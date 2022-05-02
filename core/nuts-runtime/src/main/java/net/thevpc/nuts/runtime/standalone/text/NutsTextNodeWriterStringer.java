@@ -83,17 +83,10 @@ public class NutsTextNodeWriterStringer extends AbstractNutsTextNodeWriter {
                     writeNode(s.getChild(), ctx);
                 } else {
                     NutsTextStyles styles = s.getStyles();
-                    if (s.getChild().getType() == NutsTextType.PLAIN) {
-                        writeRaw("##:"+styles.id()+":");
-                        writeNode(s.getChild(), ctx);
-                        writeRaw("##");
-                        writeRaw(NutsConstants.Ntf.SILENT);
-                    } else {
-                        writeRaw("##{"+styles.id()+":");
-                        writeNode(s.getChild(), ctx);
-                        writeRaw("}##");
-                        writeRaw(NutsConstants.Ntf.SILENT);
-                    }
+                    writeRaw("##{"+styles.id()+":");
+                    writeNode(s.getChild(), ctx);
+                    writeRaw("}##");
+                    writeRaw(NutsConstants.Ntf.SILENT);
                 }
                 break;
             }

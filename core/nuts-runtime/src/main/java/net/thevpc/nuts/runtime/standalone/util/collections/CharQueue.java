@@ -5,9 +5,7 @@ import java.io.IOException;
 import java.io.Reader;
 import java.io.UncheckedIOException;
 import java.nio.CharBuffer;
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.List;
+import java.util.*;
 import java.util.function.Consumer;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -21,6 +19,7 @@ public class CharQueue implements CharSequence {
     //    private int count;
     private int to;
     private boolean eof;
+    private Map<String,Pattern> cachedPatterns=new HashMap<>();
 
     public CharQueue() {
         this(256);
@@ -170,8 +169,8 @@ public class CharQueue implements CharSequence {
 
 
     private Pattern pattern(String pattern) {
-        pattern = "^" + pattern;
-        return Pattern.compile(pattern);
+        return Pattern.compile("^" + pattern);
+//        return cachedPatterns.computeIfAbsent("^" + pattern, Pattern::compile);
     }
 
     public NutsStringMatchResult peekPattern(String pattern) {

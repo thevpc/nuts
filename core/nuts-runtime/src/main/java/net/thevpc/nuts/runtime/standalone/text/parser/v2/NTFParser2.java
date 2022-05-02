@@ -132,18 +132,38 @@ public class NTFParser2 extends AbstractNutsTextNodeParser {
                             q.doWithPattern(
                                     new CharQueue.MultiPattern()
                                             .setFully(fully)
-                                            .onFullMatch("##:(?<n>[^:]+)[: ]", m -> {
+                                            .onFullMatch("##:(?<n>[!a-zA-Z0-9_,(')/%+-]+)[: ]", m -> {
+                                                String a = m.get();
                                                 String s = m.get("n");
                                                 wasNewLine = false;
+                                                NutsTextStyles ss = NutsTextStyles.parse(s).orNull();
                                                 q.read(m.count());
-                                                pushSimpleStyle(s);
-                                            })
-                                            .onFullMatch("##\\{(?<n>[^:]+)[: ]", m -> {
-                                                wasNewLine = false;
-                                                String s = m.get("n");
                                                 NutsText p = pushUp(consumeBuffer());
-                                                pushCompositeStyle(s);
+                                                if (ss == null) {
+                                                    //this is an invalid style
+                                                    // just push all
+                                                    buffer.append(a);
+                                                } else {
+                                                    pushSimpleStyle(ss);
+                                                }
+                                                if (p != null) {
+                                                    ret.set(p);
+                                                }
+                                            })
+                                            .onFullMatch("##\\{(?<n>[!a-zA-Z0-9_,(')/%+-]+)[: ]", m -> {
+                                                wasNewLine = false;
+                                                String a = m.get();
+                                                String s = m.get("n");
+                                                NutsTextStyles ss = NutsTextStyles.parse(s).orNull();
                                                 q.read(m.count());
+                                                NutsText p = pushUp(consumeBuffer());
+                                                if (ss == null) {
+                                                    //this is an invalid style
+                                                    // just push all
+                                                    buffer.append(a);
+                                                } else {
+                                                    pushCompositeStyle(ss);
+                                                }
                                                 if (p != null) {
                                                     ret.set(p);
                                                 }
@@ -399,8 +419,8 @@ public class NTFParser2 extends AbstractNutsTextNodeParser {
         return pushUp(txt.ofStyled(txt.ofList(embedded.children), embedded.style));
     }
 
-    private void pushCompositeStyle(String style) {
-        stackedStyles.push(new Embedded(StepEnum.COMPOSITE_STYLE, createStyle(style), 0));
+    private void pushCompositeStyle(NutsTextStyles style) {
+        stackedStyles.push(new Embedded(StepEnum.COMPOSITE_STYLE, style, 0));
     }
 
     private void pushCode() {
@@ -408,20 +428,18 @@ public class NTFParser2 extends AbstractNutsTextNodeParser {
     }
 
     private void pushSimpleStyle(int level) {
-        stackedStyles.push(new Embedded(StepEnum.SIMPLE_STYLE, createStyle("p" + level), level));
+        stackedStyles.push(new Embedded(StepEnum.SIMPLE_STYLE, NutsTextStyles.parse("p" + level).get(session), level));
     }
 
-    private void pushSimpleStyle(String s) {
-        stackedStyles.push(new Embedded(StepEnum.SIMPLE_STYLE, createStyle(s), 1));
+    private void pushSimpleStyle(NutsTextStyles s) {
+        stackedStyles.push(new Embedded(StepEnum.SIMPLE_STYLE, s, 1));
     }
 
     private void pushTitle(int level) {
         stackedStyles.push(new Embedded(StepEnum.TITLE, null, level));
     }
 
-    private NutsTextStyles createStyle(String n1) {
-        return NutsTextStyles.of(NutsTextStyle.parse(n1).get(txt.getSession()));
-    }
+
 
     private NutsText pushUp(NutsText t) {
         if (t == null) {

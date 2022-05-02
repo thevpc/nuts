@@ -503,10 +503,6 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
                                         .append(")")
                         );
                     }
-                    int len = txt.builder()
-                            .append(" This is the very first time ")
-                            .appendCode("sh", "nuts")
-                            .append(" has been launched for this workspace ").textLength();
                     NutsTableFormat.of(defaultSession()).setValue(
                             NutsTableModel.of(defaultSession())
                                     .addCell(

@@ -926,7 +926,7 @@ public class Test04_NTFTest {
         NutsTexts text = NutsTexts.of(session);
         NutsText str = text.ofStyled("re-install", NutsTextStyles.of(NutsTextStyle.success(), NutsTextStyle.underlined()));
         TestUtils.println(str.toString());
-        Assertions.assertEquals("##:_,success:re-install##\u001E",str.toString());
+        Assertions.assertEquals("##{_,success:re-install}##\u001E",str.toString());
     }
 
     @Test
@@ -1216,5 +1216,14 @@ public class Test04_NTFTest {
         NutsText t = s.toText();
         Assertions.assertEquals(NutsTextType.LIST,t.getType());
         Assertions.assertEquals(3,((NutsTextList)t).size());
+    }
+
+    @Test
+    public void test32() {
+        NutsString s = NutsString.of(
+                "##:_:location##:##:path:/home## (Tan Type)\n", session);
+        NutsText t = s.toText();
+        Assertions.assertEquals(NutsTextType.LIST,t.getType());
+        Assertions.assertEquals(4,((NutsTextList)t).size());
     }
 }
