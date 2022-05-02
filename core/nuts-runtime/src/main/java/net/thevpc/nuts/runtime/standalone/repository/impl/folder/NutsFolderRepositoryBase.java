@@ -12,6 +12,7 @@ import net.thevpc.nuts.runtime.standalone.repository.util.NutsIdLocationUtils;
 import net.thevpc.nuts.runtime.standalone.util.iter.IteratorBuilder;
 import net.thevpc.nuts.runtime.standalone.util.iter.IteratorUtils;
 import net.thevpc.nuts.runtime.standalone.xtra.digest.NutsDigestUtils;
+import net.thevpc.nuts.spi.NutsPaths;
 import net.thevpc.nuts.util.NutsIterator;
 import net.thevpc.nuts.util.NutsLoggerVerb;
 import net.thevpc.nuts.util.NutsStringUtils;
@@ -164,9 +165,8 @@ public abstract class NutsFolderRepositoryBase extends NutsCachedRepository {
                     throw new NutsNotFoundException(session, id);
                 }
             } else {
-                String tempFile = NutsTmp.of(session)
-                        .setRepositoryId(getUuid())
-                        .createTempFile(p.getName()).toString();
+                String tempFile = NutsPaths.of(session)
+                        .createRepositoryTempFile(p.getName(),getUuid(),session).toString();
                 try {
                     NutsCp.of(session)
                             .from(getStream(id, "artifact binaries", "retrieve", session)).to(tempFile).setValidator(new NutsCpValidator() {

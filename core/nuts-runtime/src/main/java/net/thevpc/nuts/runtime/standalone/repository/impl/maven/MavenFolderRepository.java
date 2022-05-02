@@ -32,6 +32,7 @@ import net.thevpc.nuts.runtime.standalone.repository.impl.maven.util.MavenUtils;
 import net.thevpc.nuts.runtime.standalone.repository.impl.maven.util.MvnClient;
 import net.thevpc.nuts.runtime.standalone.util.CoreNutsConstants;
 import net.thevpc.nuts.runtime.standalone.workspace.NutsWorkspaceUtils;
+import net.thevpc.nuts.spi.NutsPaths;
 import net.thevpc.nuts.spi.NutsRepositorySPI;
 import net.thevpc.nuts.util.NutsIterator;
 import net.thevpc.nuts.util.NutsLogger;
@@ -139,9 +140,8 @@ public class MavenFolderRepository extends NutsFolderRepositoryBase {
                 if (localPath == null) {
                     return content.setUserCache(true).setUserTemporary(false);
                 } else {
-                    String tempFile = NutsTmp.of(session)
-                            .setRepositoryId(getUuid())
-                            .createTempFile(content.getName()).toString();
+                    String tempFile = NutsPaths.of(session)
+                            .createRepositoryTempFile(content.getName(),getUuid(),session).toString();
                     NutsCp.of(session)
                             .from(content).to(tempFile).addOptions(NutsPathOption.SAFE).run();
                     return NutsPath.of(tempFile, session).setUserCache(true).setUserTemporary(false);

@@ -5,6 +5,21 @@
  */
 package net.thevpc.nuts.runtime.standalone.workspace.cmd.exec;
 
+import net.thevpc.nuts.*;
+import net.thevpc.nuts.cmdline.NutsCommandLine;
+import net.thevpc.nuts.io.NutsIOException;
+import net.thevpc.nuts.io.NutsPath;
+import net.thevpc.nuts.runtime.standalone.definition.DefaultNutsDefinition;
+import net.thevpc.nuts.runtime.standalone.definition.DefaultNutsInstallInfo;
+import net.thevpc.nuts.runtime.standalone.descriptor.parser.NutsDescriptorContentResolver;
+import net.thevpc.nuts.runtime.standalone.io.util.*;
+import net.thevpc.nuts.runtime.standalone.security.util.CoreDigestHelper;
+import net.thevpc.nuts.runtime.standalone.util.filters.CoreFilterUtils;
+import net.thevpc.nuts.spi.NutsDependencySolver;
+import net.thevpc.nuts.spi.NutsPaths;
+import net.thevpc.nuts.util.NutsLogger;
+import net.thevpc.nuts.util.NutsLoggerVerb;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UncheckedIOException;
@@ -14,25 +29,6 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
 import java.util.logging.Level;
-
-import net.thevpc.nuts.*;
-import net.thevpc.nuts.cmdline.NutsCommandLine;
-import net.thevpc.nuts.io.NutsIOException;
-import net.thevpc.nuts.io.NutsPath;
-import net.thevpc.nuts.io.NutsTmp;
-import net.thevpc.nuts.runtime.standalone.descriptor.parser.NutsDescriptorContentResolver;
-import net.thevpc.nuts.runtime.standalone.io.util.NutsStreamOrPath;
-import net.thevpc.nuts.runtime.standalone.definition.DefaultNutsDefinition;
-import net.thevpc.nuts.runtime.standalone.definition.DefaultNutsInstallInfo;
-import net.thevpc.nuts.util.NutsLogger;
-import net.thevpc.nuts.util.NutsLoggerVerb;
-import net.thevpc.nuts.runtime.standalone.io.util.CoreIOUtils;
-import net.thevpc.nuts.runtime.standalone.io.util.URLBuilder;
-import net.thevpc.nuts.runtime.standalone.io.util.ZipOptions;
-import net.thevpc.nuts.runtime.standalone.io.util.ZipUtils;
-import net.thevpc.nuts.runtime.standalone.security.util.CoreDigestHelper;
-import net.thevpc.nuts.runtime.standalone.util.filters.CoreFilterUtils;
-import net.thevpc.nuts.spi.NutsDependencySolver;
 
 /**
  * @author thevpc
@@ -86,18 +82,18 @@ public class DefaultNutsArtifactPathExecutable extends AbstractNutsExecutableCom
     public void executeHelper(boolean dry) {
         try (final CharacterizedExecFile c = characterizeForExec(NutsStreamOrPath.of(cmdName, session), session, executorOptions)) {
             if (c.descriptor == null) {
-                throw new NutsNotFoundException(execSession, null, NutsMessage.cstyle("unable to resolve a valid descriptor for %s",cmdName), null);
+                throw new NutsNotFoundException(execSession, null, NutsMessage.cstyle("unable to resolve a valid descriptor for %s", cmdName), null);
             }
-            String tempFolder = NutsTmp.of(session)
-                    .createTempFolder("exec-path-").toString();
+            String tempFolder = NutsPaths.of(session)
+                    .createTempFolder("exec-path-", session).toString();
             NutsId _id = c.descriptor.getId();
             DefaultNutsDefinition nutToRun = new DefaultNutsDefinition(
                     null,
                     null,
                     _id.getLongId(),
                     c.descriptor,
-                            NutsPath.of(c.contentFile,execSession).setUserCache(false).setUserTemporary(c.temps.size() > 0)
-                            ,
+                    NutsPath.of(c.contentFile, execSession).setUserCache(false).setUserTemporary(c.temps.size() > 0)
+                    ,
                     DefaultNutsInstallInfo.notInstalled(_id),
                     null, session
             );
@@ -116,13 +112,13 @@ public class DefaultNutsArtifactPathExecutable extends AbstractNutsExecutableCom
 //            System.out.println(String.join(" ",args));
             try {
                 execCommand.ws_execId(nutToRun, cmdName, args, executorOptions, workspaceOptions, execCommand.getEnv(),
-                        execCommand.getDirectory(), execCommand.isFailFast(), true, session, execSession, executionType,runAs, dry);
+                        execCommand.getDirectory(), execCommand.isFailFast(), true, session, execSession, executionType, runAs, dry);
             } finally {
                 try {
                     CoreIOUtils.delete(session, Paths.get(tempFolder));
                 } catch (UncheckedIOException | NutsIOException e) {
                     LOG.with().session(session).level(Level.FINEST).verb(NutsLoggerVerb.FAIL)
-                            .log(NutsMessage.jstyle("unable to delete temp folder created for execution : {0}",tempFolder));
+                            .log(NutsMessage.jstyle("unable to delete temp folder created for execution : {0}", tempFolder));
                 }
             }
         }
@@ -133,10 +129,10 @@ public class DefaultNutsArtifactPathExecutable extends AbstractNutsExecutableCom
         CharacterizedExecFile c = new CharacterizedExecFile(session);
         try {
             c.streamOrPath = contentFile;
-            c.contentFile = CoreIOUtils.toPathInputSource(contentFile, c.temps,true, session);
+            c.contentFile = CoreIOUtils.toPathInputSource(contentFile, c.temps, true, session);
             Path fileSource = c.contentFile;
             if (!Files.exists(fileSource)) {
-                throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("file does not exists %s",fileSource));
+                throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("file does not exists %s", fileSource));
             }
             if (Files.isDirectory(fileSource)) {
                 Path ext = fileSource.resolve(NutsConstants.Files.DESCRIPTOR_FILE_NAME);
@@ -147,7 +143,7 @@ public class DefaultNutsArtifactPathExecutable extends AbstractNutsExecutableCom
                 }
                 if (c.descriptor != null) {
                     if ("zip".equals(c.descriptor.getPackaging())) {
-                        Path zipFilePath = NutsPath.of(fileSource+ ".zip",session)
+                        Path zipFilePath = NutsPath.of(fileSource + ".zip", session)
                                 .toAbsolute().toFile();
                         ZipUtils.zip(session, fileSource.toString(), new ZipOptions(), zipFilePath.toString());
                         c.contentFile = zipFilePath;
@@ -167,9 +163,9 @@ public class DefaultNutsArtifactPathExecutable extends AbstractNutsExecutableCom
                         try {
                             c.contentFile = CoreIOUtils.toPathInputSource(
                                     NutsStreamOrPath.of(
-                                            ub.resolveSibling(session.locations().getDefaultIdFilename(c.descriptor.getId())).toURL(),session
+                                            ub.resolveSibling(session.locations().getDefaultIdFilename(c.descriptor.getId())).toURL(), session
                                     ),
-                                    c.temps, true,session);
+                                    c.temps, true, session);
                         } catch (Exception ex) {
                             //TODO FIX ME
                             ex.printStackTrace();
@@ -179,11 +175,11 @@ public class DefaultNutsArtifactPathExecutable extends AbstractNutsExecutableCom
                         for (NutsIdLocation location0 : c.descriptor.getLocations()) {
                             if (CoreFilterUtils.acceptClassifier(location0, classifier)) {
                                 String location = location0.getUrl();
-                                if (NutsPath.of(location,session).isHttp()) {
+                                if (NutsPath.of(location, session).isHttp()) {
                                     try {
                                         c.contentFile = CoreIOUtils.toPathInputSource(
-                                                NutsStreamOrPath.of(new URL(location),session),
-                                                c.temps, true,session);
+                                                NutsStreamOrPath.of(new URL(location), session),
+                                                c.temps, true, session);
                                     } catch (Exception ex) {
 
                                     }
@@ -191,8 +187,8 @@ public class DefaultNutsArtifactPathExecutable extends AbstractNutsExecutableCom
                                     URLBuilder ub = new URLBuilder(c.streamOrPath.getPath().toURL().toString());
                                     try {
                                         c.contentFile = CoreIOUtils.toPathInputSource(
-                                                NutsStreamOrPath.of(ub.resolveSibling(session.locations().getDefaultIdFilename(c.descriptor.getId())).toURL(),session),
-                                                c.temps, true,session);
+                                                NutsStreamOrPath.of(ub.resolveSibling(session.locations().getDefaultIdFilename(c.descriptor.getId())).toURL(), session),
+                                                c.temps, true, session);
                                     } catch (Exception ex) {
                                         //TODO add log here
                                     }
@@ -204,7 +200,7 @@ public class DefaultNutsArtifactPathExecutable extends AbstractNutsExecutableCom
                         }
                     }
                     if (c.contentFile == null) {
-                        throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("unable to locale package for %s" , c.streamOrPath));
+                        throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("unable to locale package for %s", c.streamOrPath));
                     }
                 } else {
                     c.descriptor = NutsDescriptorContentResolver.resolveNutsDescriptorFromFileContent(c.contentFile, execOptions, session);
@@ -213,7 +209,7 @@ public class DefaultNutsArtifactPathExecutable extends AbstractNutsExecutableCom
                         d.append(c.contentFile);
                         String artifactId = d.getDigest();
                         c.descriptor = new DefaultNutsDescriptorBuilder()
-                                .setId("temp:"+artifactId+"#1.0")
+                                .setId("temp:" + artifactId + "#1.0")
                                 .setPackaging(CoreIOUtils.getFileExtension(contentFile.getName()))
                                 .build();
                     }
@@ -222,7 +218,7 @@ public class DefaultNutsArtifactPathExecutable extends AbstractNutsExecutableCom
                 throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("path does not denote a valid file or folder %s", c.streamOrPath));
             }
         } catch (IOException ex) {
-            throw new NutsIOException(session,ex);
+            throw new NutsIOException(session, ex);
         }
         return c;
     }

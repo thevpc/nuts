@@ -2,15 +2,14 @@ package net.thevpc.nuts.toolbox.noapi;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.elem.*;
-import net.thevpc.nuts.io.NutsTmp;
 import net.thevpc.nuts.lib.md.*;
 import net.thevpc.nuts.lib.md.asciidoctor.AsciiDoctorWriter;
+import net.thevpc.nuts.spi.NutsPaths;
 import net.thevpc.nuts.text.NutsTextStyle;
 import net.thevpc.nuts.text.NutsTexts;
 import org.asciidoctor.Asciidoctor;
 import org.asciidoctor.OptionsBuilder;
 import org.asciidoctor.SafeMode;
-//import org.yaml.snakeyaml.Yaml;
 
 import java.io.*;
 import java.nio.file.Files;
@@ -52,8 +51,8 @@ public class NOpenAPIService {
             if (keep) {
                 temp = addExtension(source, "adoc").toString();
             } else {
-                temp = NutsTmp.of(session)
-                        .createTempFile("temp.adoc").toString();
+                temp = NutsPaths.of(session)
+                        .createTempFile("temp.adoc",session).toString();
             }
             writeAdoc(md, temp, keep && session.isPlainTrace());
             if (new File(target).getParentFile() != null) {

@@ -2,6 +2,7 @@ package net.thevpc.nuts.runtime.standalone.io.util;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.io.*;
+import net.thevpc.nuts.spi.NutsPaths;
 import net.thevpc.nuts.text.NutsTextStyle;
 import net.thevpc.nuts.text.NutsTexts;
 import net.thevpc.nuts.util.NutsFunction;
@@ -181,7 +182,7 @@ public class NutsStreamOrPath {
 
     public NutsStreamOrPath toDisposable(NutsSession session) {
         String name = getName();
-        Path tempFile = NutsTmp.of(session).createTempFile(name).toFile();
+        Path tempFile = NutsPaths.of(session).createTempFile(name,session).toFile();
         NutsCp copy = NutsCp.of(session);
         if (type == Type.PATH) {
             copy.from((NutsPath) value);

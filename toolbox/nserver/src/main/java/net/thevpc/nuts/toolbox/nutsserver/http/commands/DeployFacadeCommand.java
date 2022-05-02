@@ -3,7 +3,7 @@ package net.thevpc.nuts.toolbox.nutsserver.http.commands;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.io.NutsCp;
 import net.thevpc.nuts.io.NutsDigest;
-import net.thevpc.nuts.io.NutsTmp;
+import net.thevpc.nuts.spi.NutsPaths;
 import net.thevpc.nuts.toolbox.nutsserver.AbstractFacadeCommand;
 import net.thevpc.nuts.toolbox.nutsserver.FacadeCommandContext;
 import net.thevpc.nuts.toolbox.nutsserver.util.ItemStreamInfo;
@@ -53,12 +53,11 @@ public class DeployFacadeCommand extends AbstractFacadeCommand {
                     }
                     break;
                 case "content":
-                    contentFile = NutsTmp.of(session)
-                            .setSession(session)
+                    contentFile = NutsPaths.of(session)
                             .createTempFile(
-                            session.locations().getDefaultIdFilename(
-                                    descriptor.getId().builder().setFaceDescriptor().build()
-                            )).toString();
+                                    session.locations().getDefaultIdFilename(
+                                            descriptor.getId().builder().setFaceDescriptor().build()
+                                    ), session).toString();
                     NutsCp.of(session)
                             .setSession(session)
                             .setSource(info.getContent())

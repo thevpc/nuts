@@ -5,15 +5,17 @@
  */
 package net.thevpc.nuts.core.test;
 
+import net.thevpc.nuts.NutsSession;
 import net.thevpc.nuts.core.test.utils.TestUtils;
-import net.thevpc.nuts.*;
 import net.thevpc.nuts.io.NutsCp;
 import net.thevpc.nuts.io.NutsPath;
 import net.thevpc.nuts.io.NutsPathOption;
-import net.thevpc.nuts.io.NutsTmp;
+import net.thevpc.nuts.spi.NutsPaths;
 import net.thevpc.nuts.util.NutsProgressEvent;
 import net.thevpc.nuts.util.NutsProgressMonitor;
-import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 
 import java.io.BufferedWriter;
 import java.io.File;
@@ -36,10 +38,10 @@ public class Test12_CopyTest {
 
     @Test
     public void copy01() throws Exception {
-        NutsPath from = NutsTmp.of(session)
-                .createTempFolder("source");
-        NutsPath to = NutsTmp.of(session)
-                .createTempFolder("target");
+        NutsPath from = NutsPaths.of(session)
+                .createTempFolder("source",session);
+        NutsPath to = NutsPaths.of(session)
+                .createTempFolder("target",session);
         TestUtils.println("from="+from);
         TestUtils.println("to="+to);
         long collect = from.list().count();

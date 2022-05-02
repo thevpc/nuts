@@ -16,6 +16,7 @@ import net.thevpc.nuts.runtime.standalone.io.util.Interruptible;
 import net.thevpc.nuts.runtime.standalone.io.util.NutsStreamOrPath;
 import net.thevpc.nuts.runtime.standalone.session.NutsSessionUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.NutsWorkspaceUtils;
+import net.thevpc.nuts.spi.NutsPaths;
 import net.thevpc.nuts.spi.NutsSupportLevelContext;
 import net.thevpc.nuts.text.NutsText;
 import net.thevpc.nuts.text.NutsTexts;
@@ -772,8 +773,8 @@ public class DefaultNutsCp implements NutsCp {
                     NutsPath.of(to,session).mkParentDirs();
                     temp = to.resolveSibling(to.getFileName() + "~");
                 } else {
-                    temp = NutsTmp.of(getSession())
-                            .createTempFile("temp~").toFile();
+                    temp = NutsPaths.of(getSession())
+                            .createTempFile("temp~",session).toFile();
                 }
                 try {
                     if (_source.isPath() && _source.getPath().isFile()) {

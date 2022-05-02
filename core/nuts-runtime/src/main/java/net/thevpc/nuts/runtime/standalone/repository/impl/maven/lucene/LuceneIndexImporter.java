@@ -1,11 +1,12 @@
 package net.thevpc.nuts.runtime.standalone.repository.impl.maven.lucene;
 
-import net.thevpc.nuts.*;
+import net.thevpc.nuts.NutsId;
+import net.thevpc.nuts.NutsSession;
 import net.thevpc.nuts.io.NutsCp;
 import net.thevpc.nuts.io.NutsIOException;
-import net.thevpc.nuts.io.NutsTmp;
 import net.thevpc.nuts.io.NutsUncompress;
 import net.thevpc.nuts.runtime.standalone.repository.index.ArtifactsIndexDB;
+import net.thevpc.nuts.spi.NutsPaths;
 
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -23,11 +24,11 @@ public class LuceneIndexImporter {
 
     public long importGzURL(URL url, String repository,NutsSession session) {
 //        NutsWorkspace ws = session.getWorkspace();
-        String tempGzFile = NutsTmp.of(session).createTempFile("lucene-repository.gz").toString();
+        String tempGzFile = NutsPaths.of(session).createTempFile("lucene-repository.gz",session).toString();
         NutsCp.of(session)
                 .setSession(session)
                 .from(url).to(tempGzFile).run();
-        String tempFolder = NutsTmp.of(session).createTempFolder("lucene-repository").toString();
+        String tempFolder = NutsPaths.of(session).createTempFolder("lucene-repository",session).toString();
         NutsUncompress.of(session).from(tempGzFile).to(
                 tempFolder
         ).setFormat("gz").run();

@@ -151,8 +151,8 @@ public class CoreIOUtils {
                 if (goodName.length() < 3) {
                     goodName = goodName + "-repo";
                 }
-                loc = NutsTmp.of(session)
-                        .createTempFolder(goodName + "-").toString();
+                loc = NutsPaths.of(session)
+                        .createTempFolder(goodName + "-",session).toString();
             } else {
                 if (NutsBlankable.isBlank(loc)) {
                     if (NutsBlankable.isBlank(goodName)) {
@@ -847,9 +847,9 @@ public class CoreIOUtils {
         if (is.isPath() && is.getPath().isFile()) {
             return is.getPath().toFile();
         }
-        NutsTmp tmps = NutsTmp.of(session);
+        NutsPaths tmps = NutsPaths.of(session);
         Path temp = tmps
-                .createTempFile(is.getName()).toFile();
+                .createTempFile(is.getName(),session).toFile();
         NutsCp a = NutsCp.of(session).removeOptions(NutsPathOption.SAFE);
         if (is.isPath()) {
             a.from(is.getPath());
@@ -867,7 +867,7 @@ public class CoreIOUtils {
                 if(ct!=null){
                     List<String> e = ctt.findExtensionsByContentType(ct);
                     if(!e.isEmpty()){
-                        NutsPath newFile = tmps.createTempFile(is.getName() + "." + e.get(0));
+                        NutsPath newFile = tmps.createTempFile(is.getName() + "." + e.get(0),session);
                         Path newFilePath = newFile.toFile();
                         try {
                             Files.move(temp, newFilePath,StandardCopyOption.REPLACE_EXISTING);

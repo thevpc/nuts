@@ -35,7 +35,7 @@ import java.io.PrintStream;
 import java.io.Writer;
 import java.util.Locale;
 
-public interface NutsPrintStream extends NutsStreamMetadataAware {
+public interface NutsPrintStream extends NutsStreamMetadataAware,NutsOutputTarget {
 
     static NutsPrintStream ofNull(NutsSession session) {
         return NutsPrintStreams.of(session).createNull();

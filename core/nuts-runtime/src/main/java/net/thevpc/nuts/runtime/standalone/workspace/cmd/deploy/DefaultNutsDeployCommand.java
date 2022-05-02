@@ -12,6 +12,7 @@ import net.thevpc.nuts.runtime.standalone.util.CoreNutsConstants;
 import net.thevpc.nuts.runtime.standalone.workspace.NutsWorkspaceExt;
 import net.thevpc.nuts.runtime.standalone.io.util.CoreIOUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.NutsWorkspaceUtils;
+import net.thevpc.nuts.spi.NutsPaths;
 import net.thevpc.nuts.spi.NutsRepositorySPI;
 import net.thevpc.nuts.text.NutsTextStyle;
 import net.thevpc.nuts.text.NutsTexts;
@@ -165,8 +166,8 @@ public class DefaultNutsDeployCommand extends AbstractNutsDeployCommand {
                 descriptor = characterizedFile.descriptor;
             }
             String name = this.session.locations().getDefaultIdFilename(descriptor.getId().builder().setFaceDescriptor().build());
-            tempFile = NutsTmp.of(this.session)
-                    .createTempFile(name).toFile();
+            tempFile = NutsPaths.of(this.session)
+                    .createTempFile(name,session).toFile();
             NutsCp.of(this.session).setSession(session).from(contentSource.getInputStream()).to(tempFile).addOptions(NutsPathOption.SAFE).run();
             contentFile2 = tempFile;
 

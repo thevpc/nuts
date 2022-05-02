@@ -49,7 +49,7 @@ import java.util.stream.Stream;
  *
  * @app.category Input Output
  */
-public interface NutsPath extends NutsFormattable, NutsStreamMetadataAware {
+public interface NutsPath extends NutsFormattable, NutsStreamMetadataAware, NutsInputSource, NutsOutputTarget {
     static NutsPath of(URL path, NutsSession session) {
         return NutsPaths.of(session).createPath(path, session);
     }
@@ -76,20 +76,22 @@ public interface NutsPath extends NutsFormattable, NutsStreamMetadataAware {
 
     /**
      * return user home path
+     *
      * @param session session
      * @return user home path
      */
     static NutsPath ofUserHome(NutsSession session) {
-        return NutsPath.of(Paths.get(System.getProperty("user.home")),session);
+        return NutsPath.of(Paths.get(System.getProperty("user.home")), session);
     }
 
     /**
      * return user current directory
+     *
      * @param session session
      * @return return user current directory
      */
     static NutsPath ofUserDirectory(NutsSession session) {
-        return NutsPath.of(Paths.get(System.getProperty("user.dir")),session);
+        return NutsPath.of(Paths.get(System.getProperty("user.dir")), session);
     }
 
     /**
@@ -117,6 +119,7 @@ public interface NutsPath extends NutsFormattable, NutsStreamMetadataAware {
     NutsPath setUserTemporary(boolean temporary);
 
     String getBaseName();
+
     String getLongBaseName();
 
     String getLastExtension();
@@ -214,6 +217,7 @@ public interface NutsPath extends NutsFormattable, NutsStreamMetadataAware {
 
     /**
      * create all parent folders if not existing
+     *
      * @return {@code this} instance
      */
     NutsPath mkParentDirs();
@@ -350,12 +354,13 @@ public interface NutsPath extends NutsFormattable, NutsStreamMetadataAware {
 
     NutsPath walkDfs(NutsTreeVisitor<NutsPath> visitor, NutsPathOption... options);
 
-    NutsPath walkDfs(NutsTreeVisitor<NutsPath> visitor,int maxDepth, NutsPathOption... options);
+    NutsPath walkDfs(NutsTreeVisitor<NutsPath> visitor, int maxDepth, NutsPathOption... options);
 
     NutsStream<NutsPath> walkGlob(NutsPathOption... options);
 
     /**
      * return true if this is a valid URL with http or https scheme
+     *
      * @return true if this is a valid URL with http or https scheme
      */
     boolean isHttp();

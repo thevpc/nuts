@@ -24,6 +24,7 @@ import net.thevpc.nuts.format.NutsTreeFormat;
 import net.thevpc.nuts.io.*;
 import net.thevpc.nuts.spi.NutsApplicationContexts;
 import net.thevpc.nuts.spi.NutsDependencySolver;
+import net.thevpc.nuts.spi.NutsPaths;
 import net.thevpc.nuts.spi.NutsTerminals;
 import net.thevpc.nuts.text.NutsText;
 import net.thevpc.nuts.text.NutsTexts;
@@ -233,7 +234,7 @@ public class Test01_CreateTest {
             Assertions.assertNotNull(c);
         }
         {
-            NutsTmp c = NutsTmp.of(s);
+            NutsPaths c = NutsPaths.of(s);
             Assertions.assertNotNull(c);
         }
         {

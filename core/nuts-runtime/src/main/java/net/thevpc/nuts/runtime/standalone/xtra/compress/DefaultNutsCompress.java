@@ -12,6 +12,7 @@ import net.thevpc.nuts.runtime.standalone.io.util.CoreIOUtils;
 import net.thevpc.nuts.runtime.standalone.io.progress.SingletonNutsInputStreamProgressFactory;
 import net.thevpc.nuts.runtime.standalone.session.NutsSessionUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.NutsWorkspaceUtils;
+import net.thevpc.nuts.spi.NutsPaths;
 import net.thevpc.nuts.spi.NutsSupportLevelContext;
 import net.thevpc.nuts.util.*;
 
@@ -96,8 +97,8 @@ public class DefaultNutsCompress implements NutsCompress {
             if (this.target.isPath()) {
                 Path tempPath = null;
                 if (isSafe()) {
-                    tempPath = NutsTmp.of(session)
-                            .createTempFile("zip").toFile();
+                    tempPath = NutsPaths.of(session)
+                            .createTempFile("zip",session).toFile();
                 }
                 if (this.target.isPath()) {
                     this.target.getPath().mkParentDirs();

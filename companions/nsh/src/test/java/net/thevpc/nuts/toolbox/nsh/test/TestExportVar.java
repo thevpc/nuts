@@ -26,11 +26,11 @@
 */
 package net.thevpc.nuts.toolbox.nsh.test;
 
-import net.thevpc.nuts.*;
+import net.thevpc.nuts.NutsSession;
 import net.thevpc.nuts.io.NutsCp;
 import net.thevpc.nuts.io.NutsPath;
 import net.thevpc.nuts.io.NutsSessionTerminal;
-import net.thevpc.nuts.io.NutsTmp;
+import net.thevpc.nuts.spi.NutsPaths;
 import net.thevpc.nuts.toolbox.nsh.jshell.JShell;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -43,7 +43,7 @@ public class TestExportVar {
     @Test
     public void testVars1() {
         NutsSession session = TestUtils.openNewTestWorkspace("--verbose");
-        NutsPath tempFolder = NutsTmp.of(session).createTempFolder();
+        NutsPath tempFolder = NutsPaths.of(session).createTempFolder(session);
         NutsPath a = tempFolder.resolve("a.nsh");
         NutsPath b = tempFolder.resolve("b.nsh");
         System.out.println("----------------------------------------------");

@@ -3,10 +3,15 @@ package net.thevpc.nuts.toolbox.mvn;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.cmdline.NutsArgument;
 import net.thevpc.nuts.cmdline.NutsCommandLine;
-import net.thevpc.nuts.io.NutsTmp;
+import net.thevpc.nuts.spi.NutsPaths;
 
-import java.io.*;
-import java.nio.file.*;
+import java.io.IOException;
+import java.io.UncheckedIOException;
+import java.io.Writer;
+import java.nio.file.FileVisitResult;
+import java.nio.file.FileVisitor;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -154,8 +159,8 @@ public class NutsMvnMain implements NutsApplication {
     }
 
     private static Path createTempPom(NutsSession session) {
-        Path d = NutsTmp.of(session)
-                .createTempFolder().toFile();
+        Path d = NutsPaths.of(session)
+                .createTempFolder(session).toFile();
         try (Writer out = Files.newBufferedWriter(d.resolve("pom.xml"))) {
             out.write("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
                     + "<project xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns=\"http://maven.apache.org/POM/4.0.0\"\n"

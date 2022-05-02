@@ -27,14 +27,10 @@ import net.thevpc.nuts.*;
 import net.thevpc.nuts.cmdline.NutsCommandLine;
 import net.thevpc.nuts.io.NutsPath;
 import net.thevpc.nuts.io.NutsPrintStream;
-import net.thevpc.nuts.io.NutsTmp;
+import net.thevpc.nuts.runtime.standalone.definition.DefaultNutsDefinition;
 import net.thevpc.nuts.runtime.standalone.executor.java.JavaExecutorComponent;
 import net.thevpc.nuts.runtime.standalone.workspace.NutsWorkspaceExt;
-import net.thevpc.nuts.runtime.standalone.definition.DefaultNutsDefinition;
-import net.thevpc.nuts.spi.NutsComponentScope;
-import net.thevpc.nuts.spi.NutsComponentScopeType;
-import net.thevpc.nuts.spi.NutsExecutorComponent;
-import net.thevpc.nuts.spi.NutsSupportLevelContext;
+import net.thevpc.nuts.spi.*;
 import net.thevpc.nuts.text.NutsTextStyle;
 import net.thevpc.nuts.text.NutsTexts;
 
@@ -66,8 +62,8 @@ public class JavaSourceExecutorComponent implements NutsExecutorComponent {
         Path javaFile = nutMainFile.getContent().map(NutsPath::toFile).orNull();
         JavaCompiler compiler = ToolProvider.getSystemJavaCompiler();
         NutsSession session = executionContext.getSession();
-        Path folder = NutsTmp.of(session)
-                .createTempFolder("jj").toFile();
+        Path folder = NutsPaths.of(session)
+                .createTempFolder("jj",session).toFile();
         int res = compiler.run(null, null, null, "-d", folder.toString(), javaFile.toString());
         if (res != 0) {
             throw new NutsExecutionException(session, NutsMessage.cstyle("compilation failed"), res);
