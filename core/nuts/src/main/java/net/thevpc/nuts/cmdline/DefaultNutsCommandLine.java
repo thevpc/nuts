@@ -27,7 +27,7 @@ import net.thevpc.nuts.*;
 import net.thevpc.nuts.text.NutsTextBuilder;
 import net.thevpc.nuts.text.NutsTextStyle;
 import net.thevpc.nuts.text.NutsTexts;
-import net.thevpc.nuts.util.NutsUtilStrings;
+import net.thevpc.nuts.util.NutsStringUtils;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -364,7 +364,7 @@ public class DefaultNutsCommandLine implements NutsCommandLine {
         }
 
         for (String nameSeq : names) {
-            String[] nameSeqArray = NutsUtilStrings.split(nameSeq, " ").toArray(new String[0]);
+            String[] nameSeqArray = NutsStringUtils.split(nameSeq, " ").toArray(new String[0]);
             if (nameSeqArray.length == 0) {
                 continue;
             }
@@ -665,7 +665,7 @@ public class DefaultNutsCommandLine implements NutsCommandLine {
         //nameSeqArray
         List<NutsArgumentCandidate> candidates = new ArrayList<>();
         for (String nameSeq : names) {
-            String[] nameSeqArray = NutsUtilStrings.split(nameSeq, " ").toArray(new String[0]);
+            String[] nameSeqArray = NutsStringUtils.split(nameSeq, " ").toArray(new String[0]);
             if (nameSeqArray.length > 0) {
                 int i = autoCompleteCurrentWordIndex < nameSeqArray.length ? autoCompleteCurrentWordIndex : nameSeqArray.length - 1;
 //                String rec = null;
@@ -817,8 +817,8 @@ public class DefaultNutsCommandLine implements NutsCommandLine {
 
     @Override
     public String toString() {
-        return toStringList().stream().map(x -> NutsUtilStrings.formatStringLiteral(
-                x, NutsUtilStrings.QuoteType.DOUBLE, NutsSupportMode.PREFERRED
+        return toStringList().stream().map(x -> NutsStringUtils.formatStringLiteral(
+                x, NutsStringUtils.QuoteType.DOUBLE, NutsSupportMode.PREFERRED
         )).collect(Collectors.joining(" "));
     }
 
@@ -1117,5 +1117,10 @@ public class DefaultNutsCommandLine implements NutsCommandLine {
             args.add(argument);
         }
         return this;
+    }
+
+    @Override
+    public boolean isBlank() {
+        return isEmpty();
     }
 }

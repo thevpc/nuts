@@ -14,7 +14,7 @@ import net.thevpc.nuts.runtime.standalone.util.iter.IteratorUtils;
 import net.thevpc.nuts.runtime.standalone.xtra.digest.NutsDigestUtils;
 import net.thevpc.nuts.util.NutsIterator;
 import net.thevpc.nuts.util.NutsLoggerVerb;
-import net.thevpc.nuts.util.NutsUtilStrings;
+import net.thevpc.nuts.util.NutsStringUtils;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -285,7 +285,7 @@ public abstract class NutsFolderRepositoryBase extends NutsCachedRepository {
             stream.close();
             return;
         }
-        switch (NutsUtilStrings.trim(id.getFace())) {
+        switch (NutsStringUtils.trim(id.getFace())) {
             case NutsConstants.QueryFaces.CONTENT_HASH:
             case NutsConstants.QueryFaces.DESCRIPTOR_HASH: {
                 break;

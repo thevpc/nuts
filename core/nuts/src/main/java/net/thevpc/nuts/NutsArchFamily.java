@@ -23,7 +23,7 @@
  */
 package net.thevpc.nuts;
 
-import net.thevpc.nuts.boot.NutsApiUtils;
+import net.thevpc.nuts.reserved.NutsReservedLangUtils;
 
 /**
  * uniform platform architecture impl-note: list updated from
@@ -66,7 +66,7 @@ public enum NutsArchFamily implements NutsEnum {
     }
 
     public static NutsOptional<NutsArchFamily> parse(String value) {
-        return NutsApiUtils.parse(value, NutsArchFamily.class,s->{
+        return NutsReservedLangUtils.parseEnum(value, NutsArchFamily.class, s->{
             String arch = s.toLowerCase();
             switch (arch) {
                 case "x8632":

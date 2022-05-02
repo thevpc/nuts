@@ -26,8 +26,7 @@
  */
 package net.thevpc.nuts;
 
-import net.thevpc.nuts.boot.NutsApiUtils;
-import net.thevpc.nuts.spi.NutsSelectorOp;
+import net.thevpc.nuts.reserved.NutsReservedLangUtils;
 
 public enum NutsDesktopEnvironmentFamily implements NutsEnum {
     HEADLESS,
@@ -67,7 +66,7 @@ public enum NutsDesktopEnvironmentFamily implements NutsEnum {
     }
 
     public static NutsOptional<NutsDesktopEnvironmentFamily> parse(String value) {
-        return NutsApiUtils.parse(value, NutsDesktopEnvironmentFamily.class, s -> {
+        return NutsReservedLangUtils.parseEnum(value, NutsDesktopEnvironmentFamily.class, s -> {
             switch (s.toLowerCase()) {
                 case "win":
                 case "windows":

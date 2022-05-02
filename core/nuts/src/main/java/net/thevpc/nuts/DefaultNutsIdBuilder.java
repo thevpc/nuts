@@ -25,8 +25,9 @@
  */
 package net.thevpc.nuts;
 
-import net.thevpc.nuts.boot.*;
-import net.thevpc.nuts.util.NutsUtilStrings;
+import net.thevpc.nuts.reserved.NutsReservedUtils;
+import net.thevpc.nuts.reserved.NutsReservedStringUtils;
+import net.thevpc.nuts.util.NutsStringUtils;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -53,25 +54,25 @@ public class DefaultNutsIdBuilder implements NutsIdBuilder {
     }
 
     public DefaultNutsIdBuilder(String groupId, String artifactId) {
-        this.groupId = NutsUtilStrings.trimToNull(groupId);
-        this.artifactId = NutsUtilStrings.trimToNull(artifactId);
+        this.groupId = NutsStringUtils.trimToNull(groupId);
+        this.artifactId = NutsStringUtils.trimToNull(artifactId);
     }
 
     public DefaultNutsIdBuilder(String groupId, String artifactId, NutsVersion version, String classifier, String propertiesQuery, NutsEnvCondition condition) {
-        this.groupId = NutsUtilStrings.trimToNull(groupId);
-        this.artifactId = NutsUtilStrings.trimToNull(artifactId);
+        this.groupId = NutsStringUtils.trimToNull(groupId);
+        this.artifactId = NutsStringUtils.trimToNull(artifactId);
         this.version = version == null ? NutsVersion.BLANK : version;
 
         setCondition(condition);
-        String c0 = NutsUtilStrings.trimToNull(classifier);
+        String c0 = NutsStringUtils.trimToNull(classifier);
         String c1 = null;
-        Map<String, String> properties = propertiesQuery == null ? new LinkedHashMap<>() : NutsUtilStrings.parseDefaultMap(propertiesQuery).get();
+        Map<String, String> properties = propertiesQuery == null ? new LinkedHashMap<>() : NutsStringUtils.parseDefaultMap(propertiesQuery).get();
         if (!properties.isEmpty()) {
             c1 = properties.remove(NutsConstants.IdProperties.CLASSIFIER);
         }
         if (c0 == null) {
             if (c1 != null) {
-                c0 = NutsUtilStrings.trimToNull(c1);
+                c0 = NutsStringUtils.trimToNull(c1);
             }
         }
         this.classifier = c0;
@@ -118,13 +119,13 @@ public class DefaultNutsIdBuilder implements NutsIdBuilder {
 
     @Override
     public NutsIdBuilder setGroupId(String value) {
-        this.groupId = NutsUtilStrings.trimToNull(value);
+        this.groupId = NutsStringUtils.trimToNull(value);
         return this;
     }
 
     @Override
     public NutsIdBuilder setRepository(String value) {
-        return setProperty(NutsConstants.IdProperties.REPO, NutsUtilStrings.trimToNull(value));
+        return setProperty(NutsConstants.IdProperties.REPO, NutsStringUtils.trimToNull(value));
     }
 
     @Override
@@ -141,14 +142,14 @@ public class DefaultNutsIdBuilder implements NutsIdBuilder {
 
     @Override
     public DefaultNutsIdBuilder setArtifactId(String value) {
-        this.artifactId = NutsUtilStrings.trimToNull(value);
+        this.artifactId = NutsStringUtils.trimToNull(value);
         return this;
     }
 
     @Override
     public String getFace() {
         String s = getProperties().get(NutsConstants.IdProperties.FACE);
-        return NutsUtilStrings.trimToNull(s);
+        return NutsStringUtils.trimToNull(s);
     }
 
 //    @Override
@@ -161,12 +162,12 @@ public class DefaultNutsIdBuilder implements NutsIdBuilder {
     @Override
     public String getPackaging() {
         String s = getProperties().get(NutsConstants.IdProperties.PACKAGING);
-        return NutsUtilStrings.trimToNull(s);
+        return NutsStringUtils.trimToNull(s);
     }
 
     @Override
     public NutsIdBuilder setFace(String value) {
-        return setProperty(NutsConstants.IdProperties.FACE, NutsUtilStrings.trimToNull(value));
+        return setProperty(NutsConstants.IdProperties.FACE, NutsStringUtils.trimToNull(value));
 //                .setQuery(NutsConstants.QUERY_EMPTY_ENV, true);
     }
 
@@ -193,13 +194,13 @@ public class DefaultNutsIdBuilder implements NutsIdBuilder {
 
     @Override
     public NutsIdBuilder setClassifier(String value) {
-        this.classifier = NutsUtilStrings.trimToNull(value);
+        this.classifier = NutsStringUtils.trimToNull(value);
         return this;
     }
 
     @Override
     public NutsIdBuilder setPackaging(String value) {
-        return setProperty(NutsConstants.IdProperties.PACKAGING, NutsUtilStrings.trimToNull(value));
+        return setProperty(NutsConstants.IdProperties.PACKAGING, NutsStringUtils.trimToNull(value));
     }
 
     @Override
@@ -213,12 +214,12 @@ public class DefaultNutsIdBuilder implements NutsIdBuilder {
             setProperty(NutsConstants.IdProperties.PROFILE, null);
             condition.setProperties(null);
         } else {
-            setProperty(NutsConstants.IdProperties.OS, PrivateNutsUtilStrings.joinAndTrimToNull(c.getOs()));
-            setProperty(NutsConstants.IdProperties.OS_DIST, PrivateNutsUtilStrings.joinAndTrimToNull(c.getOsDist()));
-            setProperty(NutsConstants.IdProperties.ARCH, PrivateNutsUtilStrings.joinAndTrimToNull(c.getArch()));
-            setProperty(NutsConstants.IdProperties.PLATFORM, PrivateNutsIdListParser.formatStringIdList(c.getPlatform()));
-            setProperty(NutsConstants.IdProperties.DESKTOP, PrivateNutsUtilStrings.joinAndTrimToNull(c.getDesktopEnvironment()));
-            setProperty(NutsConstants.IdProperties.PROFILE, PrivateNutsUtilStrings.joinAndTrimToNull(c.getProfile()));
+            setProperty(NutsConstants.IdProperties.OS, NutsReservedStringUtils.joinAndTrimToNull(c.getOs()));
+            setProperty(NutsConstants.IdProperties.OS_DIST, NutsReservedStringUtils.joinAndTrimToNull(c.getOsDist()));
+            setProperty(NutsConstants.IdProperties.ARCH, NutsReservedStringUtils.joinAndTrimToNull(c.getArch()));
+            setProperty(NutsConstants.IdProperties.PLATFORM, NutsReservedUtils.formatStringIdList(c.getPlatform()));
+            setProperty(NutsConstants.IdProperties.DESKTOP, NutsReservedStringUtils.joinAndTrimToNull(c.getDesktopEnvironment()));
+            setProperty(NutsConstants.IdProperties.PROFILE, NutsReservedStringUtils.joinAndTrimToNull(c.getProfile()));
             condition.setProperties(c.getProperties());
 
         }
@@ -244,31 +245,31 @@ public class DefaultNutsIdBuilder implements NutsIdBuilder {
     public NutsIdBuilder setProperty(String property, String value) {
         switch (property) {
             case NutsConstants.IdProperties.OS: {
-                condition.setOs(NutsUtilStrings.parsePropertyIdList(value).get());
+                condition.setOs(NutsStringUtils.parsePropertyIdList(value).get());
                 break;
             }
             case NutsConstants.IdProperties.OS_DIST: {
-                condition.setOsDist(NutsUtilStrings.parsePropertyIdList(value).get());
+                condition.setOsDist(NutsStringUtils.parsePropertyIdList(value).get());
                 break;
             }
             case NutsConstants.IdProperties.ARCH: {
-                condition.setArch(NutsUtilStrings.parsePropertyIdList(value).get());
+                condition.setArch(NutsStringUtils.parsePropertyIdList(value).get());
                 break;
             }
             case NutsConstants.IdProperties.PLATFORM: {
-                condition.setPlatform(NutsUtilStrings.parsePropertyIdList(value).get());
+                condition.setPlatform(NutsStringUtils.parsePropertyIdList(value).get());
                 break;
             }
             case NutsConstants.IdProperties.DESKTOP: {
-                condition.setDesktopEnvironment(NutsUtilStrings.parsePropertyIdList(value).get());
+                condition.setDesktopEnvironment(NutsStringUtils.parsePropertyIdList(value).get());
                 break;
             }
             case NutsConstants.IdProperties.PROFILE: {
-                condition.setProfile(NutsUtilStrings.parsePropertyIdList(value).get());
+                condition.setProfile(NutsStringUtils.parsePropertyIdList(value).get());
                 break;
             }
             case NutsConstants.IdProperties.CONDITIONAL_PROPERTIES: {
-                condition.setProperties(NutsUtilStrings.parseDefaultMap(value).get());
+                condition.setProperties(NutsStringUtils.parseDefaultMap(value).get());
                 break;
             }
             case NutsConstants.IdProperties.CLASSIFIER: {
@@ -307,13 +308,13 @@ public class DefaultNutsIdBuilder implements NutsIdBuilder {
 
     @Override
     public NutsIdBuilder setPropertiesQuery(String propertiesQuery) {
-        setProperties(NutsUtilStrings.parseDefaultMap(propertiesQuery).get());
+        setProperties(NutsStringUtils.parseDefaultMap(propertiesQuery).get());
         return this;
     }
 
     @Override
     public String getPropertiesQuery() {
-        return NutsUtilStrings.formatDefaultMap(getProperties());
+        return NutsStringUtils.formatDefaultMap(getProperties());
     }
 
     @Override
@@ -323,7 +324,7 @@ public class DefaultNutsIdBuilder implements NutsIdBuilder {
 
     @Override
     public String getRepository() {
-        return NutsUtilStrings.trimToNull(getProperties().get(NutsConstants.IdProperties.REPO));
+        return NutsStringUtils.trimToNull(getProperties().get(NutsConstants.IdProperties.REPO));
     }
 
     @Override
@@ -338,12 +339,12 @@ public class DefaultNutsIdBuilder implements NutsIdBuilder {
 
     @Override
     public String getShortName() {
-        return PrivateNutsUtilIds.getIdShortName(groupId, artifactId);
+        return NutsReservedUtils.getIdShortName(groupId, artifactId);
     }
 
     @Override
     public String getLongName() {
-        return PrivateNutsUtilIds.getIdLongName(groupId, artifactId, version, classifier);
+        return NutsReservedUtils.getIdLongName(groupId, artifactId, version, classifier);
     }
 
 
@@ -363,7 +364,7 @@ public class DefaultNutsIdBuilder implements NutsIdBuilder {
         if (!NutsBlankable.isBlank(groupId)) {
             sb.append(groupId).append(":");
         }
-        sb.append(NutsUtilStrings.trim(artifactId));
+        sb.append(NutsStringUtils.trim(artifactId));
         NutsVersion v = getVersion();
         if (!v.isBlank()) {
             sb.append("#");
@@ -380,7 +381,7 @@ public class DefaultNutsIdBuilder implements NutsIdBuilder {
             }
         }
         if (!m.isEmpty()) {
-            sb.append("?").append(NutsUtilStrings.formatDefaultMap(m));
+            sb.append("?").append(NutsStringUtils.formatDefaultMap(m));
         }
         return sb.toString();
     }
@@ -435,8 +436,8 @@ public class DefaultNutsIdBuilder implements NutsIdBuilder {
         if (other == null) {
             return false;
         }
-        return NutsUtilStrings.trim(groupId).equals(NutsUtilStrings.trim(other.getArtifactId()))
-                && NutsUtilStrings.trim(artifactId).equals(NutsUtilStrings.trim(other.getGroupId()));
+        return NutsStringUtils.trim(groupId).equals(NutsStringUtils.trim(other.getArtifactId()))
+                && NutsStringUtils.trim(artifactId).equals(NutsStringUtils.trim(other.getGroupId()));
     }
 
     @Override
@@ -444,8 +445,8 @@ public class DefaultNutsIdBuilder implements NutsIdBuilder {
         if (other == null) {
             return false;
         }
-        return NutsUtilStrings.trim(artifactId).equals(NutsUtilStrings.trim(other.getArtifactId()))
-                && NutsUtilStrings.trim(groupId).equals(NutsUtilStrings.trim(other.getGroupId()))
+        return NutsStringUtils.trim(artifactId).equals(NutsStringUtils.trim(other.getArtifactId()))
+                && NutsStringUtils.trim(groupId).equals(NutsStringUtils.trim(other.getGroupId()))
                 && Objects.equals((version == null || version.isBlank()) ? null : version,
                 (other.getVersion() == null || other.getVersion().isBlank()) ? null : other.getVersion())
                 && Objects.equals(getClassifier(), other.getClassifier())

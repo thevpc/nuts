@@ -51,7 +51,7 @@ public class NutsWorkspaceUtils {
     }
 
     public static boolean isUserDefaultWorkspace(NutsSession session) {
-        String defaultWorkspaceLocation = NutsUtilPlatforms.getWorkspaceLocation(null, false, null);
+        String defaultWorkspaceLocation = NutsPlatformUtils.getWorkspaceLocation(null, false, null);
         return defaultWorkspaceLocation.equals(session.getWorkspace().getLocation().toString());
     }
 

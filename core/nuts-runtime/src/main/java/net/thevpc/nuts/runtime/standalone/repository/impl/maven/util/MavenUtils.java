@@ -42,7 +42,7 @@ import net.thevpc.nuts.text.NutsTextStyle;
 import net.thevpc.nuts.text.NutsTexts;
 import net.thevpc.nuts.util.NutsLogger;
 import net.thevpc.nuts.util.NutsLoggerVerb;
-import net.thevpc.nuts.util.NutsUtilStrings;
+import net.thevpc.nuts.util.NutsStringUtils;
 import org.w3c.dom.Element;
 
 import java.io.IOException;
@@ -227,7 +227,7 @@ public class MavenUtils {
                         if (XmlUtils.isNode(e, "build", "plugins", "plugin", "configuration", "archive", "manifest", "mainClass")) {
                             return true;
                         }
-                        if (NutsUtilStrings.trim(e.getTextContent()).equals("exec-war-only") &&
+                        if (NutsStringUtils.trim(e.getTextContent()).equals("exec-war-only") &&
                                 XmlUtils.isNode(e, "build", "plugins", "plugin", "executions", "execution", "goals", "goal")) {
                             return true;
                         }
@@ -257,10 +257,10 @@ public class MavenUtils {
             if (fetchMode == null) {
                 fetchMode = NutsFetchMode.REMOTE;
             }
-            String fetchString = "[" + NutsUtilStrings.formatAlign(fetchMode.id(), 7, NutsPositionType.FIRST) + "] ";
+            String fetchString = "[" + NutsStringUtils.formatAlign(fetchMode.id(), 7, NutsPositionType.FIRST) + "] ";
             LOG.with().session(session).level(Level.FINEST).verb(NutsLoggerVerb.SUCCESS).time(time)
                     .log(NutsMessage.jstyle("{0}{1} parse pom    {2}", fetchString,
-                            NutsUtilStrings.formatAlign(repository == null ? "<no-repo>" : repository.getName(), 20,NutsPositionType.FIRST),
+                            NutsStringUtils.formatAlign(repository == null ? "<no-repo>" : repository.getName(), 20,NutsPositionType.FIRST),
                             NutsTexts.of(session).ofStyled(urlDesc, NutsTextStyle.path())
                     ));
 
@@ -402,7 +402,7 @@ public class MavenUtils {
             toRemoveProps.add(propName + ".url");
             toRemoveProps.add(propName + ".region");
             toRemoveProps.add(propName + ".classifier");
-            return new NutsIdLocation(NutsUtilStrings.trimToNull(url), NutsUtilStrings.trimToNull(region), NutsUtilStrings.trimToNull(classifier));
+            return new NutsIdLocation(NutsStringUtils.trimToNull(url), NutsStringUtils.trimToNull(region), NutsStringUtils.trimToNull(classifier));
         }
         return null;
     }

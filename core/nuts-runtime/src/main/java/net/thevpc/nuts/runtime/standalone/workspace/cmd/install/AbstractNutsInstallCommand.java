@@ -29,7 +29,7 @@ import net.thevpc.nuts.*;
 import java.util.*;
 import java.util.function.Predicate;
 
-import net.thevpc.nuts.boot.PrivateNutsUtilCollections;
+import net.thevpc.nuts.reserved.NutsReservedCollectionUtils;
 import net.thevpc.nuts.cmdline.NutsArgument;
 import net.thevpc.nuts.cmdline.NutsCommandLine;
 import net.thevpc.nuts.runtime.standalone.util.CoreEnumUtils;
@@ -160,7 +160,7 @@ public abstract class AbstractNutsInstallCommand extends NutsWorkspaceCommandBas
 
     @Override
     public List<String> getArgs() {
-        return PrivateNutsUtilCollections.unmodifiableList(args);
+        return NutsReservedCollectionUtils.unmodifiableList(args);
     }
 
     @Override
@@ -204,7 +204,7 @@ public abstract class AbstractNutsInstallCommand extends NutsWorkspaceCommandBas
 
     @Override
     public List<NutsId> getIds() {
-        return PrivateNutsUtilCollections.unmodifiableList(ids==null?null:ids.keySet());
+        return NutsReservedCollectionUtils.unmodifiableList(ids==null?null:ids.keySet());
     }
 
     @Override

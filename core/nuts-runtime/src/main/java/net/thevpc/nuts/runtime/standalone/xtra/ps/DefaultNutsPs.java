@@ -17,7 +17,7 @@ import net.thevpc.nuts.spi.NutsSupportLevelContext;
 import net.thevpc.nuts.util.NutsFunction;
 import net.thevpc.nuts.util.NutsIterator;
 import net.thevpc.nuts.util.NutsStream;
-import net.thevpc.nuts.util.NutsUtilStrings;
+import net.thevpc.nuts.util.NutsStringUtils;
 
 public class DefaultNutsPs implements NutsPs {
 
@@ -145,7 +145,7 @@ public class DefaultNutsPs implements NutsPs {
     @Override
     public NutsStream<NutsPsInfo> getResultList() {
         checkSession();
-        String processType = NutsUtilStrings.trim(getType());
+        String processType = NutsStringUtils.trim(getType());
         if (processType.toLowerCase().startsWith("java#")) {
             return getResultListJava(processType.substring("java#".length()));
         } else if (processType.equalsIgnoreCase("java")) {

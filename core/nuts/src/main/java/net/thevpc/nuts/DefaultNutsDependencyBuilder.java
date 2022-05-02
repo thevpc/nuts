@@ -23,8 +23,8 @@
  */
 package net.thevpc.nuts;
 
-import net.thevpc.nuts.boot.*;
-import net.thevpc.nuts.util.NutsUtilStrings;
+import net.thevpc.nuts.reserved.*;
+import net.thevpc.nuts.util.NutsStringUtils;
 
 import java.util.*;
 
@@ -55,8 +55,8 @@ public class DefaultNutsDependencyBuilder implements NutsDependencyBuilder {
     }
 
     public DefaultNutsDependencyBuilder(String groupId, String artifactId) {
-        this.groupId = NutsUtilStrings.trimToNull(groupId);
-        this.artifactId = NutsUtilStrings.trimToNull(artifactId);
+        this.groupId = NutsStringUtils.trimToNull(groupId);
+        this.artifactId = NutsStringUtils.trimToNull(artifactId);
     }
 
     @Override
@@ -153,7 +153,7 @@ public class DefaultNutsDependencyBuilder implements NutsDependencyBuilder {
 
     @Override
     public NutsDependencyBuilder setType(String type) {
-        this.type = NutsUtilStrings.trimToNull(type);
+        this.type = NutsStringUtils.trimToNull(type);
         return this;
     }
 
@@ -164,7 +164,7 @@ public class DefaultNutsDependencyBuilder implements NutsDependencyBuilder {
 
     @Override
     public NutsDependencyBuilder setOptional(String optional) {
-        String o = NutsUtilStrings.trimToNull(optional);
+        String o = NutsStringUtils.trimToNull(optional);
         if ("false".equals(o)) {
             o = null;
         } else if ("true".equalsIgnoreCase(o)) {
@@ -194,7 +194,7 @@ public class DefaultNutsDependencyBuilder implements NutsDependencyBuilder {
     @Override
     public NutsId toId() {
         Map<String, String> m = new LinkedHashMap<>();
-        if (!PrivateNutsUtilDescriptors.isDefaultScope(scope)) {
+        if (!NutsReservedUtils.isDependencyDefaultScope(scope)) {
             m.put(NutsConstants.IdProperties.SCOPE, scope);
         }
         if (!NutsBlankable.isBlank(optional) && !"false".equals(optional)) {
@@ -207,7 +207,7 @@ public class DefaultNutsDependencyBuilder implements NutsDependencyBuilder {
             m.put(NutsConstants.IdProperties.TYPE, type);
         }
         if (exclusions.size() > 0) {
-            m.put(NutsConstants.IdProperties.EXCLUSIONS, PrivateNutsUtilDescriptors.toExclusionListString(exclusions));
+            m.put(NutsConstants.IdProperties.EXCLUSIONS, NutsReservedUtils.toDependencyExclusionListString(exclusions));
         }
         return NutsIdBuilder.of()
                 .setRepository(getRepository())
@@ -226,7 +226,7 @@ public class DefaultNutsDependencyBuilder implements NutsDependencyBuilder {
 
     @Override
     public NutsDependencyBuilder setRepository(String repository) {
-        this.repo = NutsUtilStrings.trimToNull(repository);
+        this.repo = NutsStringUtils.trimToNull(repository);
         return this;
     }
 
@@ -237,7 +237,7 @@ public class DefaultNutsDependencyBuilder implements NutsDependencyBuilder {
 
     @Override
     public NutsDependencyBuilder setGroupId(String groupId) {
-        this.groupId = NutsUtilStrings.trimToNull(groupId);
+        this.groupId = NutsStringUtils.trimToNull(groupId);
         return this;
     }
 
@@ -248,7 +248,7 @@ public class DefaultNutsDependencyBuilder implements NutsDependencyBuilder {
 
     @Override
     public NutsDependencyBuilder setArtifactId(String artifactId) {
-        this.artifactId = NutsUtilStrings.trimToNull(artifactId);
+        this.artifactId = NutsStringUtils.trimToNull(artifactId);
         return this;
     }
 
@@ -259,16 +259,16 @@ public class DefaultNutsDependencyBuilder implements NutsDependencyBuilder {
 
     @Override
     public NutsDependencyBuilder setClassifier(String classifier) {
-        this.classifier = NutsUtilStrings.trimToNull(classifier);
+        this.classifier = NutsStringUtils.trimToNull(classifier);
         return this;
     }
 
     @Override
     public String getFullName() {
         if (NutsBlankable.isBlank(groupId)) {
-            return NutsUtilStrings.trim(artifactId);
+            return NutsStringUtils.trim(artifactId);
         }
-        return NutsUtilStrings.trim(groupId) + ":" + NutsUtilStrings.trim(artifactId);
+        return NutsStringUtils.trim(groupId) + ":" + NutsStringUtils.trim(artifactId);
     }
 
     @Override
@@ -295,7 +295,7 @@ public class DefaultNutsDependencyBuilder implements NutsDependencyBuilder {
 
     @Override
     public NutsDependencyBuilder setExclusions(List<NutsId> exclusions) {
-        this.exclusions = PrivateNutsUtilCollections.nonNullList(exclusions);
+        this.exclusions = NutsReservedCollectionUtils.nonNullList(exclusions);
         return this;
     }
 
@@ -347,23 +347,23 @@ public class DefaultNutsDependencyBuilder implements NutsDependencyBuilder {
                     break;
                 }
                 case NutsConstants.IdProperties.OS: {
-                    condition.setOs(NutsUtilStrings.parsePropertyIdList(value).get());
+                    condition.setOs(NutsStringUtils.parsePropertyIdList(value).get());
                     break;
                 }
                 case NutsConstants.IdProperties.ARCH: {
-                    condition.setArch(NutsUtilStrings.parsePropertyIdList(value).get());
+                    condition.setArch(NutsStringUtils.parsePropertyIdList(value).get());
                     break;
                 }
                 case NutsConstants.IdProperties.PLATFORM: {
-                    condition.setPlatform(NutsUtilStrings.parsePropertyIdList(value).get());
+                    condition.setPlatform(NutsStringUtils.parsePropertyIdList(value).get());
                     break;
                 }
                 case NutsConstants.IdProperties.OS_DIST: {
-                    condition.setOsDist(NutsUtilStrings.parsePropertyIdList(value).get());
+                    condition.setOsDist(NutsStringUtils.parsePropertyIdList(value).get());
                     break;
                 }
                 case NutsConstants.IdProperties.DESKTOP: {
-                    condition.setDesktopEnvironment(NutsUtilStrings.parsePropertyIdList(value).get());
+                    condition.setDesktopEnvironment(NutsStringUtils.parsePropertyIdList(value).get());
                     break;
                 }
                 case NutsConstants.IdProperties.TYPE: {
@@ -384,7 +384,7 @@ public class DefaultNutsDependencyBuilder implements NutsDependencyBuilder {
 
     @Override
     public NutsDependencyBuilder addPropertiesQuery(String propertiesQuery) {
-        return addProperties(NutsUtilStrings.parseDefaultMap(propertiesQuery).get());
+        return addProperties(NutsStringUtils.parseDefaultMap(propertiesQuery).get());
     }
 
     @Override
@@ -410,13 +410,13 @@ public class DefaultNutsDependencyBuilder implements NutsDependencyBuilder {
 
     @Override
     public NutsDependencyBuilder setPropertiesQuery(String propertiesQuery) {
-        setProperties(NutsUtilStrings.parseDefaultMap(propertiesQuery).get());
+        setProperties(NutsStringUtils.parseDefaultMap(propertiesQuery).get());
         return this;
     }
 
     @Override
     public String getPropertiesQuery() {
-        return NutsUtilStrings.formatDefaultMap(properties);
+        return NutsStringUtils.formatDefaultMap(properties);
     }
 
     @Override
@@ -440,8 +440,8 @@ public class DefaultNutsDependencyBuilder implements NutsDependencyBuilder {
             exclusions = "";
         }
         List<NutsId> ids = new ArrayList<>();
-        for (String s : PrivateNutsUtilStrings.splitDefault(exclusions)) {
-            NutsId ii = NutsId.of(s).orElse(null);
+        for (String s : NutsReservedStringUtils.splitDefault(exclusions)) {
+            NutsId ii = NutsId.of(s).orNull();
             if (ii != null) {
                 ids.add(ii);
             }
@@ -467,12 +467,12 @@ public class DefaultNutsDependencyBuilder implements NutsDependencyBuilder {
 
     @Override
     public String getSimpleName() {
-        return PrivateNutsUtilIds.getIdShortName(groupId, artifactId);
+        return NutsReservedUtils.getIdShortName(groupId, artifactId);
     }
 
     @Override
     public String getLongName() {
-        return PrivateNutsUtilIds.getIdLongName(groupId, artifactId, version, classifier);
+        return NutsReservedUtils.getIdLongName(groupId, artifactId, version, classifier);
     }
 
     @Override

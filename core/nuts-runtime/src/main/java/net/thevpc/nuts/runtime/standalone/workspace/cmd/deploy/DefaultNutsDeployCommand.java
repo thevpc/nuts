@@ -15,7 +15,7 @@ import net.thevpc.nuts.runtime.standalone.workspace.NutsWorkspaceUtils;
 import net.thevpc.nuts.spi.NutsRepositorySPI;
 import net.thevpc.nuts.text.NutsTextStyle;
 import net.thevpc.nuts.text.NutsTexts;
-import net.thevpc.nuts.util.NutsUtilStrings;
+import net.thevpc.nuts.util.NutsStringUtils;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -220,7 +220,7 @@ public class DefaultNutsDeployCommand extends AbstractNutsDeployCommand {
                 }
                 //remove workspace
                 descriptor = descriptor.builder().setId(descriptor.getId().builder().setRepository(null).build()).build();
-                if (NutsUtilStrings.trim(descriptor.getId().getVersion().getValue()).endsWith(CoreNutsConstants.Versions.CHECKED_OUT_EXTENSION)) {
+                if (NutsStringUtils.trim(descriptor.getId().getVersion().getValue()).endsWith(CoreNutsConstants.Versions.CHECKED_OUT_EXTENSION)) {
                     throw new NutsIllegalArgumentException(getSession(), NutsMessage.cstyle("invalid version %s", descriptor.getId().getVersion()));
                 }
 

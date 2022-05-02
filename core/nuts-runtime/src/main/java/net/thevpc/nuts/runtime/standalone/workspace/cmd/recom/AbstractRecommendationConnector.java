@@ -2,8 +2,8 @@ package net.thevpc.nuts.runtime.standalone.workspace.cmd.recom;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.elem.NutsElements;
-import net.thevpc.nuts.util.NutsUtilPlatforms;
-import net.thevpc.nuts.util.NutsUtilStrings;
+import net.thevpc.nuts.util.NutsPlatformUtils;
+import net.thevpc.nuts.util.NutsStringUtils;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -25,7 +25,7 @@ public abstract class AbstractRecommendationConnector implements RecommendationC
         if (localUserUUID != null) {
             return localUserUUID;
         }
-        Path userConfig = Paths.get(NutsUtilPlatforms.getWorkspaceLocation(
+        Path userConfig = Paths.get(NutsPlatformUtils.getWorkspaceLocation(
                 NutsOsFamily.getCurrent(),
                 false,
                 null
@@ -39,7 +39,7 @@ public abstract class AbstractRecommendationConnector implements RecommendationC
             } catch (Exception ex) {/*IGNORE*/
             }
             if (m != null) {
-                _uuid = NutsUtilStrings.trimToNull(m.get("user") == null ? null : String.valueOf(m.get("user")));
+                _uuid = NutsStringUtils.trimToNull(m.get("user") == null ? null : String.valueOf(m.get("user")));
             }
         }
         if (_uuid != null) {

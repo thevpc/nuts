@@ -26,8 +26,7 @@ package net.thevpc.nuts.runtime.standalone.util;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.standalone.xtra.expr.StringTokenizerUtils;
 import net.thevpc.nuts.text.NutsTextBuilder;
-import net.thevpc.nuts.text.NutsTexts;
-import net.thevpc.nuts.util.NutsUtilStrings;
+import net.thevpc.nuts.util.NutsStringUtils;
 
 import java.io.*;
 import java.lang.reflect.Array;
@@ -121,32 +120,6 @@ public final class CoreStringUtils {
             return null;
         }
         return new String(s);
-    }
-
-
-    //    /**
-//     * copied from StringUtils (in order to remove dependency)
-//     *
-//     * @param s string
-//     * @param converter converter
-//     * @return replaced string
-//     */
-//    public static String replaceDollarPlaceHolders(String s, Map<String, String> converter) {
-//        return StringPlaceHolderParser.replaceDollarPlaceHolders(s, new MapToFunction(converter));
-//    }
-    public static String enforceDoubleQuote(String s) {
-        if (s.isEmpty() || s.contains(" ") || s.contains("\"")) {
-            s = "\"" + s.replace("\"", "\\\"") + "\"";
-        }
-        return s;
-    }
-
-    public static String enforceDoubleQuote(String s, NutsSession session) {
-        s = NutsTexts.of(session).builder().append(s).toString();
-        if (s.isEmpty() || s.contains(" ") || s.contains("\"") || s.contains("'")) {
-            s = "\"" + s + "\"";
-        }
-        return s;
     }
 
     /**
@@ -346,25 +319,6 @@ public final class CoreStringUtils {
         }
     }
 
-    /**
-     * copied from StringUtils (in order to remove dependency)
-     *
-     * @param s string
-     * @param width width
-     * @return aligned string
-     */
-    public static String alignLeft(String s, int width) {
-        StringBuilder sb = new StringBuilder();
-        if (s != null) {
-            sb.append(s);
-            int x = width - sb.length();
-            if (x > 0) {
-                sb.append(fillString(' ', x));
-            }
-        }
-        return sb.toString();
-    }
-
     public static String indexToString(int x) {
         if (x < 0) {
             return "-" + indexToString(-x);
@@ -403,7 +357,7 @@ public final class CoreStringUtils {
     }
 
     public static String joinAndTrimToNull(List<String> args){
-        return NutsUtilStrings.trimToNull(
+        return NutsStringUtils.trimToNull(
                 String.join(",",args)
         );
     }

@@ -28,7 +28,7 @@ import net.thevpc.nuts.io.NutsPath;
 import net.thevpc.nuts.runtime.standalone.repository.NutsRepositorySelectorHelper;
 import net.thevpc.nuts.runtime.standalone.repository.util.NutsRepositoryUtils;
 import net.thevpc.nuts.spi.*;
-import net.thevpc.nuts.util.NutsUtilStrings;
+import net.thevpc.nuts.util.NutsStringUtils;
 
 import java.util.Arrays;
 import java.util.List;
@@ -60,7 +60,7 @@ public class MavenRepositoryFactoryComponent implements NutsRepositoryFactoryCom
             return null;
         }
         NutsPath p = NutsPath.of(config.getLocation().getPath(), session);
-        String pr = NutsUtilStrings.trim(p.getProtocol());
+        String pr = NutsStringUtils.trim(p.getProtocol());
         switch (pr) {
             //non traversable!
             case "http":

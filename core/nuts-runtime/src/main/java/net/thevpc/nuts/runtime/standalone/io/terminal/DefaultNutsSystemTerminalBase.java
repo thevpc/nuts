@@ -55,7 +55,7 @@ public class DefaultNutsSystemTerminalBase extends NutsSystemTerminalBaseImpl {
         this.workspace = session.getWorkspace();
         NutsWorkspaceOptions options = session.boot().getBootOptions();
         NutsTerminalMode terminalMode = options.getTerminalMode().orElse(NutsTerminalMode.DEFAULT);
-        NutsBootTerminal bootStdFd = NutsWorkspaceExt.of(session).getModel().bootModel.getBootTerminal();
+        NutsWorkspaceTerminalOptions bootStdFd = NutsWorkspaceExt.of(session).getModel().bootModel.getBootTerminal();
         if (terminalMode == NutsTerminalMode.DEFAULT) {
             if (options.getBot().orElse(false) || !bootStdFd.getFlags().contains("ansi")) {
                 terminalMode = NutsTerminalMode.FILTERED;
@@ -175,7 +175,7 @@ public class DefaultNutsSystemTerminalBase extends NutsSystemTerminalBaseImpl {
         String s = NutsAnsiTermHelper.of(session).command(command, session);
         if(s!=null) {
             try {
-                NutsBootTerminal bootStdFd = session.boot().getBootTerminal();
+                NutsWorkspaceTerminalOptions bootStdFd = session.boot().getBootTerminal();
                 bootStdFd.getOut().write(s.getBytes());
             } catch (IOException e) {
                 throw new NutsIOException(session, e);
@@ -188,7 +188,7 @@ public class DefaultNutsSystemTerminalBase extends NutsSystemTerminalBaseImpl {
         String s = NutsAnsiTermHelper.of(session).styled(styles, session);
         if (s != null) {
             try {
-                NutsBootTerminal bootStdFd = session.boot().getBootTerminal();
+                NutsWorkspaceTerminalOptions bootStdFd = session.boot().getBootTerminal();
                 bootStdFd.getOut().write(s.getBytes());
             } catch (IOException e) {
                 throw new NutsIOException(session, e);

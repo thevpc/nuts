@@ -5,7 +5,7 @@
  */
 package net.thevpc.nuts.core.test;
 
-import net.thevpc.nuts.boot.PrivateNutsUtilStrings;
+import net.thevpc.nuts.reserved.NutsReservedStringUtils;
 import net.thevpc.nuts.runtime.standalone.xtra.expr.StringPlaceHolderParser;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
@@ -43,7 +43,7 @@ public class Test30_String {
     public void test02() {
        Assertions.assertEquals(
                Arrays.asList("",""),
-               PrivateNutsUtilStrings.split(",", ",", true, false)
+               NutsReservedStringUtils.split(",", ",", true, false)
        );
     }
 

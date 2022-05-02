@@ -44,7 +44,7 @@ import net.thevpc.nuts.toolbox.nsh.SimpleJShellBuiltin;
 import net.thevpc.nuts.toolbox.nsh.jshell.JShellExecutionContext;
 import net.thevpc.nuts.toolbox.nsh.util.ColumnRuler;
 import net.thevpc.nuts.toolbox.nsh.util.FileInfo;
-import net.thevpc.nuts.util.NutsUtilStrings;
+import net.thevpc.nuts.util.NutsStringUtils;
 
 /**
  * Created by vpc on 1/7/17.
@@ -79,10 +79,10 @@ public class GrepCommand extends SimpleJShellBuiltin {
             options.ignoreCase = true;
             return true;
         } else if ((a = commandLine.next("-H", "--highlight", "--highlighter").orNull()) != null) {
-            options.highlighter = NutsUtilStrings.trim(a.getStringValue().get(session));
+            options.highlighter = NutsStringUtils.trim(a.getStringValue().get(session));
             return true;
         } else if ((a = commandLine.next("-S", "--selection-style").orNull()) != null) {
-            options.selectionStyle = NutsUtilStrings.trimToNull(a.getStringValue().get(session));
+            options.selectionStyle = NutsStringUtils.trimToNull(a.getStringValue().get(session));
             return true;
         } else if (commandLine.next("-n").isPresent()) {
             options.n = true;

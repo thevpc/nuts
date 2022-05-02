@@ -40,6 +40,8 @@ Starred releases are most stable ones.
 + CHANGED: classes refactored to be repackaged in inner packages
 + REMOVED: removed CoreNumberUtils
 + ADDED: added 30+ unit tests
++ ADDED: NutsSession::isProgress
++ ADDED: NutsCommandline now extends NutsBlankable
 
 ## nuts 0.8.3.1 (PUBLISHED VERSION)
 - ```2022/02/01 	nuts 0.8.3.1``` released nuts-runtime-0.8.3.1.jar

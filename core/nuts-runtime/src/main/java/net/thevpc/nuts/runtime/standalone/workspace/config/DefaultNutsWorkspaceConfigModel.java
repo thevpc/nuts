@@ -24,7 +24,9 @@
 package net.thevpc.nuts.runtime.standalone.workspace.config;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.boot.PrivateNutsUtilCollections;
+import net.thevpc.nuts.boot.NutsClassLoaderNode;
+import net.thevpc.nuts.boot.NutsWorkspaceBootOptions;
+import net.thevpc.nuts.reserved.NutsReservedCollectionUtils;
 import net.thevpc.nuts.elem.NutsElement;
 import net.thevpc.nuts.elem.NutsElements;
 import net.thevpc.nuts.elem.NutsPrimitiveElement;
@@ -123,7 +125,7 @@ public class DefaultNutsWorkspaceConfigModel {
         this.ws = ws;
         NutsWorkspaceBootOptions bOptions = NutsWorkspaceExt.of(ws).getModel().bootModel.getBootEffectiveOptions();
         this.bootClassLoader = bOptions.getClassWorldLoader().orElseGet(()->Thread.currentThread().getContextClassLoader());
-        this.bootClassWorldURLs = PrivateNutsUtilCollections.nonNullList(bOptions.getClassWorldURLs().orNull());
+        this.bootClassWorldURLs = NutsReservedCollectionUtils.nonNullList(bOptions.getClassWorldURLs().orNull());
         workspaceSystemTerminalAdapter = new WorkspaceSystemTerminalAdapter(ws);
 
         this.pathExpansionConverter = new NutsWorkspaceVarExpansionFunction(NutsSessionUtils.defaultSession(ws));
@@ -309,7 +311,7 @@ public class DefaultNutsWorkspaceConfigModel {
             //this is a protocol based workspace
             //String protocol=ws.substring(0,ws.indexOf("://"));
             effWorkspaceName = "remote-bootstrap";
-            lastConfigPath = NutsUtilPlatforms.getWorkspaceLocation(null,
+            lastConfigPath = NutsPlatformUtils.getWorkspaceLocation(null,
                     global,
                     CoreNutsUtils.resolveValidWorkspaceName(effWorkspaceName));
             lastConfigLoaded = parseBootConfig(NutsPath.of(lastConfigPath, session), session);
@@ -321,7 +323,7 @@ public class DefaultNutsWorkspaceConfigModel {
             for (int i = 0; i < maxDepth; i++) {
                 lastConfigPath
                         = CoreNutsUtils.isValidWorkspaceName(_ws)
-                        ? NutsUtilPlatforms.getWorkspaceLocation(
+                        ? NutsPlatformUtils.getWorkspaceLocation(
                         null,
                         global,
                         CoreNutsUtils.resolveValidWorkspaceName(_ws)
@@ -350,7 +352,7 @@ public class DefaultNutsWorkspaceConfigModel {
             defaultLocation = CoreNutsUtils.isValidWorkspaceName(_ws);
             lastConfigPath
                     = CoreNutsUtils.isValidWorkspaceName(_ws)
-                    ? NutsUtilPlatforms.getWorkspaceLocation(
+                    ? NutsPlatformUtils.getWorkspaceLocation(
                     null,
                     global,
                     CoreNutsUtils.resolveValidWorkspaceName(_ws)
@@ -930,7 +932,7 @@ public class DefaultNutsWorkspaceConfigModel {
     }
 
     public NutsAuthenticationAgent createAuthenticationAgent(String authenticationAgent, NutsSession session) {
-        authenticationAgent = NutsUtilStrings.trim(authenticationAgent);
+        authenticationAgent = NutsStringUtils.trim(authenticationAgent);
         NutsAuthenticationAgent supported = null;
         if (authenticationAgent.isEmpty()) {
             supported = session.extensions().createSupported(NutsAuthenticationAgent.class, true, "");

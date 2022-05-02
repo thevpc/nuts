@@ -92,7 +92,7 @@ import java.util.List;
  * @app.category Command Line
  * @since 0.5.5
  */
-public interface NutsCommandLine extends Iterable<NutsArgument>, NutsFormattable {
+public interface NutsCommandLine extends Iterable<NutsArgument>, NutsFormattable,NutsBlankable {
 
     static NutsCommandLine of(String[] args) {
         return new DefaultNutsCommandLine(args);

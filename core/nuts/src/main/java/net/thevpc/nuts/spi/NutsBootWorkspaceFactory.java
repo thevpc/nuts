@@ -27,7 +27,7 @@
 package net.thevpc.nuts.spi;
 
 import net.thevpc.nuts.NutsWorkspace;
-import net.thevpc.nuts.NutsWorkspaceBootOptions;
+import net.thevpc.nuts.boot.NutsWorkspaceBootOptions;
 
 /**
  * Class responsible of creating and initializing Workspace

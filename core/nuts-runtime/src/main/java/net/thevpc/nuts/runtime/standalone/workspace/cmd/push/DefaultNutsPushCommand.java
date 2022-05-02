@@ -36,7 +36,7 @@ import java.util.Map;
 import java.util.Set;
 
 import net.thevpc.nuts.spi.NutsRepositorySPI;
-import net.thevpc.nuts.util.NutsUtilStrings;
+import net.thevpc.nuts.util.NutsStringUtils;
 
 /**
  *
@@ -56,7 +56,7 @@ public class DefaultNutsPushCommand extends AbstractDefaultNutsPushCommand {
         NutsRepositoryFilter repositoryFilter = null;
         Map<NutsId, NutsDefinition> toProcess = new LinkedHashMap<>();
         for (NutsId id : this.getIds()) {
-            if (NutsUtilStrings.trim(id.getVersion().getValue()).endsWith(CoreNutsConstants.Versions.CHECKED_OUT_EXTENSION)) {
+            if (NutsStringUtils.trim(id.getVersion().getValue()).endsWith(CoreNutsConstants.Versions.CHECKED_OUT_EXTENSION)) {
                 throw new NutsIllegalArgumentException(getSession(), NutsMessage.cstyle("invalid version %s", id.getVersion()));
             }
             NutsDefinition file = session.fetch().setId(id).setSession(session.copy().setTransitive(false)).setContent(true).getResultDefinition();

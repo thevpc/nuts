@@ -4,7 +4,7 @@ import net.thevpc.nuts.*;
 import net.thevpc.nuts.elem.NutsElements;
 import net.thevpc.nuts.io.NutsPath;
 import net.thevpc.nuts.runtime.standalone.workspace.config.NutsWorkspaceConfigApi;
-import net.thevpc.nuts.util.NutsUtilStrings;
+import net.thevpc.nuts.util.NutsStringUtils;
 
 import java.util.Map;
 
@@ -39,7 +39,7 @@ public class NutsIdUtils {
 
     public static NutsId createContentFaceId(NutsId id, NutsDescriptor desc, NutsSession session) {
         Map<String, String> q = id.getProperties();
-        q.put(NutsConstants.IdProperties.PACKAGING, NutsUtilStrings.trim(desc.getPackaging()));
+        q.put(NutsConstants.IdProperties.PACKAGING, NutsStringUtils.trim(desc.getPackaging()));
         q.put(NutsConstants.IdProperties.FACE, NutsConstants.QueryFaces.CONTENT);
         return id.builder().setProperties(q).build();
     }

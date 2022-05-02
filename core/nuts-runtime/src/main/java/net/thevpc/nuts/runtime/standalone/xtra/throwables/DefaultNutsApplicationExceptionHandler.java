@@ -2,6 +2,7 @@ package net.thevpc.nuts.runtime.standalone.xtra.throwables;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.boot.NutsApiUtils;
+import net.thevpc.nuts.boot.NutsWorkspaceBootOptionsBuilder;
 import net.thevpc.nuts.elem.NutsArrayElementBuilder;
 import net.thevpc.nuts.elem.NutsElements;
 import net.thevpc.nuts.io.NutsPrintStream;

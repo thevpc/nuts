@@ -23,7 +23,7 @@
  */
 package net.thevpc.nuts;
 
-import net.thevpc.nuts.boot.NutsApiUtils;
+import net.thevpc.nuts.reserved.NutsReservedLangUtils;
 
 /**
  * uniform platform
@@ -49,7 +49,7 @@ public enum NutsPlatformFamily implements NutsEnum {
     }
 
     public static NutsOptional<NutsPlatformFamily> parse(String value) {
-        return NutsApiUtils.parse(value, NutsPlatformFamily.class,s->{
+        return NutsReservedLangUtils.parseEnum(value, NutsPlatformFamily.class, s->{
             switch (s.toUpperCase()) {
                 case "java":
                 case "jre":

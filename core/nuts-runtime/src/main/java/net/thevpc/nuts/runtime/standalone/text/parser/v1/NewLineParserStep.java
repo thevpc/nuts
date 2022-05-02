@@ -4,7 +4,7 @@ import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.standalone.text.DefaultNutsTexts;
 import net.thevpc.nuts.text.NutsText;
 import net.thevpc.nuts.text.NutsTexts;
-import net.thevpc.nuts.util.NutsUtilStrings;
+import net.thevpc.nuts.util.NutsStringUtils;
 
 
 public class NewLineParserStep extends ParserStep {
@@ -54,7 +54,7 @@ public class NewLineParserStep extends ParserStep {
 
     @Override
     public String toString() {
-        StringBuilder sb = new StringBuilder("NewLine(" + NutsUtilStrings.formatStringLiteral(start.toString(), NutsUtilStrings.QuoteType.DOUBLE));
+        StringBuilder sb = new StringBuilder("NewLine(" + NutsStringUtils.formatStringLiteral(start.toString(), NutsStringUtils.QuoteType.DOUBLE));
         return sb.append(")").toString();
     }
 

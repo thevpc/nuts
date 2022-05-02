@@ -33,7 +33,7 @@ import net.thevpc.nuts.util.NutsLoggerOp;
 import net.thevpc.nuts.util.NutsLoggerVerb;
 import net.thevpc.nuts.runtime.standalone.repository.impl.NutsRepositoryExt;
 import net.thevpc.nuts.spi.NutsDeployRepositoryCommand;
-import net.thevpc.nuts.util.NutsUtilStrings;
+import net.thevpc.nuts.util.NutsStringUtils;
 
 /**
  *
@@ -77,10 +77,10 @@ public class DefaultNutsDeployRepositoryCommand extends AbstractNutsDeployReposi
                 }
             }
             _LOGOP(session).level(Level.FINEST).verb(NutsLoggerVerb.SUCCESS)
-                    .log(NutsMessage.jstyle("{0} deploy {1}", NutsUtilStrings.formatAlign(getRepo().getName(), 20, NutsPositionType.FIRST), this.getId()));
+                    .log(NutsMessage.jstyle("{0} deploy {1}", NutsStringUtils.formatAlign(getRepo().getName(), 20, NutsPositionType.FIRST), this.getId()));
         } catch (RuntimeException ex) {
             _LOGOP(session).level(Level.FINEST).verb(NutsLoggerVerb.FAIL)
-                    .log(NutsMessage.jstyle("{0} deploy {1}", NutsUtilStrings.formatAlign(getRepo().getName(), 20,NutsPositionType.FIRST), this.getId()));
+                    .log(NutsMessage.jstyle("{0} deploy {1}", NutsStringUtils.formatAlign(getRepo().getName(), 20,NutsPositionType.FIRST), this.getId()));
             throw ex;
         }
         return this;

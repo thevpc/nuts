@@ -506,6 +506,8 @@ public interface NutsSession extends NutsCommandLineConfigurable {
      */
     String getProgressOptions();
 
+    boolean isProgress();
+
     /**
      * change progress options
      *

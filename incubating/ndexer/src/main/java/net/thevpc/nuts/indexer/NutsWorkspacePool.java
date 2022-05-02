@@ -1,6 +1,6 @@
 package net.thevpc.nuts.indexer;
 
-import net.thevpc.nuts.DefaultNutsWorkspaceOptionsBuilder;
+import net.thevpc.nuts.boot.DefaultNutsWorkspaceOptionsBuilder;
 import net.thevpc.nuts.Nuts;
 import net.thevpc.nuts.NutsSession;
 import org.springframework.beans.factory.annotation.Autowired;

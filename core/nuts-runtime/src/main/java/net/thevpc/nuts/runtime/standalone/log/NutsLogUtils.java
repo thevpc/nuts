@@ -5,7 +5,7 @@ import net.thevpc.nuts.format.NutsPositionType;
 import net.thevpc.nuts.runtime.standalone.workspace.NutsWorkspaceExt;
 import net.thevpc.nuts.util.NutsLogger;
 import net.thevpc.nuts.util.NutsLoggerVerb;
-import net.thevpc.nuts.util.NutsUtilStrings;
+import net.thevpc.nuts.util.NutsStringUtils;
 
 import java.io.BufferedReader;
 import java.io.PrintWriter;
@@ -227,12 +227,12 @@ public class NutsLogUtils {
             sep = " : ";
         }
         long time = (startTime != 0) ? (System.currentTimeMillis() - startTime) : 0;
-        String modeString = NutsUtilStrings.formatAlign(fetchMode.id(), 7, NutsPositionType.FIRST);
+        String modeString = NutsStringUtils.formatAlign(fetchMode.id(), 7, NutsPositionType.FIRST);
         log.with().session(session).level(lvl).verb(tracePhase).time(time)
                 .log(NutsMessage.jstyle("[{0}] {1} {2} {3} {4}",
                         modeString,
-                        NutsUtilStrings.formatAlign(name, 20,NutsPositionType.FIRST),
-                        NutsUtilStrings.formatAlign(title, 18,NutsPositionType.FIRST),
+                        NutsStringUtils.formatAlign(name, 20,NutsPositionType.FIRST),
+                        NutsStringUtils.formatAlign(title, 18,NutsPositionType.FIRST),
                         (id == null ? "" : id),
                         extraMsg));
     }
@@ -240,13 +240,13 @@ public class NutsLogUtils {
         if (log.isLoggable(Level.FINEST)) {
 
             long time = (startTime != 0) ? (System.currentTimeMillis() - startTime) : 0;
-            String fetchString = "[" + NutsUtilStrings.formatAlign(fetchMode.id(), 7,NutsPositionType.FIRST) + "] ";
+            String fetchString = "[" + NutsStringUtils.formatAlign(fetchMode.id(), 7,NutsPositionType.FIRST) + "] ";
             log.with().level(Level.FINEST)
                     .verb(tracePhase).time(time)
                     .log(NutsMessage.jstyle("{0}{1} {2}",
                             fetchString,
                             id,
-                            NutsUtilStrings.formatAlign(message, 18,NutsPositionType.FIRST)
+                            NutsStringUtils.formatAlign(message, 18,NutsPositionType.FIRST)
                     ));
         }
     }

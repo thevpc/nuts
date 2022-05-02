@@ -32,7 +32,7 @@ import net.thevpc.nuts.runtime.standalone.util.collections.DefaultObservableMap;
 import net.thevpc.nuts.runtime.standalone.util.collections.ObservableMap;
 import net.thevpc.nuts.runtime.standalone.app.gui.CoreNutsUtilGui;
 import net.thevpc.nuts.runtime.standalone.util.jclass.NutsJavaSdkUtils;
-import net.thevpc.nuts.util.NutsUtilStrings;
+import net.thevpc.nuts.util.NutsStringUtils;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -188,7 +188,7 @@ public class DefaultNutsWorkspaceEnvManagerModel {
         List<NutsId> a = new ArrayList<>();
         if (!NutsBlankable.isBlank(_XDG_SESSION_DESKTOP) && !NutsBlankable.isBlank(_XDG_SESSION_DESKTOP)) {
             String[] supportedSessions = new LinkedHashSet<>(
-                    Arrays.stream(NutsUtilStrings.trim(_XDG_CURRENT_DESKTOP).split(":"))
+                    Arrays.stream(NutsStringUtils.trim(_XDG_CURRENT_DESKTOP).split(":"))
                             .map(x -> x.trim().toLowerCase()).filter(x -> x.length() > 0)
                             .collect(Collectors.toList())
             ).toArray(new String[0]);

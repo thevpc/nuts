@@ -237,7 +237,7 @@ public class DefaultNutsSessionTerminalFromSession extends AbstractNutsSessionTe
 
     @Override
     public NutsSessionTerminal printProgress(float progress, NutsMessage message) {
-        if (NutsProgressUtils.acceptProgress(session)) {
+        if (session.isProgress()) {
             if (getParent() instanceof NutsSystemTerminal) {
                 ((NutsSystemTerminal) getParent()).printProgress(progress, message, session);
             } else {

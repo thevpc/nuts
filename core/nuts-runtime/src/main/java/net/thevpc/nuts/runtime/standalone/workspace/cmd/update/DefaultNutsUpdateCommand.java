@@ -25,7 +25,7 @@ import net.thevpc.nuts.text.NutsTextStyle;
 import net.thevpc.nuts.text.NutsTexts;
 import net.thevpc.nuts.util.NutsComparator;
 import net.thevpc.nuts.util.NutsLoggerVerb;
-import net.thevpc.nuts.util.NutsUtilStrings;
+import net.thevpc.nuts.util.NutsStringUtils;
 
 import java.time.Instant;
 import java.util.*;
@@ -374,21 +374,21 @@ public class DefaultNutsUpdateCommand extends AbstractNutsUpdateCommand {
                 for (NutsUpdateResult update : all) {
                     if (update.getInstalled() == null) {
                         out.printf("%s  : %s%n",
-                                factory.ofStyled(NutsUtilStrings.formatAlign(update.getId().toString(), widthCol2, NutsPositionType.FIRST), NutsTextStyle.primary6()),
+                                factory.ofStyled(NutsStringUtils.formatAlign(update.getId().toString(), widthCol2, NutsPositionType.FIRST), NutsTextStyle.primary6()),
                                 factory.ofStyled("not installed", NutsTextStyle.error()));
                     } else if (update.isUpdateVersionAvailable()) {
                         out.printf("%s  : %s => %s%n",
-                                factory.ofStyled(NutsUtilStrings.formatAlign(update.getInstalled().getId().getVersion().toString(), widthCol2,NutsPositionType.FIRST), NutsTextStyle.primary6()),
-                                NutsUtilStrings.formatAlign(update.getAvailable().getId().getShortName(), widthCol1,NutsPositionType.FIRST),
+                                factory.ofStyled(NutsStringUtils.formatAlign(update.getInstalled().getId().getVersion().toString(), widthCol2,NutsPositionType.FIRST), NutsTextStyle.primary6()),
+                                NutsStringUtils.formatAlign(update.getAvailable().getId().getShortName(), widthCol1,NutsPositionType.FIRST),
                                 factory.ofPlain(update.getAvailable().getId().getVersion().toString()));
                     } else if (update.isUpdateStatusAvailable()) {
                         out.printf("%s  : %s => %s%n",
-                                factory.ofStyled(NutsUtilStrings.formatAlign(update.getInstalled().getId().getVersion().toString(), widthCol2,NutsPositionType.FIRST), NutsTextStyle.primary6()),
-                                NutsUtilStrings.formatAlign(update.getAvailable().getId().getShortName(), widthCol1,NutsPositionType.FIRST),
+                                factory.ofStyled(NutsStringUtils.formatAlign(update.getInstalled().getId().getVersion().toString(), widthCol2,NutsPositionType.FIRST), NutsTextStyle.primary6()),
+                                NutsStringUtils.formatAlign(update.getAvailable().getId().getShortName(), widthCol1,NutsPositionType.FIRST),
                                 factory.ofStyled("set as default", NutsTextStyle.primary4()));
                     } else {
                         out.printf("%s  : %s%n",
-                                factory.ofStyled(NutsUtilStrings.formatAlign(update.getInstalled().getId().getVersion().toString(), widthCol2,NutsPositionType.FIRST), NutsTextStyle.primary6()),
+                                factory.ofStyled(NutsStringUtils.formatAlign(update.getInstalled().getId().getVersion().toString(), widthCol2,NutsPositionType.FIRST), NutsTextStyle.primary6()),
                                 factory.ofStyled("up-to-date", NutsTextStyle.warn()));
                     }
                 }

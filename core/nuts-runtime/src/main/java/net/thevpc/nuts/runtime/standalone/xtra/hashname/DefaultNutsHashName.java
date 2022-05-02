@@ -5,7 +5,7 @@ import net.thevpc.nuts.io.NutsHashName;
 import net.thevpc.nuts.io.NutsPath;
 import net.thevpc.nuts.runtime.standalone.util.CoreNutsUtils;
 import net.thevpc.nuts.spi.NutsSupportLevelContext;
-import net.thevpc.nuts.util.NutsUtilPlatforms;
+import net.thevpc.nuts.util.NutsPlatformUtils;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -36,7 +36,7 @@ public class DefaultNutsHashName implements NutsHashName {
         if (p == null) {
             return ("Root " + n).trim();
         } else {
-            Path root = Paths.get(NutsUtilPlatforms.getWorkspaceLocation(
+            Path root = Paths.get(NutsPlatformUtils.getWorkspaceLocation(
                     null,
                     false,
                     null

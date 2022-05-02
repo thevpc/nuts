@@ -6,7 +6,7 @@
 package net.thevpc.nuts.runtime.standalone.workspace.cmd.uninstall;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.boot.PrivateNutsUtilCollections;
+import net.thevpc.nuts.reserved.NutsReservedCollectionUtils;
 import net.thevpc.nuts.cmdline.NutsArgument;
 import net.thevpc.nuts.cmdline.NutsCommandLine;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.NutsWorkspaceCommandBase;
@@ -92,7 +92,7 @@ public abstract class AbstractNutsUninstallCommand extends NutsWorkspaceCommandB
 
     @Override
     public List<String> getArgs() {
-        return PrivateNutsUtilCollections.unmodifiableList(args);
+        return NutsReservedCollectionUtils.unmodifiableList(args);
     }
 
     @Override
@@ -128,7 +128,7 @@ public abstract class AbstractNutsUninstallCommand extends NutsWorkspaceCommandB
 
     @Override
     public List<NutsId> getIds() {
-        return PrivateNutsUtilCollections.unmodifiableList(ids);
+        return NutsReservedCollectionUtils.unmodifiableList(ids);
     }
 
     @Override

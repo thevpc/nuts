@@ -26,7 +26,7 @@
  */
 package net.thevpc.nuts;
 
-import net.thevpc.nuts.boot.NutsApiUtils;
+import net.thevpc.nuts.reserved.NutsReservedLangUtils;
 
 /**
  * Descriptor Style
@@ -59,7 +59,7 @@ public enum NutsDescriptorStyle implements NutsEnum {
     }
 
     public static NutsOptional<NutsDescriptorStyle> parse(String value) {
-        return NutsApiUtils.parse(value, NutsDescriptorStyle.class);
+        return NutsReservedLangUtils.parseEnum(value, NutsDescriptorStyle.class);
     }
 
     /**

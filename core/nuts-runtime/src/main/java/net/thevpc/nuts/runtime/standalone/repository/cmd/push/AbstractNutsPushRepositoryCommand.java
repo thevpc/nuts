@@ -7,7 +7,7 @@ package net.thevpc.nuts.runtime.standalone.repository.cmd.push;
 
 import net.thevpc.nuts.cmdline.NutsCommandLine;
 import net.thevpc.nuts.NutsId;
-import net.thevpc.nuts.boot.PrivateNutsUtilCollections;
+import net.thevpc.nuts.reserved.NutsReservedCollectionUtils;
 import net.thevpc.nuts.runtime.standalone.repository.cmd.NutsRepositoryCommandBase;
 import net.thevpc.nuts.spi.NutsPushRepositoryCommand;
 import net.thevpc.nuts.NutsRepository;
@@ -78,7 +78,7 @@ public abstract class AbstractNutsPushRepositoryCommand extends NutsRepositoryCo
 
     @Override
     public List<String> getArgs() {
-        return PrivateNutsUtilCollections.unmodifiableList(args);
+        return NutsReservedCollectionUtils.unmodifiableList(args);
     }
 
 //    @Override
@@ -91,7 +91,7 @@ public abstract class AbstractNutsPushRepositoryCommand extends NutsRepositoryCo
     @Override
     public NutsPushRepositoryCommand setArgs(List<String> args) {
         this.args.clear();
-        this.args.addAll(PrivateNutsUtilCollections.nonNullList(args));
+        this.args.addAll(NutsReservedCollectionUtils.nonNullList(args));
         return this;
     }
 

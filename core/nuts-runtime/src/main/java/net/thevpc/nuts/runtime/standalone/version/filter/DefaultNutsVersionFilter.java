@@ -28,12 +28,11 @@ package net.thevpc.nuts.runtime.standalone.version.filter;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.standalone.id.filter.NutsExprIdFilter;
-import net.thevpc.nuts.runtime.standalone.util.CoreStringUtils;
 import net.thevpc.nuts.runtime.standalone.util.filters.CoreFilterUtils;
+import net.thevpc.nuts.util.NutsStringUtils;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
@@ -79,7 +78,7 @@ public class DefaultNutsVersionFilter extends AbstractVersionFilter implements N
 
         NutsOptional<List<NutsVersionInterval>> r = NutsVersionInterval.ofList(version);
         return r.map(
-                x->{
+                x -> {
                     DefaultNutsVersionFilter dd = new DefaultNutsVersionFilter(session);
                     for (NutsVersionInterval i : x) {
                         dd.add(i);
@@ -116,7 +115,14 @@ public class DefaultNutsVersionFilter extends AbstractVersionFilter implements N
     }
 
     public String toExpr() {
-        return "id.version.matches('" + CoreStringUtils.escapeQuoteStrings(toString()) + "')";
+        return "id.version.matches("
+                //this will escape `"' if it is present
+                + NutsStringUtils.formatStringLiteral(
+                //this will create '...' value
+                NutsStringUtils.formatStringLiteral(toString(), NutsStringUtils.QuoteType.SIMPLE),
+                NutsStringUtils.QuoteType.DOUBLE, NutsSupportMode.NEVER
+        )
+                + ")";
     }
 
     @Override

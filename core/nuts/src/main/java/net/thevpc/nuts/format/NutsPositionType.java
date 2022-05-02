@@ -28,7 +28,7 @@ package net.thevpc.nuts.format;
 
 import net.thevpc.nuts.NutsEnum;
 import net.thevpc.nuts.NutsOptional;
-import net.thevpc.nuts.boot.NutsApiUtils;
+import net.thevpc.nuts.reserved.NutsReservedLangUtils;
 
 import java.util.function.Function;
 
@@ -67,7 +67,7 @@ public enum NutsPositionType implements NutsEnum {
     }
 
     public static NutsOptional<NutsPositionType> parse(String value) {
-        return NutsApiUtils.parse(value, NutsPositionType.class, new Function<String, NutsOptional<NutsPositionType>>() {
+        return NutsReservedLangUtils.parseEnum(value, NutsPositionType.class, new Function<String, NutsOptional<NutsPositionType>>() {
             @Override
             public NutsOptional<NutsPositionType> apply(String s) {
                 switch (s.toLowerCase()){

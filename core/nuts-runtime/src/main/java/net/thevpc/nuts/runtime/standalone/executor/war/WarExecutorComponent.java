@@ -33,7 +33,7 @@ import net.thevpc.nuts.spi.NutsComponentScope;
 import net.thevpc.nuts.spi.NutsComponentScopeType;
 import net.thevpc.nuts.spi.NutsExecutorComponent;
 import net.thevpc.nuts.spi.NutsSupportLevelContext;
-import net.thevpc.nuts.util.NutsUtilStrings;
+import net.thevpc.nuts.util.NutsStringUtils;
 
 /**
  * Created by vpc on 1/7/17.
@@ -57,7 +57,7 @@ public class WarExecutorComponent implements NutsExecutorComponent {
         }
         NutsDefinition def = context.getConstraints(NutsDefinition.class);
         if (def != null) {
-            if ("war".equals(NutsUtilStrings.trim(def.getDescriptor().getPackaging()))) {
+            if ("war".equals(NutsStringUtils.trim(def.getDescriptor().getPackaging()))) {
                 return DEFAULT_SUPPORT + 1;
             }
         }

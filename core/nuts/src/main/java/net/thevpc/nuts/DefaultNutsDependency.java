@@ -23,8 +23,8 @@
  */
 package net.thevpc.nuts;
 
-import net.thevpc.nuts.boot.*;
-import net.thevpc.nuts.util.NutsUtilStrings;
+import net.thevpc.nuts.reserved.*;
+import net.thevpc.nuts.util.NutsStringUtils;
 
 import java.util.*;
 
@@ -49,35 +49,35 @@ public class DefaultNutsDependency implements NutsDependency {
     public DefaultNutsDependency(String repository, String groupId, String artifactId, String classifier, NutsVersion version, String scope, String optional, List<NutsId> exclusions,
                                  NutsEnvCondition condition, String type,
                                  Map<String, String> properties) {
-        this(repository, groupId, artifactId, classifier, version, scope, optional, exclusions, condition, type, NutsUtilStrings.formatDefaultMap(properties));
+        this(repository, groupId, artifactId, classifier, version, scope, optional, exclusions, condition, type, NutsStringUtils.formatDefaultMap(properties));
     }
 
     public DefaultNutsDependency(String repository, String groupId, String artifactId, String classifier, NutsVersion version, String scope, String optional, List<NutsId> exclusions,
                                  NutsEnvCondition condition, String type,
                                  String properties) {
-        this.repository = NutsUtilStrings.trimToNull(repository);
-        this.groupId = NutsUtilStrings.trimToNull(groupId);
-        this.artifactId = NutsUtilStrings.trimToNull(artifactId);
+        this.repository = NutsStringUtils.trimToNull(repository);
+        this.groupId = NutsStringUtils.trimToNull(groupId);
+        this.artifactId = NutsStringUtils.trimToNull(artifactId);
         this.version = version == null ? NutsVersion.BLANK : version;
-        this.classifier = NutsUtilStrings.trimToNull(classifier);
+        this.classifier = NutsStringUtils.trimToNull(classifier);
         this.scope = NutsDependencyScope.parse(scope).orElse(NutsDependencyScope.API).id();
 
-        String o = NutsUtilStrings.trimToNull(optional);
+        String o = NutsStringUtils.trimToNull(optional);
         if ("false".equalsIgnoreCase(o)) {
             o = null;
         } else if ("true".equalsIgnoreCase(o)) {
             o = "true";//remove case and formatting
         }
         this.optional = o;
-        this.exclusions = PrivateNutsUtilCollections.unmodifiableList(exclusions);
+        this.exclusions = NutsReservedCollectionUtils.unmodifiableList(exclusions);
         for (NutsId exclusion : this.exclusions) {
             if (exclusion == null) {
                 throw new NullPointerException();
             }
         }
         this.condition = condition == null ? NutsEnvCondition.BLANK : condition;
-        this.type = NutsUtilStrings.trimToNull(type);
-        this.properties = NutsUtilStrings.formatDefaultMap(NutsUtilStrings.parseDefaultMap(properties).get());
+        this.type = NutsStringUtils.trimToNull(type);
+        this.properties = NutsStringUtils.formatDefaultMap(NutsStringUtils.parseDefaultMap(properties).get());
     }
 
     @Override
@@ -114,7 +114,7 @@ public class DefaultNutsDependency implements NutsDependency {
     @Override
     public NutsId toId() {
         Map<String, String> m = new LinkedHashMap<>();
-        if (!PrivateNutsUtilDescriptors.isDefaultScope(scope)) {
+        if (!NutsReservedUtils.isDependencyDefaultScope(scope)) {
             m.put(NutsConstants.IdProperties.SCOPE, scope);
         }
         if (!NutsBlankable.isBlank(optional) && !"false".equals(optional)) {
@@ -127,7 +127,7 @@ public class DefaultNutsDependency implements NutsDependency {
             m.put(NutsConstants.IdProperties.REPO, repository);
         }
         if (exclusions.size() > 0) {
-            m.put(NutsConstants.IdProperties.EXCLUSIONS, PrivateNutsUtilDescriptors.toExclusionListString(exclusions));
+            m.put(NutsConstants.IdProperties.EXCLUSIONS, NutsReservedUtils.toDependencyExclusionListString(exclusions));
         }
         NutsId ii = NutsIdBuilder.of()
                 .setGroupId(getGroupId())
@@ -156,12 +156,12 @@ public class DefaultNutsDependency implements NutsDependency {
 
     @Override
     public String getSimpleName() {
-        return PrivateNutsUtilIds.getIdShortName(groupId, artifactId);
+        return NutsReservedUtils.getIdShortName(groupId, artifactId);
     }
 
     @Override
     public String getLongName() {
-        return PrivateNutsUtilIds.getIdLongName(groupId, artifactId, version, classifier);
+        return NutsReservedUtils.getIdLongName(groupId, artifactId, version, classifier);
     }
 
     @Override
@@ -196,7 +196,7 @@ public class DefaultNutsDependency implements NutsDependency {
 
     @Override
     public Map<String, String> getProperties() {
-        return NutsUtilStrings.parseDefaultMap(properties).get();
+        return NutsStringUtils.parseDefaultMap(properties).get();
     }
 
     @Override
@@ -261,25 +261,25 @@ public class DefaultNutsDependency implements NutsDependency {
                 p.put(NutsConstants.IdProperties.ARCH, String.join(",", condition.getArch()));
             }
             if (condition.getPlatform().size() > 0) {
-                p.put(NutsConstants.IdProperties.PLATFORM, PrivateNutsIdListParser.formatStringIdList(condition.getPlatform()));
+                p.put(NutsConstants.IdProperties.PLATFORM, NutsReservedUtils.formatStringIdList(condition.getPlatform()));
             }
             if (condition.getProfile().size() > 0) {
                 p.put(NutsConstants.IdProperties.PROFILE, String.join(",", condition.getProfile()));
             }
             if (!condition.getProperties().isEmpty()) {
                 p.put(NutsConstants.IdProperties.CONDITIONAL_PROPERTIES,
-                        NutsUtilStrings.formatMap(condition.getProperties(), "=", ",", "&", true)
+                        NutsStringUtils.formatMap(condition.getProperties(), "=", ",", "&", true)
                 );
             }
         }
         if (exclusions.size() > 0) {
             p.put(NutsConstants.IdProperties.EXCLUSIONS,
-                    PrivateNutsUtilDescriptors.toExclusionListString(exclusions)
+                    NutsReservedUtils.toDependencyExclusionListString(exclusions)
             );
         }
         if (!p.isEmpty()) {
             sb.append("?");
-            sb.append(NutsUtilStrings.formatDefaultMap(p));
+            sb.append(NutsStringUtils.formatDefaultMap(p));
         }
         return sb.toString();
     }

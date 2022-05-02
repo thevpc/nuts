@@ -24,6 +24,8 @@
 package net.thevpc.nuts.runtime.standalone.boot;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.boot.NutsClassLoaderNode;
+import net.thevpc.nuts.boot.NutsWorkspaceBootOptions;
 import net.thevpc.nuts.runtime.standalone.session.NutsSessionUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.NutsWorkspaceUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.config.DefaultNutsWorkspaceConfigManager;
@@ -125,7 +127,7 @@ public class DefaultNutsBootManager implements NutsBootManager {
     }
 
     @Override
-    public NutsBootTerminal getBootTerminal() {
+    public NutsWorkspaceTerminalOptions getBootTerminal() {
         return model.getBootTerminal();
     }
 

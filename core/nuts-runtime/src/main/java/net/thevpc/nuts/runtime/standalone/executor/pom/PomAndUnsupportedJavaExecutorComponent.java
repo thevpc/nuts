@@ -33,7 +33,7 @@ import net.thevpc.nuts.spi.NutsComponentScope;
 import net.thevpc.nuts.spi.NutsComponentScopeType;
 import net.thevpc.nuts.spi.NutsExecutorComponent;
 import net.thevpc.nuts.spi.NutsSupportLevelContext;
-import net.thevpc.nuts.util.NutsUtilStrings;
+import net.thevpc.nuts.util.NutsStringUtils;
 
 /**
  * Created by vpc on 1/7/17.
@@ -57,7 +57,7 @@ public class PomAndUnsupportedJavaExecutorComponent implements NutsExecutorCompo
         }
         NutsDefinition def = context.getConstraints(NutsDefinition.class);
         if (def != null) {
-            switch (NutsUtilStrings.trim(def.getDescriptor().getPackaging())){
+            switch (NutsStringUtils.trim(def.getDescriptor().getPackaging())){
                 case "jar":
                 case "war":
                 case "zip":

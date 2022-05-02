@@ -26,7 +26,7 @@
 package net.thevpc.nuts.runtime.standalone.format;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.boot.NutsApiUtils;
+import net.thevpc.nuts.reserved.NutsReservedLangUtils;
 
 /**
  *
@@ -71,7 +71,7 @@ public enum NutsDisplayProperty  implements NutsEnum {
     }
 
     public static NutsOptional<NutsDisplayProperty> parse(String value) {
-        return NutsApiUtils.parse(value, NutsDisplayProperty.class,s->{
+        return NutsReservedLangUtils.parseEnum(value, NutsDisplayProperty.class, s->{
             switch (s.toLowerCase()){
                 case "de":
                 case "desktop":

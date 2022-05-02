@@ -1,7 +1,7 @@
 package net.thevpc.nuts.toolbox.nwork;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.DefaultNutsWorkspaceBootOptionsBuilder;
+import net.thevpc.nuts.boot.DefaultNutsWorkspaceBootOptionsBuilder;
 import net.thevpc.nuts.elem.NutsElements;
 import net.thevpc.nuts.io.NutsPath;
 import net.thevpc.nuts.toolbox.nwork.config.ProjectConfig;

@@ -1,6 +1,7 @@
 package net.thevpc.nuts.runtime.standalone.util.jclass;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.boot.NutsClassLoaderNode;
 import net.thevpc.nuts.concurrent.NutsScheduler;
 import net.thevpc.nuts.io.NutsIOException;
 import net.thevpc.nuts.io.NutsPath;
@@ -100,7 +101,7 @@ public class NutsJavaSdkUtils {
 
     public NutsPlatformLocation resolveJdkLocation(String requestedJavaVersion, NutsSession session) {
         String _requestedJavaVersion = requestedJavaVersion;
-        requestedJavaVersion = NutsUtilStrings.trim(requestedJavaVersion);
+        requestedJavaVersion = NutsStringUtils.trim(requestedJavaVersion);
         NutsVersion vv = NutsVersion.of(requestedJavaVersion).get( session);
         String singleVersion = vv.asSingleValue().orNull();
         if (singleVersion!=null) {
@@ -160,8 +161,8 @@ public class NutsJavaSdkUtils {
             }
             case WINDOWS: {
                 conf = new String[]{
-                        NutsUtilPlatforms.getWindowsProgramFiles() + "\\Java",
-                        NutsUtilPlatforms.getWindowsProgramFilesX86() + "\\Java"
+                        NutsPlatformUtils.getWindowsProgramFiles() + "\\Java",
+                        NutsPlatformUtils.getWindowsProgramFilesX86() + "\\Java"
                 };
                 break;
             }
@@ -200,8 +201,8 @@ public class NutsJavaSdkUtils {
             }
             case WINDOWS: {
                 conf.addAll(Arrays.asList(
-                        NutsUtilPlatforms.getWindowsProgramFiles() + "\\Java",
-                        NutsUtilPlatforms.getWindowsProgramFilesX86() + "\\Java"
+                        NutsPlatformUtils.getWindowsProgramFiles() + "\\Java",
+                        NutsPlatformUtils.getWindowsProgramFilesX86() + "\\Java"
                 ));
                 break;
             }
@@ -378,7 +379,7 @@ public class NutsJavaSdkUtils {
         if (NutsBlankable.isBlank(preferredName)) {
             preferredName = product + "-" + jdkVersion;
         } else {
-            preferredName = NutsUtilStrings.trim(preferredName);
+            preferredName = NutsStringUtils.trim(preferredName);
         }
         NutsPlatformLocation r = new NutsPlatformLocation(
                 NutsWorkspaceUtils.of(session).createSdkId("java", jdkVersion),

@@ -15,7 +15,7 @@ import net.thevpc.nuts.text.NutsTextBuilder;
 import net.thevpc.nuts.text.NutsTextStyle;
 import net.thevpc.nuts.util.NutsFunction;
 import net.thevpc.nuts.util.NutsStream;
-import net.thevpc.nuts.util.NutsUtilStrings;
+import net.thevpc.nuts.util.NutsStringUtils;
 
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -307,12 +307,12 @@ public class GithubfsPath extends AbstractPathSPIAdapter {
 
     private String _type() {
         if (info != null) {
-            return NutsUtilStrings.trim(info.type);
+            return NutsStringUtils.trim(info.type);
         }
         Object a = load();
         if (a != null) {
             if (a instanceof Info) {
-                return NutsUtilStrings.trim(((Info) a).type);
+                return NutsStringUtils.trim(((Info) a).type);
             }
             if (a instanceof Info[]) {
                 return "dir";

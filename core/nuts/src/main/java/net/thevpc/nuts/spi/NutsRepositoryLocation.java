@@ -24,7 +24,7 @@
 package net.thevpc.nuts.spi;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.util.NutsUtilStrings;
+import net.thevpc.nuts.util.NutsStringUtils;
 
 import java.util.Objects;
 import java.util.regex.Matcher;
@@ -52,9 +52,9 @@ public class NutsRepositoryLocation implements Comparable<NutsRepositoryLocation
      * location)
      */
     private NutsRepositoryLocation(String name, String locationType, String path) {
-        this.name = NutsUtilStrings.trimToNull(name);
-        this.locationType = NutsUtilStrings.trimToNull(locationType);
-        this.path = NutsUtilStrings.trimToNull(path);
+        this.name = NutsStringUtils.trimToNull(name);
+        this.locationType = NutsStringUtils.trimToNull(locationType);
+        this.path = NutsStringUtils.trimToNull(path);
     }
 
     /**
@@ -69,13 +69,13 @@ public class NutsRepositoryLocation implements Comparable<NutsRepositoryLocation
         }
         Matcher nm = FULL_PATTERN.matcher(locationString);
         if (nm.find()) {
-            name = NutsUtilStrings.trimToNull(nm.group("n"));
-            locationType = NutsUtilStrings.trimToNull(nm.group("t"));
-            path = NutsUtilStrings.trimToNull(nm.group("r"));
+            name = NutsStringUtils.trimToNull(nm.group("n"));
+            locationType = NutsStringUtils.trimToNull(nm.group("t"));
+            path = NutsStringUtils.trimToNull(nm.group("r"));
         } else {
             name = null;
             locationType = null;
-            path = NutsUtilStrings.trimToNull(locationString);
+            path = NutsStringUtils.trimToNull(locationString);
         }
     }
 

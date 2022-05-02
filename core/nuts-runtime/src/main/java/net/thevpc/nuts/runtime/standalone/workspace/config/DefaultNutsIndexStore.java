@@ -35,7 +35,7 @@ import net.thevpc.nuts.util.NutsDescribables;
 import net.thevpc.nuts.runtime.standalone.io.util.CoreIOUtils;
 import net.thevpc.nuts.util.NutsIterator;
 import net.thevpc.nuts.util.NutsPredicates;
-import net.thevpc.nuts.util.NutsUtilStrings;
+import net.thevpc.nuts.util.NutsStringUtils;
 
 import java.io.InputStreamReader;
 import java.io.UncheckedIOException;
@@ -62,10 +62,10 @@ public class DefaultNutsIndexStore extends AbstractNutsIndexStore {
                             + String.format("?repositoryUuid=%s&name=%s&repo=%s&group=%s"
                                     + "&os=%s&osdist=%s&arch=%s&face=%s&"/*alternative=%s*/,
                             getRepository().getUuid(),
-                            NutsUtilStrings.trim(id.getArtifactId()), NutsUtilStrings.trim(id.getRepository()), NutsUtilStrings.trim(id.getGroupId()),
-                            NutsUtilStrings.trim(String.join(",",id.getCondition().getOs())),
-                            NutsUtilStrings.trim(String.join(",",id.getCondition().getOsDist())),
-                            NutsUtilStrings.trim(String.join(",",id.getCondition().getArch())), NutsUtilStrings.trim(id.getFace())
+                            NutsStringUtils.trim(id.getArtifactId()), NutsStringUtils.trim(id.getRepository()), NutsStringUtils.trim(id.getGroupId()),
+                            NutsStringUtils.trim(String.join(",",id.getCondition().getOs())),
+                            NutsStringUtils.trim(String.join(",",id.getCondition().getOsDist())),
+                            NutsStringUtils.trim(String.join(",",id.getCondition().getArch())), NutsStringUtils.trim(id.getFace())
 //                , NutsUtilStrings.trim(id.getAlternative())
                     );
                     try {
@@ -128,11 +128,11 @@ public class DefaultNutsIndexStore extends AbstractNutsIndexStore {
         String uu = getIndexURL(session).resolve( NutsConstants.Folders.ID).resolve("delete")
                 + String.format("?repositoryUuid=%s&name=%s&repo=%s&group=%s&version=%s"
                         + "&os=%s&osdist=%s&arch=%s&face=%s"/*&alternative=%s*/, getRepository().getUuid(),
-                NutsUtilStrings.trim(id.getArtifactId()), NutsUtilStrings.trim(id.getRepository()), NutsUtilStrings.trim(id.getGroupId()), NutsUtilStrings.trim(id.getVersion().toString()),
-                NutsUtilStrings.trim(String.join(",",id.getCondition().getOs())),
-                NutsUtilStrings.trim(String.join(",",id.getCondition().getOsDist())),
-                NutsUtilStrings.trim(String.join(",",id.getCondition().getArch())),
-                NutsUtilStrings.trim(id.getFace())
+                NutsStringUtils.trim(id.getArtifactId()), NutsStringUtils.trim(id.getRepository()), NutsStringUtils.trim(id.getGroupId()), NutsStringUtils.trim(id.getVersion().toString()),
+                NutsStringUtils.trim(String.join(",",id.getCondition().getOs())),
+                NutsStringUtils.trim(String.join(",",id.getCondition().getOsDist())),
+                NutsStringUtils.trim(String.join(",",id.getCondition().getArch())),
+                NutsStringUtils.trim(id.getFace())
 //                ,NutsUtilStrings.trim(id.getAlternative())
         );
         try {
@@ -152,11 +152,11 @@ public class DefaultNutsIndexStore extends AbstractNutsIndexStore {
         String uu = getIndexURL(session).resolve(NutsConstants.Folders.ID).resolve("addData")
                 + String.format("?repositoryUuid=%s&name=%s&repo=%s&group=%s&version=%s"
                         + "&os=%s&osdist=%s&arch=%s&face=%s"/*&alternative=%s*/, getRepository().getUuid(),
-                NutsUtilStrings.trim(id.getArtifactId()), NutsUtilStrings.trim(id.getRepository()), NutsUtilStrings.trim(id.getGroupId()), NutsUtilStrings.trim(id.getVersion().toString()),
-                NutsUtilStrings.trim(String.join(",",id.getCondition().getOs())),
-                NutsUtilStrings.trim(String.join(",",id.getCondition().getOsDist())),
-                NutsUtilStrings.trim(String.join(",",id.getCondition().getArch())),
-                NutsUtilStrings.trim(id.getFace())
+                NutsStringUtils.trim(id.getArtifactId()), NutsStringUtils.trim(id.getRepository()), NutsStringUtils.trim(id.getGroupId()), NutsStringUtils.trim(id.getVersion().toString()),
+                NutsStringUtils.trim(String.join(",",id.getCondition().getOs())),
+                NutsStringUtils.trim(String.join(",",id.getCondition().getOsDist())),
+                NutsStringUtils.trim(String.join(",",id.getCondition().getArch())),
+                NutsStringUtils.trim(id.getFace())
 //                ,NutsUtilStrings.trim(id.getAlternative())
         );
         try {

@@ -25,7 +25,7 @@ package net.thevpc.nuts.runtime.standalone.util.collections;
 
 import net.thevpc.nuts.NutsBlankable;
 import net.thevpc.nuts.NutsIdLocation;
-import net.thevpc.nuts.util.NutsUtilStrings;
+import net.thevpc.nuts.util.NutsStringUtils;
 
 import java.util.*;
 
@@ -47,7 +47,7 @@ public class CoreCollectionUtils {
         LinkedHashSet<String> set = new LinkedHashSet<>();
         if (values0 != null) {
             for (String a : values0) {
-                a = NutsUtilStrings.trim(a);
+                a = NutsStringUtils.trim(a);
                 if (!NutsBlankable.isBlank(a)) {
                     set.add(a);
                 }

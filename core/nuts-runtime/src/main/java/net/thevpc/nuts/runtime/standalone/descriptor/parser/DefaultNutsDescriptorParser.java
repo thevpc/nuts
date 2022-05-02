@@ -12,7 +12,7 @@ import net.thevpc.nuts.runtime.standalone.repository.impl.maven.util.MavenUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.NutsWorkspaceUtils;
 import net.thevpc.nuts.runtime.standalone.xtra.expr.StringTokenizerUtils;
 import net.thevpc.nuts.spi.NutsSupportLevelContext;
-import net.thevpc.nuts.util.NutsUtilStrings;
+import net.thevpc.nuts.util.NutsStringUtils;
 
 import java.io.*;
 import java.net.URL;
@@ -182,25 +182,25 @@ public class DefaultNutsDescriptorParser implements NutsDescriptorParser {
                         for (Object o : attrs.keySet()) {
                             Attributes.Name attrName = (Attributes.Name) o;
                             if ("Main-Class".equals(attrName.toString())) {
-                                mainClass = (NutsUtilStrings.trimToNull(attrs.getValue(attrName)));
+                                mainClass = (NutsStringUtils.trimToNull(attrs.getValue(attrName)));
                             }
                             if ("Automatic-Module-Name".equals(attrName.toString())) {
-                                automaticModuleName = NutsUtilStrings.trimToNull(attrs.getValue(attrName));
+                                automaticModuleName = NutsStringUtils.trimToNull(attrs.getValue(attrName));
                             }
                             if ("Implementation-Version".equals(attrName.toString())) {
-                                mainVersion = NutsUtilStrings.trimToNull(attrs.getValue(attrName));
+                                mainVersion = NutsStringUtils.trimToNull(attrs.getValue(attrName));
                             }
                             if ("Implementation-Vendor-Id".equals(attrName.toString())) {
-                                implVendorId = NutsUtilStrings.trimToNull(attrs.getValue(attrName));
+                                implVendorId = NutsStringUtils.trimToNull(attrs.getValue(attrName));
                             }
                             if ("Implementation-Vendor-Title".equals(attrName.toString())) {
-                                implVendorTitle = NutsUtilStrings.trimToNull(attrs.getValue(attrName));
+                                implVendorTitle = NutsStringUtils.trimToNull(attrs.getValue(attrName));
                             }
                             if ("Nuts-Id".equals(attrName.toString())) {
-                                explicitId = NutsId.of(NutsUtilStrings.trimToNull(attrs.getValue(attrName))).orNull();
+                                explicitId = NutsId.of(NutsStringUtils.trimToNull(attrs.getValue(attrName))).orNull();
                             }
                             if ("Nuts-Dependencies".equals(attrName.toString())) {
-                                String nutsDependencies = NutsUtilStrings.trimToNull(attrs.getValue(attrName));
+                                String nutsDependencies = NutsStringUtils.trimToNull(attrs.getValue(attrName));
                                 deps = nutsDependencies == null ? Collections.emptySet() :
                                         StringTokenizerUtils.splitSemiColon(nutsDependencies).stream()
                                                 .map(String::trim)
@@ -209,7 +209,7 @@ public class DefaultNutsDescriptorParser implements NutsDescriptorParser {
                                                 .filter(Objects::nonNull)
                                                 .collect(Collectors.toCollection(LinkedHashSet::new));
                             }
-                            all.put(attrName.toString(), NutsUtilStrings.trimToNull(attrs.getValue(attrName)));
+                            all.put(attrName.toString(), NutsStringUtils.trimToNull(attrs.getValue(attrName)));
                         }
                         if (explicitId == null) {
                             if (automaticModuleName == null && implVendorId == null) {
@@ -232,7 +232,7 @@ public class DefaultNutsDescriptorParser implements NutsDescriptorParser {
                             }
                         }
                         if (explicitId != null || !deps.isEmpty()) {
-                            String nutsName = NutsUtilStrings.trimToNull(all.get("Nuts-Name"));
+                            String nutsName = NutsStringUtils.trimToNull(all.get("Nuts-Name"));
                             if (nutsName == null) {
                                 nutsName = implVendorTitle;
                             }
@@ -249,14 +249,14 @@ public class DefaultNutsDescriptorParser implements NutsDescriptorParser {
                                                     .toArray(NutsDescriptorFlag[]::new)
                                     )
                                     .setPackaging(CoreStringUtils.coalesce(
-                                            NutsUtilStrings.trimToNull(all.get("Nuts-Packaging")),
+                                            NutsStringUtils.trimToNull(all.get("Nuts-Packaging")),
                                             "jar"
                                     ))
                                     .setCategories(
                                             StringTokenizerUtils.splitDefault(
                                                             all.get("Nuts-Categories")
                                                     ).stream()
-                                                    .map(NutsUtilStrings::trimToNull)
+                                                    .map(NutsStringUtils::trimToNull)
                                                     .filter(Objects::nonNull)
                                                     .collect(Collectors.toList())
                                     )
@@ -264,13 +264,13 @@ public class DefaultNutsDescriptorParser implements NutsDescriptorParser {
                                             StringTokenizerUtils.splitDefault(
                                                             all.get("Nuts-Icons")
                                                     ).stream()
-                                                    .map(NutsUtilStrings::trimToNull)
+                                                    .map(NutsStringUtils::trimToNull)
                                                     .filter(Objects::nonNull)
                                                     .collect(Collectors.toList())
                                     )
                                     .setName(nutsName)
-                                    .setDescription(NutsUtilStrings.trimToNull(all.get("Nuts-Description")))
-                                    .setGenericName(NutsUtilStrings.trimToNull(all.get("Nuts-Generic-Name")))
+                                    .setDescription(NutsStringUtils.trimToNull(all.get("Nuts-Description")))
+                                    .setGenericName(NutsStringUtils.trimToNull(all.get("Nuts-Generic-Name")))
                                     .setProperties(all.entrySet().stream()
                                             .filter(x -> x.getKey().startsWith("Nuts-Property-"))
                                             .map(x -> new DefaultNutsDescriptorPropertyBuilder()

@@ -27,7 +27,7 @@
 package net.thevpc.nuts.runtime.standalone.repository.cmd;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.boot.NutsApiUtils;
+import net.thevpc.nuts.reserved.NutsReservedLangUtils;
 
 /**
  *
@@ -56,7 +56,7 @@ public enum NutsRepositorySupportedAction  implements NutsEnum {
     }
 
     public static NutsOptional<NutsRepositorySupportedAction> parse(String value) {
-        return NutsApiUtils.parse(value, NutsRepositorySupportedAction.class);
+        return NutsReservedLangUtils.parseEnum(value, NutsRepositorySupportedAction.class);
     }
 
 }

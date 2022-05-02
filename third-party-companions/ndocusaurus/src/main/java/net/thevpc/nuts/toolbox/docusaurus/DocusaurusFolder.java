@@ -7,7 +7,7 @@ import net.thevpc.nuts.elem.NutsObjectElement;
 import net.thevpc.nuts.lib.md.MdElement;
 import net.thevpc.nuts.lib.md.docusaurus.DocusaurusUtils;
 import net.thevpc.nuts.lib.md.util.MdUtils;
-import net.thevpc.nuts.util.NutsUtilStrings;
+import net.thevpc.nuts.util.NutsStringUtils;
 
 import java.io.IOException;
 import java.io.UncheckedIOException;
@@ -40,8 +40,8 @@ public class DocusaurusFolder implements DocusaurusFileOrFolder {
             if (x != 0) {
                 return x;
             }
-            String title1 = NutsUtilStrings.trim(o1.getTitle());
-            String title2 = NutsUtilStrings.trim(o2.getTitle());
+            String title1 = NutsStringUtils.trim(o1.getTitle());
+            String title2 = NutsStringUtils.trim(o2.getTitle());
             x = title1.toLowerCase().compareTo(title2.toLowerCase());
             if (x != 0) {
                 return x;

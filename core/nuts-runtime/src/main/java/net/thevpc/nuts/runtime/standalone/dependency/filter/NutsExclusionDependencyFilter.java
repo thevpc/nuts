@@ -3,7 +3,7 @@ package net.thevpc.nuts.runtime.standalone.dependency.filter;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.standalone.util.filters.CoreFilterUtils;
 import net.thevpc.nuts.runtime.standalone.xtra.glob.GlobUtils;
-import net.thevpc.nuts.util.NutsUtilStrings;
+import net.thevpc.nuts.util.NutsStringUtils;
 
 import java.util.Arrays;
 import java.util.Objects;
@@ -30,8 +30,8 @@ public class NutsExclusionDependencyFilter extends AbstractDependencyFilter{
         for (NutsId exclusion : exclusions) {
             NutsId nutsId = dependency.toId();
             if (
-                    GlobUtils.ofExact(exclusion.getGroupId()).matcher(NutsUtilStrings.trim(nutsId.getGroupId())).matches()
-                    && GlobUtils.ofExact(exclusion.getArtifactId()).matcher(NutsUtilStrings.trim(nutsId.getArtifactId())).matches()
+                    GlobUtils.ofExact(exclusion.getGroupId()).matcher(NutsStringUtils.trim(nutsId.getGroupId())).matches()
+                    && GlobUtils.ofExact(exclusion.getArtifactId()).matcher(NutsStringUtils.trim(nutsId.getArtifactId())).matches()
                     && exclusion.getVersion().filter(session).acceptVersion(nutsId.getVersion(), session)) {
                 return false;
             }

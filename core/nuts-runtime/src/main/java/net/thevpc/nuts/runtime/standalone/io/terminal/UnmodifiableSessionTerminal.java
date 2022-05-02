@@ -132,7 +132,7 @@ public class UnmodifiableSessionTerminal extends AbstractNutsSessionTerminal {
 
     @Override
     public NutsSessionTerminal printProgress(float progress, NutsMessage message) {
-        if (NutsProgressUtils.acceptProgress(session)) {
+        if (session.isProgress()) {
             if (getBase() != null) {
                 getBase().printProgress(progress, message);
             } else {

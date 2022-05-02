@@ -25,7 +25,7 @@
  */
 package net.thevpc.nuts;
 
-import net.thevpc.nuts.util.NutsUtilStrings;
+import net.thevpc.nuts.util.NutsStringUtils;
 
 import java.io.Serializable;
 import java.math.BigInteger;
@@ -60,7 +60,7 @@ public interface NutsVersion extends Serializable, /*NutsTokenFilter, */NutsForm
         if (NutsBlankable.isBlank(version)) {
             return NutsOptional.of(new DefaultNutsVersion(""));
         }
-        String version2 = NutsUtilStrings.trim(version);
+        String version2 = NutsStringUtils.trim(version);
         if (PATTERN.matcher(version2).matches()) {
             return NutsOptional.of(new DefaultNutsVersion(version2));
         }

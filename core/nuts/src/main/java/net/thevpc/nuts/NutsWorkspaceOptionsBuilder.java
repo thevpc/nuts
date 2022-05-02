@@ -25,6 +25,7 @@
  */
 package net.thevpc.nuts;
 
+import net.thevpc.nuts.boot.DefaultNutsWorkspaceOptionsBuilder;
 import net.thevpc.nuts.io.NutsTerminalMode;
 import net.thevpc.nuts.util.NutsLogConfig;
 
@@ -61,7 +62,7 @@ public interface NutsWorkspaceOptionsBuilder extends NutsWorkspaceOptions {
 
     NutsWorkspaceOptionsBuilder setInitJava(Boolean initJava);
 
-    NutsWorkspaceOptionsBuilder setIsolation(NutsWorkspaceIsolation isolation);
+    NutsWorkspaceOptionsBuilder setIsolationLevel(NutsIsolationLevel isolationLevel);
 
     NutsWorkspaceOptionsBuilder setDesktopLauncher(NutsSupportMode desktopLauncher);
 

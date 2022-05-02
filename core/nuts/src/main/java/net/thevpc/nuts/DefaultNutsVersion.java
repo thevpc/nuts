@@ -25,8 +25,8 @@
  */
 package net.thevpc.nuts;
 
-import net.thevpc.nuts.boot.PrivateNutsUtilStrings;
-import net.thevpc.nuts.util.NutsUtilStrings;
+import net.thevpc.nuts.reserved.NutsReservedStringUtils;
+import net.thevpc.nuts.util.NutsStringUtils;
 
 import java.math.BigInteger;
 import java.util.*;
@@ -43,7 +43,7 @@ public class DefaultNutsVersion implements NutsVersion {
     private VersionParts parts;
 
     public DefaultNutsVersion(String expression) {
-        this.expression = (NutsUtilStrings.trim(expression));
+        this.expression = (NutsStringUtils.trim(expression));
     }
 
     public static String incVersion(String oldVersion, int level, long count) {
@@ -81,8 +81,8 @@ public class DefaultNutsVersion implements NutsVersion {
 
 
     public static int compareVersions(String v1, String v2) {
-        v1 = NutsUtilStrings.trim(v1);
-        v2 = NutsUtilStrings.trim(v2);
+        v1 = NutsStringUtils.trim(v1);
+        v2 = NutsStringUtils.trim(v2);
         if (v1.equals(v2)) {
             return 0;
         }
@@ -105,7 +105,7 @@ public class DefaultNutsVersion implements NutsVersion {
 
 
     private static VersionParts splitVersionParts2(String v1) {
-        v1 = NutsUtilStrings.trim(v1);
+        v1 = NutsStringUtils.trim(v1);
         List<VersionPart> parts = new ArrayList<>();
         StringBuilder last = null;
         VersionPartType partType = null;
@@ -297,7 +297,7 @@ public class DefaultNutsVersion implements NutsVersion {
                     return NutsOptional.of(expression.trim());
                 }
             } else {
-                Set<String> all = new HashSet<>(PrivateNutsUtilStrings.split(s, ",", true, true));
+                Set<String> all = new HashSet<>(NutsReservedStringUtils.split(s, ",", true, true));
                 if (all.size() == 1) {
                     String one = all.stream().findAny().get();
                     if (VERSION_PART_PATTERN.matcher(one).matches()) {
@@ -323,7 +323,7 @@ public class DefaultNutsVersion implements NutsVersion {
                     }
                 } else {
                     //commas==1
-                    Set<String> two = new HashSet<>(PrivateNutsUtilStrings.split(s, ",", true, false));
+                    Set<String> two = new HashSet<>(NutsReservedStringUtils.split(s, ",", true, false));
                     if (two.size() == 1) {
                         String one = two.stream().findAny().get();
                         if (VERSION_PART_PATTERN.matcher(one).matches()) {

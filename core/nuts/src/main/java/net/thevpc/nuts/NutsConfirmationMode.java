@@ -25,7 +25,7 @@
  */
 package net.thevpc.nuts;
 
-import net.thevpc.nuts.boot.NutsApiUtils;
+import net.thevpc.nuts.reserved.NutsReservedLangUtils;
 
 /**
  * user interaction mode. Some operations may require user confirmation before
@@ -67,7 +67,7 @@ public enum NutsConfirmationMode implements NutsEnum {
     }
 
     public static NutsOptional<NutsConfirmationMode> parse(String value) {
-        return NutsApiUtils.parse(value, NutsConfirmationMode.class);
+        return NutsReservedLangUtils.parseEnum(value, NutsConfirmationMode.class);
     }
 
     /**

@@ -42,7 +42,7 @@ import net.thevpc.nuts.toolbox.nsh.SimpleJShellBuiltin;
 import net.thevpc.nuts.toolbox.nsh.bundles.BytesSizeFormat;
 import net.thevpc.nuts.toolbox.nsh.jshell.JShellExecutionContext;
 import net.thevpc.nuts.util.NutsComparator;
-import net.thevpc.nuts.util.NutsUtilStrings;
+import net.thevpc.nuts.util.NutsStringUtils;
 
 import java.time.Instant;
 import java.time.ZoneId;
@@ -231,7 +231,7 @@ public class LsCommand extends SimpleJShellBuiltin {
     private void printPlain(ResultItem item, Options options, NutsPrintStream out, NutsSession session) {
         if (options.l) {
             out.printf("%s%s  %s %s %s %s ",
-                    item.type, item.uperms != null ? item.uperms : item.jperms, NutsUtilStrings.trim(item.owner), NutsUtilStrings.trim(item.group),
+                    item.type, item.uperms != null ? item.uperms : item.jperms, NutsStringUtils.trim(item.owner), NutsStringUtils.trim(item.group),
                     options.h ? options.byteFormat.format(item.length) : String.format("%9d", item.length),
                     item.modified == null ? "" : SIMPLE_DATE_FORMAT.format(item.modified)
             );

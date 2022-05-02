@@ -26,7 +26,7 @@
  */
 package net.thevpc.nuts;
 
-import net.thevpc.nuts.boot.PrivateNutsVersionIntervalParser;
+import net.thevpc.nuts.reserved.NutsReservedVersionIntervalParser;
 
 import java.io.Serializable;
 import java.util.List;
@@ -52,7 +52,7 @@ public interface NutsVersionInterval extends Serializable {
         );
     }
     static NutsOptional<List<NutsVersionInterval>> ofList(String s){
-        return new PrivateNutsVersionIntervalParser().parse(s);
+        return new NutsReservedVersionIntervalParser().parse(s);
     }
     boolean acceptVersion(NutsVersion version);
 

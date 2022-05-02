@@ -26,7 +26,7 @@
  */
 package net.thevpc.nuts;
 
-import net.thevpc.nuts.boot.PrivateNutsUtilCollections;
+import net.thevpc.nuts.reserved.NutsReservedCollectionUtils;
 
 import java.util.Arrays;
 import java.util.List;
@@ -133,11 +133,11 @@ public class NutsCommandConfig extends NutsConfigItem {
      * @return {@code this} instance
      */
     public NutsCommandConfig setCommand(String... value) {
-        this.command = PrivateNutsUtilCollections.nonNullList(Arrays.asList(value));
+        this.command = NutsReservedCollectionUtils.nonNullList(Arrays.asList(value));
         return this;
     }
     public NutsCommandConfig setCommand(List<String> value) {
-        this.command = PrivateNutsUtilCollections.nonNullList(value);
+        this.command = NutsReservedCollectionUtils.nonNullList(value);
         return this;
     }
 
@@ -197,11 +197,11 @@ public class NutsCommandConfig extends NutsConfigItem {
      * @return {@code this} instance
      */
     public NutsCommandConfig setHelpCommand(String... value) {
-        this.helpCommand = PrivateNutsUtilCollections.nonNullList(Arrays.asList(value));
+        this.helpCommand = NutsReservedCollectionUtils.nonNullList(Arrays.asList(value));
         return this;
     }
     public NutsCommandConfig setHelpCommand(List<String> value) {
-        this.helpCommand = PrivateNutsUtilCollections.nonNullList(value);
+        this.helpCommand = NutsReservedCollectionUtils.nonNullList(value);
         return this;
     }
 

@@ -9,7 +9,7 @@ import net.thevpc.nuts.runtime.standalone.workspace.DefaultNutsWorkspace;
 import net.thevpc.nuts.runtime.standalone.workspace.NutsWorkspaceExt;
 import net.thevpc.nuts.runtime.standalone.workspace.NutsWorkspaceUtils;
 import net.thevpc.nuts.spi.NutsRepositorySPI;
-import net.thevpc.nuts.util.NutsUtilStrings;
+import net.thevpc.nuts.util.NutsStringUtils;
 
 import java.util.Map;
 
@@ -229,7 +229,7 @@ public class DefaultNutsWorkspaceLocationModel {
 
     public String getDefaultIdExtension(NutsId id, NutsSession session) {
         Map<String, String> q = id.getProperties();
-        String f = NutsUtilStrings.trim(q.get(NutsConstants.IdProperties.FACE));
+        String f = NutsStringUtils.trim(q.get(NutsConstants.IdProperties.FACE));
         switch (f) {
             case NutsConstants.QueryFaces.DESCRIPTOR: {
                 return NutsConstants.Files.DESCRIPTOR_FILE_EXTENSION;

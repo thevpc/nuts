@@ -1,6 +1,6 @@
 package net.thevpc.nuts.runtime.standalone.dependency.solver;
 
-import net.thevpc.nuts.util.NutsUtilStrings;
+import net.thevpc.nuts.util.NutsStringUtils;
 
 public class NutsDependencySolverUtils {
 
@@ -10,7 +10,7 @@ public class NutsDependencySolverUtils {
         if(name==null){
             return DEFAULT_SOLVER_NAME;
         }
-        name= NutsUtilStrings.trim(name);
+        name= NutsStringUtils.trim(name);
         String lcName=name.toLowerCase();
         if(lcName.equals("default")){
             lcName="maven";

@@ -26,7 +26,7 @@
  */
 package net.thevpc.nuts;
 
-import net.thevpc.nuts.boot.NutsApiUtils;
+import net.thevpc.nuts.reserved.NutsReservedLangUtils;
 
 /**
  * @app.category Base
@@ -52,7 +52,7 @@ public enum NutsStoreLocationStrategy implements NutsEnum {
     }
 
     public static NutsOptional<NutsStoreLocationStrategy> parse(String value) {
-        return NutsApiUtils.parse(value, NutsStoreLocationStrategy.class,s->{
+        return NutsReservedLangUtils.parseEnum(value, NutsStoreLocationStrategy.class, s->{
             switch (s.toUpperCase()) {
                 case "S":
                     return NutsOptional.of(NutsStoreLocationStrategy.STANDALONE);

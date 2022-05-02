@@ -1,7 +1,7 @@
 package net.thevpc.nuts;
 
 import net.thevpc.nuts.elem.NutsElementType;
-import net.thevpc.nuts.util.NutsUtilStrings;
+import net.thevpc.nuts.util.NutsStringUtils;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
@@ -534,7 +534,7 @@ public class DefaultNutsValue implements NutsValue {
             case NULL:
                 return "null";
             case STRING:
-                return NutsUtilStrings.formatStringLiteral(asString().get(), NutsUtilStrings.QuoteType.DOUBLE);
+                return NutsStringUtils.formatStringLiteral(asString().get(), NutsStringUtils.QuoteType.DOUBLE);
             case BOOLEAN:
                 return String.valueOf(asBoolean());
             case BYTE:
@@ -547,7 +547,7 @@ public class DefaultNutsValue implements NutsValue {
             case DOUBLE:
                 return String.valueOf(asNumber());
             case INSTANT:
-                return NutsUtilStrings.formatStringLiteral(asInstant().toString(), NutsUtilStrings.QuoteType.DOUBLE);
+                return NutsStringUtils.formatStringLiteral(asInstant().toString(), NutsStringUtils.QuoteType.DOUBLE);
         }
         return asString().get();
     }

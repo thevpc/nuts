@@ -9,7 +9,7 @@ import net.thevpc.nuts.spi.NutsSupportLevelContext;
 import net.thevpc.nuts.text.NutsText;
 import net.thevpc.nuts.text.NutsTextStyle;
 import net.thevpc.nuts.text.NutsTexts;
-import net.thevpc.nuts.util.NutsUtilStrings;
+import net.thevpc.nuts.util.NutsStringUtils;
 
 import java.io.StringReader;
 import java.util.ArrayList;
@@ -119,7 +119,7 @@ public class XmlCodeHighlighter implements NutsCodeHighlighter {
     }
 
     public NutsText tokenToText(String text, String nodeType, NutsTexts txt, NutsSession session) {
-        switch (NutsUtilStrings.trim(nodeType).toLowerCase()) {
+        switch (NutsStringUtils.trim(nodeType).toLowerCase()) {
             case "name":
                 return formatNodeName(text, txt);
             case "attribute":

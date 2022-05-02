@@ -46,7 +46,7 @@ import net.thevpc.nuts.text.NutsTexts;
 import net.thevpc.nuts.util.NutsLogger;
 import net.thevpc.nuts.util.NutsLoggerVerb;
 import net.thevpc.nuts.util.NutsStream;
-import net.thevpc.nuts.util.NutsUtilStrings;
+import net.thevpc.nuts.util.NutsStringUtils;
 
 import java.io.*;
 import java.net.*;
@@ -830,10 +830,10 @@ public class CoreIOUtils {
                     } else if (((c < 0x0020) || (c > 0x007e))) {
                         buffer.append('\\');
                         buffer.append('u');
-                        buffer.append(NutsUtilStrings.toHexChar((c >> 12) & 0xF));
-                        buffer.append(NutsUtilStrings.toHexChar((c >> 8) & 0xF));
-                        buffer.append(NutsUtilStrings.toHexChar((c >> 4) & 0xF));
-                        buffer.append(NutsUtilStrings.toHexChar(c & 0xF));
+                        buffer.append(NutsStringUtils.toHexChar((c >> 12) & 0xF));
+                        buffer.append(NutsStringUtils.toHexChar((c >> 8) & 0xF));
+                        buffer.append(NutsStringUtils.toHexChar((c >> 4) & 0xF));
+                        buffer.append(NutsStringUtils.toHexChar(c & 0xF));
                     } else {
                         buffer.append(c);
                     }

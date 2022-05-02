@@ -7,7 +7,7 @@ import java.util.function.Function;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.standalone.session.NutsSessionUtils;
 import net.thevpc.nuts.spi.NutsAuthenticationAgent;
-import net.thevpc.nuts.util.NutsUtilStrings;
+import net.thevpc.nuts.util.NutsStringUtils;
 
 class WrapperNutsAuthenticationAgent {
 
@@ -24,7 +24,7 @@ class WrapperNutsAuthenticationAgent {
 
     public NutsAuthenticationAgent getCachedAuthenticationAgent(String name,NutsSession session) {
         NutsSessionUtils.checkSession(ws, session);
-        name = NutsUtilStrings.trim(name);
+        name = NutsStringUtils.trim(name);
         NutsAuthenticationAgent a = cache.get(name);
         if (a == null) {
             a = provider.create(name,session);

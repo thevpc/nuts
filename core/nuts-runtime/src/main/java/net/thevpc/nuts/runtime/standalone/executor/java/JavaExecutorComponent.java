@@ -24,6 +24,7 @@
 package net.thevpc.nuts.runtime.standalone.executor.java;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.boot.NutsClassLoaderNode;
 import net.thevpc.nuts.cmdline.NutsCommandLine;
 import net.thevpc.nuts.io.NutsPrintStream;
 import net.thevpc.nuts.io.NutsTerminalMode;
@@ -46,7 +47,7 @@ import net.thevpc.nuts.spi.NutsSupportLevelContext;
 import net.thevpc.nuts.text.NutsTextStyle;
 import net.thevpc.nuts.text.NutsTexts;
 import net.thevpc.nuts.util.NutsLogConfig;
-import net.thevpc.nuts.util.NutsUtilStrings;
+import net.thevpc.nuts.util.NutsStringUtils;
 
 import java.io.File;
 import java.lang.reflect.InvocationTargetException;
@@ -179,8 +180,8 @@ public class JavaExecutorComponent implements NutsExecutorComponent {
             options.setAllPresent(extraOptions);
         }
         //sandbox workspace children are always confined
-        if (options.getIsolation().orNull() == NutsWorkspaceIsolation.SANDBOX) {
-            options.setIsolation(NutsWorkspaceIsolation.CONFINED);
+        if (options.getIsolationLevel().orNull() == NutsIsolationLevel.SANDBOX) {
+            options.setIsolationLevel(NutsIsolationLevel.CONFINED);
         }
         options.unsetCreationOptions().unsetRuntimeOptions();
         return options;
@@ -352,7 +353,7 @@ public class JavaExecutorComponent implements NutsExecutorComponent {
                         args.add(joptions.getJ9_addModules().stream().distinct().collect(Collectors.joining(",")));
                     }
                     if (!NutsBlankable.isBlank(joptions.getSplash())) {
-                        args.add("-splash:" + NutsUtilStrings.trim(joptions.getSplash()));
+                        args.add("-splash:" + NutsStringUtils.trim(joptions.getSplash()));
                     }
                     List<String> classPathStrings = joptions.getClassPath();
                     if (!classPathStrings.isEmpty()) {

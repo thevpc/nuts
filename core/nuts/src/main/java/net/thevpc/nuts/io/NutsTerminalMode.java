@@ -29,7 +29,7 @@ package net.thevpc.nuts.io;
 import net.thevpc.nuts.NutsEnum;
 import net.thevpc.nuts.NutsOptional;
 import net.thevpc.nuts.NutsValue;
-import net.thevpc.nuts.boot.NutsApiUtils;
+import net.thevpc.nuts.reserved.NutsReservedLangUtils;
 
 import java.util.function.Function;
 
@@ -78,7 +78,7 @@ public enum NutsTerminalMode implements NutsEnum {
     }
 
     public static NutsOptional<NutsTerminalMode> parse(String value) {
-        return NutsApiUtils.parse(value, NutsTerminalMode.class, new Function<String, NutsOptional<NutsTerminalMode>>() {
+        return NutsReservedLangUtils.parseEnum(value, NutsTerminalMode.class, new Function<String, NutsOptional<NutsTerminalMode>>() {
             @Override
             public NutsOptional<NutsTerminalMode> apply(String s) {
                 switch (s.toLowerCase()){

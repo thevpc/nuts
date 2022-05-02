@@ -28,7 +28,7 @@ import net.thevpc.nuts.elem.*;
 import net.thevpc.nuts.io.NutsIOException;
 import net.thevpc.nuts.io.NutsPrintStream;
 import net.thevpc.nuts.runtime.standalone.elem.NutsElementStreamFormat;
-import net.thevpc.nuts.util.NutsUtilStrings;
+import net.thevpc.nuts.util.NutsStringUtils;
 
 import java.io.*;
 
@@ -112,10 +112,10 @@ public class DefaultJsonElementFormat implements NutsElementStreamFormat {
                             default: {
                                 sb.append('\\');
                                 sb.append('u');
-                                sb.append(NutsUtilStrings.toHexChar((c >> 12) & 0xF));
-                                sb.append(NutsUtilStrings.toHexChar((c >> 8) & 0xF));
-                                sb.append(NutsUtilStrings.toHexChar((c >> 4) & 0xF));
-                                sb.append(NutsUtilStrings.toHexChar(c & 0xF));
+                                sb.append(NutsStringUtils.toHexChar((c >> 12) & 0xF));
+                                sb.append(NutsStringUtils.toHexChar((c >> 8) & 0xF));
+                                sb.append(NutsStringUtils.toHexChar((c >> 4) & 0xF));
+                                sb.append(NutsStringUtils.toHexChar(c & 0xF));
                             }
                         }
                     } else {
@@ -132,10 +132,10 @@ public class DefaultJsonElementFormat implements NutsElementStreamFormat {
                                 if (c > 0x007e) {
                                     sb.append('\\');
                                     sb.append('u');
-                                    sb.append(NutsUtilStrings.toHexChar((c >> 12) & 0xF));
-                                    sb.append(NutsUtilStrings.toHexChar((c >> 8) & 0xF));
-                                    sb.append(NutsUtilStrings.toHexChar((c >> 4) & 0xF));
-                                    sb.append(NutsUtilStrings.toHexChar(c & 0xF));
+                                    sb.append(NutsStringUtils.toHexChar((c >> 12) & 0xF));
+                                    sb.append(NutsStringUtils.toHexChar((c >> 8) & 0xF));
+                                    sb.append(NutsStringUtils.toHexChar((c >> 4) & 0xF));
+                                    sb.append(NutsStringUtils.toHexChar(c & 0xF));
                                 } else {
                                     sb.append(c);
                                 }

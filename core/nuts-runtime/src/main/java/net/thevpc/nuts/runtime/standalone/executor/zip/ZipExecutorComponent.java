@@ -31,7 +31,7 @@ import net.thevpc.nuts.spi.NutsComponentScope;
 import net.thevpc.nuts.spi.NutsComponentScopeType;
 import net.thevpc.nuts.spi.NutsExecutorComponent;
 import net.thevpc.nuts.spi.NutsSupportLevelContext;
-import net.thevpc.nuts.util.NutsUtilStrings;
+import net.thevpc.nuts.util.NutsStringUtils;
 
 import java.util.*;
 
@@ -75,7 +75,7 @@ public class ZipExecutorComponent implements NutsExecutorComponent {
             if ("zip".equals(shortName)) {
                 return DEFAULT_SUPPORT + 10;
             }
-            switch (NutsUtilStrings.trim(def.getDescriptor().getPackaging())) {
+            switch (NutsStringUtils.trim(def.getDescriptor().getPackaging())) {
                 case "zip": {
                     return DEFAULT_SUPPORT + 10;
                 }

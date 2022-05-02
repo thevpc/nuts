@@ -9,7 +9,7 @@ import net.thevpc.nuts.*;
 
 import java.util.*;
 
-import net.thevpc.nuts.boot.PrivateNutsUtilCollections;
+import net.thevpc.nuts.reserved.NutsReservedCollectionUtils;
 import net.thevpc.nuts.runtime.standalone.session.NutsSessionUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.config.NutsRepositoryConfigManagerExt;
 import net.thevpc.nuts.runtime.standalone.workspace.config.NutsWorkspaceConfigManagerExt;
@@ -18,7 +18,7 @@ import net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.user.DefaultNut
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.user.DefaultNutsUpdateUserCommand;
 import net.thevpc.nuts.runtime.standalone.repository.config.DefaultNutsRepoConfigManager;
 import net.thevpc.nuts.spi.NutsAuthenticationAgent;
-import net.thevpc.nuts.util.NutsUtilStrings;
+import net.thevpc.nuts.util.NutsStringUtils;
 
 /**
  *
@@ -79,7 +79,7 @@ public class DefaultNutsRepositorySecurityModel {
         if (s != null) {
             List<String> rr = s.getPermissions();
             aa = new NutsAuthorizations(
-                    PrivateNutsUtilCollections.nonNullList(rr)
+                    NutsReservedCollectionUtils.nonNullList(rr)
             );
             authorizations.put(n, aa);
         } else {
@@ -164,7 +164,7 @@ public class DefaultNutsRepositorySecurityModel {
     }
 
     public NutsAuthenticationAgent getAuthenticationAgent(String id, NutsSession session) {
-        id = NutsUtilStrings.trim(id);
+        id = NutsStringUtils.trim(id);
         if (id.isEmpty()) {
             id = ((DefaultNutsRepoConfigManager) repository.config())
                     .getModel()

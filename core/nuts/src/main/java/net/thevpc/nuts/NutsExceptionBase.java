@@ -26,7 +26,7 @@
  */
 package net.thevpc.nuts;
 
-import net.thevpc.nuts.boot.PrivateNutsUtilErrors;
+import net.thevpc.nuts.reserved.NutsReservedLangUtils;
 
 /**
  * Base Nuts Exception Interface. Parent of all Nuts defined Exceptions.
@@ -37,7 +37,7 @@ import net.thevpc.nuts.boot.PrivateNutsUtilErrors;
  */
 public interface NutsExceptionBase {
     static NutsOptional<NutsExceptionBase> resolveExceptionBase(Throwable th) {
-        return PrivateNutsUtilErrors.findThrowable(th,NutsExceptionBase.class,null);
+        return NutsReservedLangUtils.findThrowable(th,NutsExceptionBase.class,null);
     }
 
 

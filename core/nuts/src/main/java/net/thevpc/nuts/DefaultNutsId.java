@@ -25,9 +25,9 @@
  */
 package net.thevpc.nuts;
 
-import net.thevpc.nuts.boot.PrivateNutsUtilMaps;
-import net.thevpc.nuts.boot.PrivateNutsUtilStrings;
-import net.thevpc.nuts.util.NutsUtilStrings;
+import net.thevpc.nuts.reserved.NutsReservedCollectionUtils;
+import net.thevpc.nuts.reserved.NutsReservedStringUtils;
+import net.thevpc.nuts.util.NutsStringUtils;
 
 import java.util.*;
 
@@ -54,8 +54,8 @@ public class DefaultNutsId implements NutsId {
     }
 
     public DefaultNutsId(String groupId, String artifactId, NutsVersion version) {
-        this.groupId = NutsUtilStrings.trimToNull(groupId);
-        this.artifactId = NutsUtilStrings.trimToNull(artifactId);
+        this.groupId = NutsStringUtils.trimToNull(groupId);
+        this.artifactId = NutsStringUtils.trimToNull(artifactId);
         this.version = version == null ? NutsVersion.BLANK : version;
         this.classifier = null;
         this.condition = NutsEnvCondition.BLANK;
@@ -63,26 +63,26 @@ public class DefaultNutsId implements NutsId {
     }
 
     public DefaultNutsId(String groupId, String artifactId, NutsVersion version, String classifier, Map<String, String> properties, NutsEnvCondition condition) {
-        this.groupId = NutsUtilStrings.trimToNull(groupId);
-        this.artifactId = NutsUtilStrings.trimToNull(artifactId);
+        this.groupId = NutsStringUtils.trimToNull(groupId);
+        this.artifactId = NutsStringUtils.trimToNull(artifactId);
         this.version = version == null ? NutsVersion.BLANK : version;
-        String c0 = NutsUtilStrings.trimToNull(classifier);
+        String c0 = NutsStringUtils.trimToNull(classifier);
         String c1 = null;
         if (properties != null) {
             c1 = properties.remove(NutsConstants.IdProperties.CLASSIFIER);
         }
         if (c0 == null) {
             if (c1 != null) {
-                c0 = NutsUtilStrings.trimToNull(c1);
+                c0 = NutsStringUtils.trimToNull(c1);
             }
         }
         this.classifier = c0;
         this.condition = condition == null ? NutsEnvCondition.BLANK : condition.readOnly();
-        this.properties = NutsUtilStrings.formatDefaultMap(properties);
+        this.properties = NutsStringUtils.formatDefaultMap(properties);
     }
 
     public DefaultNutsId(String groupId, String artifactId, NutsVersion version, String classifier, String properties, NutsEnvCondition condition) {
-        this(groupId, artifactId, version, classifier, NutsUtilStrings.parseDefaultMap(properties).get(), condition);
+        this(groupId, artifactId, version, classifier, NutsStringUtils.parseDefaultMap(properties).get(), condition);
     }
 
     @Override
@@ -105,8 +105,8 @@ public class DefaultNutsId implements NutsId {
         if (other == null) {
             return false;
         }
-        return NutsUtilStrings.trim(groupId).equals(NutsUtilStrings.trim(other.getGroupId()))
-                && NutsUtilStrings.trim(artifactId).equals(NutsUtilStrings.trim(other.getArtifactId()));
+        return NutsStringUtils.trim(groupId).equals(NutsStringUtils.trim(other.getGroupId()))
+                && NutsStringUtils.trim(artifactId).equals(NutsStringUtils.trim(other.getArtifactId()));
     }
 
     @Override
@@ -132,8 +132,8 @@ public class DefaultNutsId implements NutsId {
         if (other == null) {
             return false;
         }
-        return NutsUtilStrings.trim(groupId).equals(NutsUtilStrings.trim(other.getGroupId()))
-                && NutsUtilStrings.trim(artifactId).equals(NutsUtilStrings.trim(other.getArtifactId()))
+        return NutsStringUtils.trim(groupId).equals(NutsStringUtils.trim(other.getGroupId()))
+                && NutsStringUtils.trim(artifactId).equals(NutsStringUtils.trim(other.getArtifactId()))
                 && Objects.equals((version == null || version.isBlank()) ? null : version,
                 (other.getVersion() == null || other.getVersion().isBlank()) ? null : other.getVersion())
                 && Objects.equals(getClassifier(), other.getClassifier())
@@ -143,18 +143,18 @@ public class DefaultNutsId implements NutsId {
     @Override
     public String getFace() {
         String s = getProperties().get(NutsConstants.IdProperties.FACE);
-        return NutsUtilStrings.trimToNull(s);
+        return NutsStringUtils.trimToNull(s);
     }
 
     @Override
     public String getClassifier() {
-        return NutsUtilStrings.trimToNull(classifier);
+        return NutsStringUtils.trimToNull(classifier);
     }
 
     @Override
     public String getPackaging() {
         String s = getProperties().get(NutsConstants.IdProperties.PACKAGING);
-        return NutsUtilStrings.trimToNull(s);
+        return NutsStringUtils.trimToNull(s);
     }
 
     @Override
@@ -169,13 +169,13 @@ public class DefaultNutsId implements NutsId {
 
     @Override
     public Map<String, String> getProperties() {
-        return NutsUtilStrings.parseDefaultMap(properties).get();
+        return NutsStringUtils.parseDefaultMap(properties).get();
     }
 
     @Override
     public String getRepository() {
         String s = getProperties().get(NutsConstants.IdProperties.REPO);
-        return NutsUtilStrings.trimToNull(s);
+        return NutsStringUtils.trimToNull(s);
     }
 
     @Override
@@ -197,9 +197,9 @@ public class DefaultNutsId implements NutsId {
     @Override
     public String getShortName() {
         if (NutsBlankable.isBlank(groupId)) {
-            return NutsUtilStrings.trim(artifactId);
+            return NutsStringUtils.trim(artifactId);
         }
-        return NutsUtilStrings.trim(groupId) + ":" + NutsUtilStrings.trim(artifactId);
+        return NutsStringUtils.trim(groupId) + ":" + NutsStringUtils.trim(artifactId);
     }
 
     @Override
@@ -208,7 +208,7 @@ public class DefaultNutsId implements NutsId {
         if (!NutsBlankable.isBlank(groupId)) {
             sb.append(groupId).append(":");
         }
-        sb.append(NutsUtilStrings.trim(artifactId));
+        sb.append(NutsStringUtils.trim(artifactId));
         NutsVersion v = getVersion();
         if (!v.isBlank()) {
             sb.append("#");
@@ -243,7 +243,7 @@ public class DefaultNutsId implements NutsId {
         if (!NutsBlankable.isBlank(groupId)) {
             sb.append(groupId).append(":");
         }
-        sb.append(NutsUtilStrings.trim(artifactId));
+        sb.append(NutsStringUtils.trim(artifactId));
         NutsVersion v = getVersion();
         if (!v.isBlank()) {
             sb.append("#");
@@ -253,14 +253,14 @@ public class DefaultNutsId implements NutsId {
         if (!NutsBlankable.isBlank(classifier)) {
             m.put(NutsConstants.IdProperties.CLASSIFIER, classifier);
         }
-        m.putAll(PrivateNutsUtilMaps.toMap(condition));
-        for (Map.Entry<String, String> e : NutsUtilStrings.parseDefaultMap(properties).get().entrySet()) {
+        m.putAll(NutsReservedCollectionUtils.toMap(condition));
+        for (Map.Entry<String, String> e : NutsStringUtils.parseDefaultMap(properties).get().entrySet()) {
             if (!m.containsKey(e.getKey())) {
                 m.put(e.getKey(), e.getValue());
             }
         }
         if (!m.isEmpty()) {
-            sb.append("?").append(NutsUtilStrings.formatDefaultMap(m));
+            sb.append("?").append(NutsStringUtils.formatDefaultMap(m));
         }
         return sb.toString();
     }
@@ -311,7 +311,7 @@ public class DefaultNutsId implements NutsId {
             exc = "";
         }
         List<NutsId> a = new ArrayList<>();
-        for (String s : PrivateNutsUtilStrings.splitDefault(exc)) {
+        for (String s : NutsReservedStringUtils.splitDefault(exc)) {
             NutsId n = NutsId.of(s).get();
             if (n != null) {
                 a.add(n);
@@ -340,15 +340,15 @@ public class DefaultNutsId implements NutsId {
     @Override
     public int compareTo(NutsId o2) {
         int x;
-        x = NutsUtilStrings.trim(this.getGroupId()).compareTo(NutsUtilStrings.trim(o2.getGroupId()));
+        x = NutsStringUtils.trim(this.getGroupId()).compareTo(NutsStringUtils.trim(o2.getGroupId()));
         if (x != 0) {
             return x;
         }
-        x = NutsUtilStrings.trim(this.getArtifactId()).compareTo(NutsUtilStrings.trim(o2.getArtifactId()));
+        x = NutsStringUtils.trim(this.getArtifactId()).compareTo(NutsStringUtils.trim(o2.getArtifactId()));
         if (x != 0) {
             return x;
         }
-        x = NutsUtilStrings.trim(this.getClassifier()).compareTo(NutsUtilStrings.trim(o2.getClassifier()));
+        x = NutsStringUtils.trim(this.getClassifier()).compareTo(NutsStringUtils.trim(o2.getClassifier()));
         if (x != 0) {
             return x;
         }

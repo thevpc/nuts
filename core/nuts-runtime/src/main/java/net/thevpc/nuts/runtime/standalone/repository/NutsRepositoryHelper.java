@@ -15,7 +15,7 @@ import java.util.logging.Level;
 
 import net.thevpc.nuts.runtime.standalone.repository.cmd.NutsRepositorySupportedAction;
 import net.thevpc.nuts.runtime.standalone.util.NutsSpeedQualifiers;
-import net.thevpc.nuts.util.NutsUtilStrings;
+import net.thevpc.nuts.util.NutsStringUtils;
 
 public class NutsRepositoryHelper {
     private NutsLogger LOG;
@@ -146,7 +146,7 @@ public class NutsRepositoryHelper {
         public void fireOnAddRepository(NutsRepositoryEvent event) {
             if (u._LOG(event.getSession()).isLoggable(Level.FINEST)) {
                 u._LOGOP(event.getSession()).level(Level.FINEST).verb(NutsLoggerVerb.ADD)
-                        .log(NutsMessage.jstyle("{0} add    repo {1}", NutsUtilStrings.formatAlign(u.repo.getName(), 20, NutsPositionType.FIRST), event
+                        .log(NutsMessage.jstyle("{0} add    repo {1}", NutsStringUtils.formatAlign(u.repo.getName(), 20, NutsPositionType.FIRST), event
                                 .getRepository().getName())
                         );
             }
@@ -164,7 +164,7 @@ public class NutsRepositoryHelper {
         public void fireOnRemoveRepository(NutsRepositoryEvent event) {
             if (u._LOG(event.getSession()).isLoggable(Level.FINEST)) {
                 u._LOGOP(event.getSession()).level(Level.FINEST).verb(NutsLoggerVerb.REMOVE).log(
-                        NutsMessage.jstyle("{0} remove repo {1}", NutsUtilStrings.formatAlign(u.repo.getName(), 20,NutsPositionType.FIRST), event
+                        NutsMessage.jstyle("{0} remove repo {1}", NutsStringUtils.formatAlign(u.repo.getName(), 20,NutsPositionType.FIRST), event
                                 .getRepository().getName()));
             }
             for (NutsRepositoryListener listener : u.repo.getRepositoryListeners()) {

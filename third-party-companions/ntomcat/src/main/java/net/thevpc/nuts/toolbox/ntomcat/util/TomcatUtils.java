@@ -3,7 +3,7 @@ package net.thevpc.nuts.toolbox.ntomcat.util;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.io.NutsPath;
 import net.thevpc.nuts.io.NutsPs;
-import net.thevpc.nuts.util.NutsUtilStrings;
+import net.thevpc.nuts.util.NutsStringUtils;
 
 import java.io.*;
 import java.nio.file.Files;
@@ -13,9 +13,9 @@ import java.util.*;
 public class TomcatUtils {
 
     public static String toValidFileName(String name, String defaultName) {
-        String r = NutsUtilStrings.trim(name);
+        String r = NutsStringUtils.trim(name);
         if (r.isEmpty()) {
-            return NutsUtilStrings.trim(defaultName);
+            return NutsStringUtils.trim(defaultName);
         }
         return r
                 .replace('/', '_')

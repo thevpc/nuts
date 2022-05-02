@@ -31,7 +31,7 @@ import net.thevpc.nuts.runtime.standalone.io.util.CoreIOUtils;
 import net.thevpc.nuts.runtime.standalone.repository.impl.folder.NutsFolderRepositoryBase;
 import net.thevpc.nuts.runtime.standalone.repository.impl.maven.util.MavenUtils;
 import net.thevpc.nuts.runtime.standalone.util.CoreNutsConstants;
-import net.thevpc.nuts.util.NutsUtilStrings;
+import net.thevpc.nuts.util.NutsStringUtils;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -59,7 +59,7 @@ public class NutsFolderRepository extends NutsFolderRepositoryBase {
     public String getIdExtension(NutsId id, NutsSession session) {
         checkSession(session);
         Map<String, String> q = id.getProperties();
-        String f = NutsUtilStrings.trim(q.get(NutsConstants.IdProperties.FACE));
+        String f = NutsStringUtils.trim(q.get(NutsConstants.IdProperties.FACE));
         switch (f) {
             case NutsConstants.QueryFaces.DESCRIPTOR: {
                 return ".nuts";

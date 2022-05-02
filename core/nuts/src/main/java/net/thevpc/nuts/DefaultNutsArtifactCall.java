@@ -24,7 +24,7 @@
  */
 package net.thevpc.nuts;
 
-import net.thevpc.nuts.boot.PrivateNutsUtilCollections;
+import net.thevpc.nuts.reserved.NutsReservedCollectionUtils;
 
 import java.io.Serializable;
 import java.util.*;
@@ -51,8 +51,8 @@ public class DefaultNutsArtifactCall implements NutsArtifactCall, Serializable {
 
     public DefaultNutsArtifactCall(NutsArtifactCall other) {
         this.id = other.getId();
-        this.arguments = PrivateNutsUtilCollections.nonNullList(other.getArguments());
-        this.properties = PrivateNutsUtilCollections.nonNullMap(other.getProperties());
+        this.arguments = NutsReservedCollectionUtils.nonNullList(other.getArguments());
+        this.properties = NutsReservedCollectionUtils.nonNullMap(other.getProperties());
     }
 
     @Override
@@ -90,8 +90,8 @@ public class DefaultNutsArtifactCall implements NutsArtifactCall, Serializable {
 
     public DefaultNutsArtifactCall(NutsId id, List<String> options, Map<String, String> properties) {
         this.id = id;
-        this.arguments = PrivateNutsUtilCollections.nonNullList(options);
-        this.properties = PrivateNutsUtilCollections.nonNullMap(properties);
+        this.arguments = NutsReservedCollectionUtils.nonNullList(options);
+        this.properties = NutsReservedCollectionUtils.nonNullMap(properties);
     }
 
     public NutsId getId() {
@@ -99,11 +99,11 @@ public class DefaultNutsArtifactCall implements NutsArtifactCall, Serializable {
     }
 
     public List<String> getArguments() {
-        return PrivateNutsUtilCollections.unmodifiableList(arguments);
+        return NutsReservedCollectionUtils.unmodifiableList(arguments);
     }
 
     public Map<String, String> getProperties() {
-        return PrivateNutsUtilCollections.unmodifiableMap(properties);
+        return NutsReservedCollectionUtils.unmodifiableMap(properties);
     }
 
     @Override

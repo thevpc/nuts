@@ -25,9 +25,9 @@
  */
 package net.thevpc.nuts;
 
-import net.thevpc.nuts.boot.PrivateNutsDefaultNutsProperties;
-import net.thevpc.nuts.boot.PrivateNutsUtilCollections;
-import net.thevpc.nuts.util.NutsUtilStrings;
+import net.thevpc.nuts.reserved.NutsReservedDefaultNutsProperties;
+import net.thevpc.nuts.reserved.NutsReservedCollectionUtils;
+import net.thevpc.nuts.util.NutsStringUtils;
 
 import java.util.*;
 
@@ -110,31 +110,31 @@ public class DefaultNutsDescriptor implements NutsDescriptor {
     ) {
         this.id = id;
         this.idType = idType == null ? NutsIdType.REGULAR : idType;
-        this.packaging = NutsUtilStrings.trimToNull(packaging);
-        this.parents = PrivateNutsUtilCollections.uniqueList(parents);
-        this.description = NutsUtilStrings.trimToNull(description);
-        this.name = NutsUtilStrings.trimToNull(name);
-        this.genericName = NutsUtilStrings.trimToNull(genericName);
-        this.icons = PrivateNutsUtilCollections.uniqueNonBlankList(icons);
-        this.categories = PrivateNutsUtilCollections.uniqueNonBlankList(categories);
+        this.packaging = NutsStringUtils.trimToNull(packaging);
+        this.parents = NutsReservedCollectionUtils.uniqueList(parents);
+        this.description = NutsStringUtils.trimToNull(description);
+        this.name = NutsStringUtils.trimToNull(name);
+        this.genericName = NutsStringUtils.trimToNull(genericName);
+        this.icons = NutsReservedCollectionUtils.uniqueNonBlankList(icons);
+        this.categories = NutsReservedCollectionUtils.uniqueNonBlankList(categories);
         this.executor = executor;
         this.installer = installer;
         this.condition = condition == null ? NutsEnvCondition.BLANK : condition;
-        this.locations = PrivateNutsUtilCollections.uniqueNonBlankList(locations);
-        this.dependencies = PrivateNutsUtilCollections.uniqueNonBlankList(dependencies);
-        this.standardDependencies = PrivateNutsUtilCollections.uniqueNonBlankList(standardDependencies);
+        this.locations = NutsReservedCollectionUtils.uniqueNonBlankList(locations);
+        this.dependencies = NutsReservedCollectionUtils.uniqueNonBlankList(dependencies);
+        this.standardDependencies = NutsReservedCollectionUtils.uniqueNonBlankList(standardDependencies);
         if (properties == null || properties.size() == 0) {
             this.properties = null;
         } else {
-            PrivateNutsDefaultNutsProperties p = new PrivateNutsDefaultNutsProperties();
+            NutsReservedDefaultNutsProperties p = new NutsReservedDefaultNutsProperties();
             p.addAll(properties);
             this.properties = p.getList();
         }
-        this.flags = PrivateNutsUtilCollections.nonBlankSet(flags);
-        this.solver = NutsUtilStrings.trimToNull(solver);
-        this.contributors = PrivateNutsUtilCollections.unmodifiableUniqueList(contributors);
-        this.licenses = PrivateNutsUtilCollections.unmodifiableUniqueList(licenses);
-        this.mailingLists = PrivateNutsUtilCollections.unmodifiableUniqueList(mailingLists);
+        this.flags = NutsReservedCollectionUtils.nonBlankSet(flags);
+        this.solver = NutsStringUtils.trimToNull(solver);
+        this.contributors = NutsReservedCollectionUtils.unmodifiableUniqueList(contributors);
+        this.licenses = NutsReservedCollectionUtils.unmodifiableUniqueList(licenses);
+        this.mailingLists = NutsReservedCollectionUtils.unmodifiableUniqueList(mailingLists);
         this.organization = organization;
     }
 

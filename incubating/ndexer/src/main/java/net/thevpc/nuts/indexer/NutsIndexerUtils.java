@@ -2,7 +2,7 @@ package net.thevpc.nuts.indexer;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.elem.NutsElements;
-import net.thevpc.nuts.util.NutsUtilStrings;
+import net.thevpc.nuts.util.NutsStringUtils;
 import org.apache.lucene.index.Term;
 import org.apache.lucene.search.*;
 import org.springframework.util.StringUtils;
@@ -107,7 +107,7 @@ public class NutsIndexerUtils {
     }
 
     private static void _condPut(Map<String, String> m, String k, String v) {
-        if (!NutsUtilStrings.trim(v).isEmpty()) {
+        if (!NutsStringUtils.trim(v).isEmpty()) {
             m.put(k, v);
         }
     }
@@ -143,20 +143,20 @@ public class NutsIndexerUtils {
 
     public static NutsId mapToNutsId(Map<String, String> map, NutsSession session) {
         return NutsIdBuilder.of()
-                .setArtifactId(NutsUtilStrings.trim(map.get("name")))
-                .setRepository(NutsUtilStrings.trim(map.get("namespace")))
-                .setGroupId(NutsUtilStrings.trim(map.get("group")))
-                .setVersion(NutsUtilStrings.trim(map.get("version")))
+                .setArtifactId(NutsStringUtils.trim(map.get("name")))
+                .setRepository(NutsStringUtils.trim(map.get("namespace")))
+                .setGroupId(NutsStringUtils.trim(map.get("group")))
+                .setVersion(NutsStringUtils.trim(map.get("version")))
                 .setCondition(
                         new DefaultNutsEnvConditionBuilder()
                                 //TODO what if the result is ',' separated array?
-                                .setArch(Arrays.asList(NutsUtilStrings.trim(map.get(NutsConstants.IdProperties.ARCH))))
-                                .setOs(Arrays.asList(NutsUtilStrings.trim(map.get(NutsConstants.IdProperties.OS))))
-                                .setOsDist(Arrays.asList(NutsUtilStrings.trim(map.get(NutsConstants.IdProperties.OS_DIST))))
-                                .setPlatform(Arrays.asList(NutsUtilStrings.trim(map.get(NutsConstants.IdProperties.PLATFORM))))
-                                .setDesktopEnvironment(Arrays.asList(NutsUtilStrings.trim(map.get(NutsConstants.IdProperties.DESKTOP))))
+                                .setArch(Arrays.asList(NutsStringUtils.trim(map.get(NutsConstants.IdProperties.ARCH))))
+                                .setOs(Arrays.asList(NutsStringUtils.trim(map.get(NutsConstants.IdProperties.OS))))
+                                .setOsDist(Arrays.asList(NutsStringUtils.trim(map.get(NutsConstants.IdProperties.OS_DIST))))
+                                .setPlatform(Arrays.asList(NutsStringUtils.trim(map.get(NutsConstants.IdProperties.PLATFORM))))
+                                .setDesktopEnvironment(Arrays.asList(NutsStringUtils.trim(map.get(NutsConstants.IdProperties.DESKTOP))))
                 )
-                .setClassifier(NutsUtilStrings.trim(map.get(NutsConstants.IdProperties.CLASSIFIER)))
+                .setClassifier(NutsStringUtils.trim(map.get(NutsConstants.IdProperties.CLASSIFIER)))
 //                .setAlternative(trim(map.get(NutsConstants.IdProperties.ALTERNATIVE)))
                 .build();
     }
@@ -171,7 +171,7 @@ public class NutsIndexerUtils {
             if (!set.contains(entry.getKey())) {
                 builder.add(new PhraseQuery.Builder()
                                 .add(new Term(entry.getKey(),
-                                        NutsUtilStrings.trim(entry.getValue()))).build(),
+                                        NutsStringUtils.trim(entry.getValue()))).build(),
                         BooleanClause.Occur.MUST);
             }
         }

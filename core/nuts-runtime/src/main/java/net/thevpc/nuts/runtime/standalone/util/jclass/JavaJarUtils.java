@@ -9,7 +9,7 @@ import net.thevpc.nuts.runtime.standalone.repository.impl.maven.pom.PomXmlParser
 import net.thevpc.nuts.runtime.standalone.util.xml.XmlUtils;
 import net.thevpc.nuts.runtime.standalone.xtra.execentries.DefaultNutsExecutionEntry;
 import net.thevpc.nuts.util.NutsRef;
-import net.thevpc.nuts.util.NutsUtilStrings;
+import net.thevpc.nuts.util.NutsStringUtils;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
@@ -114,7 +114,7 @@ public class JavaJarUtils {
                 if (a != null) {
                     String v = a.getValue("Main-Class");
                     if (!NutsBlankable.isBlank(v)) {
-                        v= NutsUtilStrings.trim(v);
+                        v= NutsStringUtils.trim(v);
                         classes.add(new DefaultNutsExecutionEntry(v, true, false));
                     }
                 }
@@ -122,7 +122,7 @@ public class JavaJarUtils {
                 Pom pom = new PomXmlParser(session).parse(inputStream, session);
                 final Element ee = pom.getXml().getDocumentElement();
                 if(pom.getParent()!=null && pom.getParent().getArtifactId().equals("spring-boot-starter-parent")){
-                    String springStartClass = NutsUtilStrings.trim(pom.getProperties().get("start-class"));
+                    String springStartClass = NutsStringUtils.trim(pom.getProperties().get("start-class"));
                     if(springStartClass.length()>0){
                         classes.add(new DefaultNutsExecutionEntry(springStartClass, true, false));
                     }
@@ -138,7 +138,7 @@ public class JavaJarUtils {
                                     pluginId.getShortName().equals("org.apache.maven.plugins:maven-assembly-plugin")
                                             || pluginId.getShortName().equals("org.apache.maven.plugins:maven-jar-plugin")
                             ) {
-                                String s = NutsUtilStrings.trim(e.getTextContent());
+                                String s = NutsStringUtils.trim(e.getTextContent());
                                 if (s.length() > 0) {
                                     s=resolveMainClassString(s,pom);
                                     classes.add(new DefaultNutsExecutionEntry(s, true, false));
@@ -153,7 +153,7 @@ public class JavaJarUtils {
                                     || pluginId.getShortName().equals("org.springframework.boot:spring-boot-maven-plugin")
                                     || pluginId.getShortName().equals("org.openjfx:javafx-maven-plugin")
                             ) {
-                                String s = NutsUtilStrings.trim(e.getTextContent());
+                                String s = NutsStringUtils.trim(e.getTextContent());
                                 if (s.length() > 0) {
                                     s=resolveMainClassString(s,pom);
                                     classes.add(new DefaultNutsExecutionEntry(s, true, false));
@@ -166,7 +166,7 @@ public class JavaJarUtils {
                             Node plugin = e.getParentNode().getParentNode();
                             NutsId pluginId = parseMavenPluginElement(plugin, session);
                             if (pluginId.getShortName().equals("org.springframework.boot:spring-boot-maven-plugin")) {
-                                String s = NutsUtilStrings.trim(e.getTextContent());
+                                String s = NutsStringUtils.trim(e.getTextContent());
                                 if (s.length() > 0) {
                                     s=resolveMainClassString(s,pom);
                                     classes.add(new DefaultNutsExecutionEntry(s, true, false));
@@ -179,7 +179,7 @@ public class JavaJarUtils {
                             if (
                                     pluginId.getShortName().equals("org.apache.maven.plugins:maven-shade-plugin")
                             ) {
-                                String s = NutsUtilStrings.trim(e.getTextContent());
+                                String s = NutsStringUtils.trim(e.getTextContent());
                                 if (s.length() > 0) {
                                     s=resolveMainClassString(s,pom);
                                     classes.add(new DefaultNutsExecutionEntry(s, true, false));
@@ -211,7 +211,7 @@ public class JavaJarUtils {
                 }
                 NutsDescriptorProperty mc = descriptor.getProperty("nuts.mainClass");
                 if(mc!=null){
-                    String s = NutsUtilStrings.trim(mc.getValue().asString().get(session));
+                    String s = NutsStringUtils.trim(mc.getValue().asString().get(session));
                     if (s.length() > 0) {
                         s=resolveMainClassString(s,descriptor);
                         classes.add(new DefaultNutsExecutionEntry(s, true, false));
@@ -283,15 +283,15 @@ public class JavaJarUtils {
             if (ne != null) {
                 switch (ne.getNodeName()) {
                     case "groupId": {
-                        ib.setGroupId(NutsUtilStrings.trim(ne.getTextContent()));
+                        ib.setGroupId(NutsStringUtils.trim(ne.getTextContent()));
                         break;
                     }
                     case "artifactId": {
-                        ib.setArtifactId(NutsUtilStrings.trim(ne.getTextContent()));
+                        ib.setArtifactId(NutsStringUtils.trim(ne.getTextContent()));
                         break;
                     }
                     case "version": {
-                        ib.setVersion(NutsUtilStrings.trim(ne.getTextContent()));
+                        ib.setVersion(NutsStringUtils.trim(ne.getTextContent()));
                         break;
                     }
                 }
@@ -325,7 +325,7 @@ public class JavaJarUtils {
                     for (Object o : attrs.keySet()) {
                         Attributes.Name attrName = (Attributes.Name) o;
                         if ("Automatic-Module-Name".equals(attrName.toString())) {
-                            automaticModuleName.setNonNull(NutsUtilStrings.trimToNull(attrs.getValue(attrName)));
+                            automaticModuleName.setNonNull(NutsStringUtils.trimToNull(attrs.getValue(attrName)));
                             return false;
                         }
                     }

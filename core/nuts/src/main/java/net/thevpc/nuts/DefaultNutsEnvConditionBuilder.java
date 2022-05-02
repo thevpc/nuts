@@ -25,8 +25,7 @@
  */
 package net.thevpc.nuts;
 
-import net.thevpc.nuts.boot.PrivateNutsUtilCollections;
-import net.thevpc.nuts.boot.PrivateNutsUtilMaps;
+import net.thevpc.nuts.reserved.NutsReservedCollectionUtils;
 
 import java.io.Serializable;
 import java.util.*;
@@ -62,7 +61,7 @@ public class DefaultNutsEnvConditionBuilder implements Serializable, NutsEnvCond
 
     @Override
     public NutsEnvConditionBuilder setArch(List<String> arch) {
-        this.arch = PrivateNutsUtilCollections.uniqueNonBlankList(arch);
+        this.arch = NutsReservedCollectionUtils.uniqueNonBlankList(arch);
         return this;
     }
 
@@ -72,7 +71,7 @@ public class DefaultNutsEnvConditionBuilder implements Serializable, NutsEnvCond
 
     @Override
     public NutsEnvConditionBuilder setOs(List<String> os) {
-        this.os = PrivateNutsUtilCollections.uniqueNonBlankList(os);
+        this.os = NutsReservedCollectionUtils.uniqueNonBlankList(os);
         return this;
     }
 
@@ -82,7 +81,7 @@ public class DefaultNutsEnvConditionBuilder implements Serializable, NutsEnvCond
 
     @Override
     public NutsEnvConditionBuilder setOsDist(List<String> osDist) {
-        this.osDist = PrivateNutsUtilCollections.uniqueNonBlankList(osDist);
+        this.osDist = NutsReservedCollectionUtils.uniqueNonBlankList(osDist);
         return this;
     }
 
@@ -92,7 +91,7 @@ public class DefaultNutsEnvConditionBuilder implements Serializable, NutsEnvCond
 
     @Override
     public NutsEnvConditionBuilder setPlatform(List<String> platform) {
-        this.platform = PrivateNutsUtilCollections.uniqueNonBlankList(platform);
+        this.platform = NutsReservedCollectionUtils.uniqueNonBlankList(platform);
         return this;
     }
 
@@ -102,7 +101,7 @@ public class DefaultNutsEnvConditionBuilder implements Serializable, NutsEnvCond
 
     @Override
     public NutsEnvConditionBuilder setDesktopEnvironment(List<String> desktopEnvironment) {
-        this.desktopEnvironment = PrivateNutsUtilCollections.uniqueNonBlankList(desktopEnvironment);
+        this.desktopEnvironment = NutsReservedCollectionUtils.uniqueNonBlankList(desktopEnvironment);
         return this;
     }
 
@@ -263,6 +262,6 @@ public class DefaultNutsEnvConditionBuilder implements Serializable, NutsEnvCond
     }
 
     public Map<String, String> toMap() {
-        return PrivateNutsUtilMaps.toMap(this);
+        return NutsReservedCollectionUtils.toMap(this);
     }
 }

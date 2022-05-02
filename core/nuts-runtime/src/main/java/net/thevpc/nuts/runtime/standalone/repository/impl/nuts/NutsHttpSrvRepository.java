@@ -47,7 +47,7 @@ import net.thevpc.nuts.runtime.standalone.util.iter.IteratorBuilder;
 import net.thevpc.nuts.runtime.standalone.xtra.digest.NutsDigestUtils;
 import net.thevpc.nuts.spi.*;
 import net.thevpc.nuts.util.NutsIterator;
-import net.thevpc.nuts.util.NutsUtilStrings;
+import net.thevpc.nuts.util.NutsStringUtils;
 
 public class NutsHttpSrvRepository extends NutsCachedRepository {
 
@@ -269,7 +269,7 @@ public class NutsHttpSrvRepository extends NutsCachedRepository {
         }
 
         String passphrase = config().getConfigProperty(CoreSecurityUtils.ENV_KEY_PASSPHRASE, CoreSecurityUtils.DEFAULT_PASSPHRASE);
-        newLogin = new String(CoreSecurityUtils.defaultEncryptChars(NutsUtilStrings.trim(newLogin).toCharArray(), passphrase,session));
+        newLogin = new String(CoreSecurityUtils.defaultEncryptChars(NutsStringUtils.trim(newLogin).toCharArray(), passphrase,session));
         credentials = CoreSecurityUtils.defaultEncryptChars(credentials, passphrase,session);
         return new String[]{newLogin, new String(credentials)};
     }

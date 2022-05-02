@@ -10,7 +10,7 @@ import net.thevpc.nuts.text.NutsTexts;
 import net.thevpc.nuts.toolbox.ntomcat.remote.config.RemoteTomcatAppConfig;
 import net.thevpc.nuts.toolbox.ntomcat.remote.config.RemoteTomcatConfig;
 import net.thevpc.nuts.toolbox.ntomcat.util._FileUtils;
-import net.thevpc.nuts.util.NutsUtilStrings;
+import net.thevpc.nuts.util.NutsStringUtils;
 
 import java.io.File;
 import java.util.LinkedHashMap;
@@ -115,7 +115,7 @@ public class RemoteTomcatAppConfigService extends RemoteTomcatServiceBase {
                 "--app",
                 name,
                 "--version",
-                NutsUtilStrings.trim(version)
+                NutsStringUtils.trim(version)
         );
     }
 

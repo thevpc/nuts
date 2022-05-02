@@ -26,7 +26,7 @@
 package net.thevpc.nuts.runtime.standalone.boot;
 
 import net.thevpc.nuts.NutsWorkspace;
-import net.thevpc.nuts.NutsWorkspaceBootOptions;
+import net.thevpc.nuts.boot.NutsWorkspaceBootOptions;
 import net.thevpc.nuts.runtime.standalone.workspace.DefaultNutsWorkspace;
 import net.thevpc.nuts.spi.NutsBootWorkspaceFactory;
 import net.thevpc.nuts.spi.NutsComponent;

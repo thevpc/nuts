@@ -302,23 +302,47 @@ public class DefaultNutsInfoCommand extends DefaultFormatBase<NutsInfoCommand> i
         props.put("nuts-store-layout", session.locations().getStoreLocationLayout());
         props.put("nuts-store-strategy", session.locations().getStoreLocationStrategy());
         props.put("nuts-repo-store-strategy", session.locations().getRepositoryStoreLocationStrategy());
-        props.put("nuts-global", options.getGlobal().orElse(false));
+        props.put("nuts-global", options.getGlobal().orNull());
         props.put("nuts-workspace", session.locations().getWorkspaceLocation());
         for (NutsStoreLocation folderType : NutsStoreLocation.values()) {
             props.put("nuts-workspace-" + folderType.id(), session.locations().getStoreLocation(folderType));
         }
-        props.put("nuts-open-mode", options.getOpenMode().orElse(NutsOpenMode.OPEN_OR_CREATE));
+        props.put("nuts-open-mode", options.getOpenMode().orNull());
+        props.put("nuts-isolation-level", options.getIsolationLevel().orNull());
         props.put("nuts-secure", (session.security().isSecure()));
-        props.put("nuts-gui", options.getGui().orElse(false));
-        props.put("nuts-inherited", options.getInherited().orElse(false));
-        props.put("nuts-recover", options.getRecover().orElse(false));
-        props.put("nuts-reset", options.getReset().orElse(false));
+        props.put("nuts-gui", options.getGui().orNull());
+        props.put("nuts-inherited", options.getInherited().orNull());
+        props.put("nuts-recover", options.getRecover().orNull());
+        props.put("nuts-reset", options.getReset().orNull());
+        props.put("nuts-read-only", (options.getReadOnly().orNull()));
         props.put("nuts-debug", NutsDebugString.of(options.getDebug().orNull(), getSession()));
-        props.put("nuts-trace", options.getTrace().orElse(true));
-        props.put("nuts-read-only", (options.getReadOnly().orElse(false)));
-        props.put("nuts-skip-companions", options.getSkipCompanions().orElse(false));
-        props.put("nuts-skip-welcome", options.getSkipWelcome().orElse(false));
-        props.put("nuts-skip-boot", options.getSkipBoot().orElse(false));
+        props.put("nuts-bot", options.getBot().orNull());
+        props.put("nuts-trace", options.getTrace().orNull());
+        props.put("nuts-indexed", options.getIndexed().orNull());
+        props.put("nuts-transitive", options.getTransitive().orNull());
+        props.put("nuts-fetch-strategy", options.getFetchStrategy().orNull());
+        props.put("nuts-execution-type", options.getExecutionType().orNull());
+        props.put("nuts-dry", options.getDry().orNull());
+        props.put("nuts-output-format", options.getOutputFormat().orNull());
+        props.put("nuts-confirm", options.getConfirm().orNull());
+        props.put("nuts-dependency-solver", options.getDependencySolver().orNull());
+        props.put("nuts-progress-options", options.getProgressOptions().orNull());
+        props.put("nuts-progress", session.isProgress());
+        props.put("nuts-terminal-mode", options.getTerminalMode().orNull());
+        props.put("nuts-cached", options.getCached().orNull());
+        props.put("nuts-skip-companions", options.getSkipCompanions().orNull());
+        props.put("nuts-skip-welcome", options.getSkipWelcome().orNull());
+        props.put("nuts-skip-boot", options.getSkipBoot().orNull());
+        props.put("nuts-init-platforms", options.getInitPlatforms().orNull());
+        props.put("nuts-init-java", options.getInitJava().orNull());
+        props.put("nuts-init-launchers", options.getInitLaunchers().orNull());
+        props.put("nuts-init-scripts", options.getInitScripts().orNull());
+        props.put("nuts-desktop-launcher", options.getDesktopLauncher().orNull());
+        props.put("nuts-menu-launcher", options.getMenuLauncher().orNull());
+        props.put("nuts-user-launcher", options.getUserLauncher().orNull());
+        props.put("nuts-locale", options.getLocale().orNull());
+        props.put("nuts-theme", options.getTheme().orNull());
+        props.put("nuts-username", options.getUserName().orNull());
         String ds = NutsDependencySolverUtils.resolveSolverName(options.getDependencySolver().orNull());
         List<String> allDs = NutsDependencySolver.getSolverNames(session);
         props.put("nuts-solver",
@@ -336,7 +360,7 @@ public class DefaultNutsInfoCommand extends DefaultFormatBase<NutsInfoCommand> i
                 )
 
         );
-        NutsBootTerminal b = session.boot().getBootTerminal();
+        NutsWorkspaceTerminalOptions b = session.boot().getBootTerminal();
         props.put("sys-terminal-flags", b.getFlags());
         NutsTerminalMode terminalMode = session.boot().getBootOptions().getTerminalMode().orElse(NutsTerminalMode.DEFAULT);
         props.put("sys-terminal-mode", terminalMode);
@@ -375,7 +399,7 @@ public class DefaultNutsInfoCommand extends DefaultFormatBase<NutsInfoCommand> i
         props.put("os-user-launcher", session.env().getDesktopIntegrationSupport(NutsDesktopIntegrationItem.USER));
         props.put("os-shell", session.env().getShellFamily());
         props.put("os-shells", session.env().getShellFamilies());
-        props.put("user-name", stringValue(System.getProperty("user.name")));
+        props.put("os-username", stringValue(System.getProperty("user.name")));
         props.put("user-home", NutsPath.ofUserHome(session));
         props.put("user-dir", NutsPath.ofUserDirectory(session));
         props.put("command-line-long",

@@ -6,6 +6,8 @@
 package net.thevpc.nuts.runtime.standalone.extension;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.boot.NutsClassLoaderNode;
+import net.thevpc.nuts.boot.NutsWorkspaceBootOptions;
 import net.thevpc.nuts.elem.NutsElements;
 import net.thevpc.nuts.io.NutsPath;
 import net.thevpc.nuts.io.NutsServiceLoader;

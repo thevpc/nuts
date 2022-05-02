@@ -32,7 +32,7 @@ import net.thevpc.nuts.runtime.standalone.io.util.ZipUtils;
 import net.thevpc.nuts.spi.NutsContentTypeResolver;
 import net.thevpc.nuts.spi.NutsSupportLevelContext;
 import net.thevpc.nuts.util.NutsRef;
-import net.thevpc.nuts.util.NutsUtilStrings;
+import net.thevpc.nuts.util.NutsStringUtils;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -60,7 +60,7 @@ public class DefaultNutsContentTypeResolver implements NutsContentTypeResolver {
         }
         for (Map.Entry<Object, Object> e : p.entrySet()) {
             String extension=(String)e.getKey();
-            for (String contentType : NutsUtilStrings.split((String) e.getValue(), ",; ")) {
+            for (String contentType : NutsStringUtils.split((String) e.getValue(), ",; ")) {
                 contentTypesToExtensions.computeIfAbsent(contentType,x->new LinkedHashSet<>())
                         .add(extension);
                 extensionsToContentType.computeIfAbsent(extension,x->new LinkedHashSet<>())

@@ -1,8 +1,8 @@
 package net.thevpc.nuts.runtime.standalone.io.terminal;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.boot.NutsApiUtils;
 import net.thevpc.nuts.io.NutsTerminalMode;
+import net.thevpc.nuts.reserved.NutsReservedLangUtils;
 
 public enum NutsTerminalModeOp  implements NutsEnum {
     NOP(NutsTerminalMode.INHERITED, NutsTerminalMode.INHERITED),
@@ -34,7 +34,7 @@ public enum NutsTerminalModeOp  implements NutsEnum {
     }
 
     public static NutsOptional<NutsTerminalMode> parse(String value) {
-        return NutsApiUtils.parse(value, NutsTerminalMode.class);
+        return NutsReservedLangUtils.parseEnum(value, NutsTerminalMode.class);
     }
 
 }

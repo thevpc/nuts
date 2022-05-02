@@ -15,7 +15,7 @@ import java.util.regex.Pattern;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.standalone.xtra.glob.GlobUtils;
 import net.thevpc.nuts.util.NutsPredicates;
-import net.thevpc.nuts.util.NutsUtilStrings;
+import net.thevpc.nuts.util.NutsStringUtils;
 
 /**
  *
@@ -97,7 +97,7 @@ public class NutsPatternIdFilter extends AbstractIdFilter implements NutsIdFilte
 
         @Override
         public boolean test(Map<String, String> x) {
-            String sv = NutsUtilStrings.trim(x.get(key));
+            String sv = NutsStringUtils.trim(x.get(key));
             return valPattern.matcher(sv).matches();
         }
         @Override
@@ -124,7 +124,7 @@ public class NutsPatternIdFilter extends AbstractIdFilter implements NutsIdFilte
         public boolean test(Map<String, String> x) {
             for (Map.Entry<String, String> entry : x.entrySet()) {
                 if (keyPattern.matcher(entry.getKey()).matches()) {
-                    String sv = NutsUtilStrings.trim(entry.getValue());
+                    String sv = NutsStringUtils.trim(entry.getValue());
                     return valPattern.matcher(sv).matches();
                 }
             }

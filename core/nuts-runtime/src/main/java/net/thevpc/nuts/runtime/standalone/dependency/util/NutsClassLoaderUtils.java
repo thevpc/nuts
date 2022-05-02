@@ -29,6 +29,7 @@ import java.net.URLClassLoader;
 import java.util.*;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.boot.NutsClassLoaderNode;
 
 /**
  *

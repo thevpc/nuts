@@ -24,7 +24,7 @@
 package net.thevpc.nuts.runtime.standalone.util;
 
 import net.thevpc.nuts.format.NutsPositionType;
-import net.thevpc.nuts.util.NutsUtilStrings;
+import net.thevpc.nuts.util.NutsStringUtils;
 
 import java.time.Duration;
 
@@ -45,18 +45,18 @@ public class CoreTimeUtils {
         int s = (int) ((period % 60000L) / 1000L);
         int ms = (int) (period % 1000L);
         if (h > 0) {
-            sb.append(NutsUtilStrings.formatAlign(String.valueOf(h), 2, NutsPositionType.LAST)).append("h ");
+            sb.append(NutsStringUtils.formatAlign(String.valueOf(h), 2, NutsPositionType.LAST)).append("h ");
             started = true;
         }
         if (mn > 0 || started) {
-            sb.append(NutsUtilStrings.formatAlign(String.valueOf(mn), 2, NutsPositionType.LAST)).append("mn ");
+            sb.append(NutsStringUtils.formatAlign(String.valueOf(mn), 2, NutsPositionType.LAST)).append("mn ");
             started = true;
         }
         if (s > 0 || started) {
-            sb.append(NutsUtilStrings.formatAlign(String.valueOf(s), 2, NutsPositionType.LAST)).append("s ");
+            sb.append(NutsStringUtils.formatAlign(String.valueOf(s), 2, NutsPositionType.LAST)).append("s ");
             //started=true;
         }
-        sb.append(NutsUtilStrings.formatAlign(String.valueOf(ms), 3, NutsPositionType.LAST)).append("ms");
+        sb.append(NutsStringUtils.formatAlign(String.valueOf(ms), 3, NutsPositionType.LAST)).append("ms");
         return sb.toString();
     }
     

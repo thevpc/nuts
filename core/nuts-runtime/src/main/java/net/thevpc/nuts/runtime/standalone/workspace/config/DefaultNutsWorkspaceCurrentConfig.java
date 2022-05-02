@@ -4,7 +4,7 @@ import net.thevpc.nuts.*;
 import net.thevpc.nuts.io.NutsPath;
 import net.thevpc.nuts.runtime.standalone.boot.NutsBootConfig;
 import net.thevpc.nuts.runtime.standalone.xtra.expr.StringTokenizerUtils;
-import net.thevpc.nuts.util.NutsUtilPlatforms;
+import net.thevpc.nuts.util.NutsPlatformUtils;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -110,7 +110,7 @@ public final class DefaultNutsWorkspaceCurrentConfig {
         if (repositoryStoreLocationStrategy == null) {
             repositoryStoreLocationStrategy = NutsStoreLocationStrategy.EXPLODED;
         }
-        Map<NutsStoreLocation, String> storeLocations = NutsUtilPlatforms.buildLocations(getStoreLocationLayout(), storeLocationStrategy,
+        Map<NutsStoreLocation, String> storeLocations = NutsPlatformUtils.buildLocations(getStoreLocationLayout(), storeLocationStrategy,
                 getStoreLocations(), homeLocations, isGlobal(), workspaceLocation.toString(),
                 session
         );
@@ -366,7 +366,7 @@ public final class DefaultNutsWorkspaceCurrentConfig {
     }
 
     public NutsPath getHomeLocation(NutsStoreLocation folderType,NutsSession session) {
-        return NutsPath.of(Paths.get(NutsUtilPlatforms.getPlatformHomeFolder(getStoreLocationLayout(),
+        return NutsPath.of(Paths.get(NutsPlatformUtils.getPlatformHomeFolder(getStoreLocationLayout(),
                 folderType, getHomeLocations(),
                 isGlobal(),
                 getName()

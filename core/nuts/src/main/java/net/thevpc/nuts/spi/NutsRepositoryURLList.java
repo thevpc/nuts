@@ -26,7 +26,7 @@
  */
 package net.thevpc.nuts.spi;
 
-import net.thevpc.nuts.util.NutsUtilStrings;
+import net.thevpc.nuts.util.NutsStringUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -58,9 +58,9 @@ public class NutsRepositoryURLList {
     }
 
     public int indexOfName(String name, int offset) {
-        String trimmedName = NutsUtilStrings.trim(name);
+        String trimmedName = NutsStringUtils.trim(name);
         for (int i = offset; i < all.size(); i++) {
-            if (trimmedName.equals(NutsUtilStrings.trim(all.get(i).getName()))) {
+            if (trimmedName.equals(NutsStringUtils.trim(all.get(i).getName()))) {
                 return i;
             }
         }
@@ -70,8 +70,8 @@ public class NutsRepositoryURLList {
         for (int i = offset; i < all.size(); i++) {
             NutsRepositoryLocation loc = all.get(i);
             for (String name : names) {
-                String trimmedName = NutsUtilStrings.trim(name);
-                if (trimmedName.equals(NutsUtilStrings.trim(loc.getName()))) {
+                String trimmedName = NutsStringUtils.trim(name);
+                if (trimmedName.equals(NutsStringUtils.trim(loc.getName()))) {
                     return i;
                 }
             }
@@ -80,9 +80,9 @@ public class NutsRepositoryURLList {
     }
 
     public int indexOfURL(String url, int offset) {
-        String trimmedName = NutsUtilStrings.trim(url);
+        String trimmedName = NutsStringUtils.trim(url);
         for (int i = offset; i < all.size(); i++) {
-            if (trimmedName.equals(NutsUtilStrings.trim(all.get(i).getPath()))) {
+            if (trimmedName.equals(NutsStringUtils.trim(all.get(i).getPath()))) {
                 return i;
             }
         }
@@ -95,8 +95,8 @@ public class NutsRepositoryURLList {
         }
         for (int i = offset; i < all.size(); i++) {
             NutsRepositoryLocation o = all.get(i);
-            if (NutsUtilStrings.trim(other.getName()).equals(NutsUtilStrings.trim(o.getName()))) {
-                if (NutsUtilStrings.trim(other.getPath()).equals(NutsUtilStrings.trim(o.getPath()))) {
+            if (NutsStringUtils.trim(other.getName()).equals(NutsStringUtils.trim(o.getName()))) {
+                if (NutsStringUtils.trim(other.getPath()).equals(NutsStringUtils.trim(o.getPath()))) {
                     return i;
                 }
             }
@@ -114,7 +114,7 @@ public class NutsRepositoryURLList {
 
     public void add(NutsRepositoryLocation a) {
         if (a != null) {
-            String n = NutsUtilStrings.trim(a.getName());
+            String n = NutsStringUtils.trim(a.getName());
             if (n.isEmpty()) {
                 if (indexOf(a, 0) < 0) {
                     all.add(a);

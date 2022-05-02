@@ -24,6 +24,7 @@
 package net.thevpc.nuts.runtime.standalone.repository.impl.main;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.boot.NutsWorkspaceBootOptions;
 import net.thevpc.nuts.concurrent.NutsLocks;
 import net.thevpc.nuts.elem.NutsElements;
 import net.thevpc.nuts.io.NutsIOException;

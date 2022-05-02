@@ -136,7 +136,7 @@ public abstract class AbstractSystemTerminalAdapter extends NutsSystemTerminalBa
 
     @Override
     public NutsSystemTerminal printProgress(float progress, NutsMessage message,NutsSession session) {
-        if (NutsProgressUtils.acceptProgress(session)) {
+        if (session.isProgress()) {
             if (getBase() instanceof NutsSystemTerminal) {
                 ((NutsSystemTerminal) getBase()).printProgress(progress, message,session);
             } else {

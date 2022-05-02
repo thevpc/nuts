@@ -27,7 +27,7 @@ import net.thevpc.nuts.NutsId;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.LinkedHashMap;
-import net.thevpc.nuts.NutsClassLoaderNode;
+import net.thevpc.nuts.boot.NutsClassLoaderNode;
 
 import net.thevpc.nuts.NutsSession;
 

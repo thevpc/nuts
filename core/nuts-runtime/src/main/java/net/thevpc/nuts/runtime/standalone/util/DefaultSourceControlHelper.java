@@ -15,7 +15,7 @@ import net.thevpc.nuts.runtime.standalone.definition.DefaultNutsDefinition;
 import net.thevpc.nuts.runtime.standalone.session.NutsSessionUtils;
 import net.thevpc.nuts.util.NutsLogger;
 import net.thevpc.nuts.util.NutsLoggerOp;
-import net.thevpc.nuts.util.NutsUtilStrings;
+import net.thevpc.nuts.util.NutsStringUtils;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -55,7 +55,7 @@ public class DefaultSourceControlHelper {
 
         Path file = folder.resolve(NutsConstants.Files.DESCRIPTOR_FILE_NAME);
         NutsDescriptor d = NutsDescriptorParser.of(session).parse(file).get(session);
-        String oldVersion = NutsUtilStrings.trim(d.getId().getVersion().getValue());
+        String oldVersion = NutsStringUtils.trim(d.getId().getVersion().getValue());
         if (oldVersion.endsWith(CoreNutsConstants.Versions.CHECKED_OUT_EXTENSION)) {
             oldVersion = oldVersion.substring(0, oldVersion.length() - CoreNutsConstants.Versions.CHECKED_OUT_EXTENSION.length());
             String newVersion = NutsVersion.of(oldVersion).get(session).inc().getValue();

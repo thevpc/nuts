@@ -30,7 +30,7 @@ import net.thevpc.nuts.*;
 import net.thevpc.nuts.io.NutsIOException;
 import net.thevpc.nuts.runtime.standalone.io.util.ZipUtils;
 import net.thevpc.nuts.spi.*;
-import net.thevpc.nuts.util.NutsUtilStrings;
+import net.thevpc.nuts.util.NutsStringUtils;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -57,7 +57,7 @@ public class ZipDescriptorContentParserComponent implements NutsDescriptorConten
     public int getSupportLevel(NutsSupportLevelContext criteria) {
         NutsDescriptorContentParserContext constraints = criteria.getConstraints(NutsDescriptorContentParserContext.class);
         if(constraints!=null) {
-            String e = NutsUtilStrings.trim(constraints.getFileExtension());
+            String e = NutsStringUtils.trim(constraints.getFileExtension());
             if (!POSSIBLE_EXT.contains(e)) {
                 return NO_SUPPORT;
             }
@@ -67,7 +67,7 @@ public class ZipDescriptorContentParserComponent implements NutsDescriptorConten
 
     @Override
     public NutsDescriptor parse(NutsDescriptorContentParserContext parserContext) {
-        String e = NutsUtilStrings.trim(parserContext.getFileExtension());
+        String e = NutsStringUtils.trim(parserContext.getFileExtension());
         if (!POSSIBLE_EXT.contains(e)) {
             return null;
         }

@@ -383,7 +383,7 @@ public class NutsTextStyle implements NutsEnum {
         if (key.isEmpty()) {
             key = "p";
         }
-        NutsTextStyleType t = NutsTextStyleType.parse(key).orElse(null);
+        NutsTextStyleType t = NutsTextStyleType.parse(key).orNull();
         if (t == null) {
             if (NutsBlankable.isBlank(key)) {
                 return NutsOptional.ofEmpty(s -> NutsMessage.cstyle(NutsTextStyle.class.getSimpleName() + " is empty"));

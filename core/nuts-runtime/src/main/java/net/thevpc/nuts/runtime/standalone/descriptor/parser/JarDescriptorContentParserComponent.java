@@ -37,7 +37,7 @@ import java.util.*;
 import net.thevpc.nuts.runtime.standalone.io.util.ZipUtils;
 import net.thevpc.nuts.runtime.standalone.security.util.CoreDigestHelper;
 import net.thevpc.nuts.spi.*;
-import net.thevpc.nuts.util.NutsUtilStrings;
+import net.thevpc.nuts.util.NutsStringUtils;
 
 /**
  * Created by vpc on 1/15/17.
@@ -53,7 +53,7 @@ public class JarDescriptorContentParserComponent implements NutsDescriptorConten
         this.ws = criteria.getSession();
         NutsDescriptorContentParserContext cons = criteria.getConstraints(NutsDescriptorContentParserContext.class);
         if (cons != null) {
-            String e = NutsUtilStrings.trim(cons.getFileExtension());
+            String e = NutsStringUtils.trim(cons.getFileExtension());
             switch (e) {
                 case "jar":
                 case "war":
@@ -136,12 +136,12 @@ public class JarDescriptorContentParserComponent implements NutsDescriptorConten
                 for (int i = 0; i < args.size(); i++) {
                     String arg = args.get(i);
                     if (arg.startsWith("--main-class=")) {
-                        mainClassString = NutsUtilStrings.trimToNull(arg.substring("--main-class=".length()));
+                        mainClassString = NutsStringUtils.trimToNull(arg.substring("--main-class=".length()));
                         break;
                     } else if (arg.equals("--main-class")) {
                         i++;
                         if (i < args.size()) {
-                            mainClassString = NutsUtilStrings.trimToNull(args.get(i));
+                            mainClassString = NutsStringUtils.trimToNull(args.get(i));
                         }
                     }
                 }

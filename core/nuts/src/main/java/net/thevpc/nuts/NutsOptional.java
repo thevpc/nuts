@@ -1,8 +1,8 @@
 package net.thevpc.nuts;
 
-import net.thevpc.nuts.boot.PrivateNutsOptionalEmpty;
-import net.thevpc.nuts.boot.PrivateNutsOptionalError;
-import net.thevpc.nuts.boot.PrivateNutsOptionalValid;
+import net.thevpc.nuts.reserved.NutsReservedOptionalValid;
+import net.thevpc.nuts.reserved.NutsReservedOptionalEmpty;
+import net.thevpc.nuts.reserved.NutsReservedOptionalError;
 
 import java.util.Optional;
 import java.util.function.Consumer;
@@ -13,7 +13,7 @@ import java.util.function.Supplier;
 public interface NutsOptional<T> extends NutsBlankable{
 
     static <T> NutsOptional<T> ofEmpty(Function<NutsSession, NutsMessage> emptyMessage) {
-        return new PrivateNutsOptionalEmpty<>(emptyMessage);
+        return new NutsReservedOptionalEmpty<>(emptyMessage);
     }
 
     static <T> NutsOptional<T> ofError(Function<NutsSession, NutsMessage> errorMessage) {
@@ -21,7 +21,7 @@ public interface NutsOptional<T> extends NutsBlankable{
     }
 
     static <T> NutsOptional<T> ofError(Function<NutsSession, NutsMessage> errorMessage, Throwable throwable) {
-        return new PrivateNutsOptionalError<>(errorMessage, throwable);
+        return new NutsReservedOptionalError<>(errorMessage, throwable);
     }
 
     static <T> NutsOptional<T> of(T value) {
@@ -29,18 +29,18 @@ public interface NutsOptional<T> extends NutsBlankable{
     }
 
     static <T> NutsOptional<T> ofNullable(T value) {
-        return new PrivateNutsOptionalValid<>(value);
+        return new NutsReservedOptionalValid<>(value);
     }
 
     static <T> NutsOptional<T> of(T value, Function<NutsSession, NutsMessage> emptyMessage) {
         if (value == null) {
             return ofEmpty(emptyMessage);
         }
-        return new PrivateNutsOptionalValid<>(value);
+        return new NutsReservedOptionalValid<>(value);
     }
 
     static <T> NutsOptional<T> ofNull() {
-        return new PrivateNutsOptionalValid<>(null);
+        return new NutsReservedOptionalValid<>(null);
     }
 
     static <T> NutsOptional<T> ofOptional(Optional<T> optional, Function<NutsSession, NutsMessage> errorMessage) {

@@ -5,7 +5,7 @@ import net.thevpc.nuts.io.NutsPath;
 import net.thevpc.nuts.spi.NutsRepositoryDB;
 import net.thevpc.nuts.spi.NutsRepositoryLocation;
 import net.thevpc.nuts.spi.NutsSupportLevelContext;
-import net.thevpc.nuts.util.NutsUtilPlatforms;
+import net.thevpc.nuts.util.NutsPlatformUtils;
 
 import java.util.*;
 
@@ -16,7 +16,7 @@ public class DefaultNutsRepositoryDB implements NutsRepositoryDB {
 
     private DefaultNutsRepositoryDB(NutsSession session) {
         reg("system", "nuts@" + NutsPath.of(
-                NutsUtilPlatforms.getDefaultPlatformHomeFolder(null,
+                NutsPlatformUtils.getDefaultPlatformHomeFolder(null,
                         NutsStoreLocation.LIB,
                         true,
                         NutsConstants.Names.DEFAULT_WORKSPACE_NAME), session

@@ -5,7 +5,7 @@ import net.thevpc.nuts.cmdline.*;
 import net.thevpc.nuts.io.NutsPath;
 import net.thevpc.nuts.io.NutsPrintStream;
 import net.thevpc.nuts.util.NutsFunction;
-import net.thevpc.nuts.util.NutsUtilStrings;
+import net.thevpc.nuts.util.NutsStringUtils;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -151,7 +151,7 @@ public abstract class AbstractJShellContext implements JShellContext {
                 NutsDefinition def = session.search().addId(selectedId).setEffective(true).setSession(this.getSession()
                         .copy().setFetchStrategy(NutsFetchStrategy.OFFLINE)).getResultDefinitions().required();
                 NutsDescriptor d = def.getDescriptor();
-                String nuts_autocomplete_support = NutsUtilStrings.trim(d.getPropertyValue("nuts.autocomplete").flatMap(NutsValue::asString).get(session));
+                String nuts_autocomplete_support = NutsStringUtils.trim(d.getPropertyValue("nuts.autocomplete").flatMap(NutsValue::asString).get(session));
                 if (d.isApplication()
                         || "true".equalsIgnoreCase(nuts_autocomplete_support)
                         || "supported".equalsIgnoreCase(nuts_autocomplete_support)) {

@@ -24,7 +24,7 @@
 //package net.thevpc.nuts.runtime.standalone.security;
 //
 //import net.thevpc.nuts.*;
-//import net.thevpc.nuts.DefaultNutsWorkspaceOptionsBuilder;
+//import net.thevpc.nuts.boot.DefaultNutsWorkspaceOptionsBuilder;
 //
 //import java.io.InputStream;
 //import java.io.PrintStream;

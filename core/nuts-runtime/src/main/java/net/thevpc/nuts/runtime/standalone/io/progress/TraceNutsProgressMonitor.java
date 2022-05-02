@@ -63,10 +63,6 @@ public class TraceNutsProgressMonitor implements NutsProgressMonitor/*, NutsOutp
         return true;
     }
 
-//    private String escapeText(NutsTexts text , String str) {
-//        return text.builder().append(str).toString();
-//    }
-
     public boolean onProgress0(NutsProgressEvent event, boolean end) {
         if(!optionsProcessed) {
             optionsProcessed=true;

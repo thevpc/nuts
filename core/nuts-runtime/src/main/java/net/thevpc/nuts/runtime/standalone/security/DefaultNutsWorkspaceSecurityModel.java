@@ -26,7 +26,7 @@
 package net.thevpc.nuts.runtime.standalone.security;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.boot.PrivateNutsUtilCollections;
+import net.thevpc.nuts.reserved.NutsReservedCollectionUtils;
 import net.thevpc.nuts.runtime.standalone.session.NutsSessionUtils;
 import net.thevpc.nuts.runtime.standalone.util.CorePlatformUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.config.NutsWorkspaceConfigManagerExt;
@@ -44,7 +44,7 @@ import net.thevpc.nuts.spi.NutsAuthenticationAgent;
 import net.thevpc.nuts.util.NutsLogger;
 import net.thevpc.nuts.util.NutsLoggerOp;
 import net.thevpc.nuts.util.NutsLoggerVerb;
-import net.thevpc.nuts.util.NutsUtilStrings;
+import net.thevpc.nuts.util.NutsStringUtils;
 
 import javax.security.auth.Subject;
 import javax.security.auth.callback.*;
@@ -249,7 +249,7 @@ public class DefaultNutsWorkspaceSecurityModel {
         NutsUserConfig s = NutsWorkspaceConfigManagerExt.of(session.config()).getModel().getUser(n, session);
         if (s != null) {
             List<String> rr = s.getPermissions();
-            aa = new NutsAuthorizations(PrivateNutsUtilCollections.nonNullList(rr));
+            aa = new NutsAuthorizations(NutsReservedCollectionUtils.nonNullList(rr));
             authorizations.put(n, aa);
         } else {
             aa = new NutsAuthorizations(Collections.emptyList());
@@ -389,7 +389,7 @@ public class DefaultNutsWorkspaceSecurityModel {
 
 
     public NutsAuthenticationAgent getAuthenticationAgent(String authenticationAgentId, NutsSession session) {
-        authenticationAgentId = NutsUtilStrings.trim(authenticationAgentId);
+        authenticationAgentId = NutsStringUtils.trim(authenticationAgentId);
         if (NutsBlankable.isBlank(authenticationAgentId)) {
             authenticationAgentId = NutsWorkspaceConfigManagerExt.of(session.config())
                     .getModel().getStoredConfigSecurity().getAuthenticationAgent();

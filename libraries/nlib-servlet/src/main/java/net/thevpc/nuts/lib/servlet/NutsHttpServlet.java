@@ -26,12 +26,13 @@
 package net.thevpc.nuts.lib.servlet;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.boot.DefaultNutsWorkspaceOptionsBuilder;
 import net.thevpc.nuts.toolbox.nutsserver.AdminServerConfig;
 import net.thevpc.nuts.toolbox.nutsserver.DefaultNutsWorkspaceServerManager;
 import net.thevpc.nuts.toolbox.nutsserver.NutsServer;
 import net.thevpc.nuts.toolbox.nutsserver.http.AbstractNutsHttpServletFacadeContext;
 import net.thevpc.nuts.toolbox.nutsserver.http.NutsHttpServletFacade;
-import net.thevpc.nuts.util.NutsUtilStrings;
+import net.thevpc.nuts.util.NutsStringUtils;
 
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
@@ -71,7 +72,7 @@ public class NutsHttpServlet extends HttpServlet {
             if (NutsBlankable.isBlank(v1)) {
                 return defaultValue;
             }
-            return Integer.parseInt(NutsUtilStrings.trim(v1));
+            return Integer.parseInt(NutsStringUtils.trim(v1));
         } catch (NumberFormatException e) {
             return defaultValue;
         }

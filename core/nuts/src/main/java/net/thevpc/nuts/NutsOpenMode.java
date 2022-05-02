@@ -26,7 +26,7 @@
  */
 package net.thevpc.nuts;
 
-import net.thevpc.nuts.boot.NutsApiUtils;
+import net.thevpc.nuts.reserved.NutsReservedLangUtils;
 
 /**
  * @author thevpc
@@ -72,7 +72,7 @@ public enum NutsOpenMode implements NutsEnum {
     }
 
     public static NutsOptional<NutsOpenMode> parse(String value) {
-        return NutsApiUtils.parse(value, NutsOpenMode.class,s->{
+        return NutsReservedLangUtils.parseEnum(value, NutsOpenMode.class, s->{
             switch (s.toUpperCase()) {
                 case "R":
                 case "READ":

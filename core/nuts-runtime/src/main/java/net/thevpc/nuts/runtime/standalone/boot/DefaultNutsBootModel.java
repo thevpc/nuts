@@ -24,6 +24,7 @@
 package net.thevpc.nuts.runtime.standalone.boot;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.boot.NutsWorkspaceBootOptions;
 import net.thevpc.nuts.cmdline.DefaultNutsArgument;
 import net.thevpc.nuts.io.NutsPrintStream;
 import net.thevpc.nuts.io.NutsSystemTerminal;
@@ -61,7 +62,7 @@ public class DefaultNutsBootModel implements NutsBootModel {
     protected NutsWorkspaceBootOptions bOptions;
     protected NutsSession bootSession;
     private Map<String, NutsValue> customBootOptions;
-    private NutsBootTerminal bootTerminal;
+    private NutsWorkspaceTerminalOptions bootTerminal;
     private NutsLogger LOG;
     private NutsSystemTerminal systemTerminal;
 
@@ -83,7 +84,7 @@ public class DefaultNutsBootModel implements NutsBootModel {
         this.nullOut = new NutsPrintStreamNull(bootSession);
     }
 
-    public static NutsBootTerminal detectAnsiTerminalSupport(NutsOsFamily os, NutsWorkspaceOptions bOption, boolean boot, NutsSession session) {
+    public static NutsWorkspaceTerminalOptions detectAnsiTerminalSupport(NutsOsFamily os, NutsWorkspaceOptions bOption, boolean boot, NutsSession session) {
         List<String> flags = new ArrayList<>();
         boolean tty = false;
         boolean customOut = false;
@@ -119,7 +120,7 @@ public class DefaultNutsBootModel implements NutsBootModel {
             case MACOS:
             case UNIX: {
                 flags.add(ansiFlag(tty, bOption));
-                return new NutsBootTerminal(stdIn, stdOut, stdErr, flags.toArray(flags.toArray(new String[0])));
+                return new NutsWorkspaceTerminalOptions(stdIn, stdOut, stdErr, flags.toArray(flags.toArray(new String[0])));
             }
             case WINDOWS: {
                 if (CorePlatformUtils.IS_CYGWIN || CorePlatformUtils.IS_MINGW_XTERM) {
@@ -130,26 +131,26 @@ public class DefaultNutsBootModel implements NutsBootModel {
                         flags.add("mingw");
                     }
                     flags.add(ansiFlag((!customOut && !customErr), bOption));
-                    return new NutsBootTerminal(stdIn, stdOut, stdErr, flags.toArray(new String[0]));
+                    return new NutsWorkspaceTerminalOptions(stdIn, stdOut, stdErr, flags.toArray(new String[0]));
                 }
                 if (OptionalJansi.isAvailable()) {
-                    NutsBootTerminal t = OptionalJansi.resolveStdFd(session, flags);
+                    NutsWorkspaceTerminalOptions t = OptionalJansi.resolveStdFd(session, flags);
                     if (t != null) {
                         return t;
                     }
                 }
                 flags.add(ansiFlag(tty, bOption));
-                return new NutsBootTerminal(stdIn, stdOut, stdErr, flags.toArray(new String[0]));
+                return new NutsWorkspaceTerminalOptions(stdIn, stdOut, stdErr, flags.toArray(new String[0]));
             }
             default: {
                 if (OptionalJansi.isAvailable()) {
-                    NutsBootTerminal t = OptionalJansi.resolveStdFd(session, flags);
+                    NutsWorkspaceTerminalOptions t = OptionalJansi.resolveStdFd(session, flags);
                     if (t != null) {
                         return t;
                     }
                 }
                 flags.add(ansiFlag(tty, bOption));
-                return new NutsBootTerminal(stdIn, stdOut, stdErr, flags.toArray(new String[0]));
+                return new NutsWorkspaceTerminalOptions(stdIn, stdOut, stdErr, flags.toArray(new String[0]));
             }
         }
     }
@@ -272,7 +273,7 @@ public class DefaultNutsBootModel implements NutsBootModel {
         return bOptions.getUserOptions().get();
     }
 
-    public NutsBootTerminal getBootTerminal() {
+    public NutsWorkspaceTerminalOptions getBootTerminal() {
         return bootTerminal;
     }
 

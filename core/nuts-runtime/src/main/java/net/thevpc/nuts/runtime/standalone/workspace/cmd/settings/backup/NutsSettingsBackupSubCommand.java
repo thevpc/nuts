@@ -15,7 +15,7 @@ import net.thevpc.nuts.io.NutsUncompressVisitor;
 import net.thevpc.nuts.io.NutsPath;
 import net.thevpc.nuts.io.NutsUncompress;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.AbstractNutsSettingsSubCommand;
-import net.thevpc.nuts.util.NutsUtilPlatforms;
+import net.thevpc.nuts.util.NutsPlatformUtils;
 
 import java.io.File;
 import java.io.InputStream;
@@ -133,7 +133,7 @@ public class NutsSettingsBackupSubCommand extends AbstractNutsSettingsSubCommand
                 if (ws == null || ws.isEmpty()) {
                     commandLine.throwMissingArgument(NutsMessage.cstyle("not a valid file : %s", file),session);
                 }
-                String platformHomeFolder = NutsUtilPlatforms.getWorkspaceLocation(null,
+                String platformHomeFolder = NutsPlatformUtils.getWorkspaceLocation(null,
                         session.config().stored().isGlobal(), ws);
                 NutsUncompress.of(session)
                         .from(file)

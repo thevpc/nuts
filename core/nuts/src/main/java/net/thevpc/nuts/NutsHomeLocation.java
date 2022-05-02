@@ -80,8 +80,8 @@ public class NutsHomeLocation implements NutsEnum {
         if (i >= 0) {
             String s1 = e.substring(0, i);
             String s2 = e.substring(i + 1);
-            NutsOsFamily osf = s1.equals("system") ? null : NutsOsFamily.parse(s1).orElse(null);
-            NutsStoreLocation loc = s2.equals("system") ? null : NutsStoreLocation.parse(s2).orElse(null);
+            NutsOsFamily osf = s1.equals("system") ? null : NutsOsFamily.parse(s1).orNull();
+            NutsStoreLocation loc = s2.equals("system") ? null : NutsStoreLocation.parse(s2).orNull();
             if (osf == null) {
                 if (!s1.equals("system") && s1.length() > 0) {
                     return NutsOptional.ofError(s -> NutsMessage.cstyle(NutsHomeLocation.class.getSimpleName() + " invalid value : %s", finalValue));

@@ -19,7 +19,7 @@ import net.thevpc.nuts.runtime.standalone.text.util.NutsTextUtils;
 import net.thevpc.nuts.spi.NutsSupportLevelContext;
 import net.thevpc.nuts.text.NutsTextStyle;
 import net.thevpc.nuts.text.NutsTexts;
-import net.thevpc.nuts.util.NutsUtilStrings;
+import net.thevpc.nuts.util.NutsStringUtils;
 
 public class DefaultNutsPropertiesFormat extends DefaultFormatBase<NutsPropertiesFormat> implements NutsPropertiesFormat {
 
@@ -227,7 +227,7 @@ public class DefaultNutsPropertiesFormat extends DefaultFormatBase<NutsPropertie
         NutsString formattedKey = compact ? key
                 : txt.builder().append(key).append(CoreStringUtils.fillString(' ', len - key.textLength()));
         if (fancySep != null) {
-            NutsString cc = compact ? key : txt.ofPlain(NutsUtilStrings.formatAlign("", len + 3, NutsPositionType.FIRST));
+            NutsString cc = compact ? key : txt.ofPlain(NutsStringUtils.formatAlign("", len + 3, NutsPositionType.FIRST));
             String[] split = value.toString().split(fancySep);
             if (split.length == 0) {
                 out.print(prefix);

@@ -23,7 +23,7 @@
  */
 package net.thevpc.nuts.runtime.optional.jansi;
 
-import net.thevpc.nuts.NutsBootTerminal;
+import net.thevpc.nuts.NutsWorkspaceTerminalOptions;
 import net.thevpc.nuts.NutsOsFamily;
 import net.thevpc.nuts.NutsSession;
 
@@ -47,21 +47,21 @@ public class OptionalJansi {
         return false;
     }
 
-    public static NutsBootTerminal resolveStdFd(NutsSession session,List<String> flags) {
+    public static NutsWorkspaceTerminalOptions resolveStdFd(NutsSession session, List<String> flags) {
         boolean tty=flags.contains("tty");
         if(isAvailable()) {
             flags.add("jansi");
             if(System.console()!=null) {
                 org.fusesource.jansi.AnsiConsole.systemInstall();
                 flags.add("ansi");
-                return new NutsBootTerminal(System.in,System.out, System.err, flags.toArray(new String[0]));
+                return new NutsWorkspaceTerminalOptions(System.in,System.out, System.err, flags.toArray(new String[0]));
             }else{
                 if(tty){
                     flags.add("ansi");
                 }else{
                     flags.add("raw");
                 }
-                return new NutsBootTerminal(System.in,System.out, System.err, flags.toArray(new String[0]));
+                return new NutsWorkspaceTerminalOptions(System.in,System.out, System.err, flags.toArray(new String[0]));
             }
         }
         return null;

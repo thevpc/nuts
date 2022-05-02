@@ -26,7 +26,7 @@ package net.thevpc.nuts.text;
 import net.thevpc.nuts.NutsEnum;
 import net.thevpc.nuts.NutsMessage;
 import net.thevpc.nuts.NutsOptional;
-import net.thevpc.nuts.util.NutsUtilStrings;
+import net.thevpc.nuts.util.NutsStringUtils;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -69,7 +69,7 @@ public final class NutsTextStyles implements Iterable<NutsTextStyle>, NutsEnum {
 
 
     public static NutsOptional<NutsTextStyles> parse(String value) {
-        value = NutsUtilStrings.trim(value);
+        value = NutsStringUtils.trim(value);
         if (value.isEmpty()) {
             return NutsOptional.ofEmpty(s -> NutsMessage.cstyle(NutsTextStyles.class.getSimpleName() + " is empty"));
         }
@@ -77,7 +77,7 @@ public final class NutsTextStyles implements Iterable<NutsTextStyle>, NutsEnum {
         for (String s : value.split(",")) {
             s = s.trim();
             if (s.length() > 0) {
-                NutsTextStyle a = NutsTextStyle.parse(s).orElse(null);
+                NutsTextStyle a = NutsTextStyle.parse(s).orNull();
                 if (a == null) {
                     String finalValue = value;
                     return NutsOptional.ofError(session -> NutsMessage.cstyle(NutsTextStyles.class.getSimpleName() + " invalid value : %s", finalValue));

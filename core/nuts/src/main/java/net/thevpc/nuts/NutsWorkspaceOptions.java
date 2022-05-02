@@ -53,7 +53,7 @@ public interface NutsWorkspaceOptions extends Serializable {
 
     NutsOptional<NutsSupportMode> getUserLauncher();
 
-    NutsOptional<NutsWorkspaceIsolation> getIsolation();
+    NutsOptional<NutsIsolationLevel> getIsolationLevel();
 
     /**
      * init launcher

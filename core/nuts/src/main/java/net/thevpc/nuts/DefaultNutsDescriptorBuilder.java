@@ -26,9 +26,9 @@
  */
 package net.thevpc.nuts;
 
-import net.thevpc.nuts.boot.PrivateNutsDefaultNutsProperties;
-import net.thevpc.nuts.boot.PrivateNutsUtilCollections;
-import net.thevpc.nuts.util.NutsUtilStrings;
+import net.thevpc.nuts.reserved.NutsReservedDefaultNutsProperties;
+import net.thevpc.nuts.reserved.NutsReservedCollectionUtils;
+import net.thevpc.nuts.util.NutsStringUtils;
 
 import java.util.*;
 import java.util.function.Function;
@@ -63,7 +63,7 @@ public class DefaultNutsDescriptorBuilder implements NutsDescriptorBuilder {
     private List<NutsDependency> standardDependencies = new ArrayList<>(); //defaults to empty;
     private Set<NutsDescriptorFlag> flags = new LinkedHashSet<>();
     private List<NutsDescriptorProperty> properties = new ArrayList<>(); //defaults to empty;
-    private transient PrivateNutsDefaultNutsProperties _propertiesBuilder = new PrivateNutsDefaultNutsProperties(); //defaults to empty;
+    private transient NutsReservedDefaultNutsProperties _propertiesBuilder = new NutsReservedDefaultNutsProperties(); //defaults to empty;
     private List<NutsDescriptorContributor> contributors = new ArrayList<>(); //defaults to empty;
     private List<NutsDescriptorLicense> licenses = new ArrayList<>(); //defaults to empty;
     private List<NutsDescriptorMailingList> mailingLists = new ArrayList<>(); //defaults to empty;
@@ -102,7 +102,7 @@ public class DefaultNutsDescriptorBuilder implements NutsDescriptorBuilder {
     }
 
     public NutsDescriptorBuilder setParents(List<NutsId> parents) {
-        this.parents = PrivateNutsUtilCollections.uniqueNonBlankList(parents);
+        this.parents = NutsReservedCollectionUtils.uniqueNonBlankList(parents);
         return this;
     }
 
@@ -113,7 +113,7 @@ public class DefaultNutsDescriptorBuilder implements NutsDescriptorBuilder {
 
     @Override
     public NutsDescriptorBuilder setPackaging(String packaging) {
-        this.packaging = NutsUtilStrings.trim(packaging);
+        this.packaging = NutsStringUtils.trim(packaging);
         return this;
     }
 
@@ -124,7 +124,7 @@ public class DefaultNutsDescriptorBuilder implements NutsDescriptorBuilder {
 
     @Override
     public NutsDescriptorBuilder setName(String name) {
-        this.name = NutsUtilStrings.trim(name);
+        this.name = NutsStringUtils.trim(name);
         return this;
     }
 
@@ -190,7 +190,7 @@ public class DefaultNutsDescriptorBuilder implements NutsDescriptorBuilder {
 
     @Override
     public NutsDescriptorBuilder setDescription(String description) {
-        this.description = NutsUtilStrings.trim(description);
+        this.description = NutsStringUtils.trim(description);
         return this;
     }
 
@@ -201,7 +201,7 @@ public class DefaultNutsDescriptorBuilder implements NutsDescriptorBuilder {
 
     @Override
     public NutsDescriptorBuilder setLocations(List<NutsIdLocation> locations) {
-        this.locations = PrivateNutsUtilCollections.uniqueList(locations);
+        this.locations = NutsReservedCollectionUtils.uniqueList(locations);
         return this;
     }
 
@@ -212,7 +212,7 @@ public class DefaultNutsDescriptorBuilder implements NutsDescriptorBuilder {
 
     @Override
     public NutsDescriptorBuilder setStandardDependencies(List<NutsDependency> dependencies) {
-        this.standardDependencies = PrivateNutsUtilCollections.uniqueNonBlankList(dependencies);
+        this.standardDependencies = NutsReservedCollectionUtils.uniqueNonBlankList(dependencies);
         return this;
     }
 
@@ -223,7 +223,7 @@ public class DefaultNutsDescriptorBuilder implements NutsDescriptorBuilder {
 
     @Override
     public NutsDescriptorBuilder setDependencies(List<NutsDependency> dependencies) {
-        this.dependencies = PrivateNutsUtilCollections.uniqueNonBlankList(dependencies);
+        this.dependencies = NutsReservedCollectionUtils.uniqueNonBlankList(dependencies);
         return this;
     }
 
@@ -400,7 +400,7 @@ public class DefaultNutsDescriptorBuilder implements NutsDescriptorBuilder {
 
     @Override
     public NutsDescriptorBuilder addDependencies(List<NutsDependency> dependencies) {
-        PrivateNutsUtilCollections.addUniqueNonBlankList(this.dependencies, dependencies);
+        NutsReservedCollectionUtils.addUniqueNonBlankList(this.dependencies, dependencies);
         return this;
     }
 
@@ -420,7 +420,7 @@ public class DefaultNutsDescriptorBuilder implements NutsDescriptorBuilder {
 
     @Override
     public NutsDescriptorBuilder addStandardDependencies(List<NutsDependency> dependencies) {
-        PrivateNutsUtilCollections.addUniqueNonBlankList(this.standardDependencies, dependencies);
+        NutsReservedCollectionUtils.addUniqueNonBlankList(this.standardDependencies, dependencies);
         return this;
     }
 
@@ -459,7 +459,7 @@ public class DefaultNutsDescriptorBuilder implements NutsDescriptorBuilder {
             return this;
         }
 
-        PrivateNutsDefaultNutsProperties p = new PrivateNutsDefaultNutsProperties();
+        NutsReservedDefaultNutsProperties p = new NutsReservedDefaultNutsProperties();
         boolean someUpdate = false;
         for (NutsDescriptorProperty entry : getProperties()) {
             if (filter == null || filter.test(entry)) {
@@ -688,7 +688,7 @@ public class DefaultNutsDescriptorBuilder implements NutsDescriptorBuilder {
 
     private void _rebuildPropertiesBuilder() {
         if (_propertiesBuilder == null) {
-            _propertiesBuilder = new PrivateNutsDefaultNutsProperties();
+            _propertiesBuilder = new NutsReservedDefaultNutsProperties();
             _propertiesBuilder.addAll(this.properties.toArray(new NutsDescriptorProperty[0]));
         }
     }
@@ -765,7 +765,7 @@ public class DefaultNutsDescriptorBuilder implements NutsDescriptorBuilder {
 
     @Override
     public NutsDescriptorBuilder setContributors(List<NutsDescriptorContributor> contributors) {
-        this.contributors = PrivateNutsUtilCollections.uniqueList(contributors);
+        this.contributors = NutsReservedCollectionUtils.uniqueList(contributors);
         return this;
     }
 
@@ -776,7 +776,7 @@ public class DefaultNutsDescriptorBuilder implements NutsDescriptorBuilder {
 
     @Override
     public NutsDescriptorBuilder setLicenses(List<NutsDescriptorLicense> licenses) {
-        this.licenses = PrivateNutsUtilCollections.uniqueList(licenses);
+        this.licenses = NutsReservedCollectionUtils.uniqueList(licenses);
         return this;
     }
 
@@ -787,7 +787,7 @@ public class DefaultNutsDescriptorBuilder implements NutsDescriptorBuilder {
 
     @Override
     public NutsDescriptorBuilder setMailingLists(List<NutsDescriptorMailingList> mailingLists) {
-        this.mailingLists = PrivateNutsUtilCollections.uniqueList(mailingLists);
+        this.mailingLists = NutsReservedCollectionUtils.uniqueList(mailingLists);
         return this;
     }
 

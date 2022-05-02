@@ -24,9 +24,10 @@
 package net.thevpc.nuts.runtime.standalone.util;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.boot.NutsClassLoaderNode;
 import net.thevpc.nuts.runtime.standalone.descriptor.util.NutsDescriptorUtils;
 import net.thevpc.nuts.runtime.standalone.xtra.expr.StringPlaceHolderParser;
-import net.thevpc.nuts.util.NutsUtilStrings;
+import net.thevpc.nuts.util.NutsStringUtils;
 
 import java.io.File;
 import java.io.IOException;
@@ -197,7 +198,7 @@ public class CoreNutsUtils {
             return NutsVersion.BLANK;
         }
         String s2 = applyStringProperties(s, properties);
-        if (!NutsUtilStrings.trim(s2).equals(s)) {
+        if (!NutsStringUtils.trim(s2).equals(s)) {
             return NutsVersion.of(s2).orElse(NutsVersion.BLANK);
         }
         return child;
@@ -218,8 +219,8 @@ public class CoreNutsUtils {
 //        return CoreStringUtils.replaceDollarPlaceHolders(child, properties);
 //    }
     public static String applyStringInheritance(String child, String parent) {
-        child = NutsUtilStrings.trimToNull(child);
-        parent = NutsUtilStrings.trimToNull(parent);
+        child = NutsStringUtils.trimToNull(child);
+        parent = NutsStringUtils.trimToNull(parent);
         if (child == null) {
             return parent;
         }

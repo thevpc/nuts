@@ -35,6 +35,7 @@ import net.thevpc.nuts.runtime.standalone.shell.NutsShellHelper;
 import net.thevpc.nuts.runtime.standalone.util.CoreStringUtils;
 import net.thevpc.nuts.text.NutsTextStyle;
 import net.thevpc.nuts.text.NutsTexts;
+import net.thevpc.nuts.util.NutsStringUtils;
 
 import java.io.*;
 import java.lang.reflect.Field;
@@ -70,19 +71,19 @@ public class ProcessBuilder2 {
         NutsTexts factory = NutsTexts.of(session);
         if (a.isKeyValue()) {
             if (a.isOption()) {
-                sb.append(factory.ofStyled(CoreStringUtils.enforceDoubleQuote(a.getKey().asString().get(session), session), NutsTextStyle.option()));
+                sb.append(factory.ofStyled(NutsStringUtils.formatStringLiteral(a.getKey().asString().get(session)), NutsTextStyle.option()));
                 sb.append("=");
-                sb.append(CoreStringUtils.enforceDoubleQuote(a.getStringValue().get(session), session));
+                sb.append(NutsStringUtils.formatStringLiteral(a.getStringValue().get(session)));
             } else {
-                sb.append(factory.ofStyled(CoreStringUtils.enforceDoubleQuote(a.getKey().asString().get(session), session), NutsTextStyle.primary4()));
+                sb.append(factory.ofStyled(NutsStringUtils.formatStringLiteral(a.getKey().asString().get(session)), NutsTextStyle.primary4()));
                 sb.append("=");
-                sb.append(CoreStringUtils.enforceDoubleQuote(a.getStringValue().get(session), session));
+                sb.append(NutsStringUtils.formatStringLiteral(a.getStringValue().get(session)));
             }
         } else {
             if (a.isOption()) {
-                sb.append(factory.ofStyled(CoreStringUtils.enforceDoubleQuote(a.asString().get(session), session), NutsTextStyle.option()));
+                sb.append(factory.ofStyled(NutsStringUtils.formatStringLiteral(a.asString().get(session)), NutsTextStyle.option()));
             } else {
-                sb.append(CoreStringUtils.enforceDoubleQuote(a.asString().get(session), session));
+                sb.append(NutsStringUtils.formatStringLiteral(a.asString().get(session)));
             }
         }
         return sb.toString();
@@ -619,10 +620,10 @@ public class ProcessBuilder2 {
                         case PIPE:
                             break;
                         case WRITE:
-                            sb.append(" > ").append(CoreStringUtils.enforceDoubleQuote(r.file().getPath()));
+                            sb.append(" > ").append(NutsStringUtils.formatStringLiteral(r.file().getPath()));
                             break;
                         case APPEND:
-                            sb.append(" >> ").append(CoreStringUtils.enforceDoubleQuote(r.file().getPath()));
+                            sb.append(" >> ").append(NutsStringUtils.formatStringLiteral(r.file().getPath()));
                             break;
                         default:
                             sb.append(" > ").append("{?}");
@@ -649,7 +650,7 @@ public class ProcessBuilder2 {
                                     sb.append(" 2> ").append(r.file().getPath());
                                     break;
                                 case APPEND:
-                                    sb.append(" 2>> ").append(CoreStringUtils.enforceDoubleQuote(r.file().getPath()));
+                                    sb.append(" 2>> ").append(NutsStringUtils.formatStringLiteral(r.file().getPath(), NutsStringUtils.QuoteType.DOUBLE));
                                     break;
                                 default:
                                     sb.append(" 2> ").append("{?}");
@@ -671,7 +672,7 @@ public class ProcessBuilder2 {
                         case PIPE:
                             break;
                         case READ:
-                            sb.append(" < ").append(CoreStringUtils.enforceDoubleQuote(r.file().getPath()));
+                            sb.append(" < ").append(NutsStringUtils.formatStringLiteral(r.file().getPath(), NutsStringUtils.QuoteType.DOUBLE));
                             break;
                         default:
                             sb.append(" < ").append("{?}");
@@ -801,10 +802,10 @@ public class ProcessBuilder2 {
                         case PIPE:
                             break;
                         case WRITE:
-                            sb.append(" ##:separator:").append(escape(session, ">")).append("## ").append(CoreStringUtils.enforceDoubleQuote(r.file().getPath()));
+                            sb.append(" ##:separator:").append(escape(session, ">")).append("## ").append(NutsStringUtils.formatStringLiteral(r.file().getPath()));
                             break;
                         case APPEND:
-                            sb.append(" ##:separator:").append(escape(session, ">>")).append("## ").append(CoreStringUtils.enforceDoubleQuote(r.file().getPath()));
+                            sb.append(" ##:separator:").append(escape(session, ">>")).append("## ").append(NutsStringUtils.formatStringLiteral(r.file().getPath()));
                             break;
                         default:
                             sb.append(" ##:separator:").append(escape(session, ">")).append("## ").append("##:pale:{?}##");
@@ -828,10 +829,10 @@ public class ProcessBuilder2 {
                                 case PIPE:
                                     break;
                                 case WRITE:
-                                    sb.append(" ##:separator:").append(escape(session, "2>")).append("## ").append(CoreStringUtils.enforceDoubleQuote(r.file().getPath()));
+                                    sb.append(" ##:separator:").append(escape(session, "2>")).append("## ").append(NutsStringUtils.formatStringLiteral(r.file().getPath()));
                                     break;
                                 case APPEND:
-                                    sb.append(" ##:separator:").append(escape(session, "2>>")).append("## ").append(CoreStringUtils.enforceDoubleQuote(r.file().getPath()));
+                                    sb.append(" ##:separator:").append(escape(session, "2>>")).append("## ").append(NutsStringUtils.formatStringLiteral(r.file().getPath()));
                                     break;
                                 default:
                                     sb.append(" ##:separator:").append(escape(session, "2>")).append("## ").append("##:pale:{?}##");
@@ -853,7 +854,7 @@ public class ProcessBuilder2 {
                         case PIPE:
                             break;
                         case READ:
-                            sb.append(" ##:separator:").append(escape(session, "<")).append("## ").append(CoreStringUtils.enforceDoubleQuote(r.file().getPath()));
+                            sb.append(" ##:separator:").append(escape(session, "<")).append("## ").append(NutsStringUtils.formatStringLiteral(r.file().getPath()));
                             break;
                         default:
                             sb.append(" ##:separator:").append(escape(session, "<")).append("## ").append("##:pale:{?}##");

@@ -24,7 +24,7 @@ import net.thevpc.nuts.runtime.standalone.util.NutsSpeedQualifiers;
 import net.thevpc.nuts.runtime.standalone.workspace.NutsWorkspaceUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.DefaultNutsWorkspace;
 import net.thevpc.nuts.spi.NutsRepositoryLocation;
-import net.thevpc.nuts.util.NutsUtilStrings;
+import net.thevpc.nuts.util.NutsStringUtils;
 
 public class DefaultNutsRepositoryConfigModel implements NutsRepositoryConfigModel {
 
@@ -222,7 +222,7 @@ public class DefaultNutsRepositoryConfigModel implements NutsRepositoryConfigMod
 
     @Override
     public NutsPath getLocationPath(NutsSession session) {
-        String s= NutsUtilStrings.trimToNull(config.getLocation().getPath());
+        String s= NutsStringUtils.trimToNull(config.getLocation().getPath());
         if (s != null) {
             return NutsPath.of(s,session).toAbsolute(session.locations().getWorkspaceLocation());
         }
@@ -450,13 +450,13 @@ public class DefaultNutsRepositoryConfigModel implements NutsRepositoryConfigMod
                     _LOGOP(session).level(Level.CONFIG).verb(NutsLoggerVerb.SUCCESS)
                             .log(NutsMessage.jstyle(
                                     "{0} created repository {1} at {2}",
-                                    NutsUtilStrings.formatAlign(repository.getName(), 20, NutsPositionType.FIRST) , repository.getName() ,
+                                    NutsStringUtils.formatAlign(repository.getName(), 20, NutsPositionType.FIRST) , repository.getName() ,
                                     getStoreLocation()
                                     ));
                 } else {
                     _LOGOP(session).level(Level.CONFIG).verb(NutsLoggerVerb.SUCCESS).log(NutsMessage.jstyle(
                             "{0} updated repository {1} at {2}",
-                            NutsUtilStrings.formatAlign(repository.getName(), 20,NutsPositionType.FIRST) , repository.getName() ,
+                            NutsStringUtils.formatAlign(repository.getName(), 20,NutsPositionType.FIRST) , repository.getName() ,
                             getStoreLocation()
                     ));
                 }

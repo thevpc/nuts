@@ -27,7 +27,7 @@
 package net.thevpc.nuts.spi;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.boot.NutsApiUtils;
+import net.thevpc.nuts.reserved.NutsReservedLangUtils;
 
 public enum NutsSelectorOp implements NutsEnum {
     INCLUDE,
@@ -41,7 +41,7 @@ public enum NutsSelectorOp implements NutsEnum {
 
 
     public static NutsOptional<NutsSelectorOp> parse(String value) {
-        return NutsApiUtils.parse(value, NutsSelectorOp.class);
+        return NutsReservedLangUtils.parseEnum(value, NutsSelectorOp.class);
     }
 
     @Override

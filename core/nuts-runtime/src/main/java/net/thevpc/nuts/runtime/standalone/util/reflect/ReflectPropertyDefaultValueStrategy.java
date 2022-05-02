@@ -24,7 +24,7 @@
 package net.thevpc.nuts.runtime.standalone.util.reflect;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.boot.NutsApiUtils;
+import net.thevpc.nuts.reserved.NutsReservedLangUtils;
 
 /**
  *
@@ -41,7 +41,7 @@ public enum ReflectPropertyDefaultValueStrategy implements NutsEnum {
     }
 
     public static NutsOptional<ReflectPropertyDefaultValueStrategy> parse(String value) {
-        return NutsApiUtils.parse(value, ReflectPropertyDefaultValueStrategy.class);
+        return NutsReservedLangUtils.parseEnum(value, ReflectPropertyDefaultValueStrategy.class);
     }
 
 

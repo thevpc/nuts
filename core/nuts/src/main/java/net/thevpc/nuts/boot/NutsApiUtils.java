@@ -29,8 +29,9 @@ package net.thevpc.nuts.boot;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.cmdline.NutsCommandLine;
 import net.thevpc.nuts.cmdline.NutsCommandLineFormatStrategy;
+import net.thevpc.nuts.reserved.*;
 import net.thevpc.nuts.util.NutsLogConfig;
-import net.thevpc.nuts.util.NutsUtilStrings;
+import net.thevpc.nuts.util.NutsStringUtils;
 
 import java.io.PrintStream;
 import java.lang.reflect.Array;
@@ -38,7 +39,6 @@ import java.net.URL;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Map;
-import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.logging.Level;
 
@@ -104,11 +104,11 @@ public class NutsApiUtils {
     }
 
     public static int processThrowable(Throwable ex, PrintStream out) {
-        return PrivateNutsUtilApplication.processThrowable(ex, out);
+        return NutsReservedApplicationUtils.processThrowable(ex, out);
     }
 
     public static int processThrowable(Throwable ex, String[] args) {
-        PrivateNutsBootLog log = new PrivateNutsBootLog(null);
+        NutsReservedBootLog log = new NutsReservedBootLog(null);
         DefaultNutsWorkspaceBootOptionsBuilder bo = new DefaultNutsWorkspaceBootOptionsBuilder();
         bo.setCommandLine(args, null);
         try {
@@ -135,26 +135,26 @@ public class NutsApiUtils {
     }
 
     public static int processThrowable(Throwable ex, PrintStream out, boolean showMessage, boolean showTrace, boolean showGui) {
-        return PrivateNutsUtilApplication.processThrowable(ex, out, showMessage, showTrace, showGui);
+        return NutsReservedApplicationUtils.processThrowable(ex, out, showMessage, showTrace, showGui);
     }
 
     public static boolean isGraphicalDesktopEnvironment() {
-        return PrivateNutsUtilGui.isGraphicalDesktopEnvironment();
+        return NutsReservedGuiUtils.isGraphicalDesktopEnvironment();
     }
 
     public static boolean getSysBoolNutsProperty(String property, boolean defaultValue) {
-        return PrivateNutsUtils.getSysBoolNutsProperty(property, defaultValue);
+        return NutsReservedUtils.getSysBoolNutsProperty(property, defaultValue);
     }
 
-    public static String resolveNutsVersionFromClassPath(PrivateNutsBootLog bLog) {
-        return PrivateNutsUtilMavenRepos.resolveNutsApiVersionFromClassPath(bLog);
+    public static String resolveNutsVersionFromClassPath(NutsReservedBootLog bLog) {
+        return NutsReservedMavenUtils.resolveNutsApiVersionFromClassPath(bLog);
     }
 
     public static String resolveNutsIdDigestOrError() {
         String d = resolveNutsIdDigest();
         if (d == null) {
             ClassLoader cl = Thread.currentThread().getContextClassLoader();
-            URL[] urls = PrivateNutsUtilClassLoader.resolveClasspathURLs(cl, true);
+            URL[] urls = NutsReservedClassLoaderUtils.resolveClasspathURLs(cl, true);
             throw new NutsBootException(NutsMessage.plain("unable to detect nuts digest. Most likely you are missing valid compilation of nuts." + "\n\t 'pom.properties' could not be resolved and hence, we are unable to resolve nuts version." + "\n\t java=" + System.getProperty("java.home") + " as " + System.getProperty("java.version") + "\n\t class-path=" + System.getProperty("java.class.path") + "\n\t urls=" + Arrays.toString(urls) + "\n\t class-loader=" + cl.getClass().getName() + " as " + cl));
         }
         return d;
@@ -163,15 +163,15 @@ public class NutsApiUtils {
 
     public static String resolveNutsIdDigest() {
         //TODO COMMIT TO 0.8.4
-        return resolveNutsIdDigest(NutsId.ofApi(Nuts.getVersion()).get(), PrivateNutsUtilClassLoader.resolveClasspathURLs(Nuts.class.getClassLoader(), true));
+        return resolveNutsIdDigest(NutsId.ofApi(Nuts.getVersion()).get(), NutsReservedClassLoaderUtils.resolveClasspathURLs(Nuts.class.getClassLoader(), true));
     }
 
     public static String resolveNutsIdDigest(NutsId id, URL[] urls) {
-        return PrivateNutsUtilDigest.getURLDigest(PrivateNutsUtilClassLoader.findClassLoaderJar(id, urls), null);
+        return NutsReservedIOUtils.getURLDigest(NutsReservedClassLoaderUtils.findClassLoaderJar(id, urls), null);
     }
 
     public static URL findClassLoaderJar(NutsId id, URL[] urls) {
-        return PrivateNutsUtilClassLoader.findClassLoaderJar(id, urls);
+        return NutsReservedClassLoaderUtils.findClassLoaderJar(id, urls);
     }
 
     public static <T extends NutsEnum> void checkNonNullEnum(T objectValue, String stringValue, Class<T> enumType, NutsSession session) {
@@ -186,21 +186,21 @@ public class NutsApiUtils {
     }
 
     public static Integer parseInt(String value, Integer emptyValue, Integer errorValue) {
-        return PrivateNutsUtilStrings.parseInt(value, emptyValue, errorValue);
+        return NutsReservedStringUtils.parseInt(value, emptyValue, errorValue);
     }
 
     public static Integer parseInt16(String value, Integer emptyValue, Integer errorValue) {
-        return PrivateNutsUtilStrings.parseInt16(value, emptyValue, errorValue);
+        return NutsReservedStringUtils.parseInt16(value, emptyValue, errorValue);
     }
 
     public static NutsOptional<Integer> parseFileSizeInBytes(String value, Integer defaultMultiplier) {
-        return PrivateNutsUtilStrings.parseFileSizeInBytes(value, defaultMultiplier);
+        return NutsReservedStringUtils.parseFileSizeInBytes(value, defaultMultiplier);
     }
 
     @SuppressWarnings("unchecked")
     public static <T> T createSessionCachedType(String name, Class<T> t, NutsSession session, Supplier<T> sup) {
         checkSession(session);
-        name = NutsUtilStrings.trim(name);
+        name = NutsStringUtils.trim(name);
         if (NutsBlankable.isBlank(name)) {
             name = "default";
         }
@@ -218,45 +218,4 @@ public class NutsApiUtils {
         return createSessionCachedType("default", t, session, sup);
     }
 
-    public static <T extends Enum> NutsOptional<T> parse(String value, Class<T> type) {
-        if (value == null) {
-            value = "";
-        } else {
-            value = value.toUpperCase().trim().replace('-', '_');
-        }
-        if (value.isEmpty()) {
-            return NutsOptional.ofEmpty(s -> NutsMessage.cstyle(type.getSimpleName() + " is empty"));
-        }
-        try {
-            return NutsOptional.of((T) Enum.valueOf(type, value.toUpperCase()));
-        } catch (Exception notFound) {
-            String finalValue = value;
-            return NutsOptional.ofError(s -> NutsMessage.cstyle(type.getSimpleName() + " invalid value : %s", finalValue));
-        }
-    }
-
-    public static <T extends Enum> NutsOptional<T> parse(String value, Class<T> type, Function<String, NutsOptional<T>> mapper) {
-        if (value == null) {
-            value = "";
-        } else {
-            value = value.toUpperCase().trim().replace('-', '_');
-        }
-        if (value.isEmpty()) {
-            return NutsOptional.ofEmpty(s -> NutsMessage.cstyle(type.getSimpleName() + " is empty"));
-        }
-        try {
-            NutsOptional<T> o = mapper.apply(value);
-            if (o != null) {
-                return o;
-            }
-        } catch (Exception notFound) {
-            //ignore
-        }
-        try {
-            return NutsOptional.of((T) Enum.valueOf(type, value.toUpperCase()));
-        } catch (Exception notFound) {
-            String finalValue = value;
-            return NutsOptional.ofError(s -> NutsMessage.cstyle(type.getSimpleName() + " invalid value : %s", finalValue),notFound);
-        }
-    }
 }

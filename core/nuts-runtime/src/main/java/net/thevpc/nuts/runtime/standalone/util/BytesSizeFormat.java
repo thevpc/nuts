@@ -2,7 +2,7 @@ package net.thevpc.nuts.runtime.standalone.util;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.format.NutsPositionType;
-import net.thevpc.nuts.util.NutsUtilStrings;
+import net.thevpc.nuts.util.NutsStringUtils;
 
 /**
  * Created by vpc on 3/20/17.
@@ -281,7 +281,7 @@ public class BytesSizeFormat {
 
     private String formatLeft(Object number, int size) {
         if (fixedLength) {
-            return NutsUtilStrings.formatAlign(String.valueOf(number == null ? "" : number), size, NutsPositionType.FIRST);
+            return NutsStringUtils.formatAlign(String.valueOf(number == null ? "" : number), size, NutsPositionType.FIRST);
         } else {
             return String.valueOf(number);
         }

@@ -33,7 +33,7 @@ import net.thevpc.nuts.runtime.standalone.extension.CoreServiceUtils;
 import net.thevpc.nuts.spi.*;
 import net.thevpc.nuts.util.NutsLogger;
 import net.thevpc.nuts.util.NutsLoggerVerb;
-import net.thevpc.nuts.util.NutsUtilStrings;
+import net.thevpc.nuts.util.NutsStringUtils;
 
 import java.io.PrintStream;
 import java.lang.reflect.Constructor;
@@ -191,7 +191,7 @@ public class DefaultNutsWorkspaceFactory implements NutsWorkspaceFactory {
         }
         if (LOG.isLoggable(Level.CONFIG)) {
             LOG.with().session(validLogSession(session)).level(Level.FINEST).verb(NutsLoggerVerb.ADD)
-                    .log(NutsMessage.jstyle("bind    {0} for impl instance {1}", NutsUtilStrings.formatAlign(extensionPoint.getSimpleName(), 40, NutsPositionType.FIRST),
+                    .log(NutsMessage.jstyle("bind    {0} for impl instance {1}", NutsStringUtils.formatAlign(extensionPoint.getSimpleName(), 40, NutsPositionType.FIRST),
                             implementation.getClass().getName()));
         }
         instances.add(extensionPoint, implementation);
@@ -205,7 +205,7 @@ public class DefaultNutsWorkspaceFactory implements NutsWorkspaceFactory {
         }
         if (LOG.isLoggable(Level.CONFIG)) {
             LOG.with().session(validLogSession(session)).level(Level.FINEST).verb(NutsLoggerVerb.ADD)
-                    .log(NutsMessage.jstyle("bind    {0} for impl type {1}", NutsUtilStrings.formatAlign(extensionPoint.getSimpleName(), 40,NutsPositionType.FIRST),
+                    .log(NutsMessage.jstyle("bind    {0} for impl type {1}", NutsStringUtils.formatAlign(extensionPoint.getSimpleName(), 40,NutsPositionType.FIRST),
                             implementation.getName()));
         }
         IdCache t = discoveredCacheById.get(source);
@@ -501,7 +501,7 @@ public class DefaultNutsWorkspaceFactory implements NutsWorkspaceFactory {
                 _alreadyLogger.put(baseType.getName(), implType.getName());
                 LOG.with().session(validLogSession(session)).level(Level.FINEST).verb(NutsLoggerVerb.READ)
                         .log(NutsMessage.jstyle("resolve {0} to  ```underlined {1}``` {2}",
-                                NutsUtilStrings.formatAlign(baseType.getSimpleName(), 40,NutsPositionType.FIRST),
+                                NutsStringUtils.formatAlign(baseType.getSimpleName(), 40,NutsPositionType.FIRST),
                                 scope,
                                 implType.getName()
                         ));
@@ -550,7 +550,7 @@ public class DefaultNutsWorkspaceFactory implements NutsWorkspaceFactory {
                 singletons.put(type, o);
                 if (LOG.isLoggable(Level.CONFIG)) {
                     LOG.with().session(validLogSession(session)).level(Level.FINEST).verb(NutsLoggerVerb.READ)
-                            .log(NutsMessage.jstyle("resolve {0} to  ```underlined singleton``` {1}", NutsUtilStrings.formatAlign(apiType.getSimpleName(), 40,NutsPositionType.FIRST), o.getClass().getName()));
+                            .log(NutsMessage.jstyle("resolve {0} to  ```underlined singleton``` {1}", NutsStringUtils.formatAlign(apiType.getSimpleName(), 40,NutsPositionType.FIRST), o.getClass().getName()));
                 }
             }
             return (T) o;
@@ -558,7 +558,7 @@ public class DefaultNutsWorkspaceFactory implements NutsWorkspaceFactory {
             T o = instantiate0(type, argTypes, args, apiType, session);
             if (LOG.isLoggable(Level.CONFIG)) {
                 LOG.with().session(validLogSession(session)).level(Level.FINEST).verb(NutsLoggerVerb.READ)
-                        .log(NutsMessage.jstyle("resolve {0} to  ```underlined prototype``` {1}", NutsUtilStrings.formatAlign(apiType.getSimpleName(), 40,NutsPositionType.FIRST), o.getClass().getName()));
+                        .log(NutsMessage.jstyle("resolve {0} to  ```underlined prototype``` {1}", NutsStringUtils.formatAlign(apiType.getSimpleName(), 40,NutsPositionType.FIRST), o.getClass().getName()));
             }
             return o;
         }
@@ -572,7 +572,7 @@ public class DefaultNutsWorkspaceFactory implements NutsWorkspaceFactory {
             //if static instance found, always return it!
             if (LOG.isLoggable(Level.CONFIG)) {
                 LOG.with().session(validLogSession(session)).level(Level.FINEST).verb(NutsLoggerVerb.READ)
-                        .log(NutsMessage.jstyle("resolve {0} to singleton {1}", NutsUtilStrings.formatAlign(type.getSimpleName(), 40,NutsPositionType.FIRST), one.getClass().getName()));
+                        .log(NutsMessage.jstyle("resolve {0} to singleton {1}", NutsStringUtils.formatAlign(type.getSimpleName(), 40,NutsPositionType.FIRST), one.getClass().getName()));
             }
             return (T) one;
         }

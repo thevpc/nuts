@@ -5,7 +5,7 @@ import net.thevpc.nuts.io.NutsIOException;
 import net.thevpc.nuts.runtime.standalone.util.xml.XmlUtils;
 import net.thevpc.nuts.runtime.standalone.util.XmlEscaper;
 import net.thevpc.nuts.runtime.standalone.xtra.expr.StringTokenizerUtils;
-import net.thevpc.nuts.util.NutsUtilStrings;
+import net.thevpc.nuts.util.NutsStringUtils;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -239,7 +239,7 @@ public class PomXmlParser {
                                 break;
                             }
                             case "activeByDefault": {
-                                String s = NutsUtilStrings.trim(elemToStr(cc));
+                                String s = NutsStringUtils.trim(elemToStr(cc));
                                 a.setActiveByDefault(s.equalsIgnoreCase("true"));
                                 break;
                             }

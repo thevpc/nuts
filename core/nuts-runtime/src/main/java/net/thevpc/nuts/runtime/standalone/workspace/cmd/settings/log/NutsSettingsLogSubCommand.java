@@ -13,7 +13,7 @@ import net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.AbstractNutsSet
 import net.thevpc.nuts.text.NutsTextStyle;
 import net.thevpc.nuts.text.NutsTexts;
 import net.thevpc.nuts.util.NutsLogger;
-import net.thevpc.nuts.util.NutsUtilStrings;
+import net.thevpc.nuts.util.NutsStringUtils;
 
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -91,7 +91,7 @@ public class NutsSettingsLogSubCommand extends AbstractNutsSettingsSubCommand {
                                         txt.ofStyled("Failed",NutsTextStyle.fail()),
                                 r.getId()==null?"":r.getId(),
                                 r.getForId()==null?"":r.getForId(),
-                                NutsUtilStrings.trim(r.getMessage())
+                                NutsStringUtils.trim(r.getMessage())
                         );
                     }
                 }else{

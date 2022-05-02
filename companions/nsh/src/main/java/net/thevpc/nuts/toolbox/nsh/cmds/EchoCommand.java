@@ -33,7 +33,7 @@ import net.thevpc.nuts.text.NutsTextCode;
 import net.thevpc.nuts.text.NutsTexts;
 import net.thevpc.nuts.toolbox.nsh.SimpleJShellBuiltin;
 import net.thevpc.nuts.toolbox.nsh.jshell.JShellExecutionContext;
-import net.thevpc.nuts.util.NutsUtilStrings;
+import net.thevpc.nuts.util.NutsStringUtils;
 
 /**
  * Created by vpc on 1/7/17.
@@ -63,7 +63,7 @@ public class EchoCommand extends SimpleJShellBuiltin {
             case "--highlight":
             case "--highlighter":
             {
-                options.highlighter = NutsUtilStrings.trim(
+                options.highlighter = NutsStringUtils.trim(
                         commandLine.next()
                         .get(session)
                         .getStringValue().get(session)

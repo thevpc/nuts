@@ -25,7 +25,8 @@ package net.thevpc.nuts;
 
 import net.thevpc.nuts.boot.*;
 import net.thevpc.nuts.cmdline.NutsCommandLine;
-import net.thevpc.nuts.util.NutsUtilStrings;
+import net.thevpc.nuts.reserved.NutsReservedBootLog;
+import net.thevpc.nuts.util.NutsStringUtils;
 
 import java.time.Instant;
 import java.util.Arrays;
@@ -60,7 +61,7 @@ public final class Nuts {
         if (version == null) {
             synchronized (Nuts.class) {
                 if (version == null) {
-                    String v = NutsApiUtils.resolveNutsVersionFromClassPath(new PrivateNutsBootLog(null));
+                    String v = NutsApiUtils.resolveNutsVersionFromClassPath(new NutsReservedBootLog(null));
                     if (v == null) {
                         throw new NutsBootException(
                                 NutsMessage.plain(
@@ -123,13 +124,13 @@ public final class Nuts {
      * @param args arguments
      * @return NutsSession instance
      */
-    public static NutsSession openInheritedWorkspace(NutsBootTerminal term, String... args) throws NutsUnsatisfiedRequirementsException {
+    public static NutsSession openInheritedWorkspace(NutsWorkspaceTerminalOptions term, String... args) throws NutsUnsatisfiedRequirementsException {
         Instant startTime = Instant.now();
-        String nutsWorkspaceOptions = NutsUtilStrings.trim(
-                NutsUtilStrings.trim(System.getProperty("nuts.boot.args"))
-                        + " " + NutsUtilStrings.trim(System.getProperty("nuts.args"))
+        String nutsWorkspaceOptions = NutsStringUtils.trim(
+                NutsStringUtils.trim(System.getProperty("nuts.boot.args"))
+                        + " " + NutsStringUtils.trim(System.getProperty("nuts.args"))
         );
-        PrivateNutsBootLog log = new PrivateNutsBootLog(term);
+        NutsReservedBootLog log = new NutsReservedBootLog(term);
         NutsWorkspaceOptionsBuilder options = new DefaultNutsWorkspaceOptionsBuilder();
         if (!NutsBlankable.isBlank(nutsWorkspaceOptions)) {
             String[] cml = NutsCommandLine.parseDefault(nutsWorkspaceOptions).get().toStringArray();
@@ -163,7 +164,7 @@ public final class Nuts {
      * @param args nuts boot arguments
      * @return new NutsSession instance
      */
-    public static NutsSession openWorkspace(NutsBootTerminal term, String... args) throws NutsUnsatisfiedRequirementsException {
+    public static NutsSession openWorkspace(NutsWorkspaceTerminalOptions term, String... args) throws NutsUnsatisfiedRequirementsException {
         return new NutsBootWorkspace(term, args).openWorkspace();
     }
 
@@ -197,7 +198,7 @@ public final class Nuts {
      * @param args boot arguments
      * @return session
      */
-    public static NutsSession runWorkspace(NutsBootTerminal term, String... args) throws NutsExecutionException {
+    public static NutsSession runWorkspace(NutsWorkspaceTerminalOptions term, String... args) throws NutsExecutionException {
         return new NutsBootWorkspace(term, args).runWorkspace();
     }
 

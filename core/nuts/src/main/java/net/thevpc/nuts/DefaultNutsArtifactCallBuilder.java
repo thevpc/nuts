@@ -25,7 +25,7 @@
 */
 package net.thevpc.nuts;
 
-import net.thevpc.nuts.boot.PrivateNutsUtilCollections;
+import net.thevpc.nuts.reserved.NutsReservedCollectionUtils;
 import net.thevpc.nuts.spi.NutsSupportLevelContext;
 
 import java.io.Serializable;
@@ -73,13 +73,13 @@ public class DefaultNutsArtifactCallBuilder implements NutsArtifactCallBuilder, 
 
     @Override
     public DefaultNutsArtifactCallBuilder setArguments(String... arguments) {
-        this.arguments = PrivateNutsUtilCollections.unmodifiableList(Arrays.asList(arguments));
+        this.arguments = NutsReservedCollectionUtils.unmodifiableList(Arrays.asList(arguments));
         return this;
     }
 
     @Override
     public NutsArtifactCallBuilder setArguments(List<String> value) {
-        this.arguments = PrivateNutsUtilCollections.unmodifiableList(value);
+        this.arguments = NutsReservedCollectionUtils.unmodifiableList(value);
         return this;
     }
 

@@ -12,7 +12,7 @@ import net.thevpc.nuts.text.NutsTextBuilder;
 import net.thevpc.nuts.text.NutsTextStyle;
 import net.thevpc.nuts.text.NutsTextStyleType;
 import net.thevpc.nuts.text.NutsTexts;
-import net.thevpc.nuts.util.NutsUtilStrings;
+import net.thevpc.nuts.util.NutsStringUtils;
 
 import java.util.*;
 
@@ -283,11 +283,11 @@ public class DefaultNutsIdFormat extends DefaultFormatBase<NutsIdFormat> impleme
     }
 
     private String _encodeValue(String s) {
-        return NutsUtilStrings.formatStringLiteral(s, NutsUtilStrings.QuoteType.SIMPLE, NutsSupportMode.PREFERRED);
+        return NutsStringUtils.formatStringLiteral(s, NutsStringUtils.QuoteType.SIMPLE, NutsSupportMode.PREFERRED);
     }
 
     private String _encodeKey(String s) {
-        return NutsUtilStrings.formatStringLiteral(s, NutsUtilStrings.QuoteType.SIMPLE, NutsSupportMode.PREFERRED);
+        return NutsStringUtils.formatStringLiteral(s, NutsStringUtils.QuoteType.SIMPLE, NutsSupportMode.PREFERRED);
     }
 
     @Override

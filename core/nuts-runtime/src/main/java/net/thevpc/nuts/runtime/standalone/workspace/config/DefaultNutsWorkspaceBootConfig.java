@@ -1,7 +1,7 @@
 package net.thevpc.nuts.runtime.standalone.workspace.config;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.util.NutsUtilPlatforms;
+import net.thevpc.nuts.util.NutsPlatformUtils;
 
 import java.nio.file.Paths;
 import java.util.Collections;
@@ -52,7 +52,7 @@ class DefaultNutsWorkspaceBootConfig implements NutsWorkspaceBootConfig {
         if (storeLocationStrategy == null) {
             storeLocationStrategy = NutsStoreLocationStrategy.EXPLODED;
         }
-        this.storeLocations= NutsUtilPlatforms.buildLocations(null,storeLocationStrategy, storeLocations, homeLocations, global, effectiveWorkspace,session);
+        this.storeLocations= NutsPlatformUtils.buildLocations(null,storeLocationStrategy, storeLocations, homeLocations, global, effectiveWorkspace,session);
         List<NutsWorkspaceConfigBoot.ExtensionConfig> extensions = bootModel.getExtensions();
         if (extensions == null) {
             this.extensions= Collections.emptyList();
@@ -189,7 +189,7 @@ class DefaultNutsWorkspaceBootConfig implements NutsWorkspaceBootConfig {
 
     @Override
     public String getHomeLocation(NutsStoreLocation storeLocation) {
-        return NutsUtilPlatforms.getPlatformHomeFolder(getStoreLocationLayout(),
+        return NutsPlatformUtils.getPlatformHomeFolder(getStoreLocationLayout(),
                 storeLocation, getHomeLocations(),
                 isGlobal(),
                 getName()

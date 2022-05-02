@@ -1,7 +1,7 @@
 package net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.alias;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.boot.PrivateNutsUtilCollections;
+import net.thevpc.nuts.reserved.NutsReservedCollectionUtils;
 import net.thevpc.nuts.util.NutsLogger;
 import net.thevpc.nuts.util.NutsLoggerOp;
 
@@ -127,30 +127,30 @@ public class DefaultNutsWorkspaceCustomCommand implements NutsWorkspaceCustomCom
 
     @Override
     public List<String> getCommand() {
-        return PrivateNutsUtilCollections.unmodifiableList(command);
+        return NutsReservedCollectionUtils.unmodifiableList(command);
     }
 
     public DefaultNutsWorkspaceCustomCommand setCommand(List<String> command) {
-        this.command = PrivateNutsUtilCollections.nonNullList(command);
+        this.command = NutsReservedCollectionUtils.nonNullList(command);
         return this;
     }
     public DefaultNutsWorkspaceCustomCommand setCommand(String[] command) {
-        this.command = PrivateNutsUtilCollections.nonNullListFromArray(command);
+        this.command = NutsReservedCollectionUtils.nonNullListFromArray(command);
         return this;
     }
 
     @Override
     public List<String> getExecutorOptions() {
-        return PrivateNutsUtilCollections.unmodifiableList(executorOptions);
+        return NutsReservedCollectionUtils.unmodifiableList(executorOptions);
     }
 
     public DefaultNutsWorkspaceCustomCommand setExecutorOptions(List<String> executorOptions) {
-        this.executorOptions = PrivateNutsUtilCollections.nonNullList(executorOptions);
+        this.executorOptions = NutsReservedCollectionUtils.nonNullList(executorOptions);
         return this;
     }
 
     public DefaultNutsWorkspaceCustomCommand setExecutorOptions(String[] executorOptions) {
-        this.executorOptions = PrivateNutsUtilCollections.nonNullListFromArray(executorOptions);
+        this.executorOptions = NutsReservedCollectionUtils.nonNullListFromArray(executorOptions);
         return this;
     }
 

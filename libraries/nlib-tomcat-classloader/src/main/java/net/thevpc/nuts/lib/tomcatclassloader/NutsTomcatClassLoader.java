@@ -1,6 +1,7 @@
 package net.thevpc.nuts.lib.tomcatclassloader;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.boot.DefaultNutsWorkspaceOptionsBuilder;
 import org.apache.catalina.WebResource;
 import org.apache.catalina.WebResourceRoot;
 import org.apache.catalina.loader.WebappClassLoader;

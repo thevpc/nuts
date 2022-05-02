@@ -41,7 +41,7 @@ import net.thevpc.nuts.toolbox.nsh.jshell.JShellExecutionContext;
 import net.thevpc.nuts.toolbox.nsh.util.ColumnRuler;
 import net.thevpc.nuts.toolbox.nsh.util.FileInfo;
 import net.thevpc.nuts.toolbox.nsh.util.ShellHelper;
-import net.thevpc.nuts.util.NutsUtilStrings;
+import net.thevpc.nuts.util.NutsStringUtils;
 
 import java.io.*;
 import java.util.ArrayList;
@@ -76,7 +76,7 @@ public class CatCommand extends SimpleJShellBuiltin {
             options.E = a.getBooleanValue().get(session);
             return true;
         } else if ((a = commandLine.next("-H", "--highlight", "--highlighter").orNull()) != null) {
-            options.highlighter = NutsUtilStrings.trim(a.getStringValue().get(session));
+            options.highlighter = NutsStringUtils.trim(a.getStringValue().get(session));
             return true;
         } else if (!commandLine.isNextOption()) {
             String path = commandLine.next().flatMap(NutsValue::asString).get(session);

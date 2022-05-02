@@ -30,7 +30,7 @@ import net.thevpc.nuts.*;
 import net.thevpc.nuts.DefaultNutsArtifactCall;
 import net.thevpc.nuts.runtime.standalone.format.json.JsonStringBuffer;
 import net.thevpc.nuts.spi.*;
-import net.thevpc.nuts.util.NutsUtilStrings;
+import net.thevpc.nuts.util.NutsStringUtils;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -69,7 +69,7 @@ public class NshDescriptorContentParserComponent implements NutsDescriptorConten
         }
         NutsDescriptorContentParserContext ctr=criteria.getConstraints(NutsDescriptorContentParserContext.class);
         if(ctr!=null) {
-            String e = NutsUtilStrings.trim(ctr.getFileExtension());
+            String e = NutsStringUtils.trim(ctr.getFileExtension());
             switch (e) {
                 case "":
                 case "sh":

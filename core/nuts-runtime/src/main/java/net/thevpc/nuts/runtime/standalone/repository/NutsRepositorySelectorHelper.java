@@ -6,7 +6,7 @@ import net.thevpc.nuts.runtime.standalone.util.collections.CoreCollectionUtils;
 import net.thevpc.nuts.spi.NutsRepositoryDB;
 import net.thevpc.nuts.spi.NutsRepositoryLocation;
 import net.thevpc.nuts.spi.NutsRepositorySelectorList;
-import net.thevpc.nuts.util.NutsUtilPlatforms;
+import net.thevpc.nuts.util.NutsPlatformUtils;
 
 import java.util.HashMap;
 import java.util.Objects;
@@ -108,7 +108,7 @@ public class NutsRepositorySelectorHelper {
                         .setConfig(
                                 new NutsRepositoryConfig()
                                         .setLocation(NutsRepositoryLocation.of("nuts@"
-                                                + NutsPath.of(NutsUtilPlatforms.getPlatformHomeFolder(null,
+                                                + NutsPath.of(NutsPlatformUtils.getPlatformHomeFolder(null,
                                                         NutsStoreLocation.LIB, session.config().stored().getHomeLocations(),
                                                         true,
                                                         NutsConstants.Names.DEFAULT_WORKSPACE_NAME), session)

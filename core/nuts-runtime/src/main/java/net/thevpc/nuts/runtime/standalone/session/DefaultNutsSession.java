@@ -34,13 +34,14 @@ import net.thevpc.nuts.io.NutsPrintStream;
 import net.thevpc.nuts.io.NutsSessionTerminal;
 import net.thevpc.nuts.io.NutsTerminalMode;
 import net.thevpc.nuts.runtime.standalone.elem.DefaultNutsArrayElementBuilder;
+import net.thevpc.nuts.runtime.standalone.io.progress.NutsProgressUtils;
 import net.thevpc.nuts.runtime.standalone.io.terminal.AbstractNutsSessionTerminal;
 import net.thevpc.nuts.runtime.standalone.util.CoreStringUtils;
 import net.thevpc.nuts.runtime.standalone.util.NutsConfigurableHelper;
 import net.thevpc.nuts.runtime.standalone.util.collections.NutsPropertiesHolder;
 import net.thevpc.nuts.util.NutsLogConfig;
 import net.thevpc.nuts.util.NutsMapListener;
-import net.thevpc.nuts.util.NutsUtilStrings;
+import net.thevpc.nuts.util.NutsStringUtils;
 
 import java.io.InputStream;
 import java.time.Instant;
@@ -1091,6 +1092,15 @@ public class DefaultNutsSession implements Cloneable, NutsSession {
     }
 
     @Override
+    public boolean isProgress() {
+        if (!isPlainOut() || isBot()) {
+            return false;
+        }
+        //TODO, should we cache this?
+        return NutsProgressUtils.parseProgressOptions(this).isEnabled();
+    }
+
+    @Override
     public NutsSession setProgressOptions(String progressOptions) {
         this.progressOptions = progressOptions;
         return this;
@@ -1530,7 +1540,7 @@ public class DefaultNutsSession implements Cloneable, NutsSession {
                 if (enabled) {
                     String id = a.getKey().asString().get(this);
                     this.setLogFileLevel(
-                            NutsUtilStrings.parseLogLevel(id.substring("--log-file-".length())).ifEmpty(null).get(this));
+                            NutsStringUtils.parseLogLevel(id.substring("--log-file-".length())).ifEmpty(null).get(this));
                 }
                 break;
             }
@@ -1548,7 +1558,7 @@ public class DefaultNutsSession implements Cloneable, NutsSession {
                 cmdLine.skip();
                 if (enabled) {
                     String id = a.getKey().asString().get(this);
-                    this.setLogTermLevel(NutsUtilStrings.parseLogLevel(id.substring("--log-term-".length())).ifEmpty(null).get(this));
+                    this.setLogTermLevel(NutsStringUtils.parseLogLevel(id.substring("--log-term-".length())).ifEmpty(null).get(this));
                 }
                 break;
             }
@@ -1574,7 +1584,7 @@ public class DefaultNutsSession implements Cloneable, NutsSession {
                 cmdLine.skip();
                 if (enabled) {
                     String id = a.getKey().asString().get(this);
-                    Level lvl = NutsUtilStrings.parseLogLevel(id.substring("--log-".length())).ifEmpty(null).get(this);
+                    Level lvl = NutsStringUtils.parseLogLevel(id.substring("--log-".length())).ifEmpty(null).get(this);
                     this.setLogTermLevel(lvl);
                     this.setLogFileLevel(lvl);
                 }

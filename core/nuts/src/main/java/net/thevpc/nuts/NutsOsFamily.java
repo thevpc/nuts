@@ -25,7 +25,7 @@
  */
 package net.thevpc.nuts;
 
-import net.thevpc.nuts.boot.NutsApiUtils;
+import net.thevpc.nuts.reserved.NutsReservedLangUtils;
 
 /**
  * Supported Operating System Families
@@ -68,7 +68,7 @@ public enum NutsOsFamily implements NutsEnum {
     }
 
     public static NutsOptional<NutsOsFamily> parse(String value) {
-        return NutsApiUtils.parse(value, NutsOsFamily.class, s -> {
+        return NutsReservedLangUtils.parseEnum(value, NutsOsFamily.class, s -> {
             String e = s.toLowerCase();
             switch (e) {
                 case "w":

@@ -25,7 +25,7 @@
  */
 package net.thevpc.nuts;
 
-import net.thevpc.nuts.boot.PrivateNutsUtilMaps;
+import net.thevpc.nuts.reserved.NutsReservedCollectionUtils;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -227,6 +227,6 @@ public class DefaultNutsEnvCondition implements NutsEnvCondition {
 
     @Override
     public Map<String, String> toMap() {
-        return PrivateNutsUtilMaps.toMap(this);
+        return NutsReservedCollectionUtils.toMap(this);
     }
 }

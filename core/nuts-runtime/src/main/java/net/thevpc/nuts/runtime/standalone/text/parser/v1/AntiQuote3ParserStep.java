@@ -5,7 +5,7 @@ import net.thevpc.nuts.runtime.standalone.text.DefaultNutsTexts;
 import net.thevpc.nuts.text.NutsTerminalCommand;
 import net.thevpc.nuts.text.NutsText;
 import net.thevpc.nuts.text.NutsTexts;
-import net.thevpc.nuts.util.NutsUtilStrings;
+import net.thevpc.nuts.util.NutsStringUtils;
 
 public class AntiQuote3ParserStep extends ParserStep {
 
@@ -284,9 +284,9 @@ public class AntiQuote3ParserStep extends ParserStep {
 
     @Override
     public String toString() {
-        StringBuilder sb = new StringBuilder("Quoted(" + NutsUtilStrings.formatStringLiteral(start.toString(), NutsUtilStrings.QuoteType.DOUBLE));
+        StringBuilder sb = new StringBuilder("Quoted(" + NutsStringUtils.formatStringLiteral(start.toString(), NutsStringUtils.QuoteType.DOUBLE));
         sb.append(",");
-        sb.append(NutsUtilStrings.formatStringLiteral(getPartialValue(), NutsUtilStrings.QuoteType.DOUBLE));
+        sb.append(NutsStringUtils.formatStringLiteral(getPartialValue(), NutsStringUtils.QuoteType.DOUBLE));
         sb.append(",status=").append(status == 0 ? "EXPECT_START" : status == 1 ? "EXPECT_CONTENT" : status == 2 ? "EXPECT_END" : String.valueOf(status));
         sb.append(",end=");
         sb.append(end);

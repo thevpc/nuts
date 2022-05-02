@@ -27,7 +27,7 @@ package net.thevpc.nuts;
 
 import java.io.Serializable;
 
-import net.thevpc.nuts.util.NutsUtilStrings;
+import net.thevpc.nuts.util.NutsStringUtils;
 
 /**
  * Created by vpc on 2/1/17.
@@ -46,8 +46,8 @@ public class DefaultNutsVersionInterval implements NutsVersionInterval, Serializ
     public DefaultNutsVersionInterval(boolean inclusiveLowerBoundary, boolean inclusiveUpperBoundary, String min, String max) {
         this.includeLowerBound = inclusiveLowerBoundary;
         this.includeUpperBound = inclusiveUpperBoundary;
-        this.lowerBound = NutsUtilStrings.trimToNull(min);
-        this.upperBound = NutsUtilStrings.trimToNull(max);
+        this.lowerBound = NutsStringUtils.trimToNull(min);
+        this.upperBound = NutsStringUtils.trimToNull(max);
     }
 
     @Override
@@ -67,7 +67,7 @@ public class DefaultNutsVersionInterval implements NutsVersionInterval, Serializ
 
     @Override
     public boolean isFixedValue() {
-        return includeLowerBound && includeUpperBound && NutsUtilStrings.trim(lowerBound).equals(NutsUtilStrings.trim(upperBound))
+        return includeLowerBound && includeUpperBound && NutsStringUtils.trim(lowerBound).equals(NutsStringUtils.trim(upperBound))
                 && !NutsConstants.Versions.LATEST.equals(lowerBound) && !NutsConstants.Versions.RELEASE.equals(lowerBound);
     }
 

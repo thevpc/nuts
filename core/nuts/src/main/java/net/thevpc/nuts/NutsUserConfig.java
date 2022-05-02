@@ -25,9 +25,8 @@
  */
 package net.thevpc.nuts;
 
-import net.thevpc.nuts.boot.PrivateNutsUtilCollections;
+import net.thevpc.nuts.reserved.NutsReservedCollectionUtils;
 
-import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
@@ -102,7 +101,7 @@ public final class NutsUserConfig extends NutsConfigItem {
     }
 
     public void setPermissions(List<String> permissions) {
-        this.permissions = PrivateNutsUtilCollections.nonNullList(permissions);
+        this.permissions = NutsReservedCollectionUtils.nonNullList(permissions);
     }
 
     public List<String> getGroups() {
@@ -110,7 +109,7 @@ public final class NutsUserConfig extends NutsConfigItem {
     }
 
     public void setGroups(List<String> groups) {
-        this.groups = PrivateNutsUtilCollections.nonNullList(groups);
+        this.groups = NutsReservedCollectionUtils.nonNullList(groups);
     }
 
     @Override

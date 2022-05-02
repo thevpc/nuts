@@ -1,7 +1,7 @@
 package net.thevpc.nuts.runtime.standalone.workspace.config;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.boot.NutsApiUtils;
+import net.thevpc.nuts.reserved.NutsReservedLangUtils;
 
 public enum ConfigEventType  implements NutsEnum {
     API, RUNTIME, BOOT, MAIN, SECURITY;
@@ -17,7 +17,7 @@ public enum ConfigEventType  implements NutsEnum {
     }
 
     public static NutsOptional<ConfigEventType> parse(String value) {
-        return NutsApiUtils.parse(value, ConfigEventType.class);
+        return NutsReservedLangUtils.parseEnum(value, ConfigEventType.class);
     }
 
 }

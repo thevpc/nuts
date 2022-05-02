@@ -1,6 +1,7 @@
 package net.thevpc.nuts.runtime.standalone.io.terminal;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.boot.NutsWorkspaceBootOptions;
 import net.thevpc.nuts.cmdline.NutsCommandAutoCompleteResolver;
 import net.thevpc.nuts.cmdline.NutsCommandHistory;
 import net.thevpc.nuts.io.NutsIOException;
@@ -37,7 +38,7 @@ public class DefaultNutsSystemTerminalBaseBoot extends NutsSystemTerminalBaseImp
         this.session = bootModel.bootSession();
         this.workspace = session.getWorkspace();
         NutsWorkspaceOptions bo = bootModel.getBootUserOptions();
-        NutsBootTerminal bootStdFd = new NutsBootTerminal(
+        NutsWorkspaceTerminalOptions bootStdFd = new NutsWorkspaceTerminalOptions(
                 bo.getStdin().orElse(System.in),
                 bo.getStdout().orElse(System.out),
                 bo.getStderr().orElse(System.err),
@@ -182,7 +183,7 @@ public class DefaultNutsSystemTerminalBaseBoot extends NutsSystemTerminalBaseImp
         String s = NutsAnsiTermHelper.of(session).styled(styles, session);
         if (s != null) {
             try {
-                NutsBootTerminal bootStdFd = session.boot().getBootTerminal();
+                NutsWorkspaceTerminalOptions bootStdFd = session.boot().getBootTerminal();
                 bootStdFd.getOut().write(s.getBytes());
             } catch (IOException e) {
                 throw new NutsIOException(session, e);

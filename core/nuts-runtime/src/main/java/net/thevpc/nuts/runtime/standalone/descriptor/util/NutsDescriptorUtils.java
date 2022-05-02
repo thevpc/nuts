@@ -1,7 +1,7 @@
 package net.thevpc.nuts.runtime.standalone.descriptor.util;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.boot.PrivateNutsDefaultNutsProperties;
+import net.thevpc.nuts.reserved.NutsReservedDefaultNutsProperties;
 import net.thevpc.nuts.runtime.standalone.id.util.NutsIdUtils;
 import net.thevpc.nuts.runtime.standalone.util.CoreNutsUtils;
 import net.thevpc.nuts.runtime.standalone.util.CoreStringUtils;
@@ -10,7 +10,7 @@ import net.thevpc.nuts.runtime.standalone.util.collections.CoreArrayUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.NutsWorkspaceExt;
 import net.thevpc.nuts.util.NutsLoggerOp;
 import net.thevpc.nuts.util.NutsLoggerVerb;
-import net.thevpc.nuts.util.NutsUtilStrings;
+import net.thevpc.nuts.util.NutsStringUtils;
 
 import java.util.*;
 import java.util.function.Function;
@@ -218,7 +218,7 @@ public class NutsDescriptorUtils {
         );
     }
     private static String sPropId(NutsDescriptorProperty d) {
-        return NutsUtilStrings.trim(d.getName()) + ":" + d.getCondition().toString();
+        return NutsStringUtils.trim(d.getName()) + ":" + d.getCondition().toString();
     }
 
     private static Map<String, NutsDescriptorProperty> propsAsMap(List<NutsDescriptorProperty> arr) {
@@ -324,7 +324,7 @@ public class NutsDescriptorUtils {
         String n_desc = CoreNutsUtils.applyStringProperties(b.getDescription(), map);
         NutsArtifactCall n_executor = b.getExecutor();
         NutsArtifactCall n_installer = b.getInstaller();
-        PrivateNutsDefaultNutsProperties n_props = new PrivateNutsDefaultNutsProperties();
+        NutsReservedDefaultNutsProperties n_props = new NutsReservedDefaultNutsProperties();
         for (NutsDescriptorProperty property : b.getProperties()) {
             String v = property.getValue().asString().get(session);
             if (CoreStringUtils.containsVars("${")) {
@@ -455,7 +455,7 @@ public class NutsDescriptorUtils {
     }
 
     private static String sDepId(NutsDependency d) {
-        return NutsUtilStrings.trim(d.getGroupId()) + ":" + NutsUtilStrings.trim(d.getArtifactId()) + "?" + NutsUtilStrings.trim(d.getClassifier());
+        return NutsStringUtils.trim(d.getGroupId()) + ":" + NutsStringUtils.trim(d.getArtifactId()) + "?" + NutsStringUtils.trim(d.getClassifier());
     }
 
 

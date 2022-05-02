@@ -24,6 +24,8 @@
 package net.thevpc.nuts;
 
 import net.thevpc.nuts.boot.NutsApiUtils;
+import net.thevpc.nuts.boot.NutsClassLoaderNode;
+import net.thevpc.nuts.boot.NutsWorkspaceBootOptions;
 
 import java.net.URL;
 import java.time.Duration;
@@ -71,5 +73,5 @@ public interface NutsBootManager {
 
     List<NutsClassLoaderNode> getBootExtensionClassLoaderNode();
 
-    NutsBootTerminal getBootTerminal();
+    NutsWorkspaceTerminalOptions getBootTerminal();
 }

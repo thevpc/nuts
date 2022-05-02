@@ -81,7 +81,7 @@ public class NutsPrintStreamSystem extends NutsPrintStreamBase{
         if (ansi != null) {
             return ansi ? NutsTerminalMode.ANSI : NutsTerminalMode.INHERITED;
         }
-        NutsBootTerminal b = session.boot().getBootTerminal();
+        NutsWorkspaceTerminalOptions b = session.boot().getBootTerminal();
         if (b.getFlags().contains("ansi")) {
             return NutsTerminalMode.ANSI;
         } else {

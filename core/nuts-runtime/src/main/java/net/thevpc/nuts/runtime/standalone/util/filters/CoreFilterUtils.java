@@ -29,7 +29,7 @@ import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.standalone.util.Simplifiable;
 import net.thevpc.nuts.util.NutsPredicate;
 import net.thevpc.nuts.util.NutsPredicates;
-import net.thevpc.nuts.util.NutsUtilStrings;
+import net.thevpc.nuts.util.NutsStringUtils;
 
 import java.lang.reflect.Array;
 import java.util.*;
@@ -361,7 +361,7 @@ public class CoreFilterUtils {
         if (CoreFilterUtils.acceptCondition(dep.getCondition(), false, session)) {
             // fast reject jfx dependencies with different environment defined by classifier!
             if (dep.getGroupId().equals("org.openjfx") && dep.getArtifactId().startsWith("javafx")) {
-                String c = NutsUtilStrings.trim(dep.getClassifier());
+                String c = NutsStringUtils.trim(dep.getClassifier());
                 if (c.length() > 0) {
                     String[] a = c.split("-");
                     if (a.length > 0) {
@@ -455,8 +455,8 @@ public class CoreFilterUtils {
         if (expected == null) {
             return f != null;
         }
-        expected = NutsUtilStrings.trim(expected);
-        f = NutsUtilStrings.trim(f);
+        expected = NutsStringUtils.trim(expected);
+        f = NutsStringUtils.trim(f);
         if (expected.startsWith("!")) {
             expected = expected.substring(1).trim();
             return !expected.equals(f);
@@ -652,8 +652,8 @@ public class CoreFilterUtils {
         if (location == null) {
             return false;
         }
-        String c0 = NutsUtilStrings.trim(classifier);
-        String c1 = NutsUtilStrings.trim(location.getClassifier());
+        String c0 = NutsStringUtils.trim(classifier);
+        String c1 = NutsStringUtils.trim(location.getClassifier());
         return c0.equals(c1);
     }
 
@@ -685,7 +685,7 @@ public class CoreFilterUtils {
         }
         Map<String, String> properties = condition.getProperties();
         if (!properties.isEmpty()) {
-            m.put(NutsConstants.IdProperties.CONDITIONAL_PROPERTIES, NutsUtilStrings.formatMap(properties, "=", ",", "", true));
+            m.put(NutsConstants.IdProperties.CONDITIONAL_PROPERTIES, NutsStringUtils.formatMap(properties, "=", ",", "", true));
         }
         return m;
     }

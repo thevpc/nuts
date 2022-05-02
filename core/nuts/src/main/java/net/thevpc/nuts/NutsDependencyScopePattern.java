@@ -25,7 +25,7 @@
  */
 package net.thevpc.nuts;
 
-import net.thevpc.nuts.boot.NutsApiUtils;
+import net.thevpc.nuts.reserved.NutsReservedLangUtils;
 
 import java.util.EnumSet;
 
@@ -140,7 +140,7 @@ public enum NutsDependencyScopePattern implements NutsEnum {
     }
 
     public static NutsOptional<NutsDependencyScopePattern> parse(String value) {
-        return NutsApiUtils.parse(value, NutsDependencyScopePattern.class,s->{
+        return NutsReservedLangUtils.parseEnum(value, NutsDependencyScopePattern.class, s->{
             switch (s.toLowerCase()) {
                 case "compileonly": //gradle
                 case "compile_only": //gradle

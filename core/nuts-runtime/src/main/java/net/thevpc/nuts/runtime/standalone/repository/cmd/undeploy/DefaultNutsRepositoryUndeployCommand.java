@@ -15,7 +15,7 @@ import net.thevpc.nuts.util.NutsLogger;
 import net.thevpc.nuts.util.NutsLoggerOp;
 import net.thevpc.nuts.util.NutsLoggerVerb;
 import net.thevpc.nuts.spi.NutsRepositoryUndeployCommand;
-import net.thevpc.nuts.util.NutsUtilStrings;
+import net.thevpc.nuts.util.NutsStringUtils;
 
 /**
  *
@@ -61,10 +61,10 @@ public class DefaultNutsRepositoryUndeployCommand extends AbstractNutsRepository
                 }
             }
             _LOGOP(session).level(Level.FINEST).verb(NutsLoggerVerb.SUCCESS)
-                    .log(NutsMessage.jstyle("{0} undeploy {1}", NutsUtilStrings.formatAlign(getRepo().getName(), 20, NutsPositionType.FIRST), this.getId()));
+                    .log(NutsMessage.jstyle("{0} undeploy {1}", NutsStringUtils.formatAlign(getRepo().getName(), 20, NutsPositionType.FIRST), this.getId()));
         } catch (RuntimeException ex) {
             _LOGOP(session).level(Level.FINEST).verb(NutsLoggerVerb.FAIL)
-                    .log(NutsMessage.jstyle("{0} undeploy {1}", NutsUtilStrings.formatAlign(getRepo().getName(), 20,NutsPositionType.FIRST), this.getId()));
+                    .log(NutsMessage.jstyle("{0} undeploy {1}", NutsStringUtils.formatAlign(getRepo().getName(), 20,NutsPositionType.FIRST), this.getId()));
         }
         return this;
     }

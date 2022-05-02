@@ -26,7 +26,7 @@
 package net.thevpc.nuts.core.test;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.boot.PrivateNutsVersionIntervalParser;
+import net.thevpc.nuts.reserved.NutsReservedVersionIntervalParser;
 import net.thevpc.nuts.core.test.utils.TestUtils;
 import org.junit.jupiter.api.*;
 
@@ -210,7 +210,7 @@ public class Test20_VersionTest {
 
     @Test
     public void test20() {
-        new PrivateNutsVersionIntervalParser().parse(",,").get();
+        new NutsReservedVersionIntervalParser().parse(",,").get();
     }
 
     @Test

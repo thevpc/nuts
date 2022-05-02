@@ -33,7 +33,7 @@ import net.thevpc.nuts.runtime.standalone.io.util.NutsStreamOrPath;
 import net.thevpc.nuts.runtime.standalone.session.NutsSessionUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.NutsWorkspaceUtils;
 import net.thevpc.nuts.spi.NutsSupportLevelContext;
-import net.thevpc.nuts.util.NutsUtilStrings;
+import net.thevpc.nuts.util.NutsStringUtils;
 
 import java.io.*;
 import java.nio.file.Path;
@@ -100,7 +100,7 @@ public class DefaultNutsDigest implements NutsDigest {
 
     @Override
     public String computeString() {
-        return NutsUtilStrings.toHexString(computeBytes());
+        return NutsStringUtils.toHexString(computeBytes());
     }
 
     @Override

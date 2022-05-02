@@ -1,7 +1,7 @@
 package net.thevpc.nuts.runtime.standalone.workspace.config;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.util.NutsUtilStrings;
+import net.thevpc.nuts.util.NutsStringUtils;
 
 import java.util.Comparator;
 
@@ -27,26 +27,26 @@ public class NutsPlatformLocationSelectComparator implements Comparator<NutsPlat
         if (x != 0) {
             return x;
         }
-        String s1 = NutsUtilStrings.trim(o1.getName());
-        String s2 = NutsUtilStrings.trim(o2.getName());
+        String s1 = NutsStringUtils.trim(o1.getName());
+        String s2 = NutsStringUtils.trim(o2.getName());
         x = s1.compareTo(s2);
         if (x != 0) {
             return x;
         }
-        s1 = NutsUtilStrings.trim(o1.getPackaging());
-        s2 = NutsUtilStrings.trim(o2.getPackaging());
+        s1 = NutsStringUtils.trim(o1.getPackaging());
+        s2 = NutsStringUtils.trim(o2.getPackaging());
         x = s1.compareTo(s2);
         if (x != 0) {
             return x;
         }
-        s1 = NutsUtilStrings.trim(o1.getProduct());
-        s2 = NutsUtilStrings.trim(o2.getProduct());
+        s1 = NutsStringUtils.trim(o1.getProduct());
+        s2 = NutsStringUtils.trim(o2.getProduct());
         x = s1.compareTo(s2);
         if (x != 0) {
             return x;
         }
-        s1 = NutsUtilStrings.trim(o1.getPath());
-        s2 = NutsUtilStrings.trim(o2.getPath());
+        s1 = NutsStringUtils.trim(o1.getPath());
+        s2 = NutsStringUtils.trim(o2.getPath());
         x = s1.compareTo(s2);
         if (x != 0) {
             return x;

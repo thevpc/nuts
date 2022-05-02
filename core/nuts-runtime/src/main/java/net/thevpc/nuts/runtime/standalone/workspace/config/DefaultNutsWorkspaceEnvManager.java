@@ -271,8 +271,8 @@ public class DefaultNutsWorkspaceEnvManager implements NutsWorkspaceEnvManager {
     public void addLauncher(NutsLauncherOptions launcher) {
         checkSession();
         //apply isolation!
-        NutsWorkspaceIsolation isolation = session.boot().getBootOptions().getIsolation().orElse(NutsWorkspaceIsolation.SYSTEM);
-        if (isolation.compareTo(NutsWorkspaceIsolation.CONFINED) >= 0) {
+        NutsIsolationLevel isolation = session.boot().getBootOptions().getIsolationLevel().orElse(NutsIsolationLevel.SYSTEM);
+        if (isolation.compareTo(NutsIsolationLevel.CONFINED) >= 0) {
             launcher.setCreateDesktopLauncher(NutsSupportMode.NEVER);
             launcher.setCreateMenuLauncher(NutsSupportMode.NEVER);
             launcher.setCreateUserLauncher(NutsSupportMode.NEVER);

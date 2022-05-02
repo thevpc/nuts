@@ -25,8 +25,7 @@
  */
 package net.thevpc.nuts;
 
-import net.thevpc.nuts.boot.PrivateNutsIdListParser;
-import net.thevpc.nuts.boot.PrivateNutsIdParser;
+import net.thevpc.nuts.reserved.NutsReservedUtils;
 
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -48,7 +47,7 @@ public interface NutsId extends Comparable<NutsId>, NutsFormattable, NutsBlankab
     NutsId BLANK = new DefaultNutsId();
 
     static NutsOptional<List<NutsId>> ofList(String value) {
-        return PrivateNutsIdListParser.parseIdList(value);
+        return NutsReservedUtils.parseIdList(value);
     }
 
     static NutsOptional<Set<NutsId>> ofSet(String value) {
@@ -96,7 +95,7 @@ public interface NutsId extends Comparable<NutsId>, NutsFormattable, NutsBlankab
     }
 
     static NutsOptional<NutsId> of(String value) {
-        return PrivateNutsIdParser.parse(value);
+        return NutsReservedUtils.parseId(value);
     }
 
     /**

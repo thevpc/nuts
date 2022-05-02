@@ -41,7 +41,7 @@ import net.thevpc.nuts.runtime.standalone.xtra.expr.StringTokenizerUtils;
 import net.thevpc.nuts.spi.NutsDefaultSupportLevelContext;
 import net.thevpc.nuts.text.NutsTextFormatTheme;
 import net.thevpc.nuts.text.NutsTextStyle;
-import net.thevpc.nuts.util.NutsUtilStrings;
+import net.thevpc.nuts.util.NutsStringUtils;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -150,7 +150,7 @@ public class DefaultNutsTextManagerModel {
     }
 
     public NutsCodeHighlighter getCodeHighlighter(String highlighterId, NutsSession session) {
-        String lc = NutsUtilStrings.trim(highlighterId).toLowerCase();
+        String lc = NutsStringUtils.trim(highlighterId).toLowerCase();
         NutsCodeHighlighter old = _cachedHighlighters.get(lc);
         if (old != null) {
             return old;

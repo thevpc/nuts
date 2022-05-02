@@ -1,14 +1,14 @@
 package net.thevpc.nuts.runtime.standalone.workspace.cmd.exec;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.boot.PrivateNutsUtilCollections;
+import net.thevpc.nuts.reserved.NutsReservedCollectionUtils;
 import net.thevpc.nuts.cmdline.NutsArgument;
 import net.thevpc.nuts.cmdline.NutsCommandLine;
 import net.thevpc.nuts.io.NutsPrintStream;
 import net.thevpc.nuts.runtime.standalone.executor.system.ProcessBuilder2;
 import net.thevpc.nuts.runtime.standalone.io.printstream.NutsByteArrayPrintStream;
-import net.thevpc.nuts.runtime.standalone.util.CoreStringUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.NutsWorkspaceCommandBase;
+import net.thevpc.nuts.util.NutsStringUtils;
 
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
@@ -69,7 +69,7 @@ public abstract class AbstractNutsExecCommand extends NutsWorkspaceCommandBase<N
 
     @Override
     public List<String> getCommand() {
-        return PrivateNutsUtilCollections.unmodifiableList(command);
+        return NutsReservedCollectionUtils.unmodifiableList(command);
     }
 
     @Override
@@ -159,7 +159,7 @@ public abstract class AbstractNutsExecCommand extends NutsWorkspaceCommandBase<N
 
     @Override
     public List<String> getWorkspaceOptions() {
-        return PrivateNutsUtilCollections.unmodifiableList(workspaceOptions);
+        return NutsReservedCollectionUtils.unmodifiableList(workspaceOptions);
     }
 
     @Override
@@ -435,7 +435,7 @@ public abstract class AbstractNutsExecCommand extends NutsWorkspaceCommandBase<N
 
     @Override
     public List<String> getExecutorOptions() {
-        return PrivateNutsUtilCollections.unmodifiableList(executorOptions);
+        return NutsReservedCollectionUtils.unmodifiableList(executorOptions);
     }
 
     @Override
@@ -659,7 +659,7 @@ public abstract class AbstractNutsExecCommand extends NutsWorkspaceCommandBase<N
                 if (sb.length() > 0) {
                     sb.append(" ");
                 }
-                sb.append(CoreStringUtils.enforceDoubleQuote(k)).append("=").append(CoreStringUtils.enforceDoubleQuote(v));
+                sb.append(NutsStringUtils.formatStringLiteral(k)).append("=").append(NutsStringUtils.formatStringLiteral(v));
             }
         }
         for (int i = 0; i < command.size(); i++) {
@@ -676,88 +676,8 @@ public abstract class AbstractNutsExecCommand extends NutsWorkspaceCommandBase<N
             if (sb.length() > 0) {
                 sb.append(" ");
             }
-            sb.append(CoreStringUtils.enforceDoubleQuote(s));
+            sb.append(NutsStringUtils.formatStringLiteral(s));
         }
-//        if (baseIO) {
-////            ProcessBuilder.Redirect r;
-//            if (f == null || f.acceptRedirectOutput()) {
-//                sb.append(" > ").append("{?}");
-////                r = base.redirectOutput();
-////                if (null == r.type()) {
-////                    sb.append(" > ").append("{?}");
-////                } else {
-////                    switch (r.type()) {
-////                        //sb.append(" > ").append("{inherited}");
-////                        case INHERIT:
-////                            break;
-////                        case PIPE:
-////                            break;
-////                        case WRITE:
-////                            sb.append(" > ").append(CoreStringUtils.enforceDoubleQuote(r.file().getPath()));
-////                            break;
-////                        case APPEND:
-////                            sb.append(" >> ").append(CoreStringUtils.enforceDoubleQuote(r.file().getPath()));
-////                            break;
-////                        default:
-////                            sb.append(" > ").append("{?}");
-////                            break;
-////                    }
-////                }
-//            }
-//            if (f == null || f.acceptRedirectError()) {
-//                if (isRedirectErrorStream()) {
-//                    sb.append(" 2>&1");
-//                } else {
-//                    if (f == null || f.acceptRedirectError()) {
-//                        sb.append(" 2> ").append("{?}");
-//                    }
-////                    if (f == null || f.acceptRedirectError()) {
-////                        r = base.redirectError();
-////                        if (null == r.type()) {
-////                            sb.append(" 2> ").append("{?}");
-////                        } else {
-////                            switch (r.type()) {
-////                                //sb.append(" 2> ").append("{inherited}");
-////                                case INHERIT:
-////                                    break;
-////                                case PIPE:
-////                                    break;
-////                                case WRITE:
-////                                    sb.append(" 2> ").append(r.file().getPath());
-////                                    break;
-////                                case APPEND:
-////                                    sb.append(" 2>> ").append(CoreStringUtils.enforceDoubleQuote(r.file().getPath()));
-////                                    break;
-////                                default:
-////                                    sb.append(" 2> ").append("{?}");
-////                                    break;
-////                            }
-////                        }
-////                    }
-//                }
-//            }
-//            if (f == null || f.acceptRedirectInput()) {
-//                sb.append(" < ").append("{?}");
-////                r = base.redirectInput();
-////                if (null == r.type()) {
-////                    sb.append(" < ").append("{?}");
-////                } else {
-////                    switch (r.type()) {
-////                        //sb.append(" < ").append("{inherited}");
-////                        case INHERIT:
-////                            break;
-////                        case PIPE:
-////                            break;
-////                        case READ:
-////                            sb.append(" < ").append(CoreStringUtils.enforceDoubleQuote(r.file().getPath()));
-////                            break;
-////                        default:
-////                            sb.append(" < ").append("{?}");
-////                            break;
-////                    }
-////                }
-//            }
-//        } else if (isRedirectErrorStream()) {
         if (isRedirectErrorStream()) {
             if (out != null) {
                 if (f == null || f.acceptRedirectOutput()) {

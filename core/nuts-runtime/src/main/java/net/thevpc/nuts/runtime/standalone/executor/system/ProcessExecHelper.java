@@ -16,7 +16,7 @@ import net.thevpc.nuts.text.NutsTextStyle;
 import net.thevpc.nuts.text.NutsTexts;
 import net.thevpc.nuts.util.NutsLogger;
 import net.thevpc.nuts.util.NutsLoggerVerb;
-import net.thevpc.nuts.util.NutsUtilStrings;
+import net.thevpc.nuts.util.NutsStringUtils;
 
 import java.io.File;
 import java.io.IOException;
@@ -210,7 +210,7 @@ public class ProcessExecHelper extends AbstractSyncIProcessExecHelper {
         }
         List<String> args2 = new ArrayList<>();
         for (String arg : args) {
-            String s = NutsUtilStrings.trim(StringPlaceHolderParser.replaceDollarPlaceHolders(arg, mapper));
+            String s = NutsStringUtils.trim(StringPlaceHolderParser.replaceDollarPlaceHolders(arg, mapper));
             if (s.startsWith("<::expand::>")) {
                 Collections.addAll(args2, NutsCommandLine.of(s, NutsShellFamily.BASH, session).setExpandSimpleOptions(false).toStringArray());
             } else {

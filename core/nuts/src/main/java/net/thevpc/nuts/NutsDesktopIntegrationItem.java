@@ -26,7 +26,7 @@
  */
 package net.thevpc.nuts;
 
-import net.thevpc.nuts.boot.NutsApiUtils;
+import net.thevpc.nuts.reserved.NutsReservedLangUtils;
 
 public enum NutsDesktopIntegrationItem implements NutsEnum {
     MENU,
@@ -39,7 +39,7 @@ public enum NutsDesktopIntegrationItem implements NutsEnum {
     }
 
     public static NutsOptional<NutsDesktopIntegrationItem> parse(String value) {
-        return NutsApiUtils.parse(value, NutsDesktopIntegrationItem.class);
+        return NutsReservedLangUtils.parseEnum(value, NutsDesktopIntegrationItem.class);
     }
 
     @Override

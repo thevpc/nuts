@@ -3,7 +3,7 @@ package net.thevpc.nuts.indexer.services;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.elem.NutsElements;
 import net.thevpc.nuts.indexer.NutsIndexerUtils;
-import net.thevpc.nuts.util.NutsUtilStrings;
+import net.thevpc.nuts.util.NutsStringUtils;
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
@@ -68,7 +68,7 @@ public class DataService {
     private Document mapToDocument(Map<String, String> data) {
         Document document = new Document();
         for (Map.Entry<String, String> entry : data.entrySet()) {
-            document.add(new StringField(entry.getKey(), NutsUtilStrings.trim(entry.getValue()), Field.Store.YES));
+            document.add(new StringField(entry.getKey(), NutsStringUtils.trim(entry.getValue()), Field.Store.YES));
         }
         return document;
     }

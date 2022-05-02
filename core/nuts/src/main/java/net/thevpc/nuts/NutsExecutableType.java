@@ -25,7 +25,7 @@
  */
 package net.thevpc.nuts;
 
-import net.thevpc.nuts.boot.NutsApiUtils;
+import net.thevpc.nuts.reserved.NutsReservedLangUtils;
 
 /**
  * Executable command type returned by which internal command
@@ -76,7 +76,7 @@ public enum NutsExecutableType implements NutsEnum {
     }
 
     public static NutsOptional<NutsExecutableType> parse(String value) {
-        return NutsApiUtils.parse(value, NutsExecutableType.class);
+        return NutsReservedLangUtils.parseEnum(value, NutsExecutableType.class);
     }
 
 

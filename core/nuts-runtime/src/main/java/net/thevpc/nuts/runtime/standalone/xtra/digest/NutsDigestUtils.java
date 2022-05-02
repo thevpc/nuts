@@ -3,7 +3,7 @@ package net.thevpc.nuts.runtime.standalone.xtra.digest;
 import net.thevpc.nuts.io.NutsIOException;
 import net.thevpc.nuts.io.NutsPath;
 import net.thevpc.nuts.NutsSession;
-import net.thevpc.nuts.util.NutsUtilStrings;
+import net.thevpc.nuts.util.NutsStringUtils;
 import net.thevpc.nuts.runtime.standalone.io.util.CoreIOUtils;
 
 import java.io.*;
@@ -21,7 +21,7 @@ public class NutsDigestUtils {
     }
 
     public static String evalMD5Hex(Path path, NutsSession session) {
-        return NutsUtilStrings.toHexString(evalMD5(path, session));
+        return NutsStringUtils.toHexString(evalMD5(path, session));
     }
 
     public static byte[] evalMD5(Path path, NutsSession session) {
@@ -33,7 +33,7 @@ public class NutsDigestUtils {
     }
 
     public static String evalMD5Hex(java.io.InputStream input, NutsSession session) {
-        return NutsUtilStrings.toHexString(evalMD5(input, session));
+        return NutsStringUtils.toHexString(evalMD5(input, session));
     }
 
     public static byte[] evalHash(java.io.InputStream input, String algo, NutsSession session) {
@@ -120,11 +120,11 @@ public class NutsDigestUtils {
     }
 
     public static String evalSHA1Hex(InputStream input, boolean closeStream, NutsSession session) {
-        return NutsUtilStrings.toHexString(evalSHA1(input, closeStream, session));
+        return NutsStringUtils.toHexString(evalSHA1(input, closeStream, session));
     }
 
     public static char[] evalSHA1HexChars(InputStream input, boolean closeStream, NutsSession session) {
-        return NutsUtilStrings.toHexString(evalSHA1(input, closeStream, session)).toCharArray();
+        return NutsStringUtils.toHexString(evalSHA1(input, closeStream, session)).toCharArray();
     }
 
     public static byte[] evalSHA1(InputStream input, boolean closeStream, NutsSession session) {

@@ -8,7 +8,7 @@ import net.thevpc.nuts.text.NutsTextStyle;
 import net.thevpc.nuts.text.NutsTexts;
 import net.thevpc.nuts.util.NutsProgressFactory;
 import net.thevpc.nuts.util.NutsProgressMonitor;
-import net.thevpc.nuts.util.NutsUtilStrings;
+import net.thevpc.nuts.util.NutsStringUtils;
 
 import java.net.URL;
 import java.util.ArrayList;
@@ -19,7 +19,7 @@ public class NutsProgressUtils {
     public static ProgressOptions parseProgressOptions(NutsSession session) {
         ProgressOptions o = new ProgressOptions();
         boolean enabledVisited = false;
-        Map<String, String> m = NutsUtilStrings.parseMap(session.getProgressOptions(), "=", ",; ","").get(session);
+        Map<String, String> m = NutsStringUtils.parseMap(session.getProgressOptions(), "=", ",; ","").get(session);
         NutsElements elems = NutsElements.of(session);
         for (Map.Entry<String, String> e : m.entrySet()) {
             String k = e.getKey();
@@ -39,13 +39,6 @@ public class NutsProgressUtils {
             }
         }
         return o;
-    }
-
-    public static boolean acceptProgress(NutsSession session) {
-        if (!session.isPlainOut()) {
-            return false;
-        }
-        return !session.isBot() && parseProgressOptions(session).isEnabled();
     }
 
     public static java.io.InputStream monitor(URL from, NutsProgressMonitor monitor, NutsSession session) {
@@ -93,7 +86,7 @@ public class NutsProgressUtils {
                 all.add(e);
             }
         }
-        if (traceProgress) {
+        if (traceProgress && session.isProgress()) {
             all.add(new TraceNutsProgressMonitor());
         }
         if (progressFactory != null) {

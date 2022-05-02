@@ -1,6 +1,7 @@
 package net.thevpc.nuts.runtime.standalone.executor.java;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.boot.NutsClassLoaderNode;
 import net.thevpc.nuts.cmdline.NutsArgument;
 import net.thevpc.nuts.cmdline.NutsCommandLine;
 import net.thevpc.nuts.io.NutsPath;
@@ -14,7 +15,7 @@ import net.thevpc.nuts.runtime.standalone.dependency.util.NutsClassLoaderUtils;
 import net.thevpc.nuts.text.NutsTextBuilder;
 import net.thevpc.nuts.text.NutsTextStyle;
 import net.thevpc.nuts.text.NutsTexts;
-import net.thevpc.nuts.util.NutsUtilStrings;
+import net.thevpc.nuts.util.NutsStringUtils;
 
 import java.net.URL;
 import java.nio.file.Path;
@@ -233,7 +234,7 @@ public final class JavaExecutorOptions {
         }
         NutsPlatformLocation nutsPlatformLocation = NutsJavaSdkUtils.of(session).resolveJdkLocation(getJavaVersion(), session);
         if (nutsPlatformLocation == null) {
-            throw new NutsExecutionException(session, NutsMessage.cstyle("no java version %s was found", NutsUtilStrings.trim(getJavaVersion())), 1);
+            throw new NutsExecutionException(session, NutsMessage.cstyle("no java version %s was found", NutsStringUtils.trim(getJavaVersion())), 1);
         }
         javaEffVersion = nutsPlatformLocation.getVersion();
         javaCommand = NutsJavaSdkUtils.of(session).resolveJavaCommandByVersion(nutsPlatformLocation, javaw, session);
