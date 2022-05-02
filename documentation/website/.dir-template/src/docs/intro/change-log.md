@@ -11,6 +11,7 @@ Starred releases are most stable ones.
 
 ## nuts 0.8.4.0 (DEVELOPMENT VERSION)
 - ```2022/XX/XX 	nuts 0.8.4.0``` not released yet nuts-runtime-0.8.4.2-alpha1.jar
+- WARNING : {api}  API has evolved with incompatibilities with previous versions
 - FIXED: Fixed maven url parsing on windows platforms that prevented nsh from being installed
 - ADDED: Added native installers for windows, linux and macOS
 - ADDED: Added links to pdf docs in website and offline documentation
@@ -35,6 +36,9 @@ Starred releases are most stable ones.
 + ADDED: promote cmdline arguments : --init-platforms,--init-launchers,--init-scripts, --init-java
 + ADDED: promote cmdline arguments : --desktop-launcher,--menu-launcher,--user-launcher
 + ADDED: Add NutsMessageFormattable
++ CHANGED: complete rewrite of NTF parser
++ CHANGED: classes refactored to be repackaged in inner packages
++ ADDED: added 30+ unit tests
 
 ## nuts 0.8.3.1 (PUBLISHED VERSION)
 - ```2022/02/01 	nuts 0.8.3.1``` released nuts-runtime-0.8.3.1.jar

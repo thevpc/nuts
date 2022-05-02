@@ -91,15 +91,20 @@ The repository is organized in several folders described here after:
 
 * **[.dir-template]** : contains template files for generating `README.md` and `METADATA` (among other) files according to the current `nuts` development version
 * **[core]**          : contains the core of `nuts` package manager (and the only required pieces for `nuts` to work). Practically this contains the Bootstrap (and API) project (called `nuts`) and the Runtime (Implementation) project (called `nuts-runtime`)
+* **[companions]**    : contains the 'companion' aka main applications bundled with `nuts` (mainly `nsh`).
 * **[docs]**          : contains a generated (using docusaurus) web site that is deployed to github pages (https://thevpc.github.io/nuts/)
-* **[ext]**           : contains some `nuts` extensions/plugins. as an example it includes and extension for nuts terminal features implemented using `jline` library
+* **[extensions]**    : contains some `nuts` extensions/plugins. as an example it includes and extension for nuts terminal features implemented using `jline` library
 * **[incubating]**    : ignore this for the moment :), it is a work in progress and an attempt to simplify `nuts` installation process and other frozen features. Still very embryonic.
-* **[lib]**           : contains a suite of libraries that are based on `nuts` and that can be used by other applications. This includes markdown parsers, ssh support, etc...
+* **[libraries]**     : contains a suite of libraries that are based on `nuts` and that can be used by other applications. This includes markdown parsers, ssh support, etc...
 * **[test]**          : contains unit test projects
 * **[toolbox]**       : contains a suite of applications that are based on `nuts` and that complement `nuts` features. This includes `nsh` the shell companion
+* **[tutorials]**     : contains a suite of tutorial applications on how to use `nuts` and a framework and its integration with other frameworks such as `spring`
 * **[web-toolbox]**   : contains a suite of web applications that are based on `nuts` and that complement `nuts` features. This includes `nwar`, a servlet implementation to serve `nuts` workspaces.
-* **[website]**       : contains the sources of `nuts`'s docusaurus based website.
+* **[documentation]** : contains the sources of `nuts`'s documentations
+  * **[website]**                     : contains the sources of `nuts`'s docusaurus based website.
   * **[website/.dir-template]**       : contains the effective sources of `nuts`'s documentation (used to create the website as well). To be more precise, the website is built using a two steps process: first we pre-process the markdown files with template processing (using `ntemplate`) that will handle things like `nuts` version variables, documentation structure etc and hence prepare the `docusaurus` base folder. And then, we run `docusaurus` to generate the effective `html`/`js` for the statically compiled website.
+  * **[presentations]**               : contains several presentations about `nuts`
+  * **[media]**                       : contains images/logos/icons
 
 ## Running, testing and Working with nuts-dev, in development environment
 
@@ -166,7 +171,7 @@ nuts -w test --debug=5010 my-app
 * You can contribute by: 
   * issuing bug reports to github issues, particularly, we are looking for people who can use different environments (operating system, java version, architecture etc...)
   * providing medias/icons for the website
-  * (or even) reimplement the website
+  * reimplement the website
   * fixing issues that are pushed to github issues
   * implementing new features in `nuts`
   * updating the documentation (README and Docusaurus WebSite)
@@ -179,11 +184,11 @@ nuts -w test --debug=5010 my-app
     * nserver (a tool that runs a `nuts` web repository)
     * ntemplate  (a tool that generates folders and files from templates)
     * nversion (a tool that parses jars, zips, pom files and folders to detect versions)
-    * `nuts` Installer (a Swing GUI App)
+    * `nuts` Installer (a Swing GUI Installer App)
+    * `nuts` Store (a JavaFX GUI App for installing apps using `nuts` without commandline)
   * creating a new application for `nuts`
-  * creating a JavaFX/Swing GUI as a `Store App` to help installation without commandline for dummy users
   * finding and reporting any interesting application available on maven (or not) that can be (or should be) installable using `nuts`
-  * creating some tutorial projects (source code ) on how to use NAF (nuts application Framework)
+  * creating some tutorial projects (source code) on how to use NAF (nuts application Framework)
   * building your very own java app and push it to maven central (no constraints)
 
 

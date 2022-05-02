@@ -3,17 +3,24 @@
 ## to build repository documentation and website
 ## N.B.:  please make sure to replace '0.8.3' with the actual nuts version
 
-NUTS_VERSION=0.8.3
-NUTS_INSTALLER_VERSION=0.8.3.1
+NUTS_VERSION=0.8.4
+NUTS_INSTALLER_VERSION=0.8.4.0
 
 NUTS_JAR=~/.m2/repository/net/thevpc/nuts/nuts/$NUTS_VERSION/nuts-$NUTS_VERSION.jar
 
-## Please update this path to point to your valid java 8 and 17 home, but
+## Please update theses paths to point to your valid java 8 and 17 home, but
 ## DO NOT commit your changes to GIT for this file !!
 NUTS_JAVA_HOME=/usr/lib64/jvm/java-1.8.0-openjdk-1.8.0
 NUTS_INSTALLER_BUILD_JAVA_HOME=/usr/lib64/jvm/java-17-openjdk
-NUTS_GRAALVM_DIR=/data/programs/Development/Building/graalvm-ce-java11-21.3.0/
+NUTS_GRAALVM_DIR=/data/Programs/Development/Building/graalvm-ce-java11-21.3.0/
 NUTS_INSTALLER_TARGET=linux-x64
+
+INSTALLER_JRE8_LINUX64=/home/vpc/Programs/Development/SDK/Java/openlogic-openjdk-jre-8u262-b10-linux-x64.tar.gz
+INSTALLER_JRE8_LINUX32=/home/vpc/Programs/Development/SDK/Java/openlogic-openjdk-jre-8u262-b10-linux-x32.tar.gz
+INSTALLER_JRE8_WINDOWS64=/home/vpc/Programs/Development/SDK/Java/openlogic-openjdk-jre-8u262-b10-windows-x64.zip
+INSTALLER_JRE8_WINDOWS32=/home/vpc/Programs/Development/SDK/Java/openlogic-openjdk-jre-8u262-b10-windows-x32.zip
+INSTALLER_JRE8_MAC64=/home/vpc/Programs/Development/SDK/Java/openlogic-openjdk-jre-8u262-b10-mac-x64.zip
+
 
 NUTS_ROOT_BASE=$(dirname $0)
 NUTS_ROOT_BASE=$(readlink -f $NUTS_ROOT_BASE)
@@ -163,7 +170,7 @@ if [ x"$NUTS_FLAG_REPO_STATS" == x"true" ]; then
 fi
 
 ####################################
-## GENERATE NATIVE IMAGE
+## GENERATE NATIVE IMAGES
 if [ x"$NUTS_FLAG_NATIVE" == x"true" ]; then
   cd $NUTS_ROOT_BASE
   mkdir -p $NUTS_ROOT_BASE/installers/nuts-installer/src/dist
@@ -193,22 +200,22 @@ cd $NUTS_ROOT_BASE
   echo $NUTS_INSTALLER_BUILD_JAVA_HOME/bin/jpackage  --name "nuts-installer" --description "Nuts Installer" --vendor "thevpc" --app-version $NUTS_INSTALLER_VERSION --input $NUTS_ROOT_BASE/installers/nuts-installer/src/dist  --main-jar nuts-installer-$NUTS_INSTALLER_VERSION.jar --dest $NUTS_ROOT_BASE/installers/nuts-installer/dist/linux64-rpm
   $NUTS_INSTALLER_BUILD_JAVA_HOME/bin/jpackage  --name "nuts-installer" --description "Nuts Installer" --vendor "thevpc" --app-version $NUTS_INSTALLER_VERSION --input $NUTS_ROOT_BASE/installers/nuts-installer/src/dist  --main-jar nuts-installer-$NUTS_INSTALLER_VERSION.jar --dest $NUTS_ROOT_BASE/installers/nuts-installer/dist/linux64-rpm
 
-  echo java -jar /data/programs/Development/Building/packr/packr-all-4.0.0.jar --platform linux64 --jdk /data/programs/Development/SDK/Java/openlogic-openjdk-jre-8u262-b10-linux-x64.tar.gz --useZgcIfSupportedOs --executable nuts-installer-$NUTS_INSTALLER_TARGET-$NUTS_INSTALLER_VERSION --classpath $NUTS_INSTALLER_JAR --mainclass net.thevpc.nuts.installer.NutsInstaller --vmargs Xmx1G --output $NUTS_ROOT_BASE/installers/nuts-installer/dist/linux64-with-java
+  echo java -jar /data/programs/Development/Building/packr/packr-all-4.0.0.jar --platform linux64 --jdk $INSTALLER_JRE8_LINUX64 --useZgcIfSupportedOs --executable nuts-installer-$NUTS_INSTALLER_TARGET-$NUTS_INSTALLER_VERSION --classpath $NUTS_INSTALLER_JAR --mainclass net.thevpc.nuts.installer.NutsInstaller --vmargs Xmx1G --output $NUTS_ROOT_BASE/installers/nuts-installer/dist/linux64-with-java
    rm -Rf $NUTS_ROOT_BASE/installers/nuts-installer/dist/linux64-with-java
-   java -jar /data/programs/Development/Building/packr/packr-all-4.0.0.jar --platform linux64 --jdk /data/programs/Development/SDK/Java/openlogic-openjdk-jre-8u262-b10-linux-x64.tar.gz --useZgcIfSupportedOs --executable nuts-installer-$NUTS_INSTALLER_TARGET-$NUTS_INSTALLER_VERSION --classpath $NUTS_INSTALLER_JAR --mainclass net.thevpc.nuts.installer.NutsInstaller --vmargs Xmx1G --output $NUTS_ROOT_BASE/installers/nuts-installer/dist/linux64-with-java
+   java -jar /data/programs/Development/Building/packr/packr-all-4.0.0.jar --platform linux64 --jdk $INSTALLER_JRE8_LINUX64 --useZgcIfSupportedOs --executable nuts-installer-$NUTS_INSTALLER_TARGET-$NUTS_INSTALLER_VERSION --classpath $NUTS_INSTALLER_JAR --mainclass net.thevpc.nuts.installer.NutsInstaller --vmargs Xmx1G --output $NUTS_ROOT_BASE/installers/nuts-installer/dist/linux64-with-java
 
-  echo java -jar /data/programs/Development/Building/packr/packr-all-4.0.0.jar --platform windows64 --jdk /data/programs/Development/SDK/Java/openlogic-openjdk-jre-8u262-b10-windows-x64.zip --useZgcIfSupportedOs --executable nuts-installer-$NUTS_INSTALLER_TARGET-$NUTS_INSTALLER_VERSION --classpath $NUTS_INSTALLER_JAR --mainclass net.thevpc.nuts.installer.NutsInstaller --vmargs Xmx1G --output $NUTS_ROOT_BASE/installers/nuts-installer/dist/windows64-with-java
+  echo java -jar /data/programs/Development/Building/packr/packr-all-4.0.0.jar --platform windows64 --jdk $INSTALLER_JRE8_WINDOWS64 --useZgcIfSupportedOs --executable nuts-installer-$NUTS_INSTALLER_TARGET-$NUTS_INSTALLER_VERSION --classpath $NUTS_INSTALLER_JAR --mainclass net.thevpc.nuts.installer.NutsInstaller --vmargs Xmx1G --output $NUTS_ROOT_BASE/installers/nuts-installer/dist/windows64-with-java
    rm -Rf $NUTS_ROOT_BASE/installers/nuts-installer/dist/windows64-with-java
-   java -jar /data/programs/Development/Building/packr/packr-all-4.0.0.jar --platform windows64 --jdk /data/programs/Development/SDK/Java/openlogic-openjdk-jre-8u262-b10-windows-x64.zip --useZgcIfSupportedOs --executable nuts-installer-$NUTS_INSTALLER_TARGET-$NUTS_INSTALLER_VERSION --classpath $NUTS_INSTALLER_JAR --mainclass net.thevpc.nuts.installer.NutsInstaller --vmargs Xmx1G --output $NUTS_ROOT_BASE/installers/nuts-installer/dist/windows64-with-java
+   java -jar /data/programs/Development/Building/packr/packr-all-4.0.0.jar --platform windows64 --jdk $INSTALLER_JRE8_WINDOWS64 --useZgcIfSupportedOs --executable nuts-installer-$NUTS_INSTALLER_TARGET-$NUTS_INSTALLER_VERSION --classpath $NUTS_INSTALLER_JAR --mainclass net.thevpc.nuts.installer.NutsInstaller --vmargs Xmx1G --output $NUTS_ROOT_BASE/installers/nuts-installer/dist/windows64-with-java
 
-  echo java -jar /data/programs/Development/Building/packr/packr-all-4.0.0.jar --platform mac --jdk /data/programs/Development/SDK/Java/openlogic-openjdk-jre-8u262-b10-mac-x64.zip --useZgcIfSupportedOs --executable nuts-installer-$NUTS_INSTALLER_TARGET-$NUTS_INSTALLER_VERSION --classpath $NUTS_INSTALLER_JAR --mainclass net.thevpc.nuts.installer.NutsInstaller --vmargs Xmx1G --output $NUTS_ROOT_BASE/installers/nuts-installer/dist/mac64-with-java
+  echo java -jar /data/programs/Development/Building/packr/packr-all-4.0.0.jar --platform mac --jdk $INSTALLER_JRE8_MAC64 --useZgcIfSupportedOs --executable nuts-installer-$NUTS_INSTALLER_TARGET-$NUTS_INSTALLER_VERSION --classpath $NUTS_INSTALLER_JAR --mainclass net.thevpc.nuts.installer.NutsInstaller --vmargs Xmx1G --output $NUTS_ROOT_BASE/installers/nuts-installer/dist/mac64-with-java
    rm -Rf $NUTS_ROOT_BASE/installers/nuts-installer/dist/mac64-with-java
-   java -jar /data/programs/Development/Building/packr/packr-all-4.0.0.jar --platform mac --jdk /data/programs/Development/SDK/Java/openlogic-openjdk-jre-8u262-b10-mac-x64.zip --useZgcIfSupportedOs --executable nuts-installer-$NUTS_INSTALLER_TARGET-$NUTS_INSTALLER_VERSION --classpath $NUTS_INSTALLER_JAR --mainclass net.thevpc.nuts.installer.NutsInstaller --vmargs Xmx1G --output $NUTS_ROOT_BASE/installers/nuts-installer/dist/mac64-with-java
+   java -jar /data/programs/Development/Building/packr/packr-all-4.0.0.jar --platform mac --jdk $INSTALLER_JRE8_MAC64 --useZgcIfSupportedOs --executable nuts-installer-$NUTS_INSTALLER_TARGET-$NUTS_INSTALLER_VERSION --classpath $NUTS_INSTALLER_JAR --mainclass net.thevpc.nuts.installer.NutsInstaller --vmargs Xmx1G --output $NUTS_ROOT_BASE/installers/nuts-installer/dist/mac64-with-java
 
 ## GENERATE MAC BIN USING JAR2APP
 
-  echo jar2app --copyright="(c) 2022 thevpc" --short-version=0.8.3 --version=$NUTS_INSTALLER_VERSION --icon=/data/git/nuts/documentation/media/nuts-icon.icns --bundle-identifier=net.thevpc.nut.nuts-installer --display-name="Nuts Installer" --name=nuts-installer-$NUTS_INSTALLER_TARGET-$NUTS_INSTALLER_VERSION  $NUTS_INSTALLER_JAR $NUTS_ROOT_BASE/installers/nuts-installer/dist/mac64-bin
+  echo jar2app --copyright="(c) 2022 thevpc" --short-version=$NUTS_VERSION --version=$NUTS_INSTALLER_VERSION --icon=$NUTS_ROOT_BASE/documentation/media/nuts-icon.icns --bundle-identifier=net.thevpc.nut.nuts-installer --display-name="Nuts Installer" --name=nuts-installer-$NUTS_INSTALLER_TARGET-$NUTS_INSTALLER_VERSION  $NUTS_INSTALLER_JAR $NUTS_ROOT_BASE/installers/nuts-installer/dist/mac64-bin
    rm -Rf $NUTS_ROOT_BASE/installers/nuts-installer/dist/mac64-bin
-   jar2app --copyright="(c) 2022 thevpc" --short-version=0.8.3 --version=$NUTS_INSTALLER_VERSION --icon=/data/git/nuts/documentation/media/nuts-icon.icns --bundle-identifier=net.thevpc.nut.nuts-installer --display-name="Nuts Installer" --name=nuts-installer-$NUTS_INSTALLER_TARGET-$NUTS_INSTALLER_VERSION  $NUTS_INSTALLER_JAR $NUTS_ROOT_BASE/installers/nuts-installer/dist/mac64-bin
+   jar2app --copyright="(c) 2022 thevpc" --short-version=$NUTS_VERSION --version=$NUTS_INSTALLER_VERSION --icon=$NUTS_ROOT_BASE/documentation/media/nuts-icon.icns --bundle-identifier=net.thevpc.nut.nuts-installer --display-name="Nuts Installer" --name=nuts-installer-$NUTS_INSTALLER_TARGET-$NUTS_INSTALLER_VERSION  $NUTS_INSTALLER_JAR $NUTS_ROOT_BASE/installers/nuts-installer/dist/mac64-bin
 
 fi
