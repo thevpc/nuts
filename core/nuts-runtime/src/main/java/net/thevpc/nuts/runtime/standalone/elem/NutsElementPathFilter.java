@@ -29,7 +29,6 @@ package net.thevpc.nuts.runtime.standalone.elem;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.elem.*;
 import net.thevpc.nuts.io.NutsIOException;
-import net.thevpc.nuts.runtime.standalone.util.CoreNumberUtils;
 
 import java.io.IOException;
 import java.io.StreamTokenizer;
@@ -272,13 +271,15 @@ public class NutsElementPathFilter {
                             if (vir.length() > 0) {
                                 if (vir.indexOf('-') > 0) {
                                     String[] inter = vir.split("-");
-                                    if (inter.length == 2 && CoreNumberUtils.isInt(inter[0]) && CoreNumberUtils.isInt(inter[1])) {
+                                    if (inter.length == 2
+                                            && NutsValue.of(inter[0]).isInt()
+                                            && NutsValue.of(inter[1]).isInt()) {
                                         int a = Integer.parseInt(inter[0]);
                                         int b = Integer.parseInt(inter[1]);
                                         ors.add(new NutsElementNameMatcherValueInterval(a, b));
                                     }
                                 } else {
-                                    if (CoreNumberUtils.isInt(vir)) {
+                                    if (NutsValue.of(vir).isInt()) {
                                         int a = Integer.parseInt(vir);
                                         ors.add(new NutsElementNameMatcherValue(a));
                                     }
@@ -327,7 +328,7 @@ public class NutsElementPathFilter {
                     if (s.startsWith(":#")) {
                         s = s.substring(2);
                         return createIndexValueInervalMatcher(s);
-                    } else if (CoreNumberUtils.isInt(s)) {
+                    } else if (NutsValue.of(s).isInt()) {
                         return new NutsElementIndexMatcherForValue(Integer.parseInt(s));
                     } else if (s.matches("[0-9][0-9,-]+")) {
                         return createIndexValueInervalMatcher(s);
@@ -345,13 +346,13 @@ public class NutsElementPathFilter {
                 if (vir.length() > 0) {
                     if (vir.indexOf('-') > 0) {
                         String[] inter = vir.split("-");
-                        if (inter.length == 2 && CoreNumberUtils.isInt(inter[0]) && CoreNumberUtils.isInt(inter[1])) {
+                        if (inter.length == 2 && NutsValue.of(inter[0]).isInt() && NutsValue.of(inter[1]).isInt()) {
                             int a = Integer.parseInt(inter[0]);
                             int b = Integer.parseInt(inter[1]);
                             ors.add(new NutsElementIndexMatcherValueInterval(a, b));
                         }
                     } else {
-                        if (CoreNumberUtils.isInt(vir)) {
+                        if (NutsValue.of(vir).isInt()) {
                             ors.add(new NutsElementIndexMatcherForValue(Integer.parseInt(vir)));
                         }
                     }

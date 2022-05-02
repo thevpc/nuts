@@ -412,7 +412,7 @@ public final class JavaExecutorOptions {
                                 .setSession(session)
                                 .forString(msgString.toString())
                                 .setValidator((value, question) -> {
-                                    Integer anyInt = CoreNumberUtils.convertToInteger(value, null);
+                                    Integer anyInt = NutsValue.of(value).asInt().orNull();
                                     if (anyInt != null) {
                                         int i = anyInt;
                                         if (i >= 1 && i <= possibleClasses.size()) {
@@ -438,7 +438,7 @@ public final class JavaExecutorOptions {
 
     private String resolveMainClass(String name, List<String> possibleClasses) {
         if (name != null) {
-            Integer v = CoreNumberUtils.convertToInteger(name, null);
+            Integer v = NutsValue.of(name).asInt().orNull();
             if (v != null) {
                 if (v >= 1 && v <= possibleClasses.size()) {
                     return possibleClasses.get(v - 1);

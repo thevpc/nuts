@@ -34,7 +34,6 @@ import net.thevpc.nuts.runtime.standalone.util.CoreNutsUtils;
 import net.thevpc.nuts.runtime.standalone.util.collections.StringKeyValueList;
 import net.thevpc.nuts.runtime.standalone.io.util.IProcessExecHelper;
 import net.thevpc.nuts.runtime.standalone.extension.DefaultNutsClassLoader;
-import net.thevpc.nuts.runtime.standalone.util.CoreNumberUtils;
 import net.thevpc.nuts.runtime.standalone.util.NutsDebugString;
 import net.thevpc.nuts.runtime.standalone.extension.DefaultNutsWorkspaceExtensionManager;
 import net.thevpc.nuts.runtime.standalone.workspace.NutsWorkspaceExt;
@@ -269,11 +268,11 @@ public class JavaExecutorComponent implements NutsExecutorComponent {
                     }
                 }
                 // fix infinite recursion
-                int maxDepth = Math.abs(CoreNumberUtils.convertToInteger(sysProperties.getProperty("nuts.export.watchdog.max-depth"), 24));
+                int maxDepth = Math.abs(NutsValue.of(sysProperties.getProperty("nuts.export.watchdog.max-depth")).asInt().orElse(24));
                 if (maxDepth > 64) {
                     maxDepth = 64;
                 }
-                int currentDepth = CoreNumberUtils.convertToInteger(sysProperties.getProperty("nuts.export.watchdog.depth"), -1);
+                int currentDepth = NutsValue.of(sysProperties.getProperty("nuts.export.watchdog.depth")).asInt().orElse(-1);
                 currentDepth++;
                 if (currentDepth > maxDepth) {
                     session.err().println("[[Process Stack Overflow Error]]");

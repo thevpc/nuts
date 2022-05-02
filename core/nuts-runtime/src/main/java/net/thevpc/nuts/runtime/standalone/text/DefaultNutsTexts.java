@@ -6,7 +6,6 @@ import net.thevpc.nuts.runtime.standalone.session.NutsSessionUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.NutsWorkspaceExt;
 import net.thevpc.nuts.runtime.standalone.text.highlighter.CustomStyleCodeHighlighter;
 import net.thevpc.nuts.runtime.standalone.text.parser.*;
-import net.thevpc.nuts.runtime.standalone.util.CoreNumberUtils;
 import net.thevpc.nuts.runtime.standalone.util.CoreStringUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.NutsWorkspaceUtils;
 import net.thevpc.nuts.spi.NutsSupportLevelContext;
@@ -534,7 +533,7 @@ public class DefaultNutsTexts implements NutsTexts {
                 }
                 if (x < cc.length()) {
                     NutsTextStyle found = NutsTextStyle.of(NutsTextStyleType.valueOf(expandAlias(kind.toUpperCase().substring(0, x))),
-                            CoreNumberUtils.convertToInteger(kind.substring(x), 0)
+                            NutsValue.of(kind.substring(x)).asInt().orElse(0)
                     );
                     return new CustomStyleCodeHighlighter(found, session);
                 } else {

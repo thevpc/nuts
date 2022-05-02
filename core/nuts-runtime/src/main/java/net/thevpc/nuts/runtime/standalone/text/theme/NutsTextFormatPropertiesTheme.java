@@ -4,7 +4,6 @@ import net.thevpc.nuts.*;
 import net.thevpc.nuts.io.NutsIOException;
 import net.thevpc.nuts.io.NutsPath;
 import net.thevpc.nuts.runtime.standalone.xtra.expr.StringReaderExt;
-import net.thevpc.nuts.runtime.standalone.util.CoreNumberUtils;
 import net.thevpc.nuts.text.NutsTextFormatTheme;
 import net.thevpc.nuts.text.NutsTextStyle;
 import net.thevpc.nuts.text.NutsTextStyleType;
@@ -105,7 +104,7 @@ public class NutsTextFormatPropertiesTheme implements NutsTextFormatTheme {
                         while (r.hasNext() && r.peekChar() >= '0' && r.peekChar() <= '9') {
                             mod.append(r.nextChar());
                         }
-                        sb.append(variant % (CoreNumberUtils.convertToInteger(mod.toString(), 1)));
+                        sb.append(variant % (NutsValue.of(mod.toString()).asInt().orElse(1)));
                     } else {
                         r.nextChar();
                         sb.append(variant);
@@ -120,7 +119,7 @@ public class NutsTextFormatPropertiesTheme implements NutsTextFormatTheme {
     }
 
     private int getVarValAsInt(String n) {
-        return CoreNumberUtils.convertToInteger(props.getProperty(n), 0);
+        return NutsValue.of(props.getProperty(n)).asInt().orElse(0);
     }
 
     private String getProp(NutsTextStyleType t, String variant) {
@@ -196,14 +195,14 @@ public class NutsTextFormatPropertiesTheme implements NutsTextFormatTheme {
             case FORE_TRUE_COLOR:
             case BACK_COLOR:
             case BACK_TRUE_COLOR: {
-                Integer ii = CoreNumberUtils.convertToInteger(n, null);
+                Integer ii = NutsValue.of(n).asInt().orNull();
                 if (ii == null) {
                     ii = getVarValAsInt(n);
                 }
                 return NutsTextStyles.of(NutsTextStyle.of(st, ii));
             }
             default: {
-                Integer ii = CoreNumberUtils.convertToInteger(n, null);
+                Integer ii = NutsValue.of(n).asInt().orNull();
                 if (ii == null) {
                     ii = getVarValAsInt(n);
                 }

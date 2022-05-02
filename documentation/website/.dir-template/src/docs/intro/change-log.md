@@ -38,6 +38,7 @@ Starred releases are most stable ones.
 + ADDED: Add NutsMessageFormattable
 + CHANGED: complete rewrite of NTF parser
 + CHANGED: classes refactored to be repackaged in inner packages
++ REMOVED: removed CoreNumberUtils
 + ADDED: added 30+ unit tests
 
 ## nuts 0.8.3.1 (PUBLISHED VERSION)

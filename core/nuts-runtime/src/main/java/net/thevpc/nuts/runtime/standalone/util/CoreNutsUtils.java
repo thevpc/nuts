@@ -428,7 +428,7 @@ public class CoreNutsUtils {
             }
             int a = 0;
             for (String part : s.split("\\.")) {
-                a = a * 100 + CoreNumberUtils.convertToInteger(part, 0);
+                a = a * 100 + NutsValue.of(part).asInt().orElse(0);
             }
             return a;
         } catch (Exception ex) {

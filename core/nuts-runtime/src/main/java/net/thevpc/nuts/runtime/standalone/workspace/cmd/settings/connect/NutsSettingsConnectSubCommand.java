@@ -13,7 +13,6 @@ import net.thevpc.nuts.concurrent.NutsScheduler;
 import net.thevpc.nuts.runtime.standalone.executor.system.NutsSysExecUtils;
 import net.thevpc.nuts.runtime.standalone.io.util.NonBlockingInputStreamAdapter;
 import net.thevpc.nuts.runtime.standalone.executor.system.PipeRunnable;
-import net.thevpc.nuts.runtime.standalone.util.CoreNumberUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.AbstractNutsSettingsSubCommand;
 
 import java.io.PrintStream;
@@ -57,7 +56,7 @@ public class NutsSettingsConnectSubCommand extends AbstractNutsSettingsSubComman
                 server = server.substring(server.indexOf("@") + 1);
             }
             if (server.contains(":")) {
-                port =  CoreNumberUtils.convertToInteger(server.substring(server.indexOf(":") + 1),-1);
+                port =  NutsValue.of(server.substring(server.indexOf(":") + 1)).asInt().orElse(-1);
                 server = server.substring(0, server.indexOf(":"));
             }
             if (!NutsBlankable.isBlank(login) && NutsBlankable.isBlank(password)) {
