@@ -89,7 +89,7 @@ public class ShellHelper {
         }
 
         @Override
-        public InputStream monitorInputStream(InputStream stream, long length, NutsString message) {
+        public InputStream monitorInputStream(InputStream stream, long length, NutsMessage message) {
             return NutsInputStreamMonitor.of(session).setSource(stream).setLength(length).setName(message).create();
         }
     }

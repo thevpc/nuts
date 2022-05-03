@@ -26,7 +26,7 @@
  */
 package net.thevpc.nuts;
 
-import net.thevpc.nuts.reserved.NutsReservedLangUtils;
+import net.thevpc.nuts.util.NutsUtils;
 
 import java.util.Objects;
 
@@ -109,7 +109,7 @@ public class NutsRunAs {
         }
 
         public static NutsOptional<Mode> parse(String value) {
-            return NutsReservedLangUtils.parseEnum(value, Mode.class);
+            return NutsUtils.parseEnum(value, Mode.class);
         }
 
         @Override

@@ -6,12 +6,15 @@
 package net.thevpc.nuts.runtime.standalone.workspace.cmd.uninstall;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.reserved.NutsReservedCollectionUtils;
 import net.thevpc.nuts.cmdline.NutsArgument;
 import net.thevpc.nuts.cmdline.NutsCommandLine;
+import net.thevpc.nuts.runtime.standalone.util.collections.CoreCollectionUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.NutsWorkspaceCommandBase;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.List;
 
 /**
  *
@@ -92,7 +95,7 @@ public abstract class AbstractNutsUninstallCommand extends NutsWorkspaceCommandB
 
     @Override
     public List<String> getArgs() {
-        return NutsReservedCollectionUtils.unmodifiableList(args);
+        return CoreCollectionUtils.unmodifiableList(args);
     }
 
     @Override
@@ -128,7 +131,7 @@ public abstract class AbstractNutsUninstallCommand extends NutsWorkspaceCommandB
 
     @Override
     public List<NutsId> getIds() {
-        return NutsReservedCollectionUtils.unmodifiableList(ids);
+        return CoreCollectionUtils.unmodifiableList(ids);
     }
 
     @Override

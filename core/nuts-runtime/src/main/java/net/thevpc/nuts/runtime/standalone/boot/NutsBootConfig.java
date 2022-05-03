@@ -26,7 +26,7 @@
 package net.thevpc.nuts.runtime.standalone.boot;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.reserved.NutsReservedCollectionUtils;
+import net.thevpc.nuts.runtime.standalone.util.collections.CoreCollectionUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.config.DefaultNutsWorkspaceCurrentConfig;
 
 import java.io.Serializable;
@@ -128,8 +128,8 @@ public final class NutsBootConfig implements Cloneable, Serializable {
             this.setStoreLocationStrategy(options.getStoreLocationStrategy().orNull());
             this.setRepositoryStoreLocationStrategy(options.getRepositoryStoreLocationStrategy().orNull());
             this.setStoreLocationLayout(options.getStoreLocationLayout().orNull());
-            this.storeLocations = NutsReservedCollectionUtils.nonNullMap(options.getStoreLocations().orNull());
-            this.homeLocations = NutsReservedCollectionUtils.nonNullMap(options.getHomeLocations().orNull());
+            this.storeLocations = CoreCollectionUtils.nonNullMap(options.getStoreLocations().orNull());
+            this.homeLocations = CoreCollectionUtils.nonNullMap(options.getHomeLocations().orNull());
             this.setRuntimeId(options.getRuntimeId().orNull());
 //            this.setRuntimeDependencies(options.getBootRuntimeDependencies());
 //            this.setRepositories(options.getBootRepositories());

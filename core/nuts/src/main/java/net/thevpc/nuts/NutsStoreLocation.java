@@ -26,7 +26,7 @@
  */
 package net.thevpc.nuts;
 
-import net.thevpc.nuts.reserved.NutsReservedLangUtils;
+import net.thevpc.nuts.util.NutsUtils;
 
 /**
  * @author thevpc
@@ -103,7 +103,7 @@ public enum NutsStoreLocation implements NutsEnum {
     }
 
     public static NutsOptional<NutsStoreLocation> parse(String value) {
-        return NutsReservedLangUtils.parseEnum(value, NutsStoreLocation.class);
+        return NutsUtils.parseEnum(value, NutsStoreLocation.class);
     }
 
     /**

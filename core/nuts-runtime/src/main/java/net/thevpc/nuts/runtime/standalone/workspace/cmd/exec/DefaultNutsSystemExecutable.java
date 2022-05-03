@@ -5,14 +5,19 @@
  */
 package net.thevpc.nuts.runtime.standalone.workspace.cmd.exec;
 
-import net.thevpc.nuts.*;
-import net.thevpc.nuts.reserved.NutsReservedCollectionUtils;
+import net.thevpc.nuts.NutsExecCommand;
+import net.thevpc.nuts.NutsExecutableType;
+import net.thevpc.nuts.NutsId;
+import net.thevpc.nuts.NutsSession;
 import net.thevpc.nuts.cmdline.NutsArgument;
 import net.thevpc.nuts.cmdline.NutsCommandLine;
 import net.thevpc.nuts.io.NutsPath;
 import net.thevpc.nuts.runtime.standalone.executor.system.ProcessExecHelper;
+import net.thevpc.nuts.runtime.standalone.util.collections.CoreCollectionUtils;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * @author thevpc
@@ -35,7 +40,7 @@ public class DefaultNutsSystemExecutable extends AbstractNutsExecutableCommand {
         this.inheritSystemIO = execCommand.isInheritSystemIO();
         this.cmd = cmd;
         this.execCommand = execCommand;
-        this.executorOptions = NutsReservedCollectionUtils.nonNullList(executorOptions);
+        this.executorOptions = CoreCollectionUtils.nonNullList(executorOptions);
         this.session = session;
         this.execSession = execSession;
         NutsCommandLine cmdLine = NutsCommandLine.of(this.executorOptions);

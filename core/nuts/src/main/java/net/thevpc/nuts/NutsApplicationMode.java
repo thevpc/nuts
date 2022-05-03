@@ -26,7 +26,7 @@
  */
 package net.thevpc.nuts;
 
-import net.thevpc.nuts.reserved.NutsReservedLangUtils;
+import net.thevpc.nuts.util.NutsUtils;
 
 /**
  * Modes Application can run with
@@ -88,7 +88,7 @@ public enum NutsApplicationMode implements NutsEnum {
     }
 
     public static NutsOptional<NutsApplicationMode> parse(String value) {
-        return NutsReservedLangUtils.parseEnum(value, NutsApplicationMode.class);
+        return NutsUtils.parseEnum(value, NutsApplicationMode.class);
     }
 
     /**

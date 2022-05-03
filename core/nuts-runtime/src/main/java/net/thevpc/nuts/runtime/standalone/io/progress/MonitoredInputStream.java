@@ -47,7 +47,7 @@ public class MonitoredInputStream extends InputStream implements NutsInputSource
     private final long length;
     private final NutsProgressMonitor monitor;
     private final Object source;
-    private final NutsString sourceName;
+    private final NutsMessage sourceName;
     private long count;
     private long lastCount;
     private long startTime;
@@ -57,7 +57,7 @@ public class MonitoredInputStream extends InputStream implements NutsInputSource
     private final NutsSession session;
     private DefaultNutsInputSourceMetadata md;
 
-    public MonitoredInputStream(InputStream base, Object source, NutsString sourceName, long length, NutsProgressMonitor monitor, NutsSession session) {
+    public MonitoredInputStream(InputStream base, Object source, NutsMessage sourceName, long length, NutsProgressMonitor monitor, NutsSession session) {
         this.base = (InputStream) NutsIO.of(session).createInputSource(base);
         this.session = session;
         if (monitor == null) {
@@ -231,7 +231,7 @@ public class MonitoredInputStream extends InputStream implements NutsInputSource
     public NutsMessage formatMessage(NutsSession session) {
         return getInputMetaData().getMessage()
                 .orElseOf(
-                        () -> sourceName == null ? null : NutsMessage.ofNtf(sourceName)
+                        () -> sourceName
                 )
                 .orElse(
                         NutsMessage.ofStyled(getClass().getSimpleName(), NutsTextStyle.path())

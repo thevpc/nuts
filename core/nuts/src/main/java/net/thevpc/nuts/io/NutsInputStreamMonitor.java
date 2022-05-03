@@ -67,7 +67,7 @@ public interface NutsInputStreamMonitor extends NutsComponent {
      *
      * @return action name
      */
-    NutsString getName();
+    NutsMessage getName();
 
     /**
      * update action name
@@ -75,7 +75,7 @@ public interface NutsInputStreamMonitor extends NutsComponent {
      * @param name action name
      * @return {@code this} instance
      */
-    NutsInputStreamMonitor setName(NutsString name);
+    NutsInputStreamMonitor setName(NutsMessage name);
 
     /**
      * return source origin

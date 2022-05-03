@@ -26,7 +26,7 @@
  */
 package net.thevpc.nuts;
 
-import net.thevpc.nuts.reserved.NutsReservedLangUtils;
+import net.thevpc.nuts.util.NutsUtils;
 
 public enum NutsIsolationLevel implements NutsEnum {
     SYSTEM,
@@ -40,7 +40,7 @@ public enum NutsIsolationLevel implements NutsEnum {
     }
 
     public static NutsOptional<NutsIsolationLevel> parse(String value) {
-        return NutsReservedLangUtils.parseEnum(value, NutsIsolationLevel.class);
+        return NutsUtils.parseEnum(value, NutsIsolationLevel.class);
     }
 
     @Override

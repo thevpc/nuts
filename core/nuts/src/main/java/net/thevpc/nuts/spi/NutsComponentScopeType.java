@@ -28,7 +28,7 @@ package net.thevpc.nuts.spi;
 
 import net.thevpc.nuts.NutsEnum;
 import net.thevpc.nuts.NutsOptional;
-import net.thevpc.nuts.reserved.NutsReservedLangUtils;
+import net.thevpc.nuts.util.NutsUtils;
 
 /**
  * Modes Application can run with
@@ -63,7 +63,7 @@ public enum NutsComponentScopeType implements NutsEnum {
     }
 
     public static NutsOptional<NutsComponentScopeType> parse(String value) {
-        return NutsReservedLangUtils.parseEnum(value, NutsComponentScopeType.class);
+        return NutsUtils.parseEnum(value, NutsComponentScopeType.class);
     }
 
 

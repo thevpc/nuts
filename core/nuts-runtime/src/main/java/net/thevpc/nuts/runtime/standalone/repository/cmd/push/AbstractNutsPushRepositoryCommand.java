@@ -5,12 +5,12 @@
  */
 package net.thevpc.nuts.runtime.standalone.repository.cmd.push;
 
-import net.thevpc.nuts.cmdline.NutsCommandLine;
 import net.thevpc.nuts.NutsId;
-import net.thevpc.nuts.reserved.NutsReservedCollectionUtils;
-import net.thevpc.nuts.runtime.standalone.repository.cmd.NutsRepositoryCommandBase;
-import net.thevpc.nuts.spi.NutsPushRepositoryCommand;
 import net.thevpc.nuts.NutsRepository;
+import net.thevpc.nuts.cmdline.NutsCommandLine;
+import net.thevpc.nuts.runtime.standalone.repository.cmd.NutsRepositoryCommandBase;
+import net.thevpc.nuts.runtime.standalone.util.collections.CoreCollectionUtils;
+import net.thevpc.nuts.spi.NutsPushRepositoryCommand;
 
 import java.util.Arrays;
 import java.util.List;
@@ -78,7 +78,7 @@ public abstract class AbstractNutsPushRepositoryCommand extends NutsRepositoryCo
 
     @Override
     public List<String> getArgs() {
-        return NutsReservedCollectionUtils.unmodifiableList(args);
+        return CoreCollectionUtils.unmodifiableList(args);
     }
 
 //    @Override
@@ -91,7 +91,7 @@ public abstract class AbstractNutsPushRepositoryCommand extends NutsRepositoryCo
     @Override
     public NutsPushRepositoryCommand setArgs(List<String> args) {
         this.args.clear();
-        this.args.addAll(NutsReservedCollectionUtils.nonNullList(args));
+        this.args.addAll(CoreCollectionUtils.nonNullList(args));
         return this;
     }
 

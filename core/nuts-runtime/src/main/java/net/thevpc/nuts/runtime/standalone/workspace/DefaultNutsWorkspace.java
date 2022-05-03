@@ -24,10 +24,7 @@
 package net.thevpc.nuts.runtime.standalone.workspace;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.boot.NutsApiUtils;
 import net.thevpc.nuts.boot.NutsWorkspaceBootOptions;
-import net.thevpc.nuts.reserved.NutsReservedLangUtils;
-import net.thevpc.nuts.reserved.NutsReservedCollectionUtils;
 import net.thevpc.nuts.cmdline.NutsArgument;
 import net.thevpc.nuts.cmdline.NutsCommandLine;
 import net.thevpc.nuts.cmdline.NutsCommandLines;
@@ -36,15 +33,15 @@ import net.thevpc.nuts.elem.NutsElements;
 import net.thevpc.nuts.format.NutsTableFormat;
 import net.thevpc.nuts.format.NutsTableModel;
 import net.thevpc.nuts.io.*;
+import net.thevpc.nuts.util.DefaultNutsProperties;
 import net.thevpc.nuts.runtime.standalone.boot.DefaultNutsBootManager;
 import net.thevpc.nuts.runtime.standalone.boot.DefaultNutsBootModel;
 import net.thevpc.nuts.runtime.standalone.boot.NutsBootConfig;
-import net.thevpc.nuts.reserved.NutsReservedDefaultNutsProperties;
+import net.thevpc.nuts.runtime.standalone.dependency.util.NutsClassLoaderUtils;
 import net.thevpc.nuts.runtime.standalone.descriptor.util.NutsDescriptorUtils;
 import net.thevpc.nuts.runtime.standalone.event.*;
 import net.thevpc.nuts.runtime.standalone.extension.DefaultNutsWorkspaceExtensionManager;
 import net.thevpc.nuts.runtime.standalone.extension.DefaultNutsWorkspaceExtensionModel;
-import net.thevpc.nuts.runtime.standalone.dependency.util.NutsClassLoaderUtils;
 import net.thevpc.nuts.runtime.standalone.extension.NutsExtensionListHelper;
 import net.thevpc.nuts.runtime.standalone.id.util.NutsIdUtils;
 import net.thevpc.nuts.runtime.standalone.installer.CommandForIdNutsInstallerComponent;
@@ -63,7 +60,11 @@ import net.thevpc.nuts.runtime.standalone.session.DefaultNutsSession;
 import net.thevpc.nuts.runtime.standalone.session.NutsSessionUtils;
 import net.thevpc.nuts.runtime.standalone.text.DefaultNutsTextManagerModel;
 import net.thevpc.nuts.runtime.standalone.text.util.NutsTextUtils;
-import net.thevpc.nuts.runtime.standalone.util.*;
+import net.thevpc.nuts.runtime.standalone.util.CoreNutsUtils;
+import net.thevpc.nuts.runtime.standalone.util.CoreStringUtils;
+import net.thevpc.nuts.runtime.standalone.util.CoreTimeUtils;
+import net.thevpc.nuts.runtime.standalone.util.MapToFunction;
+import net.thevpc.nuts.runtime.standalone.util.collections.CoreCollectionUtils;
 import net.thevpc.nuts.runtime.standalone.util.filters.CoreFilterUtils;
 import net.thevpc.nuts.runtime.standalone.util.filters.DefaultNutsFilterModel;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.DefaultNutsExecutionContextBuilder;
@@ -87,9 +88,7 @@ import net.thevpc.nuts.text.NutsText;
 import net.thevpc.nuts.text.NutsTextStyle;
 import net.thevpc.nuts.text.NutsTextStyles;
 import net.thevpc.nuts.text.NutsTexts;
-import net.thevpc.nuts.util.NutsLogger;
-import net.thevpc.nuts.util.NutsLoggerOp;
-import net.thevpc.nuts.util.NutsLoggerVerb;
+import net.thevpc.nuts.util.*;
 
 import java.io.IOException;
 import java.io.Writer;
@@ -577,7 +576,7 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
                     justInstalledArchetype = initializeWorkspace(bootOptions.getArchetype().orNull(), defaultSession());
                 }
                 List<String> transientRepositoriesSet =
-                        NutsReservedCollectionUtils.nonNullList(bootOptions.getRepositories().orElseGet(Collections::emptyList));
+                        CoreCollectionUtils.nonNullList(bootOptions.getRepositories().orElseGet(Collections::emptyList));
                 NutsRepositoryDB repoDB = NutsRepositoryDB.of(defaultSession());
                 NutsRepositorySelectorList expected = NutsRepositorySelectorList.ofAll(
                         transientRepositoriesSet, repoDB, defaultSession());
@@ -724,7 +723,7 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
         List<NutsDescriptorProperty> properties = descrWithParents.getProperties().stream().filter(x -> CoreFilterUtils.acceptCondition(
                 x.getCondition(), false, session)).collect(Collectors.toList());
         if (properties.size() > 0) {
-            NutsReservedDefaultNutsProperties pp = new NutsReservedDefaultNutsProperties();
+            DefaultNutsProperties pp = new DefaultNutsProperties();
             List<NutsDescriptorProperty> n = new ArrayList<>();
             pp.addAll(properties);
             for (String s : pp.keySet()) {
@@ -2026,7 +2025,7 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
         }
 
         public static NutsOptional<InstallStrategy0> parse(String value) {
-            return NutsReservedLangUtils.parseEnum(value, InstallStrategy0.class);
+            return NutsUtils.parseEnum(value, InstallStrategy0.class);
         }
 
 

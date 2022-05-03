@@ -26,7 +26,7 @@
  */
 package net.thevpc.nuts;
 
-import net.thevpc.nuts.reserved.NutsReservedLangUtils;
+import net.thevpc.nuts.util.NutsUtils;
 
 /**
  * Artifacts are organized according to {@code NutsIdType} to reflect how the artifact
@@ -78,7 +78,7 @@ public enum NutsIdType implements NutsEnum {
     }
 
     public static NutsOptional<NutsIdType> parse(String value) {
-        return NutsReservedLangUtils.parseEnum(value, NutsIdType.class);
+        return NutsUtils.parseEnum(value, NutsIdType.class);
     }
 
     /**

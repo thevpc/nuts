@@ -25,6 +25,7 @@
 */
 package net.thevpc.nuts.runtime.standalone.io.progress;
 
+import net.thevpc.nuts.NutsMessage;
 import net.thevpc.nuts.util.NutsProgressEvent;
 import net.thevpc.nuts.NutsSession;
 import net.thevpc.nuts.NutsString;
@@ -36,7 +37,7 @@ import net.thevpc.nuts.NutsWorkspace;
 public class DefaultNutsProgressEvent implements NutsProgressEvent {
 
     private final Object source;
-    private final NutsString message;
+    private final NutsMessage message;
     private final long globalCount;
     private final long globalMillis;
     private final long partialCount;
@@ -47,7 +48,7 @@ public class DefaultNutsProgressEvent implements NutsProgressEvent {
     private final float percent;
     private final boolean indeterminate;
 
-    public DefaultNutsProgressEvent(Object source, NutsString message, long globalCount, long globalMillis, long partialCount, long partialMillis, long length, Throwable exception, NutsSession session, boolean indeterminate) {
+    public DefaultNutsProgressEvent(Object source, NutsMessage message, long globalCount, long globalMillis, long partialCount, long partialMillis, long length, Throwable exception, NutsSession session, boolean indeterminate) {
         this.source = source;
         this.length = length;
         this.message = message;
@@ -86,7 +87,7 @@ public class DefaultNutsProgressEvent implements NutsProgressEvent {
         return source;
     }
 
-    public NutsString getMessage() {
+    public NutsMessage getMessage() {
         return message;
     }
 

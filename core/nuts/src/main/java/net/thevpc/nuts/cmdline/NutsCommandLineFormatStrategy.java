@@ -25,7 +25,7 @@ package net.thevpc.nuts.cmdline;
 
 import net.thevpc.nuts.NutsEnum;
 import net.thevpc.nuts.NutsOptional;
-import net.thevpc.nuts.reserved.NutsReservedLangUtils;
+import net.thevpc.nuts.util.NutsUtils;
 
 /**
  * uniform platform architecture impl-note: list updated from
@@ -56,7 +56,7 @@ public enum NutsCommandLineFormatStrategy implements NutsEnum {
 
 
     public static NutsOptional<NutsCommandLineFormatStrategy> parse(String value) {
-        return NutsReservedLangUtils.parseEnum(value, NutsCommandLineFormatStrategy.class, arch->{
+        return NutsUtils.parseEnum(value, NutsCommandLineFormatStrategy.class, arch->{
             arch = arch.toLowerCase();
             switch (arch) {
                 case "default":

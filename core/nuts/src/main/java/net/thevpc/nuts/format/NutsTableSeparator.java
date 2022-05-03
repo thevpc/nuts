@@ -28,7 +28,7 @@ package net.thevpc.nuts.format;
 
 import net.thevpc.nuts.NutsEnum;
 import net.thevpc.nuts.NutsOptional;
-import net.thevpc.nuts.reserved.NutsReservedLangUtils;
+import net.thevpc.nuts.util.NutsUtils;
 
 /**
  * @app.category Format
@@ -60,7 +60,7 @@ public enum NutsTableSeparator implements NutsEnum {
     }
 
     public static NutsOptional<NutsTableSeparator> parse(String value) {
-        return NutsReservedLangUtils.parseEnum(value, NutsTableSeparator.class);
+        return NutsUtils.parseEnum(value, NutsTableSeparator.class);
     }
 
     /**

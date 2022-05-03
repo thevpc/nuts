@@ -25,7 +25,7 @@
  */
 package net.thevpc.nuts;
 
-import net.thevpc.nuts.reserved.NutsReservedLangUtils;
+import net.thevpc.nuts.util.NutsUtils;
 
 /**
  * Command execution type.
@@ -71,7 +71,7 @@ public enum NutsExecutionType implements NutsEnum {
     }
 
     public static NutsOptional<NutsExecutionType> parse(String value) {
-        return NutsReservedLangUtils.parseEnum(value, NutsExecutionType.class);
+        return NutsUtils.parseEnum(value, NutsExecutionType.class);
     }
 
 

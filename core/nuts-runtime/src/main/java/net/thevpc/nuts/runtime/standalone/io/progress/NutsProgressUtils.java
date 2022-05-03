@@ -51,7 +51,13 @@ public class NutsProgressUtils {
                 NutsPath.of(from, session).getContentLength(), monitor, session);
     }
 
-    public static java.io.InputStream monitor(java.io.InputStream from, Object source, NutsString sourceName, long length, NutsProgressMonitor monitor, NutsSession session) {
+    public static java.io.InputStream monitor(java.io.InputStream from, Object source,
+                                              NutsString sourceName, long length, NutsProgressMonitor monitor, NutsSession session) {
+        return new MonitoredInputStream(from, source, NutsMessage.ofNtf(sourceName), length, monitor, session);
+    }
+
+    public static java.io.InputStream monitor(java.io.InputStream from, Object source,
+                                              NutsMessage sourceName, long length, NutsProgressMonitor monitor, NutsSession session) {
         return new MonitoredInputStream(from, source, sourceName, length, monitor, session);
     }
 
@@ -63,7 +69,7 @@ public class NutsProgressUtils {
             sourceName = NutsTexts.of(session).toText(m.getName());
             length = m.getContentLength().orElse(-1L);
         }
-        return new MonitoredInputStream(from, source, sourceName, length, monitor, session);
+        return new MonitoredInputStream(from, source, NutsMessage.ofNtf(sourceName), length, monitor, session);
     }
 
     public static NutsProgressFactory createLogProgressMonitorFactory(MonitorType mt) {

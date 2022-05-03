@@ -25,7 +25,7 @@
  */
 package net.thevpc.nuts;
 
-import net.thevpc.nuts.reserved.NutsReservedDefaultNutsProperties;
+import net.thevpc.nuts.util.DefaultNutsProperties;
 import net.thevpc.nuts.reserved.NutsReservedCollectionUtils;
 import net.thevpc.nuts.util.NutsStringUtils;
 
@@ -126,9 +126,9 @@ public class DefaultNutsDescriptor implements NutsDescriptor {
         if (properties == null || properties.size() == 0) {
             this.properties = null;
         } else {
-            NutsReservedDefaultNutsProperties p = new NutsReservedDefaultNutsProperties();
+            DefaultNutsProperties p = new DefaultNutsProperties();
             p.addAll(properties);
-            this.properties = p.getList();
+            this.properties = p.toList();
         }
         this.flags = NutsReservedCollectionUtils.nonBlankSet(flags);
         this.solver = NutsStringUtils.trimToNull(solver);

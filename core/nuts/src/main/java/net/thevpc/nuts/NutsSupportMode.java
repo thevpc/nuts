@@ -23,7 +23,7 @@
  */
 package net.thevpc.nuts;
 
-import net.thevpc.nuts.reserved.NutsReservedLangUtils;
+import net.thevpc.nuts.util.NutsUtils;
 
 import java.util.function.Function;
 
@@ -44,7 +44,7 @@ public enum NutsSupportMode implements NutsEnum {
     }
 
     public static NutsOptional<NutsSupportMode> parse(String value) {
-        return NutsReservedLangUtils.parseEnum(value, NutsSupportMode.class, new Function<String, NutsOptional<NutsSupportMode>>() {
+        return NutsUtils.parseEnum(value, NutsSupportMode.class, new Function<String, NutsOptional<NutsSupportMode>>() {
             @Override
             public NutsOptional<NutsSupportMode> apply(String s) {
                 switch (s.toLowerCase()){

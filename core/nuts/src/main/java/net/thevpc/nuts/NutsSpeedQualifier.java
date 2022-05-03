@@ -26,7 +26,7 @@
  */
 package net.thevpc.nuts;
 
-import net.thevpc.nuts.reserved.NutsReservedLangUtils;
+import net.thevpc.nuts.util.NutsUtils;
 
 /**
  * Speed Qualifier
@@ -83,7 +83,7 @@ public enum NutsSpeedQualifier implements NutsEnum {
     }
 
     public static NutsOptional<NutsSpeedQualifier> parse(String value) {
-        return NutsReservedLangUtils.parseEnum(value, NutsSpeedQualifier.class);
+        return NutsUtils.parseEnum(value, NutsSpeedQualifier.class);
     }
 
 

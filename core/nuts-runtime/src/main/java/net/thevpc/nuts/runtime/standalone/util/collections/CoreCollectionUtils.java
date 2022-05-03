@@ -30,10 +30,27 @@ import net.thevpc.nuts.util.NutsStringUtils;
 import java.util.*;
 
 /**
- *
  * @author thevpc
  */
 public class CoreCollectionUtils {
+    public static <T> List<T> unmodifiableList(Collection<T> other) {
+        return other == null ? Collections.emptyList() : Collections.unmodifiableList(nonNullList(other));
+    }
+
+    public static <T, V> Map<T, V> nonNullMap(Map<T, V> other) {
+        if (other == null) {
+            return new LinkedHashMap<>();
+        }
+        return new LinkedHashMap<>(other);
+    }
+
+
+    public static <T> List<T> nonNullList(Collection<T> other) {
+        if (other == null) {
+            return new ArrayList<>();
+        }
+        return new ArrayList<>(other);
+    }
 
     public static <T> List<T> toList(Iterator<T> it) {
         List<T> all = new ArrayList<>();
@@ -88,5 +105,13 @@ public class CoreCollectionUtils {
         m.put(k2, v2);
         m.put(k3, v3);
         return m;
+    }
+
+    public static <T, V> Map<T, V> unmodifiableMap(Map<T, V> other) {
+        return other == null ? Collections.emptyMap() : Collections.unmodifiableMap(nonNullMap(other));
+    }
+
+    public static <T> List<T> nonNullListFromArray(T[] other) {
+        return nonNullList(Arrays.asList(other));
     }
 }

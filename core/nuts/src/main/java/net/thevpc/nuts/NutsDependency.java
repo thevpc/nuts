@@ -25,8 +25,6 @@
  */
 package net.thevpc.nuts;
 
-import net.thevpc.nuts.boot.NutsApiUtils;
-
 import java.io.Serializable;
 import java.util.List;
 import java.util.Map;

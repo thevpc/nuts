@@ -25,7 +25,7 @@ package net.thevpc.nuts.text;
 
 import net.thevpc.nuts.NutsEnum;
 import net.thevpc.nuts.NutsOptional;
-import net.thevpc.nuts.reserved.NutsReservedLangUtils;
+import net.thevpc.nuts.util.NutsUtils;
 
 /**
  * @app.category Format
@@ -46,7 +46,7 @@ public enum NutsTextType implements NutsEnum {
     }
 
     public static NutsOptional<NutsTextType> parse(String value) {
-        return NutsReservedLangUtils.parseEnum(value, NutsTextType.class);
+        return NutsUtils.parseEnum(value, NutsTextType.class);
     }
 
     @Override

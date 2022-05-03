@@ -1,12 +1,12 @@
 package net.thevpc.nuts.runtime.standalone.workspace.cmd.exec;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.reserved.NutsReservedCollectionUtils;
 import net.thevpc.nuts.cmdline.NutsArgument;
 import net.thevpc.nuts.cmdline.NutsCommandLine;
 import net.thevpc.nuts.io.NutsPrintStream;
 import net.thevpc.nuts.runtime.standalone.executor.system.ProcessBuilder2;
 import net.thevpc.nuts.runtime.standalone.io.printstream.NutsByteArrayPrintStream;
+import net.thevpc.nuts.runtime.standalone.util.collections.CoreCollectionUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.NutsWorkspaceCommandBase;
 import net.thevpc.nuts.util.NutsStringUtils;
 
@@ -69,7 +69,7 @@ public abstract class AbstractNutsExecCommand extends NutsWorkspaceCommandBase<N
 
     @Override
     public List<String> getCommand() {
-        return NutsReservedCollectionUtils.unmodifiableList(command);
+        return CoreCollectionUtils.unmodifiableList(command);
     }
 
     @Override
@@ -159,7 +159,7 @@ public abstract class AbstractNutsExecCommand extends NutsWorkspaceCommandBase<N
 
     @Override
     public List<String> getWorkspaceOptions() {
-        return NutsReservedCollectionUtils.unmodifiableList(workspaceOptions);
+        return CoreCollectionUtils.unmodifiableList(workspaceOptions);
     }
 
     @Override
@@ -435,7 +435,7 @@ public abstract class AbstractNutsExecCommand extends NutsWorkspaceCommandBase<N
 
     @Override
     public List<String> getExecutorOptions() {
-        return NutsReservedCollectionUtils.unmodifiableList(executorOptions);
+        return CoreCollectionUtils.unmodifiableList(executorOptions);
     }
 
     @Override

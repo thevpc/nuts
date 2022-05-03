@@ -5,6 +5,7 @@
  */
 package net.thevpc.nuts.runtime.standalone.io.progress;
 
+import net.thevpc.nuts.NutsMessage;
 import net.thevpc.nuts.NutsSession;
 import net.thevpc.nuts.NutsString;
 import net.thevpc.nuts.NutsWorkspace;
@@ -33,7 +34,7 @@ public class DefaultNutsInputStreamMonitor implements NutsInputStreamMonitor {
     private String sourceTypeName;
     private NutsInputSource source;
     private Object sourceOrigin;
-    private NutsString sourceName;
+    private NutsMessage sourceName;
     private long length = -1;
     private NutsSession session;
     private boolean logProgress;
@@ -58,12 +59,12 @@ public class DefaultNutsInputStreamMonitor implements NutsInputStreamMonitor {
     }
 
     @Override
-    public NutsString getName() {
+    public NutsMessage getName() {
         return sourceName;
     }
 
     @Override
-    public NutsInputStreamMonitor setName(NutsString name) {
+    public NutsInputStreamMonitor setName(NutsMessage name) {
         this.sourceName = name;
         return this;
     }
@@ -125,15 +126,12 @@ public class DefaultNutsInputStreamMonitor implements NutsInputStreamMonitor {
     @Override
     public InputStream create() {
         NutsUtils.requireNonNull(source, getSession(), "source");
-        NutsString sourceName = this.sourceName;
-        if (sourceName == null || sourceName.isEmpty()) {
-            sourceName = NutsTexts.of(session).toText(source);
+        NutsMessage sourceName = this.sourceName;
+        if (sourceName == null && source!=null) {
+            sourceName = NutsMessage.ofNtf(NutsTexts.of(session).toText(source));
         }
-        if (sourceName == null || sourceName.isEmpty()) {
-            sourceName = NutsTexts.of(session).toText(source.getInputMetaData().getName());
-        }
-        if (sourceName == null || sourceName.isEmpty()) {
-            sourceName = NutsTexts.of(session).toText(String.valueOf(source));
+        if (sourceName == null) {
+            sourceName = NutsMessage.ofNtf(NutsTexts.of(session).toText(source.getInputMetaData().getName()));
         }
         NutsProgressMonitor monitor = NutsProgressUtils.createProgressMonitor(NutsProgressUtils.MonitorType.STREAM, source, sourceOrigin, session
                 , isLogProgress()
@@ -168,7 +166,7 @@ public class DefaultNutsInputStreamMonitor implements NutsInputStreamMonitor {
             sourceTypeName = source.getInputMetaData().getKind().orElse("nuts-Path");
         }
         return (InputStream) NutsIO.of(session).createInputSource(
-                NutsProgressUtils.monitor(openedStream, source, sourceName, size, new SilentStartNutsProgressMonitorAdapter(monitor, sourceName.filteredText()), session),
+                NutsProgressUtils.monitor(openedStream, source, sourceName, size, new SilentStartNutsProgressMonitorAdapter(monitor, sourceName), session),
                 new DefaultNutsInputSourceMetadata(source.getInputMetaData())
                         .setKind(sourceTypeName)
         );

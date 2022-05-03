@@ -38,7 +38,6 @@ public class NutsException extends RuntimeException implements NutsSessionAwareE
 
     private final NutsSession session;
     private final NutsMessage formattedMessage;
-    private final NutsString formattedString;
 
     /**
      * Constructs a new runtime exception with the specified detail message. The
@@ -54,7 +53,6 @@ public class NutsException extends RuntimeException implements NutsSessionAwareE
         NutsUtils.requireSession(session);
         this.session = session;
         this.formattedMessage = NutsException.validateFormattedMessage(message);
-        this.formattedString = NutsException.messageToFormattedString(message, session);
     }
 
     /**
@@ -75,7 +73,6 @@ public class NutsException extends RuntimeException implements NutsSessionAwareE
         super(NutsException.messageToString(message, session), cause);
         this.session = session;
         this.formattedMessage = NutsException.validateFormattedMessage(message);
-        this.formattedString = NutsException.messageToFormattedString(message, session);
     }
 
     /**
@@ -86,10 +83,9 @@ public class NutsException extends RuntimeException implements NutsSessionAwareE
      * @param message            the detail message.
      * @param cause              the cause. (A {@code null} value is permitted, and indicates
      *                           that the cause is nonexistent or unknown.)
-     * @param enableSuppression  whether or not suppression is enabled or
+     * @param enableSuppression  whether suppression is enabled or not
      *                           disabled
-     * @param writableStackTrace whether or not the stack trace should be
-     *                           writable
+     * @param writableStackTrace whether the stack trace should be writable or not
      * @param session            the workspace session of this Nuts Exception
      */
     public NutsException(NutsSession session, NutsMessage message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
@@ -97,7 +93,6 @@ public class NutsException extends RuntimeException implements NutsSessionAwareE
                 cause, enableSuppression, writableStackTrace);
         this.session = session;
         this.formattedMessage = NutsException.validateFormattedMessage(message);
-        this.formattedString = NutsException.messageToFormattedString(message, session);
     }
 
     static NutsMessage validateFormattedMessage(NutsMessage message) {
@@ -119,13 +114,6 @@ public class NutsException extends RuntimeException implements NutsSessionAwareE
     @Override
     public NutsMessage getFormattedMessage() {
         return formattedMessage;
-    }
-
-    /**
-     * @return formatted message
-     */
-    public NutsString getFormattedString() {
-        return formattedString;
     }
 
     /**

@@ -6,19 +6,18 @@
 package net.thevpc.nuts.runtime.standalone.security;
 
 import net.thevpc.nuts.*;
-
-import java.util.*;
-
-import net.thevpc.nuts.reserved.NutsReservedCollectionUtils;
+import net.thevpc.nuts.runtime.standalone.repository.config.DefaultNutsRepoConfigManager;
 import net.thevpc.nuts.runtime.standalone.session.NutsSessionUtils;
-import net.thevpc.nuts.runtime.standalone.workspace.config.NutsRepositoryConfigManagerExt;
-import net.thevpc.nuts.runtime.standalone.workspace.config.NutsWorkspaceConfigManagerExt;
+import net.thevpc.nuts.runtime.standalone.util.collections.CoreCollectionUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.user.DefaultNutsAddUserCommand;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.user.DefaultNutsRemoveUserCommand;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.user.DefaultNutsUpdateUserCommand;
-import net.thevpc.nuts.runtime.standalone.repository.config.DefaultNutsRepoConfigManager;
+import net.thevpc.nuts.runtime.standalone.workspace.config.NutsRepositoryConfigManagerExt;
+import net.thevpc.nuts.runtime.standalone.workspace.config.NutsWorkspaceConfigManagerExt;
 import net.thevpc.nuts.spi.NutsAuthenticationAgent;
 import net.thevpc.nuts.util.NutsStringUtils;
+
+import java.util.*;
 
 /**
  *
@@ -79,7 +78,7 @@ public class DefaultNutsRepositorySecurityModel {
         if (s != null) {
             List<String> rr = s.getPermissions();
             aa = new NutsAuthorizations(
-                    NutsReservedCollectionUtils.nonNullList(rr)
+                    CoreCollectionUtils.nonNullList(rr)
             );
             authorizations.put(n, aa);
         } else {

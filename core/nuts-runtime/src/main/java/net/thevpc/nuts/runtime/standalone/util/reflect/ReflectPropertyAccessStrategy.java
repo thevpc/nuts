@@ -24,7 +24,7 @@
 package net.thevpc.nuts.runtime.standalone.util.reflect;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.reserved.NutsReservedLangUtils;
+import net.thevpc.nuts.util.NutsUtils;
 
 /**
  *
@@ -41,7 +41,7 @@ public enum ReflectPropertyAccessStrategy implements NutsEnum {
     }
 
     public static NutsOptional<ReflectPropertyAccessStrategy> parse(String value) {
-        return NutsReservedLangUtils.parseEnum(value, ReflectPropertyAccessStrategy.class);
+        return NutsUtils.parseEnum(value, ReflectPropertyAccessStrategy.class);
     }
     @Override
     public String id() {

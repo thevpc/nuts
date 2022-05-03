@@ -1,7 +1,7 @@
 package net.thevpc.nuts.runtime.standalone.descriptor.util;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.reserved.NutsReservedDefaultNutsProperties;
+import net.thevpc.nuts.util.DefaultNutsProperties;
 import net.thevpc.nuts.runtime.standalone.id.util.NutsIdUtils;
 import net.thevpc.nuts.runtime.standalone.util.CoreNutsUtils;
 import net.thevpc.nuts.runtime.standalone.util.CoreStringUtils;
@@ -321,7 +321,7 @@ public class NutsDescriptorUtils {
         String n_desc = CoreNutsUtils.applyStringProperties(b.getDescription(), map);
         NutsArtifactCall n_executor = b.getExecutor();
         NutsArtifactCall n_installer = b.getInstaller();
-        NutsReservedDefaultNutsProperties n_props = new NutsReservedDefaultNutsProperties();
+        DefaultNutsProperties n_props = new DefaultNutsProperties();
         for (NutsDescriptorProperty property : b.getProperties()) {
             String v = property.getValue().asString().get(session);
             if (CoreStringUtils.containsVars("${")) {
@@ -366,7 +366,7 @@ public class NutsDescriptorUtils {
         b.setCondition(applyPropertiesNutsEnvCondition(b.getCondition().builder(),properties).build());
         b.setDependencies(new ArrayList<>(n_deps));
         b.setStandardDependencies(new ArrayList<>(n_sdeps));
-        b.setProperties(n_props.getList());
+        b.setProperties(n_props.toList());
         return b;
     }
 

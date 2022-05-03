@@ -26,7 +26,7 @@
  */
 package net.thevpc.nuts;
 
-import net.thevpc.nuts.reserved.NutsReservedLangUtils;
+import net.thevpc.nuts.util.NutsUtils;
 
 /**
  * Install strategy defines the strategy used by installer
@@ -78,7 +78,7 @@ public enum NutsInstallStrategy implements NutsEnum {
     }
 
     public static NutsOptional<NutsInstallStrategy> parse(String value) {
-        return NutsReservedLangUtils.parseEnum(value, NutsInstallStrategy.class);
+        return NutsUtils.parseEnum(value, NutsInstallStrategy.class);
     }
 
 

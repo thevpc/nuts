@@ -26,7 +26,7 @@
  */
 package net.thevpc.nuts;
 
-import net.thevpc.nuts.reserved.NutsReservedLangUtils;
+import net.thevpc.nuts.util.NutsUtils;
 
 /**
  * Filter Type
@@ -48,7 +48,7 @@ public enum NutsFilterOp implements NutsEnum {
     }
 
     public static NutsOptional<NutsFilterOp> parse(String value) {
-        return NutsReservedLangUtils.parseEnum(value, NutsFilterOp.class);
+        return NutsUtils.parseEnum(value, NutsFilterOp.class);
     }
     @Override
     public String id() {

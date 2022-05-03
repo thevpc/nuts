@@ -99,6 +99,8 @@ public interface NutsPrintStream extends NutsOutputTarget {
 
     NutsPrintStream write(char[] buf, int off, int len);
 
+    NutsPrintStream print(NutsMessage b);
+
     NutsPrintStream print(NutsString b);
 
     NutsPrintStream print(boolean b);
@@ -128,6 +130,8 @@ public interface NutsPrintStream extends NutsOutputTarget {
     NutsPrintStream println(boolean x);
 
     NutsPrintStream println(char x);
+
+    NutsPrintStream println(NutsMessage b);
 
     NutsPrintStream println(NutsString b);
 

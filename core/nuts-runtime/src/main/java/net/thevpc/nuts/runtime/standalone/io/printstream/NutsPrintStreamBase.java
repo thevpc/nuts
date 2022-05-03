@@ -73,6 +73,12 @@ public abstract class NutsPrintStreamBase implements NutsPrintStream {
     }
 
     @Override
+    public NutsPrintStream print(NutsMessage b) {
+        this.print(NutsTexts.of(session).toText(b));
+        return this;
+    }
+
+    @Override
     public NutsPrintStream print(boolean b) {
         this.print(b ? "true" : "false");
         return this;
@@ -161,6 +167,12 @@ public abstract class NutsPrintStreamBase implements NutsPrintStream {
     @Override
     public NutsPrintStream println(NutsString b) {
         this.println(String.valueOf(b));
+        return this;
+    }
+
+    @Override
+    public NutsPrintStream println(NutsMessage b) {
+        this.println(NutsTexts.of(session).toText(b));
         return this;
     }
 

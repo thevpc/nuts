@@ -25,7 +25,7 @@
  */
 package net.thevpc.nuts;
 
-import net.thevpc.nuts.reserved.NutsReservedLangUtils;
+import net.thevpc.nuts.util.NutsUtils;
 
 /**
  * Supported Shell Families
@@ -100,7 +100,7 @@ public enum NutsShellFamily implements NutsEnum {
     }
 
     public static NutsOptional<NutsShellFamily> parse(String value) {
-        return NutsReservedLangUtils.parseEnum(value, NutsShellFamily.class, s -> {
+        return NutsUtils.parseEnum(value, NutsShellFamily.class, s -> {
             String[] parts = s.trim().toLowerCase().split("/");
             if (parts.length > 0) {
                 s = parts[parts.length - 1];

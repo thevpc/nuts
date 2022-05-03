@@ -25,7 +25,7 @@ package net.thevpc.nuts.reserved;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.boot.DefaultNutsWorkspaceBootOptionsBuilder;
-import net.thevpc.nuts.boot.NutsApiUtils;
+import net.thevpc.nuts.util.NutsApiUtils;
 import net.thevpc.nuts.boot.NutsWorkspaceBootOptions;
 import net.thevpc.nuts.boot.NutsWorkspaceBootOptionsBuilder;
 import net.thevpc.nuts.cmdline.NutsCommandLine;
@@ -234,7 +234,7 @@ public final class NutsReservedUtils {
      * @param locations   of type NutsStoreLocation, Path of File
      */
     public static long deleteStoreLocations(NutsWorkspaceBootOptions lastBootOptions, NutsWorkspaceBootOptions o, boolean includeRoot,
-                                     NutsReservedBootLog bLog, Object[] locations) {
+                                            NutsReservedBootLog bLog, Object[] locations) {
         if (lastBootOptions == null) {
             return 0;
         }
@@ -334,7 +334,7 @@ public final class NutsReservedUtils {
                             .resetLine()
                             .forString(
                                     NutsMessage.ofCstyle(
-                                    "do you confirm deleting %s [y/n/c/a] (default 'n') ?", directory
+                                            "do you confirm deleting %s [y/n/c/a] (default 'n') ?", directory
                                     )).setSession(session).getValue();
                 } else {
                     if (bOptions.getBot().orElse(false)) {
@@ -871,7 +871,7 @@ public final class NutsReservedUtils {
     public static NutsOptional<List<NutsId>> parseIdList(String s) {
         List<NutsId> list = new ArrayList<>();
         NutsOptional<List<String>> o = parseStringIdList(s);
-        if(o.isPresent()) {
+        if (o.isPresent()) {
             for (String x : o.get()) {
                 NutsOptional<NutsId> y = NutsId.of(x).ifBlankNull();
                 if (y.isError()) {
@@ -918,7 +918,7 @@ public final class NutsReservedUtils {
                             + " " + NutsStringUtils.trim(System.getProperty("nuts.args"))
             );
             try {
-                options.setCommandLine(NutsCommandLine.parseDefault(nutsArgs).get().toStringArray(),null);
+                options.setCommandLine(NutsCommandLine.parseDefault(nutsArgs).get().toStringArray(), null);
             } catch (Exception e) {
                 //any, ignore...
             }
@@ -932,7 +932,7 @@ public final class NutsReservedUtils {
 
         boolean bot = bo.getBot().orElse(false);
         boolean gui = bo.getGui().orElse(false);
-        boolean showTrace = bo.getDebug()!=null;
+        boolean showTrace = bo.getDebug() != null;
         NutsLogConfig logConfig = bo.getLogConfig().orElseGet(NutsLogConfig::new);
         showTrace |= (logConfig != null
                 && logConfig.getLogTermLevel() != null
@@ -952,7 +952,7 @@ public final class NutsReservedUtils {
             return 0;
         }
         NutsSession session = NutsSessionAwareExceptionBase.resolveSession(ex).orNull();
-        NutsString fm = NutsSessionAwareExceptionBase.resolveSessionAwareExceptionBase(ex).map(NutsSessionAwareExceptionBase::getFormattedString)
+        NutsMessage fm = NutsSessionAwareExceptionBase.resolveSessionAwareExceptionBase(ex).map(NutsSessionAwareExceptionBase::getFormattedMessage)
                 .orNull();
         int errorCode = NutsExceptionWithExitCodeBase.resolveExitCode(ex).orElse(204);
         if (errorCode == 0) {
@@ -965,9 +965,9 @@ public final class NutsReservedUtils {
                 try {
                     fout = session.config().getSystemTerminal().getErr();
                     if (fm != null) {
-                        fm = NutsTexts.of(session).ofStyled(fm, NutsTextStyle.error());
+                        fm = NutsMessage.ofNtf(NutsTexts.of(session).builder().append(fm, NutsTextStyle.error()).build());
                     } else {
-                        fm = NutsTexts.of(session).ofStyled(m, NutsTextStyle.error());
+                        fm = NutsMessage.ofStyled(m, NutsTextStyle.error());
                     }
                 } catch (Exception ex2) {
                     NutsLoggerOp.of(NutsApplications.class, session).level(Level.FINE).error(ex2).log(
@@ -986,7 +986,7 @@ public final class NutsReservedUtils {
             }
         } else {
             if (session != null) {
-                fout = NutsPrintStream.of(out, NutsTerminalMode.FORMATTED,null, session);
+                fout = NutsPrintStream.of(out, NutsTerminalMode.FORMATTED, null, session);
             } else {
                 fout = null;
             }
@@ -1008,7 +1008,7 @@ public final class NutsReservedUtils {
                     if (fm != null) {
                         session.eout().add(NutsElements.of(session).ofObject()
                                 .set("app-id", session.getAppId() == null ? "" : session.getAppId().toString())
-                                .set("error", fm.filteredText())
+                                .set("error", NutsTexts.of(session).toText(fm).filteredText())
                                 .build()
                         );
                         if (showTrace) {
@@ -1059,7 +1059,11 @@ public final class NutsReservedUtils {
         if (showGui) {
             StringBuilder sb = new StringBuilder();
             if (fm != null) {
-                sb.append(fm.filteredText());
+                if (session != null) {
+                    sb.append(NutsTexts.of(session).toText(fm).filteredText());
+                } else {
+                    sb.append(fm);
+                }
             } else {
                 sb.append(m);
             }

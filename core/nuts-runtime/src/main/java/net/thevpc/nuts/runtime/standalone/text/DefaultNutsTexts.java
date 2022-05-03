@@ -44,7 +44,7 @@ public class DefaultNutsTexts implements NutsTexts {
         if (params == null) {
             params = new Object[0];
         }
-        String msg = m.getMessage();
+        Object msg = m.getMessage();
         String sLocale = getSession() == null ? null : getSession().getLocale();
         Locale locale = NutsBlankable.isBlank(sLocale) ? null : new Locale(sLocale);
         Object[] args2 = new Object[params.length];
@@ -64,23 +64,26 @@ public class DefaultNutsTexts implements NutsTexts {
         switch (format) {
             case CSTYLE: {
                 StringBuilder sb = new StringBuilder();
-                new Formatter(sb, locale).format(msg, args2);
+                new Formatter(sb, locale).format((String) msg, args2);
                 return txt.parse(sb.toString());
             }
             case JSTYLE: {
-                return txt.parse(MessageFormat.format(msg, args2));
+                return txt.parse(MessageFormat.format((String) msg, args2));
             }
             case PLAIN: {
-                return txt.ofPlain(msg);
+                return txt.ofPlain((String) msg);
             }
             case NTF: {
-                return txt.parse(msg);
+                if (msg instanceof String) {
+                    return txt.parse((String) msg);
+                }
+                return txt.toText(msg);
             }
             case STYLED: {
-                return txt.ofStyled(msg, m.getStyles());
+                return txt.ofStyled(txt.toText(msg), m.getStyles());
             }
             case CODE: {
-                return txt.ofCodeOrCommand(m.getCodeLang(), msg);
+                return txt.ofCodeOrCommand(m.getCodeLang(), (String) msg);
             }
         }
         throw new NutsUnsupportedEnumException(getSession(), format);

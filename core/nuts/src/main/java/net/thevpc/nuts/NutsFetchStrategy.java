@@ -26,7 +26,7 @@
  */
 package net.thevpc.nuts;
 
-import net.thevpc.nuts.reserved.NutsReservedLangUtils;
+import net.thevpc.nuts.util.NutsUtils;
 
 import java.util.Arrays;
 import java.util.HashSet;
@@ -92,7 +92,7 @@ public enum NutsFetchStrategy implements Iterable<NutsFetchMode>, NutsEnum {
     }
 
     public static NutsOptional<NutsFetchStrategy> parse(String value) {
-        return NutsReservedLangUtils.parseEnum(value, NutsFetchStrategy.class);
+        return NutsUtils.parseEnum(value, NutsFetchStrategy.class);
     }
 
 

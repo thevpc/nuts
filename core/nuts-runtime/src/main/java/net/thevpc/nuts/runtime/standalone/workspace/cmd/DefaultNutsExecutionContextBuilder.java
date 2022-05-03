@@ -24,7 +24,7 @@
 package net.thevpc.nuts.runtime.standalone.workspace.cmd;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.reserved.NutsReservedCollectionUtils;
+import net.thevpc.nuts.runtime.standalone.util.collections.CoreCollectionUtils;
 
 import java.util.*;
 
@@ -91,12 +91,12 @@ public class DefaultNutsExecutionContextBuilder implements NutsExecutionContextB
         }
         this.commandName = commandName;
         this.definition = definition;
-        this.arguments = NutsReservedCollectionUtils.nonNullList(arguments);
+        this.arguments = CoreCollectionUtils.nonNullList(arguments);
         this.execSession = execSession;
         this.session = session;
         this.workspace = workspace;
-        this.executorOptions = NutsReservedCollectionUtils.nonNullList(executorArgs);
-        this.executorProperties = NutsReservedCollectionUtils.unmodifiableMap(executorProperties);
+        this.executorOptions = CoreCollectionUtils.nonNullList(executorArgs);
+        this.executorProperties = CoreCollectionUtils.unmodifiableMap(executorProperties);
         this.sleepMillis = sleepMillis;
         this.cwd = cwd;
         if (env == null) {
@@ -112,12 +112,12 @@ public class DefaultNutsExecutionContextBuilder implements NutsExecutionContextB
     public DefaultNutsExecutionContextBuilder(NutsExecutionContext other) {
         this.commandName = other.getCommandName();
         this.definition = other.getDefinition();
-        this.arguments = NutsReservedCollectionUtils.nonNullList(other.getArguments());
+        this.arguments = CoreCollectionUtils.nonNullList(other.getArguments());
         this.execSession = other.getExecSession();
         this.session = other.getSession();
         this.workspace = other.getWorkspace();
-        this.executorOptions.addAll(NutsReservedCollectionUtils.nonNullList(other.getExecutorOptions()));
-        this.executorProperties.putAll(NutsReservedCollectionUtils.nonNullMap(other.getExecutorProperties()));
+        this.executorOptions.addAll(CoreCollectionUtils.nonNullList(other.getExecutorOptions()));
+        this.executorProperties.putAll(CoreCollectionUtils.nonNullMap(other.getExecutorProperties()));
         this.cwd = other.getCwd();
         this.env = other.getEnv();
         this.failFast = other.isFailFast();
@@ -226,7 +226,7 @@ public class DefaultNutsExecutionContextBuilder implements NutsExecutionContextB
     public NutsExecutionContextBuilder setExecutorOptions(List<String> executorOptions) {
         this.executorOptions.clear();
         if (executorOptions != null) {
-            this.executorOptions.addAll(NutsReservedCollectionUtils.nonNullList(executorOptions));
+            this.executorOptions.addAll(CoreCollectionUtils.nonNullList(executorOptions));
         }
         return this;
     }
@@ -235,7 +235,7 @@ public class DefaultNutsExecutionContextBuilder implements NutsExecutionContextB
     public NutsExecutionContextBuilder setWorkspaceOptions(List<String> workspaceOptions) {
         this.workspaceOptions.clear();
         if (workspaceOptions != null) {
-            this.workspaceOptions.addAll(NutsReservedCollectionUtils.nonNullList(workspaceOptions));
+            this.workspaceOptions.addAll(CoreCollectionUtils.nonNullList(workspaceOptions));
         }
         return this;
     }
@@ -284,7 +284,7 @@ public class DefaultNutsExecutionContextBuilder implements NutsExecutionContextB
 
     @Override
     public NutsExecutionContextBuilder setArguments(String[] arguments) {
-        this.arguments = NutsReservedCollectionUtils.nonNullList(Arrays.asList(arguments));
+        this.arguments = CoreCollectionUtils.nonNullList(Arrays.asList(arguments));
         return this;
     }
 

@@ -26,7 +26,7 @@
  */
 package net.thevpc.nuts;
 
-import net.thevpc.nuts.reserved.NutsReservedDefaultNutsProperties;
+import net.thevpc.nuts.util.DefaultNutsProperties;
 import net.thevpc.nuts.reserved.NutsReservedCollectionUtils;
 import net.thevpc.nuts.util.NutsStringUtils;
 
@@ -63,7 +63,7 @@ public class DefaultNutsDescriptorBuilder implements NutsDescriptorBuilder {
     private List<NutsDependency> standardDependencies = new ArrayList<>(); //defaults to empty;
     private Set<NutsDescriptorFlag> flags = new LinkedHashSet<>();
     private List<NutsDescriptorProperty> properties = new ArrayList<>(); //defaults to empty;
-    private transient NutsReservedDefaultNutsProperties _propertiesBuilder = new NutsReservedDefaultNutsProperties(); //defaults to empty;
+    private transient DefaultNutsProperties _propertiesBuilder = new DefaultNutsProperties(); //defaults to empty;
     private List<NutsDescriptorContributor> contributors = new ArrayList<>(); //defaults to empty;
     private List<NutsDescriptorLicense> licenses = new ArrayList<>(); //defaults to empty;
     private List<NutsDescriptorMailingList> mailingLists = new ArrayList<>(); //defaults to empty;
@@ -459,7 +459,7 @@ public class DefaultNutsDescriptorBuilder implements NutsDescriptorBuilder {
             return this;
         }
 
-        NutsReservedDefaultNutsProperties p = new NutsReservedDefaultNutsProperties();
+        DefaultNutsProperties p = new DefaultNutsProperties();
         boolean someUpdate = false;
         for (NutsDescriptorProperty entry : getProperties()) {
             if (filter == null || filter.test(entry)) {
@@ -475,7 +475,7 @@ public class DefaultNutsDescriptorBuilder implements NutsDescriptorBuilder {
             }
         }
         if (someUpdate) {
-            setProperties(p.getList());
+            setProperties(p.toList());
         }
         return this;
     }
@@ -666,7 +666,7 @@ public class DefaultNutsDescriptorBuilder implements NutsDescriptorBuilder {
 
     @Override
     public NutsOptional<NutsDescriptorProperty> getProperty(String name) {
-        return NutsOptional.ofNamed(Arrays.stream(_propertiesBuilder.getAll()).filter(x -> x.getName().equals(name)).findFirst()
+        return NutsOptional.ofNamed(Arrays.stream(_propertiesBuilder.toArray()).filter(x -> x.getName().equals(name)).findFirst()
                 .orElse(null), "property " + name);
     }
 
@@ -687,14 +687,14 @@ public class DefaultNutsDescriptorBuilder implements NutsDescriptorBuilder {
 
     private void _rebuildPropertiesBuilder() {
         if (_propertiesBuilder == null) {
-            _propertiesBuilder = new NutsReservedDefaultNutsProperties();
-            _propertiesBuilder.addAll(this.properties.toArray(new NutsDescriptorProperty[0]));
+            _propertiesBuilder = new DefaultNutsProperties();
+            _propertiesBuilder.addAll(this.properties);
         }
     }
 
     private void _updateProperties() {
         this.properties.clear();
-        this.properties.addAll(Arrays.asList(_propertiesBuilder.getAll()));
+        this.properties.addAll(Arrays.asList(_propertiesBuilder.toArray()));
     }
 
 

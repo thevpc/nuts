@@ -8,9 +8,9 @@ import java.util.logging.Level;
 class SilentStartNutsProgressMonitorAdapter implements NutsProgressMonitor {
     private NutsLogger LOG;
     private final NutsProgressMonitor finalMonitor;
-    private final String path;
+    private final NutsMessage path;
 
-    public SilentStartNutsProgressMonitorAdapter(NutsProgressMonitor finalMonitor, String path) {
+    public SilentStartNutsProgressMonitorAdapter(NutsProgressMonitor finalMonitor, NutsMessage path) {
         this.finalMonitor = finalMonitor;
         this.path = path;
     }

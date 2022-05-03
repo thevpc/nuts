@@ -27,7 +27,7 @@ package net.thevpc.nuts.io;
 
 import net.thevpc.nuts.NutsEnum;
 import net.thevpc.nuts.NutsOptional;
-import net.thevpc.nuts.reserved.NutsReservedLangUtils;
+import net.thevpc.nuts.util.NutsUtils;
 
 /**
  * Equivalent to FileVisitOption
@@ -88,7 +88,7 @@ public enum NutsPathOption implements NutsEnum {
     }
 
     public static NutsOptional<NutsPathOption> parse(String value) {
-        return NutsReservedLangUtils.parseEnum(value, NutsPathOption.class);
+        return NutsUtils.parseEnum(value, NutsPathOption.class);
     }
 
 

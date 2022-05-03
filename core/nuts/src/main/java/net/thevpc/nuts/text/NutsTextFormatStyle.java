@@ -28,7 +28,7 @@ package net.thevpc.nuts.text;
 
 import net.thevpc.nuts.NutsEnum;
 import net.thevpc.nuts.NutsOptional;
-import net.thevpc.nuts.reserved.NutsReservedLangUtils;
+import net.thevpc.nuts.util.NutsUtils;
 
 import java.util.Locale;
 
@@ -72,7 +72,7 @@ public enum NutsTextFormatStyle implements NutsEnum {
     }
 
     public static NutsOptional<NutsTextFormatStyle> parse(String value) {
-        return NutsReservedLangUtils.parseEnum(value, NutsTextFormatStyle.class);
+        return NutsUtils.parseEnum(value, NutsTextFormatStyle.class);
     }
 
 

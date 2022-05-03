@@ -26,19 +26,19 @@
 package net.thevpc.nuts.runtime.standalone.security;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.reserved.NutsReservedCollectionUtils;
+import net.thevpc.nuts.runtime.standalone.boot.DefaultNutsBootManager;
 import net.thevpc.nuts.runtime.standalone.session.NutsSessionUtils;
 import net.thevpc.nuts.runtime.standalone.util.CorePlatformUtils;
-import net.thevpc.nuts.runtime.standalone.workspace.config.NutsWorkspaceConfigManagerExt;
 import net.thevpc.nuts.runtime.standalone.util.CoreStringUtils;
+import net.thevpc.nuts.runtime.standalone.util.collections.CoreCollectionUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.DefaultNutsWorkspace;
-import net.thevpc.nuts.runtime.standalone.boot.DefaultNutsBootManager;
-import net.thevpc.nuts.runtime.standalone.workspace.config.ConfigEventType;
-import net.thevpc.nuts.runtime.standalone.workspace.config.DefaultNutsWorkspaceConfigModel;
-import net.thevpc.nuts.runtime.standalone.workspace.config.NutsWorkspaceConfigSecurity;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.user.DefaultNutsAddUserCommand;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.user.DefaultNutsRemoveUserCommand;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.user.DefaultNutsUpdateUserCommand;
+import net.thevpc.nuts.runtime.standalone.workspace.config.ConfigEventType;
+import net.thevpc.nuts.runtime.standalone.workspace.config.DefaultNutsWorkspaceConfigModel;
+import net.thevpc.nuts.runtime.standalone.workspace.config.NutsWorkspaceConfigManagerExt;
+import net.thevpc.nuts.runtime.standalone.workspace.config.NutsWorkspaceConfigSecurity;
 import net.thevpc.nuts.runtime.standalone.xtra.digest.NutsDigestUtils;
 import net.thevpc.nuts.spi.NutsAuthenticationAgent;
 import net.thevpc.nuts.util.NutsLogger;
@@ -249,7 +249,7 @@ public class DefaultNutsWorkspaceSecurityModel {
         NutsUserConfig s = NutsWorkspaceConfigManagerExt.of(session.config()).getModel().getUser(n, session);
         if (s != null) {
             List<String> rr = s.getPermissions();
-            aa = new NutsAuthorizations(NutsReservedCollectionUtils.nonNullList(rr));
+            aa = new NutsAuthorizations(CoreCollectionUtils.nonNullList(rr));
             authorizations.put(n, aa);
         } else {
             aa = new NutsAuthorizations(Collections.emptyList());

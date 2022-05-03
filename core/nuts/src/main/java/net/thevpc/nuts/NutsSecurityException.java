@@ -39,7 +39,6 @@ public class NutsSecurityException extends SecurityException implements NutsSess
      */
     private final NutsSession session;
     private final NutsMessage formattedMessage;
-    private final NutsString formattedString;
 
     /**
      * Constructs a <code>NutsSecurityException</code> with the specified
@@ -52,7 +51,6 @@ public class NutsSecurityException extends SecurityException implements NutsSess
         super(NutsException.messageToString(message, session));
         this.session = session;
         this.formattedMessage = NutsException.validateFormattedMessage(message);
-        this.formattedString = NutsException.messageToFormattedString(message, session);
     }
 
     /**
@@ -67,16 +65,11 @@ public class NutsSecurityException extends SecurityException implements NutsSess
         super(NutsException.messageToString(message, session), cause);
         this.session = session;
         this.formattedMessage = NutsException.validateFormattedMessage(message);
-        this.formattedString = NutsException.messageToFormattedString(message, session);
     }
 
     @Override
     public NutsMessage getFormattedMessage() {
         return formattedMessage;
-    }
-
-    public NutsString getFormattedString() {
-        return formattedString;
     }
 
     /**

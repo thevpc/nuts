@@ -141,7 +141,7 @@ public class NutsLogRichFormatter extends Formatter {
                 + NutsLogUtils.formatClassName(wRecord.getSourceClassName())
                 + ": ");
 
-        NutsMessage message = wRecord.getNutsMessage();
+        NutsMessage message = wRecord.getFormattedMessage();
         NutsString msgStr =
                 NutsTexts.of(wRecord.getSession())
                         .toText(message);

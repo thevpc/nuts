@@ -1,7 +1,7 @@
 package net.thevpc.nuts.runtime.standalone.repository.impl.main;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.reserved.NutsReservedLangUtils;
+import net.thevpc.nuts.util.NutsUtils;
 
 public enum NutsInstallLogAction implements NutsEnum {
     INSTALL,
@@ -17,7 +17,7 @@ public enum NutsInstallLogAction implements NutsEnum {
     }
 
     public static NutsOptional<NutsInstallLogAction> parse(String value) {
-        return NutsReservedLangUtils.parseEnum(value, NutsInstallLogAction.class);
+        return NutsUtils.parseEnum(value, NutsInstallLogAction.class);
     }
 
 

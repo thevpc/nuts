@@ -24,15 +24,13 @@
  * <br>
  * ====================================================================
  */
-package net.thevpc.nuts.boot;
+package net.thevpc.nuts.util;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.boot.DefaultNutsWorkspaceBootOptionsBuilder;
 import net.thevpc.nuts.cmdline.NutsCommandLine;
 import net.thevpc.nuts.cmdline.NutsCommandLineFormatStrategy;
 import net.thevpc.nuts.reserved.*;
-import net.thevpc.nuts.util.NutsLogConfig;
-import net.thevpc.nuts.util.NutsStringUtils;
-import net.thevpc.nuts.util.NutsUtils;
 
 import java.io.PrintStream;
 import java.lang.reflect.Array;

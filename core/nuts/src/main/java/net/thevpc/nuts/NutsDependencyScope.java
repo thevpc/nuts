@@ -25,7 +25,7 @@
  */
 package net.thevpc.nuts;
 
-import net.thevpc.nuts.reserved.NutsReservedLangUtils;
+import net.thevpc.nuts.util.NutsUtils;
 
 /**
  * Supported dependency scope lists
@@ -124,7 +124,7 @@ public enum NutsDependencyScope implements NutsEnum {
     }
 
     public static NutsOptional<NutsDependencyScope> parse(String value) {
-        return NutsReservedLangUtils.parseEnum(value, NutsDependencyScope.class, s->{
+        return NutsUtils.parseEnum(value, NutsDependencyScope.class, s->{
             switch (s.toLowerCase()) {
                 case "compileonly": //gradle
                 case "compile_only": //gradle

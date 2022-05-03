@@ -26,7 +26,7 @@
  */
 package net.thevpc.nuts;
 
-import net.thevpc.nuts.reserved.NutsReservedLangUtils;
+import net.thevpc.nuts.util.NutsUtils;
 
 /**
  * Formats supported by Nuts
@@ -76,7 +76,7 @@ public enum NutsDescriptorFlag implements NutsEnum {
     }
 
     public static NutsOptional<NutsDescriptorFlag> parse(String value) {
-        return NutsReservedLangUtils.parseEnum(value, NutsDescriptorFlag.class);
+        return NutsUtils.parseEnum(value, NutsDescriptorFlag.class);
     }
 
 

@@ -25,7 +25,7 @@ package net.thevpc.nuts.text;
 
 import net.thevpc.nuts.NutsEnum;
 import net.thevpc.nuts.NutsOptional;
-import net.thevpc.nuts.reserved.NutsReservedLangUtils;
+import net.thevpc.nuts.util.NutsUtils;
 
 /**
  * @app.category Format
@@ -76,7 +76,7 @@ public enum NutsTextStyleType implements NutsEnum {
     }
 
     public static NutsOptional<NutsTextStyleType> parse(String value) {
-        return NutsReservedLangUtils.parseEnum(value, NutsTextStyleType.class, s->{
+        return NutsUtils.parseEnum(value, NutsTextStyleType.class, s->{
             switch (s.toLowerCase()) {
                 case "f":
                 case "foreground":

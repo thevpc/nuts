@@ -28,7 +28,7 @@ package net.thevpc.nuts.cmdline;
 
 import net.thevpc.nuts.NutsEnum;
 import net.thevpc.nuts.NutsOptional;
-import net.thevpc.nuts.reserved.NutsReservedLangUtils;
+import net.thevpc.nuts.util.NutsUtils;
 
 /**
  * Argument parse Type
@@ -68,7 +68,7 @@ public enum NutsArgumentType implements NutsEnum {
     }
 
     public static NutsOptional<NutsArgumentType> parse(String value) {
-        return NutsReservedLangUtils.parseEnum(value, NutsArgumentType.class);
+        return NutsUtils.parseEnum(value, NutsArgumentType.class);
     }
 
 

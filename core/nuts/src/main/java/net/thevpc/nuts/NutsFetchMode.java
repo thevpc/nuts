@@ -25,7 +25,7 @@
  */
 package net.thevpc.nuts;
 
-import net.thevpc.nuts.reserved.NutsReservedLangUtils;
+import net.thevpc.nuts.util.NutsUtils;
 
 /**
  * fetch mode defines if the artifact should be looked for withing the "installed" meta repository, "local" (offline)
@@ -75,7 +75,7 @@ public enum NutsFetchMode implements NutsEnum {
     }
 
     public static NutsOptional<NutsFetchMode> parse(String value) {
-        return NutsReservedLangUtils.parseEnum(value, NutsFetchMode.class);
+        return NutsUtils.parseEnum(value, NutsFetchMode.class);
     }
 
 

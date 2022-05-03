@@ -26,7 +26,7 @@
  */
 package net.thevpc.nuts;
 
-import net.thevpc.nuts.boot.NutsApiUtils;
+import net.thevpc.nuts.util.NutsApiUtils;
 
 /**
  * Capable of being blank

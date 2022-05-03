@@ -23,7 +23,7 @@
  */
 package net.thevpc.nuts;
 
-import net.thevpc.nuts.boot.NutsApiUtils;
+import net.thevpc.nuts.util.NutsApiUtils;
 import net.thevpc.nuts.io.NutsSessionTerminal;
 import net.thevpc.nuts.util.NutsLogger;
 import net.thevpc.nuts.util.NutsLoggerVerb;

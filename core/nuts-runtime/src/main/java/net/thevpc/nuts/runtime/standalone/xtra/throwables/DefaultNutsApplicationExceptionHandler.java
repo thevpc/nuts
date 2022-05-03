@@ -1,7 +1,7 @@
 package net.thevpc.nuts.runtime.standalone.xtra.throwables;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.boot.NutsApiUtils;
+import net.thevpc.nuts.util.NutsApiUtils;
 import net.thevpc.nuts.boot.NutsWorkspaceBootOptionsBuilder;
 import net.thevpc.nuts.elem.NutsArrayElementBuilder;
 import net.thevpc.nuts.elem.NutsElements;
@@ -43,8 +43,8 @@ public class DefaultNutsApplicationExceptionHandler implements NutsApplicationEx
         }
 
         int errorCode = NutsExceptionWithExitCodeBase.resolveExitCode(throwable).orElse(204);
-        NutsString fm = NutsSessionAwareExceptionBase.resolveSessionAwareExceptionBase(throwable)
-                .map(NutsSessionAwareExceptionBase::getFormattedString).orNull();
+        NutsMessage fm = NutsSessionAwareExceptionBase.resolveSessionAwareExceptionBase(throwable)
+                .map(NutsSessionAwareExceptionBase::getFormattedMessage).orNull();
         String m = throwable.getMessage();
         if (m == null || m.length() < 5) {
             m = throwable.toString();
@@ -54,9 +54,9 @@ public class DefaultNutsApplicationExceptionHandler implements NutsApplicationEx
         try {
             fout = session.config().getSystemTerminal().getErr();
             if (fm != null) {
-                fm = NutsTexts.of(session).ofStyled(fm, NutsTextStyle.error());
+                fm = NutsMessage.ofStyled(fm, NutsTextStyle.error());
             } else {
-                fm = NutsTexts.of(session).ofStyled(m, NutsTextStyle.error());
+                fm = NutsMessage.ofStyled(m, NutsTextStyle.error());
             }
         } catch (Exception ex2) {
             NutsLoggerOp.of(NutsApplications.class, session).level(Level.FINE).error(ex2).log(
@@ -79,7 +79,7 @@ public class DefaultNutsApplicationExceptionHandler implements NutsApplicationEx
                 if (fm != null) {
                     session.eout().add(NutsElements.of(session).ofObject()
                             .set("app-id", session.getAppId() == null ? "" : session.getAppId().toString())
-                            .set("error", fm.filteredText())
+                            .set("error", NutsTexts.of(session).toText(fm).filteredText())
                             .build()
                     );
                     if (showTrace) {
@@ -127,7 +127,7 @@ public class DefaultNutsApplicationExceptionHandler implements NutsApplicationEx
         if (showGui) {
             StringBuilder sb = new StringBuilder();
             if (fm != null) {
-                sb.append(fm.filteredText());
+                sb.append(NutsTexts.of(session).toText(fm).filteredText());
             } else {
                 sb.append(m);
             }

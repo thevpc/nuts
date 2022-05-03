@@ -2,7 +2,7 @@ package net.thevpc.nuts.runtime.standalone.io.terminal;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.io.NutsTerminalMode;
-import net.thevpc.nuts.reserved.NutsReservedLangUtils;
+import net.thevpc.nuts.util.NutsUtils;
 
 public enum NutsTerminalModeOp  implements NutsEnum {
     NOP(NutsTerminalMode.INHERITED, NutsTerminalMode.INHERITED),
@@ -34,7 +34,7 @@ public enum NutsTerminalModeOp  implements NutsEnum {
     }
 
     public static NutsOptional<NutsTerminalMode> parse(String value) {
-        return NutsReservedLangUtils.parseEnum(value, NutsTerminalMode.class);
+        return NutsUtils.parseEnum(value, NutsTerminalMode.class);
     }
 
 }

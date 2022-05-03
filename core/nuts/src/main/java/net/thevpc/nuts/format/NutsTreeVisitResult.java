@@ -27,7 +27,7 @@ package net.thevpc.nuts.format;
 
 import net.thevpc.nuts.NutsEnum;
 import net.thevpc.nuts.NutsOptional;
-import net.thevpc.nuts.reserved.NutsReservedLangUtils;
+import net.thevpc.nuts.util.NutsUtils;
 
 /**
  * Equivalent to FileVisitResult
@@ -52,7 +52,7 @@ public enum NutsTreeVisitResult implements NutsEnum {
     }
 
     public static NutsOptional<NutsTreeVisitResult> parse(String value) {
-        return NutsReservedLangUtils.parseEnum(value, NutsTreeVisitResult.class);
+        return NutsUtils.parseEnum(value, NutsTreeVisitResult.class);
     }
 
 

@@ -40,16 +40,16 @@ public class NutsMessage {
 
     public static final Object[] NO_PARAMS = new Object[0];
     private final String codeLang;
-    private final String message;
+    private final Object message;
     private final NutsTextFormatStyle format;
     private final Object[] params;
     private final NutsTextStyles styles;
 
-    private static NutsMessage of(NutsTextFormatStyle format, String message, Object[] params, NutsTextStyles styles, String codeLang) {
+    private static NutsMessage of(NutsTextFormatStyle format, Object message, Object[] params, NutsTextStyles styles, String codeLang) {
         return new NutsMessage(format, message, params, styles, codeLang);
     }
 
-    private NutsMessage(NutsTextFormatStyle format, String message, Object[] params, NutsTextStyles styles, String codeLang) {
+    private NutsMessage(NutsTextFormatStyle format, Object message, Object[] params, NutsTextStyles styles, String codeLang) {
         NutsUtils.requireNonNull(message, "message");
         NutsUtils.requireNonNull(format, "format");
         NutsUtils.requireNonNull(params, "params");
@@ -98,8 +98,24 @@ public class NutsMessage {
         return of(NutsTextFormatStyle.STYLED, message, NO_PARAMS, styles, null);
     }
 
+    public static NutsMessage ofStyled(NutsMessage message, NutsTextStyle style) {
+        return of(NutsTextFormatStyle.STYLED, message, NO_PARAMS, style == null ? null : NutsTextStyles.of(style), null);
+    }
+
+    public static NutsMessage ofStyled(NutsMessage message, NutsTextStyles styles) {
+        return of(NutsTextFormatStyle.STYLED, message, NO_PARAMS, styles, null);
+    }
+
+    public static NutsMessage ofStyled(NutsString message, NutsTextStyle style) {
+        return of(NutsTextFormatStyle.STYLED, message, NO_PARAMS, style == null ? null : NutsTextStyles.of(style), null);
+    }
+
+    public static NutsMessage ofStyled(NutsString message, NutsTextStyles styles) {
+        return of(NutsTextFormatStyle.STYLED, message, NO_PARAMS, styles, null);
+    }
+
     public static NutsMessage ofNtf(NutsString message) {
-        return of(NutsTextFormatStyle.NTF, message.toString(), NO_PARAMS, null, null);
+        return of(NutsTextFormatStyle.NTF, message, NO_PARAMS, null, null);
     }
 
     public static NutsMessage ofPlain(String message) {
@@ -132,7 +148,7 @@ public class NutsMessage {
         return styles;
     }
 
-    public String getMessage() {
+    public Object getMessage() {
         return message;
     }
 
@@ -149,17 +165,17 @@ public class NutsMessage {
         switch (format) {
             case CSTYLE: {
                 StringBuilder sb = new StringBuilder();
-                new Formatter(sb).format(message, params);
+                new Formatter(sb).format((String) message, params);
                 return sb.toString();
             }
             case JSTYLE: {
-                return MessageFormat.format(message, params);
+                return MessageFormat.format((String) message, params);
             }
             case NTF:
             case STYLED:
             case CODE:
             case PLAIN: {
-                return message; //ignore any style
+                return String.valueOf(message); //ignore any style
             }
         }
         return "NutsMessage{" + "message=" + message + ", style=" + format + ", params=" + params + '}';

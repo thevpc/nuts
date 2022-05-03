@@ -8,51 +8,9 @@ import java.io.PrintWriter;
 import java.io.StringReader;
 import java.io.StringWriter;
 import java.util.*;
-import java.util.function.Function;
 import java.util.function.Predicate;
 
 public final class NutsReservedLangUtils {
-    public static <T extends Enum> NutsOptional<T> parseEnum(String value, Class<T> type) {
-        if (value == null) {
-            value = "";
-        } else {
-            value = value.toUpperCase().trim().replace('-', '_');
-        }
-        if (value.isEmpty()) {
-            return NutsOptional.ofEmpty(s -> NutsMessage.ofCstyle("%s is empty",type.getSimpleName()));
-        }
-        try {
-            return NutsOptional.of((T) Enum.valueOf(type, value.toUpperCase()));
-        } catch (Exception notFound) {
-            String finalValue = value;
-            return NutsOptional.ofError(s -> NutsMessage.ofCstyle(type.getSimpleName() + " invalid value : %s", finalValue));
-        }
-    }
-
-    public static <T extends Enum> NutsOptional<T> parseEnum(String value, Class<T> type, Function<String, NutsOptional<T>> mapper) {
-        if (value == null) {
-            value = "";
-        } else {
-            value = value.toUpperCase().trim().replace('-', '_');
-        }
-        if (value.isEmpty()) {
-            return NutsOptional.ofEmpty(s -> NutsMessage.ofCstyle("%s is empty",type.getSimpleName()));
-        }
-        try {
-            NutsOptional<T> o = mapper.apply(value);
-            if (o != null) {
-                return o;
-            }
-        } catch (Exception notFound) {
-            //ignore
-        }
-        try {
-            return NutsOptional.of((T) Enum.valueOf(type, value.toUpperCase()));
-        } catch (Exception notFound) {
-            String finalValue = value;
-            return NutsOptional.ofError(s -> NutsMessage.ofCstyle(type.getSimpleName() + " invalid value : %s", finalValue),notFound);
-        }
-    }
 
     public static String getErrorMessage(Throwable ex){
         String m = ex.getMessage();

@@ -24,7 +24,7 @@
 package net.thevpc.nuts.runtime.standalone.workspace.cmd;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.reserved.NutsReservedCollectionUtils;
+import net.thevpc.nuts.runtime.standalone.util.collections.CoreCollectionUtils;
 
 import java.util.Arrays;
 import java.util.LinkedHashMap;
@@ -90,13 +90,13 @@ public class DefaultNutsExecutionContext implements NutsExecutionContext {
     ) {
         this.commandName = commandName;
         this.definition = definition;
-        this.arguments = NutsReservedCollectionUtils.unmodifiableList(arguments);
+        this.arguments = CoreCollectionUtils.unmodifiableList(arguments);
         this.execSession = execSession;
         this.session = session;
         this.workspace = workspace;
-        this.executorOptions = NutsReservedCollectionUtils.unmodifiableList(executorArgs);
-        this.workspaceOptions = NutsReservedCollectionUtils.unmodifiableList(workspaceOptions);
-        this.executorProperties = NutsReservedCollectionUtils.unmodifiableMap(executorProperties);
+        this.executorOptions = CoreCollectionUtils.unmodifiableList(executorArgs);
+        this.workspaceOptions = CoreCollectionUtils.unmodifiableList(workspaceOptions);
+        this.executorProperties = CoreCollectionUtils.unmodifiableMap(executorProperties);
         this.sleepMillis = sleepMillis;
         this.cwd = cwd;
         if (env == null) {
@@ -236,7 +236,7 @@ public class DefaultNutsExecutionContext implements NutsExecutionContext {
     }
 
     public DefaultNutsExecutionContext setExecutorOptions(String[] executorOptions) {
-        this.executorOptions = NutsReservedCollectionUtils.unmodifiableList(Arrays.asList(executorOptions));
+        this.executorOptions = CoreCollectionUtils.unmodifiableList(Arrays.asList(executorOptions));
         return this;
     }
 
@@ -246,7 +246,7 @@ public class DefaultNutsExecutionContext implements NutsExecutionContext {
     }
 
     public DefaultNutsExecutionContext setArguments(String[] arguments) {
-        this.arguments = NutsReservedCollectionUtils.unmodifiableList(Arrays.asList(arguments));
+        this.arguments = CoreCollectionUtils.unmodifiableList(Arrays.asList(arguments));
         return this;
     }
 

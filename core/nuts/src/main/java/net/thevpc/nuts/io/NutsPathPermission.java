@@ -25,7 +25,7 @@ package net.thevpc.nuts.io;
 
 import net.thevpc.nuts.NutsEnum;
 import net.thevpc.nuts.NutsOptional;
-import net.thevpc.nuts.reserved.NutsReservedLangUtils;
+import net.thevpc.nuts.util.NutsUtils;
 
 /**
  * uniform permissions
@@ -90,7 +90,7 @@ public enum NutsPathPermission implements NutsEnum {
     }
 
     public static NutsOptional<NutsPathPermission> parse(String value) {
-        return NutsReservedLangUtils.parseEnum(value, NutsPathPermission.class);
+        return NutsUtils.parseEnum(value, NutsPathPermission.class);
     }
 
 

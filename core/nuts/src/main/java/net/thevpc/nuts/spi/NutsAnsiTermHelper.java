@@ -27,7 +27,6 @@
 package net.thevpc.nuts.spi;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.boot.NutsApiUtils;
 import net.thevpc.nuts.text.NutsTerminalCommand;
 import net.thevpc.nuts.text.NutsTextStyle;
 import net.thevpc.nuts.text.NutsTextStyles;

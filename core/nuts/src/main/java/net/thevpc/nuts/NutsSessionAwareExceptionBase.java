@@ -52,6 +52,4 @@ public interface NutsSessionAwareExceptionBase extends NutsExceptionBase {
     NutsWorkspace getWorkspace();
 
     NutsSession getSession();
-
-    NutsString getFormattedString();
 }

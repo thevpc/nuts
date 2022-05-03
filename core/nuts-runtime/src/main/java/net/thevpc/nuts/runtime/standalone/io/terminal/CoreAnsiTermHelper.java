@@ -3,7 +3,6 @@ package net.thevpc.nuts.runtime.standalone.io.terminal;
 import net.thevpc.nuts.NutsExecutionType;
 import net.thevpc.nuts.NutsSession;
 import net.thevpc.nuts.NutsValue;
-import net.thevpc.nuts.boot.NutsApiUtils;
 import net.thevpc.nuts.spi.NutsSystemTerminalBase;
 
 public class CoreAnsiTermHelper {

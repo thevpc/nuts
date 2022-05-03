@@ -16,7 +16,7 @@ public class NutsLogRecord extends LogRecord {
     private long time;
 
     public NutsLogRecord(NutsSession session, Level level, NutsLoggerVerb verb, NutsMessage msg, long time, Throwable thrown) {
-        super(level, msg.getMessage());
+        super(level, String.valueOf(msg.getMessage()));
         this.nmsg = msg;
         this.verb = verb;
         this.session = session;
@@ -25,7 +25,7 @@ public class NutsLogRecord extends LogRecord {
         setThrown(thrown);
     }
 
-    public NutsMessage getNutsMessage() {
+    public NutsMessage getFormattedMessage() {
         return nmsg;
     }
 
@@ -38,7 +38,7 @@ public class NutsLogRecord extends LogRecord {
     }
 
     public NutsWorkspace getWorkspace() {
-        return session==null?null: session.getWorkspace();
+        return session == null ? null : session.getWorkspace();
     }
 
     public NutsSession getSession() {
@@ -49,32 +49,4 @@ public class NutsLogRecord extends LogRecord {
         this.session = session;
     }
 
-//    public NutsLogRecord filter(){
-//        if(isFormatted()) {
-//            NutsLogRecord r = new NutsLogRecord(session,getLevel(), verb,
-//                    NutsTexts.of(session).builder().append(getMessage()).filteredText()
-//                    ,getParameters(),false,time,formatStyle);
-//            r.setSequenceNumber(this.getSequenceNumber());
-//            r.setThreadID(this.getThreadID());
-//            r.setMillis(this.getMillis());
-//            r.setThrown(this.getThrown());
-//            return r;
-//        }else{
-//            return this;
-//        }
-//    }
-//    public NutsLogRecord escape(){
-//        if(isFormatted()) {
-//            return this;
-//        }else{
-//            NutsLogRecord r = new NutsLogRecord(session,getLevel(), verb,
-//                    getWorkspace().text().builder().append(getMessage()).toString(),
-//                    getParameters(),false,time,formatStyle);
-//            r.setSequenceNumber(this.getSequenceNumber());
-//            r.setThreadID(this.getThreadID());
-//            r.setMillis(this.getMillis());
-//            r.setThrown(this.getThrown());
-//            return r;
-//        }
-//    }
 }

@@ -37,15 +37,13 @@ import net.thevpc.nuts.reserved.NutsReservedLangUtils;
  */
 public interface NutsExceptionBase {
     static NutsOptional<NutsExceptionBase> resolveExceptionBase(Throwable th) {
-        return NutsReservedLangUtils.findThrowable(th,NutsExceptionBase.class,null);
+        return NutsReservedLangUtils.findThrowable(th, NutsExceptionBase.class, null);
     }
-
 
 
     NutsMessage getFormattedMessage();
 
 
     String getMessage();
-
 
 }

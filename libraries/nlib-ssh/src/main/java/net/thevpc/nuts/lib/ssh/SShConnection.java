@@ -1,7 +1,9 @@
 package net.thevpc.nuts.lib.ssh;
 
 import com.jcraft.jsch.*;
+import net.thevpc.nuts.NutsMessage;
 import net.thevpc.nuts.NutsSession;
+import net.thevpc.nuts.text.NutsTextStyle;
 import net.thevpc.nuts.text.NutsTexts;
 
 import java.io.*;
@@ -11,7 +13,7 @@ import java.util.Properties;
 
 public class SShConnection implements AutoCloseable {
 
-//    public static final SshListener LOGGER = new SshListener() {
+    //    public static final SshListener LOGGER = new SshListener() {
 //        @Override
 //        public void onExec(String command) {
 //            System.out.println("[SSH-EXEC] " + command);
@@ -40,16 +42,16 @@ public class SShConnection implements AutoCloseable {
     private PrintStream err = new PrintStream(new NonClosableOutputStream(System.err));
     private List<SshListener> listeners = new ArrayList<>();
 
-    public SShConnection(String address,NutsSession nutsSession) {
-        this(new SshAddress(address),nutsSession);
+    public SShConnection(String address, NutsSession nutsSession) {
+        this(new SshAddress(address), nutsSession);
     }
 
-    public SShConnection(SshAddress address,NutsSession nutsSession) {
-        init(address.getUser(), address.getHost(), address.getPort(), address.getKeyFile(), address.getPassword(),nutsSession);
+    public SShConnection(SshAddress address, NutsSession nutsSession) {
+        init(address.getUser(), address.getHost(), address.getPort(), address.getKeyFile(), address.getPassword(), nutsSession);
     }
 
-    public SShConnection(String user, String host, int port, String keyFilePath, String keyPassword,NutsSession nutsSession) {
-        init(user, host, port, keyFilePath, keyPassword,nutsSession);
+    public SShConnection(String user, String host, int port, String keyFilePath, String keyPassword, NutsSession nutsSession) {
+        init(user, host, port, keyFilePath, keyPassword, nutsSession);
     }
 
     public boolean isRedirectErrorStream() {
@@ -87,13 +89,13 @@ public class SShConnection implements AutoCloseable {
         return this;
     }
 
-    private void init(String user, String host, int port, String keyFilePath, String keyPassword,NutsSession nutsSession) {
-        this.nutsSession=nutsSession;
+    private void init(String user, String host, int port, String keyFilePath, String keyPassword, NutsSession nutsSession) {
+        this.nutsSession = nutsSession;
         try {
             JSch jsch = new JSch();
 
             if (keyFilePath == null && keyPassword == null) {
-                keyFilePath = new File(System.getProperty("user.home"),".ssh/id_rsa").getPath();
+                keyFilePath = new File(System.getProperty("user.home"), ".ssh/id_rsa").getPath();
             }
             if (keyFilePath != null) {
                 if (keyPassword != null) {
@@ -134,7 +136,7 @@ public class SShConnection implements AutoCloseable {
     public SShConnection sailFast(boolean failFast) {
         return setFailFast(failFast);
     }
-    
+
     public SShConnection setFailFast(boolean failFast) {
         this.failFast = failFast;
         return this;
@@ -332,7 +334,7 @@ public class SShConnection implements AutoCloseable {
                 }
 
                 String file = null;
-                for (int i = 0;; i++) {
+                for (int i = 0; ; i++) {
                     in.read(buf, i, 1);
                     if (buf[i] == (byte) 0x0a) {
                         file = new String(buf, 0, i);
@@ -451,7 +453,7 @@ public class SShConnection implements AutoCloseable {
                 }
 
                 String file = null;
-                for (int i = 0;; i++) {
+                for (int i = 0; ; i++) {
                     in.read(buf, i, 1);
                     if (buf[i] == (byte) 0x0a) {
                         file = new String(buf, 0, i);
@@ -670,8 +672,9 @@ public class SShConnection implements AutoCloseable {
 
     public InputStream prepareStream(File file) throws FileNotFoundException {
         FileInputStream in = new FileInputStream(file);
+        NutsMessage path = NutsMessage.ofStyled(file.getPath(), NutsTextStyle.path());
         for (SshListener listener : listeners) {
-            InputStream v = listener.monitorInputStream(in, file.length(), NutsTexts.of(nutsSession).toText(file.getPath()));
+            InputStream v = listener.monitorInputStream(in, file.length(), path);
             if (v != null) {
                 return v;
             }

@@ -217,8 +217,8 @@ public class DefaultNutsCommandLine implements NutsCommandLine {
             List<Object> ep = new ArrayList<>();
             sb.append("unexpected argument %s");
             ep.add(highlightText(String.valueOf(peek().orNull())));
-            if (errorMessage != null && errorMessage.getMessage() != null && errorMessage.getMessage().length() > 0) {
-                sb.append(" , %s");
+            if (errorMessage != null) {
+                sb.append(", %s");
                 ep.add(errorMessage);
             }
             throwError(NutsMessage.ofCstyle(sb.toString(), ep.toArray()), session);
@@ -241,8 +241,8 @@ public class DefaultNutsCommandLine implements NutsCommandLine {
             StringBuilder sb = new StringBuilder();
             List<Object> ep = new ArrayList<>();
             sb.append("missing argument");
-            if (errorMessage != null && errorMessage.getMessage() != null && errorMessage.getMessage().length() > 0) {
-                sb.append(" , %s");
+            if (errorMessage != null) {
+                sb.append(", %s");
                 ep.add(errorMessage);
             }
             throwError(NutsMessage.ofCstyle(sb.toString(), ep.toArray()), session);

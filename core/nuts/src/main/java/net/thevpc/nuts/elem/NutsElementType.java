@@ -25,7 +25,7 @@ package net.thevpc.nuts.elem;
 
 import net.thevpc.nuts.NutsEnum;
 import net.thevpc.nuts.NutsOptional;
-import net.thevpc.nuts.reserved.NutsReservedLangUtils;
+import net.thevpc.nuts.util.NutsUtils;
 
 /**
  * Element type. this an extension of json element types.
@@ -115,7 +115,7 @@ public enum NutsElementType implements NutsEnum {
     }
 
     public static NutsOptional<NutsElementType> parse(String value) {
-        return NutsReservedLangUtils.parseEnum(value, NutsElementType.class);
+        return NutsUtils.parseEnum(value, NutsElementType.class);
     }
 
     public boolean isNumber() {

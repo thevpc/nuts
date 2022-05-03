@@ -513,7 +513,7 @@ public class DefaultNutsCp implements NutsCp {
                 getProgressFactory());
         NutsText srcBaseMessage = NutsTexts.of(session).toText(srcBase);
         m.onStart(new DefaultNutsProgressEvent(srcBase,
-                srcBaseMessage
+                NutsMessage.ofNtf(srcBaseMessage)
                 , 0, 0, 0, 0, f.files + f.folders, null, session, false));
         try {
             NutsSession finalSession = session;
@@ -523,7 +523,7 @@ public class DefaultNutsCp implements NutsCp {
                     checkInterrupted();
                     f.doneFolders++;
                     NutsPath.of(transformPath(dir, srcBase, targetBase), session).mkdirs();
-                    m.onProgress(new DefaultNutsProgressEvent(srcBase, srcBaseMessage, f.doneFiles + f.doneFolders, System.currentTimeMillis() - start, 0, 0, f.files + f.folders, null, finalSession, false));
+                    m.onProgress(new DefaultNutsProgressEvent(srcBase, NutsMessage.ofNtf(srcBaseMessage), f.doneFiles + f.doneFolders, System.currentTimeMillis() - start, 0, 0, f.files + f.folders, null, finalSession, false));
                     return FileVisitResult.CONTINUE;
                 }
 
@@ -532,7 +532,7 @@ public class DefaultNutsCp implements NutsCp {
                     checkInterrupted();
                     f.doneFiles++;
                     copy(file, transformPath(file, srcBase, targetBase), options);
-                    m.onProgress(new DefaultNutsProgressEvent(srcBase, srcBaseMessage, f.doneFiles + f.doneFolders, System.currentTimeMillis() - start, 0, 0, f.files + f.folders, null, finalSession, false));
+                    m.onProgress(new DefaultNutsProgressEvent(srcBase, NutsMessage.ofNtf(srcBaseMessage), f.doneFiles + f.doneFolders, System.currentTimeMillis() - start, 0, 0, f.files + f.folders, null, finalSession, false));
                     return FileVisitResult.CONTINUE;
                 }
 
@@ -551,7 +551,7 @@ public class DefaultNutsCp implements NutsCp {
         } catch (IOException exc) {
             throw new NutsIOException(session, exc);
         } finally {
-            m.onComplete(new DefaultNutsProgressEvent(srcBase, srcBaseMessage, f.files + f.folders, System.currentTimeMillis() - start, 0, 0, f.files + f.folders, null, session, false));
+            m.onComplete(new DefaultNutsProgressEvent(srcBase, NutsMessage.ofNtf(srcBaseMessage), f.files + f.folders, System.currentTimeMillis() - start, 0, 0, f.files + f.folders, null, session, false));
         }
     }
 
@@ -628,7 +628,7 @@ public class DefaultNutsCp implements NutsCp {
         try {
             Files.walkFileTree(srcBase, new FileVisitor<Path>() {
                 @Override
-                public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) throws IOException {
+                public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) {
                     checkInterrupted();
                     f.doneFolders++;
                     NutsPath.of(transformPath(dir, srcBase, targetBase), session).mkdirs();
@@ -644,13 +644,13 @@ public class DefaultNutsCp implements NutsCp {
                 }
 
                 @Override
-                public FileVisitResult visitFileFailed(Path file, IOException exc) throws IOException {
+                public FileVisitResult visitFileFailed(Path file, IOException exc) {
                     checkInterrupted();
                     return FileVisitResult.CONTINUE;
                 }
 
                 @Override
-                public FileVisitResult postVisitDirectory(Path dir, IOException exc) throws IOException {
+                public FileVisitResult postVisitDirectory(Path dir, IOException exc) {
                     checkInterrupted();
                     return FileVisitResult.CONTINUE;
                 }

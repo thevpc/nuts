@@ -29,7 +29,6 @@ package net.thevpc.nuts.util;
 import net.thevpc.nuts.NutsEnum;
 import net.thevpc.nuts.NutsOptional;
 import net.thevpc.nuts.NutsSession;
-import net.thevpc.nuts.reserved.NutsReservedLangUtils;
 import net.thevpc.nuts.spi.NutsComponent;
 
 import java.util.List;
@@ -89,7 +88,7 @@ public interface NutsExpr extends NutsComponent {
 
 
         public static NutsOptional<NodeType> parse(String value) {
-            return NutsReservedLangUtils.parseEnum(value, NodeType.class, s->{
+            return NutsUtils.parseEnum(value, NodeType.class, s->{
                 switch (s.toUpperCase()) {
                     case "VAR":
                     case "VARIABLE":
@@ -126,7 +125,7 @@ public interface NutsExpr extends NutsComponent {
         }
 
         public static NutsOptional<OpType> parse(String value) {
-            return NutsReservedLangUtils.parseEnum(value, OpType.class, s->{
+            return NutsUtils.parseEnum(value, OpType.class, s->{
                 switch (s.toUpperCase()) {
                     case "INFIX":
                         return NutsOptional.of(INFIX);

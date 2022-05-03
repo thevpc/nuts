@@ -26,7 +26,7 @@
  */
 package net.thevpc.nuts;
 
-import net.thevpc.nuts.reserved.NutsReservedLangUtils;
+import net.thevpc.nuts.util.NutsUtils;
 
 /**
  * Formats supported by Nuts
@@ -94,7 +94,7 @@ public enum NutsContentType implements NutsEnum {
     }
 
     public static NutsOptional<NutsContentType> parse(String value) {
-        return NutsReservedLangUtils.parseEnum(value, NutsContentType.class);
+        return NutsUtils.parseEnum(value, NutsContentType.class);
     }
 
     /**

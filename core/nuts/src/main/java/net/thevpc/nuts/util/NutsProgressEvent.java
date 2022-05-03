@@ -25,8 +25,8 @@
  */
 package net.thevpc.nuts.util;
 
+import net.thevpc.nuts.NutsMessage;
 import net.thevpc.nuts.NutsSession;
-import net.thevpc.nuts.NutsString;
 import net.thevpc.nuts.NutsWorkspace;
 
 /**
@@ -93,7 +93,7 @@ public interface NutsProgressEvent {
      *
      * @return event message
      */
-    NutsString getMessage();
+    NutsMessage getMessage();
 
     /**
      * progress percentage ([0..100])
