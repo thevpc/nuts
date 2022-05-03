@@ -206,7 +206,7 @@ public class DefaultJShellOptionsParser implements JShellOptionsParser {
             args.clear();
             args.addAll(Arrays.asList(a.toStringArray()));
         } else {
-            throw new JShellException(session, NutsMessage.cstyle("unsupported option %s", args.get(0)), 1);
+            throw new JShellException(session, NutsMessage.ofCstyle("unsupported option %s", args.get(0)), 1);
         }
     }
 

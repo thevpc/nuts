@@ -425,7 +425,7 @@ public class JShell {
         if (!cmdPath.isName()) {
             final JShellExternalExecutor externalExec = getExternalExecutor();
             if (externalExec == null) {
-                throw new JShellException(context.getSession(), NutsMessage.cstyle("not found %s", cmdToken), 101);
+                throw new JShellException(context.getSession(), NutsMessage.ofCstyle("not found %s", cmdToken), 101);
             }
             return externalExec.execExternalCommand(command, context);
             //this is a path!
@@ -469,11 +469,11 @@ public class JShell {
                 if (considerExternal) {
                     final JShellExternalExecutor externalExec = getExternalExecutor();
                     if (externalExec == null) {
-                        throw new JShellException(context.getSession(), NutsMessage.cstyle("not found %s", cmdToken), 101);
+                        throw new JShellException(context.getSession(), NutsMessage.ofCstyle("not found %s", cmdToken), 101);
                     }
                     externalExec.execExternalCommand(cmds.toArray(new String[0]), context);
                 } else {
-                    throw new JShellException(context.getSession(), NutsMessage.cstyle("not found %s", cmdToken), 101);
+                    throw new JShellException(context.getSession(), NutsMessage.ofCstyle("not found %s", cmdToken), 101);
                 }
             }
         }
@@ -540,7 +540,7 @@ public class JShell {
         } catch (NutsExecutionException ex) {
             throw ex;
         } catch (Exception ex) {
-            throw new NutsExecutionException(appContext.getSession(), NutsMessage.cstyle("%s", ex), ex, 100);
+            throw new NutsExecutionException(appContext.getSession(), NutsMessage.ofCstyle("%s", ex), ex, 100);
         }
     }
 
@@ -654,7 +654,7 @@ public class JShell {
         } catch (IOException e) {
             //e.printStackTrace();
         }
-        throw new NutsExecutionException(getRootContext().getSession(), NutsMessage.cstyle("%s", quitException), quitException.getExitCode());
+        throw new NutsExecutionException(getRootContext().getSession(), NutsMessage.ofCstyle("%s", quitException), quitException.getExitCode());
 //        throw quitException;
     }
 
@@ -668,7 +668,7 @@ public class JShell {
             if (ignoreIfNotFound) {
                 return 0;
             }
-            throw new JShellException(session, NutsMessage.cstyle("shell file not found : %s", file), 1);
+            throw new JShellException(session, NutsMessage.ofCstyle("shell file not found : %s", file), 1);
         }
         context.setServiceName(file);
         InputStream stream = null;

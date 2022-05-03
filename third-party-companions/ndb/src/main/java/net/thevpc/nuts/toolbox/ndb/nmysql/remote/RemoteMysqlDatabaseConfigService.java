@@ -69,7 +69,9 @@ public class RemoteMysqlDatabaseConfigService {
         if (lastRun.exists()) {
             if (!session.getTerminal().ask()
                     .resetLine()
-                    .forBoolean("a previous pull has failed. would you like to resume (yes) or ignore and re-run the pull (no).")
+                    .forBoolean(
+                            NutsMessage.ofPlain("a previous pull has failed. would you like to resume (yes) or ignore and re-run the pull (no).")
+                    )
                     .getBooleanValue()
             ) {
                 lastRun.reset();
@@ -122,7 +124,7 @@ public class RemoteMysqlDatabaseConfigService {
         }
         if (lastRun.get("localPath") != null) {
             String s = lastRun.get("localPath");
-            NutsCp.of(session).from(s).to(localPath).run();
+            NutsCp.of(session).from(NutsPath.of(s, session)).to(NutsPath.of(localPath, session)).run();
         } else {
             if (Paths.get(localPath).getParent() != null) {
                 try {
@@ -182,18 +184,18 @@ public class RemoteMysqlDatabaseConfigService {
             localPath = loc.backup(localPath).path;
         } else {
             if (NutsBlankable.isBlank(localPath)) {
-                throw new NutsExecutionException(session, NutsMessage.cstyle("missing local path"), 2);
+                throw new NutsExecutionException(session, NutsMessage.ofPlain("missing local path"), 2);
             }
         }
         if (!new File(localPath).isFile()) {
-            throw new NutsExecutionException(session, NutsMessage.cstyle("invalid local path %s", localPath), 2);
+            throw new NutsExecutionException(session, NutsMessage.ofCstyle("invalid local path %s", localPath), 2);
         }
         RemoteMysqlDatabaseConfig cconfig = getConfig();
         String remoteTempPath = null;
         final String searchResultString = execRemoteNuts("search --!color --json net.thevpc.nuts.toolbox:nmysql --display temp-folder --installed --first");
         List<Map> result = NutsElements.of(session).json().parse(new StringReader(searchResultString), List.class);
         if (result.isEmpty()) {
-            throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("Mysql is not installed on the remote machine"));
+            throw new NutsIllegalArgumentException(session, NutsMessage.ofPlain("Mysql is not installed on the remote machine"));
         }
         remoteTempPath = (String) result.get(0).get("temp-folder");
 

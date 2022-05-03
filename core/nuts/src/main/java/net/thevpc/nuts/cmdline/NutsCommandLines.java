@@ -28,8 +28,8 @@ package net.thevpc.nuts.cmdline;
 
 import net.thevpc.nuts.NutsSession;
 import net.thevpc.nuts.NutsShellFamily;
-import net.thevpc.nuts.boot.NutsApiUtils;
 import net.thevpc.nuts.spi.NutsComponent;
+import net.thevpc.nuts.util.NutsUtils;
 
 /**
  * @author thevpc
@@ -38,7 +38,7 @@ import net.thevpc.nuts.spi.NutsComponent;
  */
 public interface NutsCommandLines extends NutsComponent {
     static NutsCommandLines of(NutsSession session) {
-        NutsApiUtils.checkSession(session);
+        NutsUtils.requireSession(session);
         return session.extensions().createSupported(NutsCommandLines.class, true, session);
     }
 

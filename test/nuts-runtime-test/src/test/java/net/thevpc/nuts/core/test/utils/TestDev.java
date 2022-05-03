@@ -11,10 +11,10 @@ public class TestDev {
 
 
         NutsString s = NutsTexts.of(session).toText(
-                NutsMessage.cstyle("%s", "Hello")
+                NutsMessage.ofCstyle("%s", "Hello")
         );
 
         session.out().printf("%s\n", "Hello");
-        session.out().printf("%s", NutsMessage.cstyle("Hello"));
+        session.out().printf("%s", NutsMessage.ofPlain("Hello"));
     }
 }

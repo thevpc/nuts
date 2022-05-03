@@ -25,8 +25,8 @@
  */
 package net.thevpc.nuts;
 
-import net.thevpc.nuts.boot.NutsApiUtils;
 import net.thevpc.nuts.spi.NutsComponent;
+import net.thevpc.nuts.util.NutsUtils;
 
 import java.io.Serializable;
 import java.util.List;
@@ -42,7 +42,7 @@ import java.util.Map;
  */
 public interface NutsArtifactCallBuilder extends Serializable, NutsComponent {
     static NutsArtifactCallBuilder of(NutsSession session) {
-        NutsApiUtils.checkSession(session);
+        NutsUtils.requireSession(session);
         return session.extensions().createSupported(NutsArtifactCallBuilder.class, true, null);
     }
 

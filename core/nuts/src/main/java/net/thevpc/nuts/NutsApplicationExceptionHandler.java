@@ -26,8 +26,8 @@
  */
 package net.thevpc.nuts;
 
-import net.thevpc.nuts.boot.NutsApiUtils;
 import net.thevpc.nuts.spi.NutsComponent;
+import net.thevpc.nuts.util.NutsUtils;
 
 /**
  * This interface defines how exit application exceptions/throwables are handled
@@ -39,7 +39,7 @@ public interface NutsApplicationExceptionHandler extends NutsComponent {
      * @return a new instance of {@code NutsApplicationExceptionHandler}
      */
     static NutsApplicationExceptionHandler of(NutsSession session) {
-        NutsApiUtils.checkSession(session);
+        NutsUtils.requireSession(session);
         return session.extensions().createSupported(NutsApplicationExceptionHandler.class, true, session);
     }
 

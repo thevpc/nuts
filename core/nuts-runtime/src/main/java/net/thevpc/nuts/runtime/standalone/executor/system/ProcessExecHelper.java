@@ -60,18 +60,18 @@ public class ProcessExecHelper extends AbstractSyncIProcessExecHelper {
         if (!inheritSystemIO) {
             if (inputFile == null) {
                 in = execTerminal.in();
-                if (NutsInputStreams.of(session).isStdin(in)) {
+                if (NutsIO.of(session).isStdin(in)) {
                     in = null;
                 }
             }
             if (outputFile == null) {
                 out = execTerminal.out();
-                if (NutsPrintStreams.of(session).isStdout(out)) {
+                if (NutsIO.of(session).isStdout(out)) {
                     out = null;
                 }
             }
             err = execTerminal.err();
-            if (NutsPrintStreams.of(session).isStderr(err)) {
+            if (NutsIO.of(session).isStderr(err)) {
                 err = null;
             }
             if (out != null) {
@@ -104,7 +104,7 @@ public class ProcessExecHelper extends AbstractSyncIProcessExecHelper {
         NutsLogger _LL = NutsLogger.of(NutsWorkspaceUtils.class, session);
         if (_LL.isLoggable(Level.FINEST)) {
             _LL.with().level(Level.FINE).verb(NutsLoggerVerb.START).log(
-                    NutsMessage.jstyle("[exec] {0}",
+                    NutsMessage.ofJstyle("[exec] {0}",
                             NutsTexts.of(session).ofCode("system",
                                     pb.getCommandString()
                             )));
@@ -146,7 +146,7 @@ public class ProcessExecHelper extends AbstractSyncIProcessExecHelper {
         map.put("nuts.file", nutMainFile.getContent().map(NutsPath::toFile).map(Object::toString).orNull());
         String defaultJavaCommand = NutsJavaSdkUtils.of(execSession.getWorkspace()).resolveJavaCommandByVersion("", false, session);
         if (defaultJavaCommand == null) {
-            throw new NutsExecutionException(session, NutsMessage.plain("no java version was found"), 1);
+            throw new NutsExecutionException(session, NutsMessage.ofPlain("no java version was found"), 1);
         }
         map.put("nuts.java", defaultJavaCommand);
         if (map.containsKey("nuts.jar")) {
@@ -174,7 +174,7 @@ public class ProcessExecHelper extends AbstractSyncIProcessExecHelper {
                     }
                     String s = NutsJavaSdkUtils.of(execSession.getWorkspace()).resolveJavaCommandByVersion(javaVer, false, session);
                     if (s == null) {
-                        throw new NutsExecutionException(session, NutsMessage.cstyle("no java version %s was found", javaVer), 1);
+                        throw new NutsExecutionException(session, NutsMessage.ofCstyle("no java version %s was found", javaVer), 1);
                     }
                     return s;
                 } else if (skey.equals("javaw") || skey.startsWith("javaw#")) {
@@ -184,7 +184,7 @@ public class ProcessExecHelper extends AbstractSyncIProcessExecHelper {
                     }
                     String s = NutsJavaSdkUtils.of(execSession.getWorkspace()).resolveJavaCommandByVersion(javaVer, true, session);
                     if (s == null) {
-                        throw new NutsExecutionException(session, NutsMessage.cstyle("no java version %s was found", javaVer), 1);
+                        throw new NutsExecutionException(session, NutsMessage.ofCstyle("no java version %s was found", javaVer), 1);
                     }
                     return s;
                 } else if (skey.equals("nuts")) {
@@ -365,14 +365,14 @@ public class ProcessExecHelper extends AbstractSyncIProcessExecHelper {
                                 }
                             }
                             if (currSu == null) {
-                                throw new NutsIllegalArgumentException(session, NutsMessage.plain("unable to resolve gui su application (kdesu,gksu,...)"));
+                                throw new NutsIllegalArgumentException(session, NutsMessage.ofPlain("unable to resolve gui su application (kdesu,gksu,...)"));
                             }
                             cc.add(currSu);
                             cc.add(runAsEffective);
                         } else {
                             Path su = NutsSysExecUtils.sysWhich("su");
                             if (su == null) {
-                                throw new NutsIllegalArgumentException(session, NutsMessage.plain("unable to resolve su application"));
+                                throw new NutsIllegalArgumentException(session, NutsMessage.ofPlain("unable to resolve su application"));
                             }
                             cc.add(su.toString());
                             cc.add("-c");
@@ -385,7 +385,7 @@ public class ProcessExecHelper extends AbstractSyncIProcessExecHelper {
                         break;
                     }
                     default: {
-                        throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("cannot run as %s on unknown system OS family", runAsEffective));
+                        throw new NutsIllegalArgumentException(session, NutsMessage.ofCstyle("cannot run as %s on unknown system OS family", runAsEffective));
                     }
                 }
                 cc.addAll(command);
@@ -422,13 +422,13 @@ public class ProcessExecHelper extends AbstractSyncIProcessExecHelper {
                                 }
                             }
                             if (currSu == null) {
-                                throw new NutsIllegalArgumentException(session, NutsMessage.plain("unable to resolve gui su application (kdesu,gksu,...)"));
+                                throw new NutsIllegalArgumentException(session, NutsMessage.ofPlain("unable to resolve gui su application (kdesu,gksu,...)"));
                             }
                             cc.add(currSu);
                         } else {
                             Path su = NutsSysExecUtils.sysWhich("sudo");
                             if (su == null) {
-                                throw new NutsIllegalArgumentException(session, NutsMessage.plain("unable to resolve su application"));
+                                throw new NutsIllegalArgumentException(session, NutsMessage.ofPlain("unable to resolve su application"));
                             }
                             cc.add(su.toString());
                         }
@@ -439,14 +439,14 @@ public class ProcessExecHelper extends AbstractSyncIProcessExecHelper {
                         break;
                     }
                     default: {
-                        throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("cannot run sudo %s on unknown system OS family", currentUserName));
+                        throw new NutsIllegalArgumentException(session, NutsMessage.ofCstyle("cannot run sudo %s on unknown system OS family", currentUserName));
                     }
                 }
                 cc.addAll(command);
                 return cc;
             }
         }
-        throw new NutsIllegalArgumentException(session, NutsMessage.plain("cannot run as admin/root on unknown system OS family"));
+        throw new NutsIllegalArgumentException(session, NutsMessage.ofPlain("cannot run as admin/root on unknown system OS family"));
     }
 
     public void dryExec() {
@@ -488,7 +488,7 @@ public class ProcessExecHelper extends AbstractSyncIProcessExecHelper {
         try {
             int a = p.waitFor().getResult();
             if (a != 0) {
-                err = new NutsExecutionException(getSession(), NutsMessage.cstyle("process returned error code %s", a), err);
+                err = new NutsExecutionException(getSession(), NutsMessage.ofCstyle("process returned error code %s", a), err);
             }
             return a;
         } catch (Exception ex) {
@@ -496,7 +496,7 @@ public class ProcessExecHelper extends AbstractSyncIProcessExecHelper {
             if (ex instanceof RuntimeException) {
                 throw (RuntimeException) err;
             }
-            throw new NutsExecutionException(getSession(), NutsMessage.cstyle("error executing process"), err);
+            throw new NutsExecutionException(getSession(), NutsMessage.ofPlain("error executing process"), err);
         } finally {
             if (err != null) {
                 if (definition != null) {

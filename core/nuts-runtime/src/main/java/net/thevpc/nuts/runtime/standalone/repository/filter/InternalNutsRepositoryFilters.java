@@ -75,7 +75,7 @@ public class InternalNutsRepositoryFilters extends InternalNutsTypedFilters<Nuts
         }
         NutsRepositoryFilter t = as(a);
         if (t == null) {
-            throw new NutsIllegalArgumentException(getSession(), NutsMessage.cstyle("not a RepositoryFilter"));
+            throw new NutsIllegalArgumentException(getSession(), NutsMessage.ofPlain("not a RepositoryFilter"));
         }
         return t;
     }

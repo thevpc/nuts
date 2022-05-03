@@ -35,7 +35,7 @@ public class NutsRef<T> {
     }
 
     public static <T> NutsRef<T> ofNull() {
-        return new NutsRef<>(null);
+        return of(null);
     }
 
     public NutsRef() {
@@ -57,7 +57,7 @@ public class NutsRef<T> {
     }
 
     public void setNonNull(T value) {
-        if(value!=null){
+        if (value != null) {
             set(value);
         }
     }

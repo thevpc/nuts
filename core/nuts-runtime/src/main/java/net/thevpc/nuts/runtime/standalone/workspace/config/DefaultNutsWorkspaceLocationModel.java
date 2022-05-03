@@ -10,6 +10,7 @@ import net.thevpc.nuts.runtime.standalone.workspace.NutsWorkspaceExt;
 import net.thevpc.nuts.runtime.standalone.workspace.NutsWorkspaceUtils;
 import net.thevpc.nuts.spi.NutsRepositorySPI;
 import net.thevpc.nuts.util.NutsStringUtils;
+import net.thevpc.nuts.util.NutsUtils;
 
 import java.util.Map;
 
@@ -64,10 +65,7 @@ public class DefaultNutsWorkspaceLocationModel {
 
 
     public void setStoreLocation(NutsStoreLocation folderType, String location, NutsSession session) {
-        if (folderType == null) {
-            throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("invalid store root folder null"));
-        }
-//        options = CoreNutsUtils.validate(options, ws);
+        NutsUtils.requireNonNull(folderType,session,"store root folder");
         cfg().onPreUpdateConfig("store-location", session);
         cfg().getStoreModelBoot().setStoreLocations(new NutsStoreLocationsMap(cfg().getStoreModelBoot().getStoreLocations()).set(folderType, location).toMapOrNull());
         cfg().onPostUpdateConfig("store-location", session);
@@ -189,9 +187,7 @@ public class DefaultNutsWorkspaceLocationModel {
 
 
     public String getDefaultIdContentExtension(String packaging, NutsSession session) {
-        if (NutsBlankable.isBlank(packaging)) {
-            throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("unsupported empty packaging"));
-        }
+        NutsUtils.requireNonBlank(packaging,session,"packaging");
         switch (packaging) {
             case "jar":
             case "bundle":
@@ -250,10 +246,8 @@ public class DefaultNutsWorkspaceLocationModel {
                 if (f.equals("cache") || f.endsWith(".cache")) {
                     return "." + f;
                 }
-                if (NutsBlankable.isBlank(f)) {
-                    throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("missing face in %s", id));
-                }
-                throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("unsupported face %s in %s", f, id));
+                NutsUtils.requireNonBlank(f,session,()->NutsMessage.ofCstyle("missing face in %s", id));
+                throw new NutsIllegalArgumentException(session, NutsMessage.ofCstyle("unsupported face %s in %s", f, id));
             }
         }
     }

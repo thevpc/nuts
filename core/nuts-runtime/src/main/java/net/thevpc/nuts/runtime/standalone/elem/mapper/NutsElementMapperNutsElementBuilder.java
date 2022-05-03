@@ -170,9 +170,9 @@ public class NutsElementMapperNutsElementBuilder implements NutsElementMapper<Nu
                 return src.asObject().get(session).builder();
             }
             case CUSTOM:{
-                throw new NutsIllegalArgumentException(context.getSession(),NutsMessage.plain("unsupported"));
+                throw new NutsIllegalArgumentException(context.getSession(),NutsMessage.ofPlain("unsupported"));
             }
         }
-        throw new NutsIllegalArgumentException(context.getSession(),NutsMessage.plain("unsupported"));
+        throw new NutsIllegalArgumentException(context.getSession(),NutsMessage.ofPlain("unsupported"));
     }
 }

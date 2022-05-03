@@ -50,7 +50,7 @@ public class ErrorHandlerIterator<T> extends NutsIteratorBase<T> {
             NutsLoggerOp.of(IndexFirstIterator.class,session)
                     .verb(NutsLoggerVerb.WARNING)
                     .level(Level.FINEST)
-                    .log(NutsMessage.cstyle("error evaluating Iterator 'hasNext()' : %s", ex));
+                    .log(NutsMessage.ofCstyle("error evaluating Iterator 'hasNext()' : %s", ex));
             switch (type) {
                 case IGNORE: {
                     // do nothing

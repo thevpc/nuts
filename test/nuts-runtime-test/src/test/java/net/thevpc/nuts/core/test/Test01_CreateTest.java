@@ -192,7 +192,7 @@ public class Test01_CreateTest {
         }
 
         {
-            InputStream stdin = NutsInputStreams.of(s).stdin();
+            InputStream stdin = NutsIO.of(s).stdin();
             Assertions.assertNotNull(stdin);
         }
 
@@ -235,10 +235,6 @@ public class Test01_CreateTest {
         }
         {
             NutsPaths c = NutsPaths.of(s);
-            Assertions.assertNotNull(c);
-        }
-        {
-            NutsRm c = NutsRm.of(s);
             Assertions.assertNotNull(c);
         }
         {

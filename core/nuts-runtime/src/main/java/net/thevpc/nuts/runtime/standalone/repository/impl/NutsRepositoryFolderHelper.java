@@ -11,20 +11,18 @@ import net.thevpc.nuts.elem.NutsElements;
 import net.thevpc.nuts.elem.NutsObjectElement;
 import net.thevpc.nuts.io.*;
 import net.thevpc.nuts.runtime.standalone.descriptor.util.NutsDescriptorUtils;
+import net.thevpc.nuts.runtime.standalone.event.DefaultNutsContentEvent;
 import net.thevpc.nuts.runtime.standalone.id.util.NutsIdUtils;
-import net.thevpc.nuts.runtime.standalone.io.util.InputStreamMetadataAwareImpl;
-import net.thevpc.nuts.runtime.standalone.io.util.NutsStreamOrPath;
-import net.thevpc.nuts.runtime.standalone.util.iter.IteratorBuilder;
+import net.thevpc.nuts.runtime.standalone.io.terminal.DefaultWriteTypeProcessor;
+import net.thevpc.nuts.runtime.standalone.io.util.CoreIOUtils;
 import net.thevpc.nuts.runtime.standalone.repository.NutsIdPathIterator;
 import net.thevpc.nuts.runtime.standalone.repository.NutsIdPathIteratorBase;
 import net.thevpc.nuts.runtime.standalone.repository.NutsRepositoryHelper;
 import net.thevpc.nuts.runtime.standalone.repository.cmd.fetch.DefaultNutsFetchContentRepositoryCommand;
 import net.thevpc.nuts.runtime.standalone.repository.cmd.undeploy.DefaultNutsRepositoryUndeployCommand;
 import net.thevpc.nuts.runtime.standalone.util.CoreNutsConstants;
-import net.thevpc.nuts.runtime.standalone.event.DefaultNutsContentEvent;
 import net.thevpc.nuts.runtime.standalone.util.filters.CoreFilterUtils;
-import net.thevpc.nuts.runtime.standalone.io.terminal.DefaultWriteTypeProcessor;
-import net.thevpc.nuts.runtime.standalone.io.util.CoreIOUtils;
+import net.thevpc.nuts.runtime.standalone.util.iter.IteratorBuilder;
 import net.thevpc.nuts.runtime.standalone.workspace.NutsWorkspaceUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.exec.CharacterizedExecFile;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.exec.DefaultNutsArtifactPathExecutable;
@@ -34,6 +32,7 @@ import net.thevpc.nuts.spi.NutsRepositorySPI;
 import net.thevpc.nuts.spi.NutsRepositoryUndeployCommand;
 import net.thevpc.nuts.util.NutsIterator;
 import net.thevpc.nuts.util.NutsLogger;
+import net.thevpc.nuts.util.NutsUtils;
 
 import java.io.*;
 import java.nio.file.FileVisitResult;
@@ -89,7 +88,7 @@ public class NutsRepositoryFolderHelper {
     }
 
     public NutsPath getLongIdLocalFolder(NutsId id, NutsSession session) {
-        NutsIdUtils.checkNutsId(id,session);
+        NutsIdUtils.checkLongId(id, session);
         if (repo == null) {
             return getStoreLocation().resolve(session.locations().setSession(session).getDefaultIdBasedir(id));
         }
@@ -104,7 +103,7 @@ public class NutsRepositoryFolderHelper {
     }
 
     public NutsPath getShortIdLocalFolder(NutsId id, NutsSession session) {
-        NutsIdUtils.checkShortId(id,session);
+        NutsIdUtils.checkShortId(id, session);
         if (repo == null) {
             return getStoreLocation().resolve(session.locations().getDefaultIdBasedir(id.builder().setVersion("").build()));
         }
@@ -229,13 +228,13 @@ public class NutsRepositoryFolderHelper {
     }
 
     public NutsPath getRelativeLocalGroupAndArtifactFile(NutsId id, NutsSession session) {
-        NutsIdUtils.checkShortId(id,session);
+        NutsIdUtils.checkShortId(id, session);
         NutsPath groupFolder = NutsPath.of(id.getGroupId().replace('.', File.separatorChar), session);
         return groupFolder.resolve(id.getArtifactId());
     }
 
     public NutsPath getLocalGroupAndArtifactFile(NutsId id, NutsSession session) {
-        NutsIdUtils.checkShortId(id,session);
+        NutsIdUtils.checkShortId(id, session);
         NutsPath groupFolder = getStoreLocation().resolve(id.getGroupId().replace('.', File.separatorChar));
         return groupFolder.resolve(id.getArtifactId());
     }
@@ -245,12 +244,12 @@ public class NutsRepositoryFolderHelper {
             return null;
         }
         String singleVersion = id.getVersion().asSingleValue().orNull();
-        if (singleVersion!=null) {
+        if (singleVersion != null) {
             return IteratorBuilder.ofSupplier(
                     () -> {
-                        if(NutsConstants.Versions.LATEST.equals(singleVersion) || NutsConstants.Versions.RELEASE.equals(singleVersion)){
+                        if (NutsConstants.Versions.LATEST.equals(singleVersion) || NutsConstants.Versions.RELEASE.equals(singleVersion)) {
                             NutsId found = searchLatestVersion(id, filter, session);
-                            return (found!=null?Arrays.asList(found).iterator():Collections.emptyIterator());
+                            return (found != null ? Arrays.asList(found).iterator() : Collections.emptyIterator());
                         }
                         NutsId id1 = id.builder().setVersion(singleVersion).setFaceDescriptor().build();
                         NutsPath localFile = getLongIdLocalFile(id1, session);
@@ -354,31 +353,30 @@ public class NutsRepositoryFolderHelper {
     public NutsDescriptor deploy(NutsDeployRepositoryCommand deployment, NutsConfirmationMode writeType) {
         NutsSession session = deployment.getSession();
         if (!isWriteEnabled()) {
-            throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("read-only repository"));
+            throw new NutsIllegalArgumentException(session, NutsMessage.ofPlain("read-only repository"));
         }
         NutsDescriptor descriptor = deployment.getDescriptor();
         NutsId id = deployment.getId();
         if (id == null) {
             id = descriptor.getId();
         }
-        NutsIdUtils.checkNutsId(id,session);
-        NutsStreamOrPath inputSource=null;
+        NutsIdUtils.checkLongId(id, session);
+        NutsInputSource inputSource = null;
         if (deployment.getContent() == null) {
-            if(!NutsDescriptorUtils.isNoContent(descriptor)) {
-                throw new NutsIllegalArgumentException(session,
-                        NutsMessage.cstyle("invalid deployment; missing content for %s", deployment.getId()));
+            if (!NutsDescriptorUtils.isNoContent(descriptor)) {
+                NutsUtils.requireNonNull(deployment.getContent(),session,()->NutsMessage.ofCstyle("invalid deployment; missing content for %s", deployment.getId()));
             }
-        }else {
-            inputSource = NutsStreamOrPath.ofAnyInputOrNull(deployment.getContent(), session)
-                    .toMultiRead(session)
-                    .setKindType(("package content"));
+        } else {
+            inputSource = NutsIO.of(session).createMultiRead(deployment.getContent());
+            inputSource.getInputMetaData().setKind("package content");
             if (descriptor == null) {
                 try (final CharacterizedExecFile c = DefaultNutsArtifactPathExecutable.characterizeForExec(inputSource, session, null)) {
-                    if (c.descriptor == null) {
+//                    NutsUtils.requireNonNull(c.getDescriptor(),session,s->NutsMessage.cstyle("invalid deployment; missing descriptor for %s", deployment.getContent()));
+                    if (c.getDescriptor() == null) {
                         throw new NutsNotFoundException(session, null,
-                                NutsMessage.cstyle("unable to resolve a valid descriptor for %s", deployment.getContent()), null);
+                                NutsMessage.ofCstyle("unable to resolve a valid descriptor for %s", deployment.getContent()), null);
                     }
-                    descriptor = c.descriptor;
+                    descriptor = c.getDescriptor();
                 }
             }
         }
@@ -387,8 +385,8 @@ public class NutsRepositoryFolderHelper {
             NutsId finalId = id;
             if (!DefaultWriteTypeProcessor
                     .of(writeType, session)
-                    .ask("override deployment for %s?", id)
-                    .withLog(_LOG(session), "nuts deployment overridden {0}", id)
+                    .ask(NutsMessage.ofCstyle("override deployment for %s?", id))
+                    .withLog(_LOG(session), NutsMessage.ofCstyle("nuts deployment overridden {0}", id))
                     .onError(() -> new NutsAlreadyDeployedException(session, finalId))
                     .process()) {
                 return descriptor;
@@ -403,7 +401,7 @@ public class NutsRepositoryFolderHelper {
         }
 
         deployDescriptor(id, descriptor, writeType, session);
-        NutsPath pckFile = inputSource==null?null:deployContent(id, inputSource, descriptor, writeType, session);
+        NutsPath pckFile = inputSource == null ? null : deployContent(id, inputSource, descriptor, writeType, session);
         if (repo != null) {
             NutsRepositoryHelper.of(repo).events().fireOnDeploy(new DefaultNutsContentEvent(
                     pckFile, deployment, session, repo));
@@ -420,15 +418,15 @@ public class NutsRepositoryFolderHelper {
 
     public NutsPath deployDescriptor(NutsId id, NutsDescriptor desc, NutsConfirmationMode writeType, NutsSession session) {
         if (!isWriteEnabled()) {
-            throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("read only repository"));
+            throw new NutsIllegalArgumentException(session, NutsMessage.ofPlain("read only repository"));
         }
-        NutsIdUtils.checkNutsId(id,session);
+        NutsIdUtils.checkLongId(id, session);
         NutsPath descFile = getLongIdLocalFile(id.builder().setFaceDescriptor().build(), session);
         if (descFile.exists()) {
             if (!DefaultWriteTypeProcessor
                     .of(writeType, session)
-                    .ask("override descriptor file for %s?", id)
-                    .withLog(_LOG(session), "nuts descriptor file overridden {0}", id)
+                    .ask(NutsMessage.ofCstyle("override descriptor file for %s?", id))
+                    .withLog(_LOG(session), NutsMessage.ofCstyle("nuts descriptor file overridden {0}", id))
                     .onError(() -> new NutsAlreadyDeployedException(session, id))
                     .process()) {
                 return descFile;
@@ -439,11 +437,10 @@ public class NutsRepositoryFolderHelper {
             desc.formatter(session).setNtf(false).print(descFile);
             byte[] bytes = NutsDigest.of(session).sha1().setSource(desc).computeString().getBytes();
             NutsCp.of(session)
-                    .from(
-                            InputStreamMetadataAwareImpl.of(
+                    .from(NutsIO.of(session).createInputSource(
                                     new ByteArrayInputStream(bytes)
-                                    , new DefaultNutsStreamMetadata(
-                                            NutsMessage.cstyle("sha1://%s", desc.getId()),
+                                    , new DefaultNutsInputSourceMetadata(
+                                            NutsMessage.ofCstyle("sha1://%s", desc.getId()),
                                             bytes.length,
                                             CoreIOUtils.MIME_TYPE_SHA1,
                                             "descriptor hash"
@@ -463,34 +460,34 @@ public class NutsRepositoryFolderHelper {
         return descFile.exists() && (!cacheFolder || !CoreIOUtils.isObsoletePath(session, descFile));
     }
 
-    public NutsPath deployContent(NutsId id, NutsStreamOrPath content, NutsDescriptor descriptor, NutsConfirmationMode writeType, NutsSession session) {
+    public NutsPath deployContent(NutsId id, NutsInputSource content, NutsDescriptor descriptor, NutsConfirmationMode writeType, NutsSession session) {
         if (!isWriteEnabled()) {
             return null;
         }
-        NutsIdUtils.checkNutsId(id,session);
+        NutsIdUtils.checkLongId(id, session);
         NutsPath pckFile = getLongIdLocalFile(id.builder().setFaceContent().setPackaging(descriptor.getPackaging()).build(), session);
         if (pckFile.exists()) {
-            if(content.isPath()){
-                if(content.getPath().equals(pckFile)){
+            if (content instanceof NutsPath) {
+                if (((NutsPath) content).equals(pckFile)) {
                     //do nothing
                     return pckFile;
                 }
             }
             if (!DefaultWriteTypeProcessor
                     .of(writeType, session)
-                    .ask("override content file for %s?", id)
-                    .withLog(_LOG(session), "nuts content file overridden {0}", id)
+                    .ask(NutsMessage.ofCstyle("override content file for %s?", id))
+                    .withLog(_LOG(session), NutsMessage.ofCstyle("nuts content file overridden {0}", id))
                     .onError(() -> new NutsAlreadyDeployedException(session, id))
                     .process()) {
                 return pckFile;
             }
         }
         return NutsLocks.of(session).setSource(pckFile).call(() -> {
-            (content.isPath() ? NutsCp.of(session).from(content.getPath()) : NutsCp.of(session).from(content.getInputStream()))
+            NutsCp.of(session).from(content)
                     .to(pckFile).addOptions(NutsPathOption.SAFE).run();
             NutsCp.of(session).from(
                     CoreIOUtils.createBytesStream(NutsDigestUtils.evalSHA1Hex(pckFile, session).getBytes(),
-                            NutsMessage.cstyle("sha1://%s", id),
+                            NutsMessage.ofCstyle("sha1://%s", id),
                             CoreIOUtils.MIME_TYPE_SHA1,
                             null,
                             session

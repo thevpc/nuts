@@ -66,14 +66,14 @@ public class NutsIdPathIterator extends NutsIteratorBase<NutsId> {
         this.model = model;
         this.maxDepth = maxDepth;
         if (rootFolder == null) {
-            throw new NutsIllegalArgumentException(session, NutsMessage.plain("could not iterate over null rootFolder"));
+            throw new NutsIllegalArgumentException(session, NutsMessage.ofPlain("could not iterate over null rootFolder"));
         }
         this.basePath = basePath;
         this.rootFolder = rootFolder;
         NutsPath startUrl = rootFolder;
         if (basePath != null) {
             if (basePath.isAbsolute()) {
-                throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("expected relative path : %s", basePath));
+                throw new NutsIllegalArgumentException(session, NutsMessage.ofCstyle("expected relative path : %s", basePath));
             } else {
                 startUrl = startUrl.resolve(basePath);
             }
@@ -109,11 +109,11 @@ public class NutsIdPathIterator extends NutsIteratorBase<NutsId> {
                     //just log without stack trace!
                     session.getTerminal().printProgress("%-14s %-8s %-8s %s %s", repository.getName(), kind, "search folder", file.path.toCompressedForm(), NutsTexts.of(session).ofStyled("failed!", NutsTextStyle.error()));
                     NutsLoggerOp.of(NutsIdPathIterator.class, session).level(Level.FINE)//.error(ex)
-                            .log(NutsMessage.jstyle("error listing : {0} : {1} : {2}", file.path, toString(), ex.toString()));
+                            .log(NutsMessage.ofJstyle("error listing : {0} : {1} : {2}", file.path, toString(), ex.toString()));
                 } catch (Exception ex) {
                     session.getTerminal().printProgress("%-14s %-8s %-8s %s %s", repository.getName(), kind, "search folder", file.path.toCompressedForm(), NutsTexts.of(session).ofStyled("failed!", NutsTextStyle.error()));
                     NutsLoggerOp.of(NutsIdPathIterator.class, session).level(Level.FINE).error(ex)
-                            .log(NutsMessage.jstyle("error listing : {0} : {1}", file.path, toString()));
+                            .log(NutsMessage.ofJstyle("error listing : {0} : {1}", file.path, toString()));
                 }
                 boolean deep = file.depth < maxDepth;
                 for (NutsPath child : children) {
@@ -135,7 +135,7 @@ public class NutsIdPathIterator extends NutsIteratorBase<NutsId> {
                     t = model.parseId(file.path, rootFolder, filter, repository, session);
                 } catch (Exception ex) {
                     NutsLoggerOp.of(NutsIdPathIterator.class, session).level(Level.FINE).error(ex)
-                            .log(NutsMessage.jstyle("error parsing : {0} : {1}", file.path, toString()));
+                            .log(NutsMessage.ofJstyle("error parsing : {0} : {1}", file.path, toString()));
                 }
                 if (t != null) {
                     last = t;
@@ -159,7 +159,7 @@ public class NutsIdPathIterator extends NutsIteratorBase<NutsId> {
         if (last != null) {
             model.undeploy(last, session);
         }
-        throw new NutsUnsupportedOperationException(session, NutsMessage.cstyle("unsupported Remove"));
+        throw new NutsUnsupportedOperationException(session, NutsMessage.ofPlain("unsupported Remove"));
     }
 
     public long getVisitedFoldersCount() {

@@ -26,10 +26,10 @@
  */
 package net.thevpc.nuts;
 
-import net.thevpc.nuts.boot.NutsApiUtils;
 import net.thevpc.nuts.text.NutsText;
 import net.thevpc.nuts.text.NutsTextBuilder;
 import net.thevpc.nuts.text.NutsTexts;
+import net.thevpc.nuts.util.NutsUtils;
 
 import java.io.PrintStream;
 
@@ -43,12 +43,12 @@ public interface NutsString extends NutsBlankable {
     }
 
     static NutsString of(String str, NutsSession session) {
-        NutsApiUtils.checkSession(session);
+        NutsUtils.requireSession(session);
         return NutsTexts.of(session).parse(str);
     }
 
     static NutsString ofPlain(String str, NutsSession session) {
-        NutsApiUtils.checkSession(session);
+        NutsUtils.requireSession(session);
         return NutsTexts.of(session).ofPlain(str);
     }
 

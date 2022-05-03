@@ -68,7 +68,7 @@ public class WgetCommand extends SimpleJShellBuiltin {
     protected void execBuiltin(NutsCommandLine commandLine, JShellExecutionContext context) {
         Options options = context.getOptions();
         if (options.files.isEmpty()) {
-            throw new NutsExecutionException(context.getSession(), NutsMessage.cstyle("wget: Missing Files"), 2);
+            throw new NutsExecutionException(context.getSession(), NutsMessage.ofPlain("wget: Missing Files"), 2);
         }
         for (String file : options.files) {
             download(file, options.outputDocument, context);

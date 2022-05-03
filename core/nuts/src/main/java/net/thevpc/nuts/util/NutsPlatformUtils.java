@@ -353,7 +353,7 @@ public final class NutsPlatformUtils {
                 }
             }
         }
-        throw new NutsBootException(NutsMessage.cstyle("unsupported %s/%s for %s", platformOsFamily, location, workspaceName));
+        throw new NutsBootException(NutsMessage.ofCstyle("unsupported %s/%s for %s", platformOsFamily, location, workspaceName));
     }
 
     public static String getWindowsProgramFiles() {
@@ -441,9 +441,9 @@ public final class NutsPlatformUtils {
                     global, workspaceLocation);
             if (NutsBlankable.isBlank(platformHomeFolder)) {
                 if (session == null) {
-                    throw new NutsBootException(NutsMessage.cstyle("missing Home for %s", location.id()));
+                    throw new NutsBootException(NutsMessage.ofCstyle("missing Home for %s", location.id()));
                 } else {
-                    throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("missing Home for %s", location.id()));
+                    throw new NutsIllegalArgumentException(session, NutsMessage.ofCstyle("missing Home for %s", location.id()));
                 }
             }
             homes[location.ordinal()] = platformHomeFolder;
@@ -457,9 +457,9 @@ public final class NutsPlatformUtils {
                 NutsStoreLocation loc = e.getKey();
                 if (loc == null) {
                     if (session == null) {
-                        throw new NutsBootException(NutsMessage.plain("null location"));
+                        throw new NutsBootException(NutsMessage.ofPlain("null location"));
                     } else {
-                        throw new NutsIllegalArgumentException(session, NutsMessage.plain("null location"));
+                        throw new NutsIllegalArgumentException(session, NutsMessage.ofPlain("null location"));
                     }
                 }
                 storeLocations.put(loc, e.getValue());

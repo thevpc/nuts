@@ -328,7 +328,7 @@ public class NutsSettingsRepositorySubCommand extends AbstractNutsSettingsSubCom
                 if (NutsSettingsUserSubCommand.exec(editedRepo, cmdLine, autoSave, session)) {
                     //okkay
                 } else {
-                    throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("config edit repo: Unsupported command %s", cmdLine));
+                    throw new NutsIllegalArgumentException(session, NutsMessage.ofCstyle("config edit repo: Unsupported command %s", cmdLine));
                 }
             }
             return true;

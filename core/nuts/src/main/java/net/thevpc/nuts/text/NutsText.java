@@ -28,7 +28,7 @@ package net.thevpc.nuts.text;
 
 import net.thevpc.nuts.NutsSession;
 import net.thevpc.nuts.NutsString;
-import net.thevpc.nuts.boot.NutsApiUtils;
+import net.thevpc.nuts.util.NutsUtils;
 
 /**
  * Created by vpc on 5/23/17.
@@ -37,7 +37,7 @@ import net.thevpc.nuts.boot.NutsApiUtils;
  */
 public interface NutsText extends NutsString {
     static NutsString parse(String str, NutsSession session) {
-        NutsApiUtils.checkSession(session);
+        NutsUtils.requireSession(session);
         return NutsTexts.of(session).parse(str);
     }
 

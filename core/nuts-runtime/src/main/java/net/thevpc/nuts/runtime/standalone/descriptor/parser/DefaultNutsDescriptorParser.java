@@ -73,16 +73,16 @@ public class DefaultNutsDescriptorParser implements NutsDescriptorParser {
                     startParsing = true;
                     return parse(is, true);
                 } catch (RuntimeException ex) {
-                    return NutsOptional.ofError(session1 -> NutsMessage.cstyle("unable to parse descriptor from %s : %S", path,ex),ex);
+                    return NutsOptional.ofError(session1 -> NutsMessage.ofCstyle("unable to parse descriptor from %s : %S", path,ex),ex);
                 }
             } catch (IOException ex) {
                 if (!startParsing) {
-                    return NutsOptional.ofError(session1 -> NutsMessage.cstyle("unable to parse descriptor from %s : file not found", path),ex);
+                    return NutsOptional.ofError(session1 -> NutsMessage.ofCstyle("unable to parse descriptor from %s : file not found", path),ex);
                 }
-                return NutsOptional.ofError(session1 -> NutsMessage.cstyle("unable to parse descriptor from %s : %S", path,ex),ex);
+                return NutsOptional.ofError(session1 -> NutsMessage.ofCstyle("unable to parse descriptor from %s : %S", path,ex),ex);
             }
         } catch (Exception ex) {
-            return NutsOptional.ofError(session1 -> NutsMessage.cstyle("unable to parse descriptor from %s : %s", path, ex),ex);
+            return NutsOptional.ofError(session1 -> NutsMessage.ofCstyle("unable to parse descriptor from %s : %s", path, ex),ex);
         }
     }
 
@@ -126,7 +126,7 @@ public class DefaultNutsDescriptorParser implements NutsDescriptorParser {
         try {
             return NutsOptional.of(parseNonLenient(in, closeStream));
         } catch (Exception ex) {
-            return NutsOptional.ofError(session1 -> NutsMessage.cstyle("unable to parse descriptor : %s", ex),ex);
+            return NutsOptional.ofError(session1 -> NutsMessage.ofCstyle("unable to parse descriptor : %s", ex),ex);
         }
     }
 
@@ -291,7 +291,7 @@ public class DefaultNutsDescriptorParser implements NutsDescriptorParser {
                                     .setDependencies(new ArrayList<>(deps))
                                     .build();
                         }
-                        throw new NutsParseException(getSession(), NutsMessage.cstyle("unable to parse Descriptor for Manifest from %s", in));
+                        throw new NutsParseException(getSession(), NutsMessage.ofCstyle("unable to parse Descriptor for Manifest from %s", in));
                     } catch (IOException ex) {
                         throw new NutsIOException(getSession(), ex);
                     }

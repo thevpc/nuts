@@ -5,7 +5,6 @@ import net.thevpc.nuts.io.*;
 import net.thevpc.nuts.runtime.standalone.descriptor.parser.NutsDescriptorContentResolver;
 import net.thevpc.nuts.runtime.standalone.id.util.NutsIdUtils;
 import net.thevpc.nuts.runtime.standalone.util.CorePlatformUtils;
-import net.thevpc.nuts.runtime.standalone.io.util.NutsStreamOrPath;
 import net.thevpc.nuts.runtime.standalone.io.util.ZipOptions;
 import net.thevpc.nuts.runtime.standalone.io.util.ZipUtils;
 import net.thevpc.nuts.runtime.standalone.util.CoreNutsConstants;
@@ -17,6 +16,7 @@ import net.thevpc.nuts.spi.NutsRepositorySPI;
 import net.thevpc.nuts.text.NutsTextStyle;
 import net.thevpc.nuts.text.NutsTexts;
 import net.thevpc.nuts.util.NutsStringUtils;
+import net.thevpc.nuts.util.NutsUtils;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -37,60 +37,64 @@ public class DefaultNutsDeployCommand extends AbstractNutsDeployCommand {
         super(ws);
     }
 
-    private static CharacterizedDeployFile characterizeForDeploy(NutsStreamOrPath contentFile, NutsFetchCommand options, List<String> parseOptions, NutsSession session) {
+    private static CharacterizedDeployFile characterizeForDeploy(NutsInputSource contentFile, NutsFetchCommand options, List<String> parseOptions, NutsSession session) {
         if (parseOptions == null) {
             parseOptions = new ArrayList<>();
         }
         CharacterizedDeployFile c = new CharacterizedDeployFile(session);
         try {
-            c.baseFile = CoreIOUtils.toPathInputSource(contentFile, c.temps, true,session);
-            c.contentStreamOrPath = contentFile;
-            if (!Files.exists(c.baseFile)) {
-                throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("file does not exists %s", c.baseFile));
+            c.setBaseFile(CoreIOUtils.toPathInputSource(contentFile, c.getTemps(), true, session));
+            c.setContentStreamOrPath(contentFile);
+            if (!Files.exists(c.getBaseFile())) {
+                throw new NutsIllegalArgumentException(session, NutsMessage.ofCstyle("file does not exists %s", c.getBaseFile()));
             }
-            if (c.descriptor == null && c.contentStreamOrPath.isPath() && c.contentStreamOrPath.getPath().isURL()) {
-                try {
-                    c.descriptor = NutsDescriptorParser.of(session).parse(
-                            c.contentStreamOrPath.getPath().resolve(NutsConstants.Files.DESCRIPTOR_FILE_NAME)
-                    ).get(session);
-                } catch (Exception ex) {
-                    //ignore
-                }
-            }
-            if (Files.isDirectory(c.baseFile)) {
-                if (c.descriptor == null) {
-                    Path ext = c.baseFile.resolve(NutsConstants.Files.DESCRIPTOR_FILE_NAME);
-                    if (Files.exists(ext)) {
-                        c.descriptor = NutsDescriptorParser.of(session).parse(ext).get(session);
-                    } else {
-                        c.descriptor = NutsDescriptorContentResolver.resolveNutsDescriptorFromFileContent(c.baseFile, parseOptions, session);
+            if (c.getDescriptor() == null) {
+                NutsInputSource p = c.getContentStreamOrPath();
+                if(p instanceof NutsPath) {
+                    NutsPath pp=(NutsPath) p;
+                    try {
+                        c.setDescriptor(NutsDescriptorParser.of(session).parse(
+                                pp.resolve(NutsConstants.Files.DESCRIPTOR_FILE_NAME)
+                        ).get(session));
+                    } catch (Exception ex) {
+                        //ignore
                     }
                 }
-                if (c.descriptor != null) {
-                    if ("zip".equals(c.descriptor.getPackaging())) {
-                        Path zipFilePath = Paths.get(NutsPath.of(c.baseFile.toString() + ".zip",session).toAbsolute().toString());
-                        ZipUtils.zip(session, c.baseFile.toString(), new ZipOptions(), zipFilePath.toString());
-                        c.contentStreamOrPath = NutsStreamOrPath.of(NutsPath.of(zipFilePath,session));
+            }
+            if (Files.isDirectory(c.getBaseFile())) {
+                if (c.getDescriptor() == null) {
+                    Path ext = c.getBaseFile().resolve(NutsConstants.Files.DESCRIPTOR_FILE_NAME);
+                    if (Files.exists(ext)) {
+                        c.setDescriptor(NutsDescriptorParser.of(session).parse(ext).get(session));
+                    } else {
+                        c.setDescriptor(NutsDescriptorContentResolver.resolveNutsDescriptorFromFileContent(c.getBaseFile(), parseOptions, session));
+                    }
+                }
+                if (c.getDescriptor() != null) {
+                    if ("zip".equals(c.getDescriptor().getPackaging())) {
+                        Path zipFilePath = Paths.get(NutsPath.of(c.getBaseFile().toString() + ".zip", session).toAbsolute().toString());
+                        ZipUtils.zip(session, c.getBaseFile().toString(), new ZipOptions(), zipFilePath.toString());
+                        c.setContentStreamOrPath(NutsPath.of(zipFilePath, session));
                         c.addTemp(zipFilePath);
                     } else {
-                        throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("invalid Nut Folder source. expected 'zip' ext in descriptor"));
+                        throw new NutsIllegalArgumentException(session, NutsMessage.ofPlain("invalid Nut Folder source. expected 'zip' ext in descriptor"));
                     }
                 }
-            } else if (Files.isRegularFile(c.baseFile)) {
-                if (c.descriptor == null) {
-                    NutsPath ext = NutsPath.of(c.baseFile.toString() + "." + NutsConstants.Files.DESCRIPTOR_FILE_NAME,session)
+            } else if (Files.isRegularFile(c.getBaseFile())) {
+                if (c.getDescriptor() == null) {
+                    NutsPath ext = NutsPath.of(c.getBaseFile().toString() + "." + NutsConstants.Files.DESCRIPTOR_FILE_NAME, session)
                             .toAbsolute();
                     if (ext.exists()) {
-                        c.descriptor = NutsDescriptorParser.of(session).parse(ext).get(session);
+                        c.setDescriptor(NutsDescriptorParser.of(session).parse(ext).get(session));
                     } else {
-                        c.descriptor = NutsDescriptorContentResolver.resolveNutsDescriptorFromFileContent(c.baseFile, parseOptions, session);
+                        c.setDescriptor(NutsDescriptorContentResolver.resolveNutsDescriptorFromFileContent(c.getBaseFile(), parseOptions, session));
                     }
                 }
             } else {
-                throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("path does not denote a valid file or folder %s", c.contentStreamOrPath));
+                throw new NutsIllegalArgumentException(session, NutsMessage.ofCstyle("path does not denote a valid file or folder %s", c.getContentStreamOrPath()));
             }
         } catch (IOException ex) {
-            throw new NutsIOException(session,ex);
+            throw new NutsIOException(session, ex);
         }
         return c;
     }
@@ -108,28 +112,24 @@ public class DefaultNutsDeployCommand extends AbstractNutsDeployCommand {
                     .addIds(ids.toArray(new NutsId[0])).setLatest(true).setRepositoryFilter(fromRepository).getResultIds()) {
                 NutsDefinition fetched = session.fetch().setContent(true).setId(nutsId).setSession(getSession()).getResultDefinition();
                 if (fetched.getContent().isPresent()) {
-                    runDeployFile(NutsStreamOrPath.of(
-                           fetched.getContent().get(session)
-                    ), fetched.getDescriptor(), null);
+                    runDeployFile(fetched.getContent().get(session), fetched.getDescriptor(), null);
                 }
             }
         }
-        if (result == null || result.isEmpty()) {
-            throw new NutsIllegalArgumentException(getSession(), NutsMessage.formatted("missing package to deploy"));
-        }
+        NutsUtils.requireNonBlank(result,session, "package to deploy");
         if (getSession().isTrace()) {
-            switch (getSession().getOutputFormat()){
-                case PLAIN:{
+            switch (getSession().getOutputFormat()) {
+                case PLAIN: {
                     for (Result nid : result) {
-                            getSession().getTerminal().out().resetLine().printf("%s deployed successfully as %s to %s%n",
-                                    nid.source,
-                                    nid.id,
-                                    NutsTexts.of(session).ofStyled(nid.repository, NutsTextStyle.primary3())
-                            );
+                        getSession().getTerminal().out().resetLine().printf("%s deployed successfully as %s to %s%n",
+                                nid.source,
+                                nid.id,
+                                NutsTexts.of(session).ofStyled(nid.repository, NutsTextStyle.primary3())
+                        );
                     }
                     break;
                 }
-                default:{
+                default: {
                     getSession().out().printlnf(result);
                 }
             }
@@ -141,7 +141,7 @@ public class DefaultNutsDeployCommand extends AbstractNutsDeployCommand {
         return runDeployFile(getContent(), getDescriptor(), getDescSha1());
     }
 
-    private NutsDeployCommand runDeployFile(NutsStreamOrPath content, Object descriptor0, String descSHA1) {
+    private NutsDeployCommand runDeployFile(NutsInputSource content, Object descriptor0, String descSHA1) {
         checkSession();
         NutsSession session = getSession();
         NutsWorkspaceExt dws = NutsWorkspaceExt.of(session.getWorkspace());
@@ -149,8 +149,7 @@ public class DefaultNutsDeployCommand extends AbstractNutsDeployCommand {
         wu.checkReadOnly();
 
         Path tempFile = null;
-        NutsStreamOrPath contentSource;
-        contentSource = content.toMultiRead(this.session);
+        NutsInputSource contentSource = NutsIO.of(session).createMultiRead(content);
         NutsDescriptor descriptor = buildDescriptor(descriptor0, descSHA1);
 
         CharacterizedDeployFile characterizedFile = null;
@@ -160,14 +159,12 @@ public class DefaultNutsDeployCommand extends AbstractNutsDeployCommand {
                 NutsFetchCommand p = this.session.fetch()
                         .setSession(session.copy().setTransitive(true));
                 characterizedFile = characterizeForDeploy(contentSource, p, getParseOptions(), session);
-                if (characterizedFile.descriptor == null) {
-                    throw new NutsIllegalArgumentException(getSession(), NutsMessage.cstyle("missing descriptor"));
-                }
-                descriptor = characterizedFile.descriptor;
+                NutsUtils.requireNonBlank(characterizedFile.getDescriptor(),session, "descriptor");
+                descriptor = characterizedFile.getDescriptor();
             }
             String name = this.session.locations().getDefaultIdFilename(descriptor.getId().builder().setFaceDescriptor().build());
             tempFile = NutsPaths.of(this.session)
-                    .createTempFile(name,session).toFile();
+                    .createTempFile(name, session).toFile();
             NutsCp.of(this.session).setSession(session).from(contentSource.getInputStream()).to(tempFile).addOptions(NutsPathOption.SAFE).run();
             contentFile2 = tempFile;
 
@@ -202,12 +199,12 @@ public class DefaultNutsDeployCommand extends AbstractNutsDeployCommand {
                             try {
                                 ZipUtils.zip(session, contentFile.toString(), new ZipOptions(), zipFilePath.toString());
                             } catch (IOException ex) {
-                                throw new NutsIOException(session,ex);
+                                throw new NutsIOException(session, ex);
                             }
                             contentFile = zipFilePath;
                             tempFile2 = contentFile;
                         } else {
-                            throw new NutsIllegalArgumentException(getSession(), NutsMessage.cstyle("invalid nuts folder source; expected 'zip' ext in descriptor"));
+                            throw new NutsIllegalArgumentException(getSession(), NutsMessage.ofPlain("invalid nuts folder source; expected 'zip' ext in descriptor"));
                         }
                     }
                 } else {
@@ -217,22 +214,22 @@ public class DefaultNutsDeployCommand extends AbstractNutsDeployCommand {
                     }
                 }
                 if (descriptor == null) {
-                    throw new NutsNotFoundException(getSession(), null, NutsMessage.cstyle("artifact not found at %s", contentFile));
+                    throw new NutsNotFoundException(getSession(), null, NutsMessage.ofCstyle("artifact not found at %s", contentFile));
                 }
                 //remove workspace
                 descriptor = descriptor.builder().setId(descriptor.getId().builder().setRepository(null).build()).build();
                 if (NutsStringUtils.trim(descriptor.getId().getVersion().getValue()).endsWith(CoreNutsConstants.Versions.CHECKED_OUT_EXTENSION)) {
-                    throw new NutsIllegalArgumentException(getSession(), NutsMessage.cstyle("invalid version %s", descriptor.getId().getVersion()));
+                    throw new NutsIllegalArgumentException(getSession(), NutsMessage.ofCstyle("invalid version %s", descriptor.getId().getVersion()));
                 }
 
                 NutsId effId = dws.resolveEffectiveId(descriptor, session);
-                CorePlatformUtils.checkAcceptCondition(descriptor.getCondition(),false, session);
+                CorePlatformUtils.checkAcceptCondition(descriptor.getCondition(), false, session);
                 if (NutsBlankable.isBlank(repository)) {
-                    effId = NutsIdUtils.createContentFaceId(effId.builder().setPropertiesQuery("").build(), descriptor,session);
+                    effId = NutsIdUtils.createContentFaceId(effId.builder().setPropertiesQuery("").build(), descriptor, session);
                     for (NutsRepository repo : wu.filterRepositoriesDeploy(effId, null)
                             .stream()
-                            .filter(x->x.config().getDeployWeight()>0)
-                            .sorted(Comparator.comparingInt(x->x.config().getDeployWeight()))
+                            .filter(x -> x.config().getDeployWeight() > 0)
+                            .sorted(Comparator.comparingInt(x -> x.config().getDeployWeight()))
                             .collect(Collectors.toList())) {
                         int deployOrder = repo.config().getDeployWeight();
                         NutsRepositorySPI repoSPI = wu.repoSPI(repo);
@@ -241,7 +238,7 @@ public class DefaultNutsDeployCommand extends AbstractNutsDeployCommand {
                                 //.setFetchMode(NutsFetchMode.LOCAL)
                                 .setId(effId).setContent(contentFile).setDescriptor(descriptor)
                                 .run();
-                        addResult(effId,repo.getName(), NutsTexts.of(session).toText(content.getValue()));
+                        addResult(effId, repo.getName(), NutsTexts.of(session).toText(content));
                         return this;
                     }
                 } else {
@@ -252,7 +249,7 @@ public class DefaultNutsDeployCommand extends AbstractNutsDeployCommand {
                     if (!repo.config().isEnabled()) {
                         throw new NutsRepositoryDisabledException(getSession(), repository);
                     }
-                    effId = NutsIdUtils.createContentFaceId(effId.builder().setPropertiesQuery("").build(), descriptor,session);
+                    effId = NutsIdUtils.createContentFaceId(effId.builder().setPropertiesQuery("").build(), descriptor, session);
                     NutsRepositorySPI repoSPI = wu.repoSPI(repo);
                     repoSPI.deploy()
                             .setSession(session)
@@ -260,7 +257,7 @@ public class DefaultNutsDeployCommand extends AbstractNutsDeployCommand {
                             .setContent(contentFile)
                             .setDescriptor(descriptor)
                             .run();
-                    addResult(effId,repo.getName(), NutsTexts.of(this.session).toText(content.getValue()));
+                    addResult(effId, repo.getName(), NutsTexts.of(this.session).toText(content));
                     return this;
                 }
                 throw new NutsRepositoryNotFoundException(getSession(), repository);
@@ -269,7 +266,7 @@ public class DefaultNutsDeployCommand extends AbstractNutsDeployCommand {
                     try {
                         Files.delete(tempFile2);
                     } catch (IOException ex) {
-                        throw new NutsIOException(session,ex);
+                        throw new NutsIOException(session, ex);
                     }
                 }
             }
@@ -294,37 +291,34 @@ public class DefaultNutsDeployCommand extends AbstractNutsDeployCommand {
         if (descriptor instanceof NutsDescriptor) {
             mdescriptor = (NutsDescriptor) descriptor;
             if (descSHA1 != null && !NutsDigest.of(session).sha1().setSource(mdescriptor).computeString().equalsIgnoreCase(descSHA1)) {
-                throw new NutsIllegalArgumentException(getSession(), NutsMessage.cstyle("invalid content Hash"));
+                throw new NutsIllegalArgumentException(getSession(), NutsMessage.ofPlain("invalid content Hash"));
             }
             return mdescriptor;
         } else {
             InputStream inputStream = (InputStream) descriptor;
-            NutsStreamOrPath nutsStreamOrPath = NutsStreamOrPath.ofAnyInputOrNull(descriptor, this.session);
-            if(nutsStreamOrPath!=null) {
-                NutsStreamOrPath d = nutsStreamOrPath.isInputStream()?
-                        NutsStreamOrPath.of(inputStream,session).toDisposable(this.session)
-                        :nutsStreamOrPath
-                        ;
+            NutsInputSource nutsStreamOrPath = NutsIO.of(session).createInputSource(inputStream);
+            if (nutsStreamOrPath != null) {
+                NutsInputSource d = NutsIO.of(session).createMultiRead(nutsStreamOrPath);
                 try {
                     if (descSHA1 != null) {
                         try (InputStream is = d.getInputStream()) {
                             if (!NutsDigest.of(session).sha1().setSource(is).computeString().equalsIgnoreCase(descSHA1)) {
-                                throw new NutsIllegalArgumentException(getSession(), NutsMessage.cstyle("invalid content Hash"));
+                                throw new NutsIllegalArgumentException(getSession(), NutsMessage.ofPlain("invalid content Hash"));
                             }
                         } catch (IOException ex) {
-                            throw new NutsIOException(session,ex);
+                            throw new NutsIOException(session, ex);
                         }
                     }
                     try (InputStream is = d.getInputStream()) {
                         return NutsDescriptorParser.of(session).parse(is).get(session);
                     } catch (IOException ex) {
-                        throw new NutsIOException(session,ex);
+                        throw new NutsIOException(session, ex);
                     }
                 } finally {
-                    d.dispose();
+                    d.disposeMultiRead();
                 }
-            }else{
-                throw new NutsException(getSession(), NutsMessage.cstyle("unexpected type %s", descriptor.getClass().getName()));
+            } else {
+                throw new NutsException(getSession(), NutsMessage.ofCstyle("unexpected type %s", descriptor.getClass().getName()));
             }
         }
     }

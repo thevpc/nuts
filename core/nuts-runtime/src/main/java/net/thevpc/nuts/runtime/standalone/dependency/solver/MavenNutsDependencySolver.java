@@ -6,6 +6,7 @@ import net.thevpc.nuts.runtime.standalone.util.filters.CoreFilterUtils;
 import net.thevpc.nuts.runtime.standalone.dependency.DefaultNutsDependencies;
 import net.thevpc.nuts.runtime.standalone.dependency.DefaultNutsDependencyTreeNode;
 import net.thevpc.nuts.spi.NutsDependencySolver;
+import net.thevpc.nuts.util.NutsUtils;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -192,7 +193,7 @@ public class MavenNutsDependencySolver implements NutsDependencySolver {
             if (def != null) {
                 dependency = def.getId().toDependency();
             } else {
-                throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("missing dependency"));
+                NutsUtils.requireNonNull(dependency,session,"dependency");
             }
         }
         if (def == null) {
@@ -204,7 +205,7 @@ public class MavenNutsDependencySolver implements NutsDependencySolver {
                     .setLatest(true).getResultDefinitions().required();
         }
         if (def.getEffectiveDescriptor().isNotPresent()) {
-            throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("expected an effective definition for %s", def.getId()));
+            throw new NutsIllegalArgumentException(session, NutsMessage.ofCstyle("expected an effective definition for %s", def.getId()));
         }
         NutsDependencyTreeNodeBuild info = new NutsDependencyTreeNodeBuild(null, def, dependency, dependency, 0, session);
         for (NutsId exclusion : dependency.getExclusions()) {
@@ -387,7 +388,7 @@ public class MavenNutsDependencySolver implements NutsDependencySolver {
                 effDescriptor = def.getEffectiveDescriptor().orNull();
                 if (effDescriptor == null) {
                     throw new NutsIllegalArgumentException(session,
-                            NutsMessage.cstyle("expected an effective definition for %s", def.getId()));
+                            NutsMessage.ofCstyle("expected an effective definition for %s", def.getId()));
                 }
             }
             return effDescriptor;

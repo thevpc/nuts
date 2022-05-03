@@ -14,6 +14,7 @@ import net.thevpc.nuts.runtime.standalone.app.util.NutsAppUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.exec.DefaultInternalNutsExecutableCommand;
 import net.thevpc.nuts.text.NutsTextStyle;
 import net.thevpc.nuts.text.NutsTexts;
+import net.thevpc.nuts.util.NutsUtils;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -52,9 +53,7 @@ public class DefaultNutsWhichInternalExecutable extends DefaultInternalNutsExecu
                 commandLine.skipAll();
             }
         }
-        if (commands.isEmpty()) {
-            throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("which: missing commands"));
-        }
+        NutsUtils.requireNonBlank(commands,session,"commands");
         NutsTexts factory = NutsTexts.of(session);
         for (String arg : commands) {
             NutsPrintStream out = session.out();
@@ -107,7 +106,7 @@ public class DefaultNutsWhichInternalExecutable extends DefaultInternalNutsExecu
                             if (nid != null) {
                                 throw new NutsNotFoundException(session, nid);
                             } else {
-                                throw new NutsNotFoundException(session, null, NutsMessage.cstyle("artifact not found: %s%s", (arg == null ? "<null>" : arg)));
+                                throw new NutsNotFoundException(session, null, NutsMessage.ofCstyle("artifact not found: %s%s", (arg == null ? "<null>" : arg)));
                             }
                         }
                         if (session.isPlainOut()) {

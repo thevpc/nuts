@@ -2,8 +2,9 @@ package net.thevpc.nuts.runtime.standalone.io.progress;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.elem.NutsElements;
+import net.thevpc.nuts.io.NutsInputSource;
 import net.thevpc.nuts.io.NutsPath;
-import net.thevpc.nuts.io.NutsStreamMetadata;
+import net.thevpc.nuts.io.NutsInputSourceMetadata;
 import net.thevpc.nuts.text.NutsTextStyle;
 import net.thevpc.nuts.text.NutsTexts;
 import net.thevpc.nuts.util.NutsProgressFactory;
@@ -19,7 +20,7 @@ public class NutsProgressUtils {
     public static ProgressOptions parseProgressOptions(NutsSession session) {
         ProgressOptions o = new ProgressOptions();
         boolean enabledVisited = false;
-        Map<String, String> m = NutsStringUtils.parseMap(session.getProgressOptions(), "=", ",; ","").get(session);
+        Map<String, String> m = NutsStringUtils.parseMap(session.getProgressOptions(), "=", ",; ", "").get(session);
         NutsElements elems = NutsElements.of(session);
         for (Map.Entry<String, String> e : m.entrySet()) {
             String k = e.getKey();
@@ -43,9 +44,9 @@ public class NutsProgressUtils {
 
     public static java.io.InputStream monitor(URL from, NutsProgressMonitor monitor, NutsSession session) {
         return monitor(
-                NutsPath.of(from,session).getInputStream(),
+                NutsPath.of(from, session).getInputStream(),
                 from, NutsTexts.of(session).ofStyled(
-                        NutsPath.of(from,session).getName()
+                        NutsPath.of(from, session).getName()
                         , NutsTextStyle.path()),
                 NutsPath.of(from, session).getContentLength(), monitor, session);
     }
@@ -57,10 +58,10 @@ public class NutsProgressUtils {
     public static java.io.InputStream monitor(java.io.InputStream from, Object source, NutsProgressMonitor monitor, NutsSession session) {
         NutsString sourceName = null;
         long length = -1;
-        NutsStreamMetadata m = NutsStreamMetadata.resolve(from);
+        NutsInputSourceMetadata m = (from instanceof NutsInputSource) ? ((NutsInputSource) from).getInputMetaData() : null;
         if (m != null) {
             sourceName = NutsTexts.of(session).toText(m.getName());
-            length = m.getContentLength();
+            length = m.getContentLength().orElse(-1L);
         }
         return new MonitoredInputStream(from, source, sourceName, length, monitor, session);
     }
@@ -75,7 +76,7 @@ public class NutsProgressUtils {
         return new DefaultNutsProgressFactory();
     }
 
-    public static NutsProgressMonitor createProgressMonitor(MonitorType mt, Object source, Object sourceOrigin, NutsSession session,
+    public static NutsProgressMonitor createProgressMonitor(MonitorType mt, NutsInputSource source, Object sourceOrigin, NutsSession session,
                                                             boolean logProgress,
                                                             boolean traceProgress,
                                                             NutsProgressFactory progressFactory) {

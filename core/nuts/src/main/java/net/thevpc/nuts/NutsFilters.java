@@ -23,10 +23,10 @@
  */
 package net.thevpc.nuts;
 
-import net.thevpc.nuts.boot.NutsApiUtils;
 import net.thevpc.nuts.spi.NutsComponent;
 import net.thevpc.nuts.spi.NutsComponentScope;
 import net.thevpc.nuts.spi.NutsComponentScopeType;
+import net.thevpc.nuts.util.NutsUtils;
 
 /**
  * Filters helper
@@ -38,7 +38,7 @@ import net.thevpc.nuts.spi.NutsComponentScopeType;
 @NutsComponentScope(NutsComponentScopeType.SESSION)
 public interface NutsFilters extends NutsComponent {
     static NutsFilters of(NutsSession session) {
-        NutsApiUtils.checkSession(session);
+        NutsUtils.requireSession(session);
         return session.extensions().createSupported(NutsFilters.class, true, null);
     }
 

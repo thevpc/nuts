@@ -11,6 +11,7 @@ import net.thevpc.nuts.runtime.standalone.workspace.NutsWorkspaceExt;
 import net.thevpc.nuts.util.NutsLoggerOp;
 import net.thevpc.nuts.util.NutsLoggerVerb;
 import net.thevpc.nuts.util.NutsStringUtils;
+import net.thevpc.nuts.util.NutsUtils;
 
 import java.util.*;
 import java.util.function.Function;
@@ -37,7 +38,7 @@ public class NutsDescriptorUtils {
                 if (property.getCondition() == null || property.getCondition().isBlank()) {
                     m.put(property.getName(), property.getValue().asString().orNull());
                 } else {
-                    throw new NutsIllegalArgumentException(session, NutsMessage.plain("unexpected properties with conditions. probably a bug"));
+                    throw new NutsIllegalArgumentException(session, NutsMessage.ofPlain("unexpected properties with conditions. probably a bug"));
                 }
             }
         }
@@ -55,24 +56,24 @@ public class NutsDescriptorUtils {
                 case ERROR: {
                     if (groupId == null) {
                         groupId = session.getTerminal().ask()
-                                .forString(NutsMessage.cstyle("group id"))
+                                .forString(NutsMessage.ofPlain("group id"))
                                 .setDefaultValue(groupId)
-                                .setHintMessage(NutsBlankable.isBlank(groupId) ? null : NutsMessage.plain(groupId))
+                                .setHintMessage(NutsBlankable.isBlank(groupId) ? null : NutsMessage.ofPlain(groupId))
                                 .getValue();
                     }
                     if (artifactId == null) {
                         artifactId = session.getTerminal().ask()
-                                .forString(NutsMessage.cstyle("artifact id"))
+                                .forString(NutsMessage.ofPlain("artifact id"))
                                 .setDefaultValue(artifactId)
-                                .setHintMessage(NutsBlankable.isBlank(artifactId) ? null : NutsMessage.plain(artifactId))
+                                .setHintMessage(NutsBlankable.isBlank(artifactId) ? null : NutsMessage.ofPlain(artifactId))
                                 .getValue();
                     }
                     if (NutsBlankable.isBlank(version)) {
                         String ov = version == null ? null : version.getValue();
                         String v = session.getTerminal().ask()
-                                .forString(NutsMessage.cstyle("version"))
+                                .forString(NutsMessage.ofPlain("version"))
                                 .setDefaultValue(ov)
-                                .setHintMessage(NutsBlankable.isBlank(ov) ? null : NutsMessage.plain(ov))
+                                .setHintMessage(NutsBlankable.isBlank(ov) ? null : NutsMessage.ofPlain(ov))
                                 .getValue();
                         version = NutsVersion.of(v).get();
                     }
@@ -85,7 +86,7 @@ public class NutsDescriptorUtils {
             }
         }
         if (groupId == null || artifactId == null || NutsBlankable.isBlank(version)) {
-            throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("invalid descriptor id %s:%s#%s", groupId, artifactId, version));
+            throw new NutsIllegalArgumentException(session, NutsMessage.ofCstyle("invalid descriptor id %s:%s#%s", groupId, artifactId, version));
         }
         return nutsDescriptor.builder()
                 .setId(NutsIdBuilder.of(groupId,artifactId).setVersion(version).build())
@@ -93,9 +94,7 @@ public class NutsDescriptorUtils {
     }
 
     public static void checkValidEffectiveDescriptor(NutsDescriptor effectiveDescriptor,NutsSession session) {
-        if(effectiveDescriptor==null){
-            throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("unable to evaluate effective null descriptor"));
-        }
+        NutsUtils.requireNonNull(effectiveDescriptor,session,"effective descriptor");
         try{
             for (NutsId parent : effectiveDescriptor.getParents()) {
                 NutsIdUtils.checkValidEffectiveId(parent,session);
@@ -107,22 +106,20 @@ public class NutsDescriptorUtils {
             for (NutsDependency dependency : effectiveDescriptor.getStandardDependencies()) {
                 //NutsIdUtils.checkValidEffectiveId(dependency.toId(),session);
                 // replace direct call to checkValidEffectiveId with the following...
-                if (dependency == null) {
-                    throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("unable to evaluate effective null id"));
-                }
+                NutsUtils.requireNonNull(dependency,session,"dependency");
                 if (dependency.toString().contains("${")) {
-                    // some times the variable is defined later in the pom that uses this POM standard Dependencies
+                    // sometimes the variable is defined later in the pom that uses this POM standard Dependencies
                     // so just log a warning, this is not an error but a very bad practice from the dependency maintainer!
                     NutsLoggerOp.of(NutsDescriptorUtils.class,session)
                             .verb(NutsLoggerVerb.WARNING).level(Level.FINE)
-                            .log(NutsMessage.jstyle("{0} is using {1} which defines an unresolved variable. This is a potential bug.",
+                            .log(NutsMessage.ofJstyle("{0} is using {1} which defines an unresolved variable. This is a potential bug.",
                                     effectiveDescriptor.getId(),
                                     dependency
                             ));
                 }
             }
         }catch (Exception ex) {
-            throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("unable to evaluate effective descriptor for %s", effectiveDescriptor.getId()),ex);
+            throw new NutsIllegalArgumentException(session, NutsMessage.ofCstyle("unable to evaluate effective descriptor for %s", effectiveDescriptor.getId()),ex);
         }
 
     }
@@ -426,7 +423,7 @@ public class NutsDescriptorUtils {
             }
             oldMap = newMap;
         }
-        throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("too many recursion applying properties %s", updated));
+        throw new NutsIllegalArgumentException(session, NutsMessage.ofCstyle("too many recursion applying properties %s", updated));
     }
 
     private static Map<String, NutsDependency> depsAsMap(List<NutsDependency> arr,NutsSession session) {
@@ -442,12 +439,12 @@ public class NutsDescriptorUtils {
                     NutsLoggerOp.of(DefaultNutsDescriptorBuilder.class, session)
                             .level(Level.FINER)
                             .verb(NutsLoggerVerb.WARNING)
-                            .log(NutsMessage.cstyle("dependency %s is duplicated", d));
+                            .log(NutsMessage.ofCstyle("dependency %s is duplicated", d));
                 } else {
                     NutsLoggerOp.of(DefaultNutsDescriptorBuilder.class, session)
                             .level(Level.FINER)
                             .verb(NutsLoggerVerb.WARNING)
-                            .log(NutsMessage.cstyle("dependency %s is overridden by %s", a, d));
+                            .log(NutsMessage.ofCstyle("dependency %s is overridden by %s", a, d));
                 }
             }
         }

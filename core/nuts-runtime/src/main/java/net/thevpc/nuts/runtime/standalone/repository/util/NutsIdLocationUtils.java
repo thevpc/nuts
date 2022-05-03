@@ -2,6 +2,7 @@ package net.thevpc.nuts.runtime.standalone.repository.util;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.io.NutsCp;
+import net.thevpc.nuts.io.NutsPath;
 import net.thevpc.nuts.io.NutsPathOption;
 import net.thevpc.nuts.runtime.standalone.util.filters.CoreFilterUtils;
 import net.thevpc.nuts.util.NutsLoggerOp;
@@ -14,12 +15,12 @@ public class NutsIdLocationUtils {
         for (NutsIdLocation location : locations) {
             if (CoreFilterUtils.acceptClassifier(location, id.getClassifier())) {
                 try {
-                    NutsCp.of(session).from(location.getUrl()).to(localFile).addOptions(NutsPathOption.SAFE, NutsPathOption.LOG, NutsPathOption.TRACE).run();
+                    NutsCp.of(session).from(NutsPath.of(location.getUrl(),session)).to(NutsPath.of(localFile,session)).addOptions(NutsPathOption.SAFE, NutsPathOption.LOG, NutsPathOption.TRACE).run();
                     return true;
                 } catch (Exception ex) {
                     NutsLoggerOp.of(NutsIdLocationUtils.class, session)
                             .level(Level.SEVERE).error(ex)
-                            .log(NutsMessage.jstyle("unable to download location for id {0} in location {1} : {2}", id, location.getUrl(), ex));
+                            .log(NutsMessage.ofJstyle("unable to download location for id {0} in location {1} : {2}", id, location.getUrl(), ex));
                 }
             }
         }

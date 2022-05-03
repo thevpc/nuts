@@ -37,7 +37,7 @@ public class GithubfsPath extends AbstractPathSPIAdapter {
     private GithubfsPath(String url, Info info, NutsSession session) {
         super(NutsPath.of(url.substring(PREFIX.length()), session), session);
         if (!url.startsWith(PREFIX)) {
-            throw new NutsUnsupportedArgumentException(session, NutsMessage.cstyle("expected prefix '" + PREFIX + "'"));
+            throw new NutsUnsupportedArgumentException(session, NutsMessage.ofCstyle("expected prefix '%s'",PREFIX));
         }
         this.info = info;
     }
@@ -170,12 +170,12 @@ public class GithubfsPath extends AbstractPathSPIAdapter {
         if (p != null) {
             return p.getInputStream();
         }
-        throw new NutsIOException(session, NutsMessage.cstyle("not a file %s", basePath));
+        throw new NutsIOException(session, NutsMessage.ofCstyle("not a file %s", basePath));
     }
 
     @Override
     public OutputStream getOutputStream(NutsPath basePath) {
-        throw new NutsIOException(session, NutsMessage.cstyle("not writable %s", basePath));
+        throw new NutsIOException(session, NutsMessage.ofCstyle("not writable %s", basePath));
     }
 
     @Override

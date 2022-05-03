@@ -74,7 +74,7 @@ public abstract class DefaultInternalNutsExecutableCommand extends AbstractNutsE
                             .append(NutsCommandLine.of(args))
             );
         } else {
-            session.out().printlnf(NutsMessage.cstyle(
+            session.out().printlnf(NutsMessage.ofCstyle(
                             "[dry] %s",
                             text.builder()
                                     .append("internal", NutsTextStyle.pale())

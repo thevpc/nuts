@@ -26,10 +26,10 @@
 package net.thevpc.nuts.io;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.boot.NutsApiUtils;
 import net.thevpc.nuts.spi.NutsComponent;
 import net.thevpc.nuts.util.NutsProgressFactory;
 import net.thevpc.nuts.util.NutsProgressMonitor;
+import net.thevpc.nuts.util.NutsUtils;
 
 import java.io.File;
 import java.io.InputStream;
@@ -46,7 +46,7 @@ import java.util.Set;
  */
 public interface NutsUncompress extends NutsComponent {
     static NutsUncompress of(NutsSession session) {
-        NutsApiUtils.checkSession(session);
+        NutsUtils.requireSession(session);
         return session.extensions().createSupported(NutsUncompress.class, true, null);
     }
 
@@ -87,7 +87,11 @@ public interface NutsUncompress extends NutsComponent {
      *
      * @return source to uncompress
      */
-    Object getSource();
+    NutsInputSource getSource();
+
+    NutsUncompress setSource(NutsInputSource source);
+
+    NutsUncompress setTarget(NutsOutputTarget target);
 
     /**
      * update source to uncompress from
@@ -168,7 +172,7 @@ public interface NutsUncompress extends NutsComponent {
      *
      * @return target to uncompress to
      */
-    Object getTarget();
+    NutsOutputTarget getTarget();
 
     /**
      * update target
@@ -186,31 +190,7 @@ public interface NutsUncompress extends NutsComponent {
      */
     NutsUncompress setTarget(File target);
 
-    /**
-     * update target
-     *
-     * @param target target
-     * @return {@code this} instance
-     */
-    NutsUncompress setTarget(String target);
-
     NutsUncompress setTarget(NutsPath target);
-
-    /**
-     * update source to uncompress from
-     *
-     * @param source source to uncompress from
-     * @return {@code this} instance
-     */
-    NutsUncompress from(String source);
-
-    /**
-     * update target
-     *
-     * @param target target
-     * @return {@code this} instance
-     */
-    NutsUncompress to(String target);
 
     /**
      * update target

@@ -155,7 +155,7 @@ public class NutsSettingsUserSubCommand extends AbstractNutsSettingsSubCommand {
                         u = repository.security().getEffectiveUser(user);
                     }
                     if (u == null) {
-                        throw new NutsElementNotFoundException(session, NutsMessage.cstyle("no such user %s", user));
+                        throw new NutsElementNotFoundException(session, NutsMessage.ofCstyle("no such user %s", user));
                     }
                 }
                 //            NutsUserConfig u = null;

@@ -94,7 +94,7 @@ public class NTasksSubCmd {
                     String jobId = s;
                     NJob job = service.jobs().getJob(jobId);
                     if (job == null) {
-                        cmd.throwError(NutsMessage.cstyle("invalid job %s", jobId), session);
+                        cmd.throwError(NutsMessage.ofCstyle("invalid job %s", jobId), session);
                     }
                     t.setJobId(job.getId());
                 });
@@ -104,7 +104,7 @@ public class NTasksSubCmd {
                     String taskId = s;
                     NTask parentTask = service.tasks().getTask(taskId);
                     if (parentTask == null) {
-                        cmd.throwError(NutsMessage.cstyle("invalid parent task %s", taskId), session);
+                        cmd.throwError(NutsMessage.ofCstyle("invalid parent task %s", taskId), session);
                     }
                     t.setParentTaskId(parentTask.getId());
                 });
@@ -305,7 +305,7 @@ public class NTasksSubCmd {
                     String jobId = cmd.nextStringValueLiteral().get(session);
                     NJob job = service.jobs().getJob(jobId);
                     if (job == null) {
-                        cmd.throwError(NutsMessage.cstyle("invalid job %s", jobId), session);
+                        cmd.throwError(NutsMessage.ofCstyle("invalid job %s", jobId), session);
                     }
                     runLater.add(t -> t.setJobId(job.getId()));
                     break;
@@ -315,7 +315,7 @@ public class NTasksSubCmd {
                     String taskId = cmd.nextStringValueLiteral().get(session);
                     NTask parentTask = service.tasks().getTask(taskId);
                     if (parentTask == null) {
-                        cmd.throwError(NutsMessage.cstyle("invalid parent task %s", taskId), session);
+                        cmd.throwError(NutsMessage.ofCstyle("invalid parent task %s", taskId), session);
                     }
                     runLater.add(t -> t.setParentTaskId(parentTask.getId()));
                     break;
@@ -391,7 +391,7 @@ public class NTasksSubCmd {
             }
         }
         if (tasks.isEmpty()) {
-            cmd.throwError(NutsMessage.formatted("task id expected"), session);
+            cmd.throwError(NutsMessage.ofNtf("task id expected"), session);
         }
         if (cmd.isExecMode()) {
             for (NTask task : tasks) {
@@ -514,7 +514,7 @@ public class NTasksSubCmd {
                             break;
                         }
                         default: {
-                            cmd.pushBack(y, session).throwUnexpectedArgument(NutsMessage.cstyle("invalid value"), session);
+                            cmd.pushBack(y, session).throwUnexpectedArgument(NutsMessage.ofPlain("invalid value"), session);
                         }
                     }
                     break;
@@ -734,7 +734,7 @@ public class NTasksSubCmd {
             t = service.tasks().getTask(pid);
         }
         if (t == null) {
-            cmd.throwError(NutsMessage.cstyle("task not found: %s", pid), session);
+            cmd.throwError(NutsMessage.ofCstyle("task not found: %s", pid), session);
         }
         return t;
     }

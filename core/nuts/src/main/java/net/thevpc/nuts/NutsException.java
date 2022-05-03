@@ -24,8 +24,8 @@
  */
 package net.thevpc.nuts;
 
-import net.thevpc.nuts.boot.NutsApiUtils;
 import net.thevpc.nuts.text.NutsTexts;
+import net.thevpc.nuts.util.NutsUtils;
 
 /**
  * Base Nuts Exception. Parent of all Nuts defined Exceptions.
@@ -51,6 +51,7 @@ public class NutsException extends RuntimeException implements NutsSessionAwareE
      */
     public NutsException(NutsSession session, NutsMessage message) {
         super(NutsException.messageToString(message, session));
+        NutsUtils.requireSession(session);
         this.session = session;
         this.formattedMessage = NutsException.validateFormattedMessage(message);
         this.formattedString = NutsException.messageToFormattedString(message, session);
@@ -101,13 +102,13 @@ public class NutsException extends RuntimeException implements NutsSessionAwareE
 
     static NutsMessage validateFormattedMessage(NutsMessage message) {
         if (message == null) {
-            message = NutsMessage.plain("error occurred");
+            message = NutsMessage.ofPlain("error occurred");
         }
         return message;
     }
 
     static NutsString messageToFormattedString(NutsMessage message, NutsSession session) {
-        NutsApiUtils.checkSession(session);
+        NutsUtils.requireSession(session);
         return NutsTexts.of(session).toText(validateFormattedMessage(message));
     }
 

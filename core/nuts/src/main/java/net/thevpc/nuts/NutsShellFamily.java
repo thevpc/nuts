@@ -109,7 +109,7 @@ public enum NutsShellFamily implements NutsEnum {
             }
             switch (s) {
                 case "":
-                    return NutsOptional.ofEmpty(session -> NutsMessage.cstyle(NutsShellFamily.class.getSimpleName() + " is empty"));
+                    return NutsOptional.ofEmpty(session -> NutsMessage.ofCstyle("%s is empty",NutsShellFamily.class.getSimpleName()));
                 case "sh":
                     return NutsOptional.of(SH);
                 case "bash":

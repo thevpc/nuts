@@ -56,7 +56,7 @@ public class NutsLockReleaseException extends NutsLockException {
      */
     public NutsLockReleaseException(NutsSession session, NutsMessage message, Object lockedObject, Object lockObject) {
         super(session,
-                message == null ? NutsMessage.cstyle("unable to release lock for %s", lockedObject)
+                message == null ? NutsMessage.ofCstyle("unable to release lock for %s", lockedObject)
                         : message, lockedObject, lockObject
         );
     }
@@ -72,7 +72,7 @@ public class NutsLockReleaseException extends NutsLockException {
      */
     public NutsLockReleaseException(NutsSession session, NutsMessage message, Object lockedObject, Object lockObject, Throwable cause) {
         super(session,
-                message == null ? NutsMessage.cstyle("unable to release lock for %s", lockedObject)
+                message == null ? NutsMessage.ofCstyle("unable to release lock for %s", lockedObject)
                         : message, lockObject, cause
         );
     }

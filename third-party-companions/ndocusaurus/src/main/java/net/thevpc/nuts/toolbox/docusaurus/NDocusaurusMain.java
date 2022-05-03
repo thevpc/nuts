@@ -62,7 +62,7 @@ public class NDocusaurusMain implements NutsApplication, NutsAppCmdProcessor {
         NutsSession session = context.getSession();
         if (!start && !build && !buildPdf) {
             commandline.throwMissingArgument(
-                    NutsMessage.cstyle("missing command. try ```sh ndocusaurus pdf | start | build```"),
+                    NutsMessage.ofCstyle("missing command. try %s", NutsMessage.ofCode("sh", "ndocusaurus pdf | start | build")),
                     session);
         }
     }

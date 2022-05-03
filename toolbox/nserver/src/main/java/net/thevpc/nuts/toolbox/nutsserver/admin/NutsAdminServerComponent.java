@@ -31,6 +31,7 @@ import net.thevpc.nuts.spi.NutsSupportLevelContext;
 import net.thevpc.nuts.text.NutsTextStyle;
 import net.thevpc.nuts.text.NutsTexts;
 import net.thevpc.nuts.toolbox.nutsserver.*;
+import net.thevpc.nuts.util.NutsUtils;
 
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
@@ -55,9 +56,7 @@ public class NutsAdminServerComponent implements NutsServerComponent {
 
     public NutsServer start(NutsSession invokerWorkspace, ServerConfig config) {
         AdminServerConfig httpConfig = (AdminServerConfig) config;
-        if (invokerWorkspace == null) {
-            throw new NutsIllegalArgumentException(invokerWorkspace, NutsMessage.cstyle("missing workspace"));
-        }
+        NutsUtils.requireSession(invokerWorkspace);
         NutsSession session = invokerWorkspace;
         String serverId = httpConfig.getServerId();
         InetAddress address = httpConfig.getAddress();

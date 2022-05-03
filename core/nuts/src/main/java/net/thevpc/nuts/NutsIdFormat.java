@@ -25,9 +25,9 @@
  */
 package net.thevpc.nuts;
 
-import net.thevpc.nuts.boot.NutsApiUtils;
 import net.thevpc.nuts.cmdline.NutsCommandLineConfigurable;
 import net.thevpc.nuts.spi.NutsComponent;
+import net.thevpc.nuts.util.NutsUtils;
 
 import java.util.List;
 
@@ -44,7 +44,7 @@ import java.util.List;
  */
 public interface NutsIdFormat extends NutsFormat, NutsComponent {
     static NutsIdFormat of(NutsSession session) {
-        NutsApiUtils.checkSession(session);
+        NutsUtils.requireSession(session);
         return session.extensions().createSupported(NutsIdFormat.class, true, null);
     }
 

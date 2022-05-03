@@ -60,7 +60,7 @@ public class DefaultNutsSettingsInternalExecutable extends DefaultInternalNutsEx
                             showDefaultHelp();
                         }
                         cmd.skipAll();
-                        throw new NutsExecutionException(session, NutsMessage.cstyle("help"), 0);
+                        throw new NutsExecutionException(session, NutsMessage.ofPlain("help"), 0);
                     }
                     break;
                 } else{
@@ -82,7 +82,7 @@ public class DefaultNutsSettingsInternalExecutable extends DefaultInternalNutsEx
                             NutsPrintStream out = session.err();
                             out.printf("unexpected %s%n", cmd.peek());
                             out.printf("type for more help : nuts settings -h%n");
-                            throw new NutsExecutionException(session, NutsMessage.cstyle("unexpected %s", cmd.peek()), 1);
+                            throw new NutsExecutionException(session, NutsMessage.ofCstyle("unexpected %s", cmd.peek()), 1);
                         }
                         break;
                     }
@@ -92,7 +92,7 @@ public class DefaultNutsSettingsInternalExecutable extends DefaultInternalNutsEx
             NutsPrintStream out = session.err();
             out.printf("missing settings command%n");
             out.printf("type for more help : nuts settings -h%n");
-            throw new NutsExecutionException(session, NutsMessage.cstyle("missing settings command"), 1);
+            throw new NutsExecutionException(session, NutsMessage.ofPlain("missing settings command"), 1);
         }
     }
 

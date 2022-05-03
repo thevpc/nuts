@@ -6,6 +6,7 @@ import net.thevpc.nuts.runtime.standalone.util.filters.InternalNutsTypedFilters;
 import java.util.List;
 
 import net.thevpc.nuts.spi.NutsSupportLevelContext;
+import net.thevpc.nuts.util.NutsUtils;
 
 public class InternalNutsInstallStatusFilters extends InternalNutsTypedFilters<NutsInstallStatusFilter>
         implements NutsInstallStatusFilters {
@@ -75,9 +76,8 @@ public class InternalNutsInstallStatusFilters extends InternalNutsTypedFilters<N
             return null;
         }
         NutsInstallStatusFilter t = as(a);
-        if (t == null) {
-            throw new NutsIllegalArgumentException(getSession(), NutsMessage.cstyle("not a InstallStatusFilter"));
-        }
+        NutsSession session = getSession();
+        NutsUtils.requireNonNull(t, session,"InstallStatusFilter");
         return t;
     }
 

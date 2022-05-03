@@ -26,11 +26,13 @@
 package net.thevpc.nuts.runtime.standalone.io.progress;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.io.DefaultNutsStreamMetadata;
-import net.thevpc.nuts.io.NutsStreamMetadata;
-import net.thevpc.nuts.io.NutsStreamMetadataAware;
+import net.thevpc.nuts.io.DefaultNutsInputSourceMetadata;
+import net.thevpc.nuts.io.NutsIO;
+import net.thevpc.nuts.io.NutsInputSource;
+import net.thevpc.nuts.io.NutsInputSourceMetadata;
 import net.thevpc.nuts.runtime.standalone.io.util.InterruptException;
 import net.thevpc.nuts.runtime.standalone.io.util.Interruptible;
+import net.thevpc.nuts.text.NutsTextStyle;
 import net.thevpc.nuts.util.NutsProgressMonitor;
 
 import java.io.IOException;
@@ -39,7 +41,7 @@ import java.io.InputStream;
 /**
  * @author thevpc
  */
-public class MonitoredInputStream extends InputStream implements NutsStreamMetadataAware, Interruptible {
+public class MonitoredInputStream extends InputStream implements NutsInputSource, Interruptible {
 
     private final InputStream base;
     private final long length;
@@ -53,9 +55,10 @@ public class MonitoredInputStream extends InputStream implements NutsStreamMetad
     private boolean completed = false;
     private boolean interrupted = false;
     private final NutsSession session;
+    private DefaultNutsInputSourceMetadata md;
 
     public MonitoredInputStream(InputStream base, Object source, NutsString sourceName, long length, NutsProgressMonitor monitor, NutsSession session) {
-        this.base = base;
+        this.base = (InputStream) NutsIO.of(session).createInputSource(base);
         this.session = session;
         if (monitor == null) {
             throw new NullPointerException();
@@ -64,6 +67,7 @@ public class MonitoredInputStream extends InputStream implements NutsStreamMetad
         this.source = source;
         this.sourceName = sourceName;
         this.length = length;
+        this.md = new DefaultNutsInputSourceMetadata(((NutsInputSource) base).getInputMetaData());
     }
 
     @Override
@@ -210,16 +214,33 @@ public class MonitoredInputStream extends InputStream implements NutsStreamMetad
         }
     }
 
+    public NutsInputSourceMetadata getInputMetaData() {
+        return md;
+    }
+
     @Override
-    public NutsStreamMetadata getStreamMetadata() {
-        NutsStreamMetadata md = NutsStreamMetadata.of(base);
-        return new DefaultNutsStreamMetadata(sourceName, length, md.getContentType(),
-                md.getUserKind()
-        );
+    public InputStream getInputStream() {
+        return this;
+    }
+
+    public boolean isMultiRead() {
+        return false;
+    }
+
+    @Override
+    public NutsMessage formatMessage(NutsSession session) {
+        return getInputMetaData().getMessage()
+                .orElseOf(
+                        () -> sourceName == null ? null : NutsMessage.ofNtf(sourceName)
+                )
+                .orElse(
+                        NutsMessage.ofStyled(getClass().getSimpleName(), NutsTextStyle.path())
+                );
     }
 
     @Override
     public String toString() {
-        return String.valueOf(sourceName);
+        return formatMessage().toString();
     }
+
 }

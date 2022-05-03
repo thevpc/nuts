@@ -207,7 +207,7 @@ public abstract class AbstractNutsTextNodeParser implements NutsTextParser {
             NutsLoggerOp.of(AbstractNutsTextNodeParser.class, session)
                     .verb(NutsLoggerVerb.WARNING)
                     .level(Level.FINEST)
-                    .log(NutsMessage.cstyle("error parsing : %s", text));
+                    .log(NutsMessage.ofCstyle("error parsing : %s", text));
             return text;
         }
     }

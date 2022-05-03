@@ -67,7 +67,7 @@ public class MavenRepositoryFolderHelper {
         this.repo = repo;
         this.ws = session != null ? session.getWorkspace() : repo == null ? null : repo.getWorkspace();
         if (repo == null && session == null) {
-            throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("both workspace and repo are null"));
+            throw new NutsIllegalArgumentException(session, NutsMessage.ofPlain("both workspace and repo are null"));
         }
         this.rootPath = rootPath;
     }
@@ -132,7 +132,7 @@ public class MavenRepositoryFolderHelper {
         return new NutsIdPathIterator(repo, rootPath.normalize(), folder, filter, session, new NutsIdPathIteratorBase() {
             @Override
             public void undeploy(NutsId id, NutsSession session) {
-                throw new NutsIllegalArgumentException(session,NutsMessage.cstyle("unsupported undeploy"));
+                throw new NutsIllegalArgumentException(session,NutsMessage.ofPlain("unsupported undeploy"));
             }
 
             @Override
@@ -224,7 +224,7 @@ public class MavenRepositoryFolderHelper {
                                 }
                             } catch (Exception ex) {
                                 _LOGOP(session).level(Level.SEVERE).error(ex)
-                                        .log(NutsMessage.jstyle("failed to parse metadata xml for {0} : {1}", metadataxml, ex));
+                                        .log(NutsMessage.ofJstyle("failed to parse metadata xml for {0} : {1}", metadataxml, ex));
                                 //ignore any error!
                             }
                             MavenMetadata m = new MavenMetadata();

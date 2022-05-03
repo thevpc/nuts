@@ -43,7 +43,7 @@ public class NutsRepositoryNotFoundException extends NutsRepositoryException {
      */
     public NutsRepositoryNotFoundException(NutsSession session, String repository) {
         super(session, repository,
-                NutsMessage.cstyle("no such repository %s", (repository == null ? "<null>" : repository))
+                NutsMessage.ofCstyle("no such repository %s", (repository == null ? "<null>" : repository))
                 , null);
     }
 

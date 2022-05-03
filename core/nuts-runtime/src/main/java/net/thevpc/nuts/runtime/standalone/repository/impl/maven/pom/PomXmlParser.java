@@ -643,7 +643,7 @@ public class PomXmlParser {
         } catch (IOException ex) {
             throw new NutsIOException(session, ex);
         } catch (SAXException ex) {
-            throw new NutsParseException(session, NutsMessage.plain("parse problem"), ex);
+            throw new NutsParseException(session, NutsMessage.ofPlain("parse problem"), ex);
         }
     }
 

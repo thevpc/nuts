@@ -834,9 +834,6 @@ public final class NutsReservedWorkspaceCommandLineParser {
                     case "--run-as": {
                         a = cmdLine.nextString().get(session);
                         if (active) {
-                            if (NutsBlankable.isBlank(a.getStringValue())) {
-                                throw new NutsBootException(NutsMessage.cstyle("missing user name"));
-                            }
                             options.setRunAs(NutsRunAs.user(a.getStringValue().get(session)));
                         }
                         break;
@@ -890,7 +887,7 @@ public final class NutsReservedWorkspaceCommandLineParser {
                         cmdLine.skip();
                         if (active) {
                             if (!a.getValue().isNull()) {
-                                throw new NutsBootException(NutsMessage.cstyle("invalid argument for workspace: %s", a.asString()));
+                                throw new NutsBootException(NutsMessage.ofCstyle("invalid argument for workspace: %s", a.asString()));
                             }
                             applicationArguments.add(NutsConstants.Ids.NUTS_SHELL);
                             if (!cmdLine.isEmpty()) {
@@ -1112,7 +1109,7 @@ public final class NutsReservedWorkspaceCommandLineParser {
                         } else {
                             cmdLine.skip();
                             if (a.isActive()) {
-                                showError.add(NutsMessage.cstyle("nuts: invalid option %s", a.asString().orNull()));
+                                showError.add(NutsMessage.ofCstyle("nuts: invalid option %s", a.asString().orNull()));
                             }
                         }
                     }
@@ -1146,7 +1143,7 @@ public final class NutsReservedWorkspaceCommandLineParser {
                 }
                 errorMessage.append("Try 'nuts --help' for more information.");
                 if (!options.getSkipErrors().orElse(false)) {
-                    throw new NutsBootException(NutsMessage.plain(errorMessage.toString()));
+                    throw new NutsBootException(NutsMessage.ofPlain(errorMessage.toString()));
                 }
             }
         }
@@ -1162,13 +1159,13 @@ public final class NutsReservedWorkspaceCommandLineParser {
                     Integer fileSize = NutsApiUtils.parseFileSizeInBytes(v, 1024 * 1024).orNull();
                     if (fileSize == null) {
                         if (NutsBlankable.isBlank(v)) {
-                            throw new NutsBootException(NutsMessage.cstyle("invalid file size : %s", v));
+                            throw new NutsBootException(NutsMessage.ofCstyle("invalid file size : %s", v));
                         }
                     } else {
                         //always in mega
                         fileSize = fileSize / (1024 * 1024);
                         if (fileSize <= 0) {
-                            throw new NutsBootException(NutsMessage.cstyle("invalid file size : %s < 1Mb", v));
+                            throw new NutsBootException(NutsMessage.ofCstyle("invalid file size : %s < 1Mb", v));
                         }
                     }
                     if (fileSize != null) {
@@ -1276,7 +1273,7 @@ public final class NutsReservedWorkspaceCommandLineParser {
     private static NutsStoreLocationStrategy parseNutsStoreLocationStrategy(String s) {
         NutsStoreLocationStrategy m = NutsStoreLocationStrategy.parse(s).orNull();
         if (m == null && !NutsBlankable.isBlank(s)) {
-            throw new NutsBootException(NutsMessage.cstyle("unable to parse value for NutsStoreLocationStrategy : %s", s));
+            throw new NutsBootException(NutsMessage.ofCstyle("unable to parse value for NutsStoreLocationStrategy : %s", s));
         }
         return m;
     }
@@ -1284,7 +1281,7 @@ public final class NutsReservedWorkspaceCommandLineParser {
     private static NutsOsFamily parseNutsOsFamily(String s) {
         NutsOsFamily m = NutsOsFamily.parse(s).orNull();
         if (m == null && !NutsBlankable.isBlank(s)) {
-            throw new NutsBootException(NutsMessage.cstyle("unable to parse value for NutsOsFamily : %s", s));
+            throw new NutsBootException(NutsMessage.ofCstyle("unable to parse value for NutsOsFamily : %s", s));
         }
         return m;
     }
@@ -1292,7 +1289,7 @@ public final class NutsReservedWorkspaceCommandLineParser {
     private static NutsOpenMode parseNutsOpenMode(String s) {
         NutsOpenMode m = NutsOpenMode.parse(s).orNull();
         if (m == null && !NutsBlankable.isBlank(s)) {
-            throw new NutsBootException(NutsMessage.cstyle("unable to parse value for NutsOpenMode : %s", s));
+            throw new NutsBootException(NutsMessage.ofCstyle("unable to parse value for NutsOpenMode : %s", s));
         }
         return m;
     }

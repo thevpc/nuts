@@ -28,7 +28,7 @@ package net.thevpc.nuts.spi;
 
 import net.thevpc.nuts.util.NutsLogger;
 import net.thevpc.nuts.NutsSession;
-import net.thevpc.nuts.boot.NutsApiUtils;
+import net.thevpc.nuts.util.NutsUtils;
 
 import java.util.List;
 import java.util.logging.Handler;
@@ -42,7 +42,7 @@ import java.util.logging.Level;
 @NutsComponentScope(NutsComponentScopeType.WORKSPACE)
 public interface NutsLogManager extends NutsComponent {
     static NutsLogManager of(NutsSession session) {
-        NutsApiUtils.checkSession(session);
+        NutsUtils.requireSession(session);
         return session.extensions().createSupported(NutsLogManager.class, true, null);
     }
 

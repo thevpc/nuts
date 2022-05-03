@@ -10,6 +10,7 @@ import net.thevpc.nuts.text.NutsTextStyle;
 import net.thevpc.nuts.text.NutsTexts;
 import net.thevpc.nuts.toolbox.nutsserver.bundled._IOUtils;
 import net.thevpc.nuts.toolbox.nutsserver.http.NutsHttpServerConfig;
+import net.thevpc.nuts.util.NutsUtils;
 
 import java.io.*;
 import java.net.InetAddress;
@@ -69,7 +70,7 @@ public class NutsServerMain implements NutsApplication {
             for (NutsServer o : servers) {
                 if (o.isRunning()) {
                     out.printf("%s %s\n",
-                            text.ofStyled("running",NutsTextStyle.primary4()),
+                            text.ofStyled("running", NutsTextStyle.primary4()),
                             o.getServerId()
                     );
                 } else {
@@ -93,7 +94,7 @@ public class NutsServerMain implements NutsApplication {
                 break;
             }
             count++;
-            s = cmdLine.nextNonOption(NutsArgumentName.of("ServerName",session)).flatMap(NutsValue::asString).get(session);
+            s = cmdLine.nextNonOption(NutsArgumentName.of("ServerName", session)).flatMap(NutsValue::asString).get(session);
             if (cmdLine.isExecMode()) {
                 serverManager.stopServer(s);
             }
@@ -127,7 +128,7 @@ public class NutsServerMain implements NutsApplication {
                 } else {
                     s.append(a.asString());
                 }
-                HostStr u = parseHostStr(s.toString(), context,true);
+                HostStr u = parseHostStr(s.toString(), context, true);
                 if (u.protocol.isEmpty()) {
                     u.protocol = "http";
                 }
@@ -147,7 +148,7 @@ public class NutsServerMain implements NutsApplication {
                 }
                 if (servers.current().workspaceLocations.containsKey(serverContext)) {
                     throw new NutsIllegalArgumentException(session,
-                            NutsMessage.cstyle("nuts-server: server workspace context already defined %s", serverContext));
+                            NutsMessage.ofCstyle("nuts-server: server workspace context already defined %s", serverContext));
                 }
                 servers.current().workspaceLocations.put(serverContext, ws);
             } else {
@@ -157,7 +158,7 @@ public class NutsServerMain implements NutsApplication {
         }
         if (commandLine.isExecMode()) {
             if (servers.all.isEmpty()) {
-                servers.add().set(new HostStr("http","0.0.0.0",-1));
+                servers.add().set(new HostStr("http", "0.0.0.0", -1));
             }
             for (SrvInfo server : servers.all) {
                 for (Map.Entry<String, String> entry : server.workspaceLocations.entrySet()) {
@@ -168,10 +169,7 @@ public class NutsServerMain implements NutsApplication {
                         wsContext = "";
                     }
                     if (NutsBlankable.isBlank(wsContext)) {
-                        if (context.getWorkspace() == null) {
-                            throw new NutsIllegalArgumentException(session,
-                                    NutsMessage.cstyle("nuts-server: missing workspace"));
-                        }
+                        NutsUtils.requireNonNull(context.getWorkspace(), session, "workspace");
                         nutsSession = session;
                         server.workspaces.put(wsContext, nutsSession);
                     } else {
@@ -206,19 +204,12 @@ public class NutsServerMain implements NutsApplication {
                         config.getWorkspaces().putAll(server.workspaces);
                         if ("https".equals(server.serverType)) {
                             config.setTls(true);
-                            if (server.sslCertificate == null) {
-                                throw new NutsIllegalArgumentException(session,
-                                        NutsMessage.cstyle("nuts-server: missing SSL certificate"));
-                            }
+                            NutsUtils.requireNonBlank(server.sslCertificate, session, "SSL certificate");
+                            NutsUtils.requireNonBlank(server.sslPassphrase, session, "SSL passphrase");
                             try {
                                 config.setSslKeystoreCertificate(_IOUtils.loadByteArray(new File(server.sslCertificate)));
                             } catch (IOException e) {
                                 throw new UncheckedIOException(e);
-                            }
-                            if (server.sslPassphrase == null) {
-                                throw new NutsIllegalArgumentException(session,
-                                        NutsMessage.cstyle("nuts-server: missing SSL passphrase")
-                                );
                             }
                             config.setSslKeystorePassphrase(server.sslPassphrase.toCharArray());
                         }
@@ -240,7 +231,7 @@ public class NutsServerMain implements NutsApplication {
                     }
                     default:
                         throw new NutsIllegalArgumentException(session,
-                                NutsMessage.cstyle("nuts-server: unsupported server type %s", server.serverType)
+                                NutsMessage.ofCstyle("nuts-server: unsupported server type %s", server.serverType)
                         );
                 }
                 serverManager.startServer(config0);
@@ -264,12 +255,12 @@ public class NutsServerMain implements NutsApplication {
         }
     }
 
-    private HostStr parseHostStr(String host, NutsApplicationContext context,boolean srv) {
+    private HostStr parseHostStr(String host, NutsApplicationContext context, boolean srv) {
         try {
             Matcher pattern = HOST_PATTERN.matcher(host);
             HostStr v = new HostStr();
             v.protocol = "";
-            v.addr = srv?"0.0.0.0":"localhost";
+            v.addr = srv ? "0.0.0.0" : "localhost";
             v.port = -1;
             if (pattern.find()) {
                 if (pattern.group("protocol") != null) {
@@ -281,12 +272,12 @@ public class NutsServerMain implements NutsApplication {
                 }
             } else {
                 throw new NutsIllegalArgumentException(context.getSession(),
-                        NutsMessage.cstyle("invalid Host : %s", v.protocol)
-                        );
+                        NutsMessage.ofCstyle("invalid Host : %s", v.protocol)
+                );
             }
             return v;
         } catch (Exception ex) {
-            throw new NutsIllegalArgumentException(context.getSession(), NutsMessage.cstyle("invalid"));
+            throw new NutsIllegalArgumentException(context.getSession(), NutsMessage.ofPlain("invalid"), ex);
         }
     }
 
@@ -337,7 +328,7 @@ public class NutsServerMain implements NutsApplication {
                 } else {
                     s.append(a.asString());
                 }
-                HostStr u = parseHostStr(s.toString(), context,false);
+                HostStr u = parseHostStr(s.toString(), context, false);
                 servers.add().set(u);
             } else {
                 context.configureLast(commandLine);
@@ -402,11 +393,11 @@ public class NutsServerMain implements NutsApplication {
                 for (StatusResult result : results) {
                     session.out().printf(
                             "%s server at %s is %s%n",
-                            text.ofStyled(result.type,NutsTextStyle.primary4()),
+                            text.ofStyled(result.type, NutsTextStyle.primary4()),
                             result.host,
-                            result.status.equals("stopped")?
-                            text.ofStyled("stopped",NutsTextStyle.error()):
-                            text.ofStyled("alive",NutsTextStyle.success())
+                            result.status.equals("stopped") ?
+                                    text.ofStyled("stopped", NutsTextStyle.error()) :
+                                    text.ofStyled("alive", NutsTextStyle.success())
                     );
                 }
             } else {
@@ -454,9 +445,7 @@ public class NutsServerMain implements NutsApplication {
         }
 
         SrvInfo current() {
-            if (all.isEmpty()) {
-                throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("nuts-server: server type missing"));
-            }
+            NutsUtils.requireNonBlank(all,session,"server type");
             return all.get(all.size() - 1);
         }
     }

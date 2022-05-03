@@ -32,6 +32,7 @@ import net.thevpc.nuts.cmdline.NutsCommandLineFormatStrategy;
 import net.thevpc.nuts.reserved.*;
 import net.thevpc.nuts.util.NutsLogConfig;
 import net.thevpc.nuts.util.NutsStringUtils;
+import net.thevpc.nuts.util.NutsUtils;
 
 import java.io.PrintStream;
 import java.lang.reflect.Array;
@@ -93,18 +94,12 @@ public class NutsApiUtils {
         return true;
     }
 
-    public static void checkSession(NutsSession session) {
-        if (session == null) {
-            throw new NutsMissingSessionException();
-        }
-    }
-
     public static String[] parseCommandLineArray(String commandLineString) {
         return NutsCommandLine.parseDefault(commandLineString).get().toStringArray();
     }
 
     public static int processThrowable(Throwable ex, PrintStream out) {
-        return NutsReservedApplicationUtils.processThrowable(ex, out);
+        return NutsReservedUtils.processThrowable(ex, out);
     }
 
     public static int processThrowable(Throwable ex, String[] args) {
@@ -135,7 +130,7 @@ public class NutsApiUtils {
     }
 
     public static int processThrowable(Throwable ex, PrintStream out, boolean showMessage, boolean showTrace, boolean showGui) {
-        return NutsReservedApplicationUtils.processThrowable(ex, out, showMessage, showTrace, showGui);
+        return NutsReservedUtils.processThrowable(ex, out, showMessage, showTrace, showGui);
     }
 
     public static boolean isGraphicalDesktopEnvironment() {
@@ -155,7 +150,7 @@ public class NutsApiUtils {
         if (d == null) {
             ClassLoader cl = Thread.currentThread().getContextClassLoader();
             URL[] urls = NutsReservedClassLoaderUtils.resolveClasspathURLs(cl, true);
-            throw new NutsBootException(NutsMessage.plain("unable to detect nuts digest. Most likely you are missing valid compilation of nuts." + "\n\t 'pom.properties' could not be resolved and hence, we are unable to resolve nuts version." + "\n\t java=" + System.getProperty("java.home") + " as " + System.getProperty("java.version") + "\n\t class-path=" + System.getProperty("java.class.path") + "\n\t urls=" + Arrays.toString(urls) + "\n\t class-loader=" + cl.getClass().getName() + " as " + cl));
+            throw new NutsBootException(NutsMessage.ofPlain("unable to detect nuts digest. Most likely you are missing valid compilation of nuts." + "\n\t 'pom.properties' could not be resolved and hence, we are unable to resolve nuts version." + "\n\t java=" + System.getProperty("java.home") + " as " + System.getProperty("java.version") + "\n\t class-path=" + System.getProperty("java.class.path") + "\n\t urls=" + Arrays.toString(urls) + "\n\t class-loader=" + cl.getClass().getName() + " as " + cl));
         }
         return d;
 
@@ -178,28 +173,19 @@ public class NutsApiUtils {
         if (objectValue == null) {
             if (!NutsBlankable.isBlank(stringValue)) {
                 if (session == null) {
-                    throw new NutsBootException(NutsMessage.cstyle("invalid value %s of type %s", stringValue, enumType.getName()));
+                    throw new NutsBootException(NutsMessage.ofCstyle("invalid value %s of type %s", stringValue, enumType.getName()));
                 }
                 throw new NutsParseEnumException(session, stringValue, NutsCommandLineFormatStrategy.class);
             }
         }
     }
-
-    public static Integer parseInt(String value, Integer emptyValue, Integer errorValue) {
-        return NutsReservedStringUtils.parseInt(value, emptyValue, errorValue);
-    }
-
-    public static Integer parseInt16(String value, Integer emptyValue, Integer errorValue) {
-        return NutsReservedStringUtils.parseInt16(value, emptyValue, errorValue);
-    }
-
     public static NutsOptional<Integer> parseFileSizeInBytes(String value, Integer defaultMultiplier) {
         return NutsReservedStringUtils.parseFileSizeInBytes(value, defaultMultiplier);
     }
 
     @SuppressWarnings("unchecked")
     public static <T> T createSessionCachedType(String name, Class<T> t, NutsSession session, Supplier<T> sup) {
-        checkSession(session);
+        NutsUtils.requireSession(session);
         name = NutsStringUtils.trim(name);
         if (NutsBlankable.isBlank(name)) {
             name = "default";

@@ -5,7 +5,6 @@ import net.thevpc.nuts.cmdline.NutsCommandLine;
 import net.thevpc.nuts.format.NutsTreeVisitResult;
 import net.thevpc.nuts.format.NutsTreeVisitor;
 import net.thevpc.nuts.io.*;
-import net.thevpc.nuts.runtime.standalone.io.util.InputStreamMetadataAwareImpl;
 import net.thevpc.nuts.runtime.standalone.io.util.CoreIOUtils;
 import net.thevpc.nuts.runtime.standalone.session.NutsSessionUtils;
 import net.thevpc.nuts.spi.NutsFormatSPI;
@@ -32,7 +31,7 @@ public class FilePath implements NutsPathSPI {
 
     public FilePath(Path value, NutsSession session) {
         if (value == null) {
-            throw new NutsIllegalArgumentException(session, NutsMessage.plain("invalid null value"));
+            throw new NutsIllegalArgumentException(session, NutsMessage.ofPlain("invalid null value"));
         }
         this.value = value;
         this.session = session;
@@ -202,9 +201,7 @@ public class FilePath implements NutsPathSPI {
 
     public InputStream getInputStream(NutsPath basePath) {
         try {
-            return InputStreamMetadataAwareImpl.of(Files.newInputStream(value),
-                    basePath.getStreamMetadata()
-            );
+            return Files.newInputStream(value);
         } catch (IOException e) {
             throw new NutsIOException(session, e);
         }
@@ -242,21 +239,21 @@ public class FilePath implements NutsPathSPI {
                 }
             }
         } else {
-            throw new NutsIOException(getSession(), NutsMessage.cstyle("unable to delete path %s", value));
+            throw new NutsIOException(getSession(), NutsMessage.ofCstyle("unable to delete path %s", value));
         }
     }
 
     @Override
     public void mkdir(boolean parents, NutsPath basePath) {
         if (Files.isRegularFile(value)) {
-            throw new NutsIOException(getSession(), NutsMessage.cstyle("unable to create folder out of regular file %s", value));
+            throw new NutsIOException(getSession(), NutsMessage.ofCstyle("unable to create folder out of regular file %s", value));
         } else if (Files.isDirectory(value)) {
             return;
         } else {
             try {
                 Files.createDirectories(value);
             } catch (IOException e) {
-                throw new NutsIOException(getSession(), NutsMessage.cstyle("unable to create folders %s", value));
+                throw new NutsIOException(getSession(), NutsMessage.ofCstyle("unable to create folders %s", value));
             }
         }
     }

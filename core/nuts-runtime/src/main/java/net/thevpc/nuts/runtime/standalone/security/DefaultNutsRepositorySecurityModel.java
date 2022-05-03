@@ -48,9 +48,9 @@ public class DefaultNutsRepositorySecurityModel {
         NutsSessionUtils.checkSession(repository.getWorkspace(), session);
         if (!isAllowed(right, session)) {
             if (NutsBlankable.isBlank(operationName)) {
-                throw new NutsSecurityException(session, NutsMessage.cstyle("%s not allowed!",right));
+                throw new NutsSecurityException(session, NutsMessage.ofCstyle("%s not allowed!",right));
             } else {
-                throw new NutsSecurityException(session, NutsMessage.cstyle("%s : %s not allowed!",operationName,right));
+                throw new NutsSecurityException(session, NutsMessage.ofCstyle("%s : %s not allowed!",operationName,right));
             }
         }
 //        return this;
@@ -183,7 +183,7 @@ public class DefaultNutsRepositorySecurityModel {
         if (NutsWorkspaceConfigManagerExt.of(session.config())
                 .getModel().createAuthenticationAgent(authenticationAgent, session) == null) {
             throw new NutsIllegalArgumentException(session,
-                    NutsMessage.cstyle("unsupported Authentication Agent %s", authenticationAgent)
+                    NutsMessage.ofCstyle("unsupported Authentication Agent %s", authenticationAgent)
             );
         }
 

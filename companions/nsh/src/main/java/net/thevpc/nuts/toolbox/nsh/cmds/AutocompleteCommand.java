@@ -75,7 +75,7 @@ public class AutocompleteCommand extends SimpleJShellBuiltin {
         Options options = context.getOptions();
         NutsSession session = context.getSession();
         if (options.cmd == null) {
-            throw new NutsExecutionException(session, NutsMessage.cstyle("missing JShellCommandNode"), 1);
+            throw new NutsExecutionException(session, NutsMessage.ofPlain("missing JShellCommandNode"), 1);
         }
         if (options.index < 0) {
             options.index = options.items.size();

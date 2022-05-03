@@ -205,7 +205,7 @@ public class DefaultTableFormat extends DefaultFormatBase<NutsTableFormat> imple
                 break;
             }
             default: {
-                throw new NutsUnsupportedArgumentException(session, NutsMessage.cstyle("unsupported position type %s", a));
+                throw new NutsUnsupportedArgumentException(session, NutsMessage.ofCstyle("unsupported position type %s", a));
             }
         }
     }
@@ -236,7 +236,7 @@ public class DefaultTableFormat extends DefaultFormatBase<NutsTableFormat> imple
     public NutsTableFormat setBorder(String borderName) {
         NutsTableBordersFormat n = parseTableBorders(borderName);
         if (n == null) {
-            throw new NutsIllegalArgumentException(getSession(), NutsMessage.cstyle("unsupported border. use one of : %s", getAvailableTableBorders()));
+            throw new NutsIllegalArgumentException(getSession(), NutsMessage.ofCstyle("unsupported border. use one of : %s", getAvailableTableBorders()));
         }
         setBorder(n);
         return this;
@@ -729,7 +729,7 @@ public class DefaultTableFormat extends DefaultFormatBase<NutsTableFormat> imple
                 return model;
             }
             default: {
-                throw new NutsUnsupportedArgumentException(session, NutsMessage.cstyle("unsupported %s", elem.type()));
+                throw new NutsUnsupportedArgumentException(session, NutsMessage.ofCstyle("unsupported %s", elem.type()));
             }
         }
     }

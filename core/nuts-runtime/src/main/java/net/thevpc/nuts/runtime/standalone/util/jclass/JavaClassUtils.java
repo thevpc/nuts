@@ -87,7 +87,7 @@ public class JavaClassUtils {
             mainClass = getMainClassType(classStream, session);
         } catch (Exception ex) {
             NutsLoggerOp.of(CorePlatformUtils.class, session).level(Level.FINE).error(ex)
-                    .log(NutsMessage.jstyle("invalid file format {0}", sourceName));
+                    .log(NutsMessage.ofJstyle("invalid file format {0}", sourceName));
         }
         if (mainClass != null) {
             return new DefaultNutsExecutionEntry(
@@ -123,7 +123,7 @@ public class JavaClassUtils {
 
     public static String classVersionToSourceVersion(int major, int minor, NutsSession session) {
         if (major < 45) {
-            throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("invalid classVersion %s.%s", major,minor));
+            throw new NutsIllegalArgumentException(session, NutsMessage.ofCstyle("invalid classVersion %s.%s", major,minor));
         }
         if (major == 45) {
             if (minor <= 3) {
@@ -146,7 +146,7 @@ public class JavaClassUtils {
         int major = v.getNumber(0).flatMap(NutsValue::asInt).orElse(0);
         int minor = v.getNumber(1).flatMap(NutsValue::asInt).orElse(-1);
         if (major < 1) {
-            throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("invalid sourceVersion %s", sourceVersion));
+            throw new NutsIllegalArgumentException(session, NutsMessage.ofCstyle("invalid sourceVersion %s", sourceVersion));
         }
         if (major == 1) {
             switch (minor) {
@@ -164,7 +164,7 @@ public class JavaClassUtils {
                 case 9:
                     return String.valueOf(46 - minor - 2);
                 default: {
-                    throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("invalid sourceVersion %s", sourceVersion));
+                    throw new NutsIllegalArgumentException(session, NutsMessage.ofCstyle("invalid sourceVersion %s", sourceVersion));
                 }
             }
         } else {

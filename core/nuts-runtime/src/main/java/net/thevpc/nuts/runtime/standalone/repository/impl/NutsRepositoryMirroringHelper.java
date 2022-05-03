@@ -84,7 +84,7 @@ public class NutsRepositoryMirroringHelper {
                     if (c != null) {
                         if (localPath != null) {
                             NutsCp.of(session)
-                                    .from(c).to(localPath).addOptions(NutsPathOption.SAFE).run();
+                                    .from(c).to(NutsPath.of(localPath,session)).addOptions(NutsPathOption.SAFE).run();
                         } else {
                             return c;
                         }
@@ -166,7 +166,7 @@ public class NutsRepositoryMirroringHelper {
             throw new NutsNotFoundException(session, id);
         }
         if (!repo.config().setSession(session).isSupportedMirroring()) {
-            throw new NutsPushException(session, id, NutsMessage.cstyle("unable to push %s. no repository found.", id == null ? "<null>" : id));
+            throw new NutsPushException(session, id, NutsMessage.ofCstyle("unable to push %s. no repository found.", id == null ? "<null>" : id));
         }
         NutsRepository repo = this.repo;
         if (NutsBlankable.isBlank(repository)) {
@@ -178,10 +178,10 @@ public class NutsRepositoryMirroringHelper {
                 }
             }
             if (all.isEmpty()) {
-                throw new NutsPushException(session, id, NutsMessage.cstyle("unable to push %s. no repository found.", id == null ? "<null>" : id));
+                throw new NutsPushException(session, id, NutsMessage.ofCstyle("unable to push %s. no repository found.", id == null ? "<null>" : id));
             } else if (all.size() > 1) {
                 throw new NutsPushException(session, id,
-                        NutsMessage.cstyle("unable to perform push for %s. at least two Repositories (%s) provides the same nuts %s",
+                        NutsMessage.ofCstyle("unable to perform push for %s. at least two Repositories (%s) provides the same nuts %s",
                                 id,
                                 all.stream().map(NutsRepository::getName).collect(Collectors.joining(",")),
                                 id

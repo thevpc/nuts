@@ -54,7 +54,7 @@ public class InternalNutsVersionFilters extends InternalNutsTypedFilters<NutsVer
         }
         NutsVersionFilter t = as(a);
         if (t == null) {
-            throw new NutsIllegalArgumentException(getSession(), NutsMessage.cstyle("not a VersionFilter"));
+            throw new NutsIllegalArgumentException(getSession(), NutsMessage.ofPlain("not a VersionFilter"));
         }
         return t;
     }

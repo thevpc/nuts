@@ -26,10 +26,10 @@
 package net.thevpc.nuts.io;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.boot.NutsApiUtils;
 import net.thevpc.nuts.spi.NutsComponent;
 import net.thevpc.nuts.util.NutsProgressFactory;
 import net.thevpc.nuts.util.NutsProgressMonitor;
+import net.thevpc.nuts.util.NutsUtils;
 
 import java.io.File;
 import java.io.InputStream;
@@ -43,7 +43,7 @@ import java.nio.file.Path;
  */
 public interface NutsInputStreamMonitor extends NutsComponent {
     static NutsInputStreamMonitor of(NutsSession session) {
-        NutsApiUtils.checkSession(session);
+        NutsUtils.requireSession(session);
         return session.extensions().createSupported(NutsInputStreamMonitor.class, true, null);
     }
 
@@ -107,14 +107,6 @@ public interface NutsInputStreamMonitor extends NutsComponent {
      */
     NutsInputStreamMonitor setLength(long len);
 
-    /**
-     * update operation source
-     *
-     * @param path operation source
-     * @return {@code this} instance
-     */
-    NutsInputStreamMonitor setSource(String path);
-
     NutsInputStreamMonitor setSource(NutsPath inputSource);
 
     /**
@@ -141,6 +133,8 @@ public interface NutsInputStreamMonitor extends NutsComponent {
      */
     NutsInputStreamMonitor setSource(InputStream path);
 
+    NutsInputStreamMonitor setSource(NutsInputSource source);
+
     /**
      * Create monitored input stream
      *
@@ -149,6 +143,8 @@ public interface NutsInputStreamMonitor extends NutsComponent {
     InputStream create();
 
     String getSourceTypeName();
+
+    NutsInputSource getSource();
 
     NutsInputStreamMonitor setSourceTypeName(String sourceType);
 

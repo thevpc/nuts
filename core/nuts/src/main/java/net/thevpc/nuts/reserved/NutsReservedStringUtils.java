@@ -3,6 +3,7 @@ package net.thevpc.nuts.reserved;
 import net.thevpc.nuts.NutsBlankable;
 import net.thevpc.nuts.NutsMessage;
 import net.thevpc.nuts.NutsOptional;
+import net.thevpc.nuts.NutsValue;
 import net.thevpc.nuts.util.NutsStringUtils;
 
 import java.util.*;
@@ -13,21 +14,21 @@ public class NutsReservedStringUtils {
         if (value == null) {
             value = "";
         }
-        StringTokenizer st = new StringTokenizer(value, chars,true);
+        StringTokenizer st = new StringTokenizer(value, chars, true);
         List<String> all = new ArrayList<>();
-        boolean wasSep=true;
+        boolean wasSep = true;
         while (st.hasMoreElements()) {
             String s = st.nextToken();
-            if(chars.indexOf(s.charAt(0))>=0){
-                if(wasSep){
-                    s="";
+            if (chars.indexOf(s.charAt(0)) >= 0) {
+                if (wasSep) {
+                    s = "";
                     if (!ignoreEmpty) {
                         all.add(s);
                     }
                 }
-                wasSep=true;
-            }else {
-                wasSep=false;
+                wasSep = true;
+            } else {
+                wasSep = false;
                 if (trim) {
                     s = s.trim();
                 }
@@ -36,7 +37,7 @@ public class NutsReservedStringUtils {
                 }
             }
         }
-        if(wasSep){
+        if (wasSep) {
             if (!ignoreEmpty) {
                 all.add("");
             }
@@ -45,7 +46,7 @@ public class NutsReservedStringUtils {
     }
 
     public static List<String> splitDefault(String str) {
-        return split(str, " ;,\n\r\t|",true,true);
+        return split(str, " ;,\n\r\t|", true, true);
     }
 
     public static List<String> parseAndTrimToDistinctList(String s) {
@@ -57,43 +58,18 @@ public class NutsReservedStringUtils {
                 .distinct().collect(Collectors.toList());
     }
 
-    public static String joinAndTrimToNull(List<String> args){
+    public static String joinAndTrimToNull(List<String> args) {
         return NutsStringUtils.trimToNull(
-                String.join(",",args)
+                String.join(",", args)
         );
-    }
-
-
-    public static Integer parseInt(String value, Integer emptyValue, Integer errorValue) {
-        if (NutsBlankable.isBlank(value)) {
-            return emptyValue;
-        }
-        value = value.trim();
-        try {
-            return Integer.parseInt(value);
-        } catch (Exception ex) {
-            return errorValue;
-        }
-    }
-
-    public static Integer parseInt16(String value, Integer emptyValue, Integer errorValue) {
-        if (NutsBlankable.isBlank(value)) {
-            return emptyValue;
-        }
-        value = value.trim();
-        try {
-            return Integer.parseInt(value, 16);
-        } catch (Exception ex) {
-            return errorValue;
-        }
     }
 
     public static NutsOptional<Integer> parseFileSizeInBytes(String value, Integer defaultMultiplier) {
         if (NutsBlankable.isBlank(value)) {
-            return NutsOptional.ofEmpty(session -> NutsMessage.cstyle("empty size"));
+            return NutsOptional.ofEmpty(session -> NutsMessage.ofPlain("empty size"));
         }
         value = value.trim();
-        Integer i = parseInt(value, null, null);
+        Integer i = NutsValue.of(value).asInt().orNull();
         if (i != null) {
             if (defaultMultiplier != null) {
                 return NutsOptional.of(i * defaultMultiplier);
@@ -104,7 +80,7 @@ public class NutsReservedStringUtils {
         for (String s : new String[]{"kb", "mb", "gb", "k", "m", "g"}) {
             if (value.toLowerCase().endsWith(s)) {
                 String v = value.substring(0, value.length() - s.length()).trim();
-                i = parseInt(v, null, null);
+                i = NutsValue.of(v).asInt().orNull();
                 if (i != null) {
                     switch (s) {
                         case "k":
@@ -121,7 +97,7 @@ public class NutsReservedStringUtils {
             }
         }
         String finalValue = value;
-        return NutsOptional.ofError(session->NutsMessage.cstyle("invalid size :%s", finalValue));
+        return NutsOptional.ofError(session -> NutsMessage.ofCstyle("invalid size :%s", finalValue));
     }
 
     public static int firstIndexOf(String string, char[] chars) {

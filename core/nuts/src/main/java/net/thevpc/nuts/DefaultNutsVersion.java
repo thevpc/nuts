@@ -254,7 +254,7 @@ public class DefaultNutsVersion implements NutsVersion {
         int commas = 0;
         int seps = 0;
         String s = expression.trim();
-        NutsOptional<String> emptyVersion = NutsOptional.ofEmpty(session -> NutsMessage.cstyle("not a single value : %s", expression));
+        NutsOptional<String> emptyVersion = NutsOptional.ofEmpty(session -> NutsMessage.ofCstyle("not a single value : %s", expression));
         if (s.isEmpty()) {
             return emptyVersion;
         }
@@ -401,7 +401,7 @@ public class DefaultNutsVersion implements NutsVersion {
                 return NutsOptional.of(NutsValue.of(parts.get(x).string));
             }
         }
-        return NutsOptional.ofEmpty(session -> NutsMessage.cstyle("version part not found : %s", index));
+        return NutsOptional.ofEmpty(session -> NutsMessage.ofCstyle("version part not found : %s", index));
     }
 
     public NutsOptional<NutsValue> getNumber(int level) {
@@ -411,14 +411,14 @@ public class DefaultNutsVersion implements NutsVersion {
             VersionPart digit = parts.getDigit(level);
             return NutsOptional.of(
                     digit == null ? null : NutsValue.of(digit.string),
-                    s -> NutsMessage.cstyle("missing number at %s", level)
+                    s -> NutsMessage.ofCstyle("missing number at %s", level)
             );
         } else {
             int x = size + level;
             VersionPart digit = x >= 0 ? parts.getDigit(x) : null;
             return NutsOptional.of(
                     digit == null ? null : NutsValue.of(digit.string),
-                    s -> NutsMessage.cstyle("missing number at %s", level)
+                    s -> NutsMessage.ofCstyle("missing number at %s", level)
             );
         }
     }

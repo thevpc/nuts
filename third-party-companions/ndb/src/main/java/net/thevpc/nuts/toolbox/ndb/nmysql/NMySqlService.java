@@ -37,7 +37,7 @@ public class NMySqlService {
         LocalMysqlConfigService t = new LocalMysqlConfigService(name, context);
         if (t.existsConfig()) {
             if (action == NutsOpenMode.CREATE_OR_ERROR) {
-                throw new NutsIllegalArgumentException(context.getSession(), NutsMessage.cstyle("local mysql config already exist: %s", name));
+                throw new NutsIllegalArgumentException(context.getSession(), NutsMessage.ofCstyle("local mysql config already exist: %s", name));
             }
             t.loadConfig();
         } else {
@@ -47,7 +47,7 @@ public class NMySqlService {
                     break;
                 }
                 case OPEN_OR_ERROR: {
-                    throw new NutsIllegalArgumentException(context.getSession(), NutsMessage.cstyle("no such local mysql config: %s", name));
+                    throw new NutsIllegalArgumentException(context.getSession(), NutsMessage.ofCstyle("no such local mysql config: %s", name));
                 }
                 case OPEN_OR_NULL: {
                     t = null;
@@ -62,7 +62,7 @@ public class NMySqlService {
         RemoteMysqlConfigService t = new RemoteMysqlConfigService(name, context);
         if (t.existsConfig()) {
             if (action == NutsOpenMode.CREATE_OR_ERROR) {
-                throw new NutsIllegalArgumentException(context.getSession(), NutsMessage.cstyle("remote mysql config already exist: %s", name));
+                throw new NutsIllegalArgumentException(context.getSession(), NutsMessage.ofCstyle("remote mysql config already exist: %s", name));
             }
             t.loadConfig();
         } else {
@@ -72,7 +72,7 @@ public class NMySqlService {
                     break;
                 }
                 case OPEN_OR_ERROR: {
-                    throw new NutsIllegalArgumentException(context.getSession(), NutsMessage.cstyle("no such remote mysql config: %s", name));
+                    throw new NutsIllegalArgumentException(context.getSession(), NutsMessage.ofCstyle("no such remote mysql config: %s", name));
                 }
                 case OPEN_OR_NULL: {
                     t = null;

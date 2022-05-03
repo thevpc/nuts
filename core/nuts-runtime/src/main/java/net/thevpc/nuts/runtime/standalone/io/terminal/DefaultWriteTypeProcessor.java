@@ -3,15 +3,14 @@ package net.thevpc.nuts.runtime.standalone.io.terminal;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.util.NutsLogger;
 import net.thevpc.nuts.util.NutsLoggerVerb;
+import net.thevpc.nuts.util.NutsUtils;
 
 import java.util.function.Supplier;
 import java.util.logging.Level;
 
 public class DefaultWriteTypeProcessor {
-    private String askMessage;
-    private Object[] askMessageParams;
-    private String logMessage;
-    private Object[] logMessageParams;
+    private NutsMessage askMessage;
+    private NutsMessage logMessage;
     private Supplier<RuntimeException> error;
     private NutsLogger log;
     private NutsConfirmationMode writeType;
@@ -26,69 +25,43 @@ public class DefaultWriteTypeProcessor {
         return new DefaultWriteTypeProcessor(writeType, session);
     }
 
-    public DefaultWriteTypeProcessor ask(String m, Object... p) {
-        if (m == null) {
-            throw new NutsIllegalArgumentException(session,NutsMessage.cstyle("missing ask message"));
-        }
+    public DefaultWriteTypeProcessor ask(NutsMessage m) {
+        NutsUtils.requireNonNull(m, session, "message");
         this.askMessage = m;
-        this.askMessageParams = p;
         return this;
     }
 
-    public DefaultWriteTypeProcessor withLog(NutsLogger log, String m, Object... p) {
-        if (log == null) {
-            throw new NutsIllegalArgumentException(session,NutsMessage.cstyle("missing ask log"));
-        }
+    public DefaultWriteTypeProcessor withLog(NutsLogger log, NutsMessage m) {
+        NutsUtils.requireNonNull(log, session, "log");
+        NutsUtils.requireNonNull(m, session, "message");
         this.log = log;
-        if (m == null) {
-            throw new NutsIllegalArgumentException(session,NutsMessage.cstyle("missing log message"));
-        }
         this.logMessage = m;
-        this.logMessageParams = p;
         return this;
     }
 
     public DefaultWriteTypeProcessor onError(Supplier<RuntimeException> error) {
-        if (error == null) {
-            throw new NutsIllegalArgumentException(session,NutsMessage.cstyle("missing error handler"));
-        }
+        NutsUtils.requireNonNull(error, session, "error handler");
         this.error = error;
         return this;
     }
 
-    private String getAskMessage() {
-        if (askMessage == null) {
-            throw new NutsIllegalArgumentException(session,NutsMessage.cstyle("missing ask message"));
-        }
+    private NutsMessage getValidAskMessage() {
+        NutsUtils.requireNonNull(askMessage, session, "message");
         return askMessage;
     }
 
-    private Object[] getAskMessageParams() {
-        return askMessageParams == null ? new Object[0] : askMessageParams;
-    }
-
-    private String getLogMessage() {
-        if (logMessage == null) {
-            throw new NutsIllegalArgumentException(session,NutsMessage.cstyle("missing log message"));
-        }
+    private NutsMessage getValidLogMessage() {
+        NutsUtils.requireNonNull(logMessage, session, "log message");
         return logMessage;
     }
 
-    private Object[] getLogMessageParams() {
-        return logMessageParams == null ? new Object[0] : logMessageParams;
-    }
-
-    private Supplier<RuntimeException> getError() {
-        if (error == null) {
-            throw new NutsIllegalArgumentException(session,NutsMessage.cstyle("missing error handler"));
-        }
+    private Supplier<RuntimeException> getValidError() {
+        NutsUtils.requireNonNull(error, session, "error handler");
         return error;
     }
 
-    private NutsLogger getLog() {
-        if (log == null) {
-            throw new NutsIllegalArgumentException(session,NutsMessage.cstyle("missing log"));
-        }
+    private NutsLogger getValidLog() {
+        NutsUtils.requireNonNull(log, session, "log");
         return log;
     }
 
@@ -96,25 +69,25 @@ public class DefaultWriteTypeProcessor {
     public boolean process() {
         switch (writeType) {
             case ERROR: {
-                throw getError().get();
+                throw getValidError().get();
             }
             case ASK: {
                 if (!session.getTerminal().ask()
                         .setSession(session)
-                        .forBoolean(getAskMessage(), getAskMessageParams())
+                        .forBoolean(getValidAskMessage())
                         .setDefaultValue(false).getBooleanValue()) {
                     return false;
                 }
                 break;
             }
             case NO: {
-                getLog().with().session(session).level(Level.FINE).verb(NutsLoggerVerb.WARNING)
-                        .log( NutsMessage.jstyle(getLogMessage(), getLogMessageParams()));
+                getValidLog().with().session(session).level(Level.FINE).verb(NutsLoggerVerb.WARNING)
+                        .log(getValidLogMessage());
                 return false;
             }
         }
-        getLog().with().session(session).level(Level.FINE).verb(NutsLoggerVerb.WARNING)
-                .log( NutsMessage.jstyle(getLogMessage(), getLogMessageParams()));
+        getValidLog().with().session(session).level(Level.FINE).verb(NutsLoggerVerb.WARNING)
+                .log(getValidLogMessage());
         return true;
     }
 }

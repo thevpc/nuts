@@ -26,9 +26,9 @@
  */
 package net.thevpc.nuts;
 
-import net.thevpc.nuts.boot.NutsApiUtils;
 import net.thevpc.nuts.io.NutsPath;
 import net.thevpc.nuts.spi.NutsComponent;
+import net.thevpc.nuts.util.NutsUtils;
 
 import java.io.File;
 import java.io.InputStream;
@@ -40,7 +40,7 @@ import java.util.List;
  */
 public interface NutsExecutionEntries extends NutsComponent {
     static NutsExecutionEntries of(NutsSession session) {
-        NutsApiUtils.checkSession(session);
+        NutsUtils.requireSession(session);
         return session.extensions().createSupported(NutsExecutionEntries.class, true, null);
     }
 

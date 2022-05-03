@@ -25,12 +25,12 @@ public class NProjectsSubService {
     public void addProject(NProject p) {
         String name = p.getName();
         if (name == null) {
-            throw new NutsIllegalArgumentException(context.getSession(), NutsMessage.cstyle("invalid project"));
+            throw new NutsIllegalArgumentException(context.getSession(), NutsMessage.ofPlain("invalid project"));
         }
         p.setId(null);
         NProject p0 = getProject(name);
         if (p0 != null) {
-            throw new NutsIllegalArgumentException(context.getSession(), NutsMessage.cstyle("project already exists: %d", name));
+            throw new NutsIllegalArgumentException(context.getSession(), NutsMessage.ofCstyle("project already exists: %d", name));
         }
         if (p.getBeneficiary() == null) {
             p.setBeneficiary("unspecified");
@@ -63,7 +63,7 @@ public class NProjectsSubService {
     public void updateProject(NProject p) {
         String name = p.getName();
         if (name == null) {
-            throw new NutsIllegalArgumentException(context.getSession(),NutsMessage.cstyle("invalid project"));
+            throw new NutsIllegalArgumentException(context.getSession(),NutsMessage.ofPlain("invalid project"));
         }
         String id = p.getId();
         if (id == null) {
@@ -91,7 +91,7 @@ public class NProjectsSubService {
     public NProject getProjectOrError(String projectNameOrId) {
         NProject p = getProject(projectNameOrId);
         if (p == null) {
-            throw new NutsIllegalArgumentException(context.getSession(),NutsMessage.cstyle("project not found %s", projectNameOrId));
+            throw new NutsIllegalArgumentException(context.getSession(),NutsMessage.ofCstyle("project not found %s", projectNameOrId));
         }
         return p;
     }
@@ -120,7 +120,7 @@ public class NProjectsSubService {
                 }
                 sb.append(countTasks > 1 ? "one task" : (countTasks + " task"));
             }
-            throw new NutsIllegalArgumentException(context.getSession(),NutsMessage.cstyle("Project is used in %s. It cannot be removed.",sb));
+            throw new NutsIllegalArgumentException(context.getSession(),NutsMessage.ofCstyle("Project is used in %s. It cannot be removed.",sb));
         }
         return dal.delete(NProject.class, projectName);
     }

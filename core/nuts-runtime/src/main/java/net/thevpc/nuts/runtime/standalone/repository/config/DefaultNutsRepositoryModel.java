@@ -78,7 +78,7 @@ public class DefaultNutsRepositoryModel {
                         y = m;
                     } else {
                         throw new NutsIllegalArgumentException(session,
-                                NutsMessage.cstyle("ambiguous repository name %s found two Ids %s and %s",
+                                NutsMessage.ofCstyle("ambiguous repository name %s found two Ids %s and %s",
                                         repositoryNameOrId, y.getUuid(), m.getUuid()
                                 )
                         );
@@ -104,7 +104,7 @@ public class DefaultNutsRepositoryModel {
                         y = m;
                     } else {
                         throw new NutsIllegalArgumentException(session,
-                                NutsMessage.cstyle("ambiguous repository name %s found two Ids %s and %s",
+                                NutsMessage.ofCstyle("ambiguous repository name %s found two Ids %s and %s",
                                         repositoryNameOrId, y.getUuid(), m.getUuid()
                                 )
                         );
@@ -130,7 +130,7 @@ public class DefaultNutsRepositoryModel {
                         y = m;
                     } else {
                         throw new NutsIllegalArgumentException(session,
-                                NutsMessage.cstyle("ambiguous repository name %s found two Ids %s and %s",
+                                NutsMessage.ofCstyle("ambiguous repository name %s found two Ids %s and %s",
                                         repositoryNameOrId, y.getUuid(), m.getUuid()
                                 )
 
@@ -255,7 +255,7 @@ public class DefaultNutsRepositoryModel {
                         return null;
                     }
                     throw new NutsInvalidRepositoryException(session, options.getLocation(),
-                            NutsMessage.cstyle("invalid repository location ", options.getLocation())
+                            NutsMessage.ofCstyle("invalid repository location ", options.getLocation())
                     );
                 }
                 options.setConfig(conf);
@@ -305,15 +305,15 @@ public class DefaultNutsRepositoryModel {
             String repoType = NutsRepositoryUtils.getRepoType(conf);
             if (options.isTemporary()) {
                 if (NutsBlankable.isBlank(repoType)) {
-                    throw new NutsInvalidRepositoryException(session, options.getName(), NutsMessage.cstyle("unable to detect valid type for temporary repository"));
+                    throw new NutsInvalidRepositoryException(session, options.getName(), NutsMessage.ofPlain("unable to detect valid type for temporary repository"));
                 } else {
-                    throw new NutsInvalidRepositoryException(session, options.getName(), NutsMessage.cstyle("invalid repository type %s", repoType));
+                    throw new NutsInvalidRepositoryException(session, options.getName(), NutsMessage.ofCstyle("invalid repository type %s", repoType));
                 }
             } else {
                 if (NutsBlankable.isBlank(repoType)) {
-                    throw new NutsInvalidRepositoryException(session, options.getName(), NutsMessage.cstyle("unable to detect valid type for repository %s",options.getName()));
+                    throw new NutsInvalidRepositoryException(session, options.getName(), NutsMessage.ofCstyle("unable to detect valid type for repository %s",options.getName()));
                 } else {
-                    throw new NutsInvalidRepositoryException(session, options.getName(), NutsMessage.cstyle("invalid repository type %s", repoType));
+                    throw new NutsInvalidRepositoryException(session, options.getName(), NutsMessage.ofCstyle("invalid repository type %s", repoType));
                 }
             }
         } catch (RuntimeException ex) {
@@ -330,7 +330,7 @@ public class DefaultNutsRepositoryModel {
         try {
             r = NutsRepositoryLocation.of(repositoryNamedUrl,NutsRepositoryDB.of(session),session);
         } catch (Exception ex) {
-            throw new NutsInvalidRepositoryException(session, repositoryNamedUrl, NutsMessage.cstyle("invalid repository definition"));
+            throw new NutsInvalidRepositoryException(session, repositoryNamedUrl, NutsMessage.ofPlain("invalid repository definition"));
         }
         NutsAddRepositoryOptions options = NutsRepositorySelectorHelper.createRepositoryOptions(r, true, session);
         return addRepository(options, session);
@@ -372,25 +372,25 @@ public class DefaultNutsRepositoryModel {
         NutsBootManager wboot = session.boot().setSession(session);
         NutsWorkspaceEnvManager wenv = session.env().setSession(session);
         if (wconfig.isReadOnly()) {
-            throw new NutsIOException(session, NutsMessage.cstyle("error loading repository %s", file), ex);
+            throw new NutsIOException(session, NutsMessage.ofCstyle("error loading repository %s", file), ex);
         }
         String fileName = "nuts-repository" + (name == null ? "" : ("-") + name) + (uuid == null ? "" : ("-") + uuid) + "-" + Instant.now().toString();
         LOG.with().session(session).level(Level.SEVERE).verb(NutsLoggerVerb.FAIL).log(
-                NutsMessage.jstyle("erroneous repository config file. Unable to load file {0} : {1}", file, ex));
+                NutsMessage.ofJstyle("erroneous repository config file. Unable to load file {0} : {1}", file, ex));
         NutsPath logError = session.locations().getStoreLocation(getWorkspace().getApiId(), NutsStoreLocation.LOG)
                 .resolve("invalid-config");
         try {
             logError.mkParentDirs();
         } catch (Exception ex1) {
-            throw new NutsIOException(session, NutsMessage.cstyle("unable to log repository error while loading config file %s : %s", file, ex1), ex);
+            throw new NutsIOException(session, NutsMessage.ofCstyle("unable to log repository error while loading config file %s : %s", file, ex1), ex);
         }
         NutsPath newfile = logError.resolve(fileName + ".json");
         LOG.with().session(session).level(Level.SEVERE).verb(NutsLoggerVerb.FAIL)
-                .log(NutsMessage.jstyle("erroneous repository config file will be replaced by a fresh one. Old config is copied to {0}", newfile));
+                .log(NutsMessage.ofJstyle("erroneous repository config file will be replaced by a fresh one. Old config is copied to {0}", newfile));
         try {
             Files.move(file.toFile(), newfile.toFile());
         } catch (IOException e) {
-            throw new NutsIOException(session, NutsMessage.cstyle("nable to load and re-create repository config file %s : %s", file, e), ex);
+            throw new NutsIOException(session, NutsMessage.ofCstyle("nable to load and re-create repository config file %s : %s", file, e), ex);
         }
 
         try (PrintStream o = new PrintStream(logError.resolve(fileName + ".error").getOutputStream())) {

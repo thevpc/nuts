@@ -1,14 +1,14 @@
 package net.thevpc.nuts.spi;
 
 import net.thevpc.nuts.NutsSession;
-import net.thevpc.nuts.boot.NutsApiUtils;
+import net.thevpc.nuts.util.NutsUtils;
 
 import java.util.Set;
 
 @NutsComponentScope(NutsComponentScopeType.WORKSPACE)
 public interface NutsRepositoryDB extends NutsComponent{
     static NutsRepositoryDB of(NutsSession session){
-        NutsApiUtils.checkSession(session);
+        NutsUtils.requireSession(session);
         return session.extensions().createSupported(NutsRepositoryDB.class, true, session);
     }
 

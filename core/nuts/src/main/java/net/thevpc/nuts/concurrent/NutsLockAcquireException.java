@@ -56,7 +56,7 @@ public class NutsLockAcquireException extends NutsLockException {
      */
     public NutsLockAcquireException(NutsSession session, NutsMessage message, Object lockedObject, Object lockObject) {
         super(session,
-                message == null ? NutsMessage.cstyle("unable to acquire lock for %s", lockedObject)
+                message == null ? NutsMessage.ofCstyle("unable to acquire lock for %s", lockedObject)
                         : message, lockedObject, lockObject
         );
     }
@@ -72,7 +72,7 @@ public class NutsLockAcquireException extends NutsLockException {
      */
     public NutsLockAcquireException(NutsSession session, NutsMessage message, Object lockedObject, Object lockObject, Throwable cause) {
         super(session,
-                message == null ? NutsMessage.cstyle("unable to acquire lock for %s", lockedObject)
+                message == null ? NutsMessage.ofCstyle("unable to acquire lock for %s", lockedObject)
                         : message, lockObject, cause
         );
     }

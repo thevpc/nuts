@@ -76,9 +76,7 @@ public class Test06_UpdateTest {
                 "--standalone",
                 "--standalone-repositories",
                 "--yes",
-                "--progress=newline",
-                "--skip-companions",
-                "--verbose"
+                "--skip-companions"
         );
         NutsRepository updateRepo1 = uws.repos().addRepository("local");
 //        uws.config().save();
@@ -147,7 +145,6 @@ public class Test06_UpdateTest {
         NutsSession nws = TestUtils.openNewTestWorkspace(
                 "--standalone",
                 "--standalone-repositories",
-                "--progress=newline",
                 "--yes",
                 "--skip-companions"
         );

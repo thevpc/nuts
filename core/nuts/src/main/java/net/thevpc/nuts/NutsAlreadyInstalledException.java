@@ -56,7 +56,7 @@ public class NutsAlreadyInstalledException extends NutsInstallationException {
      * @param cause   exception
      */
     public NutsAlreadyInstalledException(NutsSession session, NutsId id, NutsMessage msg, Exception cause) {
-        super(session, id, msg == null ? NutsMessage.cstyle("already installed %s", (id == null ? "<null>" : id)) : msg, cause);
+        super(session, id, msg == null ? NutsMessage.ofCstyle("already installed %s", (id == null ? "<null>" : id)) : msg, cause);
     }
 
 }

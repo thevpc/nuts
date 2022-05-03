@@ -77,7 +77,7 @@ public abstract class AbstractJShellBuiltin implements JShellBuiltin {
         context.getShellContext().setAutoComplete(autoComplete);
         try {
             if (autoComplete == null) {
-                throw new NutsIllegalArgumentException(context.getSession(),  NutsMessage.cstyle("missing auto-complete"));
+                throw new NutsIllegalArgumentException(context.getSession(),  NutsMessage.ofPlain("missing auto-complete"));
             }
             NutsCommandAutoCompleteComponent best = context.getSession().extensions().createServiceLoader(NutsCommandAutoCompleteComponent.class, JShellBuiltin.class, NutsCommandAutoCompleteComponent.class.getClassLoader())
                     .loadBest(AbstractJShellBuiltin.this);
@@ -110,7 +110,7 @@ public abstract class AbstractJShellBuiltin implements JShellBuiltin {
             throw new NutsExecutionException(context.getSession(),ex.getFormattedMessage(),ex,254);
         } catch (Exception ex) {
             throw new NutsExecutionException(context.getSession(),
-                    NutsMessage.formatted(NutsTexts.of(context.getSession()).toText(ex).toString())
+                    NutsMessage.ofNtf(NutsTexts.of(context.getSession()).toText(ex).toString())
                     ,ex,254);
         }
     }
@@ -175,7 +175,7 @@ public abstract class AbstractJShellBuiltin implements JShellBuiltin {
         }else{
             printStream.printf("%s: command failed with code %s%n",getName(),errorCode);
         }
-        throw new NutsExecutionException(session,NutsMessage.formatted(printStream.toString()), errorCode);
+        throw new NutsExecutionException(session,NutsMessage.ofNtf(printStream.toString()), errorCode);
     }
 
 }

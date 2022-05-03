@@ -36,7 +36,7 @@ public final class CoreNutsUtilGui {
         try {
             NutsTexts text = NutsTexts.of(session);
             if (title == null) {
-                title = NutsMessage.cstyle("Nuts Package Manager - %s", Nuts.getVersion());
+                title = NutsMessage.ofCstyle("Nuts Package Manager - %s", Nuts.getVersion());
             }
             String line = javax.swing.JOptionPane.showInputDialog(
                     null,
@@ -55,10 +55,10 @@ public final class CoreNutsUtilGui {
 
     public static String inputPassword(NutsMessage message, NutsMessage title, NutsSession session) {
         if (title == null) {
-            title = NutsMessage.cstyle("Nuts Package Manager - %s", Nuts.getVersion());
+            title = NutsMessage.ofCstyle("Nuts Package Manager - %s", Nuts.getVersion());
         }
         if (message == null) {
-            message = NutsMessage.plain("");
+            message = NutsMessage.ofPlain("");
         }
         NutsTexts text = NutsTexts.of(session);
         String messageString = text.toText(message).filteredText();
@@ -86,7 +86,7 @@ public final class CoreNutsUtilGui {
 
     public static void showMessage(NutsMessage message, NutsMessage title, NutsSession session) {
         if (title == null) {
-            title = NutsMessage.cstyle("Nuts Package Manager - %s", Nuts.getVersion());
+            title = NutsMessage.ofCstyle("Nuts Package Manager - %s", Nuts.getVersion());
         }
         NutsTexts text = NutsTexts.of(session);
         String messageString = text.toText(message==null?"":message).filteredText();

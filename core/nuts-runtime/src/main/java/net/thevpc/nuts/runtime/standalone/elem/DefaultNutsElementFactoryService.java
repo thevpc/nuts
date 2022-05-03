@@ -208,7 +208,7 @@ public class DefaultNutsElementFactoryService implements NutsElementFactoryServi
         }
         Class cls = ReflectUtils.getRawClass(type);
         if(NutsSession.class.isAssignableFrom(cls)){
-            throw new NutsIllegalArgumentException(session, NutsMessage.cstyle(
+            throw new NutsIllegalArgumentException(session, NutsMessage.ofCstyle(
                     "%s is not serializable", type
             ));
         }
@@ -229,7 +229,7 @@ public class DefaultNutsElementFactoryService implements NutsElementFactoryServi
         if (r != null) {
             return r;
         }
-        throw new NutsIllegalArgumentException(session, NutsMessage.cstyle(
+        throw new NutsIllegalArgumentException(session, NutsMessage.ofCstyle(
                 "unable to find serialization factory for %s", type
         ));
     }

@@ -66,7 +66,7 @@ public class NutsSettingsAliasSubCommand extends AbstractNutsSettingsSubCommand 
                                             NutsWorkspaceCustomCommand::getName,
                                             x -> NutsCommandLine.of(x.getCommand()).toString(),
                                             (x, y) -> {
-                                                throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("duplicate %s", x));
+                                                throw new NutsIllegalArgumentException(session, NutsMessage.ofCstyle("duplicate %s", x));
                                             },
                                             //preserve order
                                             LinkedHashMap::new

@@ -628,7 +628,7 @@ public class StyledParserStep extends ParserStep {
                 if (s != null) {
                     return text.applyStyles(a, s);
                 }
-                throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("unable to resolve style from %s",name.toString()));
+                throw new NutsIllegalArgumentException(session, NutsMessage.ofCstyle("unable to resolve style from %s",name.toString()));
             }
         }
         throw new NutsUnsupportedEnumException(session, curState);

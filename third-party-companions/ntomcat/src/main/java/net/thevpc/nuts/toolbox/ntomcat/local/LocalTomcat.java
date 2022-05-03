@@ -104,11 +104,11 @@ public class LocalTomcat {
                         ps(cmdLine);
                         return;
                     default:
-                        throw new NutsExecutionException(session, NutsMessage.cstyle("unsupported action %s", a.asString()), 1);
+                        throw new NutsExecutionException(session, NutsMessage.ofCstyle("unsupported action %s", a.asString()), 1);
                 }
             }
         }
-        throw new NutsExecutionException(session, NutsMessage.cstyle("missing tomcat action. Type: nuts tomcat --help"), 1);
+        throw new NutsExecutionException(session, NutsMessage.ofPlain("missing tomcat action. Type: nuts tomcat --help"), 1);
     }
 
     public void list(NutsCommandLine args) {
@@ -280,13 +280,13 @@ public class LocalTomcat {
                 }
                 default: {
                     args.pushBack(a, session);
-                    args.setCommandName("tomcat --local add").throwUnexpectedArgument(NutsMessage.cstyle("expected instance|domain|app"), session);
+                    args.setCommandName("tomcat --local add").throwUnexpectedArgument(NutsMessage.ofPlain("expected instance|domain|app"), session);
                     return;
                 }
             }
         }
         args.setCommandName("tomcat --local add")
-                .throwMissingArgument(NutsMessage.cstyle("expected instance|domain|app"),session);
+                .throwMissingArgument(NutsMessage.ofPlain("expected instance|domain|app"),session);
     }
 
     public void addInstance(LocalTomcatConfigService c, NutsCommandLine args, NutsOpenMode autoCreate) {
@@ -408,7 +408,7 @@ public class LocalTomcat {
                     LocalTomcatConfigService s = nextLocalTomcatConfigService(args, NutsOpenMode.OPEN_OR_ERROR);
                     if (session.getTerminal().ask()
                             .resetLine()
-                            .forBoolean("Confirm Deleting %s?", s.getName()).setDefaultValue(true).getBooleanValue()) {
+                            .forBoolean(NutsMessage.ofCstyle("Confirm Deleting %s?", s.getName())).setDefaultValue(true).getBooleanValue()) {
                         s.remove();
                     }
                     return;
@@ -417,7 +417,7 @@ public class LocalTomcat {
                     LocalTomcatDomainConfigService s = nextLocalTomcatDomainConfigService(args, NutsOpenMode.OPEN_OR_ERROR);
                     if (session.getTerminal().ask()
                             .resetLine()
-                            .forBoolean("Confirm Deleting %s?", s.getName()).setDefaultValue(true).getBooleanValue()) {
+                            .forBoolean(NutsMessage.ofCstyle("Confirm Deleting %s?", s.getName())).setDefaultValue(true).getBooleanValue()) {
                         s.remove();
                         s.getTomcat().save();
                     }
@@ -427,7 +427,7 @@ public class LocalTomcat {
                     LocalTomcatAppConfigService s = nextLocalTomcatAppConfigService(args, NutsOpenMode.OPEN_OR_ERROR);
                     if (session.getTerminal().ask()
                             .resetLine()
-                            .forBoolean("Confirm Deleting %s?", s.getName()).setDefaultValue(true).getBooleanValue()) {
+                            .forBoolean(NutsMessage.ofCstyle("Confirm Deleting %s?", s.getName())).setDefaultValue(true).getBooleanValue()) {
                         s.remove();
                         s.getTomcat().save();
                     }
@@ -435,7 +435,7 @@ public class LocalTomcat {
                 }
             }
         }
-        args.throwMissingArgument(NutsMessage.cstyle("expected instance|domain|app"),session);
+        args.throwMissingArgument(NutsMessage.ofPlain("expected instance|domain|app"),session);
     }
 
     public void stop(NutsCommandLine args) {
@@ -447,7 +447,7 @@ public class LocalTomcat {
             context.configureLast(args);
         }
         if (!c.stop()) {
-            throw new NutsExecutionException(context.getSession(), NutsMessage.cstyle("unable to stop"), 1);
+            throw new NutsExecutionException(context.getSession(), NutsMessage.ofPlain("unable to stop"), 1);
         }
     }
 
@@ -516,10 +516,10 @@ public class LocalTomcat {
             }
         }
         if (app == null) {
-            throw new NutsExecutionException(context.getSession(), NutsMessage.cstyle("tomcat install: Missing Application"), 2);
+            throw new NutsExecutionException(context.getSession(), NutsMessage.ofPlain("tomcat install: Missing Application"), 2);
         }
         if (file == null) {
-            throw new NutsExecutionException(context.getSession(), NutsMessage.cstyle("tomcat install: Missing File"), 2);
+            throw new NutsExecutionException(context.getSession(), NutsMessage.ofPlain("tomcat install: Missing File"), 2);
         }
         app.install(version, file, true);
     }
@@ -538,7 +538,7 @@ public class LocalTomcat {
                 args.setCommandName("tomcat --local delete").throwUnexpectedArgument(session);
             }
         } else {
-            args.setCommandName("tomcat --local delete").throwUnexpectedArgument(NutsMessage.cstyle("missing log|temp|work"),session);
+            args.setCommandName("tomcat --local delete").throwUnexpectedArgument(NutsMessage.ofPlain("missing log|temp|work"),session);
         }
     }
 
@@ -796,7 +796,7 @@ public class LocalTomcat {
             }
         }
         if (file == null) {
-            throw new NutsExecutionException(context.getSession(), NutsMessage.cstyle("tomcat deploy: Missing File"), 2);
+            throw new NutsExecutionException(context.getSession(), NutsMessage.ofPlain("tomcat deploy: Missing File"), 2);
         }
         LocalTomcatConfigService c = openTomcatConfig(instance, NutsOpenMode.OPEN_OR_ERROR);
         c.deployFile(NutsPath.of(file,getContext().getSession()), contextName, domain);
@@ -940,10 +940,10 @@ public class LocalTomcat {
             LocalTomcatDomainConfigService d = u.getDomain(strings[1], null);
             LocalTomcatAppConfigService a = u.getApp(strings[1], null);
             if (d != null && a != null) {
-                throw new NutsExecutionException(context.getSession(), NutsMessage.cstyle("ambiguous name %s. Could be either domain or app", name), 3);
+                throw new NutsExecutionException(context.getSession(), NutsMessage.ofCstyle("ambiguous name %s. Could be either domain or app", name), 3);
             }
             if (d == null && a == null) {
-                throw new NutsExecutionException(context.getSession(), NutsMessage.cstyle("unknown name %s. it is no domain nor app", name), 3);
+                throw new NutsExecutionException(context.getSession(), NutsMessage.ofCstyle("unknown name %s. it is no domain nor app", name), 3);
             }
             if (d != null) {
                 return d;

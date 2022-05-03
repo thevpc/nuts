@@ -21,11 +21,11 @@ public class NutsPathPartList implements Iterable<NutsPathPart> {
             NutsPathPart p = list.get(i);
             if (p.isName()) {
                 if (i > 0) {
-                    throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("invalid part %s at %i", p, i));
+                    throw new NutsIllegalArgumentException(session, NutsMessage.ofCstyle("invalid part %s at %i", p, i));
                 }
             } else if (p.isTrailingSeparator()) {
                 if (i != list.size() - 1) {
-                    throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("invalid part %s at %i", p, i));
+                    throw new NutsIllegalArgumentException(session, NutsMessage.ofCstyle("invalid part %s at %i", p, i));
                 }
             }
         }

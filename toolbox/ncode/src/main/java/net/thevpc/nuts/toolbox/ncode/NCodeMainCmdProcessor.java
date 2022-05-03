@@ -82,7 +82,7 @@ class NCodeMainCmdProcessor implements NutsAppCmdProcessor {
             paths.add(".");
         }
         if(typeComparators.isEmpty() && fileComparators.isEmpty()){
-            commandline.throwError(NutsMessage.plain("missing filter"),session);
+            commandline.throwError(NutsMessage.ofPlain("missing filter"),session);
         }
         List<Object> results=new ArrayList<>();
         if(!typeComparators.isEmpty()) {

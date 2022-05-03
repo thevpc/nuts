@@ -45,7 +45,7 @@ public class DefaultNutsQuestionFormat<T> implements NutsQuestionFormat<T> {
                 return Arrays.asList(true, false);
             }
             default: {
-                throw new NutsUnsupportedArgumentException(session, NutsMessage.cstyle("unsupported type %s", type.getName()));
+                throw new NutsUnsupportedArgumentException(session, NutsMessage.ofCstyle("unsupported type %s", type.getName()));
             }
         }
     }

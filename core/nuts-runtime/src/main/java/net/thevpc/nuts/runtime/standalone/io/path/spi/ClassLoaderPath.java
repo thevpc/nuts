@@ -18,7 +18,7 @@ public class ClassLoaderPath extends URLPath {
         this.loader = loader;
         if (!path.startsWith("classpath://")) {
             throw new NutsIllegalArgumentException(session,
-                    NutsMessage.cstyle("invalid classpath url format: %s", path)
+                    NutsMessage.ofCstyle("invalid classpath url format: %s", path)
             );
         }
     }

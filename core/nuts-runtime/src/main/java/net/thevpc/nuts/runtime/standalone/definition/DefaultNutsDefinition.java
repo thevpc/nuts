@@ -23,11 +23,9 @@
  */
 package net.thevpc.nuts.runtime.standalone.definition;
 
-import java.nio.file.Path;
 import java.util.Objects;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.elem.NutsElementNotFoundException;
 import net.thevpc.nuts.io.NutsPath;
 
 /**
@@ -56,7 +54,7 @@ public class DefaultNutsDefinition implements NutsDefinition {
         this.content = content;
         this.id = id;
         if (!id.isLongId()) {
-            throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("id should not have query defined in descriptors : %s",id));
+            throw new NutsIllegalArgumentException(session, NutsMessage.ofCstyle("id should not have query defined in descriptors : %s",id));
         }
         this.installInformation = install;
         this.repositoryUuid = repoUuid;
@@ -123,22 +121,22 @@ public class DefaultNutsDefinition implements NutsDefinition {
 
     @Override
     public NutsOptional<NutsPath> getContent() {
-        return NutsOptional.of(content,s->NutsMessage.cstyle("content not found for id %s",getId()));
+        return NutsOptional.of(content,s->NutsMessage.ofCstyle("content not found for id %s",getId()));
     }
 
     @Override
     public NutsOptional<NutsDescriptor> getEffectiveDescriptor() {
-        return NutsOptional.of(effectiveDescriptor,s->NutsMessage.cstyle("unable to get effectiveDescriptor for id %s. You need to call search.setEffective(...) first.",getId()));
+        return NutsOptional.of(effectiveDescriptor,s->NutsMessage.ofCstyle("unable to get effectiveDescriptor for id %s. You need to call search.setEffective(...) first.",getId()));
     }
 
     @Override
     public NutsOptional<NutsInstallInformation> getInstallInformation() {
-        return NutsOptional.of(installInformation,s->NutsMessage.cstyle("unable to get install information for id %s.",getId()));
+        return NutsOptional.of(installInformation,s->NutsMessage.ofCstyle("unable to get install information for id %s.",getId()));
     }
 
     @Override
     public NutsOptional<NutsDependencies> getDependencies() {
-        return NutsOptional.of(dependencies,s->NutsMessage.cstyle("unable to get dependencies for id %s. You need to call search.setDependencies(...) first.",getId()));
+        return NutsOptional.of(dependencies,s->NutsMessage.ofCstyle("unable to get dependencies for id %s. You need to call search.setDependencies(...) first.",getId()));
     }
 
     public DefaultNutsDefinition setContent(NutsPath content) {

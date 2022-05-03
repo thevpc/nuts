@@ -34,7 +34,7 @@ public class NewLineParserStep extends ParserStep {
 
     @Override
     public void appendChild(ParserStep tt) {
-        throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("unsupported"));
+        throw new NutsUnsupportedOperationException(session);
     }
 
     @Override

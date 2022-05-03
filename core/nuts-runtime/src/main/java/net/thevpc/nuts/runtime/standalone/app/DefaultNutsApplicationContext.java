@@ -10,6 +10,9 @@ import net.thevpc.nuts.runtime.standalone.util.NutsConfigurableHelper;
 import net.thevpc.nuts.runtime.standalone.util.jclass.JavaClassUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.NutsWorkspaceExt;
 import net.thevpc.nuts.runtime.standalone.workspace.NutsWorkspaceUtils;
+import net.thevpc.nuts.text.NutsTextStyle;
+import net.thevpc.nuts.text.NutsTexts;
+import net.thevpc.nuts.util.NutsUtils;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -49,7 +52,7 @@ public class DefaultNutsApplicationContext implements NutsApplicationContext {
     public DefaultNutsApplicationContext(NutsWorkspace workspace, NutsSession session, List<String> args, Class appClass, String storeId, long startTimeMillis) {
         this.startTimeMillis = startTimeMillis <= 0 ? System.currentTimeMillis() : startTimeMillis;
         if (workspace == null && session == null) {
-            throw new IllegalArgumentException("missing workpace and/or session");
+            NutsUtils.requireSession(session);
         } else if (workspace != null) {
             if (session == null) {
                 this.session = workspace.createSession();
@@ -69,7 +72,7 @@ public class DefaultNutsApplicationContext implements NutsApplicationContext {
                     args.get(0).substring(args.get(0).indexOf('=') + 1)).get(session);
             if (execModeCommand.hasNext()) {
                 NutsArgument a = execModeCommand.next().get(session);
-                switch(a.getStringKey().orElse("")) {
+                switch (a.getStringKey().orElse("")) {
                     case "auto-complete": {
                         mode = NutsApplicationMode.AUTO_COMPLETE;
                         if (execModeCommand.hasNext()) {
@@ -101,7 +104,7 @@ public class DefaultNutsApplicationContext implements NutsApplicationContext {
                         break;
                     }
                     default: {
-                        throw new NutsExecutionException(session, NutsMessage.cstyle("Unsupported nuts-exec-mode : %s", args.get(0)), 205);
+                        throw new NutsExecutionException(session, NutsMessage.ofCstyle("Unsupported nuts-exec-mode : %s", args.get(0)), 205);
                     }
                 }
             }
@@ -114,7 +117,7 @@ public class DefaultNutsApplicationContext implements NutsApplicationContext {
             _appId = NutsIdResolver.of(session).resolveId(appClass);
         }
         if (_appId == null) {
-            throw new NutsExecutionException(session, NutsMessage.cstyle("invalid Nuts Application (%s). Id cannot be resolved", appClass.getName()), 203);
+            throw new NutsExecutionException(session, NutsMessage.ofCstyle("invalid Nuts Application (%s). Id cannot be resolved", appClass.getName()), 203);
         }
         this.args = (args);
         this.appId = (_appId);
@@ -182,9 +185,10 @@ public class DefaultNutsApplicationContext implements NutsApplicationContext {
     public void printHelp() {
         String h = NutsWorkspaceExt.of(getWorkspace()).resolveDefaultHelp(getAppClass(), session);
         if (h == null) {
-            h = "Help is ```error missing```.";
+            getSession().out().printlnf("Help is %s.", NutsTexts.of(getSession()).ofStyled("missing", NutsTextStyle.error()));
+        } else {
+            getSession().out().println(h);
         }
-        getSession().out().println(h);
         //need flush if the help is syntactically incorrect
         getSession().out().flush();
     }
@@ -364,7 +368,7 @@ public class DefaultNutsApplicationContext implements NutsApplicationContext {
                 if (next == a) {
                     //was not consumed!
                     throw new NutsIllegalArgumentException(session,
-                            NutsMessage.cstyle("%s must consume the option: %s",
+                            NutsMessage.ofCstyle("%s must consume the option: %s",
                                     (a.isOption() ? "nextOption" : "nextNonOption"),
                                     a));
                 }
@@ -435,7 +439,7 @@ public class DefaultNutsApplicationContext implements NutsApplicationContext {
             return false;
         }
         boolean enabled = a.isActive();
-        switch(a.getStringKey().orElse("")) {
+        switch (a.getStringKey().orElse("")) {
             case "-?":
             case "-h":
             case "--help": {
@@ -445,7 +449,7 @@ public class DefaultNutsApplicationContext implements NutsApplicationContext {
                         printHelp();
                     }
                     cmd.skipAll();
-                    throw new NutsExecutionException(session, NutsMessage.cstyle("help"), 0);
+                    throw new NutsExecutionException(session, NutsMessage.ofPlain("help"), 0);
                 }
                 break;
             }
@@ -456,7 +460,7 @@ public class DefaultNutsApplicationContext implements NutsApplicationContext {
                     case UPDATE: {
                         if (enabled) {
                             cmd.skip();
-                            throw new NutsExecutionException(session, NutsMessage.cstyle("skip-event"), 0);
+                            throw new NutsExecutionException(session, NutsMessage.ofPlain("skip-event"), 0);
                         }
                     }
                 }
@@ -469,7 +473,7 @@ public class DefaultNutsApplicationContext implements NutsApplicationContext {
                         getSession().out().printf("%s%n", NutsIdResolver.of(session).resolveId(getClass()).getVersion().toString());
                         cmd.skipAll();
                     }
-                    throw new NutsExecutionException(session, NutsMessage.cstyle("version"), 0);
+                    throw new NutsExecutionException(session, NutsMessage.ofPlain("version"), 0);
                 }
                 return true;
             }
@@ -563,7 +567,7 @@ public class DefaultNutsApplicationContext implements NutsApplicationContext {
             NutsArgumentCandidate c = super.addCandidatesImpl(value);
             String v = value.getValue();
             if (v == null) {
-                throw new NutsExecutionException(session, NutsMessage.cstyle("candidate cannot be null"), 2);
+                throw new NutsExecutionException(session, NutsMessage.ofPlain("candidate cannot be null"), 2);
             }
             String d = value.getDisplay();
             if (Objects.equals(v, d) || d == null) {

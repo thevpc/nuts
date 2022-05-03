@@ -28,7 +28,7 @@ package net.thevpc.nuts.cmdline;
 import net.thevpc.nuts.NutsFormat;
 import net.thevpc.nuts.NutsSession;
 import net.thevpc.nuts.NutsShellFamily;
-import net.thevpc.nuts.boot.NutsApiUtils;
+import net.thevpc.nuts.util.NutsUtils;
 
 /**
  * Simple Command line Format
@@ -40,7 +40,7 @@ import net.thevpc.nuts.boot.NutsApiUtils;
 public interface NutsCommandLineFormat extends NutsFormat {
 
     static NutsCommandLineFormat of(NutsSession session) {
-        NutsApiUtils.checkSession(session);
+        NutsUtils.requireSession(session);
         return session.extensions().createSupported(NutsCommandLineFormat.class, true, null);
     }
 

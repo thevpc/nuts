@@ -26,11 +26,7 @@
  */
 package net.thevpc.nuts.text;
 
-import net.thevpc.nuts.NutsBlankable;
-import net.thevpc.nuts.NutsEnum;
-import net.thevpc.nuts.NutsMessage;
-import net.thevpc.nuts.NutsOptional;
-import net.thevpc.nuts.boot.NutsApiUtils;
+import net.thevpc.nuts.*;
 
 import java.util.Objects;
 
@@ -325,7 +321,7 @@ public class NutsTextStyle implements NutsEnum {
     public static NutsOptional<NutsTextStyle> parse(String value) {
         value = value == null ? "" : value.trim();
         if (value.isEmpty()) {
-            return NutsOptional.ofEmpty(s -> NutsMessage.cstyle(NutsTextStyle.class.getSimpleName() + " is empty"));
+            return NutsOptional.ofEmpty(s -> NutsMessage.ofCstyle("%s is empty", NutsTextStyle.class.getSimpleName()));
         }
         switch (value) {
             case "/":
@@ -386,30 +382,30 @@ public class NutsTextStyle implements NutsEnum {
         NutsTextStyleType t = NutsTextStyleType.parse(key).orNull();
         if (t == null) {
             if (NutsBlankable.isBlank(key)) {
-                return NutsOptional.ofEmpty(s -> NutsMessage.cstyle(NutsTextStyle.class.getSimpleName() + " is empty"));
+                return NutsOptional.ofEmpty(s -> NutsMessage.ofCstyle("%s is empty", NutsTextStyle.class.getSimpleName()));
             }
-            return NutsOptional.ofError(s -> NutsMessage.cstyle(NutsTextStyle.class.getSimpleName() + " invalid value : %s", finalValue));
+            return NutsOptional.ofError(s -> NutsMessage.ofCstyle("%s invalid value : %s", NutsTextStyle.class.getSimpleName(), finalValue));
         }
         switch (t) {
             case FORE_TRUE_COLOR:
             case BACK_TRUE_COLOR: {
-                Integer ii = NutsApiUtils.parseInt16(nbr, null, null);
+                Integer ii = NutsValue.of("0x" + nbr).asInt().orNull();
                 if (ii == null) {
                     if (NutsBlankable.isBlank(key)) {
                         ii = 0;
                     } else {
-                        return NutsOptional.ofError(s -> NutsMessage.cstyle(NutsTextStyle.class.getSimpleName() + " invalid value : %s", finalValue));
+                        return NutsOptional.ofError(s -> NutsMessage.ofCstyle(NutsTextStyle.class.getSimpleName() + " invalid value : %s", finalValue));
                     }
                 }
                 return NutsOptional.of(NutsTextStyle.of(t, ii));
             }
             default: {
-                Integer ii = NutsApiUtils.parseInt(nbr, null, null);
+                Integer ii = NutsValue.of(nbr).asInt().orNull();
                 if (ii == null) {
                     if (NutsBlankable.isBlank(key)) {
                         ii = 0;
                     } else {
-                        return NutsOptional.ofError(s -> NutsMessage.cstyle(NutsTextStyle.class.getSimpleName() + " invalid value : %s", finalValue));
+                        return NutsOptional.ofError(s -> NutsMessage.ofCstyle(NutsTextStyle.class.getSimpleName() + " invalid value : %s", finalValue));
                     }
                 }
                 return NutsOptional.of(NutsTextStyle.of(t, ii));

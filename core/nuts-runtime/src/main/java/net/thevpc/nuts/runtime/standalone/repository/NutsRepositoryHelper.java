@@ -146,7 +146,7 @@ public class NutsRepositoryHelper {
         public void fireOnAddRepository(NutsRepositoryEvent event) {
             if (u._LOG(event.getSession()).isLoggable(Level.FINEST)) {
                 u._LOGOP(event.getSession()).level(Level.FINEST).verb(NutsLoggerVerb.ADD)
-                        .log(NutsMessage.jstyle("{0} add    repo {1}", NutsStringUtils.formatAlign(u.repo.getName(), 20, NutsPositionType.FIRST), event
+                        .log(NutsMessage.ofJstyle("{0} add    repo {1}", NutsStringUtils.formatAlign(u.repo.getName(), 20, NutsPositionType.FIRST), event
                                 .getRepository().getName())
                         );
             }
@@ -164,7 +164,7 @@ public class NutsRepositoryHelper {
         public void fireOnRemoveRepository(NutsRepositoryEvent event) {
             if (u._LOG(event.getSession()).isLoggable(Level.FINEST)) {
                 u._LOGOP(event.getSession()).level(Level.FINEST).verb(NutsLoggerVerb.REMOVE).log(
-                        NutsMessage.jstyle("{0} remove repo {1}", NutsStringUtils.formatAlign(u.repo.getName(), 20,NutsPositionType.FIRST), event
+                        NutsMessage.ofJstyle("{0} remove repo {1}", NutsStringUtils.formatAlign(u.repo.getName(), 20,NutsPositionType.FIRST), event
                                 .getRepository().getName()));
             }
             for (NutsRepositoryListener listener : u.repo.getRepositoryListeners()) {

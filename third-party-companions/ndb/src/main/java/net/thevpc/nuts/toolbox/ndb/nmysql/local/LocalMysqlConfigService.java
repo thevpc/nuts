@@ -96,7 +96,7 @@ public class LocalMysqlConfigService {
             saveConfig();
             return this;
         }
-        throw new NutsIllegalArgumentException(session,NutsMessage.cstyle("no such mysql config : %s",name));
+        throw new NutsIllegalArgumentException(session,NutsMessage.ofCstyle("no such mysql config : %s",name));
     }
 
     public LocalMysqlConfigService removeConfig() {
@@ -123,7 +123,7 @@ public class LocalMysqlConfigService {
                 case OPEN_OR_NULL:
                     return null;
                 case OPEN_OR_ERROR:
-                    throw new NutsIllegalArgumentException(context.getSession(), NutsMessage.cstyle("local instance not found:%s@%s" ,dbName, getName()));
+                    throw new NutsIllegalArgumentException(context.getSession(), NutsMessage.ofCstyle("local instance not found:%s@%s" ,dbName, getName()));
                 case CREATE_OR_ERROR:
                 case OPEN_OR_CREATE: {
                     a = new LocalMysqlDatabaseConfig();
@@ -131,13 +131,13 @@ public class LocalMysqlConfigService {
                     return new LocalMysqlDatabaseConfigService(dbName, a, this);
                 }
                 default: {
-                    throw new NutsIllegalArgumentException(context.getSession(), NutsMessage.cstyle("unexpected error"));
+                    throw new NutsIllegalArgumentException(context.getSession(), NutsMessage.ofPlain("unexpected error"));
                 }
             }
         }
         switch (action) {
             case CREATE_OR_ERROR: {
-                throw new NutsIllegalArgumentException(context.getSession(), NutsMessage.cstyle("local instance not found:%s@%s",dbName,getName()));
+                throw new NutsIllegalArgumentException(context.getSession(), NutsMessage.ofCstyle("local instance not found:%s@%s",dbName,getName()));
             }
             case OPEN_OR_ERROR:
             case OPEN_OR_NULL:
@@ -145,7 +145,7 @@ public class LocalMysqlConfigService {
                 return new LocalMysqlDatabaseConfigService(dbName, a, this);
             }
             default: {
-                throw new NutsIllegalArgumentException(context.getSession(), NutsMessage.cstyle("unexpected error"));
+                throw new NutsIllegalArgumentException(context.getSession(), NutsMessage.ofPlain("unexpected error"));
             }
         }
     }

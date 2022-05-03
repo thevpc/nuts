@@ -133,7 +133,7 @@ public class HistoryCommand extends SimpleJShellBuiltin {
                         shistory.save(NutsPath.of(options.sval, session).toAbsolute(session.locations().getWorkspaceLocation()));
                     }
                 } catch (IOException ex) {
-                    throw new NutsExecutionException(session, NutsMessage.cstyle("%s", ex), ex, 100);
+                    throw new NutsExecutionException(session, NutsMessage.ofCstyle("%s", ex), ex, 100);
                 }
                 return;
             }
@@ -146,12 +146,12 @@ public class HistoryCommand extends SimpleJShellBuiltin {
                         shistory.load(NutsPath.of(options.sval, session).toAbsolute(session.locations().getWorkspaceLocation()));
                     }
                 } catch (IOException ex) {
-                    throw new NutsExecutionException(session, NutsMessage.cstyle("%s", ex), ex, 100);
+                    throw new NutsExecutionException(session, NutsMessage.ofCstyle("%s", ex), ex, 100);
                 }
                 return;
             }
             default: {
-                throw new NutsUnsupportedArgumentException(session, NutsMessage.cstyle("unsupported %s", String.valueOf(options.action)));
+                throw new NutsUnsupportedArgumentException(session, NutsMessage.ofCstyle("unsupported %s", String.valueOf(options.action)));
             }
         }
     }

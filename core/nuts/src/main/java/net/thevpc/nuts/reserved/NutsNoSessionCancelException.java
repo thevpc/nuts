@@ -26,15 +26,15 @@
  */
 package net.thevpc.nuts.reserved;
 
-import net.thevpc.nuts.NutsBootException;
 import net.thevpc.nuts.NutsMessage;
+import net.thevpc.nuts.NutsNoSessionException;
 
 /**
  *
  * @author thevpc
  */
-public class NutsReservedBootCancelException extends NutsBootException {
-    public NutsReservedBootCancelException(NutsMessage message) {
+public class NutsNoSessionCancelException extends NutsNoSessionException {
+    public NutsNoSessionCancelException(NutsMessage message) {
         super(message);
     }
 }

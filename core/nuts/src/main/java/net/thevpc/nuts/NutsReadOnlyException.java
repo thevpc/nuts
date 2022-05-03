@@ -43,7 +43,7 @@ public class NutsReadOnlyException extends NutsException {
      * @param location location
      */
     public NutsReadOnlyException(NutsSession session, String location) {
-        super(session, NutsMessage.cstyle("cannot update readonly workspace %s", NutsTexts.of(session).ofStyled(location, NutsTextStyle.path())));
+        super(session, NutsMessage.ofCstyle("cannot update readonly workspace %s", NutsTexts.of(session).ofStyled(location, NutsTextStyle.path())));
     }
 
     /**

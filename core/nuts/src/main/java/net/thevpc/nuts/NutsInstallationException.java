@@ -48,7 +48,7 @@ public abstract class NutsInstallationException extends NutsException {
      * @param ex      exception
      */
     public NutsInstallationException(NutsSession session, NutsId id, NutsMessage msg, Throwable ex) {
-        super(session, msg == null ? NutsMessage.cstyle("failed to install %s" + (id == null ? "<null>" : id)) : msg, ex);
+        super(session, msg == null ? NutsMessage.ofCstyle("failed to install %s", (id == null ? "<null>" : id)) : msg, ex);
         this.id = id;
     }
 

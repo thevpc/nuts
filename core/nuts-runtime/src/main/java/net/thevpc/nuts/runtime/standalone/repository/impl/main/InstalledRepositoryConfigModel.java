@@ -37,12 +37,12 @@ class InstalledRepositoryConfigModel implements NutsRepositoryConfigModel {
 
     @Override
     public void addMirror(NutsRepository repo, NutsSession session) {
-        throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("not supported : addMirror"));
+        throw new NutsIllegalArgumentException(session, NutsMessage.ofPlain("not supported : addMirror"));
     }
 
     @Override
     public NutsRepository addMirror(NutsAddRepositoryOptions options, NutsSession session) {
-        throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("not supported : addMirror"));
+        throw new NutsIllegalArgumentException(session, NutsMessage.ofPlain("not supported : addMirror"));
     }
 
     @Override
@@ -172,22 +172,13 @@ class InstalledRepositoryConfigModel implements NutsRepositoryConfigModel {
 
     @Override
     public void removeMirror(String repositoryId, NutsSession session) {
-        throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("not supported : removeMirror"));
+        throw new NutsIllegalArgumentException(session, NutsMessage.ofPlain("not supported : removeMirror"));
     }
 
     @Override
     public void setEnabled(boolean enabled, NutsSession options) {
     }
 
-    //        @Override
-//        public Map<String, String> getEnv(boolean inherit) {
-//            return Collections.emptyMap();
-//        }
-//
-//        @Override
-//        public String getEnv(String key, String defaultValue, boolean inherit) {
-//            return null;
-//        }
     @Override
     public void setIndexEnabled(boolean enabled, NutsSession session) {
     }
@@ -221,37 +212,37 @@ class InstalledRepositoryConfigModel implements NutsRepositoryConfigModel {
 
     @Override
     public NutsUserConfig[] getUsers(NutsSession session) {
-        throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("not supported : getUsers"));
+        throw new NutsIllegalArgumentException(session, NutsMessage.ofPlain("not supported : getUsers"));
     }
 
     @Override
     public NutsUserConfig getUser(String userId, NutsSession session) {
-        throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("not supported : getUser"));
+        throw new NutsIllegalArgumentException(session, NutsMessage.ofPlain("not supported : getUser"));
     }
 
     @Override
     public NutsRepositoryConfig getStoredConfig(NutsSession session) {
-        throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("not supported : getStoredConfig"));
+        throw new NutsIllegalArgumentException(session, NutsMessage.ofPlain("not supported : getStoredConfig"));
     }
 
     @Override
     public void fireConfigurationChanged(String configName, NutsSession session) {
-        throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("not supported : fireConfigurationChanged"));
+        throw new NutsIllegalArgumentException(session, NutsMessage.ofPlain("not supported : fireConfigurationChanged"));
     }
 
     @Override
     public void setUser(NutsUserConfig user, NutsSession session) {
-        throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("not supported : setUser"));
+        throw new NutsIllegalArgumentException(session, NutsMessage.ofPlain("not supported : setUser"));
     }
 
     @Override
     public void removeUser(String userId, NutsSession session) {
-        throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("not supported : removeUser"));
+        throw new NutsIllegalArgumentException(session, NutsMessage.ofPlain("not supported : removeUser"));
     }
 
     @Override
     public NutsRepositoryConfig getConfig(NutsSession session) {
-        throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("not supported : getConfig"));
+        throw new NutsIllegalArgumentException(session, NutsMessage.ofPlain("not supported : getConfig"));
     }
 
     @Override
@@ -269,7 +260,7 @@ class InstalledRepositoryConfigModel implements NutsRepositoryConfigModel {
 
     @Override
     public NutsOptional<NutsValue> get(String key, boolean inherit, NutsSession session) {
-        NutsOptional<NutsValue> o = NutsOptional.ofEmpty(s -> NutsMessage.cstyle("repo config property not found : %s", key));
+        NutsOptional<NutsValue> o = NutsOptional.ofEmpty(s -> NutsMessage.ofCstyle("repo config property not found : %s", key));
         if (inherit) {
             return o.orElseUse(()->session.config().getConfigProperty(key));
         }

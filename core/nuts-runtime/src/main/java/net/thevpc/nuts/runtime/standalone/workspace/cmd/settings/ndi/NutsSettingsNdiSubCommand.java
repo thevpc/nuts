@@ -205,7 +205,7 @@ public class NutsSettingsNdiSubCommand extends AbstractNutsSettingsSubCommand {
                 if (ignoreUnsupportedOs) {
                     return;
                 }
-                throw new NutsExecutionException(session, NutsMessage.cstyle("platform not supported : %s", session.env().getOs()), 2);
+                throw new NutsExecutionException(session, NutsMessage.ofCstyle("platform not supported : %s", session.env().getOs()), 2);
             }
             if (!idsToInstall.isEmpty()) {
                 printResults(session, ndi.addScript(options, idsToInstall.toArray(new String[0])));
@@ -269,7 +269,7 @@ public class NutsSettingsNdiSubCommand extends AbstractNutsSettingsSubCommand {
                 if (ignoreUnsupportedOs) {
                     return;
                 }
-                throw new NutsExecutionException(session, NutsMessage.cstyle("platform not supported : %s", session.env().getOs()), 2);
+                throw new NutsExecutionException(session, NutsMessage.ofCstyle("platform not supported : %s", session.env().getOs()), 2);
             }
             boolean subTrace = session.isTrace();
             if (!session.isPlainTrace()) {
@@ -284,7 +284,7 @@ public class NutsSettingsNdiSubCommand extends AbstractNutsSettingsSubCommand {
                                 session.copy().setTrace(subTrace)
                         );
                     } catch (UncheckedIOException | NutsIOException e) {
-                        throw new NutsExecutionException(session, NutsMessage.cstyle("unable to run script %s : %s", id, e), e);
+                        throw new NutsExecutionException(session, NutsMessage.ofCstyle("unable to run script %s : %s", id, e), e);
                     }
                 }
             }
@@ -364,7 +364,7 @@ public class NutsSettingsNdiSubCommand extends AbstractNutsSettingsSubCommand {
                 if (ignoreUnsupportedOs) {
                     return;
                 }
-                throw new NutsExecutionException(session, NutsMessage.cstyle("platform not supported : %s ", session.env().getOs()), 2);
+                throw new NutsExecutionException(session, NutsMessage.ofCstyle("platform not supported : %s ", session.env().getOs()), 2);
             }
             if (switchWorkspaceLocation != null || switchWorkspaceApi != null) {
                 NdiScriptOptions oo = new NdiScriptOptions()

@@ -35,6 +35,7 @@ import net.thevpc.nuts.spi.NutsComponentScopeType;
 import net.thevpc.nuts.toolbox.nsh.SimpleJShellBuiltin;
 import net.thevpc.nuts.toolbox.nsh.jshell.JShellExecutionContext;
 import net.thevpc.nuts.toolbox.nsh.util.ShellHelper;
+import net.thevpc.nuts.util.NutsUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -82,15 +83,13 @@ public class CpCommand extends SimpleJShellBuiltin {
         Options options = context.getOptions();
         NutsSession session = context.getSession();
         for (String value : options.files) {
-            if (NutsBlankable.isBlank(value)) {
-                throw new NutsExecutionException(session, NutsMessage.cstyle("empty file path"), 2);
-            }
+            NutsUtils.requireNonBlank(value,session,"file path");
             options.xfiles.add(NutsPath.of((value.contains("://") ? value :
                     NutsPath.of(value, session).toAbsolute(session.locations().getWorkspaceLocation()).toString()
             ), session));
         }
         if (options.xfiles.size() < 2) {
-            throw new NutsExecutionException(session, NutsMessage.cstyle("missing parameters"), 2);
+            throw new NutsExecutionException(session, NutsMessage.ofPlain("missing parameters"), 2);
         }
 
         options.sshlistener = new ShellHelper.WsSshListener(session);

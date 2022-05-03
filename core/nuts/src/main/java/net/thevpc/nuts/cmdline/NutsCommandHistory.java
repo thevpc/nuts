@@ -26,8 +26,8 @@ package net.thevpc.nuts.cmdline;
 
 import net.thevpc.nuts.io.NutsPath;
 import net.thevpc.nuts.NutsSession;
-import net.thevpc.nuts.boot.NutsApiUtils;
 import net.thevpc.nuts.spi.NutsComponent;
+import net.thevpc.nuts.util.NutsUtils;
 
 import java.io.File;
 import java.io.InputStream;
@@ -44,7 +44,7 @@ import java.util.ListIterator;
  */
 public interface NutsCommandHistory extends NutsComponent {
     static NutsCommandHistory of(NutsSession session) {
-        NutsApiUtils.checkSession(session);
+        NutsUtils.requireSession(session);
         return session.extensions().createSupported(NutsCommandHistory.class, true, null);
     }
 

@@ -15,6 +15,7 @@ import net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.ndi.script.From
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.ndi.script.SimpleScriptBuilder;
 import net.thevpc.nuts.text.NutsTextStyle;
 import net.thevpc.nuts.text.NutsTexts;
+import net.thevpc.nuts.util.NutsUtils;
 
 import java.io.*;
 import java.nio.file.Files;
@@ -228,9 +229,9 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
         if (f.isRegularFile()) {
             if (session.getTerminal().ask()
                     .resetLine()
-                    .forBoolean("tool %s will be removed. Confirm?",
+                    .forBoolean(NutsMessage.ofCstyle("tool %s will be removed. Confirm?",
                             factory.ofStyled(CoreIOUtils.betterPath(f.toString()), NutsTextStyle.path())
-                    )
+                    ))
                     .setDefaultValue(true)
                     .setSession(session)
                     .getBooleanValue()) {
@@ -278,7 +279,7 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
             for (String id : idsToInstall) {
                 NutsId nid = NutsId.of(id).get( session);
                 if (nid == null) {
-                    throw new NutsExecutionException(session, NutsMessage.cstyle("unable to create script for %s : invalid id", id), 100);
+                    throw new NutsExecutionException(session, NutsMessage.ofCstyle("unable to create script for %s : invalid id", id), 100);
                 }
                 if (!nid.getVersion().isBlank()) {
                     includeEnv = true;
@@ -309,7 +310,7 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
 
                     result.addAll(Arrays.asList(createArtifactScript(oo)));
                 } catch (UncheckedIOException | NutsIOException e) {
-                    throw new NutsExecutionException(session, NutsMessage.cstyle("unable to add launcher for %s : %s", id, e), e);
+                    throw new NutsExecutionException(session, NutsMessage.ofCstyle("unable to add launcher for %s : %s", id, e), e);
                 }
             }
             if (!bootAlreadyProcessed && !nonNutsIds.isEmpty()) {
@@ -324,7 +325,7 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
                 try {
                     NutsId nid = NutsId.of(id).get(session);
                     if (nid == null) {
-                        throw new NutsExecutionException(session, NutsMessage.cstyle("unable to create script for %s : invalid id", id), 100);
+                        throw new NutsExecutionException(session, NutsMessage.ofCstyle("unable to create script for %s : invalid id", id), 100);
                     }
                     NdiScriptOptions oo = options.copy()
                             .setId(id);
@@ -334,7 +335,7 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
                     oo.setSession(session);
                     result.addAll(Arrays.asList(createArtifactScript(oo)));
                 } catch (UncheckedIOException | NutsIOException e) {
-                    throw new NutsExecutionException(session, NutsMessage.cstyle("unable to add launcher for %s : %s", id, e), e);
+                    throw new NutsExecutionException(session, NutsMessage.ofCstyle("unable to add launcher for %s : %s", id, e), e);
                 }
             }
 //            result.addAll(Arrays.asList(configurePath(
@@ -431,7 +432,7 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
     public NutsWorkspaceBootConfig loadSwitchWorkspaceLocationConfig(String switchWorkspaceLocation) {
         NutsWorkspaceBootConfig bootConfig = session.config().loadBootConfig(switchWorkspaceLocation, false, true);
         if (bootConfig == null) {
-            throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("invalid workspace: %s", switchWorkspaceLocation));
+            throw new NutsIllegalArgumentException(session, NutsMessage.ofCstyle("invalid workspace: %s", switchWorkspaceLocation));
         }
         return bootConfig;
     }
@@ -622,7 +623,7 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
         } else if (nutsDesktopIntegrationItem == NutsDesktopIntegrationItem.USER) {
             results.addAll(Arrays.asList(ww.writeShortcut(shortcut, path == null ? null : NutsPath.of(path, session), true, id)));
         } else {
-            throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("unsupported"));
+            throw new NutsIllegalArgumentException(session, NutsMessage.ofPlain("unsupported"));
         }
         return results.toArray(new PathInfo[0]);
     }
@@ -789,9 +790,7 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
 
     public PathInfo[] createShortcut(NutsDesktopIntegrationItem nutsDesktopIntegrationItem, NdiScriptOptions options) {
         String apiVersion = options.getNutsApiVersion().toString();
-        if (apiVersion == null) {
-            throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("missing nuts-api version to link to"));
-        }
+        NutsUtils.requireNonBlank(apiVersion,session,"nuts-api version to link to");
         NutsId apiId = session.getWorkspace().getApiId().builder().setVersion(apiVersion).build();
         NutsDefinition apiDefinition = session.search().addId(apiId).setFailFast(true).setLatest(true).setContent(true)
                 .setDistinct(true)

@@ -184,7 +184,7 @@ public class NProjectsSubCmd {
             }
         }
         if (projects.isEmpty()) {
-            cmd.throwError(NutsMessage.formatted("project name expected"), session);
+            cmd.throwError(NutsMessage.ofNtf("project name expected"), session);
         }
         if (cmd.isExecMode()) {
             NutsTexts text = NutsTexts.of(context.getSession());
@@ -378,7 +378,7 @@ public class NProjectsSubCmd {
             t = service.projects().getProject(pid);
         }
         if (t == null) {
-            cmd.throwError(NutsMessage.cstyle("project not found: %s", pid), session);
+            cmd.throwError(NutsMessage.ofCstyle("project not found: %s", pid), session);
         }
         return t;
     }

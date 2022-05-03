@@ -88,7 +88,7 @@ public class NutsElementMapperMap implements NutsElementMapper<Map> {
             elemType2 = pt.getActualTypeArguments()[1];
         }
         if (cls == null) {
-            throw new NutsIllegalArgumentException(session, NutsMessage.plain("class is null"));
+            throw new NutsIllegalArgumentException(session, NutsMessage.ofPlain("class is null"));
         }
         switch (cls.getName()) {
             case "java.util.Map":

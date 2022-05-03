@@ -7,7 +7,6 @@ import net.thevpc.nuts.io.*;
 import net.thevpc.nuts.runtime.standalone.format.DefaultFormatBase;
 import net.thevpc.nuts.runtime.standalone.io.path.spi.NutsPathSPIHelper;
 import net.thevpc.nuts.runtime.standalone.io.path.spi.URLPath;
-import net.thevpc.nuts.runtime.standalone.io.util.InputStreamMetadataAwareImpl;
 import net.thevpc.nuts.runtime.standalone.util.reflect.NutsUseDefaultUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.NutsWorkspaceVarExpansionFunction;
 import net.thevpc.nuts.runtime.standalone.xtra.expr.StringPlaceHolderParser;
@@ -107,12 +106,12 @@ public class NutsPathFromSPI extends NutsPathBase {
                 }
                 return bos.toByteArray();
             } catch (IOException e) {
-                throw new NutsIOException(getSession(), NutsMessage.cstyle("unable to read file %s", this), e);
+                throw new NutsIOException(getSession(), NutsMessage.ofCstyle("unable to read file %s", this), e);
             }
         }
         int ilen = (int) len;
         if (len > Integer.MAX_VALUE - 8) {
-            throw new NutsIOException(getSession(), NutsMessage.cstyle("file is too large %s", this));
+            throw new NutsIOException(getSession(), NutsMessage.ofCstyle("file is too large %s", this));
         }
         byte[] buffer = new byte[ilen];
         try (InputStream is = getInputStream()) {
@@ -122,14 +121,14 @@ public class NutsPathFromSPI extends NutsPathBase {
                 offset += count;
             }
             if (offset < ilen) {
-                throw new NutsIOException(getSession(), NutsMessage.cstyle("premature read stop %s", this));
+                throw new NutsIOException(getSession(), NutsMessage.ofCstyle("premature read stop %s", this));
             }
             if (is.read() >= 0) {
-                throw new NutsIOException(getSession(), NutsMessage.cstyle("invalid %s", this));
+                throw new NutsIOException(getSession(), NutsMessage.ofCstyle("invalid %s", this));
             }
             return buffer;
         } catch (IOException e) {
-            throw new NutsIOException(getSession(), NutsMessage.cstyle("unable to read file %s", this), e);
+            throw new NutsIOException(getSession(), NutsMessage.ofCstyle("unable to read file %s", this), e);
         }
     }
 
@@ -138,7 +137,7 @@ public class NutsPathFromSPI extends NutsPathBase {
         try (OutputStream os = getOutputStream()) {
             os.write(bytes);
         } catch (IOException ex) {
-            throw new NutsIOException(getSession(), NutsMessage.cstyle("unable to write to %s", this));
+            throw new NutsIOException(getSession(), NutsMessage.ofCstyle("unable to write to %s", this));
         }
         return this;
     }
@@ -185,14 +184,15 @@ public class NutsPathFromSPI extends NutsPathBase {
         return NutsStream.ofEmpty(getSession());
     }
 
+
     @Override
     public InputStream getInputStream() {
-        return InputStreamMetadataAwareImpl.of(base.getInputStream(this), getStreamMetadata());
+        return (InputStream) NutsIO.of(getSession()).createInputSource(base.getInputStream(this),getInputMetaData());
     }
 
     @Override
     public OutputStream getOutputStream() {
-        return base.getOutputStream(this);
+        return (OutputStream) NutsIO.of(getSession()).createOutputTarget(base.getOutputStream(this),getOutputMetaData());
     }
 
     @Override
@@ -472,10 +472,6 @@ public class NutsPathFromSPI extends NutsPathBase {
     @Override
     public NutsStream<NutsPath> walkGlob(NutsPathOption... options) {
         return new DirectoryScanner(this, getSession()).stream();
-    }
-
-    public NutsStreamMetadata getStreamMetadata() {
-        return new NutsPathStreamMetadata(this);
     }
 
     @Override

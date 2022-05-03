@@ -26,8 +26,8 @@
 package net.thevpc.nuts.concurrent;
 
 import net.thevpc.nuts.NutsSession;
-import net.thevpc.nuts.boot.NutsApiUtils;
 import net.thevpc.nuts.spi.NutsComponent;
+import net.thevpc.nuts.util.NutsUtils;
 
 import java.io.File;
 import java.nio.file.Path;
@@ -44,7 +44,7 @@ import java.util.concurrent.locks.Lock;
  */
 public interface NutsLocks extends NutsComponent {
     static NutsLocks of(NutsSession session) {
-        NutsApiUtils.checkSession(session);
+        NutsUtils.requireSession(session);
         return session.extensions().createSupported(NutsLocks.class, true, null);
     }
 

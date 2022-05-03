@@ -55,6 +55,6 @@ public class NutsNotInstallableException extends NutsInstallationException {
      */
     public NutsNotInstallableException(NutsSession session, NutsId id, NutsMessage msg, Exception ex) {
         super(session, id,
-                msg == null ? NutsMessage.cstyle("not installed %s", (id == null ? "<null>" : id)) : msg, ex);
+                msg == null ? NutsMessage.ofCstyle("not installed %s", (id == null ? "<null>" : id)) : msg, ex);
     }
 }

@@ -88,19 +88,19 @@ public class FileTemplater {
             @Override
             public void info(String title, String message) {
                 log().verb(NutsLoggerVerb.INFO).level(Level.FINER)
-                        .log(NutsMessage.jstyle("{0} : {1}", title, message));
+                        .log(NutsMessage.ofJstyle("{0} : {1}", title, message));
             }
 
             @Override
             public void debug(String title, String message) {
                 log().verb(NutsLoggerVerb.DEBUG).level(Level.FINER)
-                        .log(NutsMessage.jstyle("{0} : {1}", title, message));
+                        .log(NutsMessage.ofJstyle("{0} : {1}", title, message));
             }
 
             @Override
             public void error(String title, String message) {
                 log().verb(NutsLoggerVerb.FAIL).level(Level.FINER)
-                        .log(NutsMessage.jstyle("{0} : {1}", title, message));
+                        .log(NutsMessage.ofJstyle("{0} : {1}", title, message));
             }
 
             private NutsLoggerOp log() {
@@ -542,9 +542,9 @@ public class FileTemplater {
         return NutsOptional.ofEmpty(session1 -> {
             String source = getSourcePath().orElse(null);
             if (source == null) {
-                return NutsMessage.cstyle("not found : %s", StringUtils.escapeString(name));
+                return NutsMessage.ofCstyle("not found : %s", StringUtils.escapeString(name));
             } else {
-                return NutsMessage.cstyle("not found : %s in %s", StringUtils.escapeString(name), source);
+                return NutsMessage.ofCstyle("not found : %s in %s", StringUtils.escapeString(name), source);
             }
         });
     }
@@ -566,7 +566,7 @@ public class FileTemplater {
                         try {
                             processRegularFile(x, null);
                         } catch (Exception ex) {
-                            throw new NutsIllegalArgumentException(getSession(), NutsMessage.cstyle("error processing %s : %s", x, ex), ex);
+                            throw new NutsIllegalArgumentException(getSession(), NutsMessage.ofCstyle("error processing %s : %s", x, ex), ex);
                         }
                     }
                 });
@@ -574,7 +574,7 @@ public class FileTemplater {
                 throw new NutsIOException(getSession(), e);
             }
         } else {
-            throw new NutsIOException(getSession(), NutsMessage.cstyle("unsupported path %s", path));
+            throw new NutsIOException(getSession(), NutsMessage.ofCstyle("unsupported path %s", path));
         }
     }
 
@@ -598,7 +598,7 @@ public class FileTemplater {
                 throw new NutsIOException(getSession(), e);
             }
         } else {
-            throw new NutsIOException(getSession(), NutsMessage.cstyle("unsupported path %s", path));
+            throw new NutsIOException(getSession(), NutsMessage.ofCstyle("unsupported path %s", path));
         }
     }
 
@@ -610,7 +610,7 @@ public class FileTemplater {
         Path absolutePath = toAbsolutePath(path);
         Path parentPath = absolutePath.getParent();
         if (!Files.isRegularFile(absolutePath)) {
-            throw new NutsIllegalArgumentException(getSession(), NutsMessage.cstyle("no a file : %s", path));
+            throw new NutsIllegalArgumentException(getSession(), NutsMessage.ofCstyle("no a file : %s", path));
         }
         String[] mimeTypesArray = mimeTypesString == null ? FileProcessorUtils.splitMimeTypes(getMimeTypeResolver().resolveMimetype(path.toString()))
                 : FileProcessorUtils.splitMimeTypes(mimeTypesString);
@@ -641,18 +641,18 @@ public class FileTemplater {
                         return out.toString();
                     }
                 } catch (IOException ex) {
-                    throw new NutsIOException(getSession(), NutsMessage.cstyle("error executing file : %s", path), ex);
+                    throw new NutsIOException(getSession(), NutsMessage.ofCstyle("error executing file : %s", path), ex);
                 }
             }
         }
-        throw new NutsIllegalArgumentException(getSession(), NutsMessage.cstyle("processor not found for %s", mimeTypesString));
+        throw new NutsIllegalArgumentException(getSession(), NutsMessage.ofCstyle("processor not found for %s", mimeTypesString));
     }
 
     public void processRegularFile(Path path, String mimeType) {
         Path absolutePath = toAbsolutePath(path);
         Path parentPath = absolutePath.getParent();
         if (!Files.isRegularFile(absolutePath)) {
-            throw new NutsIllegalArgumentException(getSession(), NutsMessage.cstyle("unsupported file : %s", path.toString()));
+            throw new NutsIllegalArgumentException(getSession(), NutsMessage.ofCstyle("unsupported file : %s", path.toString()));
         }
         String[] mimeTypes = mimeType == null ? FileProcessorUtils.splitMimeTypes(getMimeTypeResolver().resolveMimetype(path.toString()))
                 : FileProcessorUtils.splitMimeTypes(mimeType);
@@ -707,7 +707,7 @@ public class FileTemplater {
                     return bos.toString();
                 }
             }
-            throw new NutsIllegalArgumentException(getSession(), NutsMessage.cstyle("unsupported mimetype : %s", mimeType));
+            throw new NutsIllegalArgumentException(getSession(), NutsMessage.ofCstyle("unsupported mimetype : %s", mimeType));
         } catch (IOException ex) {
             throw new NutsIOException(getSession(), ex);
         }
@@ -740,7 +740,7 @@ public class FileTemplater {
                 return;
             }
         }
-        throw new NutsIllegalArgumentException(getSession(), NutsMessage.cstyle("unsupported mimetype : %s", mimeType));
+        throw new NutsIllegalArgumentException(getSession(), NutsMessage.ofCstyle("unsupported mimetype : %s", mimeType));
     }
 
     public MimeTypeResolver getMimeTypeResolver() {
@@ -787,20 +787,20 @@ public class FileTemplater {
         String targetFolder = config.getTargetFolder();
         if (projectPath == null) {
             if (config.getPaths().isEmpty()) {
-                throw new NutsIllegalArgumentException(getSession(), NutsMessage.plain("missing path to process"));
+                throw new NutsIllegalArgumentException(getSession(), NutsMessage.ofPlain("missing path to process"));
             }
             if (targetFolder == null) {
-                throw new NutsIllegalArgumentException(getSession(), NutsMessage.plain("missing target folder"));
+                throw new NutsIllegalArgumentException(getSession(), NutsMessage.ofPlain("missing target folder"));
             }
         }
         Path oProjectDirPath = Paths.get(projectPath);
         Path oProjectFile = oProjectDirPath.resolve(getProjectFileName());
         Path oProjectSrc = oProjectDirPath.resolve("src");
         if (!Files.isDirectory(oProjectSrc)) {
-            throw new NutsIllegalArgumentException(getSession(), NutsMessage.cstyle("invalid project, missing src/ folder : %s", oProjectDirPath));
+            throw new NutsIllegalArgumentException(getSession(), NutsMessage.ofCstyle("invalid project, missing src/ folder : %s", oProjectDirPath));
         }
         if (!Files.isRegularFile(oProjectFile)) {
-            throw new NutsIllegalArgumentException(getSession(), NutsMessage.cstyle("invalid project, missing project.ftex : %s", oProjectDirPath));
+            throw new NutsIllegalArgumentException(getSession(), NutsMessage.ofCstyle("invalid project, missing project.ftex : %s", oProjectDirPath));
         }
         List<String> initScripts = new ArrayList<>(config.getInitScripts());
         initScripts.add(oProjectFile.toString());
@@ -828,7 +828,7 @@ public class FileTemplater {
             }
         }
         if (targetFolder == null) {
-            throw new NutsIllegalArgumentException(getSession(), NutsMessage.plain("missing target folder"));
+            throw new NutsIllegalArgumentException(getSession(), NutsMessage.ofPlain("missing target folder"));
         }
         FileProcessorUtils.mkdirs(Paths.get(targetFolder));
         try {

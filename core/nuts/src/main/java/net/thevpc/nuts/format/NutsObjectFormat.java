@@ -28,8 +28,8 @@ package net.thevpc.nuts.format;
 
 import net.thevpc.nuts.NutsContentTypeFormat;
 import net.thevpc.nuts.NutsSession;
-import net.thevpc.nuts.boot.NutsApiUtils;
 import net.thevpc.nuts.cmdline.NutsCommandLineConfigurable;
+import net.thevpc.nuts.util.NutsUtils;
 
 /**
  * Object format is responsible of formatting to terminal
@@ -42,7 +42,7 @@ import net.thevpc.nuts.cmdline.NutsCommandLineConfigurable;
 public interface NutsObjectFormat extends NutsContentTypeFormat {
 
     static NutsObjectFormat of(NutsSession session) {
-        NutsApiUtils.checkSession(session);
+        NutsUtils.requireSession(session);
         return session.extensions().createSupported(NutsObjectFormat.class, true, null);
     }
 

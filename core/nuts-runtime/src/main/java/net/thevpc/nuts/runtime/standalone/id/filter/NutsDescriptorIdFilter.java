@@ -55,7 +55,7 @@ public class NutsDescriptorIdFilter extends AbstractIdFilter implements NutsIdFi
                     nutsDescriptor = NutsWorkspaceExt.of(session.getWorkspace()).resolveEffectiveDescriptor(descriptor, session);
                 } catch (Exception ex) {
                     LOG.with().session(session).level(Level.FINE).error(ex)
-                            .log( NutsMessage.jstyle("failed to resolve effective desc {0} for {1}", descriptor.getId(),id));
+                            .log( NutsMessage.ofJstyle("failed to resolve effective desc {0} for {1}", descriptor.getId(),id));
                     //throw new NutsException(e);
                 }
                 descriptor = nutsDescriptor;
@@ -65,7 +65,7 @@ public class NutsDescriptorIdFilter extends AbstractIdFilter implements NutsIdFi
             if (LOG.isLoggable(Level.FINER)) {
                 LOG.with().session(session).level(Level.FINER).verb(NutsLoggerVerb.FAIL)
                         .log(
-                                NutsMessage.jstyle("unable to fetch descriptor for {0} : {1}",
+                                NutsMessage.ofJstyle("unable to fetch descriptor for {0} : {1}",
                         id,ex)
                         );
             }

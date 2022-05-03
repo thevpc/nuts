@@ -29,6 +29,7 @@ import net.thevpc.nuts.cmdline.NutsCommandHistoryEntry;
 import net.thevpc.nuts.io.NutsIOException;
 import net.thevpc.nuts.io.NutsPath;
 import net.thevpc.nuts.spi.NutsSupportLevelContext;
+import net.thevpc.nuts.util.NutsUtils;
 
 import java.io.*;
 import java.nio.file.Path;
@@ -54,9 +55,7 @@ public class NutsCommandHistoryImpl implements NutsCommandHistory {
     @Override
     public void load() {
         entries.clear();
-        if (path == null) {
-            throw new NutsIllegalArgumentException(session, NutsMessage.plain("missing path"));
-        }
+        NutsUtils.requireNonNull(path, session, "path");
         if (path.exists()) {
             try (InputStream in = path.getInputStream()) {
                 load(in);
@@ -68,9 +67,7 @@ public class NutsCommandHistoryImpl implements NutsCommandHistory {
 
     @Override
     public void save() {
-        if (path == null) {
-            throw new NutsIllegalArgumentException(session, NutsMessage.plain("missing path"));
-        }
+        NutsUtils.requireNonNull(path, session, "path");
         path.mkParentDirs();
         try (OutputStream out = path.getOutputStream()) {
             save(out);

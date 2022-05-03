@@ -4,10 +4,7 @@ import net.thevpc.nuts.*;
 import net.thevpc.nuts.boot.NutsWorkspaceBootOptions;
 import net.thevpc.nuts.cmdline.NutsCommandAutoCompleteResolver;
 import net.thevpc.nuts.cmdline.NutsCommandHistory;
-import net.thevpc.nuts.io.NutsIOException;
-import net.thevpc.nuts.io.NutsPrintStream;
-import net.thevpc.nuts.io.NutsPrintStreams;
-import net.thevpc.nuts.io.NutsTerminalMode;
+import net.thevpc.nuts.io.*;
 import net.thevpc.nuts.runtime.standalone.boot.DefaultNutsBootModel;
 import net.thevpc.nuts.runtime.standalone.io.printstream.NutsPrintStreamSystem;
 import net.thevpc.nuts.runtime.standalone.session.NutsSessionUtils;
@@ -83,7 +80,7 @@ public class DefaultNutsSystemTerminalBaseBoot extends NutsSystemTerminalBaseImp
             out = getOut();
         }
         if (out == null) {
-            out = NutsPrintStreams.of(session).stdout();
+            out = NutsIO.of(session).stdout();
         }
         if (message != null) {
             out.printf("%s", message);
@@ -98,7 +95,7 @@ public class DefaultNutsSystemTerminalBaseBoot extends NutsSystemTerminalBaseImp
             out = getOut();
         }
         if (out == null) {
-            out = NutsPrintStreams.of(session).stdout();
+            out = NutsIO.of(session).stdout();
         }
         if (message != null) {
             out.printf("%s", message);

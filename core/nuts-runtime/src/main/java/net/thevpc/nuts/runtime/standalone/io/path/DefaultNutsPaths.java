@@ -68,7 +68,7 @@ public class DefaultNutsPaths implements NutsPaths {
         }
         NutsPath p = getModel(session).resolve(path, session, classLoader);
         if (p == null) {
-            throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("unable to resolve path from %s", path));
+            throw new NutsIllegalArgumentException(session, NutsMessage.ofCstyle("unable to resolve path from %s", path));
         }
         return p;
     }
@@ -202,16 +202,18 @@ public class DefaultNutsPaths implements NutsPaths {
                 try {
                     temp = File.createTempFile(prefix.toString(), ext.toString(), rootFolder.toFile().toFile());
                     if (temp.delete() && temp.mkdir()) {
-                        return NutsPath.of(temp.toPath(), session);
+                        return NutsPath.of(temp.toPath(), session)
+                                .setUserTemporary(true);
                     }
                 } catch (IOException ex) {
                     //
                 }
             }
-            throw new NutsIOException(session, NutsMessage.cstyle("could not create temp directory: %s*%s", rootFolder + File.separator + prefix, ext));
+            throw new NutsIOException(session, NutsMessage.ofCstyle("could not create temp directory: %s*%s", rootFolder + File.separator + prefix, ext));
         } else {
             try {
-                return NutsPath.of(File.createTempFile(prefix.toString(), ext.toString(), rootFolder.toFile().toFile()).toPath(), session);
+                return NutsPath.of(File.createTempFile(prefix.toString(), ext.toString(), rootFolder.toFile().toFile()).toPath(), session)
+                        .setUserTemporary(true);
             } catch (IOException e) {
                 throw new NutsIOException(session, e);
             }

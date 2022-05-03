@@ -2,6 +2,7 @@ package net.thevpc.nuts.runtime.standalone.io.terminal;
 
 import net.thevpc.nuts.NutsExecutionType;
 import net.thevpc.nuts.NutsSession;
+import net.thevpc.nuts.NutsValue;
 import net.thevpc.nuts.boot.NutsApiUtils;
 import net.thevpc.nuts.spi.NutsSystemTerminalBase;
 
@@ -21,8 +22,8 @@ public class CoreAnsiTermHelper {
     }
 
     public static NutsSystemTerminalBase.Size evalSize(NutsSession session) {
-        Integer c = NutsApiUtils.parseInt(evalCapability("cols", session),null,null);
-        Integer l = NutsApiUtils.parseInt(evalCapability("lines", session),null,null);
+        Integer c = NutsValue.of(evalCapability("cols", session)).asInt().orNull();
+        Integer l = NutsValue.of(evalCapability("lines", session)).asInt().orNull();
         if (c != null && l != null) {
             return new NutsSystemTerminalBase.Size(c, l);
         }

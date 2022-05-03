@@ -33,6 +33,7 @@ import net.thevpc.nuts.lib.ssh.SShConnection;
 import net.thevpc.nuts.toolbox.nsh.SimpleJShellBuiltin;
 import net.thevpc.nuts.toolbox.nsh.jshell.JShellExecutionContext;
 import net.thevpc.nuts.toolbox.nsh.util.ShellHelper;
+import net.thevpc.nuts.util.NutsUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -89,17 +90,11 @@ public class SshCommand extends SimpleJShellBuiltin {
     protected void execBuiltin(NutsCommandLine commandLine, JShellExecutionContext context) {
         Options o = context.getOptions();
         // address --nuts [nuts options] args
-        if (o.address == null) {
-            throw new NutsExecutionException(context.getSession(), NutsMessage.cstyle("missing ssh address"), 2);
-        }
-        if (o.cmd.isEmpty()) {
-            throw new NutsExecutionException(context.getSession(),
-                    NutsMessage.cstyle("missing ssh command. Interactive ssh is not yet supported!")
-                    , 2);
-        }
-        final NutsSession session = context.getSession();
-        ShellHelper.WsSshListener listener = new ShellHelper.WsSshListener(context.getSession());
-        try (SShConnection sshSession = new SShConnection(o.address, context.getSession())
+        NutsSession session = context.getSession();
+        NutsUtils.requireNonBlank(o.address, session, "ssh address");
+        NutsUtils.requireNonBlank(o.cmd, session, () -> NutsMessage.ofPlain("missing ssh command. Interactive ssh is not yet supported!"));
+        ShellHelper.WsSshListener listener = new ShellHelper.WsSshListener(session);
+        try (SShConnection sshSession = new SShConnection(o.address, session)
                 .addListener(listener)) {
             List<String> cmd = new ArrayList<>();
             if (o.invokeNuts) {
@@ -136,18 +131,15 @@ public class SshCommand extends SimpleJShellBuiltin {
                     }
                     if (!nutsCommandFound) {
                         NutsPath from = session.search().addId(session.getWorkspace().getApiId()).getResultDefinitions().required().getContent().orNull();
-                        if (from == null) {
-                            throw new NutsExecutionException(context.getSession(), NutsMessage.cstyle("unable to resolve Nuts Jar File"), 2);
+                        NutsUtils.requireNonNull(from, session, "jar file");
+                        context.out().printf("Detected nuts.jar location : %s\n", from);
+                        String bootApiFileName = "nuts-" + session.getWorkspace().getApiId() + ".jar";
+                        sshSession.setFailFast(true).copyLocalToRemote(from.toString(), workspace + "/" + bootApiFileName, true);
+                        String javaCmd = null;
+                        if (o.nutsJre != null) {
+                            javaCmd = (o.nutsJre + "/bin/java");
                         } else {
-                            context.out().printf("Detected nuts.jar location : %s\n", from);
-                            String bootApiFileName = "nuts-" + session.getWorkspace().getApiId() + ".jar";
-                            sshSession.setFailFast(true).copyLocalToRemote(from.toString(), workspace + "/" + bootApiFileName, true);
-                            String javaCmd = null;
-                            if (o.nutsJre != null) {
-                                javaCmd = (o.nutsJre + "/bin/java");
-                            } else {
-                                javaCmd = ("java");
-                            }
+                            javaCmd = ("java");
                         }
                     }
                     cmd.add(workspace + "/nuts");

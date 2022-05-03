@@ -17,6 +17,7 @@ import net.thevpc.nuts.runtime.standalone.repository.impl.maven.util.MavenReposi
 import net.thevpc.nuts.runtime.standalone.workspace.NutsWorkspaceUtils;
 import net.thevpc.nuts.spi.NutsRepositorySPI;
 import net.thevpc.nuts.text.NutsTexts;
+import net.thevpc.nuts.util.NutsUtils;
 
 /**
  * @author thevpc
@@ -43,11 +44,9 @@ public class DefaultNutsUpdateStatisticsCommand extends AbstractNutsUpdateStatis
         }
         for (Path repositoryPath : getPaths()) {
             processed = true;
-            if (repositoryPath == null) {
-                throw new NutsIllegalArgumentException(getSession(), NutsMessage.cstyle("missing location %s", repositoryPath));
-            }
+            NutsUtils.requireNonBlank(repositoryPath,session,"location");
             if (!Files.isDirectory(repositoryPath)) {
-                throw new NutsIllegalArgumentException(getSession(), NutsMessage.cstyle("expected folder at location %s",repositoryPath));
+                throw new NutsIllegalArgumentException(getSession(), NutsMessage.ofCstyle("expected folder at location %s",repositoryPath));
             }
             File[] mavenRepoRootFiles = repositoryPath.toFile().listFiles(x
                     -> x.getName().equals("index.html")
@@ -72,7 +71,7 @@ public class DefaultNutsUpdateStatisticsCommand extends AbstractNutsUpdateStatis
                 if (nutsRepoRootFiles != null && nutsRepoRootFiles.length > 0) {
                     new NutsRepositoryFolderHelper(null, session, NutsPath.of(repositoryPath,session), false,"stats",null).reindexFolder(session);
                 } else {
-                    throw new NutsIllegalArgumentException(getSession(), NutsMessage.cstyle("unsupported repository folder"));
+                    throw new NutsIllegalArgumentException(getSession(), NutsMessage.ofPlain("unsupported repository folder"));
                 }
                 if (session.isPlainTrace()) {
                     session.out().resetLine().printf("[%s] updated stats %s%n", getSession().locations().getWorkspaceLocation(), repositoryPath);
@@ -99,9 +98,7 @@ public class DefaultNutsUpdateStatisticsCommand extends AbstractNutsUpdateStatis
 
     @Override
     public void add(String repo) {
-        if (repo == null) {
-            throw new NutsIllegalArgumentException(getSession(), NutsMessage.cstyle("missing repo or path"));
-        }
+        NutsUtils.requireNonBlank(repo,session,"repository or path");
         if (repo.equals(".") || repo.equals("..") || repo.contains("/") || repo.contains("\\")) {
             addPath(Paths.get(repo));
         } else {

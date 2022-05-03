@@ -27,8 +27,8 @@ package net.thevpc.nuts.io;
 
 import net.thevpc.nuts.NutsSession;
 import net.thevpc.nuts.util.NutsStream;
-import net.thevpc.nuts.boot.NutsApiUtils;
 import net.thevpc.nuts.spi.NutsComponent;
+import net.thevpc.nuts.util.NutsUtils;
 
 /**
  * I/O Action that help monitoring processes
@@ -39,7 +39,7 @@ import net.thevpc.nuts.spi.NutsComponent;
  */
     public interface NutsPs extends NutsComponent {
     static NutsPs of(NutsSession session) {
-        NutsApiUtils.checkSession(session);
+        NutsUtils.requireSession(session);
         return session.extensions().createSupported(NutsPs.class, true, null);
     }
 

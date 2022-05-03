@@ -43,7 +43,7 @@ public class NutsRepositoryAlreadyRegisteredException extends NutsRepositoryExce
      */
     public NutsRepositoryAlreadyRegisteredException(NutsSession session, String repository) {
         super(session, repository,
-                NutsMessage.cstyle("repository already registered %s", (repository == null ? "<null>" : repository))
+                NutsMessage.ofCstyle("repository already registered %s", (repository == null ? "<null>" : repository))
                 , null);
     }
 
@@ -56,7 +56,7 @@ public class NutsRepositoryAlreadyRegisteredException extends NutsRepositoryExce
      */
     public NutsRepositoryAlreadyRegisteredException(NutsSession session, String repository, Throwable err) {
         super(session, repository,
-                NutsMessage.cstyle("repository already registered %s", (repository == null ? "<null>" : repository))
+                NutsMessage.ofCstyle("repository already registered %s", (repository == null ? "<null>" : repository))
                 , err);
     }
 }

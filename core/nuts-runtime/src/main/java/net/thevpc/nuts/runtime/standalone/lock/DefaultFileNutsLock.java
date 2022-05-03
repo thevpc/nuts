@@ -7,6 +7,7 @@ import net.thevpc.nuts.concurrent.NutsLockBarrierException;
 import net.thevpc.nuts.concurrent.NutsLockReleaseException;
 import net.thevpc.nuts.io.NutsPath;
 import net.thevpc.nuts.runtime.standalone.util.TimePeriod;
+import net.thevpc.nuts.util.NutsUtils;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -140,9 +141,7 @@ public class DefaultFileNutsLock implements NutsLock {
 
     @Override
     public synchronized boolean tryLock(long time, TimeUnit unit) {
-        if (unit == null) {
-            throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("missing unit"));
-        }
+        NutsUtils.requireNonNull(unit,session,"unit");
         long now = System.currentTimeMillis();
         PollTime ptime = preferredPollTime(time, unit);
         do {
@@ -162,9 +161,7 @@ public class DefaultFileNutsLock implements NutsLock {
     }
 
     public synchronized boolean tryLockInterruptibly(long time, TimeUnit unit) throws InterruptedException {
-        if (unit == null) {
-            throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("missing unit"));
-        }
+        NutsUtils.requireNonNull(unit,session,"unit");
         long now = System.currentTimeMillis();
         PollTime ptime = preferredPollTime(time, unit);
         do {
@@ -206,6 +203,6 @@ public class DefaultFileNutsLock implements NutsLock {
 
     @Override
     public Condition newCondition() {
-        throw new NutsUnsupportedOperationException(session, NutsMessage.cstyle("unsupported Lock.newCondition"));
+        throw new NutsUnsupportedOperationException(session, NutsMessage.ofPlain("unsupported Lock.newCondition"));
     }
 }

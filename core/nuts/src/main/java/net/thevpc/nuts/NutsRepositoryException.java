@@ -46,7 +46,7 @@ public abstract class NutsRepositoryException extends NutsException {
      */
     public NutsRepositoryException(NutsSession session, String repository, NutsMessage message, Throwable ex) {
         super(session,
-                message == null ? NutsMessage.cstyle("repository %s has encountered problem", (repository == null ? "<null>" : repository)) : message, ex);
+                message == null ? NutsMessage.ofCstyle("repository %s has encountered problem", (repository == null ? "<null>" : repository)) : message, ex);
         this.repository = repository;
     }
 

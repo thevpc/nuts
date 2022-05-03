@@ -139,14 +139,14 @@ public class DerbyService {
             if (optional) {
                 Path r = appContext.getSession().fetch().setLocation(targetFile).setId(id).setFailFast(false).getResultPath();
                 if (r != null) {
-                    LOG.with().session(appContext.getSession()).level(Level.FINEST).verb(NutsLoggerVerb.READ).log(NutsMessage.jstyle("downloading {0} to {1}", id, targetFile));
+                    LOG.with().session(appContext.getSession()).level(Level.FINEST).verb(NutsLoggerVerb.READ).log(NutsMessage.ofJstyle("downloading {0} to {1}", id, targetFile));
                 }
             } else {
                 appContext.getSession().fetch().setLocation(targetFile).setId(id).setFailFast(true).getResultPath();
-                LOG.with().session(appContext.getSession()).level(Level.FINEST).verb(NutsLoggerVerb.READ).log(NutsMessage.jstyle("downloading {0} to {1}", id, targetFile));
+                LOG.with().session(appContext.getSession()).level(Level.FINEST).verb(NutsLoggerVerb.READ).log(NutsMessage.ofJstyle("downloading {0} to {1}", id, targetFile));
             }
         } else {
-            LOG.with().session(appContext.getSession()).level(Level.FINEST).verb(NutsLoggerVerb.READ).log(NutsMessage.jstyle("using {0} form {1}", id, targetFile));
+            LOG.with().session(appContext.getSession()).level(Level.FINEST).verb(NutsLoggerVerb.READ).log(NutsMessage.ofJstyle("using {0} form {1}", id, targetFile));
         }
         return targetFile;
     }
@@ -211,7 +211,7 @@ public class DerbyService {
                         .replace("${{DB_PATH}}", derbyDataHomeRoot.toString());
                 Files.write(policy, permissions.getBytes());
             } catch (IOException ex) {
-                throw new NutsExecutionException(appContext.getSession(), NutsMessage.cstyle("unable to create %s",policy), 1);
+                throw new NutsExecutionException(appContext.getSession(), NutsMessage.ofCstyle("unable to create %s",policy), 1);
             }
         }
         //use named jar because derby does test upon jar names at runtime (what a shame !!!)

@@ -30,6 +30,7 @@ import net.thevpc.nuts.runtime.standalone.format.xml.DefaultSearchFormatXml;
 import net.thevpc.nuts.spi.NutsSupportLevelContext;
 import net.thevpc.nuts.text.NutsTexts;
 import net.thevpc.nuts.util.NutsProgressFactory;
+import net.thevpc.nuts.util.NutsUtils;
 
 public class DefaultNutsElements extends DefaultFormatBase<NutsElements> implements NutsElements {
 
@@ -62,10 +63,10 @@ public class DefaultNutsElements extends DefaultFormatBase<NutsElements> impleme
                 case "java.sql.Time":
                     return true;
             }
-            if(Temporal.class.isAssignableFrom(x)){
+            if (Temporal.class.isAssignableFrom(x)) {
                 return true;
             }
-            if(java.util.Date.class.isAssignableFrom(x)){
+            if (java.util.Date.class.isAssignableFrom(x)) {
                 return true;
             }
             return (
@@ -169,11 +170,11 @@ public class DefaultNutsElements extends DefaultFormatBase<NutsElements> impleme
     @Override
     public <T> T parse(URL url, Class<T> clazz) {
         checkSession();
-        return parse(NutsPath.of(url,getSession()),clazz);
+        return parse(NutsPath.of(url, getSession()), clazz);
     }
 
-    private InputStream prepareInputStream(InputStream is,Object origin){
-        if(isLogProgress() || isTraceProgress()){
+    private InputStream prepareInputStream(InputStream is, Object origin) {
+        if (isLogProgress() || isTraceProgress()) {
             return NutsInputStreamMonitor.of(getSession())
                     .setSource(is)
                     .setOrigin(origin)
@@ -184,8 +185,9 @@ public class DefaultNutsElements extends DefaultFormatBase<NutsElements> impleme
         }
         return is;
     }
-    private InputStream prepareInputStream(NutsPath path){
-        if(isLogProgress()){
+
+    private InputStream prepareInputStream(NutsPath path) {
+        if (isLogProgress()) {
             return NutsInputStreamMonitor.of(getSession())
                     .setSource(path)
                     .setOrigin(path)
@@ -213,14 +215,14 @@ public class DefaultNutsElements extends DefaultFormatBase<NutsElements> impleme
                     } catch (UncheckedIOException ex) {
                         throw new NutsIOException(getSession(), ex);
                     } catch (RuntimeException ex) {
-                        throw new NutsParseException(getSession(), NutsMessage.cstyle("unable to parse path %s", path), ex);
+                        throw new NutsParseException(getSession(), NutsMessage.ofCstyle("unable to parse path %s", path), ex);
                     }
                 } catch (IOException ex) {
-                    throw new NutsParseException(getSession(), NutsMessage.cstyle("unable to parse path %s", path), ex);
+                    throw new NutsParseException(getSession(), NutsMessage.ofCstyle("unable to parse path %s", path), ex);
                 }
             }
         }
-        throw new NutsIllegalArgumentException(getSession(), NutsMessage.cstyle("invalid content type %s. Only structured content types are allowed.", contentType));
+        throw new NutsIllegalArgumentException(getSession(), NutsMessage.ofCstyle("invalid content type %s. Only structured content types are allowed.", contentType));
     }
 
     @Override
@@ -231,10 +233,10 @@ public class DefaultNutsElements extends DefaultFormatBase<NutsElements> impleme
             case YAML:
             case XML:
             case TSON: {
-                return parse(new InputStreamReader(prepareInputStream(inputStream,null)), clazz);
+                return parse(new InputStreamReader(prepareInputStream(inputStream, null)), clazz);
             }
         }
-        throw new NutsIllegalArgumentException(getSession(), NutsMessage.cstyle("invalid content type %s. Only structured content types are allowed.", contentType));
+        throw new NutsIllegalArgumentException(getSession(), NutsMessage.ofCstyle("invalid content type %s. Only structured content types are allowed.", contentType));
     }
 
     @Override
@@ -248,7 +250,7 @@ public class DefaultNutsElements extends DefaultFormatBase<NutsElements> impleme
                 return parse(new StringReader(string), clazz);
             }
         }
-        throw new NutsIllegalArgumentException(getSession(), NutsMessage.cstyle("invalid content type %s. Only structured content types are allowed.", contentType));
+        throw new NutsIllegalArgumentException(getSession(), NutsMessage.ofCstyle("invalid content type %s. Only structured content types are allowed.", contentType));
     }
 
     @Override
@@ -259,10 +261,10 @@ public class DefaultNutsElements extends DefaultFormatBase<NutsElements> impleme
             case YAML:
             case XML:
             case TSON: {
-                return parse(new InputStreamReader(prepareInputStream(new ByteArrayInputStream(bytes),null)), clazz);
+                return parse(new InputStreamReader(prepareInputStream(new ByteArrayInputStream(bytes), null)), clazz);
             }
         }
-        throw new NutsIllegalArgumentException(getSession(), NutsMessage.cstyle("invalid content type %s. Only structured content types are allowed.", contentType));
+        throw new NutsIllegalArgumentException(getSession(), NutsMessage.ofCstyle("invalid content type %s. Only structured content types are allowed.", contentType));
     }
 
     @Override
@@ -350,7 +352,7 @@ public class DefaultNutsElements extends DefaultFormatBase<NutsElements> impleme
 
     @Override
     public <T> T fromElement(NutsElement o, Class<T> to) {
-        return convert(o,to);
+        return convert(o, to);
     }
 
     //    @Override
@@ -392,7 +394,7 @@ public class DefaultNutsElements extends DefaultFormatBase<NutsElements> impleme
     @Override
     public NutsPrimitiveElement ofBoolean(String value) {
         NutsOptional<Boolean> o = NutsValue.of(value).asBoolean();
-        if(o.isEmpty()){
+        if (o.isEmpty()) {
             return ofNull();
         }
         return ofBoolean(o.get());
@@ -420,10 +422,9 @@ public class DefaultNutsElements extends DefaultFormatBase<NutsElements> impleme
     @Override
     public NutsCustomElement ofCustom(Object object) {
         checkSession();
-        if(object ==null){
-            throw new NutsIllegalArgumentException(getSession(), NutsMessage.cstyle("custom element cannot be null"));
-        }
-        return new DefaultNutsCustomElement(object, getSession());
+        NutsSession session = getSession();
+        NutsUtils.requireNonNull(object, session, "custom element");
+        return new DefaultNutsCustomElement(object, session);
     }
 
     @Override
@@ -501,7 +502,7 @@ public class DefaultNutsElements extends DefaultFormatBase<NutsElements> impleme
 
             }
         }
-        throw new NutsParseException(getSession(), NutsMessage.cstyle("unable to parse number %s", value));
+        throw new NutsParseException(getSession(), NutsMessage.ofCstyle("unable to parse number %s", value));
     }
 
     @Override
@@ -598,7 +599,7 @@ public class DefaultNutsElements extends DefaultFormatBase<NutsElements> impleme
             case PROPS:
                 return new DefaultSearchFormatProps(getSession(), writer, new NutsFetchDisplayOptions(getSession()));
         }
-        throw new NutsIllegalArgumentException(getSession(), NutsMessage.cstyle("unsupported iterator for " + getContentType()));
+        throw new NutsUnsupportedOperationException(getSession(), NutsMessage.ofCstyle("unsupported iterator for %s", getContentType()));
     }
 
     @Override
@@ -625,7 +626,7 @@ public class DefaultNutsElements extends DefaultFormatBase<NutsElements> impleme
                 throw new NutsUnsupportedEnumException(getSession(), contentType);
             }
         }
-        throw new NutsIllegalArgumentException(getSession(), NutsMessage.cstyle("invalid content type %s. Only structured content types are allowed.", contentType));
+        throw new NutsIllegalArgumentException(getSession(), NutsMessage.ofCstyle("invalid content type %s. Only structured content types are allowed.", contentType));
     }
 
     private DefaultNutsElementFactoryContext createFactoryContext() {

@@ -147,7 +147,7 @@ public class NutsJLineCommandHistory implements NutsCommandHistory {
                     public void accept(String l) {
                         int idx = l.indexOf(':');
                         if (idx < 0) {
-                            throw new NutsExecutionException(session,  NutsMessage.cstyle("Bad history file syntax! "
+                            throw new NutsExecutionException(session,  NutsMessage.ofPlain("Bad history file syntax! "
                                     + "The history file may be an older history: "
                                     + "please remove it or use a different history file."), 2);
                         }

@@ -73,7 +73,7 @@ public abstract class AbstractWinNutsShellHelper implements NutsShellHelper{
                             break;
                         }
                         case '"': {
-                            throw new NutsParseException(session, NutsMessage.cstyle("illegal char %s", c));
+                            throw new NutsParseException(session, NutsMessage.ofCstyle("illegal char %s", c));
                         }
                         case '^': {
                             i++;
@@ -120,7 +120,7 @@ public abstract class AbstractWinNutsShellHelper implements NutsShellHelper{
                 break;
             }
             case IN_DBQUOTED_WORD: {
-                throw new NutsParseException(session, NutsMessage.cstyle("expected \""));
+                throw new NutsParseException(session, NutsMessage.ofPlain("expected \""));
             }
         }
         return args.toArray(new String[0]);
@@ -225,7 +225,7 @@ public abstract class AbstractWinNutsShellHelper implements NutsShellHelper{
                         case '\n':
                         case '\r':
                         {
-                            throw new NutsIllegalArgumentException(options.getSession(),NutsMessage.plain("unsupported new line in arguments"));
+                            throw new NutsIllegalArgumentException(options.getSession(),NutsMessage.ofPlain("unsupported new line in arguments"));
                         }
                         default:
                         {
@@ -263,7 +263,7 @@ public abstract class AbstractWinNutsShellHelper implements NutsShellHelper{
                         case '\n':
                         case '\r':
                         {
-                            throw new NutsIllegalArgumentException(options.getSession(),NutsMessage.plain("unsupported new line in arguments"));
+                            throw new NutsIllegalArgumentException(options.getSession(),NutsMessage.ofPlain("unsupported new line in arguments"));
                         }
                         default:
                         {
@@ -288,7 +288,7 @@ public abstract class AbstractWinNutsShellHelper implements NutsShellHelper{
                         case '\n':
                         case '\r':
                         {
-                            throw new NutsIllegalArgumentException(options.getSession(),NutsMessage.plain("unsupported new line in arguments"));
+                            throw new NutsIllegalArgumentException(options.getSession(),NutsMessage.ofPlain("unsupported new line in arguments"));
                         }
                         default:
                         {

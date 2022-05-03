@@ -15,6 +15,7 @@ import net.thevpc.nuts.text.NutsText;
 import net.thevpc.nuts.text.NutsTextBuilder;
 import net.thevpc.nuts.text.NutsTextStyle;
 import net.thevpc.nuts.text.NutsTexts;
+import net.thevpc.nuts.util.NutsUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -41,9 +42,7 @@ public class DefaultNutsUninstallCommand extends AbstractNutsUninstallCommand {
         session.security().setSession(getSession()).checkAllowed(NutsConstants.Permissions.UNINSTALL, "uninstall");
         List<NutsDefinition> defs = new ArrayList<>();
         List<NutsId> nutsIds = this.getIds();
-        if (nutsIds.size() == 0) {
-            throw new NutsExecutionException(getSession(), NutsMessage.cstyle("missing packages to uninstall"), 1);
-        }
+        NutsUtils.requireNonBlank(nutsIds,session,"packages to uninstall");
         List<NutsId> installed = new ArrayList<>();
         for (NutsId id : nutsIds) {
             List<NutsDefinition> resultDefinitions = session.search().addId(id)
@@ -56,7 +55,7 @@ public class DefaultNutsUninstallCommand extends AbstractNutsUninstallCommand {
                     .getResultDefinitions().toList();
             resultDefinitions.removeIf(it -> !it.getInstallInformation().get(session).isInstalledOrRequired());
             if (resultDefinitions.isEmpty()) {
-                throw new NutsIllegalArgumentException(getSession(), NutsMessage.cstyle("not installed : %s", id));
+                throw new NutsIllegalArgumentException(getSession(), NutsMessage.ofCstyle("not installed : %s", id));
             }
             installed.addAll(resultDefinitions.stream().map(NutsDefinition::getId).collect(Collectors.toList()));
             defs.addAll(resultDefinitions);
@@ -64,18 +63,18 @@ public class DefaultNutsUninstallCommand extends AbstractNutsUninstallCommand {
         NutsMemoryPrintStream mout = NutsMemoryPrintStream.of(session);
         printList(mout, "installed", "uninstalled", installed);
         mout.println("should we proceed uninstalling ?");
-        NutsMessage cancelMessage = NutsMessage.cstyle("uninstall cancelled : %s", defs.stream()
+        NutsMessage cancelMessage = NutsMessage.ofCstyle("uninstall cancelled : %s", defs.stream()
                 .map(NutsDefinition::getId)
                 .map(NutsId::getFullName)
                 .collect(Collectors.joining(", ")));
         if (!defs.isEmpty() && !getSession().getTerminal().ask()
                 .resetLine()
                 .setSession(session)
-                .forBoolean(mout.toString())
+                .forBoolean(NutsMessage.ofNtf(mout.toString()))
                 .setDefaultValue(true)
                 .setCancelMessage(cancelMessage)
                 .getBooleanValue()) {
-            throw new NutsUserCancelException(getSession(), cancelMessage);
+            throw new NutsCancelException(getSession(), cancelMessage);
         }
 
         for (NutsDefinition def : defs) {

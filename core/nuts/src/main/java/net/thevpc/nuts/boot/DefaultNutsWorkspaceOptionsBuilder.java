@@ -393,17 +393,17 @@ public class DefaultNutsWorkspaceOptionsBuilder implements NutsWorkspaceOptionsB
 
     @Override
     public NutsOptional<NutsSupportMode> getDesktopLauncher() {
-        return NutsOptional.of(desktopLauncher);
+        return NutsOptional.ofNamed(desktopLauncher,"desktopLauncher");
     }
 
     @Override
     public NutsOptional<NutsSupportMode> getMenuLauncher() {
-        return NutsOptional.of(menuLauncher);
+        return NutsOptional.ofNamed(menuLauncher,"menuLauncher");
     }
 
     @Override
     public NutsOptional<NutsSupportMode> getUserLauncher() {
-        return NutsOptional.of(userLauncher);
+        return NutsOptional.ofNamed(userLauncher,"userLauncher");
     }
 
     @Override
@@ -462,7 +462,7 @@ public class DefaultNutsWorkspaceOptionsBuilder implements NutsWorkspaceOptionsB
 
     @Override
     public NutsOptional<NutsVersion> getApiVersion() {
-        return NutsOptional.of(apiVersion);
+        return NutsOptional.ofNamed(apiVersion,"apiVersion");
     }
 
     /**
@@ -479,7 +479,7 @@ public class DefaultNutsWorkspaceOptionsBuilder implements NutsWorkspaceOptionsB
 
     @Override
     public NutsOptional<List<String>> getApplicationArguments() {
-        return NutsOptional.of(applicationArguments);
+        return NutsOptional.ofNamed(applicationArguments,"applicationArguments");
     }
 
     /**
@@ -496,7 +496,7 @@ public class DefaultNutsWorkspaceOptionsBuilder implements NutsWorkspaceOptionsB
 
     @Override
     public NutsOptional<String> getArchetype() {
-        return NutsOptional.of(archetype);
+        return NutsOptional.ofNamed(archetype,"archetype");
     }
 
     /**
@@ -513,7 +513,7 @@ public class DefaultNutsWorkspaceOptionsBuilder implements NutsWorkspaceOptionsB
 
     @Override
     public NutsOptional<Supplier<ClassLoader>> getClassLoaderSupplier() {
-        return NutsOptional.of(classLoaderSupplier);
+        return NutsOptional.ofNamed(classLoaderSupplier,"classLoaderSupplier");
     }
 
     /**
@@ -530,7 +530,7 @@ public class DefaultNutsWorkspaceOptionsBuilder implements NutsWorkspaceOptionsB
 
     @Override
     public NutsOptional<NutsConfirmationMode> getConfirm() {
-        return NutsOptional.of(confirm);
+        return NutsOptional.ofNamed(confirm,"confirm");
     }
 
     /**
@@ -547,7 +547,7 @@ public class DefaultNutsWorkspaceOptionsBuilder implements NutsWorkspaceOptionsB
 
     @Override
     public NutsOptional<Boolean> getDry() {
-        return NutsOptional.of(dry);
+        return NutsOptional.ofNamed(dry,"dry");
     }
 
     /**
@@ -564,7 +564,7 @@ public class DefaultNutsWorkspaceOptionsBuilder implements NutsWorkspaceOptionsB
 
     @Override
     public NutsOptional<Instant> getCreationTime() {
-        return NutsOptional.of(creationTime);
+        return NutsOptional.ofNamed(creationTime,"creationTime");
     }
 
     /**
@@ -581,7 +581,7 @@ public class DefaultNutsWorkspaceOptionsBuilder implements NutsWorkspaceOptionsB
 
     @Override
     public NutsOptional<List<String>> getExcludedExtensions() {
-        return NutsOptional.of(excludedExtensions);
+        return NutsOptional.ofNamed(excludedExtensions,"excludedExtensions");
     }
 
     /**
@@ -598,7 +598,7 @@ public class DefaultNutsWorkspaceOptionsBuilder implements NutsWorkspaceOptionsB
 
     @Override
     public NutsOptional<NutsExecutionType> getExecutionType() {
-        return NutsOptional.of(executionType);
+        return NutsOptional.ofNamed(executionType,"executionType");
     }
 
     /**
@@ -615,7 +615,7 @@ public class DefaultNutsWorkspaceOptionsBuilder implements NutsWorkspaceOptionsB
 
     @Override
     public NutsOptional<NutsRunAs> getRunAs() {
-        return NutsOptional.of(runAs);
+        return NutsOptional.ofNamed(runAs,"runAs");
     }
 
     /**
@@ -631,7 +631,7 @@ public class DefaultNutsWorkspaceOptionsBuilder implements NutsWorkspaceOptionsB
 
     @Override
     public NutsOptional<List<String>> getExecutorOptions() {
-        return NutsOptional.of(executorOptions);
+        return NutsOptional.ofNamed(executorOptions,"executorOptions");
     }
 
     /**
@@ -648,12 +648,12 @@ public class DefaultNutsWorkspaceOptionsBuilder implements NutsWorkspaceOptionsB
 
     @Override
     public NutsOptional<String> getHomeLocation(NutsHomeLocation location) {
-        return NutsOptional.of(homeLocations.get(location));
+        return NutsOptional.ofNamed(homeLocations==null?null:homeLocations.get(location),"homeLocations["+location+"]");
     }
 
     @Override
     public NutsOptional<Map<NutsHomeLocation, String>> getHomeLocations() {
-        return NutsOptional.of(homeLocations);
+        return NutsOptional.ofNamed(homeLocations,"homeLocations");
     }
 
     @Override
@@ -671,7 +671,7 @@ public class DefaultNutsWorkspaceOptionsBuilder implements NutsWorkspaceOptionsB
 
     @Override
     public NutsOptional<String> getJavaCommand() {
-        return NutsOptional.of(javaCommand);
+        return NutsOptional.ofNamed(javaCommand,"javaCommand");
     }
 
     @Override
@@ -682,7 +682,7 @@ public class DefaultNutsWorkspaceOptionsBuilder implements NutsWorkspaceOptionsB
 
     @Override
     public NutsOptional<String> getJavaOptions() {
-        return NutsOptional.of(javaOptions);
+        return NutsOptional.ofNamed(javaOptions,"javaOptions");
     }
 
     /**
@@ -699,7 +699,7 @@ public class DefaultNutsWorkspaceOptionsBuilder implements NutsWorkspaceOptionsB
 
     @Override
     public NutsOptional<NutsLogConfig> getLogConfig() {
-        return NutsOptional.of(logConfig);
+        return NutsOptional.ofNamed(logConfig,"logConfig");
     }
 
     /**
@@ -716,7 +716,7 @@ public class DefaultNutsWorkspaceOptionsBuilder implements NutsWorkspaceOptionsB
 
     @Override
     public NutsOptional<String> getName() {
-        return NutsOptional.of(name);
+        return NutsOptional.ofNamed(name,"name");
     }
 
     /**
@@ -733,7 +733,7 @@ public class DefaultNutsWorkspaceOptionsBuilder implements NutsWorkspaceOptionsB
 
     @Override
     public NutsOptional<NutsOpenMode> getOpenMode() {
-        return NutsOptional.of(openMode);
+        return NutsOptional.ofNamed(openMode,"openMode");
     }
 
     /**
@@ -750,7 +750,7 @@ public class DefaultNutsWorkspaceOptionsBuilder implements NutsWorkspaceOptionsB
 
     @Override
     public NutsOptional<NutsContentType> getOutputFormat() {
-        return NutsOptional.of(outputFormat);
+        return NutsOptional.ofNamed(outputFormat,"outputFormat");
     }
 
     /**
@@ -767,7 +767,7 @@ public class DefaultNutsWorkspaceOptionsBuilder implements NutsWorkspaceOptionsB
 
     @Override
     public NutsOptional<List<String>> getOutputFormatOptions() {
-        return NutsOptional.of(outputFormatOptions);
+        return NutsOptional.ofNamed(outputFormatOptions,"outputFormatOptions");
     }
 
     /**
@@ -800,7 +800,7 @@ public class DefaultNutsWorkspaceOptionsBuilder implements NutsWorkspaceOptionsB
 
     @Override
     public NutsOptional<char[]> getCredentials() {
-        return NutsOptional.of(credentials);
+        return NutsOptional.ofNamed(credentials,"credentials");
     }
 
     /**
@@ -817,7 +817,7 @@ public class DefaultNutsWorkspaceOptionsBuilder implements NutsWorkspaceOptionsB
 
     @Override
     public NutsOptional<NutsStoreLocationStrategy> getRepositoryStoreLocationStrategy() {
-        return NutsOptional.of(repositoryStoreLocationStrategy);
+        return NutsOptional.ofNamed(repositoryStoreLocationStrategy,"repositoryStoreLocationStrategy");
     }
 
     /**
@@ -834,7 +834,7 @@ public class DefaultNutsWorkspaceOptionsBuilder implements NutsWorkspaceOptionsB
 
     @Override
     public NutsOptional<NutsId> getRuntimeId() {
-        return NutsOptional.of(runtimeId);
+        return NutsOptional.ofNamed(runtimeId,"runtimeId");
     }
 
     /**
@@ -851,12 +851,12 @@ public class DefaultNutsWorkspaceOptionsBuilder implements NutsWorkspaceOptionsB
 
     @Override
     public NutsOptional<String> getStoreLocation(NutsStoreLocation folder) {
-        return NutsOptional.of(storeLocations.get(folder));
+        return NutsOptional.ofNamed(storeLocations==null?null:storeLocations.get(folder),"storeLocations["+folder+"]");
     }
 
     @Override
     public NutsOptional<NutsOsFamily> getStoreLocationLayout() {
-        return NutsOptional.of(storeLocationLayout);
+        return NutsOptional.ofNamed(storeLocationLayout,"storeLocationLayout");
     }
 
     /**
@@ -873,7 +873,7 @@ public class DefaultNutsWorkspaceOptionsBuilder implements NutsWorkspaceOptionsB
 
     @Override
     public NutsOptional<NutsStoreLocationStrategy> getStoreLocationStrategy() {
-        return NutsOptional.of(storeLocationStrategy);
+        return NutsOptional.ofNamed(storeLocationStrategy,"storeLocationStrategy");
     }
 
     /**
@@ -890,7 +890,7 @@ public class DefaultNutsWorkspaceOptionsBuilder implements NutsWorkspaceOptionsB
 
     @Override
     public NutsOptional<Map<NutsStoreLocation, String>> getStoreLocations() {
-        return NutsOptional.of(storeLocations);
+        return NutsOptional.ofNamed(storeLocations,"storeLocations");
     }
 
     @Override
@@ -909,7 +909,7 @@ public class DefaultNutsWorkspaceOptionsBuilder implements NutsWorkspaceOptionsB
 
     @Override
     public NutsOptional<NutsTerminalMode> getTerminalMode() {
-        return NutsOptional.of(terminalMode);
+        return NutsOptional.ofNamed(terminalMode,"terminalMode");
     }
 
     /**
@@ -926,7 +926,7 @@ public class DefaultNutsWorkspaceOptionsBuilder implements NutsWorkspaceOptionsB
 
     @Override
     public NutsOptional<List<String>> getRepositories() {
-        return NutsOptional.of(repositories);
+        return NutsOptional.ofNamed(repositories,"repositories");
     }
 
     /**
@@ -943,12 +943,12 @@ public class DefaultNutsWorkspaceOptionsBuilder implements NutsWorkspaceOptionsB
 
     @Override
     public NutsOptional<String> getUserName() {
-        return NutsOptional.of(userName);
+        return NutsOptional.ofNamed(userName,"userName");
     }
 
     @Override
     public NutsOptional<String> getWorkspace() {
-        return NutsOptional.of(workspace);
+        return NutsOptional.ofNamed(workspace,"workspace");
     }
 
     /**
@@ -965,7 +965,7 @@ public class DefaultNutsWorkspaceOptionsBuilder implements NutsWorkspaceOptionsB
 
     @Override
     public NutsOptional<String> getDebug() {
-        return NutsOptional.of(debug);
+        return NutsOptional.ofNamed(debug,"debug");
     }
 
     /**
@@ -982,7 +982,7 @@ public class DefaultNutsWorkspaceOptionsBuilder implements NutsWorkspaceOptionsB
 
     @Override
     public NutsOptional<Boolean> getGlobal() {
-        return NutsOptional.of(global);
+        return NutsOptional.ofNamed(global,"global");
     }
 
     /**
@@ -999,7 +999,7 @@ public class DefaultNutsWorkspaceOptionsBuilder implements NutsWorkspaceOptionsB
 
     @Override
     public NutsOptional<Boolean> getGui() {
-        return NutsOptional.of(gui);
+        return NutsOptional.ofNamed(gui,"gui");
     }
 
     /**
@@ -1016,7 +1016,7 @@ public class DefaultNutsWorkspaceOptionsBuilder implements NutsWorkspaceOptionsB
 
     @Override
     public NutsOptional<Boolean> getInherited() {
-        return NutsOptional.of(inherited);
+        return NutsOptional.ofNamed(inherited,"inherited");
     }
 
     /**
@@ -1033,7 +1033,7 @@ public class DefaultNutsWorkspaceOptionsBuilder implements NutsWorkspaceOptionsB
 
     @Override
     public NutsOptional<Boolean> getReadOnly() {
-        return NutsOptional.of(readOnly);
+        return NutsOptional.ofNamed(readOnly,"readOnly");
     }
 
     /**
@@ -1050,7 +1050,7 @@ public class DefaultNutsWorkspaceOptionsBuilder implements NutsWorkspaceOptionsB
 
     @Override
     public NutsOptional<Boolean> getRecover() {
-        return NutsOptional.of(recover);
+        return NutsOptional.ofNamed(recover,"recover");
     }
 
     /**
@@ -1067,7 +1067,7 @@ public class DefaultNutsWorkspaceOptionsBuilder implements NutsWorkspaceOptionsB
 
     @Override
     public NutsOptional<Boolean> getReset() {
-        return NutsOptional.of(reset);
+        return NutsOptional.ofNamed(reset,"reset");
     }
 
     /**
@@ -1084,7 +1084,7 @@ public class DefaultNutsWorkspaceOptionsBuilder implements NutsWorkspaceOptionsB
 
     @Override
     public NutsOptional<Boolean> getCommandVersion() {
-        return NutsOptional.of(commandVersion);
+        return NutsOptional.ofNamed(commandVersion,"commandVersion");
     }
 
     @Override
@@ -1095,7 +1095,7 @@ public class DefaultNutsWorkspaceOptionsBuilder implements NutsWorkspaceOptionsB
 
     @Override
     public NutsOptional<Boolean> getCommandHelp() {
-        return NutsOptional.of(commandHelp);
+        return NutsOptional.ofNamed(commandHelp,"commandHelp");
     }
 
     @Override
@@ -1106,7 +1106,7 @@ public class DefaultNutsWorkspaceOptionsBuilder implements NutsWorkspaceOptionsB
 
     @Override
     public NutsOptional<Boolean> getSkipCompanions() {
-        return NutsOptional.of(skipCompanions);
+        return NutsOptional.ofNamed(skipCompanions,"skipCompanions");
     }
 
     /**
@@ -1123,7 +1123,7 @@ public class DefaultNutsWorkspaceOptionsBuilder implements NutsWorkspaceOptionsB
 
     @Override
     public NutsOptional<Boolean> getSkipWelcome() {
-        return NutsOptional.of(skipWelcome);
+        return NutsOptional.ofNamed(skipWelcome,"skipWelcome");
     }
 
     /**
@@ -1140,7 +1140,7 @@ public class DefaultNutsWorkspaceOptionsBuilder implements NutsWorkspaceOptionsB
 
     @Override
     public NutsOptional<String> getOutLinePrefix() {
-        return NutsOptional.of(outLinePrefix);
+        return NutsOptional.ofNamed(outLinePrefix,"outLinePrefix");
     }
 
     @Override
@@ -1151,7 +1151,7 @@ public class DefaultNutsWorkspaceOptionsBuilder implements NutsWorkspaceOptionsB
 
     @Override
     public NutsOptional<String> getErrLinePrefix() {
-        return NutsOptional.of(errLinePrefix);
+        return NutsOptional.ofNamed(errLinePrefix,"errLinePrefix");
     }
 
     @Override
@@ -1162,7 +1162,7 @@ public class DefaultNutsWorkspaceOptionsBuilder implements NutsWorkspaceOptionsB
 
     @Override
     public NutsOptional<Boolean> getSkipBoot() {
-        return NutsOptional.of(skipBoot);
+        return NutsOptional.ofNamed(skipBoot,"skipBoot");
     }
 
     /**
@@ -1179,7 +1179,7 @@ public class DefaultNutsWorkspaceOptionsBuilder implements NutsWorkspaceOptionsB
 
     @Override
     public NutsOptional<Boolean> getTrace() {
-        return NutsOptional.of(trace);
+        return NutsOptional.ofNamed(trace,"trace");
     }
 
     /**
@@ -1195,7 +1195,7 @@ public class DefaultNutsWorkspaceOptionsBuilder implements NutsWorkspaceOptionsB
     }
 
     public NutsOptional<String> getProgressOptions() {
-        return NutsOptional.of(progressOptions);
+        return NutsOptional.ofNamed(progressOptions,"progressOptions");
     }
 
     @Override
@@ -1206,7 +1206,7 @@ public class DefaultNutsWorkspaceOptionsBuilder implements NutsWorkspaceOptionsB
 
     @Override
     public NutsOptional<Boolean> getCached() {
-        return NutsOptional.of(cached);
+        return NutsOptional.ofNamed(cached,"cached");
     }
 
     @Override
@@ -1217,7 +1217,7 @@ public class DefaultNutsWorkspaceOptionsBuilder implements NutsWorkspaceOptionsB
 
     @Override
     public NutsOptional<Boolean> getIndexed() {
-        return NutsOptional.of(indexed);
+        return NutsOptional.ofNamed(indexed,"indexed");
     }
 
     @Override
@@ -1228,7 +1228,7 @@ public class DefaultNutsWorkspaceOptionsBuilder implements NutsWorkspaceOptionsB
 
     @Override
     public NutsOptional<Boolean> getTransitive() {
-        return NutsOptional.of(transitive);
+        return NutsOptional.ofNamed(transitive,"transitive");
     }
 
     @Override
@@ -1239,7 +1239,7 @@ public class DefaultNutsWorkspaceOptionsBuilder implements NutsWorkspaceOptionsB
 
     @Override
     public NutsOptional<Boolean> getBot() {
-        return NutsOptional.of(bot);
+        return NutsOptional.ofNamed(bot,"bot");
     }
 
     @Override
@@ -1250,7 +1250,7 @@ public class DefaultNutsWorkspaceOptionsBuilder implements NutsWorkspaceOptionsB
 
     @Override
     public NutsOptional<NutsFetchStrategy> getFetchStrategy() {
-        return NutsOptional.of(fetchStrategy);
+        return NutsOptional.ofNamed(fetchStrategy,"fetchStrategy");
     }
 
     @Override
@@ -1261,7 +1261,7 @@ public class DefaultNutsWorkspaceOptionsBuilder implements NutsWorkspaceOptionsB
 
     @Override
     public NutsOptional<InputStream> getStdin() {
-        return NutsOptional.of(stdin);
+        return NutsOptional.ofNamed(stdin,"stdin");
     }
 
     @Override
@@ -1272,7 +1272,7 @@ public class DefaultNutsWorkspaceOptionsBuilder implements NutsWorkspaceOptionsB
 
     @Override
     public NutsOptional<PrintStream> getStdout() {
-        return NutsOptional.of(stdout);
+        return NutsOptional.ofNamed(stdout,"stdout");
     }
 
     @Override
@@ -1283,7 +1283,7 @@ public class DefaultNutsWorkspaceOptionsBuilder implements NutsWorkspaceOptionsB
 
     @Override
     public NutsOptional<PrintStream> getStderr() {
-        return NutsOptional.of(stderr);
+        return NutsOptional.ofNamed(stderr,"stderr");
     }
 
     @Override
@@ -1294,7 +1294,7 @@ public class DefaultNutsWorkspaceOptionsBuilder implements NutsWorkspaceOptionsB
 
     @Override
     public NutsOptional<ExecutorService> getExecutorService() {
-        return NutsOptional.of(executorService);
+        return NutsOptional.ofNamed(executorService,"executorService");
     }
 
     @Override
@@ -1305,7 +1305,7 @@ public class DefaultNutsWorkspaceOptionsBuilder implements NutsWorkspaceOptionsB
 
     @Override
     public NutsOptional<Instant> getExpireTime() {
-        return NutsOptional.of(expireTime);
+        return NutsOptional.ofNamed(expireTime,"expireTime");
     }
 
     @Override
@@ -1316,7 +1316,7 @@ public class DefaultNutsWorkspaceOptionsBuilder implements NutsWorkspaceOptionsB
 
     @Override
     public NutsOptional<Boolean> getSkipErrors() {
-        return NutsOptional.of(skipErrors);
+        return NutsOptional.ofNamed(skipErrors,"skipErrors");
     }
 
     @Override
@@ -1327,7 +1327,7 @@ public class DefaultNutsWorkspaceOptionsBuilder implements NutsWorkspaceOptionsB
 
     @Override
     public NutsOptional<Boolean> getSwitchWorkspace() {
-        return NutsOptional.of(switchWorkspace);
+        return NutsOptional.ofNamed(switchWorkspace,"switchWorkspace");
     }
 
     public NutsWorkspaceOptionsBuilder setSwitchWorkspace(Boolean switchWorkspace) {
@@ -1337,7 +1337,7 @@ public class DefaultNutsWorkspaceOptionsBuilder implements NutsWorkspaceOptionsB
 
     @Override
     public NutsOptional<List<NutsMessage>> getErrors() {
-        return NutsOptional.of(errors);
+        return NutsOptional.ofNamed(errors,"errors");
     }
 
     @Override
@@ -1348,7 +1348,7 @@ public class DefaultNutsWorkspaceOptionsBuilder implements NutsWorkspaceOptionsB
 
     @Override
     public NutsOptional<List<String>> getCustomOptions() {
-        return NutsOptional.of(customOptions);
+        return NutsOptional.ofNamed(customOptions,"customOptions");
     }
 
     @Override
@@ -1359,7 +1359,7 @@ public class DefaultNutsWorkspaceOptionsBuilder implements NutsWorkspaceOptionsB
 
     @Override
     public NutsOptional<String> getLocale() {
-        return NutsOptional.of(locale);
+        return NutsOptional.ofNamed(locale,"locale");
     }
 
     @Override
@@ -1370,7 +1370,7 @@ public class DefaultNutsWorkspaceOptionsBuilder implements NutsWorkspaceOptionsB
 
     @Override
     public NutsOptional<String> getTheme() {
-        return NutsOptional.of(theme);
+        return NutsOptional.ofNamed(theme,"theme");
     }
 
     @Override
@@ -1770,7 +1770,7 @@ public class DefaultNutsWorkspaceOptionsBuilder implements NutsWorkspaceOptionsB
 
     @Override
     public NutsOptional<String> getDependencySolver() {
-        return NutsOptional.of(dependencySolver);
+        return NutsOptional.ofNamed(dependencySolver,"dependencySolver");
     }
 
     @Override
@@ -1831,27 +1831,27 @@ public class DefaultNutsWorkspaceOptionsBuilder implements NutsWorkspaceOptionsB
 
     @Override
     public NutsOptional<NutsIsolationLevel> getIsolationLevel() {
-        return NutsOptional.of(isolationLevel);
+        return NutsOptional.ofNamed(isolationLevel,"isolationLevel");
     }
 
     @Override
     public NutsOptional<Boolean> getInitLaunchers() {
-        return NutsOptional.of(initLaunchers);
+        return NutsOptional.ofNamed(initLaunchers,"initLaunchers");
     }
 
     @Override
     public NutsOptional<Boolean> getInitScripts() {
-        return NutsOptional.of(initScripts);
+        return NutsOptional.ofNamed(initScripts,"initScripts");
     }
 
     @Override
     public NutsOptional<Boolean> getInitPlatforms() {
-        return NutsOptional.of(initPlatforms);
+        return NutsOptional.ofNamed(initPlatforms,"initPlatforms");
     }
 
     @Override
     public NutsOptional<Boolean> getInitJava() {
-        return NutsOptional.of(initJava);
+        return NutsOptional.ofNamed(initJava,"initJava");
     }
 
     @Override

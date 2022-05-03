@@ -142,7 +142,7 @@ public class NutsElementMapperObjReflect implements NutsElementMapper<Object> {
         }
         int mod = c.getModifiers();
         if (Modifier.isAbstract(mod)) {
-            throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("cannot instantiate abstract class %s", typeOfResult));
+            throw new NutsIllegalArgumentException(session, NutsMessage.ofCstyle("cannot instantiate abstract class %s", typeOfResult));
         }
         ReflectType m = defaultNutsElementFactoryService.getTypesRepository().getType(typeOfResult);
         Object instance;

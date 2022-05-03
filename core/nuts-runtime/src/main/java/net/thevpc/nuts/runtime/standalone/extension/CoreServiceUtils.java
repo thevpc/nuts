@@ -121,11 +121,11 @@ public final class CoreServiceUtils {
             try {
                 c = Class.forName(n, false, classLoader);
             } catch (ClassNotFoundException x) {
-                throw new NutsException(session, NutsMessage.cstyle("unable to load service class %s", n), x);
+                throw new NutsException(session, NutsMessage.ofCstyle("unable to load service class %s", n), x);
             }
             if (!service.isAssignableFrom(c)) {
                 throw new NutsException(session,
-                        NutsMessage.cstyle("not a valid type %s <> %s", c, service));
+                        NutsMessage.ofCstyle("not a valid type %s <> %s", c, service));
             }
             classes.add(c);
         }

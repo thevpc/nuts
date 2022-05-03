@@ -13,6 +13,7 @@ import java.util.Objects;
 
 public class DefaultNutsValue implements NutsValue {
     private static NutsValue NULL = new DefaultNutsValue(null);
+
     public static NutsValue of(Object any) {
         if (any == null) {
             return NULL;
@@ -32,7 +33,7 @@ public class DefaultNutsValue implements NutsValue {
     private Object value;
     private NutsElementType type;
 
-    public static NutsOptional<Instant> parseInstant(String text){
+    public static NutsOptional<Instant> parseInstant(String text) {
         for (String f : DATE_FORMATS) {
             try {
                 return NutsOptional.of(new SimpleDateFormat(f).parse(text).toInstant());
@@ -40,8 +41,9 @@ public class DefaultNutsValue implements NutsValue {
                 //
             }
         }
-        return NutsOptional.ofError(session -> NutsMessage.cstyle("invalid Instant %s",text));
+        return NutsOptional.ofError(session -> NutsMessage.ofCstyle("invalid Instant %s", text));
     }
+
     public DefaultNutsValue(Object value) {
         this.value = value;
     }
@@ -50,7 +52,7 @@ public class DefaultNutsValue implements NutsValue {
         if (value == null) {
             return NutsElementType.NULL;
         } else {
-            switch (value.getClass().getName()){
+            switch (value.getClass().getName()) {
                 case "java.lang.Byte":
                     return NutsElementType.BYTE;
                 case "java.lang.Short":
@@ -77,10 +79,10 @@ public class DefaultNutsValue implements NutsValue {
                 case "java.lang.Boolean":
                     return NutsElementType.BOOLEAN;
             }
-            if(value instanceof Number){
+            if (value instanceof Number) {
                 return NutsElementType.FLOAT;
             }
-            if(value instanceof CharSequence) {
+            if (value instanceof CharSequence) {
                 return NutsElementType.STRING;
             }
             return NutsElementType.OBJECT;
@@ -88,8 +90,8 @@ public class DefaultNutsValue implements NutsValue {
     }
 
     public NutsElementType type() {
-        if(type==null){
-            type=resolveType(value);
+        if (type == null) {
+            type = resolveType(value);
         }
         return type;
     }
@@ -102,10 +104,10 @@ public class DefaultNutsValue implements NutsValue {
     @Override
     public NutsOptional<Instant> asInstant() {
         if (value == null) {
-            return NutsOptional.ofEmpty(session -> NutsMessage.plain("empty instant"));
+            return NutsOptional.ofEmpty(session -> NutsMessage.ofPlain("empty instant"));
         }
         if (value instanceof Boolean) {
-            return NutsOptional.ofEmpty(session -> NutsMessage.plain("cannot convert boolean to Instant"));
+            return NutsOptional.ofEmpty(session -> NutsMessage.ofPlain("cannot convert boolean to Instant"));
         }
         if (value instanceof Date) {
             return NutsOptional.of(((Date) value).toInstant());
@@ -115,7 +117,7 @@ public class DefaultNutsValue implements NutsValue {
         }
         String s = String.valueOf(value);
         if (s.trim().isEmpty()) {
-            return NutsOptional.ofEmpty(session -> NutsMessage.plain("empty instant"));
+            return NutsOptional.ofEmpty(session -> NutsMessage.ofPlain("empty instant"));
         }
         try {
             return NutsOptional.of(DateTimeFormatter.ISO_INSTANT.parse(s, Instant::from));
@@ -141,15 +143,15 @@ public class DefaultNutsValue implements NutsValue {
             }
         }
         if (isNumber()) {
-            return NutsOptional.ofEmpty(session -> NutsMessage.plain("cannot convert number to Instant"));
+            return NutsOptional.ofEmpty(session -> NutsMessage.ofPlain("cannot convert number to Instant"));
         }
-        return NutsOptional.ofEmpty(session -> NutsMessage.plain("cannot convert to Instant"));
+        return NutsOptional.ofEmpty(session -> NutsMessage.ofPlain("cannot convert to Instant"));
     }
 
     @Override
     public NutsOptional<Number> asNumber() {
         if (value == null) {
-            return NutsOptional.ofEmpty(session -> NutsMessage.cstyle("empty number"));
+            return NutsOptional.ofEmpty(session -> NutsMessage.ofPlain("empty number"),0);
         }
         if (value instanceof Boolean) {
             return NutsOptional.of(((Boolean) value) ? 1 : 0);
@@ -192,13 +194,13 @@ public class DefaultNutsValue implements NutsValue {
                 //just ignore!
             }
         }
-        return NutsOptional.ofEmpty(session -> NutsMessage.plain("cannot convert to Number"));
+        return NutsOptional.ofError(session -> NutsMessage.ofPlain("cannot convert to Number"),0);
     }
 
     @Override
     public NutsOptional<Boolean> asBoolean() {
         if (value == null) {
-            return NutsOptional.ofEmpty(session -> NutsMessage.cstyle("empty boolean"));
+            return NutsOptional.ofEmpty(session -> NutsMessage.ofPlain("empty boolean"),false);
         }
         if (value instanceof Boolean) {
             return NutsOptional.of((Boolean) value);
@@ -214,9 +216,9 @@ public class DefaultNutsValue implements NutsValue {
                 );
             }
         }
-        String svalue=String.valueOf(value).trim().toLowerCase();
+        String svalue = String.valueOf(value).trim().toLowerCase();
         if (svalue.isEmpty()) {
-            return NutsOptional.ofEmpty(session -> NutsMessage.cstyle("empty boolean"));
+            return NutsOptional.ofEmpty(session -> NutsMessage.ofPlain("empty boolean"),false);
         }
         if (svalue.matches("true|enable|enabled|yes|always|y|on|ok|t|o")) {
             return NutsOptional.of(true);
@@ -224,13 +226,12 @@ public class DefaultNutsValue implements NutsValue {
         if (svalue.matches("false|disable|disabled|no|none|never|n|off|ko|f")) {
             return NutsOptional.of(false);
         }
-        return NutsOptional.ofError(session -> NutsMessage.cstyle("invalid boolean % ",svalue));
+        return NutsOptional.ofError(session -> NutsMessage.ofCstyle("invalid boolean % ", svalue),false);
     }
 
-    @Override
     public NutsOptional<Long> asLong() {
         if (isBlank()) {
-            return NutsOptional.ofEmpty(session -> NutsMessage.cstyle("empty Long"));
+            return NutsOptional.ofEmpty(session -> NutsMessage.ofPlain("empty Long"),1L);
         }
         if (value instanceof Number) {
             if (value instanceof BigInteger) {
@@ -255,26 +256,29 @@ public class DefaultNutsValue implements NutsValue {
                 } catch (NumberFormatException ex) {
                     // ignore
                 }
-                return NutsOptional.ofEmpty(session -> NutsMessage.cstyle("invalid Long %s", value));
+                return NutsOptional.ofError(session -> NutsMessage.ofCstyle("invalid Long %s", value),0L);
             } else {
                 try {
+                    if (s.startsWith("0x")) {
+                        return NutsOptional.of(Long.parseLong(s.substring(2), 16));
+                    }
                     return NutsOptional.of(Long.parseLong(s));
                 } catch (NumberFormatException ex) {
                     // ignore
                 }
-                return NutsOptional.ofEmpty(session -> NutsMessage.cstyle("invalid Long %s", value));
+                return NutsOptional.ofError(session -> NutsMessage.ofCstyle("invalid Long %s", value),0L);
             }
         }
         if (value instanceof Boolean) {
             return NutsOptional.of(((Boolean) value) ? 1L : 0L);
         }
-        return NutsOptional.ofEmpty(session -> NutsMessage.cstyle("invalid Long %s", value));
+        return NutsOptional.ofError(session -> NutsMessage.ofCstyle("invalid Long %s", value),1L);
     }
 
     @Override
     public NutsOptional<Double> asDouble() {
         if (isBlank()) {
-            return NutsOptional.ofEmpty(session -> NutsMessage.cstyle("empty Double"));
+            return NutsOptional.ofEmpty(session -> NutsMessage.ofPlain("empty Double"),0.0);
         }
         if (value instanceof Double || value instanceof Float) {
             return NutsOptional.of(((Number) value).doubleValue());
@@ -295,7 +299,7 @@ public class DefaultNutsValue implements NutsValue {
             } catch (Exception any) {
                 //
             }
-            return NutsOptional.ofEmpty(session -> NutsMessage.cstyle("invalid Double %s", value));
+            return NutsOptional.ofError(session -> NutsMessage.ofCstyle("invalid Double %s", value),0.0);
         }
         if (value instanceof BigInteger) {
             try {
@@ -311,7 +315,7 @@ public class DefaultNutsValue implements NutsValue {
             } catch (Exception any) {
                 //
             }
-            return NutsOptional.ofEmpty(session -> NutsMessage.cstyle("invalid Double %s", value));
+            return NutsOptional.ofError(session -> NutsMessage.ofCstyle("invalid Double %s", value),0.0);
         }
         if (value instanceof Date) {
             return NutsOptional.of((double) ((Date) value).getTime());
@@ -323,15 +327,14 @@ public class DefaultNutsValue implements NutsValue {
             } catch (NumberFormatException ex) {
                 // ignore
             }
-            return NutsOptional.ofEmpty(session -> NutsMessage.cstyle("invalid Double %s", value));
         }
-        return NutsOptional.ofEmpty(session -> NutsMessage.cstyle("invalid Double %s", value));
+        return NutsOptional.ofError(session -> NutsMessage.ofCstyle("invalid Double %s", value),0.0);
     }
 
     @Override
     public NutsOptional<Float> asFloat() {
         if (isBlank()) {
-            return NutsOptional.ofEmpty(session -> NutsMessage.cstyle("empty Float"));
+            return NutsOptional.ofEmpty(session -> NutsMessage.ofPlain("empty Float"));
         }
         if (value instanceof Float) {
             return NutsOptional.of(((Number) value).floatValue());
@@ -345,7 +348,7 @@ public class DefaultNutsValue implements NutsValue {
             if (abs >= Float.MIN_VALUE && abs <= Float.MIN_VALUE) {
                 return NutsOptional.of(d.floatValue());
             }
-            return NutsOptional.ofEmpty(session -> NutsMessage.cstyle("invalid Float %s", value));
+            return NutsOptional.ofEmpty(session -> NutsMessage.ofCstyle("invalid Float %s", value));
         }
         if (value instanceof Byte || value instanceof Short || value instanceof Integer || value instanceof Long) {
             double d = ((Number) value).doubleValue();
@@ -353,7 +356,7 @@ public class DefaultNutsValue implements NutsValue {
             if (abs >= Float.MIN_VALUE && abs <= Float.MIN_VALUE) {
                 return NutsOptional.of((float) d);
             }
-            return NutsOptional.ofEmpty(session -> NutsMessage.cstyle("invalid Float %s", value));
+            return NutsOptional.ofEmpty(session -> NutsMessage.ofCstyle("invalid Float %s", value));
         }
         if (value instanceof BigDecimal) {
             try {
@@ -368,7 +371,7 @@ public class DefaultNutsValue implements NutsValue {
             } catch (Exception any) {
                 //
             }
-            return NutsOptional.ofEmpty(session -> NutsMessage.cstyle("invalid Float %s", value));
+            return NutsOptional.ofEmpty(session -> NutsMessage.ofCstyle("invalid Float %s", value));
         }
         if (value instanceof BigInteger) {
             try {
@@ -384,7 +387,7 @@ public class DefaultNutsValue implements NutsValue {
             } catch (Exception any) {
                 //
             }
-            return NutsOptional.ofEmpty(session -> NutsMessage.cstyle("invalid Float %s", value));
+            return NutsOptional.ofEmpty(session -> NutsMessage.ofCstyle("invalid Float %s", value));
         }
         if (value instanceof CharSequence) {
             String s = value.toString();
@@ -393,21 +396,21 @@ public class DefaultNutsValue implements NutsValue {
             } catch (NumberFormatException ex) {
                 // ignore
             }
-            return NutsOptional.ofEmpty(session -> NutsMessage.cstyle("invalid Float %s", value));
+            return NutsOptional.ofEmpty(session -> NutsMessage.ofCstyle("invalid Float %s", value));
         }
-        return NutsOptional.ofEmpty(session -> NutsMessage.cstyle("invalid Float %s", value));
+        return NutsOptional.ofEmpty(session -> NutsMessage.ofCstyle("invalid Float %s", value));
     }
 
 
     @Override
     public NutsOptional<Byte> asByte() {
         return asLong()
-                .ifEmptyUse(() -> NutsOptional.ofEmpty(session -> NutsMessage.cstyle("empty Byte")))
-                .ifErrorUse(() -> NutsOptional.ofError(session -> NutsMessage.cstyle("invalid Byte : %s", getRaw())))
+                .ifEmptyUse(() -> NutsOptional.ofEmpty(session -> NutsMessage.ofPlain("empty Byte")))
+                .ifErrorUse(() -> NutsOptional.ofError(session -> NutsMessage.ofCstyle("invalid Byte : %s", getRaw())))
                 .flatMap(value -> {
                     byte smallValue = value.byteValue();
                     if (!Long.valueOf(smallValue).equals(value)) {
-                        return NutsOptional.ofError(session -> NutsMessage.cstyle("invalid Byte : %s", getRaw()));
+                        return NutsOptional.ofError(session -> NutsMessage.ofCstyle("invalid Byte : %s", getRaw()));
                     }
                     return NutsOptional.of(smallValue);
                 });
@@ -416,12 +419,12 @@ public class DefaultNutsValue implements NutsValue {
     @Override
     public NutsOptional<Short> asShort() {
         return asLong()
-                .ifEmptyUse(() -> NutsOptional.ofEmpty(session -> NutsMessage.cstyle("empty Short")))
-                .ifErrorUse(() -> NutsOptional.ofError(session -> NutsMessage.cstyle("invalid Short : %s", getRaw())))
+                .ifEmptyUse(() -> NutsOptional.ofEmpty(session -> NutsMessage.ofPlain("empty Short")))
+                .ifErrorUse(() -> NutsOptional.ofError(session -> NutsMessage.ofCstyle("invalid Short : %s", getRaw())))
                 .flatMap(value -> {
                     short smallValue = value.shortValue();
                     if (!Long.valueOf(smallValue).equals(value)) {
-                        return NutsOptional.ofError(session -> NutsMessage.cstyle("invalid Short : %s", getRaw()));
+                        return NutsOptional.ofError(session -> NutsMessage.ofCstyle("invalid Short : %s", getRaw()));
                     }
                     return NutsOptional.of(smallValue);
                 });
@@ -430,12 +433,12 @@ public class DefaultNutsValue implements NutsValue {
     @Override
     public NutsOptional<Integer> asInt() {
         return asLong()
-                .ifEmptyUse(() -> NutsOptional.ofEmpty(session -> NutsMessage.cstyle("empty Integer")))
-                .ifErrorUse(() -> NutsOptional.ofError(session -> NutsMessage.cstyle("invalid Integer : %s", getRaw())))
+                .ifEmptyUse(() -> NutsOptional.ofEmpty(session -> NutsMessage.ofPlain("empty Integer"),0L))
+                .ifErrorUse(() -> NutsOptional.ofError(session -> NutsMessage.ofCstyle("invalid Integer : %s", getRaw()),0L))
                 .flatMap(value -> {
                     int smallValue = value.intValue();
                     if (!Long.valueOf(smallValue).equals(value)) {
-                        return NutsOptional.ofError(session -> NutsMessage.cstyle("invalid Integer : %s", getRaw()));
+                        return NutsOptional.ofError(session -> NutsMessage.ofCstyle("invalid Integer : %s", getRaw()));
                     }
                     return NutsOptional.of(smallValue);
                 });
@@ -573,7 +576,7 @@ public class DefaultNutsValue implements NutsValue {
     @Override
     public NutsOptional<BigInteger> asBigInt() {
         if (isBlank()) {
-            return NutsOptional.ofEmpty(session -> NutsMessage.cstyle("empty BigInteger"));
+            return NutsOptional.ofEmpty(session -> NutsMessage.ofPlain("empty BigInteger"),BigInteger.ZERO);
         }
         if (value instanceof BigInteger) {
             return NutsOptional.of((BigInteger) value);
@@ -584,7 +587,7 @@ public class DefaultNutsValue implements NutsValue {
                         || value instanceof Short
                         || value instanceof Byte
         ) {
-            return NutsOptional.of(BigInteger.valueOf(((Long) value)));
+            return NutsOptional.of(BigInteger.valueOf(((Number) value).longValue()));
         }
         if (value instanceof Date) {
             return NutsOptional.of(BigInteger.valueOf(((Date) value).getTime()));
@@ -608,23 +611,26 @@ public class DefaultNutsValue implements NutsValue {
                 } catch (NumberFormatException ex) {
                     // ignore
                 }
-                return NutsOptional.ofEmpty(session -> NutsMessage.cstyle("invalid BigInteger %s", value));
+                return NutsOptional.ofEmpty(session -> NutsMessage.ofCstyle("invalid BigInteger %s", value));
             } else {
                 try {
+                    if (s.startsWith("0x")) {
+                        return NutsOptional.of(new BigInteger(s.substring(2), 16));
+                    }
                     return NutsOptional.of(new BigInteger(s));
                 } catch (NumberFormatException ex) {
                     // ignore
                 }
-                return NutsOptional.ofEmpty(session -> NutsMessage.cstyle("invalid BigInteger %s", value));
+                return NutsOptional.ofEmpty(session -> NutsMessage.ofCstyle("invalid BigInteger %s", value));
             }
         }
-        return NutsOptional.ofEmpty(session -> NutsMessage.cstyle("invalid BigInteger %s", value));
+        return NutsOptional.ofEmpty(session -> NutsMessage.ofCstyle("invalid BigInteger %s", value));
     }
 
     @Override
     public NutsOptional<BigDecimal> asBigDecimal() {
         if (isBlank()) {
-            return NutsOptional.ofEmpty(session -> NutsMessage.cstyle("empty BigDecimal"));
+            return NutsOptional.ofEmpty(session -> NutsMessage.ofPlain("empty BigDecimal"),BigDecimal.ZERO);
         }
         if (value instanceof BigDecimal) {
             return NutsOptional.of((BigDecimal) value);
@@ -654,17 +660,17 @@ public class DefaultNutsValue implements NutsValue {
                 } catch (NumberFormatException ex) {
                     // ignore
                 }
-                return NutsOptional.ofEmpty(session -> NutsMessage.cstyle("invalid BigDecimal %s", value));
+                return NutsOptional.ofEmpty(session -> NutsMessage.ofCstyle("invalid BigDecimal %s", value));
             } else {
                 try {
                     return NutsOptional.of(new BigDecimal(new BigInteger(s)));
                 } catch (NumberFormatException ex) {
                     // ignore
                 }
-                return NutsOptional.ofEmpty(session -> NutsMessage.cstyle("invalid BigDecimal %s", value));
+                return NutsOptional.ofEmpty(session -> NutsMessage.ofCstyle("invalid BigDecimal %s", value));
             }
         }
-        return NutsOptional.ofEmpty(session -> NutsMessage.cstyle("invalid BigDecimal %s", value));
+        return NutsOptional.ofEmpty(session -> NutsMessage.ofCstyle("invalid BigDecimal %s", value));
     }
 
     @Override

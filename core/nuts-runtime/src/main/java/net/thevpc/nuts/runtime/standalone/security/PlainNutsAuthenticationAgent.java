@@ -19,13 +19,13 @@ public class PlainNutsAuthenticationAgent implements NutsAuthenticationAgent {
     @Override
     public void checkCredentials(char[] credentialsId, char[] password, Map<String, String> envProvider, NutsSession session) {
         if (password == null || NutsBlankable.isBlank(new String(password))) {
-            throw new NutsSecurityException(session, NutsMessage.plain("missing old password"));
+            throw new NutsSecurityException(session, NutsMessage.ofPlain("missing old password"));
         }
         char[] iid = extractId(credentialsId, session);
         if (Arrays.equals(iid, password)) {
             return;
         }
-        throw new NutsSecurityException(session, NutsMessage.plain("invalid login or password"));
+        throw new NutsSecurityException(session, NutsMessage.ofPlain("invalid login or password"));
     }
 
     @Override
@@ -80,6 +80,6 @@ public class PlainNutsAuthenticationAgent implements NutsAuthenticationAgent {
                 }
             }
         }
-        throw new NutsSecurityException(session, NutsMessage.cstyle("credential id must start with '%s:'", getId()));
+        throw new NutsSecurityException(session, NutsMessage.ofCstyle("credential id must start with '%s:'", getId()));
     }
 }

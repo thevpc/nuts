@@ -68,7 +68,7 @@ public class NutsLockException extends NutsException {
      */
     public NutsLockException(NutsSession session, NutsMessage message, Object lockedObject, Object lockObject) {
         super(session,
-                message == null ? NutsMessage.cstyle("item already locked %s", lockedObject)
+                message == null ? NutsMessage.ofCstyle("item already locked %s", lockedObject)
                         : message
         );
         this.lockedObject = lockedObject;
@@ -86,7 +86,7 @@ public class NutsLockException extends NutsException {
      */
     public NutsLockException(NutsSession session, NutsMessage message, Object lockedObject, Object lockObject, Throwable cause) {
         super(session,
-                message == null ? NutsMessage.cstyle("item already locked %s", lockedObject)
+                message == null ? NutsMessage.ofCstyle("item already locked %s", lockedObject)
                         : message, cause
         );
         this.lockedObject = lockedObject;

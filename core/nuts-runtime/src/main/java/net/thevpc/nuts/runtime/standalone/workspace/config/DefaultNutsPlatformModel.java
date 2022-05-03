@@ -9,6 +9,7 @@ import net.thevpc.nuts.text.NutsTextStyle;
 import net.thevpc.nuts.text.NutsTextStyles;
 import net.thevpc.nuts.text.NutsTexts;
 import net.thevpc.nuts.util.NutsStream;
+import net.thevpc.nuts.util.NutsUtils;
 
 import java.util.*;
 import java.util.concurrent.ExecutionException;
@@ -36,18 +37,10 @@ public class DefaultNutsPlatformModel {
     public boolean add0(NutsPlatformLocation location, NutsSession session, boolean notify) {
 //        session = CoreNutsUtils.validate(session, workspace);
         if (location != null) {
-            if (NutsBlankable.isBlank(location.getProduct())) {
-                throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("platform type should not be null"));
-            }
-            if (NutsBlankable.isBlank(location.getName())) {
-                throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("platform name should not be null"));
-            }
-            if (NutsBlankable.isBlank(location.getVersion())) {
-                throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("platform version should not be null"));
-            }
-            if (NutsBlankable.isBlank(location.getPath())) {
-                throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("platform path should not be null"));
-            }
+            NutsUtils.requireNonBlank(location.getProduct(),session,"platform location product");
+            NutsUtils.requireNonBlank(location.getName(),session,"platform location product");
+            NutsUtils.requireNonBlank(location.getVersion(),session,"platform location version");
+            NutsUtils.requireNonBlank(location.getVersion(),session,"platform location path");
             List<NutsPlatformLocation> list = getPlatforms().get(location.getPlatformType());
             if (list == null) {
                 list = new ArrayList<>();

@@ -79,7 +79,7 @@ public class TailCommand extends SimpleJShellBuiltin {
         NutsSession session = context.getSession();
 
         if (options.files.isEmpty()) {
-            throw new NutsExecutionException(session, NutsMessage.cstyle("not yet supported"), 2);
+            throw new NutsExecutionException(session, NutsMessage.ofPlain("not yet supported"), 2);
         }
         for (NutsPath file : options.files) {
             tail(file, options.max, context);
@@ -111,7 +111,7 @@ public class TailCommand extends SimpleJShellBuiltin {
                 }
             }
         } catch (IOException ex) {
-            throw new NutsExecutionException(session, NutsMessage.cstyle("%s", ex), ex, 100);
+            throw new NutsExecutionException(session, NutsMessage.ofCstyle("%s", ex), ex, 100);
         }
     }
 

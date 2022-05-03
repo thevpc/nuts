@@ -31,7 +31,7 @@ public class NutsSettingsDeleteFoldersSubCommand extends AbstractNutsSettingsSub
                 if (force
                         || session.getTerminal().ask()
                         .resetLine()
-                        .forBoolean("force delete?").setDefaultValue(false)
+                        .forBoolean(NutsMessage.ofPlain("force delete?")).setDefaultValue(false)
                         .setSession(session).getBooleanValue()) {
                     s.delete();
                 }
@@ -91,7 +91,7 @@ public class NutsSettingsDeleteFoldersSubCommand extends AbstractNutsSettingsSub
                 if (force
                         || session.getTerminal().ask()
                         .resetLine()
-                        .forBoolean("force delete?").setDefaultValue(false).setSession(session)
+                        .forBoolean(NutsMessage.ofPlain("force delete?")).setDefaultValue(false).setSession(session)
                         .getBooleanValue()) {
                     sstoreLocation.delete();
                 }
@@ -114,7 +114,7 @@ public class NutsSettingsDeleteFoldersSubCommand extends AbstractNutsSettingsSub
                 if (force
                         || session.getTerminal().ask()
                         .resetLine()
-                        .forBoolean("Force Delete?").setDefaultValue(false).setSession(session)
+                        .forBoolean(NutsMessage.ofPlain("Force Delete?")).setDefaultValue(false).setSession(session)
                         .getBooleanValue()) {
                     sstoreLocation.delete();
                 }

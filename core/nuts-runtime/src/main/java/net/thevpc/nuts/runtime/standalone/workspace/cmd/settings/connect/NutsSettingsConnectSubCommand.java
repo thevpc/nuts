@@ -14,6 +14,7 @@ import net.thevpc.nuts.runtime.standalone.executor.system.NutsSysExecUtils;
 import net.thevpc.nuts.runtime.standalone.io.util.NonBlockingInputStreamAdapter;
 import net.thevpc.nuts.runtime.standalone.executor.system.PipeRunnable;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.AbstractNutsSettingsSubCommand;
+import net.thevpc.nuts.util.NutsUtils;
 
 import java.io.PrintStream;
 import java.net.InetAddress;
@@ -48,9 +49,7 @@ public class NutsSettingsConnectSubCommand extends AbstractNutsSettingsSubComman
             }
             String login = null;
             int port = -1;
-            if (server == null) {
-                throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("missing address"));
-            }
+            NutsUtils.requireNonBlank(server,session,"server");
             if (server.contains("@")) {
                 login = server.substring(0, server.indexOf("@"));
                 server = server.substring(server.indexOf("@") + 1);
@@ -93,7 +92,7 @@ public class NutsSettingsConnectSubCommand extends AbstractNutsSettingsSubComman
                     }
                 }
             } catch (Exception ex) {
-                throw new NutsExecutionException(session,NutsMessage.plain("settings connect failed"), ex, 2);
+                throw new NutsExecutionException(session,NutsMessage.ofPlain("settings connect failed"), ex, 2);
             }
             return true;
         }

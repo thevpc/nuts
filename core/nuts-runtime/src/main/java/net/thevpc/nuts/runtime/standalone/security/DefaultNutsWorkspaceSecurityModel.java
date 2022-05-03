@@ -122,7 +122,7 @@ public class DefaultNutsWorkspaceSecurityModel {
         if (adminSecurity == null || !adminSecurity.hasCredentials()) {
             if (_LOG(session).isLoggable(Level.CONFIG)) {
                 _LOGOP(session).level(Level.CONFIG).verb(NutsLoggerVerb.WARNING)
-                        .log(NutsMessage.jstyle("{0} user has no credentials. reset to default",NutsConstants.Users.ADMIN));
+                        .log(NutsMessage.ofJstyle("{0} user has no credentials. reset to default",NutsConstants.Users.ADMIN));
             }
             NutsUserConfig u = NutsWorkspaceConfigManagerExt.of(session.config()).getModel().getUser(NutsConstants.Users.ADMIN, session);
             u.setCredentials(CoreStringUtils.chrToStr(createCredentials("admin".toCharArray(), false, null, session)));
@@ -132,7 +132,7 @@ public class DefaultNutsWorkspaceSecurityModel {
         char[] credentials = NutsDigestUtils.evalSHA1(adminPassword,session);
         if (Arrays.equals(credentials, adminPassword)) {
             Arrays.fill(credentials, '\0');
-            throw new NutsSecurityException(session, NutsMessage.plain("invalid credentials"));
+            throw new NutsSecurityException(session, NutsMessage.ofPlain("invalid credentials"));
         }
         Arrays.fill(credentials, '\0');
         boolean activated = false;
@@ -151,7 +151,7 @@ public class DefaultNutsWorkspaceSecurityModel {
         char[] credentials = NutsDigestUtils.evalSHA1(adminPassword,session);
         if (Arrays.equals(credentials, adminPassword)) {
             Arrays.fill(credentials, '\0');
-            throw new NutsSecurityException(session, NutsMessage.plain("invalid credentials"));
+            throw new NutsSecurityException(session, NutsMessage.ofPlain("invalid credentials"));
         }
         Arrays.fill(credentials, '\0');
         if (!isSecure(session)) {
@@ -170,13 +170,13 @@ public class DefaultNutsWorkspaceSecurityModel {
     public void logout(NutsSession session) {
         Stack<LoginContext> r = loginContextStack.get();
         if (r == null || r.isEmpty()) {
-            throw new NutsLoginException(session, NutsMessage.cstyle("not logged in"));
+            throw new NutsLoginException(session, NutsMessage.ofPlain("not logged in"));
         }
         try {
             LoginContext loginContext = r.pop();
             loginContext.logout();
         } catch (LoginException ex) {
-            throw new NutsLoginException(session, NutsMessage.plain("login failed"), ex);
+            throw new NutsLoginException(session, NutsMessage.ofPlain("login failed"), ex);
         }
     }
 
@@ -234,9 +234,9 @@ public class DefaultNutsWorkspaceSecurityModel {
     public void checkAllowed(String permission, String operationName, NutsSession session) {
         if (!isAllowed(permission, session)) {
             if (NutsBlankable.isBlank(operationName)) {
-                throw new NutsSecurityException(session, NutsMessage.cstyle("%s not allowed!", permission));
+                throw new NutsSecurityException(session, NutsMessage.ofCstyle("%s not allowed!", permission));
             } else {
-                throw new NutsSecurityException(session, NutsMessage.cstyle("%s : %s not allowed!", operationName, permission));
+                throw new NutsSecurityException(session, NutsMessage.ofCstyle("%s : %s not allowed!", operationName, permission));
             }
         }
     }
@@ -366,7 +366,7 @@ public class DefaultNutsWorkspaceSecurityModel {
             }, NutsWorkspaceLoginModule.class.getClassLoader(), session);
             login.login();
         } catch (LoginException ex) {
-            throw new NutsLoginException(session, NutsMessage.plain("login failed"), ex);
+            throw new NutsLoginException(session, NutsMessage.ofPlain("login failed"), ex);
         }
         Stack<LoginContext> r = loginContextStack.get();
         if (r == null) {
@@ -406,7 +406,7 @@ public class DefaultNutsWorkspaceSecurityModel {
 
         if (cc.createAuthenticationAgent(authenticationAgentId, session) == null) {
             throw new NutsIllegalArgumentException(session,
-                    NutsMessage.cstyle("unsupported Authentication Agent %s", authenticationAgentId)
+                    NutsMessage.ofCstyle("unsupported Authentication Agent %s", authenticationAgentId)
             );
         }
 

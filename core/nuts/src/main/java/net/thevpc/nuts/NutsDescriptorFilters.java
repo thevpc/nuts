@@ -26,9 +26,9 @@
  */
 package net.thevpc.nuts;
 
-import net.thevpc.nuts.boot.NutsApiUtils;
 import net.thevpc.nuts.spi.NutsComponentScope;
 import net.thevpc.nuts.spi.NutsComponentScopeType;
+import net.thevpc.nuts.util.NutsUtils;
 
 import java.util.List;
 
@@ -41,7 +41,7 @@ import java.util.List;
 @NutsComponentScope(NutsComponentScopeType.SESSION)
 public interface NutsDescriptorFilters extends NutsTypedFilters<NutsDescriptorFilter> {
     static NutsDescriptorFilters of(NutsSession session) {
-        NutsApiUtils.checkSession(session);
+        NutsUtils.requireSession(session);
         return session.extensions().createSupported(NutsDescriptorFilters.class, true, null);
     }
 

@@ -81,6 +81,6 @@ public class DefaultOpNode implements NutsExpr.Node {
         if (f != null) {
             return f.eval(getName(), getArgs(), context.newChild());
         }
-        throw new NutsIllegalArgumentException(context.getSession(), NutsMessage.cstyle("function not found %s", getName()));
+        throw new NutsIllegalArgumentException(context.getSession(), NutsMessage.ofCstyle("function not found %s", getName()));
     }
 }

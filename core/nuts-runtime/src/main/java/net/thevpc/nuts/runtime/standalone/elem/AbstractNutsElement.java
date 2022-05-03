@@ -53,7 +53,7 @@ public abstract class AbstractNutsElement implements NutsElement {
         if (this instanceof NutsPrimitiveElement) {
             return NutsOptional.of((NutsPrimitiveElement) this);
         }
-        return NutsOptional.ofError(s -> NutsMessage.cstyle("unable to cast % to primitive: %s", type().id(), this));
+        return NutsOptional.ofError(s -> NutsMessage.ofCstyle("unable to cast % to primitive: %s", type().id(), this));
     }
 
     @Override
@@ -61,21 +61,21 @@ public abstract class AbstractNutsElement implements NutsElement {
         if (this instanceof NutsObjectElement) {
             return NutsOptional.of((NutsObjectElement) this);
         }
-        return NutsOptional.ofError(s -> NutsMessage.cstyle("unable to cast % to object: %s", type().id(), this));
+        return NutsOptional.ofError(s -> NutsMessage.ofCstyle("unable to cast % to object: %s", type().id(), this));
     }
     @Override
     public NutsOptional<NutsNavigatableElement> asNavigatable() {
         if (this instanceof NutsNavigatableElement) {
             return NutsOptional.of((NutsNavigatableElement) this);
         }
-        return NutsOptional.ofError(s -> NutsMessage.cstyle("unable to cast % to object/array: %s", type().id(), this));
+        return NutsOptional.ofError(s -> NutsMessage.ofCstyle("unable to cast % to object/array: %s", type().id(), this));
     }
 
     public NutsOptional<NutsCustomElement> asCustom() {
         if (this instanceof NutsCustomElement) {
             return NutsOptional.of((NutsCustomElement) this);
         }
-        return NutsOptional.ofError(s -> NutsMessage.cstyle("unable to cast % to custom: %s", type().id(), this));
+        return NutsOptional.ofError(s -> NutsMessage.ofCstyle("unable to cast % to custom: %s", type().id(), this));
     }
 
     @Override
@@ -83,7 +83,7 @@ public abstract class AbstractNutsElement implements NutsElement {
         if (this instanceof NutsArrayElement) {
             return NutsOptional.of((NutsArrayElement) this);
         }
-        return NutsOptional.ofError(s -> NutsMessage.cstyle("unable to cast % to array: %s", type().id(), this));
+        return NutsOptional.ofError(s -> NutsMessage.ofCstyle("unable to cast % to array: %s", type().id(), this));
     }
 
     @Override

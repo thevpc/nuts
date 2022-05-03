@@ -5,46 +5,77 @@
  */
 package net.thevpc.nuts.runtime.standalone.io.util;
 
-import net.thevpc.nuts.io.NutsStreamMetadataAware;
-import net.thevpc.nuts.io.NutsStreamMetadata;
+import net.thevpc.nuts.NutsMessage;
+import net.thevpc.nuts.NutsSession;
+import net.thevpc.nuts.io.DefaultNutsInputSourceMetadata;
+import net.thevpc.nuts.io.NutsInputSource;
+import net.thevpc.nuts.io.NutsInputSourceMetadata;
+import net.thevpc.nuts.text.NutsTextStyle;
 
 import java.io.IOException;
 import java.io.InputStream;
 
 /**
- *
  * @author thevpc
  */
-public class InputStreamExt extends InputStream implements NutsStreamMetadataAware,Interruptible {
+public class InputStreamExt extends InputStream implements NutsInputSource, Interruptible {
 
-    private InputStream in;
+    private InputStream base;
     private Runnable onClose;
     private boolean interrupted;
+    private DefaultNutsInputSourceMetadata md;
 
-    public InputStreamExt(InputStream in, Runnable onClose) {
-        this.in = in;
+    public InputStreamExt(InputStream base, NutsInputSourceMetadata md0, Runnable onClose) {
+        this.base = base;
         this.onClose = onClose;
+        if (md0 == null) {
+            if (base instanceof NutsInputSource) {
+                md = new DefaultNutsInputSourceMetadata(((NutsInputSource) base).getInputMetaData());
+            } else {
+                md = new DefaultNutsInputSourceMetadata();
+            }
+        } else {
+            md = new DefaultNutsInputSourceMetadata(md0);
+            if (base instanceof NutsInputSource) {
+                NutsInputSourceMetadata md2 = ((NutsInputSource) base).getInputMetaData();
+                if (md.getContentLength().isNotPresent()) {
+                    md.setContentLength(md2.getContentLength().orNull());
+                }
+                if (md.getContentType().isNotPresent()) {
+                    md.setContentType(md2.getContentType().orNull());
+                }
+                if (md.getMessage().isNotPresent()) {
+                    md.setMessage(md2.getMessage().orNull());
+                }
+                if (md.getName().isNotPresent()) {
+                    md.setName(md2.getName().orNull());
+                }
+                if (md.getKind().isNotPresent()) {
+                    md.setKind(md2.getKind().orNull());
+                }
+            }
+        }
     }
 
     @Override
     public void interrupt() throws InterruptException {
-        this.interrupted=true;
+        this.interrupted = true;
     }
 
     @Override
     public int read() throws IOException {
-        if(interrupted){
+        if (interrupted) {
             throw new IOException(new InterruptException("Interrupted"));
         }
-        return in.read();
+        return base.read();
     }
 
     @Override
     public void close() throws IOException {
-        if(interrupted){
+        if (interrupted) {
             throw new IOException(new InterruptException("Interrupted"));
         }
-        in.close();
+        base.close();
         if (onClose != null) {
             onClose.run();
         }
@@ -52,23 +83,51 @@ public class InputStreamExt extends InputStream implements NutsStreamMetadataAwa
 
     @Override
     public int available() throws IOException {
-        if(interrupted){
+        if (interrupted) {
             throw new IOException(new InterruptException("Interrupted"));
         }
-        return in.available();
+        return base.available();
     }
 
     @Override
     public int read(byte[] b, int off, int len) throws IOException {
-        if(interrupted){
+        if (interrupted) {
             throw new IOException(new InterruptException("Interrupted"));
         }
-        return in.read(b, off, len);
+        return base.read(b, off, len);
+    }
+
+
+    @Override
+    public NutsInputSourceMetadata getInputMetaData() {
+        return md;
     }
 
     @Override
-    public NutsStreamMetadata getStreamMetadata() {
-        return NutsStreamMetadata.of(in);
+    public InputStream getInputStream() {
+        return this;
+    }
+
+    @Override
+    public boolean isMultiRead() {
+        return false;
+    }
+
+    @Override
+    public void disposeMultiRead() {
+    }
+
+    @Override
+    public NutsMessage formatMessage(NutsSession session) {
+        return getInputMetaData().getMessage()
+                .orElse(
+                        NutsMessage.ofStyled(getClass().getSimpleName(), NutsTextStyle.path())
+                );
+    }
+
+    @Override
+    public String toString() {
+        return formatMessage().toString();
     }
 
 }

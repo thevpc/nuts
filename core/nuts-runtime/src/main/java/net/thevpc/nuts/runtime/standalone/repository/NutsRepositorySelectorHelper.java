@@ -7,6 +7,7 @@ import net.thevpc.nuts.spi.NutsRepositoryDB;
 import net.thevpc.nuts.spi.NutsRepositoryLocation;
 import net.thevpc.nuts.spi.NutsRepositorySelectorList;
 import net.thevpc.nuts.util.NutsPlatformUtils;
+import net.thevpc.nuts.util.NutsUtils;
 
 import java.util.HashMap;
 import java.util.Objects;
@@ -53,7 +54,7 @@ public class NutsRepositorySelectorHelper {
 
     public static NutsAddRepositoryOptions createCustomRepositoryOptions(String name, String url, boolean requireName, NutsSession session) {
         if ((name == null || name.isEmpty()) && requireName) {
-            throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("missing repository name (<name>=<url>) for %s", name));
+            NutsUtils.requireNonBlank(name,session, "repository name (<name>=<url>)");
         }
         if (name == null || name.isEmpty()) {
             name = url;
@@ -71,10 +72,8 @@ public class NutsRepositorySelectorHelper {
                 name = name.substring(1);
             }
         }
-        if (name.isEmpty() || url.isEmpty()) {
-            throw new IllegalArgumentException("missing repository name (<name>=<url>) for " + name);
-        }
-//                boolean localRepo = CoreIOUtils.isPathFile(ppath);
+        NutsUtils.requireNonBlank(name,session, "repository name (<name>=<url>)");
+        NutsUtils.requireNonBlank(url,session, "repository url (<name>=<url>)");
         return new NutsAddRepositoryOptions().setName(name)
                 .setFailSafe(false).setCreate(true)
                 .setOrder((!NutsBlankable.isBlank(url) && NutsPath.of(url, session).isFile())

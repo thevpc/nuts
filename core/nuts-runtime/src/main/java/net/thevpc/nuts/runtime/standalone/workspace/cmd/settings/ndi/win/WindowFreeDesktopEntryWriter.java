@@ -10,6 +10,7 @@ import net.thevpc.nuts.runtime.optional.mslink.OptionalMsLinkHelper;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.util.PathInfo;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.ndi.FreeDesktopEntry;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.ndi.base.AbstractFreeDesktopEntryWriter;
+import net.thevpc.nuts.util.NutsUtils;
 
 import java.io.File;
 import java.io.IOException;
@@ -143,13 +144,9 @@ public class WindowFreeDesktopEntryWriter extends AbstractFreeDesktopEntryWriter
         for (FreeDesktopEntry.Group group : file.getGroups()) {
             out.println();
             String gn = group.getGroupName();
-            if (gn == null || gn.trim().length() == 0) {
-                throw new IllegalArgumentException("invalid group name");
-            }
+            NutsUtils.requireNonBlank(gn,session,"group name");
             FreeDesktopEntry.Type t = group.getType();
-            if (t == null) {
-                throw new IllegalArgumentException("missing type");
-            }
+            NutsUtils.requireNonBlank(t,session,"type");
             out.println("[" + gn.trim() + "]");
             for (Map.Entry<String, Object> e : group.toMap().entrySet()) {
                 Object v = e.getValue();

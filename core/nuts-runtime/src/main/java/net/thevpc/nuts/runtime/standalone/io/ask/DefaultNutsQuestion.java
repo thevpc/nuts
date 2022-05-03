@@ -65,12 +65,12 @@ public class DefaultNutsQuestion<T> implements NutsQuestion<T> {
                         NutsByteArrayPrintStream os = new NutsByteArrayPrintStream(getSession());
                         os.printf(cancelMessage);
                         os.flush();
-                        throw new NutsUserCancelException(getSession(), NutsMessage.formatted(os.toString()));
+                        throw new NutsCancelException(getSession(), NutsMessage.ofNtf(os.toString()));
                     } else {
                         NutsByteArrayPrintStream os = new NutsByteArrayPrintStream(getSession());
                         os.printf(message);
                         os.flush();
-                        throw new NutsUserCancelException(getSession(), NutsMessage.cstyle("cancelled : %s", NutsMessage.formatted(os.toString())));
+                        throw new NutsCancelException(getSession(), NutsMessage.ofCstyle("cancelled : %s", NutsMessage.ofNtf(os.toString())));
                     }
                 }
             }
@@ -79,7 +79,7 @@ public class DefaultNutsQuestion<T> implements NutsQuestion<T> {
             NutsByteArrayPrintStream os = new NutsByteArrayPrintStream(getSession());
             os.printf(message);
             os.flush();
-            throw new NutsExecutionException(getSession(), NutsMessage.cstyle(
+            throw new NutsExecutionException(getSession(), NutsMessage.ofCstyle(
                     "unable to switch to interactive mode for non plain text output format. "
                             + "You need to provide default response (-y|-n) for question : %s", os
             ), 243);
@@ -160,7 +160,7 @@ public class DefaultNutsQuestion<T> implements NutsQuestion<T> {
                 case ERROR: {
                     out.flush();
                     out.println(" : cancel");
-                    throw new NutsUserCancelException(getSession());
+                    throw new NutsCancelException(getSession());
                 }
             }
             if (this.getValueType().equals(Boolean.class) || this.getValueType().equals(Boolean.TYPE)) {
@@ -168,12 +168,12 @@ public class DefaultNutsQuestion<T> implements NutsQuestion<T> {
                     case YES: {
                         out.flush();
                         out.println(" : yes");
-                        throw new NutsUserCancelException(getSession());
+                        throw new NutsCancelException(getSession());
                     }
                     case NO: {
                         out.flush();
                         out.println(" : no");
-                        throw new NutsUserCancelException(getSession());
+                        throw new NutsCancelException(getSession());
                     }
                 }
             }
@@ -208,14 +208,14 @@ public class DefaultNutsQuestion<T> implements NutsQuestion<T> {
                     }
                 }
                 if (Arrays.equals("cancel!".toCharArray(), v)) {
-                    throw new NutsUserCancelException(getSession());
+                    throw new NutsCancelException(getSession());
                 }
                 try {
                     if (this.validator != null) {
                         v = (char[]) this.validator.validate((T) v, this);
                     }
                     return (T) v;
-                } catch (NutsUserCancelException ex) {
+                } catch (NutsCancelException ex) {
                     throw ex;
                 } catch (Exception ex) {
                     out.printf("```error ERROR``` : %s%n", ex);
@@ -256,7 +256,7 @@ public class DefaultNutsQuestion<T> implements NutsQuestion<T> {
                         parsed = this.validator.validate(parsed, this);
                     }
                     return parsed;
-                } catch (NutsUserCancelException ex) {
+                } catch (NutsCancelException ex) {
                     throw ex;
                 } catch (Exception ex) {
                     out.printf("```error ERROR``` : %s%n", ex);
@@ -268,7 +268,7 @@ public class DefaultNutsQuestion<T> implements NutsQuestion<T> {
 
     private String showGuiInput(String str, boolean pwd) {
         String ft = NutsTexts.of(getSession()).parse(str).filteredText();
-        NutsMessage title = NutsMessage.cstyle("Nuts Package Manager - %s", getSession().getWorkspace().getApiId().getVersion());
+        NutsMessage title = NutsMessage.ofCstyle("Nuts Package Manager - %s", getSession().getWorkspace().getApiId().getVersion());
         if (session.getAppId() != null) {
             try {
                 NutsDefinition def = session.search().setId(session.getAppId())
@@ -276,7 +276,7 @@ public class DefaultNutsQuestion<T> implements NutsQuestion<T> {
                 if (def != null) {
                     String n = def.getEffectiveDescriptor().get(session).getName();
                     if (!NutsBlankable.isBlank(n)) {
-                        title = NutsMessage.cstyle("%s - %s", n, def.getEffectiveDescriptor().get(session).getId().getVersion());
+                        title = NutsMessage.ofCstyle("%s - %s", n, def.getEffectiveDescriptor().get(session).getId().getVersion());
                     }
                 }
             } catch (Exception ex) {
@@ -284,9 +284,9 @@ public class DefaultNutsQuestion<T> implements NutsQuestion<T> {
             }
         }
         if (password) {
-            return CoreNutsUtilGui.inputPassword(NutsMessage.formatted(str), title, getSession());
+            return CoreNutsUtilGui.inputPassword(NutsMessage.ofNtf(str), title, getSession());
         } else {
-            return CoreNutsUtilGui.inputString(NutsMessage.formatted(str), title, getSession());
+            return CoreNutsUtilGui.inputString(NutsMessage.ofNtf(str), title, getSession());
         }
     }
 
@@ -304,47 +304,6 @@ public class DefaultNutsQuestion<T> implements NutsQuestion<T> {
     public NutsQuestion<T> resetLine(boolean resetLine) {
         this.resetLine = resetLine;
         return this;
-    }
-
-    @Override
-    public NutsQuestion<Boolean> forBoolean(String msg, Object... params) {
-        return ((NutsQuestion<Boolean>) this).setValueType(Boolean.class).setMessage(NutsMessage.cstyle(msg, params));
-    }
-
-    @Override
-    public NutsQuestion<char[]> forPassword(String msg, Object... params) {
-        this.password = true;
-        return ((NutsQuestion<char[]>) this).setValueType(char[].class).setMessage(NutsMessage.cstyle(msg, params));
-    }
-
-    @Override
-    public NutsQuestion<String> forString(String msg, Object... params) {
-        return ((NutsQuestion<String>) this).setValueType(String.class).setMessage(NutsMessage.cstyle(msg, params));
-    }
-
-    @Override
-    public NutsQuestion<Integer> forInteger(String msg, Object... params) {
-        return ((NutsQuestion<Integer>) this).setValueType(Integer.class).setMessage(NutsMessage.cstyle(msg, params));
-    }
-
-    @Override
-    public NutsQuestion<Long> forLong(String msg, Object... params) {
-        return forLong(NutsMessage.cstyle(msg, params));
-    }
-
-    @Override
-    public NutsQuestion<Float> forFloat(String msg, Object... params) {
-        return forFloat(NutsMessage.cstyle(msg, params));
-    }
-
-    @Override
-    public NutsQuestion<Double> forDouble(String msg, Object... params) {
-        return forDouble(NutsMessage.cstyle(msg, params));
-    }
-
-    @Override
-    public <K extends Enum> NutsQuestion<K> forEnum(Class<K> enumType, String msg, Object... params) {
-        return forEnum(enumType, NutsMessage.cstyle(msg, params));
     }
 
     @Override

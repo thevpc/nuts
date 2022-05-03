@@ -29,6 +29,7 @@ import net.thevpc.nuts.spi.*;
 import net.thevpc.nuts.util.NutsLogger;
 import net.thevpc.nuts.util.NutsLoggerOp;
 import net.thevpc.nuts.util.NutsLoggerVerb;
+import net.thevpc.nuts.util.NutsUtils;
 
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -132,9 +133,7 @@ public class DefaultNutsWorkspaceExtensionModel {
 
     // @Override
     public List<NutsExtensionInformation> findExtensions(NutsId id, String extensionType, NutsSession session) {
-        if (id.getVersion().isBlank()) {
-            throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("missing version"));
-        }
+        NutsUtils.requireNonBlank(id.getVersion(),session, "version");
         List<NutsExtensionInformation> ret = new ArrayList<>();
         List<String> allUrls = new ArrayList<>();
         for (String r : getExtensionRepositoryLocations(id)) {
@@ -147,7 +146,7 @@ public class DefaultNutsWorkspaceExtensionModel {
                     s = NutsElements.of(session).json().parse(rr, DefaultNutsExtensionInformation[].class);
                 } catch (IOException ex) {
                     _LOGOP(session).level(Level.SEVERE).error(ex)
-                            .log(NutsMessage.jstyle("failed to parse NutsExtensionInformation from {0} : {1}", u, ex));
+                            .log(NutsMessage.ofJstyle("failed to parse NutsExtensionInformation from {0} : {1}", u, ex));
                 }
                 if (s != null) {
                     for (NutsExtensionInformation nutsExtensionInfo : s) {
@@ -307,7 +306,7 @@ public class DefaultNutsWorkspaceExtensionModel {
             return true;
         }
         _LOGOP(session).level(Level.FINE).verb(NutsLoggerVerb.WARNING)
-                .log(NutsMessage.jstyle("Bootstrap Extension Point {0} => {1} ignored. Already registered", extensionPointType.getName(), extensionImpl.getClass().getName()));
+                .log(NutsMessage.ofJstyle("Bootstrap Extension Point {0} => {1} ignored. Already registered", extensionPointType.getName(), extensionImpl.getClass().getName()));
         return false;
     }
 
@@ -318,7 +317,7 @@ public class DefaultNutsWorkspaceExtensionModel {
             return true;
         }
         _LOGOP(session).level(Level.FINE).verb(NutsLoggerVerb.WARNING)
-                .log(NutsMessage.jstyle("Bootstrap Extension Point {0} => {1} ignored. Already registered", extensionPointType.getName(), extensionType.getName()));
+                .log(NutsMessage.ofJstyle("Bootstrap Extension Point {0} => {1} ignored. Already registered", extensionPointType.getName(), extensionType.getName()));
         return false;
     }
 
@@ -376,10 +375,10 @@ public class DefaultNutsWorkspaceExtensionModel {
                             .setLatest(true)
                             .getResultDefinitions().required();
                     if (def == null || def.getContent().isNotPresent()) {
-                        throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("extension not found: %s", extension));
+                        throw new NutsIllegalArgumentException(session, NutsMessage.ofCstyle("extension not found: %s", extension));
                     }
                     if (def.getDescriptor().getIdType() != NutsIdType.EXTENSION) {
-                        throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("not an extension: %s" ,extension));
+                        throw new NutsIllegalArgumentException(session, NutsMessage.ofCstyle("not an extension: %s" ,extension));
                     }
 //                    ws.install().setSession(session).id(def.getId());
                     workspaceExtensionsClassLoader.add(NutsClassLoaderUtils.definitionToClassLoaderNode(def, session));
@@ -388,7 +387,7 @@ public class DefaultNutsWorkspaceExtensionModel {
                     //and the add to classpath
                     loadedExtensionIds.add(extension);
                     _LOGOP(session).verb(NutsLoggerVerb.SUCCESS)
-                            .log(NutsMessage.jstyle("extension {0} loaded", def.getId()
+                            .log(NutsMessage.ofJstyle("extension {0} loaded", def.getId()
                             ));
                     someUpdates = true;
                 }
@@ -441,15 +440,13 @@ public class DefaultNutsWorkspaceExtensionModel {
     public NutsWorkspaceExtension wireExtension(NutsId id, NutsFetchCommand options) {
         NutsSession session = options.getSession();
         NutsSessionUtils.checkSession(ws, session);
-        if (id == null) {
-            throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("extension Id could not be null"));
-        }
+        NutsUtils.requireNonNull(id,session,"extension id");
         NutsId wired = CoreNutsUtils.findNutsIdBySimpleName(id, extensions.keySet());
         if (wired != null) {
             throw new NutsExtensionAlreadyRegisteredException(session, id, wired.toString());
         }
 
-        _LOGOP(session).level(Level.FINE).verb(NutsLoggerVerb.ADD).log(NutsMessage.jstyle("installing extension {0}", id));
+        _LOGOP(session).level(Level.FINE).verb(NutsLoggerVerb.ADD).log(NutsMessage.ofJstyle("installing extension {0}", id));
         NutsDefinition nutsDefinitions = session.search()
                 .setAll(options)
                 .addId(id)
@@ -474,7 +471,7 @@ public class DefaultNutsWorkspaceExtensionModel {
 //            }
 //        }
         extensions.put(id, workspaceExtension);
-        _LOGOP(session).level(Level.FINE).verb(NutsLoggerVerb.ADD).log(NutsMessage.jstyle("extension {0} installed successfully", id));
+        _LOGOP(session).level(Level.FINE).verb(NutsLoggerVerb.ADD).log(NutsMessage.ofJstyle("extension {0} installed successfully", id));
         NutsTerminalSpec spec = new NutsDefaultTerminalSpec();
         if (session.getTerminal() != null) {
             spec.setProperty("ignoreClass", session.getTerminal().getClass());
@@ -482,7 +479,7 @@ public class DefaultNutsWorkspaceExtensionModel {
         NutsSessionTerminal newTerminal = createTerminal(spec, session);
         if (newTerminal != null) {
             _LOGOP(session).level(Level.FINE).verb(NutsLoggerVerb.UPDATE)
-                    .log(NutsMessage.jstyle("extension {0} changed Terminal configuration. Reloading Session Terminal", id));
+                    .log(NutsMessage.ofJstyle("extension {0} changed Terminal configuration. Reloading Session Terminal", id));
             session.setTerminal(newTerminal);
         }
         return workspaceExtension;
@@ -519,7 +516,7 @@ public class DefaultNutsWorkspaceExtensionModel {
                             zipFile.close();
                         } catch (IOException ex) {
                             _LOGOP(session).level(Level.SEVERE)
-                                    .error(ex).log(NutsMessage.jstyle("failed to close zip file {0} : {1}",
+                                    .error(ex).log(NutsMessage.ofJstyle("failed to close zip file {0} : {1}",
                                     file.getContent().orNull(), ex));
                             //ignore return false;
                         }

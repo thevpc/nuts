@@ -139,7 +139,7 @@ public class DefaultNutsInstalledRepository extends AbstractNutsRepository imple
                     }
                 } catch (Exception ex) {
                     _LOGOP(session).error(ex)
-                            .log(NutsMessage.jstyle("unable to parse {0}", path));
+                            .log(NutsMessage.ofJstyle("unable to parse {0}", path));
                 }
                 return null;
             }
@@ -241,7 +241,7 @@ public class DefaultNutsInstalledRepository extends AbstractNutsRepository imple
             succeeded = true;
         } catch (UncheckedIOException | NutsIOException ex) {
             throw new NutsNotInstallableException(session, id,
-                    NutsMessage.cstyle("failed to install %s : %s", id, ex)
+                    NutsMessage.ofCstyle("failed to install %s : %s", id, ex)
                     , ex);
         } finally {
             addLog(NutsInstallLogAction.INSTALL, id, forId, null, succeeded, session);
@@ -469,7 +469,7 @@ public class DefaultNutsInstalledRepository extends AbstractNutsRepository imple
                 if (changeStatus && !session.config().isReadOnly()) {
                     NutsLocks.of(session).setSource(path).call(() -> {
                                 _LOGOP(session).level(Level.CONFIG)
-                                        .log(NutsMessage.jstyle("install-info upgraded {0}", finalPath));
+                                        .log(NutsMessage.ofJstyle("install-info upgraded {0}", finalPath));
                                 c.setConfigVersion(workspace.getApiVersion());
                                 elem.json().setValue(c)
                                         .setNtf(false)
@@ -503,7 +503,7 @@ public class DefaultNutsInstalledRepository extends AbstractNutsRepository imple
                         return c;
                     }
                 } catch (Exception ex) {
-                    _LOGOP(session).error(ex).log(NutsMessage.jstyle("unable to parse {0}", path));
+                    _LOGOP(session).error(ex).log(NutsMessage.ofJstyle("unable to parse {0}", path));
                 }
                 return null;
             }
@@ -587,7 +587,7 @@ public class DefaultNutsInstalledRepository extends AbstractNutsRepository imple
                 ii.setRequired(_require);
                 saveCreate(ii,session);
             } catch (UncheckedIOException | NutsIOException ex) {
-                throw new NutsNotInstallableException(session, id, NutsMessage.cstyle("failed to install %s : %s", id, ex), ex);
+                throw new NutsNotInstallableException(session, id, NutsMessage.ofCstyle("failed to install %s : %s", id, ex), ex);
             }
             DefaultNutsInstallInfo uu = (DefaultNutsInstallInfo) getInstallInformation(ii, session);
             uu.setWasInstalled(false);
@@ -729,7 +729,7 @@ public class DefaultNutsInstalledRepository extends AbstractNutsRepository imple
             @Override
             public NutsPushRepositoryCommand run() {
                 throw new NutsIllegalArgumentException(getSession(),
-                        NutsMessage.cstyle("unsupported push() for %s repository", getName())
+                        NutsMessage.ofCstyle("unsupported push() for %s repository", getName())
                 );
             }
         };

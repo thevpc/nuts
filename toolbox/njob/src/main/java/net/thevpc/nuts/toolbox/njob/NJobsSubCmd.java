@@ -194,7 +194,7 @@ public class NJobsSubCmd {
             }
         }
         if (jobs.isEmpty()) {
-            cmd.throwError(NutsMessage.formatted("job id expected"), session);
+            cmd.throwError(NutsMessage.ofNtf("job id expected"), session);
         }
         if (cmd.isExecMode()) {
             for (NJob job : jobs) {
@@ -361,7 +361,7 @@ public class NJobsSubCmd {
                             break;
                         }
                         default: {
-                            cmd.pushBack(y, session).throwUnexpectedArgument(NutsMessage.cstyle("invalid value"), session);
+                            cmd.pushBack(y, session).throwUnexpectedArgument(NutsMessage.ofPlain("invalid value"), session);
                         }
                     }
                     break;
@@ -481,7 +481,7 @@ public class NJobsSubCmd {
             t = service.jobs().getJob(pid);
         }
         if (t == null) {
-            cmd.throwError(NutsMessage.cstyle("job not found: %s", pid), session);
+            cmd.throwError(NutsMessage.ofCstyle("job not found: %s", pid), session);
         }
         return t;
     }

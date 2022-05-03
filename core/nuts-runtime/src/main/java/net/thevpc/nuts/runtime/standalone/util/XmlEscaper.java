@@ -57,7 +57,7 @@ public class XmlEscaper {
                 NutsLoggerOp.of(PomXmlParser.class, session)
                         .verb(NutsLoggerVerb.WARNING)
                         .level(Level.FINEST)
-                        .log(NutsMessage.cstyle("unsupported  xml entity declaration : %s", g));
+                        .log(NutsMessage.ofCstyle("unsupported  xml entity declaration : %s", g));
                 m.appendReplacement(sb, g);
             }
         }
@@ -77,7 +77,7 @@ public class XmlEscaper {
                 NutsLoggerOp.of(PomXmlParser.class, session)
                         .verb(NutsLoggerVerb.WARNING)
                         .level(Level.FINEST)
-                        .log(NutsMessage.cstyle("unsupported  xml entity declaration : %s", g));
+                        .log(NutsMessage.ofCstyle("unsupported  xml entity declaration : %s", g));
                 m.appendReplacement(sb, g);
             }
         }

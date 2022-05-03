@@ -48,22 +48,6 @@ public interface NutsQuestion<T> extends NutsCommandLineConfigurable {
 
     NutsQuestion<T> resetLine(boolean resetLine);
 
-    NutsQuestion<Boolean> forBoolean(String msg, Object... params);
-
-    NutsQuestion<char[]> forPassword(String msg, Object... params);
-
-    NutsQuestion<String> forString(String msg, Object... params);
-
-    NutsQuestion<Integer> forInteger(String msg, Object... params);
-
-    NutsQuestion<Long> forLong(String msg, Object... params);
-
-    NutsQuestion<Float> forFloat(String msg, Object... params);
-
-    NutsQuestion<Double> forDouble(String msg, Object... params);
-
-    <K extends Enum> NutsQuestion<K> forEnum(Class<K> enumType, String msg, Object... params);
-
     /**
      * ask for message of type Boolean
      *

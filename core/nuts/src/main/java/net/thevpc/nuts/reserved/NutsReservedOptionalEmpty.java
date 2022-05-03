@@ -6,12 +6,13 @@ import java.util.NoSuchElementException;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
-public class NutsReservedOptionalEmpty<T> extends NutsReservedOptionalThrowable<T> {
+public class NutsReservedOptionalEmpty<T> extends NutsReservedOptionalThrowable<T> implements Cloneable {
     private Function<NutsSession, NutsMessage> message;
 
-    public NutsReservedOptionalEmpty(Function<NutsSession, NutsMessage> message) {
+    public NutsReservedOptionalEmpty(Function<NutsSession, NutsMessage> message,Supplier<T> defaultValue) {
+        super(defaultValue);
         if (message == null) {
-            message = (s) -> NutsMessage.cstyle("missing value");
+            message = (s) -> NutsMessage.ofPlain("missing value");
         }
         this.message = message;
     }
@@ -83,5 +84,10 @@ public class NutsReservedOptionalEmpty<T> extends NutsReservedOptionalThrowable<
     @Override
     public String toString() {
         return "EmptyOptional@" + System.identityHashCode(this);
+    }
+
+    @Override
+    protected NutsOptional<T> clone() {
+        return super.clone();
     }
 }

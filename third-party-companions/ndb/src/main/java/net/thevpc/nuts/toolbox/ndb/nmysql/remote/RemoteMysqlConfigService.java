@@ -68,7 +68,7 @@ public class RemoteMysqlConfigService {
     public RemoteMysqlConfigService loadConfig() {
         NutsSession session = context.getSession();
         if (name == null) {
-            throw new NutsExecutionException(session, NutsMessage.cstyle("missing config name"), 2);
+            throw new NutsExecutionException(session, NutsMessage.ofPlain("missing config name"), 2);
         }
         NutsPath f = getConfigPath();
         if (f.exists()) {
@@ -111,7 +111,7 @@ public class RemoteMysqlConfigService {
                 case OPEN_OR_NULL:
                     return null;
                 case OPEN_OR_ERROR:
-                    throw new NutsIllegalArgumentException(context.getSession(), NutsMessage.cstyle("remote instance not found: %s@%s", dbName, getName()));
+                    throw new NutsIllegalArgumentException(context.getSession(), NutsMessage.ofCstyle("remote instance not found: %s@%s", dbName, getName()));
                 case CREATE_OR_ERROR:
                 case OPEN_OR_CREATE: {
                     a = new RemoteMysqlDatabaseConfig();
@@ -119,13 +119,13 @@ public class RemoteMysqlConfigService {
                     return new RemoteMysqlDatabaseConfigService(dbName, a, this);
                 }
                 default: {
-                    throw new NutsIllegalArgumentException(context.getSession(), NutsMessage.cstyle("unexpected error"));
+                    throw new NutsIllegalArgumentException(context.getSession(), NutsMessage.ofPlain("unexpected error"));
                 }
             }
         }
         switch (action) {
             case CREATE_OR_ERROR: {
-                throw new NutsIllegalArgumentException(context.getSession(), NutsMessage.cstyle("remote instance not found: %s@%s", dbName, getName()));
+                throw new NutsIllegalArgumentException(context.getSession(), NutsMessage.ofCstyle("remote instance not found: %s@%s", dbName, getName()));
             }
             case OPEN_OR_ERROR:
             case OPEN_OR_NULL:
@@ -133,7 +133,7 @@ public class RemoteMysqlConfigService {
                 return new RemoteMysqlDatabaseConfigService(dbName, a, this);
             }
             default: {
-                throw new NutsIllegalArgumentException(context.getSession(), NutsMessage.cstyle("unexpected error"));
+                throw new NutsIllegalArgumentException(context.getSession(), NutsMessage.ofPlain("unexpected error"));
             }
         }
     }

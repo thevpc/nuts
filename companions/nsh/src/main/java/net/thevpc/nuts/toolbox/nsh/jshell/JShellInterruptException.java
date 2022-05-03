@@ -41,6 +41,6 @@ import net.thevpc.nuts.NutsSession;
  */
 public class JShellInterruptException extends JShellException {
     public JShellInterruptException(NutsSession session) {
-        super(session, NutsMessage.plain("user interruption"),100);
+        super(session, NutsMessage.ofPlain("user interruption"),100);
     }
 }

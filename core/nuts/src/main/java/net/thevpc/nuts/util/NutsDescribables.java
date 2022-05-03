@@ -74,7 +74,7 @@ public final class NutsDescribables {
 
     public static void cast(Object o) {
         if (!isSupported(o)) {
-            throw new IllegalArgumentException(NutsMessage.cstyle("not a valid NutsDescribable object %s : %s", o.getClass().getName(), o.toString()).toString());
+            throw new IllegalArgumentException(NutsMessage.ofCstyle("not a valid NutsDescribable object %s : %s", o.getClass().getName(), o.toString()).toString());
         }
     }
 

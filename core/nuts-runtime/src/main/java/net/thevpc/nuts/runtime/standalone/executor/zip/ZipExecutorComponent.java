@@ -32,6 +32,7 @@ import net.thevpc.nuts.spi.NutsComponentScopeType;
 import net.thevpc.nuts.spi.NutsExecutorComponent;
 import net.thevpc.nuts.spi.NutsSupportLevelContext;
 import net.thevpc.nuts.util.NutsStringUtils;
+import net.thevpc.nuts.util.NutsUtils;
 
 import java.util.*;
 
@@ -90,14 +91,12 @@ public class ZipExecutorComponent implements NutsExecutorComponent {
         NutsSession session = executionContext.getSession();
         HashMap<String, String> osEnv = new HashMap<>();
         NutsArtifactCall executor = def.getDescriptor().getExecutor();
-        if (executor == null) {
-            throw new NutsIOException(session, NutsMessage.cstyle("missing executor for %s", def.getId()));
-        }
-        List<String> args=new ArrayList<>(executionContext.getExecutorOptions());
+        NutsUtils.requireNonNull(executor, session, () -> NutsMessage.ofCstyle("missing executor %s", def.getId()));
+        List<String> args = new ArrayList<>(executionContext.getExecutorOptions());
         args.addAll(executionContext.getArguments());
         if (executor.getId() != null && !executor.getId().toString().equals("exec")) {
             // TODO: delegate to another executor!
-            throw new NutsIOException(session, NutsMessage.cstyle("unsupported executor %s for %s", executor.getId(), def.getId()));
+            throw new NutsIOException(session, NutsMessage.ofCstyle("unsupported executor %s for %s", executor.getId(), def.getId()));
         }
         String directory = null;
         return NutsExecHelper.ofDefinition(def,

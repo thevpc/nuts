@@ -27,6 +27,7 @@ package net.thevpc.nuts.spi;
 
 import net.thevpc.nuts.NutsDescriptor;
 import net.thevpc.nuts.NutsId;
+import net.thevpc.nuts.io.NutsInputSource;
 import net.thevpc.nuts.io.NutsPath;
 import net.thevpc.nuts.NutsSession;
 
@@ -50,7 +51,15 @@ public interface NutsDeployRepositoryCommand extends NutsRepositoryCommand {
      *
      * @return content to deploy
      */
-    Object getContent();
+    NutsInputSource getContent();
+
+    /**
+     * set content to deploy
+     *
+     * @param content content to deploy
+     * @return {@code this} instance
+     */
+    NutsDeployRepositoryCommand setContent(NutsInputSource content);
 
     /**
      * set content to deploy

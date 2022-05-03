@@ -39,7 +39,7 @@ import net.thevpc.nuts.toolbox.nsh.jshell.JShellExecutionContext;
 public class LoginCommand extends SimpleJShellBuiltin {
 
     public LoginCommand() {
-        super("login", DEFAULT_SUPPORT,Options.class);
+        super("login", DEFAULT_SUPPORT, Options.class);
     }
 
     @Override
@@ -70,7 +70,7 @@ public class LoginCommand extends SimpleJShellBuiltin {
             NutsSession session = context.getSession();
             options.password = session.getTerminal().ask()
                     .resetLine()
-                    .forPassword("Password:").getValue();
+                    .forPassword(NutsMessage.ofPlain("Password:")).getValue();
         }
         context.getSession().security().login(options.login, options.password);
     }

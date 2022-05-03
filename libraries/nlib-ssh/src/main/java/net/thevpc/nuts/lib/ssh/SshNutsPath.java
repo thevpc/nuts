@@ -213,12 +213,12 @@ class SshNutsPath implements NutsPathSPI {
 
     @Override
     public URL toURL(NutsPath basePath) {
-        throw new NutsIOException(getSession(), NutsMessage.cstyle("unable to resolve url from %s", toString()));
+        throw new NutsIOException(getSession(), NutsMessage.ofCstyle("unable to resolve url from %s", toString()));
     }
 
     @Override
     public Path toFile(NutsPath basePath) {
-        throw new NutsIOException(getSession(), NutsMessage.cstyle("unable to resolve file from %s", toString()));
+        throw new NutsIOException(getSession(), NutsMessage.ofCstyle("unable to resolve file from %s", toString()));
     }
 
     //    @Override
@@ -301,7 +301,7 @@ class SshNutsPath implements NutsPathSPI {
 
     @Override
     public boolean exists(NutsPath basePath) {
-        throw new NutsIOException(getSession(), NutsMessage.cstyle("not supported exists for %s", toString()));
+        throw new NutsIOException(getSession(), NutsMessage.ofCstyle("not supported exists for %s", toString()));
     }
 
     @Override
@@ -331,7 +331,7 @@ class SshNutsPath implements NutsPathSPI {
 
     @Override
     public OutputStream getOutputStream(NutsPath basePath) {
-        throw new NutsIOException(getSession(), NutsMessage.cstyle("not supported output stream for %s", toString()));
+        throw new NutsIOException(getSession(), NutsMessage.ofCstyle("not supported output stream for %s", toString()));
     }
 
     @Override
@@ -537,7 +537,7 @@ class SshNutsPath implements NutsPathSPI {
                     r = c.execStringCommand("mv " + path.getPath() + " " + sp);
                 }
                 if (r != 0) {
-                    throw new NutsIOException(session, NutsMessage.cstyle("unable to move %s", this));
+                    throw new NutsIOException(session, NutsMessage.ofCstyle("unable to move %s", this));
                 }
                 return;
             }
@@ -565,7 +565,7 @@ class SshNutsPath implements NutsPathSPI {
                     }
                     case SKIP_SIBLINGS:
                     case SKIP_SUBTREE: {
-                        throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("unsupported %s", r));
+                        throw new NutsIllegalArgumentException(session, NutsMessage.ofCstyle("unsupported %s", r));
                     }
                 }
             } else if (x.isRegularFile()) {
@@ -579,7 +579,7 @@ class SshNutsPath implements NutsPathSPI {
                     }
                     case SKIP_SIBLINGS:
                     case SKIP_SUBTREE: {
-                        throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("unsupported %s", r));
+                        throw new NutsIllegalArgumentException(session, NutsMessage.ofCstyle("unsupported %s", r));
                     }
                 }
             }

@@ -41,9 +41,9 @@ public class SimpleRecommendationConnector extends AbstractRecommendationConnect
             }
             return elems.parse(http.getInputStream(), resultType);
         } catch (IOException ex) {
-            throw new NutsIOException(session, NutsMessage.cstyle("recommendations are not available : %s",ex.toString()), ex);
+            throw new NutsIOException(session, NutsMessage.ofCstyle("recommendations are not available : %s",ex.toString()), ex);
         } catch (Exception ex) {
-            throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("unexpected error : %s",ex.toString()), ex);
+            throw new NutsIllegalArgumentException(session, NutsMessage.ofCstyle("unexpected error : %s",ex.toString()), ex);
         }
     }
 

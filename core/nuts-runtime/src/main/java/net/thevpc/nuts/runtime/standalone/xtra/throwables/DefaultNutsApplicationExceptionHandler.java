@@ -12,6 +12,7 @@ import net.thevpc.nuts.text.NutsTextStyle;
 import net.thevpc.nuts.text.NutsTexts;
 import net.thevpc.nuts.util.NutsLogConfig;
 import net.thevpc.nuts.util.NutsLoggerOp;
+import net.thevpc.nuts.util.NutsUtils;
 
 import java.io.PrintStream;
 import java.util.logging.Level;
@@ -19,7 +20,7 @@ import java.util.logging.Level;
 public class DefaultNutsApplicationExceptionHandler implements NutsApplicationExceptionHandler {
     @Override
     public int processThrowable(String[] args, Throwable throwable, NutsSession session) {
-        NutsApiUtils.checkSession(session);
+        NutsUtils.requireSession(session);
         NutsWorkspaceBootOptionsBuilder bo = null;
         bo = session.boot().getBootOptions().builder();
         if (!session.env().isGraphicalDesktopEnvironment()) {
@@ -59,7 +60,7 @@ public class DefaultNutsApplicationExceptionHandler implements NutsApplicationEx
             }
         } catch (Exception ex2) {
             NutsLoggerOp.of(NutsApplications.class, session).level(Level.FINE).error(ex2).log(
-                    NutsMessage.jstyle("unable to get system terminal")
+                    NutsMessage.ofPlain("unable to get system terminal")
             );
         }
         boolean showMessage=true;
@@ -138,7 +139,7 @@ public class DefaultNutsApplicationExceptionHandler implements NutsApplicationEx
             }
             String title = "Nuts Package Manager - Error";
             try {
-                javax.swing.JOptionPane.showMessageDialog(null, NutsMessage.plain(sb.toString()).toString());
+                javax.swing.JOptionPane.showMessageDialog(null, NutsMessage.ofPlain(sb.toString()).toString());
             } catch (UnsatisfiedLinkError e) {
                 //exception may occur if the sdk is built in headless mode
                 System.err.printf("[Graphical Environment Unsupported] %s%n", title);

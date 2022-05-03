@@ -93,7 +93,7 @@ public class DefaultNutsElementFactoryContext implements NutsElementFactoryConte
         if (o != null) {
             RefItem ro = new RefItem(o, "defaultObjectToElement");
             if (visited.contains(ro)) {
-                throw new NutsIllegalArgumentException(getSession(), NutsMessage.cstyle("unable to serialize object of type %s because of cyclic references: %s", o.getClass().getName(),stacktrace()));
+                throw new NutsIllegalArgumentException(getSession(), NutsMessage.ofCstyle("unable to serialize object of type %s because of cyclic references: %s", o.getClass().getName(),stacktrace()));
             }
             visited.add(ro);
             try {
@@ -110,7 +110,7 @@ public class DefaultNutsElementFactoryContext implements NutsElementFactoryConte
         if (o != null) {
             RefItem ro = new RefItem(o, "defaultDestruct");
             if (visited.contains(ro)) {
-                throw new NutsIllegalArgumentException(getSession(), NutsMessage.cstyle("unable to destruct object of type %s because of cyclic references: %s", o.getClass().getName(),stacktrace()));
+                throw new NutsIllegalArgumentException(getSession(), NutsMessage.ofCstyle("unable to destruct object of type %s because of cyclic references: %s", o.getClass().getName(),stacktrace()));
             }
             visited.add(ro);
             try {
@@ -127,7 +127,7 @@ public class DefaultNutsElementFactoryContext implements NutsElementFactoryConte
         if (o != null) {
             RefItem ro = new RefItem(o, "objectToElement");
             if (visited.contains(ro)) {
-                throw new NutsIllegalArgumentException(getSession(), NutsMessage.cstyle("unable to serialize object of type %s because of cyclic references: %s", o.getClass().getName(),stacktrace()));
+                throw new NutsIllegalArgumentException(getSession(), NutsMessage.ofCstyle("unable to serialize object of type %s because of cyclic references: %s", o.getClass().getName(),stacktrace()));
             }
             visited.add(ro);
             try {
@@ -145,7 +145,7 @@ public class DefaultNutsElementFactoryContext implements NutsElementFactoryConte
         if (o != null) {
             RefItem ro = new RefItem(o, "destruct");
             if (visited.contains(ro)) {
-                throw new NutsIllegalArgumentException(getSession(), NutsMessage.cstyle("unable to destruct object of type %s because of cyclic references.", o.getClass().getName()));
+                throw new NutsIllegalArgumentException(getSession(), NutsMessage.ofCstyle("unable to destruct object of type %s because of cyclic references.", o.getClass().getName()));
             }
             visited.add(ro);
             try {

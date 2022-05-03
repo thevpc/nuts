@@ -7,6 +7,7 @@ import net.thevpc.nuts.runtime.standalone.io.util.NutsInstallStatusIdFilter;
 import java.util.List;
 
 import net.thevpc.nuts.spi.NutsSupportLevelContext;
+import net.thevpc.nuts.util.NutsUtils;
 
 public class InternalNutsIdFilters extends InternalNutsTypedFilters<NutsIdFilter> implements NutsIdFilters {
 
@@ -88,9 +89,8 @@ public class InternalNutsIdFilters extends InternalNutsTypedFilters<NutsIdFilter
             return null;
         }
         NutsIdFilter t = as(a);
-        if (t == null) {
-            throw new NutsIllegalArgumentException(getSession(), NutsMessage.cstyle("not a IdFilter"));
-        }
+        NutsSession session = getSession();
+        NutsUtils.requireNonNull(t, session,"IdFilter");
         return t;
     }
 

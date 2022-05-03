@@ -85,7 +85,7 @@ public class NutsFormatPlain extends DefaultFormatBase<NutsContentTypeFormat> im
     private String getFormattedPrimitiveValue(NutsElement value) {
         switch (value.type()) {
             default: {
-                throw new NutsUnsupportedArgumentException(getSession(), NutsMessage.cstyle("invalid element type: %s", value.type()));
+                throw new NutsUnsupportedArgumentException(getSession(), NutsMessage.ofCstyle("invalid element type: %s", value.type()));
             }
         }
     }

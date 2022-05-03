@@ -48,7 +48,7 @@ public class NutsExtensionAlreadyRegisteredException extends NutsExtensionExcept
      */
     public NutsExtensionAlreadyRegisteredException(NutsSession session, NutsId id, String installed) {
         super(session, id,
-                NutsMessage.cstyle("extension already registered %s  as %", (id == null ? "<null>" : id), installed)
+                NutsMessage.ofCstyle("extension already registered %s  as %", (id == null ? "<null>" : id), installed)
                 , null);
         this.installed = installed;
     }
@@ -62,7 +62,7 @@ public class NutsExtensionAlreadyRegisteredException extends NutsExtensionExcept
      * @param cause     cause
      */
     public NutsExtensionAlreadyRegisteredException(NutsSession session, NutsId id, String installed, Throwable cause) {
-        super(session, id, NutsMessage.cstyle("extension already registered %s  as %", (id == null ? "<null>" : id), installed), cause);
+        super(session, id, NutsMessage.ofCstyle("extension already registered %s  as %", (id == null ? "<null>" : id), installed), cause);
         this.installed = installed;
     }
 

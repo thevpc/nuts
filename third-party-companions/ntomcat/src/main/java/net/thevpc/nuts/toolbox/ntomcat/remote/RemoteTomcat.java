@@ -34,34 +34,34 @@ public class RemoteTomcat {
             if (cmdLine.isNextOption()) {
                 context.configureLast(cmdLine);
             } else {
-                if ((a = cmdLine.next("list").orNull())!=null) {
+                if ((a = cmdLine.next("list").orNull()) != null) {
                     list(cmdLine);
                     return;
-                } else if ((a = cmdLine.next("show").orNull())!=null) {
+                } else if ((a = cmdLine.next("show").orNull()) != null) {
                     show(cmdLine);
                     return;
-                } else if ((a = cmdLine.next("add", "set").orNull())!=null) {
+                } else if ((a = cmdLine.next("add", "set").orNull()) != null) {
                     add(cmdLine);
                     return;
-                } else if ((a = cmdLine.next("remove").orNull())!=null) {
+                } else if ((a = cmdLine.next("remove").orNull()) != null) {
                     remove(cmdLine);
                     return;
-                } else if ((a = cmdLine.next("start").orNull())!=null) {
+                } else if ((a = cmdLine.next("start").orNull()) != null) {
                     restart(cmdLine, false);
                     return;
-                } else if ((a = cmdLine.next("restart").orNull())!=null) {
+                } else if ((a = cmdLine.next("restart").orNull()) != null) {
                     restart(cmdLine, true);
                     return;
-                } else if ((a = cmdLine.next("stop").orNull())!=null) {
+                } else if ((a = cmdLine.next("stop").orNull()) != null) {
                     stop(cmdLine);
                     return;
-                } else if ((a = cmdLine.next("install").orNull())!=null) {
+                } else if ((a = cmdLine.next("install").orNull()) != null) {
                     install(cmdLine);
                     return;
-                } else if ((a = cmdLine.next("deploy").orNull())!=null) {
+                } else if ((a = cmdLine.next("deploy").orNull()) != null) {
                     deploy(cmdLine);
                     return;
-                } else if ((a = cmdLine.next("reset").orNull())!=null) {
+                } else if ((a = cmdLine.next("reset").orNull()) != null) {
                     reset(cmdLine);
                     return;
                 } else {
@@ -69,7 +69,7 @@ public class RemoteTomcat {
                 }
             }
         }
-        throw new NutsExecutionException(context.getSession(), NutsMessage.cstyle("missing tomcat action. Type: nuts tomcat --help"), 1);
+        throw new NutsExecutionException(context.getSession(), NutsMessage.ofPlain("missing tomcat action. Type: nuts tomcat --help"), 1);
     }
 
     public void list(NutsCommandLine args) {
@@ -89,7 +89,7 @@ public class RemoteTomcat {
         }
         Helper x = new Helper();
         while (args.hasNext()) {
-            if ((a = args.nextString("--name").orNull())!=null) {
+            if ((a = args.nextString("--name").orNull()) != null) {
                 x.print(loadOrCreateTomcatConfig(a.getStringValue().get(session)));
             } else if (args.peek().get(session).isNonOption()) {
                 x.print(loadOrCreateTomcatConfig(args.nextNonOption().get(session).getStringValue().get(session)));
@@ -112,30 +112,30 @@ public class RemoteTomcat {
         args.setCommandName("tomcat --remote add");
         NutsSession session = context.getSession();
         while (args.hasNext()) {
-            if ((a = args.nextString("--name").orNull())!=null) {
+            if ((a = args.nextString("--name").orNull()) != null) {
                 if (c == null) {
                     instanceName = a.getStringValue().get(session);
                     c = loadOrCreateTomcatConfig(instanceName);
                 } else {
-                    throw new NutsExecutionException(session, NutsMessage.cstyle("instance already defined"), 2);
+                    throw new NutsExecutionException(session, NutsMessage.ofPlain("instance already defined"), 2);
                 }
-            } else if ((a = args.nextString("--server").orNull())!=null) {
+            } else if ((a = args.nextString("--server").orNull()) != null) {
                 if (c == null) {
                     c = loadOrCreateTomcatConfig(null);
                 }
                 c.getConfig().setServer(a.getStringValue().get(session));
-            } else if ((a = args.nextString("--remote-temp-path").orNull())!=null) {
+            } else if ((a = args.nextString("--remote-temp-path").orNull()) != null) {
                 if (c == null) {
                     c = loadOrCreateTomcatConfig(null);
                 }
                 c.getConfig().setRemoteTempPath(a.getStringValue().get(session));
-            } else if ((a = args.nextString("--remote-instance").orNull())!=null) {
+            } else if ((a = args.nextString("--remote-instance").orNull()) != null) {
                 String value = a.getStringValue().get(session);
                 if (c == null) {
                     c = loadOrCreateTomcatConfig(null);
                 }
                 c.getConfig().setRemoteName(value);
-            } else if ((a = args.nextString("--app").orNull())!=null) {
+            } else if ((a = args.nextString("--app").orNull()) != null) {
                 appName = a.getStringValue().get(session);
                 if (c == null) {
                     c = loadOrCreateTomcatConfig(null);
@@ -170,13 +170,15 @@ public class RemoteTomcat {
                 if (NutsBlankable.isBlank(c.getConfig().getServer())) {
                     ok = false;
                     c.getConfig().setServer(session.getTerminal()
-                                    .ask()
-                                    .forString("[instance=%s] would you enter %s value ?"
-                                    , text.ofStyled(c.getName(), NutsTextStyle.primary1())
-                                    , text.ofStyled("--server", NutsTextStyle.option())
+                            .ask()
+                            .forString(
+                                    NutsMessage.ofCstyle("[instance=%s] would you enter %s value ?"
+                                            , text.ofStyled(c.getName(), NutsTextStyle.primary1())
+                                            , text.ofStyled("--server", NutsTextStyle.option())
+                                    )
                             )
-                                    .setDefaultValue("ssh://login@myserver/instanceName")
-                                    .getValue()
+                            .setDefaultValue("ssh://login@myserver/instanceName")
+                            .getValue()
                     );
                 }
                 if (NutsBlankable.isBlank(c.getConfig().getRemoteTempPath())) {
@@ -184,10 +186,10 @@ public class RemoteTomcat {
                     c.getConfig()
                             .setRemoteTempPath(session.getTerminal().ask()
                                     .resetLine()
-                                    .forString("[instance=%s] would you enter %s value ?"
+                                    .forString(NutsMessage.ofCstyle("[instance=%s] would you enter %s value ?"
                                             , text.ofStyled(c.getName(), NutsTextStyle.primary1())
                                             , text.ofStyled("--remote-temp-path", NutsTextStyle.option())
-                                    ).setDefaultValue("/tmp")
+                                    )).setDefaultValue("/tmp")
                                     .getValue()
                             );
                 }
@@ -196,16 +198,16 @@ public class RemoteTomcat {
                         ok = false;
                         aa.getConfig().setPath(session.getTerminal().ask()
                                 .resetLine()
-                                .forString("[instance=%s] [app=%s] would you enter %s value ?"
+                                .forString(NutsMessage.ofCstyle("[instance=%s] [app=%s] would you enter %s value ?"
                                         , text.ofStyled(c.getName(), NutsTextStyle.primary1())
                                         , text.ofStyled(aa.getName(), NutsTextStyle.option())
                                         , text.ofStyled("--app.path", NutsTextStyle.option())
-                                )
+                                ))
                                 .getValue());
                     }
                 }
-            } catch (NutsUserCancelException ex) {
-                throw new NutsExecutionException(session, NutsMessage.cstyle("cancelled"), 1);
+            } catch (NutsCancelException ex) {
+                throw new NutsExecutionException(session, NutsMessage.ofPlain("cancelled"), 1);
             }
         }
         c.save();
@@ -230,10 +232,10 @@ public class RemoteTomcat {
             }
         }
         if (!processed) {
-            throw new NutsExecutionException(context.getSession(), NutsMessage.cstyle("invalid parameters"), 2);
+            throw new NutsExecutionException(context.getSession(), NutsMessage.ofPlain("invalid parameters"), 2);
         }
         if (lastExitCode != 0) {
-            throw new NutsExecutionException(context.getSession(),NutsMessage.cstyle("tomcat remove failed"), lastExitCode);
+            throw new NutsExecutionException(context.getSession(), NutsMessage.ofPlain("tomcat remove failed"), lastExitCode);
         }
     }
 
@@ -348,12 +350,12 @@ public class RemoteTomcat {
     public RemoteTomcatConfigService[] listConfig() {
         return
                 sharedConfigFolder.list().filter(
-                                pathname -> pathname.isRegularFile() &&  pathname.getName().endsWith(RemoteTomcatConfigService.REMOTE_CONFIG_EXT),
-                                "isRegularFile() && matches(*"+RemoteTomcatConfigService.REMOTE_CONFIG_EXT+")"
+                                pathname -> pathname.isRegularFile() && pathname.getName().endsWith(RemoteTomcatConfigService.REMOTE_CONFIG_EXT),
+                                "isRegularFile() && matches(*" + RemoteTomcatConfigService.REMOTE_CONFIG_EXT + ")"
                         )
                         .mapUnsafe(
-                                NutsUnsafeFunction.of(x->loadTomcatConfig(x),"loadTomcatConfig")
-                                ,null)
+                                NutsUnsafeFunction.of(x -> loadTomcatConfig(x), "loadTomcatConfig")
+                                , null)
                         .filterNonNull()
                         .toArray(RemoteTomcatConfigService[]::new);
     }
@@ -426,7 +428,7 @@ public class RemoteTomcat {
             RemoteTomcatConfigService u = loadOrCreateTomcatConfig(strings[0]);
             RemoteTomcatAppConfigService a = u.getAppOrNull(strings[1]);
             if (a == null) {
-                throw new NutsExecutionException(context.getSession(), NutsMessage.cstyle("unknown name %s. it is no domain or app",name), 3);
+                throw new NutsExecutionException(context.getSession(), NutsMessage.ofCstyle("unknown name %s. it is no domain or app", name), 3);
             }
             return a;
         }

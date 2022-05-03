@@ -45,6 +45,7 @@ import net.thevpc.nuts.toolbox.nsh.jshell.JShellExecutionContext;
 import net.thevpc.nuts.toolbox.nsh.util.ColumnRuler;
 import net.thevpc.nuts.toolbox.nsh.util.FileInfo;
 import net.thevpc.nuts.util.NutsStringUtils;
+import net.thevpc.nuts.util.NutsUtils;
 
 /**
  * Created by vpc on 1/7/17.
@@ -107,9 +108,8 @@ public class GrepCommand extends SimpleJShellBuiltin {
         if (options.files.isEmpty()) {
             options.files.add(null);
         }
-        if (options.expression == null) {
-            throw new NutsExecutionException(context.getSession(), NutsMessage.cstyle("missing Expression"), 2);
-        }
+        NutsSession session = context.getSession();
+        NutsUtils.requireNonBlank(options.expression,session,"expression");
         String baseExpr = simpexpToRegexp(options.expression, true);
         if (options.word) {
             baseExpr = "\\b" + baseExpr + "\\b";
@@ -128,7 +128,7 @@ public class GrepCommand extends SimpleJShellBuiltin {
         for (FileInfo f : options.files) {
             x = grepFile(f, p, options, context, prefixFileName, results);
         }
-        switch (context.getSession().getOutputFormat()) {
+        switch (session.getOutputFormat()) {
             case PLAIN: {
                 ColumnRuler ruler=new ColumnRuler();
                 for (GrepResultItem result : results) {
@@ -137,7 +137,7 @@ public class GrepCommand extends SimpleJShellBuiltin {
                             out.printf(result.path);
                             out.print(":");
                         }
-                        out.print(ruler.nextNum(result.number, context.getSession()));
+                        out.print(ruler.nextNum(result.number, session));
                     }
                     out.println(result.line);
                 }
@@ -152,7 +152,7 @@ public class GrepCommand extends SimpleJShellBuiltin {
             }
         }
         if (x != 0) {
-            throwExecutionException("error", x, context.getSession());
+            throwExecutionException("error", x, session);
         }
     }
 
@@ -191,7 +191,7 @@ public class GrepCommand extends SimpleJShellBuiltin {
                 }
             }
         } catch (IOException ex) {
-            throw new NutsExecutionException(session, NutsMessage.cstyle("%s", ex), ex, 100);
+            throw new NutsExecutionException(session, NutsMessage.ofCstyle("%s", ex), ex, 100);
         }
         return 0;
     }

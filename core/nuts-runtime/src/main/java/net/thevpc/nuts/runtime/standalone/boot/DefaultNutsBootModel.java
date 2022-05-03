@@ -69,7 +69,8 @@ public class DefaultNutsBootModel implements NutsBootModel {
     public DefaultNutsBootModel(NutsWorkspace workspace) {
         this.workspace = workspace;
     }
-    public void init(NutsWorkspaceBootOptions bOption0){
+
+    public void init(NutsWorkspaceBootOptions bOption0) {
         this.initializing = true;
         NutsWorkspaceModel _model = NutsWorkspaceExt.of(workspace).getModel();
         this.bootSession = new DefaultNutsSession(workspace, bOption0);
@@ -230,14 +231,14 @@ public class DefaultNutsBootModel implements NutsBootModel {
                 setSystemTerminal(systemTerminal, session);
                 if (getSystemTerminal().isAutoCompleteSupported()) {
                     _LOGOP(session).level(Level.FINE).verb(NutsLoggerVerb.SUCCESS)
-                            .log(NutsMessage.jstyle("enable rich terminal"));
+                            .log(NutsMessage.ofPlain("enable rich terminal"));
                 } else {
                     _LOGOP(session).level(Level.FINE).verb(NutsLoggerVerb.FAIL)
-                            .log(NutsMessage.jstyle("unable to enable rich terminal"));
+                            .log(NutsMessage.ofPlain("unable to enable rich terminal"));
                 }
             } else {
                 _LOGOP(session).level(Level.FINE).verb(NutsLoggerVerb.WARNING)
-                        .log(NutsMessage.jstyle("enableRichTerm discarded; next-term is excluded."));
+                        .log(NutsMessage.ofPlain("enableRichTerm discarded; next-term is excluded."));
             }
         }
     }
@@ -255,7 +256,7 @@ public class DefaultNutsBootModel implements NutsBootModel {
                 NutsSessionUtils.setSession(syst, session);
             } catch (Exception ex) {
                 _LOGOP(session).level(Level.FINEST).verb(NutsLoggerVerb.WARNING)
-                        .log(NutsMessage.jstyle("unable to create system terminal : {0}", ex));
+                        .log(NutsMessage.ofJstyle("unable to create system terminal : {0}", ex));
                 DefaultNutsSystemTerminalBase b = new DefaultNutsSystemTerminalBase();
                 NutsSessionUtils.setSession(b, session);
                 syst = new DefaultSystemTerminal(b);
@@ -324,12 +325,12 @@ public class DefaultNutsBootModel implements NutsBootModel {
                 return NutsOptional.of(r);
             }
         }
-        return NutsOptional.ofEmpty(session -> NutsMessage.cstyle("option not found : %s", Arrays.asList(names)));
+        return NutsOptional.ofNamedEmpty("options "+ Arrays.asList(names));
     }
 
     public NutsOptional<NutsValue> getCustomBootOption(String name) {
         NutsValue r = getCustomBootOptions().get(name);
-        return NutsOptional.of(r, session -> NutsMessage.cstyle("option not found : %s", name));
+        return NutsOptional.ofNamed(r, "option " + name);
     }
 
     public Map<String, NutsValue> getCustomBootOptions() {

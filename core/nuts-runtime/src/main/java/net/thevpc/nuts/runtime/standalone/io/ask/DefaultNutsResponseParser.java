@@ -24,7 +24,7 @@ public class DefaultNutsResponseParser<T> implements NutsQuestionParser<T> {
             response = defaultValue;
         }
         if ("cancel!".equals(response)) {
-            throw new NutsUserCancelException(session);
+            throw new NutsCancelException(session);
         }
         if (response == null) {
             return null;
@@ -64,13 +64,13 @@ public class DefaultNutsResponseParser<T> implements NutsQuestionParser<T> {
                 String sReponse = response.toString();
                 NutsArgument a = new DefaultNutsArgument(sReponse);
                 if (!a.isBoolean()) {
-                    throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("invalid response %s", sReponse));
+                    throw new NutsIllegalArgumentException(session, NutsMessage.ofCstyle("invalid response %s", sReponse));
                 }
                 return (T) (Object) a.asBoolean().get(session);
             }
 
             default: {
-                throw new NutsUnsupportedArgumentException(session, NutsMessage.cstyle("unsupported type %s", type.getName()));
+                throw new NutsUnsupportedArgumentException(session, NutsMessage.ofCstyle("unsupported type %s", type.getName()));
             }
         }
     }

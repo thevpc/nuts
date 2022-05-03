@@ -59,7 +59,7 @@ public abstract class NutsExtensionException extends NutsException {
     public NutsExtensionException(NutsSession session, NutsId extensionId, NutsMessage message, Throwable cause) {
         super(session,
                 message == null
-                        ? NutsMessage.cstyle("extension %s has encountered problem", (extensionId == null ? "<null>" : extensionId)) : message, cause);
+                        ? NutsMessage.ofCstyle("extension %s has encountered problem", (extensionId == null ? "<null>" : extensionId)) : message, cause);
         this.id = extensionId;
     }
 

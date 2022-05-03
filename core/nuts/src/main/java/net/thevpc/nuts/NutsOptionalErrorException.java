@@ -26,7 +26,7 @@
 package net.thevpc.nuts;
 
 /**
- * Generic exception to be thrown when an element is not found.
+ * Generic exception to be thrown when an optional is erroneous is not found.
  *
  * @author thevpc
  * @app.category Exceptions

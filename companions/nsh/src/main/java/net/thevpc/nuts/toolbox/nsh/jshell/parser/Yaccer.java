@@ -1065,7 +1065,7 @@ public class Yaccer {
 
         @Override
         public int eval(JShellContext context) {
-            throw new NutsIllegalArgumentException(context.getSession(), NutsMessage.cstyle("not yet implemented UnOpSuffix %s",op.image));
+            throw new NutsIllegalArgumentException(context.getSession(), NutsMessage.ofCstyle("not yet implemented UnOpSuffix %s",op.image));
         }
     }
 
@@ -1115,7 +1115,7 @@ public class Yaccer {
 
         @Override
         public int eval(JShellContext context) {
-            throw new NutsIllegalArgumentException(context.getSession(), NutsMessage.cstyle("not yet implemented UnOpPrefix %s",op.image));
+            throw new NutsIllegalArgumentException(context.getSession(), NutsMessage.ofCstyle("not yet implemented UnOpPrefix %s",op.image));
         }
     }
 
@@ -1139,7 +1139,7 @@ public class Yaccer {
 
         @Override
         public int eval(JShellContext context) {
-            throw new NutsIllegalArgumentException(context.getSession(), NutsMessage.cstyle("not yet implemented BinOp %s",op.image));
+            throw new NutsIllegalArgumentException(context.getSession(), NutsMessage.ofCstyle("not yet implemented BinOp %s",op.image));
         }
     }
 

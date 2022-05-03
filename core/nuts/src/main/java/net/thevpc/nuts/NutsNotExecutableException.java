@@ -46,7 +46,7 @@ public class NutsNotExecutableException extends NutsExecutionException {
      * @param id      artifact id
      */
     public NutsNotExecutableException(NutsSession session, NutsId id) {
-        super(session, NutsMessage.cstyle("not executable %s", (id == null ? "<null>" : id)), -1);
+        super(session, NutsMessage.ofCstyle("not executable %s", (id == null ? "<null>" : id)), -1);
         this.id = id;
     }
 

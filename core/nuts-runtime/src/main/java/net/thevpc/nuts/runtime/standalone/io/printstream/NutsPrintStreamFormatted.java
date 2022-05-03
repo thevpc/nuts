@@ -10,33 +10,38 @@ import net.thevpc.nuts.text.NutsTextStyle;
 import net.thevpc.nuts.text.NutsTextStyles;
 import net.thevpc.nuts.text.NutsTexts;
 
+import java.io.OutputStream;
+
 public class NutsPrintStreamFormatted extends NutsPrintStreamRendered {
     public NutsPrintStreamFormatted(NutsPrintStreamBase base, NutsSession session, Bindings bindings) {
-        super(base,session, NutsTerminalMode.FORMATTED,
+        super(base, session, NutsTerminalMode.FORMATTED,
                 bindings);
-        if(bindings.formatted!=null){
-            throw new NutsIllegalArgumentException(session,NutsMessage.plain("formatted already bound"));
+        if (bindings.formatted != null) {
+            throw new NutsIllegalArgumentException(session, NutsMessage.ofPlain("formatted already bound"));
         }
-        setFormattedName(new DefaultNutsTextStyled(session,new DefaultNutsTextPlain(session,"<formatted-stream>" ), NutsTextStyles.of(NutsTextStyle.path())));
-        bindings.formatted=this;
+        getOutputMetaData().setMessage(
+                NutsMessage.ofStyled(
+                        "<formatted-stream>", NutsTextStyle.path())
+        );
+        bindings.formatted = this;
     }
 
     @Override
     public NutsPrintStream setSession(NutsSession session) {
-        if(session==null || session==this.session){
+        if (session == null || session == this.session) {
             return this;
         }
-        return new NutsPrintStreamFormatted(base,session,new Bindings());
+        return new NutsPrintStreamFormatted(base, session, new Bindings());
     }
 
     @Override
     protected NutsPrintStream convertImpl(NutsTerminalMode other) {
-        switch (other){
-            case FILTERED:{
-                return new NutsPrintStreamFiltered(base,getSession(),bindings);
+        switch (other) {
+            case FILTERED: {
+                return new NutsPrintStreamFiltered(base, getSession(), bindings);
             }
         }
-        throw new NutsIllegalArgumentException(base.getSession(),NutsMessage.cstyle("unsupported %s -> %s",mode(), other));
+        throw new NutsIllegalArgumentException(base.getSession(), NutsMessage.ofCstyle("unsupported %s -> %s", mode(), other));
     }
 
     @Override
@@ -47,4 +52,8 @@ public class NutsPrintStreamFormatted extends NutsPrintStreamRendered {
         return this;
     }
 
+    @Override
+    public OutputStream getOutputStream() {
+        return asOutputStream();
+    }
 }

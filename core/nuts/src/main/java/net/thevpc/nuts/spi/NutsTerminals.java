@@ -29,7 +29,7 @@ package net.thevpc.nuts.spi;
 import net.thevpc.nuts.io.NutsPrintStream;
 import net.thevpc.nuts.NutsSession;
 import net.thevpc.nuts.io.NutsSessionTerminal;
-import net.thevpc.nuts.boot.NutsApiUtils;
+import net.thevpc.nuts.util.NutsUtils;
 
 import java.io.InputStream;
 
@@ -48,7 +48,7 @@ public interface NutsTerminals extends NutsComponent {
      * @return the singleton instance of NutsTerminals for the given session
      */
     static NutsTerminals of(NutsSession session) {
-        NutsApiUtils.checkSession(session);
+        NutsUtils.requireSession(session);
         return session.extensions().createSupported(NutsTerminals.class, true, null);
     }
 

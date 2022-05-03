@@ -25,7 +25,7 @@ public class NutsTextFormatPropertiesTheme implements NutsTextFormatTheme {
             try (InputStream is = NutsPath.of(name, session).getInputStream()) {
                 props.load(is);
             } catch (IOException e) {
-                throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("invalid theme: %s", name), e);
+                throw new NutsIllegalArgumentException(session, NutsMessage.ofCstyle("invalid theme: %s", name), e);
             }
         } else {
             if (cls == null) {
@@ -37,7 +37,7 @@ public class NutsTextFormatPropertiesTheme implements NutsTextFormatTheme {
                     InputStream inStream = null;
                     inStream = u.openStream();
                     if (inStream == null) {
-                        throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("invalid theme: %s", name));
+                        throw new NutsIllegalArgumentException(session, NutsMessage.ofCstyle("invalid theme: %s", name));
                     }
                     try {
                         props.load(inStream);
@@ -56,10 +56,10 @@ public class NutsTextFormatPropertiesTheme implements NutsTextFormatTheme {
                     try (InputStream inStream = themeFile.getInputStream()) {
                         props.load(inStream);
                     } catch (IOException e) {
-                        throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("invalid theme: %s", name), e);
+                        throw new NutsIllegalArgumentException(session, NutsMessage.ofCstyle("invalid theme: %s", name), e);
                     }
                 } else {
-                    throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("invalid theme: %s", name));
+                    throw new NutsIllegalArgumentException(session, NutsMessage.ofCstyle("invalid theme: %s", name));
                 }
             }
         }
@@ -138,7 +138,7 @@ public class NutsTextFormatPropertiesTheme implements NutsTextFormatTheme {
     public NutsTextStyles toBasicStyles(NutsTextStyle style, NutsSession session, int maxLoop) {
         if (maxLoop <= 0) {
             throw new NutsIllegalArgumentException(session,
-                    NutsMessage.cstyle("invalid ntf theme for %s(%s). infinite loop", style.getType(), style.getVariant()));
+                    NutsMessage.ofCstyle("invalid ntf theme for %s(%s). infinite loop", style.getType(), style.getVariant()));
         }
         if (style.getType().basic()) {
             return NutsTextStyles.of(style);

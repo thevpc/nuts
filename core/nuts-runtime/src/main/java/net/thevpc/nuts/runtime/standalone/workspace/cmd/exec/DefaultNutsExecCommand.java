@@ -35,6 +35,7 @@ import net.thevpc.nuts.spi.NutsExecutorComponent;
 import net.thevpc.nuts.text.NutsTextStyle;
 import net.thevpc.nuts.text.NutsTexts;
 import net.thevpc.nuts.util.NutsStream;
+import net.thevpc.nuts.util.NutsUtils;
 
 import java.io.File;
 import java.nio.file.Files;
@@ -87,23 +88,16 @@ public class DefaultNutsExecCommand extends AbstractNutsExecCommand {
         }
         switch (executionType) {
             case OPEN: {
-                if (commandDefinition != null) {
-                    throw new NutsIllegalArgumentException(getSession(), NutsMessage.cstyle("unable to run open artifact"));
-                }
-                if (command == null || command.size() == 0) {
-                    throw new NutsIllegalArgumentException(traceSession, NutsMessage.plain("missing command"));
-                }
+                NutsUtils.requireNonNull(commandDefinition, session, "artifact definition");
+                NutsUtils.requireNonBlank(command, session, "command");
                 String[] ts = command.toArray(new String[0]);
                 exec = new DefaultNutsOpenExecutable(ts, getExecutorOptions().toArray(new String[0]), traceSession, execSession, this);
                 break;
             }
             case SYSTEM: {
-                if (commandDefinition != null) {
-                    throw new NutsIllegalArgumentException(getSession(), NutsMessage.cstyle("unable to run artifact as " + executionType + "cmd"));
-                }
-                if (command == null || command.size() == 0) {
-                    throw new NutsIllegalArgumentException(traceSession, NutsMessage.plain("missing command"));
-                }
+                NutsExecutionType finalExecutionType = executionType;
+                NutsUtils.requireNull(commandDefinition, session, () -> NutsMessage.ofCstyle("unable to run artifact as %s cmd", finalExecutionType));
+                NutsUtils.requireNonBlank(command, session, "command");
                 String[] ts = command.toArray(new String[0]);
                 List<String> tsl = new ArrayList<>(Arrays.asList(ts));
                 if (CoreStringUtils.firstIndexOf(ts[0], new char[]{'/', '\\'}) < 0) {
@@ -112,7 +106,8 @@ public class DefaultNutsExecCommand extends AbstractNutsExecCommand {
                         tsl.set(0, p.toString());
                     }
                 }
-                exec = new DefaultNutsSystemExecutable(tsl.toArray(new String[0]), getExecutorOptions(),
+                exec = new DefaultNutsSystemExecutable(tsl.toArray(new String[0]),
+                        getExecutorOptions(),
                         traceSession,
                         execSession,
                         this
@@ -126,16 +121,14 @@ public class DefaultNutsExecCommand extends AbstractNutsExecCommand {
                     return ws_execDef(commandDefinition, commandDefinition.getId().getLongName(), ts, getExecutorOptions(), workspaceOptions, env, directory, failFast,
                             executionType, runAs, traceSession, execSession);
                 } else {
-                    if (command == null || command.size() == 0) {
-                        throw new NutsIllegalArgumentException(traceSession, NutsMessage.plain("missing command"));
-                    }
+                    NutsUtils.requireNonBlank(command, session, "command");
                     String[] ts = command.toArray(new String[0]);
                     exec = execEmbeddedOrExternal(ts, getExecutorOptions(), getWorkspaceOptions(), traceSession, execSession);
                 }
                 break;
             }
             default: {
-                throw new NutsUnsupportedArgumentException(getSession(), NutsMessage.cstyle("invalid execution type %s", executionType));
+                throw new NutsUnsupportedArgumentException(getSession(), NutsMessage.ofCstyle("invalid execution type %s", executionType));
             }
         }
         return exec;
@@ -156,7 +149,7 @@ public class DefaultNutsExecCommand extends AbstractNutsExecCommand {
             String p = getExtraErrorMessage();
             if (p != null) {
                 result = new NutsExecutionException(getSession(),
-                        NutsMessage.cstyle("execution failed with code %s and message : %s", ex.getExitCode(), p),
+                        NutsMessage.ofCstyle("execution failed with code %s and message : %s", ex.getExitCode(), p),
                         ex, ex.getExitCode());
             } else {
                 result = ex;
@@ -167,10 +160,10 @@ public class DefaultNutsExecCommand extends AbstractNutsExecCommand {
             if (exitCode != 0) {
                 if (p != null) {
                     result = new NutsExecutionException(getSession(),
-                            NutsMessage.cstyle("execution failed with code %s and message :  of : %s ; error was : %s ; notes : %s", 244, exec, ex, p),
+                            NutsMessage.ofCstyle("execution failed with code %s and message :  of : %s ; error was : %s ; notes : %s", 244, exec, ex, p),
                             ex, exitCode);
                 } else {
-                    result = new NutsExecutionException(getSession(), NutsMessage.cstyle("execution failed of : %s ; error was : %s", exec, ex),
+                    result = new NutsExecutionException(getSession(), NutsMessage.ofCstyle("execution failed of : %s ; error was : %s", exec, ex),
                             ex,
                             exitCode
                     );
@@ -185,9 +178,7 @@ public class DefaultNutsExecCommand extends AbstractNutsExecCommand {
     }
 
     private NutsExecutableInformationExt execEmbeddedOrExternal(String[] cmd, List<String> executorOptions, List<String> workspaceOptions, NutsSession prepareSession, NutsSession execSession) {
-        if (cmd == null || cmd.length == 0) {
-            throw new NutsIllegalArgumentException(getSession(), NutsMessage.cstyle("missing command"));
-        }
+        NutsUtils.requireNonBlank(cmd, session, "command");
         String[] args = new String[cmd.length - 1];
         System.arraycopy(cmd, 1, args, 0, args.length);
         String cmdName = cmd[0];
@@ -223,7 +214,7 @@ public class DefaultNutsExecCommand extends AbstractNutsExecCommand {
             if (goodId != null) {
                 cmdKind = CmdKind.ID;
             } else {
-                throw new NutsNotFoundException(getSession(), null, NutsMessage.cstyle("unable to resolve id %", cmdName));
+                throw new NutsNotFoundException(getSession(), null, NutsMessage.ofCstyle("unable to resolve id %", cmdName));
             }
         } else {
             if (cmdName.endsWith("!")) {
@@ -332,7 +323,7 @@ public class DefaultNutsExecCommand extends AbstractNutsExecCommand {
                 }
             }
         }
-        throw new NutsNotFoundException(getSession(), goodId, NutsMessage.cstyle("unable to resolve id %", cmdName));
+        throw new NutsNotFoundException(getSession(), goodId, NutsMessage.ofCstyle("unable to resolve id %", cmdName));
     }
 
     protected NutsId findExecId(NutsId nid, NutsSession traceSession, boolean forceInstalled, boolean ignoreIfUserCommand) {
@@ -372,7 +363,7 @@ public class DefaultNutsExecCommand extends AbstractNutsExecCommand {
             List<NutsVersion> versions = ff.stream().map(NutsId::getVersion).distinct().collect(Collectors.toList());
             if (versions.size() > 1) {
                 throw new NutsTooManyElementsException(getSession(),
-                        NutsMessage.cstyle("%s can be resolved to all (%d) of %s", nid, ff.size(), ff)
+                        NutsMessage.ofCstyle("%s can be resolved to all (%d) of %s", nid, ff.size(), ff)
                 );
             }
         }
@@ -481,12 +472,12 @@ public class DefaultNutsExecCommand extends AbstractNutsExecCommand {
                                 .getResultDefinitions();
                         NutsDefinition[] availableExecutors = q.stream().limit(2).toArray(NutsDefinition[]::new);
                         if (availableExecutors.length > 1) {
-                            throw new NutsTooManyElementsException(this.session, NutsMessage.cstyle("too many results for executor %s", eid));
+                            throw new NutsTooManyElementsException(this.session, NutsMessage.ofCstyle("too many results for executor %s", eid));
                         } else if (availableExecutors.length == 1) {
                             execComponent = new ArtifactExecutorComponent(availableExecutors[0].getId(), this.session);
                         } else {
                             // availableExecutors.length=0;
-                            throw new NutsNotFoundException(this.session, eid, NutsMessage.cstyle("executor not found %s", eid));
+                            throw new NutsNotFoundException(this.session, eid, NutsMessage.ofCstyle("executor not found %s", eid));
                         }
                     }
                 }
@@ -497,8 +488,8 @@ public class DefaultNutsExecCommand extends AbstractNutsExecCommand {
             if (executorCall != null) {
                 for (String argument : executorCall.getArguments()) {
                     executorArgs.add(StringPlaceHolderParser.replaceDollarPlaceHolders(argument,
-                            def,session,NutsExecutionContextUtils.DEFINITION_PLACEHOLDER
-                            ));
+                            def, session, NutsExecutionContextUtils.DEFINITION_PLACEHOLDER
+                    ));
                 }
                 execProps = executorCall.getProperties();
             }

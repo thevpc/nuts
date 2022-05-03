@@ -54,7 +54,7 @@ public class JShellException extends NutsExecutionException {
     }
 
     public JShellException(NutsSession session, Throwable cause, int exitCode) {
-        super(session, NutsMessage.cstyle("error"), cause, exitCode);
+        super(session, NutsMessage.ofPlain("error"), cause, exitCode);
     }
 
     public JShellException(NutsSession session, NutsMessage message, Throwable cause, boolean enableSuppression, boolean writableStackTrace, int exitCode) {

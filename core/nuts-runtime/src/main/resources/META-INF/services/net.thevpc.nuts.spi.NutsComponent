@@ -74,14 +74,13 @@ net.thevpc.nuts.runtime.standalone.xtra.contenttype.DefaultNutsContentTypeResolv
 net.thevpc.nuts.runtime.standalone.xtra.contenttype.DefaultNutsContentTypes
 net.thevpc.nuts.runtime.standalone.xtra.download.DefaultHttpTransportComponent
 net.thevpc.nuts.runtime.standalone.io.path.DefaultNutsPaths
-net.thevpc.nuts.runtime.standalone.io.inputstream.DefaultNutsInputStreams
+net.thevpc.nuts.runtime.standalone.io.inputstream.DefaultNutsIO
 net.thevpc.nuts.runtime.standalone.io.printstream.DefaultNutsPrintStreams
 net.thevpc.nuts.runtime.standalone.xtra.execentries.DefaultNutsExecutionEntries
 net.thevpc.nuts.runtime.standalone.xtra.digest.DefaultNutsDigest
 net.thevpc.nuts.runtime.standalone.io.progress.DefaultNutsInputStreamMonitor
 net.thevpc.nuts.runtime.standalone.lock.DefaultNutsLocks
 net.thevpc.nuts.runtime.standalone.io.terminal.DefaultNutsTerminals
-net.thevpc.nuts.runtime.standalone.xtra.rm.DefaultNutsRm
 net.thevpc.nuts.runtime.standalone.xtra.cp.DefaultNutsCp
 net.thevpc.nuts.runtime.standalone.xtra.ps.DefaultNutsPs
 net.thevpc.nuts.runtime.standalone.xtra.compress.DefaultNutsCompress

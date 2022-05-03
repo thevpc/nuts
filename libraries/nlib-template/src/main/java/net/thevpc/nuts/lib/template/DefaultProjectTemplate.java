@@ -1,6 +1,6 @@
 /*
  * Here comes the text of your license
- * Each line should be prefixed with  * 
+ * Each line should be prefixed with  *
  */
 package net.thevpc.nuts.lib.template;
 
@@ -28,7 +28,6 @@ import net.thevpc.nuts.util.NutsQuestionValidator;
 import org.w3c.dom.Document;
 
 /**
- *
  * @author thevpc
  */
 public class DefaultProjectTemplate implements ProjectTemplate {
@@ -43,7 +42,7 @@ public class DefaultProjectTemplate implements ProjectTemplate {
     public Set<String> createPaths = new HashSet<>();
     private MessageNameFormatContext DEFAULT = new MessageNameFormatContext(true, true);
     private MessageNameFormatContext context = DEFAULT;
-    private Function<String,String> dollar_converter = new Function<String,String>() {
+    private Function<String, String> dollar_converter = new Function<String, String>() {
         @Override
         public String apply(String str) {
             return evalExpression(str);
@@ -68,12 +67,13 @@ public class DefaultProjectTemplate implements ProjectTemplate {
                 return term.ask()
                         .resetLine()
                         .forString(
-                        NutsTexts.of(getSession()).builder()
-                                .append(propertyTitle, NutsTextStyle.primary4())
-                                .append(" (")
-                                .append(propName,NutsTextStyle.pale())
-                                .append(")\n ?")
-                        .toString())
+                                NutsMessage.ofNtf(
+                                        NutsTexts.of(getSession()).builder()
+                                                .append(propertyTitle, NutsTextStyle.primary4())
+                                                .append(" (")
+                                                .append(propName, NutsTextStyle.pale())
+                                                .append(")\n ?")
+                                                .toString()))
                         .setDefaultValue(defaultValue)
                         .setValidator(new NutsQuestionValidator<String>() {
                             @Override
@@ -105,7 +105,7 @@ public class DefaultProjectTemplate implements ProjectTemplate {
         v.setAskMe(promenent);
     }
 
-//    public void setConsole(TemplateConsole console) {
+    //    public void setConsole(TemplateConsole console) {
 //        this.console = console;
 //    }
     public TemplateConsole getConsole() {
@@ -166,37 +166,37 @@ public class DefaultProjectTemplate implements ProjectTemplate {
     public void registerDefaultsFunctions() {
         context.register("path", new AbstractFunction() {
             @Override
-            public Object evalArgs(Object[] args, MessageNameFormat format, Function<String,Object> provider) {
+            public Object evalArgs(Object[] args, MessageNameFormat format, Function<String, Object> provider) {
                 return JavaUtils.path(String.valueOf(args[0]));
             }
         });
         context.register("now", new MessageNameFormat.Function() {
             @Override
-            public Object eval(MessageNameFormat.ExprNode[] args, MessageNameFormat format, Function<String,Object> provider, MessageNameFormatContext messageNameFormatContext) {
+            public Object eval(MessageNameFormat.ExprNode[] args, MessageNameFormat format, Function<String, Object> provider, MessageNameFormatContext messageNameFormatContext) {
                 return new Date();
             }
         });
         context.register("packageName", new AbstractFunction() {
             @Override
-            public Object evalArgs(Object[] args, MessageNameFormat format, Function<String,Object> provider) {
+            public Object evalArgs(Object[] args, MessageNameFormat format, Function<String, Object> provider) {
                 return JavaUtils.packageName(String.valueOf(args[0]));
             }
         });
         context.register("className", new AbstractFunction() {
             @Override
-            public Object evalArgs(Object[] args, MessageNameFormat format, Function<String,Object> provider) {
+            public Object evalArgs(Object[] args, MessageNameFormat format, Function<String, Object> provider) {
                 return JavaUtils.className(String.valueOf(args[0]));
             }
         });
         context.register("varName", new AbstractFunction() {
             @Override
-            public Object evalArgs(Object[] args, MessageNameFormat format, Function<String,Object> provider) {
+            public Object evalArgs(Object[] args, MessageNameFormat format, Function<String, Object> provider) {
                 return JavaUtils.varName(String.valueOf(args[0]));
             }
         });
         context.register("pathToPackage", new AbstractFunction() {
             @Override
-            public Object evalArgs(Object[] args, MessageNameFormat format, Function<String,Object> provider) {
+            public Object evalArgs(Object[] args, MessageNameFormat format, Function<String, Object> provider) {
                 return JavaUtils.pathToPackage(String.valueOf(args[0]));
             }
         });
@@ -226,7 +226,7 @@ public class DefaultProjectTemplate implements ProjectTemplate {
 
     public String evalExpression(String expression) {
         MessageNameFormat f = new MessageNameFormat("${" + expression + "}");
-        return f.format(new Function<String,Object>() {
+        return f.format(new Function<String, Object>() {
             @Override
             public Object apply(String string) {
                 return getConfigProperty(string).get();
@@ -435,11 +435,11 @@ public class DefaultProjectTemplate implements ProjectTemplate {
             if (p != null) {
                 if (!getSession().getTerminal().ask()
                         .resetLine()
-                        .forBoolean("accept project location %s?",
-                        NutsTexts.of(applicationContext.getSession()).ofStyled(p.getPath(), NutsTextStyle.path()))
+                        .forBoolean(NutsMessage.ofCstyle("accept project location %s?",
+                                NutsTexts.of(applicationContext.getSession()).ofStyled(p.getPath(), NutsTextStyle.path())))
                         .setDefaultValue(false)
                         .getBooleanValue()) {
-                    throw new NutsUserCancelException(getSession());
+                    throw new NutsCancelException(getSession());
                 }
             }
         }

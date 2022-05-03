@@ -281,9 +281,9 @@ public class NTasksSubService {
     public boolean removeTask(String taskId) {
         long count = findAllTasks().filter(x -> taskId.equals(x.getParentTaskId())).count();
         if (count > 1) {
-            throw new NutsIllegalArgumentException(context.getSession(), NutsMessage.cstyle("Task is used in %d tasks. It cannot be removed.",count));
+            throw new NutsIllegalArgumentException(context.getSession(), NutsMessage.ofCstyle("Task is used in %d tasks. It cannot be removed.",count));
         } else if (count > 0) {
-            throw new NutsIllegalArgumentException(context.getSession(), NutsMessage.cstyle("Task is used in one task. It cannot be removed."));
+            throw new NutsIllegalArgumentException(context.getSession(), NutsMessage.ofPlain("Task is used in one task. It cannot be removed."));
         }
         return dal.delete(NTask.class, taskId);
     }

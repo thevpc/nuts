@@ -24,9 +24,9 @@
  */
 package net.thevpc.nuts;
 
-import net.thevpc.nuts.boot.NutsApiUtils;
 import net.thevpc.nuts.spi.NutsComponentScope;
 import net.thevpc.nuts.spi.NutsComponentScopeType;
+import net.thevpc.nuts.util.NutsUtils;
 
 import java.util.Collection;
 
@@ -45,7 +45,7 @@ public interface NutsDependencyFilters extends NutsTypedFilters<NutsDependencyFi
      * @return a new session bound instance of NutsDependencyFilters
      */
     static NutsDependencyFilters of(NutsSession session) {
-        NutsApiUtils.checkSession(session);
+        NutsUtils.requireSession(session);
         return session.extensions().createSupported(NutsDependencyFilters.class, true, null);
     }
 

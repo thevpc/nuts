@@ -24,27 +24,44 @@
  * <br>
  * ====================================================================
  */
-package net.thevpc.nuts.io;
+package net.thevpc.nuts;
 
-import net.thevpc.nuts.NutsSession;
-import net.thevpc.nuts.boot.NutsApiUtils;
-import net.thevpc.nuts.spi.NutsComponent;
+/**
+ * @author thevpc
+ * @app.category Exceptions
+ * @since 0.5.4
+ */
+public class NutsCancelException extends NutsExecutionException {
 
-import java.io.InputStream;
+    public static final int DEFAULT_CANCEL_EXIT_CODE = 245;
 
-public interface NutsInputStreams extends NutsComponent {
-    static NutsInputStreams of(NutsSession session) {
-        NutsApiUtils.checkSession(session);
-        return session.extensions().createSupported(NutsInputStreams.class, true, session);
+    /**
+     * Constructs a new NutsUserCancelException exception
+     *
+     * @param session workspace
+     */
+    public NutsCancelException(NutsSession session) {
+        this(session, null);
     }
 
-    static InputStream ofNull(NutsSession session) {
-        return of(session).ofNull();
+    /**
+     * Constructs a new NutsUserCancelException exception
+     *
+     * @param session workspace
+     * @param message message
+     */
+    public NutsCancelException(NutsSession session, NutsMessage message) {
+        this(session, message, DEFAULT_CANCEL_EXIT_CODE);
     }
 
-    InputStream ofNull();
-
-    boolean isStdin(InputStream in);
-
-    InputStream stdin();
+    /**
+     * Constructs a new NutsUserCancelException exception
+     *
+     * @param session  workspace
+     * @param message  message
+     * @param exitCode exit code
+     */
+    public NutsCancelException(NutsSession session, NutsMessage message, int exitCode) {
+        super(session, (message == null) ? NutsMessage.ofPlain("operation cancelled") : message, exitCode);
+    }
 }

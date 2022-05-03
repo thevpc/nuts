@@ -26,10 +26,10 @@
 package net.thevpc.nuts.io;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.boot.NutsApiUtils;
 import net.thevpc.nuts.spi.NutsComponent;
 import net.thevpc.nuts.util.NutsProgressFactory;
 import net.thevpc.nuts.util.NutsProgressMonitor;
+import net.thevpc.nuts.util.NutsUtils;
 
 import java.io.File;
 import java.io.InputStream;
@@ -50,7 +50,7 @@ import java.util.Set;
  */
 public interface NutsCompress extends NutsComponent {
     static NutsCompress of(NutsSession session) {
-        NutsApiUtils.checkSession(session);
+        NutsUtils.requireSession(session);
         return session.extensions().createSupported(NutsCompress.class, true, null);
     }
 
@@ -91,17 +91,9 @@ public interface NutsCompress extends NutsComponent {
      *
      * @return sources to compress
      */
-    List<Object> getSources();
+    List<NutsInputSource> getSources();
 
-    /**
-     * add source to compress
-     *
-     * @param source source
-     * @return {@code this} instance
-     * @throws NutsUnsupportedArgumentException if unsupported type
-     */
-    NutsCompress addSource(String source);
-
+    NutsCompress addSource(NutsInputSource source);
     /**
      * add source to compress
      *
@@ -170,6 +162,7 @@ public interface NutsCompress extends NutsComponent {
      */
     NutsCompress setTarget(Path target);
 
+    NutsCompress setTarget(NutsOutputTarget target);
     /**
      * update target
      *

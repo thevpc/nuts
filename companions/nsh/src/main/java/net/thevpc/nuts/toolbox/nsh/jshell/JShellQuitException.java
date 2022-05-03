@@ -50,7 +50,7 @@ public class JShellQuitException extends JShellException {
     }
 
     public JShellQuitException(NutsSession session, Throwable cause, int result) {
-        super(session, NutsMessage.plain("quit"), cause,result);
+        super(session, NutsMessage.ofPlain("quit"), cause,result);
     }
     
 }

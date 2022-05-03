@@ -25,7 +25,6 @@
 package net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.user;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.user.AbstractNutsUpdateUserCommand;
 import net.thevpc.nuts.runtime.standalone.workspace.config.NutsRepositoryConfigManagerExt;
 import net.thevpc.nuts.runtime.standalone.workspace.config.NutsWorkspaceConfigManagerExt;
 import net.thevpc.nuts.runtime.standalone.util.CoreStringUtils;
@@ -61,14 +60,14 @@ public class DefaultNutsUpdateUserCommand extends AbstractNutsUpdateUserCommand 
                 if (!NutsConstants.Users.ANONYMOUS.equals(currentLogin)) {
                     login = currentLogin;
                 } else {
-                    throw new NutsIllegalArgumentException(getSession(), NutsMessage.cstyle("not logged in"));
+                    throw new NutsIllegalArgumentException(getSession(), NutsMessage.ofPlain("not logged in"));
                 }
             }
             if (repo != null) {
                 NutsRepositoryConfigModel rconf = NutsRepositoryConfigManagerExt.of(repo.config()).getModel();
                 NutsUserConfig u = rconf.getUser(login, ws);
                 if (u == null) {
-                    throw new NutsIllegalArgumentException(ws, NutsMessage.cstyle("no such user %s", login));
+                    throw new NutsIllegalArgumentException(ws, NutsMessage.ofCstyle("no such user %s", login));
                 }
                 fillNutsUserConfig(u);
 
@@ -78,7 +77,7 @@ public class DefaultNutsUpdateUserCommand extends AbstractNutsUpdateUserCommand 
                 DefaultNutsWorkspaceConfigModel wconf = NutsWorkspaceConfigManagerExt.of(session.config()).getModel();
                 NutsUserConfig u = wconf.getUser(login, ws);
                 if (u == null) {
-                    throw new NutsIllegalArgumentException(ws, NutsMessage.cstyle("no such user %s", login));
+                    throw new NutsIllegalArgumentException(ws, NutsMessage.ofCstyle("no such user %s", login));
                 }
 
                 fillNutsUserConfig(u);

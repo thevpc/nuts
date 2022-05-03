@@ -26,6 +26,7 @@
 package net.thevpc.nuts;
 
 import net.thevpc.nuts.reserved.NutsReservedCollectionUtils;
+import net.thevpc.nuts.reserved.NutsReservedUtils;
 
 import java.io.Serializable;
 import java.util.*;
@@ -262,6 +263,6 @@ public class DefaultNutsEnvConditionBuilder implements Serializable, NutsEnvCond
     }
 
     public Map<String, String> toMap() {
-        return NutsReservedCollectionUtils.toMap(this);
+        return NutsReservedUtils.toMap(this);
     }
 }

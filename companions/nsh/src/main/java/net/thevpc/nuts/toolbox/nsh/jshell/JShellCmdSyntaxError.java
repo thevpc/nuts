@@ -69,6 +69,6 @@ public class JShellCmdSyntaxError extends JShellException {
             s.append("\n");
             s.append(desc);
         }
-        return NutsMessage.plain(s.toString());
+        return NutsMessage.ofPlain(s.toString());
     }
 }

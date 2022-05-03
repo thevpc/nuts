@@ -806,7 +806,7 @@ public class DefaultJsonElementFormat implements NutsElementStreamFormat {
         }
 
         private RuntimeException error(String message) {
-            return new NutsParseException(context.getSession(), NutsMessage.cstyle("%s : %s", message, getLocation().toString()));
+            return new NutsParseException(context.getSession(), NutsMessage.ofCstyle("%s : %s", message, getLocation().toString()));
         }
 
         private boolean isHexDigit() {

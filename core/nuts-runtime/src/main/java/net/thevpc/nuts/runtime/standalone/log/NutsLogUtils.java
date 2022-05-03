@@ -74,7 +74,7 @@ public class NutsLogUtils {
                                 lvl.intValue() <= Level.INFO.intValue() ? NutsLoggerVerb.INFO :
                                         lvl.intValue() <= Level.FINE.intValue() ? NutsLoggerVerb.DEBUG :
                                                 NutsLoggerVerb.DEBUG,
-                NutsMessage.jstyle(record.getMessage(),
+                NutsMessage.ofJstyle(record.getMessage(),
                         record.getParameters()),
                 record.getMillis(),
                 record.getThrown()
@@ -222,14 +222,14 @@ public class NutsLogUtils {
         String sep;
         if (extraMsg == null) {
             sep = "";
-            extraMsg = NutsMessage.formatted("");
+            extraMsg = NutsMessage.ofNtf("");
         } else {
             sep = " : ";
         }
         long time = (startTime != 0) ? (System.currentTimeMillis() - startTime) : 0;
         String modeString = NutsStringUtils.formatAlign(fetchMode.id(), 7, NutsPositionType.FIRST);
         log.with().session(session).level(lvl).verb(tracePhase).time(time)
-                .log(NutsMessage.jstyle("[{0}] {1} {2} {3} {4}",
+                .log(NutsMessage.ofJstyle("[{0}] {1} {2} {3} {4}",
                         modeString,
                         NutsStringUtils.formatAlign(name, 20,NutsPositionType.FIRST),
                         NutsStringUtils.formatAlign(title, 18,NutsPositionType.FIRST),
@@ -243,7 +243,7 @@ public class NutsLogUtils {
             String fetchString = "[" + NutsStringUtils.formatAlign(fetchMode.id(), 7,NutsPositionType.FIRST) + "] ";
             log.with().level(Level.FINEST)
                     .verb(tracePhase).time(time)
-                    .log(NutsMessage.jstyle("{0}{1} {2}",
+                    .log(NutsMessage.ofJstyle("{0}{1} {2}",
                             fetchString,
                             id,
                             NutsStringUtils.formatAlign(message, 18,NutsPositionType.FIRST)

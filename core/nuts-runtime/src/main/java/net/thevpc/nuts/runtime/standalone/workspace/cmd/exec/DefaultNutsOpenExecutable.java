@@ -92,7 +92,7 @@ public class DefaultNutsOpenExecutable extends AbstractNutsExecutableCommand {
 
     private NutsExecCommand resolveExecHelper() {
         if (effectiveOpenExecutable == null) {
-            throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("unable to resolve viewer for %s", cmd[0]));
+            throw new NutsIllegalArgumentException(session, NutsMessage.ofCstyle("unable to resolve viewer for %s", cmd[0]));
         }
         NutsExecCommand cc = execCommand.copy();
         cc.setExecutionType(NutsExecutionType.SYSTEM);

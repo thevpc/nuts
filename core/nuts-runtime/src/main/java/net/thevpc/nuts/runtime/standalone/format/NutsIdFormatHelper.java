@@ -159,7 +159,10 @@ public class NutsIdFormatHelper {
         if (h != null) {
             return h;
         }
-        FormatHelperResetListener h2 = (FormatHelperResetListener) session.env().getProperty(FormatHelperResetListener.class.getName());
+        FormatHelperResetListener h2 = (FormatHelperResetListener) session.env()
+                .getProperty(FormatHelperResetListener.class.getName())
+                .map(NutsValue::getRaw).orNull()
+                ;
         if (h2 == null) {
             h2 = new FormatHelperResetListener();
             session.events().addWorkspaceListener(h2);
@@ -610,7 +613,7 @@ public class NutsIdFormatHelper {
             } catch (Exception ex) {
                 LOG.with().session(session).level(Level.FINE).error(ex)
                         .log(
-                                NutsMessage.jstyle("failed to build id format for {0}", id));
+                                NutsMessage.ofJstyle("failed to build id format for {0}", id));
             }
 
             if (def != null) {

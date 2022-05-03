@@ -64,7 +64,7 @@ public interface NutsVersion extends Serializable, /*NutsTokenFilter, */NutsForm
         if (PATTERN.matcher(version2).matches()) {
             return NutsOptional.of(new DefaultNutsVersion(version2));
         }
-        return NutsOptional.ofError(s -> NutsMessage.cstyle("invalid version format : %s", version));
+        return NutsOptional.ofError(s -> NutsMessage.ofCstyle("invalid version format : %s", version));
     }
 
     /**

@@ -67,7 +67,7 @@ public class NutsSettingsBackupSubCommand extends AbstractNutsSettingsSubCommand
                 }
                 NutsCompress cmp = NutsCompress.of(session);
                 for (String s : all) {
-                    cmp.addSource(s);
+                    cmp.addSource(NutsPath.of(s,session));
                 }
                 cmp.to(file).run();
             }
@@ -99,13 +99,13 @@ public class NutsSettingsBackupSubCommand extends AbstractNutsSettingsSubCommand
                 file += ".zip";
             }
             if (!Files.isRegularFile(Paths.get(file))) {
-                commandLine.throwMissingArgument(NutsMessage.cstyle("not a valid file : %s", file),session);
+                commandLine.throwMissingArgument(NutsMessage.ofCstyle("not a valid file : %s", file),session);
             }
             if (commandLine.isExecMode()) {
                 NutsObjectElement[] nutsWorkspaceConfigRef = new NutsObjectElement[1];
                 NutsElements elem = NutsElements.of(session);
                 NutsUncompress.of(session)
-                        .from(file)
+                        .from(NutsPath.of(file,session))
                         .visit(new NutsUncompressVisitor() {
                             @Override
                             public boolean visitFolder(String path) {
@@ -124,20 +124,20 @@ public class NutsSettingsBackupSubCommand extends AbstractNutsSettingsSubCommand
                             }
                         });
                 if (nutsWorkspaceConfigRef[0] == null) {
-                    commandLine.throwMissingArgument(NutsMessage.cstyle("not a valid file : %s", file),session);
+                    commandLine.throwMissingArgument(NutsMessage.ofCstyle("not a valid file : %s", file),session);
                 }
                 if (ws == null || ws.isEmpty()) {
                     NutsElements prv = elem.setSession(session);
                     ws = nutsWorkspaceConfigRef[0].getString("name").get(session);
                 }
                 if (ws == null || ws.isEmpty()) {
-                    commandLine.throwMissingArgument(NutsMessage.cstyle("not a valid file : %s", file),session);
+                    commandLine.throwMissingArgument(NutsMessage.ofCstyle("not a valid file : %s", file),session);
                 }
                 String platformHomeFolder = NutsPlatformUtils.getWorkspaceLocation(null,
                         session.config().stored().isGlobal(), ws);
                 NutsUncompress.of(session)
-                        .from(file)
-                        .to(platformHomeFolder)
+                        .from(NutsPath.of(file,session))
+                        .to(NutsPath.of(platformHomeFolder,session))
                         .setSkipRoot(true).run();
                 if (session.isPlainTrace()) {
                     session.out().printf("restore %s to %s %n", file, platformHomeFolder);

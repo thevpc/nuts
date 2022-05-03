@@ -184,13 +184,13 @@ public class PropsCommand extends SimpleJShellBuiltin {
         NutsSession session = context.getSession();
         commandLine.setCommandName(getName());
         if (o.sourceType != SourceType.FILE && o.sourceFile != null) {
-            throw new NutsExecutionException(session, NutsMessage.cstyle("props: Should not use file with --system flag"), 2);
+            throw new NutsExecutionException(session, NutsMessage.ofPlain("props: Should not use file with --system flag"), 2);
         }
         if (o.sourceType == SourceType.FILE && o.sourceFile == null) {
-            throw new NutsExecutionException(session, NutsMessage.cstyle("props: Missing file"), 3);
+            throw new NutsExecutionException(session, NutsMessage.ofPlain("props: Missing file"), 3);
         }
         if (o.action == null) {
-            throw new NutsExecutionException(session, NutsMessage.cstyle("props: Missing action"), 4);
+            throw new NutsExecutionException(session, NutsMessage.ofPlain("props: Missing action"), 4);
         }
         switch (o.action) {
             case "get": {
@@ -205,7 +205,7 @@ public class PropsCommand extends SimpleJShellBuiltin {
                     }
                     storeProperties(p, o, context);
                 } catch (Exception ex) {
-                    throw new NutsExecutionException(session, NutsMessage.cstyle("%s", ex), ex, 100);
+                    throw new NutsExecutionException(session, NutsMessage.ofCstyle("%s", ex), ex, 100);
                 }
                 return;
             }
@@ -214,7 +214,7 @@ public class PropsCommand extends SimpleJShellBuiltin {
                 return;
             }
             default: {
-                throw new NutsExecutionException(session, NutsMessage.cstyle("props: Unsupported action %s", o.action), 2);
+                throw new NutsExecutionException(session, NutsMessage.ofCstyle("props: Unsupported action %s", o.action), 2);
             }
         }
     }
@@ -258,7 +258,7 @@ public class PropsCommand extends SimpleJShellBuiltin {
         } else if (file.toLowerCase().endsWith(".xml")) {
             return Format.XML;
         }
-        throw new NutsExecutionException(context.getSession(), NutsMessage.cstyle("unknown file format %s", file), 2);
+        throw new NutsExecutionException(context.getSession(), NutsMessage.ofCstyle("unknown file format %s", file), 2);
     }
 
     private Map<String, String> readProperties(Options o, JShellExecutionContext context) {
@@ -286,7 +286,7 @@ public class PropsCommand extends SimpleJShellBuiltin {
                 }
             }
         } catch (Exception ex) {
-            throw new NutsExecutionException(context.getSession(), NutsMessage.cstyle("%s", ex), ex, 100);
+            throw new NutsExecutionException(context.getSession(), NutsMessage.ofCstyle("%s", ex), ex, 100);
         }
         return p;
     }

@@ -51,18 +51,18 @@ public class NutsExecHelper extends AbstractSyncIProcessExecHelper {
         if (!inheritSystemIO) {
             if (inputFile == null) {
                 in = execTerminal.in();
-                if (NutsInputStreams.of(session).isStdin(in)) {
+                if (NutsIO.of(session).isStdin(in)) {
                     in = null;
                 }
             }
             if (outputFile == null) {
                 out = execTerminal.out();
-                if (NutsPrintStreams.of(session).isStdout(out)) {
+                if (NutsIO.of(session).isStdout(out)) {
                     out = null;
                 }
             }
             err = execTerminal.err();
-            if (NutsPrintStreams.of(session).isStderr(err)) {
+            if (NutsIO.of(session).isStderr(err)) {
                 err = null;
             }
             if (out != null) {
@@ -96,7 +96,7 @@ public class NutsExecHelper extends AbstractSyncIProcessExecHelper {
         NutsCommandLine commandOut = NutsCommandLine.of(pb.getCommand());
         if (_LL.isLoggable(Level.FINEST)) {
             _LL.with().level(Level.FINE).verb(NutsLoggerVerb.START).log(
-                    NutsMessage.jstyle("[exec] {0}",
+                    NutsMessage.ofJstyle("[exec] {0}",
                             commandOut
                     ));
         }

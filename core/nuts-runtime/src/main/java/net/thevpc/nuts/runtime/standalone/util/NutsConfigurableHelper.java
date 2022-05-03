@@ -74,7 +74,7 @@ public class NutsConfigurableHelper {
                 String[] after = commandLine.toStringArray();
                 if (Arrays.equals(before, after)) {
                     throw new NutsIllegalArgumentException(session,
-                            NutsMessage.cstyle(
+                            NutsMessage.ofCstyle(
                                     "bad implementation of configureFirst in class %s."
                                             + " commandline is not consumed; perhaps missing skip() class."
                                             + " args = %s" , c.getClass().getName(), Arrays.toString(after)

@@ -26,8 +26,6 @@
  */
 package net.thevpc.nuts;
 
-import net.thevpc.nuts.boot.NutsApiUtils;
-
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
@@ -72,7 +70,7 @@ public class NutsHomeLocation implements NutsEnum {
             value = value.trim().toLowerCase();
         }
         if(value.isEmpty()){
-            return NutsOptional.ofEmpty(s -> NutsMessage.cstyle(NutsHomeLocation.class.getSimpleName() + " is empty"));
+            return NutsOptional.ofEmpty(s -> NutsMessage.ofCstyle("%s is empty",NutsHomeLocation.class.getSimpleName()));
         }
         String e = value.replace(':', '_').replace('-', '_');
         String finalValue = value;
@@ -84,17 +82,17 @@ public class NutsHomeLocation implements NutsEnum {
             NutsStoreLocation loc = s2.equals("system") ? null : NutsStoreLocation.parse(s2).orNull();
             if (osf == null) {
                 if (!s1.equals("system") && s1.length() > 0) {
-                    return NutsOptional.ofError(s -> NutsMessage.cstyle(NutsHomeLocation.class.getSimpleName() + " invalid value : %s", finalValue));
+                    return NutsOptional.ofError(s -> NutsMessage.ofCstyle(NutsHomeLocation.class.getSimpleName() + " invalid value : %s", finalValue));
                 }
             }
             if (loc == null) {
                 if (!s2.equals("system") && s2.length() > 0) {
-                    return NutsOptional.ofError(s -> NutsMessage.cstyle(NutsHomeLocation.class.getSimpleName() + " invalid value : %s", finalValue));
+                    return NutsOptional.ofError(s -> NutsMessage.ofCstyle(NutsHomeLocation.class.getSimpleName() + " invalid value : %s", finalValue));
                 }
             }
             return NutsOptional.of(of(osf, loc));
         }
-        return NutsOptional.ofError(s -> NutsMessage.cstyle(NutsHomeLocation.class.getSimpleName() + " invalid value : %s", finalValue));
+        return NutsOptional.ofError(s -> NutsMessage.ofCstyle(NutsHomeLocation.class.getSimpleName() + " invalid value : %s", finalValue));
     }
 
 

@@ -69,7 +69,7 @@ public class NutsPushException extends NutsException {
      * @param cause   cause
      */
     public NutsPushException(NutsSession session, NutsId id, NutsMessage message, Throwable cause) {
-        super(session, message == null ? NutsMessage.cstyle("unable to push %s", id == null ? "<null>" : id) : message, cause);
+        super(session, message == null ? NutsMessage.ofCstyle("unable to push %s", id == null ? "<null>" : id) : message, cause);
         this.id = id;
     }
 

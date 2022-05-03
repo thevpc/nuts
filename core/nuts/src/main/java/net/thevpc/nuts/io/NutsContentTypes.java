@@ -27,10 +27,10 @@
 package net.thevpc.nuts.io;
 
 import net.thevpc.nuts.NutsSession;
-import net.thevpc.nuts.boot.NutsApiUtils;
 import net.thevpc.nuts.spi.NutsComponent;
 import net.thevpc.nuts.spi.NutsComponentScope;
 import net.thevpc.nuts.spi.NutsComponentScopeType;
+import net.thevpc.nuts.util.NutsUtils;
 
 import java.io.File;
 import java.io.InputStream;
@@ -48,7 +48,7 @@ import java.util.List;
 @NutsComponentScope(NutsComponentScopeType.SESSION)
 public interface NutsContentTypes extends NutsComponent {
     static NutsContentTypes of(NutsSession session) {
-        NutsApiUtils.checkSession(session);
+        NutsUtils.requireSession(session);
         return session.extensions().createSupported(NutsContentTypes.class, true, null);
     }
 

@@ -26,10 +26,10 @@
 package net.thevpc.nuts.io;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.boot.NutsApiUtils;
 import net.thevpc.nuts.spi.NutsComponent;
 import net.thevpc.nuts.util.NutsProgressFactory;
 import net.thevpc.nuts.util.NutsProgressMonitor;
+import net.thevpc.nuts.util.NutsUtils;
 
 import java.io.File;
 import java.io.InputStream;
@@ -62,7 +62,7 @@ import java.util.Set;
  */
 public interface NutsCp extends NutsComponent {
     static NutsCp of(NutsSession session) {
-        NutsApiUtils.checkSession(session);
+        NutsUtils.requireSession(session);
         return session.extensions().createSupported(NutsCp.class, true, null);
     }
 
@@ -71,7 +71,7 @@ public interface NutsCp extends NutsComponent {
      *
      * @return source object to copy from
      */
-    Object getSource();
+    NutsInputSource getSource();
 
     /**
      * update source to copy from
@@ -131,13 +131,7 @@ public interface NutsCp extends NutsComponent {
      */
     NutsCp setSource(byte[] source);
 
-    /**
-     * update source to copy from
-     *
-     * @param source source to copy from
-     * @return {@code this} instance
-     */
-    NutsCp from(String source);
+    NutsCp from(NutsInputSource source);
 
     /**
      * update source to copy from
@@ -193,7 +187,8 @@ public interface NutsCp extends NutsComponent {
      *
      * @return target object to copy to
      */
-    Object getTarget();
+    NutsOutputTarget getTarget();
+
 
     /**
      * update target to copy from
@@ -240,17 +235,12 @@ public interface NutsCp extends NutsComponent {
      * @param target target to copy to
      * @return {@code this} instance
      */
-    NutsCp setTarget(String target);
-
-    /**
-     * update target to copy from
-     *
-     * @param target target to copy to
-     * @return {@code this} instance
-     */
     NutsCp setTarget(File target);
 
 
+    NutsCp setTarget(NutsOutputTarget target);
+
+    NutsCp setSource(NutsInputSource source);
     /**
      * update target
      *
@@ -274,7 +264,7 @@ public interface NutsCp extends NutsComponent {
      * @param target target to copy to
      * @return {@code this} instance
      */
-    NutsCp to(String target);
+    NutsCp to(Path target);
 
     /**
      * update target to copy from
@@ -282,7 +272,7 @@ public interface NutsCp extends NutsComponent {
      * @param target target to copy to
      * @return {@code this} instance
      */
-    NutsCp to(Path target);
+    NutsCp to(NutsOutputTarget target);
 
     /**
      * update target to copy from

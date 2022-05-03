@@ -3,6 +3,7 @@ package net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.ndi;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.io.NutsIOException;
 import net.thevpc.nuts.io.NutsPath;
+import net.thevpc.nuts.util.NutsUtils;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -216,9 +217,7 @@ public class NdiScriptOptions implements Cloneable {
                 } catch (IOException e) {
                     throw new NutsIOException(session, e);
                 }
-                if (_latestVersion == null) {
-                    throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("missing nuts-api version to link to"));
-                }
+                NutsUtils.requireNonBlank(_latestVersion,session,"missing nuts-api version to link to");
                 nutsApiId = session.getWorkspace().getApiId().builder().setVersion(_latestVersion).build();
             }
         }
@@ -242,7 +241,7 @@ public class NdiScriptOptions implements Cloneable {
         if (workspaceBootConfig == null) {
             workspaceBootConfig = session.config().loadBootConfig(switchWorkspaceLocation, false, true);
             if (workspaceBootConfig == null) {
-                throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("invalid workspace: %s", switchWorkspaceLocation));
+                throw new NutsIllegalArgumentException(session, NutsMessage.ofCstyle("invalid workspace: %s", switchWorkspaceLocation));
             }
         }
         return workspaceBootConfig;

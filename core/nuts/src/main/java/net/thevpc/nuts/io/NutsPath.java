@@ -49,7 +49,7 @@ import java.util.stream.Stream;
  *
  * @app.category Input Output
  */
-public interface NutsPath extends NutsFormattable, NutsStreamMetadataAware, NutsInputSource, NutsOutputTarget {
+public interface NutsPath extends NutsFormattable, NutsInputSource, NutsOutputTarget {
     static NutsPath of(URL path, NutsSession session) {
         return NutsPaths.of(session).createPath(path, session);
     }
@@ -251,10 +251,6 @@ public interface NutsPath extends NutsFormattable, NutsStreamMetadataAware, Nuts
     List<String> tail(int count);
 
     NutsPath getParent();
-
-    String getUserKind();
-
-    NutsPath setUserKind(String userKind);
 
     boolean isAbsolute();
 

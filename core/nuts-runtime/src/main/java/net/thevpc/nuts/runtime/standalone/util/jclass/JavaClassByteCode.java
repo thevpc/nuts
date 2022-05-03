@@ -60,7 +60,7 @@ public class JavaClassByteCode {
 
             int signature = stream.readInt();
             if (signature != 0xcafebabe) {
-                throw new NutsIllegalArgumentException(session, NutsMessage.plain("invalid Java signature"));
+                throw new NutsIllegalArgumentException(session, NutsMessage.ofPlain("invalid Java signature"));
             }
             int minorVersion = stream.readUnsignedShort();
             int majorVersion = stream.readUnsignedShort();

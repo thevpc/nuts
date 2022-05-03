@@ -36,7 +36,7 @@ public class RemoteTomcatAppConfigService extends RemoteTomcatServiceBase {
         String localWarPath = this.config.getPath();
         NutsSession session = context.getSession();
         if (!new File(localWarPath).exists()) {
-            throw new NutsExecutionException(session, NutsMessage.cstyle("missing source war file %s", localWarPath), 2);
+            throw new NutsExecutionException(session, NutsMessage.ofCstyle("missing source war file %s", localWarPath), 2);
         }
         String remoteTempPath = cconfig.getRemoteTempPath();
         if (NutsBlankable.isBlank(remoteTempPath)) {
@@ -101,7 +101,7 @@ public class RemoteTomcatAppConfigService extends RemoteTomcatServiceBase {
                     remoteFilePath
             );
         } else {
-            throw new NutsExecutionException(session, NutsMessage.cstyle("unable to detect file version of %s.\n%s",localWarPath ,
+            throw new NutsExecutionException(session, NutsMessage.ofCstyle("unable to detect file version of %s.\n%s",localWarPath ,
                     s.getOutputString()), 2);
         }
     }

@@ -251,21 +251,21 @@ public class XmlUtils {
             public void warning(SAXParseException exception) throws SAXException {
                 NutsLoggerOp.of(XmlUtils.class,session)
                         .level(Level.FINEST).verb(NutsLoggerVerb.WARNING)
-                        .log(NutsMessage.jstyle("{0}",exception));
+                        .log(NutsMessage.ofJstyle("{0}",exception));
             }
 
             @Override
             public void error(SAXParseException exception) throws SAXException {
                 NutsLoggerOp.of(XmlUtils.class,session)
                         .level(Level.FINEST).verb(NutsLoggerVerb.WARNING)
-                        .log(NutsMessage.jstyle("{0}",exception));
+                        .log(NutsMessage.ofJstyle("{0}",exception));
             }
 
             @Override
             public void fatalError(SAXParseException exception) throws SAXException {
                 NutsLoggerOp.of(XmlUtils.class,session)
                         .level(Level.FINEST).verb(NutsLoggerVerb.WARNING)
-                        .log(NutsMessage.jstyle("{0}",exception));
+                        .log(NutsMessage.ofJstyle("{0}",exception));
             }
         });
         return b;

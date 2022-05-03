@@ -6,6 +6,7 @@ import net.thevpc.nuts.NutsSession;
 import net.thevpc.nuts.NutsWorkspace;
 import net.thevpc.nuts.runtime.standalone.workspace.NutsWorkspaceExt;
 import net.thevpc.nuts.spi.NutsSessionAware;
+import net.thevpc.nuts.util.NutsUtils;
 
 import java.util.Objects;
 
@@ -21,11 +22,9 @@ public class NutsSessionUtils {
     }
 
     public static void checkSession(NutsWorkspace ws, NutsSession session) {
-        if (session == null) {
-            throw new NutsIllegalArgumentException(defaultSession(ws), NutsMessage.cstyle("missing session"));
-        }
+        NutsUtils.requireSession(session);
         if (!Objects.equals(session.getWorkspace().getUuid(), ws.getUuid())) {
-            throw new NutsIllegalArgumentException(defaultSession(ws), NutsMessage.cstyle("invalid session %s != %s ; %s != %s ; %s != %s ; ",
+            throw new NutsIllegalArgumentException(defaultSession(ws), NutsMessage.ofCstyle("invalid session %s != %s ; %s != %s ; %s != %s ; ",
                     session.getWorkspace().getName(), ws.getName(),
                     session.getWorkspace().getLocation(), ws.getLocation(),
                     session.getWorkspace().getUuid(), ws.getUuid()

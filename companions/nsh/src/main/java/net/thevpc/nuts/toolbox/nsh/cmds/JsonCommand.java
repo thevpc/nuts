@@ -106,7 +106,7 @@ public class JsonCommand extends SimpleJShellBuiltin {
                     try {
                         resultDocument = documentFactory.newDocumentBuilder().newDocument();
                     } catch (ParserConfigurationException ex) {
-                        throw new NutsExecutionException(session, NutsMessage.plain("failed to create xml document"), ex, 1);
+                        throw new NutsExecutionException(session, NutsMessage.ofPlain("failed to create xml document"), ex, 1);
                     }
                     Element resultElement = resultDocument.createElement("result");
                     resultDocument.appendChild(resultElement);
@@ -119,7 +119,7 @@ public class JsonCommand extends SimpleJShellBuiltin {
                                 resultElement.appendChild(o);
                             }
                         } catch (XPathExpressionException ex) {
-                            throw new NutsExecutionException(session, NutsMessage.cstyle("%s", ex), ex, 103);
+                            throw new NutsExecutionException(session, NutsMessage.ofCstyle("%s", ex), ex, 103);
                         }
                     }
                     NutsElement json = NutsElements.of(session).toElement(resultDocument);
@@ -162,7 +162,7 @@ public class JsonCommand extends SimpleJShellBuiltin {
             if (file.exists()) {
                 inputDocument = njson.parse(file, cls);
             } else {
-                throw new NutsExecutionException(session, NutsMessage.cstyle("invalid path %s", path), 1);
+                throw new NutsExecutionException(session, NutsMessage.ofCstyle("invalid path %s", path), 1);
             }
         } else {
             StringBuilder sb = new StringBuilder();
@@ -172,7 +172,7 @@ public class JsonCommand extends SimpleJShellBuiltin {
                 try {
                     line = reader.readLine();
                 } catch (IOException ex) {
-                    throw new NutsExecutionException(session, NutsMessage.cstyle("broken Input"), 2);
+                    throw new NutsExecutionException(session, NutsMessage.ofPlain("broken Input"), 2);
                 }
                 if (line == null) {
                     inputDocument = njson.parse(new StringReader(sb.toString()), cls);

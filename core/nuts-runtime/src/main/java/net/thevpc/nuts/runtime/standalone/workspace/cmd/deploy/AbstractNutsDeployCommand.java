@@ -3,9 +3,10 @@ package net.thevpc.nuts.runtime.standalone.workspace.cmd.deploy;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.cmdline.NutsArgument;
 import net.thevpc.nuts.cmdline.NutsCommandLine;
+import net.thevpc.nuts.io.NutsIO;
 import net.thevpc.nuts.io.NutsIOException;
+import net.thevpc.nuts.io.NutsInputSource;
 import net.thevpc.nuts.io.NutsPath;
-import net.thevpc.nuts.runtime.standalone.io.util.NutsStreamOrPath;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.NutsWorkspaceCommandBase;
 
 import java.io.ByteArrayInputStream;
@@ -24,7 +25,7 @@ import java.util.stream.Collectors;
 public abstract class AbstractNutsDeployCommand extends NutsWorkspaceCommandBase<NutsDeployCommand> implements NutsDeployCommand {
 
     protected List<Result> result;
-    protected NutsStreamOrPath content;
+    protected NutsInputSource content;
     protected Object descriptor;
     protected String sha1;
     protected String descSha1;
@@ -65,38 +66,32 @@ public abstract class AbstractNutsDeployCommand extends NutsWorkspaceCommandBase
     @Override
     public NutsDeployCommand setContent(InputStream stream) {
         checkSession();
-        content = stream==null?null:NutsStreamOrPath.of(stream,getSession());
-        return this;
-    }
-
-    @Override
-    public NutsDeployCommand setContent(String path) {
-        content = path==null?null:NutsStreamOrPath.of(path,getSession());
+        content = stream==null?null: NutsIO.of(session).createInputSource(stream);
         return this;
     }
 
     @Override
     public NutsDeployCommand setContent(NutsPath path) {
-        content = path==null?null:NutsStreamOrPath.of(path);
+        content = path;
         return this;
     }
 
     @Override
     public NutsDeployCommand setContent(byte[] content) {
-        this.content = content ==null?null:NutsStreamOrPath.of(new ByteArrayInputStream(content),getSession());
+        this.content = content ==null?null: NutsIO.of(session).createInputSource(content);
         return this;
     }
 
     @Override
     public NutsDeployCommand setContent(File file) {
-        content = file==null?null:NutsStreamOrPath.of(file,getSession());
+        content = file==null?null: NutsPath.of(file,getSession());
         invalidateResult();
         return this;
     }
 
     @Override
     public NutsDeployCommand setContent(Path file) {
-        content = file==null?null:NutsStreamOrPath.of(file,getSession());
+        content = file==null?null: NutsPath.of(file,getSession());
         invalidateResult();
         return this;
     }
@@ -152,13 +147,19 @@ public abstract class AbstractNutsDeployCommand extends NutsWorkspaceCommandBase
         return this;
     }
 
-    public NutsStreamOrPath getContent() {
+    public NutsInputSource getContent() {
         return content;
     }
 
     @Override
+    public NutsDeployCommand setContent(NutsInputSource content) {
+        this.content=content;
+        return this;
+    }
+
+    @Override
     public NutsDeployCommand setContent(URL url) {
-        content = url==null?null:NutsStreamOrPath.of(url,getSession());
+        content = url==null?null: NutsPath.of(url,getSession());
         invalidateResult();
         return this;
     }
@@ -394,7 +395,7 @@ public abstract class AbstractNutsDeployCommand extends NutsWorkspaceCommandBase
                     cmdLine.skip();
                     String idOrPath = a.asString().get(session);
                     if (idOrPath.indexOf('/') >= 0 || idOrPath.indexOf('\\') >= 0) {
-                        setContent(idOrPath);
+                        setContent(NutsPath.of(idOrPath,session));
                     } else {
                         addId(idOrPath);
                     }

@@ -42,10 +42,10 @@ public interface NutsVersionInterval extends Serializable {
         return ofList(s).flatMap(
                 x->{
                     if(x.isEmpty()){
-                        return NutsOptional.ofEmpty(y->NutsMessage.cstyle("empty interval"));
+                        return NutsOptional.ofEmpty(y->NutsMessage.ofPlain("empty interval"));
                     }
                     if(x.size()>1){
-                        return NutsOptional.ofError(y->NutsMessage.cstyle("too many intervals"));
+                        return NutsOptional.ofError(y->NutsMessage.ofPlain("too many intervals"));
                     }
                     return NutsOptional.of(x.get(0));
                 }

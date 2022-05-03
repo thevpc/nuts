@@ -137,7 +137,7 @@ public final class NutsApplications {
                                 return appType.cast(o);
                             }
                         } else {
-                            throw new NutsBootException(NutsMessage.cstyle("createApplicationInstance must return %s", appType.getName()));
+                            throw new NutsBootException(NutsMessage.ofCstyle("createApplicationInstance must return %s", appType.getName()));
                         }
                         break;
                     }
@@ -164,13 +164,13 @@ public final class NutsApplications {
             if (c instanceof Error) {
                 throw (Error) c;
             }
-            throw new NutsBootException(NutsMessage.cstyle("unable to instantiate %s", appType.getName()), ex);
+            throw new NutsBootException(NutsMessage.ofCstyle("unable to instantiate %s", appType.getName()), ex);
         } catch (IllegalAccessException ex) {
-            throw new NutsBootException(NutsMessage.cstyle("illegal access to default constructor for %s", appType.getName()), ex);
+            throw new NutsBootException(NutsMessage.ofCstyle("illegal access to default constructor for %s", appType.getName()), ex);
         } catch (InvocationTargetException ex) {
-            throw new NutsBootException(NutsMessage.cstyle("invocation exception for %s", appType.getName()), ex);
+            throw new NutsBootException(NutsMessage.ofCstyle("invocation exception for %s", appType.getName()), ex);
         }
-        throw new NutsBootException(NutsMessage.cstyle("missing application constructor one of : \n\t static createApplicationInstance(NutsSession,String[])\n\t Constructor(NutsSession,String[])\n\t Constructor()", appType.getName()));
+        throw new NutsBootException(NutsMessage.ofCstyle("missing application constructor one of : \n\t static createApplicationInstance(NutsSession,String[])\n\t Constructor(NutsSession,String[])\n\t Constructor()", appType.getName()));
     }
 
     /**
@@ -224,7 +224,7 @@ public final class NutsApplications {
         boolean inherited = session.boot().getBootOptions().getInherited().orElse(false);
         NutsLogger.of(NutsApplications.class, session).with().level(Level.FINE).verb(NutsLoggerVerb.START)
                 .log(
-                        NutsMessage.jstyle(
+                        NutsMessage.ofJstyle(
                                 "running application {0}: {1} {2}", inherited ? "(inherited)" : "",
                                 applicationInstance.getClass().getName(), applicationContext.getCommandLine()
                         )
@@ -250,7 +250,7 @@ public final class NutsApplications {
                 return;
             }
         }
-        throw new NutsExecutionException(session, NutsMessage.cstyle("unsupported execution mode %s", applicationContext.getMode()), 204);
+        throw new NutsExecutionException(session, NutsMessage.ofCstyle("unsupported execution mode %s", applicationContext.getMode()), 204);
     }
 
     /**

@@ -35,7 +35,7 @@ public class HtmlfsPath extends AbstractPathSPIAdapter {
     public HtmlfsPath(String url, NutsSession session) {
         super(NutsPath.of(url.substring(PREFIX.length()), session), session);
         if (!url.startsWith(PREFIX)) {
-            throw new NutsUnsupportedArgumentException(session, NutsMessage.cstyle("expected prefix '%s'", PREFIX));
+            throw new NutsUnsupportedArgumentException(session, NutsMessage.ofCstyle("expected prefix '%s'", PREFIX));
         }
         this.url = url;
     }
@@ -237,7 +237,7 @@ public class HtmlfsPath extends AbstractPathSPIAdapter {
                                 .verb(NutsLoggerVerb.FAIL)
                                 .level(Level.FINEST)
                                 .error(ex)
-                                .log(NutsMessage.cstyle("failed to parse using %s", p.getClass().getSimpleName()));
+                                .log(NutsMessage.ofCstyle("failed to parse using %s", p.getClass().getSimpleName()));
                     }
                     return null;
                 }).filter(p -> NutsSupported.isValid(p)).max(Comparator.comparing(NutsSupported::getSupportLevel))

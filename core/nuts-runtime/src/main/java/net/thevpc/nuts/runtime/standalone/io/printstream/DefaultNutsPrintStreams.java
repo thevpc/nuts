@@ -26,19 +26,19 @@ public class DefaultNutsPrintStreams implements NutsPrintStreams {
     }
 
     @Override
-    public NutsPrintStream createNull() {
+    public NutsPrintStream createNullPrintStream() {
         checkSession();
         return getBootModel().nullPrintStream();
     }
 
     @Override
-    public NutsMemoryPrintStream createInMemory() {
+    public NutsMemoryPrintStream createInMemoryPrintStream() {
         checkSession();
         return new NutsByteArrayPrintStream(getSession());
     }
 
     @Override
-    public NutsPrintStream create(OutputStream out, NutsTerminalMode expectedMode, NutsSystemTerminalBase term) {
+    public NutsPrintStream createPrintStream(OutputStream out, NutsTerminalMode expectedMode, NutsSystemTerminalBase term) {
         if (out == null) {
             return null;
         }
@@ -70,12 +70,12 @@ public class DefaultNutsPrintStreams implements NutsPrintStreams {
     }
 
     @Override
-    public NutsPrintStream create(OutputStream out) {
+    public NutsPrintStream createPrintStream(OutputStream out) {
         checkSession();
         return new NutsPrintStreamRaw(out, null, null, session, new NutsPrintStreamBase.Bindings(), null);
     }
 
-    public NutsPrintStream create(Writer out, NutsTerminalMode mode, NutsSystemTerminalBase terminal) {
+    public NutsPrintStream createPrintStream(Writer out, NutsTerminalMode mode, NutsSystemTerminalBase terminal) {
         checkSession();
         if (mode == null) {
             mode = NutsTerminalMode.INHERITED;
@@ -87,13 +87,13 @@ public class DefaultNutsPrintStreams implements NutsPrintStreams {
             return ((NutsPrintStreamAdapter) out).getBasePrintStream().setMode(mode);
         }
         SimpleWriterOutputStream w = new SimpleWriterOutputStream(out, terminal, session);
-        return create(w, mode, terminal);
+        return createPrintStream(w, mode, terminal);
     }
 
     @Override
-    public NutsPrintStream create(Writer out) {
+    public NutsPrintStream createPrintStream(Writer out) {
         checkSession();
-        return create(out, NutsTerminalMode.INHERITED, null);
+        return createPrintStream(out, NutsTerminalMode.INHERITED, null);
     }
 
     @Override

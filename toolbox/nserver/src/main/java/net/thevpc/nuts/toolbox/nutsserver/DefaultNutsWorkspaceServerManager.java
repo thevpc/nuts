@@ -26,11 +26,10 @@
  */
 package net.thevpc.nuts.toolbox.nutsserver;
 
-import net.thevpc.nuts.NutsIllegalArgumentException;
-import net.thevpc.nuts.NutsMessage;
 import net.thevpc.nuts.NutsSession;
 import net.thevpc.nuts.NutsWorkspace;
 import net.thevpc.nuts.toolbox.nutsserver.http.NutsHttpServerConfig;
+import net.thevpc.nuts.util.NutsUtils;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -59,9 +58,7 @@ public class DefaultNutsWorkspaceServerManager implements NutsWorkspaceServerMan
         }
         NutsServerComponent server = session.extensions().createServiceLoader(NutsServerComponent.class, ServerConfig.class, NutsServerComponent.class.getClassLoader())
                 .loadBest(serverConfig);
-        if (server == null) {
-            throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("not server extensions are registered."));
-        }
+        NutsUtils.requireNonNull(server, session,"server");
         NutsServer s = server.start(session/*.self()*/, serverConfig);
         if (servers.get(s.getServerId()) != null) {
             servers.get(s.getServerId()).stop();
@@ -73,9 +70,7 @@ public class DefaultNutsWorkspaceServerManager implements NutsWorkspaceServerMan
     @Override
     public NutsServer getServer(String serverId) {
         NutsServer nutsServer = servers.get(serverId);
-        if (nutsServer == null) {
-            throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("server not found %s", serverId));
-        }
+        NutsUtils.requireNonNull(nutsServer,session,"server "+serverId);
         return nutsServer;
     }
 

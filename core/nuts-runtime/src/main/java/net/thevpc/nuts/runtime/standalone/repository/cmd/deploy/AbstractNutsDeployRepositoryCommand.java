@@ -25,11 +25,13 @@ package net.thevpc.nuts.runtime.standalone.repository.cmd.deploy;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.cmdline.NutsCommandLine;
+import net.thevpc.nuts.io.NutsIO;
+import net.thevpc.nuts.io.NutsInputSource;
 import net.thevpc.nuts.io.NutsPath;
 import net.thevpc.nuts.runtime.standalone.id.util.NutsIdUtils;
-import net.thevpc.nuts.runtime.standalone.io.util.NutsStreamOrPath;
 import net.thevpc.nuts.runtime.standalone.repository.cmd.NutsRepositoryCommandBase;
 import net.thevpc.nuts.spi.NutsDeployRepositoryCommand;
+import net.thevpc.nuts.util.NutsUtils;
 
 import java.io.File;
 import java.io.InputStream;
@@ -42,7 +44,7 @@ import java.nio.file.Path;
 public abstract class AbstractNutsDeployRepositoryCommand extends NutsRepositoryCommandBase<NutsDeployRepositoryCommand> implements NutsDeployRepositoryCommand {
 
     private NutsId id;
-    private NutsStreamOrPath content;
+    private NutsInputSource content;
     private NutsDescriptor descriptor;
 
     public AbstractNutsDeployRepositoryCommand(NutsRepository repo) {
@@ -55,42 +57,48 @@ public abstract class AbstractNutsDeployRepositoryCommand extends NutsRepository
     }
 
     @Override
-    public Object getContent() {
-        return content == null ? null : content.getValue();
+    public NutsInputSource getContent() {
+        return content;
+    }
+
+    @Override
+    public NutsDeployRepositoryCommand setContent(NutsInputSource content) {
+        this.content = content;
+        return this;
     }
 
     @Override
     public NutsDeployRepositoryCommand setContent(NutsPath content) {
         checkSession();
-        this.content = content == null ? null : NutsStreamOrPath.of(content);
+        this.content = content;
         return this;
     }
 
     @Override
     public NutsDeployRepositoryCommand setContent(Path content) {
         checkSession();
-        this.content = content == null ? null : NutsStreamOrPath.of(NutsPath.of(content, getSession()));
+        this.content = content == null ? null : NutsPath.of(content, getSession());
         return this;
     }
 
     @Override
     public NutsDeployRepositoryCommand setContent(URL content) {
         checkSession();
-        this.content = content == null ? null : NutsStreamOrPath.of(NutsPath.of(content, getSession()));
+        this.content = content == null ? null : NutsPath.of(content, getSession());
         return this;
     }
 
     @Override
     public NutsDeployRepositoryCommand setContent(File content) {
         checkSession();
-        this.content = content == null ? null : NutsStreamOrPath.of(NutsPath.of(content, getSession()));
+        this.content = content == null ? null : NutsPath.of(content, getSession());
         return this;
     }
 
     @Override
     public NutsDeployRepositoryCommand setContent(InputStream content) {
         checkSession();
-        this.content = content == null ? null : NutsStreamOrPath.of(content, getSession());
+        this.content = content == null ? null : NutsIO.of(getSession()).createInputSource(content);
         return this;
     }
 
@@ -120,16 +128,13 @@ public abstract class AbstractNutsDeployRepositoryCommand extends NutsRepository
         checkSession();
         NutsSession session = getSession();
         getRepo().security().setSession(session).checkAllowed(NutsConstants.Permissions.DEPLOY, "deploy");
-        NutsIdUtils.checkNutsId(getId(), session);
-        if (this.getContent() == null) {
-            throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("missing Content"));
-        }
-        if (this.getDescriptor() == null) {
-            throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("missing Descriptor"));
-        }
-        if ("RELEASE".equals(this.getId().getVersion().getValue())
-                || NutsConstants.Versions.LATEST.equals(this.getId().getVersion().getValue())) {
-            throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("invalid version %s", this.getId().getVersion()));
+        NutsIdUtils.checkLongId(getId(), session);
+        NutsUtils.requireNonNull(this.getContent(), getSession(), "content");
+        NutsUtils.requireNonNull(this.getDescriptor(), getSession(), "descriptor");
+        if (this.getId().getVersion().isReleaseVersion()
+                || this.getId().getVersion().isLatestVersion()
+        ) {
+            throw new NutsIllegalArgumentException(session, NutsMessage.ofCstyle("invalid version %s", this.getId().getVersion()));
         }
     }
 

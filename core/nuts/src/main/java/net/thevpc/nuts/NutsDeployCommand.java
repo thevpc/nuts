@@ -27,6 +27,7 @@
 package net.thevpc.nuts;
 
 import net.thevpc.nuts.cmdline.NutsCommandLineConfigurable;
+import net.thevpc.nuts.io.NutsInputSource;
 import net.thevpc.nuts.io.NutsPath;
 
 import java.io.File;
@@ -51,14 +52,6 @@ public interface NutsDeployCommand extends NutsWorkspaceCommand {
      * @return {@code this} instance
      */
     NutsDeployCommand setContent(InputStream stream);
-
-    /**
-     * set content
-     *
-     * @param path content
-     * @return {@code this} instance
-     */
-    NutsDeployCommand setContent(String path);
 
     /**
      * set content
@@ -326,4 +319,7 @@ public interface NutsDeployCommand extends NutsWorkspaceCommand {
      */
     List<NutsId> getResult();
 
+    NutsInputSource getContent();
+
+    NutsDeployCommand setContent(NutsInputSource content);
 }

@@ -29,7 +29,7 @@ package net.thevpc.nuts.spi;
 
 import net.thevpc.nuts.NutsApplicationContext;
 import net.thevpc.nuts.NutsSession;
-import net.thevpc.nuts.boot.NutsApiUtils;
+import net.thevpc.nuts.util.NutsUtils;
 
 /**
  * Application context that store all relevant information about application
@@ -42,7 +42,7 @@ import net.thevpc.nuts.boot.NutsApiUtils;
 @NutsComponentScope(NutsComponentScopeType.WORKSPACE)
 public interface NutsApplicationContexts extends NutsComponent {
     static NutsApplicationContexts of(NutsSession session) {
-        NutsApiUtils.checkSession(session);
+        NutsUtils.requireSession(session);
         return session.extensions().createSupported(NutsApplicationContexts.class, true, null);
     }
 

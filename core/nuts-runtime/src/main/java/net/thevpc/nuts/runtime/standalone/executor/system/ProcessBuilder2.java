@@ -33,7 +33,9 @@ import net.thevpc.nuts.runtime.standalone.io.util.MultiPipeThread;
 import net.thevpc.nuts.runtime.standalone.io.util.NonBlockingInputStreamAdapter;
 import net.thevpc.nuts.runtime.standalone.shell.NutsShellHelper;
 import net.thevpc.nuts.runtime.standalone.util.CoreStringUtils;
+import net.thevpc.nuts.text.NutsTextBuilder;
 import net.thevpc.nuts.text.NutsTextStyle;
+import net.thevpc.nuts.text.NutsTextStyles;
 import net.thevpc.nuts.text.NutsTexts;
 import net.thevpc.nuts.util.NutsStringUtils;
 
@@ -209,7 +211,7 @@ public class ProcessBuilder2 {
 
     public ProcessBuilder2 setIn(InputStream in) {
         if (baseIO) {
-            throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("already used base IO redirection"));
+            throw new NutsIllegalArgumentException(session, NutsMessage.ofPlain("already used base IO redirection"));
         }
         this.in = in;
         return this;
@@ -234,7 +236,7 @@ public class ProcessBuilder2 {
         if (o instanceof SPrintStream) {
             return ((SPrintStream) o).getStringBuffer();
         }
-        throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("no buffer was configured; should call setOutString"));
+        throw new NutsIllegalArgumentException(session, NutsMessage.ofPlain("no buffer was configured; should call setOutString"));
     }
 
     public String getErrorString() {
@@ -245,12 +247,12 @@ public class ProcessBuilder2 {
         if (o instanceof SPrintStream) {
             return ((SPrintStream) o).getStringBuffer();
         }
-        throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("no buffer was configured; should call setErrString"));
+        throw new NutsIllegalArgumentException(session, NutsMessage.ofPlain("no buffer was configured; should call setErrString"));
     }
 
     public ProcessBuilder2 setOutput(PrintStream out) {
         if (baseIO) {
-            throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("already used base IO redirection"));
+            throw new NutsIllegalArgumentException(session, NutsMessage.ofPlain("already used base IO redirection"));
         }
         this.out = out;
         return this;
@@ -262,7 +264,7 @@ public class ProcessBuilder2 {
 
     public ProcessBuilder2 setErr(PrintStream err) {
         if (baseIO) {
-            throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("already used base IO redirection"));
+            throw new NutsIllegalArgumentException(session, NutsMessage.ofPlain("already used base IO redirection"));
         }
         this.err = err;
         return this;
@@ -367,7 +369,7 @@ public class ProcessBuilder2 {
             try {
                 pipes.awaitTermination(5, TimeUnit.MINUTES);
             } catch (InterruptedException e) {
-                throw new NutsUnexpectedException(session,NutsMessage.cstyle("unable to await termination"));
+                throw new NutsUnexpectedException(session, NutsMessage.ofPlain("unable to await termination"));
             }
         } else {
             waitFor0();
@@ -386,25 +388,25 @@ public class ProcessBuilder2 {
                 if (base.redirectErrorStream()) {
                     if (isGrabOutputString()) {
                         throw new NutsExecutionException(session,
-                                NutsMessage.cstyle("execution failed with code %d and message : %s. Command was %s", result, getOutputString(),
+                                NutsMessage.ofCstyle("execution failed with code %d and message : %s. Command was %s", result, getOutputString(),
                                         NutsCommandLine.of(getCommand())),
                                 result);
                     }
                 } else {
                     if (isGrabErrorString()) {
                         throw new NutsExecutionException(session,
-                                NutsMessage.cstyle("execution failed with code %d and message : %s. Command was %s", result, getOutputString(),
+                                NutsMessage.ofCstyle("execution failed with code %d and message : %s. Command was %s", result, getOutputString(),
                                         NutsCommandLine.of(getCommand())),
                                 result);
                     }
                     if (isGrabOutputString()) {
-                        throw new NutsExecutionException(session, NutsMessage.cstyle(
+                        throw new NutsExecutionException(session, NutsMessage.ofCstyle(
                                 "execution failed with code %d and message : %s. Command was %s", result, getOutputString(),
                                 NutsCommandLine.of(getCommand())
                         ), result);
                     }
                 }
-                throw new NutsExecutionException(session, NutsMessage.cstyle("execution failed with code %d. Command was %s", result,
+                throw new NutsExecutionException(session, NutsMessage.ofCstyle("execution failed with code %d. Command was %s", result,
                         NutsCommandLine.of(getCommand())
                 ), result);
             }
@@ -776,24 +778,25 @@ public class ProcessBuilder2 {
             }
             fullCommandString.add(s);
         }
-
-        StringBuilder sb = new StringBuilder()
-                .append("```system ").append(
-                NutsShellHelper.of(NutsShellFamily.getCurrent())
-                        .escapeArguments(fullCommandString.toArray(new String[0]),
-                                new NutsCommandLineShellOptions()
-                                        .setSession(session)
-                                        .setFormatStrategy(NutsCommandLineFormatStrategy.SUPPORT_QUOTES)
-                                        .setExpectEnv(true)
-                        )
-        ).append(" ```");
-
+        NutsTexts txt = NutsTexts.of(session);
+        NutsTextBuilder sb = txt.ofBlank().builder()
+                .append(txt.ofCode("system",
+                        NutsShellHelper.of(NutsShellFamily.getCurrent())
+                                .escapeArguments(fullCommandString.toArray(new String[0]),
+                                        new NutsCommandLineShellOptions()
+                                                .setSession(session)
+                                                .setFormatStrategy(NutsCommandLineFormatStrategy.SUPPORT_QUOTES)
+                                                .setExpectEnv(true)
+                                )
+                ));
         if (baseIO) {
             ProcessBuilder.Redirect r;
             if (f == null || f.acceptRedirectOutput()) {
                 r = base.redirectOutput();
                 if (null == r.type()) {
-                    sb.append(" ##:separator:").append(escape(session, "> ")).append("## ").append("##:pale:{?}##");
+                    sb.append(">", NutsTextStyle.separator());
+                    sb.append(" ");
+                    sb.append("{?}", NutsTextStyle.pale());
                 } else {
                     switch (r.type()) {
                         //sb.append(" > ").append("{inherited}");
@@ -802,25 +805,32 @@ public class ProcessBuilder2 {
                         case PIPE:
                             break;
                         case WRITE:
-                            sb.append(" ##:separator:").append(escape(session, ">")).append("## ").append(NutsStringUtils.formatStringLiteral(r.file().getPath()));
+                            sb.append(">", NutsTextStyle.separator());
+                            sb.append(" ");
+                            sb.append(NutsStringUtils.formatStringLiteral(r.file().getPath()), NutsTextStyle.path());
                             break;
                         case APPEND:
-                            sb.append(" ##:separator:").append(escape(session, ">>")).append("## ").append(NutsStringUtils.formatStringLiteral(r.file().getPath()));
+                            sb.append(txt.ofStyled(">>", NutsTextStyle.separator()));
+                            sb.append(" ");
+                            sb.append(NutsStringUtils.formatStringLiteral(r.file().getPath()), NutsTextStyle.path());
                             break;
                         default:
-                            sb.append(" ##:separator:").append(escape(session, ">")).append("## ").append("##:pale:{?}##");
+                            sb.append(">", NutsTextStyle.separator());
+                            sb.append(" ");
+                            sb.append(NutsStringUtils.formatStringLiteral("{?}"), NutsTextStyle.pale());
                             break;
                     }
                 }
             }
             if (f == null || f.acceptRedirectError()) {
                 if (base.redirectErrorStream()) {
-                    sb.append(" ##:separator:").append(escape(session, "2>&1")).append("##");
+                    sb.append(" ").append("2>&1", NutsTextStyle.separator());
                 } else {
                     if (f == null || f.acceptRedirectError()) {
                         r = base.redirectError();
                         if (null == r.type()) {
-                            sb.append(" ##:separator:").append(escape(session, "2>")).append("## ").append("##:pale:{?}##");
+                            sb.append(" ").append("2>", NutsTextStyle.separator())
+                                    .append("{?", NutsTextStyle.pale());
                         } else {
                             switch (r.type()) {
                                 //sb.append(" 2> ").append("{inherited}");
@@ -829,13 +839,13 @@ public class ProcessBuilder2 {
                                 case PIPE:
                                     break;
                                 case WRITE:
-                                    sb.append(" ##:separator:").append(escape(session, "2>")).append("## ").append(NutsStringUtils.formatStringLiteral(r.file().getPath()));
+                                    sb.append(" ").append("2>",NutsTextStyle.separator()).append(" ").append(NutsStringUtils.formatStringLiteral(r.file().getPath()),NutsTextStyle.path());
                                     break;
                                 case APPEND:
-                                    sb.append(" ##:separator:").append(escape(session, "2>>")).append("## ").append(NutsStringUtils.formatStringLiteral(r.file().getPath()));
+                                    sb.append(" ").append("2>>",NutsTextStyle.separator()).append(" ").append(NutsStringUtils.formatStringLiteral(r.file().getPath()),NutsTextStyle.path());
                                     break;
                                 default:
-                                    sb.append(" ##:separator:").append(escape(session, "2>")).append("## ").append("##:pale:{?}##");
+                                    sb.append(" ").append("2>",NutsTextStyle.separator()).append(" ").append("{?}",NutsTextStyle.pale());
                                     break;
                             }
                         }

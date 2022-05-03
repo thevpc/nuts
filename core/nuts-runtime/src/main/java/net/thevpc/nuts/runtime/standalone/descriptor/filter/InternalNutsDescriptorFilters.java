@@ -9,6 +9,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import net.thevpc.nuts.spi.NutsSupportLevelContext;
+import net.thevpc.nuts.util.NutsUtils;
 
 public class InternalNutsDescriptorFilters extends InternalNutsTypedFilters<NutsDescriptorFilter>
         implements NutsDescriptorFilters {
@@ -203,9 +204,8 @@ public class InternalNutsDescriptorFilters extends InternalNutsTypedFilters<Nuts
             return null;
         }
         NutsDescriptorFilter t = as(a);
-        if (t == null) {
-            throw new NutsIllegalArgumentException(getSession(), NutsMessage.cstyle("not a DescriptorFilter"));
-        }
+        NutsSession session = getSession();
+        NutsUtils.requireNonNull(t, session,"DescriptorFilter");
         return t;
     }
 

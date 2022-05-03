@@ -15,7 +15,6 @@ import net.thevpc.nuts.util.*;
 
 import java.io.File;
 import java.io.IOException;
-import java.math.BigInteger;
 import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -134,10 +133,10 @@ public class NutsJavaSdkUtils {
             if (bestJava == null) {
                 if (!NutsBlankable.isBlank(requestedJavaVersion)) {
                     _LOGOP(session).level(Level.FINE).verb(NutsLoggerVerb.WARNING)
-                            .log(NutsMessage.jstyle("no valid JRE found. recommended {0} . Using default java.home at {1}", requestedJavaVersion, System.getProperty("java.home")));
+                            .log(NutsMessage.ofJstyle("no valid JRE found. recommended {0} . Using default java.home at {1}", requestedJavaVersion, System.getProperty("java.home")));
                 } else {
                     _LOGOP(session).level(Level.FINE).verb(NutsLoggerVerb.WARNING)
-                            .log(NutsMessage.jstyle("no valid JRE found. Using default java.home at {0}", System.getProperty("java.home")));
+                            .log(NutsMessage.ofJstyle("no valid JRE found. Using default java.home at {0}", System.getProperty("java.home")));
                 }
                 bestJava = current;
             }
@@ -146,7 +145,7 @@ public class NutsJavaSdkUtils {
             return bestJava;
         }
         _LOGOP(session).level(Level.FINE).verb(NutsLoggerVerb.WARNING)
-                .log(NutsMessage.jstyle("no valid JRE found for version {0}", _requestedJavaVersion));
+                .log(NutsMessage.ofJstyle("no valid JRE found for version {0}", _requestedJavaVersion));
         return null;
     }
 
@@ -269,7 +268,7 @@ public class NutsJavaSdkUtils {
                                         synchronized (session.getWorkspace()) {
                                             NutsTexts factory = NutsTexts.of(session);
                                             session.getTerminal().printProgress(
-                                                    NutsMessage.cstyle("detected java %s %s at %s", r.getPackaging(),
+                                                    NutsMessage.ofCstyle("detected java %s %s at %s", r.getPackaging(),
                                                             factory.ofStyled(r.getVersion(), NutsTextStyle.version()),
                                                             factory.ofStyled(r.getPath(), NutsTextStyle.path()))
                                             );
@@ -295,16 +294,14 @@ public class NutsJavaSdkUtils {
                 }
             }
             //just reset the line!
-            session.getTerminal().printProgress(NutsMessage.plain(""));
+            session.getTerminal().printProgress(NutsMessage.ofPlain(""));
             return locs.toArray(new NutsPlatformLocation[0]);
         });
     }
 
     public NutsPlatformLocation resolveJdkLocation(String path, String preferredName, NutsSession session) {
         NutsSessionUtils.checkSession(ws, session);
-        if (path == null) {
-            throw new NutsException(session, NutsMessage.formatted("missing path"));
-        }
+        NutsUtils.requireNonBlank(path,session, "path");
         String appSuffix = session.env().getOsFamily() == NutsOsFamily.WINDOWS ? ".exe" : "";
         Path bin = Paths.get(path).resolve("bin");
         Path javaExePath = bin.resolve("java" + appSuffix);
@@ -332,7 +329,7 @@ public class NutsJavaSdkUtils {
                     break;
                 } else {
                     _LOGOP(session).level(i == (MAX_ITER - 1) ? Level.WARNING : Level.FINER).verb(NutsLoggerVerb.WARNING)
-                            .log(NutsMessage.jstyle("unable to execute {0}. returned empty string ({1}/{2})", javaExePath, i + 1, MAX_ITER));
+                            .log(NutsMessage.ofJstyle("unable to execute {0}. returned empty string ({1}/{2})", javaExePath, i + 1, MAX_ITER));
                 }
             }
             if (cmdOutputString.length() > 0) {
@@ -363,12 +360,12 @@ public class NutsJavaSdkUtils {
         } catch (Exception ex) {
             loggedError = true;
             _LOGOP(session).error(ex).level(Level.SEVERE).verb(NutsLoggerVerb.WARNING)
-                    .log(NutsMessage.jstyle("unable to execute {0}. JDK Home ignored", javaExePath));
+                    .log(NutsMessage.ofJstyle("unable to execute {0}. JDK Home ignored", javaExePath));
         }
         if (jdkVersion == null) {
             if (!loggedError) {
                 _LOGOP(session).level(Level.SEVERE).verb(NutsLoggerVerb.WARNING)
-                        .log(NutsMessage.jstyle("execute {0} failed with result code {1} and result string \"{2}\". JDK Home ignored", javaExePath.toString(), cmdRresult, cmdOutputString));
+                        .log(NutsMessage.ofJstyle("execute {0} failed with result code {1} and result string \"{2}\". JDK Home ignored", javaExePath.toString(), cmdRresult, cmdOutputString));
             }
             return null;
         }
@@ -395,9 +392,7 @@ public class NutsJavaSdkUtils {
     }
 
     public NutsId createJdkId(String version, NutsSession session) {
-        if (NutsBlankable.isBlank(version)) {
-            throw new NutsException(session, NutsMessage.formatted("missing version"));
-        }
+        NutsUtils.requireNonBlank(version,session, "version");
         NutsVersion jv = NutsVersion.of(version).get( session);
         long n1 = jv.getNumber(0).flatMap(NutsValue::asLong).orElse(0L);
         long n2 = jv.getNumber(1).flatMap(NutsValue::asLong).orElse(0L);

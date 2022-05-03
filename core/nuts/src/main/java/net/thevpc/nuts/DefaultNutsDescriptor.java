@@ -365,18 +365,20 @@ public class DefaultNutsDescriptor implements NutsDescriptor {
     }
 
     @Override
-    public NutsDescriptorProperty getProperty(String name) {
+    public NutsOptional<NutsDescriptorProperty> getProperty(String name) {
         if (properties == null) {
-            return null;
+            return NutsOptional.ofNamedEmpty("property " + name);
         }
-        return properties.stream().filter(x -> x.getName().equals(name)).findFirst()
-                .orElse(null);
+        return NutsOptional.ofNamed(
+                properties.stream().filter(x -> x.getName().equals(name)).findFirst()
+                        .orElse(null),
+                "property " + name
+        );
     }
 
     @Override
     public NutsOptional<NutsValue> getPropertyValue(String name) {
-        NutsDescriptorProperty p = getProperty(name);
-        return NutsOptional.of(p == null ? null : p.getValue(), session -> NutsMessage.cstyle("property not found : %s", name));
+        return getProperty(name).map(NutsDescriptorProperty::getValue);
     }
 
     @Override

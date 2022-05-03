@@ -123,7 +123,7 @@ public class DefaultNutsPs implements NutsPs {
             }
         }
         throw new NutsExecutionException(session,
-                NutsMessage.cstyle("unable to resolve a valid jdk installation. "
+                NutsMessage.ofCstyle("unable to resolve a valid jdk installation. "
                 + "Either run nuts with a valid JDK/SDK (not JRE) or register a valid one using 'nuts settings' command. "
                 + "All the followings are invalid : \n%s",
                 String.join("\n", detectedJavaHomes)
@@ -152,7 +152,7 @@ public class DefaultNutsPs implements NutsPs {
             return getResultListJava("");
         } else {
             if (isFailFast()) {
-                throw new NutsIllegalArgumentException(getSession(), NutsMessage.cstyle("unsupported list processes of type : %s" , processType));
+                throw new NutsIllegalArgumentException(getSession(), NutsMessage.ofCstyle("unsupported list processes of type : %s" , processType));
             }
             return new NutsEmptyStream<>(getSession(), "process-" + processType);
         }

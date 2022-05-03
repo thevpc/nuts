@@ -109,7 +109,7 @@ public class NanoDBDefaultIndex<T> extends NanoDBAbstractIndex<T> {
         try {
             String header = in.readUTF();
             if (!NANODB_INDEX_0_8_1.equals(header)) {
-                throw new NutsIOException(session, NutsMessage.cstyle("unsupported index file %s",header));
+                throw new NutsIOException(session, NutsMessage.ofCstyle("unsupported index file %s",header));
             }
             long r = in.readLong();
             index = new HashMap<T, DBIndexValueStore>(r <= 10 ? 10 : (int) r);

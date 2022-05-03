@@ -37,6 +37,15 @@ public class NutsUnsupportedOperationException extends NutsException {
      * Constructs a new NutsUnsupportedOperationException exception
      *
      * @param session workspace
+     */
+    public NutsUnsupportedOperationException(NutsSession session) {
+        super(session, NutsMessage.ofPlain("unsupported operation"));
+    }
+
+    /**
+     * Constructs a new NutsUnsupportedOperationException exception
+     *
+     * @param session workspace
      * @param message message
      */
     public NutsUnsupportedOperationException(NutsSession session, NutsMessage message) {

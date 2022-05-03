@@ -172,11 +172,11 @@ public class GenericFilePath implements NutsPathSPI {
     }
 
     public InputStream getInputStream(NutsPath basePath) {
-        throw new NutsIOException(session, NutsMessage.cstyle("path not found %s", this));
+        throw new NutsIOException(session, NutsMessage.ofCstyle("path not found %s", this));
     }
 
     public OutputStream getOutputStream(NutsPath basePath) {
-        throw new NutsIOException(session, NutsMessage.cstyle("path not found %s", this));
+        throw new NutsIOException(session, NutsMessage.ofCstyle("path not found %s", this));
     }
 
     @Override
@@ -186,12 +186,12 @@ public class GenericFilePath implements NutsPathSPI {
 
     @Override
     public void delete(NutsPath basePath, boolean recurse) {
-        throw new NutsIOException(getSession(), NutsMessage.cstyle("unable to delete path %s", this));
+        throw new NutsIOException(getSession(), NutsMessage.ofCstyle("unable to delete path %s", this));
     }
 
     @Override
     public void mkdir(boolean parents, NutsPath basePath) {
-        throw new NutsIOException(getSession(), NutsMessage.cstyle("unable to create folder out of regular file %s", this));
+        throw new NutsIOException(getSession(), NutsMessage.ofCstyle("unable to create folder out of regular file %s", this));
     }
 
     @Override
@@ -469,12 +469,12 @@ public class GenericFilePath implements NutsPathSPI {
 
     @Override
     public void moveTo(NutsPath basePath, NutsPath other, NutsPathOption... options) {
-        throw new NutsIOException(session, NutsMessage.cstyle("unable to move %s", this));
+        throw new NutsIOException(session, NutsMessage.ofCstyle("unable to move %s", this));
     }
 
     @Override
     public void copyTo(NutsPath basePath, NutsPath other, NutsPathOption... options) {
-        throw new NutsIOException(session, NutsMessage.cstyle("unable to copy %s", this));
+        throw new NutsIOException(session, NutsMessage.ofCstyle("unable to copy %s", this));
     }
 
     @Override

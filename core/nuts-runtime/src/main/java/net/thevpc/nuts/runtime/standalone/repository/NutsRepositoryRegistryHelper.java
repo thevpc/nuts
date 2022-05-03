@@ -70,16 +70,16 @@ public class NutsRepositoryRegistryHelper {
             ii = repositoriesByUuid.get(uuid);
             if (ii != null) {
                 throw new NutsIllegalArgumentException(session,
-                        NutsMessage.cstyle("repository with the same uuid already exists % / %s", ii.repo.getUuid(), ii.repo.getName())
+                        NutsMessage.ofCstyle("repository with the same uuid already exists % / %s", ii.repo.getUuid(), ii.repo.getName())
                 );
             }
         }
         ii = repositoriesByName.get(name);
         if (ii != null) {
-            throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("repository with the same name already exists %s / %s", ii.repo.getUuid(), ii.repo.getName()));
+            throw new NutsIllegalArgumentException(session, NutsMessage.ofCstyle("repository with the same name already exists %s / %s", ii.repo.getUuid(), ii.repo.getName()));
         }
         if (!name.matches("[a-zA-Z][.a-zA-Z0-9_-]*")) {
-            throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("invalid repository name %s", name));
+            throw new NutsIllegalArgumentException(session, NutsMessage.ofCstyle("invalid repository name %s", name));
         }
         RepoAndRef rr = new RepoAndRef(repository);
         rr.ref = repositoryRef;

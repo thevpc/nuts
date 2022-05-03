@@ -5,7 +5,6 @@ import net.thevpc.nuts.cmdline.NutsCommandLine;
 import net.thevpc.nuts.format.NutsTreeVisitResult;
 import net.thevpc.nuts.format.NutsTreeVisitor;
 import net.thevpc.nuts.io.*;
-import net.thevpc.nuts.runtime.standalone.io.util.InputStreamMetadataAwareImpl;
 import net.thevpc.nuts.runtime.standalone.io.util.NutsPathParts;
 import net.thevpc.nuts.runtime.standalone.session.NutsSessionUtils;
 import net.thevpc.nuts.runtime.standalone.util.NutsCachedValue;
@@ -217,7 +216,7 @@ public class URLPath implements NutsPathSPI {
     @Override
     public URL toURL(NutsPath basePath) {
         if (url == null) {
-            throw new NutsIOException(getSession(), NutsMessage.cstyle("unable to resolve url %s", toString()));
+            throw new NutsIOException(getSession(), NutsMessage.ofCstyle("unable to resolve url %s", toString()));
         }
         return url;
     }
@@ -228,7 +227,7 @@ public class URLPath implements NutsPathSPI {
         if (f != null) {
             return f.toPath();
         }
-        throw new NutsIOException(getSession(), NutsMessage.cstyle("unable to resolve file %s", toString()));
+        throw new NutsIOException(getSession(), NutsMessage.ofCstyle("unable to resolve file %s", toString()));
     }
 
     public boolean isSymbolicLink(NutsPath basePath) {
@@ -368,7 +367,7 @@ public class URLPath implements NutsPathSPI {
 
     public InputStream getInputStream(NutsPath basePath) {
         if (url == null) {
-            throw new NutsIOException(getSession(), NutsMessage.cstyle("unable to resolve input stream %s", toString()));
+            throw new NutsIOException(getSession(), NutsMessage.ofCstyle("unable to resolve input stream %s", toString()));
         }
         NutsTransportComponent best = session.extensions()
                 .createSupported(NutsTransportComponent.class, false, url);
@@ -376,13 +375,13 @@ public class URLPath implements NutsPathSPI {
             best = DefaultHttpTransportComponent.INSTANCE;
         }
         NutsTransportConnection uu = best.open(url.toString());
-        return InputStreamMetadataAwareImpl.of(uu.open(), basePath.getStreamMetadata());
+        return uu.open();
     }
 
     public OutputStream getOutputStream(NutsPath basePath) {
         try {
             if (url == null) {
-                throw new NutsIOException(getSession(), NutsMessage.cstyle("unable to resolve output stream %s", toString()));
+                throw new NutsIOException(getSession(), NutsMessage.ofCstyle("unable to resolve output stream %s", toString()));
             }
             return url.openConnection().getOutputStream();
         } catch (IOException e) {
@@ -404,7 +403,7 @@ public class URLPath implements NutsPathSPI {
                 return;
             }
         }
-        throw new NutsIOException(getSession(), NutsMessage.cstyle("unable to delete %s", toString()));
+        throw new NutsIOException(getSession(), NutsMessage.ofCstyle("unable to delete %s", toString()));
     }
 
     @Override
@@ -416,7 +415,7 @@ public class URLPath implements NutsPathSPI {
                 return;
             }
         }
-        throw new NutsIOException(getSession(), NutsMessage.cstyle("unable to mkdir %s", toString()));
+        throw new NutsIOException(getSession(), NutsMessage.ofCstyle("unable to mkdir %s", toString()));
     }
 
     @Override
@@ -602,7 +601,7 @@ public class URLPath implements NutsPathSPI {
 
     @Override
     public void moveTo(NutsPath basePath, NutsPath other, NutsPathOption... options) {
-        throw new NutsIOException(session, NutsMessage.cstyle("unable to move %s", this));
+        throw new NutsIOException(session, NutsMessage.ofCstyle("unable to move %s", this));
     }
 
     @Override
@@ -624,7 +623,7 @@ public class URLPath implements NutsPathSPI {
                     }
                     case SKIP_SIBLINGS:
                     case SKIP_SUBTREE: {
-                        throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("unsupported %s", r));
+                        throw new NutsIllegalArgumentException(session, NutsMessage.ofCstyle("unsupported %s", r));
                     }
                 }
             } else if (x.isRegularFile()) {
@@ -638,7 +637,7 @@ public class URLPath implements NutsPathSPI {
                     }
                     case SKIP_SIBLINGS:
                     case SKIP_SUBTREE: {
-                        throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("unsupported %s", r));
+                        throw new NutsIllegalArgumentException(session, NutsMessage.ofCstyle("unsupported %s", r));
                     }
                 }
             }

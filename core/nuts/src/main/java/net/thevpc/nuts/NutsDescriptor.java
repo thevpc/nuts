@@ -31,10 +31,10 @@ import java.util.Set;
 
 /**
  * Nuts descriptors define an <strong>immutable</strong> image to all information needed to execute an artifact.
- * It resembles to maven's pom file but it focuses on execution information
- * rather then build information. Common features are inheritance
+ * It resembles to maven's pom file, but it focuses on execution information
+ * rather than build information. Common features are inheritance
  * dependencies, standard dependencies, exclusions and properties.
- * However nuts descriptor adds new features such as :
+ * However, nuts descriptor adds new features such as :
  * <ul>
  *     <li>multiple parent inheritance</li>
  *     <li>executable/nuts-executable flag</li>
@@ -57,9 +57,9 @@ public interface NutsDescriptor extends Serializable, NutsBlankable, NutsFormatt
     NutsId getId();
 
     /**
-     * descriptor parent list (may be empty)
+     * descriptor parent list (maybe empty)
      *
-     * @return descriptor parent list (may be empty)
+     * @return descriptor parent list (maybe empty)
      */
     List<NutsId> getParents();
 
@@ -115,7 +115,7 @@ public interface NutsDescriptor extends Serializable, NutsBlankable, NutsFormatt
     NutsEnvCondition getCondition();
 
     /**
-     * user friendly name, a short description for the artifact
+     * user-friendly name, a short description for the artifact
      *
      * @return user friendly name
      */
@@ -170,30 +170,30 @@ public interface NutsDescriptor extends Serializable, NutsBlankable, NutsFormatt
     List<NutsDependency> getStandardDependencies();
 
     /**
-     * list of immediate (non inherited and non transitive dependencies
+     * list of immediate (non-inherited and non-transitive dependencies
      *
-     * @return list of immediate (non inherited and non transitive dependencies
+     * @return list of immediate (non-inherited and non-transitive dependencies
      */
     List<NutsDependency> getDependencies();
 
     /**
-     * descriptor of artifact responsible of running this artifact
+     * descriptor of artifact responsible for running this artifact
      *
-     * @return descriptor of artifact responsible of running this artifact
+     * @return descriptor of artifact responsible for running this artifact
      */
     NutsArtifactCall getExecutor();
 
     /**
-     * descriptor of artifact responsible of installing this artifact
+     * descriptor of artifact responsible for installing this artifact
      *
-     * @return descriptor of artifact responsible of installing this artifact
+     * @return descriptor of artifact responsible for installing this artifact
      */
     NutsArtifactCall getInstaller();
 
     /**
-     * custom properties that can be used as place holders (int ${name} form) in other fields.
+     * custom properties that can be used as placeholders (int ${name} form) in other fields.
      *
-     * @return custom properties that can be used as place holders (int ${name} form) in other fields.
+     * @return custom properties that can be used as placeholders (int ${name} form) in other fields.
      */
     List<NutsDescriptorProperty> getProperties();
 
@@ -204,7 +204,7 @@ public interface NutsDescriptor extends Serializable, NutsBlankable, NutsFormatt
      * @return custom property value by name
      * @since 0.8.3
      */
-    NutsDescriptorProperty getProperty(String name);
+    NutsOptional<NutsDescriptorProperty> getProperty(String name);
 
     /**
      * custom property

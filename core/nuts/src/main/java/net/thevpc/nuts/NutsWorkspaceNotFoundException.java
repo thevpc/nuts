@@ -46,7 +46,7 @@ public class NutsWorkspaceNotFoundException extends NutsBootException {
      * @param workspaceLocation location
      */
     public NutsWorkspaceNotFoundException(String workspaceLocation) {
-        super(NutsMessage.cstyle("no such workspace %s", (workspaceLocation == null ? "<null>" : workspaceLocation))
+        super(NutsMessage.ofCstyle("no such workspace %s", (workspaceLocation == null ? "<null>" : workspaceLocation))
                 , null);
         this.workspaceLocation = workspaceLocation;
     }

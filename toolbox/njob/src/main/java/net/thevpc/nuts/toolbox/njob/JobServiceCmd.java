@@ -199,7 +199,7 @@ public class JobServiceCmd {
             case 5:
                 return NutsTexts.of(session).ofStyled(x, NutsTextStyle.primary5());
         }
-        throw new NutsIllegalArgumentException(context.getSession(), NutsMessage.cstyle("invalid index %s", index));
+        throw new NutsIllegalArgumentException(context.getSession(), NutsMessage.ofCstyle("invalid index %s", index));
     }
 
     protected NutsString getFlagString(NFlag x) {

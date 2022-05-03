@@ -118,7 +118,7 @@ public class DefaultNutsWorkspaceCustomCommand implements NutsWorkspaceCustomCom
                         .run()
                         .getOutputString();
             } catch (Exception ex) {
-                _LOGOP(session).level(Level.FINE).error(ex).log(NutsMessage.jstyle("failed to retrieve help for {0}", getName()));
+                _LOGOP(session).level(Level.FINE).error(ex).log(NutsMessage.ofJstyle("failed to retrieve help for {0}", getName()));
                 return "failed to retrieve help for " + getName();
             }
         }

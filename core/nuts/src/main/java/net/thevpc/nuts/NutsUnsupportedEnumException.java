@@ -53,7 +53,7 @@ public class NutsUnsupportedEnumException extends NutsException {
      */
     public NutsUnsupportedEnumException(NutsSession session, NutsMessage message, Enum enumValue) {
         super(session,
-                message != null ? message : NutsMessage.cstyle(
+                message != null ? message : NutsMessage.ofCstyle(
                         "unexpected/unsupported enum %s of type %s", enumValue, enumValue.getClass().getName())
         );
         this.enumValue = enumValue;
@@ -70,7 +70,7 @@ public class NutsUnsupportedEnumException extends NutsException {
     public NutsUnsupportedEnumException(NutsSession session, NutsMessage message, String stringValue, Enum enumValue) {
         super(session,
                 message == null ? (
-                        NutsMessage.cstyle("unexpected/unsupported value %s of type %s", stringValue, enumValue.getClass().getName()))
+                        NutsMessage.ofCstyle("unexpected/unsupported value %s of type %s", stringValue, enumValue.getClass().getName()))
                         : message
         );
     }

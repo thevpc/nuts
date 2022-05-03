@@ -27,8 +27,8 @@ package net.thevpc.nuts.io;
 
 import net.thevpc.nuts.NutsDescriptor;
 import net.thevpc.nuts.NutsSession;
-import net.thevpc.nuts.boot.NutsApiUtils;
 import net.thevpc.nuts.spi.NutsComponent;
+import net.thevpc.nuts.util.NutsUtils;
 
 import java.io.File;
 import java.io.InputStream;
@@ -45,7 +45,7 @@ import java.security.MessageDigest;
  */
 public interface NutsDigest extends NutsComponent {
     static NutsDigest of(NutsSession session) {
-        NutsApiUtils.checkSession(session);
+        NutsUtils.requireSession(session);
         return session.extensions().createSupported(NutsDigest.class, true, null);
     }
 
@@ -169,4 +169,8 @@ public interface NutsDigest extends NutsComponent {
      * @return {@code this} instance
      */
     NutsDigest setAlgorithm(String algorithm);
+
+    NutsDigest setSource(NutsInputSource source);
+
+    NutsInputSource getSource();
 }

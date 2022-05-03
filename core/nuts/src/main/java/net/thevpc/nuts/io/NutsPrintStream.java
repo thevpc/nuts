@@ -35,10 +35,10 @@ import java.io.PrintStream;
 import java.io.Writer;
 import java.util.Locale;
 
-public interface NutsPrintStream extends NutsStreamMetadataAware,NutsOutputTarget {
+public interface NutsPrintStream extends NutsOutputTarget {
 
     static NutsPrintStream ofNull(NutsSession session) {
-        return NutsPrintStreams.of(session).createNull();
+        return NutsIO.of(session).createNullPrintStream();
     }
 
     /**
@@ -49,11 +49,11 @@ public interface NutsPrintStream extends NutsStreamMetadataAware,NutsOutputTarge
      * @return new in-memory NutsPrintStream implementation
      */
     static NutsMemoryPrintStream ofInMemory(NutsSession session) {
-        return NutsPrintStreams.of(session).createInMemory();
+        return NutsIO.of(session).createInMemoryPrintStream();
     }
 
     static NutsPrintStream of(OutputStream out, NutsSession session) {
-        return NutsPrintStreams.of(session).create(out);
+        return NutsIO.of(session).createPrintStream(out);
     }
 
     /**
@@ -68,16 +68,12 @@ public interface NutsPrintStream extends NutsStreamMetadataAware,NutsOutputTarge
      * @return {@code mode} supporting PrintStream
      */
     static NutsPrintStream of(OutputStream out, NutsTerminalMode mode, NutsSystemTerminalBase terminal, NutsSession session) {
-        return NutsPrintStreams.of(session).create(out, mode, terminal);
+        return NutsIO.of(session).createPrintStream(out, mode, terminal);
     }
 
     static NutsPrintStream of(Writer out, NutsSession session) {
-        return NutsPrintStreams.of(session).create(out);
+        return NutsIO.of(session).createPrintStream(out);
     }
-
-    NutsString getFormattedName();
-
-    NutsPrintStream setFormattedName(NutsString name);
 
     NutsSession getSession();
 

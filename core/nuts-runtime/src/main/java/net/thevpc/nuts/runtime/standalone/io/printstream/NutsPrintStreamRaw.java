@@ -20,15 +20,15 @@ public class NutsPrintStreamRaw extends NutsPrintStreamBase {
     private PrintStream base;
 
     protected NutsPrintStreamRaw(OutputStream out, PrintStream base, Boolean autoFlush, NutsTerminalMode mode, NutsSession session, Bindings bindings, NutsSystemTerminalBase term) {
-        super(autoFlush == null ? true : autoFlush, mode, session, bindings,term);
-        setFormattedName(NutsTexts.of(session).ofStyled("<raw-stream>", NutsTextStyle.path()));
+        super(autoFlush == null || autoFlush, mode, session, bindings, term);
+        getOutputMetaData().setMessage(NutsMessage.ofNtf(NutsTexts.of(session).ofStyled("<raw-stream>", NutsTextStyle.path())));
         this.out = out;
         this.base = base;
     }
 
-    public NutsPrintStreamRaw(OutputStream out, Boolean autoFlush, String encoding, NutsSession session, Bindings bindings,NutsSystemTerminalBase term) {
-        super(true, NutsTerminalMode.INHERITED, session, bindings,term);
-        setFormattedName(NutsTexts.of(session).ofStyled("<raw-stream>", NutsTextStyle.path()));
+    public NutsPrintStreamRaw(OutputStream out, Boolean autoFlush, String encoding, NutsSession session, Bindings bindings, NutsSystemTerminalBase term) {
+        super(true, NutsTerminalMode.INHERITED, session, bindings, term);
+        getOutputMetaData().setMessage(NutsMessage.ofNtf(NutsTexts.of(session).ofStyled("<raw-stream>", NutsTextStyle.path())));
         this.out = out;
         if (out instanceof PrintStream) {
             PrintStream ps = (PrintStream) out;
@@ -120,7 +120,7 @@ public class NutsPrintStreamRaw extends NutsPrintStreamBase {
         if (session == null || session == this.session) {
             return this;
         }
-        return new NutsPrintStreamRaw(out, base, autoFlash, mode(), session, new Bindings(),getTerminal());
+        return new NutsPrintStreamRaw(out, base, autoFlash, mode(), session, new Bindings(), getTerminal());
     }
 
     @Override
@@ -138,12 +138,17 @@ public class NutsPrintStreamRaw extends NutsPrintStreamBase {
     protected NutsPrintStream convertImpl(NutsTerminalMode other) {
         switch (other) {
             case FORMATTED: {
-                return new NutsPrintStreamFormatted(this,getSession(), bindings);
+                return new NutsPrintStreamFormatted(this, getSession(), bindings);
             }
             case FILTERED: {
-                return new NutsPrintStreamFiltered(this, getSession(),bindings);
+                return new NutsPrintStreamFiltered(this, getSession(), bindings);
             }
         }
-        throw new NutsIllegalArgumentException(getSession(),NutsMessage.cstyle("unsupported %s -> %s",mode(), other));
+        throw new NutsIllegalArgumentException(getSession(), NutsMessage.ofCstyle("unsupported %s -> %s", mode(), other));
+    }
+
+    @Override
+    public OutputStream getOutputStream() {
+        return asOutputStream();
     }
 }

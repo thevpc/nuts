@@ -51,9 +51,19 @@ public enum NutsTextFormatStyle implements NutsEnum {
      */
     PLAIN,
     /**
-     * NTF format without arguments
+     * NTF format without arguments.
+     * was (formatted)
      */
-    FORMATTED,
+    NTF,
+    /**
+     * plain format given style
+     * @since 0.8.4
+     */
+    STYLED,
+    /**
+     * code
+     */
+    CODE,
     ;
     private final String id;
 

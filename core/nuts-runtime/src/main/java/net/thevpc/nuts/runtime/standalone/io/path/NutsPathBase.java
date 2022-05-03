@@ -2,10 +2,7 @@ package net.thevpc.nuts.runtime.standalone.io.path;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.cmdline.NutsCommandLine;
-import net.thevpc.nuts.io.NutsIOException;
-import net.thevpc.nuts.io.NutsPath;
-import net.thevpc.nuts.io.NutsPathOption;
-import net.thevpc.nuts.io.NutsPrintStream;
+import net.thevpc.nuts.io.*;
 import net.thevpc.nuts.runtime.standalone.format.DefaultFormatBase;
 import net.thevpc.nuts.spi.NutsSupportLevelContext;
 import net.thevpc.nuts.text.NutsTextStyle;
@@ -22,9 +19,7 @@ import java.util.stream.StreamSupport;
 
 public abstract class NutsPathBase implements NutsPath {
     private final NutsSession session;
-    private String userKind;
-    private boolean userCache;
-    private boolean userTemp;
+    private DefaultNutsPathMetadata omd = new DefaultNutsPathMetadata(this);
 
     public NutsPathBase(NutsSession session) {
         if (session == null) {
@@ -34,34 +29,35 @@ public abstract class NutsPathBase implements NutsPath {
         this.session = session;
     }
 
-    protected NutsPath copyExtraFrom(NutsPath other){
-        if(other instanceof NutsPathBase){
-            userKind=((NutsPathBase) other).userKind;
-            userCache =((NutsPathBase) other).userCache;
-            userTemp =((NutsPathBase) other).userTemp;
+    protected NutsPath copyExtraFrom(NutsPath other) {
+        if (other instanceof NutsPathBase) {
+            omd.setAll(omd);
+        } else {
+            omd.setAll(other.getInputMetaData());
+            omd.setAll(other.getOutputMetaData());
         }
         return this;
     }
 
     @Override
     public boolean isUserCache() {
-        return userCache;
+        return omd.isUserCache();
     }
 
     @Override
     public NutsPath setUserCache(boolean userCache) {
-        this.userCache = userCache;
+        this.omd.setUserCache(userCache);
         return this;
     }
 
     @Override
     public boolean isUserTemporary() {
-        return userTemp;
+        return omd.isUserTemporary();
     }
 
     @Override
     public NutsPath setUserTemporary(boolean temporary) {
-        this.userTemp = temporary;
+        this.omd.setUserTemporary(temporary);
         return this;
     }
 
@@ -160,7 +156,7 @@ public abstract class NutsPathBase implements NutsPath {
                     try {
                         line = br.readLine();
                     } catch (IOException e) {
-                        throw new NutsIOException(session,e);
+                        throw new NutsIOException(session, e);
                     }
                     hasNext = line != null;
                     return hasNext;
@@ -169,7 +165,7 @@ public abstract class NutsPathBase implements NutsPath {
                         try {
                             br.close();
                         } catch (IOException e) {
-                            throw new NutsIOException(session,e);
+                            throw new NutsIOException(session, e);
                         }
                     }
                 }
@@ -210,17 +206,6 @@ public abstract class NutsPathBase implements NutsPath {
         return lines;
     }
 
-    @Override
-    public String getUserKind() {
-        return userKind;
-    }
-
-    @Override
-    public NutsPathBase setUserKind(String userKind) {
-        this.userKind = userKind;
-        return this;
-    }
-
     public NutsString toNutsString() {
         return NutsTexts.of(session).ofPlain(toString());
     }
@@ -234,7 +219,7 @@ public abstract class NutsPathBase implements NutsPath {
 
     @Override
     public int hashCode() {
-        return Objects.hash(/*session, */userKind, toString());
+        return Objects.hash(toString());
     }
 
     @Override
@@ -242,10 +227,7 @@ public abstract class NutsPathBase implements NutsPath {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         NutsPathBase that = (NutsPathBase) o;
-        return  //Objects.equals(session, that.session)
-                //&&
-                Objects.equals(userKind, that.userKind)
-                && Objects.equals(toString(), toString())
+        return  Objects.equals(toString(), toString())
                 ;
     }
 
@@ -275,17 +257,17 @@ public abstract class NutsPathBase implements NutsPath {
 
     @Override
     public NutsStream<NutsPath> walk() {
-        return walk(Integer.MAX_VALUE,new NutsPathOption[0]);
+        return walk(Integer.MAX_VALUE, new NutsPathOption[0]);
     }
 
     @Override
     public NutsStream<NutsPath> walk(NutsPathOption... options) {
-        return walk(Integer.MAX_VALUE,options);
+        return walk(Integer.MAX_VALUE, options);
     }
 
     @Override
     public NutsStream<NutsPath> walk(int maxDepth) {
-        return walk(maxDepth<=0?Integer.MAX_VALUE:maxDepth,new NutsPathOption[0]);
+        return walk(maxDepth <= 0 ? Integer.MAX_VALUE : maxDepth, new NutsPathOption[0]);
     }
 
     @Override
@@ -300,10 +282,126 @@ public abstract class NutsPathBase implements NutsPath {
 
     @Override
     public boolean isHttp() {
-        if(!isURL()){
+        if (!isURL()) {
             return false;
         }
         String s = toString();
-        return s.startsWith("http://") ||s.startsWith("https://");
+        return s.startsWith("http://") || s.startsWith("https://");
     }
+
+
+    @Override
+    public NutsInputSourceMetadata getInputMetaData() {
+        return omd.asInput();
+    }
+
+    @Override
+    public NutsOutputTargetMetadata getOutputMetaData() {
+        return omd.asOutput();
+    }
+
+    @Override
+    public boolean isMultiRead() {
+        return true;
+    }
+
+    @Override
+    public void disposeMultiRead() {
+        //do nothing
+    }
+
+    @Override
+    public NutsMessage formatMessage(NutsSession session) {
+        if(session!=null) {
+            return NutsMessage.ofNtf(format(session));
+        }
+        return NutsMessage.ofPlain(toString());
+    }
+
+    //    public NutsRm fixMe_delete() {
+//        checkSession();
+//        Path t = _toPath(getTarget());
+//        if (t == null) {
+//            NutsUtils.requireNonBlank(getTarget(),getSession(),"target");
+//        }
+//        if (!Files.exists(t)) {
+//            grabException(new FileNotFoundException(t.toString()));
+//            return this;
+//        }
+//        if (Files.isRegularFile(t)) {
+//            try {
+//                Files.delete(t);
+//            } catch (IOException e) {
+//                grabException(e);
+//                return this;
+//            }
+//            return this;
+//        }
+//        final int[] deleted = new int[]{0, 0, 0};
+//        NutsLogger LOG = NutsLogger.of(CoreIOUtils.class,getSession());
+//        try {
+//            Files.walkFileTree(t, new FileVisitor<Path>() {
+//                @Override
+//                public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) throws IOException {
+//                    return FileVisitResult.CONTINUE;
+//                }
+//
+//                @Override
+//                public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
+//                    try {
+//                        Files.delete(file);
+//                        if (LOG != null) {
+//                            LOG.with().session(getSession()).level(Level.FINEST).verb(NutsLoggerVerb.WARNING)
+//                                    .log( NutsMessage.jstyle("delete file {0}", file));
+//                        }
+//                        deleted[0]++;
+//                    } catch (IOException e) {
+//                        if (LOG != null) {
+//                            LOG.with().session(getSession()).level(Level.FINEST).verb(NutsLoggerVerb.WARNING)
+//                                    .log( NutsMessage.jstyle("failed deleting file : {0}", file));
+//                        }
+//                        deleted[2]++;
+//                        grabException(e);
+//                    }
+//                    return FileVisitResult.CONTINUE;
+//                }
+//
+//                @Override
+//                public FileVisitResult visitFileFailed(Path file, IOException exc) throws IOException {
+//                    return FileVisitResult.CONTINUE;
+//                }
+//
+//                @Override
+//                public FileVisitResult postVisitDirectory(Path dir, IOException exc) throws IOException {
+//                    try {
+//                        Files.delete(dir);
+//                        if (LOG != null) {
+//                            LOG.with().session(getSession()).level(Level.FINEST).verb(NutsLoggerVerb.WARNING)
+//                                    .log( NutsMessage.jstyle("delete folder {0}", dir));
+//                        }
+//                        deleted[1]++;
+//                    } catch (IOException e) {
+//                        if (LOG != null) {
+//                            LOG.with().session(getSession()).level(Level.FINEST).verb(NutsLoggerVerb.WARNING)
+//                                    .log( NutsMessage.jstyle("failed deleting folder : {0}", dir));
+//                        }
+//                        deleted[2]++;
+//                        grabException(e);
+//                    }
+//                    return FileVisitResult.CONTINUE;
+//                }
+//            });
+//        } catch (IOException e) {
+//            if (error != null) {
+//                grabException(e);
+//            }
+//        }
+//        return this;
+//    }
+//    private void grabException(IOException e) {
+//        this.error = e;
+//        if (isFailFast()) {
+//            throw new NutsIOException(getSession(),e);
+//        }
+//    }
 }

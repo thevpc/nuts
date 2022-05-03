@@ -103,7 +103,7 @@ public class FolderObjectIterator<T> extends NutsIteratorBase<T> {
                                         return (deep && pathname.isDirectory()) || model.isObjectFile(pathname);
                                     } catch (Exception ex) {
                                         NutsLoggerOp.of(FolderObjectIterator.class, session).level(Level.FINE).error(ex)
-                                                .log(NutsMessage.jstyle("unable to test desk file {0}", pathname));
+                                                .log(NutsMessage.ofJstyle("unable to test desk file {0}", pathname));
                                         return false;
                                     }
                                 },"isDirectory || isObjectFile"
@@ -118,7 +118,7 @@ public class FolderObjectIterator<T> extends NutsIteratorBase<T> {
                         });
                     } catch (Exception ex) {
                         LOG.with().error(ex).log(
-                                NutsMessage.jstyle("unable to parse {0}", file.path));
+                                NutsMessage.ofJstyle("unable to parse {0}", file.path));
                     }
                 }
             } else {
@@ -154,7 +154,7 @@ public class FolderObjectIterator<T> extends NutsIteratorBase<T> {
         if (last != null) {
             model.remove(last, lastPath, session);
         } else {
-            throw new NutsUnsupportedOperationException(session, NutsMessage.cstyle("unsupported remove"));
+            throw new NutsUnsupportedOperationException(session, NutsMessage.ofPlain("unsupported remove"));
         }
     }
 

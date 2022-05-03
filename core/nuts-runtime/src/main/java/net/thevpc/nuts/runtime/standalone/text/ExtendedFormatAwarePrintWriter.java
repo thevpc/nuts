@@ -107,7 +107,7 @@ public class ExtendedFormatAwarePrintWriter extends PrintWriter implements Exten
     public ExtendedFormatAwarePrintWriter format(Locale l, String format, Object... args) {
         if (l == null) {
             print(NutsTexts.of(session).setSession(session).toText(
-                    NutsMessage.cstyle(
+                    NutsMessage.ofCstyle(
                             format, args
                     )
             ));
@@ -115,7 +115,7 @@ public class ExtendedFormatAwarePrintWriter extends PrintWriter implements Exten
             NutsSession s2 = this.session.copy().setLocale(l.toString());
             print(
                     NutsTexts.of(s2).toText(
-                            NutsMessage.cstyle(
+                            NutsMessage.ofCstyle(
                                     format, args
                             )
                     )

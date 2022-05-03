@@ -24,11 +24,18 @@
 package net.thevpc.nuts.reserved;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.boot.DefaultNutsWorkspaceBootOptionsBuilder;
+import net.thevpc.nuts.boot.NutsApiUtils;
 import net.thevpc.nuts.boot.NutsWorkspaceBootOptions;
 import net.thevpc.nuts.boot.NutsWorkspaceBootOptionsBuilder;
-import net.thevpc.nuts.util.NutsLoggerVerb;
-import net.thevpc.nuts.util.NutsPlatformUtils;
-import net.thevpc.nuts.util.NutsStringUtils;
+import net.thevpc.nuts.cmdline.NutsCommandLine;
+import net.thevpc.nuts.elem.NutsArrayElementBuilder;
+import net.thevpc.nuts.elem.NutsElements;
+import net.thevpc.nuts.io.NutsPrintStream;
+import net.thevpc.nuts.io.NutsTerminalMode;
+import net.thevpc.nuts.text.NutsTextStyle;
+import net.thevpc.nuts.text.NutsTexts;
+import net.thevpc.nuts.util.*;
 
 import java.io.*;
 import java.net.URL;
@@ -235,11 +242,11 @@ public final class NutsReservedUtils {
         if (confirm == NutsConfirmationMode.ASK
                 && o.getOutputFormat().orElse(NutsContentType.PLAIN) != NutsContentType.PLAIN) {
             throw new NutsBootException(
-                    NutsMessage.cstyle("unable to switch to interactive mode for non plain text output format. "
+                    NutsMessage.ofPlain("unable to switch to interactive mode for non plain text output format. "
                             + "You need to provide default response (-y|-n) for resetting/recovering workspace. "
                             + "You was asked to confirm deleting folders as part as recover/reset option."), 243);
         }
-        bLog.log(Level.FINE, NutsLoggerVerb.WARNING, NutsMessage.jstyle("delete workspace location(s) at : {0}", lastBootOptions.getWorkspace()));
+        bLog.log(Level.FINE, NutsLoggerVerb.WARNING, NutsMessage.ofJstyle("delete workspace location(s) at : {0}", lastBootOptions.getWorkspace()));
         boolean force = false;
         switch (confirm) {
             case ASK: {
@@ -251,8 +258,8 @@ public final class NutsReservedUtils {
             }
             case NO:
             case ERROR: {
-                bLog.log(Level.WARNING, NutsLoggerVerb.WARNING, NutsMessage.jstyle("reset cancelled (applied '--no' argument)"));
-                throw new NutsReservedBootCancelException(NutsMessage.plain("cancel delete folder"));
+                bLog.log(Level.WARNING, NutsLoggerVerb.WARNING, NutsMessage.ofPlain("reset cancelled (applied '--no' argument)"));
+                throw new NutsNoSessionCancelException(NutsMessage.ofPlain("cancel delete folder"));
             }
         }
         NutsWorkspaceConfigManager conf = null;
@@ -273,7 +280,7 @@ public final class NutsReservedUtils {
                 } else if (ovalue instanceof File) {
                     folders.add(((File) ovalue).toPath());
                 } else {
-                    throw new NutsBootException(NutsMessage.cstyle("unsupported path type : %s", ovalue));
+                    throw new NutsBootException(NutsMessage.ofCstyle("unsupported path type : %s", ovalue));
                 }
             }
         }
@@ -304,7 +311,7 @@ public final class NutsReservedUtils {
                                     if (session != null) {
                                         session.err().println(header);
                                     } else {
-                                        bLog.log(Level.WARNING, NutsLoggerVerb.WARNING, NutsMessage.jstyle("{0}", header));
+                                        bLog.log(Level.WARNING, NutsLoggerVerb.WARNING, NutsMessage.ofJstyle("{0}", header));
                                     }
                                 }
                             }
@@ -325,18 +332,21 @@ public final class NutsReservedUtils {
                 if (session != null) {
                     line = session.getTerminal().ask()
                             .resetLine()
-                            .forString("do you confirm deleting %s [y/n/c/a] (default 'n') ?", directory).setSession(session).getValue();
+                            .forString(
+                                    NutsMessage.ofCstyle(
+                                    "do you confirm deleting %s [y/n/c/a] (default 'n') ?", directory
+                                    )).setSession(session).getValue();
                 } else {
                     if (bOptions.getBot().orElse(false)) {
                         if (bOptions.getConfirm().orElse(NutsConfirmationMode.ASK) == NutsConfirmationMode.YES) {
                             line = "y";
                         } else {
-                            throw new NutsBootException(NutsMessage.plain("failed to delete files in --bot mode without auto confirmation"));
+                            throw new NutsBootException(NutsMessage.ofPlain("failed to delete files in --bot mode without auto confirmation"));
                         }
                     } else {
                         if (bOptions.getGui().orElse(false)) {
                             line = NutsReservedGuiUtils.inputString(
-                                    NutsMessage.cstyle("do you confirm deleting %s [y/n/c/a] (default 'n') ?", directory).toString(),
+                                    NutsMessage.ofCstyle("do you confirm deleting %s [y/n/c/a] (default 'n') ?", directory).toString(),
                                     null, () -> bLog.readLine(), bLog.err()
                             );
                         } else {
@@ -351,11 +361,11 @@ public final class NutsReservedUtils {
                                     break;
                                 }
                                 case ERROR: {
-                                    throw new NutsBootException(NutsMessage.plain("error response"));
+                                    throw new NutsBootException(NutsMessage.ofPlain("error response"));
                                 }
                                 case ASK: {
                                     // Level.OFF is to force logging in all cases
-                                    bLog.log(Level.OFF, NutsLoggerVerb.WARNING, NutsMessage.jstyle("do you confirm deleting {0} [y/n/c/a] (default 'n') ? : ", directory));
+                                    bLog.log(Level.OFF, NutsLoggerVerb.WARNING, NutsMessage.ofJstyle("do you confirm deleting {0} [y/n/c/a] (default 'n') ? : ", directory));
                                     line = bLog.readLine();
                                 }
                             }
@@ -365,7 +375,7 @@ public final class NutsReservedUtils {
                 if ("a".equalsIgnoreCase(line) || "all".equalsIgnoreCase(line)) {
                     refForceAll.setForce(true);
                 } else if ("c".equalsIgnoreCase(line)) {
-                    throw new NutsUserCancelException(session);
+                    throw new NutsCancelException(session);
                 } else if (!NutsValue.of(line).asBoolean().orElse(false)) {
                     refForceAll.ignore(directory);
                     return 0;
@@ -411,7 +421,7 @@ public final class NutsReservedUtils {
                     }
                 });
                 count[0]++;
-                bLog.log(Level.FINEST, NutsLoggerVerb.WARNING, NutsMessage.jstyle("delete folder : {0} ({1} files/folders deleted)", directory, count[0]));
+                bLog.log(Level.FINEST, NutsLoggerVerb.WARNING, NutsMessage.ofJstyle("delete folder : {0} ({1} files/folders deleted)", directory, count[0]));
             } catch (IOException ex) {
                 throw new UncheckedIOException(ex);
             }
@@ -540,7 +550,7 @@ public final class NutsReservedUtils {
 
     public static boolean acceptVersion(NutsVersion one, NutsVersion other) {
         if (!other.isSingleValue()) {
-            throw new NutsBootException(NutsMessage.cstyle("expected single value version: %s", other));
+            throw new NutsBootException(NutsMessage.ofCstyle("expected single value version: %s", other));
         }
         List<NutsVersionInterval> ii = one.intervals().get();
         if (ii.isEmpty()) {
@@ -594,7 +604,7 @@ public final class NutsReservedUtils {
             return NutsOptional.of(idBuilder.setCondition(conditionBuilder)
                     .setProperties(idProperties).build());
         }
-        return NutsOptional.ofError(session -> NutsMessage.cstyle("invalid id format : %s", nutsId));
+        return NutsOptional.ofError(session -> NutsMessage.ofCstyle("invalid id format : %s", nutsId));
     }
 
     private static void setIdProperty(String key, String value, NutsIdBuilder builder, NutsEnvConditionBuilder sb, Map<String, String> props) {
@@ -727,7 +737,7 @@ public final class NutsReservedUtils {
             }
             return updatedFile;
         } catch (IOException ex) {
-            bLog.log(Level.WARNING, NutsMessage.jstyle("unable to update update " + filePath), ex);
+            bLog.log(Level.WARNING, NutsMessage.ofPlain("unable to update update " + filePath), ex);
             return false;
         }
     }
@@ -769,7 +779,7 @@ public final class NutsReservedUtils {
                 }
             } catch (Exception e) {
                 //ignore
-                bLog.log(Level.FINEST, NutsLoggerVerb.FAIL, NutsMessage.jstyle("unable to undo NDI : {0}", e.toString()));
+                bLog.log(Level.FINEST, NutsLoggerVerb.FAIL, NutsMessage.ofJstyle("unable to undo NDI : {0}", e.toString()));
             }
         }
     }
@@ -877,5 +887,243 @@ public final class NutsReservedUtils {
             return NutsOptional.ofError(o.getMessage());
         }
         return NutsOptional.ofEmpty(o.getMessage());
+    }
+
+    /**
+     * process throwable and return exit code
+     *
+     * @param ex  exception
+     * @param out out stream
+     * @return exit code
+     */
+    public static int processThrowable(Throwable ex, PrintStream out) {
+        if (ex == null) {
+            return 0;
+        }
+
+        NutsSession session = NutsSessionAwareExceptionBase.resolveSession(ex).orNull();
+        NutsWorkspaceBootOptionsBuilder bo = null;
+        if (session != null) {
+            bo = session.boot().getBootOptions().builder();
+            if (bo.getGui().orElse(false)) {
+                if (!session.env().isGraphicalDesktopEnvironment()) {
+                    bo.setGui(false);
+                }
+            }
+        } else {
+            NutsWorkspaceBootOptionsBuilder options = new DefaultNutsWorkspaceBootOptionsBuilder();
+            //load inherited
+            String nutsArgs = NutsStringUtils.trim(
+                    NutsStringUtils.trim(System.getProperty("nuts.boot.args"))
+                            + " " + NutsStringUtils.trim(System.getProperty("nuts.args"))
+            );
+            try {
+                options.setCommandLine(NutsCommandLine.parseDefault(nutsArgs).get().toStringArray(),null);
+            } catch (Exception e) {
+                //any, ignore...
+            }
+            bo = options;
+            if (bo.getGui().orElse(false)) {
+                if (!NutsApiUtils.isGraphicalDesktopEnvironment()) {
+                    bo.setGui(false);
+                }
+            }
+        }
+
+        boolean bot = bo.getBot().orElse(false);
+        boolean gui = bo.getGui().orElse(false);
+        boolean showTrace = bo.getDebug()!=null;
+        NutsLogConfig logConfig = bo.getLogConfig().orElseGet(NutsLogConfig::new);
+        showTrace |= (logConfig != null
+                && logConfig.getLogTermLevel() != null
+                && logConfig.getLogTermLevel().intValue() < Level.INFO.intValue());
+        if (!showTrace) {
+            showTrace = NutsApiUtils.getSysBoolNutsProperty("debug", false);
+        }
+        if (bot) {
+            showTrace = false;
+            gui = false;
+        }
+        return NutsApiUtils.processThrowable(ex, out, true, showTrace, gui);
+    }
+
+    public static int processThrowable(Throwable ex, PrintStream out, boolean showMessage, boolean showTrace, boolean showGui) {
+        if (ex == null) {
+            return 0;
+        }
+        NutsSession session = NutsSessionAwareExceptionBase.resolveSession(ex).orNull();
+        NutsString fm = NutsSessionAwareExceptionBase.resolveSessionAwareExceptionBase(ex).map(NutsSessionAwareExceptionBase::getFormattedString)
+                .orNull();
+        int errorCode = NutsExceptionWithExitCodeBase.resolveExitCode(ex).orElse(204);
+        if (errorCode == 0) {
+            return 0;
+        }
+        String m = NutsReservedLangUtils.getErrorMessage(ex);
+        NutsPrintStream fout = null;
+        if (out == null) {
+            if (session != null) {
+                try {
+                    fout = session.config().getSystemTerminal().getErr();
+                    if (fm != null) {
+                        fm = NutsTexts.of(session).ofStyled(fm, NutsTextStyle.error());
+                    } else {
+                        fm = NutsTexts.of(session).ofStyled(m, NutsTextStyle.error());
+                    }
+                } catch (Exception ex2) {
+                    NutsLoggerOp.of(NutsApplications.class, session).level(Level.FINE).error(ex2).log(
+                            NutsMessage.ofPlain("unable to get system terminal")
+                    );
+                    //
+                }
+            } else {
+                if (fm != null) {
+                    // session is null but the exception is of NutsException type
+                    // This is kind of odd, so will ignore message fm
+                    fm = null;
+                } else {
+                    out = System.err;
+                }
+            }
+        } else {
+            if (session != null) {
+                fout = NutsPrintStream.of(out, NutsTerminalMode.FORMATTED,null, session);
+            } else {
+                fout = null;
+            }
+        }
+        if (showMessage) {
+
+            if (fout != null) {
+                if (session.getOutputFormat() == NutsContentType.PLAIN) {
+                    if (fm != null) {
+                        fout.println(fm);
+                    } else {
+                        fout.println(m);
+                    }
+                    if (showTrace) {
+                        ex.printStackTrace(fout.asPrintStream());
+                    }
+                    fout.flush();
+                } else {
+                    if (fm != null) {
+                        session.eout().add(NutsElements.of(session).ofObject()
+                                .set("app-id", session.getAppId() == null ? "" : session.getAppId().toString())
+                                .set("error", fm.filteredText())
+                                .build()
+                        );
+                        if (showTrace) {
+                            session.eout().add(NutsElements.of(session).ofObject().set("errorTrace",
+                                    NutsElements.of(session).ofArray().addAll(NutsReservedLangUtils.stacktraceToArray(ex)).build()
+                            ).build());
+                        }
+                        NutsArrayElementBuilder e = session.eout();
+                        if (e.size() > 0) {
+                            fout.printlnf(e.build());
+                            e.clear();
+                        }
+                        fout.flush();
+                    } else {
+                        session.eout().add(NutsElements.of(session).ofObject()
+                                .set("app-id", session.getAppId() == null ? "" : session.getAppId().toString())
+                                .set("error", m)
+                                .build());
+                        if (showTrace) {
+                            session.eout().add(NutsElements.of(session).ofObject().set("errorTrace",
+                                    NutsElements.of(session).ofArray().addAll(NutsReservedLangUtils.stacktraceToArray(ex)).build()
+                            ).build());
+                        }
+                        NutsArrayElementBuilder e = session.eout();
+                        if (e.size() > 0) {
+                            fout.printlnf(e.build());
+                            e.clear();
+                        }
+                        fout.flush();
+                    }
+                    fout.flush();
+                }
+            } else {
+                if (out == null) {
+                    out = System.err;
+                }
+                if (fm != null) {
+                    out.println(fm);
+                } else {
+                    out.println(m);
+                }
+                if (showTrace) {
+                    ex.printStackTrace(out);
+                }
+                out.flush();
+            }
+        }
+        if (showGui) {
+            StringBuilder sb = new StringBuilder();
+            if (fm != null) {
+                sb.append(fm.filteredText());
+            } else {
+                sb.append(m);
+            }
+            if (showTrace) {
+                if (sb.length() > 0) {
+                    sb.append("\n");
+                    sb.append(NutsReservedLangUtils.stacktrace(ex));
+                }
+            }
+            if (session != null) {
+                //TODO show we delegate to the workspace implementation?
+                NutsReservedGuiUtils.showMessage(NutsMessage.ofPlain(sb.toString()).toString(), "Nuts Package Manager - Error", out);
+            } else {
+                NutsReservedGuiUtils.showMessage(NutsMessage.ofPlain(sb.toString()).toString(), "Nuts Package Manager - Error", out);
+            }
+        }
+        return (errorCode);
+    }
+
+    public static Map<String, String> toMap(NutsEnvCondition condition) {
+        LinkedHashMap<String, String> m = new LinkedHashMap<>();
+        String s;
+        if (condition.getArch() != null) {
+            s = condition.getArch().stream().map(String::trim).filter(x -> !x.isEmpty()).collect(Collectors.joining(","));
+            if (!NutsBlankable.isBlank(s)) {
+                m.put(NutsConstants.IdProperties.ARCH, s);
+            }
+        }
+        if (condition.getOs() != null) {
+            s = condition.getOs().stream().map(String::trim).filter(x -> !x.isEmpty()).collect(Collectors.joining(","));
+            if (!NutsBlankable.isBlank(s)) {
+                m.put(NutsConstants.IdProperties.OS, s);
+            }
+        }
+        if (condition.getOsDist() != null) {
+            s = condition.getOsDist().stream().map(String::trim).filter(x -> !x.isEmpty()).collect(Collectors.joining(","));
+            if (!NutsBlankable.isBlank(s)) {
+                m.put(NutsConstants.IdProperties.OS_DIST, s);
+            }
+        }
+        if (condition.getPlatform() != null) {
+            s = formatStringIdList(condition.getPlatform());
+            if (!NutsBlankable.isBlank(s)) {
+                m.put(NutsConstants.IdProperties.PLATFORM, s);
+            }
+        }
+        if (condition.getDesktopEnvironment() != null) {
+            s = condition.getDesktopEnvironment().stream().map(String::trim).filter(x -> !x.isEmpty()).collect(Collectors.joining(","));
+            if (!NutsBlankable.isBlank(s)) {
+                m.put(NutsConstants.IdProperties.DESKTOP, s);
+            }
+        }
+        if (condition.getProfile() != null) {
+            s = condition.getProfile().stream().map(String::trim).filter(x -> !x.isEmpty()).collect(Collectors.joining(","));
+            if (!NutsBlankable.isBlank(s)) {
+                m.put(NutsConstants.IdProperties.PROFILE, s);
+            }
+        }
+        if (condition.getProperties() != null) {
+            Map<String, String> properties = condition.getProperties();
+            if (!properties.isEmpty()) {
+                m.put(NutsConstants.IdProperties.CONDITIONAL_PROPERTIES, NutsStringUtils.formatDefaultMap(properties));
+            }
+        }
+        return m;
     }
 }

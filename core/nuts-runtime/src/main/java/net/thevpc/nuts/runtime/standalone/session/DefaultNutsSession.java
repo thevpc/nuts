@@ -689,7 +689,7 @@ public class DefaultNutsSession implements Cloneable, NutsSession {
             }
             return cloned;
         } catch (CloneNotSupportedException e) {
-            throw new NutsUnsupportedOperationException(this, NutsMessage.cstyle("clone failed for type %s", getClass().getName()), e);
+            throw new NutsUnsupportedOperationException(this, NutsMessage.ofCstyle("clone failed for type %s", getClass().getName()), e);
         }
     }
 
@@ -817,7 +817,7 @@ public class DefaultNutsSession implements Cloneable, NutsSession {
                 }
             }
             if (!ok) {
-                throw new NutsIllegalArgumentException(this, NutsMessage.cstyle("unsupported Listener %s : %s", listener.getClass().getName(), listener));
+                throw new NutsIllegalArgumentException(this, NutsMessage.ofCstyle("unsupported Listener %s : %s", listener.getClass().getName(), listener));
             }
         }
         return this;
@@ -1012,7 +1012,7 @@ public class DefaultNutsSession implements Cloneable, NutsSession {
         if (terminal != null) {
             AbstractNutsSessionTerminal a = (AbstractNutsSessionTerminal) terminal;
             if (a.getSession() != this) {
-                throw new NutsIllegalArgumentException(this, NutsMessage.cstyle("session mismatch"));
+                throw new NutsIllegalArgumentException(this, NutsMessage.ofPlain("session mismatch"));
             }
             NutsPrintStream o = a.getOut();
         }

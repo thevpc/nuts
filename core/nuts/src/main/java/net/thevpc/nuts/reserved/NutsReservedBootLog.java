@@ -85,7 +85,7 @@ public class NutsReservedBootLog implements NutsLogger {
 
     @Override
     public void log(LogRecord record) {
-        log(record.getLevel(),NutsMessage.plain(record.getMessage()),record.getThrown());
+        log(record.getLevel(),NutsMessage.ofPlain(record.getMessage()),record.getThrown());
     }
 
     @Override

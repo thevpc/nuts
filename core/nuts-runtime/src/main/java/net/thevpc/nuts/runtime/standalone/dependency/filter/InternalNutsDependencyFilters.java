@@ -3,6 +3,7 @@ package net.thevpc.nuts.runtime.standalone.dependency.filter;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.standalone.util.filters.InternalNutsTypedFilters;
 import net.thevpc.nuts.spi.NutsSupportLevelContext;
+import net.thevpc.nuts.util.NutsUtils;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -79,9 +80,8 @@ public class InternalNutsDependencyFilters extends InternalNutsTypedFilters<Nuts
             return null;
         }
         NutsDependencyFilter t = as(a);
-        if (t == null) {
-            throw new NutsIllegalArgumentException(getSession(), NutsMessage.cstyle("not a NutsDependencyFilter"));
-        }
+        NutsSession session = getSession();
+        NutsUtils.requireNonNull(t, session,"InstallDependencyFilter");
         return t;
     }
 

@@ -35,26 +35,23 @@ public class DefaultNutsObjectElement extends AbstractNutsObjectElement {
         }
         NutsPrimitiveElement newKey = elements.ofString(s);
         NutsElement value = values.get(newKey);
-        return NutsOptional.of(value, session -> NutsMessage.cstyle("field not found : %s", s));
+        return NutsOptional.ofNamed(value, "property " + s);
     }
 
     @Override
     public NutsOptional<NutsElement> get(NutsElement s) {
-        return NutsOptional.of(values.get(s), session -> NutsMessage.cstyle("field not found : %s", s));
+        return NutsOptional.ofNamed(values.get(s), "property " + s);
     }
 
 
     @Override
     public Collection<NutsElementEntry> entries() {
-        return values.entrySet().stream()
-                .map(x -> new DefaultNutsElementEntry(x.getKey(), x.getValue()))
-                .collect(Collectors.toList());
+        return values.entrySet().stream().map(x -> new DefaultNutsElementEntry(x.getKey(), x.getValue())).collect(Collectors.toList());
     }
 
     @Override
     public Stream<NutsElementEntry> stream() {
-        return values.entrySet().stream()
-                .map(x -> new DefaultNutsElementEntry(x.getKey(), x.getValue()));
+        return values.entrySet().stream().map(x -> new DefaultNutsElementEntry(x.getKey(), x.getValue()));
     }
 
     @Override
@@ -64,9 +61,7 @@ public class DefaultNutsObjectElement extends AbstractNutsObjectElement {
 
     @Override
     public NutsObjectElementBuilder builder() {
-        return NutsElements.of(session)
-                .ofObject()
-                .set(this);
+        return NutsElements.of(session).ofObject().set(this);
     }
 
     @Override
@@ -101,11 +96,7 @@ public class DefaultNutsObjectElement extends AbstractNutsObjectElement {
 
     @Override
     public String toString() {
-        return "{" + entries().stream().map(x ->
-                x.getKey()
-                        + ":"
-                        + x.getValue().toString()
-        ).collect(Collectors.joining(", ")) + "}";
+        return "{" + entries().stream().map(x -> x.getKey() + ":" + x.getValue().toString()).collect(Collectors.joining(", ")) + "}";
     }
 
     @Override

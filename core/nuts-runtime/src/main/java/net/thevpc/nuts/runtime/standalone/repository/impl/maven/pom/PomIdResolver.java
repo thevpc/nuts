@@ -66,7 +66,7 @@ public class PomIdResolver {
                     NutsLoggerOp.of(PomXmlParser.class,session)
                             .verb(NutsLoggerVerb.WARNING)
                             .level(Level.FINEST)
-                            .log(NutsMessage.cstyle("failed to parse pom file %s : %s", s2, ex));
+                            .log(NutsMessage.ofCstyle("failed to parse pom file %s : %s", s2, ex));
                 }
             }
         }
@@ -93,7 +93,7 @@ public class PomIdResolver {
             NutsLoggerOp.of(PomXmlParser.class,session)
                     .verb(NutsLoggerVerb.WARNING)
                     .level(Level.FINEST)
-                    .log(NutsMessage.cstyle("failed to parse class %s : %s", clazz.getName(), ex));
+                    .log(NutsMessage.ofCstyle("failed to parse class %s : %s", clazz.getName(), ex));
         }
         if(all.isEmpty() && JavaClassUtils.isCGLib(clazz)){
             Class s = JavaClassUtils.unwrapCGLib(clazz);
@@ -114,7 +114,7 @@ public class PomIdResolver {
             NutsLoggerOp.of(PomXmlParser.class,session)
                     .verb(NutsLoggerVerb.WARNING)
                     .level(Level.FINEST)
-                    .log(NutsMessage.cstyle(
+                    .log(NutsMessage.ofCstyle(
                             "multiple ids found : %s for class %s and id %s",
                             Arrays.asList(pomIds),clazz,defaultValue
                     ));

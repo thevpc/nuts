@@ -57,14 +57,14 @@ public class NutsReservedOptionalValid<T> extends NutsReservedOptionalImpl<T> {
     public NutsOptional<T> ifBlankNull() {
         T v = get();
         if (NutsBlankable.isBlank(v)) {
-            return NutsOptional.ofEmpty((session) -> NutsMessage.cstyle("blank value"));
+            return NutsOptional.ofEmpty((session) -> NutsMessage.ofPlain("blank value"));
         }
         return this;
     }
 
     @Override
     public Function<NutsSession, NutsMessage> getMessage() {
-        return (session) -> NutsMessage.cstyle("element not found");
+        return (session) -> NutsMessage.ofPlain("element not found");
     }
 
     @Override
@@ -75,5 +75,25 @@ public class NutsReservedOptionalValid<T> extends NutsReservedOptionalImpl<T> {
     @Override
     public String toString() {
         return "ValidOptional@" + System.identityHashCode(this) + "=" + get();
+    }
+
+    @Override
+    public NutsOptional<T> withDefault(T value) {
+        return this;
+    }
+
+    @Override
+    public NutsOptional<T> withoutDefault() {
+        return this;
+    }
+
+    @Override
+    public T orDefault() {
+        return get();
+    }
+
+    @Override
+    public NutsOptional<T> withDefault(Supplier<T> value) {
+        return this;
     }
 }

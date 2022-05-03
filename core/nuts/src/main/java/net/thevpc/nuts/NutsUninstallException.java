@@ -54,6 +54,6 @@ public class NutsUninstallException extends NutsInstallationException {
      */
     public NutsUninstallException(NutsSession session, NutsId id, NutsMessage msg, Throwable ex) {
         super(session, id,
-                msg == null ? NutsMessage.cstyle("unable to uninstall %s", (id == null ? "<null>" : id)) : msg, ex);
+                msg == null ? NutsMessage.ofCstyle("unable to uninstall %s", (id == null ? "<null>" : id)) : msg, ex);
     }
 }

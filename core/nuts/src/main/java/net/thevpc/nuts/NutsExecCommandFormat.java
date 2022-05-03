@@ -25,7 +25,7 @@
  */
 package net.thevpc.nuts;
 
-import net.thevpc.nuts.boot.NutsApiUtils;
+import net.thevpc.nuts.util.NutsUtils;
 
 import java.util.function.Function;
 import java.util.function.Predicate;
@@ -40,7 +40,7 @@ import java.util.function.Predicate;
  */
 public interface NutsExecCommandFormat extends NutsFormat {
     static NutsExecCommandFormat of(NutsSession session) {
-        NutsApiUtils.checkSession(session);
+        NutsUtils.requireSession(session);
         return session.extensions().createSupported(NutsExecCommandFormat.class, true, null);
     }
 

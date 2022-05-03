@@ -27,52 +27,109 @@
 package net.thevpc.nuts;
 
 import net.thevpc.nuts.text.NutsTextFormatStyle;
+import net.thevpc.nuts.text.NutsTextStyle;
+import net.thevpc.nuts.text.NutsTextStyles;
 import net.thevpc.nuts.text.NutsTexts;
+import net.thevpc.nuts.util.NutsStringUtils;
+import net.thevpc.nuts.util.NutsUtils;
 
 import java.text.MessageFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Formatter;
-import java.util.List;
+import java.util.*;
 
 public class NutsMessage {
 
+    public static final Object[] NO_PARAMS = new Object[0];
+    private final String codeLang;
     private final String message;
-    private final NutsTextFormatStyle style;
+    private final NutsTextFormatStyle format;
     private final Object[] params;
+    private final NutsTextStyles styles;
 
-    public NutsMessage(NutsTextFormatStyle style, String message, Object... params) {
-        if (message == null || params == null || style == null) {
-            throw new NullPointerException();
-        }
-        this.style = style;
-        if (style == NutsTextFormatStyle.PLAIN || style == NutsTextFormatStyle.FORMATTED) {
-            if (params != null && params.length > 0) {
-                throw new IllegalArgumentException("arguments are not supported for " + style);
+    private static NutsMessage of(NutsTextFormatStyle format, String message, Object[] params, NutsTextStyles styles, String codeLang) {
+        return new NutsMessage(format, message, params, styles, codeLang);
+    }
+
+    private NutsMessage(NutsTextFormatStyle format, String message, Object[] params, NutsTextStyles styles, String codeLang) {
+        NutsUtils.requireNonNull(message, "message");
+        NutsUtils.requireNonNull(format, "format");
+        NutsUtils.requireNonNull(params, "params");
+        this.format = format;
+        this.styles = styles;
+        if (format == NutsTextFormatStyle.PLAIN
+                || format == NutsTextFormatStyle.NTF
+                || format == NutsTextFormatStyle.STYLED
+                || format == NutsTextFormatStyle.CODE
+        ) {
+            if (params.length > 0) {
+                throw new IllegalArgumentException("arguments are not supported for " + format);
             }
         }
+        if (format == NutsTextFormatStyle.STYLED) {
+            if (styles == null) {
+                throw new IllegalArgumentException("missing style for " + format);
+            }
+        } else {
+            if (styles != null) {
+                throw new IllegalArgumentException("styles not supported for " + format);
+            }
+        }
+        this.codeLang = NutsStringUtils.trimToNull(codeLang);
         this.message = message;
         this.params = params;
     }
 
-    public static NutsMessage formatted(String message) {
-        return new NutsMessage(NutsTextFormatStyle.FORMATTED, message);
+    public static NutsMessage ofNtf(String message) {
+        return of(NutsTextFormatStyle.NTF, message, NO_PARAMS, null, null);
     }
 
-    public static NutsMessage plain(String message) {
-        return new NutsMessage(NutsTextFormatStyle.PLAIN, message);
+    public static NutsMessage ofCode(String lang, String text) {
+        return of(NutsTextFormatStyle.CODE, text, NO_PARAMS, null, lang);
     }
 
-    public static NutsMessage cstyle(String message, Object... params) {
-        return new NutsMessage(NutsTextFormatStyle.CSTYLE, message, params);
+    public static NutsMessage ofCode(String text) {
+        return of(NutsTextFormatStyle.CODE, text, NO_PARAMS, null, null);
     }
 
-    public static NutsMessage jstyle(String message, Object... params) {
-        return new NutsMessage(NutsTextFormatStyle.JSTYLE, message, params);
+    public static NutsMessage ofStyled(String message, NutsTextStyle style) {
+        return of(NutsTextFormatStyle.STYLED, message, NO_PARAMS, style == null ? null : NutsTextStyles.of(style), null);
     }
 
-    public NutsTextFormatStyle getStyle() {
-        return style;
+    public static NutsMessage ofStyled(String message, NutsTextStyles styles) {
+        return of(NutsTextFormatStyle.STYLED, message, NO_PARAMS, styles, null);
+    }
+
+    public static NutsMessage ofNtf(NutsString message) {
+        return of(NutsTextFormatStyle.NTF, message.toString(), NO_PARAMS, null, null);
+    }
+
+    public static NutsMessage ofPlain(String message) {
+        return of(NutsTextFormatStyle.PLAIN, message, NO_PARAMS, null, null);
+    }
+
+    @Deprecated
+    public static NutsMessage ofCstyle(String message) {
+        return of(NutsTextFormatStyle.CSTYLE, message, NO_PARAMS, null, null);
+    }
+
+    public static NutsMessage ofCstyle(String message, Object... params) {
+        return of(NutsTextFormatStyle.CSTYLE, message, params, null, null);
+    }
+
+    @Deprecated
+    public static NutsMessage ofJstyle(String message) {
+        return of(NutsTextFormatStyle.JSTYLE, message, NO_PARAMS, null, null);
+    }
+
+    public static NutsMessage ofJstyle(String message, Object... params) {
+        return of(NutsTextFormatStyle.JSTYLE, message, params, null, null);
+    }
+
+    public NutsTextFormatStyle getFormat() {
+        return format;
+    }
+
+    public NutsTextStyles getStyles() {
+        return styles;
     }
 
     public String getMessage() {
@@ -83,46 +140,13 @@ public class NutsMessage {
         return params;
     }
 
-    public NutsString toNutsString(NutsSession session) {
-        return NutsTexts.of(session).toText(this);
-    }
-
-    public NutsMessage concat(NutsSession session, NutsMessage... others) {
-        if (others == null || others.length == 0) {
-            return this;
-        }
-        NutsMessage m = this;
-        for (NutsMessage other : others) {
-            if (other != null && other.getMessage().length() > 0) {
-                if (m.getStyle() == other.getStyle()
-                        && (
-                        //these are non indexed param styles
-                        m.getStyle() == NutsTextFormatStyle.CSTYLE
-                                || m.getStyle() == NutsTextFormatStyle.FORMATTED
-                                || m.getStyle() == NutsTextFormatStyle.PLAIN
-                )
-                ) {
-                    List<Object> allParams = new ArrayList<>(Arrays.asList(m.getParams()));
-                    allParams.addAll(Arrays.asList(other.getParams()));
-                    m = new NutsMessage(
-                            m.getStyle(),
-                            m.getMessage() + other.getMessage(),
-                            allParams.toArray()
-                    );
-                } else {
-                    //need to format
-                    m = NutsMessage.formatted(
-                            NutsTexts.of(session).builder().append(m).append(other).toText().toString()
-                    );
-                }
-            }
-        }
-        return m;
+    public String getCodeLang() {
+        return codeLang;
     }
 
     @Override
     public String toString() {
-        switch (style) {
+        switch (format) {
             case CSTYLE: {
                 StringBuilder sb = new StringBuilder();
                 new Formatter(sb).format(message, params);
@@ -131,14 +155,14 @@ public class NutsMessage {
             case JSTYLE: {
                 return MessageFormat.format(message, params);
             }
-            case FORMATTED: {
-                return message;
-            }
+            case NTF:
+            case STYLED:
+            case CODE:
             case PLAIN: {
-                return message;
+                return message; //ignore any style
             }
         }
-        return "NutsMessage{" + "message=" + message + ", style=" + style + ", params=" + params + '}';
+        return "NutsMessage{" + "message=" + message + ", style=" + format + ", params=" + params + '}';
     }
 
 }

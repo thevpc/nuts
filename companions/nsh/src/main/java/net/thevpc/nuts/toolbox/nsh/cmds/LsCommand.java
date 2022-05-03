@@ -115,7 +115,7 @@ public class LsCommand extends SimpleJShellBuiltin {
                     errors = new ResultError();
                     errors.workingDir = context.getAbsolutePath(".");
                 }
-                errors.result.put(path, NutsMessage.cstyle("cannot access '%s': No such file or directory", path));
+                errors.result.put(path, NutsMessage.ofCstyle("cannot access '%s': No such file or directory", path));
                 continue;
             }
             NutsPath file = NutsPath.of(path, session);
@@ -124,7 +124,7 @@ public class LsCommand extends SimpleJShellBuiltin {
                     errors = new ResultError();
                     errors.workingDir = context.getAbsolutePath(".");
                 }
-                errors.result.put(path, NutsMessage.cstyle("cannot access '%s': No such file or directory", path));
+                errors.result.put(path, NutsMessage.ofCstyle("cannot access '%s': No such file or directory", path));
                 continue;
             }
             file = file.toAbsolute(NutsPath.of(context.getCwd(), session));
@@ -134,7 +134,7 @@ public class LsCommand extends SimpleJShellBuiltin {
                     errors = new ResultError();
                     errors.workingDir = context.getAbsolutePath(".");
                 }
-                errors.result.put(path, NutsMessage.cstyle("cannot access '%s': No such file or directory", file));
+                errors.result.put(path, NutsMessage.ofCstyle("cannot access '%s': No such file or directory", file));
             } else {
                 ResultGroup g = new ResultGroup();
                 g.name = path;

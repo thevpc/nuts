@@ -1,7 +1,7 @@
 package net.thevpc.nuts.runtime.standalone.text;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.io.NutsStreamMetadata;
+import net.thevpc.nuts.io.NutsIO;
 import net.thevpc.nuts.runtime.standalone.session.NutsSessionUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.NutsWorkspaceExt;
 import net.thevpc.nuts.runtime.standalone.text.highlighter.CustomStyleCodeHighlighter;
@@ -36,9 +36,9 @@ public class DefaultNutsTexts implements NutsTexts {
 
     private NutsText _NutsMessage_toString(NutsMessage m) {
         checkSession();
-        NutsTextFormatStyle style = m.getStyle();
-        if (style == null) {
-            style = NutsTextFormatStyle.JSTYLE;
+        NutsTextFormatStyle format = m.getFormat();
+        if (format == null) {
+            format = NutsTextFormatStyle.JSTYLE;
         }
         Object[] params = m.getParams();
         if (params == null) {
@@ -61,7 +61,7 @@ public class DefaultNutsTexts implements NutsTexts {
                 args2[i] = txt.toText(a).toString();
             }
         }
-        switch (style) {
+        switch (format) {
             case CSTYLE: {
                 StringBuilder sb = new StringBuilder();
                 new Formatter(sb, locale).format(msg, args2);
@@ -73,11 +73,17 @@ public class DefaultNutsTexts implements NutsTexts {
             case PLAIN: {
                 return txt.ofPlain(msg);
             }
-            case FORMATTED: {
+            case NTF: {
                 return txt.parse(msg);
             }
+            case STYLED: {
+                return txt.ofStyled(msg, m.getStyles());
+            }
+            case CODE: {
+                return txt.ofCodeOrCommand(m.getCodeLang(), msg);
+            }
         }
-        throw new NutsUnsupportedEnumException(getSession(), style);
+        throw new NutsUnsupportedEnumException(getSession(), format);
     }
 
     public NutsText title(NutsText t, int level) {
@@ -136,17 +142,14 @@ public class DefaultNutsTexts implements NutsTexts {
             return _NutsMessage_toString((NutsMessage) t);
         }
         if (t instanceof NutsMessageFormattable) {
-            NutsMessage m = ((NutsMessageFormattable) t).format(getSession());
+            NutsMessage m = ((NutsMessageFormattable) t).formatMessage(getSession());
             return _NutsMessage_toString(m);
         }
         if (t instanceof NutsString) {
             return ((NutsString) t).toText();
         }
         if (t instanceof InputStream) {
-            String q = NutsStreamMetadata.of((InputStream) t).getName();
-            if (q == null) {
-                q = t.toString();
-            }
+            String q = NutsIO.of(session).createInputSource((InputStream) t).getInputMetaData().getName().orElse(t.toString());
             return ofStyled(q, NutsTextStyle.path());
         }
         if (t instanceof OutputStream || t instanceof Writer) {
@@ -273,24 +276,24 @@ public class DefaultNutsTexts implements NutsTexts {
 
     @Override
     public NutsText ofCodeOrCommand(String text) {
-        if(text==null){
-            text="";
+        if (text == null) {
+            text = "";
         }
         int i = 0;
         while (i < text.length() && text.charAt(i) != ':' && !Character.isWhitespace(text.charAt(i))) i++;
         String cmd = null;
         String value = null;
-        if(i==text.length()){
+        if (i == text.length()) {
             //this is a command only text, try
-            if(text.startsWith("!")){
-                cmd=text.trim();
-                value="";
-            }else{
-                cmd="";
-                value=text;
+            if (text.startsWith("!")) {
+                cmd = text.trim();
+                value = "";
+            } else {
+                cmd = "";
+                value = text;
             }
-            return ofCodeOrCommand(cmd,value);
-        }else {
+            return ofCodeOrCommand(cmd, value);
+        } else {
             char sep = ' ';
             if (i < text.length()) {
                 cmd = text.substring(0, i);
@@ -312,7 +315,7 @@ public class DefaultNutsTexts implements NutsTexts {
                 cmd = null;
                 value = text;
             }
-            return ofCodeOrCommand(cmd,value,sep);
+            return ofCodeOrCommand(cmd, value, sep);
         }
     }
 
@@ -339,7 +342,7 @@ public class DefaultNutsTexts implements NutsTexts {
 
     private void checkValidSeparator(char sep) {
         if (sep != ':' && !Character.isWhitespace(sep)) {
-            throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("invalid separator '%s'", sep));
+            throw new NutsIllegalArgumentException(session, NutsMessage.ofCstyle("invalid separator '%s'", sep));
         }
     }
 
@@ -397,7 +400,7 @@ public class DefaultNutsTexts implements NutsTexts {
         checkValidSeparator(sep);
         return createLink(
                 "```!",
-                ""+sep, "```", value
+                "" + sep, "```", value
         );
     }
 

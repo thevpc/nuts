@@ -316,7 +316,7 @@ public class JavaExecutorComponent implements NutsExecutorComponent {
                     }
                     port = NetUtils.detectRandomFreeTcpPort(port, maxPort + 1);
                     if (port < 0) {
-                        throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("unable to resolve valid debug port %d-%d", port, port + 1000));
+                        throw new NutsIllegalArgumentException(session, NutsMessage.ofCstyle("unable to resolve valid debug port %d-%d", port, port + 1000));
                     }
                     String ds = "-agentlib:jdwp=transport=dt_socket,server=y,suspend=" + (jdb.isSuspend() ? 'y' : 'n') + ",address=" + port;
                     xargs.add(txt.ofPlain(ds));
@@ -432,9 +432,9 @@ public class JavaExecutorComponent implements NutsExecutorComponent {
                 }
                 if (joptions.getMainClass() == null) {
                     if (joptions.isJar()) {
-                        throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("jar mode and embedded mode are exclusive for %s", def.getId()));
+                        throw new NutsIllegalArgumentException(session, NutsMessage.ofCstyle("jar mode and embedded mode are exclusive for %s", def.getId()));
                     } else {
-                        throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("unable resolve class name for %s", def.getId()));
+                        throw new NutsIllegalArgumentException(session, NutsMessage.ofCstyle("unable resolve class name for %s", def.getId()));
                     }
                 }
                 Class<?> cls = Class.forName(joptions.getMainClass(), true, classLoader);
@@ -453,7 +453,7 @@ public class JavaExecutorComponent implements NutsExecutorComponent {
                 if (!(th instanceof NutsExecutionException)) {
                     NutsWorkspaceExt.of(getSession()).getModel().recomm.getRecommendations(new RequestQueryInfo(def.getId().toString(), th), NutsRecommendationPhase.EXEC, false, getSession());
                     throw new NutsExecutionException(session,
-                            NutsMessage.cstyle("error executing %s : %s", def.getId(), th)
+                            NutsMessage.ofCstyle("error executing %s : %s", def.getId(), th)
                             , th);
                 }
                 NutsExecutionException nex = (NutsExecutionException) th;
@@ -461,7 +461,7 @@ public class JavaExecutorComponent implements NutsExecutorComponent {
                     if (def != null) {
                         NutsWorkspaceExt.of(getSession()).getModel().recomm.getRecommendations(new RequestQueryInfo(def.getId().toString(), nex), NutsRecommendationPhase.EXEC, false, getSession());
                     }
-                    throw new NutsExecutionException(session, NutsMessage.cstyle("error executing %s : %s", def == null ? null : def.getId(), th), th);
+                    throw new NutsExecutionException(session, NutsMessage.ofCstyle("error executing %s : %s", def == null ? null : def.getId(), th), th);
                 }
             }
             return 0;

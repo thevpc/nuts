@@ -28,6 +28,7 @@ public class DotfilefsPath extends AbstractPathSPIAdapter {
 
     public static final String PROTOCOL = "dotfilefs";
     public static final String PREFIX = PROTOCOL + ":";
+
     public static class DotfilefsFactory implements NutsPathFactory {
         private NutsWorkspace ws;
 
@@ -38,16 +39,17 @@ public class DotfilefsPath extends AbstractPathSPIAdapter {
         @Override
         public NutsSupported<NutsPathSPI> createPath(String path, NutsSession session, ClassLoader classLoader) {
             NutsSessionUtils.checkSession(ws, session);
-            if(path.startsWith(PREFIX)) {
+            if (path.startsWith(PREFIX)) {
                 return NutsSupported.of(10, () -> new DotfilefsPath(path, session));
             }
             return null;
         }
     }
+
     public DotfilefsPath(String url, NutsSession session) {
         super(NutsPath.of(url.substring(PREFIX.length()), session), session);
         if (!url.startsWith(PREFIX)) {
-            throw new NutsUnsupportedArgumentException(session, NutsMessage.cstyle("expected prefix '" + PREFIX + "'"));
+            throw new NutsUnsupportedArgumentException(session, NutsMessage.ofCstyle("expected prefix '%s'", PREFIX));
         }
     }
 
@@ -127,7 +129,7 @@ public class DotfilefsPath extends AbstractPathSPIAdapter {
 
     @Override
     public boolean isDirectory(NutsPath basePath) {
-        if(NutsBlankable.isBlank(basePath.getLocation()) || basePath.getLocation().endsWith("/")){
+        if (NutsBlankable.isBlank(basePath.getLocation()) || basePath.getLocation().endsWith("/")) {
             return true;
         }
         String t = getContentType(basePath);
@@ -203,16 +205,16 @@ public class DotfilefsPath extends AbstractPathSPIAdapter {
 
 
     private List<String> parseHtml(String baseUrl) {
-        boolean folders=true;
-        boolean files=true;
+        boolean folders = true;
+        boolean files = true;
         List<String> all = new ArrayList<>();
         InputStream foldersFileStream = null;
         String dotFilesUrl = baseUrl + "/" + CoreNutsConstants.Files.DOT_FILES;
         NutsVersion versionString = NutsVersion.of("0.5.5").get(session);
         try {
-            session.getTerminal().printProgress("%-8s %s", "browse",NutsPath.of(baseUrl,session).toCompressedForm());
-            foldersFileStream = NutsInputStreamMonitor.of(session).setSource(dotFilesUrl).create();
-            List<String> splitted = StringTokenizerUtils.splitNewLine(CoreIOUtils.loadString(foldersFileStream, true,session));
+            session.getTerminal().printProgress("%-8s %s", "browse", NutsPath.of(baseUrl, session).toCompressedForm());
+            foldersFileStream = NutsInputStreamMonitor.of(session).setSource(NutsPath.of(dotFilesUrl, session)).create();
+            List<String> splitted = StringTokenizerUtils.splitNewLine(CoreIOUtils.loadString(foldersFileStream, true, session));
             for (String s : splitted) {
                 s = s.trim();
                 if (s.length() > 0) {
@@ -241,8 +243,8 @@ public class DotfilefsPath extends AbstractPathSPIAdapter {
                                 }
                                 if (s.length() > 0 && !s.equals("..")) {
                                     if (folders) {
-                                        if(!s.endsWith("/")){
-                                            s=s+"/";
+                                        if (!s.endsWith("/")) {
+                                            s = s + "/";
                                         }
                                         all.add(s);
                                     }
@@ -261,25 +263,25 @@ public class DotfilefsPath extends AbstractPathSPIAdapter {
                 }
             }
         } catch (UncheckedIOException | NutsIOException ex) {
-            NutsLoggerOp.of(DotfilefsPath.class,session).level(Level.FINE).verb(NutsLoggerVerb.FAIL)
-                    .log(NutsMessage.jstyle("unable to navigate : file not found {0}", dotFilesUrl));
+            NutsLoggerOp.of(DotfilefsPath.class, session).level(Level.FINE).verb(NutsLoggerVerb.FAIL)
+                    .log(NutsMessage.ofJstyle("unable to navigate : file not found {0}", dotFilesUrl));
         }
         if (versionString.compareTo("0.5.7") < 0) {
             if (folders) {
                 String[] foldersFileContent = null;
                 String dotFolderUrl = baseUrl + "/" + CoreNutsConstants.Files.DOT_FOLDERS;
-                try (InputStream stream = NutsInputStreamMonitor.of(session).setSource(dotFolderUrl)
+                try (InputStream stream = NutsInputStreamMonitor.of(session).setSource(NutsPath.of(dotFolderUrl, session))
                         .create()) {
-                    foldersFileContent = StringTokenizerUtils.splitNewLine(CoreIOUtils.loadString(stream, true,session))
+                    foldersFileContent = StringTokenizerUtils.splitNewLine(CoreIOUtils.loadString(stream, true, session))
                             .stream().map(x -> x.trim()).filter(x -> x.length() > 0).toArray(String[]::new);
                 } catch (IOException | UncheckedIOException | NutsIOException ex) {
-                    NutsLoggerOp.of(DotfilefsPath.class,session).level(Level.FINE).verb(NutsLoggerVerb.FAIL)
-                            .log(NutsMessage.jstyle("unable to navigate : file not found {0}", dotFolderUrl));
+                    NutsLoggerOp.of(DotfilefsPath.class, session).level(Level.FINE).verb(NutsLoggerVerb.FAIL)
+                            .log(NutsMessage.ofJstyle("unable to navigate : file not found {0}", dotFolderUrl));
                 }
                 if (foldersFileContent != null) {
                     for (String folder : foldersFileContent) {
-                        if(!folder.endsWith("/")){
-                            folder=folder+"/";
+                        if (!folder.endsWith("/")) {
+                            folder = folder + "/";
                         }
                         all.add(folder);
                     }

@@ -10,7 +10,6 @@ import net.thevpc.nuts.toolbox.nwork.config.RepositoryAddress;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
-import java.nio.file.Path;
 import java.util.List;
 
 public class ProjectService {
@@ -207,7 +206,7 @@ public class ProjectService {
             }
             String nutsRepository = a.getNutsRepository();
             if (NutsBlankable.isBlank(nutsRepository)) {
-                throw new NutsExecutionException(session, NutsMessage.cstyle("missing repository. try 'nwork set -r vpc-public-maven' or something like that"), 2);
+                throw new NutsExecutionException(session, NutsMessage.ofPlain("missing repository. try 'nwork set -r vpc-public-maven' or something like that"), 2);
             }
             try {
                 NutsSession s = null;
@@ -255,7 +254,7 @@ public class ProjectService {
                     String nutsRepository = a.getNutsRepository();
                     NutsSession session = appContext.getSession();
                     if (NutsBlankable.isBlank(nutsRepository)) {
-                        throw new NutsExecutionException(session, NutsMessage.cstyle("missing repository. try 'nwork set -r vpc-public-maven' or something like that"), 2);
+                        throw new NutsExecutionException(session, NutsMessage.ofPlain("missing repository. try 'nwork set -r vpc-public-maven' or something like that"), 2);
                     }
                     try {
                         NutsDescriptor g = NutsDescriptorParser.of(session)
@@ -281,7 +280,7 @@ public class ProjectService {
                             return found.get(0).getVersion().toString();
                         }
                     } catch (Exception e) {
-                        throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("unable to process %s", f), e);
+                        throw new NutsIllegalArgumentException(session, NutsMessage.ofCstyle("unable to process %s", f), e);
                     }
                 }
             }

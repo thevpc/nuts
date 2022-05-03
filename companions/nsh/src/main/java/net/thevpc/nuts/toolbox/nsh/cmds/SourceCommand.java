@@ -83,7 +83,7 @@ public class SourceCommand extends SimpleJShellBuiltin {
             file=file.toAbsolute(context.getCwd());
         }
         if (!file.isRegularFile()) {
-            throwExecutionException(NutsMessage.cstyle("file not found : %s",file), 1, session);
+            throwExecutionException(NutsMessage.ofCstyle("file not found : %s",file), 1, session);
         } else {
             JShellContext c2 = context.getShellContext();
             JShellContext c = context.getShell().createInlineContext(c2, file.toString(), options.args.toArray(new String[0]));

@@ -25,9 +25,9 @@
  */
 package net.thevpc.nuts;
 
-import net.thevpc.nuts.boot.NutsApiUtils;
 import net.thevpc.nuts.cmdline.NutsCommandLineConfigurable;
 import net.thevpc.nuts.spi.NutsComponent;
+import net.thevpc.nuts.util.NutsUtils;
 
 /**
  * Descriptor Format class that help building, formatting and parsing Descriptors.
@@ -38,7 +38,7 @@ import net.thevpc.nuts.spi.NutsComponent;
  */
 public interface NutsDescriptorFormat extends NutsFormat, NutsComponent {
     static NutsDescriptorFormat of(NutsSession session) {
-        NutsApiUtils.checkSession(session);
+        NutsUtils.requireSession(session);
         return session.extensions().createSupported(NutsDescriptorFormat.class, true, null);
     }
 

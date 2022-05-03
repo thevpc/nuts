@@ -95,7 +95,7 @@ public class NutsReservedVersionIntervalParser {
                                 break;
                             }
                             default: {
-                                return NutsOptional.ofError((s) -> NutsMessage.cstyle("unexpected  %s", ((char) t)));
+                                return NutsOptional.ofError((s) -> NutsMessage.ofCstyle("unexpected  %s", ((char) t)));
                             }
                         }
                         break;
@@ -107,7 +107,7 @@ public class NutsReservedVersionIntervalParser {
                                 break;
                             }
                             default: {
-                                return NutsOptional.ofError(s -> NutsMessage.cstyle("expected ',' found %s", ((char) t)));
+                                return NutsOptional.ofError(s -> NutsMessage.ofCstyle("expected ',' found %s", ((char) t)));
                             }
                         }
                         break;
@@ -124,7 +124,7 @@ public class NutsReservedVersionIntervalParser {
                                 break;
                             }
                             default: {
-                                return NutsOptional.ofError(s -> NutsMessage.cstyle("unexpected %s", ((char) t)));
+                                return NutsOptional.ofError(s -> NutsMessage.ofCstyle("unexpected %s", ((char) t)));
                             }
                         }
                         break;
@@ -152,7 +152,7 @@ public class NutsReservedVersionIntervalParser {
                                 break;
                             }
                             default: {
-                                return NutsOptional.ofError(s -> NutsMessage.cstyle("unexpected %s", ((char) t)));
+                                return NutsOptional.ofError(s -> NutsMessage.ofCstyle("unexpected %s", ((char) t)));
                             }
                         }
                         break;
@@ -173,7 +173,7 @@ public class NutsReservedVersionIntervalParser {
                                 break;
                             }
                             default: {
-                                return NutsOptional.ofError(s -> NutsMessage.cstyle("unexpected %s", ((char) t)));
+                                return NutsOptional.ofError(s -> NutsMessage.ofCstyle("unexpected %s", ((char) t)));
                             }
                         }
                         break;
@@ -189,22 +189,22 @@ public class NutsReservedVersionIntervalParser {
                                 break;
                             }
                             default: {
-                                return NutsOptional.ofError(s -> NutsMessage.cstyle("unexpected %s", ((char) t)));
+                                return NutsOptional.ofError(s -> NutsMessage.ofCstyle("unexpected %s", ((char) t)));
                             }
                         }
                         break;
                     }
                     default: {
-                        return NutsOptional.ofError(s -> NutsMessage.cstyle("unsupported state %s", state));
+                        return NutsOptional.ofError(s -> NutsMessage.ofCstyle("unsupported state %s", state));
                     }
                 }
             }
             if (state != NEXT_COMMA && state != NEXT) {
-                return NutsOptional.ofError(s -> NutsMessage.cstyle("invalid state %s", state));
+                return NutsOptional.ofError(s -> NutsMessage.ofCstyle("invalid state %s", state));
             }
         } catch (IOException ex) {
-            return NutsOptional.ofError(s -> NutsMessage.cstyle("parse version failed: %s : ", version, ex));
+            return NutsOptional.ofError(s -> NutsMessage.ofCstyle("parse version failed: %s : ", version, ex));
         }
-        return NutsOptional.of(dd, s -> NutsMessage.cstyle("empty version"));
+        return NutsOptional.ofNamed(dd, "version");
     }
 }

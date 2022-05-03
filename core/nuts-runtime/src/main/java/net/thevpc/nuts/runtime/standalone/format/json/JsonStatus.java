@@ -50,36 +50,36 @@ public class JsonStatus {
         }
         if (countBraces == 0) {
             if (throwError) {
-                throw new NutsParseException(session, NutsMessage.cstyle("not an object"));
+                throw new NutsParseException(session, NutsMessage.ofPlain("not an object"));
             }
             return false;
         }
         if (openBrackets > 0) {
             if (throwError) {
-                throw new NutsParseException(session, NutsMessage.cstyle("unbalanced brackets"));
+                throw new NutsParseException(session, NutsMessage.ofPlain("unbalanced brackets"));
             }
             return false;
         }
         if (openBraces > 0) {
             if (throwError) {
-                throw new NutsParseException(session, NutsMessage.cstyle("unbalanced braces"));
+                throw new NutsParseException(session, NutsMessage.ofPlain("unbalanced braces"));
             }
             return false;
         }
         if (openAntiSlash) {
             if (throwError) {
-                throw new NutsParseException(session, NutsMessage.cstyle("unbalanced anti-slash"));
+                throw new NutsParseException(session, NutsMessage.ofPlain("unbalanced anti-slash"));
             }
         }
         if (openSimpleQuotes) {
             if (throwError) {
-                throw new NutsParseException(session, NutsMessage.cstyle("unbalanced simple quotes"));
+                throw new NutsParseException(session, NutsMessage.ofPlain("unbalanced simple quotes"));
             }
             return false;
         }
         if (openDoubleQuotes) {
             if (throwError) {
-                throw new NutsParseException(session, NutsMessage.cstyle("unbalanced double quotes"));
+                throw new NutsParseException(session, NutsMessage.ofPlain("unbalanced double quotes"));
             }
             return false;
         }
@@ -89,13 +89,13 @@ public class JsonStatus {
     public boolean checkPartialValid(boolean throwError) {
         if (openBrackets < 0) {
             if (throwError) {
-                throw new NutsParseException(session, NutsMessage.cstyle("unbalanced brackets"));
+                throw new NutsParseException(session, NutsMessage.ofPlain("unbalanced brackets"));
             }
             return false;
         }
         if (openBraces < 0) {
             if (throwError) {
-                throw new NutsParseException(session, NutsMessage.cstyle("unbalanced braces"));
+                throw new NutsParseException(session, NutsMessage.ofPlain("unbalanced braces"));
             }
             return false;
         }

@@ -9,7 +9,6 @@
  * dependencies at runtime. Nuts is not tied to java and is a good choice
  * to share shell scripts and other 'things' . Its based on an extensible
  * architecture to help supporting a large range of sub managers / repositories.
- *
  * <br>
  * <p>
  * Copyright [2020] [thevpc]
@@ -24,44 +23,19 @@
  * <br>
  * ====================================================================
  */
-package net.thevpc.nuts;
+package net.thevpc.nuts.io;
+
+import java.io.OutputStream;
 
 /**
+ * I/O output stream base
+ *
  * @author thevpc
- * @app.category Exceptions
- * @since 0.5.4
+ * @app.category Input Output
+ * @since 0.5.5
  */
-public class NutsUserCancelException extends NutsExecutionException {
+public interface NutsOutputTarget{
+    OutputStream getOutputStream();
 
-    public static final int DEFAULT_CANCEL_EXIT_CODE = 245;
-
-    /**
-     * Constructs a new NutsUserCancelException exception
-     *
-     * @param session workspace
-     */
-    public NutsUserCancelException(NutsSession session) {
-        this(session, null);
-    }
-
-    /**
-     * Constructs a new NutsUserCancelException exception
-     *
-     * @param session workspace
-     * @param message message
-     */
-    public NutsUserCancelException(NutsSession session, NutsMessage message) {
-        this(session, message, DEFAULT_CANCEL_EXIT_CODE);
-    }
-
-    /**
-     * Constructs a new NutsUserCancelException exception
-     *
-     * @param session  workspace
-     * @param message  message
-     * @param exitCode exit code
-     */
-    public NutsUserCancelException(NutsSession session, NutsMessage message, int exitCode) {
-        super(session, (message == null) ? NutsMessage.cstyle("user cancelled operation") : message, exitCode);
-    }
+    NutsOutputTargetMetadata getOutputMetaData();
 }

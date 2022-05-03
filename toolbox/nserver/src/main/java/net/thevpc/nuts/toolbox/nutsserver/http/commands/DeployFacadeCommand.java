@@ -3,6 +3,7 @@ package net.thevpc.nuts.toolbox.nutsserver.http.commands;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.io.NutsCp;
 import net.thevpc.nuts.io.NutsDigest;
+import net.thevpc.nuts.io.NutsPath;
 import net.thevpc.nuts.spi.NutsPaths;
 import net.thevpc.nuts.toolbox.nutsserver.AbstractFacadeCommand;
 import net.thevpc.nuts.toolbox.nutsserver.FacadeCommandContext;
@@ -61,7 +62,7 @@ public class DeployFacadeCommand extends AbstractFacadeCommand {
                     NutsCp.of(session)
                             .setSession(session)
                             .setSource(info.getContent())
-                            .setTarget(contentFile)
+                            .setTarget(NutsPath.of(contentFile,session))
                             .run();
                     break;
             }
@@ -69,7 +70,7 @@ public class DeployFacadeCommand extends AbstractFacadeCommand {
         if (contentFile == null) {
             context.sendError(400, "invalid JShellCommandNode arguments : " + getName() + " : missing file");
         }
-        NutsId id = session.deploy().setContent(contentFile)
+        NutsId id = session.deploy().setContent(NutsPath.of(contentFile,session))
                 .setSha1(receivedContentHash)
                 .setDescriptor(descriptor)
                 .setSession(session.copy())

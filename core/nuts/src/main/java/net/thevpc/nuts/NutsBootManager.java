@@ -23,9 +23,9 @@
  */
 package net.thevpc.nuts;
 
-import net.thevpc.nuts.boot.NutsApiUtils;
 import net.thevpc.nuts.boot.NutsClassLoaderNode;
 import net.thevpc.nuts.boot.NutsWorkspaceBootOptions;
+import net.thevpc.nuts.util.NutsUtils;
 
 import java.net.URL;
 import java.time.Duration;
@@ -38,7 +38,7 @@ import java.util.List;
 public interface NutsBootManager {
 
     static NutsBootManager of(NutsSession session) {
-        NutsApiUtils.checkSession(session);
+        NutsUtils.requireSession(session);
         return session.boot();
     }
 

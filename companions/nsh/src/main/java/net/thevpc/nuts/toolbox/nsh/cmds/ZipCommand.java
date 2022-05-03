@@ -73,10 +73,10 @@ public class ZipCommand extends SimpleJShellBuiltin {
         Options options = context.getOptions();
         NutsSession session = context.getSession();
         if (options.files.isEmpty()) {
-            commandLine.throwError(NutsMessage.cstyle("missing input-files"),session);
+            commandLine.throwError(NutsMessage.ofPlain("missing input-files"),session);
         }
         if (options.outZip == null) {
-            commandLine.throwError(NutsMessage.cstyle("missing out-zip"),session);
+            commandLine.throwError(NutsMessage.ofPlain("missing out-zip"),session);
         }
         NutsCompress aa = NutsCompress.of(session)
                 .setTarget(options.outZip);

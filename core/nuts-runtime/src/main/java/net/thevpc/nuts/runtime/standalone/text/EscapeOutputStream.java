@@ -23,7 +23,7 @@ public class EscapeOutputStream extends BaseTransparentFilterOutputStream implem
         this.ws = session.getWorkspace();
         NutsTerminalModeOp t = NutsTerminalModeOpUtils.resolveNutsTerminalModeOp(out);
         if (t.in() != NutsTerminalMode.FORMATTED && t.in() != NutsTerminalMode.FILTERED) {
-            throw new NutsIllegalArgumentException(session, NutsMessage.plain("illegal Formatted"));
+            throw new NutsIllegalArgumentException(session, NutsMessage.ofPlain("illegal Formatted"));
         }
     }
 

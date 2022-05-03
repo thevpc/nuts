@@ -10,9 +10,7 @@ import net.thevpc.nuts.runtime.standalone.repository.util.NutsRepositoryUtils;
 import net.thevpc.nuts.runtime.standalone.session.NutsSessionUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.config.NutsRepositoryConfigManagerExt;
 import net.thevpc.nuts.runtime.standalone.workspace.config.NutsStoreLocationsMap;
-import net.thevpc.nuts.util.NutsLogger;
-import net.thevpc.nuts.util.NutsLoggerOp;
-import net.thevpc.nuts.util.NutsLoggerVerb;
+import net.thevpc.nuts.util.*;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -24,7 +22,6 @@ import net.thevpc.nuts.runtime.standalone.util.NutsSpeedQualifiers;
 import net.thevpc.nuts.runtime.standalone.workspace.NutsWorkspaceUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.DefaultNutsWorkspace;
 import net.thevpc.nuts.spi.NutsRepositoryLocation;
-import net.thevpc.nuts.util.NutsStringUtils;
 
 public class DefaultNutsRepositoryConfigModel implements NutsRepositoryConfigModel {
 
@@ -49,14 +46,9 @@ public class DefaultNutsRepositoryConfigModel implements NutsRepositoryConfigMod
     public DefaultNutsRepositoryConfigModel(NutsRepository repository, NutsAddRepositoryOptions options, NutsSession session,
                                             NutsSpeedQualifier speed,
             boolean supportedMirroring, String repositoryType) {
-        if (options == null) {
-            throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("missing repository options"));
-        }
-        if (options.getConfig() == null) {
-            throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("missing repository options config"));
-        }
+        NutsUtils.requireNonNull(options,session,"repository options");
+        NutsUtils.requireNonNull(options.getConfig(),session,"repository options config");
         this.repositoryRef = net.thevpc.nuts.runtime.standalone.repository.util.NutsRepositoryUtils.optionsToRef(options);
-//        NutsSession session = options.getSession();
         String storeLocation = options.getLocation();
         NutsRepositoryConfig config = options.getConfig();
         String globalName = options.getConfig().getName();
@@ -64,21 +56,13 @@ public class DefaultNutsRepositoryConfigModel implements NutsRepositoryConfigMod
 
         speed = speed==null?NutsSpeedQualifier.NORMAL : speed;
 
-        if (NutsBlankable.isBlank(repositoryType)) {
-            throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("missing repository type"));
-        }
-        if (NutsBlankable.isBlank(repositoryName)) {
-            throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("missing repository name"));
-        }
-        if (NutsBlankable.isBlank(globalName)) {
-            throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("missing repository global name"));
-        }
-        if (NutsBlankable.isBlank(storeLocation)) {
-            throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("missing folder"));
-        }
+        NutsUtils.requireNonBlank(repositoryType,session,"repository type");
+        NutsUtils.requireNonBlank(repositoryName,session,"repository name");
+        NutsUtils.requireNonBlank(globalName,session,"repository global name");
+        NutsUtils.requireNonBlank(storeLocation,session,"repository store location");
         Path pfolder = Paths.get(storeLocation);
         if ((Files.exists(pfolder) && !Files.isDirectory(pfolder))) {
-            throw new NutsInvalidRepositoryException(session, storeLocation, NutsMessage.cstyle("unable to resolve root as a valid folder %s",storeLocation));
+            throw new NutsInvalidRepositoryException(session, storeLocation, NutsMessage.ofCstyle("unable to resolve root as a valid folder %s",storeLocation));
         }
 
         this.repositoryRegistryHelper = new NutsRepositoryRegistryHelper(repository.getWorkspace());
@@ -271,7 +255,7 @@ public class DefaultNutsRepositoryConfigModel implements NutsRepositoryConfigMod
 
                 }
                 default: {
-                    throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("unsupported strategy type %s", getStoreLocation()));
+                    throw new NutsIllegalArgumentException(session, NutsMessage.ofCstyle("unsupported strategy type %s", getStoreLocation()));
                 }
             }
         }
@@ -286,10 +270,7 @@ public class DefaultNutsRepositoryConfigModel implements NutsRepositoryConfigMod
     }
 
     public void setConfig(NutsRepositoryConfig newConfig, NutsSession session, boolean fireChange) {
-        if (newConfig == null) {
-            throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("missing config"));
-        }
-//        options = CoreNutsUtils.validate(options, repository.getWorkspace());
+        NutsUtils.requireNonBlank(newConfig,session,"repository config");
         this.config = newConfig;
         if (this.config.getUuid() == null) {
             fireChange = true;
@@ -301,7 +282,7 @@ public class DefaultNutsRepositoryConfigModel implements NutsRepositoryConfigMod
         }
         if (!Objects.equals(NutsRepositoryUtils.getRepoType(config),repositoryType)) {
             throw new NutsIllegalArgumentException(session,
-                    NutsMessage.cstyle("invalid Repository Type : expected %s, found %s" ,repositoryType, NutsRepositoryUtils.getRepoType(config))
+                    NutsMessage.ofCstyle("invalid Repository Type : expected %s, found %s" ,repositoryType, NutsRepositoryUtils.getRepoType(config))
                     );
         }
 
@@ -448,13 +429,13 @@ public class DefaultNutsRepositoryConfigModel implements NutsRepositoryConfigMod
             if (_LOG(session).isLoggable(Level.CONFIG)) {
                 if (created) {
                     _LOGOP(session).level(Level.CONFIG).verb(NutsLoggerVerb.SUCCESS)
-                            .log(NutsMessage.jstyle(
+                            .log(NutsMessage.ofJstyle(
                                     "{0} created repository {1} at {2}",
                                     NutsStringUtils.formatAlign(repository.getName(), 20, NutsPositionType.FIRST) , repository.getName() ,
                                     getStoreLocation()
                                     ));
                 } else {
-                    _LOGOP(session).level(Level.CONFIG).verb(NutsLoggerVerb.SUCCESS).log(NutsMessage.jstyle(
+                    _LOGOP(session).level(Level.CONFIG).verb(NutsLoggerVerb.SUCCESS).log(NutsMessage.ofJstyle(
                             "{0} updated repository {1} at {2}",
                             NutsStringUtils.formatAlign(repository.getName(), 20,NutsPositionType.FIRST) , repository.getName() ,
                             getStoreLocation()
@@ -559,7 +540,7 @@ public class DefaultNutsRepositoryConfigModel implements NutsRepositoryConfigMod
     @Override
     public void removeMirror(String repositoryId, NutsSession session) {
         if (!isSupportedMirroring(session)) {
-            throw new NutsUnsupportedOperationException(session,NutsMessage.cstyle("unsupported operation '%s'","removeMirror"));
+            throw new NutsUnsupportedOperationException(session,NutsMessage.ofCstyle("unsupported operation '%s'","removeMirror"));
         }
 //        options = CoreNutsUtils.validate(options, repository.getWorkspace());
         repository.security().setSession(session).checkAllowed(NutsConstants.Permissions.REMOVE_REPOSITORY, "remove-repository");
@@ -599,7 +580,7 @@ public class DefaultNutsRepositoryConfigModel implements NutsRepositoryConfigMod
                         y = m;
                     } else {
                         throw new NutsIllegalArgumentException(session,
-                                NutsMessage.cstyle("ambiguous repository name %s ; found two Ids %s and %s",
+                                NutsMessage.ofCstyle("ambiguous repository name %s ; found two Ids %s and %s",
                                         repositoryNameOrId ,y.getUuid() ,m.getUuid()
                                 )
                         );
@@ -626,7 +607,7 @@ public class DefaultNutsRepositoryConfigModel implements NutsRepositoryConfigMod
                         y = m;
                     } else {
                         throw new NutsIllegalArgumentException(session,
-                                NutsMessage.cstyle("ambiguous repository name %s ; found two Ids %s and %s",
+                                NutsMessage.ofCstyle("ambiguous repository name %s ; found two Ids %s and %s",
                                         repositoryNameOrId ,y.getUuid() ,m.getUuid()
                                 )
                         );
@@ -653,7 +634,7 @@ public class DefaultNutsRepositoryConfigModel implements NutsRepositoryConfigMod
                         y = m;
                     } else {
                         throw new NutsIllegalArgumentException(session,
-                                NutsMessage.cstyle("ambiguous repository name %s ; found two Ids %s and %s",
+                                NutsMessage.ofCstyle("ambiguous repository name %s ; found two Ids %s and %s",
                                         repositoryNameOrId ,y.getUuid() ,m.getUuid()
                                 )
                         );
@@ -671,7 +652,7 @@ public class DefaultNutsRepositoryConfigModel implements NutsRepositoryConfigMod
 
     public NutsRepository addMirror(NutsAddRepositoryOptions options, NutsSession session) {
         if (!isSupportedMirroring(session)) {
-            throw new NutsUnsupportedOperationException(session,NutsMessage.cstyle("unsupported operation '%s'","addMirror"));
+            throw new NutsUnsupportedOperationException(session,NutsMessage.ofCstyle("unsupported operation '%s'","addMirror"));
         }
         if (options.isTemporary()) {
             return null;
@@ -756,7 +737,7 @@ public class DefaultNutsRepositoryConfigModel implements NutsRepositoryConfigMod
         if (inherit) {
             return session.config().getConfigProperty(key);
         }
-        return NutsOptional.ofEmpty(s->NutsMessage.cstyle("repository property not found : %s",key));
+        return NutsOptional.ofEmpty(s->NutsMessage.ofCstyle("repository property not found : %s",key));
     }
 
     private Map<String, String> config_getEnv(boolean inherit,NutsSession session) {

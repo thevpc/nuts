@@ -69,12 +69,12 @@ public class AnyNixNdi extends BaseSystemNdi {
             final String sysRcName = NutsShellHelper.of(session.env().getShellFamily()).getSysRcName();
             session.getTerminal().ask()
                     .resetLine()
-                    .forBoolean(
+                    .forBoolean(NutsMessage.ofCstyle(
                             "```error ATTENTION``` You may need to re-run terminal or issue \"%s\" in your current terminal for new environment to take effect.%n"
                                     + "Please type 'ok' if you agree, 'why' if you need more explanation or 'cancel' to cancel updates.",
                             factory.ofStyled(". ~/" + sysRcName, NutsTextStyle.path())
-                    )
-                    .setHintMessage(NutsMessage.plain(""))
+                    ))
+                    .setHintMessage(NutsMessage.ofPlain(""))
                     .setSession(session)
                     .setParser(new NutsQuestionParser<Boolean>() {
                         @Override
@@ -86,7 +86,7 @@ public class AnyNixNdi extends BaseSystemNdi {
                                 response = defaultValue;
                             }
                             if (response == null) {
-                                throw new NutsValidationException(session, NutsMessage.cstyle("sorry... but you need to type 'ok', 'why' or 'cancel'"));
+                                throw new NutsValidationException(session, NutsMessage.ofPlain("sorry... but you need to type 'ok', 'why' or 'cancel'"));
                             }
                             String r = response.toString();
                             if ("ok".equalsIgnoreCase(r)) {
@@ -101,11 +101,11 @@ public class AnyNixNdi extends BaseSystemNdi {
                                 out.printf("However updating \\\"%s\\\" does not affect the running process/terminal. So you have basically two choices :%n", factory.ofStyled(sysRcName, NutsTextStyle.path()));
                                 out.print(" - Either to restart the process/terminal (konsole, term, xterm, sh, bash, ...)%n");
                                 out.printf(" - Or to run by your self the \\\"%s\\\" script (don\\'t forget the leading dot)%n", factory.ofStyled(". ~/" + sysRcName, NutsTextStyle.path()));
-                                throw new NutsValidationException(session, NutsMessage.cstyle("Try again..."));
+                                throw new NutsValidationException(session, NutsMessage.ofPlain("Try again..."));
                             } else if ("cancel".equalsIgnoreCase(r) || "cancel!".equalsIgnoreCase(r)) {
-                                throw new NutsUserCancelException(session);
+                                throw new NutsCancelException(session);
                             } else {
-                                throw new NutsValidationException(session, NutsMessage.cstyle("sorry... but you need to type 'ok', 'why' or 'cancel'"));
+                                throw new NutsValidationException(session, NutsMessage.ofPlain("sorry... but you need to type 'ok', 'why' or 'cancel'"));
                             }
                         }
                     })

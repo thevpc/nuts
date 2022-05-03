@@ -10,7 +10,7 @@
  * other 'things' . Its based on an extensible architecture to help supporting a
  * large range of sub managers / repositories.
  * <br>
- *
+ * <p>
  * Copyright [2020] [thevpc] Licensed under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -24,9 +24,9 @@
 package net.thevpc.nuts.runtime.standalone.repository.impl.nuts;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.io.NutsIO;
 import net.thevpc.nuts.io.NutsIOException;
 import net.thevpc.nuts.io.NutsPath;
-import net.thevpc.nuts.io.NutsStreamMetadata;
 import net.thevpc.nuts.runtime.standalone.io.util.CoreIOUtils;
 import net.thevpc.nuts.runtime.standalone.repository.impl.folder.NutsFolderRepositoryBase;
 import net.thevpc.nuts.runtime.standalone.repository.impl.maven.util.MavenUtils;
@@ -45,7 +45,7 @@ public class NutsFolderRepository extends NutsFolderRepositoryBase {
 
 
     public NutsFolderRepository(NutsAddRepositoryOptions options, NutsSession session, NutsRepository parentRepository) {
-        super(options, session, parentRepository, null, true, NutsConstants.RepoTypes.NUTS,true);
+        super(options, session, parentRepository, null, true, NutsConstants.RepoTypes.NUTS, true);
         repoIter = new NutsRepoIter(this);
 //        LOG = session.log().of(NutsFolderRepository.class);
         extensions.put("src", "-src.zip");
@@ -78,7 +78,7 @@ public class NutsFolderRepository extends NutsFolderRepositoryBase {
                 return session.locations().getDefaultIdContentExtension(packaging);
             }
             default: {
-                throw new NutsUnsupportedArgumentException(session, NutsMessage.cstyle("unsupported fact %s", f));
+                throw new NutsUnsupportedArgumentException(session, NutsMessage.ofCstyle("unsupported fact %s", f));
             }
         }
     }
@@ -98,9 +98,9 @@ public class NutsFolderRepository extends NutsFolderRepositoryBase {
                 try {
                     stream = getStream(idDesc, "artifact descriptor", "retrieve", session);
                     bytes = CoreIOUtils.loadByteArray(stream, true, session);
-                    name = NutsStreamMetadata.of(stream).getName();
+                    name = NutsIO.of(session).createInputSource(stream).getInputMetaData().getName().orElse("no-name");
                     nutsDescriptor = MavenUtils.of(session).parsePomXmlAndResolveParents(
-                            CoreIOUtils.createBytesStream(bytes, name == null ? null : NutsMessage.formatted(name), "application/json", "nuts.json", session)
+                            CoreIOUtils.createBytesStream(bytes, NutsMessage.ofNtf(name), "application/json", "nuts.json", session)
                             , fetchMode, getIdRemotePath(id, session).toString(), this);
                 } finally {
                     if (stream != null) {
@@ -108,13 +108,13 @@ public class NutsFolderRepository extends NutsFolderRepositoryBase {
                     }
                 }
                 checkSHA1Hash(id.builder().setFace(NutsConstants.QueryFaces.DESCRIPTOR_HASH).build(),
-                        CoreIOUtils.createBytesStream(bytes, name == null ? null : NutsMessage.formatted(name), "application/json", "nuts.json", session)
+                        CoreIOUtils.createBytesStream(bytes, name == null ? null : NutsMessage.ofNtf(name), "application/json", "nuts.json", session)
                         , "artifact descriptor", session);
                 return nutsDescriptor;
             } catch (IOException | UncheckedIOException | NutsIOException ex) {
                 throw new NutsNotFoundException(session, id, ex);
             }
-        }catch (NutsNotFoundException e){
+        } catch (NutsNotFoundException e) {
             //ignore
         }
         //now try pom file (maven!)
@@ -128,14 +128,14 @@ public class NutsFolderRepository extends NutsFolderRepositoryBase {
                 NutsPath pomURL =
                         config().setSession(session).getLocationPath().resolve(
                                 getIdBasedir(id, session).resolve(
-                                        getIdFilename(id,".pom", session)
+                                        getIdFilename(id, ".pom", session)
                                 )
                         );
                 stream = openStream(id, pomURL, id, "artifact descriptor", "retrieve", session);
                 bytes = CoreIOUtils.loadByteArray(stream, true, session);
-                name = NutsStreamMetadata.of(stream).getName();
+                name = NutsIO.of(session).createInputSource(stream).getInputMetaData().getName().orElse("no-name");
                 nutsDescriptor = MavenUtils.of(session).parsePomXmlAndResolveParents(
-                        CoreIOUtils.createBytesStream(bytes, name == null ? null : NutsMessage.formatted(name), "text/xml", "pom.xml", session)
+                        CoreIOUtils.createBytesStream(bytes, NutsMessage.ofNtf(name), "text/xml", "pom.xml", session)
                         , fetchMode, getIdRemotePath(id, session).toString(), this);
             } finally {
                 if (stream != null) {
@@ -143,7 +143,7 @@ public class NutsFolderRepository extends NutsFolderRepositoryBase {
                 }
             }
             checkSHA1Hash(id.builder().setFace(NutsConstants.QueryFaces.DESCRIPTOR_HASH).build(),
-                    CoreIOUtils.createBytesStream(bytes, name == null ? null : NutsMessage.formatted(name), "text/xml", "pom.xml", session)
+                    CoreIOUtils.createBytesStream(bytes, name == null ? null : NutsMessage.ofNtf(name), "text/xml", "pom.xml", session)
                     , "artifact descriptor", session);
             return nutsDescriptor;
         } catch (IOException | UncheckedIOException | NutsIOException ex) {

@@ -4,6 +4,7 @@ import net.thevpc.nuts.NutsId;
 import net.thevpc.nuts.NutsSession;
 import net.thevpc.nuts.io.NutsCp;
 import net.thevpc.nuts.io.NutsIOException;
+import net.thevpc.nuts.io.NutsPath;
 import net.thevpc.nuts.io.NutsUncompress;
 import net.thevpc.nuts.runtime.standalone.repository.index.ArtifactsIndexDB;
 import net.thevpc.nuts.spi.NutsPaths;
@@ -27,10 +28,10 @@ public class LuceneIndexImporter {
         String tempGzFile = NutsPaths.of(session).createTempFile("lucene-repository.gz",session).toString();
         NutsCp.of(session)
                 .setSession(session)
-                .from(url).to(tempGzFile).run();
+                .from(url).to(NutsPath.of(tempGzFile,session)).run();
         String tempFolder = NutsPaths.of(session).createTempFolder("lucene-repository",session).toString();
-        NutsUncompress.of(session).from(tempGzFile).to(
-                tempFolder
+        NutsUncompress.of(session).from(NutsPath.of(tempGzFile,session)).to(
+                NutsPath.of(tempFolder,session)
         ).setFormat("gz").run();
         try {
             long[] ref=new long[1];

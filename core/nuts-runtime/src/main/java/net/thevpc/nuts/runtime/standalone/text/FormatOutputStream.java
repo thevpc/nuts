@@ -16,7 +16,7 @@ public class FormatOutputStream extends RenderedOutputStream implements Extended
         super(out, term, false, session);
         NutsTerminalModeOp op = NutsTerminalModeOpUtils.resolveNutsTerminalModeOp(out);
         if (op != NutsTerminalModeOp.NOP) {
-            throw new NutsIllegalArgumentException(session, NutsMessage.plain("expected Raw"));
+            throw new NutsIllegalArgumentException(session, NutsMessage.ofPlain("expected Raw"));
         }
     }
 

@@ -152,7 +152,7 @@ public class WorkspaceService {
         }
 
         if (count == 0) {
-            throw new NutsExecutionException(session, NutsMessage.cstyle("missing projects"), 1);
+            throw new NutsExecutionException(session, NutsMessage.ofPlain("missing projects"), 1);
         }
     }
 
@@ -631,7 +631,7 @@ public class WorkspaceService {
                                     session.out().printf("already registered project folder %s%n", formatProjectConfig(appContext, p2));
                                 }
                                 if (structuredOutContentType) {
-                                    result.add(new ScanResult(folder.getPath(), "already-registered", NutsMessage.cstyle("already registered project folder %s", formatProjectConfig(appContext, p2)).toString()));
+                                    result.add(new ScanResult(folder.getPath(), "already-registered", NutsMessage.ofCstyle("already registered project folder %s", formatProjectConfig(appContext, p2)).toString()));
                                 }
                             } else if (!p2.getPath().equals(p3.getPath())) {
                                 if (session.isPlainOut()) {
@@ -644,7 +644,7 @@ public class WorkspaceService {
                                 }
                                 if (structuredOutContentType) {
                                     result.add(new ScanResult(folder.getPath(), "conflict",
-                                            NutsMessage.cstyle(
+                                            NutsMessage.ofCstyle(
                                                     "[CONFLICT] multiple paths for the same id %s. "
                                                             + "please consider adding .nuts-info file with " + SCAN + "=false  :  %s -- %s",
                                                     p2.getId(),
@@ -659,7 +659,7 @@ public class WorkspaceService {
                                 }
                                 if (structuredOutContentType) {
                                     result.add(new ScanResult(folder.getPath(), "reloaded",
-                                            NutsMessage.cstyle(
+                                            NutsMessage.ofCstyle(
                                                     "reloaded project folder %s", formatProjectConfig(appContext, p2).toString()
                                             ).toString()
                                     ));
@@ -690,7 +690,7 @@ public class WorkspaceService {
                             }
                             if (structuredOutContentType) {
                                 result.add(new ScanResult(folder.getPath(), "detected",
-                                        NutsMessage.cstyle("detected Project Folder").toString()
+                                        NutsMessage.ofPlain("detected Project Folder").toString()
                                 ));
                             }
 //                String repo = term.readLine("Enter Repository ####%s####: ", ((p2.getAddress() == null || p2.getAddress().getNutsRepository() == null )? "" : ("(" + p2.getAddress().getNutsRepository() + ")")));

@@ -74,7 +74,7 @@ public class DefaultNutsArrayElement extends AbstractNutsArrayElement {
         if(index>=0 && index<values.length){
             return NutsOptional.of(values[index]);
         }
-        return NutsOptional.ofError(s->NutsMessage.cstyle("invalid array index %s not in [%s,%s[",index,0,values.length));
+        return NutsOptional.ofError(s->NutsMessage.ofCstyle("invalid array index %s not in [%s,%s[",index,0,values.length));
     }
 
     @Override

@@ -30,7 +30,7 @@ import net.thevpc.nuts.NutsSession;
 
 public interface NutsMemoryPrintStream extends NutsPrintStream {
     static NutsMemoryPrintStream of(NutsSession session) {
-        return NutsPrintStreams.of(session).createInMemory();
+        return NutsIO.of(session).createInMemoryPrintStream();
     }
 
     byte[] getBytes();

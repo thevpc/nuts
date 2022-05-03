@@ -37,7 +37,7 @@ public class ProcessCmd extends SimpleJShellBuiltin {
     protected void execBuiltin(NutsCommandLine commandLine, JShellExecutionContext context) {
         Options o = context.getOptions();
         if (o.args.size() == 0) {
-            throw new NutsExecutionException(context.getSession(), NutsMessage.cstyle("%s : invalid arguments count", getName()), 1);
+            throw new NutsExecutionException(context.getSession(), NutsMessage.ofCstyle("%s : invalid arguments count", getName()), 1);
         }
         for (String pathString : o.args) {
             fileTemplater.getLog().debug("eval", getName() + "(" + StringUtils.toLiteralString(pathString) + ")");

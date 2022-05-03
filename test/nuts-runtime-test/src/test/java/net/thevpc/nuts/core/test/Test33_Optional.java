@@ -6,6 +6,7 @@
 package net.thevpc.nuts.core.test;
 
 import net.thevpc.nuts.NutsMessage;
+import net.thevpc.nuts.NutsNoSessionOptionalErrorException;
 import net.thevpc.nuts.NutsOptional;
 import net.thevpc.nuts.NutsSession;
 import org.junit.jupiter.api.Assertions;
@@ -72,8 +73,8 @@ public class Test33_Optional {
         }
 
         {
-            NutsOptional<String> a = NutsOptional.ofError(s-> NutsMessage.cstyle("error"));
-            Assertions.assertThrows(NoSuchElementException.class, () -> a.get());
+            NutsOptional<String> a = NutsOptional.ofError(s-> NutsMessage.ofPlain("error"));
+            Assertions.assertThrows(NutsNoSessionOptionalErrorException.class, () -> a.get());
             Assertions.assertEquals(false, a.isEmpty());
             Assertions.assertEquals(true, a.isError());
             Assertions.assertEquals(false, a.isPresent());

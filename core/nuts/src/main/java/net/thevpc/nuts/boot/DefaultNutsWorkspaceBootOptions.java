@@ -151,7 +151,7 @@ public class DefaultNutsWorkspaceBootOptions extends DefaultNutsWorkspaceOptions
 
     @Override
     public NutsOptional<NutsWorkspaceOptions> getUserOptions() {
-        return NutsOptional.of(userOptions);
+        return NutsOptional.ofNamed(userOptions,"userOptions");
     }
 
     @Override
@@ -161,59 +161,59 @@ public class DefaultNutsWorkspaceBootOptions extends DefaultNutsWorkspaceOptions
 
     @Override
     public NutsOptional<String> getBootRepositories() {
-        return NutsOptional.of(bootRepositories);
+        return NutsOptional.ofNamed(bootRepositories,"bootRepositories");
     }
 
     @Override
     public NutsOptional<NutsClassLoaderNode> getRuntimeBootDependencyNode() {
-        return NutsOptional.of(runtimeBootDependencyNode);
+        return NutsOptional.ofNamed(runtimeBootDependencyNode,"runtimeBootDependencyNode");
     }
 
 
     @Override
     public NutsOptional<List<NutsDescriptor>> getExtensionBootDescriptors() {
-        return NutsOptional.of(extensionBootDescriptors);
+        return NutsOptional.ofNamed(extensionBootDescriptors,"extensionBootDescriptors");
     }
 
     @Override
     public NutsOptional<List<NutsClassLoaderNode>> getExtensionBootDependencyNodes() {
-        return NutsOptional.of(extensionBootDependencyNodes);
+        return NutsOptional.ofNamed(extensionBootDependencyNodes,"extensionBootDependencyNodes");
     }
 
 
     @Override
     public NutsOptional<NutsBootWorkspaceFactory> getBootWorkspaceFactory() {
-        return NutsOptional.of(bootWorkspaceFactory);
+        return NutsOptional.ofNamed(bootWorkspaceFactory,"bootWorkspaceFactory");
     }
 
 
     @Override
     public NutsOptional<List<URL>> getClassWorldURLs() {
-        return NutsOptional.of(classWorldURLs);
+        return NutsOptional.ofNamed(classWorldURLs,"classWorldURLs");
     }
 
 
     @Override
     public NutsOptional<ClassLoader> getClassWorldLoader() {
-        return NutsOptional.of(classWorldLoader);
+        return NutsOptional.ofNamed(classWorldLoader,"classWorldLoader");
     }
 
 
     @Override
     public NutsOptional<String> getUuid() {
-        return NutsOptional.of(uuid);
+        return NutsOptional.ofNamed(uuid,"uuid");
     }
 
 
     @Override
     public NutsOptional<Set<String>> getExtensionsSet() {
-        return NutsOptional.of(extensionsSet);
+        return NutsOptional.ofNamed(extensionsSet,"extensionsSet");
     }
 
 
     @Override
     public NutsOptional<NutsDescriptor> getRuntimeBootDescriptor() {
-        return NutsOptional.of(runtimeBootDescriptor);
+        return NutsOptional.ofNamed(runtimeBootDescriptor,"runtimeBootDescriptor");
     }
 
     @Override

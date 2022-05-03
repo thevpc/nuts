@@ -339,7 +339,7 @@ public class DefaultNutsWorkspaceConfigModel {
                 }
                 _ws = configLoaded.getWorkspace();
                 if (i >= maxDepth - 1) {
-                    throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("cyclic workspace resolution"));
+                    throw new NutsIllegalArgumentException(session, NutsMessage.ofPlain("cyclic workspace resolution"));
                 }
             }
             if (lastConfigLoaded == null) {
@@ -583,7 +583,7 @@ public class DefaultNutsWorkspaceConfigModel {
                     aconfig = compat.parseApiConfig(olderId, session);
                     if (aconfig != null) {
                         // ask
-                        if (session.getTerminal().ask().forBoolean(NutsMessage.cstyle("import older config %s", apiId))
+                        if (session.getTerminal().ask().forBoolean(NutsMessage.ofCstyle("import older config %s", apiId))
                                 .setDefaultValue(true)
                                 .getBooleanValue()
                         ) {
@@ -899,7 +899,7 @@ public class DefaultNutsWorkspaceConfigModel {
         if (c != null) {
             return c.create(session);
         }
-        throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("dependency solver not found %s", name));
+        throw new NutsIllegalArgumentException(session, NutsMessage.ofCstyle("dependency solver not found %s", name));
     }
 
     private Map<String, NutsDependencySolverFactory> getSolversMap(NutsSession session) {
@@ -1288,7 +1288,7 @@ public class DefaultNutsWorkspaceConfigModel {
         DefaultNutsWorkspaceConfigModel wconfig = this;
         Path file = session.locations().getWorkspaceLocation().toFile().resolve(NutsConstants.Files.WORKSPACE_CONFIG_FILE_NAME);
         if (wconfig.isReadOnly()) {
-            throw new NutsIOException(session, NutsMessage.cstyle("unable to load config file %s", file), ex);
+            throw new NutsIOException(session, NutsMessage.ofCstyle("unable to load config file %s", file), ex);
         }
         String fileSuffix = Instant.now().toString();
         fileSuffix = fileSuffix.replace(':', '-');
@@ -1296,20 +1296,20 @@ public class DefaultNutsWorkspaceConfigModel {
         NutsPath logError = session.locations().getStoreLocation(ws.getApiId(), NutsStoreLocation.LOG).resolve("invalid-config");
         NutsPath logFile = logError.resolve(fileName + ".error");
         _LOGOP(session).level(Level.SEVERE).verb(NutsLoggerVerb.FAIL)
-                .log(NutsMessage.jstyle("erroneous workspace config file. Unable to load file {0} : {1}", file, ex));
+                .log(NutsMessage.ofJstyle("erroneous workspace config file. Unable to load file {0} : {1}", file, ex));
 
         try {
             logFile.mkParentDirs();
         } catch (Exception ex1) {
-            throw new NutsIOException(session, NutsMessage.cstyle("unable to log workspace error while loading config file %s : %s", file, ex1), ex);
+            throw new NutsIOException(session, NutsMessage.ofCstyle("unable to log workspace error while loading config file %s : %s", file, ex1), ex);
         }
         NutsPath newfile = logError.resolve(fileName + ".json");
         _LOGOP(session).level(Level.SEVERE).verb(NutsLoggerVerb.FAIL)
-                .log(NutsMessage.jstyle("erroneous workspace config file will be replaced by a fresh one. Old config is copied to {0}\n error logged to  {1}", newfile.toString(), logFile));
+                .log(NutsMessage.ofJstyle("erroneous workspace config file will be replaced by a fresh one. Old config is copied to {0}\n error logged to  {1}", newfile.toString(), logFile));
         try {
             Files.move(file, newfile.toFile());
         } catch (IOException e) {
-            throw new NutsIOException(session, NutsMessage.cstyle("unable to load and re-create config file %s : %s", file, e), ex);
+            throw new NutsIOException(session, NutsMessage.ofCstyle("unable to load and re-create config file %s : %s", file, e), ex);
         }
 
         try (PrintStream o = new PrintStream(logFile.getOutputStream())) {
@@ -1361,9 +1361,9 @@ public class DefaultNutsWorkspaceConfigModel {
             return createNutsVersionCompat(version, session).parseConfig(bytes, session);
         } catch (Exception ex) {
             _LOGOP(session).level(Level.SEVERE).verb(NutsLoggerVerb.FAIL)
-                    .log(NutsMessage.jstyle("erroneous workspace config file. Unable to load file {0} : {1}",
+                    .log(NutsMessage.ofJstyle("erroneous workspace config file. Unable to load file {0} : {1}",
                             file, ex));
-            throw new NutsIOException(session, NutsMessage.cstyle("unable to load config file %s", file), ex);
+            throw new NutsIOException(session, NutsMessage.ofCstyle("unable to load config file %s", file), ex);
         }
     }
 
@@ -1560,7 +1560,7 @@ public class DefaultNutsWorkspaceConfigModel {
             String v = env.get(property);
             return NutsOptional.of(v == null ? null : NutsValue.of(v));
         }
-        return NutsOptional.ofEmpty(s -> NutsMessage.cstyle("config property not found : %s", property));
+        return NutsOptional.ofEmpty(s -> NutsMessage.ofCstyle("config property not found : %s", property));
     }
 
     public void setConfigProperty(String property, String value, NutsSession session) {

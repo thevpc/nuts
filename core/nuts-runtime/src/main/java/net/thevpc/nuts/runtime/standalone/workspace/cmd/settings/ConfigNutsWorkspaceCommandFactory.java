@@ -121,7 +121,7 @@ public class ConfigNutsWorkspaceCommandFactory implements NutsWorkspaceCommandFa
                 try {
                     c = NutsElements.of(session).json().parse(file, NutsCommandConfig.class);
                 } catch (Exception ex) {
-                    _LOGOP(session).level(Level.FINE).error(ex).log(NutsMessage.jstyle("unable to parse {0}", file));
+                    _LOGOP(session).level(Level.FINE).error(ex).log(NutsMessage.ofJstyle("unable to parse {0}", file));
                     //
                 }
                 if (c != null) {

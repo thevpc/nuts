@@ -19,7 +19,7 @@ public class TimePeriod {
 
     public static NutsOptional<TimePeriod> parse(String str, TimeUnit defaultUnit) {
         if (NutsBlankable.isBlank(str)) {
-            return NutsOptional.ofEmpty(s -> NutsMessage.cstyle(TimePeriod.class.getSimpleName() + " is empty"));
+            return NutsOptional.ofEmpty(s -> NutsMessage.ofPlain(TimePeriod.class.getSimpleName() + " is empty"));
         }
         if (defaultUnit == null) {
             defaultUnit = TimeUnit.MILLISECONDS;
@@ -30,7 +30,7 @@ public class TimePeriod {
             try {
                 unitCount = Long.parseLong(matcher.group("val"));
             } catch (Exception ex) {
-                return NutsOptional.ofError(s -> NutsMessage.cstyle(TimePeriod.class.getSimpleName() + " invalid value : %s", str),ex);
+                return NutsOptional.ofError(s -> NutsMessage.ofCstyle(TimePeriod.class.getSimpleName() + " invalid value : %s", str),ex);
             }
             String u = matcher.group("unit");
             if (u == null) {
@@ -88,7 +88,7 @@ public class TimePeriod {
             }
             return NutsOptional.of(new TimePeriod(unitCount, unit));
         }
-        return NutsOptional.ofError(s -> NutsMessage.cstyle(TimePeriod.class.getSimpleName() + " invalid value : %s", str));
+        return NutsOptional.ofError(s -> NutsMessage.ofCstyle(TimePeriod.class.getSimpleName() + " invalid value : %s", str));
     }
 
     public long getCount() {

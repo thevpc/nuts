@@ -8,17 +8,17 @@ import net.thevpc.nuts.io.NutsSessionTerminal;
 public abstract class AbstractNutsSessionTerminal implements NutsSessionTerminal {
     @Override
     public String readLine(NutsPrintStream out, String prompt, Object... params) {
-        return readLine(out,NutsMessage.cstyle(prompt,params));
+        return readLine(out,NutsMessage.ofCstyle(prompt,params));
     }
 
     @Override
     public char[] readPassword(NutsPrintStream out, String prompt, Object... params) {
-        return readPassword(out,NutsMessage.cstyle(prompt,params));
+        return readPassword(out,NutsMessage.ofCstyle(prompt,params));
     }
 
     @Override
     public NutsSessionTerminal printProgress(float progress, String prompt, Object... params) {
-        printProgress(progress,NutsMessage.cstyle(prompt,params));
+        printProgress(progress,NutsMessage.ofCstyle(prompt,params));
         return this;
     }
 

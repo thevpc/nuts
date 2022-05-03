@@ -92,7 +92,7 @@ public class DefaultNutsIndexStore extends AbstractNutsIndexStore {
         return IteratorBuilder.ofSupplier(
                 () -> {
                     if (isInaccessible()) {
-                        throw new NutsIndexerNotAccessibleException(session,NutsMessage.cstyle("index search failed for %s",getRepository().getName()));
+                        throw new NutsIndexerNotAccessibleException(session,NutsMessage.ofCstyle("index search failed for %s",getRepository().getName()));
 //                        return IteratorUtils.emptyIterator();
                     }
                     String uu = getIndexURL(session).resolve(NutsConstants.Folders.ID) + "?repositoryUuid=" + getRepository().getUuid();
@@ -104,7 +104,7 @@ public class DefaultNutsIndexStore extends AbstractNutsIndexStore {
                                 .iterator();
                     } catch (UncheckedIOException | NutsIOException e) {
                         setInaccessible();
-                        throw new NutsIndexerNotAccessibleException(session,NutsMessage.cstyle("index search failed for %s",getRepository().getName()));
+                        throw new NutsIndexerNotAccessibleException(session,NutsMessage.ofCstyle("index search failed for %s",getRepository().getName()));
 //                        return IteratorUtils.emptyIterator();
                     }
                 },
@@ -176,7 +176,7 @@ public class DefaultNutsIndexStore extends AbstractNutsIndexStore {
         try {
             NutsPath.of(uu,session).getInputStream();
         } catch (UncheckedIOException | NutsIOException e) {
-            throw new NutsUnsupportedOperationException(session, NutsMessage.cstyle("unable to subscribe for repository%s", getRepository().getName()), e);
+            throw new NutsUnsupportedOperationException(session, NutsMessage.ofCstyle("unable to subscribe for repository%s", getRepository().getName()), e);
         }
         return this;
     }
@@ -189,7 +189,7 @@ public class DefaultNutsIndexStore extends AbstractNutsIndexStore {
         try {
             NutsPath.of(uu,session).getInputStream();
         } catch (UncheckedIOException | NutsIOException e) {
-            throw new NutsUnsupportedOperationException(session, NutsMessage.cstyle("unable to unsubscribe for repository %s", getRepository().getName()), e);
+            throw new NutsUnsupportedOperationException(session, NutsMessage.ofCstyle("unable to unsubscribe for repository %s", getRepository().getName()), e);
         }
         return this;
     }

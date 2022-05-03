@@ -49,7 +49,7 @@ public class NutsUnexpectedException extends NutsException {
      * @param message message
      */
     public NutsUnexpectedException(NutsSession session, NutsMessage message) {
-        super(session, message == null ? NutsMessage.plain("unexpected behaviour") : message);
+        super(session, message == null ? NutsMessage.ofPlain("unexpected behaviour") : message);
     }
 
     /**
@@ -60,7 +60,7 @@ public class NutsUnexpectedException extends NutsException {
      * @param cause   cause
      */
     public NutsUnexpectedException(NutsSession session, NutsMessage message, Throwable cause) {
-        super(session, message == null ? NutsMessage.plain("unexpected behaviour") : message, cause);
+        super(session, message == null ? NutsMessage.ofPlain("unexpected behaviour") : message, cause);
     }
 
     /**
@@ -73,7 +73,7 @@ public class NutsUnexpectedException extends NutsException {
      * @param writableStackTrace whether or not the stack trace should be writable
      */
     public NutsUnexpectedException(NutsSession session, NutsMessage message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
-        super(session, message == null ? NutsMessage.plain("unexpected behaviour") : message, cause, enableSuppression, writableStackTrace);
+        super(session, message == null ? NutsMessage.ofPlain("unexpected behaviour") : message, cause, enableSuppression, writableStackTrace);
     }
 
 }

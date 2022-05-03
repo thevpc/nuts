@@ -36,6 +36,7 @@ import net.thevpc.nuts.toolbox.nutsserver.NutsServer;
 import net.thevpc.nuts.toolbox.nutsserver.NutsServerComponent;
 import net.thevpc.nuts.toolbox.nutsserver.NutsServerConstants;
 import net.thevpc.nuts.toolbox.nutsserver.ServerConfig;
+import net.thevpc.nuts.util.NutsUtils;
 
 import javax.net.ssl.*;
 import java.io.*;
@@ -104,9 +105,7 @@ public class NutsHttpServerComponent implements NutsServerComponent {
     public NutsServer start(NutsSession invokerSession, ServerConfig config) {
         NutsHttpServerConfig httpConfig = (NutsHttpServerConfig) config;
         Map<String, NutsSession> workspaces = httpConfig.getWorkspaces();
-        if (invokerSession == null) {
-            throw new NutsIllegalArgumentException(invokerSession, NutsMessage.cstyle("missing workspace"));
-        }
+        NutsUtils.requireSession(invokerSession);
         if (workspaces.isEmpty()) {
             workspaces.put("", invokerSession);
         }
@@ -173,12 +172,8 @@ public class NutsHttpServerComponent implements NutsServerComponent {
         }
         server.setExecutor(executor);
         if (httpConfig.isTls()) {
-            if (httpConfig.getSslKeystorePassphrase() == null) {
-                throw new NutsIllegalArgumentException(invokerSession, NutsMessage.cstyle("missing SslKeystorePassphrase"));
-            }
-            if (httpConfig.getSslKeystoreCertificate() == null) {
-                throw new NutsIllegalArgumentException(invokerSession, NutsMessage.cstyle("missing SslKeystoreCertificate"));
-            }
+            NutsUtils.requireNonBlank(httpConfig.getSslKeystorePassphrase(),invokerSession,"sslKeystorePassphrase");
+            NutsUtils.requireNonBlank(httpConfig.getSslKeystoreCertificate(),invokerSession,"sslKeystoreCertificate");
             try {
                 SSLContext sslContext = SSLContext.getInstance("TLS");
 
@@ -223,7 +218,7 @@ public class NutsHttpServerComponent implements NutsServerComponent {
                     }
                 });
             } catch (GeneralSecurityException e) {
-                throw new NutsIllegalArgumentException(invokerSession,NutsMessage.plain("start server failed"), e);
+                throw new NutsIllegalArgumentException(invokerSession,NutsMessage.ofPlain("start server failed"), e);
             }
         }
 

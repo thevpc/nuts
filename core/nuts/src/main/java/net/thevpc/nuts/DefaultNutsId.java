@@ -25,8 +25,8 @@
  */
 package net.thevpc.nuts;
 
-import net.thevpc.nuts.reserved.NutsReservedCollectionUtils;
 import net.thevpc.nuts.reserved.NutsReservedStringUtils;
+import net.thevpc.nuts.reserved.NutsReservedUtils;
 import net.thevpc.nuts.util.NutsStringUtils;
 
 import java.util.*;
@@ -253,7 +253,7 @@ public class DefaultNutsId implements NutsId {
         if (!NutsBlankable.isBlank(classifier)) {
             m.put(NutsConstants.IdProperties.CLASSIFIER, classifier);
         }
-        m.putAll(NutsReservedCollectionUtils.toMap(condition));
+        m.putAll(NutsReservedUtils.toMap(condition));
         for (Map.Entry<String, String> e : NutsStringUtils.parseDefaultMap(properties).get().entrySet()) {
             if (!m.containsKey(e.getKey())) {
                 m.put(e.getKey(), e.getValue());

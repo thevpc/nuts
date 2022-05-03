@@ -95,10 +95,19 @@ public abstract class NutsReservedOptionalImpl<T> implements NutsOptional<T> {
         return get();
     }
 
+    public NutsOptional<T> orElseOf(Supplier<T> other){
+        if (isNotPresent()) {
+            Objects.requireNonNull(other);
+            return NutsOptional.of(other.get(),getMessage());
+        }
+        return this;
+    }
+
+
     @Override
     public NutsOptional<T> ifBlankNull(Function<NutsSession, NutsMessage> emptyMessage) {
         if (emptyMessage == null) {
-            emptyMessage = session -> NutsMessage.cstyle("blank value");
+            emptyMessage = session -> NutsMessage.ofPlain("blank value");
         }
         if (isPresent()) {
             T v = get();

@@ -7,6 +7,7 @@ import net.thevpc.nuts.runtime.standalone.workspace.NutsWorkspaceUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.ndi.NdiScriptOptions;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.ndi.NutsSettingsNdiSubCommand;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.ndi.SystemNdi;
+import net.thevpc.nuts.util.NutsUtils;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -39,13 +40,7 @@ public class DefaultNutsWorkspaceEnvManager implements NutsWorkspaceEnvManager {
     }
 
     @Override
-    public NutsElement getPropertyElement(String property) {
-        checkSession();
-        return model.getPropertyElement(property, getSession());
-    }
-
-    @Override
-    public Object getProperty(String property) {
+    public NutsOptional<NutsValue> getProperty(String property) {
         checkSession();
         return model.getProperty(property, getSession());
     }
@@ -147,9 +142,7 @@ public class DefaultNutsWorkspaceEnvManager implements NutsWorkspaceEnvManager {
     @Override
     public NutsSupportMode getDesktopIntegrationSupport(NutsDesktopIntegrationItem item) {
         checkSession();
-        if (item == null) {
-            throw new NutsIllegalArgumentException(getSession(), NutsMessage.cstyle("missing item"));
-        }
+        NutsUtils.requireNonBlank(item,session,"item");
         switch (item) {
             case DESKTOP: {
                 NutsSupportMode a = session.boot().getBootOptions().getDesktopLauncher().orNull();

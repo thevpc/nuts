@@ -90,10 +90,10 @@ public class DefaultNutsArtifactExecutable extends AbstractNutsExecutableCommand
                 session.install().setSession(session).addId(def.getId()).run();
                 NutsInstallStatus st = session.fetch().setSession(session).setId(def.getId()).getResultDefinition().getInstallInformation().get(session).getInstallStatus();
                 if (!st.isInstalled()) {
-                    throw new NutsUnexpectedException(execSession, NutsMessage.cstyle("auto installation of %s failed",def.getId()));
+                    throw new NutsUnexpectedException(execSession, NutsMessage.ofCstyle("auto installation of %s failed",def.getId()));
                 }
             }else{
-                throw new NutsUnexpectedException(execSession, NutsMessage.cstyle("you must install %s to be able to run it",def.getId()));
+                throw new NutsUnexpectedException(execSession, NutsMessage.ofCstyle("you must install %s to be able to run it",def.getId()));
             }
         } else if (installStatus.isObsolete()) {
             if(autoInstall) {

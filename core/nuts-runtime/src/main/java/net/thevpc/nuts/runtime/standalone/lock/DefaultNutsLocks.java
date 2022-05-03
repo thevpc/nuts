@@ -26,17 +26,17 @@ public class DefaultNutsLocks extends AbstractNutsLocks {
         Path lrPath = null;
         if (lr == null) {
             if (s == null) {
-                throw new NutsLockException(getSession(), NutsMessage.cstyle("unsupported lock for null"), null, null);
+                throw new NutsLockException(getSession(), NutsMessage.ofPlain("unsupported lock for null"), null, null);
             }
             Path p = toPath(s);
             if (p == null) {
-                throw new NutsLockException(getSession(), NutsMessage.cstyle("unsupported lock for %s", s.getClass().getName()), null, s);
+                throw new NutsLockException(getSession(), NutsMessage.ofCstyle("unsupported lock for %s", s.getClass().getName()), null, s);
             }
             lrPath = p.resolveSibling(p.getFileName().toString() + ".lock");
         } else {
             lrPath = toPath(lr);
             if (lrPath == null) {
-                throw new NutsLockException(getSession(), NutsMessage.cstyle("unsupported lock %s", lr.getClass().getName()), lr, s);
+                throw new NutsLockException(getSession(), NutsMessage.ofCstyle("unsupported lock %s", lr.getClass().getName()), lr, s);
             }
         }
         return new DefaultFileNutsLock(lrPath, s, getSession());
@@ -56,7 +56,7 @@ public class DefaultNutsLocks extends AbstractNutsLocks {
             if (e instanceof NutsException) {
                 throw (NutsException) e;
             }
-            throw new NutsException(getSession(), NutsMessage.plain("call failed"), e);
+            throw new NutsException(getSession(), NutsMessage.ofPlain("call failed"), e);
         } finally {
             lock.unlock();
         }
@@ -83,7 +83,7 @@ public class DefaultNutsLocks extends AbstractNutsLocks {
             if (e instanceof NutsException) {
                 throw (NutsException) e;
             }
-            throw new NutsException(getSession(), NutsMessage.plain("call failed"), e);
+            throw new NutsException(getSession(), NutsMessage.ofPlain("call failed"), e);
         } finally {
             lock.unlock();
         }
@@ -103,7 +103,7 @@ public class DefaultNutsLocks extends AbstractNutsLocks {
             if (e instanceof NutsException) {
                 throw (NutsException) e;
             }
-            throw new NutsException(getSession(), NutsMessage.plain("call failed"), e);
+            throw new NutsException(getSession(), NutsMessage.ofPlain("call failed"), e);
         } finally {
             lock.unlock();
         }
@@ -128,7 +128,7 @@ public class DefaultNutsLocks extends AbstractNutsLocks {
             if (e instanceof NutsException) {
                 throw (NutsException) e;
             }
-            throw new NutsException(getSession(), NutsMessage.cstyle("lock action failed"), e);
+            throw new NutsException(getSession(), NutsMessage.ofPlain("lock action failed"), e);
         } finally {
             lock.unlock();
         }

@@ -50,7 +50,7 @@ public class DefaultSourceControlHelper {
         NutsSessionUtils.checkSession(ws, session);
         session.security().setSession(session).checkAllowed(NutsConstants.Permissions.DEPLOY, "commit");
         if (folder == null || !Files.isDirectory(folder)) {
-            throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("not a directory %s", folder));
+            throw new NutsIllegalArgumentException(session, NutsMessage.ofCstyle("not a directory %s", folder));
         }
 
         Path file = folder.resolve(NutsConstants.Files.DESCRIPTOR_FILE_NAME);
@@ -64,7 +64,7 @@ public class DefaultSourceControlHelper {
                 newVersionFound = session.fetch().setId(d.getId().builder().setVersion(newVersion).build()).setSession(session).getResultDefinition();
             } catch (NutsNotFoundException ex) {
                 _LOGOP(session).level(Level.FINE).error(ex)
-                        .log(NutsMessage.jstyle("failed to fetch {0}", d.getId().builder().setVersion(newVersion).build()));
+                        .log(NutsMessage.ofJstyle("failed to fetch {0}", d.getId().builder().setVersion(newVersion).build()));
                 //ignore
             }
             if (newVersionFound == null) {
@@ -77,7 +77,7 @@ public class DefaultSourceControlHelper {
             CoreIOUtils.delete(session, folder);
             return newId;
         } else {
-            throw new NutsUnsupportedOperationException(session, NutsMessage.cstyle("commit not supported"));
+            throw new NutsUnsupportedOperationException(session, NutsMessage.ofPlain("commit not supported"));
         }
     }
 
@@ -116,7 +116,7 @@ public class DefaultSourceControlHelper {
                     null, null, session
             );
         } else {
-            throw new NutsUnsupportedOperationException(session, NutsMessage.cstyle("checkout not supported"));
+            throw new NutsUnsupportedOperationException(session, NutsMessage.ofPlain("checkout not supported"));
         }
     }
 }

@@ -26,8 +26,8 @@ package net.thevpc.nuts.format;
 
 import net.thevpc.nuts.NutsContentTypeFormat;
 import net.thevpc.nuts.NutsSession;
-import net.thevpc.nuts.boot.NutsApiUtils;
 import net.thevpc.nuts.cmdline.NutsCommandLineConfigurable;
+import net.thevpc.nuts.util.NutsUtils;
 
 /**
  * Tree Format handles terminal output in Tree format. It is one of the many
@@ -43,7 +43,7 @@ import net.thevpc.nuts.cmdline.NutsCommandLineConfigurable;
  */
 public interface NutsTreeFormat extends NutsContentTypeFormat {
     static NutsTreeFormat of(NutsSession session) {
-        NutsApiUtils.checkSession(session);
+        NutsUtils.requireSession(session);
         return session.extensions().createSupported(NutsTreeFormat.class, true, null);
     }
 

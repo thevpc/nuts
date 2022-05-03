@@ -79,7 +79,7 @@ public class NutsPathParts {
                 break;
             }
             default:{
-                throw new NutsIllegalArgumentException(session,NutsMessage.plain("unsupported NutsPathParts"));
+                throw new NutsIllegalArgumentException(session,NutsMessage.ofPlain("unsupported NutsPathParts"));
             }
         }
     }

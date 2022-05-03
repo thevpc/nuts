@@ -3,6 +3,7 @@ package net.thevpc.nuts.runtime.standalone.xtra.expr;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.spi.NutsSupportLevelContext;
 import net.thevpc.nuts.util.NutsExpr;
+import net.thevpc.nuts.util.NutsUtils;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
@@ -250,14 +251,14 @@ public class DefaultNutsExpr implements NutsExpr {
     public Object evalFunction(String fctName, Object... args) {
         NutsExpr.Fct f = getFunction(fctName);
         if (f == null) {
-            throw new NutsIllegalArgumentException(getSession(), NutsMessage.cstyle("function not found %s", fctName));
+            throw new NutsIllegalArgumentException(getSession(), NutsMessage.ofCstyle("function not found %s", fctName));
         }
         return f.eval(fctName, Arrays.stream(args).map(DefaultLiteralNode::new).collect(Collectors.toList()), newChild());
     }
 
     public void setOperator(String name, OpType type, int precedence, boolean rightAssociative, Fct fct) {
         if (NutsBlankable.isBlank(name)) {
-            throw new NutsIllegalArgumentException(getSession(), NutsMessage.cstyle("empty operator"));
+            throw new NutsIllegalArgumentException(getSession(), NutsMessage.ofPlain("empty operator"));
         }
         //TODO: should check supported op!!
         if (fct == null) {
@@ -272,9 +273,7 @@ public class DefaultNutsExpr implements NutsExpr {
                 }
             }
         } else {
-            if (type == null) {
-                throw new NutsIllegalArgumentException(getSession(), NutsMessage.cstyle("missing op type"));
-            }
+            NutsUtils.requireNonBlank(type,session,"op type");
             Map<String, NutsExpr.Op> ops = getOps(type);
             ops.put(name, new OpImpl(name, type, precedence, rightAssociative, fct));
         }
@@ -360,7 +359,7 @@ public class DefaultNutsExpr implements NutsExpr {
     public Object evalVar(String fctName) {
         NutsExpr.Var f = getVar(fctName);
         if (f == null) {
-            throw new NutsIllegalArgumentException(getSession(), NutsMessage.cstyle("var not found %s", fctName));
+            throw new NutsIllegalArgumentException(getSession(), NutsMessage.ofCstyle("var not found %s", fctName));
         }
         return f.get(fctName, this);
     }

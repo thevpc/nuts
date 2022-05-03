@@ -210,7 +210,7 @@ public final class CoreStringUtils {
                 }
                 msg = exceptionToMessage(ex2, true);
             } else {
-                msg = NutsMessage.plain(ex.getMessage());
+                msg = NutsMessage.ofPlain(ex.getMessage());
             }
         } else if (ex instanceof NutsNotFoundException) {
             if (ex.getCause() != null) {
@@ -220,18 +220,18 @@ public final class CoreStringUtils {
                 }
                 msg = exceptionToMessage(ex2, true);
             } else {
-                msg = NutsMessage.formatted(((NutsNotFoundException) ex).getFormattedString().toString());
+                msg = NutsMessage.ofNtf(((NutsNotFoundException) ex).getFormattedString().toString());
             }
         } else if (ex instanceof NutsException) {
-            msg = NutsMessage.formatted(((NutsException) ex).getFormattedString().toString());
+            msg = NutsMessage.ofNtf(((NutsException) ex).getFormattedString().toString());
         } else {
             String msg2 = ex.toString();
             if (msg2.startsWith(ex.getClass().getName() + ":")) {
                 if (inner) {
                     //this is  default toString for the exception
-                    msg = NutsMessage.plain(msg2.substring((ex.getClass().getName()).length() + 1).trim());
+                    msg = NutsMessage.ofPlain(msg2.substring((ex.getClass().getName()).length() + 1).trim());
                 } else {
-                    msg = NutsMessage.plain(ex.getClass().getSimpleName() + ": " + msg2.substring((ex.getClass().getName()).length() + 1).trim());
+                    msg = NutsMessage.ofPlain(ex.getClass().getSimpleName() + ": " + msg2.substring((ex.getClass().getName()).length() + 1).trim());
                 }
             } else {
                 for (Class aClass : new Class[]{
@@ -242,12 +242,12 @@ public final class CoreStringUtils {
                         ReflectiveOperationException.class,
                         Error.class,}) {
                     if (aClass.isInstance(ex)) {
-                        return NutsMessage.plain(ex.toString());
+                        return NutsMessage.ofPlain(ex.toString());
                     }
                 }
-                msg = ex.getMessage() == null ? null : NutsMessage.plain(ex.getMessage());
+                msg = ex.getMessage() == null ? null : NutsMessage.ofPlain(ex.getMessage());
                 if (msg == null) {
-                    msg = NutsMessage.plain(ex.toString());
+                    msg = NutsMessage.ofPlain(ex.toString());
                 }
             }
         }

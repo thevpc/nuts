@@ -187,7 +187,7 @@ public class AdminServerRunnable implements NutsServer, Runnable {
             try {
                 socket.close();
             } catch (IOException ex) {
-                throw new NutsExecutionException(context.getSession(), NutsMessage.cstyle("%s",ex), ex, 100);
+                throw new NutsExecutionException(context.getSession(), NutsMessage.ofCstyle("%s",ex), ex, 100);
             }
         }
     }

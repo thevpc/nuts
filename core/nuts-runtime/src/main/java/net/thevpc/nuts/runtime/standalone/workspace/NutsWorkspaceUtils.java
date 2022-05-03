@@ -86,12 +86,8 @@ public class NutsWorkspaceUtils {
     }
 
     public NutsId createSdkId(String type, String version) {
-        if (NutsBlankable.isBlank(type)) {
-            throw new NutsException(session, NutsMessage.formatted("missing sdk type"));
-        }
-        if (NutsBlankable.isBlank(version)) {
-            throw new NutsException(session, NutsMessage.formatted("missing version"));
-        }
+        NutsUtils.requireNonBlank(type, session, "sdk type");
+        NutsUtils.requireNonBlank(version, session, "version");
         if ("java".equalsIgnoreCase(type)) {
             return NutsJavaSdkUtils.of(ws).createJdkId(version, session);
         } else {
@@ -112,7 +108,7 @@ public class NutsWorkspaceUtils {
             session = ws.createSession();
         } else {
             if (session.getWorkspace() != ws) {
-                throw new NutsIllegalArgumentException(session, NutsMessage.plain("session was created with a different Workspace"));
+                throw new NutsIllegalArgumentException(session, NutsMessage.ofPlain("session was created with a different Workspace"));
             }
         }
         return session;
@@ -181,7 +177,7 @@ public class NutsWorkspaceUtils {
                         d = NutsRepositoryHelper.getSupportDeployLevel(repository, fmode, id, mode, session.isTransitive(), session);
                     } catch (Exception ex) {
                         _LOGOP(session).level(Level.FINE).error(ex)
-                                .log(NutsMessage.jstyle("unable to resolve support deploy level for : {0}", repository.getName()));
+                                .log(NutsMessage.ofJstyle("unable to resolve support deploy level for : {0}", repository.getName()));
                     }
                 }
                 NutsSpeedQualifier t = NutsSpeedQualifier.NORMAL;
@@ -189,7 +185,7 @@ public class NutsWorkspaceUtils {
                     t = NutsRepositoryHelper.getSupportSpeedLevel(repository, fmode, id, mode, session.isTransitive(), session);
                 } catch (Exception ex) {
                     _LOGOP(session).level(Level.FINE).error(ex)
-                            .log(NutsMessage.jstyle("unable to resolve support speed level for : {0}", repository.getName()));
+                            .log(NutsMessage.ofJstyle("unable to resolve support speed level for : {0}", repository.getName()));
                 }
                 if (t != NutsSpeedQualifier.UNAVAILABLE) {
                     repos2.add(new RepoAndLevel(repository, d, t, postComp));
@@ -215,7 +211,7 @@ public class NutsWorkspaceUtils {
 
     public void validateRepositoryName(String repositoryName, Set<String> registered, NutsSession session) {
         if (!repositoryName.matches("[a-zA-Z][.a-zA-Z0-9_-]*")) {
-            throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("invalid repository id %s", repositoryName));
+            throw new NutsIllegalArgumentException(session, NutsMessage.ofCstyle("invalid repository id %s", repositoryName));
         }
         if (registered.contains(repositoryName)) {
             throw new NutsRepositoryAlreadyRegisteredException(session, repositoryName);
@@ -249,11 +245,11 @@ public class NutsWorkspaceUtils {
             NutsTexts factory = NutsTexts.of(session);
             if (session.isPlainTrace()) {
                 if (someAdded == 0) {
-                    session.out().print("```error no new``` java installation locations found...\n");
+                    session.out().printlnf("%s java installation locations found...", NutsMessage.ofStyled("no new", NutsTextStyle.error()));
                 } else if (someAdded == 1) {
-                    session.out().printf("%s new java installation location added...\n", factory.ofStyled("1", NutsTextStyle.primary2()));
+                    session.out().printf("%s new java installation location added...\n", NutsMessage.ofStyled("1", NutsTextStyle.primary2()));
                 } else {
-                    session.out().printf("%s new java installation locations added...\n", factory.ofStyled("" + someAdded, NutsTextStyle.primary2()));
+                    session.out().printf("%s new java installation locations added...\n", NutsMessage.ofStyled("" + someAdded, NutsTextStyle.primary2()));
                 }
                 session.out().println("you can always add another installation manually using 'nuts settings add java' command.");
             }
@@ -262,11 +258,13 @@ public class NutsWorkspaceUtils {
             }
         } catch (Exception ex) {
             _LOG(session).with().session(session).level(Level.FINEST).verb(NutsLoggerVerb.WARNING).error(ex)
-                    .log(NutsMessage.jstyle("unable to resolve default JRE/JDK locations : {0}", ex));
+                    .log(NutsMessage.ofJstyle("unable to resolve default JRE/JDK locations : {0}", ex));
             if (session.isPlainTrace()) {
                 NutsPrintStream out = session.out();
                 out.resetLine();
-                out.printf("```unable to resolve default JRE/JDK locations``` :  %s%n", ex);
+                out.printf("%s :  %s%n",
+                        NutsMessage.ofStyled("unable to resolve default JRE/JDK locations", NutsTextStyle.error()),
+                        ex);
             }
         }
     }
@@ -291,7 +289,7 @@ public class NutsWorkspaceUtils {
             NutsTexts factory = NutsTexts.of(session);
             if (session.isPlainTrace()) {
                 if (someAdded == 0) {
-                    session.out().print("```error no new``` java installation locations found...\n");
+                    session.out().printf("%s java installation locations found...\n", NutsMessage.ofStyled("no new", NutsTextStyle.error()));
                 }
             }
             if (!config.isReadOnly()) {
@@ -299,11 +297,11 @@ public class NutsWorkspaceUtils {
             }
         } catch (Exception ex) {
             _LOG(session).with().session(session).level(Level.FINEST).verb(NutsLoggerVerb.WARNING).error(ex)
-                    .log(NutsMessage.jstyle("unable to resolve default JRE/JDK locations : {0}", ex));
+                    .log(NutsMessage.ofJstyle("unable to resolve default JRE/JDK locations : {0}", ex));
             if (session.isPlainTrace()) {
                 NutsPrintStream out = session.out();
                 out.resetLine();
-                out.printf("```unable to resolve default JRE/JDK locations``` :  %s%n", ex);
+                out.printf("Ms :  %s%n", NutsMessage.ofStyled("unable to resolve default JRE/JDK locations", NutsTextStyle.error()), ex);
             }
         }
     }
@@ -323,11 +321,13 @@ public class NutsWorkspaceUtils {
             );
         } catch (Exception ex) {
             _LOG(session).with().session(session).level(Level.FINEST).verb(NutsLoggerVerb.WARNING).error(ex)
-                    .log(NutsMessage.jstyle("unable to install desktop launchers : {0}", ex));
+                    .log(NutsMessage.ofJstyle("unable to install desktop launchers : {0}", ex));
             if (session.isPlainTrace()) {
                 NutsPrintStream out = session.out();
                 out.resetLine();
-                out.printf("```error unable to install desktop launchers``` :  %s%n", ex);
+                out.printf("%s :  %s%n",
+                        NutsMessage.ofStyled("unable to install desktop launchers", NutsTextStyle.error()),
+                        ex);
             }
         }
     }
@@ -352,12 +352,13 @@ public class NutsWorkspaceUtils {
                     .run();
         } catch (Exception ex) {
             _LOG(session).with().session(session).level(Level.FINEST).verb(NutsLoggerVerb.WARNING).error(ex)
-                    .log(NutsMessage.jstyle("unable to install companions : {0}", ex));
+                    .log(NutsMessage.ofJstyle("unable to install companions : {0}", ex));
             if (session.isPlainTrace()) {
                 NutsPrintStream out = session.out();
                 out.resetLine();
-                out.printf("```error unable to install companion tools``` :  %s \n"
+                out.printf("%s :  %s \n"
                                 + "this happens when none of the following repositories are able to locate them : %s\n",
+                        NutsMessage.ofStyled("unable to install companion tools", NutsTextStyle.error()),
                         ex,
                         text.builder().appendJoined(text.ofPlain(", "),
                                 session.repos().getRepositories().stream().map(x
@@ -411,7 +412,7 @@ public class NutsWorkspaceUtils {
 
         public void fireOnInstall(NutsInstallEvent event) {
             u._LOGOP(event.getSession()).level(Level.FINEST).verb(NutsLoggerVerb.ADD)
-                    .log(NutsMessage.jstyle("installed {0}", event.getDefinition().getId()));
+                    .log(NutsMessage.ofJstyle("installed {0}", event.getDefinition().getId()));
             for (NutsInstallListener listener : event.getSession().events().getInstallListeners()) {
                 listener.onInstall(event);
             }
@@ -422,7 +423,7 @@ public class NutsWorkspaceUtils {
 
         public void fireOnRequire(NutsInstallEvent event) {
             u._LOGOP(event.getSession()).level(Level.FINEST).verb(NutsLoggerVerb.ADD)
-                    .log(NutsMessage.jstyle("required {0}", event.getDefinition().getId()));
+                    .log(NutsMessage.ofJstyle("required {0}", event.getDefinition().getId()));
             for (NutsInstallListener listener : event.getSession().events().getInstallListeners()) {
                 listener.onRequire(event);
             }
@@ -435,10 +436,10 @@ public class NutsWorkspaceUtils {
             if (u._LOG(event.getSession()).isLoggable(Level.FINEST)) {
                 if (event.getOldValue() == null) {
                     u._LOGOP(event.getSession()).level(Level.FINEST).verb(NutsLoggerVerb.UPDATE)
-                            .log(NutsMessage.jstyle("updated {0}", event.getNewValue().getId()));
+                            .log(NutsMessage.ofJstyle("updated {0}", event.getNewValue().getId()));
                 } else {
                     u._LOGOP(event.getSession()).level(Level.FINEST).verb(NutsLoggerVerb.UPDATE)
-                            .log(NutsMessage.jstyle("updated {0} (old is {1})",
+                            .log(NutsMessage.ofJstyle("updated {0} (old is {1})",
                                     event.getOldValue().getId().getLongId(),
                                     event.getNewValue().getId().getLongId()));
                 }
@@ -454,7 +455,7 @@ public class NutsWorkspaceUtils {
         public void fireOnUninstall(NutsInstallEvent event) {
             if (u._LOG(event.getSession()).isLoggable(Level.FINEST)) {
                 u._LOGOP(event.getSession()).level(Level.FINEST).verb(NutsLoggerVerb.REMOVE)
-                        .log(NutsMessage.jstyle("uninstalled {0}", event.getDefinition().getId()));
+                        .log(NutsMessage.ofJstyle("uninstalled {0}", event.getDefinition().getId()));
             }
             for (NutsInstallListener listener : event.getSession().events().getInstallListeners()) {
                 listener.onUninstall(event);
@@ -467,7 +468,7 @@ public class NutsWorkspaceUtils {
         public void fireOnAddRepository(NutsWorkspaceEvent event) {
             if (u._LOG(event.getSession()).isLoggable(Level.CONFIG)) {
                 u._LOGOP(event.getSession()).level(Level.CONFIG).verb(NutsLoggerVerb.ADD)
-                        .log(NutsMessage.jstyle("added repo ##{0}##", event.getRepository().getName()));
+                        .log(NutsMessage.ofJstyle("added repo ##{0}##", event.getRepository().getName()));
             }
 
             for (NutsWorkspaceListener listener : event.getSession().events().getWorkspaceListeners()) {
@@ -481,7 +482,7 @@ public class NutsWorkspaceUtils {
         public void fireOnRemoveRepository(NutsWorkspaceEvent event) {
             if (u._LOG(event.getSession()).isLoggable(Level.FINEST)) {
                 u._LOGOP(event.getSession()).level(Level.FINEST).verb(NutsLoggerVerb.REMOVE)
-                        .log(NutsMessage.jstyle("removed repo ##{0}##", event.getRepository().getName()));
+                        .log(NutsMessage.ofJstyle("removed repo ##{0}##", event.getRepository().getName()));
             }
             for (NutsWorkspaceListener listener : event.getSession().events().getWorkspaceListeners()) {
                 listener.onRemoveRepository(event);

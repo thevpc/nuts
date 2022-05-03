@@ -27,8 +27,8 @@ package net.thevpc.nuts.format;
 
 import net.thevpc.nuts.NutsContentTypeFormat;
 import net.thevpc.nuts.NutsSession;
-import net.thevpc.nuts.boot.NutsApiUtils;
 import net.thevpc.nuts.cmdline.NutsCommandLineConfigurable;
+import net.thevpc.nuts.util.NutsUtils;
 
 /**
  * @author thevpc
@@ -37,7 +37,7 @@ import net.thevpc.nuts.cmdline.NutsCommandLineConfigurable;
  */
 public interface NutsTableFormat extends NutsContentTypeFormat {
     static NutsTableFormat of(NutsSession session) {
-        NutsApiUtils.checkSession(session);
+        NutsUtils.requireSession(session);
         return session.extensions().createSupported(NutsTableFormat.class, true, null);
     }
 

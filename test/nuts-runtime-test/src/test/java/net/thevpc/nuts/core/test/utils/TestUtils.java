@@ -232,6 +232,7 @@ public class TestUtils {
             argsList.add("--yes");
             //disable installing nsh
             argsList.add("--skip-companions");
+            argsList.add("--skip-welcome");
 //        argsList.add("--embedded");
             argsList.addAll(Arrays.asList(args));
             if (run) {

@@ -47,6 +47,6 @@ public class NutsElementMapperNutsFilter implements NutsElementMapper<NutsFilter
                 }
             }
         }
-        throw new NutsUnsupportedArgumentException(context.getSession(),NutsMessage.cstyle("unsupported parse of %s",to));
+        throw new NutsUnsupportedArgumentException(context.getSession(),NutsMessage.ofCstyle("unsupported parse of %s",to));
     }
 }

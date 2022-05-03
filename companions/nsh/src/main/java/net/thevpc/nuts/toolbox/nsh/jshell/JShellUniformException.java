@@ -17,7 +17,7 @@ public class JShellUniformException extends JShellException {
     private boolean quit;
 
     public JShellUniformException(NutsSession session,int code, boolean quit, Throwable cause) {
-        super(session, NutsMessage.plain("error"),cause,code);
+        super(session, NutsMessage.ofPlain("error"),cause,code);
         this.quit = quit;
     }
 

@@ -56,7 +56,7 @@ public class NutsAnsiTermHelper {
         boolean italic = false;
         boolean reversed = false;
         int intensity = 0;
-        if(styles!=null) {
+        if (styles != null) {
             for (NutsTextStyle style : styles) {
                 switch (style.getType()) {
                     case PRIMARY:
@@ -266,8 +266,8 @@ public class NutsAnsiTermHelper {
                 if (a != null) {
                     String[] split = a.split("[;v, x]");
                     if (split.length >= 2) {
-                        Integer count1 = NutsApiUtils.parseInt(split[0], null, null);
-                        Integer count2 = NutsApiUtils.parseInt(split[1], null, null);
+                        Integer count1 = NutsValue.of(split[0]).asInt().orNull();
+                        Integer count2 = NutsValue.of(split[1]).asInt().orNull();
                         if (count1 != null && count2 != null) {
                             return ("\u001b[" + count1 + ";" + count2 + "H");
                         }
@@ -277,28 +277,28 @@ public class NutsAnsiTermHelper {
             }
 
             case NutsTerminalCommand.Ids.MOVE_UP: {
-                Integer count1 = NutsApiUtils.parseInt(command.getArgs(), null, null);
+                Integer count1 = NutsValue.of(command.getArgs()).asInt().orNull();
                 if (count1 != null) {
                     return ("\u001b[" + count1 + "A");
                 }
                 return null;
             }
             case NutsTerminalCommand.Ids.MOVE_DOWN: {
-                Integer count1 = NutsApiUtils.parseInt(command.getArgs(), null, null);
+                Integer count1 = NutsValue.of(command.getArgs()).asInt().orNull();
                 if (count1 != null) {
                     return ("\u001b[" + count1 + "B");
                 }
                 return null;
             }
             case NutsTerminalCommand.Ids.MOVE_RIGHT: {
-                Integer count1 = NutsApiUtils.parseInt(command.getArgs(), null, null);
+                Integer count1 = NutsValue.of(command.getArgs()).asInt().orNull();
                 if (count1 != null) {
                     return ("\u001b[" + count1 + "C");
                 }
                 return null;
             }
             case NutsTerminalCommand.Ids.MOVE_LEFT: {
-                Integer count1 = NutsApiUtils.parseInt(command.getArgs(), null, null);
+                Integer count1 = NutsValue.of(command.getArgs()).asInt().orNull();
                 if (count1 != null) {
                     return ("\u001b[" + count1 + "D");
                 }

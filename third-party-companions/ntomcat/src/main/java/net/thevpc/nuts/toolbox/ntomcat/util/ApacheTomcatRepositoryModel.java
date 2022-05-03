@@ -60,7 +60,7 @@ public class ApacheTomcatRepositoryModel implements NutsRepositoryModel {
 
             }
             if (url != null) {
-                session.getTerminal().printProgress(NutsMessage.cstyle("peek %s", url));
+                session.getTerminal().printProgress(NutsMessage.ofCstyle("peek %s", url));
                 try (InputStream inputStream = url.openStream()) {
                     //ws.io().copy().from(r).getByteArrayResult();
                     found = true;
@@ -122,7 +122,8 @@ public class ApacheTomcatRepositoryModel implements NutsRepositoryModel {
             if (localPath == null) {
                 localPath = getIdLocalFile(id.builder().setFaceContent().build(), fetchMode, repository, session);
             }
-            NutsCp.of(session).from(r).to(localPath).addOptions(NutsPathOption.SAFE, NutsPathOption.LOG, NutsPathOption.TRACE).run();
+            NutsCp.of(session).from(NutsPath.of(r,session)).to(NutsPath.of(localPath,session))
+                    .addOptions(NutsPathOption.SAFE, NutsPathOption.LOG, NutsPathOption.TRACE).run();
             return NutsPath.of(localPath, session);
         }
         return null;

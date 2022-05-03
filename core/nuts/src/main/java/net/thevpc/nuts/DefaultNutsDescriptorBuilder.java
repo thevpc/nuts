@@ -665,15 +665,14 @@ public class DefaultNutsDescriptorBuilder implements NutsDescriptorBuilder {
     }
 
     @Override
-    public NutsDescriptorProperty getProperty(String name) {
-        return Arrays.stream(_propertiesBuilder.getAll()).filter(x -> x.getName().equals(name)).findFirst()
-                .orElse(null);
+    public NutsOptional<NutsDescriptorProperty> getProperty(String name) {
+        return NutsOptional.ofNamed(Arrays.stream(_propertiesBuilder.getAll()).filter(x -> x.getName().equals(name)).findFirst()
+                .orElse(null), "property " + name);
     }
 
     @Override
     public NutsOptional<NutsValue> getPropertyValue(String name) {
-        NutsDescriptorProperty p = getProperty(name);
-        return NutsOptional.of(p == null ? null : p.getValue(), session -> NutsMessage.cstyle("property not found : %s", name));
+        return getProperty(name).map(NutsDescriptorProperty::getValue);
     }
 
     public NutsIdType getIdType() {

@@ -43,7 +43,7 @@ public class NutsDescriptorContentResolver {
                                 .level(Level.FINE)
                                 .verb(NutsLoggerVerb.WARNING)
                                 .error(e)
-                                .log(NutsMessage.cstyle("error parsing %s with %s", localPath, parser.getClass().getSimpleName() + ". Error ignored"));
+                                .log(NutsMessage.ofCstyle("error parsing %s with %s", localPath, parser.getClass().getSimpleName() + ". Error ignored"));
                         //e.printStackTrace();
                     }
                     if (desc != null) {

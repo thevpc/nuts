@@ -309,7 +309,7 @@ public abstract class AbstractNutsExecCommand extends NutsWorkspaceCommandBase<N
         if (o instanceof SPrintStream) {
             return o.toString();
         }
-        throw new NutsIllegalArgumentException(getSession(), NutsMessage.cstyle("no buffer was configured; should call grabOutputString"));
+        throw new NutsIllegalArgumentException(getSession(), NutsMessage.ofPlain("no buffer was configured; should call grabOutputString"));
     }
 
     @Override
@@ -325,7 +325,7 @@ public abstract class AbstractNutsExecCommand extends NutsWorkspaceCommandBase<N
         if (o instanceof SPrintStream) {
             return o.toString();
         }
-        throw new NutsIllegalArgumentException(getSession(), NutsMessage.cstyle("no buffer was configured; should call grabErrorString"));
+        throw new NutsIllegalArgumentException(getSession(), NutsMessage.ofPlain("no buffer was configured; should call grabErrorString"));
     }
 
     @Override
@@ -490,7 +490,7 @@ public abstract class AbstractNutsExecCommand extends NutsWorkspaceCommandBase<N
         if (o instanceof SPrintStream) {
             return o.toString();
         }
-        throw new NutsIllegalArgumentException(getSession(), NutsMessage.cstyle("no buffer was configured; should call grabOutputString"));
+        throw new NutsIllegalArgumentException(getSession(), NutsMessage.ofPlain("no buffer was configured; should call grabOutputString"));
     }
 
     protected String getExtraErrorMessage() {
@@ -573,10 +573,7 @@ public abstract class AbstractNutsExecCommand extends NutsWorkspaceCommandBase<N
             case "--run-as": {
                 NutsArgument s = cmdLine.nextString().get(session);
                 if (enabled) {
-                    if (NutsBlankable.isBlank(s.getStringValue())) {
-                        throw new NutsIllegalArgumentException(getSession(), NutsMessage.cstyle("missing user name"));
-                    }
-                    setRunAs(NutsRunAs.user(s.getStringValue().get(session)));
+                    setRunAs(NutsRunAs.user(s.getStringValue().ifBlankNull().get(session)));
                 }
                 return true;
             }

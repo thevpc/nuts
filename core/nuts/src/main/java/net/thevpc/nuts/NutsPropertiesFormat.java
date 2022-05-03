@@ -26,8 +26,8 @@
  */
 package net.thevpc.nuts;
 
-import net.thevpc.nuts.boot.NutsApiUtils;
 import net.thevpc.nuts.cmdline.NutsCommandLineConfigurable;
+import net.thevpc.nuts.util.NutsUtils;
 
 import java.util.Map;
 
@@ -38,7 +38,7 @@ import java.util.Map;
  */
 public interface NutsPropertiesFormat extends NutsContentTypeFormat {
     static NutsPropertiesFormat of(NutsSession session) {
-        NutsApiUtils.checkSession(session);
+        NutsUtils.requireSession(session);
         return session.extensions().createSupported(NutsPropertiesFormat.class, true, null);
     }
 

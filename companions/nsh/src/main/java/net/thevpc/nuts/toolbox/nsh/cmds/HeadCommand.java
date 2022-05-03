@@ -99,7 +99,7 @@ public class HeadCommand extends SimpleJShellBuiltin {
                 }
             }
         } catch (IOException ex) {
-            throw new NutsExecutionException(session, NutsMessage.cstyle("%s", ex), ex, 100);
+            throw new NutsExecutionException(session, NutsMessage.ofCstyle("%s", ex), ex, 100);
         }
     }
 

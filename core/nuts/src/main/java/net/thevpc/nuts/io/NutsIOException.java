@@ -69,7 +69,7 @@ public class NutsIOException extends NutsException {
                 cause == null ? null
                         : (cause instanceof NutsExceptionBase) ?
                         ((NutsExceptionBase) cause).getFormattedMessage()
-                        : NutsMessage.plain(cause.getMessage() == null ? "error" : cause.getMessage()),
+                        : NutsMessage.ofPlain(cause.getMessage() == null ? "error" : cause.getMessage()),
                 cause);
     }
 }

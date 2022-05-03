@@ -35,10 +35,10 @@ class SilentStartNutsProgressMonitorAdapter implements NutsProgressMonitor {
         finalMonitor.onComplete(event);
         if (event.getError() != null) {
             _LOGOP(event.getSession()).level(Level.FINEST).verb(NutsLoggerVerb.FAIL)
-                    .log(NutsMessage.jstyle("download failed    : {0}", path));
+                    .log(NutsMessage.ofJstyle("download failed    : {0}", path));
         } else {
             _LOGOP(event.getSession()).level(Level.FINEST).verb(NutsLoggerVerb.SUCCESS)
-                    .log(NutsMessage.jstyle( "download succeeded : {0}", path));
+                    .log(NutsMessage.ofJstyle( "download succeeded : {0}", path));
         }
     }
 

@@ -139,7 +139,7 @@ public class DefaultNutsWorkspaceFactory implements NutsWorkspaceFactory {
                 obj = (T) resolveInstance(c, type, session);
             } catch (Exception e) {
                 LOG.with().session(validLogSession(session)).level(Level.FINEST).verb(NutsLoggerVerb.FAIL).error(e)
-                        .log(NutsMessage.jstyle("unable to instantiate {0} for {1} : {2}", c, type, e));
+                        .log(NutsMessage.ofJstyle("unable to instantiate {0} for {1} : {2}", c, type, e));
             }
             if (obj != null) {
                 all.add(obj);
@@ -187,11 +187,11 @@ public class DefaultNutsWorkspaceFactory implements NutsWorkspaceFactory {
     public <T> void registerInstance(Class<T> extensionPoint, T implementation, NutsSession session) {
         checkSession(session);
         if (isRegisteredInstance(extensionPoint, implementation, session)) {
-            throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("already registered Extension %s for %s", implementation, extensionPoint.getName()));
+            throw new NutsIllegalArgumentException(session, NutsMessage.ofCstyle("already registered Extension %s for %s", implementation, extensionPoint.getName()));
         }
         if (LOG.isLoggable(Level.CONFIG)) {
             LOG.with().session(validLogSession(session)).level(Level.FINEST).verb(NutsLoggerVerb.ADD)
-                    .log(NutsMessage.jstyle("bind    {0} for impl instance {1}", NutsStringUtils.formatAlign(extensionPoint.getSimpleName(), 40, NutsPositionType.FIRST),
+                    .log(NutsMessage.ofJstyle("bind    {0} for impl instance {1}", NutsStringUtils.formatAlign(extensionPoint.getSimpleName(), 40, NutsPositionType.FIRST),
                             implementation.getClass().getName()));
         }
         instances.add(extensionPoint, implementation);
@@ -201,11 +201,11 @@ public class DefaultNutsWorkspaceFactory implements NutsWorkspaceFactory {
     public void registerType(Class extensionPoint, Class implementation, NutsId source, NutsSession session) {
         checkSession(session);
         if (isRegisteredType(extensionPoint, implementation.getName(), session)) {
-            throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("already registered Extension %s for %s", implementation.getName(), extensionPoint.getName()));
+            throw new NutsIllegalArgumentException(session, NutsMessage.ofCstyle("already registered Extension %s for %s", implementation.getName(), extensionPoint.getName()));
         }
         if (LOG.isLoggable(Level.CONFIG)) {
             LOG.with().session(validLogSession(session)).level(Level.FINEST).verb(NutsLoggerVerb.ADD)
-                    .log(NutsMessage.jstyle("bind    {0} for impl type {1}", NutsStringUtils.formatAlign(extensionPoint.getSimpleName(), 40,NutsPositionType.FIRST),
+                    .log(NutsMessage.ofJstyle("bind    {0} for impl type {1}", NutsStringUtils.formatAlign(extensionPoint.getSimpleName(), 40, NutsPositionType.FIRST),
                             implementation.getName()));
         }
         IdCache t = discoveredCacheById.get(source);
@@ -308,18 +308,18 @@ public class DefaultNutsWorkspaceFactory implements NutsWorkspaceFactory {
         T theInstance = null;
         CachedConstructor<T> ctrl = getCtrl0(t, session);
         if (ctrl == null) {
-            throw new NutsFactoryException(session, NutsMessage.cstyle("instantiate '%s' failed. missing constructor", t));
+            throw new NutsFactoryException(session, NutsMessage.ofCstyle("instantiate '%s' failed. missing constructor", t));
         }
         try {
             theInstance = ctrl.ctrl().newInstance(ctrl.args(session));
         } catch (InstantiationException | InvocationTargetException e) {
             if (isBootstrapLogType(apiType)) {
                 //do not use log. this is a bug that must be resolved fast!
-                safeLog(NutsMessage.cstyle("unable to instantiate %s as %s", apiType, t), e,session);
+                safeLog(NutsMessage.ofCstyle("unable to instantiate %s as %s", apiType, t), e, session);
             } else {
                 if (LOG.isLoggable(Level.FINEST)) {
                     LOG.with().session(validLogSession(session)).level(Level.FINEST).verb(NutsLoggerVerb.FAIL).error(e)
-                            .log(NutsMessage.jstyle("unable to instantiate {0}", t));
+                            .log(NutsMessage.ofJstyle("unable to instantiate {0}", t));
                 }
             }
             Throwable cause = e.getCause();
@@ -329,18 +329,18 @@ public class DefaultNutsWorkspaceFactory implements NutsWorkspaceFactory {
             if (cause instanceof RuntimeException) {
                 throw (RuntimeException) cause;
             }
-            throw new NutsFactoryException(session, NutsMessage.cstyle("instantiate '%s' failed", t), cause);
+            throw new NutsFactoryException(session, NutsMessage.ofCstyle("instantiate '%s' failed", t), cause);
         } catch (IllegalAccessException e) {
             if (isBootstrapLogType(apiType)) {
                 //do not use log. this is a bug that must be resolved fast!
-                safeLog(NutsMessage.cstyle("unable to instantiate %s as %s", apiType, t), e,session);
+                safeLog(NutsMessage.ofCstyle("unable to instantiate %s as %s", apiType, t), e, session);
             } else {
                 if (LOG.isLoggable(Level.FINEST)) {
                     LOG.with().session(validLogSession(session)).level(Level.FINEST).verb(NutsLoggerVerb.FAIL).error(e)
-                            .log(NutsMessage.jstyle("unable to instantiate {0}", t));
+                            .log(NutsMessage.ofJstyle("unable to instantiate {0}", t));
                 }
             }
-            throw new NutsFactoryException(session, NutsMessage.cstyle("instantiate '%s' failed", t), e);
+            throw new NutsFactoryException(session, NutsMessage.ofCstyle("instantiate '%s' failed", t), e);
         }
         //initialize?
         return theInstance;
@@ -354,12 +354,12 @@ public class DefaultNutsWorkspaceFactory implements NutsWorkspaceFactory {
         } catch (InstantiationException e) {
             if (isBootstrapLogType(apiType)) {
                 //do not use log. this is a bug that must be resolved fast!
-                safeLog(NutsMessage.cstyle("unable to instantiate %s as %s", apiType, t), e,session);
+                safeLog(NutsMessage.ofCstyle("unable to instantiate %s as %s", apiType, t), e, session);
             } else {
 
                 if (LOG.isLoggable(Level.FINEST)) {
                     LOG.with().session(validLogSession(session)).level(Level.FINEST).verb(NutsLoggerVerb.FAIL).error(e)
-                            .log(NutsMessage.jstyle("unable to instantiate {0}", t));
+                            .log(NutsMessage.ofJstyle("unable to instantiate {0}", t));
                 }
             }
             Throwable cause = e.getCause();
@@ -369,21 +369,21 @@ public class DefaultNutsWorkspaceFactory implements NutsWorkspaceFactory {
             if (cause instanceof RuntimeException) {
                 throw (RuntimeException) cause;
             }
-            throw new NutsFactoryException(session, NutsMessage.cstyle("instantiate '%s' failed", t), cause);
+            throw new NutsFactoryException(session, NutsMessage.ofCstyle("instantiate '%s' failed", t), cause);
         } catch (Exception e) {
             if (isBootstrapLogType(apiType)) {
                 //do not use log. this is a bug that must be resolved fast!
-                safeLog(NutsMessage.cstyle("unable to instantiate %s as %s", apiType, t), e,session);
+                safeLog(NutsMessage.ofCstyle("unable to instantiate %s as %s", apiType, t), e, session);
             } else {
                 if (LOG.isLoggable(Level.FINEST)) {
                     LOG.with().session(validLogSession(session)).level(Level.FINEST).verb(NutsLoggerVerb.FAIL).error(e)
-                            .log(NutsMessage.jstyle("unable to instantiate {0}", t));
+                            .log(NutsMessage.ofJstyle("unable to instantiate {0}", t));
                 }
             }
             if (e instanceof RuntimeException) {
                 throw (RuntimeException) e;
             }
-            throw new NutsFactoryException(session, NutsMessage.cstyle("instantiate '%s' failed", t), e);
+            throw new NutsFactoryException(session, NutsMessage.ofCstyle("instantiate '%s' failed", t), e);
         }
         //initialize?
         return t1;
@@ -452,7 +452,7 @@ public class DefaultNutsWorkspaceFactory implements NutsWorkspaceFactory {
                             }
                             default: {
                                 LOG.with().session(validLogSession(session)).level(Level.FINEST).verb(NutsLoggerVerb.FAIL)
-                                        .log(NutsMessage.jstyle("invalid scope {0} ; expected {1} for  {2}",
+                                        .log(NutsMessage.ofJstyle("invalid scope {0} ; expected {1} for  {2}",
                                                 implScope.value(),
                                                 apiScope.value(),
                                                 implType.getName()
@@ -466,11 +466,11 @@ public class DefaultNutsWorkspaceFactory implements NutsWorkspaceFactory {
         return scope;
     }
 
-    public void safeLog(NutsMessage msg, Throwable any,NutsSession session) {
+    public void safeLog(NutsMessage msg, Throwable any, NutsSession session) {
         //TODO: should we use boot stdio?
         PrintStream err = NutsWorkspaceExt.of(session).getModel().bootModel.getBootTerminal().getErr();
-        if(err==null){
-            err=System.err;
+        if (err == null) {
+            err = System.err;
         }
         err.println(msg.toString() + ":");
         any.printStackTrace();
@@ -500,8 +500,8 @@ public class DefaultNutsWorkspaceFactory implements NutsWorkspaceFactory {
             if (old == null || !old.equals(implType.getName())) {
                 _alreadyLogger.put(baseType.getName(), implType.getName());
                 LOG.with().session(validLogSession(session)).level(Level.FINEST).verb(NutsLoggerVerb.READ)
-                        .log(NutsMessage.jstyle("resolve {0} to  ```underlined {1}``` {2}",
-                                NutsStringUtils.formatAlign(baseType.getSimpleName(), 40,NutsPositionType.FIRST),
+                        .log(NutsMessage.ofJstyle("resolve {0} to  ```underlined {1}``` {2}",
+                                NutsStringUtils.formatAlign(baseType.getSimpleName(), 40, NutsPositionType.FIRST),
                                 scope,
                                 implType.getName()
                         ));
@@ -542,7 +542,7 @@ public class DefaultNutsWorkspaceFactory implements NutsWorkspaceFactory {
         }
         if (singleton) {
             if (argTypes.length > 0) {
-                throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("singletons should have no arg types"));
+                throw new NutsIllegalArgumentException(session, NutsMessage.ofPlain("singletons should have no arg types"));
             }
             Object o = singletons.get(type);
             if (o == null) {
@@ -550,7 +550,7 @@ public class DefaultNutsWorkspaceFactory implements NutsWorkspaceFactory {
                 singletons.put(type, o);
                 if (LOG.isLoggable(Level.CONFIG)) {
                     LOG.with().session(validLogSession(session)).level(Level.FINEST).verb(NutsLoggerVerb.READ)
-                            .log(NutsMessage.jstyle("resolve {0} to  ```underlined singleton``` {1}", NutsStringUtils.formatAlign(apiType.getSimpleName(), 40,NutsPositionType.FIRST), o.getClass().getName()));
+                            .log(NutsMessage.ofJstyle("resolve {0} to  ```underlined singleton``` {1}", NutsStringUtils.formatAlign(apiType.getSimpleName(), 40, NutsPositionType.FIRST), o.getClass().getName()));
                 }
             }
             return (T) o;
@@ -558,7 +558,7 @@ public class DefaultNutsWorkspaceFactory implements NutsWorkspaceFactory {
             T o = instantiate0(type, argTypes, args, apiType, session);
             if (LOG.isLoggable(Level.CONFIG)) {
                 LOG.with().session(validLogSession(session)).level(Level.FINEST).verb(NutsLoggerVerb.READ)
-                        .log(NutsMessage.jstyle("resolve {0} to  ```underlined prototype``` {1}", NutsStringUtils.formatAlign(apiType.getSimpleName(), 40,NutsPositionType.FIRST), o.getClass().getName()));
+                        .log(NutsMessage.ofJstyle("resolve {0} to  ```underlined prototype``` {1}", NutsStringUtils.formatAlign(apiType.getSimpleName(), 40, NutsPositionType.FIRST), o.getClass().getName()));
             }
             return o;
         }
@@ -572,7 +572,7 @@ public class DefaultNutsWorkspaceFactory implements NutsWorkspaceFactory {
             //if static instance found, always return it!
             if (LOG.isLoggable(Level.CONFIG)) {
                 LOG.with().session(validLogSession(session)).level(Level.FINEST).verb(NutsLoggerVerb.READ)
-                        .log(NutsMessage.jstyle("resolve {0} to singleton {1}", NutsStringUtils.formatAlign(type.getSimpleName(), 40,NutsPositionType.FIRST), one.getClass().getName()));
+                        .log(NutsMessage.ofJstyle("resolve {0} to singleton {1}", NutsStringUtils.formatAlign(type.getSimpleName(), 40, NutsPositionType.FIRST), one.getClass().getName()));
             }
             return (T) one;
         }
@@ -583,7 +583,7 @@ public class DefaultNutsWorkspaceFactory implements NutsWorkspaceFactory {
         for (Class<T> t : extensionTypes) {
             return instantiate0(t, session, type);
         }
-        throw new NutsElementNotFoundException(session, NutsMessage.cstyle("type %s not found", type));
+        throw new NutsElementNotFoundException(session, NutsMessage.ofCstyle("type %s not found", type));
     }
 
     public <T> List<T> createAll(Class<T> type, Class[] argTypes, Object[] args, NutsSession session) {
@@ -594,7 +594,7 @@ public class DefaultNutsWorkspaceFactory implements NutsWorkspaceFactory {
                 obj = (T) resolveInstance(c, type, argTypes, args, session);
             } catch (Exception e) {
                 LOG.with().session(validLogSession(session)).level(Level.WARNING).verb(NutsLoggerVerb.FAIL).error(e)
-                        .log(NutsMessage.jstyle("unable to instantiate {0} for {1} : {2}", c, type, e));
+                        .log(NutsMessage.ofJstyle("unable to instantiate {0} for {1} : {2}", c, type, e));
             }
             if (obj != null) {
                 all.add(obj);
@@ -649,12 +649,12 @@ public class DefaultNutsWorkspaceFactory implements NutsWorkspaceFactory {
                         c = Class.forName(n, false, bootClassLoader);
                     } catch (ClassNotFoundException x) {
                         LOG.with().session(validLogSession(session)).verb(NutsLoggerVerb.WARNING).level(Level.FINE).error(x)
-                                .log(NutsMessage.jstyle("not a valid type {0}", c));
+                                .log(NutsMessage.ofJstyle("not a valid type {0}", c));
                     }
                     if (c != null) {
                         if (!serviceClass.isAssignableFrom(c)) {
                             LOG.with().session(validLogSession(session)).verb(NutsLoggerVerb.WARNING).level(Level.FINE)
-                                    .log(NutsMessage.jstyle("not a valid type {0} <> {1}, ignore...", c, serviceClass));
+                                    .log(NutsMessage.ofJstyle("not a valid type {0} <> {1}, ignore...", c, serviceClass));
                         } else {
                             cc.add(c);
                         }

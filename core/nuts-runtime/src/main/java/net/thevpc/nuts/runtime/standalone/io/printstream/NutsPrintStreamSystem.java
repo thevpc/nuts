@@ -14,19 +14,19 @@ import java.io.OutputStream;
 import java.io.PrintStream;
 import java.io.UnsupportedEncodingException;
 
-public class NutsPrintStreamSystem extends NutsPrintStreamBase{
+public class NutsPrintStreamSystem extends NutsPrintStreamBase {
     private final OutputStream out;
     private PrintStream base;
 
     public NutsPrintStreamSystem(OutputStream out, Boolean autoFlush, String encoding, Boolean ansi, NutsSession session, NutsSystemTerminalBase term) {
-        this(out, autoFlush, encoding, ansi, session, new Bindings(),term);
+        this(out, autoFlush, encoding, ansi, session, new Bindings(), term);
     }
 
     protected NutsPrintStreamSystem(OutputStream out, PrintStream base, Boolean autoFlush,
                                     NutsTerminalMode mode, NutsSession session, Bindings bindings, NutsSystemTerminalBase term) {
-        super(autoFlush == null || autoFlush.booleanValue(), mode/*resolveMode(out,ansi, session)*/, session, bindings,term);
+        super(autoFlush == null || autoFlush.booleanValue(), mode/*resolveMode(out,ansi, session)*/, session, bindings, term);
         //Do not use NutsTexts, not yet initialized!
-        setFormattedName(new DefaultNutsTextStyled(session,new DefaultNutsTextPlain(session,"<system-stream>" ),NutsTextStyles.of(NutsTextStyle.path())));
+        getOutputMetaData().setMessage(NutsMessage.ofStyled("<system-stream>", NutsTextStyle.path()));
         this.out = out;
         this.base = base;
     }
@@ -35,10 +35,10 @@ public class NutsPrintStreamSystem extends NutsPrintStreamBase{
         return base;
     }
 
-    public NutsPrintStreamSystem(OutputStream out, Boolean autoFlush, String encoding, Boolean ansi, NutsSession session, Bindings bindings,NutsSystemTerminalBase term) {
-        super(true, resolveMode(out, ansi, session), session, bindings,term);
+    public NutsPrintStreamSystem(OutputStream out, Boolean autoFlush, String encoding, Boolean ansi, NutsSession session, Bindings bindings, NutsSystemTerminalBase term) {
+        super(true, resolveMode(out, ansi, session), session, bindings, term);
         //Do not use NutsTexts, not yet initialized!
-        setFormattedName(new DefaultNutsTextStyled(session,new DefaultNutsTextPlain(session,"<system-stream>" ), NutsTextStyles.of(NutsTextStyle.path())));
+        getOutputMetaData().setMessage(NutsMessage.ofStyled("<system-stream>", NutsTextStyle.path()));
         this.out = out;
         if (out instanceof PrintStream) {
             PrintStream ps = (PrintStream) out;
@@ -140,7 +140,7 @@ public class NutsPrintStreamSystem extends NutsPrintStreamBase{
         if (session == null || session == this.session) {
             return this;
         }
-        return new NutsPrintStreamSystem(out, base, autoFlash, mode(), session, new Bindings(),getTerminal());
+        return new NutsPrintStreamSystem(out, base, autoFlash, mode(), session, new Bindings(), getTerminal());
     }
 
     @Override
@@ -159,16 +159,22 @@ public class NutsPrintStreamSystem extends NutsPrintStreamBase{
                 return new NutsPrintStreamFiltered(this, getSession(), bindings);
             }
         }
-        throw new NutsIllegalArgumentException(getSession(), NutsMessage.cstyle("unsupported %s -> %s", mode(), other));
+        throw new NutsIllegalArgumentException(getSession(), NutsMessage.ofCstyle("unsupported %s -> %s", mode(), other));
     }
 
     @Override
     public NutsPrintStream run(NutsTerminalCommand command, NutsSession session) {
-        switch (command.getName()){
-            case NutsTerminalCommand.Ids.GET_SIZE:{
+        switch (command.getName()) {
+            case NutsTerminalCommand.Ids.GET_SIZE: {
                 break;
             }
         }
         return null;
     }
+
+    @Override
+    public OutputStream getOutputStream() {
+        return asOutputStream();
+    }
+
 }

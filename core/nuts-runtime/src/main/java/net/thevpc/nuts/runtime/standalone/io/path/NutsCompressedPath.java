@@ -1,11 +1,12 @@
 package net.thevpc.nuts.runtime.standalone.io.path;
 
-import net.thevpc.nuts.*;
+import net.thevpc.nuts.NutsFormat;
+import net.thevpc.nuts.NutsSession;
+import net.thevpc.nuts.NutsString;
 import net.thevpc.nuts.cmdline.NutsCommandLine;
 import net.thevpc.nuts.format.NutsTreeVisitor;
 import net.thevpc.nuts.io.*;
 import net.thevpc.nuts.runtime.standalone.format.DefaultFormatBase;
-import net.thevpc.nuts.runtime.standalone.io.util.InputStreamMetadataAwareImpl;
 import net.thevpc.nuts.spi.NutsSupportLevelContext;
 import net.thevpc.nuts.util.NutsStream;
 
@@ -117,15 +118,12 @@ public class NutsCompressedPath extends NutsPathBase {
 
     @Override
     public InputStream getInputStream() {
-        InputStream is = base.getInputStream();
-        NutsStreamMetadata m = NutsStreamMetadata.of(is);
-        NutsStreamMetadata m2 = new DefaultNutsStreamMetadata(m).setUserKind(getUserKind());
-        return InputStreamMetadataAwareImpl.of(is, m2);
+        return (InputStream) NutsIO.of(getSession()).createInputSource(base.getInputStream(),getInputMetaData());
     }
 
     @Override
     public OutputStream getOutputStream() {
-        return base.getOutputStream();
+        return (OutputStream) NutsIO.of(getSession()).createOutputTarget(base.getOutputStream(),getOutputMetaData());
     }
 
     @Override
@@ -367,11 +365,6 @@ public class NutsCompressedPath extends NutsPathBase {
                 .setSession(getSession());
     }
 
-    @Override
-    public NutsStreamMetadata getStreamMetadata() {
-        return new NutsPathStreamMetadata(this);
-    }
-
     private static class MyPathFormat extends DefaultFormatBase<NutsFormat> {
 
         private final NutsCompressedPath p;
@@ -400,4 +393,6 @@ public class NutsCompressedPath extends NutsPathBase {
             return DEFAULT_SUPPORT;
         }
     }
+
+
 }

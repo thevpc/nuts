@@ -28,9 +28,9 @@ package net.thevpc.nuts.util;
 
 import net.thevpc.nuts.NutsMessage;
 import net.thevpc.nuts.NutsOptional;
+import net.thevpc.nuts.NutsValue;
 import net.thevpc.nuts.format.NutsPositionType;
 import net.thevpc.nuts.NutsSupportMode;
-import net.thevpc.nuts.boot.*;
 import net.thevpc.nuts.reserved.NutsReservedUtils;
 import net.thevpc.nuts.reserved.NutsReservedStringMapParser;
 import net.thevpc.nuts.reserved.NutsReservedStringUtils;
@@ -92,15 +92,15 @@ public class NutsStringUtils {
     }
 
     public static String formatAlign(String text, int size, NutsPositionType position) {
-        if(text==null){
-            text="";
+        if (text == null) {
+            text = "";
         }
         int len = text.length();
-        if(len>=size){
+        if (len >= size) {
             return text;
         }
-        switch (position){
-            case FIRST:{
+        switch (position) {
+            case FIRST: {
                 StringBuilder sb = new StringBuilder(size);
                 sb.append(text);
                 for (int i = len; i < size; i++) {
@@ -108,7 +108,7 @@ public class NutsStringUtils {
                 }
                 return sb.toString();
             }
-            case LAST:{
+            case LAST: {
                 StringBuilder sb = new StringBuilder(size);
                 for (int i = len; i < size; i++) {
                     sb.append(' ');
@@ -116,14 +116,14 @@ public class NutsStringUtils {
                 sb.append(text);
                 return sb.toString();
             }
-            case CENTER:{
+            case CENTER: {
                 StringBuilder sb = new StringBuilder(size);
-                int h=size/2+size%2;
+                int h = size / 2 + size % 2;
                 for (int i = len; i < h; i++) {
                     sb.append(' ');
                 }
                 sb.append(text);
-                h=size/2;
+                h = size / 2;
                 for (int i = len; i < h; i++) {
                     sb.append(' ');
                 }
@@ -165,23 +165,23 @@ public class NutsStringUtils {
         int s = (int) ((period % 60000L) / 1000L);
         int ms = (int) (period % 1000L);
         if (h > 0) {
-            sb.append(formatAlign(String.valueOf(h), 2,NutsPositionType.LAST)).append("h ");
+            sb.append(formatAlign(String.valueOf(h), 2, NutsPositionType.LAST)).append("h ");
             started = true;
         }
         if (mn > 0 || started) {
-            sb.append(formatAlign(String.valueOf(mn), 2,NutsPositionType.LAST)).append("mn ");
+            sb.append(formatAlign(String.valueOf(mn), 2, NutsPositionType.LAST)).append("mn ");
             started = true;
         }
         if (s > 0 || started) {
-            sb.append(formatAlign(String.valueOf(s), 2,NutsPositionType.LAST)).append("s ");
+            sb.append(formatAlign(String.valueOf(s), 2, NutsPositionType.LAST)).append("s ");
             //started=true;
         }
-        sb.append(formatAlign(String.valueOf(ms), 3,NutsPositionType.LAST)).append("ms");
+        sb.append(formatAlign(String.valueOf(ms), 3, NutsPositionType.LAST)).append("ms");
         return sb.toString();
     }
 
     public static String formatStringLiteral(String text) {
-        return formatStringLiteral(text,QuoteType.DOUBLE);
+        return formatStringLiteral(text, QuoteType.DOUBLE);
     }
 
     public static String formatStringLiteral(String text, QuoteType quoteType) {
@@ -202,7 +202,7 @@ public class NutsStringUtils {
                     if (allowQuotes) {
                         sb.append(" ");
                         requireQuotes = true;
-                    }else{
+                    } else {
                         sb.append("\\ ");
                     }
                     break;
@@ -270,10 +270,10 @@ public class NutsStringUtils {
                 }
                 default: {
                     if (escapeChars != null && escapeChars.indexOf(c) >= 0) {
-                        if(allowQuotes){
+                        if (allowQuotes) {
                             sb.append(c);
                             requireQuotes = true;
-                        }else{
+                        } else {
                             sb.append("\\").append(c);
                         }
                     } else {
@@ -340,7 +340,7 @@ public class NutsStringUtils {
     public static NutsOptional<Level> parseLogLevel(String value) {
         value = value == null ? "" : value.trim();
         if (value.isEmpty()) {
-            return NutsOptional.ofEmpty(s-> NutsMessage.cstyle("empty level"));
+            return NutsOptional.ofNamedEmpty("log level");
         }
         switch (value.trim().toLowerCase()) {
             case "off": {
@@ -372,7 +372,7 @@ public class NutsStringUtils {
                 return NutsOptional.of(Level.CONFIG);
             }
         }
-        Integer i = NutsApiUtils.parseInt(value, null, null);
+        Integer i = NutsValue.of(value).asInt().orNull();
         if (i != null) {
             switch (i) {
                 case Integer.MAX_VALUE:
@@ -397,7 +397,7 @@ public class NutsStringUtils {
             return NutsOptional.of(new CustomLogLevel("LEVEL" + i, i));
         }
         String finalValue = value;
-        return NutsOptional.ofError(s->NutsMessage.cstyle("invalid level %s", finalValue));
+        return NutsOptional.ofError(s -> NutsMessage.ofCstyle("invalid level %s", finalValue));
     }
 
 

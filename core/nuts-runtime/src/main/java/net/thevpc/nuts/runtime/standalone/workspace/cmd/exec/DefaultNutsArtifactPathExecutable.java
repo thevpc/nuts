@@ -8,6 +8,7 @@ package net.thevpc.nuts.runtime.standalone.workspace.cmd.exec;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.cmdline.NutsCommandLine;
 import net.thevpc.nuts.io.NutsIOException;
+import net.thevpc.nuts.io.NutsInputSource;
 import net.thevpc.nuts.io.NutsPath;
 import net.thevpc.nuts.runtime.standalone.definition.DefaultNutsDefinition;
 import net.thevpc.nuts.runtime.standalone.definition.DefaultNutsInstallInfo;
@@ -64,8 +65,8 @@ public class DefaultNutsArtifactPathExecutable extends AbstractNutsExecutableCom
 
     @Override
     public NutsId getId() {
-        try (final CharacterizedExecFile c = characterizeForExec(NutsStreamOrPath.of(cmdName, session), session, executorOptions)) {
-            return c.descriptor == null ? null : c.descriptor.getId();
+        try (final CharacterizedExecFile c = characterizeForExec(NutsPath.of(cmdName, session), session, executorOptions)) {
+            return c.getDescriptor() == null ? null : c.getDescriptor().getId();
         }
     }
 
@@ -80,19 +81,19 @@ public class DefaultNutsArtifactPathExecutable extends AbstractNutsExecutableCom
     }
 
     public void executeHelper(boolean dry) {
-        try (final CharacterizedExecFile c = characterizeForExec(NutsStreamOrPath.of(cmdName, session), session, executorOptions)) {
-            if (c.descriptor == null) {
-                throw new NutsNotFoundException(execSession, null, NutsMessage.cstyle("unable to resolve a valid descriptor for %s", cmdName), null);
+        try (final CharacterizedExecFile c = characterizeForExec(NutsPath.of(cmdName, session), session, executorOptions)) {
+            if (c.getDescriptor() == null) {
+                throw new NutsNotFoundException(execSession, null, NutsMessage.ofCstyle("unable to resolve a valid descriptor for %s", cmdName), null);
             }
             String tempFolder = NutsPaths.of(session)
                     .createTempFolder("exec-path-", session).toString();
-            NutsId _id = c.descriptor.getId();
+            NutsId _id = c.getDescriptor().getId();
             DefaultNutsDefinition nutToRun = new DefaultNutsDefinition(
                     null,
                     null,
                     _id.getLongId(),
-                    c.descriptor,
-                    NutsPath.of(c.contentFile, execSession).setUserCache(false).setUserTemporary(c.temps.size() > 0)
+                    c.getDescriptor(),
+                    NutsPath.of(c.getContentFile(), execSession).setUserCache(false).setUserTemporary(c.getTemps().size() > 0)
                     ,
                     DefaultNutsInstallInfo.notInstalled(_id),
                     null, session
@@ -105,7 +106,7 @@ public class DefaultNutsArtifactPathExecutable extends AbstractNutsExecutableCom
 //                            .and(ff.byOptional(getOptional())
 //                            ).and(getDependencyFilter())
                     );
-            for (NutsDependency dependency : c.descriptor.getDependencies()) {
+            for (NutsDependency dependency : c.getDescriptor().getDependencies()) {
                 resolver.add(dependency);
             }
             nutToRun.setDependencies(resolver.solve());
@@ -118,104 +119,104 @@ public class DefaultNutsArtifactPathExecutable extends AbstractNutsExecutableCom
                     CoreIOUtils.delete(session, Paths.get(tempFolder));
                 } catch (UncheckedIOException | NutsIOException e) {
                     LOG.with().session(session).level(Level.FINEST).verb(NutsLoggerVerb.FAIL)
-                            .log(NutsMessage.jstyle("unable to delete temp folder created for execution : {0}", tempFolder));
+                            .log(NutsMessage.ofJstyle("unable to delete temp folder created for execution : {0}", tempFolder));
                 }
             }
         }
     }
 
-    public static CharacterizedExecFile characterizeForExec(NutsStreamOrPath contentFile, NutsSession session, List<String> execOptions) {
+    public static CharacterizedExecFile characterizeForExec(NutsInputSource contentFile, NutsSession session, List<String> execOptions) {
         String classifier = null;//TODO how to get classifier?
         CharacterizedExecFile c = new CharacterizedExecFile(session);
         try {
-            c.streamOrPath = contentFile;
-            c.contentFile = CoreIOUtils.toPathInputSource(contentFile, c.temps, true, session);
-            Path fileSource = c.contentFile;
+            c.setStreamOrPath(contentFile);
+            c.setContentFile(CoreIOUtils.toPathInputSource(contentFile, c.getTemps(), true, session));
+            Path fileSource = c.getContentFile();
             if (!Files.exists(fileSource)) {
-                throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("file does not exists %s", fileSource));
+                throw new NutsIllegalArgumentException(session, NutsMessage.ofCstyle("file does not exists %s", fileSource));
             }
             if (Files.isDirectory(fileSource)) {
                 Path ext = fileSource.resolve(NutsConstants.Files.DESCRIPTOR_FILE_NAME);
                 if (Files.exists(ext)) {
-                    c.descriptor = NutsDescriptorParser.of(session).parse(ext).get(session);
+                    c.setDescriptor(NutsDescriptorParser.of(session).parse(ext).get(session));
                 } else {
-                    c.descriptor = NutsDescriptorContentResolver.resolveNutsDescriptorFromFileContent(c.contentFile, execOptions, session);
+                    c.setDescriptor(NutsDescriptorContentResolver.resolveNutsDescriptorFromFileContent(c.getContentFile(), execOptions, session));
                 }
-                if (c.descriptor != null) {
-                    if ("zip".equals(c.descriptor.getPackaging())) {
+                if (c.getDescriptor() != null) {
+                    if ("zip".equals(c.getDescriptor().getPackaging())) {
                         Path zipFilePath = NutsPath.of(fileSource + ".zip", session)
                                 .toAbsolute().toFile();
                         ZipUtils.zip(session, fileSource.toString(), new ZipOptions(), zipFilePath.toString());
-                        c.contentFile = zipFilePath;
+                        c.setContentFile(zipFilePath);
                         c.addTemp(zipFilePath);
                     } else {
-                        throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("invalid nuts folder source. expected 'zip' ext in descriptor"));
+                        throw new NutsIllegalArgumentException(session, NutsMessage.ofPlain("invalid nuts folder source. expected 'zip' ext in descriptor"));
                     }
                 }
             } else if (Files.isRegularFile(fileSource)) {
-                if (c.contentFile.getFileName().toString().endsWith(NutsConstants.Files.DESCRIPTOR_FILE_NAME)) {
-                    try (InputStream in = Files.newInputStream(c.contentFile)) {
-                        c.descriptor = NutsDescriptorParser.of(session).parse(in).get(session);
+                if (c.getContentFile().getFileName().toString().endsWith(NutsConstants.Files.DESCRIPTOR_FILE_NAME)) {
+                    try (InputStream in = Files.newInputStream(c.getContentFile())) {
+                        c.setDescriptor(NutsDescriptorParser.of(session).parse(in).get(session));
                     }
-                    c.contentFile = null;
-                    if (c.streamOrPath.isPath() && c.streamOrPath.getPath().isURL()) {
-                        URLBuilder ub = new URLBuilder(c.streamOrPath.getPath().toURL().toString());
+                    c.setContentFile(null);
+                    if (c.getStreamOrPath() instanceof NutsPath && ((NutsPath) c.getStreamOrPath()).isURL()) {
+                        URLBuilder ub = new URLBuilder(((NutsPath) c.getStreamOrPath()).toURL().toString());
                         try {
-                            c.contentFile = CoreIOUtils.toPathInputSource(
-                                    NutsStreamOrPath.of(
-                                            ub.resolveSibling(session.locations().getDefaultIdFilename(c.descriptor.getId())).toURL(), session
-                                    ),
-                                    c.temps, true, session);
+                            c.setContentFile(CoreIOUtils.toPathInputSource(
+                                    NutsPath.of(ub.resolveSibling(session.locations().getDefaultIdFilename(c.getDescriptor().getId())).toURL(), session),
+                                    c.getTemps(), true, session));
                         } catch (Exception ex) {
                             //TODO FIX ME
                             ex.printStackTrace();
                         }
                     }
-                    if (c.contentFile == null) {
-                        for (NutsIdLocation location0 : c.descriptor.getLocations()) {
+                    if (c.getContentFile() == null) {
+                        for (NutsIdLocation location0 : c.getDescriptor().getLocations()) {
                             if (CoreFilterUtils.acceptClassifier(location0, classifier)) {
                                 String location = location0.getUrl();
                                 if (NutsPath.of(location, session).isHttp()) {
                                     try {
-                                        c.contentFile = CoreIOUtils.toPathInputSource(
-                                                NutsStreamOrPath.of(new URL(location), session),
-                                                c.temps, true, session);
+                                        c.setContentFile(CoreIOUtils.toPathInputSource(
+                                                NutsPath.of(new URL(location), session),
+                                                c.getTemps(), true, session));
                                     } catch (Exception ex) {
-
+                                        ex.printStackTrace();
                                     }
                                 } else {
-                                    URLBuilder ub = new URLBuilder(c.streamOrPath.getPath().toURL().toString());
+                                    URLBuilder ub = new URLBuilder(((NutsPath)c.getStreamOrPath()).toURL().toString());
                                     try {
-                                        c.contentFile = CoreIOUtils.toPathInputSource(
-                                                NutsStreamOrPath.of(ub.resolveSibling(session.locations().getDefaultIdFilename(c.descriptor.getId())).toURL(), session),
-                                                c.temps, true, session);
+                                        c.setContentFile(CoreIOUtils.toPathInputSource(
+                                                NutsPath.of(ub.resolveSibling(session.locations()
+                                                        .getDefaultIdFilename(c.getDescriptor().getId())).toURL(), session),
+                                                c.getTemps(), true, session));
                                     } catch (Exception ex) {
                                         //TODO add log here
+                                        ex.printStackTrace();
                                     }
                                 }
-                                if (c.contentFile == null) {
+                                if (c.getContentFile() == null) {
                                     break;
                                 }
                             }
                         }
                     }
-                    if (c.contentFile == null) {
-                        throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("unable to locale package for %s", c.streamOrPath));
+                    if (c.getContentFile() == null) {
+                        throw new NutsIllegalArgumentException(session, NutsMessage.ofCstyle("unable to locale package for %s", c.getStreamOrPath()));
                     }
                 } else {
-                    c.descriptor = NutsDescriptorContentResolver.resolveNutsDescriptorFromFileContent(c.contentFile, execOptions, session);
-                    if (c.descriptor == null) {
+                    c.setDescriptor(NutsDescriptorContentResolver.resolveNutsDescriptorFromFileContent(c.getContentFile(), execOptions, session));
+                    if (c.getDescriptor() == null) {
                         CoreDigestHelper d = new CoreDigestHelper(session);
-                        d.append(c.contentFile);
+                        d.append(c.getContentFile());
                         String artifactId = d.getDigest();
-                        c.descriptor = new DefaultNutsDescriptorBuilder()
+                        c.setDescriptor(new DefaultNutsDescriptorBuilder()
                                 .setId("temp:" + artifactId + "#1.0")
-                                .setPackaging(CoreIOUtils.getFileExtension(contentFile.getName()))
-                                .build();
+                                .setPackaging(CoreIOUtils.getFileExtension(contentFile.getInputMetaData().getName().orElse("")))
+                                .build());
                     }
                 }
             } else {
-                throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("path does not denote a valid file or folder %s", c.streamOrPath));
+                throw new NutsIllegalArgumentException(session, NutsMessage.ofCstyle("path does not denote a valid file or folder %s", c.getStreamOrPath()));
             }
         } catch (IOException ex) {
             throw new NutsIOException(session, ex);

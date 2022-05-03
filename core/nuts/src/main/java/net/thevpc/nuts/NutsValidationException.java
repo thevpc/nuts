@@ -39,7 +39,7 @@ public class NutsValidationException extends NutsException {
      * @param session session
      */
     public NutsValidationException(NutsSession session) {
-        super(session, NutsMessage.formatted("invalid value"));
+        super(session, NutsMessage.ofNtf("invalid value"));
     }
 
     /**

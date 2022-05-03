@@ -45,6 +45,6 @@ public abstract class NutsWorkspaceException extends NutsException {
     public NutsWorkspaceException(NutsSession session, NutsMessage message, Throwable ex) {
         super(session,
                 message == null
-                        ? NutsMessage.cstyle("workspace %s has encountered problem", session.getWorkspace().getName()) : message, ex);
+                        ? NutsMessage.ofCstyle("workspace %s has encountered problem", session.getWorkspace().getName()) : message, ex);
     }
 }

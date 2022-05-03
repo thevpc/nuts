@@ -113,7 +113,7 @@ public class NMysqlMain implements NdbSupport {
                         if (name == null) {
                             name = AtName.nextAppOption(commandLine, session);
                         } else {
-                            commandLine.throwUnexpectedArgument(NutsMessage.cstyle("already defined"), session);
+                            commandLine.throwUnexpectedArgument(NutsMessage.ofPlain("already defined"), session);
                         }
                         break;
                     }
@@ -121,7 +121,7 @@ public class NMysqlMain implements NdbSupport {
                         if (path == null) {
                             path = commandLine.nextStringValueLiteral().get(session);
                         } else {
-                            commandLine.throwUnexpectedArgument(NutsMessage.cstyle("already defined"), session);
+                            commandLine.throwUnexpectedArgument(NutsMessage.ofPlain("already defined"), session);
                         }
                         break;
                     }
@@ -164,7 +164,7 @@ public class NMysqlMain implements NdbSupport {
                         if (name == null) {
                             name = AtName.nextAppOption(commandLine, session);
                         } else {
-                            commandLine.throwUnexpectedArgument(NutsMessage.cstyle("already defined"), session);
+                            commandLine.throwUnexpectedArgument(NutsMessage.ofPlain("already defined"), session);
                         }
                         break;
                     }
@@ -172,7 +172,7 @@ public class NMysqlMain implements NdbSupport {
                         if (path == null) {
                             path = commandLine.nextStringValueLiteral().get(session);
                         } else {
-                            commandLine.throwUnexpectedArgument(NutsMessage.cstyle("already defined"), session);
+                            commandLine.throwUnexpectedArgument(NutsMessage.ofPlain("already defined"), session);
                         }
                         break;
                     }
@@ -204,7 +204,7 @@ public class NMysqlMain implements NdbSupport {
             s.out().printlnf(result);
         } else {
             if (path == null) {
-                commandLine.throwMissingArgument(NutsMessage.cstyle("missing --path"),session);
+                commandLine.throwMissingArgument(NutsMessage.ofPlain("missing --path"), session);
             }
             LocalMysqlDatabaseConfigService.RestoreResult result = d.restore(path);
             s.out().printlnf(result);
@@ -241,7 +241,7 @@ public class NMysqlMain implements NdbSupport {
                         if (name == null) {
                             name = AtName.nextAppOption(commandLine, session);
                         } else {
-                            commandLine.throwUnexpectedArgument(NutsMessage.cstyle("already defined"), session);
+                            commandLine.throwUnexpectedArgument(NutsMessage.ofPlain("already defined"), session);
                         }
                         break;
                     }
@@ -362,7 +362,7 @@ public class NMysqlMain implements NdbSupport {
                         if (forRemote_localName == null) {
                             forRemote_localName = AtName.nextAppOption(commandLine, session);
                         } else {
-                            commandLine.throwUnexpectedArgument(NutsMessage.cstyle("already defined"), session);
+                            commandLine.throwUnexpectedArgument(NutsMessage.ofPlain("already defined"), session);
                         }
                         break;
                     }
@@ -375,7 +375,7 @@ public class NMysqlMain implements NdbSupport {
                         if (forRemote_remoteName == null) {
                             forRemote_remoteName = AtName.nextAppOption(commandLine, session);
                         } else {
-                            commandLine.throwUnexpectedArgument(NutsMessage.cstyle("already defined"), session);
+                            commandLine.throwUnexpectedArgument(NutsMessage.ofPlain("already defined"), session);
                         }
                         break;
                     }
@@ -388,7 +388,7 @@ public class NMysqlMain implements NdbSupport {
                         if (forRemote_server == null) {
                             forRemote_server = commandLine.nextStringValueLiteral().get(session);
                         } else {
-                            commandLine.throwUnexpectedArgument(NutsMessage.cstyle("already defined"), session);
+                            commandLine.throwUnexpectedArgument(NutsMessage.ofPlain("already defined"), session);
                         }
                         break;
                     }
@@ -415,7 +415,7 @@ public class NMysqlMain implements NdbSupport {
                             if (name == null) {
                                 name = AtName.nextAppOption(commandLine, session);
                             } else {
-                                commandLine.throwUnexpectedArgument(NutsMessage.cstyle("already defined"), session);
+                                commandLine.throwUnexpectedArgument(NutsMessage.ofPlain("already defined"), session);
                             }
                         } else {
                             service.getContext().configureLast(commandLine);
@@ -438,7 +438,7 @@ public class NMysqlMain implements NdbSupport {
             expectedRemote = false;
         }
         if (expectedRemote && forRemote_server == null) {
-            commandLine.throwMissingArgument(NutsMessage.cstyle("required --server option"),session);
+            commandLine.throwMissingArgument(NutsMessage.ofPlain("required --server option"), session);
         }
         NutsTexts factory = NutsTexts.of(session);
         if (commandLine.isExecMode()) {
@@ -451,11 +451,14 @@ public class NMysqlMain implements NdbSupport {
                             overrideExisting = true;
                             if (!session.getTerminal().ask()
                                     .resetLine()
-                                    .forBoolean("already exists %s. override?", factory.ofStyled(name.toString(),
-                                            NutsTextStyle.primary3())
+                                    .forBoolean(
+                                            NutsMessage.ofCstyle(
+                                                    "already exists %s. override?", factory.ofStyled(name.toString(),
+                                                            NutsTextStyle.primary3()
+                                                    ))
                                     )
                                     .setDefaultValue(false).getBooleanValue()) {
-                                throw new NutsExecutionException(session, NutsMessage.cstyle("already exists %s", name), 2);
+                                throw new NutsExecutionException(session, NutsMessage.ofCstyle("already exists %s", name), 2);
                             }
                         }
                     } else {
@@ -463,20 +466,22 @@ public class NMysqlMain implements NdbSupport {
                             overrideExisting = true;
                             if (!session.getTerminal().ask()
                                     .resetLine()
-                                    .forBoolean("already exists %s. override?", factory.ofStyled(name.toString(), NutsTextStyle.primary3()))
+                                    .forBoolean(
+                                            NutsMessage.ofCstyle("already exists %s. override?", factory.ofStyled(name.toString(), NutsTextStyle.primary3()
+                                            )))
                                     .setDefaultValue(false).getBooleanValue()) {
-                                throw new NutsExecutionException(session, NutsMessage.cstyle("already exists %s", name), 2);
+                                throw new NutsExecutionException(session, NutsMessage.ofCstyle("already exists %s", name), 2);
                             }
                         }
                     }
                 } else {
                     if (name.getDatabaseName().isEmpty()) {
                         if (c.getDatabase(name.getDatabaseName(), NutsOpenMode.OPEN_OR_NULL) == null) {
-                            throw new NutsExecutionException(session, NutsMessage.cstyle("not found %s", name), 2);
+                            throw new NutsExecutionException(session, NutsMessage.ofCstyle("not found %s", name), 2);
                         }
                     } else {
                         if (c.getDatabase(name.getDatabaseName(), NutsOpenMode.OPEN_OR_NULL) == null) {
-                            throw new NutsExecutionException(session, NutsMessage.cstyle("not found  %s", name), 2);
+                            throw new NutsExecutionException(session, NutsMessage.ofCstyle("not found  %s", name), 2);
                         }
                     }
                 }
@@ -565,13 +570,13 @@ public class NMysqlMain implements NdbSupport {
                         );
                     }
                     if (r.getConfig().getUser() == null) {
-                        throw new NutsExecutionException(session, NutsMessage.cstyle("missing --user"), 2);
+                        throw new NutsExecutionException(session, NutsMessage.ofPlain("missing --user"), 2);
                     }
                     if (r.getConfig().getPassword() == null) {
-                        throw new NutsExecutionException(session, NutsMessage.cstyle("missing --password"), 2);
+                        throw new NutsExecutionException(session, NutsMessage.ofPlain("missing --password"), 2);
                     }
                     if (r.getConfig().getDatabaseName() == null) {
-                        throw new NutsExecutionException(session, NutsMessage.cstyle("missing --name"), 2);
+                        throw new NutsExecutionException(session, NutsMessage.ofPlain("missing --name"), 2);
                     }
                     if (someUpdates && session.isPlainTrace()) {
                         if (add) {
@@ -596,7 +601,7 @@ public class NMysqlMain implements NdbSupport {
                     }
                 }
                 if (!someUpdates) {
-                    throw new NutsExecutionException(session, NutsMessage.cstyle("nothing to save"), 2);
+                    throw new NutsExecutionException(session, NutsMessage.ofPlain("nothing to save"), 2);
                 }
 
                 c.saveConfig();
@@ -620,9 +625,11 @@ public class NMysqlMain implements NdbSupport {
                             overrideExisting = true;
                             if (!session.getTerminal().ask()
                                     .resetLine()
-                                    .forBoolean("already exists %s. override?", factory.ofStyled(name.toString(), NutsTextStyle.primary3()))
+                                    .forBoolean(
+                                            NutsMessage.ofCstyle("already exists %s. override?", factory.ofStyled(name.toString(), NutsTextStyle.primary3())
+                                            ))
                                     .setDefaultValue(false).getBooleanValue()) {
-                                throw new NutsExecutionException(session, NutsMessage.cstyle("already exists %s", name), 2);
+                                throw new NutsExecutionException(session, NutsMessage.ofCstyle("already exists %s", name), 2);
                             }
                         }
                     } else {
@@ -630,20 +637,22 @@ public class NMysqlMain implements NdbSupport {
                             overrideExisting = true;
                             if (!session.getTerminal().ask()
                                     .resetLine()
-                                    .forBoolean("already exists %s. override?", factory.ofStyled(name.toString(), NutsTextStyle.primary3()))
+                                    .forBoolean(
+                                            NutsMessage.ofCstyle("already exists %s. override?", factory.ofStyled(name.toString(), NutsTextStyle.primary3())
+                                            ))
                                     .setDefaultValue(false).getBooleanValue()) {
-                                throw new NutsExecutionException(session, NutsMessage.cstyle("already exists %s", name), 2);
+                                throw new NutsExecutionException(session, NutsMessage.ofCstyle("already exists %s", name), 2);
                             }
                         }
                     }
                 } else {
                     if (name.getDatabaseName().isEmpty()) {
                         if (c.getDatabase(name.getDatabaseName(), NutsOpenMode.OPEN_OR_NULL) == null) {
-                            throw new NutsExecutionException(session, NutsMessage.cstyle("not found %s", name), 2);
+                            throw new NutsExecutionException(session, NutsMessage.ofCstyle("not found %s", name), 2);
                         }
                     } else {
                         if (c.getDatabase(name.getDatabaseName(), NutsOpenMode.OPEN_OR_NULL) == null) {
-                            throw new NutsExecutionException(session, NutsMessage.cstyle("not found  %s" + name), 2);
+                            throw new NutsExecutionException(session, NutsMessage.ofPlain("not found  %s" + name), 2);
                         }
                     }
                 }
@@ -708,7 +717,7 @@ public class NMysqlMain implements NdbSupport {
                     }
                 }
                 if (!someUpdates) {
-                    throw new NutsExecutionException(session, NutsMessage.cstyle("nothing to save"), 2);
+                    throw new NutsExecutionException(session, NutsMessage.ofPlain("nothing to save"), 2);
                 }
 
                 c.saveConfig();

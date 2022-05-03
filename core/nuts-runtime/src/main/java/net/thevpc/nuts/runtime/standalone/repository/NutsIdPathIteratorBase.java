@@ -22,7 +22,7 @@ public abstract class NutsIdPathIteratorBase implements NutsIdPathIteratorModel 
                     nutsDescriptor = NutsWorkspaceExt.of(session.getWorkspace()).resolveEffectiveDescriptor(t, session);
                 } catch (Exception ex) {
                     NutsLoggerOp.of(NutsIdPathIteratorBase.class,session).level(Level.FINE).error(ex).log(
-                            NutsMessage.jstyle("error resolving effective descriptor for {0} in url {1} : {2}", t.getId(),
+                            NutsMessage.ofJstyle("error resolving effective descriptor for {0} in url {1} : {2}", t.getId(),
                                     pathname,
                                     ex));//e.printStackTrace();
                 }
@@ -50,7 +50,7 @@ public abstract class NutsIdPathIteratorBase implements NutsIdPathIteratorModel 
                     NutsFetchMode.LOCAL, repository, session, rootPath);
         } catch (Exception ex) {
             NutsLoggerOp.of(NutsIdPathIteratorBase.class,session).level(Level.FINE).error(ex)
-                    .log(NutsMessage.jstyle("error parsing url : {0} : {1}", pathname, toString()));//e.printStackTrace();
+                    .log(NutsMessage.ofJstyle("error parsing url : {0} : {1}", pathname, toString()));//e.printStackTrace();
         }
         if (t != null) {
             return validate(null, t, pathname, rootPath, filter, repository, session);

@@ -113,7 +113,7 @@ public class CoreSecurityUtils {
         } catch (NutsException ex) {
             throw ex;
         } catch (Exception ex) {
-            throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("encryption failed"),ex);
+            throw new NutsIllegalArgumentException(session, NutsMessage.ofPlain("encryption failed"),ex);
         }
     }
 
@@ -137,7 +137,7 @@ public class CoreSecurityUtils {
         } catch (NutsException ex) {
             throw ex;
         } catch (Exception ex) {
-            throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("decryption failed"),ex);
+            throw new NutsIllegalArgumentException(session, NutsMessage.ofPlain("decryption failed"),ex);
         }
     }
 
@@ -159,7 +159,7 @@ public class CoreSecurityUtils {
             k.key = sha.digest(k.key);
             k.secretKey = new SecretKeySpec(k.key, "AES");
         } catch (NoSuchAlgorithmException ex) {
-            throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("encryption key building failed"),ex);
+            throw new NutsIllegalArgumentException(session, NutsMessage.ofPlain("encryption key building failed"),ex);
         }
         return k;
     }

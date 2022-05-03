@@ -36,7 +36,7 @@ public class DefaultNutsFilterModel {
 
     public NutsTypedFilters resolveNutsTypedFilters(Class type, NutsSession session) {
         if (type == null) {
-            throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("unable to detected Filter type"));
+            throw new NutsIllegalArgumentException(session, NutsMessage.ofPlain("unable to detected Filter type"));
         }
         switch (type.getName()) {
             case "net.thevpc.nuts.NutsDependencyFilter": {
@@ -58,7 +58,7 @@ public class DefaultNutsFilterModel {
                 return NutsInstallStatusFilters.of(session);
             }
         }
-        throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("unsupported filter type: %s", type));
+        throw new NutsIllegalArgumentException(session, NutsMessage.ofCstyle("unsupported filter type: %s", type));
     }
 
     public <T extends NutsFilter> T always(Class<T> type, NutsSession session) {
@@ -76,7 +76,7 @@ public class DefaultNutsFilterModel {
             all.addAll(Arrays.asList(others));
             type = detectType(all.toArray(new NutsFilter[0]), session);
             if (type == null) {
-                throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("unable to detected Filter type"));
+                throw new NutsIllegalArgumentException(session, NutsMessage.ofPlain("unable to detected Filter type"));
             }
         }
         return (T) resolveNutsTypedFilters(type, session).all(others);
@@ -93,7 +93,7 @@ public class DefaultNutsFilterModel {
             all.addAll(Arrays.asList(others));
             type = detectType(all.toArray(new NutsFilter[0]), session);
             if (type == null) {
-                throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("unable to detected Filter type"));
+                throw new NutsIllegalArgumentException(session, NutsMessage.ofPlain("unable to detected Filter type"));
             }
         }
         return (T) resolveNutsTypedFilters(type, session).any(others);
@@ -107,7 +107,7 @@ public class DefaultNutsFilterModel {
         if (type == null || type.equals(NutsFilter.class)) {
             type = (Class<T>) detectType(other, session);
             if (type == null) {
-                throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("unable to detected Filter type"));
+                throw new NutsIllegalArgumentException(session, NutsMessage.ofPlain("unable to detected Filter type"));
             }
         }
         return (T) resolveNutsTypedFilters(type, session).not(other);
@@ -124,7 +124,7 @@ public class DefaultNutsFilterModel {
             all.addAll(Arrays.asList(others));
             type = detectType(all.toArray(new NutsFilter[0]), session);
             if (type == null) {
-                throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("unable to detected Filter type"));
+                throw new NutsIllegalArgumentException(session, NutsMessage.ofPlain("unable to detected Filter type"));
             }
         }
         switch (type.getName()) {
@@ -194,7 +194,7 @@ public class DefaultNutsFilterModel {
                 return (T) new NutsDescriptorFilterNone(session, all.toArray(new NutsDescriptorFilter[0]));
             }
         }
-        throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("unsupported filter type: %s", type));
+        throw new NutsIllegalArgumentException(session, NutsMessage.ofCstyle("unsupported filter type: %s", type));
     }
 
     public <T extends NutsFilter> T none(NutsFilter[] others, NutsSession session) {
@@ -303,7 +303,7 @@ public class DefaultNutsFilterModel {
         if (NutsInstallStatusFilter.class.isAssignableFrom(c1)) {
             return (Class<T>) NutsInstallStatusFilter.class;
         }
-        throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("cannot detect filter type for %s", c1));
+        throw new NutsIllegalArgumentException(session, NutsMessage.ofCstyle("cannot detect filter type for %s", c1));
     }
 
     public <T extends NutsFilter> Class<T> detectType(Class<? extends NutsFilter> c1, Class<? extends NutsFilter> c2, NutsSession session) {
@@ -317,7 +317,7 @@ public class DefaultNutsFilterModel {
             if (NutsDescriptorFilter.class.isAssignableFrom(c2)) {
                 return (Class<T>) NutsDescriptorFilter.class;
             }
-            throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("cannot detect common type for %s and %s", c1, c2));
+            throw new NutsIllegalArgumentException(session, NutsMessage.ofCstyle("cannot detect common type for %s and %s", c1, c2));
         }
         if (NutsIdFilter.class.isAssignableFrom(c1)) {
             if (NutsVersionFilter.class.isAssignableFrom(c2)) {
@@ -329,7 +329,7 @@ public class DefaultNutsFilterModel {
             if (NutsDescriptorFilter.class.isAssignableFrom(c2)) {
                 return (Class<T>) NutsDescriptorFilter.class;
             }
-            throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("cannot detect common type for %s and %s",c1,c2));
+            throw new NutsIllegalArgumentException(session, NutsMessage.ofCstyle("cannot detect common type for %s and %s",c1,c2));
         }
         if (NutsDescriptorFilter.class.isAssignableFrom(c1)) {
             if (NutsVersionFilter.class.isAssignableFrom(c2)) {
@@ -341,27 +341,27 @@ public class DefaultNutsFilterModel {
             if (NutsDescriptorFilter.class.isAssignableFrom(c2)) {
                 return (Class<T>) NutsDescriptorFilter.class;
             }
-            throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("cannot detect common type for %s and %s",c1,c2));
+            throw new NutsIllegalArgumentException(session, NutsMessage.ofCstyle("cannot detect common type for %s and %s",c1,c2));
         }
         if (NutsDependencyFilter.class.isAssignableFrom(c1)) {
             if (NutsDependencyFilter.class.isAssignableFrom(c2)) {
                 return (Class<T>) NutsDependencyFilter.class;
             }
-            throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("cannot detect common type for %s and %s",c1,c2));
+            throw new NutsIllegalArgumentException(session, NutsMessage.ofCstyle("cannot detect common type for %s and %s",c1,c2));
         }
         if (NutsRepositoryFilter.class.isAssignableFrom(c1)) {
             if (NutsRepositoryFilter.class.isAssignableFrom(c2)) {
                 return (Class<T>) NutsRepositoryFilter.class;
             }
-            throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("cannot detect common type for %s and %s",c1,c2));
+            throw new NutsIllegalArgumentException(session, NutsMessage.ofCstyle("cannot detect common type for %s and %s",c1,c2));
         }
         if (NutsInstallStatusFilter.class.isAssignableFrom(c1)) {
             if (NutsInstallStatusFilter.class.isAssignableFrom(c2)) {
                 return (Class<T>) NutsInstallStatusFilter.class;
             }
-            throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("cannot detect common type for %s and %s",c1,c2));
+            throw new NutsIllegalArgumentException(session, NutsMessage.ofCstyle("cannot detect common type for %s and %s",c1,c2));
         }
-        throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("cannot detect common type for %s and %s",c1,c2));
+        throw new NutsIllegalArgumentException(session, NutsMessage.ofCstyle("cannot detect common type for %s and %s",c1,c2));
     }
 
 }

@@ -148,10 +148,10 @@ public class ShNutsShellHelper extends AbstractNixNutsShellHelper {
                             break;
                         }
                         case '\'': {
-                            throw new NutsParseException(session, NutsMessage.cstyle("illegal char %s", c));
+                            throw new NutsParseException(session, NutsMessage.ofCstyle("illegal char %s", c));
                         }
                         case '"': {
-                            throw new NutsParseException(session, NutsMessage.cstyle("illegal char %s", c));
+                            throw new NutsParseException(session, NutsMessage.ofCstyle("illegal char %s", c));
                         }
                         case '\\': {
                             i++;
@@ -215,7 +215,7 @@ public class ShNutsShellHelper extends AbstractNixNutsShellHelper {
                 break;
             }
             case IN_QUOTED_WORD: {
-                throw new NutsParseException(session, NutsMessage.cstyle("expected '"));
+                throw new NutsParseException(session, NutsMessage.ofPlain("expected '"));
             }
         }
         return args.toArray(new String[0]);
@@ -335,7 +335,7 @@ public class ShNutsShellHelper extends AbstractNixNutsShellHelper {
                         case '\n':
                         case '\r':
                         {
-                            throw new NutsIllegalArgumentException(options.getSession(),NutsMessage.plain("unsupported new line in arguments"));
+                            throw new NutsIllegalArgumentException(options.getSession(),NutsMessage.ofPlain("unsupported new line in arguments"));
                         }
                         default:
                         {
@@ -369,7 +369,7 @@ public class ShNutsShellHelper extends AbstractNixNutsShellHelper {
                         case '\n':
                         case '\r':
                         {
-                            throw new NutsIllegalArgumentException(options.getSession(),NutsMessage.plain("unsupported new line in arguments"));
+                            throw new NutsIllegalArgumentException(options.getSession(),NutsMessage.ofPlain("unsupported new line in arguments"));
                         }
                         default:
                         {
@@ -396,7 +396,7 @@ public class ShNutsShellHelper extends AbstractNixNutsShellHelper {
                         case '\r':
                         {
                             throw new NutsIllegalArgumentException(options.getSession(),
-                                    NutsMessage.plain("unsupported new line in arguments"));
+                                    NutsMessage.ofPlain("unsupported new line in arguments"));
                         }
                         default:
                         {

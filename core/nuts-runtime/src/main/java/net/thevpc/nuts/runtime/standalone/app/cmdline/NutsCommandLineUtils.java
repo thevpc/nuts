@@ -147,10 +147,10 @@ public class NutsCommandLineUtils {
                             break;
                         }
                         case '\'': {
-                            throw new NutsParseException(session, NutsMessage.cstyle("illegal char %s", c));
+                            throw new NutsParseException(session, NutsMessage.ofCstyle("illegal char %s", c));
                         }
                         case '"': {
-                            throw new NutsParseException(session, NutsMessage.cstyle("illegal char %s", c));
+                            throw new NutsParseException(session, NutsMessage.ofCstyle("illegal char %s", c));
                         }
                         case '\\': {
                             i++;
@@ -214,7 +214,7 @@ public class NutsCommandLineUtils {
                 break;
             }
             case IN_QUOTED_WORD: {
-                throw new NutsParseException(session, NutsMessage.cstyle("expected '"));
+                throw new NutsParseException(session, NutsMessage.ofPlain("expected '"));
             }
         }
         return args.toArray(new String[0]);

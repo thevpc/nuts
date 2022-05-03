@@ -28,6 +28,7 @@ import net.thevpc.nuts.text.NutsTextBuilder;
 import net.thevpc.nuts.text.NutsTextStyle;
 import net.thevpc.nuts.text.NutsTexts;
 import net.thevpc.nuts.util.NutsStringUtils;
+import net.thevpc.nuts.util.NutsUtils;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -135,9 +136,9 @@ public class DefaultNutsCommandLine implements NutsCommandLine {
             }
         }
         if (session == null) {
-            throw new IllegalArgumentException(NutsMessage.cstyle("invalid special option %s", option).toString());
+            throw new IllegalArgumentException(NutsMessage.ofCstyle("invalid special option %s", option).toString());
         } else {
-            throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("invalid special option %s", option));
+            throw new NutsIllegalArgumentException(session, NutsMessage.ofCstyle("invalid special option %s", option));
         }
     }
 
@@ -202,7 +203,7 @@ public class DefaultNutsCommandLine implements NutsCommandLine {
 
     @Override
     public NutsCommandLine throwUnexpectedArgument(NutsString errorMessage, NutsSession session) {
-        return throwUnexpectedArgument(NutsMessage.cstyle("%s", errorMessage), session);
+        return throwUnexpectedArgument(NutsMessage.ofCstyle("%s", errorMessage), session);
     }
 
     @Override
@@ -220,7 +221,7 @@ public class DefaultNutsCommandLine implements NutsCommandLine {
                 sb.append(" , %s");
                 ep.add(errorMessage);
             }
-            throwError(NutsMessage.cstyle(sb.toString(), ep.toArray()), session);
+            throwError(NutsMessage.ofCstyle(sb.toString(), ep.toArray()), session);
         }
         return this;
     }
@@ -244,7 +245,7 @@ public class DefaultNutsCommandLine implements NutsCommandLine {
                 sb.append(" , %s");
                 ep.add(errorMessage);
             }
-            throwError(NutsMessage.cstyle(sb.toString(), ep.toArray()), session);
+            throwError(NutsMessage.ofCstyle(sb.toString(), ep.toArray()), session);
         }
         return this;
     }
@@ -256,9 +257,7 @@ public class DefaultNutsCommandLine implements NutsCommandLine {
 
     @Override
     public NutsCommandLine pushBack(NutsArgument arg, NutsSession session) {
-        if (arg == null) {
-            throwError(NutsMessage.cstyle("null argument"), session);
-        }
+        NutsUtils.requireNonNull(arg, "argument");
         lookahead.add(0, arg);
         return this;
     }
@@ -434,19 +433,19 @@ public class DefaultNutsCommandLine implements NutsCommandLine {
         if (!NutsBlankable.isBlank(getCommandName())) {
             a.add(getCommandName());
             a.addAll(Arrays.asList(args));
-            return NutsOptional.ofEmpty(s -> NutsMessage.cstyle("%s : " + str, a.toArray()));
+            return NutsOptional.ofEmpty(s -> NutsMessage.ofCstyle("%s : " + str, a.toArray()));
         } else {
             a.addAll(Arrays.asList(args));
         }
-        return NutsOptional.ofEmpty(s -> NutsMessage.cstyle(str, a.toArray()));
+        return NutsOptional.ofEmpty(s -> NutsMessage.ofCstyle(str, a.toArray()));
     }
 
     private <T> NutsOptional<T> errorOptionalCstyle(String str, Object... args) {
         return NutsOptional.ofError(s -> {
             if (!NutsBlankable.isBlank(getCommandName())) {
-                return NutsMessage.cstyle("%s : %s ", getCommandName(), NutsMessage.cstyle(str, args));
+                return NutsMessage.ofCstyle("%s : %s ", getCommandName(), NutsMessage.ofCstyle(str, args));
             }
-            return NutsMessage.cstyle(str, args);
+            return NutsMessage.ofCstyle(str, args);
         });
     }
 
@@ -632,28 +631,28 @@ public class DefaultNutsCommandLine implements NutsCommandLine {
             if (NutsBlankable.isBlank(commandName)) {
                 throw new IllegalArgumentException(message.toString());
             }
-            throw new IllegalArgumentException(NutsMessage.cstyle("%s : %s", commandName, message).toString());
+            throw new IllegalArgumentException(NutsMessage.ofCstyle("%s : %s", commandName, message).toString());
         }
         if (NutsBlankable.isBlank(commandName)) {
             throw new NutsIllegalArgumentException(session, message);
         }
-        throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("%s : %s", commandName, message));
+        throw new NutsIllegalArgumentException(session, NutsMessage.ofCstyle("%s : %s", commandName, message));
     }
 
     @Override
     public void throwError(NutsString message, NutsSession session) {
         if (session == null) {
             if (!NutsBlankable.isBlank(commandName)) {
-                throw new IllegalArgumentException(NutsMessage.cstyle("%s : %s", commandName, message).toString());
+                throw new IllegalArgumentException(NutsMessage.ofCstyle("%s : %s", commandName, message).toString());
             }
-            throw new IllegalArgumentException(NutsMessage.cstyle("%s", commandName, message).toString());
+            throw new IllegalArgumentException(NutsMessage.ofCstyle("%s", commandName, message).toString());
         }
         NutsTextBuilder m = NutsTexts.of(session).builder();
         if (!NutsBlankable.isBlank(commandName)) {
             m.append(commandName).append(" : ");
         }
         m.append(message);
-        throw new NutsIllegalArgumentException(session, NutsMessage.formatted(m.build().toString()));
+        throw new NutsIllegalArgumentException(session, NutsMessage.ofNtf(m.build().toString()));
     }
 
     @Override
@@ -927,18 +926,8 @@ public class DefaultNutsCommandLine implements NutsCommandLine {
         return c;
     }
 
-    private NutsMessageFormattable highlightText(String text) {
-        return new NutsMessageFormattable() {
-            @Override
-            public NutsMessage format(NutsSession session) {
-                return NutsMessage.cstyle("%s", NutsTexts.of(session).ofStyled(text, NutsTextStyle.primary3()));
-            }
-
-            @Override
-            public String toString() {
-                return String.valueOf(text);
-            }
-        };
+    private NutsMessage highlightText(String text) {
+        return NutsMessage.ofStyled(String.valueOf(text), NutsTextStyle.primary3());
     }
 
     private boolean isPunctuation(char c) {
@@ -1014,7 +1003,7 @@ public class DefaultNutsCommandLine implements NutsCommandLine {
                         }
                         case '\'':
                         case '"': {
-                            return NutsOptional.ofError(session -> NutsMessage.cstyle("illegal char %s", c));
+                            return NutsOptional.ofError(session -> NutsMessage.ofCstyle("illegal char %s", c));
                         }
                         case '\\': {
                             i++;
@@ -1078,7 +1067,7 @@ public class DefaultNutsCommandLine implements NutsCommandLine {
                 break;
             }
             case IN_QUOTED_WORD: {
-                return NutsOptional.ofError(session -> NutsMessage.cstyle("expected quote"));
+                return NutsOptional.ofError(session -> NutsMessage.ofPlain("expected quote"));
             }
         }
         return NutsOptional.of(args.toArray(new String[0]));
@@ -1113,7 +1102,7 @@ public class DefaultNutsCommandLine implements NutsCommandLine {
 
     @Override
     public NutsCommandLine add(String argument) {
-        if(argument!=null) {
+        if (argument != null) {
             args.add(argument);
         }
         return this;

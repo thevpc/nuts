@@ -57,11 +57,11 @@ public class NutsParseEnumException extends NutsException {
     public NutsParseEnumException(NutsSession session, NutsMessage message, String invalidValue, Class enumType) {
         super(session,
                 message == null ? (
-                        NutsMessage.cstyle("invalid value %s of type %s", invalidValue, enumType.getName()))
+                        NutsMessage.ofCstyle("invalid value %s of type %s", invalidValue, enumType.getName()))
                         : message
         );
         if (enumType == null || (!Enum.class.isAssignableFrom(enumType) && !NutsEnum.class.isAssignableFrom(enumType))) {
-            throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("failed creating NutsParseEnumException for %s", (enumType == null ? null : enumType.getName())));
+            throw new NutsIllegalArgumentException(session, NutsMessage.ofCstyle("failed creating NutsParseEnumException for %s", (enumType == null ? null : enumType.getName())));
         }
         this.enumType = enumType;
         this.invalidValue = invalidValue;

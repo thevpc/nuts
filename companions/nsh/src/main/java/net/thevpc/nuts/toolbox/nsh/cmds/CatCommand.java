@@ -143,7 +143,7 @@ public class CatCommand extends SimpleJShellBuiltin {
                 out.printf(results);
             }
         } catch (IOException ex) {
-            throw new NutsExecutionException(context.getSession(), NutsMessage.cstyle("%s", ex), ex, 100);
+            throw new NutsExecutionException(context.getSession(), NutsMessage.ofCstyle("%s", ex), ex, 100);
         }
     }
 
@@ -323,7 +323,7 @@ public class CatCommand extends SimpleJShellBuiltin {
                 return tb.build();
             }
         }
-        throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("unsupported"));
+        throw new NutsUnsupportedOperationException(session);
     }
 
     public static class CatResult {

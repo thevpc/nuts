@@ -124,10 +124,10 @@ public class NutsCachedRepository extends AbstractNutsRepositoryBase {
                     }
                     return NutsOptional.of(success);
                 } else {
-                    return NutsOptional.ofError(session1 -> NutsMessage.cstyle("nuts descriptor not found %s",id), new NutsNotFoundException(session, id));
+                    return NutsOptional.ofError(session1 -> NutsMessage.ofCstyle("nuts descriptor not found %s",id), new NutsNotFoundException(session, id));
                 }
             } catch (RuntimeException ex) {
-                return NutsOptional.ofError(session1 -> NutsMessage.cstyle("nuts descriptor not found %s",id), ex);
+                return NutsOptional.ofError(session1 -> NutsMessage.ofCstyle("nuts descriptor not found %s",id), ex);
             }
         });
         if (res.isPresent()) {
@@ -196,7 +196,7 @@ public class NutsCachedRepository extends AbstractNutsRepositoryBase {
             //ignore error
         } catch (Exception ex) {
             _LOGOP(session).level(Level.SEVERE).error(ex)
-                    .log(NutsMessage.jstyle("search versions error : {0}", ex));
+                    .log(NutsMessage.ofJstyle("search versions error : {0}", ex));
             //ignore....
         }
         NutsIterator<NutsId> namedNutIdIterator = IteratorBuilder.ofConcat(all, session).distinct(
@@ -239,13 +239,13 @@ public class NutsCachedRepository extends AbstractNutsRepositoryBase {
 //                cache.deployContent(id, c.getPath(), session);
                     if (localPath2 != null) {
                         NutsCp.of(session)
-                                .from(cachePath).to(localPath2).run();
+                                .from(cachePath).to(NutsPath.of(localPath2,session)).run();
                     } else {
                         localPath2 = cachePath.toString();
                     }
                     return NutsOptional.of(NutsPath.of(localPath2, session).setUserCache(true).setUserTemporary(false));
                 } else {
-                    return NutsOptional.ofError(session1 -> NutsMessage.cstyle("nuts content not found %s",id),new NutsNotFoundException(session, id));
+                    return NutsOptional.ofError(session1 -> NutsMessage.ofCstyle("nuts content not found %s",id),new NutsNotFoundException(session, id));
                 }
             } else {
                 NutsPath c2 = null;
@@ -258,9 +258,9 @@ public class NutsCachedRepository extends AbstractNutsRepositoryBase {
                 if (c2 != null) {
                     return NutsOptional.of(c2);
                 } else if (impl2Ex != null) {
-                    return NutsOptional.ofError(session1 -> NutsMessage.cstyle("nuts content not found %s",id),impl2Ex);
+                    return NutsOptional.ofError(session1 -> NutsMessage.ofCstyle("nuts content not found %s",id),impl2Ex);
                 } else {
-                    return NutsOptional.ofError(session1 -> NutsMessage.cstyle("nuts content not found %s",id),new NutsNotFoundException(session, id));
+                    return NutsOptional.ofError(session1 -> NutsMessage.ofCstyle("nuts content not found %s",id),new NutsNotFoundException(session, id));
                 }
             }
         });
@@ -320,7 +320,7 @@ public class NutsCachedRepository extends AbstractNutsRepositoryBase {
         } catch (Exception ex) {
             //ignore....
             _LOGOP(session).level(Level.SEVERE).error(ex)
-                    .log(NutsMessage.jstyle("search latest versions error : {0}", ex));
+                    .log(NutsMessage.ofJstyle("search latest versions error : {0}", ex));
         }
         if (p != null) {
             li.add(p);
@@ -386,7 +386,7 @@ public class NutsCachedRepository extends AbstractNutsRepositoryBase {
                 //ignore
             } catch (Exception ex) {
                 _LOGOP(session).level(Level.SEVERE).error(ex)
-                        .log(NutsMessage.jstyle("search latest versions error : {0}", ex));
+                        .log(NutsMessage.ofJstyle("search latest versions error : {0}", ex));
                 //ignore....
             }
             return mirroring.searchLatestVersion(bestId, id, filter, fetchMode, session);

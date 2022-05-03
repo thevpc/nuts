@@ -84,7 +84,7 @@ public class PomAndUnsupportedJavaExecutorComponent implements NutsExecutorCompo
         return new AbstractSyncIProcessExecHelper(executionContext.getSession()) {
             @Override
             public void dryExec() {
-                throw new NutsIOException(getSession(),NutsMessage.cstyle("unsupported execution of %s with packaging %s",
+                throw new NutsIOException(getSession(),NutsMessage.ofCstyle("unsupported execution of %s with packaging %s",
                         executionContext.getDefinition().getId(),
                         executionContext.getDefinition().getDescriptor().getPackaging()
                 ));
@@ -92,7 +92,7 @@ public class PomAndUnsupportedJavaExecutorComponent implements NutsExecutorCompo
 
             @Override
             public int exec() {
-                throw new NutsIOException(getSession(),NutsMessage.cstyle("unsupported execution of %s with packaging %s",
+                throw new NutsIOException(getSession(),NutsMessage.ofCstyle("unsupported execution of %s with packaging %s",
                         executionContext.getDefinition().getId(),
                         executionContext.getDefinition().getDescriptor().getPackaging()
                 ));

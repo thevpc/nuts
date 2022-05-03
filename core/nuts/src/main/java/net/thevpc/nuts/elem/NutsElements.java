@@ -25,12 +25,12 @@
 package net.thevpc.nuts.elem;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.boot.NutsApiUtils;
 import net.thevpc.nuts.cmdline.NutsCommandLineConfigurable;
 import net.thevpc.nuts.format.NutsIterableFormat;
 import net.thevpc.nuts.io.NutsPath;
 import net.thevpc.nuts.io.NutsPrintStream;
 import net.thevpc.nuts.util.NutsProgressFactory;
+import net.thevpc.nuts.util.NutsUtils;
 
 import java.io.File;
 import java.io.InputStream;
@@ -53,7 +53,7 @@ public interface NutsElements extends NutsContentTypeFormat {
 
 
     static NutsElements of(NutsSession session) {
-        NutsApiUtils.checkSession(session);
+        NutsUtils.requireSession(session);
         return session.extensions().createSupported(NutsElements.class, true, null);
     }
 

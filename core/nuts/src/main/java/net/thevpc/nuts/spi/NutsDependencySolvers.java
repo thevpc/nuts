@@ -27,14 +27,14 @@
 package net.thevpc.nuts.spi;
 
 import net.thevpc.nuts.NutsSession;
-import net.thevpc.nuts.boot.NutsApiUtils;
+import net.thevpc.nuts.util.NutsUtils;
 
 import java.util.List;
 
 @NutsComponentScope(NutsComponentScopeType.WORKSPACE)
 public interface NutsDependencySolvers extends NutsComponent {
     static NutsDependencySolvers of(NutsSession session) {
-        NutsApiUtils.checkSession(session);
+        NutsUtils.requireSession(session);
         return session.extensions().createSupported(NutsDependencySolvers.class, true, null);
     }
 

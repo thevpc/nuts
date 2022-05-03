@@ -9,6 +9,7 @@ import net.thevpc.nuts.io.NutsPrintStream;
 import net.thevpc.nuts.runtime.standalone.format.DefaultFormatBase;
 import net.thevpc.nuts.runtime.standalone.shell.NutsShellHelper;
 import net.thevpc.nuts.spi.NutsSupportLevelContext;
+import net.thevpc.nuts.text.NutsTexts;
 
 public class DefaultNutsCommandLineFormat extends DefaultFormatBase<NutsCommandLineFormat> implements NutsCommandLineFormat {
 
@@ -82,7 +83,9 @@ public class DefaultNutsCommandLineFormat extends DefaultFormatBase<NutsCommandL
                                             .setExpectEnv(true)
                             );
             if (isNtf()) {
-                out.print("```system " + cmd + " ```");
+                out.printf(
+                        NutsTexts.of(getSession()).ofCode("system", cmd)
+                );
             } else {
                 out.print(cmd);
             }

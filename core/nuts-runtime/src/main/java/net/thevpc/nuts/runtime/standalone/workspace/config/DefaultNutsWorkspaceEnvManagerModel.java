@@ -329,8 +329,11 @@ public class DefaultNutsWorkspaceEnvManagerModel {
         return userProperties;
     }
 
-    public Object getProperty(String property, NutsSession session) {
-        return userProperties.get(property);
+    public NutsOptional<NutsValue> getProperty(String property, NutsSession session) {
+        Object v = userProperties.get(property);
+        return NutsOptional.of(
+                v == null ? null : NutsValue.of(v)
+        );
     }
 
     public NutsElement getPropertyElement(String property, NutsSession session) {

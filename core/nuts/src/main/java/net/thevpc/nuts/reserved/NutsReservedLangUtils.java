@@ -19,13 +19,13 @@ public final class NutsReservedLangUtils {
             value = value.toUpperCase().trim().replace('-', '_');
         }
         if (value.isEmpty()) {
-            return NutsOptional.ofEmpty(s -> NutsMessage.cstyle(type.getSimpleName() + " is empty"));
+            return NutsOptional.ofEmpty(s -> NutsMessage.ofCstyle("%s is empty",type.getSimpleName()));
         }
         try {
             return NutsOptional.of((T) Enum.valueOf(type, value.toUpperCase()));
         } catch (Exception notFound) {
             String finalValue = value;
-            return NutsOptional.ofError(s -> NutsMessage.cstyle(type.getSimpleName() + " invalid value : %s", finalValue));
+            return NutsOptional.ofError(s -> NutsMessage.ofCstyle(type.getSimpleName() + " invalid value : %s", finalValue));
         }
     }
 
@@ -36,7 +36,7 @@ public final class NutsReservedLangUtils {
             value = value.toUpperCase().trim().replace('-', '_');
         }
         if (value.isEmpty()) {
-            return NutsOptional.ofEmpty(s -> NutsMessage.cstyle(type.getSimpleName() + " is empty"));
+            return NutsOptional.ofEmpty(s -> NutsMessage.ofCstyle("%s is empty",type.getSimpleName()));
         }
         try {
             NutsOptional<T> o = mapper.apply(value);
@@ -50,7 +50,7 @@ public final class NutsReservedLangUtils {
             return NutsOptional.of((T) Enum.valueOf(type, value.toUpperCase()));
         } catch (Exception notFound) {
             String finalValue = value;
-            return NutsOptional.ofError(s -> NutsMessage.cstyle(type.getSimpleName() + " invalid value : %s", finalValue),notFound);
+            return NutsOptional.ofError(s -> NutsMessage.ofCstyle(type.getSimpleName() + " invalid value : %s", finalValue),notFound);
         }
     }
 
@@ -82,7 +82,7 @@ public final class NutsReservedLangUtils {
                 }
             }
         }
-        return NutsOptional.ofEmpty(x -> NutsMessage.cstyle("error with type %s not found", type.getSimpleName()));
+        return NutsOptional.ofEmpty(x -> NutsMessage.ofCstyle("error with type %s not found", type.getSimpleName()));
     }
 
     public static String[] stacktraceToArray(Throwable th) {

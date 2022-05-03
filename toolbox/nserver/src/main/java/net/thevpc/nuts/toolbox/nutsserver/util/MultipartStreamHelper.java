@@ -59,7 +59,7 @@ public class MultipartStreamHelper implements Iterable<ItemStreamInfo> {
                 return s.substring("boundary=".length()).getBytes();
             }
         }
-        throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("invalid boundary"));
+        throw new NutsIllegalArgumentException(session, NutsMessage.ofPlain("invalid boundary"));
     }
 
     public Iterator<ItemStreamInfo> iterator() {
@@ -123,7 +123,7 @@ public class MultipartStreamHelper implements Iterable<ItemStreamInfo> {
             } catch (RuntimeException e) {
                 throw e;
             } catch (Exception e) {
-                throw new NutsException(session, NutsMessage.plain("parse multipart failed"),e);
+                throw new NutsException(session, NutsMessage.ofPlain("parse multipart failed"),e);
             }
         }
 

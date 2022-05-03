@@ -125,8 +125,8 @@ public class DefaultNutsContentTypeResolver implements NutsContentTypeResolver {
         if(contentType!=null){
             switch (contentType){
                 case "application/zip":{
-                    NutsRef<Boolean> isJar=new NutsRef<>(false);
-                    NutsRef<Boolean> isWar=new NutsRef<>(false);
+                    NutsRef<Boolean> isJar=NutsRef.of(false);
+                    NutsRef<Boolean> isWar=NutsRef.of(false);
                     ZipUtils.visitZipStream(file,(path, inputStream) -> {
                         switch (path){
                             case "META-INF/MANIFEST.MF":{

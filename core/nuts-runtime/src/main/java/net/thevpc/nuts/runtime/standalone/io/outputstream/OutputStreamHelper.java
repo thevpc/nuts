@@ -29,7 +29,7 @@ public class OutputStreamHelper implements OutputHelper {
             loopGard--;
         }
         if (rawOutput0 instanceof NutsOutputStreamTransparentAdapter) {
-            throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("invalid rawOutput"));
+            throw new NutsIllegalArgumentException(session, NutsMessage.ofPlain("invalid rawOutput"));
         }
     }
 

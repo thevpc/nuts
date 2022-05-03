@@ -37,6 +37,7 @@ import java.util.Set;
 
 import net.thevpc.nuts.spi.NutsRepositorySPI;
 import net.thevpc.nuts.util.NutsStringUtils;
+import net.thevpc.nuts.util.NutsUtils;
 
 /**
  *
@@ -57,18 +58,14 @@ public class DefaultNutsPushCommand extends AbstractDefaultNutsPushCommand {
         Map<NutsId, NutsDefinition> toProcess = new LinkedHashMap<>();
         for (NutsId id : this.getIds()) {
             if (NutsStringUtils.trim(id.getVersion().getValue()).endsWith(CoreNutsConstants.Versions.CHECKED_OUT_EXTENSION)) {
-                throw new NutsIllegalArgumentException(getSession(), NutsMessage.cstyle("invalid version %s", id.getVersion()));
+                throw new NutsIllegalArgumentException(getSession(), NutsMessage.ofCstyle("invalid version %s", id.getVersion()));
             }
             NutsDefinition file = session.fetch().setId(id).setSession(session.copy().setTransitive(false)).setContent(true).getResultDefinition();
-            if (file == null) {
-                throw new NutsIllegalArgumentException(getSession(), NutsMessage.cstyle("nothing to push"));
-            }
+            NutsUtils.requireNonNull(file,session,"content to push");
             toProcess.put(id, file);
         }
         NutsWorkspaceExt dws = NutsWorkspaceExt.of(ws);
-        if (toProcess.isEmpty()) {
-            throw new NutsIllegalArgumentException(getSession(), NutsMessage.cstyle("missing package to push"));
-        }
+        NutsUtils.requireNonBlank(toProcess,session,"package tp push");
         for (Map.Entry<NutsId, NutsDefinition> entry : toProcess.entrySet()) {
             NutsId id = entry.getKey();
             NutsDefinition file = entry.getValue();
@@ -106,7 +103,7 @@ public class DefaultNutsPushCommand extends AbstractDefaultNutsPushCommand {
                     }
                 }
                 if (!ok) {
-                    throw new NutsPushException(session,id, NutsMessage.cstyle(
+                    throw new NutsPushException(session,id, NutsMessage.ofCstyle(
                             "unable to push %s to repository %s : %s",
                             id == null ? "<null>" : id,
                             this.getRepository(),
@@ -116,7 +113,7 @@ public class DefaultNutsPushCommand extends AbstractDefaultNutsPushCommand {
             } else {
                 NutsRepository repo = session.repos().getRepository(this.getRepository());
                 if (!repo.config().isEnabled()) {
-                    throw new NutsIllegalArgumentException(getSession(), NutsMessage.cstyle("repository %s is disabled", repo.getName()));
+                    throw new NutsIllegalArgumentException(getSession(), NutsMessage.ofCstyle("repository %s is disabled", repo.getName()));
                 }
                 NutsId effId = NutsIdUtils.createContentFaceId(id.builder().setPropertiesQuery("").build(), file.getDescriptor(),session) //                        .setAlternative(NutsUtilStrings.trim(file.getDescriptor().getAlternative()))
                         ;

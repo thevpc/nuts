@@ -5,18 +5,19 @@ import net.thevpc.nuts.*;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
-public class NutsReservedOptionalError<T> extends NutsReservedOptionalThrowable<T> {
+public class NutsReservedOptionalError<T> extends NutsReservedOptionalThrowable<T> implements Cloneable {
     private Function<NutsSession, NutsMessage> message;
     private Throwable error;
 
-    public NutsReservedOptionalError(Function<NutsSession, NutsMessage> message, Throwable error) {
+    public NutsReservedOptionalError(Function<NutsSession, NutsMessage> message, Throwable error, Supplier<T> defaultValue) {
+        super(defaultValue);
         if (message == null) {
             message = (s) -> {
                 Throwable error1 = NutsReservedOptionalError.this.error;
                 if (error1 == null) {
-                    return NutsMessage.cstyle("erroneous value");
+                    return NutsMessage.ofPlain("erroneous value");
                 } else {
-                    return NutsMessage.cstyle("erroneous value : %s", NutsReservedLangUtils.getErrorMessage(error));
+                    return NutsMessage.ofCstyle("erroneous value : %s", NutsReservedLangUtils.getErrorMessage(error));
                 }
             };
         }
@@ -47,7 +48,7 @@ public class NutsReservedOptionalError<T> extends NutsReservedOptionalThrowable<
         }
         NutsMessage m = prepareMessage(message.apply(session));
         if (session == null) {
-            throw new RuntimeException(m.toString());
+            throw new NutsNoSessionOptionalErrorException(m);
         } else {
             throw new NutsOptionalErrorException(session, m);
         }
@@ -87,8 +88,14 @@ public class NutsReservedOptionalError<T> extends NutsReservedOptionalThrowable<
     public boolean isBlank() {
         return false;
     }
+
     @Override
     public String toString() {
         return "ErrorOptional@" + System.identityHashCode(this);
+    }
+
+    @Override
+    protected NutsOptional<T> clone() {
+        return super.clone();
     }
 }

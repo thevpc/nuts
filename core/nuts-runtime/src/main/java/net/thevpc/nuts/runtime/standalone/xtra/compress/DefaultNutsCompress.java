@@ -7,9 +7,8 @@ package net.thevpc.nuts.runtime.standalone.xtra.compress;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.io.*;
-import net.thevpc.nuts.runtime.standalone.io.util.NutsStreamOrPath;
-import net.thevpc.nuts.runtime.standalone.io.util.CoreIOUtils;
 import net.thevpc.nuts.runtime.standalone.io.progress.SingletonNutsInputStreamProgressFactory;
+import net.thevpc.nuts.runtime.standalone.io.util.CoreIOUtils;
 import net.thevpc.nuts.runtime.standalone.session.NutsSessionUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.NutsWorkspaceUtils;
 import net.thevpc.nuts.spi.NutsPaths;
@@ -34,16 +33,16 @@ import java.util.zip.ZipOutputStream;
  */
 public class DefaultNutsCompress implements NutsCompress {
 
-    private final List<NutsStreamOrPath> sources = new ArrayList<>();
+    private final List<NutsInputSource> sources = new ArrayList<>();
     private final NutsWorkspace ws;
     private NutsLogger LOG;
     private boolean safe = true;
-    private NutsStreamOrPath target;
+    private NutsOutputTarget target;
     private NutsSession session;
     private boolean skipRoot;
     private NutsProgressFactory progressFactory;
     private String format = "zip";
-    private Set<NutsPathOption> options=new LinkedHashSet<>();
+    private Set<NutsPathOption> options = new LinkedHashSet<>();
 
     public DefaultNutsCompress(NutsSession session) {
         this.session = session;
@@ -73,7 +72,7 @@ public class DefaultNutsCompress implements NutsCompress {
 
     protected NutsLogger _LOG(NutsSession session) {
         if (LOG == null) {
-            LOG = NutsLogger.of(DefaultNutsCompress.class,session);
+            LOG = NutsLogger.of(DefaultNutsCompress.class, session);
         }
         return LOG;
     }
@@ -84,27 +83,23 @@ public class DefaultNutsCompress implements NutsCompress {
 
     public void runZip() {
         checkSession();
-        if (sources.isEmpty()) {
-            throw new NutsIllegalArgumentException(getSession(), NutsMessage.cstyle("missing source"));
-        }
-        if (target == null) {
-            throw new NutsIllegalArgumentException(getSession(), NutsMessage.cstyle("missing target"));
-        }
-        _LOG(session).with().level(Level.FINEST).verb(NutsLoggerVerb.START).log(NutsMessage.jstyle("compress {0} to {1}", sources, target));
+        NutsUtils.requireNonBlank(sources, session, "source");
+        NutsUtils.requireNonBlank(target, session, "target");
+        _LOG(session).with().level(Level.FINEST).verb(NutsLoggerVerb.START).log(NutsMessage.ofJstyle("compress {0} to {1}", sources, target));
         try {
             OutputStream fW = null;
             ZipOutputStream zip = null;
-            if (this.target.isPath()) {
+            if (this.target instanceof NutsPath) {
                 Path tempPath = null;
                 if (isSafe()) {
                     tempPath = NutsPaths.of(session)
-                            .createTempFile("zip",session).toFile();
+                            .createTempFile("zip", session).toFile();
                 }
-                if (this.target.isPath()) {
-                    this.target.getPath().mkParentDirs();
+                if (this.target instanceof NutsPath) {
+                    ((NutsPath) this.target).mkParentDirs();
                 }
                 if (tempPath == null) {
-                    fW = target.isOutputStream() ? target.getOutputStream() : target.getPath().getOutputStream();
+                    fW = target.getOutputStream();
                 } else {
                     fW = Files.newOutputStream(tempPath);
                 }
@@ -112,9 +107,9 @@ public class DefaultNutsCompress implements NutsCompress {
                     try {
                         zip = new ZipOutputStream(fW);
                         if (skipRoot) {
-                            for (NutsStreamOrPath s : sources) {
-                                Item file1 = new Item(s,this);
-                                if (file1.isDirectory()) {
+                            for (NutsInputSource s : sources) {
+                                Item file1 = new Item(s, this);
+                                if (file1.isSourceDirectory()) {
                                     for (Item c : file1.list()) {
                                         add("", c, zip);
                                     }
@@ -123,8 +118,8 @@ public class DefaultNutsCompress implements NutsCompress {
                                 }
                             }
                         } else {
-                            for (NutsStreamOrPath s : sources) {
-                                add("", new Item(s,this), zip);
+                            for (NutsInputSource s : sources) {
+                                add("", new Item(s, this), zip);
                             }
                         }
                     } finally {
@@ -138,36 +133,35 @@ public class DefaultNutsCompress implements NutsCompress {
                     }
                 }
                 if (tempPath != null) {
-                    if (this.target.isOutputStream()) {
-                        CoreIOUtils.copy(
-                                Files.newInputStream(tempPath),
-                                this.target.getOutputStream(),session
-                        );
-                    } else if (this.target.isPath()
-                            && this.target.getPath().isFile()) {
-                        Files.move(tempPath, this.target.getPath().toFile(),
+                    if (this.target instanceof NutsPath && ((NutsPath) target).isFile()) {
+                        Files.move(tempPath, ((NutsPath) target).toFile(),
                                 StandardCopyOption.REPLACE_EXISTING);
-                    } else {
+                    } else if (this.target instanceof NutsPath) {
                         try (InputStream ii = Files.newInputStream(tempPath)) {
-                            try (OutputStream jj = this.target.getPath().getOutputStream()) {
-                                CoreIOUtils.copy(ii, jj,session);
+                            try (OutputStream jj = target.getOutputStream()) {
+                                CoreIOUtils.copy(ii, jj, session);
                             }
                         }
+                    } else {
+                        CoreIOUtils.copy(
+                                Files.newInputStream(tempPath),
+                                this.target.getOutputStream(), session
+                        );
                     }
                 }
             } else {
-                throw new NutsIllegalArgumentException(getSession(), NutsMessage.cstyle("unsupported target %s", target));
+                throw new NutsIllegalArgumentException(getSession(), NutsMessage.ofCstyle("unsupported target %s", target));
             }
         } catch (IOException ex) {
             _LOG(session).with().level(Level.CONFIG).verb(NutsLoggerVerb.FAIL)
-                    .log(NutsMessage.jstyle("error compressing {0} to {1} : {2}",
-                            sources, target.getValue(), ex));
-            throw new NutsIOException(session,ex);
+                    .log(NutsMessage.ofJstyle("error compressing {0} to {1} : {2}",
+                            sources, target, ex));
+            throw new NutsIOException(session, ex);
         }
     }
 
     private void add(String path, Item srcFolder, ZipOutputStream zip) {
-        if (srcFolder.isDirectory()) {
+        if (srcFolder.isSourceDirectory()) {
             addFolderToZip(path, srcFolder, zip);
         } else {
             addFileToZip(path, srcFolder, zip, false);
@@ -203,7 +197,7 @@ public class DefaultNutsCompress implements NutsCompress {
             if (flag) {
                 zip.putNextEntry(new ZipEntry(pathPrefix + srcFile.getName() + "/"));
             } else {
-                if (srcFile.isDirectory()) {
+                if (srcFile.isSourceDirectory()) {
                     addFolderToZip(pathPrefix, srcFile, zip);
                 } else {
                     byte[] buf = new byte[1024];
@@ -216,7 +210,7 @@ public class DefaultNutsCompress implements NutsCompress {
                 }
             }
         } catch (IOException ex) {
-            throw new NutsIOException(session,ex);
+            throw new NutsIOException(session, ex);
         }
     }
 
@@ -249,20 +243,20 @@ public class DefaultNutsCompress implements NutsCompress {
                 break;
             }
             default: {
-                throw new NutsUnsupportedArgumentException(getSession(), NutsMessage.cstyle("unsupported compression format %s", format));
+                throw new NutsUnsupportedArgumentException(getSession(), NutsMessage.ofCstyle("unsupported compression format %s", format));
             }
         }
         return this;
     }
 
     @Override
-    public List<Object> getSources() {
-        return (List) sources;
+    public List<NutsInputSource> getSources() {
+        return sources;
     }
 
-    public NutsCompress addSource(String source) {
+    public NutsCompress addSource(NutsInputSource source) {
         if (source != null) {
-            this.sources.add(NutsStreamOrPath.of(NutsPath.of(source, session)));
+            this.sources.add(source);
         }
         return this;
     }
@@ -271,9 +265,9 @@ public class DefaultNutsCompress implements NutsCompress {
     public NutsCompress addSource(InputStream source) {
         checkSession();
         if (source == null) {
-            throw new NutsIllegalArgumentException(session, NutsMessage.plain("null source"));
+            throw new NutsIllegalArgumentException(session, NutsMessage.ofPlain("null source"));
         }
-        this.sources.add(NutsStreamOrPath.of(source,session));
+        this.sources.add(NutsIO.of(session).createInputSource(source));
         return this;
     }
 
@@ -281,9 +275,9 @@ public class DefaultNutsCompress implements NutsCompress {
     public NutsCompress addSource(File source) {
         checkSession();
         if (source == null) {
-            throw new NutsIllegalArgumentException(session, NutsMessage.plain("null source"));
+            throw new NutsIllegalArgumentException(session, NutsMessage.ofPlain("null source"));
         }
-        this.sources.add(NutsStreamOrPath.of(NutsPath.of(source,session)));
+        this.sources.add(NutsPath.of(source, session));
         return this;
     }
 
@@ -291,9 +285,9 @@ public class DefaultNutsCompress implements NutsCompress {
     public NutsCompress addSource(Path source) {
         if (source == null) {
             checkSession();
-            throw new NutsIllegalArgumentException(session, NutsMessage.plain("null source"));
+            throw new NutsIllegalArgumentException(session, NutsMessage.ofPlain("null source"));
         }
-        this.sources.add(NutsStreamOrPath.of(NutsPath.of(source,session)));
+        this.sources.add(NutsPath.of(source, session));
         return this;
     }
 
@@ -301,16 +295,16 @@ public class DefaultNutsCompress implements NutsCompress {
     public NutsCompress addSource(URL source) {
         if (source == null) {
             checkSession();
-            throw new NutsIllegalArgumentException(session, NutsMessage.plain("null source"));
+            throw new NutsIllegalArgumentException(session, NutsMessage.ofPlain("null source"));
         }
-        this.sources.add(NutsStreamOrPath.of(NutsPath.of(source,session)));
+        this.sources.add(NutsPath.of(source, session));
         return this;
     }
 
     @Override
     public NutsCompress addSource(NutsPath source) {
         if (source != null) {
-            this.sources.add(NutsStreamOrPath.of(source));
+            this.sources.add(source);
         }
         return this;
     }
@@ -326,8 +320,14 @@ public class DefaultNutsCompress implements NutsCompress {
             this.target = null;
         } else {
             checkSession();
-            this.target = NutsStreamOrPath.of(target,session);
+            this.target = NutsIO.of(session).createOutputTarget(target);
         }
+        return this;
+    }
+
+    @Override
+    public NutsCompress setTarget(NutsOutputTarget target) {
+        this.target = target;
         return this;
     }
 
@@ -336,7 +336,7 @@ public class DefaultNutsCompress implements NutsCompress {
         if (target == null) {
             this.target = null;
         } else {
-            this.target = NutsStreamOrPath.of(NutsPath.of(target,session));
+            this.target = NutsPath.of(target, session);
         }
         return this;
     }
@@ -346,7 +346,7 @@ public class DefaultNutsCompress implements NutsCompress {
         if (target == null) {
             this.target = null;
         } else {
-            this.target = NutsStreamOrPath.of(NutsPath.of(target,session));
+            this.target = NutsPath.of(target, session);
         }
         return this;
     }
@@ -356,18 +356,14 @@ public class DefaultNutsCompress implements NutsCompress {
         if (target == null) {
             this.target = null;
         } else {
-            this.target = NutsStreamOrPath.of(NutsPath.of(target,session));
+            this.target = NutsPath.of(target, session);
         }
         return this;
     }
 
     @Override
     public NutsCompress setTarget(NutsPath target) {
-        if (target == null) {
-            this.target = null;
-        } else {
-            this.target = NutsStreamOrPath.of(target);
-        }
+        this.target = target;
         return this;
     }
 
@@ -418,7 +414,7 @@ public class DefaultNutsCompress implements NutsCompress {
                 break;
             }
             default: {
-                throw new NutsUnsupportedArgumentException(getSession(), NutsMessage.cstyle("unsupported compression format %s", getFormat()));
+                throw new NutsUnsupportedArgumentException(getSession(), NutsMessage.ofCstyle("unsupported compression format %s", getFormat()));
             }
         }
         return this;
@@ -494,26 +490,30 @@ public class DefaultNutsCompress implements NutsCompress {
 
     private static class Item {
 
-        private final NutsStreamOrPath o;
+        private final NutsInputSource inSource;
         private final DefaultNutsCompress c;
 
-        public Item(NutsStreamOrPath value,DefaultNutsCompress c) {
-            this.o = value;
+        public Item(NutsInputSource value, DefaultNutsCompress c) {
+            this.inSource = value;
             this.c = c;
         }
 
-        public boolean isDirectory() {
-            return (o.isPath() && o.getPath().isDirectory());
+        public boolean isSourcePath() {
+            return ((inSource instanceof NutsPath));
+        }
+
+        public boolean isSourceDirectory() {
+            return isSourcePath() && ((NutsPath) inSource).isDirectory();
         }
 
         private Item[] list() {
-            if (o.isPath()) {
-                NutsPath p = o.getPath();
+            if (isSourcePath()) {
+                NutsPath p = (NutsPath) inSource;
                 return p.list().map(
                                 NutsFunction.of(
-                                x -> new Item(NutsStreamOrPath.of(x),c),
-                                "NutsStreamOrPath::of"
-                        )
+                                        x -> new Item(x, c),
+                                        "NutsStreamOrPath::of"
+                                )
                         )
                         .toArray(Item[]::new);
             }
@@ -522,28 +522,21 @@ public class DefaultNutsCompress implements NutsCompress {
 
         public InputStream open() {
             if (c.options.contains(NutsPathOption.LOG)
-                    ||c.options.contains(NutsPathOption.TRACE)
+                    || c.options.contains(NutsPathOption.TRACE)
                     || c.getProgressFactory() != null) {
                 NutsInputStreamMonitor monitor = NutsInputStreamMonitor.of(c.session);
-                monitor.setOrigin(o.getValue());
+                monitor.setOrigin(inSource);
                 monitor.setLogProgress(c.options.contains(NutsPathOption.LOG));
                 monitor.setTraceProgress(c.options.contains(NutsPathOption.TRACE));
                 monitor.setProgressFactory(c.getProgressFactory());
-                if(o.isInputStream()){
-                    monitor.setSource(o.getInputStream());
-                }else{
-                    monitor.setSource(o.getPath());
-                }
+                monitor.setSource(inSource);
                 return monitor.create();
             }
-            if (o.isInputStream()) {
-                return o.getInputStream();
-            }
-            return o.getPath().getInputStream();
+            return inSource.getInputStream();
         }
 
         public String getName() {
-            return o.getName();
+            return inSource.getInputMetaData().getName().orElse(inSource.toString());
         }
     }
 

@@ -71,7 +71,7 @@ public final class NutsTextStyles implements Iterable<NutsTextStyle>, NutsEnum {
     public static NutsOptional<NutsTextStyles> parse(String value) {
         value = NutsStringUtils.trim(value);
         if (value.isEmpty()) {
-            return NutsOptional.ofEmpty(s -> NutsMessage.cstyle(NutsTextStyles.class.getSimpleName() + " is empty"));
+            return NutsOptional.ofEmpty(s -> NutsMessage.ofCstyle("%s is empty",NutsTextStyles.class.getSimpleName()));
         }
         List<NutsTextStyle> all = new ArrayList<>();
         for (String s : value.split(",")) {
@@ -80,7 +80,7 @@ public final class NutsTextStyles implements Iterable<NutsTextStyle>, NutsEnum {
                 NutsTextStyle a = NutsTextStyle.parse(s).orNull();
                 if (a == null) {
                     String finalValue = value;
-                    return NutsOptional.ofError(session -> NutsMessage.cstyle(NutsTextStyles.class.getSimpleName() + " invalid value : %s", finalValue));
+                    return NutsOptional.ofError(session -> NutsMessage.ofCstyle(NutsTextStyles.class.getSimpleName() + " invalid value : %s", finalValue));
                 }
                 all.add(a);
             }

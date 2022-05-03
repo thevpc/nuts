@@ -26,8 +26,8 @@
 package net.thevpc.nuts.format;
 
 import net.thevpc.nuts.NutsSession;
-import net.thevpc.nuts.boot.NutsApiUtils;
 import net.thevpc.nuts.spi.NutsComponent;
+import net.thevpc.nuts.util.NutsUtils;
 
 /**
  * Mutable Table Model
@@ -38,7 +38,7 @@ import net.thevpc.nuts.spi.NutsComponent;
 public interface NutsMutableTableModel extends NutsTableModel, NutsComponent {
 
     static NutsMutableTableModel of(NutsSession session) {
-        NutsApiUtils.checkSession(session);
+        NutsUtils.requireSession(session);
         return session.extensions().createSupported(NutsMutableTableModel.class, true, null);
     }
 

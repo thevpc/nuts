@@ -39,7 +39,7 @@ public class NutsTooManyElementsException extends NutsException {
      * @param session workspace
      */
     public NutsTooManyElementsException(NutsSession session) {
-        this(session, NutsMessage.formatted("too many elements"));
+        this(session, NutsMessage.ofNtf("too many elements"));
     }
 
     /**

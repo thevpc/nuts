@@ -55,7 +55,7 @@ class WrapperNutsAuthenticationAgent {
                 session.err().println("```error RECOVER MODE : Password could no be parsed due a change in encryption spec. WIll use new default agent```");
                 return null;
             }
-            throw new NutsSecurityException(session, NutsMessage.plain("credential id must start with authentication agent id"));
+            throw new NutsSecurityException(session, NutsMessage.ofPlain("credential id must start with authentication agent id"));
         }
         return b.substring(0, x);
     }

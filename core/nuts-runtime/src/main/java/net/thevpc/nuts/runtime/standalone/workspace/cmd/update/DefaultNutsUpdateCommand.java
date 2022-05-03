@@ -196,7 +196,7 @@ public class DefaultNutsUpdateCommand extends AbstractNutsUpdateCommand {
                     //FIX ME
                     if (!dd.getVersion().filter(session2).acceptVersion(updated.getId().getVersion(), session2)) {
                         throw new NutsIllegalArgumentException(getSession(),
-                                NutsMessage.cstyle("%s unsatisfied  : %s", dd, updated.getId().getVersion())
+                                NutsMessage.ofCstyle("%s unsatisfied  : %s", dd, updated.getId().getVersion())
                         );
                     }
                 }
@@ -465,7 +465,8 @@ public class DefaultNutsUpdateCommand extends AbstractNutsUpdateCommand {
             updateEvenIfExisting = session.getTerminal().ask()
                     .resetLine()
                     .setDefaultValue(true).setSession(session)
-                    .forBoolean("version is too restrictive. Do you intend to force update of %s ?", id).getBooleanValue();
+                    .forBoolean(NutsMessage.ofCstyle("version is too restrictive. Do you intend to force update of %s ?", id))
+                    .getBooleanValue();
         }
         DefaultNutsUpdateResult r = new DefaultNutsUpdateResult();
         r.setId(id.getShortId());
@@ -566,9 +567,9 @@ public class DefaultNutsUpdateCommand extends AbstractNutsUpdateCommand {
                 .collect(Collectors.toList());
         if (!notInstalled.isEmpty()) {
             if (notInstalled.size() == 1) {
-                throw new NutsIllegalArgumentException(getSession(), NutsMessage.cstyle("%s is not yet installed for it to be updated.", notInstalled.get(0)));
+                throw new NutsIllegalArgumentException(getSession(), NutsMessage.ofCstyle("%s is not yet installed for it to be updated.", notInstalled.get(0)));
             } else {
-                throw new NutsIllegalArgumentException(getSession(), NutsMessage.cstyle("%s are not yet installed for them to be updated.", notInstalled));
+                throw new NutsIllegalArgumentException(getSession(), NutsMessage.ofCstyle("%s are not yet installed for them to be updated.", notInstalled));
             }
         }
         if (result.getUpdatesCount() == 0) {
@@ -580,10 +581,10 @@ public class DefaultNutsUpdateCommand extends AbstractNutsUpdateCommand {
         final NutsPrintStream out = validWorkspaceSession.out();
         boolean accept = getSession().config().getDefaultTerminal().ask()
                 .resetLine()
-                .forBoolean("would you like to apply updates?").setDefaultValue(true)
+                .forBoolean(NutsMessage.ofPlain("would you like to apply updates?")).setDefaultValue(true)
                 .setSession(validWorkspaceSession).getValue();
         if (validWorkspaceSession.isAsk() && !accept) {
-            throw new NutsUserCancelException(getSession());
+            throw new NutsCancelException(getSession());
         }
         NutsWorkspaceConfigManagerExt wcfg = NutsWorkspaceConfigManagerExt.of(session.config());
         boolean apiUpdateAvailable = apiUpdate != null && apiUpdate.getAvailable() != null && !apiUpdate.isUpdateApplied();
@@ -641,7 +642,7 @@ public class DefaultNutsUpdateCommand extends AbstractNutsUpdateCommand {
         if (session.config().setSession(validWorkspaceSession).save(requireSave)) {
             if (_LOG(session).isLoggable(Level.INFO)) {
                 _LOGOP(session).level(Level.INFO).verb(NutsLoggerVerb.WARNING)
-                        .log(NutsMessage.jstyle("workspace is updated. Nuts should be restarted for changes to take effect."));
+                        .log(NutsMessage.ofPlain("workspace is updated. Nuts should be restarted for changes to take effect."));
             }
             if (apiUpdate != null && apiUpdate.isUpdatable() && !apiUpdate.isUpdateApplied()) {
                 if (validWorkspaceSession.isPlainTrace()) {
@@ -728,7 +729,7 @@ public class DefaultNutsUpdateCommand extends AbstractNutsUpdateCommand {
                             .addId(NutsConstants.Ids.NUTS_API + "#" + v).setLatest(true).getResultIds().first();
                     newFile = newId == null ? null : latestOnlineDependencies(fetch0()).setFailFast(false).setSession(session).setId(newId).getResultDefinition();
                 } catch (NutsNotFoundException ex) {
-                    _LOGOP(session).level(Level.SEVERE).error(ex).log(NutsMessage.jstyle("error : {0}", ex));
+                    _LOGOP(session).level(Level.SEVERE).error(ex).log(NutsMessage.ofJstyle("error : {0}", ex));
                     //ignore
                 }
                 break;
@@ -743,7 +744,7 @@ public class DefaultNutsUpdateCommand extends AbstractNutsUpdateCommand {
                     try {
                         oldFile = fetch0().setId(oldId).setSession(session.copy().setFetchStrategy(NutsFetchStrategy.ONLINE)).getResultDefinition();
                     } catch (NutsNotFoundException ex) {
-                        _LOGOP(session).level(Level.SEVERE).error(ex).log(NutsMessage.jstyle("error : {0}", ex));
+                        _LOGOP(session).level(Level.SEVERE).error(ex).log(NutsMessage.ofJstyle("error : {0}", ex));
                         //ignore
                     }
                 }
@@ -762,7 +763,7 @@ public class DefaultNutsUpdateCommand extends AbstractNutsUpdateCommand {
                             .setFailFast(false)
                             .getResultDefinition();
                 } catch (NutsNotFoundException ex) {
-                    _LOGOP(session).level(Level.SEVERE).error(ex).log(NutsMessage.jstyle("error : {0}", ex));
+                    _LOGOP(session).level(Level.SEVERE).error(ex).log(NutsMessage.ofJstyle("error : {0}", ex));
                     //ignore
                 }
                 break;

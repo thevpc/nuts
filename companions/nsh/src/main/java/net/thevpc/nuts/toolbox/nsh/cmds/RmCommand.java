@@ -34,6 +34,7 @@ import net.thevpc.nuts.spi.NutsComponentScopeType;
 import net.thevpc.nuts.toolbox.nsh.SimpleJShellBuiltin;
 import net.thevpc.nuts.toolbox.nsh.jshell.JShellExecutionContext;
 import net.thevpc.nuts.toolbox.nsh.util.ShellHelper;
+import net.thevpc.nuts.util.NutsUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -67,9 +68,8 @@ public class RmCommand extends SimpleJShellBuiltin {
     @Override
     protected void execBuiltin(NutsCommandLine commandLine, JShellExecutionContext context) {
         Options options = context.getOptions();
-        if (options.files.size() < 1) {
-            throw new NutsExecutionException(context.getSession(), NutsMessage.cstyle("missing parameters"), 2);
-        }
+        NutsSession session = context.getSession();
+        NutsUtils.requireNonBlank(options.files, session,"parameters");
 //        ShellHelper.WsSshListener listener = options.verbose ? new ShellHelper.WsSshListener(context.getSession()) : null;
         for (NutsPath p : options.files) {
 //            if (p instanceof SshXFile) {

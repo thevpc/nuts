@@ -26,7 +26,7 @@ public class SyntaxParser {
     public NutsExpr.Node parse() {
         NutsExpr.Node e = nextExpr();
         if(tokens.peek()!=null){
-            throw new NutsIllegalArgumentException(evaluator.getSession(),NutsMessage.cstyle("unexpected token %s, after reading %s",tokens.peek(),e));
+            throw new NutsIllegalArgumentException(evaluator.getSession(),NutsMessage.ofCstyle("unexpected token %s, after reading %s",tokens.peek(),e));
         }
         return e;
     }
@@ -102,7 +102,7 @@ public class SyntaxParser {
                 //error ?
                 //q=null
                 if (true) {
-                    throw new NutsIllegalArgumentException(evaluator.getSession(), NutsMessage.cstyle("expected expression"));
+                    throw new NutsIllegalArgumentException(evaluator.getSession(), NutsMessage.ofPlain("expected expression"));
                 }
             }
             first = new DefaultOpNode(opName(t), NutsExpr.OpType.PREFIX, withCache.precedences[precedenceIndex], Arrays.asList(q));
@@ -110,7 +110,7 @@ public class SyntaxParser {
             first = nextNonTerminal(precedenceIndex + 1);
         }
         if (first == null) {
-            throw new NutsIllegalArgumentException(evaluator.getSession(), NutsMessage.cstyle("expected expression"));
+            throw new NutsIllegalArgumentException(evaluator.getSession(), NutsMessage.ofPlain("expected expression"));
         }
         NutsToken infixOp = tokens.peek();
         if (isOp(infixOp, NutsExpr.OpType.INFIX, precedenceIndex)) {
@@ -124,7 +124,7 @@ public class SyntaxParser {
             //else
             NutsExpr.Node q = nextNonTerminal(precedenceIndex+1);
             if (q == null) {
-                throw new NutsIllegalArgumentException(evaluator.getSession(), NutsMessage.cstyle("expected expression"));
+                throw new NutsIllegalArgumentException(evaluator.getSession(), NutsMessage.ofPlain("expected expression"));
             }
             first= new DefaultOpNode(opName(infixOp), NutsExpr.OpType.INFIX, withCache.precedences[precedenceIndex], Arrays.asList(first,q));
             infixOp = tokens.peek();
@@ -132,7 +132,7 @@ public class SyntaxParser {
                 tokens.next();
                 q = nextNonTerminal(precedenceIndex+1);
                 if (q == null) {
-                    throw new NutsIllegalArgumentException(evaluator.getSession(), NutsMessage.cstyle("expected expression"));
+                    throw new NutsIllegalArgumentException(evaluator.getSession(), NutsMessage.ofPlain("expected expression"));
                 }
                 first= new DefaultOpNode(opName(infixOp), NutsExpr.OpType.INFIX, withCache.precedences[precedenceIndex], Arrays.asList(first,q));
                 infixOp = tokens.peek();
@@ -219,7 +219,7 @@ public class SyntaxParser {
                 return new DefaultLiteralNode(t.sval);
             }
         }
-        throw new NutsIllegalArgumentException(this.evaluator.getSession(),NutsMessage.cstyle("unsupported %s",t));
+        throw new NutsIllegalArgumentException(this.evaluator.getSession(),NutsMessage.ofCstyle("unsupported %s",t));
     }
 
 }

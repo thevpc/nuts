@@ -146,12 +146,12 @@ public class UnzipCommand extends SimpleJShellBuiltin {
                     dir = context.getAbsolutePath(dir);
                     NutsUncompress.of(session)
                             .from(file)
-                            .to(dir)
+                            .to(NutsPath.of(dir,session))
                             .setSkipRoot(options.skipRoot)
                             .run();
                 }
             } catch (UncheckedIOException | NutsIOException ex) {
-                throw new NutsExecutionException(session, NutsMessage.cstyle("%s", ex), ex, 1);
+                throw new NutsExecutionException(session, NutsMessage.ofCstyle("%s", ex), ex, 1);
             }
         }
     }

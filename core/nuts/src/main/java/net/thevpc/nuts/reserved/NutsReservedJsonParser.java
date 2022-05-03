@@ -77,11 +77,11 @@ public final class NutsReservedJsonParser {
             Object a = nextElement();
             int p = st.nextToken();
             if (p != StreamTokenizer.TT_EOF) {
-                throw new NutsBootException(NutsMessage.cstyle("json syntax error :  encountered %s", st));
+                throw new NutsBootException(NutsMessage.ofCstyle("json syntax error :  encountered %s", st));
             }
             return a;
         } catch (IOException ex) {
-            throw new NutsBootException(NutsMessage.cstyle("json syntax error : %s", ex.getMessage()), ex);
+            throw new NutsBootException(NutsMessage.ofCstyle("json syntax error : %s", ex.getMessage()), ex);
         }
     }
 
@@ -100,7 +100,7 @@ public final class NutsReservedJsonParser {
                     case "null":
                         return null;
                     default:
-                        throw new NutsBootException(NutsMessage.cstyle("json syntax error : %s", st.sval));
+                        throw new NutsBootException(NutsMessage.ofCstyle("json syntax error : %s", st.sval));
                 }
             }
             case '\"': {
@@ -115,7 +115,7 @@ public final class NutsReservedJsonParser {
                 return nextObject();
             }
             default: {
-                throw new NutsBootException(NutsMessage.cstyle("json syntax error : %s", str(p)));
+                throw new NutsBootException(NutsMessage.ofCstyle("json syntax error : %s", str(p)));
             }
         }
     }
@@ -124,7 +124,7 @@ public final class NutsReservedJsonParser {
         List<Object> arr = new ArrayList<>();
         int p = st.nextToken();
         if (p != '[') {
-            throw new NutsBootException(NutsMessage.cstyle("json syntax error : %s", str(p)));
+            throw new NutsBootException(NutsMessage.ofCstyle("json syntax error : %s", str(p)));
         }
         p = st.nextToken();
         if (p == ']') {
@@ -141,17 +141,17 @@ public final class NutsReservedJsonParser {
                     arr.add(nextElement());
                     break;
                 default:
-                    throw new NutsBootException(NutsMessage.cstyle("json syntax error : %s", str(p)));
+                    throw new NutsBootException(NutsMessage.ofCstyle("json syntax error : %s", str(p)));
             }
         }
-        throw new NutsBootException(NutsMessage.cstyle("json syntax error : missing ]"));
+        throw new NutsBootException(NutsMessage.ofPlain("json syntax error : missing ]"));
     }
 
     private void readChar(char expected) throws IOException {
         int encountered = st.nextToken();
         if (encountered != expected) {
             throw new NutsBootException(
-                    NutsMessage.cstyle("json syntax error : expected %s  , encountered %s", str(expected), str(encountered))
+                    NutsMessage.ofCstyle("json syntax error : expected %s  , encountered %s", str(expected), str(encountered))
             );
         }
     }
@@ -159,7 +159,7 @@ public final class NutsReservedJsonParser {
     private Object[] nextKeyValue() throws IOException {
         Object t = nextElement();
         if (!(t instanceof String)) {
-            throw new NutsBootException(NutsMessage.cstyle("json syntax error : expected entry name, , encountered %s", t));
+            throw new NutsBootException(NutsMessage.ofCstyle("json syntax error : expected entry name, , encountered %s", t));
         }
         readChar(':');
         Object v = nextElement();
@@ -170,7 +170,7 @@ public final class NutsReservedJsonParser {
         Map<String, Object> map = new LinkedHashMap<>();
         int p = st.nextToken();
         if (p != '{') {
-            throw new NutsBootException(NutsMessage.cstyle("json syntax error : %s", p));
+            throw new NutsBootException(NutsMessage.ofCstyle("json syntax error : %s", p));
         }
         p = st.nextToken();
         if (p == '}') {
@@ -189,10 +189,10 @@ public final class NutsReservedJsonParser {
                     map.put((String) kv[0], kv[1]);
                     break;
                 default:
-                    throw new NutsBootException(NutsMessage.cstyle("json syntax error : %s", p));
+                    throw new NutsBootException(NutsMessage.ofCstyle("json syntax error : %s", p));
             }
         }
-        throw new NutsBootException(NutsMessage.cstyle("json syntax error : Missing }"));
+        throw new NutsBootException(NutsMessage.ofPlain("json syntax error : Missing }"));
     }
 
     private String str(int a) {

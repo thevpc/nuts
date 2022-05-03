@@ -126,7 +126,7 @@ public class NutsRepositoryLocation implements Comparable<NutsRepositoryLocation
             if (session == null) {
                 throw new IllegalArgumentException("invalid null repository");
             } else {
-                throw new NutsIllegalArgumentException(session, NutsMessage.plain("invalid null repository"));
+                throw new NutsIllegalArgumentException(session, NutsMessage.ofPlain("invalid null repository"));
             }
         }
         locationString = locationString.trim();
@@ -138,7 +138,7 @@ public class NutsRepositoryLocation implements Comparable<NutsRepositoryLocation
             if (session == null) {
                 throw new IllegalArgumentException("invalid selection syntax");
             } else {
-                throw new NutsIllegalArgumentException(session, NutsMessage.plain("invalid repository syntax"));
+                throw new NutsIllegalArgumentException(session, NutsMessage.ofPlain("invalid repository syntax"));
             }
         }
         Matcher matcher = Pattern.compile("(?<name>[a-zA-Z-_]+)=(?<value>.+)").matcher(locationString);

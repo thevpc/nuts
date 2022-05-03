@@ -52,12 +52,12 @@ public abstract class NutsFolderRepositoryBase extends NutsCachedRepository {
             } finally {
                 LOG.with().level(Level.FINEST).verb(NutsLoggerVerb.SUCCESS)
                         .time(System.currentTimeMillis() - now)
-                        .log(NutsMessage.cstyle("check available %s : success", getName()));
+                        .log(NutsMessage.ofCstyle("check available %s : success", getName()));
             }
         } catch (Exception e) {
             LOG.with().level(Level.FINEST).verb(NutsLoggerVerb.FAIL)
                     .time(System.currentTimeMillis() - now)
-                    .log(NutsMessage.cstyle("check available %s : failed", getName()));
+                    .log(NutsMessage.ofCstyle("check available %s : failed", getName()));
             return false;
         }
     }
@@ -134,17 +134,17 @@ public abstract class NutsFolderRepositoryBase extends NutsCachedRepository {
 
                              @Override
                              public NutsTreeVisitResult visitFile(NutsPath file, NutsSession session) {
-                                 throw new NutsIOException(session, NutsMessage.cstyle("updateStatistics Not supported."));
+                                 throw new NutsIOException(session, NutsMessage.ofPlain("updateStatistics Not supported."));
                              }
 
                              @Override
                              public NutsTreeVisitResult visitFileFailed(NutsPath file, Exception exc, NutsSession session) {
-                                 throw new NutsIOException(session, NutsMessage.cstyle("updateStatistics Not supported."));
+                                 throw new NutsIOException(session, NutsMessage.ofPlain("updateStatistics Not supported."));
                              }
 
                              @Override
                              public NutsTreeVisitResult postVisitDirectory(NutsPath dir, Exception exc, NutsSession session) {
-                                 throw new NutsIOException(session, NutsMessage.cstyle("updateStatistics Not supported."));
+                                 throw new NutsIOException(session, NutsMessage.ofPlain("updateStatistics Not supported."));
                              }
                          }
                 );
@@ -169,7 +169,7 @@ public abstract class NutsFolderRepositoryBase extends NutsCachedRepository {
                         .createRepositoryTempFile(p.getName(),getUuid(),session).toString();
                 try {
                     NutsCp.of(session)
-                            .from(getStream(id, "artifact binaries", "retrieve", session)).to(tempFile).setValidator(new NutsCpValidator() {
+                            .from(getStream(id, "artifact binaries", "retrieve", session)).to(NutsPath.of(tempFile,session)).setValidator(new NutsCpValidator() {
                                 @Override
                                 public void validate(InputStream in) throws IOException {
                                     checkSHA1Hash(id.builder().setFace(NutsConstants.QueryFaces.CONTENT_HASH).build(), in, "artifact binaries", session);
@@ -184,7 +184,7 @@ public abstract class NutsFolderRepositoryBase extends NutsCachedRepository {
             try {
                 NutsCp.of(session)
                         .from(getIdRemotePath(id, session))
-                        .to(localPath)
+                        .to(NutsPath.of(localPath,session))
                         .setValidator(in -> checkSHA1Hash(
                                         id.builder().setFace(NutsConstants.QueryFaces.CONTENT_HASH).build(),
                                         in, "artifact binaries", session
@@ -251,7 +251,7 @@ public abstract class NutsFolderRepositoryBase extends NutsCachedRepository {
                             .build(),
                     session).build();
         } else {
-            throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("expected single version in %s", id));
+            throw new NutsIllegalArgumentException(session, NutsMessage.ofCstyle("expected single version in %s", id));
         }
     }
 
@@ -269,7 +269,7 @@ public abstract class NutsFolderRepositoryBase extends NutsCachedRepository {
                 .addOptions(NutsPathOption.LOG, NutsPathOption.TRACE, NutsPathOption.SAFE)
                 .from(getIdRemotePath(id, session))
                 .setSourceOrigin(id)
-                .setActionMessage(action==null?null:NutsMessage.plain(action))
+                .setActionMessage(action==null?null:NutsMessage.ofPlain(action))
                 .setSourceTypeName(action)
                 .getByteArrayResult()
                 ;
@@ -289,8 +289,8 @@ public abstract class NutsFolderRepositoryBase extends NutsCachedRepository {
                 break;
             }
             default: {
-                _LOGOP(session).level(Level.SEVERE).error(new NutsIllegalArgumentException(session, NutsMessage.cstyle("unsupported Hash Type %s", id.getFace())))
-                        .log(NutsMessage.jstyle("[BUG] unsupported Hash Type {0}", id.getFace()));
+                _LOGOP(session).level(Level.SEVERE).error(new NutsIllegalArgumentException(session, NutsMessage.ofCstyle("unsupported Hash Type %s", id.getFace())))
+                        .log(NutsMessage.ofJstyle("[BUG] unsupported Hash Type {0}", id.getFace()));
                 throw new IOException("unsupported hash type " + id.getFace());
             }
         }

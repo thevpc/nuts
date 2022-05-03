@@ -6,6 +6,7 @@ import net.thevpc.nuts.runtime.standalone.xtra.expr.StringPlaceHolderParser;
 import net.thevpc.nuts.runtime.standalone.io.util.CoreIOUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.NutsWorkspaceVarExpansionFunction;
 import net.thevpc.nuts.text.*;
+import net.thevpc.nuts.util.NutsUtils;
 
 import java.io.*;
 import java.net.URL;
@@ -26,9 +27,7 @@ public class DefaultNutsTextNodeResourceParserHelper {
     }
 
     public NutsText parseResource(String resourceName, NutsTextFormatLoader loader) {
-        if (loader == null) {
-            throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("missing loader"));
-        }
+        NutsUtils.requireNonBlank(loader,session, "loader");
         Reader reader = loader.forPath(resourceName);
         if (reader == null) {
             return null;
@@ -45,9 +44,7 @@ public class DefaultNutsTextNodeResourceParserHelper {
     }
 
     public NutsText parseResource(String resourceName, Reader reader, NutsTextFormatLoader loader) {
-        if (loader == null) {
-            throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("missing loader"));
-        }
+        NutsUtils.requireNonBlank(loader,session, "loader");
         if (reader == null) {
             reader = loader.forPath(resourceName);
         }

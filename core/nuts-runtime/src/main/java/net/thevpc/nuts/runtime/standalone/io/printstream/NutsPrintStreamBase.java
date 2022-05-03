@@ -2,13 +2,15 @@ package net.thevpc.nuts.runtime.standalone.io.printstream;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.format.NutsObjectFormat;
+import net.thevpc.nuts.io.DefaultNutsOutputTargetMetadata;
+import net.thevpc.nuts.io.NutsOutputTargetMetadata;
 import net.thevpc.nuts.io.NutsPrintStream;
-import net.thevpc.nuts.io.NutsStreamMetadata;
 import net.thevpc.nuts.io.NutsTerminalMode;
 import net.thevpc.nuts.spi.NutsSystemTerminalBase;
 import net.thevpc.nuts.text.NutsTerminalCommand;
 import net.thevpc.nuts.text.NutsText;
 import net.thevpc.nuts.text.NutsTexts;
+import net.thevpc.nuts.util.NutsUtils;
 
 import java.io.OutputStream;
 import java.io.PrintStream;
@@ -25,17 +27,10 @@ public abstract class NutsPrintStreamBase implements NutsPrintStream {
     protected boolean autoFlash;
     private NutsTerminalMode mode;
     private NutsSystemTerminalBase term;
-    private NutsString formattedName;
-    private String userKind;
-    private NutsStreamMetadata md = new MyNutsStreamMetadata(this);
+    private DefaultNutsOutputTargetMetadata md = new DefaultNutsOutputTargetMetadata();
 
     public NutsPrintStreamBase(boolean autoFlash, NutsTerminalMode mode, NutsSession session, Bindings bindings, NutsSystemTerminalBase term) {
-        if (mode == null) {
-            throw new IllegalArgumentException("null mode");
-        }
-        if (session == null) {
-            throw new IllegalArgumentException("null session");
-        }
+        NutsUtils.requireNonNull(mode, session, "mode");
         this.bindings = bindings;
         this.autoFlash = autoFlash;
         this.mode = mode;
@@ -43,8 +38,7 @@ public abstract class NutsPrintStreamBase implements NutsPrintStream {
         this.term = term;
     }
 
-    @Override
-    public NutsStreamMetadata getStreamMetadata() {
+    public NutsOutputTargetMetadata getOutputMetaData() {
         return md;
     }
 
@@ -53,17 +47,6 @@ public abstract class NutsPrintStreamBase implements NutsPrintStream {
     @Override
     public String toString() {
         return super.toString();
-    }
-
-    @Override
-    public NutsString getFormattedName() {
-        return formattedName;
-    }
-
-    @Override
-    public NutsPrintStreamBase setFormattedName(NutsString formattedName) {
-        this.formattedName = formattedName;
-        return this;
     }
 
     public NutsSession getSession() {
@@ -246,7 +229,7 @@ public abstract class NutsPrintStreamBase implements NutsPrintStream {
     @Override
     public NutsPrintStream printj(String format, Object... args) {
         NutsText s = NutsTexts.of(session).toText(
-                NutsMessage.jstyle(
+                NutsMessage.ofJstyle(
                         format, args
                 )
         );
@@ -276,7 +259,7 @@ public abstract class NutsPrintStreamBase implements NutsPrintStream {
     public NutsPrintStream format(Locale l, String format, Object... args) {
         if (l == null) {
             NutsText s = NutsTexts.of(session).toText(
-                    NutsMessage.cstyle(
+                    NutsMessage.ofCstyle(
                             format, args
                     )
             );
@@ -284,7 +267,7 @@ public abstract class NutsPrintStreamBase implements NutsPrintStream {
         } else {
             NutsSession sess = this.session.copy().setLocale(l.toString());
             NutsText s = NutsTexts.of(sess).toText(
-                    NutsMessage.cstyle(
+                    NutsMessage.ofCstyle(
                             format, args
                     )
             );
@@ -302,7 +285,6 @@ public abstract class NutsPrintStreamBase implements NutsPrintStream {
     @Override
     public NutsPrintStream append(CharSequence csq, int start, int end) {
         int bufferLength = Math.min(4096, (end - start));
-        char[] buffer = new char[bufferLength];
         int i = start;
         while (i < end) {
             int e = Math.min(i + bufferLength, end);
@@ -408,44 +390,5 @@ public abstract class NutsPrintStreamBase implements NutsPrintStream {
         protected NutsPrintStreamBase ansi;
         protected NutsPrintStreamBase inherited;
         protected NutsPrintStreamBase formatted;
-    }
-
-    private static class MyNutsStreamMetadata implements NutsStreamMetadata {
-        private NutsPrintStreamBase b;
-
-        public MyNutsStreamMetadata(NutsPrintStreamBase b) {
-            this.b = b;
-        }
-
-        @Override
-        public long getContentLength() {
-            return -1;
-        }
-
-        @Override
-        public NutsString getFormattedPath(NutsSession session) {
-            return b.formattedName;
-        }
-
-        @Override
-        public String getContentType() {
-            return null;
-        }
-
-        @Override
-        public String getName() {
-            return b.formattedName == null ? null : b.formattedName.filteredText();
-        }
-
-        @Override
-        public String getUserKind() {
-            return b.userKind;
-        }
-
-        @Override
-        public NutsStreamMetadata setUserKind(String userKind) {
-            b.userKind = userKind;
-            return this;
-        }
     }
 }

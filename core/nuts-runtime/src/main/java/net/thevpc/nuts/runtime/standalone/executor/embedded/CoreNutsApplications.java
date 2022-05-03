@@ -35,7 +35,7 @@ public class CoreNutsApplications {
                                 return appType.cast(o);
                             }
                         } else {
-                            throw new NutsBootException(NutsMessage.cstyle("createApplicationInstance must return %s", appType.getName()));
+                            throw new NutsBootException(NutsMessage.ofCstyle("createApplicationInstance must return %s", appType.getName()));
                         }
                         break;
                     }
@@ -62,13 +62,13 @@ public class CoreNutsApplications {
             if (c instanceof Error) {
                 throw (Error) c;
             }
-            throw new NutsBootException(NutsMessage.cstyle("unable to instantiate %s", appType.getName()), ex);
+            throw new NutsBootException(NutsMessage.ofCstyle("unable to instantiate %s", appType.getName()), ex);
         } catch (IllegalAccessException ex) {
-            throw new NutsBootException(NutsMessage.cstyle("illegal access to default constructor for %s", appType.getName()), ex);
+            throw new NutsBootException(NutsMessage.ofCstyle("illegal access to default constructor for %s", appType.getName()), ex);
         } catch (InvocationTargetException ex) {
-            throw new NutsBootException(NutsMessage.cstyle("invocation exception for %s", appType.getName()), ex);
+            throw new NutsBootException(NutsMessage.ofCstyle("invocation exception for %s", appType.getName()), ex);
         }
-        throw new NutsBootException(NutsMessage.cstyle("missing application constructor one of : \n\t static createApplicationInstance(NutsSession,String[])\n\t Constructor(NutsSession,String[])\n\t Constructor()", appType.getName()));
+        throw new NutsBootException(NutsMessage.ofCstyle("missing application constructor one of : \n\t static createApplicationInstance(NutsSession,String[])\n\t Constructor(NutsSession,String[])\n\t Constructor()", appType.getName()));
     }
 
     public static String getNutsAppVersion(Class cls) {

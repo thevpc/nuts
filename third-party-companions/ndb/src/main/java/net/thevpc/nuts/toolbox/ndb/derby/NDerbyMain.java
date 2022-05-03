@@ -81,7 +81,7 @@ public class NDerbyMain implements NdbSupport {
                                 factory.ofStyled("already running", NutsTextStyle.warn()),
                                 factory.ofStyled("" + effectivePort, NutsTextStyle.number())
                         );
-                        throw new NutsExecutionException(session, NutsMessage.cstyle("derby is already running on port %d", effectivePort), 3);
+                        throw new NutsExecutionException(session, NutsMessage.ofCstyle("derby is already running on port %d", effectivePort), 3);
                     }
                 }
             } else if (options.cmd == Command.shutdown) {
@@ -93,7 +93,7 @@ public class NDerbyMain implements NdbSupport {
                                 factory.ofStyled("" + effectivePort, NutsTextStyle.number())
                         );
                         session.out().printf("derby is %s%n", factory.ofStyled("already stopped", NutsTextStyle.warn()));
-                        throw new NutsExecutionException(session, NutsMessage.cstyle("derby is already stopped on port %d", effectivePort), 3);
+                        throw new NutsExecutionException(session, NutsMessage.ofCstyle("derby is already stopped on port %d", effectivePort), 3);
                     }
                 }
             }

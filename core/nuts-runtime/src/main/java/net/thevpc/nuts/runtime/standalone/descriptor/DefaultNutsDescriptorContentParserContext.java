@@ -10,19 +10,19 @@
  * to share shell scripts and other 'things' . Its based on an extensible
  * architecture to help supporting a large range of sub managers / repositories.
  * <br>
- *
+ * <p>
  * Copyright [2020] [thevpc]
- * Licensed under the Apache License, Version 2.0 (the "License"); you may 
- * not use this file except in compliance with the License. You may obtain a 
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may
+ * not use this file except in compliance with the License. You may obtain a
  * copy of the License at http://www.apache.org/licenses/LICENSE-2.0
- * Unless required by applicable law or agreed to in writing, software 
- * distributed under the License is distributed on an 
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, 
- * either express or implied. See the License for the specific language 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND,
+ * either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  * <br>
  * ====================================================================
-*/
+ */
 package net.thevpc.nuts.runtime.standalone.descriptor;
 
 import net.thevpc.nuts.*;
@@ -50,7 +50,7 @@ public class DefaultNutsDescriptorContentParserContext implements NutsDescriptor
     private final List<String> parseOptions;
 
     public DefaultNutsDescriptorContentParserContext(NutsSession session, Path file, String fileExtension, String mimeType, List<String> parseOptions) {
-        this.file = NutsPath.of(file,session);
+        this.file = NutsPath.of(file, session);
         this.session = session;
         this.fileExtension = fileExtension;
         this.mimeType = mimeType;
@@ -77,13 +77,14 @@ public class DefaultNutsDescriptorContentParserContext implements NutsDescriptor
         if (bytes == null) {
             try {
                 try (InputStream is = file.getInputStream()) {
-                    bytes = CoreIOUtils.loadByteArray(is, 1024 * 1024 * 10, true,session);
+                    bytes = CoreIOUtils.loadByteArray(is, 1024 * 1024 * 10, true, session);
                 }
             } catch (IOException e) {
-                throw new NutsIOException(session,e);
+                throw new NutsIOException(session, e);
             }
         }
-        return CoreIOUtils.createBytesStream(bytes,NutsMessage.cstyle("%s",file),file.getContentType(),file.getUserKind(),session);
+        return CoreIOUtils.createBytesStream(bytes, NutsMessage.ofCstyle("%s", file), file.getContentType(),
+                file.getOutputMetaData().getKind().orNull(), session);
     }
 
     @Override

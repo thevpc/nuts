@@ -387,7 +387,7 @@ public interface NutsDescriptorBuilder extends NutsDescriptor{
      * @return first property
      * @since 0.8.3
      */
-    NutsDescriptorProperty getProperty(String name);
+    NutsOptional<NutsDescriptorProperty> getProperty(String name);
 
     /**
      * return first property value

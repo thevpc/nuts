@@ -57,7 +57,7 @@ public class FalseCommand extends SimpleJShellBuiltin {
     @Override
     protected void execBuiltin(NutsCommandLine commandLine, JShellExecutionContext context) {
         //do nothing, return true
-        throw new NutsExecutionException(context.getSession(), NutsMessage.plain(""), 1);
+        throw new NutsExecutionException(context.getSession(), NutsMessage.ofPlain(""), 1);
     }
 
 }

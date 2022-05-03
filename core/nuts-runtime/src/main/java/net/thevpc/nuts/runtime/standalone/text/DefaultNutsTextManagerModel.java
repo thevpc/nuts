@@ -206,7 +206,7 @@ public class DefaultNutsTextManagerModel {
         if (h != null) {
             return h;
         }
-        throw new NutsIllegalArgumentException(session, NutsMessage.plain("not found plain highlighter"));
+        throw new NutsIllegalArgumentException(session, NutsMessage.ofPlain("not found plain highlighter"));
     }
 
     private String expandAlias(String ss) {

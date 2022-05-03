@@ -316,8 +316,8 @@ public class CorePlatformUtils {
 
 
     public static boolean checkAcceptCondition(NutsEnvCondition condition, boolean currentVM, NutsSession session) {
-        if(!CoreFilterUtils.acceptCondition(condition,currentVM,session)){
-            throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("unsupported environment"));
+        if (!CoreFilterUtils.acceptCondition(condition, currentVM, session)) {
+            throw new NutsIllegalArgumentException(session, NutsMessage.ofCstyle("environment %s is rejected by %s", currentVM, condition));
         }
         return true;
     }
@@ -371,7 +371,7 @@ public class CorePlatformUtils {
             } catch (RuntimeException ex) {
                 throw ex;
             } catch (Exception ex) {
-                throw new NutsException(session, NutsMessage.plain("run with loader failed"), ex);
+                throw new NutsException(session, NutsMessage.ofPlain("run with loader failed"), ex);
             }
         }, "RunWithinLoader");
         thread.setContextClassLoader(loader);
@@ -379,21 +379,22 @@ public class CorePlatformUtils {
         try {
             thread.join();
         } catch (InterruptedException ex) {
-            throw new NutsException(session, NutsMessage.plain("run with loader failed"), ex);
+            throw new NutsException(session, NutsMessage.ofPlain("run with loader failed"), ex);
         }
         return ref.get();
     }
 
-    public static String getPackageName(String cn){
+    public static String getPackageName(String cn) {
         int i = cn.lastIndexOf('.');
         if (i >= 0) {
             return cn.substring(0, i);
         }
         return "";
     }
-    public static String getSimpleClassName(String cn){
+
+    public static String getSimpleClassName(String cn) {
         int i = cn.lastIndexOf('.');
-        if (i>=0) {
+        if (i >= 0) {
             return cn.substring(i + 1);
         }
         return cn;

@@ -250,7 +250,7 @@ public class NutsJLineTerminal extends NutsSystemTerminalBaseImpl {
         } catch (Exception ex) {
             NutsLogger.of(NutsJLineTerminal.class, session)
                     .with().level(Level.FINEST).verb(NutsLoggerVerb.FAIL).error(ex)
-                    .log(NutsMessage.jstyle("unable to create NutsJLineTerminal. ignored."));
+                    .log(NutsMessage.ofPlain("unable to create NutsJLineTerminal. ignored."));
             return NO_SUPPORT;
         }
         return DEFAULT_SUPPORT + 1;
@@ -263,7 +263,7 @@ public class NutsJLineTerminal extends NutsSystemTerminalBaseImpl {
             out = getOut();
         }
         if (out == null) {
-            out = NutsPrintStreams.of(session).stdout();
+            out = NutsIO.of(session).stdout();
         }
         String readLine = null;
         try {

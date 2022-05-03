@@ -27,23 +27,23 @@
 package net.thevpc.nuts.io;
 
 import net.thevpc.nuts.NutsSession;
-import net.thevpc.nuts.boot.NutsApiUtils;
 import net.thevpc.nuts.spi.NutsComponent;
 import net.thevpc.nuts.spi.NutsSystemTerminalBase;
+import net.thevpc.nuts.util.NutsUtils;
 
 import java.io.OutputStream;
 import java.io.Writer;
 
 public interface NutsPrintStreams extends NutsComponent {
     static NutsPrintStreams of(NutsSession session) {
-        NutsApiUtils.checkSession(session);
+        NutsUtils.requireSession(session);
         return session.extensions().createSupported(NutsPrintStreams.class, true, session);
     }
 
 
-    NutsPrintStream createNull();
+    NutsPrintStream createNullPrintStream();
 
-    NutsMemoryPrintStream createInMemory();
+    NutsMemoryPrintStream createInMemoryPrintStream();
 
     /**
      * create print stream that supports the given {@code mode}. If the given
@@ -55,13 +55,13 @@ public interface NutsPrintStreams extends NutsComponent {
      * @param terminal terminal
      * @return {@code mode} supporting PrintStream
      */
-    NutsPrintStream create(OutputStream out, NutsTerminalMode mode, NutsSystemTerminalBase terminal);
+    NutsPrintStream createPrintStream(OutputStream out, NutsTerminalMode mode, NutsSystemTerminalBase terminal);
 
-    NutsPrintStream create(OutputStream out);
+    NutsPrintStream createPrintStream(OutputStream out);
 
-    NutsPrintStream create(Writer out, NutsTerminalMode mode, NutsSystemTerminalBase terminal);
+    NutsPrintStream createPrintStream(Writer out, NutsTerminalMode mode, NutsSystemTerminalBase terminal);
 
-    NutsPrintStream create(Writer out);
+    NutsPrintStream createPrintStream(Writer out);
 
     boolean isStdout(NutsPrintStream out);
 

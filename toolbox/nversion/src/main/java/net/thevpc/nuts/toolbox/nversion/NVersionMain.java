@@ -39,20 +39,20 @@ public class NVersionMain implements NutsApplication {
         try {
             Path p = Paths.get(filePath);
             if (!Files.exists(p)) {
-                throw new NutsExecutionException(context.getSession(), NutsMessage.cstyle("nversion: file does not exist: %s" + p), 2);
+                throw new NutsExecutionException(context.getSession(), NutsMessage.ofCstyle("nversion: file does not exist: %s" , p), 2);
             }
             if (Files.isDirectory(p)) {
-                throw new NutsExecutionException(context.getSession(), NutsMessage.cstyle("nversion: unsupported directory: %s", p), 2);
+                throw new NutsExecutionException(context.getSession(), NutsMessage.ofCstyle("nversion: unsupported directory: %s", p), 2);
             }
             if (Files.isRegularFile(p)) {
-                throw new NutsExecutionException(context.getSession(), NutsMessage.cstyle("nversion: unsupported file: %s", filePath), 2);
+                throw new NutsExecutionException(context.getSession(), NutsMessage.ofCstyle("nversion: unsupported file: %s", filePath), 2);
             }
         } catch (NutsExecutionException ex) {
             throw ex;
         } catch (Exception ex) {
             //
         }
-        throw new NutsExecutionException(context.getSession(), NutsMessage.cstyle("nversion: unsupported path: %s", filePath), 2);
+        throw new NutsExecutionException(context.getSession(), NutsMessage.ofCstyle("nversion: unsupported path: %s", filePath), 2);
     }
 
     @Override
@@ -112,20 +112,20 @@ public class NVersionMain implements NutsApplication {
                     processed++;
                     value = detectVersions(NutsPath.of(arg, session).toAbsolute().toString(), context);
                 } catch (IOException e) {
-                    throw new NutsExecutionException(session,NutsMessage.cstyle("nversion: unable to detect version for %s",arg), e, 2);
+                    throw new NutsExecutionException(session,NutsMessage.ofCstyle("nversion: unable to detect version for %s",arg), e, 2);
                 }
                 if (!value.isEmpty()) {
                     results.put(arg, value);
                 }
             }
             if (processed == 0) {
-                throw new NutsExecutionException(session, NutsMessage.cstyle("nversion: missing file"), 2);
+                throw new NutsExecutionException(session, NutsMessage.ofPlain("nversion: missing file"), 2);
             }
             if (table && all) {
-                throw new NutsExecutionException(session, NutsMessage.cstyle("nversion: options conflict --table --all"), 1);
+                throw new NutsExecutionException(session, NutsMessage.ofPlain("nversion: options conflict --table --all"), 1);
             }
             if (table && longFormat) {
-                throw new NutsExecutionException(session, NutsMessage.cstyle("nversion: options conflict --table --long"), 1);
+                throw new NutsExecutionException(session, NutsMessage.ofPlain("nversion: options conflict --table --long"), 1);
             }
 
             NutsPrintStream out = session.out();
@@ -206,7 +206,7 @@ public class NVersionMain implements NutsApplication {
                 }
             }
             if (!unsupportedFileTypes.isEmpty()) {
-                throw new NutsExecutionException(session, NutsMessage.cstyle("nversion: unsupported file types %s", unsupportedFileTypes), 3);
+                throw new NutsExecutionException(session, NutsMessage.ofCstyle("nversion: unsupported file types %s", unsupportedFileTypes), 3);
             }
         }
     }

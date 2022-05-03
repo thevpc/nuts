@@ -43,7 +43,7 @@ public class NutsRepositoryDisabledException extends NutsRepositoryException {
      */
     public NutsRepositoryDisabledException(NutsSession session, String repository) {
         super(session, repository,
-                NutsMessage.cstyle("repository %s is not enabled", (repository == null ? "<null>" : repository))
+                NutsMessage.ofCstyle("repository %s is not enabled", (repository == null ? "<null>" : repository))
                 , null);
     }
 

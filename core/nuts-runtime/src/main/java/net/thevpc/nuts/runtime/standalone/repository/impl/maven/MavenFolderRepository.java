@@ -143,7 +143,7 @@ public class MavenFolderRepository extends NutsFolderRepositoryBase {
                     String tempFile = NutsPaths.of(session)
                             .createRepositoryTempFile(content.getName(),getUuid(),session).toString();
                     NutsCp.of(session)
-                            .from(content).to(tempFile).addOptions(NutsPathOption.SAFE).run();
+                            .from(content).to(NutsPath.of(tempFile,session)).addOptions(NutsPathOption.SAFE).run();
                     return NutsPath.of(tempFile, session).setUserCache(true).setUserTemporary(false);
                 }
             }
@@ -174,7 +174,7 @@ public class MavenFolderRepository extends NutsFolderRepositoryBase {
                 return session.locations().getDefaultIdContentExtension(packaging);
             }
             default: {
-                throw new NutsUnsupportedArgumentException(session, NutsMessage.cstyle("unsupported fact %s", f));
+                throw new NutsUnsupportedArgumentException(session, NutsMessage.ofCstyle("unsupported fact %s", f));
             }
         }
     }
@@ -193,9 +193,9 @@ public class MavenFolderRepository extends NutsFolderRepositoryBase {
             try {
                 stream = getStream(idDesc, "artifact descriptor", "retrieve", session);
                 bytes = CoreIOUtils.loadByteArray(stream, true, session);
-                name = NutsStreamMetadata.of(stream).getName();
+                name = NutsIO.of(session).createInputSource(stream).getInputMetaData().getName().orElse("no-name");
                 nutsDescriptor = MavenUtils.of(session).parsePomXmlAndResolveParents(
-                        CoreIOUtils.createBytesStream(bytes, name == null ? null : NutsMessage.formatted(name), "text/xml", "pom.xml", session)
+                        CoreIOUtils.createBytesStream(bytes, name == null ? null : NutsMessage.ofNtf(name), "text/xml", "pom.xml", session)
                         , fetchMode, getIdRemotePath(id, session).toString(), this);
             } finally {
                 if (stream != null) {
@@ -203,7 +203,7 @@ public class MavenFolderRepository extends NutsFolderRepositoryBase {
                 }
             }
             checkSHA1Hash(id.builder().setFace(NutsConstants.QueryFaces.DESCRIPTOR_HASH).build(),
-                    CoreIOUtils.createBytesStream(bytes, name == null ? null : NutsMessage.formatted(name), "text/xml", "pom.xml", session)
+                    CoreIOUtils.createBytesStream(bytes, name == null ? null : NutsMessage.ofNtf(name), "text/xml", "pom.xml", session)
                     , "artifact descriptor", session);
             return nutsDescriptor;
         } catch (IOException | UncheckedIOException | NutsIOException ex) {

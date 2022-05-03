@@ -26,14 +26,14 @@
 package net.thevpc.nuts.runtime.standalone.xtra.digest;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.io.NutsDigest;
-import net.thevpc.nuts.io.NutsIOException;
-import net.thevpc.nuts.io.NutsPath;
-import net.thevpc.nuts.runtime.standalone.io.util.NutsStreamOrPath;
+import net.thevpc.nuts.io.*;
 import net.thevpc.nuts.runtime.standalone.session.NutsSessionUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.NutsWorkspaceUtils;
 import net.thevpc.nuts.spi.NutsSupportLevelContext;
+import net.thevpc.nuts.text.NutsTextStyle;
+import net.thevpc.nuts.text.NutsTexts;
 import net.thevpc.nuts.util.NutsStringUtils;
+import net.thevpc.nuts.util.NutsUtils;
 
 import java.io.*;
 import java.nio.file.Path;
@@ -46,7 +46,7 @@ import java.security.NoSuchAlgorithmException;
 public class DefaultNutsDigest implements NutsDigest {
 
     private final NutsWorkspace ws;
-    private NutsStreamOrPath source;
+    private NutsInputSource source;
     private String algorithm;
     private NutsSession session;
 
@@ -56,45 +56,55 @@ public class DefaultNutsDigest implements NutsDigest {
     }
 
     @Override
+    public NutsDigest setSource(NutsInputSource source) {
+        this.source = source;
+        return this;
+    }
+
+    public NutsInputSource getSource() {
+        return source;
+    }
+
+    @Override
     public NutsDigest setSource(InputStream source) {
         if (source == null) {
             this.source = null;
         } else {
-            this.source = NutsStreamOrPath.of(source, session);
+            this.source = NutsIO.of(session).createInputSource(source);
         }
         return this;
     }
 
     @Override
     public NutsDigest setSource(File source) {
-        this.source = source == null ? null : NutsStreamOrPath.of(source, getSession());
+        this.source = source == null ? null : NutsPath.of(source, getSession());
         return this;
     }
 
     @Override
     public NutsDigest setSource(Path source) {
-        this.source = source == null ? null : NutsStreamOrPath.of(source, getSession());
+        this.source = source == null ? null : NutsPath.of(source, getSession());
         return this;
     }
 
     @Override
     public NutsDigest setSource(NutsPath source) {
-        this.source = source == null ? null : NutsStreamOrPath.of(source);
+        this.source = source;
         return this;
     }
 
     @Override
     public NutsDigest setSource(byte[] source) {
         checkSession();
-        this.source = source == null ? null : NutsStreamOrPath.ofAnyInputOrNull(new ByteArrayInputStream(source), session);
+        this.source = source == null ? null : NutsIO.of(session).createInputSource(new ByteArrayInputStream(source));
         return null;
     }
 
     @Override
     public NutsDigest setSource(NutsDescriptor source) {
         checkSession();
-        this.source = source == null ? null : NutsStreamOrPath.ofSpecial(source, NutsStreamOrPath.Type.DESCRIPTOR,
-                session);
+        this.source = source == null ? null : new NutsDescriptorInputSource(source);
+        ;
         return this;
     }
 
@@ -105,34 +115,11 @@ public class DefaultNutsDigest implements NutsDigest {
 
     @Override
     public byte[] computeBytes() {
-        if (source == null) {
-            throw new NutsIllegalArgumentException(getSession(), NutsMessage.cstyle("missing Source"));
-        }
-        checkSession();
-        switch (source.getType()) {
-            case INPUT_STREAM: {
-                return NutsDigestUtils.evalHash(source.getInputStream(), getValidAlgo(), session);
-            }
-            case PATH: {
-                try (InputStream is = new BufferedInputStream(source.getInputStream())) {
-                    return NutsDigestUtils.evalHash(is, getValidAlgo(), session);
-                } catch (IOException ex) {
-                    throw new NutsIOException(session, ex);
-                }
-            }
-            case DESCRIPTOR: {
-                ByteArrayOutputStream o = new ByteArrayOutputStream();
-                ((NutsDescriptor) source.getValue()).formatter(session)
-                        .compact().setSession(session).print(new OutputStreamWriter(o));
-                try (InputStream is = new ByteArrayInputStream(o.toByteArray())) {
-                    return NutsDigestUtils.evalHash(is, getValidAlgo(), session);
-                } catch (IOException ex) {
-                    throw new NutsIOException(session, ex);
-                }
-            }
-            default: {
-                throw new NutsUnsupportedArgumentException(getSession(), NutsMessage.cstyle("unsupported type %s", source.getType()));
-            }
+        NutsUtils.requireNonNull(source, getSession(), "source");
+        try (InputStream is = new BufferedInputStream(source.getInputStream())) {
+            return NutsDigestUtils.evalHash(is, getValidAlgo(), session);
+        } catch (IOException ex) {
+            throw new NutsIOException(session, ex);
         }
     }
 
@@ -191,7 +178,7 @@ public class DefaultNutsDigest implements NutsDigest {
             MessageDigest.getInstance(algorithm);
             this.algorithm = algorithm;
         } catch (NoSuchAlgorithmException ex) {
-            throw new NutsIllegalArgumentException(getSession(), NutsMessage.cstyle("unable to resolve algo: %s", algorithm), ex);
+            throw new NutsIllegalArgumentException(getSession(), NutsMessage.ofCstyle("unable to resolve algo: %s", algorithm), ex);
         }
         return this;
     }
@@ -210,5 +197,52 @@ public class DefaultNutsDigest implements NutsDigest {
     @Override
     public int getSupportLevel(NutsSupportLevelContext context) {
         return DEFAULT_SUPPORT;
+    }
+
+    private class NutsDescriptorInputSource implements NutsInputSource {
+        private final NutsDescriptor source;
+
+        public NutsDescriptorInputSource(NutsDescriptor source) {
+            this.source = source;
+        }
+
+        @Override
+        public InputStream getInputStream() {
+            return new ByteArrayInputStream(source.formatter(getSession())
+                    .setNtf(false)
+                    .format().filteredText().getBytes()
+            );
+        }
+
+        @Override
+        public NutsInputSourceMetadata getInputMetaData() {
+            NutsId id = source.getId();
+            NutsString str;
+            if (id != null) {
+                str = id.format(session);
+            } else {
+                str = NutsTexts.of(session).ofStyled("<empty-descriptor>", NutsTextStyle.path());
+            }
+            return new DefaultNutsInputSourceMetadata(NutsMessage.ofNtf(str), -1, null, null);
+        }
+
+        @Override
+        public boolean isMultiRead() {
+            return true;
+        }
+
+        @Override
+        public NutsMessage formatMessage(NutsSession session) {
+            return getInputMetaData().getMessage()
+                    .orElse(
+                            NutsMessage.ofStyled(getClass().getSimpleName(), NutsTextStyle.path())
+                    );
+        }
+
+        @Override
+        public String toString() {
+            return formatMessage().toString();
+        }
+
     }
 }

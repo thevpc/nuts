@@ -5,18 +5,17 @@
  */
 package net.thevpc.nuts.runtime.standalone.io.util;
 
-import net.thevpc.nuts.io.NutsStreamMetadataAware;
-import net.thevpc.nuts.io.NutsStreamMetadata;
+import net.thevpc.nuts.io.NutsInputSource;
+import net.thevpc.nuts.io.NutsInputSourceMetadata;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
 /**
- *
  * @author thevpc
  */
-public class InputStreamTee extends InputStream implements NutsStreamMetadataAware,Interruptible {
+public class InputStreamTee extends InputStream implements Interruptible {
 
     private final InputStream in;
     private final OutputStream out;
@@ -31,12 +30,12 @@ public class InputStreamTee extends InputStream implements NutsStreamMetadataAwa
 
     @Override
     public void interrupt() throws InterruptException {
-        this.interrupted=true;
+        this.interrupted = true;
     }
 
     @Override
     public int read() throws IOException {
-        if(interrupted){
+        if (interrupted) {
             throw new IOException(new InterruptException("Interrupted"));
         }
         int x = in.read();
@@ -48,7 +47,7 @@ public class InputStreamTee extends InputStream implements NutsStreamMetadataAwa
 
     @Override
     public void close() throws IOException {
-        if(interrupted){
+        if (interrupted) {
             throw new IOException(new InterruptException("Interrupted"));
         }
         in.close();
@@ -60,7 +59,7 @@ public class InputStreamTee extends InputStream implements NutsStreamMetadataAwa
 
     @Override
     public int available() throws IOException {
-        if(interrupted){
+        if (interrupted) {
             throw new IOException(new InterruptException("Interrupted"));
         }
         return in.available();
@@ -68,7 +67,7 @@ public class InputStreamTee extends InputStream implements NutsStreamMetadataAwa
 
     @Override
     public int read(byte[] b, int off, int len) throws IOException {
-        if(interrupted){
+        if (interrupted) {
             throw new IOException(new InterruptException("Interrupted"));
         }
         final int p = in.read(b, off, len);
@@ -77,10 +76,4 @@ public class InputStreamTee extends InputStream implements NutsStreamMetadataAwa
         }
         return p;
     }
-
-    @Override
-    public NutsStreamMetadata getStreamMetadata() {
-        return NutsStreamMetadata.of(in);
-    }
-
 }

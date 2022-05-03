@@ -16,6 +16,7 @@ import net.thevpc.nuts.text.NutsTextBuilder;
 import net.thevpc.nuts.text.NutsTextStyle;
 import net.thevpc.nuts.text.NutsTexts;
 import net.thevpc.nuts.util.NutsStringUtils;
+import net.thevpc.nuts.util.NutsUtils;
 
 import java.net.URL;
 import java.nio.file.Path;
@@ -79,7 +80,7 @@ public final class JavaExecutorOptions {
         List<NutsClassLoaderNode> currentCP = new ArrayList<>();
         while (cmdLine.hasNext()) {
             a = cmdLine.peek().get(session);
-            switch(a.getStringKey().orElse("")) {
+            switch (a.getStringKey().orElse("")) {
                 case "--java-version":
                 case "-java-version": {
                     javaVersion = cmdLine.nextStringValueLiteral().get(session);
@@ -224,22 +225,22 @@ public final class JavaExecutorOptions {
                 javaVersion = binJavaVersion.toString();
             }
         }
-        NutsVersion explicitJavaVersion = def.getDescriptor().getCondition().getPlatform().stream().map(x -> NutsId.of(x).get( session))
+        NutsVersion explicitJavaVersion = def.getDescriptor().getCondition().getPlatform().stream().map(x -> NutsId.of(x).get(session))
                 .filter(x -> x.getShortName().equals("java"))
                 .map(NutsId::getVersion)
                 .min(Comparator.naturalOrder())
                 .orElse(null);
-        if (!NutsBlankable.isBlank(explicitJavaVersion)  && (NutsBlankable.isBlank(javaVersion) || explicitJavaVersion.compareTo(javaVersion) > 0)) {
+        if (!NutsBlankable.isBlank(explicitJavaVersion) && (NutsBlankable.isBlank(javaVersion) || explicitJavaVersion.compareTo(javaVersion) > 0)) {
             javaVersion = explicitJavaVersion.toString();
         }
         NutsPlatformLocation nutsPlatformLocation = NutsJavaSdkUtils.of(session).resolveJdkLocation(getJavaVersion(), session);
         if (nutsPlatformLocation == null) {
-            throw new NutsExecutionException(session, NutsMessage.cstyle("no java version %s was found", NutsStringUtils.trim(getJavaVersion())), 1);
+            throw new NutsExecutionException(session, NutsMessage.ofCstyle("no java version %s was found", NutsStringUtils.trim(getJavaVersion())), 1);
         }
         javaEffVersion = nutsPlatformLocation.getVersion();
         javaCommand = NutsJavaSdkUtils.of(session).resolveJavaCommandByVersion(nutsPlatformLocation, javaw, session);
         if (javaCommand == null) {
-            throw new NutsExecutionException(session, NutsMessage.cstyle("no java version %s was found", getJavaVersion()), 1);
+            throw new NutsExecutionException(session, NutsMessage.ofCstyle("no java version %s was found", getJavaVersion()), 1);
         }
         java9 = NutsVersion.of(javaVersion).get(session).compareTo("1.8") > 0;
         if (this.jar) {
@@ -257,13 +258,13 @@ public final class JavaExecutorOptions {
                 }
             }
             if (this.excludeBase) {
-                throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("cannot exclude base with jar modifier"));
+                throw new NutsIllegalArgumentException(session, NutsMessage.ofPlain("cannot exclude base with jar modifier"));
             }
         } else {
             if (mainClass == null) {
                 if (path != null) {
                     //check manifest!
-                    List<NutsExecutionEntry>classes = NutsExecutionEntries.of(session).parse(path);
+                    List<NutsExecutionEntry> classes = NutsExecutionEntries.of(session).parse(path);
                     NutsExecutionEntry[] primary = classes.stream().filter(NutsExecutionEntry::isDefaultEntry).toArray(NutsExecutionEntry[]::new);
                     if (primary.length > 0) {
                         mainClass = Arrays.stream(primary).map(NutsExecutionEntry::getName)
@@ -282,10 +283,8 @@ public final class JavaExecutorOptions {
                     mainClass = r;
                 }
             }
-            if (mainClass == null) {
-                throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("missing Main Class for %s", id));
-            }
-
+            NutsId finalId = id;
+            NutsUtils.requireNonNull(mainClass, session, () -> NutsMessage.ofCstyle("missing Main Class for %s", finalId));
             boolean baseDetected = false;
             for (NutsDefinition nutsDefinition : nutsDefinitions) {
                 NutsClassLoaderNode nn = null;
@@ -308,12 +307,8 @@ public final class JavaExecutorOptions {
                 }
             }
             if (!isExcludeBase() && !baseDetected) {
-                if (path == null) {
-                    throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("missing path for %s", id));
-                }
+                NutsUtils.requireNonNull(path, session, () -> NutsMessage.ofCstyle("missing path %s", finalId));
                 currentCP.add(0, NutsClassLoaderUtils.definitionToClassLoaderNode(def, session));
-//                nutsPath.add(0, nutsIdFormat.value(id).format());
-//                classPath.add(0, path.toString());
             }
             classPathNodes.addAll(currentCP);
             List<NutsClassLoaderNodeExt> ln =
@@ -374,7 +369,7 @@ public final class JavaExecutorOptions {
                 List<String> possibleClasses = StringTokenizerUtils.split(getMainClass(), ":");
                 switch (possibleClasses.size()) {
                     case 0:
-                        throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("missing Main-Class in Manifest for %s", id));
+                        throw new NutsIllegalArgumentException(session, NutsMessage.ofCstyle("missing Main-Class in Manifest for %s", id));
                     case 1:
                         //
                         break;
@@ -383,7 +378,7 @@ public final class JavaExecutorOptions {
                                 || session.isBot()
 //                                    || !session.isAsk()
                         ) {
-                            throw new NutsExecutionException(session, NutsMessage.cstyle("multiple runnable classes detected : %s" + possibleClasses), 102);
+                            throw new NutsExecutionException(session, NutsMessage.ofCstyle("multiple runnable classes detected : %s", possibleClasses), 102);
                         }
                         NutsTexts text = NutsTexts.of(session);
                         NutsTextBuilder msgString = text.builder();
@@ -411,7 +406,7 @@ public final class JavaExecutorOptions {
                                 .ask()
                                 .resetLine()
                                 .setSession(session)
-                                .forString(msgString.toString())
+                                .forString(NutsMessage.ofNtf(msgString))
                                 .setValidator((value, question) -> {
                                     Integer anyInt = NutsValue.of(value).asInt().orNull();
                                     if (anyInt != null) {
@@ -466,7 +461,7 @@ public final class JavaExecutorOptions {
                         return extraPossibilities.get(0);
                     }
                     if (extraPossibilities.size() > 1) {
-                        throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("ambiguous main-class %s matches all of %s",
+                        throw new NutsIllegalArgumentException(session, NutsMessage.ofCstyle("ambiguous main-class %s matches all of %s",
                                 name, extraPossibilities.toString()
                         ));
                     }
@@ -482,7 +477,7 @@ public final class JavaExecutorOptions {
                         return extraPossibilities.get(0);
                     }
                     if (extraPossibilities.size() > 1) {
-                        throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("ambiguous main-class %s matches all of from %s",
+                        throw new NutsIllegalArgumentException(session, NutsMessage.ofCstyle("ambiguous main-class %s matches all of from %s",
                                 name, extraPossibilities.toString()
                         ));
                     }

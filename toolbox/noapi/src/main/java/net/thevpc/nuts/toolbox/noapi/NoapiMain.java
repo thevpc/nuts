@@ -3,6 +3,7 @@ package net.thevpc.nuts.toolbox.noapi;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.cmdline.NutsArgument;
 import net.thevpc.nuts.cmdline.NutsCommandLine;
+import net.thevpc.nuts.util.NutsUtils;
 
 public class NoapiMain implements NutsApplication, NutsAppCmdProcessor {
 
@@ -74,9 +75,7 @@ public class NoapiMain implements NutsApplication, NutsAppCmdProcessor {
     @Override
     public void onCmdFinishParsing(NutsCommandLine commandline, NutsApplicationContext context) {
         NutsSession session = context.getSession();
-        if (path == null) {
-            commandline.throwMissingArgument(NutsMessage.cstyle("missing path"),session);
-        }
+        NutsUtils.requireNonBlank(path,session, "path");
         if (command == null) {
             command = "pdf";
         }

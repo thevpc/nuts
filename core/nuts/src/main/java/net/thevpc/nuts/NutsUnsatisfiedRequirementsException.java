@@ -37,7 +37,7 @@ public class NutsUnsatisfiedRequirementsException extends NutsBootException {
      * Constructs a new NutsUnsatisfiedRequirementsException exception
      */
     public NutsUnsatisfiedRequirementsException() {
-        super(NutsMessage.plain("unsatisfiedR workspace requirements"));
+        super(NutsMessage.ofPlain("unsatisfiedR workspace requirements"));
     }
 
     /**

@@ -73,14 +73,14 @@ public class DefaultNutsDeployRepositoryCommand extends AbstractNutsDeployReposi
                     xrepo.getIndexStore().revalidate(this.getId(), session);
                 } catch (NutsException ex) {
                     _LOGOP(session).level(Level.FINEST).verb(NutsLoggerVerb.FAIL)
-                            .log(NutsMessage.jstyle("error revalidating Indexer for {0} : {1}", getRepo().getName(), ex));
+                            .log(NutsMessage.ofJstyle("error revalidating Indexer for {0} : {1}", getRepo().getName(), ex));
                 }
             }
             _LOGOP(session).level(Level.FINEST).verb(NutsLoggerVerb.SUCCESS)
-                    .log(NutsMessage.jstyle("{0} deploy {1}", NutsStringUtils.formatAlign(getRepo().getName(), 20, NutsPositionType.FIRST), this.getId()));
+                    .log(NutsMessage.ofJstyle("{0} deploy {1}", NutsStringUtils.formatAlign(getRepo().getName(), 20, NutsPositionType.FIRST), this.getId()));
         } catch (RuntimeException ex) {
             _LOGOP(session).level(Level.FINEST).verb(NutsLoggerVerb.FAIL)
-                    .log(NutsMessage.jstyle("{0} deploy {1}", NutsStringUtils.formatAlign(getRepo().getName(), 20,NutsPositionType.FIRST), this.getId()));
+                    .log(NutsMessage.ofJstyle("{0} deploy {1}", NutsStringUtils.formatAlign(getRepo().getName(), 20,NutsPositionType.FIRST), this.getId()));
             throw ex;
         }
         return this;

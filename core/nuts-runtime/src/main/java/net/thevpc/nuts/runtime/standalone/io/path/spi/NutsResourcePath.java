@@ -47,7 +47,7 @@ public class NutsResourcePath implements NutsPathSPI {
                 idsStr = path.substring("nuts-resource://(".length(), x);
                 location = path.substring(x + 1);
             } else {
-                throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("invalid path %s", path));
+                throw new NutsIllegalArgumentException(session, NutsMessage.ofCstyle("invalid path %s", path));
             }
         } else if (path.startsWith("nuts-resource://")) {
             int x = path.indexOf('/', "nuts-resource://".length());
@@ -55,10 +55,10 @@ public class NutsResourcePath implements NutsPathSPI {
                 idsStr = path.substring("nuts-resource://".length(), x);
                 location = path.substring(x);
             } else {
-                throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("invalid path %s", path));
+                throw new NutsIllegalArgumentException(session, NutsMessage.ofCstyle("invalid path %s", path));
             }
         } else {
-            throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("invalid path %s", path));
+            throw new NutsIllegalArgumentException(session, NutsMessage.ofCstyle("invalid path %s", path));
         }
         this.ids = StringTokenizerUtils.splitSemiColon(idsStr).stream().map(x -> {
             x = x.trim();
@@ -201,7 +201,7 @@ public class NutsResourcePath implements NutsPathSPI {
         if (up != null) {
             return up.toURL();
         }
-        throw new NutsIOException(getSession(), NutsMessage.cstyle("unable to resolve url from %s", toString()));
+        throw new NutsIOException(getSession(), NutsMessage.ofCstyle("unable to resolve url from %s", toString()));
     }
 
     @Override
@@ -210,7 +210,7 @@ public class NutsResourcePath implements NutsPathSPI {
         if (up != null) {
             return up.toFile();
         }
-        throw new NutsIOException(getSession(), NutsMessage.cstyle("unable to resolve file from %s", toString()));
+        throw new NutsIOException(getSession(), NutsMessage.ofCstyle("unable to resolve file from %s", toString()));
     }
 
     @Override
@@ -287,7 +287,7 @@ public class NutsResourcePath implements NutsPathSPI {
     public InputStream getInputStream(NutsPath basePath) {
         NutsPath up = toURLPath();
         if (up == null) {
-            throw new NutsIOException(getSession(), NutsMessage.cstyle("unable to resolve input stream %s", toString()));
+            throw new NutsIOException(getSession(), NutsMessage.ofCstyle("unable to resolve input stream %s", toString()));
         }
         return up.getInputStream();
     }
@@ -296,7 +296,7 @@ public class NutsResourcePath implements NutsPathSPI {
     public OutputStream getOutputStream(NutsPath basePath) {
         NutsPath up = toURLPath();
         if (up == null) {
-            throw new NutsIOException(getSession(), NutsMessage.cstyle("unable to resolve output stream %s", toString()));
+            throw new NutsIOException(getSession(), NutsMessage.ofCstyle("unable to resolve output stream %s", toString()));
         }
         return up.getOutputStream();
     }
@@ -310,7 +310,7 @@ public class NutsResourcePath implements NutsPathSPI {
     public void delete(NutsPath basePath, boolean recurse) {
         NutsPath up = toURLPath();
         if (up == null) {
-            throw new NutsIOException(getSession(), NutsMessage.cstyle("unable to delete %s", toString()));
+            throw new NutsIOException(getSession(), NutsMessage.ofCstyle("unable to delete %s", toString()));
         }
         up.delete(recurse);
     }
@@ -319,7 +319,7 @@ public class NutsResourcePath implements NutsPathSPI {
     public void mkdir(boolean parents, NutsPath basePath) {
         NutsPath up = toURLPath();
         if (up == null) {
-            throw new NutsIOException(getSession(), NutsMessage.cstyle("unable to mkdir %s", toString()));
+            throw new NutsIOException(getSession(), NutsMessage.ofCstyle("unable to mkdir %s", toString()));
         }
         up.mkdir(parents);
     }
@@ -454,7 +454,7 @@ public class NutsResourcePath implements NutsPathSPI {
 
     @Override
     public void moveTo(NutsPath basePath, NutsPath other, NutsPathOption... options) {
-        throw new NutsIOException(session, NutsMessage.cstyle("unable to move %s", this));
+        throw new NutsIOException(session, NutsMessage.ofCstyle("unable to move %s", this));
     }
 
     @Override

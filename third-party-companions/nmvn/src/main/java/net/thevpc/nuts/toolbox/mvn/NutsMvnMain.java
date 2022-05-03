@@ -86,7 +86,7 @@ public class NutsMvnMain implements NutsApplication {
                     if (r == 0) {
                         return;
                     } else {
-                        throw new NutsExecutionException(session, NutsMessage.cstyle("Maven Call exited with code %d", r), r);
+                        throw new NutsExecutionException(session, NutsMessage.ofCstyle("Maven Call exited with code %d", r), r);
                     }
                 }
                 case "get": {
@@ -115,7 +115,7 @@ public class NutsMvnMain implements NutsApplication {
                     if (r == 0) {
                         return;
                     } else {
-                        throw new NutsExecutionException(session, NutsMessage.cstyle("Maven Call exited with code %s", r), r);
+                        throw new NutsExecutionException(session, NutsMessage.ofCstyle("Maven Call exited with code %s", r), r);
                     }
                 }
             }

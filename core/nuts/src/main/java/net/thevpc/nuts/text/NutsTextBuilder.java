@@ -29,7 +29,7 @@ package net.thevpc.nuts.text;
 import net.thevpc.nuts.NutsSession;
 import net.thevpc.nuts.util.NutsStream;
 import net.thevpc.nuts.NutsString;
-import net.thevpc.nuts.boot.NutsApiUtils;
+import net.thevpc.nuts.util.NutsUtils;
 
 import java.util.Collection;
 import java.util.List;
@@ -39,7 +39,7 @@ import java.util.List;
  */
 public interface NutsTextBuilder extends NutsString {
     static NutsTextBuilder of(NutsSession session) {
-        NutsApiUtils.checkSession(session);
+        NutsUtils.requireSession(session);
         return NutsTexts.of(session).builder();
     }
 
