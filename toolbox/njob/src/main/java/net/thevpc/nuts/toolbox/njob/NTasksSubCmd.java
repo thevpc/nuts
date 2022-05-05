@@ -607,7 +607,7 @@ public class NTasksSubCmd {
         NProject p = project == null ? null : service.projects().getProject(project);
         NTaskStatus s = x.getStatus();
         String dte0 = parent.getFormattedDate(x.getDueTime());
-        NutsTextBuilder dte = NutsTexts.of(session).builder();
+        NutsTextBuilder dte = NutsTexts.of(session).ofBuilder();
         if (s == NTaskStatus.CANCELLED || s == NTaskStatus.DONE) {
             dte.append(dte0, NutsTextStyle.pale());
         } else if (x.getDueTime() != null && x.getDueTime().compareTo(Instant.now()) < 0) {
@@ -618,7 +618,7 @@ public class NTasksSubCmd {
         String projectName = p != null ? p.getName() : project != null ? project : "*";
         return new Object[]{
             index,
-            NutsTexts.of(session).builder().append(x.getId(), NutsTextStyle.pale()),
+            NutsTexts.of(session).ofBuilder().append(x.getId(), NutsTextStyle.pale()),
             parent.getFlagString(x.getFlag()),
             parent.getStatusString(x.getStatus()),
             parent.getPriorityString(x.getPriority()),

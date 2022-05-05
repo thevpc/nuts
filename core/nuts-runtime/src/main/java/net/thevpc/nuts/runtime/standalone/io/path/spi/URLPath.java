@@ -764,7 +764,7 @@ public class URLPath implements NutsPathSPI {
             if (p.url == null) {
                 return NutsTexts.of(p.getSession()).ofPlain("");
             }
-            return NutsTexts.of(p.getSession()).toText(p.url);
+            return NutsTexts.of(p.getSession()).ofText(p.url);
         }
 
         @Override

@@ -16,7 +16,7 @@ show version
     ```sh --add <key>=<value> ```
         include key=value pair in the result
 
-#!include</net/thevpc/nuts/runtime/includes/standard-command.ntf>
+```!include classpath:/net/thevpc/nuts/runtime/includes/standard-command.ntf```
 
 ##) EXAMPLES
 

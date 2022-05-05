@@ -229,4 +229,8 @@ public class DefaultNutsArtifactPathExecutable extends AbstractNutsExecutableCom
         return "nuts " + cmdName + " " + NutsCommandLine.of(args).toString();
     }
 
+    @Override
+    public NutsSession getSession() {
+        return session;
+    }
 }

@@ -40,16 +40,12 @@ import java.util.List;
 public interface NutsTextBuilder extends NutsString {
     static NutsTextBuilder of(NutsSession session) {
         NutsUtils.requireSession(session);
-        return NutsTexts.of(session).builder();
+        return NutsTexts.of(session).ofBuilder();
     }
 
     NutsTextStyleGenerator getStyleGenerator();
 
     NutsTextBuilder setStyleGenerator(NutsTextStyleGenerator styleGenerator);
-
-    NutsTextWriteConfiguration getConfiguration();
-
-    NutsTextBuilder setConfiguration(NutsTextWriteConfiguration writeConfiguration);
 
     NutsTextBuilder appendCommand(NutsTerminalCommand command);
 

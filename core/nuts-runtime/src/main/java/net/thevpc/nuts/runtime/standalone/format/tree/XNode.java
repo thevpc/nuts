@@ -101,9 +101,9 @@ public class XNode {
             return titleOrValueAsElement;
         } else {
             if (isList(value) || isMap(value)) {
-                return NutsTexts.of(session).builder().append(keyAsElement);
+                return NutsTexts.of(session).ofBuilder().append(keyAsElement);
             } else {
-                return NutsTexts.of(session).builder().append(keyAsElement).append("=").append(titleOrValueAsElement);
+                return NutsTexts.of(session).ofBuilder().append(keyAsElement).append("=").append(titleOrValueAsElement);
             }
         }
     }

@@ -214,7 +214,7 @@ search for artifacts
     ```sh --highlight-scope```
         when formatting id, highlight scope
 
-#!include</net/thevpc/nuts/runtime/includes/standard-command.ntf>
+```!include classpath:/net/thevpc/nuts/runtime/includes/standard-command.ntf```
 
 ##) EXAMPLES
 

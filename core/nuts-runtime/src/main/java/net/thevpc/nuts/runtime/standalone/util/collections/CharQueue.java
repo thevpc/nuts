@@ -418,22 +418,42 @@ public class CharQueue implements CharSequence {
         return NutsStringMatchResult.ofNoMatch();
     }
 
-    public String readNewLine(boolean fully) {
-        char c = read();
-        switch (c) {
-            case '\n': {
-                return "" + c;
+    public String readBlank() {
+        StringBuilder sb = new StringBuilder();
+        while (hasNext()) {
+            char c = peek();
+            if (Character.isWhitespace(c)) {
+                sb.append(read());
+            } else {
+                break;
             }
-            case '\r': {
-                if (hasNext()) {
-                    if (peek() == '\n') {
-                        return "" + c + read();
+        }
+        if (sb.length() > 0) {
+            return sb.toString();
+        }
+        return null;
+    }
+
+
+    public String readNewLine(boolean fully) {
+        if (hasNext()) {
+            char c = peek();
+            switch (c) {
+                case '\n': {
+                    read();
+                    return "" + c;
+                }
+                case '\r': {
+                    read();
+                    if (hasNext()) {
+                        if (peek() == '\n') {
+                            return "" + c + read();
+                        }
+                        return "" + c;
+                    } else if (fully) {
+                        return "" + c;
                     }
-                    return "" + c;
-                } else if (fully) {
-                    return "" + c;
-                } else {
-                    return null;
+                    break;
                 }
             }
         }

@@ -6,15 +6,14 @@ import net.thevpc.nuts.runtime.standalone.util.CorePlatformUtils;
 import net.thevpc.nuts.runtime.standalone.util.CoreStringUtils;
 
 import java.util.Calendar;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.function.Function;
 
 import net.thevpc.nuts.runtime.standalone.workspace.NutsWorkspaceUtils;
-import net.thevpc.nuts.text.NutsTerminalCommand;
-import net.thevpc.nuts.text.NutsTextBuilder;
-import net.thevpc.nuts.text.NutsTextStyle;
-import net.thevpc.nuts.text.NutsTexts;
+import net.thevpc.nuts.text.*;
 
 /**
- *
  * inspired by
  * https://github.com/Changaco/unicode-progress-bars/blob/master/generator.html
  *
@@ -22,22 +21,11 @@ import net.thevpc.nuts.text.NutsTexts;
  */
 public class CProgressBar {
 
-    public static final Formatter RECTANGLES = new SimpleFormatter("⬜⬛", "⬛", null, null, null);
-    public static final Formatter CIRCLES = new SimpleFormatter("⚪⚫", "⚫", null, null, null);
-    public static final Formatter PARALLELOGRAM = new SimpleFormatter("▱▰", "▰", null, null, null);
-    public static final Formatter SIMPLE = new SimpleFormatter(" *", null, null, "[", "]");
-    public static final Formatter RECTANGLES2 = new SimpleFormatter(" ▁▂▃▄▅▆▇█", "▁▂▃▄▅▆▇█", "█▇▆▅▄▃▂▁", null, null);
-    public static final Formatter RECTANGLES3 = new SimpleFormatter(" ░▒▓█", "█", null, null, null);
-    public static final Formatter RECTANGLES4 = new SimpleFormatter(" ▏▎▍▌▋▊▉█", "▁▂▃▄▅▆▇█", "█▇▆▅▄▃▂▁", null, null);
-    public static final Formatter DOTS1 = new SimpleFormatter(" ⣀⣄⣤⣦⣶⣷⣿", "⣿", null, null, null);
-    public static final Formatter DOTS2 = new SimpleFormatter(" ⣀⣄⣆⣇⣧⣷⣿", "⣿", null, null, null);
-    public static final Formatter CIRCLES2 = new SimpleFormatter("○◔◐◕⬤", "⬤", null, null, null);
-    public static final Formatter DEFAULT = RECTANGLES4;
     private static final IndeterminatePosition DEFAULT_INDETERMINATE_POSITION = new DefaultIndeterminatePosition();
-    private boolean formatted = true;
-    private int size = 10;
+    private int determinateSize = 10;
+    private int indeterminateSize = 10;
     private int maxMessage = 0;
-    private float indeterminateSize = 0.3f;
+    private float indeterminateRatio = 0.3f;
     private NutsSession session;
     private int columns = 3;
     private int maxColumns = 133;
@@ -47,21 +35,249 @@ public class CProgressBar {
     private long minPeriod = 0;
     private IndeterminatePosition indeterminatePosition = DEFAULT_INDETERMINATE_POSITION;
     private boolean optionNewline;
-    private Formatter formatter = CorePlatformUtils.SUPPORTS_UTF_ENCODING ?RECTANGLES4:SIMPLE;
+    private Formatter formatter;
     private NutsWorkspace ws;
+    private static Map<String, Function<NutsSession, Formatter>> formatters = new HashMap();
 
-    public CProgressBar(NutsSession session) {
-        this.session = session;
-        formatted = session != null;
-        if (session != null) {
-            optionNewline = NutsProgressUtils.parseProgressOptions(session).isArmedNewline();
-            ws=session.getWorkspace();
-        }
+    static {
+        reg("",session-> {
+            NutsTexts txt = NutsTexts.of(session);
+            return CorePlatformUtils.SUPPORTS_UTF_ENCODING ? createFormatter("braille", session) : createFormatter("simple", session);
+        });
+        reg( "square",session-> {
+            NutsTexts txt = NutsTexts.of(session);
+            if (!CorePlatformUtils.SUPPORTS_UTF_ENCODING) {
+                return null;
+            }
+            return new SimpleFormatter("square",
+                    new NutsText[]{
+                            txt.ofStyled("⬜", NutsTextStyle.primary1()),
+                            txt.ofStyled("⬛", NutsTextStyle.primary1()),
+                    },
+                    new NutsText[]{txt.ofStyled("⬛", NutsTextStyle.primary1())},
+                    10,
+                    -1,10,10
+            );
+        });
+        reg( "vbar",session-> {
+            //" ▁▂▃▄▅▆▇█"
+            if (!CorePlatformUtils.SUPPORTS_UTF_ENCODING) {
+                return null;
+            }
+            NutsTexts txt = NutsTexts.of(session);
+            return new SimpleFormatter("vbar",
+                    new NutsText[]{
+                            txt.ofStyled(" ", NutsTextStyle.primary1()),
+                            txt.ofStyled("▁", NutsTextStyle.primary1()),
+                            txt.ofStyled("▂", NutsTextStyle.primary1()),
+                            txt.ofStyled("▃", NutsTextStyle.primary1()),
+                            txt.ofStyled("▄", NutsTextStyle.primary1()),
+                            txt.ofStyled("▅", NutsTextStyle.primary1()),
+                            txt.ofStyled("▆", NutsTextStyle.primary1()),
+                            txt.ofStyled("▇", NutsTextStyle.primary1()),
+                            txt.ofStyled("█", NutsTextStyle.primary1()),
+                    },
+                    new NutsText[]{
+                            txt.ofStyled("▁", NutsTextStyle.primary1()),
+                            txt.ofStyled("▂", NutsTextStyle.primary1()),
+                            txt.ofStyled("▃", NutsTextStyle.primary1()),
+                            txt.ofStyled("▄", NutsTextStyle.primary1()),
+                            txt.ofStyled("▅", NutsTextStyle.primary1()),
+                            txt.ofStyled("▆", NutsTextStyle.primary1()),
+                            txt.ofStyled("▇", NutsTextStyle.primary1()),
+                            txt.ofStyled("█", NutsTextStyle.primary1()),
+                    },
+                    new NutsText[]{
+                            txt.ofStyled("█", NutsTextStyle.primary1()),
+                            txt.ofStyled("▇", NutsTextStyle.primary1()),
+                            txt.ofStyled("▆", NutsTextStyle.primary1()),
+                            txt.ofStyled("▅", NutsTextStyle.primary1()),
+                            txt.ofStyled("▄", NutsTextStyle.primary1()),
+                            txt.ofStyled("▃", NutsTextStyle.primary1()),
+                            txt.ofStyled("▂", NutsTextStyle.primary1()),
+                            txt.ofStyled("▁", NutsTextStyle.primary1()),
+                    },
+                    1, 1,10,10
+            );
+        });
+
+        reg( "shadow",session-> {
+            NutsTexts txt = NutsTexts.of(session);
+            //" ░▒▓█"
+            if (!CorePlatformUtils.SUPPORTS_UTF_ENCODING) {
+                return null;
+            }
+            return new SimpleFormatter("shadow",
+                    new NutsText[]{
+                            txt.ofStyled(" ", NutsTextStyle.primary1()),
+                            txt.ofStyled("░", NutsTextStyle.primary1()),
+                            txt.ofStyled("▒", NutsTextStyle.primary1()),
+                            txt.ofStyled("▓", NutsTextStyle.primary1()),
+                            txt.ofStyled("█", NutsTextStyle.primary1()),
+                    },
+                    new NutsText[]{
+                            txt.ofStyled("█", NutsTextStyle.primary1()),
+                    },
+                    1, 1,10,10
+            );
+        });
+        reg( "hbar",session-> {
+            NutsTexts txt = NutsTexts.of(session);
+            //" ▏▎▍▌▋▊▉█"
+            if (!CorePlatformUtils.SUPPORTS_UTF_ENCODING) {
+                return null;
+            }
+            return new SimpleFormatter("hbar",
+                    new NutsText[]{
+                            txt.ofStyled(" ", NutsTextStyle.primary1()),
+                            txt.ofStyled("▏", NutsTextStyle.primary1()),
+                            txt.ofStyled("▎", NutsTextStyle.primary1()),
+                            txt.ofStyled("▍", NutsTextStyle.primary1()),
+                            txt.ofStyled("▌", NutsTextStyle.primary1()),
+                            txt.ofStyled("▋", NutsTextStyle.primary1()),
+                            txt.ofStyled("▊", NutsTextStyle.primary1()),
+                            txt.ofStyled("▉", NutsTextStyle.primary1()),
+                            txt.ofStyled("█", NutsTextStyle.primary1()),
+                    },
+                    new NutsText[]{
+                            txt.ofStyled("█", NutsTextStyle.primary1()),
+                    },
+                    10, -1,10,10
+            );
+        });
+        reg( "circle",session-> {
+            NutsTexts txt = NutsTexts.of(session);
+            if (!CorePlatformUtils.SUPPORTS_UTF_ENCODING) {
+                return null;
+            }
+            return new SimpleFormatter("circle",
+                    new NutsText[]{
+                            txt.ofStyled("⚪", NutsTextStyle.primary1()),
+                            txt.ofStyled("⚫", NutsTextStyle.primary1()),
+                    },
+                    new NutsText[]{txt.ofStyled("⚫", NutsTextStyle.primary1())},
+                    10, -1,10,10
+            );
+        });
+        reg( "parallelogram",session-> {
+            NutsTexts txt = NutsTexts.of(session);
+            if (!CorePlatformUtils.SUPPORTS_UTF_ENCODING) {
+                return null;
+            }
+            return new SimpleFormatter("parallelogram",
+                    new NutsText[]{
+                            txt.ofStyled("▱", NutsTextStyle.primary1()),
+                            txt.ofStyled("▰", NutsTextStyle.primary1()),
+                    },
+                    new NutsText[]{txt.ofStyled("▰", NutsTextStyle.primary1())},
+                    10, -1,10,10
+            );
+        });
+        reg( "simple",session-> {
+            NutsTexts txt = NutsTexts.of(session);
+            return new SimpleFormatter("simple",
+                    new NutsText[]{
+                            txt.ofStyled(" ", NutsTextStyle.primary1()),
+                            txt.ofStyled("*", NutsTextStyle.primary1()),
+                    },
+                    new NutsText[]{txt.ofStyled("*", NutsTextStyle.primary1())},
+                    null,
+                    txt.ofStyled("[", NutsTextStyle.primary4()),
+                    txt.ofStyled("]", NutsTextStyle.primary4()),
+                    10, -1,10,10
+            );
+        });
+        reg( "clock",session-> {
+            NutsTexts txt = NutsTexts.of(session);
+            if (!CorePlatformUtils.SUPPORTS_UTF_ENCODING) {
+                return null;
+            }
+            //"\u25CB\u25D4\u25D1\u25D5\u25CF"
+            // ○◔◑◕●
+            return new SimpleFormatter("clock",
+                    new NutsText[]{
+                            txt.ofStyled("\u25CB", NutsTextStyle.primary1()),
+                            txt.ofStyled("\u25D4", NutsTextStyle.primary1()),
+                            txt.ofStyled("\u25D1", NutsTextStyle.primary1()),
+                            txt.ofStyled("\u25D5", NutsTextStyle.primary1()),
+                            txt.ofStyled("\u25CF", NutsTextStyle.primary1()),
+                    },
+                    new NutsText[]{txt.ofStyled("\u25CF", NutsTextStyle.primary1())}
+                    , 1, 1,10,10
+            );
+        });
+        reg( "braille",session-> {
+            NutsTexts txt = NutsTexts.of(session);
+            if (!CorePlatformUtils.SUPPORTS_UTF_ENCODING) {
+                return null;
+            }
+            //"\u25CB\u25D4\u25D1\u25D5\u25CF"
+            // ○◔◑◕●
+            return new SimpleFormatter("braille",
+                    new NutsText[]{
+                            txt.ofStyled("\u2800", NutsTextStyle.primary1()),// ⠀
+                            txt.ofStyled("\u2801", NutsTextStyle.primary1()),// ⠁
+                            txt.ofStyled("\u2803", NutsTextStyle.primary1()),// ⠃
+                            txt.ofStyled("\u2807", NutsTextStyle.primary1()),// ⠇
+                            txt.ofStyled("\u2846", NutsTextStyle.primary1()),// ⡆
+                            txt.ofStyled("\u28C4", NutsTextStyle.primary1()),// ⣄
+                            txt.ofStyled("\u28E0", NutsTextStyle.primary1()),// ⣠
+                            txt.ofStyled("\u28B0", NutsTextStyle.primary1()),// ⢰
+                            txt.ofStyled("\u2838", NutsTextStyle.primary1()),// ⠸
+                            txt.ofStyled("\u2819", NutsTextStyle.primary1()),// ⠙
+                            txt.ofStyled("\u2819", NutsTextStyle.primary1()),// ⠙
+                            txt.ofStyled("\u2809", NutsTextStyle.primary1()),// ⠉
+                    },
+                    new NutsText[]{
+                            txt.ofStyled("\u2815", NutsTextStyle.primary1()),// ⠕
+                            txt.ofStyled("\u2817", NutsTextStyle.primary1()),// ⠗
+                    },
+                    new NutsText[]{
+                            txt.ofStyled("\u282A", NutsTextStyle.primary1()),// ⠪
+                            txt.ofStyled("\u283A", NutsTextStyle.primary1()),// ⠺
+                    }
+                    , 1, 1,10,10
+            );
+        });
     }
 
-    public CProgressBar(NutsSession session, int size) {
+    private static void reg(String name, Function<NutsSession, Formatter> f) {
+        formatters.put(name, f);
+    }
+
+    public static CProgressBar of(NutsSession session) {
+        return session.getOrComputeRefProperty(CProgressBar.class.getName(), CProgressBar::new);
+    }
+
+    public CProgressBar(NutsSession session) {
+        this(session, -1);
+    }
+
+    public CProgressBar(NutsSession session, int determinateSize) {
         this.session = session;
-        setSize(size);
+        ProgressOptions o = ProgressOptions.of(session);
+        this.optionNewline = o.isArmedNewline();
+        this.ws = session.getWorkspace();
+        this.formatter = createFormatter(o.get("type").flatMap(NutsValue::asString).orElse(""), session);
+        if (determinateSize <= 0) {
+            determinateSize = o.get("size").flatMap(NutsValue::asInt).orElse(formatter.getDefaultWidth());
+        }
+        setDeterminateSize(determinateSize);
+    }
+
+    public String[] getFormatterNames() {
+        return formatters.keySet().toArray(new String[0]);
+    }
+
+    public static Formatter createFormatter(String name, NutsSession session) {
+        Function<NutsSession, Formatter> e = formatters.get(name);
+        if(e!=null){
+            Formatter u = e.apply(session);
+            if(u!=null) {
+                return u;
+            }
+        }
+        return formatters.get("").apply(session);
     }
 
     public long getMinPeriod() {
@@ -76,8 +292,12 @@ public class CProgressBar {
         return formatter;
     }
 
+    public CProgressBar setFormatter(String formatter) {
+        return setFormatter(createFormatter(formatter, session));
+    }
+
     public CProgressBar setFormatter(Formatter formatter) {
-        this.formatter = formatter == null ? DEFAULT : formatter;
+        this.formatter = formatter == null ? createFormatter("", session) : formatter;
         return this;
     }
 
@@ -90,110 +310,157 @@ public class CProgressBar {
         return this;
     }
 
-    public int getSize() {
-        return size;
+    public int getEffSize(boolean indeterminate) {
+        int m = indeterminate ? formatter.getIndeterminateMaxWidth() : formatter.getMaxWidth();
+        int s = indeterminate ? getIndeterminateSize() : getDeterminateSize();
+        if (m > 0 && m < s) {
+            return m;
+        }
+        return s;
     }
 
-    public CProgressBar setSize(int size) {
-        if (size < 10) {
-            size = 10;
-        }
-        this.size = size;
+    public int getDeterminateSize() {
+        return determinateSize;
+    }
+
+    public CProgressBar setDeterminateSize(int determinateSize) {
+        this.determinateSize = determinateSize;
         return this;
     }
 
     public static class SimpleFormatter implements Formatter {
 
-        private String style;
-        private String intermediateForwardStyle;
-        private String intermediateBackwardStyle;
-        private String start;
-        private String end;
+        private NutsText[] style;
+        private NutsText[] intermediateForwardStyle;
+        private NutsText[] intermediateBackwardStyle;
+        private NutsText start;
+        private NutsText end;
+        private int defaultWidth;
+        private int maxWidth;
+        private int defaultIndeterminateWidth;
+        private int maxIndeterminateWidth;
+        private String name;
 
-        public SimpleFormatter(String style, String forward, String backward, String start, String end) {
-            if (forward == null || forward.isEmpty()) {
+        public SimpleFormatter(String name, NutsText[] style, int defaultWidth, int maxWidth, int defaultIndeterminateWidth, int maxIndeterminateWidth) {
+            this(name, style, null, null, null, null, defaultWidth, maxWidth,defaultIndeterminateWidth, maxIndeterminateWidth);
+        }
+
+        public SimpleFormatter(String name, NutsText[] style, NutsText[] forward, int defaultWidth, int maxWidth, int defaultIndeterminateWidth, int maxIndeterminateWidth) {
+            this(name, style, forward, null, null, null, defaultWidth, maxWidth,defaultIndeterminateWidth, maxIndeterminateWidth);
+        }
+
+        public SimpleFormatter(String name, NutsText[] style, NutsText[] forward, NutsText[] backward, int defaultWidth, int maxWidth, int defaultIndeterminateWidth, int maxIndeterminateWidth) {
+            this(name, style, forward, backward, null, null, defaultWidth, maxWidth,defaultIndeterminateWidth, maxIndeterminateWidth);
+        }
+
+        public SimpleFormatter(String name, NutsText[] style, NutsText[] forward, NutsText[] backward, NutsText start, NutsText end, int defaultWidth, int maxWidth, int defaultIndeterminateWidth, int maxIndeterminateWidth) {
+            if (forward == null) {
                 forward = style;
             }
-            if (backward == null || backward.isEmpty()) {
+            if (backward == null) {
                 backward = forward;
             }
+            this.name = name;
+            this.defaultWidth = defaultWidth;
+            this.maxWidth = maxWidth;
             this.style = style;
             this.intermediateForwardStyle = forward;
             this.intermediateBackwardStyle = backward;
-            this.start = start == null ? "" : start;
-            this.end = end == null ? "" : end;
+            this.start = start;
+            this.end = end;
+            this.maxIndeterminateWidth =maxIndeterminateWidth;
+            this.defaultIndeterminateWidth =defaultIndeterminateWidth;
+        }
+
+        public int getMaxWidth() {
+            return maxWidth;
         }
 
         @Override
-        public String getIndicator(float itemDensity, int itemPosition) {
+        public int getDefaultWidth() {
+            return defaultWidth;
+        }
+
+        @Override
+        public NutsText getIndicator(float itemDensity, int itemPosition) {
             return getIndicator(style, itemDensity, itemPosition);
         }
 
-        public String getIndicator(String style, float itemDensity, int itemPosition) {
-            int length = style.length();
+        public NutsText getIndicator(NutsText[] style, float itemDensity, int itemPosition) {
+            int length = style.length;
             int p = (int) (itemDensity * length);
             if (p < 0) {
                 p = 0;
             } else if (p >= length) {
                 p = length - 1;
             }
-            return String.valueOf(style.charAt(p));
+            return style[p];
         }
 
         @Override
-        public String getIntermediateIndicator(int intermediatePosition, int indeterminateSize, int intermediateStartPosition, boolean forward) {
-
-//            int halfSize = indeterminateSize / 2;
-//            int away = intermediatePosition - halfSize;
-//            if (away < 0) {
-//                away = -away;
-//            }
-//            float density = ((1.f - away) / halfSize) / 2.0f + 0.5f;
+        public NutsText getIntermediateIndicator(int intermediatePosition, int indeterminateSize, int intermediateStartPosition, boolean forward) {
             float density = (intermediatePosition * 1.f / indeterminateSize);
             if (forward) {
-                int length = intermediateForwardStyle.length();
+                int length = intermediateForwardStyle.length;
                 int p = (int) (density * length);
                 if (p < 0) {
                     p = 0;
                 } else if (p >= length) {
                     p = length - 1;
                 }
-                return String.valueOf(intermediateForwardStyle.charAt(p));
+                return intermediateForwardStyle[p];
             } else {
                 //should be symmetric to farward
                 density = density;
-                int length = intermediateBackwardStyle.length();
+                int length = intermediateBackwardStyle.length;
                 int p = (int) (density * length);
                 if (p < 0) {
                     p = 0;
                 } else if (p >= length) {
                     p = length - 1;
                 }
-                return String.valueOf(intermediateBackwardStyle.charAt(p));
+                return intermediateBackwardStyle[p];
             }
         }
 
         @Override
-        public String getStart() {
+        public NutsText getStart() {
             return start;
         }
 
         @Override
-        public String getEnd() {
+        public NutsText getEnd() {
             return end;
         }
 
+        @Override
+        public int getIndeterminateMaxWidth() {
+            return maxIndeterminateWidth;
+        }
+
+        @Override
+        public int getDefaultIndeterminateWidth() {
+            return defaultIndeterminateWidth;
+        }
     }
 
     public static interface Formatter {
 
-        public String getIntermediateIndicator(int intermediatePosition, int indeterminateSize, int itemPosition, boolean forward);
+        NutsText getIntermediateIndicator(int intermediatePosition, int indeterminateSize, int itemPosition, boolean forward);
 
-        public String getIndicator(float itemDensity, int itemPosition);
+        NutsText getIndicator(float itemDensity, int itemPosition);
 
-        public String getStart();
+        NutsText getStart();
 
-        public String getEnd();
+        NutsText getEnd();
+
+        int getMaxWidth();
+
+        int getDefaultWidth();
+
+        int getIndeterminateMaxWidth();
+
+        int getDefaultIndeterminateWidth();
     }
 
     public int getColumns() {
@@ -232,125 +499,29 @@ public class CProgressBar {
         return this;
     }
 
-    public String progress(int percent) {
-        if (session != null) {
-            return progressWithSession(percent);
-        }
-        return progressWithoutSession(percent);
-    }
-
-    public String progressWithoutSession(int percent) {
+    public NutsText progress(int percent) {
         long now = System.currentTimeMillis();
-        if (minPeriod > 0 && now < lastPrint + minPeriod) {
-            return "";
-        }
-        lastPrint = now;
-        boolean indeterminate = percent < 0;
-        if (indeterminate) {
-            StringBuilder formattedLine = new StringBuilder();
-            formattedLine.append(getFormatter().getStart());
-            int indeterminateSize = (int) (this.indeterminateSize * size);
-            if (indeterminateSize >= size) {
-                indeterminateSize = size - 1;
-            }
-            if (indeterminateSize < 1) {
-                indeterminateSize = 1;
-            }
-            int x = 0;
-            boolean forward = true;
-            if (indeterminateSize < size) {
-                int p = this.size - indeterminateSize;
-                int h = indeterminatePosition.evalIndeterminatePos(this, 2 * p);
-                if (h < 0) {
-                    h = -h;
-                }
-                x = h % (2 * p);//(int) ((s * 2 * size) / 60.0);
-                if (x >= p) {
-                    forward = false;
-                    x = 2 * p - x;
-                }
-            } else {
-                x = 0;
-            }
-
-            if (x < 0) {
-                x = 0;
-            }
-            StringBuilder sb = new StringBuilder();
-            for (int i = 0; i < x; i++) {
-                sb.append(getFormatter().getIndicator(0, i));
-            }
-            for (int i = 0; i < indeterminateSize; i++) {
-                sb.append(getFormatter().getIntermediateIndicator(i, indeterminateSize, x, forward));
-            }
-            formattedLine.append(sb.toString());
-            int r = size - x - indeterminateSize;
-            sb.setLength(0);
-            for (int i = 0; i < r; i++) {
-                sb.append(getFormatter().getIndicator(0, x + indeterminateSize + i));
-            }
-            formattedLine.append(sb.toString());
-            formattedLine.append(getFormatter().getEnd());
-            return formattedLine.toString();
-        } else {
-            if (percent > 100) {
-                percent = 100 - percent;
-            }
-            double d = (size / 100.0 * percent);
-            int x = (int) d;
-            float rest = (float) (d - x);
-            StringBuilder formattedLine = new StringBuilder();
-            formattedLine.append(getFormatter().getStart());
-            if (x > 0) {
-                StringBuilder sb = new StringBuilder();
-                for (int i = 0; i < x; i++) {
-                    sb.append(getFormatter().getIndicator(1, i));
-                }
-                formattedLine.append(sb.toString());
-            }
-            StringBuilder sb = new StringBuilder();
-            if (rest > 0 && (size - x) > 0) {
-                sb.append(getFormatter().getIndicator(rest, x));
-                for (int i = 0; i < size - x - 1; i++) {
-                    sb.append(getFormatter().getIndicator(0, x + 1 + i));
-                }
-            } else {
-                for (int i = 0; i < size - x; i++) {
-                    sb.append(getFormatter().getIndicator(0, x + i));
-                }
-            }
-            formattedLine.append(sb.toString());
-            formattedLine.append(getFormatter().getEnd());
-            return formattedLine.toString();
-        }
-    }
-
-    public String progressWithSession(int percent) {
-        return progressWithSessionOld(percent);
-//        return progressWithSessionNew(percent);
-    }
-
-    public String progressWithSessionOld(int percent) {
-        long now = System.currentTimeMillis();
+        NutsTexts txt = NutsTexts.of(session);
         if (now < lastPrint + minPeriod) {
-            return "";
+            return txt.ofPlain("");
         }
         lastPrint = now;
         boolean indeterminate = percent < 0;
+        int eSize = getEffSize(indeterminate);
         if (indeterminate) {
-            NutsTextBuilder formattedLine = NutsTexts.of(session).builder();
+            NutsTextBuilder formattedLine = txt.ofBuilder();
             formattedLine.append(getFormatter().getStart());
-            int indeterminateSize = (int) (this.indeterminateSize * size);
+            int indeterminateSize = (int) (this.indeterminateRatio * eSize);
             boolean forward = true;
-            if (indeterminateSize >= size) {
-                indeterminateSize = size - 1;
+            if (indeterminateSize >= eSize) {
+                indeterminateSize = eSize - 1;
             }
             if (indeterminateSize < 1) {
                 indeterminateSize = 1;
             }
             int x = 0;
-            if (indeterminateSize < size) {
-                int p = this.size - indeterminateSize;
+            if (indeterminateSize < eSize) {
+                int p = eSize - indeterminateSize;
                 int h = indeterminatePosition.evalIndeterminatePos(this, 2 * p);
                 if (h < 0) {
                     h = -h;
@@ -367,200 +538,89 @@ public class CProgressBar {
             if (x < 0) {
                 x = 0;
             }
-            StringBuilder sb = new StringBuilder();
+
             for (int i = 0; i < x; i++) {
-                sb.append(getFormatter().getIndicator(0, i));
+                formattedLine.append(getFormatter().getIndicator(0, i));
             }
             for (int i = 0; i < indeterminateSize; i++) {
-                sb.append(getFormatter().getIntermediateIndicator(i, indeterminateSize, x, forward));
+                formattedLine.append(getFormatter().getIntermediateIndicator(i, indeterminateSize, x, forward));
             }
-            formattedLine.append(sb.toString(), NutsTextStyle.primary1());
-            int r = size - x - indeterminateSize;
-            sb.setLength(0);
+            int r = eSize - x - indeterminateSize;
+
             for (int i = 0; i < r; i++) {
-                sb.append(getFormatter().getIndicator(0, x + indeterminateSize + i));
+                formattedLine.append(getFormatter().getIndicator(0, x + indeterminateSize + i));
             }
-            formattedLine.append(sb.toString());
             formattedLine.append(getFormatter().getEnd());
-            return formattedLine.toString();
+            return formattedLine.build();
         } else {
             if (percent > 100) {
                 percent = 100 - percent;
             }
-            double d = (size / 100.0 * percent);
+            double d = (eSize / 100.0 * percent);
             int x = (int) d;
             float rest = (float) (d - x);
-            NutsTextBuilder formattedLine = NutsTexts.of(session).builder();
+            NutsTextBuilder formattedLine = txt.ofBuilder();
             formattedLine.append(getFormatter().getStart());
             if (x > 0) {
-                StringBuilder sb = new StringBuilder();
                 for (int i = 0; i < x; i++) {
-                    sb.append(getFormatter().getIndicator(1, i));
+                    formattedLine.append(getFormatter().getIndicator(1, i));
                 }
-                formattedLine.append(sb.toString(), NutsTextStyle.primary1());
             }
-            StringBuilder sb = new StringBuilder();
-            if (rest > 0 && (size - x) > 0) {
-                sb.append(getFormatter().getIndicator(rest, x));
-                for (int i = 0; i < size - x - 1; i++) {
-                    sb.append(getFormatter().getIndicator(0, x + 1 + i));
+            if (rest > 0 && (eSize - x) > 0) {
+                formattedLine.append(getFormatter().getIndicator(rest, x));
+                for (int i = 0; i < eSize - x - 1; i++) {
+                    formattedLine.append(getFormatter().getIndicator(0, x + 1 + i));
                 }
             } else {
-                for (int i = 0; i < size - x; i++) {
-                    sb.append(getFormatter().getIndicator(0, x + i));
+                for (int i = 0; i < eSize - x; i++) {
+                    formattedLine.append(getFormatter().getIndicator(0, x + i));
                 }
             }
-            formattedLine.append(sb.toString(), NutsTextStyle.primary1());
             formattedLine.append(getFormatter().getEnd());
-            return formattedLine.toString();
+            return formattedLine.build();
         }
     }
 
-    public String progressWithSessionNew(int percent) {
-        long now = System.currentTimeMillis();
-        if (now < lastPrint + minPeriod) {
-            return "";
-        }
-        lastPrint = now;
-        boolean indeterminate = percent < 0;
-        if (indeterminate) {
-            NutsTextBuilder formattedLine = NutsTexts.of(session).builder();
-            formattedLine.append(getFormatter().getStart());
-            int indeterminateSize = (int) (this.indeterminateSize * size);
-            boolean forward = true;
-            if (indeterminateSize >= size) {
-                indeterminateSize = size - 1;
-            }
-            if (indeterminateSize < 1) {
-                indeterminateSize = 1;
-            }
-            int x = 0;
-            if (indeterminateSize < size) {
-                int p = this.size - indeterminateSize;
-                int h = indeterminatePosition.evalIndeterminatePos(this, 2 * p);
-                if (h < 0) {
-                    h = -h;
-                }
-                x = h % (2 * p);//(int) ((s * 2 * size) / 60.0);
-                if (x >= p) {
-                    forward = false;
-                    x = 2 * p - x;
-                }
-            } else {
-                x = 0;
-            }
-
-            if (x < 0) {
-                x = 0;
-            }
-            StringBuilder sb = new StringBuilder();
-            for (int i = 0; i < x; i++) {
-                sb.append(getFormatter().getIndicator(0, i));
-            }
-            for (int i = 0; i < indeterminateSize; i++) {
-                sb.append(getFormatter().getIntermediateIndicator(i, indeterminateSize, x, forward));
-            }
-            formattedLine.append(sb.toString(), NutsTextStyle.primary1());
-            int r = size - x - indeterminateSize;
-            sb.setLength(0);
-            for (int i = 0; i < r; i++) {
-                sb.append(getFormatter().getIndicator(0, x + indeterminateSize + i));
-            }
-            formattedLine.append(sb.toString());
-            formattedLine.append(getFormatter().getEnd());
-            return formattedLine.toString();
-        } else {
-            if (percent > 100) {
-                percent = 100 - percent;
-            }
-            double d = (size / 100.0 * percent);
-            int x = (int) d;
-            float rest = (float) (d - x);
-            NutsTextBuilder formattedLine = NutsTexts.of(session).builder();
-            formattedLine.append(getFormatter().getStart());
-            StringBuilder sb = new StringBuilder();
-            if (x > 0) {
-                for (int i = 0; i < x; i++) {
-                    sb.append(getFormatter().getIndicator(1, i));
-                }
-            }
-            if (rest > 0 && (size - x) > 0) {
-                sb.append(getFormatter().getIndicator(rest, x));
-                for (int i = 0; i < size - x - 1; i++) {
-                    sb.append(getFormatter().getIndicator(0, x + 1 + i));
-                }
-            } else {
-                for (int i = 0; i < size - x; i++) {
-                    sb.append(getFormatter().getIndicator(0, x + i));
-                }
-            }
-            formattedLine.append(sb.toString(), NutsTextStyle.primary1());
-            formattedLine.append(getFormatter().getEnd());
-            return formattedLine.toString();
-        }
-    }
-
-    public void printProgress(int percent, String msg, NutsPrintStream out) {
-        String p = progress(percent, msg);
+    public void printProgress(int percent, NutsText msg, NutsPrintStream out) {
+        NutsText p = progress(percent, msg);
         if (p == null || p.isEmpty()) {
             return;
         }
         out.print(p);
     }
 
-    public String progress(int percent, String msg) {
-        StringBuilder sb = new StringBuilder();
+    public NutsText progress(int percent, NutsText msg) {
+        NutsTexts txt = NutsTexts.of(session);
+        NutsTextBuilder sb = txt.ofBuilder();
         if (maxMessage < columns) {
             maxMessage = columns;
         }
         int s2 = 0;
-        if (formatted) {
-            if (msg == null) {
-                msg = "";
-            }
-            NutsTexts txts = NutsTexts.of(session);
-            s2 = session == null ? msg.length() : txts.builder().append(msg).textLength();
-            if (isPrefixMoveLineStart()) {
-                if (optionNewline) {
-                    if (!isSuffixMoveLineStart()) {
-                        sb.append("\n");
-                    }
-                } else {
-                    sb.append(txts.ofCommand(NutsTerminalCommand.CLEAR_LINE));
-                    sb.append(txts.ofCommand(NutsTerminalCommand.MOVE_LINE_START));
-                }
-            }
-            String p = progress(percent);
-            if (p == null || p.isEmpty()) {
-                return "";
-            }
-            sb.append(p).append(" ");
-            sb.append(msg);
-            sb.append(CoreStringUtils.fillString(' ', maxMessage - s2));
-//            sb.append(" ");
-//            sb.append(maxMessage);
-//            if(maxMessage<s2){
-//                maxMessage=s2;
-//            }
-//            sb.append(" ");
-//            sb.append(maxMessage);
-            if (isSuffixMoveLineStart()) {
-                if (optionNewline) {
+        if (msg == null) {
+            msg = txt.ofPlain("");
+        }
+        s2 = msg.textLength();
+        if (isPrefixMoveLineStart()) {
+            if (optionNewline) {
+                if (!isSuffixMoveLineStart()) {
                     sb.append("\n");
-                } else {
-                    //FPrintCommands.runLaterResetLine(sb);
                 }
+            } else {
+                sb.append(txt.ofCommand(NutsTerminalCommand.CLEAR_LINE));
+                sb.append(txt.ofCommand(NutsTerminalCommand.MOVE_LINE_START));
             }
-        } else {
-            s2 = msg.length();
-            String p = progress(percent);
-            if (p == null || p.isEmpty()) {
-                return "";
+        }
+        NutsText p = progress(percent);
+        if (p == null) {
+            return txt.ofBlank();
+        }
+        sb.append(p).append(" ");
+        sb.append(msg);
+        sb.append(CoreStringUtils.fillString(' ', maxMessage - s2));
+        if (isSuffixMoveLineStart()) {
+            if (optionNewline) {
+                sb.append("\n");
             }
-            sb.append(p).append(" ");
-            sb.append(msg);
-            sb.append(CoreStringUtils.fillString(' ', maxMessage - s2));
-            sb.append(" ");
         }
         if (maxMessage < s2) {
             maxMessage = s2;
@@ -568,7 +628,7 @@ public class CProgressBar {
         if (maxMessage > maxColumns) {
             maxMessage = maxColumns;
         }
-        return sb.toString();
+        return sb.build();
     }
 
     public interface IndeterminatePosition {
@@ -589,14 +649,23 @@ public class CProgressBar {
         }
     }
 
-    public float getIndeterminateSize() {
+    public float getIndeterminateRatio() {
+        return indeterminateRatio;
+    }
+
+    public CProgressBar setIndeterminateRatio(float indeterminateRatio) {
+        if (indeterminateRatio <= 0 || indeterminateRatio >= 1) {
+            indeterminateRatio = 0.3f;
+        }
+        this.indeterminateRatio = indeterminateRatio;
+        return this;
+    }
+
+    public int getIndeterminateSize() {
         return indeterminateSize;
     }
 
-    public CProgressBar setIndeterminateSize(float indeterminateSize) {
-        if (indeterminateSize <= 0 || indeterminateSize >= 1) {
-            indeterminateSize = 0.3f;
-        }
+    public CProgressBar setIndeterminateSize(int indeterminateSize) {
         this.indeterminateSize = indeterminateSize;
         return this;
     }

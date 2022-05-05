@@ -104,7 +104,7 @@ nuts -w test --debug=5010 my-app
 
 * You may want to disable creation of shortcuts and desktop icons in development mode:
 ```sh 
-./nuts-dev ---!init-launchers
+./nuts-dev --!init-launchers
 ```
 
 

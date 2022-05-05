@@ -12,7 +12,7 @@ public class FormatOutputStreamSupport {
     private boolean formatEnabled = true;
     private NutsSession session;
     private NutsWorkspace ws;
-    private NutsTextWriteConfiguration writeConfiguration = new NutsTextWriteConfiguration();
+    private NutsTextTransformConfig writeConfiguration = new NutsTextTransformConfig();
     private NutsTextVisitor nutsTextNodeVisitor = node -> {
         nodeWriter.writeNode(node);
     };

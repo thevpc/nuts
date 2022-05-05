@@ -28,7 +28,7 @@ public class NutsLogRichFormatter extends Formatter {
         NutsLogRecord wRecord = NutsLogUtils.toNutsLogRecord(record, session);
         NutsTexts tf = NutsTexts.of(wRecord.getSession()).setSession(wRecord.getSession());
 
-        NutsTextBuilder sb = tf.builder();
+        NutsTextBuilder sb = tf.ofBuilder();
         String date = CoreNutsUtils.DEFAULT_DATE_TIME_FORMATTER.format(Instant.ofEpochMilli(wRecord.getMillis()));
 
         sb.append(tf.ofStyled(date, NutsTextStyle.pale()));
@@ -144,7 +144,7 @@ public class NutsLogRichFormatter extends Formatter {
         NutsMessage message = wRecord.getFormattedMessage();
         NutsString msgStr =
                 NutsTexts.of(wRecord.getSession())
-                        .toText(message);
+                        .ofText(message);
         sb.append(msgStr);
         if (wRecord.getTime() > 0) {
             sb.append(" (");

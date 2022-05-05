@@ -60,7 +60,7 @@ public class AnyNixNdi extends BaseSystemNdi {
                                 factory.ofStyled("force updating", NutsTextStyle.warn().append(NutsTextStyle.underlined())) :
                                 factory.ofStyled("force updating", NutsTextStyle.warn())
                         ,
-                        factory.builder().appendJoined(", ",
+                        factory.ofBuilder().appendJoined(", ",
                                 Arrays.stream(updatedPaths).map(x ->
                                         factory.ofStyled(x.getPath().getName(), NutsTextStyle.path())).collect(Collectors.toList())),
                         session.locations().getWorkspaceLocation()

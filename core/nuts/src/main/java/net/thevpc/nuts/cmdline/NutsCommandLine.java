@@ -547,4 +547,5 @@ public interface NutsCommandLine extends Iterable<NutsArgument>, NutsFormattable
      * @return reset this instance
      */
     NutsCommandLine add(String argument);
+    NutsCommandLine addAll(List<String> arguments);
 }

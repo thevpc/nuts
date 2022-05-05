@@ -66,7 +66,7 @@ public class XmlCodeHighlighter implements NutsCodeHighlighter {
                     break;
                 }
                 case StreamTokenizerExt.TT_COMMENTS: {
-                    nodes.add(txt.applyStyles(txt.ofPlain(st.image), NutsTextStyle.comments()));
+                    nodes.add(txt.ofStyled(st.image, NutsTextStyle.comments()));
                     break;
                 }
                 case NutsToken.TT_INT:
@@ -75,7 +75,7 @@ public class XmlCodeHighlighter implements NutsCodeHighlighter {
                 case NutsToken.TT_FLOAT:
                 case NutsToken.TT_DOUBLE:
                 case NutsToken.TT_BIG_DECIMAL:{
-                    nodes.add(txt.applyStyles(txt.ofPlain(st.image), NutsTextStyle.number()));
+                    nodes.add(txt.ofStyled(st.image, NutsTextStyle.number()));
                     break;
                 }
                 case StreamTokenizerExt.TT_WORD: {
@@ -106,11 +106,11 @@ public class XmlCodeHighlighter implements NutsCodeHighlighter {
                 case '>':
                 case '&':
                 case '=': {
-                    nodes.add(txt.applyStyles(txt.ofPlain(st.image), NutsTextStyle.separator()));
+                    nodes.add(txt.ofStyled(st.image, NutsTextStyle.separator()));
                     break;
                 }
                 default: {
-                    nodes.add(txt.applyStyles(txt.ofPlain(st.image), NutsTextStyle.separator()));
+                    nodes.add(txt.ofStyled(st.image, NutsTextStyle.separator()));
                 }
             }
             last.add(st.image == null ? "" : st.image);
@@ -139,14 +139,14 @@ public class XmlCodeHighlighter implements NutsCodeHighlighter {
     }
 
     public NutsText formatNodeName(String text, NutsTexts txt) {
-        return txt.applyStyles(txt.ofPlain(text), NutsTextStyle.keyword());
+        return txt.ofStyled(text, NutsTextStyle.keyword());
     }
 
     public NutsText formatNodeString(String text, NutsTexts txt) {
-        return txt.applyStyles(txt.ofPlain(text), NutsTextStyle.string());
+        return txt.ofStyled(text, NutsTextStyle.string());
     }
 
     public NutsText formatNodeSeparator(String text, NutsTexts txt) {
-        return txt.applyStyles(txt.ofPlain(text), NutsTextStyle.separator());
+        return txt.ofStyled(text, NutsTextStyle.separator());
     }
 }

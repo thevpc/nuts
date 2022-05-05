@@ -79,7 +79,7 @@ public class DefaultNutsApplicationExceptionHandler implements NutsApplicationEx
                 if (fm != null) {
                     session.eout().add(NutsElements.of(session).ofObject()
                             .set("app-id", session.getAppId() == null ? "" : session.getAppId().toString())
-                            .set("error", NutsTexts.of(session).toText(fm).filteredText())
+                            .set("error", NutsTexts.of(session).ofText(fm).filteredText())
                             .build()
                     );
                     if (showTrace) {
@@ -127,7 +127,7 @@ public class DefaultNutsApplicationExceptionHandler implements NutsApplicationEx
         if (showGui) {
             StringBuilder sb = new StringBuilder();
             if (fm != null) {
-                sb.append(NutsTexts.of(session).toText(fm).filteredText());
+                sb.append(NutsTexts.of(session).ofText(fm).filteredText());
             } else {
                 sb.append(m);
             }

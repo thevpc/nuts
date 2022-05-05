@@ -28,7 +28,7 @@ public class DefaultNutsTreeFormat extends DefaultFormatBase<NutsTreeFormat> imp
     public final NutsTreeNodeFormat TO_STRING_FORMATTER = new NutsTreeNodeFormat() {
         @Override
         public NutsString format(Object o, int depth, NutsSession session) {
-            return NutsTexts.of(session).builder().append(o).immutable();
+            return NutsTexts.of(session).ofBuilder().append(o).immutable();
         }
     };
     private NutsTreeNodeFormat formatter;
@@ -303,7 +303,7 @@ public class DefaultNutsTreeFormat extends DefaultFormatBase<NutsTreeFormat> imp
         if (vv.length == 0 || vv.length == 1) {
             return null;
         }
-        return Arrays.stream(vv).map(x -> NutsTexts.of(getSession()).toText(x)).toArray(NutsString[]::new);
+        return Arrays.stream(vv).map(x -> NutsTexts.of(getSession()).ofText(x)).toArray(NutsString[]::new);
     }
 
     private String getMultilineSeparator(NutsString key) {

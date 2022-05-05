@@ -7,9 +7,11 @@ package net.thevpc.nuts.runtime.standalone.workspace.cmd.exec;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.cmdline.NutsCommandLine;
+import net.thevpc.nuts.io.NutsPath;
 import net.thevpc.nuts.runtime.standalone.app.util.NutsAppUtils;
 import net.thevpc.nuts.text.NutsText;
 import net.thevpc.nuts.text.NutsTextStyle;
+import net.thevpc.nuts.text.NutsTextTransformConfig;
 import net.thevpc.nuts.text.NutsTexts;
 
 /**
@@ -41,15 +43,20 @@ public abstract class DefaultInternalNutsExecutableCommand extends AbstractNutsE
 
 
     @Override
-    public String getHelpText() {
+    public NutsText getHelpText() {
         NutsTexts txt = NutsTexts.of(getSession());
-        NutsText n = txt.parser().parseResource("/net/thevpc/nuts/runtime/command/" + name + ".ntf",
-                txt.parser().createLoader(getClass().getClassLoader())
-        );
+        NutsPath path = NutsPath.of("classpath://net/thevpc/nuts/runtime/command/" + name + ".ntf", getClass().getClassLoader(), session);
+        NutsText n = txt.parser().parse(path);
         if (n == null) {
-            return "no help found for " + name;
+            return super.getHelpText();
         }
-        return n.toString();
+        return txt.transform(n,
+                new NutsTextTransformConfig()
+                        .setProcessAll(true)
+                        .setRootLevel(1)
+                        .setImportClassLoader(getClass().getClassLoader())
+                        .setCurrentDir(path.getParent())
+        );
     }
 
     @Override
@@ -66,7 +73,7 @@ public abstract class DefaultInternalNutsExecutableCommand extends AbstractNutsE
         NutsTexts text = NutsTexts.of(session);
         if (getSession().isPlainOut()) {
             session.out().printlnf("[dry] %s%n",
-                    text.builder()
+                    text.ofBuilder()
                             .append("internal", NutsTextStyle.pale())
                             .append(" ")
                             .append(getName(), NutsTextStyle.primary5())
@@ -76,7 +83,7 @@ public abstract class DefaultInternalNutsExecutableCommand extends AbstractNutsE
         } else {
             session.out().printlnf(NutsMessage.ofCstyle(
                             "[dry] %s",
-                            text.builder()
+                            text.ofBuilder()
                                     .append("internal", NutsTextStyle.pale())
                                     .append(" ")
                                     .append(getName(), NutsTextStyle.primary5())

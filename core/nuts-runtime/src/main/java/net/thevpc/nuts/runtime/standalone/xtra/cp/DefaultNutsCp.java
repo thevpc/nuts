@@ -348,6 +348,11 @@ public class DefaultNutsCp implements NutsCp {
     }
 
     @Override
+    public String getStringResult() {
+        return new String(getByteArrayResult());
+    }
+
+    @Override
     public NutsCp run() {
         checkSession();
         NutsUtils.requireNonBlank(source,session,"source");
@@ -511,7 +516,7 @@ public class DefaultNutsCp implements NutsCp {
                 options.contains(NutsPathOption.LOG),
                 options.contains(NutsPathOption.TRACE),
                 getProgressFactory());
-        NutsText srcBaseMessage = NutsTexts.of(session).toText(srcBase);
+        NutsText srcBaseMessage = NutsTexts.of(session).ofText(srcBase);
         m.onStart(new DefaultNutsProgressEvent(srcBase,
                 NutsMessage.ofNtf(srcBaseMessage)
                 , 0, 0, 0, 0, f.files + f.folders, null, session, false));

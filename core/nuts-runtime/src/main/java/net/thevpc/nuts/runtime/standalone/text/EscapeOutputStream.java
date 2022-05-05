@@ -39,13 +39,13 @@ public class EscapeOutputStream extends BaseTransparentFilterOutputStream implem
     @Override
     public void write(int b) throws IOException {
         out.write(
-                AbstractNutsTextNodeParser.escapeText0(Character.toString((char) b)).getBytes()
+                DefaultNutsTexts.escapeText0(Character.toString((char) b)).getBytes()
         );
     }
 
     @Override
     public void write(byte[] b, int off, int len) throws IOException {
-        byte[] bytes = AbstractNutsTextNodeParser.escapeText0(new String(b, off, len)).getBytes();
+        byte[] bytes = DefaultNutsTexts.escapeText0(new String(b, off, len)).getBytes();
         out.write(bytes, 0, bytes.length);
     }
 

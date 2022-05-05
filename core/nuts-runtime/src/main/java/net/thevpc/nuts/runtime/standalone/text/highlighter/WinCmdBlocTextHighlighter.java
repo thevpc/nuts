@@ -284,7 +284,7 @@ public class WinCmdBlocTextHighlighter implements NutsCodeHighlighter {
             throw new IllegalArgumentException("was not expecting " + ar.peekChar() + " as part of word");
         }
         if (ret.get(0).getType() == NutsTextType.PLAIN && isOption(((NutsTextPlain) ret.get(0)).getText())) {
-            ret.set(0, txt.applyStyles(ret.get(0), NutsTextStyle.option()));
+            ret.set(0, txt.ofStyled(ret.get(0), NutsTextStyle.option()));
         }
         return ret.toArray(new NutsText[0]);
     }
@@ -482,7 +482,7 @@ public class WinCmdBlocTextHighlighter implements NutsCodeHighlighter {
                         expectedName = false;
                         if (all.size() > startIndex) {
                             if (isWord(all.get(startIndex))) {
-                                all.set(startIndex, txt.applyStyles(all.get(startIndex), NutsTextStyle.keyword(4)));
+                                all.set(startIndex, txt.ofStyled(all.get(startIndex), NutsTextStyle.keyword(4)));
                                 wasSpace = false;
                             }
                         }
@@ -681,7 +681,7 @@ public class WinCmdBlocTextHighlighter implements NutsCodeHighlighter {
                     if (first) {
                         int i = indexOfFirstWord(all, startIndex);
                         if (i >= 0) {
-                            all.set(i, txt.applyStyles(all.get(i), NutsTextStyle.keyword()));
+                            all.set(i, txt.ofStyled(all.get(i), NutsTextStyle.keyword()));
                         }
                     }
                 } else {

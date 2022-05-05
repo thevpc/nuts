@@ -9,6 +9,9 @@ import net.thevpc.nuts.*;
 import net.thevpc.nuts.cmdline.NutsArgument;
 import net.thevpc.nuts.cmdline.NutsCommandLine;
 import net.thevpc.nuts.runtime.standalone.executor.system.NutsSysExecUtils;
+import net.thevpc.nuts.text.NutsText;
+import net.thevpc.nuts.text.NutsTextStyle;
+import net.thevpc.nuts.text.NutsTexts;
 
 import java.nio.file.Path;
 import java.util.ArrayList;
@@ -113,13 +116,13 @@ public class DefaultNutsOpenExecutable extends AbstractNutsExecutableCommand {
     }
 
     @Override
-    public String getHelpText() {
+    public NutsText getHelpText() {
         switch (execSession.env().getOsFamily()) {
             case WINDOWS: {
-                return "No help available. Try " + getName() + " /help";
+                return NutsTexts.of(session).ofStyled("No help available. Try " + getName() + " /help", NutsTextStyle.error());
             }
             default: {
-                return "No help available. Try 'man " + getName() + "' or '" + getName() + " --help'";
+                return NutsTexts.of(session).ofStyled("No help available. Try 'man " + getName() + "' or '" + getName() + " --help'",NutsTextStyle.error());
             }
         }
     }
@@ -132,4 +135,8 @@ public class DefaultNutsOpenExecutable extends AbstractNutsExecutableCommand {
         return "open --with " + effectiveOpenExecutable[0] + " " + NutsCommandLine.of(cmd);
     }
 
+    @Override
+    public NutsSession getSession() {
+        return session;
+    }
 }

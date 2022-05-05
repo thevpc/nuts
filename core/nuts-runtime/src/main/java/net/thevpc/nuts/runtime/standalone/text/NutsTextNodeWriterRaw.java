@@ -12,17 +12,17 @@ public class NutsTextNodeWriterRaw {
 
     private final NutsSession session;
     private final List<NutsText> items = new ArrayList<>();
-    private NutsTextWriteConfiguration config;
+    private NutsTextTransformConfig config;
 
     public NutsTextNodeWriterRaw(NutsSession session) {
         this.session = session;
     }
 
-    public NutsTextWriteConfiguration getWriteConfiguration() {
+    public NutsTextTransformConfig getWriteConfiguration() {
         return config;
     }
 
-    public NutsTextNodeWriterRaw setWriteConfiguration(NutsTextWriteConfiguration config) {
+    public NutsTextNodeWriterRaw setWriteConfiguration(NutsTextTransformConfig config) {
         this.config = config;
         return this;
     }
@@ -35,16 +35,16 @@ public class NutsTextNodeWriterRaw {
         flattenNode(node, getWriteConfiguration());
     }
 
-    public void flattenNode(NutsText node, NutsTextWriteConfiguration ctx) {
+    public void flattenNode(NutsText node, NutsTextTransformConfig ctx) {
         flattenNode(node, ctx, null);
     }
 
-    private void flattenNode(NutsText node, NutsTextWriteConfiguration ctx, NutsTextStyles style) {
+    private void flattenNode(NutsText node, NutsTextTransformConfig ctx, NutsTextStyles style) {
         if (node == null) {
             return;
         }
         if (ctx == null) {
-            ctx = new NutsTextWriteConfiguration();
+            ctx = new NutsTextTransformConfig();
         }
         switch (node.getType()) {
             case PLAIN:
@@ -82,13 +82,13 @@ public class NutsTextNodeWriterRaw {
             }
             case TITLE: {
                 DefaultNutsTextTitle s = (DefaultNutsTextTitle) node;
-                if (ctx.isTitleNumberEnabled()) {
-                    NutsTextNumbering seq = ctx.getTitleNumberSequence();
+                if (ctx.isProcessTitleNumbers()) {
+                    NutsTitleSequence seq = ctx.getTitleNumberSequence();
                     if (seq == null) {
                         seq = NutsTexts.of(session).ofNumbering();
                         ctx.setTitleNumberSequence(seq);
                     }
-                    NutsTextNumbering a = seq.newLevel(s.getTextStyleCode().length());
+                    NutsTitleSequence a = seq.next(s.getTextStyleCode().length());
                     String ts = a.toString() + " ";
                     flattenNode(NutsTexts.of(session).ofPlain(ts), ctx, NutsTextStyles.of(NutsTextStyle.title(s.getLevel())));
                 }
@@ -107,9 +107,9 @@ public class NutsTextNodeWriterRaw {
             case LINK: {
                 DefaultNutsTextLink s = (DefaultNutsTextLink) node;
                 if (!ctx.isFiltered()) {
-                    flattenNode(NutsTexts.of(session).ofPlain(s.getValue()), ctx, NutsTextStyles.of(NutsTextStyle.primary1()));//
+                    flattenNode(NutsTexts.of(session).ofPlain(s.getText()), ctx, NutsTextStyles.of(NutsTextStyle.primary1()));//
                 } else {
-                    flattenNode(NutsTexts.of(session).ofPlain(s.getValue()), ctx, style);//
+                    flattenNode(NutsTexts.of(session).ofPlain(s.getText()), ctx, style);//
                 }
                 break;
             }

@@ -68,7 +68,7 @@ public class DefaultProjectTemplate implements ProjectTemplate {
                         .resetLine()
                         .forString(
                                 NutsMessage.ofNtf(
-                                        NutsTexts.of(getSession()).builder()
+                                        NutsTexts.of(getSession()).ofBuilder()
                                                 .append(propertyTitle, NutsTextStyle.primary4())
                                                 .append(" (")
                                                 .append(propName, NutsTextStyle.pale())

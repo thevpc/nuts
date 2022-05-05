@@ -10,26 +10,26 @@ njob ( add | remove | update | show | list ) task  <-options>...
 
 ####) add task:
 ```sh
-njob tasks|t add|a [<-options>] <job-name>
+njob tasks|t add|a [<-options>] <task-name>
 ```
     on <start-date>
     at <start-time>
     for <project>
     obs <observations>
 
-    add new job
+    add new task
 
 ####) remove task:
 ```sh
-njob tasks|t remove|rm <job-id> ...
+njob tasks|t remove|rm <task-id> ...
 ```
     remove tasks
 
 ####) show task:
 ```sh
-njob tasks|j show|s <job-id> ...
+njob tasks|j show|s <task-id> ...
 ```
-    show job details
+    show task details
 
 
 ####) list tasks:
@@ -43,13 +43,13 @@ njob tasks|j list|l [<-options>]
     ```sh -w=<n>  ``` : last <n> weeks
     ```sh -m=<n>  ``` : last <n> months
     ```sh -l=<n>  ``` : last <n> tasks
-    ```sh -u|--unit=<unit-name>  ``` : show duration in <unit-name> (h,d,mn,s,... are valid unit names)
+    ```sh -u|--unit=<unit-name>  ```   : show duration in <unit-name> (h,d,mn,s,... are valid unit names)
     ```sh -g|--group-by=p|project ```  : group by project name
-    ```sh -g|--group-by=n|name  ``` : group by job name
-    ```sh -g|--group-by=s|summary ``` : show one row summary
-    ```sh -p=<s-expr> ```     : filter by project name /../ is used for regexps, '*' is supported in non regexp.
-    ```sh -n=<s-expr> ```     : filter by job name /../ is used for regexps, '*' is supported in non regexp.
-    ```sh -c=<s-expr> ```     : filter by customer name /../ is used for regexps, '*' is supported in non regexp.
-    ```sh -C=<s-expr> ```     : filter by company name /../ is used for regexps, '*' is supported in non regexp.
+    ```sh -g|--group-by=n|name  ```    : group by job name
+    ```sh -g|--group-by=s|summary ```  : show one row summary
+    ```sh -p=<s-expr> ```     : filter by project name ```string /../``` is used for regexps, ```string '*'``` is supported in non regexp.
+    ```sh -n=<s-expr> ```     : filter by job name ```string /../``` is used for regexps, ```string '*'``` is supported in non regexp.
+    ```sh -c=<s-expr> ```     : filter by customer name ```string /../``` is used for regexps, ```string '*'``` is supported in non regexp.
+    ```sh -C=<s-expr> ```     : filter by company name ```string /../``` is used for regexps, ```string '*'``` is supported in non regexp.
     ```sh -d=<t-expr> ```     : filter by duration. can start with '<' and other operators
     ```sh -t=<t-expr> ```     : filter by start date. can start with '<' and other operators. accept periods as well.

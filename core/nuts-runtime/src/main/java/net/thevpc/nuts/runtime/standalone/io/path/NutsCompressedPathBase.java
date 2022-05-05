@@ -52,6 +52,7 @@ public class NutsCompressedPathBase extends NutsPathBase {
     public static String compressUrl(String path, NutsSession session) {
         NutsPathParts p = new NutsPathParts(path, session);
         switch (p.getType()) {
+            case FILE_URL:
             case URL: {
                 return new NutsPathParts(
                         p.getType(),
@@ -69,9 +70,6 @@ public class NutsCompressedPathBase extends NutsPathBase {
             }
             case FILE: {
                 return NutsPathParts.compressLocalPath(p.getLocation());
-            }
-            case FILE_URL: {
-                return "file:" + NutsPathParts.compressLocalPath(p.getLocation());
             }
             case EMPTY:
                 return "";

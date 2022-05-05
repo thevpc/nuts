@@ -88,7 +88,7 @@ public class NutsResourcePath implements NutsPathSPI {
     }
     protected static NutsString rebuildURL2(NutsString location, NutsId[] ids,NutsSession session) {
         NutsTexts txt = NutsTexts.of(session);
-        NutsTextBuilder sb = txt.builder();
+        NutsTextBuilder sb = txt.ofBuilder();
         sb.append("nuts-resource://",NutsTextStyle.path());
         boolean complex = Arrays.stream(ids).map(Object::toString).anyMatch(x -> x.contains(";") || x.contains("/"));
         if (complex) {
@@ -514,7 +514,7 @@ public class NutsResourcePath implements NutsPathSPI {
         public NutsString asFormattedString() {
             String path = p.path;
             NutsTexts text = NutsTexts.of(p.getSession());
-            NutsTextBuilder tb = text.builder();
+            NutsTextBuilder tb = text.ofBuilder();
             tb.append("nuts-resource://", NutsTextStyle.primary1());
             if (path.startsWith("nuts-resource://(")) {
                 tb.append("(", NutsTextStyle.separator());
@@ -537,7 +537,7 @@ public class NutsResourcePath implements NutsPathSPI {
                     tb.append(")", NutsTextStyle.separator());
                     tb.append(path.substring(x + 1), NutsTextStyle.path());
                 } else {
-                    return text.toText(path);
+                    return text.ofText(path);
                 }
             } else if (path.startsWith("nuts-resource://")) {
                 int x = path.indexOf('/', "nuts-resource://".length());
@@ -551,10 +551,10 @@ public class NutsResourcePath implements NutsPathSPI {
                     }
                     tb.append(path.substring(x), NutsTextStyle.path());
                 } else {
-                    return text.toText(path);
+                    return text.ofText(path);
                 }
             } else {
-                return text.toText(path);
+                return text.ofText(path);
             }
             return tb.toText();
         }

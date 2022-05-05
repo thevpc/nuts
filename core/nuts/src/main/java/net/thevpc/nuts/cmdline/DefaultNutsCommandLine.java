@@ -647,7 +647,7 @@ public class DefaultNutsCommandLine implements NutsCommandLine {
             }
             throw new IllegalArgumentException(NutsMessage.ofCstyle("%s", commandName, message).toString());
         }
-        NutsTextBuilder m = NutsTexts.of(session).builder();
+        NutsTextBuilder m = NutsTexts.of(session).ofBuilder();
         if (!NutsBlankable.isBlank(commandName)) {
             m.append(commandName).append(" : ");
         }
@@ -755,7 +755,7 @@ public class DefaultNutsCommandLine implements NutsCommandLine {
     private boolean isPrefixed(String[] nameSeqArray) {
         for (int i = 0; i < nameSeqArray.length - 1; i++) {
             NutsArgument x = get(i).orNull();
-            if (x == null || !x.asString().equals(nameSeqArray[i])) {
+            if (x == null || !x.asString().orElse("").equals(nameSeqArray[i])) {
                 return false;
             }
         }
@@ -881,7 +881,7 @@ public class DefaultNutsCommandLine implements NutsCommandLine {
                         }
                         lookahead.add(createArgument(createExpandedSimpleOption(start, negate, nextArg)));
                         i = chars.length;
-                    } else if (isPunctuation(chars[i])) {
+                    } else if ((last == null && !DefaultNutsArgument.isKeyStart(chars[i])) || (last != null && !DefaultNutsArgument.isKeyPart(chars[i]))) {
                         StringBuilder sb = new StringBuilder();
                         if (last != null) {
                             sb.append(last);
@@ -931,8 +931,20 @@ public class DefaultNutsCommandLine implements NutsCommandLine {
     }
 
     private boolean isPunctuation(char c) {
-        int t = Character.getType(c);
-        return t != Character.LOWERCASE_LETTER && t != Character.UPPERCASE_LETTER && t != Character.TITLECASE_LETTER;
+        switch (Character.getType(c)) {
+            case Character.DASH_PUNCTUATION:
+            case Character.OTHER_PUNCTUATION:
+            case Character.CONNECTOR_PUNCTUATION:
+            case Character.END_PUNCTUATION:
+            case Character.SPACE_SEPARATOR:
+            case Character.START_PUNCTUATION:
+            case Character.LINE_SEPARATOR:
+            case Character.PARAGRAPH_SEPARATOR:
+            case Character.MODIFIER_SYMBOL:
+            case Character.CONTROL:
+                return true;
+        }
+        return false;
     }
 
     @Override
@@ -1104,6 +1116,16 @@ public class DefaultNutsCommandLine implements NutsCommandLine {
     public NutsCommandLine add(String argument) {
         if (argument != null) {
             args.add(argument);
+        }
+        return this;
+    }
+
+    @Override
+    public NutsCommandLine addAll(List<String> arguments) {
+        if (arguments != null) {
+            for (String argument : arguments) {
+                add(argument);
+            }
         }
         return this;
     }

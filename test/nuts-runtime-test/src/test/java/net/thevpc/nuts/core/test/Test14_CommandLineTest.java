@@ -6,6 +6,7 @@
 package net.thevpc.nuts.core.test;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.cmdline.DefaultNutsCommandLine;
 import net.thevpc.nuts.cmdline.NutsArgument;
 import net.thevpc.nuts.cmdline.NutsCommandLine;
 import net.thevpc.nuts.core.test.utils.TestUtils;
@@ -232,11 +233,19 @@ public class Test14_CommandLineTest {
         }
         Assertions.assertEquals(2,x);
     }
+
     @Test
     public void testArgument12(){
         String s="-Dcatalina.base=/home/vpc/.config/nuts/default-workspace/config/id/net/thevpc/nuts/toolbox/ntomcat/SHARED/catalina-base-10.0/default";
         DefaultNutsArgument a=new DefaultNutsArgument(s);
         Assertions.assertEquals("-Dcatalina.base",a.getStringKey().get());
+    }
+
+    @Test
+    public void testArgument13(){
+        NutsCommandLine c=new DefaultNutsCommandLine(new String[]{"-1=15"}).setExpandSimpleOptions(true);
+        NutsArgument a = c.next().get();
+        Assertions.assertEquals("-1",a.getStringKey().get());
     }
 
     private static void checkDefaultNutsArgument(NutsArgument a, boolean active, boolean option, boolean keyValue, boolean negated

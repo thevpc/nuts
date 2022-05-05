@@ -132,7 +132,7 @@ public class DefaultNutsWorkspaceConfigModel {
         this.bootClassWorldURLs = CoreCollectionUtils.nonNullList(bOptions.getClassWorldURLs().orNull());
         workspaceSystemTerminalAdapter = new WorkspaceSystemTerminalAdapter(ws);
 
-        this.pathExpansionConverter = new NutsWorkspaceVarExpansionFunction(NutsSessionUtils.defaultSession(ws));
+        this.pathExpansionConverter = NutsWorkspaceVarExpansionFunction.of(NutsSessionUtils.defaultSession(ws));
         this.bootModel = (DefaultNutsBootModel) ((DefaultNutsBootManager) ws.boot()).getModel();
         addPathFactory(new FilePath.FilePathFactory(ws));
         addPathFactory(new ClassLoaderPath.ClasspathFactory(ws));

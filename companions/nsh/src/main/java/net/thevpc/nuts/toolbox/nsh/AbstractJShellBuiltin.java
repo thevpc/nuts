@@ -110,7 +110,7 @@ public abstract class AbstractJShellBuiltin implements JShellBuiltin {
             throw new NutsExecutionException(context.getSession(),ex.getFormattedMessage(),ex,254);
         } catch (Exception ex) {
             throw new NutsExecutionException(context.getSession(),
-                    NutsMessage.ofNtf(NutsTexts.of(context.getSession()).toText(ex).toString())
+                    NutsMessage.ofNtf(NutsTexts.of(context.getSession()).ofText(ex).toString())
                     ,ex,254);
         }
     }

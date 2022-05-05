@@ -550,7 +550,7 @@ public class JShell {
     }
 
     protected void printHeader(NutsPrintStream out) {
-        out.resetLine().println(NutsTexts.of(appContext.getSession()).builder()
+        out.resetLine().println(NutsTexts.of(appContext.getSession()).ofBuilder()
                 .appendCode("sh", "nuts")
                 .append(" shell ")
                 .append("v" + getRootContext().getWorkspace().getRuntimeId().getVersion().toString(), NutsTextStyle.version())

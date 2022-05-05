@@ -16,6 +16,8 @@ public class TimePeriod implements Comparable<TimePeriod> {
 //        System.out.println("1ms".matches("(<?val>([0-9]+([.][0-9]+)?))[ ]*(<?unit>([a-zA-Z]+))"));
 //        System.out.println("1".matches("(?<a>[0-9])"));
 //    }
+    private TimePeriod() {
+    }
     public TimePeriod(double count, ChronoUnit unit) {
         this.count = count;
         this.unit = unit;

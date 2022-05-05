@@ -37,7 +37,7 @@ public class UnescapeOutputStream extends BaseTransparentFilterOutputStream impl
 
     private String filterThanEscape(String b) throws IOException {
         NutsTexts txt = NutsTexts.of(session);
-        String filtered = txt.builder().append(b).filteredText();
+        String filtered = txt.ofBuilder().append(b).filteredText();
         return txt.ofPlain(filtered).toString();
 //        return ws.text().escapeText(
 //                ws.text().filterText(b)

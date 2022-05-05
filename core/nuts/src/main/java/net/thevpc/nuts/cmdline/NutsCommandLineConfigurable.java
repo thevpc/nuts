@@ -25,6 +25,11 @@
  */
 package net.thevpc.nuts.cmdline;
 
+import net.thevpc.nuts.NutsSession;
+
+import java.util.function.Function;
+import java.util.function.Supplier;
+
 /**
  * Configurable interface define a extensible way to configure nuts commands
  * and objects using simple argument line options.
@@ -68,11 +73,5 @@ public interface NutsCommandLineConfigurable {
     boolean configureFirst(NutsCommandLine commandLine);
 
     void configureLast(NutsCommandLine commandLine);
-//    default void configureLast(NutsCommandLine commandLine) {
-//        if (!configureFirst(commandLine)) {
-//            commandLine.throwUnexpectedArgument(session);
-//        }
-//    }
-
 
 }

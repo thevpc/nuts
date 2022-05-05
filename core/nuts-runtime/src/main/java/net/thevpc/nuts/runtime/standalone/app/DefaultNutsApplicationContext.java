@@ -10,7 +10,9 @@ import net.thevpc.nuts.runtime.standalone.util.NutsConfigurableHelper;
 import net.thevpc.nuts.runtime.standalone.util.jclass.JavaClassUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.NutsWorkspaceExt;
 import net.thevpc.nuts.runtime.standalone.workspace.NutsWorkspaceUtils;
+import net.thevpc.nuts.text.NutsText;
 import net.thevpc.nuts.text.NutsTextStyle;
+import net.thevpc.nuts.text.NutsTextTransformConfig;
 import net.thevpc.nuts.text.NutsTexts;
 import net.thevpc.nuts.util.NutsUtils;
 
@@ -183,7 +185,12 @@ public class DefaultNutsApplicationContext implements NutsApplicationContext {
 
     @Override
     public void printHelp() {
-        String h = NutsWorkspaceExt.of(getWorkspace()).resolveDefaultHelp(getAppClass(), session);
+        NutsText h = NutsWorkspaceExt.of(getWorkspace()).resolveDefaultHelp(getAppClass(), session);
+        h=NutsTexts.of(session).transform(h,new NutsTextTransformConfig()
+                .setProcessTitleNumbers(true)
+                .setNormalize(true)
+                .setFlatten(true)
+        );
         if (h == null) {
             getSession().out().printlnf("Help is %s.", NutsTexts.of(getSession()).ofStyled("missing", NutsTextStyle.error()));
         } else {

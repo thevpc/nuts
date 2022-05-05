@@ -90,7 +90,7 @@ class SshNutsPath implements NutsPathSPI {
                 NutsTextStyle _nbr = NutsTextStyle.number();
 //        if(true) {
                 NutsTexts text = NutsTexts.of(session);
-                NutsTextBuilder sb = text.builder();
+                NutsTextBuilder sb = text.ofBuilder();
                 String user = path.getUser();
                 String host = path.getHost();
                 int port = path.getPort();

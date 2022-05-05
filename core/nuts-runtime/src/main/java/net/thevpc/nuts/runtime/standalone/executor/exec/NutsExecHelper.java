@@ -105,7 +105,7 @@ public class NutsExecHelper extends AbstractSyncIProcessExecHelper {
                 .orElse(false)) {
             if (prepareTerminal.out().mode() == NutsTerminalMode.FORMATTED) {
                 prepareTerminal.out().printf("%s ", NutsTexts.of(session).ofStyled("[exec]", NutsTextStyle.primary4()));
-                prepareTerminal.out().println(NutsTexts.of(session).toText(commandOut));
+                prepareTerminal.out().println(NutsTexts.of(session).ofText(commandOut));
             } else {
                 prepareTerminal.out().print("exec ");
                 prepareTerminal.out().printf("%s%n", commandOut);

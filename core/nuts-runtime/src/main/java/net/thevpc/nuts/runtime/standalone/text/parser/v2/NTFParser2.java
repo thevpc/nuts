@@ -183,9 +183,14 @@ public class NTFParser2 extends AbstractNutsTextNodeParser {
                                                     wasNewLine && (mode == StepEnum.TEXT || mode == StepEnum.COMPOSITE_STYLE)
                                                     , m -> {
                                                         wasNewLine = false;
+                                                        String s = m.get();
                                                         q.read(m.count());
+                                                        if(q.hasNext() && q.peek()==' '){
+                                                            //ignore leading space!
+                                                            q.read();
+                                                        }
                                                         NutsText p = pushUp(consumeBuffer());
-                                                        pushTitle(m.get().length() - 1);
+                                                        pushTitle(s.length() - 1);
                                                         if (p != null) {
                                                             ret.set(p);
                                                         }
@@ -193,6 +198,7 @@ public class NTFParser2 extends AbstractNutsTextNodeParser {
                                             .onFullMatch(SHARPS[simpleLvl] + "($|[^#])",
                                                     mode == StepEnum.SIMPLE_STYLE,
                                                     m -> {
+                                                        wasNewLine = false;
                                                         q.read(SHARPS[simpleLvl].length()); //ignore extra
                                                         ret.set(pushUpSimpleStyle());
                                                     }
@@ -200,8 +206,8 @@ public class NTFParser2 extends AbstractNutsTextNodeParser {
                                             .onFullMatch("##{" + (simpleLvl + 1) + ",}",
                                                     mode == StepEnum.SIMPLE_STYLE,
                                                     m -> {
-                                                        q.read(m.count());
                                                         wasNewLine = false;
+                                                        q.read(m.count());
                                                         NutsText p = pushUp(consumeBuffer());
                                                         pushSimpleStyle(m.count() - 1);
                                                         if (p != null) {
@@ -222,7 +228,10 @@ public class NTFParser2 extends AbstractNutsTextNodeParser {
                                                         }
                                                     }
                                             )
-                                            .onNoMatch(() -> buffer.append(q.read()))
+                                            .onNoMatch(() -> {
+                                                wasNewLine = false;
+                                                buffer.append(q.read());
+                                            })
                                             .onMatch(c -> ret.set(null))
                                             .onPartialMatch(c -> ret.set(null))
                             );
@@ -237,6 +246,7 @@ public class NTFParser2 extends AbstractNutsTextNodeParser {
                         if (mode == StepEnum.CODE) {
                             String s = q.peek(4);
                             if (s.length() == 4) {
+                                wasNewLine = false;
                                 if (s.equals("\\```")) {
                                     q.read();
                                     buffer.append(q.read());
@@ -245,6 +255,7 @@ public class NTFParser2 extends AbstractNutsTextNodeParser {
                                 }
                             } else {
                                 if (q.isEOF()) {
+                                    wasNewLine = false;
                                     buffer.append(q.read());
                                 } else {
                                     return null;
@@ -255,26 +266,31 @@ public class NTFParser2 extends AbstractNutsTextNodeParser {
                             if (s.length() == 2) {
                                 switch (s.charAt(1)) {
                                     case '\\': {
+                                        wasNewLine = false;
                                         q.read(2);
                                         buffer.append("\\");
                                         break;
                                     }
                                     case '#': {
+                                        wasNewLine = false;
                                         q.read(2);
                                         buffer.append("#");
                                         break;
                                     }
                                     case '\u001E': {
+                                        wasNewLine = false;
                                         //just ignore
                                         q.read(2);
                                         break;
                                     }
                                     default: {
+                                        wasNewLine = false;
                                         buffer.append(q.read(2));
                                     }
                                 }
                             } else {
                                 if (q.isEOF()) {
+                                    wasNewLine = false;
                                     buffer.append(q.read());
                                 } else {
                                     return null;
@@ -285,9 +301,11 @@ public class NTFParser2 extends AbstractNutsTextNodeParser {
                     }
                     case '\u001E': {
                         if (mode == StepEnum.CODE) {
+                            wasNewLine = false;
                             buffer.append(q.read());
                         } else {
                             // just ignore
+                            wasNewLine = false;
                             q.read();
                         }
                         break;
@@ -295,10 +313,12 @@ public class NTFParser2 extends AbstractNutsTextNodeParser {
                     case '\r':
                     case '\n': {
                         if (mode == StepEnum.CODE) {
+                            wasNewLine = false;
                             buffer.append(q.read());
                         } else if (mode == StepEnum.TITLE) {
                             String s = q.readNewLine(true);
                             if (s != null) {
+                                wasNewLine = false;
                                 return pushUpTitle();
                             }
                             return null;
@@ -314,14 +334,19 @@ public class NTFParser2 extends AbstractNutsTextNodeParser {
                         break;
                     }
                     case '`': {
-                        NutsStringMatchResult n = q.peekPattern("```($|[^`])", fully);
+                        NutsStringMatchResult n = q.peekPattern("```", fully);
                         if (mode == StepEnum.CODE) {
                             switch (n.mode()) {
                                 case FULL_MATCH: {
+                                    wasNewLine = false;
                                     q.read(3); // ignore extra // n.count()
+//                                    if(containsNewline(buffer.toString().toCharArray())) {
+//                                        q.readNewLine(true);
+//                                    }
                                     return pushUpCode();
                                 }
                                 case NO_MATCH: {
+                                    wasNewLine = false;
                                     buffer.append(q.read());
                                     break;
                                 }
@@ -336,11 +361,13 @@ public class NTFParser2 extends AbstractNutsTextNodeParser {
                                     NutsText p = pushUp(consumeBuffer());
                                     pushCode();
                                     if (p != null) {
+                                        wasNewLine = false;
                                         return p;
                                     }
                                     break;
                                 }
                                 case NO_MATCH: {
+                                    wasNewLine = false;
                                     buffer.append(q.read(n.count()));
                                     break;
                                 }
@@ -352,6 +379,7 @@ public class NTFParser2 extends AbstractNutsTextNodeParser {
                         break;
                     }
                     default: {
+                        wasNewLine = false;
                         buffer.append(q.read());
                     }
                 }
@@ -518,5 +546,14 @@ public class NTFParser2 extends AbstractNutsTextNodeParser {
     @Override
     public boolean isIncomplete() {
         return q.length() > 0 || buffer.length() > 0 || !stackedStyles.isEmpty();
+    }
+
+    private static boolean containsNewline(char[] all){
+        for (char c : all) {
+            if(c=='\n' || c=='\r'){
+                return true;
+            }
+        }
+        return false;
     }
 }

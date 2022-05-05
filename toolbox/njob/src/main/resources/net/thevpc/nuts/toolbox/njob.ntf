@@ -6,10 +6,12 @@ is a productivity tool to follow you tasks
 njob tasks | jobs | projects | summary...
 ```
     manage tasks, jobs, projects
+    a project aggregates multiple jobs
+    a job aggregates multiple tasks
+    a task has a status and priority
 
-
-#!include</net/thevpc/nuts/toolbox/njob-jobs.ntf>
-#!include</net/thevpc/nuts/toolbox/njob-tasks.ntf>
-#!include</net/thevpc/nuts/toolbox/njob-projects.ntf>
+```!include classpath:/net/thevpc/nuts/toolbox/njob-jobs.ntf```
+```!include classpath:/net/thevpc/nuts/toolbox/njob-tasks.ntf```
+```!include classpath:/net/thevpc/nuts/toolbox/njob-projects.ntf```
 
 

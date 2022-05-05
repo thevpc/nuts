@@ -14,6 +14,9 @@ import net.thevpc.nuts.cmdline.NutsCommandLine;
 import net.thevpc.nuts.io.NutsPath;
 import net.thevpc.nuts.runtime.standalone.executor.system.ProcessExecHelper;
 import net.thevpc.nuts.runtime.standalone.util.collections.CoreCollectionUtils;
+import net.thevpc.nuts.text.NutsText;
+import net.thevpc.nuts.text.NutsTextStyle;
+import net.thevpc.nuts.text.NutsTexts;
 
 import java.util.HashMap;
 import java.util.List;
@@ -46,7 +49,7 @@ public class DefaultNutsSystemExecutable extends AbstractNutsExecutableCommand {
         NutsCommandLine cmdLine = NutsCommandLine.of(this.executorOptions);
         while (cmdLine.hasNext()) {
             NutsArgument a = cmdLine.peek().get(session);
-            switch(a.getStringKey().orElse("")) {
+            switch (a.getStringKey().orElse("")) {
                 case "--show-command": {
                     showCommand = cmdLine.nextBooleanValueLiteral().get(session);
                     break;
@@ -71,7 +74,7 @@ public class DefaultNutsSystemExecutable extends AbstractNutsExecutableCommand {
         }
         return ProcessExecHelper.ofArgs(null,
                 execCommand.getCommand().toArray(new String[0]), e2,
-                execCommand.getDirectory()==null?null: NutsPath.of(execCommand.getDirectory(),session).toFile(),
+                execCommand.getDirectory() == null ? null : NutsPath.of(execCommand.getDirectory(), session).toFile(),
                 session.getTerminal(),
                 execSession.getTerminal(), showCommand, true, execCommand.getSleepMillis(),
                 inheritSystemIO,
@@ -81,9 +84,6 @@ public class DefaultNutsSystemExecutable extends AbstractNutsExecutableCommand {
                 execCommand.getRunAs(),
                 session);
     }
-
-
-
 
 
     @Override
@@ -97,13 +97,20 @@ public class DefaultNutsSystemExecutable extends AbstractNutsExecutableCommand {
     }
 
     @Override
-    public String getHelpText() {
+    public NutsText getHelpText() {
         switch (execSession.env().getOsFamily()) {
             case WINDOWS: {
-                return "No help available. Try " + getName() + " /help";
+                return NutsTexts.of(session).ofStyled(
+                        "No help available. Try " + getName() + " /help",
+                        NutsTextStyle.error()
+                );
             }
             default: {
-                return "No help available. Try 'man " + getName() + "' or '" + getName() + " --help'";
+                return
+                        NutsTexts.of(session).ofStyled(
+                                "No help available. Try 'man " + getName() + "' or '" + getName() + " --help'",
+                                NutsTextStyle.error()
+                        );
             }
         }
     }
@@ -113,4 +120,8 @@ public class DefaultNutsSystemExecutable extends AbstractNutsExecutableCommand {
         return execCommand.getRunAs() + " " + NutsCommandLine.of(cmd).toString();
     }
 
+    @Override
+    public NutsSession getSession() {
+        return session;
+    }
 }

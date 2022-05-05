@@ -38,7 +38,7 @@ public class Test16_TerminalProgressTest {
 
     @BeforeAll
     public static void init() {
-        session = TestUtils.openNewMinTestWorkspace();
+        session = TestUtils.openNewMinTestWorkspace("--progress");
     }
 
 
@@ -52,21 +52,9 @@ public class Test16_TerminalProgressTest {
 
     @Test
     public void test2() {
-        CProgressBar rr = new CProgressBar(null);
-        rr.setFormatter(CProgressBar.CIRCLES2);
+        CProgressBar rr = CProgressBar.of(session);
         rr.setMinPeriod(-1);
-        for (CProgressBar.Formatter formatter : new CProgressBar.Formatter[]{
-//            CProgressBar.CIRCLES2,
-//            CProgressBar.CIRCLES,
-//            CProgressBar.DOTS1,
-//            CProgressBar.DOTS2,
-//            CProgressBar.PARALLELOGRAM,
-//            CProgressBar.RECTANGLES,
-//            CProgressBar.RECTANGLES2,
-//            CProgressBar.RECTANGLES3,
-                CProgressBar.RECTANGLES4,
-//            CProgressBar.SIMPLE,
-        }) {
+        for (String formatter : rr.getFormatterNames()) {
             rr.setFormatter(formatter);
             for (int i = 0; i < 100; i++) {
                 System.out.printf("%2d ::" + rr.progress(i) + "\n", i);
@@ -87,20 +75,8 @@ public class Test16_TerminalProgressTest {
     @Test
     public void test3() {
         CProgressBar rr = new CProgressBar(session);
-        rr.setFormatter(CProgressBar.CIRCLES2);
         rr.setMinPeriod(-1);
-        for (CProgressBar.Formatter formatter : new CProgressBar.Formatter[]{
-//            CProgressBar.CIRCLES2,
-                CProgressBar.CIRCLES,
-//            CProgressBar.DOTS1,
-//            CProgressBar.DOTS2,
-//            CProgressBar.PARALLELOGRAM,
-//            CProgressBar.RECTANGLES,
-//            CProgressBar.RECTANGLES2,
-//            CProgressBar.RECTANGLES3,
-                CProgressBar.RECTANGLES4,
-//            CProgressBar.SIMPLE,
-        }) {
+        for (String formatter : rr.getFormatterNames()) {
             rr.setFormatter(formatter);
             for (int i = 0; i < 100; i++) {
 //                System.out.printf("%2d ::" + rr.progress(i) + "\n", i);
@@ -121,7 +97,7 @@ public class Test16_TerminalProgressTest {
 
     @Test
     public void test4() {
-        CProgressBar rr = new CProgressBar(null);
+        CProgressBar rr = new CProgressBar(session);
         for (int i = 0; i < 12; i++) {
             int finalI = i;
             rr.setIndeterminatePosition(new CProgressBar.IndeterminatePosition() {

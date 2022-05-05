@@ -15,7 +15,7 @@ install ```sh nuts``` package <nuts-artifact>
     ```sh -g | --args <args> ...```
         pass the given args to the install executor
 
-#!include</net/thevpc/nuts/runtime/includes/standard-command.ntf>
+```!include classpath:/net/thevpc/nuts/runtime/includes/standard-command.ntf```
 
 ##) EXAMPLES:
 

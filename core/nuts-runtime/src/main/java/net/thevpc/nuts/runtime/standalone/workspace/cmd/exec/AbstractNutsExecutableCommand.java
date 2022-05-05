@@ -5,11 +5,14 @@
  */
 package net.thevpc.nuts.runtime.standalone.workspace.cmd.exec;
 
+import net.thevpc.nuts.NutsSession;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.NutsExecutableInformationExt;
 import net.thevpc.nuts.NutsExecutableType;
+import net.thevpc.nuts.text.NutsText;
+import net.thevpc.nuts.text.NutsTextStyle;
+import net.thevpc.nuts.text.NutsTexts;
 
 /**
- *
  * @author thevpc
  */
 public abstract class AbstractNutsExecutableCommand implements NutsExecutableInformationExt {
@@ -50,8 +53,13 @@ public abstract class AbstractNutsExecutableCommand implements NutsExecutableInf
     }
 
     @Override
-    public String getHelpText() {
-        return "No help available. Try '" + getName() + " --help'";
+    public NutsText getHelpText() {
+        return NutsTexts.of(getSession()).ofStyled(
+                "No help available. Try '" + getName() + " --help'",
+                NutsTextStyle.error()
+        );
     }
+
+    protected abstract NutsSession getSession();
 
 }

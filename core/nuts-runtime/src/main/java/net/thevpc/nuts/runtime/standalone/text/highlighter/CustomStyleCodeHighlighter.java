@@ -24,7 +24,7 @@ public class CustomStyleCodeHighlighter implements NutsCodeHighlighter {
 
     @Override
     public NutsText stringToText(String text, NutsTexts txt, NutsSession session) {
-        return txt.applyStyles(txt.ofPlain(text), style);
+        return txt.ofStyled(text, style);
     }
 
     @Override

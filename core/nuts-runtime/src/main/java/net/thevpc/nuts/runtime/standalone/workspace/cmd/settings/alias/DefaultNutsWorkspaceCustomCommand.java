@@ -2,6 +2,9 @@ package net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.alias;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.standalone.util.collections.CoreCollectionUtils;
+import net.thevpc.nuts.text.NutsText;
+import net.thevpc.nuts.text.NutsTextStyle;
+import net.thevpc.nuts.text.NutsTexts;
 import net.thevpc.nuts.util.NutsLogger;
 import net.thevpc.nuts.util.NutsLoggerOp;
 
@@ -104,22 +107,24 @@ public class DefaultNutsWorkspaceCustomCommand implements NutsWorkspaceCustomCom
     }
 
     @Override
-    public String getHelpText(NutsSession session) throws NutsExecutionException {
+    public NutsText getHelpText(NutsSession session) throws NutsExecutionException {
         if (!NutsBlankable.isBlank(helpText)) {
-            return helpText;
+            return NutsTexts.of(session).ofPlain(helpText);
         }
         if (helpCommand != null && helpCommand.size() > 0) {
             try {
-                return session.exec()
+                return NutsTexts.of(session).ofPlain(
+                        session.exec()
                         .addCommand(helpCommand)
                         .setFailFast(false)
                         .setRedirectErrorStream(true)
                         .grabOutputString()
                         .run()
-                        .getOutputString();
+                        .getOutputString()
+                );
             } catch (Exception ex) {
                 _LOGOP(session).level(Level.FINE).error(ex).log(NutsMessage.ofJstyle("failed to retrieve help for {0}", getName()));
-                return "failed to retrieve help for " + getName();
+                return NutsTexts.of(session).ofStyled("failed to retrieve help for " + getName(), NutsTextStyle.error());
             }
         }
         return null;

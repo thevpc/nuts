@@ -6,7 +6,7 @@ show help and exit
 
     ```sh nuts help [<-options>]... <command-name>...```
 
-#!include</net/thevpc/nuts/runtime/includes/standard-command.ntf>
+```!include classpath:/net/thevpc/nuts/runtime/includes/standard-command.ntf```
 
 ##) EXAMPLES
 

@@ -342,7 +342,7 @@ public class NutsWorkspaceUtils {
             NutsPrintStream out = session.out();
             out.resetLine();
             out.printf("looking for recommended companion tools to install... detected : %s%n",
-                    text.builder().appendJoined(text.ofPlain(","),
+                    text.ofBuilder().appendJoined(text.ofPlain(","),
                             companionIds
                     )
             );
@@ -360,9 +360,9 @@ public class NutsWorkspaceUtils {
                                 + "this happens when none of the following repositories are able to locate them : %s\n",
                         NutsMessage.ofStyled("unable to install companion tools", NutsTextStyle.error()),
                         ex,
-                        text.builder().appendJoined(text.ofPlain(", "),
+                        text.ofBuilder().appendJoined(text.ofPlain(", "),
                                 session.repos().getRepositories().stream().map(x
-                                        -> text.builder().append(x.getName(), NutsTextStyle.primary3())
+                                        -> text.ofBuilder().append(x.getName(), NutsTextStyle.primary3())
                                 ).collect(Collectors.toList())
                         )
                 );

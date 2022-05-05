@@ -965,7 +965,7 @@ public final class NutsReservedUtils {
                 try {
                     fout = session.config().getSystemTerminal().getErr();
                     if (fm != null) {
-                        fm = NutsMessage.ofNtf(NutsTexts.of(session).builder().append(fm, NutsTextStyle.error()).build());
+                        fm = NutsMessage.ofNtf(NutsTexts.of(session).ofBuilder().append(fm, NutsTextStyle.error()).build());
                     } else {
                         fm = NutsMessage.ofStyled(m, NutsTextStyle.error());
                     }
@@ -1008,7 +1008,7 @@ public final class NutsReservedUtils {
                     if (fm != null) {
                         session.eout().add(NutsElements.of(session).ofObject()
                                 .set("app-id", session.getAppId() == null ? "" : session.getAppId().toString())
-                                .set("error", NutsTexts.of(session).toText(fm).filteredText())
+                                .set("error", NutsTexts.of(session).ofText(fm).filteredText())
                                 .build()
                         );
                         if (showTrace) {
@@ -1060,7 +1060,7 @@ public final class NutsReservedUtils {
             StringBuilder sb = new StringBuilder();
             if (fm != null) {
                 if (session != null) {
-                    sb.append(NutsTexts.of(session).toText(fm).filteredText());
+                    sb.append(NutsTexts.of(session).ofText(fm).filteredText());
                 } else {
                     sb.append(fm);
                 }

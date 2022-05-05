@@ -104,7 +104,7 @@ public class NutsException extends RuntimeException implements NutsSessionAwareE
 
     static NutsString messageToFormattedString(NutsMessage message, NutsSession session) {
         NutsUtils.requireSession(session);
-        return NutsTexts.of(session).toText(validateFormattedMessage(message));
+        return NutsTexts.of(session).ofText(validateFormattedMessage(message));
     }
 
     static String messageToString(NutsMessage message, NutsSession session) {

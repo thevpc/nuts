@@ -343,6 +343,8 @@ public interface NutsCp extends NutsComponent {
      */
     byte[] getByteArrayResult();
 
+    String getStringResult();
+
     /**
      * run this copy action
      *

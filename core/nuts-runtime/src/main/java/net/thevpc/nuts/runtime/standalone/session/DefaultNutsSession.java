@@ -35,6 +35,7 @@ import net.thevpc.nuts.io.NutsSessionTerminal;
 import net.thevpc.nuts.io.NutsTerminalMode;
 import net.thevpc.nuts.runtime.standalone.elem.DefaultNutsArrayElementBuilder;
 import net.thevpc.nuts.runtime.standalone.io.progress.NutsProgressUtils;
+import net.thevpc.nuts.runtime.standalone.io.progress.ProgressOptions;
 import net.thevpc.nuts.runtime.standalone.io.terminal.AbstractNutsSessionTerminal;
 import net.thevpc.nuts.runtime.standalone.util.CoreStringUtils;
 import net.thevpc.nuts.runtime.standalone.util.NutsConfigurableHelper;
@@ -42,10 +43,13 @@ import net.thevpc.nuts.runtime.standalone.util.collections.NutsPropertiesHolder;
 import net.thevpc.nuts.util.NutsLogConfig;
 import net.thevpc.nuts.util.NutsMapListener;
 import net.thevpc.nuts.util.NutsStringUtils;
+import net.thevpc.nuts.util.NutsUtils;
 
 import java.io.InputStream;
 import java.time.Instant;
 import java.util.*;
+import java.util.function.Function;
+import java.util.function.Supplier;
 import java.util.logging.Filter;
 import java.util.logging.Level;
 
@@ -60,6 +64,7 @@ public class DefaultNutsSession implements Cloneable, NutsSession {
     protected List<String> outputFormatOptions = new ArrayList<>();
     private NutsSessionTerminal terminal;
     private NutsPropertiesHolder properties = new NutsPropertiesHolder();
+    private NutsPropertiesHolder refProperties = new NutsPropertiesHolder();
     private Map<Class, LinkedHashSet<NutsListener>> listeners = new HashMap<>();
     private String dependencySolver;
     private Boolean trace;
@@ -680,6 +685,7 @@ public class DefaultNutsSession implements Cloneable, NutsSession {
             cloned.ws = new NutsWorkspaceSessionAwareImpl(cloned, ws);
             cloned.terminal = terminal == null ? null : NutsSessionTerminal.of(terminal, cloned);
             cloned.properties = properties == null ? null : properties.copy();
+            cloned.refProperties = new NutsPropertiesHolder();
             cloned.outputFormatOptions = outputFormatOptions == null ? null : new ArrayList<>(outputFormatOptions);
             cloned.listeners = null;
             if (listeners != null) {
@@ -880,44 +886,29 @@ public class DefaultNutsSession implements Cloneable, NutsSession {
         return properties.getProperty(key);
     }
 
-    //    @Override
-//    public NutsSession setAsk(boolean ask) {
-//        return setConfirm(ask ? NutsConfirmationMode.ASK : null);
-//    }
-//    @Override
-//    public NutsSession setYes(boolean value) {
-//        return setConfirm(value ? NutsConfirmationMode.YES : null);
-//    }
-//
-//    @Override
-//    public NutsSession yes(boolean value) {
-//        return setYes(value);
-//    }
-//
-//    @Override
-//    public NutsSession setNo(boolean value) {
-//        return setConfirm(value ? NutsConfirmationMode.NO : null);
-//    }
-//
-//    @Override
-//    public NutsSession no(boolean value) {
-//        return setNo(value);
-//    }
-//
-//    @Override
-//    public NutsSession no() {
-//        return no(true);
-//    }
-//
-//    @Override
-//    public NutsSession yes() {
-//        return yes(true);
-//    }
-//
-//    @Override
-//    public NutsSession ask() {
-//        return setAsk(true);
-//    }
+
+    @Override
+    public NutsSession setRefProperty(String key, Object value) {
+        this.refProperties.setProperty(key, value);
+        return this;
+    }
+
+    @Override
+    public Map<String, Object> getRefProperties() {
+        return refProperties.getProperties();
+    }
+
+    @Override
+    public NutsSession setRefProperties(Map<String, Object> properties) {
+        this.refProperties.setProperties(properties);
+        return this;
+    }
+
+    @Override
+    public Object getRefProperty(String key) {
+        return refProperties.getProperty(key);
+    }
+
     @Override
     public NutsConfirmationMode getConfirm() {
         NutsConfirmationMode cm = (confirm != null) ? confirm : boot().getBootOptions().getConfirm().orNull();
@@ -1092,7 +1083,7 @@ public class DefaultNutsSession implements Cloneable, NutsSession {
             return false;
         }
         //TODO, should we cache this?
-        return NutsProgressUtils.parseProgressOptions(this).isEnabled();
+        return ProgressOptions.of(this).isEnabled();
     }
 
     @Override
@@ -1593,5 +1584,15 @@ public class DefaultNutsSession implements Cloneable, NutsSession {
         if (!configureFirst(commandLine)) {
             commandLine.throwUnexpectedArgument(this);
         }
+    }
+
+    public <T> T getOrComputeRefProperty(String name, Function<NutsSession,T> supplier) {
+        Object v = getRefProperty(name);
+        if (v != null) {
+            return (T) v;
+        }
+        v = supplier.apply(this);
+        setRefProperty(name, v);
+        return (T) v;
     }
 }

@@ -28,7 +28,7 @@ package net.thevpc.nuts;
 import net.thevpc.nuts.cmdline.NutsCommandLineConfigurable;
 import net.thevpc.nuts.util.NutsUtils;
 
-import java.util.Map;
+import java.util.*;
 
 /**
  * this class is responsible of displaying general information about the current workspace and repositories.
@@ -123,4 +123,8 @@ public interface NutsInfoCommand extends NutsFormat, NutsWorkspaceCommand {
      * @return {@code this} instance
      */
     NutsInfoCommand copySession();
+
+    Map<String, Object> getPropertyValues() ;
+
+    NutsOptional<Object> getPropertyValue(String propertyName) ;
 }

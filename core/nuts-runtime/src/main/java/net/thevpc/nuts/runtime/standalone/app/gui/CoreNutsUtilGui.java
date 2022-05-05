@@ -40,7 +40,7 @@ public final class CoreNutsUtilGui {
             }
             String line = javax.swing.JOptionPane.showInputDialog(
                     null,
-                    text.toText(message).filteredText(), text.toText(title).filteredText(), javax.swing.JOptionPane.QUESTION_MESSAGE
+                    text.ofText(message).filteredText(), text.ofText(title).filteredText(), javax.swing.JOptionPane.QUESTION_MESSAGE
             );
             if (line == null) {
                 line = "";
@@ -61,8 +61,8 @@ public final class CoreNutsUtilGui {
             message = NutsMessage.ofPlain("");
         }
         NutsTexts text = NutsTexts.of(session);
-        String messageString = text.toText(message).filteredText();
-        String titleString = text.toText(title).filteredText();
+        String messageString = text.ofText(message).filteredText();
+        String titleString = text.ofText(title).filteredText();
         try {
             javax.swing.JPanel panel = new javax.swing.JPanel();
             javax.swing.JLabel label = new javax.swing.JLabel(messageString);
@@ -89,8 +89,8 @@ public final class CoreNutsUtilGui {
             title = NutsMessage.ofCstyle("Nuts Package Manager - %s", Nuts.getVersion());
         }
         NutsTexts text = NutsTexts.of(session);
-        String messageString = text.toText(message==null?"":message).filteredText();
-        String titleString = text.toText(title).filteredText();
+        String messageString = text.ofText(message==null?"":message).filteredText();
+        String titleString = text.ofText(title).filteredText();
         try {
             javax.swing.JOptionPane.showMessageDialog(null, messageString, titleString, JOptionPane.QUESTION_MESSAGE);
         } catch (UnsatisfiedLinkError e) {

@@ -140,7 +140,7 @@ public class NutsJLineTerminal extends NutsSystemTerminalBaseImpl {
             case LINK: {
                 NutsTextLink p = (NutsTextLink) n;
                 return toAttributedString(
-                        NutsTexts.of(session).ofPlain(p.getValue()),
+                        NutsTexts.of(session).ofPlain(p.getText()),
                         styles.append(NutsTextStyle.underlined()),
                         session);
             }
@@ -267,7 +267,7 @@ public class NutsJLineTerminal extends NutsSystemTerminalBaseImpl {
         }
         String readLine = null;
         try {
-            readLine = reader.readLine(NutsTexts.of(session).toText(message).toString());
+            readLine = reader.readLine(NutsTexts.of(session).ofText(message).toString());
         } catch (UserInterruptException e) {
             throw new NutsJLineInterruptException();
         }
@@ -283,11 +283,11 @@ public class NutsJLineTerminal extends NutsSystemTerminalBaseImpl {
     public char[] readPassword(NutsPrintStream out, NutsMessage message, NutsSession session) {
         prepare(session);
         if (out == null) {
-            return reader.readLine(NutsTexts.of(session).toText(message).toString(), '*').toCharArray();
+            return reader.readLine(NutsTexts.of(session).ofText(message).toString(), '*').toCharArray();
         } else {
             //should I use some out??
         }
-        return reader.readLine(NutsTexts.of(session).toText(message).toString(), '*').toCharArray();
+        return reader.readLine(NutsTexts.of(session).ofText(message).toString(), '*').toCharArray();
     }
 
     @Override

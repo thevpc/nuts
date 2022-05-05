@@ -45,7 +45,7 @@ public class DefaultNutsTextLink extends NutsTextSpecialBase implements NutsText
     }
 
     @Override
-    public String getValue() {
+    public String getText() {
         return value;
     }
 

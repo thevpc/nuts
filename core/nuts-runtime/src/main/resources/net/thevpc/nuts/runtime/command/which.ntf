@@ -5,7 +5,7 @@ resolves commands type
     ```sh nuts which [<-options>]... [<command>] ...```
         resolves commands type
 
-#!include</net/thevpc/nuts/runtime/includes/standard-command.ntf>
+```!include classpath:/net/thevpc/nuts/runtime/includes/standard-command.ntf```
 
 ##) EXAMPLES:
 

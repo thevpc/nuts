@@ -118,7 +118,7 @@ public class DefaultNutsSessionTerminalFromSystem extends AbstractNutsSessionTer
         if ((
                 in == NutsIO.of(session).stdin()
         ) && ((cons = System.console()) != null)) {
-            String txt = NutsTexts.of(session).toText(message).toString();
+            String txt = NutsTexts.of(session).ofText(message).toString();
             if ((passwd = cons.readPassword("%s", txt)) != null) {
                 return passwd;
             } else {
@@ -242,7 +242,7 @@ public class DefaultNutsSessionTerminalFromSystem extends AbstractNutsSessionTer
                 getProgressBar().printProgress(
                         Float.isNaN(progress) ? -1 :
                                 (int) (progress * 100),
-                        NutsTexts.of(session).toText(message).toString(),
+                        NutsTexts.of(session).ofText(message),
                         err()
                 );
             }
@@ -268,7 +268,7 @@ public class DefaultNutsSessionTerminalFromSystem extends AbstractNutsSessionTer
 
     private CProgressBar getProgressBar() {
         if (progressBar == null) {
-            progressBar = CoreTerminalUtils.createProgressBar(session);
+            progressBar = CProgressBar.of(session);
         }
         return progressBar;
     }

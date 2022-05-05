@@ -1,13 +1,18 @@
 package net.thevpc.nuts.runtime.standalone.text;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.cmdline.DefaultNutsCommandLine;
+import net.thevpc.nuts.cmdline.NutsArgument;
+import net.thevpc.nuts.cmdline.NutsCommandLine;
 import net.thevpc.nuts.io.NutsIOException;
 import net.thevpc.nuts.runtime.standalone.text.parser.*;
+import net.thevpc.nuts.runtime.standalone.util.CoreStringUtils;
 import net.thevpc.nuts.text.*;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.Arrays;
 
 public class NutsTextNodeWriterStringer extends AbstractNutsTextNodeWriter {
 
@@ -24,14 +29,10 @@ public class NutsTextNodeWriterStringer extends AbstractNutsTextNodeWriter {
             return "";
         }
         ByteArrayOutputStream bos = new ByteArrayOutputStream();
-        new NutsTextNodeWriterStringer(bos, ws).writeNode(n, new NutsTextWriteConfiguration());
+        new NutsTextNodeWriterStringer(bos, ws).writeNode(n);
         return bos.toString();
     }
 
-    @Override
-    public void writeNode(NutsText node) {
-        writeNode(node, getWriteConfiguration());
-    }
 
     @Override
     public void writeRaw(byte[] buf, int off, int len) {
@@ -49,128 +50,77 @@ public class NutsTextNodeWriterStringer extends AbstractNutsTextNodeWriter {
         try {
             out.flush();
         } catch (IOException ex) {
-            throw new NutsIOException(session,ex);
+            throw new NutsIOException(session, ex);
         }
         return true;
     }
 
-    public void writeNode(NutsText node, NutsTextWriteConfiguration ctx) {
+    @Override
+    public void writeNode(NutsText node) {
         if (node == null) {
             return;
-        }
-        if (ctx == null) {
-            ctx = new NutsTextWriteConfiguration();
         }
         switch (node.getType()) {
             case PLAIN:
                 NutsTextPlain p = (NutsTextPlain) node;
-                if (ctx.isFiltered()) {
-                    writeRaw(p.getText());
-//                    writeEscaped(p.getText());
-                } else {
-                    writeEscaped(p.getText());
-                }
+                writeEscaped(p.getText());
                 break;
             case LIST: {
                 NutsTextList s = (NutsTextList) node;
                 for (NutsText n : s) {
-                    writeNode(n, ctx);
+                    writeNode(n);
                 }
                 break;
             }
             case STYLED: {
                 DefaultNutsTextStyled s = (DefaultNutsTextStyled) node;
-                if (ctx.isFiltered()) {
-//                    writeNode(s.getChild(), ctx.copy().setFiltered(false));
-                    writeNode(s.getChild(), ctx);
-                } else {
-                    NutsTextStyles styles = s.getStyles();
-                    writeRaw("##{"+styles.id()+":");
-                    writeNode(s.getChild(), ctx);
-                    writeRaw("}##");
-                    writeRaw(NutsConstants.Ntf.SILENT);
-                }
+                NutsTextStyles styles = s.getStyles();
+                writeRaw("##{" + styles.id() + ":");
+                writeNode(s.getChild());
+                writeRaw("}##");
+                writeRaw(NutsConstants.Ntf.SILENT);
                 break;
             }
             case TITLE: {
                 DefaultNutsTextTitle s = (DefaultNutsTextTitle) node;
-                if (!ctx.isFiltered()) {
-                    writeRaw(s.getStart());
-                }
-                if (ctx.isTitleNumberEnabled()) {
-                    NutsTextNumbering seq = ctx.getTitleNumberSequence();
-                    if (seq == null) {
-                        seq = NutsTexts.of(session).ofNumbering();
-                        ctx.setTitleNumberSequence(seq);
-                    }
-                    NutsTextNumbering a = seq.newLevel(s.getTextStyleCode().length());
-                    String ts = a.toString() + " ";
-//                if(startWritten){
-//                    ts=" "+ts;
-//                }
-                    writeRaw(ts);
-                }
-                writeNode(s.getChild(), ctx);
-//        } else if (text instanceof TextNodeUnStyled) {
-//            TextNodeUnStyled s = (TextNodeUnStyled) text;
-//            writeRaw(s.getStart());
-//            writeNode(s.getChild(), ctx);
-//            writeRaw(s.getEnd());
+                writeRaw(CoreStringUtils.fillString('#', s.getLevel()) + ") ");
+                writeNode(s.getChild());
+                writeRaw("\n");
                 break;
             }
             case COMMAND: {
-                DefaultNutsTextCommand s = (DefaultNutsTextCommand) node;
-                if (!ctx.isFiltered()) {
-                    writeRaw(s.getStart());
-//                    writeRaw(s.getKind());
-                    writeEscapedSpecial(s.getCommand().getName());
-                    if (!NutsBlankable.isBlank(s.getCommand().getArgs())) {
-                        writeEscapedSpecial(" ");
-                        writeEscapedSpecial(s.getCommand().getArgs());
-                    }
-                    writeRaw(s.getEnd());
-                    writeRaw(NutsConstants.Ntf.SILENT);
-                }
+                NutsTextCommand s = (NutsTextCommand) node;
+                writeRaw("```!");
+                NutsCommandLine cmd = new DefaultNutsCommandLine();
+                cmd.add(s.getCommand().getName());
+                cmd.addAll(Arrays.asList(s.getCommand().getArgs()));
+                writeEscapedSpecial(cmd.toString());
+                writeRaw("```");
                 break;
             }
             case ANCHOR: {
-                DefaultNutsTextAnchor s = (DefaultNutsTextAnchor) node;
-                if (!ctx.isFiltered()) {
-                    writeRaw(s.getStart());
-                    writeRaw(s.getKind());
-                    writeRaw(s.getSeparator());
-                    writeEscapedSpecial(s.getValue());
-                    writeRaw(s.getEnd());
-                    writeRaw(NutsConstants.Ntf.SILENT);
-                }
+                NutsTextAnchor s = (NutsTextAnchor) node;
+                writeRaw("```!anchor");
+                writeRaw(s.getSeparator());
+                writeEscapedSpecial(s.getValue());
+                writeRaw("```");
                 break;
             }
             case LINK: {
-                DefaultNutsTextLink s = (DefaultNutsTextLink) node;
-                if (!ctx.isFiltered()) {
-                    writeRaw(s.getStart());
-                    writeRaw(s.getKind());
-                    writeRaw(s.getSeparator());
-                    writeEscaped(s.getValue());
-                    writeRaw(s.getEnd());
-                    writeRaw(NutsConstants.Ntf.SILENT);
-                } else {
-                    writeRaw(s.getValue());
-                }
+                NutsTextLink s = (NutsTextLink) node;
+                writeRaw("```!link");
+                writeRaw(s.getSeparator());
+                writeEscaped(s.getText());
+                writeRaw("```");
                 break;
             }
             case CODE: {
-                DefaultNutsTextCode s = (DefaultNutsTextCode) node;
-                if (!ctx.isFiltered()) {
-                    writeRaw(s.getStart());
-                    writeRaw(s.getKind());
-                    writeRaw(s.getSeparator());
-                    writeEscapedSpecial(s.getText());
-                    writeRaw(s.getEnd());
-                    writeRaw(NutsConstants.Ntf.SILENT);
-                } else {
-                    writeRaw(s.getText());
-                }
+                NutsTextCode s = (NutsTextCode) node;
+                writeRaw("```");
+                writeRaw(s.getQualifier());
+                writeRaw(s.getSeparator());
+                writeEscapedSpecial(s.getText());
+                writeRaw("```");
                 break;
             }
             default:
@@ -239,9 +189,6 @@ public class NutsTextNodeWriterStringer extends AbstractNutsTextNodeWriter {
         writeRaw(sb.toString());
     }
 
-    //    public final void writeEscaped(String rawString) {
-//        writeRaw(DefaultNutsTextNodeParser.escapeText0(rawString));
-//    }
     public final void writeRaw(char rawChar) {
         writeRaw(String.valueOf(rawChar));
     }
@@ -250,15 +197,15 @@ public class NutsTextNodeWriterStringer extends AbstractNutsTextNodeWriter {
         try {
             out.write(rawString.getBytes());
         } catch (IOException ex) {
-            throw new NutsIOException(session,ex);
+            throw new NutsIOException(session, ex);
         }
     }
 
     private void writeStyledStart(NutsTextStyles styles, boolean complex) {
-        StringBuilder sb=new StringBuilder();
-        if(complex){
+        StringBuilder sb = new StringBuilder();
+        if (complex) {
             sb.append("##{");
-        }else{
+        } else {
             sb.append("##:");
         }
         sb.append(styles.id());

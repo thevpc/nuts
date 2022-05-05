@@ -41,7 +41,7 @@
     ```sh <args> ...```
         provide arguments to pass to updater
 
-#!include</net/thevpc/nuts/runtime/includes/standard-command.ntf>
+```!include classpath:/net/thevpc/nuts/runtime/includes/standard-command.ntf```
 
 ##) EXAMPLES
 

@@ -3,7 +3,6 @@ package net.thevpc.nuts.runtime.standalone.io.terminal;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.io.NutsPrintStream;
 import net.thevpc.nuts.io.NutsSessionTerminal;
-import net.thevpc.nuts.runtime.standalone.io.progress.NutsProgressUtils;
 import net.thevpc.nuts.runtime.standalone.io.progress.CProgressBar;
 import net.thevpc.nuts.text.NutsTexts;
 import net.thevpc.nuts.util.NutsQuestion;
@@ -139,7 +138,7 @@ public class UnmodifiableSessionTerminal extends AbstractNutsSessionTerminal {
                 getProgressBar().printProgress(
                         Float.isNaN(progress) ? -1
                                 : (int) (progress * 100),
-                        NutsTexts.of(session).toText(message).toString(),
+                        NutsTexts.of(session).ofText(message),
                         err()
                 );
             }
@@ -149,7 +148,7 @@ public class UnmodifiableSessionTerminal extends AbstractNutsSessionTerminal {
 
     private CProgressBar getProgressBar() {
         if (progressBar == null) {
-            progressBar = CoreTerminalUtils.createProgressBar(session);
+            progressBar = CProgressBar.of(session);
         }
         return progressBar;
     }

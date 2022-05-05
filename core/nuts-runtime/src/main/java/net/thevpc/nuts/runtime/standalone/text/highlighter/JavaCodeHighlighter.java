@@ -135,7 +135,7 @@ public class JavaCodeHighlighter implements NutsCodeHighlighter {
                             if (d.length == 1 && d[0].getType() == NutsTextType.PLAIN) {
                                 String txt2 = ((NutsTextPlain) d[0]).getText();
                                 if (reservedWords.contains(txt2)) {
-                                    d[0] = txt.applyStyles(d[0], NutsTextStyle.keyword());
+                                    d[0] = txt.ofStyled(d[0], NutsTextStyle.keyword());
                                 }
                             }
                             all.addAll(Arrays.asList(d));

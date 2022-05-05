@@ -95,14 +95,14 @@ public class DefaultNutsUninstallCommand extends AbstractNutsUninstallCommand {
                                                 NutsTextStyle.primary1()
                         );
                 NutsSession session = getSession();
-                NutsTextBuilder msg = NutsTexts.of(getSession()).builder();
+                NutsTextBuilder msg = NutsTexts.of(getSession()).ofBuilder();
                 msg.append("the following ")
                         .append(kind).append(" ").append((all.size() > 1 ? "artifacts are" : "artifact is"))
                         .append(" going to be ").append(action).append(" : ")
                         .appendJoined(
                                 NutsTexts.of(session).ofPlain(", "),
                                 all.stream().map(x
-                                                -> NutsTexts.of(session).toText(
+                                                -> NutsTexts.of(session).ofText(
                                                 x.builder().build()
                                         )
                                 ).collect(Collectors.toList())

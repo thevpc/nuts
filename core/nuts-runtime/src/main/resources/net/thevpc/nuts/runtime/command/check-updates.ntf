@@ -25,7 +25,7 @@ check for updates
     ```sh -A | --api```
         check updates for workspace's api (major workspace update)
 
-#!include</net/thevpc/nuts/runtime/includes/standard-command.ntf>
+```!include classpath:/net/thevpc/nuts/runtime/includes/standard-command.ntf```
 
 ##) EXAMPLES
 

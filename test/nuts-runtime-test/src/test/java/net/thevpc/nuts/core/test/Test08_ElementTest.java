@@ -36,6 +36,7 @@ import net.thevpc.nuts.elem.NutsElement;
 import net.thevpc.nuts.elem.NutsElements;
 import net.thevpc.nuts.elem.NutsObjectElement;
 import net.thevpc.nuts.format.NutsObjectFormat;
+import net.thevpc.nuts.text.NutsText;
 import net.thevpc.nuts.text.NutsTextStyle;
 import net.thevpc.nuts.text.NutsTextStyled;
 import net.thevpc.nuts.text.NutsTexts;
@@ -221,7 +222,7 @@ public class Test08_ElementTest {
 
     @Test
     public void testIndestructibleObjects() {
-        NutsTextStyled styledText = NutsTexts.of(session).ofStyled("Hello", NutsTextStyle.success());
+        NutsText styledText = NutsTexts.of(session).ofStyled("Hello", NutsTextStyle.success());
         NutsElements e = NutsElements.of(session);
 
         //create a composite object with a styled element

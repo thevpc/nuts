@@ -34,6 +34,7 @@ import java.io.InputStream;
 import java.time.Instant;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Function;
 import java.util.logging.Filter;
 import java.util.logging.Level;
 
@@ -342,6 +343,38 @@ public interface NutsSession extends NutsCommandLineConfigurable {
      * @return return property value or null
      */
     Object getProperty(String key);
+
+    /**
+     * set session property
+     *
+     * @param key   property key
+     * @param value property value
+     * @return {@code this} instance
+     */
+    NutsSession setRefProperty(String key, Object value);
+
+    /**
+     * return defined properties
+     *
+     * @return defined properties
+     */
+    Map<String, Object> getRefProperties();
+
+    /**
+     * add session properties
+     *
+     * @param properties properties
+     * @return {@code this} instance
+     */
+    NutsSession setRefProperties(Map<String, Object> properties);
+
+    /**
+     * return property value or null
+     *
+     * @param key property key
+     * @return return property value or null
+     */
+    Object getRefProperty(String key);
 
     /**
      * return confirmation mode or {@link NutsConfirmationMode#ASK}
@@ -724,4 +757,15 @@ public interface NutsSession extends NutsCommandLineConfigurable {
      * @since 0.8.3
      */
     NutsSession setDependencySolver(String dependencySolver);
+
+    /**
+     * return value or create new one and add it to ref properties
+     * @param name property name
+     * @param supplier supplier
+     * @return value or create new one and add it to ref properties
+     * @param <T> returned Type
+     * @since 0.8.4
+     */
+    <T> T getOrComputeRefProperty(String name, Function<NutsSession,T> supplier);
+
 }

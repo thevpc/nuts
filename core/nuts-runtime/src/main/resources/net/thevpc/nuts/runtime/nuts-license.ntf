@@ -1,4 +1,4 @@
-#!include</net/thevpc/nuts/runtime/includes/standard-header.ntf>
+```!include classpath:/net/thevpc/nuts/runtime/includes/standard-header.ntf```
 
 
  Is a new Open Source Package Manager to help install packages

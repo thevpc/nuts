@@ -17,31 +17,6 @@ import java.util.List;
 import java.util.Map;
 
 public class NutsProgressUtils {
-    public static ProgressOptions parseProgressOptions(NutsSession session) {
-        ProgressOptions o = new ProgressOptions();
-        boolean enabledVisited = false;
-        Map<String, String> m = NutsStringUtils.parseMap(session.getProgressOptions(), "=", ",; ", "").get(session);
-        NutsElements elems = NutsElements.of(session);
-        for (Map.Entry<String, String> e : m.entrySet()) {
-            String k = e.getKey();
-            String v = e.getValue();
-            if (!enabledVisited) {
-                if (v == null) {
-                    Boolean a = NutsValue.of(k).asBoolean().orNull();
-                    if (a != null) {
-                        o.setEnabled(a);
-                        enabledVisited = true;
-                    } else {
-                        o.put(k, elems.ofString(v));
-                    }
-                }
-            } else {
-                o.put(k, elems.ofString(v));
-            }
-        }
-        return o;
-    }
-
     public static java.io.InputStream monitor(URL from, NutsProgressMonitor monitor, NutsSession session) {
         return monitor(
                 NutsPath.of(from, session).getInputStream(),
@@ -66,7 +41,7 @@ public class NutsProgressUtils {
         long length = -1;
         NutsInputSourceMetadata m = (from instanceof NutsInputSource) ? ((NutsInputSource) from).getInputMetaData() : null;
         if (m != null) {
-            sourceName = NutsTexts.of(session).toText(m.getName());
+            sourceName = NutsTexts.of(session).ofText(m.getName());
             length = m.getContentLength().orElse(-1L);
         }
         return new MonitoredInputStream(from, source, NutsMessage.ofNtf(sourceName), length, monitor, session);

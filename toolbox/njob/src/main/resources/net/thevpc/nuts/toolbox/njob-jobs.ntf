@@ -3,13 +3,11 @@ manage jobs
 
 ####) SYNOPSIS:
 
-####) add project:
-
 ```sh
 njob ( add | remove | update | show | list ) job  <-options>...
 ```
 
-####) add project:
+####) add job:
 
 ```sh
 njob jobs|j add|a [<-options>] <job-name>
@@ -21,7 +19,7 @@ njob jobs|j add|a [<-options>] <job-name>
 
     add new job
 
-####) update project:
+####) update job:
 
 ```sh
 njob jobs|j update|a [<-options>] <job-name>
@@ -64,9 +62,9 @@ njob jobs|j list|l [<-options>]
     ```sh -g|--group-by=p|project  ``` group by project name
     ```sh -g|--group-by=n|name  ``` group by job name
     ```sh -g|--group-by=s|summary  ``` show one row summary
-    ```sh -p=<s-expr>       ``` filter by project name /../ is used for regexps, '*' is supported in non regexp.
-    ```sh -n=<s-expr>       ``` filter by job name /../ is used for regexps, '*' is supported in non regexp.
-    ```sh -c=<s-expr>       ``` filter by customer name /../ is used for regexps, '*' is supported in non regexp.
-    ```sh -C=<s-expr>       ``` filter by company name /../ is used for regexps, '*' is supported in non regexp.
+    ```sh -p=<s-expr>       ``` filter by project name ```string /../``` is used for regexps, ```string '*'``` is supported in non regexp.
+    ```sh -n=<s-expr>       ``` filter by job name ```string /../``` is used for regexps, ```string '*'``` is supported in non regexp.
+    ```sh -c=<s-expr>       ``` filter by customer name ```string /../``` is used for regexps, ```string '*'``` is supported in non regexp.
+    ```sh -C=<s-expr>       ``` filter by company name ```string /../``` is used for regexps, ```string '*'``` is supported in non regexp.
     ```sh -d=<t-expr>       ``` filter by duration. can start with '<' and other operators
     ```sh -t=<t-expr>       ``` filter by start date. can start with '<' and other operators. accept periods as well.

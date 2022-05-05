@@ -39,7 +39,7 @@ import java.io.PrintStream;
 public interface NutsString extends NutsBlankable {
 
     static NutsString of(NutsMessage str, NutsSession session) {
-        return NutsTexts.of(session).toText(str);
+        return NutsTexts.of(session).ofText(str);
     }
 
     static NutsString of(String str, NutsSession session) {

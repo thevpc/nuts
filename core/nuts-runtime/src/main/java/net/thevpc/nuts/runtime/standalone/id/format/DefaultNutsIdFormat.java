@@ -167,7 +167,7 @@ public class DefaultNutsIdFormat extends DefaultFormatBase<NutsIdFormat> impleme
             idBuilder.setProperty(NutsConstants.IdProperties.FACE, null);
         }
         id = idBuilder.build();
-        NutsTextBuilder sb = NutsTexts.of(getSession()).builder();
+        NutsTextBuilder sb = NutsTexts.of(getSession()).ofBuilder();
         if (!isOmitGroupId()) {
             if (!NutsBlankable.isBlank(id.getGroupId())) {
                 boolean importedGroup2 = NutsConstants.Ids.NUTS_GROUP_ID.equals(id.getGroupId());

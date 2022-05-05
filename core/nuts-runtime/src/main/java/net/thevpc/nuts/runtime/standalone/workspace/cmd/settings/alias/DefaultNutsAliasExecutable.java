@@ -8,6 +8,9 @@ package net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.alias;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.cmdline.NutsCommandLine;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.exec.AbstractNutsExecutableCommand;
+import net.thevpc.nuts.text.NutsText;
+import net.thevpc.nuts.text.NutsTextStyle;
+import net.thevpc.nuts.text.NutsTexts;
 
 /**
  *
@@ -46,12 +49,12 @@ public class DefaultNutsAliasExecutable extends AbstractNutsExecutableCommand {
     }
 
     @Override
-    public String getHelpText() {
-        String t = command.getHelpText(session);
+    public NutsText getHelpText() {
+        NutsText t = command.getHelpText(session);
         if (t != null) {
             return t;
         }
-        return "No help available. Try '" + getName() + " --help'";
+        return NutsTexts.of(session).ofStyled("No help available. Try '" + getName() + " --help'", NutsTextStyle.error());
     }
 
     @Override
@@ -59,4 +62,8 @@ public class DefaultNutsAliasExecutable extends AbstractNutsExecutableCommand {
         return "alias " + command.getName() + " @ " + command.getOwner();
     }
 
+    @Override
+    public NutsSession getSession() {
+        return session;
+    }
 }

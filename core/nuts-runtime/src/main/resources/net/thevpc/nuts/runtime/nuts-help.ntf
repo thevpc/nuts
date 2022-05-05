@@ -1,4 +1,4 @@
-#!include</net/thevpc/nuts/runtime/includes/standard-header.ntf>
+```!include classpath:/net/thevpc/nuts/runtime/includes/standard-header.ntf```
 
 ```sh nuts``` is a ##:_:Java™## ##:_:Package Manager## that helps discovering, downloading, assembling and executing
 local and remote artifacts (packages) in a very handy way. Unlike maven which resolves dependencies at compile time,
@@ -296,23 +296,19 @@ Boot Runtime Version: ###${nuts.workspace-runtime.version}###
 
  ```sh --init-scripts ``` (default is ```kw true``` for default archetype)
       When creating a new workspace, you can select to enable or disable creation of os shell scripts to point to nuts
-      and other installed artifacts using ```sh ---!init-scripts ``` flag. Please notice the '---' prefix which means
-      that the option is not standard and can be removed in later versions.
+      and other installed artifacts using ```sh --!init-scripts ``` flag.
 
  ```sh --init-launchers ``` (default is ```kw true``` for default archetype)
       When creating a new workspace, you can select to enable or disable creation of menus and desktop icons by using
-      ```sh ---!init-launchers ``` flag. Please notice the '---' prefix which means that the option is not standard and
-      can be removed in later versions. This option implies ```sh ---init-scripts ```
+      ```sh --!init-launchers ``` flag. This option implies ```sh --init-scripts ```
 
  ```sh --init-java ``` (default is ```kw true``` for default archetype)
       When creating a new workspace, you can select to enable or disable registration of installed JDK/JRE in the system
-      by using ```sh ---!init-java ``` flag. Please notice the '---' prefix which means that the option is not
-      standard and can be removed in later versions. This option implies ```sh ---init-scripts ```
+      by using ```sh --!init-java ``` flag. This option implies ```sh --init-scripts ```
 
  ```sh --init-platforms ``` (default is ```kw true``` for default archetype)
       When creating a new workspace, you can select to enable or disable registration of installed platforms (including
-      java) in the system by using ```sh ---!init-platforms ``` flag. Please notice the '---' prefix which means that
-      the option is not standard and can be removed in later versions. This option implies ```sh ---init-java ```
+      java) in the system by using ```sh --!init-platforms ``` flag. This option implies ```sh --init-java ```
 
 
  ###) NUTS OPEN EXPORTED OPTIONS:
@@ -734,7 +730,7 @@ will search for it), aliases (a commodity mechanism to extend internal commands)
    run a nuts shell ```sh nsh``` command with the remaining arguments.
    This is equivalent to ```sh nsh -c <command>```
 
-#!include</net/thevpc/nuts/runtime/includes/standard-options-format.ntf>
+```!include classpath:/net/thevpc/nuts/runtime/includes/standard-options-format.ntf```
 
 ##) EXAMPLES:
 ```sh nuts help```

@@ -32,6 +32,7 @@ import net.thevpc.nuts.runtime.standalone.repository.impl.main.NutsInstalledRepo
 import net.thevpc.nuts.runtime.standalone.workspace.config.DefaultNutsWorkspaceEnvManager;
 import net.thevpc.nuts.spi.NutsInstallerComponent;
 import net.thevpc.nuts.spi.NutsSupportLevelContext;
+import net.thevpc.nuts.text.NutsText;
 
 /**
  * @author thevpc
@@ -212,22 +213,22 @@ public class NutsWorkspaceSessionAwareImpl implements NutsWorkspace, NutsWorkspa
     }
 
     @Override
-    public String getWelcomeText(NutsSession session) {
+    public NutsText getWelcomeText(NutsSession session) {
         return ((NutsWorkspaceExt) ws).getWelcomeText(session);
     }
 
     @Override
-    public String getHelpText(NutsSession session) {
+    public NutsText getHelpText(NutsSession session) {
         return ((NutsWorkspaceExt) ws).getHelpText(session);
     }
 
     @Override
-    public String getLicenseText(NutsSession session) {
+    public NutsText getLicenseText(NutsSession session) {
         return ((NutsWorkspaceExt) ws).getLicenseText(session);
     }
 
     @Override
-    public String resolveDefaultHelp(Class clazz, NutsSession session) {
+    public NutsText resolveDefaultHelp(Class clazz, NutsSession session) {
         return ((NutsWorkspaceExt) ws).resolveDefaultHelp(clazz, session);
     }
 

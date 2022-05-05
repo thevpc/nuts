@@ -26,6 +26,8 @@
  */
 package net.thevpc.nuts;
 
+import net.thevpc.nuts.text.NutsText;
+
 import java.util.List;
 
 /**
@@ -45,7 +47,7 @@ public interface NutsWorkspaceCustomCommand {
 
     void dryExec(String[] args, NutsCommandExecOptions options, NutsSession session) throws NutsExecutionException;
 
-    String getHelpText(NutsSession session) throws NutsExecutionException;
+    NutsText getHelpText(NutsSession session) throws NutsExecutionException;
 
     List<String> getCommand();
 

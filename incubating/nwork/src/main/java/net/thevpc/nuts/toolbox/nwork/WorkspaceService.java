@@ -193,7 +193,7 @@ public class WorkspaceService {
 
     private NutsTextBuilder formatProjectConfig(NutsApplicationContext appContext, ProjectConfig p2) {
         NutsTexts text = NutsTexts.of(appContext.getSession());
-        return text.builder()
+        return text.ofBuilder()
                 .append(p2.getId(), NutsTextStyle.primary4())
                 .append(" ")
                 .appendJoined(

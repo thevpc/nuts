@@ -150,12 +150,12 @@ public class NVersionMain implements NutsApplication {
                     for (String t : unsupportedFileTypes) {
                         File f = new File(NutsPath.of(t,session).toAbsolute().toString());
                         if (f.isFile()) {
-                            pp.setProperty(t, text.builder().append("<<ERROR>>", NutsTextStyle.error()).append(" unsupported file type").toString());
+                            pp.setProperty(t, text.ofBuilder().append("<<ERROR>>", NutsTextStyle.error()).append(" unsupported file type").toString());
                         } else if (f.isDirectory()) {
-                            pp.setProperty(t, text.builder().append("<<ERROR>>", NutsTextStyle.error()).append(" ignored folder").toString()
+                            pp.setProperty(t, text.ofBuilder().append("<<ERROR>>", NutsTextStyle.error()).append(" ignored folder").toString()
                             );
                         } else {
-                            pp.setProperty(t, text.builder().append("<<ERROR>>", NutsTextStyle.error()).append(" file not found").toString()
+                            pp.setProperty(t, text.ofBuilder().append("<<ERROR>>", NutsTextStyle.error()).append(" file not found").toString()
                             );
                         }
                     }
@@ -176,14 +176,14 @@ public class NVersionMain implements NutsApplication {
                         if (nameFormat) {
                             out.printf("%s%n", text.ofStyled(descriptor.getId().getShortName(), NutsTextStyle.primary4()));
                         } else if (idFormat) {
-                            out.printf("%s%n", text.toText(descriptor.getId()));
+                            out.printf("%s%n", text.ofText(descriptor.getId()));
                         } else if (longFormat) {
-                            out.printf("%s%n", text.toText(descriptor.getId()));
+                            out.printf("%s%n", text.ofText(descriptor.getId()));
                             NutsPropertiesFormat f = NutsPropertiesFormat.of(session)
                                     .setSorted(true);
                             f.setValue(descriptor.getProperties()).print(out);
                         } else {
-                            out.printf("%s%n", text.toText(descriptor.getId().getVersion()));
+                            out.printf("%s%n", text.ofText(descriptor.getId().getVersion()));
                         }
                         if (!all) {
                             break;

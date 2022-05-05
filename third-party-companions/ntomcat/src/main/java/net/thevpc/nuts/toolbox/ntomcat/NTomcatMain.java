@@ -30,10 +30,11 @@ public class NTomcatMain implements NutsApplication {
         boolean skipFirst = false;
         if (cmdLine.hasNext()) {
             NutsArgument a = cmdLine.peek().get(session);
-            if ((a.asString().equals   ("--remote") || a.asString().equals("-r"))) {
+            String s = a.asString().orElse("");
+            if ((s.equals   ("--remote") || s.equals("-r"))) {
                 cmdLine.skip();
                 local = false;
-            } else if ((a.asString().equals("--local") || a.asString().equals("-l"))) {
+            } else if ((s.equals("--local") || s.equals("-l"))) {
                 cmdLine.skip();
                 local = true;
             }

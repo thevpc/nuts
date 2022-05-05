@@ -307,7 +307,7 @@ public class NutsIdFormatHelper {
     public NutsString getSingleColumnRow(NutsFetchDisplayOptions oo) {
         NutsDisplayProperty[] a = oo.getDisplayProperties();
         NutsTexts txt = NutsTexts.of(session);
-        NutsTextBuilder sb = txt.builder();
+        NutsTextBuilder sb = txt.ofBuilder();
         for (int j = 0; j < a.length; j++) {
             NutsString s = buildMain(oo, a[j]);
             int z = 0;
@@ -329,7 +329,7 @@ public class NutsIdFormatHelper {
                     break;
                 }
             }
-            int len = txt.builder().append(s).textLength();
+            int len = txt.ofBuilder().append(s).textLength();
             if (j > 0) {
                 sb.append(' ');
             }
@@ -362,7 +362,7 @@ public class NutsIdFormatHelper {
             }
             case FILE: {
                 if (def != null && def.getContent().isPresent()) {
-                    return text.toText(def.getContent().orNull());
+                    return text.ofText(def.getContent().orNull());
                 }
                 return text.ofStyled("missing-path", NutsTextStyle.error());
             }
@@ -526,7 +526,7 @@ public class NutsIdFormatHelper {
                     if (results.size() == 1) {
                         return results.get(0);
                     }
-                    return text.builder().appendJoined(
+                    return text.ofBuilder().appendJoined(
                             text.ofPlain(","),
                             results
                     );
@@ -569,7 +569,7 @@ public class NutsIdFormatHelper {
                         all.add(text.ofStyled(NutsDependencyScope.API.id(), NutsTextStyle.primary5()));
                     }
                 }
-                return text.builder().appendJoined(text.ofStyled(",", NutsTextStyle.pale()),
+                return text.ofBuilder().appendJoined(text.ofStyled(",", NutsTextStyle.pale()),
                         all).build();
 
             }
@@ -770,10 +770,10 @@ public class NutsIdFormatHelper {
             return txt.ofBlank();
         }
         if (any.size() == 1) {
-            return txt.builder().append(txt.ofStyled(stringValue(any.get(0)), style))
+            return txt.ofBuilder().append(txt.ofStyled(stringValue(any.get(0)), style))
                     .immutable();
         }
-        return txt.builder()
+        return txt.ofBuilder()
                 .append("[")
                 .appendJoined(
                         txt.ofPlain(","),

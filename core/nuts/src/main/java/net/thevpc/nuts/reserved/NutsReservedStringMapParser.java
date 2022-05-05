@@ -209,7 +209,7 @@ public class NutsReservedStringMapParser {
                     }
                 } else if (separatorChars.indexOf(c) >= 0) {
                     //this is a key without a value
-                    m.put(t, "");
+                    m.put(t, null);
                 } else {
                     //
                 }

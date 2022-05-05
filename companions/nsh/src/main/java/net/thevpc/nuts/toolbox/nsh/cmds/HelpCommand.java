@@ -27,9 +27,11 @@ package net.thevpc.nuts.toolbox.nsh.cmds;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.cmdline.NutsCommandLine;
+import net.thevpc.nuts.io.NutsPath;
 import net.thevpc.nuts.io.NutsTerminalMode;
 import net.thevpc.nuts.text.NutsText;
 import net.thevpc.nuts.text.NutsTextStyle;
+import net.thevpc.nuts.text.NutsTextTransformConfig;
 import net.thevpc.nuts.text.NutsTexts;
 import net.thevpc.nuts.toolbox.nsh.SimpleJShellBuiltin;
 import net.thevpc.nuts.toolbox.nsh.bundles._StringUtils;
@@ -62,7 +64,7 @@ public class HelpCommand extends SimpleJShellBuiltin {
         } else if (commandLine.peek().get(session).isNonOption()) {
             options.commandNames.add(
                     commandLine.nextNonOption(new CommandNonOption("command", context.getShellContext()))
-                    .get().asString().get(session));
+                            .get().asString().get(session));
             return true;
         } else {
             return false;
@@ -71,13 +73,14 @@ public class HelpCommand extends SimpleJShellBuiltin {
 
     @Override
     protected void execBuiltin(NutsCommandLine commandLine, JShellExecutionContext context) {
+        NutsSession session = context.getSession();
         Options options = context.getOptions();
         if (options.code) {
-            context.getSession().getTerminal().setOut(
-                    context.getSession().getTerminal().out().setMode(NutsTerminalMode.INHERITED)
+            session.getTerminal().setOut(
+                    session.getTerminal().out().setMode(NutsTerminalMode.INHERITED)
             );
         }
-        final NutsTexts text = NutsTexts.of(context.getSession());
+        final NutsTexts text = NutsTexts.of(session);
         Function<String, String> ss = options.code ? new Function<String, String>() {
             @Override
             public String apply(String t) {
@@ -86,12 +89,15 @@ public class HelpCommand extends SimpleJShellBuiltin {
         } : x -> x;
         if (commandLine.isExecMode()) {
             if (options.commandNames.isEmpty()) {
-                NutsText n = text.parser().parseResource("/net/thevpc/nuts/toolbox/nsh.ntf",
-                        text.parser().createLoader(HelpCommand.class.getClassLoader())
+                NutsPath p = NutsPath.of("classpath:/net/thevpc/nuts/toolbox/nsh.ntf", HelpCommand.class.getClassLoader(), session);
+                NutsText n = text.parser().parse(p);
+                n = text.transform(n, new NutsTextTransformConfig().setProcessAll(true)
+                        .setCurrentDir(p.getParent())
+                        .setImportClassLoader(getClass().getClassLoader())
                 );
                 String helpText = (n == null ? "no help found" : n.toString());
                 context.out().println(ss.apply(helpText));
-                context.out().println(NutsTexts.of(context.getSession()).ofStyled("AVAILABLE COMMANDS ARE:", NutsTextStyle.primary1()));
+                context.out().println(NutsTexts.of(session).ofStyled("AVAILABLE COMMANDS ARE:", NutsTextStyle.primary1()));
                 JShellBuiltin[] commands = context.builtins().getAll();
                 Arrays.sort(commands, new Comparator<JShellBuiltin>() {
                     @Override
@@ -123,7 +129,7 @@ public class HelpCommand extends SimpleJShellBuiltin {
                         context.out().println(ss.apply(help));
                     }
                 }
-                throwExecutionException("error", x, context.getSession());
+                throwExecutionException("error", x, session);
             }
         }
     }

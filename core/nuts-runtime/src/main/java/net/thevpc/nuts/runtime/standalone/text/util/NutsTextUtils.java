@@ -53,7 +53,7 @@ public class NutsTextUtils {
             return txt.ofBlank();
         }
         if (o instanceof NutsFormattable) {
-            return txt.toText(o);
+            return txt.ofText(o);
         }
         if (o instanceof NutsPrimitiveElement) {
             o = ((NutsPrimitiveElement) o).getRaw();
@@ -68,7 +68,7 @@ public class NutsTextUtils {
             if (a.length == 1) {
                 return txt.ofPlain(CoreStringUtils.stringValue(a[0]));
             }
-            return txt.builder()
+            return txt.ofBuilder()
                     .append("{")
                     .appendJoined(
                             txt.ofPlain(", "),
@@ -78,12 +78,12 @@ public class NutsTextUtils {
 
         } else if (o instanceof NutsElementEntry) {
             NutsElementEntry ne = (NutsElementEntry) o;
-            NutsTextBuilder sb = NutsTexts.of(session).builder();
+            NutsTextBuilder sb = NutsTexts.of(session).ofBuilder();
             sb.append(stringValueFormatted(ne.getKey(), escapeString, session));
             sb.append("=");
             if (ne.getValue().type() == NutsElementType.STRING) {
                 sb.append(
-                        txt.toText(
+                        txt.ofText(
                                 NutsStringUtils.formatStringLiteral(stringValueFormatted(ne.getValue(), escapeString, session).toString(), NutsStringUtils.QuoteType.DOUBLE)
                         ));
 //            } else if (ne.getValue().type() == NutsElementType.NUTS_STRING) {
@@ -94,13 +94,13 @@ public class NutsTextUtils {
             o = sb.toString();
         } else if (o instanceof Map.Entry) {
             Map.Entry ne = (Map.Entry) o;
-            NutsTextBuilder sb = NutsTexts.of(session).builder();
+            NutsTextBuilder sb = NutsTexts.of(session).ofBuilder();
             sb.append(stringValueFormatted(ne.getKey(), escapeString, session));
             sb.append("=");
             if (ne.getValue() instanceof String
                     || (ne.getValue() instanceof NutsElement && ((NutsElement) ne.getValue()).isString())) {
                 sb.append(
-                        txt.toText(
+                        txt.ofText(
                                 NutsStringUtils.formatStringLiteral(stringValueFormatted(ne.getValue(), escapeString, session).toString(), NutsStringUtils.QuoteType.DOUBLE)
                         )
                 );
@@ -141,7 +141,7 @@ public class NutsTextUtils {
                 return txt.ofPlain(CoreStringUtils.stringValue(a[0]));
             }
             List<NutsString> ll = ((Collection<Object>) c).stream().map(x -> stringValueFormatted(x, escapeString, session)).collect(Collectors.toList());
-            return txt.builder()
+            return txt.ofBuilder()
                     .append("[")
                     .appendJoined(
                             txt.ofPlain(", "),
@@ -159,7 +159,7 @@ public class NutsTextUtils {
                 return txt.ofPlain(CoreStringUtils.stringValue(a[0]));
             }
             List<NutsString> ll = Arrays.stream(a).map(x -> stringValueFormatted(x, escapeString, session)).collect(Collectors.toList());
-            return txt.builder()
+            return txt.ofBuilder()
                     .append("{")
                     .appendJoined(
                             txt.ofPlain(", "),
@@ -179,7 +179,7 @@ public class NutsTextUtils {
             for (int i = 0; i < len; i++) {
                 all.add(stringValueFormatted(Array.get(o, i), escapeString, session));
             }
-            return txt.builder()
+            return txt.ofBuilder()
                     .append("[")
                     .appendJoined(
                             txt.ofPlain(", "),
@@ -200,7 +200,7 @@ public class NutsTextUtils {
             }
             return stringValueFormatted(all, escapeString, session);
         }
-        return txt.toText(o);
+        return txt.ofText(o);
     }
 
     public static NutsString formatLogValue(NutsTexts text, Object unresolved, Object resolved) {
@@ -210,7 +210,7 @@ public class NutsTextUtils {
             return a;
         } else {
             return
-                    text.builder()
+                    text.ofBuilder()
                             .append(a)
                             .append(" => ")
                             .append(b)
@@ -222,6 +222,6 @@ public class NutsTextUtils {
         if (s == null || (s instanceof String && ((String) s).isEmpty())) {
             return text.ofStyled("<EMPTY>", NutsTextStyle.option());
         }
-        return text.toText(s);
+        return text.ofText(s);
     }
 }

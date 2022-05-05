@@ -1,6 +1,7 @@
 package net.thevpc.nuts.runtime.standalone.io.path.spi;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.io.NutsIOException;
 import net.thevpc.nuts.io.NutsPath;
 import net.thevpc.nuts.runtime.standalone.session.NutsSessionUtils;
 import net.thevpc.nuts.spi.NutsPathFactory;
@@ -10,26 +11,39 @@ import java.util.Objects;
 
 public class ClassLoaderPath extends URLPath {
     private final String path;
+    private final String effectivePath;
     private final ClassLoader loader;
+    private final static String fileOf(String path,boolean check, NutsSession session){
+        if(path!=null){
+            if(path.startsWith("classpath:")){
+                String p=path;
+                p=p.substring("classpath:".length());
+                while(p.startsWith("/")){
+                    p=p.substring(1);
+                }
+                return p;
+            }
+        }
+        if(check){
+            throw new NutsIOException(session, NutsMessage.ofCstyle("invalid class path file : %s",path));
+        }
+        return null;
+    }
 
     public ClassLoaderPath(String path, ClassLoader loader, NutsSession session) {
-        super(loader.getResource(path.substring("classpath://".length())), session, true);
+        super(loader.getResource(fileOf(path,true,session)), session, true);
         this.path = path;
+        this.effectivePath = fileOf(path,false,session);
         this.loader = loader;
-        if (!path.startsWith("classpath://")) {
-            throw new NutsIllegalArgumentException(session,
-                    NutsMessage.ofCstyle("invalid classpath url format: %s", path)
-            );
-        }
     }
 
     @Override
     public String toString() {
-        return path;
+        return "classpath:"+effectivePath;
     }
 
     public String getName(NutsPath basePath) {
-        return URLPath.getURLName(path);
+        return URLPath.getURLName(effectivePath);
     }
 
     @Override
@@ -37,7 +51,7 @@ public class ClassLoaderPath extends URLPath {
         if (url != null) {
             return super.getLocation(basePath);
         }
-        return path.substring("classpath:/".length());
+        return effectivePath;
     }
 
     @Override
@@ -55,13 +69,13 @@ public class ClassLoaderPath extends URLPath {
         if (o == null || getClass() != o.getClass()) return false;
 //        if (!super.equals(o)) return false;
         ClassLoaderPath that = (ClassLoaderPath) o;
-        return Objects.equals(path, that.path) && Objects.equals(loader, that.loader);
+        return Objects.equals(effectivePath, that.effectivePath) && Objects.equals(loader, that.loader);
     }
 
     @Override
     public int hashCode() {
 //        return Objects.hash(super.hashCode(), path, loader);
-        return Objects.hash(path, loader);
+        return Objects.hash(effectivePath, loader);
     }
 
     public static class ClasspathFactory implements NutsPathFactory {

@@ -33,27 +33,27 @@ import net.thevpc.nuts.NutsString;
  * @app.category Format
  */
 public interface NutsTextStyled extends NutsText {
-    static NutsTextStyled of(String str, NutsTextStyle style, NutsSession session) {
+    static NutsText of(String str, NutsTextStyle style, NutsSession session) {
         return NutsTexts.of(session).ofStyled(str, style);
     }
 
-    static NutsTextStyled of(NutsString str, NutsTextStyle style, NutsSession session) {
+    static NutsText of(NutsString str, NutsTextStyle style, NutsSession session) {
         return NutsTexts.of(session).ofStyled(str, style);
     }
 
-    static NutsTextStyled of(NutsText str, NutsTextStyle style, NutsSession session) {
+    static NutsText of(NutsText str, NutsTextStyle style, NutsSession session) {
         return NutsTexts.of(session).ofStyled(str, style);
     }
 
-    static NutsTextStyled of(String str, NutsTextStyles styles, NutsSession session) {
+    static NutsText of(String str, NutsTextStyles styles, NutsSession session) {
         return NutsTexts.of(session).ofStyled(str, styles);
     }
 
-    static NutsTextStyled of(NutsString str, NutsTextStyles styles, NutsSession session) {
+    static NutsText of(NutsString str, NutsTextStyles styles, NutsSession session) {
         return NutsTexts.of(session).ofStyled(str, styles);
     }
 
-    static NutsTextStyled of(NutsText str, NutsTextStyles styles, NutsSession session) {
+    static NutsText of(NutsText str, NutsTextStyles styles, NutsSession session) {
         return NutsTexts.of(session).ofStyled(str, styles);
     }
 

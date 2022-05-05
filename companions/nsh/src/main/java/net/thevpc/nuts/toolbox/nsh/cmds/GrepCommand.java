@@ -217,7 +217,7 @@ public class GrepCommand extends SimpleJShellBuiltin {
             }
             r.add(t);
         }
-        return NutsTexts.of(session).builder().appendAll(r);
+        return NutsTexts.of(session).ofBuilder().appendAll(r);
     }
 
     private void processByLine(Reader reader, Options options, Pattern p, FileInfo f, List<GrepResultItem> results, NutsSession session) throws IOException {
@@ -245,7 +245,7 @@ public class GrepCommand extends SimpleJShellBuiltin {
             int pos = matcher.start();
             int end = matcher.end();
             coloredLine.replace(pos, end,
-                    NutsTexts.of(session).applyStyles(
+                    NutsTexts.of(session).ofStyled(
                             coloredLine.substring(pos, end)
                             , selectionStyle(options)
                     )

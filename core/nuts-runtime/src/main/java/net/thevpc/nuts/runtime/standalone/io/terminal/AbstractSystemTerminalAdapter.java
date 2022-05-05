@@ -5,7 +5,6 @@ import net.thevpc.nuts.cmdline.NutsCommandAutoCompleteResolver;
 import net.thevpc.nuts.cmdline.NutsCommandHistory;
 import net.thevpc.nuts.io.NutsPrintStream;
 import net.thevpc.nuts.io.NutsSystemTerminal;
-import net.thevpc.nuts.runtime.standalone.io.progress.NutsProgressUtils;
 import net.thevpc.nuts.runtime.standalone.io.progress.CProgressBar;
 import net.thevpc.nuts.spi.NutsSupportLevelContext;
 import net.thevpc.nuts.spi.NutsSystemTerminalBase;
@@ -143,7 +142,7 @@ public abstract class AbstractSystemTerminalAdapter extends NutsSystemTerminalBa
                 getProgressBar(session).printProgress(
                         Float.isNaN(progress) ? -1
                                 : (int) (progress * 100),
-                        NutsTexts.of(session).toText(message).toString(),
+                        NutsTexts.of(session).ofText(message),
                         err()
                 );
             }
@@ -152,7 +151,7 @@ public abstract class AbstractSystemTerminalAdapter extends NutsSystemTerminalBa
     }
     private CProgressBar getProgressBar(NutsSession session) {
         if (progressBar == null) {
-            progressBar = CoreTerminalUtils.createProgressBar(session);
+            progressBar = CProgressBar.of(session);
         }
         return progressBar;
     }

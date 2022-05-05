@@ -5,17 +5,17 @@
  */
 package net.thevpc.nuts.runtime.standalone.io.progress;
 
-import java.text.DecimalFormat;
-
 import net.thevpc.nuts.io.NutsPrintStream;
-import net.thevpc.nuts.runtime.standalone.io.terminal.CoreTerminalUtils;
-import net.thevpc.nuts.runtime.standalone.util.CoreStringUtils;
 import net.thevpc.nuts.runtime.standalone.util.BytesSizeFormat;
+import net.thevpc.nuts.runtime.standalone.util.CoreStringUtils;
+import net.thevpc.nuts.text.NutsText;
 import net.thevpc.nuts.text.NutsTextBuilder;
 import net.thevpc.nuts.text.NutsTextStyle;
 import net.thevpc.nuts.text.NutsTexts;
 import net.thevpc.nuts.util.NutsProgressEvent;
 import net.thevpc.nuts.util.NutsProgressMonitor;
+
+import java.text.DecimalFormat;
 
 /**
  * @author thevpc
@@ -40,7 +40,7 @@ public class TraceNutsProgressMonitor implements NutsProgressMonitor/*, NutsOutp
 
     @Override
     public void onStart(NutsProgressEvent event) {
-        bar= CoreTerminalUtils.resolveProgressBar(event.getSession());
+        bar= CProgressBar.of(event.getSession());
         this.out = event.getSession().getTerminal().err();
         if (event.getSession().isPlainOut()) {
             onProgress0(event, false);
@@ -66,7 +66,7 @@ public class TraceNutsProgressMonitor implements NutsProgressMonitor/*, NutsOutp
     public boolean onProgress0(NutsProgressEvent event, boolean end) {
         if(!optionsProcessed) {
             optionsProcessed=true;
-            optionNewline= NutsProgressUtils.parseProgressOptions(event.getSession()).isArmedNewline();
+            optionNewline= ProgressOptions.of(event.getSession()).isArmedNewline();
         }
         double partialSeconds = event.getPartialMillis() / 1000.0;
         if (event.getCurrentValue() == 0 || partialSeconds > 0.5 || event.getCurrentValue() == event.getMaxValue()) {
@@ -82,12 +82,12 @@ public class TraceNutsProgressMonitor implements NutsProgressMonitor/*, NutsOutp
             long partialSpeed = partialSeconds == 0 ? 0 : (long) (event.getPartialValue() / partialSeconds);
             double percent = event.getPercent();
 
-            NutsTextBuilder formattedLine = text.builder();
-            String p = bar.progress(event.isIndeterminate() ? -1 : (int) (event.getPercent()));
+            NutsTextBuilder formattedLine = text.ofBuilder();
+            NutsText p = bar.progress(event.isIndeterminate() ? -1 : (int) (event.getPercent()));
             if(p==null|| p.isEmpty()){
                 return false;
             }
-            formattedLine.append(text.parse(p));
+            formattedLine.append(p);
             BytesSizeFormat mf = new BytesSizeFormat("BTD1F", event.getSession());
 
             formattedLine.append(" ").append(text.ofStyled(String.format("%6s", df.format(percent)), NutsTextStyle.config())).append("% ");
@@ -106,7 +106,7 @@ public class TraceNutsProgressMonitor implements NutsProgressMonitor/*, NutsOutp
             }
             formattedLine.append(" ").append(event.getMessage()).append(" ");
             String ff = formattedLine.toString();
-            int length = text.builder().append(ff).textLength();
+            int length = text.ofBuilder().append(ff).textLength();
             if (length < minLength) {
                 CoreStringUtils.fillString(' ', minLength - length, formattedLine);
             } else {

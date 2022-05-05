@@ -1,23 +1,18 @@
 package net.thevpc.nuts.runtime.standalone.text;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.io.NutsIOException;
-import net.thevpc.nuts.runtime.standalone.text.parser.DefaultNutsTextNodeResourceParserHelper;
+import net.thevpc.nuts.io.*;
 import net.thevpc.nuts.text.*;
-import net.thevpc.nuts.util.NutsLoggerOp;
-import net.thevpc.nuts.util.NutsLoggerVerb;
 
 import java.io.*;
-import java.util.logging.Level;
+import java.net.URL;
+import java.nio.file.Path;
 
 public abstract class AbstractNutsTextNodeParser implements NutsTextParser {
     protected int bufferSize = 4096;
     protected NutsSession session;
-    protected DefaultNutsTextNodeResourceParserHelper rp;
-
     public AbstractNutsTextNodeParser(NutsSession session) {
         this.session = session;
-        rp = new DefaultNutsTextNodeResourceParserHelper(this, session);
     }
 
     public NutsWorkspace getWorkspace() {
@@ -65,6 +60,32 @@ public abstract class AbstractNutsTextNodeParser implements NutsTextParser {
     public NutsText parse(Reader in) {
         NutsTextNodeCollector doc = new NutsTextNodeCollector(session);
         parse(in, doc);
+        return doc.getRootOrEmpty();
+    }
+
+    @Override
+    public NutsText parse(File in) {
+        return parse(NutsPath.of(in, getSession()));
+    }
+
+    @Override
+    public NutsText parse(Path in) {
+        return parse(NutsPath.of(in, getSession()));
+    }
+
+    @Override
+    public NutsText parse(URL in) {
+        return parse(NutsPath.of(in, getSession()));
+    }
+
+    @Override
+    public NutsText parse(NutsInputSource in) {
+        NutsTextNodeCollector doc = new NutsTextNodeCollector(session);
+        try (InputStream is = in.getInputStream()) {
+            parse(is, doc);
+        } catch (IOException ex) {
+            throw new UncheckedIOException(ex);
+        }
         return doc.getRootOrEmpty();
     }
 
@@ -140,76 +161,6 @@ public abstract class AbstractNutsTextNodeParser implements NutsTextParser {
         String raw = new String(buf, off, len);
         char[] c = raw.toCharArray();
         return parseIncremental(c, 0, c.length, visitor);
-    }
-
-    @Override
-    public NutsText parseResource(String resourceName, NutsTextFormatLoader loader) {
-        return rp.parseResource(resourceName, loader);
-    }
-
-    @Override
-    public NutsText parseResource(String resourceName, Reader reader, NutsTextFormatLoader loader) {
-        return rp.parseResource(resourceName, reader, loader);
-    }
-
-    @Override
-    public NutsTextFormatLoader createLoader(ClassLoader loader) {
-        return rp.createClassPathLoader(loader);
-    }
-
-    @Override
-    public NutsTextFormatLoader createLoader(File root) {
-        return rp.createFileLoader(root);
-    }
-
-    /**
-     * transform plain text to formatted text so that the result is rendered as
-     * is
-     *
-     * @param str str
-     * @return escaped text
-     */
-    public static String escapeText0(String str) {
-        if (str == null) {
-            return str;
-        }
-        StringBuilder sb = new StringBuilder(str.length());
-        for (char c : str.toCharArray()) {
-            switch (c) {
-                case '`':
-                case '#':
-                case NutsConstants.Ntf.SILENT:
-                case '\\': {
-                    sb.append('\\').append(c);
-                    break;
-                }
-                default: {
-                    sb.append(c);
-                }
-            }
-        }
-        return sb.toString();
-    }
-
-    @Override
-    public String escapeText(String str) {
-        return escapeText0(str);
-    }
-
-    public String filterText(String text) {
-        try {
-            ByteArrayOutputStream out = new ByteArrayOutputStream();
-            NutsTextNodeWriterStringer s = new NutsTextNodeWriterStringer(out, getSession());
-            s.writeNode(this.parse(new StringReader(text)), new NutsTextWriteConfiguration().setFiltered(true));
-            s.flush();
-            return out.toString();
-        } catch (Exception ex) {
-            NutsLoggerOp.of(AbstractNutsTextNodeParser.class, session)
-                    .verb(NutsLoggerVerb.WARNING)
-                    .level(Level.FINEST)
-                    .log(NutsMessage.ofCstyle("error parsing : %s", text));
-            return text;
-        }
     }
 
 }

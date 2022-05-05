@@ -30,5 +30,6 @@ package net.thevpc.nuts.text;
  * @app.category Format
  */
 public interface NutsTextLink extends NutsText {
-    String getValue();
+    String getText();
+    String getSeparator();
 }

@@ -1,17 +1,17 @@
 package net.thevpc.nuts.runtime.standalone.text;
 
-import net.thevpc.nuts.text.NutsTextWriteConfiguration;
+import net.thevpc.nuts.text.NutsTextTransformConfig;
 
 public abstract class AbstractNutsTextNodeWriter implements NutsTextNodeWriter {
-    private NutsTextWriteConfiguration config;
+    private NutsTextTransformConfig config;
 
     @Override
-    public NutsTextWriteConfiguration getWriteConfiguration() {
+    public NutsTextTransformConfig getWriteConfiguration() {
         return config;
     }
 
     @Override
-    public NutsTextNodeWriter setWriteConfiguration(NutsTextWriteConfiguration config) {
+    public NutsTextNodeWriter setWriteConfiguration(NutsTextTransformConfig config) {
         this.config = config;
         return this;
     }

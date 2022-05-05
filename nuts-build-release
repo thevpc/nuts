@@ -153,7 +153,7 @@ if [ x"$NUTS_FLAG_IMPLICIT_ALL" == x"true" ]; then
 fi
 
 if [ x"$NUTS_FLAG_SITE" == x"true" ]; then
-  $JAVA_CMD $NUTS_DEBUG_ARG -jar core/nuts/target/nuts-$NUTS_VERSION.jar -ZSbyK -w development-build $NUTS_VERBOSE $NUTS_TRACE ---!init-platforms ---!init-launchers ./nuts-build-release.nsh
+  $JAVA_CMD $NUTS_DEBUG_ARG -jar core/nuts/target/nuts-$NUTS_VERSION.jar -ZSbyK -w development-build $NUTS_VERBOSE $NUTS_TRACE --!init-platforms --!init-launchers ./nuts-build-release.nsh
 fi
 
 ## should move these commands to nuts-build-release.nsh, for that we need to ensure that 'find' command is well implemented in 'nsh'

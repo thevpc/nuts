@@ -7,7 +7,6 @@ package net.thevpc.nuts.runtime.standalone.io.progress;
 
 import net.thevpc.nuts.NutsMessage;
 import net.thevpc.nuts.NutsSession;
-import net.thevpc.nuts.NutsString;
 import net.thevpc.nuts.NutsWorkspace;
 import net.thevpc.nuts.io.*;
 import net.thevpc.nuts.runtime.standalone.session.NutsSessionUtils;
@@ -128,10 +127,10 @@ public class DefaultNutsInputStreamMonitor implements NutsInputStreamMonitor {
         NutsUtils.requireNonNull(source, getSession(), "source");
         NutsMessage sourceName = this.sourceName;
         if (sourceName == null && source!=null) {
-            sourceName = NutsMessage.ofNtf(NutsTexts.of(session).toText(source));
+            sourceName = NutsMessage.ofNtf(NutsTexts.of(session).ofText(source));
         }
         if (sourceName == null) {
-            sourceName = NutsMessage.ofNtf(NutsTexts.of(session).toText(source.getInputMetaData().getName()));
+            sourceName = NutsMessage.ofNtf(NutsTexts.of(session).ofText(source.getInputMetaData().getName()));
         }
         NutsProgressMonitor monitor = NutsProgressUtils.createProgressMonitor(NutsProgressUtils.MonitorType.STREAM, source, sourceOrigin, session
                 , isLogProgress()

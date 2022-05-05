@@ -35,7 +35,7 @@ public class DefaultSearchFormatTree extends DefaultSearchFormatBase {
                 if (o instanceof XNode) {
                     return ((XNode) o).toNutsString();
                 }
-                return NutsTexts.of(getSession()).builder().append(o).immutable();
+                return NutsTexts.of(getSession()).ofBuilder().append(o).immutable();
             }
         }
     };

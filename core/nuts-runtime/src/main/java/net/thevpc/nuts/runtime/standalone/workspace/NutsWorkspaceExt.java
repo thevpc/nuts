@@ -10,6 +10,7 @@ import net.thevpc.nuts.runtime.standalone.repository.impl.main.NutsInstalledRepo
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.NutsExecutionContextBuilder;
 import net.thevpc.nuts.runtime.standalone.workspace.config.NutsWorkspaceModel;
 import net.thevpc.nuts.spi.NutsInstallerComponent;
+import net.thevpc.nuts.text.NutsText;
 
 /**
  * @author thevpc
@@ -24,13 +25,13 @@ public interface NutsWorkspaceExt {
         return (NutsWorkspaceExt) ws;
     }
 
-    String getWelcomeText(NutsSession session);
+    NutsText getWelcomeText(NutsSession session);
 
-    String getHelpText(NutsSession session);
+    NutsText getHelpText(NutsSession session);
 
-    String getLicenseText(NutsSession session);
+    NutsText getLicenseText(NutsSession session);
 
-    String resolveDefaultHelp(Class clazz, NutsSession session);
+    NutsText resolveDefaultHelp(Class clazz, NutsSession session);
 
     NutsId resolveEffectiveId(NutsDescriptor descriptor, NutsSession options);
 

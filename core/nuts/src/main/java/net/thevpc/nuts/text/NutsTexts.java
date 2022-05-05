@@ -27,6 +27,7 @@
 package net.thevpc.nuts.text;
 
 import net.thevpc.nuts.NutsCodeHighlighter;
+import net.thevpc.nuts.NutsMessage;
 import net.thevpc.nuts.NutsSession;
 import net.thevpc.nuts.NutsString;
 import net.thevpc.nuts.spi.NutsComponent;
@@ -48,11 +49,11 @@ public interface NutsTexts extends NutsComponent {
 
     NutsTexts setSession(NutsSession session);
 
-    NutsTextBuilder builder();
+    NutsTextBuilder ofBuilder();
 
     NutsText ofBlank();
 
-    NutsText toText(Object t);
+    NutsText ofText(Object t);
 
     NutsTextPlain ofPlain(String t);
 
@@ -60,39 +61,22 @@ public interface NutsTexts extends NutsComponent {
 
     NutsTextList ofList(Collection<NutsText> nodes);
 
-    NutsTextStyled ofStyled(String other, NutsTextStyles styles);
+    NutsText ofStyled(String other, NutsTextStyles styles);
 
-    NutsTextStyled ofStyled(NutsString other, NutsTextStyles styles);
+    NutsText ofStyled(NutsMessage other, NutsTextStyles styles);
 
-    NutsTextStyled ofStyled(NutsText other, NutsTextStyles styles);
+    NutsText ofStyled(NutsString other, NutsTextStyles styles);
 
-    /**
-     * apply style to the given text or return it as is if no style is to be applied.
-     *
-     * @param other  text to apply style to.
-     * @param styles styles to apply
-     * @return the given text with the applied style
-     */
-    NutsText applyStyles(NutsText other, NutsTextStyles styles);
+    NutsText ofStyled(NutsText other, NutsTextStyles styles);
 
-    NutsText applyStyles(NutsText other, NutsTextStyle... styles);
 
-    /**
-     * apply style to the given text or return it as is if no style is to be applied.
-     *
-     * @param other  text to apply style to.
-     * @param styles styles to apply
-     * @return the given text with the applied style
-     */
-    NutsText applyStyles(NutsString other, NutsTextStyles styles);
+    NutsText ofStyled(String other, NutsTextStyle style);
 
-    NutsText applyStyles(NutsString other, NutsTextStyle... styles);
+    NutsText ofStyled(NutsMessage other, NutsTextStyle style);
 
-    NutsTextStyled ofStyled(String other, NutsTextStyle styles);
+    NutsText ofStyled(NutsString other, NutsTextStyle style);
 
-    NutsTextStyled ofStyled(NutsString other, NutsTextStyle styles);
-
-    NutsTextStyled ofStyled(NutsText other, NutsTextStyle styles);
+    NutsText ofStyled(NutsText other, NutsTextStyle style);
 
     NutsTextTitle ofTitle(String other, int level);
 
@@ -109,16 +93,19 @@ public interface NutsTexts extends NutsComponent {
     NutsText ofCodeOrCommand(String lang, String text);
 
     NutsText ofCodeOrCommand(String text);
+
     NutsText ofCodeOrCommand(String lang, String text, char sep);
 
-    NutsTextNumbering ofNumbering();
+    NutsTitleSequence ofNumbering();
 
-    NutsTextNumbering ofNumbering(String pattern);
+    NutsTitleSequence ofNumbering(String pattern);
 
     NutsTextAnchor ofAnchor(String anchorName);
 
     NutsTextLink ofLink(String value, char sep);
+
     NutsTextAnchor ofAnchor(String anchorName, char sep);
+
     NutsTextLink ofLink(String value);
 
     NutsTextFormatTheme getTheme();
@@ -139,4 +126,15 @@ public interface NutsTexts extends NutsComponent {
 
     NutsTextParser parser();
 
+    void traverseDFS(NutsText text, NutsTextVisitor visitor);
+
+    void traverseBFS(NutsText text, NutsTextVisitor visitor);
+
+    NutsText transform(NutsText text, NutsTextTransformConfig config);
+
+    NutsText transform(NutsText text, NutsTextTransformer transformer, NutsTextTransformConfig config);
+
+    String escapeText(String str);
+
+    String filterText(String text);
 }

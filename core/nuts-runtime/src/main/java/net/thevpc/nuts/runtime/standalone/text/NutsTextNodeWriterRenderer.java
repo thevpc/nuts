@@ -8,6 +8,7 @@ import net.thevpc.nuts.runtime.standalone.text.parser.DefaultNutsTextTitle;
 import net.thevpc.nuts.runtime.standalone.io.printstream.NutsPrintStreamHelper;
 import net.thevpc.nuts.runtime.standalone.io.outputstream.OutputHelper;
 import net.thevpc.nuts.runtime.standalone.io.outputstream.OutputStreamHelper;
+import net.thevpc.nuts.runtime.standalone.util.CoreStringUtils;
 import net.thevpc.nuts.spi.NutsSystemTerminalBase;
 import net.thevpc.nuts.text.*;
 
@@ -80,11 +81,11 @@ public class NutsTextNodeWriterRenderer extends AbstractNutsTextNodeWriter {
         return false;
     }
 
-    public void writeNode(NutsText node, NutsTextWriteConfiguration ctx) {
+    public void writeNode(NutsText node, NutsTextTransformConfig ctx) {
         writeNode(NutsTextStyles.of(), node, ctx);
     }
 
-    private void writeNode(NutsTextStyles formats, NutsText node, NutsTextWriteConfiguration ctx) {
+    private void writeNode(NutsTextStyles formats, NutsText node, NutsTextTransformConfig ctx) {
         if (formats == null) {
             formats = NutsTextStyles.of();
         }
@@ -118,20 +119,26 @@ public class NutsTextNodeWriterRenderer extends AbstractNutsTextNodeWriter {
                 NutsTextStyles s2 = formats.append(NutsTexts.of(session).getTheme().toBasicStyles(
                         NutsTextStyles.of(NutsTextStyle.title(s.getLevel())), session
                 ));
-                if (ctx.isTitleNumberEnabled()) {
-                    NutsTextNumbering seq = ctx.getTitleNumberSequence();
+                if (ctx.isProcessTitleNumbers()) {
+                    NutsTitleSequence seq = ctx.getTitleNumberSequence();
                     if (seq == null) {
                         seq = NutsTexts.of(session).ofNumbering();
                         ctx.setTitleNumberSequence(seq);
                     }
-                    NutsTextNumbering a = seq.newLevel(s.getLevel());
+                    NutsTitleSequence a = seq.next(s.getLevel());
                     NutsText sWithTitle = factory0.ofList(
                             NutsTexts.of(session).ofPlain(a.toString() + " "),
                             s.getChild()
                     );
                     writeNode(s2, sWithTitle, ctx);
+                    writeRaw("\n");
                 } else {
-                    writeNode(s2, s.getChild(), ctx);
+                    NutsText sWithTitle = factory0.ofList(
+                            NutsTexts.of(session).ofPlain(CoreStringUtils.fillString('#',s.getLevel())+") "),
+                            s.getChild()
+                    );
+                    writeNode(s2, sWithTitle, ctx);
+                    writeRaw("\n");
                 }
 //        } else if (text instanceof TextNodeUnStyled) {
 //            TextNodeUnStyled s = (TextNodeUnStyled) text;
@@ -155,19 +162,12 @@ public class NutsTextNodeWriterRenderer extends AbstractNutsTextNodeWriter {
             }
             case LINK: {
                 //ignore!!
-                DefaultNutsTexts factory0 = (DefaultNutsTexts) NutsTexts.of(session);
-                NutsTextPlain child = NutsTexts.of(session).ofPlain(((NutsTextLink) node).getValue());
-                writeNode(
-                        formats,
-                        factory0.createStyledOrPlain(
-                                child
-                                ,
-                                NutsTextStyles.of(NutsTextStyle.underlined()),
-                                true
-                        ),
-                        ctx
-                );
-                writeRaw(formats, "see: " + ((NutsTextLink) node).getValue(), ctx.isFiltered());
+                NutsTextPlain child = NutsTexts.of(session).ofPlain(((NutsTextLink) node).getText());
+                writeNode(formats,
+                        NutsTexts.of(session).ofStyled(child,
+                                NutsTextStyles.of(NutsTextStyle.underlined())
+                        ),ctx);
+                writeRaw(formats, "see: " + ((NutsTextLink) node).getText(), ctx.isFiltered());
                 break;
             }
             case CODE: {

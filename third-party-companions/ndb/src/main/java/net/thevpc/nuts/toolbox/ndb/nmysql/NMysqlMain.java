@@ -806,7 +806,7 @@ public class NMysqlMain implements NdbSupport {
         NutsTexts text = NutsTexts.of(context.getSession());
         if (!describe) {
             if (plain) {
-                return text.builder()
+                return text.ofBuilder()
                         .append(" [local ] ", NutsTextStyle.primary4())
                         .append(dbName).append("@").append(confName, NutsTextStyle.primary4())
                         ;
@@ -815,7 +815,7 @@ public class NMysqlMain implements NdbSupport {
             }
         } else {
             if (plain) {
-                return text.builder()
+                return text.ofBuilder()
                         .append(" [local ] ", NutsTextStyle.primary4())
                         .append(dbName).append("@").append(confName, NutsTextStyle.primary4())
                         .append(" db=").append(config.getDatabaseName())
@@ -830,7 +830,7 @@ public class NMysqlMain implements NdbSupport {
         NutsTexts text = NutsTexts.of(context.getSession());
         if (!describe) {
             if (plain) {
-                return text.builder()
+                return text.ofBuilder()
                         .append(" [remote] ", NutsTextStyle.primary4())
                         .append(dbName).append("@").append(confName, NutsTextStyle.primary4())
                         ;
@@ -839,7 +839,7 @@ public class NMysqlMain implements NdbSupport {
             }
         } else {
             if (plain) {
-                return text.builder()
+                return text.ofBuilder()
                         .append(" [remote] ", NutsTextStyle.primary4())
                         .append(dbName).append("@").append(confName, NutsTextStyle.primary4())
                         .append(" local=").append(config.getLocalName())

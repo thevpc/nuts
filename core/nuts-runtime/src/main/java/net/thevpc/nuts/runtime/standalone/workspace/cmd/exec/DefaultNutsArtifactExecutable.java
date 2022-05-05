@@ -148,4 +148,8 @@ public class DefaultNutsArtifactExecutable extends AbstractNutsExecutableCommand
         return "nuts " + getId().toString() + " " + NutsCommandLine.of(appArgs).toString();
     }
 
+    @Override
+    public NutsSession getSession() {
+        return session;
+    }
 }

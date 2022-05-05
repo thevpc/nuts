@@ -45,12 +45,13 @@ public final class NutsTextStyles implements Iterable<NutsTextStyle>, NutsEnum {
     }
 
     public static NutsTextStyles of(NutsTextStyle... others) {
+        if (others==null || others.length==0) {
+            return PLAIN;
+        }
         Map<NutsTextStyleType, NutsTextStyle> visited = new TreeMap<>();
-        if (others != null) {
-            for (NutsTextStyle element : others) {
-                if (element != null) {
-                    visited.put(element.getType(), element);
-                }
+        for (NutsTextStyle element : others) {
+            if (element != null) {
+                visited.put(element.getType(), element);
             }
         }
         visited.remove(NutsTextStyleType.PLAIN);

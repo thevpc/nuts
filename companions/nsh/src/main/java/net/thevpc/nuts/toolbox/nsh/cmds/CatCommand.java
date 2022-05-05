@@ -259,7 +259,7 @@ public class CatCommand extends SimpleJShellBuiltin {
     }
 
     private NutsText nextLine(List<NutsText> t, NutsSession session, Tracker tracker, Options options, boolean skipNewline) {
-        NutsTextBuilder b = NutsTexts.of(session).builder();
+        NutsTextBuilder b = NutsTexts.of(session).ofBuilder();
         while (!t.isEmpty()) {
             NutsText ii = t.remove(0);
             NutsText n = nextNode(ii, session, tracker, options);
@@ -279,7 +279,7 @@ public class CatCommand extends SimpleJShellBuiltin {
         switch (t.getType()) {
             case PLAIN: {
                 String text = ((NutsTextPlain) t).getText();
-                NutsTextBuilder tb = NutsTexts.of(session).builder();
+                NutsTextBuilder tb = NutsTexts.of(session).ofBuilder();
                 if (options.n && tracker.wasNewline) {
                     tb.append(tracker.ruler.nextNum(tracker.line, session));
                 }
@@ -308,7 +308,7 @@ public class CatCommand extends SimpleJShellBuiltin {
                 NutsTextPlain pt = (NutsTextPlain) tt.getChild();
 
                 String text = pt.getText();
-                NutsTextBuilder tb = NutsTexts.of(session).builder();
+                NutsTextBuilder tb = NutsTexts.of(session).ofBuilder();
                 if (options.n && tracker.wasNewline) {
                     tb.append(tracker.ruler.nextNum(tracker.line, session));
                 }

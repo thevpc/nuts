@@ -1,9 +1,13 @@
 package net.thevpc.nuts.runtime.standalone.text.parser;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.runtime.standalone.text.NutsImmutableString;
+import net.thevpc.nuts.runtime.standalone.text.NutsTextNodeWriterStringer;
 import net.thevpc.nuts.text.NutsText;
 import net.thevpc.nuts.text.NutsTextBuilder;
 import net.thevpc.nuts.text.NutsTexts;
+
+import java.io.ByteArrayOutputStream;
 
 public abstract class AbstractNutsText implements NutsText {
 
@@ -28,7 +32,10 @@ public abstract class AbstractNutsText implements NutsText {
 
     @Override
     public NutsString immutable() {
-        return NutsTexts.of(session).builder().append(this).immutable();
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        NutsTextNodeWriterStringer ss = new NutsTextNodeWriterStringer(out, session);
+        ss.writeNode(this);
+        return new NutsImmutableString(session, out.toString());
     }
 
     @Override
@@ -58,7 +65,7 @@ public abstract class AbstractNutsText implements NutsText {
 
     @Override
     public NutsTextBuilder builder() {
-        return NutsTexts.of(session).builder().append(this);
+        return NutsTexts.of(session).ofBuilder().append(this);
     }
 
 }

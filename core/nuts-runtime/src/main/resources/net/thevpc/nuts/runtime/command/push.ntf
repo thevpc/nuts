@@ -5,7 +5,7 @@ push a ```sh nuts``` to remote repository
     ```sh push <id>```
         pushes a ```sh nuts``` to remote server
 
-#!include</net/thevpc/nuts/runtime/includes/standard-command.ntf>
+```!include classpath:/net/thevpc/nuts/runtime/includes/standard-command.ntf```
 
 ##) EXAMPLES:
 

@@ -43,7 +43,7 @@ public class DefaultSearchFormatXml extends DefaultSearchFormatBase {
 
     @Override
     public void start() {
-        NutsTextBuilder builder = NutsTexts.of(getSession()).builder();
+        NutsTextBuilder builder = NutsTexts.of(getSession()).ofBuilder();
         NutsSession session = getSession();
 
         builder.append(codeFormat.tokenToText("<?", "separator", txt, session));
@@ -84,7 +84,7 @@ public class DefaultSearchFormatXml extends DefaultSearchFormatBase {
 
     @Override
     public void complete(long count) {
-        NutsTextBuilder builder = NutsTexts.of(getSession()).builder();
+        NutsTextBuilder builder = NutsTexts.of(getSession()).ofBuilder();
 
         NutsSession session = getSession();
         builder.append(codeFormat.tokenToText("</", "separator", txt, session));

@@ -59,6 +59,10 @@ public class AlphabetNutsTitleNumber implements NutsTitleNumber {
         }
         throw new IllegalArgumentException("invalid name " + n);
     }
+    @Override
+    public boolean isBullet() {
+        return false;
+    }
 
     private String[] copy(String[] value) {
         String[] t = new String[value.length];
@@ -108,4 +112,5 @@ public class AlphabetNutsTitleNumber implements NutsTitleNumber {
         }
         return sb.toString();
     }
+
 }

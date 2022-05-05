@@ -35,4 +35,9 @@ public class IntNutsTitleNumber implements NutsTitleNumber {
     public String toString() {
         return String.valueOf(value);
     }
+
+    @Override
+    public boolean isBullet() {
+        return false;
+    }
 }

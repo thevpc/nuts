@@ -6,9 +6,12 @@ import java.util.function.Function;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class StringPlaceHolderParser {
+public final class StringPlaceHolderParser {
 
     public static final Pattern DOLLAR_PLACE_HOLDER_PATTERN = Pattern.compile("(?<braces>[$][{](?<bname>([^}]+))[}])|(?<dollar>[$](?<dname>[a-zA-Z0-9_-]+))");
+
+    private StringPlaceHolderParser() {
+    }
 
     public static <T> String replaceDollarPlaceHolders(String s, T context, NutsSession session, PlaceHolderProvider<T> provider) {
         return replaceDollarPlaceHolders(s, x -> provider.get(x, context, session));

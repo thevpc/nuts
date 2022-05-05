@@ -26,6 +26,8 @@
  */
 package net.thevpc.nuts;
 
+import net.thevpc.nuts.text.NutsText;
+
 /**
  * Class describing executable command.
  *
@@ -75,7 +77,7 @@ public interface NutsExecutableInformation {
      *
      * @return executable help string
      */
-    String getHelpText();
+    NutsText getHelpText();
 
 
 }

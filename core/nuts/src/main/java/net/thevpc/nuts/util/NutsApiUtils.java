@@ -72,10 +72,10 @@ public class NutsApiUtils {
             return Array.getLength(any) == 0;
         }
         if (any instanceof Collection) {
-            return ((Collection)any).isEmpty();
+            return ((Collection) any).isEmpty();
         }
         if (any instanceof Map) {
-            return ((Map)any).isEmpty();
+            return ((Map) any).isEmpty();
         }
         return false;
     }
@@ -177,29 +177,26 @@ public class NutsApiUtils {
             }
         }
     }
+
     public static NutsOptional<Integer> parseFileSizeInBytes(String value, Integer defaultMultiplier) {
         return NutsReservedStringUtils.parseFileSizeInBytes(value, defaultMultiplier);
     }
 
     @SuppressWarnings("unchecked")
-    public static <T> T createSessionCachedType(String name, Class<T> t, NutsSession session, Supplier<T> sup) {
+
+
+    public static <T> T getOrCreateRefProperty(String name, Class<T> type, NutsSession session, Supplier<T> sup) {
         NutsUtils.requireSession(session);
         name = NutsStringUtils.trim(name);
         if (NutsBlankable.isBlank(name)) {
             name = "default";
         }
-        String key = t.getName() + "(" + name + "@" + System.identityHashCode(session) + ")";
-        Object v = session.getProperty(key);
-        if (v != null && t.isInstance(v)) {
-            return (T) v;
-        }
-        v = sup.get();
-        session.setProperty(key, v);
-        return (T) v;
+        String key = type.getName() + "(" + name + ")";
+        return session.getOrComputeRefProperty(key, s->sup.get());
     }
 
-    public static <T> T createSessionCachedType(Class<T> t, NutsSession session, Supplier<T> sup) {
-        return createSessionCachedType("default", t, session, sup);
+    public static <T> T getOrCreateRefProperty(Class<T> type, NutsSession session, Supplier<T> sup) {
+        return getOrCreateRefProperty("default", type, session, sup);
     }
 
 }

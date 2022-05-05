@@ -77,12 +77,20 @@ public class DefaultNutsTextCode extends NutsTextSpecialBase implements NutsText
     }
 
     @Override
+    public String getQualifier() {
+        return getKind();
+    }
+
+    @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         if (!super.equals(o)) return false;
         DefaultNutsTextCode that = (DefaultNutsTextCode) o;
-        return Objects.equals(text, that.text);
+        return
+                Objects.equals(text, that.text)
+                && Objects.equals(getQualifier(), that.getQualifier())
+                ;
     }
 
     @Override

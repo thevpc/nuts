@@ -45,4 +45,7 @@ public interface NutsTextCode extends NutsText {
      * @return text
      */
     String getText();
+
+    String getQualifier();
+    String getSeparator();
 }

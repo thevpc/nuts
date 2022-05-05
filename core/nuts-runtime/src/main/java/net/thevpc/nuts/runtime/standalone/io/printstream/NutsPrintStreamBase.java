@@ -7,9 +7,7 @@ import net.thevpc.nuts.io.NutsOutputTargetMetadata;
 import net.thevpc.nuts.io.NutsPrintStream;
 import net.thevpc.nuts.io.NutsTerminalMode;
 import net.thevpc.nuts.spi.NutsSystemTerminalBase;
-import net.thevpc.nuts.text.NutsTerminalCommand;
-import net.thevpc.nuts.text.NutsText;
-import net.thevpc.nuts.text.NutsTexts;
+import net.thevpc.nuts.text.*;
 import net.thevpc.nuts.util.NutsUtils;
 
 import java.io.OutputStream;
@@ -66,15 +64,49 @@ public abstract class NutsPrintStreamBase implements NutsPrintStream {
         return write(buf, 0, buf.length);
     }
 
+    private NutsPrintStream printNormalized(NutsText b) {
+        if (b != null) {
+            switch (b.getType()) {
+                case LIST: {
+                    for (NutsText child : ((NutsTextList) b).getChildren()) {
+                        printNormalized(child);
+                    }
+                    break;
+                }
+                case PLAIN:
+                case STYLED:
+                case COMMAND: {
+                    print(b.toString());
+                    break;
+                }
+                case ANCHOR:
+                case LINK:
+                case CODE:
+                case TITLE:
+                default: {
+                    throw new NutsUnsupportedOperationException(session);
+                }
+            }
+        }
+        return this;
+    }
+
     @Override
     public NutsPrintStream print(NutsString b) {
-        this.print(String.valueOf(b));
+        if (b != null) {
+            NutsText t = b.toText();
+            printNormalized(NutsTexts.of(session).transform(t,
+                    new NutsTextTransformConfig()
+                            .setNormalize(true)
+                            .setFlatten(true)
+            ));
+        }
         return this;
     }
 
     @Override
     public NutsPrintStream print(NutsMessage b) {
-        this.print(NutsTexts.of(session).toText(b));
+        this.print(NutsTexts.of(session).ofText(b));
         return this;
     }
 
@@ -166,13 +198,14 @@ public abstract class NutsPrintStreamBase implements NutsPrintStream {
 
     @Override
     public NutsPrintStream println(NutsString b) {
-        this.println(String.valueOf(b));
+        this.print(b);
+        this.println();
         return this;
     }
 
     @Override
     public NutsPrintStream println(NutsMessage b) {
-        this.println(NutsTexts.of(session).toText(b));
+        this.println(NutsTexts.of(session).ofText(b));
         return this;
     }
 
@@ -240,7 +273,7 @@ public abstract class NutsPrintStreamBase implements NutsPrintStream {
 
     @Override
     public NutsPrintStream printj(String format, Object... args) {
-        NutsText s = NutsTexts.of(session).toText(
+        NutsText s = NutsTexts.of(session).ofText(
                 NutsMessage.ofJstyle(
                         format, args
                 )
@@ -270,7 +303,7 @@ public abstract class NutsPrintStreamBase implements NutsPrintStream {
     @Override
     public NutsPrintStream format(Locale l, String format, Object... args) {
         if (l == null) {
-            NutsText s = NutsTexts.of(session).toText(
+            NutsText s = NutsTexts.of(session).ofText(
                     NutsMessage.ofCstyle(
                             format, args
                     )
@@ -278,7 +311,7 @@ public abstract class NutsPrintStreamBase implements NutsPrintStream {
             print(s);
         } else {
             NutsSession sess = this.session.copy().setLocale(l.toString());
-            NutsText s = NutsTexts.of(sess).toText(
+            NutsText s = NutsTexts.of(sess).ofText(
                     NutsMessage.ofCstyle(
                             format, args
                     )

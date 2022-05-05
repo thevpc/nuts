@@ -143,6 +143,7 @@ public class Test04_NTFTest {
         String str2 = q2.toString();
         TestUtils.println(str2);
     }
+
     @Test
     public void test06() {
         NutsTexts txt = NutsTexts.of(session);
@@ -219,7 +220,7 @@ public class Test04_NTFTest {
     @Test
     public void test09() {
         NutsTexts text = NutsTexts.of(session);
-        NutsTextStyled q = text.ofStyled("re-install", NutsTextStyles.of(NutsTextStyle.success(), NutsTextStyle.underlined()));
+        NutsText q = text.ofStyled("re-install", NutsTextStyles.of(NutsTextStyle.success(), NutsTextStyle.underlined()));
         TestUtils.println(q.toString());
     }
 
@@ -247,7 +248,7 @@ public class Test04_NTFTest {
 
     private static void writeColors(String s) {
         TestUtils.println(s);
-        NutsSession ws = TestUtils.openNewTestWorkspace("--verbose","--skip-companions");
+        NutsSession ws = TestUtils.openNewTestWorkspace("--verbose", "--skip-companions");
         {
             ws.out().println(s);
         }
@@ -736,7 +737,7 @@ public class Test04_NTFTest {
 ////        writeColors("##)Hello");
 ////        writeColors("##)Hello");
 ////        writeColors("\n##)Hello");
-//        writeColors("#!include</net/thevpc/nuts/runtime/includes/standard-header.ntf>\n" +
+//        writeColors("```!include classpath:/net/thevpc/nuts/runtime/includes/standard-header.ntf```\n" +
 //                "\n" +
 //                "```sh ntf``` aka ##nuts text format## is a markdown like text format enabling colored text styles.\n" +
 //                "```sh ntf``` is the standard format used in the standard output and standard error. It is as\n" +
@@ -915,8 +916,7 @@ public class Test04_NTFTest {
 //"####) Coloring Result\n" +
 //"```sh cmd arg user -option=true```\n" +
 //"\n" +
-                        ""
-                ;
+                        "";
         writeColors(s);
     }
 
@@ -925,25 +925,25 @@ public class Test04_NTFTest {
         NutsTexts text = NutsTexts.of(session);
         NutsText str = text.ofStyled("re-install", NutsTextStyles.of(NutsTextStyle.success(), NutsTextStyle.underlined()));
         TestUtils.println(str.toString());
-        Assertions.assertEquals("##{_,success:re-install}##\u001E",str.toString());
+        Assertions.assertEquals("##{_,success:re-install}##\u001E", str.toString());
     }
 
     @Test
     public void test12() {
         NutsTexts text = NutsTexts.of(session);
-        String str="```system \"C:\\U\\v\" ```";
+        String str = "```system \"C:\\U\\v\" ```";
         NutsText t = text.parse(str);
-        Assertions.assertEquals("\"C:\\U\\v\" ",t.filteredText());
+        Assertions.assertEquals("\"C:\\U\\v\" ", t.filteredText());
     }
 
     @Test
     public void test13() {
         NutsTexts text = NutsTexts.of(session);
-        String str="```system \\``````";
+        String str = "```system \\``````";
         NutsText t = text.parse(str);
-        Assertions.assertEquals("```",t.filteredText());
+        Assertions.assertEquals("```", t.filteredText());
     }
-   //////////////////
+    //////////////////
 
 
     @Test
@@ -1110,7 +1110,7 @@ public class Test04_NTFTest {
     public void test25() {
         for (char c : "/_+%!-".toCharArray()) {
             NTFParser2 p = createParser();
-            String s = "##:"+c+":text##";
+            String s = "##:" + c + ":text##";
             TestUtils.println(s);
             p.offer(s);
             NutsText r = p.read();
@@ -1118,7 +1118,7 @@ public class Test04_NTFTest {
             r = p.readFully();
             Assertions.assertNotNull(r);
             Assertions.assertEquals(NutsTextType.STYLED, r.getType());
-            Assertions.assertEquals("##{"+c+":text}##\u001E", r.toString());
+            Assertions.assertEquals("##{" + c + ":text}##\u001E", r.toString());
         }
     }
 
@@ -1132,10 +1132,10 @@ public class Test04_NTFTest {
                 "+:bold",
                 "-:striked"
         }) {
-            char c=v.charAt(0);
-            String rr=v.substring(2);
+            char c = v.charAt(0);
+            String rr = v.substring(2);
             NTFParser2 p = createParser();
-            String s = "##:"+rr+":text##";
+            String s = "##:" + rr + ":text##";
             TestUtils.println(s);
             p.offer(s);
             NutsText r = p.read();
@@ -1143,7 +1143,7 @@ public class Test04_NTFTest {
             r = p.readFully();
             Assertions.assertNotNull(r);
             Assertions.assertEquals(NutsTextType.STYLED, r.getType());
-            Assertions.assertEquals("##{"+c+":text}##\u001E", r.toString());
+            Assertions.assertEquals("##{" + c + ":text}##\u001E", r.toString());
         }
 
         NTFParser2 p = createParser();
@@ -1192,8 +1192,8 @@ public class Test04_NTFTest {
         String s = "##{version:0.8.4}##\u001E";
         TestUtils.println(s);
         p.offer(s);
-        NutsText r1 =  p.readFully();
-        NutsText r2 =  p.readFully();
+        NutsText r1 = p.readFully();
+        NutsText r2 = p.readFully();
         Assertions.assertNotNull(r1);
         Assertions.assertNull(r2);
         Assertions.assertEquals(NutsTextType.STYLED, r1.getType());
@@ -1202,19 +1202,19 @@ public class Test04_NTFTest {
 
     @Test
     public void test30() {
-        NutsTextBuilder b = NutsTexts.of(session).builder()
+        NutsTextBuilder b = NutsTexts.of(session).ofBuilder()
                 .append("a")
                 .appendCode("sh", "b")
                 .append("c");
-        Assertions.assertEquals(3,b.textLength());
+        Assertions.assertEquals(3, b.textLength());
     }
 
     @Test
     public void test31() {
         NutsString s = NutsString.of("a```sh b```\u001Ec", session);
         NutsText t = s.toText();
-        Assertions.assertEquals(NutsTextType.LIST,t.getType());
-        Assertions.assertEquals(3,((NutsTextList)t).size());
+        Assertions.assertEquals(NutsTextType.LIST, t.getType());
+        Assertions.assertEquals(3, ((NutsTextList) t).size());
     }
 
     @Test
@@ -1222,7 +1222,30 @@ public class Test04_NTFTest {
         NutsString s = NutsString.of(
                 "##:_:location##:##:path:/home## (Tan Type)\n", session);
         NutsText t = s.toText();
-        Assertions.assertEquals(NutsTextType.LIST,t.getType());
-        Assertions.assertEquals(4,((NutsTextList)t).size());
+        Assertions.assertEquals(NutsTextType.LIST, t.getType());
+        Assertions.assertEquals(4, ((NutsTextList) t).size());
+    }
+
+    @Test
+    public void test33() {
+        String q = "###) SYNOPSIS:\n" +
+                "```sh\n" +
+                "njob tasks | jobs | projects | summary...\n" +
+                "```\n" +
+                "    manage tasks, jobs, projects\n";
+        NutsText s = NutsString.of(
+                q, session).toText();
+        NutsString im = s.immutable();
+        Assertions.assertEquals(NutsTextType.LIST, s.getType());
+        Assertions.assertEquals(q, s.toString());
+    }
+    @Test
+    public void test34() {
+        NutsText s = NutsString.of(
+                "```!clear-line``````!move-line-start```", session).toText();
+        Assertions.assertEquals(NutsTextType.LIST, s.getType());
+        Assertions.assertEquals(2, ((NutsTextList)s).size());
+        Assertions.assertEquals(true, ((NutsTextList)s).get(0) instanceof NutsTextCommand);
+        Assertions.assertEquals(true, ((NutsTextCommand)((NutsTextList)s).get(0)).getCommand().getName().equals("clear-line"));
     }
 }

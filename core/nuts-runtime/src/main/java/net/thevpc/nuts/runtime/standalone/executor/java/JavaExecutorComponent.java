@@ -332,7 +332,7 @@ public class JavaExecutorComponent implements NutsExecutorComponent {
                 } else {
                     xargs.add(txt.ofPlain("--nuts-path"));
                     xargs.add(
-                            txt.builder().appendJoined(
+                            txt.ofBuilder().appendJoined(
                                     ";", joptions.getClassPathNidStrings()
                             ).immutable()
                     );
@@ -403,7 +403,7 @@ public class JavaExecutorComponent implements NutsExecutorComponent {
             cmdLine.addAll(joptions.getAppArgs());
 
             session.out().printf("[dry] %s%n",
-                    text.builder()
+                    text.ofBuilder()
                             .append("exec", NutsTextStyle.pale())
                             .append(" ")
                             .append(NutsCommandLine.of(cmdLine))

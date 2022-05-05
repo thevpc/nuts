@@ -240,7 +240,7 @@ public class LocalTomcatConfigService extends LocalTomcatServiceBase {
     }
 
     public NutsString getFormattedPrefix(String str) {
-        return NutsTexts.of(getSession()).builder()
+        return NutsTexts.of(getSession()).ofBuilder()
                 .append("[")
                 .append(str, NutsTextStyle.primary5())
                 .append("]");

@@ -531,7 +531,7 @@ public class NutsPathFromSPI extends NutsPathBase {
         public EffectiveResolver(Function<String, String> resolver, NutsSession session) {
             this.session = session;
             this.resolver = resolver;
-            fallback = new NutsWorkspaceVarExpansionFunction(session);
+            fallback = NutsWorkspaceVarExpansionFunction.of(session);
         }
 
         @Override

@@ -14,7 +14,7 @@ uninstall ```sh nuts``` package <nuts-artifact>
     ```sh <args> ...```
         provide arguments to pass to uninstaller
 
-#!include</net/thevpc/nuts/runtime/includes/standard-command.ntf>
+```!include classpath:/net/thevpc/nuts/runtime/includes/standard-command.ntf```
 
 ##) EXAMPLES
 

@@ -381,7 +381,7 @@ public final class JavaExecutorOptions {
                             throw new NutsExecutionException(session, NutsMessage.ofCstyle("multiple runnable classes detected : %s", possibleClasses), 102);
                         }
                         NutsTexts text = NutsTexts.of(session);
-                        NutsTextBuilder msgString = text.builder();
+                        NutsTextBuilder msgString = text.ofBuilder();
 
                         msgString.append("multiple runnable classes detected  - actually ")
                                 .append(text.ofStyled("" + possibleClasses.size(), NutsTextStyle.primary5()))

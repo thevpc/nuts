@@ -3,9 +3,11 @@ package net.thevpc.nuts.toolbox.njob;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.cmdline.NutsCommandHistory;
 import net.thevpc.nuts.cmdline.NutsCommandLine;
+import net.thevpc.nuts.io.NutsPath;
 import net.thevpc.nuts.io.NutsSystemTerminal;
 import net.thevpc.nuts.text.NutsTextBuilder;
 import net.thevpc.nuts.text.NutsTextStyle;
+import net.thevpc.nuts.text.NutsTextTransformConfig;
 import net.thevpc.nuts.text.NutsTexts;
 import net.thevpc.nuts.toolbox.njob.model.*;
 import net.thevpc.nuts.toolbox.njob.time.TimeFormatter;
@@ -100,7 +102,7 @@ public class JobServiceCmd {
             context.getSession().out().printf("%s open task%s\n", text.ofStyled("" + tasksCount, NutsTextStyle.primary1()), tasksCount == 1 ? "" : "s");
             context.getSession().out().printf("%s job%s %s\n", text.ofStyled("" + allJobsCount, NutsTextStyle.primary1()), allJobsCount == 1 ? "" : "s",
                     allJobsCount == 0 ? ""
-                            : text.builder()
+                            : text.ofBuilder()
                             .append("(")
                             .append("" + jobsCount, NutsTextStyle.primary1())
                             .append(" this month)")
@@ -111,13 +113,20 @@ public class JobServiceCmd {
 
     protected void showCustomHelp(String name) {
         NutsTexts text = NutsTexts.of(context.getSession());
-        context.getSession().out().println(text.parser().parseResource("/net/thevpc/nuts/toolbox/" + name + ".ntf",
-                text.parser().createLoader(getClass().getClassLoader())
-        ));
+        NutsPath p = NutsPath.of("classpath:/net/thevpc/nuts/toolbox/" + name + ".ntf", session);
+        context.getSession().out().println(
+                text.transform(text.parser().parse(p), new NutsTextTransformConfig()
+                        .setCurrentDir(p.getParent())
+                        .setImportClassLoader(getClass().getClassLoader())
+                        .setRootLevel(1)
+                        .setProcessAll(true)
+                        .setNormalize(true)
+                )
+        );
     }
 
     protected NutsString getFormattedProject(String projectName) {
-        NutsTextBuilder builder = NutsTexts.of(session).builder();
+        NutsTextBuilder builder = NutsTexts.of(session).ofBuilder();
         builder.getStyleGenerator()
                 .setIncludeForeground(true)
                 .setUsePaletteColors();

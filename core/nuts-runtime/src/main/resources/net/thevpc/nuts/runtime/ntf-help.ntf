@@ -1,4 +1,4 @@
-#!include</net/thevpc/nuts/runtime/includes/standard-header.ntf>
+```!include classpath:/net/thevpc/nuts/runtime/includes/standard-header.ntf```
 
 
 ```sh ntf``` aka ##nuts text format## is a markdown like text format enabling colored text styles.

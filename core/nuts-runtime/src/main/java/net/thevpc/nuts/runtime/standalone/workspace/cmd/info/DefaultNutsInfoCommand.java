@@ -7,6 +7,7 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.file.Paths;
 import java.util.*;
+import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
@@ -38,11 +39,45 @@ public class DefaultNutsInfoCommand extends DefaultFormatBase<NutsInfoCommand> i
     private boolean showRepositories = false;
     private boolean fancy = false;
     private List<String> requests = new ArrayList<>();
+    private List<Supplier<Map<String, Object>>> extraSuppliers = new ArrayList<>();
     private Predicate<String> filter = NutsPredicates.always();
     private boolean lenient = false;
+    private Function<MapAndSession, Map<String, Object>> extraPropertiesSupplier = a -> (Map) extraProperties;
+
+    Function<MapAndSession, Map<String, Object>> repoSupplier = s -> {
+        Object oldRepos = s.map.get("repos");
+        if (oldRepos instanceof String) {
+            Map<String, Object> repositories = new LinkedHashMap<>();
+            for (NutsRepository repository : s.session.repos().setSession(getSession()).getRepositories()) {
+                repositories.put(repository.getName(), buildRepoRepoMap(repository, true, null));
+            }
+            return repositories;
+        }
+        return null;
+    };
+    private Map<String, Function<NutsSession, Object>> mapSupplier;
+    private Function<StringAndSession, Object> fct = new Function<StringAndSession, Object>() {
+        @Override
+        public Object apply(StringAndSession s) {
+            Function<NutsSession, Object> r = mapSupplier.get(s.string);
+            if(r!=null){
+                return r.apply(s.session);
+            }
+            String v = extraProperties.get(s.string);
+            if(v!=null){
+                return v;
+            }
+            NutsRepository repo = s.session.repos().setSession(getSession()).getRepository(s.string);
+            if(repo!=null){
+                return buildRepoRepoMap(repo, true, null);
+            }
+            return null;
+        }
+    };
 
     public DefaultNutsInfoCommand(NutsSession session) {
         super(session, "info");
+        mapSupplier = buildMapSupplier();
     }
 
     private static String key(String prefix, String key) {
@@ -161,7 +196,7 @@ public class DefaultNutsInfoCommand extends DefaultFormatBase<NutsInfoCommand> i
             return false;
         }
         boolean enabled = a.isActive();
-        switch(a.getStringKey().orElse("")) {
+        switch (a.getStringKey().orElse("")) {
             case "-r":
             case "--repos": {
                 boolean val = cmdLine.nextBoolean().get(session).getBooleanValue().get(session);
@@ -263,7 +298,214 @@ public class DefaultNutsInfoCommand extends DefaultFormatBase<NutsInfoCommand> i
         return false;
     }
 
-    //    @Override
+    public Map<String, Object> getPropertyValues() {
+        return buildWorkspaceMap(true);
+    }
+
+    public NutsOptional<Object> getPropertyValue(String propertyName) {
+        return NutsOptional.ofNamed(fct.apply(new StringAndSession(propertyName,getSession())), "property " + propertyName);
+    }
+
+    private Map<String, Function<NutsSession, Object>> buildMapSupplier() {
+        Map<String, Function<NutsSession, Object>> props = new HashMap<>();
+        props.put("name", session -> stringValue(session.getWorkspace().getName()));
+        props.put("nuts-api-version", session -> session.getWorkspace().getApiVersion());
+        props.put("nuts-api-id", session -> session.getWorkspace().getApiId());
+        props.put("nuts-runtime-id", session -> session.getWorkspace().getRuntimeId());
+        props.put("nuts-app-id", session -> session.getAppId());
+
+        props.put("nuts-runtime-classpath",
+                session -> {
+                    NutsTexts txt = NutsTexts.of(session);
+                    List<URL> cl = session.boot().getBootClassWorldURLs();
+                    List<NutsPath> runtimeClassPath = new ArrayList<>();
+                    if (cl != null) {
+                        for (URL url : cl) {
+                            if (url != null) {
+                                String s = url.toString();
+                                try {
+                                    s = Paths.get(url.toURI()).toFile().getPath();
+                                } catch (URISyntaxException ex) {
+                                    s = s.replace(":", "\\:");
+                                }
+                                runtimeClassPath.add(NutsPath.of(s, session));
+                            }
+                        }
+                    }
+                    return txt.ofBuilder().appendJoined(";", runtimeClassPath);
+                }
+        );
+        props.put("nuts-workspace-id", session -> NutsTexts.of(session).ofStyled(stringValue(session.getWorkspace().getUuid()), NutsTextStyle.path()));
+        props.put("nuts-store-layout", session -> session.locations().getStoreLocationLayout());
+        props.put("nuts-store-strategy", session -> session.locations().getStoreLocationStrategy());
+        props.put("nuts-repo-store-strategy", session -> session.locations().getRepositoryStoreLocationStrategy());
+        props.put("nuts-global", session -> session.boot().getBootOptions().getGlobal().orNull());
+        props.put("nuts-workspace", session -> session.locations().getWorkspaceLocation());
+        for (NutsStoreLocation folderType : NutsStoreLocation.values()) {
+            props.put("nuts-workspace-" + folderType.id(), session -> session.locations().getStoreLocation(folderType));
+        }
+        props.put("nuts-open-mode", session -> session.boot().getBootOptions().getOpenMode().orNull());
+        props.put("nuts-isolation-level", session -> session.boot().getBootOptions().getIsolationLevel().orNull());
+        props.put("nuts-secure", session -> (session.security().isSecure()));
+        props.put("nuts-gui", session -> session.boot().getBootOptions().getGui().orNull());
+        props.put("nuts-inherited", session -> session.boot().getBootOptions().getInherited().orNull());
+        props.put("nuts-recover", session -> session.boot().getBootOptions().getRecover().orNull());
+        props.put("nuts-reset", session -> session.boot().getBootOptions().getReset().orNull());
+        props.put("nuts-read-only", session -> session.boot().getBootOptions().getReadOnly().orNull());
+        props.put("nuts-debug", session -> NutsDebugString.of(session.boot().getBootOptions().getDebug().orNull(), getSession()));
+        props.put("nuts-bot", session -> session.boot().getBootOptions().getBot().orNull());
+        props.put("nuts-trace", session -> session.boot().getBootOptions().getTrace().orNull());
+        props.put("nuts-indexed", session -> session.boot().getBootOptions().getIndexed().orNull());
+        props.put("nuts-transitive", session -> session.boot().getBootOptions().getTransitive().orNull());
+        props.put("nuts-fetch-strategy", session -> session.boot().getBootOptions().getFetchStrategy().orNull());
+        props.put("nuts-execution-type", session -> session.boot().getBootOptions().getExecutionType().orNull());
+        props.put("nuts-dry", session -> session.boot().getBootOptions().getDry().orNull());
+        props.put("nuts-output-format", session -> session.boot().getBootOptions().getOutputFormat().orNull());
+        props.put("nuts-confirm", session -> session.boot().getBootOptions().getConfirm().orNull());
+        props.put("nuts-dependency-solver", session -> session.boot().getBootOptions().getDependencySolver().orNull());
+        props.put("nuts-progress-options", session -> session.boot().getBootOptions().getProgressOptions().orNull());
+        props.put("nuts-progress", session -> session.isProgress());
+        props.put("nuts-terminal-mode", session -> session.boot().getBootOptions().getTerminalMode().orNull());
+        props.put("nuts-cached", session -> session.boot().getBootOptions().getCached().orNull());
+        props.put("nuts-skip-companions", session -> session.boot().getBootOptions().getSkipCompanions().orNull());
+        props.put("nuts-skip-welcome", session -> session.boot().getBootOptions().getSkipWelcome().orNull());
+        props.put("nuts-skip-boot", session -> session.boot().getBootOptions().getSkipBoot().orNull());
+        props.put("nuts-init-platforms", session -> session.boot().getBootOptions().getInitPlatforms().orNull());
+        props.put("nuts-init-java", session -> session.boot().getBootOptions().getInitJava().orNull());
+        props.put("nuts-init-launchers", session -> session.boot().getBootOptions().getInitLaunchers().orNull());
+        props.put("nuts-init-scripts", session -> session.boot().getBootOptions().getInitScripts().orNull());
+        props.put("nuts-desktop-launcher", session -> session.boot().getBootOptions().getDesktopLauncher().orNull());
+        props.put("nuts-menu-launcher", session -> session.boot().getBootOptions().getMenuLauncher().orNull());
+        props.put("nuts-user-launcher", session -> session.boot().getBootOptions().getUserLauncher().orNull());
+        props.put("nuts-locale", session -> session.boot().getBootOptions().getLocale().orNull());
+        props.put("nuts-theme", session -> session.boot().getBootOptions().getTheme().orNull());
+        props.put("nuts-username", session -> session.boot().getBootOptions().getUserName().orNull());
+        props.put("nuts-solver",
+                session -> {
+                    String ds = NutsDependencySolverUtils.resolveSolverName(session.boot().getBootOptions().getDependencySolver().orNull());
+                    List<String> allDs = NutsDependencySolver.getSolverNames(session);
+                    return NutsTexts.of(session).ofStyled(
+                            ds,
+                            allDs.stream().map(NutsDependencySolverUtils::resolveSolverName)
+                                    .anyMatch(x -> x.equals(ds))
+                                    ? NutsTextStyle.keyword() : NutsTextStyle.error());
+                }
+        );
+        props.put("nuts-solver-list",
+                session -> {
+                    String ds = NutsDependencySolverUtils.resolveSolverName(session.boot().getBootOptions().getDependencySolver().orNull());
+                    List<String> allDs = NutsDependencySolver.getSolverNames(session);
+                    NutsTexts txt = NutsTexts.of(session);
+                    return txt.ofBuilder().appendJoined(";",
+                            allDs.stream()
+                                    .map(x -> txt.ofStyled(x, NutsTextStyle.keyword()))
+                                    .collect(Collectors.toList())
+                    );
+                }
+        );
+        props.put("sys-terminal-flags", session -> session.boot().getBootTerminal().getFlags());
+        props.put("sys-terminal-mode", session -> session.boot().getBootOptions().getTerminalMode().orElse(NutsTerminalMode.DEFAULT));
+        props.put("java-version", session -> NutsVersion.of(System.getProperty("java.version")).get(session));
+        props.put("platform", session -> session.env().getPlatform());
+        props.put("java-home", session -> NutsPath.of(System.getProperty("java.home"), session));
+        props.put("java-executable", session -> NutsPath.of(NutsJavaSdkUtils.of(session).resolveJavaCommandByHome(null, getSession()), session));
+        props.put("java-classpath",
+                session -> NutsTexts.of(session).ofBuilder().appendJoined(";",
+                        Arrays.stream(System.getProperty("java.class.path").split(File.pathSeparator))
+                                .map(x -> NutsPath.of(x, session))
+                                .collect(Collectors.toList())
+                )
+        );
+        props.put("java-library-path",
+                session -> NutsTexts.of(session).ofBuilder().appendJoined(";",
+                        Arrays.stream(System.getProperty("java.library.path").split(File.pathSeparator))
+                                .map(x -> NutsPath.of(x, session))
+                                .collect(Collectors.toList())
+                )
+        );
+        props.put("os-name", session -> session.env().getOs());
+        props.put("os-family", session -> session.env().getOsFamily());
+        props.put("os-dist", session -> session.env().getOsDist());
+        props.put("os-arch", session -> session.env().getArch());
+        props.put("os-arch-family", session -> session.env().getArchFamily());
+        props.put("os-desktop", session -> session.env().getDesktopEnvironment());
+        props.put("os-desktops", session -> session.env().getDesktopEnvironments());
+        props.put("os-desktop-family", session -> session.env().getDesktopEnvironmentFamily());
+        props.put("os-desktop-families", session -> session.env().getDesktopEnvironmentFamilies());
+        props.put("os-desktop-path", session -> session.env().getDesktopPath());
+        props.put("os-desktop-launcher", session -> session.env().getDesktopIntegrationSupport(NutsDesktopIntegrationItem.DESKTOP));
+        props.put("os-menu-launcher", session -> session.env().getDesktopIntegrationSupport(NutsDesktopIntegrationItem.MENU));
+        props.put("os-user-launcher", session -> session.env().getDesktopIntegrationSupport(NutsDesktopIntegrationItem.USER));
+        props.put("os-shell", session -> session.env().getShellFamily());
+        props.put("os-shells", session -> session.env().getShellFamilies());
+        props.put("os-username", session -> stringValue(System.getProperty("user.name")));
+        props.put("user-home", NutsPath::ofUserHome);
+        props.put("user-dir", NutsPath::ofUserDirectory);
+        props.put("command-line-long",
+                session -> session.boot().getBootOptions().toCommandLine(new NutsWorkspaceOptionsConfig().setCompact(false))
+        );
+        props.put("command-line-short", session -> session.boot().getBootOptions().toCommandLine(new NutsWorkspaceOptionsConfig().setCompact(true)));
+        props.put("inherited", session -> session.boot().getBootOptions().getInherited().orElse(false));
+        // nuts-boot-args must always be parsed in bash format
+        props.put("inherited-nuts-boot-args", session -> NutsCommandLine.of(System.getProperty("nuts.boot.args"), NutsShellFamily.SH, session).format(session));
+        props.put("inherited-nuts-args", session -> NutsCommandLine.of(System.getProperty("nuts.args"), NutsShellFamily.SH, session)
+                .format(session)
+        );
+        props.put("creation-started", session -> session.boot().getCreationStartTime());
+        props.put("creation-finished", session -> session.boot().getCreationFinishTime());
+        props.put("creation-within", session -> CoreTimeUtils.formatPeriodMilli(session.boot().getCreationDuration()).trim());
+        props.put("repositories-count", session -> (session.repos().setSession(getSession()).getRepositories().size()));
+        return props;
+    }
+
+    private boolean inflate(MapAndSession m, Function<MapAndSession, Map<String, Object>> s) {
+        boolean change = false;
+        if (s != null) {
+            Map<String, Object> i = s.apply(m);
+            if (i != null) {
+                for (Map.Entry<String, Object> e : i.entrySet()) {
+                    String key = e.getKey();
+                    Object value = e.getValue();
+                    if (!change) {
+                        Object old = m.map.get(key);
+                        if (!Objects.equals(old, value)) {
+                            change = true;
+                        }
+                    }
+                    m.map.put(key, value);
+                }
+            }
+        }
+        return change;
+    }
+
+    static class StringAndSession {
+        String string;
+        NutsSession session;
+
+        public StringAndSession(String string, NutsSession session) {
+            this.string = string;
+            this.session = session;
+        }
+    }
+
+    static class MapAndSession {
+        Map<String, Object> map;
+        NutsSession session;
+
+        public MapAndSession(Map<String, Object> map, NutsSession session) {
+            this.map = map;
+            this.session = session;
+        }
+    }
+
+    private Map<String, Object> inflate(Map<String, Object> m, NutsSession session) {
+        MapAndSession mm = new MapAndSession(m, session);
+        inflate(mm, repoSupplier);
+        inflate(mm, extraPropertiesSupplier);
+        return mm.map;
+    }
+
     private Map<String, Object> buildWorkspaceMap(boolean deep) {
         String prefix = null;
         FilteredMap props = new FilteredMap(filter);
@@ -296,7 +538,7 @@ public class DefaultNutsInfoCommand extends DefaultFormatBase<NutsInfoCommand> i
 
         NutsTexts txt = NutsTexts.of(session);
         props.put("nuts-runtime-classpath",
-                txt.builder().appendJoined(";", runtimeClassPath)
+                txt.ofBuilder().appendJoined(";", runtimeClassPath)
         );
         props.put("nuts-workspace-id", txt.ofStyled(stringValue(session.getWorkspace().getUuid()), NutsTextStyle.path()));
         props.put("nuts-store-layout", session.locations().getStoreLocationLayout());
@@ -353,7 +595,7 @@ public class DefaultNutsInfoCommand extends DefaultFormatBase<NutsInfoCommand> i
                                 ? NutsTextStyle.keyword() : NutsTextStyle.error())
         );
         props.put("nuts-solver-list",
-                txt.builder().appendJoined(";",
+                txt.ofBuilder().appendJoined(";",
                         allDs.stream()
                                 .map(x -> txt.ofStyled(x, NutsTextStyle.keyword()))
                                 .collect(Collectors.toList())
@@ -369,14 +611,14 @@ public class DefaultNutsInfoCommand extends DefaultFormatBase<NutsInfoCommand> i
         props.put("java-home", NutsPath.of(System.getProperty("java.home"), session));
         props.put("java-executable", NutsPath.of(NutsJavaSdkUtils.of(session).resolveJavaCommandByHome(null, getSession()), session));
         props.put("java-classpath",
-                txt.builder().appendJoined(";",
+                txt.ofBuilder().appendJoined(";",
                         Arrays.stream(System.getProperty("java.class.path").split(File.pathSeparator))
                                 .map(x -> NutsPath.of(x, session))
                                 .collect(Collectors.toList())
                 )
         );
         props.put("java-library-path",
-                txt.builder().appendJoined(";",
+                txt.ofBuilder().appendJoined(";",
                         Arrays.stream(System.getProperty("java.library.path").split(File.pathSeparator))
                                 .map(x -> NutsPath.of(x, session))
                                 .collect(Collectors.toList())
@@ -474,7 +716,7 @@ public class DefaultNutsInfoCommand extends DefaultFormatBase<NutsInfoCommand> i
     }
 
     private String stringValue(Object s) {
-        return NutsTexts.of(getSession()).builder().append(CoreStringUtils.stringValue(s)).toString();
+        return NutsTexts.of(getSession()).ofBuilder().append(CoreStringUtils.stringValue(s)).toString();
     }
 
     public boolean isLenient() {

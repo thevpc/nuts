@@ -7,7 +7,6 @@ package net.thevpc.nuts.runtime.standalone.io.progress;
 
 import net.thevpc.nuts.io.NutsPrintStream;
 import net.thevpc.nuts.runtime.standalone.util.BytesSizeFormat;
-import net.thevpc.nuts.runtime.standalone.io.terminal.CoreTerminalUtils;
 import net.thevpc.nuts.runtime.standalone.util.CoreStringUtils;
 import net.thevpc.nuts.text.NutsTextBuilder;
 import net.thevpc.nuts.text.NutsTextStyle;
@@ -83,10 +82,10 @@ public class DefaultNutsCountProgressMonitor implements NutsProgressMonitor/*, N
             }
 //            int x = (int) (20.0 / 100.0 * percent);
 
-            NutsTextBuilder formattedLine = text.builder();
-            CProgressBar cp= CoreTerminalUtils.resolveProgressBar(event.getSession());
+            NutsTextBuilder formattedLine = text.ofBuilder();
+            CProgressBar cp= CProgressBar.of(event.getSession());
 
-            formattedLine.append(text.parse(cp.progress((int)percent)));
+            formattedLine.append(cp.progress((int)percent));
 //            if (x > 0) {
 //                formattedLine.append(text.forStyled(
 //                        CoreStringUtils.fillString("*", x),
@@ -113,7 +112,7 @@ public class DefaultNutsCountProgressMonitor implements NutsProgressMonitor/*, N
             }
             formattedLine.append(" ").append(event.getMessage()).append(" ");
             String ff = formattedLine.toString();
-            int length = text.builder().append(ff).textLength();
+            int length = text.ofBuilder().append(ff).textLength();
             if (length < minLength) {
                 CoreStringUtils.fillString(' ', minLength - length, formattedLine);
             } else {

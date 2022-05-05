@@ -61,8 +61,15 @@ public class NutsPathParts {
             }
             case URL:{
                 String p = ensureNonNull(protocol, "protocol");
-                if(p.equals("file")){
+                if(p.equals("file")) {
                     this.type = Type.FILE_URL;
+                    this.protocol = ensureTrimmed(protocol, "protocol");
+                    this.authority = ensureNull(authority, "authority");
+                    this.location = ensureNonNull(location, "location");
+                    this.query = ensureNull(query, "query");
+                    this.ref = ensureNull(ref, "ref");
+                }else if(p.equals("jar") || p.equals("zip")){
+                    this.type = type;
                     this.protocol= ensureTrimmed(protocol,"protocol");
                     this.authority=ensureNull(authority,"authority");
                     this.location=ensureNonNull(location,"location");
@@ -294,7 +301,7 @@ public class NutsPathParts {
 
     public static NutsString toNutsString(NutsString protocol, NutsString authority, NutsString path, NutsString query, NutsString ref, NutsSession session){
         NutsTexts txt = NutsTexts.of(session);
-        NutsTextBuilder result = txt.builder();
+        NutsTextBuilder result = txt.ofBuilder();
         result.append(protocol);
         if (authority != null && authority.textLength() > 0) {
             result.append("://", NutsTextStyle.path());
@@ -349,6 +356,7 @@ public class NutsPathParts {
         NutsTexts txt = NutsTexts.of(session);
         NutsPathParts p=new NutsPathParts(path,session);
         switch (p.getType()){
+            case FILE_URL:
             case URL:{
                 return NutsPathParts.toNutsString(
                         txt.ofStyled(p.getProtocol(),NutsTextStyle.path()),
@@ -364,16 +372,6 @@ public class NutsPathParts {
             }
             case FILE:{
                 return txt.ofStyled(NutsPathParts.compressLocalPath(p.getLocation(),2,2),NutsTextStyle.path());
-            }
-            case FILE_URL:{
-                return NutsPathParts.toNutsString(
-                        txt.ofStyled(p.getProtocol(),NutsTextStyle.path()),
-                        null,
-                        NutsBlankable.isBlank(p.getLocation())?null:txt.ofStyled(NutsPathParts.compressLocalPath(p.getLocation(),0,2),NutsTextStyle.path()),
-                        null,
-                        null,
-                        session
-                );
             }
             case EMPTY: return txt.ofBlank();
         }

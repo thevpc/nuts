@@ -238,7 +238,7 @@ public class DefaultNutsDeployCommand extends AbstractNutsDeployCommand {
                                 //.setFetchMode(NutsFetchMode.LOCAL)
                                 .setId(effId).setContent(contentFile).setDescriptor(descriptor)
                                 .run();
-                        addResult(effId, repo.getName(), NutsTexts.of(session).toText(content));
+                        addResult(effId, repo.getName(), NutsTexts.of(session).ofText(content));
                         return this;
                     }
                 } else {
@@ -257,7 +257,7 @@ public class DefaultNutsDeployCommand extends AbstractNutsDeployCommand {
                             .setContent(contentFile)
                             .setDescriptor(descriptor)
                             .run();
-                    addResult(effId, repo.getName(), NutsTexts.of(this.session).toText(content));
+                    addResult(effId, repo.getName(), NutsTexts.of(this.session).ofText(content));
                     return this;
                 }
                 throw new NutsRepositoryNotFoundException(getSession(), repository);

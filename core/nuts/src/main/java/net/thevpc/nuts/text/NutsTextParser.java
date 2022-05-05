@@ -27,11 +27,15 @@
 package net.thevpc.nuts.text;
 
 import net.thevpc.nuts.NutsSession;
+import net.thevpc.nuts.io.NutsInputSource;
+import net.thevpc.nuts.io.NutsPath;
 import net.thevpc.nuts.util.NutsUtils;
 
 import java.io.File;
 import java.io.InputStream;
 import java.io.Reader;
+import java.net.URL;
+import java.nio.file.Path;
 
 /**
  * @app.category Format
@@ -42,10 +46,6 @@ public interface NutsTextParser {
         return NutsTexts.of(session).parser();
     }
 
-    String escapeText(String text);
-
-    String filterText(String text);
-
     long parseIncremental(char buf, NutsTextVisitor visitor);
 
     long parse(InputStream in, NutsTextVisitor visitor);
@@ -55,6 +55,14 @@ public interface NutsTextParser {
     NutsText parse(InputStream in);
 
     NutsText parse(Reader in);
+
+    NutsText parse(NutsInputSource in);
+
+    NutsText parse(File in);
+
+    NutsText parse(Path in);
+
+    NutsText parse(URL in);
 
     long parseIncremental(byte[] buf, int off, int len, NutsTextVisitor visitor);
 
@@ -97,14 +105,4 @@ public interface NutsTextParser {
     NutsText parseIncremental(char[] buf, int off, int len);
 
     NutsText parseRemaining();
-
-    NutsText parseResource(String resourceName, NutsTextFormatLoader loader);
-
-    NutsText parseResource(String resourceName, Reader reader, NutsTextFormatLoader loader);
-
-    NutsTextFormatLoader createLoader(ClassLoader loader);
-
-    NutsTextFormatLoader createLoader(File root);
-
-
 }

@@ -110,7 +110,7 @@ public class JsonCodeHighlighter implements NutsCodeHighlighter {
                                 switch (txt2) {
                                     case "true":
                                     case "false": {
-                                        d[0] = txt.applyStyles(d[0], NutsTextStyle.bool());
+                                        d[0] = txt.ofStyled(d[0], NutsTextStyle.bool());
                                         break;
                                     }
                                 }

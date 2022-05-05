@@ -28,7 +28,7 @@ show workspace information and exit
     ```sh -g | --get <name> ...```
         filter names to include only the given names
 
-#!include</net/thevpc/nuts/runtime/includes/standard-command.ntf>
+```!include classpath:/net/thevpc/nuts/runtime/includes/standard-command.ntf```
 
 ##) EXAMPLES
 

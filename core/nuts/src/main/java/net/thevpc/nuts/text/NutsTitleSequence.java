@@ -31,18 +31,16 @@ import java.util.List;
 /**
  * @app.category Format
  */
-public interface NutsTextNumbering {
-    List<NutsTitleNumber> getPattern();
+public interface NutsTitleSequence {
+//    List<NutsTitleNumber> getPattern();
+//    List<NutsTitleNumber> getValue();
 
-    NutsTextNumbering newLevel(int level);
+
+    NutsTitleSequence next(int level);
 
     NutsTitleNumber getNumber(int index);
 
     int size();
-
-    List<NutsTitleNumber> getValue();
-
-    String getSeparator(int index);
 
     String toString();
 }

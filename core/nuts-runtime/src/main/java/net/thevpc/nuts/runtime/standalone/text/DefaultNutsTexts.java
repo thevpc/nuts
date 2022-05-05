@@ -10,6 +10,9 @@ import net.thevpc.nuts.runtime.standalone.util.CoreStringUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.NutsWorkspaceUtils;
 import net.thevpc.nuts.spi.NutsSupportLevelContext;
 import net.thevpc.nuts.text.*;
+import net.thevpc.nuts.util.NutsLoggerOp;
+import net.thevpc.nuts.util.NutsLoggerVerb;
+import net.thevpc.nuts.util.NutsRef;
 
 import java.io.*;
 import java.net.URL;
@@ -17,6 +20,7 @@ import java.nio.file.Path;
 import java.text.MessageFormat;
 import java.time.temporal.Temporal;
 import java.util.*;
+import java.util.logging.Level;
 
 public class DefaultNutsTexts implements NutsTexts {
 
@@ -28,6 +32,35 @@ public class DefaultNutsTexts implements NutsTexts {
         this.session = session;
         this.ws = session.getWorkspace();
         this.shared = NutsWorkspaceExt.of(ws).getModel().textModel;
+    }
+
+    /**
+     * transform plain text to formatted text so that the result is rendered as
+     * is
+     *
+     * @param str str
+     * @return escaped text
+     */
+    public static String escapeText0(String str) {
+        if (str == null) {
+            return str;
+        }
+        StringBuilder sb = new StringBuilder(str.length());
+        for (char c : str.toCharArray()) {
+            switch (c) {
+                case '`':
+                case '#':
+                case NutsConstants.Ntf.SILENT:
+                case '\\': {
+                    sb.append('\\').append(c);
+                    break;
+                }
+                default: {
+                    sb.append(c);
+                }
+            }
+        }
+        return sb.toString();
     }
 
     private void checkSession() {
@@ -58,7 +91,7 @@ public class DefaultNutsTexts implements NutsTexts {
                 //do nothing, support format pattern
                 args2[i] = a;
             } else {
-                args2[i] = txt.toText(a).toString();
+                args2[i] = txt.ofText(a).toString();
             }
         }
         switch (format) {
@@ -77,10 +110,10 @@ public class DefaultNutsTexts implements NutsTexts {
                 if (msg instanceof String) {
                     return txt.parse((String) msg);
                 }
-                return txt.toText(msg);
+                return txt.ofText(msg);
             }
             case STYLED: {
-                return txt.ofStyled(txt.toText(msg), m.getStyles());
+                return txt.ofStyled(txt.ofText(msg), m.getStyles());
             }
             case CODE: {
                 return txt.ofCodeOrCommand(m.getCodeLang(), (String) msg);
@@ -89,14 +122,6 @@ public class DefaultNutsTexts implements NutsTexts {
         throw new NutsUnsupportedEnumException(getSession(), format);
     }
 
-    public NutsText title(NutsText t, int level) {
-        StringBuilder sb = new StringBuilder();
-        for (int i = 0; i < level; i++) {
-            sb.append("#");
-        }
-        sb.append(")");
-        return createTitle(sb.toString(), level, t, true);
-    }
 
     public NutsText fg(String t, int level) {
         return fg(ofPlain(t), level);
@@ -104,7 +129,7 @@ public class DefaultNutsTexts implements NutsTexts {
 
     public NutsText fg(NutsText t, int level) {
         NutsTextStyle textStyle = NutsTextStyle.primary(level);
-        return createStyled("##:p" + level + ":", "##", t, NutsTextStyles.of(textStyle), true);
+        return ofStyled(t, NutsTextStyles.of(textStyle));
     }
 
     @Override
@@ -119,7 +144,7 @@ public class DefaultNutsTexts implements NutsTexts {
     }
 
     @Override
-    public NutsTextBuilder builder() {
+    public NutsTextBuilder ofBuilder() {
         checkSession();
         return new DefaultNutsTextNodeBuilder(getSession());
     }
@@ -130,7 +155,7 @@ public class DefaultNutsTexts implements NutsTexts {
     }
 
     @Override
-    public NutsText toText(Object t) {
+    public NutsText ofText(Object t) {
         checkSession();
         if (t == null) {
             return ofBlank();
@@ -178,8 +203,8 @@ public class DefaultNutsTexts implements NutsTexts {
             return ofStyled(t.toString(), NutsTextStyle.path());
         }
         if (t instanceof Throwable) {
-            return applyStyles(
-                    toText(CoreStringUtils.exceptionToMessage((Throwable) t)),
+            return ofStyled(
+                    ofText(CoreStringUtils.exceptionToMessage((Throwable) t)),
                     NutsTextStyle.error()
             );
         }
@@ -210,60 +235,60 @@ public class DefaultNutsTexts implements NutsTexts {
     }
 
     @Override
-    public NutsTextStyled ofStyled(String other, NutsTextStyles styles) {
-        return ofStyled(ofPlain(other), styles);
+    public NutsText ofStyled(String other, NutsTextStyles styles) {
+        return ofStyled(other == null ? null : ofPlain(other), styles);
     }
 
     @Override
-    public NutsTextStyled ofStyled(NutsString other, NutsTextStyles styles) {
+    public NutsText ofStyled(NutsString other, NutsTextStyles styles) {
         checkSession();
-        return ofStyled(other.toText(), styles);
+        return ofStyled(other == null ? null : other.toText(), styles);
     }
 
     @Override
-    public NutsTextStyled ofStyled(NutsText other, NutsTextStyles styles) {
-        return createStyled(other, styles, true);
+    public NutsText ofStyled(NutsText other, NutsTextStyles styles) {
+        if (other == null) {
+            return ofPlain("");
+        }
+        if (styles == null || styles.isPlain()) {
+            return other;
+        }
+        checkSession();
+        return new DefaultNutsTextStyled(getSession(),
+                "##:" + styles.id() + ":", "##",
+                other, true, styles);
+    }
+
+
+    @Override
+    public NutsText ofStyled(String other, NutsTextStyle style) {
+        return ofStyled(ofPlain(other), style);
     }
 
     @Override
-    public NutsText applyStyles(NutsText other, NutsTextStyles styles) {
-        return createStyledOrPlain(other, styles, true);
+    public NutsText ofStyled(NutsString other, NutsTextStyle style) {
+        return ofStyled(other.toText(), style);
     }
 
     @Override
-    public NutsText applyStyles(NutsText other, NutsTextStyle... styles) {
-        return applyStyles(other, NutsTextStyles.of(styles));
+    public NutsText ofStyled(NutsMessage other, NutsTextStyles styles) {
+        return ofStyled(ofText(other),styles);
     }
 
     @Override
-    public NutsText applyStyles(NutsString other, NutsTextStyles styles) {
-        return createStyledOrPlain(other.toText(), styles, true);
-    }
-
-    @Override
-    public NutsText applyStyles(NutsString other, NutsTextStyle... styles) {
-        return applyStyles(other, NutsTextStyles.of(styles));
-    }
-
-    @Override
-    public NutsTextStyled ofStyled(String other, NutsTextStyle styles) {
-        return ofStyled(ofPlain(other), styles);
-    }
-
-    @Override
-    public NutsTextStyled ofStyled(NutsString other, NutsTextStyle styles) {
-        return ofStyled(other.toText(), styles);
+    public NutsText ofStyled(NutsMessage other, NutsTextStyle style) {
+        return ofStyled(ofText(other), style);
     }
 
     /**
      * this is the default theme!
      *
      * @param other  other
-     * @param styles textNodeStyle
+     * @param style textNodeStyle
      * @return NutsText
      */
-    public NutsTextStyled ofStyled(NutsText other, NutsTextStyle styles) {
-        return createStyled(other, NutsTextStyles.of(styles), true);
+    public NutsText ofStyled(NutsText other, NutsTextStyle style) {
+        return ofStyled(other, NutsTextStyles.of(style));
     }
 
     @Override
@@ -333,12 +358,11 @@ public class DefaultNutsTexts implements NutsTexts {
                 case "!link": {
                     return ofLink(text.trim(), sep);
                 }
+                case "!include": {
+                    return ofInclude(text, sep);
+                }
             }
-            NutsTerminalCommand ntc = NutsTerminalCommand.of(name.substring(1), text);
-            if (ntc == null) {
-                return ofCode(null, name + sep + text);
-            }
-            return ofCommand(ntc);
+            return ofCommand(NutsTerminalCommand.of(name.substring(1), text));
         }
         return ofCode(name, text, sep);
     }
@@ -352,6 +376,10 @@ public class DefaultNutsTexts implements NutsTexts {
     @Override
     public NutsTextCode ofCode(String lang, String text) {
         return ofCode(lang, text, ' ');
+    }
+
+    public NutsTextCode ofInclude(String text, char sep) {
+        return ofCode("include", text == null ? "" : text.trim(), sep);
     }
 
     @Override
@@ -368,15 +396,15 @@ public class DefaultNutsTexts implements NutsTexts {
     }
 
     @Override
-    public NutsTextNumbering ofNumbering() {
+    public NutsTitleSequence ofNumbering() {
         checkSession();
-        return new DefaultNutsTitleNumberSequence("");
+        return new DefaultNutsTitleSequence("");
     }
 
     @Override
-    public NutsTextNumbering ofNumbering(String pattern) {
+    public NutsTitleSequence ofNumbering(String pattern) {
         checkSession();
-        return new DefaultNutsTitleNumberSequence((pattern == null || pattern.isEmpty()) ? "1.1.1.a.1" : pattern);
+        return new DefaultNutsTitleSequence((pattern == null || pattern.isEmpty()) ? "1.1.1.a.1" : pattern);
     }
 
     @Override
@@ -469,8 +497,8 @@ public class DefaultNutsTexts implements NutsTexts {
     }
 
     public NutsText bg(NutsText t, int variant) {
-        NutsTextStyle textStyle = NutsTextStyle.primary(variant);
-        return createStyled("##:s" + variant + ":", "##", t, NutsTextStyles.of(textStyle), true);
+        NutsTextStyle textStyle = NutsTextStyle.secondary(variant);
+        return ofStyled(t, NutsTextStyles.of(textStyle));
     }
 
     public NutsText comments(String image) {
@@ -567,20 +595,6 @@ public class DefaultNutsTexts implements NutsTexts {
         return ss;
     }
 
-    public NutsText createStyledOrPlain(NutsText child, NutsTextStyles textStyles, boolean completed) {
-        if (textStyles == null || textStyles.isPlain()) {
-            return child;
-        }
-        return createStyled(child, textStyles, completed);
-    }
-
-    public NutsTextStyled createStyled(NutsText child, NutsTextStyles textStyles, boolean completed) {
-        if (textStyles == null || textStyles.isPlain()) {
-            return createStyled("", "", child, textStyles, completed);
-        }
-        return createStyled("##:" + textStyles.id() + ":", "##", child, textStyles, completed);
-    }
-
     @Override
     public NutsTextTitle ofTitle(NutsText other, int level) {
         String prefix = CoreStringUtils.fillString('#', level) + ")";
@@ -598,14 +612,6 @@ public class DefaultNutsTexts implements NutsTexts {
     @Override
     public NutsTextTitle ofTitle(NutsString other, int level) {
         return ofTitle(other.toText(), level);
-    }
-
-    public NutsTextStyled createStyled(String start, String end, NutsText child, NutsTextStyles textStyle, boolean completed) {
-        if (textStyle == null) {
-            textStyle = NutsTextStyles.PLAIN;
-        }
-        checkSession();
-        return new DefaultNutsTextStyled(getSession(), start, end, child, completed, textStyle);
     }
 
     public NutsTextCode createCode(String start, String kind, String separator, String end, String text) {
@@ -638,4 +644,268 @@ public class DefaultNutsTexts implements NutsTexts {
         return DEFAULT_SUPPORT;
     }
 
+    @Override
+    public NutsText transform(NutsText text, NutsTextTransformConfig config) {
+        return transform(text, null, config);
+    }
+
+    int resolveRootLevel(NutsText text) {
+        NutsRef<Integer> level = NutsRef.ofNull();
+        traverseDFS(text, n -> {
+            if (n.getType() == NutsTextType.TITLE) {
+                int lvl = ((NutsTextTitle) n).getLevel();
+                if (level.isNull() || level.get() > lvl) {
+                    level.set(lvl);
+                }
+            }
+        });
+        return level.isNull() ? 0 : level.get();
+    }
+
+    @Override
+    public NutsText transform(NutsText text, NutsTextTransformer transformer, NutsTextTransformConfig config) {
+        if (config == null) {
+            config = new NutsTextTransformConfig();
+        }
+        NutsText node;
+        if (config.getRootLevel() != null) {
+            NutsTextTransformConfig config2 = config.copy();
+            config2.setRootLevel(null);
+            config2.setProcessTitleNumbers(false);
+            config2.setFlatten(false);
+            config2.setNormalize(false);
+            config2.setAnchor(null);
+            node = transform(text, transformer, config2);
+            //find root level
+            int level = resolveRootLevel(text);
+            if (level != config.getRootLevel()) {
+                int offset = config.getRootLevel() - level;
+                node = transform(node, (text1, context) -> {
+                    if (text1.getType() == NutsTextType.TITLE) {
+                        NutsTextTitle t = (NutsTextTitle) text1;
+                        return ofTitle(t.getChild(), t.getLevel() + offset);
+                    }
+                    return text1;
+                }, new NutsTextTransformConfig());
+            }
+        } else {
+            node = text;
+        }
+
+        NutsTextTransformerContext c = new DefaultNutsTextTransformerContext(config, session);
+        if (transformer == null) {
+            transformer = c.getDefaultTransformer();
+        }
+        node = transform(node, transformer, c);
+
+        String anchor = config.getAnchor();
+        if (anchor != null) {
+            List<NutsText> ok = new ArrayList<>();
+            boolean start = false;
+            if (node.getType() == NutsTextType.LIST) {
+                for (NutsText o : ((NutsTextList) node)) {
+                    if (start) {
+                        ok.add(o);
+                    } else if (o.getType() == NutsTextType.ANCHOR) {
+                        if (anchor.equals(((DefaultNutsTextAnchor) o).getValue())) {
+                            start = true;
+                        }
+                    }
+                }
+            }
+            if (start) {
+                node = ofList(ok).simplify();
+            }
+            return node;
+        }
+        return node;
+    }
+
+    @Override
+    public void traverseDFS(NutsText text, NutsTextVisitor visitor) {
+        if (text == null) {
+            return;
+        }
+        switch (text.getType()) {
+            case PLAIN:
+            case CODE:
+            case ANCHOR:
+            case LINK:
+            case COMMAND: {
+                visitor.visit(text);
+                break;
+            }
+            case TITLE: {
+                NutsTextTitle t = (NutsTextTitle) text;
+                NutsText child = t.getChild();
+                if (child != null) {
+                    visitor.visit(child);
+                }
+                visitor.visit(t);
+                break;
+            }
+            case STYLED: {
+                NutsTextStyled t = (NutsTextStyled) text;
+                NutsText child = t.getChild();
+                if (child != null) {
+                    visitor.visit(child);
+                }
+                visitor.visit(t);
+                break;
+            }
+            case LIST: {
+                NutsTextList t = (NutsTextList) text;
+                for (NutsText child : t.getChildren()) {
+                    if (child != null) {
+                        visitor.visit(child);
+                    }
+                }
+                visitor.visit(t);
+            }
+        }
+    }
+
+    @Override
+    public void traverseBFS(NutsText text, NutsTextVisitor visitor) {
+        Queue<NutsText> q = new ArrayDeque<>();
+        q.add(text);
+        while (!q.isEmpty()) {
+            NutsText u = q.remove();
+            switch (text.getType()) {
+                case PLAIN:
+                case CODE:
+                case ANCHOR:
+                case LINK:
+                case COMMAND: {
+                    visitor.visit(text);
+                    break;
+                }
+                case TITLE: {
+                    NutsTextTitle t = (NutsTextTitle) text;
+                    NutsText child = t.getChild();
+                    if (child != null) {
+                        q.add(child);
+                    }
+                    visitor.visit(t);
+                    break;
+                }
+                case STYLED: {
+                    NutsTextStyled t = (NutsTextStyled) text;
+                    NutsText child = t.getChild();
+                    if (child != null) {
+                        q.add(child);
+                    }
+                    visitor.visit(t);
+                    break;
+                }
+                case LIST: {
+                    NutsTextList t = (NutsTextList) text;
+                    for (NutsText child : t.getChildren()) {
+                        if (child != null) {
+                            q.add(child);
+                        }
+                    }
+                    visitor.visit(t);
+                    break;
+                }
+            }
+        }
+    }
+
+    private NutsText transform(NutsText text, NutsTextTransformer transformer, NutsTextTransformerContext c) {
+        if (text == null) {
+            return null;
+        }
+        NutsText pt = transformer.preTransform(text, c);
+        if (pt != text) {
+            return pt;
+        }
+        switch (text.getType()) {
+            case PLAIN:
+            case CODE:
+            case ANCHOR:
+            case LINK:
+            case COMMAND: {
+                return transformer.postTransform(text, c);
+            }
+            case TITLE: {
+                NutsTextTitle t = (NutsTextTitle) text;
+                NutsText child = t.getChild();
+                if (child == null) {
+                    return null;
+                }
+                child = transform(child, transformer, c);
+                return transformer.postTransform(ofTitle(child, t.getLevel()), c);
+            }
+            case STYLED: {
+                NutsTextStyled t = (NutsTextStyled) text;
+                NutsText child = t.getChild();
+                if (child == null) {
+                    return null;
+                }
+                child = transform(child, transformer, c);
+                return transformer.postTransform(ofStyled(child, t.getStyles()), c);
+            }
+            case LIST: {
+                NutsTextList t = (NutsTextList) text;
+                List<NutsText> li = new ArrayList<>();
+                for (NutsText child : t.getChildren()) {
+                    if (child != null) {
+                        child = transform(child, transformer, c);
+                        if (child != null) {
+                            li.add(child);
+                        }
+                    }
+                }
+                if (li.size() > 0) {
+                    if (li.size() == 1) {
+                        return transformer.postTransform(li.get(0), c);
+                    }
+                    return transformer.postTransform(ofList(li), c);
+                }
+                return null;
+            }
+        }
+        return null;
+    }
+
+    @Override
+    public String escapeText(String str) {
+        return escapeText0(str);
+    }
+
+    private void writeFilteredText(NutsText t, ByteArrayOutputStream out) {
+        if (t != null) {
+            if (t instanceof NutsTextPlain) {
+                try {
+                    out.write(((NutsTextPlain) t).getText().getBytes());
+                } catch (IOException e) {
+                    throw new UncheckedIOException(e);
+                }
+            } else if (t instanceof NutsTextList) {
+                for (NutsText child : ((NutsTextList) t).getChildren()) {
+                    writeFilteredText(child, out);
+                }
+            } else {
+                throw new IllegalArgumentException("unexpected");
+            }
+        }
+    }
+
+    @Override
+    public String filterText(String text) {
+        try {
+            ByteArrayOutputStream out = new ByteArrayOutputStream();
+            NutsText parsed = this.parser().parse(new StringReader(text));
+            parsed = NutsTexts.of(session).transform(parsed, new NutsTextTransformConfig().setFiltered(true));
+            writeFilteredText(parsed, out);
+            return out.toString();
+        } catch (Exception ex) {
+            NutsLoggerOp.of(AbstractNutsTextNodeParser.class, session)
+                    .verb(NutsLoggerVerb.WARNING)
+                    .level(Level.FINEST)
+                    .log(NutsMessage.ofCstyle("error parsing : %s", text));
+            return text;
+        }
+    }
 }

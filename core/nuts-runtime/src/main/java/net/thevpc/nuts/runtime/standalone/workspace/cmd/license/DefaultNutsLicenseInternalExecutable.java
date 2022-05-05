@@ -11,6 +11,7 @@ import net.thevpc.nuts.cmdline.NutsCommandLine;
 import net.thevpc.nuts.runtime.standalone.app.util.NutsAppUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.NutsWorkspaceExt;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.exec.DefaultInternalNutsExecutableCommand;
+import net.thevpc.nuts.text.NutsText;
 
 /**
  *
@@ -35,7 +36,7 @@ public class DefaultNutsLicenseInternalExecutable extends DefaultInternalNutsExe
             session.configureLast(commandLine);
         }
 
-        String licenseString = NutsWorkspaceExt.of(session.getWorkspace()).getLicenseText(session);
+        NutsText licenseString = NutsWorkspaceExt.of(session.getWorkspace()).getLicenseText(session);
         if (session.isPlainOut()) {
             session.out().println(licenseString);
         } else {

@@ -453,7 +453,7 @@ public class GenericFilePath implements NutsPathSPI {
         }
 
         public NutsString asFormattedString() {
-            return NutsTexts.of(p.getSession()).toText(p.value);
+            return NutsTexts.of(p.getSession()).ofText(p.value);
         }
 
         @Override

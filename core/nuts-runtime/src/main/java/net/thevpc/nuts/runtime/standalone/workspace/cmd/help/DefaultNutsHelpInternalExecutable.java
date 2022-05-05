@@ -8,10 +8,12 @@ package net.thevpc.nuts.runtime.standalone.workspace.cmd.help;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.cmdline.NutsArgument;
 import net.thevpc.nuts.cmdline.NutsCommandLine;
+import net.thevpc.nuts.io.NutsPath;
 import net.thevpc.nuts.io.NutsPrintStream;
 import net.thevpc.nuts.runtime.standalone.workspace.NutsWorkspaceExt;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.exec.DefaultInternalNutsExecutableCommand;
 import net.thevpc.nuts.text.NutsText;
+import net.thevpc.nuts.text.NutsTextStyle;
 import net.thevpc.nuts.text.NutsTexts;
 import net.thevpc.nuts.util.NutsLogger;
 
@@ -41,7 +43,7 @@ public class DefaultNutsHelpInternalExecutable extends DefaultInternalNutsExecut
         while (cmdLine.hasNext()) {
             NutsArgument a = cmdLine.peek().get(session);
             if (a.isOption()) {
-                switch(a.getStringKey().orElse("")) {
+                switch (a.getStringKey().orElse("")) {
                     case "--colors":
                     case "--ntf": {
                         NutsArgument c = cmdLine.nextBoolean().get(session);
@@ -70,11 +72,9 @@ public class DefaultNutsHelpInternalExecutable extends DefaultInternalNutsExecut
 
         if (helpColors) {
             NutsTexts txt = NutsTexts.of(session);
-            NutsText n = txt.parser().parseResource("/net/thevpc/nuts/runtime/ntf-help.ntf",
-                    txt.parser().createLoader(getClass().getClassLoader())
-            );
+            NutsText n = txt.parser().parse(NutsPath.of("classpath:/net/thevpc/nuts/runtime/ntf-help.ntf", session));
             session.getTerminal().out().print(
-                    n == null ? ("no help found for " + name) : n.toString()
+                    n == null ? NutsTexts.of(session).ofStyled(("no help found for " + name), NutsTextStyle.error()) : n
             );
         }
         NutsContentType outputFormat = session.getOutputFormat();

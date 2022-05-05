@@ -10,7 +10,7 @@ public class TestDev {
         NutsSession session = TestUtils.openNewTestWorkspace();
 
 
-        NutsString s = NutsTexts.of(session).toText(
+        NutsString s = NutsTexts.of(session).ofText(
                 NutsMessage.ofCstyle("%s", "Hello")
         );
 

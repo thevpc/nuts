@@ -74,8 +74,7 @@ public class NutsImmutableString implements NutsString {
 
     @Override
     public String filteredText() {
-        return NutsTexts.of(session).
-                parser().filterText(value);
+        return NutsTexts.of(session).filterText(value);
     }
 
     public int textLength() {
@@ -93,7 +92,7 @@ public class NutsImmutableString implements NutsString {
 
     @Override
     public NutsTextBuilder builder() {
-        return NutsTexts.of(session).builder().append(this);
+        return NutsTexts.of(session).ofBuilder().append(this);
     }
 
     @Override

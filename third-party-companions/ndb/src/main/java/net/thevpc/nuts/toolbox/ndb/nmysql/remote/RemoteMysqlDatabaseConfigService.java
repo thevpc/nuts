@@ -300,7 +300,7 @@ public class RemoteMysqlDatabaseConfigService {
     }
 
     public NutsString getBracketsPrefix(String str) {
-        return NutsTexts.of(context.getSession()).builder()
+        return NutsTexts.of(context.getSession()).ofBuilder()
                 .append("[")
                 .append(str, NutsTextStyle.primary5())
                 .append("]");

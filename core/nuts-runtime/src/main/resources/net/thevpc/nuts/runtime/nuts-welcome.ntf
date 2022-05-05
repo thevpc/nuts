@@ -1,4 +1,4 @@
-#!include</net/thevpc/nuts/runtime/includes/standard-header.ntf>
+```!include classpath:/net/thevpc/nuts/runtime/includes/standard-header.ntf```
 ##:_:location##:##:path:${workspace.location}## (${workspace.hash-name})
 
 ##) SYNOPSIS:

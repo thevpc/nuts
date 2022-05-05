@@ -34,6 +34,7 @@ public interface NutsTitleNumber {
     NutsTitleNumber none();
 
     boolean isNone();
+    boolean isBullet();
 
     String toString();
 }

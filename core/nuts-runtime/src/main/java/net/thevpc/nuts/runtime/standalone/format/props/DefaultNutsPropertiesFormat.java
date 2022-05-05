@@ -225,7 +225,7 @@ public class DefaultNutsPropertiesFormat extends DefaultFormatBase<NutsPropertie
             prefix = txt.ofBlank();
         }
         NutsString formattedKey = compact ? key
-                : txt.builder().append(key).append(CoreStringUtils.fillString(' ', len - key.textLength()));
+                : txt.ofBuilder().append(key).append(CoreStringUtils.fillString(' ', len - key.textLength()));
         if (fancySep != null) {
             NutsString cc = compact ? key : txt.ofPlain(NutsStringUtils.formatAlign("", len + 3, NutsPositionType.FIRST));
             String[] split = value.toString().split(fancySep);
@@ -273,7 +273,7 @@ public class DefaultNutsPropertiesFormat extends DefaultFormatBase<NutsPropertie
         if (escapeText) {
             return NutsTextUtils.stringValueFormatted(o, escapeText, getSession());
         } else {
-            return NutsTexts.of(getSession()).toText(o);
+            return NutsTexts.of(getSession()).ofText(o);
         }
     }
 
