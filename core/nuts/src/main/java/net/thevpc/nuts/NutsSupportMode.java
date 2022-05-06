@@ -23,7 +23,8 @@
  */
 package net.thevpc.nuts;
 
-import net.thevpc.nuts.util.NutsUtils;
+import net.thevpc.nuts.util.NutsNameFormat;
+import net.thevpc.nuts.util.NutsStringUtils;
 
 import java.util.function.Function;
 
@@ -40,24 +41,21 @@ public enum NutsSupportMode implements NutsEnum {
     private final String id;
 
     NutsSupportMode() {
-        this.id = name().toLowerCase().replace('_', '-');
+        this.id = NutsNameFormat.ID_NAME.formatName(name());
     }
 
     public static NutsOptional<NutsSupportMode> parse(String value) {
-        return NutsUtils.parseEnum(value, NutsSupportMode.class, new Function<String, NutsOptional<NutsSupportMode>>() {
-            @Override
-            public NutsOptional<NutsSupportMode> apply(String s) {
-                switch (s.toLowerCase()){
-                    case "unsupported":
-                    case "no":
-                    case "false":
-                        return NutsOptional.of(NEVER);
-                    case "yes":
-                    case "true":
-                        return NutsOptional.of(ALWAYS);
-                }
-                return null;
+        return NutsStringUtils.parseEnum(value, NutsSupportMode.class, s -> {
+            switch (s.getNormalizedValue()){
+                case "UNSUPPORTED":
+                case "NO":
+                case "FALSE":
+                    return NutsOptional.of(NEVER);
+                case "YES":
+                case "TRUE":
+                    return NutsOptional.of(ALWAYS);
             }
+            return null;
         });
     }
 

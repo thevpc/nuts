@@ -4,6 +4,7 @@ import net.thevpc.nuts.*;
 import net.thevpc.nuts.cmdline.NutsCommandLine;
 import net.thevpc.nuts.io.NutsTerminalMode;
 import net.thevpc.nuts.util.NutsLogConfig;
+import net.thevpc.nuts.util.NutsNameFormat;
 import net.thevpc.nuts.util.NutsStringUtils;
 
 import java.io.File;
@@ -317,7 +318,9 @@ public class NutsReservedWorkspaceOptionsArgumentsBuilder {
             if (value instanceof NutsEnum) {
                 arguments.add("--" + ((NutsEnum) value).id());
             } else {
-                arguments.add("--" + value.toString().toLowerCase().replace('_', '-'));
+                arguments.add("--" +
+                        NutsNameFormat.CONST_NAME.formatName(value.name())
+                );
             }
         }
     }

@@ -25,7 +25,8 @@
  */
 package net.thevpc.nuts;
 
-import net.thevpc.nuts.util.NutsUtils;
+import net.thevpc.nuts.util.NutsNameFormat;
+import net.thevpc.nuts.util.NutsStringUtils;
 
 /**
  * Supported Operating System Families
@@ -64,60 +65,60 @@ public enum NutsOsFamily implements NutsEnum {
     private final String id;
 
     NutsOsFamily() {
-        this.id = name().toLowerCase().replace('_', '-');
+        this.id = NutsNameFormat.ID_NAME.formatName(name());
     }
 
     public static NutsOptional<NutsOsFamily> parse(String value) {
-        return NutsUtils.parseEnum(value, NutsOsFamily.class, s -> {
-            String e = s.toLowerCase();
+        return NutsStringUtils.parseEnum(value, NutsOsFamily.class, s -> {
+            String e = s.getNormalizedValue();
             switch (e) {
-                case "w":
-                case "win":
-                case "windows":
+                case "W":
+                case "WIN":
+                case "WINDOWS":
                     return NutsOptional.of(WINDOWS);
-                case "l":
-                case "linux":
+                case "L":
+                case "LINUX":
                     return NutsOptional.of(LINUX);
-                case "m":
-                case "mac":
-                case "macos":
+                case "M":
+                case "MAC":
+                case "MACOS":
                     return NutsOptional.of(MACOS);
-                case "u":
-                case "unix":
+                case "U":
+                case "UNIX":
                     return NutsOptional.of(UNIX);
                 case "unknown":
                     return NutsOptional.of(UNKNOWN);
             }
-            if (e.startsWith("linux")) {
+            if (e.startsWith("LINUX")) {
                 return NutsOptional.of(NutsOsFamily.LINUX);
             }
-            if (e.startsWith("win")) {
+            if (e.startsWith("WIN")) {
                 return NutsOptional.of(NutsOsFamily.WINDOWS);
             }
-            if (e.startsWith("mac")) {
+            if (e.startsWith("MAC")) {
                 return NutsOptional.of(NutsOsFamily.MACOS);
             }
-            if (e.startsWith("sunos")) {
+            if (e.startsWith("SUNOS")) {
                 return NutsOptional.of(NutsOsFamily.UNIX);
             }
-            if (e.startsWith("freebsd")) {
+            if (e.startsWith("FREEBSD")) {
                 return NutsOptional.of(NutsOsFamily.UNIX);
             }
             //process plexus os families
             switch (e) {
-                case "dos":
+                case "DOS":
                     return NutsOptional.of(NutsOsFamily.WINDOWS);
-                case "netware":
+                case "NETWARE":
                     return NutsOptional.of(NutsOsFamily.UNKNOWN);
-                case "os/2":
+                case "OS_2":
                     return NutsOptional.of(NutsOsFamily.UNKNOWN);
-                case "tandem":
+                case "TANDEM":
                     return NutsOptional.of(NutsOsFamily.UNKNOWN);
-                case "zos":
+                case "ZOS":
                     return NutsOptional.of(NutsOsFamily.UNKNOWN);
-                case "os/400":
+                case "OS_400":
                     return NutsOptional.of(NutsOsFamily.UNIX);
-                case "openvms":
+                case "OPENVMS":
                     return NutsOptional.of(NutsOsFamily.UNKNOWN);
             }
             return null;

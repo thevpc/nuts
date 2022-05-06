@@ -26,7 +26,8 @@
  */
 package net.thevpc.nuts;
 
-import net.thevpc.nuts.util.NutsUtils;
+import net.thevpc.nuts.util.NutsNameFormat;
+import net.thevpc.nuts.util.NutsStringUtils;
 
 /**
  * Filter Type
@@ -44,11 +45,11 @@ public enum NutsFilterOp implements NutsEnum {
     private final String id;
 
     NutsFilterOp() {
-        this.id = name().toLowerCase().replace('_', '-');
+        this.id = NutsNameFormat.ID_NAME.formatName(name());
     }
 
     public static NutsOptional<NutsFilterOp> parse(String value) {
-        return NutsUtils.parseEnum(value, NutsFilterOp.class);
+        return NutsStringUtils.parseEnum(value, NutsFilterOp.class);
     }
     @Override
     public String id() {

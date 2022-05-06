@@ -26,7 +26,8 @@
  */
 package net.thevpc.nuts;
 
-import net.thevpc.nuts.util.NutsUtils;
+import net.thevpc.nuts.util.NutsNameFormat;
+import net.thevpc.nuts.util.NutsStringUtils;
 
 /**
  * Descriptor Style
@@ -55,11 +56,11 @@ public enum NutsDescriptorStyle implements NutsEnum {
     private final String id;
 
     NutsDescriptorStyle() {
-        this.id = name().toLowerCase().replace('_', '-');
+        this.id = NutsNameFormat.ID_NAME.formatName(name());
     }
 
     public static NutsOptional<NutsDescriptorStyle> parse(String value) {
-        return NutsUtils.parseEnum(value, NutsDescriptorStyle.class);
+        return NutsStringUtils.parseEnum(value, NutsDescriptorStyle.class);
     }
 
     /**

@@ -25,7 +25,8 @@
  */
 package net.thevpc.nuts;
 
-import net.thevpc.nuts.util.NutsUtils;
+import net.thevpc.nuts.util.NutsNameFormat;
+import net.thevpc.nuts.util.NutsStringUtils;
 
 /**
  * user interaction mode. Some operations may require user confirmation before
@@ -63,11 +64,11 @@ public enum NutsConfirmationMode implements NutsEnum {
     private final String id;
 
     NutsConfirmationMode() {
-        this.id = name().toLowerCase().replace('_', '-');
+        this.id = NutsNameFormat.ID_NAME.formatName(name());
     }
 
     public static NutsOptional<NutsConfirmationMode> parse(String value) {
-        return NutsUtils.parseEnum(value, NutsConfirmationMode.class);
+        return NutsStringUtils.parseEnum(value, NutsConfirmationMode.class);
     }
 
     /**

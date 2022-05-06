@@ -25,7 +25,8 @@
  */
 package net.thevpc.nuts;
 
-import net.thevpc.nuts.util.NutsUtils;
+import net.thevpc.nuts.util.NutsNameFormat;
+import net.thevpc.nuts.util.NutsStringUtils;
 
 /**
  * Supported dependency scope lists
@@ -113,63 +114,64 @@ public enum NutsDependencyScope implements NutsEnum {
      * default constructor
      */
     NutsDependencyScope() {
-        this.id = name().toLowerCase().replace('_', '-');
-        api = id.equals("api") || id.equals("test");
-        implementation = id.equals("implementation") || id.endsWith("-implementation");
-        provided = id.equals("provided") || id.endsWith("-provided");
-        runtime = id.equals("provided") || id.endsWith("-runtime");
-        system = id.equals("system") || id.endsWith("-system");
-        test = id.startsWith("test-");
-        other = id.equals("other") || id.startsWith("other-");
+        this.id = NutsNameFormat.ID_NAME.formatName(name());
+        this.api = id.equals("api") || id.equals("test");
+        this.implementation = id.equals("implementation") || id.endsWith("-implementation");
+        this.provided = id.equals("provided") || id.endsWith("-provided");
+        this.runtime = id.equals("provided") || id.endsWith("-runtime");
+        this.system = id.equals("system") || id.endsWith("-system");
+        this.test = id.startsWith("test-");
+        this.other = id.equals("other") || id.startsWith("other-");
     }
 
     public static NutsOptional<NutsDependencyScope> parse(String value) {
-        return NutsUtils.parseEnum(value, NutsDependencyScope.class, s->{
-            switch (s.toLowerCase()) {
-                case "compileonly": //gradle
-                case "compile_only": //gradle
-                case "provided": //gradle
+        return NutsStringUtils.parseEnum(value, NutsDependencyScope.class, s -> {
+            switch (s.getNormalizedValue()) {
+                case "COMPILEONLY": //gradle
+                case "COMPILE_ONLY": //gradle
+                case "PROVIDED": //gradle
                     return NutsOptional.of(NutsDependencyScope.PROVIDED);
-                case "test"://maven
-                case "testcompile"://gradle
-                case "test_compile":
-                case "testapi":
-                case "test_api":
+                case "TEST"://maven
+                case "TESTCOMPILE"://gradle
+                case "TEST_COMPILE":
+                case "TESTAPI":
+                case "TEST_API":
                     return NutsOptional.of(NutsDependencyScope.TEST_API);
-                case "testruntime":
-                case "test_runtime":
+                case "TESTRUNTIME":
+                case "TEST_RUNTIME":
                     return NutsOptional.of(NutsDependencyScope.TEST_RUNTIME);
-                case "testsystem":
-                case "test_system":
+                case "TESTSYSTEM":
+                case "TEST_SYSTEM":
                     return NutsOptional.of(NutsDependencyScope.TEST_SYSTEM);
-                case "testprovided":
-                case "test_provided":
-                case "testcompileonly":
-                case "test_compile_only":
+                case "TESTPROVIDED":
+                case "TEST_PROVIDED":
+                case "TESTCOMPILEONLY":
+                case "TEST_COMPILE_ONLY":
                     return NutsOptional.of(NutsDependencyScope.TEST_PROVIDED);
-                case "api":
-                case "compile":
+                case "API":
+                case "COMPILE":
                     return NutsOptional.of(NutsDependencyScope.API);
-                case "impl":
-                case "implementation":
+                case "IMPL":
+                case "IMPLEMENTATION":
                     return NutsOptional.of(NutsDependencyScope.IMPLEMENTATION);
-                case "import":
+                case "IMPORT":
                     return NutsOptional.of(NutsDependencyScope.IMPORT);
-                case "runtime":
+                case "RUNTIME":
                     return NutsOptional.of(NutsDependencyScope.RUNTIME);
-                case "test_impl":
-                case "test_implementation":
+                case "TEST_IMPL":
+                case "TEST_IMPLEMENTATION":
                     return NutsOptional.of(NutsDependencyScope.TEST_IMPLEMENTATION);
-                case "test_other":
+                case "TEST_OTHER":
                     return NutsOptional.of(NutsDependencyScope.TEST_OTHER);
-                case "other":
+                case "OTHER":
                     return NutsOptional.of(NutsDependencyScope.OTHER);
-                case "system":
+                case "SYSTEM":
                     return NutsOptional.of(NutsDependencyScope.SYSTEM);
             }
             return null;
         });
     }
+
     public boolean isCompile() {
         return !test;
     }

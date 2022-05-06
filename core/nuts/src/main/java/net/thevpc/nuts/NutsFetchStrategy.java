@@ -26,7 +26,8 @@
  */
 package net.thevpc.nuts;
 
-import net.thevpc.nuts.util.NutsUtils;
+import net.thevpc.nuts.util.NutsNameFormat;
+import net.thevpc.nuts.util.NutsStringUtils;
 
 import java.util.Arrays;
 import java.util.HashSet;
@@ -86,13 +87,13 @@ public enum NutsFetchStrategy implements Iterable<NutsFetchMode>, NutsEnum {
      * @param all      modes
      */
     NutsFetchStrategy(boolean stopFast, NutsFetchMode... all) {
-        this.id = name().toLowerCase().replace('_', '-');
+        this.id = NutsNameFormat.ID_NAME.formatName(name());
         this.stopFast = stopFast;
         this.all = Arrays.copyOf(all, all.length);
     }
 
     public static NutsOptional<NutsFetchStrategy> parse(String value) {
-        return NutsUtils.parseEnum(value, NutsFetchStrategy.class);
+        return NutsStringUtils.parseEnum(value, NutsFetchStrategy.class);
     }
 
 

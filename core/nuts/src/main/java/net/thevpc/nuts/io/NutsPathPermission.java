@@ -25,7 +25,8 @@ package net.thevpc.nuts.io;
 
 import net.thevpc.nuts.NutsEnum;
 import net.thevpc.nuts.NutsOptional;
-import net.thevpc.nuts.util.NutsUtils;
+import net.thevpc.nuts.util.NutsNameFormat;
+import net.thevpc.nuts.util.NutsStringUtils;
 
 /**
  * uniform permissions
@@ -86,11 +87,11 @@ public enum NutsPathPermission implements NutsEnum {
     private final String id;
 
     NutsPathPermission() {
-        this.id = name().toLowerCase();//.replace('_', '-');
+        this.id = NutsNameFormat.ID_NAME.formatName(name());
     }
 
     public static NutsOptional<NutsPathPermission> parse(String value) {
-        return NutsUtils.parseEnum(value, NutsPathPermission.class);
+        return NutsStringUtils.parseEnum(value, NutsPathPermission.class);
     }
 
 

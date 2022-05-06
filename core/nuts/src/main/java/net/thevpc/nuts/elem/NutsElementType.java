@@ -25,7 +25,8 @@ package net.thevpc.nuts.elem;
 
 import net.thevpc.nuts.NutsEnum;
 import net.thevpc.nuts.NutsOptional;
-import net.thevpc.nuts.util.NutsUtils;
+import net.thevpc.nuts.util.NutsNameFormat;
+import net.thevpc.nuts.util.NutsStringUtils;
 
 /**
  * Element type. this an extension of json element types.
@@ -109,13 +110,13 @@ public enum NutsElementType implements NutsEnum {
     private final String id;
 
     NutsElementType(boolean primitive, boolean nbr) {
-        this.id = name().toLowerCase().replace('_', '-');
+        this.id = NutsNameFormat.ID_NAME.formatName(name());
         this.primitive = primitive;
         this.nbr = nbr;
     }
 
     public static NutsOptional<NutsElementType> parse(String value) {
-        return NutsUtils.parseEnum(value, NutsElementType.class);
+        return NutsStringUtils.parseEnum(value, NutsElementType.class);
     }
 
     public boolean isNumber() {

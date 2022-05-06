@@ -24,29 +24,12 @@
  * <br>
  * ====================================================================
  */
-package net.thevpc.nuts;
+package net.thevpc.nuts.text;
 
-import net.thevpc.nuts.util.NutsNameFormat;
-import net.thevpc.nuts.util.NutsStringUtils;
-
-public enum NutsIsolationLevel implements NutsEnum {
-    SYSTEM,
-    USER,
-    CONFINED,
-    SANDBOX;
-    private final String id;
-
-    NutsIsolationLevel() {
-        this.id = NutsNameFormat.ID_NAME.formatName(name());
-    }
-
-    public static NutsOptional<NutsIsolationLevel> parse(String value) {
-        return NutsStringUtils.parseEnum(value, NutsIsolationLevel.class);
-    }
-
-    @Override
-    public String id() {
-        return id;
-    }
-
+/**
+ * @app.category Format
+ */
+public interface NutsTextInclude extends NutsText {
+    String getText();
+    String getSeparator();
 }

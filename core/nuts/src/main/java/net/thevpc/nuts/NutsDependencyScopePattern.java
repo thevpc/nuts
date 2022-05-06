@@ -25,7 +25,8 @@
  */
 package net.thevpc.nuts;
 
-import net.thevpc.nuts.util.NutsUtils;
+import net.thevpc.nuts.util.NutsNameFormat;
+import net.thevpc.nuts.util.NutsStringUtils;
 
 import java.util.EnumSet;
 
@@ -136,64 +137,64 @@ public enum NutsDependencyScopePattern implements NutsEnum {
     private final String id;
 
     NutsDependencyScopePattern() {
-        this.id = name().toLowerCase().replace('_', '-');
+        this.id = NutsNameFormat.ID_NAME.formatName(name());
     }
 
     public static NutsOptional<NutsDependencyScopePattern> parse(String value) {
-        return NutsUtils.parseEnum(value, NutsDependencyScopePattern.class, s->{
-            switch (s.toLowerCase()) {
-                case "compileonly": //gradle
-                case "compile_only": //gradle
-                case "provided": //gradle
+        return NutsStringUtils.parseEnum(value, NutsDependencyScopePattern.class, s->{
+            switch (s.getNormalizedValue()) {
+                case "COMPILEONLY": //gradle
+                case "COMPILE_ONLY": //gradle
+                case "PROVIDED": //gradle
                     return NutsOptional.of(NutsDependencyScopePattern.PROVIDED);
 //            case "test"://maven
-                case "testcompile"://gradle
+                case "TESTCOMPILE"://gradle
 //            case "test_compile":
-                case "testapi":
-                case "test_api":
+                case "TESTAPI":
+                case "TEST_API":
                     return NutsOptional.of(NutsDependencyScopePattern.TEST_API);
-                case "testruntime":
-                case "test_runtime":
+                case "TESTRUNTIME":
+                case "TEST_RUNTIME":
                     return NutsOptional.of(NutsDependencyScopePattern.TEST_RUNTIME);
-                case "testsystem":
-                case "test_system":
+                case "TESTSYSTEM":
+                case "TEST_SYSTEM":
                     return NutsOptional.of(NutsDependencyScopePattern.TEST_SYSTEM);
-                case "testprovided":
-                case "test_provided":
-                case "testcompileonly":
-                case "test_compile_only":
+                case "TESTPROVIDED":
+                case "TEST_PROVIDED":
+                case "TESTCOMPILEONLY":
+                case "TEST_COMPILE_ONLY":
                     return NutsOptional.of(NutsDependencyScopePattern.TEST_PROVIDED);
-                case "api":
+                case "API":
 //            case "compile":
                     return NutsOptional.of(NutsDependencyScopePattern.API);
-                case "impl":
-                case "implementation":
+                case "IMPL":
+                case "IMPLEMENTATION":
                     return NutsOptional.of(NutsDependencyScopePattern.IMPLEMENTATION);
-                case "import":
+                case "IMPORT":
                     return NutsOptional.of(NutsDependencyScopePattern.IMPORT);
-                case "runtime":
+                case "RUNTIME":
                     return NutsOptional.of(NutsDependencyScopePattern.RUNTIME);
-                case "test_impl":
-                case "test_implementation":
+                case "TEST_IMPL":
+                case "TEST_IMPLEMENTATION":
                     return NutsOptional.of(NutsDependencyScopePattern.TEST_IMPLEMENTATION);
-                case "test_other":
+                case "TEST_OTHER":
                     return NutsOptional.of(NutsDependencyScopePattern.TEST_OTHER);
-                case "other":
+                case "OTHER":
                     return NutsOptional.of(NutsDependencyScopePattern.OTHER);
-                case "system":
+                case "SYSTEM":
                     return NutsOptional.of(NutsDependencyScopePattern.SYSTEM);
 
-                case "test_compile":
+                case "TEST_COMPILE":
                     return NutsOptional.of(NutsDependencyScopePattern.TEST_COMPILE);
-                case "test":
+                case "TEST":
                     return NutsOptional.of(NutsDependencyScopePattern.TEST);
-                case "compile":
+                case "COMPILE":
                     return NutsOptional.of(NutsDependencyScopePattern.COMPILE);
-                case "run":
+                case "RUN":
                     return NutsOptional.of(NutsDependencyScopePattern.RUN);
-                case "run_test":
+                case "RUN_TEST":
                     return NutsOptional.of(NutsDependencyScopePattern.RUN_TEST);
-                case "all":
+                case "ALL":
                     return NutsOptional.of(NutsDependencyScopePattern.ALL);
             }
             return null;

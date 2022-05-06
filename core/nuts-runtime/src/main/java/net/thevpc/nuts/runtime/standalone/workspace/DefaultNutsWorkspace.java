@@ -2037,11 +2037,11 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
         private final String id;
 
         InstallStrategy0() {
-            this.id = name().toLowerCase().replace('_', '-');
+            this.id = NutsNameFormat.ID_NAME.formatName(name());
         }
 
         public static NutsOptional<InstallStrategy0> parse(String value) {
-            return NutsUtils.parseEnum(value, InstallStrategy0.class);
+            return NutsStringUtils.parseEnum(value, InstallStrategy0.class);
         }
 
 

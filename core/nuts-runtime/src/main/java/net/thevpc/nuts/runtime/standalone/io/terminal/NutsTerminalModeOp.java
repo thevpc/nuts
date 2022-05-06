@@ -2,7 +2,8 @@ package net.thevpc.nuts.runtime.standalone.io.terminal;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.io.NutsTerminalMode;
-import net.thevpc.nuts.util.NutsUtils;
+import net.thevpc.nuts.util.NutsNameFormat;
+import net.thevpc.nuts.util.NutsStringUtils;
 
 public enum NutsTerminalModeOp  implements NutsEnum {
     NOP(NutsTerminalMode.INHERITED, NutsTerminalMode.INHERITED),
@@ -17,7 +18,7 @@ public enum NutsTerminalModeOp  implements NutsEnum {
     NutsTerminalModeOp(NutsTerminalMode in, NutsTerminalMode out) {
         this.in = in;
         this.out = out;
-        this.id = name().toLowerCase().replace('_', '-');
+        this.id = NutsNameFormat.ID_NAME.formatName(name());
     }
 
     @Override
@@ -34,7 +35,7 @@ public enum NutsTerminalModeOp  implements NutsEnum {
     }
 
     public static NutsOptional<NutsTerminalMode> parse(String value) {
-        return NutsUtils.parseEnum(value, NutsTerminalMode.class);
+        return NutsStringUtils.parseEnum(value, NutsTerminalMode.class);
     }
 
 }

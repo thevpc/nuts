@@ -159,29 +159,30 @@ public class DefaultNutsTextTransformer implements NutsTextTransformer {
                 }
                 return text;
             }
-            case CODE: {
-                NutsTextCode t = (NutsTextCode) text;
+            case INCLUDE: {
+                NutsTextInclude t = (NutsTextInclude) text;
                 if (config.isProcessIncludes()) {
-                    if ("include".equals(t.getQualifier())) {
-                        NutsCommandLine cmd = NutsCommandLine.parseDefault(
-                                t.getText()
-                        ).orNull();
-                        if (cmd != null && cmd.length() > 0) {
-                            String p = cmd.next().flatMap(NutsArgument::asString).orNull();
-                            NutsPath newP = resolveRelativePath(p, config.getCurrentDir());
-                            NutsText n = txt.parser().parse(newP);
-                            return txt.transform(n, new NutsTextTransformConfig()
-                                    .setProcessIncludes(true)
-                                    .setCurrentDir(newP.getParent())
-                                    .setImportClassLoader(config.getImportClassLoader())
-                            );
-                        }
+                    NutsCommandLine cmd = NutsCommandLine.parseDefault(
+                            t.getText()
+                    ).orNull();
+                    if (cmd != null && cmd.length() > 0) {
+                        String p = cmd.next().flatMap(NutsArgument::asString).orNull();
+                        NutsPath newP = resolveRelativePath(p, config.getCurrentDir());
+                        NutsText n = txt.parser().parse(newP);
+                        //do not continue
+                        return txt.transform(n, new NutsTextTransformConfig()
+                                .setProcessIncludes(true)
+                                .setCurrentDir(newP.getParent())
+                                .setImportClassLoader(config.getImportClassLoader())
+                        );
                     }
                 }
-                if (config.isNormalize()) {
+                return t;
+            }
+            case CODE: {
+                NutsTextCode t = (NutsTextCode) text;
+                if (config.isNormalize()||config.isFlatten()) {
                     text = t.highlight(session);
-                }
-                if (config.isFlatten()) {
                     // We have no insurance that highlight is not using special nodes so
                     // we enforce flattening
                     text = txt.transform(text, new NutsTextTransformConfig()

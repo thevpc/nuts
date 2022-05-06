@@ -26,7 +26,8 @@
  */
 package net.thevpc.nuts;
 
-import net.thevpc.nuts.util.NutsUtils;
+import net.thevpc.nuts.util.NutsNameFormat;
+import net.thevpc.nuts.util.NutsStringUtils;
 
 public enum NutsDesktopIntegrationItem implements NutsEnum {
     MENU,
@@ -35,11 +36,11 @@ public enum NutsDesktopIntegrationItem implements NutsEnum {
     private final String id;
 
     NutsDesktopIntegrationItem() {
-        this.id = name().toLowerCase().replace('_', '-');
+        this.id = NutsNameFormat.ID_NAME.formatName(name());
     }
 
     public static NutsOptional<NutsDesktopIntegrationItem> parse(String value) {
-        return NutsUtils.parseEnum(value, NutsDesktopIntegrationItem.class);
+        return NutsStringUtils.parseEnum(value, NutsDesktopIntegrationItem.class);
     }
 
     @Override

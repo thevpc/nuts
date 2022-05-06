@@ -23,6 +23,12 @@
  */
 package net.thevpc.nuts.text;
 
+import net.thevpc.nuts.NutsValue;
+import net.thevpc.nuts.reserved.NutsReservedCollectionUtils;
+
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 import java.util.Objects;
 
 /**
@@ -46,43 +52,43 @@ public final class NutsTerminalCommand {
     public static final NutsTerminalCommand MOVE_LEFT = MOVE_LEFT(1);
     public static final NutsTerminalCommand MOVE_RIGHT = MOVE_RIGHT(1);
     private final String name;
-    private final String args;
+    private final List<String> args;
 
     public NutsTerminalCommand(String name) {
-        this(name, "");
+        this(name, Collections.emptyList());
     }
 
-    public NutsTerminalCommand(String name, String args) {
+    public NutsTerminalCommand(String name, List<String> args) {
         this.name = name;
-        this.args = args;
+        this.args = NutsReservedCollectionUtils.unmodifiableList(args);
     }
 
     public static NutsTerminalCommand MOVE_TO(int row, int col) {
-        return new NutsTerminalCommand(Ids.MOVE_TO, row + "," + col);
+        return new NutsTerminalCommand(Ids.MOVE_TO, Arrays.asList(String.valueOf(row), String.valueOf(col)));
     }
 
     public static NutsTerminalCommand MOVE_RIGHT(int count) {
-        return new NutsTerminalCommand(Ids.MOVE_RIGHT, count <= 0 ? "1" : String.valueOf(count));
+        return new NutsTerminalCommand(Ids.MOVE_RIGHT, Arrays.asList(count <= 0 ? "1" : String.valueOf(count)));
     }
 
     public static NutsTerminalCommand MOVE_LEFT(int count) {
-        return new NutsTerminalCommand(Ids.MOVE_LEFT, count <= 0 ? "1" : String.valueOf(count));
+        return new NutsTerminalCommand(Ids.MOVE_LEFT, Arrays.asList(count <= 0 ? "1" : String.valueOf(count)));
     }
 
     public static NutsTerminalCommand MOVE_UP(int count) {
-        return new NutsTerminalCommand(Ids.MOVE_UP, count <= 0 ? "1" : String.valueOf(count));
+        return new NutsTerminalCommand(Ids.MOVE_UP, Arrays.asList(count <= 0 ? "1" : String.valueOf(count)));
     }
 
     public static NutsTerminalCommand MOVE_DOWN(int count) {
-        return new NutsTerminalCommand(Ids.MOVE_DOWN, count <= 0 ? "1" : String.valueOf(count));
+        return new NutsTerminalCommand(Ids.MOVE_DOWN, Arrays.asList(count <= 0 ? "1" : String.valueOf(count)));
     }
 
     public static NutsTerminalCommand of(String name) {
         return of(name, "");
     }
 
-    public static NutsTerminalCommand of(String name, String args) {
-        if (args.trim().isEmpty()) {
+    public static NutsTerminalCommand of(String name, String... args) {
+        if (args == null || args.length == 0) {
             switch (name) {
                 case Ids.LATER_RESET_LINE:
                     return LATER_RESET_LINE;
@@ -128,16 +134,24 @@ public final class NutsTerminalCommand {
                 return CLEAR_LINE_TO_CURSOR;
             case Ids.CLEAR_LINE_FROM_CURSOR:
                 return CLEAR_LINE_FROM_CURSOR;
+            case Ids.MOVE_UP:
+                return MOVE_UP(NutsValue.of(args[0]).asInt().orElse(1));
+            case Ids.MOVE_DOWN:
+                return MOVE_DOWN(NutsValue.of(args[0]).asInt().orElse(1));
+            case Ids.MOVE_LEFT:
+                return MOVE_LEFT(NutsValue.of(args[0]).asInt().orElse(1));
+            case Ids.MOVE_RIGHT:
+                return MOVE_RIGHT(NutsValue.of(args[0]).asInt().orElse(1));
         }
 
-        return new NutsTerminalCommand(name, args);
+        return new NutsTerminalCommand(name, args == null ? null : Arrays.asList(args));
     }
 
     public String getName() {
         return name;
     }
 
-    public String getArgs() {
+    public List<String> getArgs() {
         return args;
     }
 

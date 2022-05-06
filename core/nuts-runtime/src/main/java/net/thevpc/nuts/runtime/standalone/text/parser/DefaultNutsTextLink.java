@@ -39,8 +39,8 @@ import java.util.Objects;
 public class DefaultNutsTextLink extends NutsTextSpecialBase implements NutsTextLink {
     private String value;
 
-    public DefaultNutsTextLink(NutsSession session, String start, String separator, String end, String value) {
-        super(session, start, "link", separator, end);
+    public DefaultNutsTextLink(NutsSession session, String separator, String value) {
+        super(session, "```!", "link", separator, "```");
         this.value = value;
     }
 

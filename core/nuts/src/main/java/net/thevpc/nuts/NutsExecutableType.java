@@ -25,7 +25,8 @@
  */
 package net.thevpc.nuts;
 
-import net.thevpc.nuts.util.NutsUtils;
+import net.thevpc.nuts.util.NutsNameFormat;
+import net.thevpc.nuts.util.NutsStringUtils;
 
 /**
  * Executable command type returned by which internal command
@@ -72,11 +73,11 @@ public enum NutsExecutableType implements NutsEnum {
      * default constructor
      */
     NutsExecutableType() {
-        this.id = name().toLowerCase().replace('_', '-');
+        this.id = NutsNameFormat.ID_NAME.formatName(name());
     }
 
     public static NutsOptional<NutsExecutableType> parse(String value) {
-        return NutsUtils.parseEnum(value, NutsExecutableType.class);
+        return NutsStringUtils.parseEnum(value, NutsExecutableType.class);
     }
 
 

@@ -25,7 +25,8 @@
  */
 package net.thevpc.nuts;
 
-import net.thevpc.nuts.util.NutsUtils;
+import net.thevpc.nuts.util.NutsNameFormat;
+import net.thevpc.nuts.util.NutsStringUtils;
 
 /**
  * Command execution type.
@@ -67,11 +68,11 @@ public enum NutsExecutionType implements NutsEnum {
     private final String id;
 
     NutsExecutionType() {
-        this.id = name().toLowerCase().replace('_', '-');
+        this.id = NutsNameFormat.ID_NAME.formatName(name());
     }
 
     public static NutsOptional<NutsExecutionType> parse(String value) {
-        return NutsUtils.parseEnum(value, NutsExecutionType.class);
+        return NutsStringUtils.parseEnum(value, NutsExecutionType.class);
     }
 
 

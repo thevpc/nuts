@@ -26,7 +26,8 @@
  */
 package net.thevpc.nuts;
 
-import net.thevpc.nuts.util.NutsUtils;
+import net.thevpc.nuts.util.NutsNameFormat;
+import net.thevpc.nuts.util.NutsStringUtils;
 
 /**
  * @author thevpc
@@ -99,11 +100,11 @@ public enum NutsStoreLocation implements NutsEnum {
     private final String id;
 
     NutsStoreLocation() {
-        this.id = name().toLowerCase().replace('_', '-');
+        this.id = NutsNameFormat.ID_NAME.formatName(name());
     }
 
     public static NutsOptional<NutsStoreLocation> parse(String value) {
-        return NutsUtils.parseEnum(value, NutsStoreLocation.class);
+        return NutsStringUtils.parseEnum(value, NutsStoreLocation.class);
     }
 
     /**

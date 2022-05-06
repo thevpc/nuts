@@ -1,7 +1,8 @@
 package net.thevpc.nuts.runtime.standalone.repository.impl.main;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.util.NutsUtils;
+import net.thevpc.nuts.util.NutsNameFormat;
+import net.thevpc.nuts.util.NutsStringUtils;
 
 public enum NutsInstallLogAction implements NutsEnum {
     INSTALL,
@@ -13,11 +14,11 @@ public enum NutsInstallLogAction implements NutsEnum {
     private final String id;
 
     NutsInstallLogAction() {
-        this.id = name().toLowerCase().replace('_', '-');
+        this.id = NutsNameFormat.ID_NAME.formatName(name());
     }
 
     public static NutsOptional<NutsInstallLogAction> parse(String value) {
-        return NutsUtils.parseEnum(value, NutsInstallLogAction.class);
+        return NutsStringUtils.parseEnum(value, NutsInstallLogAction.class);
     }
 
 

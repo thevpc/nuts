@@ -149,7 +149,8 @@ public final class NutsReservedUtils {
             return "<EMPTY>";
         }
         String ss
-                = (s instanceof Enum) ? ((Enum<?>) s).name().toLowerCase().replace('_', '-')
+                =
+                (s instanceof Enum) ?NutsNameFormat.CONST_NAME.formatName(((Enum<?>) s).name())
                 : s.toString().trim();
         return ss.isEmpty() ? "<EMPTY>" : ss;
     }
@@ -938,13 +939,13 @@ public final class NutsReservedUtils {
                 && logConfig.getLogTermLevel() != null
                 && logConfig.getLogTermLevel().intValue() < Level.INFO.intValue());
         if (!showTrace) {
-            showTrace = NutsApiUtils.getSysBoolNutsProperty("debug", false);
+            showTrace = getSysBoolNutsProperty("debug", false);
         }
         if (bot) {
             showTrace = false;
             gui = false;
         }
-        return NutsApiUtils.processThrowable(ex, out, true, showTrace, gui);
+        return processThrowable(ex, out, true, showTrace, gui);
     }
 
     public static int processThrowable(Throwable ex, PrintStream out, boolean showMessage, boolean showTrace, boolean showGui) {

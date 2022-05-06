@@ -58,7 +58,7 @@ public class Test32_Id {
         Assertions.assertEquals("net.sourceforge.cobertura",s.getGroupId());
         Assertions.assertEquals("cobertura",s.getArtifactId());
         Assertions.assertEquals("asm:asm,asm:asm-tree,log4j:log4j,oro:oro",s.getProperties().get("exclusions"));
-        Assertions.assertEquals("",s.getCondition().getProperties().get("a"));
+        Assertions.assertEquals(null,s.getCondition().getProperties().get("a"));
         Assertions.assertEquals("c",s.getCondition().getProperties().get("b"));
         TestUtils.println(s);
     }
@@ -70,7 +70,7 @@ public class Test32_Id {
         Assertions.assertEquals("net.sourceforge.cobertura",s.getGroupId());
         Assertions.assertEquals("cobertura",s.getArtifactId());
         Assertions.assertEquals("asm:asm,asm:asm-tree,log4j:log4j,oro:oro",s.getProperties().get("exclusions"));
-        Assertions.assertEquals("",s.getCondition().getProperties().get("a"));
+        Assertions.assertEquals(null,s.getCondition().getProperties().get("a"));
         Assertions.assertEquals("c",s.getCondition().getProperties().get("b"));
         TestUtils.println(s);
     }

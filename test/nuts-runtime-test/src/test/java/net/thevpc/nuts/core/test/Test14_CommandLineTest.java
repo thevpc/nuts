@@ -34,11 +34,17 @@ public class Test14_CommandLineTest {
     @Test
     public void test1() throws Exception {
         NutsArgument[] cmd = NutsCommandLine.parseDefault("-ad+ +ad--").get(session).toArgumentArray();
-        Set<String> set = Arrays.stream(cmd).map(x -> x.toString()).collect(Collectors.toSet());
+        Set<String> set = Arrays.stream(cmd).map(Object::toString).collect(Collectors.toSet());
         Set<String> expectedSet = new HashSet<>(Arrays.asList(
                 "-a", "-d+", "+a","+d--"
         ));
-        Assertions.assertEquals(set,expectedSet);
+        Assertions.assertEquals(expectedSet,set);
+    }
+
+    @Test
+    public void test2() throws Exception {
+        NutsCommandLine cmd = new DefaultNutsCommandLine().registerSpecialSimpleOption("-version");
+        Assertions.assertEquals(true,cmd.isSpecialSimpleOption("-//version"));
     }
 
 

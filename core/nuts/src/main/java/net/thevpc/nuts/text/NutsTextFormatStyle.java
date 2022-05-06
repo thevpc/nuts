@@ -28,7 +28,8 @@ package net.thevpc.nuts.text;
 
 import net.thevpc.nuts.NutsEnum;
 import net.thevpc.nuts.NutsOptional;
-import net.thevpc.nuts.util.NutsUtils;
+import net.thevpc.nuts.util.NutsNameFormat;
+import net.thevpc.nuts.util.NutsStringUtils;
 
 import java.util.Locale;
 
@@ -68,11 +69,11 @@ public enum NutsTextFormatStyle implements NutsEnum {
     private final String id;
 
     NutsTextFormatStyle() {
-        this.id = name().toLowerCase().replace('_', '-');
+        this.id = NutsNameFormat.ID_NAME.formatName(name());
     }
 
     public static NutsOptional<NutsTextFormatStyle> parse(String value) {
-        return NutsUtils.parseEnum(value, NutsTextFormatStyle.class);
+        return NutsStringUtils.parseEnum(value, NutsTextFormatStyle.class);
     }
 
 

@@ -26,7 +26,8 @@
 package net.thevpc.nuts.runtime.standalone.format;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.util.NutsUtils;
+import net.thevpc.nuts.util.NutsNameFormat;
+import net.thevpc.nuts.util.NutsStringUtils;
 
 /**
  *
@@ -62,7 +63,7 @@ public enum NutsDisplayProperty  implements NutsEnum {
     private String id;
 
     NutsDisplayProperty() {
-        this.id = name().toLowerCase().replace('_', '-');
+        this.id = NutsNameFormat.ID_NAME.formatName(name());
     }
 
     @Override
@@ -71,15 +72,15 @@ public enum NutsDisplayProperty  implements NutsEnum {
     }
 
     public static NutsOptional<NutsDisplayProperty> parse(String value) {
-        return NutsUtils.parseEnum(value, NutsDisplayProperty.class, s->{
-            switch (s.toLowerCase()){
-                case "de":
-                case "desktop":
+        return NutsStringUtils.parseEnum(value, NutsDisplayProperty.class, s->{
+            switch (s.getNormalizedValue()){
+                case "DE":
+                case "DESKTOP":
                     return NutsOptional.of(DESKTOP_ENVIRONMENT);
-                case "osdist":return NutsOptional.of(OSDIST);
-                case "repo":return NutsOptional.of(REPOSITORY);
-                case "repo_id":
-                case "repoid":
+                case "OSDIST":return NutsOptional.of(OSDIST);
+                case "REPO":return NutsOptional.of(REPOSITORY);
+                case "REPO_ID":
+                case "REPOID":
                     return NutsOptional.of(REPOSITORY_ID);
             }
             return null;

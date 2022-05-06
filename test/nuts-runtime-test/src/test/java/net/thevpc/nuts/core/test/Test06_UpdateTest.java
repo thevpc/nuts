@@ -218,7 +218,7 @@ public class Test06_UpdateTest {
                         "--json",
                         "version"
                 )
-                .setFailFast(true)
+                .setFailFast(false)
                 .grabOutputString()
                 .grabErrorString()
                 .setSleepMillis(5000);
@@ -230,6 +230,8 @@ public class Test06_UpdateTest {
         TestUtils.println("OUT =" + ss);
         TestUtils.println("ERR =" + ee.getErrorString());
         TestUtils.println("CODE=" + ee.getResult());
+        Assertions.assertEquals(0,ee.getResult());
+
         Map m = NutsElements.of(uws).json().parse(ss, Map.class);
         Assertions.assertEquals(newApiVersion, m.get("nuts-api-version"));
         Assertions.assertEquals(newRuntimeVersion, m.get("nuts-runtime-version"));

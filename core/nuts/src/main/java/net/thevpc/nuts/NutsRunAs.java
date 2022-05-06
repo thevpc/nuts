@@ -26,7 +26,8 @@
  */
 package net.thevpc.nuts;
 
-import net.thevpc.nuts.util.NutsUtils;
+import net.thevpc.nuts.util.NutsNameFormat;
+import net.thevpc.nuts.util.NutsStringUtils;
 
 import java.util.Objects;
 
@@ -105,11 +106,11 @@ public class NutsRunAs {
         private final String id;
 
         Mode() {
-            this.id = name().toLowerCase().replace('_', '-');
+            this.id = NutsNameFormat.ID_NAME.formatName(name());
         }
 
         public static NutsOptional<Mode> parse(String value) {
-            return NutsUtils.parseEnum(value, Mode.class);
+            return NutsStringUtils.parseEnum(value, Mode.class);
         }
 
         @Override

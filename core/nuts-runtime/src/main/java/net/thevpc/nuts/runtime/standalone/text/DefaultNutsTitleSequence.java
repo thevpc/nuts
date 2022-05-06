@@ -337,10 +337,10 @@ public class DefaultNutsTitleSequence implements NutsTitleSequence {
                 }
                 sb.append(h.n);
             }
-        }
-        if (sb.length() > 0) {
-            sb.insert(0, start);
-            sb.append(end);
+            if (sb.length() > 0) {
+                sb.insert(0, start);
+                sb.append(end);
+            }
         }
         return sb.toString();
     }

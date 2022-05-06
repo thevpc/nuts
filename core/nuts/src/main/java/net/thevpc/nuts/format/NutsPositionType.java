@@ -28,7 +28,8 @@ package net.thevpc.nuts.format;
 
 import net.thevpc.nuts.NutsEnum;
 import net.thevpc.nuts.NutsOptional;
-import net.thevpc.nuts.util.NutsUtils;
+import net.thevpc.nuts.util.NutsNameFormat;
+import net.thevpc.nuts.util.NutsStringUtils;
 
 import java.util.function.Function;
 
@@ -63,24 +64,21 @@ public enum NutsPositionType implements NutsEnum {
     private final String id;
 
     NutsPositionType() {
-        this.id = name().toLowerCase().replace('_', '-');
+        this.id = NutsNameFormat.ID_NAME.formatName(name());
     }
 
     public static NutsOptional<NutsPositionType> parse(String value) {
-        return NutsUtils.parseEnum(value, NutsPositionType.class, new Function<String, NutsOptional<NutsPositionType>>() {
-            @Override
-            public NutsOptional<NutsPositionType> apply(String s) {
-                switch (s.toLowerCase()){
-                    case "left":
-                    case "top":
-                    case "before":
-                        return NutsOptional.of(FIRST);
-                    case "right":
-                    case "bottom":
-                        return NutsOptional.of(LAST);
-                }
-                return null;
+        return NutsStringUtils.parseEnum(value, NutsPositionType.class, s -> {
+            switch (s.getNormalizedValue()){
+                case "LEFT":
+                case "TOP":
+                case "BEFORE":
+                    return NutsOptional.of(FIRST);
+                case "RIGHT":
+                case "BOTTOM":
+                    return NutsOptional.of(LAST);
             }
+            return null;
         });
     }
 

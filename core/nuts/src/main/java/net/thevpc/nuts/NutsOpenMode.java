@@ -26,7 +26,8 @@
  */
 package net.thevpc.nuts;
 
-import net.thevpc.nuts.util.NutsUtils;
+import net.thevpc.nuts.util.NutsNameFormat;
+import net.thevpc.nuts.util.NutsStringUtils;
 
 /**
  * @author thevpc
@@ -68,12 +69,12 @@ public enum NutsOpenMode implements NutsEnum {
     private final String id;
 
     NutsOpenMode() {
-        this.id = name().toLowerCase().replace('_', '-');
+        this.id = NutsNameFormat.ID_NAME.formatName(name());
     }
 
     public static NutsOptional<NutsOpenMode> parse(String value) {
-        return NutsUtils.parseEnum(value, NutsOpenMode.class, s->{
-            switch (s.toUpperCase()) {
+        return NutsStringUtils.parseEnum(value, NutsOpenMode.class, s->{
+            switch (s.getNormalizedValue()) {
                 case "R":
                 case "READ":
                 case "O":

@@ -177,15 +177,16 @@ public interface NutsCommandLine extends Iterable<NutsArgument>, NutsFormattable
      * @return {@code this} instance
      */
     NutsCommandLine registerSpecialSimpleOption(String option, NutsSession session);
+    NutsCommandLine registerSpecialSimpleOption(String option);
 
-    /**
-     * test if the option is a registered simple option This method helps
-     * considering '-version' as a single simple options when
-     * {@code isExpandSimpleOptions()==true}
-     *
-     * @param option option
-     * @return {@code this} instance
-     */
+        /**
+         * test if the option is a registered simple option This method helps
+         * considering '-version' as a single simple options when
+         * {@code isExpandSimpleOptions()==true}
+         *
+         * @param option option
+         * @return {@code this} instance
+         */
     boolean isSpecialSimpleOption(String option);
 
     /**

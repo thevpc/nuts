@@ -275,7 +275,7 @@ public class NutsWorkspaceUtils {
         NutsWorkspaceConfigManager config = session.config();
         try {
             if (session.isPlainTrace()) {
-                session.out().resetLine().println("adding current JVM...");
+                session.out().resetLine().println("configuring current JVM...");
             }
             NutsPlatformLocation found0 = env.platforms()
                     .resolvePlatform(NutsPlatformFamily.JAVA, System.getProperty("java.home"), null);

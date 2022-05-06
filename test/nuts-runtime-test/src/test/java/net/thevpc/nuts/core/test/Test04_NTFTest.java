@@ -983,7 +983,7 @@ public class Test04_NTFTest {
         r = p.readFully();
         Assertions.assertNotNull(r);
         Assertions.assertEquals(NutsTextType.TITLE, r.getType());
-        Assertions.assertEquals("#) Hello #World\\#", r.toString());
+        Assertions.assertEquals("#) Hello #World\\#\n", r.toString());
     }
 
     @Test
@@ -999,7 +999,7 @@ public class Test04_NTFTest {
             Assertions.assertNotNull(r);
             Assertions.assertEquals(NutsTextType.TITLE, r.getType());
             Assertions.assertEquals(i, ((NutsTextTitle) r).getLevel());
-            Assertions.assertEquals(q + ") Hello #World\\#", r.toString());
+            Assertions.assertEquals(q + ") Hello #World\\#\n", r.toString());
         }
     }
 
@@ -1028,11 +1028,9 @@ public class Test04_NTFTest {
         TestUtils.println(s);
         p.offer(s);
         NutsText r = p.read();
-        Assertions.assertNull(r);
-        r = p.readFully();
         Assertions.assertNotNull(r);
         Assertions.assertEquals(NutsTextType.ANCHOR, r.getType());
-        Assertions.assertEquals("```!anchor some anchor```\u001E", r.toString());
+        Assertions.assertEquals("```!anchor some anchor```", r.toString());
     }
 
     @Test
@@ -1042,11 +1040,9 @@ public class Test04_NTFTest {
         TestUtils.println(s);
         p.offer(s);
         NutsText r = p.read();
-        Assertions.assertNull(r);
-        r = p.readFully();
         Assertions.assertNotNull(r);
         Assertions.assertEquals(NutsTextType.LINK, r.getType());
-        Assertions.assertEquals("```!link some link```\u001E", r.toString());
+        Assertions.assertEquals("```!link some link```", r.toString());
     }
 
     @Test
@@ -1056,11 +1052,9 @@ public class Test04_NTFTest {
         TestUtils.println(s);
         p.offer(s);
         NutsText r = p.read();
-        Assertions.assertNull(r);
-        r = p.readFully();
         Assertions.assertNotNull(r);
         Assertions.assertEquals(NutsTextType.LINK, r.getType());
-        Assertions.assertEquals("```!link:some link```\u001E", r.toString());
+        Assertions.assertEquals("```!link:some link```", r.toString());
     }
 
     @Test
@@ -1070,11 +1064,9 @@ public class Test04_NTFTest {
         TestUtils.println(s);
         p.offer(s);
         NutsText r = p.read();
-        Assertions.assertNull(r);
-        r = p.readFully();
         Assertions.assertNotNull(r);
         Assertions.assertEquals(NutsTextType.LINK, r.getType());
-        Assertions.assertEquals("```!link\nsome link```\u001E", r.toString());
+        Assertions.assertEquals("```!link\nsome link```", r.toString());
     }
 
     @Test
@@ -1084,12 +1076,10 @@ public class Test04_NTFTest {
         TestUtils.println(s);
         p.offer(s);
         NutsText r = p.read();
-        Assertions.assertNull(r);
-        r = p.readFully();
         Assertions.assertNotNull(r);
         Assertions.assertEquals(NutsTextType.CODE, r.getType());
         Assertions.assertEquals("public class \\` some thing ``` some thing", ((NutsTextCode) r).getText());
-        Assertions.assertEquals("```java\npublic class \\` some thing \\``` some thing```\u001E", r.toString());
+        Assertions.assertEquals("```java\npublic class \\` some thing \\``` some thing```", r.toString());
     }
 
     @Test
@@ -1179,11 +1169,9 @@ public class Test04_NTFTest {
         TestUtils.println(s);
         p.offer(s);
         NutsText r = p.read();
-        Assertions.assertNull(r);
-        r = p.readFully();
         Assertions.assertNotNull(r);
         Assertions.assertEquals(NutsTextType.COMMAND, r.getType());
-        Assertions.assertEquals("```!clear-line```\u001E", r.toString());
+        Assertions.assertEquals("```!clear-line```", r.toString());
     }
 
     @Test

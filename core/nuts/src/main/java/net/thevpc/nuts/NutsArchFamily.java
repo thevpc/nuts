@@ -23,7 +23,8 @@
  */
 package net.thevpc.nuts;
 
-import net.thevpc.nuts.util.NutsUtils;
+import net.thevpc.nuts.util.NutsNameFormat;
+import net.thevpc.nuts.util.NutsStringUtils;
 
 /**
  * uniform platform architecture impl-note: list updated from
@@ -62,111 +63,111 @@ public enum NutsArchFamily implements NutsEnum {
     private final String id;
 
     NutsArchFamily() {
-        this.id = name().toLowerCase();//.replace('_', '-');
+        this.id = NutsNameFormat.ID_NAME.formatName(name());
     }
 
     public static NutsOptional<NutsArchFamily> parse(String value) {
-        return NutsUtils.parseEnum(value, NutsArchFamily.class, s->{
-            String arch = s.toLowerCase();
+        return NutsStringUtils.parseEnum(value, NutsArchFamily.class, s->{
+            String arch = s.getNormalizedValue();
             switch (arch) {
-                case "x8632":
-                case "x86":
-                case "i386":
-                case "i486":
-                case "i586":
-                case "i686":
-                case "ia32":
-                case "x32":
-                case "x86_32":
+                case "X8632":
+                case "X86":
+                case "I386":
+                case "I486":
+                case "I586":
+                case "I686":
+                case "IA32":
+                case "X32":
+                case "X86_32":
                     return NutsOptional.of(X86_32);
 
-                case "x8664":
-                case "amd64":
-                case "ia32e":
-                case "em64t":
-                case "x64":
-                case "x86_64":
+                case "X8664":
+                case "AMD64":
+                case "IA32E":
+                case "EM64T":
+                case "X64":
+                case "X86_64":
                     return NutsOptional.of(X86_64);
 
-                case "ia64n":
-                case "itanium_32":
+                case "IA64N":
+                case "ITANIUM_32":
                     return NutsOptional.of(ITANIUM_32);
 
-                case "sparc":
-                case "sparc32":
-                case "sparc_32":
+                case "SPARC":
+                case "SPARC32":
+                case "SPARC_32":
                     return NutsOptional.of(SPARC_32);
 
-                case "sparcv9":
-                case "sparc64":
-                case "sparc_64":
+                case "SPARCV9":
+                case "SPARC64":
+                case "SPARC_64":
                     return NutsOptional.of(SPARC_64);
 
-                case "arm":
-                case "arm32":
-                case "arm_32":
+                case "ARM":
+                case "ARM32":
+                case "ARM_32":
                     return NutsOptional.of(ARM_32);
 
-                case "arm64": //merged with aarch64
-                case "aarch64":
-                case "aarch_64":
+                case "ARM64": //merged with aarch64
+                case "AARCH64":
+                case "AARCH_64":
                     return NutsOptional.of(AARCH_64);
 
-                case "mips":
-                case "mips32":
-                case "mips_32":
+                case "MIPS":
+                case "MIPS32":
+                case "MIPS_32":
                     return NutsOptional.of(MIPS_32);
 
-                case "mips_64":
+                case "MIPS_64":
                     return NutsOptional.of(MIPS_64);
 
-                case "mipsel":
-                case "mips32el":
-                case "mipsel_32":
+                case "MIPSEL":
+                case "MIPS32EL":
+                case "MIPSEL_32":
                     return NutsOptional.of(MIPSEL_32);
 
-                case "mips64":
-                case "mips64el":
-                case "mipsel_64":
+                case "MIPS64":
+                case "MIPS64EL":
+                case "MIPSEL_64":
                     return NutsOptional.of(MIPSEL_64);
 
-                case "ppc":
-                case "ppc32":
-                case "ppc_32":
+                case "PPC":
+                case "PPC32":
+                case "PPC_32":
                     return NutsOptional.of(PPC_32);
 
-                case "ppc64":
-                case "ppc_64":
+                case "PPC64":
+                case "PPC_64":
                     return NutsOptional.of(PPC_64);
 
-                case "ppcle":
-                case "ppcle32":
-                case "ppcle_32":
+                case "PPCLE":
+                case "PPCLE32":
+                case "PPCLE_32":
                     return NutsOptional.of(PPCLE_32);
 
-                case "ppc64le":
-                case "ppcle_64":
+                case "PPC64LE":
+                case "PPCLE_64":
                     return NutsOptional.of(PPCLE_64);
 
-                case "s390":
-                case "s390_32":
+                case "S390":
+                case "S390_32":
                     return NutsOptional.of(S390_32);
 
-                case "s390x":
-                case "s390_64":
+                case "S390X":
+                case "S390_64":
                     return NutsOptional.of(S390_64);
 
-                case "arm_64":
+                case "ARM_64":
                     return NutsOptional.of(ARM_64);
 
-                case "ia64w":
-                case "itanium64":
-                case "itanium_64":
+                case "IA64W":
+                case "ITANIUM64":
+                case "ITANIUM_64":
                     return NutsOptional.of(ITANIUM_64);
-                case "unknown":
+                case "UNKNOWN":
                     return NutsOptional.of(UNKNOWN);
                 default: {
-                    if (arch.startsWith("ia64w") && arch.length() == 6) {
+                    if (arch.startsWith("IA64W") && arch.length() == 6) {
                         return NutsOptional.of(ITANIUM_64);
                     }
                 }

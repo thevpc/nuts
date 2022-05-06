@@ -27,7 +27,8 @@ package net.thevpc.nuts.io;
 
 import net.thevpc.nuts.NutsEnum;
 import net.thevpc.nuts.NutsOptional;
-import net.thevpc.nuts.util.NutsUtils;
+import net.thevpc.nuts.util.NutsNameFormat;
+import net.thevpc.nuts.util.NutsStringUtils;
 
 /**
  * Equivalent to FileVisitOption
@@ -84,11 +85,11 @@ public enum NutsPathOption implements NutsEnum {
     private final String id;
 
     NutsPathOption() {
-        this.id = name().toLowerCase().replace('_', '-');
+        this.id = NutsNameFormat.ID_NAME.formatName(name());
     }
 
     public static NutsOptional<NutsPathOption> parse(String value) {
-        return NutsUtils.parseEnum(value, NutsPathOption.class);
+        return NutsStringUtils.parseEnum(value, NutsPathOption.class);
     }
 
 

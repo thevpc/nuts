@@ -89,13 +89,11 @@ public class NutsTextNodeWriterRenderer extends AbstractNutsTextNodeWriter {
         if (formats == null) {
             formats = NutsTextStyles.of();
         }
+        NutsTexts txt = NutsTexts.of(session);
         switch (node.getType()) {
             case PLAIN: {
                 NutsTextPlain p = (NutsTextPlain) node;
                 writeRaw(formats, p.getText(), ctx.isFiltered());
-//        }else if (text instanceof TextNodeEscaped) {
-//            TextNodeEscaped p = (TextNodeEscaped) text;
-//            writeRaw(AnsiEscapeCommands.forList(formats), p.getChild(), ctx.isFiltered());
                 break;
             }
             case LIST: {
@@ -108,43 +106,37 @@ public class NutsTextNodeWriterRenderer extends AbstractNutsTextNodeWriter {
             case STYLED: {
                 DefaultNutsTextStyled s = (DefaultNutsTextStyled) node;
                 NutsTextStyles styles = s.getStyles();
-                NutsTextStyles format = NutsTexts.of(session).getTheme().toBasicStyles(styles, session);
+                NutsTextStyles format = txt.getTheme().toBasicStyles(styles, session);
                 NutsTextStyles s2 = formats.append(format);
                 writeNode(s2, s.getChild(), ctx);
                 break;
             }
             case TITLE: {
                 DefaultNutsTextTitle s = (DefaultNutsTextTitle) node;
-                DefaultNutsTexts factory0 = (DefaultNutsTexts) NutsTexts.of(session);
-                NutsTextStyles s2 = formats.append(NutsTexts.of(session).getTheme().toBasicStyles(
+                NutsTextStyles s2 = formats.append(txt.getTheme().toBasicStyles(
                         NutsTextStyles.of(NutsTextStyle.title(s.getLevel())), session
                 ));
                 if (ctx.isProcessTitleNumbers()) {
                     NutsTitleSequence seq = ctx.getTitleNumberSequence();
                     if (seq == null) {
-                        seq = NutsTexts.of(session).ofNumbering();
+                        seq = txt.ofNumbering();
                         ctx.setTitleNumberSequence(seq);
                     }
                     NutsTitleSequence a = seq.next(s.getLevel());
-                    NutsText sWithTitle = factory0.ofList(
-                            NutsTexts.of(session).ofPlain(a.toString() + " "),
+                    NutsText sWithTitle = txt.ofList(
+                            txt.ofPlain(a.toString() + " "),
                             s.getChild()
                     );
                     writeNode(s2, sWithTitle, ctx);
                     writeRaw("\n");
                 } else {
-                    NutsText sWithTitle = factory0.ofList(
-                            NutsTexts.of(session).ofPlain(CoreStringUtils.fillString('#',s.getLevel())+") "),
+                    NutsText sWithTitle = txt.ofList(
+                            txt.ofPlain(CoreStringUtils.fillString('#',s.getLevel())+") "),
                             s.getChild()
                     );
                     writeNode(s2, sWithTitle, ctx);
                     writeRaw("\n");
                 }
-//        } else if (text instanceof TextNodeUnStyled) {
-//            TextNodeUnStyled s = (TextNodeUnStyled) text;
-//            writeNode(formats, new NutsTextPlain(s.getStart()), ctx);
-//            writeNode(formats, s.getChild(), ctx);
-//            writeNode(formats, new NutsTextPlain(s.getEnd()), ctx);
                 break;
             }
             case COMMAND: {
@@ -162,12 +154,26 @@ public class NutsTextNodeWriterRenderer extends AbstractNutsTextNodeWriter {
             }
             case LINK: {
                 //ignore!!
-                NutsTextPlain child = NutsTexts.of(session).ofPlain(((NutsTextLink) node).getText());
+                NutsTextPlain child = txt.ofPlain(((NutsTextLink) node).getText());
                 writeNode(formats,
-                        NutsTexts.of(session).ofStyled(child,
+                        txt.ofStyled(child,
                                 NutsTextStyles.of(NutsTextStyle.underlined())
                         ),ctx);
                 writeRaw(formats, "see: " + ((NutsTextLink) node).getText(), ctx.isFiltered());
+                break;
+            }
+            case INCLUDE: {
+                //ignore!!
+                NutsTextPlain child = txt.ofPlain(((NutsTextInclude) node).getText());
+                writeNode(formats,
+                        txt.ofStyled(
+                                txt.ofList(
+                                        txt.ofPlain("include: "),
+                                        child
+                                )
+                                ,
+                                NutsTextStyles.of(NutsTextStyle.warn())
+                        ),ctx);
                 break;
             }
             case CODE: {

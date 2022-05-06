@@ -26,7 +26,8 @@
  */
 package net.thevpc.nuts;
 
-import net.thevpc.nuts.util.NutsUtils;
+import net.thevpc.nuts.util.NutsNameFormat;
+import net.thevpc.nuts.util.NutsStringUtils;
 
 /**
  * Formats supported by Nuts
@@ -90,11 +91,11 @@ public enum NutsContentType implements NutsEnum {
      * private constructor
      */
     NutsContentType() {
-        this.id = name().toLowerCase().replace('_', '-');
+        this.id = NutsNameFormat.ID_NAME.formatName(name());
     }
 
     public static NutsOptional<NutsContentType> parse(String value) {
-        return NutsUtils.parseEnum(value, NutsContentType.class);
+        return NutsStringUtils.parseEnum(value, NutsContentType.class);
     }
 
     /**

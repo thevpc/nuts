@@ -210,7 +210,7 @@ public final class NutsReservedWorkspaceCommandLineParser {
                     case "--standalone":
                     case "--standalone-workspace": {
                         a = cmdLine.nextBoolean().get(session);
-                        if (active && a.getValue().asBoolean().get(session)) {
+                        if (active && a.getBooleanValue().get(session)) {
                             options.setStoreLocationStrategy(NutsStoreLocationStrategy.STANDALONE);
 //                            options.setRepositoryStoreLocationStrategy(NutsStoreLocationStrategy.STANDALONE);
                         }
@@ -221,7 +221,7 @@ public final class NutsReservedWorkspaceCommandLineParser {
                     case "--exploded":
                     case "--exploded-workspace": {
                         a = cmdLine.nextBoolean().get(session);
-                        if (active && a.getValue().asBoolean().get(session)) {
+                        if (active && a.getBooleanValue().get(session)) {
                             options.setStoreLocationStrategy(NutsStoreLocationStrategy.EXPLODED);
 //                            options.setRepositoryStoreLocationStrategy(NutsStoreLocationStrategy.EXPLODED);
                         }
@@ -238,14 +238,14 @@ public final class NutsReservedWorkspaceCommandLineParser {
                     }
                     case "--exploded-repositories": {
                         a = cmdLine.nextBoolean().get(session);
-                        if (active && a.getValue().asBoolean().get(session)) {
+                        if (active && a.getBooleanValue().get(session)) {
                             options.setRepositoryStoreLocationStrategy(NutsStoreLocationStrategy.EXPLODED);
                         }
                         break;
                     }
                     case "--standalone-repositories": {
                         a = cmdLine.nextBoolean().get(session);
-                        if (active && a.getValue().asBoolean().get(session)) {
+                        if (active && a.getBooleanValue().get(session)) {
                             options.setRepositoryStoreLocationStrategy(NutsStoreLocationStrategy.STANDALONE);
                         }
                         break;
@@ -260,35 +260,35 @@ public final class NutsReservedWorkspaceCommandLineParser {
                     }
                     case "--system-layout": {
                         a = cmdLine.nextBoolean().get(session);
-                        if (active && a.getValue().asBoolean().get(session)) {
+                        if (active && a.getBooleanValue().get(session)) {
                             options.setStoreLocationLayout(null);
                         }
                         break;
                     }
                     case "--windows-layout": {
                         a = cmdLine.nextBoolean().get(session);
-                        if (active && a.getValue().asBoolean().get(session)) {
+                        if (active && a.getBooleanValue().get(session)) {
                             options.setStoreLocationLayout(NutsOsFamily.WINDOWS);
                         }
                         break;
                     }
                     case "--macos-layout": {
                         a = cmdLine.nextBoolean().get(session);
-                        if (active && a.getValue().asBoolean().get(session)) {
+                        if (active && a.getBooleanValue().get(session)) {
                             options.setStoreLocationLayout(NutsOsFamily.MACOS);
                         }
                         break;
                     }
                     case "--linux-layout": {
                         a = cmdLine.nextBoolean().get(session);
-                        if (active && a.getValue().asBoolean().get(session)) {
+                        if (active && a.getBooleanValue().get(session)) {
                             options.setStoreLocationLayout(NutsOsFamily.LINUX);
                         }
                         break;
                     }
                     case "--unix-layout": {
                         a = cmdLine.nextBoolean().get(session);
-                        if (active && a.getValue().asBoolean().get(session)) {
+                        if (active && a.getBooleanValue().get(session)) {
                             options.setStoreLocationLayout(NutsOsFamily.UNIX);
                         }
                         break;
@@ -370,7 +370,7 @@ public final class NutsReservedWorkspaceCommandLineParser {
                     case "-k": {
                         a = cmdLine.nextBoolean().get(session);
                         if (active) {
-                            options.setSkipCompanions(a.getValue().asBoolean().get());
+                            options.setSkipCompanions(a.getBooleanValue().get());
                         }
                         break;
                     }
@@ -378,7 +378,7 @@ public final class NutsReservedWorkspaceCommandLineParser {
                     case "-K": {
                         a = cmdLine.nextBoolean().get(session);
                         if (active) {
-                            options.setSkipWelcome(a.getValue().asBoolean().get(session));
+                            options.setSkipWelcome(a.getBooleanValue().get(session));
                         }
                         break;
                     }
@@ -386,14 +386,14 @@ public final class NutsReservedWorkspaceCommandLineParser {
                     case "-Q": {
                         a = cmdLine.nextBoolean().get(session);
                         if (active) {
-                            options.setSkipBoot(a.getValue().asBoolean().get(session));
+                            options.setSkipBoot(a.getBooleanValue().get(session));
                         }
                         break;
                     }
                     case "--switch": {
                         a = cmdLine.nextBoolean().get(session);
                         if (active) {
-                            options.setSwitchWorkspace(a.getValue().asBoolean().orElse(true));
+                            options.setSwitchWorkspace(a.getBooleanValue().orElse(true));
                         }
                         break;
                     }
@@ -412,7 +412,7 @@ public final class NutsReservedWorkspaceCommandLineParser {
                     case "--global": {
                         a = cmdLine.nextBoolean().get(session);
                         if (active) {
-                            options.setGlobal(a.getValue().asBoolean().get(session));
+                            options.setGlobal(a.getBooleanValue().get(session));
                         }
                         break;
                     }
@@ -420,7 +420,7 @@ public final class NutsReservedWorkspaceCommandLineParser {
                     case "--gui": {
                         a = cmdLine.nextBoolean().get(session);
                         if (active) {
-                            options.setGui(a.getValue().asBoolean().get(session));
+                            options.setGui(a.getBooleanValue().get(session));
                         }
                         break;
                     }
@@ -439,15 +439,15 @@ public final class NutsReservedWorkspaceCommandLineParser {
                     case "--bot": {
                         a = cmdLine.nextBoolean().get(session);
                         if (active) {
-                            options.setBot(a.getValue().asBoolean().get(session));
+                            options.setBot(a.getBooleanValue().get(session));
                         }
                         break;
                     }
                     case "-R":
                     case "--read-only": {
                         a = cmdLine.nextBoolean().get(session);
-                        if (active && a.getValue().asBoolean().get(session)) {
-                            options.setReadOnly(a.getValue().asBoolean().get(session));
+                        if (active && a.getBooleanValue().get(session)) {
+                            options.setReadOnly(a.getBooleanValue().get(session));
                         }
                         break;
                     }
@@ -455,7 +455,7 @@ public final class NutsReservedWorkspaceCommandLineParser {
                     case "--trace": {
                         a = cmdLine.nextBoolean().get(session);
                         if (active) {
-                            options.setTrace(a.getValue().asBoolean().get(session));
+                            options.setTrace(a.getBooleanValue().get(session));
                         }
                         break;
                     }
@@ -494,7 +494,7 @@ public final class NutsReservedWorkspaceCommandLineParser {
                     case "-D": {
                         a = cmdLine.nextBoolean().get(session);
                         if (active) {
-                            options.setDry(a.getValue().asBoolean().get(session));
+                            options.setDry(a.getBooleanValue().get(session));
                         }
                         break;
                     }
@@ -670,7 +670,7 @@ public final class NutsReservedWorkspaceCommandLineParser {
                     case "--yes":
                     case "-y": {
                         a = cmdLine.nextBoolean().get(session);
-                        if (active && a.getValue().asBoolean().get(session)) {
+                        if (active && a.getBooleanValue().get(session)) {
                             explicitConfirm = true;
                             options.setConfirm(NutsConfirmationMode.YES);
                         }
@@ -679,7 +679,7 @@ public final class NutsReservedWorkspaceCommandLineParser {
                     case "--no":
                     case "-n": {
                         a = cmdLine.nextBoolean().get(session);
-                        if (active && a.getValue().asBoolean().get(session)) {
+                        if (active && a.getBooleanValue().get(session)) {
                             explicitConfirm = true;
                             options.setConfirm(NutsConfirmationMode.NO);
                         }
@@ -687,7 +687,7 @@ public final class NutsReservedWorkspaceCommandLineParser {
                     }
                     case "--error": {
                         a = cmdLine.nextBoolean().get(session);
-                        if (active && a.getValue().asBoolean().get(session)) {
+                        if (active && a.getBooleanValue().get(session)) {
                             explicitConfirm = true;
                             options.setConfirm(NutsConfirmationMode.ERROR);
                         }
@@ -695,7 +695,7 @@ public final class NutsReservedWorkspaceCommandLineParser {
                     }
                     case "--ask": {
                         a = cmdLine.nextBoolean().get(session);
-                        if (active && a.getValue().asBoolean().get(session)) {
+                        if (active && a.getBooleanValue().get(session)) {
                             explicitConfirm = true;
                             options.setConfirm(NutsConfirmationMode.ASK);
                         }
@@ -703,22 +703,22 @@ public final class NutsReservedWorkspaceCommandLineParser {
                     }
                     case "--cached": {
                         a = cmdLine.nextBoolean().get(session);
-                        if (active && a.getValue().asBoolean().get(session)) {
-                            options.setCached(a.getValue().asBoolean().get(session));
+                        if (active && a.getBooleanValue().get(session)) {
+                            options.setCached(a.getBooleanValue().get(session));
                         }
                         break;
                     }
                     case "--indexed": {
                         a = cmdLine.nextBoolean().get(session);
-                        if (active && a.getValue().asBoolean().get(session)) {
-                            options.setIndexed(a.getValue().asBoolean().get(session));
+                        if (active && a.getBooleanValue().get(session)) {
+                            options.setIndexed(a.getBooleanValue().get(session));
                         }
                         break;
                     }
                     case "--transitive": {
                         a = cmdLine.nextBoolean().get(session);
-                        if (active && a.getValue().asBoolean().get(session)) {
-                            options.setTransitive(a.getValue().asBoolean().get(session));
+                        if (active) {
+                            options.setTransitive(a.getBooleanValue().get(session));
                         }
                         break;
                     }
@@ -726,15 +726,15 @@ public final class NutsReservedWorkspaceCommandLineParser {
                     case "--fetch": {
                         a = cmdLine.nextString().get(session);
                         if (active) {
-                            options.setFetchStrategy(NutsFetchStrategy.parse(a.getStringValue()
-                                    .get(session)).get(session));
+                            options.setFetchStrategy(a.getStringValue()
+                                    .flatMap(NutsFetchStrategy::parse).get(session));
                         }
                         break;
                     }
                     case "-a":
                     case "--anywhere": {
                         a = cmdLine.nextBoolean().get(session);
-                        if (active && a.getValue().asBoolean().get(session)) {
+                        if (active && a.getBooleanValue().get(session)) {
                             options.setFetchStrategy(NutsFetchStrategy.ANYWHERE);
                         }
                         break;
@@ -751,21 +751,21 @@ public final class NutsReservedWorkspaceCommandLineParser {
                     case "-F":
                     case "--offline": {
                         a = cmdLine.nextBoolean().get(session);
-                        if (active && a.getValue().asBoolean().get(session)) {
+                        if (active && a.getBooleanValue().get(session)) {
                             options.setFetchStrategy(NutsFetchStrategy.OFFLINE);
                         }
                         break;
                     }
                     case "--online": {
                         a = cmdLine.nextBoolean().get(session);
-                        if (active && a.getValue().asBoolean().get(session)) {
+                        if (active && a.getBooleanValue().get(session)) {
                             options.setFetchStrategy(NutsFetchStrategy.ONLINE);
                         }
                         break;
                     }
                     case "--remote": {
                         a = cmdLine.nextBoolean().get(session);
-                        if (active && a.getValue().asBoolean().get(session)) {
+                        if (active && a.getBooleanValue().get(session)) {
                             options.setFetchStrategy(NutsFetchStrategy.REMOTE);
                         }
                         break;
@@ -785,7 +785,7 @@ public final class NutsReservedWorkspaceCommandLineParser {
                     case "--embedded":
                     case "-b": {
                         a = cmdLine.nextBoolean().get(session);
-                        if (active && a.getValue().asBoolean().get(session)) {
+                        if (active && a.getBooleanValue().get(session)) {
                             options.setExecutionType(NutsExecutionType.EMBEDDED);
                         }
                         //ignore
@@ -793,7 +793,7 @@ public final class NutsReservedWorkspaceCommandLineParser {
                     }
                     case "--open-file": {
                         a = cmdLine.nextBoolean().get(session);
-                        if (active && a.getValue().asBoolean().get(session)) {
+                        if (active && a.getBooleanValue().get(session)) {
                             options.setExecutionType(NutsExecutionType.OPEN);
                         }
                         //ignore
@@ -803,7 +803,7 @@ public final class NutsReservedWorkspaceCommandLineParser {
                     case "--spawn":
                     case "-x": {
                         a = cmdLine.nextBoolean().get(session);
-                        if (active && a.getValue().asBoolean().get(session)) {
+                        if (active && a.getBooleanValue().get(session)) {
                             options.setExecutionType(NutsExecutionType.SPAWN);
                         }
                         break;
@@ -811,7 +811,7 @@ public final class NutsReservedWorkspaceCommandLineParser {
                     case "--user-cmd"://deprecated since 0.8.1
                     case "--system": {
                         a = cmdLine.nextBoolean().get(session);
-                        if (active && a.getValue().asBoolean().get(session)) {
+                        if (active && a.getBooleanValue().get(session)) {
                             options.setExecutionType(NutsExecutionType.SYSTEM);
                         }
                         break;
@@ -819,14 +819,14 @@ public final class NutsReservedWorkspaceCommandLineParser {
                     case "--root-cmd": //deprecated since 0.8.1
                     case "--as-root": {
                         a = cmdLine.nextBoolean().get(session);
-                        if (active && a.getValue().asBoolean().get(session)) {
+                        if (active && a.getBooleanValue().get(session)) {
                             options.setRunAs(NutsRunAs.root());
                         }
                         break;
                     }
                     case "--current-user": {
                         a = cmdLine.nextBoolean().get(session);
-                        if (active && a.getValue().asBoolean().get(session)) {
+                        if (active && a.getBooleanValue().get(session)) {
                             options.setRunAs(NutsRunAs.currentUser());
                         }
                         break;
@@ -850,7 +850,7 @@ public final class NutsReservedWorkspaceCommandLineParser {
                     case "--open-or-error":
                     case "--open": {
                         a = cmdLine.nextBoolean().get(session);
-                        if (active && a.getValue().asBoolean().get(session)) {
+                        if (active && a.getBooleanValue().get(session)) {
                             options.setOpenMode(NutsOpenMode.OPEN_OR_ERROR);
                         }
                         break;
@@ -858,21 +858,21 @@ public final class NutsReservedWorkspaceCommandLineParser {
                     case "--create-or-error":
                     case "--create": {
                         a = cmdLine.nextBoolean().get(session);
-                        if (active && a.getValue().asBoolean().get(session)) {
+                        if (active && a.getBooleanValue().get(session)) {
                             options.setOpenMode(NutsOpenMode.CREATE_OR_ERROR);
                         }
                         break;
                     }
                     case "--open-or-create": {
                         a = cmdLine.nextBoolean().get(session);
-                        if (active && a.getValue().asBoolean().get(session)) {
+                        if (active && a.getBooleanValue().get(session)) {
                             options.setOpenMode(NutsOpenMode.OPEN_OR_CREATE);
                         }
                         break;
                     }
                     case "--open-or-null": {
                         a = cmdLine.nextBoolean().get(session);
-                        if (active && a.getValue().asBoolean().get(session)) {
+                        if (active && a.getBooleanValue().get(session)) {
                             options.setOpenMode(NutsOpenMode.OPEN_OR_NULL);
                         }
                         break;
@@ -915,7 +915,7 @@ public final class NutsReservedWorkspaceCommandLineParser {
                     case "--reset": {
                         a = cmdLine.nextBoolean().get(session);
                         if (active) {
-                            if (a.getValue().asBoolean().get(session)) {
+                            if (a.getBooleanValue().get(session)) {
                                 options.setReset(true);
                                 options.setRecover(false);
                             }
@@ -928,7 +928,7 @@ public final class NutsReservedWorkspaceCommandLineParser {
                     case "--recover": {
                         a = cmdLine.nextBoolean().get(session);
                         if (active) {
-                            if (a.getValue().asBoolean().get(session)) {
+                            if (a.getBooleanValue().get(session)) {
                                 options.setReset(false);
                                 options.setRecover(true);
                             }
@@ -972,7 +972,7 @@ public final class NutsReservedWorkspaceCommandLineParser {
                     case "-e":
                     case "--exec": {
                         a = cmdLine.nextBoolean().get(session);
-                        if (active && a.getValue().asBoolean().get(session)) {
+                        if (active && a.getBooleanValue().get(session)) {
                             while ((a = cmdLine.next().orNull()) != null) {
                                 if (a.isOption()) {
                                     executorOptions.add(a.asString().orElse(""));
@@ -992,14 +992,14 @@ public final class NutsReservedWorkspaceCommandLineParser {
                     case "-h": {
                         a = cmdLine.nextBoolean().get(session);
                         if (active) {
-                            options.setCommandHelp(a.getValue().asBoolean().get(session));
+                            options.setCommandHelp(a.getBooleanValue().get(session));
                         }
                         break;
                     }
                     case "--skip-errors": {
                         a = cmdLine.nextBoolean().get(session);
                         if (active) {
-                            options.setSkipErrors(a.getValue().asBoolean().get(session));
+                            options.setSkipErrors(a.getBooleanValue().get(session));
                         }
                         break;
                     }
@@ -1035,7 +1035,7 @@ public final class NutsReservedWorkspaceCommandLineParser {
                     case "--isolation-level": {
                         a = cmdLine.nextString().get(session);
                         if (active) {
-                            options.setIsolationLevel(NutsIsolationLevel.parse(a.getStringValue().get(session)).get(session));
+                            options.setIsolationLevel(a.getStringValue().flatMap(NutsIsolationLevel::parse).get(session));
                         }
                         break;
                     }
@@ -1070,21 +1070,21 @@ public final class NutsReservedWorkspaceCommandLineParser {
                     case "--desktop-launcher": {
                         a = cmdLine.nextString().get(session);
                         if (active) {
-                            options.setDesktopLauncher(NutsSupportMode.parse(a.getStringValue().get(session)).get(session));
+                            options.setDesktopLauncher(a.getStringValue().flatMap(NutsSupportMode::parse).get(session));
                         }
                         break;
                     }
                     case "--menu-launcher": {
                         a = cmdLine.nextString().get(session);
                         if (active) {
-                            options.setMenuLauncher(NutsSupportMode.parse(a.getStringValue().get(session)).get(session));
+                            options.setMenuLauncher(a.getStringValue().flatMap(NutsSupportMode::parse).get(session));
                         }
                         break;
                     }
                     case "--user-launcher": {
                         a = cmdLine.nextString().get(session);
                         if (active) {
-                            options.setUserLauncher(NutsSupportMode.parse(a.getStringValue().get(session)).get(session));
+                            options.setUserLauncher(a.getStringValue().flatMap(NutsSupportMode::parse).get(session));
                         }
                         break;
                     }
@@ -1242,7 +1242,7 @@ public final class NutsReservedWorkspaceCommandLineParser {
 
             case "--verbose": {
                 cmdLine.skip();
-                if (enabled && a.getValue().asBoolean().orElse(true)) {
+                if (enabled && a.getBooleanValue().orElse(true)) {
                     logConfig.setLogTermLevel(Level.FINEST);
                     logConfig.setLogFileLevel(Level.FINEST);
                 }

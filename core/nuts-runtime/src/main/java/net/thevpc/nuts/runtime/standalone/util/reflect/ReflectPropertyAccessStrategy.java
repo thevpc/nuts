@@ -24,7 +24,8 @@
 package net.thevpc.nuts.runtime.standalone.util.reflect;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.util.NutsUtils;
+import net.thevpc.nuts.util.NutsNameFormat;
+import net.thevpc.nuts.util.NutsStringUtils;
 
 /**
  *
@@ -37,11 +38,11 @@ public enum ReflectPropertyAccessStrategy implements NutsEnum {
     private final String id;
 
     ReflectPropertyAccessStrategy() {
-        this.id = name().toLowerCase().replace('_', '-');
+        this.id = NutsNameFormat.ID_NAME.formatName(name());
     }
 
     public static NutsOptional<ReflectPropertyAccessStrategy> parse(String value) {
-        return NutsUtils.parseEnum(value, ReflectPropertyAccessStrategy.class);
+        return NutsStringUtils.parseEnum(value, ReflectPropertyAccessStrategy.class);
     }
     @Override
     public String id() {

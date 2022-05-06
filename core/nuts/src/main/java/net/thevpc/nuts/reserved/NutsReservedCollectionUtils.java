@@ -95,11 +95,11 @@ public class NutsReservedCollectionUtils {
     }
 
     public static <T> List<T> unmodifiableList(Collection<T> other) {
-        return other == null ? Collections.emptyList() : Collections.unmodifiableList(nonNullList(other));
+        return other == null ? Collections.emptyList() : Collections.unmodifiableList(new ArrayList<>(other));
     }
 
     public static <T, V> Map<T, V> unmodifiableMap(Map<T, V> other) {
-        return other == null ? Collections.emptyMap() : Collections.unmodifiableMap(nonNullMap(other));
+        return other == null ? Collections.emptyMap() : Collections.unmodifiableMap(new LinkedHashMap<>(other));
     }
 
     public static <T> List<T> unmodifiableUniqueList(Collection<T> other) {

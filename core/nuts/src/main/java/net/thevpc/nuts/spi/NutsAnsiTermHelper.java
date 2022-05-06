@@ -32,6 +32,8 @@ import net.thevpc.nuts.text.NutsTextStyle;
 import net.thevpc.nuts.text.NutsTextStyles;
 import net.thevpc.nuts.util.NutsColor;
 
+import java.util.List;
+
 public class NutsAnsiTermHelper {
     private static final int[] FG8 = {30, 31, 32, 33, 34, 35, 36, 37, 90, 91, 92, 93, 94, 95, 96, 97};
     private static final int[] BG8 = {40, 41, 42, 43, 44, 45, 46, 47, 100, 101, 102, 103, 104, 105, 106, 107};
@@ -261,45 +263,54 @@ public class NutsAnsiTermHelper {
                 return ("\r");
             }
             case NutsTerminalCommand.Ids.MOVE_TO: {
-                String a = command.getArgs();
-                if (a != null) {
-                    String[] split = a.split("[;v, x]");
-                    if (split.length >= 2) {
-                        Integer count1 = NutsValue.of(split[0]).asInt().orNull();
-                        Integer count2 = NutsValue.of(split[1]).asInt().orNull();
-                        if (count1 != null && count2 != null) {
-                            return ("\u001b[" + count1 + ";" + count2 + "H");
-                        }
+                List<String> a = command.getArgs();
+                if (a.size() >= 2) {
+                    Integer count1 = NutsValue.of(a.get(0)).asInt().orNull();
+                    Integer count2 = NutsValue.of(a.get(1)).asInt().orNull();
+                    if (count1 != null && count2 != null) {
+                        return ("\u001b[" + count1 + ";" + count2 + "H");
                     }
                 }
                 return null;
             }
 
             case NutsTerminalCommand.Ids.MOVE_UP: {
-                Integer count1 = NutsValue.of(command.getArgs()).asInt().orNull();
-                if (count1 != null) {
-                    return ("\u001b[" + count1 + "A");
+                List<String> a = command.getArgs();
+                if (a.size() >= 1) {
+                    Integer count1 = NutsValue.of(a.get(0)).asInt().orNull();
+                    if (count1 != null) {
+                        return ("\u001b[" + count1 + "A");
+                    }
                 }
                 return null;
             }
             case NutsTerminalCommand.Ids.MOVE_DOWN: {
-                Integer count1 = NutsValue.of(command.getArgs()).asInt().orNull();
-                if (count1 != null) {
-                    return ("\u001b[" + count1 + "B");
+                List<String> a = command.getArgs();
+                if (a.size() >= 1) {
+                    Integer count1 = NutsValue.of(a.get(0)).asInt().orNull();
+                    if (count1 != null) {
+                        return ("\u001b[" + count1 + "B");
+                    }
                 }
                 return null;
             }
             case NutsTerminalCommand.Ids.MOVE_RIGHT: {
-                Integer count1 = NutsValue.of(command.getArgs()).asInt().orNull();
-                if (count1 != null) {
-                    return ("\u001b[" + count1 + "C");
+                List<String> a = command.getArgs();
+                if (a.size() >= 1) {
+                    Integer count1 = NutsValue.of(a.get(0)).asInt().orNull();
+                    if (count1 != null) {
+                        return ("\u001b[" + count1 + "C");
+                    }
                 }
                 return null;
             }
             case NutsTerminalCommand.Ids.MOVE_LEFT: {
-                Integer count1 = NutsValue.of(command.getArgs()).asInt().orNull();
-                if (count1 != null) {
-                    return ("\u001b[" + count1 + "D");
+                List<String> a = command.getArgs();
+                if (a.size() >= 1) {
+                    Integer count1 = NutsValue.of(a.get(0)).asInt().orNull();
+                    if (count1 != null) {
+                        return ("\u001b[" + count1 + "D");
+                    }
                 }
                 return null;
             }

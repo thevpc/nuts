@@ -26,7 +26,8 @@
  */
 package net.thevpc.nuts;
 
-import net.thevpc.nuts.util.NutsUtils;
+import net.thevpc.nuts.util.NutsNameFormat;
+import net.thevpc.nuts.util.NutsStringUtils;
 
 /**
  * @app.category Base
@@ -48,12 +49,12 @@ public enum NutsStoreLocationStrategy implements NutsEnum {
     private final String id;
 
     NutsStoreLocationStrategy() {
-        this.id = name().toLowerCase().replace('_', '-');
+        this.id = NutsNameFormat.ID_NAME.formatName(name());
     }
 
     public static NutsOptional<NutsStoreLocationStrategy> parse(String value) {
-        return NutsUtils.parseEnum(value, NutsStoreLocationStrategy.class, s->{
-            switch (s.toUpperCase()) {
+        return NutsStringUtils.parseEnum(value, NutsStoreLocationStrategy.class, s->{
+            switch (s.getNormalizedValue()) {
                 case "S":
                     return NutsOptional.of(NutsStoreLocationStrategy.STANDALONE);
                 case "E":

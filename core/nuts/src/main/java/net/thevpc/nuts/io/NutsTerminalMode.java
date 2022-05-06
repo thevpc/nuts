@@ -29,7 +29,8 @@ package net.thevpc.nuts.io;
 import net.thevpc.nuts.NutsEnum;
 import net.thevpc.nuts.NutsOptional;
 import net.thevpc.nuts.NutsValue;
-import net.thevpc.nuts.util.NutsUtils;
+import net.thevpc.nuts.util.NutsNameFormat;
+import net.thevpc.nuts.util.NutsStringUtils;
 
 import java.util.function.Function;
 
@@ -74,31 +75,29 @@ public enum NutsTerminalMode implements NutsEnum {
      * default constructor
      */
     NutsTerminalMode() {
-        this.id = name().toLowerCase().replace('_', '-');
+        this.id = NutsNameFormat.ID_NAME.formatName(name());
     }
 
     public static NutsOptional<NutsTerminalMode> parse(String value) {
-        return NutsUtils.parseEnum(value, NutsTerminalMode.class, new Function<String, NutsOptional<NutsTerminalMode>>() {
-            @Override
-            public NutsOptional<NutsTerminalMode> apply(String s) {
-                switch (s.toLowerCase()){
-                    case "system":
-                    case "s":
-                    case "auto":
-                    case "d":
-                        return NutsOptional.of(DEFAULT);
-                    case "h":
-                        return NutsOptional.of(INHERITED);
-                    default:{
-                        Boolean b = NutsValue.of(s).asBoolean().orNull();
-                        if(b!=null){
-                            return NutsOptional.of(b?FORMATTED:FILTERED);
-                        }
-                        break;
+        return NutsStringUtils.parseEnum(value, NutsTerminalMode.class, s -> {
+            String normalizedValue = s.getNormalizedValue();
+            switch (normalizedValue){
+                case "SYSTEM":
+                case "S":
+                case "AUTO":
+                case "D":
+                    return NutsOptional.of(DEFAULT);
+                case "H":
+                    return NutsOptional.of(INHERITED);
+                default:{
+                    Boolean b = NutsValue.of(normalizedValue).asBoolean().orNull();
+                    if(b!=null){
+                        return NutsOptional.of(b?FORMATTED:FILTERED);
                     }
+                    break;
                 }
-                return null;
             }
+            return null;
         });
     }
 

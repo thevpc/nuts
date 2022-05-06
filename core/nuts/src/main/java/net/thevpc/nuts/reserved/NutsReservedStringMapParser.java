@@ -243,6 +243,13 @@ public class NutsReservedStringMapParser {
                                 .append(NutsStringUtils.formatStringLiteral(v, NutsStringUtils.QuoteType.SIMPLE, NutsSupportMode.PREFERRED, escapedChars)
                                 );
                     }
+                }else{
+                    if (sb.length() > 0) {
+                        sb.append(separatorChars);
+                    }
+                    sb.append(
+                            NutsStringUtils.formatStringLiteral(k, NutsStringUtils.QuoteType.SIMPLE, NutsSupportMode.PREFERRED, escapedChars)
+                    );
                 }
             }
         }

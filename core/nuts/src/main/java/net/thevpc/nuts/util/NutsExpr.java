@@ -83,13 +83,13 @@ public interface NutsExpr extends NutsComponent {
         private final String id;
 
         NodeType() {
-            this.id = name().toLowerCase().replace('_', '-');
+            this.id = NutsNameFormat.ID_NAME.formatName(name());
         }
 
 
         public static NutsOptional<NodeType> parse(String value) {
-            return NutsUtils.parseEnum(value, NodeType.class, s->{
-                switch (s.toUpperCase()) {
+            return NutsStringUtils.parseEnum(value, NodeType.class, s->{
+                switch (s.getNormalizedValue()) {
                     case "VAR":
                     case "VARIABLE":
                         return NutsOptional.of(VARIABLE);
@@ -121,12 +121,12 @@ public interface NutsExpr extends NutsComponent {
         private final String id;
 
         OpType() {
-            this.id = name().toLowerCase().replace('_', '-');
+            this.id = NutsNameFormat.ID_NAME.formatName(name());
         }
 
         public static NutsOptional<OpType> parse(String value) {
-            return NutsUtils.parseEnum(value, OpType.class, s->{
-                switch (s.toUpperCase()) {
+            return NutsStringUtils.parseEnum(value, OpType.class, s->{
+                switch (s.getNormalizedValue()) {
                     case "INFIX":
                         return NutsOptional.of(INFIX);
                     case "POSTFIX_OPERATOR":

@@ -144,6 +144,16 @@ public class NutsJLineTerminal extends NutsSystemTerminalBaseImpl {
                         styles.append(NutsTextStyle.underlined()),
                         session);
             }
+            case INCLUDE: {
+                NutsTextLink p = (NutsTextLink) n;
+                return toAttributedString(
+                        NutsTexts.of(session).ofList(
+                                NutsTexts.of(session).ofPlain("include"),
+                                NutsTexts.of(session).ofPlain(p.getText())
+                        ),
+                        styles.append(NutsTextStyle.danger()),
+                        session);
+            }
             case LIST: {
                 NutsTextList p = (NutsTextList) n;
                 AttributedStringBuilder b = new AttributedStringBuilder();

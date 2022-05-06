@@ -13,21 +13,21 @@ public class AntiQuote3ParserStep extends ParserStep {
     StringBuilder end = new StringBuilder();
     StringBuilder value = new StringBuilder();
     int maxSize = 3;
-    private static final int START_QUOTES=0;
-    private static final int CONTENT=1;
-    private static final int CONTENT_ANTISLASH=2;
-    private static final int CONTENT_ANTISLASH_TIC1=3;
-    private static final int CONTENT_ANTISLASH_TIC2=4;
-    private static final int END_QUOTES=20;
+    private static final int START_QUOTES = 0;
+    private static final int CONTENT = 1;
+    private static final int CONTENT_ANTISLASH = 2;
+    private static final int CONTENT_ANTISLASH_TIC1 = 3;
+    private static final int CONTENT_ANTISLASH_TIC2 = 4;
+    private static final int END_QUOTES = 20;
     int status = START_QUOTES;
     char antiQuote;
     boolean spreadLines;
     NutsSession session;
     boolean exitOnBrace;
 
-    public AntiQuote3ParserStep(char c, boolean spreadLines, NutsSession session,boolean exitOnBrace) {
-        start.append(antiQuote =c);
-        this.spreadLines=spreadLines;
+    public AntiQuote3ParserStep(char c, boolean spreadLines, NutsSession session, boolean exitOnBrace) {
+        start.append(antiQuote = c);
+        this.spreadLines = spreadLines;
         this.session = session;
         this.exitOnBrace = exitOnBrace;
     }
@@ -46,7 +46,7 @@ public class AntiQuote3ParserStep extends ParserStep {
                     } else {
                         //too much, ignore it all and consider it as forPlain
                         start.append(c);
-                        p.applyDropReplacePreParsedPlain(this, start.toString(),exitOnBrace);
+                        p.applyDropReplacePreParsedPlain(this, start.toString(), exitOnBrace);
                     }
                 } else {
                     if (start.length() == maxSize) {
@@ -60,9 +60,9 @@ public class AntiQuote3ParserStep extends ParserStep {
                                 status = CONTENT;
                             }
                         }
-                    }else{
+                    } else {
                         start.append(c);
-                        p.applyDropReplacePreParsedPlain(this, start.toString(),exitOnBrace);
+                        p.applyDropReplacePreParsedPlain(this, start.toString(), exitOnBrace);
                     }
                 }
 //                    p.applyContinue();
@@ -79,7 +79,7 @@ public class AntiQuote3ParserStep extends ParserStep {
                 } else {
                     switch (c) {
                         case '\\': {
-                            status=CONTENT_ANTISLASH;
+                            status = CONTENT_ANTISLASH;
                             break;
                         }
                         default: {
@@ -127,10 +127,10 @@ public class AntiQuote3ParserStep extends ParserStep {
                 if (c == antiQuote) {
                     end.append(c);
                 } else {
-                    if(end.length()==maxSize){
+                    if (end.length() == maxSize) {
                         //valid ending reached!
                         p.applyPopReplay(this, c);
-                    }else {
+                    } else {
                         switch (c) {
                             case '\\': {
                                 value.append(end);
@@ -162,59 +162,62 @@ public class AntiQuote3ParserStep extends ParserStep {
     public NutsText toText() {
         StringBuilder value2 = new StringBuilder(getPartialValue());
         char[] dst = new char[value2.length()];
-        value2.getChars(0,value2.length(), dst,0 );
+        value2.getChars(0, value2.length(), dst, 0);
 
-        DefaultNutsTexts factory0 = (DefaultNutsTexts) NutsTexts.of(session);
-        int i=0;
-        int endOffset=-1;
-        if(dst.length>0 && dst[i]=='!') {
+        NutsTexts txt = NutsTexts.of(session);
+        DefaultNutsTexts factory0 = (DefaultNutsTexts) txt;
+        int i = 0;
+        int endOffset = -1;
+        if (dst.length > 0 && dst[i] == '!') {
             i++;
         }
-        while(i<dst.length) {
+        while (i < dst.length) {
             if (Character.isWhitespace(dst[i])) {
                 endOffset = i;
                 break;
-            }else if (!Character.isAlphabetic(dst[i]) && !Character.isDigit(dst[i]) && dst[i]!='-' && dst[i]!='_') {
-                endOffset=i;
+            } else if (!Character.isAlphabetic(dst[i]) && !Character.isDigit(dst[i]) && dst[i] != '-' && dst[i] != '_') {
+                endOffset = i;
                 break;
             }
             i++;
         }
-        if(endOffset==-1){
-            endOffset=dst.length;
+        if (endOffset == -1) {
+            endOffset = dst.length;
         }
 
-        StringBuilder w=new StringBuilder();
-        i=endOffset;
-        while(i<dst.length && Character.isWhitespace(dst[i])){
+        StringBuilder w = new StringBuilder();
+        i = endOffset;
+        while (i < dst.length && Character.isWhitespace(dst[i])) {
             w.append(dst[i]);
             i++;
         }
 
         String cmd = new String(dst, 0, endOffset);
         String value = new String(dst, i, dst.length - i);
-        if(cmd.startsWith("!")) {
+        if (cmd.startsWith("!")) {
             String cmd0 = cmd.substring(1);
             String start2 = this.start.toString() + "!";
-            switch (cmd){
-                case "!anchor":{
-                    return factory0.createAnchor(
-                            start2,
-                            w.toString(),
-                            end.toString(),
-                            value
+            switch (cmd) {
+                case "!anchor": {
+                    return txt.ofAnchor(
+                            value,
+                            w.length()==0?' ':w.charAt(0)
                     );
                 }
-                case "!link":{
-                    return factory0.createLink(
-                            start2,
-                            w.toString(),
-                            end.toString(),
-                            value
+                case "!link": {
+                    return txt.ofLink(
+                            value,
+                            w.length()==0?' ':w.charAt(0)
+                    );
+                }
+                case "!include": {
+                    return txt.ofInclude(
+                            value,
+                            w.length()==0?' ':w.charAt(0)
                     );
                 }
             }
-            NutsTerminalCommand ntc=NutsTerminalCommand.of(cmd0,value);
+            NutsTerminalCommand ntc = NutsTerminalCommand.of(cmd0, value);
             return factory0.createCommand(
                     start2,
                     ntc,
@@ -222,8 +225,8 @@ public class AntiQuote3ParserStep extends ParserStep {
                     end.toString()
             );
         }
-        if(value.isEmpty()){
-            if(w.length()>0 && cmd.length()>0){
+        if (value.isEmpty()) {
+            if (w.length() > 0 && cmd.length() > 0) {
                 return factory0.createCode(
                         start.toString(),
                         cmd,
@@ -237,7 +240,7 @@ public class AntiQuote3ParserStep extends ParserStep {
                     "",
                     "",
                     end.toString(),
-                    cmd+w.toString()+value
+                    cmd + w.toString() + value
             );
         }
         return factory0.createCode(
@@ -250,17 +253,17 @@ public class AntiQuote3ParserStep extends ParserStep {
     }
 
     private String getPartialValue() {
-        StringBuilder value2=new StringBuilder(value);
-        switch (status){
-            case CONTENT_ANTISLASH:{
+        StringBuilder value2 = new StringBuilder(value);
+        switch (status) {
+            case CONTENT_ANTISLASH: {
                 value2.append('\\');
                 break;
             }
-            case CONTENT_ANTISLASH_TIC1:{
+            case CONTENT_ANTISLASH_TIC1: {
                 value2.append("\\`");
                 break;
             }
-            case CONTENT_ANTISLASH_TIC2:{
+            case CONTENT_ANTISLASH_TIC2: {
                 value2.append("\\``");
                 break;
             }
@@ -270,7 +273,7 @@ public class AntiQuote3ParserStep extends ParserStep {
 
     @Override
     public void end(DefaultNutsTextNodeParser.State p) {
-        if(!isComplete()) {
+        if (!isComplete()) {
             while (end.length() < start.length()) {
                 end.append(antiQuote);
             }

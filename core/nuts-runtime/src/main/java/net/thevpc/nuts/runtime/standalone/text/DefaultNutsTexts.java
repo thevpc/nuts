@@ -272,7 +272,7 @@ public class DefaultNutsTexts implements NutsTexts {
 
     @Override
     public NutsText ofStyled(NutsMessage other, NutsTextStyles styles) {
-        return ofStyled(ofText(other),styles);
+        return ofStyled(ofText(other), styles);
     }
 
     @Override
@@ -283,7 +283,7 @@ public class DefaultNutsTexts implements NutsTexts {
     /**
      * this is the default theme!
      *
-     * @param other  other
+     * @param other other
      * @param style textNodeStyle
      * @return NutsText
      */
@@ -378,10 +378,6 @@ public class DefaultNutsTexts implements NutsTexts {
         return ofCode(lang, text, ' ');
     }
 
-    public NutsTextCode ofInclude(String text, char sep) {
-        return ofCode("include", text == null ? "" : text.trim(), sep);
-    }
-
     @Override
     public NutsTextCode ofCode(String lang, String text, char sep) {
         checkValidSeparator(sep);
@@ -429,10 +425,19 @@ public class DefaultNutsTexts implements NutsTexts {
     @Override
     public NutsTextLink ofLink(String value, char sep) {
         checkValidSeparator(sep);
-        return createLink(
-                "```!",
-                "" + sep, "```", value
-        );
+        return new DefaultNutsTextLink(getSession(), "" + sep, value);
+    }
+
+    @Override
+    public NutsTextInclude ofInclude(String value) {
+        return ofInclude(value, ' ');
+    }
+
+    @Override
+    public NutsTextInclude ofInclude(String value, char sep) {
+        checkValidSeparator(sep);
+        checkSession();
+        return new DefaultNutsTextInclude(getSession(), "" + sep, value);
     }
 
     @Override
@@ -624,11 +629,6 @@ public class DefaultNutsTexts implements NutsTexts {
         return new DefaultNutsTextCommand(getSession(), start, command, separator, end);
     }
 
-    public NutsTextLink createLink(String start, String separator, String end, String value) {
-        checkSession();
-        return new DefaultNutsTextLink(getSession(), start, separator, end, value);
-    }
-
     public NutsTextAnchor createAnchor(String start, String separator, String end, String value) {
         checkSession();
         return new DefaultNutsTextAnchor(getSession(), start, separator, end, value);
@@ -646,6 +646,9 @@ public class DefaultNutsTexts implements NutsTexts {
 
     @Override
     public NutsText transform(NutsText text, NutsTextTransformConfig config) {
+        if (NutsBlankable.isBlank(config)) {
+            return text;
+        }
         return transform(text, null, config);
     }
 
@@ -664,61 +667,83 @@ public class DefaultNutsTexts implements NutsTexts {
 
     @Override
     public NutsText transform(NutsText text, NutsTextTransformer transformer, NutsTextTransformConfig config) {
+        if (text == null) {
+            return null;
+        }
+        if (NutsBlankable.isBlank(config) && transformer == null) {
+            return text;
+        }
         if (config == null) {
             config = new NutsTextTransformConfig();
         }
-        NutsText node;
-        if (config.getRootLevel() != null) {
-            NutsTextTransformConfig config2 = config.copy();
-            config2.setRootLevel(null);
-            config2.setProcessTitleNumbers(false);
-            config2.setFlatten(false);
-            config2.setNormalize(false);
-            config2.setAnchor(null);
-            node = transform(text, transformer, config2);
+        // start by processing includes
+        if (config.isProcessIncludes()) {
+            NutsTextTransformConfig iconfig = new NutsTextTransformConfig();
+            iconfig.setProcessIncludes(true);
+            iconfig.setImportClassLoader(config.getImportClassLoader());
+            NutsTextTransformerContext c = new DefaultNutsTextTransformerContext(iconfig, session);
+            text = transform(text, c.getDefaultTransformer(), c);
+            config = config.copy().setProcessIncludes(false).setImportClassLoader(null);
+        }
+
+        if (NutsBlankable.isBlank(config) && transformer == null) {
+            return text;
+        }
+
+        Integer rootLevel = config.getRootLevel();
+        if (rootLevel != null) {
+            config = config.copy().setRootLevel(null);
             //find root level
             int level = resolveRootLevel(text);
-            if (level != config.getRootLevel()) {
-                int offset = config.getRootLevel() - level;
-                node = transform(node, (text1, context) -> {
+            if (level != rootLevel) {
+                int offset = rootLevel - level;
+                NutsTextTransformerContext c = new DefaultNutsTextTransformerContext(new NutsTextTransformConfig(), session);
+                text = transform(text, (text1, context) -> {
                     if (text1.getType() == NutsTextType.TITLE) {
                         NutsTextTitle t = (NutsTextTitle) text1;
                         return ofTitle(t.getChild(), t.getLevel() + offset);
                     }
                     return text1;
-                }, new NutsTextTransformConfig());
+                }, c);
             }
-        } else {
-            node = text;
         }
 
-        NutsTextTransformerContext c = new DefaultNutsTextTransformerContext(config, session);
-        if (transformer == null) {
-            transformer = c.getDefaultTransformer();
+        if (NutsBlankable.isBlank(config) && transformer == null) {
+            return text;
         }
-        node = transform(node, transformer, c);
 
         String anchor = config.getAnchor();
         if (anchor != null) {
+            config = config.copy().setAnchor(null);
+        }
+
+        if (transformer != null || !config.isBlank()) {
+            NutsTextTransformerContext c = new DefaultNutsTextTransformerContext(config, session);
+            if (transformer == null) {
+                transformer = c.getDefaultTransformer();
+            }
+            text = transform(text, transformer == null ? c.getDefaultTransformer() : transformer, c);
+        }
+
+        if (anchor != null) {
             List<NutsText> ok = new ArrayList<>();
-            boolean start = false;
-            if (node.getType() == NutsTextType.LIST) {
-                for (NutsText o : ((NutsTextList) node)) {
-                    if (start) {
+            boolean foundAnchor = false;
+            if (text.getType() == NutsTextType.LIST) {
+                for (NutsText o : ((NutsTextList) text)) {
+                    if (foundAnchor) {
                         ok.add(o);
                     } else if (o.getType() == NutsTextType.ANCHOR) {
                         if (anchor.equals(((DefaultNutsTextAnchor) o).getValue())) {
-                            start = true;
+                            foundAnchor = true;
                         }
                     }
                 }
             }
-            if (start) {
-                node = ofList(ok).simplify();
+            if (foundAnchor) {
+                text = ofList(ok).simplify();
             }
-            return node;
         }
-        return node;
+        return text;
     }
 
     @Override

@@ -28,7 +28,8 @@ package net.thevpc.nuts.cmdline;
 
 import net.thevpc.nuts.NutsEnum;
 import net.thevpc.nuts.NutsOptional;
-import net.thevpc.nuts.util.NutsUtils;
+import net.thevpc.nuts.util.NutsNameFormat;
+import net.thevpc.nuts.util.NutsStringUtils;
 
 /**
  * Argument parse Type
@@ -64,11 +65,11 @@ public enum NutsArgumentType implements NutsEnum {
      * Default constructor
      */
     NutsArgumentType() {
-        this.id = name().toLowerCase().replace('_', '-');
+        this.id = NutsNameFormat.ID_NAME.formatName(name());
     }
 
     public static NutsOptional<NutsArgumentType> parse(String value) {
-        return NutsUtils.parseEnum(value, NutsArgumentType.class);
+        return NutsStringUtils.parseEnum(value, NutsArgumentType.class);
     }
 
 

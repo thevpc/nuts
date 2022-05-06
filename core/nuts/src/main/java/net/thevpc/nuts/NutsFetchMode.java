@@ -25,7 +25,8 @@
  */
 package net.thevpc.nuts;
 
-import net.thevpc.nuts.util.NutsUtils;
+import net.thevpc.nuts.util.NutsNameFormat;
+import net.thevpc.nuts.util.NutsStringUtils;
 
 /**
  * fetch mode defines if the artifact should be looked for withing the "installed" meta repository, "local" (offline)
@@ -71,11 +72,11 @@ public enum NutsFetchMode implements NutsEnum {
     private final String id;
 
     NutsFetchMode() {
-        this.id = name().toLowerCase().replace('_', '-');
+        this.id = NutsNameFormat.ID_NAME.formatName(name());
     }
 
     public static NutsOptional<NutsFetchMode> parse(String value) {
-        return NutsUtils.parseEnum(value, NutsFetchMode.class);
+        return NutsStringUtils.parseEnum(value, NutsFetchMode.class);
     }
 
 

@@ -25,7 +25,8 @@ package net.thevpc.nuts.text;
 
 import net.thevpc.nuts.NutsEnum;
 import net.thevpc.nuts.NutsOptional;
-import net.thevpc.nuts.util.NutsUtils;
+import net.thevpc.nuts.util.NutsNameFormat;
+import net.thevpc.nuts.util.NutsStringUtils;
 
 /**
  * @app.category Format
@@ -36,17 +37,18 @@ public enum NutsTextType implements NutsEnum {
     TITLE,
     COMMAND,
     LINK,
+    INCLUDE,
     STYLED,
     ANCHOR,
     CODE;
     private final String id;
 
     NutsTextType() {
-        this.id = name().toLowerCase().replace('_', '-');
+        this.id = NutsNameFormat.ID_NAME.formatName(name());
     }
 
     public static NutsOptional<NutsTextType> parse(String value) {
-        return NutsUtils.parseEnum(value, NutsTextType.class);
+        return NutsStringUtils.parseEnum(value, NutsTextType.class);
     }
 
     @Override

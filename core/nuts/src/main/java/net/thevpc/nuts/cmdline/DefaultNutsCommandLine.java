@@ -24,6 +24,7 @@
 package net.thevpc.nuts.cmdline;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.reserved.ReservedSimpleCharQueue;
 import net.thevpc.nuts.text.NutsTextBuilder;
 import net.thevpc.nuts.text.NutsTextStyle;
 import net.thevpc.nuts.text.NutsTexts;
@@ -114,25 +115,19 @@ public class DefaultNutsCommandLine implements NutsCommandLine {
     }
 
     @Override
+    public NutsCommandLine registerSpecialSimpleOption(String option) {
+        return registerSpecialSimpleOption(option, null);
+    }
+
+    @Override
     public NutsCommandLine registerSpecialSimpleOption(String option, NutsSession session) {
-        int len = option.length();
-        switch (len) {
-            case 0: {
-                break;
-            }
-            case 1: {
-                if (option.equals("-") || option.equals("+")) {
-                    specialSimpleOptions.add(option);
-                    return this;
-                }
-                break;
-            }
-            default: {
-                if ((option.charAt(0) == '-' && option.charAt(1) != '-') || (option.charAt(0) == '+' && option.charAt(1) != '+')) {
-                    specialSimpleOptions.add(option);
-                    return this;
-                }
-                break;
+        if (option.length() > 2) {
+            char c0 = option.charAt(0);
+            char c1 = option.charAt(1);
+            char c2 = option.charAt(2);
+            if ((c0 == '-' || c0 == '+') && DefaultNutsArgument.isSimpleKey(c1) && DefaultNutsArgument.isSimpleKey(c2)) {
+                specialSimpleOptions.add(option);
+                return this;
             }
         }
         if (session == null) {
@@ -144,20 +139,20 @@ public class DefaultNutsCommandLine implements NutsCommandLine {
 
     @Override
     public boolean isSpecialSimpleOption(String option) {
-        for (String x : specialSimpleOptions) {
-            if (option.equals(x) || option.startsWith(x + eq)) {
-                return true;
-            }
-            if (option.startsWith("-//" + x.substring(1))) {
-                //disabled option
-                return true;
-            }
-            if (option.startsWith("-!" + x.substring(1))) {
-                //unarmed
-                return true;
-            }
-            if (option.startsWith("-~" + x.substring(1))) {
-                //unarmed
+        if (option == null) {
+            return false;
+        }
+        DefaultNutsArgument a = new DefaultNutsArgument(option);
+        String p = a.getOptionPrefix().asString().orNull();
+        if (p == null || p.length() != 1) {
+            return false;
+        }
+        String o = a.getKey().asString().orNull();
+        if (o == null) {
+            return false;
+        }
+        for (String registered : specialSimpleOptions) {
+            if (registered.equals(o)) {
                 return true;
             }
         }
@@ -821,22 +816,6 @@ public class DefaultNutsCommandLine implements NutsCommandLine {
         )).collect(Collectors.joining(" "));
     }
 
-    private boolean isExpandableOption(String v, boolean expandSimpleOptions) {
-        if (!expandSimpleOptions || v.length() <= 2) {
-            return false;
-        }
-        if (isSpecialSimpleOption(v)) {
-            return false;
-        }
-        if (v.charAt(0) == '-') {
-            return v.charAt(1) != '-';
-        }
-        if (v.charAt(0) == '+') {
-            return v.charAt(1) != '+';
-        }
-        return false;
-    }
-
     private String createExpandedSimpleOption(char start, boolean negate, char val) {
         return new String(negate ? new char[]{start, '!', val} : new char[]{start, val});
     }
@@ -851,6 +830,7 @@ public class DefaultNutsCommandLine implements NutsCommandLine {
         return sb.toString();
     }
 
+
     private boolean ensureNext(boolean expandSimpleOptions, boolean ignoreExistingExpanded) {
         if (!ignoreExistingExpanded) {
             if (!lookahead.isEmpty()) {
@@ -860,48 +840,49 @@ public class DefaultNutsCommandLine implements NutsCommandLine {
         if (!args.isEmpty()) {
             // -!abc=true
             String v = args.removeFirst();
-            if (isExpandableOption(v, expandSimpleOptions)) {
-                char[] chars = v.toCharArray();
+            if (
+                    expandSimpleOptions && v.length() > 2
+                            && !isSpecialSimpleOption(v)
+                            && (
+                            (v.charAt(0) == '-' && v.charAt(1) != '-')
+                                    || (v.charAt(0) == '+' && v.charAt(1) != '+')
+                    )
+                            && (v.charAt(1) != '/' || v.charAt(2) == '/')
+            ) {
+                ReservedSimpleCharQueue vv = new ReservedSimpleCharQueue(v.toCharArray());
+                char start = vv.read();
+                char negChar = '\0';
                 boolean negate = false;
-                Character last = null;
-                char start = v.charAt(0);
-                for (int i = 1; i < chars.length; i++) {
-                    char c = chars[i];
-                    if (c == '!' || c == '~') {
-                        if (last != null) {
-                            lookahead.add(createArgument(createExpandedSimpleOption(start, negate, last)));
-                            last = null;
-                        }
-                        negate = true;
-                    } else if (chars[i] == eq) {
-                        String nextArg = new String(chars, i, chars.length - i);
-                        if (last != null) {
-                            nextArg = last + nextArg;
-                            last = null;
-                        }
-                        lookahead.add(createArgument(createExpandedSimpleOption(start, negate, nextArg)));
-                        i = chars.length;
-                    } else if ((last == null && !DefaultNutsArgument.isKeyStart(chars[i])) || (last != null && !DefaultNutsArgument.isKeyPart(chars[i]))) {
-                        StringBuilder sb = new StringBuilder();
-                        if (last != null) {
-                            sb.append(last);
-                        }
-                        sb.append(chars[i]);
-                        while (i + 1 < chars.length) {
-                            i++;
-                            sb.append(chars[i]);
-                        }
-                        lookahead.add(createArgument(createExpandedSimpleOption(start, negate, sb.toString())));
-                        last = null;
-                    } else {
-                        if (last != null) {
-                            lookahead.add(createArgument(createExpandedSimpleOption(start, negate, last)));
-                        }
-                        last = chars[i];
-                    }
+                if (vv.peek() == '!' || vv.peek() == '~') {
+                    negChar = vv.read();
+                    negate = true;
                 }
-                if (last != null) {
-                    lookahead.add(createArgument(createExpandedSimpleOption(start, negate, last)));
+                while (vv.hasNext()) {
+                    char c = vv.read();
+                    StringBuilder cc = new StringBuilder();
+                    cc.append(start);
+                    if (negate) {
+                        cc.append(negChar);
+                    }
+                    cc.append(c);
+                    if (DefaultNutsArgument.isSimpleKey(c)) {
+                        while (vv.hasNext() && (vv.peek() != eq && !DefaultNutsArgument.isSimpleKey(vv.peek()))) {
+                            cc.append(vv.read());
+                        }
+                        if (vv.hasNext() && vv.peek() == eq) {
+                            while (vv.hasNext()) {
+                                cc.append(vv.read());
+                            }
+                            lookahead.add(createArgument(cc.toString()));
+                        } else {
+                            lookahead.add(createArgument(cc.toString()));
+                        }
+                    } else {
+                        while (vv.hasNext()) {
+                            cc.append(vv.read());
+                        }
+                        lookahead.add(createArgument(cc.toString()));
+                    }
                 }
             } else {
                 lookahead.add(createArgument(v));

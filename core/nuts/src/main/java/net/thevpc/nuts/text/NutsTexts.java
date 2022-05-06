@@ -137,4 +137,9 @@ public interface NutsTexts extends NutsComponent {
     String escapeText(String str);
 
     String filterText(String text);
+
+
+    NutsTextInclude ofInclude(String value);
+
+    NutsTextInclude ofInclude(String value, char sep);
 }

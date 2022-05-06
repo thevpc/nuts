@@ -26,9 +26,9 @@
  */
 package net.thevpc.nuts.runtime.standalone.text.parser;
 
+import net.thevpc.nuts.NutsBlankable;
 import net.thevpc.nuts.NutsSession;
-import net.thevpc.nuts.text.NutsTerminalCommand;
-import net.thevpc.nuts.text.NutsTextCommand;
+import net.thevpc.nuts.text.NutsTextInclude;
 import net.thevpc.nuts.text.NutsTextType;
 
 import java.util.Objects;
@@ -36,29 +36,28 @@ import java.util.Objects;
 /**
  * Created by vpc on 5/23/17.
  */
-public class DefaultNutsTextCommand extends NutsTextSpecialBase implements NutsTextCommand {
+public class DefaultNutsTextInclude extends NutsTextSpecialBase implements NutsTextInclude {
+    private String value;
 
-    private final NutsTerminalCommand command;
-
-    public DefaultNutsTextCommand(NutsSession session, String start, NutsTerminalCommand command, String separator, String end) {
-        super(session, start, command.getName(),
-                (command.getArgs() != null && command.getArgs().size() > 0 && (separator == null || separator.isEmpty())) ? " " : separator
-                , end);
-        this.command = command;
+    public DefaultNutsTextInclude(NutsSession session, String separator, String value) {
+        super(session, "```!", "include", separator, "```");
+        this.value = value == null ? "" : value;
     }
+
     @Override
-    public boolean isEmpty() {
-        return command==null;
+    public String getText() {
+        return value;
     }
+
 
     @Override
     public NutsTextType getType() {
-        return NutsTextType.COMMAND;
+        return NutsTextType.INCLUDE;
     }
 
     @Override
-    public NutsTerminalCommand getCommand() {
-        return command;
+    public boolean isEmpty() {
+        return NutsBlankable.isBlank(value);
     }
 
     @Override
@@ -66,22 +65,22 @@ public class DefaultNutsTextCommand extends NutsTextSpecialBase implements NutsT
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         if (!super.equals(o)) return false;
-        DefaultNutsTextCommand that = (DefaultNutsTextCommand) o;
-        return Objects.equals(command, that.command);
+        DefaultNutsTextInclude that = (DefaultNutsTextInclude) o;
+        return Objects.equals(value, that.value);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(super.hashCode(), command);
+        return Objects.hash(super.hashCode(), value);
     }
 
     @Override
     public String filteredText() {
-        return "";
+        return value == null ? "" : value;
     }
 
     @Override
     public int textLength() {
-        return 0;
+        return value == null ? 0 : value.length();
     }
 }

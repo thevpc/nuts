@@ -93,7 +93,7 @@ public class NutsTextNodeWriterStringer extends AbstractNutsTextNodeWriter {
                 writeRaw("```!");
                 NutsCommandLine cmd = new DefaultNutsCommandLine();
                 cmd.add(s.getCommand().getName());
-                cmd.addAll(Arrays.asList(s.getCommand().getArgs()));
+                cmd.addAll(s.getCommand().getArgs());
                 writeEscapedSpecial(cmd.toString());
                 writeRaw("```");
                 break;
@@ -109,6 +109,14 @@ public class NutsTextNodeWriterStringer extends AbstractNutsTextNodeWriter {
             case LINK: {
                 NutsTextLink s = (NutsTextLink) node;
                 writeRaw("```!link");
+                writeRaw(s.getSeparator());
+                writeEscaped(s.getText());
+                writeRaw("```");
+                break;
+            }
+            case INCLUDE: {
+                NutsTextInclude s = (NutsTextInclude) node;
+                writeRaw("```!include");
                 writeRaw(s.getSeparator());
                 writeEscaped(s.getText());
                 writeRaw("```");

@@ -27,7 +27,8 @@
 package net.thevpc.nuts.spi;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.util.NutsUtils;
+import net.thevpc.nuts.util.NutsNameFormat;
+import net.thevpc.nuts.util.NutsStringUtils;
 
 public enum NutsSelectorOp implements NutsEnum {
     INCLUDE,
@@ -36,12 +37,12 @@ public enum NutsSelectorOp implements NutsEnum {
     private final String id;
 
     NutsSelectorOp() {
-        this.id = name().toLowerCase().replace('_', '-');
+        this.id = NutsNameFormat.ID_NAME.formatName(name());
     }
 
 
     public static NutsOptional<NutsSelectorOp> parse(String value) {
-        return NutsUtils.parseEnum(value, NutsSelectorOp.class);
+        return NutsStringUtils.parseEnum(value, NutsSelectorOp.class);
     }
 
     @Override

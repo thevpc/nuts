@@ -31,6 +31,7 @@ public interface NutsValue extends NutsBlankable {
     NutsOptional<Short> asShort();
 
     NutsOptional<Integer> asInt();
+
     NutsOptional<String> asString();
 
     NutsOptional<BigInteger> asBigInt();

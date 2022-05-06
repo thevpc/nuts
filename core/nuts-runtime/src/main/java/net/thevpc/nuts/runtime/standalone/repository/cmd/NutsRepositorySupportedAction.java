@@ -27,7 +27,8 @@
 package net.thevpc.nuts.runtime.standalone.repository.cmd;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.util.NutsUtils;
+import net.thevpc.nuts.util.NutsNameFormat;
+import net.thevpc.nuts.util.NutsStringUtils;
 
 /**
  *
@@ -44,7 +45,7 @@ public enum NutsRepositorySupportedAction  implements NutsEnum {
     private final String id;
 
     NutsRepositorySupportedAction() {
-        this.id = name().toLowerCase().replace('_', '-');
+        this.id = NutsNameFormat.ID_NAME.formatName(name());
     }
 
     /**
@@ -56,7 +57,7 @@ public enum NutsRepositorySupportedAction  implements NutsEnum {
     }
 
     public static NutsOptional<NutsRepositorySupportedAction> parse(String value) {
-        return NutsUtils.parseEnum(value, NutsRepositorySupportedAction.class);
+        return NutsStringUtils.parseEnum(value, NutsRepositorySupportedAction.class);
     }
 
 }

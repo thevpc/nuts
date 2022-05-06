@@ -26,7 +26,8 @@
  */
 package net.thevpc.nuts;
 
-import net.thevpc.nuts.util.NutsUtils;
+import net.thevpc.nuts.util.NutsNameFormat;
+import net.thevpc.nuts.util.NutsStringUtils;
 
 public enum NutsDesktopEnvironmentFamily implements NutsEnum {
     HEADLESS,
@@ -62,28 +63,28 @@ public enum NutsDesktopEnvironmentFamily implements NutsEnum {
     private final String id;
 
     NutsDesktopEnvironmentFamily() {
-        this.id = name().toLowerCase().replace('_', '-');
+        this.id = NutsNameFormat.ID_NAME.formatName(name());
     }
 
     public static NutsOptional<NutsDesktopEnvironmentFamily> parse(String value) {
-        return NutsUtils.parseEnum(value, NutsDesktopEnvironmentFamily.class, s -> {
-            switch (s.toLowerCase()) {
-                case "win":
-                case "windows":
-                case "windowsshell":
+        return NutsStringUtils.parseEnum(value, NutsDesktopEnvironmentFamily.class, s -> {
+            switch (s.getNormalizedValue()) {
+                case "WIN":
+                case "WINDOWS":
+                case "WINDOWSSHELL":
                     return NutsOptional.of(WINDOWS_SHELL);
-                case "mac":
-                case "macos":
-                case "macaqua":
-                case "macosaqua":
-                case "aqua":
+                case "MAC":
+                case "MACOS":
+                case "MACAQUA":
+                case "MACOSAQUA":
+                case "AQUA":
                     return NutsOptional.of(MACOS_AQUA);
-                case "kde":
-                case "plasma":
+                case "KDE":
+                case "PLASMA":
                     return NutsOptional.of(KDE);
-                case "gnome":
+                case "GNOME":
                     return NutsOptional.of(GNOME);
-                case "unknown":
+                case "UNKNOWN":
                     return NutsOptional.of(UNKNOWN);
             }
             return null;

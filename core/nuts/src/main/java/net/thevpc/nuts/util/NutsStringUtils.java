@@ -26,11 +26,8 @@
  */
 package net.thevpc.nuts.util;
 
-import net.thevpc.nuts.NutsMessage;
-import net.thevpc.nuts.NutsOptional;
-import net.thevpc.nuts.NutsValue;
+import net.thevpc.nuts.*;
 import net.thevpc.nuts.format.NutsPositionType;
-import net.thevpc.nuts.NutsSupportMode;
 import net.thevpc.nuts.reserved.NutsReservedUtils;
 import net.thevpc.nuts.reserved.NutsReservedStringMapParser;
 import net.thevpc.nuts.reserved.NutsReservedStringUtils;
@@ -398,6 +395,70 @@ public class NutsStringUtils {
         }
         String finalValue = value;
         return NutsOptional.ofError(s -> NutsMessage.ofCstyle("invalid level %s", finalValue));
+    }
+
+    public static <T extends Enum> NutsOptional<T> parseEnum(String value, Class<T> type) {
+        if (NutsBlankable.isBlank(value)) {
+            return NutsOptional.ofEmpty(s -> NutsMessage.ofCstyle("%s is empty", type.getSimpleName()));
+        }
+        String normalizedValue = NutsNameFormat.CONST_NAME.formatName(value);
+        try {
+            return NutsOptional.of((T) Enum.valueOf(type, normalizedValue));
+        } catch (Exception notFound) {
+            return NutsOptional.ofError(s -> NutsMessage.ofCstyle(type.getSimpleName() + " invalid value : %s", value));
+        }
+    }
+
+
+    public static <T extends Enum> NutsOptional<T> parseEnum(String value, Class<T> type, Function<EnumValue, NutsOptional<T>> mapper) {
+        if (NutsBlankable.isBlank(value)) {
+            return NutsOptional.ofEmpty(s -> NutsMessage.ofCstyle("%s is empty", type.getSimpleName()));
+        }
+        String[] parsedValue = NutsNameFormat.parseName(value);
+        String normalizedValue = NutsNameFormat.CONST_NAME.formatName(parsedValue);
+        if (mapper != null) {
+            try {
+                NutsOptional<T> o = mapper.apply(new EnumValue(
+                        value,
+                        normalizedValue,
+                        parsedValue
+                ));
+                if (o != null) {
+                    return o;
+                }
+            } catch (Exception notFound) {
+                //just ignore
+            }
+        }
+        try {
+            return NutsOptional.of((T) Enum.valueOf(type, normalizedValue));
+        } catch (Exception notFound) {
+            return NutsOptional.ofError(s -> NutsMessage.ofCstyle(type.getSimpleName() + " invalid value : %s", value), notFound);
+        }
+    }
+
+    public static class EnumValue {
+        private String value;
+        private String normalizedValue;
+        private String[] parsedValue;
+
+        public EnumValue(String value, String normalizedValue, String[] parsedValue) {
+            this.value = value;
+            this.normalizedValue = normalizedValue;
+            this.parsedValue = parsedValue;
+        }
+
+        public String getValue() {
+            return value;
+        }
+
+        public String getNormalizedValue() {
+            return normalizedValue;
+        }
+
+        public String[] getParsedValue() {
+            return parsedValue;
+        }
     }
 
 

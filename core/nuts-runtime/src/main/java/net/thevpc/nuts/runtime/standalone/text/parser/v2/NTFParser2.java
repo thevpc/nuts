@@ -368,7 +368,7 @@ public class NTFParser2 extends AbstractNutsTextNodeParser {
                                 }
                                 case NO_MATCH: {
                                     wasNewLine = false;
-                                    buffer.append(q.read(n.count()));
+                                    buffer.append(q.read());
                                     break;
                                 }
                                 default: {

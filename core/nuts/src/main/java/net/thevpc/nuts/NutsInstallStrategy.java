@@ -26,7 +26,8 @@
  */
 package net.thevpc.nuts;
 
-import net.thevpc.nuts.util.NutsUtils;
+import net.thevpc.nuts.util.NutsNameFormat;
+import net.thevpc.nuts.util.NutsStringUtils;
 
 /**
  * Install strategy defines the strategy used by installer
@@ -74,11 +75,11 @@ public enum NutsInstallStrategy implements NutsEnum {
     private final String id;
 
     NutsInstallStrategy() {
-        this.id = name().toLowerCase().replace('_', '-');
+        this.id = NutsNameFormat.ID_NAME.formatName(name());
     }
 
     public static NutsOptional<NutsInstallStrategy> parse(String value) {
-        return NutsUtils.parseEnum(value, NutsInstallStrategy.class);
+        return NutsStringUtils.parseEnum(value, NutsInstallStrategy.class);
     }
 
 

@@ -25,7 +25,8 @@
  */
 package net.thevpc.nuts;
 
-import net.thevpc.nuts.util.NutsUtils;
+import net.thevpc.nuts.util.NutsNameFormat;
+import net.thevpc.nuts.util.NutsStringUtils;
 
 /**
  * Supported Shell Families
@@ -80,7 +81,7 @@ public enum NutsShellFamily implements NutsEnum {
     private final String id;
 
     NutsShellFamily() {
-        this.id = name().toLowerCase().replace('_', '-');
+        this.id = NutsNameFormat.ID_NAME.formatName(name());
     }
 
     private static NutsShellFamily _resolveCurrent() {
@@ -100,39 +101,44 @@ public enum NutsShellFamily implements NutsEnum {
     }
 
     public static NutsOptional<NutsShellFamily> parse(String value) {
-        return NutsUtils.parseEnum(value, NutsShellFamily.class, s -> {
-            String[] parts = s.trim().toLowerCase().split("/");
-            if (parts.length > 0) {
-                s = parts[parts.length - 1];
-            } else {
-                s = "";
+        return NutsStringUtils.parseEnum(value, NutsShellFamily.class, s -> {
+            String n=null;
+            if(s.getValue().contains("/")){
+                String[] parts = s.getValue().trim().toUpperCase().split("/");
+                if (parts.length > 0) {
+                    n = parts[parts.length - 1];
+                } else {
+                    n = "";
+                }
+            }else{
+                n=s.getNormalizedValue();
             }
-            switch (s) {
+            switch (n) {
                 case "":
                     return NutsOptional.ofEmpty(session -> NutsMessage.ofCstyle("%s is empty",NutsShellFamily.class.getSimpleName()));
-                case "sh":
+                case "SH":
                     return NutsOptional.of(SH);
-                case "bash":
+                case "BASH":
                     return NutsOptional.of(BASH);
-                case "csh":
+                case "CSH":
                     return NutsOptional.of(CSH);
-                case "ksh":
+                case "KSH":
                     return NutsOptional.of(KSH);
-                case "zsh":
+                case "ZSH":
                     return NutsOptional.of(ZSH);
-                case "fish":
+                case "FISH":
                     return NutsOptional.of(FISH);
-                case "windows_cmd":
-                case "win_cmd":
-                case "cmd":
-                case "win":
+                case "WINDOWS_CMD":
+                case "WIN_CMD":
+                case "CMD":
+                case "WIN":
                     return NutsOptional.of(WIN_CMD);
-                case "windows_power_shell":
-                case "windows_powershell":
-                case "win_power_shell":
-                case "win_powershell":
-                case "power_shell":
-                case "powershell":
+                case "WINDOWS_POWER_SHELL":
+                case "WINDOWS_POWERSHELL":
+                case "WIN_POWER_SHELL":
+                case "WIN_POWERSHELL":
+                case "POWER_SHELL":
+                case "POWERSHELL":
                     return NutsOptional.of(WIN_POWER_SHELL);
             }
             return null;

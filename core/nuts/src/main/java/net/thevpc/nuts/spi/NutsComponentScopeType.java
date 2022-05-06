@@ -28,7 +28,8 @@ package net.thevpc.nuts.spi;
 
 import net.thevpc.nuts.NutsEnum;
 import net.thevpc.nuts.NutsOptional;
-import net.thevpc.nuts.util.NutsUtils;
+import net.thevpc.nuts.util.NutsNameFormat;
+import net.thevpc.nuts.util.NutsStringUtils;
 
 /**
  * Modes Application can run with
@@ -59,11 +60,11 @@ public enum NutsComponentScopeType implements NutsEnum {
      * default constructor
      */
     NutsComponentScopeType() {
-        this.id = name().toLowerCase().replace('_', '-');
+        this.id = NutsNameFormat.ID_NAME.formatName(name());
     }
 
     public static NutsOptional<NutsComponentScopeType> parse(String value) {
-        return NutsUtils.parseEnum(value, NutsComponentScopeType.class);
+        return NutsStringUtils.parseEnum(value, NutsComponentScopeType.class);
     }
 
 

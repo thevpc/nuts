@@ -25,7 +25,8 @@ package net.thevpc.nuts.text;
 
 import net.thevpc.nuts.NutsEnum;
 import net.thevpc.nuts.NutsOptional;
-import net.thevpc.nuts.util.NutsUtils;
+import net.thevpc.nuts.util.NutsNameFormat;
+import net.thevpc.nuts.util.NutsStringUtils;
 
 /**
  * @app.category Format
@@ -72,136 +73,136 @@ public enum NutsTextStyleType implements NutsEnum {
 
     NutsTextStyleType(boolean basic) {
         this.basic = basic;
-        this.id = name().toLowerCase().replace('_', '-');
+        this.id = NutsNameFormat.ID_NAME.formatName(name());
     }
 
     public static NutsOptional<NutsTextStyleType> parse(String value) {
-        return NutsUtils.parseEnum(value, NutsTextStyleType.class, s->{
-            switch (s.toLowerCase()) {
-                case "f":
-                case "foreground":
-                case "foregroundcolor": {
+        return NutsStringUtils.parseEnum(value, NutsTextStyleType.class, s->{
+            switch (s.getNormalizedValue()) {
+                case "F":
+                case "FOREGROUND":
+                case "FOREGROUNDCOLOR": {
                     return NutsOptional.of(FORE_COLOR);
                 }
-                case "plain": {
+                case "PLAIN": {
                     return NutsOptional.of(PLAIN);
                 }
-                case "foregroundx":
-                case "foregroundtruecolor": {
+                case "FOREGROUNDX":
+                case "FOREGROUNDTRUECOLOR": {
                     return NutsOptional.of(FORE_TRUE_COLOR);
                 }
-                case "b":
-                case "background":
-                case "back_color":
-                case "backcolor":
-                case "backgroundcolor": {
+                case "B":
+                case "BACKGROUND":
+                case "BACK_COLOR":
+                case "BACKCOLOR":
+                case "BACKGROUNDCOLOR": {
                     return NutsOptional.of(BACK_COLOR);
                 }
-                case "backtruecolor":
-                case "backgroundx":
-                case "backgroundtruecolor": {
+                case "BACKTRUECOLOR":
+                case "BACKGROUNDX":
+                case "BACKGROUNDTRUECOLOR": {
                     return NutsOptional.of(BACK_TRUE_COLOR);
 
                 }
 
-                case "p":
-                case "primary": {
+                case "P":
+                case "PRIMARY": {
                     return NutsOptional.of(PRIMARY);
                 }
-                case "s":
-                case "secondary": {
+                case "S":
+                case "SECONDARY": {
                     return NutsOptional.of(SECONDARY);
                 }
-                case "underlined": {
+                case "UNDERLINED": {
                     return NutsOptional.of(UNDERLINED);
                 }
-                case "bold": {
+                case "BOLD": {
                     return NutsOptional.of(BOLD);
                 }
-                case "boolean":
-                case "bool": {
+                case "BOOLEAN":
+                case "BOOL": {
                     return NutsOptional.of(BOOLEAN);
                 }
-                case "blink": {
+                case "BLINK": {
                     return NutsOptional.of(BLINK);
                 }
-                case "comment":
-                case "comments": {
+                case "COMMENT":
+                case "COMMENTS": {
                     return NutsOptional.of(COMMENTS);
                 }
-                case "config": {
+                case "CONFIG": {
                     return NutsOptional.of(CONFIG);
                 }
-                case "danger": {
+                case "DANGER": {
                     return NutsOptional.of(DANGER);
                 }
-                case "date": {
+                case "DATE": {
                     return NutsOptional.of(DATE);
                 }
-                case "number": {
+                case "NUMBER": {
                     return NutsOptional.of(NUMBER);
                 }
-                case "error": {
+                case "ERROR": {
                     return NutsOptional.of(ERROR);
                 }
-                case "warning":
-                case "warn": {
+                case "WARNING":
+                case "WARN": {
                     return NutsOptional.of(WARN);
                 }
-                case "version": {
+                case "VERSION": {
                     return NutsOptional.of(VERSION);
                 }
-                case "var":
-                case "variable": {
+                case "VAR":
+                case "VARIABLE": {
                     return NutsOptional.of(VAR);
                 }
-                case "input": {
+                case "INPUT": {
                     return NutsOptional.of(INPUT);
                 }
-                case "title": {
+                case "TITLE": {
                     return NutsOptional.of(TITLE);
                 }
-                case "success": {
+                case "SUCCESS": {
                     return NutsOptional.of(SUCCESS);
                 }
-                case "string": {
+                case "STRING": {
                     return NutsOptional.of(STRING);
                 }
-                case "strike":
-                case "striked": {
+                case "STRIKE":
+                case "STRIKED": {
                     return NutsOptional.of(STRIKED);
                 }
-                case "sep":
-                case "separator": {
+                case "SEP":
+                case "SEPARATOR": {
                     return NutsOptional.of(SEPARATOR);
                 }
-                case "reversed": {
+                case "REVERSED": {
                     return NutsOptional.of(REVERSED);
                 }
-                case "path": {
+                case "PATH": {
                     return NutsOptional.of(PATH);
                 }
-                case "option": {
+                case "OPTION": {
                     return NutsOptional.of(OPTION);
                 }
-                case "pale": {
+                case "PALE": {
                     return NutsOptional.of(PALE);
                 }
-                case "operator": {
+                case "OPERATOR": {
                     return NutsOptional.of(OPERATOR);
                 }
-                case "kw":
-                case "keyword": {
+                case "KW":
+                case "KEYWORD": {
                     return NutsOptional.of(KEYWORD);
                 }
-                case "italic": {
+                case "ITALIC": {
                     return NutsOptional.of(ITALIC);
                 }
-                case "information":
-                case "info": {
+                case "INFORMATION":
+                case "INFO": {
                     return NutsOptional.of(INFO);
                 }
-                case "fail": {
+                case "FAIL": {
                     return NutsOptional.of(FAIL);
                 }
             }

@@ -26,7 +26,8 @@
  */
 package net.thevpc.nuts;
 
-import net.thevpc.nuts.util.NutsUtils;
+import net.thevpc.nuts.util.NutsNameFormat;
+import net.thevpc.nuts.util.NutsStringUtils;
 
 /**
  * Artifacts are organized according to {@code NutsIdType} to reflect how the artifact
@@ -74,11 +75,11 @@ public enum NutsIdType implements NutsEnum {
     private final String id;
 
     NutsIdType() {
-        this.id = name().toLowerCase().replace('_', '-');
+        this.id = NutsNameFormat.ID_NAME.formatName(name());
     }
 
     public static NutsOptional<NutsIdType> parse(String value) {
-        return NutsUtils.parseEnum(value, NutsIdType.class);
+        return NutsStringUtils.parseEnum(value, NutsIdType.class);
     }
 
     /**

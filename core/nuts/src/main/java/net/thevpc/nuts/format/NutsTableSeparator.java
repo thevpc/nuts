@@ -28,7 +28,8 @@ package net.thevpc.nuts.format;
 
 import net.thevpc.nuts.NutsEnum;
 import net.thevpc.nuts.NutsOptional;
-import net.thevpc.nuts.util.NutsUtils;
+import net.thevpc.nuts.util.NutsNameFormat;
+import net.thevpc.nuts.util.NutsStringUtils;
 
 /**
  * @app.category Format
@@ -56,11 +57,11 @@ public enum NutsTableSeparator implements NutsEnum {
     private final String id;
 
     NutsTableSeparator() {
-        this.id = name().toLowerCase().replace('_', '-');
+        this.id = NutsNameFormat.ID_NAME.formatName(name());
     }
 
     public static NutsOptional<NutsTableSeparator> parse(String value) {
-        return NutsUtils.parseEnum(value, NutsTableSeparator.class);
+        return NutsStringUtils.parseEnum(value, NutsTableSeparator.class);
     }
 
     /**

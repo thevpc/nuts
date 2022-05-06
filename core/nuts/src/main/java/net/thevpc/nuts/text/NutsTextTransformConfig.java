@@ -179,7 +179,18 @@ public class NutsTextTransformConfig implements Cloneable, NutsBlankable {
     }
 
     public boolean isBlank() {
-        return equals(new NutsTextTransformConfig());
+        return !filtered
+                && !flatten
+                && !normalize
+                && !processTitleNumbers
+                && !processIncludes
+                && !processVars
+                && titleNumberSequence==null
+                && currentDir==null
+                && varProvider==null
+                && NutsBlankable.isBlank(anchor)
+                && rootLevel==null
+                && importClassLoader==null;
     }
 
 

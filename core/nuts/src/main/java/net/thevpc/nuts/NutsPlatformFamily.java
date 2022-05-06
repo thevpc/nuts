@@ -23,7 +23,8 @@
  */
 package net.thevpc.nuts;
 
-import net.thevpc.nuts.util.NutsUtils;
+import net.thevpc.nuts.util.NutsNameFormat;
+import net.thevpc.nuts.util.NutsStringUtils;
 
 /**
  * uniform platform
@@ -45,29 +46,31 @@ public enum NutsPlatformFamily implements NutsEnum {
     private final String id;
 
     NutsPlatformFamily() {
-        this.id = name().toLowerCase();//.replace('_', '-');
+        this.id = NutsNameFormat.ID_NAME.formatName(name());
     }
 
     public static NutsOptional<NutsPlatformFamily> parse(String value) {
-        return NutsUtils.parseEnum(value, NutsPlatformFamily.class, s->{
-            switch (s.toUpperCase()) {
-                case "java":
-                case "jre":
-                case "jdk":
+        return NutsStringUtils.parseEnum(value, NutsPlatformFamily.class, s->{
+            switch (s.getNormalizedValue()) {
+                case "JAVA":
+                case "JAVAW":
+                case "JRE":
+                case "JDK":
+                case "OPENJDK":
                     return NutsOptional.of(JAVA);
 
-                case ".net":
-                case "dotnet":
+                case "NET":
+                case "DOTNET":
                     return NutsOptional.of(DOTNET);
 
-                case "python":
+                case "PYTHON":
                     return NutsOptional.of(PYTHON);
 
-                case "js":
-                case "javascript":
+                case "JS":
+                case "JAVASCRIPT":
                     return NutsOptional.of(JAVASCRIPT);
 
-                case "unknown":
+                case "UNKNOWN":
                     return NutsOptional.of(UNKNOWN);
             }
             return null;

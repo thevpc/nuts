@@ -25,7 +25,8 @@ package net.thevpc.nuts.cmdline;
 
 import net.thevpc.nuts.NutsEnum;
 import net.thevpc.nuts.NutsOptional;
-import net.thevpc.nuts.util.NutsUtils;
+import net.thevpc.nuts.util.NutsNameFormat;
+import net.thevpc.nuts.util.NutsStringUtils;
 
 /**
  * uniform platform architecture impl-note: list updated from
@@ -47,7 +48,7 @@ public enum NutsCommandLineFormatStrategy implements NutsEnum {
     private final String id;
 
     NutsCommandLineFormatStrategy() {
-        this.id = name().toLowerCase();//.replace('_', '-');
+        this.id = NutsNameFormat.ID_NAME.formatName(name());
     }
 
     public static NutsCommandLineFormatStrategy getCurrent() {
@@ -56,20 +57,7 @@ public enum NutsCommandLineFormatStrategy implements NutsEnum {
 
 
     public static NutsOptional<NutsCommandLineFormatStrategy> parse(String value) {
-        return NutsUtils.parseEnum(value, NutsCommandLineFormatStrategy.class, arch->{
-            arch = arch.toLowerCase();
-            switch (arch) {
-                case "default":
-                    return NutsOptional.of(DEFAULT);
-                case "no_quotes":
-                    return NutsOptional.of(NO_QUOTES);
-                case "require_quotes":
-                    return NutsOptional.of(REQUIRE_QUOTES);
-                case "support_quotes":
-                    return NutsOptional.of(SUPPORT_QUOTES);
-            }
-            return null;
-        });
+        return NutsStringUtils.parseEnum(value, NutsCommandLineFormatStrategy.class);
     }
 
 

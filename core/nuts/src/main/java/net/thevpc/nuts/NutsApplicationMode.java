@@ -26,7 +26,8 @@
  */
 package net.thevpc.nuts;
 
-import net.thevpc.nuts.util.NutsUtils;
+import net.thevpc.nuts.util.NutsNameFormat;
+import net.thevpc.nuts.util.NutsStringUtils;
 
 /**
  * Modes Application can run with
@@ -84,11 +85,11 @@ public enum NutsApplicationMode implements NutsEnum {
      * default constructor
      */
     NutsApplicationMode() {
-        this.id = name().toLowerCase().replace('_', '-');
+        this.id = NutsNameFormat.ID_NAME.formatName(name());
     }
 
     public static NutsOptional<NutsApplicationMode> parse(String value) {
-        return NutsUtils.parseEnum(value, NutsApplicationMode.class);
+        return NutsStringUtils.parseEnum(value, NutsApplicationMode.class);
     }
 
     /**
