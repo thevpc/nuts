@@ -9,8 +9,8 @@ public class NutsReservedOptionalError<T> extends NutsReservedOptionalThrowable<
     private Function<NutsSession, NutsMessage> message;
     private Throwable error;
 
-    public NutsReservedOptionalError(Function<NutsSession, NutsMessage> message, Throwable error, Supplier<T> defaultValue) {
-        super(defaultValue);
+    public NutsReservedOptionalError(Function<NutsSession, NutsMessage> message, Throwable error) {
+        super(null);
         if (message == null) {
             message = (s) -> {
                 Throwable error1 = NutsReservedOptionalError.this.error;

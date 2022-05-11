@@ -142,7 +142,7 @@ public class URLPath implements NutsPathSPI {
 
     @Override
     public String getName(NutsPath basePath) {
-        return new NutsPathParts(url.toString(),session).getName();
+        return new NutsPathParts(toString(),session).getName();
     }
 
     @Override
@@ -152,6 +152,15 @@ public class URLPath implements NutsPathSPI {
 
     @Override
     public NutsPath resolve(NutsPath basePath, String path) {
+        if(url==null){
+            NutsPathParts p = new NutsPathParts(toString(), session);
+            String u = p.getFile();
+            if (!u.endsWith("/") && !path.startsWith("/")) {
+                u += "/";
+            }
+            u += path;
+            return rebuildURLPath(rebuildURLString(p.getProtocol(), p.getAuthority(), u, p.getRef()));
+        }
         String u = url.getFile();
         if (!u.endsWith("/") && !path.startsWith("/")) {
             u += "/";
@@ -162,6 +171,16 @@ public class URLPath implements NutsPathSPI {
 
     @Override
     public NutsPath resolve(NutsPath basePath, NutsPath path) {
+        if(url==null){
+            NutsPathParts p = new NutsPathParts(toString(), session);
+            String spath = path.toString().replace("\\", "/");
+            String u = p.getFile();
+            if (!u.endsWith("/") && !spath.startsWith("/")) {
+                u += "/";
+            }
+            u += spath;
+            return rebuildURLPath(rebuildURLString(p.getProtocol(), p.getAuthority(), u, p.getRef()));
+        }
         String spath = path.toString().replace("\\", "/");
         String u = url.getFile();
         if (!u.endsWith("/") && !spath.startsWith("/")) {
@@ -174,6 +193,20 @@ public class URLPath implements NutsPathSPI {
 
     @Override
     public NutsPath resolveSibling(NutsPath basePath, String path) {
+        if(url==null){
+            NutsPathParts p = new NutsPathParts(toString(), session);
+            String u = _parent(p.getFile());
+            String spath = path.replace("\\", "/");
+            if (u == null || u.isEmpty()) {
+                u = spath;
+            } else {
+                if (!u.endsWith("/") && !spath.startsWith("/")) {
+                    u += "/";
+                }
+                u += spath;
+            }
+            return rebuildURLPath(rebuildURLString(p.getProtocol(), p.getAuthority(), u, p.getRef()));
+        }
         String u = _parent(url.getFile());
         String spath = path.replace("\\", "/");
         if (u == null || u.isEmpty()) {
@@ -197,22 +230,6 @@ public class URLPath implements NutsPathSPI {
         return null;
     }
 
-    //    @Override
-//    public NutsPath resolve(String other) {
-//        String[] others = Arrays.stream(NutsUtilStrings.trim(other).split("[/\\\\]"))
-//                .filter(x -> x.length() > 0).toArray(String[]::new);
-//        if (others.length > 0) {
-//            StringBuilder file2 = new StringBuilder(url.getFile());
-//            for (String s : others) {
-//                if (file2.length() == 0 || file2.charAt(file2.length() - 1) != '/') {
-//                    file2.append("/");
-//                }
-//                file2.append(s);
-//            }
-//            return rebuildURLPath(rebuildURLString(url.getProtocol(), url.getAuthority(), file2.toString(), url.getRef()));
-//        }
-//        return null;
-//    }
     @Override
     public URL toURL(NutsPath basePath) {
         if (url == null) {
@@ -241,13 +258,9 @@ public class URLPath implements NutsPathSPI {
         return f != null && f.isOther();
     }
 
-    //    @Override
-//    public NutsInput input() {
-//        return new URLPathInput();
-//    }
     @Override
     public boolean isDirectory(NutsPath basePath) {
-        if (url.toString().endsWith("/")) {
+        if (toString().endsWith("/")) {
             return exists(basePath);
         }
         NutsPath f = asFilePath(basePath);
@@ -269,7 +282,7 @@ public class URLPath implements NutsPathSPI {
         if (f != null) {
             return f.isRegularFile();
         }
-        if (!url.toString().endsWith("/")) {
+        if (!toString().endsWith("/")) {
             return exists(basePath);
         }
         return false;
@@ -332,15 +345,6 @@ public class URLPath implements NutsPathSPI {
         return null;
     }
 
-    //    @Override
-//    public NutsOutput output() {
-//        return new NutsPathOutput(null, this, getSession()) {
-//            @Override
-//            public OutputStream open() {
-//                return getOutputStream();
-//            }
-//        };
-//    }
     public String getContentType(NutsPath basePath) {
         if (url == null) {
             return null;

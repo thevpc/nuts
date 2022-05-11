@@ -231,7 +231,7 @@ public class NutsPathParts {
         return authority;
     }
 
-    public String getLocation() {
+    public String getFile() {
         return location;
     }
 
@@ -361,7 +361,7 @@ public class NutsPathParts {
                 return NutsPathParts.toNutsString(
                         txt.ofStyled(p.getProtocol(),NutsTextStyle.path()),
                         NutsBlankable.isBlank(p.getAuthority())?null:txt.ofStyled(p.getAuthority(),NutsTextStyle.path()),
-                        NutsBlankable.isBlank(p.getLocation())?null:txt.ofStyled(NutsPathParts.compressLocalPath(p.getLocation(),0,2),NutsTextStyle.path()),
+                        NutsBlankable.isBlank(p.getFile())?null:txt.ofStyled(NutsPathParts.compressLocalPath(p.getFile(),0,2),NutsTextStyle.path()),
                         NutsBlankable.isBlank(p.getQuery())?null:txt.ofStyled("...",NutsTextStyle.path()),
                         NutsBlankable.isBlank(p.getRef())?null:txt.ofStyled("...",NutsTextStyle.path()),
                         session
@@ -371,7 +371,7 @@ public class NutsPathParts {
                 return NutsBlankable.isBlank(p.getRef())?null:txt.ofStyled("...",NutsTextStyle.path());
             }
             case FILE:{
-                return txt.ofStyled(NutsPathParts.compressLocalPath(p.getLocation(),2,2),NutsTextStyle.path());
+                return txt.ofStyled(NutsPathParts.compressLocalPath(p.getFile(),2,2),NutsTextStyle.path());
             }
             case EMPTY: return txt.ofBlank();
         }

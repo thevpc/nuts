@@ -9,8 +9,8 @@ import java.util.function.Supplier;
 public class NutsReservedOptionalEmpty<T> extends NutsReservedOptionalThrowable<T> implements Cloneable {
     private Function<NutsSession, NutsMessage> message;
 
-    public NutsReservedOptionalEmpty(Function<NutsSession, NutsMessage> message,Supplier<T> defaultValue) {
-        super(defaultValue);
+    public NutsReservedOptionalEmpty(Function<NutsSession, NutsMessage> message) {
+        super(null);
         if (message == null) {
             message = (s) -> NutsMessage.ofPlain("missing value");
         }

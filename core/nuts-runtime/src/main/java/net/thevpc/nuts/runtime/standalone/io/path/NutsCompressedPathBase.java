@@ -58,7 +58,7 @@ public class NutsCompressedPathBase extends NutsPathBase {
                         p.getType(),
                         p.getProtocol(),
                         p.getAuthority(),
-                        NutsPathParts.compressLocalPath(p.getLocation(), 0, 2),
+                        NutsPathParts.compressLocalPath(p.getFile(), 0, 2),
                         p.getQuery().length() > 0 ? "..." : "",
                         p.getRef().length() > 0 ? "..." : "",
                         session
@@ -69,7 +69,7 @@ public class NutsCompressedPathBase extends NutsPathBase {
                 return "#...";
             }
             case FILE: {
-                return NutsPathParts.compressLocalPath(p.getLocation());
+                return NutsPathParts.compressLocalPath(p.getFile());
             }
             case EMPTY:
                 return "";

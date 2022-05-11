@@ -31,7 +31,7 @@ public class Test31_PathParts {
         Assertions.assertEquals(NutsPathParts.Type.URL,h.getType());
         Assertions.assertEquals("http",h.getProtocol());
         Assertions.assertEquals("a:password@here.com",h.getAuthority());
-        Assertions.assertEquals("/a/b/c",h.getLocation());
+        Assertions.assertEquals("/a/b/c",h.getFile());
         Assertions.assertEquals("a=toz",h.getQuery());
         Assertions.assertEquals("",h.getRef());
     }
@@ -41,7 +41,7 @@ public class Test31_PathParts {
         Assertions.assertEquals(NutsPathParts.Type.URL,h.getType());
         Assertions.assertEquals("http",h.getProtocol());
         Assertions.assertEquals("a:password@here.com:12",h.getAuthority());
-        Assertions.assertEquals("",h.getLocation());
+        Assertions.assertEquals("",h.getFile());
         Assertions.assertEquals("a=toz/be",h.getQuery());
         Assertions.assertEquals("",h.getRef());
     }
@@ -52,7 +52,7 @@ public class Test31_PathParts {
         Assertions.assertEquals(NutsPathParts.Type.URL,h.getType());
         Assertions.assertEquals("http",h.getProtocol());
         Assertions.assertEquals("a:password@here.com:12",h.getAuthority());
-        Assertions.assertEquals("/",h.getLocation());
+        Assertions.assertEquals("/",h.getFile());
         Assertions.assertEquals("",h.getQuery());
         Assertions.assertEquals("",h.getRef());
     }
@@ -63,7 +63,7 @@ public class Test31_PathParts {
         Assertions.assertEquals(NutsPathParts.Type.URL,h.getType());
         Assertions.assertEquals("http",h.getProtocol());
         Assertions.assertEquals("a:password@here.com:12",h.getAuthority());
-        Assertions.assertEquals("",h.getLocation());
+        Assertions.assertEquals("",h.getFile());
         Assertions.assertEquals("",h.getQuery());
         Assertions.assertEquals("something",h.getRef());
     }
@@ -74,7 +74,7 @@ public class Test31_PathParts {
         Assertions.assertEquals(NutsPathParts.Type.REF,h.getType());
         Assertions.assertEquals("",h.getProtocol());
         Assertions.assertEquals("",h.getAuthority());
-        Assertions.assertEquals("",h.getLocation());
+        Assertions.assertEquals("",h.getFile());
         Assertions.assertEquals("",h.getQuery());
         Assertions.assertEquals("something",h.getRef());
     }

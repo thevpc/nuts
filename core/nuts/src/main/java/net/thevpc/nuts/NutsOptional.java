@@ -13,49 +13,49 @@ import java.util.function.Supplier;
 public interface NutsOptional<T> extends NutsBlankable {
 
     static <T> NutsOptional<T> ofNamedEmpty(String name) {
-        return ofEmpty(s -> NutsMessage.ofCstyle("missing %s", name), null);
+        return ofEmpty(s -> NutsMessage.ofCstyle("missing %s", name));
     }
 
     static <T> NutsOptional<T> ofNamedError(String name) {
-        return ofEmpty(s -> NutsMessage.ofCstyle("error evaluating %s", name), null);
+        return ofError(s -> NutsMessage.ofCstyle("error evaluating %s", name));
     }
 
     static <T> NutsOptional<T> ofEmpty(Function<NutsSession, NutsMessage> emptyMessage) {
-        return ofEmpty(emptyMessage, null);
+        return new NutsReservedOptionalEmpty<>(emptyMessage);
     }
 
     static <T> NutsOptional<T> ofError(Function<NutsSession, NutsMessage> errorMessage) {
-        return ofError(errorMessage, null, null);
+        return ofError(errorMessage, null);
     }
 
     static <T> NutsOptional<T> ofError(Function<NutsSession, NutsMessage> errorMessage, Throwable throwable) {
-        return ofError(errorMessage, throwable, null);
+        return new NutsReservedOptionalError<>(errorMessage, throwable);
     }
 
 
-    static <T> NutsOptional<T> ofError(Function<NutsSession, NutsMessage> errorMessage, Supplier<T> defaultValue) {
-        return ofError(errorMessage, null, defaultValue);
-    }
-
-    static <T> NutsOptional<T> ofError(Function<NutsSession, NutsMessage> errorMessage, T defaultValue) {
-        return ofError(errorMessage, null, defaultValue);
-    }
-
-    static <T> NutsOptional<T> ofEmpty(Function<NutsSession, NutsMessage> emptyMessage, T defaultValue) {
-        return new NutsReservedOptionalEmpty<>(emptyMessage, () -> defaultValue);
-    }
-
-    static <T> NutsOptional<T> ofError(Function<NutsSession, NutsMessage> errorMessage, Throwable throwable, T defaultValue) {
-        return new NutsReservedOptionalError<>(errorMessage, throwable, () -> defaultValue);
-    }
-
-    static <T> NutsOptional<T> ofEmpty(Function<NutsSession, NutsMessage> emptyMessage, Supplier<T> defaultValue) {
-        return new NutsReservedOptionalEmpty<>(emptyMessage, defaultValue);
-    }
-
-    static <T> NutsOptional<T> ofError(Function<NutsSession, NutsMessage> errorMessage, Throwable throwable, Supplier<T> defaultValue) {
-        return new NutsReservedOptionalError<>(errorMessage, throwable, defaultValue);
-    }
+//    static <T> NutsOptional<T> ofError(Function<NutsSession, NutsMessage> errorMessage, Supplier<T> defaultValue) {
+//        return ofError(errorMessage, null, defaultValue);
+//    }
+//
+//    static <T> NutsOptional<T> ofError(Function<NutsSession, NutsMessage> errorMessage, T defaultValue) {
+//        return ofError(errorMessage, null, defaultValue);
+//    }
+//
+//    static <T> NutsOptional<T> ofEmpty(Function<NutsSession, NutsMessage> emptyMessage, T defaultValue) {
+//        return new NutsReservedOptionalEmpty<>(emptyMessage, () -> defaultValue);
+//    }
+//
+//    static <T> NutsOptional<T> ofError(Function<NutsSession, NutsMessage> errorMessage, Throwable throwable, T defaultValue) {
+//        return new NutsReservedOptionalError<>(errorMessage, throwable, () -> defaultValue);
+//    }
+//
+//    static <T> NutsOptional<T> ofEmpty(Function<NutsSession, NutsMessage> emptyMessage, Supplier<T> defaultValue) {
+//        return new NutsReservedOptionalEmpty<>(emptyMessage, defaultValue);
+//    }
+//
+//    static <T> NutsOptional<T> ofError(Function<NutsSession, NutsMessage> errorMessage, Throwable throwable, Supplier<T> defaultValue) {
+//        return new NutsReservedOptionalError<>(errorMessage, throwable, defaultValue);
+//    }
 
     static <T> NutsOptional<T> of(T value) {
         return of(value, null);

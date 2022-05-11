@@ -370,7 +370,7 @@ public class DefaultNutsApplicationContext implements NutsApplicationContext {
                 consumed = commandLineProcessor.onCmdNextNonOption(a, cmd, this);
             }
             if (consumed) {
-                NutsArgument next = cmd.peek().get(session);
+                NutsArgument next = cmd.peek().orNull();
                 //reference equality!
                 if (next == a) {
                     //was not consumed!
