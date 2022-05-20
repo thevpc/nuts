@@ -4,7 +4,7 @@ import net.thevpc.nuts.elem.NutsElement;
 import net.thevpc.nuts.elem.NutsElementFactoryContext;
 import net.thevpc.nuts.elem.NutsElementMapper;
 import net.thevpc.nuts.NutsSession;
-import net.thevpc.nuts.runtime.standalone.util.reflect.ReflectType;
+import net.thevpc.nuts.util.NutsReflectType;
 import net.thevpc.nuts.runtime.standalone.util.reflect.ReflectUtils;
 import net.thevpc.nuts.runtime.standalone.elem.DefaultNutsArrayElement;
 import net.thevpc.nuts.runtime.standalone.elem.DefaultNutsElementFactoryService;
@@ -88,7 +88,7 @@ public class NutsElementMapperCollection implements NutsElementMapper {
                 return fillObject(o, new ArrayList(), elemType, to, context);
             }
             default: {
-                ReflectType m = defaultNutsElementFactoryService.getTypesRepository().getType(to);
+                NutsReflectType m = defaultNutsElementFactoryService.getTypesRepository().getType(to);
                 return fillObject(o, (Collection) m.newInstance(), elemType, to, context);
             }
         }

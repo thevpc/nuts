@@ -21,7 +21,7 @@
  * governing permissions and limitations under the License.
  * <br> ====================================================================
  */
-package net.thevpc.nuts.runtime.standalone.util.reflect;
+package net.thevpc.nuts.util;
 
 import net.thevpc.nuts.NutsSession;
 
@@ -30,18 +30,19 @@ import java.util.List;
 /**
  *
  * @author thevpc
+ * @since 0.8.4
  */
-public interface ReflectType {
+public interface NutsReflectType {
 
-    ReflectPropertyAccessStrategy getAccessStrategy();
+    NutsReflectPropertyAccessStrategy getAccessStrategy();
 
-    ReflectPropertyDefaultValueStrategy getDefaultValueStrategy();
+    NutsReflectPropertyDefaultValueStrategy getDefaultValueStrategy();
 
-    List<ReflectProperty> getDeclaredProperties();
+    List<NutsReflectProperty> getDeclaredProperties();
 
     String getName();
 
-    List<ReflectProperty> getProperties();
+    List<NutsReflectProperty> getProperties();
 
     boolean hasNoArgsConstructor();
 

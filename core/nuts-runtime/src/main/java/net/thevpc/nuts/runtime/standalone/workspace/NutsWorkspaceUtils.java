@@ -71,16 +71,16 @@ public class NutsWorkspaceUtils {
         return repos.getModel().toRepositorySPI(repo);
     }
 
-    public ReflectRepository getReflectRepository() {
+    public NutsReflectRepository getReflectRepository() {
         NutsWorkspaceEnvManager env = session.env();
         //do not call env.getProperty(...). It will end up with a stack overflow
-        ReflectRepository o = (ReflectRepository) (env.getProperties().get(ReflectRepository.class.getName()));
+        NutsReflectRepository o = (NutsReflectRepository) (env.getProperties().get(NutsReflectRepository.class.getName()));
         if (o == null) {
-            o = new DefaultReflectRepository(ReflectConfigurationBuilder.create()
-                    .setPropertyAccessStrategy(ReflectPropertyAccessStrategy.FIELD)
-                    .setPropertyDefaultValueStrategy(ReflectPropertyDefaultValueStrategy.PROPERTY_DEFAULT)
+            o = new DefaultNutsReflectRepository(NutsReflectConfigurationBuilder.of(session)
+                    .setPropertyAccessStrategy(NutsReflectPropertyAccessStrategy.FIELD)
+                    .setPropertyDefaultValueStrategy(NutsReflectPropertyDefaultValueStrategy.PROPERTY_DEFAULT)
                     .build());
-            env.setProperty(ReflectRepository.class.getName(), o);
+            env.setProperty(NutsReflectRepository.class.getName(), o);
         }
         return o;
     }

@@ -23,6 +23,10 @@
  */
 package net.thevpc.nuts.runtime.standalone.util.reflect;
 
+import net.thevpc.nuts.NutsSession;
+import net.thevpc.nuts.spi.NutsSupportLevelContext;
+import net.thevpc.nuts.util.*;
+
 import java.lang.reflect.Type;
 import java.util.HashMap;
 import java.util.Map;
@@ -31,23 +35,33 @@ import java.util.Map;
  *
  * @author thevpc
  */
-public class DefaultReflectRepository implements ReflectRepository {
+public class DefaultNutsReflectRepository implements NutsReflectRepository {
 
-    private final Map<Type, ReflectType> beans = new HashMap<>();
-    private final ReflectConfiguration configuration;
+    private final Map<Type, NutsReflectType> beans = new HashMap<>();
+    private NutsReflectConfiguration configuration;
 
-    public DefaultReflectRepository(ReflectConfiguration configurer) {
-        this.configuration = configurer == null ? ReflectConfigurationBuilder.create().build() : configurer;
+    public DefaultNutsReflectRepository(NutsSession session) {
+        this(NutsReflectConfigurationBuilder.of(session).build());
+    }
+
+    public DefaultNutsReflectRepository(NutsReflectConfiguration configuration) {
+        this.configuration = configuration;
     }
 
     @Override
-    public ReflectConfiguration getConfiguration() {
+    public DefaultNutsReflectRepository setConfiguration(NutsReflectConfiguration configuration) {
+        this.configuration = configuration;
+        return this;
+    }
+
+    @Override
+    public NutsReflectConfiguration getConfiguration() {
         return configuration;
     }
 
     @Override
-    public ReflectType getType(Type clz) {
-        ReflectType v = beans.get(clz);
+    public NutsReflectType getType(Type clz) {
+        NutsReflectType v = beans.get(clz);
         if (v == null) {
             v = create(clz);
             beans.put(clz, v);
@@ -55,10 +69,15 @@ public class DefaultReflectRepository implements ReflectRepository {
         return v;
     }
 
-    private ReflectType create(Type clz) {
+    private NutsReflectType create(Type clz) {
         Class raw = ReflectUtils.getRawClass(clz);
-        ReflectPropertyAccessStrategy a = configuration.getAccessStrategy(raw);
-        ReflectPropertyDefaultValueStrategy d = configuration.getDefaultValueStrategy(raw);
-        return new ClassReflectType(clz, a, d, this);
+        NutsReflectPropertyAccessStrategy a = configuration.getAccessStrategy(raw);
+        NutsReflectPropertyDefaultValueStrategy d = configuration.getDefaultValueStrategy(raw);
+        return new ClassNutsReflectType(clz, a, d, this);
+    }
+
+    @Override
+    public int getSupportLevel(NutsSupportLevelContext context) {
+        return DEFAULT_SUPPORT;
     }
 }

@@ -49,7 +49,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 import net.thevpc.nuts.runtime.standalone.util.collections.ClassMap;
-import net.thevpc.nuts.runtime.standalone.util.reflect.ReflectRepository;
+import net.thevpc.nuts.util.NutsReflectRepository;
 import net.thevpc.nuts.runtime.standalone.util.reflect.ReflectUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.NutsWorkspaceUtils;
 import net.thevpc.nuts.spi.NutsRepositoryLocation;
@@ -97,7 +97,7 @@ public class DefaultNutsElementFactoryService implements NutsElementFactoryServi
     private final ClassMap<NutsElementMapper> defaultMappers = new ClassMap<>(null, NutsElementMapper.class);
     private final Map<Class, NutsElementMapper> coreMappers = new HashMap<>();
     private final ClassMap<NutsElementMapper> customMappers = new ClassMap<>(null, NutsElementMapper.class);
-    private ReflectRepository typesRepository;
+    private NutsReflectRepository typesRepository;
     private final NutsWorkspace ws;
     private final NutsSession session;
     private final NutsElementMapper F_OBJ = new NutsElementMapperObjReflect(this);
@@ -364,7 +364,7 @@ public class DefaultNutsElementFactoryService implements NutsElementFactoryServi
         return createElement(o, expectedType, context, true);
     }
 
-    public ReflectRepository getTypesRepository() {
+    public NutsReflectRepository getTypesRepository() {
         return typesRepository;
     }
 

@@ -23,38 +23,42 @@
  */
 package net.thevpc.nuts.runtime.standalone.util.reflect;
 
+import net.thevpc.nuts.util.NutsReflectConfiguration;
+import net.thevpc.nuts.util.NutsReflectPropertyAccessStrategy;
+import net.thevpc.nuts.util.NutsReflectPropertyDefaultValueStrategy;
+
 import java.util.function.Function;
 
 /**
  *
  * @author thevpc
  */
-public class DefaultReflectConfiguration implements ReflectConfiguration {
+public class DefaultNutsReflectConfiguration implements NutsReflectConfiguration {
 
-    private Function<Class, ReflectPropertyAccessStrategy> propertyAccessStrategy;
-    private Function<Class, ReflectPropertyDefaultValueStrategy> propertyDefaultValueStrategy;
+    private Function<Class, NutsReflectPropertyAccessStrategy> propertyAccessStrategy;
+    private Function<Class, NutsReflectPropertyDefaultValueStrategy> propertyDefaultValueStrategy;
 
-    public DefaultReflectConfiguration(Function<Class, ReflectPropertyAccessStrategy> propertyAccessStrategy, Function<Class, ReflectPropertyDefaultValueStrategy> propertyDefaultValueStrategy) {
+    public DefaultNutsReflectConfiguration(Function<Class, NutsReflectPropertyAccessStrategy> propertyAccessStrategy, Function<Class, NutsReflectPropertyDefaultValueStrategy> propertyDefaultValueStrategy) {
         this.propertyAccessStrategy = propertyAccessStrategy;
         this.propertyDefaultValueStrategy = propertyDefaultValueStrategy;
     }
 
     @Override
-    public ReflectPropertyAccessStrategy getAccessStrategy(Class clz) {
+    public NutsReflectPropertyAccessStrategy getAccessStrategy(Class clz) {
         if (propertyAccessStrategy == null) {
-            return ReflectPropertyAccessStrategy.FIELD;
+            return NutsReflectPropertyAccessStrategy.FIELD;
         }
-        ReflectPropertyAccessStrategy v = propertyAccessStrategy.apply(clz);
-        return v != null ? v : ReflectPropertyAccessStrategy.FIELD;
+        NutsReflectPropertyAccessStrategy v = propertyAccessStrategy.apply(clz);
+        return v != null ? v : NutsReflectPropertyAccessStrategy.FIELD;
     }
 
     @Override
-    public ReflectPropertyDefaultValueStrategy getDefaultValueStrategy(Class clz) {
+    public NutsReflectPropertyDefaultValueStrategy getDefaultValueStrategy(Class clz) {
         if (propertyAccessStrategy == null) {
-            return ReflectPropertyDefaultValueStrategy.TYPE_DEFAULT;
+            return NutsReflectPropertyDefaultValueStrategy.TYPE_DEFAULT;
         }
-        ReflectPropertyDefaultValueStrategy v = propertyDefaultValueStrategy.apply(clz);
-        return v != null ? v : ReflectPropertyDefaultValueStrategy.PROPERTY_DEFAULT;
+        NutsReflectPropertyDefaultValueStrategy v = propertyDefaultValueStrategy.apply(clz);
+        return v != null ? v : NutsReflectPropertyDefaultValueStrategy.PROPERTY_DEFAULT;
     }
 
 }

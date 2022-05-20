@@ -130,19 +130,6 @@ public class NutsStringUtils {
         throw new UnsupportedOperationException();
     }
 
-    @SuppressWarnings("unchecked")
-    public static List<String> split(String text, String separators) {
-        if (text == null) {
-            return Collections.EMPTY_LIST;
-        }
-        StringTokenizer st = new StringTokenizer(text, separators);
-        List<String> result = new ArrayList<>();
-        while (st.hasMoreElements()) {
-            result.add(st.nextToken());
-        }
-        return result;
-    }
-
     public static String replaceDollarString(String text, Function<String, String> m) {
         Matcher matcher = DOLLAR_PLACE_HOLDER_PATTERN.matcher(text);
         StringBuffer sb = new StringBuffer();
@@ -474,4 +461,42 @@ public class NutsStringUtils {
         }
     }
 
+    public static List<String> split(String value, String chars) {
+        return split(value, chars, true, false);
+    }
+
+    public static List<String> split(String value, String chars, boolean trim, boolean ignoreEmpty) {
+        if (value == null) {
+            value = "";
+        }
+        StringTokenizer st = new StringTokenizer(value, chars,true);
+        List<String> all = new ArrayList<>();
+        boolean wasSep=true;
+        while (st.hasMoreElements()) {
+            String s = st.nextToken();
+            if(chars.indexOf(s.charAt(0))>=0){
+                if(wasSep){
+                    s="";
+                    if (!ignoreEmpty) {
+                        all.add(s);
+                    }
+                }
+                wasSep=true;
+            }else {
+                wasSep=false;
+                if (trim) {
+                    s = s.trim();
+                }
+                if (!ignoreEmpty || !s.isEmpty()) {
+                    all.add(s);
+                }
+            }
+        }
+        if(wasSep){
+            if (!ignoreEmpty) {
+                all.add("");
+            }
+        }
+        return all;
+    }
 }

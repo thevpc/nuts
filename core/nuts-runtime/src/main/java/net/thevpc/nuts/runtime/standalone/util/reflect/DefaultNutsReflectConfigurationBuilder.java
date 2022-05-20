@@ -23,66 +23,76 @@
  */
 package net.thevpc.nuts.runtime.standalone.util.reflect;
 
+import net.thevpc.nuts.spi.NutsSupportLevelContext;
+import net.thevpc.nuts.util.NutsReflectConfiguration;
+import net.thevpc.nuts.util.NutsReflectConfigurationBuilder;
+import net.thevpc.nuts.util.NutsReflectPropertyAccessStrategy;
+import net.thevpc.nuts.util.NutsReflectPropertyDefaultValueStrategy;
+
 import java.util.function.Function;
 
 /**
  *
  * @author thevpc
  */
-public class DefaultReflectConfigurationBuilder implements ReflectConfigurationBuilder {
+public class DefaultNutsReflectConfigurationBuilder implements NutsReflectConfigurationBuilder {
 
-    private Function<Class, ReflectPropertyAccessStrategy> propertyAccessStrategy;
-    private Function<Class, ReflectPropertyDefaultValueStrategy> propertyDefaultValueStrategy;
+    private Function<Class, NutsReflectPropertyAccessStrategy> propertyAccessStrategy;
+    private Function<Class, NutsReflectPropertyDefaultValueStrategy> propertyDefaultValueStrategy;
 
     @Override
-    public Function<Class, ReflectPropertyAccessStrategy> getPropertyAccessStrategy() {
+    public Function<Class, NutsReflectPropertyAccessStrategy> getPropertyAccessStrategy() {
         return propertyAccessStrategy;
     }
 
     @Override
-    public ReflectConfigurationBuilder unsetPropertyAccessStrategy() {
+    public NutsReflectConfigurationBuilder unsetPropertyAccessStrategy() {
         this.propertyAccessStrategy = null;
         return this;
     }
 
     @Override
-    public ReflectConfigurationBuilder setPropertyAccessStrategy(Function<Class, ReflectPropertyAccessStrategy> propertyAccessStrategy) {
+    public NutsReflectConfigurationBuilder setPropertyAccessStrategy(Function<Class, NutsReflectPropertyAccessStrategy> propertyAccessStrategy) {
         this.propertyAccessStrategy = propertyAccessStrategy;
         return this;
     }
 
     @Override
-    public ReflectConfigurationBuilder setPropertyAccessStrategy(ReflectPropertyAccessStrategy propertyAccessStrategy) {
+    public NutsReflectConfigurationBuilder setPropertyAccessStrategy(NutsReflectPropertyAccessStrategy propertyAccessStrategy) {
         this.propertyAccessStrategy = propertyAccessStrategy == null ? null : x -> propertyAccessStrategy;
         return this;
     }
 
     @Override
-    public ReflectConfigurationBuilder unsetPropertyDefaultValueStrategy() {
+    public NutsReflectConfigurationBuilder unsetPropertyDefaultValueStrategy() {
         this.propertyDefaultValueStrategy = null;
         return this;
     }
 
     @Override
-    public Function<Class, ReflectPropertyDefaultValueStrategy> getPropertyDefaultValueStrategy() {
+    public Function<Class, NutsReflectPropertyDefaultValueStrategy> getPropertyDefaultValueStrategy() {
         return propertyDefaultValueStrategy;
     }
 
     @Override
-    public ReflectConfigurationBuilder setPropertyDefaultValueStrategy(Function<Class, ReflectPropertyDefaultValueStrategy> propertyDefaultValueStrategy) {
+    public NutsReflectConfigurationBuilder setPropertyDefaultValueStrategy(Function<Class, NutsReflectPropertyDefaultValueStrategy> propertyDefaultValueStrategy) {
         this.propertyDefaultValueStrategy = propertyDefaultValueStrategy;
         return this;
     }
 
     @Override
-    public ReflectConfigurationBuilder setPropertyDefaultValueStrategy(ReflectPropertyDefaultValueStrategy propertyDefaultValueStrategy) {
+    public NutsReflectConfigurationBuilder setPropertyDefaultValueStrategy(NutsReflectPropertyDefaultValueStrategy propertyDefaultValueStrategy) {
         this.propertyDefaultValueStrategy = propertyDefaultValueStrategy == null ? null : x -> propertyDefaultValueStrategy;
         return this;
     }
 
     @Override
-    public ReflectConfiguration build() {
-        return new DefaultReflectConfiguration(propertyAccessStrategy, propertyDefaultValueStrategy);
+    public NutsReflectConfiguration build() {
+        return new DefaultNutsReflectConfiguration(propertyAccessStrategy, propertyDefaultValueStrategy);
     }
 
+    @Override
+    public int getSupportLevel(NutsSupportLevelContext context) {
+        return DEFAULT_SUPPORT;
+    }
 }

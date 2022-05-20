@@ -42,6 +42,7 @@ Starred releases are most stable ones.
 + ADDED: added 30+ unit tests
 + ADDED: NutsSession::isProgress
 + ADDED: NutsCommandline now extends NutsBlankable
++ ADDED: Added/Exposed Bean Reflection API : NutsReflectRepository,NutsReflectType,NutsReflectProperty
 
 ## nuts 0.8.3.1 (PUBLISHED VERSION)
 - ```2022/02/01 	nuts 0.8.3.1``` released nuts-runtime-0.8.3.1.jar

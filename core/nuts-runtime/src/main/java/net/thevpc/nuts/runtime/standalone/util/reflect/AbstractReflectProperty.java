@@ -23,6 +23,10 @@
  */
 package net.thevpc.nuts.runtime.standalone.util.reflect;
 
+import net.thevpc.nuts.util.NutsReflectPropertyDefaultValueStrategy;
+import net.thevpc.nuts.util.NutsReflectType;
+import net.thevpc.nuts.util.NutsReflectProperty;
+
 import java.lang.reflect.Array;
 import java.lang.reflect.Type;
 import java.util.Arrays;
@@ -32,15 +36,15 @@ import java.util.Objects;
  *
  * @author thevpc
  */
-public abstract class AbstractReflectProperty implements ReflectProperty {
+public abstract class AbstractReflectProperty implements NutsReflectProperty {
 
     private String name;
     private Object cleanInstanceValue;
     private Type propertyType;
-    private ReflectType type;
-    private ReflectPropertyDefaultValueStrategy defaultValueStrategy;
+    private NutsReflectType type;
+    private NutsReflectPropertyDefaultValueStrategy defaultValueStrategy;
 
-    protected final void init(String name, ReflectType type, Object cleanInstance, Type propertyType, ReflectPropertyDefaultValueStrategy defaultValueStrategy) {
+    protected final void init(String name, NutsReflectType type, Object cleanInstance, Type propertyType, NutsReflectPropertyDefaultValueStrategy defaultValueStrategy) {
         this.name = name;
         this.cleanInstanceValue = cleanInstance == null ? ReflectUtils.getDefaultValue(propertyType) : read(cleanInstance);
         this.type = type;
@@ -54,7 +58,7 @@ public abstract class AbstractReflectProperty implements ReflectProperty {
     }
 
     @Override
-    public ReflectType getType() {
+    public NutsReflectType getType() {
         return type;
     }
 
@@ -64,12 +68,12 @@ public abstract class AbstractReflectProperty implements ReflectProperty {
     }
 
     @Override
-    public ReflectPropertyDefaultValueStrategy getDefaultValueStrategy() {
+    public NutsReflectPropertyDefaultValueStrategy getDefaultValueStrategy() {
         return defaultValueStrategy;
     }
 
     @Override
-    public boolean isDefaultValue(Object value, ReflectPropertyDefaultValueStrategy strategy) {
+    public boolean isDefaultValue(Object value, NutsReflectPropertyDefaultValueStrategy strategy) {
         if (strategy == null) {
             strategy = getDefaultValueStrategy();
         }

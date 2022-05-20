@@ -21,33 +21,26 @@
  * governing permissions and limitations under the License.
  * <br> ====================================================================
  */
-package net.thevpc.nuts.runtime.standalone.util.reflect;
+package net.thevpc.nuts.util;
 
-import net.thevpc.nuts.*;
-import net.thevpc.nuts.util.NutsNameFormat;
-import net.thevpc.nuts.util.NutsStringUtils;
+import net.thevpc.nuts.NutsSession;
+import net.thevpc.nuts.spi.NutsComponent;
+
+import java.lang.reflect.Type;
 
 /**
  *
  * @author thevpc
+ * @since 0.8.4
  */
-public enum ReflectPropertyDefaultValueStrategy implements NutsEnum {
-    TYPE_DEFAULT,
-    PROPERTY_DEFAULT,
-    NO_DEFAULT;
-    private final String id;
-
-    ReflectPropertyDefaultValueStrategy() {
-        this.id = NutsNameFormat.ID_NAME.formatName(name());
+public interface NutsReflectRepository extends NutsComponent {
+    static NutsReflectRepository of(NutsSession session) {
+        return session.extensions().createSupported(NutsReflectRepository.class, true, session);
     }
 
-    public static NutsOptional<ReflectPropertyDefaultValueStrategy> parse(String value) {
-        return NutsStringUtils.parseEnum(value, ReflectPropertyDefaultValueStrategy.class);
-    }
+    NutsReflectType getType(Type clazz);
 
+    NutsReflectConfiguration getConfiguration();
 
-    @Override
-    public String id() {
-        return id;
-    }
+    NutsReflectRepository setConfiguration(NutsReflectConfiguration config);
 }

@@ -20,6 +20,9 @@ public interface NutsOptional<T> extends NutsBlankable {
         return ofError(s -> NutsMessage.ofCstyle("error evaluating %s", name));
     }
 
+    static <T> NutsOptional<T> ofEmpty() {
+        return ofEmpty(null);
+    }
     static <T> NutsOptional<T> ofEmpty(Function<NutsSession, NutsMessage> emptyMessage) {
         return new NutsReservedOptionalEmpty<>(emptyMessage);
     }
@@ -32,30 +35,6 @@ public interface NutsOptional<T> extends NutsBlankable {
         return new NutsReservedOptionalError<>(errorMessage, throwable);
     }
 
-
-//    static <T> NutsOptional<T> ofError(Function<NutsSession, NutsMessage> errorMessage, Supplier<T> defaultValue) {
-//        return ofError(errorMessage, null, defaultValue);
-//    }
-//
-//    static <T> NutsOptional<T> ofError(Function<NutsSession, NutsMessage> errorMessage, T defaultValue) {
-//        return ofError(errorMessage, null, defaultValue);
-//    }
-//
-//    static <T> NutsOptional<T> ofEmpty(Function<NutsSession, NutsMessage> emptyMessage, T defaultValue) {
-//        return new NutsReservedOptionalEmpty<>(emptyMessage, () -> defaultValue);
-//    }
-//
-//    static <T> NutsOptional<T> ofError(Function<NutsSession, NutsMessage> errorMessage, Throwable throwable, T defaultValue) {
-//        return new NutsReservedOptionalError<>(errorMessage, throwable, () -> defaultValue);
-//    }
-//
-//    static <T> NutsOptional<T> ofEmpty(Function<NutsSession, NutsMessage> emptyMessage, Supplier<T> defaultValue) {
-//        return new NutsReservedOptionalEmpty<>(emptyMessage, defaultValue);
-//    }
-//
-//    static <T> NutsOptional<T> ofError(Function<NutsSession, NutsMessage> errorMessage, Throwable throwable, Supplier<T> defaultValue) {
-//        return new NutsReservedOptionalError<>(errorMessage, throwable, defaultValue);
-//    }
 
     static <T> NutsOptional<T> of(T value) {
         return of(value, null);

@@ -24,6 +24,7 @@
 package net.thevpc.nuts.runtime.standalone.util.reflect;
 
 import net.thevpc.nuts.NutsSession;
+import net.thevpc.nuts.util.*;
 
 import java.lang.reflect.*;
 import java.util.*;
@@ -33,26 +34,26 @@ import java.util.regex.Pattern;
 /**
  * @author thevpc
  */
-public class ClassReflectType implements ReflectType {
+public class ClassNutsReflectType implements NutsReflectType {
 
     private static final Pattern GETTER_SETTER = Pattern.compile("(?<prefix>(get|set|is))(?<suffix>([A-Z].*))");
 
     private Type type;
     private Class clazz;
-    private Map<String, ReflectProperty> direct;
-    private List<ReflectProperty> directList;
-    private Map<String, ReflectProperty> all;
-    private List<ReflectProperty> allList;
-    private ReflectRepository repo;
-    private ReflectPropertyAccessStrategy propertyAccessStrategy;
-    private ReflectPropertyDefaultValueStrategy propertyDefaultValueStrategy;
+    private Map<String, NutsReflectProperty> direct;
+    private List<NutsReflectProperty> directList;
+    private Map<String, NutsReflectProperty> all;
+    private List<NutsReflectProperty> allList;
+    private NutsReflectRepository repo;
+    private NutsReflectPropertyAccessStrategy propertyAccessStrategy;
+    private NutsReflectPropertyDefaultValueStrategy propertyDefaultValueStrategy;
     private Constructor noArgConstr;
     private Constructor sessionConstr;
 
-    public ClassReflectType(Type type,
-                            ReflectPropertyAccessStrategy propertyAccessStrategy,
-                            ReflectPropertyDefaultValueStrategy propertyDefaultValueStrategy,
-                            ReflectRepository repo) {
+    public ClassNutsReflectType(Type type,
+                                NutsReflectPropertyAccessStrategy propertyAccessStrategy,
+                                NutsReflectPropertyDefaultValueStrategy propertyDefaultValueStrategy,
+                                NutsReflectRepository repo) {
         this.type = type;
         this.repo = repo;
         this.propertyAccessStrategy = propertyAccessStrategy;
@@ -60,11 +61,11 @@ public class ClassReflectType implements ReflectType {
         clazz = ReflectUtils.getRawClass(type);
     }
 
-    public ReflectPropertyAccessStrategy getAccessStrategy() {
+    public NutsReflectPropertyAccessStrategy getAccessStrategy() {
         return propertyAccessStrategy;
     }
 
-    public ReflectPropertyDefaultValueStrategy getDefaultValueStrategy() {
+    public NutsReflectPropertyDefaultValueStrategy getDefaultValueStrategy() {
         return propertyDefaultValueStrategy;
     }
 
@@ -72,7 +73,7 @@ public class ClassReflectType implements ReflectType {
      * @return direct declared properties
      */
     @Override
-    public List<ReflectProperty> getDeclaredProperties() {
+    public List<NutsReflectProperty> getDeclaredProperties() {
         build();
         return directList;
     }
@@ -86,7 +87,7 @@ public class ClassReflectType implements ReflectType {
      * @return all (including inherited) declared properties
      */
     @Override
-    public List<ReflectProperty> getProperties() {
+    public List<NutsReflectProperty> getProperties() {
         build();
         return allList;
     }
@@ -175,8 +176,8 @@ public class ClassReflectType implements ReflectType {
             } catch (Exception ex) {
                 //ignore any error...
             }
-            LinkedHashMap<String, IndexedItem<ReflectProperty>> declaredProperties = new LinkedHashMap<>();
-            LinkedHashMap<String, IndexedItem<ReflectProperty>> fieldAllProperties = new LinkedHashMap<>();
+            LinkedHashMap<String, IndexedItem<NutsReflectProperty>> declaredProperties = new LinkedHashMap<>();
+            LinkedHashMap<String, IndexedItem<NutsReflectProperty>> fieldAllProperties = new LinkedHashMap<>();
             Set<String> ambiguousWrites = new HashSet<>();
             int hierarchyIndex = 0;
             fillProperties(hierarchyIndex, clazz, declaredProperties, cleanInstance, ambiguousWrites, propertyAccessStrategy, propertyDefaultValueStrategy);
@@ -185,8 +186,8 @@ public class ClassReflectType implements ReflectType {
             while (parent != null) {
                 hierarchyIndex++;
                 //must reeavliuate for parent classes
-                ReflectPropertyAccessStrategy _propertyAccessStrategy = repo.getConfiguration().getAccessStrategy(parent);
-                ReflectPropertyDefaultValueStrategy _propertyDefaultValueStrategy = repo.getConfiguration().getDefaultValueStrategy(parent);
+                NutsReflectPropertyAccessStrategy _propertyAccessStrategy = repo.getConfiguration().getAccessStrategy(parent);
+                NutsReflectPropertyDefaultValueStrategy _propertyDefaultValueStrategy = repo.getConfiguration().getDefaultValueStrategy(parent);
                 fillProperties(hierarchyIndex, parent, fieldAllProperties, cleanInstance, ambiguousWrites, _propertyAccessStrategy, _propertyDefaultValueStrategy);
                 parent = parent.getSuperclass();
             }
@@ -198,21 +199,21 @@ public class ClassReflectType implements ReflectType {
         }
     }
 
-    private LinkedHashMap<String, ReflectProperty> reorder(LinkedHashMap<String, IndexedItem<ReflectProperty>> fieldAllProperties) {
-        Map.Entry<String, IndexedItem<ReflectProperty>>[] ee = fieldAllProperties.entrySet().toArray(new Map.Entry[0]);
+    private LinkedHashMap<String, NutsReflectProperty> reorder(LinkedHashMap<String, IndexedItem<NutsReflectProperty>> fieldAllProperties) {
+        Map.Entry<String, IndexedItem<NutsReflectProperty>>[] ee = fieldAllProperties.entrySet().toArray(new Map.Entry[0]);
         Arrays.sort(ee, (o1, o2) -> Integer.compare(o2.getValue().index, o1.getValue().index));
-        LinkedHashMap<String, ReflectProperty> r = new LinkedHashMap<>();
-        for (Map.Entry<String, IndexedItem<ReflectProperty>> entry : ee) {
+        LinkedHashMap<String, NutsReflectProperty> r = new LinkedHashMap<>();
+        for (Map.Entry<String, IndexedItem<NutsReflectProperty>> entry : ee) {
             r.put(entry.getKey(), entry.getValue().item);
         }
         return r;
     }
 
-    private void fillProperties(int hierarchyIndex, Class clazz, LinkedHashMap<String, IndexedItem<ReflectProperty>> declaredProperties, Object cleanInstance, Set<String> ambiguousWrites,
-                                ReflectPropertyAccessStrategy propertyAccessStrategy,
-                                ReflectPropertyDefaultValueStrategy propertyDefaultValueStrategy
+    private void fillProperties(int hierarchyIndex, Class clazz, LinkedHashMap<String, IndexedItem<NutsReflectProperty>> declaredProperties, Object cleanInstance, Set<String> ambiguousWrites,
+                                NutsReflectPropertyAccessStrategy propertyAccessStrategy,
+                                NutsReflectPropertyDefaultValueStrategy propertyDefaultValueStrategy
     ) {
-        if (propertyAccessStrategy == ReflectPropertyAccessStrategy.METHOD || propertyAccessStrategy == ReflectPropertyAccessStrategy.BOTH) {
+        if (propertyAccessStrategy == NutsReflectPropertyAccessStrategy.METHOD || propertyAccessStrategy == NutsReflectPropertyAccessStrategy.BOTH) {
             LinkedHashMap<String, Method> methodGetters = new LinkedHashMap<>();
             LinkedHashMap<String, List<Method>> methodSetters = new LinkedHashMap<>();
             for (Method m : clazz.getDeclaredMethods()) {
@@ -274,7 +275,7 @@ public class ClassReflectType implements ReflectType {
                         }
                     }
                     if (writeMethod == null) {
-                        if (propertyAccessStrategy == ReflectPropertyAccessStrategy.BOTH) {
+                        if (propertyAccessStrategy == NutsReflectPropertyAccessStrategy.BOTH) {
                             for (Field f : clazz.getDeclaredFields()) {
                                 if (!Modifier.isStatic(f.getModifiers()) && !Modifier.isTransient(f.getModifiers())) {
                                     if (!declaredProperties.containsKey(f.getName())) {
@@ -334,7 +335,7 @@ public class ClassReflectType implements ReflectType {
             }
 
         }
-        if (propertyAccessStrategy == ReflectPropertyAccessStrategy.FIELD || propertyAccessStrategy == ReflectPropertyAccessStrategy.BOTH) {
+        if (propertyAccessStrategy == NutsReflectPropertyAccessStrategy.FIELD || propertyAccessStrategy == NutsReflectPropertyAccessStrategy.BOTH) {
             for (Field f : clazz.getDeclaredFields()) {
                 if (!declaredProperties.containsKey(f.getName())) {
                     if (!Modifier.isStatic(f.getModifiers()) && !Modifier.isTransient(f.getModifiers())) {

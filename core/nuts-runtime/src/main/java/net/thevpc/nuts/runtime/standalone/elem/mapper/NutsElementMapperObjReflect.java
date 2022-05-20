@@ -2,8 +2,8 @@ package net.thevpc.nuts.runtime.standalone.elem.mapper;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.elem.*;
-import net.thevpc.nuts.runtime.standalone.util.reflect.ReflectProperty;
-import net.thevpc.nuts.runtime.standalone.util.reflect.ReflectType;
+import net.thevpc.nuts.util.NutsReflectProperty;
+import net.thevpc.nuts.util.NutsReflectType;
 import net.thevpc.nuts.runtime.standalone.util.reflect.ReflectUtils;
 import net.thevpc.nuts.runtime.standalone.elem.DefaultNutsElementFactoryService;
 
@@ -26,9 +26,9 @@ public class NutsElementMapperObjReflect implements NutsElementMapper<Object> {
 
     @Override
     public Object destruct(Object src, Type typeOfSrc, NutsElementFactoryContext context) {
-        ReflectType m = defaultNutsElementFactoryService.getTypesRepository().getType(typeOfSrc);
+        NutsReflectType m = defaultNutsElementFactoryService.getTypesRepository().getType(typeOfSrc);
         Map<String, Object> obj = new LinkedHashMap<>();
-        for (ReflectProperty property : m.getProperties()) {
+        for (NutsReflectProperty property : m.getProperties()) {
             final Object v = property.read(src);
             if (!property.isDefaultValue(v)) {
                 obj.put(property.getName(), context.destruct(v, null));
@@ -39,9 +39,9 @@ public class NutsElementMapperObjReflect implements NutsElementMapper<Object> {
 
     @Override
     public NutsElement createElement(Object src, Type typeOfSrc, NutsElementFactoryContext context) {
-        ReflectType m = defaultNutsElementFactoryService.getTypesRepository().getType(typeOfSrc);
+        NutsReflectType m = defaultNutsElementFactoryService.getTypesRepository().getType(typeOfSrc);
         NutsObjectElementBuilder obj = context.elem().ofObject();
-        for (ReflectProperty property : m.getProperties()) {
+        for (NutsReflectProperty property : m.getProperties()) {
             final Object v = property.read(src);
             if (!property.isDefaultValue(v)) {
                 obj.set(property.getName(), context.objectToElement(v, null));
@@ -144,7 +144,7 @@ public class NutsElementMapperObjReflect implements NutsElementMapper<Object> {
         if (Modifier.isAbstract(mod)) {
             throw new NutsIllegalArgumentException(session, NutsMessage.ofCstyle("cannot instantiate abstract class %s", typeOfResult));
         }
-        ReflectType m = defaultNutsElementFactoryService.getTypesRepository().getType(typeOfResult);
+        NutsReflectType m = defaultNutsElementFactoryService.getTypesRepository().getType(typeOfResult);
         Object instance;
         if (m.hasSessionConstructor()) {
             instance = m.newInstance(session);
@@ -153,7 +153,7 @@ public class NutsElementMapperObjReflect implements NutsElementMapper<Object> {
         }
         NutsObjectElement eobj = o.asObject().get(session);
         NutsElements prv = context.elem();
-        for (ReflectProperty property : m.getProperties()) {
+        for (NutsReflectProperty property : m.getProperties()) {
             if (property.isWrite()) {
                 NutsElement v = eobj.get(property.getName()).orNull();
                 if (v != null) {

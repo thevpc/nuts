@@ -102,6 +102,10 @@ net.thevpc.nuts.runtime.standalone.dependency.solver.DefaultNutsDependencySolver
 
 net.thevpc.nuts.runtime.standalone.xtra.throwables.DefaultNutsApplicationExceptionHandler
 
+net.thevpc.nuts.runtime.standalone.util.reflect.DefaultNutsReflectRepository
+
+net.thevpc.nuts.runtime.standalone.util.reflect.DefaultNutsReflectConfigurationBuilder
+
 ##################### Settings Subcommands!
 
 net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.archetype.NutsSettingsArchetypeSubCommand

@@ -21,7 +21,7 @@
  * governing permissions and limitations under the License.
  * <br> ====================================================================
  */
-package net.thevpc.nuts.runtime.standalone.util.reflect;
+package net.thevpc.nuts.util;
 
 import java.lang.reflect.Type;
 
@@ -29,11 +29,11 @@ import java.lang.reflect.Type;
  *
  * @author thevpc
  */
-public interface ReflectProperty {
+public interface NutsReflectProperty {
 
     String getName();
     
-    ReflectPropertyDefaultValueStrategy getDefaultValueStrategy();
+    NutsReflectPropertyDefaultValueStrategy getDefaultValueStrategy();
     
     Type getPropertyType();
     
@@ -62,12 +62,12 @@ public interface ReflectProperty {
      * @param strategy default strategy
      * @return true when the given value is the default value for the property itself
      */
-    boolean isDefaultValue(Object value,ReflectPropertyDefaultValueStrategy strategy);
+    boolean isDefaultValue(Object value, NutsReflectPropertyDefaultValueStrategy strategy);
 
     Object read(Object instance);
 
     void write(Object instance, Object value);
 
-    ReflectType getType();
+    NutsReflectType getType();
 
 }

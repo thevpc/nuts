@@ -21,36 +21,40 @@
  * governing permissions and limitations under the License.
  * <br> ====================================================================
  */
-package net.thevpc.nuts.runtime.standalone.util.reflect;
+package net.thevpc.nuts.util;
+
+import net.thevpc.nuts.NutsSession;
+import net.thevpc.nuts.spi.NutsComponent;
 
 import java.util.function.Function;
 
 /**
  *
  * @author thevpc
+ * @since 0.8.4
  */
-public interface ReflectConfigurationBuilder {
+public interface NutsReflectConfigurationBuilder extends NutsComponent {
 
-    static ReflectConfigurationBuilder create() {
-        return new DefaultReflectConfigurationBuilder();
+    static NutsReflectConfigurationBuilder of(NutsSession session) {
+        return session.extensions().createSupported(NutsReflectConfigurationBuilder.class, true, session);
     }
 
-    ReflectConfiguration build();
+    NutsReflectConfiguration build();
 
-    Function<Class, ReflectPropertyAccessStrategy> getPropertyAccessStrategy();
+    Function<Class, NutsReflectPropertyAccessStrategy> getPropertyAccessStrategy();
 
-    Function<Class, ReflectPropertyDefaultValueStrategy> getPropertyDefaultValueStrategy();
+    Function<Class, NutsReflectPropertyDefaultValueStrategy> getPropertyDefaultValueStrategy();
 
-    ReflectConfigurationBuilder setPropertyAccessStrategy(Function<Class, ReflectPropertyAccessStrategy> propertyAccessStrategy);
+    NutsReflectConfigurationBuilder setPropertyAccessStrategy(Function<Class, NutsReflectPropertyAccessStrategy> propertyAccessStrategy);
 
-    ReflectConfigurationBuilder setPropertyAccessStrategy(ReflectPropertyAccessStrategy propertyAccessStrategy);
+    NutsReflectConfigurationBuilder setPropertyAccessStrategy(NutsReflectPropertyAccessStrategy propertyAccessStrategy);
 
-    ReflectConfigurationBuilder setPropertyDefaultValueStrategy(ReflectPropertyDefaultValueStrategy propertyDefaultValueStrategy);
+    NutsReflectConfigurationBuilder setPropertyDefaultValueStrategy(NutsReflectPropertyDefaultValueStrategy propertyDefaultValueStrategy);
     
-    ReflectConfigurationBuilder setPropertyDefaultValueStrategy(Function<Class, ReflectPropertyDefaultValueStrategy> propertyDefaultValueStrategy);
+    NutsReflectConfigurationBuilder setPropertyDefaultValueStrategy(Function<Class, NutsReflectPropertyDefaultValueStrategy> propertyDefaultValueStrategy);
 
-    ReflectConfigurationBuilder unsetPropertyAccessStrategy();
+    NutsReflectConfigurationBuilder unsetPropertyAccessStrategy();
 
-    ReflectConfigurationBuilder unsetPropertyDefaultValueStrategy();
+    NutsReflectConfigurationBuilder unsetPropertyDefaultValueStrategy();
 
 }

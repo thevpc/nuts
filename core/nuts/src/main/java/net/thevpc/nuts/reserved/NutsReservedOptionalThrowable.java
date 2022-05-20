@@ -10,7 +10,7 @@ public abstract class NutsReservedOptionalThrowable<T> extends NutsReservedOptio
 
     static {
         String property = System.getProperty("nuts.optional.debug");
-        DEBUG = (property == null || property.trim().isEmpty() || Boolean.parseBoolean(property));
+        DEBUG = Boolean.parseBoolean(property);
     }
 
     private Throwable rootStack = DEBUG ? new Throwable() : null;
