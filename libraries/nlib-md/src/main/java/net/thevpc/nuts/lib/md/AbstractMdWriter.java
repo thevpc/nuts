@@ -36,6 +36,9 @@ public abstract class AbstractMdWriter implements MdWriter {
     public abstract void writeImpl(MdElement element, WriteContext last);
 
     protected void write(String text) {
+        if(text==null){
+            return;
+        }
         try {
             writer.write(text);
         } catch (IOException ex) {

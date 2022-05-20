@@ -10,6 +10,7 @@ import net.thevpc.nuts.text.NutsTexts;
 import org.asciidoctor.Asciidoctor;
 import org.asciidoctor.OptionsBuilder;
 import org.asciidoctor.SafeMode;
+import org.yaml.snakeyaml.Yaml;
 
 import java.io.*;
 import java.nio.file.Files;
@@ -23,7 +24,8 @@ public class NOpenAPIService {
 
     private NutsApplicationContext appContext;
     private OpenApiParser openApiParser = new OpenApiParser();
-    private int maxExampleInlineLength=80;
+    private int maxExampleInlineLength = 80;
+
     public NOpenAPIService(NutsApplicationContext appContext) {
         this.appContext = appContext;
     }
@@ -52,7 +54,7 @@ public class NOpenAPIService {
                 temp = addExtension(source, "adoc").toString();
             } else {
                 temp = NutsPaths.of(session)
-                        .createTempFile("temp.adoc",session).toString();
+                        .createTempFile("temp.adoc", session).toString();
             }
             writeAdoc(md, temp, keep && session.isPlainTrace());
             if (new File(target).getParentFile() != null) {
@@ -97,7 +99,7 @@ public class NOpenAPIService {
     }
 
     private Path addExtension(String source, String ext) {
-        Path path = Paths.get(source);
+        Path path = Paths.get(source).normalize().toAbsolutePath();
         String n = path.getFileName().toString();
         if (n.endsWith(".json")) {
             n = n.substring(0, n.length() - ".json".length()) + "." + ext;
@@ -113,7 +115,7 @@ public class NOpenAPIService {
 
     private MdDocument toMarkdown(String source) {
         boolean json = false;
-        Path sourcePath = Paths.get(source);
+        Path sourcePath = Paths.get(source).normalize().toAbsolutePath();
         try (BufferedReader r = Files.newBufferedReader(sourcePath)) {
             String t;
             while ((t = r.readLine()) != null) {
@@ -140,9 +142,9 @@ public class NOpenAPIService {
         if (json) {
             return NutsElements.of(session).json().parse(inputStream, NutsElement.class);
         } else {
-            return NutsElements.of(session).json().parse(inputStream, NutsElement.class);
-//            final Object o = new Yaml().load(inputStream);
-//            return appContext.getWorkspace().elem().toElement(o);
+//            return NutsElements.of(session).json().parse(inputStream, NutsElement.class);
+            final Object o = new Yaml().load(inputStream);
+            return NutsElements.of(session).toElement(o);
         }
     }
 
@@ -305,7 +307,7 @@ public class NOpenAPIService {
 
 
     private void _fillSchemaTypes(NutsObjectElement entries, List<MdElement> all) {
-        Map<String, TypeInfo> allTypes = openApiParser.parseTypes(entries,appContext.getSession());
+        Map<String, TypeInfo> allTypes = openApiParser.parseTypes(entries, appContext.getSession());
         if (allTypes.isEmpty()) {
             return;
         }
@@ -358,7 +360,7 @@ public class NOpenAPIService {
         NutsSession session = appContext.getSession();
         all.add(MdFactory.endParagraph());
         all.add(MdFactory.title(2, "API PATHS"));
-        NutsObjectElement schemas = entries.getObjectByPath("components","schemas").get(session);
+        NutsObjectElement schemas = entries.getObjectByPath("components", "schemas").orNull();
         NutsElements prv = NutsElements.of(session);
         for (NutsElementEntry path : entries.get(prv.ofString("paths")).flatMap(NutsElement::asObject).get(session)) {
             String url = path.getKey().asString().get(session);
@@ -399,6 +401,7 @@ public class NOpenAPIService {
         NutsElements prv = NutsElements.of(session);
         for (NutsElement srv : entries.getArray(prv.ofString("servers")).orElse(prv.ofEmptyArray())) {
             NutsObjectElement srvObj = (NutsObjectElement) srv.asObject().orElse(prv.ofEmptyObject());
+            all.add(MdFactory.endParagraph());
             all.add(MdFactory.title(4, srvObj.getString("url").orNull()));
             all.add(MdFactory.text(srvObj.getString("description").orNull()));
             NutsElement vars = srvObj.get(prv.ofString("variables")).orNull();
@@ -423,10 +426,10 @@ public class NOpenAPIService {
         }
     }
 
-    private MdDocument toMarkdown(InputStream inputStream, boolean json,String folder) {
+    private MdDocument toMarkdown(InputStream inputStream, boolean json, String folder) {
         NutsSession session = appContext.getSession();
         MdDocumentBuilder doc = new MdDocumentBuilder();
-        List<String> options=new ArrayList<>(
+        List<String> options = new ArrayList<>(
                 Arrays.asList(
                         ":source-highlighter: coderay",
                         ":icons: font",
@@ -439,8 +442,8 @@ public class NOpenAPIService {
                         ":chapter-label:"
                 )
         );
-        if(Files.exists(Paths.get(folder).resolve("logo.png"))){
-            options.add(":title-logo-image: logo.png");
+        if (Files.exists(Paths.get(folder).resolve("logo.png"))) {
+            options.add(":title-logo-image: " + Paths.get(folder).resolve("logo.png").normalize().toAbsolutePath().toString());
         }
         doc.setProperty("headers", options.toArray(new String[0]));
         doc.setDate(LocalDate.now());
@@ -484,18 +487,17 @@ public class NOpenAPIService {
                 headerParameters.stream().map(
                         headerParameter -> {
                             NutsObjectElement obj = headerParameter.asObject().orElse(NutsElements.of(session).ofEmptyObject());
-                            boolean pdeprecated=obj.getBoolean("pdeprecated").orElse(false);
+                            boolean pdeprecated = obj.getBoolean("pdeprecated").orElse(false);
                             String type = _StringUtils.nvl(obj.getString("type").orNull(), "string")
-                                    + (obj.getBoolean("required").orElse(false) ? " [required]" : " [optional]")
-                                    ;
+                                    + (obj.getBoolean("required").orElse(false) ? " [required]" : " [optional]");
                             return new MdRow(
                                     new MdElement[]{
-                                            MdFactory.codeBacktick3("", _StringUtils.nvl(obj.getString("name").orNull(),"unknown")
-                                                    + (pdeprecated?" [DEPRECATED]":"")
+                                            MdFactory.codeBacktick3("", _StringUtils.nvl(obj.getString("name").orNull(), "unknown")
+                                                    + (pdeprecated ? " [DEPRECATED]" : "")
                                             ),
                                             MdFactory.codeBacktick3("", type),
-                                            MdFactory.text(_StringUtils.nvl(obj.getString("description").orElse(""),"")),
-                                            MdFactory.text(_StringUtils.nvl(obj.getString("example").orElse(""),"")),
+                                            MdFactory.text(_StringUtils.nvl(obj.getString("description").orElse(""), "")),
+                                            MdFactory.text(_StringUtils.nvl(obj.getString("example").orElse(""), "")),
                                     }, false
                             );
                         }
@@ -521,8 +523,8 @@ public class NOpenAPIService {
             all.add(MdFactory.endParagraph());
         }
         NutsArrayElement parameters = call.getArray(prv.ofString("parameters"))
-                .orElseUse(()->NutsOptional.of(dparameters))
-                .orElseGet(()->NutsArrayElementBuilder.of(session).build());
+                .orElseUse(() -> NutsOptional.of(dparameters))
+                .orElseGet(() -> NutsArrayElementBuilder.of(session).build());
         List<NutsElement> headerParameters = parameters.stream().filter(x -> "header".equals(x.asObject().get(session).getString("in").orNull())).collect(Collectors.toList());
         List<NutsElement> queryParameters = parameters.stream().filter(x -> "query".equals(x.asObject().get(session).getString("in").orNull())).collect(Collectors.toList());
         List<NutsElement> pathParameters = parameters.stream().filter(x -> "path".equals(x.asObject().get(session).getString("in").orNull())).collect(Collectors.toList());
@@ -555,15 +557,17 @@ public class NOpenAPIService {
             if (requestBody != null && !requestBody.isEmpty()) {
                 boolean required = requestBody.getBoolean("required").orElse(false);
                 String desc = requestBody.getString("description").orElse("");
-                NutsObjectElement r = requestBody.getObject("content").orElseGet(()->NutsObjectElement.ofEmpty(session));
+                NutsObjectElement r = requestBody.getObject("content").orElseGet(() -> NutsObjectElement.ofEmpty(session));
                 for (NutsElementEntry ii : r) {
                     all.add(MdFactory.endParagraph());
                     all.add(MdFactory.title(5, "REQUEST BODY - " + ii.getKey() + (required ? " [required]" : "[optional]")));
                     all.add(MdFactory.text(desc));
-                    TypeInfo o = openApiParser.parseOneType(ii.getValue().asObject().get(session), null,session);
+                    TypeInfo o = openApiParser.parseOneType(ii.getValue().asObject().get(session), null, session);
                     if (o.ref != null) {
+                        all.add(MdFactory.endParagraph());
                         all.add(MdFactory.title(5, "REQUEST TYPE - " + o.ref));
                     } else {
+                        all.add(MdFactory.endParagraph());
                         all.add(MdFactory.codeBacktick3("javascript", toCode(o, true, "")));
                     }
                 }
@@ -580,9 +584,9 @@ public class NOpenAPIService {
                     all.add(MdFactory.title(5, "STATUS CODE - " + s));
                     all.add(MdFactory.text(v.asObject().get(session).getString("description").orElse("")));
                     for (NutsElementEntry content : v.asObject().get(session).getObject("content").orElse(NutsObjectElement.ofEmpty(session))) {
-                        TypeInfo o = openApiParser.parseOneType(content.getValue().asObject().get(session), null,session);
+                        TypeInfo o = openApiParser.parseOneType(content.getValue().asObject().get(session), null, session);
                         if (o.userType.equals("$ref")) {
-                            if(NutsBlankable.isBlank(o.example)) {
+                            if (NutsBlankable.isBlank(o.example)) {
                                 all.add(MdFactory.table()
                                         .addColumns(
                                                 MdFactory.column().setName("RESPONSE MODEL"),
@@ -595,7 +599,7 @@ public class NOpenAPIService {
                                                 )
                                         ).build()
                                 );
-                            }else if(o.example.toString().trim().length()<=maxExampleInlineLength){
+                            } else if (o.example.toString().trim().length() <= maxExampleInlineLength) {
                                 all.add(MdFactory.table()
                                         .addColumns(
                                                 MdFactory.column().setName("RESPONSE MODEL"),
@@ -610,7 +614,7 @@ public class NOpenAPIService {
                                                 )
                                         ).build()
                                 );
-                            }else{
+                            } else {
                                 all.add(MdFactory.table()
                                         .addColumns(
                                                 MdFactory.column().setName("RESPONSE MODEL"),
@@ -625,7 +629,7 @@ public class NOpenAPIService {
                                                 )
                                         ).build()
                                 );
-                                all.add(MdFactory.codeBacktick3("json", "\n"+o.example.toString()));
+                                all.add(MdFactory.codeBacktick3("json", "\n" + o.example.toString()));
                             }
                         } else {
                             all.add(MdFactory.endParagraph());
@@ -634,7 +638,7 @@ public class NOpenAPIService {
                             if (o.ref != null) {
                                 all.add(MdFactory.title(6, "RESPONSE TYPE - " + o.ref));
                             } else {
-                                all.add(MdFactory.codeBacktick3("javascript", "\n"+toCode(o, true, "")));
+                                all.add(MdFactory.codeBacktick3("javascript", "\n" + toCode(o, true, "")));
                             }
                         }
                     }
@@ -662,8 +666,7 @@ public class NOpenAPIService {
             String type = o.userType;
             switch (o.userType) {
                 case "string":
-                case "enum":
-                {
+                case "enum": {
                     if (!NutsBlankable.isBlank(o.minLength) && !NutsBlankable.isBlank(o.maxLength)) {
                         type += ("[" + o.minLength.trim() + "," + o.maxLength.trim() + "]");
                     } else if (!NutsBlankable.isBlank(o.minLength)) {

@@ -13,17 +13,12 @@ public class OpenApiParser {
     public TypeInfo parseOneType(NutsObjectElement value, String name0, NutsSession session) {
         NutsObjectElement v = value.asObject().get(session);
         TypeInfo tt=new TypeInfo();
-        String t = v.getString("type").get(session);
-        String name = v.getString("name").get(session);
-        if(name==null){
-            name=name0;
-        }
-        tt.name= name;
+        tt.name= v.getString("name").orElse(name0);
         tt.type = value.getString("type").orNull();
         tt.description=v.getString("description").orNull();
         tt.summary=v.getString("summary").orNull();
-        tt.example = value.get("example");
-        if(!NutsBlankable.isBlank(value.getString("$ref"))) {
+        tt.example = value.get("example").orNull();
+        if(!NutsBlankable.isBlank(value.getString("$ref").orNull())) {
             tt.refLong = value.getString("$ref").orNull();
             tt.ref = userNameFromRefValue(tt.refLong);
             tt.userType = "$ref";
@@ -31,7 +26,7 @@ public class OpenApiParser {
             tt.refLong=value.getStringByPath("schema","$ref").orNull();
             tt.ref = userNameFromRefValue(tt.refLong);
             tt.userType = "$ref";
-        } else if (value.get("properties") != null || "object".equals(t)) {
+        } else if (value.get("properties").orNull() != null || "object".equals(tt.type)) {
             Set<String> requiredSet = new HashSet<>();
             NutsArrayElement requiredElem = v.getArray("required").orNull();
             if (requiredElem != null) {
@@ -92,8 +87,8 @@ public class OpenApiParser {
     public Map<String,TypeInfo> parseTypes(NutsObjectElement root,NutsSession session) {
 
         Map<String,TypeInfo> res=new LinkedHashMap<>();
-        NutsObjectElement schemas = root.getObjectByPath("components","schemas").get(session);
-        if (schemas.isEmpty()) {
+        NutsObjectElement schemas = root.getObjectByPath("components","schemas").orNull();
+        if (schemas==null || schemas.isEmpty()) {
             return res;
         }
         for (NutsElementEntry entry : schemas) {
