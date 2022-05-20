@@ -2,13 +2,12 @@ package net.thevpc.nuts.tutorial.naf.spring.helloworld;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.io.NutsPrintStream;
-import net.thevpc.nuts.lib.spring.boot.NutsSpringBootConfig;
+import net.thevpc.nuts.lib.spring.boot.NutsSpringBootConfiguration;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Import;
 
 @SpringBootApplication
-@Import(NutsSpringBootConfig.class)
 public class AppExample implements NutsApplication {
     public static void main(String[] args) {
         SpringApplication.run(AppExample.class, args);
