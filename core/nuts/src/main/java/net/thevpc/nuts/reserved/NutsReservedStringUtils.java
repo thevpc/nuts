@@ -10,43 +10,8 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 public class NutsReservedStringUtils {
-    public static List<String> split(String value, String chars, boolean trim, boolean ignoreEmpty) {
-        if (value == null) {
-            value = "";
-        }
-        StringTokenizer st = new StringTokenizer(value, chars, true);
-        List<String> all = new ArrayList<>();
-        boolean wasSep = true;
-        while (st.hasMoreElements()) {
-            String s = st.nextToken();
-            if (chars.indexOf(s.charAt(0)) >= 0) {
-                if (wasSep) {
-                    s = "";
-                    if (!ignoreEmpty) {
-                        all.add(s);
-                    }
-                }
-                wasSep = true;
-            } else {
-                wasSep = false;
-                if (trim) {
-                    s = s.trim();
-                }
-                if (!ignoreEmpty || !s.isEmpty()) {
-                    all.add(s);
-                }
-            }
-        }
-        if (wasSep) {
-            if (!ignoreEmpty) {
-                all.add("");
-            }
-        }
-        return all;
-    }
-
     public static List<String> splitDefault(String str) {
-        return split(str, " ;,\n\r\t|", true, true);
+        return NutsStringUtils.split(str, " ;,\n\r\t|", true, true);
     }
 
     public static List<String> parseAndTrimToDistinctList(String s) {

@@ -1,9 +1,9 @@
 package net.thevpc.nuts.toolbox.nsh.util;
 
-import net.thevpc.nuts.util.NutsExpr;
+import net.thevpc.nuts.util.NutsExprNode;
 
 public class RowFilter {
-    NutsExpr.Node expr;
+    NutsExprNode expr;
 
 //    boolean acceptRow(long i,long max){
 //

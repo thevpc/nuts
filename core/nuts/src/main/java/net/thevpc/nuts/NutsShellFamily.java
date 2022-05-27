@@ -28,6 +28,8 @@ package net.thevpc.nuts;
 import net.thevpc.nuts.util.NutsNameFormat;
 import net.thevpc.nuts.util.NutsStringUtils;
 
+import java.util.List;
+
 /**
  * Supported Shell Families
  *
@@ -102,20 +104,20 @@ public enum NutsShellFamily implements NutsEnum {
 
     public static NutsOptional<NutsShellFamily> parse(String value) {
         return NutsStringUtils.parseEnum(value, NutsShellFamily.class, s -> {
-            String n=null;
-            if(s.getValue().contains("/")){
-                String[] parts = s.getValue().trim().toUpperCase().split("/");
-                if (parts.length > 0) {
-                    n = parts[parts.length - 1];
+            String n = null;
+            if (s.getValue().contains("/")) {
+                List<String> parts = NutsStringUtils.split(s.getValue().trim().toUpperCase(), "/",true,true);
+                if (parts.size() > 0) {
+                    n = parts.get(parts.size() - 1);
                 } else {
                     n = "";
                 }
-            }else{
-                n=s.getNormalizedValue();
+            } else {
+                n = s.getNormalizedValue();
             }
             switch (n) {
                 case "":
-                    return NutsOptional.ofEmpty(session -> NutsMessage.ofCstyle("%s is empty",NutsShellFamily.class.getSimpleName()));
+                    return NutsOptional.ofEmpty(session -> NutsMessage.ofCstyle("%s is empty", NutsShellFamily.class.getSimpleName()));
                 case "SH":
                     return NutsOptional.of(SH);
                 case "BASH":

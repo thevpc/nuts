@@ -1,5 +1,7 @@
 package net.thevpc.nuts.runtime.standalone.xtra.expr;
 
+import net.thevpc.nuts.util.NutsExprNode;
+
 import java.math.BigDecimal;
 import java.math.BigInteger;
 
@@ -132,5 +134,30 @@ public class EvalUtils {
             long bb = b.longValue();
             return new Number[]{aa, bb};
         }
+    }
+
+    public static String wrapPars(NutsExprNode n) {
+        if (n instanceof DefaultLiteralNode) {
+            String s = n.toString();
+            if (s.charAt(0) == '-' || s.charAt(0) == '+') {
+                return "(" + s + ")";
+            }
+            return s;
+        }
+        if (n instanceof DefaultVarNode) {
+            return n.toString();
+        }
+        if (n instanceof DefaultOpNode) {
+            String s = n.toString();
+            switch (s.charAt(0)) {
+                case '-':
+                case '+':
+                case '!': {
+                    return "(" + s + ")";
+                }
+            }
+            return s;
+        }
+        return "(" + n + ")";
     }
 }

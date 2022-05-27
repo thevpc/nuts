@@ -297,7 +297,7 @@ public class DefaultNutsVersion implements NutsVersion {
                     return NutsOptional.of(expression.trim());
                 }
             } else {
-                Set<String> all = new HashSet<>(NutsReservedStringUtils.split(s, ",", true, true));
+                Set<String> all = new HashSet<>(NutsStringUtils.split(s, ",", true, true));
                 if (all.size() == 1) {
                     String one = all.stream().findAny().get();
                     if (VERSION_PART_PATTERN.matcher(one).matches()) {
@@ -323,7 +323,7 @@ public class DefaultNutsVersion implements NutsVersion {
                     }
                 } else {
                     //commas==1
-                    Set<String> two = new HashSet<>(NutsReservedStringUtils.split(s, ",", true, false));
+                    Set<String> two = new HashSet<>(NutsStringUtils.split(s, ",", true, false));
                     if (two.size() == 1) {
                         String one = two.stream().findAny().get();
                         if (VERSION_PART_PATTERN.matcher(one).matches()) {

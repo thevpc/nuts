@@ -10,6 +10,7 @@ import net.thevpc.nuts.io.NutsTerminalMode;
 import net.thevpc.nuts.reserved.NutsReservedStringUtils;
 import net.thevpc.nuts.runtime.standalone.xtra.expr.StringPlaceHolderParser;
 import net.thevpc.nuts.util.NutsNameFormat;
+import net.thevpc.nuts.util.NutsStringUtils;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -46,7 +47,7 @@ public class Test30_String {
     public void test02() {
        Assertions.assertEquals(
                Arrays.asList("",""),
-               NutsReservedStringUtils.split(",", ",", true, false)
+               NutsStringUtils.split(",", ",", true, false)
        );
     }
    @Test

@@ -179,7 +179,7 @@ public final class NutsBootWorkspace {
             bootOptions.setName(workspaceName);
         }
         boolean global = bootOptions.getGlobal().orElse(false);
-        if (sandboxMode.compareTo(NutsIsolationLevel.SANDBOX)>=0) {
+        if (sandboxMode.compareTo(NutsIsolationLevel.SANDBOX) >= 0) {
             bootOptions.setStoreLocationStrategy(NutsStoreLocationStrategy.STANDALONE);
             bootOptions.setRepositoryStoreLocationStrategy(NutsStoreLocationStrategy.EXPLODED);
             global = false;
@@ -356,14 +356,14 @@ public final class NutsBootWorkspace {
             NutsIsolationLevel isolationMode = computedOptions.getIsolationLevel().orElse(NutsIsolationLevel.SYSTEM);
             if (bLog.isLoggable(Level.CONFIG)) {
                 bLog.log(Level.CONFIG, NutsLoggerVerb.START, NutsMessage.ofJstyle("bootstrap Nuts version {0}{1}- digest {1}...", Nuts.getVersion(),
-                        isolationMode== NutsIsolationLevel.SYSTEM?"":
-                        isolationMode== NutsIsolationLevel.USER?" (user mode)":
-                        isolationMode== NutsIsolationLevel.CONFINED?" (confined mode)":
-                        isolationMode== NutsIsolationLevel.SANDBOX?" (sandbox mode)":
-                        " (unsupported mode)",
+                        isolationMode == NutsIsolationLevel.SYSTEM ? "" :
+                                isolationMode == NutsIsolationLevel.USER ? " (user mode)" :
+                                        isolationMode == NutsIsolationLevel.CONFINED ? " (confined mode)" :
+                                                isolationMode == NutsIsolationLevel.SANDBOX ? " (sandbox mode)" :
+                                                        " (unsupported mode)",
                         getApiDigest()));
                 bLog.log(Level.CONFIG, NutsLoggerVerb.START, NutsMessage.ofPlain("boot-class-path:"));
-                for (String s : System.getProperty("java.class.path").split(File.pathSeparator)) {
+                for (String s : NutsStringUtils.split(System.getProperty("java.class.path"), File.pathSeparator, true, true)) {
                     bLog.log(Level.CONFIG, NutsLoggerVerb.START, NutsMessage.ofJstyle("                  {0}", s));
                 }
                 ClassLoader thisClassClassLoader = getClass().getClassLoader();
@@ -399,7 +399,7 @@ public final class NutsBootWorkspace {
             boolean resetFlag = computedOptions.getReset().orElse(false);
             boolean dryFlag = computedOptions.getDry().orElse(false);
             String _ws = computedOptions.getWorkspace().orNull();
-            if (isolationMode== NutsIsolationLevel.SANDBOX) {
+            if (isolationMode == NutsIsolationLevel.SANDBOX) {
                 Path t = null;
                 try {
                     t = Files.createTempDirectory("nuts-sandbox-" + Instant.now().toString().replace(':', '-'));
@@ -424,9 +424,9 @@ public final class NutsBootWorkspace {
                 }
                 computedOptions.setWorkspace(lastNutsWorkspaceJsonConfigPath);
             } else {
-                if (isolationMode.compareTo(NutsIsolationLevel.SYSTEM)>0 && userOptions.getGlobal().orElse(false)) {
+                if (isolationMode.compareTo(NutsIsolationLevel.SYSTEM) > 0 && userOptions.getGlobal().orElse(false)) {
                     if (userOptions.getReset().orElse(false)) {
-                        throw new NutsBootException(NutsMessage.ofCstyle("invalid option 'global' in %s mode",isolationMode));
+                        throw new NutsBootException(NutsMessage.ofCstyle("invalid option 'global' in %s mode", isolationMode));
                     }
                 }
                 if (_ws != null && _ws.matches("[a-z-]+://.*")) {
@@ -465,31 +465,25 @@ public final class NutsBootWorkspace {
                 computedOptions.setWorkspace(lastNutsWorkspaceJsonConfigPath);
                 computedOptions.setName(lastConfigLoaded.getName().orNull());
                 computedOptions.setUuid(lastConfigLoaded.getUuid().orNull());
+                NutsWorkspaceBootOptionsBuilder curr;
                 if (!resetFlag) {
-                    computedOptions.setBootRepositories(lastConfigLoaded.getBootRepositories().orNull());
-                    computedOptions.setJavaCommand(lastConfigLoaded.getJavaCommand().orNull());
-                    computedOptions.setJavaOptions(lastConfigLoaded.getJavaOptions().orNull());
-                    computedOptions.setExtensionsSet(NutsReservedCollectionUtils.nonNullSet(lastConfigLoaded.getExtensionsSet().orNull()));
-                    computedOptions.setStoreLocationStrategy(lastConfigLoaded.getStoreLocationStrategy().orNull());
-                    computedOptions.setRepositoryStoreLocationStrategy(lastConfigLoaded.getRepositoryStoreLocationStrategy().orNull());
-                    computedOptions.setStoreLocationLayout(lastConfigLoaded.getStoreLocationLayout().orNull());
-                    computedOptions.setStoreLocations(NutsReservedCollectionUtils.nonNullMap(lastConfigLoaded.getStoreLocations().orNull()));
-                    computedOptions.setHomeLocations(NutsReservedCollectionUtils.nonNullMap(lastConfigLoaded.getHomeLocations().orNull()));
+                    curr = computedOptions;
                 } else {
                     lastWorkspaceOptions = new DefaultNutsWorkspaceBootOptionsBuilder();
-                    lastWorkspaceOptions.setWorkspace(lastNutsWorkspaceJsonConfigPath);
-                    lastWorkspaceOptions.setName(lastConfigLoaded.getName().orNull());
-                    lastWorkspaceOptions.setUuid(lastConfigLoaded.getUuid().orNull());
-                    lastWorkspaceOptions.setBootRepositories(lastConfigLoaded.getBootRepositories().orNull());
-                    lastWorkspaceOptions.setJavaCommand(lastConfigLoaded.getJavaCommand().orNull());
-                    lastWorkspaceOptions.setJavaOptions(lastConfigLoaded.getJavaOptions().orNull());
-                    lastWorkspaceOptions.setExtensionsSet(NutsReservedCollectionUtils.nonNullSet(lastConfigLoaded.getExtensionsSet().orNull()));
-                    lastWorkspaceOptions.setStoreLocationStrategy(lastConfigLoaded.getStoreLocationStrategy().orNull());
-                    lastWorkspaceOptions.setRepositoryStoreLocationStrategy(lastConfigLoaded.getRepositoryStoreLocationStrategy().orNull());
-                    lastWorkspaceOptions.setStoreLocationLayout(lastConfigLoaded.getStoreLocationLayout().orNull());
-                    lastWorkspaceOptions.setStoreLocations(NutsReservedCollectionUtils.nonNullMap(lastConfigLoaded.getStoreLocations().orNull()));
-                    lastWorkspaceOptions.setHomeLocations(NutsReservedCollectionUtils.nonNullMap(lastConfigLoaded.getHomeLocations().orNull()));
+                    curr = lastWorkspaceOptions;
+                    curr.setWorkspace(lastNutsWorkspaceJsonConfigPath);
+                    curr.setName(lastConfigLoaded.getName().orNull());
+                    curr.setUuid(lastConfigLoaded.getUuid().orNull());
                 }
+                curr.setBootRepositories(lastConfigLoaded.getBootRepositories().orNull());
+                curr.setJavaCommand(lastConfigLoaded.getJavaCommand().orNull());
+                curr.setJavaOptions(lastConfigLoaded.getJavaOptions().orNull());
+                curr.setExtensionsSet(NutsReservedCollectionUtils.nonNullSet(lastConfigLoaded.getExtensionsSet().orNull()));
+                curr.setStoreLocationStrategy(lastConfigLoaded.getStoreLocationStrategy().orNull());
+                curr.setRepositoryStoreLocationStrategy(lastConfigLoaded.getRepositoryStoreLocationStrategy().orNull());
+                curr.setStoreLocationLayout(lastConfigLoaded.getStoreLocationLayout().orNull());
+                curr.setStoreLocations(NutsReservedCollectionUtils.nonNullMap(lastConfigLoaded.getStoreLocations().orNull()));
+                curr.setHomeLocations(NutsReservedCollectionUtils.nonNullMap(lastConfigLoaded.getHomeLocations().orNull()));
             }
             revalidateLocations(computedOptions, workspaceName, immediateLocation, isolationMode);
             long countDeleted = 0;
@@ -693,10 +687,8 @@ public final class NutsBootWorkspace {
                     LinkedHashSet<String> excludedExtensions = new LinkedHashSet<>();
                     if (computedOptions.getExcludedExtensions().isPresent()) {
                         for (String excludedExtensionGroup : computedOptions.getExcludedExtensions().get()) {
-                            for (String excludedExtension : excludedExtensionGroup.split("[;, ]")) {
-                                if (excludedExtension.length() > 0) {
-                                    excludedExtensions.add(NutsId.of(excludedExtension).get().getShortName());
-                                }
+                            for (String excludedExtension : NutsStringUtils.split(excludedExtensionGroup, ";,", true, true)) {
+                                excludedExtensions.add(NutsId.of(excludedExtension).get().getShortName());
                             }
                         }
                     }
@@ -785,7 +777,9 @@ public final class NutsBootWorkspace {
 
             String workspaceBootLibFolder = computedOptions.getStoreLocation(NutsStoreLocation.LIB).get() + File.separator + NutsConstants.Folders.ID;
 
-            NutsRepositoryLocation[] repositories = Arrays.stream(computedOptions.getBootRepositories().orElse("").split("[\n;]")).map(String::trim).filter(x -> x.length() > 0).map(NutsRepositoryLocation::of).toArray(NutsRepositoryLocation[]::new);
+            NutsRepositoryLocation[] repositories =
+                    NutsStringUtils.split(computedOptions.getBootRepositories().orNull(),"\n;",true,true)
+                            .stream().map(NutsRepositoryLocation::of).toArray(NutsRepositoryLocation[]::new);
 
             NutsRepositoryLocation workspaceBootLibFolderRepo = NutsRepositoryLocation.of("nuts@" + workspaceBootLibFolder);
             computedOptions.setRuntimeBootDependencyNode(createClassLoaderNode(computedOptions.getRuntimeBootDescriptor().orNull(), repositories, workspaceBootLibFolderRepo, recover, errorList, true));
@@ -845,7 +839,7 @@ public final class NutsBootWorkspace {
                     exceptions.add(ex);
                     bLog.log(Level.SEVERE, NutsMessage.ofJstyle("unable to create workspace using factory {0}", a), ex);
                     // if the creation generates an error
-                    //just stop
+                    // just stop
                     break;
                 }
                 if (nutsWorkspace != null) {

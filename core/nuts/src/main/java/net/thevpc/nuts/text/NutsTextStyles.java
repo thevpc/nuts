@@ -45,7 +45,7 @@ public final class NutsTextStyles implements Iterable<NutsTextStyle>, NutsEnum {
     }
 
     public static NutsTextStyles of(NutsTextStyle... others) {
-        if (others==null || others.length==0) {
+        if (others == null || others.length == 0) {
             return PLAIN;
         }
         Map<NutsTextStyleType, NutsTextStyle> visited = new TreeMap<>();
@@ -72,16 +72,16 @@ public final class NutsTextStyles implements Iterable<NutsTextStyle>, NutsEnum {
     public static NutsOptional<NutsTextStyles> parse(String value) {
         value = NutsStringUtils.trim(value);
         if (value.isEmpty()) {
-            return NutsOptional.ofEmpty(s -> NutsMessage.ofCstyle("%s is empty",NutsTextStyles.class.getSimpleName()));
+            return NutsOptional.ofEmpty(s -> NutsMessage.ofCstyle("%s is empty", NutsTextStyles.class.getSimpleName()));
         }
         List<NutsTextStyle> all = new ArrayList<>();
-        for (String s : value.split(",")) {
+        for (String s : NutsStringUtils.split(value, ",", true, true)) {
             s = s.trim();
             if (s.length() > 0) {
                 NutsTextStyle a = NutsTextStyle.parse(s).orNull();
                 if (a == null) {
                     String finalValue = value;
-                    return NutsOptional.ofError(session -> NutsMessage.ofCstyle(NutsTextStyles.class.getSimpleName() + " invalid value : %s", finalValue));
+                    return NutsOptional.ofError(session -> NutsMessage.ofCstyle("%s invalid value : %s", NutsTextStyles.class.getSimpleName(), finalValue));
                 }
                 all.add(a);
             }

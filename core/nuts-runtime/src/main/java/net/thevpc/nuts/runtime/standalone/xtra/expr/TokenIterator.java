@@ -9,12 +9,12 @@ import java.util.Iterator;
 class TokenIterator implements Iterator<NutsToken> {
     private final StreamTokenizerExt st;
     private NutsToken previous;
-    private boolean returnSpace=false;
-    private boolean returnComment=false;
+    private boolean returnSpace = false;
+    private boolean returnComment = false;
     private boolean doReplay;
 
     public TokenIterator(Reader r, NutsSession session) {
-        this.st=new StreamTokenizerExt(r,session);
+        this.st = new StreamTokenizerExt(r, session);
     }
 
     public void pushBack() {
@@ -55,9 +55,21 @@ class TokenIterator implements Iterator<NutsToken> {
                 case ' ':
                 case '\t':
                 case StreamTokenizer.TT_EOL: {
-                    if(returnSpace) {
+                    if (returnSpace) {
                         previous = new NutsToken(NutsToken.TT_SPACE, st.sval, 0, st.lineno());
                         return true;
+                    }
+                    break;
+                }
+                case '&':{
+                    int i = st.nextToken();
+                    if(i==StreamTokenizer.TT_EOF){
+                        //
+                    }else if(i=='&'){
+                        previous = new NutsToken(NutsToken.TT_AND, "&&", 0, st.lineno());
+                    }else{
+                        st.pushBack();
+                        previous = new NutsToken(nt, "&", 0, st.lineno());
                     }
                     break;
                 }
@@ -67,7 +79,7 @@ class TokenIterator implements Iterator<NutsToken> {
                         case '\n':
                         case '\r':
                         case '\t': {
-                            if(returnSpace) {
+                            if (returnSpace) {
                                 previous = new NutsToken(NutsToken.TT_SPACE, st.sval, 0, st.lineno());
                                 return true;
                             }
@@ -84,17 +96,23 @@ class TokenIterator implements Iterator<NutsToken> {
                         case NutsToken.TT_BIG_INT:
                         case NutsToken.TT_FLOAT:
                         case NutsToken.TT_DOUBLE:
-                        case NutsToken.TT_BIG_DECIMAL:
-                        {
+                        case NutsToken.TT_BIG_DECIMAL: {
                             previous = new NutsToken(st.ttype, st.sval, st.nval, st.lineno());
                             return true;
                         }
-                        default:{
+                        case NutsToken.TT_WORD: {
                             String s = st.sval;
-                            if(st.ttype>=32){
-                                s=String.valueOf((char)st.ttype);
-                            }else{
-                                s=null;
+                            previous = new NutsToken(st.ttype, s, 0, st.lineno());
+                            return true;
+                        }
+                        default: {
+                            String s = st.sval;
+                            if (st.ttype >= 0) {
+                                if (st.ttype >= 32) {
+                                    s = String.valueOf((char) st.ttype);
+                                } else {
+                                    s = null;
+                                }
                             }
                             previous = new NutsToken(st.ttype, s, 0, st.lineno());
                             return true;

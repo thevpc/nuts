@@ -1,43 +1,41 @@
 package net.thevpc.nuts.runtime.standalone.xtra.expr;
 
-import net.thevpc.nuts.util.NutsExpr;
-import net.thevpc.nuts.NutsIllegalArgumentException;
-import net.thevpc.nuts.NutsMessage;
+import net.thevpc.nuts.util.*;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class DefaultOpNode implements NutsExpr.Node {
+public class DefaultOpNode implements NutsExprNode {
     private final String name;
-    private final List<NutsExpr.Node> args;
-    private final NutsExpr.OpType op;
+    private final List<NutsExprNode> args;
+    private final NutsExprOpType op;
     private final int precedence;
 
-    public DefaultOpNode(String name, NutsExpr.OpType type, int precedence, List<NutsExpr.Node> args) {
+    public DefaultOpNode(String name, NutsExprOpType type, int precedence, List<NutsExprNode> args) {
         this.op = type;
         this.name = name;
         this.precedence = precedence;
         this.args = args;
     }
 
-    public NutsExpr.Node getArg(int index) {
+    public NutsExprNode getArg(int index) {
         if (index >= args.size()) {
             throw new IllegalArgumentException("Missing argument " + (index + 1) + " for " + name);
         }
         return args.get(index);
     }
 
-    public List<NutsExpr.Node> getArgs() {
+    public List<NutsExprNode> getArgs() {
         return args;
     }
 
     @Override
-    public NutsExpr.NodeType getType() {
-        return NutsExpr.NodeType.OPERATOR;
+    public NutsExprNodeType getType() {
+        return NutsExprNodeType.OPERATOR;
     }
 
     @Override
-    public List<NutsExpr.Node> getChildren() {
+    public List<NutsExprNode> getChildren() {
         return args;
     }
 
@@ -49,14 +47,14 @@ public class DefaultOpNode implements NutsExpr.Node {
     public String toString() {
         switch (op) {
             case PREFIX: {
-                return name + " " + DefaultNutsExpr.wrapPars(args.get(0));
+                return name + " " + EvalUtils.wrapPars(args.get(0));
             }
             case POSTFIX: {
-                return DefaultNutsExpr.wrapPars(args.get(0)) + name;
+                return EvalUtils.wrapPars(args.get(0)) + name;
             }
             case INFIX: {
                 if (args.size() == 2) {
-                    return DefaultNutsExpr.wrapPars(args.get(0)) + " " + name + " " + DefaultNutsExpr.wrapPars(args.get(1));
+                    return EvalUtils.wrapPars(args.get(0)) + " " + name + " " + EvalUtils.wrapPars(args.get(1));
                 }
                 if (args.size() > 2) {
                     StringBuilder sb = new StringBuilder();
@@ -64,7 +62,7 @@ public class DefaultOpNode implements NutsExpr.Node {
                         if (i > 0) {
                             sb.append(" ").append(name).append(" ");
                         }
-                        sb.append(DefaultNutsExpr.wrapPars(args.get(i)));
+                        sb.append(EvalUtils.wrapPars(args.get(i)));
                     }
                     return sb.toString();
                 }
@@ -76,11 +74,7 @@ public class DefaultOpNode implements NutsExpr.Node {
     }
 
     @Override
-    public Object eval(NutsExpr context) {
-        NutsExpr.Fct f = context.getFunction(getName());
-        if (f != null) {
-            return f.eval(getName(), getArgs(), context.newChild());
-        }
-        throw new NutsIllegalArgumentException(context.getSession(), NutsMessage.ofCstyle("function not found %s", getName()));
+    public Object eval(NutsExprDeclarations context) {
+        return context.evalOperator(getName(),op,args.toArray(new NutsExprNode[0]));
     }
 }

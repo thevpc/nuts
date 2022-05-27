@@ -33,6 +33,19 @@ public class NutsToken {
     public static final int TT_NOTHING = -30;
     public static final int TT_STRING_LITERAL = -10;
     public static final int TT_SPACE = -11;
+    public static final int TT_AND = -40;
+    public static final int TT_OR = -41;
+    public static final int TT_LEFT_SHIFT = -42;
+    public static final int TT_RIGHT_SHIFT = -43;
+    public static final int TT_LEFT_SHIFT_UNSIGNED = -44;
+    public static final int TT_RIGHT_SHIFT_UNSIGNED = -45;
+    public static final int TT_LTE = -46;
+    public static final int TT_GTE = -47;
+    public static final int TT_LTGT = -48;
+    public static final int TT_EQ = -49;
+    public static final int TT_NEQ = -50;
+    public static final int TT_NEQ2 = -51;
+    public static final int TT_RIGHT_ARROW = -52;
 
     public int ttype;
     public int lineno;

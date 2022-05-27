@@ -28,6 +28,7 @@ package net.thevpc.nuts.spi;
 
 import net.thevpc.nuts.NutsBlankable;
 import net.thevpc.nuts.NutsSession;
+import net.thevpc.nuts.util.NutsStringUtils;
 
 import java.util.*;
 
@@ -62,7 +63,7 @@ public class NutsRepositorySelectorList {
         }
         NutsSelectorOp op = NutsSelectorOp.EXACT;
         List<NutsRepositorySelector> all = new ArrayList<>();
-        for (String s : expression.split("[,;]")) {
+        for (String s : NutsStringUtils.split(expression,",;",true,true)) {
             s = s.trim();
             if (s.length() > 0) {
                 if (s.startsWith("+")) {

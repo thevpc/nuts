@@ -1,21 +1,23 @@
 package net.thevpc.nuts.runtime.standalone.xtra.expr;
 
-import net.thevpc.nuts.util.NutsExpr;
+import net.thevpc.nuts.util.NutsExprDeclarations;
+import net.thevpc.nuts.util.NutsExprNode;
+import net.thevpc.nuts.util.NutsExprNodeType;
 
 import java.util.Collections;
 import java.util.List;
 
-public class DefaultVarNode implements NutsExpr.Node {
+public class DefaultVarNode implements NutsExprNode {
     private final String name;
 
     @Override
-    public NutsExpr.NodeType getType() {
-        return NutsExpr.NodeType.VARIABLE;
+    public NutsExprNodeType getType() {
+        return NutsExprNodeType.VARIABLE;
     }
 
 
     @Override
-    public List<NutsExpr.Node> getChildren() {
+    public List<NutsExprNode> getChildren() {
         return Collections.emptyList();
     }
 
@@ -29,8 +31,8 @@ public class DefaultVarNode implements NutsExpr.Node {
     }
 
     @Override
-    public Object eval(NutsExpr context) {
-        return context.getVar(name);
+    public Object eval(NutsExprDeclarations context) {
+        return context.evalGetVar(name);
     }
 
     @Override

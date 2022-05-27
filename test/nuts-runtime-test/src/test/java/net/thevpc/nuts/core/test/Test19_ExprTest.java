@@ -23,7 +23,8 @@
  */
 package net.thevpc.nuts.core.test;
 
-import net.thevpc.nuts.util.NutsExpr;
+import net.thevpc.nuts.runtime.standalone.xtra.expr.NutsToken;
+import net.thevpc.nuts.util.*;
 import net.thevpc.nuts.NutsSession;
 import net.thevpc.nuts.core.test.utils.TestUtils;
 import net.thevpc.nuts.runtime.standalone.xtra.expr.StreamTokenizerExt;
@@ -32,7 +33,6 @@ import org.junit.jupiter.api.*;
 import java.io.StringReader;
 
 /**
- *
  * @author thevpc
  */
 public class Test19_ExprTest {
@@ -43,33 +43,40 @@ public class Test19_ExprTest {
         session = TestUtils.openNewTestWorkspace();
     }
 
-    private void _retain(NutsExpr expr,String... patterns){
-        for (NutsExpr.OpType opt : NutsExpr.OpType.values()) {
-            for (String o : expr.getOperatorNames(opt)) {
-                boolean ok=false;
-                for (String pattern : patterns) {
-                    if(pattern.startsWith("prefix:")) {
-                        String so = pattern.substring("prefix:".length());
-                        if ((o.equals(so) && opt == NutsExpr.OpType.INFIX)) {
-                            ok = true;
-                            break;
-                        }
-                    }else if(pattern.startsWith("infix:")){
-                        String so=pattern.substring("infix:".length());
-                        if((o.equals(so) && opt== NutsExpr.OpType.INFIX)) {
-                            ok=true;
-                            break;
-                        }
-                    }else if(pattern.startsWith("postfix:")){
-                        String so=pattern.substring("postfix:".length());
-                        if((o.equals(so) && opt== NutsExpr.OpType.POSTFIX)) {
-                            ok=true;
-                            break;
-                        }
-                    }
-                }
-                if(!ok){
-                    expr.setOperator(o, opt, -1, false, null);
+    private boolean accept(NutsExprOpDeclaration d, String pattern) {
+        NutsExprOpType f;
+        String n;
+        if (pattern.startsWith("prefix:")) {
+            f = NutsExprOpType.PREFIX;
+            n = pattern.substring("prefix:".length());
+        } else if (pattern.startsWith("postfix:")) {
+            f = NutsExprOpType.POSTFIX;
+            n = pattern.substring("postfix:".length());
+        } else if (pattern.startsWith("infix:")) {
+            f = NutsExprOpType.INFIX;
+            n = pattern.substring("infix:".length());
+        } else {
+            return false;
+        }
+        return f.equals(d.getType()) && n.equals(d.getName());
+
+    }
+
+    private boolean accept(NutsExprOpDeclaration d, String... patterns) {
+        for (String pattern : patterns) {
+            if (accept(d, pattern)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private void _retain(NutsExprDeclarations expr, String... patterns) {
+        if (expr instanceof NutsExprMutableDeclarations) {
+            NutsExprMutableDeclarations d = (NutsExprMutableDeclarations) expr;
+            for (NutsExprOpDeclaration operator : d.getOperators()) {
+                if (!accept(operator, patterns)) {
+                    d.removeDeclaration(operator);
                 }
             }
         }
@@ -77,34 +84,73 @@ public class Test19_ExprTest {
 
     @Test
     public void test1() throws Exception {
-        NutsExpr expr = NutsExpr.of(session);
-        _retain(expr,"infix:+");
-        NutsExpr.Node n = expr.parse("1+2+3");
+        NutsExprDeclarations expr = NutsExpr.of(session).newDeclarations(true);
+        _retain(expr, "infix:+");
+        NutsExprNode n = expr.parse("1+2+3").get();
         TestUtils.println(n);
-        Assertions.assertEquals("1 + 2 + 3",n.toString());
+        Assertions.assertEquals("1 + 2 + 3", n.toString());
     }
 
     @Test
     public void test2() throws Exception {
-        NutsExpr expr = NutsExpr.of(session);
+        NutsExprDeclarations expr = NutsExpr.of(session).newDeclarations(true);
 //        _retain(expr,"infix:+");
-        NutsExpr.Node n = expr.parse("1+2*3");
+        NutsExprNode n = expr.parse("1+2*3").get();
         TestUtils.println(n);
-        Assertions.assertEquals("1 + 2 * 3",n.toString());
+        Assertions.assertEquals("1 + 2 * 3", n.toString());
+    }
+
+    @Test
+    public void test3() throws Exception {
+        NutsExprDeclarations expr = NutsExpr.of(session).newDeclarations(true);
+//        _retain(expr,"infix:+");
+        NutsExprNode n = expr.parse("a").get();
+        Assertions.assertEquals(NutsExprNodeType.VARIABLE, n.getType());
+        TestUtils.println(n);
+    }
+
+    @Test
+    public void test4() throws Exception {
+        NutsExprDeclarations expr = NutsExpr.of(session).newDeclarations(true);
+//        _retain(expr,"infix:+");
+        NutsExprNode n = expr.parse("(a&b)").get();
+        Assertions.assertEquals(NutsExprNodeType.OPERATOR, n.getType());
+        Assertions.assertEquals("&", n.getName());
+        TestUtils.println(n);
+    }
+
+    @Test
+    public void test5() throws Exception {
+        NutsExprDeclarations expr = NutsExpr.of(session).newDeclarations(true);
+//        _retain(expr,"infix:+");
+        NutsExprNode n = expr.parse("(a&&b)").get();
+        Assertions.assertEquals(NutsExprNodeType.OPERATOR, n.getType());
+        Assertions.assertEquals("&&", n.getName());
+        TestUtils.println(n);
     }
 
     @Test
     public void testTokenized() {
-        StreamTokenizerExt st = new StreamTokenizerExt(new StringReader("8.0.0"),session);
+        StreamTokenizerExt st = new StreamTokenizerExt(new StringReader("8.0.0"), session);
         st.xmlComments(true);
         st.doNotParseNumbers();
-        st.wordChars('0','9');
-        st.wordChars('.','.');
-        st.wordChars('-','-');
+        st.wordChars('0', '9');
+        st.wordChars('.', '.');
+        st.wordChars('-', '-');
 
         int s;
         while ((s = st.nextToken()) != StreamTokenizerExt.TT_EOF) {
             TestUtils.println(st.image);
         }
     }
+
+    @Test
+    public void testTokenize2() {
+        StreamTokenizerExt st = new StreamTokenizerExt(new StringReader("<<"), session);
+        int i = st.nextToken();
+        Assertions.assertEquals(NutsToken.TT_LEFT_SHIFT, i);
+        System.out.println(i);
+    }
+
+
 }

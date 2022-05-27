@@ -78,6 +78,19 @@ public class StreamTokenizerExt {
      * initializing ttype.  FIXME This could be made public and
      * made available as the part of the API in a future release.
      */
+    public static final int TT_AND = -40;
+    public static final int TT_OR = -41;
+    public static final int TT_LEFT_SHIFT = -42;
+    public static final int TT_RIGHT_SHIFT = -43;
+    public static final int TT_LEFT_SHIFT_UNSIGNED = -44;
+    public static final int TT_RIGHT_SHIFT_UNSIGNED = -45;
+    public static final int TT_LTE = -46;
+    public static final int TT_GTE = -47;
+    public static final int TT_LTGT = -48;
+    public static final int TT_EQ = -49;
+    public static final int TT_NEQ = -50;
+    public static final int TT_NEQ2 = -51;
+    public static final int TT_RIGHT_ARROW = -52;
     private static final int TT_NOTHING = -25;
     private final StringBuilder bufImage = new StringBuilder();
     private final byte[] ctype = new byte[256];
@@ -175,7 +188,7 @@ public class StreamTokenizerExt {
      * @param r a Reader object providing the input stream.
      * @since JDK1.1
      */
-    public StreamTokenizerExt(Reader r,NutsSession session) {
+    public StreamTokenizerExt(Reader r, NutsSession session) {
         this(session);
         if (r == null) {
             throw new NullPointerException();
@@ -441,7 +454,7 @@ public class StreamTokenizerExt {
     /**
      * Read the next character
      */
-    private int read() {
+    private int readChar() {
         try {
             return reader.read();
         } catch (IOException ex) {
@@ -449,7 +462,7 @@ public class StreamTokenizerExt {
         }
     }
 
-    private void mark(int count) {
+    private void markChar(int count) {
         try {
             reader.mark(count);
         } catch (IOException ex) {
@@ -457,7 +470,7 @@ public class StreamTokenizerExt {
         }
     }
 
-    private void reset() {
+    private void resetChar() {
         try {
             reader.reset();
         } catch (IOException ex) {
@@ -492,14 +505,14 @@ public class StreamTokenizerExt {
         if (c < 0)
             c = NEED_CHAR;
         if (c == SKIP_LF) {
-            c = read();
+            c = readChar();
             if (c < 0)
                 return ttype = TT_EOF;
             if (c == '\n')
                 c = NEED_CHAR;
         }
         if (c == NEED_CHAR) {
-            c = read();
+            c = readChar();
             if (c < 0)
                 return ttype = TT_EOF;
         }
@@ -520,10 +533,10 @@ public class StreamTokenizerExt {
                     peekc = SKIP_LF;
                     return ttype = TT_EOL;
                 }
-                c = read();
+                c = readChar();
                 if (c == '\n') {
                     bufImage.append((char) c);
-                    c = read();
+                    c = readChar();
                 }
             } else {
                 if (c == '\n') {
@@ -532,7 +545,7 @@ public class StreamTokenizerExt {
                         return ttype = TT_EOL;
                     }
                 }
-                c = read();
+                c = readChar();
             }
             if (bufImage.length() > 0 && returnSpaces) {
                 peekc = c;
@@ -550,7 +563,7 @@ public class StreamTokenizerExt {
             boolean neg = false;
             boolean intType = true;
             if (c == '-') {
-                c = read();
+                c = readChar();
                 image.append((char) c);
                 if (c != '.' && (c < '0' || c > '9')) {
                     peekc = c;
@@ -574,7 +587,7 @@ public class StreamTokenizerExt {
                 loop = false;
             }
             if (loop) {
-                c = read();
+                c = readChar();
                 while (true) {
                     if (c == '.' && seendot == 0) {
                         seendot = 1;
@@ -588,7 +601,7 @@ public class StreamTokenizerExt {
                     } else {
                         break;
                     }
-                    c = read();
+                    c = readChar();
                 }
             }
             peekc = c;
@@ -644,7 +657,7 @@ public class StreamTokenizerExt {
                     buf = Arrays.copyOf(buf, buf.length * 2);
                 }
                 buf[i++] = (char) c;
-                c = read();
+                c = readChar();
                 ctype = c < 0 ? CT_WHITESPACE : c < 256 ? ct[c] : CT_ALPHA;
             } while ((ctype & (CT_ALPHA | CT_DIGIT)) != 0);
             peekc = c;
@@ -664,24 +677,24 @@ public class StreamTokenizerExt {
              *   (i)  c contains char value
              *   (ii) d contains the lookahead
              */
-            int d = read();
+            int d = readChar();
             while (d >= 0 && d != ttype && d != '\n' && d != '\r') {
                 bufImage.append((char) d);
                 if (d == '\\') {
-                    c = read();
+                    c = readChar();
                     int first = c;   /* To allow \377, but not \477 */
                     if (c >= '0' && c <= '7') {
                         bufImage.append((char) d);
                         c = c - '0';
-                        int c2 = read();
+                        int c2 = readChar();
                         if ('0' <= c2 && c2 <= '7') {
                             bufImage.append((char) d);
                             c = (c << 3) + (c2 - '0');
-                            c2 = read();
+                            c2 = readChar();
                             bufImage.append((char) d);
                             if ('0' <= c2 && c2 <= '7' && first <= '3') {
                                 c = (c << 3) + (c2 - '0');
-                                d = read();
+                                d = readChar();
                             } else
                                 d = c2;
                         } else
@@ -711,11 +724,11 @@ public class StreamTokenizerExt {
                                 c = 0xB;
                                 break;
                         }
-                        d = read();
+                        d = readChar();
                     }
                 } else {
                     c = d;
-                    d = read();
+                    d = readChar();
                 }
                 if (i >= buf.length) {
                     buf = Arrays.copyOf(buf, buf.length * 2);
@@ -739,24 +752,24 @@ public class StreamTokenizerExt {
         if (c == '/' && (slashSlashCommentsP || slashStarCommentsP)) {
             StringBuilder sb = new StringBuilder();
             sb.append((char) c);
-            c = read();
+            c = readChar();
             if (c == '*' && slashStarCommentsP) {
                 sb.append((char) c);
                 int prevc = 0;
-                while ((c = read()) != '/' || prevc != '*') {
+                while ((c = readChar()) != '/' || prevc != '*') {
                     if (c == '\r') {
                         sb.append((char) c);
                         LINENO++;
-                        c = read();
+                        c = readChar();
                         if (c == '\n') {
                             sb.append((char) c);
-                            c = read();
+                            c = readChar();
                         }
                     } else {
                         if (c == '\n') {
                             LINENO++;
                             sb.append((char) c);
-                            c = read();
+                            c = readChar();
                         }
                     }
                     if (c < 0)
@@ -770,7 +783,7 @@ public class StreamTokenizerExt {
                 return nextToken();
             } else if (c == '/' && slashSlashCommentsP) {
                 sb.append((char) c);
-                while ((c = read()) != '\n' && c != '\r' && c >= 0) {
+                while ((c = readChar()) != '\n' && c != '\r' && c >= 0) {
                     sb.append((char) c);
                 }
                 peekc = c;
@@ -783,7 +796,7 @@ public class StreamTokenizerExt {
                 /* Now see if it is still a single line comment */
                 if ((ct['/'] & CT_COMMENT) != 0) {
                     sb.append((char) c);
-                    while ((c = read()) != '\n' && c != '\r' && c >= 0) {
+                    while ((c = readChar()) != '\n' && c != '\r' && c >= 0) {
                         sb.append((char) c);
                     }
                     if (returnComments) {
@@ -800,24 +813,24 @@ public class StreamTokenizerExt {
         } else if (c == '<' && (xmlCommentsP)) {
             StringBuilder sb = new StringBuilder();
             sb.append((char) c);
-            mark(4);
-            int a = read();
+            markChar(4);
+            int a = readChar();
             if (a == '!') {
                 sb.append((char) c);
-                a = read();
+                a = readChar();
                 if (a == '-') {
                     sb.append((char) c);
-                    a = read();
+                    a = readChar();
                     if (a == '-') {
                         sb.append((char) c);
                         while (true) {
-                            c = read();
+                            c = readChar();
                             boolean wasEnd = false;
                             if (c == '-') {
                                 sb.append((char) c);
-                                a = read();
+                                a = readChar();
                                 if (a == '-') {
-                                    a = read();
+                                    a = readChar();
                                     if (a == '>') {
                                         wasEnd = true;
                                     }
@@ -826,7 +839,7 @@ public class StreamTokenizerExt {
                                     sb.append("->");
                                     break;
                                 } else {
-                                    reset();
+                                    resetChar();
                                 }
                             } else {
                                 sb.append((char) c);
@@ -841,20 +854,136 @@ public class StreamTokenizerExt {
                     }
                 }
             }
-            reset();
+            resetChar();
             image = "<";
             return ttype = '<';
         }
 
         if ((ctype & CT_COMMENT) != 0) {
             StringBuilder sb = new StringBuilder();
-            while ((c = read()) != '\n' && c != '\r' && c >= 0) {
+            while ((c = readChar()) != '\n' && c != '\r' && c >= 0) {
                 sb.append((char) c);
             }
             peekc = c;
             return nextToken();
         }
-
+        switch (c) {
+            case '&': {
+                markChar(1);
+                int n = readChar();
+                if (n < 0) {
+                    //EOF, this is okkay
+                } else if (n == '&') {
+                    image = "&&";
+                    return ttype = TT_AND;
+                } else {
+                    resetChar();
+                }
+                break;
+            }
+            case '|': {
+                markChar(1);
+                int n = readChar();
+                if (n < 0) {
+                    //EOF, this is okkay
+                } else if (n == '|') {
+                    image = "||";
+                    return ttype = TT_OR;
+                } else {
+                    resetChar();
+                }
+                break;
+            }
+            case '<': {
+                markChar(1);
+                int n = readChar();
+                if (n < 0) {
+                    //EOF, this is okkay
+                } else if (n == '<') {
+                    markChar(1);
+                    int n2 = readChar();
+                    if (n2 == '<') {
+                        image = "<<<";
+                        return ttype = TT_LEFT_SHIFT_UNSIGNED;
+                    } else {
+                        resetChar();
+                        image = "<<";
+                        return ttype = TT_LEFT_SHIFT;
+                    }
+                } else if (n == '=') {
+                    image = "<=";
+                    return ttype = TT_LTE;
+                } else if (n == '>') {
+                    image = "<>";
+                    return ttype = TT_LTGT;
+                } else {
+                    resetChar();
+                }
+                break;
+            }
+            case '>': {
+                markChar(1);
+                int n = readChar();
+                if (n < 0) {
+                    //EOF, this is okkay
+                } else if (n == '>') {
+                    markChar(1);
+                    int n2 = readChar();
+                    if (n2 == '>') {
+                        image = ">>>";
+                        return ttype = TT_RIGHT_SHIFT_UNSIGNED;
+                    } else {
+                        resetChar();
+                        image = ">>";
+                        return ttype = TT_RIGHT_SHIFT;
+                    }
+                } else if (n == '=') {
+                    image = ">=";
+                    return ttype = TT_GTE;
+                } else {
+                    resetChar();
+                }
+                break;
+            }
+            case '=': {
+                markChar(1);
+                int n = readChar();
+                if (n < 0) {
+                    //EOF, this is okkay
+                } else if (n == '>') {
+                    resetChar();
+                    image = "=>";
+                    return ttype = TT_RIGHT_ARROW;
+                } else if (n == '=') {
+                    image = "==";
+                    return ttype = TT_EQ;
+                } else {
+                    resetChar();
+                }
+                break;
+            }
+            case '!': {
+                markChar(1);
+                int n = readChar();
+                if (n < 0) {
+                    //EOF, this is okkay
+                } else if (n == '=') {
+                    markChar(1);
+                    int n2 = readChar();
+                    if (n2 == '=') {
+                        image = "!==";
+                        return ttype = TT_NEQ2;
+                    } else {
+                        resetChar();
+                        image = "!=";
+                        return ttype = TT_NEQ;
+                    }
+                } else {
+                    resetChar();
+                }
+                break;
+            }
+        }
         image = String.valueOf((char) c);
         return ttype = c;
     }

@@ -44,7 +44,7 @@ import java.util.regex.Pattern;
  * @since 0.8.1
  */
 public class NutsStringUtils {
-    private static final Pattern DOLLAR_PLACE_HOLDER_PATTERN = Pattern.compile("[$][{](?<name>([a-zA-Z]+))[}]");
+    private static final Pattern DOLLAR_PLACE_HOLDER_PATTERN = Pattern.compile("[$][{](?<name>([a-zA-Z._-]+))[}]");
     private static final char[] BASE16_CHARS = "0123456789ABCDEF".toCharArray();
 
 
@@ -420,7 +420,7 @@ public class NutsStringUtils {
         try {
             return NutsOptional.of((T) Enum.valueOf(type, normalizedValue));
         } catch (Exception notFound) {
-            return NutsOptional.ofError(s -> NutsMessage.ofCstyle(type.getSimpleName() + " invalid value : %s", value), notFound);
+            return NutsOptional.ofError(s -> NutsMessage.ofCstyle("%s invalid value : %s", type.getSimpleName(), value), notFound);
         }
     }
 
@@ -469,21 +469,21 @@ public class NutsStringUtils {
         if (value == null) {
             value = "";
         }
-        StringTokenizer st = new StringTokenizer(value, chars,true);
+        StringTokenizer st = new StringTokenizer(value, chars, true);
         List<String> all = new ArrayList<>();
-        boolean wasSep=true;
+        boolean wasSep = true;
         while (st.hasMoreElements()) {
             String s = st.nextToken();
-            if(chars.indexOf(s.charAt(0))>=0){
-                if(wasSep){
-                    s="";
+            if (chars.indexOf(s.charAt(0)) >= 0) {
+                if (wasSep) {
+                    s = "";
                     if (!ignoreEmpty) {
                         all.add(s);
                     }
                 }
-                wasSep=true;
-            }else {
-                wasSep=false;
+                wasSep = true;
+            } else {
+                wasSep = false;
                 if (trim) {
                     s = s.trim();
                 }
@@ -492,7 +492,7 @@ public class NutsStringUtils {
                 }
             }
         }
-        if(wasSep){
+        if (wasSep) {
             if (!ignoreEmpty) {
                 all.add("");
             }

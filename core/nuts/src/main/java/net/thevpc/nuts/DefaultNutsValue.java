@@ -539,7 +539,7 @@ public class DefaultNutsValue implements NutsValue {
             case STRING:
                 return NutsStringUtils.formatStringLiteral(asString().get(), NutsStringUtils.QuoteType.DOUBLE);
             case BOOLEAN:
-                return String.valueOf(asBoolean());
+                return String.valueOf(asBoolean().get());
             case BYTE:
             case LONG:
             case BIG_DECIMAL:
@@ -548,9 +548,9 @@ public class DefaultNutsValue implements NutsValue {
             case INTEGER:
             case FLOAT:
             case DOUBLE:
-                return String.valueOf(asNumber());
+                return String.valueOf(asNumber().get());
             case INSTANT:
-                return NutsStringUtils.formatStringLiteral(asInstant().toString(), NutsStringUtils.QuoteType.DOUBLE);
+                return NutsStringUtils.formatStringLiteral(asInstant().get().toString(), NutsStringUtils.QuoteType.DOUBLE);
         }
         return asString().get();
     }
