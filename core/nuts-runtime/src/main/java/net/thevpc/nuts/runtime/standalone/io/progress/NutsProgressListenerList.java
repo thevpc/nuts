@@ -1,25 +1,25 @@
 package net.thevpc.nuts.runtime.standalone.io.progress;
 
 import net.thevpc.nuts.util.NutsProgressEvent;
-import net.thevpc.nuts.util.NutsProgressMonitor;
+import net.thevpc.nuts.util.NutsProgressListener;
 
-public class NutsProgressMonitorList implements NutsProgressMonitor {
-    private NutsProgressMonitor[] all;
+public class NutsProgressListenerList implements NutsProgressListener {
+    private NutsProgressListener[] all;
 
-    public NutsProgressMonitorList(NutsProgressMonitor[] all) {
+    public NutsProgressListenerList(NutsProgressListener[] all) {
         this.all = all;
     }
 
     @Override
     public void onStart(NutsProgressEvent event) {
-        for (NutsProgressMonitor i : all) {
+        for (NutsProgressListener i : all) {
             i.onStart(event);
         }
     }
 
     @Override
     public void onComplete(NutsProgressEvent event) {
-        for (NutsProgressMonitor i : all) {
+        for (NutsProgressListener i : all) {
             i.onComplete(event);
         }
     }
@@ -27,7 +27,7 @@ public class NutsProgressMonitorList implements NutsProgressMonitor {
     @Override
     public boolean onProgress(NutsProgressEvent event) {
         boolean b = false;
-        for (NutsProgressMonitor i : all) {
+        for (NutsProgressListener i : all) {
             b |= i.onProgress(event);
         }
         return b;

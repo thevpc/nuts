@@ -32,6 +32,7 @@ import net.thevpc.nuts.cmdline.NutsCommandLine;
 import net.thevpc.nuts.cmdline.NutsCommandLineConfigurable;
 import net.thevpc.nuts.io.NutsPath;
 import net.thevpc.nuts.spi.NutsApplicationContexts;
+import net.thevpc.nuts.util.NutsClock;
 
 import java.util.List;
 
@@ -54,13 +55,13 @@ public interface NutsApplicationContext extends NutsCommandLineConfigurable {
      *
      * @param session         session context session. If null will consider {@code getSession()} that should not be null as well.
      * @param args            application arguments
-     * @param startTimeMillis application start time
+     * @param startTime application start time
      * @param appClass        application class
      * @param storeId         application store id or null
      * @return new instance of {@link NutsApplicationContext}
      */
-    static NutsApplicationContext of(String[] args, long startTimeMillis, Class appClass, String storeId, NutsSession session) {
-        return NutsApplicationContexts.of(session).create(args, startTimeMillis, appClass, storeId);
+    static NutsApplicationContext of(String[] args, NutsClock startTime, Class appClass, String storeId, NutsSession session) {
+        return NutsApplicationContexts.of(session).create(args, startTime, appClass, storeId);
     }
 
     /**
@@ -254,7 +255,7 @@ public interface NutsApplicationContext extends NutsCommandLineConfigurable {
      *
      * @return application start time in milli-seconds
      */
-    long getStartTimeMillis();
+    NutsClock getStartTime();
 
     /**
      * previous version (applicable in update mode)

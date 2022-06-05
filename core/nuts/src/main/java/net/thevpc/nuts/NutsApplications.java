@@ -25,6 +25,7 @@ package net.thevpc.nuts;
 
 import net.thevpc.nuts.util.NutsApiUtils;
 import net.thevpc.nuts.io.NutsSessionTerminal;
+import net.thevpc.nuts.util.NutsClock;
 import net.thevpc.nuts.util.NutsLogger;
 import net.thevpc.nuts.util.NutsLoggerVerb;
 
@@ -182,7 +183,7 @@ public final class NutsApplications {
      * @return NutsApplicationContext instance
      */
     public static NutsApplicationContext createApplicationContext(NutsApplication applicationInstance, String[] args, NutsSession session) {
-        long startTimeMillis = System.currentTimeMillis();
+        NutsClock startTime = NutsClock.now();
         if (applicationInstance == null) {
             throw new NullPointerException("null application");
         }
@@ -190,9 +191,9 @@ public final class NutsApplications {
             session = Nuts.openInheritedWorkspace(args);
         }
         NutsApplicationContext applicationContext;
-        applicationContext = applicationInstance.createApplicationContext(session, args, startTimeMillis);
+        applicationContext = applicationInstance.createApplicationContext(session, args, startTime);
         if (applicationContext == null) {
-            applicationContext = NutsApplicationContext.of(args, startTimeMillis, applicationInstance.getClass(), null, session);
+            applicationContext = NutsApplicationContext.of(args, startTime, applicationInstance.getClass(), null, session);
         }
 
         //copy inter-process parameters only

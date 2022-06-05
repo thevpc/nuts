@@ -360,6 +360,10 @@ public class GithubfsPath extends AbstractPathSPIAdapter {
         public MyPathFormat(GithubfsPath p) {
             this.p = p;
         }
+        @Override
+        public String getName() {
+            return "path";
+        }
 
         public NutsString asFormattedString() {
             NutsTextBuilder sb = NutsTextBuilder.of(p.getSession());

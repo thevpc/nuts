@@ -12,7 +12,7 @@ import net.thevpc.nuts.io.NutsPath;
 import net.thevpc.nuts.io.NutsPathOption;
 import net.thevpc.nuts.spi.NutsPaths;
 import net.thevpc.nuts.util.NutsProgressEvent;
-import net.thevpc.nuts.util.NutsProgressMonitor;
+import net.thevpc.nuts.util.NutsProgressListener;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -64,7 +64,7 @@ public class Test12_CopyTest {
 
         NutsCp.of(session).from(from).to(to)
                 .addOptions(NutsPathOption.LOG, NutsPathOption.TRACE)
-                .setProgressMonitor(new NutsProgressMonitor() {
+                .setProgressMonitor(new NutsProgressListener() {
             @Override
             public void onStart(NutsProgressEvent event) {
                 TestUtils.println(event.getPercent());

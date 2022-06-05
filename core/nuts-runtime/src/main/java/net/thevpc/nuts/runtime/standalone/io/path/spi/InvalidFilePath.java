@@ -373,6 +373,10 @@ public class InvalidFilePath implements NutsPathSPI {
     private static class MyPathFormat implements NutsFormatSPI {
 
         private final InvalidFilePath p;
+        @Override
+        public String getName() {
+            return "path";
+        }
 
         public MyPathFormat(InvalidFilePath p) {
             this.p = p;

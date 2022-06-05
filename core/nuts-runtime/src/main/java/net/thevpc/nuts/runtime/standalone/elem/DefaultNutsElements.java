@@ -74,7 +74,6 @@ public class DefaultNutsElements extends DefaultFormatBase<NutsElements> impleme
                             || NutsElement.class.isAssignableFrom(x)
                             || NutsFormattable.class.isAssignableFrom(x)
                             || NutsMessage.class.isAssignableFrom(x)
-                            || NutsMessageFormattable.class.isAssignableFrom(x)
             );
         }
     };

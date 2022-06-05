@@ -75,7 +75,7 @@ public interface NutsProgressEvent {
 
     /**
      * progress value from the last mark point.
-     * Mark point occurs when {@link NutsProgressMonitor#onProgress(NutsProgressEvent)} return false.
+     * Mark point occurs when {@link NutsProgressListener#onProgress(NutsProgressEvent)} return false.
      *
      * @return progress value from the last mark point.
      */

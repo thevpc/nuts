@@ -2,19 +2,21 @@ package net.thevpc.nuts.runtime.standalone.text;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.io.NutsIO;
+import net.thevpc.nuts.runtime.standalone.io.path.NutsFormatFromSPI;
 import net.thevpc.nuts.runtime.standalone.session.NutsSessionUtils;
+import net.thevpc.nuts.runtime.standalone.util.collections.ClassMap;
 import net.thevpc.nuts.runtime.standalone.workspace.NutsWorkspaceExt;
 import net.thevpc.nuts.runtime.standalone.text.highlighter.CustomStyleCodeHighlighter;
 import net.thevpc.nuts.runtime.standalone.text.parser.*;
 import net.thevpc.nuts.runtime.standalone.util.CoreStringUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.NutsWorkspaceUtils;
+import net.thevpc.nuts.spi.NutsFormatSPI;
 import net.thevpc.nuts.spi.NutsSupportLevelContext;
 import net.thevpc.nuts.text.*;
-import net.thevpc.nuts.util.NutsLoggerOp;
-import net.thevpc.nuts.util.NutsLoggerVerb;
-import net.thevpc.nuts.util.NutsRef;
+import net.thevpc.nuts.util.*;
 
 import java.io.*;
+import java.lang.reflect.Array;
 import java.net.URL;
 import java.nio.file.Path;
 import java.text.MessageFormat;
@@ -27,11 +29,84 @@ public class DefaultNutsTexts implements NutsTexts {
     private final NutsWorkspace ws;
     private final DefaultNutsTextManagerModel shared;
     private NutsSession session;
+    private ClassMap<NutsTextMapper> textMapper = new ClassMap<>(NutsTextMapper.class);
 
     public DefaultNutsTexts(NutsSession session) {
         this.session = session;
         this.ws = session.getWorkspace();
         this.shared = NutsWorkspaceExt.of(ws).getModel().textModel;
+        registerDefaults();
+    }
+
+    private void registerDefaults() {
+        register(NutsFormattable.class, (o, t, s) -> (((NutsFormattable) o).formatter(s).setSession(getSession()).setNtf(true).format()).toText());
+        register(NutsMessage.class, (o, t, s) -> _NutsMessage_toString((NutsMessage) o));
+        register(NutsString.class, (o, t, s) -> ((NutsString) o).toText());
+        register(InputStream.class, (o, t, s) -> t.ofStyled(NutsIO.of(s).createInputSource((InputStream) o).getInputMetaData().getName().orElse(o.toString()), NutsTextStyle.path()));
+        register(OutputStream.class, (o, t, s) -> t.ofStyled(o.toString(), NutsTextStyle.path()));
+        register(Writer.class, (o, t, s) -> t.ofStyled(o.toString(), NutsTextStyle.path()));
+        register(NutsEnum.class, (o, t, s) -> t.ofStyled(((NutsEnum) o).id(), NutsTextStyle.option()));
+        register(Enum.class, (o, t, s) -> (o instanceof NutsEnum) ? t.ofStyled(((NutsEnum) o).id(), NutsTextStyle.option()) : ofStyled(((Enum<?>) o).name(), NutsTextStyle.option()));
+        register(Number.class, (o, t, s) -> t.ofStyled(o.toString(), NutsTextStyle.number()));
+        register(Date.class, (o, t, s) -> t.ofStyled(o.toString(), NutsTextStyle.date()));
+        register(Temporal.class, (o, t, s) -> t.ofStyled(o.toString(), NutsTextStyle.date()));
+        register(Boolean.class, (o, t, s) -> t.ofStyled(o.toString(), NutsTextStyle.bool()));
+        register(Path.class, (o, t, s) -> t.ofStyled(o.toString(), NutsTextStyle.path()));
+        register(File.class, (o, t, s) -> t.ofStyled(o.toString(), NutsTextStyle.path()));
+        register(URL.class, (o, t, s) -> t.ofStyled(o.toString(), NutsTextStyle.path()));
+        register(Throwable.class, (o, t, s) -> t.ofStyled(
+                ofText(CoreStringUtils.exceptionToMessage((Throwable) o)),
+                NutsTextStyle.error()
+        ));
+        register(Collection.class, (o, t, s) -> {
+            NutsTextBuilder b = ofBuilder();
+            b.append("[", NutsTextStyle.separator());
+            boolean first = true;
+            for (Object v : ((Collection) o)) {
+                if (!first) {
+                    b.append(",", NutsTextStyle.separator());
+                    b.append(" ");
+                } else {
+                    first = false;
+                }
+                b.append(t.ofText(v));
+            }
+            b.append("]", NutsTextStyle.separator());
+            return b.toText();
+        });
+        register(Map.Entry.class, (o, t, s) -> {
+            NutsTextBuilder b = ofBuilder();
+            Map.Entry e = (Map.Entry) o;
+            b.append(t.ofText(e.getKey()));
+            b.append(":", NutsTextStyle.separator());
+            b.append(" ");
+            b.append(t.ofText(e.getValue()));
+            return b.toText();
+        });
+        register(Map.class, (o, t, s) -> {
+            NutsTextBuilder b = ofBuilder();
+            b.append("{", NutsTextStyle.separator());
+            boolean first = true;
+            for (Map.Entry<?, ?> v : ((Map<?, ?>) o).entrySet()) {
+                if (!first) {
+                    b.append(",", NutsTextStyle.separator());
+                    b.append(" ");
+                } else {
+                    first = false;
+                }
+                b.append(t.ofText(v));
+            }
+            b.append("}", NutsTextStyle.separator());
+            return b.toText();
+        });
+    }
+
+    private void register(Class clz, NutsTextMapper mapper) {
+        if (mapper == null) {
+            textMapper.remove(clz);
+        } else {
+            textMapper.put(clz, mapper);
+        }
     }
 
     /**
@@ -103,6 +178,22 @@ public class DefaultNutsTexts implements NutsTexts {
             case JSTYLE: {
                 return txt.parse(MessageFormat.format((String) msg, args2));
             }
+            case VSTYLE: {
+                Object[] finalParams = params;
+                String a = NutsStringUtils.replaceDollarString((String) msg,
+                        s -> {
+                            Map<String, ?> mm =
+                                    (finalParams == null) ? new LinkedHashMap<>() :
+                                            (Map<String, ?>) finalParams[0];
+                            Object v = mm.get(s);
+                            if (v != null) {
+                                return String.valueOf(v);
+                            }
+                            return "${" + s + "}";
+                        }
+                );
+                return txt.parse(a);
+            }
             case PLAIN: {
                 return txt.ofPlain((String) msg);
             }
@@ -163,53 +254,28 @@ public class DefaultNutsTexts implements NutsTexts {
         if (t instanceof NutsText) {
             return (NutsText) t;
         }
-        if (t instanceof NutsFormattable) {
-            return (((NutsFormattable) t).formatter(session).setSession(getSession()).setNtf(true).format()).toText();
-        }
-        if (t instanceof NutsMessage) {
-            return _NutsMessage_toString((NutsMessage) t);
-        }
-        if (t instanceof NutsMessageFormattable) {
-            NutsMessage m = ((NutsMessageFormattable) t).formatMessage(getSession());
-            return _NutsMessage_toString(m);
-        }
-        if (t instanceof NutsString) {
-            return ((NutsString) t).toText();
-        }
-        if (t instanceof InputStream) {
-            String q = NutsIO.of(session).createInputSource((InputStream) t).getInputMetaData().getName().orElse(t.toString());
-            return ofStyled(q, NutsTextStyle.path());
-        }
-        if (t instanceof OutputStream || t instanceof Writer) {
-            return ofStyled(t.toString(), NutsTextStyle.path());
-        }
-        if (t instanceof Enum) {
-            if (t instanceof NutsEnum) {
-                return ofStyled(((NutsEnum) t).id(), NutsTextStyle.option());
-            } else {
-                return ofStyled(((Enum<?>) t).name(), NutsTextStyle.option());
+        Class<?> c = t.getClass();
+        if (c.isArray()) {
+            NutsTextBuilder b = ofBuilder();
+            b.append("[", NutsTextStyle.separator());
+            int max = Array.getLength(t);
+            if (max > 0) {
+                b.append(ofText(Array.get(t, 0)));
+                for (int i = 1; i < max; i++) {
+                    b.append(",", NutsTextStyle.separator());
+                    b.append(" ");
+                    b.append(ofText(Array.get(t, i)));
+                }
             }
+            b.append("]", NutsTextStyle.separator());
+            return b.toText();
         }
-        if (t instanceof Number) {
-            return ofStyled(t.toString(), NutsTextStyle.number());
+        NutsTextMapper e = textMapper.get(c);
+        if (e != null) {
+            return e.ofText(t, this, session);
         }
-        if (t instanceof Date || t instanceof Temporal) {
-            return ofStyled(t.toString(), NutsTextStyle.date());
-        }
-        if (t instanceof Boolean) {
-            return ofStyled(t.toString(), NutsTextStyle.bool());
-        }
-        if (t instanceof Path || t instanceof File || t instanceof URL) {
-            return ofStyled(t.toString(), NutsTextStyle.path());
-        }
-        if (t instanceof Throwable) {
-            return ofStyled(
-                    ofText(CoreStringUtils.exceptionToMessage((Throwable) t)),
-                    NutsTextStyle.error()
-            );
-        }
-        if (t instanceof NutsEnum) {
-            return ofStyled(((NutsEnum) t).id(), NutsTextStyle.option());
+        if (c.isArray()) {
+
         }
         return ofPlain(t.toString());
     }
@@ -932,5 +998,15 @@ public class DefaultNutsTexts implements NutsTexts {
                     .log(NutsMessage.ofCstyle("error parsing : %s", text));
             return text;
         }
+    }
+
+    @Override
+    public NutsFormat createFormat(NutsFormatSPI value) {
+        return new NutsFormatFromSPI(value, getSession());
+    }
+
+    private interface NutsTextMapper {
+
+        NutsText ofText(Object t, NutsTexts texts, NutsSession session);
     }
 }

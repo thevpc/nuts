@@ -48,6 +48,10 @@ public enum NutsTextFormatStyle implements NutsEnum {
      */
     JSTYLE,
     /**
+     * with var place holders
+     */
+    VSTYLE,
+    /**
      * plain text
      */
     PLAIN,
@@ -58,6 +62,7 @@ public enum NutsTextFormatStyle implements NutsEnum {
     NTF,
     /**
      * plain format given style
+     *
      * @since 0.8.4
      */
     STYLED,

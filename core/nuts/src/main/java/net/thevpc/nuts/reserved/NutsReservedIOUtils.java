@@ -27,6 +27,8 @@
 package net.thevpc.nuts.reserved;
 
 import net.thevpc.nuts.NutsBlankable;
+import net.thevpc.nuts.util.NutsDuration;
+import net.thevpc.nuts.util.NutsChronometer;
 import net.thevpc.nuts.util.NutsLoggerVerb;
 import net.thevpc.nuts.NutsMessage;
 import net.thevpc.nuts.util.NutsStringUtils;
@@ -83,7 +85,7 @@ public class NutsReservedIOUtils {
     }
 
     public static Properties loadURLProperties(URL url, File cacheFile, boolean useCache, NutsReservedBootLog bLog) {
-        long startTime = System.currentTimeMillis();
+        NutsChronometer chrono = NutsChronometer.startNow();
         Properties props = new Properties();
         InputStream inputStream = null;
         File urlFile = toFile(url);
@@ -93,8 +95,9 @@ public class NutsReservedIOUtils {
                     try {
                         inputStream = new FileInputStream(cacheFile);
                         props.load(inputStream);
-                        long time = System.currentTimeMillis() - startTime;
-                        bLog.log(Level.CONFIG, NutsLoggerVerb.SUCCESS, NutsMessage.ofJstyle("load cached file from  {0}" + ((time > 0) ? " (time {1})" : ""), cacheFile.getPath(), NutsStringUtils.formatPeriodMilli(time)));
+                        chrono.stop();
+                        NutsDuration time = chrono.getDuration();
+                        bLog.log(Level.CONFIG, NutsLoggerVerb.SUCCESS, NutsMessage.ofJstyle("load cached file from  {0}" + ((!time.isZero()) ? " (time {1})" : ""), cacheFile.getPath(), chrono));
                         return props;
                     } catch (IOException ex) {
                         bLog.log(Level.CONFIG, NutsLoggerVerb.FAIL, NutsMessage.ofJstyle("invalid cache. Ignored {0} : {1}", cacheFile.getPath(), ex.toString()));
@@ -138,20 +141,20 @@ public class NutsReservedIOUtils {
                                 } else {
                                     copy(url, cacheFile, bLog);
                                 }
-                                long time = System.currentTimeMillis() - startTime;
+                                NutsDuration time = chrono.getDuration();
                                 if (cachedRecovered) {
-                                    bLog.log(Level.CONFIG, NutsLoggerVerb.CACHE, NutsMessage.ofJstyle("recover cached prp file {0} (from {1})" + ((time > 0) ? " (time {2})" : ""), cacheFile.getPath(), urlString, NutsStringUtils.formatPeriodMilli(time)));
+                                    bLog.log(Level.CONFIG, NutsLoggerVerb.CACHE, NutsMessage.ofJstyle("recover cached prp file {0} (from {1})" + ((!time.isZero()) ? " (time {2})" : ""), cacheFile.getPath(), urlString, time));
                                 } else {
-                                    bLog.log(Level.CONFIG, NutsLoggerVerb.CACHE, NutsMessage.ofJstyle("cache prp file {0} (from {1})" + ((time > 0) ? " (time {2})" : ""), cacheFile.getPath(), urlString, NutsStringUtils.formatPeriodMilli(time)));
+                                    bLog.log(Level.CONFIG, NutsLoggerVerb.CACHE, NutsMessage.ofJstyle("cache prp file {0} (from {1})" + ((!time.isZero()) ? " (time {2})" : ""), cacheFile.getPath(), urlString, time));
                                 }
                                 return props;
                             }
                         }
-                        long time = System.currentTimeMillis() - startTime;
-                        bLog.log(Level.CONFIG, NutsLoggerVerb.SUCCESS, NutsMessage.ofJstyle("load props file from  {0}" + ((time > 0) ? " (time {1})" : ""), urlString, NutsStringUtils.formatPeriodMilli(time)));
+                        NutsDuration time = chrono.getDuration();
+                        bLog.log(Level.CONFIG, NutsLoggerVerb.SUCCESS, NutsMessage.ofJstyle("load props file from  {0}" + ((!time.isZero()) ? " (time {1})" : ""), urlString, time));
                     } else {
-                        long time = System.currentTimeMillis() - startTime;
-                        bLog.log(Level.CONFIG, NutsLoggerVerb.FAIL, NutsMessage.ofJstyle("load props file from  {0}" + ((time > 0) ? " (time {1})" : ""), urlString, NutsStringUtils.formatPeriodMilli(time)));
+                        NutsDuration time = chrono.getDuration();
+                        bLog.log(Level.CONFIG, NutsLoggerVerb.FAIL, NutsMessage.ofJstyle("load props file from  {0}" + ((!time.isZero()) ? " (time {1})" : ""), urlString, time));
                     }
                 }
             } finally {
@@ -160,9 +163,9 @@ public class NutsReservedIOUtils {
                 }
             }
         } catch (Exception e) {
-            long time = System.currentTimeMillis() - startTime;
-            bLog.log(Level.CONFIG, NutsLoggerVerb.FAIL, NutsMessage.ofJstyle("load props file from  {0}" + ((time > 0) ? " (time {1})" : ""), String.valueOf(url),
-                    NutsStringUtils.formatPeriodMilli(time)));
+            NutsDuration time = chrono.getDuration();
+            bLog.log(Level.CONFIG, NutsLoggerVerb.FAIL, NutsMessage.ofJstyle("load props file from  {0}" + ((!time.isZero()) ? " (time {1})" : ""), String.valueOf(url),
+                    time));
         }
         return props;
     }

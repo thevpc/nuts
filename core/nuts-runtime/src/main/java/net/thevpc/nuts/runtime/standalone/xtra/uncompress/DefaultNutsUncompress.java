@@ -606,7 +606,7 @@ public class DefaultNutsUncompress implements NutsUncompress {
      * @since 0.5.8
      */
     @Override
-    public NutsUncompress setProgressMonitor(NutsProgressMonitor value) {
+    public NutsUncompress setProgressMonitor(NutsProgressListener value) {
         this.progressFactory = value == null ? null : new SingletonNutsInputStreamProgressFactory(value);
         return this;
     }
@@ -619,7 +619,7 @@ public class DefaultNutsUncompress implements NutsUncompress {
      * @since 0.5.8
      */
     @Override
-    public NutsUncompress progressMonitor(NutsProgressMonitor value) {
+    public NutsUncompress progressMonitor(NutsProgressListener value) {
         return setProgressMonitor(value);
     }
 

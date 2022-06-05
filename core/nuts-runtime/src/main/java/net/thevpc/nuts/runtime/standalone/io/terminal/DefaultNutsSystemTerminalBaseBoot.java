@@ -55,9 +55,9 @@ public class DefaultNutsSystemTerminalBaseBoot extends NutsSystemTerminalBaseImp
             }
         }
         this.out = new NutsPrintStreamSystem(bootStdFd.getOut(), null, null, bootStdFd.getFlags().contains("ansi"),
-                bootModel.getBootSession(), this).setMode(terminalMode);
+                bootModel.getBootSession(), this).setTerminalMode(terminalMode);
         this.err = new NutsPrintStreamSystem(bootStdFd.getErr(), null, null, bootStdFd.getFlags().contains("ansi"),
-                bootModel.getBootSession(), this).setMode(terminalMode);
+                bootModel.getBootSession(), this).setTerminalMode(terminalMode);
         this.in = bootStdFd.getIn();
         this.scanner = new Scanner(this.in);
     }

@@ -15,7 +15,7 @@ import net.thevpc.nuts.runtime.standalone.workspace.NutsWorkspaceUtils;
 import net.thevpc.nuts.spi.NutsSupportLevelContext;
 import net.thevpc.nuts.text.NutsTexts;
 import net.thevpc.nuts.util.NutsProgressFactory;
-import net.thevpc.nuts.util.NutsProgressMonitor;
+import net.thevpc.nuts.util.NutsProgressListener;
 import net.thevpc.nuts.util.NutsUtils;
 
 import java.io.File;
@@ -132,7 +132,7 @@ public class DefaultNutsInputStreamMonitor implements NutsInputStreamMonitor {
         if (sourceName == null) {
             sourceName = NutsMessage.ofNtf(NutsTexts.of(session).ofText(source.getInputMetaData().getName()));
         }
-        NutsProgressMonitor monitor = NutsProgressUtils.createProgressMonitor(NutsProgressUtils.MonitorType.STREAM, source, sourceOrigin, session
+        NutsProgressListener monitor = NutsProgressUtils.createProgressMonitor(NutsProgressUtils.MonitorType.STREAM, source, sourceOrigin, session
                 , isLogProgress()
                 , isTraceProgress()
                 , getProgressFactory());
@@ -165,7 +165,7 @@ public class DefaultNutsInputStreamMonitor implements NutsInputStreamMonitor {
             sourceTypeName = source.getInputMetaData().getKind().orElse("nuts-Path");
         }
         return (InputStream) NutsIO.of(session).createInputSource(
-                NutsProgressUtils.monitor(openedStream, source, sourceName, size, new SilentStartNutsProgressMonitorAdapter(monitor, sourceName), session),
+                NutsProgressUtils.monitor(openedStream, source, sourceName, size, new SilentStartNutsProgressListenerAdapter(monitor, sourceName), session),
                 new DefaultNutsInputSourceMetadata(source.getInputMetaData())
                         .setKind(sourceTypeName)
         );
@@ -253,7 +253,7 @@ public class DefaultNutsInputStreamMonitor implements NutsInputStreamMonitor {
      * @since 0.5.8
      */
     @Override
-    public NutsInputStreamMonitor setProgressMonitor(NutsProgressMonitor value) {
+    public NutsInputStreamMonitor setProgressMonitor(NutsProgressListener value) {
         this.progressFactory = value == null ? null : new SingletonNutsInputStreamProgressFactory(value);
         return this;
     }

@@ -415,7 +415,7 @@ public class DefaultNutsCp implements NutsCp {
      * @since 0.5.8
      */
     @Override
-    public NutsCp setProgressMonitor(NutsProgressMonitor value) {
+    public NutsCp setProgressMonitor(NutsProgressListener value) {
         this.progressMonitorFactory = value == null ? null : new SingletonNutsInputStreamProgressFactory(value);
         return this;
     }
@@ -511,7 +511,7 @@ public class DefaultNutsCp implements NutsCp {
         NutsSession session = getSession();
         long start = System.currentTimeMillis();
         Object origin = getSourceOrigin();
-        NutsProgressMonitor m = NutsProgressUtils.createProgressMonitor(
+        NutsProgressListener m = NutsProgressUtils.createProgressMonitor(
                 NutsProgressUtils.MonitorType.DEFAULT, NutsPath.of(srcBase, session), origin, session,
                 options.contains(NutsPathOption.LOG),
                 options.contains(NutsPathOption.TRACE),

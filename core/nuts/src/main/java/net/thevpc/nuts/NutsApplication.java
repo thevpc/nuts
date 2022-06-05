@@ -25,6 +25,8 @@
  */
 package net.thevpc.nuts;
 
+import net.thevpc.nuts.util.NutsClock;
+
 /**
  * Nuts Application is the Top Level interface to be handled by nuts as rich console
  * application. By default NutsApplication classes :
@@ -232,10 +234,10 @@ public interface NutsApplication {
      *
      * @param session         session
      * @param args            arguments
-     * @param startTimeMillis start time
+     * @param startTime start time
      * @return new instance of NutsApplicationContext or null
      */
-    default NutsApplicationContext createApplicationContext(NutsSession session, String[] args, long startTimeMillis) {
+    default NutsApplicationContext createApplicationContext(NutsSession session, String[] args, NutsClock startTime) {
         return null;
     }
 

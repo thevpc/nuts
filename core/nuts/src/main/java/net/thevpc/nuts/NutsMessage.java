@@ -131,6 +131,10 @@ public class NutsMessage {
         return of(NutsTextFormatStyle.CSTYLE, message, params, null, null);
     }
 
+    public static NutsMessage ofVstyle(String message, Map<String, ?> vars) {
+        return of(NutsTextFormatStyle.VSTYLE, message, new Object[]{vars}, null, null);
+    }
+
     @Deprecated
     public static NutsMessage ofJstyle(String message) {
         return of(NutsTextFormatStyle.JSTYLE, message, NO_PARAMS, null, null);
@@ -171,6 +175,9 @@ public class NutsMessage {
             case JSTYLE: {
                 return MessageFormat.format((String) message, params);
             }
+            case VSTYLE: {
+                return formatAsVStyle();
+            }
             case NTF:
             case STYLED:
             case CODE:
@@ -178,7 +185,20 @@ public class NutsMessage {
                 return String.valueOf(message); //ignore any style
             }
         }
-        return "NutsMessage{" + "message=" + message + ", style=" + format + ", params=" + params + '}';
+        return "NutsMessage{" + "message=" + message + ", style=" + format + ", params=" + Arrays.toString(params) + '}';
+    }
+
+    private String formatAsVStyle() {
+        return NutsStringUtils.replaceDollarString((String) message,
+                s -> {
+                    Map<String, ?> m = (Map<String, ?>) (params[0]);
+                    Object v = m.get(s);
+                    if (v != null) {
+                        return String.valueOf(v);
+                    }
+                    return "${"+s+"}";
+                }
+        );
     }
 
 }

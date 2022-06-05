@@ -1,6 +1,7 @@
 package net.thevpc.nuts.reserved;
 
 import net.thevpc.nuts.NutsBootException;
+import net.thevpc.nuts.util.NutsChronometer;
 import net.thevpc.nuts.util.NutsLoggerVerb;
 import net.thevpc.nuts.NutsMessage;
 
@@ -13,18 +14,17 @@ import java.util.logging.Level;
 
 public class NutsReservedMonitoredURLInputStream extends FilterInputStream {
     public static final int M = 1024 * 1024;
-    private final long startTime;
+    private NutsChronometer chronometer;
     private final long contentLength;
     private final NutsReservedBootLog log;
     private final URL url;
-    long endTime;
     long lastSec = -1;
     long readCount = 0;
     boolean preDestroyed = false;
 
-    private NutsReservedMonitoredURLInputStream(InputStream in, URL url, long startTime, long contentLength, NutsReservedBootLog log) {
+    private NutsReservedMonitoredURLInputStream(InputStream in, URL url, NutsChronometer chronometer, long contentLength, NutsReservedBootLog log) {
         super(in);
-        this.startTime = startTime;
+        this.chronometer = chronometer;
         this.url = url;
         this.contentLength = contentLength;
         this.log = log;
@@ -34,7 +34,7 @@ public class NutsReservedMonitoredURLInputStream extends FilterInputStream {
         if (log != null) {
             log.log(Level.FINE, NutsLoggerVerb.START, NutsMessage.ofJstyle("download {0}", url));
         }
-        long startTime = System.currentTimeMillis();
+        NutsChronometer chronometer = NutsChronometer.startNow();
         URLConnection c = null;
         try {
             c = url.openConnection();
@@ -46,7 +46,7 @@ public class NutsReservedMonitoredURLInputStream extends FilterInputStream {
         }
         long contentLength = c.getContentLengthLong();
         try {
-            return new NutsReservedMonitoredURLInputStream(c.getInputStream(), url, startTime, contentLength, log);
+            return new NutsReservedMonitoredURLInputStream(c.getInputStream(), url, chronometer, contentLength, log);
         } catch (IOException ex) {
             if (log != null) {
                 log.log(Level.FINE, NutsLoggerVerb.FAIL, NutsMessage.ofJstyle("failed to download {0}", url));
@@ -99,9 +99,9 @@ public class NutsReservedMonitoredURLInputStream extends FilterInputStream {
     private void preDestroy() {
         if (!preDestroyed) {
             preDestroyed = true;
-            endTime = System.currentTimeMillis();
+            chronometer.stop();
             doLog(true);
-            if(contentLength>=0) {
+            if (contentLength >= 0) {
                 if (readCount != contentLength) {
                     log.log(Level.FINE, NutsLoggerVerb.FAIL, NutsMessage.ofJstyle("failed to downloaded {0}. stream closed unexpectedly", url));
                     throw new NutsBootException(NutsMessage.ofJstyle("failed to downloaded {0}. stream closed unexpectedly", url));
@@ -114,34 +114,34 @@ public class NutsReservedMonitoredURLInputStream extends FilterInputStream {
     }
 
     private void doLog(boolean force) {
-        long sec = (System.currentTimeMillis() - startTime) / 1000;
+        long sec = chronometer.getDuration().getTimeAsSeconds();
         if (sec != lastSec || force) {
             lastSec = sec;
-        }else{
+        } else {
             return;
         }
         if (sec == 0) {
             if (contentLength <= 0) {
-                String v = formatSize(readCount)+"/s";
+                String v = formatSize(readCount) + "/s";
                 if (log != null) {
                     log.log(Level.FINE, NutsLoggerVerb.READ, NutsMessage.ofCstyle("%-8s %s/s", v, url));
                 }
             } else {
                 float f = (float) (((double) readCount / (double) contentLength) * 100);
-                String v = formatSize(readCount)+"/s";
+                String v = formatSize(readCount) + "/s";
                 if (log != null) {
                     log.log(Level.FINE, NutsLoggerVerb.READ, NutsMessage.ofCstyle("%.2f%% %-8s %s", f, v, url));
                 }
             }
         } else {
             if (contentLength <= 0) {
-                String v = formatSize(readCount / sec)+"/s";
+                String v = formatSize(readCount / sec) + "/s";
                 if (log != null) {
                     log.log(Level.FINE, NutsLoggerVerb.READ, NutsMessage.ofCstyle("%-8s %s", v, url));
                 }
             } else {
                 float f = (float) (((double) readCount / (double) contentLength) * 100);
-                String v = formatSize(readCount / sec)+"/s";
+                String v = formatSize(readCount / sec) + "/s";
                 if (log != null) {
                     log.log(Level.FINE, NutsLoggerVerb.READ, NutsMessage.ofCstyle("%.2f%% %-8s %s", f, v, url));
                 }
@@ -174,6 +174,6 @@ public class NutsReservedMonitoredURLInputStream extends FilterInputStream {
             }
             return kilo + "." + x + "K";
         }
-        return s+"B";
+        return s + "B";
     }
 }

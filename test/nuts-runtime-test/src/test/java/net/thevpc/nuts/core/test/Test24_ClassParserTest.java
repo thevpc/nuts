@@ -17,13 +17,13 @@ import java.util.Arrays;
 
 import net.thevpc.nuts.NutsExecutionEntries;
 import net.thevpc.nuts.NutsSession;
-import net.thevpc.nuts.util.NutsStringUtils;
+import net.thevpc.nuts.util.NutsDuration;
+import net.thevpc.nuts.util.NutsChronometer;
 import net.thevpc.nuts.core.test.utils.TestUtils;
 import net.thevpc.nuts.runtime.standalone.util.jclass.JavaClassByteCode;
 import org.junit.jupiter.api.*;
 
 /**
- *
  * @author thevpc
  */
 public class Test24_ClassParserTest {
@@ -55,43 +55,43 @@ public class Test24_ClassParserTest {
     }
 
     private static void parseRegularFile(Path file, NutsSession session) throws IOException {
-        long from = System.currentTimeMillis();
+        NutsChronometer from = NutsChronometer.startNow();
         if (file.getFileName().toString().endsWith(".class")) {
             parseClassFile(file.toAbsolutePath().normalize(), session);
         }
         if (file.getFileName().toString().endsWith(".jar")) {
             parseJarFile(file.toAbsolutePath().normalize(), session);
         }
-        long to = System.currentTimeMillis();
-        if (max < to - from) {
-            max = to - from;
+        NutsDuration to = from.getDuration();
+        if (max < to.getTimeAsNanos()) {
+            max = to.getTimeAsNanos();
         }
-        TestUtils.println("### TIME [" + file + "] " + NutsStringUtils.formatPeriodMilli(to - from) + " -- " + max);
+        TestUtils.println("### TIME [" + file + "] " + to + " -- " + max);
     }
 
     private static void parseFolder(Path file, NutsSession session) throws IOException {
         Files.walkFileTree(file, new FileVisitor<Path>() {
-            @Override
-            public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
-                parseRegularFile(file, session);
-                return FileVisitResult.CONTINUE;
-            }
+                    @Override
+                    public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
+                        parseRegularFile(file, session);
+                        return FileVisitResult.CONTINUE;
+                    }
 
-            @Override
-            public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) throws IOException {
-                return FileVisitResult.CONTINUE;
-            }
+                    @Override
+                    public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) throws IOException {
+                        return FileVisitResult.CONTINUE;
+                    }
 
-            @Override
-            public FileVisitResult visitFileFailed(Path file, IOException exc) throws IOException {
-                return FileVisitResult.CONTINUE;
-            }
+                    @Override
+                    public FileVisitResult visitFileFailed(Path file, IOException exc) throws IOException {
+                        return FileVisitResult.CONTINUE;
+                    }
 
-            @Override
-            public FileVisitResult postVisitDirectory(Path dir, IOException exc) throws IOException {
-                return FileVisitResult.CONTINUE;
-            }
-        }
+                    @Override
+                    public FileVisitResult postVisitDirectory(Path dir, IOException exc) throws IOException {
+                        return FileVisitResult.CONTINUE;
+                    }
+                }
         );
     }
 
@@ -100,7 +100,7 @@ public class Test24_ClassParserTest {
         try (InputStream in = Files.newInputStream(file)) {
             TestUtils.println("parse jar " + file + " :: " + Arrays.asList(
                     NutsExecutionEntries.of(session)
-                                    .parse(in, "java",file.toString())
+                            .parse(in, "java", file.toString())
             ));
         }
     }
@@ -132,7 +132,7 @@ public class Test24_ClassParserTest {
                 return true;
             }
 
-        },session
+        }, session
         );
     }
 }

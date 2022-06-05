@@ -33,7 +33,7 @@ package net.thevpc.nuts.util;
  * @app.category Toolkit
  * @since 0.5.8
  */
-public interface NutsProgressMonitor {
+public interface NutsProgressListener {
 
     /**
      * called when the action starts

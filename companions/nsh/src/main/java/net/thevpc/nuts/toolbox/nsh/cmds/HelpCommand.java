@@ -77,7 +77,7 @@ public class HelpCommand extends SimpleJShellBuiltin {
         Options options = context.getOptions();
         if (options.code) {
             session.getTerminal().setOut(
-                    session.getTerminal().out().setMode(NutsTerminalMode.INHERITED)
+                    session.getTerminal().out().setTerminalMode(NutsTerminalMode.INHERITED)
             );
         }
         final NutsTexts text = NutsTexts.of(session);

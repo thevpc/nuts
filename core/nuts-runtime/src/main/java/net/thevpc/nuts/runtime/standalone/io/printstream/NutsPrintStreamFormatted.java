@@ -3,11 +3,8 @@ package net.thevpc.nuts.runtime.standalone.io.printstream;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.io.NutsPrintStream;
 import net.thevpc.nuts.io.NutsTerminalMode;
-import net.thevpc.nuts.runtime.standalone.text.parser.DefaultNutsTextPlain;
-import net.thevpc.nuts.runtime.standalone.text.parser.DefaultNutsTextStyled;
 import net.thevpc.nuts.text.NutsTerminalCommand;
 import net.thevpc.nuts.text.NutsTextStyle;
-import net.thevpc.nuts.text.NutsTextStyles;
 import net.thevpc.nuts.text.NutsTexts;
 
 import java.io.OutputStream;
@@ -41,7 +38,7 @@ public class NutsPrintStreamFormatted extends NutsPrintStreamRendered {
                 return new NutsPrintStreamFiltered(base, getSession(), bindings);
             }
         }
-        throw new NutsIllegalArgumentException(base.getSession(), NutsMessage.ofCstyle("unsupported %s -> %s", mode(), other));
+        throw new NutsIllegalArgumentException(base.getSession(), NutsMessage.ofCstyle("unsupported %s -> %s", getTerminalMode(), other));
     }
 
     @Override

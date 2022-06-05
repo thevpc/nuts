@@ -28,7 +28,7 @@ package net.thevpc.nuts.io;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.spi.NutsComponent;
 import net.thevpc.nuts.util.NutsProgressFactory;
-import net.thevpc.nuts.util.NutsProgressMonitor;
+import net.thevpc.nuts.util.NutsProgressListener;
 import net.thevpc.nuts.util.NutsUtils;
 
 import java.io.File;
@@ -376,7 +376,7 @@ public interface NutsCp extends NutsComponent {
      * @return {@code this} instance
      * @since 0.5.8
      */
-    NutsCp setProgressMonitor(NutsProgressMonitor value);
+    NutsCp setProgressMonitor(NutsProgressListener value);
 
     /**
      * return true if skip root flag is armed.

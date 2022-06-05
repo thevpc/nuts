@@ -1,10 +1,8 @@
 package net.thevpc.nuts.runtime.standalone.io.path;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.cmdline.NutsCommandLine;
 import net.thevpc.nuts.format.NutsTreeVisitor;
 import net.thevpc.nuts.io.*;
-import net.thevpc.nuts.runtime.standalone.format.DefaultFormatBase;
 import net.thevpc.nuts.runtime.standalone.io.path.spi.NutsPathSPIHelper;
 import net.thevpc.nuts.runtime.standalone.io.path.spi.URLPath;
 import net.thevpc.nuts.runtime.standalone.util.reflect.NutsUseDefaultUtils;
@@ -12,7 +10,6 @@ import net.thevpc.nuts.runtime.standalone.workspace.NutsWorkspaceVarExpansionFun
 import net.thevpc.nuts.runtime.standalone.xtra.expr.StringPlaceHolderParser;
 import net.thevpc.nuts.spi.NutsFormatSPI;
 import net.thevpc.nuts.spi.NutsPathSPI;
-import net.thevpc.nuts.spi.NutsSupportLevelContext;
 import net.thevpc.nuts.util.NutsStream;
 
 import java.io.ByteArrayOutputStream;
@@ -483,23 +480,7 @@ public class NutsPathFromSPI extends NutsPathBase {
             fspi = base.formatter(this);
         }
         if (fspi != null) {
-            NutsFormatSPI finalFspi = fspi;
-            return new DefaultFormatBase<NutsFormat>(getSession(), "path") {
-                @Override
-                public void print(NutsPrintStream out) {
-                    finalFspi.print(out);
-                }
-
-                @Override
-                public boolean configureFirst(NutsCommandLine commandLine) {
-                    return finalFspi.configureFirst(commandLine);
-                }
-
-                @Override
-                public int getSupportLevel(NutsSupportLevelContext context) {
-                    return DEFAULT_SUPPORT;
-                }
-            };
+            return new NutsFormatFromSPI(fspi,getSession());
         }
         return super.formatter(session);
     }
@@ -545,4 +526,5 @@ public class NutsPathFromSPI extends NutsPathBase {
             return fallback.apply(s);
         }
     }
+
 }

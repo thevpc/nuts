@@ -722,7 +722,6 @@ public final class NutsReservedMavenUtils {
                 urlPath += "/";
             }
             urlPath += path;
-            long start = System.currentTimeMillis();
             try {
                 NutsReservedIOUtils.copy(new URL(urlPath), to, bLog);
                 errorList.removeErrorsFor(nutsId);

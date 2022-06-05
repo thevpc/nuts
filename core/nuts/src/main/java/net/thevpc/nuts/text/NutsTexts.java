@@ -26,11 +26,9 @@
  */
 package net.thevpc.nuts.text;
 
-import net.thevpc.nuts.NutsCodeHighlighter;
-import net.thevpc.nuts.NutsMessage;
-import net.thevpc.nuts.NutsSession;
-import net.thevpc.nuts.NutsString;
+import net.thevpc.nuts.*;
 import net.thevpc.nuts.spi.NutsComponent;
+import net.thevpc.nuts.spi.NutsFormatSPI;
 import net.thevpc.nuts.util.NutsUtils;
 
 import java.util.Collection;
@@ -142,4 +140,6 @@ public interface NutsTexts extends NutsComponent {
     NutsTextInclude ofInclude(String value);
 
     NutsTextInclude ofInclude(String value, char sep);
+
+    NutsFormat createFormat(NutsFormatSPI value);
 }

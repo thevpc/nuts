@@ -764,6 +764,11 @@ public class URLPath implements NutsPathSPI {
             this.p = p;
         }
 
+        @Override
+        public String getName() {
+            return "path";
+        }
+
         public NutsString asFormattedString() {
             if (p.url == null) {
                 return NutsTexts.of(p.getSession()).ofPlain("");

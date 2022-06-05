@@ -12,19 +12,19 @@ import net.thevpc.nuts.text.NutsTextBuilder;
 import net.thevpc.nuts.text.NutsTextStyle;
 import net.thevpc.nuts.text.NutsTexts;
 import net.thevpc.nuts.util.NutsProgressEvent;
-import net.thevpc.nuts.util.NutsProgressMonitor;
+import net.thevpc.nuts.util.NutsProgressListener;
 
 import java.text.DecimalFormat;
 
 /**
  * @author thevpc
  */
-public class DefaultNutsCountProgressMonitor implements NutsProgressMonitor/*, NutsOutputStreamTransparentAdapter*/ {
+public class DefaultNutsCountProgressListener implements NutsProgressListener/*, NutsOutputStreamTransparentAdapter*/ {
 
     private NutsPrintStream out;
     private int minLength;
 
-    public DefaultNutsCountProgressMonitor() {
+    public DefaultNutsCountProgressListener() {
     }
 
 //    @Override

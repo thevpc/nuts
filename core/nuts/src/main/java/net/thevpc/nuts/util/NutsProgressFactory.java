@@ -28,7 +28,7 @@ package net.thevpc.nuts.util;
 import net.thevpc.nuts.NutsSession;
 
 /**
- * NutsProgressFactory is responsible of creating instances of {@link NutsProgressMonitor}
+ * NutsProgressFactory is responsible of creating instances of {@link NutsProgressListener}
  *
  * @author thevpc
  * @app.category Toolkit
@@ -37,13 +37,13 @@ import net.thevpc.nuts.NutsSession;
 public interface NutsProgressFactory {
 
     /**
-     * create a new instance of {@link NutsProgressMonitor}
+     * create a new instance of {@link NutsProgressListener}
      *
      * @param source       source object of the progress. This may be the File for instance
      * @param sourceOrigin source origin object of the progress. This may be the NutsId for instance
      * @param session      workspace session
-     * @return new instance of {@link NutsProgressMonitor}
+     * @return new instance of {@link NutsProgressListener}
      */
-    NutsProgressMonitor create(Object source, Object sourceOrigin, NutsSession session);
+    NutsProgressListener create(Object source, Object sourceOrigin, NutsSession session);
 
 }

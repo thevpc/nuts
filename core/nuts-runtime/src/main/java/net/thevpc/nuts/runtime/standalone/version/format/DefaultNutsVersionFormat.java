@@ -106,7 +106,7 @@ public class DefaultNutsVersionFormat extends DefaultFormatBase<NutsVersionForma
     public void print(NutsPrintStream out) {
         checkSession();
         if (!isNtf()) {
-            out = out.setMode(NutsTerminalMode.FILTERED);
+            out = out.setTerminalMode(NutsTerminalMode.FILTERED);
         }
         if (getSession().isPlainOut()) {
             if (isWorkspaceVersion()) {

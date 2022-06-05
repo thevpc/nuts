@@ -61,11 +61,11 @@ public class DefaultNutsPrintStreams implements NutsPrintStreams {
             }
         }
         if (out instanceof NutsPrintStreamAdapter) {
-            return ((NutsPrintStreamAdapter) out).getBasePrintStream().setMode(expectedMode);
+            return ((NutsPrintStreamAdapter) out).getBasePrintStream().setTerminalMode(expectedMode);
         }
         return
                 new NutsPrintStreamRaw(out, null, null, session, new NutsPrintStreamBase.Bindings(), term)
-                        .setMode(expectedMode)
+                        .setTerminalMode(expectedMode)
                 ;
     }
 
@@ -84,7 +84,7 @@ public class DefaultNutsPrintStreams implements NutsPrintStreams {
             return null;
         }
         if (out instanceof NutsPrintStreamAdapter) {
-            return ((NutsPrintStreamAdapter) out).getBasePrintStream().setMode(mode);
+            return ((NutsPrintStreamAdapter) out).getBasePrintStream().setTerminalMode(mode);
         }
         SimpleWriterOutputStream w = new SimpleWriterOutputStream(out, terminal, session);
         return createPrintStream(w, mode, terminal);

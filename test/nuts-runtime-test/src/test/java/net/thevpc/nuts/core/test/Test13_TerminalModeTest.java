@@ -68,23 +68,23 @@ public class Test13_TerminalModeTest {
                             NutsSystemTerminal systemTerminal = session.config().getSystemTerminal();
                             NutsPrintStream sysInitMode = systemTerminal.out();
                             TestUtils.println(
-                                    "sys-init="+(sysInitMode.mode()==null?"default": sysInitMode.mode().id())
+                                    "sys-init="+(sysInitMode.getTerminalMode()==null?"default": sysInitMode.getTerminalMode().id())
                                             +", sys-fixed="+(systemMode==null?"default":systemMode.id())
                                             +" ->"+sessionMode.id());
 
                             NutsSessionTerminal terminal = NutsSessionTerminal.of(session);
-                            NutsPrintStream out = terminal.out().setMode(systemMode);
-                            NutsTerminalMode initMode = out.mode();
+                            NutsPrintStream out = terminal.out().setTerminalMode(systemMode);
+                            NutsTerminalMode initMode = out.getTerminalMode();
                             Assertions.assertEquals(systemMode,initMode);
                             TestUtils.println(
-                                    "sys-init="+(sysInitMode.mode()==null?"default": sysInitMode.mode().id())
+                                    "sys-init="+(sysInitMode.getTerminalMode()==null?"default": sysInitMode.getTerminalMode().id())
                                             +", sys-fixed="+(systemMode==null?"default":systemMode.id())
                                             +" ->"+sessionMode.id());
 //        if(systemMode!=null) {
 //            ws.term().getSystemTerminal().setMode(systemMode);
 //        }
 
-                            terminal.setOut(out.setMode(sessionMode));
+                            terminal.setOut(out.setTerminalMode(sessionMode));
 
                             TestUtils.print("      ");
                             out.print("{**aa");
@@ -98,17 +98,17 @@ public class Test13_TerminalModeTest {
                 NutsSystemTerminal systemTerminal = session.config().getSystemTerminal();
                 NutsPrintStream sysInitMode = systemTerminal.out();
                 NutsSessionTerminal terminal = NutsSessionTerminal.of(session);
-                NutsPrintStream out = terminal.out().setMode(systemMode);
-                NutsTerminalMode initMode = out.mode();
+                NutsPrintStream out = terminal.out().setTerminalMode(systemMode);
+                NutsTerminalMode initMode = out.getTerminalMode();
                 Assertions.assertEquals(systemMode,initMode);
                 TestUtils.println(
-                        "sys-init="+sysInitMode.mode().id()
+                        "sys-init="+sysInitMode.getTerminalMode().id()
                                 +", sys-fixed="+systemMode.id()
                                 +" ->"+ sessionMode.id());
 //        if(systemMode!=null) {
 //            ws.term().getSystemTerminal().setMode(systemMode);
 //        }
-                terminal.setOut(out.setMode(sessionMode));
+                terminal.setOut(out.setTerminalMode(sessionMode));
                 TestUtils.print("      ");
                 out.print("{**aa");
                 out.print("aa**}");

@@ -510,6 +510,10 @@ public class NutsResourcePath implements NutsPathSPI {
         public MyPathFormat(NutsResourcePath p) {
             this.p = p;
         }
+        @Override
+        public String getName() {
+            return "path";
+        }
 
         public NutsString asFormattedString() {
             String path = p.path;

@@ -3,16 +3,16 @@ package net.thevpc.nuts.runtime.standalone.io.progress;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.standalone.util.CoreNutsConstants;
 import net.thevpc.nuts.util.NutsProgressFactory;
-import net.thevpc.nuts.util.NutsProgressMonitor;
+import net.thevpc.nuts.util.NutsProgressListener;
 
 public class DefaultNutsInputStreamProgressFactory implements NutsProgressFactory {
 
     @Override
-    public NutsProgressMonitor create(Object source, Object sourceOrigin, NutsSession session) {
+    public NutsProgressListener create(Object source, Object sourceOrigin, NutsSession session) {
         if (!acceptMonitoring(source, sourceOrigin, session)) {
             return null;
         }
-        return new TraceNutsProgressMonitor();
+        return new TraceNutsProgressListener();
     }
 
     public boolean acceptMonitoring(Object source, Object sourceOrigin, NutsSession session) {

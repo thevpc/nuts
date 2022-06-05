@@ -7,6 +7,7 @@ import net.thevpc.nuts.lib.md.asciidoctor.AsciiDoctorWriter;
 import net.thevpc.nuts.spi.NutsPaths;
 import net.thevpc.nuts.text.NutsTextStyle;
 import net.thevpc.nuts.text.NutsTexts;
+import net.thevpc.nuts.util.NutsMaps;
 import net.thevpc.nuts.util.NutsStringUtils;
 import org.asciidoctor.Asciidoctor;
 import org.asciidoctor.OptionsBuilder;
@@ -27,9 +28,11 @@ public class NOpenAPIService {
     private OpenApiParser openApiParser = new OpenApiParser();
     private int maxExampleInlineLength = 80;
     private Properties httpCodes = new Properties();
+    private AppMessages msg;
 
     public NOpenAPIService(NutsApplicationContext appContext) {
         this.appContext = appContext;
+        msg = new AppMessages(null, getClass().getResource("/net/thevpc/nuts/toolbox/noapi/messages-en.json"), appContext.getSession());
     }
 
     public void run(String source, String target, boolean keep) {
@@ -181,26 +184,28 @@ public class NOpenAPIService {
     private void _fillIntroduction(NutsObjectElement entries, List<MdElement> all, Vars vars2) {
         NutsSession session = appContext.getSession();
         all.add(MdFactory.endParagraph());
-        all.add(MdFactory.title(2, "INTRODUCTION"));
+        all.add(MdFactory.title(2, msg.get("INTRODUCTION").get()));
         all.add(MdFactory.endParagraph());
         NutsObjectElement info = entries.getObject("info").orElse(NutsObjectElement.ofEmpty(session));
-        all.add(MdFactory.text(info.getString("description").orElse("").trim()));
+        all.add(asText(info.getString("description").orElse("").trim()));
         all.add(MdFactory.endParagraph());
-        all.add(MdFactory.title(3, "CONTACT"));
-        all.add(MdFactory.text("Any question, comments or request related to this API document should be addressed to :"));
+        all.add(MdFactory.title(3, msg.get("CONTACT").get()));
+        all.add(asText(
+                msg.get("section.contact.body").get()
+        ));
         all.add(MdFactory.endParagraph());
         NutsObjectElement contact = info.getObject("contact").orElse(NutsObjectElement.ofEmpty(session));
         all.add(MdFactory.table()
                 .addColumns(
-                        MdFactory.column().setName("NAME"),
-                        MdFactory.column().setName("EMAIL"),
-                        MdFactory.column().setName("URL")
+                        MdFactory.column().setName(msg.get("NAME").get()),
+                        MdFactory.column().setName(msg.get("EMAIL").get()),
+                        MdFactory.column().setName(msg.get("URL").get())
                 )
                 .addRows(
                         MdFactory.row().addCells(
-                                MdFactory.text(contact.getString("name").orElse("")),
-                                MdFactory.text(contact.getString("email").orElse("")),
-                                MdFactory.text(contact.getString("url").orElse(""))
+                                asText(contact.getString("name").orElse("")),
+                                asText(contact.getString("email").orElse("")),
+                                asText(contact.getString("url").orElse(""))
                         )
                 ).build()
         );
@@ -211,28 +216,28 @@ public class NOpenAPIService {
         NutsObjectElement components = entries.getObject("components").orElse(NutsObjectElement.ofEmpty(session));
         if (!components.getObject("headers").isEmpty()) {
             all.add(MdFactory.endParagraph());
-            all.add(MdFactory.title(3, "HEADERS"));
+            all.add(MdFactory.title(3, msg.get("HEADERS").get()));
             all.add(MdFactory.endParagraph());
-            all.add(MdFactory.text("This section includes common HTTP Headers to be included in the incoming requests."));
+            all.add(asText(msg.get("section.headers.body").get()));
             all.add(MdFactory.endParagraph());
             MdTableBuilder table = MdFactory.table()
                     .addColumns(
-                            MdFactory.column().setName("NAME"),
-                            MdFactory.column().setName("TYPE"),
-                            MdFactory.column().setName("DESCRIPTION")
+                            MdFactory.column().setName(msg.get("NAME").get()),
+                            MdFactory.column().setName(msg.get("TYPE").get()),
+                            MdFactory.column().setName(msg.get("DESCRIPTION").get())
                     );
 
             for (NutsElementEntry ee : components.getObject("headers").orElse(NutsObjectElement.ofEmpty(session))) {
                 String k = ee.getKey().toString();
-                k = k + (ee.getValue().asObject().get(session).getBoolean("deprecated").orElse(false) ? " [DEPRECATED]" : "");
-                k = k + MdFactory.text(ee.getValue().asObject().get(session).getBoolean("required").orElse(false) ? " [REQUIRED]" : "");
+                k = k + (ee.getValue().asObject().get(session).getBoolean("deprecated").orElse(false) ? (" [" + msg.get("DEPRECATED").get() + "]") : "");
+                k = k + asText(ee.getValue().asObject().get(session).getBoolean("required").orElse(false) ? (" [" + msg.get("REQUIRED").get() + "]") : "");
                 table.addRows(
                         MdFactory.row().addCells(
                                 MdFactory.codeBacktick3("", k),
                                 MdFactory.codeBacktick3("", ee.getValue().asObject().get(session).getObject("schema")
                                         .orElse(NutsObjectElement.ofEmpty(session))
                                         .getString("type").orElse("")),
-                                MdFactory.text(ee.getValue().asObject().get(session).getString("description").orElse(""))
+                                asText(ee.getValue().asObject().get(session).getString("description").orElse(""))
                         )
                 );
             }
@@ -246,9 +251,9 @@ public class NOpenAPIService {
         NutsObjectElement securitySchemes = components.getObject("securitySchemes").orElse(NutsObjectElement.ofEmpty(session));
         if (!securitySchemes.isEmpty()) {
             all.add(MdFactory.endParagraph());
-            all.add(MdFactory.title(3, "SECURITY AND AUTHENTICATION"));
+            all.add(MdFactory.title(3, msg.get("SECURITY_AND_AUTHENTICATION").get()));
             all.add(MdFactory.endParagraph());
-            all.add(MdFactory.text("This section includes security configuration."));
+            all.add(asText(msg.get("section.security.body").get()));
             for (NutsElementEntry ee : securitySchemes) {
                 String type = ee.getValue().asObject().get(session).getString("type").orElse("");
                 switch (type) {
@@ -256,12 +261,12 @@ public class NOpenAPIService {
                         all.add(MdFactory.endParagraph());
                         all.add(MdFactory.title(4, ee.getKey() + " (Api Key)"));
                         all.add(MdFactory.endParagraph());
-                        all.add(MdFactory.text(vars2.format(ee.getValue().asObject().get(session).getString("description").orElse(""))));
+                        all.add(asText(vars2.format(ee.getValue().asObject().get(session).getString("description").orElse(""))));
                         all.add(MdFactory.endParagraph());
                         all.add(MdFactory
                                 .table().addColumns(
-                                        MdFactory.column().setName("NAME"),
-                                        MdFactory.column().setName("IN")
+                                        MdFactory.column().setName(msg.get("NAME").get()),
+                                        MdFactory.column().setName(msg.get("IN").get())
                                 )
                                 .addRows(MdFactory.row()
                                         .addCells(
@@ -279,17 +284,17 @@ public class NOpenAPIService {
                         all.add(MdFactory.endParagraph());
                         all.add(MdFactory.title(4, ee.getKey() + " (Http)"));
                         all.add(MdFactory.endParagraph());
-                        all.add(MdFactory.text(
+                        all.add(asText(
                                 vars2.format(ee.getValue().asObject().get(session).getString("description").orElse(""))));
                         all.add(MdFactory
                                 .table().addColumns(
-                                        MdFactory.column().setName("SCHEME"),
-                                        MdFactory.column().setName("BEARER")
+                                        MdFactory.column().setName(msg.get("SCHEME").get()),
+                                        MdFactory.column().setName(msg.get("BEARER").get())
                                 )
                                 .addRows(MdFactory.row()
                                         .addCells(
-                                                MdFactory.text(vars2.format(ee.getValue().asObject().get(session).getString("scheme").orElse(""))),
-                                                MdFactory.text(vars2.format(ee.getValue().asObject().get(session).getString("bearerFormat").orElse("")))
+                                                asText(vars2.format(ee.getValue().asObject().get(session).getString("scheme").orElse(""))),
+                                                asText(vars2.format(ee.getValue().asObject().get(session).getString("bearerFormat").orElse("")))
                                         ))
                                 .build()
                         );
@@ -299,7 +304,7 @@ public class NOpenAPIService {
                         all.add(MdFactory.endParagraph());
                         all.add(MdFactory.title(4, ee.getKey() + " (Oauth2)"));
                         all.add(MdFactory.endParagraph());
-                        all.add(MdFactory.text(vars2.format(ee.getValue().asObject().get(session).getString("description").orElse(""))));
+                        all.add(asText(vars2.format(ee.getValue().asObject().get(session).getString("description").orElse(""))));
 //                        all.add(MdFactory
 //                                .table().addColumns(
 //                                        MdFactory.column().setName("SCHEME"),
@@ -307,8 +312,8 @@ public class NOpenAPIService {
 //                                )
 //                                .addRows(MdFactory.row()
 //                                        .addCells(
-//                                                MdFactory.text(ee.getValue().asObject().getString("scheme")),
-//                                                MdFactory.text(ee.getValue().asObject().getString("bearerFormat"))
+//                                                asText(ee.getValue().asObject().getString("scheme")),
+//                                                asText(ee.getValue().asObject().getString("bearerFormat"))
 //                                        ))
 //                        );
                         break;
@@ -317,14 +322,14 @@ public class NOpenAPIService {
                         all.add(MdFactory.endParagraph());
                         all.add(MdFactory.title(4, ee.getKey() + " (OpenId Connect)"));
                         all.add(MdFactory.endParagraph());
-                        all.add(MdFactory.text(ee.getValue().asObject().get(session).getString("description").orElse("")));
+                        all.add(asText(ee.getValue().asObject().get(session).getString("description").orElse("")));
                         all.add(MdFactory
                                 .table().addColumns(
                                         MdFactory.column().setName("URL")
                                 )
                                 .addRows(MdFactory.row()
                                         .addCells(
-                                                MdFactory.text(ee.getValue().asObject().get(session).getString("openIdConnectUrl").orElse(""))
+                                                asText(ee.getValue().asObject().get(session).getString("openIdConnectUrl").orElse(""))
                                         ))
                                 .build()
                         );
@@ -333,7 +338,7 @@ public class NOpenAPIService {
                     default: {
                         all.add(MdFactory.endParagraph());
                         all.add(MdFactory.title(4, ee.getKey() + " (" + type + ")"));
-                        all.add(MdFactory.text(vars2.format(ee.getValue().asObject().get(session).getString("description").orElse(""))));
+                        all.add(asText(vars2.format(ee.getValue().asObject().get(session).getString("description").orElse(""))));
                     }
                 }
             }
@@ -348,7 +353,7 @@ public class NOpenAPIService {
             return;
         }
         all.add(MdFactory.endParagraph());
-        all.add(MdFactory.title(2, "SCHEMA TYPES"));
+        all.add(MdFactory.title(2, msg.get("SCHEMA_TYPES").get()));
         for (Map.Entry<String, TypeInfo> entry : allTypes.entrySet()) {
             TypeInfo v = entry.getValue();
             if ("object".equals(v.type)) {
@@ -357,34 +362,34 @@ public class NOpenAPIService {
                 String d1 = v.description;
                 String d2 = v.summary;
                 if (!NutsBlankable.isBlank(d1) && !NutsBlankable.isBlank(d2)) {
-                    all.add(MdFactory.text(d1));
+                    all.add(asText(d1));
                     all.add(MdFactory.text(". "));
-                    all.add(MdFactory.text(d2));
+                    all.add(asText(d2));
                     if (!NutsBlankable.isBlank(d2) && !d2.endsWith(".")) {
                         all.add(MdFactory.text("."));
                     }
                 } else if (!NutsBlankable.isBlank(d1)) {
-                    all.add(MdFactory.text(d1));
+                    all.add(asText(d1));
                     if (!NutsBlankable.isBlank(d1) && !d1.endsWith(".")) {
                         all.add(MdFactory.text("."));
                     }
                 } else if (!NutsBlankable.isBlank(d2)) {
-                    all.add(MdFactory.text(d2));
+                    all.add(asText(d2));
                     if (!NutsBlankable.isBlank(d2) && !d2.endsWith(".")) {
-                        all.add(MdFactory.text("."));
+                        all.add(asText("."));
                     }
                 }
                 List<TypeCrossRef> types = typeCrossRefs.stream().filter(x -> x.type.equals(v.name)).collect(Collectors.toList());
                 if (types.size() > 0) {
                     all.add(MdFactory.endParagraph());
-                    all.add(MdFactory.text("This type is used in :"));
+                    all.add(asText(msg.get("ThisTypeIsUsedIn").get()));
                     all.add(MdFactory.endParagraph());
                     for (TypeCrossRef type : types) {
                         all.add(MdFactory.ul(1,
                                 MdFactory.ofListOrEmpty(
                                         new MdElement[]{
                                                 MdFactory.codeBacktick3("", type.url),
-                                                MdFactory.text(" (" + type.location + ")"),
+                                                asText(" (" + type.location + ")"),
                                         }
                                 )
                         ));
@@ -393,17 +398,17 @@ public class NOpenAPIService {
                 }
 
                 MdTableBuilder mdTableBuilder = MdFactory.table().addColumns(
-                        MdFactory.column().setName("NAME"),
-                        MdFactory.column().setName("TYPE"),
-                        MdFactory.column().setName("DESCRIPTION"),
-                        MdFactory.column().setName("EXAMPLE")
+                        MdFactory.column().setName(msg.get("NAME").get()),
+                        MdFactory.column().setName(msg.get("TYPE").get()),
+                        MdFactory.column().setName(msg.get("DESCRIPTION").get()),
+                        MdFactory.column().setName(msg.get("EXAMPLE").get())
                 );
                 for (FieldInfo p : v.fields) {
                     mdTableBuilder.addRows(
                             MdFactory.row().addCells(
-                                    MdFactory.text(p.name),
-                                    MdFactory.codeBacktick3("", toCode(p.schema, false, "") + (p.required ? " [required]" : " [optional]")),
-                                    MdFactory.text(p.description == null ? "" : p.description.trim()),
+                                    asText(p.name),
+                                    MdFactory.codeBacktick3("", toCode(p.schema, false, "") + (p.required ? (" [" + msg.get("REQUIRED").get() + "]") : (" [" + msg.get("OPTIONAL").get() + "]"))),
+                                    asText(p.description == null ? "" : p.description.trim()),
                                     jsonText(p.example)
                             )
                     );
@@ -412,7 +417,8 @@ public class NOpenAPIService {
             }
             if (!NutsBlankable.isBlank(v.example)) {
                 all.add(MdFactory.endParagraph());
-                all.add(MdFactory.text("EXAMPLE:"));
+                all.add(asText(msg.get("EXAMPLE").get()));
+                all.add(asText(":"));
                 all.add(MdFactory.endParagraph());
                 all.add(jsonText(v.example));
             }
@@ -424,16 +430,16 @@ public class NOpenAPIService {
         NutsSession session = appContext.getSession();
         NutsElements prv = NutsElements.of(session);
         all.add(MdFactory.endParagraph());
-        all.add(MdFactory.title(2, "API PATHS"));
+        all.add(MdFactory.title(2, msg.get("API_PATHS").get()));
         int apiSize = entries.get(prv.ofString("paths")).flatMap(NutsElement::asObject).get(session).size();
-        all.add(MdFactory.text("The exposed API defines "+apiSize+" end-point(s)."));
+        all.add(asText(NutsMessage.ofVstyle(msg.get("API_PATHS.body").get(), NutsMaps.of("apiSize", apiSize)).toString()));
         all.add(MdFactory.endParagraph());
         for (NutsElementEntry path : entries.get(prv.ofString("paths")).flatMap(NutsElement::asObject).get(session)) {
             String url = path.getKey().asString().get(session);
-            all.add(MdFactory.ul(1,MdFactory.codeBacktick3("", url)));
+            all.add(MdFactory.ul(1, MdFactory.codeBacktick3("", url)));
         }
         all.add(MdFactory.endParagraph());
-        all.add(MdFactory.text("The following details each of them."));
+        all.add(asText(msg.get("API_PATHS.text").get()));
         NutsObjectElement schemas = entries.getObjectByPath("components", "schemas").orNull();
         for (NutsElementEntry path : entries.get(prv.ofString("paths")).flatMap(NutsElement::asObject).get(session)) {
             String url = path.getKey().asString().get(session);
@@ -471,13 +477,15 @@ public class NOpenAPIService {
         NutsSession session = appContext.getSession();
         all.add(MdFactory.endParagraph());
         all.add(MdFactory.title(3, "SERVER LIST"));
-        all.add(MdFactory.text("This API end-points are accessible via the following URL(s). Please append any API path to the desired server URL to build a valid request path."));
+        all.add(asText(
+                msg.get("section.serverlist.body").get()
+        ));
         NutsElements prv = NutsElements.of(session);
         for (NutsElement srv : entries.getArray(prv.ofString("servers")).orElse(prv.ofEmptyArray())) {
             NutsObjectElement srvObj = (NutsObjectElement) srv.asObject().orElse(prv.ofEmptyObject());
             all.add(MdFactory.endParagraph());
             all.add(MdFactory.title(4, vars2.format(srvObj.getString("url").orNull())));
-            all.add(MdFactory.text(vars2.format(srvObj.getString("description").orNull())));
+            all.add(asText(vars2.format(srvObj.getString("description").orNull())));
             NutsElement vars = srvObj.get(prv.ofString("variables")).orNull();
             if (vars != null && !vars.isEmpty()) {
                 MdTableBuilder mdTableBuilder = MdFactory.table().addColumns(
@@ -488,10 +496,10 @@ public class NOpenAPIService {
                 for (NutsElementEntry variables : vars.asObject().get(session)) {
                     mdTableBuilder.addRows(
                             MdFactory.row().addCells(
-                                    MdFactory.text(variables.getKey().asString().get(session)),
-                                    //                                MdFactory.text(variables.getValue().asObject().getString("enum")),
-                                    MdFactory.text(vars2.format(variables.getValue().asObject().get(session).getString("default").orNull())),
-                                    MdFactory.text(vars2.format(variables.getValue().asObject().get(session).getString("description").orNull()))
+                                    asText(variables.getKey().asString().get(session)),
+                                    //                                asText(variables.getValue().asObject().getString("enum")),
+                                    asText(vars2.format(variables.getValue().asObject().get(session).getString("default").orNull())),
+                                    asText(vars2.format(variables.getValue().asObject().get(session).getString("description").orNull()))
                             )
                     );
                 }
@@ -537,7 +545,7 @@ public class NOpenAPIService {
         all.add(MdFactory.title(1, documentTitle));
 //        all.add(new MdImage(null,null,"Logo, 64,64","./logo.png"));
 //        all.add(MdFactory.endParagraph());
-//        all.add(MdFactory.seq(MdFactory.text("API Reference")));
+//        all.add(MdFactory.seq(asText("API Reference")));
         Vars vars = _fillVars(entries);
         List<TypeCrossRef> typeCrossRefs = new ArrayList<>();
         _fillIntroduction(entries, all, vars);
@@ -555,27 +563,27 @@ public class NOpenAPIService {
         NutsSession session = appContext.getSession();
         MdTable tab = new MdTable(
                 new MdColumn[]{
-                        new MdColumn(MdFactory.text("NAME"), MdHorizontalAlign.LEFT),
-                        new MdColumn(MdFactory.text("TYPE"), MdHorizontalAlign.LEFT),
-                        new MdColumn(MdFactory.text("DESCRIPTION"), MdHorizontalAlign.LEFT),
-                        new MdColumn(MdFactory.text("EXAMPLE"), MdHorizontalAlign.LEFT)
+                        new MdColumn(asText(msg.get("NAME").get()), MdHorizontalAlign.LEFT),
+                        new MdColumn(asText(msg.get("TYPE").get()), MdHorizontalAlign.LEFT),
+                        new MdColumn(asText(msg.get("DESCRIPTION").get()), MdHorizontalAlign.LEFT),
+                        new MdColumn(asText(msg.get("EXAMPLE").get()), MdHorizontalAlign.LEFT)
                 },
                 headerParameters.stream().map(
                         headerParameter -> {
                             NutsObjectElement obj = headerParameter.asObject().orElse(NutsElements.of(session).ofEmptyObject());
                             boolean pdeprecated = obj.getBoolean("pdeprecated").orElse(false);
                             String type = _StringUtils.nvl(obj.getString("type").orNull(), "string")
-                                    + (obj.getBoolean("required").orElse(false) ? " [required]" : " [optional]");
+                                    + (obj.getBoolean("required").orElse(false) ? (" [" + msg.get("REQUIRED").get() + "]") : (" [" + msg.get("OPTIONAL").get() + "]"));
                             typeCrossRefs.add(new TypeCrossRef(
                                     obj.getString("type").orElse(""), url, paramType
                             ));
                             return new MdRow(
                                     new MdElement[]{
                                             MdFactory.codeBacktick3("", _StringUtils.nvl(obj.getString("name").orNull(), "unknown")
-                                                    + (pdeprecated ? " [DEPRECATED]" : "")
+                                                    + (pdeprecated ? (" [" + msg.get("DEPRECATED").get() + "]") : "")
                                             ),
                                             MdFactory.codeBacktick3("", type),
-                                            MdFactory.text(_StringUtils.nvl(obj.getString("description").orElse(""), "")),
+                                            asText(_StringUtils.nvl(obj.getString("description").orElse(""), "")),
                                             jsonText(obj.getString("example").orElse("")),
                                     }, false
                             );
@@ -591,9 +599,9 @@ public class NOpenAPIService {
         String ndescription = call.getString("description").orElse(ddescription);
         all.add(MdFactory.endParagraph());
         all.add(MdFactory.title(3, method.toUpperCase() + " " + url));
-        all.add(MdFactory.text(nsummary));
+        all.add(asText(nsummary));
         if (!NutsBlankable.isBlank(nsummary) && !nsummary.endsWith(".")) {
-            all.add(MdFactory.text("."));
+            all.add(asText("."));
         }
         all.add(MdFactory.endParagraph());
         all.add(
@@ -601,9 +609,9 @@ public class NOpenAPIService {
         );
         all.add(MdFactory.endParagraph());
         if (ndescription != null) {
-            all.add(MdFactory.text(ndescription));
+            all.add(asText(ndescription));
             if (!NutsBlankable.isBlank(ndescription) && !ndescription.endsWith(".")) {
-                all.add(MdFactory.text("."));
+                all.add(asText("."));
             }
             all.add(MdFactory.endParagraph());
         }
@@ -626,40 +634,40 @@ public class NOpenAPIService {
 
         ) {
             all.add(MdFactory.endParagraph());
-            all.add(MdFactory.title(4, "REQUEST"));
+            all.add(MdFactory.title(4, msg.get("REQUEST").get()));
 
             // paragraph details the expected request parameters and body to be provided by the caller
 
-            if((
-                    (withRequestHeaderParameters?1:0)+
-                    (withRequestQueryParameters?1:0)+
-                    (withRequestPathParameters?1:0)+
-                    (withRequestBody?1:0)
-            )>1){
-                all.add(MdFactory.text("This end-point requires various parameter types to be provided by the caller."));
-            }else if(withRequestHeaderParameters){
-                all.add(MdFactory.text("This end-point requires Header Parameter(s) to be provided by the caller."));
-            }else if(withRequestQueryParameters){
-                all.add(MdFactory.text("This end-point requires Query (s) to be provided by the caller."));
-            }else if(withRequestPathParameters){
-                all.add(MdFactory.text("This end-point requires Path Parameter(s) to be provided by the caller."));
-            }else if(withRequestBody){
-                all.add(MdFactory.text("This end-point requires some input in its body to be provided by the caller."));
+            if ((
+                    (withRequestHeaderParameters ? 1 : 0) +
+                            (withRequestQueryParameters ? 1 : 0) +
+                            (withRequestPathParameters ? 1 : 0) +
+                            (withRequestBody ? 1 : 0)
+            ) > 1) {
+                all.add(asText(msg.get("endpoint.info.1").get()));
+            } else if (withRequestHeaderParameters) {
+                all.add(asText(msg.get("endpoint.info.2").get()));
+            } else if (withRequestQueryParameters) {
+                all.add(asText(msg.get("endpoint.info.3").get()));
+            } else if (withRequestPathParameters) {
+                all.add(asText(msg.get("endpoint.info.4").get()));
+            } else if (withRequestBody) {
+                all.add(asText(msg.get("endpoint.info.5").get()));
             }
 
             if (withRequestHeaderParameters) {
                 all.add(MdFactory.endParagraph());
-                all.add(MdFactory.title(5, "HEADER PARAMETERS"));
+                all.add(MdFactory.title(5, msg.get("HEADER_PARAMETERS").get()));
                 _fillApiPathMethodParam(headerParameters, all, url, typeCrossRefs, "Header Parameter");
             }
             if (withRequestPathParameters) {
                 all.add(MdFactory.endParagraph());
-                all.add(MdFactory.title(5, "PATH PARAMETERS"));
+                all.add(MdFactory.title(5, msg.get("PATH_PARAMETERS").get()));
                 _fillApiPathMethodParam(pathParameters, all, url, typeCrossRefs, "Path Parameter");
             }
             if (withRequestQueryParameters) {
                 all.add(MdFactory.endParagraph());
-                all.add(MdFactory.title(5, "QUERY PARAMETERS"));
+                all.add(MdFactory.title(5, msg.get("QUERY_PARAMETERS").get()));
                 _fillApiPathMethodParam(queryParameters, all, url, typeCrossRefs, "Query Parameter");
             }
             if (withRequestBody) {
@@ -668,8 +676,8 @@ public class NOpenAPIService {
                 NutsObjectElement r = requestBody.getObject("content").orElseGet(() -> NutsObjectElement.ofEmpty(session));
                 for (NutsElementEntry ii : r) {
                     all.add(MdFactory.endParagraph());
-                    all.add(MdFactory.title(5, "REQUEST BODY - " + ii.getKey() + (required ? " [required]" : "[optional]")));
-                    all.add(MdFactory.text(desc));
+                    all.add(MdFactory.title(5, msg.get("REQUEST_BODY").get() + " - " + ii.getKey() + (required ? (" [" + msg.get("REQUIRED").get() + "]") : (" [" + msg.get("OPTIONAL").get() + "]"))));
+                    all.add(asText(desc));
                     if (!NutsBlankable.isBlank(desc) && !desc.endsWith(".")) {
                         all.add(MdFactory.text("."));
                     }
@@ -678,10 +686,8 @@ public class NOpenAPIService {
                         typeCrossRefs.add(new TypeCrossRef(o.ref, url, "Request Body"));
 //                        all.add(MdFactory.endParagraph());
 //                        all.add(MdFactory.title(5, "REQUEST TYPE - " + o.ref));
-                        all.add(MdFactory.text(" The request body is expected to be of type : "));
-                        all.add(MdFactory.codeBacktick3("javascript", o.ref));
-                        all.add(MdFactory.text(" which is detailed in 'SCHEMA TYPES' section"));
-
+                        all.add(asText(" "));
+                        all.add(asText(NutsMessage.ofVstyle(msg.get("requestType.info").get(), NutsMaps.of("type", o.ref)).toString()));
                         NutsElement s = schemas.get(o.ref).orNull();
                         NutsElement description = null;
                         NutsElement example = null;
@@ -691,17 +697,17 @@ public class NOpenAPIService {
                         }
                         MdTable tab = new MdTable(
                                 new MdColumn[]{
-                                        new MdColumn(MdFactory.text("NAME"), MdHorizontalAlign.LEFT),
-                                        new MdColumn(MdFactory.text("TYPE"), MdHorizontalAlign.LEFT),
-                                        new MdColumn(MdFactory.text("DESCRIPTION"), MdHorizontalAlign.LEFT),
-                                        new MdColumn(MdFactory.text("EXAMPLE"), MdHorizontalAlign.LEFT)
+                                        new MdColumn(asText(msg.get("NAME").get()), MdHorizontalAlign.LEFT),
+                                        new MdColumn(asText(msg.get("TYPE").get()), MdHorizontalAlign.LEFT),
+                                        new MdColumn(asText(msg.get("DESCRIPTION").get()), MdHorizontalAlign.LEFT),
+                                        new MdColumn(asText(msg.get("EXAMPLE").get()), MdHorizontalAlign.LEFT)
                                 },
                                 new MdRow[]{
                                         new MdRow(
                                                 new MdElement[]{
                                                         MdFactory.codeBacktick3("", "request-body"),
                                                         MdFactory.codeBacktick3("", o.ref),
-                                                        MdFactory.text(_StringUtils.nvl(description == null ? null : description.toString(), "")),
+                                                        asText(_StringUtils.nvl(description == null ? null : description.toString(), "")),
                                                         jsonText(example),
                                                 }, false
                                         )
@@ -719,10 +725,8 @@ public class NOpenAPIService {
         }
 
         all.add(MdFactory.endParagraph());
-        all.add(MdFactory.title(4, "RESPONSE"));
-        all.add(MdFactory.text("This paragraph details main status codes and content as a response to the "));
-        all.add(MdFactory.codeBacktick3("javascript", url));
-        all.add(MdFactory.text(" path."));
+        all.add(MdFactory.title(4, msg.get("RESPONSE").get()));
+        all.add(asText(NutsMessage.ofVstyle(msg.get("section.response.body").get(), NutsMaps.of("path", url)).toString()));
 
         call.getObject("responses").get(session).stream()
                 .forEach(x -> {
@@ -730,11 +734,11 @@ public class NOpenAPIService {
                     NutsElement v = x.getValue();
                     all.add(MdFactory.endParagraph());
                     String codeDescription = evalCodeDescription(s.toString());
-                    all.add(MdFactory.title(5, "STATUS CODE - " + s
+                    all.add(MdFactory.title(5, msg.get("STATUS_CODE").get() + " - " + s
                             + (NutsBlankable.isBlank(codeDescription) ? "" : (" - " + codeDescription))
                     ));
                     String description = v.asObject().get(session).getString("description").orElse("");
-                    all.add(MdFactory.text(description));
+                    all.add(asText(description));
                     if (!NutsBlankable.isBlank(description) && !description.endsWith(".")) {
                         all.add(MdFactory.text("."));
                     }
@@ -748,27 +752,27 @@ public class NOpenAPIService {
                             if (NutsBlankable.isBlank(o.example)) {
                                 all.add(MdFactory.table()
                                         .addColumns(
-                                                MdFactory.column().setName("RESPONSE MODEL"),
-                                                MdFactory.column().setName("RESPONSE TYPE")
+                                                MdFactory.column().setName(msg.get("RESPONSE_MODEL").get()),
+                                                MdFactory.column().setName(msg.get("RESPONSE_TYPE").get())
                                         )
                                         .addRows(
                                                 MdFactory.row().addCells(
-                                                        MdFactory.text(content.getKey().asString().get(session)),
-                                                        MdFactory.text(o.ref)
+                                                        asText(content.getKey().asString().get(session)),
+                                                        asText(o.ref)
                                                 )
                                         ).build()
                                 );
                             } else if (o.example.toString().trim().length() <= maxExampleInlineLength) {
                                 all.add(MdFactory.table()
                                         .addColumns(
-                                                MdFactory.column().setName("RESPONSE MODEL"),
-                                                MdFactory.column().setName("RESPONSE TYPE"),
-                                                MdFactory.column().setName("EXAMPLE")
+                                                MdFactory.column().setName(msg.get("RESPONSE_MODEL").get()),
+                                                MdFactory.column().setName(msg.get("RESPONSE_TYPE").get()),
+                                                MdFactory.column().setName(msg.get("EXAMPLE").get())
                                         )
                                         .addRows(
                                                 MdFactory.row().addCells(
-                                                        MdFactory.text(content.getKey().asString().get(session)),
-                                                        MdFactory.text(o.ref),
+                                                        asText(content.getKey().asString().get(session)),
+                                                        asText(o.ref),
                                                         jsonText(o.example)
                                                 )
                                         ).build()
@@ -776,15 +780,16 @@ public class NOpenAPIService {
                             } else {
                                 all.add(MdFactory.table()
                                         .addColumns(
-                                                MdFactory.column().setName("RESPONSE MODEL"),
-                                                MdFactory.column().setName("RESPONSE TYPE"),
-                                                MdFactory.column().setName("EXAMPLE")
+                                                MdFactory.column().setName(msg.get("RESPONSE_MODEL").get()),
+                                                MdFactory.column().setName(msg.get("RESPONSE_TYPE").get()),
+                                                MdFactory.column().setName(msg.get("EXAMPLE").get())
                                         )
                                         .addRows(
                                                 MdFactory.row().addCells(
-                                                        MdFactory.text(content.getKey().asString().get(session)),
-                                                        MdFactory.text(o.ref),
-                                                        MdFactory.text("SEE BELOW...")
+                                                        asText(content.getKey().asString().get(session)),
+                                                        asText(o.ref),
+                                                        asText(msg.get("SEE_BELOW").get()),
+                                                        asText("...")
                                                 )
                                         ).build()
                                 );
@@ -795,10 +800,10 @@ public class NOpenAPIService {
                             }
                         } else {
                             all.add(MdFactory.endParagraph());
-                            all.add(MdFactory.title(6, "RESPONSE MODEL - " + content.getKey()));
+                            all.add(MdFactory.title(6, msg.get("RESPONSE_MODEL").get() + " - " + content.getKey()));
 //                        all.add(MdFactory.endParagraph());
                             if (o.ref != null) {
-                                all.add(MdFactory.title(6, "RESPONSE TYPE - " + o.ref));
+                                all.add(MdFactory.title(6, msg.get("RESPONSE_TYPE").get() + " - " + o.ref));
                             } else {
                                 all.add(MdFactory.codeBacktick3("javascript", "\n" + toCode(o, true, "")));
                             }
@@ -891,7 +896,7 @@ public class NOpenAPIService {
                         type += ("<=" + o.minLength.trim());
                     }
                     if (o.enumValues != null && o.enumValues.size() > 0) {
-                        type += " ALLOWED {";
+                        type += " " + msg.get("ALLOWED").get() + " {";
                         type += o.enumValues.stream().map(x -> x == null ? "null" : ("'" + x + "'")).collect(Collectors.joining(", "));
                         type += "}";
                     }
@@ -907,7 +912,7 @@ public class NOpenAPIService {
                         type += ("<=" + o.minLength.trim());
                     }
                     if (o.enumValues != null && o.enumValues.size() > 0) {
-                        type += " ALLOWED {";
+                        type += " " + msg.get("ALLOWED").get() + " {";
                         type += o.enumValues.stream().map(x -> x == null ? "null" : x).collect(Collectors.joining(", "));
                         type += "}";
                     }
@@ -915,7 +920,7 @@ public class NOpenAPIService {
                 }
                 case "boolean": {
                     if (o.enumValues != null && o.enumValues.size() > 0) {
-                        type += " ALLOWED {";
+                        type += " " + msg.get("ALLOWED").get() + " {";
                         type += o.enumValues.stream().map(x -> x == null ? "null" : x).collect(Collectors.joining(", "));
                         type += "}";
                     }
@@ -935,5 +940,30 @@ public class NOpenAPIService {
             this.location = location;
             this.type = type;
         }
+    }
+
+    private MdElement asText(String text) {
+        List<MdElement> all = new ArrayList<>();
+        int i = 0;
+        while (i < text.length()) {
+            int j = text.indexOf("##", i);
+            if (j < 0) {
+                all.add(MdFactory.text(text.substring(i)));
+                break;
+            }
+            String a = text.substring(i, j);
+            if (a.length() > 0) {
+                all.add(MdFactory.text(a));
+            }
+            int j2 = text.indexOf("##", j + 2);
+            if (j2 < 0) {
+                all.add(MdFactory.codeBacktick3("", text.substring(j + 2)));
+                break;
+            } else {
+                all.add(MdFactory.codeBacktick3("", text.substring(j + 2, j2)));
+                i = j2 + 2;
+            }
+        }
+        return MdFactory.ofListOrEmpty(all.toArray(new MdElement[0]));
     }
 }

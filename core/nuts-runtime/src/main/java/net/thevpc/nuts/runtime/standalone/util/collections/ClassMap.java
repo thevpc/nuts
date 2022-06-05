@@ -59,6 +59,10 @@ public class ClassMap<V> {
     private final Class<V> valueType;
     private final HashMap<Class, Class[]> cachedHierarchy;
 
+    public ClassMap(Class<V> valueType) {
+        this(null, valueType);
+    }
+
     public ClassMap(Class keyType, Class<V> valueType) {
         this(keyType, valueType, 0);
     }

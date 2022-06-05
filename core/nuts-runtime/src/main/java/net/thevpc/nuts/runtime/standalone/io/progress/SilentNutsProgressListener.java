@@ -1,10 +1,10 @@
 package net.thevpc.nuts.runtime.standalone.io.progress;
 
 import net.thevpc.nuts.util.NutsProgressEvent;
-import net.thevpc.nuts.util.NutsProgressMonitor;
+import net.thevpc.nuts.util.NutsProgressListener;
 
-public class SilentNutsProgressMonitor implements NutsProgressMonitor {
-    public SilentNutsProgressMonitor() {
+public class SilentNutsProgressListener implements NutsProgressListener {
+    public SilentNutsProgressListener() {
     }
 
     public void onStart(NutsProgressEvent event) {

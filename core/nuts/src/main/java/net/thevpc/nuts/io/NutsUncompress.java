@@ -28,7 +28,7 @@ package net.thevpc.nuts.io;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.spi.NutsComponent;
 import net.thevpc.nuts.util.NutsProgressFactory;
-import net.thevpc.nuts.util.NutsProgressMonitor;
+import net.thevpc.nuts.util.NutsProgressListener;
 import net.thevpc.nuts.util.NutsUtils;
 
 import java.io.File;
@@ -281,7 +281,7 @@ public interface NutsUncompress extends NutsComponent {
      * @return {@code this} instance
      * @since 0.5.8
      */
-    NutsUncompress setProgressMonitor(NutsProgressMonitor value);
+    NutsUncompress setProgressMonitor(NutsProgressListener value);
 
     /**
      * set progress monitor. Will create a singleton progress monitor factory
@@ -290,7 +290,7 @@ public interface NutsUncompress extends NutsComponent {
      * @return {@code this} instance
      * @since 0.5.8
      */
-    NutsUncompress progressMonitor(NutsProgressMonitor value);
+    NutsUncompress progressMonitor(NutsProgressListener value);
 
     /**
      * return true if safe flag is armed

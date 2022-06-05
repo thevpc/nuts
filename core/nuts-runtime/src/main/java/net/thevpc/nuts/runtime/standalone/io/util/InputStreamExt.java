@@ -5,11 +5,13 @@
  */
 package net.thevpc.nuts.runtime.standalone.io.util;
 
+import net.thevpc.nuts.NutsFormat;
 import net.thevpc.nuts.NutsMessage;
+import net.thevpc.nuts.NutsOptional;
 import net.thevpc.nuts.NutsSession;
-import net.thevpc.nuts.io.DefaultNutsInputSourceMetadata;
-import net.thevpc.nuts.io.NutsInputSource;
-import net.thevpc.nuts.io.NutsInputSourceMetadata;
+import net.thevpc.nuts.cmdline.NutsCommandLine;
+import net.thevpc.nuts.io.*;
+import net.thevpc.nuts.spi.NutsFormatSPI;
 import net.thevpc.nuts.text.NutsTextStyle;
 
 import java.io.IOException;
@@ -118,16 +120,40 @@ public class InputStreamExt extends InputStream implements NutsInputSource, Inte
     }
 
     @Override
-    public NutsMessage formatMessage(NutsSession session) {
-        return getInputMetaData().getMessage()
-                .orElse(
-                        NutsMessage.ofStyled(getClass().getSimpleName(), NutsTextStyle.path())
-                );
+    public NutsFormat formatter(NutsSession session) {
+        return NutsFormat.of(session, new NutsFormatSPI() {
+            @Override
+            public String getName() {
+                return "input-stream";
+            }
+
+            @Override
+            public void print(NutsPrintStream out) {
+                NutsOptional<NutsMessage> m = getInputMetaData().getMessage();
+                if(m.isPresent()){
+                    out.print(m.get());
+                }else {
+                    out.append(getClass().getSimpleName(), NutsTextStyle.path());
+                }
+            }
+
+            @Override
+            public boolean configureFirst(NutsCommandLine commandLine) {
+                return false;
+            }
+        });
     }
 
     @Override
     public String toString() {
-        return formatMessage().toString();
+        NutsPlainPrintStream out = new NutsPlainPrintStream();
+        NutsOptional<NutsMessage> m = getInputMetaData().getMessage();
+        if (m.isPresent()) {
+            out.print(m.get());
+        } else {
+            out.append(getClass().getSimpleName(), NutsTextStyle.path());
+        }
+        return out.toString();
     }
 
 }

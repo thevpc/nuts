@@ -129,7 +129,7 @@ public class JavaExecutorComponent implements NutsExecutorComponent {
         switch (options.getTerminalMode().orElse(NutsTerminalMode.DEFAULT)) {
             //retain filtered
             case DEFAULT:
-                options.setTerminalMode(execSession.getTerminal().out().mode());
+                options.setTerminalMode(execSession.getTerminal().out().getTerminalMode());
                 //retain filtered
             case FILTERED:
                 break;
@@ -137,7 +137,7 @@ public class JavaExecutorComponent implements NutsExecutorComponent {
             case INHERITED:
                 break;
             default:
-                options.setTerminalMode(execSession.getTerminal().out().mode());
+                options.setTerminalMode(execSession.getTerminal().out().getTerminalMode());
                 break;
         }
         options.setExpireTime(execSession.getExpireTime());

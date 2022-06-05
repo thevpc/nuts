@@ -14,6 +14,7 @@ import net.thevpc.nuts.text.NutsText;
 import net.thevpc.nuts.text.NutsTextStyle;
 import net.thevpc.nuts.text.NutsTextTransformConfig;
 import net.thevpc.nuts.text.NutsTexts;
+import net.thevpc.nuts.util.NutsClock;
 import net.thevpc.nuts.util.NutsUtils;
 
 import java.util.ArrayList;
@@ -33,7 +34,7 @@ public class DefaultNutsApplicationContext implements NutsApplicationContext {
     private NutsWorkspace workspace;
     private NutsSession session;
     private NutsId appId;
-    private long startTimeMillis;
+    private NutsClock startTime;
     private List<String> args;
     private NutsApplicationMode mode = NutsApplicationMode.RUN;
     private NutsAppStoreLocationResolver storeLocationResolver;
@@ -51,8 +52,8 @@ public class DefaultNutsApplicationContext implements NutsApplicationContext {
 //                startTimeMillis
 //        );
 //    }
-    public DefaultNutsApplicationContext(NutsWorkspace workspace, NutsSession session, List<String> args, Class appClass, String storeId, long startTimeMillis) {
-        this.startTimeMillis = startTimeMillis <= 0 ? System.currentTimeMillis() : startTimeMillis;
+    public DefaultNutsApplicationContext(NutsWorkspace workspace, NutsSession session, List<String> args, Class appClass, String storeId, NutsClock startTime) {
+        this.startTime = startTime == null ? NutsClock.now() : startTime;
         if (workspace == null && session == null) {
             NutsUtils.requireSession(session);
         } else if (workspace != null) {
@@ -186,7 +187,7 @@ public class DefaultNutsApplicationContext implements NutsApplicationContext {
     @Override
     public void printHelp() {
         NutsText h = NutsWorkspaceExt.of(getWorkspace()).resolveDefaultHelp(getAppClass(), session);
-        h=NutsTexts.of(session).transform(h,new NutsTextTransformConfig()
+        h = NutsTexts.of(session).transform(h, new NutsTextTransformConfig()
                 .setProcessTitleNumbers(true)
                 .setNormalize(true)
                 .setFlatten(true)
@@ -340,8 +341,8 @@ public class DefaultNutsApplicationContext implements NutsApplicationContext {
     }
 
     @Override
-    public long getStartTimeMillis() {
-        return startTimeMillis;
+    public NutsClock getStartTime() {
+        return startTime;
     }
 
     @Override
@@ -525,8 +526,8 @@ public class DefaultNutsApplicationContext implements NutsApplicationContext {
         return this;
     }
 
-    public NutsApplicationContext setStartTimeMillis(long startTimeMillis) {
-        this.startTimeMillis = startTimeMillis;
+    public NutsApplicationContext setStartTime(NutsClock startTime) {
+        this.startTime = startTime;
         return this;
     }
 

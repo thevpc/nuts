@@ -29,11 +29,14 @@ package net.thevpc.nuts.io;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.spi.NutsSystemTerminalBase;
 import net.thevpc.nuts.text.NutsTerminalCommand;
+import net.thevpc.nuts.text.NutsTextStyle;
+import net.thevpc.nuts.text.NutsTextStyles;
 
 import java.io.OutputStream;
 import java.io.PrintStream;
 import java.io.Writer;
 import java.util.Locale;
+import java.util.Map;
 
 public interface NutsPrintStream extends NutsOutputTarget {
 
@@ -149,6 +152,10 @@ public interface NutsPrintStream extends NutsOutputTarget {
 
     NutsPrintStream println(Object x);
 
+    NutsPrintStream append(Object text, NutsTextStyle style);
+
+    NutsPrintStream append(Object text, NutsTextStyles styles);
+
     NutsPrintStream resetLine();
 
     NutsPrintStream printf(String format, Object... args);
@@ -165,6 +172,12 @@ public interface NutsPrintStream extends NutsOutputTarget {
      */
     NutsPrintStream printj(String format, Object... args);
 
+    NutsPrintStream printlnj(String format, Object... args);
+
+    NutsPrintStream printv(String format, Map<String,?> args);
+
+    NutsPrintStream printlnv(String format, Map<String,?> args);
+
     NutsPrintStream printlnf(String format, Object... args);
 
     NutsPrintStream printf(Locale l, String format, Object... args);
@@ -179,7 +192,7 @@ public interface NutsPrintStream extends NutsOutputTarget {
 
     NutsPrintStream append(char c);
 
-    NutsTerminalMode mode();
+    NutsTerminalMode getTerminalMode();
 
     boolean isAutoFlash();
 
@@ -189,7 +202,7 @@ public interface NutsPrintStream extends NutsOutputTarget {
      * @param other new mode
      * @return a new instance of NutsPrintStream (if the mode changes)
      */
-    NutsPrintStream setMode(NutsTerminalMode other);
+    NutsPrintStream setTerminalMode(NutsTerminalMode other);
 
     NutsPrintStream run(NutsTerminalCommand command, NutsSession session);
 

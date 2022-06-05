@@ -68,9 +68,9 @@ public class DefaultNutsSystemTerminalBase extends NutsSystemTerminalBaseImpl {
             termSize =new NutsCachedValue<>(session -> null, THIRTY_SECONDS);
         }
         this.out = new NutsPrintStreamSystem(bootStdFd.getOut(), null, null, bootStdFd.getFlags().contains("ansi"),
-                session, this).setMode(terminalMode);
+                session, this).setTerminalMode(terminalMode);
         this.err = new NutsPrintStreamSystem(bootStdFd.getErr(), null, null, bootStdFd.getFlags().contains("ansi"),
-                session, this).setMode(terminalMode);
+                session, this).setTerminalMode(terminalMode);
         this.in = bootStdFd.getIn();
         this.scanner = new Scanner(this.in);
         return DEFAULT_SUPPORT;

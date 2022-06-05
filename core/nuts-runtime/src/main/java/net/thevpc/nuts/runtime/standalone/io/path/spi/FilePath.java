@@ -726,6 +726,11 @@ public class FilePath implements NutsPathSPI {
             this.p = p;
         }
 
+        @Override
+        public String getName() {
+            return "path";
+        }
+
         public NutsString asFormattedString() {
             return NutsTexts.of(p.getSession()).ofText(p.value);
         }

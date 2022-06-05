@@ -452,7 +452,7 @@ public class DefaultNutsCompress implements NutsCompress {
      * @since 0.5.8
      */
     @Override
-    public NutsCompress setProgressMonitor(NutsProgressMonitor value) {
+    public NutsCompress setProgressMonitor(NutsProgressListener value) {
         this.progressFactory = value == null ? null : new SingletonNutsInputStreamProgressFactory(value);
         return this;
     }

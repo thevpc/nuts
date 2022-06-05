@@ -69,7 +69,7 @@ public abstract class NutsPrintStreamRendered extends NutsPrintStreamBase {
                 return new NutsPrintStreamFiltered(base, getSession(),bindings);
             }
         }
-        throw new NutsIllegalArgumentException(base.getSession(),NutsMessage.ofCstyle("unsupported %s -> %s",mode(), other));
+        throw new NutsIllegalArgumentException(base.getSession(),NutsMessage.ofCstyle("unsupported %s -> %s", getTerminalMode(), other));
     }
 
 }

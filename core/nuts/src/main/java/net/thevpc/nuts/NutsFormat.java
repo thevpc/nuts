@@ -27,10 +27,14 @@
 package net.thevpc.nuts;
 
 import net.thevpc.nuts.cmdline.NutsCommandLineConfigurable;
+import net.thevpc.nuts.io.NutsCompress;
 import net.thevpc.nuts.io.NutsPath;
 import net.thevpc.nuts.io.NutsPrintStream;
 import net.thevpc.nuts.io.NutsSessionTerminal;
 import net.thevpc.nuts.spi.NutsComponent;
+import net.thevpc.nuts.spi.NutsFormatSPI;
+import net.thevpc.nuts.text.NutsTexts;
+import net.thevpc.nuts.util.NutsUtils;
 
 import java.io.File;
 import java.io.OutputStream;
@@ -45,6 +49,9 @@ import java.nio.file.Path;
  * @since 0.5.5
  */
 public interface NutsFormat extends NutsCommandLineConfigurable, NutsComponent {
+    static NutsFormat of(NutsSession session, NutsFormatSPI spi) {
+        return NutsTexts.of(session).createFormat(spi);
+    }
 
     /**
      * equivalent to {@link #format() }

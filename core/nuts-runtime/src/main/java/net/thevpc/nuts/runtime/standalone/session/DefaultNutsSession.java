@@ -34,7 +34,6 @@ import net.thevpc.nuts.io.NutsPrintStream;
 import net.thevpc.nuts.io.NutsSessionTerminal;
 import net.thevpc.nuts.io.NutsTerminalMode;
 import net.thevpc.nuts.runtime.standalone.elem.DefaultNutsArrayElementBuilder;
-import net.thevpc.nuts.runtime.standalone.io.progress.NutsProgressUtils;
 import net.thevpc.nuts.runtime.standalone.io.progress.ProgressOptions;
 import net.thevpc.nuts.runtime.standalone.io.terminal.AbstractNutsSessionTerminal;
 import net.thevpc.nuts.runtime.standalone.util.CoreStringUtils;
@@ -43,13 +42,11 @@ import net.thevpc.nuts.runtime.standalone.util.collections.NutsPropertiesHolder;
 import net.thevpc.nuts.util.NutsLogConfig;
 import net.thevpc.nuts.util.NutsMapListener;
 import net.thevpc.nuts.util.NutsStringUtils;
-import net.thevpc.nuts.util.NutsUtils;
 
 import java.io.InputStream;
 import java.time.Instant;
 import java.util.*;
 import java.util.function.Function;
-import java.util.function.Supplier;
 import java.util.logging.Filter;
 import java.util.logging.Level;
 
@@ -369,8 +366,8 @@ public class DefaultNutsSession implements Cloneable, NutsSession {
                         if(v==NutsTerminalMode.DEFAULT){
                             v=NutsTerminalMode.INHERITED;
                         }
-                        getTerminal().setOut(getTerminal().out().setMode(v));
-                        getTerminal().setErr(getTerminal().err().setMode(v));
+                        getTerminal().setOut(getTerminal().out().setTerminalMode(v));
+                        getTerminal().setErr(getTerminal().err().setTerminalMode(v));
                     }
                     return true;
                 }
@@ -378,8 +375,8 @@ public class DefaultNutsSession implements Cloneable, NutsSession {
                 case "--bot": {
                     a = cmdLine.nextBoolean().get(this);
                     if (active && a.getBooleanValue().get(this)) {
-                        getTerminal().setOut(getTerminal().out().setMode(NutsTerminalMode.FILTERED));
-                        getTerminal().setErr(getTerminal().err().setMode(NutsTerminalMode.FILTERED));
+                        getTerminal().setOut(getTerminal().out().setTerminalMode(NutsTerminalMode.FILTERED));
+                        getTerminal().setErr(getTerminal().err().setTerminalMode(NutsTerminalMode.FILTERED));
                         setProgressOptions("none");
                         setConfirm(NutsConfirmationMode.ERROR);
                         setTrace(false);
@@ -1208,11 +1205,11 @@ public class DefaultNutsSession implements Cloneable, NutsSession {
                 boolean becomesBot = options.getBot().orElse(false);
                 this.setBot(becomesBot);
                 if (/*!wasBot && */becomesBot) {
-                    if (getTerminal().out().mode() != NutsTerminalMode.FILTERED) {
-                        getTerminal().setOut(getTerminal().out().setMode(NutsTerminalMode.FILTERED));
+                    if (getTerminal().out().getTerminalMode() != NutsTerminalMode.FILTERED) {
+                        getTerminal().setOut(getTerminal().out().setTerminalMode(NutsTerminalMode.FILTERED));
                     }
-                    if (getTerminal().err().mode() != NutsTerminalMode.FILTERED) {
-                        getTerminal().setErr(getTerminal().err().setMode(NutsTerminalMode.FILTERED));
+                    if (getTerminal().err().getTerminalMode() != NutsTerminalMode.FILTERED) {
+                        getTerminal().setErr(getTerminal().err().setTerminalMode(NutsTerminalMode.FILTERED));
                     }
                 }
             }
@@ -1221,7 +1218,7 @@ public class DefaultNutsSession implements Cloneable, NutsSession {
             }
             if (options.getTerminalMode().isPresent() && NutsTerminalMode.DEFAULT != options.getTerminalMode().orNull()) {
                 getTerminal().setOut(
-                        getTerminal().getOut().setMode(options.getTerminalMode().orNull())
+                        getTerminal().getOut().setTerminalMode(options.getTerminalMode().orNull())
                 );
             }
             if (options.getExecutionType().isPresent()) {

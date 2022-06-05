@@ -57,7 +57,7 @@ public class ExecFacadeCommand extends AbstractFacadeCommand {
         NutsSession session = context.getSession().copy();
         session.setTerminal(NutsSessionTerminal.of(
                 new ByteArrayInputStream(new byte[0]),
-                NutsPrintStream.ofInMemory(session).setMode(NutsTerminalMode.FILTERED),
+                NutsPrintStream.ofInMemory(session).setTerminalMode(NutsTerminalMode.FILTERED),
                 NutsPrintStream.ofInMemory(session),
                 session
         ));

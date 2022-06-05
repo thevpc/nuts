@@ -83,6 +83,11 @@ class SshNutsPath implements NutsPathSPI {
     public NutsFormatSPI formatter(NutsPath basePath) {
         return new NutsFormatSPI() {
             @Override
+            public String getName() {
+                return "path";
+            }
+
+            @Override
             public void print(NutsPrintStream out) {
                 //should implement better formatting...
                 NutsTextStyle _sep = NutsTextStyle.separator();

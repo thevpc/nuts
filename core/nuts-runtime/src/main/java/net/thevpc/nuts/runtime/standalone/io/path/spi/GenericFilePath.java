@@ -301,17 +301,17 @@ public class GenericFilePath implements NutsPathSPI {
 
     @Override
     public boolean isAbsolute(NutsPath basePath) {
-        if(parts.size() != 0) {
+        if (parts.size() != 0) {
             NutsPathPart f = parts.first();
-            if(f.getSeparator().length() > 0){
+            if (f.getSeparator().length() > 0) {
                 return true;
             }
-            if(session.env().getOsFamily()==NutsOsFamily.WINDOWS) {
+            if (session.env().getOsFamily() == NutsOsFamily.WINDOWS) {
                 String n = f.getName();
                 //test if the name is a drive name
-                if (n.length()==2 && n.charAt(1)==':') {
-                    char c=n.charAt(0);
-                    if((c>='A' && c<='Z') || (c>='a' && c<='z')){
+                if (n.length() == 2 && n.charAt(1) == ':') {
+                    char c = n.charAt(0);
+                    if ((c >= 'A' && c <= 'Z') || (c >= 'a' && c <= 'z')) {
                         return true;
                     }
                 }
@@ -447,6 +447,11 @@ public class GenericFilePath implements NutsPathSPI {
     private static class MyPathFormat implements NutsFormatSPI {
 
         private final GenericFilePath p;
+
+        @Override
+        public String getName() {
+            return "path";
+        }
 
         public MyPathFormat(GenericFilePath p) {
             this.p = p;

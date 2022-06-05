@@ -103,7 +103,7 @@ public class NutsExecHelper extends AbstractSyncIProcessExecHelper {
         if (showCommand || session.boot().getCustomBootOption("---show-command")
                 .flatMap(NutsValue::asBoolean)
                 .orElse(false)) {
-            if (prepareTerminal.out().mode() == NutsTerminalMode.FORMATTED) {
+            if (prepareTerminal.out().getTerminalMode() == NutsTerminalMode.FORMATTED) {
                 prepareTerminal.out().printf("%s ", NutsTexts.of(session).ofStyled("[exec]", NutsTextStyle.primary4()));
                 prepareTerminal.out().println(NutsTexts.of(session).ofText(commandOut));
             } else {
@@ -134,7 +134,7 @@ public class NutsExecHelper extends AbstractSyncIProcessExecHelper {
     }
 
     public void dryExec() {
-        if (out.mode() == NutsTerminalMode.FORMATTED) {
+        if (out.getTerminalMode() == NutsTerminalMode.FORMATTED) {
             out.print("[dry] ==[exec]== ");
             out.println(pb.format());
         } else {

@@ -43,6 +43,7 @@ import net.thevpc.nuts.text.NutsTexts;
 import net.thevpc.nuts.toolbox.nsh.*;
 import net.thevpc.nuts.toolbox.nsh.jshell.parser.JShellParser;
 import net.thevpc.nuts.toolbox.nsh.jshell.util.ByteArrayPrintStream;
+import net.thevpc.nuts.util.NutsClock;
 
 import java.io.*;
 import java.util.ArrayList;
@@ -63,7 +64,7 @@ public class JShell {
     private final JShellHistory history;
     private final List<JShellVarListener> listeners = new ArrayList<>();
     protected JShellContext rootContext;
-    long boot_startMillis;
+    NutsClock boot_startMillis;
     private JShellEvaluator evaluator;
     private JShellErrorHandler errorHandler;
     private JShellExternalExecutor externalExecutor;
@@ -85,15 +86,15 @@ public class JShell {
     }
 
     public JShell(NutsSession session, String[] args) {
-        this(NutsApplicationContext.of(new String[]{}, 0, Nsh.class, null, session), null, null, args);
+        this(NutsApplicationContext.of(new String[]{}, null, Nsh.class, null, session), null, null, args);
     }
 
     public JShell(NutsSession session, NutsId appId, String[] args) {
-        this(NutsApplicationContext.of(new String[]{}, 0, Nsh.class, null, session), appId, appId==null?null:appId.getArtifactId(), args);
+        this(NutsApplicationContext.of(new String[]{}, null, Nsh.class, null, session), appId, appId==null?null:appId.getArtifactId(), args);
     }
 
     public JShell(NutsSession session, NutsId appId, String serviceName, String[] args) {
-        this(NutsApplicationContext.of(new String[]{}, 0, Nsh.class, null, session), appId, serviceName, args);
+        this(NutsApplicationContext.of(new String[]{}, null, Nsh.class, null, session), appId, serviceName, args);
     }
 
     private JShell(NutsApplicationContext appContext, NutsId appId, String serviceName, String[] args) {
@@ -101,7 +102,7 @@ public class JShell {
                 new NshEvaluator(), new NutsCommandTypeResolver(), new NutsErrorHandler(), new NutsExternalExecutor(),
                 null
         );
-        boot_startMillis = appContext.getStartTimeMillis();
+        boot_startMillis = appContext.getStartTime();
         this.appContext = appContext;
         this.appId = appId;
         //super.setCwd(workspace.getConfigManager().getCwd());

@@ -46,7 +46,7 @@ public class NutsPrintStreamRaw extends NutsPrintStreamBase {
                 throw new IllegalArgumentException(e);
             }
         }
-        switch (mode()) {
+        switch (getTerminalMode()) {
             case ANSI: {
                 if (bindings.ansi != null) {
                     throw new IllegalArgumentException("already bound ansi");
@@ -79,7 +79,7 @@ public class NutsPrintStreamRaw extends NutsPrintStreamBase {
 
     @Override
     public NutsPrintStream close() {
-        if (mode() == NutsTerminalMode.ANSI) {
+        if (getTerminalMode() == NutsTerminalMode.ANSI) {
             write("\033[0m".getBytes());
             flush();
         }
@@ -120,7 +120,7 @@ public class NutsPrintStreamRaw extends NutsPrintStreamBase {
         if (session == null || session == this.session) {
             return this;
         }
-        return new NutsPrintStreamRaw(out, base, autoFlash, mode(), session, new Bindings(), getTerminal());
+        return new NutsPrintStreamRaw(out, base, autoFlash, getTerminalMode(), session, new Bindings(), getTerminal());
     }
 
     @Override
@@ -144,7 +144,7 @@ public class NutsPrintStreamRaw extends NutsPrintStreamBase {
                 return new NutsPrintStreamFiltered(this, getSession(), bindings);
             }
         }
-        throw new NutsIllegalArgumentException(getSession(), NutsMessage.ofCstyle("unsupported %s -> %s", mode(), other));
+        throw new NutsIllegalArgumentException(getSession(), NutsMessage.ofCstyle("unsupported %s -> %s", getTerminalMode(), other));
     }
 
     @Override

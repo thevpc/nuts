@@ -26,14 +26,14 @@
 package net.thevpc.nuts.runtime.standalone.io.progress;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.io.DefaultNutsInputSourceMetadata;
-import net.thevpc.nuts.io.NutsIO;
-import net.thevpc.nuts.io.NutsInputSource;
-import net.thevpc.nuts.io.NutsInputSourceMetadata;
+import net.thevpc.nuts.cmdline.NutsCommandLine;
+import net.thevpc.nuts.io.*;
 import net.thevpc.nuts.runtime.standalone.io.util.InterruptException;
 import net.thevpc.nuts.runtime.standalone.io.util.Interruptible;
+import net.thevpc.nuts.spi.NutsFormatSPI;
 import net.thevpc.nuts.text.NutsTextStyle;
-import net.thevpc.nuts.util.NutsProgressMonitor;
+import net.thevpc.nuts.util.NutsProgressListener;
+import net.thevpc.nuts.io.NutsPlainPrintStream;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -45,7 +45,7 @@ public class MonitoredInputStream extends InputStream implements NutsInputSource
 
     private final InputStream base;
     private final long length;
-    private final NutsProgressMonitor monitor;
+    private final NutsProgressListener monitor;
     private final Object source;
     private final NutsMessage sourceName;
     private long count;
@@ -57,7 +57,7 @@ public class MonitoredInputStream extends InputStream implements NutsInputSource
     private final NutsSession session;
     private DefaultNutsInputSourceMetadata md;
 
-    public MonitoredInputStream(InputStream base, Object source, NutsMessage sourceName, long length, NutsProgressMonitor monitor, NutsSession session) {
+    public MonitoredInputStream(InputStream base, Object source, NutsMessage sourceName, long length, NutsProgressListener monitor, NutsSession session) {
         this.base = (InputStream) NutsIO.of(session).createInputSource(base);
         this.session = session;
         if (monitor == null) {
@@ -228,19 +228,44 @@ public class MonitoredInputStream extends InputStream implements NutsInputSource
     }
 
     @Override
-    public NutsMessage formatMessage(NutsSession session) {
-        return getInputMetaData().getMessage()
-                .orElseOf(
-                        () -> sourceName
-                )
-                .orElse(
-                        NutsMessage.ofStyled(getClass().getSimpleName(), NutsTextStyle.path())
-                );
+    public NutsFormat formatter(NutsSession session) {
+        return NutsFormat.of(session, new NutsFormatSPI() {
+            @Override
+            public String getName() {
+                return "input-stream";
+            }
+
+            @Override
+            public void print(NutsPrintStream out) {
+                NutsOptional<NutsMessage> m = getInputMetaData().getMessage();
+                if (m.isPresent()) {
+                    out.print(m.get());
+                } else if (sourceName != null) {
+                    out.append(sourceName, NutsTextStyle.path());
+                } else {
+                    out.append(getClass().getSimpleName(), NutsTextStyle.path());
+                }
+            }
+
+            @Override
+            public boolean configureFirst(NutsCommandLine commandLine) {
+                return false;
+            }
+        });
     }
 
     @Override
     public String toString() {
-        return formatMessage().toString();
+        NutsPlainPrintStream out = new NutsPlainPrintStream();
+        NutsOptional<NutsMessage> m = getInputMetaData().getMessage();
+        if (m.isPresent()) {
+            out.print(m.get());
+        } else if (sourceName != null) {
+            out.append(sourceName, NutsTextStyle.path());
+        } else {
+            out.append(getClass().getSimpleName(), NutsTextStyle.path());
+        }
+        return out.toString();
     }
 
 }

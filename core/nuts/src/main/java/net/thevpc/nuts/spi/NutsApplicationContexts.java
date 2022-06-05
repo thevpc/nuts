@@ -29,6 +29,7 @@ package net.thevpc.nuts.spi;
 
 import net.thevpc.nuts.NutsApplicationContext;
 import net.thevpc.nuts.NutsSession;
+import net.thevpc.nuts.util.NutsClock;
 import net.thevpc.nuts.util.NutsUtils;
 
 /**
@@ -50,10 +51,10 @@ public interface NutsApplicationContexts extends NutsComponent {
      * create a new instance of {@link NutsApplicationContext}
      *
      * @param args            application arguments
-     * @param startTimeMillis application start time
+     * @param startTime application start time
      * @param appClass        application class
      * @param storeId         application store id or null
      * @return new instance of {@link NutsApplicationContext}
      */
-    NutsApplicationContext create(String[] args, long startTimeMillis, Class appClass, String storeId);
+    NutsApplicationContext create(String[] args, NutsClock startTime, Class appClass, String storeId);
 }

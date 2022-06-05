@@ -13,14 +13,14 @@ import net.thevpc.nuts.text.NutsTextBuilder;
 import net.thevpc.nuts.text.NutsTextStyle;
 import net.thevpc.nuts.text.NutsTexts;
 import net.thevpc.nuts.util.NutsProgressEvent;
-import net.thevpc.nuts.util.NutsProgressMonitor;
+import net.thevpc.nuts.util.NutsProgressListener;
 
 import java.text.DecimalFormat;
 
 /**
  * @author thevpc
  */
-public class TraceNutsProgressMonitor implements NutsProgressMonitor/*, NutsOutputStreamTransparentAdapter*/ {
+public class TraceNutsProgressListener implements NutsProgressListener/*, NutsOutputStreamTransparentAdapter*/ {
     private static DecimalFormat df = new DecimalFormat("##0.00");
 
     private NutsPrintStream out;
@@ -29,7 +29,7 @@ public class TraceNutsProgressMonitor implements NutsProgressMonitor/*, NutsOutp
     private boolean optionsProcessed=false;
     private boolean optionNewline=false;
 
-    public TraceNutsProgressMonitor() {
+    public TraceNutsProgressListener() {
 //        this.session = session;
     }
 

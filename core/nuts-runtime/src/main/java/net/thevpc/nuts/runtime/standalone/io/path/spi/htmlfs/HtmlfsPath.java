@@ -289,6 +289,10 @@ public class HtmlfsPath extends AbstractPathSPIAdapter {
         public MyPathFormat(HtmlfsPath p) {
             this.p = p;
         }
+        @Override
+        public String getName() {
+            return "path";
+        }
 
         public NutsString asFormattedString() {
             NutsTextBuilder sb = NutsTextBuilder.of(p.getSession());

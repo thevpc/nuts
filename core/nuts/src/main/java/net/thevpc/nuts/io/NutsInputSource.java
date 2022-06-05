@@ -26,8 +26,6 @@
 package net.thevpc.nuts.io;
 
 import net.thevpc.nuts.NutsFormattable;
-import net.thevpc.nuts.NutsMessageFormattable;
-import net.thevpc.nuts.NutsSession;
 
 import java.io.InputStream;
 
@@ -38,7 +36,7 @@ import java.io.InputStream;
  * @app.category Input Output
  * @since 0.5.5
  */
-public interface NutsInputSource extends NutsMessageFormattable {
+public interface NutsInputSource extends NutsFormattable {
     InputStream getInputStream();
 
     NutsInputSourceMetadata getInputMetaData();

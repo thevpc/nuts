@@ -3,12 +3,9 @@ package net.thevpc.nuts.runtime.standalone.io.printstream;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.io.NutsPrintStream;
 import net.thevpc.nuts.io.NutsTerminalMode;
-import net.thevpc.nuts.runtime.standalone.text.parser.DefaultNutsTextPlain;
-import net.thevpc.nuts.runtime.standalone.text.parser.DefaultNutsTextStyled;
 import net.thevpc.nuts.spi.NutsSystemTerminalBase;
 import net.thevpc.nuts.text.NutsTerminalCommand;
 import net.thevpc.nuts.text.NutsTextStyle;
-import net.thevpc.nuts.text.NutsTextStyles;
 
 import java.io.OutputStream;
 import java.io.PrintStream;
@@ -56,7 +53,7 @@ public class NutsPrintStreamSystem extends NutsPrintStreamBase {
                 throw new IllegalArgumentException(e);
             }
         }
-        switch (mode()) {
+        switch (getTerminalMode()) {
             case ANSI: {
                 if (bindings.ansi != null) {
                     throw new IllegalArgumentException("already bound ansi");
@@ -99,7 +96,7 @@ public class NutsPrintStreamSystem extends NutsPrintStreamBase {
 
     @Override
     public NutsPrintStream close() {
-        if (mode() == NutsTerminalMode.ANSI) {
+        if (getTerminalMode() == NutsTerminalMode.ANSI) {
             write("\033[0m".getBytes());
             flush();
         }
@@ -140,7 +137,7 @@ public class NutsPrintStreamSystem extends NutsPrintStreamBase {
         if (session == null || session == this.session) {
             return this;
         }
-        return new NutsPrintStreamSystem(out, base, autoFlash, mode(), session, new Bindings(), getTerminal());
+        return new NutsPrintStreamSystem(out, base, autoFlash, getTerminalMode(), session, new Bindings(), getTerminal());
     }
 
     @Override
@@ -159,7 +156,7 @@ public class NutsPrintStreamSystem extends NutsPrintStreamBase {
                 return new NutsPrintStreamFiltered(this, getSession(), bindings);
             }
         }
-        throw new NutsIllegalArgumentException(getSession(), NutsMessage.ofCstyle("unsupported %s -> %s", mode(), other));
+        throw new NutsIllegalArgumentException(getSession(), NutsMessage.ofCstyle("unsupported %s -> %s", getTerminalMode(), other));
     }
 
     @Override

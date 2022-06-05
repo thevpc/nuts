@@ -14,6 +14,7 @@ import java.io.OutputStream;
 import java.io.PrintStream;
 import java.io.Writer;
 import java.util.Locale;
+import java.util.Map;
 
 public abstract class NutsPrintStreamBase implements NutsPrintStream {
     private static String LINE_SEP = System.getProperty("line.separator");
@@ -273,12 +274,25 @@ public abstract class NutsPrintStreamBase implements NutsPrintStream {
 
     @Override
     public NutsPrintStream printj(String format, Object... args) {
-        NutsText s = NutsTexts.of(session).ofText(
-                NutsMessage.ofJstyle(
-                        format, args
-                )
-        );
-        print(s);
+        print(NutsTexts.of(session).ofText(NutsMessage.ofJstyle(format, args)));
+        return this;
+    }
+
+    @Override
+    public NutsPrintStream printlnj(String format, Object... args) {
+        println(NutsTexts.of(session).ofText(NutsMessage.ofJstyle(format, args)));
+        return this;
+    }
+
+    @Override
+    public NutsPrintStream printv(String format, Map<String, ?> args) {
+        print(NutsTexts.of(session).ofText(NutsMessage.ofVstyle(format, args)));
+        return this;
+    }
+
+    @Override
+    public NutsPrintStream printlnv(String format, Map<String, ?> args) {
+        println(NutsTexts.of(session).ofText(NutsMessage.ofVstyle(format, args)));
         return this;
     }
 
@@ -347,7 +361,7 @@ public abstract class NutsPrintStreamBase implements NutsPrintStream {
     }
 
     @Override
-    public NutsTerminalMode mode() {
+    public NutsTerminalMode getTerminalMode() {
         return mode;
     }
 
@@ -357,8 +371,8 @@ public abstract class NutsPrintStreamBase implements NutsPrintStream {
     }
 
     @Override
-    public NutsPrintStream setMode(NutsTerminalMode other) {
-        if (other == null || other == this.mode()) {
+    public NutsPrintStream setTerminalMode(NutsTerminalMode other) {
+        if (other == null || other == this.getTerminalMode()) {
             return this;
         }
         switch (other) {
@@ -416,7 +430,7 @@ public abstract class NutsPrintStreamBase implements NutsPrintStream {
 
     @Override
     public boolean isNtf() {
-        switch (mode()) {
+        switch (getTerminalMode()) {
             case FORMATTED:
             case FILTERED: {
                 return true;
@@ -435,5 +449,22 @@ public abstract class NutsPrintStreamBase implements NutsPrintStream {
         protected NutsPrintStreamBase ansi;
         protected NutsPrintStreamBase inherited;
         protected NutsPrintStreamBase formatted;
+    }
+
+    @Override
+    public NutsPrintStream append(Object text, NutsTextStyle style) {
+        return append(text, NutsTextStyles.of(style));
+    }
+
+    @Override
+    public NutsPrintStream append(Object text, NutsTextStyles styles) {
+        if (text != null) {
+            if (styles.size() == 0) {
+                print(NutsTexts.of(session).ofText(text));
+            } else {
+                print(NutsTexts.of(session).ofStyled(NutsTexts.of(session).ofText(text), styles));
+            }
+        }
+        return this;
     }
 }

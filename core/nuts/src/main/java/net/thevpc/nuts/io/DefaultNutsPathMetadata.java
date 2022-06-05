@@ -71,7 +71,7 @@ public class DefaultNutsPathMetadata {
 
     public NutsOptional<NutsMessage> getMessage() {
         return NutsOptional.ofNamed(message, "message")
-                .orElseOf(() -> path.formatMessage(path.getSession()))
+                .orElseOf(() -> NutsMessage.ofNtf(path.format(path.getSession())))
                 ;
     }
 

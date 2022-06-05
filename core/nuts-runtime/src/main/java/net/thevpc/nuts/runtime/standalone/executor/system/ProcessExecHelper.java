@@ -110,7 +110,7 @@ public class ProcessExecHelper extends AbstractSyncIProcessExecHelper {
                             )));
         }
         if (showCommand || CoreNutsUtils.isShowCommand(session)) {
-            if (prepareTerminal.out().mode() == NutsTerminalMode.FORMATTED) {
+            if (prepareTerminal.out().getTerminalMode() == NutsTerminalMode.FORMATTED) {
                 prepareTerminal.out().printf("%s ", NutsTexts.of(session).ofStyled("[exec]", NutsTextStyle.primary4()));
                 prepareTerminal.out().println(NutsTexts.of(session).ofCode("system", pb.getCommandString()));
             } else {
@@ -450,7 +450,7 @@ public class ProcessExecHelper extends AbstractSyncIProcessExecHelper {
     }
 
     public void dryExec() {
-        if (out.mode() == NutsTerminalMode.FORMATTED) {
+        if (out.getTerminalMode() == NutsTerminalMode.FORMATTED) {
             out.print("[dry] ==[exec]== ");
             out.println(pb.getFormattedCommandString(getSession()));
         } else {

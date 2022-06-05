@@ -141,29 +141,6 @@ public class NutsStringUtils {
         return sb.toString();
     }
 
-    public static String formatPeriodMilli(long period) {
-        StringBuilder sb = new StringBuilder();
-        boolean started = false;
-        int h = (int) (period / (1000L * 60L * 60L));
-        int mn = (int) ((period % (1000L * 60L * 60L)) / 60000L);
-        int s = (int) ((period % 60000L) / 1000L);
-        int ms = (int) (period % 1000L);
-        if (h > 0) {
-            sb.append(formatAlign(String.valueOf(h), 2, NutsPositionType.LAST)).append("h ");
-            started = true;
-        }
-        if (mn > 0 || started) {
-            sb.append(formatAlign(String.valueOf(mn), 2, NutsPositionType.LAST)).append("mn ");
-            started = true;
-        }
-        if (s > 0 || started) {
-            sb.append(formatAlign(String.valueOf(s), 2, NutsPositionType.LAST)).append("s ");
-            //started=true;
-        }
-        sb.append(formatAlign(String.valueOf(ms), 3, NutsPositionType.LAST)).append("ms");
-        return sb.toString();
-    }
-
     public static String formatStringLiteral(String text) {
         return formatStringLiteral(text, QuoteType.DOUBLE);
     }

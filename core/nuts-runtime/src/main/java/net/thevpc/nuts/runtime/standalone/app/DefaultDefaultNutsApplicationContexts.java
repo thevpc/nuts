@@ -6,6 +6,7 @@ import net.thevpc.nuts.NutsSession;
 import net.thevpc.nuts.spi.NutsComponentScope;
 import net.thevpc.nuts.spi.NutsComponentScopeType;
 import net.thevpc.nuts.spi.NutsSupportLevelContext;
+import net.thevpc.nuts.util.NutsClock;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -18,12 +19,12 @@ public class DefaultDefaultNutsApplicationContexts implements NutsApplicationCon
         this.session = session;
     }
 
-    public NutsApplicationContext create(String[] args, long startTimeMillis, Class appClass, String storeId) {
+    public NutsApplicationContext create(String[] args, NutsClock startTime, Class appClass, String storeId) {
 //        if (session == null) {
 //            checkSession(this.session);
 //            session = this.session;
 //        }
-        return new DefaultNutsApplicationContext(session.getWorkspace(), session, new ArrayList<>(Arrays.asList(args)), appClass, storeId, startTimeMillis);
+        return new DefaultNutsApplicationContext(session.getWorkspace(), session, new ArrayList<>(Arrays.asList(args)), appClass, storeId, startTime);
     }
 
 

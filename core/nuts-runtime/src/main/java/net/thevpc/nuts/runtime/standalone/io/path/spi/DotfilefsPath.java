@@ -307,6 +307,10 @@ public class DotfilefsPath extends AbstractPathSPIAdapter {
             sb.append(p.ref);
             return sb.build();
         }
+        @Override
+        public String getName() {
+            return "path";
+        }
 
         @Override
         public void print(NutsPrintStream out) {

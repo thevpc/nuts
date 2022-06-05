@@ -37,6 +37,7 @@ import net.thevpc.nuts.io.NutsPrintStream;
  * @since 0.8.1
  */
 public interface NutsFormatSPI {
+    String getName();
 
     /**
      * format current value and write result to {@code out} and finally appends
