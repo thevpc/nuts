@@ -66,18 +66,8 @@ public class Test12_CopyTest {
                 .addOptions(NutsPathOption.LOG, NutsPathOption.TRACE)
                 .setProgressMonitor(new NutsProgressListener() {
             @Override
-            public void onStart(NutsProgressEvent event) {
-                TestUtils.println(event.getPercent());
-            }
-
-            @Override
-            public void onComplete(NutsProgressEvent event) {
-                TestUtils.println(event.getPercent());
-            }
-
-            @Override
             public boolean onProgress(NutsProgressEvent event) {
-                TestUtils.println(event.getPercent());
+                TestUtils.println(event.getProgress());
                 return true;
             }
         }).run();
