@@ -12,40 +12,42 @@ Starred releases are most stable ones.
 ## nuts 0.8.4.0 (DEVELOPMENT VERSION)
 - ```2022/XX/XX 	nuts 0.8.4.0``` not released yet nuts-runtime-0.8.4.2-alpha1.jar
 - WARNING : {api}  API has evolved with incompatibilities with previous versions
-- FIXED: Fixed maven url parsing on windows platforms that prevented nsh from being installed
-- ADDED: Added native installers for windows, linux and macOS
-- ADDED: Added links to pdf docs in website and offline documentation
-- ADDED: Added new nuts LOGO
-- ADDED: Added NutsOptional a feature riche replacement of java's Optional
+- FIXED: Fixed maven url parsing on Windows platforms that prevented nsh from being installed
+- ADDED: Add native installers for windows, linux and macOS
+- ADDED: Add links to pdf docs in website and offline documentation
+- ADDED: Add new nuts LOGO
+- ADDED: Add NutsOptional a feature riche replacement of java's Optional
 - ADDED: Add NutsEnvCondition/NutsEnvConditionBuilder::setProperties/getProperties
-- REMOVED: Remove session dependency from NutsVersion,NutsId and NutsDescriptor
-- CHANGED: Enum.parseLenient replaced by NutsOptional
 - ADDED: Add NutsDescriptor/NutsDescriptorBuilder::setLicenses
 - ADDED: Add NutsDescriptor/NutsDescriptorBuilder::setDevelopers
-+ CHANGED: Rename NutsConstants.IdProperties.DESKTOP_ENVIRONMENT -> NutsConstants.IdProperties.DESKTOP
-+ ADDED: Add    NutsConstants.IdProperties.DESKTOP_ENVIRONMENT -> NutsConstants.IdProperties.PROPERTIES
-+ CHANGED: Rename NutsRepositoryDB::getRepositoryNameByURL -> NutsRepositoryDB::getRepositoryNameByLocation
-+ CHANGED: Rename NutsRepositoryDB::getRepositoryURLByName -> NutsRepositoryDB::getRepositoryLocationByName
-+ CHANGED: Change type to long in NutsExecCommand::getSleepMillis()/setSleepMillis(int sleepMillis);
-+ ADDED: Add NutsPath::getLongBaseName // longest file name before last '.'
-+ ADDED: Add NutsMessageFormattable
-+ ADDED: Add NutsDescribable now takes a Session instead of NutsElements
-+ CHANGED: Now NutsWorkspaceOptionsBuilder extends NutsWorkspaceOptions
-+ REMOVED: Remove NutsBootOptions
-+ ADDED: added cmdline arguments : --isolation,--confined, --sandbox
-+ ADDED: promote cmdline arguments : --init-platforms,--init-launchers,--init-scripts, --init-java
-+ ADDED: promote cmdline arguments : --desktop-launcher,--menu-launcher,--user-launcher
-+ ADDED: Add NutsMessageFormattable
-+ CHANGED: complete rewrite of NTF parser
-+ CHANGED: classes refactored to be repackaged in inner packages
-+ REMOVED: removed CoreNumberUtils
-+ ADDED: added 30+ unit tests
-+ ADDED: NutsSession::isProgress
-+ ADDED: NutsCommandline now extends NutsBlankable
-+ ADDED: Added/Exposed Bean Reflection API : NutsReflectRepository,NutsReflectType,NutsReflectProperty
-+ ADDED: Added NutsChronometer and NutsDuration
-+ ADDED: Added Var Style (dollar based placeholder) in NutsMessage
-+ REMOVED: NutsMessageFormatted
+- ADDED: Add    NutsConstants.IdProperties.DESKTOP_ENVIRONMENT -> NutsConstants.IdProperties.PROPERTIES
+- ADDED: Add NutsPath::getLongBaseName // longest file name before last '.'
+- ADDED: Add NutsMessageFormattable
+- ADDED: Add NutsDescribable now takes a Session instead of NutsElements
+- ADDED: Add cmdline arguments : --isolation,--confined, --sandbox
+- ADDED: promote cmdline arguments : --init-platforms,--init-launchers,--init-scripts, --init-java
+- ADDED: promote cmdline arguments : --desktop-launcher,--menu-launcher,--user-launcher
+- ADDED: Add NutsMessageFormattable
+- ADDED: Add 30+ unit tests
+- ADDED: NutsSession::isProgress
+- ADDED: NutsCommandline now extends NutsBlankable
+- ADDED: Added/Exposed Bean Reflection API : NutsReflectRepository,NutsReflectType,NutsReflectProperty
+- ADDED: Added NutsChronometer, NutsDuration
+- ADDED: Added Var Style (dollar based placeholder) in NutsMessage
+- ADDED: added NutsProgressMonitor and monitoring api
+- ADDED: NutsMemorySize and memory size api
+- CHANGED: Enum.parseLenient replaced by NutsOptional
+- CHANGED: Rename NutsConstants.IdProperties.DESKTOP_ENVIRONMENT -> NutsConstants.IdProperties.DESKTOP
+- CHANGED: Now NutsWorkspaceOptionsBuilder extends NutsWorkspaceOptions
+- CHANGED: Rename NutsRepositoryDB::getRepositoryNameByURL -> NutsRepositoryDB::getRepositoryNameByLocation
+- CHANGED: Rename NutsRepositoryDB::getRepositoryURLByName -> NutsRepositoryDB::getRepositoryLocationByName
+- CHANGED: Change type to long in NutsExecCommand::getSleepMillis()/setSleepMillis(int sleepMillis);
+- CHANGED: complete rewrite of NTF parser
+- CHANGED: classes refactored to be repackaged in inner packages
+- REMOVED: Remove session dependency from NutsVersion,NutsId and NutsDescriptor
+- REMOVED: Remove NutsBootOptions
+- REMOVED: removed CoreNumberUtils
+- REMOVED: NutsMessageFormatted
 
 ## nuts 0.8.3.1 (PUBLISHED VERSION)
 - ```2022/02/01 	nuts 0.8.3.1``` released nuts-runtime-0.8.3.1.jar
