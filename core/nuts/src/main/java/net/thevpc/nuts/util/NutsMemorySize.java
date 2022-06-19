@@ -825,15 +825,15 @@ public class NutsMemorySize implements Serializable, NutsFormattable {
 
     @Override
     public String toString() {
-        return NutsMemoryFormat.DEFAULT.format(this);
+        return NutsMemorySizeFormat.DEFAULT.format(this);
     }
 
     public String toString(boolean fixed, Boolean iec) {
-        return NutsMemoryFormat.of(fixed, iec).format(this);
+        return NutsMemorySizeFormat.of(fixed, iec).format(this);
     }
 
     public String toString(boolean fixed) {
-        return NutsMemoryFormat.of(fixed, null).format(this);
+        return NutsMemorySizeFormat.of(fixed, null).format(this);
     }
 
     @Override
@@ -849,7 +849,7 @@ public class NutsMemorySize implements Serializable, NutsFormattable {
 
             @Override
             public void print(NutsPrintStream out) {
-                NutsMemoryFormat.of(fixed, iec).print(NutsMemorySize.this, out);
+                NutsMemorySizeFormat.of(fixed, iec).print(NutsMemorySize.this, out);
             }
 
             @Override
