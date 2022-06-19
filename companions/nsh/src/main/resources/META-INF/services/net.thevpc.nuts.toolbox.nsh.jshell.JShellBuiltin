@@ -44,6 +44,7 @@ net.thevpc.nuts.toolbox.nsh.cmds.CommandCommand
 net.thevpc.nuts.toolbox.nsh.cmds.TestCommand
 net.thevpc.nuts.toolbox.nsh.cmds.JsonCommand
 net.thevpc.nuts.toolbox.nsh.cmds.XmlCommand
+net.thevpc.nuts.toolbox.nsh.cmds.ClearCommand
 
 net.thevpc.nuts.toolbox.nsh.cmds.JpsCommand
 
