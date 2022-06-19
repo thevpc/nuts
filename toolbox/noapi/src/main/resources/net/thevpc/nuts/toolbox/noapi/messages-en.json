@@ -44,4 +44,6 @@
   "endpoint.info.4":"This end-point requires Path Parameter(s) to be provided by the caller.",
   "endpoint.info.5":"This end-point requires some input in its body to be provided by the caller.",
   "requestType.info": "The request body is expected to be of type : ##${type}## which is detailed in 'SCHEMA TYPES' section",
+  "request.body.example.intro": "The following is a request body example",
+  "response.body.example.intro": "The following is a response body example",
 }

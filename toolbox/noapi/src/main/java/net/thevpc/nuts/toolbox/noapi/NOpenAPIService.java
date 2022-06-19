@@ -230,7 +230,7 @@ public class NOpenAPIService {
             for (NutsElementEntry ee : components.getObject("headers").orElse(NutsObjectElement.ofEmpty(session))) {
                 String k = ee.getKey().toString();
                 k = k + (ee.getValue().asObject().get(session).getBoolean("deprecated").orElse(false) ? (" [" + msg.get("DEPRECATED").get() + "]") : "");
-                k = k + asText(ee.getValue().asObject().get(session).getBoolean("required").orElse(false) ? (" [" + msg.get("REQUIRED").get() + "]") : "");
+                k = k + asText(requiredSuffix(ee.getValue().asObject().get(session)));
                 table.addRows(
                         MdFactory.row().addCells(
                                 MdFactory.codeBacktick3("", k),
@@ -407,9 +407,9 @@ public class NOpenAPIService {
                     mdTableBuilder.addRows(
                             MdFactory.row().addCells(
                                     asText(p.name),
-                                    MdFactory.codeBacktick3("", toCode(p.schema, false, "") + (p.required ? (" [" + msg.get("REQUIRED").get() + "]") : (" [" + msg.get("OPTIONAL").get() + "]"))),
+                                    codeElement(p.schema, false, requiredSuffix(p.required)),
                                     asText(p.description == null ? "" : p.description.trim()),
-                                    jsonText(p.example)
+                                    jsonTextElementInlined(p.example)
                             )
                     );
                 }
@@ -420,7 +420,7 @@ public class NOpenAPIService {
                 all.add(asText(msg.get("EXAMPLE").get()));
                 all.add(asText(":"));
                 all.add(MdFactory.endParagraph());
-                all.add(jsonText(v.example));
+                all.add(jsonTextElement(v.example));
             }
         }
     }
@@ -573,7 +573,7 @@ public class NOpenAPIService {
                             NutsObjectElement obj = headerParameter.asObject().orElse(NutsElements.of(session).ofEmptyObject());
                             boolean pdeprecated = obj.getBoolean("pdeprecated").orElse(false);
                             String type = _StringUtils.nvl(obj.getString("type").orNull(), "string")
-                                    + (obj.getBoolean("required").orElse(false) ? (" [" + msg.get("REQUIRED").get() + "]") : (" [" + msg.get("OPTIONAL").get() + "]"));
+                                    + requiredSuffix(obj);
                             typeCrossRefs.add(new TypeCrossRef(
                                     obj.getString("type").orElse(""), url, paramType
                             ));
@@ -584,13 +584,21 @@ public class NOpenAPIService {
                                             ),
                                             MdFactory.codeBacktick3("", type),
                                             asText(_StringUtils.nvl(obj.getString("description").orElse(""), "")),
-                                            jsonText(obj.getString("example").orElse("")),
+                                            jsonTextElementInlined(obj.getString("example").orElse("")),
                                     }, false
                             );
                         }
                 ).toArray(MdRow[]::new)
         );
         all.add(tab);
+    }
+
+    private String requiredSuffix(NutsObjectElement obj) {
+        return requiredSuffix(obj.getBoolean("required").orElse(false));
+    }
+
+    private String requiredSuffix(boolean obj) {
+        return obj ? (" [" + msg.get("REQUIRED").get() + "]") : (" [" + msg.get("OPTIONAL").get() + "]");
     }
 
     private void _fillApiPathMethod(String method, NutsObjectElement call, List<MdElement> all, String url, NutsElements prv, String dsummary, String ddescription, NutsArrayElement dparameters, NutsObjectElement schemas, List<TypeCrossRef> typeCrossRefs) {
@@ -676,7 +684,8 @@ public class NOpenAPIService {
                 NutsObjectElement r = requestBody.getObject("content").orElseGet(() -> NutsObjectElement.ofEmpty(session));
                 for (NutsElementEntry ii : r) {
                     all.add(MdFactory.endParagraph());
-                    all.add(MdFactory.title(5, msg.get("REQUEST_BODY").get() + " - " + ii.getKey() + (required ? (" [" + msg.get("REQUIRED").get() + "]") : (" [" + msg.get("OPTIONAL").get() + "]"))));
+                    all.add(MdFactory.title(5, msg.get("REQUEST_BODY").get() + " - " + ii.getKey() +
+                            requiredSuffix(required)));
                     all.add(asText(desc));
                     if (!NutsBlankable.isBlank(desc) && !desc.endsWith(".")) {
                         all.add(MdFactory.text("."));
@@ -700,7 +709,7 @@ public class NOpenAPIService {
                                         new MdColumn(asText(msg.get("NAME").get()), MdHorizontalAlign.LEFT),
                                         new MdColumn(asText(msg.get("TYPE").get()), MdHorizontalAlign.LEFT),
                                         new MdColumn(asText(msg.get("DESCRIPTION").get()), MdHorizontalAlign.LEFT),
-                                        new MdColumn(asText(msg.get("EXAMPLE").get()), MdHorizontalAlign.LEFT)
+//                                        new MdColumn(asText(msg.get("EXAMPLE").get()), MdHorizontalAlign.LEFT)
                                 },
                                 new MdRow[]{
                                         new MdRow(
@@ -708,17 +717,22 @@ public class NOpenAPIService {
                                                         MdFactory.codeBacktick3("", "request-body"),
                                                         MdFactory.codeBacktick3("", o.ref),
                                                         asText(_StringUtils.nvl(description == null ? null : description.toString(), "")),
-                                                        jsonText(example),
+//                                                        jsonTextElementInlined(example),
                                                 }, false
                                         )
                                 }
 
                         );
                         all.add(tab);
+                        if (!NutsBlankable.isBlank(example)) {
+                            all.add(MdFactory.text(msg.get("request.body.example.intro").get()));
+                            all.add(MdFactory.text(":\n"));
+                            all.add(jsonTextElement(example));
+                        }
 
                     } else {
                         all.add(MdFactory.endParagraph());
-                        all.add(MdFactory.codeBacktick3("javascript", toCode(o, true, "")));
+                        all.add(codeElement(o, true, ""));
                     }
                 }
             }
@@ -766,36 +780,39 @@ public class NOpenAPIService {
                                 all.add(MdFactory.table()
                                         .addColumns(
                                                 MdFactory.column().setName(msg.get("RESPONSE_MODEL").get()),
-                                                MdFactory.column().setName(msg.get("RESPONSE_TYPE").get()),
-                                                MdFactory.column().setName(msg.get("EXAMPLE").get())
+                                                MdFactory.column().setName(msg.get("RESPONSE_TYPE").get())
                                         )
                                         .addRows(
                                                 MdFactory.row().addCells(
                                                         asText(content.getKey().asString().get(session)),
-                                                        asText(o.ref),
-                                                        jsonText(o.example)
-                                                )
-                                        ).build()
-                                );
-                            } else {
-                                all.add(MdFactory.table()
-                                        .addColumns(
-                                                MdFactory.column().setName(msg.get("RESPONSE_MODEL").get()),
-                                                MdFactory.column().setName(msg.get("RESPONSE_TYPE").get()),
-                                                MdFactory.column().setName(msg.get("EXAMPLE").get())
-                                        )
-                                        .addRows(
-                                                MdFactory.row().addCells(
-                                                        asText(content.getKey().asString().get(session)),
-                                                        asText(o.ref),
-                                                        asText(msg.get("SEE_BELOW").get()),
-                                                        asText("...")
+                                                        asText(o.ref)
                                                 )
                                         ).build()
                                 );
                                 if (!NutsBlankable.isBlank(o.example)) {
-                                    all.add(MdFactory.text("\n"));
-                                    all.add(jsonText(o.example));
+                                    all.add(MdFactory.text(msg.get("response.body.example.intro").get()));
+                                    all.add(MdFactory.text(":\n"));
+                                    all.add(jsonTextElement(o.example));
+                                }
+                            } else {
+                                all.add(MdFactory.table()
+                                                .addColumns(
+                                                        MdFactory.column().setName(msg.get("RESPONSE_MODEL").get()),
+                                                        MdFactory.column().setName(msg.get("RESPONSE_TYPE").get())//,
+//                                                MdFactory.column().setName(msg.get("EXAMPLE").get())
+                                                )
+                                                .addRows(
+                                                        MdFactory.row().addCells(
+                                                                asText(content.getKey().asString().get(session)),
+                                                                asText(o.ref)//,
+//                                                        MdFactory.seq(asText(msg.get("SEE_BELOW").get()), asText("..."))
+                                                        )
+                                                ).build()
+                                );
+                                if (!NutsBlankable.isBlank(o.example)) {
+                                    all.add(MdFactory.text(msg.get("response.body.example.intro").get()));
+                                    all.add(MdFactory.text(":\n"));
+                                    all.add(jsonTextElement(o.example));
                                 }
                             }
                         } else {
@@ -805,7 +822,8 @@ public class NOpenAPIService {
                             if (o.ref != null) {
                                 all.add(MdFactory.title(6, msg.get("RESPONSE_TYPE").get() + " - " + o.ref));
                             } else {
-                                all.add(MdFactory.codeBacktick3("javascript", "\n" + toCode(o, true, "")));
+                                all.add(MdFactory.text("\n"));
+                                all.add(codeElement(o, true, ""));
                             }
                         }
                     }
@@ -825,12 +843,33 @@ public class NOpenAPIService {
         return "";
     }
 
-    private MdElement jsonText(Object example) {
+    private MdElement codeElement(TypeInfo o, boolean includeDesc, String extra) {
+        String type = "javascript";
+        if (o.userType.equals("object")) {
+            type = "json";
+        }
+
+        String s = toCode(o, includeDesc, "");
+        if (extra != null) {
+            s += extra;
+        }
+        return MdFactory.codeBacktick3(type, s);
+    }
+
+    private MdElement jsonTextElementInlined(Object example) {
         if (NutsBlankable.isBlank(example)) {
             return MdFactory.text("");
         }
         String e = jsonTextString(example);
         return MdFactory.codeBacktick3("json", e);
+    }
+
+    private MdElement jsonTextElement(Object example) {
+        if (NutsBlankable.isBlank(example)) {
+            return MdFactory.text("");
+        }
+        String e = jsonTextString(example);
+        return MdFactory.codeBacktick3Paragraph("json", e);
     }
 
     private String jsonTextString(Object example) {
