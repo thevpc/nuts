@@ -41,42 +41,41 @@ public class DefaultNutsCountProgressListener implements NutsProgressListener/*,
     }
 
     @Override
-    public void onStart(NutsProgressEvent event) {
-        this.out = event.getSession().getTerminal().err();
-        if (event.getSession().isPlainOut()) {
-            onProgress0(event, false);
-        }
-    }
-
-    @Override
-    public void onComplete(NutsProgressEvent event) {
-        if (event.getSession().isPlainOut()) {
-            onProgress0(event, true);
-//            out.println();
-        }
-    }
-
-    @Override
     public boolean onProgress(NutsProgressEvent event) {
-        if (event.getSession().isPlainOut()) {
-            return onProgress0(event, false);
+        switch (event.getState()){
+            case START:{
+                this.out = event.getSession().getTerminal().err();
+                if (event.getSession().isPlainOut()) {
+                    onProgress0(event, false);
+                }
+                break;
+            }
+            case COMPLETE:{
+                if (event.getSession().isPlainOut()) {
+                    onProgress0(event, true);
+//            out.println();
+                }
+                break;
+            }
+            case PROGRESS:{
+                if (event.getSession().isPlainOut()) {
+                    return onProgress0(event, false);
+                }
+                break;
+            }
         }
         return true;
     }
-//
-//    private String escapeText(NutsTexts text , String str) {
-//        return text.builder().append(str).toString();
-//    }
 
     public boolean onProgress0(NutsProgressEvent event, boolean end) {
-        double partialSeconds = event.getPartialMillis() / 1000.0;
-        if (event.getCurrentValue() == 0 || partialSeconds > 0.5 || event.getCurrentValue() == event.getMaxValue()) {
+        double partialSeconds = event.getPartialDuration().getTimeAsDoubleSeconds();
+        if (event.getCurrentCount() == 0 || partialSeconds > 0.5 || event.getCurrentCount() == event.getMaxValue()) {
             NutsTexts text = NutsTexts.of(event.getSession());
             out.resetLine();
-            double globalSeconds = event.getTimeMillis() / 1000.0;
-            long globalSpeed = globalSeconds == 0 ? 0 : (long) (event.getCurrentValue() / globalSeconds);
-            long partialSpeed = partialSeconds == 0 ? 0 : (long) (event.getPartialValue() / partialSeconds);
-            double percent = event.getPercent();
+            double globalSeconds = event.getDuration().getTimeAsDoubleSeconds();
+            long globalSpeed = globalSeconds == 0 ? 0 : (long) (event.getCurrentCount() / globalSeconds);
+            long partialSpeed = partialSeconds == 0 ? 0 : (long) (event.getPartialCount() / partialSeconds);
+            double percent = event.getProgress();
             if (event.isIndeterminate()) {
                 percent = end ? 100 : 0;
             }

@@ -32,6 +32,7 @@ import net.thevpc.nuts.runtime.standalone.io.util.InterruptException;
 import net.thevpc.nuts.runtime.standalone.io.util.Interruptible;
 import net.thevpc.nuts.spi.NutsFormatSPI;
 import net.thevpc.nuts.text.NutsTextStyle;
+import net.thevpc.nuts.util.NutsProgressEvent;
 import net.thevpc.nuts.util.NutsProgressListener;
 import net.thevpc.nuts.io.NutsPlainPrintStream;
 
@@ -185,21 +186,24 @@ public class MonitoredInputStream extends InputStream implements NutsInputSource
     private void onBeforeRead() {
         if (!completed) {
             if (startTime == 0) {
-                long now = System.currentTimeMillis();
+                long now = System.nanoTime();
                 this.startTime = now;
                 this.lastTime = now;
                 this.lastCount = 0;
                 this.count = 0;
-                monitor.onStart(new DefaultNutsProgressEvent(source, sourceName, 0, 0, 0, 0, length, null, session, length < 0));
+                monitor.onProgress(NutsProgressEvent.ofStart(source, sourceName, length, session));
             }
         }
     }
 
     private void onAfterRead(long count) {
         if (!completed) {
-            long now = System.currentTimeMillis();
+            long now = System.nanoTime();
             this.count += count;
-            if (monitor.onProgress(new DefaultNutsProgressEvent(source, sourceName, this.count, now - startTime, this.count - lastCount, now - lastTime, length, null, session, length < 0))) {
+            if (monitor.onProgress(NutsProgressEvent.ofProgress(source, sourceName,
+                    this.count, now - startTime, null,
+                    this.count - lastCount, now - lastTime,
+                    length, null, session))) {
                 this.lastCount = this.count;
                 this.lastTime = now;
             }
@@ -209,8 +213,11 @@ public class MonitoredInputStream extends InputStream implements NutsInputSource
     private void onComplete(IOException ex) {
         if (!completed) {
             completed = true;
-            long now = System.currentTimeMillis();
-            monitor.onComplete(new DefaultNutsProgressEvent(source, sourceName, this.count, now - startTime, this.count - lastCount, now - lastTime, length, ex, session, length < 0));
+            long now = System.nanoTime();
+            monitor.onProgress(NutsProgressEvent.ofComplete(source, sourceName,
+                    this.count, now - startTime, null,
+                    this.count - lastCount, now - lastTime,
+                    length, ex, session));
         }
     }
 

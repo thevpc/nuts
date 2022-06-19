@@ -36,22 +36,6 @@ package net.thevpc.nuts.util;
 public interface NutsProgressListener {
 
     /**
-     * called when the action starts
-     *
-     * @param event event
-     */
-    default void onStart(NutsProgressEvent event) {
-    }
-
-    /**
-     * called when the action terminates
-     *
-     * @param event event
-     */
-    default void onComplete(NutsProgressEvent event) {
-    }
-
-    /**
      * called when the action does a step forward and return
      * true if the progress was handled or false otherwise.
      *

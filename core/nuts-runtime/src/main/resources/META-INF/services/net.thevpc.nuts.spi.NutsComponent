@@ -106,6 +106,8 @@ net.thevpc.nuts.runtime.standalone.util.reflect.DefaultNutsReflectRepository
 
 net.thevpc.nuts.runtime.standalone.util.reflect.DefaultNutsReflectConfigurationBuilder
 
+net.thevpc.nuts.runtime.standalone.xtra.mon.DefaultNutsProgressMonitors
+
 ##################### Settings Subcommands!
 
 net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.archetype.NutsSettingsArchetypeSubCommand

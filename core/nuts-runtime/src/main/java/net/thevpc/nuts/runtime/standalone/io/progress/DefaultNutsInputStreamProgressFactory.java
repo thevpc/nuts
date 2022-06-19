@@ -8,7 +8,7 @@ import net.thevpc.nuts.util.NutsProgressListener;
 public class DefaultNutsInputStreamProgressFactory implements NutsProgressFactory {
 
     @Override
-    public NutsProgressListener create(Object source, Object sourceOrigin, NutsSession session) {
+    public NutsProgressListener createProgressListener(Object source, Object sourceOrigin, NutsSession session) {
         if (!acceptMonitoring(source, sourceOrigin, session)) {
             return null;
         }

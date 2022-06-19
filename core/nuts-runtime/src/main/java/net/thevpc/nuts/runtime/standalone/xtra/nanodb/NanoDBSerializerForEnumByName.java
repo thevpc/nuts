@@ -1,6 +1,6 @@
 package net.thevpc.nuts.runtime.standalone.xtra.nanodb;
 
-import net.thevpc.nuts.NutsEnum;
+import net.thevpc.nuts.util.NutsEnum;
 import net.thevpc.nuts.NutsSession;
 
 import java.util.HashMap;

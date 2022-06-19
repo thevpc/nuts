@@ -44,6 +44,6 @@ public interface NutsProgressFactory {
      * @param session      workspace session
      * @return new instance of {@link NutsProgressListener}
      */
-    NutsProgressListener create(Object source, Object sourceOrigin, NutsSession session);
+    NutsProgressListener createProgressListener(Object source, Object sourceOrigin, NutsSession session);
 
 }

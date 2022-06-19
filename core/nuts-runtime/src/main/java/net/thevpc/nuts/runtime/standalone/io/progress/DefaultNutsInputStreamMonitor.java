@@ -14,9 +14,7 @@ import net.thevpc.nuts.runtime.standalone.util.CoreNutsUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.NutsWorkspaceUtils;
 import net.thevpc.nuts.spi.NutsSupportLevelContext;
 import net.thevpc.nuts.text.NutsTexts;
-import net.thevpc.nuts.util.NutsProgressFactory;
-import net.thevpc.nuts.util.NutsProgressListener;
-import net.thevpc.nuts.util.NutsUtils;
+import net.thevpc.nuts.util.*;
 
 import java.io.File;
 import java.io.InputStream;
@@ -126,7 +124,7 @@ public class DefaultNutsInputStreamMonitor implements NutsInputStreamMonitor {
     public InputStream create() {
         NutsUtils.requireNonNull(source, getSession(), "source");
         NutsMessage sourceName = this.sourceName;
-        if (sourceName == null && source!=null) {
+        if (sourceName == null && source != null) {
             sourceName = NutsMessage.ofNtf(NutsTexts.of(session).ofText(source));
         }
         if (sourceName == null) {
@@ -141,12 +139,13 @@ public class DefaultNutsInputStreamMonitor implements NutsInputStreamMonitor {
         long size = -1;
         try {
             if (verboseMode && monitor != null) {
-                monitor.onStart(new DefaultNutsProgressEvent(source, sourceName, 0, 0, 0, 0, size, null, session, true));
+                monitor.onProgress(NutsProgressEvent.ofStart(source, sourceName, size, session));
             }
             size = source.getInputMetaData().getContentLength().orElse(-1L);
         } catch (UncheckedIOException | NutsIOException e) {
             if (verboseMode && monitor != null) {
-                monitor.onComplete(new DefaultNutsProgressEvent(source, sourceName, 0, 0, 0, 0, size, e, session, true));
+                monitor.onProgress(NutsProgressEvent.ofComplete(source, sourceName, 0, 0,
+                        null, 0, 0, size, e, session));
             }
             throw e;
         }
@@ -158,7 +157,7 @@ public class DefaultNutsInputStreamMonitor implements NutsInputStreamMonitor {
         }
         InputStream openedStream = source.getInputStream();
         if (!verboseMode) {
-            monitor.onStart(new DefaultNutsProgressEvent(source, sourceName, 0, 0, 0, 0, size, null, session, size < 0));
+            monitor.onProgress(NutsProgressEvent.ofStart(source, sourceName, size, session));
         }
         String sourceTypeName = getSourceTypeName();
         if (sourceTypeName == null) {

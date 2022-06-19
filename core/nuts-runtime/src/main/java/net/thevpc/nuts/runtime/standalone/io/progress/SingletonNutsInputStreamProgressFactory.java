@@ -12,7 +12,7 @@ public class SingletonNutsInputStreamProgressFactory implements NutsProgressFact
     }
 
     @Override
-    public NutsProgressListener create(Object source, Object sourceOrigin, NutsSession session) {
+    public NutsProgressListener createProgressListener(Object source, Object sourceOrigin, NutsSession session) {
         return value;
     }
 }

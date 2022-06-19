@@ -23,7 +23,7 @@
  */
 package net.thevpc.nuts.runtime.standalone.util;
 
-import net.thevpc.nuts.NutsEnum;
+import net.thevpc.nuts.util.NutsEnum;
 
 import java.util.NoSuchElementException;
 

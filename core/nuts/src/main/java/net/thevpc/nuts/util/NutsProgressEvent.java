@@ -38,6 +38,26 @@ import net.thevpc.nuts.NutsWorkspace;
  */
 public interface NutsProgressEvent {
 
+    static NutsProgressEvent ofStart(Object source, NutsMessage message, long length, NutsSession session) {
+        return new DefaultNutsProgressEvent(source, message, 0, 0, null, 0, 0,
+                length, null, session, null, NutsProgressEventType.START);
+    }
+
+    static NutsProgressEvent ofComplete(Object source, NutsMessage message, long globalCount, long globalDurationNanos,
+                                        Double percent,
+                                        long partialCount, long partialDurationNanos, long length, Throwable exception, NutsSession session) {
+        return new DefaultNutsProgressEvent(source, message, globalCount, globalDurationNanos, percent, partialCount, partialDurationNanos,
+                length, exception, session, null, NutsProgressEventType.COMPLETE);
+    }
+
+    static NutsProgressEvent ofProgress(Object source, NutsMessage message,
+                                        long globalCount, long globalDurationNanos,
+                                        Double percent,
+                                        long partialCount, long partialDurationNanos, long length, Throwable exception, NutsSession session) {
+        return new DefaultNutsProgressEvent(source, message, globalCount, globalDurationNanos, percent, partialCount, partialDurationNanos,
+                length, exception, session, null, NutsProgressEventType.PROGRESS);
+    }
+
     /**
      * Nuts Session
      *
@@ -71,7 +91,7 @@ public interface NutsProgressEvent {
      *
      * @return progress current value
      */
-    long getCurrentValue();
+    long getCurrentCount();
 
     /**
      * progress value from the last mark point.
@@ -79,7 +99,7 @@ public interface NutsProgressEvent {
      *
      * @return progress value from the last mark point.
      */
-    long getPartialValue();
+    long getPartialCount();
 
     /**
      * progress source object
@@ -96,25 +116,15 @@ public interface NutsProgressEvent {
     NutsMessage getMessage();
 
     /**
-     * progress percentage ([0..100])
+     * progress percentage ([0..1])
      *
-     * @return progress percentage ([0..100])
+     * @return progress percentage ([0..1])
      */
-    float getPercent();
+    double getProgress();
 
-    /**
-     * progress time from the starting of the progress.
-     *
-     * @return progress time from the starting of the progress.
-     */
-    long getTimeMillis();
+    NutsDuration getDuration();
 
-    /**
-     * progress time from the starting of the last mark point.
-     *
-     * @return progress time from the starting of the last mark point.
-     */
-    long getPartialMillis();
+    NutsDuration getPartialDuration();
 
     /**
      * when true, max value is unknown, and the progress is indeterminate
@@ -122,5 +132,7 @@ public interface NutsProgressEvent {
      * @return true when max value is unknown, and the progress is indeterminate
      */
     boolean isIndeterminate();
+
+    NutsProgressEventType getState();
 
 }

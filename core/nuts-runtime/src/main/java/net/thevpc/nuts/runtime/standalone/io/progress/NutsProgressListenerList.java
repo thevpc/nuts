@@ -11,20 +11,6 @@ public class NutsProgressListenerList implements NutsProgressListener {
     }
 
     @Override
-    public void onStart(NutsProgressEvent event) {
-        for (NutsProgressListener i : all) {
-            i.onStart(event);
-        }
-    }
-
-    @Override
-    public void onComplete(NutsProgressEvent event) {
-        for (NutsProgressListener i : all) {
-            i.onComplete(event);
-        }
-    }
-
-    @Override
     public boolean onProgress(NutsProgressEvent event) {
         boolean b = false;
         for (NutsProgressListener i : all) {

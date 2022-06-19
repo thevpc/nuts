@@ -60,7 +60,7 @@ public class NutsProgressUtils {
                                                              NutsProgressFactory progressFactory) {
         List<NutsProgressListener> all = new ArrayList<>();
         if (logProgress) {
-            NutsProgressListener e = createLogProgressMonitorFactory(mt).create(source, sourceOrigin, session);
+            NutsProgressListener e = createLogProgressMonitorFactory(mt).createProgressListener(source, sourceOrigin, session);
             if (e != null) {
                 all.add(e);
             }
@@ -69,7 +69,7 @@ public class NutsProgressUtils {
             all.add(new TraceNutsProgressListener());
         }
         if (progressFactory != null) {
-            NutsProgressListener e = progressFactory.create(source, sourceOrigin, session);
+            NutsProgressListener e = progressFactory.createProgressListener(source, sourceOrigin, session);
             if (e != null) {
                 all.add(e);
             }

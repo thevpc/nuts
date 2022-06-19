@@ -5,6 +5,7 @@ import net.thevpc.nuts.elem.NutsElement;
 import net.thevpc.nuts.elem.NutsElementFactoryContext;
 import net.thevpc.nuts.elem.NutsElementMapper;
 import net.thevpc.nuts.runtime.standalone.util.reflect.ReflectUtils;
+import net.thevpc.nuts.util.NutsEnum;
 
 import java.lang.reflect.Type;
 

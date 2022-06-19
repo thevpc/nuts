@@ -26,83 +26,80 @@ public class TraceNutsProgressListener implements NutsProgressListener/*, NutsOu
     private NutsPrintStream out;
     private int minLength;
     private CProgressBar bar;
-    private boolean optionsProcessed=false;
-    private boolean optionNewline=false;
+    private boolean optionsProcessed = false;
+    private boolean optionNewline = false;
 
     public TraceNutsProgressListener() {
 //        this.session = session;
     }
 
-//    @Override
-//    public OutputStream baseOutputStream() {
-//        return out;
-//    }
-
-    @Override
-    public void onStart(NutsProgressEvent event) {
-        bar= CProgressBar.of(event.getSession());
-        this.out = event.getSession().getTerminal().err();
-        if (event.getSession().isPlainOut()) {
-            onProgress0(event, false);
-        }
-    }
-
-    @Override
-    public void onComplete(NutsProgressEvent event) {
-        if (event.getSession().isPlainOut()) {
-            onProgress0(event, true);
-            //out.println();
-        }
-    }
-
     @Override
     public boolean onProgress(NutsProgressEvent event) {
-        if (event.getSession().isPlainOut()) {
-            return onProgress0(event, false);
+        switch (event.getState()) {
+            case START: {
+                bar = CProgressBar.of(event.getSession());
+                this.out = event.getSession().getTerminal().err();
+                if (event.getSession().isPlainOut()) {
+                    onProgress0(event, false);
+                }
+                return true;
+            }
+            case COMPLETE: {
+                if (event.getSession().isPlainOut()) {
+                    return onProgress0(event, true);
+                    //out.println();
+                }
+                return false;
+            }
+            default: {
+                if (event.getSession().isPlainOut()) {
+                    return onProgress0(event, false);
+                }
+                return false;
+            }
         }
-        return true;
     }
 
     public boolean onProgress0(NutsProgressEvent event, boolean end) {
-        if(!optionsProcessed) {
-            optionsProcessed=true;
-            optionNewline= ProgressOptions.of(event.getSession()).isArmedNewline();
+        if (!optionsProcessed) {
+            optionsProcessed = true;
+            optionNewline = ProgressOptions.of(event.getSession()).isArmedNewline();
         }
-        double partialSeconds = event.getPartialMillis() / 1000.0;
-        if (event.getCurrentValue() == 0 || partialSeconds > 0.5 || event.getCurrentValue() == event.getMaxValue()) {
+        double partialSeconds = event.getPartialDuration().getTimeAsDoubleSeconds();
+        if (event.getCurrentCount() == 0 || partialSeconds > 0.5 || event.getCurrentCount() == event.getMaxValue()) {
             NutsTexts text = NutsTexts.of(event.getSession());
-            if(!optionNewline) {
+            if (!optionNewline) {
                 out.resetLine();
 //                out.run(NutsTerminalCommand.MOVE_LINE_START);
-            }else{
+            } else {
                 out.print("\n");
             }
-            double globalSeconds = event.getTimeMillis() / 1000.0;
-            long globalSpeed = globalSeconds == 0 ? 0 : (long) (event.getCurrentValue() / globalSeconds);
-            long partialSpeed = partialSeconds == 0 ? 0 : (long) (event.getPartialValue() / partialSeconds);
-            double percent = event.getPercent();
+            double globalSeconds = event.getDuration().getTimeAsDoubleSeconds();
+            long globalSpeed = globalSeconds == 0 ? 0 : (long) (event.getCurrentCount() / globalSeconds);
+            long partialSpeed = partialSeconds == 0 ? 0 : (long) (event.getPartialCount() / partialSeconds);
+            double percent = event.getProgress();
 
             NutsTextBuilder formattedLine = text.ofBuilder();
-            NutsText p = bar.progress(event.isIndeterminate() ? -1 : (int) (event.getPercent()));
-            if(p==null|| p.isEmpty()){
+            NutsText p = bar.progress(event.isIndeterminate() ? -1 : (int) (event.getProgress()));
+            if (p == null || p.isEmpty()) {
                 return false;
             }
             formattedLine.append(p);
             BytesSizeFormat mf = new BytesSizeFormat("BTD1F", event.getSession());
 
             formattedLine.append(" ").append(text.ofStyled(String.format("%6s", df.format(percent)), NutsTextStyle.config())).append("% ");
-            formattedLine.append(" ").append(text.ofStyled(String.format("%6s", mf.format(partialSpeed)),NutsTextStyle.config())).append("/s");
+            formattedLine.append(" ").append(text.ofStyled(String.format("%6s", mf.format(partialSpeed)), NutsTextStyle.config())).append("/s");
             if (event.getMaxValue() < 0) {
                 if (globalSpeed == 0) {
                     formattedLine.append(" ( -- )");
                 } else {
-                    formattedLine.append(" (").append(text.ofStyled(mf.format(globalSpeed),NutsTextStyle.info())).append(")");
+                    formattedLine.append(" (").append(text.ofStyled(mf.format(globalSpeed), NutsTextStyle.info())).append(")");
                 }
             } else {
-                formattedLine.append(" (").append(text.ofStyled(mf.format(event.getMaxValue()),NutsTextStyle.warn())).append(")");
+                formattedLine.append(" (").append(text.ofStyled(mf.format(event.getMaxValue()), NutsTextStyle.warn())).append(")");
             }
             if (event.getError() != null) {
-                formattedLine.append(" ").append(text.ofStyled("ERROR",NutsTextStyle.error())).append(" ");
+                formattedLine.append(" ").append(text.ofStyled("ERROR", NutsTextStyle.error())).append(" ");
             }
             formattedLine.append(" ").append(event.getMessage()).append(" ");
             String ff = formattedLine.toString();
