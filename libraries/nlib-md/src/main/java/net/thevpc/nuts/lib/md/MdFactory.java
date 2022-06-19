@@ -77,6 +77,10 @@ public class MdFactory {
         return new MdCode("```",lang,code,code.indexOf('\n')<0);
     }
 
+    public static MdElement codeBacktick3Paragraph(String lang, String code) {
+        return new MdCode("```",lang,code,false);
+    }
+
     public static MdElement codeBacktick3(String lang, String code,boolean inline) {
         return new MdCode("```",lang,code,inline);
     }
