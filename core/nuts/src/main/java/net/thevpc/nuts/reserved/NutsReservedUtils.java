@@ -933,32 +933,32 @@ public final class NutsReservedUtils {
 
         boolean bot = bo.getBot().orElse(false);
         boolean gui = bo.getGui().orElse(false);
-        boolean showTrace = bo.getDebug() != null;
+        boolean showStackTrace = bo.getDebug() != null;
         NutsLogConfig logConfig = bo.getLogConfig().orElseGet(NutsLogConfig::new);
-        showTrace |= (logConfig != null
+        showStackTrace |= (logConfig != null
                 && logConfig.getLogTermLevel() != null
                 && logConfig.getLogTermLevel().intValue() < Level.INFO.intValue());
-        if (!showTrace) {
-            showTrace = getSysBoolNutsProperty("debug", false);
+        if (!showStackTrace) {
+            showStackTrace = getSysBoolNutsProperty("debug", false);
         }
         if (bot) {
-            showTrace = false;
+            showStackTrace = false;
             gui = false;
         }
-        return processThrowable(ex, out, true, showTrace, gui);
+        return processThrowable(ex, out, true, showStackTrace, gui);
     }
 
-    public static int processThrowable(Throwable ex, PrintStream out, boolean showMessage, boolean showTrace, boolean showGui) {
+    public static int processThrowable(Throwable ex, PrintStream out, boolean showMessage, boolean showStackTrace, boolean showGui) {
         if (ex == null) {
+            return 0;
+        }
+        int errorCode = NutsExceptionWithExitCodeBase.resolveExitCode(ex).orElse(204);
+        if (errorCode == 0) {
             return 0;
         }
         NutsSession session = NutsSessionAwareExceptionBase.resolveSession(ex).orNull();
         NutsMessage fm = NutsSessionAwareExceptionBase.resolveSessionAwareExceptionBase(ex).map(NutsSessionAwareExceptionBase::getFormattedMessage)
                 .orNull();
-        int errorCode = NutsExceptionWithExitCodeBase.resolveExitCode(ex).orElse(204);
-        if (errorCode == 0) {
-            return 0;
-        }
         String m = NutsReservedLangUtils.getErrorMessage(ex);
         NutsPrintStream fout = null;
         if (out == null) {
@@ -1001,7 +1001,7 @@ public final class NutsReservedUtils {
                     } else {
                         fout.println(m);
                     }
-                    if (showTrace) {
+                    if (showStackTrace) {
                         ex.printStackTrace(fout.asPrintStream());
                     }
                     fout.flush();
@@ -1012,7 +1012,7 @@ public final class NutsReservedUtils {
                                 .set("error", NutsTexts.of(session).ofText(fm).filteredText())
                                 .build()
                         );
-                        if (showTrace) {
+                        if (showStackTrace) {
                             session.eout().add(NutsElements.of(session).ofObject().set("errorTrace",
                                     NutsElements.of(session).ofArray().addAll(NutsReservedLangUtils.stacktraceToArray(ex)).build()
                             ).build());
@@ -1028,7 +1028,7 @@ public final class NutsReservedUtils {
                                 .set("app-id", session.getAppId() == null ? "" : session.getAppId().toString())
                                 .set("error", m)
                                 .build());
-                        if (showTrace) {
+                        if (showStackTrace) {
                             session.eout().add(NutsElements.of(session).ofObject().set("errorTrace",
                                     NutsElements.of(session).ofArray().addAll(NutsReservedLangUtils.stacktraceToArray(ex)).build()
                             ).build());
@@ -1051,7 +1051,10 @@ public final class NutsReservedUtils {
                 } else {
                     out.println(m);
                 }
-                if (showTrace) {
+                if (showStackTrace) {
+                    out.println("---------------");
+                    out.println(">  STACKTRACE :");
+                    out.println("---------------");
                     ex.printStackTrace(out);
                 }
                 out.flush();
@@ -1068,7 +1071,7 @@ public final class NutsReservedUtils {
             } else {
                 sb.append(m);
             }
-            if (showTrace) {
+            if (showStackTrace) {
                 if (sb.length() > 0) {
                     sb.append("\n");
                     sb.append(NutsReservedLangUtils.stacktrace(ex));

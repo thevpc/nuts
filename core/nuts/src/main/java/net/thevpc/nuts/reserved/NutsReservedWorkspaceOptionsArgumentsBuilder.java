@@ -3,6 +3,7 @@ package net.thevpc.nuts.reserved;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.cmdline.NutsCommandLine;
 import net.thevpc.nuts.io.NutsTerminalMode;
+import net.thevpc.nuts.util.NutsEnum;
 import net.thevpc.nuts.util.NutsLogConfig;
 import net.thevpc.nuts.util.NutsNameFormat;
 import net.thevpc.nuts.util.NutsStringUtils;

@@ -24,7 +24,10 @@
  * <br>
  * ====================================================================
  */
-package net.thevpc.nuts;
+package net.thevpc.nuts.util;
+
+import net.thevpc.nuts.NutsMessage;
+import net.thevpc.nuts.NutsOptional;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;

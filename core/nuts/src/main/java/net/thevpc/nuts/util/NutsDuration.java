@@ -431,6 +431,80 @@ public class NutsDuration implements Serializable, NutsFormattable {
         return new NutsDuration(ms, ns, smallestUnit, largestUnit);
     }
 
+    public static NutsDuration ofNanosOnly(long durationNanos) {
+        return ofUnitOnly(durationNanos, ChronoUnit.MILLIS);
+    }
+
+    public static NutsDuration ofMillisOnly(long durationMillis) {
+        return ofUnitOnly(durationMillis, ChronoUnit.MILLIS);
+    }
+
+    public static NutsDuration ofSecondsOnly(long durationSeconds) {
+        return ofUnitOnly(durationSeconds, ChronoUnit.SECONDS);
+    }
+
+    public static NutsDuration ofMinutesOnly(long durationMinutes) {
+        return ofUnitOnly(durationMinutes, ChronoUnit.MINUTES);
+    }
+
+    public static NutsDuration ofHoursOnly(long durationHours) {
+        return ofUnitOnly(durationHours, ChronoUnit.HOURS);
+    }
+
+    public static NutsDuration ofDaysOnly(long durationDays) {
+        return ofUnitOnly(durationDays, ChronoUnit.DAYS);
+    }
+
+    public static NutsDuration ofWeeksOnly(long durationWeeks) {
+        return ofUnitOnly(durationWeeks, ChronoUnit.WEEKS);
+    }
+
+    public static NutsDuration ofMonthOnly(long durationMonths) {
+        return ofUnitOnly(durationMonths, ChronoUnit.MONTHS);
+    }
+
+    public static NutsDuration ofYearsOnly(long durationYears) {
+        return ofUnitOnly(durationYears, ChronoUnit.YEARS);
+    }
+
+    public static NutsDuration ofSeconds(long durationSeconds) {
+        return ofUnit(durationSeconds, ChronoUnit.SECONDS);
+    }
+
+    public static NutsDuration ofMinutes(long durationMinutes) {
+        return ofUnit(durationMinutes, ChronoUnit.MINUTES);
+    }
+
+    public static NutsDuration ofHours(long durationHours) {
+        return ofUnit(durationHours, ChronoUnit.HOURS);
+    }
+
+    public static NutsDuration ofDays(long durationDays) {
+        return ofUnit(durationDays, ChronoUnit.DAYS);
+    }
+
+    public static NutsDuration ofWeeks(long durationWeeks) {
+        return ofUnit(durationWeeks, ChronoUnit.WEEKS);
+    }
+
+    public static NutsDuration ofMonth(long durationMonths) {
+        return ofUnit(durationMonths, ChronoUnit.MONTHS);
+    }
+
+    public static NutsDuration ofYears(long durationYears) {
+        return ofUnit(durationYears, ChronoUnit.YEARS);
+    }
+
+    public static NutsDuration ofUnitOnly(long durationInUnit, ChronoUnit unit) {
+        long[] values = new long[ChronoUnit.values().length];
+        values[unit.ordinal()] = durationInUnit;
+        return new NutsDuration(values, null, null);
+    }
+
+    public static NutsDuration ofUnit(long durationInUnit, ChronoUnit unit) {
+        return ofUnitOnly(durationInUnit, unit).normalize();
+    }
+
     public static NutsDuration ofMillis(long durationMillis) {
         return new NutsDuration(durationMillis, 0);
     }
@@ -678,6 +752,10 @@ public class NutsDuration implements Serializable, NutsFormattable {
         return timeMillis / 1000;
     }
 
+    public double getTimeAsDoubleSeconds() {
+        return timeMillis / 1000.0 + ((double) timeNanos) / 1E9;
+    }
+
     public long getTimeAsMillis() {
         return timeMillis;
     }
@@ -766,6 +844,13 @@ public class NutsDuration implements Serializable, NutsFormattable {
                 smallestUnit.compareTo(other.getSmallestUnit()) < 0 ? smallestUnit : other.smallestUnit,
                 largestUnit.compareTo(other.getSmallestUnit()) > 0 ? largestUnit : other.smallestUnit
         );
+    }
+
+    public NutsDuration mul(double other) {
+        double ms = timeMillis * other;
+        long msL = (long) (timeMillis * other);
+        long ns = (long) (timeNanos * other + (ms - msL) * 1000000);
+        return ofMillisAndNanos(msL, (int) ns).withUnits(smallestUnit, largestUnit);
     }
 
     public NutsDuration mul(long other) {
@@ -984,7 +1069,7 @@ public class NutsDuration implements Serializable, NutsFormattable {
 
             @Override
             public void print(NutsPrintStream out) {
-                DefaultNutsDurationFormat.of(formatMode).print(NutsDuration.this,out);
+                DefaultNutsDurationFormat.of(formatMode).print(NutsDuration.this, out);
             }
 
             @Override

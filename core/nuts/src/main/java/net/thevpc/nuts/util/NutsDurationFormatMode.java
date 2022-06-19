@@ -1,6 +1,5 @@
 package net.thevpc.nuts.util;
 
-import net.thevpc.nuts.NutsEnum;
 import net.thevpc.nuts.NutsOptional;
 
 public enum NutsDurationFormatMode implements NutsEnum {

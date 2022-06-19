@@ -29,30 +29,33 @@ package net.thevpc.nuts;
 import net.thevpc.nuts.text.NutsTextFormatStyle;
 import net.thevpc.nuts.text.NutsTextStyle;
 import net.thevpc.nuts.text.NutsTextStyles;
-import net.thevpc.nuts.text.NutsTexts;
 import net.thevpc.nuts.util.NutsStringUtils;
 import net.thevpc.nuts.util.NutsUtils;
 
+import java.lang.reflect.Array;
 import java.text.MessageFormat;
 import java.util.*;
+import java.util.logging.Level;
 
 public class NutsMessage {
 
     public static final Object[] NO_PARAMS = new Object[0];
     private final String codeLang;
     private final Object message;
+    private final Level level;
     private final NutsTextFormatStyle format;
     private final Object[] params;
     private final NutsTextStyles styles;
 
-    private static NutsMessage of(NutsTextFormatStyle format, Object message, Object[] params, NutsTextStyles styles, String codeLang) {
-        return new NutsMessage(format, message, params, styles, codeLang);
+    private static NutsMessage of(NutsTextFormatStyle format, Object message, Object[] params, NutsTextStyles styles, String codeLang, Level level) {
+        return new NutsMessage(format, message, params, styles, codeLang, level);
     }
 
-    private NutsMessage(NutsTextFormatStyle format, Object message, Object[] params, NutsTextStyles styles, String codeLang) {
+    private NutsMessage(NutsTextFormatStyle format, Object message, Object[] params, NutsTextStyles styles, String codeLang, Level level) {
         NutsUtils.requireNonNull(message, "message");
         NutsUtils.requireNonNull(format, "format");
         NutsUtils.requireNonNull(params, "params");
+        this.level = level;
         this.format = format;
         this.styles = styles;
         if (format == NutsTextFormatStyle.PLAIN
@@ -79,69 +82,69 @@ public class NutsMessage {
     }
 
     public static NutsMessage ofNtf(String message) {
-        return of(NutsTextFormatStyle.NTF, message, NO_PARAMS, null, null);
+        return of(NutsTextFormatStyle.NTF, message, NO_PARAMS, null, null, null);
     }
 
     public static NutsMessage ofCode(String lang, String text) {
-        return of(NutsTextFormatStyle.CODE, text, NO_PARAMS, null, lang);
+        return of(NutsTextFormatStyle.CODE, text, NO_PARAMS, null, lang, null);
     }
 
     public static NutsMessage ofCode(String text) {
-        return of(NutsTextFormatStyle.CODE, text, NO_PARAMS, null, null);
+        return of(NutsTextFormatStyle.CODE, text, NO_PARAMS, null, null, null);
     }
 
     public static NutsMessage ofStyled(String message, NutsTextStyle style) {
-        return of(NutsTextFormatStyle.STYLED, message, NO_PARAMS, style == null ? null : NutsTextStyles.of(style), null);
+        return of(NutsTextFormatStyle.STYLED, message, NO_PARAMS, style == null ? null : NutsTextStyles.of(style), null, null);
     }
 
     public static NutsMessage ofStyled(String message, NutsTextStyles styles) {
-        return of(NutsTextFormatStyle.STYLED, message, NO_PARAMS, styles, null);
+        return of(NutsTextFormatStyle.STYLED, message, NO_PARAMS, styles, null, null);
     }
 
     public static NutsMessage ofStyled(NutsMessage message, NutsTextStyle style) {
-        return of(NutsTextFormatStyle.STYLED, message, NO_PARAMS, style == null ? null : NutsTextStyles.of(style), null);
+        return of(NutsTextFormatStyle.STYLED, message, NO_PARAMS, style == null ? null : NutsTextStyles.of(style), null, null);
     }
 
     public static NutsMessage ofStyled(NutsMessage message, NutsTextStyles styles) {
-        return of(NutsTextFormatStyle.STYLED, message, NO_PARAMS, styles, null);
+        return of(NutsTextFormatStyle.STYLED, message, NO_PARAMS, styles, null, null);
     }
 
     public static NutsMessage ofStyled(NutsString message, NutsTextStyle style) {
-        return of(NutsTextFormatStyle.STYLED, message, NO_PARAMS, style == null ? null : NutsTextStyles.of(style), null);
+        return of(NutsTextFormatStyle.STYLED, message, NO_PARAMS, style == null ? null : NutsTextStyles.of(style), null, null);
     }
 
     public static NutsMessage ofStyled(NutsString message, NutsTextStyles styles) {
-        return of(NutsTextFormatStyle.STYLED, message, NO_PARAMS, styles, null);
+        return of(NutsTextFormatStyle.STYLED, message, NO_PARAMS, styles, null, null);
     }
 
     public static NutsMessage ofNtf(NutsString message) {
-        return of(NutsTextFormatStyle.NTF, message, NO_PARAMS, null, null);
+        return of(NutsTextFormatStyle.NTF, message, NO_PARAMS, null, null, null);
     }
 
     public static NutsMessage ofPlain(String message) {
-        return of(NutsTextFormatStyle.PLAIN, message, NO_PARAMS, null, null);
+        return of(NutsTextFormatStyle.PLAIN, message, NO_PARAMS, null, null, null);
     }
 
     @Deprecated
     public static NutsMessage ofCstyle(String message) {
-        return of(NutsTextFormatStyle.CSTYLE, message, NO_PARAMS, null, null);
+        return of(NutsTextFormatStyle.CSTYLE, message, NO_PARAMS, null, null, null);
     }
 
     public static NutsMessage ofCstyle(String message, Object... params) {
-        return of(NutsTextFormatStyle.CSTYLE, message, params, null, null);
+        return of(NutsTextFormatStyle.CSTYLE, message, params, null, null, null);
     }
 
     public static NutsMessage ofVstyle(String message, Map<String, ?> vars) {
-        return of(NutsTextFormatStyle.VSTYLE, message, new Object[]{vars}, null, null);
+        return of(NutsTextFormatStyle.VSTYLE, message, new Object[]{vars}, null, null, null);
     }
 
     @Deprecated
     public static NutsMessage ofJstyle(String message) {
-        return of(NutsTextFormatStyle.JSTYLE, message, NO_PARAMS, null, null);
+        return of(NutsTextFormatStyle.JSTYLE, message, NO_PARAMS, null, null, null);
     }
 
     public static NutsMessage ofJstyle(String message, Object... params) {
-        return of(NutsTextFormatStyle.JSTYLE, message, params, null, null);
+        return of(NutsTextFormatStyle.JSTYLE, message, params, null, null, null);
     }
 
     public NutsTextFormatStyle getFormat() {
@@ -162,6 +165,10 @@ public class NutsMessage {
 
     public String getCodeLang() {
         return codeLang;
+    }
+
+    public Level getLevel() {
+        return level;
     }
 
     @Override
@@ -196,9 +203,33 @@ public class NutsMessage {
                     if (v != null) {
                         return String.valueOf(v);
                     }
-                    return "${"+s+"}";
+                    return "${" + s + "}";
                 }
         );
     }
 
+    public NutsMessage withLevel(Level level) {
+        return new NutsMessage(format, message, params, styles, codeLang, level);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        NutsMessage that = (NutsMessage) o;
+        return Objects.equals(codeLang, that.codeLang)
+                && Objects.equals(message, that.message)
+                && format == that.format
+                && Arrays.deepEquals(params, that.params)
+                && Objects.equals(styles, that.styles)
+                && Objects.equals(level, that.level)
+                ;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = Objects.hash(codeLang, message, format, styles, level);
+        result = 31 * result + Arrays.hashCode(params);
+        return result;
+    }
 }

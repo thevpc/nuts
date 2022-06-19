@@ -26,6 +26,8 @@
  */
 package net.thevpc.nuts;
 
+import net.thevpc.nuts.util.NutsEnum;
+
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;

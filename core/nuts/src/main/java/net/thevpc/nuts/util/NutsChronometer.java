@@ -52,7 +52,7 @@ public class NutsChronometer implements Serializable, NutsFormattable {
         return new NutsChronometer(name, smallestUnit).start();
     }
 
-    private NutsChronometer() {
+    public NutsChronometer() {
     }
 
     public NutsChronometer copy() {
@@ -139,6 +139,15 @@ public class NutsChronometer implements Serializable, NutsFormattable {
         return endClock!=null;
     }
 
+    public NutsChronometer reset() {
+        endClock = null;
+        startClock = null;
+        lastNanos = 0;
+        accumulatedNanos = 0;
+        running = false;
+        return this;
+    }
+
     public NutsChronometer start() {
         endClock = null;
         startClock = NutsClock.now();
@@ -211,6 +220,7 @@ public class NutsChronometer implements Serializable, NutsFormattable {
     public NutsDuration getDuration() {
         return NutsDuration.ofNanos(getDurationNanos(), getSmallestUnit(), getLargestUnit());
     }
+
 
     public long getDurationNanos() {
         if (startClock == null) {

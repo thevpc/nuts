@@ -38,11 +38,23 @@ public class NutsReservedErrorInfoList {
         all.removeIf(x -> x.getNutsId().equals(nutsId));
     }
 
+    public void insert(int pos, NutsReservedErrorInfo e) {
+        all.add(pos,e);
+    }
     public void add(NutsReservedErrorInfo e) {
         all.add(e);
     }
 
     public List<NutsReservedErrorInfo> list() {
         return all;
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder errors = new StringBuilder();
+        for (NutsReservedErrorInfo errorInfo : list()) {
+            errors.append(errorInfo.toString()).append("\n");
+        }
+        return errors.toString();
     }
 }

@@ -114,21 +114,21 @@ public class NutsApiUtils {
         }
         boolean bot = bo.getBot().orElse(false);
         boolean gui = !bot && bo.getGui().orElse(false);
-        boolean showTrace = bo.getDebug() != null;
+        boolean showStackTrace = bo.getDebug().isPresent();
         NutsLogConfig nutsLogConfig = bo.getLogConfig().orElseGet(NutsLogConfig::new);
-        showTrace |= (nutsLogConfig.getLogTermLevel() != null
+        showStackTrace |= (nutsLogConfig.getLogTermLevel() != null
                 && nutsLogConfig.getLogTermLevel().intValue() < Level.INFO.intValue());
-        if (!showTrace) {
-            showTrace = NutsApiUtils.getSysBoolNutsProperty("debug", false);
+        if (!showStackTrace) {
+            showStackTrace = NutsApiUtils.getSysBoolNutsProperty("debug", false);
         }
         if (bot) {
-            showTrace = false;
+            showStackTrace = false;
         }
-        return processThrowable(ex, null, true, showTrace, gui);
+        return processThrowable(ex, null, true, showStackTrace, gui);
     }
 
-    public static int processThrowable(Throwable ex, PrintStream out, boolean showMessage, boolean showTrace, boolean showGui) {
-        return NutsReservedUtils.processThrowable(ex, out, showMessage, showTrace, showGui);
+    public static int processThrowable(Throwable ex, PrintStream out, boolean showMessage, boolean showStackTrace, boolean showGui) {
+        return NutsReservedUtils.processThrowable(ex, out, showMessage, showStackTrace, showGui);
     }
 
     public static boolean isGraphicalDesktopEnvironment() {

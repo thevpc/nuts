@@ -23,7 +23,7 @@
  */
 package net.thevpc.nuts.cmdline;
 
-import net.thevpc.nuts.NutsEnum;
+import net.thevpc.nuts.util.NutsEnum;
 import net.thevpc.nuts.NutsOptional;
 import net.thevpc.nuts.util.NutsNameFormat;
 import net.thevpc.nuts.util.NutsStringUtils;

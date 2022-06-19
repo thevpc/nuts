@@ -26,13 +26,11 @@
  */
 package net.thevpc.nuts.io;
 
-import net.thevpc.nuts.NutsEnum;
+import net.thevpc.nuts.util.NutsEnum;
 import net.thevpc.nuts.NutsOptional;
 import net.thevpc.nuts.NutsValue;
 import net.thevpc.nuts.util.NutsNameFormat;
 import net.thevpc.nuts.util.NutsStringUtils;
-
-import java.util.function.Function;
 
 /**
  * @author thevpc

@@ -292,7 +292,6 @@ public final class NutsBootWorkspace {
     public String[] createProcessCommandLine() {
         prepareWorkspace();
         bLog.log(Level.FINE, NutsLoggerVerb.START, NutsMessage.ofJstyle("running version {0}.  {1}", computedOptions.getApiVersion().orNull(), getRequirementsHelpString(true)));
-        StringBuilder errors = new StringBuilder();
         String defaultWorkspaceLibFolder = computedOptions.getStoreLocation(NutsStoreLocation.LIB).orNull();
         List<NutsRepositoryLocation> repos = new ArrayList<>();
         repos.add(NutsRepositoryLocation.of("nuts@" + defaultWorkspaceLibFolder));
@@ -301,11 +300,10 @@ public final class NutsBootWorkspace {
         NutsReservedErrorInfoList errorList = new NutsReservedErrorInfoList();
         File file = NutsReservedMavenUtils.resolveOrDownloadJar(NutsId.ofApi(computedOptions.getApiVersion().orNull()).get(), repos.toArray(new NutsRepositoryLocation[0]), NutsRepositoryLocation.of("nuts@" + computedOptions.getStoreLocation(NutsStoreLocation.LIB).get() + File.separator + NutsConstants.Folders.ID), bLog, false, computedOptions.getExpireTime().orNull(), errorList);
         if (file == null) {
-            errors.append("unable to load nuts ").append(computedOptions.getApiVersion().orNull()).append("\n");
-            for (NutsReservedErrorInfo errorInfo : errorList.list()) {
-                errors.append(errorInfo.toString()).append("\n");
-            }
-            showError(null, errors.toString(), errorList);
+            errorList.insert(
+                    0,new NutsReservedErrorInfo(null,null,null,"unable to load nuts "+computedOptions.getApiVersion().orNull(),null)
+            );
+            logError(null, errorList);
             throw new NutsBootException(NutsMessage.ofCstyle("unable to load %s#%s", NutsConstants.Ids.NUTS_API, computedOptions.getApiVersion().orNull()));
         }
 
@@ -778,7 +776,7 @@ public final class NutsBootWorkspace {
             String workspaceBootLibFolder = computedOptions.getStoreLocation(NutsStoreLocation.LIB).get() + File.separator + NutsConstants.Folders.ID;
 
             NutsRepositoryLocation[] repositories =
-                    NutsStringUtils.split(computedOptions.getBootRepositories().orNull(),"\n;",true,true)
+                    NutsStringUtils.split(computedOptions.getBootRepositories().orNull(), "\n;", true, true)
                             .stream().map(NutsRepositoryLocation::of).toArray(NutsRepositoryLocation[]::new);
 
             NutsRepositoryLocation workspaceBootLibFolderRepo = NutsRepositoryLocation.of("nuts@" + workspaceBootLibFolder);
@@ -861,13 +859,17 @@ public final class NutsBootWorkspace {
             return nutsWorkspace.createSession();
         } catch (NutsReadOnlyException | NutsCancelException | NutsNoSessionCancelException ex) {
             throw ex;
+        } catch (UnsatisfiedLinkError | AbstractMethodError ex) {
+            NutsMessage errorMessage = NutsMessage.ofCstyle(
+                    "unable to boot nuts workspace because the installed binaries are incompatible with the current nuts bootstrap version %s\nusing '-N' command line flag should fix the problem", Nuts.getVersion()
+            );
+            errorList.insert(0,new NutsReservedErrorInfo(null, null, null, errorMessage + ": " + ex, ex));
+            logError(bootClassWorldURLs, errorList);
+            throw new NutsBootException(errorMessage, ex);
         } catch (Throwable ex) {
-            StringBuilder errors = new StringBuilder();
-            errorList.add(new NutsReservedErrorInfo(null, null, null, "unable to boot workspace : " + ex, ex));
-            for (NutsReservedErrorInfo errorInfo : errorList.list()) {
-                errors.append(errorInfo.toString()).append("\n");
-            }
-            showError(bootClassWorldURLs, errors.toString(), errorList);
+            NutsMessage message = NutsMessage.ofPlain("unable to locate valid nuts-runtime package");
+            errorList.insert(0,new NutsReservedErrorInfo(null, null, null, message + " : " + ex, ex));
+            logError(bootClassWorldURLs, errorList);
             if (ex instanceof NutsException) {
                 throw (NutsException) ex;
             }
@@ -877,7 +879,7 @@ public final class NutsBootWorkspace {
             if (ex instanceof NutsBootException) {
                 throw (NutsBootException) ex;
             }
-            throw new NutsBootException(NutsMessage.ofPlain("unable to locate valid nuts-runtime package"), ex);
+            throw new NutsBootException(message, ex);
         }
     }
 
@@ -1096,11 +1098,13 @@ public final class NutsBootWorkspace {
         bLog.log(Level.SEVERE, NutsLoggerVerb.FAIL, NutsMessage.ofPlain(message));
     }
 
-    private void showError(URL[] bootClassWorldURLs, String extraMessage, NutsReservedErrorInfoList ths) {
+    private void logError(URL[] bootClassWorldURLs, NutsReservedErrorInfoList ths) {
         String workspace = computedOptions.getWorkspace().orNull();
         Map<NutsStoreLocation, String> rbc_locations = computedOptions.getStoreLocations().orElse(Collections.emptyMap());
         bLog.log(Level.SEVERE, NutsLoggerVerb.FAIL, NutsMessage.ofJstyle("unable to bootstrap nuts (digest {0}):", getApiDigest()));
-        bLog.log(Level.SEVERE, NutsLoggerVerb.FAIL, NutsMessage.ofJstyle("{0}", extraMessage));
+        if (!ths.list().isEmpty()) {
+            bLog.log(Level.SEVERE, NutsLoggerVerb.FAIL, NutsMessage.ofJstyle("{0}", ths.list().get(0)));
+        }
         bLog.log(Level.SEVERE, NutsLoggerVerb.FAIL, NutsMessage.ofPlain("here after current environment info:"));
         bLog.log(Level.SEVERE, NutsLoggerVerb.FAIL, NutsMessage.ofJstyle("  nuts-boot-api-version            : {0}", computedOptions.getApiVersion().map(Object::toString).orElse("<?> Not Found!")));
         bLog.log(Level.SEVERE, NutsLoggerVerb.FAIL, NutsMessage.ofJstyle("  nuts-boot-runtime                : {0}", computedOptions.getRuntimeId().map(Object::toString).orElse("<?> Not Found!")));

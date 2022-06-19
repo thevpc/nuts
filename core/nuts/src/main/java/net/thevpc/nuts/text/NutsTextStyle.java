@@ -27,6 +27,7 @@
 package net.thevpc.nuts.text;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.util.NutsEnum;
 
 import java.util.Objects;
 

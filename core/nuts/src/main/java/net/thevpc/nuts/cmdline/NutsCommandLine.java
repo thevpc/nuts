@@ -335,6 +335,14 @@ public interface NutsCommandLine extends Iterable<NutsArgument>, NutsFormattable
     NutsOptional<NutsArgument> nextBoolean(String... names);
 
     /**
+     * next argument with boolean value equivalent to
+     * next(NutsArgumentType.STRING,{})
+     *
+     * @return next argument
+     */
+    NutsOptional<NutsArgument> nextBoolean();
+
+    /**
      * next argument with string value. equivalent to
      * next(NutsArgumentType.STRING,names)
      *
@@ -342,6 +350,14 @@ public interface NutsCommandLine extends Iterable<NutsArgument>, NutsFormattable
      * @return next argument
      */
     NutsOptional<NutsArgument> nextString(String... names);
+
+    /**
+     * next argument with string value. equivalent to
+     * next(NutsArgumentType.STRING,{})
+     *
+     * @return next argument
+     */
+    NutsOptional<NutsArgument> nextString();
 
     NutsOptional<String> nextStringValueLiteral(String... names);
 
@@ -351,8 +367,16 @@ public interface NutsCommandLine extends Iterable<NutsArgument>, NutsFormattable
 
     NutsOptional<NutsValue> nextBooleanValue(String... names);
 
+    NutsOptional<String> nextStringValueLiteral();
+
+    NutsOptional<Boolean> nextBooleanValueLiteral();
+
+    NutsOptional<NutsValue> nextStringValue();
+
+    NutsOptional<NutsValue> nextBooleanValue();
+
     /**
-     * next argument with any value type (may having not a value). equivalent to
+     * next argument with any value type (may have not a value). equivalent to
      * {@code next(NutsArgumentType.ANY,names)}
      *
      * @param names names

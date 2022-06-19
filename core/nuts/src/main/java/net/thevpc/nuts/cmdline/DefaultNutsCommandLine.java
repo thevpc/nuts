@@ -306,6 +306,36 @@ public class DefaultNutsCommandLine implements NutsCommandLine {
     }
 
     @Override
+    public NutsOptional<NutsArgument> nextString() {
+        return nextString(new String[0]);
+    }
+
+    @Override
+    public NutsOptional<NutsArgument> nextBoolean() {
+        return nextBoolean(new String[0]);
+    }
+
+    @Override
+    public NutsOptional<String> nextStringValueLiteral() {
+        return nextStringValueLiteral(new String[0]);
+    }
+
+    @Override
+    public NutsOptional<Boolean> nextBooleanValueLiteral() {
+        return nextBooleanValueLiteral(new String[0]);
+    }
+
+    @Override
+    public NutsOptional<NutsValue> nextStringValue() {
+        return nextStringValue(new String[0]);
+    }
+
+    @Override
+    public NutsOptional<NutsValue> nextBooleanValue() {
+        return nextBooleanValue(new String[0]);
+    }
+
+    @Override
     public NutsOptional<String> nextStringValueLiteral(String... names) {
         return nextString(names).flatMap(NutsArgument::getStringValue);
     }

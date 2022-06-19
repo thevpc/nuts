@@ -26,7 +26,7 @@
  */
 package net.thevpc.nuts.spi;
 
-import net.thevpc.nuts.NutsEnum;
+import net.thevpc.nuts.util.NutsEnum;
 import net.thevpc.nuts.NutsOptional;
 import net.thevpc.nuts.util.NutsNameFormat;
 import net.thevpc.nuts.util.NutsStringUtils;

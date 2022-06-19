@@ -19,4 +19,8 @@ public interface NutsFunction<T, V> extends Function<T, V>, NutsDescribable {
         return NutsDescribables.ofFunction(o, descr);
     }
 
+    default NutsElement describe(NutsSession session) {
+        return NutsElements.of(session).toElement("custom function");
+    }
+
 }
