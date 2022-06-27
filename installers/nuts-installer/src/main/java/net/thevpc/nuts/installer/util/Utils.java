@@ -114,7 +114,7 @@ public class Utils {
     }
 
     public static String replace(String str, Function<String, String> fct) {
-        Pattern p = Pattern.compile("\\$\\{(?<k>[^\\]]*)\\}");
+        Pattern p = Pattern.compile("\\$\\{(?<k>[^\\]}]*)\\}");
         Matcher matcher = p.matcher(str);
         StringBuffer sb = new StringBuffer();
         while (matcher.find()) {

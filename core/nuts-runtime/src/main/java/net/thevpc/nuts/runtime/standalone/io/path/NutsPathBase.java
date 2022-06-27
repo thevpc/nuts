@@ -74,6 +74,69 @@ public abstract class NutsPathBase implements NutsPath {
         return n.substring(0, i);
     }
 
+    public String[] getSmartParts() {
+        String n=getName();
+        NutsValue[] vals = NutsVersion.of(n).get().split();
+        int lastDot = -1;
+        for (int i = vals.length - 1; i >= 0; i--) {
+            NutsValue v = vals[i];
+            String u = v.asString().get();
+            if (u.equals(".")) {
+                if (i == vals.length - 1) {
+                    return rebuildSmartParts(vals, i);
+                }
+                NutsValue v2 = vals[i + 1];
+                if (v2.isNumber()) {
+                    //check if the part before is also a number
+                    if(i>0 && vals[i - 1].isNumber()) {
+                        if (i + 1 == vals.length - 1) {
+                            return rebuildSmartParts(vals, i + 2);
+                        } else if (vals[i + 1].asString().get().equals(".")) {
+                            return rebuildSmartParts(vals, i + 1);
+                        }
+                    }
+                } else {
+                    //continue
+                }
+                if (lastDot == -1) {
+                    lastDot = i;
+                } else {
+                    break;
+                }
+            }
+        }
+        if (lastDot < 0) {
+            return new String[]{n, ""};
+        }
+        return rebuildSmartParts(vals, lastDot);
+    }
+
+    private String[] rebuildSmartParts(NutsValue[] vals, int split) {
+        return new String[]{
+                concatSmartParts(vals, 0, split),
+                concatSmartParts(vals, split + 1, vals.length),
+        };
+    }
+
+    private String concatSmartParts(NutsValue[] vals, int from, int to) {
+        StringBuilder sb = new StringBuilder();
+        for (int i = from; i < to; i++) {
+            sb.append(vals[i].asString().get());
+        }
+        return sb.toString();
+    }
+
+
+    @Override
+    public String getSmartBaseName() {
+        return getSmartParts()[0];
+    }
+
+    @Override
+    public String getSmartExtension() {
+        return getSmartParts()[1];
+    }
+
     @Override
     public String getLongBaseName() {
         String n = getName();
@@ -98,7 +161,7 @@ public abstract class NutsPathBase implements NutsPath {
     }
 
     @Override
-    public String getFullExtension() {
+    public String getLongExtension() {
         String n = getName();
         int i = n.indexOf('.');
         if (i < 0) {

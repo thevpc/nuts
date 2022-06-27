@@ -684,6 +684,17 @@ public class DefaultNutsValue implements NutsValue {
             case FLOAT:
             case DOUBLE:
                 return true;
+            case STRING: {
+                String s = asString().get();
+                s = s.trim();
+                try {
+                    new BigDecimal(s);
+                    return true;
+                } catch (NumberFormatException ex) {
+                    //ignore
+                }
+                break;
+            }
         }
         return false;
     }

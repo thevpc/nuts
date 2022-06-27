@@ -5,6 +5,7 @@
  */
 package net.thevpc.nuts.lib.md.asciidoctor;
 
+import net.thevpc.nuts.io.NutsPath;
 import net.thevpc.nuts.lib.md.*;
 import net.thevpc.nuts.lib.md.util.MdUtils;
 
@@ -26,10 +27,14 @@ public class AsciiDoctorWriter extends AbstractMdWriter {
 
 
     public AsciiDoctorWriter(OutputStream out) {
-        super(new PrintWriter(out));
+        super(out);
     }
 
     public AsciiDoctorWriter(Writer out) {
+        super(out);
+    }
+
+    public AsciiDoctorWriter(NutsPath out) {
         super(out);
     }
 

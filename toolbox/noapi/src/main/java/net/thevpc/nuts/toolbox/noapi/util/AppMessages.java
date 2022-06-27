@@ -1,4 +1,4 @@
-package net.thevpc.nuts.toolbox.noapi;
+package net.thevpc.nuts.toolbox.noapi.util;
 
 import net.thevpc.nuts.NutsMessage;
 import net.thevpc.nuts.NutsOptional;

@@ -44,7 +44,7 @@ import java.util.regex.Pattern;
  * @since 0.8.1
  */
 public class NutsStringUtils {
-    private static final Pattern DOLLAR_PLACE_HOLDER_PATTERN = Pattern.compile("[$][{](?<name>([a-zA-Z._-]+))[}]");
+    private static final Pattern DOLLAR_PLACE_HOLDER_PATTERN = Pattern.compile("[$][{](?<name>([a-zA-Z._0-9-]+))[}]");
     private static final char[] BASE16_CHARS = "0123456789ABCDEF".toCharArray();
 
 
@@ -134,7 +134,11 @@ public class NutsStringUtils {
         Matcher matcher = DOLLAR_PLACE_HOLDER_PATTERN.matcher(text);
         StringBuffer sb = new StringBuffer();
         while (matcher.find()) {
-            String x = m.apply(matcher.group("name"));
+            String e = matcher.group("name");
+            String x = m.apply(e);
+            if (x == null) {
+                throw new IllegalArgumentException("var not found " + e);
+            }
             matcher.appendReplacement(sb, Matcher.quoteReplacement(x));
         }
         matcher.appendTail(sb);
@@ -401,43 +405,6 @@ public class NutsStringUtils {
         }
     }
 
-    public static class EnumValue {
-        private String value;
-        private String normalizedValue;
-        private String[] parsedValue;
-
-        public EnumValue(String value, String normalizedValue, String[] parsedValue) {
-            this.value = value;
-            this.normalizedValue = normalizedValue;
-            this.parsedValue = parsedValue;
-        }
-
-        public String getValue() {
-            return value;
-        }
-
-        public String getNormalizedValue() {
-            return normalizedValue;
-        }
-
-        public String[] getParsedValue() {
-            return parsedValue;
-        }
-    }
-
-
-    public enum QuoteType {
-        DOUBLE,
-        SIMPLE,
-        ANTI,
-    }
-
-    private static class CustomLogLevel extends Level {
-        public CustomLogLevel(String name, int value) {
-            super(name, value);
-        }
-    }
-
     public static List<String> split(String value, String chars) {
         return split(value, chars, true, false);
     }
@@ -475,5 +442,67 @@ public class NutsStringUtils {
             }
         }
         return all;
+    }
+
+
+    public static class EnumValue {
+        private String value;
+        private String normalizedValue;
+        private String[] parsedValue;
+
+        public EnumValue(String value, String normalizedValue, String[] parsedValue) {
+            this.value = value;
+            this.normalizedValue = normalizedValue;
+            this.parsedValue = parsedValue;
+        }
+
+        public String getValue() {
+            return value;
+        }
+
+        public String getNormalizedValue() {
+            return normalizedValue;
+        }
+
+        public String[] getParsedValue() {
+            return parsedValue;
+        }
+    }
+
+
+    public enum QuoteType implements NutsEnum {
+        DOUBLE,
+        SIMPLE,
+        ANTI;
+        /**
+         * lower-cased identifier for the enum entry
+         */
+        private final String id;
+
+        /**
+         * default constructor
+         */
+        QuoteType() {
+            this.id = NutsNameFormat.ID_NAME.formatName(name());
+        }
+
+        public static NutsOptional<QuoteType> parse(String value) {
+            return NutsStringUtils.parseEnum(value, QuoteType.class);
+        }
+
+        /**
+         * lower cased identifier.
+         *
+         * @return lower cased identifier
+         */
+        public String id() {
+            return id;
+        }
+    }
+
+    private static class CustomLogLevel extends Level {
+        public CustomLogLevel(String name, int value) {
+            super(name, value);
+        }
     }
 }

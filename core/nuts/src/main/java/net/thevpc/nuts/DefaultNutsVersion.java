@@ -388,6 +388,16 @@ public class DefaultNutsVersion implements NutsVersion {
         return getParts().getDigitCount();
     }
 
+    public NutsValue[] split() {
+        VersionParts parts = getParts();
+        int size = parts.size();
+        NutsValue[] all = new NutsValue[size];
+        for (int i = 0; i < size; i++) {
+            all[i] = NutsValue.of(parts.get(i).string);
+        }
+        return all;
+    }
+
     public NutsOptional<NutsValue> get(int index) {
         VersionParts parts = getParts();
         int size = parts.size();

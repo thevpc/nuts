@@ -217,6 +217,17 @@ public interface NutsVersion extends Serializable, /*NutsTokenFilter, */NutsForm
      */
     NutsOptional<NutsValue> get(int index);
 
+
+    /**
+     * split all elements
+     * <ul>
+     *     <li>(1.a22).split()=['1','.','a','22']</li>
+     * </ul>
+     *
+     * @return all elements
+     */
+    NutsValue[] split();
+
     /**
      * number element at given index. if the index is negative will return from right (-1 is the first starting from the right).
      * The version is first split (as a suite of numbers and words) then all words are discarded.

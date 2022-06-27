@@ -17,13 +17,21 @@
  */
 package net.thevpc.nuts.lib.md;
 
-import java.io.IOException;
-import java.io.UncheckedIOException;
-import java.io.Writer;
+import net.thevpc.nuts.io.NutsPath;
+
+import java.io.*;
 
 public abstract class AbstractMdWriter implements MdWriter {
     private Writer writer;
 
+
+    public AbstractMdWriter(OutputStream out) {
+        this(new PrintWriter(out));
+    }
+
+    public AbstractMdWriter(NutsPath out) {
+        this(out.getWriter());
+    }
 
     public AbstractMdWriter(Writer writer) {
         this.writer = writer;
@@ -36,7 +44,7 @@ public abstract class AbstractMdWriter implements MdWriter {
     public abstract void writeImpl(MdElement element, WriteContext last);
 
     protected void write(String text) {
-        if(text==null){
+        if (text == null) {
             return;
         }
         try {
@@ -94,7 +102,7 @@ public abstract class AbstractMdWriter implements MdWriter {
         }
 
         public boolean hasLast() {
-            return getLast()!=null;
+            return getLast() != null;
         }
 
         public MdElement getLast() {

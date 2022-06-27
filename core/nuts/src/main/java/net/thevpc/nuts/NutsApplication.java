@@ -166,7 +166,7 @@ public interface NutsApplication {
      * @since 0.7.1
      */
     static <T extends NutsApplication> void main(Class<T> appType, String[] args) {
-        NutsApplications.createApplicationInstance(appType,null,args).runAndExit(args);
+        NutsApplications.createApplicationInstance(appType, null, args).runAndExit(args);
     }
 
     /**
@@ -175,7 +175,7 @@ public interface NutsApplication {
      * @param args arguments
      */
     default void runAndExit(String[] args) {
-        NutsApplications.runApplicationAndExit(this,null, args);
+        NutsApplications.runApplicationAndExit(this, null, args);
     }
 
     /**
@@ -199,7 +199,7 @@ public interface NutsApplication {
      * @since 0.6.0, first parameter changed from NutsWorkspace to NutsSession to enable passing session options
      */
     default void run(NutsSession session, String[] args) {
-        NutsApplications.runApplication(this, session, args);
+        NutsApplications.runApplication(this, session, null,args);
     }
 
     /**
@@ -232,12 +232,13 @@ public interface NutsApplication {
     /**
      * create application context or return null for default
      *
-     * @param session         session
-     * @param args            arguments
+     * @param session   session
+     * @param nutsArgs  nuts arguments
+     * @param appArgs      app arguments
      * @param startTime start time
      * @return new instance of NutsApplicationContext or null
      */
-    default NutsApplicationContext createApplicationContext(NutsSession session, String[] args, NutsClock startTime) {
+    default NutsApplicationContext createApplicationContext(NutsSession session, String[] nutsArgs, String[] appArgs, NutsClock startTime) {
         return null;
     }
 

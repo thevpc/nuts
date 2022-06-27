@@ -257,6 +257,10 @@ public class MdFactory {
         return MdText.phrase(s);
     }
 
+    public static MdElement newLine() {
+        return MdText.paragraph("");
+    }
+
     public static MdElement endParagraph() {
         return MdText.paragraph("");
     }

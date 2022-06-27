@@ -23,14 +23,17 @@
  */
 package net.thevpc.nuts;
 
-import net.thevpc.nuts.boot.*;
+import net.thevpc.nuts.boot.DefaultNutsWorkspaceOptionsBuilder;
+import net.thevpc.nuts.boot.NutsBootWorkspace;
 import net.thevpc.nuts.cmdline.NutsCommandLine;
 import net.thevpc.nuts.reserved.NutsReservedBootLog;
 import net.thevpc.nuts.util.NutsApiUtils;
 import net.thevpc.nuts.util.NutsStringUtils;
 
 import java.time.Instant;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 /**
  * Nuts Top Class. Nuts is a Package manager for Java Applications and this
@@ -107,11 +110,12 @@ public final class Nuts {
      * method is to be called by child processes of nuts in order to inherit
      * workspace configuration.
      *
-     * @param args arguments
+     * @param overriddenNutsArgs nuts arguments to override inherited arguments
+     * @param appArgs application arguments
      * @return NutsSession instance
      */
-    public static NutsSession openInheritedWorkspace(String... args) throws NutsUnsatisfiedRequirementsException {
-        return openInheritedWorkspace(null, args);
+    public static NutsSession openInheritedWorkspace(String[] overriddenNutsArgs, String... appArgs) throws NutsUnsatisfiedRequirementsException {
+        return openInheritedWorkspace(null, overriddenNutsArgs,appArgs);
     }
 
     /**
@@ -122,22 +126,25 @@ public final class Nuts {
      * workspace configuration.
      *
      * @param term boot terminal or null for defaults
-     * @param args arguments
+     * @param overriddenNutsArgs nuts arguments to override inherited arguments
+     * @param appArgs arguments
      * @return NutsSession instance
      */
-    public static NutsSession openInheritedWorkspace(NutsWorkspaceTerminalOptions term, String... args) throws NutsUnsatisfiedRequirementsException {
+    public static NutsSession openInheritedWorkspace(NutsWorkspaceTerminalOptions term, String[] overriddenNutsArgs, String... appArgs) throws NutsUnsatisfiedRequirementsException {
         Instant startTime = Instant.now();
-        String nutsWorkspaceOptions = NutsStringUtils.trim(
-                NutsStringUtils.trim(System.getProperty("nuts.boot.args"))
-                        + " " + NutsStringUtils.trim(System.getProperty("nuts.args"))
-        );
-        NutsReservedBootLog log = new NutsReservedBootLog(term);
-        NutsWorkspaceOptionsBuilder options = new DefaultNutsWorkspaceOptionsBuilder();
-        if (!NutsBlankable.isBlank(nutsWorkspaceOptions)) {
-            String[] cml = NutsCommandLine.parseDefault(nutsWorkspaceOptions).get().toStringArray();
-            options.setCommandLine(cml,null);
+        List<String> nutsArgs = new ArrayList<>();
+        nutsArgs.addAll(NutsCommandLine.parseDefault(NutsStringUtils.trim(System.getProperty("nuts.boot.args"))).get().toStringList());
+        nutsArgs.addAll(NutsCommandLine.parseDefault(NutsStringUtils.trim(System.getProperty("nuts.args"))).get().toStringList());
+        if (overriddenNutsArgs != null) {
+            nutsArgs.addAll(Arrays.asList(overriddenNutsArgs));
         }
-        options.setApplicationArguments(Arrays.asList(args));
+        NutsWorkspaceOptionsBuilder options = new DefaultNutsWorkspaceOptionsBuilder();
+        options.setCommandLine(nutsArgs.toArray(new String[0]),null);
+        if (options.getApplicationArguments().isNotPresent()) {
+            options.setApplicationArguments(new ArrayList<>());
+        }
+        options.getApplicationArguments().get().addAll(Arrays.asList(appArgs));
+        options.setApplicationArguments(Arrays.asList(appArgs));
         options.setInherited(true);
         options.setCreationTime(startTime);
         if (term != null) {

@@ -1,6 +1,6 @@
-package net.thevpc.nuts.toolbox.noapi;
+package net.thevpc.nuts.toolbox.noapi.model;
 
-class FieldInfo {
+public class FieldInfo {
     public String name;
     public String summary;
     public String description;

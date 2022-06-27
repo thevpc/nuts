@@ -60,6 +60,7 @@ public final class NutsReservedWorkspaceCommandLineParser {
      *
      * @param bootArguments input arguments to parse
      * @param options       options instance to fill
+     * @param session       session, can be null
      */
     public static void parseNutsArguments(String[] bootArguments, NutsWorkspaceOptionsBuilder options, NutsSession session) {
         List<NutsMessage> showError = new ArrayList<>();

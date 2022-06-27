@@ -78,19 +78,19 @@ public final class NutsApplications {
      */
     @Deprecated
     public static void runApplicationAndExit(NutsApplication application, String[] args) {
-        runApplicationAndExit(application,null,args);
+        runApplicationAndExit(application, null, args);
     }
 
     /**
      * run the given application and call System.exit(?)
      *
      * @param application application
-     * @param session session
+     * @param session     session
      * @param args        arguments
      */
-    public static void runApplicationAndExit(NutsApplication application, NutsSession session,String[] args) {
+    public static void runApplicationAndExit(NutsApplication application, NutsSession session, String[] args) {
         try {
-            application.run(session,args);
+            application.run(session, args);
         } catch (Exception ex) {
             System.exit(NutsApplications.processThrowable(ex));
             return;
@@ -109,7 +109,7 @@ public final class NutsApplications {
     public static <T extends NutsApplication> T createApplicationInstance(Class<T> appType) {
         NutsSession session = null;
         String[] args = null;
-        return createApplicationInstance(appType,session, args);
+        return createApplicationInstance(appType, session, args);
     }
 
     /**
@@ -117,12 +117,12 @@ public final class NutsApplications {
      *
      * @param appType application type
      * @param session session
-     * @param args args
+     * @param args    args
      * @param <T>     application type
      * @return new instance
      */
     @SuppressWarnings("unchecked")
-    public static <T extends NutsApplication> T createApplicationInstance(Class<T> appType,NutsSession session,String[] args) {
+    public static <T extends NutsApplication> T createApplicationInstance(Class<T> appType, NutsSession session, String[] args) {
         try {
             for (Method declaredMethod : appType.getDeclaredMethods()) {
                 if (Modifier.isStatic(declaredMethod.getModifiers())) {
@@ -144,17 +144,17 @@ public final class NutsApplications {
                     }
                 }
             }
-            Constructor<T> dconstructor=null;
+            Constructor<T> dconstructor = null;
             for (Constructor<?> constructor : appType.getConstructors()) {
-                if(constructor.getParameterCount() == 2
+                if (constructor.getParameterCount() == 2
                         && constructor.getParameterTypes()[0].equals(NutsSession.class)
-                        && constructor.getParameterTypes()[1].equals(String[].class)){
-                    return (T) constructor.newInstance(session,args);
-                }else if(constructor.getParameterCount()==0){
-                    dconstructor=(Constructor<T>) constructor;
+                        && constructor.getParameterTypes()[1].equals(String[].class)) {
+                    return (T) constructor.newInstance(session, args);
+                } else if (constructor.getParameterCount() == 0) {
+                    dconstructor = (Constructor<T>) constructor;
                 }
             }
-            if(dconstructor!=null){
+            if (dconstructor != null) {
                 return dconstructor.newInstance();
             }
         } catch (InstantiationException ex) {
@@ -178,22 +178,23 @@ public final class NutsApplications {
      * create an Application Context instance for the given arguments. The session can be null.
      *
      * @param applicationInstance application instance (to resolve appId)
-     * @param args                application arguments
+     * @param nutsArgs            nutsArgs arguments
+     * @param appArgs             application arguments
      * @param session             caller workspace session (or null to create an inherited workspace)
      * @return NutsApplicationContext instance
      */
-    public static NutsApplicationContext createApplicationContext(NutsApplication applicationInstance, String[] args, NutsSession session) {
+    public static NutsApplicationContext createApplicationContext(NutsApplication applicationInstance, String[] nutsArgs, String[] appArgs, NutsSession session) {
         NutsClock startTime = NutsClock.now();
         if (applicationInstance == null) {
             throw new NullPointerException("null application");
         }
         if (session == null) {
-            session = Nuts.openInheritedWorkspace(args);
+            session = Nuts.openInheritedWorkspace(nutsArgs, appArgs);
         }
         NutsApplicationContext applicationContext;
-        applicationContext = applicationInstance.createApplicationContext(session, args, startTime);
+        applicationContext = applicationInstance.createApplicationContext(session, nutsArgs, appArgs, startTime);
         if (applicationContext == null) {
-            applicationContext = NutsApplicationContext.of(args, startTime, applicationInstance.getClass(), null, session);
+            applicationContext = NutsApplicationContext.of(appArgs, startTime, applicationInstance.getClass(), null, session);
         }
 
         //copy inter-process parameters only
@@ -214,10 +215,11 @@ public final class NutsApplications {
      *
      * @param applicationInstance application
      * @param session             session
+     * @param nutsArgs            nuts arguments
      * @param args                application arguments
      */
-    public static void runApplication(NutsApplication applicationInstance, NutsSession session, String[] args) {
-        runApplication(applicationInstance, createApplicationContext(applicationInstance, args, session));
+    public static void runApplication(NutsApplication applicationInstance, NutsSession session, String[] nutsArgs, String[] args) {
+        runApplication(applicationInstance, createApplicationContext(applicationInstance, nutsArgs, args, session));
     }
 
     public static void runApplication(NutsApplication applicationInstance, NutsApplicationContext applicationContext) {

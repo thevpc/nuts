@@ -120,11 +120,15 @@ public interface NutsPath extends NutsFormattable, NutsInputSource, NutsOutputTa
 
     String getBaseName();
 
+    String getSmartBaseName();
+
+    String getSmartExtension();
+
     String getLongBaseName();
 
     String getLastExtension();
 
-    String getFullExtension();
+    String getLongExtension();
 
     String getName();
 

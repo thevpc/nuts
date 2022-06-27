@@ -3,26 +3,20 @@ package net.thevpc.nuts.toolbox.noapi;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.cmdline.NutsArgument;
 import net.thevpc.nuts.cmdline.NutsCommandLine;
+import net.thevpc.nuts.toolbox.noapi.model.NoapiCmdData;
+import net.thevpc.nuts.toolbox.noapi.service.NOpenAPIService;
 import net.thevpc.nuts.util.NutsUtils;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 public class NoapiMain implements NutsApplication, NutsAppCmdProcessor {
 
     private NOpenAPIService service;
-    private CmdData ref = new CmdData();
+    private NoapiCmdData ref = new NoapiCmdData();
 
-    class CmdData {
-        String command;
-        String path;
-        String target;
-        boolean openAPI;
-        boolean keep;
-        String openAPIFormat;
-    }
-
-    private List<CmdData> data = new ArrayList<>();
+    private List<NoapiCmdData> data = new ArrayList<>();
 
     public static void main(String[] args) {
         new NoapiMain().runAndExit(args);
@@ -32,7 +26,7 @@ public class NoapiMain implements NutsApplication, NutsAppCmdProcessor {
     public void run(NutsApplicationContext appContext) {
         this.service = new NOpenAPIService(appContext);
         NutsCommandLine cmdLine = appContext.getCommandLine();
-        ref.command = "pdf";
+        ref.setCommand("pdf");
         appContext.processCommandLine(this);
     }
 
@@ -42,51 +36,79 @@ public class NoapiMain implements NutsApplication, NutsAppCmdProcessor {
         switch (option.asString().get(session)) {
             case "--yaml": {
                 commandline.nextBoolean();
-                ref.openAPIFormat = "yaml";
+                ref.setOpenAPIFormat("yaml");
                 if (!data.isEmpty()) {
-                    data.get(data.size() - 1).openAPIFormat = "yaml";
+                    data.get(data.size() - 1).setOpenAPIFormat("yaml");
                 }
                 return true;
             }
             case "--json": {
                 commandline.nextBoolean();
-                ref.openAPIFormat = "json";
+                ref.setOpenAPIFormat("json");
                 if (!data.isEmpty()) {
-                    data.get(data.size() - 1).openAPIFormat = "json";
+                    data.get(data.size() - 1).setOpenAPIFormat("json");
                 }
                 return true;
             }
             case "--keep": {
                 commandline.nextBoolean();
-                ref.keep = true;
+                ref.setKeep(true);
                 if (!data.isEmpty()) {
-                    data.get(data.size() - 1).keep = true;
+                    data.get(data.size() - 1).setKeep(true);
+                }
+                return true;
+            }
+            case "--vars": {
+                NutsArgument a = commandline.nextString().get();
+                if (a.isActive()) {
+                    String vars = a.getStringValue().get();
+                    ref.setVars(vars);
+                    if (!data.isEmpty()) {
+                        data.get(data.size() - 1).setVars(vars);
+                    }
+                }
+                return true;
+            }
+            case "--var": {
+                NutsArgument a = commandline.nextString().get();
+                if (a.isActive()) {
+                    String vars = a.getStringValue().get();
+                    NutsArgument b = NutsArgument.of(vars);
+                    if (b.isActive()) {
+                        ref.getVarsMap().put(b.getKey().toStringLiteral(), b.getValue().toStringLiteral());
+                        if (!data.isEmpty()) {
+                            data.get(data.size() - 1).getVarsMap().put(b.getKey().toStringLiteral(), b.getValue().toStringLiteral());
+                        }
+                    }
                 }
                 return true;
             }
             case "--open-api": {
                 commandline.nextBoolean();
-                ref.openAPI = true;
+                ref.setOpenAPI(true);
                 if (!data.isEmpty()) {
-                    data.get(data.size() - 1).openAPI = true;
+                    data.get(data.size() - 1).setOpenAPI(true);
                 }
                 return true;
             }
             case "--pdf": {
                 commandline.nextBoolean();
-                ref.command = "pdf";
+                ref.setCommand("pdf");
                 if (!data.isEmpty()) {
-                    data.get(data.size() - 1).command = "pdf";
+                    data.get(data.size() - 1).setCommand("pdf");
                 }
                 return true;
             }
             case "--target": {
-                String target = commandline.nextString().get().getStringValue().get();
-                if (target.contains("*")) {
-                    ref.target = target;
-                }
-                if (!data.isEmpty()) {
-                    data.get(data.size() - 1).target = target;
+                NutsArgument a = commandline.nextString().get();
+                if (a.isActive()) {
+                    String target = a.getStringValue().get();
+                    if (target.contains("*")) {
+                        ref.setTarget(target);
+                    }
+                    if (!data.isEmpty()) {
+                        data.get(data.size() - 1).setTarget(target);
+                    }
                 }
                 return true;
             }
@@ -97,13 +119,15 @@ public class NoapiMain implements NutsApplication, NutsAppCmdProcessor {
     @Override
     public boolean onCmdNextNonOption(NutsArgument nonOption, NutsCommandLine commandline, NutsApplicationContext context) {
         NutsSession session = context.getSession();
-        CmdData c = new CmdData();
-        c.command = ref.command;
-        c.keep = ref.keep;
-        c.openAPI = ref.openAPI;
-        c.target = ref.target;
+        NoapiCmdData c = new NoapiCmdData();
+        c.setCommand(ref.getCommand());
+        c.setKeep(ref.isKeep());
+        c.setOpenAPI(ref.isOpenAPI());
+        c.setTarget(ref.getTarget());
+        c.setVars(ref.getVars());
+        c.setVarsMap(new HashMap<>(ref.getVarsMap()));
         NutsArgument pathArg = commandline.next().get(session);
-        c.path = pathArg.getKey().asString().get(session);
+        c.setPath(pathArg.getKey().asString().get(session));
         data.add(c);
         return true;
     }
@@ -114,21 +138,21 @@ public class NoapiMain implements NutsApplication, NutsAppCmdProcessor {
         if (data.isEmpty()) {
             commandline.throwMissingArgument(session);
         }
-        for (CmdData d : data) {
-            NutsUtils.requireNonBlank(d.path, session, "path");
-            if (!"pdf".equals(d.command)) {
-                throw new NutsIllegalArgumentException(session, NutsMessage.ofCstyle("unsupported command %s", d.command));
+        for (NoapiCmdData d : data) {
+            NutsUtils.requireNonBlank(d.getPath(), session, "path");
+            if (!"pdf".equals(d.getCommand())) {
+                throw new NutsIllegalArgumentException(session, NutsMessage.ofCstyle("unsupported command %s", d.getCommand()));
             }
         }
     }
 
     @Override
     public void onCmdExec(NutsCommandLine commandline, NutsApplicationContext context) {
-        for (CmdData d : data) {
-            switch (d.command) {
+        for (NoapiCmdData d : data) {
+            switch (d.getCommand()) {
                 case "pdf": {
                     NOpenAPIService service = new NOpenAPIService(context);
-                    service.run(d.path, d.target, d.keep);
+                    service.run(d.getPath(), d.getTarget(), d.getVars(), d.getVarsMap(), d.isKeep());
                     break;
                 }
             }
