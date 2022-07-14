@@ -4,6 +4,7 @@ import net.thevpc.nuts.reserved.NutsReservedOptionalValid;
 import net.thevpc.nuts.reserved.NutsReservedOptionalEmpty;
 import net.thevpc.nuts.reserved.NutsReservedOptionalError;
 
+import java.util.Collection;
 import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.function.Function;
@@ -23,6 +24,7 @@ public interface NutsOptional<T> extends NutsBlankable {
     static <T> NutsOptional<T> ofEmpty() {
         return ofEmpty(null);
     }
+
     static <T> NutsOptional<T> ofEmpty(Function<NutsSession, NutsMessage> emptyMessage) {
         return new NutsReservedOptionalEmpty<>(emptyMessage);
     }
@@ -62,6 +64,32 @@ public interface NutsOptional<T> extends NutsBlankable {
     static <T> NutsOptional<T> ofOptional(Optional<T> optional, Function<NutsSession, NutsMessage> errorMessage) {
         if (optional.isPresent()) {
             return of(optional.get());
+        }
+        return ofEmpty(errorMessage);
+    }
+
+    static <T> NutsOptional<T> ofNamedSingleton(Collection<T> collection, String name) {
+        if (name == null) {
+            return ofSingleton(collection, null, null);
+        }
+        return ofSingleton(collection,
+                s -> NutsMessage.ofCstyle("missing %s", name)
+                ,
+                s -> NutsMessage.ofCstyle("too many (%s>1) values for %s", collection == null ? 0 : collection.size(), name));
+    }
+
+    static <T> NutsOptional<T> ofSingleton(Collection<T> collection, Function<NutsSession, NutsMessage> emptyMessage, Function<NutsSession, NutsMessage> errorMessage) {
+        if (collection == null || collection.isEmpty()) {
+            return ofEmpty(emptyMessage);
+        }
+        if (collection.size() > 1) {
+            if (errorMessage == null) {
+                errorMessage = s -> NutsMessage.ofCstyle("too many elements %s >1", collection.size());
+            }
+            return ofError(errorMessage);
+        }
+        for (T t : collection) {
+            return of(t);
         }
         return ofEmpty(errorMessage);
     }
