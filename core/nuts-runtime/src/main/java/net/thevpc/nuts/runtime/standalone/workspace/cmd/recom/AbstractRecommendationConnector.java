@@ -1,18 +1,11 @@
 package net.thevpc.nuts.runtime.standalone.workspace.cmd.recom;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.elem.NutsElements;
-import net.thevpc.nuts.util.NutsPlatformUtils;
-import net.thevpc.nuts.util.NutsStringUtils;
+import net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.clinfo.NutsCliInfo;
 
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.LinkedHashMap;
 import java.util.Locale;
 import java.util.Map;
 import java.util.TimeZone;
-import java.util.UUID;
 
 public abstract class AbstractRecommendationConnector implements RecommendationConnector {
 
@@ -25,36 +18,7 @@ public abstract class AbstractRecommendationConnector implements RecommendationC
         if (localUserUUID != null) {
             return localUserUUID;
         }
-        Path userConfig = Paths.get(NutsPlatformUtils.getWorkspaceLocation(
-                NutsOsFamily.getCurrent(),
-                false,
-                null
-        )).getParent().resolve(".nuts-user-config");
-        Map m = null;
-        NutsElements elems = NutsElements.of(session);
-        String _uuid = null;
-        if (Files.exists(userConfig)) {
-            try {
-                m = elems.json().parse(userConfig, Map.class);
-            } catch (Exception ex) {/*IGNORE*/
-            }
-            if (m != null) {
-                _uuid = NutsStringUtils.trimToNull(m.get("user") == null ? null : String.valueOf(m.get("user")));
-            }
-        }
-        if (_uuid != null) {
-            localUserUUID = _uuid;
-        } else {
-            if (m == null) {
-                m = new LinkedHashMap();
-            }
-            m.put("user", localUserUUID = UUID.randomUUID().toString());
-            try {
-                elems.json().setValue(m).print(userConfig);
-            } catch (Exception ex) {
-                //ignore
-            }
-        }
+        localUserUUID = NutsCliInfo.loadCliId(session, true);
         return localUserUUID;
     }
 
@@ -62,7 +26,7 @@ public abstract class AbstractRecommendationConnector implements RecommendationC
     public Map getRecommendations(RequestQueryInfo ri, NutsRecommendationPhase phase, boolean failure, NutsSession session) {
         validateRequest(ri, session);
         NutsId id = NutsId.of(ri.q.getId()).ifBlankNull().get(session);
-        String name=phase.name().toLowerCase()+(failure?"-failure":"")+"-recommendations.json";
+        String name = phase.name().toLowerCase() + (failure ? "-failure" : "") + "-recommendations.json";
         String url = "/repo/" + id.getGroupId().replace('.', '/')
                 + '/' + id.getArtifactId()
                 + '/' + id.getVersion()

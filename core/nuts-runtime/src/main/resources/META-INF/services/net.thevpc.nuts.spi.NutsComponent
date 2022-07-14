@@ -122,5 +122,5 @@ net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.index.NutsSettingsInde
 net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.connect.NutsSettingsConnectSubCommand
 net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.alias.NutsSettingsAliasSubCommand
 net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.ndi.NutsSettingsNdiSubCommand
-
+net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.clinfo.NutsCliInfoSubCommand
 
