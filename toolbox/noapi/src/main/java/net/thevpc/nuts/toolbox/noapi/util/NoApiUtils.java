@@ -85,7 +85,7 @@ public class NoApiUtils {
 
     public static MdElement codeElement(TypeInfo o, boolean includeDesc, String extra, AppMessages msg) {
         String type = "javascript";
-        if (o.getUserType().equals("object")) {
+        if ("object".equals(o.getUserType())) {
             type = "json";
         }
 
@@ -168,7 +168,7 @@ public class NoApiUtils {
                 case "string":
                 case "enum": {
                     if (!NutsBlankable.isBlank(o.getMinLength()) && !NutsBlankable.isBlank(o.getMaxLength())) {
-                        type += ("[" + o.getMinLength().trim() + "," + o.getMaxLength().trim() + "]");
+                        type += ("(" + o.getMinLength().trim() + "..." + o.getMaxLength().trim() + ")");
                     } else if (!NutsBlankable.isBlank(o.getMinLength())) {
                         type += (">=" + o.getMinLength().trim());
                     } else if (!NutsBlankable.isBlank(o.getMaxLength())) {
@@ -184,7 +184,7 @@ public class NoApiUtils {
                 case "integer":
                 case "number": {
                     if (!NutsBlankable.isBlank(o.getMinLength()) && !NutsBlankable.isBlank(o.getMaxLength())) {
-                        type += ("[" + o.getMinLength().trim() + "," + o.getMaxLength().trim() + "]");
+                        type += ("(" + o.getMinLength().trim() + "..." + o.getMaxLength().trim() + ")");
                     } else if (!NutsBlankable.isBlank(o.getMinLength())) {
                         type += (">=" + o.getMinLength().trim());
                     } else if (!NutsBlankable.isBlank(o.getMaxLength())) {

@@ -445,6 +445,19 @@ public class MainMakdownGenerator {
     }
 
 
+    private String getSmartTypeName(NutsObjectElement obj) {
+        String e = _StringUtils.nvl(obj.getString("type").orNull(), "string");
+        if("array".equals(e)){
+            NutsObjectElement items = obj.getObject("items").orNull();
+            if(items!=null){
+                return getSmartTypeName(items)+"[]";
+            }else{
+                return e;
+            }
+        }else{
+            return e;
+        }
+    }
     private void _fillApiPathMethodParam(List<NutsElement> headerParameters, List<MdElement> all, String url, List<TypeCrossRef> typeCrossRefs, String paramType) {
         NutsSession session = appContext.getSession();
         MdTable tab = new MdTable(
@@ -457,15 +470,16 @@ public class MainMakdownGenerator {
                 headerParameters.stream().map(
                         headerParameter -> {
                             NutsObjectElement obj = headerParameter.asObject().orElse(NutsElements.of(session).ofEmptyObject());
-                            boolean pdeprecated = obj.getBoolean("pdeprecated").orElse(false);
-                            String type = _StringUtils.nvl(obj.getString("type").orNull(), "string")
+                            String name = obj.getString("name").orNull();
+                            boolean pdeprecated = obj.getBoolean("deprecated").orElse(false);
+                            String type = getSmartTypeName(obj)
                                     + requiredSuffix(obj);
                             typeCrossRefs.add(new TypeCrossRef(
                                     obj.getString("type").orElse(""), url, paramType
                             ));
                             return new MdRow(
                                     new MdElement[]{
-                                            MdFactory.codeBacktick3("", _StringUtils.nvl(obj.getString("name").orNull(), "unknown")
+                                            MdFactory.codeBacktick3("", _StringUtils.nvl(name, "unknown")
                                                     + (pdeprecated ? (" [" + msg.get("DEPRECATED").get() + "]") : "")
                                             ),
                                             MdFactory.codeBacktick3("", type),

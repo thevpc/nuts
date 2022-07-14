@@ -62,6 +62,21 @@ public class OpenApiParser {
         TypeInfo tt = new TypeInfo();
         tt.setName(v.getString("name").orElse(name0));
         tt.setType(value.getString("type").orNull());
+        if (NutsBlankable.isBlank(tt.getType())) {
+            if (value.get("properties").orNull() != null) {
+                tt.setType("object");
+            } else if (value.get("items").orNull() != null) {
+                tt.setType("array");
+            } else if (
+                    !NutsBlankable.isBlank(value.getString("$ref").orNull())
+                            || !NutsBlankable.isBlank(value.getStringByPath("schema", "$ref").orNull())
+            ) {
+                tt.setType("ref");
+            } else {
+                tt.setType("string");
+            }
+        }
+        tt.setSmartName(tt.getType());
         tt.setDescription(v.getString("description").orNull());
         tt.setSummary(v.getString("summary").orNull());
         tt.setExample(value.get("example").orNull());
@@ -69,10 +84,26 @@ public class OpenApiParser {
             tt.setRefLong(value.getString("$ref").orNull());
             tt.setRef(userNameFromRefValue(tt.getRefLong()));
             tt.setUserType("$ref");
+            tt.setSmartName(tt.getRef());
         } else if (!NutsBlankable.isBlank(value.getStringByPath("schema", "$ref").orNull())) {
             tt.setRefLong(value.getStringByPath("schema", "$ref").orNull());
             tt.setRef(userNameFromRefValue(tt.getRefLong()));
             tt.setUserType("$ref");
+            tt.setSmartName(tt.getRef());
+        } else if ("array".equals(tt.getType())) {
+            NutsObjectElement items = v.getObject("items").orNull();
+            if(items==null){
+                TypeInfo a=new TypeInfo();
+                a.setType("string");
+                a.setSmartName(a.getType());
+                tt.setArrayComponentType(a);
+                tt.setSmartName(a.getSmartName()+"[]");
+            }else {
+                TypeInfo a = parseOneType(items, null, session);
+                tt.setArrayComponentType(a);
+                tt.setSmartName(a.getSmartName()+"[]");
+            }
+            tt.setUserType(tt.getSmartName());
         } else if (value.get("properties").orNull() != null || "object".equals(tt.getType())) {
             Set<String> requiredSet = new HashSet<>();
             NutsArrayElement requiredElem = v.getArray("required").orNull();
