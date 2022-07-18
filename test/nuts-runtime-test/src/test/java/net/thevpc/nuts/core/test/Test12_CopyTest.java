@@ -39,9 +39,9 @@ public class Test12_CopyTest {
     @Test
     public void copy01() throws Exception {
         NutsPath from = NutsPaths.of(session)
-                .createTempFolder("source",session);
+                .createTempFolder("source");
         NutsPath to = NutsPaths.of(session)
-                .createTempFolder("target",session);
+                .createTempFolder("target");
         TestUtils.println("from="+from);
         TestUtils.println("to="+to);
         long collect = from.list().count();

@@ -8,7 +8,7 @@ import java.io.File;
 import java.net.URL;
 import java.nio.file.Path;
 
-@NutsComponentScope(NutsComponentScopeType.WORKSPACE)
+@NutsComponentScope(NutsComponentScopeType.SESSION)
 public interface NutsPaths extends NutsComponent {
     static NutsPaths of(NutsSession session) {
         NutsUtils.requireSession(session);
@@ -19,53 +19,22 @@ public interface NutsPaths extends NutsComponent {
      * expand path to Workspace Location
      *
      * @param path path to expand
-     * @param session session
      * @return expanded path
      */
-    NutsPath createPath(String path, NutsSession session);
+    NutsPath createPath(String path);
 
-    NutsPath createPath(File path, NutsSession session);
+    NutsPath createPath(File path);
 
-    NutsPath createPath(Path path, NutsSession session);
+    NutsPath createPath(Path path);
 
-    NutsPath createPath(URL path, NutsSession session);
+    NutsPath createPath(URL path);
 
-    NutsPath createPath(String path, ClassLoader classLoader, NutsSession session);
-    NutsPath createPath(NutsPathSPI path, NutsSession session);
+    NutsPath createPath(String path, ClassLoader classLoader);
+    NutsPath createPath(NutsPathSPI path);
 
-    NutsPaths addPathFactory(NutsPathFactory pathFactory, NutsSession session);
+    NutsPaths addPathFactory(NutsPathFactory pathFactory);
 
-    NutsPaths removePathFactory(NutsPathFactory pathFactory, NutsSession session);
-
-    /**
-     * create temp file in the repositoryId's temp folder
-     *
-     * @param name file name
-     * @return newly created file path
-     */
-    NutsPath createTempFile(String name,NutsSession session);
-
-    /**
-     * create temp file in the repositoryId's temp folder
-     *
-     * @return newly created file path
-     */
-    NutsPath createTempFile(NutsSession session);
-
-    /**
-     * create temp folder in the workspace's temp folder
-     *
-     * @param name folder name
-     * @return newly created temp folder
-     */
-    NutsPath createTempFolder(String name,NutsSession session);
-
-    /**
-     * create temp folder in the workspace's temp folder
-     *
-     * @return newly created temp folder
-     */
-    NutsPath createTempFolder(NutsSession session);
+    NutsPaths removePathFactory(NutsPathFactory pathFactory);
 
     /**
      * create temp file in the repositoryId's temp folder
@@ -73,14 +42,44 @@ public interface NutsPaths extends NutsComponent {
      * @param name file name
      * @return newly created file path
      */
-    NutsPath createRepositoryTempFile(String name,String repository,NutsSession session);
+    NutsPath createTempFile(String name);
 
     /**
      * create temp file in the repositoryId's temp folder
      *
      * @return newly created file path
      */
-    NutsPath createRepositoryTempFile(String repository,NutsSession session);
+    NutsPath createTempFile();
+
+    /**
+     * create temp folder in the workspace's temp folder
+     *
+     * @param name folder name
+     * @return newly created temp folder
+     */
+    NutsPath createTempFolder(String name);
+
+    /**
+     * create temp folder in the workspace's temp folder
+     *
+     * @return newly created temp folder
+     */
+    NutsPath createTempFolder();
+
+    /**
+     * create temp file in the repositoryId's temp folder
+     *
+     * @param name file name
+     * @return newly created file path
+     */
+    NutsPath createRepositoryTempFile(String name,String repository);
+
+    /**
+     * create temp file in the repositoryId's temp folder
+     *
+     * @return newly created file path
+     */
+    NutsPath createRepositoryTempFile(String repository);
 
     /**
      * create temp folder in the repository's temp folder
@@ -88,12 +87,12 @@ public interface NutsPaths extends NutsComponent {
      * @param name folder name
      * @return newly created temp folder
      */
-    NutsPath createRepositoryTempFolder(String name,String repository,NutsSession session);
+    NutsPath createRepositoryTempFolder(String name,String repository);
 
     /**
      * create temp folder in the repository's temp folder
      *
      * @return newly created temp folder
      */
-    NutsPath createRepositoryTempFolder(String repository,NutsSession session);
+    NutsPath createRepositoryTempFolder(String repository);
 }

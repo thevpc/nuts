@@ -29,14 +29,18 @@ package net.thevpc.nuts.reserved;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.boot.NutsWorkspaceBootOptions;
 import net.thevpc.nuts.spi.NutsRepositoryLocation;
+import net.thevpc.nuts.util.NutsLogger;
 import net.thevpc.nuts.util.NutsLoggerVerb;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 import org.xml.sax.SAXParseException;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import java.io.*;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -65,7 +69,7 @@ public final class NutsReservedMavenUtils {
     }
 
     /**
-     * detect artifact ids from an URL. Work in very simplistic way :
+     * detect artifact ids from a URL. Work in very simplistic way :
      * It looks for pom.xml or nuts.json files and parses them with simplistic heuristics
      * (do not handle comments or multiline values for XML)
      *
@@ -183,7 +187,7 @@ public final class NutsReservedMavenUtils {
         return id.getGroupId().replace('.', '/') + '/' + id.getArtifactId() + '/' + id.getVersion() + "/" + name;
     }
 
-    public static File resolveOrDownloadJar(NutsId nutsId, NutsRepositoryLocation[] repositories, NutsRepositoryLocation cacheFolder, NutsReservedBootLog bLog, boolean includeDesc, Instant expire, NutsReservedErrorInfoList errors) {
+    public static File resolveOrDownloadJar(NutsId nutsId, NutsRepositoryLocation[] repositories, NutsRepositoryLocation cacheFolder, NutsLogger bLog, boolean includeDesc, Instant expire, NutsReservedErrorInfoList errors) {
         File cachedJarFile = new File(resolveMavenFullPath(cacheFolder, nutsId, "jar"));
         if (cachedJarFile.isFile()) {
             if (NutsReservedIOUtils.isFileAccessible(cachedJarFile.toPath(), expire, bLog)) {
@@ -191,7 +195,7 @@ public final class NutsReservedMavenUtils {
             }
         }
         for (NutsRepositoryLocation r : repositories) {
-            bLog.log(Level.FINE, NutsLoggerVerb.CACHE, NutsMessage.ofJstyle("checking {0} from {1}", nutsId, r));
+            bLog.with().level(Level.FINE).verb(NutsLoggerVerb.CACHE).log(NutsMessage.ofJstyle("checking {0} from {1}", nutsId, r));
 //                File file = toFile(r);
             if (includeDesc) {
                 String path = resolveMavenFullPath(r, nutsId, "pom");
@@ -200,25 +204,25 @@ public final class NutsReservedMavenUtils {
                     NutsReservedIOUtils.copy(new URL(path), cachedPomFile, bLog);
                 } catch (Exception ex) {
                     errors.add(new NutsReservedErrorInfo(nutsId, r.toString(), path, "unable to load descriptor", ex));
-                    bLog.log(Level.SEVERE, NutsLoggerVerb.FAIL, NutsMessage.ofJstyle("unable to load descriptor {0} from {1}.\n", nutsId, r));
+                    bLog.with().level(Level.SEVERE).verb(NutsLoggerVerb.FAIL).log(NutsMessage.ofJstyle("unable to load descriptor {0} from {1}.\n", nutsId, r));
                     continue;
                 }
             }
             String path = resolveMavenFullPath(r, nutsId, "jar");
             try {
                 NutsReservedIOUtils.copy(new URL(path), cachedJarFile, bLog);
-                bLog.log(Level.CONFIG, NutsLoggerVerb.CACHE, NutsMessage.ofJstyle("cache jar file {0}", cachedJarFile.getPath()));
+                bLog.with().level(Level.CONFIG).verb(NutsLoggerVerb.CACHE).log(NutsMessage.ofJstyle("cache jar file {0}", cachedJarFile.getPath()));
                 errors.removeErrorsFor(nutsId);
                 return cachedJarFile;
             } catch (Exception ex) {
                 errors.add(new NutsReservedErrorInfo(nutsId, r.toString(), path, "unable to load binaries", ex));
-                bLog.log(Level.SEVERE, NutsLoggerVerb.FAIL, NutsMessage.ofJstyle("unable to load binaries {0} from {1}.\n", nutsId, r));
+                bLog.with().level(Level.SEVERE).verb(NutsLoggerVerb.FAIL).log(NutsMessage.ofJstyle("unable to load binaries {0} from {1}.\n", nutsId, r));
             }
         }
         return null;
     }
 
-    public static Set<NutsId> loadDependenciesFromId(NutsId rid, NutsReservedBootLog bLog, Collection<NutsRepositoryLocation> repos) {
+    public static Set<NutsId> loadDependenciesFromId(NutsId rid, NutsLogger bLog, Collection<NutsRepositoryLocation> repos) {
         String urlPath = NutsReservedUtils.idToPath(rid) + "/" + rid.getArtifactId() + "-" + rid.getVersion() + ".pom";
         Set<NutsId> deps = null;
         for (NutsRepositoryLocation baseUrl : repos) {
@@ -239,7 +243,117 @@ public final class NutsReservedMavenUtils {
         return deps;
     }
 
-    static Set<NutsId> loadDependenciesFromPomUrl(String url, NutsReservedBootLog bLog) {
+    private static Boolean elementBoolean(Node c, boolean def) {
+        String t = elementText(c);
+        if (t.isEmpty()) {
+            return def;
+        }
+        return Boolean.parseBoolean(t);
+    }
+
+    private static String elementText(Node c) {
+        String e = c == null ? null : c.getTextContent();
+        if (e == null) {
+            e = "";
+        }
+        e = e.trim();
+        return e;
+    }
+
+    private static List<Element> elements(Node c, Predicate<Element> cond) {
+        return (List) nodes(c, x -> x instanceof Element && (cond == null || cond.test((Element) x)));
+    }
+
+    private static List<Node> nodes(Node c, Predicate<Node> cond) {
+        List<Node> li = new ArrayList<>();
+        NodeList a = c.getChildNodes();
+        for (int i = 0; i < a.getLength(); i++) {
+            Node e = a.item(i);
+            if (cond == null || cond.test(e)) {
+                li.add(e);
+            }
+        }
+        return li;
+    }
+
+    public static List<NutsRepositoryLocation> loadAllMavenRepos(NutsLogger logger) {
+        List<NutsRepositoryLocation> all=new ArrayList<>();
+        all.add(new NutsRepositoryLocation("maven-local","maven",System.getProperty("user.home") + NutsReservedIOUtils.getNativePath("/.m2/repository")));
+        all.add(new NutsRepositoryLocation("maven-central","maven","https://repo.maven.apache.org/maven2"));
+        all.addAll(NutsReservedMavenUtils.loadSettingsRepos(logger));
+        return all;
+    }
+
+    public static List<NutsRepositoryLocation> loadSettingsRepos(NutsLogger bLog) {
+        URL u= null;
+        File r=null;
+        try {
+            r = new File(System.getProperty("user.home") + NutsReservedIOUtils.getNativePath("/.m2/settings.xml"));
+            if(!r.isFile()){
+                return new ArrayList<>();
+            }
+            u = r.toURI().toURL();
+        } catch (MalformedURLException e) {
+            bLog.with().level(Level.SEVERE).verb(NutsLoggerVerb.FAIL).error(e).log(NutsMessage.ofJstyle("unable to load {0}.", r));
+            return new ArrayList<>();
+        }
+        return loadSettingsRepos(u,bLog);
+    }
+
+    public static List<NutsRepositoryLocation> loadSettingsRepos(URL url, NutsLogger bLog) {
+        ArrayList<NutsRepositoryLocation> list = new ArrayList<>();
+        InputStream xml = null;
+        try {
+            xml = NutsReservedIOUtils.openStream(url, bLog);
+            DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+            DocumentBuilder builder = factory.newDocumentBuilder();
+            Document doc = null;
+            doc = builder.parse(xml);
+            Element c = doc.getDocumentElement();
+            for (Element profiles : elements(c, x -> x.getNodeName().equals("profiles"))) {
+                for (Element profile : elements(profiles, x -> x.getNodeName().equals("profile"))) {
+                    boolean active = true;
+                    for (Element activation : elements(profile, x -> x.getNodeName().equals("activation"))) {
+                        for (Element activeByDefault : elements(activation, x -> x.getNodeName().equals("activeByDefault"))) {
+                            active = elementBoolean(activeByDefault, active);
+                        }
+                    }
+                    if (active) {
+                        for (Element repositories : elements(profile, x -> x.getNodeName().equals("repositories"))) {
+                            for (Element repository : elements(repositories, x -> x.getNodeName().equals("repository"))) {
+                                String id = elementText(NutsOptional.ofSingleton(elements(repository, x -> x.getNodeName().equals("id"))).orNull());
+                                String url0 = elementText(NutsOptional.ofSingleton(elements(repository, x -> x.getNodeName().equals("url"))).orNull());
+                                boolean enabled0 = true;
+                                for (Element releases : elements(profile, x -> x.getNodeName().equals("releases"))) {
+                                    for (Element enabled : elements(releases, x -> x.getNodeName().equals("enabled"))) {
+                                        enabled0 = elementBoolean(enabled, enabled0);
+                                    }
+                                }
+                                if (enabled0 && !NutsBlankable.isBlank(id) && !NutsBlankable.isBlank(url0)) {
+                                    list.add(new NutsRepositoryLocation(id.trim(), "maven",url0.trim()));
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+        } catch (Exception ex) {
+            bLog.with().level(Level.FINE).verb(NutsLoggerVerb.FAIL).error(ex).log(NutsMessage.ofJstyle("unable to loadSettingsRepos {0}", url));
+            return Collections.emptyList();
+        } finally {
+            if (xml != null) {
+                try {
+                    xml.close();
+                } catch (IOException ex) {
+                    //ignore
+                }
+            }
+        }
+        return list;
+    }
+
+    static Set<NutsId> loadDependenciesFromPomUrl(String url, NutsLogger bLog) {
         LinkedHashSet<NutsId> depsSet = new LinkedHashSet<>();
         InputStream xml = null;
         try {
@@ -344,9 +458,9 @@ public final class NutsReservedMavenUtils {
                             if (NutsBlankable.isBlank(scope) || scope.equals("compile")) {
                                 depsSet.add(
                                         NutsId.of(
-                                                groupId,
-                                                artifactId,
-                                                NutsVersion.of(version).get()).get()
+                                                        groupId,
+                                                        artifactId,
+                                                        NutsVersion.of(version).get()).get()
                                                 .builder()
                                                 .setProperty(NutsConstants.IdProperties.OPTIONAL, "" +
                                                         NutsValue.of(optional).asBoolean().orElse(false))
@@ -426,7 +540,7 @@ public final class NutsReservedMavenUtils {
             depsSet.addAll(ok);
 
         } catch (Exception ex) {
-            bLog.log(Level.FINE, NutsMessage.ofJstyle("unable to loadDependenciesAndRepositoriesFromPomUrl {0}", url), ex);
+            bLog.with().level(Level.FINE).verb(NutsLoggerVerb.FAIL).error(ex).log(NutsMessage.ofJstyle("unable to loadDependenciesAndRepositoriesFromPomUrl {0}", url));
         } finally {
             if (xml != null) {
                 try {
@@ -440,7 +554,7 @@ public final class NutsReservedMavenUtils {
         return depsSet;
     }
 
-    static List<NutsVersion> detectVersionsFromMetaData(String mavenMetadata, NutsReservedBootLog bLog) {
+    static List<NutsVersion> detectVersionsFromMetaData(String mavenMetadata, NutsLogger bLog) {
         List<NutsVersion> all = new ArrayList<>();
         try {
             URL runtimeMetadata = new URL(mavenMetadata);
@@ -455,7 +569,7 @@ public final class NutsReservedMavenUtils {
                 //ignore
             }
             if (is != null) {
-                bLog.log(Level.FINEST, NutsLoggerVerb.SUCCESS, NutsMessage.ofJstyle("parsing {0}", mavenMetadata));
+                bLog.with().level(Level.FINEST).verb(NutsLoggerVerb.SUCCESS).log(NutsMessage.ofJstyle("parsing {0}", mavenMetadata));
                 Document doc = builder.parse(is);
                 Element c = doc.getDocumentElement();
                 for (int i = 0; i < c.getChildNodes().getLength(); i++) {
@@ -481,14 +595,14 @@ public final class NutsReservedMavenUtils {
                 }
             }
         } catch (Exception ex) {
-            bLog.log(Level.FINE, NutsMessage.ofJstyle("unable to parse {0}", mavenMetadata), ex);
+            bLog.with().level(Level.FINE).verb(NutsLoggerVerb.FAIL).error(ex).log(NutsMessage.ofJstyle("unable to parse {0}", mavenMetadata));
             // ignore any error
         }
         return all;
     }
 
     static VersionAndPath resolveLatestMavenId(NutsId zId, String path, Predicate<NutsVersion> filter,
-                                               NutsReservedBootLog bLog, NutsRepositoryLocation repoUrl2, boolean stopFirst) {
+                                               NutsLogger bLog, NutsRepositoryLocation repoUrl2, boolean stopFirst) {
         NutsDescriptorStyle descType = NutsDescriptorStyle.MAVEN;
         if (NutsConstants.RepoTypes.NUTS.equalsIgnoreCase(repoUrl2.getLocationType())) {
             descType = NutsDescriptorStyle.NUTS;
@@ -521,7 +635,7 @@ public final class NutsReservedMavenUtils {
                                             bestVersion = p;
                                             bestPath = "local location : " + jarPath;
                                             if (bLog != null) {
-                                                bLog.log(Level.FINEST, NutsLoggerVerb.SUCCESS, NutsMessage.ofJstyle("{0}#{1} found in {2} as {3}", zId, bestVersion, repoUrl2, bestPath));
+                                                bLog.with().level(Level.FINEST).verb(NutsLoggerVerb.SUCCESS).log(NutsMessage.ofJstyle("{0}#{1} found in {2} as {3}", zId, bestVersion, repoUrl2, bestPath));
                                             }
                                             if (stopFirst) {
                                                 break;
@@ -555,7 +669,7 @@ public final class NutsReservedMavenUtils {
                             bestVersion = p;
                             bestPath = "remote file " + basePath;
                             if (bLog != null) {
-                                bLog.log(Level.FINEST, NutsLoggerVerb.SUCCESS, NutsMessage.ofJstyle("{0}#{1} found in {2} as {3}", zId, bestVersion, repoUrl2, bestPath));
+                                bLog.with().level(Level.FINEST).verb(NutsLoggerVerb.SUCCESS).log(NutsMessage.ofJstyle("{0}#{1} found in {2} as {3}", zId, bestVersion, repoUrl2, bestPath));
                             }
                             if (stopFirst) {
                                 break;
@@ -572,7 +686,7 @@ public final class NutsReservedMavenUtils {
                             bestVersion = p;
                             bestPath = "remote file " + mavenMetadata;
                             if (bLog != null) {
-                                bLog.log(Level.FINEST, NutsLoggerVerb.SUCCESS, NutsMessage.ofJstyle("{0}#{1} found in {2} as {3}", zId, bestVersion, repoUrl2, bestPath));
+                                bLog.with().level(Level.FINEST).verb(NutsLoggerVerb.SUCCESS).log(NutsMessage.ofJstyle("{0}#{1} found in {2} as {3}", zId, bestVersion, repoUrl2, bestPath));
                             }
                             if (stopFirst) {
                                 break;
@@ -592,16 +706,16 @@ public final class NutsReservedMavenUtils {
      * @return latest runtime version
      */
     public static NutsId resolveLatestMavenId(NutsId zId, Predicate<NutsVersion> filter,
-                                       NutsReservedBootLog bLog, Collection<NutsRepositoryLocation> bootRepositories) {
+                                              NutsLogger bLog, Collection<NutsRepositoryLocation> bootRepositories) {
         if (bLog.isLoggable(Level.FINEST)) {
             if (bootRepositories.isEmpty()) {
-                bLog.log(Level.FINEST, NutsLoggerVerb.START, NutsMessage.ofJstyle("search for {0} nuts there are no repositories to look into.", zId));
+                bLog.with().level(Level.FINEST).verb(NutsLoggerVerb.START).log(NutsMessage.ofJstyle("search for {0} nuts there are no repositories to look into.", zId));
             } else if (bootRepositories.size() == 1) {
-                bLog.log(Level.FINEST, NutsLoggerVerb.START, NutsMessage.ofJstyle("search for {0} in: {1}", zId, bootRepositories.toArray()[0]));
+                bLog.with().level(Level.FINEST).verb(NutsLoggerVerb.START).log(NutsMessage.ofJstyle("search for {0} in: {1}", zId, bootRepositories.toArray()[0]));
             } else {
-                bLog.log(Level.FINEST, NutsLoggerVerb.START, NutsMessage.ofJstyle("search for {0} in: ", zId));
+                bLog.with().level(Level.FINEST).verb(NutsLoggerVerb.START).log(NutsMessage.ofJstyle("search for {0} in: ", zId));
                 for (NutsRepositoryLocation repoUrl : bootRepositories) {
-                    bLog.log(Level.FINEST, NutsLoggerVerb.START, NutsMessage.ofJstyle("    {0}", repoUrl));
+                    bLog.with().level(Level.FINEST).verb(NutsLoggerVerb.START).log(NutsMessage.ofJstyle("    {0}", repoUrl));
                 }
             }
         }
@@ -625,11 +739,11 @@ public final class NutsReservedMavenUtils {
             return null;
         }
         NutsId iid = NutsId.of(zId.getGroupId(), zId.getArtifactId(), bestVersion).get();
-        bLog.log(Level.FINEST, NutsLoggerVerb.SUCCESS, NutsMessage.ofJstyle("resolve {0} from {1}", iid, bestPath));
+        bLog.with().level(Level.FINEST).verb(NutsLoggerVerb.SUCCESS).log(NutsMessage.ofJstyle("resolve {0} from {1}", iid, bestPath));
         return iid;
     }
 
-    private static List<NutsVersion> detectVersionsFromHtmlfsTomcatDirectoryListing(String basePath, NutsReservedBootLog bLog) {
+    private static List<NutsVersion> detectVersionsFromHtmlfsTomcatDirectoryListing(String basePath, NutsLogger bLog) {
         List<NutsVersion> all = new ArrayList<>();
         try (InputStream in = NutsReservedIOUtils.openStream(new URL(basePath), bLog)) {
             List<String> p = new HtmlfsTomcatDirectoryListParser().parse(in);
@@ -656,7 +770,7 @@ public final class NutsReservedMavenUtils {
 
     public static File getBootCacheJar(NutsId vid, NutsRepositoryLocation[] repositories, NutsRepositoryLocation cacheFolder, boolean useCache, String name,
                                        Instant expire, NutsReservedErrorInfoList errorList, NutsWorkspaceBootOptions bOptions,
-                                       Function<String, String> pathExpansionConverter, NutsReservedBootLog bLog) {
+                                       Function<String, String> pathExpansionConverter, NutsLogger bLog) {
         File f = getBootCacheFile(vid, getFileName(vid, "jar"), repositories, cacheFolder, useCache, expire, errorList, bOptions, pathExpansionConverter, bLog);
         if (f == null) {
             throw new NutsInvalidWorkspaceException(bOptions.getWorkspace().orNull(),
@@ -668,7 +782,7 @@ public final class NutsReservedMavenUtils {
     static File getBootCacheFile(NutsId vid, String fileName, NutsRepositoryLocation[] repositories, NutsRepositoryLocation cacheFolder,
                                  boolean useCache, Instant expire, NutsReservedErrorInfoList errorList,
                                  NutsWorkspaceBootOptions bOptions,
-                                 Function<String, String> pathExpansionConverter, NutsReservedBootLog bLog) {
+                                 Function<String, String> pathExpansionConverter, NutsLogger bLog) {
         String path = getPathFile(vid, fileName);
         if (useCache && cacheFolder != null) {
 
@@ -692,7 +806,7 @@ public final class NutsReservedMavenUtils {
     private static File getBootCacheFile(NutsId nutsId, String path, NutsRepositoryLocation repository0, NutsRepositoryLocation cacheFolder,
                                          boolean useCache, Instant expire, NutsReservedErrorInfoList errorList,
                                          NutsWorkspaceBootOptions bOptions, Function<String, String> pathExpansionConverter,
-                                         NutsReservedBootLog bLog) {
+                                         NutsLogger bLog) {
         boolean cacheLocalFiles = true;//Boolean.getBoolean("nuts.cache.cache-local-files");
         String repository = repository0.getPath();
         //we know exactly the file path, so we will trim "htmlfs:" protocol
@@ -705,7 +819,7 @@ public final class NutsReservedMavenUtils {
             try {
                 repositoryFolder = NutsReservedIOUtils.toFile(new URL(repository));
             } catch (Exception ex) {
-                bLog.log(Level.FINE, NutsMessage.ofJstyle("unable to convert url to file : {0}", repository), ex);
+                bLog.with().level(Level.FINE).verb(NutsLoggerVerb.FAIL).error(ex).log(NutsMessage.ofJstyle("unable to convert url to file : {0}", repository));
                 //ignore
             }
         } else {
@@ -742,11 +856,11 @@ public final class NutsReservedMavenUtils {
             if (file.isFile()) {
                 ff = file;
             } else {
-                bLog.log(Level.CONFIG, NutsLoggerVerb.FAIL, NutsMessage.ofJstyle("locate {0}", file));
+                bLog.with().level(Level.CONFIG).verb(NutsLoggerVerb.FAIL).log(NutsMessage.ofJstyle("locate {0}", file));
             }
         } else {
             File file = new File(repoFolder, path.replace('/', File.separatorChar));
-            bLog.log(Level.CONFIG, NutsLoggerVerb.FAIL, NutsMessage.ofJstyle("locate {0} ; repository is not a valid folder : {1}", file, repoFolder));
+            bLog.with().level(Level.CONFIG).verb(NutsLoggerVerb.FAIL).log(NutsMessage.ofJstyle("locate {0} ; repository is not a valid folder : {1}", file, repoFolder));
         }
 
         if (ff != null) {
@@ -767,15 +881,15 @@ public final class NutsReservedMavenUtils {
                     }
                     if (to.isFile()) {
                         NutsReservedIOUtils.copy(ff, to, bLog);
-                        bLog.log(Level.CONFIG, NutsLoggerVerb.CACHE, NutsMessage.ofJstyle("recover cached {0} file {0} to {1}", ext, ff, to));
+                        bLog.with().level(Level.CONFIG).verb(NutsLoggerVerb.CACHE).log( NutsMessage.ofJstyle("recover cached {0} file {0} to {1}", ext, ff, to));
                     } else {
                         NutsReservedIOUtils.copy(ff, to, bLog);
-                        bLog.log(Level.CONFIG, NutsLoggerVerb.CACHE, NutsMessage.ofJstyle("cache {0} file {0} to {1}", ext, ff, to));
+                        bLog.with().level(Level.CONFIG).verb(NutsLoggerVerb.CACHE).log(NutsMessage.ofJstyle("cache {0} file {0} to {1}", ext, ff, to));
                     }
                     return to;
                 } catch (IOException ex) {
                     errorList.add(new NutsReservedErrorInfo(nutsId, repository, ff.getPath(), "unable to cache", ex));
-                    bLog.log(Level.CONFIG, NutsLoggerVerb.FAIL, NutsMessage.ofJstyle("error caching file {0} to {1} : {2}", ff, to, ex.toString()));
+                    bLog.with().level(Level.CONFIG).verb(NutsLoggerVerb.FAIL).log(NutsMessage.ofJstyle("error caching file {0} to {1} : {2}", ff, to, ex.toString()));
                     //not found
                 }
                 return ff;
@@ -786,11 +900,11 @@ public final class NutsReservedMavenUtils {
         return null;
     }
 
-    public static String resolveNutsApiVersionFromClassPath(NutsReservedBootLog bLog) {
+    public static String resolveNutsApiVersionFromClassPath(NutsLogger bLog) {
         return resolveNutsApiPomPattern("version", bLog);
     }
 
-    public static String resolveNutsApiPomPattern(String propName, NutsReservedBootLog bLog) {
+    public static String resolveNutsApiPomPattern(String propName, NutsLogger bLog) {
 //        boolean devMode = false;
         String propValue = null;
         try {

@@ -252,7 +252,7 @@ public class NoApiUtils {
                 temp = NoApiUtils.addExtension(target, "adoc", session).toString();
             } else {
                 temp = NutsPaths.of(session)
-                        .createTempFile("temp.adoc", session).toString();
+                        .createTempFile("temp.adoc").toString();
             }
             adocFile = temp;
         }

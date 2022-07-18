@@ -213,7 +213,7 @@ public class DefaultNutsIO implements NutsIO {
         if (source.isMultiRead()) {
             return source;
         }
-        NutsPath tf = NutsPaths.of(session).createTempFile(session);
+        NutsPath tf = NutsPaths.of(session).createTempFile();
         try (InputStream in = source.getInputStream()) {
             try (OutputStream out = tf.getOutputStream()) {
                 CoreIOUtils.copy(in, out, 4096, session);

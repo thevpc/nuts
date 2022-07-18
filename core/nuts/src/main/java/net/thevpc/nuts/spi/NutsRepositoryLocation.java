@@ -51,7 +51,7 @@ public class NutsRepositoryLocation implements Comparable<NutsRepositoryLocation
      * @param path repository location (file, URL or any NutsPath valid
      * location)
      */
-    private NutsRepositoryLocation(String name, String locationType, String path) {
+    public NutsRepositoryLocation(String name, String locationType, String path) {
         this.name = NutsStringUtils.trimToNull(name);
         this.locationType = NutsStringUtils.trimToNull(locationType);
         this.path = NutsStringUtils.trimToNull(path);

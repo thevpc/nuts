@@ -96,12 +96,11 @@ public class NutsApiUtils {
         return NutsCommandLine.parseDefault(commandLineString).get().toStringArray();
     }
 
-    public static int processThrowable(Throwable ex, PrintStream out) {
+    public static int processThrowable(Throwable ex, NutsLogger out) {
         return NutsReservedUtils.processThrowable(ex, out);
     }
 
     public static int processThrowable(Throwable ex, String[] args) {
-        NutsReservedBootLog log = new NutsReservedBootLog(null);
         DefaultNutsWorkspaceBootOptionsBuilder bo = new DefaultNutsWorkspaceBootOptionsBuilder();
         bo.setCommandLine(args, null);
         try {
@@ -127,7 +126,7 @@ public class NutsApiUtils {
         return processThrowable(ex, null, true, showStackTrace, gui);
     }
 
-    public static int processThrowable(Throwable ex, PrintStream out, boolean showMessage, boolean showStackTrace, boolean showGui) {
+    public static int processThrowable(Throwable ex, NutsLogger out, boolean showMessage, boolean showStackTrace, boolean showGui) {
         return NutsReservedUtils.processThrowable(ex, out, showMessage, showStackTrace, showGui);
     }
 
@@ -139,7 +138,7 @@ public class NutsApiUtils {
         return NutsReservedUtils.getSysBoolNutsProperty(property, defaultValue);
     }
 
-    public static String resolveNutsVersionFromClassPath(NutsReservedBootLog bLog) {
+    public static String resolveNutsVersionFromClassPath(NutsLogger bLog) {
         return NutsReservedMavenUtils.resolveNutsApiVersionFromClassPath(bLog);
     }
 

@@ -141,7 +141,7 @@ public class MavenFolderRepository extends NutsFolderRepositoryBase {
                     return content.setUserCache(true).setUserTemporary(false);
                 } else {
                     String tempFile = NutsPaths.of(session)
-                            .createRepositoryTempFile(content.getName(),getUuid(),session).toString();
+                            .createRepositoryTempFile(content.getName(),getUuid()).toString();
                     NutsCp.of(session)
                             .from(content).to(NutsPath.of(tempFile,session)).addOptions(NutsPathOption.SAFE).run();
                     return NutsPath.of(tempFile, session).setUserCache(true).setUserTemporary(false);

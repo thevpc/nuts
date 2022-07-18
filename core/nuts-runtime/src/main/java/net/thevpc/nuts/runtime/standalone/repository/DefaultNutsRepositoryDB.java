@@ -2,11 +2,14 @@ package net.thevpc.nuts.runtime.standalone.repository;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.io.NutsPath;
+import net.thevpc.nuts.reserved.NutsReservedMavenUtils;
 import net.thevpc.nuts.spi.NutsRepositoryDB;
 import net.thevpc.nuts.spi.NutsRepositoryLocation;
 import net.thevpc.nuts.spi.NutsSupportLevelContext;
+import net.thevpc.nuts.util.NutsLogger;
 import net.thevpc.nuts.util.NutsPlatformUtils;
 
+import java.net.URL;
 import java.util.*;
 
 public class DefaultNutsRepositoryDB implements NutsRepositoryDB {
@@ -22,6 +25,9 @@ public class DefaultNutsRepositoryDB implements NutsRepositoryDB {
                         NutsConstants.Names.DEFAULT_WORKSPACE_NAME), session
         ).resolve(NutsConstants.Folders.ID).toString());
         reg("maven-local", "maven@" + NutsPath.ofUserHome(session).resolve(".m2/repository").toString(), ".m2", "m2");
+        for (NutsRepositoryLocation rr : NutsReservedMavenUtils.loadSettingsRepos(NutsLogger.of(DefaultNutsRepositoryDB.class, session))) {
+            reg(rr.getName(), rr.getFullLocation());
+        }
         reg("maven-central", "maven@htmlfs:https://repo.maven.apache.org/maven2", "central", "maven", "central");
         reg("jcenter", "maven@https://jcenter.bintray.com");
         reg("jboss", "maven@https://repository.jboss.org/nexus/content/repositories/releases");

@@ -240,7 +240,7 @@ public class Test06_UpdateTest {
     private Path replaceAPIJar(Path p, FromTo api, NutsSession session) {
         try {
             Path zipFilePath = NutsPaths.of(session)
-                    .createTempFile(".zip", session).toFile();
+                    .createTempFile(".zip").toFile();
             Files.copy(p, zipFilePath, StandardCopyOption.REPLACE_EXISTING);
             try (FileSystem fs = FileSystems.newFileSystem(zipFilePath, (ClassLoader) null)) {
 
@@ -279,7 +279,7 @@ public class Test06_UpdateTest {
     private Path replaceRuntimeJar(Path p, FromTo api, FromTo impl, NutsSession session) {
         try {
             Path zipFilePath = NutsPaths.of(session)
-                    .createTempFile(".zip", session).toFile();
+                    .createTempFile(".zip").toFile();
             Files.copy(p, zipFilePath, StandardCopyOption.REPLACE_EXISTING);
             try (FileSystem fs = FileSystems.newFileSystem(zipFilePath, (ClassLoader) null)) {
 

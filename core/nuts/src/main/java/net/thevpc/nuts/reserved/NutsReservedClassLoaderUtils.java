@@ -28,6 +28,7 @@ package net.thevpc.nuts.reserved;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.boot.NutsClassLoaderNode;
+import net.thevpc.nuts.util.NutsLogger;
 import net.thevpc.nuts.util.NutsLoggerVerb;
 
 import java.io.File;
@@ -45,14 +46,14 @@ import java.util.zip.ZipFile;
 
 public class NutsReservedClassLoaderUtils {
     private static void fillBootDependencyNodes(NutsClassLoaderNode node, Set<URL> urls, Set<String> visitedIds,
-                                                NutsReservedBootLog bLog) {
+                                                NutsLogger bLog) {
         String shortName = NutsId.of(node.getId()).get().getShortName();
         if (!visitedIds.contains(shortName)) {
             visitedIds.add(shortName);
             if (!node.isIncludedInClasspath()) {
                 urls.add(node.getURL());
             } else {
-                bLog.log(Level.WARNING, NutsLoggerVerb.CACHE, NutsMessage.ofJstyle("url will not be loaded (already in classloader) : {0}", node.getURL()));
+                bLog.with().level(Level.WARNING).verb(NutsLoggerVerb.CACHE).log( NutsMessage.ofJstyle("url will not be loaded (already in classloader) : {0}", node.getURL()));
             }
             for (NutsClassLoaderNode dependency : node.getDependencies()) {
                 fillBootDependencyNodes(dependency, urls, visitedIds, bLog);
@@ -61,7 +62,7 @@ public class NutsReservedClassLoaderUtils {
     }
 
     public static URL[] resolveClassWorldURLs(NutsClassLoaderNode[] nodes, ClassLoader contextClassLoader,
-                                       NutsReservedBootLog bLog) {
+                                              NutsLogger bLog) {
         LinkedHashSet<URL> urls = new LinkedHashSet<>();
         Set<String> visitedIds = new HashSet<>();
         for (NutsClassLoaderNode info : nodes) {
@@ -137,7 +138,7 @@ public class NutsReservedClassLoaderUtils {
     }
 
     public static boolean isLoadedClassPath(URL url, ClassLoader contextClassLoader,
-                                            NutsReservedBootLog bLog) {
+                                            NutsLogger bLog) {
         try {
             if (url != null) {
                 if (contextClassLoader == null) {
@@ -162,11 +163,11 @@ public class NutsReservedClassLoaderUtils {
                             URL incp = contextClassLoader.getResource(zname);
                             String clz = zname.substring(0, zname.length() - 6).replace('/', '.');
                             if (incp != null) {
-                                bLog.log(Level.FINEST, NutsLoggerVerb.SUCCESS, NutsMessage.ofJstyle("url {0} is already in classpath. checked class {1} successfully",
+                                bLog.with().level(Level.FINEST).verb(NutsLoggerVerb.SUCCESS).log( NutsMessage.ofJstyle("url {0} is already in classpath. checked class {1} successfully",
                                         url, clz));
                                 return true;
                             } else {
-                                bLog.log(Level.FINEST, NutsLoggerVerb.INFO, NutsMessage.ofJstyle("url {0} is not in classpath. failed to check class {1}",
+                                bLog.with().level(Level.FINEST).verb(NutsLoggerVerb.INFO).log( NutsMessage.ofJstyle("url {0} is not in classpath. failed to check class {1}",
                                         url, clz));
                                 return false;
                             }
@@ -186,7 +187,7 @@ public class NutsReservedClassLoaderUtils {
         } catch (IOException e) {
             //
         }
-        bLog.log(Level.FINEST, NutsLoggerVerb.FAIL, NutsMessage.ofJstyle("url {0} is not in classpath. no class found to check", url));
+        bLog.with().level(Level.FINEST).verb(NutsLoggerVerb.FAIL).log( NutsMessage.ofJstyle("url {0} is not in classpath. no class found to check", url));
         return false;
     }
 }

@@ -21,6 +21,10 @@ public interface NutsOptional<T> extends NutsBlankable {
         return ofError(s -> NutsMessage.ofCstyle("error evaluating %s", name));
     }
 
+    static <T> NutsOptional<T> ofNamedError(String name, Throwable throwable) {
+        return ofError(s -> NutsMessage.ofCstyle("error evaluating %s", name), throwable);
+    }
+
     static <T> NutsOptional<T> ofEmpty() {
         return ofEmpty(null);
     }
@@ -68,6 +72,10 @@ public interface NutsOptional<T> extends NutsBlankable {
         return ofEmpty(errorMessage);
     }
 
+    static <T> NutsOptional<T> ofSingleton(Collection<T> collection) {
+        return ofSingleton(collection, null, null);
+    }
+
     static <T> NutsOptional<T> ofNamedSingleton(Collection<T> collection, String name) {
         if (name == null) {
             return ofSingleton(collection, null, null);
@@ -92,6 +100,17 @@ public interface NutsOptional<T> extends NutsBlankable {
             return of(t);
         }
         return ofEmpty(errorMessage);
+    }
+
+    default NutsOptional<T> failFast() {
+        return failFast(null);
+    }
+
+    default NutsOptional<T> failFast(NutsSession session) {
+        if (isError()) {
+            get(session);
+        }
+        return this;
     }
 
     <V> NutsOptional<V> flatMap(Function<T, NutsOptional<V>> mapper);

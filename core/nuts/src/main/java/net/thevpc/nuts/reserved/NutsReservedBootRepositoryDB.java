@@ -2,6 +2,7 @@ package net.thevpc.nuts.reserved;
 
 import net.thevpc.nuts.NutsConstants;
 import net.thevpc.nuts.NutsStoreLocation;
+import net.thevpc.nuts.util.NutsLogger;
 import net.thevpc.nuts.util.NutsPlatformUtils;
 import net.thevpc.nuts.spi.NutsRepositoryDB;
 import net.thevpc.nuts.spi.NutsRepositoryLocation;
@@ -10,12 +11,11 @@ import net.thevpc.nuts.spi.NutsSupportLevelContext;
 import java.util.*;
 
 public class NutsReservedBootRepositoryDB implements NutsRepositoryDB {
-    public static final NutsRepositoryDB INSTANCE = new NutsReservedBootRepositoryDB();
     private final Map<String, String> defaultRepositoriesByName = new LinkedHashMap<>();
     private final Map<String, String> aliasToBase = new LinkedHashMap<>();
     private final Map<String, Set<String>> baseToAliases = new LinkedHashMap<>();
 
-    {
+    public NutsReservedBootRepositoryDB(NutsLogger logger) {
         reg("system", NutsReservedIOUtils.getNativePath(
                         NutsPlatformUtils.getDefaultPlatformHomeFolder(null,
                                 NutsStoreLocation.LIB,
@@ -24,6 +24,9 @@ public class NutsReservedBootRepositoryDB implements NutsRepositoryDB {
                 )
         );
         reg("maven-local", "maven@" + System.getProperty("user.home") + NutsReservedIOUtils.getNativePath("/.m2/repository"), ".m2", "m2");
+        for (NutsRepositoryLocation rr : NutsReservedMavenUtils.loadSettingsRepos(logger)) {
+            reg(rr.getName(), rr.getFullLocation());
+        }
         reg("maven-central", "maven@https://repo.maven.apache.org/maven2", "central", "maven", "mvn");
         reg("jcenter", "maven@https://jcenter.bintray.com");
         reg("jboss", "maven@https://repository.jboss.org/nexus/content/repositories/releases");

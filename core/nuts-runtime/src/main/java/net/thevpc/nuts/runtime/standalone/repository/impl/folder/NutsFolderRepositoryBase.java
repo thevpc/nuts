@@ -166,7 +166,7 @@ public abstract class NutsFolderRepositoryBase extends NutsCachedRepository {
                 }
             } else {
                 String tempFile = NutsPaths.of(session)
-                        .createRepositoryTempFile(p.getName(),getUuid(),session).toString();
+                        .createRepositoryTempFile(p.getName(),getUuid()).toString();
                 try {
                     NutsCp.of(session)
                             .from(getStream(id, "artifact binaries", "retrieve", session)).to(NutsPath.of(tempFile,session)).setValidator(new NutsCpValidator() {

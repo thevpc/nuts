@@ -32,6 +32,7 @@ import net.thevpc.nuts.reserved.NutsReservedUtils;
 import net.thevpc.nuts.reserved.NutsReservedStringMapParser;
 import net.thevpc.nuts.reserved.NutsReservedStringUtils;
 
+import java.text.Normalizer;
 import java.util.*;
 import java.util.function.Function;
 import java.util.logging.Level;
@@ -47,6 +48,66 @@ public class NutsStringUtils {
     private static final Pattern DOLLAR_PLACE_HOLDER_PATTERN = Pattern.compile("[$][{](?<name>([a-zA-Z._0-9-]+))[}]");
     private static final char[] BASE16_CHARS = "0123456789ABCDEF".toCharArray();
 
+
+    /**
+     * return normalized string without accents
+     *
+     * @param value value or null
+     * @return normalized string without accents
+     */
+    public static String normalizeString(String value) {
+        if (value == null) {
+            return null;
+        }
+
+        String nfdNormalizedString = Normalizer.normalize(value, Normalizer.Form.NFD);
+        Pattern pattern = Pattern.compile("\\p{InCombiningDiacriticalMarks}+");
+        return pattern.matcher(nfdNormalizedString).replaceAll("");
+    }
+
+    /**
+     * return normalized file name by replacing any special character with a space and trimming the result
+     *
+     * @param name fine name to normalize
+     * @return normalized string without accents
+     */
+    public static String normalizeFileName(String name) {
+        char[] chars = NutsStringUtils.normalizeString(name).toCharArray();
+        for (int i = 0; i < chars.length; i++) {
+            switch (chars[i]) {
+                case '°': {
+                    chars[i] = 'o';
+                    break;
+                }
+                case '"':
+                case '\'':
+                case '?':
+                case '*':
+                case ':':
+                case '%':
+                case '|':
+                case '<':
+                case '>':
+                case '/':
+                case '\\':
+                case '{':
+                case '}':
+                case '[':
+                case ']':
+                case '(':
+                case ')': {
+                    chars[i] = ' ';
+                    break;
+                }
+                default: {
+                    if (chars[i] < 32) {
+                        chars[i] = ' ';
+                    }
+                }
+            }
+        }
+        return new String(chars).trim();
+    }
 
     /**
      * @param value value

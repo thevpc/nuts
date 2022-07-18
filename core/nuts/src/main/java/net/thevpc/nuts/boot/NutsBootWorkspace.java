@@ -33,6 +33,7 @@ import net.thevpc.nuts.util.*;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.UncheckedIOException;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -66,6 +67,7 @@ public final class NutsBootWorkspace {
     private final NutsWorkspaceOptions userOptions;
     private final NutsReservedBootLog bLog;
     private final NutsWorkspaceBootOptionsBuilder computedOptions = new DefaultNutsWorkspaceBootOptionsBuilder();
+    private final NutsReservedBootRepositoryDB repositoryDB;
     private final Function<String, String> pathExpansionConverter = new Function<String, String>() {
         @Override
         public String apply(String from) {
@@ -109,6 +111,7 @@ public final class NutsBootWorkspace {
     private boolean preparedWorkspace;
     private NutsLogger nLog;
     private NutsSession nLogSession;
+    private Scanner scanner;
 
     public NutsBootWorkspace(NutsWorkspaceTerminalOptions bootTerminal, String... args) {
         this.bLog = new NutsReservedBootLog(bootTerminal);
@@ -118,6 +121,8 @@ public final class NutsBootWorkspace {
             userOptions.setStdout(bootTerminal.getOut());
             userOptions.setStderr(bootTerminal.getErr());
         }
+        InputStream in = userOptions.getStdin().orNull();
+        scanner = new Scanner(in == null ? System.in : in);
         userOptions.setCommandLine(args, null);
         if (userOptions.getSkipErrors().orElse(false)) {
             StringBuilder errorMessage = new StringBuilder();
@@ -128,6 +133,7 @@ public final class NutsBootWorkspace {
             bLog.log(Level.WARNING, NutsLoggerVerb.WARNING, NutsMessage.ofCstyle("Error : %s", errorMessage));
         }
         this.userOptions = userOptions.readOnly();
+        repositoryDB = new NutsReservedBootRepositoryDB(nLog);
         this.postInit();
     }
 
@@ -137,6 +143,7 @@ public final class NutsBootWorkspace {
         }
         this.bLog = new NutsReservedBootLog(new NutsWorkspaceTerminalOptions(userOptions.getStdin().orNull(), userOptions.getStdout().orNull(), userOptions.getStderr().orNull()));
         this.userOptions = userOptions.readOnly();
+        repositoryDB = new NutsReservedBootRepositoryDB(nLog);
         this.postInit();
     }
 
@@ -271,14 +278,17 @@ public final class NutsBootWorkspace {
             }
             bLog.log(Level.FINE, NutsLoggerVerb.START, NutsMessage.ofJstyle("resolve boot repositories to load nuts-runtime from options : {0} and config: {1}", computedOptions.getRepositories().orElseGet(Collections::emptyList).toString(), computedOptions.getBootRepositories().ifBlankNull().orElse("[]")));
         }
-        NutsRepositorySelectorList bootRepositories = NutsRepositorySelectorList.ofAll(computedOptions.getRepositories().orNull(), NutsReservedBootRepositoryDB.INSTANCE, null);
-        NutsRepositorySelector[] old = NutsRepositorySelectorList.ofAll(Arrays.asList(computedOptions.getBootRepositories().orNull()), NutsReservedBootRepositoryDB.INSTANCE, null).toArray();
+        NutsRepositorySelectorList bootRepositories = NutsRepositorySelectorList.ofAll(computedOptions.getRepositories().orNull(), repositoryDB, null);
+        NutsRepositorySelector[] old = NutsRepositorySelectorList.ofAll(Arrays.asList(computedOptions.getBootRepositories().orNull()), repositoryDB, null).toArray();
         NutsRepositoryLocation[] result;
         if (old.length == 0) {
             //no previous config, use defaults!
-            result = bootRepositories.resolve(new NutsRepositoryLocation[]{NutsRepositoryLocation.of("maven-local", null), NutsRepositoryLocation.of("maven-central", null),}, NutsReservedBootRepositoryDB.INSTANCE);
+            result = bootRepositories.resolve(
+                    NutsReservedMavenUtils.loadAllMavenRepos(nLog).toArray(new NutsRepositoryLocation[0])
+                    , repositoryDB
+            );
         } else {
-            result = bootRepositories.resolve(Arrays.stream(old).map(x -> NutsRepositoryLocation.of(x.getName(), x.getUrl())).toArray(NutsRepositoryLocation[]::new), NutsReservedBootRepositoryDB.INSTANCE);
+            result = bootRepositories.resolve(Arrays.stream(old).map(x -> NutsRepositoryLocation.of(x.getName(), x.getUrl())).toArray(NutsRepositoryLocation[]::new), repositoryDB);
         }
         Set<NutsRepositoryLocation> rr = Arrays.stream(result).collect(Collectors.toCollection(LinkedHashSet::new));
         if (dependencies) {
@@ -301,7 +311,7 @@ public final class NutsBootWorkspace {
         File file = NutsReservedMavenUtils.resolveOrDownloadJar(NutsId.ofApi(computedOptions.getApiVersion().orNull()).get(), repos.toArray(new NutsRepositoryLocation[0]), NutsRepositoryLocation.of("nuts@" + computedOptions.getStoreLocation(NutsStoreLocation.LIB).get() + File.separator + NutsConstants.Folders.ID), bLog, false, computedOptions.getExpireTime().orNull(), errorList);
         if (file == null) {
             errorList.insert(
-                    0,new NutsReservedErrorInfo(null,null,null,"unable to load nuts "+computedOptions.getApiVersion().orNull(),null)
+                    0, new NutsReservedErrorInfo(null, null, null, "unable to load nuts " + computedOptions.getApiVersion().orNull(), null)
             );
             logError(null, errorList);
             throw new NutsBootException(NutsMessage.ofCstyle("unable to load %s#%s", NutsConstants.Ids.NUTS_API, computedOptions.getApiVersion().orNull()));
@@ -495,7 +505,7 @@ public final class NutsBootWorkspace {
                         bLog.log(Level.INFO, NutsLoggerVerb.DEBUG, NutsMessage.ofPlain("[dry] [reset] delete ALL workspace folders and configurations"));
                     } else {
                         bLog.log(Level.CONFIG, NutsLoggerVerb.WARNING, NutsMessage.ofPlain("reset workspace"));
-                        countDeleted = NutsReservedUtils.deleteStoreLocations(lastWorkspaceOptions, getOptions(), true, bLog, NutsStoreLocation.values());
+                        countDeleted = NutsReservedUtils.deleteStoreLocations(lastWorkspaceOptions, getOptions(), true, bLog, NutsStoreLocation.values(), () -> scanner.nextLine());
                         NutsReservedUtils.ndiUndo(bLog);
                     }
                 } else {
@@ -503,7 +513,7 @@ public final class NutsBootWorkspace {
                         bLog.log(Level.INFO, NutsLoggerVerb.DEBUG, NutsMessage.ofPlain("[dry] [reset] delete ALL workspace folders and configurations"));
                     } else {
                         bLog.log(Level.CONFIG, NutsLoggerVerb.WARNING, NutsMessage.ofPlain("reset workspace"));
-                        countDeleted = NutsReservedUtils.deleteStoreLocations(computedOptions, getOptions(), true, bLog, NutsStoreLocation.values());
+                        countDeleted = NutsReservedUtils.deleteStoreLocations(computedOptions, getOptions(), true, bLog, NutsStoreLocation.values(), () -> scanner.nextLine());
                         NutsReservedUtils.ndiUndo(bLog);
                     }
                 }
@@ -521,7 +531,7 @@ public final class NutsBootWorkspace {
                         folders.add(Paths.get(p).resolve("id/net/thevpc/nuts/nuts"));
                         folders.add(Paths.get(p).resolve("id/net/thevpc/nuts/nuts-runtime"));
                     }
-                    countDeleted = NutsReservedUtils.deleteStoreLocations(computedOptions, getOptions(), false, bLog, folders.toArray());
+                    countDeleted = NutsReservedUtils.deleteStoreLocations(computedOptions, getOptions(), false, bLog, folders.toArray(), () -> scanner.nextLine());
                 }
             }
             if (computedOptions.getExtensionsSet().isNotPresent()) {
@@ -863,12 +873,12 @@ public final class NutsBootWorkspace {
             NutsMessage errorMessage = NutsMessage.ofCstyle(
                     "unable to boot nuts workspace because the installed binaries are incompatible with the current nuts bootstrap version %s\nusing '-N' command line flag should fix the problem", Nuts.getVersion()
             );
-            errorList.insert(0,new NutsReservedErrorInfo(null, null, null, errorMessage + ": " + ex, ex));
+            errorList.insert(0, new NutsReservedErrorInfo(null, null, null, errorMessage + ": " + ex, ex));
             logError(bootClassWorldURLs, errorList);
             throw new NutsBootException(errorMessage, ex);
         } catch (Throwable ex) {
             NutsMessage message = NutsMessage.ofPlain("unable to locate valid nuts-runtime package");
-            errorList.insert(0,new NutsReservedErrorInfo(null, null, null, message + " : " + ex, ex));
+            errorList.insert(0, new NutsReservedErrorInfo(null, null, null, message + " : " + ex, ex));
             logError(bootClassWorldURLs, errorList);
             if (ex instanceof NutsException) {
                 throw (NutsException) ex;

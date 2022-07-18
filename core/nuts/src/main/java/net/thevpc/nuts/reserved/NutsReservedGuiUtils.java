@@ -27,10 +27,14 @@
 package net.thevpc.nuts.reserved;
 
 import net.thevpc.nuts.Nuts;
+import net.thevpc.nuts.NutsMessage;
+import net.thevpc.nuts.util.NutsLogger;
+import net.thevpc.nuts.util.NutsLoggerVerb;
 
 import java.io.PrintStream;
 import java.util.Scanner;
 import java.util.function.Supplier;
+import java.util.logging.Level;
 
 public final class NutsReservedGuiUtils {
 
@@ -57,7 +61,7 @@ public final class NutsReservedGuiUtils {
         }
     }
 
-    public static String inputString(String message, String title, Supplier<String> in, PrintStream err) {
+    public static String inputString(String message, String title, Supplier<String> in, NutsLogger bLog) {
         try {
             if (title == null) {
                 title = "Nuts Package Manager - " + Nuts.getVersion();
@@ -72,10 +76,7 @@ public final class NutsReservedGuiUtils {
             return line;
         } catch (UnsatisfiedLinkError e) {
             //exception may occur if the sdk is built in headless mode
-            if (err == null) {
-                err = System.err;
-            }
-            err.printf("[Graphical Environment Unsupported] %s%n", title);
+            bLog.with().level(Level.OFF).verb(NutsLoggerVerb.WARNING).log( NutsMessage.ofJstyle("[Graphical Environment Unsupported] {0}", title));
             if (in == null) {
                 return new Scanner(System.in).nextLine();
             }
@@ -83,7 +84,7 @@ public final class NutsReservedGuiUtils {
         }
     }
 
-    public static void showMessage(String message, String title, PrintStream err) {
+    public static void showMessage(String message, String title, NutsLogger bLog) {
         if (title == null) {
             title = "Nuts Package Manager";
         }
@@ -91,10 +92,7 @@ public final class NutsReservedGuiUtils {
             javax.swing.JOptionPane.showMessageDialog(null, message);
         } catch (UnsatisfiedLinkError e) {
             //exception may occur if the sdk is built in headless mode
-            if (err == null) {
-                err = System.err;
-            }
-            err.printf("[Graphical Environment Unsupported] %s%n", title);
+            bLog.with().level(Level.OFF).verb(NutsLoggerVerb.WARNING).log( NutsMessage.ofJstyle("[Graphical Environment Unsupported] {0}", title));
         }
     }
 }

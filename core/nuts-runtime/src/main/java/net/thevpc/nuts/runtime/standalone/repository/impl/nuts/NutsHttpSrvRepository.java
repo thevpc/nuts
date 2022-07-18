@@ -198,7 +198,7 @@ public class NutsHttpSrvRepository extends NutsCachedRepository {
             temp = true;
             String p = getIdFilename(id, session);
             localPath = NutsPaths.of(session)
-                    .createRepositoryTempFile(new File(p).getName(), getUuid(), session).toString();
+                    .createRepositoryTempFile(new File(p).getName(), getUuid()).toString();
         }
 
         try {

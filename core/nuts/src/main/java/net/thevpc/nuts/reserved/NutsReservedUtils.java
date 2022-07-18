@@ -32,7 +32,6 @@ import net.thevpc.nuts.cmdline.NutsCommandLine;
 import net.thevpc.nuts.elem.NutsArrayElementBuilder;
 import net.thevpc.nuts.elem.NutsElements;
 import net.thevpc.nuts.io.NutsPrintStream;
-import net.thevpc.nuts.io.NutsTerminalMode;
 import net.thevpc.nuts.text.NutsTextStyle;
 import net.thevpc.nuts.text.NutsTexts;
 import net.thevpc.nuts.util.*;
@@ -42,6 +41,7 @@ import java.net.URL;
 import java.nio.file.*;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.*;
+import java.util.function.Supplier;
 import java.util.logging.Level;
 import java.util.regex.Matcher;
 import java.util.stream.Collectors;
@@ -233,9 +233,10 @@ public final class NutsReservedUtils {
     /**
      * @param includeRoot true if include root
      * @param locations   of type NutsStoreLocation, Path of File
+     * @param readline
      */
     public static long deleteStoreLocations(NutsWorkspaceBootOptions lastBootOptions, NutsWorkspaceBootOptions o, boolean includeRoot,
-                                            NutsReservedBootLog bLog, Object[] locations) {
+                                            NutsLogger bLog, Object[] locations, Supplier<String> readline) {
         if (lastBootOptions == null) {
             return 0;
         }
@@ -247,7 +248,7 @@ public final class NutsReservedUtils {
                             + "You need to provide default response (-y|-n) for resetting/recovering workspace. "
                             + "You was asked to confirm deleting folders as part as recover/reset option."), 243);
         }
-        bLog.log(Level.FINE, NutsLoggerVerb.WARNING, NutsMessage.ofJstyle("delete workspace location(s) at : {0}", lastBootOptions.getWorkspace()));
+        bLog.with().level(Level.FINEST).verb(NutsLoggerVerb.WARNING).log(NutsMessage.ofJstyle("delete workspace location(s) at : {0}", lastBootOptions.getWorkspace()));
         boolean force = false;
         switch (confirm) {
             case ASK: {
@@ -259,7 +260,7 @@ public final class NutsReservedUtils {
             }
             case NO:
             case ERROR: {
-                bLog.log(Level.WARNING, NutsLoggerVerb.WARNING, NutsMessage.ofPlain("reset cancelled (applied '--no' argument)"));
+                bLog.with().level(Level.WARNING).verb(NutsLoggerVerb.WARNING).log(NutsMessage.ofPlain("reset cancelled (applied '--no' argument)"));
                 throw new NutsNoSessionCancelException(NutsMessage.ofPlain("cancel delete folder"));
             }
         }
@@ -289,16 +290,16 @@ public final class NutsReservedUtils {
         if (optionsCopy.getBot().orElse(false) || !NutsReservedGuiUtils.isGraphicalDesktopEnvironment()) {
             optionsCopy.setGui(false);
         }
-        return deleteAndConfirmAll(folders.toArray(new Path[0]), force, DELETE_FOLDERS_HEADER, null, bLog, optionsCopy);
+        return deleteAndConfirmAll(folders.toArray(new Path[0]), force, DELETE_FOLDERS_HEADER, null, bLog, optionsCopy, readline);
     }
 
     public static long deleteAndConfirmAll(Path[] folders, boolean force, String header, NutsSession session,
-                                           NutsReservedBootLog bLog, NutsWorkspaceBootOptions bOptions) {
-        return deleteAndConfirmAll(folders, force, new NutsReservedDeleteFilesContextImpl(), header, session, bLog, bOptions);
+                                           NutsLogger bLog, NutsWorkspaceBootOptions bOptions, Supplier<String> readline) {
+        return deleteAndConfirmAll(folders, force, new NutsReservedDeleteFilesContextImpl(), header, session, bLog, bOptions, readline);
     }
 
     private static long deleteAndConfirmAll(Path[] folders, boolean force, NutsReservedDeleteFilesContext refForceAll,
-                                            String header, NutsSession session, NutsReservedBootLog bLog, NutsWorkspaceBootOptions bOptions) {
+                                            String header, NutsSession session, NutsLogger bLog, NutsWorkspaceBootOptions bOptions, Supplier<String> readline) {
         long count = 0;
         boolean headerWritten = false;
         if (folders != null) {
@@ -312,13 +313,13 @@ public final class NutsReservedUtils {
                                     if (session != null) {
                                         session.err().println(header);
                                     } else {
-                                        bLog.log(Level.WARNING, NutsLoggerVerb.WARNING, NutsMessage.ofJstyle("{0}", header));
+                                        bLog.with().level(Level.WARNING).verb(NutsLoggerVerb.WARNING).log( NutsMessage.ofJstyle("{0}", header));
                                     }
                                 }
                             }
                         }
                     }
-                    count += deleteAndConfirm(child, force, refForceAll, session, bLog, bOptions);
+                    count += deleteAndConfirm(child, force, refForceAll, session, bLog, bOptions, readline);
                 }
             }
         }
@@ -326,7 +327,7 @@ public final class NutsReservedUtils {
     }
 
     private static long deleteAndConfirm(Path directory, boolean force, NutsReservedDeleteFilesContext refForceAll,
-                                         NutsSession session, NutsReservedBootLog bLog, NutsWorkspaceBootOptions bOptions) {
+                                         NutsSession session, NutsLogger bLog, NutsWorkspaceBootOptions bOptions, Supplier<String> readline) {
         if (Files.exists(directory)) {
             if (!force && !refForceAll.isForce() && refForceAll.accept(directory)) {
                 String line = null;
@@ -348,7 +349,7 @@ public final class NutsReservedUtils {
                         if (bOptions.getGui().orElse(false)) {
                             line = NutsReservedGuiUtils.inputString(
                                     NutsMessage.ofCstyle("do you confirm deleting %s [y/n/c/a] (default 'n') ?", directory).toString(),
-                                    null, () -> bLog.readLine(), bLog.err()
+                                    null, readline, bLog
                             );
                         } else {
                             NutsConfirmationMode cc = bOptions.getConfirm().orElse(NutsConfirmationMode.ASK);
@@ -366,8 +367,8 @@ public final class NutsReservedUtils {
                                 }
                                 case ASK: {
                                     // Level.OFF is to force logging in all cases
-                                    bLog.log(Level.OFF, NutsLoggerVerb.WARNING, NutsMessage.ofJstyle("do you confirm deleting {0} [y/n/c/a] (default 'n') ? : ", directory));
-                                    line = bLog.readLine();
+                                    bLog.with().level(Level.OFF).verb(NutsLoggerVerb.WARNING).log( NutsMessage.ofJstyle("do you confirm deleting {0} [y/n/c/a] (default 'n') ? : ", directory));
+                                    line = readline.get();
                                 }
                             }
                         }
@@ -422,7 +423,7 @@ public final class NutsReservedUtils {
                     }
                 });
                 count[0]++;
-                bLog.log(Level.FINEST, NutsLoggerVerb.WARNING, NutsMessage.ofJstyle("delete folder : {0} ({1} files/folders deleted)", directory, count[0]));
+                bLog.with().level(Level.FINEST).verb(NutsLoggerVerb.WARNING).log( NutsMessage.ofJstyle("delete folder : {0} ({1} files/folders deleted)", directory, count[0]));
             } catch (IOException ex) {
                 throw new UncheckedIOException(ex);
             }
@@ -650,7 +651,7 @@ public final class NutsReservedUtils {
     }
 
     private static boolean ndiAddFileLine(Path filePath, String commentLine, String goodLine, boolean force,
-                                          String ensureHeader, String headerReplace, NutsReservedBootLog bLog) {
+                                          String ensureHeader, String headerReplace, NutsLogger bLog) {
         boolean found = false;
         boolean updatedFile = false;
         List<String> lines = new ArrayList<>();
@@ -708,7 +709,7 @@ public final class NutsReservedUtils {
         return updatedFile;
     }
 
-    static boolean ndiRemoveFileCommented2Lines(Path filePath, String commentLine, boolean force, NutsReservedBootLog bLog) {
+    static boolean ndiRemoveFileCommented2Lines(Path filePath, String commentLine, boolean force, NutsLogger bLog) {
         boolean found = false;
         boolean updatedFile = false;
         try {
@@ -738,12 +739,12 @@ public final class NutsReservedUtils {
             }
             return updatedFile;
         } catch (IOException ex) {
-            bLog.log(Level.WARNING, NutsMessage.ofPlain("unable to update update " + filePath), ex);
+            bLog.with().level(Level.WARNING).verb(NutsLoggerVerb.WARNING).error(ex).log( NutsMessage.ofPlain("unable to update update " + filePath));
             return false;
         }
     }
 
-    public static void ndiUndo(NutsReservedBootLog bLog) {
+    public static void ndiUndo(NutsLogger bLog) {
         //need to unset settings configuration.
         //what is the safest way to do so?
         NutsOsFamily os = NutsOsFamily.getCurrent();
@@ -780,7 +781,7 @@ public final class NutsReservedUtils {
                 }
             } catch (Exception e) {
                 //ignore
-                bLog.log(Level.FINEST, NutsLoggerVerb.FAIL, NutsMessage.ofJstyle("unable to undo NDI : {0}", e.toString()));
+                bLog.with().level(Level.FINEST).verb(NutsLoggerVerb.FAIL).log( NutsMessage.ofJstyle("unable to undo NDI : {0}", e.toString()));
             }
         }
     }
@@ -897,7 +898,7 @@ public final class NutsReservedUtils {
      * @param out out stream
      * @return exit code
      */
-    public static int processThrowable(Throwable ex, PrintStream out) {
+    public static int processThrowable(Throwable ex, NutsLogger out) {
         if (ex == null) {
             return 0;
         }
@@ -948,7 +949,7 @@ public final class NutsReservedUtils {
         return processThrowable(ex, out, true, showStackTrace, gui);
     }
 
-    public static int processThrowable(Throwable ex, PrintStream out, boolean showMessage, boolean showStackTrace, boolean showGui) {
+    public static int processThrowable(Throwable ex, NutsLogger out, boolean showMessage, boolean showStackTrace, boolean showGui) {
         if (ex == null) {
             return 0;
         }
@@ -982,12 +983,13 @@ public final class NutsReservedUtils {
                     // This is kind of odd, so will ignore message fm
                     fm = null;
                 } else {
-                    out = System.err;
+                    out = new NutsReservedBootLog();
                 }
             }
         } else {
             if (session != null) {
-                fout = NutsPrintStream.of(out, NutsTerminalMode.FORMATTED, null, session);
+//                fout = NutsPrintStream.of(out, NutsTerminalMode.FORMATTED, null, session);
+                fout = session.err();
             } else {
                 fout = null;
             }
@@ -1044,20 +1046,21 @@ public final class NutsReservedUtils {
                 }
             } else {
                 if (out == null) {
-                    out = System.err;
+                    out = new NutsReservedBootLog();
                 }
                 if (fm != null) {
-                    out.println(fm);
+                    out.with().level(Level.OFF).verb(NutsLoggerVerb.FAIL).log(fm);
                 } else {
-                    out.println(m);
+                    out.with().level(Level.OFF).verb(NutsLoggerVerb.FAIL).log(NutsMessage.ofPlain(m));
                 }
                 if (showStackTrace) {
-                    out.println("---------------");
-                    out.println(">  STACKTRACE :");
-                    out.println("---------------");
-                    ex.printStackTrace(out);
+                    out.with().level(Level.OFF).verb(NutsLoggerVerb.FAIL).log(NutsMessage.ofPlain("---------------"));
+                    out.with().level(Level.OFF).verb(NutsLoggerVerb.FAIL).log(NutsMessage.ofPlain(">  STACKTRACE :"));
+                    out.with().level(Level.OFF).verb(NutsLoggerVerb.FAIL).log(NutsMessage.ofPlain("---------------"));
+                    out.with().level(Level.OFF).verb(NutsLoggerVerb.FAIL).log(NutsMessage.ofPlain(
+                            NutsReservedLangUtils.stacktrace(ex)
+                    ));
                 }
-                out.flush();
             }
         }
         if (showGui) {

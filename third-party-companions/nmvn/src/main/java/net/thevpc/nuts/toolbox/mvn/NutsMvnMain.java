@@ -160,7 +160,7 @@ public class NutsMvnMain implements NutsApplication {
 
     private static Path createTempPom(NutsSession session) {
         Path d = NutsPaths.of(session)
-                .createTempFolder(session).toFile();
+                .createTempFolder().toFile();
         try (Writer out = Files.newBufferedWriter(d.resolve("pom.xml"))) {
             out.write("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
                     + "<project xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns=\"http://maven.apache.org/POM/4.0.0\"\n"

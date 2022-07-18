@@ -43,7 +43,7 @@ public class TestExportVar {
     @Test
     public void testVars1() {
         NutsSession session = TestUtils.openNewTestWorkspace("--verbose");
-        NutsPath tempFolder = NutsPaths.of(session).createTempFolder(session);
+        NutsPath tempFolder = NutsPaths.of(session).createTempFolder();
         NutsPath a = tempFolder.resolve("a.nsh");
         NutsPath b = tempFolder.resolve("b.nsh");
         System.out.println("----------------------------------------------");

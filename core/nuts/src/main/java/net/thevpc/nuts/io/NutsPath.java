@@ -51,27 +51,27 @@ import java.util.stream.Stream;
  */
 public interface NutsPath extends NutsFormattable, NutsInputSource, NutsOutputTarget {
     static NutsPath of(URL path, NutsSession session) {
-        return NutsPaths.of(session).createPath(path, session);
+        return NutsPaths.of(session).createPath(path);
     }
 
     static NutsPath of(String path, ClassLoader classLoader, NutsSession session) {
-        return NutsPaths.of(session).createPath(path, classLoader, session);
+        return NutsPaths.of(session).createPath(path, classLoader);
     }
 
     static NutsPath of(File path, NutsSession session) {
-        return NutsPaths.of(session).createPath(path, session);
+        return NutsPaths.of(session).createPath(path);
     }
 
     static NutsPath of(Path path, NutsSession session) {
-        return NutsPaths.of(session).createPath(path, session);
+        return NutsPaths.of(session).createPath(path);
     }
 
     static NutsPath of(String path, NutsSession session) {
-        return NutsPaths.of(session).createPath(path, session);
+        return NutsPaths.of(session).createPath(path);
     }
 
     static NutsPath of(NutsPathSPI path, NutsSession session) {
-        return NutsPaths.of(session).createPath(path, session);
+        return NutsPaths.of(session).createPath(path);
     }
 
     /**

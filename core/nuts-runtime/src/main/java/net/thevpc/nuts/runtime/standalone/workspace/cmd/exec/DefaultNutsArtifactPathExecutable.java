@@ -86,7 +86,7 @@ public class DefaultNutsArtifactPathExecutable extends AbstractNutsExecutableCom
                 throw new NutsNotFoundException(execSession, null, NutsMessage.ofCstyle("unable to resolve a valid descriptor for %s", cmdName), null);
             }
             String tempFolder = NutsPaths.of(session)
-                    .createTempFolder("exec-path-", session).toString();
+                    .createTempFolder("exec-path-").toString();
             NutsId _id = c.getDescriptor().getId();
             DefaultNutsDefinition nutToRun = new DefaultNutsDefinition(
                     null,

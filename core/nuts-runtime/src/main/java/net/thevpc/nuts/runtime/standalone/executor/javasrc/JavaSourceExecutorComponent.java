@@ -63,7 +63,7 @@ public class JavaSourceExecutorComponent implements NutsExecutorComponent {
         JavaCompiler compiler = ToolProvider.getSystemJavaCompiler();
         NutsSession session = executionContext.getSession();
         Path folder = NutsPaths.of(session)
-                .createTempFolder("jj",session).toFile();
+                .createTempFolder("jj").toFile();
         int res = compiler.run(null, null, null, "-d", folder.toString(), javaFile.toString());
         if (res != 0) {
             throw new NutsExecutionException(session, NutsMessage.ofPlain("compilation failed"), res);

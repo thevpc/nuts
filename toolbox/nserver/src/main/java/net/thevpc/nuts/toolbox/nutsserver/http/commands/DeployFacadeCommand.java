@@ -58,7 +58,7 @@ public class DeployFacadeCommand extends AbstractFacadeCommand {
                             .createTempFile(
                                     session.locations().getDefaultIdFilename(
                                             descriptor.getId().builder().setFaceDescriptor().build()
-                                    ), session).toString();
+                                    )).toString();
                     NutsCp.of(session)
                             .setSession(session)
                             .setSource(info.getContent())

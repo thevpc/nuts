@@ -273,7 +273,7 @@ public final class NutsApplications {
      * @param out out stream
      * @return exit code
      */
-    public static int processThrowable(Throwable ex, PrintStream out) {
+    public static int processThrowable(Throwable ex, NutsLogger out) {
         return NutsApiUtils.processThrowable(ex, out);
     }
 

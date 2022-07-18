@@ -27,6 +27,8 @@ package net.thevpc.nuts.io;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.spi.NutsComponent;
+import net.thevpc.nuts.spi.NutsComponentScope;
+import net.thevpc.nuts.spi.NutsComponentScopeType;
 import net.thevpc.nuts.util.NutsProgressFactory;
 import net.thevpc.nuts.util.NutsProgressListener;
 import net.thevpc.nuts.util.NutsUtils;
@@ -60,6 +62,7 @@ import java.util.Set;
  * @app.category Input Output
  * @since 0.5.4
  */
+@NutsComponentScope(NutsComponentScopeType.SESSION)
 public interface NutsCp extends NutsComponent {
     static NutsCp of(NutsSession session) {
         NutsUtils.requireSession(session);

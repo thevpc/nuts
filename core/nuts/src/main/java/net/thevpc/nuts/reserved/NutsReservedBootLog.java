@@ -58,6 +58,9 @@ public class NutsReservedBootLog implements NutsLogger {
     private final NutsWorkspaceTerminalOptions bootTerminal;
     private Scanner inScanner;
 
+    public NutsReservedBootLog() {
+        this(null);
+    }
     public NutsReservedBootLog(NutsWorkspaceTerminalOptions bootTerminal) {
         InputStream in = (bootTerminal == null || bootTerminal.getIn() == null) ? System.in : bootTerminal.getIn();
         PrintStream out = (bootTerminal == null || bootTerminal.getOut() == null) ? System.out : bootTerminal.getOut();
@@ -96,7 +99,9 @@ public class NutsReservedBootLog implements NutsLogger {
     public void log(Level lvl, NutsMessage message, Throwable err) {
         if (isLoggable(lvl)) {
             doLog(lvl, NutsLoggerVerb.FAIL, message == null ? "" : message.toString());
-            err.printStackTrace(bootTerminal.getErr());
+            if(err!=null) {
+                err.printStackTrace(bootTerminal.getErr());
+            }
         }
     }
 

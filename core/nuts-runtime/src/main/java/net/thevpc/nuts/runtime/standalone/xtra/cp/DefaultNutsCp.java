@@ -797,7 +797,7 @@ public class DefaultNutsCp implements NutsCp {
                     temp = to.resolveSibling(to.getFileName() + "~");
                 } else {
                     temp = NutsPaths.of(getSession())
-                            .createTempFile("temp~", session).toFile();
+                            .createTempFile("temp~").toFile();
                 }
                 try {
                     if (_source0 != null) {

@@ -21,52 +21,52 @@ import java.net.URL;
 import java.nio.file.Path;
 
 public class DefaultNutsPaths implements NutsPaths {
-    private final NutsWorkspace ws;
+    private final NutsSession session;
 
-    public DefaultNutsPaths(NutsWorkspace ws) {
-        this.ws = ws;
+    public DefaultNutsPaths(NutsSession session) {
+        this.session = session;
     }
 
     @Override
-    public NutsPath createPath(String path, NutsSession session) {
+    public NutsPath createPath(String path) {
         checkSession(session);
-        return createPath(path, null, session);
+        return createPath(path, null);
     }
 
     @Override
-    public NutsPath createPath(File path, NutsSession session) {
-        checkSession(session);
-        if (path == null) {
-            return null;
-        }
-        return createPath(new FilePath(path.toPath(), session), session);
-    }
-
-    @Override
-    public NutsPath createPath(Path path, NutsSession session) {
+    public NutsPath createPath(File path) {
         checkSession(session);
         if (path == null) {
             return null;
         }
-        return createPath(new FilePath(path, session), session);
+        return createPath(new FilePath(path.toPath(), session));
     }
 
     @Override
-    public NutsPath createPath(URL path, NutsSession session) {
+    public NutsPath createPath(Path path) {
         checkSession(session);
         if (path == null) {
             return null;
         }
-        return createPath(new URLPath(path, session), session);
+        return createPath(new FilePath(path, session));
     }
 
     @Override
-    public NutsPath createPath(String path, ClassLoader classLoader, NutsSession session) {
+    public NutsPath createPath(URL path) {
+        checkSession(session);
+        if (path == null) {
+            return null;
+        }
+        return createPath(new URLPath(path, session));
+    }
+
+    @Override
+    public NutsPath createPath(String path, ClassLoader classLoader) {
         checkSession(session);
         if (path == null || path.trim().isEmpty()) {
             return null;
         }
-        NutsPath p = getModel(session).resolve(path, session, classLoader);
+        NutsPath p = getModel().resolve(path, session, classLoader);
         if (p == null) {
             throw new NutsIllegalArgumentException(session, NutsMessage.ofCstyle("unable to resolve path from %s", path));
         }
@@ -74,7 +74,7 @@ public class DefaultNutsPaths implements NutsPaths {
     }
 
     @Override
-    public NutsPath createPath(NutsPathSPI path, NutsSession session) {
+    public NutsPath createPath(NutsPathSPI path) {
         checkSession(session);
         if (path == null) {
             return null;
@@ -83,22 +83,22 @@ public class DefaultNutsPaths implements NutsPaths {
     }
 
     @Override
-    public NutsPaths addPathFactory(NutsPathFactory pathFactory, NutsSession session) {
-        getModel(session).addPathFactory(pathFactory);
+    public NutsPaths addPathFactory(NutsPathFactory pathFactory) {
+        getModel().addPathFactory(pathFactory);
         return this;
     }
 
     @Override
-    public NutsPaths removePathFactory(NutsPathFactory pathFactory, NutsSession session) {
-        getModel(session).removePathFactory(pathFactory);
+    public NutsPaths removePathFactory(NutsPathFactory pathFactory) {
+        getModel().removePathFactory(pathFactory);
         return this;
     }
 
     private void checkSession(NutsSession session) {
-        NutsSessionUtils.checkSession(ws, session);
+        NutsSessionUtils.checkSession(this.session.getWorkspace(), session);
     }
 
-    private DefaultNutsWorkspaceConfigModel getModel(NutsSession session) {
+    private DefaultNutsWorkspaceConfigModel getModel() {
         return ((DefaultNutsWorkspaceConfigManager) session.config()).getModel();
     }
 
@@ -108,47 +108,47 @@ public class DefaultNutsPaths implements NutsPaths {
     }
 
 
-    public NutsPath createTempFile(String name, NutsSession session) {
-        return createAnyTempFile(name, false, null, session);
+    public NutsPath createTempFile(String name) {
+        return createAnyTempFile(name, false, null);
     }
 
     @Override
-    public NutsPath createTempFolder(String name, NutsSession session) {
-        return createAnyTempFile(name, true, null, session);
+    public NutsPath createTempFolder(String name) {
+        return createAnyTempFile(name, true, null);
     }
 
     @Override
-    public NutsPath createTempFile(NutsSession session) {
-        return createAnyTempFile(null, false, null, session);
+    public NutsPath createTempFile() {
+        return createAnyTempFile(null, false, null);
     }
 
     @Override
-    public NutsPath createTempFolder(NutsSession session) {
-        return createAnyTempFile(null, true, null, session);
+    public NutsPath createTempFolder() {
+        return createAnyTempFile(null, true, null);
     }
 
 
-    public NutsPath createRepositoryTempFile(String name, String repository,NutsSession session) {
-        return createAnyTempFile(name, false, repository, session);
-    }
-
-    @Override
-    public NutsPath createRepositoryTempFolder(String name, String repository,NutsSession session) {
-        return createAnyTempFile(name, true, repository, session);
+    public NutsPath createRepositoryTempFile(String name, String repository) {
+        return createAnyTempFile(name, false, repository);
     }
 
     @Override
-    public NutsPath createRepositoryTempFile(String repository,NutsSession session) {
-        return createAnyTempFile(null, false, repository, session);
+    public NutsPath createRepositoryTempFolder(String name, String repository) {
+        return createAnyTempFile(name, true, repository);
     }
 
     @Override
-    public NutsPath createRepositoryTempFolder(String repository,NutsSession session) {
-        return createAnyTempFile(null, true, repository, session);
+    public NutsPath createRepositoryTempFile(String repository) {
+        return createAnyTempFile(null, false, repository);
+    }
+
+    @Override
+    public NutsPath createRepositoryTempFolder(String repository) {
+        return createAnyTempFile(null, true, repository);
     }
 
 
-    public NutsPath createAnyTempFile(String name, boolean folder, String repositoryId, NutsSession session) {
+    public NutsPath createAnyTempFile(String name, boolean folder, String repositoryId) {
         NutsPath rootFolder = null;
         NutsRepository repositoryById = null;
         if (repositoryId == null) {

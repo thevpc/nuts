@@ -93,7 +93,7 @@ public class DefaultNutsCompress implements NutsCompress {
                 Path tempPath = null;
                 if (isSafe()) {
                     tempPath = NutsPaths.of(session)
-                            .createTempFile("zip", session).toFile();
+                            .createTempFile("zip").toFile();
                 }
                 if (this.target instanceof NutsPath) {
                     ((NutsPath) this.target).mkParentDirs();
