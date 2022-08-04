@@ -171,6 +171,10 @@ public class URLParts {
                         try (final JarFile jar = urlcon.getJarFile()) {
                             Enumeration<JarEntry> entries = jar.entries();
                             String pv = value.getPath();
+                            if(pv.startsWith("/")){
+                                // zip entries does not start with '/'
+                                pv=pv.substring(1);
+                            }
                             if (!pv.endsWith("/")) {
                                 pv += "/";
                             }
