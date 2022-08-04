@@ -9,6 +9,7 @@ import net.thevpc.nuts.spi.NutsSystemTerminalBase;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.Writer;
+import java.nio.Buffer;
 import java.nio.ByteBuffer;
 import java.nio.CharBuffer;
 import java.nio.charset.Charset;
@@ -108,7 +109,7 @@ public class SimpleWriterOutputStream extends OutputStream implements ExtendedFo
     }
 
     private void processInput(boolean endOfInput) throws IOException {
-        decoderIn.flip();
+        ((Buffer) decoderIn).flip();
         CoderResult coderResult;
         while (true) {
             coderResult = decoder.decode(decoderIn, decoderOut, endOfInput);
@@ -126,7 +127,7 @@ public class SimpleWriterOutputStream extends OutputStream implements ExtendedFo
     private void flushOutput() throws IOException {
         if (decoderOut.position() > 0) {
             writer.write(decoderOut.array(), 0, decoderOut.position());
-            decoderOut.rewind();
+            ((Buffer) decoderOut).rewind();
         }
     }
 
