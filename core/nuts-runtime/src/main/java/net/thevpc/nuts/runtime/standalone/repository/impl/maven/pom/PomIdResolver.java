@@ -27,7 +27,7 @@ public class PomIdResolver {
         List<PomId> all = new ArrayList<PomId>();
         final URLParts aa = new URLParts(baseUrl.toURL());
         String basePath = aa.getLastPart().getPath().substring(0, aa.getLastPart().getPath().length() - referenceResourcePath.length());
-        if (!basePath.endsWith("/")) {
+        if (!basePath.endsWith("/") && !basePath.endsWith("\\")) {
             basePath += "/";
         }
 
@@ -57,8 +57,8 @@ public class PomIdResolver {
         }
         if (beforeSize == all.size()) {
             //no found !
-            if (basePath.endsWith("/target/classes/")) {
-                String s2 = basePath.substring(0, basePath.length() - "/target/classes/".length()) + "/pom.xml";
+            if (basePath.matches(".*[/\\\\]target[/\\\\]classes[/\\\\]")) {
+                String s2 = basePath.substring(0, basePath.length() - "/target/classes".length()) + "pom.xml";
                 //this is most likely to be a maven project
                 try {
                     all.add(new PomXmlParser(session).parse(NutsPath.of(s2,session).asURL(), session).getPomId());
