@@ -57,7 +57,7 @@ public enum NutsTableSeparator implements NutsEnum {
     private final String id;
 
     NutsTableSeparator() {
-        this.id = NutsNameFormat.ID_NAME.formatName(name());
+        this.id = NutsNameFormat.ID_NAME.format(name());
     }
 
     public static NutsOptional<NutsTableSeparator> parse(String value) {

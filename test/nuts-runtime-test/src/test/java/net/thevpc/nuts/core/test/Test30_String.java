@@ -7,7 +7,6 @@ package net.thevpc.nuts.core.test;
 
 import net.thevpc.nuts.NutsOptional;
 import net.thevpc.nuts.io.NutsTerminalMode;
-import net.thevpc.nuts.reserved.NutsReservedStringUtils;
 import net.thevpc.nuts.runtime.standalone.xtra.expr.StringPlaceHolderParser;
 import net.thevpc.nuts.util.NutsNameFormat;
 import net.thevpc.nuts.util.NutsStringUtils;
@@ -59,7 +58,7 @@ public class Test30_String {
 
     @Test
     public void test04() {
-        String[] a = NutsNameFormat.parseName("aBc_r");
+        String[] a = NutsNameFormat.parse("aBc_r");
         Assertions.assertArrayEquals(
                 new String[]{"a","Bc","r"},
                 a
@@ -67,7 +66,7 @@ public class Test30_String {
     }
     @Test
     public void test05() {
-        String[] a = NutsNameFormat.parseName("setName");
+        String[] a = NutsNameFormat.parse("setName");
         Assertions.assertArrayEquals(
                 new String[]{"set","Name"},
                 a
@@ -75,7 +74,7 @@ public class Test30_String {
     }
     @Test
     public void test06() {
-        String[] a = NutsNameFormat.parseName("setTHEName");
+        String[] a = NutsNameFormat.parse("setTHEName");
         Assertions.assertArrayEquals(
                 new String[]{"set","THEName"},
                 a
@@ -84,7 +83,7 @@ public class Test30_String {
 
     @Test
     public void test07() {
-        String[] a = NutsNameFormat.parseName("/a/dAt");
+        String[] a = NutsNameFormat.parse("/a/dAt");
         Assertions.assertArrayEquals(
                 new String[]{"a","d","At"},
                 a
@@ -93,7 +92,7 @@ public class Test30_String {
 
     @Test
     public void test08() {
-        String[] a = NutsNameFormat.parseName(".Net");
+        String[] a = NutsNameFormat.parse(".Net");
         Assertions.assertArrayEquals(
                 new String[]{"Net"},
                 a

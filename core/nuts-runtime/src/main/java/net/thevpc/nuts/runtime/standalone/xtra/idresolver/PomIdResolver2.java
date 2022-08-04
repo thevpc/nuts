@@ -1,7 +1,11 @@
-package net.thevpc.nuts.runtime.standalone.repository.impl.maven.pom;
+package net.thevpc.nuts.runtime.standalone.xtra.idresolver;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.io.NutsPath;
+import net.thevpc.nuts.runtime.standalone.repository.impl.maven.pom.PomId;
+import net.thevpc.nuts.runtime.standalone.repository.impl.maven.pom.PomXmlParser;
+import net.thevpc.nuts.runtime.standalone.repository.impl.maven.pom.URLFilter;
+import net.thevpc.nuts.runtime.standalone.repository.impl.maven.pom.URLParts;
 import net.thevpc.nuts.runtime.standalone.util.jclass.JavaClassUtils;
 import net.thevpc.nuts.util.NutsLoggerOp;
 import net.thevpc.nuts.util.NutsLoggerVerb;
@@ -14,24 +18,24 @@ import java.util.logging.Level;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
-public class PomIdResolver {
+public class PomIdResolver2 {
 
     //    private NutsWorkspace ws;
     private NutsSession session;
 
-    public PomIdResolver(NutsSession session) {
+    public PomIdResolver2(NutsSession session) {
         this.session = session;
     }
 
-    public PomId[] resolvePomId(NutsPath baseUrl, String referenceResourcePath, NutsSession session) {
-        List<PomId> all = new ArrayList<PomId>();
+    public NutsId[] resolvePomId(NutsPath baseUrl, String referenceResourcePath, NutsSession session) {
+        List<NutsId> all = new ArrayList<>();
         final URLParts aa = new URLParts(baseUrl.toURL());
         String basePath = aa.getLastPart().getPath().substring(0, aa.getLastPart().getPath().length() - referenceResourcePath.length());
         if (!basePath.endsWith("/")) {
             basePath += "/";
         }
 
-        final URLParts p = aa.getParent().append(basePath + "META-INF/maven");
+        final URLParts p = aa.getParent().append(basePath + "META-INF/nuts");
         int beforeSize = all.size();
         URL[] children = new URL[0];
         try {
@@ -41,17 +45,17 @@ public class PomIdResolver {
         }
         for (URL url : children) {
             if (url != null) {
-                Properties prop = new Properties();
                 try {
-                    prop.load(url.openStream());
-                } catch (IOException e) {
-                    //
-                }
-                String version = prop.getProperty("version");
-                String groupId = prop.getProperty("groupId");
-                String artifactId = prop.getProperty("artifactId");
-                if (version != null && version.trim().length() != 0) {
-                    all.add(new PomId(groupId, artifactId, version));
+                    NutsDescriptor d = NutsDescriptorParser.of(session).parse(url).get(session);
+                    NutsId id = d.getId();
+                    if(id!=null && id.getVersion()!=null && !id.getVersion().isBlank()){
+                        all.add(id);
+                    }
+                } catch (Exception ex) {
+                    NutsLoggerOp.of(PomXmlParser.class,session)
+                            .verb(NutsLoggerVerb.WARNING)
+                            .level(Level.FINEST)
+                            .log(NutsMessage.ofCstyle("failed to parse pom file %s : %s", url, ex));
                 }
             }
         }
@@ -60,17 +64,10 @@ public class PomIdResolver {
             if (basePath.endsWith("/target/classes/")) {
                 String s2 = basePath.substring(0, basePath.length() - "/target/classes/".length()) + "/pom.xml";
                 //this is most likely to be a maven project
-                try {
-                    all.add(new PomXmlParser(session).parse(NutsPath.of(s2,session).asURL(), session).getPomId());
-                } catch (Exception ex) {
-                    NutsLoggerOp.of(PomXmlParser.class,session)
-                            .verb(NutsLoggerVerb.WARNING)
-                            .level(Level.FINEST)
-                            .log(NutsMessage.ofCstyle("failed to parse pom file %s : %s", s2, ex));
-                }
+
             }
         }
-        return all.toArray(new PomId[0]);
+        return all.toArray(new NutsId[0]);
     }
 
     /**
@@ -80,8 +77,8 @@ public class PomIdResolver {
      * @param clazz class
      * @return artifacts array in the form groupId:artfcatId#version
      */
-    public PomId[] resolvePomIds(Class clazz) {
-        List<PomId> all = new ArrayList<PomId>();
+    public NutsId[] resolvePomIds(Class clazz) {
+        List<NutsId> all = new ArrayList<>();
         try {
             final String n = clazz.getName().replace('.', '/').concat(".class");
             final Enumeration<URL> r = clazz.getClassLoader().getResources(n);
@@ -101,29 +98,9 @@ public class PomIdResolver {
                 return resolvePomIds(s);
             }
         }
-        return all.toArray(new PomId[0]);
+        return all.toArray(new NutsId[0]);
     }
 
-    public PomId resolvePomId(Class clazz) {
-        return resolvePomId(clazz, new PomId("dev", "dev", "dev"));
-    }
-
-    public PomId resolvePomId(Class clazz, PomId defaultValue) {
-        PomId[] pomIds = resolvePomIds(clazz);
-        if (pomIds.length > 1) {
-            NutsLoggerOp.of(PomXmlParser.class,session)
-                    .verb(NutsLoggerVerb.WARNING)
-                    .level(Level.FINEST)
-                    .log(NutsMessage.ofCstyle(
-                            "multiple ids found : %s for class %s and id %s",
-                            Arrays.asList(pomIds),clazz,defaultValue
-                    ));
-        }
-        for (PomId v : pomIds) {
-            return v;
-        }
-        return defaultValue;
-    }
 
     public PomId resolvePomId(Class clazz, String groupId, String artifactId, String defaultValue) {
         String ver = resolvePomVersion(clazz, groupId, artifactId, defaultValue);
@@ -284,7 +261,7 @@ public class PomIdResolver {
 
         @Override
         public boolean accept(URL path) {
-            return new URLParts(path).getName().equals("pom.properties");
+            return new URLParts(path).getName().equals("nuts.json");
         }
     }
 

@@ -76,7 +76,7 @@ public enum NutsInstallStrategy implements NutsEnum {
     private final String id;
 
     NutsInstallStrategy() {
-        this.id = NutsNameFormat.ID_NAME.formatName(name());
+        this.id = NutsNameFormat.ID_NAME.format(name());
     }
 
     public static NutsOptional<NutsInstallStrategy> parse(String value) {

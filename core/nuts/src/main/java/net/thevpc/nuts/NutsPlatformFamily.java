@@ -47,7 +47,7 @@ public enum NutsPlatformFamily implements NutsEnum {
     private final String id;
 
     NutsPlatformFamily() {
-        this.id = NutsNameFormat.ID_NAME.formatName(name());
+        this.id = NutsNameFormat.ID_NAME.format(name());
     }
 
     public static NutsOptional<NutsPlatformFamily> parse(String value) {

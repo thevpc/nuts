@@ -44,6 +44,8 @@ import java.time.Instant;
 import java.util.Properties;
 import java.util.function.Function;
 import java.util.logging.Level;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class NutsReservedIOUtils {
 
@@ -56,22 +58,22 @@ public class NutsReservedIOUtils {
     }
 
     public static InputStream openStream(URL url, NutsLogger bLog) {
-        return NutsReservedMonitoredURLInputStream.of(url,bLog);
+        return NutsReservedMonitoredURLInputStream.of(url, bLog);
     }
 
-    public static byte[] loadStream(InputStream stream, NutsLogger bLog) throws IOException{
-        ByteArrayOutputStream bos=new ByteArrayOutputStream();
-        copy(stream,bos,true, true);
+    public static byte[] loadStream(InputStream stream, NutsLogger bLog) throws IOException {
+        ByteArrayOutputStream bos = new ByteArrayOutputStream();
+        copy(stream, bos, true, true);
         return bos.toByteArray();
     }
 
-    public static ByteArrayInputStream preloadStream(InputStream stream, NutsLogger bLog) throws IOException{
-        return new ByteArrayInputStream(loadStream(stream,bLog));
+    public static ByteArrayInputStream preloadStream(InputStream stream, NutsLogger bLog) throws IOException {
+        return new ByteArrayInputStream(loadStream(stream, bLog));
     }
 
     public static Properties loadURLProperties(Path path, NutsLogger bLog) {
         Properties props = new Properties();
-        if(Files.isRegularFile(path)) {
+        if (Files.isRegularFile(path)) {
             try (InputStream is = Files.newInputStream(path)) {
                 props.load(is);
             } catch (IOException ex) {
@@ -116,7 +118,7 @@ public class NutsReservedIOUtils {
             try {
                 if (url != null) {
                     String urlString = url.toString();
-                    inputStream = openStream(url,bLog);
+                    inputStream = openStream(url, bLog);
                     if (inputStream != null) {
                         props.load(inputStream);
                         if (cacheFile != null) {
@@ -168,7 +170,7 @@ public class NutsReservedIOUtils {
     }
 
     public static boolean isURL(String url) {
-        if(url!=null) {
+        if (url != null) {
             try {
                 new URL(url);
                 return true;
@@ -239,7 +241,7 @@ public class NutsReservedIOUtils {
             to.getParentFile().mkdirs();
         }
         if (ff == null || !ff.exists()) {
-            bLog.with().level(Level.CONFIG).verb(NutsLoggerVerb.FAIL).log( NutsMessage.ofJstyle("not found {0}", ff));
+            bLog.with().level(Level.CONFIG).verb(NutsLoggerVerb.FAIL).log(NutsMessage.ofJstyle("not found {0}", ff));
             throw new FileNotFoundException(ff == null ? "" : ff.getPath());
         }
         try {
@@ -252,7 +254,7 @@ public class NutsReservedIOUtils {
 
     public static void copy(URL url, File to, NutsLogger bLog) throws IOException {
         try {
-            InputStream in = openStream(url,bLog);
+            InputStream in = openStream(url, bLog);
             if (in == null) {
                 throw new IOException("empty Stream " + url);
             }
@@ -260,7 +262,7 @@ public class NutsReservedIOUtils {
                 if (!to.getParentFile().isDirectory()) {
                     boolean mkdirs = to.getParentFile().mkdirs();
                     if (!mkdirs) {
-                        bLog.with().level(Level.CONFIG).verb(NutsLoggerVerb.FAIL).log( NutsMessage.ofJstyle("error creating folder {0}", url));
+                        bLog.with().level(Level.CONFIG).verb(NutsLoggerVerb.FAIL).log(NutsMessage.ofJstyle("error creating folder {0}", url));
                     }
                 }
             }
@@ -268,7 +270,7 @@ public class NutsReservedIOUtils {
             FileOutputStream fos = new FileOutputStream(to);
             fos.getChannel().transferFrom(rbc, 0, Long.MAX_VALUE);
         } catch (FileNotFoundException ex) {
-            bLog.with().level(Level.CONFIG).verb(NutsLoggerVerb.FAIL).log( NutsMessage.ofJstyle("not found {0}", url));
+            bLog.with().level(Level.CONFIG).verb(NutsLoggerVerb.FAIL).log(NutsMessage.ofJstyle("not found {0}", url));
             throw ex;
         } catch (IOException ex) {
             bLog.with().level(Level.CONFIG).verb(NutsLoggerVerb.FAIL).log(NutsMessage.ofJstyle("error copying {0} to {1} : {2}", url, to, ex.toString()));
@@ -278,7 +280,7 @@ public class NutsReservedIOUtils {
 
     static File createFile(String parent, String child) {
         String userHome = System.getProperty("user.home");
-        if (child.startsWith("~/")|| child.startsWith("~\\")) {
+        if (child.startsWith("~/") || child.startsWith("~\\")) {
             child = new File(userHome, child.substring(2)).getPath();
         }
         if ((child.startsWith("/") || child.startsWith("\\") || new File(child).isAbsolute())) {
@@ -322,7 +324,7 @@ public class NutsReservedIOUtils {
                     }
                 }
             } catch (Exception ex0) {
-                bLog.with().level(Level.FINEST).verb(NutsLoggerVerb.FAIL).log( NutsMessage.ofJstyle("unable to get LastModifiedTime for file : {0}", path.toString(), ex0.toString()));
+                bLog.with().level(Level.FINEST).verb(NutsLoggerVerb.FAIL).log(NutsMessage.ofJstyle("unable to get LastModifiedTime for file : {0}", path.toString(), ex0.toString()));
             }
         }
         return proceed;
@@ -436,5 +438,42 @@ public class NutsReservedIOUtils {
         } catch (IOException ex) {
             throw new UncheckedIOException(ex);
         }
+    }
+
+    public static boolean isRemoteURL(String a) {
+        if (NutsBlankable.isBlank(a)) {
+            return false;
+        }
+        int i = a.indexOf(':');
+        if (i >= 0) {
+            String protocol = a.substring(0, i);
+            if (protocol.length() == 1) {
+                // this is a file
+                return false;
+            }
+            String path = a.substring(i + 1);
+            if (protocol.equalsIgnoreCase("http") || protocol.equalsIgnoreCase("https")) {
+                if (path.startsWith("//")) {
+                    path = path.substring(2);
+                    Pattern p = Pattern.compile("^(?<n>[^!:/\\\\?#]*).*");
+                    Matcher m = p.matcher(path);
+                    if (m.find()) {
+                        String k = m.group("n");
+                        if (k != null) {
+                            if (k.startsWith("127.")) {
+                                return false;
+                            }
+                            if (k.equalsIgnoreCase("localhost")) {
+                                return false;
+                            }
+                        }
+                    }
+                }
+                return true;
+            } else {
+                return true;
+            }
+        }
+        return false;
     }
 }

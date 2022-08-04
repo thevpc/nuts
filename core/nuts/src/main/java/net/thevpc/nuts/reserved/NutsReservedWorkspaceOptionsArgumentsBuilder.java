@@ -320,7 +320,7 @@ public class NutsReservedWorkspaceOptionsArgumentsBuilder {
                 arguments.add("--" + ((NutsEnum) value).id());
             } else {
                 arguments.add("--" +
-                        NutsNameFormat.CONST_NAME.formatName(value.name())
+                        NutsNameFormat.CONST_NAME.format(value.name())
                 );
             }
         }

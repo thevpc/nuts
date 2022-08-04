@@ -64,7 +64,7 @@ public enum NutsDisplayProperty  implements NutsEnum {
     private String id;
 
     NutsDisplayProperty() {
-        this.id = NutsNameFormat.ID_NAME.formatName(name());
+        this.id = NutsNameFormat.ID_NAME.format(name());
     }
 
     @Override

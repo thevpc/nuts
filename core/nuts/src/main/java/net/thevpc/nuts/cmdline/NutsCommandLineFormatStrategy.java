@@ -48,7 +48,7 @@ public enum NutsCommandLineFormatStrategy implements NutsEnum {
     private final String id;
 
     NutsCommandLineFormatStrategy() {
-        this.id = NutsNameFormat.ID_NAME.formatName(name());
+        this.id = NutsNameFormat.ID_NAME.format(name());
     }
 
     public static NutsCommandLineFormatStrategy getCurrent() {

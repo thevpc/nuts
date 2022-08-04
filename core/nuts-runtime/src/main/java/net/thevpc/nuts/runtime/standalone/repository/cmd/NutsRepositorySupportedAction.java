@@ -46,7 +46,7 @@ public enum NutsRepositorySupportedAction  implements NutsEnum {
     private final String id;
 
     NutsRepositorySupportedAction() {
-        this.id = NutsNameFormat.ID_NAME.formatName(name());
+        this.id = NutsNameFormat.ID_NAME.format(name());
     }
 
     /**

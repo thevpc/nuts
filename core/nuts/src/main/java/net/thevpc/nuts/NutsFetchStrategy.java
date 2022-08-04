@@ -88,7 +88,7 @@ public enum NutsFetchStrategy implements Iterable<NutsFetchMode>, NutsEnum {
      * @param all      modes
      */
     NutsFetchStrategy(boolean stopFast, NutsFetchMode... all) {
-        this.id = NutsNameFormat.ID_NAME.formatName(name());
+        this.id = NutsNameFormat.ID_NAME.format(name());
         this.stopFast = stopFast;
         this.all = Arrays.copyOf(all, all.length);
     }

@@ -28,6 +28,7 @@ package net.thevpc.nuts.reserved;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.boot.NutsWorkspaceBootOptions;
+import net.thevpc.nuts.boot.NutsWorkspaceBootOptionsBuilder;
 import net.thevpc.nuts.spi.NutsRepositoryLocation;
 import net.thevpc.nuts.util.NutsLogger;
 import net.thevpc.nuts.util.NutsLoggerVerb;
@@ -277,19 +278,19 @@ public final class NutsReservedMavenUtils {
     }
 
     public static List<NutsRepositoryLocation> loadAllMavenRepos(NutsLogger logger) {
-        List<NutsRepositoryLocation> all=new ArrayList<>();
-        all.add(new NutsRepositoryLocation("maven-local","maven",System.getProperty("user.home") + NutsReservedIOUtils.getNativePath("/.m2/repository")));
-        all.add(new NutsRepositoryLocation("maven-central","maven","https://repo.maven.apache.org/maven2"));
+        List<NutsRepositoryLocation> all = new ArrayList<>();
+        all.add(new NutsRepositoryLocation("maven-local", "maven", System.getProperty("user.home") + NutsReservedIOUtils.getNativePath("/.m2/repository")));
+        all.add(new NutsRepositoryLocation("maven-central", "maven", "https://repo.maven.apache.org/maven2"));
         all.addAll(NutsReservedMavenUtils.loadSettingsRepos(logger));
         return all;
     }
 
     public static List<NutsRepositoryLocation> loadSettingsRepos(NutsLogger bLog) {
-        URL u= null;
-        File r=null;
+        URL u = null;
+        File r = null;
         try {
             r = new File(System.getProperty("user.home") + NutsReservedIOUtils.getNativePath("/.m2/settings.xml"));
-            if(!r.isFile()){
+            if (!r.isFile()) {
                 return new ArrayList<>();
             }
             u = r.toURI().toURL();
@@ -297,7 +298,7 @@ public final class NutsReservedMavenUtils {
             bLog.with().level(Level.SEVERE).verb(NutsLoggerVerb.FAIL).error(e).log(NutsMessage.ofJstyle("unable to load {0}.", r));
             return new ArrayList<>();
         }
-        return loadSettingsRepos(u,bLog);
+        return loadSettingsRepos(u, bLog);
     }
 
     public static List<NutsRepositoryLocation> loadSettingsRepos(URL url, NutsLogger bLog) {
@@ -330,7 +331,7 @@ public final class NutsReservedMavenUtils {
                                     }
                                 }
                                 if (enabled0 && !NutsBlankable.isBlank(id) && !NutsBlankable.isBlank(url0)) {
-                                    list.add(new NutsRepositoryLocation(id.trim(), "maven",url0.trim()));
+                                    list.add(new NutsRepositoryLocation(id.trim(), "maven", url0.trim()));
                                 }
                             }
                         }
@@ -602,7 +603,7 @@ public final class NutsReservedMavenUtils {
     }
 
     static VersionAndPath resolveLatestMavenId(NutsId zId, String path, Predicate<NutsVersion> filter,
-                                               NutsLogger bLog, NutsRepositoryLocation repoUrl2, boolean stopFirst) {
+                                               NutsLogger bLog, NutsRepositoryLocation repoUrl2, boolean stopFirst, NutsWorkspaceBootOptionsBuilder options) {
         NutsDescriptorStyle descType = NutsDescriptorStyle.MAVEN;
         if (NutsConstants.RepoTypes.NUTS.equalsIgnoreCase(repoUrl2.getLocationType())) {
             descType = NutsDescriptorStyle.NUTS;
@@ -611,34 +612,39 @@ public final class NutsReservedMavenUtils {
         boolean found = false;
         NutsVersion bestVersion = null;
         String bestPath = null;
+        NutsFetchStrategy fetchStrategy = options.getFetchStrategy().orElse(NutsFetchStrategy.ANYWHERE);
+        boolean offline = fetchStrategy != NutsFetchStrategy.REMOTE;
+        boolean online = fetchStrategy != NutsFetchStrategy.OFFLINE;
         if (!repoUrl.contains("://")) {
-            File mavenNutsCoreFolder = new File(repoUrl, path.replace("/", File.separator));
-            FilenameFilter filenameFilter =
-                    descType == NutsDescriptorStyle.NUTS ? (dir, name) -> name.endsWith(".nuts")
-                            : (dir, name) -> name.endsWith(".pom");
-            if (mavenNutsCoreFolder.isDirectory()) {
-                File[] children = mavenNutsCoreFolder.listFiles();
-                if (children != null) {
-                    for (File file : children) {
-                        if (file.isDirectory()) {
-                            String[] goodChildren = file.list(filenameFilter);
-                            if (goodChildren != null && goodChildren.length > 0) {
-                                NutsVersion p = NutsVersion.of(file.getName()).get();//folder name is version name
-                                if (filter == null || filter.test(p)) {
-                                    found = true;
-                                    if (bestVersion == null || bestVersion.compareTo(p) < 0) {
-                                        //we will ignore artifact classifier to simplify search
-                                        Path jarPath = file.toPath().resolve(
-                                                getFileName(NutsId.of(zId.getGroupId(), zId.getArtifactId(), p).get(), "jar")
-                                        );
-                                        if (Files.isRegularFile(jarPath)) {
-                                            bestVersion = p;
-                                            bestPath = "local location : " + jarPath;
-                                            if (bLog != null) {
-                                                bLog.with().level(Level.FINEST).verb(NutsLoggerVerb.SUCCESS).log(NutsMessage.ofJstyle("{0}#{1} found in {2} as {3}", zId, bestVersion, repoUrl2, bestPath));
-                                            }
-                                            if (stopFirst) {
-                                                break;
+            if (offline) {
+                File mavenNutsCoreFolder = new File(repoUrl, path.replace("/", File.separator));
+                FilenameFilter filenameFilter =
+                        descType == NutsDescriptorStyle.NUTS ? (dir, name) -> name.endsWith(".nuts")
+                                : (dir, name) -> name.endsWith(".pom");
+                if (mavenNutsCoreFolder.isDirectory()) {
+                    File[] children = mavenNutsCoreFolder.listFiles();
+                    if (children != null) {
+                        for (File file : children) {
+                            if (file.isDirectory()) {
+                                String[] goodChildren = file.list(filenameFilter);
+                                if (goodChildren != null && goodChildren.length > 0) {
+                                    NutsVersion p = NutsVersion.of(file.getName()).get();//folder name is version name
+                                    if (filter == null || filter.test(p)) {
+                                        found = true;
+                                        if (bestVersion == null || bestVersion.compareTo(p) < 0) {
+                                            //we will ignore artifact classifier to simplify search
+                                            Path jarPath = file.toPath().resolve(
+                                                    getFileName(NutsId.of(zId.getGroupId(), zId.getArtifactId(), p).get(), "jar")
+                                            );
+                                            if (Files.isRegularFile(jarPath)) {
+                                                bestVersion = p;
+                                                bestPath = "local location : " + jarPath;
+                                                if (bLog != null) {
+                                                    bLog.with().level(Level.FINEST).verb(NutsLoggerVerb.SUCCESS).log(NutsMessage.ofJstyle("{0}#{1} found in {2} as {3}", zId, bestVersion, repoUrl2, bestPath));
+                                                }
+                                                if (stopFirst) {
+                                                    break;
+                                                }
                                             }
                                         }
                                     }
@@ -661,35 +667,39 @@ public final class NutsReservedMavenUtils {
             if (!basePath.endsWith("/")) {
                 basePath = basePath + "/";
             }
-            if (htmlfs) {
-                for (NutsVersion p : detectVersionsFromHtmlfsTomcatDirectoryListing(basePath, bLog)) {
-                    if (filter == null || filter.test(p)) {
-                        found = true;
-                        if (bestVersion == null || bestVersion.compareTo(p) < 0) {
-                            bestVersion = p;
-                            bestPath = "remote file " + basePath;
-                            if (bLog != null) {
-                                bLog.with().level(Level.FINEST).verb(NutsLoggerVerb.SUCCESS).log(NutsMessage.ofJstyle("{0}#{1} found in {2} as {3}", zId, bestVersion, repoUrl2, bestPath));
-                            }
-                            if (stopFirst) {
-                                break;
+            boolean remoteURL = NutsReservedIOUtils.isRemoteURL(basePath);
+            if ((remoteURL && online) || (!remoteURL && offline)) {
+                //do nothing
+                if (htmlfs) {
+                    for (NutsVersion p : detectVersionsFromHtmlfsTomcatDirectoryListing(basePath, bLog)) {
+                        if (filter == null || filter.test(p)) {
+                            found = true;
+                            if (bestVersion == null || bestVersion.compareTo(p) < 0) {
+                                bestVersion = p;
+                                bestPath = "remote file " + basePath;
+                                if (bLog != null) {
+                                    bLog.with().level(Level.FINEST).verb(NutsLoggerVerb.SUCCESS).log(NutsMessage.ofJstyle("{0}#{1} found in {2} as {3}", zId, bestVersion, repoUrl2, bestPath));
+                                }
+                                if (stopFirst) {
+                                    break;
+                                }
                             }
                         }
                     }
-                }
-            } else {
-                String mavenMetadata = basePath + "maven-metadata.xml";
-                for (NutsVersion p : detectVersionsFromMetaData(mavenMetadata, bLog)) {
-                    if (filter == null || filter.test(p)) {
-                        found = true;
-                        if (bestVersion == null || bestVersion.compareTo(p) < 0) {
-                            bestVersion = p;
-                            bestPath = "remote file " + mavenMetadata;
-                            if (bLog != null) {
-                                bLog.with().level(Level.FINEST).verb(NutsLoggerVerb.SUCCESS).log(NutsMessage.ofJstyle("{0}#{1} found in {2} as {3}", zId, bestVersion, repoUrl2, bestPath));
-                            }
-                            if (stopFirst) {
-                                break;
+                } else {
+                    String mavenMetadata = basePath + "maven-metadata.xml";
+                    for (NutsVersion p : detectVersionsFromMetaData(mavenMetadata, bLog)) {
+                        if (filter == null || filter.test(p)) {
+                            found = true;
+                            if (bestVersion == null || bestVersion.compareTo(p) < 0) {
+                                bestVersion = p;
+                                bestPath = "remote file " + mavenMetadata;
+                                if (bLog != null) {
+                                    bLog.with().level(Level.FINEST).verb(NutsLoggerVerb.SUCCESS).log(NutsMessage.ofJstyle("{0}#{1} found in {2} as {3}", zId, bestVersion, repoUrl2, bestPath));
+                                }
+                                if (stopFirst) {
+                                    break;
+                                }
                             }
                         }
                     }
@@ -702,11 +712,12 @@ public final class NutsReservedMavenUtils {
     /**
      * find latest maven artifact
      *
-     * @param filter filter
+     * @param filter  filter
+     * @param options
      * @return latest runtime version
      */
     public static NutsId resolveLatestMavenId(NutsId zId, Predicate<NutsVersion> filter,
-                                              NutsLogger bLog, Collection<NutsRepositoryLocation> bootRepositories) {
+                                              NutsLogger bLog, Collection<NutsRepositoryLocation> bootRepositories, NutsWorkspaceBootOptionsBuilder options) {
         if (bLog.isLoggable(Level.FINEST)) {
             if (bootRepositories.isEmpty()) {
                 bLog.with().level(Level.FINEST).verb(NutsLoggerVerb.START).log(NutsMessage.ofJstyle("search for {0} nuts there are no repositories to look into.", zId));
@@ -724,7 +735,7 @@ public final class NutsReservedMavenUtils {
         String bestPath = null;
         boolean stopOnFirstValidRepo = false;
         for (NutsRepositoryLocation repoUrl2 : bootRepositories) {
-            VersionAndPath r = resolveLatestMavenId(zId, path, filter, bLog, repoUrl2, false);
+            VersionAndPath r = resolveLatestMavenId(zId, path, filter, bLog, repoUrl2, false, options);
             if (r.version != null) {
                 if (bestVersion == null || bestVersion.compareTo(r.version) < 0) {
                     bestVersion = r.version;
@@ -881,7 +892,7 @@ public final class NutsReservedMavenUtils {
                     }
                     if (to.isFile()) {
                         NutsReservedIOUtils.copy(ff, to, bLog);
-                        bLog.with().level(Level.CONFIG).verb(NutsLoggerVerb.CACHE).log( NutsMessage.ofJstyle("recover cached {0} file {0} to {1}", ext, ff, to));
+                        bLog.with().level(Level.CONFIG).verb(NutsLoggerVerb.CACHE).log(NutsMessage.ofJstyle("recover cached {0} file {0} to {1}", ext, ff, to));
                     } else {
                         NutsReservedIOUtils.copy(ff, to, bLog);
                         bLog.with().level(Level.CONFIG).verb(NutsLoggerVerb.CACHE).log(NutsMessage.ofJstyle("cache {0} file {0} to {1}", ext, ff, to));

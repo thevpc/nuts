@@ -74,7 +74,7 @@ public enum NutsTextFormatStyle implements NutsEnum {
     private final String id;
 
     NutsTextFormatStyle() {
-        this.id = NutsNameFormat.ID_NAME.formatName(name());
+        this.id = NutsNameFormat.ID_NAME.format(name());
     }
 
     public static NutsOptional<NutsTextFormatStyle> parse(String value) {

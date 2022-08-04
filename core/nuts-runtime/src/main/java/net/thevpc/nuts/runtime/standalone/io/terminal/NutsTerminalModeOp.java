@@ -19,7 +19,7 @@ public enum NutsTerminalModeOp  implements NutsEnum {
     NutsTerminalModeOp(NutsTerminalMode in, NutsTerminalMode out) {
         this.in = in;
         this.out = out;
-        this.id = NutsNameFormat.ID_NAME.formatName(name());
+        this.id = NutsNameFormat.ID_NAME.format(name());
     }
 
     @Override

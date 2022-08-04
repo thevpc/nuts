@@ -9,7 +9,7 @@ public enum NutsExprOpType implements NutsEnum {
     private final String id;
 
     NutsExprOpType() {
-        this.id = NutsNameFormat.ID_NAME.formatName(name());
+        this.id = NutsNameFormat.ID_NAME.format(name());
     }
 
     public static NutsOptional<NutsExprOpType> parse(String value) {

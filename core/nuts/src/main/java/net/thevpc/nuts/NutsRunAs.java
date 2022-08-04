@@ -107,7 +107,7 @@ public class NutsRunAs {
         private final String id;
 
         Mode() {
-            this.id = NutsNameFormat.ID_NAME.formatName(name());
+            this.id = NutsNameFormat.ID_NAME.format(name());
         }
 
         public static NutsOptional<Mode> parse(String value) {

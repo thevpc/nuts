@@ -101,7 +101,7 @@ public enum NutsStoreLocation implements NutsEnum {
     private final String id;
 
     NutsStoreLocation() {
-        this.id = NutsNameFormat.ID_NAME.formatName(name());
+        this.id = NutsNameFormat.ID_NAME.format(name());
     }
 
     public static NutsOptional<NutsStoreLocation> parse(String value) {

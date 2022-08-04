@@ -430,7 +430,7 @@ public class NutsStringUtils {
         if (NutsBlankable.isBlank(value)) {
             return NutsOptional.ofEmpty(s -> NutsMessage.ofCstyle("%s is empty", type.getSimpleName()));
         }
-        String normalizedValue = NutsNameFormat.CONST_NAME.formatName(value);
+        String normalizedValue = NutsNameFormat.CONST_NAME.format(value);
         try {
             return NutsOptional.of((T) Enum.valueOf(type, normalizedValue));
         } catch (Exception notFound) {
@@ -443,8 +443,8 @@ public class NutsStringUtils {
         if (NutsBlankable.isBlank(value)) {
             return NutsOptional.ofEmpty(s -> NutsMessage.ofCstyle("%s is empty", type.getSimpleName()));
         }
-        String[] parsedValue = NutsNameFormat.parseName(value);
-        String normalizedValue = NutsNameFormat.CONST_NAME.formatName(parsedValue);
+        String[] parsedValue = NutsNameFormat.parse(value);
+        String normalizedValue = NutsNameFormat.CONST_NAME.format(parsedValue);
         if (mapper != null) {
             try {
                 NutsOptional<T> o = mapper.apply(new EnumValue(
@@ -544,7 +544,7 @@ public class NutsStringUtils {
          * default constructor
          */
         QuoteType() {
-            this.id = NutsNameFormat.ID_NAME.formatName(name());
+            this.id = NutsNameFormat.ID_NAME.format(name());
         }
 
         public static NutsOptional<QuoteType> parse(String value) {

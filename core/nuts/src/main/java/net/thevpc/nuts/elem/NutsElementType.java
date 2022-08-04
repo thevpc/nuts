@@ -110,7 +110,7 @@ public enum NutsElementType implements NutsEnum {
     private final String id;
 
     NutsElementType(boolean primitive, boolean nbr) {
-        this.id = NutsNameFormat.ID_NAME.formatName(name());
+        this.id = NutsNameFormat.ID_NAME.format(name());
         this.primitive = primitive;
         this.nbr = nbr;
     }

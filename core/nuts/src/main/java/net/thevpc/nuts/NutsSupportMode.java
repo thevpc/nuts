@@ -40,7 +40,7 @@ public enum NutsSupportMode implements NutsEnum {
     private final String id;
 
     NutsSupportMode() {
-        this.id = NutsNameFormat.ID_NAME.formatName(name());
+        this.id = NutsNameFormat.ID_NAME.format(name());
     }
 
     public static NutsOptional<NutsSupportMode> parse(String value) {

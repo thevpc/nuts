@@ -115,7 +115,7 @@ public enum NutsDependencyScope implements NutsEnum {
      * default constructor
      */
     NutsDependencyScope() {
-        this.id = NutsNameFormat.ID_NAME.formatName(name());
+        this.id = NutsNameFormat.ID_NAME.format(name());
         this.api = id.equals("api") || id.equals("test");
         this.implementation = id.equals("implementation") || id.endsWith("-implementation");
         this.provided = id.equals("provided") || id.endsWith("-provided");

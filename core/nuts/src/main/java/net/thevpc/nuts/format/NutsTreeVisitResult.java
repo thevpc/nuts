@@ -49,7 +49,7 @@ public enum NutsTreeVisitResult implements NutsEnum {
     private final String id;
 
     NutsTreeVisitResult() {
-        this.id = NutsNameFormat.ID_NAME.formatName(name());
+        this.id = NutsNameFormat.ID_NAME.format(name());
     }
 
     public static NutsOptional<NutsTreeVisitResult> parse(String value) {

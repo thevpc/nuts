@@ -7,10 +7,30 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class NutsNameFormat {
-    public static final NutsNameFormat ID_NAME = new NutsNameFormat(NutsWordFormat.LOWERCASE, NutsWordFormat.LOWERCASE, "-");
-    public static final NutsNameFormat CONST_NAME = new NutsNameFormat(NutsWordFormat.UPPERCASE, NutsWordFormat.UPPERCASE, "_");
-    public static final NutsNameFormat CLASS_NAME = new NutsNameFormat(NutsWordFormat.CAPITALIZED, NutsWordFormat.CAPITALIZED, null);
-    public static final NutsNameFormat VAR_NAME = new NutsNameFormat(NutsWordFormat.UNCAPITALIZED, NutsWordFormat.CAPITALIZED, null);
+    public static final NutsNameFormat LOWER_CAMEL_CASE = new NutsNameFormat(NutsWordFormat.UNCAPITALIZED, NutsWordFormat.CAPITALIZED, null);
+    public static final NutsNameFormat UPPER_CAMEL_CASE = new NutsNameFormat(NutsWordFormat.CAPITALIZED, NutsWordFormat.CAPITALIZED, null);
+    public static final NutsNameFormat CAMEL_CASE = UPPER_CAMEL_CASE;
+    public static final NutsNameFormat LOWER_KEBAB_CASE = new NutsNameFormat(NutsWordFormat.LOWERCASE, NutsWordFormat.LOWERCASE, "-");
+    public static final NutsNameFormat UPPER_KEBAB_CASE = new NutsNameFormat(NutsWordFormat.UPPERCASE, NutsWordFormat.UPPERCASE, "-");
+    public static final NutsNameFormat KEBAB_CASE = LOWER_KEBAB_CASE;
+    public static final NutsNameFormat LOWER_SNAKE_CASE = new NutsNameFormat(NutsWordFormat.LOWERCASE, NutsWordFormat.LOWERCASE, "_");
+    public static final NutsNameFormat UPPER_SNAKE_CASE = new NutsNameFormat(NutsWordFormat.UPPERCASE, NutsWordFormat.UPPERCASE, "_");
+    public static final NutsNameFormat SNAKE_CASE = LOWER_SNAKE_CASE;
+
+    public static final NutsNameFormat LOWER_SPACE_CASE = new NutsNameFormat(NutsWordFormat.LOWERCASE, NutsWordFormat.LOWERCASE, " ");
+    public static final NutsNameFormat UPPER_SPACE_CASE = new NutsNameFormat(NutsWordFormat.UPPERCASE, NutsWordFormat.UPPERCASE, " ");
+    public static final NutsNameFormat SPACE_CASE = LOWER_SPACE_CASE;
+
+    public static final NutsNameFormat UPPER_TITLE_CASE = new NutsNameFormat(NutsWordFormat.CAPITALIZED, NutsWordFormat.CAPITALIZED, " ");
+    public static final NutsNameFormat LOWER_TITLE_CASE = new NutsNameFormat(NutsWordFormat.CAPITALIZED, NutsWordFormat.UNCAPITALIZED, " ");
+    public static final NutsNameFormat TITLE_CASE = UPPER_TITLE_CASE;
+
+    public static final NutsNameFormat TITLE_NAME = TITLE_CASE;
+    public static final NutsNameFormat ID_NAME = LOWER_KEBAB_CASE;
+    public static final NutsNameFormat CONST_NAME = UPPER_SNAKE_CASE;
+    public static final NutsNameFormat CLASS_NAME = UPPER_CAMEL_CASE;
+    public static final NutsNameFormat VAR_NAME = LOWER_CAMEL_CASE;
+
     private NutsWordFormat leading;
     private NutsWordFormat next;
     private String sep;
@@ -40,7 +60,7 @@ public class NutsNameFormat {
     }
 
 
-    public static String[] parseName(String value) {
+    public static String[] parse(String value) {
         if (NutsBlankable.isBlank(value)) {
             return new String[]{""};
         }
@@ -121,11 +141,11 @@ public class NutsNameFormat {
         return all.toArray(new String[0]);
     }
 
-    public String formatName(String value) {
-        return formatName(parseName(value));
+    public String format(String value) {
+        return format(parse(value));
     }
 
-    public String formatName(String[] value) {
+    public String format(String[] value) {
         StringBuilder sb = new StringBuilder();
         if (value.length > 0) {
             sb.append(leading.formatWord(value[0]));

@@ -84,7 +84,7 @@ public enum NutsShellFamily implements NutsEnum {
     private final String id;
 
     NutsShellFamily() {
-        this.id = NutsNameFormat.ID_NAME.formatName(name());
+        this.id = NutsNameFormat.ID_NAME.format(name());
     }
 
     private static NutsShellFamily _resolveCurrent() {

@@ -73,7 +73,7 @@ public enum NutsTerminalMode implements NutsEnum {
      * default constructor
      */
     NutsTerminalMode() {
-        this.id = NutsNameFormat.ID_NAME.formatName(name());
+        this.id = NutsNameFormat.ID_NAME.format(name());
     }
 
     public static NutsOptional<NutsTerminalMode> parse(String value) {

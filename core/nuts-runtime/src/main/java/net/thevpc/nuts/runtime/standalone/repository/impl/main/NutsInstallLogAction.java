@@ -15,7 +15,7 @@ public enum NutsInstallLogAction implements NutsEnum {
     private final String id;
 
     NutsInstallLogAction() {
-        this.id = NutsNameFormat.ID_NAME.formatName(name());
+        this.id = NutsNameFormat.ID_NAME.format(name());
     }
 
     public static NutsOptional<NutsInstallLogAction> parse(String value) {

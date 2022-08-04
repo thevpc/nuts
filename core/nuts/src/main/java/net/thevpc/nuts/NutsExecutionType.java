@@ -69,7 +69,7 @@ public enum NutsExecutionType implements NutsEnum {
     private final String id;
 
     NutsExecutionType() {
-        this.id = NutsNameFormat.ID_NAME.formatName(name());
+        this.id = NutsNameFormat.ID_NAME.format(name());
     }
 
     public static NutsOptional<NutsExecutionType> parse(String value) {

@@ -74,7 +74,7 @@ public enum NutsExecutableType implements NutsEnum {
      * default constructor
      */
     NutsExecutableType() {
-        this.id = NutsNameFormat.ID_NAME.formatName(name());
+        this.id = NutsNameFormat.ID_NAME.format(name());
     }
 
     public static NutsOptional<NutsExecutableType> parse(String value) {

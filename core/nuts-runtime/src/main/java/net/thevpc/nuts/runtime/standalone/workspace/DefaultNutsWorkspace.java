@@ -2037,7 +2037,7 @@ public class DefaultNutsWorkspace extends AbstractNutsWorkspace implements NutsW
         private final String id;
 
         InstallStrategy0() {
-            this.id = NutsNameFormat.ID_NAME.formatName(name());
+            this.id = NutsNameFormat.ID_NAME.format(name());
         }
 
         public static NutsOptional<InstallStrategy0> parse(String value) {

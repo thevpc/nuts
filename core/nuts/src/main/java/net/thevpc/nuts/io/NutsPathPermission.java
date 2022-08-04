@@ -87,7 +87,7 @@ public enum NutsPathPermission implements NutsEnum {
     private final String id;
 
     NutsPathPermission() {
-        this.id = NutsNameFormat.ID_NAME.formatName(name());
+        this.id = NutsNameFormat.ID_NAME.format(name());
     }
 
     public static NutsOptional<NutsPathPermission> parse(String value) {

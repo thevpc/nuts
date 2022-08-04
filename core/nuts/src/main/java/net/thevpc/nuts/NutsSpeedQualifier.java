@@ -81,7 +81,7 @@ public enum NutsSpeedQualifier implements NutsEnum {
      * Default constructor
      */
     NutsSpeedQualifier() {
-        this.id = NutsNameFormat.ID_NAME.formatName(name());
+        this.id = NutsNameFormat.ID_NAME.format(name());
     }
 
     public static NutsOptional<NutsSpeedQualifier> parse(String value) {

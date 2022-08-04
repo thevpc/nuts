@@ -74,7 +74,7 @@ public enum NutsDescriptorFlag implements NutsEnum {
      * private constructor
      */
     NutsDescriptorFlag() {
-        this.id = NutsNameFormat.ID_NAME.formatName(name());
+        this.id = NutsNameFormat.ID_NAME.format(name());
     }
 
     public static NutsOptional<NutsDescriptorFlag> parse(String value) {

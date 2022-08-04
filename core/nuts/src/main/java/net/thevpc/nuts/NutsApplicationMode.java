@@ -86,7 +86,7 @@ public enum NutsApplicationMode implements NutsEnum {
      * default constructor
      */
     NutsApplicationMode() {
-        this.id = NutsNameFormat.ID_NAME.formatName(name());
+        this.id = NutsNameFormat.ID_NAME.format(name());
     }
 
     public static NutsOptional<NutsApplicationMode> parse(String value) {

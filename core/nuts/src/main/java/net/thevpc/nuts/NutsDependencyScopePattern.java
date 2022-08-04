@@ -138,7 +138,7 @@ public enum NutsDependencyScopePattern implements NutsEnum {
     private final String id;
 
     NutsDependencyScopePattern() {
-        this.id = NutsNameFormat.ID_NAME.formatName(name());
+        this.id = NutsNameFormat.ID_NAME.format(name());
     }
 
     public static NutsOptional<NutsDependencyScopePattern> parse(String value) {

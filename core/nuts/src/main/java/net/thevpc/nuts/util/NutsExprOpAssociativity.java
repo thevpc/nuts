@@ -8,7 +8,7 @@ public enum NutsExprOpAssociativity implements NutsEnum {
     private final String id;
 
     NutsExprOpAssociativity() {
-        this.id = NutsNameFormat.ID_NAME.formatName(name());
+        this.id = NutsNameFormat.ID_NAME.format(name());
     }
 
     public static NutsOptional<NutsExprOpAssociativity> parse(String value) {

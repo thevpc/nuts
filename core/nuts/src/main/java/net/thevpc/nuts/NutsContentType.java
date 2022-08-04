@@ -92,7 +92,7 @@ public enum NutsContentType implements NutsEnum {
      * private constructor
      */
     NutsContentType() {
-        this.id = NutsNameFormat.ID_NAME.formatName(name());
+        this.id = NutsNameFormat.ID_NAME.format(name());
     }
 
     public static NutsOptional<NutsContentType> parse(String value) {

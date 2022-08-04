@@ -37,7 +37,7 @@ public enum NutsReflectPropertyAccessStrategy implements NutsEnum {
     private final String id;
 
     NutsReflectPropertyAccessStrategy() {
-        this.id = NutsNameFormat.ID_NAME.formatName(name());
+        this.id = NutsNameFormat.ID_NAME.format(name());
     }
 
     public static NutsOptional<NutsReflectPropertyAccessStrategy> parse(String value) {

@@ -36,7 +36,7 @@ public enum NutsReflectPropertyDefaultValueStrategy implements NutsEnum {
     private final String id;
 
     NutsReflectPropertyDefaultValueStrategy() {
-        this.id = NutsNameFormat.ID_NAME.formatName(name());
+        this.id = NutsNameFormat.ID_NAME.format(name());
     }
 
     public static NutsOptional<NutsReflectPropertyDefaultValueStrategy> parse(String value) {

@@ -65,7 +65,7 @@ public enum NutsArgumentType implements NutsEnum {
      * Default constructor
      */
     NutsArgumentType() {
-        this.id = NutsNameFormat.ID_NAME.formatName(name());
+        this.id = NutsNameFormat.ID_NAME.format(name());
     }
 
     public static NutsOptional<NutsArgumentType> parse(String value) {

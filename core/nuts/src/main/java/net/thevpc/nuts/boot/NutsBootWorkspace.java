@@ -575,7 +575,7 @@ public final class NutsBootWorkspace {
             } else {
                 NutsVersion nutsVersion = computedOptions.getApiVersion().orElse(NutsVersion.BLANK);
                 if (nutsVersion.isLatestVersion() || nutsVersion.isReleaseVersion()) {
-                    NutsId s = NutsReservedMavenUtils.resolveLatestMavenId(NutsId.ofApi("").get(), null, bLog, resolveBootRuntimeRepositories(true));
+                    NutsId s = NutsReservedMavenUtils.resolveLatestMavenId(NutsId.ofApi("").get(), null, bLog, resolveBootRuntimeRepositories(true), computedOptions);
                     if (s == null) {
                         throw new NutsBootException(NutsMessage.ofPlain("unable to load latest nuts version"));
                     }
@@ -623,10 +623,10 @@ public final class NutsBootWorkspace {
                     //load from local lib folder
                     NutsId runtimeId = null;
                     if (!resetFlag && !computedOptions.getRecover().orElse(false)) {
-                        runtimeId = NutsReservedMavenUtils.resolveLatestMavenId(NutsId.of(NutsConstants.Ids.NUTS_RUNTIME).get(), (rtVersion) -> rtVersion.getValue().startsWith(apiVersion + "."), bLog, Collections.singletonList(NutsRepositoryLocation.of("nuts@" + computedOptions.getStoreLocation(NutsStoreLocation.LIB).get() + File.separatorChar + NutsConstants.Folders.ID)));
+                        runtimeId = NutsReservedMavenUtils.resolveLatestMavenId(NutsId.of(NutsConstants.Ids.NUTS_RUNTIME).get(), (rtVersion) -> rtVersion.getValue().startsWith(apiVersion + "."), bLog, Collections.singletonList(NutsRepositoryLocation.of("nuts@" + computedOptions.getStoreLocation(NutsStoreLocation.LIB).get() + File.separatorChar + NutsConstants.Folders.ID)), computedOptions);
                     }
                     if (runtimeId == null) {
-                        runtimeId = NutsReservedMavenUtils.resolveLatestMavenId(NutsId.of(NutsConstants.Ids.NUTS_RUNTIME).get(), (rtVersion) -> rtVersion.getValue().startsWith(apiVersion + "."), bLog, resolveBootRuntimeRepositories(true));
+                        runtimeId = NutsReservedMavenUtils.resolveLatestMavenId(NutsId.of(NutsConstants.Ids.NUTS_RUNTIME).get(), (rtVersion) -> rtVersion.getValue().startsWith(apiVersion + "."), bLog, resolveBootRuntimeRepositories(true), computedOptions);
                     }
                     if (runtimeId == null) {
                         bLog.log(Level.FINEST, NutsLoggerVerb.FAIL, NutsMessage.ofPlain("unable to resolve latest runtime-id version (is connection ok?)"));

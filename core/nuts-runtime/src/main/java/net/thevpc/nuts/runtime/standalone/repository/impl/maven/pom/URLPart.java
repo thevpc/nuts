@@ -32,24 +32,24 @@ package net.thevpc.nuts.runtime.standalone.repository.impl.maven.pom;
  */
 public class URLPart {
 
-    private String type;
+    private Type type;
     private String path;
 
-    public URLPart(String type, String path) {
+    public URLPart(Type type, String path) {
         this.type = type;
         this.path = path;
     }
 
     public String getName() {
         String n = path;
-        final int p = n.lastIndexOf('/');
+        final int p = n.replace('\\','/').lastIndexOf('/');
         if (p > 0) {
             n = path.substring(p + 1);
         }
         return n;
     }
 
-    public String getType() {
+    public Type getType() {
         return type;
     }
 
@@ -62,4 +62,7 @@ public class URLPart {
         return "PathItem{" + "type=" + type + ", path=" + path + '}';
     }
 
+    public enum Type{
+        WEB, FS_FILE,URL_FILE,URL,JAR
+    }
 }

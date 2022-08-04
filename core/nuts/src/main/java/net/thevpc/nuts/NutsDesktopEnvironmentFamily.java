@@ -64,7 +64,7 @@ public enum NutsDesktopEnvironmentFamily implements NutsEnum {
     private final String id;
 
     NutsDesktopEnvironmentFamily() {
-        this.id = NutsNameFormat.ID_NAME.formatName(name());
+        this.id = NutsNameFormat.ID_NAME.format(name());
     }
 
     public static NutsOptional<NutsDesktopEnvironmentFamily> parse(String value) {

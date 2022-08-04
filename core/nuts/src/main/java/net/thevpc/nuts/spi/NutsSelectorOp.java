@@ -38,7 +38,7 @@ public enum NutsSelectorOp implements NutsEnum {
     private final String id;
 
     NutsSelectorOp() {
-        this.id = NutsNameFormat.ID_NAME.formatName(name());
+        this.id = NutsNameFormat.ID_NAME.format(name());
     }
 
 

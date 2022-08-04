@@ -9,7 +9,7 @@ public enum NutsMemoryUnit implements NutsEnum {
     private String id;
 
     NutsMemoryUnit() {
-        this.id = NutsNameFormat.ID_NAME.formatName(name());
+        this.id = NutsNameFormat.ID_NAME.format(name());
     }
 
     @Override

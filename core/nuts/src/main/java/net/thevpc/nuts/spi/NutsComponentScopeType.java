@@ -60,7 +60,7 @@ public enum NutsComponentScopeType implements NutsEnum {
      * default constructor
      */
     NutsComponentScopeType() {
-        this.id = NutsNameFormat.ID_NAME.formatName(name());
+        this.id = NutsNameFormat.ID_NAME.format(name());
     }
 
     public static NutsOptional<NutsComponentScopeType> parse(String value) {

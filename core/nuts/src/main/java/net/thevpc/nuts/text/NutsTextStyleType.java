@@ -73,7 +73,7 @@ public enum NutsTextStyleType implements NutsEnum {
 
     NutsTextStyleType(boolean basic) {
         this.basic = basic;
-        this.id = NutsNameFormat.ID_NAME.formatName(name());
+        this.id = NutsNameFormat.ID_NAME.format(name());
     }
 
     public static NutsOptional<NutsTextStyleType> parse(String value) {

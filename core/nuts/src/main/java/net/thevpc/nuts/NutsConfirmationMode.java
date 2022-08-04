@@ -65,7 +65,7 @@ public enum NutsConfirmationMode implements NutsEnum {
     private final String id;
 
     NutsConfirmationMode() {
-        this.id = NutsNameFormat.ID_NAME.formatName(name());
+        this.id = NutsNameFormat.ID_NAME.format(name());
     }
 
     public static NutsOptional<NutsConfirmationMode> parse(String value) {

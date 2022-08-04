@@ -27,9 +27,8 @@
 package net.thevpc.nuts.runtime.standalone.repository.impl.maven.pom;
 
 import java.io.*;
-import java.net.JarURLConnection;
-import java.net.MalformedURLException;
-import java.net.URL;
+import java.net.*;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Enumeration;
@@ -51,20 +50,27 @@ public class URLParts {
 
     public URLParts(String r) {
         if (r.startsWith("file:")) {
-            values = new URLPart[]{new URLPart("file", r)};
+            try {
+                values = new URLPart[]{new URLPart(URLPart.Type.URL_FILE, Paths.get(new URI(r)).toFile().getPath())};
+            } catch (URISyntaxException e) {
+                throw new RuntimeException(e);
+            }
         } else if (r.startsWith("http:") || r.startsWith("https:") || r.startsWith("ftp:")) {
-            values = new URLPart[]{new URLPart("web", r)};
+            values = new URLPart[]{new URLPart(URLPart.Type.WEB, r)};
         } else if (r.startsWith("jar:")) {
             final String r2 = r.substring(4);
             int x = r2.indexOf('!');
             List<URLPart> rr = new ArrayList<>();
-            rr.add(new URLPart("jar", r2.substring(0, x)));
+            rr.add(new URLPart(URLPart.Type.JAR, r2.substring(0, x)));
             for (URLPart pathItem : new URLParts(r2.substring(x + 1)).values) {
                 rr.add(pathItem);
             }
             values = rr.toArray(new URLPart[0]);
-        } else if (r.startsWith("/")) {
-            values = new URLPart[]{new URLPart("/", r.substring(1))};
+        } else if (
+                r.startsWith("/")
+                        || (r.length()>=2 && Character.isAlphabetic(r.charAt(0)) && r.charAt(1)==':')
+        ) {
+            values = new URLPart[]{new URLPart(URLPart.Type.FS_FILE, r)};
         } else {
             throw new UnsupportedOperationException("unsupported protocol " + r);
         }
@@ -119,9 +125,30 @@ public class URLParts {
         for (int i = 0; i < values.length; i++) {
             URLPart value = values[i];
             switch (value.getType()) {
-                case "/": {
+                case FS_FILE: {
                     if (parent == null) {
-                        parent = new File("/" + value.getPath());
+                        parent = new File(value.getPath());
+                        if(i==values.length-1){
+                            File f2=((File)parent);
+                            final File[] listFiles = f2.listFiles(new FileFilter() {
+                                @Override
+                                public boolean accept(File pathname) {
+                                    try {
+                                        return filter == null || filter.accept(pathname.toURI().toURL());
+                                    } catch (MalformedURLException ex) {
+                                        return false;
+                                    }
+                                }
+                            });
+                            if (listFiles == null) {
+                                return new URL[0];
+                            }
+                            URL[] found = new URL[listFiles.length];
+                            for (int j = 0; j < found.length; j++) {
+                                found[j] = (listFiles[i]).toURI().toURL();
+                            }
+                            return found;
+                        }
                     } else if (parent instanceof File) {
                         File f2 = new File((File) parent, value.getPath());
                         if (i == values.length - 1) {
@@ -177,8 +204,9 @@ public class URLParts {
                     } else {
                         throw new UnsupportedOperationException( "unsupported");
                     }
+                    break;
                 }
-                case "file": {
+                case URL_FILE: {
                     if (parent == null) {
                         File f2 = new File((File) parent, value.getPath());
                         if (i == values.length - 1) {
@@ -207,9 +235,18 @@ public class URLParts {
                         throw new UnsupportedOperationException("unsupported");
                     }
                 }
-                case "jar": {
+                case JAR: {
                     if (parent == null) {
                         parent = new URL("jar:" + value.getPath() + "!/");
+                    } else {
+                        throw new IllegalArgumentException("unsupported");
+                    }
+                    break;
+                }
+                case URL:
+                case WEB: {
+                    if (parent == null) {
+                        parent = new URL(value.getPath());
                     } else {
                         throw new IllegalArgumentException("unsupported");
                     }
@@ -223,23 +260,31 @@ public class URLParts {
         Object parent = null;
         for (URLPart value : values) {
             switch (value.getType()) {
-                case "/": {
+                case FS_FILE: {
                     if (parent == null) {
                         parent = new File(value.getPath());
                     } else {
                         throw new IllegalArgumentException( "unsupported");
                     }
                 }
-                case "file": {
+                case URL_FILE: {
                     if (parent == null) {
                         parent = new URL(value.getPath());
                     } else {
                         throw new UnsupportedOperationException( "unsupported");
                     }
                 }
-                case "jar": {
+                case JAR: {
                     if (parent == null) {
                         parent = new URL(value.getPath()).openStream();
+                    } else {
+                        throw new UnsupportedOperationException( "unsupported");
+                    }
+                }
+                case URL:
+                case WEB:{
+                    if (parent == null) {
+                        parent = new URL(value.getPath());
                     } else {
                         throw new UnsupportedOperationException( "unsupported");
                     }

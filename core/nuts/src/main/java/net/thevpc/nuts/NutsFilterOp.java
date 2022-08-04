@@ -46,7 +46,7 @@ public enum NutsFilterOp implements NutsEnum {
     private final String id;
 
     NutsFilterOp() {
-        this.id = NutsNameFormat.ID_NAME.formatName(name());
+        this.id = NutsNameFormat.ID_NAME.format(name());
     }
 
     public static NutsOptional<NutsFilterOp> parse(String value) {

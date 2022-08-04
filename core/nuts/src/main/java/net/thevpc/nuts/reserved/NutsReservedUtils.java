@@ -150,7 +150,7 @@ public final class NutsReservedUtils {
         }
         String ss
                 =
-                (s instanceof Enum) ?NutsNameFormat.CONST_NAME.formatName(((Enum<?>) s).name())
+                (s instanceof Enum) ?NutsNameFormat.CONST_NAME.format(((Enum<?>) s).name())
                 : s.toString().trim();
         return ss.isEmpty() ? "<EMPTY>" : ss;
     }

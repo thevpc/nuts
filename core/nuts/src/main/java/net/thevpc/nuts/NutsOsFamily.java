@@ -66,7 +66,7 @@ public enum NutsOsFamily implements NutsEnum {
     private final String id;
 
     NutsOsFamily() {
-        this.id = NutsNameFormat.ID_NAME.formatName(name());
+        this.id = NutsNameFormat.ID_NAME.format(name());
     }
 
     public static NutsOptional<NutsOsFamily> parse(String value) {

@@ -50,7 +50,7 @@ public enum NutsStoreLocationStrategy implements NutsEnum {
     private final String id;
 
     NutsStoreLocationStrategy() {
-        this.id = NutsNameFormat.ID_NAME.formatName(name());
+        this.id = NutsNameFormat.ID_NAME.format(name());
     }
 
     public static NutsOptional<NutsStoreLocationStrategy> parse(String value) {

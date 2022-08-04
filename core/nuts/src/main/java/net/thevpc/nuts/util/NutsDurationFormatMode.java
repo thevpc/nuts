@@ -15,7 +15,7 @@ public enum NutsDurationFormatMode implements NutsEnum {
      * private constructor
      */
     NutsDurationFormatMode() {
-        this.id = NutsNameFormat.ID_NAME.formatName(name());
+        this.id = NutsNameFormat.ID_NAME.format(name());
     }
 
     public static NutsOptional<NutsDurationFormatMode> parse(String value) {

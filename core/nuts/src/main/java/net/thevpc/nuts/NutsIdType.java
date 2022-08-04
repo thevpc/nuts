@@ -76,7 +76,7 @@ public enum NutsIdType implements NutsEnum {
     private final String id;
 
     NutsIdType() {
-        this.id = NutsNameFormat.ID_NAME.formatName(name());
+        this.id = NutsNameFormat.ID_NAME.format(name());
     }
 
     public static NutsOptional<NutsIdType> parse(String value) {

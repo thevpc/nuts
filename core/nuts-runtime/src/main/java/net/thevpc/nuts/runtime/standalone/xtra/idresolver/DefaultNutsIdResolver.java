@@ -1,12 +1,18 @@
 package net.thevpc.nuts.runtime.standalone.xtra.idresolver;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.runtime.standalone.repository.impl.maven.pom.PomXmlParser;
 import net.thevpc.nuts.runtime.standalone.repository.impl.maven.util.MavenUtils;
 import net.thevpc.nuts.runtime.standalone.repository.impl.maven.pom.PomId;
 import net.thevpc.nuts.spi.NutsSupportLevelContext;
+import net.thevpc.nuts.util.NutsLoggerOp;
+import net.thevpc.nuts.util.NutsLoggerVerb;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.logging.Level;
 
 public class DefaultNutsIdResolver implements NutsIdResolver {
 
@@ -18,21 +24,33 @@ public class DefaultNutsIdResolver implements NutsIdResolver {
 
     @Override
     public NutsId resolveId(Class clazz) {
-        PomId u = MavenUtils.createPomIdResolver(session).resolvePomId(clazz, null);
-        if (u == null) {
+        List<NutsId> pomIds = resolveIds(clazz);
+        NutsId defaultValue = null;
+        if (pomIds.isEmpty()) {
             return null;
         }
-        return NutsId.of(u.getGroupId() + ":" + u.getArtifactId() + "#" + u.getVersion()).get(session);
+        if (pomIds.size() > 1) {
+            NutsLoggerOp.of(PomXmlParser.class, session)
+                    .verb(NutsLoggerVerb.WARNING)
+                    .level(Level.FINEST)
+                    .log(NutsMessage.ofCstyle(
+                            "multiple ids found : %s for class %s and id %s",
+                            Arrays.asList(pomIds), clazz, defaultValue
+                    ));
+        }
+        return pomIds.get(0);
     }
 
     @Override
     public List<NutsId> resolveIds(Class clazz) {
         PomId[] u = MavenUtils.createPomIdResolver(session).resolvePomIds(clazz);
-        NutsId[] all = new NutsId[u.length];
-        for (int i = 0; i < all.length; i++) {
-            all[i] = NutsId.of(u[i].getGroupId() + ":" + u[i].getArtifactId() + "#" + u[i].getVersion()).get(session);
+        LinkedHashSet<NutsId> all = new LinkedHashSet<>(
+                Arrays.asList(new PomIdResolver2(session).resolvePomIds(clazz))
+        );
+        for (PomId uu : u) {
+            all.add(NutsId.of(uu.getGroupId() + ":" + uu.getArtifactId() + "#" + uu.getVersion()).get(session));
         }
-        return Arrays.asList(all);
+        return new ArrayList<>(all);
     }
 
     @Override

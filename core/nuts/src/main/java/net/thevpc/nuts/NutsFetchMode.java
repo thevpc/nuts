@@ -73,7 +73,7 @@ public enum NutsFetchMode implements NutsEnum {
     private final String id;
 
     NutsFetchMode() {
-        this.id = NutsNameFormat.ID_NAME.formatName(name());
+        this.id = NutsNameFormat.ID_NAME.format(name());
     }
 
     public static NutsOptional<NutsFetchMode> parse(String value) {
