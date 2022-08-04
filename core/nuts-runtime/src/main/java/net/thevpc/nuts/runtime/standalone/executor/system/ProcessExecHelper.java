@@ -242,7 +242,7 @@ public class ProcessExecHelper extends AbstractSyncIProcessExecHelper {
             case WINDOWS: {
                 String s = (String) session.getProperty("nuts.windows.root-user");
                 if (s == null) {
-                    s = session.config().getConfigProperty("nuts.windows.root-user").flatMap(NutsValue::asString).get(session);
+                    s = session.config().getConfigProperty("nuts.windows.root-user").flatMap(NutsValue::asString).orNull();
                 }
                 if (NutsBlankable.isBlank(s)) {
                     s = "Administrator";
