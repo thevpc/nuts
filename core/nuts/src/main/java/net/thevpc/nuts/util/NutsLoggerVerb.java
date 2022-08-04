@@ -74,6 +74,7 @@ public final class NutsLoggerVerb {
      * Log verb used for tracing cache related operations
      */
     public static final NutsLoggerVerb CACHE = of("CACHE");
+    public static final NutsLoggerVerb PROGRESS = of("PROGRESS");
 
     private final String name;
 

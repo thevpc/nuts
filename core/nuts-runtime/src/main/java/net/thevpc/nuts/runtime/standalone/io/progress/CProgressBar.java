@@ -9,9 +9,12 @@ import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Function;
+import java.util.logging.Level;
 
 import net.thevpc.nuts.runtime.standalone.workspace.NutsWorkspaceUtils;
 import net.thevpc.nuts.text.*;
+import net.thevpc.nuts.util.NutsLogger;
+import net.thevpc.nuts.util.NutsLoggerVerb;
 
 /**
  * inspired by
@@ -27,6 +30,7 @@ public class CProgressBar {
     private int maxMessage = 0;
     private float indeterminateRatio = 0.3f;
     private NutsSession session;
+    private NutsLogger logger;
     private int columns = 3;
     private int maxColumns = 133;
     private boolean suffixMoveLineStart = true;
@@ -34,17 +38,17 @@ public class CProgressBar {
     private long lastPrint = 0;
     private long minPeriod = 0;
     private IndeterminatePosition indeterminatePosition = DEFAULT_INDETERMINATE_POSITION;
-    private boolean optionNewline;
+    private ProgressOptions options;
     private Formatter formatter;
     private NutsWorkspace ws;
     private static Map<String, Function<NutsSession, Formatter>> formatters = new HashMap();
 
     static {
-        reg("",session-> {
+        reg("", session -> {
             NutsTexts txt = NutsTexts.of(session);
             return CorePlatformUtils.SUPPORTS_UTF_ENCODING ? createFormatter("braille", session) : createFormatter("simple", session);
         });
-        reg( "square",session-> {
+        reg("square", session -> {
             NutsTexts txt = NutsTexts.of(session);
             if (!CorePlatformUtils.SUPPORTS_UTF_ENCODING) {
                 return null;
@@ -56,10 +60,10 @@ public class CProgressBar {
                     },
                     new NutsText[]{txt.ofStyled("⬛", NutsTextStyle.primary1())},
                     10,
-                    -1,10,10
+                    -1, 10, 10
             );
         });
-        reg( "vbar",session-> {
+        reg("vbar", session -> {
             //" ▁▂▃▄▅▆▇█"
             if (!CorePlatformUtils.SUPPORTS_UTF_ENCODING) {
                 return null;
@@ -97,11 +101,11 @@ public class CProgressBar {
                             txt.ofStyled("▂", NutsTextStyle.primary1()),
                             txt.ofStyled("▁", NutsTextStyle.primary1()),
                     },
-                    1, 1,10,10
+                    1, 1, 10, 10
             );
         });
 
-        reg( "shadow",session-> {
+        reg("shadow", session -> {
             NutsTexts txt = NutsTexts.of(session);
             //" ░▒▓█"
             if (!CorePlatformUtils.SUPPORTS_UTF_ENCODING) {
@@ -118,10 +122,10 @@ public class CProgressBar {
                     new NutsText[]{
                             txt.ofStyled("█", NutsTextStyle.primary1()),
                     },
-                    1, 1,10,10
+                    1, 1, 10, 10
             );
         });
-        reg( "hbar",session-> {
+        reg("hbar", session -> {
             NutsTexts txt = NutsTexts.of(session);
             //" ▏▎▍▌▋▊▉█"
             if (!CorePlatformUtils.SUPPORTS_UTF_ENCODING) {
@@ -142,10 +146,10 @@ public class CProgressBar {
                     new NutsText[]{
                             txt.ofStyled("█", NutsTextStyle.primary1()),
                     },
-                    10, -1,10,10
+                    10, -1, 10, 10
             );
         });
-        reg( "circle",session-> {
+        reg("circle", session -> {
             NutsTexts txt = NutsTexts.of(session);
             if (!CorePlatformUtils.SUPPORTS_UTF_ENCODING) {
                 return null;
@@ -156,10 +160,10 @@ public class CProgressBar {
                             txt.ofStyled("⚫", NutsTextStyle.primary1()),
                     },
                     new NutsText[]{txt.ofStyled("⚫", NutsTextStyle.primary1())},
-                    10, -1,10,10
+                    10, -1, 10, 10
             );
         });
-        reg( "parallelogram",session-> {
+        reg("parallelogram", session -> {
             NutsTexts txt = NutsTexts.of(session);
             if (!CorePlatformUtils.SUPPORTS_UTF_ENCODING) {
                 return null;
@@ -170,10 +174,10 @@ public class CProgressBar {
                             txt.ofStyled("▰", NutsTextStyle.primary1()),
                     },
                     new NutsText[]{txt.ofStyled("▰", NutsTextStyle.primary1())},
-                    10, -1,10,10
+                    10, -1, 10, 10
             );
         });
-        reg( "simple",session-> {
+        reg("simple", session -> {
             NutsTexts txt = NutsTexts.of(session);
             return new SimpleFormatter("simple",
                     new NutsText[]{
@@ -184,10 +188,10 @@ public class CProgressBar {
                     null,
                     txt.ofStyled("[", NutsTextStyle.primary4()),
                     txt.ofStyled("]", NutsTextStyle.primary4()),
-                    10, -1,10,10
+                    10, -1, 10, 10
             );
         });
-        reg( "clock",session-> {
+        reg("clock", session -> {
             NutsTexts txt = NutsTexts.of(session);
             if (!CorePlatformUtils.SUPPORTS_UTF_ENCODING) {
                 return null;
@@ -203,10 +207,10 @@ public class CProgressBar {
                             txt.ofStyled("\u25CF", NutsTextStyle.primary1()),
                     },
                     new NutsText[]{txt.ofStyled("\u25CF", NutsTextStyle.primary1())}
-                    , 1, 1,10,10
+                    , 1, 1, 10, 10
             );
         });
-        reg( "braille",session-> {
+        reg("braille", session -> {
             NutsTexts txt = NutsTexts.of(session);
             if (!CorePlatformUtils.SUPPORTS_UTF_ENCODING) {
                 return null;
@@ -236,7 +240,7 @@ public class CProgressBar {
                             txt.ofStyled("\u282A", NutsTextStyle.primary1()),// ⠪
                             txt.ofStyled("\u283A", NutsTextStyle.primary1()),// ⠺
                     }
-                    , 1, 1,10,10
+                    , 1, 1, 10, 10
             );
         });
     }
@@ -255,12 +259,12 @@ public class CProgressBar {
 
     public CProgressBar(NutsSession session, int determinateSize) {
         this.session = session;
-        ProgressOptions o = ProgressOptions.of(session);
-        this.optionNewline = o.isArmedNewline();
+        this.logger = NutsLogger.of(CProgressBar.class, this.session);
+        this.options = ProgressOptions.of(session);
         this.ws = session.getWorkspace();
-        this.formatter = createFormatter(o.get("type").flatMap(NutsValue::asString).orElse(""), session);
+        this.formatter = createFormatter(options.get("type").flatMap(NutsValue::asString).orElse(""), session);
         if (determinateSize <= 0) {
-            determinateSize = o.get("size").flatMap(NutsValue::asInt).orElse(formatter.getDefaultWidth());
+            determinateSize = options.get("size").flatMap(NutsValue::asInt).orElse(formatter.getDefaultWidth());
         }
         setDeterminateSize(determinateSize);
     }
@@ -271,9 +275,9 @@ public class CProgressBar {
 
     public static Formatter createFormatter(String name, NutsSession session) {
         Function<NutsSession, Formatter> e = formatters.get(name);
-        if(e!=null){
+        if (e != null) {
             Formatter u = e.apply(session);
-            if(u!=null) {
+            if (u != null) {
                 return u;
             }
         }
@@ -342,15 +346,15 @@ public class CProgressBar {
         private String name;
 
         public SimpleFormatter(String name, NutsText[] style, int defaultWidth, int maxWidth, int defaultIndeterminateWidth, int maxIndeterminateWidth) {
-            this(name, style, null, null, null, null, defaultWidth, maxWidth,defaultIndeterminateWidth, maxIndeterminateWidth);
+            this(name, style, null, null, null, null, defaultWidth, maxWidth, defaultIndeterminateWidth, maxIndeterminateWidth);
         }
 
         public SimpleFormatter(String name, NutsText[] style, NutsText[] forward, int defaultWidth, int maxWidth, int defaultIndeterminateWidth, int maxIndeterminateWidth) {
-            this(name, style, forward, null, null, null, defaultWidth, maxWidth,defaultIndeterminateWidth, maxIndeterminateWidth);
+            this(name, style, forward, null, null, null, defaultWidth, maxWidth, defaultIndeterminateWidth, maxIndeterminateWidth);
         }
 
         public SimpleFormatter(String name, NutsText[] style, NutsText[] forward, NutsText[] backward, int defaultWidth, int maxWidth, int defaultIndeterminateWidth, int maxIndeterminateWidth) {
-            this(name, style, forward, backward, null, null, defaultWidth, maxWidth,defaultIndeterminateWidth, maxIndeterminateWidth);
+            this(name, style, forward, backward, null, null, defaultWidth, maxWidth, defaultIndeterminateWidth, maxIndeterminateWidth);
         }
 
         public SimpleFormatter(String name, NutsText[] style, NutsText[] forward, NutsText[] backward, NutsText start, NutsText end, int defaultWidth, int maxWidth, int defaultIndeterminateWidth, int maxIndeterminateWidth) {
@@ -368,8 +372,8 @@ public class CProgressBar {
             this.intermediateBackwardStyle = backward;
             this.start = start;
             this.end = end;
-            this.maxIndeterminateWidth =maxIndeterminateWidth;
-            this.defaultIndeterminateWidth =defaultIndeterminateWidth;
+            this.maxIndeterminateWidth = maxIndeterminateWidth;
+            this.defaultIndeterminateWidth = defaultIndeterminateWidth;
         }
 
         public int getMaxWidth() {
@@ -586,7 +590,14 @@ public class CProgressBar {
         if (p == null || p.isEmpty()) {
             return;
         }
-        out.print(p);
+        Level armedLogLevel = options.getArmedLogLevel();
+        if (armedLogLevel!=null) {
+            logger.with().verb(NutsLoggerVerb.PROGRESS)
+                    .level(armedLogLevel)
+                    .log(NutsMessage.ofNtf(p));
+        } else {
+            out.print(p);
+        }
     }
 
     public NutsText progress(int percent, NutsText msg) {
@@ -600,14 +611,17 @@ public class CProgressBar {
             msg = txt.ofPlain("");
         }
         s2 = msg.textLength();
-        if (isPrefixMoveLineStart()) {
-            if (optionNewline) {
-                if (!isSuffixMoveLineStart()) {
-                    sb.append("\n");
+        Level armedLogLevel = options.getArmedLogLevel();
+        if (armedLogLevel==null) {
+            if (isPrefixMoveLineStart()) {
+                if (options.isArmedNewline()) {
+                    if (!isSuffixMoveLineStart()) {
+                        sb.append("\n");
+                    }
+                } else {
+                    sb.append(txt.ofCommand(NutsTerminalCommand.CLEAR_LINE));
+                    sb.append(txt.ofCommand(NutsTerminalCommand.MOVE_LINE_START));
                 }
-            } else {
-                sb.append(txt.ofCommand(NutsTerminalCommand.CLEAR_LINE));
-                sb.append(txt.ofCommand(NutsTerminalCommand.MOVE_LINE_START));
             }
         }
         NutsText p = progress(percent);
@@ -618,7 +632,7 @@ public class CProgressBar {
         sb.append(msg);
         sb.append(CoreStringUtils.fillString(' ', maxMessage - s2));
         if (isSuffixMoveLineStart()) {
-            if (optionNewline) {
+            if (armedLogLevel==null && options.isArmedNewline()) {
                 sb.append("\n");
             }
         }

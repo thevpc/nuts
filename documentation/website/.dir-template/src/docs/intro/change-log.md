@@ -36,6 +36,7 @@ Starred releases are most stable ones.
 - ADDED: Added Var Style (dollar based placeholder) in NutsMessage
 - ADDED: added NutsProgressMonitor and monitoring api
 - ADDED: NutsMemorySize and memory size api
+- ADDED: --progress=log now prints progress to log instead of stderr
 - CHANGED: Enum.parseLenient replaced by NutsOptional
 - CHANGED: Rename NutsConstants.IdProperties.DESKTOP_ENVIRONMENT -> NutsConstants.IdProperties.DESKTOP
 - CHANGED: Now NutsWorkspaceOptionsBuilder extends NutsWorkspaceOptions

@@ -375,6 +375,11 @@ Boot Runtime Version: ###${nuts.workspace-runtime.version}###
             progress monitor is disabled
         ```kw newline``` || ```kw %n```
             progress monitor writes every message in a new line
+        ```kw log```
+            progress monitor writes every message to the log as finest (aka verbose)
+        ```kw log=off|severe|warning|info|config|fine|finer|finest|verbose|all```
+        ```kw log-off|log-severe|log-warning|log-info|log-config|log-fine|log-finer|log-finest|log-verbose|log-all```
+            progress monitor writes every message to the log with the selected level
 
 
  ```sh --solver <solverName>``` (default is ```kw default```)

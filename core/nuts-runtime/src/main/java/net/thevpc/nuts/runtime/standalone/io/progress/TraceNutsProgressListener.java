@@ -5,6 +5,7 @@
  */
 package net.thevpc.nuts.runtime.standalone.io.progress;
 
+import net.thevpc.nuts.NutsMessage;
 import net.thevpc.nuts.io.NutsPrintStream;
 import net.thevpc.nuts.runtime.standalone.util.BytesSizeFormat;
 import net.thevpc.nuts.runtime.standalone.util.CoreStringUtils;
@@ -12,10 +13,13 @@ import net.thevpc.nuts.text.NutsText;
 import net.thevpc.nuts.text.NutsTextBuilder;
 import net.thevpc.nuts.text.NutsTextStyle;
 import net.thevpc.nuts.text.NutsTexts;
+import net.thevpc.nuts.util.NutsLogger;
+import net.thevpc.nuts.util.NutsLoggerVerb;
 import net.thevpc.nuts.util.NutsProgressEvent;
 import net.thevpc.nuts.util.NutsProgressListener;
 
 import java.text.DecimalFormat;
+import java.util.logging.Level;
 
 /**
  * @author thevpc
@@ -27,7 +31,8 @@ public class TraceNutsProgressListener implements NutsProgressListener/*, NutsOu
     private int minLength;
     private CProgressBar bar;
     private boolean optionsProcessed = false;
-    private boolean optionNewline = false;
+    private ProgressOptions options;
+    private NutsLogger logger;
 
     public TraceNutsProgressListener() {
 //        this.session = session;
@@ -39,6 +44,7 @@ public class TraceNutsProgressListener implements NutsProgressListener/*, NutsOu
             case START: {
                 bar = CProgressBar.of(event.getSession());
                 this.out = event.getSession().getTerminal().err();
+                this.logger=NutsLogger.of(TraceNutsProgressListener.class,event.getSession());
                 if (event.getSession().isPlainOut()) {
                     onProgress0(event, false);
                 }
@@ -63,16 +69,18 @@ public class TraceNutsProgressListener implements NutsProgressListener/*, NutsOu
     public boolean onProgress0(NutsProgressEvent event, boolean end) {
         if (!optionsProcessed) {
             optionsProcessed = true;
-            optionNewline = ProgressOptions.of(event.getSession()).isArmedNewline();
+            options = ProgressOptions.of(event.getSession());
         }
         double partialSeconds = event.getPartialDuration().getTimeAsDoubleSeconds();
         if (event.getCurrentCount() == 0 || partialSeconds > 0.5 || event.getCurrentCount() == event.getMaxValue()) {
             NutsTexts text = NutsTexts.of(event.getSession());
-            if (!optionNewline) {
-                out.resetLine();
-//                out.run(NutsTerminalCommand.MOVE_LINE_START);
-            } else {
+            Level armedLogLevel = options.getArmedLogLevel();
+            if (options.isArmedNewline()) {
                 out.print("\n");
+            }else if (armedLogLevel!=null) {
+                //
+            }else{
+                out.resetLine();
             }
             double globalSeconds = event.getDuration().getTimeAsDoubleSeconds();
             long globalSpeed = globalSeconds == 0 ? 0 : (long) (event.getCurrentCount() / globalSeconds);
@@ -109,8 +117,14 @@ public class TraceNutsProgressListener implements NutsProgressListener/*, NutsOu
             } else {
                 minLength = length;
             }
-            out.print(ff);
-            out.flush();
+            if (armedLogLevel!=null && logger!=null) {
+                this.logger.with().level(armedLogLevel)
+                        .verb(NutsLoggerVerb.PROGRESS)
+                        .log(NutsMessage.ofNtf(formattedLine.toString()));
+            }else {
+                out.print(ff);
+                out.flush();
+            }
             return true;
         }
         return false;
