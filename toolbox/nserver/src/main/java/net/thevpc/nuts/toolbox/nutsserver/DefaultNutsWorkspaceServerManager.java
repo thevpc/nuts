@@ -58,7 +58,7 @@ public class DefaultNutsWorkspaceServerManager implements NutsWorkspaceServerMan
         }
         NutsServerComponent server = session.extensions().createServiceLoader(NutsServerComponent.class, ServerConfig.class, NutsServerComponent.class.getClassLoader())
                 .loadBest(serverConfig);
-        NutsUtils.requireNonNull(server, session,"server");
+        NutsUtils.requireNonNull(server, "server", session);
         NutsServer s = server.start(session/*.self()*/, serverConfig);
         if (servers.get(s.getServerId()) != null) {
             servers.get(s.getServerId()).stop();
@@ -70,7 +70,7 @@ public class DefaultNutsWorkspaceServerManager implements NutsWorkspaceServerMan
     @Override
     public NutsServer getServer(String serverId) {
         NutsServer nutsServer = servers.get(serverId);
-        NutsUtils.requireNonNull(nutsServer,session,"server "+serverId);
+        NutsUtils.requireNonNull(nutsServer, "server "+serverId, session);
         return nutsServer;
     }
 

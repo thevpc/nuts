@@ -193,7 +193,7 @@ public class MavenNutsDependencySolver implements NutsDependencySolver {
             if (def != null) {
                 dependency = def.getId().toDependency();
             } else {
-                NutsUtils.requireNonNull(dependency,session,"dependency");
+                NutsUtils.requireNonNull(dependency, "dependency", session);
             }
         }
         if (def == null) {

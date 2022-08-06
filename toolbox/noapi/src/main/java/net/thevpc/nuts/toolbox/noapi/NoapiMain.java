@@ -139,7 +139,7 @@ public class NoapiMain implements NutsApplication, NutsAppCmdProcessor {
             commandline.throwMissingArgument(session);
         }
         for (NoapiCmdData d : data) {
-            NutsUtils.requireNonBlank(d.getPath(), session, "path");
+            NutsUtils.requireNonBlank(d.getPath(), "path", session);
             if (!"pdf".equals(d.getCommand())) {
                 throw new NutsIllegalArgumentException(session, NutsMessage.ofCstyle("unsupported command %s", d.getCommand()));
             }

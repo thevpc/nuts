@@ -242,8 +242,8 @@ public class DefaultNutsUncompress implements NutsUncompress {
             format = "zip";
         }
         NutsInputSource _source = source;
-        NutsUtils.requireNonNull(source, getSession(), "source");
-        NutsUtils.requireNonNull(target, getSession(), "target");
+        NutsUtils.requireNonNull(source, "source", getSession());
+        NutsUtils.requireNonNull(target, "target", getSession());
         NutsPath _target = asValidTargetPath();
         if (_target == null) {
             throw new NutsIllegalArgumentException(getSession(), NutsMessage.ofCstyle("invalid target %s", target));
@@ -304,8 +304,8 @@ public class DefaultNutsUncompress implements NutsUncompress {
         if (NutsBlankable.isBlank(format)) {
             format = "zip";
         }
-        NutsUtils.requireNonNull(source, getSession(), "source");
-        NutsUtils.requireNonNull(target, getSession(), "target");
+        NutsUtils.requireNonNull(source, "source", getSession());
+        NutsUtils.requireNonNull(target, "target", getSession());
         NutsPath _target = asValidTargetPath();
         if (_target == null) {
             throw new NutsIllegalArgumentException(getSession(), NutsMessage.ofCstyle("invalid target %s", target));

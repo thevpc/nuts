@@ -116,7 +116,7 @@ public class DefaultNutsDeployCommand extends AbstractNutsDeployCommand {
                 }
             }
         }
-        NutsUtils.requireNonBlank(result,session, "package to deploy");
+        NutsUtils.requireNonBlank(result, "package to deploy", session);
         if (getSession().isTrace()) {
             switch (getSession().getOutputFormat()) {
                 case PLAIN: {
@@ -159,7 +159,7 @@ public class DefaultNutsDeployCommand extends AbstractNutsDeployCommand {
                 NutsFetchCommand p = this.session.fetch()
                         .setSession(session.copy().setTransitive(true));
                 characterizedFile = characterizeForDeploy(contentSource, p, getParseOptions(), session);
-                NutsUtils.requireNonBlank(characterizedFile.getDescriptor(),session, "descriptor");
+                NutsUtils.requireNonBlank(characterizedFile.getDescriptor(), "descriptor", session);
                 descriptor = characterizedFile.getDescriptor();
             }
             String name = this.session.locations().getDefaultIdFilename(descriptor.getId().builder().setFaceDescriptor().build());

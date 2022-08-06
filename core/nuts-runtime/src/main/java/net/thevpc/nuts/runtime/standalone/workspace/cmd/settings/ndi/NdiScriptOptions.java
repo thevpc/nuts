@@ -217,7 +217,7 @@ public class NdiScriptOptions implements Cloneable {
                 } catch (IOException e) {
                     throw new NutsIOException(session, e);
                 }
-                NutsUtils.requireNonBlank(_latestVersion,session,"missing nuts-api version to link to");
+                NutsUtils.requireNonBlank(_latestVersion, "missing nuts-api version to link to", session);
                 nutsApiId = session.getWorkspace().getApiId().builder().setVersion(_latestVersion).build();
             }
         }

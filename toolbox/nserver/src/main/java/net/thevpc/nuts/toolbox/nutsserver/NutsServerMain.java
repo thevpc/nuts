@@ -169,7 +169,7 @@ public class NutsServerMain implements NutsApplication {
                         wsContext = "";
                     }
                     if (NutsBlankable.isBlank(wsContext)) {
-                        NutsUtils.requireNonNull(context.getWorkspace(), session, "workspace");
+                        NutsUtils.requireNonNull(context.getWorkspace(), "workspace", session);
                         nutsSession = session;
                         server.workspaces.put(wsContext, nutsSession);
                     } else {
@@ -204,8 +204,8 @@ public class NutsServerMain implements NutsApplication {
                         config.getWorkspaces().putAll(server.workspaces);
                         if ("https".equals(server.serverType)) {
                             config.setTls(true);
-                            NutsUtils.requireNonBlank(server.sslCertificate, session, "SSL certificate");
-                            NutsUtils.requireNonBlank(server.sslPassphrase, session, "SSL passphrase");
+                            NutsUtils.requireNonBlank(server.sslCertificate, "SSL certificate", session);
+                            NutsUtils.requireNonBlank(server.sslPassphrase, "SSL passphrase", session);
                             try {
                                 config.setSslKeystoreCertificate(_IOUtils.loadByteArray(new File(server.sslCertificate)));
                             } catch (IOException e) {
@@ -445,7 +445,7 @@ public class NutsServerMain implements NutsApplication {
         }
 
         SrvInfo current() {
-            NutsUtils.requireNonBlank(all,session,"server type");
+            NutsUtils.requireNonBlank(all, "server type", session);
             return all.get(all.size() - 1);
         }
     }

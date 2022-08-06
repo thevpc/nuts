@@ -91,8 +91,8 @@ public class SshCommand extends SimpleJShellBuiltin {
         Options o = context.getOptions();
         // address --nuts [nuts options] args
         NutsSession session = context.getSession();
-        NutsUtils.requireNonBlank(o.address, session, "ssh address");
-        NutsUtils.requireNonBlank(o.cmd, session, () -> NutsMessage.ofPlain("missing ssh command. Interactive ssh is not yet supported!"));
+        NutsUtils.requireNonBlank(o.address, "ssh address", session);
+        NutsUtils.requireNonBlank(o.cmd, () -> NutsMessage.ofPlain("missing ssh command. Interactive ssh is not yet supported!"), session);
         ShellHelper.WsSshListener listener = new ShellHelper.WsSshListener(session);
         try (SShConnection sshSession = new SShConnection(o.address, session)
                 .addListener(listener)) {
@@ -131,7 +131,7 @@ public class SshCommand extends SimpleJShellBuiltin {
                     }
                     if (!nutsCommandFound) {
                         NutsPath from = session.search().addId(session.getWorkspace().getApiId()).getResultDefinitions().required().getContent().orNull();
-                        NutsUtils.requireNonNull(from, session, "jar file");
+                        NutsUtils.requireNonNull(from, "jar file", session);
                         context.out().printf("Detected nuts.jar location : %s\n", from);
                         String bootApiFileName = "nuts-" + session.getWorkspace().getApiId() + ".jar";
                         sshSession.setFailFast(true).copyLocalToRemote(from.toString(), workspace + "/" + bootApiFileName, true);

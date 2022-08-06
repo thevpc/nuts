@@ -65,7 +65,7 @@ public class DefaultNutsWorkspaceLocationModel {
 
 
     public void setStoreLocation(NutsStoreLocation folderType, String location, NutsSession session) {
-        NutsUtils.requireNonNull(folderType,session,"store root folder");
+        NutsUtils.requireNonNull(folderType, "store root folder", session);
         cfg().onPreUpdateConfig("store-location", session);
         cfg().getStoreModelBoot().setStoreLocations(new NutsStoreLocationsMap(cfg().getStoreModelBoot().getStoreLocations()).set(folderType, location).toMapOrNull());
         cfg().onPostUpdateConfig("store-location", session);
@@ -187,7 +187,7 @@ public class DefaultNutsWorkspaceLocationModel {
 
 
     public String getDefaultIdContentExtension(String packaging, NutsSession session) {
-        NutsUtils.requireNonBlank(packaging,session,"packaging");
+        NutsUtils.requireNonBlank(packaging, "packaging", session);
         switch (packaging) {
             case "jar":
             case "bundle":
@@ -246,7 +246,7 @@ public class DefaultNutsWorkspaceLocationModel {
                 if (f.equals("cache") || f.endsWith(".cache")) {
                     return "." + f;
                 }
-                NutsUtils.requireNonBlank(f,session,()->NutsMessage.ofCstyle("missing face in %s", id));
+                NutsUtils.requireNonBlank(f, ()->NutsMessage.ofCstyle("missing face in %s", id), session);
                 throw new NutsIllegalArgumentException(session, NutsMessage.ofCstyle("unsupported face %s in %s", f, id));
             }
         }

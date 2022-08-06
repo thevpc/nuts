@@ -69,7 +69,7 @@ public class RmCommand extends SimpleJShellBuiltin {
     protected void execBuiltin(NutsCommandLine commandLine, JShellExecutionContext context) {
         Options options = context.getOptions();
         NutsSession session = context.getSession();
-        NutsUtils.requireNonBlank(options.files, session,"parameters");
+        NutsUtils.requireNonBlank(options.files, "parameters", session);
 //        ShellHelper.WsSshListener listener = options.verbose ? new ShellHelper.WsSshListener(context.getSession()) : null;
         for (NutsPath p : options.files) {
 //            if (p instanceof SshXFile) {

@@ -88,16 +88,16 @@ public class DefaultNutsExecCommand extends AbstractNutsExecCommand {
         }
         switch (executionType) {
             case OPEN: {
-                NutsUtils.requireNonNull(commandDefinition, session, "artifact definition");
-                NutsUtils.requireNonBlank(command, session, "command");
+                NutsUtils.requireNonNull(commandDefinition, "artifact definition", session);
+                NutsUtils.requireNonBlank(command, "command", session);
                 String[] ts = command.toArray(new String[0]);
                 exec = new DefaultNutsOpenExecutable(ts, getExecutorOptions().toArray(new String[0]), traceSession, execSession, this);
                 break;
             }
             case SYSTEM: {
                 NutsExecutionType finalExecutionType = executionType;
-                NutsUtils.requireNull(commandDefinition, session, () -> NutsMessage.ofCstyle("unable to run artifact as %s cmd", finalExecutionType));
-                NutsUtils.requireNonBlank(command, session, "command");
+                NutsUtils.requireNull(commandDefinition, () -> NutsMessage.ofCstyle("unable to run artifact as %s cmd", finalExecutionType), session);
+                NutsUtils.requireNonBlank(command, "command", session);
                 String[] ts = command.toArray(new String[0]);
                 List<String> tsl = new ArrayList<>(Arrays.asList(ts));
                 if (CoreStringUtils.firstIndexOf(ts[0], new char[]{'/', '\\'}) < 0) {
@@ -121,7 +121,7 @@ public class DefaultNutsExecCommand extends AbstractNutsExecCommand {
                     return ws_execDef(commandDefinition, commandDefinition.getId().getLongName(), ts, getExecutorOptions(), workspaceOptions, env, directory, failFast,
                             executionType, runAs, traceSession, execSession);
                 } else {
-                    NutsUtils.requireNonBlank(command, session, "command");
+                    NutsUtils.requireNonBlank(command, "command", session);
                     String[] ts = command.toArray(new String[0]);
                     exec = execEmbeddedOrExternal(ts, getExecutorOptions(), getWorkspaceOptions(), traceSession, execSession);
                 }
@@ -178,7 +178,7 @@ public class DefaultNutsExecCommand extends AbstractNutsExecCommand {
     }
 
     private NutsExecutableInformationExt execEmbeddedOrExternal(String[] cmd, List<String> executorOptions, List<String> workspaceOptions, NutsSession prepareSession, NutsSession execSession) {
-        NutsUtils.requireNonBlank(cmd, session, "command");
+        NutsUtils.requireNonBlank(cmd, "command", session);
         String[] args = new String[cmd.length - 1];
         System.arraycopy(cmd, 1, args, 0, args.length);
         String cmdName = cmd[0];

@@ -364,7 +364,7 @@ public class NutsRepositoryFolderHelper {
         NutsInputSource inputSource = null;
         if (deployment.getContent() == null) {
             if (!NutsDescriptorUtils.isNoContent(descriptor)) {
-                NutsUtils.requireNonNull(deployment.getContent(),session,()->NutsMessage.ofCstyle("invalid deployment; missing content for %s", deployment.getId()));
+                NutsUtils.requireNonNull(deployment.getContent(), ()->NutsMessage.ofCstyle("invalid deployment; missing content for %s", deployment.getId()), session);
             }
         } else {
             inputSource = NutsIO.of(session).createMultiRead(deployment.getContent());

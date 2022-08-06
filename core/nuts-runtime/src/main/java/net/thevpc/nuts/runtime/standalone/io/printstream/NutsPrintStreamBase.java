@@ -29,7 +29,7 @@ public abstract class NutsPrintStreamBase implements NutsPrintStream {
     private DefaultNutsOutputTargetMetadata md = new DefaultNutsOutputTargetMetadata();
 
     public NutsPrintStreamBase(boolean autoFlash, NutsTerminalMode mode, NutsSession session, Bindings bindings, NutsSystemTerminalBase term) {
-        NutsUtils.requireNonNull(mode, session, "mode");
+        NutsUtils.requireNonNull(mode, "mode", session);
         this.bindings = bindings;
         this.autoFlash = autoFlash;
         this.mode = mode;

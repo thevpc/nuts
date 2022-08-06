@@ -144,9 +144,9 @@ public class WindowFreeDesktopEntryWriter extends AbstractFreeDesktopEntryWriter
         for (FreeDesktopEntry.Group group : file.getGroups()) {
             out.println();
             String gn = group.getGroupName();
-            NutsUtils.requireNonBlank(gn,session,"group name");
+            NutsUtils.requireNonBlank(gn, "group name", session);
             FreeDesktopEntry.Type t = group.getType();
-            NutsUtils.requireNonBlank(t,session,"type");
+            NutsUtils.requireNonBlank(t, "type", session);
             out.println("[" + gn.trim() + "]");
             for (Map.Entry<String, Object> e : group.toMap().entrySet()) {
                 Object v = e.getValue();

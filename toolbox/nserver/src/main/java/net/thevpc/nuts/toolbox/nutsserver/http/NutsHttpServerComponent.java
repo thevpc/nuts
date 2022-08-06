@@ -172,8 +172,8 @@ public class NutsHttpServerComponent implements NutsServerComponent {
         }
         server.setExecutor(executor);
         if (httpConfig.isTls()) {
-            NutsUtils.requireNonBlank(httpConfig.getSslKeystorePassphrase(),invokerSession,"sslKeystorePassphrase");
-            NutsUtils.requireNonBlank(httpConfig.getSslKeystoreCertificate(),invokerSession,"sslKeystoreCertificate");
+            NutsUtils.requireNonBlank(httpConfig.getSslKeystorePassphrase(), "sslKeystorePassphrase", invokerSession);
+            NutsUtils.requireNonBlank(httpConfig.getSslKeystoreCertificate(), "sslKeystoreCertificate", invokerSession);
             try {
                 SSLContext sslContext = SSLContext.getInstance("TLS");
 

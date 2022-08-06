@@ -49,7 +49,7 @@ public class NutsSettingsConnectSubCommand extends AbstractNutsSettingsSubComman
             }
             String login = null;
             int port = -1;
-            NutsUtils.requireNonBlank(server,session,"server");
+            NutsUtils.requireNonBlank(server, "server", session);
             if (server.contains("@")) {
                 login = server.substring(0, server.indexOf("@"));
                 server = server.substring(server.indexOf("@") + 1);

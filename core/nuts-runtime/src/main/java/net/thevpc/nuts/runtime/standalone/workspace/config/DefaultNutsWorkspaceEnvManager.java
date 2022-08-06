@@ -1,7 +1,6 @@
 package net.thevpc.nuts.runtime.standalone.workspace.config;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.elem.NutsElement;
 import net.thevpc.nuts.runtime.standalone.session.NutsSessionUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.NutsWorkspaceUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.ndi.NdiScriptOptions;
@@ -142,7 +141,7 @@ public class DefaultNutsWorkspaceEnvManager implements NutsWorkspaceEnvManager {
     @Override
     public NutsSupportMode getDesktopIntegrationSupport(NutsDesktopIntegrationItem item) {
         checkSession();
-        NutsUtils.requireNonBlank(item,session,"item");
+        NutsUtils.requireNonBlank(item, "item", session);
         switch (item) {
             case DESKTOP: {
                 NutsSupportMode a = session.boot().getBootOptions().getDesktopLauncher().orNull();

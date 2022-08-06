@@ -61,11 +61,11 @@ public class DefaultNutsPushCommand extends AbstractDefaultNutsPushCommand {
                 throw new NutsIllegalArgumentException(getSession(), NutsMessage.ofCstyle("invalid version %s", id.getVersion()));
             }
             NutsDefinition file = session.fetch().setId(id).setSession(session.copy().setTransitive(false)).setContent(true).getResultDefinition();
-            NutsUtils.requireNonNull(file,session,"content to push");
+            NutsUtils.requireNonNull(file, "content to push", session);
             toProcess.put(id, file);
         }
         NutsWorkspaceExt dws = NutsWorkspaceExt.of(ws);
-        NutsUtils.requireNonBlank(toProcess,session,"package tp push");
+        NutsUtils.requireNonBlank(toProcess, "package tp push", session);
         for (Map.Entry<NutsId, NutsDefinition> entry : toProcess.entrySet()) {
             NutsId id = entry.getKey();
             NutsDefinition file = entry.getValue();

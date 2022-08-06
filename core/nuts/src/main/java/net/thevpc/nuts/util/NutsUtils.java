@@ -21,9 +21,9 @@ public final class NutsUtils {
     }
 
     private static NutsMessage createMessage(Supplier<NutsMessage> msg, NutsSession session) {
-        requireNonNull(msg, session, "message supplier");
+        requireNonNull(msg, "message supplier", session);
         NutsMessage m = msg.get();
-        requireNonNull(m, session, "message");
+        requireNonNull(m, "message", session);
         return m;
     }
 
@@ -38,7 +38,7 @@ public final class NutsUtils {
         return m;
     }
 
-    public static void requireNonNull(Object object, NutsSession session, Supplier<NutsMessage> msg) {
+    public static void requireNonNull(Object object, Supplier<NutsMessage> msg, NutsSession session) {
         if (object == null) {
             throw new NutsIllegalArgumentException(session, createMessage(msg, session));
         }
@@ -56,37 +56,43 @@ public final class NutsUtils {
         }
     }
 
-    public static void requireNonNull(Object object, NutsSession defaultSession, String name) {
-        requireNonNull(object, defaultSession, () -> NutsMessage.ofCstyle("%s should not be null", createName(name)));
+    public static void requireNonNull(Object object, String name, NutsSession defaultSession) {
+        requireNonNull(object, () -> NutsMessage.ofCstyle("%s should not be null", createName(name)), defaultSession);
     }
 
     public static void requireNonNull(Object object, NutsSession session) {
-        requireNonNull(object, session, "value");
+        requireNonNull(object, "value", session);
     }
 
     public static void requireNull(Object object, NutsSession session) {
-        requireNull(object, session, "value");
+        requireNull(object, "value", session);
     }
 
-    public static void requireNull(Object object, NutsSession session, String name) {
+    public static void requireNull(Object object, String name, NutsSession session) {
         if (object != null) {
             throw new NutsIllegalArgumentException(session, NutsMessage.ofCstyle("%s must be null", createName(name)));
         }
     }
 
-    public static void requireNull(Object object, NutsSession session, Supplier<NutsMessage> message) {
+    public static void requireNull(Object object, Supplier<NutsMessage> message, NutsSession session) {
         if (object != null) {
             throw new NutsIllegalArgumentException(session, createMessage(message, session));
         }
     }
 
-    public static void requireNonBlank(Object object, NutsSession session, String name) {
+    public static void requireNonBlank(Object object, String name) {
+        if (NutsBlankable.isBlank(object)) {
+            throw new IllegalArgumentException(createName(name)+" should not be blank");
+        }
+    }
+
+    public static void requireNonBlank(Object object, String name, NutsSession session) {
         if (NutsBlankable.isBlank(object)) {
             throw new NutsIllegalArgumentException(session, NutsMessage.ofCstyle("%s should not be blank", createName(name)));
         }
     }
 
-    public static void requireNonBlank(Object object, NutsSession session, Supplier<NutsMessage> msg) {
+    public static void requireNonBlank(Object object, Supplier<NutsMessage> msg, NutsSession session) {
         if (NutsBlankable.isBlank(object)) {
             throw new NutsIllegalArgumentException(session, createMessage(msg, session));
         }

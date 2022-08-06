@@ -301,7 +301,7 @@ public class NutsJavaSdkUtils {
 
     public NutsPlatformLocation resolveJdkLocation(String path, String preferredName, NutsSession session) {
         NutsSessionUtils.checkSession(ws, session);
-        NutsUtils.requireNonBlank(path,session, "path");
+        NutsUtils.requireNonBlank(path, "path", session);
         String appSuffix = session.env().getOsFamily() == NutsOsFamily.WINDOWS ? ".exe" : "";
         Path bin = Paths.get(path).resolve("bin");
         Path javaExePath = bin.resolve("java" + appSuffix);
@@ -392,7 +392,7 @@ public class NutsJavaSdkUtils {
     }
 
     public NutsId createJdkId(String version, NutsSession session) {
-        NutsUtils.requireNonBlank(version,session, "version");
+        NutsUtils.requireNonBlank(version, "version", session);
         NutsVersion jv = NutsVersion.of(version).get( session);
         long n1 = jv.getNumber(0).flatMap(NutsValue::asLong).orElse(0L);
         long n2 = jv.getNumber(1).flatMap(NutsValue::asLong).orElse(0L);

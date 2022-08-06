@@ -54,7 +54,7 @@ public class NutsRepositorySelectorHelper {
 
     public static NutsAddRepositoryOptions createCustomRepositoryOptions(String name, String url, boolean requireName, NutsSession session) {
         if ((name == null || name.isEmpty()) && requireName) {
-            NutsUtils.requireNonBlank(name,session, "repository name (<name>=<url>)");
+            NutsUtils.requireNonBlank(name, "repository name (<name>=<url>)", session);
         }
         if (name == null || name.isEmpty()) {
             name = url;
@@ -72,8 +72,8 @@ public class NutsRepositorySelectorHelper {
                 name = name.substring(1);
             }
         }
-        NutsUtils.requireNonBlank(name,session, "repository name (<name>=<url>)");
-        NutsUtils.requireNonBlank(url,session, "repository url (<name>=<url>)");
+        NutsUtils.requireNonBlank(name, "repository name (<name>=<url>)", session);
+        NutsUtils.requireNonBlank(url, "repository url (<name>=<url>)", session);
         return new NutsAddRepositoryOptions().setName(name)
                 .setFailSafe(false).setCreate(true)
                 .setOrder((!NutsBlankable.isBlank(url) && NutsPath.of(url, session).isFile())

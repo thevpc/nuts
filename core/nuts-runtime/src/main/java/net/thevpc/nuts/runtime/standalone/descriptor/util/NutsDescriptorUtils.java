@@ -94,7 +94,7 @@ public class NutsDescriptorUtils {
     }
 
     public static void checkValidEffectiveDescriptor(NutsDescriptor effectiveDescriptor,NutsSession session) {
-        NutsUtils.requireNonNull(effectiveDescriptor,session,"effective descriptor");
+        NutsUtils.requireNonNull(effectiveDescriptor, "effective descriptor", session);
         try{
             for (NutsId parent : effectiveDescriptor.getParents()) {
                 NutsIdUtils.checkValidEffectiveId(parent,session);
@@ -106,7 +106,7 @@ public class NutsDescriptorUtils {
             for (NutsDependency dependency : effectiveDescriptor.getStandardDependencies()) {
                 //NutsIdUtils.checkValidEffectiveId(dependency.toId(),session);
                 // replace direct call to checkValidEffectiveId with the following...
-                NutsUtils.requireNonNull(dependency,session,"dependency");
+                NutsUtils.requireNonNull(dependency, "dependency", session);
                 if (dependency.toString().contains("${")) {
                     // sometimes the variable is defined later in the pom that uses this POM standard Dependencies
                     // so just log a warning, this is not an error but a very bad practice from the dependency maintainer!

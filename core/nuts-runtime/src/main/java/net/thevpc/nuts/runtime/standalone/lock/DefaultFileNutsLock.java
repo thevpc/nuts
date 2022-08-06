@@ -141,7 +141,7 @@ public class DefaultFileNutsLock implements NutsLock {
 
     @Override
     public synchronized boolean tryLock(long time, TimeUnit unit) {
-        NutsUtils.requireNonNull(unit,session,"unit");
+        NutsUtils.requireNonNull(unit, "unit", session);
         long now = System.currentTimeMillis();
         PollTime ptime = preferredPollTime(time, unit);
         do {
@@ -161,7 +161,7 @@ public class DefaultFileNutsLock implements NutsLock {
     }
 
     public synchronized boolean tryLockInterruptibly(long time, TimeUnit unit) throws InterruptedException {
-        NutsUtils.requireNonNull(unit,session,"unit");
+        NutsUtils.requireNonNull(unit, "unit", session);
         long now = System.currentTimeMillis();
         PollTime ptime = preferredPollTime(time, unit);
         do {

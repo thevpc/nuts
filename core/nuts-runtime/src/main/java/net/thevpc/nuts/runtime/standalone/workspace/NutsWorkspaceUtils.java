@@ -86,8 +86,8 @@ public class NutsWorkspaceUtils {
     }
 
     public NutsId createSdkId(String type, String version) {
-        NutsUtils.requireNonBlank(type, session, "sdk type");
-        NutsUtils.requireNonBlank(version, session, "version");
+        NutsUtils.requireNonBlank(type, "sdk type", session);
+        NutsUtils.requireNonBlank(version, "version", session);
         if ("java".equalsIgnoreCase(type)) {
             return NutsJavaSdkUtils.of(ws).createJdkId(version, session);
         } else {

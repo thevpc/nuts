@@ -44,7 +44,7 @@ public class DefaultNutsUpdateStatisticsCommand extends AbstractNutsUpdateStatis
         }
         for (Path repositoryPath : getPaths()) {
             processed = true;
-            NutsUtils.requireNonBlank(repositoryPath,session,"location");
+            NutsUtils.requireNonBlank(repositoryPath, "location", session);
             if (!Files.isDirectory(repositoryPath)) {
                 throw new NutsIllegalArgumentException(getSession(), NutsMessage.ofCstyle("expected folder at location %s",repositoryPath));
             }
@@ -98,7 +98,7 @@ public class DefaultNutsUpdateStatisticsCommand extends AbstractNutsUpdateStatis
 
     @Override
     public void add(String repo) {
-        NutsUtils.requireNonBlank(repo,session,"repository or path");
+        NutsUtils.requireNonBlank(repo, "repository or path", session);
         if (repo.equals(".") || repo.equals("..") || repo.contains("/") || repo.contains("\\")) {
             addPath(Paths.get(repo));
         } else {

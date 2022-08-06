@@ -46,8 +46,8 @@ public class DefaultNutsRepositoryConfigModel implements NutsRepositoryConfigMod
     public DefaultNutsRepositoryConfigModel(NutsRepository repository, NutsAddRepositoryOptions options, NutsSession session,
                                             NutsSpeedQualifier speed,
             boolean supportedMirroring, String repositoryType) {
-        NutsUtils.requireNonNull(options,session,"repository options");
-        NutsUtils.requireNonNull(options.getConfig(),session,"repository options config");
+        NutsUtils.requireNonNull(options, "repository options", session);
+        NutsUtils.requireNonNull(options.getConfig(), "repository options config", session);
         this.repositoryRef = net.thevpc.nuts.runtime.standalone.repository.util.NutsRepositoryUtils.optionsToRef(options);
         String storeLocation = options.getLocation();
         NutsRepositoryConfig config = options.getConfig();
@@ -56,10 +56,10 @@ public class DefaultNutsRepositoryConfigModel implements NutsRepositoryConfigMod
 
         speed = speed==null?NutsSpeedQualifier.NORMAL : speed;
 
-        NutsUtils.requireNonBlank(repositoryType,session,"repository type");
-        NutsUtils.requireNonBlank(repositoryName,session,"repository name");
-        NutsUtils.requireNonBlank(globalName,session,"repository global name");
-        NutsUtils.requireNonBlank(storeLocation,session,"repository store location");
+        NutsUtils.requireNonBlank(repositoryType, "repository type", session);
+        NutsUtils.requireNonBlank(repositoryName, "repository name", session);
+        NutsUtils.requireNonBlank(globalName, "repository global name", session);
+        NutsUtils.requireNonBlank(storeLocation, "repository store location", session);
         Path pfolder = Paths.get(storeLocation);
         if ((Files.exists(pfolder) && !Files.isDirectory(pfolder))) {
             throw new NutsInvalidRepositoryException(session, storeLocation, NutsMessage.ofCstyle("unable to resolve root as a valid folder %s",storeLocation));
@@ -270,7 +270,7 @@ public class DefaultNutsRepositoryConfigModel implements NutsRepositoryConfigMod
     }
 
     public void setConfig(NutsRepositoryConfig newConfig, NutsSession session, boolean fireChange) {
-        NutsUtils.requireNonBlank(newConfig,session,"repository config");
+        NutsUtils.requireNonBlank(newConfig, "repository config", session);
         this.config = newConfig;
         if (this.config.getUuid() == null) {
             fireChange = true;

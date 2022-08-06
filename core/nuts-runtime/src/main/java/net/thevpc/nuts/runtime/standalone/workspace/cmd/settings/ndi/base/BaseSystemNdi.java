@@ -790,7 +790,7 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
 
     public PathInfo[] createShortcut(NutsDesktopIntegrationItem nutsDesktopIntegrationItem, NdiScriptOptions options) {
         String apiVersion = options.getNutsApiVersion().toString();
-        NutsUtils.requireNonBlank(apiVersion,session,"nuts-api version to link to");
+        NutsUtils.requireNonBlank(apiVersion, "nuts-api version to link to", session);
         NutsId apiId = session.getWorkspace().getApiId().builder().setVersion(apiVersion).build();
         NutsDefinition apiDefinition = session.search().addId(apiId).setFailFast(true).setLatest(true).setContent(true)
                 .setDistinct(true)

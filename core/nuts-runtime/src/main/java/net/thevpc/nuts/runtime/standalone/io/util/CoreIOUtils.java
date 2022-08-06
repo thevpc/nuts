@@ -1133,8 +1133,8 @@ public class CoreIOUtils {
     }
 
     public static PathInfo.Status tryWrite(byte[] content, NutsPath out, /*boolean doNotWrite*/ DoWhenExist doWhenExist, DoWhenNotExists doWhenNotExist, NutsSession session) {
-        NutsUtils.requireNonNull(doWhenExist, session, "doWhenExist");
-        NutsUtils.requireNonNull(doWhenNotExist, session, "doWhenNotExist");
+        NutsUtils.requireNonNull(doWhenExist, "doWhenExist", session);
+        NutsUtils.requireNonNull(doWhenNotExist, "doWhenNotExist", session);
 //        System.err.println("[DEBUG] try write "+out);
         out = out.toAbsolute().normalize();
         byte[] old = null;

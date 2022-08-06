@@ -53,7 +53,7 @@ public class DefaultNutsWhichInternalExecutable extends DefaultInternalNutsExecu
                 commandLine.skipAll();
             }
         }
-        NutsUtils.requireNonBlank(commands,session,"commands");
+        NutsUtils.requireNonBlank(commands, "commands", session);
         NutsTexts factory = NutsTexts.of(session);
         for (String arg : commands) {
             NutsPrintStream out = session.out();

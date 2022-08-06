@@ -12,17 +12,17 @@ import java.util.Map;
 public class NutsIdUtils {
     public static void checkLongId(NutsId id, NutsSession session) {
         checkShortId(id, session);
-        NutsUtils.requireNonBlank(id.getVersion(), session, () -> NutsMessage.ofCstyle("missing version for %s", id));
+        NutsUtils.requireNonBlank(id.getVersion(), () -> NutsMessage.ofCstyle("missing version for %s", id), session);
     }
 
     public static void checkShortId(NutsId id, NutsSession session) {
-        NutsUtils.requireNonBlank(id, session, "id");
-        NutsUtils.requireNonBlank(id.getGroupId(), session, () -> NutsMessage.ofCstyle("missing groupId for %s", id));
-        NutsUtils.requireNonBlank(id.getArtifactId(), session, () -> NutsMessage.ofCstyle("missing artifactId for %s", id));
+        NutsUtils.requireNonBlank(id, "id", session);
+        NutsUtils.requireNonBlank(id.getGroupId(), () -> NutsMessage.ofCstyle("missing groupId for %s", id), session);
+        NutsUtils.requireNonBlank(id.getArtifactId(), () -> NutsMessage.ofCstyle("missing artifactId for %s", id), session);
     }
 
     public static void checkValidEffectiveId(NutsId id, NutsSession session) {
-        NutsUtils.requireNonBlank(id, session, "id");
+        NutsUtils.requireNonBlank(id, "id", session);
         if (id.toString().contains("${")) {
             throw new NutsIllegalArgumentException(session, NutsMessage.ofCstyle("unable to evaluate effective id %s", id));
         }
@@ -58,7 +58,7 @@ public class NutsIdUtils {
     }
 
     public static NutsId apiId(String apiVersion, NutsSession session) {
-        NutsUtils.requireNonBlank(apiVersion, session,"version");
+        NutsUtils.requireNonBlank(apiVersion, "version", session);
         if (apiVersion.equals(session.getWorkspace().getApiVersion().toString())) {
             return session.getWorkspace().getApiId();
         }
@@ -66,7 +66,7 @@ public class NutsIdUtils {
     }
 
     public static NutsId runtimeId(String runtimeVersion, NutsSession session) {
-        NutsUtils.requireNonBlank(runtimeVersion, session, "runtimeVersion");
+        NutsUtils.requireNonBlank(runtimeVersion, "runtimeVersion", session);
         if (runtimeVersion.equals(session.getWorkspace().getApiVersion().toString())) {
             return session.getWorkspace().getApiId();
         }
@@ -74,7 +74,7 @@ public class NutsIdUtils {
     }
 
     public static NutsId findRuntimeForApi(String apiVersion, NutsSession session) {
-        NutsUtils.requireNonBlank(apiVersion, session, "apiVersion");
+        NutsUtils.requireNonBlank(apiVersion, "apiVersion", session);
         if (apiVersion.equals(session.getWorkspace().getApiVersion().toString())) {
             return session.getWorkspace().getRuntimeId();
         }

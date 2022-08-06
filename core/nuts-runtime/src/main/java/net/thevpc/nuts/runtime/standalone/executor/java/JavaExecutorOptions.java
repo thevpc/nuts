@@ -284,7 +284,7 @@ public final class JavaExecutorOptions {
                 }
             }
             NutsId finalId = id;
-            NutsUtils.requireNonNull(mainClass, session, () -> NutsMessage.ofCstyle("missing Main Class for %s", finalId));
+            NutsUtils.requireNonNull(mainClass, () -> NutsMessage.ofCstyle("missing Main Class for %s", finalId), session);
             boolean baseDetected = false;
             for (NutsDefinition nutsDefinition : nutsDefinitions) {
                 NutsClassLoaderNode nn = null;
@@ -307,7 +307,7 @@ public final class JavaExecutorOptions {
                 }
             }
             if (!isExcludeBase() && !baseDetected) {
-                NutsUtils.requireNonNull(path, session, () -> NutsMessage.ofCstyle("missing path %s", finalId));
+                NutsUtils.requireNonNull(path, () -> NutsMessage.ofCstyle("missing path %s", finalId), session);
                 currentCP.add(0, NutsClassLoaderUtils.definitionToClassLoaderNode(def, session));
             }
             classPathNodes.addAll(currentCP);

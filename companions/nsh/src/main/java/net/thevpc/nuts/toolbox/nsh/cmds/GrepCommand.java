@@ -109,7 +109,7 @@ public class GrepCommand extends SimpleJShellBuiltin {
             options.files.add(null);
         }
         NutsSession session = context.getSession();
-        NutsUtils.requireNonBlank(options.expression,session,"expression");
+        NutsUtils.requireNonBlank(options.expression, "expression", session);
         String baseExpr = simpexpToRegexp(options.expression, true);
         if (options.word) {
             baseExpr = "\\b" + baseExpr + "\\b";

@@ -91,7 +91,7 @@ public class ZipExecutorComponent implements NutsExecutorComponent {
         NutsSession session = executionContext.getSession();
         HashMap<String, String> osEnv = new HashMap<>();
         NutsArtifactCall executor = def.getDescriptor().getExecutor();
-        NutsUtils.requireNonNull(executor, session, () -> NutsMessage.ofCstyle("missing executor %s", def.getId()));
+        NutsUtils.requireNonNull(executor, () -> NutsMessage.ofCstyle("missing executor %s", def.getId()), session);
         List<String> args = new ArrayList<>(executionContext.getExecutorOptions());
         args.addAll(executionContext.getArguments());
         if (executor.getId() != null && !executor.getId().toString().equals("exec")) {

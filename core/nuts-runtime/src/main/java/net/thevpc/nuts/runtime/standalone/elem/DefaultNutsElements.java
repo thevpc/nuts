@@ -422,7 +422,7 @@ public class DefaultNutsElements extends DefaultFormatBase<NutsElements> impleme
     public NutsCustomElement ofCustom(Object object) {
         checkSession();
         NutsSession session = getSession();
-        NutsUtils.requireNonNull(object, session, "custom element");
+        NutsUtils.requireNonNull(object, "custom element", session);
         return new DefaultNutsCustomElement(object, session);
     }
 

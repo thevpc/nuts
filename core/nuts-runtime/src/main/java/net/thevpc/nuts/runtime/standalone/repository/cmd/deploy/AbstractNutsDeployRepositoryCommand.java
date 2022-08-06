@@ -129,8 +129,8 @@ public abstract class AbstractNutsDeployRepositoryCommand extends NutsRepository
         NutsSession session = getSession();
         getRepo().security().setSession(session).checkAllowed(NutsConstants.Permissions.DEPLOY, "deploy");
         NutsIdUtils.checkLongId(getId(), session);
-        NutsUtils.requireNonNull(this.getContent(), getSession(), "content");
-        NutsUtils.requireNonNull(this.getDescriptor(), getSession(), "descriptor");
+        NutsUtils.requireNonNull(this.getContent(), "content", getSession());
+        NutsUtils.requireNonNull(this.getDescriptor(), "descriptor", getSession());
         if (this.getId().getVersion().isReleaseVersion()
                 || this.getId().getVersion().isLatestVersion()
         ) {

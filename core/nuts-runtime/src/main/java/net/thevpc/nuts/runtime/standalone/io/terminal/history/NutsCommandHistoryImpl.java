@@ -55,7 +55,7 @@ public class NutsCommandHistoryImpl implements NutsCommandHistory {
     @Override
     public void load() {
         entries.clear();
-        NutsUtils.requireNonNull(path, session, "path");
+        NutsUtils.requireNonNull(path, "path", session);
         if (path.exists()) {
             try (InputStream in = path.getInputStream()) {
                 load(in);
@@ -67,7 +67,7 @@ public class NutsCommandHistoryImpl implements NutsCommandHistory {
 
     @Override
     public void save() {
-        NutsUtils.requireNonNull(path, session, "path");
+        NutsUtils.requireNonNull(path, "path", session);
         path.mkParentDirs();
         try (OutputStream out = path.getOutputStream()) {
             save(out);

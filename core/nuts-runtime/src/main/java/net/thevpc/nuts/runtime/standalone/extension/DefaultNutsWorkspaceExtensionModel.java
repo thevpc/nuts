@@ -133,7 +133,7 @@ public class DefaultNutsWorkspaceExtensionModel {
 
     // @Override
     public List<NutsExtensionInformation> findExtensions(NutsId id, String extensionType, NutsSession session) {
-        NutsUtils.requireNonBlank(id.getVersion(),session, "version");
+        NutsUtils.requireNonBlank(id.getVersion(), "version", session);
         List<NutsExtensionInformation> ret = new ArrayList<>();
         List<String> allUrls = new ArrayList<>();
         for (String r : getExtensionRepositoryLocations(id)) {
@@ -440,7 +440,7 @@ public class DefaultNutsWorkspaceExtensionModel {
     public NutsWorkspaceExtension wireExtension(NutsId id, NutsFetchCommand options) {
         NutsSession session = options.getSession();
         NutsSessionUtils.checkSession(ws, session);
-        NutsUtils.requireNonNull(id,session,"extension id");
+        NutsUtils.requireNonNull(id, "extension id", session);
         NutsId wired = CoreNutsUtils.findNutsIdBySimpleName(id, extensions.keySet());
         if (wired != null) {
             throw new NutsExtensionAlreadyRegisteredException(session, id, wired.toString());

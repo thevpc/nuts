@@ -354,8 +354,8 @@ public class DefaultNutsCp implements NutsCp {
     @Override
     public NutsCp run() {
         checkSession();
-        NutsUtils.requireNonBlank(source, session, "source");
-        NutsUtils.requireNonBlank(target, session, "target");
+        NutsUtils.requireNonBlank(source, "source", session);
+        NutsUtils.requireNonBlank(target, "target", session);
 
         NutsInputSource _source = source;
         if ((_source instanceof NutsPath) && ((NutsPath) _source).isDirectory()) {
@@ -672,8 +672,8 @@ public class DefaultNutsCp implements NutsCp {
 
     private void copyStream() {
         checkSession();
-        NutsUtils.requireNonBlank(source, session, "source");
-        NutsUtils.requireNonBlank(target, session, "target");
+        NutsUtils.requireNonBlank(source, "source", session);
+        NutsUtils.requireNonBlank(target, "target", session);
         boolean safe = options.contains(NutsPathOption.SAFE);
         if (safe) {
             copyStreamSafe(source, target);
@@ -748,8 +748,8 @@ public class DefaultNutsCp implements NutsCp {
     private void copyStreamOnce(NutsInputSource source, NutsOutputTarget target) {
         NutsInputSource _source = source;
 
-        NutsUtils.requireNonNull(source, getSession(), "source");
-        NutsUtils.requireNonNull(target, getSession(), "target");
+        NutsUtils.requireNonNull(source, "source", getSession());
+        NutsUtils.requireNonNull(target, "target", getSession());
         NutsPath _target = asValidTargetPath();
         NutsPath _source0 = asValidSourcePath();
         boolean _target_isPath = _target != null;

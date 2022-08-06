@@ -26,42 +26,42 @@ public class DefaultWriteTypeProcessor {
     }
 
     public DefaultWriteTypeProcessor ask(NutsMessage m) {
-        NutsUtils.requireNonNull(m, session, "message");
+        NutsUtils.requireNonNull(m, "message", session);
         this.askMessage = m;
         return this;
     }
 
     public DefaultWriteTypeProcessor withLog(NutsLogger log, NutsMessage m) {
-        NutsUtils.requireNonNull(log, session, "log");
-        NutsUtils.requireNonNull(m, session, "message");
+        NutsUtils.requireNonNull(log, "log", session);
+        NutsUtils.requireNonNull(m, "message", session);
         this.log = log;
         this.logMessage = m;
         return this;
     }
 
     public DefaultWriteTypeProcessor onError(Supplier<RuntimeException> error) {
-        NutsUtils.requireNonNull(error, session, "error handler");
+        NutsUtils.requireNonNull(error, "error handler", session);
         this.error = error;
         return this;
     }
 
     private NutsMessage getValidAskMessage() {
-        NutsUtils.requireNonNull(askMessage, session, "message");
+        NutsUtils.requireNonNull(askMessage, "message", session);
         return askMessage;
     }
 
     private NutsMessage getValidLogMessage() {
-        NutsUtils.requireNonNull(logMessage, session, "log message");
+        NutsUtils.requireNonNull(logMessage, "log message", session);
         return logMessage;
     }
 
     private Supplier<RuntimeException> getValidError() {
-        NutsUtils.requireNonNull(error, session, "error handler");
+        NutsUtils.requireNonNull(error, "error handler", session);
         return error;
     }
 
     private NutsLogger getValidLog() {
-        NutsUtils.requireNonNull(log, session, "log");
+        NutsUtils.requireNonNull(log, "log", session);
         return log;
     }
 

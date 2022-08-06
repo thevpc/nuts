@@ -83,8 +83,8 @@ public class DefaultNutsCompress implements NutsCompress {
 
     public void runZip() {
         checkSession();
-        NutsUtils.requireNonBlank(sources, session, "source");
-        NutsUtils.requireNonBlank(target, session, "target");
+        NutsUtils.requireNonBlank(sources, "source", session);
+        NutsUtils.requireNonBlank(target, "target", session);
         _LOG(session).with().level(Level.FINEST).verb(NutsLoggerVerb.START).log(NutsMessage.ofJstyle("compress {0} to {1}", sources, target));
         try {
             OutputStream fW = null;

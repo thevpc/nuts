@@ -81,7 +81,7 @@ public class InternalNutsDependencyFilters extends InternalNutsTypedFilters<Nuts
         }
         NutsDependencyFilter t = as(a);
         NutsSession session = getSession();
-        NutsUtils.requireNonNull(t, session,"InstallDependencyFilter");
+        NutsUtils.requireNonNull(t, "InstallDependencyFilter", session);
         return t;
     }
 

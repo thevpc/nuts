@@ -77,7 +77,7 @@ public class InternalNutsInstallStatusFilters extends InternalNutsTypedFilters<N
         }
         NutsInstallStatusFilter t = as(a);
         NutsSession session = getSession();
-        NutsUtils.requireNonNull(t, session,"InstallStatusFilter");
+        NutsUtils.requireNonNull(t, "InstallStatusFilter", session);
         return t;
     }
 

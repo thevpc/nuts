@@ -117,7 +117,7 @@ public class DefaultNutsDigest implements NutsDigest {
 
     @Override
     public byte[] computeBytes() {
-        NutsUtils.requireNonNull(source, getSession(), "source");
+        NutsUtils.requireNonNull(source, "source", getSession());
         try (InputStream is = new BufferedInputStream(source.getInputStream())) {
             return NutsDigestUtils.evalHash(is, getValidAlgo(), session);
         } catch (IOException ex) {

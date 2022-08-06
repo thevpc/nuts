@@ -205,7 +205,7 @@ public class InternalNutsDescriptorFilters extends InternalNutsTypedFilters<Nuts
         }
         NutsDescriptorFilter t = as(a);
         NutsSession session = getSession();
-        NutsUtils.requireNonNull(t, session,"DescriptorFilter");
+        NutsUtils.requireNonNull(t, "DescriptorFilter", session);
         return t;
     }
 

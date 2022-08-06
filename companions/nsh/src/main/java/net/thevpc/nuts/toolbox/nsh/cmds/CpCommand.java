@@ -83,7 +83,7 @@ public class CpCommand extends SimpleJShellBuiltin {
         Options options = context.getOptions();
         NutsSession session = context.getSession();
         for (String value : options.files) {
-            NutsUtils.requireNonBlank(value,session,"file path");
+            NutsUtils.requireNonBlank(value, "file path", session);
             options.xfiles.add(NutsPath.of((value.contains("://") ? value :
                     NutsPath.of(value, session).toAbsolute(session.locations().getWorkspaceLocation()).toString()
             ), session));

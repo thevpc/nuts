@@ -90,7 +90,7 @@ public class InternalNutsIdFilters extends InternalNutsTypedFilters<NutsIdFilter
         }
         NutsIdFilter t = as(a);
         NutsSession session = getSession();
-        NutsUtils.requireNonNull(t, session,"IdFilter");
+        NutsUtils.requireNonNull(t, "IdFilter", session);
         return t;
     }
 

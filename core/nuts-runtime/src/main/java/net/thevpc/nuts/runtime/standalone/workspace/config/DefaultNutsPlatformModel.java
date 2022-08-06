@@ -37,10 +37,10 @@ public class DefaultNutsPlatformModel {
     public boolean add0(NutsPlatformLocation location, NutsSession session, boolean notify) {
 //        session = CoreNutsUtils.validate(session, workspace);
         if (location != null) {
-            NutsUtils.requireNonBlank(location.getProduct(),session,"platform location product");
-            NutsUtils.requireNonBlank(location.getName(),session,"platform location product");
-            NutsUtils.requireNonBlank(location.getVersion(),session,"platform location version");
-            NutsUtils.requireNonBlank(location.getVersion(),session,"platform location path");
+            NutsUtils.requireNonBlank(location.getProduct(), "platform location product", session);
+            NutsUtils.requireNonBlank(location.getName(), "platform location product", session);
+            NutsUtils.requireNonBlank(location.getVersion(), "platform location version", session);
+            NutsUtils.requireNonBlank(location.getVersion(), "platform location path", session);
             List<NutsPlatformLocation> list = getPlatforms().get(location.getPlatformType());
             if (list == null) {
                 list = new ArrayList<>();
