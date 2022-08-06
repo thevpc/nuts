@@ -65,6 +65,10 @@ public interface NutsOptional<T> extends NutsBlankable {
         return new NutsReservedOptionalValid<>(null);
     }
 
+    static <T> NutsOptional<T> ofNamedOptional(Optional<T> optional, String name) {
+        return ofOptional(optional,s -> NutsMessage.ofCstyle("missing %s", name));
+    }
+
     static <T> NutsOptional<T> ofOptional(Optional<T> optional, Function<NutsSession, NutsMessage> errorMessage) {
         if (optional.isPresent()) {
             return of(optional.get());
