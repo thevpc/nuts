@@ -80,6 +80,15 @@ public interface NutsOptional<T> extends NutsBlankable {
         return ofSingleton(collection, null, null);
     }
 
+    static <T> NutsOptional<T> ofNamedFirst(Collection<T> collection, String name) {
+        if (name == null) {
+            return ofSingleton(collection, null, null);
+        }
+        return ofFirst(collection,
+                s -> NutsMessage.ofCstyle("missing %s", name)
+        );
+    }
+
     static <T> NutsOptional<T> ofNamedSingleton(Collection<T> collection, String name) {
         if (name == null) {
             return ofSingleton(collection, null, null);
@@ -104,6 +113,16 @@ public interface NutsOptional<T> extends NutsBlankable {
             return of(t);
         }
         return ofEmpty(errorMessage);
+    }
+
+    static <T> NutsOptional<T> ofFirst(Collection<T> collection, Function<NutsSession, NutsMessage> emptyMessage) {
+        if (collection == null || collection.isEmpty()) {
+            return ofEmpty(emptyMessage);
+        }
+        for (T t : collection) {
+            return of(t);
+        }
+        return ofEmpty(emptyMessage);
     }
 
     default NutsOptional<T> failFast() {
