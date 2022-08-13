@@ -141,6 +141,10 @@ public class NutsNameFormat {
         return all.toArray(new String[0]);
     }
 
+    public boolean equals(String a, String b) {
+        return format(a).equals(format(b));
+    }
+
     public String format(String value) {
         return format(parse(value));
     }
