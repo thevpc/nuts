@@ -1,9 +1,9 @@
 package net.thevpc.nuts.runtime.standalone.xtra.idresolver;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.runtime.standalone.repository.impl.maven.pom.PomXmlParser;
+import net.thevpc.nuts.runtime.standalone.repository.impl.maven.pom.NutsPomXmlParser;
 import net.thevpc.nuts.runtime.standalone.repository.impl.maven.util.MavenUtils;
-import net.thevpc.nuts.runtime.standalone.repository.impl.maven.pom.PomId;
+import net.thevpc.nuts.runtime.standalone.repository.impl.maven.pom.api.NutsPomId;
 import net.thevpc.nuts.spi.NutsSupportLevelContext;
 import net.thevpc.nuts.util.NutsLoggerOp;
 import net.thevpc.nuts.util.NutsLoggerVerb;
@@ -30,7 +30,7 @@ public class DefaultNutsIdResolver implements NutsIdResolver {
             return null;
         }
         if (pomIds.size() > 1) {
-            NutsLoggerOp.of(PomXmlParser.class, session)
+            NutsLoggerOp.of(NutsPomXmlParser.class, session)
                     .verb(NutsLoggerVerb.WARNING)
                     .level(Level.FINEST)
                     .log(NutsMessage.ofCstyle(
@@ -43,11 +43,11 @@ public class DefaultNutsIdResolver implements NutsIdResolver {
 
     @Override
     public List<NutsId> resolveIds(Class clazz) {
-        PomId[] u = MavenUtils.createPomIdResolver(session).resolvePomIds(clazz);
+        NutsPomId[] u = MavenUtils.createPomIdResolver(session).resolvePomIds(clazz);
         LinkedHashSet<NutsId> all = new LinkedHashSet<>(
                 Arrays.asList(new PomIdResolver2(session).resolvePomIds(clazz))
         );
-        for (PomId uu : u) {
+        for (NutsPomId uu : u) {
             all.add(NutsId.of(uu.getGroupId() + ":" + uu.getArtifactId() + "#" + uu.getVersion()).get(session));
         }
         return new ArrayList<>(all);

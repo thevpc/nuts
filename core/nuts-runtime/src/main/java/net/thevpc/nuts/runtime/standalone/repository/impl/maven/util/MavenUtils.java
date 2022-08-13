@@ -32,6 +32,7 @@ import net.thevpc.nuts.io.NutsIOException;
 import net.thevpc.nuts.io.NutsPath;
 import net.thevpc.nuts.runtime.standalone.descriptor.util.NutsDescriptorUtils;
 import net.thevpc.nuts.runtime.standalone.repository.impl.maven.pom.*;
+import net.thevpc.nuts.runtime.standalone.repository.impl.maven.pom.api.*;
 import net.thevpc.nuts.runtime.standalone.util.xml.XmlUtils;
 import net.thevpc.nuts.runtime.standalone.util.MapToFunction;
 import net.thevpc.nuts.runtime.standalone.xtra.expr.StringTokenizerUtils;
@@ -73,20 +74,20 @@ public class MavenUtils {
         return wp;
     }
 
-    public static PomIdResolver createPomIdResolver(NutsSession session) {
-        PomIdResolver wp = (PomIdResolver) session.env().getProperties().get(PomIdResolver.class.getName());
+    public static NutsPomIdResolver createPomIdResolver(NutsSession session) {
+        NutsPomIdResolver wp = (NutsPomIdResolver) session.env().getProperties().get(NutsPomIdResolver.class.getName());
         if (wp == null) {
-            wp = new PomIdResolver(session);
-            session.env().setProperty(PomIdResolver.class.getName(), wp);
+            wp = new NutsPomIdResolver(session);
+            session.env().setProperty(NutsPomIdResolver.class.getName(), wp);
         }
         return wp;
     }
 
-    public List<NutsId> toNutsId(List<PomId> ids) {
+    public List<NutsId> toNutsId(List<NutsPomId> ids) {
         return ids.stream().map(this::toNutsId).collect(Collectors.toList());
     }
 
-    public NutsDependency[] toNutsDependencies(PomDependency[] deps, NutsSession session, Pom pom, PomProfileActivation ac, String profile) {
+    public NutsDependency[] toNutsDependencies(NutsPomDependency[] deps, NutsSession session, NutsPom pom, NutsPomProfileActivation ac, String profile) {
         NutsDependency[] a = new NutsDependency[deps.length];
         for (int i = 0; i < deps.length; i++) {
             a[i] = toNutsDependency(deps[i], session, pom, ac, profile);
@@ -94,11 +95,11 @@ public class MavenUtils {
         return a;
     }
 
-    public NutsId toNutsId(PomId d) {
+    public NutsId toNutsId(NutsPomId d) {
         return NutsIdBuilder.of(d.getGroupId(), d.getArtifactId()).setVersion(toNutsVersion(d.getVersion())).build();
     }
 
-    public NutsEnvCondition toCondition(NutsSession session, String os0, String arch0, PomProfileActivation a, String profile) {
+    public NutsEnvCondition toCondition(NutsSession session, String os0, String arch0, NutsPomProfileActivation a, String profile) {
 //        if (a == null) {
 //            return null;
 //        }
@@ -150,7 +151,7 @@ public class MavenUtils {
         return bb.build();
     }
 
-    public NutsDependency toNutsDependency(PomDependency d, NutsSession session, Pom pom, PomProfileActivation a, String profile) {
+    public NutsDependency toNutsDependency(NutsPomDependency d, NutsSession session, NutsPom pom, NutsPomProfileActivation a, String profile) {
         String s = d.getScope();
         if (s == null) {
             s = "";
@@ -215,7 +216,7 @@ public class MavenUtils {
             InputStream bytesStream = CoreIOUtils.createBytesStream(bytes,
                     urlDesc == null ? NutsMessage.ofNtf("pom.xml") : NutsMessage.ofNtf(urlDesc), "text/xml",
                     urlDesc == null ? "pom.xml" : urlDesc, session);
-            Pom pom = new PomXmlParser(session).parse(bytesStream, session);
+            NutsPom pom = new NutsPomXmlParser(session).parse(bytesStream, session);
             LinkedHashSet<NutsDescriptorFlag> flags = new LinkedHashSet<>();
             if (NutsValue.of(pom.getProperties().get("nuts.executable")).asBoolean().orElse(false)) {
                 flags.add(NutsDescriptorFlag.EXEC);
@@ -272,15 +273,15 @@ public class MavenUtils {
             if (categories == null) {
                 categories = "";
             }
-            PomProfile[] profiles = pom.getProfiles();//Arrays.stream(pom.getProfiles()).filter(x -> acceptRuntimeActivation(x.getActivation())).toArray(PomProfile[]::new);
+            NutsPomProfile[] profiles = pom.getProfiles();//Arrays.stream(pom.getProfiles()).filter(x -> acceptRuntimeActivation(x.getActivation())).toArray(PomProfile[]::new);
             List<NutsDependency> deps = new ArrayList<>(
                     Arrays.asList(toNutsDependencies(pom.getDependencies(), session, pom, null, null)));
-            for (PomProfile profile : profiles) {
+            for (NutsPomProfile profile : profiles) {
                 deps.addAll(Arrays.asList(toNutsDependencies(profile.getDependencies(), session, pom, profile.getActivation(), profile.getId())));
             }
             List<NutsDependency> depsM = new ArrayList<>(
                     Arrays.asList(toNutsDependencies(pom.getDependenciesManagement(), session, pom, null, null)));
-            for (PomProfile profile : profiles) {
+            for (NutsPomProfile profile : profiles) {
                 depsM.addAll(Arrays.asList(toNutsDependencies(profile.getDependenciesManagement(), session, pom, profile.getActivation(), profile.getId())));
             }
             List<NutsDescriptorProperty> props = new ArrayList<>();
@@ -288,7 +289,7 @@ public class MavenUtils {
                 props.add(new DefaultNutsDescriptorPropertyBuilder().setName(e.getKey())
                         .setValue(e.getValue()).build());
             }
-            for (PomProfile profile : profiles) {
+            for (NutsPomProfile profile : profiles) {
                 for (Map.Entry<String, String> e : profile.getProperties().entrySet()) {
                     props.add(new DefaultNutsDescriptorPropertyBuilder()
                             .setName(e.getKey())

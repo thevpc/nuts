@@ -1,9 +1,10 @@
-package net.thevpc.nuts.runtime.standalone.repository.impl.maven.pom;
+package net.thevpc.nuts.runtime.standalone.repository.impl.maven.pom.api;
 
 import java.util.Map;
+
 import org.w3c.dom.Document;
 
-public class Pom {
+public class NutsPom {
 
     String groupId;
     String artifactId;
@@ -14,24 +15,24 @@ public class Pom {
     String inceptionYear;
     String description;
     Map<String, String> properties;
-    PomDependency[] dependencies;
-    PomDependency[] dependenciesManagement;
-    PomId parent;
-    PomRepository[] repositories;
-    PomRepository[] pluginRepositories;
-    PomProfile[] profiles;
+    NutsPomDependency[] dependencies;
+    NutsPomDependency[] dependenciesManagement;
+    NutsPomId parent;
+    NutsPomRepository[] repositories;
+    NutsPomRepository[] pluginRepositories;
+    NutsPomProfile[] profiles;
     String[] modules;
     Document xml;
 
-    public Pom(String groupId, String artifactId, String version, String packaging,
-            PomId parent,
-            String name, String desc,
-            String url, String inceptionYear,
-            Map<String, String> properties,
-            PomDependency[] dependencies,
-            PomDependency[] dependenciesManagement,
-            PomRepository[] repositories, PomRepository[] pluginRepositories,
-            String[] modules, PomProfile[] profiles,Document xml
+    public NutsPom(String groupId, String artifactId, String version, String packaging,
+                   NutsPomId parent,
+                   String name, String desc,
+                   String url, String inceptionYear,
+                   Map<String, String> properties,
+                   NutsPomDependency[] dependencies,
+                   NutsPomDependency[] dependenciesManagement,
+                   NutsPomRepository[] repositories, NutsPomRepository[] pluginRepositories,
+                   String[] modules, NutsPomProfile[] profiles, Document xml
     ) {
         this.groupId = groupId;
         this.artifactId = artifactId;
@@ -52,7 +53,7 @@ public class Pom {
         this.xml = xml;
     }
 
-    public PomProfile[] getProfiles() {
+    public NutsPomProfile[] getProfiles() {
         return profiles;
     }
 
@@ -76,47 +77,47 @@ public class Pom {
         return packaging;
     }
 
-    public Pom setGroupId(String groupId) {
+    public NutsPom setGroupId(String groupId) {
         this.groupId = groupId;
         return this;
     }
 
-    public Pom setArtifactId(String artifactId) {
+    public NutsPom setArtifactId(String artifactId) {
         this.artifactId = artifactId;
         return this;
     }
 
-    public Pom setVersion(String version) {
+    public NutsPom setVersion(String version) {
         this.version = version;
         return this;
     }
 
-    public Pom setPackaging(String packaging) {
+    public NutsPom setPackaging(String packaging) {
         this.packaging = packaging;
         return this;
     }
 
-    public Pom setName(String name) {
+    public NutsPom setName(String name) {
         this.name = name;
         return this;
     }
 
-    public Pom setDescription(String description) {
+    public NutsPom setDescription(String description) {
         this.description = description;
         return this;
     }
 
-    public Pom setProperties(Map<String, String> properties) {
+    public NutsPom setProperties(Map<String, String> properties) {
         this.properties = properties;
         return this;
     }
 
-    public Pom setDependencies(PomDependency[] dependencies) {
+    public NutsPom setDependencies(NutsPomDependency[] dependencies) {
         this.dependencies = dependencies;
         return this;
     }
 
-    public Pom setParent(PomId parent) {
+    public NutsPom setParent(NutsPomId parent) {
         this.parent = parent;
         return this;
     }
@@ -133,33 +134,33 @@ public class Pom {
         return properties;
     }
 
-    public PomDependency[] getDependencies() {
+    public NutsPomDependency[] getDependencies() {
         return dependencies;
     }
 
-    public PomId getParent() {
+    public NutsPomId getParent() {
         return parent;
     }
 
-    public PomRepository[] getRepositories() {
+    public NutsPomRepository[] getRepositories() {
         return repositories;
     }
 
-    public Pom setRepositories(PomRepository[] repositories) {
+    public NutsPom setRepositories(NutsPomRepository[] repositories) {
         this.repositories = repositories;
         return this;
     }
 
-    public PomRepository[] getPluginRepositories() {
+    public NutsPomRepository[] getPluginRepositories() {
         return pluginRepositories;
     }
 
-    public Pom setPluginRepositories(PomRepository[] pluginRepositories) {
+    public NutsPom setPluginRepositories(NutsPomRepository[] pluginRepositories) {
         this.pluginRepositories = pluginRepositories;
         return this;
     }
 
-    public PomId getPomId() {
+    public NutsPomId getPomId() {
         String g = groupId;
         String v = version;
         if (parent != null) {
@@ -170,14 +171,14 @@ public class Pom {
                 v = parent.getVersion();
             }
         }
-        return new PomId(g, artifactId, v);
+        return new NutsPomId(g, artifactId, v);
     }
 
-    public PomDependency[] getDependenciesManagement() {
+    public NutsPomDependency[] getDependenciesManagement() {
         return dependenciesManagement;
     }
 
-    public Pom setDependenciesManagement(PomDependency[] dependenciesManagement) {
+    public NutsPom setDependenciesManagement(NutsPomDependency[] dependenciesManagement) {
         this.dependenciesManagement = dependenciesManagement;
         return this;
     }
@@ -186,7 +187,7 @@ public class Pom {
         return url;
     }
 
-    public Pom setUrl(String url) {
+    public NutsPom setUrl(String url) {
         this.url = url;
         return this;
     }
@@ -195,7 +196,7 @@ public class Pom {
         return inceptionYear;
     }
 
-    public Pom setInceptionYear(String inceptionYear) {
+    public NutsPom setInceptionYear(String inceptionYear) {
         this.inceptionYear = inceptionYear;
         return this;
     }
@@ -204,7 +205,7 @@ public class Pom {
         return modules;
     }
 
-    public Pom setModules(String[] modules) {
+    public NutsPom setModules(String[] modules) {
         this.modules = modules;
         return this;
     }

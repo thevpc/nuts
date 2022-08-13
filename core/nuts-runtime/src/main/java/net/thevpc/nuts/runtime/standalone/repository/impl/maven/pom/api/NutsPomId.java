@@ -1,14 +1,14 @@
-package net.thevpc.nuts.runtime.standalone.repository.impl.maven.pom;
+package net.thevpc.nuts.runtime.standalone.repository.impl.maven.pom.api;
 
 import java.util.Objects;
 
-public class PomId {
+public class NutsPomId {
 
     private String groupId;
     private String artifactId;
     private String version;
 
-    public PomId(String groupId, String artifactId, String version) {
+    public NutsPomId(String groupId, String artifactId, String version) {
         this.groupId = groupId;
         this.artifactId = artifactId;
         this.version = version;
@@ -31,17 +31,17 @@ public class PomId {
         return groupId + ":" + artifactId + "#" + version;
     }
 
-    public PomId setGroupId(String groupId) {
+    public NutsPomId setGroupId(String groupId) {
         this.groupId = groupId;
         return this;
     }
 
-    public PomId setArtifactId(String artifactId) {
+    public NutsPomId setArtifactId(String artifactId) {
         this.artifactId = artifactId;
         return this;
     }
 
-    public PomId setVersion(String version) {
+    public NutsPomId setVersion(String version) {
         this.version = version;
         return this;
     }
@@ -54,7 +54,7 @@ public class PomId {
         if (o == null || getClass() != o.getClass()) {
             return false;
         }
-        PomId pomId = (PomId) o;
+        NutsPomId pomId = (NutsPomId) o;
         return Objects.equals(groupId, pomId.groupId)
                 && Objects.equals(artifactId, pomId.artifactId)
                 && Objects.equals(version, pomId.version);

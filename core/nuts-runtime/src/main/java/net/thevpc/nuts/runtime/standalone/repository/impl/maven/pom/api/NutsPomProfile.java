@@ -1,37 +1,37 @@
-package net.thevpc.nuts.runtime.standalone.repository.impl.maven.pom;
+package net.thevpc.nuts.runtime.standalone.repository.impl.maven.pom.api;
 
 import java.util.Arrays;
 import java.util.Map;
 import java.util.Objects;
 
-public class PomProfile {
+public class NutsPomProfile {
 
     private String id;
-    private PomProfileActivation activation;
+    private NutsPomProfileActivation activation;
     private Map<String, String> properties;
-    private PomDependency[] dependencies;
-    private PomDependency[] dependenciesManagement;
-    private PomRepository[] repositories;
-    private PomRepository[] pluginRepositories;
+    private NutsPomDependency[] dependencies;
+    private NutsPomDependency[] dependenciesManagement;
+    private NutsPomRepository[] repositories;
+    private NutsPomRepository[] pluginRepositories;
     private String[] modules;
 
-    public PomProfile() {
+    public NutsPomProfile() {
     }
 
     public String getId() {
         return id;
     }
 
-    public PomProfile setId(String id) {
+    public NutsPomProfile setId(String id) {
         this.id = id;
         return this;
     }
 
-    public PomProfileActivation getActivation() {
+    public NutsPomProfileActivation getActivation() {
         return activation;
     }
 
-    public PomProfile setActivation(PomProfileActivation activation) {
+    public NutsPomProfile setActivation(NutsPomProfileActivation activation) {
         this.activation = activation;
         return this;
     }
@@ -40,43 +40,43 @@ public class PomProfile {
         return properties;
     }
 
-    public PomProfile setProperties(Map<String, String> properties) {
+    public NutsPomProfile setProperties(Map<String, String> properties) {
         this.properties = properties;
         return this;
     }
 
-    public PomDependency[] getDependencies() {
+    public NutsPomDependency[] getDependencies() {
         return dependencies;
     }
 
-    public PomProfile setDependencies(PomDependency[] dependencies) {
+    public NutsPomProfile setDependencies(NutsPomDependency[] dependencies) {
         this.dependencies = dependencies;
         return this;
     }
 
-    public PomDependency[] getDependenciesManagement() {
+    public NutsPomDependency[] getDependenciesManagement() {
         return dependenciesManagement;
     }
 
-    public PomProfile setDependenciesManagement(PomDependency[] dependenciesManagement) {
+    public NutsPomProfile setDependenciesManagement(NutsPomDependency[] dependenciesManagement) {
         this.dependenciesManagement = dependenciesManagement;
         return this;
     }
 
-    public PomRepository[] getRepositories() {
+    public NutsPomRepository[] getRepositories() {
         return repositories;
     }
 
-    public PomProfile setRepositories(PomRepository[] repositories) {
+    public NutsPomProfile setRepositories(NutsPomRepository[] repositories) {
         this.repositories = repositories;
         return this;
     }
 
-    public PomRepository[] getPluginRepositories() {
+    public NutsPomRepository[] getPluginRepositories() {
         return pluginRepositories;
     }
 
-    public PomProfile setPluginRepositories(PomRepository[] pluginRepositories) {
+    public NutsPomProfile setPluginRepositories(NutsPomRepository[] pluginRepositories) {
         this.pluginRepositories = pluginRepositories;
         return this;
     }
@@ -85,7 +85,7 @@ public class PomProfile {
         return modules;
     }
 
-    public PomProfile setModules(String[] modules) {
+    public NutsPomProfile setModules(String[] modules) {
         this.modules = modules;
         return this;
     }
@@ -94,7 +94,7 @@ public class PomProfile {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        PomProfile that = (PomProfile) o;
+        NutsPomProfile that = (NutsPomProfile) o;
         return Objects.equals(id, that.id) && Objects.equals(activation, that.activation) && Objects.equals(properties, that.properties) && Arrays.equals(dependencies, that.dependencies) && Arrays.equals(dependenciesManagement, that.dependenciesManagement) && Arrays.equals(repositories, that.repositories) && Arrays.equals(pluginRepositories, that.pluginRepositories) && Arrays.equals(modules, that.modules);
     }
 

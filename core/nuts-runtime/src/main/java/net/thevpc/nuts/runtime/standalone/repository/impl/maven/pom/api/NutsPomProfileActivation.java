@@ -1,8 +1,8 @@
-package net.thevpc.nuts.runtime.standalone.repository.impl.maven.pom;
+package net.thevpc.nuts.runtime.standalone.repository.impl.maven.pom.api;
 
 import java.util.Objects;
 
-public class PomProfileActivation {
+public class NutsPomProfileActivation {
     private Boolean activeByDefault;
     private String jdk;
     private String propertyName;
@@ -13,14 +13,14 @@ public class PomProfileActivation {
     private String osFamily;
     private String osVersion;
 
-    public PomProfileActivation() {
+    public NutsPomProfileActivation() {
     }
 
     public Boolean getActiveByDefault() {
         return activeByDefault;
     }
 
-    public PomProfileActivation setActiveByDefault(Boolean activeByDefault) {
+    public NutsPomProfileActivation setActiveByDefault(Boolean activeByDefault) {
         this.activeByDefault = activeByDefault;
         return this;
     }
@@ -29,7 +29,7 @@ public class PomProfileActivation {
         return jdk;
     }
 
-    public PomProfileActivation setJdk(String jdk) {
+    public NutsPomProfileActivation setJdk(String jdk) {
         this.jdk = jdk;
         return this;
     }
@@ -38,7 +38,7 @@ public class PomProfileActivation {
         return propertyName;
     }
 
-    public PomProfileActivation setPropertyName(String propertyName) {
+    public NutsPomProfileActivation setPropertyName(String propertyName) {
         this.propertyName = propertyName;
         return this;
     }
@@ -47,7 +47,7 @@ public class PomProfileActivation {
         return propertyValue;
     }
 
-    public PomProfileActivation setPropertyValue(String propertyValue) {
+    public NutsPomProfileActivation setPropertyValue(String propertyValue) {
         this.propertyValue = propertyValue;
         return this;
     }
@@ -56,7 +56,7 @@ public class PomProfileActivation {
         return osName;
     }
 
-    public PomProfileActivation setOsName(String osName) {
+    public NutsPomProfileActivation setOsName(String osName) {
         this.osName = osName;
         return this;
     }
@@ -65,7 +65,7 @@ public class PomProfileActivation {
         return osArch;
     }
 
-    public PomProfileActivation setOsArch(String osArch) {
+    public NutsPomProfileActivation setOsArch(String osArch) {
         this.osArch = osArch;
         return this;
     }
@@ -74,7 +74,7 @@ public class PomProfileActivation {
         return osFamily;
     }
 
-    public PomProfileActivation setOsFamily(String osFamily) {
+    public NutsPomProfileActivation setOsFamily(String osFamily) {
         this.osFamily = osFamily;
         return this;
     }
@@ -83,7 +83,7 @@ public class PomProfileActivation {
         return osVersion;
     }
 
-    public PomProfileActivation setOsVersion(String osVersion) {
+    public NutsPomProfileActivation setOsVersion(String osVersion) {
         this.osVersion = osVersion;
         return this;
     }
@@ -92,7 +92,7 @@ public class PomProfileActivation {
         return file;
     }
 
-    public PomProfileActivation setFile(String file) {
+    public NutsPomProfileActivation setFile(String file) {
         this.file = file;
         return this;
     }
@@ -101,7 +101,7 @@ public class PomProfileActivation {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        PomProfileActivation that = (PomProfileActivation) o;
+        NutsPomProfileActivation that = (NutsPomProfileActivation) o;
         return Objects.equals(activeByDefault, that.activeByDefault) && Objects.equals(jdk, that.jdk)
                 && Objects.equals(propertyName, that.propertyName)
                 && Objects.equals(propertyValue, that.propertyValue)

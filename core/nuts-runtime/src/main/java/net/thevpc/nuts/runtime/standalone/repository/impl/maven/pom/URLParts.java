@@ -33,6 +33,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Enumeration;
 import java.util.List;
+import java.util.function.Predicate;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 
@@ -120,7 +121,7 @@ public class URLParts {
         return new URLParts(all.toArray(new URLPart[0]));
     }
 
-    public URL[] getChildren(boolean includeFolders, boolean deep, final URLFilter filter) throws IOException {
+    public URL[] getChildren(boolean includeFolders, boolean deep, final Predicate<URL> filter) throws IOException {
         Object parent = null;
         for (int i = 0; i < values.length; i++) {
             URLPart value = values[i];
@@ -134,7 +135,7 @@ public class URLParts {
                                 @Override
                                 public boolean accept(File pathname) {
                                     try {
-                                        return filter == null || filter.accept(pathname.toURI().toURL());
+                                        return filter == null || filter.test(pathname.toURI().toURL());
                                     } catch (MalformedURLException ex) {
                                         return false;
                                     }
@@ -192,7 +193,7 @@ public class URLParts {
                                                 s.append(uu.toString());
                                                 s.append(entry);
                                                 final URL uuu = new URL(s.toString());
-                                                if (filter == null || filter.accept(uuu)) {
+                                                if (filter == null || filter.test(uuu)) {
                                                     ff.add(uuu);
                                                 }
                                             }
@@ -218,7 +219,7 @@ public class URLParts {
                                 @Override
                                 public boolean accept(File pathname) {
                                     try {
-                                        return filter == null || filter.accept(pathname.toURI().toURL());
+                                        return filter == null || filter.test(pathname.toURI().toURL());
                                     } catch (MalformedURLException ex) {
                                         return false;
                                     }

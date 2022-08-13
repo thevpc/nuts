@@ -1,9 +1,11 @@
-package net.thevpc.nuts.runtime.standalone.repository.impl.maven.pom;
+package net.thevpc.nuts.runtime.standalone.repository.impl.maven.pom.api;
+
+import net.thevpc.nuts.NutsBlankable;
 
 import java.util.Arrays;
 import java.util.Objects;
 
-public class PomDependency {
+public class NutsPomDependency {
 
     private String groupId;
     private String artifactId;
@@ -14,16 +16,16 @@ public class PomDependency {
     private String arch;
     private String optional;
     private String type;
-    private PomId[] exclusions;
+    private NutsPomId[] exclusions;
 
-    public PomDependency(String groupId, String artifactId, String version) {
-        this(groupId, artifactId, null, version, null, null, null, null, null, new PomId[0]);
+    public NutsPomDependency(String groupId, String artifactId, String version) {
+        this(groupId, artifactId, null, version, null, null, null, null, null, new NutsPomId[0]);
     }
 
-    public PomDependency(String groupId, String artifactId, String classifier, String version, String scope, String optional,
-            String os,
-            String arch, String type,
-            PomId[] exclusions) {
+    public NutsPomDependency(String groupId, String artifactId, String classifier, String version, String scope, String optional,
+                             String os,
+                             String arch, String type,
+                             NutsPomId[] exclusions) {
         this.groupId = groupId;
         this.artifactId = artifactId;
         this.version = version;
@@ -42,6 +44,51 @@ public class PomDependency {
 
     public String getClassifier() {
         return classifier;
+    }
+
+    public boolean equalsShortName(NutsPomDependency other) {
+        return other != null
+                && Objects.equals(groupId, other.getGroupId())
+                && Objects.equals(artifactId, other.getArtifactId())
+                ;
+    }
+
+    public boolean equalsLongName(NutsPomDependency other) {
+        return other != null
+                && Objects.equals(groupId, other.getGroupId())
+                && Objects.equals(artifactId, other.getArtifactId())
+                && Objects.equals(version, other.getVersion())
+                ;
+    }
+
+    public String getShortName() {
+        if(NutsBlankable.isBlank(groupId) && NutsBlankable.isBlank(artifactId)){
+            return "";
+        }
+        StringBuilder sb=new StringBuilder();
+        if(!NutsBlankable.isBlank(groupId)){
+            sb.append(groupId);
+            sb.append(":");
+        }
+        sb.append(artifactId);
+        return sb.toString();
+    }
+
+    public String getLongName() {
+        if(NutsBlankable.isBlank(groupId) && NutsBlankable.isBlank(artifactId)){
+            return "";
+        }
+        StringBuilder sb=new StringBuilder();
+        if(!NutsBlankable.isBlank(groupId)){
+            sb.append(groupId);
+            sb.append(":");
+        }
+        sb.append(artifactId);
+        if(!NutsBlankable.isBlank(version)){
+            sb.append("#");
+            sb.append(version);
+        }
+        return sb.toString();
     }
 
     public String getGroupId() {
@@ -64,41 +111,41 @@ public class PomDependency {
         return optional;
     }
 
-    public PomId[] getExclusions() {
+    public NutsPomId[] getExclusions() {
         return exclusions;
     }
 
-    public PomDependency setClassifier(String classifier) {
+    public NutsPomDependency setClassifier(String classifier) {
         this.classifier = classifier;
         return this;
     }
 
-    public PomDependency setGroupId(String groupId) {
+    public NutsPomDependency setGroupId(String groupId) {
         this.groupId = groupId;
         return this;
     }
 
-    public PomDependency setArtifactId(String artifactId) {
+    public NutsPomDependency setArtifactId(String artifactId) {
         this.artifactId = artifactId;
         return this;
     }
 
-    public PomDependency setVersion(String version) {
+    public NutsPomDependency setVersion(String version) {
         this.version = version;
         return this;
     }
 
-    public PomDependency setScope(String scope) {
+    public NutsPomDependency setScope(String scope) {
         this.scope = scope;
         return this;
     }
 
-    public PomDependency setOptional(String optional) {
+    public NutsPomDependency setOptional(String optional) {
         this.optional = optional;
         return this;
     }
 
-    public PomDependency setExclusions(PomId[] exclusions) {
+    public NutsPomDependency setExclusions(NutsPomId[] exclusions) {
         this.exclusions = exclusions;
         return this;
     }
@@ -131,7 +178,7 @@ public class PomDependency {
         if (o == null || getClass() != o.getClass()) {
             return false;
         }
-        PomDependency that = (PomDependency) o;
+        NutsPomDependency that = (NutsPomDependency) o;
         return Objects.equals(toUniformGroupId(groupId), toUniformGroupId(that.groupId))
                 && Objects.equals(toUniformGroupId(artifactId), toUniformGroupId(that.artifactId))
                 && Objects.equals(toUniformGroupId(version), toUniformGroupId(that.version))

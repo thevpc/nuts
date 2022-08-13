@@ -2,9 +2,8 @@ package net.thevpc.nuts.runtime.standalone.xtra.idresolver;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.io.NutsPath;
-import net.thevpc.nuts.runtime.standalone.repository.impl.maven.pom.PomId;
-import net.thevpc.nuts.runtime.standalone.repository.impl.maven.pom.PomXmlParser;
-import net.thevpc.nuts.runtime.standalone.repository.impl.maven.pom.URLFilter;
+import net.thevpc.nuts.runtime.standalone.repository.impl.maven.pom.api.NutsPomId;
+import net.thevpc.nuts.runtime.standalone.repository.impl.maven.pom.NutsPomXmlParser;
 import net.thevpc.nuts.runtime.standalone.repository.impl.maven.pom.URLParts;
 import net.thevpc.nuts.runtime.standalone.util.jclass.JavaClassUtils;
 import net.thevpc.nuts.util.NutsLoggerOp;
@@ -14,6 +13,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.util.*;
+import java.util.function.Predicate;
 import java.util.logging.Level;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
@@ -52,7 +52,7 @@ public class PomIdResolver2 {
                         all.add(id);
                     }
                 } catch (Exception ex) {
-                    NutsLoggerOp.of(PomXmlParser.class,session)
+                    NutsLoggerOp.of(NutsPomXmlParser.class,session)
                             .verb(NutsLoggerVerb.WARNING)
                             .level(Level.FINEST)
                             .log(NutsMessage.ofCstyle("failed to parse pom file %s : %s", url, ex));
@@ -87,7 +87,7 @@ public class PomIdResolver2 {
                         NutsPath.of(url,session), n, session)));
             }
         } catch (IOException ex) {
-            NutsLoggerOp.of(PomXmlParser.class,session)
+            NutsLoggerOp.of(NutsPomXmlParser.class,session)
                     .verb(NutsLoggerVerb.WARNING)
                     .level(Level.FINEST)
                     .log(NutsMessage.ofCstyle("failed to parse class %s : %s", clazz.getName(), ex));
@@ -102,9 +102,9 @@ public class PomIdResolver2 {
     }
 
 
-    public PomId resolvePomId(Class clazz, String groupId, String artifactId, String defaultValue) {
+    public NutsPomId resolvePomId(Class clazz, String groupId, String artifactId, String defaultValue) {
         String ver = resolvePomVersion(clazz, groupId, artifactId, defaultValue);
-        return new PomId(
+        return new NutsPomId(
                 groupId, artifactId, ver
         );
     }
@@ -148,7 +148,7 @@ public class PomIdResolver2 {
         return defaultValue;
     }
 
-    public PomId resolvePropertiesPomId(InputStream stream) {
+    public NutsPomId resolvePropertiesPomId(InputStream stream) {
         Properties prop = new Properties();
         try {
             prop.load(stream);
@@ -159,22 +159,22 @@ public class PomIdResolver2 {
         String groupId = prop.getProperty("groupId");
         String artifactId = prop.getProperty("artifactId");
         if (version != null && version.trim().length() != 0) {
-            return new PomId(groupId, artifactId, version);
+            return new NutsPomId(groupId, artifactId, version);
         }
         return null;
     }
 
-    public PomId[] resolveJarPomIds(InputStream jarStream) throws IOException {
-        final List<PomId> list = new ArrayList<>();
+    public NutsPomId[] resolveJarPomIds(InputStream jarStream) throws IOException {
+        final List<NutsPomId> list = new ArrayList<>();
         visitZipStream(jarStream, new InputStreamVisitor() {
             @Override
             public boolean visit(String path, InputStream inputStream) {
                 if (path.startsWith("META-INF/")
                         && path.endsWith("/pom.properties")) {
 
-                    PomId id = resolvePropertiesPomId(inputStream);
+                    NutsPomId id = resolvePropertiesPomId(inputStream);
                     if (id != null) {
-                        list.add(new PomId(
+                        list.add(new NutsPomId(
                                 id.getGroupId(),
                                 id.getArtifactId(),
                                 id.getVersion()
@@ -184,11 +184,11 @@ public class PomIdResolver2 {
                 return true;
             }
         });
-        return list.toArray(new PomId[0]);
+        return list.toArray(new NutsPomId[0]);
     }
 
-    public PomId resolveJarPomId(InputStream jarStream) throws IOException {
-        PomId[] v = resolveJarPomIds(jarStream);
+    public NutsPomId resolveJarPomId(InputStream jarStream) throws IOException {
+        NutsPomId[] v = resolveJarPomIds(jarStream);
         if (v.length == 0) {
             return null;
         }
@@ -254,13 +254,13 @@ public class PomIdResolver2 {
         boolean visit(String path, InputStream inputStream) throws IOException;
     }
 
-    private static class MyURLFilter implements URLFilter {
+    private static class MyURLFilter implements Predicate<URL> {
 
         public MyURLFilter() {
         }
 
         @Override
-        public boolean accept(URL path) {
+        public boolean test(URL path) {
             return new URLParts(path).getName().equals("nuts.json");
         }
     }

@@ -1,4 +1,4 @@
-package net.thevpc.nuts.runtime.standalone.repository.impl.maven.pom;
+package net.thevpc.nuts.runtime.standalone.repository.impl.maven.pom.api;
 
 import java.util.Objects;
 
@@ -20,19 +20,19 @@ import java.util.Objects;
  * &lt;/repository&gt;
  * </pre>
  */
-public class PomRepository {
+public class NutsPomRepository {
 
     private String id;
     private String layout;
     private String url;
     private String name;
-    private PomRepositoryPolicy releases;
-    private PomRepositoryPolicy snapshots;
+    private NutsPomRepositoryPolicy releases;
+    private NutsPomRepositoryPolicy snapshots;
 
-    public PomRepository() {
+    public NutsPomRepository() {
     }
 
-    public PomRepository(String id, String layout, String url, String name, PomRepositoryPolicy releases, PomRepositoryPolicy snapshots) {
+    public NutsPomRepository(String id, String layout, String url, String name, NutsPomRepositoryPolicy releases, NutsPomRepositoryPolicy snapshots) {
         this.id = id;
         this.layout = layout;
         this.url = url;
@@ -45,7 +45,7 @@ public class PomRepository {
         return id;
     }
 
-    public PomRepository setId(String id) {
+    public NutsPomRepository setId(String id) {
         this.id = id;
         return this;
     }
@@ -54,7 +54,7 @@ public class PomRepository {
         return layout;
     }
 
-    public PomRepository setLayout(String layout) {
+    public NutsPomRepository setLayout(String layout) {
         this.layout = layout;
         return this;
     }
@@ -63,7 +63,7 @@ public class PomRepository {
         return url;
     }
 
-    public PomRepository setUrl(String url) {
+    public NutsPomRepository setUrl(String url) {
         this.url = url;
         return this;
     }
@@ -72,25 +72,25 @@ public class PomRepository {
         return name;
     }
 
-    public PomRepository setName(String name) {
+    public NutsPomRepository setName(String name) {
         this.name = name;
         return this;
     }
 
-    public PomRepositoryPolicy getReleases() {
+    public NutsPomRepositoryPolicy getReleases() {
         return releases;
     }
 
-    public PomRepository setReleases(PomRepositoryPolicy releases) {
+    public NutsPomRepository setReleases(NutsPomRepositoryPolicy releases) {
         this.releases = releases;
         return this;
     }
 
-    public PomRepositoryPolicy getSnapshots() {
+    public NutsPomRepositoryPolicy getSnapshots() {
         return snapshots;
     }
 
-    public PomRepository setSnapshots(PomRepositoryPolicy snapshots) {
+    public NutsPomRepository setSnapshots(NutsPomRepositoryPolicy snapshots) {
         this.snapshots = snapshots;
         return this;
     }
@@ -103,7 +103,7 @@ public class PomRepository {
         if (o == null || getClass() != o.getClass()) {
             return false;
         }
-        PomRepository that = (PomRepository) o;
+        NutsPomRepository that = (NutsPomRepository) o;
         return Objects.equals(id, that.id)
                 && Objects.equals(layout, that.layout)
                 && Objects.equals(url, that.url)

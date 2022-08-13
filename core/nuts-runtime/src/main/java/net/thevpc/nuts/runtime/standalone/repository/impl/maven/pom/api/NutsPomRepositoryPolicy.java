@@ -1,17 +1,17 @@
-package net.thevpc.nuts.runtime.standalone.repository.impl.maven.pom;
+package net.thevpc.nuts.runtime.standalone.repository.impl.maven.pom.api;
 
 import java.util.Objects;
 
-public class PomRepositoryPolicy {
+public class NutsPomRepositoryPolicy {
 
     private boolean enabled = true;
     private String updatePolicy;
     private String checksumPolicy;
 
-    public PomRepositoryPolicy() {
+    public NutsPomRepositoryPolicy() {
     }
 
-    public PomRepositoryPolicy(boolean enabled, String updatePolicy, String checksumPolicy) {
+    public NutsPomRepositoryPolicy(boolean enabled, String updatePolicy, String checksumPolicy) {
         this.enabled = enabled;
         this.updatePolicy = updatePolicy;
         this.checksumPolicy = checksumPolicy;
@@ -21,7 +21,7 @@ public class PomRepositoryPolicy {
         return enabled;
     }
 
-    public PomRepositoryPolicy setEnabled(boolean enabled) {
+    public NutsPomRepositoryPolicy setEnabled(boolean enabled) {
         this.enabled = enabled;
         return this;
     }
@@ -30,7 +30,7 @@ public class PomRepositoryPolicy {
         return updatePolicy;
     }
 
-    public PomRepositoryPolicy setUpdatePolicy(String updatePolicy) {
+    public NutsPomRepositoryPolicy setUpdatePolicy(String updatePolicy) {
         this.updatePolicy = updatePolicy;
         return this;
     }
@@ -39,7 +39,7 @@ public class PomRepositoryPolicy {
         return checksumPolicy;
     }
 
-    public PomRepositoryPolicy setChecksumPolicy(String checksumPolicy) {
+    public NutsPomRepositoryPolicy setChecksumPolicy(String checksumPolicy) {
         this.checksumPolicy = checksumPolicy;
         return this;
     }
@@ -52,7 +52,7 @@ public class PomRepositoryPolicy {
         if (o == null || getClass() != o.getClass()) {
             return false;
         }
-        PomRepositoryPolicy that = (PomRepositoryPolicy) o;
+        NutsPomRepositoryPolicy that = (NutsPomRepositoryPolicy) o;
         return enabled == that.enabled
                 && Objects.equals(updatePolicy, that.updatePolicy)
                 && Objects.equals(checksumPolicy, that.checksumPolicy);

@@ -4,8 +4,8 @@ import net.thevpc.nuts.*;
 import net.thevpc.nuts.io.NutsIOException;
 import net.thevpc.nuts.io.NutsPath;
 import net.thevpc.nuts.runtime.standalone.io.util.ZipUtils;
-import net.thevpc.nuts.runtime.standalone.repository.impl.maven.pom.Pom;
-import net.thevpc.nuts.runtime.standalone.repository.impl.maven.pom.PomXmlParser;
+import net.thevpc.nuts.runtime.standalone.repository.impl.maven.pom.api.NutsPom;
+import net.thevpc.nuts.runtime.standalone.repository.impl.maven.pom.NutsPomXmlParser;
 import net.thevpc.nuts.runtime.standalone.util.xml.XmlUtils;
 import net.thevpc.nuts.runtime.standalone.xtra.execentries.DefaultNutsExecutionEntry;
 import net.thevpc.nuts.util.NutsRef;
@@ -120,7 +120,7 @@ public class JavaJarUtils {
                     }
                 }
             } else if (path.startsWith("META-INF/maven/") && path.endsWith("/pom.xml")) {
-                Pom pom = new PomXmlParser(session).parse(inputStream, session);
+                NutsPom pom = new NutsPomXmlParser(session).parse(inputStream, session);
                 final Element ee = pom.getXml().getDocumentElement();
                 if (pom.getParent() != null && pom.getParent().getArtifactId().equals("spring-boot-starter-parent")) {
                     String springStartClass = NutsStringUtils.trim(pom.getProperties().get("start-class"));
@@ -258,7 +258,7 @@ public class JavaJarUtils {
         return ee;
     }
 
-    private static String resolveMainClassString(String nameOrVar, Pom pom) {
+    private static String resolveMainClassString(String nameOrVar, NutsPom pom) {
         if (nameOrVar.startsWith("${") && nameOrVar.endsWith("}")) {
             String e = pom.getProperties().get(nameOrVar.substring(2, nameOrVar.length() - 1));
             if (e != null) {

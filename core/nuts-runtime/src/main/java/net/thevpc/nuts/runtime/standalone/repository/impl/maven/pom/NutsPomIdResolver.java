@@ -2,6 +2,7 @@ package net.thevpc.nuts.runtime.standalone.repository.impl.maven.pom;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.io.NutsPath;
+import net.thevpc.nuts.runtime.standalone.repository.impl.maven.pom.api.NutsPomId;
 import net.thevpc.nuts.runtime.standalone.util.jclass.JavaClassUtils;
 import net.thevpc.nuts.util.NutsLoggerOp;
 import net.thevpc.nuts.util.NutsLoggerVerb;
@@ -10,21 +11,22 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.util.*;
+import java.util.function.Predicate;
 import java.util.logging.Level;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
-public class PomIdResolver {
+public class NutsPomIdResolver {
 
     //    private NutsWorkspace ws;
     private NutsSession session;
 
-    public PomIdResolver(NutsSession session) {
+    public NutsPomIdResolver(NutsSession session) {
         this.session = session;
     }
 
-    public PomId[] resolvePomId(NutsPath baseUrl, String referenceResourcePath, NutsSession session) {
-        List<PomId> all = new ArrayList<PomId>();
+    public NutsPomId[] resolvePomId(NutsPath baseUrl, String referenceResourcePath, NutsSession session) {
+        List<NutsPomId> all = new ArrayList<NutsPomId>();
         final URLParts aa = new URLParts(baseUrl.toURL());
         String basePath = aa.getLastPart().getPath().substring(0, aa.getLastPart().getPath().length() - referenceResourcePath.length());
         if (!basePath.endsWith("/") && !basePath.endsWith("\\")) {
@@ -51,7 +53,7 @@ public class PomIdResolver {
                 String groupId = prop.getProperty("groupId");
                 String artifactId = prop.getProperty("artifactId");
                 if (version != null && version.trim().length() != 0) {
-                    all.add(new PomId(groupId, artifactId, version));
+                    all.add(new NutsPomId(groupId, artifactId, version));
                 }
             }
         }
@@ -61,16 +63,16 @@ public class PomIdResolver {
                 String s2 = basePath.substring(0, basePath.length() - "/target/classes".length()) + "pom.xml";
                 //this is most likely to be a maven project
                 try {
-                    all.add(new PomXmlParser(session).parse(NutsPath.of(s2,session).asURL(), session).getPomId());
+                    all.add(new NutsPomXmlParser(session).parse(NutsPath.of(s2,session).asURL(), session).getPomId());
                 } catch (Exception ex) {
-                    NutsLoggerOp.of(PomXmlParser.class,session)
+                    NutsLoggerOp.of(NutsPomXmlParser.class,session)
                             .verb(NutsLoggerVerb.WARNING)
                             .level(Level.FINEST)
                             .log(NutsMessage.ofCstyle("failed to parse pom file %s : %s", s2, ex));
                 }
             }
         }
-        return all.toArray(new PomId[0]);
+        return all.toArray(new NutsPomId[0]);
     }
 
     /**
@@ -80,8 +82,8 @@ public class PomIdResolver {
      * @param clazz class
      * @return artifacts array in the form groupId:artfcatId#version
      */
-    public PomId[] resolvePomIds(Class clazz) {
-        List<PomId> all = new ArrayList<PomId>();
+    public NutsPomId[] resolvePomIds(Class clazz) {
+        List<NutsPomId> all = new ArrayList<NutsPomId>();
         try {
             final String n = clazz.getName().replace('.', '/').concat(".class");
             final Enumeration<URL> r = clazz.getClassLoader().getResources(n);
@@ -90,7 +92,7 @@ public class PomIdResolver {
                         NutsPath.of(url,session), n, session)));
             }
         } catch (IOException ex) {
-            NutsLoggerOp.of(PomXmlParser.class,session)
+            NutsLoggerOp.of(NutsPomXmlParser.class,session)
                     .verb(NutsLoggerVerb.WARNING)
                     .level(Level.FINEST)
                     .log(NutsMessage.ofCstyle("failed to parse class %s : %s", clazz.getName(), ex));
@@ -101,17 +103,17 @@ public class PomIdResolver {
                 return resolvePomIds(s);
             }
         }
-        return all.toArray(new PomId[0]);
+        return all.toArray(new NutsPomId[0]);
     }
 
-    public PomId resolvePomId(Class clazz) {
-        return resolvePomId(clazz, new PomId("dev", "dev", "dev"));
+    public NutsPomId resolvePomId(Class clazz) {
+        return resolvePomId(clazz, new NutsPomId("dev", "dev", "dev"));
     }
 
-    public PomId resolvePomId(Class clazz, PomId defaultValue) {
-        PomId[] pomIds = resolvePomIds(clazz);
+    public NutsPomId resolvePomId(Class clazz, NutsPomId defaultValue) {
+        NutsPomId[] pomIds = resolvePomIds(clazz);
         if (pomIds.length > 1) {
-            NutsLoggerOp.of(PomXmlParser.class,session)
+            NutsLoggerOp.of(NutsPomXmlParser.class,session)
                     .verb(NutsLoggerVerb.WARNING)
                     .level(Level.FINEST)
                     .log(NutsMessage.ofCstyle(
@@ -119,15 +121,15 @@ public class PomIdResolver {
                             Arrays.asList(pomIds),clazz,defaultValue
                     ));
         }
-        for (PomId v : pomIds) {
+        for (NutsPomId v : pomIds) {
             return v;
         }
         return defaultValue;
     }
 
-    public PomId resolvePomId(Class clazz, String groupId, String artifactId, String defaultValue) {
+    public NutsPomId resolvePomId(Class clazz, String groupId, String artifactId, String defaultValue) {
         String ver = resolvePomVersion(clazz, groupId, artifactId, defaultValue);
-        return new PomId(
+        return new NutsPomId(
                 groupId, artifactId, ver
         );
     }
@@ -171,7 +173,7 @@ public class PomIdResolver {
         return defaultValue;
     }
 
-    public PomId resolvePropertiesPomId(InputStream stream) {
+    public NutsPomId resolvePropertiesPomId(InputStream stream) {
         Properties prop = new Properties();
         try {
             prop.load(stream);
@@ -182,22 +184,22 @@ public class PomIdResolver {
         String groupId = prop.getProperty("groupId");
         String artifactId = prop.getProperty("artifactId");
         if (version != null && version.trim().length() != 0) {
-            return new PomId(groupId, artifactId, version);
+            return new NutsPomId(groupId, artifactId, version);
         }
         return null;
     }
 
-    public PomId[] resolveJarPomIds(InputStream jarStream) throws IOException {
-        final List<PomId> list = new ArrayList<>();
+    public NutsPomId[] resolveJarPomIds(InputStream jarStream) throws IOException {
+        final List<NutsPomId> list = new ArrayList<>();
         visitZipStream(jarStream, new InputStreamVisitor() {
             @Override
             public boolean visit(String path, InputStream inputStream) {
                 if (path.startsWith("META-INF/")
                         && path.endsWith("/pom.properties")) {
 
-                    PomId id = resolvePropertiesPomId(inputStream);
+                    NutsPomId id = resolvePropertiesPomId(inputStream);
                     if (id != null) {
-                        list.add(new PomId(
+                        list.add(new NutsPomId(
                                 id.getGroupId(),
                                 id.getArtifactId(),
                                 id.getVersion()
@@ -207,11 +209,11 @@ public class PomIdResolver {
                 return true;
             }
         });
-        return list.toArray(new PomId[0]);
+        return list.toArray(new NutsPomId[0]);
     }
 
-    public PomId resolveJarPomId(InputStream jarStream) throws IOException {
-        PomId[] v = resolveJarPomIds(jarStream);
+    public NutsPomId resolveJarPomId(InputStream jarStream) throws IOException {
+        NutsPomId[] v = resolveJarPomIds(jarStream);
         if (v.length == 0) {
             return null;
         }
@@ -277,13 +279,13 @@ public class PomIdResolver {
         boolean visit(String path, InputStream inputStream) throws IOException;
     }
 
-    private static class MyURLFilter implements URLFilter {
+    private static class MyURLFilter implements Predicate<URL> {
 
         public MyURLFilter() {
         }
 
         @Override
-        public boolean accept(URL path) {
+        public boolean test(URL path) {
             return new URLParts(path).getName().equals("pom.properties");
         }
     }

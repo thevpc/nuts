@@ -3,8 +3,8 @@ package net.thevpc.nuts.runtime.standalone.repository.impl.maven.util;
 import net.thevpc.nuts.elem.NutsElement;
 import net.thevpc.nuts.elem.NutsElements;
 import net.thevpc.nuts.NutsSession;
-import net.thevpc.nuts.runtime.standalone.repository.impl.maven.pom.PomId;
-import net.thevpc.nuts.runtime.standalone.repository.impl.maven.pom.PomIdFilter;
+import net.thevpc.nuts.runtime.standalone.repository.impl.maven.pom.api.NutsPomId;
+import net.thevpc.nuts.runtime.standalone.repository.impl.maven.pom.api.PomIdFilter;
 import net.thevpc.nuts.runtime.standalone.util.iter.NutsIteratorBase;
 
 import javax.xml.stream.XMLEventReader;
@@ -21,7 +21,7 @@ import java.util.Stack;
 
 public class ArchetypeCatalogParser {
 
-    public static Iterator<PomId> createArchetypeCatalogIterator(final InputStream stream, final PomIdFilter filter, final boolean autoCloseStream) {
+    public static Iterator<NutsPomId> createArchetypeCatalogIterator(final InputStream stream, final PomIdFilter filter, final boolean autoCloseStream) {
         return new ArchetypeCatalogPomIdIterator(stream, filter, autoCloseStream);
     }
 
@@ -41,11 +41,11 @@ public class ArchetypeCatalogParser {
         return true;
     }
 
-    private static class ArchetypeCatalogPomIdIterator extends NutsIteratorBase<PomId> {
+    private static class ArchetypeCatalogPomIdIterator extends NutsIteratorBase<NutsPomId> {
         private final InputStream stream;
         private final PomIdFilter filter;
         private final boolean autoCloseStream;
-        PomId last;
+        NutsPomId last;
         InputStream stream2;
         XMLInputFactory factory;
         XMLEventReader eventReader;
@@ -114,7 +114,7 @@ public class ArchetypeCatalogParser {
                         }
                         case XMLStreamConstants.END_ELEMENT: {
                             if (isStackPath(nodePath, "archetype-catalog", "archetypes", "archetype")) {
-                                last = new PomId(groupId.toString(), artifactId.toString(), version.toString()
+                                last = new NutsPomId(groupId.toString(), artifactId.toString(), version.toString()
                                 );
                                 if (filter == null || filter.accept(last)) {
                                     nodePath.pop();
@@ -135,7 +135,7 @@ public class ArchetypeCatalogParser {
         }
 
         @Override
-        public PomId next() {
+        public NutsPomId next() {
             return last;
         }
 

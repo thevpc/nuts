@@ -64,6 +64,16 @@ public final class NutsUtils {
         requireNonNull(object, "value", session);
     }
 
+    public static void requireNull(Object object) {
+        requireNull(object, "value");
+    }
+
+    public static void requireNull(Object object, String name) {
+        if (object != null) {
+            throw new IllegalArgumentException(createName(name) + " must be null");
+        }
+    }
+
     public static void requireNull(Object object, NutsSession session) {
         requireNull(object, "value", session);
     }
@@ -82,7 +92,7 @@ public final class NutsUtils {
 
     public static void requireNonBlank(Object object, String name) {
         if (NutsBlankable.isBlank(object)) {
-            throw new IllegalArgumentException(createName(name)+" should not be blank");
+            throw new IllegalArgumentException(createName(name) + " should not be blank");
         }
     }
 
