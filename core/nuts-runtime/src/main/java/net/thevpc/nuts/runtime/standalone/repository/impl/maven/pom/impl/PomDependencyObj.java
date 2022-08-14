@@ -10,14 +10,17 @@ public class PomDependencyObj extends DefaultNutsPomNode<NutsPomDependency> impl
         super(element, object, document);
     }
 
+    @Override
     public void setVersion(String version) {
         super.setTextElement("version", version, true);
     }
 
+    @Override
     public void setGroupId(String version) {
         super.setTextElement("groupId", version, true);
     }
 
+    @Override
     public void setArtifactGroupId(String version) {
         super.setTextElement("artifactId", version, true);
     }

@@ -15,6 +15,7 @@ public class PomDependenciesObj
         super(element, object, document);
     }
 
+    @Override
     public void removeDuplicates() {
         Map<String, NutsPomDependencyNode> visited = new LinkedHashMap<>();
         NutsPomDependencyNode[] pomDependencyObjs = getObject().toArray(new NutsPomDependencyNode[0]);
@@ -28,7 +29,8 @@ public class PomDependenciesObj
         }
     }
 
-    public void remove(PomDependencyObj dependency) {
+    @Override
+    public void remove(NutsPomDependencyNode dependency) {
         for (NutsPomDependencyNode x : getObject().toArray(new NutsPomDependencyNode[0])) {
             if (Objects.equals(x, dependency)) {
                 getObject().remove(x);
@@ -38,6 +40,7 @@ public class PomDependenciesObj
         }
     }
 
+    @Override
     public void remove(NutsPomDependency dependency) {
         for (NutsPomDependencyNode x : getObject().toArray(new NutsPomDependencyNode[0])) {
             if (Objects.equals(x.getObject(), dependency)) {
@@ -48,10 +51,12 @@ public class PomDependenciesObj
         }
     }
 
-    public void removeAllChildren(PomDependencyObj dependency) {
+    @Override
+    public void removeAllChildren(NutsPomDependencyNode dependency) {
         removeAllChildren(dependency.getObject());
     }
 
+    @Override
     public void removeAllChildren(NutsPomDependency dependency) {
         for (NutsPomDependencyNode x : getObject().toArray(new NutsPomDependencyNode[0])) {
             if (Objects.equals(x.getObject(), dependency)) {
@@ -61,6 +66,7 @@ public class PomDependenciesObj
         }
     }
 
+    @Override
     public void appendChild(NutsPomDependency dependency) {
         Element d = getDocument().createElement("dependency");
         d.appendChild(createTextElement("groupId", dependency.getGroupId()));
