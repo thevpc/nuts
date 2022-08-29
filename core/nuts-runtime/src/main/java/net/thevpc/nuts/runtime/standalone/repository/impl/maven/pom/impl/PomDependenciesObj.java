@@ -1,8 +1,11 @@
 package net.thevpc.nuts.runtime.standalone.repository.impl.maven.pom.impl;
 
+import net.thevpc.nuts.NutsBlankable;
 import net.thevpc.nuts.runtime.standalone.repository.impl.maven.pom.api.NutsPomDependency;
 import net.thevpc.nuts.runtime.standalone.repository.impl.maven.pom.api.NutsPomDependenciesNode;
 import net.thevpc.nuts.runtime.standalone.repository.impl.maven.pom.api.NutsPomDependencyNode;
+import net.thevpc.nuts.runtime.standalone.repository.impl.maven.pom.api.NutsPomId;
+import net.thevpc.nuts.util.NutsStringUtils;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -71,7 +74,26 @@ public class PomDependenciesObj
         Element d = getDocument().createElement("dependency");
         d.appendChild(createTextElement("groupId", dependency.getGroupId()));
         d.appendChild(createTextElement("artifactId", dependency.getArtifactId()));
-        d.appendChild(createTextElement("version", dependency.getVersion()));
+        if (!NutsBlankable.isBlank(dependency.getVersion())) {
+            d.appendChild(createTextElement("version", dependency.getVersion()));
+        }
+        if (!NutsBlankable.isBlank(dependency.getOptional())) {
+            d.appendChild(createTextElement("optional", dependency.getOptional()));
+        }
+        if (!NutsBlankable.isBlank(dependency.getClassifier())) {
+            d.appendChild(createTextElement("classifier", dependency.getClassifier()));
+        }
+        if (dependency.getExclusions().length > 0) {
+            Element exclusions = getDocument().createElement("exclusions");
+            for (NutsPomId exclusion : dependency.getExclusions()) {
+                exclusions.appendChild(createTextElement("groupId", exclusion.getGroupId()));
+                exclusions.appendChild(createTextElement("artifactId", exclusion.getArtifactId()));
+                if (!NutsBlankable.isBlank(exclusion.getVersion())) {
+                    exclusions.appendChild(createTextElement("version", exclusion.getVersion()));
+                }
+            }
+            d.appendChild(exclusions);
+        }
         getXmlElement().appendChild(d);
         getObject().add(new PomDependencyObj(d, dependency, getDocument()));
     }

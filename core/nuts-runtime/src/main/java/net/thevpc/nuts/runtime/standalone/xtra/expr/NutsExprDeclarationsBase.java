@@ -20,24 +20,28 @@ public abstract class NutsExprDeclarationsBase implements NutsExprDeclarations {
         return this;
     }
 
-    public Object evalFunction(String fctName, Object... args) {
-        return getFunction(fctName, args).get(getSession()).eval(Arrays.asList(args), this);
+    public NutsOptional<Object> evalFunction(String fctName, Object... args) {
+        return getFunction(fctName, args).flatMap(x->NutsOptional.ofNullable(x.eval(Arrays.asList(args), this)));
     }
 
-    public Object evalConstruct(String constructName, NutsExprNode... args) {
-        return getConstruct(constructName, args).get(getSession()).eval(Arrays.asList(args), this);
+    public NutsOptional<Object> evalConstruct(String constructName, NutsExprNode... args) {
+        return getConstruct(constructName, args).flatMap(x->NutsOptional.ofNullable(x.eval(Arrays.asList(args), this)));
     }
 
-    public Object evalOperator(String opName, NutsExprOpType type, NutsExprNode... args) {
-        return getOperator(opName, type, args).get(getSession()).eval(Arrays.asList(args), this);
+    public NutsOptional<Object> evalOperator(String opName, NutsExprOpType type, NutsExprNode... args) {
+        return getOperator(opName, type, args).flatMap(x->NutsOptional.ofNullable(x.eval(Arrays.asList(args), this)));
     }
 
-    public Object evalSetVar(String varName, Object value) {
-        return getVar(varName).get(getSession()).set(value, this);
+    public NutsOptional<Object> evalSetVar(String varName, Object value) {
+        return NutsOptional.of(getVar(varName).get(getSession()).set(value, this));
     }
 
-    public Object evalGetVar(String varName) {
-        return getVar(varName).get(getSession()).get(this);
+    public NutsOptional<Object> evalGetVar(String varName) {
+        NutsOptional<NutsExprVarDeclaration> var = getVar(varName);
+        if(!var.isPresent()){
+            return var.map(x->null);
+        }
+        return NutsOptional.ofNullable(var.get(getSession()).get(this));
     }
 
     @Override

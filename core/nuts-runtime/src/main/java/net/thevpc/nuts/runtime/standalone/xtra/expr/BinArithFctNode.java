@@ -13,8 +13,8 @@ public abstract class BinArithFctNode extends AbstractOp {
 
     @Override
     public Object eval(String name, List<NutsExprNode> args, NutsExprDeclarations e) {
-        Object a = args.get(0).eval(e);
-        Object b = args.get(1).eval(e);
+        Object a = args.get(0).eval(e).get();
+        Object b = args.get(1).eval(e).get();
         if (EvalUtils.isNumber(a) && EvalUtils.isNumber(b)) {
             return evalAny(EvalUtils.castToNumber(a).doubleValue(), EvalUtils.castToNumber(b).doubleValue());
         }

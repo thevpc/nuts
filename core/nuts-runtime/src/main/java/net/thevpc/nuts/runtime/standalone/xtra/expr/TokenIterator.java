@@ -15,6 +15,7 @@ class TokenIterator implements Iterator<NutsToken> {
 
     public TokenIterator(Reader r, NutsSession session) {
         this.st = new StreamTokenizerExt(r, session);
+        this.st.ordinaryChar('.');
     }
 
     public void pushBack() {
@@ -64,14 +65,214 @@ class TokenIterator implements Iterator<NutsToken> {
                 case '&':{
                     int i = st.nextToken();
                     if(i==StreamTokenizer.TT_EOF){
-                        //
+                        previous = new NutsToken(nt, "&", 0, st.lineno());
+                        return true;
                     }else if(i=='&'){
                         previous = new NutsToken(NutsToken.TT_AND, "&&", 0, st.lineno());
+                        return true;
                     }else{
                         st.pushBack();
                         previous = new NutsToken(nt, "&", 0, st.lineno());
+                        return true;
                     }
-                    break;
+//                    break;
+                }
+                case '|':{
+                    int i = st.nextToken();
+                    if(i==StreamTokenizer.TT_EOF){
+                        previous = new NutsToken(nt, "|", 0, st.lineno());
+                        return true;
+                    }else if(i=='|'){
+                        previous = new NutsToken(NutsToken.TT_OR, "||", 0, st.lineno());
+                        return true;
+                    }else{
+                        st.pushBack();
+                        previous = new NutsToken(nt, "|", 0, st.lineno());
+                        return true;
+                    }
+//                    break;
+                }
+                case '?':{
+                    int i = st.nextToken();
+                    if(i==StreamTokenizer.TT_EOF){
+                        previous = new NutsToken(nt, "?", 0, st.lineno());
+                        return true;
+                    }else if(i=='?'){
+                        previous = new NutsToken(NutsToken.TT_COALESCE, "??", 0, st.lineno());
+                        return true;
+                    }else{
+                        st.pushBack();
+                        previous = new NutsToken(nt, "?", 0, st.lineno());
+                        return true;
+                    }
+//                    break;
+                }
+                case '.':{
+                    int i = st.nextToken();
+                    if(i==StreamTokenizer.TT_EOF){
+                        previous = new NutsToken(nt, ".", 0, st.lineno());
+                        return true;
+                    }else if(i=='.'){
+                        i = st.nextToken();
+                        if(i==StreamTokenizer.TT_EOF){
+                            previous = new NutsToken(NutsToken.TT_DOTS2, "..", 0, st.lineno());
+                        }else if(i=='.'){
+                            previous = new NutsToken(NutsToken.TT_DOTS3, "...", 0, st.lineno());
+                        }else{
+                            st.pushBack();
+                            previous = new NutsToken(NutsToken.TT_DOTS2, "..", 0, st.lineno());
+                        }
+                        return true;
+                    }else{
+                        st.pushBack();
+                        previous = new NutsToken(nt, ".", 0, st.lineno());
+                        return true;
+                    }
+//                    break;
+                }
+                case '<':{
+                    int i = st.nextToken();
+                    if(i=='<'){
+                        i = st.nextToken();
+                        if(i=='<') {
+                            previous = new NutsToken(NutsToken.TT_LEFT_SHIFT_UNSIGNED, "<<<", 0, st.lineno());
+                            return true;
+                        }else if(i=='>'){
+                            previous = new NutsToken(NutsToken.TT_LTGT, "<>", 0, st.lineno());
+                            return true;
+                        }else{
+                            if(i!=StreamTokenizer.TT_EOF) {
+                                st.pushBack();
+                            }
+                            previous = new NutsToken(NutsToken.TT_LEFT_SHIFT, "<<", 0, st.lineno());
+                            return true;
+                        }
+                    }else if(i=='='){
+                        previous = new NutsToken(NutsToken.TT_LTE, "<=", 0, st.lineno());
+                        return true;
+                    }else{
+                        if(i!=StreamTokenizer.TT_EOF) {
+                            st.pushBack();
+                        }
+                        previous = new NutsToken(nt, "<", 0, st.lineno());
+                        return true;
+                    }
+//                    break;
+                }
+                case '>':{
+                    int i = st.nextToken();
+                    if(i=='>'){
+                        i = st.nextToken();
+                        if(i=='>'){
+                            previous = new NutsToken(NutsToken.TT_RIGHT_SHIFT_UNSIGNED, ">>>", 0, st.lineno());
+                            return true;
+                        }else{
+                            if(i!=StreamTokenizer.TT_EOF) {
+                                st.pushBack();
+                            }
+                            previous = new NutsToken(NutsToken.TT_RIGHT_SHIFT, ">>", 0, st.lineno());
+                            return true;
+                        }
+                    }else if(i=='='){
+                        previous = new NutsToken(NutsToken.TT_GTE, ">=", 0, st.lineno());
+                        return true;
+                    }else{
+                        if(i!=StreamTokenizer.TT_EOF) {
+                            st.pushBack();
+                        }
+                        previous = new NutsToken(nt, ">", 0, st.lineno());
+                        return true;
+                    }
+//                    break;
+                }
+                case '=':{
+                    int i = st.nextToken();
+                    if(i=='='){
+                        i = st.nextToken();
+                        if(i=='='){
+                            previous = new NutsToken(NutsToken.TT_EQ3, "===", 0, st.lineno());
+                            return true;
+                        }else if(i=='>'){
+                            previous = new NutsToken(NutsToken.TT_RIGHT_ARROW2, "==>", 0, st.lineno());
+                            return true;
+                        }else{
+                            if(i!=StreamTokenizer.TT_EOF) {
+                                st.pushBack();
+                            }
+                            previous = new NutsToken(NutsToken.TT_EQ2, "==", 0, st.lineno());
+                            return true;
+                        }
+                    }else if(i=='>'){
+                        previous = new NutsToken(NutsToken.TT_RIGHT_ARROW, "=>", 0, st.lineno());
+                        return true;
+                    }else{
+                        if(i!=StreamTokenizer.TT_EOF) {
+                            st.pushBack();
+                        }
+                        previous = new NutsToken(nt, "=", 0, st.lineno());
+                        return true;
+                    }
+//                    break;
+                }
+                case '~':{
+                    int i = st.nextToken();
+                    if(i=='~'){
+                        i = st.nextToken();
+                        if(i=='~'){
+                            previous = new NutsToken(NutsToken.TT_LIKE3, "~~~", 0, st.lineno());
+                            return true;
+                        }else{
+                            if(i!=StreamTokenizer.TT_EOF) {
+                                st.pushBack();
+                            }
+                            previous = new NutsToken(NutsToken.TT_LIKE2, "~~", 0, st.lineno());
+                            return true;
+                        }
+                    }else{
+                        if(i!=StreamTokenizer.TT_EOF) {
+                            st.pushBack();
+                        }
+                        previous = new NutsToken(nt, "~", 0, st.lineno());
+                        return true;
+                    }
+//                    break;
+                }
+                case '!':{
+                    int i = st.nextToken();
+                    if(i=='!'){
+                        i = st.nextToken();
+                        if(i=='!'){
+                            previous = new NutsToken(NutsToken.TT_NOT3, "!!!", 0, st.lineno());
+                            return true;
+                        }else{
+                            if(i!=StreamTokenizer.TT_EOF) {
+                                st.pushBack();
+                            }
+                            previous = new NutsToken(NutsToken.TT_NOT2, "!!", 0, st.lineno());
+                            return true;
+                        }
+                    }else if(i=='='){
+                        i = st.nextToken();
+                        if(i=='='){
+                            previous = new NutsToken(NutsToken.TT_NEQ2, "!==", 0, st.lineno());
+                        }else{
+                            if(i!=StreamTokenizer.TT_EOF) {
+                                st.pushBack();
+                            }
+                            previous = new NutsToken(NutsToken.TT_NEQ, "!=", 0, st.lineno());
+                        }
+                        return true;
+                    }else if(i=='~'){
+                        previous = new NutsToken(NutsToken.TT_NOT_LIKE, "!~", 0, st.lineno());
+                        return true;
+                    }else{
+                        if(i!=StreamTokenizer.TT_EOF) {
+                            st.pushBack();
+                        }
+                        previous = new NutsToken(nt, "!", 0, st.lineno());
+                        return true;
+                    }
+//                    break;
                 }
                 default: {
                     switch (st.ttype) {

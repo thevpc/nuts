@@ -1,5 +1,6 @@
 package net.thevpc.nuts.runtime.standalone.repository.impl.maven.pom.impl;
 
+import net.thevpc.nuts.NutsBlankable;
 import net.thevpc.nuts.runtime.standalone.repository.impl.maven.pom.api.NutsPomNode;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -26,13 +27,49 @@ public class DefaultNutsPomNode<T> implements NutsPomNode {
     }
 
 
-    protected Element createTextElement(String name,String value) {
+    protected Element createTextElement(String name, String value) {
         Element groupId = document.createElement(name);
         groupId.setTextContent(value);
         return groupId;
     }
 
-    protected void setTextElement(String name,String value,boolean create) {
+    protected String getTextElement(String name) {
+        NodeList nodes = getXmlElement().getChildNodes();
+        for (int i = 0; i < nodes.getLength(); i++) {
+            Node c = nodes.item(i);
+            if (c instanceof Element && ((Element) c).getTagName().equals(name)) {
+                return c.getTextContent();
+            }
+        }
+        return null;
+    }
+
+    protected void setTextElement(String name, String value, boolean create,boolean removeIfNull) {
+        NodeList nodes = getXmlElement().getChildNodes();
+        for (int i = 0; i < nodes.getLength(); i++) {
+            Node c = nodes.item(i);
+            if (c instanceof Element && ((Element) c).getTagName().equals(name)) {
+                if(removeIfNull && value==null) {
+                    getXmlElement().removeChild(c);
+                    return;
+                }else {
+                    c.setTextContent(value==null?"":value);
+                    return;
+                }
+            }
+        }
+        if (create) {
+            if(removeIfNull && value==null) {
+                //ignore
+            }else {
+                Element child = document.createElement(name);
+                child.setTextContent(value);
+                getXmlElement().appendChild(child);
+            }
+        }
+    }
+
+    protected void setTextElement(String name, String value, boolean create) {
         NodeList nodes = getXmlElement().getChildNodes();
         for (int i = 0; i < nodes.getLength(); i++) {
             Node c = nodes.item(i);
@@ -41,7 +78,7 @@ public class DefaultNutsPomNode<T> implements NutsPomNode {
                 return;
             }
         }
-        if(create) {
+        if (create) {
             Element child = document.createElement(name);
             child.setTextContent(value);
             getXmlElement().appendChild(child);

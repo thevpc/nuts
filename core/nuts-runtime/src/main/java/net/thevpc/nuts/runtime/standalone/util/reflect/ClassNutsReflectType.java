@@ -23,6 +23,7 @@
  */
 package net.thevpc.nuts.runtime.standalone.util.reflect;
 
+import net.thevpc.nuts.NutsOptional;
 import net.thevpc.nuts.NutsSession;
 import net.thevpc.nuts.util.*;
 
@@ -90,6 +91,17 @@ public class ClassNutsReflectType implements NutsReflectType {
     public List<NutsReflectProperty> getProperties() {
         build();
         return allList;
+    }
+
+    @Override
+    public NutsOptional<NutsReflectProperty> getProperty(String name) {
+        build();
+        return NutsOptional.ofNamed(all.get(name), "property " + name);
+    }
+
+    @Override
+    public NutsOptional<NutsReflectProperty> getDeclaredProperty(String name) {
+        return NutsOptional.ofNamed(direct.get(name), "property " + name);
     }
 
     @Override

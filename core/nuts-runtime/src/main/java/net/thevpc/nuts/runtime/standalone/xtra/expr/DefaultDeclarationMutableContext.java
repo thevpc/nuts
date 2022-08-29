@@ -179,6 +179,230 @@ public class DefaultDeclarationMutableContext extends NutsExprDeclarationsBase i
 //    }
 
 
+    @Override
+    public NutsExprOpDeclaration declareOperator(String name, NutsExprConstruct impl) {
+        return declareOperator(name,null,impl);
+    }
+
+    @Override
+    public NutsExprOpDeclaration declareOperator(String name, NutsExprOpType type, NutsExprConstruct impl) {
+        switch (name){
+            case "+":{
+                if(type==null){
+                    type=NutsExprOpType.INFIX;
+                }
+                switch (type){
+                    case INFIX:{
+                        return declareOperator(name,type, NutsExprOpPrecedence.PLUS,NutsExprOpAssociativity.LEFT, impl);
+                    }
+                }
+                break;
+            }
+            case "-":{
+                if(type==null){
+                    type=NutsExprOpType.INFIX;
+                }
+                switch (type){
+                    case INFIX:{
+                        return declareOperator(name,type, NutsExprOpPrecedence.MINUS,NutsExprOpAssociativity.LEFT, impl);
+                    }
+                }
+                break;
+            }
+            case "*":{
+                if(type==null){
+                    type=NutsExprOpType.INFIX;
+                }
+                switch (type){
+                    case INFIX:{
+                        return declareOperator(name,type, NutsExprOpPrecedence.MUL,NutsExprOpAssociativity.LEFT, impl);
+                    }
+                }
+                break;
+            }
+            case "/":{
+                if(type==null){
+                    type=NutsExprOpType.INFIX;
+                }
+                switch (type){
+                    case INFIX:{
+                        return declareOperator(name,type, NutsExprOpPrecedence.DIV,NutsExprOpAssociativity.LEFT, impl);
+                    }
+                }
+                break;
+            }
+            case "%":{
+                if(type==null){
+                    type=NutsExprOpType.INFIX;
+                }
+                switch (type){
+                    case INFIX:{
+                        return declareOperator(name,type, NutsExprOpPrecedence.MOD,NutsExprOpAssociativity.LEFT, impl);
+                    }
+                }
+                break;
+            }
+            case "(":
+            case "()":
+            {
+                if(type==null){
+                    type=NutsExprOpType.POSTFIX;
+                }
+                switch (type){
+                    case POSTFIX:{
+                        return declareOperator(name,type, NutsExprOpPrecedence.PARS,NutsExprOpAssociativity.LEFT, impl);
+                    }
+                }
+                break;
+            }
+            case "[":
+            case "[]":
+            {
+                if(type==null){
+                    type=NutsExprOpType.POSTFIX;
+                }
+                switch (type){
+                    case POSTFIX:{
+                        return declareOperator(name,type, NutsExprOpPrecedence.BRACKETS,NutsExprOpAssociativity.LEFT, impl);
+                    }
+                }
+                break;
+            }
+            case "{":
+            case "{}":
+            {
+                if(type==null){
+                    type=NutsExprOpType.POSTFIX;
+                }
+                switch (type){
+                    case POSTFIX:{
+                        return declareOperator(name,type, NutsExprOpPrecedence.BRACES,NutsExprOpAssociativity.LEFT, impl);
+                    }
+                }
+                break;
+            }
+            case ".":
+            case "?.":
+            {
+                if(type==null){
+                    type=NutsExprOpType.INFIX;
+                }
+                switch (type){
+                    case INFIX:{
+                        return declareOperator(name,type, NutsExprOpPrecedence.DOT,NutsExprOpAssociativity.LEFT, impl);
+                    }
+                }
+                break;
+            }
+            case "<<":
+            case ">>":
+            case ">>>":
+            case "<<<":
+            {
+                if(type==null){
+                    type=NutsExprOpType.INFIX;
+                }
+                switch (type){
+                    case INFIX:{
+                        return declareOperator(name,type, NutsExprOpPrecedence.SHIFT,NutsExprOpAssociativity.LEFT, impl);
+                    }
+                }
+                break;
+            }
+            case "<":
+            case ">":
+            case "<=":
+            case ">=":
+            {
+                if(type==null){
+                    type=NutsExprOpType.INFIX;
+                }
+                switch (type){
+                    case INFIX:{
+                        return declareOperator(name,type, NutsExprOpPrecedence.CMP,NutsExprOpAssociativity.LEFT, impl);
+                    }
+                }
+                break;
+            }
+            case "=":
+            case "==":
+            case "!=":
+            case "<>":
+            {
+                if(type==null){
+                    type=NutsExprOpType.INFIX;
+                }
+                switch (type){
+                    case INFIX:{
+                        return declareOperator(name,type, NutsExprOpPrecedence.EQ,NutsExprOpAssociativity.LEFT, impl);
+                    }
+                }
+                break;
+            }
+            case "&&":
+            {
+                if(type==null){
+                    type=NutsExprOpType.INFIX;
+                }
+                switch (type){
+                    case INFIX:{
+                        return declareOperator(name,type, NutsExprOpPrecedence.AND,NutsExprOpAssociativity.LEFT, impl);
+                    }
+                }
+                break;
+            }
+            case "&":
+            {
+                if(type==null){
+                    type=NutsExprOpType.INFIX;
+                }
+                switch (type){
+                    case INFIX:{
+                        return declareOperator(name,type, NutsExprOpPrecedence.AMP,NutsExprOpAssociativity.LEFT, impl);
+                    }
+                }
+                break;
+            }
+            case "||":
+            {
+                if(type==null){
+                    type=NutsExprOpType.INFIX;
+                }
+                switch (type){
+                    case INFIX:{
+                        return declareOperator(name,type, NutsExprOpPrecedence.OR,NutsExprOpAssociativity.LEFT, impl);
+                    }
+                }
+                break;
+            }
+            case "|":
+            {
+                if(type==null){
+                    type=NutsExprOpType.INFIX;
+                }
+                switch (type){
+                    case INFIX:{
+                        return declareOperator(name,type, NutsExprOpPrecedence.PIPE,NutsExprOpAssociativity.LEFT, impl);
+                    }
+                }
+                break;
+            }
+            case "??":
+            {
+                if(type==null){
+                    type=NutsExprOpType.INFIX;
+                }
+                switch (type){
+                    case INFIX:{
+                        return declareOperator(name,type, NutsExprOpPrecedence.COALESCE,NutsExprOpAssociativity.LEFT, impl);
+                    }
+                }
+                break;
+            }
+        }
+        throw new IllegalArgumentException("unsupported operator "+name);
+    }
+
     public NutsExprOpDeclaration declareOperator(String name, NutsExprOpType type, int precedence, NutsExprOpAssociativity associativity, NutsExprConstruct impl) {
         if (!NutsBlankable.isBlank(name) && type != null) {
             if (impl == null) {

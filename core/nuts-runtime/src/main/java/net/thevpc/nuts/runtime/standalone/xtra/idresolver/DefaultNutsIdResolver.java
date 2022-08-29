@@ -45,7 +45,7 @@ public class DefaultNutsIdResolver implements NutsIdResolver {
     public List<NutsId> resolveIds(Class clazz) {
         NutsPomId[] u = MavenUtils.createPomIdResolver(session).resolvePomIds(clazz);
         LinkedHashSet<NutsId> all = new LinkedHashSet<>(
-                Arrays.asList(new PomIdResolver2(session).resolvePomIds(clazz))
+                Arrays.asList(new NutsMetaInfIdResolver(session).resolvePomIds(clazz))
         );
         for (NutsPomId uu : u) {
             all.add(NutsId.of(uu.getGroupId() + ":" + uu.getArtifactId() + "#" + uu.getVersion()).get(session));

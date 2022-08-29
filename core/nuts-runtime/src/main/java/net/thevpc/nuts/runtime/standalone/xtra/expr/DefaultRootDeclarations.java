@@ -34,6 +34,9 @@ public class DefaultRootDeclarations extends NutsExprDeclarationsBase {
         addDefaultOp(new MinusFctNode(), "minus", "-");
         addDefaultOp(new MulFctNode(), "multiply", "mul", "*");
         addDefaultOp(new DivFctNode(), "divide", "div", "/");
+        addDefaultOp(new ParsFctNode(), "(");
+        addDefaultOp(new BracketsFctNode(), "[");
+        addDefaultOp(new BracesFctNode(), "{");
         addDefaultFct(new NutsExprFct() {
             @Override
             public Object eval(String name, List<Object> args, NutsExprDeclarations context) {
@@ -100,13 +103,13 @@ public class DefaultRootDeclarations extends NutsExprDeclarationsBase {
 
     private class AndFctNode extends AbstractOp {
         public AndFctNode() {
-            super("&&", 40, NutsExprOpAssociativity.LEFT, NutsExprOpType.INFIX);
+            super("&&", NutsExprOpPrecedence.AND, NutsExprOpAssociativity.LEFT, NutsExprOpType.INFIX);
         }
 
         @Override
         public Object eval(String name, List<NutsExprNode> args, NutsExprDeclarations context) {
             for (NutsExprNode arg : args) {
-                if (!EvalUtils.castToBoolean(arg.eval(context))) {
+                if (!EvalUtils.castToBoolean(arg.eval(context).get())) {
                     return false;
                 }
             }
@@ -116,13 +119,13 @@ public class DefaultRootDeclarations extends NutsExprDeclarationsBase {
 
     private class OrFctNode extends AbstractOp {
         public OrFctNode() {
-            super("or", 30, NutsExprOpAssociativity.LEFT, NutsExprOpType.INFIX);
+            super("or", NutsExprOpPrecedence.OR, NutsExprOpAssociativity.LEFT, NutsExprOpType.INFIX);
         }
 
         @Override
         public Object eval(String name, List<NutsExprNode> args, NutsExprDeclarations e) {
             for (NutsExprNode arg : args) {
-                if (EvalUtils.castToBoolean(arg.eval(e))) {
+                if (EvalUtils.castToBoolean(arg.eval(e).get())) {
                     return true;
                 }
             }
@@ -132,19 +135,19 @@ public class DefaultRootDeclarations extends NutsExprDeclarationsBase {
 
     private class NotFctNode extends AbstractOp {
         public NotFctNode() {
-            super("!", 130, NutsExprOpAssociativity.RIGHT, NutsExprOpType.PREFIX);
+            super("!", NutsExprOpPrecedence.NOT, NutsExprOpAssociativity.RIGHT, NutsExprOpType.PREFIX);
         }
 
         @Override
         public Object eval(String name, List<NutsExprNode> args, NutsExprDeclarations e) {
-            return !EvalUtils.castToBoolean(args.get(0).eval(e));
+            return !EvalUtils.castToBoolean(args.get(0).eval(e).get());
         }
     }
 
     private class LTFctNode extends BinCompareFctNode {
 
         public LTFctNode() {
-            super("lt", 90);
+            super("lt", NutsExprOpPrecedence.CMP);
         }
 
         @Override
@@ -170,7 +173,7 @@ public class DefaultRootDeclarations extends NutsExprDeclarationsBase {
 
     private class LTEFctNode extends BinCompareFctNode {
         public LTEFctNode() {
-            super("lte", 90);
+            super("lte", NutsExprOpPrecedence.CMP);
         }
 
         @Override
@@ -196,7 +199,7 @@ public class DefaultRootDeclarations extends NutsExprDeclarationsBase {
 
     private class GTFctNode extends BinCompareFctNode {
         public GTFctNode() {
-            super("gt", 90);
+            super("gt", NutsExprOpPrecedence.CMP);
         }
 
         @Override
@@ -222,7 +225,7 @@ public class DefaultRootDeclarations extends NutsExprDeclarationsBase {
 
     private class GTEFctNode extends BinCompareFctNode {
         public GTEFctNode() {
-            super("gte", 90);
+            super("gte", NutsExprOpPrecedence.CMP);
         }
 
         @Override
@@ -248,7 +251,7 @@ public class DefaultRootDeclarations extends NutsExprDeclarationsBase {
 
     private class EQFctNode extends BinCompareFctNode {
         public EQFctNode() {
-            super("eq", 80);
+            super("eq", NutsExprOpPrecedence.EQ);
         }
 
         @Override
@@ -274,7 +277,7 @@ public class DefaultRootDeclarations extends NutsExprDeclarationsBase {
 
     private class NEQFctNode extends BinCompareFctNode {
         public NEQFctNode() {
-            super("neq", 80);
+            super("neq", NutsExprOpPrecedence.EQ);
         }
 
         @Override
@@ -300,7 +303,7 @@ public class DefaultRootDeclarations extends NutsExprDeclarationsBase {
 
     private class PlusFctNode extends BinArithFctNode {
         public PlusFctNode() {
-            super("plus", 110);
+            super("plus", NutsExprOpPrecedence.PLUS);
         }
 
         @Override
@@ -326,7 +329,7 @@ public class DefaultRootDeclarations extends NutsExprDeclarationsBase {
 
     private class MinusFctNode extends BinArithFctNode {
         public MinusFctNode() {
-            super("minus", 110);
+            super("minus", NutsExprOpPrecedence.PLUS);
         }
 
         @Override
@@ -352,7 +355,7 @@ public class DefaultRootDeclarations extends NutsExprDeclarationsBase {
 
     private class MulFctNode extends BinArithFctNode {
         public MulFctNode() {
-            super("multiply", 120);
+            super("multiply", NutsExprOpPrecedence.MUL);
         }
 
         @Override
@@ -378,7 +381,7 @@ public class DefaultRootDeclarations extends NutsExprDeclarationsBase {
 
     private class DivFctNode extends BinArithFctNode {
         public DivFctNode() {
-            super("divide", 120);
+            super("divide", NutsExprOpPrecedence.MUL);
         }
 
         @Override

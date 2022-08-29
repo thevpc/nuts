@@ -67,11 +67,12 @@ public final class Nuts {
                 if (version == null) {
                     String v = NutsApiUtils.resolveNutsVersionFromClassPath(new NutsReservedBootLog(null));
                     if (v == null) {
-                        throw new NutsBootException(
-                                NutsMessage.ofPlain(
-                                        "unable to detect nuts version. Most likely you are missing valid compilation of nuts. pom.properties could not be resolved and hence, we are unable to resolve nuts version."
-                                )
-                        );
+                        return NutsVersion.of("0.8.4").get();
+//                        throw new NutsBootException(
+//                                NutsMessage.ofPlain(
+//                                        "unable to detect nuts version. Most likely you are missing valid compilation of nuts. pom.properties could not be resolved and hence, we are unable to resolve nuts version."
+//                                )
+//                        );
                     }
                     version = NutsVersion.of(v).get();
                 }

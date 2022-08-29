@@ -37,7 +37,7 @@ public class NutsPomIdResolver {
         int beforeSize = all.size();
         URL[] children = new URL[0];
         try {
-            children = p.getChildren(false, true, new MyURLFilter());
+            children = p.getChildren(false, true, new MvnPomPropsURLFilter());
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -279,15 +279,15 @@ public class NutsPomIdResolver {
         boolean visit(String path, InputStream inputStream) throws IOException;
     }
 
-    private static class MyURLFilter implements Predicate<URL> {
+    private static class MvnPomPropsURLFilter implements Predicate<URL> {
 
-        public MyURLFilter() {
+        public MvnPomPropsURLFilter() {
         }
 
         @Override
         public boolean test(URL path) {
-            return new URLParts(path).getName().equals("pom.properties");
+            String name = new URLParts(path).getName();
+            return name.equals("pom.properties");
         }
     }
-
 }

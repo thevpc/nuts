@@ -1,11 +1,14 @@
 package net.thevpc.nuts.runtime.standalone.xtra.expr;
 
+import net.thevpc.nuts.NutsMessage;
+import net.thevpc.nuts.NutsOptional;
 import net.thevpc.nuts.util.*;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class DefaultOpNode implements NutsExprNode {
+public class DefaultOpNode implements NutsExprOpNode {
     private final String name;
     private final List<NutsExprNode> args;
     private final NutsExprOpType op;
@@ -18,15 +21,17 @@ public class DefaultOpNode implements NutsExprNode {
         this.args = args;
     }
 
-    public NutsExprNode getArg(int index) {
+
+    @Override
+    public NutsExprNode getOperand(int index) {
         if (index >= args.size()) {
             throw new IllegalArgumentException("Missing argument " + (index + 1) + " for " + name);
         }
         return args.get(index);
     }
 
-    public List<NutsExprNode> getArgs() {
-        return args;
+    public List<NutsExprNode> getOperands() {
+        return Collections.unmodifiableList(args);
     }
 
     @Override
@@ -45,6 +50,53 @@ public class DefaultOpNode implements NutsExprNode {
 
     @Override
     public String toString() {
+        switch (name) {
+            case "[]": {
+                if (args.size() == 0) {
+                    return name;
+                }
+                StringBuilder sb = new StringBuilder(EvalUtils.wrapPars(args.get(0)));
+                sb.append("[");
+                for (int i = 1; i < args.size(); i++) {
+                    if (i > 1) {
+                        sb.append(",");
+                    }
+                    sb.append(EvalUtils.wrapPars(args.get(i)));
+                }
+                sb.append("]");
+                return sb.toString();
+            }
+            case "()": {
+                if (args.size() == 0) {
+                    return name;
+                }
+                StringBuilder sb = new StringBuilder(EvalUtils.wrapPars(args.get(0)));
+                sb.append("(");
+                for (int i = 1; i < args.size(); i++) {
+                    if (i > 1) {
+                        sb.append(",");
+                    }
+                    sb.append(EvalUtils.wrapPars(args.get(i)));
+                }
+                sb.append(")");
+                return sb.toString();
+            }
+            case "{}": {
+                if (args.size() == 0) {
+                    return name;
+                }
+                StringBuilder sb = new StringBuilder(EvalUtils.wrapPars(args.get(0)));
+                sb.append("{");
+                for (int i = 1; i < args.size(); i++) {
+                    if (i > 1) {
+                        sb.append(",");
+                    }
+                    sb.append(EvalUtils.wrapPars(args.get(i)));
+                }
+                sb.append("}");
+                return sb.toString();
+            }
+        }
         switch (op) {
             case PREFIX: {
                 return name + " " + EvalUtils.wrapPars(args.get(0));
@@ -74,7 +126,11 @@ public class DefaultOpNode implements NutsExprNode {
     }
 
     @Override
-    public Object eval(NutsExprDeclarations context) {
-        return context.evalOperator(getName(),op,args.toArray(new NutsExprNode[0]));
+    public NutsOptional<Object> eval(NutsExprDeclarations context) {
+        try {
+            return context.evalOperator(getName(), op, args.toArray(new NutsExprNode[0]));
+        } catch (Exception ex) {
+            return NutsOptional.ofError(x -> NutsMessage.ofCstyle("error %s ", ex));
+        }
     }
 }

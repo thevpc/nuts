@@ -7,5 +7,7 @@ public interface NutsPomDependencyNode extends NutsPomNode {
 
     void setGroupId(String version);
 
-    void setArtifactGroupId(String version);
+    void setArtifactId(String version);
+    void setClassifier(String version);
+    void setOptional(String version);
 }

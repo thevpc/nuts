@@ -40,7 +40,7 @@ public class FileScanner {
                 for (Object arg : args) {
                     Object v = arg;
                     if (v != null) {
-                        if (rc.getTags((String) context.evalFunction("string", v)).size() == 0) {
+                        if (rc.getTags((String) context.evalFunction("string", v).orNull()).size() == 0) {
                             return false;
                         }
                     }
@@ -49,7 +49,7 @@ public class FileScanner {
                     for (Object arg : args) {
                         Object v = arg;
                         if (v != null) {
-                            if (rc.getTags((String) context.evalFunction("string", v)).size() == 0) {
+                            if (rc.getTags((String) context.evalFunction("string", v).orNull()).size() == 0) {
                                 return false;
                             }
                         }
@@ -76,7 +76,7 @@ public class FileScanner {
         return richPath -> {
             d.removeDeclaration(d.getVar("this").orNull());
             d.declareConstant("this", richPath);
-            return (Boolean) d.evalFunction("boolean", node.eval(d));
+            return (Boolean) d.evalFunction("boolean", node.eval(d).get()).get();
         };
     }
 

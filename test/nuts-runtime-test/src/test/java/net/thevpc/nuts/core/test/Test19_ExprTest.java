@@ -105,7 +105,7 @@ public class Test19_ExprTest {
         NutsExprDeclarations expr = NutsExpr.of(session).newDeclarations(true);
 //        _retain(expr,"infix:+");
         NutsExprNode n = expr.parse("a").get();
-        Assertions.assertEquals(NutsExprNodeType.VARIABLE, n.getType());
+        Assertions.assertEquals(NutsExprNodeType.WORD, n.getType());
         TestUtils.println(n);
     }
 

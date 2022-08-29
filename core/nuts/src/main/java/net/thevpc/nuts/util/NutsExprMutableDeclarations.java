@@ -12,6 +12,8 @@ public interface NutsExprMutableDeclarations extends NutsExprDeclarations {
     NutsExprVarDeclaration declareVar(String name, NutsExprVar varImpl);
 
     NutsExprOpDeclaration declareOperator(String name, NutsExprOpType type, int precedence, NutsExprOpAssociativity associativity, NutsExprConstruct impl);
+    NutsExprOpDeclaration declareOperator(String name, NutsExprConstruct impl);
+    NutsExprOpDeclaration declareOperator(String name, NutsExprOpType type, NutsExprConstruct impl);
 
     void resetDeclaration(NutsExprVarDeclaration member);
 

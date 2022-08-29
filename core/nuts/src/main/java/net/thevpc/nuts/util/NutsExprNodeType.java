@@ -5,7 +5,7 @@ import net.thevpc.nuts.NutsOptional;
 public enum NutsExprNodeType implements NutsEnum {
     FUNCTION,
     OPERATOR,
-    VARIABLE,
+    WORD,
     LITERAL;
     private final String id;
 
@@ -19,7 +19,7 @@ public enum NutsExprNodeType implements NutsEnum {
             switch (s.getNormalizedValue()) {
                 case "VAR":
                 case "VARIABLE":
-                    return NutsOptional.of(VARIABLE);
+                    return NutsOptional.of(WORD);
                 case "FCT":
                 case "FUN":
                 case "FUNCTION":

@@ -23,6 +23,7 @@
  */
 package net.thevpc.nuts.util;
 
+import net.thevpc.nuts.NutsOptional;
 import net.thevpc.nuts.NutsSession;
 
 import java.util.List;
@@ -43,6 +44,9 @@ public interface NutsReflectType {
     String getName();
 
     List<NutsReflectProperty> getProperties();
+
+    NutsOptional<NutsReflectProperty> getProperty(String name);
+    NutsOptional<NutsReflectProperty> getDeclaredProperty(String name);
 
     boolean hasNoArgsConstructor();
 

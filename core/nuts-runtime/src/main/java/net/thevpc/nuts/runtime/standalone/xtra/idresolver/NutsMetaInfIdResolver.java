@@ -18,12 +18,12 @@ import java.util.logging.Level;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
-public class PomIdResolver2 {
+public class NutsMetaInfIdResolver {
 
     //    private NutsWorkspace ws;
     private NutsSession session;
 
-    public PomIdResolver2(NutsSession session) {
+    public NutsMetaInfIdResolver(NutsSession session) {
         this.session = session;
     }
 
@@ -39,7 +39,7 @@ public class PomIdResolver2 {
         int beforeSize = all.size();
         URL[] children = new URL[0];
         try {
-            children = p.getChildren(false, true, new MyURLFilter());
+            children = p.getChildren(false, true, new NutsJsonURLFilter());
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -59,6 +59,38 @@ public class PomIdResolver2 {
                 }
             }
         }
+
+        try {
+            children = p.getChildren(false, true, new NutsPropsURLFilter());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        for (URL url : children) {
+            if (url != null) {
+                try {
+
+                    Properties prop = new Properties();
+                    try {
+                        prop.load(url.openStream());
+                    } catch (IOException e) {
+                        //
+                    }
+                    String version = prop.getProperty("id");
+                    if(!NutsBlankable.isBlank(version)){
+                        NutsId id = NutsId.of(version).orNull();
+                        if(id!=null && id.getVersion()!=null && !id.getVersion().isBlank()){
+                            all.add(id);
+                        }
+                    }
+                } catch (Exception ex) {
+                    NutsLoggerOp.of(NutsPomXmlParser.class,session)
+                            .verb(NutsLoggerVerb.WARNING)
+                            .level(Level.FINEST)
+                            .log(NutsMessage.ofCstyle("failed to parse pom file %s : %s", url, ex));
+                }
+            }
+        }
+
         if (beforeSize == all.size()) {
             //no found !
             if (basePath.endsWith("/target/classes/")) {
@@ -254,14 +286,25 @@ public class PomIdResolver2 {
         boolean visit(String path, InputStream inputStream) throws IOException;
     }
 
-    private static class MyURLFilter implements Predicate<URL> {
+    private static class NutsJsonURLFilter implements Predicate<URL> {
 
-        public MyURLFilter() {
+        public NutsJsonURLFilter() {
         }
 
         @Override
         public boolean test(URL path) {
             return new URLParts(path).getName().equals("nuts.json");
+        }
+    }
+
+    private static class NutsPropsURLFilter implements Predicate<URL> {
+
+        public NutsPropsURLFilter() {
+        }
+
+        @Override
+        public boolean test(URL path) {
+            return new URLParts(path).getName().equals("nuts.properties");
         }
     }
 

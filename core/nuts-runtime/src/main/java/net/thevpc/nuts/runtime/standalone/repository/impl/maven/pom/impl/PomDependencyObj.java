@@ -1,7 +1,9 @@
 package net.thevpc.nuts.runtime.standalone.repository.impl.maven.pom.impl;
 
+import net.thevpc.nuts.NutsBlankable;
 import net.thevpc.nuts.runtime.standalone.repository.impl.maven.pom.api.NutsPomDependency;
 import net.thevpc.nuts.runtime.standalone.repository.impl.maven.pom.api.NutsPomDependencyNode;
+import net.thevpc.nuts.util.NutsStringUtils;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -11,18 +13,28 @@ public class PomDependencyObj extends DefaultNutsPomNode<NutsPomDependency> impl
     }
 
     @Override
-    public void setVersion(String version) {
-        super.setTextElement("version", version, true);
+    public void setVersion(String value) {
+        super.setTextElement("version", NutsStringUtils.trimToNull(value), true,true);
     }
 
     @Override
-    public void setGroupId(String version) {
-        super.setTextElement("groupId", version, true);
+    public void setGroupId(String value) {
+        super.setTextElement("groupId", NutsStringUtils.trimToNull(value), true,true);
     }
 
     @Override
-    public void setArtifactGroupId(String version) {
-        super.setTextElement("artifactId", version, true);
+    public void setArtifactId(String value) {
+        super.setTextElement("artifactId", NutsStringUtils.trimToNull(value), true,true);
+    }
+
+    @Override
+    public void setOptional(String value) {
+        super.setTextElement("optional", NutsStringUtils.trimToNull(value), true,true);
+    }
+
+    @Override
+    public void setClassifier(String value) {
+        super.setTextElement("classifier", NutsStringUtils.trimToNull(value), true,true);
     }
 
 }

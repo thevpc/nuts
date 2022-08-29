@@ -27,15 +27,15 @@ public interface NutsExprDeclarations {
     NutsExprMutableDeclarations newMutableDeclarations();
 
 
-    Object evalFunction(String fctName, Object... args);
+    NutsOptional<Object> evalFunction(String fctName, Object... args);
 
-    Object evalConstruct(String constructName, NutsExprNode... args);
+    NutsOptional<Object> evalConstruct(String constructName, NutsExprNode... args);
 
-    Object evalOperator(String opName, NutsExprOpType type, NutsExprNode... args);
+    NutsOptional<Object> evalOperator(String opName, NutsExprOpType type, NutsExprNode... args);
 
-    Object evalSetVar(String varName, Object value);
+    NutsOptional<Object> evalSetVar(String varName, Object value);
 
-    Object evalGetVar(String varName);
+    NutsOptional<Object> evalGetVar(String varName);
 
 
     /**

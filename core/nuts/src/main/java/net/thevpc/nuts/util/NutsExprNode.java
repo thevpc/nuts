@@ -1,9 +1,11 @@
 package net.thevpc.nuts.util;
 
+import net.thevpc.nuts.NutsOptional;
+
 import java.util.List;
 
 public interface NutsExprNode {
-    Object eval(NutsExprDeclarations context);
+    NutsOptional<Object> eval(NutsExprDeclarations context);
 
     NutsExprNodeType getType();
 
