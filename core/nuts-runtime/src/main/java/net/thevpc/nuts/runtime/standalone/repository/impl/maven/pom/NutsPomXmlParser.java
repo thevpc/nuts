@@ -107,14 +107,14 @@ public class NutsPomXmlParser {
         if (visitor != null) {
             if (mode == PomMode.ROOT) {
                 visitor.visitStartRepositories(elem1, context);
-            }else if (mode == PomMode.ROOT_PLUGIN) {
+            } else if (mode == PomMode.ROOT_PLUGIN) {
                 visitor.visitStartRepositories(elem1, context);
             }
         }
         NodeList dependenciesChildList = elem1.getChildNodes();
-        String childName="repository";
-        if(mode==PomMode.ROOT_PLUGIN){
-            childName="pluginRepository";
+        String childName = "repository";
+        if (mode == PomMode.ROOT_PLUGIN) {
+            childName = "pluginRepository";
         }
         for (int j = 0; j < dependenciesChildList.getLength(); j++) {
             Element repository = toElement(dependenciesChildList.item(j), childName);
@@ -127,19 +127,19 @@ public class NutsPomXmlParser {
         if (visitor != null) {
             if (mode == PomMode.ROOT) {
                 visitor.visitEndRepositories(d, context);
-            }else if (mode == PomMode.ROOT_PLUGIN) {
+            } else if (mode == PomMode.ROOT_PLUGIN) {
                 visitor.visitEndPluginRepositories(d, context);
             }
         }
         return d;
     }
 
-    public static NutsPomDependenciesNode parseDependencies(Element elem1, NutsSession session, PomDomVisitor visitor, PomDomVisitorContext context, PomMode mode) {
+    public static NutsPomDependenciesNode parseDependencies(Element elem1, NutsSession session, PomDomVisitor visitor, PomDomVisitorContext context, OsAndArch osAndArch, PomMode mode) {
         List<NutsPomDependencyNode> dependencies = new ArrayList<>();
         if (visitor != null) {
-            if (mode==PomMode.ROOT) {
+            if (mode == PomMode.ROOT) {
                 visitor.visitStartDependencies(elem1, context);
-            }else if (mode==PomMode.ROOT_DEPENDENCY_MANAGEMENT) {
+            } else if (mode == PomMode.ROOT_DEPENDENCY_MANAGEMENT) {
                 visitor.visitStartDependenciesManagement(elem1, context);
             }
         }
@@ -147,16 +147,15 @@ public class NutsPomXmlParser {
         for (int j = 0; j < dependenciesChildList.getLength(); j++) {
             Element dependencyElem = toElement(dependenciesChildList.item(j), "dependency");
             if (dependencyElem != null) {
-                HashMap<String, String> props = new HashMap<>();
-                NutsPomDependencyNode dep = parseDependency(dependencyElem, new OsAndArch(props, session), session, visitor, context, mode);
+                NutsPomDependencyNode dep = parseDependency(dependencyElem, osAndArch, session, visitor, context, mode);
                 dependencies.add(dep);
             }
         }
         PomDependenciesObj d = new PomDependenciesObj(elem1, dependencies, context.getDocument());
         if (visitor != null) {
-            if (mode==PomMode.ROOT) {
+            if (mode == PomMode.ROOT) {
                 visitor.visitEndDependencies(d, context);
-            }else if (mode==PomMode.ROOT_DEPENDENCY_MANAGEMENT) {
+            } else if (mode == PomMode.ROOT_DEPENDENCY_MANAGEMENT) {
                 visitor.visitEndDependenciesManagement(d, context);
             }
         }
@@ -165,7 +164,7 @@ public class NutsPomXmlParser {
 
     public static NutsPomDependencyNode parseDependency(Element dependency, OsAndArch props, NutsSession session, PomDomVisitor visitor, PomDomVisitorContext context, PomMode mode) {
         if (visitor != null) {
-            if (mode==PomMode.ROOT) {
+            if (mode == PomMode.ROOT) {
                 visitor.visitStartDependency(dependency, context);
             }
         }
@@ -258,7 +257,7 @@ public class NutsPomXmlParser {
         );
         NutsPomDependencyNode d = new PomDependencyObj(dependency, pomDependency, context.getDocument());
         if (visitor != null) {
-            if (mode==PomMode.ROOT) {
+            if (mode == PomMode.ROOT) {
                 visitor.visitEndDependency(d, context);
             }
         }
@@ -295,7 +294,7 @@ public class NutsPomXmlParser {
     }
 
 
-    public static NutsPomProfileNode parseProfile(Element profile, PomDomVisitor visitor, NutsSession session, PomDomVisitorContext context, PomMode mode) {
+    public static NutsPomProfileNode parseProfile(Element profile, PomDomVisitor visitor, NutsSession session, PomDomVisitorContext context, OsAndArch osAndArch, PomMode mode) {
         if (visitor != null) {
             if (mode == PomMode.ROOT) {
                 visitor.visitStartProfile(profile, context);
@@ -399,13 +398,13 @@ public class NutsPomXmlParser {
                     for (int j = 0; j < dependenciesChildList.getLength(); j++) {
                         Element dependenciesElem = toElement(dependenciesChildList.item(j), "dependencies");
                         if (dependenciesElem != null) {
-                            dependenciesManagement.addAll(parseDependencies(elem1, session, visitor, context, PomMode.PROFILE_DEPENDENCY_MANAGEMENT).getObject());
+                            dependenciesManagement.addAll(parseDependencies(elem1, session, visitor, context, osAndArch, PomMode.PROFILE_DEPENDENCY_MANAGEMENT).getObject());
                         }
                     }
                     break;
                 }
                 case "dependencies": {
-                    dependencies.addAll(parseDependencies(elem1, session, visitor, context, PomMode.PROFILE).getObject());
+                    dependencies.addAll(parseDependencies(elem1, session, visitor, context, osAndArch, PomMode.PROFILE).getObject());
                     break;
                 }
                 case "repositories": {
@@ -438,10 +437,10 @@ public class NutsPomXmlParser {
             }
         }
 
-        pomProfile.setDependencies(dependencies.stream().map(x->x.getObject()).toArray(NutsPomDependency[]::new));
-        pomProfile.setDependenciesManagement(dependenciesManagement.stream().map(x->x.getObject()).toArray(NutsPomDependency[]::new));
-        pomProfile.setRepositories(repositories.stream().map(x->x.getObject()).toArray(NutsPomRepository[]::new));
-        pomProfile.setPluginRepositories(pluginRepositories.stream().map(x->x.getObject()).toArray(NutsPomRepository[]::new));
+        pomProfile.setDependencies(dependencies.stream().map(x -> x.getObject()).toArray(NutsPomDependency[]::new));
+        pomProfile.setDependenciesManagement(dependenciesManagement.stream().map(x -> x.getObject()).toArray(NutsPomDependency[]::new));
+        pomProfile.setRepositories(repositories.stream().map(x -> x.getObject()).toArray(NutsPomRepository[]::new));
+        pomProfile.setPluginRepositories(pluginRepositories.stream().map(x -> x.getObject()).toArray(NutsPomRepository[]::new));
         pomProfile.setProperties(properties);
         NutsPomProfileNode d = new PomProfileObj(profile, pomProfile, context.getDocument());
         if (visitor != null) {
@@ -613,7 +612,7 @@ public class NutsPomXmlParser {
             dependenciesElement.appendChild(createDependencyElement(doc, dependency));
             return true;
         } else {
-            NutsPomDependencyNode old = parseDependency(dependencyElement, new OsAndArch(props, session), session,visitor, context, mode);
+            NutsPomDependencyNode old = parseDependency(dependencyElement, new OsAndArch(props, session), session, visitor, context, mode);
             if (old == null || !old.getObject().equals(dependency)) {
                 dependenciesElement.replaceChild(createDependencyElement(doc, dependency), dependencyElement);
                 return true;
@@ -631,7 +630,7 @@ public class NutsPomXmlParser {
             repositoriesElement.appendChild(createRepositoryElement(doc, repository));
             return true;
         } else {
-            NutsPomRepositoryNode old = parseRepository(repositoryElement,session, visitor, context, mode);
+            NutsPomRepositoryNode old = parseRepository(repositoryElement, session, visitor, context, mode);
             if (old == null || !old.getObject().equals(repository)) {
                 repositoriesElement.replaceChild(createRepositoryElement(doc, repository), repositoryElement);
                 return true;
@@ -850,23 +849,26 @@ public class NutsPomXmlParser {
                         break;
                     }
                     case "dependencyManagement": {
-                        depsMan.addAll(parseDependencies(elem1, session, visitor, context, PomMode.ROOT_DEPENDENCY_MANAGEMENT).getObject());
+                        OsAndArch osAndArch = new OsAndArch(props, session);
+                        depsMan.addAll(parseDependencies(elem1, session, visitor, context, osAndArch, PomMode.ROOT_DEPENDENCY_MANAGEMENT).getObject());
                         break;
                     }
                     case "dependencies": {
-                        deps.addAll(parseDependencies(elem1, session, visitor, context, PomMode.ROOT).getObject());
+                        OsAndArch osAndArch = new OsAndArch(props, session);
+                        deps.addAll(parseDependencies(elem1, session, visitor, context, osAndArch, PomMode.ROOT).getObject());
                         break;
                     }
                     case "repositories": {
-                        repos.addAll(parseRepositories(elem1,session, visitor, context, PomMode.ROOT).getObject());
+                        repos.addAll(parseRepositories(elem1, session, visitor, context, PomMode.ROOT).getObject());
                         break;
                     }
                     case "pluginRepositories": {
-                        pluginRepos.addAll(parseRepositories(elem1,session, visitor, context, PomMode.ROOT_PLUGIN).getObject());
+                        pluginRepos.addAll(parseRepositories(elem1, session, visitor, context, PomMode.ROOT_PLUGIN).getObject());
                         break;
                     }
                     case "profiles": {
-                        profiles.addAll(parseProfiles(elem1,session, visitor, context, PomMode.ROOT).getObject());
+                        OsAndArch osAndArch = new OsAndArch(props, session);
+                        profiles.addAll(parseProfiles(elem1, session, visitor, context, osAndArch, PomMode.ROOT).getObject());
                         break;
                     }
                 }
@@ -878,12 +880,12 @@ public class NutsPomXmlParser {
                 description,
                 url, inceptionYear,
                 props,
-                deps.stream().map(x->x.getObject()).toArray(NutsPomDependency[]::new),
-                depsMan.stream().map(x->x.getObject()).toArray(NutsPomDependency[]::new),
-                repos.stream().map(x->x.getObject()).toArray(NutsPomRepository[]::new),
-                pluginRepos.stream().map(x->x.getObject()).toArray(NutsPomRepository[]::new),
+                deps.stream().map(x -> x.getObject()).toArray(NutsPomDependency[]::new),
+                depsMan.stream().map(x -> x.getObject()).toArray(NutsPomDependency[]::new),
+                repos.stream().map(x -> x.getObject()).toArray(NutsPomRepository[]::new),
+                pluginRepos.stream().map(x -> x.getObject()).toArray(NutsPomRepository[]::new),
                 modules.toArray(new String[0]),
-                profiles.stream().map(x->x.getObject()).toArray(NutsPomProfile[]::new),
+                profiles.stream().map(x -> x.getObject()).toArray(NutsPomProfile[]::new),
                 doc
         );
         if (visitor != null) {
@@ -893,10 +895,10 @@ public class NutsPomXmlParser {
         return pom;
     }
 
-    private NutsPomProfilesNode parseProfiles(Element elem1, NutsSession session, PomDomVisitor visitor, DefaultPomDomVisitorContext context, PomMode mode) {
+    private NutsPomProfilesNode parseProfiles(Element elem1, NutsSession session, PomDomVisitor visitor, DefaultPomDomVisitorContext context, OsAndArch osAndArch, PomMode mode) {
         List<NutsPomProfileNode> profiles = new ArrayList<>();
         if (visitor != null) {
-            if(mode==PomMode.ROOT) {
+            if (mode == PomMode.ROOT) {
                 visitor.visitStartProfiles(elem1, context);
             }
         }
@@ -904,13 +906,13 @@ public class NutsPomXmlParser {
         for (int j = 0; j < childList.getLength(); j++) {
             Element profile = toElement(childList.item(j), "profile");
             if (profile != null) {
-                NutsPomProfileNode pomProfileObj = parseProfile(profile, visitor, session, context, mode);
+                NutsPomProfileNode pomProfileObj = parseProfile(profile, visitor, session, context, osAndArch, mode);
                 profiles.add(pomProfileObj);
             }
         }
-        PomProfilesObj d=new PomProfilesObj(elem1, profiles, context.getDocument());
+        PomProfilesObj d = new PomProfilesObj(elem1, profiles, context.getDocument());
         if (visitor != null) {
-            if(mode==PomMode.ROOT) {
+            if (mode == PomMode.ROOT) {
                 visitor.visitEndProfiles(d, context);
             }
         }
