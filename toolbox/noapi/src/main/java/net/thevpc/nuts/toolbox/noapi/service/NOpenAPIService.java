@@ -48,7 +48,7 @@ public class NOpenAPIService {
         }
         NutsPath sourcePath = NutsPath.of(source, session).normalize().toAbsolute();
         if (!sourcePath.exists()) {
-            throw new NutsNoSuchElementException(session, NutsMessage.ofCstyle("fila not found %s", sourcePath));
+            throw new NutsNoSuchElementException(session, NutsMessage.ofCstyle("file not found %s", sourcePath));
         }
         if (session.isPlainTrace()) {
             session.out().printf("read open-api file %s\n", sourcePath);

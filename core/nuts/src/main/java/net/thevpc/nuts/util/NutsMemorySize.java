@@ -1,15 +1,16 @@
 package net.thevpc.nuts.util;
 
-import net.thevpc.nuts.NutsFormat;
-import net.thevpc.nuts.NutsFormattable;
-import net.thevpc.nuts.NutsSession;
+import net.thevpc.nuts.*;
 import net.thevpc.nuts.cmdline.NutsArgument;
 import net.thevpc.nuts.cmdline.NutsCommandLine;
 import net.thevpc.nuts.elem.NutsMapBy;
 import net.thevpc.nuts.io.NutsPrintStream;
 import net.thevpc.nuts.spi.NutsFormatSPI;
 
+import java.io.IOException;
 import java.io.Serializable;
+import java.io.StreamTokenizer;
+import java.io.StringReader;
 import java.util.Arrays;
 
 public class NutsMemorySize implements Serializable, NutsFormattable {
@@ -874,5 +875,61 @@ public class NutsMemorySize implements Serializable, NutsFormattable {
                 return false;
             }
         });
+    }
+
+    public static NutsOptional<NutsMemorySize> parse(String value, NutsMemoryUnit defaultUnit) {
+        if (defaultUnit == null) {
+            defaultUnit = NutsMemoryUnit.BYTE;
+        }
+        value = NutsStringUtils.trimToNull(value);
+        if (value == null) {
+            return NutsOptional.ofNull();
+        }
+        StreamTokenizer st = new StreamTokenizer(new StringReader(value));
+        try {
+            int r = st.nextToken();
+            if (r == StreamTokenizer.TT_NUMBER) {
+                double nval = st.nval;
+                StringBuilder sb = new StringBuilder();
+                while (true) {
+                    r = st.nextToken();
+                    if (r == StreamTokenizer.TT_EOF) {
+                        break;
+                    }
+                    if (r == ' ') {
+                        //ignore
+                    } else if (
+                            (r >= 'a' && r <= 'z')
+                                    || (r >= 'A' && r <= 'Z')
+                    ) {
+                        sb.append((char) r);
+                    } else {
+                        String finalValue = value;
+                        int finalR = r;
+                        return NutsOptional.ofError(s -> NutsMessage.ofCstyle(
+                                "unexpected char %s in memory size : %s",
+                                String.valueOf((char) finalR),
+                                String.valueOf(finalValue)
+                        ));
+                    }
+                }
+                String unitString = sb.toString();
+                if (unitString.isEmpty()) {
+                    return NutsOptional.of(NutsMemorySize.ofUnit((long) nval, defaultUnit, false));
+                }
+                return NutsOptional.ofNull();
+            }
+        } catch (IOException ie) {
+            String finalValue1 = value;
+            return NutsOptional.ofError(s -> NutsMessage.ofCstyle(
+                    "erroneous memory size : %s",
+                    String.valueOf(finalValue1)
+            ), ie);
+        }
+        String finalValue1 = value;
+        return NutsOptional.ofError(s -> NutsMessage.ofCstyle(
+                "erroneous memory size : %s",
+                String.valueOf(finalValue1)
+        ));
     }
 }
