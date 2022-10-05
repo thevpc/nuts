@@ -10,6 +10,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <izpack.version>5.1.3</izpack.version>
     </properties>
+    <name>Nuts Community Installer Builder</name>
 
     <modules>
 <!--        <module>nuts-installer-panels</module>-->

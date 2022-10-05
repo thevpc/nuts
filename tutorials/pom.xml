@@ -5,7 +5,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>net.thevpc.nuts</groupId>
     <artifactId>nuts-tutorials</artifactId>
-    <name>Nuts Community Tutorials Build Project</name>
+    <name>Nuts Community Tutorials Builder</name>
     <version>0.8.4.0</version>
     <packaging>pom</packaging>
     <modules>

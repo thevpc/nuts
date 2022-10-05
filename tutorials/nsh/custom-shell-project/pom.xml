@@ -17,5 +17,5 @@
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>
     </properties>
-    <name>custom-shell-project</name>
+    <name>Nuts Community Tutorial :: custom-shell-project</name>
 </project>
