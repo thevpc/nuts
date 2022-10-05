@@ -588,7 +588,7 @@ public class DefaultNutsWorkspaceConfigModel {
                     aconfig = compat.parseApiConfig(olderId, session);
                     if (aconfig != null) {
                         // ask
-                        if (session.getTerminal().ask().forBoolean(NutsMessage.ofCstyle("import older config %s", apiId))
+                        if (session.getTerminal().ask().forBoolean(NutsMessage.ofCstyle("import older config %s into %s", olderId, apiId))
                                 .setDefaultValue(true)
                                 .getBooleanValue()
                         ) {
@@ -653,9 +653,9 @@ public class DefaultNutsWorkspaceConfigModel {
         NutsId apiId = session.getWorkspace().getApiId();
         NutsPath path = session.locations().getStoreLocation(apiId, NutsStoreLocation.CONFIG)
                 .getParent();
-        List<NutsId> olderIds = path.list().filter(NutsPath::isDirectory, elems -> NutsElements.of(elems).ofString("isDirectory"))
+        List<NutsId> olderIds = path.list().filter(NutsPath::isDirectory, s -> NutsElements.of(s).ofString("isDirectory"))
                 .map(x -> NutsVersion.of(x.getName()).get(session), "toVersion")
-                .filter(x -> x.compareTo(apiId.getVersion()) < 0, elems -> NutsElements.of(elems).ofString("older"))
+                .filter(x -> x.compareTo(apiId.getVersion()) < 0, s -> NutsElements.of(s).ofString("older"))
                 .sorted(new NutsComparator<NutsVersion>() {
                     @Override
                     public int compare(NutsVersion o1, NutsVersion o2) {

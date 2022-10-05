@@ -158,15 +158,14 @@ public class DefaultNutsExecCommand extends AbstractNutsExecCommand {
             String p = getExtraErrorMessage();
             int exitCode = NutsExceptionWithExitCodeBase.resolveExitCode(ex).orElse(244);
             if (exitCode != 0) {
-                if (p != null) {
+                if (!NutsBlankable.isBlank(p)) {
                     result = new NutsExecutionException(getSession(),
-                            NutsMessage.ofCstyle("execution failed with code %s and message :  of : %s ; error was : %s ; notes : %s", 244, exec, ex, p),
+                            NutsMessage.ofCstyle("execution of (%s) failed with code %s ; error was : %s ; notes : %s", exitCode, exec, ex, p),
                             ex, exitCode);
                 } else {
-                    result = new NutsExecutionException(getSession(), NutsMessage.ofCstyle("execution failed of : %s ; error was : %s", exec, ex),
-                            ex,
-                            exitCode
-                    );
+                    result = new NutsExecutionException(getSession(),
+                            NutsMessage.ofCstyle("execution of (%s) failed with code %s ; error was : %s", exitCode, exec, ex),
+                            ex, exitCode);
                 }
             }
         }

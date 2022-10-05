@@ -468,12 +468,6 @@ public final class NutsReservedUtils {
         }
         List<String> oss = NutsReservedCollectionUtils.uniqueNonBlankList(s.getCondition().getOs());
         List<String> archs = NutsReservedCollectionUtils.uniqueNonBlankList(s.getCondition().getArch());
-        if (oss.isEmpty()) {
-            oss.add("");
-        }
-        if (archs.isEmpty()) {
-            archs.add("");
-        }
         if (!oss.isEmpty()) {
             NutsOsFamily eos = NutsOsFamily.getCurrent();
             boolean osOk = false;

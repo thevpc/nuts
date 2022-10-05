@@ -46,9 +46,9 @@ public class NutsReservedNutsUtilWorkspaceOptions {
         for (String property : bOptions.getCustomOptions().orElseGet(Collections::emptyList)) {
             NutsArgument a = NutsArgument.of(property);
             if (a.getKey().asString().orElse("").equals("boot-optional")) {
-                return true;
+                return a.getValue().asBoolean().orElse(true);
             }
         }
-        return false;
+        return true;
     }
 }

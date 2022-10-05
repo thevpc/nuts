@@ -516,8 +516,8 @@ public final class NutsConstants {
     public static final class Ids {
 
         public static final String NUTS_GROUP_ID = "net.thevpc.nuts";
-        public static final String NUTS_ARTIFACT = "nuts";
-        public static final String NUTS_RUNTIME_ARTIFACT = "nuts-runtime";
+        public static final String NUTS_ARTIFACT_ID = "nuts";
+        public static final String NUTS_RUNTIME_ARTIFACT_ID = "nuts-runtime";
         /**
          * nuts api id
          */

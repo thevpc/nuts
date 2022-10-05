@@ -62,7 +62,6 @@ import java.util.Set;
  * @app.category Input Output
  * @since 0.5.4
  */
-@NutsComponentScope(NutsComponentScopeType.SESSION)
 public interface NutsCp extends NutsComponent {
     static NutsCp of(NutsSession session) {
         NutsUtils.requireSession(session);
@@ -70,7 +69,7 @@ public interface NutsCp extends NutsComponent {
     }
 
     /**
-     * source object to copy from. It may be of any of the supported types.
+     * source object to copy from. It may be any of the supported types.
      *
      * @return source object to copy from
      */

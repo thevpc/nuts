@@ -471,11 +471,11 @@ public class DefaultNutsInstallCommand extends AbstractNutsInstallCommand {
                                             info.id))
                                     .setDefaultValue(true)
                                     .getBooleanValue()) {
-                                session.out().resetLine().printf("%s ```error installation cancelled with error:``` %s%n", info.id, ex);
+                                session.out().resetLine().printlnf("%s ```error installation cancelled with error:``` %s%n", info.id, ex);
                                 result = new NutsDefinition[0];
                                 return this;
                             } else {
-                                session.out().resetLine().printf("%s ```error installation cancelled with error:``` %s%n", info.id, ex);
+                                session.out().resetLine().printlnf("%s ```error installation cancelled with error:``` %s%n", info.id, ex);
                             }
                         } else {
                             throw ex;

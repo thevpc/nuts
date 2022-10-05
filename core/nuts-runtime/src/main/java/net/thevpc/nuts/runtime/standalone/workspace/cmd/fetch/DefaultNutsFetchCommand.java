@@ -5,6 +5,7 @@ import net.thevpc.nuts.elem.NutsElements;
 import net.thevpc.nuts.io.NutsDigest;
 import net.thevpc.nuts.io.NutsPath;
 import net.thevpc.nuts.runtime.standalone.dependency.util.NutsDependencyUtils;
+import net.thevpc.nuts.runtime.standalone.descriptor.util.NutsDescriptorUtils;
 import net.thevpc.nuts.runtime.standalone.id.util.NutsIdUtils;
 import net.thevpc.nuts.runtime.standalone.log.NutsLogUtils;
 import net.thevpc.nuts.runtime.standalone.session.NutsSessionUtils;
@@ -244,70 +245,72 @@ public class DefaultNutsFetchCommand extends AbstractNutsFetchCommand {
                     // always ok for content, if 'content' flag is not armed, try find 'local' path
                     NutsInstalledRepository installedRepository = dws.getInstalledRepository();
                     if (includeContent) {
-                        boolean loadedFromInstallRepo = DefaultNutsInstalledRepository.INSTALLED_REPO_UUID.equals(successfulDescriptorLocation
-                                .getRepository().getUuid());
-                        NutsId id1 = NutsIdUtils.createContentFaceId(foundDefinition.getId(), foundDefinition.getDescriptor(),session);
-                        Path copyTo = options.getLocation();
-                        if (copyTo != null && Files.isDirectory(copyTo)) {
-                            copyTo = copyTo.resolve(_ws.locations().getDefaultIdFilename(id1));
-                        }
+                        if(!NutsDescriptorUtils.isNoContent(foundDefinition.getDescriptor())) {
+                            boolean loadedFromInstallRepo = DefaultNutsInstalledRepository.INSTALLED_REPO_UUID.equals(successfulDescriptorLocation
+                                    .getRepository().getUuid());
+                            NutsId id1 = NutsIdUtils.createContentFaceId(foundDefinition.getId(), foundDefinition.getDescriptor(), session);
+                            Path copyTo = options.getLocation();
+                            if (copyTo != null && Files.isDirectory(copyTo)) {
+                                copyTo = copyTo.resolve(_ws.locations().getDefaultIdFilename(id1));
+                            }
 //                        boolean escalateMode = false;
-                        boolean contentSuccessful = false;
-                        NutsRepositoryAndFetchModeTracker contentTracker = new NutsRepositoryAndFetchModeTracker(descTracker.available());
+                            boolean contentSuccessful = false;
+                            NutsRepositoryAndFetchModeTracker contentTracker = new NutsRepositoryAndFetchModeTracker(descTracker.available());
 
-                        contentSuccessful = fetchContent(id1, foundDefinition, successfulDescriptorLocation, copyTo, reasons);
-                        if (contentSuccessful) {
-                            successfulContentLocation = successfulDescriptorLocation;
-                        } else {
-                            contentTracker.addFailure(successfulDescriptorLocation);
-                        }
-                        if (!contentSuccessful && !loadedFromInstallRepo) {
-                            if (successfulDescriptorLocation.getFetchMode() == NutsFetchMode.LOCAL) {
-                                NutsRepositoryAndFetchMode finalSuccessfulDescriptorLocation = successfulDescriptorLocation;
-                                NutsRepositoryAndFetchMode n = contentTracker.available().stream()
-                                        .filter(x -> x.getRepository().getUuid().equals(finalSuccessfulDescriptorLocation.getRepository().getUuid()) &&
-                                                x.getFetchMode() == NutsFetchMode.REMOTE).findFirst().orElse(null);
-                                if (n != null/* && contentTracker.accept(n)*/) {
-                                    contentSuccessful = fetchContent(id1, foundDefinition, n, copyTo, reasons);
-                                    if (contentSuccessful) {
-                                        successfulContentLocation = n;
-                                    } else {
-                                        contentTracker.addFailure(n);
+                            contentSuccessful = fetchContent(id1, foundDefinition, successfulDescriptorLocation, copyTo, reasons);
+                            if (contentSuccessful) {
+                                successfulContentLocation = successfulDescriptorLocation;
+                            } else {
+                                contentTracker.addFailure(successfulDescriptorLocation);
+                            }
+                            if (!contentSuccessful && !loadedFromInstallRepo) {
+                                if (successfulDescriptorLocation.getFetchMode() == NutsFetchMode.LOCAL) {
+                                    NutsRepositoryAndFetchMode finalSuccessfulDescriptorLocation = successfulDescriptorLocation;
+                                    NutsRepositoryAndFetchMode n = contentTracker.available().stream()
+                                            .filter(x -> x.getRepository().getUuid().equals(finalSuccessfulDescriptorLocation.getRepository().getUuid()) &&
+                                                    x.getFetchMode() == NutsFetchMode.REMOTE).findFirst().orElse(null);
+                                    if (n != null/* && contentTracker.accept(n)*/) {
+                                        contentSuccessful = fetchContent(id1, foundDefinition, n, copyTo, reasons);
+                                        if (contentSuccessful) {
+                                            successfulContentLocation = n;
+                                        } else {
+                                            contentTracker.addFailure(n);
+                                        }
                                     }
                                 }
                             }
-                        }
-                        if (!contentSuccessful) {
-                            for (NutsRepositoryAndFetchMode repoAndMode : contentTracker.available()) {
-                                contentSuccessful = fetchContent(id1, foundDefinition, repoAndMode, copyTo, reasons);
-                                if (contentSuccessful) {
-                                    successfulContentLocation = repoAndMode;
-                                    break;
-                                } else {
-                                    contentTracker.addFailure(repoAndMode);
+                            if (!contentSuccessful) {
+                                for (NutsRepositoryAndFetchMode repoAndMode : contentTracker.available()) {
+                                    contentSuccessful = fetchContent(id1, foundDefinition, repoAndMode, copyTo, reasons);
+                                    if (contentSuccessful) {
+                                        successfulContentLocation = repoAndMode;
+                                        break;
+                                    } else {
+                                        contentTracker.addFailure(repoAndMode);
+                                    }
                                 }
                             }
-                        }
-                        if (contentSuccessful) {
-                            if (loadedFromInstallRepo && successfulContentLocation != successfulDescriptorLocation) {
-                                //this happens if the jar content is no more installed while its descriptor is still installed.
-                                NutsRepositorySPI installedRepositorySPI = wu.repoSPI(installedRepository);
-                                installedRepositorySPI.deploy()
-                                        .setId(foundDefinition.getId())
-                                        .setDescriptor(foundDefinition.getDescriptor())
-                                        .setSession(this.session.copy().setConfirm(NutsConfirmationMode.YES))
-                                        //.setFetchMode(mode)
-                                        .setContent(foundDefinition.getContent().get(session))
-                                        .run();
+                            if (contentSuccessful) {
+                                if (loadedFromInstallRepo && successfulContentLocation != successfulDescriptorLocation) {
+                                    //this happens if the jar content is no more installed while its descriptor is still installed.
+                                    NutsRepositorySPI installedRepositorySPI = wu.repoSPI(installedRepository);
+                                    installedRepositorySPI.deploy()
+                                            .setId(foundDefinition.getId())
+                                            .setDescriptor(foundDefinition.getDescriptor())
+                                            .setSession(this.session.copy().setConfirm(NutsConfirmationMode.YES))
+                                            //.setFetchMode(mode)
+                                            .setContent(foundDefinition.getContent().get(session))
+                                            .run();
 
+                                }
+                            }
+                            if (!contentSuccessful /*&& includedRemote*/) {
+                                NutsLogUtils.traceMessage(_LOG(getSession()), nutsFetchModes, id.getLongId(), NutsLoggerVerb.FAIL,
+                                        "fetched descriptor but failed to fetch artifact binaries", startTime);
                             }
                         }
-                        if (!contentSuccessful /*&& includedRemote*/) {
-                            NutsLogUtils.traceMessage(_LOG(getSession()),nutsFetchModes, id.getLongId(), NutsLoggerVerb.FAIL,
-                                    "fetched descriptor but failed to fetch artifact binaries", startTime);
-                        }
                     }
-                    if (foundDefinition != null && includeInstallInfo) {
+                    if (includeInstallInfo) {
                         //will always load install information
                         NutsInstallInformation ii = installedRepository.getInstallInformation(id, this.session);
                         if (ii != null) {

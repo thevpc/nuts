@@ -41,8 +41,8 @@ import java.util.regex.Pattern;
  * @since 0.1.0
  */
 public interface NutsId extends Comparable<NutsId>, NutsFormattable, NutsBlankable {
-    NutsId API_ID = of(NutsConstants.Ids.NUTS_GROUP_ID, NutsConstants.Ids.NUTS_ARTIFACT, "").get();
-    NutsId RUNTIME_ID = of(NutsConstants.Ids.NUTS_GROUP_ID, NutsConstants.Ids.NUTS_RUNTIME_ARTIFACT, "").get();
+    NutsId API_ID = of(NutsConstants.Ids.NUTS_GROUP_ID, NutsConstants.Ids.NUTS_ARTIFACT_ID, "").get();
+    NutsId RUNTIME_ID = of(NutsConstants.Ids.NUTS_GROUP_ID, NutsConstants.Ids.NUTS_RUNTIME_ARTIFACT_ID, "").get();
     Pattern PATTERN = Pattern.compile("^(?<group>[a-zA-Z0-9_.${}*-]+)(:(?<artifact>[a-zA-Z0-9_.${}*-]+))?(#(?<version>[^?]+))?(\\?(?<query>.+))?$");
     NutsId BLANK = new DefaultNutsId();
 
@@ -70,7 +70,7 @@ public interface NutsId extends Comparable<NutsId>, NutsFormattable, NutsBlankab
         if (NutsBlankable.isBlank(version)) {
             return NutsOptional.of(API_ID);
         }
-        return of(NutsConstants.Ids.NUTS_GROUP_ID, NutsConstants.Ids.NUTS_ARTIFACT, version);
+        return of(NutsConstants.Ids.NUTS_GROUP_ID, NutsConstants.Ids.NUTS_ARTIFACT_ID, version);
     }
 
     static NutsOptional<NutsId> ofRuntime(NutsVersion version) {
@@ -84,14 +84,14 @@ public interface NutsId extends Comparable<NutsId>, NutsFormattable, NutsBlankab
         if (NutsBlankable.isBlank(version)) {
             return NutsOptional.of(API_ID);
         }
-        return of(NutsConstants.Ids.NUTS_GROUP_ID, NutsConstants.Ids.NUTS_ARTIFACT, version);
+        return of(NutsConstants.Ids.NUTS_GROUP_ID, NutsConstants.Ids.NUTS_ARTIFACT_ID, version);
     }
 
     static NutsOptional<NutsId> ofRuntime(String version) {
         if (NutsBlankable.isBlank(version)) {
             return NutsOptional.of(RUNTIME_ID);
         }
-        return of(NutsConstants.Ids.NUTS_GROUP_ID, NutsConstants.Ids.NUTS_RUNTIME, version);
+        return of(NutsConstants.Ids.NUTS_GROUP_ID, NutsConstants.Ids.NUTS_RUNTIME_ARTIFACT_ID, version);
     }
 
     static NutsOptional<NutsId> of(String value) {
