@@ -269,7 +269,7 @@ public class NutsReservedIOUtils {
             ReadableByteChannel rbc = Channels.newChannel(in);
             FileOutputStream fos = new FileOutputStream(to);
             fos.getChannel().transferFrom(rbc, 0, Long.MAX_VALUE);
-        } catch (FileNotFoundException ex) {
+        } catch (FileNotFoundException|UncheckedIOException ex) {
             bLog.with().level(Level.CONFIG).verb(NutsLoggerVerb.FAIL).log(NutsMessage.ofJstyle("not found {0}", url));
             throw ex;
         } catch (IOException ex) {

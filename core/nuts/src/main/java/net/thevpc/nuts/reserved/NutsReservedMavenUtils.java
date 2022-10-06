@@ -362,7 +362,7 @@ public final class NutsReservedMavenUtils {
                 URL url1 = new URL(url);
                 try {
                     xml = NutsReservedIOUtils.openStream(url1, bLog);
-                } catch (NutsBootException ex) {
+                } catch (Exception ex) {
                     //do not need to log error
                     return depsSet;
                 }
@@ -373,7 +373,7 @@ public final class NutsReservedMavenUtils {
                     // was not able to resolve to File
                     try {
                         xml = NutsReservedIOUtils.openStream(url1, bLog);
-                    } catch (NutsBootException ex) {
+                    } catch (Exception ex) {
                         //do not need to log error
                         return depsSet;
                     }
@@ -565,7 +565,7 @@ public final class NutsReservedMavenUtils {
             InputStream is = null;
             try {
                 is = NutsReservedIOUtils.preloadStream(NutsReservedIOUtils.openStream(runtimeMetadata, bLog), bLog);
-            } catch (NutsBootException ex) {
+            } catch (Exception ex) {
                 //do not need to log error
                 //ignore
             }
@@ -773,7 +773,7 @@ public final class NutsReservedMavenUtils {
                     }
                 }
             }
-        } catch (IOException ex) {
+        } catch (IOException|UncheckedIOException ex) {
             //ignore
         }
         return all;
@@ -851,7 +851,7 @@ public final class NutsReservedMavenUtils {
                 NutsReservedIOUtils.copy(new URL(urlPath), to, bLog);
                 errorList.removeErrorsFor(nutsId);
                 ok = to;
-            } catch (IOException ex) {
+            } catch (IOException|UncheckedIOException ex) {
                 errorList.add(new NutsReservedErrorInfo(nutsId, repository, urlPath, "unable to load", ex));
                 //not found
             }

@@ -190,6 +190,9 @@ public class DefaultNutsInstallCommand extends AbstractNutsInstallCommand {
             }
         }
         if (this.isCompanions()) {
+            // In all cases, even though search may be empty we consider that the list is not empty
+            // so that no empty exception is thrown
+            list.emptyCommand=false;
             for (NutsId sid : session.extensions().getCompanionIds()) {
                 if (!list.isVisited(sid)) {
                     List<NutsId> allIds = session.search().setSession(session).addId(sid).setLatest(true).setTargetApiVersion(ws.getApiVersion()).getResultIds().toList();
@@ -209,6 +212,9 @@ public class DefaultNutsInstallCommand extends AbstractNutsInstallCommand {
 //        Map<NutsId, NutsDefinition> defsToIgnore = new LinkedHashMap<>();
 //        Map<NutsId, NutsDefinition> defsOk = new LinkedHashMap<>();
         if (isInstalled()) {
+            // In all cases, even though search may be empty we considere that the list is not empty
+            // so that no empty exception is thrown
+            list.emptyCommand=false;
             for (NutsId resultId : session.search().setSession(session).setInstallStatus(
                     NutsInstallStatusFilters.of(session).byInstalled(true)).getResultIds()) {
                 list.addForInstall(resultId, getInstalled(), true);
