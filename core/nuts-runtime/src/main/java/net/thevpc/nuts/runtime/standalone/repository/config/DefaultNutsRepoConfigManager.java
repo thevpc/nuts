@@ -3,8 +3,8 @@ package net.thevpc.nuts.runtime.standalone.repository.config;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.io.NutsPath;
 import net.thevpc.nuts.runtime.standalone.session.NutsSessionUtils;
-import net.thevpc.nuts.runtime.standalone.workspace.config.NutsRepositoryConfigManagerExt;
 import net.thevpc.nuts.runtime.standalone.workspace.NutsWorkspaceUtils;
+import net.thevpc.nuts.runtime.standalone.workspace.config.NutsRepositoryConfigManagerExt;
 import net.thevpc.nuts.spi.NutsRepositoryLocation;
 
 import java.util.List;
@@ -123,7 +123,7 @@ public class DefaultNutsRepoConfigManager implements NutsRepositoryConfigManager
 
     @Override
     public boolean isEnabled() {
-//        checkSession();
+        checkSession();
         return getModel().isEnabled(session);
     }
 

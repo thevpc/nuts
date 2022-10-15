@@ -156,7 +156,7 @@ public class DefaultNutsRepositoryModel {
 
     public void removeRepository(String repositoryId, NutsSession session) {
         session.security().setSession(session).checkAllowed(NutsConstants.Permissions.REMOVE_REPOSITORY, "remove-repository");
-        final NutsRepository repository = repositoryRegistryHelper.removeRepository(repositoryId);
+        final NutsRepository repository = repositoryRegistryHelper.removeRepository(repositoryId, session);
         if (repository != null) {
             session.config().save();
             NutsWorkspaceConfigManagerExt config = NutsWorkspaceConfigManagerExt.of(session.config());
@@ -171,8 +171,9 @@ public class DefaultNutsRepositoryModel {
         }
     }
 
-    protected void addRepository(NutsRepository repo, NutsSession session, boolean temp) {
+    protected void addRepository(NutsRepository repo, NutsSession session, boolean temp, boolean enabled) {
         repositoryRegistryHelper.addRepository(repo, session);
+        repo.setEnabled(enabled, session);
         session.config().save();
         if (!temp) {
             NutsWorkspaceConfigManagerExt config = NutsWorkspaceConfigManagerExt.of(session.config());
@@ -193,7 +194,7 @@ public class DefaultNutsRepositoryModel {
 //            return null;
 //        }
         NutsRepository r = this.createRepository(options, null, session);
-        addRepository(r, session, options.isTemporary());
+        addRepository(r, session, options.isTemporary(),options.isEnabled());
         return r;
     }
 

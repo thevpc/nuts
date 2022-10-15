@@ -1021,8 +1021,12 @@ public class DefaultNutsWorkspaceConfigModel {
         d.getModel().setPlatforms(this.storeModelMain.getPlatforms().toArray(new NutsPlatformLocation[0]), session);
         NutsRepositoryManager repos = session.repos();
         repos.removeAllRepositories();
-        if (this.storeModelMain.getRepositories() != null) {
-            for (NutsRepositoryRef ref : this.storeModelMain.getRepositories()) {
+        List<NutsRepositoryRef> refsToLoad = this.storeModelMain.getRepositories();
+        if (refsToLoad != null) {
+            refsToLoad=new ArrayList<>(refsToLoad);
+            //reset config because add will add it again...
+            this.storeModelMain.setRepositories(new ArrayList<>());
+            for (NutsRepositoryRef ref : refsToLoad) {
                 repos
                         .addRepository(
                                 NutsRepositoryUtils.refToOptions(ref)

@@ -197,7 +197,7 @@ public interface NutsRepositorySPI {
      *
      * @return true if config is enabled and runtime is enabled
      */
-    boolean isEnabled();
+    boolean isEnabled(NutsSession session);
 
     /**
      * set runtime enabled
@@ -205,7 +205,7 @@ public interface NutsRepositorySPI {
      * @param enabled runtime enabled value
      * @return {@code this} instance
      */
-    NutsRepository setEnabled(boolean enabled);
+    NutsRepository setEnabled(boolean enabled,NutsSession session);
 
     /**
      * true if fetch mode is accepted

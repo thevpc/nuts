@@ -26,13 +26,16 @@
 package net.thevpc.nuts.runtime.standalone.repository;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.runtime.standalone.workspace.NutsWorkspaceExt;
+import net.thevpc.nuts.runtime.standalone.workspace.config.NutsWorkspaceConfigMain;
 import net.thevpc.nuts.util.NutsPredicates;
 
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
- *
  * @author thevpc
  */
 public class NutsRepositoryRegistryHelper {
@@ -87,6 +90,14 @@ public class NutsRepositoryRegistryHelper {
         if (uuid != null) {
             repositoriesByUuid.put(uuid, rr);
         }
+        NutsWorkspaceConfigMain m = ((NutsWorkspaceExt) session.getWorkspace()).getModel().configModel.getStoreModelMain();
+        List<NutsRepositoryRef> repositoriesRefs = m.getRepositories();
+        if (repositoriesRefs == null) {
+            repositoriesRefs = new ArrayList<>();
+            m.setRepositories(repositoriesRefs);
+        }
+        repositoriesRefs.add(repositoryRef);
+        m.setRepositories(repositoriesRefs);
     }
 
     //    public void addRepositoryRef(NutsRepositoryRef repositoryRef) {
@@ -122,11 +133,16 @@ public class NutsRepositoryRegistryHelper {
 //            repositoriesByUuid.put(repository.config().uuid(), rr);
 //        }
 //    }
-    public NutsRepository removeRepository(String repository) {
+    public NutsRepository removeRepository(String repository, NutsSession session) {
         final NutsRepository r = findRepository(repository);
         if (r != null) {
             repositoriesByName.remove(r.getName());
             repositoriesByUuid.remove(r.getUuid());
+            NutsWorkspaceConfigMain m = ((NutsWorkspaceExt) session.getWorkspace()).getModel().configModel.getStoreModelMain();
+            List<NutsRepositoryRef> repositoriesRefs = m.getRepositories();
+            if (repositoriesRefs != null) {
+                repositoriesRefs.removeIf(x -> x.getName().equals(r.getName()));
+            }
             return r;
         }
         return null;

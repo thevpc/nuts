@@ -180,15 +180,16 @@ public interface NutsRepository {
      *
      * @return true if config is enabled and runtime is enabled
      */
-    boolean isEnabled();
+    boolean isEnabled(NutsSession session);
 
     /**
      * set runtime enabled
      *
      * @param enabled runtime enabled value
+     * @param session
      * @return {@code this} instance
      */
-    NutsRepository setEnabled(boolean enabled);
+    NutsRepository setEnabled(boolean enabled, NutsSession session);
 
     boolean isRemote();
 }

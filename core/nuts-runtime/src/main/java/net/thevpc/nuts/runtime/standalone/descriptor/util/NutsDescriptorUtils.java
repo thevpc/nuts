@@ -20,10 +20,10 @@ import java.util.stream.Collectors;
 
 public class NutsDescriptorUtils {
     public static boolean isNoContent(NutsDescriptor desc) {
-        return desc!=null && "pom".equals(desc.getPackaging());
+        return desc != null && "pom".equals(desc.getPackaging());
     }
 
-    public static NutsDescriptor getEffectiveDescriptor(NutsDefinition def,NutsSession session) {
+    public static NutsDescriptor getEffectiveDescriptor(NutsDefinition def, NutsSession session) {
         final NutsDescriptor d = def.getEffectiveDescriptor().orNull();
         if (d == null) {
             return NutsWorkspaceExt.of(session).resolveEffectiveDescriptor(def.getDescriptor(), session);
@@ -89,46 +89,66 @@ public class NutsDescriptorUtils {
             throw new NutsIllegalArgumentException(session, NutsMessage.ofCstyle("invalid descriptor id %s:%s#%s", groupId, artifactId, version));
         }
         return nutsDescriptor.builder()
-                .setId(NutsIdBuilder.of(groupId,artifactId).setVersion(version).build())
+                .setId(NutsIdBuilder.of(groupId, artifactId).setVersion(version).build())
                 .build();
     }
 
-    public static void checkValidEffectiveDescriptor(NutsDescriptor effectiveDescriptor,NutsSession session) {
+    public static void checkValidEffectiveDescriptor(NutsDescriptor effectiveDescriptor, NutsSession session) {
         NutsUtils.requireNonNull(effectiveDescriptor, "effective descriptor", session);
-        try{
+        boolean topException = false;
+        try {
             for (NutsId parent : effectiveDescriptor.getParents()) {
-                NutsIdUtils.checkValidEffectiveId(parent,session);
+                NutsIdUtils.checkValidEffectiveId(parent, session);
             }
-            NutsIdUtils.checkValidEffectiveId(effectiveDescriptor.getId(),session);
+            NutsIdUtils.checkValidEffectiveId(effectiveDescriptor.getId(), session);
             for (NutsDependency dependency : effectiveDescriptor.getDependencies()) {
-                NutsIdUtils.checkValidEffectiveId(dependency.toId(),session);
+                if (!NutsIdUtils.isValidEffectiveId(dependency.toId())) {
+                    if (dependency.isOptional()) {
+                        NutsLoggerOp.of(NutsDescriptorUtils.class, session)
+                                .verb(NutsLoggerVerb.WARNING).level(Level.FINE)
+                                .log(NutsMessage.ofJstyle("{0} is using dependency {1} which defines an unresolved variable. This is a potential bug.",
+                                        effectiveDescriptor.getId(),
+                                        dependency
+                                ));
+                    } else {
+                        topException = true;
+                        throw new NutsIllegalArgumentException(session, NutsMessage.ofJstyle("{0} is using dependency {1} which defines an unresolved variable. This is a potential bug.",
+                                effectiveDescriptor.getId(),
+                                dependency
+                        ));
+                    }
+                }
             }
             for (NutsDependency dependency : effectiveDescriptor.getStandardDependencies()) {
                 //NutsIdUtils.checkValidEffectiveId(dependency.toId(),session);
                 // replace direct call to checkValidEffectiveId with the following...
-                NutsUtils.requireNonNull(dependency, "dependency", session);
-                if (dependency.toString().contains("${")) {
+                if (!NutsIdUtils.isValidEffectiveId(dependency.toId())) {
                     // sometimes the variable is defined later in the pom that uses this POM standard Dependencies
                     // so just log a warning, this is not an error but a very bad practice from the dependency maintainer!
-                    NutsLoggerOp.of(NutsDescriptorUtils.class,session)
+                    NutsLoggerOp.of(NutsDescriptorUtils.class, session)
                             .verb(NutsLoggerVerb.WARNING).level(Level.FINE)
-                            .log(NutsMessage.ofJstyle("{0} is using {1} which defines an unresolved variable. This is a potential bug.",
+                            .log(NutsMessage.ofJstyle("{0} is using standard-dependency {1} which defines an unresolved variable. This is a potential bug.",
                                     effectiveDescriptor.getId(),
                                     dependency
                             ));
                 }
             }
-        }catch (Exception ex) {
-            throw new NutsIllegalArgumentException(session, NutsMessage.ofCstyle("unable to evaluate effective descriptor for %s", effectiveDescriptor.getId()),ex);
+        } catch (NutsIllegalArgumentException ex) {
+            if (topException) {
+                throw ex;
+            }
+            throw new NutsIllegalArgumentException(session, NutsMessage.ofCstyle("unable to evaluate effective descriptor for %s", effectiveDescriptor.getId()), ex);
+        } catch (Exception ex) {
+            throw new NutsIllegalArgumentException(session, NutsMessage.ofCstyle("unable to evaluate effective descriptor for %s", effectiveDescriptor.getId()), ex);
         }
 
     }
 
-    public static boolean isValidEffectiveDescriptor(NutsDescriptor effectiveDescriptor,NutsSession session) {
-        try{
-            checkValidEffectiveDescriptor(effectiveDescriptor,session);
+    public static boolean isValidEffectiveDescriptor(NutsDescriptor effectiveDescriptor, NutsSession session) {
+        try {
+            checkValidEffectiveDescriptor(effectiveDescriptor, session);
             return true;
-        }catch (Exception ex){
+        } catch (Exception ex) {
             //
         }
         return false;
@@ -144,7 +164,8 @@ public class NutsDescriptorUtils {
         c.setProfile(CoreArrayUtils.toDistinctTrimmedNonEmptyList(c.getProfile()));
         return c;
     }
-    public static NutsEnvConditionBuilder applyPropertiesNutsEnvCondition(NutsEnvConditionBuilder c,Map<String, String> properties) {
+
+    public static NutsEnvConditionBuilder applyPropertiesNutsEnvCondition(NutsEnvConditionBuilder c, Map<String, String> properties) {
         Function<String, String> map = new MapToFunction<>(properties);
         c.setArch(CoreNutsUtils.applyStringPropertiesList(c.getArch(), map));
         c.setOs(CoreNutsUtils.applyStringPropertiesList(c.getOs(), map));
@@ -167,7 +188,7 @@ public class NutsDescriptorUtils {
                 .readOnly();
     }
 
-    public static NutsId applyNutsIdProperties(NutsDescriptor d,NutsId child, Function<String, String> properties) {
+    public static NutsId applyNutsIdProperties(NutsDescriptor d, NutsId child, Function<String, String> properties) {
         return NutsIdBuilder.of()
                 .setRepository(CoreNutsUtils.applyStringProperties(child.getRepository(), properties))
                 .setGroupId(CoreNutsUtils.applyStringProperties(child.getGroupId(), properties))
@@ -180,9 +201,9 @@ public class NutsDescriptorUtils {
                 .build();
     }
 
-    public static NutsDependencyBuilder applyNutsDependencyProperties(NutsDescriptorBuilder d,NutsDependency child, Function<String, String> properties) {
+    public static NutsDependencyBuilder applyNutsDependencyProperties(NutsDescriptorBuilder d, NutsDependency child, Function<String, String> properties) {
         List<NutsId> exclusions = child.getExclusions().stream().map(
-                x->applyNutsIdProperties(d,x, properties)
+                x -> applyNutsIdProperties(d, x, properties)
         ).collect(Collectors.toList());
         return NutsDependencyBuilder.of()
                 .setRepository(CoreNutsUtils.applyStringProperties(child.getRepository(), properties))
@@ -199,7 +220,7 @@ public class NutsDescriptorUtils {
                 ;
     }
 
-    public static NutsIdBuilder applyProperties(NutsIdBuilder b,Function<String, String> properties) {
+    public static NutsIdBuilder applyProperties(NutsIdBuilder b, Function<String, String> properties) {
         b.setGroupId(CoreNutsUtils.applyStringProperties(b.getGroupId(), properties));
         b.setArtifactId(CoreNutsUtils.applyStringProperties(b.getArtifactId(), properties));
         b.setVersion(CoreNutsUtils.applyStringProperties(b.getVersion().getValue(), properties));
@@ -209,11 +230,24 @@ public class NutsDescriptorUtils {
     }
 
 
-    public static NutsDescriptorBuilder applyProperties(NutsDescriptorBuilder b,NutsSession session) {
+    public static NutsDescriptorBuilder applyProperties(NutsDescriptorBuilder b, NutsSession session) {
+        Map<String, String> propertiesMap = NutsDescriptorUtils.getPropertiesMap(b.getProperties(), session);
+        if (b.getId() != null) {
+            NutsId id = b.getId();
+            String gid = id.getGroupId();
+            String version = id.getVersion().getValue();
+            if (gid != null && !propertiesMap.containsKey("groupId")) {
+                propertiesMap.put("groupId", gid);
+            }
+            if (version != null && !propertiesMap.containsKey("version")) {
+                propertiesMap.put("version", version);
+            }
+        }
         return applyProperties(b,
-                NutsDescriptorUtils.getPropertiesMap(b.getProperties(), session),session
+                propertiesMap, session
         );
     }
+
     private static String sPropId(NutsDescriptorProperty d) {
         return NutsStringUtils.trim(d.getName()) + ":" + d.getCondition().toString();
     }
@@ -227,7 +261,7 @@ public class NutsDescriptorUtils {
         return m;
     }
 
-    public static NutsDescriptorBuilder applyParents(NutsDescriptorBuilder b,List<NutsDescriptor> parentDescriptors,NutsSession session) {
+    public static NutsDescriptorBuilder applyParents(NutsDescriptorBuilder b, List<NutsDescriptor> parentDescriptors, NutsSession session) {
         NutsId n_id = b.getId();
         String n_packaging = b.getPackaging();
         LinkedHashSet<NutsDescriptorFlag> flags = new LinkedHashSet<>(b.getFlags());
@@ -279,14 +313,14 @@ public class NutsDescriptorUtils {
             n_name = CoreNutsUtils.applyStringInheritance(n_name, parentDescriptor.getName());
             n_genericName = CoreNutsUtils.applyStringInheritance(n_genericName, parentDescriptor.getGenericName());
             n_desc = CoreNutsUtils.applyStringInheritance(n_desc, parentDescriptor.getDescription());
-            n_deps.putAll(depsAsMap(parentDescriptor.getDependencies(),session));
-            n_sdeps.putAll(depsAsMap(parentDescriptor.getStandardDependencies(),session));
+            n_deps.putAll(depsAsMap(parentDescriptor.getDependencies(), session));
+            n_sdeps.putAll(depsAsMap(parentDescriptor.getStandardDependencies(), session));
             b2.addAll(parentDescriptor.getCondition());
             n_icons.addAll(parentDescriptor.getIcons());
             n_categories.addAll(parentDescriptor.getCategories());
         }
-        n_deps.putAll(depsAsMap(b.getDependencies(),session));
-        n_sdeps.putAll(depsAsMap(b.getStandardDependencies(),session));
+        n_deps.putAll(depsAsMap(b.getDependencies(), session));
+        n_sdeps.putAll(depsAsMap(b.getStandardDependencies(), session));
         b2.addAll(b.getCondition());
         List<NutsId> n_parents = new ArrayList<>();
 
@@ -310,8 +344,8 @@ public class NutsDescriptorUtils {
     }
 
 
-    public static NutsDescriptorBuilder applyProperties(NutsDescriptorBuilder b,Map<String, String> properties,NutsSession session) {
-        properties = applyPropsToProps(b,properties,session);
+    public static NutsDescriptorBuilder applyProperties(NutsDescriptorBuilder b, Map<String, String> properties, NutsSession session) {
+        properties = applyPropsToProps(b, properties, session);
         Function<String, String> map = new MapToFunction<>(properties);
 
         NutsId n_id = NutsDescriptorUtils.applyProperties(b.getId().builder(), map).build();
@@ -339,7 +373,7 @@ public class NutsDescriptorUtils {
 
         LinkedHashSet<NutsDependency> n_sdeps = new LinkedHashSet<>();
         for (NutsDependency d2 : b.getStandardDependencies()) {
-            n_sdeps.add(applyNutsDependencyProperties(b,d2, map).build());
+            n_sdeps.add(applyNutsDependencyProperties(b, d2, map).build());
         }
 
         b.setId(n_id);
@@ -363,7 +397,7 @@ public class NutsDescriptorUtils {
                                 x -> CoreNutsUtils.applyStringProperties(x, map)
                         ).collect(Collectors.toList())
         );
-        b.setCondition(applyPropertiesNutsEnvCondition(b.getCondition().builder(),properties).build());
+        b.setCondition(applyPropertiesNutsEnvCondition(b.getCondition().builder(), properties).build());
         b.setDependencies(new ArrayList<>(n_deps));
         b.setStandardDependencies(new ArrayList<>(n_sdeps));
         b.setProperties(n_props.toList());
@@ -395,7 +429,7 @@ public class NutsDescriptorUtils {
         return global;
     }
 
-    private static Map<String, String> applyPropsToProps(NutsDescriptorBuilder b,Map<String, String> properties,NutsSession session) {
+    private static Map<String, String> applyPropsToProps(NutsDescriptorBuilder b, Map<String, String> properties, NutsSession session) {
 
         Map<String, String> oldMap = new LinkedHashMap<>(properties);
 
@@ -426,7 +460,7 @@ public class NutsDescriptorUtils {
         throw new NutsIllegalArgumentException(session, NutsMessage.ofCstyle("too many recursion applying properties %s", updated));
     }
 
-    private static Map<String, NutsDependency> depsAsMap(List<NutsDependency> arr,NutsSession session) {
+    private static Map<String, NutsDependency> depsAsMap(List<NutsDependency> arr, NutsSession session) {
         Map<String, NutsDependency> m = new LinkedHashMap<>();
         //first is Best
         for (NutsDependency d : arr) {

@@ -3,11 +3,15 @@ package net.thevpc.nuts.runtime.standalone.id.util;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.elem.NutsElements;
 import net.thevpc.nuts.io.NutsPath;
+import net.thevpc.nuts.runtime.standalone.descriptor.util.NutsDescriptorUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.config.NutsWorkspaceConfigApi;
+import net.thevpc.nuts.util.NutsLoggerOp;
+import net.thevpc.nuts.util.NutsLoggerVerb;
 import net.thevpc.nuts.util.NutsStringUtils;
 import net.thevpc.nuts.util.NutsUtils;
 
 import java.util.Map;
+import java.util.logging.Level;
 
 public class NutsIdUtils {
     public static void checkLongId(NutsId id, NutsSession session) {
@@ -19,6 +23,16 @@ public class NutsIdUtils {
         NutsUtils.requireNonBlank(id, "id", session);
         NutsUtils.requireNonBlank(id.getGroupId(), () -> NutsMessage.ofCstyle("missing groupId for %s", id), session);
         NutsUtils.requireNonBlank(id.getArtifactId(), () -> NutsMessage.ofCstyle("missing artifactId for %s", id), session);
+    }
+
+    public static boolean isValidEffectiveId(NutsId id) {
+        if (NutsBlankable.isBlank(id)) {
+            return false;
+        }
+        if (id.toString().contains("${")) {
+            return false;
+        }
+        return true;
     }
 
     public static void checkValidEffectiveId(NutsId id, NutsSession session) {

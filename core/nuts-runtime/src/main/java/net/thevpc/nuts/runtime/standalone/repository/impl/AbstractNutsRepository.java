@@ -54,7 +54,6 @@ public abstract class AbstractNutsRepository implements NutsRepository, NutsRepo
     protected DefaultNutsRepositorySecurityModel securityModel;
     protected NutsRepositoryConfigModel configModel;
     protected ObservableMap<String, Object> userProperties;
-    protected boolean enabled = true;
     protected NutsSession initSession;
     protected NutsCachedValue<Boolean> available = new NutsCachedValue<>(this::isAvailableImpl, 0);
     protected boolean supportsDeploy;
@@ -171,12 +170,12 @@ public abstract class AbstractNutsRepository implements NutsRepository, NutsRepo
         return userProperties.getListeners();
     }
 
-    public boolean isEnabled() {
-        return enabled && config().isEnabled();
+    public boolean isEnabled(NutsSession session) {
+        return this.config().setSession(session).isEnabled();
     }
 
-    public NutsRepository setEnabled(boolean enabled) {
-        this.enabled = enabled;
+    public NutsRepository setEnabled(boolean enabled, NutsSession session) {
+        this.config().setSession(session).setEnabled(enabled);
         return this;
     }
 

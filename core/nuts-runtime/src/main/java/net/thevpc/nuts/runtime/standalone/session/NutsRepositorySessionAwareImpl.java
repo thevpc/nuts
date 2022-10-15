@@ -166,13 +166,13 @@ public class NutsRepositorySessionAwareImpl implements NutsRepository, NutsRepos
     }
 
     @Override
-    public boolean isEnabled() {
-        return repo.isEnabled();
+    public boolean isEnabled(NutsSession session) {
+        return repo.isEnabled(session);
     }
 
     @Override
-    public NutsRepository setEnabled(boolean enabled) {
-        return repo.setEnabled(enabled);
+    public NutsRepository setEnabled(boolean enabled, NutsSession session) {
+        return repo.setEnabled(enabled, session);
     }
 
     private NutsRepositorySPI repoSPI() {

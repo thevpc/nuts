@@ -257,8 +257,8 @@ public class NutsSettingsRepositorySubCommand extends AbstractNutsSettingsSubCom
         } else if (cmdLine.next("enable repo", "er").isPresent()) {
             enableRepo(cmdLine, autoSave, session, true);
             return true;
-        } else if (cmdLine.next("disable repo", "er").isPresent()) {
-            enableRepo(cmdLine, autoSave, session, true);
+        } else if (cmdLine.next("disable repo", "dr").isPresent()) {
+            enableRepo(cmdLine, autoSave, session, false);
             return true;
         } else if (cmdLine.next("edit repo", "er").isPresent()) {
             String repoId = cmdLine.nextNonOption(NutsArgumentName.of("RepositoryName", session)).flatMap(NutsValue::asString).get(session);
@@ -311,7 +311,7 @@ public class NutsSettingsRepositorySubCommand extends AbstractNutsSettingsSubCom
                     m.addRow(
                             NutsTexts.of(session).ofStyled(repository.getName(), NutsTextStyle.primary4()),
                             repository.config().isEnabled()
-                                    ? repository.isEnabled() ? NutsTexts.of(session).ofStyled("ENABLED", NutsTextStyle.success())
+                                    ? repository.isEnabled(session) ? NutsTexts.of(session).ofStyled("ENABLED", NutsTextStyle.success())
                                     : NutsTexts.of(session).ofStyled("<RT-DISABLED>", NutsTextStyle.error())
                                     : NutsTexts.of(session).ofStyled("<DISABLED>", NutsTextStyle.error()),
                             repository.getRepositoryType(),

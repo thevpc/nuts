@@ -72,7 +72,7 @@ public abstract class AbstractNutsRepositoryBase extends AbstractNutsRepository 
         this.parentRepository = parent;
         this.configModel = new DefaultNutsRepositoryConfigModel(this, options, initSession,speed, supportedMirroring, repositoryType);
         this.nutsIndexStore = initSession.config().getIndexStoreClientFactory().createIndexStore(this);
-        setEnabled(options.isEnabled());
+//        setEnabled(options.isEnabled(), initSession);
     }
 
     @Override
