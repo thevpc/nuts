@@ -27,10 +27,7 @@
 package net.thevpc.nuts.reserved;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.util.NutsLogConfig;
-import net.thevpc.nuts.util.NutsLogger;
-import net.thevpc.nuts.util.NutsLoggerOp;
-import net.thevpc.nuts.util.NutsLoggerVerb;
+import net.thevpc.nuts.util.*;
 
 import java.io.InputStream;
 import java.io.PrintStream;
@@ -76,19 +73,35 @@ public class NutsReservedBootLog implements NutsLogger {
 
     @Override
     public void log(NutsSession session, Level level, NutsLoggerVerb verb, NutsMessage msg, Throwable thrown) {
-        log(level, msg, thrown);
+        log(level, verb,msg, thrown);
     }
 
     @Override
     public void log(NutsSession session, Level level, NutsLoggerVerb verb, Supplier<NutsMessage> msgSupplier, Supplier<Throwable> errorSupplier) {
         if (isLoggable(level)) {
-            log(level, msgSupplier.get(), errorSupplier.get());
+            log(level, verb,msgSupplier.get(), errorSupplier.get());
         }
     }
 
     @Override
     public void log(LogRecord record) {
-        log(record.getLevel(),NutsMessage.ofPlain(record.getMessage()),record.getThrown());
+        NutsLoggerVerb verb=null;
+        if(record instanceof NutsLogRecord){
+            verb = ((NutsLogRecord) record).getVerb();
+        }
+        Level level = record.getLevel();
+        if(verb==null){
+            if (level.intValue()>=Level.SEVERE.intValue()) {
+                verb = NutsLoggerVerb.FAIL;
+            }else if (level.intValue()>=Level.WARNING.intValue()){
+                verb=NutsLoggerVerb.WARNING;
+            }else if (level.intValue()>=Level.INFO.intValue()){
+                verb=NutsLoggerVerb.INFO;
+            }else {
+                verb=NutsLoggerVerb.INFO;
+            }
+        }
+        log(level,verb, NutsMessage.ofPlain(record.getMessage()),record.getThrown());
     }
 
     @Override
@@ -96,9 +109,9 @@ public class NutsReservedBootLog implements NutsLogger {
         return new LoggerOp(this);
     }
 
-    public void log(Level lvl, NutsMessage message, Throwable err) {
+    public void log(Level lvl, NutsLoggerVerb logVerb,NutsMessage message, Throwable err) {
         if (isLoggable(lvl)) {
-            doLog(lvl, NutsLoggerVerb.FAIL, message == null ? "" : message.toString());
+            doLog(lvl, logVerb, message == null ? "" : message.toString());
             if(err!=null) {
                 err.printStackTrace(bootTerminal.getErr());
             }
@@ -224,7 +237,7 @@ public class NutsReservedBootLog implements NutsLogger {
                 if (msgSupplier != null) {
                     m = msgSupplier.get();
                 }
-                logger.log(level,m,error);
+                logger.log(level,verb, m,error);
             }
         }
 

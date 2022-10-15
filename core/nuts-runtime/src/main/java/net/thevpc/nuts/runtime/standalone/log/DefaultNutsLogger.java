@@ -2,6 +2,7 @@ package net.thevpc.nuts.runtime.standalone.log;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.spi.NutsLogManager;
+import net.thevpc.nuts.util.NutsLogRecord;
 import net.thevpc.nuts.util.NutsLogger;
 import net.thevpc.nuts.util.NutsLoggerOp;
 import net.thevpc.nuts.util.NutsLoggerVerb;

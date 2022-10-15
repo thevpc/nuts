@@ -845,7 +845,7 @@ public final class NutsBootWorkspace {
                     nutsWorkspace = a.createWorkspace(computedOptions);
                 } catch (UnsatisfiedLinkError | Exception ex) {
                     exceptions.add(ex);
-                    bLog.log(Level.SEVERE, NutsMessage.ofJstyle("unable to create workspace using factory {0}", a), ex);
+                    bLog.log(Level.SEVERE, NutsLoggerVerb.FAIL, NutsMessage.ofJstyle("unable to create workspace using factory {0}", a), ex);
                     // if the creation generates an error
                     // just stop
                     break;
@@ -861,7 +861,7 @@ public final class NutsBootWorkspace {
                     bLog.log(Level.SEVERE, NutsLoggerVerb.FAIL, NutsMessage.ofJstyle("\t {0}", NutsReservedUtils.formatURL(url)));
                 }
                 for (Throwable exception : exceptions) {
-                    bLog.log(Level.SEVERE, NutsMessage.ofJstyle("{0}", exception), exception);
+                    bLog.log(Level.SEVERE, NutsLoggerVerb.FAIL, NutsMessage.ofJstyle("{0}", exception), exception);
                 }
                 bLog.log(Level.SEVERE, NutsLoggerVerb.FAIL, NutsMessage.ofJstyle("unable to load Workspace Component from ClassPath : {0}", Arrays.asList(bootClassWorldURLs)));
                 throw new NutsInvalidWorkspaceException(this.computedOptions.getWorkspace().orNull(), NutsMessage.ofCstyle("unable to load Workspace Component from ClassPath : %s%n  caused by:%n\t%s", Arrays.asList(bootClassWorldURLs), exceptions.stream().map(Throwable::toString).collect(Collectors.joining("\n\t"))));
@@ -1213,7 +1213,7 @@ public final class NutsBootWorkspace {
                     msgParams.add("unexpected error");
                 }
                 bLog.log(Level.SEVERE, NutsLoggerVerb.FAIL, NutsMessage.ofJstyle(msg.toString(), msgParams.toArray()));
-                bLog.log(Level.SEVERE, NutsMessage.ofPlain(th.toString()), th.getThrowable());
+                bLog.log(Level.SEVERE, NutsLoggerVerb.FAIL, NutsMessage.ofPlain(th.toString()), th.getThrowable());
             }
         } else {
             bLog.log(Level.SEVERE, NutsLoggerVerb.FAIL, NutsMessage.ofPlain("no stack trace is available."));
