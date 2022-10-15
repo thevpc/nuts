@@ -593,12 +593,19 @@ public class DefaultNutsWorkspaceConfigModel {
                                 .getBooleanValue()
                         ) {
                             toImportOlderId = olderId;
+                            aconfig.setRuntimeId(null);
+                            aconfig.setApiVersion(null);
                             cConfig.merge(aconfig, session);
                         }
                         break;
                     }
                 }
-
+            }
+            if(cConfig.getApiId()==null){
+                cConfig.setApiId(NutsId.ofApi(Nuts.getVersion()).get(session));
+            }
+            if(cConfig.getRuntimeId()==null){
+                cConfig.setRuntimeId(bOptions.getRuntimeId().orNull());
             }
             NutsWorkspaceConfigRuntime rconfig = compat.parseRuntimeConfig(session);
             if (rconfig != null) {
@@ -628,6 +635,15 @@ public class DefaultNutsWorkspaceConfigModel {
             setCurrentConfig(cConfig
                     .build(session.locations().getWorkspaceLocation(), session)
             );
+            if(aconfig==null){
+                aconfig=new NutsWorkspaceConfigApi();
+            }
+            if(aconfig.getApiVersion()==null){
+                aconfig.setApiVersion(cConfig.getApiId().getVersion());
+            }
+            if(aconfig.getRuntimeId()==null){
+                aconfig.setRuntimeId(cConfig.getRuntimeId());
+            }
             setConfigBoot(_config, session, false);
             setConfigApi(aconfig, session, false);
             setConfigRuntime(rconfig, session, false);

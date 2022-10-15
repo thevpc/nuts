@@ -26,9 +26,9 @@ public class NutsVersionCompat803 extends AbstractNutsVersionCompat {
         NutsWorkspaceConfigApi c = bytes==null?null:NutsElements.of(session)
                 .setSession(session)
                 .json().parse(bytes, NutsWorkspaceConfigApi.class);
-        if (c != null) {
-            c.setApiVersion(getApiVersion());
-        }
+//        if (c != null) {
+//            c.setApiVersion(getApiVersion());
+//        }
         return c;
     }
 

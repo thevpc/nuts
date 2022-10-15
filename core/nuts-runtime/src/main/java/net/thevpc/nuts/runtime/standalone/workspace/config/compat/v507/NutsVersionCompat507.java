@@ -29,9 +29,11 @@ public class NutsVersionCompat507 extends AbstractNutsVersionCompat {
         NutsWorkspaceConfigApi c = bytes==null?null:NutsElements.of(session)
                 .setSession(session)
                 .json().parse(bytes, NutsWorkspaceConfigApi.class);
-        if (c != null) {
-            c.setApiVersion(getApiVersion());
-        }
+        // Removed test because we would have incoherence between ApiVersion and RuntimeVersion
+        // Actually I dont know was the initial need was for doing this test!
+//        if (c != null) {
+//            c.setApiVersion(getApiVersion());
+//        }
         return c;
     }
 
