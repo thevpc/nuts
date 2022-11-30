@@ -35,6 +35,7 @@ import net.thevpc.nuts.util.NutsStream;
 
 import java.io.*;
 import java.net.URL;
+import java.nio.charset.Charset;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.Instant;
@@ -142,12 +143,34 @@ public interface NutsPath extends NutsFormattable, NutsInputSource, NutsOutputTa
 
     NutsPath resolveSibling(NutsPath other);
 
-    byte[] readAllBytes();
+    byte[] readBytes();
+
+    /**
+     * read file content as UTF string
+     *
+     * @return file content as string
+     * @since 0.8.4
+     */
+    String readString();
+
+    /**
+     * read file content as string using the given Charset
+     *
+     * @param cs charset (UTF8 if null)
+     * @return file content as string
+     * @since 0.8.4
+     */
+    String readString(Charset cs);
+
 
     NutsPath writeBytes(byte[] bytes);
 
+    NutsPath writeString(String string, Charset cs);
+
+    NutsPath writeString(String string);
+
     /**
-     * path protocol or null if undefined. This is some how similar to url protocol
+     * path protocol or null if undefined. This is somehow similar to url protocol
      * Particularly file system paths have an empty (aka "") protocol
      *
      * @return path protocol or null if undefined
@@ -198,6 +221,12 @@ public interface NutsPath extends NutsFormattable, NutsInputSource, NutsOutputTa
     OutputStream getOutputStream();
 
     Reader getReader();
+
+    Reader getReader(Charset cs);
+
+    Stream<String> getLines(Charset cs);
+
+    Stream<String> getLines();
 
     Writer getWriter();
 

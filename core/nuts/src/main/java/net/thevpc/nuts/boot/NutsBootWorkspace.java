@@ -283,10 +283,7 @@ public final class NutsBootWorkspace {
         NutsRepositoryLocation[] result;
         if (old.length == 0) {
             //no previous config, use defaults!
-            result = bootRepositories.resolve(
-                    NutsReservedMavenUtils.loadAllMavenRepos(nLog).toArray(new NutsRepositoryLocation[0])
-                    , repositoryDB
-            );
+            result = bootRepositories.resolve(NutsReservedMavenUtils.loadAllMavenRepos(nLog).toArray(new NutsRepositoryLocation[0]), repositoryDB);
         } else {
             result = bootRepositories.resolve(Arrays.stream(old).map(x -> NutsRepositoryLocation.of(x.getName(), x.getUrl())).toArray(NutsRepositoryLocation[]::new), repositoryDB);
         }
@@ -310,9 +307,7 @@ public final class NutsBootWorkspace {
         NutsReservedErrorInfoList errorList = new NutsReservedErrorInfoList();
         File file = NutsReservedMavenUtils.resolveOrDownloadJar(NutsId.ofApi(computedOptions.getApiVersion().orNull()).get(), repos.toArray(new NutsRepositoryLocation[0]), NutsRepositoryLocation.of("nuts@" + computedOptions.getStoreLocation(NutsStoreLocation.LIB).get() + File.separator + NutsConstants.Folders.ID), bLog, false, computedOptions.getExpireTime().orNull(), errorList);
         if (file == null) {
-            errorList.insert(
-                    0, new NutsReservedErrorInfo(null, null, null, "unable to load nuts " + computedOptions.getApiVersion().orNull(), null)
-            );
+            errorList.insert(0, new NutsReservedErrorInfo(null, null, null, "unable to load nuts " + computedOptions.getApiVersion().orNull(), null));
             logError(null, errorList);
             throw new NutsBootException(NutsMessage.ofCstyle("unable to load %s#%s", NutsConstants.Ids.NUTS_API, computedOptions.getApiVersion().orNull()));
         }
@@ -363,13 +358,7 @@ public final class NutsBootWorkspace {
             preparedWorkspace = true;
             NutsIsolationLevel isolationMode = computedOptions.getIsolationLevel().orElse(NutsIsolationLevel.SYSTEM);
             if (bLog.isLoggable(Level.CONFIG)) {
-                bLog.log(Level.CONFIG, NutsLoggerVerb.START, NutsMessage.ofJstyle("bootstrap Nuts version {0}{1}- digest {1}...", Nuts.getVersion(),
-                        isolationMode == NutsIsolationLevel.SYSTEM ? "" :
-                                isolationMode == NutsIsolationLevel.USER ? " (user mode)" :
-                                        isolationMode == NutsIsolationLevel.CONFINED ? " (confined mode)" :
-                                                isolationMode == NutsIsolationLevel.SANDBOX ? " (sandbox mode)" :
-                                                        " (unsupported mode)",
-                        getApiDigest()));
+                bLog.log(Level.CONFIG, NutsLoggerVerb.START, NutsMessage.ofJstyle("bootstrap Nuts version {0}{1}- digest {1}...", Nuts.getVersion(), isolationMode == NutsIsolationLevel.SYSTEM ? "" : isolationMode == NutsIsolationLevel.USER ? " (user mode)" : isolationMode == NutsIsolationLevel.CONFINED ? " (confined mode)" : isolationMode == NutsIsolationLevel.SANDBOX ? " (sandbox mode)" : " (unsupported mode)", getApiDigest()));
                 bLog.log(Level.CONFIG, NutsLoggerVerb.START, NutsMessage.ofPlain("boot-class-path:"));
                 for (String s : NutsStringUtils.split(System.getProperty("java.class.path"), File.pathSeparator, true, true)) {
                     bLog.log(Level.CONFIG, NutsLoggerVerb.START, NutsMessage.ofJstyle("                  {0}", s));
@@ -785,9 +774,7 @@ public final class NutsBootWorkspace {
 
             String workspaceBootLibFolder = computedOptions.getStoreLocation(NutsStoreLocation.LIB).get() + File.separator + NutsConstants.Folders.ID;
 
-            NutsRepositoryLocation[] repositories =
-                    NutsStringUtils.split(computedOptions.getBootRepositories().orNull(), "\n;", true, true)
-                            .stream().map(NutsRepositoryLocation::of).toArray(NutsRepositoryLocation[]::new);
+            NutsRepositoryLocation[] repositories = NutsStringUtils.split(computedOptions.getBootRepositories().orNull(), "\n;", true, true).stream().map(NutsRepositoryLocation::of).toArray(NutsRepositoryLocation[]::new);
 
             NutsRepositoryLocation workspaceBootLibFolderRepo = NutsRepositoryLocation.of("nuts@" + workspaceBootLibFolder);
             computedOptions.setRuntimeBootDependencyNode(createClassLoaderNode(computedOptions.getRuntimeBootDescriptor().orNull(), repositories, workspaceBootLibFolderRepo, recover, errorList, true));
@@ -870,9 +857,7 @@ public final class NutsBootWorkspace {
         } catch (NutsReadOnlyException | NutsCancelException | NutsNoSessionCancelException ex) {
             throw ex;
         } catch (UnsatisfiedLinkError | AbstractMethodError ex) {
-            NutsMessage errorMessage = NutsMessage.ofCstyle(
-                    "unable to boot nuts workspace because the installed binaries are incompatible with the current nuts bootstrap version %s\nusing '-N' command line flag should fix the problem", Nuts.getVersion()
-            );
+            NutsMessage errorMessage = NutsMessage.ofCstyle("unable to boot nuts workspace because the installed binaries are incompatible with the current nuts bootstrap version %s\nusing '-N' command line flag should fix the problem", Nuts.getVersion());
             errorList.insert(0, new NutsReservedErrorInfo(null, null, null, errorMessage + ": " + ex, ex));
             logError(bootClassWorldURLs, errorList);
             throw new NutsBootException(errorMessage, ex);
@@ -1097,9 +1082,9 @@ public final class NutsBootWorkspace {
             if (o.getSkipWelcome().orElse(false)) {
                 return session;
             }
-            session.exec().addCommand("welcome").addExecutorOptions(o.getExecutorOptions().orNull()).setExecutionType(o.getExecutionType().orElse(NutsExecutionType.SPAWN)).setFailFast(true).setDry(computedOptions.getDry().orElse(false)).run();
+            session.setDry(computedOptions.getDry().orElse(false)).exec().addCommand("welcome").addExecutorOptions(o.getExecutorOptions().orNull()).setExecutionType(o.getExecutionType().orElse(NutsExecutionType.SPAWN)).setFailFast(true).run();
         } else {
-            session.exec().addCommand(o.getApplicationArguments().get()).addExecutorOptions(o.getExecutorOptions().orNull()).setExecutionType(o.getExecutionType().orElse(NutsExecutionType.SPAWN)).setFailFast(true).setDry(computedOptions.getDry().orElse(false)).run();
+            session.setDry(computedOptions.getDry().orElse(false)).exec().addCommand(o.getApplicationArguments().get()).addExecutorOptions(o.getExecutorOptions().orNull()).setExecutionType(o.getExecutionType().orElse(NutsExecutionType.SPAWN)).setFailFast(true).run();
         }
         return session;
     }

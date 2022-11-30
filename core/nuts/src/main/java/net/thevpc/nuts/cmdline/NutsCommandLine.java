@@ -92,7 +92,7 @@ import java.util.List;
  * @app.category Command Line
  * @since 0.5.5
  */
-public interface NutsCommandLine extends Iterable<NutsArgument>, NutsFormattable,NutsBlankable {
+public interface NutsCommandLine extends Iterable<NutsArgument>, NutsFormattable, NutsBlankable {
 
     static NutsCommandLine of(String[] args) {
         return new DefaultNutsCommandLine(args);
@@ -117,9 +117,9 @@ public interface NutsCommandLine extends Iterable<NutsArgument>, NutsFormattable
         return NutsOptional.of(NutsCommandLines.of(session).parseCommandline(line));
     }
 
-    static NutsOptional<NutsCommandLine> parseSystem(String line, NutsShellFamily shellFamily,NutsSession session) {
+    static NutsOptional<NutsCommandLine> parseSystem(String line, NutsShellFamily shellFamily, NutsSession session) {
         return NutsOptional.of(NutsCommandLines.of(session)
-                        .setShellFamily(shellFamily)
+                .setShellFamily(shellFamily)
                 .parseCommandline(line));
     }
 
@@ -177,16 +177,17 @@ public interface NutsCommandLine extends Iterable<NutsArgument>, NutsFormattable
      * @return {@code this} instance
      */
     NutsCommandLine registerSpecialSimpleOption(String option, NutsSession session);
+
     NutsCommandLine registerSpecialSimpleOption(String option);
 
-        /**
-         * test if the option is a registered simple option This method helps
-         * considering '-version' as a single simple options when
-         * {@code isExpandSimpleOptions()==true}
-         *
-         * @param option option
-         * @return {@code this} instance
-         */
+    /**
+     * test if the option is a registered simple option This method helps
+     * considering '-version' as a single simple options when
+     * {@code isExpandSimpleOptions()==true}
+     *
+     * @param option option
+     * @return {@code this} instance
+     */
     boolean isSpecialSimpleOption(String option);
 
     /**
@@ -343,6 +344,34 @@ public interface NutsCommandLine extends Iterable<NutsArgument>, NutsFormattable
     NutsOptional<NutsArgument> nextBoolean();
 
     /**
+     * consume next argument with boolean value and run {@code consumer}
+     *
+     * @return true if active
+     */
+    boolean withNextBoolean(NutsArgumentConsumer<Boolean> consumer, NutsSession session);
+
+    boolean withNextOptionalBoolean(NutsArgumentConsumer<NutsOptional<Boolean>> consumer, NutsSession session);
+
+    boolean withNextOptionalBoolean(NutsArgumentConsumer<NutsOptional<Boolean>> consumer, NutsSession session, String... names);
+
+    boolean withNextTrue(NutsArgumentConsumer<Boolean> consumer, NutsSession session);
+
+    /**
+     * consume next argument with boolean value and run {@code consumer}
+     *
+     * @param names names
+     * @return true if active
+     */
+    boolean withNextBoolean(NutsArgumentConsumer<Boolean> consumer, NutsSession session, String... names);
+
+    boolean withNextTrue(NutsArgumentConsumer<Boolean> consumer, NutsSession session, String... names);
+
+
+    boolean withNextOptionalString(NutsArgumentConsumer<NutsOptional<String>> consumer, NutsSession session);
+
+    boolean withNextOptionalString(NutsArgumentConsumer<NutsOptional<String>> consumer, NutsSession session, String... names);
+
+    /**
      * next argument with string value. equivalent to
      * next(NutsArgumentType.STRING,names)
      *
@@ -352,6 +381,37 @@ public interface NutsCommandLine extends Iterable<NutsArgument>, NutsFormattable
     NutsOptional<NutsArgument> nextString(String... names);
 
     /**
+     * consume next argument with string value and run {@code consumer}
+     *
+     * @return true if active
+     */
+    boolean withNextString(NutsArgumentConsumer<String> consumer, NutsSession session);
+
+    /**
+     * consume next argument with string value and run {@code consumer}
+     *
+     * @param names names
+     * @return true if active
+     */
+    boolean withNextString(NutsArgumentConsumer<String> consumer, NutsSession session, String... names);
+
+
+    /**
+     * consume next argument and run {@code consumer}
+     *
+     * @return true if active
+     */
+    boolean withNextValue(NutsArgumentConsumer<NutsValue> consumer, NutsSession session);
+
+    /**
+     * consume next argument and run {@code consumer}
+     *
+     * @param names names
+     * @return true if active
+     */
+    boolean withNextValue(NutsArgumentConsumer<NutsValue> consumer, NutsSession session, String... names);
+
+    /**
      * next argument with string value. equivalent to
      * next(NutsArgumentType.STRING,{})
      *
@@ -359,17 +419,10 @@ public interface NutsCommandLine extends Iterable<NutsArgument>, NutsFormattable
      */
     NutsOptional<NutsArgument> nextString();
 
-    NutsOptional<String> nextStringValueLiteral(String... names);
-
-    NutsOptional<Boolean> nextBooleanValueLiteral(String... names);
-
     NutsOptional<NutsValue> nextStringValue(String... names);
 
     NutsOptional<NutsValue> nextBooleanValue(String... names);
 
-    NutsOptional<String> nextStringValueLiteral();
-
-    NutsOptional<Boolean> nextBooleanValueLiteral();
 
     NutsOptional<NutsValue> nextStringValue();
 
@@ -568,9 +621,11 @@ public interface NutsCommandLine extends Iterable<NutsArgument>, NutsFormattable
     /**
      * add new argument (ignoring null values)
      * since 0.8.4
+     *
      * @param argument new argument
      * @return reset this instance
      */
     NutsCommandLine add(String argument);
+
     NutsCommandLine addAll(List<String> arguments);
 }

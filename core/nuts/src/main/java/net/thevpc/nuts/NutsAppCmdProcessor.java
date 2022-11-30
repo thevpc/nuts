@@ -45,7 +45,7 @@ import net.thevpc.nuts.cmdline.NutsCommandLine;
 public interface NutsAppCmdProcessor {
     NutsAppCmdProcessor NOP = new NutsAppCmdProcessor() {
         @Override
-        public void onCmdExec(NutsCommandLine commandline, NutsApplicationContext context) {
+        public void onCmdExec(NutsCommandLine commandLine, NutsApplicationContext context) {
 
         }
     };
@@ -55,11 +55,11 @@ public interface NutsAppCmdProcessor {
  the "next" methods to
      *
      * @param option      peeked argument
-     * @param commandline associated commandline
+     * @param commandLine associated commandLine
      * @param context session
      * @return true if the argument can be processed, false otherwise.
      */
-    default boolean onCmdNextOption(NutsArgument option, NutsCommandLine commandline, NutsApplicationContext context){
+    default boolean onCmdNextOption(NutsArgument option, NutsCommandLine commandLine, NutsApplicationContext context){
         return false;
     }
 
@@ -69,21 +69,21 @@ public interface NutsAppCmdProcessor {
      * the "next" methods to
      *
      * @param nonOption   peeked argument
-     * @param commandline associated commandline
+     * @param commandLine associated commandLine
      * @param context session
      * @return true if the argument can be processed, false otherwise.
      */
-    default boolean onCmdNextNonOption(NutsArgument nonOption, NutsCommandLine commandline, NutsApplicationContext context){
+    default boolean onCmdNextNonOption(NutsArgument nonOption, NutsCommandLine commandLine, NutsApplicationContext context){
         return false;
     }
 
     /**
      * initialize the processor.
      * Called before any other method.
-     *  @param commandline associated commandline
+     *  @param commandLine associated commandLine
      * @param context session
      */
-    default void onCmdInitParsing(NutsCommandLine commandline, NutsApplicationContext context) {
+    default void onCmdInitParsing(NutsCommandLine commandLine, NutsApplicationContext context) {
 
     }
 
@@ -91,20 +91,20 @@ public interface NutsAppCmdProcessor {
      * prepare for execution for auto-complete and/or exec modes.
      * Called after all next methods and before exec and autoComplete methods
      *
-     * @param commandline associated commandline
+     * @param commandLine associated commandLine
      * @param context session
      */
-    default void onCmdFinishParsing(NutsCommandLine commandline, NutsApplicationContext context) {
+    default void onCmdFinishParsing(NutsCommandLine commandLine, NutsApplicationContext context) {
 
     }
 
     /**
      * execute options, called after all options was processed and
      * cmdLine.isExecMode() returns true.
-     * @param commandline associated commandline
+     * @param commandLine associated commandLine
      * @param context session
      */
-    void onCmdExec(NutsCommandLine commandline, NutsApplicationContext context);
+    void onCmdExec(NutsCommandLine commandLine, NutsApplicationContext context);
 
     /**
      * called when auto-complete ({@code autoComplete} is not null)

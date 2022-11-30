@@ -317,7 +317,7 @@ public class CoreNutsUtils {
 
     //    public static NutsContentType readOptionOutputFormat(NutsCommandLine cmdLine) {
 //        NutsArgument a = cmdLine.peek();
-//        switch(a.getStringKey().orElse("")) {
+//        switch(a.key()) {
 //            case "--output-format": {
 //                a = cmdLine.nextString();
 //                return CoreEnumUtils.parseEnumString(a.getStringValue(), NutsContentType.class, false);

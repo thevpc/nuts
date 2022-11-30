@@ -149,7 +149,7 @@ public class NutsFetchDisplayOptions {
         if (a == null) {
             return false;
         }
-        switch(a.getStringKey().orElse("")) {
+        switch(a.key()) {
             case "-l":
             case "--long": {
                 a = cmdLine.nextBoolean().get(session);

@@ -18,7 +18,7 @@ public class DefaultNutsCommandLineFormat extends DefaultFormatBase<NutsCommandL
     private NutsCommandLineFormatStrategy formatStrategy = NutsCommandLineFormatStrategy.DEFAULT;
 
     public DefaultNutsCommandLineFormat(NutsSession session) {
-        super(session, "commandline");
+        super(session, "commandLine");
     }
 
     public NutsCommandLineFormat setNtf(boolean ntf) {

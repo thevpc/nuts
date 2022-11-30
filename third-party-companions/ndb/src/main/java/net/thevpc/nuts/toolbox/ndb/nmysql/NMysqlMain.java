@@ -17,6 +17,7 @@ import net.thevpc.nuts.toolbox.ndb.nmysql.remote.config.RemoteMysqlDatabaseConfi
 import net.thevpc.nuts.toolbox.ndb.nmysql.util.AtName;
 import net.thevpc.nuts.toolbox.ndb.nmysql.util.MysqlUtils;
 import net.thevpc.nuts.toolbox.ndb.util.NdbUtils;
+import net.thevpc.nuts.util.NutsRef;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -30,7 +31,7 @@ public class NMysqlMain implements NdbSupport {
         NutsSession session = context.getSession();
         NMySqlService service = new NMySqlService(context);
         while (commandLine.hasNext()) {
-            switch (commandLine.peek().get(session).getKey().asString().get(session)) {
+            switch (commandLine.peek().get(session).key()) {
                 case "add":
                 case "create": {
                     commandLine.skip();
@@ -103,26 +104,32 @@ public class NMysqlMain implements NdbSupport {
     private void runPushOrPull(NutsCommandLine commandLine, boolean pull, NMySqlService service) {
         NutsSession session = service.getContext().getSession();
         commandLine.setCommandName("mysql --remote " + (pull ? "pull" : "push"));
-        AtName name = null;
-        String path = null;
-        NutsArgument a;
+        class Data {
+            AtName name = null;
+            String path = null;
+        }
+        Data d = new Data();
         while (commandLine.hasNext()) {
             if (commandLine.isNextOption()) {
-                switch (commandLine.peek().get(session).getKey().asString().get(session)) {
+                switch (commandLine.peek().get(session).key()) {
                     case "--name": {
-                        if (name == null) {
-                            name = AtName.nextAppOption(commandLine, session);
-                        } else {
-                            commandLine.throwUnexpectedArgument(NutsMessage.ofPlain("already defined"), session);
-                        }
+                        commandLine.withNextString((v, aa, s) -> {
+                            if (d.name == null) {
+                                d.name = new AtName(v);
+                            } else {
+                                commandLine.throwUnexpectedArgument(NutsMessage.ofPlain("already defined"), session);
+                            }
+                        }, session);
                         break;
                     }
                     case "--path": {
-                        if (path == null) {
-                            path = commandLine.nextStringValueLiteral().get(session);
-                        } else {
-                            commandLine.throwUnexpectedArgument(NutsMessage.ofPlain("already defined"), session);
-                        }
+                        commandLine.withNextString((v, aa, s) -> {
+                            if (d.path == null) {
+                                d.path = v;
+                            } else {
+                                commandLine.throwUnexpectedArgument(NutsMessage.ofPlain("already defined"), session);
+                            }
+                        }, session);
                         break;
                     }
                     default: {
@@ -130,50 +137,53 @@ public class NMysqlMain implements NdbSupport {
                     }
                 }
             } else {
-                if (name == null) {
-                    name = AtName.nextAppNonOption(commandLine, session);
-                } else if (path == null) {
-                    path = commandLine.next().flatMap(NutsValue::asString).get(session);
+                if (d.name == null) {
+                    d.name = new AtName(commandLine.next().get().asString().get());
+                } else if (d.path == null) {
+                    d.path = commandLine.next().get().asString().get();
                 } else {
                     commandLine.throwUnexpectedArgument(session);
                 }
             }
         }
-        if (name == null) {
-            name = new AtName("");
+        if (d.name == null) {
+            d.name = new AtName("");
         }
-        RemoteMysqlConfigService c = service.loadRemoteMysqlConfig(name.getConfigName(), NutsOpenMode.OPEN_OR_ERROR);
-        RemoteMysqlDatabaseConfigService d = c.getDatabase(name.getDatabaseName(), NutsOpenMode.OPEN_OR_ERROR);
+        RemoteMysqlConfigService c = service.loadRemoteMysqlConfig(d.name.getConfigName(), NutsOpenMode.OPEN_OR_ERROR);
+        RemoteMysqlDatabaseConfigService d1 = c.getDatabase(d.name.getDatabaseName(), NutsOpenMode.OPEN_OR_ERROR);
         if (pull) {
-            d.pull(path, true, true);
+            d1.pull(d.path, true, true);
         } else {
-            d.push(path, true);
+            d1.push(d.path, true);
         }
     }
 
     private void runBackupOrRestore(NutsCommandLine commandLine, boolean backup, NMySqlService service) {
         NutsSession session = service.getContext().getSession();
         commandLine.setCommandName("mysql " + (backup ? "backup" : "restore"));
-        AtName name = null;
-        String path = null;
-        NutsArgument a;
+        NutsRef<AtName> name = NutsRef.ofNull(AtName.class);
+        NutsRef<String> path = NutsRef.ofNull(String.class);
         while (commandLine.hasNext()) {
             if (commandLine.isNextOption()) {
-                switch (commandLine.peek().get(session).getKey().asString().get(session)) {
+                switch (commandLine.peek().get(session).key()) {
                     case "--name": {
-                        if (name == null) {
-                            name = AtName.nextAppOption(commandLine, session);
-                        } else {
-                            commandLine.throwUnexpectedArgument(NutsMessage.ofPlain("already defined"), session);
-                        }
+                        commandLine.withNextString((v, a, s) -> {
+                            if (name.isNull()) {
+                                name.set(new AtName(a.getStringValue().get(session)));
+                            } else {
+                                commandLine.throwUnexpectedArgument(NutsMessage.ofPlain("already defined"), session);
+                            }
+                        }, session);
                         break;
                     }
                     case "--path": {
-                        if (path == null) {
-                            path = commandLine.nextStringValueLiteral().get(session);
-                        } else {
-                            commandLine.throwUnexpectedArgument(NutsMessage.ofPlain("already defined"), session);
-                        }
+                        commandLine.withNextString((v, a, s) -> {
+                            if (path.isNull()) {
+                                path.set(v);
+                            } else {
+                                commandLine.throwUnexpectedArgument(NutsMessage.ofPlain("already defined"), session);
+                            }
+                        }, session);
                         break;
                     }
                     default: {
@@ -181,32 +191,32 @@ public class NMysqlMain implements NdbSupport {
                     }
                 }
             } else {
-                if (name == null) {
-                    name = AtName.nextAppNonOption(commandLine, session);
-                } else if (path == null) {
-                    path = commandLine.next().flatMap(NutsValue::asString).get(session);
+                if (name.isNull()) {
+                    name.set(new AtName(commandLine.next().get(session).asString().get(session)));
+                } else if (path.isNull()) {
+                    path.set(commandLine.next().flatMap(NutsValue::asString).get(session));
                 } else {
                     commandLine.throwUnexpectedArgument(session);
                 }
             }
         }
-        if (name == null) {
-            name = new AtName("");
+        if (name.isNull()) {
+            name.set(new AtName(""));
         }
-        LocalMysqlConfigService c = service.loadLocalMysqlConfig(name.getConfigName(), NutsOpenMode.OPEN_OR_ERROR);
-        LocalMysqlDatabaseConfigService d = c.getDatabase(name.getDatabaseName(), NutsOpenMode.OPEN_OR_ERROR);
+        LocalMysqlConfigService c = service.loadLocalMysqlConfig(name.get().getConfigName(), NutsOpenMode.OPEN_OR_ERROR);
+        LocalMysqlDatabaseConfigService d = c.getDatabase(name.get().getDatabaseName(), NutsOpenMode.OPEN_OR_ERROR);
         NutsSession s = session;
         if (backup) {
-            if (path == null) {
-                path = d.getDatabaseName() + "-" + MysqlUtils.newDateString();
+            if (path.isNull()) {
+                path.set(d.getDatabaseName() + "-" + MysqlUtils.newDateString());
             }
-            LocalMysqlDatabaseConfigService.ArchiveResult result = d.backup(path);
+            LocalMysqlDatabaseConfigService.ArchiveResult result = d.backup(path.get());
             s.out().printlnf(result);
         } else {
-            if (path == null) {
+            if (path.isNull()) {
                 commandLine.throwMissingArgument(NutsMessage.ofPlain("missing --path"), session);
             }
-            LocalMysqlDatabaseConfigService.RestoreResult result = d.restore(path);
+            LocalMysqlDatabaseConfigService.RestoreResult result = d.restore(path.get());
             s.out().printlnf(result);
         }
     }
@@ -215,205 +225,243 @@ public class NMysqlMain implements NdbSupport {
     private void createOrUpdate(NutsCommandLine commandLine, boolean add, NMySqlService service) {
         NutsSession session = service.getContext().getSession();
         commandLine.setCommandName("mysql " + (add ? "add" : "set"));
-        AtName name = null;
+        class Data{
+            AtName name = null;
 
-        NutsArgument a;
-        Integer c_shutdown_wait_time = null;
-        Integer c_startup_wait_time = null;
-        Boolean c_kill = null;
-        String c_archive_folder = null;
-        String c_running_folder = null;
-        String c_log_file = null;
-        String c_mysql_command = null;
-        String c_mysqldump_command = null;
-        String user = null;
-        String password = null;
-        String dbname = null;
-        AtName forRemote_remoteName = null;
-        AtName forRemote_localName = null;
-        String forRemote_server = null;
-        Boolean expectedRemote = null;
-        boolean askPassword = false;
+            NutsArgument a;
+            Integer c_shutdown_wait_time = null;
+            Integer c_startup_wait_time = null;
+            Boolean c_kill = null;
+            String c_archive_folder = null;
+            String c_running_folder = null;
+            String c_log_file = null;
+            String c_mysql_command = null;
+            String c_mysqldump_command = null;
+            String user = null;
+            String password = null;
+            String dbname = null;
+            AtName forRemote_remoteName = null;
+            AtName forRemote_localName = null;
+            String forRemote_server = null;
+            Boolean expectedRemote = null;
+            boolean askPassword = false;
+        }
+        Data d=new Data();
         while (commandLine.hasNext()) {
             if (commandLine.isNextOption()) {
-                switch (commandLine.peek().get(session).getKey().asString().get(session)) {
+                switch (commandLine.peek().get(session).key()) {
                     case "--name": {
-                        if (name == null) {
-                            name = AtName.nextAppOption(commandLine, session);
-                        } else {
-                            commandLine.throwUnexpectedArgument(NutsMessage.ofPlain("already defined"), session);
-                        }
+                        commandLine.withNextString((v,a,s)->{
+                            if (d.name == null) {
+                                d.name = new AtName(v);
+                            } else {
+                                commandLine.throwUnexpectedArgument(NutsMessage.ofPlain("already defined"), session);
+                            }
+                        },session);
                         break;
                     }
                     case "--shutdown-wait-time": {
-                        if (expectedRemote == null) {
-                            expectedRemote = false;
-                        } else if (expectedRemote) {
-                            commandLine.throwUnexpectedArgument(session);
-                        }
-                        c_shutdown_wait_time = commandLine.nextString().get(session).getValue().asInt().get(session);
+                        commandLine.withNextValue((v,a,s)->{
+                            if (d.expectedRemote == null) {
+                                d.expectedRemote = false;
+                            } else if (d.expectedRemote) {
+                                commandLine.throwUnexpectedArgument(session);
+                            }
+                            d.c_shutdown_wait_time = v.asInt().get(session);
+                        },session);
+
                         break;
                     }
                     case "--startup-wait-time": {
-                        if (expectedRemote == null) {
-                            expectedRemote = false;
-                        } else if (expectedRemote) {
-                            commandLine.throwUnexpectedArgument(session);
-                        }
-                        c_startup_wait_time = commandLine.nextString().get(session).getValue().asInt().get(session);
+                        commandLine.withNextValue((v,a,s)-> {
+                            if (d.expectedRemote == null) {
+                                d.expectedRemote = false;
+                            } else if (d.expectedRemote) {
+                                commandLine.throwUnexpectedArgument(session);
+                            }
+                            d.c_startup_wait_time = v.asInt().get(session);
+                        },session);
                         break;
                     }
                     case "--backup-folder": {
-                        if (expectedRemote == null) {
-                            expectedRemote = false;
-                        } else if (expectedRemote) {
-                            commandLine.throwUnexpectedArgument(session);
-                        }
-                        c_archive_folder = commandLine.nextStringValueLiteral().get(session);
+                        commandLine.withNextString((v,a,s)-> {
+                            if (d.expectedRemote == null) {
+                                d.expectedRemote = false;
+                            } else if (d.expectedRemote) {
+                                commandLine.throwUnexpectedArgument(session);
+                            }
+                            d.c_archive_folder = v;
+                        },session);
                         break;
                     }
                     case "--running-folder": {
-                        if (expectedRemote == null) {
-                            expectedRemote = false;
-                        } else if (expectedRemote) {
-                            commandLine.throwUnexpectedArgument(session);
-                        }
-                        c_running_folder = commandLine.nextStringValueLiteral().get(session);
+                        commandLine.withNextString((v,a,s)-> {
+                            if (d.expectedRemote == null) {
+                                d.expectedRemote = false;
+                            } else if (d.expectedRemote) {
+                                commandLine.throwUnexpectedArgument(session);
+                            }
+                            d.c_running_folder = v;
+                        },session);
                         break;
                     }
                     case "--log-file": {
-                        if (expectedRemote == null) {
-                            expectedRemote = false;
-                        } else if (expectedRemote) {
-                            commandLine.throwUnexpectedArgument(session);
-                        }
-                        c_log_file = commandLine.nextStringValueLiteral().get(session);
+                        commandLine.withNextString((v,a,s)-> {
+                            if (d.expectedRemote == null) {
+                                d.expectedRemote = false;
+                            } else if (d.expectedRemote) {
+                                commandLine.throwUnexpectedArgument(session);
+                            }
+                            d.c_log_file = v;
+                        },session);
                         break;
                     }
                     case "--mysql-command": {
-                        if (expectedRemote == null) {
-                            expectedRemote = false;
-                        } else if (expectedRemote) {
-                            commandLine.throwUnexpectedArgument(session);
-                        }
-                        c_mysql_command = commandLine.nextStringValueLiteral().get(session);
+                        commandLine.withNextString((v,a,s)-> {
+                            if (d.expectedRemote == null) {
+                                d.expectedRemote = false;
+                            } else if (d.expectedRemote) {
+                                commandLine.throwUnexpectedArgument(session);
+                            }
+                            d.c_mysql_command = v;
+                        },session);
                         break;
                     }
                     case "--mysqldump-command": {
-                        if (expectedRemote == null) {
-                            expectedRemote = false;
-                        } else if (expectedRemote) {
-                            commandLine.throwUnexpectedArgument(session);
-                        }
-                        c_mysqldump_command = commandLine.nextStringValueLiteral().get(session);
+                        commandLine.withNextString((v,a,s)-> {
+                            if (d.expectedRemote == null) {
+                                d.expectedRemote = false;
+                            } else if (d.expectedRemote) {
+                                commandLine.throwUnexpectedArgument(session);
+                            }
+                            d.c_mysqldump_command = v;
+                        },session);
                         break;
                     }
                     case "--kill": {
-                        if (expectedRemote == null) {
-                            expectedRemote = false;
-                        } else if (expectedRemote) {
-                            commandLine.throwUnexpectedArgument(session);
-                        }
-                        c_kill = commandLine.nextBooleanValueLiteral().get(session);
+                        commandLine.withNextBoolean((v,a,s)-> {
+                            if (d.expectedRemote == null) {
+                                d.expectedRemote = false;
+                            } else if (d.expectedRemote) {
+                                commandLine.throwUnexpectedArgument(session);
+                            }
+                            d.c_kill = v;
+                        },session);
                         break;
                     }
                     case "--user": {
-                        if (expectedRemote == null) {
-                            expectedRemote = false;
-                        } else if (expectedRemote) {
-                            commandLine.throwUnexpectedArgument(session);
-                        }
-                        user = commandLine.nextStringValueLiteral().get(session);
+                        commandLine.withNextString((v,a,s)-> {
+                            if (d.expectedRemote == null) {
+                                d.expectedRemote = false;
+                            } else if (d.expectedRemote) {
+                                commandLine.throwUnexpectedArgument(session);
+                            }
+                            d.user = v;
+                        },session);
                         break;
                     }
                     case "--password": {
-                        if (expectedRemote == null) {
-                            expectedRemote = false;
-                        } else if (expectedRemote) {
-                            commandLine.throwUnexpectedArgument(session);
-                        }
-                        password = commandLine.nextStringValueLiteral().get(session);
+                        commandLine.withNextString((v,a,s)-> {
+                            if (d.expectedRemote == null) {
+                                d.expectedRemote = false;
+                            } else if (d.expectedRemote) {
+                                commandLine.throwUnexpectedArgument(session);
+                            }
+                            d.password = v;
+                        },session);
                         break;
                     }
                     case "--ask-password": {
-                        if (expectedRemote == null) {
-                            expectedRemote = false;
-                        } else if (expectedRemote) {
-                            commandLine.throwUnexpectedArgument(session);
-                        }
-                        askPassword = commandLine.nextBooleanValueLiteral().get(session);
+                        commandLine.withNextBoolean((v,a,s)-> {
+                            if (d.expectedRemote == null) {
+                                d.expectedRemote = false;
+                            } else if (d.expectedRemote) {
+                                commandLine.throwUnexpectedArgument(session);
+                            }
+                            d.askPassword = v;
+                        },session);
                         break;
                     }
                     case "--db": {
-                        if (expectedRemote == null) {
-                            expectedRemote = false;
-                        } else if (expectedRemote) {
-                            commandLine.throwUnexpectedArgument(session);
-                        }
-                        dbname = commandLine.nextStringValueLiteral().get(session);
+                        commandLine.withNextString((v,a,s)-> {
+                            if (d.expectedRemote == null) {
+                                d.expectedRemote = false;
+                            } else if (d.expectedRemote) {
+                                commandLine.throwUnexpectedArgument(session);
+                            }
+                            d.dbname = v;
+                        },session);
                         break;
                     }
                     case "--local-name": {
-                        if (expectedRemote == null) {
-                            expectedRemote = true;
-                        } else if (!expectedRemote) {
-                            commandLine.throwUnexpectedArgument(session);
-                        }
-                        if (forRemote_localName == null) {
-                            forRemote_localName = AtName.nextAppOption(commandLine, session);
-                        } else {
-                            commandLine.throwUnexpectedArgument(NutsMessage.ofPlain("already defined"), session);
-                        }
+                        commandLine.withNextString((v,a,s)-> {
+                            if (d.expectedRemote == null) {
+                                d.expectedRemote = true;
+                            } else if (!d.expectedRemote) {
+                                commandLine.throwUnexpectedArgument(session);
+                            }
+                            if (d.forRemote_localName == null) {
+                                d.forRemote_localName = new AtName(v);
+                            } else {
+                                commandLine.throwUnexpectedArgument(NutsMessage.ofPlain("already defined"), session);
+                            }
+                        },session);
                         break;
                     }
                     case "--remote-name": {
-                        if (expectedRemote == null) {
-                            expectedRemote = true;
-                        } else if (!expectedRemote) {
-                            commandLine.throwUnexpectedArgument(session);
-                        }
-                        if (forRemote_remoteName == null) {
-                            forRemote_remoteName = AtName.nextAppOption(commandLine, session);
-                        } else {
-                            commandLine.throwUnexpectedArgument(NutsMessage.ofPlain("already defined"), session);
-                        }
+                        commandLine.withNextString((v,a,s)-> {
+                            if (d.expectedRemote == null) {
+                                d.expectedRemote = true;
+                            } else if (!d.expectedRemote) {
+                                commandLine.throwUnexpectedArgument(session);
+                            }
+                            if (d.forRemote_remoteName == null) {
+                                d.forRemote_remoteName = new AtName(v);
+                            } else {
+                                commandLine.throwUnexpectedArgument(NutsMessage.ofPlain("already defined"), session);
+                            }
+                        },session);
                         break;
                     }
                     case "--server": {
-                        if (expectedRemote == null) {
-                            expectedRemote = true;
-                        } else if (!expectedRemote) {
-                            commandLine.throwUnexpectedArgument(session);
-                        }
-                        if (forRemote_server == null) {
-                            forRemote_server = commandLine.nextStringValueLiteral().get(session);
-                        } else {
-                            commandLine.throwUnexpectedArgument(NutsMessage.ofPlain("already defined"), session);
-                        }
+                        commandLine.withNextString((v,a,s)-> {
+                            if (d.expectedRemote == null) {
+                                d.expectedRemote = true;
+                            } else if (!d.expectedRemote) {
+                                commandLine.throwUnexpectedArgument(session);
+                            }
+                            if (d.forRemote_server == null) {
+                                d.forRemote_server = v;
+                            } else {
+                                commandLine.throwUnexpectedArgument(NutsMessage.ofPlain("already defined"), session);
+                            }
+                        },session);
                         break;
                     }
                     case "--local": {
-                        commandLine.nextBoolean();
-                        if (expectedRemote == null) {
-                            expectedRemote = false;
-                        } else if (expectedRemote) {
-                            commandLine.throwUnexpectedArgument(session);
-                        }
+                        commandLine.withNextBoolean((v,a,s)-> {
+                            if (d.expectedRemote == null) {
+                                d.expectedRemote = !v;
+                            } else if (d.expectedRemote) {
+                                commandLine.throwUnexpectedArgument(session);
+                            }
+                        },session);
                         break;
                     }
                     case "--remote": {
-                        commandLine.nextBoolean();
-                        if (expectedRemote == null) {
-                            expectedRemote = true;
-                        } else if (!expectedRemote) {
-                            commandLine.throwUnexpectedArgument(session);
-                        }
+                        commandLine.withNextBoolean((v,a,s)-> {
+                            if (d.expectedRemote == null) {
+                                d.expectedRemote = v;
+                            } else if (!d.expectedRemote) {
+                                commandLine.throwUnexpectedArgument(session);
+                            }
+                        },session);
                         break;
                     }
                     default: {
                         if (commandLine.peek().get(session).isNonOption()) {
-                            if (name == null) {
-                                name = AtName.nextAppOption(commandLine, session);
+                            if (d.name == null) {
+                                d.name = AtName.nextAppOption(commandLine, session);
                             } else {
                                 commandLine.throwUnexpectedArgument(NutsMessage.ofPlain("already defined"), session);
                             }
@@ -424,145 +472,145 @@ public class NMysqlMain implements NdbSupport {
                     }
                 }
             } else {
-                if (name == null) {
-                    name = AtName.nextAppNonOption(commandLine, session);
+                if (d.name == null) {
+                    d.name = AtName.nextAppNonOption(commandLine, session);
                 } else {
                     commandLine.throwUnexpectedArgument(session);
                 }
             }
         }
-        if (name == null) {
-            name = new AtName("");
+        if (d.name == null) {
+            d.name = new AtName("");
         }
-        if (expectedRemote == null) {
-            expectedRemote = false;
+        if (d.expectedRemote == null) {
+            d.expectedRemote = false;
         }
-        if (expectedRemote && forRemote_server == null) {
+        if (d.expectedRemote && d.forRemote_server == null) {
             commandLine.throwMissingArgument(NutsMessage.ofPlain("required --server option"), session);
         }
         NutsTexts factory = NutsTexts.of(session);
         if (commandLine.isExecMode()) {
-            if (!expectedRemote) {
-                LocalMysqlConfigService c = service.loadLocalMysqlConfig(name.getConfigName(), add ? NutsOpenMode.OPEN_OR_CREATE : NutsOpenMode.OPEN_OR_ERROR);
+            if (!d.expectedRemote) {
+                LocalMysqlConfigService c = service.loadLocalMysqlConfig(d.name.getConfigName(), add ? NutsOpenMode.OPEN_OR_CREATE : NutsOpenMode.OPEN_OR_ERROR);
                 boolean overrideExisting = false;
                 if (add) {
-                    if (name.getDatabaseName().isEmpty()) {
-                        if (c.getDatabase(name.getDatabaseName(), NutsOpenMode.OPEN_OR_NULL) != null) {
+                    if (d.name.getDatabaseName().isEmpty()) {
+                        if (c.getDatabase(d.name.getDatabaseName(), NutsOpenMode.OPEN_OR_NULL) != null) {
                             overrideExisting = true;
                             if (!session.getTerminal().ask()
                                     .resetLine()
                                     .forBoolean(
                                             NutsMessage.ofCstyle(
-                                                    "already exists %s. override?", factory.ofStyled(name.toString(),
+                                                    "already exists %s. override?", factory.ofStyled(d.name.toString(),
                                                             NutsTextStyle.primary3()
                                                     ))
                                     )
                                     .setDefaultValue(false).getBooleanValue()) {
-                                throw new NutsExecutionException(session, NutsMessage.ofCstyle("already exists %s", name), 2);
+                                throw new NutsExecutionException(session, NutsMessage.ofCstyle("already exists %s", d.name), 2);
                             }
                         }
                     } else {
-                        if (c.getDatabase(name.getDatabaseName(), NutsOpenMode.OPEN_OR_NULL) != null) {
+                        if (c.getDatabase(d.name.getDatabaseName(), NutsOpenMode.OPEN_OR_NULL) != null) {
                             overrideExisting = true;
                             if (!session.getTerminal().ask()
                                     .resetLine()
                                     .forBoolean(
-                                            NutsMessage.ofCstyle("already exists %s. override?", factory.ofStyled(name.toString(), NutsTextStyle.primary3()
+                                            NutsMessage.ofCstyle("already exists %s. override?", factory.ofStyled(d.name.toString(), NutsTextStyle.primary3()
                                             )))
                                     .setDefaultValue(false).getBooleanValue()) {
-                                throw new NutsExecutionException(session, NutsMessage.ofCstyle("already exists %s", name), 2);
+                                throw new NutsExecutionException(session, NutsMessage.ofCstyle("already exists %s", d.name), 2);
                             }
                         }
                     }
                 } else {
-                    if (name.getDatabaseName().isEmpty()) {
-                        if (c.getDatabase(name.getDatabaseName(), NutsOpenMode.OPEN_OR_NULL) == null) {
-                            throw new NutsExecutionException(session, NutsMessage.ofCstyle("not found %s", name), 2);
+                    if (d.name.getDatabaseName().isEmpty()) {
+                        if (c.getDatabase(d.name.getDatabaseName(), NutsOpenMode.OPEN_OR_NULL) == null) {
+                            throw new NutsExecutionException(session, NutsMessage.ofCstyle("not found %s", d.name), 2);
                         }
                     } else {
-                        if (c.getDatabase(name.getDatabaseName(), NutsOpenMode.OPEN_OR_NULL) == null) {
-                            throw new NutsExecutionException(session, NutsMessage.ofCstyle("not found  %s", name), 2);
+                        if (c.getDatabase(d.name.getDatabaseName(), NutsOpenMode.OPEN_OR_NULL) == null) {
+                            throw new NutsExecutionException(session, NutsMessage.ofCstyle("not found  %s", d.name), 2);
                         }
                     }
                 }
                 boolean someUpdates = false;
-                if (name.getDatabaseName().isEmpty()) {
-                    if (c_shutdown_wait_time != null) {
+                if (d.name.getDatabaseName().isEmpty()) {
+                    if (d.c_shutdown_wait_time != null) {
                         someUpdates = true;
-                        c.getConfig().setShutdownWaitTime(c_shutdown_wait_time);
+                        c.getConfig().setShutdownWaitTime(d.c_shutdown_wait_time);
                     }
-                    if (c_shutdown_wait_time != null) {
+                    if (d.c_shutdown_wait_time != null) {
                         someUpdates = true;
-                        c.getConfig().setStartupWaitTime(c_startup_wait_time);
+                        c.getConfig().setStartupWaitTime(d.c_startup_wait_time);
                     }
-                    if (c_archive_folder != null) {
+                    if (d.c_archive_folder != null) {
                         someUpdates = true;
-                        c.getConfig().setBackupFolder(c_archive_folder);
+                        c.getConfig().setBackupFolder(d.c_archive_folder);
                     }
-                    if (c_log_file != null) {
+                    if (d.c_log_file != null) {
                         someUpdates = true;
-                        c.getConfig().setLogFile(c_log_file);
+                        c.getConfig().setLogFile(d.c_log_file);
                     }
-                    if (c_running_folder != null) {
+                    if (d.c_running_folder != null) {
                         someUpdates = true;
-                        c.getConfig().setRunningFolder(c_running_folder);
+                        c.getConfig().setRunningFolder(d.c_running_folder);
                     }
-                    if (c_mysql_command != null) {
+                    if (d.c_mysql_command != null) {
                         someUpdates = true;
-                        c.getConfig().setMysqlCommand(c_mysql_command);
+                        c.getConfig().setMysqlCommand(d.c_mysql_command);
                     }
-                    if (c_mysqldump_command != null) {
+                    if (d.c_mysqldump_command != null) {
                         someUpdates = true;
-                        c.getConfig().setMysqldumpCommand(c_mysqldump_command);
+                        c.getConfig().setMysqldumpCommand(d.c_mysqldump_command);
                     }
-                    if (c_kill != null) {
+                    if (d.c_kill != null) {
                         someUpdates = true;
-                        c.getConfig().setKill(c_kill);
+                        c.getConfig().setKill(d.c_kill);
                     }
                     if (someUpdates && session.isPlainTrace()) {
                         if (add) {
                             if (overrideExisting) {
                                 session.out().printf("adding local config (with override) %s%n",
                                         factory.ofStyled(
-                                                NdbUtils.coalesce(name.getConfigName(), "default"), NutsTextStyle.primary3())
+                                                NdbUtils.coalesce(d.name.getConfigName(), "default"), NutsTextStyle.primary3())
                                 );
                             } else {
                                 session.out().printf("adding local config %s%n",
                                         factory.ofStyled(
-                                                NdbUtils.coalesce(name.getConfigName(), "default"), NutsTextStyle.primary3()));
+                                                NdbUtils.coalesce(d.name.getConfigName(), "default"), NutsTextStyle.primary3()));
                             }
                         } else {
                             if (overrideExisting) {
                                 session.out().printf("updating local config (with override) %s%n",
-                                        factory.ofStyled(NdbUtils.coalesce(name.getConfigName(), "default"), NutsTextStyle.primary3()));
+                                        factory.ofStyled(NdbUtils.coalesce(d.name.getConfigName(), "default"), NutsTextStyle.primary3()));
                             } else {
                                 session.out().printf("updating local config %s%n",
                                         factory.ofStyled(
-                                                NdbUtils.coalesce(name.getConfigName(), "default"), NutsTextStyle.primary3()));
+                                                NdbUtils.coalesce(d.name.getConfigName(), "default"), NutsTextStyle.primary3()));
                             }
                         }
                     }
                 } else {
-                    LocalMysqlDatabaseConfigService r = c.getDatabase(name.getDatabaseName(), NutsOpenMode.OPEN_OR_CREATE);
-                    if (user != null) {
+                    LocalMysqlDatabaseConfigService r = c.getDatabase(d.name.getDatabaseName(), NutsOpenMode.OPEN_OR_CREATE);
+                    if (d.user != null) {
                         someUpdates = true;
-                        r.getConfig().setUser(user);
+                        r.getConfig().setUser(d.user);
                     }
-                    if (password != null) {
+                    if (d.password != null) {
                         someUpdates = true;
                         r.getConfig().setPassword(
-                                new String(session.security().createCredentials(password.toCharArray(), true,
+                                new String(session.security().createCredentials(d.password.toCharArray(), true,
                                         null))
                         );
                     }
-                    if (add && dbname == null) {
-                        dbname = name.getDatabaseName();
+                    if (add && d.dbname == null) {
+                        d.dbname = d.name.getDatabaseName();
                     }
-                    if (dbname != null) {
+                    if (d.dbname != null) {
                         someUpdates = true;
-                        r.getConfig().setDatabaseName(dbname);
+                        r.getConfig().setDatabaseName(d.dbname);
                     }
-                    if (askPassword || (!add && password == null)) {
+                    if (d.askPassword || (!add && d.password == null)) {
                         r.getConfig().setPassword(new String(session.security()
                                         .createCredentials(session.getTerminal().readPassword("Password"), true,
                                                 null)
@@ -606,58 +654,58 @@ public class NMysqlMain implements NdbSupport {
 
                 c.saveConfig();
             } else {
-                if (forRemote_localName == null && forRemote_remoteName == null) {
-                    forRemote_localName = name;
-                    forRemote_remoteName = name;
-                } else if (forRemote_localName == null) {
-                    forRemote_localName = forRemote_remoteName;
-                } else if (forRemote_remoteName == null) {
-                    forRemote_remoteName = forRemote_localName;
+                if (d.forRemote_localName == null && d.forRemote_remoteName == null) {
+                    d.forRemote_localName = d.name;
+                    d.forRemote_remoteName = d.name;
+                } else if (d.forRemote_localName == null) {
+                    d.forRemote_localName = d.forRemote_remoteName;
+                } else if (d.forRemote_remoteName == null) {
+                    d.forRemote_remoteName = d.forRemote_localName;
                 }
-                service.loadLocalMysqlConfig(forRemote_localName.getConfigName(), NutsOpenMode.OPEN_OR_ERROR)
-                        .getDatabase(forRemote_localName.getDatabaseName(), NutsOpenMode.OPEN_OR_ERROR)
+                service.loadLocalMysqlConfig(d.forRemote_localName.getConfigName(), NutsOpenMode.OPEN_OR_ERROR)
+                        .getDatabase(d.forRemote_localName.getDatabaseName(), NutsOpenMode.OPEN_OR_ERROR)
                 ;
-                RemoteMysqlConfigService c = service.loadRemoteMysqlConfig(name.getConfigName(), NutsOpenMode.OPEN_OR_CREATE);
+                RemoteMysqlConfigService c = service.loadRemoteMysqlConfig(d.name.getConfigName(), NutsOpenMode.OPEN_OR_CREATE);
                 boolean overrideExisting = false;
                 if (add) {
-                    if (name.getDatabaseName().isEmpty()) {
-                        if (c.getDatabase(name.getDatabaseName(), NutsOpenMode.OPEN_OR_NULL) != null) {
+                    if (d.name.getDatabaseName().isEmpty()) {
+                        if (c.getDatabase(d.name.getDatabaseName(), NutsOpenMode.OPEN_OR_NULL) != null) {
                             overrideExisting = true;
                             if (!session.getTerminal().ask()
                                     .resetLine()
                                     .forBoolean(
-                                            NutsMessage.ofCstyle("already exists %s. override?", factory.ofStyled(name.toString(), NutsTextStyle.primary3())
+                                            NutsMessage.ofCstyle("already exists %s. override?", factory.ofStyled(d.name.toString(), NutsTextStyle.primary3())
                                             ))
                                     .setDefaultValue(false).getBooleanValue()) {
-                                throw new NutsExecutionException(session, NutsMessage.ofCstyle("already exists %s", name), 2);
+                                throw new NutsExecutionException(session, NutsMessage.ofCstyle("already exists %s", d.name), 2);
                             }
                         }
                     } else {
-                        if (c.getDatabase(name.getDatabaseName(), NutsOpenMode.OPEN_OR_NULL) != null) {
+                        if (c.getDatabase(d.name.getDatabaseName(), NutsOpenMode.OPEN_OR_NULL) != null) {
                             overrideExisting = true;
                             if (!session.getTerminal().ask()
                                     .resetLine()
                                     .forBoolean(
-                                            NutsMessage.ofCstyle("already exists %s. override?", factory.ofStyled(name.toString(), NutsTextStyle.primary3())
+                                            NutsMessage.ofCstyle("already exists %s. override?", factory.ofStyled(d.name.toString(), NutsTextStyle.primary3())
                                             ))
                                     .setDefaultValue(false).getBooleanValue()) {
-                                throw new NutsExecutionException(session, NutsMessage.ofCstyle("already exists %s", name), 2);
+                                throw new NutsExecutionException(session, NutsMessage.ofCstyle("already exists %s", d.name), 2);
                             }
                         }
                     }
                 } else {
-                    if (name.getDatabaseName().isEmpty()) {
-                        if (c.getDatabase(name.getDatabaseName(), NutsOpenMode.OPEN_OR_NULL) == null) {
-                            throw new NutsExecutionException(session, NutsMessage.ofCstyle("not found %s", name), 2);
+                    if (d.name.getDatabaseName().isEmpty()) {
+                        if (c.getDatabase(d.name.getDatabaseName(), NutsOpenMode.OPEN_OR_NULL) == null) {
+                            throw new NutsExecutionException(session, NutsMessage.ofCstyle("not found %s", d.name), 2);
                         }
                     } else {
-                        if (c.getDatabase(name.getDatabaseName(), NutsOpenMode.OPEN_OR_NULL) == null) {
-                            throw new NutsExecutionException(session, NutsMessage.ofPlain("not found  %s" + name), 2);
+                        if (c.getDatabase(d.name.getDatabaseName(), NutsOpenMode.OPEN_OR_NULL) == null) {
+                            throw new NutsExecutionException(session, NutsMessage.ofPlain("not found  %s" + d.name), 2);
                         }
                     }
                 }
                 boolean someUpdates = false;
-                if (name.getDatabaseName().isEmpty()) {
+                if (d.name.getDatabaseName().isEmpty()) {
 //                if (c_mysqldump_command != null) {
 //                    someUpdates = true;
 //                    c.getConfig().setMysqldumpCommand(c_mysqldump_command);
@@ -666,34 +714,34 @@ public class NMysqlMain implements NdbSupport {
                         if (add) {
                             if (overrideExisting) {
                                 session.out().printf("adding remote config (with override) %s%n",
-                                        factory.ofStyled(NdbUtils.coalesce(name.getConfigName(), "default"), NutsTextStyle.primary3()));
+                                        factory.ofStyled(NdbUtils.coalesce(d.name.getConfigName(), "default"), NutsTextStyle.primary3()));
                             } else {
                                 session.out().printf("adding remote config %s%n",
-                                        factory.ofStyled(NdbUtils.coalesce(name.getConfigName(), "default"), NutsTextStyle.primary3()));
+                                        factory.ofStyled(NdbUtils.coalesce(d.name.getConfigName(), "default"), NutsTextStyle.primary3()));
                             }
                         } else {
                             if (overrideExisting) {
                                 session.out().printf("updating remote config (with override) %s%n",
-                                        factory.ofStyled(NdbUtils.coalesce(name.getConfigName(), "default"), NutsTextStyle.primary3()));
+                                        factory.ofStyled(NdbUtils.coalesce(d.name.getConfigName(), "default"), NutsTextStyle.primary3()));
                             } else {
                                 session.out().printf("updating remote config %s%n",
-                                        factory.ofStyled(NdbUtils.coalesce(name.getConfigName(), "default"), NutsTextStyle.primary3()));
+                                        factory.ofStyled(NdbUtils.coalesce(d.name.getConfigName(), "default"), NutsTextStyle.primary3()));
                             }
                         }
                     }
                 } else {
-                    RemoteMysqlDatabaseConfigService r = c.getDatabaseOrCreate(name.getDatabaseName());
-                    if (forRemote_localName != null) {
+                    RemoteMysqlDatabaseConfigService r = c.getDatabaseOrCreate(d.name.getDatabaseName());
+                    if (d.forRemote_localName != null) {
                         someUpdates = true;
-                        r.getConfig().setLocalName(forRemote_localName.toString());
+                        r.getConfig().setLocalName(d.forRemote_localName.toString());
                     }
-                    if (forRemote_remoteName != null) {
+                    if (d.forRemote_remoteName != null) {
                         someUpdates = true;
-                        r.getConfig().setRemoteName(forRemote_remoteName.toString());
+                        r.getConfig().setRemoteName(d.forRemote_remoteName.toString());
                     }
-                    if (forRemote_server != null) {
+                    if (d.forRemote_server != null) {
                         someUpdates = true;
-                        r.getConfig().setServer(forRemote_server);
+                        r.getConfig().setServer(d.forRemote_server);
                     }
                     if (someUpdates && session.isPlainTrace()) {
                         if (add) {
@@ -735,7 +783,7 @@ public class NMysqlMain implements NdbSupport {
 
         while (commandLine.hasNext()) {
             if (commandLine.isNextOption()) {
-                switch (commandLine.peek().get(session).getKey().asString().get(session)) {
+                switch (commandLine.peek().get(session).key()) {
                     case "--remote": {
                         commandLine.nextBoolean();
                         currentLocal = false;
@@ -860,7 +908,7 @@ public class NMysqlMain implements NdbSupport {
         Boolean expectedLocal = null;
         while (commandLine.hasNext()) {
             if (commandLine.isNextOption()) {
-                switch (commandLine.peek().get(session).getKey().asString().get(session)) {
+                switch (commandLine.peek().get(session).key()) {
                     case "--local": {
                         commandLine.nextBoolean();
                         expectedLocal = true;

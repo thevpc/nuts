@@ -12,6 +12,7 @@ import net.thevpc.nuts.toolbox.ntemplate.filetemplate.TemplateConfig;
 import net.thevpc.nuts.toolbox.ntemplate.filetemplate.util.StringUtils;
 
 import java.nio.file.Path;
+import java.nio.file.Paths;
 
 public class NTemplateMain implements NutsApplication, NutsAppCmdProcessor {
     TemplateConfig config = new TemplateConfig();
@@ -27,27 +28,27 @@ public class NTemplateMain implements NutsApplication, NutsAppCmdProcessor {
     }
 
     @Override
-    public boolean onCmdNextOption(NutsArgument option, NutsCommandLine commandline, NutsApplicationContext context) {
+    public boolean onCmdNextOption(NutsArgument option, NutsCommandLine commandLine, NutsApplicationContext context) {
         NutsSession session = context.getSession();
         switch (option.getKey().asString().get(session)) {
             case "-i":
             case "--init": {
-                config.addInitScript(commandline.nextStringValueLiteral().get(session));
+                commandLine.withNextString((v, r, s)->config.addInitScript(v),session);
                 return true;
             }
             case "-s":
             case "--scriptType": {
-                config.setScriptType(commandline.nextStringValueLiteral().get(session));
+                commandLine.withNextString((v, r, s)->config.setScriptType(v),session);
                 return true;
             }
             case "-t":
             case "--to": {
-                config.setTargetFolder(commandline.nextStringValueLiteral().get(session));
+                commandLine.withNextString((v, r, s)->config.setTargetFolder(v),session);
                 return true;
             }
             case "-p":
             case "--project": {
-                config.setProjectPath(commandline.nextStringValueLiteral().get(session));
+                commandLine.withNextString((v, r, s)->config.setProjectPath(v),session);
                 return true;
             }
 
@@ -56,19 +57,19 @@ public class NTemplateMain implements NutsApplication, NutsAppCmdProcessor {
     }
 
     @Override
-    public boolean onCmdNextNonOption(NutsArgument nonOption, NutsCommandLine commandline, NutsApplicationContext context) {
+    public boolean onCmdNextNonOption(NutsArgument nonOption, NutsCommandLine commandLine, NutsApplicationContext context) {
         NutsSession session = context.getSession();
-        config.addSource(commandline.next().flatMap(NutsValue::asString).get(session));
+        config.addSource(commandLine.next().flatMap(NutsValue::asString).get(session));
         return false;
     }
 
     @Override
-    public void onCmdFinishParsing(NutsCommandLine commandline, NutsApplicationContext context) {
+    public void onCmdFinishParsing(NutsCommandLine commandLine, NutsApplicationContext context) {
         fileTemplater = new NFileTemplater(context);
     }
 
     @Override
-    public void onCmdExec(NutsCommandLine commandline, NutsApplicationContext context) {
+    public void onCmdExec(NutsCommandLine commandLine, NutsApplicationContext context) {
         fileTemplater.processProject(config);
     }
 

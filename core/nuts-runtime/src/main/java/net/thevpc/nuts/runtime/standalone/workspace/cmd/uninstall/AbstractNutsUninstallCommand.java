@@ -17,7 +17,6 @@ import java.util.Collection;
 import java.util.List;
 
 /**
- *
  * type: Command Class
  *
  * @author thevpc
@@ -147,39 +146,33 @@ public abstract class AbstractNutsUninstallCommand extends NutsWorkspaceCommandB
 
     @Override
     public boolean configureFirst(NutsCommandLine cmdLine) {
-        NutsArgument a = cmdLine.peek().get(session);
-        if (a == null) {
+        NutsArgument aa = cmdLine.peek().get(session);
+        if (aa == null) {
             return false;
         }
-        boolean enabled = a.isActive();
-        switch(a.getStringKey().orElse("")) {
+        switch (aa.key()) {
             case "-e":
             case "--erase": {
-                boolean val = cmdLine.nextBooleanValueLiteral().get(session);
-                if (enabled) {
-                    this.setErase(val);
-                }
+                cmdLine.withNextBoolean((v, a, s) -> this.setErase(v), session);
                 return true;
             }
             case "-g":
             case "--args": {
-                while (cmdLine.hasNext()) {
-                    String val = cmdLine.nextStringValueLiteral().get(session);
-                    if (enabled) {
-                        this.addArg(val);
-                    }
-                }
+                cmdLine.withNextBoolean((v, a, s) -> {
+                    this.addArgs(cmdLine.toStringArray());
+                    cmdLine.skipAll();
+                }, session);
                 return true;
             }
             default: {
                 if (super.configureFirst(cmdLine)) {
                     return true;
                 }
-                if (a.isOption()) {
+                if (aa.isOption()) {
                     return false;
                 } else {
                     cmdLine.skip();
-                    addId(a.asString().get(session));
+                    addId(aa.asString().get(session));
                     return true;
                 }
             }

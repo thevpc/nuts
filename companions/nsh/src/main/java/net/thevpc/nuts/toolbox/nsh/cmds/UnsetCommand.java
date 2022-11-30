@@ -51,13 +51,13 @@ public class UnsetCommand extends SimpleJShellBuiltin {
     protected boolean configureFirst(NutsCommandLine commandLine, JShellExecutionContext context) {
         Options options = context.getOptions();
         NutsSession session = context.getSession();
-        NutsArgument a = commandLine.peek().get(session);
-        if (a.isOption()) {
-            if (a.getKey().asString().get(session).equals("-v")) {
-                options.fct = !commandLine.nextBooleanValueLiteral().get(session);
+        NutsArgument aa = commandLine.peek().get(session);
+        if (aa.isOption()) {
+            if (aa.getKey().asString().get(session).equals("-v")) {
+                commandLine.withNextBoolean((v, a, s) -> options.fct= !v,session);
                 return true;
-            } else if (a.getKey().asString().get(session).equals("-f")) {
-                options.fct = commandLine.nextBooleanValueLiteral().get(session);
+            } else if (aa.getKey().asString().get(session).equals("-f")) {
+                commandLine.withNextBoolean((v, a, s) -> options.fct= v,session);
                 return true;
             }
         } else {

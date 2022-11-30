@@ -73,7 +73,7 @@ public class DefaultJShellExecutionContext implements JShellExecutionContext {
         if (a == null) {
             return false;
         }
-        switch(a.getStringKey().orElse("")) {
+        switch(a.key()) {
             case "--help": {
                 cmd.skip();
                 setAskHelp(true);

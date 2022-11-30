@@ -41,17 +41,25 @@ import java.util.Map;
  */
 public interface NutsExecCommand extends NutsWorkspaceCommand {
 
+    static NutsExecCommand of(NutsSession session) {
+        return session.exec();
+    }
+
     /**
      * create a prefilled command format
+     *
      * @return a prefilled command format
      */
     NutsExecCommandFormat formatter();
 
     /**
      * shorthand for {@code formatter().format()}
+     *
      * @return formatted string of the command
      */
-    NutsString format();;
+    NutsString format();
+
+    ;
 
     /**
      * if true, an exception is thrown whenever the command returns non zero
@@ -164,6 +172,7 @@ public interface NutsExecCommand extends NutsWorkspaceCommand {
     NutsExecCommand clearWorkspaceOptions(String workspaceOptions);
 
     NutsExecCommand addWorkspaceOptions(NutsWorkspaceOptions workspaceOptions);
+
     NutsExecCommand addWorkspaceOptions(String workspaceOptions);
 
     /**
@@ -326,21 +335,6 @@ public interface NutsExecCommand extends NutsWorkspaceCommand {
     NutsRunAs getRunAs();
 
     NutsExecCommand setRunAs(NutsRunAs runAs);
-
-    /**
-     * return true if dry execution.
-     *
-     * @return true if dry execution.
-     */
-    boolean isDry();
-
-    /**
-     * if true set dry execution
-     *
-     * @param value new value
-     * @return {@code this} instance
-     */
-    NutsExecCommand setDry(boolean value);
 
     /**
      * copy all field from the given command into {@code this} instance

@@ -72,15 +72,10 @@ public class DefaultNutsArtifactPathExecutable extends AbstractNutsExecutableCom
 
     @Override
     public void execute() {
-        executeHelper(false);
+        executeHelper();
     }
 
-    @Override
-    public void dryExecute() {
-        executeHelper(true);
-    }
-
-    public void executeHelper(boolean dry) {
+    public void executeHelper() {
         try (final CharacterizedExecFile c = characterizeForExec(NutsPath.of(cmdName, session), session, executorOptions)) {
             if (c.getDescriptor() == null) {
                 throw new NutsNotFoundException(execSession, null, NutsMessage.ofCstyle("unable to resolve a valid descriptor for %s", cmdName), null);
@@ -113,7 +108,7 @@ public class DefaultNutsArtifactPathExecutable extends AbstractNutsExecutableCom
 //            System.out.println(String.join(" ",args));
             try {
                 execCommand.ws_execId(nutToRun, cmdName, args, executorOptions, workspaceOptions, execCommand.getEnv(),
-                        execCommand.getDirectory(), execCommand.isFailFast(), true, session, execSession, executionType, runAs, dry);
+                        execCommand.getDirectory(), execCommand.isFailFast(), true, session, execSession, executionType, runAs);
             } finally {
                 try {
                     CoreIOUtils.delete(session, Paths.get(tempFolder));

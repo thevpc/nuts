@@ -79,7 +79,7 @@ public class LocalTomcatAppConfigService extends LocalTomcatServiceBase {
     public String getCurrentVersion() {
         NutsPath f = getVersionFile();
         if (f.exists()) {
-            return new String(f.readAllBytes());
+            return new String(f.readBytes());
         }
         return null;
     }
@@ -106,7 +106,7 @@ public class LocalTomcatAppConfigService extends LocalTomcatServiceBase {
         } else {
             getSession().out().printf("%s set version %s.\n", getFullName(), getFormattedVersion(version));
             getSession().out().printf("%s [LOG] updating version file %s to %s.\n", getFormattedPrefix(getFullName()), getFormattedVersion(_StringUtils.coalesce(version, "<DEFAULT>")), getFormattedPath(getVersionFile().toString()));
-            getVersionFile().writeBytes(version.getBytes());
+            getVersionFile().writeString(version);
             getSession().out().printf("%s [LOG] updating archive file %s -> %s.\n", getFormattedPrefix(getFullName()), getFormattedPath(getArchiveFile(version).toString()), getFormattedPath(getRunningFile().toString()));
             NutsCp.of(getSession()).from(getArchiveFile(version))
                     .to(getRunningFile())

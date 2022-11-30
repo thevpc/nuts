@@ -1140,7 +1140,7 @@ public class CoreIOUtils {
         byte[] old = null;
         if (out.isRegularFile()) {
             try {
-                old = out.readAllBytes();
+                old = out.readBytes();
             } catch (Exception ex) {
                 //ignore
             }

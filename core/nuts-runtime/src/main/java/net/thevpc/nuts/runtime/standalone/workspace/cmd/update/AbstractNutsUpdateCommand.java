@@ -419,7 +419,7 @@ public abstract class AbstractNutsUpdateCommand extends NutsWorkspaceCommandBase
             return false;
         }
         boolean enabled = a.isActive();
-        switch(a.getStringKey().orElse("")) {
+        switch(a.key()) {
             case "-a":
             case "--all": {
                 cmdLine.skip();
@@ -439,52 +439,34 @@ public abstract class AbstractNutsUpdateCommand extends NutsWorkspaceCommandBase
 //            }
             case "-i":
             case "--installed": {
-                boolean val = cmdLine.nextBooleanValueLiteral().get(session);
-                if (enabled) {
-                    this.setInstalled(val);
-                }
+                cmdLine.withNextBoolean((v,r,s)->this.setInstalled(v),session);
                 return true;
             }
             case "-r":
             case "--runtime": {
-                boolean val = cmdLine.nextBooleanValueLiteral().get(session);
-                if (enabled) {
-                    this.setRuntime(val);
-                }
+                cmdLine.withNextBoolean((v,r,s)->this.setRuntime(v),session);
                 return true;
             }
             case "-A":
             case "--api": {
-                boolean val = cmdLine.nextBooleanValueLiteral().get(session);
-                if (enabled) {
-                    this.setApi(val);
-                }
+                cmdLine.withNextBoolean((v,r,s)->this.setApi(v),session);
                 return true;
             }
 
             case "-e":
             case "--extensions": {
-                boolean val = cmdLine.nextBooleanValueLiteral().get(session);
-                if (enabled) {
-                    this.setExtensions(val);
-                }
+                cmdLine.withNextBoolean((v,r,s)->this.setExtensions(v),session);
                 return true;
             }
             case "-c":
             case "--companions": {
-                boolean val = cmdLine.nextBooleanValueLiteral().get(session);
-                if (enabled) {
-                    this.setCompanions(val);
-                }
+                cmdLine.withNextBoolean((v,r,s)->this.setCompanions(v),session);
                 return true;
             }
             case "-v":
             case "--api-version":
             case "--to-version": {
-                String val = cmdLine.nextStringValueLiteral().get(session);
-                if (enabled) {
-                    this.setApiVersion(NutsVersion.of(val).get(getSession()));
-                }
+                cmdLine.withNextString((v,r,s)->this.setApiVersion(NutsVersion.of(v).get(getSession())),session);
                 return true;
             }
             case "-g":

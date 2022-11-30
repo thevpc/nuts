@@ -163,7 +163,7 @@ public class DefaultNutsInstalledRepository extends AbstractNutsRepository imple
         String defaultVersion = "";
         if (pp.isRegularFile()) {
             try {
-                defaultVersion = new String(pp.readAllBytes()).trim();
+                defaultVersion = new String(pp.readBytes()).trim();
             } catch (Exception ex) {
                 defaultVersion = "";
             }
@@ -188,7 +188,7 @@ public class DefaultNutsInstalledRepository extends AbstractNutsRepository imple
             }
         } else {
             pp.mkParentDirs();
-            pp.writeBytes(version.trim().getBytes());
+            pp.writeString(version.trim());
         }
         synchronized (cachedDefaultVersions) {
             cachedDefaultVersions.put(baseVersion, version);
@@ -650,7 +650,7 @@ public class DefaultNutsInstalledRepository extends AbstractNutsRepository imple
     }
 
     public void addString(NutsId id, String name, String value, NutsSession session) {
-        getPath(id, name, session).writeBytes(value.getBytes());
+        getPath(id, name, session).writeString(value);
     }
 
     public <T> T readJson(NutsId id, String name, Class<T> clazz, NutsSession session) {

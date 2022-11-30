@@ -58,75 +58,74 @@ public class JavaSourceExecutorComponent implements NutsExecutorComponent {
 
     @Override
     public void exec(NutsExecutionContext executionContext) {
-        NutsDefinition nutMainFile = executionContext.getDefinition();//executionContext.getWorkspace().fetch(.getId().toString(), true, false);
-        Path javaFile = nutMainFile.getContent().map(NutsPath::toFile).orNull();
-        JavaCompiler compiler = ToolProvider.getSystemJavaCompiler();
-        NutsSession session = executionContext.getSession();
-        Path folder = NutsPaths.of(session)
-                .createTempFolder("jj").toFile();
-        int res = compiler.run(null, null, null, "-d", folder.toString(), javaFile.toString());
-        if (res != 0) {
-            throw new NutsExecutionException(session, NutsMessage.ofPlain("compilation failed"), res);
+        if(executionContext.getExecSession().isDry()){
+            NutsDefinition nutMainFile = executionContext.getDefinition();//executionContext.getWorkspace().fetch(.getId().toString(), true, false);
+            Path javaFile = nutMainFile.getContent().map(NutsPath::toFile).orNull();
+            String folder = "__temp_folder";
+            NutsPrintStream out = executionContext.getSession().out();
+            out.println(NutsTexts.of(executionContext.getSession()).ofStyled("compile", NutsTextStyle.primary4()));
+            out.printf("%s%n",
+                    NutsCommandLine.of(
+                            new String[]{
+                                    "embedded-javac",
+                                    "-d",
+                                    "<temp-folder>",
+                                    javaFile.toString()
+                            }
+                    )
+            );
+            JavaExecutorComponent cc = new JavaExecutorComponent();
+            NutsDefinition d = executionContext.getDefinition();
+            d = new DefaultNutsDefinition(d, executionContext.getSession());
+            ((DefaultNutsDefinition) d).setContent(
+                    NutsPath.of(folder, executionContext.getSession()).setUserCache(false).setUserTemporary(true)
+            );
+            String fileName = javaFile.getFileName().toString();
+            List<String> z = new ArrayList<>(executionContext.getExecutorOptions());
+            z.addAll(Arrays.asList("--main-class",
+                    new File(fileName.substring(fileName.length() - ".java".length())).getName(),
+                    "--class-path",
+                    folder.toString()));
+            NutsExecutionContext executionContext2 = NutsWorkspaceExt.of(executionContext.getSession())
+                    .createExecutionContext()
+                    .setAll(executionContext)
+                    .setDefinition(d)
+                    .setExecutorOptions(z)
+                    .setFailFast(true)
+                    .setTemporary(true)
+                    .build();
+            cc.exec(executionContext2);
+        }else {
+            NutsDefinition nutMainFile = executionContext.getDefinition();//executionContext.getWorkspace().fetch(.getId().toString(), true, false);
+            Path javaFile = nutMainFile.getContent().map(NutsPath::toFile).orNull();
+            JavaCompiler compiler = ToolProvider.getSystemJavaCompiler();
+            NutsSession session = executionContext.getSession();
+            Path folder = NutsPaths.of(session)
+                    .createTempFolder("jj").toFile();
+            int res = compiler.run(null, null, null, "-d", folder.toString(), javaFile.toString());
+            if (res != 0) {
+                throw new NutsExecutionException(session, NutsMessage.ofPlain("compilation failed"), res);
+            }
+            JavaExecutorComponent cc = new JavaExecutorComponent();
+            NutsDefinition d = executionContext.getDefinition();
+            d = new DefaultNutsDefinition(d, session);
+            ((DefaultNutsDefinition) d).setContent(NutsPath.of(folder, session).setUserCache(false).setUserTemporary(true));
+            String fileName = javaFile.getFileName().toString();
+            List<String> z = new ArrayList<>(executionContext.getExecutorOptions());
+            z.addAll(Arrays.asList("--main-class",
+                    new File(fileName.substring(fileName.length() - ".java".length())).getName(),
+                    "--class-path",
+                    folder.toString()));
+            NutsExecutionContext executionContext2 = NutsWorkspaceExt.of(executionContext.getSession())
+                    .createExecutionContext()
+                    .setAll(executionContext)
+                    .setDefinition(d)
+                    .setExecutorOptions(z)
+                    .setFailFast(true)
+                    .setTemporary(true)
+                    .build();
+            cc.exec(executionContext2);
         }
-        JavaExecutorComponent cc = new JavaExecutorComponent();
-        NutsDefinition d = executionContext.getDefinition();
-        d = new DefaultNutsDefinition(d, session);
-        ((DefaultNutsDefinition) d).setContent(NutsPath.of(folder, session).setUserCache(false).setUserTemporary(true));
-        String fileName = javaFile.getFileName().toString();
-        List<String> z = new ArrayList<>(executionContext.getExecutorOptions());
-        z.addAll(Arrays.asList("--main-class",
-                new File(fileName.substring(fileName.length() - ".java".length())).getName(),
-                "--class-path",
-                folder.toString()));
-        NutsExecutionContext executionContext2 = NutsWorkspaceExt.of(executionContext.getSession())
-                .createExecutionContext()
-                .setAll(executionContext)
-                .setDefinition(d)
-                .setExecutorOptions(z)
-                .setFailFast(true)
-                .setTemporary(true)
-                .build();
-        cc.exec(executionContext2);
-    }
-
-    @Override
-    public void dryExec(NutsExecutionContext executionContext) throws NutsExecutionException {
-        NutsDefinition nutMainFile = executionContext.getDefinition();//executionContext.getWorkspace().fetch(.getId().toString(), true, false);
-        Path javaFile = nutMainFile.getContent().map(NutsPath::toFile).orNull();
-        String folder = "__temp_folder";
-        NutsPrintStream out = executionContext.getSession().out();
-        out.println(NutsTexts.of(executionContext.getSession()).ofStyled("compile", NutsTextStyle.primary4()));
-        out.printf("%s%n",
-                NutsCommandLine.of(
-                        new String[]{
-                                "embedded-javac",
-                                "-d",
-                                "<temp-folder>",
-                                javaFile.toString()
-                        }
-                )
-        );
-        JavaExecutorComponent cc = new JavaExecutorComponent();
-        NutsDefinition d = executionContext.getDefinition();
-        d = new DefaultNutsDefinition(d, executionContext.getSession());
-        ((DefaultNutsDefinition) d).setContent(
-                NutsPath.of(folder, executionContext.getSession()).setUserCache(false).setUserTemporary(true)
-        );
-        String fileName = javaFile.getFileName().toString();
-        List<String> z = new ArrayList<>(executionContext.getExecutorOptions());
-        z.addAll(Arrays.asList("--main-class",
-                new File(fileName.substring(fileName.length() - ".java".length())).getName(),
-                "--class-path",
-                folder.toString()));
-        NutsExecutionContext executionContext2 = NutsWorkspaceExt.of(executionContext.getSession())
-                .createExecutionContext()
-                .setAll(executionContext)
-                .setDefinition(d)
-                .setExecutorOptions(z)
-                .setFailFast(true)
-                .setTemporary(true)
-                .build();
-        cc.dryExec(executionContext2);
     }
 
     @Override

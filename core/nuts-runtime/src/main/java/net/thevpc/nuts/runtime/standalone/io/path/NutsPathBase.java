@@ -11,6 +11,10 @@ import net.thevpc.nuts.util.NutsStream;
 
 import java.io.*;
 import java.net.URL;
+import java.nio.charset.Charset;
+import java.nio.charset.CharsetDecoder;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -75,7 +79,7 @@ public abstract class NutsPathBase implements NutsPath {
     }
 
     public String[] getSmartParts() {
-        String n=getName();
+        String n = getName();
         NutsValue[] vals = NutsVersion.of(n).get().split();
         int lastDot = -1;
         for (int i = vals.length - 1; i >= 0; i--) {
@@ -88,7 +92,7 @@ public abstract class NutsPathBase implements NutsPath {
                 NutsValue v2 = vals[i + 1];
                 if (v2.isNumber()) {
                     //check if the part before is also a number
-                    if(i>0 && vals[i - 1].isNumber()) {
+                    if (i > 0 && vals[i - 1].isNumber()) {
                         if (i + 1 == vals.length - 1) {
                             return rebuildSmartParts(vals, i + 2);
                         } else if (vals[i + 1].asString().get().equals(".")) {
@@ -290,7 +294,7 @@ public abstract class NutsPathBase implements NutsPath {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         NutsPathBase that = (NutsPathBase) o;
-        return  Objects.equals(toString(), toString())
+        return Objects.equals(toString(), toString())
                 ;
     }
 
@@ -340,7 +344,47 @@ public abstract class NutsPathBase implements NutsPath {
 
     @Override
     public Reader getReader() {
-        return new BufferedReader(new InputStreamReader(getInputStream()));
+        return getReader(StandardCharsets.UTF_8);
+    }
+
+    @Override
+    public Reader getReader(Charset cs) {
+        if (cs == null) {
+            cs = StandardCharsets.UTF_8;
+        }
+        CharsetDecoder decoder = cs.newDecoder();
+        Reader reader = new InputStreamReader(getInputStream(), decoder);
+        return new BufferedReader(reader);
+    }
+
+    @Override
+    public Stream<String> getLines(Charset cs) {
+        Reader reader = getReader(cs);
+        BufferedReader br = (reader instanceof BufferedReader) ? ((BufferedReader) reader) : new BufferedReader(reader);
+        try {
+            return br.lines().onClose(() -> {
+                try {
+                    br.close();
+                } catch (IOException e) {
+                    throw new UncheckedIOException(e);
+                }
+            });
+        } catch (Error | RuntimeException e) {
+            try {
+                br.close();
+            } catch (IOException ex) {
+                try {
+                    e.addSuppressed(ex);
+                } catch (Throwable ignore) {
+                }
+            }
+            throw e;
+        }
+    }
+
+    @Override
+    public Stream<String> getLines() {
+        return getLines(null);
     }
 
     @Override
@@ -371,5 +415,42 @@ public abstract class NutsPathBase implements NutsPath {
     @Override
     public void disposeMultiRead() {
         //do nothing
+    }
+
+    @Override
+    public NutsPath writeString(String string, Charset cs) {
+        if (cs == null) {
+            cs = StandardCharsets.UTF_8;
+        }
+        return writeBytes(string.getBytes(cs));
+    }
+
+    @Override
+    public NutsPath writeString(String string) {
+        return writeString(string, null);
+    }
+
+    @Override
+    public String readString() {
+        return readString(null);
+    }
+
+    @Override
+    public String readString(Charset cs) {
+        StringBuilder sb = new StringBuilder();
+        char[] buffer = new char[4096];
+        try (Reader reader = getReader(cs)) {
+            while (true) {
+                int len = reader.read(buffer);
+                if (len > 0) {
+                    sb.append(buffer, 0, len);
+                } else {
+                    break;
+                }
+            }
+        } catch (IOException ex) {
+            throw new NutsIOException(getSession(), ex);
+        }
+        return sb.toString();
     }
 }

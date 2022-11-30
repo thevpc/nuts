@@ -13,7 +13,6 @@ import net.thevpc.nuts.text.NutsTextStyle;
 import net.thevpc.nuts.text.NutsTexts;
 
 /**
- *
  * @author thevpc
  */
 public class DefaultNutsAliasExecutable extends AbstractNutsExecutableCommand {
@@ -43,10 +42,6 @@ public class DefaultNutsAliasExecutable extends AbstractNutsExecutableCommand {
         command.exec(args, o, session);
     }
 
-    @Override
-    public void dryExecute() {
-        command.dryExec(args, o, session);
-    }
 
     @Override
     public NutsText getHelpText() {

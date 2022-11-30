@@ -151,7 +151,7 @@ public class CompatUtils {
         if (!file.isRegularFile()) {
             return null;
         }
-        return file.readAllBytes();
+        return file.readBytes();
     }
 
 }

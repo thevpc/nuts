@@ -14,6 +14,4 @@ public interface NutsExecutableInformationExt extends NutsExecutableInformation 
 
     void execute();
 
-    void dryExecute();
-
 }

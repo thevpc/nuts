@@ -42,7 +42,7 @@ public enum NutsArgumentType implements NutsEnum {
     /**
      * argument that may or may not accept value.
      */
-    ANY,
+    DEFAULT,
     /**
      * argument that accepts a string as value. Either the string is included in
      * the argument itself (--option=value) or succeeds it (--option value).

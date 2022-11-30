@@ -49,25 +49,21 @@ public class EchoCommand extends SimpleJShellBuiltin {
     protected boolean configureFirst(NutsCommandLine commandLine, JShellExecutionContext context) {
         Options options = context.getOptions();
         NutsSession session = context.getSession();
-        switch (commandLine.peek().get(session).getKey().asString().get(session)) {
+        switch (commandLine.peek().get(session).key()) {
             case "-n": {
-                options.newLine = !commandLine.nextBooleanValueLiteral().get(session);
+                commandLine.withNextBoolean((v, a, s) -> options.newLine=v,session);
                 return true;
             }
             case "-p":
             case "--plain": {
-                options.highlighter = null;
+                commandLine.withNextTrue((v, a, s) -> options.highlighter=null,session);
                 return true;
             }
             case "-H":
             case "--highlight":
             case "--highlighter":
             {
-                options.highlighter = NutsStringUtils.trim(
-                        commandLine.next()
-                        .get(session)
-                        .getStringValue().get(session)
-                );
+                commandLine.withNextString((v, a, s) -> options.highlighter=NutsStringUtils.trim(v),session);
                 return true;
             }
             default: {

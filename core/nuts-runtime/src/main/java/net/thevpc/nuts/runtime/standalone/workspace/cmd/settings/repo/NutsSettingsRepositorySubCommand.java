@@ -19,6 +19,7 @@ import net.thevpc.nuts.spi.NutsRepositoryDB;
 import net.thevpc.nuts.spi.NutsRepositoryLocation;
 import net.thevpc.nuts.text.NutsTextStyle;
 import net.thevpc.nuts.text.NutsTexts;
+import net.thevpc.nuts.util.NutsRef;
 
 import java.util.*;
 
@@ -28,10 +29,7 @@ import java.util.*;
 public class NutsSettingsRepositorySubCommand extends AbstractNutsSettingsSubCommand {
 
     public static RepoInfo repoInfo(NutsRepository x, boolean tree, NutsSession session) {
-        return new RepoInfo(x.getName(), x.config().getType(), x.config().getLocationPath(), x.config().isEnabled() ? RepoStatus.enabled : RepoStatus.disabled,
-                tree ? x.config().setSession(session).getMirrors()
-                        .stream().map(e -> repoInfo(e, tree, session)).toArray(RepoInfo[]::new) : null
-        );
+        return new RepoInfo(x.getName(), x.config().getType(), x.config().getLocationPath(), x.config().isEnabled() ? RepoStatus.enabled : RepoStatus.disabled, tree ? x.config().setSession(session).getMirrors().stream().map(e -> repoInfo(e, tree, session)).toArray(RepoInfo[]::new) : null);
     }
 
     @Override
@@ -76,60 +74,53 @@ public class NutsSettingsRepositorySubCommand extends AbstractNutsSettingsSubCom
 //        } else {
         NutsPrintStream out = session.out();
         if (cmdLine.next("add repo", "ar").isPresent()) {
-            String location = null;
-            String repositoryName = null;
-            String parent = null;
-            Map<String, String> env = new LinkedHashMap<>();
+            class Data {
+                String location = null;
+                String repositoryName = null;
+                String parent = null;
+                Map<String, String> env = new LinkedHashMap<>();
+            }
+            Data d = new Data();
             while (cmdLine.hasNext()) {
-                NutsArgument a = cmdLine.peek().get(session);
-                boolean enabled = a.isActive();
-                switch(a.getStringKey().orElse("")) {
+                NutsArgument aa = cmdLine.peek().get(session);
+                boolean enabled = aa.isActive();
+                switch (aa.key()) {
                     case "-l":
                     case "--location": {
-                        String val = cmdLine.nextStringValueLiteral().get(session);
-                        if (enabled) {
-                            location = val;
-                        }
+                        cmdLine.withNextString((v, a, s) -> d.location = v, session);
                         break;
                     }
                     case "--name": {
-                        String val = cmdLine.nextStringValueLiteral().get(session);
-                        if (enabled) {
-                            repositoryName = val;
-                        }
+                        cmdLine.withNextString((v, a, s) -> d.repositoryName = v, session);
                         break;
                     }
                     case "--parent": {
-                        String val = cmdLine.nextStringValueLiteral().get(session);
-                        if (enabled) {
-                            parent = val;
-                        }
+                        cmdLine.withNextString((v, a, s) -> d.parent = v, session);
                         break;
                     }
                     case "--env": {
-                        String val = cmdLine.nextStringValueLiteral().get(session);
-                        if (enabled) {
-                            NutsArgument vv = NutsArgument.of(val);
-                            env.put(vv.getKey() == null ? null : vv.getKey().asString().get(session),
+                        cmdLine.withNextString((v, a, s) -> {
+                            NutsArgument vv = NutsArgument.of(v);
+                            d.env.put(vv.getKey() == null ? null : vv.getKey().asString().get(session),
                                     vv.getValue() == null ? null : vv.getStringValue().get(session));
-                        }
+                        }, session);
                         break;
                     }
                     default: {
                         if (!session.configureFirst(cmdLine)) {
-                            if (a.isOption()) {
+                            if (aa.isOption()) {
                                 cmdLine.throwUnexpectedArgument(session);
-                            } else if (a.isKeyValue()) {
+                            } else if (aa.isKeyValue()) {
                                 NutsArgument n = cmdLine.nextString().get(session);
-                                repositoryName = n.getStringKey().get(session);
-                                location = n.getStringValue().get(session);
+                                d.repositoryName = n.getStringKey().get(session);
+                                d.location = n.getStringValue().get(session);
                             } else {
-                                location = cmdLine.next().flatMap(NutsValue::asString).get(session);
-                                String loc2 = NutsRepositoryDB.of(session).getRepositoryLocationByName(location);
-                                if(loc2!=null){
-                                    repositoryName=location;
-                                    location=loc2;
-                                }else{
+                                d.location = cmdLine.next().flatMap(NutsValue::asString).get(session);
+                                String loc2 = NutsRepositoryDB.of(session).getRepositoryLocationByName(d.location);
+                                if (loc2 != null) {
+                                    d.repositoryName = d.location;
+                                    d.location = loc2;
+                                } else {
                                     cmdLine.peek().get(session);
                                 }
                             }
@@ -138,76 +129,63 @@ public class NutsSettingsRepositorySubCommand extends AbstractNutsSettingsSubCom
                     }
                 }
             }
-            if (repositoryName == null) {
+            if (d.repositoryName == null) {
                 cmdLine.peek().get(session);
             }
 
             if (cmdLine.isExecMode()) {
                 NutsRepository repo = null;
-                NutsAddRepositoryOptions o = new NutsAddRepositoryOptions()
-                        .setName(repositoryName)
-                        .setLocation(repositoryName)
-                        .setConfig(
-                                location == null ? null : new NutsRepositoryConfig()
-                                        .setName(repositoryName)
-                                        .setLocation(NutsRepositoryLocation.of(location))
-                                        .setEnv(env));
-                if (parent == null) {
+                NutsAddRepositoryOptions o = new NutsAddRepositoryOptions().setName(d.repositoryName).setLocation(d.repositoryName).setConfig(d.location == null ? null : new NutsRepositoryConfig().setName(d.repositoryName).setLocation(NutsRepositoryLocation.of(d.location)).setEnv(d.env));
+                if (d.parent == null) {
                     repo = session.repos().addRepository(o);
                 } else {
-                    NutsRepository p = session.repos().getRepository(parent);
+                    NutsRepository p = session.repos().getRepository(d.parent);
                     repo = p.config().addMirror(o);
                 }
-                out.printlnf("repository %s added successfully",repo.getName());
+                out.printlnf("repository %s added successfully", repo.getName());
                 session.config().save();
 
             }
             cmdLine.setCommandName("config add repo").throwUnexpectedArgument(session);
             return true;
         } else if (cmdLine.next("remove repo", "rr").isPresent()) {
-            String repositoryName = null;
-            String parent = null;
+            NutsRef<String> repositoryName = NutsRef.ofNull(String.class);
+            NutsRef<String> parent = NutsRef.ofNull(String.class);
             while (cmdLine.hasNext()) {
-                NutsArgument a = cmdLine.peek().get(session);
-                boolean enabled = a.isActive();
-                switch(a.getStringKey().orElse("")) {
+                NutsArgument aa = cmdLine.peek().get(session);
+                boolean enabled = aa.isActive();
+                switch (aa.key()) {
                     case "--name": {
-                        String val = cmdLine.nextStringValueLiteral().get(session);
-                        if (enabled) {
-                            repositoryName = val;
-                        }
+                        cmdLine.withNextString((v, a, s) -> repositoryName.set(v),session);
                         break;
                     }
                     case "--parent": {
-                        String val = cmdLine.nextStringValueLiteral().get(session);
-                        if (enabled) {
-                            parent = val;
-                        }
+                        cmdLine.withNextString((v, a, s) -> parent.set(v),session);
                         break;
                     }
                     default: {
                         if (!session.configureFirst(cmdLine)) {
-                            if (a.isOption()) {
+                            if (aa.isOption()) {
                                 cmdLine.throwUnexpectedArgument(session);
-                            } else if (repositoryName != null) {
+                            } else if (repositoryName.isNotNull()) {
                                 cmdLine.throwUnexpectedArgument(session);
                             } else {
-                                repositoryName = cmdLine.next().flatMap(NutsValue::asString).get(session);
+                                repositoryName.set(cmdLine.next().flatMap(NutsValue::asString).get(session));
                             }
                         }
                         break;
                     }
                 }
             }
-            if (repositoryName == null) {
+            if (repositoryName.isNull()) {
                 cmdLine.peek().get(session);
             }
             if (cmdLine.isExecMode()) {
-                if (parent == null) {
-                    session.repos().removeRepository(repositoryName);
+                if (parent.isNull()) {
+                    session.repos().removeRepository(repositoryName.get());
                 } else {
-                    NutsRepository p = session.repos().getRepository(parent);
-                    p.config().removeMirror(repositoryName);
+                    NutsRepository p = session.repos().getRepository(parent.get());
+                    p.config().removeMirror(repositoryName.get());
                 }
                 session.config().save();
             }
@@ -215,27 +193,24 @@ public class NutsSettingsRepositorySubCommand extends AbstractNutsSettingsSubCom
 
         } else if (cmdLine.next("list repos", "lr").isPresent()) {
             cmdLine.setCommandName("config list repos");
-            String parent = null;
+            NutsRef<String> parent = NutsRef.ofNull(String.class);
             while (cmdLine.hasNext()) {
                 while (cmdLine.hasNext()) {
-                    NutsArgument a = cmdLine.peek().get(session);
-                    boolean enabled = a.isActive();
-                    switch(a.getStringKey().orElse("")) {
+                    NutsArgument aa = cmdLine.peek().get(session);
+                    boolean enabled = aa.isActive();
+                    switch (aa.key()) {
                         case "--parent": {
-                            String val = cmdLine.nextStringValueLiteral().get(session);
-                            if (enabled) {
-                                parent = val;
-                            }
+                            cmdLine.withNextString((v,a,s)->parent.set(v),session);
                             break;
                         }
                         default: {
                             if (!session.configureFirst(cmdLine)) {
-                                if (a.isOption()) {
+                                if (aa.isOption()) {
                                     cmdLine.throwUnexpectedArgument(session);
-                                } else if (parent != null) {
+                                } else if (parent.isNotNull()) {
                                     cmdLine.throwUnexpectedArgument(session);
                                 } else {
-                                    parent = cmdLine.next().flatMap(NutsValue::asString).get(session);
+                                    parent.set(cmdLine.next().flatMap(NutsValue::asString).get(session));
                                 }
                             }
                             break;
@@ -244,13 +219,8 @@ public class NutsSettingsRepositorySubCommand extends AbstractNutsSettingsSubCom
                 }
             }
             if (cmdLine.isExecMode()) {
-                List<NutsRepository> r = parent == null ? session.repos().getRepositories() : session.repos().getRepository(parent).config().getMirrors();
-                out.printlnf(
-                        session.repos().getRepositories().stream()
-                                .map(x -> repoInfo(x, session.getOutputFormat() != NutsContentType.TABLE && session.getOutputFormat() != NutsContentType.PLAIN, session)
-                                )
-                                .toArray()
-                );
+                List<NutsRepository> r = parent.isNull() ? session.repos().getRepositories() : session.repos().getRepository(parent.get()).config().getMirrors();
+                out.printlnf(r.stream().map(x -> repoInfo(x, session.getOutputFormat() != NutsContentType.TABLE && session.getOutputFormat() != NutsContentType.PLAIN, session)).toArray());
             }
             return true;
 
@@ -267,13 +237,7 @@ public class NutsSettingsRepositorySubCommand extends AbstractNutsSettingsSubCom
                 String location = cmdLine.nextNonOption(NutsArgumentName.of("folder", session)).flatMap(NutsValue::asString).get(session);
 
                 NutsRepository editedRepo = session.repos().getRepository(repoId);
-                NutsRepository repo = editedRepo.config().addMirror(
-                        new NutsAddRepositoryOptions().setName(repositoryName).setLocation(repositoryName)
-                                .setConfig(
-                                        new NutsRepositoryConfig()
-                                                .setName(repositoryName)
-                                                .setLocation(NutsRepositoryLocation.of(location))
-                                ));
+                NutsRepository repo = editedRepo.config().addMirror(new NutsAddRepositoryOptions().setName(repositoryName).setLocation(repositoryName).setConfig(new NutsRepositoryConfig().setName(repositoryName).setLocation(NutsRepositoryLocation.of(location))));
                 session.config().save();
 
             } else if (cmdLine.next("remove repo", "rr").isPresent()) {
@@ -293,10 +257,7 @@ public class NutsSettingsRepositorySubCommand extends AbstractNutsSettingsSubCom
                 session.config().save();
             } else if (cmdLine.next("list repos", "lr").isPresent()) {
                 NutsRepository editedRepo = session.repos().getRepository(repoId);
-                List<NutsRepository> linkRepositories = editedRepo.config()
-                        .setSession(session)
-                        .isSupportedMirroring()
-                        ? editedRepo.config().setSession(session).getMirrors() : Collections.emptyList();
+                List<NutsRepository> linkRepositories = editedRepo.config().setSession(session).isSupportedMirroring() ? editedRepo.config().setSession(session).getMirrors() : Collections.emptyList();
                 out.printf("%s sub repositories.%n", linkRepositories.size());
                 NutsTableFormat t = NutsTableFormat.of(session);
                 NutsMutableTableModel m = NutsMutableTableModel.of(session);
@@ -308,15 +269,7 @@ public class NutsSettingsRepositorySubCommand extends AbstractNutsSettingsSubCom
                     }
                 }
                 for (NutsRepository repository : linkRepositories) {
-                    m.addRow(
-                            NutsTexts.of(session).ofStyled(repository.getName(), NutsTextStyle.primary4()),
-                            repository.config().isEnabled()
-                                    ? repository.isEnabled(session) ? NutsTexts.of(session).ofStyled("ENABLED", NutsTextStyle.success())
-                                    : NutsTexts.of(session).ofStyled("<RT-DISABLED>", NutsTextStyle.error())
-                                    : NutsTexts.of(session).ofStyled("<DISABLED>", NutsTextStyle.error()),
-                            repository.getRepositoryType(),
-                            repository.config().getLocation().toString()
-                    );
+                    m.addRow(NutsTexts.of(session).ofStyled(repository.getName(), NutsTextStyle.primary4()), repository.config().isEnabled() ? repository.isEnabled(session) ? NutsTexts.of(session).ofStyled("ENABLED", NutsTextStyle.success()) : NutsTexts.of(session).ofStyled("<RT-DISABLED>", NutsTextStyle.error()) : NutsTexts.of(session).ofStyled("<DISABLED>", NutsTextStyle.error()), repository.getRepositoryType(), repository.config().getLocation().toString());
                 }
                 out.printf(t.toString());
             } else if (cmdLine.next("-h", "-?", "--help").isPresent()) {
@@ -338,24 +291,21 @@ public class NutsSettingsRepositorySubCommand extends AbstractNutsSettingsSubCom
     }
 
     private void enableRepo(NutsCommandLine cmdLine, Boolean autoSave, NutsSession session, boolean enableRepo) {
-        String repositoryName = null;
+        NutsRef<String> repositoryName = NutsRef.ofNull(String.class);
         while (cmdLine.hasNext()) {
-            NutsArgument a = cmdLine.peek().get(session);
-            boolean enabled = a.isActive();
-            switch(a.getStringKey().orElse("")) {
+            NutsArgument aa = cmdLine.peek().get(session);
+            boolean enabled = aa.isActive();
+            switch (aa.key()) {
                 case "--name": {
-                    String val = cmdLine.nextStringValueLiteral().get(session);
-                    if (enabled) {
-                        repositoryName = val;
-                    }
+                    cmdLine.withNextString((v, a, s) -> repositoryName.set(v), session);
                     break;
                 }
                 default: {
                     if (!session.configureFirst(cmdLine)) {
-                        if (a.isOption()) {
+                        if (aa.isOption()) {
                             cmdLine.throwUnexpectedArgument(session);
-                        } else if (repositoryName == null) {
-                            repositoryName = cmdLine.next().flatMap(NutsValue::asString).get(session);
+                        } else if (repositoryName.isNull()) {
+                            repositoryName.set(cmdLine.next().flatMap(NutsValue::asString).get(session));
                         } else {
                             cmdLine.throwUnexpectedArgument(session);
                         }
@@ -364,19 +314,18 @@ public class NutsSettingsRepositorySubCommand extends AbstractNutsSettingsSubCom
                 }
             }
         }
-        if (repositoryName == null) {
+        if (repositoryName.isNull()) {
             cmdLine.peek().get(session);
         }
         if (cmdLine.isExecMode()) {
-            NutsRepository editedRepo = session.repos().getRepository(repositoryName);
+            NutsRepository editedRepo = session.repos().getRepository(repositoryName.get());
             editedRepo.config().setEnabled(enableRepo);
             session.config().save();
         }
     }
 
     public enum RepoStatus {
-        enabled,
-        disabled,
+        enabled, disabled,
     }
 
     public static class RepoInfo {

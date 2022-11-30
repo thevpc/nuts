@@ -13,12 +13,12 @@
 // */
 //public class ProcessUtils {
 //
-//    public static Object execProcess(String commandline, String dir) {
+//    public static Object execProcess(String commandLine, String dir) {
 //        return execProcess(CommandlineUtils.parseCommandLine(commandline), dir);
 //    }
 //
-//    public static Object execProcess(String[] commandline, String dir) {
-//        ProcessBuilder pb = new ProcessBuilder(commandline);
+//    public static Object execProcess(String[] commandLine, String dir) {
+//        ProcessBuilder pb = new ProcessBuilder(commandLine);
 //        pb.redirectErrorStream(true);
 //        pb.directory(new File(dir));
 //        ByteArrayOutputStream out = new ByteArrayOutputStream();

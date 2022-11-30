@@ -25,17 +25,16 @@ public class NoapiMain implements NutsApplication, NutsAppCmdProcessor {
     @Override
     public void run(NutsApplicationContext appContext) {
         this.service = new NOpenAPIService(appContext);
-        NutsCommandLine cmdLine = appContext.getCommandLine();
         ref.setCommand("pdf");
         appContext.processCommandLine(this);
     }
 
     @Override
-    public boolean onCmdNextOption(NutsArgument option, NutsCommandLine commandline, NutsApplicationContext context) {
+    public boolean onCmdNextOption(NutsArgument option, NutsCommandLine commandLine, NutsApplicationContext context) {
         NutsSession session = context.getSession();
         switch (option.asString().get(session)) {
             case "--yaml": {
-                commandline.nextBoolean();
+                commandLine.nextBoolean();
                 ref.setOpenAPIFormat("yaml");
                 if (!data.isEmpty()) {
                     data.get(data.size() - 1).setOpenAPIFormat("yaml");
@@ -43,7 +42,7 @@ public class NoapiMain implements NutsApplication, NutsAppCmdProcessor {
                 return true;
             }
             case "--json": {
-                commandline.nextBoolean();
+                commandLine.nextBoolean();
                 ref.setOpenAPIFormat("json");
                 if (!data.isEmpty()) {
                     data.get(data.size() - 1).setOpenAPIFormat("json");
@@ -51,7 +50,7 @@ public class NoapiMain implements NutsApplication, NutsAppCmdProcessor {
                 return true;
             }
             case "--keep": {
-                commandline.nextBoolean();
+                commandLine.nextBoolean();
                 ref.setKeep(true);
                 if (!data.isEmpty()) {
                     data.get(data.size() - 1).setKeep(true);
@@ -59,7 +58,7 @@ public class NoapiMain implements NutsApplication, NutsAppCmdProcessor {
                 return true;
             }
             case "--vars": {
-                NutsArgument a = commandline.nextString().get();
+                NutsArgument a = commandLine.nextString().get();
                 if (a.isActive()) {
                     String vars = a.getStringValue().get();
                     ref.setVars(vars);
@@ -70,7 +69,7 @@ public class NoapiMain implements NutsApplication, NutsAppCmdProcessor {
                 return true;
             }
             case "--var": {
-                NutsArgument a = commandline.nextString().get();
+                NutsArgument a = commandLine.nextString().get();
                 if (a.isActive()) {
                     String vars = a.getStringValue().get();
                     NutsArgument b = NutsArgument.of(vars);
@@ -84,7 +83,7 @@ public class NoapiMain implements NutsApplication, NutsAppCmdProcessor {
                 return true;
             }
             case "--open-api": {
-                commandline.nextBoolean();
+                commandLine.nextBoolean();
                 ref.setOpenAPI(true);
                 if (!data.isEmpty()) {
                     data.get(data.size() - 1).setOpenAPI(true);
@@ -92,7 +91,7 @@ public class NoapiMain implements NutsApplication, NutsAppCmdProcessor {
                 return true;
             }
             case "--pdf": {
-                commandline.nextBoolean();
+                commandLine.nextBoolean();
                 ref.setCommand("pdf");
                 if (!data.isEmpty()) {
                     data.get(data.size() - 1).setCommand("pdf");
@@ -100,7 +99,7 @@ public class NoapiMain implements NutsApplication, NutsAppCmdProcessor {
                 return true;
             }
             case "--target": {
-                NutsArgument a = commandline.nextString().get();
+                NutsArgument a = commandLine.nextString().get();
                 if (a.isActive()) {
                     String target = a.getStringValue().get();
                     if (target.contains("*")) {
@@ -117,7 +116,7 @@ public class NoapiMain implements NutsApplication, NutsAppCmdProcessor {
     }
 
     @Override
-    public boolean onCmdNextNonOption(NutsArgument nonOption, NutsCommandLine commandline, NutsApplicationContext context) {
+    public boolean onCmdNextNonOption(NutsArgument nonOption, NutsCommandLine commandLine, NutsApplicationContext context) {
         NutsSession session = context.getSession();
         NoapiCmdData c = new NoapiCmdData();
         c.setCommand(ref.getCommand());
@@ -126,17 +125,17 @@ public class NoapiMain implements NutsApplication, NutsAppCmdProcessor {
         c.setTarget(ref.getTarget());
         c.setVars(ref.getVars());
         c.setVarsMap(new HashMap<>(ref.getVarsMap()));
-        NutsArgument pathArg = commandline.next().get(session);
+        NutsArgument pathArg = commandLine.next().get(session);
         c.setPath(pathArg.getKey().asString().get(session));
         data.add(c);
         return true;
     }
 
     @Override
-    public void onCmdFinishParsing(NutsCommandLine commandline, NutsApplicationContext context) {
+    public void onCmdFinishParsing(NutsCommandLine commandLine, NutsApplicationContext context) {
         NutsSession session = context.getSession();
         if (data.isEmpty()) {
-            commandline.throwMissingArgument(session);
+            commandLine.throwMissingArgument(session);
         }
         for (NoapiCmdData d : data) {
             NutsUtils.requireNonBlank(d.getPath(), "path", session);
@@ -147,7 +146,7 @@ public class NoapiMain implements NutsApplication, NutsAppCmdProcessor {
     }
 
     @Override
-    public void onCmdExec(NutsCommandLine commandline, NutsApplicationContext context) {
+    public void onCmdExec(NutsCommandLine commandLine, NutsApplicationContext context) {
         for (NoapiCmdData d : data) {
             switch (d.getCommand()) {
                 case "pdf": {

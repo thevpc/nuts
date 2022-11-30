@@ -47,174 +47,210 @@ public class NutsSettingsNdiSubCommand extends AbstractNutsSettingsSubCommand {
     }
 
     public void runAddLauncher(NutsCommandLine commandLine, NutsSession session) {
-        NdiScriptOptions options = new NdiScriptOptions();
-        options.setSession(session.copy());
-        List<String> idsToInstall = new ArrayList<>();
+        class Data {
+            NdiScriptOptions options = new NdiScriptOptions();
+            List<String> idsToInstall = new ArrayList<>();
 
-//        ArrayList<String> idsToInstall ;
-        //        ArrayList<String> executorOptions = new ArrayList<>();
+            //        ArrayList<String> idsToInstall ;
+            //        ArrayList<String> executorOptions = new ArrayList<>();
 //        NutsExecutionType execType = null;
 //        boolean fetch = false;
-        boolean missingAnyArgument = true;
-        NutsArgument a;
-//        boolean forceAll = false;
+            boolean missingAnyArgument = true;
+            //        boolean forceAll = false;
 //        Boolean persistentConfig = null;
-        boolean ignoreUnsupportedOs = false;
+            boolean ignoreUnsupportedOs = false;
+        }
+        Data d = new Data();
+        d.options.setSession(session.copy());
 
 //        String linkName = null;
 //        boolean env = false;
         commandLine.setCommandName("settings add launcher");
         while (commandLine.hasNext()) {
-            if ((a = commandLine.nextBoolean("-t", "--fetch").orNull()) != null) {
-                options.setFetch(a.getBooleanValue().get(session));
-            } else if ((a = commandLine.nextString("-d", "--workdir").orNull()) != null) {
-                if (a.isActive()) {
-                    options.getLauncher().setWorkingDirectory(a.getStringValue().get(session));
+            switch (commandLine.peek().get().key()) {
+                case "-t":
+                case "--fetch": {
+                    commandLine.withNextBoolean((v, a, s) -> d.options.setFetch(v), session);
+                    break;
                 }
-            } else if ((a = commandLine.nextString("--icon").orNull()) != null) {
-                if (a.isActive()) {
-                    options.getLauncher().setIcon(a.getStringValue().get(session));
+                case "-d":
+                case "--workdir": {
+                    commandLine.withNextString((v, a, s) -> d.options.getLauncher().setWorkingDirectory(v), session);
+                    break;
                 }
-            } else if ((a = commandLine.next("--menu").orNull()) != null) {
-                if (a.isActive()) {
-                    options.getLauncher().setCreateMenuLauncher(parseCond(a,session));
+                case "--icon": {
+                    commandLine.withNextString((v, a, s) -> d.options.getLauncher().setIcon(v), session);
+                    break;
                 }
-            } else if ((a = commandLine.nextString("--menu-category").orNull()) != null) {
-                if (a.isActive()) {
-                    options.getLauncher().setMenuCategory(a.getStringValue().get(session));
-                    if (options.getLauncher().getMenuCategory() != null && !options.getLauncher().getMenuCategory().isEmpty()) {
-                        if (options.getLauncher().getCreateMenuLauncher() == NutsSupportMode.NEVER) {
-                            options.getLauncher().setCreateMenuLauncher(NutsSupportMode.PREFERRED);
+                case "--menu": {
+                    commandLine.withNextString((v, a, s) -> d.options.getLauncher().setCreateMenuLauncher(parseCond(v, session)), session);
+                    break;
+                }
+                case "--menu-category": {
+                    commandLine.withNextString((v, a, s) -> {
+                        d.options.getLauncher().setMenuCategory(v);
+                        if (d.options.getLauncher().getMenuCategory() != null && !d.options.getLauncher().getMenuCategory().isEmpty()) {
+                            if (d.options.getLauncher().getCreateMenuLauncher() == NutsSupportMode.NEVER) {
+                                d.options.getLauncher().setCreateMenuLauncher(NutsSupportMode.PREFERRED);
+                            }
                         }
+                    }, session);
+                    break;
+                }
+                case "--desktop": {
+                    commandLine.withNextString((v, a, s) -> d.options.getLauncher().setCreateDesktopLauncher(parseCond(v, session)), session);
+                    break;
+                }
+                case "--desktop-name": {
+                    commandLine.withNextString((v, a, s) -> {
+                        d.options.getLauncher().setShortcutName(v);
+                        if (d.options.getLauncher().getCreateDesktopLauncher() == NutsSupportMode.NEVER) {
+                            d.options.getLauncher().setCreateDesktopLauncher(NutsSupportMode.PREFERRED);
+                        }
+                    }, session);
+                    break;
+                }
+                case "--menu-name": {
+                    commandLine.withNextString((v, a, s) -> {
+                        d.options.getLauncher().setShortcutName(v);
+                        if (d.options.getLauncher().getCreateDesktopLauncher() == NutsSupportMode.NEVER) {
+                            d.options.getLauncher().setCreateMenuLauncher(NutsSupportMode.PREFERRED);
+                        }
+                    }, session);
+                    break;
+                }
+                case "--shortcut-name": {
+                    commandLine.withNextString((v, a, s) -> {
+                        d.options.getLauncher().setShortcutName(v);
+                        if (d.options.getLauncher().getCreateUserLauncher() == NutsSupportMode.NEVER) {
+                            d.options.getLauncher().setCreateUserLauncher(NutsSupportMode.PREFERRED);
+                        }
+                    }, session);
+                    break;
+                }
+                case "--shortcut-path": {
+                    commandLine.withNextString((v, a, s) -> {
+                        d.options.getLauncher().setCustomShortcutPath(v);
+                        if (d.options.getLauncher().getCreateUserLauncher() == NutsSupportMode.NEVER) {
+                            d.options.getLauncher().setCreateUserLauncher(NutsSupportMode.PREFERRED);
+                        }
+                    }, session);
+                    break;
+                }
+                case "-x":
+                case "--external":
+                case "--spawn": {
+                    commandLine.withNextTrue((v, a, s) -> d.options.getLauncher().getNutsOptions().add("--spawn"), session);
+                    break;
+                }
+                case "-b":
+                case "--embedded": {
+                    commandLine.withNextTrue((v, a, s) -> d.options.getLauncher().getNutsOptions().add("--embedded"), session);
+                    break;
+                }
+                case "--terminal": {
+                    commandLine.withNextBoolean((v, a, s) -> d.options.getLauncher().setOpenTerminal(v), session);
+                    break;
+                }
+                case "-e":
+                case "--env": {
+                    commandLine.withNextBoolean((v, a, s) -> d.options.setIncludeEnv(v), session);
+                    break;
+                }
+                case "--system": {
+                    commandLine.withNextTrue((v, a, s) -> d.options.getLauncher().getNutsOptions().add("--system"), session);
+                    break;
+                }
+                case "--current-user": {
+                    commandLine.withNextTrue((v, a, s) -> d.options.getLauncher().getNutsOptions().add("--current-user"), session);
+                    break;
+                }
+                case "--as-root": {
+                    commandLine.withNextTrue((v, a, s) -> d.options.getLauncher().getNutsOptions().add("--as-root"), session);
+                    break;
+                }
+                case "--run-as": {
+                    commandLine.withNextString((v, a, s) -> d.options.getLauncher().getNutsOptions().add("--run-as=" + v), session);
+                    break;
+                }
+                case "-X":
+                case "--exec-options": {
+                    commandLine.withNextString((v, a, s) -> d.options.getLauncher().getNutsOptions().add("--exec-options=" + v), session);
+                    break;
+                }
+                case "-i":
+                case "--installed": {
+                    commandLine.withNextTrue((v, a, s) -> {
+                        session.setConfirm(NutsConfirmationMode.YES);
+                        for (NutsId resultId : session.search().setInstallStatus(
+                                NutsInstallStatusFilters.of(session).byInstalled(true)
+                        ).getResultIds()) {
+                            d.idsToInstall.add(resultId.getLongName());
+                            d.missingAnyArgument = false;
+                        }
+                    }, session);
+                    break;
+                }
+                case "-c":
+                case "--companions": {
+                    commandLine.withNextTrue((v, a, s) -> {
+                        session.setConfirm(NutsConfirmationMode.YES);
+                        for (NutsId companion : session.extensions().getCompanionIds()) {
+                            d.idsToInstall.add(session.search().addId(companion).setLatest(true).getResultIds().required().getLongName());
+                            d.missingAnyArgument = false;
+                        }
+                    }, session);
+                    break;
+                }
+                case "--switch": {
+                    commandLine.withNextBoolean((v, a, s) -> d.options.getLauncher().setSwitchWorkspace(v), session);
+                    break;
+                }
+                case "--ignore-unsupported-os": {
+                    commandLine.withNextBoolean((v, a, s) -> d.ignoreUnsupportedOs = v, session);
+                    break;
+                }
+                case "-w":
+                case "--workspace": {
+                    commandLine.withNextString((v, a, s) -> d.options.getLauncher().setSwitchWorkspaceLocation(v), session);
+                    break;
+                }
+                case "-n":
+                case "--name": {
+                    commandLine.withNextString((v, a, s) -> d.options.getLauncher().setCustomScriptPath(v), session);
+                    break;
+                }
+                default: {
+                    if (commandLine.isNextOption()) {
+                        session.configureLast(commandLine);
+                    } else {
+                        d.idsToInstall.add(commandLine.next().flatMap(NutsValue::asString).get(session));
+                        d.missingAnyArgument = false;
                     }
                 }
-            } else if ((a = commandLine.nextBoolean("--desktop").orNull()) != null) {
-                if (a.isActive()) {
-                    options.getLauncher().setCreateDesktopLauncher(parseCond(a,session));
-                }
-            } else if ((a = commandLine.nextString("--desktop-name").orNull()) != null) {
-                if (a.isActive()) {
-                    options.getLauncher().setShortcutName(a.getStringValue().get(session));
-                    if (options.getLauncher().getCreateDesktopLauncher() == NutsSupportMode.NEVER) {
-                        options.getLauncher().setCreateDesktopLauncher(NutsSupportMode.PREFERRED);
-                    }
-                }
-            } else if ((a = commandLine.nextString("--menu-name").orNull()) != null) {
-                if (a.isActive()) {
-                    options.getLauncher().setShortcutName(a.getStringValue().get(session));
-                    if (options.getLauncher().getCreateDesktopLauncher() == NutsSupportMode.NEVER) {
-                        options.getLauncher().setCreateMenuLauncher(NutsSupportMode.PREFERRED);
-                    }
-                }
-            } else if ((a = commandLine.nextString("--shortcut-name").orNull()) != null) {
-                if (a.isActive()) {
-                    options.getLauncher().setShortcutName(a.getStringValue().get(session));
-                    if (options.getLauncher().getCreateUserLauncher() == NutsSupportMode.NEVER) {
-                        options.getLauncher().setCreateUserLauncher(NutsSupportMode.PREFERRED);
-                    }
-                }
-            } else if ((a = commandLine.nextString("--shortcut-path").orNull()) != null) {
-                if (a.isActive()) {
-                    options.getLauncher().setCustomShortcutPath(a.getStringValue().get(session));
-                    if (options.getLauncher().getCreateUserLauncher() == NutsSupportMode.NEVER) {
-                        options.getLauncher().setCreateUserLauncher(NutsSupportMode.PREFERRED);
-                    }
-                }
-            } else if ((a = commandLine.nextBoolean("-x", "--external", "--spawn").orNull()) != null) {
-                if (a.getBooleanValue().get(session)) {
-                    options.getLauncher().getNutsOptions().add("--spawn");
-                }
-            } else if ((a = commandLine.nextBoolean("-b", "--embedded").orNull()) != null) {
-                if (a.getBooleanValue().get(session)) {
-                    options.getLauncher().getNutsOptions().add("--embedded");
-                }
-            } else if ((a = commandLine.nextBoolean("--terminal").orNull()) != null) {
-                if (a.isActive()) {
-                    options.getLauncher().setOpenTerminal(a.getBooleanValue().get(session));
-                }
-            } else if ((a = commandLine.nextBoolean("-e", "--env").orNull()) != null) {
-                options.setIncludeEnv(a.getBooleanValue().get(session));
-            } else if ((a = commandLine.nextBoolean("--system").orNull()) != null) {
-                if (a.getBooleanValue().get(session)) {
-                    options.getLauncher().getNutsOptions().add("--system");
-                }
-            } else if ((a = commandLine.nextBoolean("--current-user").orNull()) != null) {
-                if (a.getBooleanValue().get(session)) {
-                    options.getLauncher().getNutsOptions().add("--current-user");
-                }
-            } else if ((a = commandLine.nextBoolean("--as-root").orNull()) != null) {
-                if (a.isActive() && a.getBooleanValue().get(session)) {
-                    options.getLauncher().getNutsOptions().add("--as-root");
-                }
-            } else if ((a = commandLine.nextBoolean("--sudo").orNull()) != null) {
-                if (a.isActive() && a.getBooleanValue().get(session)) {
-                    options.getLauncher().getNutsOptions().add("--sudo");
-                }
-            } else if ((a = commandLine.nextString("--run-as").orNull()) != null) {
-                if (a.isActive()) {
-                    options.getLauncher().getNutsOptions().add("--run-as=" + a.getStringValue());
-                }
-            } else if ((a = commandLine.nextString("-X", "--exec-options").orNull()) != null) {
-                options.getLauncher().getNutsOptions().add("--exec-options=" + a.getStringValue());
-            } else if ((a = commandLine.nextString("-i", "--installed").orNull()) != null) {
-                session.setConfirm(NutsConfirmationMode.YES);
-                for (NutsId resultId : session.search().setInstallStatus(
-                        NutsInstallStatusFilters.of(session).byInstalled(true)
-                ).getResultIds()) {
-                    idsToInstall.add(resultId.getLongName());
-                    missingAnyArgument = false;
-                }
-            } else if ((a = commandLine.nextString("-c", "--companions").orNull()) != null) {
-                session.setConfirm(NutsConfirmationMode.YES);
-                for (NutsId companion : session.extensions().getCompanionIds()) {
-                    idsToInstall.add(session.search().addId(companion).setLatest(true).getResultIds().required().getLongName());
-                    missingAnyArgument = false;
-                }
-            } else if ((a = commandLine.nextString("--switch").orNull()) != null) {
-                if(a.isActive()) {
-                    options.getLauncher().setSwitchWorkspace(a.getBooleanValue().get(session));
-                }
-            } else if ((a = commandLine.nextString("--ignore-unsupported-os").orNull()) != null) {
-                if (a.isActive()) {
-                    ignoreUnsupportedOs = a.getBooleanValue().get(session);
-                }
-            } else if (commandLine.peek().get(session).getKey().asString().get(session).equals("-w") || commandLine.peek().get(session).getKey().asString().get(session).equals("--workspace")) {
-                a = commandLine.nextString().get(session);
-                if (a.isActive()) {
-                    options.getLauncher().setSwitchWorkspaceLocation(a.getStringValue().get(session));
-                }
-            } else if (commandLine.peek().get(session).getKey().asString().get(session).equals("-n") || commandLine.peek().get(session).getKey().asString().get(session).equals("--name")) {
-                a = commandLine.nextString().get(session);
-                if (a.isActive()) {
-                    options.getLauncher().setCustomScriptPath(a.getStringValue().get(session));
-                }
-            } else if (commandLine.isNextOption()) {
-                session.configureLast(commandLine);
-            } else {
-                idsToInstall.add(commandLine.next().flatMap(NutsValue::asString).get(session));
-                missingAnyArgument = false;
             }
+
         }
 
-        if (missingAnyArgument) {
+        if (d.missingAnyArgument) {
             commandLine.peek().get(session);
         }
         if (commandLine.isExecMode()) {
             SystemNdi ndi = createNdi(session);
             if (ndi == null) {
-                if (ignoreUnsupportedOs) {
+                if (d.ignoreUnsupportedOs) {
                     return;
                 }
                 throw new NutsExecutionException(session, NutsMessage.ofCstyle("platform not supported : %s", session.env().getOs()), 2);
             }
-            if (!idsToInstall.isEmpty()) {
-                printResults(session, ndi.addScript(options, idsToInstall.toArray(new String[0])));
+            if (!d.idsToInstall.isEmpty()) {
+                printResults(session, ndi.addScript(d.options, d.idsToInstall.toArray(new String[0])));
             }
         }
     }
 
-    private NutsSupportMode parseCond(NutsArgument a, NutsSession session) {
-        String s = a.getValue().asString().orElse("");
+
+    private NutsSupportMode parseCond(String s, NutsSession session) {
         switch (s) {
             case "supported": {
                 return NutsSupportMode.SUPPORTED;
@@ -230,7 +266,7 @@ public class NutsSettingsNdiSubCommand extends AbstractNutsSettingsSubCommand {
                 return NutsSupportMode.PREFERRED;
             }
             default: {
-                if (a.getBooleanValue().get(session)) {
+                if (NutsValue.of(s).asBoolean().get(session)) {
                     return NutsSupportMode.PREFERRED;
                 } else {
                     return NutsSupportMode.NEVER;
@@ -292,88 +328,106 @@ public class NutsSettingsNdiSubCommand extends AbstractNutsSettingsSubCommand {
     }
 
     public void runSwitch(NutsCommandLine commandLine, NutsSession session) {
-        String switchWorkspaceLocation = null;
-        String switchWorkspaceApi = null;
-        NutsArgument a;
-        boolean ignoreUnsupportedOs = false;
-        NutsSupportMode createDesktop = NutsSupportMode.NEVER;
-        NutsSupportMode createMenu = NutsSupportMode.NEVER;
-        String menuCategory = null;
-        String shortcutName = null;
+        class Data {
+            String switchWorkspaceLocation = null;
+            String switchWorkspaceApi = null;
+            boolean ignoreUnsupportedOs = false;
+            NutsSupportMode createDesktop = NutsSupportMode.NEVER;
+            NutsSupportMode createMenu = NutsSupportMode.NEVER;
+            String menuCategory = null;
+            String shortcutName = null;
+        }
+        Data d = new Data();
         while (commandLine.hasNext()) {
-            if ((a = commandLine.nextString("--ignore-unsupported-os").orNull()) != null) {
-                if (a.isActive()) {
-                    ignoreUnsupportedOs = a.getBooleanValue().get(session);
+            switch (commandLine.peek().get().key()) {
+                case "--ignore-unsupported-os": {
+                    commandLine.withNextBoolean((v, a, s) -> d.ignoreUnsupportedOs = v, session);
+                    break;
                 }
-            } else if (commandLine.peek().get(session).getKey().asString().get(session).equals("-w")
-                    || commandLine.peek().get(session).getKey().asString().get(session).equals("--workspace")) {
-                switchWorkspaceLocation = commandLine.nextStringValueLiteral().get(session);
-            } else if (commandLine.peek().get(session).getKey().asString().get(session).equals("-a")
-                    || commandLine.peek().get(session).getKey().asString().get(session).equals("--api")) {
-                switchWorkspaceApi = commandLine.nextStringValueLiteral().get(session);
-            } else if ((a = commandLine.next("--menu").orNull()) != null) {
-                if (a.isActive()) {
-                    createMenu = parseCond(a,session);
+                case "-w":
+                case "--workspace": {
+                    commandLine.withNextString((v, a, s) -> d.switchWorkspaceLocation = v, session);
+                    break;
                 }
-            } else if ((a = commandLine.nextString("--menu-category").orNull()) != null) {
-                if (a.isActive()) {
-                    menuCategory = a.getStringValue().get(session);
-                    if (menuCategory != null && !menuCategory.isEmpty()) {
-                        if (createMenu == NutsSupportMode.NEVER) {
-                            createMenu = NutsSupportMode.PREFERRED;
+                case "-a":
+                case "--api": {
+                    commandLine.withNextString((v, a, s) -> d.switchWorkspaceApi = v, session);
+                    break;
+                }
+                case "--menu": {
+                    commandLine.withNextString((v, a, s) -> d.createMenu = parseCond(v, session), session);
+                    break;
+                }
+                case "--menu-category": {
+                    commandLine.withNextString((v, a, s) -> {
+                        d.menuCategory = v;
+                        if (d.menuCategory != null && !d.menuCategory.isEmpty()) {
+                            if (d.createMenu == NutsSupportMode.NEVER) {
+                                d.createMenu = NutsSupportMode.PREFERRED;
+                            }
                         }
+                    }, session);
+                    break;
+                }
+                case "--menu-name": {
+                    commandLine.withNextString((v, a, s) -> {
+                        d.shortcutName = v;
+                        if (d.shortcutName != null && !d.shortcutName.isEmpty()) {
+                            if (d.createMenu == NutsSupportMode.NEVER) {
+                                d.createMenu = NutsSupportMode.PREFERRED;
+                            }
+                        }
+                    }, session);
+                    break;
+                }
+                case "--desktop-name": {
+                    commandLine.withNextString((v, a, s) -> {
+                        d.shortcutName = v;
+                        if (d.shortcutName != null && !d.shortcutName.isEmpty()) {
+                            if (d.createDesktop == NutsSupportMode.NEVER) {
+                                d.createDesktop = NutsSupportMode.PREFERRED;
+                            }
+                        }
+                    }, session);
+                    break;
+                }
+                case "--desktop": {
+                    commandLine.withNextString((v, a, s) -> {
+                        d.createDesktop = parseCond(v, session);
+                    }, session);
+                    break;
+                }
+                default: {
+                    if (commandLine.isNextOption()) {
+                        commandLine.throwUnexpectedArgument(session);
+                    } else if (d.switchWorkspaceLocation == null) {
+                        d.switchWorkspaceLocation = commandLine.next().flatMap(NutsValue::asString).get(session);
+                    } else if (d.switchWorkspaceApi == null) {
+                        d.switchWorkspaceApi = commandLine.next().flatMap(NutsValue::asString).get(session);
+                    } else if (commandLine.isNextOption()) {
+                        session.configureLast(commandLine);
+                    } else {
+                        commandLine.throwUnexpectedArgument(session);
                     }
                 }
-            } else if ((a = commandLine.nextString("--menu-name").orNull()) != null) {
-                if (a.isActive()) {
-                    shortcutName = a.getStringValue().get(session);
-                    if (shortcutName != null && !shortcutName.isEmpty()) {
-                        if (createMenu == NutsSupportMode.NEVER) {
-                            createMenu = NutsSupportMode.PREFERRED;
-                        }
-                    }
-                }
-            } else if ((a = commandLine.nextString("--desktop-name").orNull()) != null) {
-                if (a.isActive()) {
-                    shortcutName = a.getStringValue().get(session);
-                    if (shortcutName != null && !shortcutName.isEmpty()) {
-                        if (createDesktop == NutsSupportMode.NEVER) {
-                            createDesktop = NutsSupportMode.PREFERRED;
-                        }
-                    }
-                }
-            } else if ((a = commandLine.next("--desktop").orNull()) != null) {
-                if (a.isActive()) {
-                    createDesktop = parseCond(a,session);
-                }
-            } else if (commandLine.isNextOption()) {
-                commandLine.throwUnexpectedArgument(session);
-            } else if (switchWorkspaceLocation == null) {
-                switchWorkspaceLocation = commandLine.next().flatMap(NutsValue::asString).get(session);
-            } else if (switchWorkspaceApi == null) {
-                switchWorkspaceApi = commandLine.next().flatMap(NutsValue::asString).get(session);
-            } else if (commandLine.isNextOption()) {
-                session.configureLast(commandLine);
-            } else {
-                commandLine.throwUnexpectedArgument(session);
             }
         }
         if (commandLine.isExecMode()) {
             SystemNdi ndi = createNdi(session);
             if (ndi == null) {
-                if (ignoreUnsupportedOs) {
+                if (d.ignoreUnsupportedOs) {
                     return;
                 }
                 throw new NutsExecutionException(session, NutsMessage.ofCstyle("platform not supported : %s ", session.env().getOs()), 2);
             }
-            if (switchWorkspaceLocation != null || switchWorkspaceApi != null) {
+            if (d.switchWorkspaceLocation != null || d.switchWorkspaceApi != null) {
                 NdiScriptOptions oo = new NdiScriptOptions()
                         .setSession(session);
-                oo.getLauncher().setSwitchWorkspaceLocation(switchWorkspaceLocation);
-                oo.getLauncher().setCreateDesktopLauncher(createDesktop);
-                oo.getLauncher().setMenuCategory(menuCategory);
-                oo.getLauncher().setCreateMenuLauncher(createMenu);
-                oo.getLauncher().setShortcutName(shortcutName);
+                oo.getLauncher().setSwitchWorkspaceLocation(d.switchWorkspaceLocation);
+                oo.getLauncher().setCreateDesktopLauncher(d.createDesktop);
+                oo.getLauncher().setMenuCategory(d.menuCategory);
+                oo.getLauncher().setCreateMenuLauncher(d.createMenu);
+                oo.getLauncher().setShortcutName(d.shortcutName);
                 ndi.switchWorkspace(oo);
             }
         }

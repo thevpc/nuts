@@ -82,8 +82,8 @@ public class NutsCompressedPath extends NutsPathBase {
     }
 
     @Override
-    public byte[] readAllBytes() {
-        return base.readAllBytes();
+    public byte[] readBytes() {
+        return base.readBytes();
     }
 
     @Override

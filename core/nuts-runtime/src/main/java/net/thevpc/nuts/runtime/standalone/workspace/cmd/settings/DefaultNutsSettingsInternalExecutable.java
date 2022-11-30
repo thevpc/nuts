@@ -28,6 +28,10 @@ public class DefaultNutsSettingsInternalExecutable extends DefaultInternalNutsEx
     private List<NutsSettingsSubCommand> subCommands;
     @Override
     public void execute() {
+        if(getSession().isDry()){
+            dryExecute();
+            return;
+        }
         NutsSession session = getSession();
         if (NutsAppUtils.processHelpOptions(args, session)) {
             showDefaultHelp();

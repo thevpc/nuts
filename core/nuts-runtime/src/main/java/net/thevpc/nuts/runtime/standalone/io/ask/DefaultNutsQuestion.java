@@ -112,7 +112,7 @@ public class DefaultNutsQuestion<T> implements NutsQuestion<T> {
             ByteArrayOutputStream bos = null;
             if (gui) {
                 bos = new ByteArrayOutputStream();
-                out = NutsPrintStream.of(bos,session);
+                out = NutsPrintStream.of(bos, session);
             }
             if (resetLine) {
                 out.resetLine();
@@ -510,17 +510,14 @@ public class DefaultNutsQuestion<T> implements NutsQuestion<T> {
     }
 
     @Override
-    public boolean configureFirst(NutsCommandLine cmd) {
-        NutsArgument a = cmd.peek().get(session);
-        if (a == null) {
+    public boolean configureFirst(NutsCommandLine commandLine) {
+        NutsArgument aa = commandLine.peek().get(session);
+        if (aa == null) {
             return false;
         }
-        switch(a.getStringKey().orElse("")) {
+        switch (aa.key()) {
             case "trace-confirmation": {
-                boolean val = cmd.nextBooleanValueLiteral().get(session);
-                if (a.isActive()) {
-                    this.traceConfirmation = val;
-                }
+                commandLine.withNextBoolean((v, a, s) -> this.traceConfirmation = v, session);
                 break;
             }
         }

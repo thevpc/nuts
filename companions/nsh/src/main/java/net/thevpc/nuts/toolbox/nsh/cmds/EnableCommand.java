@@ -59,29 +59,29 @@ public class EnableCommand extends SimpleJShellBuiltin {
                 return true;
             }
         } else if (a.isOption()) {
-            switch(a.getStringKey().orElse("")) {
+            switch(a.key()) {
                 case "-a": {
-                    options.a = commandLine.nextBooleanValueLiteral().get(session);
+                    commandLine.withNextBoolean((v, r, s) -> options.a = v, session);
                     return true;
                 }
                 case "-d": {
-                    options.d = commandLine.nextBooleanValueLiteral().get(session);
+                    commandLine.withNextBoolean((v, r, s) -> options.d = v, session);
                     return true;
                 }
                 case "-n": {
-                    options.n = commandLine.nextBooleanValueLiteral().get(session);
+                    commandLine.withNextBoolean((v, r, s) -> options.n = v, session);
                     return true;
                 }
                 case "-p": {
-                    options.p = commandLine.nextBooleanValueLiteral().get(session);
+                    commandLine.withNextBoolean((v, r, s) -> options.p = v, session);
                     return true;
                 }
                 case "-s": {
-                    options.s = commandLine.nextBooleanValueLiteral().get(session);
+                    commandLine.withNextBoolean((v, r, s) -> options.s = v, session);
                     return true;
                 }
                 case "-f": {
-                    options.file = commandLine.nextStringValueLiteral().get(session);
+                    commandLine.withNextString((v, r, s) -> options.file = v, session);
                     return true;
                 }
             }

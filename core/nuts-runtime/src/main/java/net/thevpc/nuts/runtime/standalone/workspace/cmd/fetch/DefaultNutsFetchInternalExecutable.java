@@ -21,6 +21,10 @@ public class DefaultNutsFetchInternalExecutable extends DefaultInternalNutsExecu
 
     @Override
     public void execute() {
+        if(getSession().isDry()){
+            dryExecute();
+            return;
+        }
         if (NutsAppUtils.processHelpOptions(args, getSession())) {
             showDefaultHelp();
             return;

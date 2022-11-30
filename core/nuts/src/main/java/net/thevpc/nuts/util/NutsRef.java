@@ -34,6 +34,14 @@ public class NutsRef<T> {
         return new NutsRef<>(t);
     }
 
+    public static <T> NutsRef<T> of(T t,Class<T> type) {
+        return new NutsRef<>(t);
+    }
+
+    public static <T> NutsRef<T> ofNull(Class<T> t) {
+        return new NutsRef<>(null);
+    }
+
     public static <T> NutsRef<T> ofNull() {
         return of(null);
     }

@@ -5,6 +5,7 @@ import net.thevpc.nuts.cmdline.NutsArgument;
 import net.thevpc.nuts.cmdline.NutsCommandLine;
 
 import java.nio.file.Paths;
+import java.util.function.Predicate;
 
 public class NDocusaurusMain implements NutsApplication, NutsAppCmdProcessor {
 
@@ -23,13 +24,13 @@ public class NDocusaurusMain implements NutsApplication, NutsAppCmdProcessor {
     }
 
     @Override
-    public boolean onCmdNextOption(NutsArgument option, NutsCommandLine commandline, NutsApplicationContext context) {
+    public boolean onCmdNextOption(NutsArgument option, NutsCommandLine commandLine, NutsApplicationContext context) {
         NutsSession session = context.getSession();
         switch (option.getKey().asString().get(session)) {
             case "-d":
             case "--dir": {
                 if (workdir == null) {
-                    workdir = commandline.nextStringValueLiteral().get(session);
+                    commandLine.withNextString((v, a, s)->workdir=v,session);
                     return true;
                 }
             }
@@ -38,19 +39,19 @@ public class NDocusaurusMain implements NutsApplication, NutsAppCmdProcessor {
     }
 
     @Override
-    public boolean onCmdNextNonOption(NutsArgument nonOption, NutsCommandLine commandline, NutsApplicationContext context) {
+    public boolean onCmdNextNonOption(NutsArgument nonOption, NutsCommandLine commandLine, NutsApplicationContext context) {
         NutsSession session = context.getSession();
         switch (nonOption.asString().get(session)) {
             case "start": {
-                start = commandline.nextBooleanValueLiteral().get(session);
+                commandLine.withNextBoolean((v, a, s) -> start=v,session);
                 return true;
             }
             case "build": {
-                build = commandline.nextBooleanValueLiteral().get(session);
+                commandLine.withNextBoolean((v, a, s) -> build=v,session);
                 return true;
             }
             case "pdf": {
-                buildPdf = commandline.nextBooleanValueLiteral().get(session);
+                commandLine.withNextBoolean((v, a, s) -> buildPdf=v,session);
                 return true;
             }
         }
@@ -58,17 +59,17 @@ public class NDocusaurusMain implements NutsApplication, NutsAppCmdProcessor {
     }
 
     @Override
-    public void onCmdFinishParsing(NutsCommandLine commandline, NutsApplicationContext context) {
+    public void onCmdFinishParsing(NutsCommandLine commandLine, NutsApplicationContext context) {
         NutsSession session = context.getSession();
         if (!start && !build && !buildPdf) {
-            commandline.throwMissingArgument(
+            commandLine.throwMissingArgument(
                     NutsMessage.ofCstyle("missing command. try %s", NutsMessage.ofCode("sh", "ndocusaurus pdf | start | build")),
                     session);
         }
     }
 
     @Override
-    public void onCmdExec(NutsCommandLine commandline, NutsApplicationContext context) {
+    public void onCmdExec(NutsCommandLine commandLine, NutsApplicationContext context) {
         if (workdir == null) {
             workdir = ".";
         }

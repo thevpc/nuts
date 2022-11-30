@@ -50,7 +50,7 @@ public class AppExample implements NutsApplication {
         Boolean someBooleanOption = null;
         List<String> nonOptions = new ArrayList<>();
         while ((a = cmd.peek().orNull()) != null) {
-            switch (a.getStringKey().orElse("")) {
+            switch (a.key()) {
                 case "--some-string-option": {
                     // example of calls
                     // your-app --some-string-option=yourValue

@@ -26,11 +26,11 @@ class NutsJLineCompleter implements Completer {
         NutsCommandAutoCompleteResolver autoCompleteResolver = nutsJLineTerminal.getAutoCompleteResolver();
         if (autoCompleteResolver != null) {
 
-            NutsCommandLine commandline = NutsCommandLine.of(line.words());
+            NutsCommandLine commandLine = NutsCommandLine.of(line.words());
             if (line.words().size() > 0) {
-                commandline.setCommandName(line.words().get(0));
+                commandLine.setCommandName(line.words().get(0));
             }
-            List<NutsArgumentCandidate> nutsArgumentCandidates = autoCompleteResolver.resolveCandidates(commandline, line.wordIndex(), session);
+            List<NutsArgumentCandidate> nutsArgumentCandidates = autoCompleteResolver.resolveCandidates(commandLine, line.wordIndex(), session);
             if (nutsArgumentCandidates != null) {
                 for (NutsArgumentCandidate cmdCandidate : nutsArgumentCandidates) {
                     if (cmdCandidate != null) {

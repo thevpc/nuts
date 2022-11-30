@@ -58,7 +58,7 @@ public class DefaultNutsArtifactExecutable extends AbstractNutsExecutableCommand
 
         List<String> executorOptionsList = new ArrayList<>();
         NutsArtifactCall exc = def.getDescriptor().getExecutor();
-        if(exc!=null){
+        if (exc != null) {
 
         }
         for (String option : executorOptions) {
@@ -84,21 +84,30 @@ public class DefaultNutsArtifactExecutable extends AbstractNutsExecutableCommand
 
     @Override
     public void execute() {
+        if (execSession.isDry()) {
+            if (autoInstall && !def.getInstallInformation().get(session).getInstallStatus().isInstalled()) {
+                execSession.security().checkAllowed(NutsConstants.Permissions.AUTO_INSTALL, commandName);
+                NutsPrintStream out = execSession.out();
+                out.printf("[dry] ==install== %s%n", def.getId().getLongName());
+            }
+            execCommand.ws_execId(def, commandName, appArgs, executorOptions, workspaceOptions, env, dir, failFast, false, session, execSession.copy().setDry(true), executionType, runAs);
+            return;
+        }
         NutsInstallStatus installStatus = def.getInstallInformation().get(session).getInstallStatus();
         if (!installStatus.isInstalled()) {
-            if(autoInstall) {
+            if (autoInstall) {
                 session.install().setSession(session).addId(def.getId()).run();
                 NutsInstallStatus st = session.fetch().setSession(session).setId(def.getId()).getResultDefinition().getInstallInformation().get(session).getInstallStatus();
                 if (!st.isInstalled()) {
-                    throw new NutsUnexpectedException(execSession, NutsMessage.ofCstyle("auto installation of %s failed",def.getId()));
+                    throw new NutsUnexpectedException(execSession, NutsMessage.ofCstyle("auto installation of %s failed", def.getId()));
                 }
-            }else{
-                throw new NutsUnexpectedException(execSession, NutsMessage.ofCstyle("you must install %s to be able to run it",def.getId()));
+            } else {
+                throw new NutsUnexpectedException(execSession, NutsMessage.ofCstyle("you must install %s to be able to run it", def.getId()));
             }
         } else if (installStatus.isObsolete()) {
-            if(autoInstall) {
+            if (autoInstall) {
                 session.install()
-                        .configure(true,"--reinstall")
+                        .configure(true, "--reinstall")
                         .setSession(session).addId(def.getId()).run();
             }
         }
@@ -130,17 +139,7 @@ public class DefaultNutsArtifactExecutable extends AbstractNutsExecutableCommand
 //                }
 //            }
 //        }
-        execCommand.ws_execId(def, commandName, appArgs, executorOptions, workspaceOptions, env, dir, failFast, false, session, execSession, executionType,runAs, false);
-    }
-
-    @Override
-    public void dryExecute() {
-        if (autoInstall && !def.getInstallInformation().get(session).getInstallStatus().isInstalled()) {
-            execSession.security().checkAllowed(NutsConstants.Permissions.AUTO_INSTALL, commandName);
-            NutsPrintStream out = execSession.out();
-            out.printf("[dry] ==install== %s%n", def.getId().getLongName());
-        }
-        execCommand.ws_execId(def, commandName, appArgs, executorOptions, workspaceOptions, env, dir, failFast, false, session, execSession, executionType,runAs, true);
+        execCommand.ws_execId(def, commandName, appArgs, executorOptions, workspaceOptions, env, dir, failFast, false, session, execSession.copy().setDry(false), executionType, runAs);
     }
 
     @Override

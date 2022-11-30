@@ -13,9 +13,13 @@ import net.thevpc.nuts.text.NutsTextStyle;
 import net.thevpc.nuts.text.NutsTexts;
 import net.thevpc.nuts.util.NutsStream;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.Reader;
 import java.net.URL;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 import java.time.Instant;
 import java.util.List;
@@ -44,9 +48,7 @@ public class NutsCompressedPathBase extends NutsPathBase {
 
     @Override
     public NutsPath copy() {
-        return new NutsCompressedPathBase(
-                base, compressedForm, formattedCompressedForm
-        ).copyExtraFrom(this);
+        return new NutsCompressedPathBase(base, compressedForm, formattedCompressedForm).copyExtraFrom(this);
     }
 
     public static String compressUrl(String path, NutsSession session) {
@@ -54,14 +56,7 @@ public class NutsCompressedPathBase extends NutsPathBase {
         switch (p.getType()) {
             case FILE_URL:
             case URL: {
-                return new NutsPathParts(
-                        p.getType(),
-                        p.getProtocol(),
-                        p.getAuthority(),
-                        NutsPathParts.compressLocalPath(p.getFile(), 0, 2),
-                        p.getQuery().length() > 0 ? "..." : "",
-                        p.getRef().length() > 0 ? "..." : "",
-                        session
+                return new NutsPathParts(p.getType(), p.getProtocol(), p.getAuthority(), NutsPathParts.compressLocalPath(p.getFile(), 0, 2), p.getQuery().length() > 0 ? "..." : "", p.getRef().length() > 0 ? "..." : "", session
 
                 ).toString();
             }
@@ -118,8 +113,8 @@ public class NutsCompressedPathBase extends NutsPathBase {
     }
 
     @Override
-    public byte[] readAllBytes() {
-        return base.readAllBytes();
+    public byte[] readBytes() {
+        return base.readBytes();
     }
 
     @Override
@@ -398,8 +393,7 @@ public class NutsCompressedPathBase extends NutsPathBase {
 
     @Override
     public NutsFormat formatter(NutsSession session) {
-        return new MyPathFormat(this)
-                .setSession(getSession());
+        return new MyPathFormat(this).setSession(getSession());
     }
 
     private static class MyPathFormat extends DefaultFormatBase<NutsFormat> {

@@ -119,26 +119,20 @@ public abstract class AbstractNutsUndeployCommand extends NutsWorkspaceCommandBa
 
     @Override
     public boolean configureFirst(NutsCommandLine cmdLine) {
-        NutsArgument a = cmdLine.peek().orNull();
-        if (a == null) {
+        NutsArgument aa = cmdLine.peek().orNull();
+        if (aa == null) {
             return false;
         }
-        boolean enabled = a.isActive();
-        switch(a.getStringKey().orElse("")) {
+        boolean enabled = aa.isActive();
+        switch(aa.key()) {
             case "--offline": {
-                boolean val = cmdLine.nextBooleanValueLiteral().get(session);
-                if (enabled) {
-                    setOffline(val);
-                }
+                cmdLine.withNextBoolean((v,a,s)-> setOffline(v),session);
                 return true;
             }
             case "-r":
             case "-repository":
             case "--from": {
-                String val = cmdLine.nextStringValueLiteral().get(session);
-                if (enabled) {
-                    setRepository(val);
-                }
+                cmdLine.withNextString((v,a,s)-> setRepository(v),session);
                 break;
             }
 
@@ -146,11 +140,11 @@ public abstract class AbstractNutsUndeployCommand extends NutsWorkspaceCommandBa
                 if (super.configureFirst(cmdLine)) {
                     return true;
                 }
-                if (a.isOption()) {
+                if (aa.isOption()) {
                     return false;
                 } else {
                     cmdLine.skip();
-                    addId(a.asString().get(session));
+                    addId(aa.asString().get(session));
                     return true;
                 }
             }

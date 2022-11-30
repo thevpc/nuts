@@ -340,7 +340,7 @@ public class DefaultNutsRepositoryModel {
     public NutsRepositoryConfig loadRepository(NutsPath file, String name, NutsSession session) {
         NutsRepositoryConfig conf = null;
         if (file.isRegularFile() && file.getPermissions().contains(NutsPathPermission.CAN_READ)) {
-            byte[] bytes= file.readAllBytes();
+            byte[] bytes= file.readBytes();
             try {
                 NutsElements elem = NutsElements.of(session);
                 Map<String, Object> a_config0 = elem.json().parse(bytes, Map.class);

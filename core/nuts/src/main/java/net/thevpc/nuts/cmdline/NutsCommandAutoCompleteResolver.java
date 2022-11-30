@@ -42,10 +42,10 @@ public interface NutsCommandAutoCompleteResolver {
     /**
      * resolve possible candidates
      *
-     * @param commandline command line
+     * @param commandLine command line
      * @param wordIndex   cursor index where to complete
      * @param session     session
      * @return possible candidates
      */
-    List<NutsArgumentCandidate> resolveCandidates(NutsCommandLine commandline, int wordIndex, NutsSession session);
+    List<NutsArgumentCandidate> resolveCandidates(NutsCommandLine commandLine, int wordIndex, NutsSession session);
 }

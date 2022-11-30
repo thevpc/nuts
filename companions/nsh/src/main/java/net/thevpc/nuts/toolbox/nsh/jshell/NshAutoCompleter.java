@@ -13,7 +13,7 @@ import java.util.List;
 class NshAutoCompleter implements NutsCommandAutoCompleteResolver {
 
     @Override
-    public List<NutsArgumentCandidate> resolveCandidates(NutsCommandLine commandline, int wordIndex, NutsSession session) {
+    public List<NutsArgumentCandidate> resolveCandidates(NutsCommandLine commandLine, int wordIndex, NutsSession session) {
         List<NutsArgumentCandidate> candidates = new ArrayList<>();
         JShellContext fileContext = (JShellContext) session.env().getProperties().get(JShellContext.class.getName());
 
@@ -22,11 +22,11 @@ class NshAutoCompleter implements NutsCommandAutoCompleteResolver {
                 candidates.add(new DefaultNutsArgumentCandidate(command.getName()));
             }
         } else {
-            List<String> autoCompleteWords = new ArrayList<>(Arrays.asList(commandline.toStringArray()));
-            int x = commandline.getCommandName().length();
+            List<String> autoCompleteWords = new ArrayList<>(Arrays.asList(commandLine.toStringArray()));
+            int x = commandLine.getCommandName().length();
 
             List<JShellAutoCompleteCandidate> autoCompleteCandidates
-                    = fileContext.resolveAutoCompleteCandidates(commandline.getCommandName(), autoCompleteWords, wordIndex, commandline.toString());
+                    = fileContext.resolveAutoCompleteCandidates(commandLine.getCommandName(), autoCompleteWords, wordIndex, commandLine.toString());
             for (Object cmdCandidate0 : autoCompleteCandidates) {
                 JShellAutoCompleteCandidate cmdCandidate = (JShellAutoCompleteCandidate) cmdCandidate0;
                 if (cmdCandidate != null) {

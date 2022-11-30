@@ -34,6 +34,10 @@ public class DefaultNutsWhichInternalExecutable extends DefaultInternalNutsExecu
 
     @Override
     public void execute() {
+        if(getSession().isDry()){
+            dryExecute();
+            return;
+        }
         NutsSession session = getSession();
         if (NutsAppUtils.processHelpOptions(args, session)) {
             showDefaultHelp();

@@ -42,7 +42,7 @@ import java.util.*;
 public class EnvCommand extends SimpleJShellBuiltin {
 
     public EnvCommand() {
-        super("env", DEFAULT_SUPPORT,Options.class);
+        super("env", DEFAULT_SUPPORT, Options.class);
     }
 
     @Override
@@ -52,62 +52,55 @@ public class EnvCommand extends SimpleJShellBuiltin {
         NutsArgument a = commandLine.peek().get(session);
         switch (options.readStatus) {
             case 0: {
-                switch(a.getStringKey().orElse("")) {
+                switch (a.key()) {
                     case "--sort": {
-                        options.sort = (commandLine.nextBooleanValueLiteral().get(session));
+                        commandLine.withNextBoolean((v, r, s) -> options.sort = v, session);
                         return true;
                     }
                     case "--external":
                     case "--spawn":
                     case "-x": {
-                        commandLine.skip();
-                        options.executionType = (NutsExecutionType.SPAWN);
+                        commandLine.withNextTrue((v, r, s) -> options.executionType = NutsExecutionType.SPAWN, session);
                         return true;
                     }
                     case "--embedded":
                     case "-b": {
-                        commandLine.skip();
-                        options.executionType = (NutsExecutionType.EMBEDDED);
+                        commandLine.withNextTrue((v, r, s) -> options.executionType = NutsExecutionType.EMBEDDED, session);
                         return true;
                     }
                     case "--system": {
-                        commandLine.skip();
-                        options.executionType = (NutsExecutionType.SYSTEM);
+                        commandLine.withNextTrue((v, r, s) -> options.executionType = NutsExecutionType.SYSTEM, session);
                         return true;
                     }
                     case "--current-user": {
-                        commandLine.skip();
-                        options.runAs = NutsRunAs.currentUser();
+                        commandLine.withNextTrue((v, r, s) -> options.runAs = NutsRunAs.currentUser(), session);
                         return true;
                     }
                     case "--as-root": {
-                        commandLine.skip();
-                        options.runAs = NutsRunAs.root();
+                        commandLine.withNextTrue((v, r, s) -> options.runAs = NutsRunAs.root(), session);
                         return true;
                     }
                     case "--sudo": {
-                        commandLine.skip();
-                        options.runAs = NutsRunAs.sudo();
+                        commandLine.withNextTrue((v, r, s) -> options.runAs = NutsRunAs.sudo(), session);
                         return true;
                     }
                     case "--as-user": {
-                        a = commandLine.nextString().get(session);
-                        options.runAs = NutsRunAs.user(a.getStringValue().get(session));
+                        commandLine.withNextString((v, r, s) -> options.runAs = NutsRunAs.user(v), session);
                         return true;
                     }
                     case "-C":
                     case "--chdir": {
-                        options.dir = commandLine.nextStringValueLiteral().get(session);
+                        commandLine.withNextString((v, r, s) -> options.dir = v, session);
                         return true;
                     }
                     case "-u":
                     case "--unset": {
-                        options.unsetVers.add(commandLine.nextStringValueLiteral().get(session));
+                        commandLine.withNextString((v, r, s) -> options.unsetVers.add(v), session);
                         return true;
                     }
                     case "-i":
                     case "--ignore-environment": {
-                        options.ignoreEnvironment = (commandLine.nextBooleanValueLiteral().get(session));
+                        commandLine.withNextBoolean((v, r, s) -> options.ignoreEnvironment = v, session);
                         return true;
                     }
                     case "-": {
@@ -166,11 +159,11 @@ public class EnvCommand extends SimpleJShellBuiltin {
         }
         env.putAll(options.newEnv);
         if (options.command.isEmpty()) {
-            if(context.getSession().isPlainOut()){
+            if (context.getSession().isPlainOut()) {
                 for (Map.Entry<String, String> e : env.entrySet()) {
-                    context.getSession().out().println(e.getKey()+"="+e.getValue());
+                    context.getSession().out().println(e.getKey() + "=" + e.getValue());
                 }
-            }else {
+            } else {
                 context.getSession().out().printlnf(env);
             }
         } else {

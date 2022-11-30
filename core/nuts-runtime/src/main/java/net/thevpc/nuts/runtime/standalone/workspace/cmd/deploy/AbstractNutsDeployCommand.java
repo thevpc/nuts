@@ -4,19 +4,14 @@ import net.thevpc.nuts.*;
 import net.thevpc.nuts.cmdline.NutsArgument;
 import net.thevpc.nuts.cmdline.NutsCommandLine;
 import net.thevpc.nuts.io.NutsIO;
-import net.thevpc.nuts.io.NutsIOException;
 import net.thevpc.nuts.io.NutsInputSource;
 import net.thevpc.nuts.io.NutsPath;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.NutsWorkspaceCommandBase;
 
-import java.io.ByteArrayInputStream;
 import java.io.File;
-import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
-import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -34,14 +29,15 @@ public abstract class AbstractNutsDeployCommand extends NutsWorkspaceCommandBase
     protected List<String> parseOptions;
     protected final List<NutsId> ids = new ArrayList<>();
 
-    protected static class Result{
+    protected static class Result {
         NutsString source;
         String repository;
         NutsId id;
-        public Result(NutsId nid, String repository,NutsString source) {
-            this.id=nid.getLongId();
-            this.source=source;
-            this.repository=repository;
+
+        public Result(NutsId nid, String repository, NutsString source) {
+            this.id = nid.getLongId();
+            this.source = source;
+            this.repository = repository;
         }
     }
 
@@ -66,7 +62,7 @@ public abstract class AbstractNutsDeployCommand extends NutsWorkspaceCommandBase
     @Override
     public NutsDeployCommand setContent(InputStream stream) {
         checkSession();
-        content = stream==null?null: NutsIO.of(session).createInputSource(stream);
+        content = stream == null ? null : NutsIO.of(session).createInputSource(stream);
         return this;
     }
 
@@ -78,20 +74,20 @@ public abstract class AbstractNutsDeployCommand extends NutsWorkspaceCommandBase
 
     @Override
     public NutsDeployCommand setContent(byte[] content) {
-        this.content = content ==null?null: NutsIO.of(session).createInputSource(content);
+        this.content = content == null ? null : NutsIO.of(session).createInputSource(content);
         return this;
     }
 
     @Override
     public NutsDeployCommand setContent(File file) {
-        content = file==null?null: NutsPath.of(file,getSession());
+        content = file == null ? null : NutsPath.of(file, getSession());
         invalidateResult();
         return this;
     }
 
     @Override
     public NutsDeployCommand setContent(Path file) {
-        content = file==null?null: NutsPath.of(file,getSession());
+        content = file == null ? null : NutsPath.of(file, getSession());
         invalidateResult();
         return this;
     }
@@ -153,13 +149,13 @@ public abstract class AbstractNutsDeployCommand extends NutsWorkspaceCommandBase
 
     @Override
     public NutsDeployCommand setContent(NutsInputSource content) {
-        this.content=content;
+        this.content = content;
         return this;
     }
 
     @Override
     public NutsDeployCommand setContent(URL url) {
-        content = url==null?null: NutsPath.of(url,getSession());
+        content = url == null ? null : NutsPath.of(url, getSession());
         invalidateResult();
         return this;
     }
@@ -221,7 +217,7 @@ public abstract class AbstractNutsDeployCommand extends NutsWorkspaceCommandBase
         if (result == null) {
             run();
         }
-        return result.stream().map(x->x.id).collect(Collectors.toList());
+        return result.stream().map(x -> x.id).collect(Collectors.toList());
     }
 
     @Override
@@ -229,13 +225,13 @@ public abstract class AbstractNutsDeployCommand extends NutsWorkspaceCommandBase
         result = null;
     }
 
-    protected void addResult(NutsId nid,String repository,NutsString source) {
+    protected void addResult(NutsId nid, String repository, NutsString source) {
         checkSession();
         if (result == null) {
             result = new ArrayList<>();
         }
         checkSession();
-        result.add(new Result(nid,repository,source));
+        result.add(new Result(nid, repository, source));
 //        if (getSession().isPlainTrace()) {
 //            getSession().getTerminal().out().resetLine().printf("Nuts %s deployed successfully to %s%n",
 //                    nid,
@@ -247,7 +243,6 @@ public abstract class AbstractNutsDeployCommand extends NutsWorkspaceCommandBase
     @Override
     public NutsDeployCommand addIds(String... values) {
         checkSession();
-        NutsWorkspace ws = getSession().getWorkspace();
         if (values != null) {
             for (String s : values) {
                 if (!NutsBlankable.isBlank(s)) {
@@ -319,70 +314,38 @@ public abstract class AbstractNutsDeployCommand extends NutsWorkspaceCommandBase
         if (a == null) {
             return false;
         }
-        boolean enabled = a.isActive();
-        switch(a.getStringKey().orElse("")) {
+        switch (a.key()) {
             case "-d":
             case "--desc": {
-                String val = cmdLine.nextStringValueLiteral().get(session);
-                if (enabled) {
-                    setDescriptor(val);
-                }
+                cmdLine.withNextString((v, r, s) -> setDescriptor(v), session);
                 return true;
             }
             case "-s":
             case "--source":
             case "--from": {
-                String val = cmdLine.nextStringValueLiteral().get(session);
-                if (enabled) {
-                    from(val);
-                }
+                cmdLine.withNextString((v, r, s) -> from(v), session);
                 return true;
             }
             case "-r":
             case "--target":
             case "--to": {
-                String val = cmdLine.nextStringValueLiteral().get(session);
-                if (enabled) {
-                    to(val);
-                }
+                cmdLine.withNextString((v, r, s) -> to(v), session);
                 return true;
             }
             case "--desc-sha1": {
-                String val = cmdLine.nextStringValueLiteral().get(session);
-                if (enabled) {
-                    this.setDescSha1(val);
-                }
+                cmdLine.withNextString((v, r, s) -> setDescSha1(v), session);
                 return true;
             }
             case "--desc-sha1-file": {
-                try {
-                    String val = cmdLine.nextStringValueLiteral().get(session);
-                    if (enabled) {
-                        this.setDescSha1(new String(Files.readAllBytes(Paths.get(val))));
-                    }
-                } catch (IOException ex) {
-                    checkSession();
-                    throw new NutsIOException(getSession(), ex);
-                }
+                cmdLine.withNextString((v, r, s) -> this.setDescSha1(NutsPath.of(v, getSession()).readString()), session);
                 return true;
             }
             case "--sha1": {
-                String val = cmdLine.nextStringValueLiteral().get(session);
-                if (enabled) {
-                    this.setSha1(val);
-                }
+                cmdLine.withNextString((v, r, s) -> this.setSha1(v), session);
                 return true;
             }
             case "--sha1-file": {
-                try {
-                    String val = cmdLine.nextStringValueLiteral().get(session);
-                    if (enabled) {
-                        this.setSha1(new String(Files.readAllBytes(Paths.get(val))));
-                    }
-                } catch (IOException ex) {
-                    checkSession();
-                    throw new NutsIOException(getSession(), ex);
-                }
+                cmdLine.withNextString((v, r, s) -> this.setSha1(NutsPath.of(v, getSession()).readString()), session);
                 return true;
             }
             default: {
@@ -395,7 +358,7 @@ public abstract class AbstractNutsDeployCommand extends NutsWorkspaceCommandBase
                     cmdLine.skip();
                     String idOrPath = a.asString().get(session);
                     if (idOrPath.indexOf('/') >= 0 || idOrPath.indexOf('\\') >= 0) {
-                        setContent(NutsPath.of(idOrPath,session));
+                        setContent(NutsPath.of(idOrPath, session));
                     } else {
                         addId(idOrPath);
                     }

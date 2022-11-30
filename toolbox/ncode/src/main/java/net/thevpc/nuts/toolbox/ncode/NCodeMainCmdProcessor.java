@@ -24,25 +24,25 @@ class NCodeMainCmdProcessor implements NutsAppCmdProcessor {
     boolean caseInsensitive = false;
 
     @Override
-    public void onCmdInitParsing(NutsCommandLine commandline, NutsApplicationContext context) {
-        commandline.setExpandSimpleOptions(true);
+    public void onCmdInitParsing(NutsCommandLine commandLine, NutsApplicationContext context) {
+        commandLine.setExpandSimpleOptions(true);
     }
 
     @Override
-    public boolean onCmdNextOption(NutsArgument option, NutsCommandLine commandline, NutsApplicationContext context) {
+    public boolean onCmdNextOption(NutsArgument option, NutsCommandLine commandLine, NutsApplicationContext context) {
         NutsSession session = context.getSession();
         switch (option.getStringKey().get(session)) {
             case "-i": {
-                option = commandline.nextBoolean().get(session);
+                option = commandLine.nextBoolean().get(session);
                 caseInsensitive = option.getBooleanValue().get(session);
                 return true;
             }
             case "-t": {
-                typeComparators.add(comp(commandline.nextString().get(session).getStringValue().get(session)));
+                typeComparators.add(comp(commandLine.nextString().get(session).getStringValue().get(session)));
                 return true;
             }
             case "-f": {
-                fileComparators.add(comp(commandline.nextString().get(session).getStringValue().get(session)));
+                fileComparators.add(comp(commandLine.nextString().get(session).getStringValue().get(session)));
                 return true;
             }
         }
@@ -69,20 +69,20 @@ class NCodeMainCmdProcessor implements NutsAppCmdProcessor {
     }
 
     @Override
-    public boolean onCmdNextNonOption(NutsArgument nonOption, NutsCommandLine commandline, NutsApplicationContext context) {
+    public boolean onCmdNextNonOption(NutsArgument nonOption, NutsCommandLine commandLine, NutsApplicationContext context) {
         NutsSession session = context.getSession();
-        paths.add(commandline.next().flatMap(NutsValue::asString).get(session));
+        paths.add(commandLine.next().flatMap(NutsValue::asString).get(session));
         return true;
     }
 
     @Override
-    public void onCmdExec(NutsCommandLine commandline, NutsApplicationContext context) {
+    public void onCmdExec(NutsCommandLine commandLine, NutsApplicationContext context) {
         NutsSession session = context.getSession();
         if (paths.isEmpty()) {
             paths.add(".");
         }
         if(typeComparators.isEmpty() && fileComparators.isEmpty()){
-            commandline.throwError(NutsMessage.ofPlain("missing filter"),session);
+            commandLine.throwError(NutsMessage.ofPlain("missing filter"),session);
         }
         List<Object> results=new ArrayList<>();
         if(!typeComparators.isEmpty()) {

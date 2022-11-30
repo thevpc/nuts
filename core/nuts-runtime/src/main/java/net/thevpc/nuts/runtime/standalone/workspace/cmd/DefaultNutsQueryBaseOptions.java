@@ -274,36 +274,22 @@ public abstract class DefaultNutsQueryBaseOptions<T extends NutsWorkspaceCommand
         if (a == null) {
             return false;
         }
-        boolean enabled = a.isActive();
-        switch(a.getStringKey().orElse("")) {
+        switch(a.key()) {
             case "--failfast": {
-                boolean val = cmdLine.nextBooleanValueLiteral().get(session);
-                if (enabled) {
-                    this.setFailFast(val);
-                }
+                cmdLine.withNextBoolean((v,r,s)->this.setFailFast(v),session);
                 return true;
             }
             case "-r":
             case "--repository": {
-                String val = cmdLine.nextStringValueLiteral().get(session);
-                if (enabled) {
-                    addRepositoryFilter(NutsRepositoryFilters.of(getSession()).byName(val));
-                }
+                cmdLine.withNextString((v,r,s)->addRepositoryFilter(NutsRepositoryFilters.of(getSession()).byName(v)),session);
                 return true;
             }
             case "--dependencies": {
-                boolean val = cmdLine.nextBooleanValueLiteral().get(session);
-                if (enabled) {
-                    this.setDependencies(val);
-                }
+                cmdLine.withNextBoolean((v,r,s)->this.setDependencies(v),session);
                 return true;
             }
             case "--scope": {
-                String s = cmdLine.nextStringValueLiteral().get(session);
-                if (enabled) {
-                    NutsDependencyScopePattern p = NutsDependencyScopePattern.parse(s).orElse(NutsDependencyScopePattern.API);
-                    this.addScope(p);
-                }
+                cmdLine.withNextString((v,r,s)->this.addScope(NutsDependencyScopePattern.parse(v).orElse(NutsDependencyScopePattern.API)),session);
                 return true;
             }
 
@@ -315,33 +301,21 @@ public abstract class DefaultNutsQueryBaseOptions<T extends NutsWorkspaceCommand
 //                return true;
 //            }
             case "--optional": {
-                NutsArgument v = cmdLine.nextString().get(session);
-                if (enabled) {
-                    this.setOptional(
-                            NutsValue.of(v.asString().get(session)).asBoolean()
-                            .orNull());
-                }
+                cmdLine.withNextValue((v,r,s)->this.setOptional(
+                        NutsValue.of(v.asString().get(session)).asBoolean()
+                                .orNull()),session);
                 return true;
             }
             case "--effective": {
-                boolean val = cmdLine.nextBooleanValueLiteral().get(session);
-                if (enabled) {
-                    this.setEffective(val);
-                }
+                cmdLine.withNextBoolean((v,r,s)->this.setEffective(v),session);
                 return true;
             }
             case "--content": {
-                boolean val = cmdLine.nextBooleanValueLiteral().get(session);
-                if (enabled) {
-                    this.setContent(val);
-                }
+                cmdLine.withNextBoolean((v,r,s)->this.setContent(v),session);
                 return true;
             }
             case "--location": {
-                String location = cmdLine.nextStringValueLiteral().get(session);
-                if (enabled) {
-                    this.setLocation(NutsBlankable.isBlank(location) ? null : Paths.get(location));
-                }
+                cmdLine.withNextString((v,r,s)->this.setLocation(NutsBlankable.isBlank(v) ? null : Paths.get(v)),session);
                 return true;
             }
         }

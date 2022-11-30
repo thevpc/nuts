@@ -75,7 +75,7 @@ public class DefaultNutsApplicationContext implements NutsApplicationContext {
                     args.get(0).substring(args.get(0).indexOf('=') + 1)).get(session);
             if (execModeCommand.hasNext()) {
                 NutsArgument a = execModeCommand.next().get(session);
-                switch (a.getStringKey().orElse("")) {
+                switch (a.key()) {
                     case "auto-complete": {
                         mode = NutsApplicationMode.AUTO_COMPLETE;
                         if (execModeCommand.hasNext()) {
@@ -447,7 +447,7 @@ public class DefaultNutsApplicationContext implements NutsApplicationContext {
             return false;
         }
         boolean enabled = a.isActive();
-        switch (a.getStringKey().orElse("")) {
+        switch (a.key()) {
             case "-?":
             case "-h":
             case "--help": {

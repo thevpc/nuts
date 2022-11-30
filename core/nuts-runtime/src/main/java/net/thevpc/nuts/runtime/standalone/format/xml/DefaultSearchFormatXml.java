@@ -105,20 +105,13 @@ public class DefaultSearchFormatXml extends DefaultSearchFormatBase {
         if (getDisplayOptions().configureFirst(cmd)) {
             return true;
         }
-        boolean enabled = a.isActive();
-        switch(a.getStringKey().orElse("")) {
+        switch(a.key()) {
             case "--compact": {
-                boolean val = cmd.nextBooleanValueLiteral().get(session);
-                if (enabled) {
-                    this.compact = val;
-                }
+                cmd.withNextBoolean((v,r,s)->compact=v,session);
                 return true;
             }
             case "--root-name": {
-                String val = cmd.nextStringValueLiteral().get(session);
-                if (enabled) {
-                    this.rootName = val;
-                }
+                cmd.withNextString((v,r,s)->rootName=v,session);
                 return true;
             }
         }

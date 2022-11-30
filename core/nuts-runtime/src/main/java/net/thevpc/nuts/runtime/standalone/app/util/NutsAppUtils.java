@@ -11,7 +11,7 @@ public class NutsAppUtils {
             while (cmdLine.hasNext()) {
                 NutsArgument a = cmdLine.peek().get(session);
                 if (a.isOption()) {
-                    switch(a.getStringKey().orElse("")) {
+                    switch(a.key()) {
                         case "--help": {
                             cmdLine.skip();
                             break;

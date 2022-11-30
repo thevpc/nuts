@@ -10,7 +10,7 @@
  * other 'things' . Its based on an extensible architecture to help supporting a
  * large range of sub managers / repositories.
  * <br>
- *
+ * <p>
  * Copyright [2020] [thevpc] Licensed under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -35,7 +35,6 @@ import java.util.Collection;
 import java.util.List;
 
 /**
- *
  * @author thevpc
  */
 public abstract class AbstractDefaultNutsPushCommand extends NutsWorkspaceCommandBase<NutsPushCommand> implements NutsPushCommand {
@@ -260,41 +259,33 @@ public abstract class AbstractDefaultNutsPushCommand extends NutsWorkspaceComman
         if (a == null) {
             return false;
         }
-        boolean enabled = a.isActive();
-        switch(a.getStringKey().orElse("")) {
+        switch (a.key()) {
             case "-o":
             case "--offline": {
-                boolean val = cmdLine.nextBooleanValueLiteral().get(session);
-                if (enabled) {
-                    setOffline(val);
-                }
+                cmdLine.withNextBoolean((v, r, s) -> setOffline(v), session);
                 return true;
             }
             case "-x":
             case "--freeze": {
-                for (String id : cmdLine.nextStringValueLiteral().get(session).split(",")) {
-                    if (enabled) {
+                cmdLine.withNextString((v, r, s) -> {
+                    for (String id : v.split(",")) {
                         addLockedId(id);
                     }
-                }
+                }, session);
                 return true;
             }
             case "-r":
             case "-repository":
             case "--from": {
-                String val = cmdLine.nextStringValueLiteral().get(session);
-                if (enabled) {
-                    setRepository(val);
-                }
+                cmdLine.withNextString((v, r, s) -> setRepository(v), session);
                 return true;
             }
             case "-g":
             case "--args": {
-                cmdLine.skip();
-                if (enabled) {
+                cmdLine.withNextTrue((v, r, s) -> {
                     this.addArgs(cmdLine.toStringArray());
-                }
-                cmdLine.skipAll();
+                    cmdLine.skipAll();
+                }, session);
                 return true;
             }
             default: {

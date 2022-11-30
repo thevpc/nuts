@@ -10,6 +10,7 @@ import net.thevpc.nuts.text.NutsTexts;
 import net.thevpc.nuts.toolbox.njob.model.NProject;
 import net.thevpc.nuts.toolbox.njob.time.TimeParser;
 import net.thevpc.nuts.toolbox.njob.time.WeekDay;
+import net.thevpc.nuts.util.NutsRef;
 
 import java.time.Instant;
 import java.time.LocalDateTime;
@@ -38,35 +39,64 @@ public class NProjectsSubCmd {
 
     public void runProjectAdd(NutsCommandLine cmd) {
         NProject t = new NProject();
-        boolean list = false;
-        boolean show = false;
+        NutsRef<Boolean> list = NutsRef.of(false);
+        NutsRef<Boolean> show = NutsRef.of(false);
         while (cmd.hasNext()) {
-            NutsArgument a = cmd.peek().get(session);
-            String string = a.getKey().asString().get(session);
-            if (string.equals("--list") || string.equals("-l")) {
-                list = cmd.nextBooleanValueLiteral().get(session);
-            } else if (string.equals("--show") || string.equals("-s")) {
-                show = cmd.nextBooleanValueLiteral().get(session);
-            } else if (string.equals("-t") || string.equals("--start") || string.equals("--on")) {
-                t.setStartTime(new TimeParser().parseInstant(cmd.nextStringValueLiteral().get(session), false));
-            } else if (string.equals("--at")) {
-                t.setStartTime(new TimeParser().setTimeOnly(true).parseInstant(cmd.nextStringValueLiteral().get(session), false));
-            } else if (string.equals("-b") || string.equals("--beneficiary") || string.equals("--for")) {
-                t.setBeneficiary(cmd.nextStringValueLiteral().get(session));
-            } else if (string.equals("-c") || string.equals("--company") || string.equals("--via")) {
-                t.setCompany(cmd.nextStringValueLiteral().get(session));
-            } else if (string.equals("-1") || string.equals("--day1")) {
-                t.setStartWeekDay(WeekDay.parse(cmd.nextStringValueLiteral().get(session)));
-            } else if (string.equals("-o") || string.equals("--obs")) {
-                t.setObservations(cmd.nextStringValueLiteral().get(session));
-            } else if (a.isNonOption()) {
-                if (t.getName() == null) {
-                    t.setName(cmd.next().get(session).toString());
-                } else {
-                    cmd.throwUnexpectedArgument(session);
+            NutsArgument aa = cmd.peek().get(session);
+            switch (aa.key()) {
+                case "--list":
+                case "-l": {
+                    cmd.withNextBoolean((v, a, s) -> list.set(v), session);
+                    break;
                 }
-            } else {
-                cmd.throwUnexpectedArgument(session);
+                case "--show":
+                case "-s": {
+                    cmd.withNextBoolean((v, a, s) -> show.set(v), session);
+                    break;
+                }
+                case "-t":
+                case "--start":
+                case "--on": {
+                    cmd.withNextString((v, a, s) -> t.setStartTime(new TimeParser().parseInstant(v, false)), session);
+                    break;
+                }
+                case "--at": {
+                    cmd.withNextString((v, a, s) -> t.setStartTime(new TimeParser().setTimeOnly(true).parseInstant(v, false)), session);
+                    break;
+                }
+                case "-b":
+                case "--beneficiary":
+                case "--for": {
+                    cmd.withNextString((v, a, s) -> t.setBeneficiary(v), session);
+                    break;
+                }
+                case "-c":
+                case "--company":
+                case "--via": {
+                    cmd.withNextString((v, a, s) -> t.setCompany(v), session);
+                    break;
+                }
+                case "-1":
+                case "--day1": {
+                    cmd.withNextString((v, a, s) -> t.setStartWeekDay(WeekDay.parse(v)), session);
+                    break;
+                }
+                case "-o":
+                case "--obs": {
+                    cmd.withNextString((v, a, s) -> t.setObservations(v), session);
+                    break;
+                }
+                default: {
+                    if (aa.isNonOption()) {
+                        if (t.getName() == null) {
+                            t.setName(cmd.next().get(session).toString());
+                        } else {
+                            cmd.throwUnexpectedArgument(session);
+                        }
+                    } else {
+                        cmd.throwUnexpectedArgument(session);
+                    }
+                }
             }
         }
         if (cmd.isExecMode()) {
@@ -77,119 +107,116 @@ public class NProjectsSubCmd {
                         t.getName()
                 );
             }
-            if (show) {
+            if (show.get()) {
                 runProjectShow(NutsCommandLine.of(new String[]{t.getId()}));
             }
-            if (list) {
+            if (list.get()) {
                 runProjectList(NutsCommandLine.of(new String[0]));
             }
         }
     }
 
     public void runProjectUpdate(NutsCommandLine cmd) {
-        List<NProject> projects = new ArrayList<>();
-        boolean list = false;
-        boolean show = false;
-        String mergeTo = null;
-        List<Consumer<NProject>> runLater = new ArrayList<>();
+        class Data {
+            List<NProject> projects = new ArrayList<>();
+            boolean list = false;
+            boolean show = false;
+            String mergeTo = null;
+            List<Consumer<NProject>> runLater = new ArrayList<>();
+        }
+        Data d = new Data();
         while (cmd.hasNext()) {
-            NutsArgument a = cmd.peek().get(session);
-            switch(a.getStringKey().orElse("")) {
+            NutsArgument aa = cmd.peek().get(session);
+            switch (aa.key()) {
                 case "-l":
                 case "--list": {
-                    list = cmd.nextBooleanValueLiteral().get(session);
+                    cmd.withNextBoolean((v, a, s) -> d.list = v, session);
                     break;
                 }
                 case "-s":
                 case "--show": {
-                    show = cmd.nextBooleanValueLiteral().get(session);
+                    cmd.withNextBoolean((v, a, s) -> d.show = v, session);
                     break;
                 }
                 case "--on":
                 case "--start": {
-                    Instant v = new TimeParser().parseInstant(cmd.nextStringValueLiteral().get(session), false);
-                    runLater.add(t -> t.setStartTime(v));
+                    cmd.withNextString((v, a, s) -> d.runLater.add(t -> t.setStartTime(new TimeParser().parseInstant(v, false))), session);
                     break;
                 }
                 case "--at": {
-                    Instant v = new TimeParser().setTimeOnly(true).parseInstant(cmd.nextStringValueLiteral().get(session), false);
-                    runLater.add(t -> t.setStartTime(v));
+                    cmd.withNextString((v, a, s) -> d.runLater.add(t -> t.setStartTime(new TimeParser().setTimeOnly(true).parseInstant(v, false))), session);
                     break;
                 }
                 case "--for":
                 case "--beneficiary":
                 case "-b": {
-                    String v = cmd.nextStringValueLiteral().get(session);
-                    runLater.add(t -> t.setBeneficiary(v));
+                    cmd.withNextString((v, a, s) -> d.runLater.add(t -> t.setBeneficiary(v)), session);
                     break;
                 }
                 case "--company":
                 case "--via":
                 case "-c": {
-                    String v = cmd.nextStringValueLiteral().get(session);
-                    runLater.add(t -> t.setCompany(v));
+                    cmd.withNextString((v, a, s) -> d.runLater.add(t -> t.setCompany(v)), session);
                     break;
                 }
                 case "--day1":
                 case "-1": {
-                    WeekDay v = WeekDay.parse(cmd.nextStringValueLiteral().get(session));
-                    runLater.add(t -> t.setStartWeekDay(v));
+                    cmd.withNextString((v, a, s) -> d.runLater.add(t -> t.setStartWeekDay(WeekDay.parse(v))), session);
                     break;
                 }
                 case "--obs":
                 case "-o": {
-                    String v = cmd.nextStringValueLiteral().get(session);
-                    runLater.add(t -> t.setObservations(v));
+                    cmd.withNextString((v, a, s) -> d.runLater.add(t -> t.setObservations(v)), session);
                     break;
                 }
                 case "--merge-to": {
-                    NutsArgument c = cmd.nextString().get(session);
-                    if (!c.isInactive()) {
-                        if (mergeTo != null) {
-                            cmd.pushBack(c, session);
+                    cmd.withNextString((v, a, s) -> {
+                        if (d.mergeTo != null) {
+                            cmd.pushBack(a, session);
                             cmd.throwUnexpectedArgument(session);
                         } else {
-                            mergeTo = c.getStringValue().get(session);
+                            d.mergeTo = v;
                         }
-                    }
+                    }, session);
                     break;
                 }
                 case "++obs":
                 case "+o": {
-                    String v = cmd.nextStringValueLiteral().get(session);
-                    runLater.add(t -> {
-                        String s = t.getObservations();
-                        if (s == null) {
-                            s = "";
-                        }
-                        s = s.trim();
-                        if (!s.isEmpty()) {
-                            s += "\n";
-                        }
-                        s += v;
-                        s = s.trim();
-                        t.setObservations(s);
-                    });
+                    cmd.withNextString((v, a, s) -> {
+                        d.runLater.add(t -> {
+                            String ss = t.getObservations();
+                            if (ss == null) {
+                                ss = "";
+                            }
+                            ss = ss.trim();
+                            if (!ss.isEmpty()) {
+                                ss += "\n";
+                            }
+                            ss += v;
+                            ss = ss.trim();
+                            t.setObservations(ss);
+                        });
+                    }, session);
                     break;
                 }
                 default: {
-                    if (a.isNonOption()) {
+                    if (aa.isNonOption()) {
                         String pid = cmd.next().get(session).toString();
                         NProject t = findProject(pid, cmd);
-                        projects.add(t);
+                        d.projects.add(t);
                     } else {
                         cmd.throwUnexpectedArgument(session);
                     }
                 }
             }
         }
-        if (projects.isEmpty()) {
+        if (d.projects.isEmpty()) {
             cmd.throwError(NutsMessage.ofNtf("project name expected"), session);
         }
         if (cmd.isExecMode()) {
             NutsTexts text = NutsTexts.of(context.getSession());
-            for (NProject project : projects) {
-                for (Consumer<NProject> c : runLater) {
+            for (NProject project : d.projects) {
+                for (Consumer<NProject> c : d.runLater) {
                     c.accept(project);
                 }
                 service.projects().updateProject(project);
@@ -200,67 +227,72 @@ public class NProjectsSubCmd {
                     );
                 }
             }
-            if (mergeTo != null) {
-                service.projects().mergeProjects(mergeTo, projects.stream().map(x -> x.getId()).toArray(String[]::new));
+            if (d.mergeTo != null) {
+                service.projects().mergeProjects(d.mergeTo, d.projects.stream().map(x -> x.getId()).toArray(String[]::new));
                 if (context.getSession().isPlainTrace()) {
                     context.getSession().out().printf("projects merged to %s.\n",
                             NutsTexts.of(context.getSession())
-                            .ofStyled(mergeTo, NutsTextStyle.primary5())
+                                    .ofStyled(d.mergeTo, NutsTextStyle.primary5())
                     );
                 }
             }
-            if (show) {
-                for (NProject t : new LinkedHashSet<>(projects)) {
+            if (d.show) {
+                for (NProject t : new LinkedHashSet<>(d.projects)) {
                     runProjectShow(NutsCommandLine.of(new String[]{t.getId()}));
                 }
             }
-            if (list) {
+            if (d.list) {
                 runProjectList(NutsCommandLine.of(new String[0]));
             }
         }
     }
 
     private void runProjectList(NutsCommandLine cmd) {
-        Predicate<NProject> whereFilter = null;
+        final NutsRef<Predicate<NProject>> whereFilter = NutsRef.ofNull();
         while (cmd.hasNext()) {
-            NutsArgument a = cmd.peek().get(session);
-            switch(a.getStringKey().orElse("")) {
+            NutsArgument aa = cmd.peek().get(session);
+            switch (aa.key()) {
                 case "-b":
                 case "-beneficiary": {
-                    String s = cmd.nextStringValueLiteral().get(session);
-                    Predicate<String> sp = parent.createStringFilter(s);
-                    Predicate<NProject> t = x -> sp.test(x.getBeneficiary());
-                    whereFilter = parent.appendPredicate(whereFilter, t);
+                    cmd.withNextString((v, a, s) -> {
+                        Predicate<String> sp = parent.createStringFilter(v);
+                        Predicate<NProject> t = x -> sp.test(x.getBeneficiary());
+                        parent.appendPredicateRef(whereFilter, t);
+                    }, session);
                     break;
                 }
                 case "-c":
                 case "-company": {
-                    String s = cmd.nextStringValueLiteral().get(session);
-                    Predicate<String> sp = parent.createStringFilter(s);
-                    Predicate<NProject> t = x -> sp.test(x.getCompany());
-                    whereFilter = parent.appendPredicate(whereFilter, t);
+                    cmd.withNextString((v, a, s) -> {
+                        Predicate<String> sp = parent.createStringFilter(v);
+                        Predicate<NProject> t = x -> sp.test(x.getCompany());
+                        parent.appendPredicateRef(whereFilter, t);
+                    }, session);
                     break;
                 }
                 case "-n":
                 case "--name": {
-                    String s = cmd.nextStringValueLiteral().get(session);
-                    Predicate<String> sp = parent.createStringFilter(s);
-                    Predicate<NProject> t = x -> sp.test(x.getName());
-                    whereFilter = parent.appendPredicate(whereFilter, t);
+                    cmd.withNextString((v, a, s) -> {
+                        Predicate<String> sp = parent.createStringFilter(v);
+                        Predicate<NProject> t = x -> sp.test(x.getName());
+                        parent.appendPredicateRef(whereFilter, t);
+                    }, session);
                     break;
                 }
                 case "--unused": {
-                    boolean unused = cmd.nextBooleanValueLiteral().get(session);
-                    Predicate<NProject> t = x -> service.projects().isUsedProject(x.getId()) != unused;
-                    whereFilter = parent.appendPredicate(whereFilter, t);
+                    cmd.withNextBoolean((v, a, s) -> {
+                        Predicate<NProject> t = x -> service.projects().isUsedProject(x.getId()) != v;
+                        parent.appendPredicateRef(whereFilter, t);
+                    }, session);
                     break;
                 }
                 case "-t":
                 case "--startTime":
                 case "--start-time": {
-                    String s = cmd.nextStringValueLiteral().get(session);
-                    Predicate<Instant> t = new TimeParser().parseInstantFilter(s, false);
-                    whereFilter = parent.appendPredicate(whereFilter, x -> t.test(x.getStartTime()));
+                    cmd.withNextString((v, a, s) -> {
+                        Predicate<Instant> t = new TimeParser().parseInstantFilter(v, false);
+                        parent.appendPredicateRef(whereFilter, x -> t.test(x.getStartTime()));
+                    }, session);
                     break;
                 }
                 default: {
@@ -271,18 +303,18 @@ public class NProjectsSubCmd {
         if (cmd.isExecMode()) {
 
             Stream<NProject> r
-                    = service.projects().findProjects().filter(whereFilter == null ? x -> true : whereFilter)
-                            .sorted(
-                                    (x, y) -> {
-                                        Instant s1 = x.getStartTime();
-                                        Instant s2 = y.getStartTime();
-                                        int v = s2.compareTo(s1);
-                                        if (v != 0) {
-                                            return v;
-                                        }
-                                        return x.getName().compareTo(y.getName());
-                                    }
-                            );
+                    = service.projects().findProjects().filter(whereFilter.isNull() ? x -> true : whereFilter.get())
+                    .sorted(
+                            (x, y) -> {
+                                Instant s1 = x.getStartTime();
+                                Instant s2 = y.getStartTime();
+                                int v = s2.compareTo(s1);
+                                if (v != 0) {
+                                    return v;
+                                }
+                                return x.getName().compareTo(y.getName());
+                            }
+                    );
 
             if (context.getSession().isPlainTrace()) {
                 NutsMutableTableModel m = NutsMutableTableModel.of(session);

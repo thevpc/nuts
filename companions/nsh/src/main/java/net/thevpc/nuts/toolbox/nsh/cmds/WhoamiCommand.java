@@ -51,7 +51,7 @@ public class WhoamiCommand extends SimpleJShellBuiltin {
     protected boolean configureFirst(NutsCommandLine commandLine, JShellExecutionContext context) {
         Options config = context.getOptions();
         NutsSession session = context.getSession();
-        switch (commandLine.peek().get(session).getKey().asString().get(session)) {
+        switch (commandLine.peek().get(session).key()) {
             case "--all":
             case "-a": {
                 config.argAll = true;

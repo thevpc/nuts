@@ -45,22 +45,18 @@ public class DefaultSearchFormatJson extends DefaultSearchFormatBase {
     }
 
     @Override
-    public boolean configureFirst(NutsCommandLine cmd) {
+    public boolean configureFirst(NutsCommandLine commandLine) {
         NutsSession session = getSession();
-        NutsArgument a = cmd.peek().get(session);
-        if (a == null) {
+        NutsArgument aa = commandLine.peek().get(session);
+        if (aa == null) {
             return false;
         }
-        if (getDisplayOptions().configureFirst(cmd)) {
+        if (getDisplayOptions().configureFirst(commandLine)) {
             return true;
         }
-        boolean enabled = a.isActive();
-        switch(a.getStringKey().orElse("")) {
+        switch(aa.key()) {
             case "--compact": {
-                boolean val = cmd.nextBooleanValueLiteral().get(session);
-                if (enabled) {
-                    this.compact = val;
-                }
+                commandLine.withNextBoolean((v, a, s) -> this.compact=v,session);
                 return true;
             }
         }

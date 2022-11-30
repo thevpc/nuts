@@ -111,7 +111,7 @@ public abstract class NutsRepositoryCommandBase<T extends NutsRepositoryCommand>
         if (a == null) {
             return false;
         }
-//        switch(a.getStringKey().orElse("")) {
+//        switch(a.key()) {
 //        }
 
         if (getSession().configureFirst(cmdLine)) {

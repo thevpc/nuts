@@ -45,8 +45,6 @@ public interface NutsWorkspaceCustomCommand {
 
     void exec(String[] args, NutsCommandExecOptions options, NutsSession session) throws NutsExecutionException;
 
-    void dryExec(String[] args, NutsCommandExecOptions options, NutsSession session) throws NutsExecutionException;
-
     NutsText getHelpText(NutsSession session) throws NutsExecutionException;
 
     List<String> getCommand();

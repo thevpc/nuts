@@ -449,25 +449,26 @@ public class ProcessExecHelper extends AbstractSyncIProcessExecHelper {
         throw new NutsIllegalArgumentException(session, NutsMessage.ofPlain("cannot run as admin/root on unknown system OS family"));
     }
 
-    public void dryExec() {
-        if (out.getTerminalMode() == NutsTerminalMode.FORMATTED) {
-            out.print("[dry] ==[exec]== ");
-            out.println(pb.getFormattedCommandString(getSession()));
-        } else {
-            out.print("[dry] exec ");
-            out.printf("%s%n", pb.getCommandString());
-        }
-    }
-
     public int exec() {
-        try {
-            if (out != null) {
-                out.resetLine();//.run(NutsTerminalCommand.MOVE_LINE_START);
+        if(getSession().isDry()){
+            if (out.getTerminalMode() == NutsTerminalMode.FORMATTED) {
+                out.print("[dry] ==[exec]== ");
+                out.println(pb.getFormattedCommandString(getSession()));
+            } else {
+                out.print("[dry] exec ");
+                out.printf("%s%n", pb.getCommandString());
             }
-            ProcessBuilder2 p = pb.start();
-            return waitResult(p);
-        } catch (IOException ex) {
-            throw new NutsIOException(getSession(), ex);
+            return 0;
+        }else {
+            try {
+                if (out != null) {
+                    out.resetLine();//.run(NutsTerminalCommand.MOVE_LINE_START);
+                }
+                ProcessBuilder2 p = pb.start();
+                return waitResult(p);
+            } catch (IOException ex) {
+                throw new NutsIOException(getSession(), ex);
+            }
         }
     }
 

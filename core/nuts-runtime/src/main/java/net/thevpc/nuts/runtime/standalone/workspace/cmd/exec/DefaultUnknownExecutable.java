@@ -28,12 +28,11 @@ public class DefaultUnknownExecutable extends AbstractNutsExecutableCommand {
 
     @Override
     public void execute() {
-        throw new NutsExecutionException(execSession, NutsMessage.ofCstyle("cannot execute an unknown command : %s", name), 1);
-    }
-
-    @Override
-    public void dryExecute() {
-        throw new NutsExecutionException(execSession, NutsMessage.ofCstyle("cannot execute an unknown command : %s", name), 1);
+        if(execSession.isDry()){
+            throw new NutsExecutionException(execSession, NutsMessage.ofCstyle("cannot execute an unknown command : %s", name), 1);
+        }else {
+            throw new NutsExecutionException(execSession, NutsMessage.ofCstyle("cannot execute an unknown command : %s", name), 1);
+        }
     }
 
     @Override

@@ -32,6 +32,7 @@ import net.thevpc.nuts.spi.NutsComponentScope;
 import net.thevpc.nuts.spi.NutsComponentScopeType;
 import net.thevpc.nuts.toolbox.nsh.SimpleJShellBuiltin;
 import net.thevpc.nuts.toolbox.nsh.jshell.JShellExecutionContext;
+import net.thevpc.nuts.util.NutsStringUtils;
 
 import java.util.Arrays;
 import java.util.HashSet;
@@ -51,10 +52,10 @@ public class UnaliasCommand extends SimpleJShellBuiltin {
     protected boolean configureFirst(NutsCommandLine commandLine, JShellExecutionContext context) {
         Options options = context.getOptions();
         NutsSession session = context.getSession();
-        NutsArgument a = commandLine.peek().get(session);
-        if (a.isOption()) {
-            if (a.getKey().asString().get(session).equals("-a")) {
-                options.all = commandLine.nextBooleanValueLiteral().get(session);
+        NutsArgument aa = commandLine.peek().get(session);
+        if (aa.isOption()) {
+            if (aa.getKey().asString().get(session).equals("-a")) {
+                commandLine.withNextBoolean((v, a, s) -> options.all= v,session);
                 return true;
             }
         } else {

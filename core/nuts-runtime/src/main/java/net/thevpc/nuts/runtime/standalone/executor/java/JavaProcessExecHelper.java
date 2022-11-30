@@ -41,29 +41,28 @@ class JavaProcessExecHelper extends AbstractSyncIProcessExecHelper {
     }
 
     @Override
-    public void dryExec() {
-        NutsPrintStream out = execSession.out();
-        out.println("[dry] ==[nuts-exec]== ");
-        for (int i = 0; i < xargs.size(); i++) {
-            NutsString xarg = xargs.get(i);
+    public int exec() {
+        if (execSession.isDry()) {
+            NutsPrintStream out = execSession.out();
+            out.println("[dry] ==[nuts-exec]== ");
+            for (int i = 0; i < xargs.size(); i++) {
+                NutsString xarg = xargs.get(i);
 //                if (i > 0 && xargs.get(i - 1).equals("--nuts-path")) {
 //                    for (String s : xarg.split(";")) {
 //                        out.println("\t\t\t " + s);
 //                    }
 //                } else {
-            out.println("\t\t " + xarg);
+                out.println("\t\t " + xarg);
 //                }
+            }
+            String directory = NutsBlankable.isBlank(joptions.getDir()) ? null : NutsPath.of(joptions.getDir(), ws)
+                    .toAbsolute().toString();
+            ProcessExecHelper.ofDefinition(def,
+                    args.toArray(new String[0]), osEnv, directory, executionContext.getExecutorProperties(), joptions.isShowCommand(), true, executionContext.getSleepMillis(), executionContext.isInheritSystemIO(), false, NutsBlankable.isBlank(executionContext.getRedirectOutputFile()) ? null : new File(executionContext.getRedirectOutputFile()), NutsBlankable.isBlank(executionContext.getRedirectInputFile()) ? null : new File(executionContext.getRedirectInputFile()), executionContext.getRunAs(), executionContext.getSession(),
+                    execSession
+            ).exec();
+            return 0;
         }
-        String directory = NutsBlankable.isBlank(joptions.getDir()) ? null : NutsPath.of(joptions.getDir(), ws)
-                .toAbsolute().toString();
-        ProcessExecHelper.ofDefinition(def,
-                args.toArray(new String[0]), osEnv, directory, executionContext.getExecutorProperties(), joptions.isShowCommand(), true, executionContext.getSleepMillis(), executionContext.isInheritSystemIO(), false, NutsBlankable.isBlank(executionContext.getRedirectOutputFile()) ? null : new File(executionContext.getRedirectOutputFile()), NutsBlankable.isBlank(executionContext.getRedirectInputFile()) ? null : new File(executionContext.getRedirectInputFile()), executionContext.getRunAs(), executionContext.getSession(),
-                execSession
-        ).dryExec();
-    }
-
-    @Override
-    public int exec() {
         return preExec().exec();
     }
 

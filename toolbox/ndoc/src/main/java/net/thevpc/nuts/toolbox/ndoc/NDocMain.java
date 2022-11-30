@@ -25,27 +25,27 @@ public class NDocMain implements NutsApplication, NutsAppCmdProcessor {
     }
 
     @Override
-    public boolean onCmdNextOption(NutsArgument option, NutsCommandLine commandline, NutsApplicationContext context) {
+    public boolean onCmdNextOption(NutsArgument option, NutsCommandLine commandLine, NutsApplicationContext context) {
         NutsSession session = context.getSession();
         switch (option.getKey().asString().get(session)) {
             case "-s":
             case "--source": {
-                src.add(commandline.nextStringValueLiteral().get(session));
+                commandLine.withNextString((v, r, s) -> src.add(v), session);
                 return true;
             }
             case "-t":
             case "--target": {
-                target = commandline.nextStringValueLiteral().get(session);
+                commandLine.withNextString((v, r, s) -> target=v, session);
                 return true;
             }
             case "-p":
             case "--package": {
-                pck.add(commandline.nextStringValueLiteral().get(session));
+                commandLine.withNextString((v, r, s) -> pck.add(v), session);
                 return true;
             }
             case "-b":
             case "--backend": {
-                backend= commandline.nextStringValueLiteral().get(session);
+                commandLine.withNextString((v, r, s) -> backend=v, session);
                 return true;
             }
         }
@@ -53,12 +53,12 @@ public class NDocMain implements NutsApplication, NutsAppCmdProcessor {
     }
 
     @Override
-    public boolean onCmdNextNonOption(NutsArgument nonOption, NutsCommandLine commandline,NutsApplicationContext context) {
+    public boolean onCmdNextNonOption(NutsArgument nonOption, NutsCommandLine commandLine, NutsApplicationContext context) {
         return false;
     }
 
     @Override
-    public void onCmdExec(NutsCommandLine commandline, NutsApplicationContext context) {
+    public void onCmdExec(NutsCommandLine commandLine, NutsApplicationContext context) {
         if (src.isEmpty()) {
             src.add(".");
         }

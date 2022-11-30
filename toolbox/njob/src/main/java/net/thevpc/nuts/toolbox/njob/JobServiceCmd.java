@@ -11,6 +11,7 @@ import net.thevpc.nuts.text.NutsTextTransformConfig;
 import net.thevpc.nuts.text.NutsTexts;
 import net.thevpc.nuts.toolbox.njob.model.*;
 import net.thevpc.nuts.toolbox.njob.time.TimeFormatter;
+import net.thevpc.nuts.util.NutsRef;
 
 import java.io.InputStream;
 import java.time.Instant;
@@ -275,6 +276,10 @@ public class JobServiceCmd {
                 return getFlagString("\u260E", 5);
         }
         return NutsTexts.of(context.getSession()).ofPlain("[" + x.toString().toLowerCase() + "]");
+    }
+
+    protected <T> void appendPredicateRef(NutsRef<Predicate<T>> whereFilter, Predicate<T> t) {
+        whereFilter.set(appendPredicate(whereFilter.get(),t));
     }
 
     protected <T> Predicate<T> appendPredicate(Predicate<T> whereFilter, Predicate<T> t) {

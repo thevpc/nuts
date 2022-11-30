@@ -21,6 +21,10 @@ public class DefaultNutsReinstallInternalExecutable extends DefaultInternalNutsE
 
     @Override
     public void execute() {
+        if(getSession().isDry()){
+            dryExecute();
+            return;
+        }
         if (NutsAppUtils.processHelpOptions(args, getSession())) {
             showDefaultHelp();
             return;

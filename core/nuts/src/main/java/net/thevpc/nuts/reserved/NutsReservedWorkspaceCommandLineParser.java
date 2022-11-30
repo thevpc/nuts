@@ -1152,7 +1152,7 @@ public final class NutsReservedWorkspaceCommandLineParser {
 
     private static void parseLogLevel(NutsLogConfig logConfig, NutsCommandLine cmdLine, boolean enabled, NutsSession session) {
         NutsArgument a = cmdLine.peek().get(session);
-        switch (a.getStringKey().orElse("")) {
+        switch (a.key()) {
             case "--log-file-size": {
                 a = cmdLine.nextString().get(session);
                 String v = a.getStringValue().get(session);

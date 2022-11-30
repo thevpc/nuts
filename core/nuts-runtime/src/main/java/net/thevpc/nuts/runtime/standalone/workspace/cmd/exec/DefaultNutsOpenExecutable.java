@@ -42,16 +42,16 @@ public class DefaultNutsOpenExecutable extends AbstractNutsExecutableCommand {
         this.executorOptions = executorOptions == null ? new String[0] : executorOptions;
         this.session = session;
         this.execSession = execSession;
-        NutsCommandLine cmdLine = NutsCommandLine.of(this.executorOptions);
-        while (cmdLine.hasNext()) {
-            NutsArgument a = cmdLine.peek().get(session);
-            switch(a.getStringKey().orElse("")) {
+        NutsCommandLine commandLine = NutsCommandLine.of(this.executorOptions);
+        while (commandLine.hasNext()) {
+            NutsArgument aa = commandLine.peek().get(session);
+            switch (aa.key()) {
                 case "--show-command": {
-                    showCommand = cmdLine.nextBooleanValueLiteral().get(session);
+                    commandLine.withNextBoolean((v, a, s) -> this.showCommand = (v), session);
                     break;
                 }
                 default: {
-                    cmdLine.skip();
+                    commandLine.skip();
                 }
             }
         }
@@ -107,12 +107,7 @@ public class DefaultNutsOpenExecutable extends AbstractNutsExecutableCommand {
 
     @Override
     public void execute() {
-        resolveExecHelper().setDry(false).run();
-    }
-
-    @Override
-    public void dryExecute() {
-        resolveExecHelper().setDry(true).run();
+        resolveExecHelper().run();
     }
 
     @Override
@@ -122,7 +117,7 @@ public class DefaultNutsOpenExecutable extends AbstractNutsExecutableCommand {
                 return NutsTexts.of(session).ofStyled("No help available. Try " + getName() + " /help", NutsTextStyle.error());
             }
             default: {
-                return NutsTexts.of(session).ofStyled("No help available. Try 'man " + getName() + "' or '" + getName() + " --help'",NutsTextStyle.error());
+                return NutsTexts.of(session).ofStyled("No help available. Try 'man " + getName() + "' or '" + getName() + " --help'", NutsTextStyle.error());
             }
         }
     }

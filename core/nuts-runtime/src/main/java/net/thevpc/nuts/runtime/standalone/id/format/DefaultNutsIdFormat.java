@@ -309,54 +309,35 @@ public class DefaultNutsIdFormat extends DefaultFormatBase<NutsIdFormat> impleme
     }
 
     @Override
-    public boolean configureFirst(NutsCommandLine cmdLine) {
+    public boolean configureFirst(NutsCommandLine commandLine) {
         NutsSession session = getSession();
-        NutsArgument a = cmdLine.peek().get(session);
-        if (a == null) {
+        NutsArgument aa = commandLine.peek().get(session);
+        if (aa == null) {
             return false;
         }
-        boolean enabled = a.isActive();
-        switch(a.getStringKey().orElse("")) {
+        switch(aa.key()) {
             case "--omit-env": {
-                boolean val = cmdLine.nextBooleanValueLiteral().get(session);
-                if (enabled) {
-                    setOmitOtherProperties(val);
-                }
+                commandLine.withNextBoolean((v, a, s) -> this.setOmitOtherProperties(v), session);
                 return true;
             }
             case "--omit-face": {
-                boolean val = cmdLine.nextBooleanValueLiteral().get(session);
-                if (enabled) {
-                    setOmitFace(val);
-                }
+                commandLine.withNextBoolean((v, a, s) -> this.setOmitFace(v), session);
                 return true;
             }
             case "--omit-group": {
-                boolean val = cmdLine.nextBooleanValueLiteral().get(session);
-                if (enabled) {
-                    setOmitGroupId(val);
-                }
+                commandLine.withNextBoolean((v, a, s) -> this.setOmitGroupId(v), session);
                 return true;
             }
             case "--omit-imported-group": {
-                boolean val = cmdLine.nextBooleanValueLiteral().get(session);
-                if (enabled) {
-                    setOmitImportedGroupId(val);
-                }
+                commandLine.withNextBoolean((v, a, s) -> this.setOmitImportedGroupId(v), session);
                 return true;
             }
             case "--omit-repo": {
-                boolean val = cmdLine.nextBooleanValueLiteral().get(session);
-                if (enabled) {
-                    setOmitRepository(val);
-                }
+                commandLine.withNextBoolean((v, a, s) -> this.setOmitRepository(v), session);
                 return true;
             }
             case "--highlight-imported-group": {
-                boolean val = cmdLine.nextBooleanValueLiteral().get(session);
-                if (enabled) {
-                    setHighlightImportedGroupId(val);
-                }
+                commandLine.withNextBoolean((v, a, s) -> this.setHighlightImportedGroupId(v), session);
                 return true;
             }
         }

@@ -851,124 +851,76 @@ public abstract class AbstractNutsSearchCommand extends DefaultNutsQueryBaseOpti
         boolean enabled = a.isActive();
         switch (a.getKey().asString().get(session)) {
             case "--inline-dependencies": {
-                boolean val = cmdLine.nextBooleanValueLiteral().get(session);
-                if (enabled) {
-                    this.setInlineDependencies(val);
-                }
+                cmdLine.withNextBoolean((v, r, s) -> this.setInlineDependencies(v), session);
                 return true;
             }
             case "-L":
             case "--latest":
             case "--latest-versions": {
-                cmdLine.skip();
-                if (enabled) {
-                    this.setLatest(true);
-                }
+                cmdLine.withNextBoolean((v, r, s) -> this.setLatest(v), session);
                 return true;
             }
             case "--distinct": {
-                boolean val = cmdLine.nextBooleanValueLiteral().get(session);
-                if (enabled) {
-                    this.setDistinct(val);
-                }
+                cmdLine.withNextBoolean((v, r, s) -> this.setDistinct(v), session);
                 return true;
             }
             case "--default":
             case "--default-versions": {
-                Boolean val = cmdLine.nextBooleanValueLiteral().ifError(false).orElse(null);
-                if (enabled) {
-                    this.setDefaultVersions(val);
-                }
+                cmdLine.withNextOptionalBoolean((v, r, s) -> this.setDefaultVersions(v.ifError(false).orElse(null)), session);
                 return true;
             }
             case "--duplicates": {
-                boolean val = !cmdLine.nextBooleanValueLiteral().get(session);
-                if (enabled) {
-                    this.setDistinct(val);
-                }
+                cmdLine.withNextBoolean((v, r, s) -> this.setDistinct(!v), session);
                 return true;
             }
             case "-s":
             case "--sort": {
-                boolean val = cmdLine.nextBooleanValueLiteral().get(session);
-                if (enabled) {
-                    this.setSorted(val);
-                }
+                cmdLine.withNextBoolean((v, r, s) -> this.setSorted(v), session);
                 return true;
             }
             case "--base": {
-                boolean val = cmdLine.nextBooleanValueLiteral().get(session);
-                if (enabled) {
-                    this.includeBasePackage = val;
-                }
+                cmdLine.withNextBoolean((v, r, s) -> this.includeBasePackage=v, session);
                 return true;
             }
             case "--lib":
             case "--libs": {
-                boolean val = cmdLine.nextBooleanValueLiteral().get(session);
-                if (enabled) {
-                    this.setLib(val);
-                }
+                cmdLine.withNextBoolean((v, r, s) -> this.setLib(v), session);
                 return true;
             }
             case "--app":
             case "--apps": {
-                boolean val = cmdLine.nextBooleanValueLiteral().get(session);
-                if (enabled) {
-                    this.setExec(val);
-                }
+                cmdLine.withNextBoolean((v, r, s) -> this.setExec(v), session);
                 return true;
             }
             case "--companion":
             case "--companions": {
-                boolean val = cmdLine.nextBooleanValueLiteral().get(session);
-                if (enabled) {
-                    this.setCompanion(val);
-                }
+                cmdLine.withNextBoolean((v, r, s) -> this.setCompanion(v), session);
                 return true;
             }
             case "--extension":
             case "--extensions": {
-                boolean val = cmdLine.nextBooleanValueLiteral().get(session);
-                if (enabled) {
-                    this.setExtension(val);
-                }
+                cmdLine.withNextBoolean((v, r, s) -> this.setExtension(v), session);
                 return true;
             }
             case "--runtime": {
-                boolean val = cmdLine.nextBooleanValueLiteral().get(session);
-                if (enabled) {
-                    this.setRuntime(val);
-                }
+                cmdLine.withNextBoolean((v, r, s) -> this.setRuntime(v), session);
                 return true;
             }
             case "--api-version": {
-                String val = cmdLine.nextStringValueLiteral().get(session);
-                if (enabled) {
-                    this.setTargetApiVersion(NutsVersion.of(val).get( getSession()));
-                }
+                cmdLine.withNextString((v, r, s) -> this.setTargetApiVersion(NutsVersion.of(v).get( getSession())), session);
                 return true;
             }
             case "--nuts-app":
             case "--nuts-apps": {
-                boolean val = cmdLine.nextBooleanValueLiteral().get(session);
-                if (enabled) {
-                    this.setApplication(val);
-                }
+                cmdLine.withNextBoolean((v, r, s) -> this.setApplication(v), session);
                 return true;
             }
             case "--arch": {
-                String val = cmdLine.nextStringValueLiteral().get(session);
-                if (enabled) {
-                    this.addArch(val);
-                }
+                cmdLine.withNextString((v, r, s) -> this.addArch(v), session);
                 return true;
             }
             case "--packaging": {
-                String val = cmdLine.nextStringValueLiteral().get(session);
-                if (enabled) {
-                    this.addPackaging(val);
-                }
+                cmdLine.withNextString((v, r, s) -> this.addPackaging(v), session);
                 return true;
             }
             case "--optional": {
@@ -979,24 +931,15 @@ public abstract class AbstractNutsSearchCommand extends DefaultNutsQueryBaseOpti
                 return true;
             }
             case "--script": {
-                String val = cmdLine.nextStringValueLiteral().get(session);
-                if (enabled) {
-                    this.addScript(val);
-                }
+                cmdLine.withNextString((v, r, s) -> this.addScripts(v), session);
                 return true;
             }
             case "--id": {
-                String val = cmdLine.nextStringValueLiteral().get(session);
-                if (enabled) {
-                    this.addId(val);
-                }
+                cmdLine.withNextString((v, r, s) -> this.addId(v), session);
                 return true;
             }
             case "--locked-id": {
-                String val = cmdLine.nextStringValueLiteral().get(session);
-                if (enabled) {
-                    this.addLockedId(val);
-                }
+                cmdLine.withNextString((v, r, s) -> this.addLockedId(v), session);
                 return true;
             }
             case "--deployed": {

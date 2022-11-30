@@ -16,6 +16,7 @@ import net.thevpc.nuts.runtime.standalone.format.props.DefaultNutsPropertiesForm
 import net.thevpc.nuts.runtime.standalone.util.CoreStringUtils;
 import net.thevpc.nuts.spi.NutsSupportLevelContext;
 import net.thevpc.nuts.text.NutsTexts;
+import net.thevpc.nuts.util.NutsStringUtils;
 
 public class DefaultNutsTreeFormat extends DefaultFormatBase<NutsTreeFormat> implements NutsTreeFormat {
 
@@ -32,7 +33,7 @@ public class DefaultNutsTreeFormat extends DefaultFormatBase<NutsTreeFormat> imp
         }
     };
     private NutsTreeNodeFormat formatter;
-    private NutsTreeLinkFormat linkFormatter ;
+    private NutsTreeLinkFormat linkFormatter;
     private Object tree;
     private boolean omitRoot = false;
     private boolean infinite = false;
@@ -144,7 +145,7 @@ public class DefaultNutsTreeFormat extends DefaultFormatBase<NutsTreeFormat> imp
     @Override
     public String toString() {
         ByteArrayOutputStream b = new ByteArrayOutputStream();
-        NutsPrintStream out = NutsPrintStream.of(b,getSession());
+        NutsPrintStream out = NutsPrintStream.of(b, getSession());
         NutsTreeModel tree = getModel();
         print(tree, "", NutsPositionType.FIRST, tree.getRoot(), out, isEffectiveOmitRoot(), 0, false);
         out.flush();
@@ -160,9 +161,9 @@ public class DefaultNutsTreeFormat extends DefaultFormatBase<NutsTreeFormat> imp
 
     private boolean print(NutsTreeModel tree, String prefix, NutsPositionType type, Object o, NutsPrintStream out, boolean hideRoot, int depth, boolean prefixNewLine) {
         checkSession();
-        Object oValue=o;
-        if(oValue instanceof XNode){
-            oValue=((XNode) oValue).toNutsString();
+        Object oValue = o;
+        if (oValue instanceof XNode) {
+            oValue = ((XNode) oValue).toNutsString();
         }
         if (!hideRoot) {
             if (prefixNewLine) {
@@ -235,18 +236,17 @@ public class DefaultNutsTreeFormat extends DefaultFormatBase<NutsTreeFormat> imp
     }
 
     @Override
-    public boolean configureFirst(NutsCommandLine cmdLine) {
+    public boolean configureFirst(NutsCommandLine commandLine) {
         NutsSession session = getSession();
-        NutsArgument a = cmdLine.peek().orNull();
-        if (a == null) {
+        NutsArgument aa = commandLine.peek().orNull();
+        if (aa == null) {
             return false;
         }
-        boolean enabled = a.isActive();
-        switch(a.getStringKey().orElse("")) {
+        boolean enabled = aa.isActive();
+        switch (aa.key()) {
             case "--border": {
-                a = cmdLine.nextString("--border").get(session);
-                if (enabled) {
-                    switch (a.getValue().asString().orElse("")) {
+                commandLine.withNextString((v, a, s) -> {
+                    switch (NutsStringUtils.trim(v)) {
                         case "simple": {
                             setLinkFormat(LINK_ASCII_FORMATTER);
                             break;
@@ -256,25 +256,19 @@ public class DefaultNutsTreeFormat extends DefaultFormatBase<NutsTreeFormat> imp
                             break;
                         }
                     }
-                }
+                }, session);
                 return true;
             }
             case "--omit-root": {
-                boolean val = cmdLine.nextBooleanValueLiteral().get(session);
-                if (enabled) {
-                    setOmitRoot(val);
-                }
+                commandLine.withNextBoolean((v, a, s) -> setOmitRoot(v), session);
                 return true;
             }
             case "--infinite": {
-                boolean val = cmdLine.nextBooleanValueLiteral().get(session);
-                if (enabled) {
-                    this.infinite = val;
-                }
+                commandLine.withNextBoolean((v, a, s) -> infinite = (v), session);
                 return true;
             }
             case DefaultNutsPropertiesFormat.OPTION_MULTILINE_PROPERTY: {
-                NutsArgument i = cmdLine.nextString().get(session);
+                NutsArgument i = commandLine.nextString().get(session);
                 if (enabled) {
                     addMultilineProperty(i.getKey().asString().get(session), i.getStringValue().get(session));
                 }

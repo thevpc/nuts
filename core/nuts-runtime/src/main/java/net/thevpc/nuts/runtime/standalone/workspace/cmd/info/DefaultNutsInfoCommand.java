@@ -196,7 +196,7 @@ public class DefaultNutsInfoCommand extends DefaultFormatBase<NutsInfoCommand> i
             return false;
         }
         boolean enabled = a.isActive();
-        switch (a.getStringKey().orElse("")) {
+        switch (a.key()) {
             case "-r":
             case "--repos": {
                 boolean val = cmdLine.nextBoolean().get(session).getBooleanValue().get(session);

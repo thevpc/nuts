@@ -46,16 +46,16 @@ public class DefaultNutsSystemExecutable extends AbstractNutsExecutableCommand {
         this.executorOptions = CoreCollectionUtils.nonNullList(executorOptions);
         this.session = session;
         this.execSession = execSession;
-        NutsCommandLine cmdLine = NutsCommandLine.of(this.executorOptions);
-        while (cmdLine.hasNext()) {
-            NutsArgument a = cmdLine.peek().get(session);
-            switch (a.getStringKey().orElse("")) {
+        NutsCommandLine commandLine = NutsCommandLine.of(this.executorOptions);
+        while (commandLine.hasNext()) {
+            NutsArgument aa = commandLine.peek().get(session);
+            switch (aa.key()) {
                 case "--show-command": {
-                    showCommand = cmdLine.nextBooleanValueLiteral().get(session);
+                    commandLine.withNextBoolean((v, a, s) -> this.showCommand = (v), session);
                     break;
                 }
                 default: {
-                    cmdLine.skip();
+                    commandLine.skip();
                 }
             }
         }
@@ -91,10 +91,6 @@ public class DefaultNutsSystemExecutable extends AbstractNutsExecutableCommand {
         resolveExecHelper().exec();
     }
 
-    @Override
-    public void dryExecute() {
-        resolveExecHelper().dryExec();
-    }
 
     @Override
     public NutsText getHelpText() {

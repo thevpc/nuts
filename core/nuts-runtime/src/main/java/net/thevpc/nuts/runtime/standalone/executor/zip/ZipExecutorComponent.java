@@ -56,11 +56,6 @@ public class ZipExecutorComponent implements NutsExecutorComponent {
     }
 
     @Override
-    public void dryExec(NutsExecutionContext executionContext) throws NutsExecutionException {
-        execHelper(executionContext).dryExec();
-    }
-
-    @Override
     public int getSupportLevel(NutsSupportLevelContext ctx) {
         this.session = ctx.getSession();
         if (ID == null) {

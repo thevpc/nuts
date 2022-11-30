@@ -316,13 +316,156 @@ public class DefaultNutsCommandLine implements NutsCommandLine {
     }
 
     @Override
-    public NutsOptional<String> nextStringValueLiteral() {
-        return nextStringValueLiteral(new String[0]);
+    public boolean withNextOptionalBoolean(NutsArgumentConsumer<NutsOptional<Boolean>> consumer, NutsSession session) {
+        NutsOptional<NutsArgument> v = nextBoolean();
+        if (v.isPresent()) {
+            NutsArgument a = v.get(session);
+            if (a.isActive()) {
+                consumer.run(a.getBooleanValue(), a, session);
+                return true;
+            }
+        }
+        return false;
     }
 
     @Override
-    public NutsOptional<Boolean> nextBooleanValueLiteral() {
-        return nextBooleanValueLiteral(new String[0]);
+    public boolean withNextOptionalBoolean(NutsArgumentConsumer<NutsOptional<Boolean>> consumer, NutsSession session, String... names) {
+        NutsOptional<NutsArgument> v = nextBoolean(names);
+        if (v.isPresent()) {
+            NutsArgument a = v.get(session);
+            if (a.isActive()) {
+                consumer.run(a.getBooleanValue(), a, session);
+                return true;
+            }
+        }
+        return false;
+    }
+
+    @Override
+    public boolean withNextOptionalString(NutsArgumentConsumer<NutsOptional<String>> consumer, NutsSession session) {
+        NutsOptional<NutsArgument> v = nextBoolean();
+        if (v.isPresent()) {
+            NutsArgument a = v.get(session);
+            if (a.isActive()) {
+                consumer.run(a.getStringValue(), a, session);
+                return true;
+            }
+        }
+        return false;
+    }
+
+    @Override
+    public boolean withNextOptionalString(NutsArgumentConsumer<NutsOptional<String>> consumer, NutsSession session, String... names) {
+        NutsOptional<NutsArgument> v = nextBoolean(names);
+        if (v.isPresent()) {
+            NutsArgument a = v.get(session);
+            if (a.isActive()) {
+                consumer.run(a.getStringValue(), a, session);
+                return true;
+            }
+        }
+        return false;
+    }
+
+
+
+    @Override
+    public boolean withNextBoolean(NutsArgumentConsumer<Boolean> consumer, NutsSession session) {
+        NutsOptional<NutsArgument> v = nextBoolean();
+        if (v.isPresent()) {
+            NutsArgument a = v.get(session);
+            if (a.isActive()) {
+                consumer.run(a.getBooleanValue().get(session), a, session);
+                return true;
+            }
+        }
+        return false;
+    }
+
+    @Override
+    public boolean withNextTrue(NutsArgumentConsumer<Boolean> consumer, NutsSession session) {
+        return withNextBoolean((value, arg, session1) -> {
+            if (value) {
+                consumer.run(true, arg, session1);
+            }
+        }, session);
+    }
+
+    @Override
+    public boolean withNextTrue(NutsArgumentConsumer<Boolean> consumer, NutsSession session, String... names) {
+        return withNextBoolean(new NutsArgumentConsumer<Boolean>() {
+            @Override
+            public void run(Boolean value, NutsArgument arg, NutsSession session) {
+                if (value) {
+                    consumer.run(true, arg, session);
+                }
+            }
+        }, session, names);
+    }
+
+    @Override
+    public boolean withNextBoolean(NutsArgumentConsumer<Boolean> consumer, NutsSession session, String... names) {
+        NutsOptional<NutsArgument> v = nextBoolean(names);
+        if (v.isPresent()) {
+            NutsArgument a = v.get(session);
+            if (a.isActive()) {
+                consumer.run(a.getBooleanValue().get(session), a, session);
+                return true;
+            }
+        }
+        return false;
+    }
+
+    @Override
+    public boolean withNextString(NutsArgumentConsumer<String> consumer, NutsSession session) {
+        NutsOptional<NutsArgument> v = nextBoolean();
+        if (v.isPresent()) {
+            NutsArgument a = v.get(session);
+            if (a.isActive()) {
+                consumer.run(a.getStringValue().get(session), a, session);
+                return true;
+            }
+        }
+        return false;
+    }
+
+    @Override
+    public boolean withNextString(NutsArgumentConsumer<String> consumer, NutsSession session, String... names) {
+        NutsOptional<NutsArgument> v = nextBoolean(names);
+        if (v.isPresent()) {
+            NutsArgument a = v.get(session);
+            if (a.isActive()) {
+                consumer.run(a.getStringValue().get(session), a, session);
+                return true;
+            }
+        }
+        return false;
+    }
+
+    @Override
+    public boolean withNextValue(NutsArgumentConsumer<NutsValue> consumer, NutsSession session) {
+        NutsOptional<NutsArgument> v = nextString();
+        if (v.isPresent()) {
+            NutsArgument a = v.get(session);
+            if (a.isActive()) {
+                consumer.run(a.getValue(), a, session);
+                return true;
+            }
+        }
+        return false;
+    }
+
+    @Override
+    public boolean withNextValue(NutsArgumentConsumer<NutsValue> consumer, NutsSession session, String... names) {
+        NutsOptional<NutsArgument> v = nextString(names);
+        if (v.isPresent()) {
+            NutsArgument a = v.get(session);
+            if (a.isActive()) {
+                consumer.run(a.getValue(), a, session);
+                return true;
+            }
+        }
+        return false;
     }
 
     @Override
@@ -333,16 +476,6 @@ public class DefaultNutsCommandLine implements NutsCommandLine {
     @Override
     public NutsOptional<NutsValue> nextBooleanValue() {
         return nextBooleanValue(new String[0]);
-    }
-
-    @Override
-    public NutsOptional<String> nextStringValueLiteral(String... names) {
-        return nextString(names).flatMap(NutsArgument::getStringValue);
-    }
-
-    @Override
-    public NutsOptional<Boolean> nextBooleanValueLiteral(String... names) {
-        return nextBoolean(names).flatMap(NutsArgument::getBooleanValue);
     }
 
     @Override
@@ -357,13 +490,13 @@ public class DefaultNutsCommandLine implements NutsCommandLine {
 
     @Override
     public NutsOptional<NutsArgument> next(String... names) {
-        return next(NutsArgumentType.ANY, names);
+        return next(NutsArgumentType.DEFAULT, names);
     }
 
     @Override
     public NutsOptional<NutsArgument> next(NutsArgumentType expectValue, String... names) {
         if (expectValue == null) {
-            expectValue = NutsArgumentType.ANY;
+            expectValue = NutsArgumentType.DEFAULT;
         }
         if (names.length == 0) {
             if (hasNext()) {
@@ -401,7 +534,7 @@ public class DefaultNutsCommandLine implements NutsCommandLine {
                 NutsOptional<String> pks = p.getKey().asString();
                 if (pks.isPresent() && pks.get().equals(name)) {
                     switch (expectValue) {
-                        case ANY: {
+                        case DEFAULT: {
                             skip(nameSeqArray.length);
                             return NutsOptional.of(p);
                         }
@@ -841,9 +974,7 @@ public class DefaultNutsCommandLine implements NutsCommandLine {
 
     @Override
     public String toString() {
-        return toStringList().stream().map(x -> NutsStringUtils.formatStringLiteral(
-                x, NutsStringUtils.QuoteType.DOUBLE, NutsSupportMode.PREFERRED
-        )).collect(Collectors.joining(" "));
+        return toStringList().stream().map(x -> NutsStringUtils.formatStringLiteral(x, NutsStringUtils.QuoteType.DOUBLE, NutsSupportMode.PREFERRED)).collect(Collectors.joining(" "));
     }
 
     private String createExpandedSimpleOption(char start, boolean negate, char val) {
@@ -870,15 +1001,7 @@ public class DefaultNutsCommandLine implements NutsCommandLine {
         if (!args.isEmpty()) {
             // -!abc=true
             String v = args.removeFirst();
-            if (
-                    expandSimpleOptions && v.length() > 2
-                            && !isSpecialSimpleOption(v)
-                            && (
-                            (v.charAt(0) == '-' && v.charAt(1) != '-')
-                                    || (v.charAt(0) == '+' && v.charAt(1) != '+')
-                    )
-                            && (v.charAt(1) != '/' || v.charAt(2) == '/')
-            ) {
+            if (expandSimpleOptions && v.length() > 2 && !isSpecialSimpleOption(v) && ((v.charAt(0) == '-' && v.charAt(1) != '-') || (v.charAt(0) == '+' && v.charAt(1) != '+')) && (v.charAt(1) != '/' || v.charAt(2) == '/')) {
                 ReservedSimpleCharQueue vv = new ReservedSimpleCharQueue(v.toCharArray());
                 char start = vv.read();
                 char negChar = '\0';

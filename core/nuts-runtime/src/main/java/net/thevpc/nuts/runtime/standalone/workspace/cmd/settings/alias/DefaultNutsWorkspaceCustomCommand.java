@@ -35,7 +35,7 @@ public class DefaultNutsWorkspaceCustomCommand implements NutsWorkspaceCustomCom
 
     protected NutsLogger _LOG(NutsSession session) {
         if (LOG == null) {
-            LOG = NutsLogger.of(DefaultNutsWorkspaceCustomCommand.class,session);
+            LOG = NutsLogger.of(DefaultNutsWorkspaceCustomCommand.class, session);
         }
         return LOG;
     }
@@ -62,49 +62,49 @@ public class DefaultNutsWorkspaceCustomCommand implements NutsWorkspaceCustomCom
 
     @Override
     public void exec(String[] args, NutsCommandExecOptions options, NutsSession session) {
-        List<String> executorOptions = new ArrayList<>(options.getExecutorOptions());
-        executorOptions.addAll(this.getExecutorOptions());
-        List<String> r = new ArrayList<>(this.getCommand());
-        r.addAll(Arrays.asList(args));
-        args = r.toArray(new String[0]);
+        if (session.isDry()) {
+            List<String> executorOptions = new ArrayList<>(options.getExecutorOptions());
+            executorOptions.addAll(this.getExecutorOptions());
+            List<String> r = new ArrayList<>(this.getCommand());
+            r.addAll(Arrays.asList(args));
+            args = r.toArray(new String[0]);
 
-        session.exec()
-                .addCommand(args)
-                .addExecutorOptions(executorOptions)
-                .setDirectory(options.getDirectory())
-                .setFailFast(true)
-                .setSession(session)
-                .setEnv(options.getEnv())
-                .setExecutionType(options.getExecutionType())
-                .setFailFast(true)
-                .run();
+            session.exec()
+                    .addCommand(args)
+                    .addExecutorOptions(executorOptions)
+                    .setDirectory(options.getDirectory())
+                    .setFailFast(true)
+                    .setSession(session)
+                    .setEnv(options.getEnv())
+                    .setExecutionType(options.getExecutionType())
+                    .setFailFast(true)
+                    .run();
 
-        //load all needed dependencies!
+            //load all needed dependencies!
 //        return ((DefaultNutsWorkspace) ws).exec(nutToRun, this.getName(), args, executorOptions, options.getEnv(), options.getDirectory(), options.isFailFast(), session, options.isEmbedded());
+        } else {
+            List<String> executorOptions = new ArrayList<>(options.getExecutorOptions());
+            executorOptions.addAll(this.getExecutorOptions());
+            List<String> r = new ArrayList<>(this.getCommand());
+            r.addAll(Arrays.asList(args));
+            args = r.toArray(new String[0]);
+
+            session.exec()
+                    .addCommand(args)
+                    .addExecutorOptions(executorOptions)
+                    .setDirectory(options.getDirectory())
+                    .setFailFast(true)
+                    .setSession(session)
+                    .setEnv(options.getEnv())
+                    .setExecutionType(options.getExecutionType())
+                    .setFailFast(true)
+                    .run();
+
+            //load all needed dependencies!
+//        return ((DefaultNutsWorkspace) ws).exec(nutToRun, this.getName(), args, executorOptions, options.getEnv(), options.getDirectory(), options.isFailFast(), session, options.isEmbedded());
+        }
     }
 
-    @Override
-    public void dryExec(String[] args, NutsCommandExecOptions options, NutsSession session) throws NutsExecutionException {
-        List<String> executorOptions = new ArrayList<>(options.getExecutorOptions());
-        executorOptions.addAll(this.getExecutorOptions());
-        List<String> r = new ArrayList<>(this.getCommand());
-        r.addAll(Arrays.asList(args));
-        args = r.toArray(new String[0]);
-
-        session.exec()
-                .addCommand(args)
-                .addExecutorOptions(executorOptions)
-                .setDirectory(options.getDirectory())
-                .setFailFast(true)
-                .setSession(session)
-                .setEnv(options.getEnv())
-                .setExecutionType(options.getExecutionType())
-                .setFailFast(true)
-                .run();
-
-        //load all needed dependencies!
-//        return ((DefaultNutsWorkspace) ws).exec(nutToRun, this.getName(), args, executorOptions, options.getEnv(), options.getDirectory(), options.isFailFast(), session, options.isEmbedded());
-    }
 
     @Override
     public NutsText getHelpText(NutsSession session) throws NutsExecutionException {
@@ -115,12 +115,12 @@ public class DefaultNutsWorkspaceCustomCommand implements NutsWorkspaceCustomCom
             try {
                 return NutsTexts.of(session).ofPlain(
                         session.exec()
-                        .addCommand(helpCommand)
-                        .setFailFast(false)
-                        .setRedirectErrorStream(true)
-                        .grabOutputString()
-                        .run()
-                        .getOutputString()
+                                .addCommand(helpCommand)
+                                .setFailFast(false)
+                                .setRedirectErrorStream(true)
+                                .grabOutputString()
+                                .run()
+                                .getOutputString()
                 );
             } catch (Exception ex) {
                 _LOGOP(session).level(Level.FINE).error(ex).log(NutsMessage.ofJstyle("failed to retrieve help for {0}", getName()));
@@ -139,6 +139,7 @@ public class DefaultNutsWorkspaceCustomCommand implements NutsWorkspaceCustomCom
         this.command = CoreCollectionUtils.nonNullList(command);
         return this;
     }
+
     public DefaultNutsWorkspaceCustomCommand setCommand(String[] command) {
         this.command = CoreCollectionUtils.nonNullListFromArray(command);
         return this;

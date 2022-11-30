@@ -24,6 +24,10 @@ public class DefaultNutsExecInternalExecutable extends DefaultInternalNutsExecut
 
     @Override
     public void execute() {
+        if(getSession().isDry()){
+            dryExecute();
+            return;
+        }
         if (NutsAppUtils.processHelpOptions(args, getSession())) {
             showDefaultHelp();
             return;
@@ -37,6 +41,6 @@ public class DefaultNutsExecInternalExecutable extends DefaultInternalNutsExecut
             getSession().out().println("[dry] ==show-help==");
             return;
         }
-        execCommand.copy().setSession(getSession()).clearCommand().configure(false, args).setFailFast(true).setDry(true).run();
+        execCommand.copy().setSession(getSession().copy().setDry(true)).clearCommand().configure(false, args).setFailFast(true).run();
     }
 }

@@ -43,7 +43,7 @@ import java.util.List;
 public class BaseNameCommand extends SimpleJShellBuiltin {
 
     public BaseNameCommand() {
-        super("basename", DEFAULT_SUPPORT,Options.class);
+        super("basename", DEFAULT_SUPPORT, Options.class);
     }
 
     @Override
@@ -51,7 +51,7 @@ public class BaseNameCommand extends SimpleJShellBuiltin {
         Options options = context.getOptions();
         NutsSession session = context.getSession();
         NutsArgument a = cmdLine.peek().get(session);
-        switch(a.getStringKey().orElse("")) {
+        switch (a.key()) {
             case "-z":
             case "--zero": {
                 cmdLine.skip();
@@ -61,13 +61,15 @@ public class BaseNameCommand extends SimpleJShellBuiltin {
             case "-a":
             case "--all":
             case "--multi": {
-                options.multi = cmdLine.nextBooleanValueLiteral().get(session);
+                cmdLine.withNextBoolean((v, r, s) -> options.multi = v, session);
                 return true;
             }
             case "-s":
             case "--suffix": {
-                options.suffix = cmdLine.nextStringValueLiteral().get(session);
-                options.multi = true;
+                cmdLine.withNextString((v, r, s) -> {
+                    options.suffix = v;
+                    options.multi = true;
+                }, session);
                 return true;
             }
             default: {

@@ -134,7 +134,7 @@ public class DefaultNutsSession implements Cloneable, NutsSession {
         NutsArgument a = cmdLine.peek().orNull();
         if (a != null) {
             boolean active = a.isActive();
-            switch (a.getStringKey().orElse("")) {
+            switch (a.key()) {
                 case "-T":
                 case "--output-format-option": {
                     a = cmdLine.nextString().get(this);
@@ -1459,7 +1459,7 @@ public class DefaultNutsSession implements Cloneable, NutsSession {
 
     private void parseLogLevel(NutsCommandLine cmdLine, boolean enabled) {
         NutsArgument a = cmdLine.peek().get(this);
-        switch (a.getStringKey().orElse("")) {
+        switch (a.key()) {
             //these options are just ignored!
 //            case "--log-file-size": {
 //                a = cmdLine.nextString();

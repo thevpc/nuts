@@ -36,7 +36,6 @@ public abstract class AbstractNutsExecCommand extends NutsWorkspaceCommandBase<N
     protected NutsRunAs runAs = NutsRunAs.CURRENT_USER;
     protected boolean redirectErrorStream;
     protected boolean failFast;
-    protected boolean dry;
     private boolean inheritSystemIO;
     private String redirectOutputFile;
     private String redirectInputFile;
@@ -384,17 +383,6 @@ public abstract class AbstractNutsExecCommand extends NutsWorkspaceCommandBase<N
     }
 
     @Override
-    public boolean isDry() {
-        return dry;
-    }
-
-    @Override
-    public NutsExecCommand setDry(boolean value) {
-        this.dry = value;
-        return this;
-    }
-
-    @Override
     public NutsExecCommand setAll(NutsExecCommand other) {
         super.copyFromWorkspaceCommandBase((NutsWorkspaceCommandBase) other);
         addCommand(other.getCommand());
@@ -523,7 +511,7 @@ public abstract class AbstractNutsExecCommand extends NutsWorkspaceCommandBase<N
             return true;
         }
         boolean enabled = a.isActive();
-        switch (a.getStringKey().orElse("")) {
+        switch (a.key()) {
             case "--external":
             case "--spawn":
             case "-x": {
@@ -595,7 +583,7 @@ public abstract class AbstractNutsExecCommand extends NutsWorkspaceCommandBase<N
             case "-d": {
                 boolean val = cmdLine.nextBoolean().get(session).getBooleanValue().get(session);
                 if (enabled) {
-                    setDry(val);
+                    getSession().setDry(val);
                 }
                 return true;
             }

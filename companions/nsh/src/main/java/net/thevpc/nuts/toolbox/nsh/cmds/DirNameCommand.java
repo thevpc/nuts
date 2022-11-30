@@ -52,7 +52,7 @@ public class DirNameCommand extends SimpleJShellBuiltin {
         Options options = context.getOptions();
         NutsSession session = context.getSession();
         NutsArgument a = cmdLine.peek().get(session);
-        switch(a.getStringKey().orElse("")) {
+        switch(a.key()) {
             case "-z":
             case "--zero": {
                 cmdLine.skip();

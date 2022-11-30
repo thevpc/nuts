@@ -88,7 +88,7 @@ public class NutsPathFromSPI extends NutsPathBase {
     }
 
     @Override
-    public byte[] readAllBytes() {
+    public byte[] readBytes() {
         long len = getContentLength();
         int readSize = 1024;
         if (len < 0) {

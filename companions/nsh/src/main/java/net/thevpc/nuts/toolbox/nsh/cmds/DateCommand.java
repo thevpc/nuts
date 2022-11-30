@@ -55,7 +55,7 @@ public class DateCommand extends SimpleJShellBuiltin {
         Options options = context.getOptions();
         NutsSession session = context.getSession();
         NutsArgument a = cmdLine.peek().get(session);
-        switch(a.getStringKey().orElse("")) {
+        switch(a.key()) {
             case "-d":
             case "--date": {
                 if (context.getShell().getOptions().isNsh()) {

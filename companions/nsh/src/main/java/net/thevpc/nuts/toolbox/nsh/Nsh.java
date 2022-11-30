@@ -36,12 +36,12 @@ public class Nsh implements NutsApplication {
         NutsSession session = applicationContext.getSession();
         applicationContext.processCommandLine(new NutsAppCmdProcessor() {
             @Override
-            public void onCmdInitParsing(NutsCommandLine commandline, NutsApplicationContext context) {
-                commandline.setCommandName("nsh --nuts-exec-mode=install");
+            public void onCmdInitParsing(NutsCommandLine commandLine, NutsApplicationContext context) {
+                commandLine.setCommandName("nsh --nuts-exec-mode=install");
             }
 
             @Override
-            public void onCmdExec(NutsCommandLine commandline, NutsApplicationContext context) {
+            public void onCmdExec(NutsCommandLine commandLine, NutsApplicationContext context) {
                 if (session.isTrace() || session.isYes()) {
                     log.level(Level.CONFIG).verb(NutsLoggerVerb.INFO).log(NutsMessage.ofJstyle("[nsh] activating options trace={0} yes={1}", session.isTrace(), session.isYes()));
                 }

@@ -76,7 +76,7 @@ public class NutsConfigurableHelper {
                     throw new NutsIllegalArgumentException(session,
                             NutsMessage.ofCstyle(
                                     "bad implementation of configureFirst in class %s."
-                                            + " commandline is not consumed; perhaps missing skip() class."
+                                            + " commandLine is not consumed; perhaps missing skip() class."
                                             + " args = %s" , c.getClass().getName(), Arrays.toString(after)
                             )
                             );

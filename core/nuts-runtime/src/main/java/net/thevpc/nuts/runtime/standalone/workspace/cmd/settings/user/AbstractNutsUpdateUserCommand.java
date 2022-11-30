@@ -413,7 +413,7 @@ protected boolean resetPermissions;
         if (a == null) {
             return false;
         }
-        switch(a.getStringKey().orElse("")) {
+        switch(a.key()) {
             default: {
                 if (super.configureFirst(cmdLine)) {
                     return true;

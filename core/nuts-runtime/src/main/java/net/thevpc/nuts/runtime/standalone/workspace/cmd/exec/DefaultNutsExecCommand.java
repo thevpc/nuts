@@ -140,11 +140,7 @@ public class DefaultNutsExecCommand extends AbstractNutsExecCommand {
         NutsExecutableInformationExt exec = (NutsExecutableInformationExt) which();
         executed = true;
         try {
-            if (dry) {
-                exec.dryExecute();
-            } else {
-                exec.execute();
-            }
+            exec.execute();
         } catch (NutsExecutionException ex) {
             String p = getExtraErrorMessage();
             if (p != null) {
@@ -431,8 +427,7 @@ public class DefaultNutsExecCommand extends AbstractNutsExecCommand {
                           NutsSession session,
                           NutsSession execSession,
                           NutsExecutionType executionType,
-                          NutsRunAs runAs,
-                          boolean dry
+                          NutsRunAs runAs
     ) {
         //TODO ! one of the sessions needs to be removed!
         NutsSessionUtils.checkSession(ws, this.session);
@@ -521,11 +516,7 @@ public class DefaultNutsExecCommand extends AbstractNutsExecCommand {
                     .setRedirectOutputFile(getRedirectOutputFile())
                     .setRedirectInputFile(getRedirectInputFile())
                     .build();
-            if (dry) {
-                execComponent.dryExec(executionContext);
-            } else {
-                execComponent.exec(executionContext);
-            }
+            execComponent.exec(executionContext);
             return;
 
         }

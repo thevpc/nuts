@@ -62,11 +62,6 @@ public class ProcessExecutorComponent implements NutsExecutorComponent {
         execHelper(executionContext).exec();
     }
 
-    @Override
-    public void dryExec(NutsExecutionContext executionContext) throws NutsExecutionException {
-        execHelper(executionContext).dryExec();
-    }
-
     public IProcessExecHelper execHelper(NutsExecutionContext executionContext) {
         NutsDefinition nutMainFile = executionContext.getDefinition();
         NutsPath storeFolder = nutMainFile.getInstallInformation().get(session).getInstallFolder();

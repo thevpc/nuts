@@ -133,17 +133,18 @@ public class NutsExecHelper extends AbstractSyncIProcessExecHelper {
                 session);
     }
 
-    public void dryExec() {
-        if (out.getTerminalMode() == NutsTerminalMode.FORMATTED) {
-            out.print("[dry] ==[exec]== ");
-            out.println(pb.format());
-        } else {
-            out.print("[dry] exec ");
-            out.printf("%s%n", pb.format());
-        }
-    }
 
     public int exec() {
+        if (getSession().isDry()) {
+            if (out.getTerminalMode() == NutsTerminalMode.FORMATTED) {
+                out.print("[dry] ==[exec]== ");
+                out.println(pb.format());
+            } else {
+                out.print("[dry] exec ");
+                out.printf("%s%n", pb.format());
+            }
+            return 0;
+        }
         if (out != null) {
             out.resetLine();
         }

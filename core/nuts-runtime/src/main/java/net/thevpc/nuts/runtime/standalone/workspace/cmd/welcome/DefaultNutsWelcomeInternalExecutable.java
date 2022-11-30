@@ -29,6 +29,10 @@ public class DefaultNutsWelcomeInternalExecutable extends DefaultInternalNutsExe
 
     @Override
     public void execute() {
+        if(getSession().isDry()){
+            dryExecute();
+            return;
+        }
         if (NutsAppUtils.processHelpOptions(args, getSession())) {
             showDefaultHelp();
             return;
@@ -38,7 +42,7 @@ public class DefaultNutsWelcomeInternalExecutable extends DefaultInternalNutsExe
         while (commandLine.hasNext()) {
             NutsArgument a = commandLine.peek().get(session);
             if (a.isOption()) {
-                switch(a.getStringKey().orElse("")) {
+                switch(a.key()) {
                     default: {
                         getSession().configureLast(commandLine);
                     }

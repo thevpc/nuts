@@ -34,7 +34,7 @@ public class RemoteNutsExecCommand extends AbstractNutsExecCommand {
             int r = getWorkspace().remoteCall(
                     getWorkspace().createCall("workspace.exec",
                             e.ofObject()
-                                    .set("dry", dry)
+                                    .set("dry", session.isDry())
                                     .set("failFast", failFast)
                                     .build(),
                             getSession()

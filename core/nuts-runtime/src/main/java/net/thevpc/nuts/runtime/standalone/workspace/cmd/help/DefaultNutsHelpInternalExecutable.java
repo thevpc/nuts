@@ -36,6 +36,10 @@ public class DefaultNutsHelpInternalExecutable extends DefaultInternalNutsExecut
 
     @Override
     public void execute() {
+        if(getSession().isDry()){
+            dryExecute();
+            return;
+        }
         List<String> helpFor = new ArrayList<>();
         NutsSession session = getSession();
         NutsCommandLine cmdLine = NutsCommandLine.of(args);
@@ -43,7 +47,7 @@ public class DefaultNutsHelpInternalExecutable extends DefaultInternalNutsExecut
         while (cmdLine.hasNext()) {
             NutsArgument a = cmdLine.peek().get(session);
             if (a.isOption()) {
-                switch (a.getStringKey().orElse("")) {
+                switch (a.key()) {
                     case "--colors":
                     case "--ntf": {
                         NutsArgument c = cmdLine.nextBoolean().get(session);

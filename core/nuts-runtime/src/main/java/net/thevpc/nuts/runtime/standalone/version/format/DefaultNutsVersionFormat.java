@@ -31,34 +31,31 @@ public class DefaultNutsVersionFormat extends DefaultFormatBase<NutsVersionForma
     }
 
     @Override
-    public boolean configureFirst(NutsCommandLine cmdLine) {
+    public boolean configureFirst(NutsCommandLine commandLine) {
         checkSession();
         NutsSession session = getSession();
-        NutsArgument a = cmdLine.peek().get(session);
-        if (a == null) {
+        NutsArgument aa = commandLine.peek().get(session);
+        if (aa == null) {
             return false;
         }
-        boolean enabled = a.isActive();
-        switch(a.getStringKey().orElse("")) {
+        boolean enabled = aa.isActive();
+        switch (aa.key()) {
             case "-a":
             case "--all": {
-                boolean val = cmdLine.nextBooleanValueLiteral().get(session);
-                if (enabled) {
-                    this.all = val;
-                }
+                commandLine.withNextBoolean((v, a, s) -> this.all = v, session);
                 return true;
             }
             case "--add": {
-                NutsArgument aa = cmdLine.nextString().get(session);
-                NutsArgument r = NutsArgument.of(aa.getStringValue().get(session));
+                NutsArgument aa2 = commandLine.nextString().get(session);
+                NutsArgument r = NutsArgument.of(aa2.getStringValue().get(session));
                 if (enabled) {
                     this.all = true;
-                    extraProperties.put(r.getKey().asString().get(session), r.getStringValue().get(session));
+                    this.extraProperties.put(r.getKey().asString().get(session), r.getStringValue().get(session));
                 }
                 return true;
             }
             default: {
-                if (session.configureFirst(cmdLine)) {
+                if (session.configureFirst(commandLine)) {
                     return true;
                 }
             }

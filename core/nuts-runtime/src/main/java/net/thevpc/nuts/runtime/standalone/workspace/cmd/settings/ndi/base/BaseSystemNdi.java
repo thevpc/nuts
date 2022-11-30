@@ -496,7 +496,7 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
         List<String> oldFileContentRows = null;
         NutsShellHelper sh = NutsShellHelper.of(shellFamily);
         if (filePath.isRegularFile()) {
-            String fileContentString = new String(filePath.readAllBytes());
+            String fileContentString = new String(filePath.readBytes());
             oldFileContentRows = splitLines(fileContentString);
             //trim lines
             while (!oldFileContentRows.isEmpty()) {
@@ -584,7 +584,7 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
 
         List<String> lines = new ArrayList<>();
         if (filePath.isRegularFile()) {
-            String fileContent = new String(filePath.readAllBytes());
+            String fileContent = new String(filePath.readBytes());
             String[] fileRows = fileContent.split("[\n\r]");
             for (int i = 0; i < fileRows.length; i++) {
                 String row = fileRows[i];
@@ -604,7 +604,7 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
         }
         if (force || updatedFile) {
             filePath.mkParentDirs();
-            filePath.writeBytes((String.join(sh.newlineString(), lines) + sh.newlineString()).getBytes());
+            filePath.writeString((String.join(sh.newlineString(), lines) + sh.newlineString()));
         }
         return new PathInfo(type, id, filePath, updatedFile ? alreadyExists ? PathInfo.Status.OVERRIDDEN : PathInfo.Status.CREATED : PathInfo.Status.DISCARDED);
     }

@@ -47,7 +47,6 @@ public class ClassloaderAwareRunnableImpl extends ClassloaderAwareRunnable {
                         .addExecutorOptions(o.getExecutorOptions().orNull())
                         .setExecutionType(o.getExecutionType().orNull())
                         .setFailFast(true)
-                        .setDry(session.isDry())
                         .run();
             } finally {
                 NutsApplications.getSharedMap().put("nuts.embedded.application.id", oldId);

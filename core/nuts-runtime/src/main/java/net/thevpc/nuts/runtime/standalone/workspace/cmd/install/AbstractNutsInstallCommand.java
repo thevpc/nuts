@@ -289,53 +289,47 @@ public abstract class AbstractNutsInstallCommand extends NutsWorkspaceCommandBas
     }
 
     @Override
-    public boolean configureFirst(NutsCommandLine cmdLine) {
-        NutsArgument a = cmdLine.peek().get(session);
-        if (a == null) {
+    public boolean configureFirst(NutsCommandLine commandLine) {
+        NutsArgument aa = commandLine.peek().get(session);
+        if (aa == null) {
             return false;
         }
-        boolean enabled = a.isActive();
-        switch(a.getStringKey().orElse("")) {
+        boolean enabled = aa.isActive();
+        switch(aa.key()) {
             case "-c":
             case "--companions": {
-                boolean val = cmdLine.nextBooleanValueLiteral().get(session);
-                if (enabled) {
-                    this.setCompanions(val);
-                }
+                commandLine.withNextBoolean((v, a, s) -> this.setCompanions(v), session);
                 return true;
             }
             case "-i":
             case "--installed": {
-                boolean val = cmdLine.nextBooleanValueLiteral().get(session);
-                if (enabled) {
-                    this.setInstalled(val);
-                }
+                commandLine.withNextBoolean((v, a, s) -> this.setInstalled(v), session);
                 return true;
             }
             case "-s":
             case "--strategy": {
-                String val = cmdLine.nextString().flatMap(NutsValue::asString).get(session);
+                String val = commandLine.nextString().flatMap(NutsValue::asString).get(session);
                 if (enabled) {
                     this.setStrategy(CoreEnumUtils.parseEnumString(val, NutsInstallStrategy.class, false));
                 }
                 return true;
             }
             case "--reinstall": {
-                cmdLine.skip();
+                commandLine.skip();
                 if (enabled) {
                     this.setStrategy(NutsInstallStrategy.REINSTALL);
                 }
                 return true;
             }
             case "--require": {
-                cmdLine.skip();
+                commandLine.skip();
                 if (enabled) {
                     this.setStrategy(NutsInstallStrategy.REQUIRE);
                 }
                 return true;
             }
             case "--repair": {
-                cmdLine.skip();
+                commandLine.skip();
                 if (enabled) {
                     this.setStrategy(NutsInstallStrategy.REPAIR);
                 }
@@ -343,23 +337,23 @@ public abstract class AbstractNutsInstallCommand extends NutsWorkspaceCommandBas
             }
             case "-g":
             case "--args": {
-                cmdLine.skip();
+                commandLine.skip();
                 if (enabled) {
-                    this.addArgs(cmdLine.toStringArray());
+                    this.addArgs(commandLine.toStringArray());
                 }
-                cmdLine.skipAll();
+                commandLine.skipAll();
                 return true;
             }
 
             default: {
-                if (super.configureFirst(cmdLine)) {
+                if (super.configureFirst(commandLine)) {
                     return true;
                 }
-                if (a.isOption()) {
+                if (aa.isOption()) {
                     return false;
                 } else {
-                    cmdLine.skip();
-                    addId(a.asString().get(session));
+                    commandLine.skip();
+                    addId(aa.asString().get(session));
                     return true;
                 }
             }

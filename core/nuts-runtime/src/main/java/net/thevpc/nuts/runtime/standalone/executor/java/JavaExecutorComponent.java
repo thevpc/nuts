@@ -80,10 +80,6 @@ public class JavaExecutorComponent implements NutsExecutorComponent {
         execHelper(executionContext).exec();
     }
 
-    @Override
-    public void dryExec(NutsExecutionContext executionContext) throws NutsExecutionException {
-        execHelper(executionContext).dryExec();
-    }
 
     @Override
     public int getSupportLevel(NutsSupportLevelContext ctx) {
@@ -392,26 +388,25 @@ public class JavaExecutorComponent implements NutsExecutorComponent {
         }
 
         @Override
-        public void dryExec() {
-            NutsSession session = getSession();
-            NutsTexts text = NutsTexts.of(session);
-            List<String> cmdLine = new ArrayList<>();
-            cmdLine.add("embedded-java");
-            cmdLine.add("-cp");
-            cmdLine.add(joptions.getClassPathNodes().stream().map(NutsClassLoaderNode::getId).collect(Collectors.joining(":")));
-            cmdLine.add(joptions.getMainClass());
-            cmdLine.addAll(joptions.getAppArgs());
-
-            session.out().printf("[dry] %s%n",
-                    text.ofBuilder()
-                            .append("exec", NutsTextStyle.pale())
-                            .append(" ")
-                            .append(NutsCommandLine.of(cmdLine))
-            );
-        }
-
-        @Override
         public int exec() {
+            if (getSession().isDry()) {
+                NutsSession session = getSession();
+                NutsTexts text = NutsTexts.of(session);
+                List<String> cmdLine = new ArrayList<>();
+                cmdLine.add("embedded-java");
+                cmdLine.add("-cp");
+                cmdLine.add(joptions.getClassPathNodes().stream().map(NutsClassLoaderNode::getId).collect(Collectors.joining(":")));
+                cmdLine.add(joptions.getMainClass());
+                cmdLine.addAll(joptions.getAppArgs());
+
+                session.out().printf("[dry] %s%n",
+                        text.ofBuilder()
+                                .append("exec", NutsTextStyle.pale())
+                                .append(" ")
+                                .append(NutsCommandLine.of(cmdLine))
+                );
+                return 0;
+            }
             NutsSession session = getSession();
             //we must make a copy not to alter caller session
             session = session.copy();
@@ -438,7 +433,7 @@ public class JavaExecutorComponent implements NutsExecutorComponent {
                     }
                 }
                 Class<?> cls = Class.forName(joptions.getMainClass(), true, classLoader);
-                new ClassloaderAwareRunnableImpl(def.getId(), classLoader, cls, session, joptions,executionContext).runAndWaitFor();
+                new ClassloaderAwareRunnableImpl(def.getId(), classLoader, cls, session, joptions, executionContext).runAndWaitFor();
                 return 0;
             } catch (InvocationTargetException e) {
                 th = e.getTargetException();

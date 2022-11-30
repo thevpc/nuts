@@ -69,22 +69,8 @@ public class WarExecutorComponent implements NutsExecutorComponent {
         execHelper(executionContext).exec();
     }
 
-    @Override
-    public void dryExec(NutsExecutionContext executionContext) throws NutsExecutionException {
-        execHelper(executionContext).dryExec();
-    }
-
     public IProcessExecHelper execHelper(NutsExecutionContext executionContext) {
         return new AbstractSyncIProcessExecHelper(executionContext.getSession()) {
-            @Override
-            public void dryExec() {
-                throw new NutsIOException(getSession(),NutsMessage.ofCstyle("unsupported yet execution of %s with packaging %s",
-                        executionContext.getDefinition().getId(),
-                        executionContext.getDefinition().getDescriptor().getPackaging()
-                ));
-            }
-
-            @Override
             public int exec() {
                 throw new NutsIOException(getSession(),NutsMessage.ofCstyle("unsupported yet execution of %s with packaging %s",
                         executionContext.getDefinition().getId(),
