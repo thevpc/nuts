@@ -76,7 +76,7 @@ public class PropsCommand extends SimpleJShellBuiltin {
                     o.sourceType = SourceType.FILE;
                     o.sourceFile = commandLine.nextNonOption(NutsArgumentName.of("file",session)).flatMap(NutsValue::asString).get(session);
                 } else {
-                    commandLine.setCommandName(getName()).throwUnexpectedArgument(session);
+                    commandLine.setCommandName(getName()).throwUnexpectedArgument();
                 }
 
             }
@@ -139,7 +139,7 @@ public class PropsCommand extends SimpleJShellBuiltin {
                     o.sourceType = SourceType.FILE;
                     o.sourceFile = commandLine.nextNonOption(NutsArgumentName.of("file",session)).flatMap(NutsValue::asString).get(session);
                 } else {
-                    commandLine.setCommandName(getName()).throwUnexpectedArgument(session);
+                    commandLine.setCommandName(getName()).throwUnexpectedArgument();
                 }
             }
             return true;
@@ -169,7 +169,7 @@ public class PropsCommand extends SimpleJShellBuiltin {
                     o.sort = true;
                     session.addOutputFormatOptions("--sort");
                 } else {
-                    commandLine.setCommandName(getName()).throwUnexpectedArgument(session);
+                    commandLine.setCommandName(getName()).throwUnexpectedArgument();
                 }
             }
             return true;

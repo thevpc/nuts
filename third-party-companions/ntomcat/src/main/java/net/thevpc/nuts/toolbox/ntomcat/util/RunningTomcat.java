@@ -13,6 +13,7 @@ public class RunningTomcat {
     private NutsPath home;
     private String base;
     private String argsLine;
+    private NutsVersion version;
 
     public RunningTomcat(NutsPsInfo r, NutsSession session) {
         pid =r.getPid();
@@ -29,8 +30,13 @@ public class RunningTomcat {
                 cmdline.skip();
             }
         }
+        String b = TomcatUtils.getFolderCatalinaHomeVersion(home);
+        this.version= b==null?null:NutsVersion.of(b).get();
     }
 
+    public NutsVersion getVersion() {
+        return version;
+    }
 
     public String getPid() {
         return pid;

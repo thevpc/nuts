@@ -1,9 +1,11 @@
 package net.thevpc.nuts.toolbox.ndb;
 
-import net.thevpc.nuts.*;
+import net.thevpc.nuts.NutsApplication;
+import net.thevpc.nuts.NutsApplicationContext;
 import net.thevpc.nuts.cmdline.NutsCommandLine;
 import net.thevpc.nuts.toolbox.ndb.derby.NDerbyMain;
 import net.thevpc.nuts.toolbox.ndb.nmysql.NMysqlMain;
+import net.thevpc.nuts.toolbox.ndb.postgres.NPostgreSQLMain;
 
 public class NdbMain implements NutsApplication {
 
@@ -20,6 +22,9 @@ public class NdbMain implements NutsApplication {
                 return;
             } else if (commandLine.next("derby").isPresent()) {
                 new NDerbyMain().run(context, commandLine);
+                return;
+            } else if (commandLine.next("postgres").isPresent()) {
+                new NPostgreSQLMain().run(context, commandLine);
                 return;
             } else {
                 context.configureLast(commandLine);

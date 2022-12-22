@@ -126,13 +126,13 @@ public abstract class AbstractNutsUndeployCommand extends NutsWorkspaceCommandBa
         boolean enabled = aa.isActive();
         switch(aa.key()) {
             case "--offline": {
-                cmdLine.withNextBoolean((v,a,s)-> setOffline(v),session);
+                cmdLine.withNextBoolean((v,a,s)-> setOffline(v));
                 return true;
             }
             case "-r":
             case "-repository":
             case "--from": {
-                cmdLine.withNextString((v,a,s)-> setRepository(v),session);
+                cmdLine.withNextString((v,a,s)-> setRepository(v));
                 break;
             }
 

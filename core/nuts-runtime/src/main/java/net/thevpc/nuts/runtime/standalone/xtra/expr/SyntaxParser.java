@@ -74,6 +74,21 @@ public class SyntaxParser {
         return s;
     }
 
+    boolean isCloseParStart(NutsToken t, int ttype) {
+        if (t == null) {
+            return false;
+        }
+        switch (ttype) {
+            case '(':
+                return t.ttype == ')';
+            case '[':
+                return t.ttype == ']';
+            case '{':
+                return t.ttype == '}';
+        }
+        return false;
+    }
+
     boolean isOpenParStart(NutsToken t) {
         if (t == null) {
             return false;
@@ -140,7 +155,41 @@ public class SyntaxParser {
         }
         NutsOptional<NutsExprNode> first = null;
         if (isOpenParStart(t)) {
-            return nextTerminal();
+            NutsToken startPar = tokens.next();
+            NutsToken p2 = tokens.peek();
+            if (p2==null){
+                NutsToken finalT = t;
+                return NutsOptional.ofError(s -> NutsMessage.ofPlain("expected closing "+ finalT.sval));
+            }
+            if(isCloseParStart(p2,t.ttype)){
+                tokens.next();
+                return NutsOptional.of(new DefaultOpNode(t.sval, t.sval+p2.sval, NutsExprOpType.PREFIX, -1, new ArrayList<>()));
+            }
+            List<NutsExprNode> args=new ArrayList<>();
+            NutsOptional<NutsExprNode> e = nextExpr();
+            if(!e.isPresent()){
+                return e;
+            }
+            args.add(e.get());
+            while(true){
+                p2 = tokens.peek();
+                if (p2==null){
+                    NutsToken finalT = t;
+                    return NutsOptional.ofError(s -> NutsMessage.ofPlain("expected closing "+ finalT.sval));
+                }else if(isCloseParStart(p2,t.ttype)){
+                    tokens.next();
+                    return NutsOptional.of(new DefaultOpNode(t.sval, t.sval+p2.sval, NutsExprOpType.PREFIX, -1, args));
+                }else if (p2.sval.equals(",")) {
+                    tokens.next();
+                    e = nextExpr();
+                    if(!e.isPresent()){
+                        return e;
+                    }
+                    args.add(e.get());
+                }else{
+                    return NutsOptional.ofError(s -> NutsMessage.ofPlain("expected ','"));
+                }
+            }
         }
         if (isOp(t, NutsExprOpType.PREFIX, precedenceIndex)) {
             tokens.next();
@@ -152,7 +201,7 @@ public class SyntaxParser {
                 return q;
             }
             first = NutsOptional.of(
-                    new DefaultOpNode(opName(t), NutsExprOpType.PREFIX, withCache.precedences[precedenceIndex], Arrays.asList(q.get()))
+                    new DefaultOpNode(t.sval, opName(t), NutsExprOpType.PREFIX, withCache.precedences[precedenceIndex], Arrays.asList(q.get()))
             );
         } else {
             first = nextNonTerminal(precedenceIndex + 1);
@@ -168,29 +217,29 @@ public class SyntaxParser {
             NutsOptional<NutsExprNode> e = nextTerminal();
             NutsOptional<NutsExprNode> finalFirst = first;
             NutsToken finalInfixOp = infixOp;
-            return e.map(x->{
-                List<NutsExprNode> cc=new ArrayList<>();
+            return e.map(x -> {
+                List<NutsExprNode> cc = new ArrayList<>();
                 cc.add(finalFirst.get());
                 cc.addAll(x.getChildren());
-                String opName="()";
+                String opName = "()";
                 switch (finalInfixOp.ttype) {
                     case '[': {
-                        opName="[]";
+                        opName = "[]";
                         break;
                     }
                     case '(': {
-                        opName="()";
+                        opName = "()";
                         break;
                     }
                     case '{': {
-                        opName="{}";
+                        opName = "{}";
                         break;
                     }
-                    default:{
+                    default: {
                         throw new IllegalArgumentException("unsupported");
                     }
                 }
-                return new DefaultOpNode(opName, NutsExprOpType.POSTFIX, -1, cc);
+                return new DefaultOpNode(finalInfixOp.sval, opName, NutsExprOpType.POSTFIX, -1, cc);
             });
         }
         if (isOp(infixOp, NutsExprOpType.INFIX, precedenceIndex)) {
@@ -209,7 +258,7 @@ public class SyntaxParser {
             if (q.isError()) {
                 return q;
             }
-            first = NutsOptional.of(new DefaultOpNode(opName(infixOp), NutsExprOpType.INFIX, withCache.precedences[precedenceIndex], Arrays.asList(first.get(), q.get())));
+            first = NutsOptional.of(new DefaultOpNode(infixOp.sval, opName(infixOp), NutsExprOpType.INFIX, withCache.precedences[precedenceIndex], Arrays.asList(first.get(), q.get())));
             infixOp = tokens.peek();
             while (infixOp != null && isOp(infixOp, NutsExprOpType.INFIX, precedenceIndex)) {
                 tokens.next();
@@ -220,13 +269,13 @@ public class SyntaxParser {
                 if (q.isError()) {
                     return q;
                 }
-                first = NutsOptional.of(new DefaultOpNode(opName(infixOp), NutsExprOpType.INFIX, withCache.precedences[precedenceIndex], Arrays.asList(first.get(), q.get())));
+                first = NutsOptional.of(new DefaultOpNode(infixOp.sval, opName(infixOp), NutsExprOpType.INFIX, withCache.precedences[precedenceIndex], Arrays.asList(first.get(), q.get())));
                 infixOp = tokens.peek();
             }
             return first;
         } else if (isOp(infixOp, NutsExprOpType.POSTFIX, precedenceIndex)) {
             tokens.next();
-            return NutsOptional.of(new DefaultOpNode(opName(infixOp), NutsExprOpType.POSTFIX, withCache.precedences[precedenceIndex], Arrays.asList(first.get())));
+            return NutsOptional.of(new DefaultOpNode(infixOp.sval, opName(infixOp), NutsExprOpType.POSTFIX, withCache.precedences[precedenceIndex], Arrays.asList(first.get())));
         } else {
             return first;
         }
@@ -239,13 +288,14 @@ public class SyntaxParser {
         }
         switch (t.ttype) {
             case '(': {
+                NutsToken t0 = t;
                 tokens.next();
                 t = tokens.peek();
-                List<NutsExprNode> all=new ArrayList<>();
-                if(t.ttype==')'){
+                List<NutsExprNode> all = new ArrayList<>();
+                if (t.ttype == ')') {
                     t = tokens.next();
-                }else{
-                    while(true) {
+                } else {
+                    while (true) {
                         NutsOptional<NutsExprNode> e = nextExpr();
                         if (e.isEmpty()) {
                             return NutsOptional.ofError(s -> NutsMessage.ofPlain("empty expression"));
@@ -255,15 +305,15 @@ public class SyntaxParser {
                         if (t.ttype == ')') {
                             t = tokens.next();
                             break;
-                        }else if (t.ttype == ',') {
+                        } else if (t.ttype == ',') {
                             tokens.next();
-                        }else{
+                        } else {
                             return NutsOptional.ofError(s -> NutsMessage.ofPlain("expected ',' or ')'"));
                         }
                     }
                 }
                 return NutsOptional.of(
-                        new DefaultOpNode("(",
+                        new DefaultOpNode(t0.sval, "(",
                                 NutsExprOpType.PREFIX,
                                 -1,
                                 all
@@ -271,14 +321,15 @@ public class SyntaxParser {
                 );
             }
             case '[': {
+                NutsToken t0 = t;
                 tokens.next();
                 t = tokens.peek();
-                List<NutsExprNode> all=new ArrayList<>();
-                if(t.ttype==']'){
+                List<NutsExprNode> all = new ArrayList<>();
+                if (t.ttype == ']') {
                     t = tokens.next();
 
-                }else{
-                    while(true) {
+                } else {
+                    while (true) {
                         NutsOptional<NutsExprNode> e = nextExpr();
                         if (e.isEmpty()) {
                             return NutsOptional.ofError(s -> NutsMessage.ofPlain("empty expression"));
@@ -288,15 +339,15 @@ public class SyntaxParser {
                         if (t.ttype == ']') {
                             t = tokens.next();
                             break;
-                        }else if (t.ttype == ',') {
+                        } else if (t.ttype == ',') {
                             tokens.next();
-                        }else{
+                        } else {
                             return NutsOptional.ofError(s -> NutsMessage.ofPlain("expected ',' or ']'"));
                         }
                     }
                 }
                 return NutsOptional.of(
-                        new DefaultOpNode("[",
+                        new DefaultOpNode(t0.sval, "[",
                                 NutsExprOpType.PREFIX,
                                 -1,
                                 all
@@ -304,13 +355,14 @@ public class SyntaxParser {
                 );
             }
             case '{': {
+                NutsToken t0 = t;
                 tokens.next();
                 t = tokens.peek();
-                List<NutsExprNode> all=new ArrayList<>();
-                if(t.ttype=='}'){
+                List<NutsExprNode> all = new ArrayList<>();
+                if (t.ttype == '}') {
                     t = tokens.next();
-                }else{
-                    while(true) {
+                } else {
+                    while (true) {
                         NutsOptional<NutsExprNode> e = nextExpr();
                         if (e.isEmpty()) {
                             return NutsOptional.ofError(s -> NutsMessage.ofPlain("empty expression"));
@@ -320,15 +372,15 @@ public class SyntaxParser {
                         if (t.ttype == '}') {
                             t = tokens.next();
                             break;
-                        }else if (t.ttype == ',') {
+                        } else if (t.ttype == ',') {
                             tokens.next();
-                        }else{
+                        } else {
                             return NutsOptional.ofError(s -> NutsMessage.ofPlain("expected ',' or '}'"));
                         }
                     }
                 }
                 return NutsOptional.of(
-                        new DefaultOpNode("{",
+                        new DefaultOpNode(t0.sval, "{",
                                 NutsExprOpType.PREFIX,
                                 -1,
                                 all

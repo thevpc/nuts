@@ -307,14 +307,7 @@ class TokenIterator implements Iterator<NutsToken> {
                             return true;
                         }
                         default: {
-                            String s = st.sval;
-                            if (st.ttype >= 0) {
-                                if (st.ttype >= 32) {
-                                    s = String.valueOf((char) st.ttype);
-                                } else {
-                                    s = null;
-                                }
-                            }
+                            String s = st.image;
                             previous = new NutsToken(st.ttype, s, 0, st.lineno());
                             return true;
                         }

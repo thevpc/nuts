@@ -38,8 +38,8 @@ public class DarkModePanel extends AbstractInstallPanel {
         panel.setPreferredSize(new Dimension(2 * w, w));
         panel.setMaximumSize(new Dimension(2 * w, w));
         bg = new ButtonGroup();
-        lightModeButton = add2(new ButtonInfo("Light Mode", "<html><body>Selected <strong>light mode</strong></body></html>", new Color(251, 251, 240), Color.GREEN));
-        darkModeButton = add2(new ButtonInfo("Dark Mode", "<html><body>Selected <strong>dark mode</strong></body></html>", new Color(35, 37, 38), Color.ORANGE));
+        lightModeButton = add2(new ButtonInfo("Light Mode", "<html><body>Selected <strong>light mode</strong></body></html>", new Color(251, 251, 240), Color.GREEN, UIHelper.getCheckedImageIcon(false), UIHelper.getCheckedImageIcon(true)));
+        darkModeButton = add2(new ButtonInfo("Dark Mode", "<html><body>Selected <strong>dark mode</strong></body></html>", new Color(35, 37, 38), Color.ORANGE, UIHelper.getCheckedImageIcon(false), UIHelper.getCheckedImageIcon(true)));
         darkModeButton.setForeground(Color.WHITE);
         JPanel jp = new JPanel(new GridBagLayout());
         GridBagConstraints c = new GridBagConstraints();
@@ -59,15 +59,14 @@ public class DarkModePanel extends AbstractInstallPanel {
 
     private JToggleButton add2(ButtonInfo s) {
         JToggleButton a = new JToggleButton(s.text);
-        a.putClientProperty("ButtonInfo", s);
-        a.setBackground(s.bg);
+        s.bind(a);
 //        a.setPreferredSize(new Dimension(60,60));
         panel.add(a);
         bg.add(a);
         a.addItemListener(new ItemListener() {
             @Override
             public void itemStateChanged(ItemEvent e) {
-                ButtonInfo ii = (ButtonInfo) ((JToggleButton) e.getSource()).getClientProperty("ButtonInfo");
+                ButtonInfo ii = ButtonInfo.of ((JComponent) e.getSource());
                 jep.setText(ii.html);
                 InstallData id = InstallData.of(getInstallerContext());
                 id.darkMode = darkModeButton.isSelected();
@@ -83,8 +82,6 @@ public class DarkModePanel extends AbstractInstallPanel {
                 getInstallerContext().setDarkMode(id.darkMode);
             }
         });
-        a.setIcon(new ImageIcon(UIHelper.getCheckedImage(false)));
-        a.setSelectedIcon(new ImageIcon(UIHelper.getCheckedImage(true)));
         return a;
     }
 

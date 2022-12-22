@@ -93,7 +93,7 @@ public class ProcessPanel extends AbstractInstallPanel {
             command.add("-w");
             command.add(id.workspace.trim());
         }
-        if (!id.installVersion.stable) {
+        if (!id.getInstallVersion().stable) {
             command.add("-r=preview");
         }
         Set<String> extraRepos = id.recommendedIds.stream().map(App::getRepo)
@@ -110,8 +110,8 @@ public class ProcessPanel extends AbstractInstallPanel {
         }
 
         printStdOut("Start installation...\n");
-        printStdOut("Download " + id.installVersion.location + "\n");
-        nutsJar = Utils.downloadFile(id.installVersion.location, "nuts-" + (id.installVersion.stable ? "stable-" : "preview-"), ".jar", null);
+        printStdOut("Download " + id.getInstallVersion().location + "\n");
+        nutsJar = Utils.downloadFile(id.getInstallVersion().location, "nuts-" + (id.getInstallVersion().stable ? "stable-" : "preview-"), ".jar", null);
         boolean someError=false;
         try {
             if (runNutsCommand(command.toArray(new String[0])) != 0) {

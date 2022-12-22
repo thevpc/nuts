@@ -42,7 +42,7 @@ public class DefaultNutsVersionFormat extends DefaultFormatBase<NutsVersionForma
         switch (aa.key()) {
             case "-a":
             case "--all": {
-                commandLine.withNextBoolean((v, a, s) -> this.all = v, session);
+                commandLine.withNextBoolean((v, a, s) -> this.all = v);
                 return true;
             }
             case "--add": {
@@ -50,7 +50,7 @@ public class DefaultNutsVersionFormat extends DefaultFormatBase<NutsVersionForma
                 NutsArgument r = NutsArgument.of(aa2.getStringValue().get(session));
                 if (enabled) {
                     this.all = true;
-                    this.extraProperties.put(r.getKey().asString().get(session), r.getStringValue().get(session));
+                    this.extraProperties.put(r.key(), r.getStringValue().get(session));
                 }
                 return true;
             }

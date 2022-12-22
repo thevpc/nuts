@@ -262,7 +262,7 @@ public abstract class AbstractDefaultNutsPushCommand extends NutsWorkspaceComman
         switch (a.key()) {
             case "-o":
             case "--offline": {
-                cmdLine.withNextBoolean((v, r, s) -> setOffline(v), session);
+                cmdLine.withNextBoolean((v, r, s) -> setOffline(v));
                 return true;
             }
             case "-x":
@@ -271,13 +271,13 @@ public abstract class AbstractDefaultNutsPushCommand extends NutsWorkspaceComman
                     for (String id : v.split(",")) {
                         addLockedId(id);
                     }
-                }, session);
+                });
                 return true;
             }
             case "-r":
             case "-repository":
             case "--from": {
-                cmdLine.withNextString((v, r, s) -> setRepository(v), session);
+                cmdLine.withNextString((v, r, s) -> setRepository(v));
                 return true;
             }
             case "-g":
@@ -285,7 +285,7 @@ public abstract class AbstractDefaultNutsPushCommand extends NutsWorkspaceComman
                 cmdLine.withNextTrue((v, r, s) -> {
                     this.addArgs(cmdLine.toStringArray());
                     cmdLine.skipAll();
-                }, session);
+                });
                 return true;
             }
             default: {
@@ -293,7 +293,7 @@ public abstract class AbstractDefaultNutsPushCommand extends NutsWorkspaceComman
                     return true;
                 }
                 if (a.isOption()) {
-                    cmdLine.throwUnexpectedArgument(session);
+                    cmdLine.throwUnexpectedArgument();
                 } else {
                     cmdLine.skip();
                     addId(a.asString().get(session));

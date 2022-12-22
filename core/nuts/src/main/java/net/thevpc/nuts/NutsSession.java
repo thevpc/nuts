@@ -24,6 +24,7 @@
 package net.thevpc.nuts;
 
 import net.thevpc.nuts.cmdline.NutsCommandLineConfigurable;
+import net.thevpc.nuts.cmdline.NutsCommandLineContext;
 import net.thevpc.nuts.elem.NutsArrayElementBuilder;
 import net.thevpc.nuts.format.NutsIterableFormat;
 import net.thevpc.nuts.io.NutsPrintStream;
@@ -45,7 +46,7 @@ import java.util.logging.Level;
  * @app.category Base
  * @since 0.5.4
  */
-public interface NutsSession extends NutsCommandLineConfigurable {
+public interface NutsSession extends NutsCommandLineConfigurable, NutsCommandLineContext {
 
     /**
      * When true, operations are invited to print to output stream extra

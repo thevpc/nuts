@@ -109,7 +109,7 @@ public class NutsSettingsUserSubCommand extends AbstractNutsSettingsSubCommand {
                     } else if (cmdLine.next("--old-password").isPresent()) {
                         oldPassword = cmdLine.nextNonOption(NutsArgumentName.of("OldPassword", session)).flatMap(NutsValue::asString).get(session).toCharArray();
                     } else {
-                        cmdLine.setCommandName("config password").throwUnexpectedArgument(session);
+                        cmdLine.setCommandName("config password").throwUnexpectedArgument();
                     }
                 } while (cmdLine.hasNext());
                 if (cmdLine.isExecMode()) {
@@ -254,7 +254,7 @@ public class NutsSettingsUserSubCommand extends AbstractNutsSettingsSubCommand {
                                 Arrays.fill(old, '\0');
                                 break;
                             default:
-                                cmdLine.setCommandName("config edit user").throwUnexpectedArgument(session);
+                                cmdLine.setCommandName("config edit user").throwUnexpectedArgument();
                                 break;
                         }
                     }

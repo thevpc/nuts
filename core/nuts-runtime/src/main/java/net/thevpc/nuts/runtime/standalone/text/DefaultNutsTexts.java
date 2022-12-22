@@ -39,7 +39,7 @@ public class DefaultNutsTexts implements NutsTexts {
     }
 
     private void registerDefaults() {
-        register(NutsFormattable.class, (o, t, s) -> (((NutsFormattable) o).formatter(s).setSession(getSession()).setNtf(true).format()).toText());
+        register(NutsFormattable.class, (o, t, s) -> (((NutsFormattable) o).formatter(session).setSession(getSession()).setNtf(true).format()).toText());
         register(NutsMessage.class, (o, t, s) -> _NutsMessage_toString((NutsMessage) o));
         register(NutsString.class, (o, t, s) -> ((NutsString) o).toText());
         register(InputStream.class, (o, t, s) -> t.ofStyled(NutsIO.of(s).createInputSource((InputStream) o).getInputMetaData().getName().orElse(o.toString()), NutsTextStyle.path()));

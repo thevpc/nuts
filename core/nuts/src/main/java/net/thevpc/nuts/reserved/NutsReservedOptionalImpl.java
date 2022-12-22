@@ -9,6 +9,7 @@ import java.util.function.Predicate;
 import java.util.function.Supplier;
 
 public abstract class NutsReservedOptionalImpl<T> implements NutsOptional<T> {
+    private NutsSession session;
 
     public NutsReservedOptionalImpl() {
     }
@@ -23,6 +24,106 @@ public abstract class NutsReservedOptionalImpl<T> implements NutsOptional<T> {
             return Objects.requireNonNull(mapper.apply(get()));
         }
         return (NutsOptional) this;
+    }
+
+    @Override
+    public <V> NutsOptional<V> mapIfPresent(Function<T, V> mapper) {
+        if (isNotPresent()) {
+            return NutsOptional.ofEmpty(getMessage());
+        }
+        return map(mapper);
+    }
+
+    @Override
+    public <V> NutsOptional<V> mapIfNotBlank(Function<T, V> mapper) {
+        if (isBlank()) {
+            return NutsOptional.ofEmpty(getMessage());
+        }
+        return map(mapper);
+    }
+
+    @Override
+    public <V> NutsOptional<V> mapIfNotEmpty(Function<T, V> mapper) {
+        if (isEmpty()) {
+            return NutsOptional.ofEmpty(getMessage());
+        }
+        return map(mapper);
+    }
+
+    @Override
+    public <V> NutsOptional<V> mapIfNotNull(Function<T, V> mapper) {
+        if (isEmpty()) {
+            return NutsOptional.ofEmpty(getMessage());
+        }
+        T v = get();
+        if (v == null) {
+            return NutsOptional.ofEmpty(getMessage());
+        }
+        return map(mapper);
+    }
+
+    @Override
+    public <V> NutsOptional<V> mapIfNotError(Function<T, V> mapper) {
+        if (isEmpty()) {
+            return NutsOptional.ofEmpty(getMessage());
+        }
+        return map(mapper);
+    }
+
+    @Override
+    public NutsOptional<T> mapIf(Predicate<T> predicate, Function<T, T> trueExpr) {
+        if (isEmpty() || isError()) {
+            return this;
+        }
+        T t = get();
+        boolean ok = predicate != null && predicate.test(t);
+        return ok ? NutsOptional.of(trueExpr.apply(t)) : this;
+    }
+
+    @Override
+    public <V> NutsOptional<V> mapIf(Predicate<T> predicate, Function<T, V> trueExpr, Function<T, V> falseExpr) {
+        if (isEmpty() || isError()) {
+            return NutsOptional.of(falseExpr.apply(null));
+        }
+        T t = get();
+        boolean ok = predicate != null && predicate.test(t);
+        return NutsOptional.of(ok ? trueExpr.apply(t) : falseExpr.apply(t));
+    }
+
+    public boolean isDefault() {
+        if (isBlank()) {
+            return true;
+        }
+        if (isNotPresent()) {
+            return false;
+        }
+        T v = get();
+        if (v == null) {
+            return true;
+        }
+        if (v instanceof Boolean) {
+            return !((Boolean) v).booleanValue();
+        }
+        if (v instanceof Number) {
+            return ((Number) v).doubleValue() == 0;
+        }
+        return false;
+    }
+
+    @Override
+    public NutsOptional<T> mapIfNotDefault(Function<T, T> mapper) {
+        if (isDefault()) {
+            return this;
+        }
+        return map(mapper);
+    }
+
+    @Override
+    public NutsOptional<T> mapIfDefault(Function<T, T> mapper) {
+        if (!isDefault()) {
+            return this;
+        }
+        return map(mapper);
     }
 
     public <V> NutsOptional<V> map(Function<T, V> mapper) {
@@ -51,6 +152,11 @@ public abstract class NutsReservedOptionalImpl<T> implements NutsOptional<T> {
         return this;
     }
 
+    @Override
+    public NutsOptional<T> filter(Predicate<T> predicate) {
+        return filter(predicate, (Function<NutsSession, NutsMessage>) null);
+    }
+
     public NutsOptional<T> ifPresent(Consumer<T> t) {
         if (isPresent()) {
             Objects.requireNonNull(t);
@@ -63,7 +169,7 @@ public abstract class NutsReservedOptionalImpl<T> implements NutsOptional<T> {
         if (isPresent()) {
             return get();
         } else {
-            throw exceptionSupplier.get();
+            throw Objects.requireNonNull(Objects.requireNonNull(exceptionSupplier).get());
         }
     }
 
@@ -71,8 +177,7 @@ public abstract class NutsReservedOptionalImpl<T> implements NutsOptional<T> {
     @Override
     public NutsOptional<T> orElseUse(Supplier<NutsOptional<T>> other) {
         if (isNotPresent()) {
-            Objects.requireNonNull(other);
-            return Objects.requireNonNull(other.get());
+            return Objects.requireNonNull(Objects.requireNonNull(other).get());
         }
         return this;
     }
@@ -95,17 +200,23 @@ public abstract class NutsReservedOptionalImpl<T> implements NutsOptional<T> {
         return get();
     }
 
-    public NutsOptional<T> orElseOf(Supplier<T> other){
+    public NutsOptional<T> orElseOf(Supplier<T> other) {
         if (isNotPresent()) {
-            Objects.requireNonNull(other);
-            return NutsOptional.of(other.get(),getMessage());
+            return NutsOptional.of(Objects.requireNonNull(other).get(), getMessage());
+        }
+        return this;
+    }
+
+    public NutsOptional<T> orElseOfNullable(Supplier<T> other) {
+        if (isNotPresent()) {
+            return NutsOptional.ofNullable(Objects.requireNonNull(other).get());
         }
         return this;
     }
 
 
     @Override
-    public NutsOptional<T> ifBlankNull(Function<NutsSession, NutsMessage> emptyMessage) {
+    public NutsOptional<T> ifBlankEmpty(Function<NutsSession, NutsMessage> emptyMessage) {
         if (emptyMessage == null) {
             emptyMessage = session -> NutsMessage.ofPlain("blank value");
         }
@@ -119,21 +230,35 @@ public abstract class NutsReservedOptionalImpl<T> implements NutsOptional<T> {
     }
 
     @Override
-    public NutsOptional<T> ifBlankNull() {
-        return ifBlankNull(null);
+    public NutsOptional<T> ifBlankEmpty() {
+        return ifBlankEmpty(null);
     }
 
     @Override
     public NutsOptional<T> ifBlankUse(Supplier<NutsOptional<T>> other) {
-        if (isPresent()) {
-            Objects.requireNonNull(other);
-            T v = get();
-            if (NutsBlankable.isBlank(v)) {
-                return Objects.requireNonNull(other.get());
-            }
-        } else if (isEmpty()) {
+        if (isBlank()) {
             Objects.requireNonNull(other);
             return Objects.requireNonNull(other.get());
+        }
+        return this;
+    }
+
+    @Override
+    public NutsOptional<T> ifNullUse(Supplier<NutsOptional<T>> other) {
+        if (isNull()) {
+            Objects.requireNonNull(other);
+            T v = get();
+            if (v == null) {
+                return Objects.requireNonNull(other.get());
+            }
+        }
+        return this;
+    }
+
+    @Override
+    public NutsOptional<T> ifNullEmpty() {
+        if (isNull()) {
+            return NutsOptional.ofEmpty(getMessage());
         }
         return this;
     }
@@ -158,13 +283,8 @@ public abstract class NutsReservedOptionalImpl<T> implements NutsOptional<T> {
 
     @Override
     public NutsOptional<T> ifBlank(T other) {
-        if (isPresent()) {
-            T v = get();
-            if (NutsBlankable.isBlank(v)) {
-                return NutsOptional.of(other);
-            }
-        } else if (isEmpty()) {
-            return NutsOptional.of(other);
+        if (isBlank()) {
+            return NutsOptional.ofNullable(other);
         }
         return this;
     }
@@ -181,8 +301,8 @@ public abstract class NutsReservedOptionalImpl<T> implements NutsOptional<T> {
 
     @Override
     public NutsOptional<T> ifEmpty(T other) {
-        if (!isError() && isEmpty()) {
-            return new NutsReservedOptionalValid<>(other);
+        if (isEmpty()) {
+            return NutsOptional.ofNullable(other).setSession(getSession());
         }
         return this;
     }
@@ -190,7 +310,7 @@ public abstract class NutsReservedOptionalImpl<T> implements NutsOptional<T> {
     @Override
     public NutsOptional<T> ifError(T other) {
         if (isError()) {
-            return new NutsReservedOptionalValid<>(other);
+            return NutsOptional.ofNullable(other).setSession(getSession());
         }
         return this;
     }
@@ -205,4 +325,12 @@ public abstract class NutsReservedOptionalImpl<T> implements NutsOptional<T> {
         return !isPresent();
     }
 
+    public NutsSession getSession() {
+        return session;
+    }
+
+    public NutsOptional<T> setSession(NutsSession session) {
+        this.session = session;
+        return this;
+    }
 }

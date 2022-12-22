@@ -517,7 +517,7 @@ public class DefaultNutsQuestion<T> implements NutsQuestion<T> {
         }
         switch (aa.key()) {
             case "trace-confirmation": {
-                commandLine.withNextBoolean((v, a, s) -> this.traceConfirmation = v, session);
+                commandLine.withNextBoolean((v, a, s) -> this.traceConfirmation = v);
                 break;
             }
         }
@@ -531,7 +531,7 @@ public class DefaultNutsQuestion<T> implements NutsQuestion<T> {
     @Override
     public void configureLast(NutsCommandLine commandLine) {
         if (!configureFirst(commandLine)) {
-            commandLine.throwUnexpectedArgument(getSession());
+            commandLine.throwUnexpectedArgument();
         }
     }
 }

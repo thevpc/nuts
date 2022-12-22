@@ -210,7 +210,7 @@ public class DefaultNutsDigest implements NutsDigest {
 
         @Override
         public InputStream getInputStream() {
-            return new ByteArrayInputStream(source.formatter(getSession())
+            return new ByteArrayInputStream(source.formatter(session)
                     .setNtf(false)
                     .format().filteredText().getBytes()
             );
@@ -235,7 +235,7 @@ public class DefaultNutsDigest implements NutsDigest {
 
         @Override
         public NutsFormat formatter(NutsSession session) {
-            return NutsFormat.of(session, new NutsFormatSPI() {
+            return NutsFormat.of(DefaultNutsDigest.this.session, new NutsFormatSPI() {
                 @Override
                 public String getName() {
                     return "input-stream";

@@ -122,7 +122,7 @@ public class ApacheTomcatRepositoryModel implements NutsRepositoryModel {
             if (localPath == null) {
                 localPath = getIdLocalFile(id.builder().setFaceContent().build(), fetchMode, repository, session);
             }
-            NutsCp.of(session).from(NutsPath.of(r,session)).to(NutsPath.of(localPath,session))
+            NutsCp.of(session).from(NutsPath.of(r, session)).to(NutsPath.of(localPath, session))
                     .addOptions(NutsPathOption.SAFE, NutsPathOption.LOG, NutsPathOption.TRACE).run();
             return NutsPath.of(localPath, session);
         }
@@ -211,4 +211,26 @@ public class ApacheTomcatRepositoryModel implements NutsRepositoryModel {
                 .resolve(session.locations().getDefaultIdFilename(id))
                 .toString();
     }
+
+//    public boolean catalinaMatchesJavaVersion(NutsVersion cv, String javaVersion, NutsSession session) {
+//        if (NutsBlankable.isBlank(javaVersion)) {
+//            return true;
+//        }
+//        if (javaVersion.compareTo("1.8") >= 0) {
+//            return NutsVersion.of("[9,10.1[").get().filter(session).acceptVersion(cv, session);
+//        } else if (javaVersion.compareTo("1.7") >= 0) {
+//            return NutsVersion.of("[8.5,9[").get().filter(session).acceptVersion(cv, session);
+//        } else if (javaVersion.compareTo("1.6") >= 0) {
+//            return NutsVersion.of("[7,8[").get().filter(session).acceptVersion(cv, session);
+//        } else if (javaVersion.compareTo("1.5") < 0) {
+//            return NutsVersion.of("[6,7[").get().filter(session).acceptVersion(cv, session);
+//        } else if (javaVersion.compareTo("1.4") < 0) {
+//            return NutsVersion.of("[5.5,6[").get().filter(session).acceptVersion(cv, session);
+//        } else if (javaVersion.compareTo("1.3") < 0) {
+//            return NutsVersion.of("[4.1,5[").get().filter(session).acceptVersion(cv, session);
+//        } else {
+//            return NutsVersion.of("[3.3,4[").get().filter(session).acceptVersion(cv, session);
+//        }
+//    }
+
 }

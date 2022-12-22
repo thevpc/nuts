@@ -5,6 +5,8 @@ public class LocalMysqlDatabaseConfig {
     private String user;
     private String password;
     private String databaseName;
+    private String server;
+    private Integer port;
 
     public String getUser() {
         return user;
@@ -33,4 +35,21 @@ public class LocalMysqlDatabaseConfig {
         return this;
     }
 
+    public String getServer() {
+        return server;
+    }
+
+    public LocalMysqlDatabaseConfig setServer(String server) {
+        this.server = server;
+        return this;
+    }
+
+    public Integer getPort() {
+        return port;
+    }
+
+    public LocalMysqlDatabaseConfig setPort(Integer port) {
+        this.port = port;
+        return this;
+    }
 }

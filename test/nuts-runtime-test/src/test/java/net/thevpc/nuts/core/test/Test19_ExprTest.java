@@ -114,10 +114,14 @@ public class Test19_ExprTest {
         NutsExprDeclarations expr = NutsExpr.of(session).newDeclarations(true);
 //        _retain(expr,"infix:+");
         NutsExprNode n = expr.parse("(a&b)").get();
+        n.toString();
         Assertions.assertEquals(NutsExprNodeType.OPERATOR, n.getType());
-        Assertions.assertEquals("&", n.getName());
+        Assertions.assertEquals("(", n.getName());
+        Assertions.assertEquals(NutsExprNodeType.OPERATOR, n.getChildren().get(0).getType());
+        Assertions.assertEquals("&", n.getChildren().get(0).getName());
         TestUtils.println(n);
     }
+
 
     @Test
     public void test5() throws Exception {
@@ -125,7 +129,9 @@ public class Test19_ExprTest {
 //        _retain(expr,"infix:+");
         NutsExprNode n = expr.parse("(a&&b)").get();
         Assertions.assertEquals(NutsExprNodeType.OPERATOR, n.getType());
-        Assertions.assertEquals("&&", n.getName());
+        Assertions.assertEquals("(", n.getName());
+        Assertions.assertEquals(NutsExprNodeType.OPERATOR, n.getChildren().get(0).getType());
+        Assertions.assertEquals("&&", n.getChildren().get(0).getName());
         TestUtils.println(n);
     }
 

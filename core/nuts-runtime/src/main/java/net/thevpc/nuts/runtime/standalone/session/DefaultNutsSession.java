@@ -1579,7 +1579,7 @@ public class DefaultNutsSession implements Cloneable, NutsSession {
     @Override
     public void configureLast(NutsCommandLine commandLine) {
         if (!configureFirst(commandLine)) {
-            commandLine.throwUnexpectedArgument(this);
+            commandLine.throwUnexpectedArgument();
         }
     }
 

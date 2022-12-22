@@ -153,7 +153,7 @@ public abstract class AbstractNutsUninstallCommand extends NutsWorkspaceCommandB
         switch (aa.key()) {
             case "-e":
             case "--erase": {
-                cmdLine.withNextBoolean((v, a, s) -> this.setErase(v), session);
+                cmdLine.withNextBoolean((v, a, s) -> this.setErase(v));
                 return true;
             }
             case "-g":
@@ -161,7 +161,7 @@ public abstract class AbstractNutsUninstallCommand extends NutsWorkspaceCommandB
                 cmdLine.withNextBoolean((v, a, s) -> {
                     this.addArgs(cmdLine.toStringArray());
                     cmdLine.skipAll();
-                }, session);
+                });
                 return true;
             }
             default: {

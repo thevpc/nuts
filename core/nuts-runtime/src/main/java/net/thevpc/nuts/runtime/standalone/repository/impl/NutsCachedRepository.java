@@ -39,10 +39,7 @@ import net.thevpc.nuts.spi.NutsDeployRepositoryCommand;
 import net.thevpc.nuts.spi.NutsPushRepositoryCommand;
 import net.thevpc.nuts.spi.NutsRepositoryUndeployCommand;
 import net.thevpc.nuts.spi.NutsUpdateRepositoryStatisticsCommand;
-import net.thevpc.nuts.util.NutsFunction;
-import net.thevpc.nuts.util.NutsIterator;
-import net.thevpc.nuts.util.NutsLogger;
-import net.thevpc.nuts.util.NutsLoggerOp;
+import net.thevpc.nuts.util.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -195,7 +192,7 @@ public class NutsCachedRepository extends AbstractNutsRepositoryBase {
         } catch (NutsNotFoundException ex) {
             //ignore error
         } catch (Exception ex) {
-            _LOGOP(session).level(Level.SEVERE).error(ex)
+            _LOGOP(session).level(Level.FINEST).verb(NutsLoggerVerb.FAIL).error(ex)
                     .log(NutsMessage.ofJstyle("search versions error : {0}", ex));
             //ignore....
         }

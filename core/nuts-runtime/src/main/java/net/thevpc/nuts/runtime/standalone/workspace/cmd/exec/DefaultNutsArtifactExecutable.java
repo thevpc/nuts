@@ -63,7 +63,7 @@ public class DefaultNutsArtifactExecutable extends AbstractNutsExecutableCommand
         }
         for (String option : executorOptions) {
             NutsArgument a = NutsArgument.of(option);
-            if (a.getKey().asString().get(session).equals("--nuts-auto-install")) {
+            if (a.key().equals("--nuts-auto-install")) {
                 if (a.isKeyValue()) {
                     autoInstall = a.isNegated() != a.getBooleanValue().get(session);
                 } else {

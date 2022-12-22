@@ -224,7 +224,7 @@ public class DefaultNutsInfoCommand extends DefaultFormatBase<NutsInfoCommand> i
                 String aa = cmdLine.nextString().get(session).getStringValue().get(session);
                 NutsArgument val = NutsArgument.of(aa);
                 if (enabled) {
-                    extraProperties.put(val.getKey().asString().get(session), val.getStringValue().get(session));
+                    extraProperties.put(val.key(), val.getStringValue().get(session));
                 }
                 return true;
             }

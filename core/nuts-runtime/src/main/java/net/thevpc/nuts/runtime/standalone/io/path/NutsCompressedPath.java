@@ -362,7 +362,7 @@ public class NutsCompressedPath extends NutsPathBase {
     @Override
     public NutsFormat formatter(NutsSession session) {
         return new MyPathFormat(this)
-                .setSession(getSession());
+                .setSession(session!=null?session:getSession());
     }
 
     private static class MyPathFormat extends DefaultFormatBase<NutsFormat> {

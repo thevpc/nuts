@@ -135,6 +135,55 @@ public class NutsStringUtils {
         return t;
     }
 
+    public static String coalesceNonNull(String... values) {
+        return coalesceNonNull(values == null ? null : Arrays.asList(values));
+    }
+
+    public static String coalesceNonNull(List<String> values) {
+        if (values != null) {
+            for (String value : values) {
+                if (value != null) {
+                    return value;
+                }
+            }
+        }
+        return null;
+    }
+
+    public static boolean isEmpty(String value) {
+        return value == null || value.isEmpty();
+    }
+
+    public static String coalesceNonEmpty(String... values) {
+        return coalesceNonEmpty(values == null ? null : Arrays.asList(values));
+    }
+
+    public static String coalesceNonEmpty(List<String> values) {
+        if (values != null) {
+            for (String value : values) {
+                if (!isEmpty(value)) {
+                    return value;
+                }
+            }
+        }
+        return null;
+    }
+
+    public static String coalesceNonBlank(String... values) {
+        return coalesceNonBlank(values == null ? null : Arrays.asList(values));
+    }
+
+    public static String coalesceNonBlank(List<String> values) {
+        if (values != null) {
+            for (String value : values) {
+                if (!NutsBlankable.isBlank(value)) {
+                    return value;
+                }
+            }
+        }
+        return null;
+    }
+
     public static String toHexString(byte[] bytes) {
         char[] hexChars = new char[bytes.length * 2];
         for (int j = 0; j < bytes.length; j++) {

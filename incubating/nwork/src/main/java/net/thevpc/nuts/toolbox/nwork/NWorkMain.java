@@ -41,10 +41,10 @@ public class NWorkMain implements NutsApplication {
                 service.setWorkspaceConfigParam(cmdLine, appContext);
                 return;
             } else {
-                cmdLine.setCommandName("nwork").throwUnexpectedArgument(session);
+                cmdLine.setCommandName("nwork").throwUnexpectedArgument();
             }
         } while (cmdLine.hasNext());
-        cmdLine.throwMissingArgument(session);
+        cmdLine.throwMissingArgument();
     }
 
 }

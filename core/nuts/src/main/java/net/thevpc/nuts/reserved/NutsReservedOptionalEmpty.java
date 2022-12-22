@@ -29,6 +29,9 @@ public class NutsReservedOptionalEmpty<T> extends NutsReservedOptionalThrowable<
 
     @Override
     public T get(Function<NutsSession, NutsMessage> message, NutsSession session) {
+        if(session==null){
+            session=getSession();
+        }
         if (message == null) {
             message = this.message;
         }
@@ -47,7 +50,7 @@ public class NutsReservedOptionalEmpty<T> extends NutsReservedOptionalThrowable<
 
 
     @Override
-    public NutsOptional<T> ifBlankNull() {
+    public NutsOptional<T> ifBlankEmpty() {
         return this;
     }
 
@@ -64,6 +67,11 @@ public class NutsReservedOptionalEmpty<T> extends NutsReservedOptionalThrowable<
     @Override
     public boolean isEmpty() {
         return true;
+    }
+
+    @Override
+    public boolean isNull() {
+        return false;
     }
 
     @Override

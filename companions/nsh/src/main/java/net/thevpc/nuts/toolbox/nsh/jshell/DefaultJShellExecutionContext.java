@@ -118,7 +118,7 @@ public class DefaultJShellExecutionContext implements JShellExecutionContext {
     @Override
     public void configureLast(NutsCommandLine cmd) {
         if (!configureFirst(cmd)) {
-            cmd.throwUnexpectedArgument(session);
+            cmd.throwUnexpectedArgument();
         }
     }
 

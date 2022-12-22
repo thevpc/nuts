@@ -56,7 +56,7 @@ public class DefaultSearchFormatJson extends DefaultSearchFormatBase {
         }
         switch(aa.key()) {
             case "--compact": {
-                commandLine.withNextBoolean((v, a, s) -> this.compact=v,session);
+                commandLine.withNextBoolean((v, a, s) -> this.compact=v);
                 return true;
             }
         }

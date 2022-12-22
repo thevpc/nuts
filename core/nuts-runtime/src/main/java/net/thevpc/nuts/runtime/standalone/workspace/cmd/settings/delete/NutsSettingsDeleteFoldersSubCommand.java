@@ -62,10 +62,10 @@ public class NutsSettingsDeleteFoldersSubCommand extends AbstractNutsSettingsSub
                         try {
                             locationsToDelete.add(NutsStoreLocation.valueOf(s.toUpperCase()));
                         } catch (Exception ex) {
-                            cmdLine.throwUnexpectedArgument(session);
+                            cmdLine.throwUnexpectedArgument();
                         }
                     } else {
-                        cmdLine.throwUnexpectedArgument(session);
+                        cmdLine.throwUnexpectedArgument();
                     }
                 }
                 if (cmdLine.isExecMode()) {

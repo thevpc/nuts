@@ -83,12 +83,12 @@ public final class JavaExecutorOptions {
             switch (a.key()) {
                 case "--java-version":
                 case "-java-version": {
-                    cmdLine.withNextString((v,r,s)-> javaVersion = v,session);
+                    cmdLine.withNextString((v,r,s)-> javaVersion = v);
                     break;
                 }
                 case "--java-home":
                 case "-java-home": {
-                    cmdLine.withNextString((v,r,s)-> javaCommand = v,session);
+                    cmdLine.withNextString((v,r,s)-> javaCommand = v);
                     break;
                 }
                 case "--class-path":
@@ -97,7 +97,7 @@ public final class JavaExecutorOptions {
                 case "-classpath":
                 case "--cp":
                 case "-cp": {
-                    cmdLine.withNextString((v,r,s)-> addCp(currentCP, v),session);
+                    cmdLine.withNextString((v,r,s)-> addCp(currentCP, v));
                     break;
                 }
 
@@ -107,69 +107,69 @@ public final class JavaExecutorOptions {
                 case "-nutspath":
                 case "--np":
                 case "-np": {
-                    cmdLine.withNextString((v,r,s)-> addNp(currentCP, v),session);
+                    cmdLine.withNextString((v,r,s)-> addNp(currentCP, v));
                     break;
                 }
                 case "--main-class":
                 case "-main-class":
                 case "--class":
                 case "-class": {
-                    cmdLine.withNextString((v,r,s)-> mainClass = v,session);
+                    cmdLine.withNextString((v,r,s)-> mainClass = v);
                     break;
                 }
                 case "--dir":
                 case "-dir": {
-                    cmdLine.withNextString((v,r,s)-> this.dir = v,session);
+                    cmdLine.withNextString((v,r,s)-> this.dir = v);
                     break;
                 }
                 case "--win":
                 case "--javaw": {
-                    cmdLine.withNextBoolean((v,r,s)-> javaw = v,session);
+                    cmdLine.withNextBoolean((v,r,s)-> javaw = v);
                     break;
                 }
                 case "--jar":
                 case "-jar": {
-                    cmdLine.withNextBoolean((v,r,s)-> jar = v,session);
+                    cmdLine.withNextBoolean((v,r,s)-> jar = v);
                     break;
                 }
                 case "--show-command":
                 case "-show-command": {
-                    cmdLine.withNextBoolean((v,r,s)-> showCommand = v,session);
+                    cmdLine.withNextBoolean((v,r,s)-> showCommand = v);
                     break;
                 }
                 case "--exclude-base":
                 case "-exclude-base": {
-                    cmdLine.withNextBoolean((v,r,s)-> excludeBase = v,session);
+                    cmdLine.withNextBoolean((v,r,s)-> excludeBase = v);
                     break;
                 }
                 case "--add-module": {
-                    cmdLine.withNextString((v,r,s)-> this.j9_addModules.add(v),session);
+                    cmdLine.withNextString((v,r,s)-> this.j9_addModules.add(v));
                     break;
                 }
                 case "-m":
                 case "--module": {
                     //<module>/<mainclass>
-                    cmdLine.withNextString((v,r,s)-> this.j9_module=v,session);
+                    cmdLine.withNextString((v,r,s)-> this.j9_module=v);
                     break;
                 }
                 case "--module-path": {
-                    cmdLine.withNextString((v,r,s)-> this.j9_modulePath.add(v),session);
+                    cmdLine.withNextString((v,r,s)-> this.j9_modulePath.add(v));
                     break;
                 }
                 case "-splash": {
-                    cmdLine.withNextString((v,r,s)-> splash = v,session);
+                    cmdLine.withNextString((v,r,s)-> splash = v);
                     break;
                 }
                 case "--upgrade-module-path": {
-                    cmdLine.withNextString((v,r,s)-> this.j9_upgradeModulePath.add(v),session);
+                    cmdLine.withNextString((v,r,s)-> this.j9_upgradeModulePath.add(v));
                     break;
                 }
                 case "--prepend-arg": {
-                    cmdLine.withNextString((v,r,s)-> this.prependArgs.add(v),session);
+                    cmdLine.withNextString((v,r,s)-> this.prependArgs.add(v));
                     break;
                 }
                 case "--append-arg": {
-                    cmdLine.withNextString((v,r,s)-> this.appendArgs.add(v),session);
+                    cmdLine.withNextString((v,r,s)-> this.appendArgs.add(v));
                     break;
                 }
                 case "-s": {

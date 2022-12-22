@@ -6,4 +6,5 @@ public interface NutsExprOpNode extends NutsExprNode{
     NutsExprNode getOperand(int index);
 
     List<NutsExprNode> getOperands();
+    String getUniformName();
 }

@@ -48,7 +48,7 @@ public class DefaultNutsCommandLines implements NutsCommandLines {
     @Override
     public NutsCommandLine parseCommandline(String line) {
         checkSession();
-        return new DefaultNutsCommandLine(parseCommandLineArr(line));
+        return new DefaultNutsCommandLine(parseCommandLineArr(line)).setSession(getSession());
     }
 
     private String[] parseCommandLineArr(String line) {

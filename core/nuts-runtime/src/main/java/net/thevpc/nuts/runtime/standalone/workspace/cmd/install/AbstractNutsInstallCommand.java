@@ -298,12 +298,12 @@ public abstract class AbstractNutsInstallCommand extends NutsWorkspaceCommandBas
         switch(aa.key()) {
             case "-c":
             case "--companions": {
-                commandLine.withNextBoolean((v, a, s) -> this.setCompanions(v), session);
+                commandLine.withNextBoolean((v, a, s) -> this.setCompanions(v));
                 return true;
             }
             case "-i":
             case "--installed": {
-                commandLine.withNextBoolean((v, a, s) -> this.setInstalled(v), session);
+                commandLine.withNextBoolean((v, a, s) -> this.setInstalled(v));
                 return true;
             }
             case "-s":

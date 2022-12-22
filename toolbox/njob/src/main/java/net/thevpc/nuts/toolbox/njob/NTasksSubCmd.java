@@ -13,7 +13,6 @@ import net.thevpc.nuts.toolbox.njob.time.TimeParser;
 import net.thevpc.nuts.toolbox.njob.time.TimePeriod;
 import net.thevpc.nuts.toolbox.njob.time.TimespanPattern;
 
-import javax.xml.crypto.Data;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
@@ -95,7 +94,7 @@ public class NTasksSubCmd {
                     String jobId = s;
                     NJob job = service.jobs().getJob(jobId);
                     if (job == null) {
-                        cmd.throwError(NutsMessage.ofCstyle("invalid job %s", jobId), session);
+                        cmd.throwError(NutsMessage.ofCstyle("invalid job %s", jobId));
                     }
                     t.setJobId(job.getId());
                 });
@@ -105,7 +104,7 @@ public class NTasksSubCmd {
                     String taskId = s;
                     NTask parentTask = service.tasks().getTask(taskId);
                     if (parentTask == null) {
-                        cmd.throwError(NutsMessage.ofCstyle("invalid parent task %s", taskId), session);
+                        cmd.throwError(NutsMessage.ofCstyle("invalid parent task %s", taskId));
                     }
                     t.setParentTaskId(parentTask.getId());
                 });
@@ -154,7 +153,7 @@ public class NTasksSubCmd {
                     String n = cmd.next("name").flatMap(NutsValue::asString).get(session);
                     runLater.add(t -> t.setName(n));
                 } else {
-                    cmd.throwUnexpectedArgument(session);
+                    cmd.throwUnexpectedArgument();
                 }
             }
         }
@@ -192,71 +191,71 @@ public class NTasksSubCmd {
             switch(aa.key()) {
                 case "--list":
                 case "-l": {
-                    cmd.withNextBoolean((v, a, s) -> d.list=v,session);
+                    cmd.withNextBoolean((v, a, s) -> d.list=v);
                     break;
                 }
                 case "--show":
                 case "-s": {
-                    cmd.withNextBoolean((v, a, s) -> d.show=v,session);
+                    cmd.withNextBoolean((v, a, s) -> d.show=v);
                     break;
                 }
                 case "--start": {
-                    cmd.withNextString((v, a, s) -> d.runLater.add(t -> t.setStartTime(new TimeParser().parseInstant(v, false))),session);
+                    cmd.withNextString((v, a, s) -> d.runLater.add(t -> t.setStartTime(new TimeParser().parseInstant(v, false))));
                     break;
                 }
                 case "-t":
                 case "--on":
                 case "--due": {
-                    cmd.withNextString((v, a, s) -> d.runLater.add(t -> t.setDueTime(TimePeriod.parseOpPeriodAsInstant(v, t.getDueTime(), true))),session);
+                    cmd.withNextString((v, a, s) -> d.runLater.add(t -> t.setDueTime(TimePeriod.parseOpPeriodAsInstant(v, t.getDueTime(), true))));
                     break;
                 }
                 case "--at": {
-                    cmd.withNextString((v, a, s) -> d.runLater.add(t -> t.setDueTime(new TimeParser().setTimeOnly(true).parseInstant(v, false))),session);
+                    cmd.withNextString((v, a, s) -> d.runLater.add(t -> t.setDueTime(new TimeParser().setTimeOnly(true).parseInstant(v, false))));
                     break;
                 }
                 case "--end": {
-                    cmd.withNextString((v, a, s) -> d.runLater.add(t -> t.setEndTime(new TimeParser().parseInstant(v, false))),session);
+                    cmd.withNextString((v, a, s) -> d.runLater.add(t -> t.setEndTime(new TimeParser().parseInstant(v, false))));
                     break;
                 }
                 case "--wip": {
-                    cmd.withNextTrue((v, a, s) -> d.runLater.add(t -> t.setStatus(NTaskStatus.WIP)),session);
+                    cmd.withNextTrue((v, a, s) -> d.runLater.add(t -> t.setStatus(NTaskStatus.WIP)));
                     break;
                 }
                 case "--done": {
-                    cmd.withNextTrue((v, a, s) -> d.runLater.add(t -> t.setStatus(NTaskStatus.DONE)),session);
+                    cmd.withNextTrue((v, a, s) -> d.runLater.add(t -> t.setStatus(NTaskStatus.DONE)));
                     break;
                 }
                 case "--cancel": {
-                    cmd.withNextTrue((v, a, s) -> d.runLater.add(t -> t.setStatus(NTaskStatus.CANCELLED)),session);
+                    cmd.withNextTrue((v, a, s) -> d.runLater.add(t -> t.setStatus(NTaskStatus.CANCELLED)));
                     break;
                 }
                 case "--todo": {
-                    cmd.withNextTrue((v, a, s) -> d.runLater.add(t -> t.setStatus(NTaskStatus.TODO)),session);
+                    cmd.withNextTrue((v, a, s) -> d.runLater.add(t -> t.setStatus(NTaskStatus.TODO)));
                     break;
                 }
                 case "--high": {
-                    cmd.withNextTrue((v, a, s) -> d.runLater.add(t -> t.setPriority(NPriority.HIGH)),session);
+                    cmd.withNextTrue((v, a, s) -> d.runLater.add(t -> t.setPriority(NPriority.HIGH)));
                     break;
                 }
                 case "--critical": {
-                    cmd.withNextTrue((v, a, s) -> d.runLater.add(t -> t.setPriority(NPriority.CRITICAL)),session);
+                    cmd.withNextTrue((v, a, s) -> d.runLater.add(t -> t.setPriority(NPriority.CRITICAL)));
                     break;
                 }
                 case "--normal": {
-                    cmd.withNextTrue((v, a, s) -> d.runLater.add(t -> t.setPriority(NPriority.NORMAL)),session);
+                    cmd.withNextTrue((v, a, s) -> d.runLater.add(t -> t.setPriority(NPriority.NORMAL)));
                     break;
                 }
                 case "++P":
                 case "++prio":
                 case "--prio++": {
-                    cmd.withNextTrue((v, a, s) -> d.runLater.add(t -> t.setPriority((t.getPriority() == null ? NPriority.NORMAL : t.getPriority()).higher())),session);
+                    cmd.withNextTrue((v, a, s) -> d.runLater.add(t -> t.setPriority((t.getPriority() == null ? NPriority.NORMAL : t.getPriority()).higher())));
                     break;
                 }
                 case "--P":
                 case "--prio":
                 case "--prio--": {
                     cmd.withNextString((v, a, s) -> {
-                        if (!aa.getKey().asString().get(session).equals("--prio")) {
+                        if (!aa.key().equals("--prio")) {
                             v = null;
                         }
                         if (v == null) {
@@ -265,27 +264,27 @@ public class NTasksSubCmd {
                             NPriority pp = NPriority.parse(v);
                             d.runLater.add(t -> t.setPriority(pp));
                         }
-                    },session);
+                    });
                     break;
                 }
                 case "--status": {
                     cmd.withNextString((v, a, s) -> {
                         d.runLater.add(t -> t.setStatus(NTaskStatus.parse(v)));
-                    },session);
+                    });
                     break;
                 }
                 case "-d":
                 case "--duration": {
                     cmd.withNextString((v, a, s) -> {
                         d.runLater.add(t -> t.setDuration(TimePeriod.parse(v, false)));
-                    },session);
+                    });
                     break;
                 }
                 case "-n":
                 case "--name": {
                     cmd.withNextString((v, a, s) -> {
                         d.runLater.add(t -> t.setName(v));
-                    },session);
+                    });
                     break;
                 }
                 case "-f":
@@ -293,7 +292,7 @@ public class NTasksSubCmd {
                     cmd.withNextString((v, a, s) -> {
                         NFlag f = NFlag.parse(v);
                         d.runLater.add(t -> t.setFlag(f));
-                    },session);
+                    });
                     break;
                 }
                 case "-j":
@@ -301,10 +300,10 @@ public class NTasksSubCmd {
                     cmd.withNextString((v, a, s) -> {
                         NJob job = service.jobs().getJob(v);
                         if (job == null) {
-                            cmd.throwError(NutsMessage.ofCstyle("invalid job %s", v), session);
+                            cmd.throwError(NutsMessage.ofCstyle("invalid job %s", v));
                         }
                         d.runLater.add(t -> t.setJobId(job.getId()));
-                    },session);
+                    });
                     break;
                 }
                 case "-T":
@@ -312,10 +311,10 @@ public class NTasksSubCmd {
                     cmd.withNextString((v, a, s) -> {
                         NTask parentTask = service.tasks().getTask(v);
                         if (parentTask == null) {
-                            cmd.throwError(NutsMessage.ofCstyle("invalid parent task %s", v), session);
+                            cmd.throwError(NutsMessage.ofCstyle("invalid parent task %s", v));
                         }
                         d.runLater.add(t -> t.setParentTaskId(parentTask.getId()));
-                    },session);
+                    });
                     break;
                 }
                 case "-P":
@@ -332,7 +331,7 @@ public class NTasksSubCmd {
                             }
                             t.setPriority(p);
                         });
-                    },session);
+                    });
                     break;
                 }
                 case "--for": {
@@ -345,21 +344,21 @@ public class NTasksSubCmd {
                                 t.setProject(v);
                             }
                         });
-                    },session);
+                    });
                     break;
                 }
                 case "-p":
                 case "--project": {
                     cmd.withNextString((v, a, s) -> {
                         d.runLater.add(t -> t.setProject(v));
-                    },session);
+                    });
                     break;
                 }
                 case "-o":
                 case "--obs": {
                     cmd.withNextString((v, a, s) -> {
                         d.runLater.add(t -> t.setObservations(v));
-                    },session);
+                    });
                     break;
                 }
                 case "-o+":
@@ -379,7 +378,7 @@ public class NTasksSubCmd {
                             so = so.trim();
                             t.setObservations(so);
                         });
-                    },session);
+                    });
                     break;
                 }
                 default: {
@@ -388,13 +387,13 @@ public class NTasksSubCmd {
                         NTask t = findTask(pid, cmd);
                         d.tasks.add(t);
                     } else {
-                        cmd.throwUnexpectedArgument(session);
+                        cmd.throwUnexpectedArgument();
                     }
                 }
             }
         }
         if (d.tasks.isEmpty()) {
-            cmd.throwError(NutsMessage.ofNtf("task id expected"), session);
+            cmd.throwError(NutsMessage.ofNtf("task id expected"));
         }
         if (cmd.isExecMode()) {
             for (NTask task : d.tasks) {
@@ -458,7 +457,7 @@ public class NTasksSubCmd {
                 case "--unit": {
                     cmd.withNextString((v, a, s) -> {
                         d.timeUnit = TimePeriod.parseUnit(v, false);
-                    },session);
+                    });
                     break;
                 }
                 case "--todo": {
@@ -522,7 +521,7 @@ public class NTasksSubCmd {
                             break;
                         }
                         default: {
-                            cmd.pushBack(y, session).throwUnexpectedArgument(NutsMessage.ofPlain("invalid value"), session);
+                            cmd.pushBack(y).throwUnexpectedArgument(NutsMessage.ofPlain("invalid value"));
                         }
                     }
                     break;
@@ -533,7 +532,7 @@ public class NTasksSubCmd {
                         Predicate<String> sp = parent.createProjectFilter(v);
                         Predicate<NTask> t = x -> sp.test(x.getProject());
                         d.whereFilter = parent.appendPredicate(d.whereFilter, t);
-                    },session);
+                    });
                     break;
                 }
                 case "-n":
@@ -542,7 +541,7 @@ public class NTasksSubCmd {
                         Predicate<String> sp = parent.createStringFilter(v);
                         Predicate<NTask> t = x -> sp.test(x.getName());
                         d.whereFilter = parent.appendPredicate(d.whereFilter, t);
-                    },session);
+                    });
                     break;
                 }
                 case "-b":
@@ -554,7 +553,7 @@ public class NTasksSubCmd {
                             return sp.test(project == null ? "" : project.getBeneficiary());
                         };
                         d.whereFilter = parent.appendPredicate(d.whereFilter, t);
-                    },session);
+                    });
                     break;
                 }
                 case "-c":
@@ -566,7 +565,7 @@ public class NTasksSubCmd {
                             return sp.test(project == null ? "" : project.getCompany());
                         };
                         d.whereFilter = parent.appendPredicate(d.whereFilter, t);
-                    },session);
+                    });
                     break;
                 }
                 case "-d":
@@ -575,7 +574,7 @@ public class NTasksSubCmd {
                         Predicate<TimePeriod> p = TimePeriod.parseFilter(v, false);
                         Predicate<NTask> t = x -> p.test(x.getDuration());
                         d.whereFilter = parent.appendPredicate(d.whereFilter, t);
-                    },session);
+                    });
                     break;
                 }
                 case "-t":
@@ -584,11 +583,11 @@ public class NTasksSubCmd {
                     cmd.withNextString((v, a, s) -> {
                         Predicate<Instant> t = new TimeParser().parseInstantFilter(v, false);
                         d.whereFilter = parent.appendPredicate(d.whereFilter, x -> t.test(x.getStartTime()));
-                    },session);
+                    });
                     break;
                 }
                 default: {
-                    cmd.throwUnexpectedArgument(session);
+                    cmd.throwUnexpectedArgument();
                 }
             }
         }
@@ -748,7 +747,7 @@ public class NTasksSubCmd {
             t = service.tasks().getTask(pid);
         }
         if (t == null) {
-            cmd.throwError(NutsMessage.ofCstyle("task not found: %s", pid), session);
+            cmd.throwError(NutsMessage.ofCstyle("task not found: %s", pid));
         }
         return t;
     }

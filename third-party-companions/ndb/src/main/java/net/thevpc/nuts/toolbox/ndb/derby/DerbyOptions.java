@@ -34,8 +34,11 @@ public class DerbyOptions implements Cloneable{
     public Command cmd = Command.start;
     public String derbyVersion = null;
     public String derbyDataHomeRoot = null;
+    public String databaseName = null;
     public String derbyDataHomeReplace = null;
     public String host = null;
+    public String user = null;
+    public String password = null;
     public int port = -1;
     public SSLMode sslmode = null;
     public String extraArg = null;

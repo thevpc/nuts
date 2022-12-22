@@ -439,34 +439,34 @@ public abstract class AbstractNutsUpdateCommand extends NutsWorkspaceCommandBase
 //            }
             case "-i":
             case "--installed": {
-                cmdLine.withNextBoolean((v,r,s)->this.setInstalled(v),session);
+                cmdLine.withNextBoolean((v,r,s)->this.setInstalled(v));
                 return true;
             }
             case "-r":
             case "--runtime": {
-                cmdLine.withNextBoolean((v,r,s)->this.setRuntime(v),session);
+                cmdLine.withNextBoolean((v,r,s)->this.setRuntime(v));
                 return true;
             }
             case "-A":
             case "--api": {
-                cmdLine.withNextBoolean((v,r,s)->this.setApi(v),session);
+                cmdLine.withNextBoolean((v,r,s)->this.setApi(v));
                 return true;
             }
 
             case "-e":
             case "--extensions": {
-                cmdLine.withNextBoolean((v,r,s)->this.setExtensions(v),session);
+                cmdLine.withNextBoolean((v,r,s)->this.setExtensions(v));
                 return true;
             }
             case "-c":
             case "--companions": {
-                cmdLine.withNextBoolean((v,r,s)->this.setCompanions(v),session);
+                cmdLine.withNextBoolean((v,r,s)->this.setCompanions(v));
                 return true;
             }
             case "-v":
             case "--api-version":
             case "--to-version": {
-                cmdLine.withNextString((v,r,s)->this.setApiVersion(NutsVersion.of(v).get(getSession())),session);
+                cmdLine.withNextString((v,r,s)->this.setApiVersion(NutsVersion.of(v).get(getSession())));
                 return true;
             }
             case "-g":

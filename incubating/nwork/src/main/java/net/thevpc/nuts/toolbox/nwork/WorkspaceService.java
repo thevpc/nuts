@@ -302,7 +302,7 @@ public class WorkspaceService {
             } else if ((a = cmd.nextBoolean("-v", "--verbose").orNull())!=null) {
                 verbose = a.getBooleanValue().get(session);
             } else if (cmd.isNextOption()) {
-                cmd.setCommandName("nwork check").throwUnexpectedArgument(session);
+                cmd.setCommandName("nwork check").throwUnexpectedArgument();
             } else {
                 filters.add(cmd.next().flatMap(NutsValue::asString).get(session));
             }
@@ -780,7 +780,7 @@ public class WorkspaceService {
                 conf.getDefaultRepositoryAddress().setNutsWorkspace(a.getStringValue().get(session));
                 setWorkspaceConfig(conf);
             } else {
-                cmd.setCommandName("nwork set").throwUnexpectedArgument(session);
+                cmd.setCommandName("nwork set").throwUnexpectedArgument();
             }
         }
         return 0;

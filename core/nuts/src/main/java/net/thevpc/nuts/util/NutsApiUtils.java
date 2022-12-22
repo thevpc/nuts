@@ -37,6 +37,7 @@ import java.lang.reflect.Array;
 import java.net.URL;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.List;
 import java.util.Map;
 import java.util.function.Supplier;
 import java.util.logging.Level;
@@ -53,6 +54,24 @@ public class NutsApiUtils {
 
     public static boolean isBlank(CharSequence s) {
         return s == null || isBlank(s.toString().toCharArray());
+    }
+
+    public static <T> T coalesce(List<T> any) {
+        for (T t : any) {
+            if(!isBlank(t)){
+                return t;
+            }
+        }
+        return null;
+    }
+
+    public static <T> T coalesce(T... any) {
+        for (T t : any) {
+            if(!isBlank(t)){
+                return t;
+            }
+        }
+        return null;
     }
 
     public static boolean isBlank(Object any) {

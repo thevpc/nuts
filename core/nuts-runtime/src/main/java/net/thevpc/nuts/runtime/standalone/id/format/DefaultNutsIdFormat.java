@@ -317,27 +317,27 @@ public class DefaultNutsIdFormat extends DefaultFormatBase<NutsIdFormat> impleme
         }
         switch(aa.key()) {
             case "--omit-env": {
-                commandLine.withNextBoolean((v, a, s) -> this.setOmitOtherProperties(v), session);
+                commandLine.withNextBoolean((v, a, s) -> this.setOmitOtherProperties(v));
                 return true;
             }
             case "--omit-face": {
-                commandLine.withNextBoolean((v, a, s) -> this.setOmitFace(v), session);
+                commandLine.withNextBoolean((v, a, s) -> this.setOmitFace(v));
                 return true;
             }
             case "--omit-group": {
-                commandLine.withNextBoolean((v, a, s) -> this.setOmitGroupId(v), session);
+                commandLine.withNextBoolean((v, a, s) -> this.setOmitGroupId(v));
                 return true;
             }
             case "--omit-imported-group": {
-                commandLine.withNextBoolean((v, a, s) -> this.setOmitImportedGroupId(v), session);
+                commandLine.withNextBoolean((v, a, s) -> this.setOmitImportedGroupId(v));
                 return true;
             }
             case "--omit-repo": {
-                commandLine.withNextBoolean((v, a, s) -> this.setOmitRepository(v), session);
+                commandLine.withNextBoolean((v, a, s) -> this.setOmitRepository(v));
                 return true;
             }
             case "--highlight-imported-group": {
-                commandLine.withNextBoolean((v, a, s) -> this.setHighlightImportedGroupId(v), session);
+                commandLine.withNextBoolean((v, a, s) -> this.setHighlightImportedGroupId(v));
                 return true;
             }
         }

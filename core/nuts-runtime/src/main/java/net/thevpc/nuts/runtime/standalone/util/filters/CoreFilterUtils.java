@@ -33,6 +33,7 @@ import net.thevpc.nuts.util.NutsStringUtils;
 
 import java.lang.reflect.Array;
 import java.util.*;
+import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
@@ -387,6 +388,52 @@ public class CoreFilterUtils {
         return false;
     }
 
+    public static boolean matchAny(List<String> all, Function<String, Boolean> accepter) {
+        boolean someFalse = false;
+        if (all != null) {
+            for (String s : all) {
+                if (NutsBlankable.isBlank(s)) {
+                    if (accepter.apply(s)) {
+                        return true;
+                    } else {
+                        someFalse = true;
+                    }
+                }
+            }
+        }
+        return !someFalse;
+    }
+
+    public static boolean acceptCondition(NutsEnvCondition envCond, NutsEnvCondition cond2, NutsSession session) {
+        if (envCond == null || envCond.isBlank()) {
+            return true;
+        }
+        if (cond2 == null || cond2.isBlank()) {
+            return true;
+        }
+        if (!matchAny(cond2.getArch(), s -> matchesArch(s, envCond.getArch(), session))) {
+            return false;
+        }
+        if (!matchAny(cond2.getOs(), s -> matchesOs(s, envCond.getOs(), session))) {
+            return false;
+        }
+        if (!matchAny(cond2.getOsDist(), s -> matchesOsDist(s, envCond.getOsDist(), session))) {
+            return false;
+        }
+        if (!matchAny(cond2.getPlatform(), s -> matchesOsDist(s, envCond.getPlatform(), session))) {
+            return false;
+        }
+        if (!matchAny(cond2.getDesktopEnvironment(), s -> matchesOsDist(s, envCond.getDesktopEnvironment(), session))) {
+            return false;
+        }
+        if (!matchesProperties(
+                envCond.getProperties(), cond2.getProperties()
+        )) {
+            return false;
+        }
+        return true;
+    }
+
     public static boolean acceptCondition(NutsEnvCondition envCond, boolean currentVMOnLy, NutsSession session) {
         if (envCond == null || envCond.isBlank()) {
             return true;
@@ -449,9 +496,34 @@ public class CoreFilterUtils {
         return true;
     }
 
+    private static boolean matchesProperties(Map<String, String> props, Map<String, String> others) {
+        for (Map.Entry<String, String> kv : props.entrySet()) {
+            if (!matchesProperty(kv.getKey(), kv.getValue(), x -> {
+                String u = others.get(x);
+                if (u != null) {
+                    return u;
+                }
+                return System.getProperty(x);
+            })) {
+                return false;
+            }
+        }
+        return true;
+    }
+
     private static boolean matchesProperty(String k, String expected, NutsSession session) {
+        return matchesProperty(k, expected, x -> {
+            Object u = session.getProperty(x);
+            if (u != null) {
+                return String.valueOf(u);
+            }
+            return System.getProperty(x);
+        });
+    }
+
+    private static boolean matchesProperty(String k, String expected, Function<String, String> session) {
         //maven always checks System Props
-        String f = System.getProperty(k);
+        String f = session.apply(k);
         if (expected == null) {
             return f != null;
         }
@@ -463,6 +535,7 @@ public class CoreFilterUtils {
         }
         return expected.equals(f);
     }
+
 
     public static boolean matchesArch(String current, Collection<String> allConds, NutsSession session) {
         if (NutsBlankable.isBlank(current)) {

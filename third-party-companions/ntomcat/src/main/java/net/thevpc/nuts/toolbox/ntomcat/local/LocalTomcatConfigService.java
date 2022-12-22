@@ -494,7 +494,7 @@ public class LocalTomcatConfigService extends LocalTomcatServiceBase {
             NutsVersion javaVersion = session.env().getPlatform().getVersion();
             //  http://tomcat.apache.org/whichversion.html
             if (javaVersion.compareTo("1.8") >= 0) {
-                catalinaVersion = "[9,[";
+                catalinaVersion = "[9,10.1[";
             } else if (javaVersion.compareTo("1.7") >= 0) {
                 catalinaVersion = "[8.5,9[";
             } else if (javaVersion.compareTo("1.6") >= 0) {
@@ -516,7 +516,13 @@ public class LocalTomcatConfigService extends LocalTomcatServiceBase {
             if (!cv.startsWith("[") && !cv.startsWith("]")) {
                 cv = "[" + catalinaVersion + "," + catalinaVersion + ".99999]";
             }
-            NutsSearchCommand searchLatestCommand = session.search().addId("org.apache.catalina:apache-tomcat#" + cv)
+            String cid="org.apache.catalina:apache-tomcat";//+"#"+cv;
+            cid=NutsIdBuilder.of().setAll(NutsId.of(cid).get()).setCondition(
+                    new DefaultNutsEnvConditionBuilder()
+                            .addPlatform(session.env().getPlatform().toString())
+            ).toString();
+
+            NutsSearchCommand searchLatestCommand = session.search().addId(cid)
                     .setSession(getSession()).setLatest(true);
             NutsDefinition r = searchLatestCommand
                     .setInstallStatus(NutsInstallStatusFilters.of(session).byDeployed(true))
@@ -588,7 +594,7 @@ public class LocalTomcatConfigService extends LocalTomcatServiceBase {
         NutsPath catalinaBase = getCatalinaBase();
         return Arrays.stream(TomcatUtils.getRunningInstances(appContext))
                 .filter(p -> (catalinaBase == null
-                || catalinaBase.toString().equals(p.getBase())))
+                        || catalinaBase.toString().equals(p.getBase())))
                 .findFirst().orElse(null);
     }
 

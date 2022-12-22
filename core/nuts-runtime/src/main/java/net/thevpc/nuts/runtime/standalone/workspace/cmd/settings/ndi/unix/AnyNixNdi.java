@@ -71,10 +71,13 @@ public class AnyNixNdi extends BaseSystemNdi {
                     .resetLine()
                     .forBoolean(NutsMessage.ofCstyle(
                             "```error ATTENTION``` You may need to re-run terminal or issue \"%s\" in your current terminal for new environment to take effect.%n"
-                                    + "Please type 'ok' if you agree, 'why' if you need more explanation or 'cancel' to cancel updates.",
-                            factory.ofStyled(". ~/" + sysRcName, NutsTextStyle.path())
+                                    + "Please type %s if you agree, %s if you need more explanation or %s to cancel updates.",
+                            factory.ofStyled(". ~/" + sysRcName, NutsTextStyle.path()),
+                            factory.ofStyled("ok", NutsTextStyle.success()),
+                            factory.ofStyled("why", NutsTextStyle.warn()),
+                            factory.ofStyled("cancel!", NutsTextStyle.comments())
                     ))
-                    .setHintMessage(NutsMessage.ofPlain(""))
+                    .setHintMessage(NutsMessage.ofPlain("you must enter your confirmation"))
                     .setSession(session)
                     .setParser(new NutsQuestionParser<Boolean>() {
                         @Override

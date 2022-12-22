@@ -26,6 +26,8 @@
  */
 package net.thevpc.nuts;
 
+import net.thevpc.nuts.cmdline.NutsCommandLineContext;
+import net.thevpc.nuts.cmdline.NutsCommandLineProcessor;
 import net.thevpc.nuts.util.NutsApiUtils;
 
 /**
@@ -79,6 +81,7 @@ public interface NutsBlankable {
 
     /**
      * return true if null or, as a supported blankable object, is blankable
+     *
      * @param value value
      * @return true if null or, as a supported blankable object, is blankable
      */

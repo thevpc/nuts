@@ -120,21 +120,23 @@ public class TomcatUtils {
 //    }
 
     public static String getFolderCatalinaHomeVersion(NutsPath h) {
-        NutsPath file = h.resolve("RELEASE-NOTES");
-        if (file.exists()) {
-            try (BufferedReader r = new BufferedReader(file.getReader())) {
-                String line = null;
-                while ((line = r.readLine()) != null) {
-                    line = line.trim();
-                    if (line.startsWith("Apache Tomcat Version")) {
-                        String v = line.substring("Apache Tomcat Version".length()).trim();
-                        if (!NutsBlankable.isBlank(v)) {
-                            return v;
+        if(h!=null) {
+            NutsPath file = h.resolve("RELEASE-NOTES");
+            if (file.exists()) {
+                try (BufferedReader r = new BufferedReader(file.getReader())) {
+                    String line = null;
+                    while ((line = r.readLine()) != null) {
+                        line = line.trim();
+                        if (line.startsWith("Apache Tomcat Version")) {
+                            String v = line.substring("Apache Tomcat Version".length()).trim();
+                            if (!NutsBlankable.isBlank(v)) {
+                                return v;
+                            }
                         }
                     }
+                } catch (Exception ex) {
+                    //
                 }
-            } catch (Exception ex) {
-                //
             }
         }
         return null;

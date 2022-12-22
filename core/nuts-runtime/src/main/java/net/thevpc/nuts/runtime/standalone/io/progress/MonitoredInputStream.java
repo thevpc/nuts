@@ -236,7 +236,7 @@ public class MonitoredInputStream extends InputStream implements NutsInputSource
 
     @Override
     public NutsFormat formatter(NutsSession session) {
-        return NutsFormat.of(session, new NutsFormatSPI() {
+        return NutsFormat.of(session!=null?session:this.session, new NutsFormatSPI() {
             @Override
             public String getName() {
                 return "input-stream";

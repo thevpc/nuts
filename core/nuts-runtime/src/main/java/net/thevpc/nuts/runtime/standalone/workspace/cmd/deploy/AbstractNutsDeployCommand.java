@@ -317,35 +317,35 @@ public abstract class AbstractNutsDeployCommand extends NutsWorkspaceCommandBase
         switch (a.key()) {
             case "-d":
             case "--desc": {
-                cmdLine.withNextString((v, r, s) -> setDescriptor(v), session);
+                cmdLine.withNextString((v, r, s) -> setDescriptor(v));
                 return true;
             }
             case "-s":
             case "--source":
             case "--from": {
-                cmdLine.withNextString((v, r, s) -> from(v), session);
+                cmdLine.withNextString((v, r, s) -> from(v));
                 return true;
             }
             case "-r":
             case "--target":
             case "--to": {
-                cmdLine.withNextString((v, r, s) -> to(v), session);
+                cmdLine.withNextString((v, r, s) -> to(v));
                 return true;
             }
             case "--desc-sha1": {
-                cmdLine.withNextString((v, r, s) -> setDescSha1(v), session);
+                cmdLine.withNextString((v, r, s) -> setDescSha1(v));
                 return true;
             }
             case "--desc-sha1-file": {
-                cmdLine.withNextString((v, r, s) -> this.setDescSha1(NutsPath.of(v, getSession()).readString()), session);
+                cmdLine.withNextString((v, r, s) -> this.setDescSha1(NutsPath.of(v, getSession()).readString()));
                 return true;
             }
             case "--sha1": {
-                cmdLine.withNextString((v, r, s) -> this.setSha1(v), session);
+                cmdLine.withNextString((v, r, s) -> this.setSha1(v));
                 return true;
             }
             case "--sha1-file": {
-                cmdLine.withNextString((v, r, s) -> this.setSha1(NutsPath.of(v, getSession()).readString()), session);
+                cmdLine.withNextString((v, r, s) -> this.setSha1(NutsPath.of(v, getSession()).readString()));
                 return true;
             }
             default: {
@@ -353,7 +353,7 @@ public abstract class AbstractNutsDeployCommand extends NutsWorkspaceCommandBase
                     return true;
                 }
                 if (a.isOption()) {
-                    cmdLine.throwUnexpectedArgument(session);
+                    cmdLine.throwUnexpectedArgument();
                 } else {
                     cmdLine.skip();
                     String idOrPath = a.asString().get(session);

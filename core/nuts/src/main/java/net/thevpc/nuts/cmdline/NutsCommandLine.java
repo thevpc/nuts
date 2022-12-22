@@ -172,13 +172,11 @@ public interface NutsCommandLine extends Iterable<NutsArgument>, NutsFormattable
      * helps considering '-version' as a single simple options when
      * {@code isExpandSimpleOptions()==true}
      *
-     * @param option  option
-     * @param session session
+     * @param option option
      * @return {@code this} instance
      */
-    NutsCommandLine registerSpecialSimpleOption(String option, NutsSession session);
-
     NutsCommandLine registerSpecialSimpleOption(String option);
+
 
     /**
      * test if the option is a registered simple option This method helps
@@ -244,40 +242,40 @@ public interface NutsCommandLine extends Iterable<NutsArgument>, NutsFormattable
      * throw exception if command line is not empty
      *
      * @param errorMessage message to throw
-     * @param session
      * @return {@code this} instance
      */
-    NutsCommandLine throwUnexpectedArgument(NutsString errorMessage, NutsSession session);
+    NutsCommandLine throwUnexpectedArgument(NutsString errorMessage);
 
     /**
      * throw exception if command line is not empty
      *
      * @param errorMessage message to throw
-     * @param session
      * @return {@code this} instance
      */
-    NutsCommandLine throwUnexpectedArgument(NutsMessage errorMessage, NutsSession session);
+    NutsCommandLine throwUnexpectedArgument(NutsMessage errorMessage);
 
-    NutsCommandLine throwMissingArgument(NutsSession session);
+    NutsCommandLine throwMissingArgument();
 
-    NutsCommandLine throwMissingArgument(NutsMessage errorMessage, NutsSession session);
+    NutsCommandLine throwMissingArgument(NutsMessage errorMessage);
 
-    /**
-     * throw exception if command line is not empty
-     *
-     * @return {@code this} instance
-     */
-    NutsCommandLine throwUnexpectedArgument(NutsSession session);
+    NutsCommandLine throwMissingArgumentByName(String argumentName);
+
+
+        /**
+         * throw exception if command line is not empty
+         *
+         * @return {@code this} instance
+         */
+    NutsCommandLine throwUnexpectedArgument();
 
     /**
      * push back argument so that it will be first to be retrieved (using next
      * methods)
      *
-     * @param arg     argument
-     * @param session
+     * @param arg argument
      * @return {@code this} instance
      */
-    NutsCommandLine pushBack(NutsArgument arg, NutsSession session);
+    NutsCommandLine pushBack(NutsArgument arg);
 
     /**
      * consume (remove) the first argument and return it return null if not
@@ -348,13 +346,13 @@ public interface NutsCommandLine extends Iterable<NutsArgument>, NutsFormattable
      *
      * @return true if active
      */
-    boolean withNextBoolean(NutsArgumentConsumer<Boolean> consumer, NutsSession session);
+    boolean withNextBoolean(NutsArgumentConsumer<Boolean> consumer);
 
-    boolean withNextOptionalBoolean(NutsArgumentConsumer<NutsOptional<Boolean>> consumer, NutsSession session);
+    boolean withNextOptionalBoolean(NutsArgumentConsumer<NutsOptional<Boolean>> consumer);
 
-    boolean withNextOptionalBoolean(NutsArgumentConsumer<NutsOptional<Boolean>> consumer, NutsSession session, String... names);
+    boolean withNextOptionalBoolean(NutsArgumentConsumer<NutsOptional<Boolean>> consumer, String... names);
 
-    boolean withNextTrue(NutsArgumentConsumer<Boolean> consumer, NutsSession session);
+    boolean withNextTrue(NutsArgumentConsumer<Boolean> consumer);
 
     /**
      * consume next argument with boolean value and run {@code consumer}
@@ -362,14 +360,14 @@ public interface NutsCommandLine extends Iterable<NutsArgument>, NutsFormattable
      * @param names names
      * @return true if active
      */
-    boolean withNextBoolean(NutsArgumentConsumer<Boolean> consumer, NutsSession session, String... names);
+    boolean withNextBoolean(NutsArgumentConsumer<Boolean> consumer, String... names);
 
-    boolean withNextTrue(NutsArgumentConsumer<Boolean> consumer, NutsSession session, String... names);
+    boolean withNextTrue(NutsArgumentConsumer<Boolean> consumer, String... names);
 
 
-    boolean withNextOptionalString(NutsArgumentConsumer<NutsOptional<String>> consumer, NutsSession session);
+    boolean withNextOptionalString(NutsArgumentConsumer<NutsOptional<String>> consumer);
 
-    boolean withNextOptionalString(NutsArgumentConsumer<NutsOptional<String>> consumer, NutsSession session, String... names);
+    boolean withNextOptionalString(NutsArgumentConsumer<NutsOptional<String>> consumer, String... names);
 
     /**
      * next argument with string value. equivalent to
@@ -385,7 +383,7 @@ public interface NutsCommandLine extends Iterable<NutsArgument>, NutsFormattable
      *
      * @return true if active
      */
-    boolean withNextString(NutsArgumentConsumer<String> consumer, NutsSession session);
+    boolean withNextString(NutsArgumentConsumer<String> consumer);
 
     /**
      * consume next argument with string value and run {@code consumer}
@@ -393,7 +391,7 @@ public interface NutsCommandLine extends Iterable<NutsArgument>, NutsFormattable
      * @param names names
      * @return true if active
      */
-    boolean withNextString(NutsArgumentConsumer<String> consumer, NutsSession session, String... names);
+    boolean withNextString(NutsArgumentConsumer<String> consumer, String... names);
 
 
     /**
@@ -401,7 +399,7 @@ public interface NutsCommandLine extends Iterable<NutsArgument>, NutsFormattable
      *
      * @return true if active
      */
-    boolean withNextValue(NutsArgumentConsumer<NutsValue> consumer, NutsSession session);
+    boolean withNextValue(NutsArgumentConsumer<NutsValue> consumer);
 
     /**
      * consume next argument and run {@code consumer}
@@ -409,7 +407,7 @@ public interface NutsCommandLine extends Iterable<NutsArgument>, NutsFormattable
      * @param names names
      * @return true if active
      */
-    boolean withNextValue(NutsArgumentConsumer<NutsValue> consumer, NutsSession session, String... names);
+    boolean withNextValue(NutsArgumentConsumer<NutsValue> consumer, String... names);
 
     /**
      * next argument with string value. equivalent to
@@ -604,17 +602,15 @@ public interface NutsCommandLine extends Iterable<NutsArgument>, NutsFormattable
      * throw a new command line error
      *
      * @param message message
-     * @param session session
      */
-    void throwError(NutsMessage message, NutsSession session);
+    void throwError(NutsMessage message);
 
     /**
      * throw a new command line error
      *
      * @param message message
-     * @param session session
      */
-    void throwError(NutsString message, NutsSession session);
+    void throwError(NutsString message);
 
     NutsCommandLineFormat formatter(NutsSession session);
 
@@ -628,4 +624,10 @@ public interface NutsCommandLine extends Iterable<NutsArgument>, NutsFormattable
     NutsCommandLine add(String argument);
 
     NutsCommandLine addAll(List<String> arguments);
+    NutsSession getSession();
+
+    NutsCommandLine setSession(NutsSession session);
+
+    void process(NutsCommandLineProcessor processor, NutsCommandLineContext context);
+
 }

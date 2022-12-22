@@ -92,7 +92,7 @@ public abstract class AbstractNutsFetchCommand extends DefaultNutsQueryBaseOptio
 
     @Override
     public boolean configureFirst(NutsCommandLine cmdLine) {
-        NutsArgument a = cmdLine.peek().get(session);
+        NutsArgument a = cmdLine.peek().orNull();
         if (a == null) {
             return false;
         }

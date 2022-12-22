@@ -13,12 +13,12 @@ import java.util.function.Predicate;
 import java.util.regex.Pattern;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.runtime.standalone.util.filters.CoreFilterUtils;
 import net.thevpc.nuts.runtime.standalone.xtra.glob.GlobUtils;
 import net.thevpc.nuts.util.NutsPredicates;
 import net.thevpc.nuts.util.NutsStringUtils;
 
 /**
- *
  * @author thevpc
  */
 public class NutsPatternIdFilter extends AbstractIdFilter implements NutsIdFilter {
@@ -80,6 +80,20 @@ public class NutsPatternIdFilter extends AbstractIdFilter implements NutsIdFilte
                 return false;
             }
         }
+        NutsEnvCondition condition = id.getCondition();
+        if (condition != null && !condition.isBlank()) {
+            NutsEnvCondition otherCondition = null;
+            try {
+                otherCondition = session.fetch().setId(other).getResultDescriptor().getCondition();
+            } catch (Exception ex) {
+                //ignore any error
+            }
+            if (otherCondition != null && !otherCondition.isBlank()) {
+                if (!CoreFilterUtils.acceptCondition(condition, otherCondition, session)) {
+                    return false;
+                }
+            }
+        }
         return true;
     }
 
@@ -100,9 +114,10 @@ public class NutsPatternIdFilter extends AbstractIdFilter implements NutsIdFilte
             String sv = NutsStringUtils.trim(x.get(key));
             return valPattern.matcher(sv).matches();
         }
+
         @Override
         public String toString() {
-            return "EntryMatches[key='"+key+"',val='"+(NutsBlankable.isBlank(val)?"*":val)+"']";
+            return "EntryMatches[key='" + key + "',val='" + (NutsBlankable.isBlank(val) ? "*" : val) + "']";
         }
     }
 
@@ -116,8 +131,8 @@ public class NutsPatternIdFilter extends AbstractIdFilter implements NutsIdFilte
         public PredicateWildKey(String key, String val) {
             this.keyPattern = GlobUtils.ofExact(key);
             this.valPattern = GlobUtils.ofExact(val);
-            skey=NutsBlankable.isBlank(key)?"*":key;
-            sval=NutsBlankable.isBlank(val)?"*":val;
+            skey = NutsBlankable.isBlank(key) ? "*" : key;
+            sval = NutsBlankable.isBlank(val) ? "*" : val;
         }
 
         @Override
@@ -133,7 +148,7 @@ public class NutsPatternIdFilter extends AbstractIdFilter implements NutsIdFilte
 
         @Override
         public String toString() {
-            return "EntryMatches[key='"+skey+"',val='"+sval+"']";
+            return "EntryMatches[key='" + skey + "',val='" + sval + "']";
         }
     }
 

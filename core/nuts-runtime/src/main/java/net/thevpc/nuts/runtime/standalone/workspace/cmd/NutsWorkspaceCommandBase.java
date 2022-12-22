@@ -149,7 +149,7 @@ public abstract class NutsWorkspaceCommandBase<T extends NutsWorkspaceCommand> i
     @Override
     public void configureLast(NutsCommandLine commandLine) {
         if (!configureFirst(commandLine)) {
-            commandLine.throwUnexpectedArgument(getSession());
+            commandLine.throwUnexpectedArgument();
         }
     }
 

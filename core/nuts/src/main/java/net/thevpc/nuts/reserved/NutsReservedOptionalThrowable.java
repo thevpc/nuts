@@ -35,6 +35,11 @@ public abstract class NutsReservedOptionalThrowable<T> extends NutsReservedOptio
     }
 
     @Override
+    public boolean isNull() {
+        return false;
+    }
+
+    @Override
     public NutsOptional<T> withDefault(Supplier<T> value) {
         NutsReservedOptionalThrowable<T> c = (NutsReservedOptionalThrowable<T>) clone();
         c.defaultValue=value;

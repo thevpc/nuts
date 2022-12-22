@@ -27,6 +27,7 @@ package net.thevpc.nuts;
 
 import net.thevpc.nuts.reserved.NutsReservedCollectionUtils;
 import net.thevpc.nuts.reserved.NutsReservedUtils;
+import net.thevpc.nuts.util.NutsStringUtils;
 
 import java.io.Serializable;
 import java.util.*;
@@ -235,6 +236,105 @@ public class DefaultNutsEnvConditionBuilder implements Serializable, NutsEnvCond
         this.properties = properties == null ? null : new HashMap<>(properties);
         return this;
     }
+
+    @Override
+    public NutsEnvConditionBuilder addProperties(Map<String, String> properties) {
+        if(properties!=null){
+            for (Map.Entry<String, String> e : properties.entrySet()) {
+                addProperty(e.getKey(),e.getValue());
+            }
+        }
+        return this;
+    }
+
+    @Override
+    public NutsEnvConditionBuilder addProperty(String key,String value) {
+        key=NutsStringUtils.trimToNull(key);
+        if(key!=null) {
+            if (this.properties == null) {
+                this.properties = new HashMap<>();
+            }
+            if(value==null){
+                this.properties.remove(key);
+            }else{
+                this.properties.put(key,value);
+            }
+        }
+        return this;
+    }
+
+    @Override
+    public NutsEnvConditionBuilder addDesktopEnvironment(String value) {
+        this.desktopEnvironment=NutsReservedCollectionUtils.addUniqueNonBlankList(this.desktopEnvironment,value);
+        return this;
+    }
+
+    @Override
+    public NutsEnvConditionBuilder addDesktopEnvironments(String... values) {
+        this.desktopEnvironment=NutsReservedCollectionUtils.addUniqueNonBlankList(this.desktopEnvironment,values);
+        return this;
+    }
+
+    @Override
+    public NutsEnvConditionBuilder addArchs(String value) {
+        this.arch=NutsReservedCollectionUtils.addUniqueNonBlankList(this.arch,value);
+        return this;
+    }
+
+    @Override
+    public NutsEnvConditionBuilder addArchs(String... values) {
+        this.arch=NutsReservedCollectionUtils.addUniqueNonBlankList(this.arch,values);
+        return this;
+    }
+
+    @Override
+    public NutsEnvConditionBuilder addOs(String value) {
+        this.os=NutsReservedCollectionUtils.addUniqueNonBlankList(this.os,value);
+        return this;
+    }
+
+    @Override
+    public NutsEnvConditionBuilder addOses(String... values) {
+        this.os=NutsReservedCollectionUtils.addUniqueNonBlankList(this.os,values);
+        return this;
+    }
+
+    @Override
+    public NutsEnvConditionBuilder addOsDist(String value) {
+        this.osDist=NutsReservedCollectionUtils.addUniqueNonBlankList(this.osDist,value);
+        return this;
+    }
+
+    @Override
+    public NutsEnvConditionBuilder addOsDists(String... values) {
+        this.osDist=NutsReservedCollectionUtils.addUniqueNonBlankList(this.osDist,values);
+        return this;
+    }
+
+    @Override
+    public NutsEnvConditionBuilder addPlatform(String value) {
+        this.platform=NutsReservedCollectionUtils.addUniqueNonBlankList(this.platform,value);
+        return this;
+    }
+
+    @Override
+    public NutsEnvConditionBuilder addPlatforms(String... values) {
+        this.platform=NutsReservedCollectionUtils.addUniqueNonBlankList(this.platform,values);
+        return this;
+    }
+
+    @Override
+    public NutsEnvConditionBuilder addProfile(String value) {
+        this.profiles=NutsReservedCollectionUtils.addUniqueNonBlankList(this.profiles,value);
+        return this;
+    }
+
+    @Override
+    public NutsEnvConditionBuilder addProfiles(String... values) {
+        this.profiles=NutsReservedCollectionUtils.addUniqueNonBlankList(this.profiles,values);
+        return this;
+    }
+
 
     private String ts(String n, Map<String, String> properties) {
         if (properties.isEmpty()) {

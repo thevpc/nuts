@@ -59,6 +59,7 @@ net.thevpc.nuts.runtime.standalone.dependency.format.DefaultNutsDependencyFormat
 net.thevpc.nuts.runtime.standalone.elem.DefaultNutsElements
 net.thevpc.nuts.runtime.standalone.text.DefaultNutsTexts
 net.thevpc.nuts.runtime.standalone.text.highlighter.JavaCodeHighlighter
+net.thevpc.nuts.runtime.standalone.text.highlighter.SqlCodeHighlighter
 net.thevpc.nuts.runtime.standalone.text.highlighter.BashCodeHighlighter
 net.thevpc.nuts.runtime.standalone.text.highlighter.FishCodeHighlighter
 net.thevpc.nuts.runtime.standalone.text.highlighter.HadraCodeHighlighter

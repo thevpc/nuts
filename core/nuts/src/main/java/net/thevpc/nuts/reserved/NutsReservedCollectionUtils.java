@@ -1,6 +1,7 @@
 package net.thevpc.nuts.reserved;
 
 import net.thevpc.nuts.NutsBlankable;
+import net.thevpc.nuts.util.NutsStringUtils;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -58,6 +59,28 @@ public class NutsReservedCollectionUtils {
         }
         return new LinkedHashSet<>(other);
     }
+
+    public static List<String> addUniqueNonBlankList(List<String> list, String... values) {
+        LinkedHashSet<String> newList = new LinkedHashSet<>();
+        if (list != null) {
+            newList.addAll(list);
+        }
+        boolean someUpdates = false;
+        if (values != null) {
+            for (String value : values) {
+                if (!NutsBlankable.isBlank(value)) {
+                    if (newList.add(NutsStringUtils.trim(value))) {
+                        someUpdates = true;
+                    }
+                }
+            }
+        }
+        if (someUpdates) {
+            list = new ArrayList<>(newList);
+        }
+        return list;
+    }
+
 
     public static <T> List<T> uniqueNonBlankList(Collection<T> other) {
         return uniqueList(other).stream().filter(x -> !NutsBlankable.isBlank(x)).collect(Collectors.toList());

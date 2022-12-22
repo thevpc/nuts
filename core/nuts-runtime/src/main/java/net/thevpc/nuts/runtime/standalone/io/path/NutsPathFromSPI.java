@@ -482,7 +482,7 @@ public class NutsPathFromSPI extends NutsPathBase {
         if (fspi != null) {
             return new NutsFormatFromSPI(fspi,getSession());
         }
-        return super.formatter(session);
+        return super.formatter(session!=null?session:getSession());
     }
 
     @Override

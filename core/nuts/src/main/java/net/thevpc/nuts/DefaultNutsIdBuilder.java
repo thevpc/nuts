@@ -366,7 +366,7 @@ public class DefaultNutsIdBuilder implements NutsIdBuilder {
         }
         sb.append(NutsStringUtils.trim(artifactId));
         NutsVersion v = getVersion();
-        if (!v.isBlank()) {
+        if (v!=null && !v.isBlank()) {
             sb.append("#");
             sb.append(v);
         }
@@ -374,10 +374,14 @@ public class DefaultNutsIdBuilder implements NutsIdBuilder {
         if (!NutsBlankable.isBlank(classifier)) {
             m.put(NutsConstants.IdProperties.CLASSIFIER, classifier);
         }
-        m.putAll(condition.build().toMap());
-        for (Map.Entry<String, String> e : properties.entrySet()) {
-            if (!m.containsKey(e.getKey())) {
-                m.put(e.getKey(), e.getValue());
+        if(condition!=null) {
+            m.putAll(condition.build().toMap());
+        }
+        if(properties!=null) {
+            for (Map.Entry<String, String> e : properties.entrySet()) {
+                if (!m.containsKey(e.getKey())) {
+                    m.put(e.getKey(), e.getValue());
+                }
             }
         }
         if (!m.isEmpty()) {

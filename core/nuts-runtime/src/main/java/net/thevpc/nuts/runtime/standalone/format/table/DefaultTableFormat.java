@@ -32,11 +32,11 @@ import net.thevpc.nuts.elem.NutsElements;
 import net.thevpc.nuts.format.*;
 import net.thevpc.nuts.io.NutsIOException;
 import net.thevpc.nuts.io.NutsPrintStream;
-import net.thevpc.nuts.runtime.standalone.util.CorePlatformUtils;
-import net.thevpc.nuts.runtime.standalone.text.util.NutsTextUtils;
-import net.thevpc.nuts.runtime.standalone.util.StringBuilder2;
 import net.thevpc.nuts.runtime.standalone.format.DefaultFormatBase;
+import net.thevpc.nuts.runtime.standalone.text.util.NutsTextUtils;
+import net.thevpc.nuts.runtime.standalone.util.CorePlatformUtils;
 import net.thevpc.nuts.runtime.standalone.util.CoreStringUtils;
+import net.thevpc.nuts.runtime.standalone.util.StringBuilder2;
 import net.thevpc.nuts.spi.NutsSupportLevelContext;
 import net.thevpc.nuts.text.NutsTexts;
 
@@ -47,6 +47,7 @@ import java.io.OutputStreamWriter;
 import java.nio.file.Path;
 import java.time.temporal.Temporal;
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * Created by vpc on 2/17/17.
@@ -563,6 +564,20 @@ public class DefaultTableFormat extends DefaultFormatBase<NutsTableFormat> imple
         return true;
     }
 
+    private static class SimpleRow {
+        List<SimpleCell> cells = new ArrayList<>();
+    }
+
+    private static class SimpleCell {
+        private String title;
+        private NutsString value;
+
+        public SimpleCell(String title, NutsString value) {
+            this.title = title;
+            this.value = value;
+        }
+    }
+
     private NutsTableModel createTableModel(Object o) {
         NutsSession session = getSession();
         if (o == null) {
@@ -578,76 +593,7 @@ public class DefaultTableFormat extends DefaultFormatBase<NutsTableFormat> imple
         }
         o = _elems().setIndestructibleFormat().destruct(o);
         if (o instanceof Collection) {
-            NutsMutableTableModel model = NutsMutableTableModel.of(session);
-            LinkedHashSet<String> columns = new LinkedHashSet<>();
-            resolveColumns(o, columns);
-            for (String column : columns) {
-                model.addHeaderCell(column);
-            }
-            for (Object oelem2 : ((Collection) o)) {
-                model.newRow();
-                if (oelem2 instanceof NutsElement) {
-                    NutsElement elem2 = (NutsElement) oelem2;
-                    switch (elem2.type()) {
-                        case OBJECT: {
-                            Map<String, NutsElement> m = new HashMap<>();
-                            for (NutsElementEntry vv : elem2.asObject().get(session).entries()) {
-                                NutsElement k = vv.getKey();
-                                if (!k.isString()) {
-                                    k = _elems().ofString(
-                                            k.toString()
-                                    );
-                                }
-                                m.put(k.asString().get(session), vv.getValue());
-                            }
-                            for (String column : columns) {
-                                NutsElement vv = m.get(column);
-                                if (vv != null) {
-                                    model.addCell(formatObject(vv));
-                                } else {
-                                    model.addCell("");
-                                }
-                            }
-                            break;
-                        }
-                        default: {
-                            for (String column : columns) {
-                                if (column.equals("value")) {
-                                    model.addCell(formatObject(elem2/*.primitive().getValue()*/));
-                                } else {
-                                    model.addCell("");
-                                }
-                            }
-                        }
-                    }
-                } else {
-                    if (oelem2 instanceof Map) {
-                        Map<String, Object> m = new HashMap<>();
-                        Map<Object, Object> omap = (Map<Object, Object>) oelem2;
-                        for (Map.Entry<Object, Object> vv : omap.entrySet()) {
-                            String k = String.valueOf(vv.getKey());
-                            m.put(k, vv.getValue());
-                        }
-                        for (String column : columns) {
-                            Object vv = m.get(column);
-                            if (vv != null) {
-                                model.addCell(formatObject(vv));
-                            } else {
-                                model.addCell("");
-                            }
-                        }
-                    } else {
-                        for (String column : columns) {
-                            if (column.equals("value")) {
-                                model.addCell(formatObject(oelem2/*.primitive().getValue()*/));
-                            } else {
-                                model.addCell("");
-                            }
-                        }
-                    }
-                }
-            }
-            return model;
+            return _model2(o, session);
         }
         if (o instanceof Map) {
             NutsMutableTableModel model = NutsMutableTableModel.of(session);
@@ -663,6 +609,16 @@ public class DefaultTableFormat extends DefaultFormatBase<NutsTableFormat> imple
                 model.addCell(formatObject(eoelem2.getKey()));
                 model.addCell(formatObject(eoelem2.getValue()));
             }
+            return model;
+        }
+        if (
+                (o instanceof NutsMessage)
+                        || (o instanceof NutsString)
+                        || (o instanceof NutsFormattable)
+        ) {
+            NutsMutableTableModel model = NutsMutableTableModel.of(session);
+            model.newRow();
+            model.addCell(formatObject(o));
             return model;
         }
         if (!(o instanceof NutsElement)) {
@@ -685,48 +641,8 @@ public class DefaultTableFormat extends DefaultFormatBase<NutsTableFormat> imple
                 return createTableModel(_elems().toElement(elem.asObject().get(session).entries()));
             }
             case ARRAY: {
-                NutsMutableTableModel model = NutsMutableTableModel.of(session);
-                LinkedHashSet<String> columns = new LinkedHashSet<>();
-                resolveColumns(elem, columns);
-                for (String column : columns) {
-                    model.addHeaderCell(column);
-                }
-                for (NutsElement elem2 : elem.asArray().get(session).items()) {
-                    model.newRow();
-                    switch (elem2.type()) {
-                        case OBJECT: {
-                            Map<String, NutsElement> m = new HashMap<>();
-                            for (NutsElementEntry vv : elem2.asObject().get(session).entries()) {
-                                NutsElement k = vv.getKey();
-                                if (!k.isString()) {
-                                    k = _elems().ofString(
-                                            k.toString()
-                                    );
-                                }
-                                m.put(k.asString().get(session), vv.getValue());
-                            }
-                            for (String column : columns) {
-                                NutsElement vv = m.get(column);
-                                if (vv != null) {
-                                    model.addCell(formatObject(vv));
-                                } else {
-                                    model.addCell("");
-                                }
-                            }
-                            break;
-                        }
-                        default: {
-                            for (String column : columns) {
-                                if (column.equals("value")) {
-                                    model.addCell(formatObject(elem2/*.primitive().getValue()*/));
-                                } else {
-                                    model.addCell("");
-                                }
-                            }
-                        }
-                    }
-                }
-                return model;
+
+                return _model2(elem,session);
             }
             default: {
                 throw new NutsUnsupportedArgumentException(session, NutsMessage.ofCstyle("unsupported %s", elem.type()));
@@ -734,12 +650,83 @@ public class DefaultTableFormat extends DefaultFormatBase<NutsTableFormat> imple
         }
     }
 
-    public void resolveColumns(Object obj, LinkedHashSet<String> columns) {
+    public NutsMutableTableModel _model2(Object obj,NutsSession session) {
+        NutsMutableTableModel model = NutsMutableTableModel.of(session);
+        List<SimpleRow> rows=resolveColumnsFromRows(obj);
+        List<String> titles=new ArrayList<>();
+        Set<String> titlesSet=new HashSet<>();
+        if(rows.size()>0){
+            titles.addAll(rows.get(0).cells.stream().map(x->x.title).collect(Collectors.toList()));
+            titlesSet.addAll(titles);
+        }
+        for (SimpleRow row : rows) {
+            for (SimpleCell cell : row.cells) {
+                if(!titlesSet.contains(cell.title)){
+                    titlesSet.add(cell.title);
+                    titles.add(cell.title);
+                }
+            }
+        }
+        for (String column : titles) {
+            model.addHeaderCell(column);
+        }
+        for (SimpleRow row : rows) {
+            model.newRow();
+            Boolean[] visited=new Boolean[row.cells.size()];
+            for (String title : titles) {
+                List<SimpleCell> cells = row.cells;
+                for (int i = 0; i < cells.size(); i++) {
+                    SimpleCell cell = cells.get(i);
+                    if(visited[i]==null){
+                        if(Objects.equals(cell.title,title)){
+                            if (cell.value != null) {
+                                model.addCell(formatObject(cell.value));
+                            } else {
+                                model.addCell("");
+                            }
+                            visited[i]=true;
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+        return model;
+    }
+    public List<SimpleRow> resolveColumnsFromRows(Object obj) {
+        List<SimpleRow> rows = new ArrayList<>();
+        NutsSession session = getSession();
+        if (obj instanceof NutsElement) {
+            NutsElement value = (NutsElement) obj;
+            switch (value.type()) {
+                case ARRAY: {
+                    for (NutsElement value2 : value.asArray().get(session).items()) {
+                        rows.add(resolveColumnsFromRow(value2));
+                    }
+                    break;
+                }
+                default: {
+                    rows.add(resolveColumnsFromRow(value));
+                    break;
+                }
+            }
+        } else if (obj instanceof Collection) {
+            for (Object value2 : ((Collection) obj)) {
+                rows.add(resolveColumnsFromRow(value2));
+            }
+        } else {
+            rows.add(resolveColumnsFromRow(obj));
+        }
+        return rows;
+    }
+
+    public SimpleRow resolveColumnsFromRow(Object obj) {
         NutsSession session = getSession();
         if (obj instanceof NutsElement) {
             NutsElement value = (NutsElement) obj;
             switch (value.type()) {
                 case OBJECT: {
+                    SimpleRow e = new SimpleRow();
                     for (NutsElementEntry nutsNamedValue : value.asObject().get(session).entries()) {
                         NutsElement k = nutsNamedValue.getKey();
                         if (!k.isString()) {
@@ -747,34 +734,52 @@ public class DefaultTableFormat extends DefaultFormatBase<NutsTableFormat> imple
                                     k.toString()
                             );
                         }
-                        columns.add(k.asString().get(session));
+                        e.cells.add(resolveColumnsFromCell(k.asString().get(session), nutsNamedValue.getValue()));
                     }
-                    break;
+                    return e;
                 }
                 case ARRAY: {
+                    SimpleRow e = new SimpleRow();
+                    int column = 1;
                     for (NutsElement value2 : value.asArray().get(session).items()) {
-                        resolveColumns(value2, columns);
+                        e.cells.add(resolveColumnsFromCell("COL " + column,value2));
+                        column++;
                     }
-                    break;
+                    return e;
                 }
                 default: {
-                    columns.add("value");
+                    SimpleRow e = new SimpleRow();
+                    e.cells.add(resolveColumnsFromCell("value", value));
+                    return e;
                 }
             }
-        } else if (obj instanceof List) {
-            for (Object value2 : ((List) obj)) {
-                resolveColumns(value2, columns);
+        } else if (obj instanceof Collection) {
+            SimpleRow e = new SimpleRow();
+            int column = 1;
+            for (Object value2 : ((Collection) obj)) {
+                e.cells.add(resolveColumnsFromCell("COL " + column, value2));
+                column++;
             }
+            return e;
         } else if (obj instanceof Map) {
-            Map<Object, Object> map = (Map) obj;
-            for (Map.Entry<Object, Object> nutsNamedValue : map.entrySet()) {
-                Object k = nutsNamedValue.getKey();
-                String ks = String.valueOf(k);
-                columns.add(ks);
+            Map<String, Object> m = new HashMap<>();
+            Map<Object, Object> omap = (Map<Object, Object>) obj;
+            SimpleRow e = new SimpleRow();
+            for (Map.Entry<Object, Object> vv : omap.entrySet()) {
+                String k = String.valueOf(vv.getKey());
+                m.put(k, formatObject(vv.getValue()));
+                e.cells.add(resolveColumnsFromCell(k, vv.getValue()));
             }
+            return e;
         } else {
-            columns.add("value");
+            SimpleRow e = new SimpleRow();
+            e.cells.add(resolveColumnsFromCell("value", obj));
+            return e;
         }
+    }
+
+    public SimpleCell resolveColumnsFromCell(String title, Object obj) {
+        return new SimpleCell(title, obj == null ? null : formatObject(obj));
     }
 
     private NutsElements _elems() {
@@ -862,7 +867,7 @@ public class DefaultTableFormat extends DefaultFormatBase<NutsTableFormat> imple
         NutsWorkspace ws;
         NutsSession session;
 
-        private RenderedCell(NutsTexts metrics,NutsSession session) {
+        private RenderedCell(NutsTexts metrics, NutsSession session) {
             this.session = session;
             this.metrics = metrics;
             this.ws = session.getWorkspace();
@@ -895,11 +900,11 @@ public class DefaultTableFormat extends DefaultFormatBase<NutsTableFormat> imple
                 }
             }
             rows = strings.size();
-            if(rows==0){
+            if (rows == 0) {
                 rendered = new char[][]{{' '}};
-                rows=1;
-                columns=1;
-            }else {
+                rows = 1;
+                columns = 1;
+            } else {
                 rendered = new char[rows][];
                 for (int i = 0, stringsSize = strings.size(); i < stringsSize; i++) {
                     StringBuilder s = strings.get(i);
@@ -932,7 +937,7 @@ public class DefaultTableFormat extends DefaultFormatBase<NutsTableFormat> imple
                 }
                 rendered0[i] = sb.toString().toCharArray();
             }
-            RenderedCell c = new RenderedCell(metrics,session);
+            RenderedCell c = new RenderedCell(metrics, session);
             c.rendered = rendered0;
             c.columns = columns + other.columns;
             c.rows = rendered0.length;
@@ -964,7 +969,7 @@ public class DefaultTableFormat extends DefaultFormatBase<NutsTableFormat> imple
                 }
                 rendered0[i + rendered.length] = sb.toString().toCharArray();
             }
-            RenderedCell c = new RenderedCell(metrics,session);
+            RenderedCell c = new RenderedCell(metrics, session);
             c.rendered = rendered0;
             c.columns = columns + other.columns;
             c.rows = rendered0.length;
@@ -978,7 +983,7 @@ public class DefaultTableFormat extends DefaultFormatBase<NutsTableFormat> imple
                     rendered0[row + r][col + c] = other.rendered[r][c];
                 }
             }
-            RenderedCell c = new RenderedCell(metrics,session);
+            RenderedCell c = new RenderedCell(metrics, session);
             c.rendered = rendered0;
             c.columns = columns;
             c.rows = rows;
@@ -990,7 +995,7 @@ public class DefaultTableFormat extends DefaultFormatBase<NutsTableFormat> imple
             for (int i = 0; i < rendered0.length; i++) {
                 System.arraycopy(rendered[i + row], col, rendered0[i], 0, toCol - col);
             }
-            RenderedCell c = new RenderedCell(metrics,session);
+            RenderedCell c = new RenderedCell(metrics, session);
             c.rendered = rendered0;
             c.columns = columns;
             c.rows = rows;
@@ -1075,7 +1080,7 @@ public class DefaultTableFormat extends DefaultFormatBase<NutsTableFormat> imple
 //                    Arrays.fill(rendered0[i],0,columns,' ');
 //                }
 //            }
-            RenderedCell c = new RenderedCell(metrics,session);
+            RenderedCell c = new RenderedCell(metrics, session);
             c.rendered = rendered0;
             c.columns = columns;
             c.rows = rows;
@@ -1089,7 +1094,7 @@ public class DefaultTableFormat extends DefaultFormatBase<NutsTableFormat> imple
                 rendered0[i] = new char[rendered[i].length];
                 System.arraycopy(rendered[i], 0, rendered0[i], 0, rendered[i].length);
             }
-            RenderedCell c = new RenderedCell(metrics,session);
+            RenderedCell c = new RenderedCell(metrics, session);
             c.rendered = rendered0;
             c.columns = columns;
             c.rows = rows;

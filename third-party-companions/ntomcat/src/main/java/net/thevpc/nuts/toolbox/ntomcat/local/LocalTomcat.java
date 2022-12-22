@@ -13,6 +13,7 @@ import net.thevpc.nuts.toolbox.ntomcat.NTomcatConfigVersions;
 import net.thevpc.nuts.toolbox.ntomcat.util.NamedItemNotFoundException;
 import net.thevpc.nuts.toolbox.ntomcat.util.RunningTomcat;
 import net.thevpc.nuts.toolbox.ntomcat.util.TomcatUtils;
+import net.thevpc.nuts.util.NutsRef;
 import net.thevpc.nuts.util.NutsUnsafeFunction;
 
 import java.util.ArrayList;
@@ -100,6 +101,7 @@ public class LocalTomcat {
                     case "version":
                     case "catalina-version":
                         showCatalinaVersion(cmdLine);
+                        return;
                     case "ps":
                         ps(cmdLine);
                         return;
@@ -182,53 +184,47 @@ public class LocalTomcat {
     }
 
     public void ps(NutsCommandLine args) {
-        NutsArgument a;
-        String format = "default";
+        NutsSession session = context.getSession();
+        NutsRef<String> format = NutsRef.of("default");
         args.setCommandName("tomcat --local show");
         while (args.hasNext()) {
-            if ((a = args.nextBoolean("-l", "--long").orNull()) != null) {
-                format = "long";
-            } else if ((a = args.nextBoolean("-s", "--short").orNull()) != null) {
-                format = "short";
+            if (args.withNextTrue((b, a, ss) -> format.set("long"), "-l", "--long")) {
             } else {
                 context.configureLast(cmdLine);
             }
         }
         if (args.isExecMode()) {
-            NutsSession session = context.getSession();
             NutsTexts factory = NutsTexts.of(session);
             if (session.isPlainOut()) {
                 NutsPrintStream out = session.out();
                 for (RunningTomcat jpsResult : TomcatUtils.getRunningInstances(context)) {
-                    switch (format) {
-                        case "short": {
-                            out.printf("%s\n",
-                                    factory.ofStyled(jpsResult.getPid(), NutsTextStyle.primary1())
-                            );
-                            break;
-                        }
+                    switch (format.get()) {
                         case "long": {
-                            out.printf("%s v%s HOME: %s BASE: %s ==CMD:== %s\n",
+                            NutsCommandLine nutsArguments = NutsCommandLine.parseSystem(jpsResult.getArgsLine(), session).orNull();
+                            out.printf("%s: %s %s: v%s %s: %s %s: %s %s: %s\n",
+                                    NutsMessage.ofStyled("pid", NutsTextStyle.comments()),
                                     factory.ofStyled(jpsResult.getPid(), NutsTextStyle.primary1()),
-                                    jpsResult.getHome() == null ? null : TomcatUtils.getFolderCatalinaHomeVersion(jpsResult.getHome()),
+                                    NutsMessage.ofStyled("version", NutsTextStyle.comments()),
+                                    jpsResult.getVersion(),
+                                    NutsMessage.ofStyled("home", NutsTextStyle.comments()),
                                     jpsResult.getHome(),
-                                    jpsResult.getBase(),
-                                    NutsCommandLine.parseSystem(jpsResult.getArgsLine(),session)
+                                    NutsMessage.ofStyled("base", NutsTextStyle.comments()),
+                                    NutsMessage.ofStyled(jpsResult.getBase() == null ? "?" : jpsResult.getBase(), NutsTextStyle.path()),
+                                    NutsMessage.ofStyled("cmd", NutsTextStyle.comments()),
+                                    nutsArguments == null ? jpsResult.getArgsLine() : nutsArguments
                             );
                             break;
                         }
                         default: {
-                            out.printf("%s ==v==%s ==BASE:== %s\n",
-                                    factory.ofStyled(jpsResult.getPid(), NutsTextStyle.primary1()),
-                                    jpsResult.getHome() == null ? null : TomcatUtils.getFolderCatalinaHomeVersion(jpsResult.getHome()),
-                                    jpsResult.getBase()
+                            out.printf("%s\n",
+                                    factory.ofStyled(jpsResult.getPid(), NutsTextStyle.primary1())
                             );
                             break;
                         }
                     }
                 }
             } else {
-                NutsObjectFormat.of(context.getSession())
+                NutsObjectFormat.of(session)
                         .setValue(TomcatUtils.getRunningInstances(context))
                         .println();
             }
@@ -279,14 +275,14 @@ public class LocalTomcat {
                     return;
                 }
                 default: {
-                    args.pushBack(a, session);
-                    args.setCommandName("tomcat --local add").throwUnexpectedArgument(NutsMessage.ofPlain("expected instance|domain|app"), session);
+                    args.pushBack(a);
+                    args.setCommandName("tomcat --local add").throwUnexpectedArgument(NutsMessage.ofPlain("expected instance|domain|app"));
                     return;
                 }
             }
         }
         args.setCommandName("tomcat --local add")
-                .throwMissingArgument(NutsMessage.ofPlain("expected instance|domain|app"),session);
+                .throwMissingArgument(NutsMessage.ofPlain("expected instance|domain|app"));
     }
 
     public void addInstance(LocalTomcatConfigService c, NutsCommandLine args, NutsOpenMode autoCreate) {
@@ -435,7 +431,7 @@ public class LocalTomcat {
                 }
             }
         }
-        args.throwMissingArgument(NutsMessage.ofPlain("expected instance|domain|app"),session);
+        args.throwMissingArgument(NutsMessage.ofPlain("expected instance|domain|app"));
     }
 
     public void stop(NutsCommandLine args) {
@@ -509,7 +505,7 @@ public class LocalTomcat {
                 if (file == null) {
                     file = a.asString().get(session);
                 } else {
-                    args.setCommandName("tomcat --local install").throwUnexpectedArgument(session);
+                    args.setCommandName("tomcat --local install").throwUnexpectedArgument();
                 }
             } else {
                 context.configureLast(args);
@@ -535,10 +531,10 @@ public class LocalTomcat {
             } else if ((a = (args.next("work")).orNull()) != null) {
                 deleteWork(args);
             } else {
-                args.setCommandName("tomcat --local delete").throwUnexpectedArgument(session);
+                args.setCommandName("tomcat --local delete").throwUnexpectedArgument();
             }
         } else {
-            args.setCommandName("tomcat --local delete").throwUnexpectedArgument(NutsMessage.ofPlain("missing log|temp|work"),session);
+            args.setCommandName("tomcat --local delete").throwUnexpectedArgument(NutsMessage.ofPlain("missing log|temp|work"));
         }
     }
 
@@ -789,7 +785,7 @@ public class LocalTomcat {
                 if (file == null) {
                     file = a.asString().get(session);
                 } else {
-                    args.setCommandName("tomcat --local deploy-file").throwUnexpectedArgument(session);
+                    args.setCommandName("tomcat --local deploy-file").throwUnexpectedArgument();
                 }
             } else {
                 context.configureLast(args);
@@ -799,7 +795,7 @@ public class LocalTomcat {
             throw new NutsExecutionException(context.getSession(), NutsMessage.ofPlain("tomcat deploy: Missing File"), 2);
         }
         LocalTomcatConfigService c = openTomcatConfig(instance, NutsOpenMode.OPEN_OR_ERROR);
-        c.deployFile(NutsPath.of(file,getContext().getSession()), contextName, domain);
+        c.deployFile(NutsPath.of(file, getContext().getSession()), contextName, domain);
     }
 
     public void deployApp(NutsCommandLine args) {
@@ -817,7 +813,7 @@ public class LocalTomcat {
                 if (app == null) {
                     app = a.asString().get(session);
                 } else {
-                    args.setCommandName("tomcat --local deploy").throwUnexpectedArgument(session);
+                    args.setCommandName("tomcat --local deploy").throwUnexpectedArgument();
                 }
             } else {
                 context.configureLast(args);
@@ -863,7 +859,7 @@ public class LocalTomcat {
                 if (instance == null) {
                     instance = a.asString().get(session);
                 } else {
-                    args.setCommandName("tomcat --local restart").throwUnexpectedArgument(session);
+                    args.setCommandName("tomcat --local restart").throwUnexpectedArgument();
                 }
             } else {
                 context.configureLast(args);
@@ -892,12 +888,12 @@ public class LocalTomcat {
     public LocalTomcatConfigService[] listConfig() {
         return
                 sharedConfigFolder.list().filter(
-                                pathname -> pathname.isRegularFile() &&  pathname.getName().toString().endsWith(LocalTomcatConfigService.LOCAL_CONFIG_EXT),
-                                "isRegularFile() && matches(*"+ LocalTomcatConfigService.LOCAL_CONFIG_EXT+")"
+                                pathname -> pathname.isRegularFile() && pathname.getName().toString().endsWith(LocalTomcatConfigService.LOCAL_CONFIG_EXT),
+                                "isRegularFile() && matches(*" + LocalTomcatConfigService.LOCAL_CONFIG_EXT + ")"
                         )
                         .mapUnsafe(
-                                NutsUnsafeFunction.of(x->openTomcatConfig(x, NutsOpenMode.OPEN_OR_ERROR),"openTomcatConfig")
-                                ,null)
+                                NutsUnsafeFunction.of(x -> openTomcatConfig(x, NutsOpenMode.OPEN_OR_ERROR), "openTomcatConfig")
+                                , null)
                         .filterNonNull()
                         .toArray(LocalTomcatConfigService[]::new);
     }

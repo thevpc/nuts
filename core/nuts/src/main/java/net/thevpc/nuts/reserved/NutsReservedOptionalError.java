@@ -43,6 +43,9 @@ public class NutsReservedOptionalError<T> extends NutsReservedOptionalThrowable<
 
     @Override
     public T get(Function<NutsSession, NutsMessage> message, NutsSession session) {
+        if(session==null){
+            session=getSession();
+        }
         if (message == null) {
             message = this.message;
         }
@@ -55,7 +58,7 @@ public class NutsReservedOptionalError<T> extends NutsReservedOptionalThrowable<
     }
 
     @Override
-    public NutsOptional<T> ifBlankNull() {
+    public NutsOptional<T> ifBlankEmpty() {
         return this;
     }
 

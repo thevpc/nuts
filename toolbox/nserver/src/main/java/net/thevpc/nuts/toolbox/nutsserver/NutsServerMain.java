@@ -59,7 +59,7 @@ public class NutsServerMain implements NutsApplication {
     private void list(NutsApplicationContext context, NutsCommandLine cmdLine) {
         NutsSession session = context.getSession();
         NutsWorkspaceServerManager serverManager = new DefaultNutsWorkspaceServerManager(session);
-        cmdLine.setCommandName("nuts-server list").throwUnexpectedArgument(session);
+        cmdLine.setCommandName("nuts-server list").throwUnexpectedArgument();
         if (cmdLine.isExecMode()) {
             List<NutsServer> servers = serverManager.getServers();
             NutsPrintStream out = session.out();
@@ -123,7 +123,7 @@ public class NutsServerMain implements NutsApplication {
                 servers.current().port = a.getValue().asInt().get(session);
             } else if ((a = commandLine.nextString("-h", "--host").orNull()) != null || (a = commandLine.nextNonOption().orNull()) != null) {
                 StringBuilder s = new StringBuilder();
-                if (a.key().equals("-h") || a.getKey().asString().get(session).equals("--host")) {
+                if (a.key().equals("-h") || a.key().equals("--host")) {
                     s.append(a.getStringValue());
                 } else {
                     s.append(a.asString());

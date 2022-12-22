@@ -68,7 +68,7 @@ public final class NutsReservedBootConfigLoader {
         NutsReservedJsonParser parser = new NutsReservedJsonParser(new StringReader(json));
         Map<String, Object> jsonObject = parser.parseObject();
         NutsWorkspaceBootOptionsBuilder c = new DefaultNutsWorkspaceBootOptionsBuilder();
-        NutsVersion configVersion = NutsVersion.of((String) jsonObject.get("configVersion")).ifBlankNull()
+        NutsVersion configVersion = NutsVersion.of((String) jsonObject.get("configVersion")).ifBlankEmpty()
                 .orElseUse(()->NutsVersion.of((String) jsonObject.get("createApiVersion")))
                 .orElse(NutsVersion.BLANK);
 

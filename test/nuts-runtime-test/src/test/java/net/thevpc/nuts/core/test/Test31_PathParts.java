@@ -113,7 +113,7 @@ public class Test31_PathParts {
         s = d("a1.2s");
         Assertions.assertArrayEquals(new String[]{"a1", "2s"}, s);
         s = d("a.config.json");
-        Assertions.assertArrayEquals(new String[]{"a", "config.json"}, s);
+        Assertions.assertArrayEquals(new String[]{"a.config", "json"}, s);
     }
 
     private String[] d(String n) {

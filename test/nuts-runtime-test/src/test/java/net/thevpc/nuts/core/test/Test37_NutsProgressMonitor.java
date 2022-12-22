@@ -44,15 +44,27 @@ public class Test37_NutsProgressMonitor {
         m.setProgress(0.2);
         m.setProgress(0);
         Assertions.assertEquals(
-                "START                S     0.0 null\n" +
-                "PROGRESS             S     0.2 null\n" +
-                "PROGRESS             S     1.0 null\n" +
-                "COMPLETE             S   T 1.0 null\n" +
-                "UNDO_COMPLETE        S     1.0 null\n" +
-                "PROGRESS             S     0.2 null\n" +
-                "PROGRESS             S     0.0 null\n", bout.toString());
+                f(NutsProgressEventType.START,true,false,false,false,false,0.0,null)+"\n" +
+                f(NutsProgressEventType.PROGRESS,true,false,false,false,false,0.2,null)+"\n" +
+                f(NutsProgressEventType.PROGRESS,true,false,false,false,false,1.0,null)+"\n" +
+                f(NutsProgressEventType.COMPLETE,true,false,false,false,true,1.0,null)+"\n" +
+                f(NutsProgressEventType.UNDO_COMPLETE,true,false,false,false,false,1.0,null)+"\n" +
+                f(NutsProgressEventType.PROGRESS,true,false,false,false,false,0.2,null)+"\n" +
+                f(NutsProgressEventType.PROGRESS,true,false,false,false,false,0.0,null)+"\n"
+                , bout.toString());
     }
 
+    private String f(NutsProgressEventType eventType,boolean started,boolean suspended,boolean blocked,boolean cancelled,boolean completed,double progress,String message){
+        return NutsStringUtils.formatAlign(eventType.toString(), 13, NutsPositionType.FIRST)
+                + " "
+                + (started ? "S" : " ")
+                + (suspended ? "P" : " ")
+                + (blocked ? "B" : " ")
+                + (cancelled ? "C" : " ")
+                + (completed ? "T" : " ")
+                + " " + progress
+                + " " + message;
+    }
     @Test
     public void test02() {
         ByteArrayOutputStream bout = new ByteArrayOutputStream();
@@ -69,12 +81,13 @@ public class Test37_NutsProgressMonitor {
         m.setProgress(0.2);
         m.setProgress(0);
         Assertions.assertEquals(
-                "START                S     0.0 null\n" +
-                "PROGRESS             S     0.2 null\n" +
-                "PROGRESS             S     1.0 null\n" +
-                "COMPLETE             S   T 1.0 null\n" +
-                "UNDO_COMPLETE        S     1.0 null\n" +
-                "PROGRESS             S     0.2 null\n" +
-                "PROGRESS             S     0.0 null\n", bout.toString());
+                f(NutsProgressEventType.START,true,false,false,false,false,0.0,null)+"\n" +
+                        f(NutsProgressEventType.PROGRESS,true,false,false,false,false,0.2,null)+"\n" +
+                        f(NutsProgressEventType.PROGRESS,true,false,false,false,false,1.0,null)+"\n" +
+                        f(NutsProgressEventType.COMPLETE,true,false,false,false,true,1.0,null)+"\n" +
+                        f(NutsProgressEventType.UNDO_COMPLETE,true,false,false,false,false,1.0,null)+"\n" +
+                        f(NutsProgressEventType.PROGRESS,true,false,false,false,false,0.2,null)+"\n" +
+                        f(NutsProgressEventType.PROGRESS,true,false,false,false,false,0.0,null)+"\n"
+                , bout.toString());
     }
 }

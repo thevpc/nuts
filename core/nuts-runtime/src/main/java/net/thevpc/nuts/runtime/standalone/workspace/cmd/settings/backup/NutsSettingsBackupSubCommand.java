@@ -99,7 +99,7 @@ public class NutsSettingsBackupSubCommand extends AbstractNutsSettingsSubCommand
                 file += ".zip";
             }
             if (!Files.isRegularFile(Paths.get(file))) {
-                commandLine.throwMissingArgument(NutsMessage.ofCstyle("not a valid file : %s", file),session);
+                commandLine.throwMissingArgument(NutsMessage.ofCstyle("not a valid file : %s", file));
             }
             if (commandLine.isExecMode()) {
                 NutsObjectElement[] nutsWorkspaceConfigRef = new NutsObjectElement[1];
@@ -124,14 +124,14 @@ public class NutsSettingsBackupSubCommand extends AbstractNutsSettingsSubCommand
                             }
                         });
                 if (nutsWorkspaceConfigRef[0] == null) {
-                    commandLine.throwMissingArgument(NutsMessage.ofCstyle("not a valid file : %s", file),session);
+                    commandLine.throwMissingArgument(NutsMessage.ofCstyle("not a valid file : %s", file));
                 }
                 if (ws == null || ws.isEmpty()) {
                     NutsElements prv = elem.setSession(session);
                     ws = nutsWorkspaceConfigRef[0].getString("name").get(session);
                 }
                 if (ws == null || ws.isEmpty()) {
-                    commandLine.throwMissingArgument(NutsMessage.ofCstyle("not a valid file : %s", file),session);
+                    commandLine.throwMissingArgument(NutsMessage.ofCstyle("not a valid file : %s", file));
                 }
                 String platformHomeFolder = NutsPlatformUtils.getWorkspaceLocation(null,
                         session.config().stored().isGlobal(), ws);

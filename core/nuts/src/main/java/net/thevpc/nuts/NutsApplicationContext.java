@@ -27,9 +27,7 @@
 package net.thevpc.nuts;
 
 
-import net.thevpc.nuts.cmdline.NutsCommandAutoComplete;
-import net.thevpc.nuts.cmdline.NutsCommandLine;
-import net.thevpc.nuts.cmdline.NutsCommandLineConfigurable;
+import net.thevpc.nuts.cmdline.*;
 import net.thevpc.nuts.io.NutsPath;
 import net.thevpc.nuts.spi.NutsApplicationContexts;
 import net.thevpc.nuts.util.NutsClock;
@@ -44,7 +42,7 @@ import java.util.List;
  * @app.category Application
  * @since 0.5.5
  */
-public interface NutsApplicationContext extends NutsCommandLineConfigurable {
+public interface NutsApplicationContext extends NutsCommandLineConfigurable, NutsCommandLineContext {
     /**
      * string that prefix each auto complete candidate
      */
@@ -101,7 +99,7 @@ public interface NutsApplicationContext extends NutsCommandLineConfigurable {
     /**
      * calls configureFirst and ensure this is the last test.
      * If the argument is not supported, throws unsupported argument
-     * by calling {@link NutsCommandLine#throwUnexpectedArgument(NutsSession)}
+     * by calling {@link NutsCommandLine#throwUnexpectedArgument()}
      *
      * @param commandLine arguments to configure with
      * @since 0.7.1
@@ -373,7 +371,7 @@ public interface NutsApplicationContext extends NutsCommandLineConfigurable {
      * @throws NullPointerException if the commandLineProcessor is null
      * @since 0.7.0
      */
-    void processCommandLine(NutsAppCmdProcessor commandLineProcessor);
+    void processCommandLine(NutsCommandLineProcessor commandLineProcessor);
 
     /**
      * application store folder path for the given {@code location}

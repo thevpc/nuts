@@ -131,7 +131,7 @@ public class PackagesPanel extends AbstractInstallPanel {
         java.util.List<Map> recommendedIds = null;
         try {
             try {
-                q.setId("net.thevpc.nuts:nuts#" + InstallData.of(getInstallerContext()).installVersion.api);
+                q.setId("net.thevpc.nuts:nuts#" + InstallData.of(getInstallerContext()).getInstallVersion().api);
                 Map d = connector.getRecommendations(ri);
                 if (d != null) {
                     recommendedIds = (java.util.List<Map>) d.get("recommendedIds");
@@ -177,13 +177,13 @@ public class PackagesPanel extends AbstractInstallPanel {
     protected PackageButtonInfo[] getDefaultButtons() {
         java.util.List<PackageButtonInfo> all = new ArrayList<>();
         all.add(new PackageButtonInfo(new App("org.jedit:jedit"), "JEdit", "Text Editor", true,
-                "https://raw.githubusercontent.com/thevpc/vpc-public-nuts/master/org/jedit/jedit/5.6.0/jedit-icon48.png"
+                "https://raw.githubusercontent.com/thevpc/nuts-public/master/org/jedit/jedit/5.6.0/jedit-icon48.png"
                 , false));
         all.add(new PackageButtonInfo(new App("org.jd:jd-gui"), "Java Decompiler", "Java Decompiler", true,
                 "http://java-decompiler.github.io/img/Icon_java_64.png"
                 , false));
         all.add(new PackageButtonInfo(new App("com.mucommander:mucommander"), "Mu-Commander", "File Explorer", true,
-                "https://raw.githubusercontent.com/thevpc/vpc-public-nuts/master/com/mucommander/mucommander/0.9.7-1/mucommander-icon.png"
+                "https://raw.githubusercontent.com/thevpc/nuts-public/master/com/mucommander/mucommander/1.1.0-1/mucommander-icon.png"
                 , false));
 //        all.add(new PackageButtonInfo("<companions>", "Pangaea Note", "Note Taking Application", true, null, false));
         return all.toArray(new PackageButtonInfo[0]);

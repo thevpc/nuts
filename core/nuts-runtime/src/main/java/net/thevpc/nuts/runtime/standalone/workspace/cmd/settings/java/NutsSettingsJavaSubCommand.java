@@ -47,7 +47,7 @@ public class NutsSettingsJavaSubCommand extends AbstractNutsSettingsSubCommand {
                         }
                     }
                 }
-                cmdLine.setCommandName("config java").throwUnexpectedArgument(session);
+                cmdLine.setCommandName("config java").throwUnexpectedArgument();
                 if (autoSave) {
                     conf.save(false);
                 }
@@ -92,7 +92,7 @@ public class NutsSettingsJavaSubCommand extends AbstractNutsSettingsSubCommand {
             m.addHeaderCells("Name", "Version", "Path");
             while (cmdLine.hasNext()) {
                 if (!t.configureFirst(cmdLine)) {
-                    cmdLine.setCommandName("config list java").throwUnexpectedArgument(session);
+                    cmdLine.setCommandName("config list java").throwUnexpectedArgument();
                 }
             }
             if (cmdLine.isExecMode()) {

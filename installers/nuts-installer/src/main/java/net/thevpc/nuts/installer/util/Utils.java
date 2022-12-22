@@ -82,7 +82,7 @@ public class Utils {
             @Override
             public String apply(String s) {
                 switch (s){
-                    case "apiVersion": return InstallData.of(context).installVersion.api;
+                    case "apiVersion": return InstallData.of(context).getInstallVersion().api;
                 }
                 return null;
             }

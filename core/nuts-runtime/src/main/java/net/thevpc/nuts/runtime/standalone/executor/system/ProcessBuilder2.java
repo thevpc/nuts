@@ -73,11 +73,11 @@ public class ProcessBuilder2 {
         NutsTexts factory = NutsTexts.of(session);
         if (a.isKeyValue()) {
             if (a.isOption()) {
-                sb.append(factory.ofStyled(NutsStringUtils.formatStringLiteral(a.getKey().asString().get(session)), NutsTextStyle.option()));
+                sb.append(factory.ofStyled(NutsStringUtils.formatStringLiteral(a.key()), NutsTextStyle.option()));
                 sb.append("=");
                 sb.append(NutsStringUtils.formatStringLiteral(a.getStringValue().get(session)));
             } else {
-                sb.append(factory.ofStyled(NutsStringUtils.formatStringLiteral(a.getKey().asString().get(session)), NutsTextStyle.primary4()));
+                sb.append(factory.ofStyled(NutsStringUtils.formatStringLiteral(a.key()), NutsTextStyle.primary4()));
                 sb.append("=");
                 sb.append(NutsStringUtils.formatStringLiteral(a.getStringValue().get(session)));
             }

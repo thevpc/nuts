@@ -220,7 +220,7 @@ public abstract class DefaultFormatBase<T extends NutsFormat> extends DefaultFor
     @Override
     public void configureLast(NutsCommandLine commandLine) {
         if (!configureFirst(commandLine)) {
-            commandLine.throwUnexpectedArgument(getSession());
+            commandLine.throwUnexpectedArgument();
         }
     }
 

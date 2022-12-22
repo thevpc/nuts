@@ -37,7 +37,7 @@ public class NutsReservedBootRepositoryDB implements NutsRepositoryDB {
         reg("google", "maven@https://maven.google.com");
         reg("spring", "maven@https://repo.spring.io/release", "spring-framework");
         reg("maven-thevpc-git", "maven@https://raw.githubusercontent.com/thevpc/vpc-public-maven/master", "vpc-public-maven");
-        reg("nuts-public", "maven@https://raw.githubusercontent.com/thevpc/nuts-public/master", "vpc-public-nuts");
+        reg("nuts-public", "maven@https://raw.githubusercontent.com/thevpc/nuts-public/master", "nuts-public", "vpc-public-nuts");
         reg("nuts-preview", "maven@https://raw.githubusercontent.com/thevpc/nuts-preview/master", "nuts-preview","preview");
         reg("thevpc", "maven@htmlfs:https://thevpc.net/maven", "dev");
     }

@@ -31,7 +31,7 @@ public class NutsSettingsAliasSubCommand extends AbstractNutsSettingsSubCommand 
                     NutsArgument a = cmdLine.next().get(session);
                     toList.add(a.toString());
                 } else {
-                    cmdLine.throwUnexpectedArgument(session);
+                    cmdLine.throwUnexpectedArgument();
                 }
             }
             if (cmdLine.isExecMode()) {
@@ -96,11 +96,11 @@ public class NutsSettingsAliasSubCommand extends AbstractNutsSettingsSubCommand 
                         NutsArgument a = cmdLine.next().get(session);
                         if (a.isKeyValue()) {
                             if (n != null) {
-                                cmdLine.pushBack(a, session);
-                                cmdLine.throwUnexpectedArgument(session);
+                                cmdLine.pushBack(a);
+                                cmdLine.throwUnexpectedArgument();
                             }
                             String[] cmdAndArgs = splitCmdAndExecArgs(a.getStringValue().get(session), session);
-                            toAdd.put(a.getKey().asString().get(session), new AliasInfo(a.getKey().asString().get(session), cmdAndArgs[0], null, null, cmdAndArgs[1]));
+                            toAdd.put(a.key(), new AliasInfo(a.getKey().asString().get(session), cmdAndArgs[0], null, null, cmdAndArgs[1]));
                         } else {
                             if (n == null) {
                                 n = a.toString();
@@ -111,7 +111,7 @@ public class NutsSettingsAliasSubCommand extends AbstractNutsSettingsSubCommand 
                             }
                         }
                     } else {
-                        cmdLine.throwUnexpectedArgument(session);
+                        cmdLine.throwUnexpectedArgument();
                     }
                 }
                 if (toAdd.isEmpty()) {

@@ -44,6 +44,6 @@ public abstract class AbstractNutsDescriptor implements NutsDescriptor {
 
     @Override
     public NutsDescriptorFormat formatter(NutsSession session) {
-        return NutsDescriptorFormat.of(session).setValue(this);
+        return NutsDescriptorFormat.of(session!=null?session:this.session).setValue(this);
     }
 }

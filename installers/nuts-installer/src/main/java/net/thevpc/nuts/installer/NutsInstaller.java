@@ -15,7 +15,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class NutsInstaller implements InstallerContext {
-    private final static String VERSION="0.8.3.1";
+    private final static String VERSION="0.8.4.0";
     private final Map<String, Object> vars = new HashMap<>();
     private final java.util.List<AbstractInstallPanel> panels = new ArrayList<>();
     private final LoadingPanel loading = new LoadingPanel();

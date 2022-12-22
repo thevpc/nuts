@@ -13,8 +13,6 @@ import net.thevpc.nuts.cmdline.NutsCommandLine;
 import net.thevpc.nuts.elem.NutsMapBy;
 import net.thevpc.nuts.io.NutsPrintStream;
 import net.thevpc.nuts.spi.NutsFormatSPI;
-import net.thevpc.nuts.text.NutsText;
-import net.thevpc.nuts.text.NutsTextBuilder;
 import net.thevpc.nuts.text.NutsTextStyle;
 
 import java.io.Serializable;

@@ -53,9 +53,9 @@ public class DefaultNutsSettingsInternalExecutable extends DefaultInternalNutsEx
             boolean enabled = a.isActive();
             if(a.isOption() &&
                     (
-                            a.getKey().asString().get(session).equals("-?")
-                            ||a.getKey().asString().get(session).equals("-h")
-                                    ||a.getKey().asString().get(session).equals("-help")
+                            a.key().equals("-?")
+                            ||a.key().equals("-h")
+                                    ||a.key().equals("-help")
                     )
                     ){
                     cmd.skip();

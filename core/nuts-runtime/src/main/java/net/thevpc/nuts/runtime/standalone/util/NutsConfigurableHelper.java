@@ -66,7 +66,7 @@ public class NutsConfigurableHelper {
                     if (skipUnsupported) {
                         commandLine.skip();
                     } else {
-                        commandLine.throwUnexpectedArgument(session);
+                        commandLine.throwUnexpectedArgument();
                     }
                 } else {
                     conf = true;
@@ -86,7 +86,7 @@ public class NutsConfigurableHelper {
                     if (skipUnsupported) {
                         commandLine.skip();
                     } else {
-                        commandLine.throwUnexpectedArgument(session);
+                        commandLine.throwUnexpectedArgument();
                     }
                 } else {
                     conf = true;

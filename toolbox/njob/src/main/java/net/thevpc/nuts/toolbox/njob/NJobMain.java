@@ -31,7 +31,7 @@ public class NJobMain implements NutsApplication {
                 //okkay
                 return;
             } else {
-                cmdLine.throwUnexpectedArgument(session);
+                cmdLine.throwUnexpectedArgument();
             }
         };
         ts.runCommands(NutsCommandLine.of(new String[]{"summary"}));

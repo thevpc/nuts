@@ -1376,9 +1376,9 @@ public class DefaultNutsWorkspaceConfigModel {
         }
         try {
             Map<String, Object> a_config0 = NutsElements.of(session).json().parse(bytes, Map.class);
-            NutsVersion version = NutsVersion.of((String) a_config0.get("configVersion")).ifBlankNull().orNull();
+            NutsVersion version = NutsVersion.of((String) a_config0.get("configVersion")).ifBlankEmpty().orNull();
             if (version == null) {
-                version = NutsVersion.of((String) a_config0.get("createApiVersion")).ifBlankNull().orNull();
+                version = NutsVersion.of((String) a_config0.get("createApiVersion")).ifBlankEmpty().orNull();
                 if (version == null) {
                     version = Nuts.getVersion();
                 }

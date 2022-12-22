@@ -119,7 +119,7 @@ public abstract class DefaultFormatBase0<T> implements NutsCommandLineConfigurab
     @Override
     public void configureLast(NutsCommandLine commandLine) {
         if (!configureFirst(commandLine)) {
-            commandLine.throwUnexpectedArgument(getSession());
+            commandLine.throwUnexpectedArgument();
         }
     }
 }

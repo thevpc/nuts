@@ -41,7 +41,7 @@ public class NutsSettingsConnectSubCommand extends AbstractNutsSettingsSubComman
                     session.configureLast(commandLine);
                 } else {
                     server = commandLine.nextNonOption(NutsArgumentName.of("ServerAddress",session)).flatMap(NutsValue::asString).get(session);
-                    commandLine.setCommandName("settings connect").throwUnexpectedArgument(session);
+                    commandLine.setCommandName("settings connect").throwUnexpectedArgument();
                 }
             }
             if (!commandLine.isExecMode()) {

@@ -688,6 +688,8 @@ public interface NutsSearchCommand extends NutsWorkspaceCommand {
      */
     NutsStream<NutsDefinition> getResultDefinitions();
 
+    NutsStream<NutsDescriptor> getResultDescriptors();
+
     /**
      * execute query and return result as class loader
      *

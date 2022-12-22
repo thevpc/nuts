@@ -271,12 +271,12 @@ public final class NutsBootWorkspace {
             if (parsedBootRuntimeDependenciesRepositories != null) {
                 return parsedBootRuntimeDependenciesRepositories;
             }
-            bLog.log(Level.FINE, NutsLoggerVerb.START, NutsMessage.ofJstyle("resolve boot repositories to load nuts-runtime dependencies from options : {0} and config: {1}", computedOptions.getRepositories().orElseGet(Collections::emptyList).toString(), computedOptions.getBootRepositories().ifBlankNull().orElse("[]")));
+            bLog.log(Level.FINE, NutsLoggerVerb.START, NutsMessage.ofJstyle("resolve boot repositories to load nuts-runtime dependencies from options : {0} and config: {1}", computedOptions.getRepositories().orElseGet(Collections::emptyList).toString(), computedOptions.getBootRepositories().ifBlankEmpty().orElse("[]")));
         } else {
             if (parsedBootRuntimeRepositories != null) {
                 return parsedBootRuntimeRepositories;
             }
-            bLog.log(Level.FINE, NutsLoggerVerb.START, NutsMessage.ofJstyle("resolve boot repositories to load nuts-runtime from options : {0} and config: {1}", computedOptions.getRepositories().orElseGet(Collections::emptyList).toString(), computedOptions.getBootRepositories().ifBlankNull().orElse("[]")));
+            bLog.log(Level.FINE, NutsLoggerVerb.START, NutsMessage.ofJstyle("resolve boot repositories to load nuts-runtime from options : {0} and config: {1}", computedOptions.getRepositories().orElseGet(Collections::emptyList).toString(), computedOptions.getBootRepositories().ifBlankEmpty().orElse("[]")));
         }
         NutsRepositorySelectorList bootRepositories = NutsRepositorySelectorList.ofAll(computedOptions.getRepositories().orNull(), repositoryDB, null);
         NutsRepositorySelector[] old = NutsRepositorySelectorList.ofAll(Arrays.asList(computedOptions.getBootRepositories().orNull()), repositoryDB, null).toArray();
@@ -410,7 +410,7 @@ public final class NutsBootWorkspace {
                 if (computedOptions.getGlobal().orElse(false)) {
                     throw new NutsBootException(NutsMessage.ofNtf("you cannot specify option '--global' in sandbox mode"));
                 }
-                if (computedOptions.getWorkspace().ifBlankNull().isPresent()) {
+                if (computedOptions.getWorkspace().ifBlankEmpty().isPresent()) {
                     throw new NutsBootException(NutsMessage.ofNtf("you cannot specify '--workspace' in sandbox mode"));
                 }
                 if (computedOptions.getStoreLocationStrategy().orElse(NutsStoreLocationStrategy.STANDALONE) != NutsStoreLocationStrategy.STANDALONE) {

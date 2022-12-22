@@ -5,7 +5,6 @@ import net.thevpc.nuts.cmdline.NutsArgument;
 import net.thevpc.nuts.cmdline.NutsCommandLine;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.context.annotation.Import;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -78,7 +77,7 @@ public class AppExample implements NutsApplication {
                         nonOptions.add(cmd.next().flatMap(NutsValue::asString).get(session));
                     } else {
                         // this is an unsupported options!
-                        cmd.throwUnexpectedArgument(session);
+                        cmd.throwUnexpectedArgument();
                     }
                 }
             }

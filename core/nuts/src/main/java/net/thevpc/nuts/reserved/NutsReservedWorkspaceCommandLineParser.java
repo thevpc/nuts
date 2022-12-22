@@ -73,14 +73,14 @@ public final class NutsReservedWorkspaceCommandLineParser {
         NutsCommandLine cmdLine = NutsCommandLine.of(bootArguments)
                 .setCommandName("nuts")
                 .setExpandSimpleOptions(true)
-                .registerSpecialSimpleOption("-version", null);
+                .registerSpecialSimpleOption("-version");
         boolean explicitConfirm = false;
         while (cmdLine.hasNext()) {
             NutsArgument a = cmdLine.peek().get(session);
 
             if (a.isOption()) {
                 boolean active = a.isActive();
-                String k = a.getKey().asString().get(session);
+                String k = a.key();
                 switch (k) {
                     //**********************************
                     //*
@@ -213,7 +213,6 @@ public final class NutsReservedWorkspaceCommandLineParser {
                         a = cmdLine.nextBoolean().get(session);
                         if (active && a.getBooleanValue().get(session)) {
                             options.setStoreLocationStrategy(NutsStoreLocationStrategy.STANDALONE);
-//                            options.setRepositoryStoreLocationStrategy(NutsStoreLocationStrategy.STANDALONE);
                         }
                         break;
 
@@ -224,7 +223,6 @@ public final class NutsReservedWorkspaceCommandLineParser {
                         a = cmdLine.nextBoolean().get(session);
                         if (active && a.getBooleanValue().get(session)) {
                             options.setStoreLocationStrategy(NutsStoreLocationStrategy.EXPLODED);
-//                            options.setRepositoryStoreLocationStrategy(NutsStoreLocationStrategy.EXPLODED);
                         }
                         break;
                     }
@@ -405,7 +403,7 @@ public final class NutsReservedWorkspaceCommandLineParser {
                     //*
                     //**********************************
                     //
-                    //  [[open exported options]] are open (so transient, non 
+                    //  [[open exported options]] are open (so transient, non-
                     // persistent) options that will override any configured 
                     // value (if any) having the ability to be exported 
                     // to any java child process (as system property -D...) 
@@ -509,8 +507,8 @@ public final class NutsReservedWorkspaceCommandLineParser {
                                 if (a.isNegated()) {
                                     options.setDebug(
                                             String.valueOf(!
-                                                            NutsValue.of(a.getStringValue().get(session)).asBoolean()
-                                                    .ifEmpty(true).ifError(false).get()));
+                                                    NutsValue.of(a.getStringValue().get(session)).asBoolean()
+                                                            .ifEmpty(true).ifError(false).get()));
                                 } else {
                                     options.setDebug(a.getStringValue().get(session));
                                 }
@@ -740,15 +738,6 @@ public final class NutsReservedWorkspaceCommandLineParser {
                         }
                         break;
                     }
-//                    case "-i":
-//                    case "--installed":
-//                    {
-//                        a = cmdLine.nextBoolean();
-//                        if (enabled && a.getValue().getBoolean()) {
-//                            options.setFetchStrategy(NutsFetchStrategy.INSTALLED);
-//                        }
-//                        break;
-//                    }
                     case "-F":
                     case "--offline": {
                         a = cmdLine.nextBoolean().get(session);
@@ -1022,14 +1011,14 @@ public final class NutsReservedWorkspaceCommandLineParser {
                     case "--sandbox": {
                         a = cmdLine.nextBoolean().get(session);
                         if (active) {
-                            options.setIsolationLevel(a.getBooleanValue().get(session)? NutsIsolationLevel.SANDBOX : null);
+                            options.setIsolationLevel(a.getBooleanValue().get(session) ? NutsIsolationLevel.SANDBOX : null);
                         }
                         break;
                     }
                     case "--confined": {
                         a = cmdLine.nextBoolean().get(session);
                         if (active) {
-                            options.setIsolationLevel(a.getBooleanValue().get(session)? NutsIsolationLevel.CONFINED : null);
+                            options.setIsolationLevel(a.getBooleanValue().get(session) ? NutsIsolationLevel.CONFINED : null);
                         }
                         break;
                     }
@@ -1213,7 +1202,7 @@ public final class NutsReservedWorkspaceCommandLineParser {
             case "--log-file-off": {
                 cmdLine.skip();
                 if (enabled) {
-                    String id = a.getKey().asString().get(session);
+                    String id = a.key();
                     logConfig.setLogFileLevel(
                             NutsStringUtils.parseLogLevel(id.substring("--log-file-".length())).orNull()
                     );
@@ -1233,7 +1222,7 @@ public final class NutsReservedWorkspaceCommandLineParser {
             case "--log-term-off": {
                 cmdLine.skip();
                 if (enabled) {
-                    String id = a.getKey().asString().get(session);
+                    String id = a.key();
                     logConfig.setLogTermLevel(
                             NutsStringUtils.parseLogLevel(id.substring("--log-term-".length())).orNull()
                     );
@@ -1261,7 +1250,7 @@ public final class NutsReservedWorkspaceCommandLineParser {
             case "--log-off": {
                 cmdLine.skip();
                 if (enabled) {
-                    String id = a.getKey().asString().get(session);
+                    String id = a.key();
                     Level lvl = NutsStringUtils.parseLogLevel(id.substring("--log-".length())).orNull();
                     logConfig.setLogTermLevel(lvl);
                     logConfig.setLogFileLevel(lvl);

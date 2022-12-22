@@ -28,7 +28,7 @@ public class NutsSettingsIndexSubCommand extends AbstractNutsSettingsSubCommand 
                 repos.add(cmdLine.next().flatMap(NutsValue::asString).get(session));
             }
             updateStatistics(session, repos.toArray(new String[0]));
-            cmdLine.setCommandName(name).throwUnexpectedArgument(session);
+            cmdLine.setCommandName(name).throwUnexpectedArgument();
             return true;
         } else {
             return false;

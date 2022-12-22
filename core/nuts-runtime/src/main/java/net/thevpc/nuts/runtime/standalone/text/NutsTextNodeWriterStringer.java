@@ -91,7 +91,7 @@ public class NutsTextNodeWriterStringer extends AbstractNutsTextNodeWriter {
             case COMMAND: {
                 NutsTextCommand s = (NutsTextCommand) node;
                 writeRaw("```!");
-                NutsCommandLine cmd = new DefaultNutsCommandLine();
+                NutsCommandLine cmd = new DefaultNutsCommandLine().setSession(session);
                 cmd.add(s.getCommand().getName());
                 cmd.addAll(s.getCommand().getArgs());
                 writeEscapedSpecial(cmd.toString());

@@ -13,13 +13,9 @@ import net.thevpc.nuts.text.NutsTextStyle;
 import net.thevpc.nuts.text.NutsTexts;
 import net.thevpc.nuts.util.NutsStream;
 
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.io.Reader;
 import java.net.URL;
-import java.nio.charset.Charset;
-import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 import java.time.Instant;
 import java.util.List;
@@ -393,7 +389,7 @@ public class NutsCompressedPathBase extends NutsPathBase {
 
     @Override
     public NutsFormat formatter(NutsSession session) {
-        return new MyPathFormat(this).setSession(getSession());
+        return new MyPathFormat(this).setSession(session!=null?session:getSession());
     }
 
     private static class MyPathFormat extends DefaultFormatBase<NutsFormat> {

@@ -256,21 +256,21 @@ public class DefaultNutsTreeFormat extends DefaultFormatBase<NutsTreeFormat> imp
                             break;
                         }
                     }
-                }, session);
+                });
                 return true;
             }
             case "--omit-root": {
-                commandLine.withNextBoolean((v, a, s) -> setOmitRoot(v), session);
+                commandLine.withNextBoolean((v, a, s) -> setOmitRoot(v));
                 return true;
             }
             case "--infinite": {
-                commandLine.withNextBoolean((v, a, s) -> infinite = (v), session);
+                commandLine.withNextBoolean((v, a, s) -> infinite = (v));
                 return true;
             }
             case DefaultNutsPropertiesFormat.OPTION_MULTILINE_PROPERTY: {
                 NutsArgument i = commandLine.nextString().get(session);
                 if (enabled) {
-                    addMultilineProperty(i.getKey().asString().get(session), i.getStringValue().get(session));
+                    addMultilineProperty(i.key(), i.getStringValue().get(session));
                 }
                 return true;
             }

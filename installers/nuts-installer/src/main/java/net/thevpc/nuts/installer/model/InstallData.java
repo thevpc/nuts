@@ -16,7 +16,7 @@ public class InstallData {
     public boolean optionk;
     public boolean optionSwitch;
     public List<String> otherOptions=new ArrayList<>();
-    public VerInfo installVersion;
+    private VerInfo installVersion;
     public String workspace;
     public String java;
     public Set<App> recommendedIds=new LinkedHashSet<>();
@@ -28,5 +28,113 @@ public class InstallData {
             context.getVars().put(InstallData.class.getName(),c);
         }
         return c;
+    }
+
+    public boolean isInstallStable() {
+        return installStable;
+    }
+
+    public InstallData setInstallStable(boolean installStable) {
+        this.installStable = installStable;
+        return this;
+    }
+
+    public boolean isDarkMode() {
+        return darkMode;
+    }
+
+    public InstallData setDarkMode(boolean darkMode) {
+        this.darkMode = darkMode;
+        return this;
+    }
+
+    public boolean isOptionZ() {
+        return optionZ;
+    }
+
+    public InstallData setOptionZ(boolean optionZ) {
+        this.optionZ = optionZ;
+        return this;
+    }
+
+    public boolean isOptionS() {
+        return optionS;
+    }
+
+    public InstallData setOptionS(boolean optionS) {
+        this.optionS = optionS;
+        return this;
+    }
+
+    public boolean isOptionVerbose() {
+        return optionVerbose;
+    }
+
+    public InstallData setOptionVerbose(boolean optionVerbose) {
+        this.optionVerbose = optionVerbose;
+        return this;
+    }
+
+    public boolean isOptionk() {
+        return optionk;
+    }
+
+    public InstallData setOptionk(boolean optionk) {
+        this.optionk = optionk;
+        return this;
+    }
+
+    public boolean isOptionSwitch() {
+        return optionSwitch;
+    }
+
+    public InstallData setOptionSwitch(boolean optionSwitch) {
+        this.optionSwitch = optionSwitch;
+        return this;
+    }
+
+    public List<String> getOtherOptions() {
+        return otherOptions;
+    }
+
+    public InstallData setOtherOptions(List<String> otherOptions) {
+        this.otherOptions = otherOptions;
+        return this;
+    }
+
+    public VerInfo getInstallVersion() {
+        return installVersion;
+    }
+
+    public InstallData setInstallVersion(VerInfo installVersion) {
+        this.installVersion = installVersion;
+        return this;
+    }
+
+    public String getWorkspace() {
+        return workspace;
+    }
+
+    public InstallData setWorkspace(String workspace) {
+        this.workspace = workspace;
+        return this;
+    }
+
+    public String getJava() {
+        return java;
+    }
+
+    public InstallData setJava(String java) {
+        this.java = java;
+        return this;
+    }
+
+    public Set<App> getRecommendedIds() {
+        return recommendedIds;
+    }
+
+    public InstallData setRecommendedIds(Set<App> recommendedIds) {
+        this.recommendedIds = recommendedIds;
+        return this;
     }
 }

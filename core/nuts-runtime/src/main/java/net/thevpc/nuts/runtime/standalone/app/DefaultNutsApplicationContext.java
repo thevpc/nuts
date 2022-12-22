@@ -180,7 +180,7 @@ public class DefaultNutsApplicationContext implements NutsApplicationContext {
     @Override
     public void configureLast(NutsCommandLine commandLine) {
         if (!configureFirst(commandLine)) {
-            commandLine.throwUnexpectedArgument(session);
+            commandLine.throwUnexpectedArgument();
         }
     }
 
@@ -354,46 +354,13 @@ public class DefaultNutsApplicationContext implements NutsApplicationContext {
     public NutsCommandLine getCommandLine() {
         return NutsCommandLine.of(getArguments())
                 .setCommandName(getAppId().getArtifactId())
-                .setAutoComplete(getAutoComplete());
+                .setAutoComplete(getAutoComplete())
+                .setSession(getSession());
     }
 
     @Override
-    public void processCommandLine(NutsAppCmdProcessor commandLineProcessor) {
-        NutsCommandLine cmd = getCommandLine();
-        NutsArgument a;
-        commandLineProcessor.onCmdInitParsing(cmd, this);
-        while (cmd.hasNext()) {
-            a = cmd.peek().get(session);
-            boolean consumed;
-            if (a.isOption()) {
-                consumed = commandLineProcessor.onCmdNextOption(a, cmd, this);
-            } else {
-                consumed = commandLineProcessor.onCmdNextNonOption(a, cmd, this);
-            }
-            if (consumed) {
-                NutsArgument next = cmd.peek().orNull();
-                //reference equality!
-                if (next == a) {
-                    //was not consumed!
-                    throw new NutsIllegalArgumentException(session,
-                            NutsMessage.ofCstyle("%s must consume the option: %s",
-                                    (a.isOption() ? "nextOption" : "nextNonOption"),
-                                    a));
-                }
-            } else if (!configureFirst(cmd)) {
-                cmd.throwUnexpectedArgument(session);
-            }
-        }
-        commandLineProcessor.onCmdFinishParsing(cmd, this);
-
-        // test if application is running in exec mode
-        // (and not in autoComplete mode)
-        if (this.isExecMode()) {
-            //do the good staff here
-            commandLineProcessor.onCmdExec(cmd, this);
-        } else if (this.getAutoComplete() != null) {
-            commandLineProcessor.onCmdAutoComplete(this.getAutoComplete(), this);
-        }
+    public void processCommandLine(NutsCommandLineProcessor commandLineProcessor) {
+        getCommandLine().process(commandLineProcessor, new AppContextNutsCommandLineContext(this));
     }
 
     @Override
@@ -584,6 +551,34 @@ public class DefaultNutsApplicationContext implements NutsApplicationContext {
                 out0.printf("%s%n", AUTO_COMPLETE_CANDIDATE_PREFIX + NutsCommandLineUtils.escapeArgument(v) + " " + NutsCommandLineUtils.escapeArgument(d));
             }
             return c;
+        }
+    }
+
+    private static class AppContextNutsCommandLineContext implements NutsCommandLineContext {
+        private NutsApplicationContext context;
+
+        public AppContextNutsCommandLineContext(NutsApplicationContext context) {
+            this.context = context;
+        }
+
+        @Override
+        public Object configure(boolean skipUnsupported, String... args) {
+            return this.context.configure(skipUnsupported, args);
+        }
+
+        @Override
+        public boolean configure(boolean skipUnsupported, NutsCommandLine commandLine) {
+            return this.context.configure(skipUnsupported, commandLine);
+        }
+
+        @Override
+        public boolean configureFirst(NutsCommandLine commandLine) {
+            return this.context.configureFirst(commandLine);
+        }
+
+        @Override
+        public void configureLast(NutsCommandLine commandLine) {
+            this.context.configureLast(commandLine);
         }
     }
 }

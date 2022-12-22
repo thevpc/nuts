@@ -1,6 +1,8 @@
 package net.thevpc.nuts.toolbox.nsh;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.cmdline.NutsCommandLineContext;
+import net.thevpc.nuts.cmdline.NutsCommandLineProcessor;
 import net.thevpc.nuts.cmdline.NutsCommandLine;
 import net.thevpc.nuts.text.NutsTextStyle;
 import net.thevpc.nuts.text.NutsTexts;
@@ -34,14 +36,14 @@ public class Nsh implements NutsApplication {
         NutsLoggerOp log = NutsLoggerOp.of(Nsh.class, applicationContext.getSession());
         log.level(Level.CONFIG).verb(NutsLoggerVerb.START).log(NutsMessage.ofPlain("[nsh] Installation..."));
         NutsSession session = applicationContext.getSession();
-        applicationContext.processCommandLine(new NutsAppCmdProcessor() {
+        applicationContext.processCommandLine(new NutsCommandLineProcessor() {
             @Override
-            public void onCmdInitParsing(NutsCommandLine commandLine, NutsApplicationContext context) {
+            public void onCmdInitParsing(NutsCommandLine commandLine, NutsCommandLineContext context) {
                 commandLine.setCommandName("nsh --nuts-exec-mode=install");
             }
 
             @Override
-            public void onCmdExec(NutsCommandLine commandLine, NutsApplicationContext context) {
+            public void onCmdExec(NutsCommandLine commandLine, NutsCommandLineContext context) {
                 if (session.isTrace() || session.isYes()) {
                     log.level(Level.CONFIG).verb(NutsLoggerVerb.INFO).log(NutsMessage.ofJstyle("[nsh] activating options trace={0} yes={1}", session.isTrace(), session.isYes()));
                 }

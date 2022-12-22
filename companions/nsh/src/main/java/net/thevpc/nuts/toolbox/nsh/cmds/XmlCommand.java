@@ -77,7 +77,7 @@ public class XmlCommand extends SimpleJShellBuiltin {
         Options options = context.getOptions();
         NutsSession session = context.getSession();
         if (options.xpaths.isEmpty()) {
-            commandLine.throwMissingArgument(session);
+            commandLine.throwMissingArgument();
         }
 
         DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();

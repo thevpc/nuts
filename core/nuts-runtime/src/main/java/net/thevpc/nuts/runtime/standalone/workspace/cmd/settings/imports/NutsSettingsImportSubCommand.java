@@ -19,7 +19,7 @@ public class NutsSettingsImportSubCommand extends AbstractNutsSettingsSubCommand
     @Override
     public boolean exec(NutsCommandLine cmdLine, Boolean autoSave, NutsSession session) {
         if (cmdLine.next("list imports", "li").isPresent()) {
-            cmdLine.setCommandName("config list imports").throwUnexpectedArgument(session);
+            cmdLine.setCommandName("config list imports").throwUnexpectedArgument();
             if (cmdLine.isExecMode()) {
                 for (String imp : (session.imports().getAllImports())) {
                     session.out().printf("%s%n", imp);
@@ -27,7 +27,7 @@ public class NutsSettingsImportSubCommand extends AbstractNutsSettingsSubCommand
             }
             return true;
         } else if (cmdLine.next("clear imports", "ci").isPresent()) {
-            cmdLine.setCommandName("config clear imports").throwUnexpectedArgument(session);
+            cmdLine.setCommandName("config clear imports").throwUnexpectedArgument();
             if (cmdLine.isExecMode()) {
                 session.imports().clearImports();
                 session.config().save();

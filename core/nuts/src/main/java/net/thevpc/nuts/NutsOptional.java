@@ -1,8 +1,8 @@
 package net.thevpc.nuts;
 
-import net.thevpc.nuts.reserved.NutsReservedOptionalValid;
 import net.thevpc.nuts.reserved.NutsReservedOptionalEmpty;
 import net.thevpc.nuts.reserved.NutsReservedOptionalError;
+import net.thevpc.nuts.reserved.NutsReservedOptionalValid;
 
 import java.util.Collection;
 import java.util.Optional;
@@ -62,11 +62,11 @@ public interface NutsOptional<T> extends NutsBlankable {
     }
 
     static <T> NutsOptional<T> ofNull() {
-        return new NutsReservedOptionalValid<>(null);
+        return ofNullable(null);
     }
 
     static <T> NutsOptional<T> ofNamedOptional(Optional<T> optional, String name) {
-        return ofOptional(optional,s -> NutsMessage.ofCstyle("missing %s", name));
+        return ofOptional(optional, s -> NutsMessage.ofCstyle("missing %s", name));
     }
 
     static <T> NutsOptional<T> ofOptional(Optional<T> optional, Function<NutsSession, NutsMessage> errorMessage) {
@@ -115,7 +115,14 @@ public interface NutsOptional<T> extends NutsBlankable {
         return ofEmpty(errorMessage);
     }
 
+    static <T> NutsOptional<T> ofFirst(Collection<T> collection) {
+        return ofFirst(collection, null);
+    }
+
     static <T> NutsOptional<T> ofFirst(Collection<T> collection, Function<NutsSession, NutsMessage> emptyMessage) {
+        if (emptyMessage == null) {
+            emptyMessage = s -> NutsMessage.ofPlain("missing element");
+        }
         if (collection == null || collection.isEmpty()) {
             return ofEmpty(emptyMessage);
         }
@@ -144,15 +151,48 @@ public interface NutsOptional<T> extends NutsBlankable {
 
     NutsOptional<T> withoutDefault();
 
+    <V> NutsOptional<V> mapIfPresent(Function<T, V> mapper);
+
+    <V> NutsOptional<V> mapIfNotBlank(Function<T, V> mapper);
+
+    <V> NutsOptional<V> mapIfNotEmpty(Function<T, V> mapper);
+
+    <V> NutsOptional<V> mapIfNotNull(Function<T, V> mapper);
+
+    <V> NutsOptional<V> mapIf(Predicate<T> predicate, Function<T, V> trueExpr, Function<T, V> falseExpr);
+
+    NutsOptional<T> mapIf(Predicate<T> predicate, Function<T, T> trueExpr);
+
+    NutsOptional<T> mapIfNotDefault(Function<T, T> mapper);
+
+    NutsOptional<T> mapIfDefault(Function<T, T> mapper);
+
+    <V> NutsOptional<V> mapIfNotError(Function<T, V> mapper);
+
     <V> NutsOptional<V> map(Function<T, V> mapper);
 
     NutsOptional<T> filter(NutsMessagedPredicate<T> predicate);
+
+    NutsOptional<T> filter(Predicate<T> predicate);
 
     NutsOptional<T> filter(Predicate<T> predicate, Function<NutsSession, NutsMessage> message);
 
     NutsOptional<T> ifPresent(Consumer<T> t);
 
+    T orElse(T other);
+
+    T orElseGet(Supplier<? extends T> other);
+
+    NutsOptional<T> orElseOf(Supplier<T> other);
+    NutsOptional<T> orElseOfNullable(Supplier<T> other);
+
+    NutsOptional<T> orElseUse(Supplier<NutsOptional<T>> other);
+
     <R extends Throwable> T orElseThrow(Supplier<? extends R> exceptionSupplier) throws R;
+
+    NutsOptional<T> ifEmpty(T other);
+
+    NutsOptional<T> ifEmptyUse(Supplier<NutsOptional<T>> other);
 
     T get();
 
@@ -164,7 +204,6 @@ public interface NutsOptional<T> extends NutsBlankable {
 
     T get(NutsSession session);
 
-    T orElse(T other);
 
     T orNull();
 
@@ -172,46 +211,76 @@ public interface NutsOptional<T> extends NutsBlankable {
 
     NutsOptional<T> ifEmptyNull();
 
-    NutsOptional<T> ifEmpty(T other);
-
     NutsOptional<T> ifBlank(T other);
 
-    NutsOptional<T> ifBlankNull(Function<NutsSession, NutsMessage> emptyMessage);
+    NutsOptional<T> ifBlankEmpty(Function<NutsSession, NutsMessage> emptyMessage);
 
-    NutsOptional<T> ifBlankNull();
+    NutsOptional<T> ifBlankEmpty();
 
 
     NutsOptional<T> ifErrorNull();
 
     NutsOptional<T> ifError(T other);
 
-    T orElseGet(Supplier<? extends T> other);
-
-    NutsOptional<T> orElseOf(Supplier<T> other);
-
-    NutsOptional<T> ifEmptyUse(Supplier<NutsOptional<T>> other);
-
     NutsOptional<T> ifBlankUse(Supplier<NutsOptional<T>> other);
+
+    NutsOptional<T> ifNullUse(Supplier<NutsOptional<T>> other);
+    NutsOptional<T> ifNullEmpty();
 
     NutsOptional<T> ifErrorUse(Supplier<NutsOptional<T>> other);
 
-    NutsOptional<T> orElseUse(Supplier<NutsOptional<T>> other);
 
-
+    /**
+     * return true when not an error and has no content. {@code isPresent()} would return false as well.
+     *
+     * @return true when not an error and has no content
+     */
     boolean isEmpty();
 
+    /**
+     * return true if this is valid null value. {@code isPresent()} would return true as well.
+     *
+     * @return true if this is valid null value
+     */
+    boolean isNull();
+
+    /**
+     * return true if this is an error value. {@code isPresent()} would return false as well. {@code isEmpty()} would return false.
+     *
+     * @return true if this is an error value
+     */
     boolean isError();
 
+    /**
+     * return true if this is neither error nor empty value.
+     *
+     * @return true if this is neither error nor empty value
+     */
     boolean isPresent();
 
+    /**
+     * return true if this is either error or empty value.
+     *
+     * @return true if this is either error or empty value
+     */
     boolean isNotPresent();
 
     Function<NutsSession, NutsMessage> getMessage();
 
+    /**
+     * set default session or null
+     *
+     * @param session default session or null
+     * @return {@code this} instance
+     */
+    NutsOptional<T> setSession(NutsSession session);
 
-    interface NutsMessagedPredicate<T> {
-        Predicate<T> filter();
+    /**
+     * return default session or null
+     *
+     * @return default session or null
+     */
+    NutsSession getSession();
 
-        Function<NutsSession, NutsMessage> message();
-    }
+
 }

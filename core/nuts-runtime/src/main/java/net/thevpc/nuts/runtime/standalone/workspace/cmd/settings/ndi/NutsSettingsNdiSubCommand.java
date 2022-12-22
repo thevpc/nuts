@@ -70,20 +70,20 @@ public class NutsSettingsNdiSubCommand extends AbstractNutsSettingsSubCommand {
             switch (commandLine.peek().get().key()) {
                 case "-t":
                 case "--fetch": {
-                    commandLine.withNextBoolean((v, a, s) -> d.options.setFetch(v), session);
+                    commandLine.withNextBoolean((v, a, s) -> d.options.setFetch(v));
                     break;
                 }
                 case "-d":
                 case "--workdir": {
-                    commandLine.withNextString((v, a, s) -> d.options.getLauncher().setWorkingDirectory(v), session);
+                    commandLine.withNextString((v, a, s) -> d.options.getLauncher().setWorkingDirectory(v));
                     break;
                 }
                 case "--icon": {
-                    commandLine.withNextString((v, a, s) -> d.options.getLauncher().setIcon(v), session);
+                    commandLine.withNextString((v, a, s) -> d.options.getLauncher().setIcon(v));
                     break;
                 }
                 case "--menu": {
-                    commandLine.withNextString((v, a, s) -> d.options.getLauncher().setCreateMenuLauncher(parseCond(v, session)), session);
+                    commandLine.withNextString((v, a, s) -> d.options.getLauncher().setCreateMenuLauncher(parseCond(v, session)));
                     break;
                 }
                 case "--menu-category": {
@@ -94,11 +94,11 @@ public class NutsSettingsNdiSubCommand extends AbstractNutsSettingsSubCommand {
                                 d.options.getLauncher().setCreateMenuLauncher(NutsSupportMode.PREFERRED);
                             }
                         }
-                    }, session);
+                    });
                     break;
                 }
                 case "--desktop": {
-                    commandLine.withNextString((v, a, s) -> d.options.getLauncher().setCreateDesktopLauncher(parseCond(v, session)), session);
+                    commandLine.withNextString((v, a, s) -> d.options.getLauncher().setCreateDesktopLauncher(parseCond(v, session)));
                     break;
                 }
                 case "--desktop-name": {
@@ -107,7 +107,7 @@ public class NutsSettingsNdiSubCommand extends AbstractNutsSettingsSubCommand {
                         if (d.options.getLauncher().getCreateDesktopLauncher() == NutsSupportMode.NEVER) {
                             d.options.getLauncher().setCreateDesktopLauncher(NutsSupportMode.PREFERRED);
                         }
-                    }, session);
+                    });
                     break;
                 }
                 case "--menu-name": {
@@ -116,7 +116,7 @@ public class NutsSettingsNdiSubCommand extends AbstractNutsSettingsSubCommand {
                         if (d.options.getLauncher().getCreateDesktopLauncher() == NutsSupportMode.NEVER) {
                             d.options.getLauncher().setCreateMenuLauncher(NutsSupportMode.PREFERRED);
                         }
-                    }, session);
+                    });
                     break;
                 }
                 case "--shortcut-name": {
@@ -125,7 +125,7 @@ public class NutsSettingsNdiSubCommand extends AbstractNutsSettingsSubCommand {
                         if (d.options.getLauncher().getCreateUserLauncher() == NutsSupportMode.NEVER) {
                             d.options.getLauncher().setCreateUserLauncher(NutsSupportMode.PREFERRED);
                         }
-                    }, session);
+                    });
                     break;
                 }
                 case "--shortcut-path": {
@@ -134,48 +134,48 @@ public class NutsSettingsNdiSubCommand extends AbstractNutsSettingsSubCommand {
                         if (d.options.getLauncher().getCreateUserLauncher() == NutsSupportMode.NEVER) {
                             d.options.getLauncher().setCreateUserLauncher(NutsSupportMode.PREFERRED);
                         }
-                    }, session);
+                    });
                     break;
                 }
                 case "-x":
                 case "--external":
                 case "--spawn": {
-                    commandLine.withNextTrue((v, a, s) -> d.options.getLauncher().getNutsOptions().add("--spawn"), session);
+                    commandLine.withNextTrue((v, a, s) -> d.options.getLauncher().getNutsOptions().add("--spawn"));
                     break;
                 }
                 case "-b":
                 case "--embedded": {
-                    commandLine.withNextTrue((v, a, s) -> d.options.getLauncher().getNutsOptions().add("--embedded"), session);
+                    commandLine.withNextTrue((v, a, s) -> d.options.getLauncher().getNutsOptions().add("--embedded"));
                     break;
                 }
                 case "--terminal": {
-                    commandLine.withNextBoolean((v, a, s) -> d.options.getLauncher().setOpenTerminal(v), session);
+                    commandLine.withNextBoolean((v, a, s) -> d.options.getLauncher().setOpenTerminal(v));
                     break;
                 }
                 case "-e":
                 case "--env": {
-                    commandLine.withNextBoolean((v, a, s) -> d.options.setIncludeEnv(v), session);
+                    commandLine.withNextBoolean((v, a, s) -> d.options.setIncludeEnv(v));
                     break;
                 }
                 case "--system": {
-                    commandLine.withNextTrue((v, a, s) -> d.options.getLauncher().getNutsOptions().add("--system"), session);
+                    commandLine.withNextTrue((v, a, s) -> d.options.getLauncher().getNutsOptions().add("--system"));
                     break;
                 }
                 case "--current-user": {
-                    commandLine.withNextTrue((v, a, s) -> d.options.getLauncher().getNutsOptions().add("--current-user"), session);
+                    commandLine.withNextTrue((v, a, s) -> d.options.getLauncher().getNutsOptions().add("--current-user"));
                     break;
                 }
                 case "--as-root": {
-                    commandLine.withNextTrue((v, a, s) -> d.options.getLauncher().getNutsOptions().add("--as-root"), session);
+                    commandLine.withNextTrue((v, a, s) -> d.options.getLauncher().getNutsOptions().add("--as-root"));
                     break;
                 }
                 case "--run-as": {
-                    commandLine.withNextString((v, a, s) -> d.options.getLauncher().getNutsOptions().add("--run-as=" + v), session);
+                    commandLine.withNextString((v, a, s) -> d.options.getLauncher().getNutsOptions().add("--run-as=" + v));
                     break;
                 }
                 case "-X":
                 case "--exec-options": {
-                    commandLine.withNextString((v, a, s) -> d.options.getLauncher().getNutsOptions().add("--exec-options=" + v), session);
+                    commandLine.withNextString((v, a, s) -> d.options.getLauncher().getNutsOptions().add("--exec-options=" + v));
                     break;
                 }
                 case "-i":
@@ -188,7 +188,7 @@ public class NutsSettingsNdiSubCommand extends AbstractNutsSettingsSubCommand {
                             d.idsToInstall.add(resultId.getLongName());
                             d.missingAnyArgument = false;
                         }
-                    }, session);
+                    });
                     break;
                 }
                 case "-c":
@@ -199,25 +199,25 @@ public class NutsSettingsNdiSubCommand extends AbstractNutsSettingsSubCommand {
                             d.idsToInstall.add(session.search().addId(companion).setLatest(true).getResultIds().required().getLongName());
                             d.missingAnyArgument = false;
                         }
-                    }, session);
+                    });
                     break;
                 }
                 case "--switch": {
-                    commandLine.withNextBoolean((v, a, s) -> d.options.getLauncher().setSwitchWorkspace(v), session);
+                    commandLine.withNextBoolean((v, a, s) -> d.options.getLauncher().setSwitchWorkspace(v));
                     break;
                 }
                 case "--ignore-unsupported-os": {
-                    commandLine.withNextBoolean((v, a, s) -> d.ignoreUnsupportedOs = v, session);
+                    commandLine.withNextBoolean((v, a, s) -> d.ignoreUnsupportedOs = v);
                     break;
                 }
                 case "-w":
                 case "--workspace": {
-                    commandLine.withNextString((v, a, s) -> d.options.getLauncher().setSwitchWorkspaceLocation(v), session);
+                    commandLine.withNextString((v, a, s) -> d.options.getLauncher().setSwitchWorkspaceLocation(v));
                     break;
                 }
                 case "-n":
                 case "--name": {
-                    commandLine.withNextString((v, a, s) -> d.options.getLauncher().setCustomScriptPath(v), session);
+                    commandLine.withNextString((v, a, s) -> d.options.getLauncher().setCustomScriptPath(v));
                     break;
                 }
                 default: {
@@ -341,21 +341,21 @@ public class NutsSettingsNdiSubCommand extends AbstractNutsSettingsSubCommand {
         while (commandLine.hasNext()) {
             switch (commandLine.peek().get().key()) {
                 case "--ignore-unsupported-os": {
-                    commandLine.withNextBoolean((v, a, s) -> d.ignoreUnsupportedOs = v, session);
+                    commandLine.withNextBoolean((v, a, s) -> d.ignoreUnsupportedOs = v);
                     break;
                 }
                 case "-w":
                 case "--workspace": {
-                    commandLine.withNextString((v, a, s) -> d.switchWorkspaceLocation = v, session);
+                    commandLine.withNextString((v, a, s) -> d.switchWorkspaceLocation = v);
                     break;
                 }
                 case "-a":
                 case "--api": {
-                    commandLine.withNextString((v, a, s) -> d.switchWorkspaceApi = v, session);
+                    commandLine.withNextString((v, a, s) -> d.switchWorkspaceApi = v);
                     break;
                 }
                 case "--menu": {
-                    commandLine.withNextString((v, a, s) -> d.createMenu = parseCond(v, session), session);
+                    commandLine.withNextString((v, a, s) -> d.createMenu = parseCond(v, session));
                     break;
                 }
                 case "--menu-category": {
@@ -366,7 +366,7 @@ public class NutsSettingsNdiSubCommand extends AbstractNutsSettingsSubCommand {
                                 d.createMenu = NutsSupportMode.PREFERRED;
                             }
                         }
-                    }, session);
+                    });
                     break;
                 }
                 case "--menu-name": {
@@ -377,7 +377,7 @@ public class NutsSettingsNdiSubCommand extends AbstractNutsSettingsSubCommand {
                                 d.createMenu = NutsSupportMode.PREFERRED;
                             }
                         }
-                    }, session);
+                    });
                     break;
                 }
                 case "--desktop-name": {
@@ -388,18 +388,18 @@ public class NutsSettingsNdiSubCommand extends AbstractNutsSettingsSubCommand {
                                 d.createDesktop = NutsSupportMode.PREFERRED;
                             }
                         }
-                    }, session);
+                    });
                     break;
                 }
                 case "--desktop": {
                     commandLine.withNextString((v, a, s) -> {
                         d.createDesktop = parseCond(v, session);
-                    }, session);
+                    });
                     break;
                 }
                 default: {
                     if (commandLine.isNextOption()) {
-                        commandLine.throwUnexpectedArgument(session);
+                        commandLine.throwUnexpectedArgument();
                     } else if (d.switchWorkspaceLocation == null) {
                         d.switchWorkspaceLocation = commandLine.next().flatMap(NutsValue::asString).get(session);
                     } else if (d.switchWorkspaceApi == null) {
@@ -407,7 +407,7 @@ public class NutsSettingsNdiSubCommand extends AbstractNutsSettingsSubCommand {
                     } else if (commandLine.isNextOption()) {
                         session.configureLast(commandLine);
                     } else {
-                        commandLine.throwUnexpectedArgument(session);
+                        commandLine.throwUnexpectedArgument();
                     }
                 }
             }

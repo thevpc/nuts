@@ -561,7 +561,7 @@ public abstract class AbstractNutsExecCommand extends NutsWorkspaceCommandBase<N
             case "--run-as": {
                 NutsArgument s = cmdLine.nextString().get(session);
                 if (enabled) {
-                    setRunAs(NutsRunAs.user(s.getStringValue().ifBlankNull().get(session)));
+                    setRunAs(NutsRunAs.user(s.getStringValue().ifBlankEmpty().get(session)));
                 }
                 return true;
             }

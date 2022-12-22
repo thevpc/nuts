@@ -107,11 +107,11 @@ public class DefaultSearchFormatXml extends DefaultSearchFormatBase {
         }
         switch(a.key()) {
             case "--compact": {
-                cmd.withNextBoolean((v,r,s)->compact=v,session);
+                cmd.withNextBoolean((v,r,s)->compact=v);
                 return true;
             }
             case "--root-name": {
-                cmd.withNextString((v,r,s)->rootName=v,session);
+                cmd.withNextString((v,r,s)->rootName=v);
                 return true;
             }
         }

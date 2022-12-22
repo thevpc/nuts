@@ -276,20 +276,20 @@ public abstract class DefaultNutsQueryBaseOptions<T extends NutsWorkspaceCommand
         }
         switch(a.key()) {
             case "--failfast": {
-                cmdLine.withNextBoolean((v,r,s)->this.setFailFast(v),session);
+                cmdLine.withNextBoolean((v,r,s)->this.setFailFast(v));
                 return true;
             }
             case "-r":
             case "--repository": {
-                cmdLine.withNextString((v,r,s)->addRepositoryFilter(NutsRepositoryFilters.of(getSession()).byName(v)),session);
+                cmdLine.withNextString((v,r,s)->addRepositoryFilter(NutsRepositoryFilters.of(getSession()).byName(v)));
                 return true;
             }
             case "--dependencies": {
-                cmdLine.withNextBoolean((v,r,s)->this.setDependencies(v),session);
+                cmdLine.withNextBoolean((v,r,s)->this.setDependencies(v));
                 return true;
             }
             case "--scope": {
-                cmdLine.withNextString((v,r,s)->this.addScope(NutsDependencyScopePattern.parse(v).orElse(NutsDependencyScopePattern.API)),session);
+                cmdLine.withNextString((v,r,s)->this.addScope(NutsDependencyScopePattern.parse(v).orElse(NutsDependencyScopePattern.API)));
                 return true;
             }
 
@@ -303,19 +303,19 @@ public abstract class DefaultNutsQueryBaseOptions<T extends NutsWorkspaceCommand
             case "--optional": {
                 cmdLine.withNextValue((v,r,s)->this.setOptional(
                         NutsValue.of(v.asString().get(session)).asBoolean()
-                                .orNull()),session);
+                                .orNull()));
                 return true;
             }
             case "--effective": {
-                cmdLine.withNextBoolean((v,r,s)->this.setEffective(v),session);
+                cmdLine.withNextBoolean((v,r,s)->this.setEffective(v));
                 return true;
             }
             case "--content": {
-                cmdLine.withNextBoolean((v,r,s)->this.setContent(v),session);
+                cmdLine.withNextBoolean((v,r,s)->this.setContent(v));
                 return true;
             }
             case "--location": {
-                cmdLine.withNextString((v,r,s)->this.setLocation(NutsBlankable.isBlank(v) ? null : Paths.get(v)),session);
+                cmdLine.withNextString((v,r,s)->this.setLocation(NutsBlankable.isBlank(v) ? null : Paths.get(v)));
                 return true;
             }
         }

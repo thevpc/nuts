@@ -14,7 +14,6 @@ import java.net.URL;
 import java.nio.charset.Charset;
 import java.nio.charset.CharsetDecoder;
 import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -280,7 +279,7 @@ public abstract class NutsPathBase implements NutsPath {
     @Override
     public NutsFormat formatter(NutsSession session) {
         return new PathFormat(this)
-                .setSession(getSession())
+                .setSession(session!=null?session:getSession())
                 ;
     }
 

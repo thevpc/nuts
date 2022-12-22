@@ -10,13 +10,15 @@ import java.util.stream.Collectors;
 
 public class DefaultOpNode implements NutsExprOpNode {
     private final String name;
+    private final String uniformName;
     private final List<NutsExprNode> args;
     private final NutsExprOpType op;
     private final int precedence;
 
-    public DefaultOpNode(String name, NutsExprOpType type, int precedence, List<NutsExprNode> args) {
+    public DefaultOpNode(String name, String uniformName,NutsExprOpType type, int precedence, List<NutsExprNode> args) {
         this.op = type;
         this.name = name;
+        this.uniformName = uniformName;
         this.precedence = precedence;
         this.args = args;
     }
@@ -48,57 +50,54 @@ public class DefaultOpNode implements NutsExprOpNode {
         return name;
     }
 
+    public String getUniformName() {
+        return uniformName;
+    }
+
+    private String toParString(String start, String end) {
+        int size = args.size();
+        if (size == 0) {
+            return start+end;
+        }
+        StringBuilder sb = new StringBuilder();
+        sb.append(start);
+        sb.append(EvalUtils.wrapPars(args.get(0)));
+        for (int i = 1; i < size; i++) {
+            sb.append(",");
+            sb.append(EvalUtils.wrapPars(args.get(i)));
+        }
+        sb.append(end);
+        return sb.toString();
+    }
     @Override
     public String toString() {
         switch (name) {
             case "[]": {
-                if (args.size() == 0) {
-                    return name;
-                }
-                StringBuilder sb = new StringBuilder(EvalUtils.wrapPars(args.get(0)));
-                sb.append("[");
-                for (int i = 1; i < args.size(); i++) {
-                    if (i > 1) {
-                        sb.append(",");
-                    }
-                    sb.append(EvalUtils.wrapPars(args.get(i)));
-                }
-                sb.append("]");
-                return sb.toString();
+                return toParString("[","]");
             }
             case "()": {
-                if (args.size() == 0) {
-                    return name;
-                }
-                StringBuilder sb = new StringBuilder(EvalUtils.wrapPars(args.get(0)));
-                sb.append("(");
-                for (int i = 1; i < args.size(); i++) {
-                    if (i > 1) {
-                        sb.append(",");
-                    }
-                    sb.append(EvalUtils.wrapPars(args.get(i)));
-                }
-                sb.append(")");
-                return sb.toString();
+                return toParString("(",")");
             }
             case "{}": {
-                if (args.size() == 0) {
-                    return name;
-                }
-                StringBuilder sb = new StringBuilder(EvalUtils.wrapPars(args.get(0)));
-                sb.append("{");
-                for (int i = 1; i < args.size(); i++) {
-                    if (i > 1) {
-                        sb.append(",");
-                    }
-                    sb.append(EvalUtils.wrapPars(args.get(i)));
-                }
-                sb.append("}");
-                return sb.toString();
+                return toParString("{","}");
             }
         }
         switch (op) {
             case PREFIX: {
+                switch (name) {
+                    case "[": {
+                        return toParString("[","]");
+                    }
+                    case "(": {
+                        return toParString("(",")");
+                    }
+                    case "{": {
+                        return toParString("{","}");
+                    }
+                    case "<": {
+                        return toParString("<",">");
+                    }
+                }
                 return name + " " + EvalUtils.wrapPars(args.get(0));
             }
             case POSTFIX: {

@@ -2,22 +2,26 @@ package net.thevpc.nuts.util;
 
 import net.thevpc.nuts.*;
 
+import java.util.function.Consumer;
+import java.util.function.Function;
 import java.util.function.Supplier;
 
 public final class NutsUtils {
     private NutsUtils() {
     }
 
-    public static void requireSession(NutsSession session) {
+    public static NutsSession requireSession(NutsSession session) {
         if (session == null) {
             throw new NutsMissingSessionException();
         }
+        return session;
     }
 
-    public static void requireSession(NutsSession session, NutsSession defaultSession) {
+    public static NutsSession requireSession(NutsSession session, NutsSession defaultSession) {
         if (session == null) {
             throw new NutsIllegalArgumentException(defaultSession, NutsMessage.ofPlain("missing session"));
         }
+        return session;
     }
 
     private static NutsMessage createMessage(Supplier<NutsMessage> msg, NutsSession session) {

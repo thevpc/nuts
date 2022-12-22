@@ -64,7 +64,7 @@ public class NutsFormatPlain extends DefaultFormatBase<NutsContentTypeFormat> im
                 if (enabled) {
                     NutsArgument i = NutsArgument.of(a.getStringValue().get(session));
                     extraConfig.add(a.asString().get(session));
-                    addMultilineProperty(i.getKey().asString().get(session), i.getStringValue().get(session));
+                    addMultilineProperty(i.key(), i.getStringValue().get(session));
                 }
             } else {
                 a = commandLine.next().get(session);

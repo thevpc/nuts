@@ -25,6 +25,15 @@ public class VersionsPanel extends AbstractInstallPanel {
     JEditorPane jep;
     JToggleButton stableButton;
     JToggleButton previewButton;
+    Color greenFg = Color.GREEN;
+    Color orangeFg = Color.ORANGE;
+    Color redFg = new Color(255, 100, 101);
+    Color greenBg = new Color(161, 205, 161);
+    Color orangeBg = new Color(255, 224, 101);
+    Color redBg = new Color(255, 100, 101);
+    ButtonInfo stableButtonInfo = new ButtonInfo("Stable", "Stable", greenBg, greenFg, UIHelper.getCheckedImageIcon(false), UIHelper.getCheckedImageIcon(true));
+    ButtonInfo previewButtonInfo = new ButtonInfo("Preview", "Preview", orangeBg, orangeFg, UIHelper.getCheckedImageIcon(false), UIHelper.getCheckedImageIcon(true));
+    ButtonInfo errorButtonInfo = new ButtonInfo("Not Available", "<html><body>Unable to resolve stable version. Please Check your internet connexion</body></html>", redBg, redFg, UIHelper.getStopImageIcon(false), UIHelper.getStopImageIcon(true));
 
     public VersionsPanel() {
         super(new BorderLayout());
@@ -42,8 +51,8 @@ public class VersionsPanel extends AbstractInstallPanel {
         panel.setPreferredSize(new Dimension(2 * w, w));
         panel.setMaximumSize(new Dimension(2 * w, w));
         bg = new ButtonGroup();
-        stableButton = add2(new ButtonInfo("Stable", "Stable", new Color(161, 205, 161), Color.GREEN));
-        previewButton = add2(new ButtonInfo("Preview", "Preview", new Color(255, 224, 101), Color.ORANGE));
+        stableButton = add2(stableButtonInfo);
+        previewButton = add2(previewButtonInfo);
 
         JPanel jp = new JPanel(new GridBagLayout());
         GridBagConstraints c = new GridBagConstraints();
@@ -58,41 +67,38 @@ public class VersionsPanel extends AbstractInstallPanel {
         jsp.setMaximumSize(new Dimension(1000, 100));
         jsp.setPreferredSize(new Dimension(100, 100));
         add(UIHelper.margins(jsp, 10), BorderLayout.PAGE_END);
-        jep.setText("<html><body>select the <strong>stable</strong> version for production</body></html>");    }
+        updateObservations(null);
+    }
 
     private JToggleButton add2(ButtonInfo s) {
 
         InstallData id = InstallData.of(getInstallerContext());
         JToggleButton a = new JToggleButton(s.text);
-        a.setForeground(Color.BLACK);
-        a.putClientProperty("ButtonInfo", s);
-        a.setBackground(s.bg);
+        s.bind(a);
 //        a.setPreferredSize(new Dimension(60,60));
         panel.add(a);
         bg.add(a);
-        a.setForeground(Color.BLACK);
         a.addItemListener(new ItemListener() {
             @Override
             public void itemStateChanged(ItemEvent e) {
-                ButtonInfo ii = (ButtonInfo) ((JToggleButton) e.getSource()).getClientProperty("ButtonInfo");
-                jep.setText(ii.html);
-                a.setForeground(Color.BLACK);
+                JToggleButton src = (JToggleButton) e.getSource();
+                ButtonInfo ii = ButtonInfo.of(src);
+                updateObservations(ii);
+                ii.applyButtonInfo(src);
             }
         });
-        a.setIcon(new ImageIcon(UIHelper.getCheckedImage(false)));
-        a.setSelectedIcon(new ImageIcon(UIHelper.getCheckedImage(true)));
         return a;
     }
 
     @Override
     public void onNext() {
         InstallData id = InstallData.of(getInstallerContext());
-        if(stableButton.isSelected() || !previewButton.isEnabled()) {
-            ButtonInfo jj = (ButtonInfo) (stableButton.getClientProperty("ButtonInfo"));
-            id.installVersion=jj.verInfo;
-        }else{
-            ButtonInfo jj = (ButtonInfo) (previewButton.getClientProperty("ButtonInfo"));
-            id.installVersion=jj.verInfo;
+        if (stableButton.isSelected() || !previewButton.isEnabled()) {
+            ButtonInfo jj = ButtonInfo.of(stableButton);
+            id.setInstallVersion(jj.verInfo);
+        } else {
+            ButtonInfo jj = ButtonInfo.of(previewButton);
+            id.setInstallVersion(jj.verInfo);
         }
         super.onNext();
     }
@@ -111,16 +117,22 @@ public class VersionsPanel extends AbstractInstallPanel {
         Info info = loadInfo();
         SwingUtilities.invokeLater(() -> {
             getInstallerContext().stopLoading(getPageIndex());
-            ButtonInfo ii = (ButtonInfo) (stableButton.getClientProperty("ButtonInfo"));
-            ii.html=("<html><body>Select the <strong>stable</strong> version <strong>"+info.stable.runtime+"</strong> for production</body></html>");
-//            stableButton.setText("<html><body><center>Stable<br>version<br><strong>" + info.stable.runtime+"</strong></center></body></html>");
-            stableButton.setText("Stable");
+            ButtonInfo ii = ButtonInfo.of(stableButton);
             ii.verInfo = info.stable;
-            ButtonInfo jj = (ButtonInfo) (previewButton.getClientProperty("ButtonInfo"));
-            jj.html=("<html><body>Select the <strong>preview</strong> version <strong>"+info.preview.runtime+"</strong> to test new features and get latest updates and bug fixes</body></html>");
-            jj.verInfo = info.preview;
             stableButton.setSelected(true);
-            jep.setText(ii.html);
+            if (ii.verInfo.valid) {
+                stableButton.setEnabled(true);
+                ii.html = ("<html><body>Select the <strong>stable</strong> version <strong>" + info.stable.runtime + "</strong> for production</body></html>");
+                stableButtonInfo.applyButtonInfo(stableButton);
+                updateObservations(stableButtonInfo);
+            } else {
+                stableButton.setEnabled(false);
+                errorButtonInfo.applyButtonInfo(stableButton);
+                updateObservations(errorButtonInfo);
+            }
+            ButtonInfo jj = ButtonInfo.of(previewButton);
+            jj.html = ("<html><body>Select the <strong>preview</strong> version <strong>" + info.preview.runtime + "</strong> to test new features and get latest updates and bug fixes</body></html>");
+            jj.verInfo = info.preview;
             if (Objects.equals(info.stable.runtime, info.preview.runtime)) {
                 previewButton.setEnabled(false);
                 previewButton.setText("Preview");
@@ -129,16 +141,26 @@ public class VersionsPanel extends AbstractInstallPanel {
                 previewButton.setText("Preview");
                 previewButton.setEnabled(true);
             }
-            stableButton.setForeground(Color.BLACK);
-            previewButton.setForeground(Color.BLACK);
+            if (ii.verInfo.valid) {
+                previewButton.setVisible(true);
+            }else{
+                previewButton.setVisible(false);
+            }
             getInstallerContext().getNextButton().setEnabled(ii.verInfo.valid);
             getInstallerContext().getPreviousButton().setEnabled(true);
             panel.invalidate();
             panel.revalidate();
         });
     }
+    private void updateObservations(ButtonInfo e){
+        if(e==null){
+            jep.setText("<html><body>select the <strong>stable</strong> version for production</body></html>");
+        }else {
+            jep.setText(e.html);
+        }
+    }
 
-    private Info loadInfo(){
+    private Info loadInfo() {
         SwingUtilities.invokeLater(() -> {
             getInstallerContext().startLoading();
         });
@@ -147,7 +169,7 @@ public class VersionsPanel extends AbstractInstallPanel {
         q.setId("net.thevpc.nuts:nuts#RELEASE");
         ri.setQ(q);
         Map info = null;
-        Properties metadata  = new Properties();
+        Properties metadata = new Properties();
         try {
             try {
                 Map d = new SimpleRecommendationConnector().getRecommendations(ri);
@@ -179,7 +201,7 @@ public class VersionsPanel extends AbstractInstallPanel {
          *     private Instant lastUpdate;
          * }
          */
-        Info ii=new Info();
+        Info ii = new Info();
 //        if(info!=null) {
 //            if(info.get("stableVersion") instanceof String) {
 //                ii.stableVersionRuntime = (String) info.get("stableVersion");
@@ -198,20 +220,20 @@ public class VersionsPanel extends AbstractInstallPanel {
 //        implVersion=0.8.3.1-alpha1
 //        jarLocation=https://raw.githubusercontent.com/thevpc/nuts-preview/master/net/thevpc/nuts/nuts/0.8.3/nuts-0.8.3.jar
 //        buildTime=Sun Jan 23 03:59:50 PM +0000 2022
-        ii.stable.api =metadata.getProperty("stableApiVersion");
-        ii.stable.runtime =metadata.getProperty("stableRuntimeVersion");
-        if(ii.stable.runtime==null){
-            ii.stable.runtime =metadata.getProperty("stableImplVersion");
+        ii.stable.api = metadata.getProperty("stableApiVersion");
+        ii.stable.runtime = metadata.getProperty("stableRuntimeVersion");
+        if (ii.stable.runtime == null) {
+            ii.stable.runtime = metadata.getProperty("stableImplVersion");
         }
-        ii.stable.location=metadata.getProperty("stableJarLocation");
-        ii.stable.valid=ii.stable.api!=null;
-        ii.preview.api =metadata.getProperty("latestApiVersion");
-        ii.preview.runtime =metadata.getProperty("latestRuntimeVersion");
-        if(ii.preview.runtime==null){
-            ii.preview.runtime =metadata.getProperty("latestImplVersion");
+        ii.stable.location = metadata.getProperty("stableJarLocation");
+        ii.stable.valid = ii.stable.api != null;
+        ii.preview.api = metadata.getProperty("latestApiVersion");
+        ii.preview.runtime = metadata.getProperty("latestRuntimeVersion");
+        if (ii.preview.runtime == null) {
+            ii.preview.runtime = metadata.getProperty("latestImplVersion");
         }
-        ii.preview.location=metadata.getProperty("latestJarLocation");
-        ii.preview.valid=ii.preview.api!=null;
+        ii.preview.location = metadata.getProperty("latestJarLocation");
+        ii.preview.valid = ii.preview.api != null;
         return ii;
     }
 

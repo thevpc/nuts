@@ -605,6 +605,11 @@ public abstract class AbstractNutsSearchCommand extends DefaultNutsQueryBaseOpti
     }
 
     @Override
+    public NutsStream<NutsDescriptor> getResultDescriptors() {
+        return getResultDefinitions().map(NutsDefinition::getDescriptor);
+    }
+
+    @Override
     public ClassLoader getResultClassLoader() {
         return getResultClassLoader(null);
     }
@@ -849,78 +854,78 @@ public abstract class AbstractNutsSearchCommand extends DefaultNutsQueryBaseOpti
             return false;
         }
         boolean enabled = a.isActive();
-        switch (a.getKey().asString().get(session)) {
+        switch (a.key()) {
             case "--inline-dependencies": {
-                cmdLine.withNextBoolean((v, r, s) -> this.setInlineDependencies(v), session);
+                cmdLine.withNextBoolean((v, r, s) -> this.setInlineDependencies(v));
                 return true;
             }
             case "-L":
             case "--latest":
             case "--latest-versions": {
-                cmdLine.withNextBoolean((v, r, s) -> this.setLatest(v), session);
+                cmdLine.withNextBoolean((v, r, s) -> this.setLatest(v));
                 return true;
             }
             case "--distinct": {
-                cmdLine.withNextBoolean((v, r, s) -> this.setDistinct(v), session);
+                cmdLine.withNextBoolean((v, r, s) -> this.setDistinct(v));
                 return true;
             }
             case "--default":
             case "--default-versions": {
-                cmdLine.withNextOptionalBoolean((v, r, s) -> this.setDefaultVersions(v.ifError(false).orElse(null)), session);
+                cmdLine.withNextOptionalBoolean((v, r, s) -> this.setDefaultVersions(v.ifError(false).orElse(null)));
                 return true;
             }
             case "--duplicates": {
-                cmdLine.withNextBoolean((v, r, s) -> this.setDistinct(!v), session);
+                cmdLine.withNextBoolean((v, r, s) -> this.setDistinct(!v));
                 return true;
             }
             case "-s":
             case "--sort": {
-                cmdLine.withNextBoolean((v, r, s) -> this.setSorted(v), session);
+                cmdLine.withNextBoolean((v, r, s) -> this.setSorted(v));
                 return true;
             }
             case "--base": {
-                cmdLine.withNextBoolean((v, r, s) -> this.includeBasePackage=v, session);
+                cmdLine.withNextBoolean((v, r, s) -> this.includeBasePackage=v);
                 return true;
             }
             case "--lib":
             case "--libs": {
-                cmdLine.withNextBoolean((v, r, s) -> this.setLib(v), session);
+                cmdLine.withNextBoolean((v, r, s) -> this.setLib(v));
                 return true;
             }
             case "--app":
             case "--apps": {
-                cmdLine.withNextBoolean((v, r, s) -> this.setExec(v), session);
+                cmdLine.withNextBoolean((v, r, s) -> this.setExec(v));
                 return true;
             }
             case "--companion":
             case "--companions": {
-                cmdLine.withNextBoolean((v, r, s) -> this.setCompanion(v), session);
+                cmdLine.withNextBoolean((v, r, s) -> this.setCompanion(v));
                 return true;
             }
             case "--extension":
             case "--extensions": {
-                cmdLine.withNextBoolean((v, r, s) -> this.setExtension(v), session);
+                cmdLine.withNextBoolean((v, r, s) -> this.setExtension(v));
                 return true;
             }
             case "--runtime": {
-                cmdLine.withNextBoolean((v, r, s) -> this.setRuntime(v), session);
+                cmdLine.withNextBoolean((v, r, s) -> this.setRuntime(v));
                 return true;
             }
             case "--api-version": {
-                cmdLine.withNextString((v, r, s) -> this.setTargetApiVersion(NutsVersion.of(v).get( getSession())), session);
+                cmdLine.withNextString((v, r, s) -> this.setTargetApiVersion(NutsVersion.of(v).get( getSession())));
                 return true;
             }
             case "--nuts-app":
             case "--nuts-apps": {
-                cmdLine.withNextBoolean((v, r, s) -> this.setApplication(v), session);
+                cmdLine.withNextBoolean((v, r, s) -> this.setApplication(v));
                 return true;
             }
             case "--arch": {
-                cmdLine.withNextString((v, r, s) -> this.addArch(v), session);
+                cmdLine.withNextString((v, r, s) -> this.addArch(v));
                 return true;
             }
             case "--packaging": {
-                cmdLine.withNextString((v, r, s) -> this.addPackaging(v), session);
+                cmdLine.withNextString((v, r, s) -> this.addPackaging(v));
                 return true;
             }
             case "--optional": {
@@ -931,15 +936,15 @@ public abstract class AbstractNutsSearchCommand extends DefaultNutsQueryBaseOpti
                 return true;
             }
             case "--script": {
-                cmdLine.withNextString((v, r, s) -> this.addScripts(v), session);
+                cmdLine.withNextString((v, r, s) -> this.addScripts(v));
                 return true;
             }
             case "--id": {
-                cmdLine.withNextString((v, r, s) -> this.addId(v), session);
+                cmdLine.withNextString((v, r, s) -> this.addId(v));
                 return true;
             }
             case "--locked-id": {
-                cmdLine.withNextString((v, r, s) -> this.addLockedId(v), session);
+                cmdLine.withNextString((v, r, s) -> this.addLockedId(v));
                 return true;
             }
             case "--deployed": {

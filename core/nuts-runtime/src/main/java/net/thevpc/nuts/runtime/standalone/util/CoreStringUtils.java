@@ -32,6 +32,8 @@ import java.io.*;
 import java.lang.reflect.Array;
 import java.time.Instant;
 import java.util.*;
+import java.util.function.Consumer;
+import java.util.function.Predicate;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
@@ -43,6 +45,17 @@ public final class CoreStringUtils {
     private static final Pattern PATTERN_ALL = Pattern.compile(".*");
 
 
+
+    public static String generateIndexedName(String name, Predicate<String> exists) {
+        int x=1;
+        while(true){
+            String a=name+(x==1?"":(" "+x));
+            if(!exists.test(a)){
+                return a;
+            }
+            x++;
+        }
+    }
 
     public static String escapeQuoteStrings(String s) {
         StringBuilder sb = new StringBuilder(s.length());

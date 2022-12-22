@@ -221,7 +221,7 @@ public class DefaultNutsDependencyFormat extends DefaultFormatBase<NutsDependenc
         boolean enabled=aa.isActive();
         switch(aa.key()) {
             case "--omit-env": {
-                commandLine.withNextBoolean((v, a, s) -> setOmitOtherProperties(v),session);
+                commandLine.withNextBoolean((v, a, s) -> setOmitOtherProperties(v));
                 return true;
             }
 //            case "--omit-face": {
@@ -229,19 +229,19 @@ public class DefaultNutsDependencyFormat extends DefaultFormatBase<NutsDependenc
 //                return true;
 //            }
             case "--omit-group": {
-                commandLine.withNextBoolean((v, a, s) -> setOmitGroupId(v),session);
+                commandLine.withNextBoolean((v, a, s) -> setOmitGroupId(v));
                 return true;
             }
             case "--omit-imported-group": {
-                commandLine.withNextBoolean((v, a, s) -> setOmitImportedGroup(v),session);
+                commandLine.withNextBoolean((v, a, s) -> setOmitImportedGroup(v));
                 return true;
             }
             case "--omit-repo": {
-                commandLine.withNextBoolean((v, a, s) -> setOmitRepository(v),session);
+                commandLine.withNextBoolean((v, a, s) -> setOmitRepository(v));
                 return true;
             }
             case "--highlight-imported-group": {
-                commandLine.withNextBoolean((v, a, s) -> setHighlightImportedGroup(v),session);
+                commandLine.withNextBoolean((v, a, s) -> setHighlightImportedGroup(v));
                 return true;
             }
         }

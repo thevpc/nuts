@@ -1,7 +1,6 @@
 package net.thevpc.nuts.tutorial.nsh.cmd;
 
 import java.util.HashMap;
-import net.thevpc.nuts.cmdline.NutsArgument;
 import net.thevpc.nuts.cmdline.NutsCommandLine;
 import net.thevpc.nuts.NutsSession;
 import net.thevpc.nuts.spi.NutsComponentScope;
@@ -50,34 +49,24 @@ public class Hello extends SimpleJShellBuiltin {
      * arguments. It just need to process the 'next'/'first' option if supported.
      *
      * @param cmdline cmdline to process partially
-     * @param ctx shell context
+     * @param ctx     shell context
      * @return true if the option is processed
      */
     @Override
     protected boolean configureFirst(NutsCommandLine cmdline, JShellExecutionContext ctx) {
-        NutsSession session = ctx.getSession();
         //get an instance of the current options object we are filling.
         Options o = ctx.getOptions();
         //get the next option (without consuming it)
-        NutsArgument a = cmdline.peek().get(session);
         // arguments can be options in the form --key=value or -k=value
-        //if not an option, the key will be resolved to all of the argument
-        switch (a.key()) {
+        //if not an option, the key will be resolved to the hole argument string
+        switch (cmdline.peek().get().key()) {
             case "--who": {
                 //consume the next argument
                 //which is of the form
                 //        --who=me
                 //        or (using spaces)
                 //        --who me
-                a = cmdline.nextString().get(session);
-                if(a.isActive()) {
-                    //get the value 'me' from the option
-                    o.who = a.getStringValue().get(session);
-                }
-                if(a.isActive()) {
-                    //get the value 'me' from the option
-                    o.who = a.getStringValue().get(session);
-                }
+                cmdline.withNextString((v, aa, session) -> o.who = v);
                 //return true to say that the option was successfully processed
                 return true;
             }
@@ -90,9 +79,7 @@ public class Hello extends SimpleJShellBuiltin {
                 //        --complex
                 //        it can even be negated with '~' or '!'
                 //        --!complex
-                a = cmdline.nextBoolean().get(session);
-                //get the value 'me' from the option
-                o.complex = a.getBooleanValue().get(session);
+                cmdline.withNextBoolean((value, arg, session) -> o.complex = value);
                 //return true to say that the option was successfully processed
                 return true;
             }
@@ -122,7 +109,7 @@ public class Hello extends SimpleJShellBuiltin {
             // '###' for another color
             // you can see NTF for more details on coloring
             // or just issue "nuts help --ntf" in your commandline
-            session.out().printlnf("hello ##%s##",o.who == null ? System.getProperty("user.home") : o.who);
+            session.out().printlnf("hello ##%s##", o.who == null ? System.getProperty("user.home") : o.who);
         }
     }
 

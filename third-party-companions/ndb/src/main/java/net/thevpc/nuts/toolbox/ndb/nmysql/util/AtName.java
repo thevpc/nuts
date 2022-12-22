@@ -44,8 +44,8 @@ public class AtName {
         NutsArgument a = cmd.nextString().get(session);
         AtName name2 = new AtName(a.getStringValue().get(session));
         if (!name2.getConfigName().isEmpty() && !name2.getDatabaseName().isEmpty()) {
-            cmd.pushBack(a, session);
-            cmd.throwUnexpectedArgument(NutsMessage.ofPlain("should be valid a config name"), session);
+            cmd.pushBack(a);
+            cmd.throwUnexpectedArgument(NutsMessage.ofPlain("should be valid a config name"));
         }
         if (name2.getConfigName().isEmpty()) {
             name2 = new AtName(name2.getDatabaseName(), "");
@@ -72,7 +72,7 @@ public class AtName {
         NutsArgument a = cmd.peek().get(session);
         AtName name2 = new AtName(a.asString().get(session));
         if (!name2.getConfigName().isEmpty() && !name2.getDatabaseName().isEmpty()) {
-            cmd.throwUnexpectedArgument(NutsMessage.ofPlain("should be valid a config name"), session);
+            cmd.throwUnexpectedArgument(NutsMessage.ofPlain("should be valid a config name"));
         } else {
             cmd.skip();
         }

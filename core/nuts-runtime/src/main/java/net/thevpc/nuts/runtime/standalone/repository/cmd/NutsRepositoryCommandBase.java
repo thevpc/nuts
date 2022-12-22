@@ -126,7 +126,7 @@ public abstract class NutsRepositoryCommandBase<T extends NutsRepositoryCommand>
     @Override
     public void configureLast(NutsCommandLine commandLine) {
         if (!configureFirst(commandLine)) {
-            commandLine.throwUnexpectedArgument(getSession());
+            commandLine.throwUnexpectedArgument();
         }
     }
 }

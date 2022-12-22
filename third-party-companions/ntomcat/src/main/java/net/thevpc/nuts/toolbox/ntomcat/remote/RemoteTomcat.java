@@ -65,7 +65,7 @@ public class RemoteTomcat {
                     reset(cmdLine);
                     return;
                 } else {
-                    cmdLine.setCommandName("tomcat --remote").throwUnexpectedArgument(session);
+                    cmdLine.setCommandName("tomcat --remote").throwUnexpectedArgument();
                 }
             }
         }
@@ -367,10 +367,15 @@ public class RemoteTomcat {
         class Helper {
 
             boolean json = false;
+            boolean yaml = false;
 
             public void show(RemoteTomcatServiceBase aa) {
                 NutsSession session = getContext().getSession();
                 if (json) {
+                    session.out().printf("%s :\n", NutsTexts.of(session).ofStyled(aa.getName(), NutsTextStyle.primary4()));
+                    aa.println(session.out());
+                }else if (yaml) {
+                    //TODO FIX ME, what to do in Yaml?
                     session.out().printf("%s :\n", NutsTexts.of(session).ofStyled(aa.getName(), NutsTextStyle.primary4()));
                     aa.println(session.out());
                 } else {
@@ -384,6 +389,8 @@ public class RemoteTomcat {
         while (args.hasNext()) {
             if ((a = args.nextBoolean("--json").orNull()) != null) {
                 h.json = a.getBooleanValue().get(session);
+            }else if ((a = args.nextBoolean("--yaml").orNull()) != null) {
+                h.yaml = a.getBooleanValue().get(session);
             } else if ((s = readBaseServiceArg(args)) != null) {
                 h.show(s);
             } else {

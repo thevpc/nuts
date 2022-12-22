@@ -29,7 +29,7 @@ public class NCodeMain implements NutsApplication {
 
     @Override
     public void run(NutsApplicationContext applicationContext) {
-        applicationContext.processCommandLine(new NCodeMainCmdProcessor());
+        applicationContext.processCommandLine(new NCodeMainCmdProcessor(applicationContext));
     }
 
 }
