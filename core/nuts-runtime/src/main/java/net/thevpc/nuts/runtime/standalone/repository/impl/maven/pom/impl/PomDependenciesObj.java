@@ -1,30 +1,29 @@
 package net.thevpc.nuts.runtime.standalone.repository.impl.maven.pom.impl;
 
-import net.thevpc.nuts.NutsBlankable;
-import net.thevpc.nuts.runtime.standalone.repository.impl.maven.pom.api.NutsPomDependency;
-import net.thevpc.nuts.runtime.standalone.repository.impl.maven.pom.api.NutsPomDependenciesNode;
-import net.thevpc.nuts.runtime.standalone.repository.impl.maven.pom.api.NutsPomDependencyNode;
-import net.thevpc.nuts.runtime.standalone.repository.impl.maven.pom.api.NutsPomId;
-import net.thevpc.nuts.util.NutsStringUtils;
+import net.thevpc.nuts.NBlankable;
+import net.thevpc.nuts.runtime.standalone.repository.impl.maven.pom.api.NPomDependency;
+import net.thevpc.nuts.runtime.standalone.repository.impl.maven.pom.api.NPomDependenciesNode;
+import net.thevpc.nuts.runtime.standalone.repository.impl.maven.pom.api.NPomDependencyNode;
+import net.thevpc.nuts.runtime.standalone.repository.impl.maven.pom.api.NPomId;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 import java.util.*;
 
 public class PomDependenciesObj
-        extends DefaultNutsPomNode<List<NutsPomDependencyNode>>
-        implements NutsPomDependenciesNode {
-    public PomDependenciesObj(Element element, List<NutsPomDependencyNode> object, Document document) {
+        extends DefaultNPomNode<List<NPomDependencyNode>>
+        implements NPomDependenciesNode {
+    public PomDependenciesObj(Element element, List<NPomDependencyNode> object, Document document) {
         super(element, object, document);
     }
 
     @Override
     public void removeDuplicates() {
-        Map<String, NutsPomDependencyNode> visited = new LinkedHashMap<>();
-        NutsPomDependencyNode[] pomDependencyObjs = getObject().toArray(new NutsPomDependencyNode[0]);
-        for (NutsPomDependencyNode dependencyAndElement : pomDependencyObjs) {
-            NutsPomDependency dependency = dependencyAndElement.getObject();
-            NutsPomDependencyNode last = visited.get(dependency.getShortName());
+        Map<String, NPomDependencyNode> visited = new LinkedHashMap<>();
+        NPomDependencyNode[] pomDependencyObjs = getObject().toArray(new NPomDependencyNode[0]);
+        for (NPomDependencyNode dependencyAndElement : pomDependencyObjs) {
+            NPomDependency dependency = dependencyAndElement.getObject();
+            NPomDependencyNode last = visited.get(dependency.getShortName());
             if (last != null) {
                 getObject().remove(last);
             }
@@ -33,8 +32,8 @@ public class PomDependenciesObj
     }
 
     @Override
-    public void remove(NutsPomDependencyNode dependency) {
-        for (NutsPomDependencyNode x : getObject().toArray(new NutsPomDependencyNode[0])) {
+    public void remove(NPomDependencyNode dependency) {
+        for (NPomDependencyNode x : getObject().toArray(new NPomDependencyNode[0])) {
             if (Objects.equals(x, dependency)) {
                 getObject().remove(x);
                 getXmlElement().removeChild(x.getXmlElement());
@@ -44,8 +43,8 @@ public class PomDependenciesObj
     }
 
     @Override
-    public void remove(NutsPomDependency dependency) {
-        for (NutsPomDependencyNode x : getObject().toArray(new NutsPomDependencyNode[0])) {
+    public void remove(NPomDependency dependency) {
+        for (NPomDependencyNode x : getObject().toArray(new NPomDependencyNode[0])) {
             if (Objects.equals(x.getObject(), dependency)) {
                 getObject().remove(x);
                 getXmlElement().removeChild(x.getXmlElement());
@@ -55,13 +54,13 @@ public class PomDependenciesObj
     }
 
     @Override
-    public void removeAllChildren(NutsPomDependencyNode dependency) {
+    public void removeAllChildren(NPomDependencyNode dependency) {
         removeAllChildren(dependency.getObject());
     }
 
     @Override
-    public void removeAllChildren(NutsPomDependency dependency) {
-        for (NutsPomDependencyNode x : getObject().toArray(new NutsPomDependencyNode[0])) {
+    public void removeAllChildren(NPomDependency dependency) {
+        for (NPomDependencyNode x : getObject().toArray(new NPomDependencyNode[0])) {
             if (Objects.equals(x.getObject(), dependency)) {
                 getObject().remove(x);
                 getXmlElement().removeChild(x.getXmlElement());
@@ -70,25 +69,25 @@ public class PomDependenciesObj
     }
 
     @Override
-    public void appendChild(NutsPomDependency dependency) {
+    public void appendChild(NPomDependency dependency) {
         Element d = getDocument().createElement("dependency");
         d.appendChild(createTextElement("groupId", dependency.getGroupId()));
         d.appendChild(createTextElement("artifactId", dependency.getArtifactId()));
-        if (!NutsBlankable.isBlank(dependency.getVersion())) {
+        if (!NBlankable.isBlank(dependency.getVersion())) {
             d.appendChild(createTextElement("version", dependency.getVersion()));
         }
-        if (!NutsBlankable.isBlank(dependency.getOptional())) {
+        if (!NBlankable.isBlank(dependency.getOptional())) {
             d.appendChild(createTextElement("optional", dependency.getOptional()));
         }
-        if (!NutsBlankable.isBlank(dependency.getClassifier())) {
+        if (!NBlankable.isBlank(dependency.getClassifier())) {
             d.appendChild(createTextElement("classifier", dependency.getClassifier()));
         }
         if (dependency.getExclusions().length > 0) {
             Element exclusions = getDocument().createElement("exclusions");
-            for (NutsPomId exclusion : dependency.getExclusions()) {
+            for (NPomId exclusion : dependency.getExclusions()) {
                 exclusions.appendChild(createTextElement("groupId", exclusion.getGroupId()));
                 exclusions.appendChild(createTextElement("artifactId", exclusion.getArtifactId()));
-                if (!NutsBlankable.isBlank(exclusion.getVersion())) {
+                if (!NBlankable.isBlank(exclusion.getVersion())) {
                     exclusions.appendChild(createTextElement("version", exclusion.getVersion()));
                 }
             }

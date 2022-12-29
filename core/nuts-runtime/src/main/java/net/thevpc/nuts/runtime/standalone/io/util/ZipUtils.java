@@ -24,10 +24,10 @@
 package net.thevpc.nuts.runtime.standalone.io.util;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.io.NutsIOException;
-import net.thevpc.nuts.io.NutsPath;
-import net.thevpc.nuts.util.NutsLoggerOp;
-import net.thevpc.nuts.util.NutsLoggerVerb;
+import net.thevpc.nuts.io.NIOException;
+import net.thevpc.nuts.io.NPath;
+import net.thevpc.nuts.util.NLoggerOp;
+import net.thevpc.nuts.util.NLoggerVerb;
 
 import java.io.*;
 import java.nio.file.Files;
@@ -45,7 +45,7 @@ import java.util.zip.ZipOutputStream;
 public class ZipUtils {
 
     //    private static final Logger LOG = Logger.getLogger(ZipUtils.class.getName());
-    public static void zip(NutsSession ws, String target, ZipOptions options, String... source) throws IOException {
+    public static void zip(NSession ws, String target, ZipOptions options, String... source) throws IOException {
         if (options == null) {
             options = new ZipOptions();
         }
@@ -177,7 +177,7 @@ public class ZipUtils {
      * @param options      options
      * @throws IOException io exception
      */
-    public static void unzip(NutsSession session, String zipFile, String outputFolder, UnzipOptions options) throws IOException {
+    public static void unzip(NSession session, String zipFile, String outputFolder, UnzipOptions options) throws IOException {
         if (options == null) {
             options = new UnzipOptions();
         }
@@ -219,8 +219,8 @@ public class ZipUtils {
                     newFile.mkdirs();
                 } else {
                     File newFile = new File(outputFolder + File.separator + fileName);
-                    NutsLoggerOp.of(ZipUtils.class, session).level(Level.FINEST).verb(NutsLoggerVerb.WARNING)
-                            .log(NutsMessage.ofJstyle("file unzip : {0}", newFile.getAbsoluteFile()));
+                    NLoggerOp.of(ZipUtils.class, session).level(Level.FINEST).verb(NLoggerVerb.WARNING)
+                            .log(NMsg.ofJstyle("file unzip : {0}", newFile.getAbsoluteFile()));
                     //create all non exists folders
                     //else you will hit FileNotFoundException for compressed folder
                     newFile.getParentFile().mkdirs();
@@ -304,23 +304,23 @@ public class ZipUtils {
 //            throw new RuntimeIOException(e);
 //        }
 //    }
-    public static boolean visitZipStream(NutsPath zipFile, InputStreamVisitor visitor, NutsSession session) {
+    public static boolean visitZipStream(NPath zipFile, InputStreamVisitor visitor, NSession session) {
         try (InputStream is = zipFile.getInputStream()) {
             return visitZipStream(is, visitor, session);
         } catch (IOException ex) {
-            throw new NutsIOException(session, ex);
+            throw new NIOException(session, ex);
         }
     }
 
-    public static boolean visitZipStream(Path zipFile, InputStreamVisitor visitor, NutsSession session) {
+    public static boolean visitZipStream(Path zipFile, InputStreamVisitor visitor, NSession session) {
         try (InputStream is = Files.newInputStream(zipFile)) {
             return visitZipStream(is, visitor, session);
         } catch (IOException ex) {
-            throw new NutsIOException(session, ex);
+            throw new NIOException(session, ex);
         }
     }
 
-    public static boolean visitZipStream(InputStream zipFile, InputStreamVisitor visitor, NutsSession session) {
+    public static boolean visitZipStream(InputStream zipFile, InputStreamVisitor visitor, NSession session) {
         //byte[] buffer = new byte[4 * 1024];
 
         //get the zip file content
@@ -366,13 +366,13 @@ public class ZipUtils {
                 ze = zis.getNextEntry();
             }
         } catch (IOException ex) {
-            throw new NutsIOException(session, ex);
+            throw new NIOException(session, ex);
         } finally {
             if (zis != null) {
                 try {
                     zis.close();
                 } catch (IOException ex) {
-                    throw new NutsIOException(session, ex);
+                    throw new NIOException(session, ex);
                 }
             }
         }

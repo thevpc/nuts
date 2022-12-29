@@ -1,8 +1,8 @@
 package net.thevpc.nuts.toolbox.nsh.jshell;
 
-import net.thevpc.nuts.cmdline.NutsCommandAutoComplete;
-import net.thevpc.nuts.NutsSession;
-import net.thevpc.nuts.NutsWorkspace;
+import net.thevpc.nuts.cmdline.NCommandAutoComplete;
+import net.thevpc.nuts.NSession;
+import net.thevpc.nuts.NWorkspace;
 
 import java.util.Map;
 
@@ -30,8 +30,8 @@ public class JShellContextForSource extends AbstractJShellContext{
     }
 
     @Override
-    public NutsSession getSession() {
-        NutsSession s = super.getSession();
+    public NSession getSession() {
+        NSession s = super.getSession();
         if(s!=null){
             return s;
         }
@@ -39,7 +39,7 @@ public class JShellContextForSource extends AbstractJShellContext{
     }
 
     @Override
-    public NutsWorkspace getWorkspace() {
+    public NWorkspace getWorkspace() {
         return getSession().getWorkspace();
     }
 
@@ -136,12 +136,12 @@ public class JShellContextForSource extends AbstractJShellContext{
     }
 
     @Override
-    public NutsCommandAutoComplete getAutoComplete() {
+    public NCommandAutoComplete getAutoComplete() {
         return other.getAutoComplete();
     }
 
     @Override
-    public void setAutoComplete(NutsCommandAutoComplete value) {
+    public void setAutoComplete(NCommandAutoComplete value) {
         other.setAutoComplete(value);
     }
 

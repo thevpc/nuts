@@ -26,16 +26,16 @@
  */
 package net.thevpc.nuts.toolbox.nsh.cmds.bash;
 
-import net.thevpc.nuts.cmdline.NutsCommandLine;
-import net.thevpc.nuts.spi.NutsComponentScope;
-import net.thevpc.nuts.spi.NutsComponentScopeType;
+import net.thevpc.nuts.cmdline.NCommandLine;
+import net.thevpc.nuts.spi.NComponentScope;
+import net.thevpc.nuts.spi.NComponentScopeType;
 import net.thevpc.nuts.toolbox.nsh.SimpleJShellBuiltin;
 import net.thevpc.nuts.toolbox.nsh.jshell.JShellExecutionContext;
 
 /**
  * Created by vpc on 1/7/17.
  */
-@NutsComponentScope(NutsComponentScopeType.WORKSPACE)
+@NComponentScope(NComponentScopeType.WORKSPACE)
 public class LogoutCommand extends SimpleJShellBuiltin {
 
     public LogoutCommand() {
@@ -46,12 +46,12 @@ public class LogoutCommand extends SimpleJShellBuiltin {
 
     }
     @Override
-    protected boolean configureFirst(NutsCommandLine commandLine, JShellExecutionContext context) {
+    protected boolean configureFirst(NCommandLine commandLine, JShellExecutionContext context) {
         return false;
     }
 
     @Override
-    protected void execBuiltin(NutsCommandLine commandLine, JShellExecutionContext context) {
+    protected void execBuiltin(NCommandLine commandLine, JShellExecutionContext context) {
         context.getSession().security().logout();
     }
 }

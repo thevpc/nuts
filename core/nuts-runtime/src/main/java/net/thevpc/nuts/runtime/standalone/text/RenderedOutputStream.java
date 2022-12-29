@@ -1,23 +1,23 @@
 package net.thevpc.nuts.runtime.standalone.text;
 
-import net.thevpc.nuts.io.NutsOutputStreamTransparentAdapter;
-import net.thevpc.nuts.NutsWorkspace;
+import net.thevpc.nuts.io.NOutputStreamTransparentAdapter;
+import net.thevpc.nuts.NWorkspace;
 
 import java.io.IOException;
 import java.io.OutputStream;
-import net.thevpc.nuts.NutsSession;
+import net.thevpc.nuts.NSession;
 import net.thevpc.nuts.runtime.standalone.io.outputstream.OutputStreamHelper;
-import net.thevpc.nuts.spi.NutsSystemTerminalBase;
+import net.thevpc.nuts.spi.NSystemTerminalBase;
 
-public class RenderedOutputStream extends OutputStream implements NutsOutputStreamTransparentAdapter {
+public class RenderedOutputStream extends OutputStream implements NOutputStreamTransparentAdapter {
 
     FormatOutputStreamSupport h;
     OutputStream out;
-    NutsSession session;
-    NutsWorkspace ws;
-    NutsSystemTerminalBase terminal;
+    NSession session;
+    NWorkspace ws;
+    NSystemTerminalBase terminal;
 
-    public RenderedOutputStream(OutputStream out, NutsSystemTerminalBase terminal,boolean filtered, NutsSession session) {
+    public RenderedOutputStream(OutputStream out, NSystemTerminalBase terminal, boolean filtered, NSession session) {
         this.out = out;
         this.session = session;
         this.ws = session.getWorkspace();
@@ -27,7 +27,7 @@ public class RenderedOutputStream extends OutputStream implements NutsOutputStre
                 , session,terminal,filtered);
     }
 
-    public NutsSystemTerminalBase getTerminal() {
+    public NSystemTerminalBase getTerminal() {
         return terminal;
     }
 

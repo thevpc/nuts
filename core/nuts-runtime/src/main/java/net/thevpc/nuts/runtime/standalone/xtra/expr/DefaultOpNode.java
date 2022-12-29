@@ -1,21 +1,21 @@
 package net.thevpc.nuts.runtime.standalone.xtra.expr;
 
-import net.thevpc.nuts.NutsMessage;
-import net.thevpc.nuts.NutsOptional;
+import net.thevpc.nuts.NMsg;
+import net.thevpc.nuts.NOptional;
 import net.thevpc.nuts.util.*;
 
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class DefaultOpNode implements NutsExprOpNode {
+public class DefaultOpNode implements NExprOpNode {
     private final String name;
     private final String uniformName;
-    private final List<NutsExprNode> args;
-    private final NutsExprOpType op;
+    private final List<NExprNode> args;
+    private final NExprOpType op;
     private final int precedence;
 
-    public DefaultOpNode(String name, String uniformName,NutsExprOpType type, int precedence, List<NutsExprNode> args) {
+    public DefaultOpNode(String name, String uniformName, NExprOpType type, int precedence, List<NExprNode> args) {
         this.op = type;
         this.name = name;
         this.uniformName = uniformName;
@@ -25,24 +25,24 @@ public class DefaultOpNode implements NutsExprOpNode {
 
 
     @Override
-    public NutsExprNode getOperand(int index) {
+    public NExprNode getOperand(int index) {
         if (index >= args.size()) {
             throw new IllegalArgumentException("Missing argument " + (index + 1) + " for " + name);
         }
         return args.get(index);
     }
 
-    public List<NutsExprNode> getOperands() {
+    public List<NExprNode> getOperands() {
         return Collections.unmodifiableList(args);
     }
 
     @Override
-    public NutsExprNodeType getType() {
-        return NutsExprNodeType.OPERATOR;
+    public NExprNodeType getType() {
+        return NExprNodeType.OPERATOR;
     }
 
     @Override
-    public List<NutsExprNode> getChildren() {
+    public List<NExprNode> getChildren() {
         return args;
     }
 
@@ -125,11 +125,11 @@ public class DefaultOpNode implements NutsExprOpNode {
     }
 
     @Override
-    public NutsOptional<Object> eval(NutsExprDeclarations context) {
+    public NOptional<Object> eval(NExprDeclarations context) {
         try {
-            return context.evalOperator(getName(), op, args.toArray(new NutsExprNode[0]));
+            return context.evalOperator(getName(), op, args.toArray(new NExprNode[0]));
         } catch (Exception ex) {
-            return NutsOptional.ofError(x -> NutsMessage.ofCstyle("error %s ", ex));
+            return NOptional.ofError(x -> NMsg.ofCstyle("error %s ", ex));
         }
     }
 }

@@ -23,7 +23,7 @@
  */
 package net.thevpc.nuts.toolbox.ntomcat.util;
 
-import net.thevpc.nuts.NutsBlankable;
+import net.thevpc.nuts.NBlankable;
 
 /**
  *
@@ -33,7 +33,7 @@ public class _StringUtils {
 
     public static String coalesce(String... cmd) {
         for (String string : cmd) {
-            if (!NutsBlankable.isBlank(string)) {
+            if (!NBlankable.isBlank(string)) {
                 return string;
             }
         }

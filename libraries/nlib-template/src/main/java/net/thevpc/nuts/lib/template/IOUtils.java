@@ -5,8 +5,8 @@
  */
 package net.thevpc.nuts.lib.template;
 
-import net.thevpc.nuts.text.NutsTextStyle;
-import net.thevpc.nuts.text.NutsTexts;
+import net.thevpc.nuts.text.NTextStyle;
+import net.thevpc.nuts.text.NTexts;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -78,10 +78,10 @@ public class IOUtils {
         fileWriter.flush();
         fileWriter.close();
         if (isOverride) {
-            console.println("[OVERRIDE] %s%n", NutsTexts.of(project.getSession()).ofStyled(file.getPath(), NutsTextStyle.path()));
+            console.println("[OVERRIDE] %s%n", NTexts.of(project.getSession()).ofStyled(file.getPath(), NTextStyle.path()));
         } else {
             project.setNewlyCreated(file.getPath());
-            console.println("[GENERATE] %s%n" + NutsTexts.of(project.getSession()).ofStyled(file.getPath(),NutsTextStyle.path()));
+            console.println("[GENERATE] %s%n" + NTexts.of(project.getSession()).ofStyled(file.getPath(), NTextStyle.path()));
         }
     }
 

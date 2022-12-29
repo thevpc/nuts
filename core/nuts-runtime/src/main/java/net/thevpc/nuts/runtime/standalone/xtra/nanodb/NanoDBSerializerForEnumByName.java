@@ -1,7 +1,7 @@
 package net.thevpc.nuts.runtime.standalone.xtra.nanodb;
 
-import net.thevpc.nuts.util.NutsEnum;
-import net.thevpc.nuts.NutsSession;
+import net.thevpc.nuts.util.NEnum;
+import net.thevpc.nuts.NSession;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -14,15 +14,15 @@ class NanoDBSerializerForEnumByName extends NanoDBNonNullSerializer<Enum> {
     }
 
     @Override
-    public void write(Enum obj, NanoDBOutputStream out, NutsSession session) {
+    public void write(Enum obj, NanoDBOutputStream out, NSession session) {
         out.writeUTF(obj.name());
     }
 
     @Override
-    public Enum read(NanoDBInputStream in, Class expectedType, NutsSession session) {
+    public Enum read(NanoDBInputStream in, Class expectedType, NSession session) {
         String o = in.readUTF();
-        if (NutsEnum.class.isAssignableFrom(expectedType)) {
-            return (Enum) NutsEnum.parse(expectedType, o).get(session);
+        if (NEnum.class.isAssignableFrom(expectedType)) {
+            return (Enum) NEnum.parse(expectedType, o).get(session);
         } else {
             return Enum.valueOf(expectedType, o);
         }

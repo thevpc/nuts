@@ -1,163 +1,163 @@
 package net.thevpc.nuts.runtime.standalone.repository.impl.main;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.io.NutsPath;
-import net.thevpc.nuts.runtime.standalone.repository.config.NutsRepositoryConfigModel;
-import net.thevpc.nuts.spi.NutsRepositoryLocation;
+import net.thevpc.nuts.io.NPath;
+import net.thevpc.nuts.runtime.standalone.repository.config.NRepositoryConfigModel;
+import net.thevpc.nuts.spi.NRepositoryLocation;
 
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-class InstalledRepositoryConfigModel implements NutsRepositoryConfigModel {
+class InstalledRepositoryConfigModel implements NRepositoryConfigModel {
 
-    private final NutsWorkspace ws;
-    private final NutsRepository repo;
+    private final NWorkspace ws;
+    private final NRepository repo;
 
-    public InstalledRepositoryConfigModel(NutsWorkspace ws, NutsRepository repo) {
+    public InstalledRepositoryConfigModel(NWorkspace ws, NRepository repo) {
         this.ws = ws;
         this.repo = repo;
     }
 
     @Override
-    public boolean save(boolean force, NutsSession session) {
+    public boolean save(boolean force, NSession session) {
         return false;
     }
 
     @Override
-    public NutsRepository getRepository() {
+    public NRepository getRepository() {
         return repo;
     }
 
     @Override
-    public NutsWorkspace getWorkspace() {
+    public NWorkspace getWorkspace() {
         return ws;
     }
 
     @Override
-    public void addMirror(NutsRepository repo, NutsSession session) {
-        throw new NutsIllegalArgumentException(session, NutsMessage.ofPlain("not supported : addMirror"));
+    public void addMirror(NRepository repo, NSession session) {
+        throw new NIllegalArgumentException(session, NMsg.ofPlain("not supported : addMirror"));
     }
 
     @Override
-    public NutsRepository addMirror(NutsAddRepositoryOptions options, NutsSession session) {
-        throw new NutsIllegalArgumentException(session, NutsMessage.ofPlain("not supported : addMirror"));
+    public NRepository addMirror(NAddRepositoryOptions options, NSession session) {
+        throw new NIllegalArgumentException(session, NMsg.ofPlain("not supported : addMirror"));
     }
 
     @Override
-    public NutsRepository findMirror(String repositoryIdOrName, NutsSession session) {
+    public NRepository findMirror(String repositoryIdOrName, NSession session) {
         return null;
     }
 
     @Override
-    public NutsRepository findMirrorById(String repositoryNameOrId, NutsSession session) {
+    public NRepository findMirrorById(String repositoryNameOrId, NSession session) {
         return null;
     }
 
     @Override
-    public NutsRepository findMirrorByName(String repositoryNameOrId, NutsSession session) {
+    public NRepository findMirrorByName(String repositoryNameOrId, NSession session) {
         return null;
     }
 
     @Override
-    public int getDeployWeight(NutsSession session) {
+    public int getDeployWeight(NSession session) {
         return -1;
     }
 
     @Override
-    public String getGlobalName(NutsSession session) {
-        return DefaultNutsInstalledRepository.INSTALLED_REPO_UUID;
+    public String getGlobalName(NSession session) {
+        return DefaultNInstalledRepository.INSTALLED_REPO_UUID;
     }
 
     @Override
-    public String getGroups(NutsSession session) {
+    public String getGroups(NSession session) {
         return null;
     }
 
     @Override
-    public NutsPath getLocationPath(NutsSession session) {
+    public NPath getLocationPath(NSession session) {
         return null;
     }
 
     @Override
-    public NutsRepositoryLocation getLocation(NutsSession session) {
+    public NRepositoryLocation getLocation(NSession session) {
         return null;
     }
     
 
     @Override
-    public NutsRepository getMirror(String repositoryIdOrName, NutsSession session) {
+    public NRepository getMirror(String repositoryIdOrName, NSession session) {
         return null;
     }
 
     @Override
-    public List<NutsRepository> getMirrors(NutsSession session) {
+    public List<NRepository> getMirrors(NSession session) {
         return Collections.emptyList();
     }
 
     @Override
     public String getName() {
-        return DefaultNutsInstalledRepository.INSTALLED_REPO_UUID;
+        return DefaultNInstalledRepository.INSTALLED_REPO_UUID;
     }
 
     @Override
-    public NutsRepositoryRef getRepositoryRef(NutsSession session) {
+    public NRepositoryRef getRepositoryRef(NSession session) {
         return null;
     }
 
     @Override
-    public NutsSpeedQualifier getSpeed(NutsSession session) {
-        return NutsSpeedQualifier.UNAVAILABLE;
+    public NSpeedQualifier getSpeed(NSession session) {
+        return NSpeedQualifier.UNAVAILABLE;
     }
 
     @Override
-    public NutsPath getStoreLocation() {
+    public NPath getStoreLocation() {
         return null;
     }
 
     @Override
-    public NutsPath getStoreLocation(NutsStoreLocation folderType, NutsSession session) {
+    public NPath getStoreLocation(NStoreLocation folderType, NSession session) {
         return null;
     }
 
     @Override
-    public NutsStoreLocationStrategy getStoreLocationStrategy(NutsSession session) {
+    public NStoreLocationStrategy getStoreLocationStrategy(NSession session) {
         return session.locations().getRepositoryStoreLocationStrategy();
     }
 
     @Override
-    public String getType(NutsSession session) {
-        return DefaultNutsInstalledRepository.INSTALLED_REPO_UUID;
+    public String getType(NSession session) {
+        return DefaultNInstalledRepository.INSTALLED_REPO_UUID;
     }
 
     @Override
     public String getUuid() {
-        return DefaultNutsInstalledRepository.INSTALLED_REPO_UUID;
+        return DefaultNInstalledRepository.INSTALLED_REPO_UUID;
     }
 
     @Override
-    public NutsRepositoryLocation getLocation() {
-        return NutsRepositoryLocation.of(DefaultNutsInstalledRepository.INSTALLED_REPO_UUID);
+    public NRepositoryLocation getLocation() {
+        return NRepositoryLocation.of(DefaultNInstalledRepository.INSTALLED_REPO_UUID);
     }
 
     @Override
-    public boolean isEnabled(NutsSession session) {
+    public boolean isEnabled(NSession session) {
         return false;
     }
 
     @Override
-    public boolean isIndexEnabled(NutsSession session) {
+    public boolean isIndexEnabled(NSession session) {
         return false;
     }
 
     @Override
-    public boolean isIndexSubscribed(NutsSession session) {
+    public boolean isIndexSubscribed(NSession session) {
         return false;
     }
 
     @Override
-    public boolean isSupportedMirroring(NutsSession session) {
+    public boolean isSupportedMirroring(NSession session) {
         return false;
     }
 
@@ -166,87 +166,87 @@ class InstalledRepositoryConfigModel implements NutsRepositoryConfigModel {
 //            //
 //        }
     @Override
-    public boolean isTemporary(NutsSession session) {
+    public boolean isTemporary(NSession session) {
         return false;
     }
 
     @Override
-    public void removeMirror(String repositoryId, NutsSession session) {
-        throw new NutsIllegalArgumentException(session, NutsMessage.ofPlain("not supported : removeMirror"));
+    public void removeMirror(String repositoryId, NSession session) {
+        throw new NIllegalArgumentException(session, NMsg.ofPlain("not supported : removeMirror"));
     }
 
     @Override
-    public void setEnabled(boolean enabled, NutsSession options) {
+    public void setEnabled(boolean enabled, NSession options) {
     }
 
     @Override
-    public void setIndexEnabled(boolean enabled, NutsSession session) {
+    public void setIndexEnabled(boolean enabled, NSession session) {
     }
 
     @Override
-    public void setMirrorEnabled(String repoName, boolean enabled, NutsSession session) {
+    public void setMirrorEnabled(String repoName, boolean enabled, NSession session) {
     }
 
     @Override
-    public void setTemporary(boolean enabled, NutsSession options) {
+    public void setTemporary(boolean enabled, NSession options) {
 
     }
 
     @Override
-    public void subscribeIndex(NutsSession session) {
+    public void subscribeIndex(NSession session) {
     }
 
     @Override
-    public void unsubscribeIndex(NutsSession session) {
+    public void unsubscribeIndex(NSession session) {
     }
 
     @Override
-    public NutsPath getTempMirrorsRoot(NutsSession session) {
+    public NPath getTempMirrorsRoot(NSession session) {
         return null;
     }
 
     @Override
-    public NutsPath getMirrorsRoot(NutsSession session) {
+    public NPath getMirrorsRoot(NSession session) {
         return null;
     }
 
     @Override
-    public NutsUserConfig[] getUsers(NutsSession session) {
-        throw new NutsIllegalArgumentException(session, NutsMessage.ofPlain("not supported : getUsers"));
+    public NUserConfig[] getUsers(NSession session) {
+        throw new NIllegalArgumentException(session, NMsg.ofPlain("not supported : getUsers"));
     }
 
     @Override
-    public NutsUserConfig getUser(String userId, NutsSession session) {
-        throw new NutsIllegalArgumentException(session, NutsMessage.ofPlain("not supported : getUser"));
+    public NUserConfig getUser(String userId, NSession session) {
+        throw new NIllegalArgumentException(session, NMsg.ofPlain("not supported : getUser"));
     }
 
     @Override
-    public NutsRepositoryConfig getStoredConfig(NutsSession session) {
-        throw new NutsIllegalArgumentException(session, NutsMessage.ofPlain("not supported : getStoredConfig"));
+    public NRepositoryConfig getStoredConfig(NSession session) {
+        throw new NIllegalArgumentException(session, NMsg.ofPlain("not supported : getStoredConfig"));
     }
 
     @Override
-    public void fireConfigurationChanged(String configName, NutsSession session) {
-        throw new NutsIllegalArgumentException(session, NutsMessage.ofPlain("not supported : fireConfigurationChanged"));
+    public void fireConfigurationChanged(String configName, NSession session) {
+        throw new NIllegalArgumentException(session, NMsg.ofPlain("not supported : fireConfigurationChanged"));
     }
 
     @Override
-    public void setUser(NutsUserConfig user, NutsSession session) {
-        throw new NutsIllegalArgumentException(session, NutsMessage.ofPlain("not supported : setUser"));
+    public void setUser(NUserConfig user, NSession session) {
+        throw new NIllegalArgumentException(session, NMsg.ofPlain("not supported : setUser"));
     }
 
     @Override
-    public void removeUser(String userId, NutsSession session) {
-        throw new NutsIllegalArgumentException(session, NutsMessage.ofPlain("not supported : removeUser"));
+    public void removeUser(String userId, NSession session) {
+        throw new NIllegalArgumentException(session, NMsg.ofPlain("not supported : removeUser"));
     }
 
     @Override
-    public NutsRepositoryConfig getConfig(NutsSession session) {
-        throw new NutsIllegalArgumentException(session, NutsMessage.ofPlain("not supported : getConfig"));
+    public NRepositoryConfig getConfig(NSession session) {
+        throw new NIllegalArgumentException(session, NMsg.ofPlain("not supported : getConfig"));
     }
 
     @Override
-    public Map<String, String> toMap(boolean inherit, NutsSession session) {
+    public Map<String, String> toMap(boolean inherit, NSession session) {
         if (inherit) {
             return session.config().getConfigMap();
         }
@@ -254,13 +254,13 @@ class InstalledRepositoryConfigModel implements NutsRepositoryConfigModel {
     }
 
     @Override
-    public Map<String, String> toMap(NutsSession session) {
+    public Map<String, String> toMap(NSession session) {
         return new HashMap<>();
     }
 
     @Override
-    public NutsOptional<NutsValue> get(String key, boolean inherit, NutsSession session) {
-        NutsOptional<NutsValue> o = NutsOptional.ofEmpty(s -> NutsMessage.ofCstyle("repo config property not found : %s", key));
+    public NOptional<NValue> get(String key, boolean inherit, NSession session) {
+        NOptional<NValue> o = NOptional.ofEmpty(s -> NMsg.ofCstyle("repo config property not found : %s", key));
         if (inherit) {
             return o.orElseUse(()->session.config().getConfigProperty(key));
         }
@@ -269,7 +269,7 @@ class InstalledRepositoryConfigModel implements NutsRepositoryConfigModel {
 
 
     @Override
-    public void set(String property, String value, NutsSession session) {
+    public void set(String property, String value, NSession session) {
 
     }
 }

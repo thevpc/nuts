@@ -26,15 +26,15 @@
 */
 package net.thevpc.nuts.runtime.standalone.format.json;
 
-import net.thevpc.nuts.NutsSession;
+import net.thevpc.nuts.NSession;
 
 public class JsonStringBuffer {
 
     private final StringBuilder sb = new StringBuilder();
     private final JsonStatus status;
-    private final NutsSession session;
+    private final NSession session;
 
-    public JsonStringBuffer(NutsSession session) {
+    public JsonStringBuffer(NSession session) {
         this.session = session;
         status = new JsonStatus(session);
     }

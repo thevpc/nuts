@@ -1,12 +1,12 @@
 package net.thevpc.nuts.toolbox.ntomcat.util;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.io.NutsCp;
-import net.thevpc.nuts.io.NutsPath;
-import net.thevpc.nuts.io.NutsPathOption;
-import net.thevpc.nuts.util.NutsFunction;
-import net.thevpc.nuts.util.NutsIterator;
-import net.thevpc.nuts.util.NutsStream;
+import net.thevpc.nuts.io.NCp;
+import net.thevpc.nuts.io.NPath;
+import net.thevpc.nuts.io.NPathOption;
+import net.thevpc.nuts.util.NFunction;
+import net.thevpc.nuts.util.NIterator;
+import net.thevpc.nuts.util.NStream;
 
 import java.io.InputStream;
 import java.net.MalformedURLException;
@@ -15,7 +15,7 @@ import java.util.Arrays;
 import java.util.UUID;
 import java.util.logging.Logger;
 
-public class ApacheTomcatRepositoryModel implements NutsRepositoryModel {
+public class ApacheTomcatRepositoryModel implements NRepositoryModel {
     public static final String HTTPS_ARCHIVE_APACHE_ORG_DIST_TOMCAT = "https://archive.apache.org/dist/tomcat/";
     private static final Logger LOG = Logger.getLogger(ApacheTomcatRepositoryModel.class.getName());
 
@@ -33,19 +33,19 @@ public class ApacheTomcatRepositoryModel implements NutsRepositoryModel {
     }
 
     @Override
-    public NutsIterator<NutsId> searchVersions(NutsId id, NutsIdFilter filter, NutsFetchMode fetchMode, NutsRepository repository, NutsSession session) {
-        if (fetchMode != NutsFetchMode.REMOTE) {
+    public NIterator<NId> searchVersions(NId id, NIdFilter filter, NFetchMode fetchMode, NRepository repository, NSession session) {
+        if (fetchMode != NFetchMode.REMOTE) {
             return null;
         }
         if ("org.apache.catalina:apache-tomcat".equals(id.getShortName())) {
-            return search(filter, new NutsPath[]{null}, fetchMode, repository, session);
+            return search(filter, new NPath[]{null}, fetchMode, repository, session);
         }
         return null;
     }
 
     @Override
-    public NutsDescriptor fetchDescriptor(NutsId id, NutsFetchMode fetchMode, NutsRepository repository, NutsSession session) {
-        if (fetchMode != NutsFetchMode.REMOTE) {
+    public NDescriptor fetchDescriptor(NId id, NFetchMode fetchMode, NRepository repository, NSession session) {
+        if (fetchMode != NFetchMode.REMOTE) {
             return null;
         }
         if ("org.apache.catalina:apache-tomcat".equals(id.getShortName())) {
@@ -60,7 +60,7 @@ public class ApacheTomcatRepositoryModel implements NutsRepositoryModel {
 
             }
             if (url != null) {
-                session.getTerminal().printProgress(NutsMessage.ofCstyle("peek %s", url));
+                session.getTerminal().printProgress(NMsg.ofCstyle("peek %s", url));
                 try (InputStream inputStream = url.openStream()) {
                     //ws.io().copy().from(r).getByteArrayResult();
                     found = true;
@@ -70,8 +70,8 @@ public class ApacheTomcatRepositoryModel implements NutsRepositoryModel {
             }
             if (found) {
                 // http://tomcat.apache.org/whichversion.html
-                int i = id.getVersion().getNumber(0).flatMap(NutsValue::asInt).orElse(-1);
-                int j = id.getVersion().getNumber(1).flatMap(NutsValue::asInt).orElse(-1);
+                int i = id.getVersion().getNumber(0).flatMap(NValue::asInt).orElse(-1);
+                int j = id.getVersion().getNumber(1).flatMap(NValue::asInt).orElse(-1);
                 String javaVersion = "";
                 if (i <= 0) {
                     //
@@ -97,11 +97,11 @@ public class ApacheTomcatRepositoryModel implements NutsRepositoryModel {
                     }
                 }
 
-                return new DefaultNutsDescriptorBuilder()
+                return new DefaultNDescriptorBuilder()
                         .setId(id.getLongId())
                         .setPackaging("zip")
                         .setCondition(
-                                new DefaultNutsEnvConditionBuilder()
+                                new DefaultNEnvConditionBuilder()
                                         .setPlatform(Arrays.asList("java" + javaVersion))
                         )
                         .setDescription("Apache Tomcat Official Zip Bundle")
@@ -113,8 +113,8 @@ public class ApacheTomcatRepositoryModel implements NutsRepositoryModel {
     }
 
     @Override
-    public NutsPath fetchContent(NutsId id, NutsDescriptor descriptor, String localPath, NutsFetchMode fetchMode, NutsRepository repository, NutsSession session) {
-        if (fetchMode != NutsFetchMode.REMOTE) {
+    public NPath fetchContent(NId id, NDescriptor descriptor, String localPath, NFetchMode fetchMode, NRepository repository, NSession session) {
+        if (fetchMode != NFetchMode.REMOTE) {
             return null;
         }
         if ("org.apache.catalina:apache-tomcat".equals(id.getShortName())) {
@@ -122,29 +122,29 @@ public class ApacheTomcatRepositoryModel implements NutsRepositoryModel {
             if (localPath == null) {
                 localPath = getIdLocalFile(id.builder().setFaceContent().build(), fetchMode, repository, session);
             }
-            NutsCp.of(session).from(NutsPath.of(r, session)).to(NutsPath.of(localPath, session))
-                    .addOptions(NutsPathOption.SAFE, NutsPathOption.LOG, NutsPathOption.TRACE).run();
-            return NutsPath.of(localPath, session);
+            NCp.of(session).from(NPath.of(r, session)).to(NPath.of(localPath, session))
+                    .addOptions(NPathOption.SAFE, NPathOption.LOG, NPathOption.TRACE).run();
+            return NPath.of(localPath, session);
         }
         return null;
     }
 
     @Override
-    public NutsIterator<NutsId> search(NutsIdFilter filter, NutsPath[] basePaths, NutsFetchMode fetchMode, NutsRepository repository, NutsSession session) {
-        if (fetchMode != NutsFetchMode.REMOTE) {
-            return NutsIterator.ofEmpty(session);
+    public NIterator<NId> search(NIdFilter filter, NPath[] basePaths, NFetchMode fetchMode, NRepository repository, NSession session) {
+        if (fetchMode != NFetchMode.REMOTE) {
+            return NIterator.ofEmpty(session);
         }
         //List<NutsId> all = new ArrayList<>();
 //        NutsWorkspace ws = session.getWorkspace();
-        NutsIdBuilder idBuilder = NutsIdBuilder.of("org.apache.catalina", "apache-tomcat");
-        return NutsPath.of("htmlfs:https://archive.apache.org/dist/tomcat/", session)
-                .list()
+        NIdBuilder idBuilder = NIdBuilder.of("org.apache.catalina", "apache-tomcat");
+        return NPath.of("htmlfs:https://archive.apache.org/dist/tomcat/", session)
+                .stream()
                 .filter(x -> x.isDirectory() && x.getName().matches("tomcat-[0-9.]+"), "directory && tomcat")
-                .flatMapStream(NutsFunction.of(
-                        s -> s.list()
+                .flatMapStream(NFunction.of(
+                        s -> s.stream()
                                 .filter(x2 -> x2.isDirectory() && x2.getName().startsWith("v"), "isDirectory")
                                 .flatMapStream(
-                                        NutsFunction.of(
+                                        NFunction.of(
                                                 x3 -> {
                                                     String s2n = x3.getName();
                                                     String prefix = "apache-tomcat-";
@@ -155,9 +155,9 @@ public class ApacheTomcatRepositoryModel implements NutsRepositoryModel {
                                                                     || s2n.matches(".*-RC[0-9]+/") || s2n.matches(".*-M[0-9]+/")
                                                     ) {
                                                         //will ignore all alpha versions
-                                                        return NutsStream.ofEmpty(session);
+                                                        return NStream.ofEmpty(session);
                                                     }
-                                                    NutsVersion version = NutsVersion.of(s2n.substring(1, s2n.length() - 1)).get(session);
+                                                    NVersion version = NVersion.of(s2n.substring(1, s2n.length() - 1)).get(session);
                                                     if (version.compareTo("4.1.32") < 0) {
                                                         prefix = "jakarta-tomcat-";
                                                     }
@@ -168,13 +168,13 @@ public class ApacheTomcatRepositoryModel implements NutsRepositoryModel {
                                                     if (checkBin) {
                                                         String finalPrefix = prefix;
                                                         return x3.resolve(bin)
-                                                                .list()
+                                                                .stream()
                                                                 .filter(x4 -> x4.getName().matches(finalPrefix + "[0-9]+\\.[0-9]+\\.[0-9]+\\.zip"), "name.isZip")
                                                                 .map(x5 -> {
                                                                     String s3 = x5.getName();
                                                                     String v0 = s3.substring(finalPrefix.length(), s3.length() - 4);
-                                                                    NutsVersion v = NutsVersion.of(v0).get(session);
-                                                                    NutsId id2 = idBuilder.setVersion(v).build();
+                                                                    NVersion v = NVersion.of(v0).get(session);
+                                                                    NId id2 = idBuilder.setVersion(v).build();
                                                                     if (filter == null || filter.acceptId(id2, session)) {
                                                                         return id2;
                                                                     }
@@ -182,18 +182,18 @@ public class ApacheTomcatRepositoryModel implements NutsRepositoryModel {
                                                                 }, "toZip")
                                                                 .nonNull();
                                                     } else {
-                                                        NutsId id2 = idBuilder.setVersion(version).build();
+                                                        NId id2 = idBuilder.setVersion(version).build();
                                                         if (filter == null || filter.acceptId(id2, session)) {
-                                                            return NutsStream.ofSingleton(id2, session);
+                                                            return NStream.ofSingleton(id2, session);
                                                         }
-                                                        return NutsStream.ofEmpty(session);
+                                                        return NStream.ofEmpty(session);
                                                     }
                                                 }
                                                 , "flatMap"))
                         , "flatMap")).iterator();
     }
 
-    private String getUrl(NutsVersion version, String extension) {
+    private String getUrl(NVersion version, String extension) {
         String bin = "bin";
         String prefix = "apache-tomcat-";
         if (version.compareTo("4.1.32") < 0) {
@@ -202,10 +202,10 @@ public class ApacheTomcatRepositoryModel implements NutsRepositoryModel {
         if (version.compareTo("4.1.27") == 0) {
             bin = "binaries";
         }
-        return HTTPS_ARCHIVE_APACHE_ORG_DIST_TOMCAT + "tomcat-" + version.get(0).flatMap(NutsValue::asString).orElse("unknown") + "/v" + version + "/" + bin + "/" + prefix + version + extension;
+        return HTTPS_ARCHIVE_APACHE_ORG_DIST_TOMCAT + "tomcat-" + version.get(0).flatMap(NValue::asString).orElse("unknown") + "/v" + version + "/" + bin + "/" + prefix + version + extension;
     }
 
-    public String getIdLocalFile(NutsId id, NutsFetchMode fetchMode, NutsRepository repository, NutsSession session) {
+    public String getIdLocalFile(NId id, NFetchMode fetchMode, NRepository repository, NSession session) {
         return repository.config().getStoreLocation()
                 .resolve(session.locations().getDefaultIdBasedir(id))
                 .resolve(session.locations().getDefaultIdFilename(id))

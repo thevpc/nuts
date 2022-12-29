@@ -1,7 +1,7 @@
 package net.thevpc.nuts.runtime.standalone.xtra.expr;
 
-import net.thevpc.nuts.io.NutsIOException;
-import net.thevpc.nuts.NutsSession;
+import net.thevpc.nuts.io.NIOException;
+import net.thevpc.nuts.NSession;
 
 import java.io.IOException;
 import java.io.Reader;
@@ -163,12 +163,12 @@ public class StreamTokenizerExt {
     private boolean slashSlashCommentsP = false;
     private boolean slashStarCommentsP = false;
     private boolean xmlCommentsP = false;
-    private NutsSession session;
+    private NSession session;
 
     /**
      * Private constructor that initializes everything except the streams.
      */
-    private StreamTokenizerExt(NutsSession session) {
+    private StreamTokenizerExt(NSession session) {
         this.session = session;
         wordChars('a', 'z');
         wordChars('A', 'Z');
@@ -188,7 +188,7 @@ public class StreamTokenizerExt {
      * @param r a Reader object providing the input stream.
      * @since JDK1.1
      */
-    public StreamTokenizerExt(Reader r, NutsSession session) {
+    public StreamTokenizerExt(Reader r, NSession session) {
         this(session);
         if (r == null) {
             throw new NullPointerException();
@@ -458,7 +458,7 @@ public class StreamTokenizerExt {
         try {
             return reader.read();
         } catch (IOException ex) {
-            throw new NutsIOException(session, ex);
+            throw new NIOException(session, ex);
         }
     }
 
@@ -466,7 +466,7 @@ public class StreamTokenizerExt {
         try {
             reader.mark(count);
         } catch (IOException ex) {
-            throw new NutsIOException(session, ex);
+            throw new NIOException(session, ex);
         }
     }
 
@@ -474,7 +474,7 @@ public class StreamTokenizerExt {
         try {
             reader.reset();
         } catch (IOException ex) {
-            throw new NutsIOException(session, ex);
+            throw new NIOException(session, ex);
         }
     }
 

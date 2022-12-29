@@ -4,22 +4,22 @@
  */
 package net.thevpc.nuts.tutorial.nsh;
 
-import net.thevpc.nuts.NutsApplication;
-import net.thevpc.nuts.NutsApplicationContext;
+import net.thevpc.nuts.NApplication;
+import net.thevpc.nuts.NApplicationContext;
 import net.thevpc.nuts.toolbox.nsh.jshell.JShell;
 
 /**
  *
  * @author vpc
  */
-public class CustomShell implements NutsApplication {
+public class CustomShell implements NApplication {
 
     public static void main(String[] args) {
         new CustomShell().runAndExit(args);
     }
 
     @Override
-    public void run(NutsApplicationContext nac) {
+    public void run(NApplicationContext nac) {
         JShell nsh = new JShell(nac);
         nsh.run();
     }

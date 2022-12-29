@@ -26,38 +26,38 @@
 package net.thevpc.nuts.runtime.standalone.executor.war;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.io.NutsIOException;
+import net.thevpc.nuts.io.NIOException;
 import net.thevpc.nuts.runtime.standalone.executor.AbstractSyncIProcessExecHelper;
 import net.thevpc.nuts.runtime.standalone.io.util.IProcessExecHelper;
-import net.thevpc.nuts.spi.NutsComponentScope;
-import net.thevpc.nuts.spi.NutsComponentScopeType;
-import net.thevpc.nuts.spi.NutsExecutorComponent;
-import net.thevpc.nuts.spi.NutsSupportLevelContext;
-import net.thevpc.nuts.util.NutsStringUtils;
+import net.thevpc.nuts.spi.NComponentScope;
+import net.thevpc.nuts.spi.NComponentScopeType;
+import net.thevpc.nuts.spi.NExecutorComponent;
+import net.thevpc.nuts.spi.NSupportLevelContext;
+import net.thevpc.nuts.util.NStringUtils;
 
 /**
  * Created by vpc on 1/7/17.
  */
-@NutsComponentScope(NutsComponentScopeType.WORKSPACE)
-public class WarExecutorComponent implements NutsExecutorComponent {
+@NComponentScope(NComponentScopeType.WORKSPACE)
+public class WarExecutorComponent implements NExecutorComponent {
 
-    public static NutsId ID;
-    NutsSession ws;
+    public static NId ID;
+    NSession ws;
 
     @Override
-    public NutsId getId() {
+    public NId getId() {
         return ID;
     }
 
     @Override
-    public int getSupportLevel(NutsSupportLevelContext context) {
+    public int getSupportLevel(NSupportLevelContext context) {
         this.ws=context.getSession();
         if(ID==null){
-            ID = NutsId.of("net.thevpc.nuts.exec:war").get( ws);
+            ID = NId.of("net.thevpc.nuts.exec:war").get( ws);
         }
-        NutsDefinition def = context.getConstraints(NutsDefinition.class);
+        NDefinition def = context.getConstraints(NDefinition.class);
         if (def != null) {
-            if ("war".equals(NutsStringUtils.trim(def.getDescriptor().getPackaging()))) {
+            if ("war".equals(NStringUtils.trim(def.getDescriptor().getPackaging()))) {
                 return DEFAULT_SUPPORT + 1;
             }
         }
@@ -65,14 +65,14 @@ public class WarExecutorComponent implements NutsExecutorComponent {
     }
 
     @Override
-    public void exec(NutsExecutionContext executionContext) {
+    public void exec(NExecutionContext executionContext) {
         execHelper(executionContext).exec();
     }
 
-    public IProcessExecHelper execHelper(NutsExecutionContext executionContext) {
+    public IProcessExecHelper execHelper(NExecutionContext executionContext) {
         return new AbstractSyncIProcessExecHelper(executionContext.getSession()) {
             public int exec() {
-                throw new NutsIOException(getSession(),NutsMessage.ofCstyle("unsupported yet execution of %s with packaging %s",
+                throw new NIOException(getSession(), NMsg.ofCstyle("unsupported yet execution of %s with packaging %s",
                         executionContext.getDefinition().getId(),
                         executionContext.getDefinition().getDescriptor().getPackaging()
                 ));

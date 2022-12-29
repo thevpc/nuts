@@ -1,18 +1,18 @@
 package net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.ndi.unix;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.io.NutsPath;
-import net.thevpc.nuts.io.NutsPrintStream;
-import net.thevpc.nuts.runtime.standalone.shell.NutsShellHelper;
+import net.thevpc.nuts.io.NPath;
+import net.thevpc.nuts.io.NStream;
+import net.thevpc.nuts.runtime.standalone.shell.NShellHelper;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.util.PathInfo;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.ndi.FreeDesktopEntryWriter;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.ndi.NdiScriptInfo;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.ndi.NdiScriptOptions;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.ndi.base.BaseSystemNdi;
-import net.thevpc.nuts.text.NutsTextStyle;
-import net.thevpc.nuts.text.NutsTexts;
-import net.thevpc.nuts.util.NutsQuestion;
-import net.thevpc.nuts.util.NutsQuestionParser;
+import net.thevpc.nuts.text.NTextStyle;
+import net.thevpc.nuts.text.NTexts;
+import net.thevpc.nuts.util.NQuestion;
+import net.thevpc.nuts.util.NQuestionParser;
 
 import java.util.Arrays;
 import java.util.LinkedHashSet;
@@ -22,14 +22,14 @@ import java.util.stream.Collectors;
 
 public class AnyNixNdi extends BaseSystemNdi {
 
-    public AnyNixNdi(NutsSession session) {
+    public AnyNixNdi(NSession session) {
         super(session);
     }
 
-    protected NutsShellFamily[] getShellGroups() {
-        Set<NutsShellFamily> all=new LinkedHashSet<>(session.env().getShellFamilies());
-        all.retainAll(Arrays.asList(NutsShellFamily.SH,NutsShellFamily.FISH));
-        return all.toArray(new NutsShellFamily[0]);
+    protected NShellFamily[] getShellGroups() {
+        Set<NShellFamily> all=new LinkedHashSet<>(session.env().getShellFamilies());
+        all.retainAll(Arrays.asList(NShellFamily.SH, NShellFamily.FISH));
+        return all.toArray(new NShellFamily[0]);
     }
 
     public boolean isShortcutFileNameUserFriendly() {
@@ -37,10 +37,10 @@ public class AnyNixNdi extends BaseSystemNdi {
     }
 
     @Override
-    public String createNutsScriptContent(NutsId fnutsId, NdiScriptOptions options, NutsShellFamily shellFamily) {
+    public String createNutsScriptContent(NId fnutsId, NdiScriptOptions options, NShellFamily shellFamily) {
         StringBuilder command = new StringBuilder();
         command.append(getExecFileName("nuts")).append(" ").append(
-                NutsShellHelper.of(shellFamily).varRef("NUTS_OPTIONS")).append(" ");
+                NShellHelper.of(shellFamily).varRef("NUTS_OPTIONS")).append(" ");
         if (options.getLauncher().getNutsOptions() != null) {
             for (String no : options.getLauncher().getNutsOptions()) {
                 command.append(" ").append(no);
@@ -52,36 +52,36 @@ public class AnyNixNdi extends BaseSystemNdi {
     }
 
     public void onPostGlobal(NdiScriptOptions options, PathInfo[] updatedPaths) {
-        NutsTexts factory = NutsTexts.of(session);
+        NTexts factory = NTexts.of(session);
         if (Arrays.stream(updatedPaths).anyMatch(x -> x.getStatus() != PathInfo.Status.DISCARDED) && session.isTrace()) {
             if (session.isPlainTrace()) {
                 session.out().resetLine().printf("%s %s to point to workspace %s%n",
                         session.isYes() ?
-                                factory.ofStyled("force updating", NutsTextStyle.warn().append(NutsTextStyle.underlined())) :
-                                factory.ofStyled("force updating", NutsTextStyle.warn())
+                                factory.ofStyled("force updating", NTextStyle.warn().append(NTextStyle.underlined())) :
+                                factory.ofStyled("force updating", NTextStyle.warn())
                         ,
                         factory.ofBuilder().appendJoined(", ",
                                 Arrays.stream(updatedPaths).map(x ->
-                                        factory.ofStyled(x.getPath().getName(), NutsTextStyle.path())).collect(Collectors.toList())),
+                                        factory.ofStyled(x.getPath().getName(), NTextStyle.path())).collect(Collectors.toList())),
                         session.locations().getWorkspaceLocation()
                 );
             }
-            final String sysRcName = NutsShellHelper.of(session.env().getShellFamily()).getSysRcName();
+            final String sysRcName = NShellHelper.of(session.env().getShellFamily()).getSysRcName();
             session.getTerminal().ask()
                     .resetLine()
-                    .forBoolean(NutsMessage.ofCstyle(
+                    .forBoolean(NMsg.ofCstyle(
                             "```error ATTENTION``` You may need to re-run terminal or issue \"%s\" in your current terminal for new environment to take effect.%n"
                                     + "Please type %s if you agree, %s if you need more explanation or %s to cancel updates.",
-                            factory.ofStyled(". ~/" + sysRcName, NutsTextStyle.path()),
-                            factory.ofStyled("ok", NutsTextStyle.success()),
-                            factory.ofStyled("why", NutsTextStyle.warn()),
-                            factory.ofStyled("cancel!", NutsTextStyle.comments())
+                            factory.ofStyled(". ~/" + sysRcName, NTextStyle.path()),
+                            factory.ofStyled("ok", NTextStyle.success()),
+                            factory.ofStyled("why", NTextStyle.warn()),
+                            factory.ofStyled("cancel!", NTextStyle.comments())
                     ))
-                    .setHintMessage(NutsMessage.ofPlain("you must enter your confirmation"))
+                    .setHintMessage(NMsg.ofPlain("you must enter your confirmation"))
                     .setSession(session)
-                    .setParser(new NutsQuestionParser<Boolean>() {
+                    .setParser(new NQuestionParser<Boolean>() {
                         @Override
-                        public Boolean parse(Object response, Boolean defaultValue, NutsQuestion<Boolean> question) {
+                        public Boolean parse(Object response, Boolean defaultValue, NQuestion<Boolean> question) {
                             if (response instanceof Boolean) {
                                 return (Boolean) response;
                             }
@@ -89,26 +89,26 @@ public class AnyNixNdi extends BaseSystemNdi {
                                 response = defaultValue;
                             }
                             if (response == null) {
-                                throw new NutsValidationException(session, NutsMessage.ofPlain("sorry... but you need to type 'ok', 'why' or 'cancel'"));
+                                throw new NValidationException(session, NMsg.ofPlain("sorry... but you need to type 'ok', 'why' or 'cancel'"));
                             }
                             String r = response.toString();
                             if ("ok".equalsIgnoreCase(r)) {
                                 return true;
                             }
                             if ("why".equalsIgnoreCase(r)) {
-                                NutsPrintStream out = session.out();
+                                NStream out = session.out();
                                 out.resetLine();
-                                out.printf("\\\"%s\\\" is a special file in your home that is invoked upon each interactive terminal launch.%n", factory.ofStyled(sysRcName, NutsTextStyle.path()));
+                                out.printf("\\\"%s\\\" is a special file in your home that is invoked upon each interactive terminal launch.%n", factory.ofStyled(sysRcName, NTextStyle.path()));
                                 out.print("It helps configuring environment variables. ```sh nuts``` make usage of such facility to update your **PATH** env variable\n");
                                 out.print("to point to current ```sh nuts``` workspace, so that when you call a ```sh nuts``` command it will be resolved correctly...\n");
-                                out.printf("However updating \\\"%s\\\" does not affect the running process/terminal. So you have basically two choices :%n", factory.ofStyled(sysRcName, NutsTextStyle.path()));
+                                out.printf("However updating \\\"%s\\\" does not affect the running process/terminal. So you have basically two choices :%n", factory.ofStyled(sysRcName, NTextStyle.path()));
                                 out.print(" - Either to restart the process/terminal (konsole, term, xterm, sh, bash, ...)%n");
-                                out.printf(" - Or to run by your self the \\\"%s\\\" script (don\\'t forget the leading dot)%n", factory.ofStyled(". ~/" + sysRcName, NutsTextStyle.path()));
-                                throw new NutsValidationException(session, NutsMessage.ofPlain("Try again..."));
+                                out.printf(" - Or to run by your self the \\\"%s\\\" script (don\\'t forget the leading dot)%n", factory.ofStyled(". ~/" + sysRcName, NTextStyle.path()));
+                                throw new NValidationException(session, NMsg.ofPlain("Try again..."));
                             } else if ("cancel".equalsIgnoreCase(r) || "cancel!".equalsIgnoreCase(r)) {
-                                throw new NutsCancelException(session);
+                                throw new NCancelException(session);
                             } else {
-                                throw new NutsValidationException(session, NutsMessage.ofPlain("sorry... but you need to type 'ok', 'why' or 'cancel'"));
+                                throw new NValidationException(session, NMsg.ofPlain("sorry... but you need to type 'ok', 'why' or 'cancel'"));
                             }
                         }
                     })
@@ -125,12 +125,12 @@ public class AnyNixNdi extends BaseSystemNdi {
     @Override
     protected FreeDesktopEntryWriter createFreeDesktopEntryWriter() {
         return new UnixFreeDesktopEntryWriter(session,
-                session.env().getDesktopPath()==null?null: NutsPath.of(session.env().getDesktopPath(),getSession())
+                session.env().getDesktopPath()==null?null: NPath.of(session.env().getDesktopPath(),getSession())
         );
     }
 
 
-    public String getTemplateName(String name, NutsShellFamily shellFamily) {
+    public String getTemplateName(String name, NShellFamily shellFamily) {
         switch (shellFamily){
             case SH:
             case BASH:
@@ -173,14 +173,14 @@ public class AnyNixNdi extends BaseSystemNdi {
 //                .map(x -> getNutsTerm(options, x))
 //                .filter(Objects::nonNull)
 //                .toArray(NdiScriptInfo[]::new);
-        return Arrays.stream(new NutsShellFamily[]{NutsShellFamily.SH})
+        return Arrays.stream(new NShellFamily[]{NShellFamily.SH})
                 .map(x -> getNutsTerm(options, x))
                 .filter(Objects::nonNull)
                 .toArray(NdiScriptInfo[]::new);
 
     }
 
-    public NdiScriptInfo getNutsTerm(NdiScriptOptions options,NutsShellFamily shellFamily) {
+    public NdiScriptInfo getNutsTerm(NdiScriptOptions options, NShellFamily shellFamily) {
         switch (shellFamily){
             case SH:
             case BASH:
@@ -190,13 +190,13 @@ public class AnyNixNdi extends BaseSystemNdi {
             {
                 return new NdiScriptInfo() {
                     @Override
-                    public NutsPath path() {
+                    public NPath path() {
                         return options.resolveBinFolder().resolve(getExecFileName("nuts-term"));
                     }
 
                     @Override
                     public PathInfo create() {
-                        return scriptBuilderTemplate("nuts-term",NutsShellFamily.SH, "nuts-term", options.resolveNutsApiId(), options)
+                        return scriptBuilderTemplate("nuts-term", NShellFamily.SH, "nuts-term", options.resolveNutsApiId(), options)
                                 .setPath(path())
                                 .build();
                     }
@@ -206,13 +206,13 @@ public class AnyNixNdi extends BaseSystemNdi {
             {
                 return new NdiScriptInfo() {
                     @Override
-                    public NutsPath path() {
+                    public NPath path() {
                         return options.resolveBinFolder().resolve(getExecFileName("nuts-term"));
                     }
 
                     @Override
                     public PathInfo create() {
-                        return scriptBuilderTemplate("nuts-term",NutsShellFamily.FISH, "nuts-term", options.resolveNutsApiId(), options)
+                        return scriptBuilderTemplate("nuts-term", NShellFamily.FISH, "nuts-term", options.resolveNutsApiId(), options)
                                 .setPath(path())
                                 .build();
                     }
@@ -222,7 +222,7 @@ public class AnyNixNdi extends BaseSystemNdi {
         return null;
     }
 
-    public NdiScriptInfo getIncludeNutsEnv(NdiScriptOptions options, NutsShellFamily shellFamily) {
+    public NdiScriptInfo getIncludeNutsEnv(NdiScriptOptions options, NShellFamily shellFamily) {
         switch (shellFamily) {
             case SH:
             case BASH:
@@ -231,13 +231,13 @@ public class AnyNixNdi extends BaseSystemNdi {
             case ZSH: {
                 return new NdiScriptInfo() {
                     @Override
-                    public NutsPath path() {
+                    public NPath path() {
                         return options.resolveIncFolder().resolve(".nuts-env.sh");
                     }
 
                     @Override
                     public PathInfo create() {
-                        return scriptBuilderTemplate("nuts-env", NutsShellFamily.SH, "nuts-env", options.resolveNutsApiId(), options)
+                        return scriptBuilderTemplate("nuts-env", NShellFamily.SH, "nuts-env", options.resolveNutsApiId(), options)
                                 .setPath(path())
                                 .build();
                     }
@@ -246,13 +246,13 @@ public class AnyNixNdi extends BaseSystemNdi {
             case FISH: {
                 return new NdiScriptInfo() {
                     @Override
-                    public NutsPath path() {
+                    public NPath path() {
                         return options.resolveIncFolder().resolve(".nuts-env.fish");
                     }
 
                     @Override
                     public PathInfo create() {
-                        return scriptBuilderTemplate("nuts-env", NutsShellFamily.FISH, "nuts-env", options.resolveNutsApiId(), options)
+                        return scriptBuilderTemplate("nuts-env", NShellFamily.FISH, "nuts-env", options.resolveNutsApiId(), options)
                                 .setPath(path())
                                 .build();
                     }
@@ -261,19 +261,19 @@ public class AnyNixNdi extends BaseSystemNdi {
         }
         return null;
     }
-    public NdiScriptInfo getIncludeNutsTermInit(NdiScriptOptions options, NutsShellFamily shellFamily) {
+    public NdiScriptInfo getIncludeNutsTermInit(NdiScriptOptions options, NShellFamily shellFamily) {
         switch (shellFamily) {
             case FISH: {
                 return
                         new NdiScriptInfo() {
                             @Override
-                            public NutsPath path() {
+                            public NPath path() {
                                 return options.resolveIncFolder().resolve(".nuts-term-init.fish");
                             }
 
                             @Override
                             public PathInfo create() {
-                                return scriptBuilderTemplate("nuts-term-init", NutsShellFamily.FISH, "nuts-term-init", options.resolveNutsApiId(), options)
+                                return scriptBuilderTemplate("nuts-term-init", NShellFamily.FISH, "nuts-term-init", options.resolveNutsApiId(), options)
                                         .setPath(path())
                                         .build();
                             }
@@ -288,13 +288,13 @@ public class AnyNixNdi extends BaseSystemNdi {
                 return
                         new NdiScriptInfo() {
                             @Override
-                            public NutsPath path() {
+                            public NPath path() {
                                 return options.resolveIncFolder().resolve(".nuts-term-init.sh");
                             }
 
                             @Override
                             public PathInfo create() {
-                                return scriptBuilderTemplate("nuts-term-init", NutsShellFamily.SH, "nuts-term-init", options.resolveNutsApiId(), options)
+                                return scriptBuilderTemplate("nuts-term-init", NShellFamily.SH, "nuts-term-init", options.resolveNutsApiId(), options)
                                         .setPath(path())
                                         .build();
                             }
@@ -305,7 +305,7 @@ public class AnyNixNdi extends BaseSystemNdi {
         return null;
     }
 
-    public NdiScriptInfo getIncludeNutsInit(NdiScriptOptions options, NutsShellFamily shellFamily) {
+    public NdiScriptInfo getIncludeNutsInit(NdiScriptOptions options, NShellFamily shellFamily) {
         switch (shellFamily) {
             case SH:
             case BASH:
@@ -314,14 +314,14 @@ public class AnyNixNdi extends BaseSystemNdi {
             case ZSH: {
                 return new NdiScriptInfo() {
                     @Override
-                    public NutsPath path() {
+                    public NPath path() {
                         return options.resolveIncFolder().resolve(".nuts-init.sh");
                     }
 
                     @Override
                     public PathInfo create() {
-                        NutsPath apiConfigFile = path();
-                        return scriptBuilderTemplate("nuts-init", NutsShellFamily.SH, "nuts-init", options.resolveNutsApiId(), options)
+                        NPath apiConfigFile = path();
+                        return scriptBuilderTemplate("nuts-init", NShellFamily.SH, "nuts-init", options.resolveNutsApiId(), options)
                                 .setPath(apiConfigFile)
                                 .buildAddLine(AnyNixNdi.this);
                     }
@@ -330,14 +330,14 @@ public class AnyNixNdi extends BaseSystemNdi {
             case FISH: {
                 return new NdiScriptInfo() {
                     @Override
-                    public NutsPath path() {
+                    public NPath path() {
                         return options.resolveIncFolder().resolve(".nuts-init.fish");
                     }
 
                     @Override
                     public PathInfo create() {
-                        NutsPath apiConfigFile = path();
-                        return scriptBuilderTemplate("nuts-init", NutsShellFamily.FISH, "nuts-init", options.resolveNutsApiId(), options)
+                        NPath apiConfigFile = path();
+                        return scriptBuilderTemplate("nuts-init", NShellFamily.FISH, "nuts-init", options.resolveNutsApiId(), options)
                                 .setPath(apiConfigFile)
                                 .buildAddLine(AnyNixNdi.this);
                     }

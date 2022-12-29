@@ -1,8 +1,8 @@
 package net.thevpc.nuts.runtime.standalone.xtra.expr;
 
-import net.thevpc.nuts.NutsMessage;
-import net.thevpc.nuts.NutsOptional;
-import net.thevpc.nuts.NutsSession;
+import net.thevpc.nuts.NMsg;
+import net.thevpc.nuts.NOptional;
+import net.thevpc.nuts.NSession;
 import net.thevpc.nuts.util.*;
 
 import java.math.BigDecimal;
@@ -13,13 +13,13 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class DefaultRootDeclarations extends NutsExprDeclarationsBase {
-    final Map<String, NutsExprFctDeclaration> defaultFunctions = new HashMap<>();
-    final Map<String, NutsExprConstructDeclaration> defaultConstructs = new HashMap<>();
-    final Map<NutsExprOpNameAndType, NutsExprOpDeclaration> ops = new HashMap<>();
-    final Map<String, NutsExprVarDeclaration> defaultVars = new HashMap<>();
+public class DefaultRootDeclarations extends NExprDeclarationsBase {
+    final Map<String, NExprFctDeclaration> defaultFunctions = new HashMap<>();
+    final Map<String, NExprConstructDeclaration> defaultConstructs = new HashMap<>();
+    final Map<NExprOpNameAndType, NExprOpDeclaration> ops = new HashMap<>();
+    final Map<String, NExprVarDeclaration> defaultVars = new HashMap<>();
 
-    public DefaultRootDeclarations(NutsSession session) {
+    public DefaultRootDeclarations(NSession session) {
         setSession(session);
         addDefaultOp(new AndFctNode(), "and", "&", "&&");
         addDefaultOp(new OrFctNode(), "or", "|", "||");
@@ -37,78 +37,78 @@ public class DefaultRootDeclarations extends NutsExprDeclarationsBase {
         addDefaultOp(new ParsFctNode(), "(");
         addDefaultOp(new BracketsFctNode(), "[");
         addDefaultOp(new BracesFctNode(), "{");
-        addDefaultFct(new NutsExprFct() {
+        addDefaultFct(new NExprFct() {
             @Override
-            public Object eval(String name, List<Object> args, NutsExprDeclarations context) {
+            public Object eval(String name, List<Object> args, NExprDeclarations context) {
                 return EvalUtils.castToString(args.get(0));
             }
         }, "string");
-        addDefaultFct(new NutsExprFct() {
+        addDefaultFct(new NExprFct() {
             @Override
-            public Object eval(String name, List<Object> args, NutsExprDeclarations context) {
+            public Object eval(String name, List<Object> args, NExprDeclarations context) {
                 return EvalUtils.castToBoolean(args.get(0));
             }
         }, "boolean");
-        addDefaultFct(new NutsExprFct() {
+        addDefaultFct(new NExprFct() {
             @Override
-            public Object eval(String name, List<Object> args, NutsExprDeclarations context) {
+            public Object eval(String name, List<Object> args, NExprDeclarations context) {
                 return EvalUtils.castToDouble(args.get(0));
             }
         }, "double");
-        addDefaultFct(new NutsExprFct() {
+        addDefaultFct(new NExprFct() {
             @Override
-            public Object eval(String name, List<Object> args, NutsExprDeclarations context) {
+            public Object eval(String name, List<Object> args, NExprDeclarations context) {
                 return EvalUtils.castToLong(args.get(0));
             }
         }, "long");
-        addDefaultFct(new NutsExprFct() {
+        addDefaultFct(new NExprFct() {
             @Override
-            public Object eval(String name, List<Object> args, NutsExprDeclarations context) {
+            public Object eval(String name, List<Object> args, NExprDeclarations context) {
                 return (int) EvalUtils.castToLong(args.get(0));
             }
         }, "int");
-        addDefaultFct(new NutsExprFct() {
+        addDefaultFct(new NExprFct() {
             @Override
-            public Object eval(String name, List<Object> args, NutsExprDeclarations context) {
+            public Object eval(String name, List<Object> args, NExprDeclarations context) {
                 return (float) EvalUtils.castToDouble(args.get(0));
             }
         }, "float");
-        addDefaultFct(new NutsExprFct() {
+        addDefaultFct(new NExprFct() {
             @Override
-            public Object eval(String name, List<Object> args, NutsExprDeclarations context) {
+            public Object eval(String name, List<Object> args, NExprDeclarations context) {
                 return EvalUtils.isNumber(args.get(0));
             }
         }, "isNumber");
-        addDefaultFct(new NutsExprFct() {
+        addDefaultFct(new NExprFct() {
             @Override
-            public Object eval(String name, List<Object> args, NutsExprDeclarations context) {
+            public Object eval(String name, List<Object> args, NExprDeclarations context) {
                 return EvalUtils.isBoolean(args.get(0));
             }
         }, "isBoolean");
     }
 
-    private void addDefaultFct(NutsExprFct fct, String... names) {
+    private void addDefaultFct(NExprFct fct, String... names) {
         for (String name : names) {
-            defaultFunctions.put(name, new DefaultNutsExprFctDeclaration(name, fct));
+            defaultFunctions.put(name, new DefaultNExprFctDeclaration(name, fct));
         }
     }
 
     private void addDefaultOp(AbstractOp op, String... names) {
         for (String name : names) {
-            DefaultNutsExprOpDeclaration opImpl = new DefaultNutsExprOpDeclaration(name, op);
-            ops.put(new NutsExprOpNameAndType(name, op.getType()), opImpl);
+            DefaultNExprOpDeclaration opImpl = new DefaultNExprOpDeclaration(name, op);
+            ops.put(new NExprOpNameAndType(name, op.getType()), opImpl);
         }
     }
 
 
     private class AndFctNode extends AbstractOp {
         public AndFctNode() {
-            super("&&", NutsExprOpPrecedence.AND, NutsExprOpAssociativity.LEFT, NutsExprOpType.INFIX);
+            super("&&", NExprOpPrecedence.AND, NExprOpAssociativity.LEFT, NExprOpType.INFIX);
         }
 
         @Override
-        public Object eval(String name, List<NutsExprNode> args, NutsExprDeclarations context) {
-            for (NutsExprNode arg : args) {
+        public Object eval(String name, List<NExprNode> args, NExprDeclarations context) {
+            for (NExprNode arg : args) {
                 if (!EvalUtils.castToBoolean(arg.eval(context).get())) {
                     return false;
                 }
@@ -119,12 +119,12 @@ public class DefaultRootDeclarations extends NutsExprDeclarationsBase {
 
     private class OrFctNode extends AbstractOp {
         public OrFctNode() {
-            super("or", NutsExprOpPrecedence.OR, NutsExprOpAssociativity.LEFT, NutsExprOpType.INFIX);
+            super("or", NExprOpPrecedence.OR, NExprOpAssociativity.LEFT, NExprOpType.INFIX);
         }
 
         @Override
-        public Object eval(String name, List<NutsExprNode> args, NutsExprDeclarations e) {
-            for (NutsExprNode arg : args) {
+        public Object eval(String name, List<NExprNode> args, NExprDeclarations e) {
+            for (NExprNode arg : args) {
                 if (EvalUtils.castToBoolean(arg.eval(e).get())) {
                     return true;
                 }
@@ -135,11 +135,11 @@ public class DefaultRootDeclarations extends NutsExprDeclarationsBase {
 
     private class NotFctNode extends AbstractOp {
         public NotFctNode() {
-            super("!", NutsExprOpPrecedence.NOT, NutsExprOpAssociativity.RIGHT, NutsExprOpType.PREFIX);
+            super("!", NExprOpPrecedence.NOT, NExprOpAssociativity.RIGHT, NExprOpType.PREFIX);
         }
 
         @Override
-        public Object eval(String name, List<NutsExprNode> args, NutsExprDeclarations e) {
+        public Object eval(String name, List<NExprNode> args, NExprDeclarations e) {
             return !EvalUtils.castToBoolean(args.get(0).eval(e).get());
         }
     }
@@ -147,7 +147,7 @@ public class DefaultRootDeclarations extends NutsExprDeclarationsBase {
     private class LTFctNode extends BinCompareFctNode {
 
         public LTFctNode() {
-            super("lt", NutsExprOpPrecedence.CMP);
+            super("lt", NExprOpPrecedence.CMP);
         }
 
         @Override
@@ -173,7 +173,7 @@ public class DefaultRootDeclarations extends NutsExprDeclarationsBase {
 
     private class LTEFctNode extends BinCompareFctNode {
         public LTEFctNode() {
-            super("lte", NutsExprOpPrecedence.CMP);
+            super("lte", NExprOpPrecedence.CMP);
         }
 
         @Override
@@ -199,7 +199,7 @@ public class DefaultRootDeclarations extends NutsExprDeclarationsBase {
 
     private class GTFctNode extends BinCompareFctNode {
         public GTFctNode() {
-            super("gt", NutsExprOpPrecedence.CMP);
+            super("gt", NExprOpPrecedence.CMP);
         }
 
         @Override
@@ -225,7 +225,7 @@ public class DefaultRootDeclarations extends NutsExprDeclarationsBase {
 
     private class GTEFctNode extends BinCompareFctNode {
         public GTEFctNode() {
-            super("gte", NutsExprOpPrecedence.CMP);
+            super("gte", NExprOpPrecedence.CMP);
         }
 
         @Override
@@ -251,7 +251,7 @@ public class DefaultRootDeclarations extends NutsExprDeclarationsBase {
 
     private class EQFctNode extends BinCompareFctNode {
         public EQFctNode() {
-            super("eq", NutsExprOpPrecedence.EQ);
+            super("eq", NExprOpPrecedence.EQ);
         }
 
         @Override
@@ -277,7 +277,7 @@ public class DefaultRootDeclarations extends NutsExprDeclarationsBase {
 
     private class NEQFctNode extends BinCompareFctNode {
         public NEQFctNode() {
-            super("neq", NutsExprOpPrecedence.EQ);
+            super("neq", NExprOpPrecedence.EQ);
         }
 
         @Override
@@ -303,7 +303,7 @@ public class DefaultRootDeclarations extends NutsExprDeclarationsBase {
 
     private class PlusFctNode extends BinArithFctNode {
         public PlusFctNode() {
-            super("plus", NutsExprOpPrecedence.PLUS);
+            super("plus", NExprOpPrecedence.PLUS);
         }
 
         @Override
@@ -329,7 +329,7 @@ public class DefaultRootDeclarations extends NutsExprDeclarationsBase {
 
     private class MinusFctNode extends BinArithFctNode {
         public MinusFctNode() {
-            super("minus", NutsExprOpPrecedence.PLUS);
+            super("minus", NExprOpPrecedence.PLUS);
         }
 
         @Override
@@ -355,7 +355,7 @@ public class DefaultRootDeclarations extends NutsExprDeclarationsBase {
 
     private class MulFctNode extends BinArithFctNode {
         public MulFctNode() {
-            super("multiply", NutsExprOpPrecedence.MUL);
+            super("multiply", NExprOpPrecedence.MUL);
         }
 
         @Override
@@ -381,7 +381,7 @@ public class DefaultRootDeclarations extends NutsExprDeclarationsBase {
 
     private class DivFctNode extends BinArithFctNode {
         public DivFctNode() {
-            super("divide", NutsExprOpPrecedence.MUL);
+            super("divide", NExprOpPrecedence.MUL);
         }
 
         @Override
@@ -406,46 +406,46 @@ public class DefaultRootDeclarations extends NutsExprDeclarationsBase {
     }
 
     @Override
-    public NutsOptional<NutsExprFctDeclaration> getFunction(String fctName, Object... args) {
-        return NutsOptional.of(
+    public NOptional<NExprFctDeclaration> getFunction(String fctName, Object... args) {
+        return NOptional.of(
                 defaultFunctions.get(fctName),
-                s -> NutsMessage.ofCstyle("function not found %s", fctName)
+                s -> NMsg.ofCstyle("function not found %s", fctName)
         );
     }
 
     @Override
-    public NutsOptional<NutsExprConstructDeclaration> getConstruct(String constructName, NutsExprNode... args) {
-        return NutsOptional.of(
+    public NOptional<NExprConstructDeclaration> getConstruct(String constructName, NExprNode... args) {
+        return NOptional.of(
                 defaultConstructs.get(constructName),
-                s -> NutsMessage.ofCstyle("construct not found %s", constructName)
+                s -> NMsg.ofCstyle("construct not found %s", constructName)
         );
     }
 
     @Override
-    public NutsOptional<NutsExprOpDeclaration> getOperator(String opName, NutsExprOpType type, NutsExprNode... args) {
-        return NutsOptional.of(
-                ops.get(new NutsExprOpNameAndType(opName, type)),
-                s -> NutsMessage.ofCstyle("operator not found %s", opName)
+    public NOptional<NExprOpDeclaration> getOperator(String opName, NExprOpType type, NExprNode... args) {
+        return NOptional.of(
+                ops.get(new NExprOpNameAndType(opName, type)),
+                s -> NMsg.ofCstyle("operator not found %s", opName)
         );
     }
 
     @Override
-    public NutsOptional<NutsExprVarDeclaration> getVar(String varName) {
-        return NutsOptional.of(
+    public NOptional<NExprVarDeclaration> getVar(String varName) {
+        return NOptional.of(
                 defaultVars.get(varName),
-                s -> NutsMessage.ofCstyle("var not found %s", varName)
+                s -> NMsg.ofCstyle("var not found %s", varName)
         );
     }
 
     @Override
-    public List<NutsExprOpDeclaration> getOperators() {
-        List<NutsExprOpDeclaration> all = new ArrayList<>();
+    public List<NExprOpDeclaration> getOperators() {
+        List<NExprOpDeclaration> all = new ArrayList<>();
         all.addAll(ops.values());
         return all;
     }
 
     public int[] getOperatorPrecedences() {
-        return ops.values().stream().map(NutsExprOpDeclaration::getPrecedence)
+        return ops.values().stream().map(NExprOpDeclaration::getPrecedence)
                 .sorted().distinct().mapToInt(x -> x).toArray();
     }
 

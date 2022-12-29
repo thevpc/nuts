@@ -6,10 +6,10 @@
 package net.thevpc.nuts.runtime.standalone.util.iter;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.elem.NutsElement;
-import net.thevpc.nuts.elem.NutsElements;
-import net.thevpc.nuts.util.NutsDescribables;
-import net.thevpc.nuts.util.NutsIterator;
+import net.thevpc.nuts.elem.NElement;
+import net.thevpc.nuts.elem.NElements;
+import net.thevpc.nuts.util.NDescribables;
+import net.thevpc.nuts.util.NIterator;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
@@ -20,21 +20,21 @@ import java.util.stream.Collectors;
  *
  * @author thevpc
  */
-public class CoalesceIterator<T> extends NutsIteratorBase<T> {
+public class CoalesceIterator<T> extends NIteratorBase<T> {
 
-    private Queue<NutsIterator<? extends T>> children = new LinkedList<NutsIterator<? extends T>>();
+    private Queue<NIterator<? extends T>> children = new LinkedList<NIterator<? extends T>>();
     private int size = 0;
 
     @Override
-    public NutsElement describe(NutsSession session) {
-        return NutsElements.of(session).ofObject()
+    public NElement describe(NSession session) {
+        return NElements.of(session).ofObject()
                 .set("type", "Coalesce")
                 .set("items",
-                        NutsElements.of(session).ofArray()
+                        NElements.of(session).ofArray()
                                 .addAll(
                                         new ArrayList<>(children)
                                                 .stream().map(
-                                                        x-> NutsDescribables.resolveOrDestruct(x, session)
+                                                        x-> NDescribables.resolveOrDestruct(x, session)
                                                 ).collect(Collectors.toList())
                                 )
                                 .build()
@@ -43,20 +43,20 @@ public class CoalesceIterator<T> extends NutsIteratorBase<T> {
     }
 
 
-    public void addNonNull(NutsIterator<T> child) {
+    public void addNonNull(NIterator<T> child) {
         if (child != null) {
             add(child);
         }
     }
 
-    public void addNonEmpty(NutsIterator<T> child) {
+    public void addNonEmpty(NIterator<T> child) {
         child = IteratorUtils.nullifyIfEmpty(child);
         if (child != null) {
             add(child);
         }
     }
 
-    public void add(NutsIterator<? extends T> child) {
+    public void add(NIterator<? extends T> child) {
         if (child == null) {
             throw new NullPointerException();
         }
@@ -68,8 +68,8 @@ public class CoalesceIterator<T> extends NutsIteratorBase<T> {
         return children.size();
     }
     
-    public NutsIterator<T>[] getChildren() {
-        return children.toArray(new NutsIterator[0]);
+    public NIterator<T>[] getChildren() {
+        return children.toArray(new NIterator[0]);
     }
 
     @Override
@@ -78,7 +78,7 @@ public class CoalesceIterator<T> extends NutsIteratorBase<T> {
             if (children.peek().hasNext()) {
                 if (size > 1) {
                     //should remove all successors;
-                    NutsIterator<? extends T> h = children.poll();
+                    NIterator<? extends T> h = children.poll();
                     children.clear();
                     children.offer(h);
                     size = 1;

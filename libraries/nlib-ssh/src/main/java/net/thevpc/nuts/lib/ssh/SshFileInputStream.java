@@ -3,7 +3,7 @@ package net.thevpc.nuts.lib.ssh;
 import com.jcraft.jsch.Channel;
 import com.jcraft.jsch.ChannelExec;
 import com.jcraft.jsch.JSchException;
-import net.thevpc.nuts.NutsSession;
+import net.thevpc.nuts.NSession;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -20,14 +20,14 @@ public class SshFileInputStream extends DynamicInputStream {
     private boolean closeConnection;
     private SShConnection connection;
 
-    public SshFileInputStream(SshPath path, NutsSession nutsSession) {
+    public SshFileInputStream(SshPath path, NSession nSession) {
         super(4096);
         this.from = path.getPath();
         init = false;
         filesize = 0L;
         buf = new byte[1024];
         this.closeConnection = true;
-        SShConnection connection = new SShConnection(path.toAddress(),nutsSession);
+        SShConnection connection = new SShConnection(path.toAddress(), nSession);
         this.connection = connection;
     }
 

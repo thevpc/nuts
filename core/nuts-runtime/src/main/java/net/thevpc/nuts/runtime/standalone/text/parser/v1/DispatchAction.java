@@ -1,6 +1,6 @@
 package net.thevpc.nuts.runtime.standalone.text.parser.v1;
 
-import net.thevpc.nuts.text.NutsText;
+import net.thevpc.nuts.text.NText;
 
 public class DispatchAction extends ParserStep {
     private boolean spreadLines;
@@ -14,7 +14,7 @@ public class DispatchAction extends ParserStep {
     }
 
     @Override
-    public void consume(char c, DefaultNutsTextNodeParser.State p, boolean wasNewLine) {
+    public void consume(char c, DefaultNTextNodeParser.State p, boolean wasNewLine) {
         p.applyDrop(this);
         p.applyPush(c, spreadLines, lineStart, exitOnBrace);
     }
@@ -25,12 +25,12 @@ public class DispatchAction extends ParserStep {
     }
 
     @Override
-    public NutsText toText() {
+    public NText toText() {
         throw new IllegalArgumentException();
     }
 
     @Override
-    public void end(DefaultNutsTextNodeParser.State p) {
+    public void end(DefaultNTextNodeParser.State p) {
         p.applyDrop(this);
     }
 

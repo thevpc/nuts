@@ -1,7 +1,7 @@
 package net.thevpc.nuts.runtime.standalone.xtra.nanodb;
 
-import net.thevpc.nuts.io.NutsIOException;
-import net.thevpc.nuts.NutsSession;
+import net.thevpc.nuts.io.NIOException;
+import net.thevpc.nuts.NSession;
 
 import java.io.UncheckedIOException;
 import java.lang.reflect.Field;
@@ -24,11 +24,11 @@ public class NanoDBSerializerForBean<T> extends NanoDBNonNullSerializer<T>{
         this.fields = buildFields(type, acceptedFields,serializers);
     }
 
-    public void write(T obj, NanoDBOutputStream out, NutsSession session) {
+    public void write(T obj, NanoDBOutputStream out, NSession session) {
         writeNonNullHelper(obj,getSupportedType(), out, fields, session);
     }
 
-    public T read(NanoDBInputStream in, Class expectedType, NutsSession session) {
+    public T read(NanoDBInputStream in, Class expectedType, NSession session) {
         return readNonNullHelper(in,getSupportedType(), fields, session);
     }
 
@@ -58,7 +58,7 @@ public class NanoDBSerializerForBean<T> extends NanoDBNonNullSerializer<T>{
         return fields;
     }
 
-    private static <T> void writeNonNullHelper(T obj, Class<T> supportedType, NanoDBOutputStream out, Map<String, FieldInfo> fields, NutsSession session) {
+    private static <T> void writeNonNullHelper(T obj, Class<T> supportedType, NanoDBOutputStream out, Map<String, FieldInfo> fields, NSession session) {
         for (FieldInfo value : fields.values()) {
             Object u = null;
             try {
@@ -70,13 +70,13 @@ public class NanoDBSerializerForBean<T> extends NanoDBNonNullSerializer<T>{
         }
     }
 
-    private static  <T> T readNonNullHelper(NanoDBInputStream in, Class<T> supportedType, Map<String, FieldInfo> fields, NutsSession session) {
+    private static  <T> T readNonNullHelper(NanoDBInputStream in, Class<T> supportedType, Map<String, FieldInfo> fields, NSession session) {
         try {
             T newInstance = supportedType.getConstructor().newInstance();
             for (FieldInfo value : fields.values()) {
                 try {
                     value.field.set(newInstance, value.ser.read(in, value.field.getType(), session));
-                } catch (NutsIOException| UncheckedIOException ex) {
+                } catch (NIOException | UncheckedIOException ex) {
                     throw ex;
                 } catch (Exception ex) {
                     throw new IllegalArgumentException("error loading field " + supportedType.getSimpleName() + "." + value.name + ": " + ex.getMessage(), ex);

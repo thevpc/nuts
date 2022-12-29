@@ -8,7 +8,7 @@
 //import java.util.ArrayList;
 //import java.util.List;
 //
-//public class NutsTextNodeWriterRaw {
+//public class NTextNodeWriterRaw {
 //
 //    private final NutsSession session;
 //    private final List<NutsText> items = new ArrayList<>();
@@ -68,7 +68,7 @@
 //                break;
 //            }
 //            case STYLED: {
-//                DefaultNutsTextStyled s = (DefaultNutsTextStyled) node;
+//                DefaultNTextStyled s = (DefaultNTextStyled) node;
 //                if (ctx.isFiltered()) {
 //                    flattenNode(s.getChild(), ctx, style);
 //                } else {
@@ -81,7 +81,7 @@
 //                break;
 //            }
 //            case TITLE: {
-//                DefaultNutsTextTitle s = (DefaultNutsTextTitle) node;
+//                DefaultNTextTitle s = (DefaultNTextTitle) node;
 //                if (ctx.isProcessTitleNumbers()) {
 //                    NutsTitleSequence seq = ctx.getTitleNumberSequence();
 //                    if (seq == null) {
@@ -100,7 +100,7 @@
 //                break;
 //            }
 //            case ANCHOR: {
-//                DefaultNutsTextAnchor s = (DefaultNutsTextAnchor) node;
+//                DefaultNTextAnchor s = (DefaultNTextAnchor) node;
 //                //not supported
 //                break;
 //            }
@@ -123,7 +123,7 @@
 //                break;
 //            }
 //            case CODE: {
-//                DefaultNutsTextCode s = (DefaultNutsTextCode) node;
+//                DefaultNTextCode s = (DefaultNTextCode) node;
 //                if (!ctx.isFiltered()) {
 //                    flattenNode(s.highlight(session), ctx, null);
 //                } else {

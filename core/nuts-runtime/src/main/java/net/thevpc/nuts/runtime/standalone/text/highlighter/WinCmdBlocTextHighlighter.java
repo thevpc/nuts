@@ -1,12 +1,12 @@
 package net.thevpc.nuts.runtime.standalone.text.highlighter;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.io.NutsIOException;
+import net.thevpc.nuts.io.NIOException;
 import net.thevpc.nuts.runtime.standalone.xtra.expr.StringReaderExt;
-import net.thevpc.nuts.runtime.standalone.text.parser.DefaultNutsTextPlain;
-import net.thevpc.nuts.runtime.standalone.text.parser.DefaultNutsTextStyled;
-import net.thevpc.nuts.spi.NutsComponent;
-import net.thevpc.nuts.spi.NutsSupportLevelContext;
+import net.thevpc.nuts.runtime.standalone.text.parser.DefaultNTextPlain;
+import net.thevpc.nuts.runtime.standalone.text.parser.DefaultNTextStyled;
+import net.thevpc.nuts.spi.NComponent;
+import net.thevpc.nuts.spi.NSupportLevelContext;
 import net.thevpc.nuts.text.*;
 
 import java.io.BufferedReader;
@@ -16,36 +16,36 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-public class WinCmdBlocTextHighlighter implements NutsCodeHighlighter {
+public class WinCmdBlocTextHighlighter implements NCodeHighlighter {
 
-    private final NutsWorkspace ws;
+    private final NWorkspace ws;
 
-    public WinCmdBlocTextHighlighter(NutsWorkspace ws) {
+    public WinCmdBlocTextHighlighter(NWorkspace ws) {
         this.ws = ws;
     }
 
-    private static NutsText[] parseCommandLine_readAntiSlash(StringReaderExt ar, NutsSession session) {
+    private static NText[] parseCommandLine_readAntiSlash(StringReaderExt ar, NSession session) {
         StringBuilder sb2 = new StringBuilder();
         sb2.append(ar.nextChar());
         if (ar.hasNext()) {
             sb2.append(ar.nextChar());
         }
-        NutsTexts txt = NutsTexts.of(session);
-        return new NutsText[]{txt.ofStyled(sb2.toString(), NutsTextStyle.separator())};
+        NTexts txt = NTexts.of(session);
+        return new NText[]{txt.ofStyled(sb2.toString(), NTextStyle.separator())};
     }
 
-    private static boolean isWord(NutsText n) {
-        if (n instanceof DefaultNutsTextPlain) {
-            return Character.isAlphabetic(((DefaultNutsTextPlain) n).getText().charAt(0));
+    private static boolean isWord(NText n) {
+        if (n instanceof DefaultNTextPlain) {
+            return Character.isAlphabetic(((DefaultNTextPlain) n).getText().charAt(0));
         }
         return false;
     }
 
-    private static boolean isSeparator(NutsText n) {
-        if (n instanceof DefaultNutsTextStyled) {
-            NutsText v = ((DefaultNutsTextStyled) n).getChild();
-            if (v instanceof DefaultNutsTextPlain) {
-                String t = ((DefaultNutsTextPlain) v).getText();
+    private static boolean isSeparator(NText n) {
+        if (n instanceof DefaultNTextStyled) {
+            NText v = ((DefaultNTextStyled) n).getChild();
+            if (v instanceof DefaultNTextPlain) {
+                String t = ((DefaultNTextPlain) v).getText();
                 switch (t.charAt(0)) {
                     case ';':
                     case '&':
@@ -57,16 +57,16 @@ public class WinCmdBlocTextHighlighter implements NutsCodeHighlighter {
         return false;
     }
 
-    private static boolean isWhites(NutsText n) {
-        if (n instanceof DefaultNutsTextPlain) {
-            return Character.isWhitespace(((DefaultNutsTextPlain) n).getText().charAt(0));
+    private static boolean isWhites(NText n) {
+        if (n instanceof DefaultNTextPlain) {
+            return Character.isWhitespace(((DefaultNTextPlain) n).getText().charAt(0));
         }
         return false;
     }
 
-    private static int indexOfFirstWord(List<NutsText> all, int from) {
+    private static int indexOfFirstWord(List<NText> all, int from) {
         for (int i = from; i < all.size(); i++) {
-            NutsText n = all.get(i);
+            NText n = all.get(i);
             if (isWord(n)) {
                 if (i == all.size() - 1 || isWhites(all.get(i + 1)) || isSeparator(all.get(i + 1))) {
                     return i;
@@ -126,7 +126,7 @@ public class WinCmdBlocTextHighlighter implements NutsCodeHighlighter {
     }
 
     @Override
-    public int getSupportLevel(NutsSupportLevelContext context) {
+    public int getSupportLevel(NSupportLevelContext context) {
         String s = context.getConstraints();
         if (s == null) {
             return DEFAULT_SUPPORT;
@@ -139,25 +139,25 @@ public class WinCmdBlocTextHighlighter implements NutsCodeHighlighter {
             case "powsershell":
             case "powser-shell":
             case "text/x-msdos-batch": {
-                return NutsComponent.DEFAULT_SUPPORT;
+                return NComponent.DEFAULT_SUPPORT;
             }
             case "system": {
-                switch (NutsShellFamily.getCurrent()) {
+                switch (NShellFamily.getCurrent()) {
                     case WIN_CMD:
                     case WIN_POWER_SHELL: {
-                        return NutsComponent.DEFAULT_SUPPORT + 10;
+                        return NComponent.DEFAULT_SUPPORT + 10;
                     }
                 }
-                return NutsComponent.DEFAULT_SUPPORT;
+                return NComponent.DEFAULT_SUPPORT;
             }
         }
-        return NutsComponent.NO_SUPPORT;
+        return NComponent.NO_SUPPORT;
     }
 
     @Override
-    public NutsText stringToText(String text, NutsTexts txt, NutsSession session) {
+    public NText stringToText(String text, NTexts txt, NSession session) {
         txt.setSession(session);
-        List<NutsText> all = new ArrayList<>();
+        List<NText> all = new ArrayList<>();
         BufferedReader reader = new BufferedReader(new StringReader(text));
         String line = null;
         boolean first = true;
@@ -167,7 +167,7 @@ public class WinCmdBlocTextHighlighter implements NutsCodeHighlighter {
                     break;
                 }
             } catch (IOException ex) {
-                throw new NutsIOException(session, ex);
+                throw new NIOException(session, ex);
             }
             if (first) {
                 first = false;
@@ -180,14 +180,14 @@ public class WinCmdBlocTextHighlighter implements NutsCodeHighlighter {
     }
 
     @Override
-    public NutsText tokenToText(String text, String nodeType, NutsTexts txt, NutsSession session) {
+    public NText tokenToText(String text, String nodeType, NTexts txt, NSession session) {
         return txt.ofPlain(text);
     }
 
-    private NutsText[] parseCommandLine_readSimpleQuotes(StringReaderExt ar, NutsTexts txt, NutsSession session) {
+    private NText[] parseCommandLine_readSimpleQuotes(StringReaderExt ar, NTexts txt, NSession session) {
         StringBuilder sb = new StringBuilder();
         sb.append(ar.nextChar()); //quote!
-        List<NutsText> ret = new ArrayList<>();
+        List<NText> ret = new ArrayList<>();
         while (ar.hasNext()) {
             char c = ar.peekChar();
             /*if (c == '\\') {
@@ -211,15 +211,15 @@ public class WinCmdBlocTextHighlighter implements NutsCodeHighlighter {
             }
         }
         if (sb.length() > 0) {
-            ret.add(txt.ofStyled(sb.toString(), NutsTextStyle.string(2)));
+            ret.add(txt.ofStyled(sb.toString(), NTextStyle.string(2)));
             sb.setLength(0);
         }
-        return ret.toArray(new NutsText[0]);
+        return ret.toArray(new NText[0]);
     }
 
-    private NutsText[] parseCommandLine_readWord(StringReaderExt ar, NutsTexts txt, NutsSession session) {
+    private NText[] parseCommandLine_readWord(StringReaderExt ar, NTexts txt, NSession session) {
         StringBuilder sb = new StringBuilder();
-        List<NutsText> ret = new ArrayList<>();
+        List<NText> ret = new ArrayList<>();
         boolean inLoop = true;
         boolean endsWithSep = false;
         while (inLoop && ar.hasNext()) {
@@ -283,13 +283,13 @@ public class WinCmdBlocTextHighlighter implements NutsCodeHighlighter {
         if (ret.isEmpty()) {
             throw new IllegalArgumentException("was not expecting " + ar.peekChar() + " as part of word");
         }
-        if (ret.get(0).getType() == NutsTextType.PLAIN && isOption(((NutsTextPlain) ret.get(0)).getText())) {
-            ret.set(0, txt.ofStyled(ret.get(0), NutsTextStyle.option()));
+        if (ret.get(0).getType() == NTextType.PLAIN && isOption(((NTextPlain) ret.get(0)).getText())) {
+            ret.set(0, txt.ofStyled(ret.get(0), NTextStyle.option()));
         }
-        return ret.toArray(new NutsText[0]);
+        return ret.toArray(new NText[0]);
     }
 
-    private NutsText[] parseCommandLine_readDollar(StringReaderExt ar, NutsTexts txt, NutsSession session) {
+    private NText[] parseCommandLine_readDollar(StringReaderExt ar, NTexts txt, NSession session) {
         if (ar.peekChars("$((")) {
             return parseCommandLine_readDollarPar2(ar, txt, session);
         }
@@ -317,7 +317,7 @@ public class WinCmdBlocTextHighlighter implements NutsCodeHighlighter {
                 case '9': {
                     sb2.append(ar.nextChar());
                     sb2.append(ar.nextChar());
-                    return new NutsText[]{txt.ofStyled(sb2.toString(), NutsTextStyle.separator())};
+                    return new NText[]{txt.ofStyled(sb2.toString(), NTextStyle.separator())};
                 }
             }
         }
@@ -331,20 +331,20 @@ public class WinCmdBlocTextHighlighter implements NutsCodeHighlighter {
             }
         }
         if (sb2.length() > 0) {
-            return new NutsText[]{
-                    txt.ofStyled("$", NutsTextStyle.separator()),
-                    txt.ofStyled(sb2.toString(), NutsTextStyle.keyword(4)),};
+            return new NText[]{
+                    txt.ofStyled("$", NTextStyle.separator()),
+                    txt.ofStyled(sb2.toString(), NTextStyle.keyword(4)),};
         }
-        return new NutsText[]{
-                txt.ofStyled("$", NutsTextStyle.separator()),};
+        return new NText[]{
+                txt.ofStyled("$", NTextStyle.separator()),};
     }
 
-    private NutsText[] parseCommandLine_readDoubleQuotes(StringReaderExt ar, NutsTexts txt, NutsSession session) {
-        List<NutsText> ret = new ArrayList<>();
+    private NText[] parseCommandLine_readDoubleQuotes(StringReaderExt ar, NTexts txt, NSession session) {
+        List<NText> ret = new ArrayList<>();
         txt.setSession(session);
         StringBuilder sb = new StringBuilder();
 
-        ret.add(txt.ofStyled(String.valueOf(ar.nextChar()), NutsTextStyle.string()));
+        ret.add(txt.ofStyled(String.valueOf(ar.nextChar()), NTextStyle.string()));
         while (ar.hasNext()) {
             char c = ar.peekChar();
             /*if (c == '\\') {
@@ -356,32 +356,32 @@ public class WinCmdBlocTextHighlighter implements NutsCodeHighlighter {
             } else */
             if (c == '$') {
                 if (sb.length() > 0) {
-                    ret.add(txt.ofStyled(sb.toString(), NutsTextStyle.string()));
+                    ret.add(txt.ofStyled(sb.toString(), NTextStyle.string()));
                     sb.setLength(0);
                 }
                 ret.addAll(Arrays.asList(parseCommandLine_readDollar(ar, txt, session)));
             } else if (c == '\"') {
                 if (sb.length() > 0) {
-                    ret.add(txt.ofStyled(sb.toString(), NutsTextStyle.string()));
+                    ret.add(txt.ofStyled(sb.toString(), NTextStyle.string()));
                     sb.setLength(0);
                 }
-                ret.add(txt.ofStyled(String.valueOf(ar.nextChar()), NutsTextStyle.string()));
+                ret.add(txt.ofStyled(String.valueOf(ar.nextChar()), NTextStyle.string()));
                 break;
             } else {
                 sb.append(ar.nextChar());
             }
         }
         if (sb.length() > 0) {
-            ret.add(txt.ofStyled(sb.toString(), NutsTextStyle.string()));
+            ret.add(txt.ofStyled(sb.toString(), NTextStyle.string()));
             sb.setLength(0);
         }
-        return ret.toArray(new NutsText[0]);
+        return ret.toArray(new NText[0]);
     }
 
-    private NutsText[] parseCommandLine_readAntiQuotes(StringReaderExt ar, NutsTexts txt, NutsSession session) {
-        List<NutsText> all = new ArrayList<>();
+    private NText[] parseCommandLine_readAntiQuotes(StringReaderExt ar, NTexts txt, NSession session) {
+        List<NText> all = new ArrayList<>();
         txt.setSession(session);
-        all.add(txt.ofStyled(String.valueOf(ar.nextChar()), NutsTextStyle.separator()));
+        all.add(txt.ofStyled(String.valueOf(ar.nextChar()), NTextStyle.separator()));
         boolean inLoop = true;
         boolean wasSpace = true;
         while (inLoop && ar.hasNext()) {
@@ -389,7 +389,7 @@ public class WinCmdBlocTextHighlighter implements NutsCodeHighlighter {
             switch (c) {
                 case '`': {
                     wasSpace = false;
-                    all.add(txt.ofStyled(String.valueOf(ar.nextChar()), NutsTextStyle.separator()));
+                    all.add(txt.ofStyled(String.valueOf(ar.nextChar()), NTextStyle.separator()));
                     inLoop = false;
                     break;
                 }
@@ -398,20 +398,20 @@ public class WinCmdBlocTextHighlighter implements NutsCodeHighlighter {
                 }
             }
         }
-        return all.toArray(new NutsText[0]);
+        return all.toArray(new NText[0]);
     }
 
-    private NutsText[] parseCommandLine_readDollarPar(NutsWorkspace ws, StringReaderExt ar, NutsTexts txt, NutsSession session) {
-        List<NutsText> all = new ArrayList<>();
+    private NText[] parseCommandLine_readDollarPar(NWorkspace ws, StringReaderExt ar, NTexts txt, NSession session) {
+        List<NText> all = new ArrayList<>();
         txt.setSession(session);
-        all.add(txt.ofStyled(String.valueOf(ar.nextChar()) + ar.nextChar(), NutsTextStyle.separator()));
+        all.add(txt.ofStyled(String.valueOf(ar.nextChar()) + ar.nextChar(), NTextStyle.separator()));
         boolean inLoop = true;
         boolean wasSpace = false;
         while (inLoop && ar.hasNext()) {
             char c = ar.peekChar();
             switch (c) {
                 case ')': {
-                    all.add(txt.ofStyled(String.valueOf(ar.nextChar()), NutsTextStyle.separator()));
+                    all.add(txt.ofStyled(String.valueOf(ar.nextChar()), NTextStyle.separator()));
                     inLoop = false;
                     break;
                 }
@@ -420,13 +420,13 @@ public class WinCmdBlocTextHighlighter implements NutsCodeHighlighter {
                 }
             }
         }
-        return all.toArray(new NutsText[0]);
+        return all.toArray(new NText[0]);
     }
 
-    private NutsText[] parseCommandLine_readDollarPar2(StringReaderExt ar, NutsTexts txt, NutsSession session) {
-        List<NutsText> all = new ArrayList<>();
+    private NText[] parseCommandLine_readDollarPar2(StringReaderExt ar, NTexts txt, NSession session) {
+        List<NText> all = new ArrayList<>();
         txt.setSession(session);
-        all.add(txt.ofStyled(String.valueOf(ar.nextChar()) + ar.nextChar() + ar.nextChar(), NutsTextStyle.separator()));
+        all.add(txt.ofStyled(String.valueOf(ar.nextChar()) + ar.nextChar() + ar.nextChar(), NTextStyle.separator()));
         boolean inLoop = true;
         boolean wasSpace = true;
         while (inLoop && ar.hasNext()) {
@@ -438,13 +438,13 @@ public class WinCmdBlocTextHighlighter implements NutsCodeHighlighter {
                 case '/':
                 case '%': {
                     wasSpace = false;
-                    all.add(txt.ofStyled(String.valueOf(ar.nextChars(2)), NutsTextStyle.operator()));
+                    all.add(txt.ofStyled(String.valueOf(ar.nextChars(2)), NTextStyle.operator()));
                     break;
                 }
                 case ')': {
                     if (ar.peekChars(2).equals("))")) {
                         wasSpace = false;
-                        all.add(txt.ofStyled(String.valueOf(ar.nextChars(2)), NutsTextStyle.separator()));
+                        all.add(txt.ofStyled(String.valueOf(ar.nextChars(2)), NTextStyle.separator()));
                         inLoop = false;
                     } else {
                         wasSpace = parseCommandLineStep(ar, all, 2, wasSpace, txt, session);
@@ -456,13 +456,13 @@ public class WinCmdBlocTextHighlighter implements NutsCodeHighlighter {
                 }
             }
         }
-        return all.toArray(new NutsText[0]);
+        return all.toArray(new NText[0]);
     }
 
-    private NutsText[] parseCommandLine_readDollarCurlyBrackets(StringReaderExt ar, NutsTexts txt, NutsSession session) {
-        List<NutsText> all = new ArrayList<>();
+    private NText[] parseCommandLine_readDollarCurlyBrackets(StringReaderExt ar, NTexts txt, NSession session) {
+        List<NText> all = new ArrayList<>();
         txt.setSession(session);
-        all.add(txt.ofStyled(String.valueOf(ar.nextChar()) + ar.nextChar(), NutsTextStyle.separator()));
+        all.add(txt.ofStyled(String.valueOf(ar.nextChar()) + ar.nextChar(), NTextStyle.separator()));
         boolean inLoop = true;
         int startIndex = 0;
         boolean expectedName = true;
@@ -471,7 +471,7 @@ public class WinCmdBlocTextHighlighter implements NutsCodeHighlighter {
             char c = ar.peekChar();
             switch (c) {
                 case '}': {
-                    all.add(txt.ofStyled(String.valueOf(ar.nextChar()), NutsTextStyle.separator()));
+                    all.add(txt.ofStyled(String.valueOf(ar.nextChar()), NTextStyle.separator()));
                     inLoop = false;
                     break;
                 }
@@ -482,7 +482,7 @@ public class WinCmdBlocTextHighlighter implements NutsCodeHighlighter {
                         expectedName = false;
                         if (all.size() > startIndex) {
                             if (isWord(all.get(startIndex))) {
-                                all.set(startIndex, txt.ofStyled(all.get(startIndex), NutsTextStyle.keyword(4)));
+                                all.set(startIndex, txt.ofStyled(all.get(startIndex), NTextStyle.keyword(4)));
                                 wasSpace = false;
                             }
                         }
@@ -490,13 +490,13 @@ public class WinCmdBlocTextHighlighter implements NutsCodeHighlighter {
                 }
             }
         }
-        return all.toArray(new NutsText[0]);
+        return all.toArray(new NText[0]);
     }
 
-    private NutsText[] parseCommandLine_readPar2(StringReaderExt ar, NutsTexts txt, NutsSession session) {
-        List<NutsText> all = new ArrayList<>();
+    private NText[] parseCommandLine_readPar2(StringReaderExt ar, NTexts txt, NSession session) {
+        List<NText> all = new ArrayList<>();
         txt.setSession(session);
-        all.add(txt.ofStyled(String.valueOf(ar.nextChar()) + ar.nextChar(), NutsTextStyle.separator()));
+        all.add(txt.ofStyled(String.valueOf(ar.nextChar()) + ar.nextChar(), NTextStyle.separator()));
         boolean inLoop = true;
         boolean wasSpace = true;
         while (inLoop && ar.hasNext()) {
@@ -504,7 +504,7 @@ public class WinCmdBlocTextHighlighter implements NutsCodeHighlighter {
             switch (c) {
                 case ')': {
                     if (ar.peekChars(2).equals("))")) {
-                        all.add(txt.ofStyled(String.valueOf(ar.nextChars(2)), NutsTextStyle.separator()));
+                        all.add(txt.ofStyled(String.valueOf(ar.nextChars(2)), NTextStyle.separator()));
                         inLoop = false;
                     } else {
                         wasSpace = parseCommandLineStep(ar, all, 2, wasSpace, txt, session);
@@ -516,7 +516,7 @@ public class WinCmdBlocTextHighlighter implements NutsCodeHighlighter {
                 }
             }
         }
-        return all.toArray(new NutsText[0]);
+        return all.toArray(new NText[0]);
     }
 
     /**
@@ -528,7 +528,7 @@ public class WinCmdBlocTextHighlighter implements NutsCodeHighlighter {
      * @param wasSpace   wasSpace
      * @return is space
      */
-    private boolean parseCommandLineStep(StringReaderExt ar, List<NutsText> all, int startIndex, boolean wasSpace, NutsTexts txt, NutsSession session) {
+    private boolean parseCommandLineStep(StringReaderExt ar, List<NText> all, int startIndex, boolean wasSpace, NTexts txt, NSession session) {
         char c = ar.peekChar();
         if (c <= 32) {
             all.addAll(Arrays.asList(StringReaderExtUtils.readSpaces(session, ar)));
@@ -552,46 +552,46 @@ public class WinCmdBlocTextHighlighter implements NutsCodeHighlighter {
                 break;
             }
             case ';': {
-                all.add(txt.ofStyled(String.valueOf(ar.nextChar()), NutsTextStyle.separator()));
+                all.add(txt.ofStyled(String.valueOf(ar.nextChar()), NTextStyle.separator()));
                 break;
             }
             case ':': {
-                all.add(txt.ofStyled(String.valueOf(ar.nextChar()), NutsTextStyle.separator(2)));
+                all.add(txt.ofStyled(String.valueOf(ar.nextChar()), NTextStyle.separator(2)));
                 break;
             }
             case '|': {
                 if (ar.peekChars(2).equals("||")) {
-                    all.add(txt.ofStyled(ar.nextChars(2), NutsTextStyle.separator()));
+                    all.add(txt.ofStyled(ar.nextChars(2), NTextStyle.separator()));
                 } else {
-                    all.add(txt.ofStyled(String.valueOf(ar.nextChar()), NutsTextStyle.separator()));
+                    all.add(txt.ofStyled(String.valueOf(ar.nextChar()), NTextStyle.separator()));
                 }
                 break;
             }
             case '&': {
                 if (ar.peekChars(2).equals("&&")) {
-                    all.add(txt.ofStyled(ar.nextChars(2), NutsTextStyle.separator()));
+                    all.add(txt.ofStyled(ar.nextChars(2), NTextStyle.separator()));
                 } else if (ar.peekChars(3).equals("&>>")) {
-                    all.add(txt.ofStyled(ar.nextChars(3), NutsTextStyle.separator()));
+                    all.add(txt.ofStyled(ar.nextChars(3), NTextStyle.separator()));
                 } else if (ar.peekChars(2).equals("&>")) {
-                    all.add(txt.ofStyled(ar.nextChars(2), NutsTextStyle.separator()));
+                    all.add(txt.ofStyled(ar.nextChars(2), NTextStyle.separator()));
                 } else {
-                    all.add(txt.ofStyled(String.valueOf(ar.nextChar()), NutsTextStyle.separator()));
+                    all.add(txt.ofStyled(String.valueOf(ar.nextChar()), NTextStyle.separator()));
                 }
                 break;
             }
             case '>': {
                 if (ar.peekChars(2).equals(">>")) {
-                    all.add(txt.ofStyled(ar.nextChars(2), NutsTextStyle.separator()));
+                    all.add(txt.ofStyled(ar.nextChars(2), NTextStyle.separator()));
                 } else if (ar.peekChars(2).equals(">&")) {
-                    all.add(txt.ofStyled(ar.nextChars(2), NutsTextStyle.separator()));
+                    all.add(txt.ofStyled(ar.nextChars(2), NTextStyle.separator()));
                 } else {
-                    all.add(txt.ofStyled(String.valueOf(ar.nextChar()), NutsTextStyle.separator()));
+                    all.add(txt.ofStyled(String.valueOf(ar.nextChar()), NTextStyle.separator()));
                 }
                 break;
             }
             case '<': {
                 if (ar.peekChars(2).equals("<<")) {
-                    all.add(txt.ofStyled(ar.nextChars(2), NutsTextStyle.separator()));
+                    all.add(txt.ofStyled(ar.nextChars(2), NTextStyle.separator()));
                 } else {
                     StringBuilder sb = new StringBuilder();
                     sb.append(ar.peekChar(0));
@@ -616,18 +616,18 @@ public class WinCmdBlocTextHighlighter implements NutsCodeHighlighter {
                         String s = ar.nextChars(sb.length());
                         String s0 = s.substring(1, s.length() - 1);
                         if (isSynopsisOption(s0)) {
-                            all.add(txt.ofStyled("<", NutsTextStyle.input()));
-                            all.add(txt.ofStyled(s0, NutsTextStyle.option()));
-                            all.add(txt.ofStyled(">", NutsTextStyle.input()));
+                            all.add(txt.ofStyled("<", NTextStyle.input()));
+                            all.add(txt.ofStyled(s0, NTextStyle.option()));
+                            all.add(txt.ofStyled(">", NTextStyle.input()));
                         } else if (isSynopsisWord(s0)) {
-                            all.add(txt.ofStyled("<", NutsTextStyle.input()));
-                            all.add(txt.ofStyled(s0, NutsTextStyle.input()));
-                            all.add(txt.ofStyled(">", NutsTextStyle.input()));
+                            all.add(txt.ofStyled("<", NTextStyle.input()));
+                            all.add(txt.ofStyled(s0, NTextStyle.input()));
+                            all.add(txt.ofStyled(">", NTextStyle.input()));
                         } else {
-                            all.add(txt.ofStyled(String.valueOf(ar.nextChar()), NutsTextStyle.separator()));
+                            all.add(txt.ofStyled(String.valueOf(ar.nextChar()), NTextStyle.separator()));
                         }
                     } else {
-                        all.add(txt.ofStyled(String.valueOf(ar.nextChar()), NutsTextStyle.separator()));
+                        all.add(txt.ofStyled(String.valueOf(ar.nextChar()), NTextStyle.separator()));
                     }
                 }
                 break;
@@ -636,7 +636,7 @@ public class WinCmdBlocTextHighlighter implements NutsCodeHighlighter {
                 if (ar.peekChars("((")) {
                     all.addAll(Arrays.asList(parseCommandLine_readPar2(ar, txt, session)));
                 } else {
-                    all.add(txt.ofStyled(String.valueOf(ar.nextChar()), NutsTextStyle.separator()));
+                    all.add(txt.ofStyled(String.valueOf(ar.nextChar()), NTextStyle.separator()));
                 }
             }
             case ')':
@@ -644,7 +644,7 @@ public class WinCmdBlocTextHighlighter implements NutsCodeHighlighter {
             case '}':
             case '~':
             case '!': {
-                all.add(txt.ofStyled(String.valueOf(ar.nextChar()), NutsTextStyle.separator()));
+                all.add(txt.ofStyled(String.valueOf(ar.nextChar()), NTextStyle.separator()));
                 break;
             }
             case '*':
@@ -652,7 +652,7 @@ public class WinCmdBlocTextHighlighter implements NutsCodeHighlighter {
             case '[':
             case ']':
             case '=': {
-                all.add(txt.ofStyled(String.valueOf(ar.nextChar()), NutsTextStyle.separator()));
+                all.add(txt.ofStyled(String.valueOf(ar.nextChar()), NTextStyle.separator()));
                 break;
             }
             case '#': {
@@ -668,9 +668,9 @@ public class WinCmdBlocTextHighlighter implements NutsCodeHighlighter {
                             sb.append(ar.nextChar());
                         }
                     }
-                    all.add(txt.ofStyled(sb.toString(), NutsTextStyle.comments()));
+                    all.add(txt.ofStyled(sb.toString(), NTextStyle.comments()));
                 } else {
-                    all.add(txt.ofStyled(String.valueOf(ar.nextChar()), NutsTextStyle.separator()));
+                    all.add(txt.ofStyled(String.valueOf(ar.nextChar()), NTextStyle.separator()));
                 }
                 break;
             }
@@ -681,7 +681,7 @@ public class WinCmdBlocTextHighlighter implements NutsCodeHighlighter {
                     if (first) {
                         int i = indexOfFirstWord(all, startIndex);
                         if (i >= 0) {
-                            all.set(i, txt.ofStyled(all.get(i), NutsTextStyle.keyword()));
+                            all.set(i, txt.ofStyled(all.get(i), NTextStyle.keyword()));
                         }
                     }
                 } else {
@@ -692,19 +692,19 @@ public class WinCmdBlocTextHighlighter implements NutsCodeHighlighter {
         return false;
     }
 
-    private NutsText[] parseCommandLine(String commandLineString, NutsTexts txt, NutsSession session) {
+    private NText[] parseCommandLine(String commandLineString, NTexts txt, NSession session) {
         StringReaderExt ar = new StringReaderExt(commandLineString);
-        List<NutsText> all = new ArrayList<>();
+        List<NText> all = new ArrayList<>();
         boolean wasSpace = true;
         while (ar.hasNext()) {
             wasSpace = parseCommandLineStep(ar, all, 0, wasSpace, txt, session);
         }
-        return all.toArray(new NutsText[0]);
+        return all.toArray(new NText[0]);
     }
 
-    public NutsText next(StringReaderExt reader, boolean exitOnClosedCurlBrace, boolean exitOnClosedPar, boolean exitOnDblQuote, boolean exitOnAntiQuote, NutsTexts txt, NutsSession session) {
+    public NText next(StringReaderExt reader, boolean exitOnClosedCurlBrace, boolean exitOnClosedPar, boolean exitOnDblQuote, boolean exitOnAntiQuote, NTexts txt, NSession session) {
         boolean lineStart = true;
-        List<NutsText> all = new ArrayList<>();
+        List<NText> all = new ArrayList<>();
         boolean exit = false;
         while (!exit && reader.hasNext()) {
             switch (reader.peekChar()) {
@@ -714,7 +714,7 @@ public class WinCmdBlocTextHighlighter implements NutsCodeHighlighter {
                         exit = true;
                     } else {
                         all.add(txt.ofStyled(
-                                reader.nextChars(1), NutsTextStyle.separator()
+                                reader.nextChars(1), NTextStyle.separator()
                         ));
                     }
                     break;
@@ -725,7 +725,7 @@ public class WinCmdBlocTextHighlighter implements NutsCodeHighlighter {
                         exit = true;
                     } else {
                         all.add(txt.ofStyled(
-                                reader.nextChars(1), NutsTextStyle.separator()
+                                reader.nextChars(1), NTextStyle.separator()
                         ));
                     }
                     break;
@@ -734,11 +734,11 @@ public class WinCmdBlocTextHighlighter implements NutsCodeHighlighter {
                     lineStart = false;
                     if (reader.isAvailable(2) && reader.peekChar() == '>') {
                         all.add(txt.ofStyled(
-                                reader.nextChars(2), NutsTextStyle.separator()
+                                reader.nextChars(2), NTextStyle.separator()
                         ));
                     } else {
                         all.add(txt.ofStyled(
-                                reader.nextChars(1), NutsTextStyle.separator()
+                                reader.nextChars(1), NTextStyle.separator()
                         ));
                     }
                     break;
@@ -747,19 +747,19 @@ public class WinCmdBlocTextHighlighter implements NutsCodeHighlighter {
                     lineStart = false;
                     if (reader.isAvailable(2) && reader.peekChar() == '&') {
                         all.add(txt.ofStyled(
-                                reader.nextChars(2), NutsTextStyle.separator()
+                                reader.nextChars(2), NTextStyle.separator()
                         ));
                     } else if (reader.isAvailable(2) && reader.peekChar() == '>') {
                         all.add(txt.ofStyled(
-                                reader.nextChars(2), NutsTextStyle.separator()
+                                reader.nextChars(2), NTextStyle.separator()
                         ));
                     } else if (reader.isAvailable(2) && reader.peekChar() == '<') {
                         all.add(txt.ofStyled(
-                                reader.nextChars(2), NutsTextStyle.separator()
+                                reader.nextChars(2), NTextStyle.separator()
                         ));
                     } else {
                         all.add(txt.ofStyled(
-                                reader.nextChars(1), NutsTextStyle.separator()
+                                reader.nextChars(1), NTextStyle.separator()
                         ));
                     }
                     break;
@@ -768,18 +768,18 @@ public class WinCmdBlocTextHighlighter implements NutsCodeHighlighter {
                     lineStart = false;
                     if (reader.isAvailable(2) && reader.peekChar() == '|') {
                         all.add(txt.ofStyled(
-                                reader.nextChars(2), NutsTextStyle.separator()
+                                reader.nextChars(2), NTextStyle.separator()
                         ));
                     } else {
                         all.add(txt.ofStyled(
-                                reader.nextChars(1), NutsTextStyle.separator()
+                                reader.nextChars(1), NTextStyle.separator()
                         ));
                     }
                     break;
                 }
                 case ';': {
                     all.add(txt.ofStyled(
-                            reader.nextChars(1), NutsTextStyle.separator()
+                            reader.nextChars(1), NTextStyle.separator()
                     ));
                     lineStart = true;
                     break;
@@ -787,11 +787,11 @@ public class WinCmdBlocTextHighlighter implements NutsCodeHighlighter {
                 case '\n': {
                     if (reader.isAvailable(2) && reader.peekChar() == '\r') {
                         all.add(txt.ofStyled(
-                                reader.nextChars(2), NutsTextStyle.separator()
+                                reader.nextChars(2), NTextStyle.separator()
                         ));
                     } else {
                         all.add(txt.ofStyled(
-                                reader.nextChars(1), NutsTextStyle.separator()
+                                reader.nextChars(1), NTextStyle.separator()
                         ));
                     }
                     lineStart = true;
@@ -821,21 +821,21 @@ public class WinCmdBlocTextHighlighter implements NutsCodeHighlighter {
                         if (ok) {
                             reader.nextChars(sb.length());
                             all.add(txt.ofStyled(
-                                    sb.toString(), NutsTextStyle.input()
+                                    sb.toString(), NTextStyle.input()
                             ));
                             break;
                         } else {
                             all.add(txt.ofStyled(
-                                    reader.nextChars(1), NutsTextStyle.separator()
+                                    reader.nextChars(1), NTextStyle.separator()
                             ));
                         }
                     } else if (reader.isAvailable(2) && reader.peekChar() == '<') {
                         all.add(txt.ofStyled(
-                                reader.nextChars(2), NutsTextStyle.separator()
+                                reader.nextChars(2), NTextStyle.separator()
                         ));
                     } else {
                         all.add(txt.ofStyled(
-                                reader.nextChars(1), NutsTextStyle.separator()
+                                reader.nextChars(1), NTextStyle.separator()
                         ));
                     }
                     break;
@@ -843,7 +843,7 @@ public class WinCmdBlocTextHighlighter implements NutsCodeHighlighter {
                 case '\\': {
                     lineStart = false;
                     all.add(txt.ofStyled(
-                            reader.nextChars(2), NutsTextStyle.separator(2)
+                            reader.nextChars(2), NTextStyle.separator(2)
                     ));
                     break;
                 }
@@ -857,11 +857,11 @@ public class WinCmdBlocTextHighlighter implements NutsCodeHighlighter {
                     if (exitOnAntiQuote) {
                         exit = true;
                     } else {
-                        List<NutsText> a = new ArrayList<>();
-                        a.add(txt.ofStyled(reader.nextChars(1), NutsTextStyle.string()));
+                        List<NText> a = new ArrayList<>();
+                        a.add(txt.ofStyled(reader.nextChars(1), NTextStyle.string()));
                         a.add(next(reader, false, false, false, true, txt, session));
                         if (reader.hasNext() && reader.peekChar() == '`') {
-                            a.add(txt.ofStyled(reader.nextChars(1), NutsTextStyle.string()));
+                            a.add(txt.ofStyled(reader.nextChars(1), NTextStyle.string()));
                         } else {
                             exit = true;
                         }
@@ -891,7 +891,7 @@ public class WinCmdBlocTextHighlighter implements NutsCodeHighlighter {
                             }
                         }
                     }
-                    all.add(txt.ofStyled(sb.toString(), NutsTextStyle.string()));
+                    all.add(txt.ofStyled(sb.toString(), NTextStyle.string()));
                     break;
                 }
                 case '$': {
@@ -920,7 +920,7 @@ public class WinCmdBlocTextHighlighter implements NutsCodeHighlighter {
                             case '7':
                             case '8':
                             case '9': {
-                                all.add(txt.ofStyled(reader.nextChars(2), NutsTextStyle.string()));
+                                all.add(txt.ofStyled(reader.nextChars(2), NTextStyle.string()));
                                 break;
                             }
                             default: {
@@ -930,14 +930,14 @@ public class WinCmdBlocTextHighlighter implements NutsCodeHighlighter {
                                     while (reader.hasNext() && (Character.isAlphabetic(reader.peekChar()) || reader.peekChar() == '_')) {
                                         sb.append(reader.nextChar());
                                     }
-                                    all.add(txt.ofStyled(sb.toString(), NutsTextStyle.variable()));
+                                    all.add(txt.ofStyled(sb.toString(), NTextStyle.variable()));
                                 } else {
-                                    all.add(txt.ofStyled(reader.nextChars(1), NutsTextStyle.separator()));
+                                    all.add(txt.ofStyled(reader.nextChars(1), NTextStyle.separator()));
                                 }
                             }
                         }
                     } else {
-                        all.add(txt.ofStyled(reader.nextChars(1), NutsTextStyle.string()));
+                        all.add(txt.ofStyled(reader.nextChars(1), NTextStyle.string()));
                     }
                     break;
                 }
@@ -1019,7 +1019,7 @@ public class WinCmdBlocTextHighlighter implements NutsCodeHighlighter {
                     }
                     if (lineStart && !reader.hasNext() || Character.isWhitespace(reader.peekChar())) {
                         //command name
-                        NutsTextStyle keyword1 = NutsTextStyle.keyword(2);
+                        NTextStyle keyword1 = NTextStyle.keyword(2);
                         switch (sb.toString()) {
                             case "if":
                             case "while":
@@ -1028,7 +1028,7 @@ public class WinCmdBlocTextHighlighter implements NutsCodeHighlighter {
                             case "elif":
                             case "then":
                             case "else": {
-                                keyword1 = NutsTextStyle.keyword();
+                                keyword1 = NTextStyle.keyword();
                                 break;
                             }
                             case "cp":
@@ -1037,7 +1037,7 @@ public class WinCmdBlocTextHighlighter implements NutsCodeHighlighter {
                             case "rm":
                             case "pwd":
                             case "echo": {
-                                keyword1 = NutsTextStyle.keyword(3);
+                                keyword1 = NTextStyle.keyword(3);
                                 break;
                             }
                         }
@@ -1053,25 +1053,25 @@ public class WinCmdBlocTextHighlighter implements NutsCodeHighlighter {
         return txt.ofList(all).simplify();
     }
 
-    private NutsText nextDollar(StringReaderExt reader, NutsTexts txt, NutsSession session) {
+    private NText nextDollar(StringReaderExt reader, NTexts txt, NSession session) {
         if (reader.isAvailable(2)) {
             char c = reader.peekChar(1);
             switch (c) {
                 case '(': {
-                    List<NutsText> a = new ArrayList<>();
-                    a.add(txt.ofStyled(reader.nextChars(1), NutsTextStyle.separator()));
+                    List<NText> a = new ArrayList<>();
+                    a.add(txt.ofStyled(reader.nextChars(1), NTextStyle.separator()));
                     a.add(next(reader, false, true, false, false, txt, session));
                     if (reader.hasNext() && reader.peekChar() == ')') {
-                        a.add(txt.ofStyled(reader.nextChars(1), NutsTextStyle.separator()));
+                        a.add(txt.ofStyled(reader.nextChars(1), NTextStyle.separator()));
                     }
                     return txt.ofList(a).simplify();
                 }
                 case '{': {
-                    List<NutsText> a = new ArrayList<>();
-                    a.add(txt.ofStyled(reader.nextChars(1), NutsTextStyle.separator()));
+                    List<NText> a = new ArrayList<>();
+                    a.add(txt.ofStyled(reader.nextChars(1), NTextStyle.separator()));
                     a.add(next(reader, true, false, false, false, txt, session));
                     if (reader.hasNext() && reader.peekChar() == ')') {
-                        a.add(txt.ofStyled(reader.nextChars(1), NutsTextStyle.separator()));
+                        a.add(txt.ofStyled(reader.nextChars(1), NTextStyle.separator()));
                     }
                     return txt.ofList(a).simplify();
                 }
@@ -1090,7 +1090,7 @@ public class WinCmdBlocTextHighlighter implements NutsCodeHighlighter {
                 case '7':
                 case '8':
                 case '9': {
-                    return txt.ofStyled(reader.nextChars(2), NutsTextStyle.string());
+                    return txt.ofStyled(reader.nextChars(2), NTextStyle.string());
                 }
                 default: {
                     if (Character.isAlphabetic(reader.peekChar(1))) {
@@ -1099,20 +1099,20 @@ public class WinCmdBlocTextHighlighter implements NutsCodeHighlighter {
                         while (reader.hasNext() && (Character.isAlphabetic(reader.peekChar()) || reader.peekChar() == '_')) {
                             sb.append(reader.nextChar());
                         }
-                        return txt.ofStyled(sb.toString(), NutsTextStyle.variable());
+                        return txt.ofStyled(sb.toString(), NTextStyle.variable());
                     } else {
-                        return txt.ofStyled(reader.nextChars(1), NutsTextStyle.separator());
+                        return txt.ofStyled(reader.nextChars(1), NTextStyle.separator());
                     }
                 }
             }
         } else {
-            return txt.ofStyled(reader.nextChars(1), NutsTextStyle.string());
+            return txt.ofStyled(reader.nextChars(1), NTextStyle.string());
         }
     }
 
-    public NutsText nextDoubleQuotes(StringReaderExt reader, NutsSession session) {
-        List<NutsText> all = new ArrayList<>();
-        NutsTexts txt = NutsTexts.of(session);
+    public NText nextDoubleQuotes(StringReaderExt reader, NSession session) {
+        List<NText> all = new ArrayList<>();
+        NTexts txt = NTexts.of(session);
         boolean exit = false;
         StringBuilder sb = new StringBuilder();
         sb.append(reader.nextChar());
@@ -1129,21 +1129,21 @@ public class WinCmdBlocTextHighlighter implements NutsCodeHighlighter {
                 }
                 case '$': {
                     if (sb.length() > 0) {
-                        all.add(txt.ofStyled(sb.toString(), NutsTextStyle.string()));
+                        all.add(txt.ofStyled(sb.toString(), NTextStyle.string()));
                         sb.setLength(0);
                     }
                     all.add(nextDollar(reader, txt, session));
                 }
                 case '`': {
                     if (sb.length() > 0) {
-                        all.add(txt.ofStyled(sb.toString(), NutsTextStyle.string()));
+                        all.add(txt.ofStyled(sb.toString(), NTextStyle.string()));
                         sb.setLength(0);
                     }
-                    List<NutsText> a = new ArrayList<>();
-                    a.add(txt.ofStyled(reader.nextChars(1), NutsTextStyle.string()));
+                    List<NText> a = new ArrayList<>();
+                    a.add(txt.ofStyled(reader.nextChars(1), NTextStyle.string()));
                     a.add(next(reader, false, false, false, true, txt, session));
                     if (reader.hasNext() && reader.peekChar() == '`') {
-                        a.add(txt.ofStyled(reader.nextChars(1), NutsTextStyle.string()));
+                        a.add(txt.ofStyled(reader.nextChars(1), NTextStyle.string()));
                     } else {
                         exit = true;
                     }
@@ -1156,13 +1156,13 @@ public class WinCmdBlocTextHighlighter implements NutsCodeHighlighter {
             }
         }
         if (sb.length() > 0) {
-            all.add(txt.ofStyled(sb.toString(), NutsTextStyle.string()));
+            all.add(txt.ofStyled(sb.toString(), NTextStyle.string()));
             sb.setLength(0);
         }
         return txt.ofList(all).simplify();
     }
 
-    public NutsText commandToNode(String text, NutsTexts txt, NutsSession session) {
+    public NText commandToNode(String text, NTexts txt, NSession session) {
         txt.setSession(session);
         return txt.ofList(parseCommandLine(text, txt, session));
     }

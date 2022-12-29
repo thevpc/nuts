@@ -1,7 +1,7 @@
 package net.thevpc.nuts.toolbox.ntemplate.filetemplate.eval;
 
-import net.thevpc.nuts.cmdline.NutsCommandLine;
-import net.thevpc.nuts.NutsSession;
+import net.thevpc.nuts.cmdline.NCommandLine;
+import net.thevpc.nuts.NSession;
 import net.thevpc.nuts.toolbox.ntemplate.filetemplate.ExprEvaluator;
 import net.thevpc.nuts.toolbox.ntemplate.filetemplate.FileTemplater;
 import net.thevpc.nuts.toolbox.ntemplate.filetemplate.MimeTypeConstants;
@@ -228,9 +228,9 @@ public class FtexEvaluator implements ExprEvaluator {
     }
 
     private Object evalAntiQuotesString(String value, FileTemplater ctx) {
-        NutsSession session = ctx.getSession();
+        NSession session = ctx.getSession();
         return session.exec().addCommand(
-                        NutsCommandLine.parseDefault(value).get(session).toStringArray()
+                        NCommandLine.parseDefault(value).get(session).toStringArray()
         ).setDirectory(ctx.getWorkingDirRequired())
                 .grabOutputString()
                 .run()

@@ -2,11 +2,11 @@ package net.thevpc.nuts.toolbox.nsh.jshell;
 
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.cmdline.NutsArgument;
-import net.thevpc.nuts.cmdline.NutsCommandAutoComplete;
-import net.thevpc.nuts.cmdline.NutsCommandLine;
-import net.thevpc.nuts.io.NutsPrintStream;
-import net.thevpc.nuts.io.NutsTerminalMode;
+import net.thevpc.nuts.cmdline.NArgument;
+import net.thevpc.nuts.cmdline.NCommandAutoComplete;
+import net.thevpc.nuts.cmdline.NCommandLine;
+import net.thevpc.nuts.io.NStream;
+import net.thevpc.nuts.io.NTerminalMode;
 
 import java.io.InputStream;
 import java.io.PrintStream;
@@ -16,9 +16,9 @@ public class DefaultJShellExecutionContext implements JShellExecutionContext {
 
 
     private JShellContext shellContext;
-    private NutsSession session;
+    private NSession session;
     private JShellBuiltin builtin;
-    private NutsTerminalMode terminalMode = null;
+    private NTerminalMode terminalMode = null;
     private boolean askHelp;
     private boolean askVersion;
     private Object options;
@@ -32,12 +32,12 @@ public class DefaultJShellExecutionContext implements JShellExecutionContext {
 
 
     @Override
-    public NutsWorkspace getWorkspace() {
+    public NWorkspace getWorkspace() {
         return shellContext.getWorkspace();
     }
 
     @Override
-    public NutsSession getSession() {
+    public NSession getSession() {
         return session;
     }
 
@@ -48,12 +48,12 @@ public class DefaultJShellExecutionContext implements JShellExecutionContext {
     }
 
     @Override
-    public NutsPrintStream out() {
+    public NStream out() {
         return getSession().out();
     }
 
     @Override
-    public NutsPrintStream err() {
+    public NStream err() {
         return getSession().err();
     }
 
@@ -68,8 +68,8 @@ public class DefaultJShellExecutionContext implements JShellExecutionContext {
         return shellContext;
     }
     @Override
-    public boolean configureFirst(NutsCommandLine cmd) {
-        NutsArgument a = cmd.peek().get(session);
+    public boolean configureFirst(NCommandLine cmd) {
+        NArgument a = cmd.peek().get(session);
         if (a == null) {
             return false;
         }
@@ -94,7 +94,7 @@ public class DefaultJShellExecutionContext implements JShellExecutionContext {
 //                    out().printf("%s%n", NutsIdResolver.of(getSession()).resolveId(getClass()).getVersion().toString());
 //                    cmd.skipAll();
 //                }
-//                throw new NutsExecutionException(shellContext.getSession(), NutsMessage.cstyle("Help"), 0);
+//                throw new NutsExecutionException(shellContext.getSession(), NMsg.ofCstyle("Help"), 0);
             }
             default: {
                 if (getSession() != null && getSession().configureFirst(cmd)) {
@@ -116,19 +116,19 @@ public class DefaultJShellExecutionContext implements JShellExecutionContext {
     }
 
     @Override
-    public void configureLast(NutsCommandLine cmd) {
+    public void configureLast(NCommandLine cmd) {
         if (!configureFirst(cmd)) {
             cmd.throwUnexpectedArgument();
         }
     }
 
     @Override
-    public NutsApplicationContext getAppContext() {
+    public NApplicationContext getAppContext() {
         return getShell().getAppContext();
     }
 
     @Override
-    public NutsTerminalMode geTerminalMode() {
+    public NTerminalMode geTerminalMode() {
         return terminalMode;
     }
 
@@ -174,13 +174,13 @@ public class DefaultJShellExecutionContext implements JShellExecutionContext {
 
     @Override
     public JShellExecutionContext setOut(PrintStream out) {
-        getSession().getTerminal().setErr(NutsPrintStream.of(out, getSession()));
+        getSession().getTerminal().setErr(NStream.of(out, getSession()));
         return this;
     }
 
     @Override
     public JShellExecutionContext setErr(PrintStream err) {
-        getSession().getTerminal().setErr(NutsPrintStream.of(err, getSession()));
+        getSession().getTerminal().setErr(NStream.of(err, getSession()));
         return this;
     }
 
@@ -272,13 +272,13 @@ public class DefaultJShellExecutionContext implements JShellExecutionContext {
 //    }
 
     @Override
-    public JShellExecutionContext setSession(NutsSession session) {
+    public JShellExecutionContext setSession(NSession session) {
         this.session=session;
         return this;
     }
 
     @Override
-    public NutsCommandAutoComplete getAutoComplete() {
+    public NCommandAutoComplete getAutoComplete() {
         return shellContext.getAutoComplete();
     }
 }

@@ -1,10 +1,10 @@
 package net.thevpc.nuts.toolbox.nsh.jshell;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.cmdline.NutsCommandAutoComplete;
-import net.thevpc.nuts.cmdline.NutsCommandLine;
-import net.thevpc.nuts.io.NutsPrintStream;
-import net.thevpc.nuts.io.NutsTerminalMode;
+import net.thevpc.nuts.cmdline.NCommandAutoComplete;
+import net.thevpc.nuts.cmdline.NCommandLine;
+import net.thevpc.nuts.io.NStream;
+import net.thevpc.nuts.io.NTerminalMode;
 
 import java.io.InputStream;
 import java.io.PrintStream;
@@ -16,25 +16,25 @@ public interface JShellExecutionContext {
 
     InputStream in();
 
-    NutsPrintStream out();
+    NStream out();
 
-    NutsPrintStream err();
+    NStream err();
 
-    NutsWorkspace getWorkspace();
+    NWorkspace getWorkspace();
 
-    NutsSession getSession();
+    NSession getSession();
 
-    boolean configureFirst(NutsCommandLine cmd);
+    boolean configureFirst(NCommandLine cmd);
 
     boolean isAskVersion();
 
-    void configureLast(NutsCommandLine cmd);
+    void configureLast(NCommandLine cmd);
 
     JShellContext getShellContext();
 
-    NutsApplicationContext getAppContext();
+    NApplicationContext getAppContext();
 
-    NutsTerminalMode geTerminalMode();
+    NTerminalMode geTerminalMode();
 
     boolean isAskHelp();
 
@@ -82,7 +82,7 @@ public interface JShellExecutionContext {
 
     String getServiceName();
 
-    JShellExecutionContext setSession(NutsSession session);
+    JShellExecutionContext setSession(NSession session);
 
-    NutsCommandAutoComplete getAutoComplete();
+    NCommandAutoComplete getAutoComplete();
 }

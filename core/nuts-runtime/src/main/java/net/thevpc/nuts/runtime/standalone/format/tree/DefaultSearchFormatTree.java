@@ -10,14 +10,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.cmdline.NutsCommandLine;
-import net.thevpc.nuts.format.NutsTreeFormat;
-import net.thevpc.nuts.format.NutsTreeNodeFormat;
-import net.thevpc.nuts.io.NutsPrintStream;
-import net.thevpc.nuts.runtime.standalone.format.NutsIdFormatHelper;
+import net.thevpc.nuts.cmdline.NCommandLine;
+import net.thevpc.nuts.format.NTreeFormat;
+import net.thevpc.nuts.format.NTreeNodeFormat;
+import net.thevpc.nuts.io.NStream;
+import net.thevpc.nuts.runtime.standalone.format.NIdFormatHelper;
 import net.thevpc.nuts.runtime.standalone.format.DefaultSearchFormatBase;
-import net.thevpc.nuts.runtime.standalone.format.NutsFetchDisplayOptions;
-import net.thevpc.nuts.text.NutsTexts;
+import net.thevpc.nuts.runtime.standalone.format.NFetchDisplayOptions;
+import net.thevpc.nuts.text.NTexts;
 
 /**
  * @author thevpc
@@ -25,27 +25,27 @@ import net.thevpc.nuts.text.NutsTexts;
 public class DefaultSearchFormatTree extends DefaultSearchFormatBase {
 
     private Object lastObject;
-    NutsTreeNodeFormat nutsTreeNodeFormat = new NutsTreeNodeFormat() {
+    NTreeNodeFormat nTreeNodeFormat = new NTreeNodeFormat() {
         @Override
-        public NutsString format(Object o, int depth, NutsSession session) {
-            NutsIdFormatHelper fid = NutsIdFormatHelper.of(o, getSession());
+        public NString format(Object o, int depth, NSession session) {
+            NIdFormatHelper fid = NIdFormatHelper.of(o, getSession());
             if (fid != null) {
                 return fid.getSingleColumnRow(getDisplayOptions());
             } else {
                 if (o instanceof XNode) {
                     return ((XNode) o).toNutsString();
                 }
-                return NutsTexts.of(getSession()).ofBuilder().append(o).immutable();
+                return NTexts.of(getSession()).ofBuilder().append(o).immutable();
             }
         }
     };
 
-    public DefaultSearchFormatTree(NutsSession session, NutsPrintStream writer, NutsFetchDisplayOptions options) {
-        super(session, writer, NutsContentType.TREE, options);
+    public DefaultSearchFormatTree(NSession session, NStream writer, NFetchDisplayOptions options) {
+        super(session, writer, NContentType.TREE, options);
     }
 
     @Override
-    public boolean configureFirst(NutsCommandLine commandLine) {
+    public boolean configureFirst(NCommandLine commandLine) {
         if (getDisplayOptions().configureFirst(commandLine)) {
             return true;
         }
@@ -73,7 +73,7 @@ public class DefaultSearchFormatTree extends DefaultSearchFormatBase {
     }
 
     public void formatElement(Object object, long index, boolean last) {
-        NutsTreeFormat tree = NutsTreeFormat.of(getSession());
+        NTreeFormat tree = NTreeFormat.of(getSession());
         List<String> options = new ArrayList<>();
         options.add("--omit-root");
         if (!last) {
@@ -81,7 +81,7 @@ public class DefaultSearchFormatTree extends DefaultSearchFormatBase {
         }
         
         tree.configure(false, options.toArray(new String[0]));
-        tree.setNodeFormat(nutsTreeNodeFormat);
+        tree.setNodeFormat(nTreeNodeFormat);
         //the object must be second level (not root)
         tree.setValue(new AbstractMap.SimpleEntry<Object, Object>("ROOT",object));
         tree.println(getWriter());

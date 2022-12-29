@@ -1,19 +1,19 @@
 package net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.util;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.io.NutsPrintStream;
-import net.thevpc.nuts.text.NutsTextStyle;
-import net.thevpc.nuts.text.NutsTexts;
+import net.thevpc.nuts.io.NStream;
+import net.thevpc.nuts.text.NTextStyle;
+import net.thevpc.nuts.text.NTexts;
 
 public class SettingsRepoUtils {
-    public static void showRepo(NutsApplicationContext context, NutsRepository repository, String prefix) {
+    public static void showRepo(NApplicationContext context, NRepository repository, String prefix) {
         boolean enabled = repository.config().isEnabled();
         String disabledString = enabled ? "" : " <DISABLED>";
-        NutsPrintStream out = context.getSession().out();
+        NStream out = context.getSession().out();
         out.print(prefix);
-        NutsTexts factory = NutsTexts.of(context.getSession());
+        NTexts factory = NTexts.of(context.getSession());
         if (enabled) {
-            out.print(factory.ofStyled(repository.getName() + disabledString, NutsTextStyle.primary2()));
+            out.print(factory.ofStyled(repository.getName() + disabledString, NTextStyle.primary2()));
         } else {
             out.print("```error " + repository.getName() + disabledString + "```");
         }
@@ -22,11 +22,11 @@ public class SettingsRepoUtils {
 
     }
 
-    public static void showRepoTree(NutsApplicationContext context, NutsRepository repository, String prefix) {
+    public static void showRepoTree(NApplicationContext context, NRepository repository, String prefix) {
         showRepo(context, repository, prefix);
         String prefix1 = prefix + "  ";
         if (repository.config().isSupportedMirroring()) {
-            for (NutsRepository c : repository.config().getMirrors()) {
+            for (NRepository c : repository.config().getMirrors()) {
                 showRepoTree(context, c, prefix1);
             }
         }

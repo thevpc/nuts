@@ -1,10 +1,10 @@
 package net.thevpc.nuts.tutorial.nsh.cmd;
 
 import java.util.HashMap;
-import net.thevpc.nuts.cmdline.NutsCommandLine;
-import net.thevpc.nuts.NutsSession;
-import net.thevpc.nuts.spi.NutsComponentScope;
-import net.thevpc.nuts.spi.NutsComponentScopeType;
+import net.thevpc.nuts.cmdline.NCommandLine;
+import net.thevpc.nuts.NSession;
+import net.thevpc.nuts.spi.NComponentScope;
+import net.thevpc.nuts.spi.NComponentScopeType;
 import net.thevpc.nuts.toolbox.nsh.SimpleJShellBuiltin;
 import net.thevpc.nuts.toolbox.nsh.jshell.JShellExecutionContext;
 
@@ -18,7 +18,7 @@ import net.thevpc.nuts.toolbox.nsh.jshell.JShellExecutionContext;
  *
  * @author vpc
  */
-@NutsComponentScope(NutsComponentScopeType.WORKSPACE)
+@NComponentScope(NComponentScopeType.WORKSPACE)
 public class Hello extends SimpleJShellBuiltin {
 
     /**
@@ -53,7 +53,7 @@ public class Hello extends SimpleJShellBuiltin {
      * @return true if the option is processed
      */
     @Override
-    protected boolean configureFirst(NutsCommandLine cmdline, JShellExecutionContext ctx) {
+    protected boolean configureFirst(NCommandLine cmdline, JShellExecutionContext ctx) {
         //get an instance of the current options object we are filling.
         Options o = ctx.getOptions();
         //get the next option (without consuming it)
@@ -89,9 +89,9 @@ public class Hello extends SimpleJShellBuiltin {
     }
 
     @Override
-    protected void execBuiltin(NutsCommandLine cmdline, JShellExecutionContext ctx) {
+    protected void execBuiltin(NCommandLine cmdline, JShellExecutionContext ctx) {
         Options o = ctx.getOptions();
-        NutsSession session = ctx.getSession();
+        NSession session = ctx.getSession();
         if (o.complex) {
             // print any object (it can be a simple string of course)
             // it will be formatted according to your "output format" (aka json, or any thing else)

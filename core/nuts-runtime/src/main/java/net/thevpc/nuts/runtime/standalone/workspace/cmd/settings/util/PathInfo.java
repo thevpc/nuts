@@ -1,22 +1,22 @@
 package net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.util;
 
-import net.thevpc.nuts.NutsId;
-import net.thevpc.nuts.io.NutsPath;
+import net.thevpc.nuts.NId;
+import net.thevpc.nuts.io.NPath;
 
 public class PathInfo {
     private String type;
-    private NutsId id;
-    private NutsPath path;
+    private NId id;
+    private NPath path;
     private Status status;
 
-    public PathInfo(String type, NutsId id, NutsPath path, Status status) {
+    public PathInfo(String type, NId id, NPath path, Status status) {
         this.id = id;
         this.type = type;
         this.path = path;
         this.status = status;
     }
 
-    public NutsId getId() {
+    public NId getId() {
         return id;
     }
 
@@ -24,7 +24,7 @@ public class PathInfo {
         return type;
     }
 
-    public NutsPath getPath() {
+    public NPath getPath() {
         return path;
     }
 

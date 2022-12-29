@@ -27,8 +27,8 @@
 package net.thevpc.nuts.runtime.standalone.xtra.download;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.io.NutsIOException;
-import net.thevpc.nuts.io.NutsPath;
+import net.thevpc.nuts.io.NIOException;
+import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.runtime.standalone.io.SimpleHttpClient;
 import net.thevpc.nuts.spi.*;
 
@@ -40,32 +40,32 @@ import java.net.URL;
 /**
  * Created by vpc on 1/21/17.
  */
-@NutsComponentScope(NutsComponentScopeType.WORKSPACE)
-public class DefaultHttpTransportComponent implements NutsTransportComponent {
+@NComponentScope(NComponentScopeType.WORKSPACE)
+public class DefaultHttpTransportComponent implements NTransportComponent {
 
-    public static final NutsTransportComponent INSTANCE = new DefaultHttpTransportComponent();
-    private NutsSession session;
+    public static final NTransportComponent INSTANCE = new DefaultHttpTransportComponent();
+    private NSession session;
     @Override
-    public int getSupportLevel(NutsSupportLevelContext url) {
+    public int getSupportLevel(NSupportLevelContext url) {
         session=url.getSession();
         return DEFAULT_SUPPORT;
     }
 
     @Override
-    public NutsTransportConnection open(String url) throws UncheckedIOException {
+    public NTransportConnection open(String url) throws UncheckedIOException {
         try {
-            return new DefaultNutsTransportConnection(new URL(url),session);
+            return new DefaultNTransportConnection(new URL(url),session);
         } catch (MalformedURLException e) {
-            throw new NutsIOException(session,e);
+            throw new NIOException(session,e);
         }
     }
 
-    private static class DefaultNutsTransportConnection implements NutsTransportConnection {
+    private static class DefaultNTransportConnection implements NTransportConnection {
 
         private final URL url;
-        private final NutsSession session;
+        private final NSession session;
 
-        public DefaultNutsTransportConnection(URL url,NutsSession session) {
+        public DefaultNTransportConnection(URL url, NSession session) {
             this.url = url;
             this.session = session;
         }
@@ -76,12 +76,12 @@ public class DefaultHttpTransportComponent implements NutsTransportComponent {
         }
 
         @Override
-        public NutsPath getPath() {
-            return NutsPath.of(url,session);
+        public NPath getPath() {
+            return NPath.of(url,session);
         }
 
-        public InputStream upload(NutsTransportParamPart... parts) {
-            throw new NutsUnsupportedOperationException(session, NutsMessage.ofPlain("upload unsupported"));
+        public InputStream upload(NTransportParamPart... parts) {
+            throw new NUnsupportedOperationException(session, NMsg.ofPlain("upload unsupported"));
         }
 
         @Override

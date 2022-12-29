@@ -26,29 +26,28 @@
 package net.thevpc.nuts.runtime.standalone.installer;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.io.NutsIOException;
-import net.thevpc.nuts.io.NutsPath;
+import net.thevpc.nuts.io.NIOException;
+import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.runtime.standalone.io.util.UnzipOptions;
 import net.thevpc.nuts.runtime.standalone.io.util.ZipUtils;
-import net.thevpc.nuts.runtime.standalone.workspace.NutsWorkspaceExt;
-import net.thevpc.nuts.runtime.standalone.definition.DefaultNutsDefinition;
-import net.thevpc.nuts.spi.NutsComponentScope;
-import net.thevpc.nuts.spi.NutsComponentScopeType;
-import net.thevpc.nuts.spi.NutsInstallerComponent;
-import net.thevpc.nuts.spi.NutsSupportLevelContext;
+import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceExt;
+import net.thevpc.nuts.runtime.standalone.definition.DefaultNDefinition;
+import net.thevpc.nuts.spi.NComponentScope;
+import net.thevpc.nuts.spi.NComponentScopeType;
+import net.thevpc.nuts.spi.NInstallerComponent;
+import net.thevpc.nuts.spi.NSupportLevelContext;
 
 import java.io.IOException;
-import java.util.Objects;
 
 /**
  * Created by vpc on 1/7/17.
  */
-@NutsComponentScope(NutsComponentScopeType.WORKSPACE)
-public class ZipInstallerComponent implements NutsInstallerComponent {
+@NComponentScope(NComponentScopeType.WORKSPACE)
+public class ZipInstallerComponent implements NInstallerComponent {
 
     @Override
-    public int getSupportLevel(NutsSupportLevelContext ctx) {
-        NutsDefinition def=ctx.getConstraints(NutsDefinition.class);
+    public int getSupportLevel(NSupportLevelContext ctx) {
+        NDefinition def=ctx.getConstraints(NDefinition.class);
         if(def!=null) {
             if (def.getDescriptor() != null) {
                 if ("zip".equals(def.getDescriptor().getPackaging())) {
@@ -60,10 +59,10 @@ public class ZipInstallerComponent implements NutsInstallerComponent {
     }
 
     @Override
-    public void install(NutsExecutionContext executionContext) {
-        DefaultNutsDefinition nutsDefinition = (DefaultNutsDefinition) executionContext.getDefinition();
-        NutsSession session = executionContext.getSession();
-        NutsPath installFolder = session.locations().getStoreLocation(nutsDefinition.getId(), NutsStoreLocation.APPS);
+    public void install(NExecutionContext executionContext) {
+        DefaultNDefinition nutsDefinition = (DefaultNDefinition) executionContext.getDefinition();
+        NSession session = executionContext.getSession();
+        NPath installFolder = session.locations().getStoreLocation(nutsDefinition.getId(), NStoreLocation.APPS);
 
         String skipRoot = (String) executionContext.getExecutorProperties().get("unzip-skip-root");
         try {
@@ -73,9 +72,9 @@ public class ZipInstallerComponent implements NutsInstallerComponent {
                     new UnzipOptions().setSkipRoot("true".equalsIgnoreCase(skipRoot))
             );
         } catch (IOException ex) {
-            throw new NutsIOException(session,ex);
+            throw new NIOException(session,ex);
         }
-        nutsDefinition.setInstallInformation(NutsWorkspaceExt.of(session).getInstalledRepository().getInstallInformation(nutsDefinition.getId(), executionContext.getExecSession()));
+        nutsDefinition.setInstallInformation(NWorkspaceExt.of(session).getInstalledRepository().getInstallInformation(nutsDefinition.getId(), executionContext.getExecSession()));
         if (executionContext.getExecutorOptions().size() > 0) {
             session
                     .exec()
@@ -88,11 +87,11 @@ public class ZipInstallerComponent implements NutsInstallerComponent {
     }
 
     @Override
-    public void update(NutsExecutionContext executionContext) {
+    public void update(NExecutionContext executionContext) {
     }
 
     @Override
-    public void uninstall(NutsExecutionContext executionContext, boolean deleteData) {
+    public void uninstall(NExecutionContext executionContext, boolean deleteData) {
     }
 
 }

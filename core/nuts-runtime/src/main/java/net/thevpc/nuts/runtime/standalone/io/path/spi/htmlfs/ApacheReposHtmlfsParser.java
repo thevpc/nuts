@@ -1,7 +1,7 @@
 package net.thevpc.nuts.runtime.standalone.io.path.spi.htmlfs;
 
-import net.thevpc.nuts.NutsSession;
-import net.thevpc.nuts.NutsSupported;
+import net.thevpc.nuts.NSession;
+import net.thevpc.nuts.NSupported;
 
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
@@ -13,7 +13,7 @@ import java.util.regex.Pattern;
 
 public class ApacheReposHtmlfsParser extends AbstractHtmlfsParser {
     @Override
-    public NutsSupported<List<String>> parseHtmlTomcat(byte[] bytes, NutsSession session) {
+    public NSupported<List<String>> parseHtmlTomcat(byte[] bytes, NSession session) {
         int expected = 0;
         try (BufferedReader br = new BufferedReader(new InputStreamReader(new ByteArrayInputStream(bytes)))) {
             String line = null;
@@ -30,7 +30,7 @@ public class ApacheReposHtmlfsParser extends AbstractHtmlfsParser {
             //ignore
         }
         if (expected < 2) {
-            return NutsSupported.invalid();
+            return NSupported.invalid();
         }
         List<String> found = new ArrayList<>();
         Pattern pattern = Pattern.compile("<img src=\"/icons/[a-z.]+\" alt=\"\\[[a-zA-Z ]+]\"> +<a href=\"(?<href>[^\"]+)\">(?<hname>[^>]+)</a> +(?<d>[^ ]+) (?<h>[^ ]+) +(?<s>[^ ]+)");

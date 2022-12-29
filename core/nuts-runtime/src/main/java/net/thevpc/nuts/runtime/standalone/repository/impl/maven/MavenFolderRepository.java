@@ -26,17 +26,17 @@ package net.thevpc.nuts.runtime.standalone.repository.impl.maven;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.io.*;
 import net.thevpc.nuts.runtime.standalone.io.util.CoreIOUtils;
-import net.thevpc.nuts.runtime.standalone.repository.impl.folder.NutsFolderRepositoryBase;
+import net.thevpc.nuts.runtime.standalone.repository.impl.folder.NFolderRepositoryBase;
 import net.thevpc.nuts.runtime.standalone.repository.impl.maven.solrsearch.MavenSolrSearchCommand;
 import net.thevpc.nuts.runtime.standalone.repository.impl.maven.util.MavenUtils;
 import net.thevpc.nuts.runtime.standalone.repository.impl.maven.util.MvnClient;
-import net.thevpc.nuts.runtime.standalone.util.CoreNutsConstants;
-import net.thevpc.nuts.runtime.standalone.workspace.NutsWorkspaceUtils;
-import net.thevpc.nuts.spi.NutsPaths;
-import net.thevpc.nuts.spi.NutsRepositorySPI;
-import net.thevpc.nuts.util.NutsIterator;
-import net.thevpc.nuts.util.NutsLogger;
-import net.thevpc.nuts.util.NutsStringUtils;
+import net.thevpc.nuts.runtime.standalone.util.CoreNConstants;
+import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceUtils;
+import net.thevpc.nuts.spi.NPaths;
+import net.thevpc.nuts.spi.NRepositorySPI;
+import net.thevpc.nuts.util.NIterator;
+import net.thevpc.nuts.util.NLogger;
+import net.thevpc.nuts.util.NStringUtils;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -47,24 +47,24 @@ import java.util.Map;
 /**
  * Created by vpc on 1/15/17.
  */
-public class MavenFolderRepository extends NutsFolderRepositoryBase {
+public class MavenFolderRepository extends NFolderRepositoryBase {
 
-    private final NutsLogger LOG;
+    private final NLogger LOG;
     private MvnClient wrapper;
 
-    public MavenFolderRepository(NutsAddRepositoryOptions options, NutsSession session, NutsRepository parentRepository) {
-        super(options, session, parentRepository,null,false, NutsConstants.RepoTypes.MAVEN,false);
+    public MavenFolderRepository(NAddRepositoryOptions options, NSession session, NRepository parentRepository) {
+        super(options, session, parentRepository,null,false, NConstants.RepoTypes.MAVEN,false);
         repoIter = new MavenRepoIter(this);
-        LOG = NutsLogger.of(MavenFolderRepository.class, session);
+        LOG = NLogger.of(MavenFolderRepository.class, session);
     }
 
     @Override
-    public NutsIterator<NutsId> searchCore(final NutsIdFilter filter, NutsPath[] basePaths, NutsId[] baseIds, NutsFetchMode fetchMode, NutsSession session) {
+    public NIterator<NId> searchCore(final NIdFilter filter, NPath[] basePaths, NId[] baseIds, NFetchMode fetchMode, NSession session) {
         if (!acceptedFetchNoCache(fetchMode)) {
             return null;
         }
         MavenSolrSearchCommand cmd=new MavenSolrSearchCommand(this);
-        NutsIterator<NutsId> aa=cmd.search(filter, baseIds, fetchMode, session);
+        NIterator<NId> aa=cmd.search(filter, baseIds, fetchMode, session);
         if(aa!=null){
             return aa;
         }
@@ -72,79 +72,79 @@ public class MavenFolderRepository extends NutsFolderRepositoryBase {
     }
 
 
-    public NutsPath fetchContentCoreUsingRepoHelper(NutsId id, NutsDescriptor descriptor, String localPath, NutsFetchMode fetchMode, NutsSession session) {
-        NutsPath cc = fetchContentCoreUsingWrapper(id, descriptor, localPath, fetchMode, session);
+    public NPath fetchContentCoreUsingRepoHelper(NId id, NDescriptor descriptor, String localPath, NFetchMode fetchMode, NSession session) {
+        NPath cc = fetchContentCoreUsingWrapper(id, descriptor, localPath, fetchMode, session);
         if (cc != null) {
             return cc;
         }
         return super.fetchContentCoreUsingRepoHelper(id, descriptor, localPath, fetchMode, session);
     }
 
-    public NutsIterator<NutsId> findNonSingleVersionImpl(final NutsId id, NutsIdFilter idFilter, NutsFetchMode fetchMode, final NutsSession session) {
+    public NIterator<NId> findNonSingleVersionImpl(final NId id, NIdFilter idFilter, NFetchMode fetchMode, final NSession session) {
         MavenSolrSearchCommand cmd = new MavenSolrSearchCommand(this);
-        NutsIterator<NutsId> aa = cmd.search(idFilter, new NutsId[]{id}, fetchMode, session);
+        NIterator<NId> aa = cmd.search(idFilter, new NId[]{id}, fetchMode, session);
         if (aa != null) {
             return aa;
         }
         return super.findNonSingleVersionImpl(id, idFilter, fetchMode,session);
     }
 
-    private NutsRepository getLocalMavenRepo(NutsSession session) {
-        for (NutsRepository nutsRepository : session.repos().setSession(session).getRepositories()) {
-            if (nutsRepository.getRepositoryType().equals(NutsConstants.RepoTypes.MAVEN)
-                    && nutsRepository.config().getLocationPath() != null
-                    && nutsRepository.config().getLocationPath().toString()
+    private NRepository getLocalMavenRepo(NSession session) {
+        for (NRepository nRepository : session.repos().setSession(session).getRepositories()) {
+            if (nRepository.getRepositoryType().equals(NConstants.RepoTypes.MAVEN)
+                    && nRepository.config().getLocationPath() != null
+                    && nRepository.config().getLocationPath().toString()
                     .equals(
-                            Paths.get(NutsPath.of("~/.m2", session).toAbsolute(session.locations().getWorkspaceLocation()).toString()).toString()
+                            Paths.get(NPath.of("~/.m2", session).toAbsolute(session.locations().getWorkspaceLocation()).toString()).toString()
                     )) {
-                return nutsRepository;
+                return nRepository;
             }
         }
         return null;
     }
 
-    protected NutsPath getMavenLocalFolderContent(NutsId id, NutsSession session) {
-        NutsPath p = getIdRelativePath(id, session);
+    protected NPath getMavenLocalFolderContent(NId id, NSession session) {
+        NPath p = getIdRelativePath(id, session);
         if (p != null) {
-            return NutsPath.ofUserHome(session).resolve(".m2").resolve(p);
+            return NPath.ofUserHome(session).resolve(".m2").resolve(p);
         }
         return null;
     }
-    private MvnClient getWrapper(NutsSession session) {
+    private MvnClient getWrapper(NSession session) {
         if (true) {
             return null;
         }
         return new MvnClient(session);
     }
 
-    public NutsPath fetchContentCoreUsingWrapper(NutsId id, NutsDescriptor descriptor, String localPath, NutsFetchMode fetchMode, NutsSession session) {
+    public NPath fetchContentCoreUsingWrapper(NId id, NDescriptor descriptor, String localPath, NFetchMode fetchMode, NSession session) {
         if (wrapper == null) {
             wrapper = getWrapper(session);
         }
         if (wrapper != null && wrapper.get(id, config().setSession(session).getLocationPath().toString(), session)) {
-            NutsRepository repo = getLocalMavenRepo(session);
+            NRepository repo = getLocalMavenRepo(session);
             if (repo != null) {
-                NutsRepositorySPI repoSPI = NutsWorkspaceUtils.of(session).repoSPI(repo);
+                NRepositorySPI repoSPI = NWorkspaceUtils.of(session).repoSPI(repo);
                 return repoSPI.fetchContent()
                         .setId(id)
                         .setDescriptor(descriptor)
                         .setLocalPath(localPath)
                         .setSession(session)
-                        .setFetchMode(NutsFetchMode.LOCAL)
+                        .setFetchMode(NFetchMode.LOCAL)
                         .run()
                         .getResult();
             }
             //should be already downloaded to m2 folder
-            NutsPath content = getMavenLocalFolderContent(id, session);
+            NPath content = getMavenLocalFolderContent(id, session);
             if (content != null && content.exists()) {
                 if (localPath == null) {
                     return content.setUserCache(true).setUserTemporary(false);
                 } else {
-                    String tempFile = NutsPaths.of(session)
+                    String tempFile = NPaths.of(session)
                             .createRepositoryTempFile(content.getName(),getUuid()).toString();
-                    NutsCp.of(session)
-                            .from(content).to(NutsPath.of(tempFile,session)).addOptions(NutsPathOption.SAFE).run();
-                    return NutsPath.of(tempFile, session).setUserCache(true).setUserTemporary(false);
+                    NCp.of(session)
+                            .from(content).to(NPath.of(tempFile,session)).addOptions(NPathOption.SAFE).run();
+                    return NPath.of(tempFile, session).setUserCache(true).setUserTemporary(false);
                 }
             }
         }
@@ -152,62 +152,62 @@ public class MavenFolderRepository extends NutsFolderRepositoryBase {
     }
 
 
-    public String getIdExtension(NutsId id, NutsSession session) {
+    public String getIdExtension(NId id, NSession session) {
         checkSession(session);
         Map<String, String> q = id.getProperties();
-        String f = NutsStringUtils.trim(q.get(NutsConstants.IdProperties.FACE));
+        String f = NStringUtils.trim(q.get(NConstants.IdProperties.FACE));
         switch (f) {
-            case NutsConstants.QueryFaces.DESCRIPTOR: {
+            case NConstants.QueryFaces.DESCRIPTOR: {
                 return ".pom";
             }
-            case NutsConstants.QueryFaces.DESCRIPTOR_HASH: {
+            case NConstants.QueryFaces.DESCRIPTOR_HASH: {
                 return ".pom.sha1";
             }
-            case CoreNutsConstants.QueryFaces.CATALOG: {
+            case CoreNConstants.QueryFaces.CATALOG: {
                 return ".catalog";
             }
-            case NutsConstants.QueryFaces.CONTENT_HASH: {
+            case NConstants.QueryFaces.CONTENT_HASH: {
                 return getIdExtension(id.builder().setFaceContent().build(), session) + ".sha1";
             }
-            case NutsConstants.QueryFaces.CONTENT: {
-                String packaging = q.get(NutsConstants.IdProperties.PACKAGING);
+            case NConstants.QueryFaces.CONTENT: {
+                String packaging = q.get(NConstants.IdProperties.PACKAGING);
                 return session.locations().getDefaultIdContentExtension(packaging);
             }
             default: {
-                throw new NutsUnsupportedArgumentException(session, NutsMessage.ofCstyle("unsupported fact %s", f));
+                throw new NUnsupportedArgumentException(session, NMsg.ofCstyle("unsupported fact %s", f));
             }
         }
     }
 
-    public NutsDescriptor fetchDescriptorCore(NutsId id, NutsFetchMode fetchMode, NutsSession session) {
+    public NDescriptor fetchDescriptorCore(NId id, NFetchMode fetchMode, NSession session) {
         checkSession(session);
         if (!acceptedFetchNoCache(fetchMode)) {
-            throw new NutsNotFoundException(session, id, new NutsFetchModeNotSupportedException(session, this, fetchMode, id.toString(), null));
+            throw new NNotFoundException(session, id, new NFetchModeNotSupportedException(session, this, fetchMode, id.toString(), null));
         }
         InputStream stream = null;
         try {
-            NutsDescriptor nutsDescriptor = null;
+            NDescriptor nutsDescriptor = null;
             byte[] bytes = null;
             String name = null;
-            NutsId idDesc = id.builder().setFaceDescriptor().build();
+            NId idDesc = id.builder().setFaceDescriptor().build();
             try {
                 stream = getStream(idDesc, "artifact descriptor", "retrieve", session);
                 bytes = CoreIOUtils.loadByteArray(stream, true, session);
-                name = NutsIO.of(session).createInputSource(stream).getInputMetaData().getName().orElse("no-name");
+                name = NIO.of(session).createInputSource(stream).getInputMetaData().getName().orElse("no-name");
                 nutsDescriptor = MavenUtils.of(session).parsePomXmlAndResolveParents(
-                        CoreIOUtils.createBytesStream(bytes, name == null ? null : NutsMessage.ofNtf(name), "text/xml", "pom.xml", session)
+                        CoreIOUtils.createBytesStream(bytes, name == null ? null : NMsg.ofNtf(name), "text/xml", "pom.xml", session)
                         , fetchMode, getIdRemotePath(id, session).toString(), this);
             } finally {
                 if (stream != null) {
                     stream.close();
                 }
             }
-            checkSHA1Hash(id.builder().setFace(NutsConstants.QueryFaces.DESCRIPTOR_HASH).build(),
-                    CoreIOUtils.createBytesStream(bytes, name == null ? null : NutsMessage.ofNtf(name), "text/xml", "pom.xml", session)
+            checkSHA1Hash(id.builder().setFace(NConstants.QueryFaces.DESCRIPTOR_HASH).build(),
+                    CoreIOUtils.createBytesStream(bytes, name == null ? null : NMsg.ofNtf(name), "text/xml", "pom.xml", session)
                     , "artifact descriptor", session);
             return nutsDescriptor;
-        } catch (IOException | UncheckedIOException | NutsIOException ex) {
-            throw new NutsNotFoundException(session, id, ex);
+        } catch (IOException | UncheckedIOException | NIOException ex) {
+            throw new NNotFoundException(session, id, ex);
         }
     }
 }

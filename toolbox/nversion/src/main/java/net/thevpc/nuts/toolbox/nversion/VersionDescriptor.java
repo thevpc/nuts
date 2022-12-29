@@ -27,7 +27,7 @@ package net.thevpc.nuts.toolbox.nversion;
 
 import java.util.Objects;
 import java.util.Properties;
-import net.thevpc.nuts.NutsId;
+import net.thevpc.nuts.NId;
 
 /**
  *
@@ -35,15 +35,15 @@ import net.thevpc.nuts.NutsId;
  */
 public class VersionDescriptor {
     
-    private NutsId id;
+    private NId id;
     private Properties properties;
 
-    public VersionDescriptor(NutsId id, Properties properties) {
+    public VersionDescriptor(NId id, Properties properties) {
         this.id = id;
         this.properties = properties;
     }
 
-    public NutsId getId() {
+    public NId getId() {
         return id;
     }
 

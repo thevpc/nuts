@@ -1,9 +1,9 @@
 package net.thevpc.nuts.runtime.optional.mslink;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.cmdline.NutsCommandLine;
-import net.thevpc.nuts.io.NutsIOException;
-import net.thevpc.nuts.io.NutsPath;
+import net.thevpc.nuts.cmdline.NCommandLine;
+import net.thevpc.nuts.io.NIOException;
+import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.runtime.standalone.io.util.CoreIOUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.util.PathInfo;
 
@@ -16,13 +16,13 @@ import java.util.Arrays;
 import java.util.Iterator;
 
 public class OptionalMsLinkHelper {
-    private final NutsSession session;
+    private final NSession session;
     private final String command;
     private final String wd;
     private final String icon;
     private final String filePath;
 
-    public OptionalMsLinkHelper(String command, String wd, String icon, String filePath, NutsSession session) {
+    public OptionalMsLinkHelper(String command, String wd, String icon, String filePath, NSession session) {
         this.session = session;
         this.command = command;
         this.wd = wd;
@@ -59,14 +59,14 @@ public class OptionalMsLinkHelper {
             //
         }
         byte[] oldContent=CoreIOUtils.loadFileContentLenient(outputFile);
-        String[] cmd = NutsCommandLine.parseDefault(command).get(session).setExpandSimpleOptions(false).toStringArray();
+        String[] cmd = NCommandLine.parseDefault(command).get(session).setExpandSimpleOptions(false).toStringArray();
         mslinks.ShellLink se = mslinks.ShellLink.createLink(cmd[0])
                 .setWorkingDir(wd)
-                .setCMDArgs(NutsCommandLine.of(
+                .setCMDArgs(NCommandLine.of(
                         Arrays.copyOfRange(cmd, 1, cmd.length)
                 ).toString());
 
-        if (NutsBlankable.isBlank(icon)) {
+        if (NBlankable.isBlank(icon)) {
             se.setIconLocation("%SystemRoot%\\system32\\SHELL32.dll");
             se.getHeader().setIconIndex(148);
         } else {
@@ -77,10 +77,10 @@ public class OptionalMsLinkHelper {
         try {
             //.setFontSize(16)
             //.setTextColor(5)
-            NutsPath.of(outputFile,session).mkParentDirs();
+            NPath.of(outputFile,session).mkParentDirs();
             se.saveTo(filePath);
         } catch (IOException ex) {
-            throw new NutsIOException(session,ex);
+            throw new NIOException(session,ex);
         }
         if(alreadyExists) {
             byte[] newContent = CoreIOUtils.loadFileContentLenient(outputFile);

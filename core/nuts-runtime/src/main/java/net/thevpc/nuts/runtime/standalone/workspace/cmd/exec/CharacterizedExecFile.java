@@ -1,10 +1,10 @@
 package net.thevpc.nuts.runtime.standalone.workspace.cmd.exec;
 
-import net.thevpc.nuts.NutsDescriptor;
-import net.thevpc.nuts.NutsId;
-import net.thevpc.nuts.NutsSession;
-import net.thevpc.nuts.io.NutsIOException;
-import net.thevpc.nuts.io.NutsInputSource;
+import net.thevpc.nuts.NDescriptor;
+import net.thevpc.nuts.NId;
+import net.thevpc.nuts.NSession;
+import net.thevpc.nuts.io.NIOException;
+import net.thevpc.nuts.io.NInputSource;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -16,13 +16,13 @@ import java.util.List;
 public class CharacterizedExecFile implements AutoCloseable {
 
     private Path contentFile;
-    private NutsInputSource streamOrPath;
+    private NInputSource streamOrPath;
     private List<Path> temps = new ArrayList<>();
-    private NutsDescriptor descriptor;
-    private NutsId executor;
-    private NutsSession session;
+    private NDescriptor descriptor;
+    private NId executor;
+    private NSession session;
 
-    public CharacterizedExecFile(NutsSession session) {
+    public CharacterizedExecFile(NSession session) {
         this.session = session;
     }
 
@@ -39,11 +39,11 @@ public class CharacterizedExecFile implements AutoCloseable {
         return this;
     }
 
-    public NutsInputSource getStreamOrPath() {
+    public NInputSource getStreamOrPath() {
         return streamOrPath;
     }
 
-    public CharacterizedExecFile setStreamOrPath(NutsInputSource streamOrPath) {
+    public CharacterizedExecFile setStreamOrPath(NInputSource streamOrPath) {
         this.streamOrPath = streamOrPath;
         return this;
     }
@@ -57,29 +57,29 @@ public class CharacterizedExecFile implements AutoCloseable {
         return this;
     }
 
-    public NutsDescriptor getDescriptor() {
+    public NDescriptor getDescriptor() {
         return descriptor;
     }
 
-    public CharacterizedExecFile setDescriptor(NutsDescriptor descriptor) {
+    public CharacterizedExecFile setDescriptor(NDescriptor descriptor) {
         this.descriptor = descriptor;
         return this;
     }
 
-    public NutsId getExecutor() {
+    public NId getExecutor() {
         return executor;
     }
 
-    public CharacterizedExecFile setExecutor(NutsId executor) {
+    public CharacterizedExecFile setExecutor(NId executor) {
         this.executor = executor;
         return this;
     }
 
-    public NutsSession getSession() {
+    public NSession getSession() {
         return session;
     }
 
-    public CharacterizedExecFile setSession(NutsSession session) {
+    public CharacterizedExecFile setSession(NSession session) {
         this.session = session;
         return this;
     }
@@ -91,7 +91,7 @@ public class CharacterizedExecFile implements AutoCloseable {
             try {
                 Files.delete(temp);
             } catch (IOException ex) {
-                throw new NutsIOException(session,ex);
+                throw new NIOException(session,ex);
             }
             it.remove();
         }

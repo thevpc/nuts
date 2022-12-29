@@ -1,8 +1,8 @@
 package net.thevpc.nuts.runtime.standalone.text.parser.v1;
 
-import net.thevpc.nuts.text.NutsTextStyle;
-import net.thevpc.nuts.text.NutsTextStyleType;
-import net.thevpc.nuts.text.NutsTextStyles;
+import net.thevpc.nuts.text.NTextStyle;
+import net.thevpc.nuts.text.NTextStyleType;
+import net.thevpc.nuts.text.NTextStyles;
 import net.thevpc.nuts.runtime.standalone.xtra.expr.StringReaderExt;
 
 import java.util.ArrayList;
@@ -25,21 +25,21 @@ public class StyledParserStepCommandParser {
                 ;
     }
 
-    public NutsTextStyles parse(String atStr) {
+    public NTextStyles parse(String atStr) {
         StringReaderExt r = new StringReaderExt(atStr);
-        List<NutsTextStyle> parsedStyles = new ArrayList<>();
+        List<NTextStyle> parsedStyles = new ArrayList<>();
         if (r.hasNext() && r.peekChar() == ':') {
             r.nextChar();//skip '!'
             while (true) {
                 if (readEnd(r)) {
                     break;
                 }
-                NutsTextStyles s = readNextStyles(r);
+                NTextStyles s = readNextStyles(r);
                 if (s == null) {
                     //this is an invalid style string hence add
                     return null;
                 } else {
-                    for (NutsTextStyle ss : s) {
+                    for (NTextStyle ss : s) {
                         parsedStyles.add(ss);
                     }
                 }
@@ -47,7 +47,7 @@ public class StyledParserStepCommandParser {
         } else {
             return null;
         }
-        return NutsTextStyles.PLAIN.append(parsedStyles.toArray(new NutsTextStyle[0]));
+        return NTextStyles.PLAIN.append(parsedStyles.toArray(new NTextStyle[0]));
     }
 
     private boolean isHexChar(char c) {
@@ -100,9 +100,9 @@ public class StyledParserStepCommandParser {
         return false;
     }
 
-    public NutsTextStyles parseSimpleNutsTextStyles(String str) {
+    public NTextStyles parseSimpleNutsTextStyles(String str) {
         StringReaderExt e = new StringReaderExt(str);
-        NutsTextStyles a = readNextStyles(e);
+        NTextStyles a = readNextStyles(e);
         if (a == null) {
             return null;
         }
@@ -147,9 +147,9 @@ public class StyledParserStepCommandParser {
         return null;
     }
 
-    private NutsTextStyles readNextStyles(StringReaderExt r) {
-        List<NutsTextStyle> all=new ArrayList<>();
-        NutsTextStyle s=readNextStyle(r);
+    private NTextStyles readNextStyles(StringReaderExt r) {
+        List<NTextStyle> all=new ArrayList<>();
+        NTextStyle s=readNextStyle(r);
         if(s!=null) {
             all.add(s);
             while (s!=null && r.hasNext()) {
@@ -162,10 +162,10 @@ public class StyledParserStepCommandParser {
         if(all.isEmpty()){
             return null;
         }
-        return NutsTextStyles.of(all.toArray(all.toArray(new NutsTextStyle[0])));
+        return NTextStyles.of(all.toArray(all.toArray(new NTextStyle[0])));
     }
 
-    private NutsTextStyle readNextStyle(StringReaderExt r) {
+    private NTextStyle readNextStyle(StringReaderExt r) {
         if (r.hasNext()) {
             char c = r.peekChar();
             switch (c) {
@@ -173,19 +173,19 @@ public class StyledParserStepCommandParser {
                 case 'F': {
                     Integer ii = readNextPrefixedHexString("fx", r);
                     if (ii != null) {
-                        return NutsTextStyle.foregroundTrueColor(ii);
+                        return NTextStyle.foregroundTrueColor(ii);
                     }
                     ii = readNextPrefixedHexString("foregroundx", r);
                     if (ii != null) {
-                        return NutsTextStyle.foregroundTrueColor(ii);
+                        return NTextStyle.foregroundTrueColor(ii);
                     }
                     ii = readNextPrefixedInt8("f", r);
                     if (ii != null) {
-                        return NutsTextStyle.foregroundColor(ii);
+                        return NTextStyle.foregroundColor(ii);
                     }
                     ii = readNextPrefixedInt8("foreground", r);
                     if (ii != null) {
-                        return NutsTextStyle.foregroundColor(ii);
+                        return NTextStyle.foregroundColor(ii);
                     }
                     break;
                 }
@@ -193,45 +193,45 @@ public class StyledParserStepCommandParser {
                 case 'B': {
                     Integer ii = readNextPrefixedHexString("bx", r);
                     if (ii != null) {
-                        return NutsTextStyle.backgroundTrueColor(ii);
+                        return NTextStyle.backgroundTrueColor(ii);
                     }
                     ii = readNextPrefixedHexString("backgroundx", r);
                     if (ii != null) {
-                        return NutsTextStyle.backgroundTrueColor(ii);
+                        return NTextStyle.backgroundTrueColor(ii);
                     }
                     ii = readNextPrefixedInt8("b", r);
                     if (ii != null) {
-                        return NutsTextStyle.backgroundColor(ii);
+                        return NTextStyle.backgroundColor(ii);
                     }
                     ii = readNextPrefixedInt8("background", r);
                     if (ii != null) {
-                        return NutsTextStyle.backgroundColor(ii);
+                        return NTextStyle.backgroundColor(ii);
                     }
                     break;
                 }
                 case '/': {
                     r.nextChar();//skip
-                    return NutsTextStyle.italic();
+                    return NTextStyle.italic();
                 }
                 case '+': {
                     r.nextChar();//skip
-                    return NutsTextStyle.bold();
+                    return NTextStyle.bold();
                 }
                 case '%': {
                     r.nextChar();//skip
-                    return NutsTextStyle.blink();
+                    return NTextStyle.blink();
                 }
                 case '_': {
                     r.nextChar();//skip
-                    return NutsTextStyle.underlined();
+                    return NTextStyle.underlined();
                 }
                 case '-': {
                     r.nextChar();//skip
-                    return NutsTextStyle.striked();
+                    return NTextStyle.striked();
                 }
                 case '!': {
                     r.nextChar();//skip
-                    return NutsTextStyle.reversed();
+                    return NTextStyle.reversed();
                 }
                 case '0':
                 case '1':
@@ -246,7 +246,7 @@ public class StyledParserStepCommandParser {
                     String s = peekInt(r, 0, 3);
                     if (s != null) {
                         r.nextChars(s.length());
-                        return NutsTextStyle.primary(Integer.parseInt(s));
+                        return NTextStyle.primary(Integer.parseInt(s));
                     }
                     break;
                 }
@@ -279,26 +279,26 @@ public class StyledParserStepCommandParser {
                 switch (n.toString().toLowerCase()) {
                     case "kw": {
                         r.nextChars(totLen);
-                        return NutsTextStyle.keyword(variant);
+                        return NTextStyle.keyword(variant);
                     }
                     case "p": {
                         r.nextChars(totLen);
-                        return NutsTextStyle.primary(variant);
+                        return NTextStyle.primary(variant);
                     }
                     case "s": {
                         r.nextChars(totLen);
-                        return NutsTextStyle.secondary(variant);
+                        return NTextStyle.secondary(variant);
                     }
                     case "bool": {
                         r.nextChars(totLen);
-                        return NutsTextStyle.bool(variant);
+                        return NTextStyle.bool(variant);
                     }
                     default: {
                         String sb2 = n.toString().toUpperCase();
                         sb2 = sb2.replace('-', '_');
-                        NutsTextStyleType st = NutsTextStyleType.parse(sb2).orElse(NutsTextStyleType.ERROR);
+                        NTextStyleType st = NTextStyleType.parse(sb2).orElse(NTextStyleType.ERROR);
                         r.nextChars(totLen);
-                        return NutsTextStyle.of(st, variant);
+                        return NTextStyle.of(st, variant);
                     }
                 }
             }

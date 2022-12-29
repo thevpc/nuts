@@ -6,15 +6,15 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.Set;
-import net.thevpc.nuts.runtime.standalone.workspace.DefaultNutsWorkspace;
+import net.thevpc.nuts.runtime.standalone.workspace.DefaultNWorkspace;
 import net.thevpc.nuts.runtime.standalone.xtra.expr.StringTokenizerUtils;
 
 public class DefaultImportModel {
 
-    private NutsWorkspace workspace;
+    private NWorkspace workspace;
     private Set<String> cachedImports;
 
-    public DefaultImportModel(NutsWorkspace ws) {
+    public DefaultImportModel(NWorkspace ws) {
         this.workspace = ws;
     }
 
@@ -26,7 +26,7 @@ public class DefaultImportModel {
         return cachedImports;
     }
 
-    public void add(String[] importExpressions, NutsSession session) {
+    public void add(String[] importExpressions, NSession session) {
         Set<String> imports = new LinkedHashSet<>();
         if (getStoreModelMain().getImports() != null) {
             imports.addAll(getStoreModelMain().getImports());
@@ -45,11 +45,11 @@ public class DefaultImportModel {
         set(arr, session);
     }
 
-    public void removeAll(NutsSession session) {
+    public void removeAll(NSession session) {
         set(null, session);
     }
 
-    public void remove(String[] importExpressions, NutsSession session) {
+    public void remove(String[] importExpressions, NSession session) {
         if (getStoreModelMain().getImports() != null) {
             Set<String> imports = new LinkedHashSet<>();
             for (String importExpression : getStoreModelMain().getImports()) {
@@ -66,7 +66,7 @@ public class DefaultImportModel {
         }
     }
 
-    public void set(String[] imports, NutsSession session) {
+    public void set(String[] imports, NSession session) {
         Set<String> simports = new LinkedHashSet<>();
         if (imports != null) {
             for (String s : imports) {
@@ -74,7 +74,7 @@ public class DefaultImportModel {
             }
         }
         getStoreModelMain().setImports(new ArrayList<>(simports));
-        NutsWorkspaceConfigManagerExt.of(session.config())
+        NWorkspaceConfigManagerExt.of(session.config())
                 .getModel()
                 .fireConfigurationChanged("import", session, ConfigEventType.MAIN);
     }
@@ -94,8 +94,8 @@ public class DefaultImportModel {
         return cachedImports;
     }
 
-    NutsWorkspaceConfigMain getStoreModelMain() {
-        return ((DefaultNutsWorkspace) workspace).getConfigModel().getStoreModelMain();
+    NWorkspaceConfigMain getStoreModelMain() {
+        return ((DefaultNWorkspace) workspace).getConfigModel().getStoreModelMain();
     }
 
     protected Set<String> parseImports(String importExpression) {
@@ -110,7 +110,7 @@ public class DefaultImportModel {
         return imports;
     }
 
-    public NutsWorkspace getWorkspace() {
+    public NWorkspace getWorkspace() {
         return workspace;
     }
 

@@ -26,11 +26,11 @@
 */
 package net.thevpc.nuts.toolbox.nsh.test;
 
-import net.thevpc.nuts.NutsSession;
-import net.thevpc.nuts.io.NutsCp;
-import net.thevpc.nuts.io.NutsPath;
-import net.thevpc.nuts.io.NutsSessionTerminal;
-import net.thevpc.nuts.spi.NutsPaths;
+import net.thevpc.nuts.NSession;
+import net.thevpc.nuts.io.NCp;
+import net.thevpc.nuts.io.NPath;
+import net.thevpc.nuts.io.NSessionTerminal;
+import net.thevpc.nuts.spi.NPaths;
 import net.thevpc.nuts.toolbox.nsh.jshell.JShell;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -42,18 +42,18 @@ import org.junit.jupiter.api.Test;
 public class TestExportVar {
     @Test
     public void testVars1() {
-        NutsSession session = TestUtils.openNewTestWorkspace("--verbose");
-        NutsPath tempFolder = NutsPaths.of(session).createTempFolder();
-        NutsPath a = tempFolder.resolve("a.nsh");
-        NutsPath b = tempFolder.resolve("b.nsh");
+        NSession session = TestUtils.openNewTestWorkspace("--verbose");
+        NPath tempFolder = NPaths.of(session).createTempFolder();
+        NPath a = tempFolder.resolve("a.nsh");
+        NPath b = tempFolder.resolve("b.nsh");
         System.out.println("----------------------------------------------");
-        NutsCp.of(session).from("echo 'run a' ; a=1; echo a0=$a ; source b.nsh ; echo 'back-to a' ; echo a1=$a ; echo b1=$b".getBytes())
+        NCp.of(session).from("echo 'run a' ; a=1; echo a0=$a ; source b.nsh ; echo 'back-to a' ; echo a1=$a ; echo b1=$b".getBytes())
                 .to(a).run();
-        NutsCp.of(session).from("echo 'run b' ; echo a2=$a ; a=2; b=3 ; echo a2=$a ; echo b2=$b".getBytes())
+        NCp.of(session).from("echo 'run b' ; echo a2=$a ; a=2; b=3 ; echo a2=$a ; echo b2=$b".getBytes())
                 .to(b).run();
         JShell c = new JShell(session,new String[]{a.toString()});
-        NutsSession shellSession = c.getRootContext().getSession();
-        shellSession.setTerminal(NutsSessionTerminal.ofMem(shellSession));
+        NSession shellSession = c.getRootContext().getSession();
+        shellSession.setTerminal(NSessionTerminal.ofMem(shellSession));
         c.getRootContext().setCwd(tempFolder.toString());
         c.run();
         System.out.println("-------------------------------------");

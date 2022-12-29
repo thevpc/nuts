@@ -25,9 +25,9 @@ package net.thevpc.nuts.core.test;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.core.test.utils.*;
-import net.thevpc.nuts.elem.NutsElement;
-import net.thevpc.nuts.elem.NutsElements;
-import net.thevpc.nuts.text.NutsTexts;
+import net.thevpc.nuts.elem.NElement;
+import net.thevpc.nuts.elem.NElements;
+import net.thevpc.nuts.text.NTexts;
 import org.junit.jupiter.api.*;
 
 /**
@@ -35,7 +35,7 @@ import org.junit.jupiter.api.*;
  * @author thevpc
  */
 public class Test17_JsonTest {
-    static NutsSession session;
+    static NSession session;
 
     @BeforeAll
     public static void init() {
@@ -56,14 +56,14 @@ public class Test17_JsonTest {
 //        TestUtils.println(NutsTexts.of(session).forPlain("a@@@"));
 //        TestUtils.println(NutsTexts.of(session).forPlain("a@@@").filteredText());
 
-        TestUtils.println(NutsTexts.of(session).ofPlain("a##@"));
-        TestUtils.println(NutsTexts.of(session).ofPlain("a##@").filteredText());
+        TestUtils.println(NTexts.of(session).ofPlain("a##@"));
+        TestUtils.println(NTexts.of(session).ofPlain("a##@").filteredText());
 
     }
 
     @Test
     public void test2()  {
-        NutsElement a = NutsElements.of(session).json()
+        NElement a = NElements.of(session).json()
                 .parse(
                         "{\n" +
                                 "    title: 'Some Title',\n" +
@@ -217,8 +217,8 @@ public class Test17_JsonTest {
 //        TestUtils.println(NutsTexts.of(session).forPlain("a@@@"));
 //        TestUtils.println(NutsTexts.of(session).forPlain("a@@@").filteredText());
 
-        TestUtils.println(NutsTexts.of(session).ofPlain("a##@"));
-        TestUtils.println(NutsTexts.of(session).ofPlain("a##@").filteredText());
+        TestUtils.println(NTexts.of(session).ofPlain("a##@"));
+        TestUtils.println(NTexts.of(session).ofPlain("a##@").filteredText());
 
     }
 

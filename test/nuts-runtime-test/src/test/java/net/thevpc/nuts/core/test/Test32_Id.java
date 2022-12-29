@@ -5,9 +5,9 @@
  */
 package net.thevpc.nuts.core.test;
 
-import net.thevpc.nuts.NutsId;
-import net.thevpc.nuts.NutsIdBuilder;
-import net.thevpc.nuts.NutsSession;
+import net.thevpc.nuts.NId;
+import net.thevpc.nuts.NIdBuilder;
+import net.thevpc.nuts.NSession;
 import net.thevpc.nuts.core.test.utils.TestUtils;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
@@ -22,7 +22,7 @@ import java.util.Map;
  */
 public class Test32_Id {
 
-    static NutsSession session;
+    static NSession session;
 
     @BeforeAll
     public static void init() {
@@ -31,30 +31,30 @@ public class Test32_Id {
 
     @Test
     public void test01() {
-        List<NutsId> s = NutsId.ofList("java#[11,[").get(session);
-        Assertions.assertEquals(Arrays.asList(NutsId.of("java#[11,[").get(session)), s);
+        List<NId> s = NId.ofList("java#[11,[").get(session);
+        Assertions.assertEquals(Arrays.asList(NId.of("java#[11,[").get(session)), s);
     }
 
     @Test
     public void test02() {
-        List<NutsId> s = NutsId.ofList("java#[11,[ java#[11,[").get(session);
+        List<NId> s = NId.ofList("java#[11,[ java#[11,[").get(session);
         //removed duplicates...
-        Assertions.assertEquals(Arrays.asList(NutsId.of("java#[11,[").get(session)), s);
+        Assertions.assertEquals(Arrays.asList(NId.of("java#[11,[").get(session)), s);
     }
 
     @Test
     public void test03() {
-        List<NutsId> s = NutsId.ofList("java#[11,[ java#[12,[").get(session);
+        List<NId> s = NId.ofList("java#[11,[ java#[12,[").get(session);
         Assertions.assertEquals(Arrays.asList(
-                NutsId.of("java#[11,[").get(session),
-                NutsId.of("java#[12,[").get(session)
+                NId.of("java#[11,[").get(session),
+                NId.of("java#[12,[").get(session)
         ), s);
     }
 
     @Test
     public void test04() {
         String t1="net.sourceforge.cobertura:cobertura#${cobertura.version}?exclusions=asm:asm,asm:asm-tree,log4j:log4j,oro:oro&profile=coverage&cond-properties='a,b=c'";
-        NutsId s = NutsId.of(t1).get(session);
+        NId s = NId.of(t1).get(session);
         Assertions.assertEquals("net.sourceforge.cobertura",s.getGroupId());
         Assertions.assertEquals("cobertura",s.getArtifactId());
         Assertions.assertEquals("asm:asm,asm:asm-tree,log4j:log4j,oro:oro",s.getProperties().get("exclusions"));
@@ -66,7 +66,7 @@ public class Test32_Id {
     @Test
     public void test05() {
         String t1="net.sourceforge.cobertura:cobertura#${cobertura.version}?exclusions=asm:asm,asm:asm-tree,log4j:log4j,oro:oro&profile=coverage&cond-properties=a,b\\=c";
-        NutsId s = NutsId.of(t1).get(session);
+        NId s = NId.of(t1).get(session);
         Assertions.assertEquals("net.sourceforge.cobertura",s.getGroupId());
         Assertions.assertEquals("cobertura",s.getArtifactId());
         Assertions.assertEquals("asm:asm,asm:asm-tree,log4j:log4j,oro:oro",s.getProperties().get("exclusions"));
@@ -77,7 +77,7 @@ public class Test32_Id {
 
     @Test
     public void test06() {
-        NutsId a = NutsIdBuilder.of()
+        NId a = NIdBuilder.of()
                 .setProperty("a", "?")
                 .build();
         Map<String, String> p = a.getProperties();

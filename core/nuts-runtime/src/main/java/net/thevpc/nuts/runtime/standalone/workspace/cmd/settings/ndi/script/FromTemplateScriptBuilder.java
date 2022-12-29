@@ -1,10 +1,10 @@
 package net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.ndi.script;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.io.NutsIOException;
-import net.thevpc.nuts.io.NutsPath;
+import net.thevpc.nuts.io.NIOException;
+import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.runtime.standalone.shell.AbstractScriptBuilder;
-import net.thevpc.nuts.runtime.standalone.shell.NutsShellHelper;
+import net.thevpc.nuts.runtime.standalone.shell.NShellHelper;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.ndi.NdiScriptOptions;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.ndi.base.BaseSystemNdi;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.ndi.util.NdiUtils;
@@ -25,7 +25,7 @@ public class FromTemplateScriptBuilder extends AbstractScriptBuilder {
     private Function<String, String> mapper;
     private final NdiScriptOptions options;
 
-    public FromTemplateScriptBuilder(String templateName, NutsShellFamily shellFamily,String type, NutsId anyId, BaseSystemNdi sndi, NdiScriptOptions options, NutsSession session) {
+    public FromTemplateScriptBuilder(String templateName, NShellFamily shellFamily, String type, NId anyId, BaseSystemNdi sndi, NdiScriptOptions options, NSession session) {
         super(shellFamily,type, anyId, session);
         this.sndi = sndi;
         this.options = options;
@@ -33,20 +33,20 @@ public class FromTemplateScriptBuilder extends AbstractScriptBuilder {
     }
 
     public FromTemplateScriptBuilder printCall(String line, String... args) {
-        return println(NutsShellHelper.of(getShellFamily()).getCallScriptCommand(line, args));
+        return println(NShellHelper.of(getShellFamily()).getCallScriptCommand(line, args));
     }
 
     public FromTemplateScriptBuilder printSet(String var, String value) {
-        return println(NutsShellHelper.of(getShellFamily()).getSetVarCommand(var, value));
+        return println(NShellHelper.of(getShellFamily()).getSetVarCommand(var, value));
     }
 
     public FromTemplateScriptBuilder printSetStatic(String var, String value) {
-        return println(NutsShellHelper.of(getShellFamily()).getSetVarStaticCommand(var, value));
+        return println(NShellHelper.of(getShellFamily()).getSetVarStaticCommand(var, value));
     }
 
     public FromTemplateScriptBuilder printComment(String line) {
         for (String s : _split(line)) {
-            println(NutsShellHelper.of(getShellFamily()).toCommentLine(s));
+            println(NShellHelper.of(getShellFamily()).toCommentLine(s));
         }
         return this;
     }
@@ -60,7 +60,7 @@ public class FromTemplateScriptBuilder extends AbstractScriptBuilder {
                 a.add(c);
             }
         } catch (IOException e) {
-            throw new NutsIOException(getSession(),e);
+            throw new NIOException(getSession(),e);
         }
         return a;
 
@@ -101,17 +101,17 @@ public class FromTemplateScriptBuilder extends AbstractScriptBuilder {
         return this;
     }
 
-    private String str(NutsPath path){
+    private String str(NPath path){
         return path==null?null:path.toString();
     }
 
     public String buildString() {
         try {
             //Path script = getScriptFile(name);
-            NutsDefinition anyIdDef = getSession().search().addId(getAnyId()).setLatest(true)
+            NDefinition anyIdDef = getSession().search().addId(getAnyId()).setLatest(true)
                     .setDistinct(true)
                     .getResultDefinitions().singleton();
-            NutsId anyId = anyIdDef.getId();
+            NId anyId = anyIdDef.getId();
             StringWriter bos = new StringWriter();
             try (BufferedWriter w = new BufferedWriter(bos)) {
                 NdiUtils.generateScript("/net/thevpc/nuts/runtime/settings/" + sndi.getTemplateName(templateName, getShellFamily()),
@@ -160,40 +160,40 @@ public class FromTemplateScriptBuilder extends AbstractScriptBuilder {
                                     case "NUTS_WORKSPACE":
                                         return getSession().locations().getWorkspaceLocation().toString();
                                     case "NUTS_WORKSPACE_APPS":
-                                        return str(getSession().locations().getStoreLocation(NutsStoreLocation.APPS));
+                                        return str(getSession().locations().getStoreLocation(NStoreLocation.APPS));
                                     case "NUTS_WORKSPACE_CONFIG":
-                                        return str(getSession().locations().getStoreLocation(NutsStoreLocation.CONFIG));
+                                        return str(getSession().locations().getStoreLocation(NStoreLocation.CONFIG));
                                     case "NUTS_WORKSPACE_CACHE":
-                                        return str(getSession().locations().getStoreLocation(NutsStoreLocation.CACHE));
+                                        return str(getSession().locations().getStoreLocation(NStoreLocation.CACHE));
                                     case "NUTS_WORKSPACE_LIB":
-                                        return str(getSession().locations().getStoreLocation(NutsStoreLocation.LIB));
+                                        return str(getSession().locations().getStoreLocation(NStoreLocation.LIB));
                                     case "NUTS_WORKSPACE_LOG":
-                                        return str(getSession().locations().getStoreLocation(NutsStoreLocation.LOG));
+                                        return str(getSession().locations().getStoreLocation(NStoreLocation.LOG));
                                     case "NUTS_WORKSPACE_RUN":
-                                        return str(getSession().locations().getStoreLocation(NutsStoreLocation.RUN));
+                                        return str(getSession().locations().getStoreLocation(NStoreLocation.RUN));
                                     case "NUTS_WORKSPACE_TEMP":
-                                        return str(getSession().locations().getStoreLocation(NutsStoreLocation.TEMP));
+                                        return str(getSession().locations().getStoreLocation(NStoreLocation.TEMP));
                                     case "NUTS_WORKSPACE_VAR":
-                                        return str(getSession().locations().getStoreLocation(NutsStoreLocation.VAR));
+                                        return str(getSession().locations().getStoreLocation(NStoreLocation.VAR));
                                     case "NUTS_JAR_EXPR": {
                                         String NUTS_JAR_PATH = options.resolveNutsApiJarPath().toString();
-                                        if (NUTS_JAR_PATH.startsWith(getSession().locations().getStoreLocation(NutsStoreLocation.LIB).toString())) {
-                                            String pp = NUTS_JAR_PATH.substring(getSession().locations().getStoreLocation(NutsStoreLocation.LIB).toString().length());
-                                            return NutsShellHelper.of(getShellFamily()).varRef("NUTS_WORKSPACE_LIB") + pp;
+                                        if (NUTS_JAR_PATH.startsWith(getSession().locations().getStoreLocation(NStoreLocation.LIB).toString())) {
+                                            String pp = NUTS_JAR_PATH.substring(getSession().locations().getStoreLocation(NStoreLocation.LIB).toString().length());
+                                            return NShellHelper.of(getShellFamily()).varRef("NUTS_WORKSPACE_LIB") + pp;
                                         } else {
                                             return NUTS_JAR_PATH;
                                         }
                                     }
                                     case "NUTS_WORKSPACE_BINDIR_EXPR": {
                                         //="${NUTS_WORKSPACE_APPS}/id/net/thevpc/nuts/nuts/0.8.2/bin"
-                                        return NutsShellHelper.of(getShellFamily()).varRef("NUTS_WORKSPACE_APPS") + options.resolveBinFolder().toString().substring(
-                                                getSession().locations().getStoreLocation(NutsStoreLocation.APPS).toString().length()
+                                        return NShellHelper.of(getShellFamily()).varRef("NUTS_WORKSPACE_APPS") + options.resolveBinFolder().toString().substring(
+                                                getSession().locations().getStoreLocation(NStoreLocation.APPS).toString().length()
                                         );
                                     }
                                     default: {
                                         List<String> q = bodyMap.get(s);
                                         if (q != null) {
-                                            return String.join(NutsShellHelper.of(getShellFamily()).newlineString(), q);
+                                            return String.join(NShellHelper.of(getShellFamily()).newlineString(), q);
                                         }
                                         break;
                                     }
@@ -204,7 +204,7 @@ public class FromTemplateScriptBuilder extends AbstractScriptBuilder {
             }
             return bos.toString();
         } catch (IOException ex) {
-            throw new NutsIOException(getSession(),ex);
+            throw new NIOException(getSession(),ex);
         }
     }
 
@@ -212,7 +212,7 @@ public class FromTemplateScriptBuilder extends AbstractScriptBuilder {
         return (FromTemplateScriptBuilder) super.setPath(path);
     }
 
-    public FromTemplateScriptBuilder setPath(NutsPath path) {
+    public FromTemplateScriptBuilder setPath(NPath path) {
         return (FromTemplateScriptBuilder) super.setPath(path);
     }
 

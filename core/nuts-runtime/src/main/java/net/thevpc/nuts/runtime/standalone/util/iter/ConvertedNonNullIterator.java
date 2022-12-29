@@ -25,10 +25,10 @@
  */
 package net.thevpc.nuts.runtime.standalone.util.iter;
 
-import net.thevpc.nuts.elem.NutsElement;
-import net.thevpc.nuts.util.NutsDescribables;
-import net.thevpc.nuts.elem.NutsElements;
-import net.thevpc.nuts.NutsSession;
+import net.thevpc.nuts.elem.NElement;
+import net.thevpc.nuts.util.NDescribables;
+import net.thevpc.nuts.elem.NElements;
+import net.thevpc.nuts.NSession;
 
 import java.util.Iterator;
 import java.util.function.Function;
@@ -39,7 +39,7 @@ import java.util.function.Function;
  * @param <F> From Type
  * @param <T> To Type
  */
-public class ConvertedNonNullIterator<F, T> extends NutsIteratorBase<T> {
+public class ConvertedNonNullIterator<F, T> extends NIteratorBase<T> {
 
     private final Iterator<F> base;
     private final Function<F, T> converter;
@@ -56,11 +56,11 @@ public class ConvertedNonNullIterator<F, T> extends NutsIteratorBase<T> {
     }
 
     @Override
-    public NutsElement describe(NutsSession session) {
-        return NutsElements.of(session).ofObject()
+    public NElement describe(NSession session) {
+        return NElements.of(session).ofObject()
                 .set("type", "Map")
                 .set("accept", "isNotNull")
-                .set("mapper", NutsDescribables.resolveOrDestructAsObject(converter, session)
+                .set("mapper", NDescribables.resolveOrDestructAsObject(converter, session)
                         .builder()
                         .set("name", convertName)
                         .build()

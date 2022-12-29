@@ -1,17 +1,17 @@
 package net.thevpc.nuts.toolbox.njob;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.cmdline.NutsCommandHistory;
-import net.thevpc.nuts.cmdline.NutsCommandLine;
-import net.thevpc.nuts.io.NutsPath;
-import net.thevpc.nuts.io.NutsSystemTerminal;
-import net.thevpc.nuts.text.NutsTextBuilder;
-import net.thevpc.nuts.text.NutsTextStyle;
-import net.thevpc.nuts.text.NutsTextTransformConfig;
-import net.thevpc.nuts.text.NutsTexts;
+import net.thevpc.nuts.cmdline.NCommandHistory;
+import net.thevpc.nuts.cmdline.NCommandLine;
+import net.thevpc.nuts.io.NPath;
+import net.thevpc.nuts.io.NSystemTerminal;
+import net.thevpc.nuts.text.NTextBuilder;
+import net.thevpc.nuts.text.NTextStyle;
+import net.thevpc.nuts.text.NTextTransformConfig;
+import net.thevpc.nuts.text.NTexts;
 import net.thevpc.nuts.toolbox.njob.model.*;
 import net.thevpc.nuts.toolbox.njob.time.TimeFormatter;
-import net.thevpc.nuts.util.NutsRef;
+import net.thevpc.nuts.util.NRef;
 
 import java.io.InputStream;
 import java.time.Instant;
@@ -26,13 +26,13 @@ import java.util.stream.Collectors;
 public class JobServiceCmd {
 
     protected JobService service;
-    protected NutsApplicationContext context;
-    protected NutsSession session;
+    protected NApplicationContext context;
+    protected NSession session;
     private NJobsSubCmd jobs;
     private NTasksSubCmd tasks;
     private NProjectsSubCmd projects;
 
-    public JobServiceCmd(NutsApplicationContext context) {
+    public JobServiceCmd(NApplicationContext context) {
         this.context = context;
         this.service = new JobService(context);
         session = context.getSession();
@@ -65,7 +65,7 @@ public class JobServiceCmd {
         }
     }
 
-    public boolean runCommands(NutsCommandLine cmd) {
+    public boolean runCommands(NCommandLine cmd) {
         if (projects.runProjectCommands(cmd)) {
             return true;
         }
@@ -93,30 +93,30 @@ public class JobServiceCmd {
         return false;
     }
 
-    private void runSummary(NutsCommandLine cmd) {
+    private void runSummary(NCommandLine cmd) {
         if (cmd.isExecMode()) {
             long projectsCount = service.projects().findProjects().count();
             long tasksCount = service.tasks().findTasks(NTaskStatusFilter.OPEN, null, -1, null, null, null, null, null).count();
             long jobsCount = service.jobs().findMonthJobs(null).count();
             long allJobsCount = service.jobs().findLastJobs(null, -1, null, null, null, null, null).count();
-            NutsTexts text = NutsTexts.of(context.getSession());
-            context.getSession().out().printf("%s open task%s\n", text.ofStyled("" + tasksCount, NutsTextStyle.primary1()), tasksCount == 1 ? "" : "s");
-            context.getSession().out().printf("%s job%s %s\n", text.ofStyled("" + allJobsCount, NutsTextStyle.primary1()), allJobsCount == 1 ? "" : "s",
+            NTexts text = NTexts.of(context.getSession());
+            context.getSession().out().printf("%s open task%s\n", text.ofStyled("" + tasksCount, NTextStyle.primary1()), tasksCount == 1 ? "" : "s");
+            context.getSession().out().printf("%s job%s %s\n", text.ofStyled("" + allJobsCount, NTextStyle.primary1()), allJobsCount == 1 ? "" : "s",
                     allJobsCount == 0 ? ""
                             : text.ofBuilder()
                             .append("(")
-                            .append("" + jobsCount, NutsTextStyle.primary1())
+                            .append("" + jobsCount, NTextStyle.primary1())
                             .append(" this month)")
             );
-            context.getSession().out().printf("%s project%s\n", text.ofStyled("" + projectsCount, NutsTextStyle.primary1()), projectsCount == 1 ? "" : "s");
+            context.getSession().out().printf("%s project%s\n", text.ofStyled("" + projectsCount, NTextStyle.primary1()), projectsCount == 1 ? "" : "s");
         }
     }
 
     protected void showCustomHelp(String name) {
-        NutsTexts text = NutsTexts.of(context.getSession());
-        NutsPath p = NutsPath.of("classpath:/net/thevpc/nuts/toolbox/" + name + ".ntf", session);
+        NTexts text = NTexts.of(context.getSession());
+        NPath p = NPath.of("classpath:/net/thevpc/nuts/toolbox/" + name + ".ntf", session);
         context.getSession().out().println(
-                text.transform(text.parser().parse(p), new NutsTextTransformConfig()
+                text.transform(text.parser().parse(p), new NTextTransformConfig()
                         .setCurrentDir(p.getParent())
                         .setImportClassLoader(getClass().getClassLoader())
                         .setRootLevel(1)
@@ -126,8 +126,8 @@ public class JobServiceCmd {
         );
     }
 
-    protected NutsString getFormattedProject(String projectName) {
-        NutsTextBuilder builder = NutsTexts.of(session).ofBuilder();
+    protected NString getFormattedProject(String projectName) {
+        NTextBuilder builder = NTexts.of(session).ofBuilder();
         builder.getStyleGenerator()
                 .setIncludeForeground(true)
                 .setUsePaletteColors();
@@ -144,42 +144,42 @@ public class JobServiceCmd {
 //        return s;
     }
 
-    protected NutsString getCheckedString(Boolean x) {
+    protected NString getCheckedString(Boolean x) {
         if (x == null) {
-            return NutsTexts.of(context.getSession()).ofPlain("");
+            return NTexts.of(context.getSession()).ofPlain("");
         }
         if (x) {
-            return NutsTexts.of(context.getSession()).ofPlain("\u2611");
+            return NTexts.of(context.getSession()).ofPlain("\u2611");
         } else {
-            return NutsTexts.of(context.getSession()).ofPlain("\u25A1");
+            return NTexts.of(context.getSession()).ofPlain("\u25A1");
         }
     }
 
-    protected NutsString getPriorityString(NPriority x) {
+    protected NString getPriorityString(NPriority x) {
         if (x == null) {
-            return NutsTexts.of(context.getSession()).ofPlain("N");
+            return NTexts.of(context.getSession()).ofPlain("N");
         }
         switch (x) {
             case NONE:
-                return NutsTexts.of(session).ofStyled("0", NutsTextStyle.pale());
+                return NTexts.of(session).ofStyled("0", NTextStyle.pale());
             case LOW:
-                return NutsTexts.of(session).ofStyled("L", NutsTextStyle.pale());
+                return NTexts.of(session).ofStyled("L", NTextStyle.pale());
             case NORMAL:
-                return NutsTexts.of(session).ofPlain("N");
+                return NTexts.of(session).ofPlain("N");
             case MEDIUM:
-                return NutsTexts.of(session).ofStyled("M", NutsTextStyle.primary1());
+                return NTexts.of(session).ofStyled("M", NTextStyle.primary1());
             case URGENT:
-                return NutsTexts.of(session).ofStyled("U", NutsTextStyle.primary2());
+                return NTexts.of(session).ofStyled("U", NTextStyle.primary2());
             case HIGH:
-                return NutsTexts.of(session).ofStyled("H", NutsTextStyle.primary3());
+                return NTexts.of(session).ofStyled("H", NTextStyle.primary3());
             case CRITICAL:
-                return NutsTexts.of(session).ofStyled("C", NutsTextStyle.fail());
+                return NTexts.of(session).ofStyled("C", NTextStyle.fail());
         }
-        return NutsTexts.of(context.getSession()).ofPlain("?");
+        return NTexts.of(context.getSession()).ofPlain("?");
     }
 
-    protected NutsString getStatusString(NTaskStatus x) {
-        NutsTexts text = NutsTexts.of(context.getSession());
+    protected NString getStatusString(NTaskStatus x) {
+        NTexts text = NTexts.of(context.getSession());
         if (x == null) {
             return text.ofPlain("*");
         }
@@ -187,38 +187,38 @@ public class JobServiceCmd {
             case TODO:
                 return text.ofPlain("\u24c9");
             case DONE:
-                return text.ofStyled("\u2611", NutsTextStyle.success());
+                return text.ofStyled("\u2611", NTextStyle.success());
             case WIP:
-                return text.ofStyled("\u24CC", NutsTextStyle.primary1());
+                return text.ofStyled("\u24CC", NTextStyle.primary1());
             case CANCELLED:
-                return text.ofStyled("\u2718", NutsTextStyle.fail());
+                return text.ofStyled("\u2718", NTextStyle.fail());
         }
         return text.ofPlain("?");
     }
 
-    private NutsString getFlagString(String x, int index) {
+    private NString getFlagString(String x, int index) {
         switch (index) {
             case 1:
-                return NutsTexts.of(session).ofStyled(x, NutsTextStyle.primary1());
+                return NTexts.of(session).ofStyled(x, NTextStyle.primary1());
             case 2:
-                return NutsTexts.of(session).ofStyled(x, NutsTextStyle.primary2());
+                return NTexts.of(session).ofStyled(x, NTextStyle.primary2());
             case 3:
-                return NutsTexts.of(session).ofStyled(x, NutsTextStyle.primary3());
+                return NTexts.of(session).ofStyled(x, NTextStyle.primary3());
             case 4:
-                return NutsTexts.of(session).ofStyled(x, NutsTextStyle.primary4());
+                return NTexts.of(session).ofStyled(x, NTextStyle.primary4());
             case 5:
-                return NutsTexts.of(session).ofStyled(x, NutsTextStyle.primary5());
+                return NTexts.of(session).ofStyled(x, NTextStyle.primary5());
         }
-        throw new NutsIllegalArgumentException(context.getSession(), NutsMessage.ofCstyle("invalid index %s", index));
+        throw new NIllegalArgumentException(context.getSession(), NMsg.ofCstyle("invalid index %s", index));
     }
 
-    protected NutsString getFlagString(NFlag x) {
+    protected NString getFlagString(NFlag x) {
         if (x == null) {
             x = NFlag.NONE;
         }
         switch (x) {
             case NONE:
-                return NutsTexts.of(context.getSession()).ofPlain("\u2690");
+                return NTexts.of(context.getSession()).ofPlain("\u2690");
 
             case STAR1:
                 return getFlagString("\u2605", 1);
@@ -275,10 +275,10 @@ public class JobServiceCmd {
             case PHONE5:
                 return getFlagString("\u260E", 5);
         }
-        return NutsTexts.of(context.getSession()).ofPlain("[" + x.toString().toLowerCase() + "]");
+        return NTexts.of(context.getSession()).ofPlain("[" + x.toString().toLowerCase() + "]");
     }
 
-    protected <T> void appendPredicateRef(NutsRef<Predicate<T>> whereFilter, Predicate<T> t) {
+    protected <T> void appendPredicateRef(NRef<Predicate<T>> whereFilter, Predicate<T> t) {
         whereFilter.set(appendPredicate(whereFilter.get(),t));
     }
 
@@ -303,13 +303,13 @@ public class JobServiceCmd {
         return x -> s.equals(x == null ? "" : x);
     }
 
-    public void runInteractive(NutsCommandLine cmdLine) {
-        NutsSession session = context.getSession();
-        NutsSystemTerminal.enableRichTerm(session);
+    public void runInteractive(NCommandLine cmdLine) {
+        NSession session = context.getSession();
+        NSystemTerminal.enableRichTerm(session);
         session.config().getSystemTerminal()
                 .setCommandAutoCompleteResolver(new JobAutoCompleter())
                 .setCommandHistory(
-                        NutsCommandHistory.of(session)
+                        NCommandHistory.of(session)
                                 .setPath(context.getVarFolder().resolve("njob-history.hist"))
                 );
         session.env().setProperty(JobServiceCmd.class.getName(), this);
@@ -319,12 +319,12 @@ public class JobServiceCmd {
 //                session.io().term().getSystemTerminal(), 
 //                        session
 //        ));
-        NutsTexts text = NutsTexts.of(session);
+        NTexts text = NTexts.of(session);
 
         session.out().printf(
                 "%s interactive mode. type %s to quit.%n",
-                text.ofStyled(context.getAppId().getArtifactId() + " " + context.getAppId().getVersion(), NutsTextStyle.primary1()),
-                text.ofStyled("q", NutsTextStyle.error())
+                text.ofStyled(context.getAppId().getArtifactId() + " " + context.getAppId().getVersion(), NTextStyle.primary1()),
+                text.ofStyled("q", NTextStyle.error())
         );
         InputStream in = session.getTerminal().in();
         Exception lastError = null;
@@ -347,7 +347,7 @@ public class JobServiceCmd {
                     lastError.printStackTrace(session.out().asPrintStream());
                 }
             } else {
-                NutsCommandLine cmd = NutsCommandLine.parseDefault(line).get(session);
+                NCommandLine cmd = NCommandLine.parseDefault(line).get(session);
                 cmd.setCommandName(context.getAppId().getArtifactId());
                 try {
                     lastError = null;

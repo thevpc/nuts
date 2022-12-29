@@ -5,8 +5,8 @@
  */
 package net.thevpc.nuts.toolbox.nsh.jshell;
 
-import net.thevpc.nuts.io.NutsPath;
-import net.thevpc.nuts.NutsSession;
+import net.thevpc.nuts.io.NPath;
+import net.thevpc.nuts.NSession;
 
 /**
  *
@@ -15,32 +15,32 @@ import net.thevpc.nuts.NutsSession;
 public class DefaultJShellFileSystem implements JShellFileSystem {
 
     @Override
-    public String getInitialWorkingDir(NutsSession session) {
+    public String getInitialWorkingDir(NSession session) {
         return System.getProperty("user.dir");
     }
 
     @Override
-    public String getHomeWorkingDir(NutsSession session) {
+    public String getHomeWorkingDir(NSession session) {
         return System.getProperty("user.home");
     }
 
     @Override
-    public String getAbsolutePath(String path, NutsSession session) {
-        return NutsPath.of(path,session).normalize().toString();
+    public String getAbsolutePath(String path, NSession session) {
+        return NPath.of(path,session).normalize().toString();
     }
 
     @Override
-    public boolean isAbsolute(String path, NutsSession session) {
-        return NutsPath.of(path,session).isAbsolute();
+    public boolean isAbsolute(String path, NSession session) {
+        return NPath.of(path,session).isAbsolute();
     }
 
     @Override
-    public boolean isDirectory(String path, NutsSession session) {
-        return NutsPath.of(path,session).isDirectory();
+    public boolean isDirectory(String path, NSession session) {
+        return NPath.of(path,session).isDirectory();
     }
 
     @Override
-    public boolean exists(String path, NutsSession session) {
-        return NutsPath.of(path,session).exists();
+    public boolean exists(String path, NSession session) {
+        return NPath.of(path,session).exists();
     }
 }

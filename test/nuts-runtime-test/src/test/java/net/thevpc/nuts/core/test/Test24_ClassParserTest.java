@@ -15,10 +15,10 @@ import java.nio.file.Paths;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.Arrays;
 
-import net.thevpc.nuts.NutsExecutionEntries;
-import net.thevpc.nuts.NutsSession;
-import net.thevpc.nuts.util.NutsDuration;
-import net.thevpc.nuts.util.NutsChronometer;
+import net.thevpc.nuts.NExecutionEntries;
+import net.thevpc.nuts.NSession;
+import net.thevpc.nuts.util.NDuration;
+import net.thevpc.nuts.util.NChronometer;
 import net.thevpc.nuts.core.test.utils.TestUtils;
 import net.thevpc.nuts.runtime.standalone.util.jclass.JavaClassByteCode;
 import org.junit.jupiter.api.*;
@@ -28,7 +28,7 @@ import org.junit.jupiter.api.*;
  */
 public class Test24_ClassParserTest {
 
-    static NutsSession session;
+    static NSession session;
 
     @BeforeAll
     public static void init() {
@@ -46,7 +46,7 @@ public class Test24_ClassParserTest {
         }
     }
 
-    private static void parseAnyFile(Path file, NutsSession session) throws IOException {
+    private static void parseAnyFile(Path file, NSession session) throws IOException {
         if (Files.isDirectory(file)) {
             parseFolder(file, session);
         } else {
@@ -54,22 +54,22 @@ public class Test24_ClassParserTest {
         }
     }
 
-    private static void parseRegularFile(Path file, NutsSession session) throws IOException {
-        NutsChronometer from = NutsChronometer.startNow();
+    private static void parseRegularFile(Path file, NSession session) throws IOException {
+        NChronometer from = NChronometer.startNow();
         if (file.getFileName().toString().endsWith(".class")) {
             parseClassFile(file.toAbsolutePath().normalize(), session);
         }
         if (file.getFileName().toString().endsWith(".jar")) {
             parseJarFile(file.toAbsolutePath().normalize(), session);
         }
-        NutsDuration to = from.getDuration();
+        NDuration to = from.getDuration();
         if (max < to.getTimeAsNanos()) {
             max = to.getTimeAsNanos();
         }
         TestUtils.println("### TIME [" + file + "] " + to + " -- " + max);
     }
 
-    private static void parseFolder(Path file, NutsSession session) throws IOException {
+    private static void parseFolder(Path file, NSession session) throws IOException {
         Files.walkFileTree(file, new FileVisitor<Path>() {
                     @Override
                     public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
@@ -95,17 +95,17 @@ public class Test24_ClassParserTest {
         );
     }
 
-    private static void parseJarFile(Path file, NutsSession session) throws IOException {
+    private static void parseJarFile(Path file, NSession session) throws IOException {
         TestUtils.println("parse jar " + file + " ... ");
         try (InputStream in = Files.newInputStream(file)) {
             TestUtils.println("parse jar " + file + " :: " + Arrays.asList(
-                    NutsExecutionEntries.of(session)
+                    NExecutionEntries.of(session)
                             .parse(in, "java", file.toString())
             ));
         }
     }
 
-    private static void parseClassFile(Path file, NutsSession session) throws IOException {
+    private static void parseClassFile(Path file, NSession session) throws IOException {
         TestUtils.println(file);
 
         JavaClassByteCode scs = new JavaClassByteCode(Files.newInputStream(file), new JavaClassByteCode.Visitor() {

@@ -13,42 +13,42 @@ Starred releases are most stable ones.
 - ```2022/XX/XX 	nuts 0.8.4.0``` not released yet nuts-runtime-0.8.4.2-alpha1.jar
 - WARNING : {api}  API has evolved with incompatibilities with previous versions
 - FIXED: Fixed maven url parsing on Windows platforms that prevented nsh from being installed
+- CHANGED: Prefix is now 'N' instead of 'Nuts'
 - ADDED: Add native installers for windows, linux and macOS
 - ADDED: Add links to pdf docs in website and offline documentation
 - ADDED: Add new nuts LOGO
-- ADDED: Add NutsOptional a feature riche replacement of java's Optional
-- ADDED: Add NutsEnvCondition/NutsEnvConditionBuilder::setProperties/getProperties
-- ADDED: Add NutsDescriptor/NutsDescriptorBuilder::setLicenses
-- ADDED: Add NutsDescriptor/NutsDescriptorBuilder::setDevelopers
-- ADDED: Add    NutsConstants.IdProperties.DESKTOP_ENVIRONMENT -> NutsConstants.IdProperties.PROPERTIES
-- ADDED: Add NutsPath::getLongBaseName // longest file name before last '.'
-- ADDED: Add NutsMessageFormattable
-- ADDED: Add NutsDescribable now takes a Session instead of NutsElements
+- ADDED: Add NOptional a feature riche replacement of java's Optional
+- ADDED: Add NEnvCondition/NEnvConditionBuilder::setProperties/getProperties
+- ADDED: Add NDescriptor/NDescriptorBuilder::setLicenses
+- ADDED: Add NDescriptor/NDescriptorBuilder::setDevelopers
+- ADDED: Add    NConstants.IdProperties.DESKTOP_ENVIRONMENT -> NConstants.IdProperties.PROPERTIES
+- ADDED: Add NPath::getLongBaseName // longest file name before last '.'
+- ADDED: Add NMessageFormattable
+- ADDED: Add NDescribable now takes a Session instead of NElements
 - ADDED: Add cmdline arguments : --isolation,--confined, --sandbox
 - ADDED: promote cmdline arguments : --init-platforms,--init-launchers,--init-scripts, --init-java
 - ADDED: promote cmdline arguments : --desktop-launcher,--menu-launcher,--user-launcher
-- ADDED: Add NutsMessageFormattable
 - ADDED: Add 30+ unit tests
-- ADDED: NutsSession::isProgress
-- ADDED: NutsCommandline now extends NutsBlankable
-- ADDED: Added/Exposed Bean Reflection API : NutsReflectRepository,NutsReflectType,NutsReflectProperty
-- ADDED: Added NutsChronometer, NutsDuration
-- ADDED: Added Var Style (dollar based placeholder) in NutsMessage
-- ADDED: added NutsProgressMonitor and monitoring api
-- ADDED: NutsMemorySize and memory size api
+- ADDED: NSession::isProgress
+- ADDED: NCommandline now extends NBlankable
+- ADDED: Added/Exposed Bean Reflection API : NReflectRepository,NReflectType,NReflectProperty
+- ADDED: Added NChronometer, NDuration
+- ADDED: Added Var Style (dollar based placeholder) in NMessage
+- ADDED: added NProgressMonitor and monitoring api
+- ADDED: NMemorySize and memory size api
 - ADDED: --progress=log now prints progress to log instead of stderr
-- CHANGED: Enum.parseLenient replaced by NutsOptional
-- CHANGED: Rename NutsConstants.IdProperties.DESKTOP_ENVIRONMENT -> NutsConstants.IdProperties.DESKTOP
-- CHANGED: Now NutsWorkspaceOptionsBuilder extends NutsWorkspaceOptions
-- CHANGED: Rename NutsRepositoryDB::getRepositoryNameByURL -> NutsRepositoryDB::getRepositoryNameByLocation
-- CHANGED: Rename NutsRepositoryDB::getRepositoryURLByName -> NutsRepositoryDB::getRepositoryLocationByName
-- CHANGED: Change type to long in NutsExecCommand::getSleepMillis()/setSleepMillis(int sleepMillis);
+- CHANGED: Enum.parseLenient replaced by NOptional
+- CHANGED: Rename NConstants.IdProperties.DESKTOP_ENVIRONMENT -> NConstants.IdProperties.DESKTOP
+- CHANGED: Now NWorkspaceOptionsBuilder extends NWorkspaceOptions
+- CHANGED: Rename NRepositoryDB::getRepositoryNameByURL -> NRepositoryDB::getRepositoryNameByLocation
+- CHANGED: Rename NRepositoryDB::getRepositoryURLByName -> NRepositoryDB::getRepositoryLocationByName
+- CHANGED: Change type to long in NExecCommand::getSleepMillis()/setSleepMillis(int sleepMillis);
 - CHANGED: complete rewrite of NTF parser
 - CHANGED: classes refactored to be repackaged in inner packages
-- REMOVED: Remove session dependency from NutsVersion,NutsId and NutsDescriptor
-- REMOVED: Remove NutsBootOptions
+- REMOVED: Remove session dependency from NVersion,NId and NDescriptor
+- REMOVED: Remove NBootOptions
 - REMOVED: removed CoreNumberUtils
-- REMOVED: NutsMessageFormatted
+- REMOVED: NMessageFormatted
 
 ## nuts 0.8.3.1 (PUBLISHED VERSION)
 - ```2022/02/01 	nuts 0.8.3.1``` released nuts-runtime-0.8.3.1.jar

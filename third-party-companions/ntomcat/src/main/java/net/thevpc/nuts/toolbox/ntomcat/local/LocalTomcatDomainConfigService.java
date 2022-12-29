@@ -1,11 +1,11 @@
 package net.thevpc.nuts.toolbox.ntomcat.local;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.elem.NutsElements;
-import net.thevpc.nuts.io.NutsPath;
-import net.thevpc.nuts.io.NutsPrintStream;
-import net.thevpc.nuts.text.NutsTextStyle;
-import net.thevpc.nuts.text.NutsTexts;
+import net.thevpc.nuts.elem.NElements;
+import net.thevpc.nuts.io.NPath;
+import net.thevpc.nuts.io.NStream;
+import net.thevpc.nuts.text.NTextStyle;
+import net.thevpc.nuts.text.NTexts;
 import net.thevpc.nuts.toolbox.ntomcat.local.config.LocalTomcatDomainConfig;
 
 public class LocalTomcatDomainConfigService extends LocalTomcatServiceBase {
@@ -13,7 +13,7 @@ public class LocalTomcatDomainConfigService extends LocalTomcatServiceBase {
     private String name;
     private LocalTomcatDomainConfig config;
     private LocalTomcatConfigService tomcat;
-    private NutsApplicationContext context;
+    private NApplicationContext context;
 
     public LocalTomcatDomainConfigService(String name, LocalTomcatDomainConfig config, LocalTomcatConfigService tomcat) {
         this.config = config;
@@ -34,19 +34,19 @@ public class LocalTomcatDomainConfigService extends LocalTomcatServiceBase {
         return name;
     }
 
-    public NutsPath getDomainDeployPath() {
-        NutsPath b = tomcat.getCatalinaBase();
+    public NPath getDomainDeployPath() {
+        NPath b = tomcat.getCatalinaBase();
         if (b == null) {
             b = tomcat.getCatalinaHome();
         }
-        NutsPath p = config.getDeployPath()==null ?null:NutsPath.of(config.getDeployPath(), getSession());
+        NPath p = config.getDeployPath()==null ?null: NPath.of(config.getDeployPath(), getSession());
         if (p == null) {
             p = tomcat.getDefaulDeployFolder(name);
         }
         return b.resolve(b);
     }
 
-    private NutsSession getSession() {
+    private NSession getSession() {
         return context.getSession();
     }
 
@@ -60,16 +60,16 @@ public class LocalTomcatDomainConfigService extends LocalTomcatServiceBase {
         getSession().out().printf("%s domain removed.\n", getBracketsPrefix(name));
         return this;
     }
-    public NutsString getBracketsPrefix(String str) {
-        return NutsTexts.of(getSession()).ofBuilder()
+    public NString getBracketsPrefix(String str) {
+        return NTexts.of(getSession()).ofBuilder()
                 .append("[")
-                .append(str, NutsTextStyle.primary5())
+                .append(str, NTextStyle.primary5())
                 .append("]");
     }
 
-    public LocalTomcatDomainConfigService print(NutsPrintStream out) {
-        NutsSession session = getSession();
-        NutsElements.of(session).json().setValue(getConfig()).print(out);
+    public LocalTomcatDomainConfigService print(NStream out) {
+        NSession session = getSession();
+        NElements.of(session).json().setValue(getConfig()).print(out);
         return this;
     }
 

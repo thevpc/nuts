@@ -1,9 +1,9 @@
 package net.thevpc.nuts.toolbox.ntomcat.util;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.io.NutsPath;
-import net.thevpc.nuts.io.NutsPs;
-import net.thevpc.nuts.util.NutsStringUtils;
+import net.thevpc.nuts.io.NPath;
+import net.thevpc.nuts.io.NPs;
+import net.thevpc.nuts.util.NStringUtils;
 
 import java.io.*;
 import java.nio.file.Files;
@@ -13,9 +13,9 @@ import java.util.*;
 public class TomcatUtils {
 
     public static String toValidFileName(String name, String defaultName) {
-        String r = NutsStringUtils.trim(name);
+        String r = NStringUtils.trim(name);
         if (r.isEmpty()) {
-            return NutsStringUtils.trim(defaultName);
+            return NStringUtils.trim(defaultName);
         }
         return r
                 .replace('/', '_')
@@ -119,17 +119,17 @@ public class TomcatUtils {
 //        return ref[0];
 //    }
 
-    public static String getFolderCatalinaHomeVersion(NutsPath h) {
+    public static String getFolderCatalinaHomeVersion(NPath h) {
         if(h!=null) {
-            NutsPath file = h.resolve("RELEASE-NOTES");
+            NPath file = h.resolve("RELEASE-NOTES");
             if (file.exists()) {
-                try (BufferedReader r = new BufferedReader(file.getReader())) {
+                try (BufferedReader r = file.getBufferedReader()) {
                     String line = null;
                     while ((line = r.readLine()) != null) {
                         line = line.trim();
                         if (line.startsWith("Apache Tomcat Version")) {
                             String v = line.substring("Apache Tomcat Version".length()).trim();
-                            if (!NutsBlankable.isBlank(v)) {
+                            if (!NBlankable.isBlank(v)) {
                                 return v;
                             }
                         }
@@ -142,9 +142,9 @@ public class TomcatUtils {
         return null;
     }
 
-    public static RunningTomcat[] getRunningInstances(NutsApplicationContext context) {
-        NutsSession session = context.getSession();
-        return NutsPs.of(session).type("java").getResultList()
+    public static RunningTomcat[] getRunningInstances(NApplicationContext context) {
+        NSession session = context.getSession();
+        return NPs.of(session).type("java").getResultList()
                 .stream().filter((p) -> p.getName().equals("org.apache.catalina.startup.Bootstrap"))
                 .map(x -> new RunningTomcat(x, session)).toArray(RunningTomcat[]::new);
     }

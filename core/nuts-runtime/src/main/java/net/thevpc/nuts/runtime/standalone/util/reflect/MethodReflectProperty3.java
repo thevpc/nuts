@@ -23,8 +23,8 @@
  */
 package net.thevpc.nuts.runtime.standalone.util.reflect;
 
-import net.thevpc.nuts.util.NutsReflectPropertyDefaultValueStrategy;
-import net.thevpc.nuts.util.NutsReflectType;
+import net.thevpc.nuts.util.NReflectPropertyDefaultValueStrategy;
+import net.thevpc.nuts.util.NReflectType;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
@@ -39,7 +39,7 @@ public class MethodReflectProperty3 extends AbstractReflectProperty {
     private Field read;
     private Method write;
 
-    public MethodReflectProperty3(String name, Field read, Method write, Object cleanInstance, NutsReflectType type, NutsReflectPropertyDefaultValueStrategy defaultValueStrategy) {
+    public MethodReflectProperty3(String name, Field read, Method write, Object cleanInstance, NReflectType type, NReflectPropertyDefaultValueStrategy defaultValueStrategy) {
         this.read = read;
         this.read.setAccessible(true);
         if (write != null) {

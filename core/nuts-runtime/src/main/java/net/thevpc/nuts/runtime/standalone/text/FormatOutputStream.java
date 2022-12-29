@@ -1,32 +1,32 @@
 package net.thevpc.nuts.runtime.standalone.text;
 
-import net.thevpc.nuts.NutsIllegalArgumentException;
-import net.thevpc.nuts.NutsMessage;
-import net.thevpc.nuts.NutsSession;
-import net.thevpc.nuts.NutsUnsupportedEnumException;
-import net.thevpc.nuts.runtime.standalone.io.terminal.NutsTerminalModeOp;
-import net.thevpc.nuts.runtime.standalone.io.terminal.NutsTerminalModeOpUtils;
-import net.thevpc.nuts.spi.NutsSystemTerminalBase;
+import net.thevpc.nuts.NIllegalArgumentException;
+import net.thevpc.nuts.NMsg;
+import net.thevpc.nuts.NSession;
+import net.thevpc.nuts.NUnsupportedEnumException;
+import net.thevpc.nuts.runtime.standalone.io.terminal.NTerminalModeOp;
+import net.thevpc.nuts.runtime.standalone.io.terminal.NTerminalModeOpUtils;
+import net.thevpc.nuts.spi.NSystemTerminalBase;
 
 import java.io.OutputStream;
 
 public class FormatOutputStream extends RenderedOutputStream implements ExtendedFormatAware {
 
-    public FormatOutputStream(OutputStream out, NutsSystemTerminalBase term, NutsSession session) {
+    public FormatOutputStream(OutputStream out, NSystemTerminalBase term, NSession session) {
         super(out, term, false, session);
-        NutsTerminalModeOp op = NutsTerminalModeOpUtils.resolveNutsTerminalModeOp(out);
-        if (op != NutsTerminalModeOp.NOP) {
-            throw new NutsIllegalArgumentException(session, NutsMessage.ofPlain("expected Raw"));
+        NTerminalModeOp op = NTerminalModeOpUtils.resolveNutsTerminalModeOp(out);
+        if (op != NTerminalModeOp.NOP) {
+            throw new NIllegalArgumentException(session, NMsg.ofPlain("expected Raw"));
         }
     }
 
     @Override
-    public NutsTerminalModeOp getModeOp() {
-        return NutsTerminalModeOp.FORMAT;
+    public NTerminalModeOp getModeOp() {
+        return NTerminalModeOp.FORMAT;
     }
 
     @Override
-    public ExtendedFormatAware convert(NutsTerminalModeOp other) {
+    public ExtendedFormatAware convert(NTerminalModeOp other) {
         if (other == null || other == getModeOp()) {
             return this;
         }
@@ -50,7 +50,7 @@ public class FormatOutputStream extends RenderedOutputStream implements Extended
                 return new UnescapeOutputStream(this, getTerminal(), session);
             }
         }
-        throw new NutsUnsupportedEnumException(session, other);
+        throw new NUnsupportedEnumException(session, other);
     }
 
 }

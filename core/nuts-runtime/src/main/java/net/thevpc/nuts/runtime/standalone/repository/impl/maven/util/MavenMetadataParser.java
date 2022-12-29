@@ -1,9 +1,9 @@
 package net.thevpc.nuts.runtime.standalone.repository.impl.maven.util;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.io.NutsIOException;
+import net.thevpc.nuts.io.NIOException;
 import net.thevpc.nuts.runtime.standalone.util.xml.XmlUtils;
-import net.thevpc.nuts.util.NutsLogger;
+import net.thevpc.nuts.util.NLogger;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -26,13 +26,13 @@ import java.util.Stack;
 import java.util.logging.Level;
 
 public class MavenMetadataParser {
-    private final NutsLogger LOG;
+    private final NLogger LOG;
 
-    private NutsSession session;
+    private NSession session;
 
-    public MavenMetadataParser(NutsSession session) {
+    public MavenMetadataParser(NSession session) {
         this.session = session;
-        LOG= NutsLogger.of(MavenMetadataParser.class,session);
+        LOG= NLogger.of(MavenMetadataParser.class,session);
     }
 
     public String toXmlString(MavenMetadata m) {
@@ -41,7 +41,7 @@ public class MavenMetadataParser {
             writeMavenMetaData(m, new StreamResult(s));
             w.flush();
         } catch (TransformerException | ParserConfigurationException | IOException e) {
-            throw new NutsIOException(session,e);
+            throw new NIOException(session,e);
         }
         return new String(s.toByteArray());
     }
@@ -50,7 +50,7 @@ public class MavenMetadataParser {
         try (Writer w = Files.newBufferedWriter(path)) {
             writeMavenMetaData(m, new StreamResult(path.toFile()));
         } catch (TransformerException | ParserConfigurationException | IOException e) {
-            throw new NutsIOException(session,e);
+            throw new NIOException(session,e);
         }
     }
 
@@ -60,12 +60,12 @@ public class MavenMetadataParser {
         Element metadata = document.createElement("metadata");
         document.appendChild(metadata);
 
-        if (!NutsBlankable.isBlank(m.getGroupId())) {
+        if (!NBlankable.isBlank(m.getGroupId())) {
             Element groupId = document.createElement("groupId");
             groupId.appendChild(document.createTextNode(m.getGroupId()));
             metadata.appendChild(groupId);
         }
-        if (!NutsBlankable.isBlank(m.getArtifactId())) {
+        if (!NBlankable.isBlank(m.getArtifactId())) {
             Element artifactId = document.createElement("artifactId");
             artifactId.appendChild(document.createTextNode(m.getArtifactId()));
             metadata.appendChild(artifactId);
@@ -74,13 +74,13 @@ public class MavenMetadataParser {
         Element versioning = document.createElement("versioning");
         metadata.appendChild(versioning);
 
-        if (!NutsBlankable.isBlank(m.getRelease())) {
+        if (!NBlankable.isBlank(m.getRelease())) {
             Element release = document.createElement("release");
             release.appendChild(document.createTextNode(m.getRelease()));
             versioning.appendChild(release);
         }
 
-        if (!NutsBlankable.isBlank(m.getLatest())) {
+        if (!NBlankable.isBlank(m.getLatest())) {
             Element latest = document.createElement("latest");
             latest.appendChild(document.createTextNode(m.getLatest()));
             versioning.appendChild(latest);
@@ -90,7 +90,7 @@ public class MavenMetadataParser {
         versioning.appendChild(versions);
         if (m.getVersions() != null) {
             for (String sversion : m.getVersions()) {
-                if (!NutsBlankable.isBlank(sversion)) {
+                if (!NBlankable.isBlank(sversion)) {
                     Element version = document.createElement("version");
                     version.appendChild(document.createTextNode(sversion));
                     versions.appendChild(version);
@@ -109,7 +109,7 @@ public class MavenMetadataParser {
         try (InputStream s = Files.newInputStream(stream)) {
             return parseMavenMetaData(s);
         } catch (IOException ex) {
-            throw new NutsIOException(session,ex);
+            throw new NIOException(session,ex);
         }
     }
 
@@ -180,7 +180,7 @@ public class MavenMetadataParser {
             info.setLastUpdated(lastUpdated.toString().trim().isEmpty() ? null : new SimpleDateFormat("yyyyMMddHHmmss").parse(lastUpdated.toString().trim()));
         } catch (Exception ex) {
             LOG.with().session(session).level(Level.SEVERE).error(ex)
-                    .log(NutsMessage.ofJstyle("failed to parse date {0} : {1}", lastUpdated, ex));
+                    .log(NMsg.ofJstyle("failed to parse date {0} : {1}", lastUpdated, ex));
         }
         for (String version : versions) {
             info.getVersions().add(version.trim());

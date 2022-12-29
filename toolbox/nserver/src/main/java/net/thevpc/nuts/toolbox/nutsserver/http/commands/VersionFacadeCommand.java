@@ -1,8 +1,7 @@
 package net.thevpc.nuts.toolbox.nutsserver.http.commands;
 
-import net.thevpc.nuts.DefaultNutsIdBuilder;
-import net.thevpc.nuts.NutsIdBuilder;
-import net.thevpc.nuts.NutsSession;
+import net.thevpc.nuts.NIdBuilder;
+import net.thevpc.nuts.NSession;
 import net.thevpc.nuts.toolbox.nutsserver.AbstractFacadeCommand;
 import net.thevpc.nuts.toolbox.nutsserver.FacadeCommandContext;
 
@@ -15,9 +14,9 @@ public class VersionFacadeCommand extends AbstractFacadeCommand {
 
     @Override
     public void executeImpl(FacadeCommandContext context) throws IOException {
-        NutsSession session = context.getSession();
+        NSession session = context.getSession();
         context.sendResponseText(200,
-                NutsIdBuilder.of()
+                NIdBuilder.of()
                         .setRepository(context.getServerId())
                         .setGroupId("net.thevpc.nuts")
                         .setArtifactId("nuts-server")

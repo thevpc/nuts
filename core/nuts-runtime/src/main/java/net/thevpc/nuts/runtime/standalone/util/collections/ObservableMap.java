@@ -26,7 +26,7 @@
 */
 package net.thevpc.nuts.runtime.standalone.util.collections;
 
-import net.thevpc.nuts.util.NutsMapListener;
+import net.thevpc.nuts.util.NMapListener;
 
 import java.util.*;
 
@@ -35,10 +35,10 @@ import java.util.*;
  */
 public interface ObservableMap<K, V> extends Map<K, V> {
 
-    void addListener(NutsMapListener<K, V> listener);
+    void addListener(NMapListener<K, V> listener);
 
-    void removeListener(NutsMapListener<K, V> listener);
+    void removeListener(NMapListener<K, V> listener);
 
-    List<NutsMapListener<K, V>> getListeners();
+    List<NMapListener<K, V>> getListeners();
 
 }

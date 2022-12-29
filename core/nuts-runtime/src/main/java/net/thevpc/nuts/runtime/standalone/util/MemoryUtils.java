@@ -1,15 +1,15 @@
 package net.thevpc.nuts.runtime.standalone.util;
 
-import net.thevpc.nuts.util.NutsMemorySize;
+import net.thevpc.nuts.util.NMemorySize;
 
 public class MemoryUtils {
-    public static NutsMemorySize inUseMemory() {
+    public static NMemorySize inUseMemory() {
         Runtime rt = Runtime.getRuntime();
-        return NutsMemorySize.ofBytes(rt.totalMemory() - rt.freeMemory());
+        return NMemorySize.ofBytes(rt.totalMemory() - rt.freeMemory());
     }
 
-    public static NutsMemorySize maxFreeMemory() {
+    public static NMemorySize maxFreeMemory() {
         Runtime rt = Runtime.getRuntime();
-        return NutsMemorySize.ofBytes(rt.maxMemory() - (rt.totalMemory() - rt.freeMemory()));
+        return NMemorySize.ofBytes(rt.maxMemory() - (rt.totalMemory() - rt.freeMemory()));
     }
 }

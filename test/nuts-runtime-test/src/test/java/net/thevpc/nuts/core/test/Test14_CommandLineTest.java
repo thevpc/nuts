@@ -6,13 +6,13 @@
 package net.thevpc.nuts.core.test;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.cmdline.DefaultNutsCommandLine;
-import net.thevpc.nuts.cmdline.NutsArgument;
-import net.thevpc.nuts.cmdline.NutsCommandLine;
+import net.thevpc.nuts.cmdline.DefaultNCommandLine;
+import net.thevpc.nuts.cmdline.NArgument;
+import net.thevpc.nuts.cmdline.NCommandLine;
 import net.thevpc.nuts.core.test.utils.TestUtils;
-import net.thevpc.nuts.cmdline.DefaultNutsArgument;
-import net.thevpc.nuts.elem.NutsElements;
-import net.thevpc.nuts.io.NutsPath;
+import net.thevpc.nuts.cmdline.DefaultNArgument;
+import net.thevpc.nuts.elem.NElements;
+import net.thevpc.nuts.io.NPath;
 import org.junit.jupiter.api.*;
 
 import java.util.*;
@@ -23,7 +23,7 @@ import java.util.stream.Collectors;
  * @author thevpc
  */
 public class Test14_CommandLineTest {
-    static NutsSession session;
+    static NSession session;
 
     @BeforeAll
     public static void init() {
@@ -33,7 +33,7 @@ public class Test14_CommandLineTest {
 
     @Test
     public void test1() throws Exception {
-        NutsArgument[] cmd = NutsCommandLine.parseDefault("-ad+ +ad--").get(session).toArgumentArray();
+        NArgument[] cmd = NCommandLine.parseDefault("-ad+ +ad--").get(session).toArgumentArray();
         Set<String> set = Arrays.stream(cmd).map(Object::toString).collect(Collectors.toSet());
         Set<String> expectedSet = new HashSet<>(Arrays.asList(
                 "-a", "-d+", "+a","+d--"
@@ -43,7 +43,7 @@ public class Test14_CommandLineTest {
 
     @Test
     public void test2() throws Exception {
-        NutsCommandLine cmd = new DefaultNutsCommandLine().registerSpecialSimpleOption("-version");
+        NCommandLine cmd = new DefaultNCommandLine().registerSpecialSimpleOption("-version");
         Assertions.assertEquals(true,cmd.isSpecialSimpleOption("-//version"));
     }
 
@@ -51,9 +51,9 @@ public class Test14_CommandLineTest {
 
     @Test
     public void testArgument01() {
-        NutsElements elems = NutsElements.of(session);
-        checkDefaultNutsArgument(
-                new DefaultNutsArgument(null),
+        NElements elems = NElements.of(session);
+        checkDefaultNArgument(
+                new DefaultNArgument(null),
                 true,
                 false,
                 false,
@@ -68,9 +68,9 @@ public class Test14_CommandLineTest {
 
     @Test
     public void testArgument02() {
-        NutsElements elems = NutsElements.of(session);
-        checkDefaultNutsArgument(
-                new DefaultNutsArgument(""),
+        NElements elems = NElements.of(session);
+        checkDefaultNArgument(
+                new DefaultNArgument(""),
                 true,
                 false,
                 false,
@@ -85,9 +85,9 @@ public class Test14_CommandLineTest {
 
     @Test
     public void testArgument03() {
-        NutsElements elems = NutsElements.of(session);
-        checkDefaultNutsArgument(
-                new DefaultNutsArgument("hello"),
+        NElements elems = NElements.of(session);
+        checkDefaultNArgument(
+                new DefaultNArgument("hello"),
                 true,
                 false,
                 false,
@@ -102,9 +102,9 @@ public class Test14_CommandLineTest {
 
     @Test
     public void testArgument04() {
-        NutsElements elems = NutsElements.of(session);
-        checkDefaultNutsArgument(
-                new DefaultNutsArgument("!hello"),
+        NElements elems = NElements.of(session);
+        checkDefaultNArgument(
+                new DefaultNArgument("!hello"),
                 true,
                 false,
                 false,
@@ -119,9 +119,9 @@ public class Test14_CommandLineTest {
 
     @Test
     public void testArgument05() {
-        NutsElements elems = NutsElements.of(session);
-        checkDefaultNutsArgument(
-                new DefaultNutsArgument("//!hello"),
+        NElements elems = NElements.of(session);
+        checkDefaultNArgument(
+                new DefaultNArgument("//!hello"),
                 true,
                 false,
                 false,
@@ -136,9 +136,9 @@ public class Test14_CommandLineTest {
 
     @Test
     public void testArgument06() {
-        NutsElements elems = NutsElements.of(session);
-        checkDefaultNutsArgument(
-                new DefaultNutsArgument("/!hello"),
+        NElements elems = NElements.of(session);
+        checkDefaultNArgument(
+                new DefaultNArgument("/!hello"),
                 true,
                 false,
                 false,
@@ -153,9 +153,9 @@ public class Test14_CommandLineTest {
 
     @Test
     public void testArgument07() {
-        NutsElements elems = NutsElements.of(session);
-        checkDefaultNutsArgument(
-                new DefaultNutsArgument("/!hello=me"),
+        NElements elems = NElements.of(session);
+        checkDefaultNArgument(
+                new DefaultNArgument("/!hello=me"),
                 true,
                 false,
                 false,
@@ -170,9 +170,9 @@ public class Test14_CommandLineTest {
 
     @Test
     public void testArgument08() {
-        NutsElements elems = NutsElements.of(session);
-        checkDefaultNutsArgument(
-                new DefaultNutsArgument("--!hello=me"),
+        NElements elems = NElements.of(session);
+        checkDefaultNArgument(
+                new DefaultNArgument("--!hello=me"),
                 true,
                 true,
                 true,
@@ -187,9 +187,9 @@ public class Test14_CommandLineTest {
 
     @Test
     public void testArgument09() {
-        NutsElements elems = NutsElements.of(session);
-        checkDefaultNutsArgument(
-                new DefaultNutsArgument("--//!hello=me"),
+        NElements elems = NElements.of(session);
+        checkDefaultNArgument(
+                new DefaultNArgument("--//!hello=me"),
                 false,
                 true,
                 true,
@@ -205,9 +205,9 @@ public class Test14_CommandLineTest {
 
     @Test
     public void testArgument10() {
-        NutsElements elems = NutsElements.of(session);
-        checkDefaultNutsArgument(
-                new DefaultNutsArgument("--//="),
+        NElements elems = NElements.of(session);
+        checkDefaultNArgument(
+                new DefaultNArgument("--//="),
                 false,
                 true,
                 true,
@@ -223,12 +223,12 @@ public class Test14_CommandLineTest {
     public void testArgument11() {
         String line0="start -Djava.util.logging.config.file=/home/vpc/.config/nuts/default-workspace/config/id/net/thevpc/nuts/toolbox/ntomcat/SHARED/catalina-base-10.0/default/conf/logging.properties -Djava.util.logging.manager=org.apache.juli.ClassLoaderLogManager -Dnuts-config-name=default -Djdk.tls.ephemeralDHKeySize=2048 -Djava.protocol.handler.pkgs=org.apache.catalina.webresources -Dorg.apache.catalina.security.SecurityListener.UMASK=0027 -Dignore.endorsed.dirs= -Dcatalina.base=/home/vpc/.config/nuts/default-workspace/config/id/net/thevpc/nuts/toolbox/ntomcat/SHARED/catalina-base-10.0/default -Dcatalina.home=/home/vpc/.local/share/nuts/apps/default-workspace/id/org/apache/catalina/apache-tomcat/10.0.0-M1/apache-tomcat-10.0.0-M1 -Djava.io.tmpdir=/home/vpc/.config/nuts/default-workspace/config/id/net/thevpc/nuts/toolbox/ntomcat/SHARED/catalina-base-10.0/default/temp";
         String line="-Dcatalina.base=/home/vpc/.config/nuts/default-workspace/config/id/net/thevpc/nuts/toolbox/ntomcat/SHARED/catalina-base-10.0/default -Dcatalina.home=/home/vpc/.local/share/nuts/apps/default-workspace/id/org/apache/catalina/apache-tomcat/10.0.0-M1/apache-tomcat-10.0.0-M1 -Djava.io.tmpdir=/home/vpc/.config/nuts/default-workspace/config/id/net/thevpc/nuts/toolbox/ntomcat/SHARED/catalina-base-10.0/default/temp ";
-        NutsCommandLine cmdline = NutsCommandLine.parseDefault(line).get(session).setExpandSimpleOptions(false);
-        NutsArgument a=null;
+        NCommandLine cmdline = NCommandLine.parseDefault(line).get(session).setExpandSimpleOptions(false);
+        NArgument a=null;
         int x=0;
         while(cmdline.hasNext()){
             if((a=cmdline.nextString("-Dcatalina.home").orNull())!=null) {
-                NutsPath.of(a.getStringValue().get(session),session);
+                NPath.of(a.getStringValue().get(session),session);
                 x++;
             }else if((a=cmdline.nextString("-Dcatalina.base").orNull())!=null){
                 a.getStringValue().get(session);
@@ -243,18 +243,18 @@ public class Test14_CommandLineTest {
     @Test
     public void testArgument12(){
         String s="-Dcatalina.base=/home/vpc/.config/nuts/default-workspace/config/id/net/thevpc/nuts/toolbox/ntomcat/SHARED/catalina-base-10.0/default";
-        DefaultNutsArgument a=new DefaultNutsArgument(s);
+        DefaultNArgument a=new DefaultNArgument(s);
         Assertions.assertEquals("-Dcatalina.base",a.getStringKey().get());
     }
 
     @Test
     public void testArgument13(){
-        NutsCommandLine c=new DefaultNutsCommandLine(new String[]{"-1=15"}).setExpandSimpleOptions(true);
-        NutsArgument a = c.next().get();
+        NCommandLine c=new DefaultNCommandLine(new String[]{"-1=15"}).setExpandSimpleOptions(true);
+        NArgument a = c.next().get();
         Assertions.assertEquals("-1",a.getStringKey().get());
     }
 
-    private static void checkDefaultNutsArgument(NutsArgument a, boolean active, boolean option, boolean keyValue, boolean negated
+    private static void checkDefaultNArgument(NArgument a, boolean active, boolean option, boolean keyValue, boolean negated
             , String key
             , String value
             , String optionName

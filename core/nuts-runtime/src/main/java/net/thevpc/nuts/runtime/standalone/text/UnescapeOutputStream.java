@@ -1,34 +1,34 @@
 package net.thevpc.nuts.runtime.standalone.text;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.io.NutsTerminalMode;
+import net.thevpc.nuts.io.NTerminalMode;
 import net.thevpc.nuts.runtime.standalone.io.outputstream.BaseTransparentFilterOutputStream;
-import net.thevpc.nuts.runtime.standalone.io.terminal.NutsTerminalModeOpUtils;
-import net.thevpc.nuts.runtime.standalone.io.terminal.NutsTerminalModeOp;
-import net.thevpc.nuts.spi.NutsSystemTerminalBase;
-import net.thevpc.nuts.text.NutsTexts;
+import net.thevpc.nuts.runtime.standalone.io.terminal.NTerminalModeOpUtils;
+import net.thevpc.nuts.runtime.standalone.io.terminal.NTerminalModeOp;
+import net.thevpc.nuts.spi.NSystemTerminalBase;
+import net.thevpc.nuts.text.NTexts;
 
 import java.io.IOException;
 import java.io.OutputStream;
 
 public class UnescapeOutputStream extends BaseTransparentFilterOutputStream implements ExtendedFormatAware {
 
-    private NutsSession session;
-    private NutsSystemTerminalBase term;
+    private NSession session;
+    private NSystemTerminalBase term;
 
-    public UnescapeOutputStream(OutputStream out, NutsSystemTerminalBase term,NutsSession session) {
+    public UnescapeOutputStream(OutputStream out, NSystemTerminalBase term, NSession session) {
         super(out);
         this.session = session;
         this.term = term;
-        NutsTerminalModeOp t = NutsTerminalModeOpUtils.resolveNutsTerminalModeOp(out);
-        if (t.in() != NutsTerminalMode.FORMATTED && t.in() != NutsTerminalMode.FILTERED) {
+        NTerminalModeOp t = NTerminalModeOpUtils.resolveNutsTerminalModeOp(out);
+        if (t.in() != NTerminalMode.FORMATTED && t.in() != NTerminalMode.FILTERED) {
             throw new IllegalArgumentException("Illegal Formatted");
         }
     }
 
     @Override
-    public NutsTerminalModeOp getModeOp() {
-        return NutsTerminalModeOp.UNESCAPE;
+    public NTerminalModeOp getModeOp() {
+        return NTerminalModeOp.UNESCAPE;
     }
 
     public OutputStream getOut() {
@@ -36,7 +36,7 @@ public class UnescapeOutputStream extends BaseTransparentFilterOutputStream impl
     }
 
     private String filterThanEscape(String b) throws IOException {
-        NutsTexts txt = NutsTexts.of(session);
+        NTexts txt = NTexts.of(session);
         String filtered = txt.ofBuilder().append(b).filteredText();
         return txt.ofPlain(filtered).toString();
 //        return ws.text().escapeText(
@@ -56,26 +56,26 @@ public class UnescapeOutputStream extends BaseTransparentFilterOutputStream impl
     }
 
     @Override
-    public ExtendedFormatAware convert(NutsTerminalModeOp other) {
+    public ExtendedFormatAware convert(NTerminalModeOp other) {
         if (other == null || other == getModeOp()) {
             return this;
         }
         switch (other) {
             case NOP: {
                 if (out instanceof ExtendedFormatAware) {
-                    return ((ExtendedFormatAware) out).convert(NutsTerminalModeOp.NOP);
+                    return ((ExtendedFormatAware) out).convert(NTerminalModeOp.NOP);
                 }
                 return new RawOutputStream(out, term,session);
             }
             case FORMAT: {
                 if (out instanceof ExtendedFormatAware) {
-                    return ((ExtendedFormatAware) out).convert(NutsTerminalModeOp.FORMAT);
+                    return ((ExtendedFormatAware) out).convert(NTerminalModeOp.FORMAT);
                 }
                 return new FormatOutputStream(out, term,session);
             }
             case FILTER: {
                 if (out instanceof ExtendedFormatAware) {
-                    return ((ExtendedFormatAware) out).convert(NutsTerminalModeOp.FILTER);
+                    return ((ExtendedFormatAware) out).convert(NTerminalModeOp.FILTER);
                 }
                 return this;//new FilterFormatOutputStream(out);
             }
@@ -86,6 +86,6 @@ public class UnescapeOutputStream extends BaseTransparentFilterOutputStream impl
                 return ((ExtendedFormatAware) out);
             }
         }
-        throw new NutsUnsupportedEnumException(session, other);
+        throw new NUnsupportedEnumException(session, other);
     }
 }

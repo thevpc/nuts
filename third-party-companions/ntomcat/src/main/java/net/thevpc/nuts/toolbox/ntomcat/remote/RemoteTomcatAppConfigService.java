@@ -1,16 +1,16 @@
 package net.thevpc.nuts.toolbox.ntomcat.remote;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.cmdline.NutsCommandLine;
-import net.thevpc.nuts.elem.NutsElements;
-import net.thevpc.nuts.format.NutsObjectFormat;
-import net.thevpc.nuts.io.NutsPrintStream;
-import net.thevpc.nuts.text.NutsTextStyle;
-import net.thevpc.nuts.text.NutsTexts;
+import net.thevpc.nuts.cmdline.NCommandLine;
+import net.thevpc.nuts.elem.NElements;
+import net.thevpc.nuts.format.NObjectFormat;
+import net.thevpc.nuts.io.NStream;
+import net.thevpc.nuts.text.NTextStyle;
+import net.thevpc.nuts.text.NTexts;
 import net.thevpc.nuts.toolbox.ntomcat.remote.config.RemoteTomcatAppConfig;
 import net.thevpc.nuts.toolbox.ntomcat.remote.config.RemoteTomcatConfig;
 import net.thevpc.nuts.toolbox.ntomcat.util._FileUtils;
-import net.thevpc.nuts.util.NutsStringUtils;
+import net.thevpc.nuts.util.NStringUtils;
 
 import java.io.File;
 import java.util.LinkedHashMap;
@@ -20,7 +20,7 @@ import java.util.Map;
 public class RemoteTomcatAppConfigService extends RemoteTomcatServiceBase {
 
     private RemoteTomcatAppConfig config;
-    private NutsApplicationContext context;
+    private NApplicationContext context;
     private RemoteTomcatConfigService client;
     private String name;
 
@@ -34,17 +34,17 @@ public class RemoteTomcatAppConfigService extends RemoteTomcatServiceBase {
     public void install() {
         RemoteTomcatConfig cconfig = client.getConfig();
         String localWarPath = this.config.getPath();
-        NutsSession session = context.getSession();
+        NSession session = context.getSession();
         if (!new File(localWarPath).exists()) {
-            throw new NutsExecutionException(session, NutsMessage.ofCstyle("missing source war file %s", localWarPath), 2);
+            throw new NExecutionException(session, NMsg.ofCstyle("missing source war file %s", localWarPath), 2);
         }
         String remoteTempPath = cconfig.getRemoteTempPath();
-        if (NutsBlankable.isBlank(remoteTempPath)) {
+        if (NBlankable.isBlank(remoteTempPath)) {
             remoteTempPath = "/tmp";
         }
         String remoteFilePath = ("/" + remoteTempPath + "/" + _FileUtils.getFileName(localWarPath));
         String server = cconfig.getServer();
-        if (NutsBlankable.isBlank(server)) {
+        if (NBlankable.isBlank(server)) {
             server = "localhost";
         }
         if (!server.startsWith("ssh://")) {
@@ -62,10 +62,10 @@ public class RemoteTomcatAppConfigService extends RemoteTomcatServiceBase {
                 ).setSession(session)
                 .run();
         String v = config.getVersionCommand();
-        if (NutsBlankable.isBlank(v)) {
+        if (NBlankable.isBlank(v)) {
             v = "nsh nversion --color=never %file";
         }
-        List<String> cmd = NutsCommandLine.parseDefault(v).get(session).toStringList();
+        List<String> cmd = NCommandLine.parseDefault(v).get(session).toStringList();
         boolean fileAdded = false;
         for (int i = 0; i < cmd.size(); i++) {
             if ("%file".equals(cmd.get(i))) {
@@ -76,7 +76,7 @@ public class RemoteTomcatAppConfigService extends RemoteTomcatServiceBase {
         if (!fileAdded) {
             cmd.add(config.getPath());
         }
-        NutsExecCommand s = session
+        NExecCommand s = session
                 .exec()
                 .setRedirectErrorStream(true)
                 .grabOutputString()
@@ -101,7 +101,7 @@ public class RemoteTomcatAppConfigService extends RemoteTomcatServiceBase {
                     remoteFilePath
             );
         } else {
-            throw new NutsExecutionException(session, NutsMessage.ofCstyle("unable to detect file version of %s.\n%s",localWarPath ,
+            throw new NExecutionException(session, NMsg.ofCstyle("unable to detect file version of %s.\n%s",localWarPath ,
                     s.getOutputString()), 2);
         }
     }
@@ -115,7 +115,7 @@ public class RemoteTomcatAppConfigService extends RemoteTomcatServiceBase {
                 "--app",
                 name,
                 "--version",
-                NutsStringUtils.trim(version)
+                NStringUtils.trim(version)
         );
     }
 
@@ -127,12 +127,12 @@ public class RemoteTomcatAppConfigService extends RemoteTomcatServiceBase {
         return name;
     }
 
-    public RemoteTomcatAppConfigService print(NutsPrintStream out) {
-        NutsSession session = context.getSession();
+    public RemoteTomcatAppConfigService print(NStream out) {
+        NSession session = context.getSession();
         Map<String, Object> m = new LinkedHashMap<>();
         m.put("config-name", getName());
-        m.putAll(NutsElements.of(session).convert(getConfig(), Map.class));
-        NutsObjectFormat.of(context.getSession()).setValue(m).print(out);
+        m.putAll(NElements.of(session).convert(getConfig(), Map.class));
+        NObjectFormat.of(context.getSession()).setValue(m).print(out);
         return this;
     }
 
@@ -143,10 +143,10 @@ public class RemoteTomcatAppConfigService extends RemoteTomcatServiceBase {
 
     }
 
-    public NutsString getBracketsPrefix(String str) {
-        return NutsTexts.of(context.getSession()).ofBuilder()
+    public NString getBracketsPrefix(String str) {
+        return NTexts.of(context.getSession()).ofBuilder()
                 .append("[")
-                .append(str, NutsTextStyle.primary5())
+                .append(str, NTextStyle.primary5())
                 .append("]");
     }
 

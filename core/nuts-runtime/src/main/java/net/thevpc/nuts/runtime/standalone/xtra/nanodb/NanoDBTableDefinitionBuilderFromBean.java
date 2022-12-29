@@ -1,7 +1,7 @@
 package net.thevpc.nuts.runtime.standalone.xtra.nanodb;
 
-import net.thevpc.nuts.NutsBlankable;
-import net.thevpc.nuts.NutsSession;
+import net.thevpc.nuts.NBlankable;
+import net.thevpc.nuts.NSession;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
@@ -16,10 +16,10 @@ public class NanoDBTableDefinitionBuilderFromBean<T> {
     private final Set<String> indexFields = new LinkedHashSet<>();
     private boolean nullable=true;
     private String name;
-    private NutsSession session;
+    private NSession session;
 
 
-    public NanoDBTableDefinitionBuilderFromBean(Class<T> cls, NanoDB db, NutsSession session) {
+    public NanoDBTableDefinitionBuilderFromBean(Class<T> cls, NanoDB db, NSession session) {
         this.cls = cls;
         this.db = db;
         this.session = session;
@@ -70,7 +70,7 @@ public class NanoDBTableDefinitionBuilderFromBean<T> {
 
     public NanoDBTableFile<T> getOrCreate(){
         String name=this.name;
-        if(NutsBlankable.isBlank(name)){
+        if(NBlankable.isBlank(name)){
             name=cls.getSimpleName();
         }
         NanoDBTableFile t = db.findTable(name,session);
@@ -93,7 +93,7 @@ public class NanoDBTableDefinitionBuilderFromBean<T> {
             serializedFields.addAll(currFields.keySet());
         }
         String name=this.name;
-        if(NutsBlankable.isBlank(name)){
+        if(NBlankable.isBlank(name)){
             name=cls.getSimpleName();
         }
         NanoDBSerializerForBean<T> s = new NanoDBSerializerForBean<>(cls, db.getSerializers(), serializedFields);

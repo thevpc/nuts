@@ -1,29 +1,29 @@
 package net.thevpc.nuts.runtime.standalone.io.terminal;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.cmdline.NutsCommandAutoCompleteResolver;
-import net.thevpc.nuts.cmdline.NutsCommandHistory;
-import net.thevpc.nuts.io.NutsPrintStream;
-import net.thevpc.nuts.io.NutsSystemTerminal;
+import net.thevpc.nuts.cmdline.NCommandAutoCompleteResolver;
+import net.thevpc.nuts.cmdline.NCommandHistory;
+import net.thevpc.nuts.io.NStream;
+import net.thevpc.nuts.io.NSystemTerminal;
 import net.thevpc.nuts.runtime.standalone.io.progress.CProgressBar;
-import net.thevpc.nuts.spi.NutsSupportLevelContext;
-import net.thevpc.nuts.spi.NutsSystemTerminalBase;
-import net.thevpc.nuts.spi.NutsSystemTerminalBaseImpl;
-import net.thevpc.nuts.text.NutsTerminalCommand;
-import net.thevpc.nuts.text.NutsTextStyles;
-import net.thevpc.nuts.text.NutsTexts;
+import net.thevpc.nuts.spi.NSupportLevelContext;
+import net.thevpc.nuts.spi.NSystemTerminalBase;
+import net.thevpc.nuts.spi.NSystemTerminalBaseImpl;
+import net.thevpc.nuts.text.NTerminalCommand;
+import net.thevpc.nuts.text.NTextStyles;
+import net.thevpc.nuts.text.NTexts;
 
 import java.io.InputStream;
 
-public abstract class AbstractSystemTerminalAdapter extends NutsSystemTerminalBaseImpl implements NutsSystemTerminal {
+public abstract class AbstractSystemTerminalAdapter extends NSystemTerminalBaseImpl implements NSystemTerminal {
 
     protected CProgressBar progressBar;
-    private NutsWorkspace ws;
+    private NWorkspace ws;
     private String commandHighlighter;
 
     @Override
-    public NutsCommandAutoCompleteResolver getAutoCompleteResolver() {
-        NutsSystemTerminalBase p = getBase();
+    public NCommandAutoCompleteResolver getAutoCompleteResolver() {
+        NSystemTerminalBase p = getBase();
         if (p != null) {
             return p.getAutoCompleteResolver();
         }
@@ -35,8 +35,8 @@ public abstract class AbstractSystemTerminalAdapter extends NutsSystemTerminalBa
     }
 
     @Override
-    public NutsSystemTerminalBase setCommandAutoCompleteResolver(NutsCommandAutoCompleteResolver autoCompleteResolver) {
-        NutsSystemTerminalBase p = getBase();
+    public NSystemTerminalBase setCommandAutoCompleteResolver(NCommandAutoCompleteResolver autoCompleteResolver) {
+        NSystemTerminalBase p = getBase();
         if (p != null) {
             p.setCommandAutoCompleteResolver(autoCompleteResolver);
         }
@@ -44,31 +44,31 @@ public abstract class AbstractSystemTerminalAdapter extends NutsSystemTerminalBa
     }
 
     @Override
-    public NutsSystemTerminalBase setCommandHistory(NutsCommandHistory history) {
+    public NSystemTerminalBase setCommandHistory(NCommandHistory history) {
         getBase().setCommandHistory(history);
         return this;
     }
 
     @Override
-    public NutsCommandHistory getCommandHistory() {
+    public NCommandHistory getCommandHistory() {
         return getBase().getCommandHistory();
     }
 
     @Override
-    public String readLine(NutsMessage message,NutsSession session) {
-        NutsSystemTerminalBase p = getBase();
-        if (p instanceof NutsSystemTerminal) {
-            return ((NutsSystemTerminal) p).readLine(message,session);
+    public String readLine(NMsg message, NSession session) {
+        NSystemTerminalBase p = getBase();
+        if (p instanceof NSystemTerminal) {
+            return ((NSystemTerminal) p).readLine(message,session);
         } else {
             return getBase().readLine(out(), message,session);
         }
     }
 
     @Override
-    public char[] readPassword(NutsMessage message,NutsSession session) {
-        NutsSystemTerminalBase p = getBase();
-        if (p instanceof NutsSystemTerminal) {
-            return ((NutsSystemTerminal) p).readPassword(message,session);
+    public char[] readPassword(NMsg message, NSession session) {
+        NSystemTerminalBase p = getBase();
+        if (p instanceof NSystemTerminal) {
+            return ((NSystemTerminal) p).readPassword(message,session);
         } else {
             return p.readPassword(out(), message,session);
         }
@@ -82,12 +82,12 @@ public abstract class AbstractSystemTerminalAdapter extends NutsSystemTerminalBa
     }
 
     @Override
-    public NutsPrintStream out() {
+    public NStream out() {
         return getOut();
     }
 
     @Override
-    public NutsPrintStream err() {
+    public NStream err() {
         return getErr();
     }
 
@@ -134,22 +134,22 @@ public abstract class AbstractSystemTerminalAdapter extends NutsSystemTerminalBa
 //    }
 
     @Override
-    public NutsSystemTerminal printProgress(float progress, NutsMessage message,NutsSession session) {
+    public NSystemTerminal printProgress(float progress, NMsg message, NSession session) {
         if (session.isProgress()) {
-            if (getBase() instanceof NutsSystemTerminal) {
-                ((NutsSystemTerminal) getBase()).printProgress(progress, message,session);
+            if (getBase() instanceof NSystemTerminal) {
+                ((NSystemTerminal) getBase()).printProgress(progress, message,session);
             } else {
                 getProgressBar(session).printProgress(
                         Float.isNaN(progress) ? -1
                                 : (int) (progress * 100),
-                        NutsTexts.of(session).ofText(message),
+                        NTexts.of(session).ofText(message),
                         err()
                 );
             }
         }
         return this;
     }
-    private CProgressBar getProgressBar(NutsSession session) {
+    private CProgressBar getProgressBar(NSession session) {
         if (progressBar == null) {
             progressBar = CProgressBar.of(session);
         }
@@ -157,17 +157,17 @@ public abstract class AbstractSystemTerminalAdapter extends NutsSystemTerminalBa
     }
 
     @Override
-    public int getSupportLevel(NutsSupportLevelContext criteria) {
+    public int getSupportLevel(NSupportLevelContext criteria) {
         return DEFAULT_SUPPORT;
     }
 
     @Override
-    public String readLine(NutsPrintStream out, NutsMessage message, NutsSession session) {
+    public String readLine(NStream out, NMsg message, NSession session) {
         return getBase().readLine(out, message,session);
     }
 
     @Override
-    public char[] readPassword(NutsPrintStream out, NutsMessage message, NutsSession session) {
+    public char[] readPassword(NStream out, NMsg message, NSession session) {
         return getBase().readPassword(out, message, session);
     }
 
@@ -177,16 +177,16 @@ public abstract class AbstractSystemTerminalAdapter extends NutsSystemTerminalBa
     }
 
     @Override
-    public NutsPrintStream getOut() {
+    public NStream getOut() {
         return getBase().getOut();
     }
 
     @Override
-    public NutsPrintStream getErr() {
+    public NStream getErr() {
         return getBase().getErr();
     }
 
-    public abstract NutsSystemTerminalBase getBase();
+    public abstract NSystemTerminalBase getBase();
 
     @Override
     public String getCommandHighlighter() {
@@ -194,18 +194,18 @@ public abstract class AbstractSystemTerminalAdapter extends NutsSystemTerminalBa
     }
 
     @Override
-    public NutsSystemTerminal setCommandHighlighter(String commandHighlighter) {
+    public NSystemTerminal setCommandHighlighter(String commandHighlighter) {
         this.commandHighlighter = commandHighlighter;
         return this;
     }
 
     @Override
-    public Object run(NutsTerminalCommand command, NutsSession session) {
+    public Object run(NTerminalCommand command, NSession session) {
         return getBase().run(command, session);
     }
 
     @Override
-    public void setStyles(NutsTextStyles styles, NutsSession session) {
+    public void setStyles(NTextStyles styles, NSession session) {
         getBase().setStyles(styles, session);
     }
 }

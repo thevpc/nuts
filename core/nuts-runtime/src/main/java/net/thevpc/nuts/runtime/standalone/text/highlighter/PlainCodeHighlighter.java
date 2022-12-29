@@ -1,16 +1,16 @@
 package net.thevpc.nuts.runtime.standalone.text.highlighter;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.spi.NutsSupportLevelContext;
-import net.thevpc.nuts.spi.NutsComponent;
-import net.thevpc.nuts.text.NutsText;
-import net.thevpc.nuts.text.NutsTexts;
+import net.thevpc.nuts.spi.NSupportLevelContext;
+import net.thevpc.nuts.spi.NComponent;
+import net.thevpc.nuts.text.NText;
+import net.thevpc.nuts.text.NTexts;
 
-public class PlainCodeHighlighter implements NutsCodeHighlighter {
+public class PlainCodeHighlighter implements NCodeHighlighter {
 
-    NutsWorkspace ws;
+    NWorkspace ws;
 
-    public PlainCodeHighlighter(NutsWorkspace ws) {
+    public PlainCodeHighlighter(NWorkspace ws) {
         this.ws = ws;
     }
 
@@ -20,17 +20,17 @@ public class PlainCodeHighlighter implements NutsCodeHighlighter {
     }
 
     @Override
-    public NutsText tokenToText(String text, String nodeType, NutsTexts txt, NutsSession session) {
+    public NText tokenToText(String text, String nodeType, NTexts txt, NSession session) {
         return txt.ofPlain(text);
     }
 
     @Override
-    public NutsText stringToText(String text, NutsTexts txt, NutsSession session) {
+    public NText stringToText(String text, NTexts txt, NSession session) {
         return txt.ofPlain(text);
     }
 
     @Override
-    public int getSupportLevel(NutsSupportLevelContext context) {
+    public int getSupportLevel(NSupportLevelContext context) {
         String s = context.getConstraints();
         if(s==null){
             return DEFAULT_SUPPORT;
@@ -40,10 +40,10 @@ public class PlainCodeHighlighter implements NutsCodeHighlighter {
             case "text":
             case "text/plain":
             {
-                return NutsComponent.DEFAULT_SUPPORT;
+                return NComponent.DEFAULT_SUPPORT;
             }
         }
-        return NutsComponent.NO_SUPPORT;
+        return NComponent.NO_SUPPORT;
     }
 
 }

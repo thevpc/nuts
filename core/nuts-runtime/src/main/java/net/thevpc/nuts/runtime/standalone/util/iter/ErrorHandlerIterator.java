@@ -6,10 +6,10 @@
 package net.thevpc.nuts.runtime.standalone.util.iter;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.elem.NutsElement;
-import net.thevpc.nuts.util.NutsDescribables;
-import net.thevpc.nuts.util.NutsLoggerOp;
-import net.thevpc.nuts.util.NutsLoggerVerb;
+import net.thevpc.nuts.elem.NElement;
+import net.thevpc.nuts.util.NDescribables;
+import net.thevpc.nuts.util.NLoggerOp;
+import net.thevpc.nuts.util.NLoggerVerb;
 
 import java.util.Iterator;
 import java.util.logging.Level;
@@ -18,22 +18,22 @@ import java.util.logging.Level;
  *
  * @author thevpc
  */
-public class ErrorHandlerIterator<T> extends NutsIteratorBase<T> {
+public class ErrorHandlerIterator<T> extends NIteratorBase<T> {
 
     private IteratorErrorHandlerType type;
     private Iterator<T> base;
     private RuntimeException ex;
-    private NutsSession session;
+    private NSession session;
 
-    public ErrorHandlerIterator(IteratorErrorHandlerType type, Iterator<T> base,NutsSession session) {
+    public ErrorHandlerIterator(IteratorErrorHandlerType type, Iterator<T> base, NSession session) {
         this.base = base;
         this.type = type;
         this.session = session;
     }
 
     @Override
-    public NutsElement describe(NutsSession session) {
-        return NutsDescribables.resolveOrDestructAsObject(base, session)
+    public NElement describe(NSession session) {
+        return NDescribables.resolveOrDestructAsObject(base, session)
                 .builder()
                 .set("onError",type.toString().toLowerCase())
                 .build();
@@ -47,10 +47,10 @@ public class ErrorHandlerIterator<T> extends NutsIteratorBase<T> {
             ex = null;
             return v;
         } catch (RuntimeException ex) {
-            NutsLoggerOp.of(IndexFirstIterator.class,session)
-                    .verb(NutsLoggerVerb.WARNING)
+            NLoggerOp.of(IndexFirstIterator.class,session)
+                    .verb(NLoggerVerb.WARNING)
                     .level(Level.FINEST)
-                    .log(NutsMessage.ofCstyle("error evaluating Iterator 'hasNext()' : %s", ex));
+                    .log(NMsg.ofCstyle("error evaluating Iterator 'hasNext()' : %s", ex));
             switch (type) {
                 case IGNORE: {
                     // do nothing

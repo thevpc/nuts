@@ -26,11 +26,11 @@
  */
 package net.thevpc.nuts.toolbox.nsh.cmds.bash;
 
-import net.thevpc.nuts.cmdline.NutsArgument;
-import net.thevpc.nuts.cmdline.NutsCommandLine;
-import net.thevpc.nuts.NutsSession;
-import net.thevpc.nuts.spi.NutsComponentScope;
-import net.thevpc.nuts.spi.NutsComponentScopeType;
+import net.thevpc.nuts.cmdline.NArgument;
+import net.thevpc.nuts.cmdline.NCommandLine;
+import net.thevpc.nuts.NSession;
+import net.thevpc.nuts.spi.NComponentScope;
+import net.thevpc.nuts.spi.NComponentScopeType;
 import net.thevpc.nuts.toolbox.nsh.SimpleJShellBuiltin;
 import net.thevpc.nuts.toolbox.nsh.jshell.JShellExecutionContext;
 
@@ -43,7 +43,7 @@ import java.time.format.DateTimeFormatter;
 /**
  * Created by vpc on 1/7/17.
  */
-@NutsComponentScope(NutsComponentScopeType.WORKSPACE)
+@NComponentScope(NComponentScopeType.WORKSPACE)
 public class DateCommand extends SimpleJShellBuiltin {
 
     public DateCommand() {
@@ -51,10 +51,10 @@ public class DateCommand extends SimpleJShellBuiltin {
     }
 
     @Override
-    protected boolean configureFirst(NutsCommandLine cmdLine, JShellExecutionContext context) {
+    protected boolean configureFirst(NCommandLine cmdLine, JShellExecutionContext context) {
         Options options = context.getOptions();
-        NutsSession session = context.getSession();
-        NutsArgument a = cmdLine.peek().get(session);
+        NSession session = context.getSession();
+        NArgument a = cmdLine.peek().get(session);
         switch(a.key()) {
             case "-d":
             case "--date": {
@@ -207,7 +207,7 @@ public class DateCommand extends SimpleJShellBuiltin {
     }
 
     @Override
-    protected void execBuiltin(NutsCommandLine cmdLine, JShellExecutionContext context) {
+    protected void execBuiltin(NCommandLine cmdLine, JShellExecutionContext context) {
         Options options = context.getOptions();
         ZonedDateTime dateTimeInMyZone = ZonedDateTime.
                 of(LocalDateTime.now(), ZoneId.systemDefault());
@@ -278,7 +278,7 @@ public class DateCommand extends SimpleJShellBuiltin {
     }
 
     @Override
-    protected void initCommandLine(NutsCommandLine commandLine, JShellExecutionContext context) {
+    protected void initCommandLine(NCommandLine commandLine, JShellExecutionContext context) {
         for (String s : new String[]{
                 "-Id", "-Idate",
                 "-Ih", "-Ihours",

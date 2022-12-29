@@ -23,10 +23,10 @@
  */
 package net.thevpc.nuts.toolbox.ndb.util;
 
-import net.thevpc.nuts.NutsBlankable;
-import net.thevpc.nuts.NutsIllegalArgumentException;
-import net.thevpc.nuts.NutsMessage;
-import net.thevpc.nuts.NutsSession;
+import net.thevpc.nuts.NBlankable;
+import net.thevpc.nuts.NIllegalArgumentException;
+import net.thevpc.nuts.NMsg;
+import net.thevpc.nuts.NSession;
 
 /**
  *
@@ -35,15 +35,15 @@ import net.thevpc.nuts.NutsSession;
 public class NdbUtils {
     public static final String SERVER_CONFIG_EXT = ".config";
 
-    public static String checkName(String name, NutsSession session) {
+    public static String checkName(String name, NSession session) {
         if (!isName(name)) {
-            throw new NutsIllegalArgumentException(session, NutsMessage.ofCstyle("invalid name %s", name));
+            throw new NIllegalArgumentException(session, NMsg.ofCstyle("invalid name %s", name));
         }
         return name;
     }
 
     public static boolean isName(String name) {
-        if (NutsBlankable.isBlank(name)) {
+        if (NBlankable.isBlank(name)) {
             return false;
         }
         return name.matches("[a-zA-Z][a-zA-Z0-9_-]*");
@@ -51,7 +51,7 @@ public class NdbUtils {
 
     public static String coalesce(String... cmd) {
         for (String string : cmd) {
-            if (!NutsBlankable.isBlank(string)) {
+            if (!NBlankable.isBlank(string)) {
                 return string;
             }
         }

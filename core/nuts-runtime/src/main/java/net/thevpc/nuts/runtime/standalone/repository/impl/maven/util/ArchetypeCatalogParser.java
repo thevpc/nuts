@@ -1,11 +1,11 @@
 package net.thevpc.nuts.runtime.standalone.repository.impl.maven.util;
 
-import net.thevpc.nuts.elem.NutsElement;
-import net.thevpc.nuts.elem.NutsElements;
-import net.thevpc.nuts.NutsSession;
-import net.thevpc.nuts.runtime.standalone.repository.impl.maven.pom.api.NutsPomId;
+import net.thevpc.nuts.elem.NElement;
+import net.thevpc.nuts.elem.NElements;
+import net.thevpc.nuts.NSession;
+import net.thevpc.nuts.runtime.standalone.repository.impl.maven.pom.api.NPomId;
 import net.thevpc.nuts.runtime.standalone.repository.impl.maven.pom.api.PomIdFilter;
-import net.thevpc.nuts.runtime.standalone.util.iter.NutsIteratorBase;
+import net.thevpc.nuts.runtime.standalone.util.iter.NIteratorBase;
 
 import javax.xml.stream.XMLEventReader;
 import javax.xml.stream.XMLInputFactory;
@@ -21,7 +21,7 @@ import java.util.Stack;
 
 public class ArchetypeCatalogParser {
 
-    public static Iterator<NutsPomId> createArchetypeCatalogIterator(final InputStream stream, final PomIdFilter filter, final boolean autoCloseStream) {
+    public static Iterator<NPomId> createArchetypeCatalogIterator(final InputStream stream, final PomIdFilter filter, final boolean autoCloseStream) {
         return new ArchetypeCatalogPomIdIterator(stream, filter, autoCloseStream);
     }
 
@@ -41,11 +41,11 @@ public class ArchetypeCatalogParser {
         return true;
     }
 
-    private static class ArchetypeCatalogPomIdIterator extends NutsIteratorBase<NutsPomId> {
+    private static class ArchetypeCatalogPomIdIterator extends NIteratorBase<NPomId> {
         private final InputStream stream;
         private final PomIdFilter filter;
         private final boolean autoCloseStream;
-        NutsPomId last;
+        NPomId last;
         InputStream stream2;
         XMLInputFactory factory;
         XMLEventReader eventReader;
@@ -73,8 +73,8 @@ public class ArchetypeCatalogParser {
         }
 
         @Override
-        public NutsElement describe(NutsSession session) {
-            return NutsElements.of(session).ofObject()
+        public NElement describe(NSession session) {
+            return NElements.of(session).ofObject()
                     .set("type","ScanArchetypeCatalog")
                     .set("source",stream.toString())
                     .build();
@@ -114,7 +114,7 @@ public class ArchetypeCatalogParser {
                         }
                         case XMLStreamConstants.END_ELEMENT: {
                             if (isStackPath(nodePath, "archetype-catalog", "archetypes", "archetype")) {
-                                last = new NutsPomId(groupId.toString(), artifactId.toString(), version.toString()
+                                last = new NPomId(groupId.toString(), artifactId.toString(), version.toString()
                                 );
                                 if (filter == null || filter.accept(last)) {
                                     nodePath.pop();
@@ -135,7 +135,7 @@ public class ArchetypeCatalogParser {
         }
 
         @Override
-        public NutsPomId next() {
+        public NPomId next() {
             return last;
         }
 

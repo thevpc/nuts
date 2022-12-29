@@ -1,9 +1,9 @@
 package net.thevpc.nuts.toolbox.nsh.jshell;
 
-import net.thevpc.nuts.cmdline.NutsCommandAutoComplete;
-import net.thevpc.nuts.io.NutsPrintStream;
-import net.thevpc.nuts.NutsSession;
-import net.thevpc.nuts.NutsWorkspace;
+import net.thevpc.nuts.cmdline.NCommandAutoComplete;
+import net.thevpc.nuts.io.NStream;
+import net.thevpc.nuts.NSession;
+import net.thevpc.nuts.NWorkspace;
 
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -28,9 +28,9 @@ public interface JShellContext {
 
     InputStream in();
 
-    NutsPrintStream out();
+    NStream out();
 
-    NutsPrintStream err();
+    NStream err();
 
     JShellVariables vars();
 
@@ -100,15 +100,15 @@ public interface JShellContext {
 
 //    JShellContext copy() ;
 
-    NutsSession getSession();
+    NSession getSession();
 
-    JShellContext setSession(NutsSession session);
+    JShellContext setSession(NSession session);
 
-    NutsWorkspace getWorkspace();
+    NWorkspace getWorkspace();
 
-    NutsCommandAutoComplete getAutoComplete();
+    NCommandAutoComplete getAutoComplete();
 
-    void setAutoComplete(NutsCommandAutoComplete value);
+    void setAutoComplete(NCommandAutoComplete value);
 
     void setFunctionManager(JShellFunctionManager functionManager);
 

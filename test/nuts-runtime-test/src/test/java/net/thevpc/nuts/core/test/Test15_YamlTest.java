@@ -25,8 +25,8 @@ package net.thevpc.nuts.core.test;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.core.test.utils.TestUtils;
-import net.thevpc.nuts.elem.NutsElement;
-import net.thevpc.nuts.elem.NutsElements;
+import net.thevpc.nuts.elem.NElement;
+import net.thevpc.nuts.elem.NElements;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
@@ -36,7 +36,7 @@ import org.junit.jupiter.api.Test;
  */
 public class Test15_YamlTest {
 
-    static NutsSession session;
+    static NSession session;
 
     @BeforeAll
     public static void init() {
@@ -47,9 +47,9 @@ public class Test15_YamlTest {
     @Test
     public void test1() throws Exception {
         String path = "net/thevpc/nuts/core/test/blackbox/yaml1.yml";
-        NutsElements elem = NutsElements.of(session);
-        NutsElement e = elem.setContentType(NutsContentType.YAML)
-                .parse(getClass().getClassLoader().getResource(path), NutsElement.class);
+        NElements elem = NElements.of(session);
+        NElement e = elem.setContentType(NContentType.YAML)
+                .parse(getClass().getClassLoader().getResource(path), NElement.class);
         elem.json().setValue(e)
                 .setCompact(false)
                 .println();

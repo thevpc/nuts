@@ -148,23 +148,23 @@ public class CharQueue implements CharSequence {
         }
     }
 
-    public NutsMatchType skipValue(String value) {
+    public NMatchType skipValue(String value) {
         int count = value.length();
         if (from + count < to) {
             for (int i = 0; i < count; i++) {
                 if (value.charAt(i) != content[from + i]) {
-                    return NutsMatchType.NO_MATCH;
+                    return NMatchType.NO_MATCH;
                 }
             }
             skip(count);
-            return NutsMatchType.FULL_MATCH;
+            return NMatchType.FULL_MATCH;
         }
         for (int i = 0; i < to; i++) {
             if (value.charAt(i) != content[from + i]) {
-                return NutsMatchType.NO_MATCH;
+                return NMatchType.NO_MATCH;
             }
         }
-        return NutsMatchType.PARTIAL_MATCH;
+        return NMatchType.PARTIAL_MATCH;
     }
 
 
@@ -173,7 +173,7 @@ public class CharQueue implements CharSequence {
 //        return cachedPatterns.computeIfAbsent("^" + pattern, Pattern::compile);
     }
 
-    public NutsStringMatchResult peekPattern(String pattern) {
+    public NStringMatchResult peekPattern(String pattern) {
         return peekPattern(pattern, isEOF());
     }
 
@@ -184,11 +184,11 @@ public class CharQueue implements CharSequence {
 
     private static class PatternInfo implements Comparable<PatternInfo> {
         private String pattern;
-        private Consumer<NutsStringMatchResult> action;
-        private Consumer<NutsStringMatchResult> fullMatchAction;
-        private Consumer<NutsStringMatchResult> matchAction;
-        private Consumer<NutsStringMatchResult> partialMatchAction;
-        private NutsStringMatchResult result;
+        private Consumer<NStringMatchResult> action;
+        private Consumer<NStringMatchResult> fullMatchAction;
+        private Consumer<NStringMatchResult> matchAction;
+        private Consumer<NStringMatchResult> partialMatchAction;
+        private NStringMatchResult result;
 
         public PatternInfo(String pattern) {
             this.pattern = pattern;
@@ -215,45 +215,45 @@ public class CharQueue implements CharSequence {
         LinkedHashMap<String, PatternInfo> map = new LinkedHashMap<>();
         boolean fully;
         Runnable noMatch;
-        Consumer<NutsStringMatchResult> match;
-        Consumer<NutsStringMatchResult> fullMatch;
+        Consumer<NStringMatchResult> match;
+        Consumer<NStringMatchResult> fullMatch;
 
-        Consumer<NutsStringMatchResult> partialMatch;
+        Consumer<NStringMatchResult> partialMatch;
 
-        public MultiPattern onMatch(String pattern, Consumer<NutsStringMatchResult> action) {
-            return on(pattern, true, action, NutsMatchType.MATCH);
+        public MultiPattern onMatch(String pattern, Consumer<NStringMatchResult> action) {
+            return on(pattern, true, action, NMatchType.MATCH);
         }
 
-        public MultiPattern onMatch(String pattern, boolean condition, Consumer<NutsStringMatchResult> action) {
-            return on(pattern, condition, action, NutsMatchType.MATCH);
+        public MultiPattern onMatch(String pattern, boolean condition, Consumer<NStringMatchResult> action) {
+            return on(pattern, condition, action, NMatchType.MATCH);
         }
 
-        public MultiPattern onPartialMatch(String pattern, Consumer<NutsStringMatchResult> action) {
-            return on(pattern, true, action, NutsMatchType.PARTIAL_MATCH);
+        public MultiPattern onPartialMatch(String pattern, Consumer<NStringMatchResult> action) {
+            return on(pattern, true, action, NMatchType.PARTIAL_MATCH);
         }
 
-        public MultiPattern onPartialMatch(String pattern, boolean condition, Consumer<NutsStringMatchResult> action) {
-            return on(pattern, condition, action, NutsMatchType.PARTIAL_MATCH);
+        public MultiPattern onPartialMatch(String pattern, boolean condition, Consumer<NStringMatchResult> action) {
+            return on(pattern, condition, action, NMatchType.PARTIAL_MATCH);
         }
 
-        public MultiPattern onFullMatch(String pattern, Consumer<NutsStringMatchResult> action) {
-            return on(pattern, true, action, NutsMatchType.FULL_MATCH);
+        public MultiPattern onFullMatch(String pattern, Consumer<NStringMatchResult> action) {
+            return on(pattern, true, action, NMatchType.FULL_MATCH);
         }
 
-        public MultiPattern onFullMatch(String pattern, boolean condition, Consumer<NutsStringMatchResult> action) {
-            return on(pattern, condition, action, NutsMatchType.FULL_MATCH);
+        public MultiPattern onFullMatch(String pattern, boolean condition, Consumer<NStringMatchResult> action) {
+            return on(pattern, condition, action, NMatchType.FULL_MATCH);
         }
 
-        public MultiPattern on(String pattern, boolean condition, Consumer<NutsStringMatchResult> action) {
+        public MultiPattern on(String pattern, boolean condition, Consumer<NStringMatchResult> action) {
             return on(pattern, condition, action, null);
         }
 
 
-        public MultiPattern on(String pattern, Consumer<NutsStringMatchResult> action) {
+        public MultiPattern on(String pattern, Consumer<NStringMatchResult> action) {
             return on(pattern, true, action, null);
         }
 
-        public MultiPattern on(String pattern, boolean condition, Consumer<NutsStringMatchResult> action, NutsMatchType matchType) {
+        public MultiPattern on(String pattern, boolean condition, Consumer<NStringMatchResult> action, NMatchType matchType) {
             if (action == null) {
                 return this;
             }
@@ -307,19 +307,19 @@ public class CharQueue implements CharSequence {
             return this;
         }
 
-        public MultiPattern onMatch(Consumer<NutsStringMatchResult> match) {
+        public MultiPattern onMatch(Consumer<NStringMatchResult> match) {
             this.match = match;
             return this;
         }
 
-        public MultiPattern onPartialMatch(Consumer<NutsStringMatchResult> partialMatch) {
+        public MultiPattern onPartialMatch(Consumer<NStringMatchResult> partialMatch) {
             this.partialMatch = partialMatch;
             return this;
         }
 
     }
 
-    public NutsStringMatchResult doWithPattern(MultiPattern pattern) {
+    public NStringMatchResult doWithPattern(MultiPattern pattern) {
         List<PatternInfo> all = new ArrayList<>(pattern.map.values());
         if (all.isEmpty()) {
             throw new IllegalArgumentException("missing pattern");
@@ -328,7 +328,7 @@ public class CharQueue implements CharSequence {
             patternInfo.result = peekPattern(patternInfo.pattern, pattern.fully);
         }
         PatternInfo p = all.stream().min(PatternInfo::compareTo).get();
-        NutsStringMatchResult r = p.result;
+        NStringMatchResult r = p.result;
         switch (r.mode()) {
             case NO_MATCH: {
                 if (pattern.noMatch != null) {
@@ -376,46 +376,46 @@ public class CharQueue implements CharSequence {
         return r;
     }
 
-    public NutsStringMatchResult peekPattern(String pattern, boolean fully) {
+    public NStringMatchResult peekPattern(String pattern, boolean fully) {
         Pattern p = pattern(pattern);
         Matcher matcher = p.matcher(this);
         if (matcher.find()) {
             if (matcher.hitEnd() && !fully) {
-                return NutsStringMatchResult.ofMatch(matcher);
+                return NStringMatchResult.ofMatch(matcher);
             } else {
-                return NutsStringMatchResult.ofFullMatch(matcher);
+                return NStringMatchResult.ofFullMatch(matcher);
             }
         } else if (matcher.hitEnd() && !fully) {
-            return NutsStringMatchResult.ofPartialMatch(toString());
+            return NStringMatchResult.ofPartialMatch(toString());
         } else {
-            return NutsStringMatchResult.ofNoMatch();
+            return NStringMatchResult.ofNoMatch();
         }
     }
 
-    public NutsStringMatchResult peekString(String value) {
+    public NStringMatchResult peekString(String value) {
         return peekString(value, isEOF());
     }
 
-    public NutsStringMatchResult peekString(String value, boolean fully) {
+    public NStringMatchResult peekString(String value, boolean fully) {
         int count = value.length();
         if (from + count <= to) {
             for (int i = 0; i < count; i++) {
                 if (value.charAt(i) != content[from + i]) {
-                    return NutsStringMatchResult.ofNoMatch();
+                    return NStringMatchResult.ofNoMatch();
                 }
             }
-            return NutsStringMatchResult.ofFullMatch(value);
+            return NStringMatchResult.ofFullMatch(value);
         }
         if (!fully) {
             int length = length();
             for (int i = 0; i < length; i++) {
                 if (value.charAt(i) != content[from + i]) {
-                    return NutsStringMatchResult.ofNoMatch();
+                    return NStringMatchResult.ofNoMatch();
                 }
             }
-            return NutsStringMatchResult.ofPartialMatch(toString());
+            return NStringMatchResult.ofPartialMatch(toString());
         }
-        return NutsStringMatchResult.ofNoMatch();
+        return NStringMatchResult.ofNoMatch();
     }
 
     public String readBlank() {

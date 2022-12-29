@@ -23,16 +23,16 @@
  */
 package net.thevpc.nuts.runtime.standalone.format.tree;
 
-import net.thevpc.nuts.format.NutsPositionType;
-import net.thevpc.nuts.format.NutsTreeLinkFormat;
+import net.thevpc.nuts.format.NPositionType;
+import net.thevpc.nuts.format.NTreeLinkFormat;
 
 /**
  *
  * @author thevpc
  */
-class AsciiTreeLinkFormat implements NutsTreeLinkFormat {
+class AsciiTreeLinkFormat implements NTreeLinkFormat {
         @Override
-    public String formatMain(NutsPositionType type) {
+    public String formatMain(NPositionType type) {
         switch (type) {
             case FIRST:
                 {
@@ -51,7 +51,7 @@ class AsciiTreeLinkFormat implements NutsTreeLinkFormat {
     }
 
     @Override
-    public String formatChild(NutsPositionType type) {
+    public String formatChild(NPositionType type) {
         String p = "";
         switch (type) {
             case FIRST:

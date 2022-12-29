@@ -7,13 +7,13 @@ package net.thevpc.nuts.core.test;
 
 import net.thevpc.nuts.core.test.utils.TestUtils;
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.io.NutsPrintStream;
-import net.thevpc.nuts.io.NutsSessionTerminal;
-import net.thevpc.nuts.io.NutsSystemTerminal;
-import net.thevpc.nuts.io.NutsTerminalMode;
-import net.thevpc.nuts.text.NutsText;
-import net.thevpc.nuts.text.NutsTextStyle;
-import net.thevpc.nuts.text.NutsTexts;
+import net.thevpc.nuts.io.NStream;
+import net.thevpc.nuts.io.NSessionTerminal;
+import net.thevpc.nuts.io.NSystemTerminal;
+import net.thevpc.nuts.io.NTerminalMode;
+import net.thevpc.nuts.text.NText;
+import net.thevpc.nuts.text.NTextStyle;
+import net.thevpc.nuts.text.NTexts;
 import org.junit.jupiter.api.*;
 
 /**
@@ -21,7 +21,7 @@ import org.junit.jupiter.api.*;
  * @author thevpc
  */
 public class Test13_TerminalModeTest {
-    static NutsSession session;
+    static NSession session;
 
     @BeforeAll
     public static void init() {
@@ -38,43 +38,43 @@ public class Test13_TerminalModeTest {
 //        testMode(session,NutsTerminalMode.INHERITED,NutsTerminalMode.ANSI,Result.FAIL);
 
 //        testMode(session,NutsTerminalMode.FORMATTED,NutsTerminalMode.INHERITED,Result.SUCCESS);
-        testMode(session, NutsTerminalMode.FORMATTED,NutsTerminalMode.FORMATTED,Result.SUCCESS);
-        testMode(session,NutsTerminalMode.FORMATTED,NutsTerminalMode.FILTERED,Result.SUCCESS);
-        testMode(session,NutsTerminalMode.FORMATTED,NutsTerminalMode.ANSI,Result.FAIL);
+        testMode(session, NTerminalMode.FORMATTED, NTerminalMode.FORMATTED,Result.SUCCESS);
+        testMode(session, NTerminalMode.FORMATTED, NTerminalMode.FILTERED,Result.SUCCESS);
+        testMode(session, NTerminalMode.FORMATTED, NTerminalMode.ANSI,Result.FAIL);
 
 //        testMode(session,NutsTerminalMode.FILTERED,NutsTerminalMode.INHERITED,Result.SUCCESS);
-        testMode(session,NutsTerminalMode.FILTERED,NutsTerminalMode.FORMATTED,Result.SUCCESS);
-        testMode(session,NutsTerminalMode.FILTERED,NutsTerminalMode.FILTERED,Result.SUCCESS);
-        testMode(session,NutsTerminalMode.FILTERED,NutsTerminalMode.ANSI,Result.FAIL);
+        testMode(session, NTerminalMode.FILTERED, NTerminalMode.FORMATTED,Result.SUCCESS);
+        testMode(session, NTerminalMode.FILTERED, NTerminalMode.FILTERED,Result.SUCCESS);
+        testMode(session, NTerminalMode.FILTERED, NTerminalMode.ANSI,Result.FAIL);
 
 //        testMode(session,NutsTerminalMode.ANSI,NutsTerminalMode.INHERITED,Result.FAIL);
-        testMode(session,NutsTerminalMode.ANSI,NutsTerminalMode.FORMATTED,Result.FAIL);
-        testMode(session,NutsTerminalMode.ANSI,NutsTerminalMode.FILTERED,Result.FAIL);
+        testMode(session, NTerminalMode.ANSI, NTerminalMode.FORMATTED,Result.FAIL);
+        testMode(session, NTerminalMode.ANSI, NTerminalMode.FILTERED,Result.FAIL);
         // How could we create in a save manner an ansi  sys terminal??
-        testMode(session,NutsTerminalMode.ANSI,NutsTerminalMode.ANSI,Result.FAIL);
+        testMode(session, NTerminalMode.ANSI, NTerminalMode.ANSI,Result.FAIL);
     }
     private enum Result{
         SUCCESS,
         FAIL
     }
 
-    public static void testMode(NutsSession session,NutsTerminalMode systemMode,NutsTerminalMode sessionMode,Result result) {
+    public static void testMode(NSession session, NTerminalMode systemMode, NTerminalMode sessionMode, Result result) {
 
         if(sessionMode!=null) {
             if(result==Result.FAIL){
-                Assertions.assertThrows(NutsIllegalArgumentException.class,()->
+                Assertions.assertThrows(NIllegalArgumentException.class,()->
 
                         {
-                            NutsSystemTerminal systemTerminal = session.config().getSystemTerminal();
-                            NutsPrintStream sysInitMode = systemTerminal.out();
+                            NSystemTerminal systemTerminal = session.config().getSystemTerminal();
+                            NStream sysInitMode = systemTerminal.out();
                             TestUtils.println(
                                     "sys-init="+(sysInitMode.getTerminalMode()==null?"default": sysInitMode.getTerminalMode().id())
                                             +", sys-fixed="+(systemMode==null?"default":systemMode.id())
                                             +" ->"+sessionMode.id());
 
-                            NutsSessionTerminal terminal = NutsSessionTerminal.of(session);
-                            NutsPrintStream out = terminal.out().setTerminalMode(systemMode);
-                            NutsTerminalMode initMode = out.getTerminalMode();
+                            NSessionTerminal terminal = NSessionTerminal.of(session);
+                            NStream out = terminal.out().setTerminalMode(systemMode);
+                            NTerminalMode initMode = out.getTerminalMode();
                             Assertions.assertEquals(systemMode,initMode);
                             TestUtils.println(
                                     "sys-init="+(sysInitMode.getTerminalMode()==null?"default": sysInitMode.getTerminalMode().id())
@@ -95,11 +95,11 @@ public class Test13_TerminalModeTest {
                 );
                 return;
             }else{
-                NutsSystemTerminal systemTerminal = session.config().getSystemTerminal();
-                NutsPrintStream sysInitMode = systemTerminal.out();
-                NutsSessionTerminal terminal = NutsSessionTerminal.of(session);
-                NutsPrintStream out = terminal.out().setTerminalMode(systemMode);
-                NutsTerminalMode initMode = out.getTerminalMode();
+                NSystemTerminal systemTerminal = session.config().getSystemTerminal();
+                NStream sysInitMode = systemTerminal.out();
+                NSessionTerminal terminal = NSessionTerminal.of(session);
+                NStream out = terminal.out().setTerminalMode(systemMode);
+                NTerminalMode initMode = out.getTerminalMode();
                 Assertions.assertEquals(systemMode,initMode);
                 TestUtils.println(
                         "sys-init="+sysInitMode.getTerminalMode().id()
@@ -119,18 +119,18 @@ public class Test13_TerminalModeTest {
 
     @Test
     public void testBuilder(){
-        NutsText c = NutsTexts.of(session).ofCode("java", "public static void main(String[] args){}")
+        NText c = NTexts.of(session).ofCode("java", "public static void main(String[] args){}")
                 .highlight(session);
         session.out().printlnf(c);
 
-        NutsText word_static = c.builder().substring(7, 13);
+        NText word_static = c.builder().substring(7, 13);
         session.out().printlnf(word_static);
         Assertions.assertEquals("##{keyword:static}##\u001E",word_static.toString());
 
-        NutsText portion_npar = c.builder().substring(22, 24);
+        NText portion_npar = c.builder().substring(22, 24);
         session.out().printlnf(portion_npar);
         Assertions.assertEquals("n##{separator:(}##\u001E",portion_npar.toString());
-        NutsText rep=c.builder().replace(23,24,NutsTexts.of(session).ofStyled("()(", NutsTextStyle.danger())).build();
+        NText rep=c.builder().replace(23,24, NTexts.of(session).ofStyled("()(", NTextStyle.danger())).build();
         session.out().printlnf(rep);
         Assertions.assertEquals("##{keyword:public}##\u001E ##{keyword:static}##\u001E ##{keyword:void}##\u001E main##{danger:()(}##\u001EString##{separator:[}##\u001E##{separator:]}##\u001E args##{separator:)}##\u001E##{separator:{}##\u001E##{separator:}}##\u001E",
                 rep.toString());

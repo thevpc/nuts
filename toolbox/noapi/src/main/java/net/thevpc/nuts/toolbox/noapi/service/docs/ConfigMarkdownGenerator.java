@@ -1,16 +1,16 @@
 package net.thevpc.nuts.toolbox.noapi.service.docs;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.elem.NutsElements;
-import net.thevpc.nuts.elem.NutsObjectElement;
-import net.thevpc.nuts.io.NutsPath;
+import net.thevpc.nuts.elem.NElements;
+import net.thevpc.nuts.elem.NObjectElement;
+import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.lib.md.*;
 import net.thevpc.nuts.toolbox.noapi.util.AppMessages;
 import net.thevpc.nuts.toolbox.noapi.util.NoApiUtils;
 import net.thevpc.nuts.toolbox.noapi.service.OpenApiParser;
 import net.thevpc.nuts.toolbox.noapi.model.ConfigVar;
 import net.thevpc.nuts.toolbox.noapi.model.Vars;
-import net.thevpc.nuts.util.NutsMaps;
+import net.thevpc.nuts.util.NMaps;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -19,30 +19,30 @@ import java.util.Map;
 import java.util.Objects;
 
 public class ConfigMarkdownGenerator {
-    private NutsApplicationContext appContext;
+    private NApplicationContext appContext;
     private AppMessages msg;
     private OpenApiParser openApiParser = new OpenApiParser();
     private int maxExampleInlineLength = 80;
 
-    public ConfigMarkdownGenerator(NutsApplicationContext appContext, AppMessages msg) {
+    public ConfigMarkdownGenerator(NApplicationContext appContext, AppMessages msg) {
         this.appContext = appContext;
         this.msg = msg;
     }
 
     public MdDocument createMarkdown(
-            NutsObjectElement configElement,
-            NutsObjectElement apiElement,
-            NutsPath targetFolder,
-            NutsPath sourceFolder, String apiDocumentFileName,
+            NObjectElement configElement,
+            NObjectElement apiElement,
+            NPath targetFolder,
+            NPath sourceFolder, String apiDocumentFileName,
             Map<String, String> vars0, List<String> defaultAdocHeaders) {
-        NutsSession session = appContext.getSession();
-        NutsObjectElement openApiEntries = apiElement.asObject().get(session);
-        NutsElements prv = NutsElements.of(session);
-        NutsObjectElement infoObj = openApiEntries.getObject("info").orElse(prv.ofEmptyObject());
+        NSession session = appContext.getSession();
+        NObjectElement openApiEntries = apiElement.asObject().get(session);
+        NElements prv = NElements.of(session);
+        NObjectElement infoObj = openApiEntries.getObject("info").orElse(prv.ofEmptyObject());
         String apiDocumentTitle = infoObj.getString("title").orNull();
         String apiDocumentVersion = infoObj.getString("version").orNull();
         String configDocumentVersion = configElement.getString("version").orNull();
-        if (NutsBlankable.isBlank(configDocumentVersion)) {
+        if (NBlankable.isBlank(configDocumentVersion)) {
             configDocumentVersion = apiDocumentVersion;
         }
         MdDocumentBuilder doc = new MdDocumentBuilder();
@@ -50,9 +50,9 @@ public class ConfigMarkdownGenerator {
         String targetId = configElement.getString("target-id").get(session);
         String apiDocumentIdFromConfig = configElement.getString("openapi-document-id").get(session);
         String apiDocumentIdFromApi = apiElement.getStringByPath("custom", "openapi-document-id").get(session);
-        if (!NutsBlankable.isBlank(apiDocumentIdFromConfig)) {
+        if (!NBlankable.isBlank(apiDocumentIdFromConfig)) {
             if (!Objects.equals(apiDocumentIdFromConfig, apiDocumentIdFromApi)) {
-                throw new NutsIllegalArgumentException(session, NutsMessage.ofCstyle("invalid api version %s <> %s", apiDocumentIdFromConfig, apiDocumentIdFromApi));
+                throw new NIllegalArgumentException(session, NMsg.ofCstyle("invalid api version %s <> %s", apiDocumentIdFromConfig, apiDocumentIdFromApi));
             }
         }
         List<String> options = new ArrayList<>(defaultAdocHeaders);
@@ -83,18 +83,18 @@ public class ConfigMarkdownGenerator {
         return doc.build();
     }
 
-    private void _fillIntroduction(NutsObjectElement configElement, NutsObjectElement apiElement,
+    private void _fillIntroduction(NObjectElement configElement, NObjectElement apiElement,
                                    List<MdElement> all, Vars vars, String apiDocumentFileName) {
-        NutsSession session = appContext.getSession();
+        NSession session = appContext.getSession();
         all.add(MdFactory.endParagraph());
         all.add(MdFactory.title(2, msg.get("INTRODUCTION").get()));
         all.add(MdFactory.endParagraph());
-        NutsObjectElement info = apiElement.getObject("info").orElse(NutsObjectElement.ofEmpty(session));
+        NObjectElement info = apiElement.getObject("info").orElse(NObjectElement.ofEmpty(session));
         all.add(NoApiUtils.asText(apiElement.getStringByPath("custom", "config", "description").orElse("").trim()));
         all.add(MdFactory.endParagraph());
         String targetName = configElement.getString("target-name").get(session);
         all.add(NoApiUtils.asText(
-                NutsMessage.ofVstyle(msg.get("section.config.introduction.body").get(), NutsMaps.of("name", targetName)
+                NMsg.ofVstyle(msg.get("section.config.introduction.body").get(), NMaps.of("name", targetName)
                 ).toString()));
 
         all.add(MdFactory.endParagraph());
@@ -103,7 +103,7 @@ public class ConfigMarkdownGenerator {
                 msg.get("section.contact.body").get()
         ));
         all.add(MdFactory.endParagraph());
-        NutsObjectElement contact = info.getObject("contact").orElse(NutsObjectElement.ofEmpty(session));
+        NObjectElement contact = info.getObject("contact").orElse(NObjectElement.ofEmpty(session));
         all.add(MdFactory.table()
                 .addColumns(
                         MdFactory.column().setName(msg.get("NAME").get()),
@@ -124,7 +124,7 @@ public class ConfigMarkdownGenerator {
                 msg.get("section.reference-document.body").get()
         ));
 
-        NutsObjectElement infoObj = apiElement.getObject("info").orElse(NutsObjectElement.ofEmpty(session));
+        NObjectElement infoObj = apiElement.getObject("info").orElse(NObjectElement.ofEmpty(session));
         String apiDocumentTitle = infoObj.getString("title").orNull();
         String apiDocumentVersion = infoObj.getString("version").orNull();
 
@@ -146,17 +146,17 @@ public class ConfigMarkdownGenerator {
     }
 
 
-    private void _fillConfigVars(NutsObjectElement entries, List<MdElement> all, Vars vars, List<ConfigVar> configVars) {
-        NutsSession session = appContext.getSession();
+    private void _fillConfigVars(NObjectElement entries, List<MdElement> all, Vars vars, List<ConfigVar> configVars) {
+        NSession session = appContext.getSession();
         String targetName = entries.getString("target-name").get(session);
         String observations = entries.getString("observations").orElse("");
         all.add(MdFactory.endParagraph());
         all.add(MdFactory.title(2, msg.get("CONFIGURATION").get()));
         all.add(NoApiUtils.asText(
-                NutsMessage.ofVstyle(msg.get("section.config.body").get(), NutsMaps.of("name", targetName)
+                NMsg.ofVstyle(msg.get("section.config.body").get(), NMaps.of("name", targetName)
                 ).toString()));
 
-        if (!NutsBlankable.isBlank(observations)) {
+        if (!NBlankable.isBlank(observations)) {
             all.add(MdFactory.newLine());
             all.add(NoApiUtils.asText(vars.format(observations)));
         }
@@ -164,7 +164,7 @@ public class ConfigMarkdownGenerator {
         all.add(MdFactory.endParagraph());
         all.add(MdFactory.title(3, msg.get("CUSTOM_PARAMETER_LIST").get()));
         all.add(NoApiUtils.asText(
-                NutsMessage.ofVstyle(msg.get("section.config.customVars.body").get(), NutsMaps.of("name", targetName)
+                NMsg.ofVstyle(msg.get("section.config.customVars.body").get(), NMaps.of("name", targetName)
                 ).toString()));
         all.add(MdFactory.endParagraph());
 
@@ -172,7 +172,7 @@ public class ConfigMarkdownGenerator {
             all.add(MdFactory.endParagraph());
             all.add(MdFactory.title(4, configVar.getName()));
             all.add(NoApiUtils.asText(configVar.getDescription()));
-            if (!NutsBlankable.isBlank(configVar.getObservations())) {
+            if (!NBlankable.isBlank(configVar.getObservations())) {
                 all.add(MdFactory.endParagraph());
                 all.add(NoApiUtils.asText(configVar.getObservations()));
             }

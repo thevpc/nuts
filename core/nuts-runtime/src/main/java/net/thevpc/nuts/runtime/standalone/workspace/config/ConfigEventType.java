@@ -1,16 +1,16 @@
 package net.thevpc.nuts.runtime.standalone.workspace.config;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.util.NutsEnum;
-import net.thevpc.nuts.util.NutsNameFormat;
-import net.thevpc.nuts.util.NutsStringUtils;
+import net.thevpc.nuts.util.NEnum;
+import net.thevpc.nuts.util.NNameFormat;
+import net.thevpc.nuts.util.NStringUtils;
 
-public enum ConfigEventType  implements NutsEnum {
+public enum ConfigEventType  implements NEnum {
     API, RUNTIME, BOOT, MAIN, SECURITY;
     private String id;
 
     ConfigEventType() {
-        this.id = NutsNameFormat.ID_NAME.format(name());
+        this.id = NNameFormat.ID_NAME.format(name());
     }
 
     @Override
@@ -18,8 +18,8 @@ public enum ConfigEventType  implements NutsEnum {
         return id;
     }
 
-    public static NutsOptional<ConfigEventType> parse(String value) {
-        return NutsStringUtils.parseEnum(value, ConfigEventType.class);
+    public static NOptional<ConfigEventType> parse(String value) {
+        return NStringUtils.parseEnum(value, ConfigEventType.class);
     }
 
 }

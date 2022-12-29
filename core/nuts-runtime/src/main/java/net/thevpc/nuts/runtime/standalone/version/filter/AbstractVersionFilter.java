@@ -24,7 +24,7 @@
 package net.thevpc.nuts.runtime.standalone.version.filter;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.runtime.standalone.util.filters.AbstractNutsFilter;
+import net.thevpc.nuts.runtime.standalone.util.filters.AbstractNFilter;
 import net.thevpc.nuts.runtime.standalone.util.Simplifiable;
 
 import java.util.Collections;
@@ -34,30 +34,30 @@ import java.util.List;
  *
  * @author thevpc
  */
-public abstract class AbstractVersionFilter extends AbstractNutsFilter implements NutsVersionFilter, Simplifiable<NutsVersionFilter> {
+public abstract class AbstractVersionFilter extends AbstractNFilter implements NVersionFilter, Simplifiable<NVersionFilter> {
 
-    public AbstractVersionFilter(NutsSession session, NutsFilterOp op) {
+    public AbstractVersionFilter(NSession session, NFilterOp op) {
         super(session, op);
     }
 
     @Override
-    public NutsVersionFilter or(NutsVersionFilter other) {
-        return or((NutsFilter) other).to(NutsVersionFilter.class);
+    public NVersionFilter or(NVersionFilter other) {
+        return or((NFilter) other).to(NVersionFilter.class);
     }
 
     @Override
-    public NutsVersionFilter and(NutsVersionFilter other) {
-        return and((NutsFilter) other).to(NutsVersionFilter.class);
+    public NVersionFilter and(NVersionFilter other) {
+        return and((NFilter) other).to(NVersionFilter.class);
     }
 
     @Override
-    public NutsVersionFilter neg() {
-        return super.neg().to(NutsVersionFilter.class);
+    public NVersionFilter neg() {
+        return super.neg().to(NVersionFilter.class);
     }
 
     @Override
-    public NutsOptional<List<NutsVersionInterval>> intervals() {
-        return NutsOptional.of(Collections.emptyList());
+    public NOptional<List<NVersionInterval>> intervals() {
+        return NOptional.of(Collections.emptyList());
     }
 
 }

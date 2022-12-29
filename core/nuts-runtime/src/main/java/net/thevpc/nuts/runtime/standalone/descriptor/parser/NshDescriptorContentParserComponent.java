@@ -27,10 +27,10 @@
 package net.thevpc.nuts.runtime.standalone.descriptor.parser;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.DefaultNutsArtifactCall;
+import net.thevpc.nuts.DefaultNArtifactCall;
 import net.thevpc.nuts.runtime.standalone.format.json.JsonStringBuffer;
 import net.thevpc.nuts.spi.*;
-import net.thevpc.nuts.util.NutsStringUtils;
+import net.thevpc.nuts.util.NStringUtils;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -43,14 +43,14 @@ import java.util.Set;
 /**
  * Created by vpc on 1/15/17.
  */
-@NutsComponentScope(NutsComponentScopeType.WORKSPACE)
-public class NshDescriptorContentParserComponent implements NutsDescriptorContentParserComponent {
+@NComponentScope(NComponentScopeType.WORKSPACE)
+public class NshDescriptorContentParserComponent implements NDescriptorContentParserComponent {
 
-    public static NutsId NSH;
+    public static NId NSH;
     public static final Set<String> POSSIBLE_EXT = new HashSet<>(Arrays.asList("nsh", "sh", "bash"));
-    private NutsWorkspace ws;
+    private NWorkspace ws;
     @Override
-    public NutsDescriptor parse(NutsDescriptorContentParserContext parserContext) {
+    public NDescriptor parse(NDescriptorContentParserContext parserContext) {
         if (!POSSIBLE_EXT.contains(parserContext.getFileExtension())) {
             return null;
         }
@@ -62,14 +62,14 @@ public class NshDescriptorContentParserComponent implements NutsDescriptorConten
     }
 
     @Override
-    public int getSupportLevel(NutsSupportLevelContext criteria) {
+    public int getSupportLevel(NSupportLevelContext criteria) {
         if(NSH==null){
-            NutsSession session = criteria.getSession();
-            NSH= NutsId.of("nsh").get(session);
+            NSession session = criteria.getSession();
+            NSH= NId.of("nsh").get(session);
         }
-        NutsDescriptorContentParserContext ctr=criteria.getConstraints(NutsDescriptorContentParserContext.class);
+        NDescriptorContentParserContext ctr=criteria.getConstraints(NDescriptorContentParserContext.class);
         if(ctr!=null) {
-            String e = NutsStringUtils.trim(ctr.getFileExtension());
+            String e = NStringUtils.trim(ctr.getFileExtension());
             switch (e) {
                 case "":
                 case "sh":
@@ -97,7 +97,7 @@ public class NshDescriptorContentParserComponent implements NutsDescriptorConten
         return "";
     }
 
-    private static NutsDescriptor readNutDescriptorFromBashScriptFile(NutsSession session, InputStream file) throws IOException {
+    private static NDescriptor readNutDescriptorFromBashScriptFile(NSession session, InputStream file) throws IOException {
 //        NutsWorkspace ws = session.getWorkspace();
         BufferedReader r = null;
         try {
@@ -151,13 +151,13 @@ public class NshDescriptorContentParserComponent implements NutsDescriptorConten
                 }
             }
             if (comment.toString().trim().isEmpty()) {
-                return new DefaultNutsDescriptorBuilder()
-                        .setId(NutsId.of("temp:nsh#1.0").get(session))
+                return new DefaultNDescriptorBuilder()
+                        .setId(NId.of("temp:nsh#1.0").get(session))
                         .setPackaging("nsh")
-                        .setExecutor(new DefaultNutsArtifactCall(NutsId.of("net.thevpc.nuts.toolbox:nsh").get(session)))
+                        .setExecutor(new DefaultNArtifactCall(NId.of("net.thevpc.nuts.toolbox:nsh").get(session)))
                         .build();
             }
-            return NutsDescriptorParser.of(session).parse(comment.getValidString()).get(session);
+            return NDescriptorParser.of(session).parse(comment.getValidString()).get(session);
         } finally {
             if (r != null) {
                 r.close();

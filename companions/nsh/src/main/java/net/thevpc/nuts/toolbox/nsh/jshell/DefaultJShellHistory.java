@@ -1,6 +1,6 @@
 package net.thevpc.nuts.toolbox.nsh.jshell;
 
-import net.thevpc.nuts.io.NutsPath;
+import net.thevpc.nuts.io.NPath;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -9,15 +9,15 @@ import java.util.List;
 
 public class DefaultJShellHistory extends AbstractJShellHistory {
     private List<String> history = new ArrayList<>();
-    private NutsPath historyFile;
+    private NPath historyFile;
 
     @Override
-    public NutsPath getHistoryFile() {
+    public NPath getHistoryFile() {
         return historyFile;
     }
 
     @Override
-    public DefaultJShellHistory setHistoryFile(NutsPath historyFile) {
+    public DefaultJShellHistory setHistoryFile(NPath historyFile) {
         this.historyFile = historyFile;
         return this;
     }

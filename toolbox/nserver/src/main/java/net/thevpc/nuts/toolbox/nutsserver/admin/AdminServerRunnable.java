@@ -34,35 +34,35 @@ import java.net.Socket;
 import java.util.concurrent.Executor;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.cmdline.NutsCommandLine;
-import net.thevpc.nuts.io.NutsPrintStream;
-import net.thevpc.nuts.io.NutsSessionTerminal;
-import net.thevpc.nuts.io.NutsTerminalMode;
-import net.thevpc.nuts.spi.NutsComponent;
-import net.thevpc.nuts.spi.NutsComponentScope;
-import net.thevpc.nuts.spi.NutsComponentScopeType;
+import net.thevpc.nuts.cmdline.NCommandLine;
+import net.thevpc.nuts.io.NStream;
+import net.thevpc.nuts.io.NSessionTerminal;
+import net.thevpc.nuts.io.NTerminalMode;
+import net.thevpc.nuts.spi.NComponent;
+import net.thevpc.nuts.spi.NComponentScope;
+import net.thevpc.nuts.spi.NComponentScopeType;
 import net.thevpc.nuts.toolbox.nsh.SimpleJShellBuiltin;
 import net.thevpc.nuts.toolbox.nsh.jshell.JShell;
 import net.thevpc.nuts.toolbox.nsh.jshell.JShellExecutionContext;
-import net.thevpc.nuts.toolbox.nutsserver.NutsServer;
+import net.thevpc.nuts.toolbox.nutsserver.NServer;
 
 /**
  *
  * @author thevpc
  */
-public class AdminServerRunnable implements NutsServer, Runnable {
+public class AdminServerRunnable implements NServer, Runnable {
 
     private final String serverId;
     int finalPort;
     int finalBacklog;
     InetAddress address;
     Executor finalExecutor;
-    NutsSession invokerSession;
+    NSession invokerSession;
     boolean running;
     ServerSocket serverSocket = null;
-    NutsSession session = null;
+    NSession session = null;
 
-    public AdminServerRunnable(String serverId, int finalPort, int finalBacklog, InetAddress address, Executor finalExecutor, NutsSession invokerSession, NutsSession session) {
+    public AdminServerRunnable(String serverId, int finalPort, int finalBacklog, InetAddress address, Executor finalExecutor, NSession invokerSession, NSession session) {
         this.serverId = serverId;
         this.finalPort = finalPort;
         this.finalBacklog = finalBacklog;
@@ -118,20 +118,20 @@ public class AdminServerRunnable implements NutsServer, Runnable {
                     finalExecutor.execute(new Runnable() {
                         @Override
                         public void run() {
-                            String[] args = {NutsConstants.Ids.NUTS_SHELL};
+                            String[] args = {NConstants.Ids.NUTS_SHELL};
                             JShell cli = null;
                             try {
                                 try {
                                     PrintStream out = new PrintStream(finalAccept.getOutputStream());
-                                    NutsPrintStream eout = NutsPrintStream.of(out, NutsTerminalMode.FORMATTED, null,invokerSession);
-                                    NutsSession session = invokerSession;
+                                    NStream eout = NStream.of(out, NTerminalMode.FORMATTED, null,invokerSession);
+                                    NSession session = invokerSession;
                                     session.setTerminal(
-                                            NutsSessionTerminal.of(
+                                            NSessionTerminal.of(
                                                     finalAccept.getInputStream(),
                                                     eout,eout, invokerSession)
                                     );
                                     cli = new JShell(session,
-                                            NutsIdResolver.of(invokerSession)
+                                            NIdResolver.of(invokerSession)
                                                     .resolveId(AdminServerRunnable.class),
                                             serverId,new String[0]);
                                     cli.getRootContext().builtins().unset("connect");
@@ -160,13 +160,13 @@ public class AdminServerRunnable implements NutsServer, Runnable {
         return "Nuts Admin Server{" + "running=" + running + '}';
     }
 
-    @NutsComponentScope(NutsComponentScopeType.WORKSPACE)
+    @NComponentScope(NComponentScopeType.WORKSPACE)
     private static class StopServerBuiltin2 extends SimpleJShellBuiltin {
 
         private final ServerSocket socket;
 
         public StopServerBuiltin2(ServerSocket finalServerSocket) {
-            super("stop-server", NutsComponent.DEFAULT_SUPPORT,Options.class);
+            super("stop-server", NComponent.DEFAULT_SUPPORT,Options.class);
             this.socket = finalServerSocket;
         }
 
@@ -175,19 +175,19 @@ public class AdminServerRunnable implements NutsServer, Runnable {
         }
 
         @Override
-        protected boolean configureFirst(NutsCommandLine commandLine, JShellExecutionContext context) {
+        protected boolean configureFirst(NCommandLine commandLine, JShellExecutionContext context) {
             return false;
         }
 
         @Override
-        protected void execBuiltin(NutsCommandLine commandLine, JShellExecutionContext context) {
+        protected void execBuiltin(NCommandLine commandLine, JShellExecutionContext context) {
             if (context.getSession().isPlainTrace()) {
                 context.getSession().out().println("Stopping Server ...");
             }
             try {
                 socket.close();
             } catch (IOException ex) {
-                throw new NutsExecutionException(context.getSession(), NutsMessage.ofCstyle("%s",ex), ex, 100);
+                throw new NExecutionException(context.getSession(), NMsg.ofCstyle("%s",ex), ex, 100);
             }
         }
     }

@@ -6,11 +6,11 @@
 package net.thevpc.nuts.runtime.standalone.util.iter;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.elem.NutsElement;
-import net.thevpc.nuts.elem.NutsElements;
-import net.thevpc.nuts.util.NutsDescribables;
-import net.thevpc.nuts.util.NutsLoggerOp;
-import net.thevpc.nuts.util.NutsLoggerVerb;
+import net.thevpc.nuts.elem.NElement;
+import net.thevpc.nuts.elem.NElements;
+import net.thevpc.nuts.util.NDescribables;
+import net.thevpc.nuts.util.NLoggerOp;
+import net.thevpc.nuts.util.NLoggerVerb;
 
 import java.util.Iterator;
 import java.util.logging.Level;
@@ -18,28 +18,28 @@ import java.util.logging.Level;
 /**
  * @author thevpc
  */
-public class IndexFirstIterator<T> extends NutsIteratorBase<T> {
+public class IndexFirstIterator<T> extends NIteratorBase<T> {
 
     private Iterator<T> index;
     private Iterator<T> other;
     private long readFromIndex;
     private T nextItem;
     private boolean hasNextItem;
-    private NutsSession session;
+    private NSession session;
 
-    public IndexFirstIterator(Iterator<T> index, Iterator<T> other,NutsSession session) {
+    public IndexFirstIterator(Iterator<T> index, Iterator<T> other, NSession session) {
         this.index = index;
         this.other = other;
         this.session = session;
     }
 
     @Override
-    public NutsElement describe(NutsSession session) {
-        return NutsElements.of(session)
+    public NElement describe(NSession session) {
+        return NElements.of(session)
                 .ofObject()
                 .set("type","IndexFirst")
-                .set("index", NutsDescribables.resolveOrDestruct(index, session))
-                .set("nonIndex", NutsDescribables.resolveOrDestruct(other, session))
+                .set("index", NDescribables.resolveOrDestruct(index, session))
+                .set("nonIndex", NDescribables.resolveOrDestruct(other, session))
                 .build()
                 ;
     }
@@ -56,7 +56,7 @@ public class IndexFirstIterator<T> extends NutsIteratorBase<T> {
                         readFromIndex++;
                     }
                     return v;
-                } catch (NutsIndexerNotAccessibleException ex) {
+                } catch (NIndexerNotAccessibleException ex) {
                     index = null;
                 }
             } else {
@@ -65,11 +65,11 @@ public class IndexFirstIterator<T> extends NutsIteratorBase<T> {
                         return true;
                     }
                     index = null;
-                } catch (NutsIndexerNotAccessibleException ex) {
-                    NutsLoggerOp.of(IndexFirstIterator.class,session)
-                            .verb(NutsLoggerVerb.WARNING)
+                } catch (NIndexerNotAccessibleException ex) {
+                    NLoggerOp.of(IndexFirstIterator.class,session)
+                            .verb(NLoggerVerb.WARNING)
                             .level(Level.FINEST)
-                            .log(NutsMessage.ofCstyle("error evaluating Iterator 'hasNext()' : %s", ex));
+                            .log(NMsg.ofCstyle("error evaluating Iterator 'hasNext()' : %s", ex));
                     other = null;
                     return false;
                 }

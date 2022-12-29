@@ -1,24 +1,24 @@
 package net.thevpc.nuts.runtime.standalone.io.terminal;
 
-import net.thevpc.nuts.NutsSession;
-import net.thevpc.nuts.text.NutsTextStyles;
-import net.thevpc.nuts.spi.NutsSystemTerminalBase;
+import net.thevpc.nuts.NSession;
+import net.thevpc.nuts.text.NTextStyles;
+import net.thevpc.nuts.spi.NSystemTerminalBase;
 
 public class DefaultSystemTerminal extends AbstractSystemTerminalAdapter {
 
-    private final NutsSystemTerminalBase base;
+    private final NSystemTerminalBase base;
 
-    public DefaultSystemTerminal(NutsSystemTerminalBase base) {
+    public DefaultSystemTerminal(NSystemTerminalBase base) {
         this.base = base;
     }
 
     @Override
-    public NutsSystemTerminalBase getBase() {
+    public NSystemTerminalBase getBase() {
         return base;
     }
 
     @Override
-    public void setStyles(NutsTextStyles styles, NutsSession session) {
+    public void setStyles(NTextStyles styles, NSession session) {
         base.setStyles(styles,session);
     }
 }

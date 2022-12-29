@@ -23,9 +23,9 @@
  */
 package net.thevpc.nuts.core.test;
 
-import net.thevpc.nuts.runtime.standalone.xtra.expr.NutsToken;
+import net.thevpc.nuts.runtime.standalone.xtra.expr.NToken;
 import net.thevpc.nuts.util.*;
-import net.thevpc.nuts.NutsSession;
+import net.thevpc.nuts.NSession;
 import net.thevpc.nuts.core.test.utils.TestUtils;
 import net.thevpc.nuts.runtime.standalone.xtra.expr.StreamTokenizerExt;
 import org.junit.jupiter.api.*;
@@ -36,24 +36,24 @@ import java.io.StringReader;
  * @author thevpc
  */
 public class Test19_ExprTest {
-    static NutsSession session;
+    static NSession session;
 
     @BeforeAll
     public static void init() {
         session = TestUtils.openNewTestWorkspace();
     }
 
-    private boolean accept(NutsExprOpDeclaration d, String pattern) {
-        NutsExprOpType f;
+    private boolean accept(NExprOpDeclaration d, String pattern) {
+        NExprOpType f;
         String n;
         if (pattern.startsWith("prefix:")) {
-            f = NutsExprOpType.PREFIX;
+            f = NExprOpType.PREFIX;
             n = pattern.substring("prefix:".length());
         } else if (pattern.startsWith("postfix:")) {
-            f = NutsExprOpType.POSTFIX;
+            f = NExprOpType.POSTFIX;
             n = pattern.substring("postfix:".length());
         } else if (pattern.startsWith("infix:")) {
-            f = NutsExprOpType.INFIX;
+            f = NExprOpType.INFIX;
             n = pattern.substring("infix:".length());
         } else {
             return false;
@@ -62,7 +62,7 @@ public class Test19_ExprTest {
 
     }
 
-    private boolean accept(NutsExprOpDeclaration d, String... patterns) {
+    private boolean accept(NExprOpDeclaration d, String... patterns) {
         for (String pattern : patterns) {
             if (accept(d, pattern)) {
                 return true;
@@ -71,10 +71,10 @@ public class Test19_ExprTest {
         return false;
     }
 
-    private void _retain(NutsExprDeclarations expr, String... patterns) {
-        if (expr instanceof NutsExprMutableDeclarations) {
-            NutsExprMutableDeclarations d = (NutsExprMutableDeclarations) expr;
-            for (NutsExprOpDeclaration operator : d.getOperators()) {
+    private void _retain(NExprDeclarations expr, String... patterns) {
+        if (expr instanceof NExprMutableDeclarations) {
+            NExprMutableDeclarations d = (NExprMutableDeclarations) expr;
+            for (NExprOpDeclaration operator : d.getOperators()) {
                 if (!accept(operator, patterns)) {
                     d.removeDeclaration(operator);
                 }
@@ -84,40 +84,40 @@ public class Test19_ExprTest {
 
     @Test
     public void test1() throws Exception {
-        NutsExprDeclarations expr = NutsExpr.of(session).newDeclarations(true);
+        NExprDeclarations expr = NExpr.of(session).newDeclarations(true);
         _retain(expr, "infix:+");
-        NutsExprNode n = expr.parse("1+2+3").get();
+        NExprNode n = expr.parse("1+2+3").get();
         TestUtils.println(n);
         Assertions.assertEquals("1 + 2 + 3", n.toString());
     }
 
     @Test
     public void test2() throws Exception {
-        NutsExprDeclarations expr = NutsExpr.of(session).newDeclarations(true);
+        NExprDeclarations expr = NExpr.of(session).newDeclarations(true);
 //        _retain(expr,"infix:+");
-        NutsExprNode n = expr.parse("1+2*3").get();
+        NExprNode n = expr.parse("1+2*3").get();
         TestUtils.println(n);
         Assertions.assertEquals("1 + 2 * 3", n.toString());
     }
 
     @Test
     public void test3() throws Exception {
-        NutsExprDeclarations expr = NutsExpr.of(session).newDeclarations(true);
+        NExprDeclarations expr = NExpr.of(session).newDeclarations(true);
 //        _retain(expr,"infix:+");
-        NutsExprNode n = expr.parse("a").get();
-        Assertions.assertEquals(NutsExprNodeType.WORD, n.getType());
+        NExprNode n = expr.parse("a").get();
+        Assertions.assertEquals(NExprNodeType.WORD, n.getType());
         TestUtils.println(n);
     }
 
     @Test
     public void test4() throws Exception {
-        NutsExprDeclarations expr = NutsExpr.of(session).newDeclarations(true);
+        NExprDeclarations expr = NExpr.of(session).newDeclarations(true);
 //        _retain(expr,"infix:+");
-        NutsExprNode n = expr.parse("(a&b)").get();
+        NExprNode n = expr.parse("(a&b)").get();
         n.toString();
-        Assertions.assertEquals(NutsExprNodeType.OPERATOR, n.getType());
+        Assertions.assertEquals(NExprNodeType.OPERATOR, n.getType());
         Assertions.assertEquals("(", n.getName());
-        Assertions.assertEquals(NutsExprNodeType.OPERATOR, n.getChildren().get(0).getType());
+        Assertions.assertEquals(NExprNodeType.OPERATOR, n.getChildren().get(0).getType());
         Assertions.assertEquals("&", n.getChildren().get(0).getName());
         TestUtils.println(n);
     }
@@ -125,12 +125,12 @@ public class Test19_ExprTest {
 
     @Test
     public void test5() throws Exception {
-        NutsExprDeclarations expr = NutsExpr.of(session).newDeclarations(true);
+        NExprDeclarations expr = NExpr.of(session).newDeclarations(true);
 //        _retain(expr,"infix:+");
-        NutsExprNode n = expr.parse("(a&&b)").get();
-        Assertions.assertEquals(NutsExprNodeType.OPERATOR, n.getType());
+        NExprNode n = expr.parse("(a&&b)").get();
+        Assertions.assertEquals(NExprNodeType.OPERATOR, n.getType());
         Assertions.assertEquals("(", n.getName());
-        Assertions.assertEquals(NutsExprNodeType.OPERATOR, n.getChildren().get(0).getType());
+        Assertions.assertEquals(NExprNodeType.OPERATOR, n.getChildren().get(0).getType());
         Assertions.assertEquals("&&", n.getChildren().get(0).getName());
         TestUtils.println(n);
     }
@@ -154,7 +154,7 @@ public class Test19_ExprTest {
     public void testTokenize2() {
         StreamTokenizerExt st = new StreamTokenizerExt(new StringReader("<<"), session);
         int i = st.nextToken();
-        Assertions.assertEquals(NutsToken.TT_LEFT_SHIFT, i);
+        Assertions.assertEquals(NToken.TT_LEFT_SHIFT, i);
         System.out.println(i);
     }
 

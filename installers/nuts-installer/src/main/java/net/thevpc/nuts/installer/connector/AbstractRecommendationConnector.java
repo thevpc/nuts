@@ -1,7 +1,7 @@
 package net.thevpc.nuts.installer.connector;
 
 import com.google.gson.Gson;
-import net.thevpc.nuts.installer.model.NutsId;
+import net.thevpc.nuts.installer.model.NId;
 import net.thevpc.nuts.installer.util.Utils;
 
 import java.io.Reader;
@@ -54,7 +54,7 @@ public abstract class AbstractRecommendationConnector implements RecommendationC
     @Override
     public Map getRecommendations(RequestQueryInfo ri) {
         validateRequest(ri);
-        NutsId id = new NutsId(ri.q.getId());
+        NId id = new NId(ri.q.getId());
         String name="installer-recommendations.json";
         String url = "/repo/" + id.getGroupId().replace('.', '/')
                 + '/' + id.getArtifactId()

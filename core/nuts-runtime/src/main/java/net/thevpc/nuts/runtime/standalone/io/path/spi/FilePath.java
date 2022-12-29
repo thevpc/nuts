@@ -1,17 +1,17 @@
 package net.thevpc.nuts.runtime.standalone.io.path.spi;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.cmdline.NutsCommandLine;
-import net.thevpc.nuts.format.NutsTreeVisitResult;
-import net.thevpc.nuts.format.NutsTreeVisitor;
+import net.thevpc.nuts.cmdline.NCommandLine;
+import net.thevpc.nuts.format.NTreeVisitResult;
+import net.thevpc.nuts.format.NTreeVisitor;
 import net.thevpc.nuts.io.*;
 import net.thevpc.nuts.runtime.standalone.io.util.CoreIOUtils;
-import net.thevpc.nuts.runtime.standalone.session.NutsSessionUtils;
-import net.thevpc.nuts.spi.NutsFormatSPI;
-import net.thevpc.nuts.spi.NutsPathFactory;
-import net.thevpc.nuts.spi.NutsPathSPI;
-import net.thevpc.nuts.text.NutsTexts;
-import net.thevpc.nuts.util.NutsStream;
+import net.thevpc.nuts.runtime.standalone.session.NSessionUtils;
+import net.thevpc.nuts.spi.NFormatSPI;
+import net.thevpc.nuts.spi.NPathFactory;
+import net.thevpc.nuts.spi.NPathSPI;
+import net.thevpc.nuts.text.NTexts;
+import net.thevpc.nuts.util.NStream;
 
 import java.io.File;
 import java.io.IOException;
@@ -24,67 +24,67 @@ import java.nio.file.attribute.*;
 import java.time.Instant;
 import java.util.*;
 
-public class FilePath implements NutsPathSPI {
+public class FilePath implements NPathSPI {
 
     private final Path value;
-    private final NutsSession session;
+    private final NSession session;
 
-    public FilePath(Path value, NutsSession session) {
+    public FilePath(Path value, NSession session) {
         if (value == null) {
-            throw new NutsIllegalArgumentException(session, NutsMessage.ofPlain("invalid null value"));
+            throw new NIllegalArgumentException(session, NMsg.ofPlain("invalid null value"));
         }
         this.value = value;
         this.session = session;
     }
 
-    private NutsPath fastPath(Path p, NutsSession s) {
-        return NutsPath.of(new FilePath(p, s), s);
+    private NPath fastPath(Path p, NSession s) {
+        return NPath.of(new FilePath(p, s), s);
     }
 
     @Override
-    public NutsStream<NutsPath> list(NutsPath basePath) {
+    public NStream<NPath> list(NPath basePath) {
         if (Files.isDirectory(value)) {
             try {
-                return NutsStream.of(Files.list(value).map(x -> fastPath(x, getSession())),
+                return NStream.of(Files.list(value).map(x -> fastPath(x, getSession())),
                         getSession());
             } catch (IOException e) {
                 //
             }
         }
-        return NutsStream.ofEmpty(getSession());
+        return NStream.ofEmpty(getSession());
     }
 
     @Override
-    public NutsFormatSPI formatter(NutsPath basePath) {
+    public NFormatSPI formatter(NPath basePath) {
         return new MyPathFormat(this);
     }
 
     @Override
-    public String getName(NutsPath basePath) {
+    public String getName(NPath basePath) {
         Path a = value.getFileName();
         return a == null ? null : a.toString();
     }
 
     @Override
-    public String getProtocol(NutsPath basePath) {
+    public String getProtocol(NPath basePath) {
         return "";
     }
 
     @Override
-    public NutsPath resolve(NutsPath basePath, String path) {
-        if (NutsBlankable.isBlank(path)) {
+    public NPath resolve(NPath basePath, String path) {
+        if (NBlankable.isBlank(path)) {
             return fastPath(value, getSession());
         }
         try {
             return fastPath(value.resolve(path), getSession());
         } catch (Exception ex) {
             //always return an instance if is invalid
-            return NutsPath.of(value + getSep() + path, getSession());
+            return NPath.of(value + getSep() + path, getSession());
         }
     }
 
     @Override
-    public NutsPath resolve(NutsPath basePath, NutsPath path) {
+    public NPath resolve(NPath basePath, NPath path) {
         if (path == null) {
             return fastPath(value, getSession());
         }
@@ -99,7 +99,7 @@ public class FilePath implements NutsPathSPI {
     }
 
     @Override
-    public NutsPath resolveSibling(NutsPath basePath, String path) {
+    public NPath resolveSibling(NPath basePath, String path) {
         if (path == null) {
             return getParent(basePath);
         }
@@ -111,14 +111,14 @@ public class FilePath implements NutsPathSPI {
         } catch (Exception e) {
             Path p = value.getParent();
             if (p == null) {
-                return NutsPath.of(path, session);
+                return NPath.of(path, session);
             }
             return fastPath(p, session).resolve(path);
         }
     }
 
     @Override
-    public NutsPath resolveSibling(NutsPath basePath, NutsPath path) {
+    public NPath resolveSibling(NPath basePath, NPath path) {
         if (path == null) {
             return getParent(basePath);
         }
@@ -126,57 +126,57 @@ public class FilePath implements NutsPathSPI {
     }
 
     @Override
-    public NutsPath toCompressedForm(NutsPath basePath) {
+    public NPath toCompressedForm(NPath basePath) {
         return null;
     }
 
     @Override
-    public URL toURL(NutsPath basePath) {
+    public URL toURL(NPath basePath) {
         try {
             return value.toUri().toURL();
         } catch (MalformedURLException e) {
-            throw new NutsIOException(session, e);
+            throw new NIOException(session, e);
         }
     }
 
     @Override
-    public Path toFile(NutsPath basePath) {
+    public Path toFile(NPath basePath) {
         return value;
     }
 
     @Override
-    public boolean isSymbolicLink(NutsPath basePath) {
+    public boolean isSymbolicLink(NPath basePath) {
         PosixFileAttributes a = getUattr();
         return a != null && a.isSymbolicLink();
     }
 
     @Override
-    public boolean isOther(NutsPath basePath) {
+    public boolean isOther(NPath basePath) {
         PosixFileAttributes a = getUattr();
         return a != null && a.isOther();
     }
 
     @Override
-    public boolean isDirectory(NutsPath basePath) {
+    public boolean isDirectory(NPath basePath) {
         return Files.isDirectory(value);
     }
 
     @Override
-    public boolean isLocal(NutsPath basePath) {
+    public boolean isLocal(NPath basePath) {
         //how about NFS?
         return true;
     }
 
     @Override
-    public boolean isRegularFile(NutsPath basePath) {
+    public boolean isRegularFile(NPath basePath) {
         return Files.isRegularFile(value);
     }
 
-    public boolean exists(NutsPath basePath) {
+    public boolean exists(NPath basePath) {
         return Files.exists(value);
     }
 
-    public long getContentLength(NutsPath basePath) {
+    public long getContentLength(NPath basePath) {
         try {
             return Files.size(value);
         } catch (IOException e) {
@@ -185,48 +185,48 @@ public class FilePath implements NutsPathSPI {
     }
 
     @Override
-    public String getContentEncoding(NutsPath basePath) {
+    public String getContentEncoding(NPath basePath) {
         return null;
     }
 
     @Override
-    public String getContentType(NutsPath basePath) {
-        return NutsContentTypes.of(session).probeContentType(value);
+    public String getContentType(NPath basePath) {
+        return NContentTypes.of(session).probeContentType(value);
     }
 
     @Override
-    public String getLocation(NutsPath basePath) {
+    public String getLocation(NPath basePath) {
         return value.toString();
     }
 
-    public InputStream getInputStream(NutsPath basePath) {
+    public InputStream getInputStream(NPath basePath, NPathOption... options) {
         try {
             return Files.newInputStream(value);
         } catch (IOException e) {
-            throw new NutsIOException(session, e);
+            throw new NIOException(session, e);
         }
     }
 
-    public OutputStream getOutputStream(NutsPath basePath) {
+    public OutputStream getOutputStream(NPath basePath, NPathOption... options) {
         try {
             return Files.newOutputStream(value);
         } catch (IOException e) {
-            throw new NutsIOException(session, e);
+            throw new NIOException(session, e);
         }
     }
 
     @Override
-    public NutsSession getSession() {
+    public NSession getSession() {
         return session;
     }
 
     @Override
-    public void delete(NutsPath basePath, boolean recurse) {
+    public void delete(NPath basePath, boolean recurse) {
         if (Files.isRegularFile(value)) {
             try {
                 Files.delete(value);
             } catch (IOException e) {
-                throw new NutsIOException(getSession(), e);
+                throw new NIOException(getSession(), e);
             }
         } else if (Files.isDirectory(value)) {
             if (recurse) {
@@ -235,31 +235,31 @@ public class FilePath implements NutsPathSPI {
                 try {
                     Files.delete(value);
                 } catch (IOException e) {
-                    throw new NutsIOException(getSession(), e);
+                    throw new NIOException(getSession(), e);
                 }
             }
         } else {
-            throw new NutsIOException(getSession(), NutsMessage.ofCstyle("unable to delete path %s", value));
+            throw new NIOException(getSession(), NMsg.ofCstyle("unable to delete path %s", value));
         }
     }
 
     @Override
-    public void mkdir(boolean parents, NutsPath basePath) {
+    public void mkdir(boolean parents, NPath basePath) {
         if (Files.isRegularFile(value)) {
-            throw new NutsIOException(getSession(), NutsMessage.ofCstyle("unable to create folder out of regular file %s", value));
+            throw new NIOException(getSession(), NMsg.ofCstyle("unable to create folder out of regular file %s", value));
         } else if (Files.isDirectory(value)) {
             return;
         } else {
             try {
                 Files.createDirectories(value);
             } catch (IOException e) {
-                throw new NutsIOException(getSession(), NutsMessage.ofCstyle("unable to create folders %s", value));
+                throw new NIOException(getSession(), NMsg.ofCstyle("unable to create folders %s", value));
             }
         }
     }
 
     @Override
-    public Instant getLastModifiedInstant(NutsPath basePath) {
+    public Instant getLastModifiedInstant(NPath basePath) {
         FileTime r = null;
         try {
             r = Files.getLastModifiedTime(value);
@@ -273,7 +273,7 @@ public class FilePath implements NutsPathSPI {
     }
 
     @Override
-    public Instant getLastAccessInstant(NutsPath basePath) {
+    public Instant getLastAccessInstant(NPath basePath) {
         BasicFileAttributes a = getBattr();
         if (a != null) {
             FileTime t = a.lastAccessTime();
@@ -283,7 +283,7 @@ public class FilePath implements NutsPathSPI {
     }
 
     @Override
-    public Instant getCreationInstant(NutsPath basePath) {
+    public Instant getCreationInstant(NPath basePath) {
         BasicFileAttributes a = getBattr();
         if (a != null) {
             FileTime t = a.creationTime();
@@ -293,7 +293,7 @@ public class FilePath implements NutsPathSPI {
     }
 
     @Override
-    public NutsPath getParent(NutsPath basePath) {
+    public NPath getParent(NPath basePath) {
         Path p = value.getParent();
         if (p == null) {
             return null;
@@ -302,7 +302,7 @@ public class FilePath implements NutsPathSPI {
     }
 
     @Override
-    public NutsPath toAbsolute(NutsPath basePath, NutsPath rootPath) {
+    public NPath toAbsolute(NPath basePath, NPath rootPath) {
         if (isAbsolute(basePath)) {
             return basePath;
         }
@@ -313,17 +313,17 @@ public class FilePath implements NutsPathSPI {
     }
 
     @Override
-    public NutsPath normalize(NutsPath basePath) {
+    public NPath normalize(NPath basePath) {
         return fastPath(value.normalize(), session);
     }
 
     @Override
-    public boolean isAbsolute(NutsPath basePath) {
+    public boolean isAbsolute(NPath basePath) {
         return value.isAbsolute();
     }
 
     @Override
-    public String owner(NutsPath basePath) {
+    public String owner(NPath basePath) {
         PosixFileAttributes a = getUattr();
         if (a != null) {
             UserPrincipal o = a.owner();
@@ -333,7 +333,7 @@ public class FilePath implements NutsPathSPI {
     }
 
     @Override
-    public String group(NutsPath basePath) {
+    public String group(NPath basePath) {
         PosixFileAttributes a = getUattr();
         if (a != null) {
             GroupPrincipal o = a.group();
@@ -343,48 +343,48 @@ public class FilePath implements NutsPathSPI {
     }
 
     @Override
-    public Set<NutsPathPermission> getPermissions(NutsPath basePath) {
-        Set<NutsPathPermission> p = new LinkedHashSet<>();
+    public Set<NPathPermission> getPermissions(NPath basePath) {
+        Set<NPathPermission> p = new LinkedHashSet<>();
         PosixFileAttributes a = getUattr();
         File file = value.toFile();
         if (file.canRead()) {
-            p.add(NutsPathPermission.CAN_READ);
+            p.add(NPathPermission.CAN_READ);
         }
         if (file.canWrite()) {
-            p.add(NutsPathPermission.CAN_WRITE);
+            p.add(NPathPermission.CAN_WRITE);
         }
         if (file.canExecute()) {
-            p.add(NutsPathPermission.CAN_EXECUTE);
+            p.add(NPathPermission.CAN_EXECUTE);
         }
         if (a != null) {
             for (PosixFilePermission permission : a.permissions()) {
                 switch (permission) {
                     case OWNER_READ: {
-                        p.add(NutsPathPermission.OWNER_READ);
+                        p.add(NPathPermission.OWNER_READ);
                     }
                     case OWNER_WRITE: {
-                        p.add(NutsPathPermission.OWNER_WRITE);
+                        p.add(NPathPermission.OWNER_WRITE);
                     }
                     case OWNER_EXECUTE: {
-                        p.add(NutsPathPermission.OWNER_EXECUTE);
+                        p.add(NPathPermission.OWNER_EXECUTE);
                     }
                     case GROUP_READ: {
-                        p.add(NutsPathPermission.GROUP_READ);
+                        p.add(NPathPermission.GROUP_READ);
                     }
                     case GROUP_WRITE: {
-                        p.add(NutsPathPermission.GROUP_WRITE);
+                        p.add(NPathPermission.GROUP_WRITE);
                     }
                     case GROUP_EXECUTE: {
-                        p.add(NutsPathPermission.GROUP_EXECUTE);
+                        p.add(NPathPermission.GROUP_EXECUTE);
                     }
                     case OTHERS_READ: {
-                        p.add(NutsPathPermission.OTHERS_READ);
+                        p.add(NPathPermission.OTHERS_READ);
                     }
                     case OTHERS_WRITE: {
-                        p.add(NutsPathPermission.OTHERS_WRITE);
+                        p.add(NPathPermission.OTHERS_WRITE);
                     }
                     case OTHERS_EXECUTE: {
-                        p.add(NutsPathPermission.OTHERS_EXECUTE);
+                        p.add(NPathPermission.OTHERS_EXECUTE);
                     }
                 }
             }
@@ -393,26 +393,26 @@ public class FilePath implements NutsPathSPI {
     }
 
     @Override
-    public void setPermissions(NutsPath basePath, NutsPathPermission... permissions) {
-        Set<NutsPathPermission> add = new LinkedHashSet<>(Arrays.asList(permissions));
-        Set<NutsPathPermission> remove = new LinkedHashSet<>(EnumSet.allOf(NutsPathPermission.class));
+    public void setPermissions(NPath basePath, NPathPermission... permissions) {
+        Set<NPathPermission> add = new LinkedHashSet<>(Arrays.asList(permissions));
+        Set<NPathPermission> remove = new LinkedHashSet<>(EnumSet.allOf(NPathPermission.class));
         remove.addAll(add);
-        setPermissions(add.toArray(new NutsPathPermission[0]), true);
+        setPermissions(add.toArray(new NPathPermission[0]), true);
 //        setPermissions(remove.toArray(new NutsPathPermission[0]),false);
     }
 
     @Override
-    public void addPermissions(NutsPath basePath, NutsPathPermission... permissions) {
+    public void addPermissions(NPath basePath, NPathPermission... permissions) {
         setPermissions(permissions, true);
     }
 
     @Override
-    public void removePermissions(NutsPath basePath, NutsPathPermission... permissions) {
+    public void removePermissions(NPath basePath, NPathPermission... permissions) {
         //
     }
 
     @Override
-    public boolean isName(NutsPath basePath) {
+    public boolean isName(NPath basePath) {
         if (value.getNameCount() > 1) {
             return false;
         }
@@ -437,21 +437,21 @@ public class FilePath implements NutsPathSPI {
     }
 
     @Override
-    public int getPathCount(NutsPath basePath) {
+    public int getPathCount(NPath basePath) {
         return value.getNameCount();
     }
 
     @Override
-    public boolean isRoot(NutsPath basePath) {
+    public boolean isRoot(NPath basePath) {
         return value.getNameCount() == 0;
     }
 
     @Override
-    public NutsPath getRoot(NutsPath basePath) {
+    public NPath getRoot(NPath basePath) {
         if (isRoot(basePath)) {
             return basePath;
         }
-        NutsPath parent = basePath.getParent();
+        NPath parent = basePath.getParent();
         if (parent == null) {
             return null;
         }
@@ -459,7 +459,7 @@ public class FilePath implements NutsPathSPI {
     }
 
     @Override
-    public NutsStream<NutsPath> walk(NutsPath basePath, int maxDepth, NutsPathOption[] options) {
+    public NStream<NPath> walk(NPath basePath, int maxDepth, NPathOption[] options) {
         FileVisitOption[] fileOptions = Arrays.stream(options)
                 .map(x -> {
                     if (x == null) {
@@ -473,22 +473,22 @@ public class FilePath implements NutsPathSPI {
                 }).filter(Objects::nonNull).toArray(FileVisitOption[]::new);
         if (Files.isDirectory(value)) {
             try {
-                return NutsStream.of(Files.walk(value, maxDepth, fileOptions).map(x -> fastPath(x, getSession())),
+                return NStream.of(Files.walk(value, maxDepth, fileOptions).map(x -> fastPath(x, getSession())),
                         getSession());
             } catch (IOException e) {
                 //
             }
         }
-        return NutsStream.ofEmpty(getSession());
+        return NStream.ofEmpty(getSession());
     }
 
     @Override
-    public NutsPath subpath(NutsPath basePath, int beginIndex, int endIndex) {
+    public NPath subpath(NPath basePath, int beginIndex, int endIndex) {
         return fastPath(value.subpath(beginIndex, endIndex), getSession());
     }
 
     @Override
-    public List<String> getItems(NutsPath basePath) {
+    public List<String> getItems(NPath basePath) {
         int nameCount = value.getNameCount();
         String[] names = new String[nameCount];
         for (int i = 0; i < nameCount; i++) {
@@ -498,13 +498,13 @@ public class FilePath implements NutsPathSPI {
     }
 
     @Override
-    public void moveTo(NutsPath basePath, NutsPath other, NutsPathOption... options) {
+    public void moveTo(NPath basePath, NPath other, NPathOption... options) {
         Path f = other.asFile();
         if (f != null) {
             try {
                 Files.move(value, f, StandardCopyOption.REPLACE_EXISTING);
             } catch (IOException e) {
-                throw new NutsIOException(session, e);
+                throw new NIOException(session, e);
             }
         } else {
             copyTo(basePath, other, options);
@@ -513,14 +513,14 @@ public class FilePath implements NutsPathSPI {
     }
 
     @Override
-    public void copyTo(NutsPath basePath, NutsPath other, NutsPathOption... options) {
-        NutsCp.of(session).from(fastPath(value, session)).to(other).run();
+    public void copyTo(NPath basePath, NPath other, NPathOption... options) {
+        NCp.of(session).from(fastPath(value, session)).to(other).run();
     }
 
     @Override
-    public void walkDfs(NutsPath basePath, NutsTreeVisitor<NutsPath> visitor, int maxDepth, NutsPathOption... options) {
+    public void walkDfs(NPath basePath, NTreeVisitor<NPath> visitor, int maxDepth, NPathOption... options) {
         Set<FileVisitOption> foptions = new HashSet<>();
-        for (NutsPathOption option : options) {
+        for (NPathOption option : options) {
             switch (option) {
                 case FOLLOW_LINKS: {
                     foptions.add(FileVisitOption.FOLLOW_LINKS);
@@ -550,7 +550,7 @@ public class FilePath implements NutsPathSPI {
                     return fileVisitResult(visitor.postVisitDirectory(fastPath(dir, session), exc, session));
                 }
 
-                private FileVisitResult fileVisitResult(NutsTreeVisitResult z) {
+                private FileVisitResult fileVisitResult(NTreeVisitResult z) {
                     if (z != null) {
                         switch (z) {
                             case CONTINUE:
@@ -567,7 +567,7 @@ public class FilePath implements NutsPathSPI {
                 }
             });
         } catch (IOException e) {
-            throw new NutsIOException(getSession(), e);
+            throw new NIOException(getSession(), e);
         }
     }
 
@@ -623,11 +623,11 @@ public class FilePath implements NutsPathSPI {
         return null;
     }
 
-    public boolean setPermissions(NutsPathPermission[] permissions, boolean f) {
+    public boolean setPermissions(NPathPermission[] permissions, boolean f) {
         int count = 0;
-        permissions = permissions == null ? new NutsPathPermission[0]
-                : Arrays.stream(permissions).filter(Objects::nonNull).distinct().toArray(NutsPathPermission[]::new);
-        for (NutsPathPermission permission : permissions) {
+        permissions = permissions == null ? new NPathPermission[0]
+                : Arrays.stream(permissions).filter(Objects::nonNull).distinct().toArray(NPathPermission[]::new);
+        for (NPathPermission permission : permissions) {
             switch (permission) {
                 case CAN_READ: {
                     boolean b = value.toFile().setReadable(f);
@@ -718,7 +718,7 @@ public class FilePath implements NutsPathSPI {
         return count == permissions.length;
     }
 
-    private static class MyPathFormat implements NutsFormatSPI {
+    private static class MyPathFormat implements NFormatSPI {
 
         private final FilePath p;
 
@@ -731,37 +731,37 @@ public class FilePath implements NutsPathSPI {
             return "path";
         }
 
-        public NutsString asFormattedString() {
-            return NutsTexts.of(p.getSession()).ofText(p.value);
+        public NString asFormattedString() {
+            return NTexts.of(p.getSession()).ofText(p.value);
         }
 
         @Override
-        public void print(NutsPrintStream out) {
+        public void print(net.thevpc.nuts.io.NStream out) {
             out.print(asFormattedString());
         }
 
         @Override
-        public boolean configureFirst(NutsCommandLine commandLine) {
+        public boolean configureFirst(NCommandLine commandLine) {
             return false;
         }
     }
 
-    public static class FilePathFactory implements NutsPathFactory {
-        NutsWorkspace ws;
+    public static class FilePathFactory implements NPathFactory {
+        NWorkspace ws;
 
-        public FilePathFactory(NutsWorkspace ws) {
+        public FilePathFactory(NWorkspace ws) {
             this.ws = ws;
         }
 
         @Override
-        public NutsSupported<NutsPathSPI> createPath(String path, NutsSession session, ClassLoader classLoader) {
-            NutsSessionUtils.checkSession(ws, session);
+        public NSupported<NPathSPI> createPath(String path, NSession session, ClassLoader classLoader) {
+            NSessionUtils.checkSession(ws, session);
             try {
                 if (URLPath.MOSTLY_URL_PATTERN.matcher(path).matches()) {
                     return null;
                 }
                 Path value = Paths.get(path);
-                return NutsSupported.of(10, () -> new FilePath(value, session));
+                return NSupported.of(10, () -> new FilePath(value, session));
             } catch (Exception ex) {
                 //ignore
             }
@@ -770,7 +770,7 @@ public class FilePath implements NutsPathSPI {
     }
 
     @Override
-    public NutsPath toRelativePath(NutsPath basePath, NutsPath parentPath) {
+    public NPath toRelativePath(NPath basePath, NPath parentPath) {
         String child = basePath.getLocation();
         String parent = parentPath.getLocation();
         if (child.startsWith(parent)) {
@@ -778,7 +778,7 @@ public class FilePath implements NutsPathSPI {
             if (child.startsWith("/") || child.startsWith("\\")) {
                 child = child.substring(1);
             }
-            return NutsPath.of(child, session);
+            return NPath.of(child, session);
         }
         return null;
     }

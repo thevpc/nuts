@@ -6,39 +6,39 @@
 package net.thevpc.nuts.runtime.standalone.format;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.cmdline.NutsCommandLine;
-import net.thevpc.nuts.cmdline.NutsCommandLineConfigurable;
-import net.thevpc.nuts.io.NutsPrintStream;
-import net.thevpc.nuts.runtime.standalone.session.NutsSessionUtils;
-import net.thevpc.nuts.runtime.standalone.util.NutsConfigurableHelper;
-import net.thevpc.nuts.runtime.standalone.workspace.NutsWorkspaceUtils;
+import net.thevpc.nuts.cmdline.NCommandLine;
+import net.thevpc.nuts.cmdline.NCommandLineConfigurable;
+import net.thevpc.nuts.io.NStream;
+import net.thevpc.nuts.runtime.standalone.session.NSessionUtils;
+import net.thevpc.nuts.runtime.standalone.util.NConfigurableHelper;
+import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceUtils;
 
 /**
  *
  * @author thevpc
  */
-public abstract class DefaultFormatBase0<T> implements NutsCommandLineConfigurable {
+public abstract class DefaultFormatBase0<T> implements NCommandLineConfigurable {
 
-    private final NutsWorkspace workspace;
-    private NutsSession session;
+    private final NWorkspace workspace;
+    private NSession session;
     private final String name;
     private boolean ntf=true;
 
-    public DefaultFormatBase0(NutsWorkspace workspace, String name) {
+    public DefaultFormatBase0(NWorkspace workspace, String name) {
         this.workspace = workspace;
         this.name = name;
     }
-    public DefaultFormatBase0(NutsSession session, String name) {
+    public DefaultFormatBase0(NSession session, String name) {
         this.session = session;
         this.workspace = session.getWorkspace();
         this.name = name;
     }
 
     protected void checkSession() {
-        NutsSessionUtils.checkSession(getWorkspace(), getSession());
+        NSessionUtils.checkSession(getWorkspace(), getSession());
     }
 
-    public NutsWorkspace getWorkspace() {
+    public NWorkspace getWorkspace() {
         return workspace;
     }
 
@@ -53,7 +53,7 @@ public abstract class DefaultFormatBase0<T> implements NutsCommandLineConfigurab
 //        return getValidPrintWriter(null);
 //    }
 
-    public NutsPrintStream getValidPrintStream(NutsPrintStream out) {
+    public NStream getValidPrintStream(NStream out) {
         checkSession();
         if (out == null) {
             out = getSession().getTerminal().getOut();
@@ -61,17 +61,17 @@ public abstract class DefaultFormatBase0<T> implements NutsCommandLineConfigurab
         return out;
     }
 
-    public NutsPrintStream getValidPrintStream() {
+    public NStream getValidPrintStream() {
         return getValidPrintStream(null);
     }
 
-    public NutsSession getSession() {
+    public NSession getSession() {
         return session;
     }
 
-    public T setSession(NutsSession session) {
+    public T setSession(NSession session) {
         //should copy because will change outputformat
-        session = NutsWorkspaceUtils.bindSession(workspace, session);
+        session = NWorkspaceUtils.bindSession(workspace, session);
         this.session =session == null ? null : session.copy();
         return (T) this;
     }
@@ -82,7 +82,7 @@ public abstract class DefaultFormatBase0<T> implements NutsCommandLineConfigurab
 
     /**
      * configure the current command with the given arguments. This is an
-     * override of the {@link NutsCommandLineConfigurable#configure(boolean, java.lang.String...)
+     * override of the {@link NCommandLineConfigurable#configure(boolean, java.lang.String...)
      * }
      * to help return a more specific return type;
      *
@@ -91,7 +91,7 @@ public abstract class DefaultFormatBase0<T> implements NutsCommandLineConfigurab
      */
     @Override
     public T configure(boolean skipUnsupported, String... args) {
-        return NutsConfigurableHelper.configure(this, getSession(), skipUnsupported, args, getName());
+        return NConfigurableHelper.configure(this, getSession(), skipUnsupported, args, getName());
     }
 
     /**
@@ -103,8 +103,8 @@ public abstract class DefaultFormatBase0<T> implements NutsCommandLineConfigurab
      * @return {@code this} instance
      */
     @Override
-    public final boolean configure(boolean skipUnsupported, NutsCommandLine commandLine) {
-        return NutsConfigurableHelper.configure(this, getSession(), skipUnsupported, commandLine);
+    public final boolean configure(boolean skipUnsupported, NCommandLine commandLine) {
+        return NConfigurableHelper.configure(this, getSession(), skipUnsupported, commandLine);
     }
 
     public boolean isNtf() {
@@ -117,7 +117,7 @@ public abstract class DefaultFormatBase0<T> implements NutsCommandLineConfigurab
     }
 
     @Override
-    public void configureLast(NutsCommandLine commandLine) {
+    public void configureLast(NCommandLine commandLine) {
         if (!configureFirst(commandLine)) {
             commandLine.throwUnexpectedArgument();
         }

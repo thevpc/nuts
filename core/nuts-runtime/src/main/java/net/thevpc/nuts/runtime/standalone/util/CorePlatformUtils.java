@@ -26,9 +26,9 @@
 package net.thevpc.nuts.runtime.standalone.util;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.io.NutsSessionTerminal;
+import net.thevpc.nuts.io.NSessionTerminal;
 import net.thevpc.nuts.runtime.standalone.util.filters.CoreFilterUtils;
-import net.thevpc.nuts.util.NutsRef;
+import net.thevpc.nuts.util.NRef;
 
 import java.io.*;
 import java.util.*;
@@ -56,7 +56,7 @@ public class CorePlatformUtils {
 //        SUPPORTED_ARCH_ALIASES.put("i386", "x86");
         boolean _e = new String("ø".getBytes()).equals("ø");
         if (_e) {
-            switch (NutsOsFamily.getCurrent()) {
+            switch (NOsFamily.getCurrent()) {
                 case LINUX:
                 case MACOS: {
                     //okkay
@@ -79,16 +79,16 @@ public class CorePlatformUtils {
         SUPPORTS_UTF_ENCODING = _e;
     }
 
-    private static String buildUnixOsNameAndVersion(String name, NutsSession session) {
+    private static String buildUnixOsNameAndVersion(String name, NSession session) {
         Map<String, String> m = getOsDistMap(session);
         String v = m.get("osVersion");
-        if (NutsBlankable.isBlank(v)) {
+        if (NBlankable.isBlank(v)) {
             return name;
         }
         return name + "#" + v;
     }
 
-    public static Map<String, String> getOsDistMap(NutsSession session) {
+    public static Map<String, String> getOsDistMap(NSession session) {
         String property = System.getProperty("os.name").toLowerCase();
         if (property.startsWith("linux")) {
             if (LOADED_OS_DIST_MAP == null) {
@@ -126,7 +126,7 @@ public class CorePlatformUtils {
      * @param session session
      * @return os distribution map including keys distId, distName, distVersion,osVersion
      */
-    public static Map<String, String> getOsDistMapLinux(NutsSession session) {
+    public static Map<String, String> getOsDistMapLinux(NSession session) {
         File dir = new File("/etc/");
         List<File> fileList = new ArrayList<>();
         if (dir.exists()) {
@@ -166,7 +166,7 @@ public class CorePlatformUtils {
             CoreStringUtils.clear(osVersion);
             try {
                 osVersion.append(
-                        session.exec().setExecutionType(NutsExecutionType.SYSTEM)
+                        session.exec().setExecutionType(NExecutionType.SYSTEM)
                                 .setCommand("uname", "-r")
                                 .setRedirectErrorStream(true)
                                 .grabOutputString()
@@ -210,7 +210,7 @@ public class CorePlatformUtils {
                                     disName = v;
                                     break;
                             }
-                            if (!NutsBlankable.isBlank(disVersion) && !NutsBlankable.isBlank(disName) && !NutsBlankable.isBlank(disId)) {
+                            if (!NBlankable.isBlank(disVersion) && !NBlankable.isBlank(disName) && !NBlankable.isBlank(disId)) {
                                 break;
                             }
                         }
@@ -228,14 +228,14 @@ public class CorePlatformUtils {
         return m;
     }
 
-    public static String getPlatformOsDist(NutsSession session) {
+    public static String getPlatformOsDist(NSession session) {
         String osInfo = getPlatformOs(session);
         if (osInfo.startsWith("linux")) {
             Map<String, String> m = getOsDistMap(session);
             String distId = m.get("distId");
             String distVersion = m.get("distVersion");
-            if (!NutsBlankable.isBlank(distId)) {
-                if (!NutsBlankable.isBlank(distId)) {
+            if (!NBlankable.isBlank(distId)) {
+                if (!NBlankable.isBlank(distId)) {
                     return distId + "#" + distVersion;
                 } else {
                     return distId;
@@ -251,7 +251,7 @@ public class CorePlatformUtils {
      * @param ws workspace
      * @return platform os name
      */
-    public static String getPlatformOs(NutsSession ws) {
+    public static String getPlatformOs(NSession ws) {
         String property = System.getProperty("os.name").toLowerCase();
         if (property.startsWith("linux")) {
             return buildUnixOsNameAndVersion("linux", ws);
@@ -315,14 +315,14 @@ public class CorePlatformUtils {
     }
 
 
-    public static boolean checkAcceptCondition(NutsEnvCondition condition, boolean currentVM, NutsSession session) {
+    public static boolean checkAcceptCondition(NEnvCondition condition, boolean currentVM, NSession session) {
         if (!CoreFilterUtils.acceptCondition(condition, currentVM, session)) {
-            throw new NutsIllegalArgumentException(session, NutsMessage.ofCstyle("environment %s is rejected by %s", currentVM, condition));
+            throw new NIllegalArgumentException(session, NMsg.ofCstyle("environment %s is rejected by %s", currentVM, condition));
         }
         return true;
     }
 
-    public static boolean isLoadedClassPath(File file, ClassLoader classLoader, NutsSessionTerminal terminal) {
+    public static boolean isLoadedClassPath(File file, ClassLoader classLoader, NSessionTerminal terminal) {
         try {
             if (file != null) {
                 ZipFile zipFile = null;
@@ -363,15 +363,15 @@ public class CorePlatformUtils {
         return false;
     }
 
-    public static <T> T runWithinLoader(Callable<T> callable, ClassLoader loader, NutsSession session) {
-        NutsRef<T> ref = new NutsRef<>();
+    public static <T> T runWithinLoader(Callable<T> callable, ClassLoader loader, NSession session) {
+        NRef<T> ref = new NRef<>();
         Thread thread = new Thread(() -> {
             try {
                 ref.set(callable.call());
             } catch (RuntimeException ex) {
                 throw ex;
             } catch (Exception ex) {
-                throw new NutsException(session, NutsMessage.ofPlain("run with loader failed"), ex);
+                throw new NException(session, NMsg.ofPlain("run with loader failed"), ex);
             }
         }, "RunWithinLoader");
         thread.setContextClassLoader(loader);
@@ -379,7 +379,7 @@ public class CorePlatformUtils {
         try {
             thread.join();
         } catch (InterruptedException ex) {
-            throw new NutsException(session, NutsMessage.ofPlain("run with loader failed"), ex);
+            throw new NException(session, NMsg.ofPlain("run with loader failed"), ex);
         }
         return ref.get();
     }

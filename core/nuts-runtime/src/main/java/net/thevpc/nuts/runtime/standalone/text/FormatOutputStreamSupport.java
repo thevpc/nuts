@@ -2,18 +2,18 @@ package net.thevpc.nuts.runtime.standalone.text;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.standalone.io.outputstream.OutputHelper;
-import net.thevpc.nuts.runtime.standalone.text.parser.AbstractNutsTextNodeParserDefaults;
-import net.thevpc.nuts.spi.NutsSystemTerminalBase;
+import net.thevpc.nuts.runtime.standalone.text.parser.AbstractNTextNodeParserDefaults;
+import net.thevpc.nuts.spi.NSystemTerminalBase;
 import net.thevpc.nuts.text.*;
 
 public class FormatOutputStreamSupport {
-    private NutsTextNodeWriter nodeWriter;
-    private NutsTextParser parser;
+    private NTextNodeWriter nodeWriter;
+    private NTextParser parser;
     private boolean formatEnabled = true;
-    private NutsSession session;
-    private NutsWorkspace ws;
-    private NutsTextTransformConfig writeConfiguration = new NutsTextTransformConfig();
-    private NutsTextVisitor nutsTextNodeVisitor = node -> {
+    private NSession session;
+    private NWorkspace ws;
+    private NTextTransformConfig writeConfiguration = new NTextTransformConfig();
+    private NTextVisitor nutsTextNodeVisitor = node -> {
         nodeWriter.writeNode(node);
     };
 
@@ -21,21 +21,21 @@ public class FormatOutputStreamSupport {
 
     }
 
-    public FormatOutputStreamSupport(OutputHelper rawOutput, NutsSession session, NutsSystemTerminalBase term,boolean filtered) {
+    public FormatOutputStreamSupport(OutputHelper rawOutput, NSession session, NSystemTerminalBase term, boolean filtered) {
         this.session = session;
         this.ws = session.getWorkspace();
-        this.parser = AbstractNutsTextNodeParserDefaults.createDefault(session);
-        this.nodeWriter = new NutsTextNodeWriterRenderer(rawOutput, session, term)
+        this.parser = AbstractNTextNodeParserDefaults.createDefault(session);
+        this.nodeWriter = new NTextNodeWriterRenderer(rawOutput, session, term)
                 .setWriteConfiguration(writeConfiguration.setFiltered(false));
         this.writeConfiguration.setFiltered(filtered);
     }
 
-    public NutsTextParser getParser() {
+    public NTextParser getParser() {
         return parser;
     }
 
-    public FormatOutputStreamSupport setParser(NutsTextParser parser) {
-        this.parser = parser == null ? NutsTexts.of(session).parser() : parser;
+    public FormatOutputStreamSupport setParser(NTextParser parser) {
+        this.parser = parser == null ? NTexts.of(session).parser() : parser;
         return this;
     }
 
@@ -57,9 +57,9 @@ public class FormatOutputStreamSupport {
         if (!isFormatEnabled()) {
             nodeWriter.writeRaw(buf, off, len);
         } else {
-            parser.parseIncremental(buf, off, len, new NutsTextVisitor() {
+            parser.parseIncremental(buf, off, len, new NTextVisitor() {
                 @Override
-                public void visit(NutsText node) {
+                public void visit(NText node) {
 //                    JOptionPane.showMessageDialog(null,node.getType()+":"+node);
                     nutsTextNodeVisitor.visit(node);
                 }
@@ -71,9 +71,9 @@ public class FormatOutputStreamSupport {
         if (!isFormatEnabled()) {
             nodeWriter.writeRaw(buf, off, len);
         } else {
-            parser.parseIncremental(buf, off, len, new NutsTextVisitor() {
+            parser.parseIncremental(buf, off, len, new NTextVisitor() {
                 @Override
-                public void visit(NutsText node) {
+                public void visit(NText node) {
 //                    JOptionPane.showMessageDialog(null,node.getType()+":"+node);
                     nutsTextNodeVisitor.visit(node);
                 }

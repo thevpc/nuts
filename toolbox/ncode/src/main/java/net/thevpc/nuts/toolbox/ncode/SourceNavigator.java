@@ -5,7 +5,7 @@
  */
 package net.thevpc.nuts.toolbox.ncode;
 
-import net.thevpc.nuts.NutsSession;
+import net.thevpc.nuts.NSession;
 
 import java.util.List;
 
@@ -14,7 +14,7 @@ import java.util.List;
  */
 public class SourceNavigator {
 
-    public static void navigate(Source s, SourceFilter filter, SourceProcessor processor, NutsSession session, List<Object> results) {
+    public static void navigate(Source s, SourceFilter filter, SourceProcessor processor, NSession session, List<Object> results) {
         try {
             navigate0(s, filter, processor, session, results);
         } catch (ExitException ex) {
@@ -22,7 +22,7 @@ public class SourceNavigator {
         }
     }
 
-    public static void navigate0(Source s, SourceFilter filter, SourceProcessor processor, NutsSession session, List<Object> results) {
+    public static void navigate0(Source s, SourceFilter filter, SourceProcessor processor, NSession session, List<Object> results) {
         if (filter == null || filter.accept(s)) {
 //            System.out.println("ACCEPT "+s);
             Object a = processor.process(s, session);

@@ -3,9 +3,9 @@ package net.thevpc.nuts.runtime.standalone.text.parser.v1;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.standalone.util.collections.EvictingCharQueue;
 import net.thevpc.nuts.runtime.standalone.util.StringBuilder2;
-import net.thevpc.nuts.runtime.standalone.text.parser.DefaultNutsTextPlain;
+import net.thevpc.nuts.runtime.standalone.text.parser.DefaultNTextPlain;
 import net.thevpc.nuts.runtime.standalone.util.CoreStringUtils;
-import net.thevpc.nuts.runtime.standalone.util.NutsDebugString;
+import net.thevpc.nuts.runtime.standalone.util.NDebugString;
 import net.thevpc.nuts.text.*;
 
 import java.util.ArrayList;
@@ -21,20 +21,20 @@ public class StyledParserStep extends ParserStep {
     int sharpsStartCount = 0;
     int sharpsEndCount = 0;
     CurState curState = CurState.EMPTY;
-    List<NutsText> children = new ArrayList<>();
+    List<NText> children = new ArrayList<>();
     StringBuilder2 name = new StringBuilder2();
     StringBuilder2 content = new StringBuilder2();
     boolean lineStart;
 //    List<ParserStep> children = new ArrayList<>();
     int maxSize = 10;
-    private NutsSession session;
+    private NSession session;
     private EvictingCharQueue charQueue = new EvictingCharQueue(5);
-    private DefaultNutsTextNodeParser.State state;
+    private DefaultNTextNodeParser.State state;
     private StyledParserStepCommandParser parseHelper = new StyledParserStepCommandParser();
     private boolean wasEscape;
     private boolean exitOnBrace;
 
-    public StyledParserStep(char c, boolean lineStart, NutsSession session, DefaultNutsTextNodeParser.State state,boolean exitOnBrace) {
+    public StyledParserStep(char c, boolean lineStart, NSession session, DefaultNTextNodeParser.State state, boolean exitOnBrace) {
         switch (c) {
             case '#': {
                 curState = CurState.SHARP;
@@ -52,7 +52,7 @@ public class StyledParserStep extends ParserStep {
         this.exitOnBrace = exitOnBrace;
     }
 
-    public StyledParserStep(String c, boolean lineStart, NutsSession session, DefaultNutsTextNodeParser.State state,boolean exitOnBrace) {
+    public StyledParserStep(String c, boolean lineStart, NSession session, DefaultNTextNodeParser.State state, boolean exitOnBrace) {
         this.session = session;
         if (c.charAt(0) == '#') {
             curState = CurState.SHARP;
@@ -69,9 +69,9 @@ public class StyledParserStep extends ParserStep {
         this.exitOnBrace = exitOnBrace;
     }
 
-    public void consume(char c, DefaultNutsTextNodeParser.State state, boolean wasNewLine) {
+    public void consume(char c, DefaultNTextNodeParser.State state, boolean wasNewLine) {
         charQueue.add(c);
-        NutsTexts text = NutsTexts.of(session);
+        NTexts text = NTexts.of(session);
         switch (curState) {
             case EMPTY: {
                 throw new IllegalArgumentException("unexpected");
@@ -99,7 +99,7 @@ public class StyledParserStep extends ParserStep {
                                 CoreStringUtils.fillString("#", sharpsStartCount) + ")", session));
                         break;
                     }
-                    case NutsConstants.Ntf.SILENT: {
+                    case NConstants.Ntf.SILENT: {
                         beforeChangingStep();
                         state.applyDropReplacePreParsedPlain(this, CoreStringUtils.fillString("#", sharpsStartCount), exitOnBrace);
                         break;
@@ -186,7 +186,7 @@ public class StyledParserStep extends ParserStep {
                         }
                         break;
                     }
-                    case NutsConstants.Ntf.SILENT: {
+                    case NConstants.Ntf.SILENT: {
                         if(wasEscape) {
                             wasEscape = false;
                             content.append(c);
@@ -238,7 +238,7 @@ public class StyledParserStep extends ParserStep {
                         sharpsEndCount++;
                         break;
                     }
-                    case NutsConstants.Ntf.SILENT: {
+                    case NConstants.Ntf.SILENT: {
                         if (sharpsStartCount == sharpsEndCount) {
                             //got the end!
                             if (curState == CurState.SHARP_CONTENT_SHARP) {
@@ -311,7 +311,7 @@ public class StyledParserStep extends ParserStep {
                         }
                         break;
                     }
-                    case NutsConstants.Ntf.SILENT:
+                    case NConstants.Ntf.SILENT:
                     case '#':
                     case '{':
                     case '}':
@@ -321,7 +321,7 @@ public class StyledParserStep extends ParserStep {
                     case ']': {
                         if(wasEscape){
                             wasEscape = false;
-                            if(c==NutsConstants.Ntf.SILENT) {
+                            if(c== NConstants.Ntf.SILENT) {
                                 name.append(c);
                             }else{
                                 name.append('\\');
@@ -393,7 +393,7 @@ public class StyledParserStep extends ParserStep {
                         break;
 
                     }
-                    case NutsConstants.Ntf.SILENT: {
+                    case NConstants.Ntf.SILENT: {
                         if(wasEscape){
                             wasEscape=false;
                             content.append(c);
@@ -450,7 +450,7 @@ public class StyledParserStep extends ParserStep {
                         state.applyPush(c, true, false, exitOnBrace);
                         break;
                     }
-                    case NutsConstants.Ntf.SILENT: {
+                    case NConstants.Ntf.SILENT: {
                         children.add(text.ofPlain("}"));
                         curState = CurState.SHARP2_OBRACE_NAME_COL_CONTENT;
                         //ignore
@@ -486,7 +486,7 @@ public class StyledParserStep extends ParserStep {
                         state.applyPush(c, true, false, exitOnBrace);
                         break;
                     }
-                    case NutsConstants.Ntf.SILENT: {
+                    case NConstants.Ntf.SILENT: {
                         sharpsEndCount=0;
                         children.add(text.ofPlain("}#"));
                         curState = CurState.SHARP2_OBRACE_NAME_COL_CONTENT;
@@ -569,14 +569,14 @@ public class StyledParserStep extends ParserStep {
 
     @Override
     public void appendChild(ParserStep tt) {
-        NutsText n = tt.toText();
-        if(n instanceof NutsTextPlain
+        NText n = tt.toText();
+        if(n instanceof NTextPlain
             && !children.isEmpty()
-            && children.get(children.size()-1) instanceof  NutsTextPlain) {
+            && children.get(children.size()-1) instanceof NTextPlain) {
             //consecutive plain text
-            NutsTextPlain p1=(NutsTextPlain) children.remove(children.size()-1);
-            NutsTextPlain p2=(NutsTextPlain) n;
-            children.add(new DefaultNutsTextPlain(
+            NTextPlain p1=(NTextPlain) children.remove(children.size()-1);
+            NTextPlain p2=(NTextPlain) n;
+            children.add(new DefaultNTextPlain(
                     session,p1.getText()+p2.getText()
             ));
         }else{
@@ -585,14 +585,14 @@ public class StyledParserStep extends ParserStep {
     }
 
     @Override
-    public NutsText toText() {
-        List<NutsText> childrenTextNodes2 = new ArrayList<>(children);
-        NutsTexts text = NutsTexts.of(session);
+    public NText toText() {
+        List<NText> childrenTextNodes2 = new ArrayList<>(children);
+        NTexts text = NTexts.of(session);
         if (!content.isEmpty()) {
             childrenTextNodes2.add(text.ofPlain(content.toString()));
         }
 
-        NutsText a = text.ofList(childrenTextNodes2.toArray(new NutsText[0])).simplify();
+        NText a = text.ofList(childrenTextNodes2.toArray(new NText[0])).simplify();
         if(a==null){
             return  text.ofPlain("");
         }
@@ -608,7 +608,7 @@ public class StyledParserStep extends ParserStep {
             case SHARP_CONTENT_SHARP:
             case SHARP_CONTENT_SHARP_END:
             {
-                return text.ofStyled(a, NutsTextStyle.primary(sharpsStartCount));
+                return text.ofStyled(a, NTextStyle.primary(sharpsStartCount));
             }
             case SHARP2_OBRACE_NAME:{
                 return text.ofPlain("##{"+ name.toString());
@@ -624,18 +624,18 @@ public class StyledParserStep extends ParserStep {
             case SHARP2_COL_NAME_CONTENT_SHARP:
             case SHARP2_COL_NAME_CONTENT_SHARP_END:
             {
-                NutsTextStyles s = parseHelper.parseSimpleNutsTextStyles(name.toString());
+                NTextStyles s = parseHelper.parseSimpleNutsTextStyles(name.toString());
                 if (s != null) {
                     return text.ofStyled(a, s);
                 }
-                throw new NutsIllegalArgumentException(session, NutsMessage.ofCstyle("unable to resolve style from %s",name.toString()));
+                throw new NIllegalArgumentException(session, NMsg.ofCstyle("unable to resolve style from %s",name.toString()));
             }
         }
-        throw new NutsUnsupportedEnumException(session, curState);
+        throw new NUnsupportedEnumException(session, curState);
     }
 
     @Override
-    public void end(DefaultNutsTextNodeParser.State p) {
+    public void end(DefaultNTextNodeParser.State p) {
         p.applyPop(this);
     }
 
@@ -651,7 +651,7 @@ public class StyledParserStep extends ParserStep {
     }
 
     private void logErr(String s) {
-        if(NutsDebugString.of(session.boot().getBootOptions().getDebug().orNull(),session).isEnabled()) {
+        if(NDebugString.of(session.boot().getBootOptions().getDebug().orNull(),session).isEnabled()) {
             session.err().println(s);
         }
     }

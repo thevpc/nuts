@@ -1,7 +1,7 @@
 package net.thevpc.nuts.runtime.standalone.xtra.nanodb;
 
-import net.thevpc.nuts.io.NutsIOException;
-import net.thevpc.nuts.NutsSession;
+import net.thevpc.nuts.io.NIOException;
+import net.thevpc.nuts.NSession;
 
 import java.io.*;
 import java.util.PrimitiveIterator;
@@ -38,7 +38,7 @@ public class DBIndexValueFileStore implements DBIndexValueStore {
         return file;
     }
 
-    public void add(long position, NutsSession session) {
+    public void add(long position, NSession session) {
         if (out == null) {
             try {
                 File pf = getFile().getParentFile();
@@ -48,24 +48,24 @@ public class DBIndexValueFileStore implements DBIndexValueStore {
                 out = new DataOutputStream(new FileOutputStream(getFile(), true));
                 out.writeUTF(NANODB_INDEX_STORE_0_8_1);
             } catch (IOException e) {
-                throw new NutsIOException(session, e);
+                throw new NIOException(session, e);
             }
         }
         try {
             out.writeLong(position);
         } catch (IOException ex) {
-            throw new NutsIOException(session, ex);
+            throw new NIOException(session, ex);
         }
         try {
             out.close();
             out = null;
         } catch (IOException ex) {
-            throw new NutsIOException(session, ex);
+            throw new NIOException(session, ex);
         }
     }
 
     @Override
-    public void addAll(long[] positions,NutsSession session) {
+    public void addAll(long[] positions, NSession session) {
         if (out == null) {
             try {
                 File pf = getFile().getParentFile();
@@ -82,18 +82,18 @@ public class DBIndexValueFileStore implements DBIndexValueStore {
                 out.writeLong(position);
             }
         } catch (IOException ex) {
-            throw new NutsIOException(session, ex);
+            throw new NIOException(session, ex);
         }
         try {
             out.close();
             out = null;
         } catch (IOException ex) {
-            throw new NutsIOException(session, ex);
+            throw new NIOException(session, ex);
         }
     }
 
     @Override
-    public LongStream stream(NutsSession session) {
+    public LongStream stream(NSession session) {
         final PrimitiveIterator.OfLong iterator = new PrimitiveIterator.OfLong() {
             final DataInputStream in;
             long nextValue;
@@ -104,7 +104,7 @@ public class DBIndexValueFileStore implements DBIndexValueStore {
                     in = new DataInputStream(new FileInputStream(getFile()));
                     header = in.readUTF();
                 } catch (IOException e) {
-                    throw new NutsIOException(session, e);
+                    throw new NIOException(session, e);
                 }
             }
 
@@ -118,7 +118,7 @@ public class DBIndexValueFileStore implements DBIndexValueStore {
                 } catch (EOFException ex) {
                     return false;
                 } catch (IOException ex) {
-                    throw new NutsIOException(session, ex);
+                    throw new NIOException(session, ex);
                 }
                 return true;
             }
@@ -139,7 +139,7 @@ public class DBIndexValueFileStore implements DBIndexValueStore {
     }
 
     @Override
-    public void flush(NutsSession session) {
+    public void flush(NSession session) {
 
     }
 }

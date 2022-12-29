@@ -1,37 +1,37 @@
 package net.thevpc.nuts.runtime.standalone.repository.impl.main;
 
-import net.thevpc.nuts.NutsConfigItem;
-import net.thevpc.nuts.NutsDependencyScope;
-import net.thevpc.nuts.NutsId;
+import net.thevpc.nuts.NConfigItem;
+import net.thevpc.nuts.NDependencyScope;
+import net.thevpc.nuts.NId;
 
 import java.util.Objects;
 
-public class InstallDepConfig extends NutsConfigItem implements Cloneable {
-    private NutsId id;
-    private NutsDependencyScope scope;
+public class InstallDepConfig extends NConfigItem implements Cloneable {
+    private NId id;
+    private NDependencyScope scope;
 
     public InstallDepConfig() {
     }
 
-    public InstallDepConfig(NutsId id, NutsDependencyScope scope) {
+    public InstallDepConfig(NId id, NDependencyScope scope) {
         this.id = id;
         this.scope = scope;
     }
 
-    public NutsId getId() {
+    public NId getId() {
         return id;
     }
 
-    public InstallDepConfig setId(NutsId id) {
+    public InstallDepConfig setId(NId id) {
         this.id = id;
         return this;
     }
 
-    public NutsDependencyScope getScope() {
+    public NDependencyScope getScope() {
         return scope;
     }
 
-    public InstallDepConfig setScope(NutsDependencyScope scope) {
+    public InstallDepConfig setScope(NDependencyScope scope) {
         this.scope = scope;
         return this;
     }

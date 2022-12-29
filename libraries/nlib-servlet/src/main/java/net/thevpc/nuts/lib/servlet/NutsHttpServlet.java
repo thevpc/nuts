@@ -26,13 +26,13 @@
 package net.thevpc.nuts.lib.servlet;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.boot.DefaultNutsWorkspaceOptionsBuilder;
+import net.thevpc.nuts.boot.DefaultNWorkspaceOptionsBuilder;
 import net.thevpc.nuts.toolbox.nutsserver.AdminServerConfig;
-import net.thevpc.nuts.toolbox.nutsserver.DefaultNutsWorkspaceServerManager;
-import net.thevpc.nuts.toolbox.nutsserver.NutsServer;
-import net.thevpc.nuts.toolbox.nutsserver.http.AbstractNutsHttpServletFacadeContext;
-import net.thevpc.nuts.toolbox.nutsserver.http.NutsHttpServletFacade;
-import net.thevpc.nuts.util.NutsStringUtils;
+import net.thevpc.nuts.toolbox.nutsserver.DefaultNWorkspaceServerManager;
+import net.thevpc.nuts.toolbox.nutsserver.NServer;
+import net.thevpc.nuts.toolbox.nutsserver.http.AbstractNHttpServletFacadeContext;
+import net.thevpc.nuts.toolbox.nutsserver.http.NHttpServletFacade;
+import net.thevpc.nuts.util.NStringUtils;
 
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
@@ -58,21 +58,21 @@ public class NutsHttpServlet extends HttpServlet {
     public static final int DEFAULT_HTTP_SERVER_PORT = 8899;
 
     private static final Logger LOG = Logger.getLogger(NutsHttpServlet.class.getName());
-    private NutsHttpServletFacade facade;
+    private NHttpServletFacade facade;
     private String serverId = "";
     private String workspaceLocation = null;
-    private NutsId runtimeId = null;
+    private NId runtimeId = null;
     private int adminServerPort = -1;
     private Map<String, String> workspaces = new HashMap<>();
     private boolean adminServer = true;
-    private NutsServer adminServerRef;
+    private NServer adminServerRef;
 
     public static int parseInt(String v1, int defaultValue) {
         try {
-            if (NutsBlankable.isBlank(v1)) {
+            if (NBlankable.isBlank(v1)) {
                 return defaultValue;
             }
-            return Integer.parseInt(NutsStringUtils.trim(v1));
+            return Integer.parseInt(NStringUtils.trim(v1));
         } catch (NumberFormatException e) {
             return defaultValue;
         }
@@ -102,7 +102,7 @@ public class NutsHttpServlet extends HttpServlet {
         }
         adminServerPort = parseInt(config.getInitParameter("nuts-admin-server-port"), -1);
         workspaceLocation = config.getInitParameter("nuts-workspace-location");
-        runtimeId = NutsId.of(config.getInitParameter("nuts-runtime-id")).orNull();
+        runtimeId = NId.of(config.getInitParameter("nuts-runtime-id")).orNull();
         adminServer = Boolean.valueOf(config.getInitParameter("nuts-admin"));
         try {
             String s = config.getInitParameter("nuts-workspaces-map");
@@ -129,22 +129,22 @@ public class NutsHttpServlet extends HttpServlet {
             workspaces = new LinkedHashMap<>();
         }
         super.init(config);
-        config.getServletContext().setAttribute(NutsHttpServletFacade.class.getName(), facade);
+        config.getServletContext().setAttribute(NHttpServletFacade.class.getName(), facade);
     }
 
     @Override
     public void init() throws ServletException {
         super.init();
-        Map<String, NutsSession> workspacesByLocation = new HashMap<>();
-        Map<String, NutsSession> workspacesByWebContextPath = new HashMap<>();
-        NutsSession session = Nuts.openWorkspace(
-                new DefaultNutsWorkspaceOptionsBuilder()
+        Map<String, NSession> workspacesByLocation = new HashMap<>();
+        Map<String, NSession> workspacesByWebContextPath = new HashMap<>();
+        NSession session = Nuts.openWorkspace(
+                new DefaultNWorkspaceOptionsBuilder()
                         .setRuntimeId(runtimeId)
                         .setWorkspace(workspaceLocation)
-                        .setOpenMode(NutsOpenMode.OPEN_OR_CREATE)
+                        .setOpenMode(NOpenMode.OPEN_OR_CREATE)
                         .setArchetype("server")
         );
-        DefaultNutsWorkspaceServerManager serverManager = new DefaultNutsWorkspaceServerManager(session);
+        DefaultNWorkspaceServerManager serverManager = new DefaultNWorkspaceServerManager(session);
         if (workspaces.isEmpty()) {
             String wl = workspaceLocation == null ? "" : workspaceLocation;
             workspaces.put("", wl);
@@ -156,13 +156,13 @@ public class NutsHttpServlet extends HttpServlet {
             if (location == null) {
                 location = "";
             }
-            NutsSession session2 = workspacesByLocation.get(location);
+            NSession session2 = workspacesByLocation.get(location);
             if (session2 == null) {
                 session2 = Nuts.openWorkspace(
-                        new DefaultNutsWorkspaceOptionsBuilder()
+                        new DefaultNWorkspaceOptionsBuilder()
                         .setRuntimeId(runtimeId)
                         .setWorkspace(location)
-                        .setOpenMode(NutsOpenMode.OPEN_OR_CREATE)
+                        .setOpenMode(NOpenMode.OPEN_OR_CREATE)
                         .setArchetype("server")
                 );
                 workspacesByLocation.put(location, session2);
@@ -170,7 +170,7 @@ public class NutsHttpServlet extends HttpServlet {
             workspacesByWebContextPath.put(webContext, session2);
         }
 
-        if (NutsBlankable.isBlank(serverId)) {
+        if (NBlankable.isBlank(serverId)) {
             String serverName = DEFAULT_HTTP_SERVER;
             try {
                 serverName = InetAddress.getLocalHost().getHostName();
@@ -187,7 +187,7 @@ public class NutsHttpServlet extends HttpServlet {
             serverId = serverName;
         }
 
-        this.facade = new NutsHttpServletFacade(serverId, workspacesByWebContextPath);
+        this.facade = new NHttpServletFacade(serverId, workspacesByWebContextPath);
         if (adminServer) {
             try {
                 AdminServerConfig serverConfig = new AdminServerConfig();
@@ -210,14 +210,14 @@ public class NutsHttpServlet extends HttpServlet {
     }
 
     protected void doService(final HttpServletRequest req, final HttpServletResponse resp) throws ServletException, IOException {
-        facade.execute(new ServletNutsHttpServletFacadeContext(req, resp));
+        facade.execute(new ServletNHttpServletFacadeContext(req, resp));
     }
 
-    private static class ServletNutsHttpServletFacadeContext extends AbstractNutsHttpServletFacadeContext {
+    private static class ServletNHttpServletFacadeContext extends AbstractNHttpServletFacadeContext {
         private final HttpServletRequest req;
         private final HttpServletResponse resp;
 
-        public ServletNutsHttpServletFacadeContext(HttpServletRequest req, HttpServletResponse resp) {
+        public ServletNHttpServletFacadeContext(HttpServletRequest req, HttpServletResponse resp) {
             this.req = req;
             this.resp = resp;
         }

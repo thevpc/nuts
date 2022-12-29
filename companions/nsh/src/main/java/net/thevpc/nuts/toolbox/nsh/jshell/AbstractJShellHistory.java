@@ -1,13 +1,13 @@
 package net.thevpc.nuts.toolbox.nsh.jshell;
 
-import net.thevpc.nuts.io.NutsPath;
+import net.thevpc.nuts.io.NPath;
 
 import java.io.*;
 
 public abstract class AbstractJShellHistory implements JShellHistory {
 
     @Override
-    public void load(NutsPath reader) throws IOException {
+    public void load(NPath reader) throws IOException {
         BufferedReader bufferedReader = null;
         try {
             bufferedReader = new BufferedReader(new InputStreamReader(reader.getInputStream()));
@@ -43,7 +43,7 @@ public abstract class AbstractJShellHistory implements JShellHistory {
     }
 
     @Override
-    public void save(NutsPath file) throws IOException {
+    public void save(NPath file) throws IOException {
         if (file == null) {
             return;
         }

@@ -26,9 +26,9 @@
 */
 package net.thevpc.nuts.runtime.standalone.app.cmdline.option;
 
-import net.thevpc.nuts.cmdline.DefaultNutsArgumentCandidate;
-import net.thevpc.nuts.cmdline.NutsArgumentCandidate;
-import net.thevpc.nuts.cmdline.NutsCommandAutoComplete;
+import net.thevpc.nuts.cmdline.DefaultNArgumentCandidate;
+import net.thevpc.nuts.cmdline.NArgumentCandidate;
+import net.thevpc.nuts.cmdline.NCommandAutoComplete;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -44,16 +44,16 @@ public class PackagingNonOption extends DefaultNonOption {
 
 
     @Override
-    public List<NutsArgumentCandidate> getCandidates(NutsCommandAutoComplete context) {
-        List<NutsArgumentCandidate> all = new ArrayList<>();
-        all.add(new DefaultNutsArgumentCandidate("jar"));
-        all.add(new DefaultNutsArgumentCandidate("war"));
-        all.add(new DefaultNutsArgumentCandidate("war"));
-        all.add(new DefaultNutsArgumentCandidate("ear"));
-        all.add(new DefaultNutsArgumentCandidate("nuts-extension"));
-        all.add(new DefaultNutsArgumentCandidate("elf"));
-        all.add(new DefaultNutsArgumentCandidate("pe"));
-        all.add(new DefaultNutsArgumentCandidate("bin"));
+    public List<NArgumentCandidate> getCandidates(NCommandAutoComplete context) {
+        List<NArgumentCandidate> all = new ArrayList<>();
+        all.add(new DefaultNArgumentCandidate("jar"));
+        all.add(new DefaultNArgumentCandidate("war"));
+        all.add(new DefaultNArgumentCandidate("war"));
+        all.add(new DefaultNArgumentCandidate("ear"));
+        all.add(new DefaultNArgumentCandidate("nuts-extension"));
+        all.add(new DefaultNArgumentCandidate("elf"));
+        all.add(new DefaultNArgumentCandidate("pe"));
+        all.add(new DefaultNArgumentCandidate("bin"));
         return all;
     }
 

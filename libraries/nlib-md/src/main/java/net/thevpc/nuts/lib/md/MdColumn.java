@@ -17,9 +17,8 @@
  */
 package net.thevpc.nuts.lib.md;
 
-import net.thevpc.nuts.NutsBlankable;
+import net.thevpc.nuts.NBlankable;
 
-import java.util.Arrays;
 import java.util.Objects;
 
 /**
@@ -75,6 +74,6 @@ public class MdColumn extends MdAbstractElement{
 
     @Override
     public boolean isBlank() {
-        return NutsBlankable.isBlank(name);
+        return NBlankable.isBlank(name);
     }
 }

@@ -1,33 +1,33 @@
 package net.thevpc.nuts.runtime.standalone.format.table;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.format.NutsPositionType;
-import net.thevpc.nuts.format.NutsTableCellFormat;
-import net.thevpc.nuts.text.NutsTextStyle;
-import net.thevpc.nuts.text.NutsTexts;
+import net.thevpc.nuts.format.NPositionType;
+import net.thevpc.nuts.format.NTableCellFormat;
+import net.thevpc.nuts.text.NTextStyle;
+import net.thevpc.nuts.text.NTexts;
 
 /**
  *
  * @author thevpc
  * @since 0.5.5
  */
-public class DefaultTableHeaderFormat implements NutsTableCellFormat {
+public class DefaultTableHeaderFormat implements NTableCellFormat {
 
-    public static final NutsTableCellFormat INSTANCE = new DefaultTableHeaderFormat();
+    public static final NTableCellFormat INSTANCE = new DefaultTableHeaderFormat();
 
     public DefaultTableHeaderFormat() {
     }
 
     @Override
-    public String format(int row, int col, Object value, NutsSession session) {
-        return NutsTexts.of(session).ofBuilder().append(String.valueOf(value),
-                NutsTextStyle.primary1()
+    public String format(int row, int col, Object value, NSession session) {
+        return NTexts.of(session).ofBuilder().append(String.valueOf(value),
+                NTextStyle.primary1()
                 ).toString();
     }
 
     @Override
-    public NutsPositionType getHorizontalAlign(int row, int col, Object value, NutsSession session) {
-        return NutsPositionType.HEADER;
+    public NPositionType getHorizontalAlign(int row, int col, Object value, NSession session) {
+        return NPositionType.HEADER;
     }
 
 }

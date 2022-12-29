@@ -1,18 +1,18 @@
 package net.thevpc.nuts.runtime.standalone.format.table;
 
-import net.thevpc.nuts.format.NutsTableBordersFormat;
-import net.thevpc.nuts.format.NutsTableSeparator;
+import net.thevpc.nuts.format.NTableBordersFormat;
+import net.thevpc.nuts.format.NTableSeparator;
 
-public class DefaultTableFormatBorders implements NutsTableBordersFormat {
+public class DefaultTableFormatBorders implements NTableBordersFormat {
 
-    private final String[] config = new String[NutsTableSeparator.values().length];
+    private final String[] config = new String[NTableSeparator.values().length];
 
     public DefaultTableFormatBorders(String... config) {
         System.arraycopy(config, 0, this.config, 0, this.config.length);
     }
 
     @Override
-    public String format(NutsTableSeparator s) {
+    public String format(NTableSeparator s) {
         return config[s.ordinal()];
     }
 }

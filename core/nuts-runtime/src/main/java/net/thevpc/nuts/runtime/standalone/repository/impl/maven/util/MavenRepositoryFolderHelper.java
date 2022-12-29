@@ -40,17 +40,17 @@ import java.util.TreeSet;
 import java.util.logging.Level;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.io.NutsIOException;
-import net.thevpc.nuts.io.NutsPath;
-import net.thevpc.nuts.runtime.standalone.id.util.NutsIdUtils;
-import net.thevpc.nuts.runtime.standalone.repository.impl.NutsRepositoryExt;
-import net.thevpc.nuts.runtime.standalone.util.CoreNutsConstants;
-import net.thevpc.nuts.DefaultNutsVersion;
-import net.thevpc.nuts.runtime.standalone.repository.NutsIdPathIterator;
-import net.thevpc.nuts.runtime.standalone.repository.NutsIdPathIteratorBase;
-import net.thevpc.nuts.runtime.standalone.xtra.digest.NutsDigestUtils;
-import net.thevpc.nuts.util.NutsLogger;
-import net.thevpc.nuts.util.NutsLoggerOp;
+import net.thevpc.nuts.io.NIOException;
+import net.thevpc.nuts.io.NPath;
+import net.thevpc.nuts.runtime.standalone.id.util.NIdUtils;
+import net.thevpc.nuts.runtime.standalone.repository.impl.NRepositoryExt;
+import net.thevpc.nuts.runtime.standalone.util.CoreNConstants;
+import net.thevpc.nuts.DefaultNVersion;
+import net.thevpc.nuts.runtime.standalone.repository.NIdPathIterator;
+import net.thevpc.nuts.runtime.standalone.repository.NIdPathIteratorBase;
+import net.thevpc.nuts.runtime.standalone.xtra.digest.NDigestUtils;
+import net.thevpc.nuts.util.NLogger;
+import net.thevpc.nuts.util.NLoggerOp;
 
 /**
  *
@@ -58,66 +58,66 @@ import net.thevpc.nuts.util.NutsLoggerOp;
  */
 public class MavenRepositoryFolderHelper {
 
-    private NutsLogger LOG;
-    private NutsRepository repo;
-    private NutsWorkspace ws;
-    private NutsPath rootPath;
+    private NLogger LOG;
+    private NRepository repo;
+    private NWorkspace ws;
+    private NPath rootPath;
 
-    public MavenRepositoryFolderHelper(NutsRepository repo, NutsSession session, NutsPath rootPath) {
+    public MavenRepositoryFolderHelper(NRepository repo, NSession session, NPath rootPath) {
         this.repo = repo;
         this.ws = session != null ? session.getWorkspace() : repo == null ? null : repo.getWorkspace();
         if (repo == null && session == null) {
-            throw new NutsIllegalArgumentException(session, NutsMessage.ofPlain("both workspace and repo are null"));
+            throw new NIllegalArgumentException(session, NMsg.ofPlain("both workspace and repo are null"));
         }
         this.rootPath = rootPath;
     }
 
-    protected NutsLoggerOp _LOGOP(NutsSession session) {
+    protected NLoggerOp _LOGOP(NSession session) {
         return _LOG(session).with().session(session);
     }
 
-    protected NutsLogger _LOG(NutsSession session) {
+    protected NLogger _LOG(NSession session) {
         if (LOG == null) {
-            LOG = NutsLogger.of(MavenRepositoryFolderHelper.class,session);
+            LOG = NLogger.of(MavenRepositoryFolderHelper.class,session);
         }
         return LOG;
     }
 
-    public NutsPath getIdLocalFile(NutsId id, NutsSession session) {
-        return getStoreLocation().resolve(NutsRepositoryExt.of(repo).getIdBasedir(id, session))
+    public NPath getIdLocalFile(NId id, NSession session) {
+        return getStoreLocation().resolve(NRepositoryExt.of(repo).getIdBasedir(id, session))
                 .resolve(session.locations().getDefaultIdFilename(id));
     }
 
-    public NutsPath fetchContentImpl(NutsId id, Path localPath, NutsSession session) {
-        NutsPath cacheContent = getIdLocalFile(id, session);
+    public NPath fetchContentImpl(NId id, Path localPath, NSession session) {
+        NPath cacheContent = getIdLocalFile(id, session);
         if (cacheContent != null && cacheContent.exists()) {
             return cacheContent.setUserCache(true).setUserTemporary(false);
         }
         return null;
     }
 
-    public NutsWorkspace getWorkspace() {
+    public NWorkspace getWorkspace() {
         return ws;
     }
 
-    protected String getIdFilename(NutsId id, NutsSession session) {
+    protected String getIdFilename(NId id, NSession session) {
         if (repo == null) {
             return session.locations().getDefaultIdFilename(id);
         }
-        return NutsRepositoryExt.of(repo).getIdFilename(id, session);
+        return NRepositoryExt.of(repo).getIdFilename(id, session);
     }
 
-    public NutsPath getLocalGroupAndArtifactFile(NutsId id, NutsSession session) {
-        NutsIdUtils.checkShortId(id,session);
-        NutsPath groupFolder = getStoreLocation().resolve(id.getGroupId().replace('.', File.separatorChar));
+    public NPath getLocalGroupAndArtifactFile(NId id, NSession session) {
+        NIdUtils.checkShortId(id,session);
+        NPath groupFolder = getStoreLocation().resolve(id.getGroupId().replace('.', File.separatorChar));
         return groupFolder.resolve(id.getArtifactId());
     }
 
-    public Iterator<NutsId> searchVersions(NutsId id, final NutsIdFilter filter, boolean deep, NutsSession session) {
+    public Iterator<NId> searchVersions(NId id, final NIdFilter filter, boolean deep, NSession session) {
         String singleVersion=id.getVersion().asSingleValue().orNull();
         if (singleVersion!=null) {
-            NutsId id1 = id.builder().setVersion(singleVersion).setFaceDescriptor().build();
-            NutsPath localFile = getIdLocalFile(id1, session);
+            NId id1 = id.builder().setVersion(singleVersion).setFaceDescriptor().build();
+            NPath localFile = getIdLocalFile(id1, session);
             if (localFile != null && localFile.isRegularFile()) {
                 return Collections.singletonList(id.builder().setRepository(repo == null ? null : repo.getName()).build()).iterator();
             }
@@ -128,36 +128,36 @@ public class MavenRepositoryFolderHelper {
                 session);
     }
 
-    public Iterator<NutsId> searchInFolder(NutsPath folder, final NutsIdFilter filter, int maxDepth, NutsSession session) {
-        return new NutsIdPathIterator(repo, rootPath.normalize(), folder, filter, session, new NutsIdPathIteratorBase() {
+    public Iterator<NId> searchInFolder(NPath folder, final NIdFilter filter, int maxDepth, NSession session) {
+        return new NIdPathIterator(repo, rootPath.normalize(), folder, filter, session, new NIdPathIteratorBase() {
             @Override
-            public void undeploy(NutsId id, NutsSession session) {
-                throw new NutsIllegalArgumentException(session,NutsMessage.ofPlain("unsupported undeploy"));
+            public void undeploy(NId id, NSession session) {
+                throw new NIllegalArgumentException(session, NMsg.ofPlain("unsupported undeploy"));
             }
 
             @Override
-            public boolean isDescFile(NutsPath pathname) {
+            public boolean isDescFile(NPath pathname) {
                 return pathname.getName().equals("pom.xml");
             }
 
             @Override
-            public NutsDescriptor parseDescriptor(NutsPath pathname, InputStream in, NutsFetchMode fetchMode, NutsRepository repository, NutsSession session, NutsPath rootURL) throws IOException {
-                return MavenUtils.of(session).parsePomXmlAndResolveParents(pathname, NutsFetchMode.LOCAL, repo);
+            public NDescriptor parseDescriptor(NPath pathname, InputStream in, NFetchMode fetchMode, NRepository repository, NSession session, NPath rootURL) throws IOException {
+                return MavenUtils.of(session).parsePomXmlAndResolveParents(pathname, NFetchMode.LOCAL, repo);
             }
         }, maxDepth,"core",null);
     }
 
-    public NutsPath getStoreLocation() {
+    public NPath getStoreLocation() {
         return rootPath;
     }
 
-    public NutsId searchLatestVersion(NutsId id, NutsIdFilter filter, NutsSession session) {
-        NutsId bestId = null;
-        NutsPath  file = getLocalGroupAndArtifactFile(id, session);
+    public NId searchLatestVersion(NId id, NIdFilter filter, NSession session) {
+        NId bestId = null;
+        NPath file = getLocalGroupAndArtifactFile(id, session);
         if (file.exists()) {
-            NutsPath[] versionFolders = file.list().filter(NutsPath::isDirectory,"isDirectory").toArray(NutsPath[]::new);
-            for (NutsPath versionFolder : versionFolders) {
-                NutsId id2 = id.builder().setVersion(versionFolder.getName()).build();
+            NPath[] versionFolders = file.stream().filter(NPath::isDirectory,"isDirectory").toArray(NPath[]::new);
+            for (NPath versionFolder : versionFolders) {
+                NId id2 = id.builder().setVersion(versionFolder.getName()).build();
                 if (bestId == null || id2.getVersion().compareTo(bestId.getVersion()) > 0) {
                     bestId = id2;
                 }
@@ -166,11 +166,11 @@ public class MavenRepositoryFolderHelper {
         return bestId;
     }
 
-    public void reindexFolder(NutsSession session) {
+    public void reindexFolder(NSession session) {
         reindexFolder(getStoreLocation(), true, session);
     }
 
-    private void reindexFolder(NutsPath path, boolean applyRawNavigation, NutsSession session) {
+    private void reindexFolder(NPath path, boolean applyRawNavigation, NSession session) {
         try {
             Files.walkFileTree(path.toFile(), new FileVisitor<Path>() {
                 @Override
@@ -224,7 +224,7 @@ public class MavenRepositoryFolderHelper {
                                 }
                             } catch (Exception ex) {
                                 _LOGOP(session).level(Level.SEVERE).error(ex)
-                                        .log(NutsMessage.ofJstyle("failed to parse metadata xml for {0} : {1}", metadataxml, ex));
+                                        .log(NMsg.ofJstyle("failed to parse metadata xml for {0} : {1}", metadataxml, ex));
                                 //ignore any error!
                             }
                             MavenMetadata m = new MavenMetadata();
@@ -246,7 +246,7 @@ public class MavenRepositoryFolderHelper {
                                 @Override
                                 public int compare(String o1, String o2) {
                                     //reverse order
-                                    return -DefaultNutsVersion.compareVersions(o1, o2);
+                                    return -DefaultNVersion.compareVersions(o1, o2);
                                 }
                             });
                             m.setVersions(ll);
@@ -255,14 +255,14 @@ public class MavenRepositoryFolderHelper {
                             }
 //                            println(MavenMetadataParser.toXmlString(m));
                             new MavenMetadataParser(session).writeMavenMetaData(m, metadataxml);
-                            String md5 = NutsDigestUtils.evalMD5Hex(metadataxml,session).toLowerCase();
+                            String md5 = NDigestUtils.evalMD5Hex(metadataxml,session).toLowerCase();
                             Files.write(metadataxml.resolveSibling("maven-metadata.xml.md5"), md5.getBytes());
-                            String sha1 = NutsDigestUtils.evalSHA1Hex(NutsPath.of(metadataxml,session),session).toLowerCase();
+                            String sha1 = NDigestUtils.evalSHA1Hex(NPath.of(metadataxml,session),session).toLowerCase();
                             Files.write(metadataxml.resolveSibling("maven-metadata.xml.sha1"), sha1.getBytes());
                         }
                         if (applyRawNavigation) {
                             for (File child : children) {
-                                //&& !DefaultNutsVersion.isBlank(child.getName())
+                                //&& !DefaultNVersion.isBlank(child.getName())
                                 if (!child.getName().startsWith(".")) {
                                     if (child.isDirectory()) {
                                         folders.add(child.getName());
@@ -281,7 +281,7 @@ public class MavenRepositoryFolderHelper {
 //                        } catch (FileNotFoundException e) {
 //                            throw new NutsIOException(getWorkspace(),e);
 //                        }
-                        try (PrintStream p = new PrintStream(new File(folder, CoreNutsConstants.Files.DOT_FILES))) {
+                        try (PrintStream p = new PrintStream(new File(folder, CoreNConstants.Files.DOT_FILES))) {
                             p.println("#version=" + ws.getApiVersion());
                             for (String file : folders) {
                                 p.println(file + "/");
@@ -290,14 +290,14 @@ public class MavenRepositoryFolderHelper {
                                 p.println(file);
                             }
                         } catch (FileNotFoundException e) {
-                            throw new NutsIOException(session, e);
+                            throw new NIOException(session, e);
                         }
                     }
                     return FileVisitResult.CONTINUE;
                 }
             });
         } catch (IOException ex) {
-            throw new NutsIOException(session, ex);
+            throw new NIOException(session, ex);
         }
 
     }

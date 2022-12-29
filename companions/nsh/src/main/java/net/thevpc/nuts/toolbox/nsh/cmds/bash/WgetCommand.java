@@ -26,12 +26,12 @@
 package net.thevpc.nuts.toolbox.nsh.cmds.bash;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.cmdline.NutsCommandLine;
-import net.thevpc.nuts.io.NutsCp;
-import net.thevpc.nuts.io.NutsPath;
-import net.thevpc.nuts.io.NutsPathOption;
-import net.thevpc.nuts.spi.NutsComponentScope;
-import net.thevpc.nuts.spi.NutsComponentScopeType;
+import net.thevpc.nuts.cmdline.NCommandLine;
+import net.thevpc.nuts.io.NCp;
+import net.thevpc.nuts.io.NPath;
+import net.thevpc.nuts.io.NPathOption;
+import net.thevpc.nuts.spi.NComponentScope;
+import net.thevpc.nuts.spi.NComponentScopeType;
 import net.thevpc.nuts.toolbox.nsh.SimpleJShellBuiltin;
 import net.thevpc.nuts.toolbox.nsh.jshell.JShellExecutionContext;
 
@@ -41,7 +41,7 @@ import java.util.List;
 /**
  * Created by vpc on 1/7/17.
  */
-@NutsComponentScope(NutsComponentScopeType.WORKSPACE)
+@NComponentScope(NComponentScopeType.WORKSPACE)
 public class WgetCommand extends SimpleJShellBuiltin {
 
     public WgetCommand() {
@@ -49,15 +49,15 @@ public class WgetCommand extends SimpleJShellBuiltin {
     }
 
     @Override
-    protected boolean configureFirst(NutsCommandLine commandLine, JShellExecutionContext context) {
+    protected boolean configureFirst(NCommandLine commandLine, JShellExecutionContext context) {
         Options options = context.getOptions();
-        NutsSession session = context.getSession();
+        NSession session = context.getSession();
         if (commandLine.next("-O", "--output-document").isPresent()) {
             options.outputDocument = commandLine.nextNonOption().get(session).asString().orNull();
             return true;
         } else if (!commandLine.isNextOption()) {
             while (commandLine.hasNext()) {
-                options.files.add(commandLine.next().flatMap(NutsValue::asString).get(session));
+                options.files.add(commandLine.next().flatMap(NValue::asString).get(session));
             }
             return true;
         }
@@ -65,10 +65,10 @@ public class WgetCommand extends SimpleJShellBuiltin {
     }
 
     @Override
-    protected void execBuiltin(NutsCommandLine commandLine, JShellExecutionContext context) {
+    protected void execBuiltin(NCommandLine commandLine, JShellExecutionContext context) {
         Options options = context.getOptions();
         if (options.files.isEmpty()) {
-            throw new NutsExecutionException(context.getSession(), NutsMessage.ofPlain("wget: Missing Files"), 2);
+            throw new NExecutionException(context.getSession(), NMsg.ofPlain("wget: Missing Files"), 2);
         }
         for (String file : options.files) {
             download(file, options.outputDocument, context);
@@ -77,15 +77,15 @@ public class WgetCommand extends SimpleJShellBuiltin {
 
     protected void download(String path, String output, JShellExecutionContext context) {
         String output2 = output;
-        NutsSession session = context.getSession();
-        String urlName = NutsPath.of(path,session).getName();
-        if (!NutsBlankable.isBlank(output2)) {
+        NSession session = context.getSession();
+        String urlName = NPath.of(path,session).getName();
+        if (!NBlankable.isBlank(output2)) {
             output2 = output2.replace("{}", urlName);
         }
-        NutsPath file = NutsPath.of(context.getAbsolutePath(NutsBlankable.isBlank(output2) ? urlName : output2),session);
-        NutsCp.of(session)
-                .from(NutsPath.of(path,session)).to(file).setSession(session)
-                .addOptions(NutsPathOption.LOG, NutsPathOption.TRACE).run();
+        NPath file = NPath.of(context.getAbsolutePath(NBlankable.isBlank(output2) ? urlName : output2),session);
+        NCp.of(session)
+                .from(NPath.of(path,session)).to(file).setSession(session)
+                .addOptions(NPathOption.LOG, NPathOption.TRACE).run();
     }
 
     private static class Options {

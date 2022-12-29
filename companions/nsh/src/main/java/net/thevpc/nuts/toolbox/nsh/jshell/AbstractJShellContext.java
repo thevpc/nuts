@@ -2,10 +2,10 @@ package net.thevpc.nuts.toolbox.nsh.jshell;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.cmdline.*;
-import net.thevpc.nuts.io.NutsPath;
-import net.thevpc.nuts.io.NutsPrintStream;
-import net.thevpc.nuts.util.NutsFunction;
-import net.thevpc.nuts.util.NutsStringUtils;
+import net.thevpc.nuts.io.NPath;
+import net.thevpc.nuts.io.NStream;
+import net.thevpc.nuts.util.NFunction;
+import net.thevpc.nuts.util.NStringUtils;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -22,7 +22,7 @@ public abstract class AbstractJShellContext implements JShellContext {
 
 
     private final List<String> args = new ArrayList<>();
-    private NutsSession session;
+    private NSession session;
     private String serviceName;
 
     @Override
@@ -31,12 +31,12 @@ public abstract class AbstractJShellContext implements JShellContext {
     }
 
     @Override
-    public NutsPrintStream out() {
+    public NStream out() {
         return getSession().getTerminal().getOut();
     }
 
     @Override
-    public NutsPrintStream err() {
+    public NStream err() {
         return getSession().getTerminal().getErr();
     }
 
@@ -98,7 +98,7 @@ public abstract class AbstractJShellContext implements JShellContext {
     @Override
     public JShellContext setOut(PrintStream out) {
         getSession().getTerminal().setOut(
-                NutsPrintStream.of(out, getSession())
+                NStream.of(out, getSession())
         );
 //        commandContext.getTerminal().setOut(workspace.createPrintStream(out,
 //                true//formatted
@@ -108,7 +108,7 @@ public abstract class AbstractJShellContext implements JShellContext {
 
     public JShellContext setErr(PrintStream err) {
         getSession().getTerminal().setErr(
-                NutsPrintStream.of(err, getSession())
+                NStream.of(err, getSession())
         );
         return this;
     }
@@ -132,30 +132,30 @@ public abstract class AbstractJShellContext implements JShellContext {
     @Override
     public List<JShellAutoCompleteCandidate> resolveAutoCompleteCandidates(String commandName, List<String> autoCompleteWords, int wordIndex, String autoCompleteLine) {
         JShellBuiltin command = this.builtins().find(commandName);
-        NutsCommandAutoComplete autoComplete = new DefaultNutsCommandAutoComplete()
+        NCommandAutoComplete autoComplete = new DefaultNCommandAutoComplete()
                 .setSession(getSession()).setLine(autoCompleteLine).setWords(autoCompleteWords).setCurrentWordIndex(wordIndex);
 
         if (command != null) {
             command.autoComplete(new DefaultJShellExecutionContext(this, command), autoComplete);
         } else {
-            NutsSession session = this.getSession();
-            List<NutsId> nutsIds = session.search()
+            NSession session = this.getSession();
+            List<NId> nutsIds = session.search()
                     .addId(commandName)
                     .setLatest(true)
-                    .addScope(NutsDependencyScopePattern.RUN)
+                    .addScope(NDependencyScopePattern.RUN)
                     .setOptional(false)
-                    .setSession(this.getSession().copy().setFetchStrategy(NutsFetchStrategy.OFFLINE))
+                    .setSession(this.getSession().copy().setFetchStrategy(NFetchStrategy.OFFLINE))
                     .getResultIds().toList();
             if (nutsIds.size() == 1) {
-                NutsId selectedId = nutsIds.get(0);
-                NutsDefinition def = session.search().addId(selectedId).setEffective(true).setSession(this.getSession()
-                        .copy().setFetchStrategy(NutsFetchStrategy.OFFLINE)).getResultDefinitions().required();
-                NutsDescriptor d = def.getDescriptor();
-                String nuts_autocomplete_support = NutsStringUtils.trim(d.getPropertyValue("nuts.autocomplete").flatMap(NutsValue::asString).get(session));
+                NId selectedId = nutsIds.get(0);
+                NDefinition def = session.search().addId(selectedId).setEffective(true).setSession(this.getSession()
+                        .copy().setFetchStrategy(NFetchStrategy.OFFLINE)).getResultDefinitions().required();
+                NDescriptor d = def.getDescriptor();
+                String nuts_autocomplete_support = NStringUtils.trim(d.getPropertyValue("nuts.autocomplete").flatMap(NValue::asString).get(session));
                 if (d.isApplication()
                         || "true".equalsIgnoreCase(nuts_autocomplete_support)
                         || "supported".equalsIgnoreCase(nuts_autocomplete_support)) {
-                    NutsExecCommand t = session.exec()
+                    NExecCommand t = session.exec()
                             .grabOutputString()
                             .grabErrorString()
                             .addCommand(
@@ -170,15 +170,15 @@ public abstract class AbstractJShellContext implements JShellContext {
                         for (String s : rr.split("\n")) {
                             s = s.trim();
                             if (s.length() > 0) {
-                                if (s.startsWith(NutsApplicationContext.AUTO_COMPLETE_CANDIDATE_PREFIX)) {
-                                    s = s.substring(NutsApplicationContext.AUTO_COMPLETE_CANDIDATE_PREFIX.length()).trim();
-                                    NutsCommandLine args = NutsCommandLine.of(s,NutsShellFamily.BASH, session).setExpandSimpleOptions(false);
+                                if (s.startsWith(NApplicationContext.AUTO_COMPLETE_CANDIDATE_PREFIX)) {
+                                    s = s.substring(NApplicationContext.AUTO_COMPLETE_CANDIDATE_PREFIX.length()).trim();
+                                    NCommandLine args = NCommandLine.of(s, NShellFamily.BASH, session).setExpandSimpleOptions(false);
                                     String value = null;
                                     String display = null;
                                     if (args.hasNext()) {
-                                        value = args.next().flatMap(NutsValue::asString).get(session);
+                                        value = args.next().flatMap(NValue::asString).get(session);
                                         if (args.hasNext()) {
-                                            display = args.next().flatMap(NutsValue::asString).get(session);
+                                            display = args.next().flatMap(NValue::asString).get(session);
                                         }
                                     }
                                     if (value != null) {
@@ -186,7 +186,7 @@ public abstract class AbstractJShellContext implements JShellContext {
                                             display = value;
                                         }
                                         autoComplete.addCandidate(
-                                                new DefaultNutsArgumentCandidate(
+                                                new DefaultNArgumentCandidate(
                                                         value
                                                 )
                                         );
@@ -203,7 +203,7 @@ public abstract class AbstractJShellContext implements JShellContext {
 
         }
         List<JShellAutoCompleteCandidate> all = new ArrayList<>();
-        for (NutsArgumentCandidate a : autoComplete.getCandidates()) {
+        for (NArgumentCandidate a : autoComplete.getCandidates()) {
             all.add(new JShellAutoCompleteCandidate(a.getValue(), a.getDisplay()));
         }
         return all;
@@ -211,7 +211,7 @@ public abstract class AbstractJShellContext implements JShellContext {
 
     @Override
     public String getAbsolutePath(String path) {
-        if (NutsPath.of(path, getSession()).isAbsolute()) {
+        if (NPath.of(path, getSession()).isAbsolute()) {
             return getFileSystem().getAbsolutePath(path, getSession());
         }
         return getFileSystem().getAbsolutePath(getCwd() + "/" + path, getSession());
@@ -219,7 +219,7 @@ public abstract class AbstractJShellContext implements JShellContext {
 
     @Override
     public String[] expandPaths(String path) {
-        return NutsPath.of(path, getSession()).walkGlob().map(NutsFunction.of(NutsPath::toString, "toString")).toArray(String[]::new);
+        return NPath.of(path, getSession()).walkGlob().map(NFunction.of(NPath::toString, "toString")).toArray(String[]::new);
     }
 
     @Override
@@ -278,18 +278,18 @@ public abstract class AbstractJShellContext implements JShellContext {
     }
 
     @Override
-    public NutsSession getSession() {
+    public NSession getSession() {
         return session;
     }
 
     @Override
-    public JShellContext setSession(NutsSession session) {
+    public JShellContext setSession(NSession session) {
         this.session = session;
         return this;
     }
 
     @Override
-    public NutsWorkspace getWorkspace() {
+    public NWorkspace getWorkspace() {
         return getSession().getWorkspace();
     }
 

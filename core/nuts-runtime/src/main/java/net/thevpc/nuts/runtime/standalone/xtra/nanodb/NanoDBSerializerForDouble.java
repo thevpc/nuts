@@ -1,6 +1,6 @@
 package net.thevpc.nuts.runtime.standalone.xtra.nanodb;
 
-import net.thevpc.nuts.NutsSession;
+import net.thevpc.nuts.NSession;
 
 class NanoDBSerializerForDouble extends NanoDBNonNullSerializer<Double> {
     public NanoDBSerializerForDouble() {
@@ -8,12 +8,12 @@ class NanoDBSerializerForDouble extends NanoDBNonNullSerializer<Double> {
     }
 
     @Override
-    public void write(Double obj, NanoDBOutputStream out, NutsSession session) {
+    public void write(Double obj, NanoDBOutputStream out, NSession session) {
         out.writeDouble((double) obj);
     }
 
     @Override
-    public Double read(NanoDBInputStream in, Class expectedType, NutsSession session) {
+    public Double read(NanoDBInputStream in, Class expectedType, NSession session) {
         return in.readDouble();
     }
 }

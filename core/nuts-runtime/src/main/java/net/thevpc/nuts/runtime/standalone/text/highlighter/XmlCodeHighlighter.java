@@ -3,23 +3,23 @@ package net.thevpc.nuts.runtime.standalone.text.highlighter;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.standalone.util.collections.EvictingQueue;
 import net.thevpc.nuts.runtime.standalone.xtra.expr.StreamTokenizerExt;
-import net.thevpc.nuts.runtime.standalone.xtra.expr.NutsToken;
-import net.thevpc.nuts.spi.NutsComponent;
-import net.thevpc.nuts.spi.NutsSupportLevelContext;
-import net.thevpc.nuts.text.NutsText;
-import net.thevpc.nuts.text.NutsTextStyle;
-import net.thevpc.nuts.text.NutsTexts;
-import net.thevpc.nuts.util.NutsStringUtils;
+import net.thevpc.nuts.runtime.standalone.xtra.expr.NToken;
+import net.thevpc.nuts.spi.NComponent;
+import net.thevpc.nuts.spi.NSupportLevelContext;
+import net.thevpc.nuts.text.NText;
+import net.thevpc.nuts.text.NTextStyle;
+import net.thevpc.nuts.text.NTexts;
+import net.thevpc.nuts.util.NStringUtils;
 
 import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.List;
 
-public class XmlCodeHighlighter implements NutsCodeHighlighter {
+public class XmlCodeHighlighter implements NCodeHighlighter {
 
-    private final NutsWorkspace ws;
+    private final NWorkspace ws;
 
-    public XmlCodeHighlighter(NutsWorkspace ws) {
+    public XmlCodeHighlighter(NWorkspace ws) {
         this.ws = ws;
     }
 
@@ -29,7 +29,7 @@ public class XmlCodeHighlighter implements NutsCodeHighlighter {
     }
 
     @Override
-    public int getSupportLevel(NutsSupportLevelContext context) {
+    public int getSupportLevel(NSupportLevelContext context) {
         String s = context.getConstraints();
         if(s==null){
             return DEFAULT_SUPPORT;
@@ -42,13 +42,13 @@ public class XmlCodeHighlighter implements NutsCodeHighlighter {
             case "html":
             case "sgml":
             {
-                return NutsComponent.DEFAULT_SUPPORT;
+                return NComponent.DEFAULT_SUPPORT;
             }
         }
-        return NutsComponent.NO_SUPPORT;    }
+        return NComponent.NO_SUPPORT;    }
 
     @Override
-    public NutsText stringToText(String text, NutsTexts txt, NutsSession session) {
+    public NText stringToText(String text, NTexts txt, NSession session) {
         StreamTokenizerExt st = new StreamTokenizerExt(new StringReader(text),session);
         st.xmlComments(true);
         st.doNotParseNumbers();
@@ -56,7 +56,7 @@ public class XmlCodeHighlighter implements NutsCodeHighlighter {
         st.wordChars('.', '.');
         st.wordChars('-', '-');
 
-        List<NutsText> nodes = new ArrayList<>();
+        List<NText> nodes = new ArrayList<>();
         int s;
         EvictingQueue<String> last = new EvictingQueue<>(3);
         while ((s = st.nextToken()) != StreamTokenizerExt.TT_EOF) {
@@ -66,16 +66,16 @@ public class XmlCodeHighlighter implements NutsCodeHighlighter {
                     break;
                 }
                 case StreamTokenizerExt.TT_COMMENTS: {
-                    nodes.add(txt.ofStyled(st.image, NutsTextStyle.comments()));
+                    nodes.add(txt.ofStyled(st.image, NTextStyle.comments()));
                     break;
                 }
-                case NutsToken.TT_INT:
-                case NutsToken.TT_LONG:
-                case NutsToken.TT_BIG_INT:
-                case NutsToken.TT_FLOAT:
-                case NutsToken.TT_DOUBLE:
-                case NutsToken.TT_BIG_DECIMAL:{
-                    nodes.add(txt.ofStyled(st.image, NutsTextStyle.number()));
+                case NToken.TT_INT:
+                case NToken.TT_LONG:
+                case NToken.TT_BIG_INT:
+                case NToken.TT_FLOAT:
+                case NToken.TT_DOUBLE:
+                case NToken.TT_BIG_DECIMAL:{
+                    nodes.add(txt.ofStyled(st.image, NTextStyle.number()));
                     break;
                 }
                 case StreamTokenizerExt.TT_WORD: {
@@ -106,11 +106,11 @@ public class XmlCodeHighlighter implements NutsCodeHighlighter {
                 case '>':
                 case '&':
                 case '=': {
-                    nodes.add(txt.ofStyled(st.image, NutsTextStyle.separator()));
+                    nodes.add(txt.ofStyled(st.image, NTextStyle.separator()));
                     break;
                 }
                 default: {
-                    nodes.add(txt.ofStyled(st.image, NutsTextStyle.separator()));
+                    nodes.add(txt.ofStyled(st.image, NTextStyle.separator()));
                 }
             }
             last.add(st.image == null ? "" : st.image);
@@ -118,8 +118,8 @@ public class XmlCodeHighlighter implements NutsCodeHighlighter {
         return txt.ofList(nodes).simplify();
     }
 
-    public NutsText tokenToText(String text, String nodeType, NutsTexts txt, NutsSession session) {
-        switch (NutsStringUtils.trim(nodeType).toLowerCase()) {
+    public NText tokenToText(String text, String nodeType, NTexts txt, NSession session) {
+        switch (NStringUtils.trim(nodeType).toLowerCase()) {
             case "name":
                 return formatNodeName(text, txt);
             case "attribute":
@@ -138,15 +138,15 @@ public class XmlCodeHighlighter implements NutsCodeHighlighter {
         return txt.ofPlain(text);
     }
 
-    public NutsText formatNodeName(String text, NutsTexts txt) {
-        return txt.ofStyled(text, NutsTextStyle.keyword());
+    public NText formatNodeName(String text, NTexts txt) {
+        return txt.ofStyled(text, NTextStyle.keyword());
     }
 
-    public NutsText formatNodeString(String text, NutsTexts txt) {
-        return txt.ofStyled(text, NutsTextStyle.string());
+    public NText formatNodeString(String text, NTexts txt) {
+        return txt.ofStyled(text, NTextStyle.string());
     }
 
-    public NutsText formatNodeSeparator(String text, NutsTexts txt) {
-        return txt.ofStyled(text, NutsTextStyle.separator());
+    public NText formatNodeSeparator(String text, NTexts txt) {
+        return txt.ofStyled(text, NTextStyle.separator());
     }
 }

@@ -31,8 +31,8 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
-import net.thevpc.nuts.NutsBlankable;
-import net.thevpc.nuts.NutsWorkspaceSecurityManager;
+import net.thevpc.nuts.NBlankable;
+import net.thevpc.nuts.NWorkspaceSecurityManager;
 
 /**
  * Created by vpc on 1/24/17.
@@ -59,10 +59,10 @@ public abstract class AbstractFacadeCommand implements FacadeCommand {
         String userPasswordS = (upList==null || upList.isEmpty())?null: upList.get(0);
 
         char[] userPassword = userPasswordS == null ? null : userPasswordS.toCharArray();
-        NutsWorkspaceSecurityManager secu = context.getSession().security();
+        NWorkspaceSecurityManager secu = context.getSession().security();
         userLogin = userLogin == null ? null :new String(secu.getCredentials(userLogin.toCharArray()));
         userPassword = userPassword==null?null:secu.getCredentials(userPassword);
-        if (!NutsBlankable.isBlank(userLogin)) {
+        if (!NBlankable.isBlank(userLogin)) {
             boolean loggedId = false;
             try {
                 context.getSession().security().login(userLogin, userPassword);

@@ -31,33 +31,33 @@
 */
 package net.thevpc.nuts.toolbox.nsh.jshell;
 
-import net.thevpc.nuts.NutsExecutionException;
-import net.thevpc.nuts.NutsMessage;
-import net.thevpc.nuts.NutsSession;
+import net.thevpc.nuts.NExecutionException;
+import net.thevpc.nuts.NMsg;
+import net.thevpc.nuts.NSession;
 
 /**
  * @author thevpc (taha.bensalah@gmail.com)
  * %lastmodified 04-dec.-2005 Time: 17:53:11
  */
-public class JShellException extends NutsExecutionException {
+public class JShellException extends NExecutionException {
 
-    public JShellException(NutsSession session, NutsMessage message, int exitCode) {
+    public JShellException(NSession session, NMsg message, int exitCode) {
         super(session, message, exitCode);
     }
 
-    public JShellException(NutsSession session, NutsMessage message, Throwable cause) {
+    public JShellException(NSession session, NMsg message, Throwable cause) {
         super(session, message, cause);
     }
 
-    public JShellException(NutsSession session, NutsMessage message, Throwable cause, int exitCode) {
+    public JShellException(NSession session, NMsg message, Throwable cause, int exitCode) {
         super(session, message, cause, exitCode);
     }
 
-    public JShellException(NutsSession session, Throwable cause, int exitCode) {
-        super(session, NutsMessage.ofPlain("error"), cause, exitCode);
+    public JShellException(NSession session, Throwable cause, int exitCode) {
+        super(session, NMsg.ofPlain("error"), cause, exitCode);
     }
 
-    public JShellException(NutsSession session, NutsMessage message, Throwable cause, boolean enableSuppression, boolean writableStackTrace, int exitCode) {
+    public JShellException(NSession session, NMsg message, Throwable cause, boolean enableSuppression, boolean writableStackTrace, int exitCode) {
         super(session, message, cause, enableSuppression, writableStackTrace, exitCode);
     }
 }

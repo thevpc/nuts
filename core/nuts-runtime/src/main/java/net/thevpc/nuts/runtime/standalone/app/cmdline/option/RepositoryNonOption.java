@@ -27,9 +27,9 @@
 package net.thevpc.nuts.runtime.standalone.app.cmdline.option;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.cmdline.DefaultNutsArgumentCandidate;
-import net.thevpc.nuts.cmdline.NutsArgumentCandidate;
-import net.thevpc.nuts.cmdline.NutsCommandAutoComplete;
+import net.thevpc.nuts.cmdline.DefaultNArgumentCandidate;
+import net.thevpc.nuts.cmdline.NArgumentCandidate;
+import net.thevpc.nuts.cmdline.NCommandAutoComplete;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -47,18 +47,18 @@ public class RepositoryNonOption extends DefaultNonOption {
 
 
     @Override
-    public List<NutsArgumentCandidate> getCandidates(NutsCommandAutoComplete context) {
-        List<NutsArgumentCandidate> all = new ArrayList<>();
-        NutsRepository repository=context.get(NutsRepository.class);
+    public List<NArgumentCandidate> getCandidates(NCommandAutoComplete context) {
+        List<NArgumentCandidate> all = new ArrayList<>();
+        NRepository repository=context.get(NRepository.class);
         if(repository!=null){
             if (repository.config().isSupportedMirroring()) {
-                for (NutsRepository repo : repository.config().setSession(context.getSession()).getMirrors()) {
-                    all.add(new DefaultNutsArgumentCandidate(repo.getName()));
+                for (NRepository repo : repository.config().setSession(context.getSession()).getMirrors()) {
+                    all.add(new DefaultNArgumentCandidate(repo.getName()));
                 }
             }
         }else{
-            for (NutsRepository repo : context.getSession().repos().setSession(context.getSession()).getRepositories()) {
-                all.add(new DefaultNutsArgumentCandidate(repo.getName()));
+            for (NRepository repo : context.getSession().repos().setSession(context.getSession()).getRepositories()) {
+                all.add(new DefaultNArgumentCandidate(repo.getName()));
             }
 
         }

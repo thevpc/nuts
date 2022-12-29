@@ -17,7 +17,7 @@ ${{include($"${resources}/header.md")}}
 * `nuts.application=<true|false>` : when true the artifact is an executable application (implements NutsApplication)
 * `nuts.gui=<true|false>` : when true the requires a gui environment to execute
 * `nuts.term=<true|false>` : when true the artifact is a command line executable
-* `nuts.icons=<icon-path-string-array>` : an array (separated with ',' or new lines) of icon paths (url in the NutsPath
+* `nuts.icons=<icon-path-string-array>` : an array (separated with ',' or new lines) of icon paths (url in the NPath
   format)
 * `nuts.genericName=<genericNameString>` : a generic name for the application like 'Text Editor'
     * `nuts.categories=<categories-string-array>` : an array (separated with ',' or new lines) of categories. the

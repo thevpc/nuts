@@ -6,14 +6,14 @@
 package net.thevpc.nuts.toolbox.ntemplate.filetemplate;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.io.NutsIOException;
+import net.thevpc.nuts.io.NIOException;
 import net.thevpc.nuts.toolbox.ntemplate.filetemplate.eval.FtexEvaluator;
 import net.thevpc.nuts.toolbox.ntemplate.filetemplate.processors.*;
 import net.thevpc.nuts.toolbox.ntemplate.filetemplate.util.FileProcessorUtils;
 import net.thevpc.nuts.toolbox.ntemplate.filetemplate.util.StringUtils;
-import net.thevpc.nuts.util.NutsLogger;
-import net.thevpc.nuts.util.NutsLoggerOp;
-import net.thevpc.nuts.util.NutsLoggerVerb;
+import net.thevpc.nuts.util.NLogger;
+import net.thevpc.nuts.util.NLoggerOp;
+import net.thevpc.nuts.util.NLoggerVerb;
 
 import java.io.*;
 import java.nio.file.Files;
@@ -78,34 +78,34 @@ public class FileTemplater {
     private boolean userParentProperties;
     private PathTranslator pathTranslator;
     private String projectFileName = PROJECT_FILENAME;
-    private NutsSession session;
+    private NSession session;
 
-    public FileTemplater(NutsSession session) {
+    public FileTemplater(NSession session) {
         this.session = session;
         this.setLog(new TemplateLog() {
-            NutsLoggerOp logOp;
+            NLoggerOp logOp;
 
             @Override
             public void info(String title, String message) {
-                log().verb(NutsLoggerVerb.INFO).level(Level.FINER)
-                        .log(NutsMessage.ofJstyle("{0} : {1}", title, message));
+                log().verb(NLoggerVerb.INFO).level(Level.FINER)
+                        .log(NMsg.ofJstyle("{0} : {1}", title, message));
             }
 
             @Override
             public void debug(String title, String message) {
-                log().verb(NutsLoggerVerb.DEBUG).level(Level.FINER)
-                        .log(NutsMessage.ofJstyle("{0} : {1}", title, message));
+                log().verb(NLoggerVerb.DEBUG).level(Level.FINER)
+                        .log(NMsg.ofJstyle("{0} : {1}", title, message));
             }
 
             @Override
             public void error(String title, String message) {
-                log().verb(NutsLoggerVerb.FAIL).level(Level.FINER)
-                        .log(NutsMessage.ofJstyle("{0} : {1}", title, message));
+                log().verb(NLoggerVerb.FAIL).level(Level.FINER)
+                        .log(NMsg.ofJstyle("{0} : {1}", title, message));
             }
 
-            private NutsLoggerOp log() {
+            private NLoggerOp log() {
                 if (logOp == null) {
-                    logOp = NutsLogger.of(FileTemplater.class, session)
+                    logOp = NLogger.of(FileTemplater.class, session)
                             .with()
                     ;
                 }
@@ -142,7 +142,7 @@ public class FileTemplater {
         return pp;
     }
 
-    public NutsSession getSession() {
+    public NSession getSession() {
         return session;
     }
 
@@ -399,16 +399,16 @@ public class FileTemplater {
         return (String) getVar(ROOT_DIR).get();
     }
 
-    public NutsOptional<String> getWorkingDir() {
-        return (NutsOptional) getVar(WORKING_DIR);
+    public NOptional<String> getWorkingDir() {
+        return (NOptional) getVar(WORKING_DIR);
     }
 
     public FileTemplater setWorkingDir(String workingDir) {
         return setVar(WORKING_DIR, workingDir);
     }
 
-    public NutsOptional<String> getRootDir() {
-        return (NutsOptional) getVar(ROOT_DIR);
+    public NOptional<String> getRootDir() {
+        return (NOptional) getVar(ROOT_DIR);
     }
 
     public FileTemplater setRootDir(String rootDir) {
@@ -427,7 +427,7 @@ public class FileTemplater {
         return (String) getVar(SOURCE_PATH).get();
     }
 
-    public NutsOptional<String> getSourcePath() {
+    public NOptional<String> getSourcePath() {
         return getVar(SOURCE_PATH);
     }
 
@@ -502,49 +502,49 @@ public class FileTemplater {
         return getVar(name).orElse(defaultValue);
     }
 
-    public <T> NutsOptional<T> getVar(String name) {
+    public <T> NOptional<T> getVar(String name) {
         switch (name) {
             case SOURCE_PATH: {
                 if (this.sourcePath != null) {
-                    return (NutsOptional<T>) NutsOptional.of(this.sourcePath);
+                    return (NOptional<T>) NOptional.of(this.sourcePath);
                 }
                 break;
             }
             case WORKING_DIR: {
                 if (this.workingDir != null) {
-                    return (NutsOptional<T>) NutsOptional.of(this.workingDir);
+                    return (NOptional<T>) NOptional.of(this.workingDir);
                 }
                 break;
             }
             case ROOT_DIR: {
                 if (this.rootDir != null) {
-                    return (NutsOptional<T>) NutsOptional.of(this.rootDir);
+                    return (NOptional<T>) NOptional.of(this.rootDir);
                 }
                 break;
             }
         }
         T r = (T) vars.get(name);
         if (r != null) {
-            return NutsOptional.of(r);
+            return NOptional.of(r);
         }
         if (vars.containsKey(name)) {
-            return NutsOptional.ofNull();
+            return NOptional.ofNull();
         }
         if (customVarEvaluator != null) {
             r = (T) customVarEvaluator.apply(name);
             if (r != null) {
-                return NutsOptional.of(r);
+                return NOptional.of(r);
             }
         }
         if (parent != null) {
             return parent.getVar(name);
         }
-        return NutsOptional.ofEmpty(session1 -> {
+        return NOptional.ofEmpty(session1 -> {
             String source = getSourcePath().orElse(null);
             if (source == null) {
-                return NutsMessage.ofCstyle("not found : %s", StringUtils.escapeString(name));
+                return NMsg.ofCstyle("not found : %s", StringUtils.escapeString(name));
             } else {
-                return NutsMessage.ofCstyle("not found : %s in %s", StringUtils.escapeString(name), source);
+                return NMsg.ofCstyle("not found : %s in %s", StringUtils.escapeString(name), source);
             }
         });
     }
@@ -566,15 +566,15 @@ public class FileTemplater {
                         try {
                             processRegularFile(x, null);
                         } catch (Exception ex) {
-                            throw new NutsIllegalArgumentException(getSession(), NutsMessage.ofCstyle("error processing %s : %s", x, ex), ex);
+                            throw new NIllegalArgumentException(getSession(), NMsg.ofCstyle("error processing %s : %s", x, ex), ex);
                         }
                     }
                 });
             } catch (IOException e) {
-                throw new NutsIOException(getSession(), e);
+                throw new NIOException(getSession(), e);
             }
         } else {
-            throw new NutsIOException(getSession(), NutsMessage.ofCstyle("unsupported path %s", path));
+            throw new NIOException(getSession(), NMsg.ofCstyle("unsupported path %s", path));
         }
     }
 
@@ -595,10 +595,10 @@ public class FileTemplater {
                             }
                         });
             } catch (IOException e) {
-                throw new NutsIOException(getSession(), e);
+                throw new NIOException(getSession(), e);
             }
         } else {
-            throw new NutsIOException(getSession(), NutsMessage.ofCstyle("unsupported path %s", path));
+            throw new NIOException(getSession(), NMsg.ofCstyle("unsupported path %s", path));
         }
     }
 
@@ -610,7 +610,7 @@ public class FileTemplater {
         Path absolutePath = toAbsolutePath(path);
         Path parentPath = absolutePath.getParent();
         if (!Files.isRegularFile(absolutePath)) {
-            throw new NutsIllegalArgumentException(getSession(), NutsMessage.ofCstyle("no a file : %s", path));
+            throw new NIllegalArgumentException(getSession(), NMsg.ofCstyle("no a file : %s", path));
         }
         String[] mimeTypesArray = mimeTypesString == null ? FileProcessorUtils.splitMimeTypes(getMimeTypeResolver().resolveMimetype(path.toString()))
                 : FileProcessorUtils.splitMimeTypes(mimeTypesString);
@@ -641,18 +641,18 @@ public class FileTemplater {
                         return out.toString();
                     }
                 } catch (IOException ex) {
-                    throw new NutsIOException(getSession(), NutsMessage.ofCstyle("error executing file : %s", path), ex);
+                    throw new NIOException(getSession(), NMsg.ofCstyle("error executing file : %s", path), ex);
                 }
             }
         }
-        throw new NutsIllegalArgumentException(getSession(), NutsMessage.ofCstyle("processor not found for %s", mimeTypesString));
+        throw new NIllegalArgumentException(getSession(), NMsg.ofCstyle("processor not found for %s", mimeTypesString));
     }
 
     public void processRegularFile(Path path, String mimeType) {
         Path absolutePath = toAbsolutePath(path);
         Path parentPath = absolutePath.getParent();
         if (!Files.isRegularFile(absolutePath)) {
-            throw new NutsIllegalArgumentException(getSession(), NutsMessage.ofCstyle("unsupported file : %s", path.toString()));
+            throw new NIllegalArgumentException(getSession(), NMsg.ofCstyle("unsupported file : %s", path.toString()));
         }
         String[] mimeTypes = mimeType == null ? FileProcessorUtils.splitMimeTypes(getMimeTypeResolver().resolveMimetype(path.toString()))
                 : FileProcessorUtils.splitMimeTypes(mimeType);
@@ -707,9 +707,9 @@ public class FileTemplater {
                     return bos.toString();
                 }
             }
-            throw new NutsIllegalArgumentException(getSession(), NutsMessage.ofCstyle("unsupported mimetype : %s", mimeType));
+            throw new NIllegalArgumentException(getSession(), NMsg.ofCstyle("unsupported mimetype : %s", mimeType));
         } catch (IOException ex) {
-            throw new NutsIOException(getSession(), ex);
+            throw new NIOException(getSession(), ex);
         }
     }
 
@@ -740,7 +740,7 @@ public class FileTemplater {
                 return;
             }
         }
-        throw new NutsIllegalArgumentException(getSession(), NutsMessage.ofCstyle("unsupported mimetype : %s", mimeType));
+        throw new NIllegalArgumentException(getSession(), NMsg.ofCstyle("unsupported mimetype : %s", mimeType));
     }
 
     public MimeTypeResolver getMimeTypeResolver() {
@@ -787,20 +787,20 @@ public class FileTemplater {
         String targetFolder = config.getTargetFolder();
         if (projectPath == null) {
             if (config.getPaths().isEmpty()) {
-                throw new NutsIllegalArgumentException(getSession(), NutsMessage.ofPlain("missing path to process"));
+                throw new NIllegalArgumentException(getSession(), NMsg.ofPlain("missing path to process"));
             }
             if (targetFolder == null) {
-                throw new NutsIllegalArgumentException(getSession(), NutsMessage.ofPlain("missing target folder"));
+                throw new NIllegalArgumentException(getSession(), NMsg.ofPlain("missing target folder"));
             }
         }
         Path oProjectDirPath = Paths.get(projectPath);
         Path oProjectFile = oProjectDirPath.resolve(getProjectFileName());
         Path oProjectSrc = oProjectDirPath.resolve("src");
         if (!Files.isDirectory(oProjectSrc)) {
-            throw new NutsIllegalArgumentException(getSession(), NutsMessage.ofCstyle("invalid project, missing src/ folder : %s", oProjectDirPath));
+            throw new NIllegalArgumentException(getSession(), NMsg.ofCstyle("invalid project, missing src/ folder : %s", oProjectDirPath));
         }
         if (!Files.isRegularFile(oProjectFile)) {
-            throw new NutsIllegalArgumentException(getSession(), NutsMessage.ofCstyle("invalid project, missing project.ftex : %s", oProjectDirPath));
+            throw new NIllegalArgumentException(getSession(), NMsg.ofCstyle("invalid project, missing project.ftex : %s", oProjectDirPath));
         }
         List<String> initScripts = new ArrayList<>(config.getInitScripts());
         initScripts.add(oProjectFile.toString());
@@ -828,20 +828,20 @@ public class FileTemplater {
             }
         }
         if (targetFolder == null) {
-            throw new NutsIllegalArgumentException(getSession(), NutsMessage.ofPlain("missing target folder"));
+            throw new NIllegalArgumentException(getSession(), NMsg.ofPlain("missing target folder"));
         }
         FileProcessorUtils.mkdirs(Paths.get(targetFolder));
         try {
             targetFolder = Paths.get(targetFolder).toRealPath().toString();
         } catch (IOException ex) {
-            throw new NutsIOException(getSession(), ex);
+            throw new NIOException(getSession(), ex);
         }
         for (String path : paths) {
             Path opath;
             try {
                 opath = Paths.get(path).toRealPath();
             } catch (IOException ex) {
-                throw new NutsIOException(getSession(), ex);
+                throw new NIOException(getSession(), ex);
             }
             if (Files.isDirectory(opath)) {
                 this.setWorkingDir(opath.toString());

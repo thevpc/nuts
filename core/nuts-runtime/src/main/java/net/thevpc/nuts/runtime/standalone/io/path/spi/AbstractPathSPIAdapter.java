@@ -1,16 +1,15 @@
 package net.thevpc.nuts.runtime.standalone.io.path.spi;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.cmdline.NutsCommandLine;
-import net.thevpc.nuts.format.NutsTreeVisitor;
-import net.thevpc.nuts.io.NutsPath;
-import net.thevpc.nuts.io.NutsPathOption;
-import net.thevpc.nuts.io.NutsPathPermission;
-import net.thevpc.nuts.io.NutsPrintStream;
-import net.thevpc.nuts.spi.NutsFormatSPI;
-import net.thevpc.nuts.spi.NutsPathSPI;
-import net.thevpc.nuts.text.NutsTextBuilder;
-import net.thevpc.nuts.util.NutsStream;
+import net.thevpc.nuts.cmdline.NCommandLine;
+import net.thevpc.nuts.format.NTreeVisitor;
+import net.thevpc.nuts.io.NPath;
+import net.thevpc.nuts.io.NPathOption;
+import net.thevpc.nuts.io.NPathPermission;
+import net.thevpc.nuts.spi.NFormatSPI;
+import net.thevpc.nuts.spi.NPathSPI;
+import net.thevpc.nuts.text.NTextBuilder;
+import net.thevpc.nuts.util.NStream;
 
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -21,12 +20,12 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 
-public abstract class AbstractPathSPIAdapter implements NutsPathSPI {
+public abstract class AbstractPathSPIAdapter implements NPathSPI {
 
-    protected final NutsSession session;
-    protected NutsPath ref;
+    protected final NSession session;
+    protected NPath ref;
 
-    protected AbstractPathSPIAdapter(NutsPath ref, NutsSession session) {
+    protected AbstractPathSPIAdapter(NPath ref, NSession session) {
         this.session = session;
         this.ref = ref;
     }
@@ -54,147 +53,147 @@ public abstract class AbstractPathSPIAdapter implements NutsPathSPI {
     }
 
     @Override
-    public NutsStream<NutsPath> list(NutsPath basePath) {
-        return ref.list();
+    public NStream<NPath> list(NPath basePath) {
+        return ref.stream();
     }
 
     @Override
-    public NutsFormatSPI formatter(NutsPath basePath) {
+    public NFormatSPI formatter(NPath basePath) {
         return new MyPathFormat(this);
     }
 
     @Override
-    public String getName(NutsPath basePath) {
+    public String getName(NPath basePath) {
         return ref.getName();
     }
 
     @Override
-    public String getProtocol(NutsPath basePath) {
+    public String getProtocol(NPath basePath) {
         return ref.getProtocol();
     }
 
     @Override
-    public NutsPath resolve(NutsPath basePath, String path) {
+    public NPath resolve(NPath basePath, String path) {
         return ref.resolve(path);
     }
 
     @Override
-    public NutsPath resolve(NutsPath basePath, NutsPath path) {
+    public NPath resolve(NPath basePath, NPath path) {
         return ref.resolve(path);
     }
 
     @Override
-    public NutsPath resolveSibling(NutsPath basePath, String path) {
+    public NPath resolveSibling(NPath basePath, String path) {
         return ref.resolveSibling(path);
     }
 
     @Override
-    public NutsPath resolveSibling(NutsPath basePath, NutsPath path) {
+    public NPath resolveSibling(NPath basePath, NPath path) {
         return ref.resolveSibling(path);
     }
 
     @Override
-    public NutsPath toCompressedForm(NutsPath basePath) {
+    public NPath toCompressedForm(NPath basePath) {
         return null;
     }
 
     @Override
-    public URL toURL(NutsPath basePath) {
+    public URL toURL(NPath basePath) {
         return ref.toURL();
     }
 
     @Override
-    public Path toFile(NutsPath basePath) {
+    public Path toFile(NPath basePath) {
         return ref.toFile();
     }
 
-    public boolean isSymbolicLink(NutsPath basePath) {
+    public boolean isSymbolicLink(NPath basePath) {
         return false;
     }
 
     @Override
-    public boolean isOther(NutsPath basePath) {
+    public boolean isOther(NPath basePath) {
         return false;
     }
 
     @Override
-    public boolean isDirectory(NutsPath basePath) {
+    public boolean isDirectory(NPath basePath) {
         return ref.isDirectory();
     }
 
     @Override
-    public boolean isRegularFile(NutsPath basePath) {
+    public boolean isRegularFile(NPath basePath) {
         return ref.isRegularFile();
     }
 
     @Override
-    public boolean exists(NutsPath basePath) {
+    public boolean exists(NPath basePath) {
         return ref.exists();
     }
 
     @Override
-    public long getContentLength(NutsPath basePath) {
+    public long getContentLength(NPath basePath) {
         return ref.getContentLength();
     }
 
-    public String getContentEncoding(NutsPath basePath) {
+    public String getContentEncoding(NPath basePath) {
         return ref.getContentEncoding();
     }
 
-    public String getContentType(NutsPath basePath) {
+    public String getContentType(NPath basePath) {
         return ref.getContentType();
     }
 
     @Override
-    public String getLocation(NutsPath basePath) {
+    public String getLocation(NPath basePath) {
         return ref.getLocation();
     }
 
-    public InputStream getInputStream(NutsPath basePath) {
-        return ref.getInputStream();
+    public InputStream getInputStream(NPath basePath, NPathOption... options) {
+        return ref.getInputStream(options);
     }
 
-    public OutputStream getOutputStream(NutsPath basePath) {
-        return ref.getOutputStream();
+    public OutputStream getOutputStream(NPath basePath, NPathOption... options) {
+        return ref.getOutputStream(options);
     }
 
     @Override
-    public NutsSession getSession() {
+    public NSession getSession() {
         return session;
     }
 
     @Override
-    public void delete(NutsPath basePath, boolean recurse) {
+    public void delete(NPath basePath, boolean recurse) {
         ref.delete(recurse);
     }
 
     @Override
-    public void mkdir(boolean parents, NutsPath basePath) {
+    public void mkdir(boolean parents, NPath basePath) {
         ref.delete(parents);
     }
 
     @Override
-    public Instant getLastModifiedInstant(NutsPath basePath) {
+    public Instant getLastModifiedInstant(NPath basePath) {
         return ref.getLastModifiedInstant();
     }
 
     @Override
-    public Instant getLastAccessInstant(NutsPath basePath) {
+    public Instant getLastAccessInstant(NPath basePath) {
         return ref.getLastAccessInstant();
     }
 
     @Override
-    public Instant getCreationInstant(NutsPath basePath) {
+    public Instant getCreationInstant(NPath basePath) {
         return ref.getCreationInstant();
     }
 
     @Override
-    public NutsPath getParent(NutsPath basePath) {
+    public NPath getParent(NPath basePath) {
         return ref.getParent();
     }
 
     @Override
-    public NutsPath toAbsolute(NutsPath basePath, NutsPath rootPath) {
+    public NPath toAbsolute(NPath basePath, NPath rootPath) {
         if (isAbsolute(basePath)) {
             return basePath;
         }
@@ -202,62 +201,62 @@ public abstract class AbstractPathSPIAdapter implements NutsPathSPI {
     }
 
     @Override
-    public NutsPath normalize(NutsPath basePath) {
+    public NPath normalize(NPath basePath) {
         return basePath.normalize();
     }
 
     @Override
-    public boolean isAbsolute(NutsPath basePath) {
+    public boolean isAbsolute(NPath basePath) {
         return ref.isAbsolute();
     }
 
     @Override
-    public String owner(NutsPath basePath) {
+    public String owner(NPath basePath) {
         return ref.owner();
     }
 
     @Override
-    public String group(NutsPath basePath) {
+    public String group(NPath basePath) {
         return ref.group();
     }
 
     @Override
-    public Set<NutsPathPermission> getPermissions(NutsPath basePath) {
+    public Set<NPathPermission> getPermissions(NPath basePath) {
         return ref.getPermissions();
     }
 
     @Override
-    public void setPermissions(NutsPath basePath, NutsPathPermission... permissions) {
+    public void setPermissions(NPath basePath, NPathPermission... permissions) {
         ref.setPermissions(permissions);
     }
 
     @Override
-    public void addPermissions(NutsPath basePath, NutsPathPermission... permissions) {
+    public void addPermissions(NPath basePath, NPathPermission... permissions) {
         ref.addPermissions(permissions);
     }
 
     @Override
-    public void removePermissions(NutsPath basePath, NutsPathPermission... permissions) {
+    public void removePermissions(NPath basePath, NPathPermission... permissions) {
         ref.removePermissions(permissions);
     }
 
     @Override
-    public boolean isName(NutsPath basePath) {
+    public boolean isName(NPath basePath) {
         return ref.isName();
     }
 
     @Override
-    public int getPathCount(NutsPath basePath) {
+    public int getPathCount(NPath basePath) {
         return ref.getPathCount();
     }
 
     @Override
-    public boolean isRoot(NutsPath basePath) {
+    public boolean isRoot(NPath basePath) {
         return ref.isRoot();
     }
 
     @Override
-    public NutsPath getRoot(NutsPath basePath) {
+    public NPath getRoot(NPath basePath) {
         if (isRoot(basePath)) {
             return basePath;
         }
@@ -265,37 +264,37 @@ public abstract class AbstractPathSPIAdapter implements NutsPathSPI {
     }
 
     @Override
-    public NutsStream<NutsPath> walk(NutsPath basePath, int maxDepth, NutsPathOption[] options) {
+    public NStream<NPath> walk(NPath basePath, int maxDepth, NPathOption[] options) {
         return ref.walk(maxDepth, options);
     }
 
     @Override
-    public NutsPath subpath(NutsPath basePath, int beginIndex, int endIndex) {
+    public NPath subpath(NPath basePath, int beginIndex, int endIndex) {
         return ref.subpath(beginIndex, endIndex);
     }
 
     @Override
-    public List<String> getItems(NutsPath basePath) {
+    public List<String> getItems(NPath basePath) {
         return ref.getItems();
     }
 
     @Override
-    public void moveTo(NutsPath basePath, NutsPath other, NutsPathOption... options) {
+    public void moveTo(NPath basePath, NPath other, NPathOption... options) {
         ref.moveTo(other);
     }
 
     @Override
-    public void copyTo(NutsPath basePath, NutsPath other, NutsPathOption... options) {
+    public void copyTo(NPath basePath, NPath other, NPathOption... options) {
         ref.copyTo(other);
     }
 
     @Override
-    public void walkDfs(NutsPath basePath, NutsTreeVisitor<NutsPath> visitor, int maxDepth, NutsPathOption... options) {
+    public void walkDfs(NPath basePath, NTreeVisitor<NPath> visitor, int maxDepth, NPathOption... options) {
         ref.walkDfs(visitor, maxDepth, options);
     }
 
     @Override
-    public NutsPath toRelativePath(NutsPath basePath, NutsPath parentPath) {
+    public NPath toRelativePath(NPath basePath, NPath parentPath) {
         String child = basePath.getLocation();
         String parent = parentPath.getLocation();
         if (child.startsWith(parent)) {
@@ -303,12 +302,12 @@ public abstract class AbstractPathSPIAdapter implements NutsPathSPI {
             if (child.startsWith("/") || child.startsWith("\\")) {
                 child = child.substring(1);
             }
-            return NutsPath.of(child, session);
+            return NPath.of(child, session);
         }
         return null;
     }
 
-    private static class MyPathFormat implements NutsFormatSPI {
+    private static class MyPathFormat implements NFormatSPI {
 
         private final AbstractPathSPIAdapter p;
 
@@ -316,8 +315,8 @@ public abstract class AbstractPathSPIAdapter implements NutsPathSPI {
             this.p = p;
         }
 
-        public NutsString asFormattedString() {
-            NutsTextBuilder sb = NutsTextBuilder.of(p.getSession());
+        public NString asFormattedString() {
+            NTextBuilder sb = NTextBuilder.of(p.getSession());
             sb.append(p.ref);
             return sb.build();
         }
@@ -327,12 +326,12 @@ public abstract class AbstractPathSPIAdapter implements NutsPathSPI {
         }
 
         @Override
-        public void print(NutsPrintStream out) {
+        public void print(net.thevpc.nuts.io.NStream out) {
             out.print(asFormattedString());
         }
 
         @Override
-        public boolean configureFirst(NutsCommandLine commandLine) {
+        public boolean configureFirst(NCommandLine commandLine) {
             return false;
         }
     }

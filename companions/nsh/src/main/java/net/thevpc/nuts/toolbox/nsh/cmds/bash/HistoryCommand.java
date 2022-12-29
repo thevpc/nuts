@@ -26,11 +26,11 @@
 package net.thevpc.nuts.toolbox.nsh.cmds.bash;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.cmdline.NutsArgument;
-import net.thevpc.nuts.cmdline.NutsCommandLine;
-import net.thevpc.nuts.io.NutsPath;
-import net.thevpc.nuts.spi.NutsComponentScope;
-import net.thevpc.nuts.spi.NutsComponentScopeType;
+import net.thevpc.nuts.cmdline.NArgument;
+import net.thevpc.nuts.cmdline.NCommandLine;
+import net.thevpc.nuts.io.NPath;
+import net.thevpc.nuts.spi.NComponentScope;
+import net.thevpc.nuts.spi.NComponentScopeType;
 import net.thevpc.nuts.toolbox.nsh.SimpleJShellBuiltin;
 import net.thevpc.nuts.toolbox.nsh.jshell.JShellExecutionContext;
 import net.thevpc.nuts.toolbox.nsh.jshell.JShellHistory;
@@ -42,7 +42,7 @@ import java.util.List;
 /**
  * Created by vpc on 1/7/17.
  */
-@NutsComponentScope(NutsComponentScopeType.WORKSPACE)
+@NComponentScope(NComponentScopeType.WORKSPACE)
 public class HistoryCommand extends SimpleJShellBuiltin {
 
     public HistoryCommand() {
@@ -50,10 +50,10 @@ public class HistoryCommand extends SimpleJShellBuiltin {
     }
 
     @Override
-    protected boolean configureFirst(NutsCommandLine commandLine, JShellExecutionContext context) {
+    protected boolean configureFirst(NCommandLine commandLine, JShellExecutionContext context) {
         Options options = context.getOptions();
-        NutsSession session = context.getSession();
-        NutsArgument a;
+        NSession session = context.getSession();
+        NArgument a;
         if (commandLine.next("-c", "--clear").isPresent()) {
             options.action = Action.CLEAR;
             commandLine.setCommandName(getName()).throwUnexpectedArgument();
@@ -72,7 +72,7 @@ public class HistoryCommand extends SimpleJShellBuiltin {
             if (a.isKeyValue()) {
                 options.sval = a.getStringValue().get(session);
             } else if (!commandLine.isEmpty()) {
-                options.sval = commandLine.next().flatMap(NutsValue::asString).get(session);
+                options.sval = commandLine.next().flatMap(NValue::asString).get(session);
             }
             commandLine.setCommandName(getName()).throwUnexpectedArgument();
             return true;
@@ -81,7 +81,7 @@ public class HistoryCommand extends SimpleJShellBuiltin {
             if (a.isKeyValue()) {
                 options.sval = a.getStringValue().get(session);
             } else if (!commandLine.isEmpty()) {
-                options.sval = commandLine.next().flatMap(NutsValue::asString).get(session);
+                options.sval = commandLine.next().flatMap(NValue::asString).get(session);
             }
             commandLine.setCommandName(getName()).throwUnexpectedArgument();
             return true;
@@ -96,10 +96,10 @@ public class HistoryCommand extends SimpleJShellBuiltin {
     }
 
     @Override
-    protected void execBuiltin(NutsCommandLine commandLine, JShellExecutionContext context) {
+    protected void execBuiltin(NCommandLine commandLine, JShellExecutionContext context) {
         Options options = context.getOptions();
         JShellHistory shistory = context.getShell().getHistory();
-        NutsSession session = context.getSession();
+        NSession session = context.getSession();
         switch (options.action) {
             case PRINT: {
                 List<String> history = shistory.getElements(options.ival <= 0 ? 1000 : options.ival);
@@ -130,10 +130,10 @@ public class HistoryCommand extends SimpleJShellBuiltin {
 
                         shistory.save();
                     } else {
-                        shistory.save(NutsPath.of(options.sval, session).toAbsolute(session.locations().getWorkspaceLocation()));
+                        shistory.save(NPath.of(options.sval, session).toAbsolute(session.locations().getWorkspaceLocation()));
                     }
                 } catch (IOException ex) {
-                    throw new NutsExecutionException(session, NutsMessage.ofCstyle("%s", ex), ex, 100);
+                    throw new NExecutionException(session, NMsg.ofCstyle("%s", ex), ex, 100);
                 }
                 return;
             }
@@ -143,15 +143,15 @@ public class HistoryCommand extends SimpleJShellBuiltin {
                         shistory.clear();
                         shistory.load();
                     } else {
-                        shistory.load(NutsPath.of(options.sval, session).toAbsolute(session.locations().getWorkspaceLocation()));
+                        shistory.load(NPath.of(options.sval, session).toAbsolute(session.locations().getWorkspaceLocation()));
                     }
                 } catch (IOException ex) {
-                    throw new NutsExecutionException(session, NutsMessage.ofCstyle("%s", ex), ex, 100);
+                    throw new NExecutionException(session, NMsg.ofCstyle("%s", ex), ex, 100);
                 }
                 return;
             }
             default: {
-                throw new NutsUnsupportedArgumentException(session, NutsMessage.ofCstyle("unsupported %s", String.valueOf(options.action)));
+                throw new NUnsupportedArgumentException(session, NMsg.ofCstyle("unsupported %s", String.valueOf(options.action)));
             }
         }
     }

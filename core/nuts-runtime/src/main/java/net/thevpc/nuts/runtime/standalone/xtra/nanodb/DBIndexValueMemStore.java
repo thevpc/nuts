@@ -1,6 +1,6 @@
 package net.thevpc.nuts.runtime.standalone.xtra.nanodb;
 
-import net.thevpc.nuts.NutsSession;
+import net.thevpc.nuts.NSession;
 
 import java.io.File;
 import java.util.Arrays;
@@ -21,7 +21,7 @@ public class DBIndexValueMemStore implements DBIndexValueStore {
     }
 
     @Override
-    public void add(long position, NutsSession session) {
+    public void add(long position, NSession session) {
         if (fallback == null && val.length + 1 < max) {
             if (val.length == 0) {
                 val = new long[]{position};
@@ -43,7 +43,7 @@ public class DBIndexValueMemStore implements DBIndexValueStore {
 
 
     @Override
-    public void addAll(long[] position, NutsSession session) {
+    public void addAll(long[] position, NSession session) {
         if (fallback == null && val.length + position.length < max) {
             if (val.length == 0) {
                 val = Arrays.copyOf(position, position.length);
@@ -64,7 +64,7 @@ public class DBIndexValueMemStore implements DBIndexValueStore {
     }
 
     @Override
-    public LongStream stream(NutsSession session) {
+    public LongStream stream(NSession session) {
         if (fallback == null) {
             return Arrays.stream(val);
         } else {
@@ -77,7 +77,7 @@ public class DBIndexValueMemStore implements DBIndexValueStore {
         return fallback == null;
     }
 
-    public void flush(NutsSession session) {
+    public void flush(NSession session) {
         if (fallback != null) {
             fallback.flush(session);
         }

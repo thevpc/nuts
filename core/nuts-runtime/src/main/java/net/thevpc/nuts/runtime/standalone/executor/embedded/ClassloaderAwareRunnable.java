@@ -25,8 +25,8 @@
 */
 package net.thevpc.nuts.runtime.standalone.executor.embedded;
 
-import net.thevpc.nuts.concurrent.NutsScheduler;
-import net.thevpc.nuts.NutsSession;
+import net.thevpc.nuts.concurrent.NScheduler;
+import net.thevpc.nuts.NSession;
 
 /**
  *
@@ -38,14 +38,14 @@ public abstract class ClassloaderAwareRunnable implements Runnable {
     protected ClassLoader initialClassLoader;
     protected ClassLoader classLoader;
     protected Throwable error;
-    protected NutsSession session;
+    protected NSession session;
 
-    public ClassloaderAwareRunnable(NutsSession session,ClassLoader classLoader) {
+    public ClassloaderAwareRunnable(NSession session, ClassLoader classLoader) {
         this.classLoader = classLoader;
         this.session = session;
     }
 
-    public NutsSession getSession() {
+    public NSession getSession() {
         return session;
     }
 
@@ -80,7 +80,7 @@ public abstract class ClassloaderAwareRunnable implements Runnable {
 
     public void runAndWaitFor() throws Throwable {
         try {
-            NutsScheduler.of(getSession()).executorService().submit(this).get();
+            NScheduler.of(getSession()).executorService().submit(this).get();
         } catch (InterruptedException ex) {
             setError(ex);
         }

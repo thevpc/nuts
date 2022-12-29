@@ -1,29 +1,29 @@
 package net.thevpc.nuts.toolbox.ntomcat.util;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.cmdline.NutsArgument;
-import net.thevpc.nuts.cmdline.NutsCommandLine;
-import net.thevpc.nuts.io.NutsPath;
-import net.thevpc.nuts.io.NutsPsInfo;
+import net.thevpc.nuts.cmdline.NArgument;
+import net.thevpc.nuts.cmdline.NCommandLine;
+import net.thevpc.nuts.io.NPath;
+import net.thevpc.nuts.io.NPsInfo;
 
 import java.util.Objects;
 
 public class RunningTomcat {
     private String pid;
-    private NutsPath home;
+    private NPath home;
     private String base;
     private String argsLine;
-    private NutsVersion version;
+    private NVersion version;
 
-    public RunningTomcat(NutsPsInfo r, NutsSession session) {
+    public RunningTomcat(NPsInfo r, NSession session) {
         pid =r.getPid();
         argsLine=r.getCommandLine();
-        NutsCommandLine cmdline = NutsCommandLine.parseSystem(r.getCommandLine(),session)
+        NCommandLine cmdline = NCommandLine.parseSystem(r.getCommandLine(),session)
                 .get(session).setExpandSimpleOptions(false);
-        NutsArgument a=null;
+        NArgument a=null;
         while(cmdline.hasNext()){
             if((a=cmdline.nextString("-Dcatalina.home").orNull())!=null) {
-                home = NutsPath.of(a.getStringValue().get(session),session);
+                home = NPath.of(a.getStringValue().get(session),session);
             }else if((a=cmdline.nextString("-Dcatalina.base").orNull())!=null){
                 base=a.getStringValue().get(session);
             }else{
@@ -31,10 +31,10 @@ public class RunningTomcat {
             }
         }
         String b = TomcatUtils.getFolderCatalinaHomeVersion(home);
-        this.version= b==null?null:NutsVersion.of(b).get();
+        this.version= b==null?null: NVersion.of(b).get();
     }
 
-    public NutsVersion getVersion() {
+    public NVersion getVersion() {
         return version;
     }
 
@@ -42,7 +42,7 @@ public class RunningTomcat {
         return pid;
     }
 
-    public NutsPath getHome() {
+    public NPath getHome() {
         return home;
     }
 

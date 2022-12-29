@@ -1,7 +1,7 @@
 package net.thevpc.nuts.toolbox.ndb.util;
 
-import net.thevpc.nuts.NutsSession;
-import net.thevpc.nuts.concurrent.NutsScheduler;
+import net.thevpc.nuts.NSession;
+import net.thevpc.nuts.concurrent.NScheduler;
 
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
@@ -12,8 +12,8 @@ public class ClassloaderAwareCallable<V> {
     private InterruptedException error;
     private Context context;
 
-    public ClassloaderAwareCallable(NutsSession session, ExecutorService executorService, ClassLoader classLoader) {
-        this.context=new Context(session, executorService!=null?executorService:NutsScheduler.of(session).executorService(), classLoader);
+    public ClassloaderAwareCallable(NSession session, ExecutorService executorService, ClassLoader classLoader) {
+        this.context=new Context(session, executorService!=null?executorService: NScheduler.of(session).executorService(), classLoader);
     }
 
     public V runAndWaitFor(Function<Context,V> callable) {
@@ -36,17 +36,17 @@ public class ClassloaderAwareCallable<V> {
     }
 
     public static class Context{
-        private NutsSession session;
+        private NSession session;
         private ExecutorService executorService;
         private ClassLoader classLoader;
 
-        public Context(NutsSession session, ExecutorService executorService, ClassLoader classLoader) {
+        public Context(NSession session, ExecutorService executorService, ClassLoader classLoader) {
             this.session = session;
             this.executorService = executorService;
             this.classLoader = classLoader;
         }
 
-        public NutsSession getSession() {
+        public NSession getSession() {
             return session;
         }
 

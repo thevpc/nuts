@@ -1,7 +1,7 @@
 package net.thevpc.nuts.lib.tomcatclassloader;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.boot.DefaultNutsWorkspaceOptionsBuilder;
+import net.thevpc.nuts.boot.DefaultNWorkspaceOptionsBuilder;
 import org.apache.catalina.WebResource;
 import org.apache.catalina.WebResourceRoot;
 import org.apache.catalina.loader.WebappClassLoader;
@@ -27,12 +27,12 @@ public class NutsTomcatClassLoader extends WebappClassLoader {
     private static final String SERVICES_PREFIX = "/META-INF/services/";
     private static final org.apache.juli.logging.Log log
             = org.apache.juli.logging.LogFactory.getLog(WebappClassLoaderBase.class);
-    protected NutsSession nutsWorkspace;
+    protected NSession nutsWorkspace;
     protected ClassLoader nutsClassLoader;
     protected boolean nutsClassLoaderUnderConstruction;
     protected String nutsPath;
     protected String workspaceLocation;
-    protected NutsId workspaceBootRuntime;
+    protected NId workspaceBootRuntime;
     protected String workspaceExcludedRepositories;
     protected String workspaceExcludedExtensions;
     protected String workspaceArchetype;
@@ -109,7 +109,7 @@ public class NutsTomcatClassLoader extends WebappClassLoader {
                 String nutsPath = getNutsPath();
                 String[] pathList = splitString(nutsPath, "; ,");
                 try {
-                    NutsSession session = resolveNutsWorkspace();
+                    NSession session = resolveNutsWorkspace();
                     nutsClassLoader = session.search().addIds(pathList).setInlineDependencies(true).getResultClassLoader();
                 } catch (Exception ex) {
                     ex.printStackTrace();
@@ -122,14 +122,14 @@ public class NutsTomcatClassLoader extends WebappClassLoader {
         return nutsClassLoader;
     }
 
-    public synchronized NutsSession resolveNutsWorkspace() {
+    public synchronized NSession resolveNutsWorkspace() {
         if (nutsWorkspace == null) {
             nutsWorkspace
                     = Nuts.openWorkspace(
-                        new DefaultNutsWorkspaceOptionsBuilder()
+                        new DefaultNWorkspaceOptionsBuilder()
                                     .setRuntimeId(getWorkspaceBootRuntime())
                                     .setClassLoaderSupplier(this::getParent)
-                                    .setOpenMode(NutsOpenMode.OPEN_OR_CREATE)
+                                    .setOpenMode(NOpenMode.OPEN_OR_CREATE)
                                     .setWorkspace(getWorkspaceLocation())
                                     .setArchetype(getWorkspaceArchetype())
 //                                    .setExcludedRepositories(splitString(getWorkspaceExcludedRepositories(), ";"))
@@ -336,11 +336,11 @@ public class NutsTomcatClassLoader extends WebappClassLoader {
         this.workspaceLocation = workspaceLocation;
     }
 
-    public NutsId getWorkspaceBootRuntime() {
+    public NId getWorkspaceBootRuntime() {
         return workspaceBootRuntime;
     }
 
-    public void setWorkspaceBootRuntime(NutsId workspaceBootRuntime) {
+    public void setWorkspaceBootRuntime(NId workspaceBootRuntime) {
         this.workspaceBootRuntime = workspaceBootRuntime;
     }
 

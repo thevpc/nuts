@@ -5,8 +5,8 @@
  */
 package net.thevpc.nuts.core.test;
 
-import net.thevpc.nuts.util.NutsDuration;
-import net.thevpc.nuts.util.NutsDurationFormatMode;
+import net.thevpc.nuts.util.NDuration;
+import net.thevpc.nuts.util.NDurationFormatMode;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -20,10 +20,10 @@ public class Test36_NutsDuration {
     @Test
     public void test01() {
         long[] time=new long[ChronoUnit.values().length];
-        NutsDuration t = NutsDuration.of(time);
+        NDuration t = NDuration.of(time);
         Assertions.assertEquals(ChronoUnit.NANOS,t.getSmallestUnit());
         Assertions.assertEquals(ChronoUnit.NANOS,t.getLargestUnit());
-        String s=t.toString(NutsDurationFormatMode.DEFAULT);
+        String s=t.toString(NDurationFormatMode.DEFAULT);
         System.out.println(s);
         Assertions.assertEquals("0ns",s);
     }
@@ -31,10 +31,10 @@ public class Test36_NutsDuration {
     @Test
     public void test02() {
         long[] time=new long[ChronoUnit.values().length];
-        NutsDuration t = NutsDuration.of(time).withSmallestUnit(ChronoUnit.SECONDS);
+        NDuration t = NDuration.of(time).withSmallestUnit(ChronoUnit.SECONDS);
         Assertions.assertEquals(ChronoUnit.SECONDS,t.getSmallestUnit());
         Assertions.assertEquals(ChronoUnit.SECONDS,t.getLargestUnit());
-        String s=t.toString(NutsDurationFormatMode.DEFAULT);
+        String s=t.toString(NDurationFormatMode.DEFAULT);
         System.out.println(s);
         Assertions.assertEquals("0s",s);
     }
@@ -44,7 +44,7 @@ public class Test36_NutsDuration {
         long[] time=new long[ChronoUnit.values().length];
         time[ChronoUnit.NANOS.ordinal()]=16;
         time[ChronoUnit.MICROS.ordinal()]=17;
-        NutsDuration t = NutsDuration.of(time).withSmallestUnit(ChronoUnit.SECONDS);
+        NDuration t = NDuration.of(time).withSmallestUnit(ChronoUnit.SECONDS);
         Assertions.assertEquals(ChronoUnit.SECONDS,t.getSmallestUnit());
         Assertions.assertEquals(ChronoUnit.SECONDS,t.getLargestUnit());
         String s=t.toString();
@@ -57,10 +57,10 @@ public class Test36_NutsDuration {
         long[] time=new long[ChronoUnit.values().length];
         time[ChronoUnit.NANOS.ordinal()]=16;
         time[ChronoUnit.MILLIS.ordinal()]=17;
-        NutsDuration t = NutsDuration.of(time);
+        NDuration t = NDuration.of(time);
         Assertions.assertEquals(ChronoUnit.NANOS,t.getSmallestUnit());
         Assertions.assertEquals(ChronoUnit.MILLIS,t.getLargestUnit());
-        String s=t.toString(NutsDurationFormatMode.DEFAULT);
+        String s=t.toString(NDurationFormatMode.DEFAULT);
         System.out.println(s);
         Assertions.assertEquals("17ms 16ns",s);
     }
@@ -70,10 +70,10 @@ public class Test36_NutsDuration {
         long[] time=new long[ChronoUnit.values().length];
         time[ChronoUnit.NANOS.ordinal()]=999;
         time[ChronoUnit.MILLIS.ordinal()]=999;
-        NutsDuration t = NutsDuration.of(time);
+        NDuration t = NDuration.of(time);
         Assertions.assertEquals(ChronoUnit.NANOS,t.getSmallestUnit());
         Assertions.assertEquals(ChronoUnit.MILLIS,t.getLargestUnit());
-        String s=t.toString(NutsDurationFormatMode.DEFAULT);
+        String s=t.toString(NDurationFormatMode.DEFAULT);
         System.out.println(s);
         Assertions.assertEquals("999ms 999ns",s);
 
@@ -88,10 +88,10 @@ public class Test36_NutsDuration {
         time[ChronoUnit.SECONDS.ordinal()]=4;
         time[ChronoUnit.MINUTES.ordinal()]=5;
         time[ChronoUnit.HOURS.ordinal()]=6;
-        NutsDuration t = NutsDuration.of(time);
+        NDuration t = NDuration.of(time);
         Assertions.assertEquals(ChronoUnit.NANOS,t.getSmallestUnit());
         Assertions.assertEquals(ChronoUnit.HOURS,t.getLargestUnit());
-        String s=t.toString(NutsDurationFormatMode.DEFAULT);
+        String s=t.toString(NDurationFormatMode.DEFAULT);
         System.out.println(s);
         Assertions.assertEquals("6h 5mn 4s 3ms 2us 1ns",s);
 
@@ -111,10 +111,10 @@ public class Test36_NutsDuration {
         time[ChronoUnit.WEEKS.ordinal()]=8;
         time[ChronoUnit.MONTHS.ordinal()]=9;
         time[ChronoUnit.YEARS.ordinal()]=10;
-        NutsDuration t = NutsDuration.of(time);
+        NDuration t = NDuration.of(time);
         Assertions.assertEquals(ChronoUnit.NANOS,t.getSmallestUnit());
         Assertions.assertEquals(ChronoUnit.YEARS,t.getLargestUnit());
-        String s=t.toString(NutsDurationFormatMode.DEFAULT);
+        String s=t.toString(NDurationFormatMode.DEFAULT);
         System.out.println(s);
         Assertions.assertEquals("10y 9m 8w 7d 6h 5mn 4s 3ms 2us 1ns",s);
     }
@@ -132,10 +132,10 @@ public class Test36_NutsDuration {
         time[ChronoUnit.WEEKS.ordinal()]=8;
         time[ChronoUnit.MONTHS.ordinal()]=9;
         time[ChronoUnit.YEARS.ordinal()]=10;
-        NutsDuration t = NutsDuration.of(time);
+        NDuration t = NDuration.of(time);
         Assertions.assertEquals(ChronoUnit.MICROS,t.getSmallestUnit());
         Assertions.assertEquals(ChronoUnit.YEARS,t.getLargestUnit());
-        String s=t.toString(NutsDurationFormatMode.DEFAULT);
+        String s=t.toString(NDurationFormatMode.DEFAULT);
         System.out.println(s);
         Assertions.assertEquals("10y 9m 8w 6h 5mn 3ms 2us",s);
     }
@@ -145,10 +145,10 @@ public class Test36_NutsDuration {
     @Test
     public void test101() {
         long[] time=new long[ChronoUnit.values().length];
-        NutsDuration t = NutsDuration.of(time);
+        NDuration t = NDuration.of(time);
         Assertions.assertEquals(ChronoUnit.NANOS,t.getSmallestUnit());
         Assertions.assertEquals(ChronoUnit.NANOS,t.getLargestUnit());
-        String s=t.toString(NutsDurationFormatMode.FIXED);
+        String s=t.toString(NDurationFormatMode.FIXED);
         System.out.println(s);
         Assertions.assertEquals("  0ns",s);
     }
@@ -156,10 +156,10 @@ public class Test36_NutsDuration {
     @Test
     public void test102() {
         long[] time=new long[ChronoUnit.values().length];
-        NutsDuration t = NutsDuration.of(time).withSmallestUnit(ChronoUnit.SECONDS);
+        NDuration t = NDuration.of(time).withSmallestUnit(ChronoUnit.SECONDS);
         Assertions.assertEquals(ChronoUnit.SECONDS,t.getSmallestUnit());
         Assertions.assertEquals(ChronoUnit.SECONDS,t.getLargestUnit());
-        String s=t.toString(NutsDurationFormatMode.FIXED);
+        String s=t.toString(NDurationFormatMode.FIXED);
         System.out.println(s);
         Assertions.assertEquals(" 0s",s);
     }
@@ -169,10 +169,10 @@ public class Test36_NutsDuration {
         long[] time=new long[ChronoUnit.values().length];
         time[ChronoUnit.NANOS.ordinal()]=16;
         time[ChronoUnit.MICROS.ordinal()]=17;
-        NutsDuration t = NutsDuration.of(time).withSmallestUnit(ChronoUnit.SECONDS);
+        NDuration t = NDuration.of(time).withSmallestUnit(ChronoUnit.SECONDS);
         Assertions.assertEquals(ChronoUnit.SECONDS,t.getSmallestUnit());
         Assertions.assertEquals(ChronoUnit.SECONDS,t.getLargestUnit());
-        String s=t.toString(NutsDurationFormatMode.FIXED);
+        String s=t.toString(NDurationFormatMode.FIXED);
         System.out.println(s);
         Assertions.assertEquals(" 0s",s);
     }
@@ -182,10 +182,10 @@ public class Test36_NutsDuration {
         long[] time=new long[ChronoUnit.values().length];
         time[ChronoUnit.NANOS.ordinal()]=16;
         time[ChronoUnit.MILLIS.ordinal()]=17;
-        NutsDuration t = NutsDuration.of(time);
+        NDuration t = NDuration.of(time);
         Assertions.assertEquals(ChronoUnit.NANOS,t.getSmallestUnit());
         Assertions.assertEquals(ChronoUnit.MILLIS,t.getLargestUnit());
-        String s=t.toString(NutsDurationFormatMode.FIXED);
+        String s=t.toString(NDurationFormatMode.FIXED);
         System.out.println(s);
         Assertions.assertEquals(" 17ms   0us  16ns",s);
     }
@@ -195,10 +195,10 @@ public class Test36_NutsDuration {
         long[] time=new long[ChronoUnit.values().length];
         time[ChronoUnit.NANOS.ordinal()]=999;
         time[ChronoUnit.MILLIS.ordinal()]=999;
-        NutsDuration t = NutsDuration.of(time);
+        NDuration t = NDuration.of(time);
         Assertions.assertEquals(ChronoUnit.NANOS,t.getSmallestUnit());
         Assertions.assertEquals(ChronoUnit.MILLIS,t.getLargestUnit());
-        String s=t.toString(NutsDurationFormatMode.FIXED);
+        String s=t.toString(NDurationFormatMode.FIXED);
         System.out.println(s);
         Assertions.assertEquals("999ms   0us 999ns",s);
 
@@ -213,10 +213,10 @@ public class Test36_NutsDuration {
         time[ChronoUnit.SECONDS.ordinal()]=4;
         time[ChronoUnit.MINUTES.ordinal()]=5;
         time[ChronoUnit.HOURS.ordinal()]=6;
-        NutsDuration t = NutsDuration.of(time);
+        NDuration t = NDuration.of(time);
         Assertions.assertEquals(ChronoUnit.NANOS,t.getSmallestUnit());
         Assertions.assertEquals(ChronoUnit.HOURS,t.getLargestUnit());
-        String s=t.toString(NutsDurationFormatMode.FIXED);
+        String s=t.toString(NDurationFormatMode.FIXED);
         System.out.println(s);
         Assertions.assertEquals(" 6h  5mn  4s   3ms   2us   1ns",s);
 
@@ -236,10 +236,10 @@ public class Test36_NutsDuration {
         time[ChronoUnit.WEEKS.ordinal()]=8;
         time[ChronoUnit.MONTHS.ordinal()]=9;
         time[ChronoUnit.YEARS.ordinal()]=10;
-        NutsDuration t = NutsDuration.of(time);
+        NDuration t = NDuration.of(time);
         Assertions.assertEquals(ChronoUnit.NANOS,t.getSmallestUnit());
         Assertions.assertEquals(ChronoUnit.YEARS,t.getLargestUnit());
-        String s=t.toString(NutsDurationFormatMode.FIXED);
+        String s=t.toString(NDurationFormatMode.FIXED);
         System.out.println(s);
         Assertions.assertEquals("10y  9m  8w  7d  6h  5mn  4s   3ms   2us   1ns",s);
     }
@@ -257,10 +257,10 @@ public class Test36_NutsDuration {
         time[ChronoUnit.WEEKS.ordinal()]=8;
         time[ChronoUnit.MONTHS.ordinal()]=9;
         time[ChronoUnit.YEARS.ordinal()]=10;
-        NutsDuration t = NutsDuration.of(time);
+        NDuration t = NDuration.of(time);
         Assertions.assertEquals(ChronoUnit.MICROS,t.getSmallestUnit());
         Assertions.assertEquals(ChronoUnit.YEARS,t.getLargestUnit());
-        String s=t.toString(NutsDurationFormatMode.FIXED);
+        String s=t.toString(NDurationFormatMode.FIXED);
         System.out.println(s);
         Assertions.assertEquals("10y  9m  8w  0d  6h  5mn  0s   3ms   2us",s);
     }
@@ -271,10 +271,10 @@ public class Test36_NutsDuration {
     @Test
     public void test201() {
         long[] time=new long[ChronoUnit.values().length];
-        NutsDuration t = NutsDuration.of(time);
+        NDuration t = NDuration.of(time);
         Assertions.assertEquals(ChronoUnit.NANOS,t.getSmallestUnit());
         Assertions.assertEquals(ChronoUnit.NANOS,t.getLargestUnit());
-        String s=t.toString(NutsDurationFormatMode.CLOCK);
+        String s=t.toString(NDurationFormatMode.CLOCK);
         System.out.println(s);
         Assertions.assertEquals("000s",s);
     }
@@ -282,10 +282,10 @@ public class Test36_NutsDuration {
     @Test
     public void test202() {
         long[] time=new long[ChronoUnit.values().length];
-        NutsDuration t = NutsDuration.of(time).withSmallestUnit(ChronoUnit.SECONDS);
+        NDuration t = NDuration.of(time).withSmallestUnit(ChronoUnit.SECONDS);
         Assertions.assertEquals(ChronoUnit.SECONDS,t.getSmallestUnit());
         Assertions.assertEquals(ChronoUnit.SECONDS,t.getLargestUnit());
-        String s=t.toString(NutsDurationFormatMode.CLOCK);
+        String s=t.toString(NDurationFormatMode.CLOCK);
         System.out.println(s);
         Assertions.assertEquals("00s",s);
     }
@@ -295,10 +295,10 @@ public class Test36_NutsDuration {
         long[] time=new long[ChronoUnit.values().length];
         time[ChronoUnit.NANOS.ordinal()]=16;
         time[ChronoUnit.MICROS.ordinal()]=17;
-        NutsDuration t = NutsDuration.of(time).withSmallestUnit(ChronoUnit.SECONDS);
+        NDuration t = NDuration.of(time).withSmallestUnit(ChronoUnit.SECONDS);
         Assertions.assertEquals(ChronoUnit.SECONDS,t.getSmallestUnit());
         Assertions.assertEquals(ChronoUnit.SECONDS,t.getLargestUnit());
-        String s=t.toString(NutsDurationFormatMode.CLOCK);
+        String s=t.toString(NDurationFormatMode.CLOCK);
         System.out.println(s);
         Assertions.assertEquals("00s",s);
     }
@@ -308,10 +308,10 @@ public class Test36_NutsDuration {
         long[] time=new long[ChronoUnit.values().length];
         time[ChronoUnit.NANOS.ordinal()]=16;
         time[ChronoUnit.MILLIS.ordinal()]=17;
-        NutsDuration t = NutsDuration.of(time);
+        NDuration t = NDuration.of(time);
         Assertions.assertEquals(ChronoUnit.NANOS,t.getSmallestUnit());
         Assertions.assertEquals(ChronoUnit.MILLIS,t.getLargestUnit());
-        String s=t.toString(NutsDurationFormatMode.CLOCK);
+        String s=t.toString(NDurationFormatMode.CLOCK);
         System.out.println(s);
         Assertions.assertEquals("00.017000016s",s);
     }
@@ -321,10 +321,10 @@ public class Test36_NutsDuration {
         long[] time=new long[ChronoUnit.values().length];
         time[ChronoUnit.NANOS.ordinal()]=999;
         time[ChronoUnit.MILLIS.ordinal()]=999;
-        NutsDuration t = NutsDuration.of(time);
+        NDuration t = NDuration.of(time);
         Assertions.assertEquals(ChronoUnit.NANOS,t.getSmallestUnit());
         Assertions.assertEquals(ChronoUnit.MILLIS,t.getLargestUnit());
-        String s=t.toString(NutsDurationFormatMode.CLOCK);
+        String s=t.toString(NDurationFormatMode.CLOCK);
         System.out.println(s);
         Assertions.assertEquals("00.999000999s",s);
 
@@ -339,10 +339,10 @@ public class Test36_NutsDuration {
         time[ChronoUnit.SECONDS.ordinal()]=4;
         time[ChronoUnit.MINUTES.ordinal()]=5;
         time[ChronoUnit.HOURS.ordinal()]=6;
-        NutsDuration t = NutsDuration.of(time);
+        NDuration t = NDuration.of(time);
         Assertions.assertEquals(ChronoUnit.NANOS,t.getSmallestUnit());
         Assertions.assertEquals(ChronoUnit.HOURS,t.getLargestUnit());
-        String s=t.toString(NutsDurationFormatMode.CLOCK);
+        String s=t.toString(NDurationFormatMode.CLOCK);
         System.out.println(s);
         Assertions.assertEquals("06:05:04.003002001",s);
 
@@ -362,10 +362,10 @@ public class Test36_NutsDuration {
         time[ChronoUnit.WEEKS.ordinal()]=8;
         time[ChronoUnit.MONTHS.ordinal()]=9;
         time[ChronoUnit.YEARS.ordinal()]=10;
-        NutsDuration t = NutsDuration.of(time);
+        NDuration t = NDuration.of(time);
         Assertions.assertEquals(ChronoUnit.NANOS,t.getSmallestUnit());
         Assertions.assertEquals(ChronoUnit.YEARS,t.getLargestUnit());
-        String s=t.toString(NutsDurationFormatMode.CLOCK);
+        String s=t.toString(NDurationFormatMode.CLOCK);
         System.out.println(s);
         Assertions.assertEquals("10y  9m  8w  7d 06:05:04.003002001",s);
     }
@@ -383,10 +383,10 @@ public class Test36_NutsDuration {
         time[ChronoUnit.WEEKS.ordinal()]=8;
         time[ChronoUnit.MONTHS.ordinal()]=9;
         time[ChronoUnit.YEARS.ordinal()]=10;
-        NutsDuration t = NutsDuration.of(time);
+        NDuration t = NDuration.of(time);
         Assertions.assertEquals(ChronoUnit.MICROS,t.getSmallestUnit());
         Assertions.assertEquals(ChronoUnit.YEARS,t.getLargestUnit());
-        String s=t.toString(NutsDurationFormatMode.CLOCK);
+        String s=t.toString(NDurationFormatMode.CLOCK);
         System.out.println(s);
         Assertions.assertEquals("10y  9m  8w  0d 06:05:00.003002",s);
     }
@@ -404,10 +404,10 @@ public class Test36_NutsDuration {
         time[ChronoUnit.WEEKS.ordinal()]=3;
         time[ChronoUnit.MONTHS.ordinal()]=9;
         time[ChronoUnit.YEARS.ordinal()]=10;
-        NutsDuration t = NutsDuration.of(time).withSmallestUnit(ChronoUnit.NANOS);
+        NDuration t = NDuration.of(time).withSmallestUnit(ChronoUnit.NANOS);
         Assertions.assertEquals(ChronoUnit.NANOS,t.getSmallestUnit());
         Assertions.assertEquals(ChronoUnit.YEARS,t.getLargestUnit());
-        String s=t.toString(NutsDurationFormatMode.CLOCK);
+        String s=t.toString(NDurationFormatMode.CLOCK);
         System.out.println(s);
         Assertions.assertEquals("10y  9m  3w  0d 06:05:00.003002000",s);
     }

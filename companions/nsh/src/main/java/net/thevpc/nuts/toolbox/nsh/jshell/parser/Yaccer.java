@@ -1,9 +1,9 @@
 package net.thevpc.nuts.toolbox.nsh.jshell.parser;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.io.NutsPath;
+import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.toolbox.nsh.jshell.*;
-import net.thevpc.nuts.util.NutsGlob;
+import net.thevpc.nuts.util.NGlob;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -654,7 +654,7 @@ public class Yaccer {
     }
 
     public static String evalTokenString(Token token, JShellContext context) {
-        NutsGlob g = NutsGlob.of(context.getSession());
+        NGlob g = NGlob.of(context.getSession());
         switch (token.type) {
             case "WORD": {
                 return token.value.toString();
@@ -1065,7 +1065,7 @@ public class Yaccer {
 
         @Override
         public int eval(JShellContext context) {
-            throw new NutsIllegalArgumentException(context.getSession(), NutsMessage.ofCstyle("not yet implemented UnOpSuffix %s",op.image));
+            throw new NIllegalArgumentException(context.getSession(), NMsg.ofCstyle("not yet implemented UnOpSuffix %s",op.image));
         }
     }
 
@@ -1115,7 +1115,7 @@ public class Yaccer {
 
         @Override
         public int eval(JShellContext context) {
-            throw new NutsIllegalArgumentException(context.getSession(), NutsMessage.ofCstyle("not yet implemented UnOpPrefix %s",op.image));
+            throw new NIllegalArgumentException(context.getSession(), NMsg.ofCstyle("not yet implemented UnOpPrefix %s",op.image));
         }
     }
 
@@ -1139,7 +1139,7 @@ public class Yaccer {
 
         @Override
         public int eval(JShellContext context) {
-            throw new NutsIllegalArgumentException(context.getSession(), NutsMessage.ofCstyle("not yet implemented BinOp %s",op.image));
+            throw new NIllegalArgumentException(context.getSession(), NMsg.ofCstyle("not yet implemented BinOp %s",op.image));
         }
     }
 
@@ -1197,11 +1197,11 @@ public class Yaccer {
                 }
             }
             if (applyWildCard) {
-                NutsPath pp=NutsPath.of(value,context.getSession());
+                NPath pp= NPath.of(value,context.getSession());
                 if(!pp.isAbsolute()){
                     pp=pp.toAbsolute(context.getCwd());
                 }
-                String[] r = pp.walkGlob().map(NutsPath::toString,"toString").toArray(String[]::new);
+                String[] r = pp.walkGlob().map(NPath::toString,"toString").toArray(String[]::new);
                 if(r.length>0){
                     return r;
                 }

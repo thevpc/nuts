@@ -26,11 +26,11 @@
 package net.thevpc.nuts.toolbox.nsh.cmds;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.cmdline.NutsArgument;
-import net.thevpc.nuts.cmdline.NutsCommandLine;
-import net.thevpc.nuts.io.NutsPath;
-import net.thevpc.nuts.spi.NutsComponentScope;
-import net.thevpc.nuts.spi.NutsComponentScopeType;
+import net.thevpc.nuts.cmdline.NArgument;
+import net.thevpc.nuts.cmdline.NCommandLine;
+import net.thevpc.nuts.io.NPath;
+import net.thevpc.nuts.spi.NComponentScope;
+import net.thevpc.nuts.spi.NComponentScopeType;
 import net.thevpc.nuts.toolbox.nsh.SimpleJShellBuiltin;
 import net.thevpc.nuts.toolbox.nsh.jshell.JShellExecutionContext;
 import org.w3c.dom.Document;
@@ -50,7 +50,7 @@ import java.util.List;
 /**
  * Created by vpc on 1/7/17.
  */
-@NutsComponentScope(NutsComponentScopeType.WORKSPACE)
+@NComponentScope(NComponentScopeType.WORKSPACE)
 public class XmlCommand extends SimpleJShellBuiltin {
 
     public XmlCommand() {
@@ -58,10 +58,10 @@ public class XmlCommand extends SimpleJShellBuiltin {
     }
 
     @Override
-    protected boolean configureFirst(NutsCommandLine commandLine, JShellExecutionContext context) {
-        NutsSession session = context.getSession();
+    protected boolean configureFirst(NCommandLine commandLine, JShellExecutionContext context) {
+        NSession session = context.getSession();
         Options options = context.getOptions();
-        NutsArgument a;
+        NArgument a;
         if ((a = commandLine.nextString("-f", "--file").orNull()) != null) {
             options.input = a.getStringValue().get(session);
             return true;
@@ -73,9 +73,9 @@ public class XmlCommand extends SimpleJShellBuiltin {
     }
 
     @Override
-    protected void execBuiltin(NutsCommandLine commandLine, JShellExecutionContext context) {
+    protected void execBuiltin(NCommandLine commandLine, JShellExecutionContext context) {
         Options options = context.getOptions();
-        NutsSession session = context.getSession();
+        NSession session = context.getSession();
         if (options.xpaths.isEmpty()) {
             commandLine.throwMissingArgument();
         }
@@ -85,20 +85,20 @@ public class XmlCommand extends SimpleJShellBuiltin {
         try {
             dBuilder = dbFactory.newDocumentBuilder();
         } catch (Exception ex) {
-            throw new NutsExecutionException(session, NutsMessage.ofPlain("unable to initialize xml system"), ex, 3);
+            throw new NExecutionException(session, NMsg.ofPlain("unable to initialize xml system"), ex, 3);
         }
 
         Document doc = null;
         if (options.input != null) {
-            NutsPath file = NutsPath.of(options.input, session).toAbsolute(context.getCwd());
+            NPath file = NPath.of(options.input, session).toAbsolute(context.getCwd());
             if (file.isFile()) {
                 try (InputStream is = file.getInputStream()) {
                     doc = dBuilder.parse(is);
                 } catch (Exception ex) {
-                    throw new NutsExecutionException(session, NutsMessage.ofCstyle("invalid xml %s", options.input), ex, 2);
+                    throw new NExecutionException(session, NMsg.ofCstyle("invalid xml %s", options.input), ex, 2);
                 }
             } else {
-                throw new NutsExecutionException(session, NutsMessage.ofCstyle("invalid path %s", options.input), 1);
+                throw new NExecutionException(session, NMsg.ofCstyle("invalid path %s", options.input), 1);
             }
         } else {
             StringBuilder sb = new StringBuilder();
@@ -108,13 +108,13 @@ public class XmlCommand extends SimpleJShellBuiltin {
                 try {
                     line = reader.readLine();
                 } catch (IOException ex) {
-                    throw new NutsExecutionException(session, NutsMessage.ofPlain("broken Input"), 2);
+                    throw new NExecutionException(session, NMsg.ofPlain("broken Input"), 2);
                 }
                 if (line == null) {
                     try {
                         doc = dBuilder.parse(new InputSource(new StringReader(sb.toString())));
                     } catch (Exception ex) {
-                        throw new NutsExecutionException(session, NutsMessage.ofCstyle("invalid xml : %s", sb), ex, 2);
+                        throw new NExecutionException(session, NMsg.ofCstyle("invalid xml : %s", sb), ex, 2);
                     }
                     break;
                 } else {
@@ -140,7 +140,7 @@ public class XmlCommand extends SimpleJShellBuiltin {
             try {
                 result.add((NodeList) xPath.compile(query).evaluate(doc, XPathConstants.NODESET));
             } catch (XPathExpressionException ex) {
-                throw new NutsExecutionException(session, NutsMessage.ofCstyle("%s", ex), ex, 103);
+                throw new NExecutionException(session, NMsg.ofCstyle("%s", ex), ex, 103);
             }
         }
         if (all.size() == 1) {

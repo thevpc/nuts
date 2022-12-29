@@ -31,8 +31,8 @@
 */
 package net.thevpc.nuts.toolbox.nsh.jshell;
 
-import net.thevpc.nuts.NutsMessage;
-import net.thevpc.nuts.NutsSession;
+import net.thevpc.nuts.NMsg;
+import net.thevpc.nuts.NSession;
 
 /**
  * @author thevpc (taha.bensalah@gmail.com)
@@ -40,7 +40,7 @@ import net.thevpc.nuts.NutsSession;
  * Time: 17:53:11
  */
 public class JShellInterruptException extends JShellException {
-    public JShellInterruptException(NutsSession session) {
-        super(session, NutsMessage.ofPlain("user interruption"),100);
+    public JShellInterruptException(NSession session) {
+        super(session, NMsg.ofPlain("user interruption"),100);
     }
 }

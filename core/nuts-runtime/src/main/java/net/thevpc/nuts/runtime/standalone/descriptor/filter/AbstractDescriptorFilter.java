@@ -23,35 +23,35 @@
  */
 package net.thevpc.nuts.runtime.standalone.descriptor.filter;
 
-import net.thevpc.nuts.NutsDescriptorFilter;
-import net.thevpc.nuts.NutsFilter;
-import net.thevpc.nuts.NutsFilterOp;
-import net.thevpc.nuts.NutsSession;
-import net.thevpc.nuts.runtime.standalone.util.filters.AbstractNutsFilter;
+import net.thevpc.nuts.NDescriptorFilter;
+import net.thevpc.nuts.NFilter;
+import net.thevpc.nuts.NFilterOp;
+import net.thevpc.nuts.NSession;
+import net.thevpc.nuts.runtime.standalone.util.filters.AbstractNFilter;
 import net.thevpc.nuts.runtime.standalone.util.Simplifiable;
 
 /**
  *
  * @author thevpc
  */
-public abstract class AbstractDescriptorFilter extends AbstractNutsFilter implements NutsDescriptorFilter, Simplifiable<NutsDescriptorFilter> {
+public abstract class AbstractDescriptorFilter extends AbstractNFilter implements NDescriptorFilter, Simplifiable<NDescriptorFilter> {
 
-    public AbstractDescriptorFilter(NutsSession session, NutsFilterOp op) {
+    public AbstractDescriptorFilter(NSession session, NFilterOp op) {
         super(session, op);
     }
 
     @Override
-    public NutsDescriptorFilter or(NutsDescriptorFilter other) {
-        return or((NutsFilter) other).to(NutsDescriptorFilter.class);
+    public NDescriptorFilter or(NDescriptorFilter other) {
+        return or((NFilter) other).to(NDescriptorFilter.class);
     }
 
     @Override
-    public NutsDescriptorFilter and(NutsDescriptorFilter other) {
-        return and((NutsFilter) other).to(NutsDescriptorFilter.class);
+    public NDescriptorFilter and(NDescriptorFilter other) {
+        return and((NFilter) other).to(NDescriptorFilter.class);
     }
 
     @Override
-    public NutsDescriptorFilter neg() {
-        return super.neg().to(NutsDescriptorFilter.class);
+    public NDescriptorFilter neg() {
+        return super.neg().to(NDescriptorFilter.class);
     }
 }

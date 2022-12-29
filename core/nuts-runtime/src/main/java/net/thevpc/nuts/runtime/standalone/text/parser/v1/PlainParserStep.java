@@ -1,12 +1,12 @@
 package net.thevpc.nuts.runtime.standalone.text.parser.v1;
 
-import net.thevpc.nuts.NutsSession;
-import net.thevpc.nuts.text.NutsTexts;
+import net.thevpc.nuts.NSession;
+import net.thevpc.nuts.text.NTexts;
 import net.thevpc.nuts.runtime.standalone.util.StringBuilder2;
 
 import java.util.function.IntPredicate;
-import net.thevpc.nuts.NutsConstants;
-import net.thevpc.nuts.text.NutsText;
+import net.thevpc.nuts.NConstants;
+import net.thevpc.nuts.text.NText;
 
 public class PlainParserStep extends ParserStep {
 
@@ -15,13 +15,13 @@ public class PlainParserStep extends ParserStep {
 //    private boolean spreadLines;
     private boolean lineStart;
     private StringBuilder2 value = new StringBuilder2();
-    private NutsSession session;
-    private DefaultNutsTextNodeParser.State state;
+    private NSession session;
+    private DefaultNTextNodeParser.State state;
     private IntPredicate exitCondition;
     private boolean exitOnBrace;
 //    private static int _COUNT=0;
 
-    public PlainParserStep(char c, boolean lineStart, NutsSession session, DefaultNutsTextNodeParser.State state, IntPredicate exitCondition,boolean exitOnBrace) {
+    public PlainParserStep(char c, boolean lineStart, NSession session, DefaultNTextNodeParser.State state, IntPredicate exitCondition, boolean exitOnBrace) {
         this.state = state;
         this.exitCondition = exitCondition;
 //        this.spreadLines = spreadLines;
@@ -39,7 +39,7 @@ public class PlainParserStep extends ParserStep {
 //        System.err.println(" PlainParserStep "+c+" : "+value);
     }
 
-    public PlainParserStep(String s, boolean spreadLines, boolean lineStart, NutsSession session, DefaultNutsTextNodeParser.State state, IntPredicate exitCondition,boolean preParsed,boolean exitOnBrace) {
+    public PlainParserStep(String s, boolean spreadLines, boolean lineStart, NSession session, DefaultNTextNodeParser.State state, IntPredicate exitCondition, boolean preParsed, boolean exitOnBrace) {
         this.state = state;
         this.exitCondition = exitCondition;
         this.exitOnBrace = exitOnBrace;
@@ -71,7 +71,7 @@ public class PlainParserStep extends ParserStep {
     }
 
     @Override
-    public void consume(char c, DefaultNutsTextNodeParser.State p, boolean wasNewLine) {
+    public void consume(char c, DefaultNTextNodeParser.State p, boolean wasNewLine) {
         char oldLast = last;
         state.setLineStart(c == '\n');
         last = c;
@@ -106,7 +106,7 @@ public class PlainParserStep extends ParserStep {
                     }
                 }
             }
-            case NutsConstants.Ntf.SILENT: {
+            case NConstants.Ntf.SILENT: {
                 if (escape != null) {
                     if (!escape.toString().equals("\\")) {
                         value.append(escape);
@@ -275,14 +275,14 @@ public class PlainParserStep extends ParserStep {
     }
 
     @Override
-    public NutsText toText() {
+    public NText toText() {
         String t = value.toString();
 //        String q = NutsTextNodeWriterStringer.removeEscapes(t);
-        return NutsTexts.of(session).ofPlain(t);
+        return NTexts.of(session).ofPlain(t);
     }
 
     @Override
-    public void end(DefaultNutsTextNodeParser.State p) {
+    public void end(DefaultNTextNodeParser.State p) {
         p.applyPop(this);
     }
 

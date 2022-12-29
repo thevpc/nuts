@@ -1,15 +1,15 @@
 package net.thevpc.nuts.runtime.standalone.io.path.spi.htmlfs;
 
-import net.thevpc.nuts.NutsSupported;
+import net.thevpc.nuts.NSupported;
 
 import java.util.List;
 
 public abstract class AbstractHtmlfsParser implements HtmlfsParser{
-    protected NutsSupported<List<String>> toSupported(int level,List<String> li) {
+    protected NSupported<List<String>> toSupported(int level, List<String> li) {
         if (li == null || li.isEmpty()) {
-            return NutsSupported.invalid();
+            return NSupported.invalid();
         }
-        return NutsSupported.of(level, () -> li);
+        return NSupported.of(level, () -> li);
     }
 
 }

@@ -28,7 +28,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
-import net.thevpc.nuts.NutsIdLocation;
+import net.thevpc.nuts.NIdLocation;
 
 /**
  *
@@ -82,9 +82,9 @@ public class CoreArrayUtils {
         return set.toArray(new String[0]);
     }
 
-    public static NutsIdLocation[] toArraySet(NutsIdLocation[] classifierMappings) {
-        Set<NutsIdLocation> set = CoreCollectionUtils.toSet(classifierMappings);
-        return set.toArray(new NutsIdLocation[0]);
+    public static NIdLocation[] toArraySet(NIdLocation[] classifierMappings) {
+        Set<NIdLocation> set = CoreCollectionUtils.toSet(classifierMappings);
+        return set.toArray(new NIdLocation[0]);
     }
     
 }

@@ -104,6 +104,8 @@ public class PackagesPanel extends AbstractInstallPanel {
         getInstallerContext().stopLoading(getPageIndex());
         getInstallerContext().getNextButton().setEnabled(true);
         getInstallerContext().getPreviousButton().setEnabled(true);
+        panel.invalidate();
+        panel.revalidate();
     }
 
     protected PackageButtonInfo[] getButtons() {

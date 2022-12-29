@@ -1,6 +1,6 @@
 package net.thevpc.nuts.indexer.services;
 
-import net.thevpc.nuts.elem.NutsElements;
+import net.thevpc.nuts.elem.NElements;
 import net.thevpc.nuts.indexer.*;
 import net.thevpc.nuts.*;
 import org.slf4j.Logger;
@@ -22,10 +22,10 @@ public class RefreshDataService {
     private static final Logger logger = LoggerFactory.getLogger(RefreshDataService.class);
 
     @Autowired
-    private NutsIndexSubscriberListManagerPool indexSubscriberListManagerPool;
+    private NIndexSubscriberListManagerPool indexSubscriberListManagerPool;
     @Autowired
-    private NutsWorkspacePool workspacePool;
-    private NutsIndexSubscriberListManager subscriberManager;
+    private NWorkspacePool workspacePool;
+    private NIndexSubscriberListManager subscriberManager;
 
     @PostConstruct
     private void init() {
@@ -34,8 +34,8 @@ public class RefreshDataService {
 
     @Scheduled(fixedDelay = 60 * 60 * 1000)
     public void refreshData() {
-        List<NutsIndexSubscriber> subscribers = subscriberManager.getSubscribers();
-        for (NutsIndexSubscriber subscriber : subscribers) {
+        List<NIndexSubscriber> subscribers = subscriberManager.getSubscribers();
+        for (NIndexSubscriber subscriber : subscribers) {
             logger.info("Refreshing data for subscriber " + subscriber.cacheFolderName() + " started!");
 
             logger.info("Refreshing components data for subscriber " + subscriber.cacheFolderName() + " started!");
@@ -46,16 +46,16 @@ public class RefreshDataService {
         }
     }
 
-    private void refreshSubscriberData(NutsIndexSubscriber subscriber) {
-        Iterator<NutsWorkspaceLocation> iterator = subscriber.getWorkspaceLocations().values().iterator();
+    private void refreshSubscriberData(NIndexSubscriber subscriber) {
+        Iterator<NWorkspaceLocation> iterator = subscriber.getWorkspaceLocations().values().iterator();
         if (iterator.hasNext()) {
-            NutsWorkspaceLocation workspaceLocation = iterator.next();
-            NutsSession session = workspacePool.openWorkspace(workspaceLocation.getLocation());
-            Map<String, NutsId> oldData = this.dataService
-                    .getAllData(NutsIndexerUtils.getCacheDir(session, subscriber.cacheFolderName()))
+            NWorkspaceLocation workspaceLocation = iterator.next();
+            NSession session = workspacePool.openWorkspace(workspaceLocation.getLocation());
+            Map<String, NId> oldData = this.dataService
+                    .getAllData(NIndexerUtils.getCacheDir(session, subscriber.cacheFolderName()))
                     .stream()
-                    .collect(Collectors.toMap(map -> map.get("stringId"), map -> NutsIndexerUtils.mapToNutsId(map, session), (v1, v2) -> v1));
-            Iterator<NutsDefinition> definitions = session.search()
+                    .collect(Collectors.toMap(map -> map.get("stringId"), map -> NIndexerUtils.mapToNutsId(map, session), (v1, v2) -> v1));
+            Iterator<NDefinition> definitions = session.search()
                     .setRepositoryFilter(session.repos().filter().byUuid(subscriber.getUuid()))
                     .setFailFast(false)
                     .setContent(false)
@@ -64,8 +64,8 @@ public class RefreshDataService {
             List<Map<String, String>> dataToIndex = new ArrayList<>();
             Map<String, Boolean> visited = new HashMap<>();
             while (definitions.hasNext()) {
-                NutsDefinition definition = definitions.next();
-                Map<String, String> id = NutsIndexerUtils.nutsIdToMap(definition.getId());
+                NDefinition definition = definitions.next();
+                Map<String, String> id = NIndexerUtils.nutsIdToMap(definition.getId());
                 if (oldData.containsKey(id.get("stringId"))) {
                     visited.put(id.get("stringId"), true);
                     oldData.remove(id.get("stringId"));
@@ -77,17 +77,17 @@ public class RefreshDataService {
                 }
                 visited.put(id.get("stringId"), true);
 
-                List<NutsDependency> directDependencies = definition.getEffectiveDescriptor().get(session).getDependencies();
+                List<NDependency> directDependencies = definition.getEffectiveDescriptor().get(session).getDependencies();
                 id.put("dependencies",
-                        NutsElements.of(session).json().setValue(directDependencies.stream().map(Object::toString).collect(Collectors.toList()))
+                        NElements.of(session).json().setValue(directDependencies.stream().map(Object::toString).collect(Collectors.toList()))
                                 .setNtf(false).format().filteredText()
                 );
                 dataToIndex.add(id);
             }
-            this.dataService.indexMultipleData(NutsIndexerUtils.getCacheDir(session, subscriber.cacheFolderName()), dataToIndex);
-            this.dataService.deleteMultipleData(NutsIndexerUtils.getCacheDir(session, subscriber.cacheFolderName()),
+            this.dataService.indexMultipleData(NIndexerUtils.getCacheDir(session, subscriber.cacheFolderName()), dataToIndex);
+            this.dataService.deleteMultipleData(NIndexerUtils.getCacheDir(session, subscriber.cacheFolderName()),
                     oldData.values().stream()
-                            .map(NutsIndexerUtils::nutsIdToMap)
+                            .map(NIndexerUtils::nutsIdToMap)
                             .collect(Collectors.toList()));
         }
     }

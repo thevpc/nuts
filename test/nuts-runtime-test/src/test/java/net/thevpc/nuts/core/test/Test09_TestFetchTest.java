@@ -8,21 +8,21 @@ public class Test09_TestFetchTest {
 
     @Test
     public void test(){
-        NutsSession session = TestUtils.openNewTestWorkspace();
-        NutsDefinition resultDefinition = session.fetch().setId("org.springframework.boot:spring-boot#2.4.1")
+        NSession session = TestUtils.openNewTestWorkspace();
+        NDefinition resultDefinition = session.fetch().setId("org.springframework.boot:spring-boot#2.4.1")
                 .setDependencies(true)
                 .setContent(true)
                 .getResultDefinition();
         TestUtils.println("-----------------");
-        for (NutsDependency dependency : resultDefinition.getDescriptor().getDependencies()) {
+        for (NDependency dependency : resultDefinition.getDescriptor().getDependencies()) {
             TestUtils.println(dependency);
         }
         TestUtils.println("-----------------");
-        for (NutsDependency dependency : resultDefinition.getDependencies().get(session)) {
+        for (NDependency dependency : resultDefinition.getDependencies().get(session)) {
             TestUtils.println(dependency);
         }
         TestUtils.println("-----------------");
-        show(resultDefinition.getDependencies().get(session).transitiveNodes().toArray(NutsDependencyTreeNode[]::new), "");
+        show(resultDefinition.getDependencies().get(session).transitiveNodes().toArray(NDependencyTreeNode[]::new), "");
     }
 
     // disable test because, for some reason it fails on Gitlab CI with
@@ -39,15 +39,15 @@ public class Test09_TestFetchTest {
         );
     }
 
-    public void show(NutsDependencyTreeNode[] n,String prefix){
-        for (NutsDependencyTreeNode nutsDependencyTreeNode : n) {
-            show(nutsDependencyTreeNode,prefix);
+    public void show(NDependencyTreeNode[] n, String prefix){
+        for (NDependencyTreeNode nDependencyTreeNode : n) {
+            show(nDependencyTreeNode,prefix);
         }
     }
 
-    public void show(NutsDependencyTreeNode n,String prefix){
+    public void show(NDependencyTreeNode n, String prefix){
         TestUtils.println(prefix+n.getDependency()+(n.isPartial()?" (partial)":""));
-        for (NutsDependencyTreeNode child : n.getChildren()) {
+        for (NDependencyTreeNode child : n.getChildren()) {
             show(child,prefix+"    ");
         }
     }

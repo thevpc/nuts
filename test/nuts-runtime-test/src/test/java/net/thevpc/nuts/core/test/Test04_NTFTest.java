@@ -39,7 +39,7 @@ import org.junit.jupiter.api.Test;
  * @author thevpc
  */
 public class Test04_NTFTest {
-    static NutsSession session;
+    static NSession session;
 
     @BeforeAll
     public static void init() {
@@ -48,47 +48,47 @@ public class Test04_NTFTest {
 
     @Test
     public void test01() {
-        NutsTexts txt = NutsTexts.of(session);
-        NutsText parsed = txt.parse("##:error0:n#01##");
+        NTexts txt = NTexts.of(session);
+        NText parsed = txt.parse("##:error0:n#01##");
         TestUtils.println(parsed);
     }
 
     @Test
     public void test02() {
-        NutsTexts txt = NutsTexts.of(session);
+        NTexts txt = NTexts.of(session);
 
 //        String str="missing command. try ```sh ndocusaurus pdf | start | build```";
         String str = "##:p2:╭───╮##\u001E\n##:p3:│##";
-        NutsText q = txt.ofStyled(txt.parse(str), NutsTextStyle.error());
+        NText q = txt.ofStyled(txt.parse(str), NTextStyle.error());
         String qs = q.toString();
-        NutsText q2 = txt.parse(qs);
+        NText q2 = txt.parse(qs);
         q2 = txt.parse(qs);
         TestUtils.println(qs);
-        NutsText parsed = txt.parse("##:error0:n#01##");
+        NText parsed = txt.parse("##:error0:n#01##");
         TestUtils.println(parsed);
     }
 
     @Test
     public void test03() {
-        NutsTexts txt = NutsTexts.of(session);
+        NTexts txt = NTexts.of(session);
 
 //        String str="missing command. try ```sh ndocusaurus pdf | start | build```";
         String str = "##:p2:╭───╮##\u001E\n##:p3:│##";
-        NutsText q = txt.parse(str);
+        NText q = txt.parse(str);
         q = txt.parse(str);
         TestUtils.println(q);
-        NutsText parsed = txt.parse("##:error0:n#01##");
+        NText parsed = txt.parse("##:error0:n#01##");
         TestUtils.println(parsed);
     }
 
     @Test
     public void test04() {
-        NutsTexts txt = NutsTexts.of(session);
+        NTexts txt = NTexts.of(session);
 
 //        String str="missing command. try ```sh ndocusaurus pdf | start | build```";
         //String str="##{error0:##{error0:not installed : ##:p1:ntomcat##\u001E}}##\u001E}##\u001E";
         String str = "##{error0:##{error0:not installed : ##:p1:ntomcat##\u001E}##\u001E}##\u001E";
-        NutsText q2 = txt.parse(str);
+        NText q2 = txt.parse(str);
         String str2 = q2.toString();
         TestUtils.println(str2);
     }
@@ -96,7 +96,7 @@ public class Test04_NTFTest {
 
     @Test
     public void test05() {
-        NutsTexts txt = NutsTexts.of(session);
+        NTexts txt = NTexts.of(session);
 
         String str = "##:separator0:{##\u001E\n" +
                 "  ##:string0:\"id\"##\u001E##:separator0::##\u001E ##:string0:\"<main>://com.github.vatbub:mslinks#1.0.5\"##\u001E##:separator0:,##\u001E\n" +
@@ -139,14 +139,14 @@ public class Test04_NTFTest {
                 "  ##:separator0:}##\u001E##:separator0:,##\u001E\n" +
                 "  ##:string0:\"type\"##\u001E##:separator0::##\u001E ##:string0:\"REGULAR\"##\u001E\n" +
                 "##:separator0:}##\u001E";
-        NutsText q2 = txt.parse(str);
+        NText q2 = txt.parse(str);
         String str2 = q2.toString();
         TestUtils.println(str2);
     }
 
     @Test
     public void test06() {
-        NutsTexts txt = NutsTexts.of(session);
+        NTexts txt = NTexts.of(session);
 
         String str = "##:separator0:{##\u001E\n" +
                 "  ##:string0:\"id\"##\u001E##:separator0::##\u001E ##{string0:\"<main>://com.github.vatbub:mslinks#1.0.5\"}##\u001E##:separator0:,##\u001E\n" +
@@ -189,18 +189,18 @@ public class Test04_NTFTest {
                 "  ##:separator0:}##\u001E##:separator0:,##\u001E\n" +
                 "  ##:string0:\"type\"##\u001E##:separator0::##\u001E ##:string0:\"REGULAR\"##\u001E\n" +
                 "##:separator0:}##\u001E";
-        NutsText q2 = txt.parse(str);
+        NText q2 = txt.parse(str);
         String str2 = q2.toString();
         TestUtils.println(str2);
     }
 
     @Test
     public void test07() {
-        NutsTexts txt = NutsTexts.of(session);
+        NTexts txt = NTexts.of(session);
 
 //        String str = "##{string0:\"<main>://com.github.vatbub:mslinks#1.0.5\"}##";
         String str = "##{string:a#b}##";
-        NutsText q2 = txt.parse(str);
+        NText q2 = txt.parse(str);
         String str2 = q2.toString();
         TestUtils.println(str2);
     }
@@ -208,19 +208,19 @@ public class Test04_NTFTest {
 
     @Test
     public void test08() {
-        NutsTexts txt = NutsTexts.of(session);
+        NTexts txt = NTexts.of(session);
 
 //        String str = "##{string0:\"<main>://com.github.vatbub:mslinks#1.0.5\"}##";
         String str = "##:string:\"a#b\"##";
-        NutsText q2 = txt.parse(str);
+        NText q2 = txt.parse(str);
         String str2 = q2.toString();
         TestUtils.println(str2);
     }
 
     @Test
     public void test09() {
-        NutsTexts text = NutsTexts.of(session);
-        NutsText q = text.ofStyled("re-install", NutsTextStyles.of(NutsTextStyle.success(), NutsTextStyle.underlined()));
+        NTexts text = NTexts.of(session);
+        NText q = text.ofStyled("re-install", NTextStyles.of(NTextStyle.success(), NTextStyle.underlined()));
         TestUtils.println(q.toString());
     }
 
@@ -248,7 +248,7 @@ public class Test04_NTFTest {
 
     private static void writeColors(String s) {
         TestUtils.println(s);
-        NutsSession ws = TestUtils.openNewTestWorkspace("--verbose", "--skip-companions");
+        NSession ws = TestUtils.openNewTestWorkspace("--verbose", "--skip-companions");
         {
             ws.out().println(s);
         }
@@ -303,7 +303,7 @@ public class Test04_NTFTest {
 //                "";
 //        TestUtils.println(text);
 //        TestUtils.println("\n--------------------------------");
-//        NutsTextNodeParser parser = new DefaultNutsTextNodeParser(ws);
+//        NutsTextNodeParser parser = new DefaultNTextNodeParser(ws);
 //        NutsText node = parser.parse(new StringReader(text));
 //        TestUtils.println(node);
 //        TestUtils.println("\n--------------------------------");
@@ -358,7 +358,7 @@ public class Test04_NTFTest {
 //                        "";
 //        TestUtils.println(text);
 //        TestUtils.println("\n--------------------------------");
-//        NutsTextNodeParser parser = new DefaultNutsTextNodeParser(ws);
+//        NutsTextNodeParser parser = new DefaultNTextNodeParser(ws);
 //        NutsText node = parser.parse(new StringReader(text));
 //        TestUtils.println(node);
 //        TestUtils.println("\n--------------------------------");
@@ -385,7 +385,7 @@ public class Test04_NTFTest {
 //        String text = "unable to create system terminal : %s";
 //        TestUtils.println(text);
 //        TestUtils.println("\n--------------------------------");
-//        NutsTextNodeParser parser = new DefaultNutsTextNodeParser(ws);
+//        NutsTextNodeParser parser = new DefaultNTextNodeParser(ws);
 //        NutsText node = parser.parse(new StringReader(text));
 //        TestUtils.println(node);
 //        TestUtils.println("\n--------------------------------");
@@ -425,7 +425,7 @@ public class Test04_NTFTest {
 //        }
 //        {
 //            String t_string = "###\u001E####aa####\u001E###";
-//            NutsText node = new DefaultNutsTextNodeParser(ws).parse(new StringReader(t_string));
+//            NutsText node = new DefaultNTextNodeParser(ws).parse(new StringReader(t_string));
 //            TestUtils.println();
 //            NutsTextNodeWriter w = new NutsTextNodeWriterStringer(System.out, ws)
 //                    .setWriteConfiguration(new NutsTextWriteConfiguration().setTitleNumberEnabled(true));
@@ -922,25 +922,25 @@ public class Test04_NTFTest {
 
     @Test
     public void test11() {
-        NutsTexts text = NutsTexts.of(session);
-        NutsText str = text.ofStyled("re-install", NutsTextStyles.of(NutsTextStyle.success(), NutsTextStyle.underlined()));
+        NTexts text = NTexts.of(session);
+        NText str = text.ofStyled("re-install", NTextStyles.of(NTextStyle.success(), NTextStyle.underlined()));
         TestUtils.println(str.toString());
         Assertions.assertEquals("##{_,success:re-install}##\u001E", str.toString());
     }
 
     @Test
     public void test12() {
-        NutsTexts text = NutsTexts.of(session);
+        NTexts text = NTexts.of(session);
         String str = "```system \"C:\\U\\v\" ```";
-        NutsText t = text.parse(str);
+        NText t = text.parse(str);
         Assertions.assertEquals("\"C:\\U\\v\" ", t.filteredText());
     }
 
     @Test
     public void test13() {
-        NutsTexts text = NutsTexts.of(session);
+        NTexts text = NTexts.of(session);
         String str = "```system \\``````";
-        NutsText t = text.parse(str);
+        NText t = text.parse(str);
         Assertions.assertEquals("```", t.filteredText());
     }
     //////////////////
@@ -950,8 +950,8 @@ public class Test04_NTFTest {
     public void test14() {
         NTFParser2 p = createParser();
         p.offer("Hello World");
-        NutsText r = p.read();
-        Assertions.assertEquals(NutsTextType.PLAIN, r.getType());
+        NText r = p.read();
+        Assertions.assertEquals(NTextType.PLAIN, r.getType());
         Assertions.assertEquals("Hello World", r.toString());
     }
 
@@ -965,11 +965,11 @@ public class Test04_NTFTest {
         NTFParser2 p = createParser();
         String s = "Hello #World#";
         p.offer(s);
-        NutsText r = p.read();
+        NText r = p.read();
         Assertions.assertNull(r);
         r = p.readFully();
         Assertions.assertNotNull(r);
-        Assertions.assertEquals(NutsTextType.PLAIN, r.getType());
+        Assertions.assertEquals(NTextType.PLAIN, r.getType());
         Assertions.assertEquals("Hello #World\\#", r.toString());
     }
 
@@ -978,11 +978,11 @@ public class Test04_NTFTest {
         NTFParser2 p = createParser();
         String s = "#) Hello #World\\#";
         p.offer(s);
-        NutsText r = p.read();
+        NText r = p.read();
         Assertions.assertNull(r);
         r = p.readFully();
         Assertions.assertNotNull(r);
-        Assertions.assertEquals(NutsTextType.TITLE, r.getType());
+        Assertions.assertEquals(NTextType.TITLE, r.getType());
         Assertions.assertEquals("#) Hello #World\\#\n", r.toString());
     }
 
@@ -993,12 +993,12 @@ public class Test04_NTFTest {
             NTFParser2 p = createParser();
             String s = q + ") Hello #World#";
             p.offer(s);
-            NutsText r = p.read();
+            NText r = p.read();
             Assertions.assertNull(r);
             r = p.readFully();
             Assertions.assertNotNull(r);
-            Assertions.assertEquals(NutsTextType.TITLE, r.getType());
-            Assertions.assertEquals(i, ((NutsTextTitle) r).getLevel());
+            Assertions.assertEquals(NTextType.TITLE, r.getType());
+            Assertions.assertEquals(i, ((NTextTitle) r).getLevel());
             Assertions.assertEquals(q + ") Hello #World\\#\n", r.toString());
         }
     }
@@ -1011,11 +1011,11 @@ public class Test04_NTFTest {
             String s = q + "Hello #World# " + q;
             TestUtils.println(s);
             p.offer(s);
-            NutsText r = p.read();
+            NText r = p.read();
             Assertions.assertNull(r);
             r = p.readFully();
             Assertions.assertNotNull(r);
-            Assertions.assertEquals(NutsTextType.STYLED, r.getType());
+            Assertions.assertEquals(NTextType.STYLED, r.getType());
 //            Assertions.assertEquals(q + " Hello #World\\# " + q, r.toString());
             Assertions.assertEquals("##{p" + i + ":Hello #World# }##\u001E", r.toString());
         }
@@ -1027,9 +1027,9 @@ public class Test04_NTFTest {
         String s = "```!anchor some anchor```";
         TestUtils.println(s);
         p.offer(s);
-        NutsText r = p.read();
+        NText r = p.read();
         Assertions.assertNotNull(r);
-        Assertions.assertEquals(NutsTextType.ANCHOR, r.getType());
+        Assertions.assertEquals(NTextType.ANCHOR, r.getType());
         Assertions.assertEquals("```!anchor some anchor```", r.toString());
     }
 
@@ -1039,9 +1039,9 @@ public class Test04_NTFTest {
         String s = "```!link some link```";
         TestUtils.println(s);
         p.offer(s);
-        NutsText r = p.read();
+        NText r = p.read();
         Assertions.assertNotNull(r);
-        Assertions.assertEquals(NutsTextType.LINK, r.getType());
+        Assertions.assertEquals(NTextType.LINK, r.getType());
         Assertions.assertEquals("```!link some link```", r.toString());
     }
 
@@ -1051,9 +1051,9 @@ public class Test04_NTFTest {
         String s = "```!link:some link```";
         TestUtils.println(s);
         p.offer(s);
-        NutsText r = p.read();
+        NText r = p.read();
         Assertions.assertNotNull(r);
-        Assertions.assertEquals(NutsTextType.LINK, r.getType());
+        Assertions.assertEquals(NTextType.LINK, r.getType());
         Assertions.assertEquals("```!link:some link```", r.toString());
     }
 
@@ -1063,9 +1063,9 @@ public class Test04_NTFTest {
         String s = "```!link\nsome link```";
         TestUtils.println(s);
         p.offer(s);
-        NutsText r = p.read();
+        NText r = p.read();
         Assertions.assertNotNull(r);
-        Assertions.assertEquals(NutsTextType.LINK, r.getType());
+        Assertions.assertEquals(NTextType.LINK, r.getType());
         Assertions.assertEquals("```!link\nsome link```", r.toString());
     }
 
@@ -1075,10 +1075,10 @@ public class Test04_NTFTest {
         String s = "```java\npublic class \\` some thing \\``` some thing```";
         TestUtils.println(s);
         p.offer(s);
-        NutsText r = p.read();
+        NText r = p.read();
         Assertions.assertNotNull(r);
-        Assertions.assertEquals(NutsTextType.CODE, r.getType());
-        Assertions.assertEquals("public class \\` some thing ``` some thing", ((NutsTextCode) r).getText());
+        Assertions.assertEquals(NTextType.CODE, r.getType());
+        Assertions.assertEquals("public class \\` some thing ``` some thing", ((NTextCode) r).getText());
         Assertions.assertEquals("```java\npublic class \\` some thing \\``` some thing```", r.toString());
     }
 
@@ -1088,11 +1088,11 @@ public class Test04_NTFTest {
         String s = "##:1:text##";
         TestUtils.println(s);
         p.offer(s);
-        NutsText r = p.read();
+        NText r = p.read();
         Assertions.assertNull(r);
         r = p.readFully();
         Assertions.assertNotNull(r);
-        Assertions.assertEquals(NutsTextType.STYLED, r.getType());
+        Assertions.assertEquals(NTextType.STYLED, r.getType());
         Assertions.assertEquals("##{p1:text}##\u001E", r.toString());
     }
 
@@ -1103,11 +1103,11 @@ public class Test04_NTFTest {
             String s = "##:" + c + ":text##";
             TestUtils.println(s);
             p.offer(s);
-            NutsText r = p.read();
+            NText r = p.read();
             Assertions.assertNull(r);
             r = p.readFully();
             Assertions.assertNotNull(r);
-            Assertions.assertEquals(NutsTextType.STYLED, r.getType());
+            Assertions.assertEquals(NTextType.STYLED, r.getType());
             Assertions.assertEquals("##{" + c + ":text}##\u001E", r.toString());
         }
     }
@@ -1128,11 +1128,11 @@ public class Test04_NTFTest {
             String s = "##:" + rr + ":text##";
             TestUtils.println(s);
             p.offer(s);
-            NutsText r = p.read();
+            NText r = p.read();
             Assertions.assertNull(r);
             r = p.readFully();
             Assertions.assertNotNull(r);
-            Assertions.assertEquals(NutsTextType.STYLED, r.getType());
+            Assertions.assertEquals(NTextType.STYLED, r.getType());
             Assertions.assertEquals("##{" + c + ":text}##\u001E", r.toString());
         }
 
@@ -1140,11 +1140,11 @@ public class Test04_NTFTest {
         String s = "##:italic:text##";
         TestUtils.println(s);
         p.offer(s);
-        NutsText r = p.read();
+        NText r = p.read();
         Assertions.assertNull(r);
         r = p.readFully();
         Assertions.assertNotNull(r);
-        Assertions.assertEquals(NutsTextType.STYLED, r.getType());
+        Assertions.assertEquals(NTextType.STYLED, r.getType());
         Assertions.assertEquals("##{/:text}##\u001E", r.toString());
     }
 
@@ -1154,11 +1154,11 @@ public class Test04_NTFTest {
         String s = "##:_:text##";
         TestUtils.println(s);
         p.offer(s);
-        NutsText r = p.read();
+        NText r = p.read();
         Assertions.assertNull(r);
         r = p.readFully();
         Assertions.assertNotNull(r);
-        Assertions.assertEquals(NutsTextType.STYLED, r.getType());
+        Assertions.assertEquals(NTextType.STYLED, r.getType());
         Assertions.assertEquals("##{_:text}##\u001E", r.toString());
     }
 
@@ -1168,9 +1168,9 @@ public class Test04_NTFTest {
         String s = "```!clear-line```";
         TestUtils.println(s);
         p.offer(s);
-        NutsText r = p.read();
+        NText r = p.read();
         Assertions.assertNotNull(r);
-        Assertions.assertEquals(NutsTextType.COMMAND, r.getType());
+        Assertions.assertEquals(NTextType.COMMAND, r.getType());
         Assertions.assertEquals("```!clear-line```", r.toString());
     }
 
@@ -1180,17 +1180,17 @@ public class Test04_NTFTest {
         String s = "##{version:0.8.4}##\u001E";
         TestUtils.println(s);
         p.offer(s);
-        NutsText r1 = p.readFully();
-        NutsText r2 = p.readFully();
+        NText r1 = p.readFully();
+        NText r2 = p.readFully();
         Assertions.assertNotNull(r1);
         Assertions.assertNull(r2);
-        Assertions.assertEquals(NutsTextType.STYLED, r1.getType());
+        Assertions.assertEquals(NTextType.STYLED, r1.getType());
         Assertions.assertEquals("##{version:0.8.4}##\u001E", r1.toString());
     }
 
     @Test
     public void test30() {
-        NutsTextBuilder b = NutsTexts.of(session).ofBuilder()
+        NTextBuilder b = NTexts.of(session).ofBuilder()
                 .append("a")
                 .appendCode("sh", "b")
                 .append("c");
@@ -1199,19 +1199,19 @@ public class Test04_NTFTest {
 
     @Test
     public void test31() {
-        NutsString s = NutsString.of("a```sh b```\u001Ec", session);
-        NutsText t = s.toText();
-        Assertions.assertEquals(NutsTextType.LIST, t.getType());
-        Assertions.assertEquals(3, ((NutsTextList) t).size());
+        NString s = NString.of("a```sh b```\u001Ec", session);
+        NText t = s.toText();
+        Assertions.assertEquals(NTextType.LIST, t.getType());
+        Assertions.assertEquals(3, ((NTextList) t).size());
     }
 
     @Test
     public void test32() {
-        NutsString s = NutsString.of(
+        NString s = NString.of(
                 "##:_:location##:##:path:/home## (Tan Type)\n", session);
-        NutsText t = s.toText();
-        Assertions.assertEquals(NutsTextType.LIST, t.getType());
-        Assertions.assertEquals(4, ((NutsTextList) t).size());
+        NText t = s.toText();
+        Assertions.assertEquals(NTextType.LIST, t.getType());
+        Assertions.assertEquals(4, ((NTextList) t).size());
     }
 
     @Test
@@ -1221,19 +1221,19 @@ public class Test04_NTFTest {
                 "njob tasks | jobs | projects | summary...\n" +
                 "```\n" +
                 "    manage tasks, jobs, projects\n";
-        NutsText s = NutsString.of(
+        NText s = NString.of(
                 q, session).toText();
-        NutsString im = s.immutable();
-        Assertions.assertEquals(NutsTextType.LIST, s.getType());
+        NString im = s.immutable();
+        Assertions.assertEquals(NTextType.LIST, s.getType());
         Assertions.assertEquals(q, s.toString());
     }
     @Test
     public void test34() {
-        NutsText s = NutsString.of(
+        NText s = NString.of(
                 "```!clear-line``````!move-line-start```", session).toText();
-        Assertions.assertEquals(NutsTextType.LIST, s.getType());
-        Assertions.assertEquals(2, ((NutsTextList)s).size());
-        Assertions.assertEquals(true, ((NutsTextList)s).get(0) instanceof NutsTextCommand);
-        Assertions.assertEquals(true, ((NutsTextCommand)((NutsTextList)s).get(0)).getCommand().getName().equals("clear-line"));
+        Assertions.assertEquals(NTextType.LIST, s.getType());
+        Assertions.assertEquals(2, ((NTextList)s).size());
+        Assertions.assertEquals(true, ((NTextList)s).get(0) instanceof NTextCommand);
+        Assertions.assertEquals(true, ((NTextCommand)((NTextList)s).get(0)).getCommand().getName().equals("clear-line"));
     }
 }

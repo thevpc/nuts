@@ -1,17 +1,17 @@
 package net.thevpc.nuts.runtime.standalone.repository.impl.main;
 
-import net.thevpc.nuts.NutsConfigItem;
-import net.thevpc.nuts.NutsId;
+import net.thevpc.nuts.NConfigItem;
+import net.thevpc.nuts.NId;
 
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-public class InstallInfoConfig extends NutsConfigItem implements Cloneable{
+public class InstallInfoConfig extends NConfigItem implements Cloneable{
 
     private static final long serialVersionUID = 3;
-    private NutsId id;
+    private NId id;
     private boolean installed;
     private boolean required;
     private Instant creationDate;
@@ -74,11 +74,11 @@ public class InstallInfoConfig extends NutsConfigItem implements Cloneable{
         return this;
     }
 
-    public NutsId getId() {
+    public NId getId() {
         return id;
     }
 
-    public void setId(NutsId id) {
+    public void setId(NId id) {
         this.id = id;
     }
 

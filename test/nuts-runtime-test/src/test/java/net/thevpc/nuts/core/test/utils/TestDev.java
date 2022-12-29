@@ -1,20 +1,20 @@
 package net.thevpc.nuts.core.test.utils;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.text.NutsTexts;
+import net.thevpc.nuts.text.NTexts;
 import org.junit.jupiter.api.Test;
 
 public class TestDev {
     @Test
     void test() {
-        NutsSession session = TestUtils.openNewTestWorkspace();
+        NSession session = TestUtils.openNewTestWorkspace();
 
 
-        NutsString s = NutsTexts.of(session).ofText(
-                NutsMessage.ofCstyle("%s", "Hello")
+        NString s = NTexts.of(session).ofText(
+                NMsg.ofCstyle("%s", "Hello")
         );
 
         session.out().printf("%s\n", "Hello");
-        session.out().printf("%s", NutsMessage.ofPlain("Hello"));
+        session.out().printf("%s", NMsg.ofPlain("Hello"));
     }
 }

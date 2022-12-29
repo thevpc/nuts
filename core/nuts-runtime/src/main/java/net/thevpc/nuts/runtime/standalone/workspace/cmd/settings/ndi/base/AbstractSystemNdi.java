@@ -1,18 +1,16 @@
 package net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.ndi.base;
 
-import net.thevpc.nuts.NutsSession;
+import net.thevpc.nuts.NSession;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.ndi.SystemNdi;
 
-import java.util.logging.Logger;
-
 public abstract class AbstractSystemNdi implements SystemNdi {
-    protected NutsSession session;
+    protected NSession session;
 
-    public AbstractSystemNdi(NutsSession appContext) {
+    public AbstractSystemNdi(NSession appContext) {
         this.session = appContext;
     }
 
-    public NutsSession getSession() {
+    public NSession getSession() {
         return session;
     }
 }

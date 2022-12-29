@@ -1,26 +1,26 @@
 package net.thevpc.nuts.runtime.standalone.text.parser.v1;
 
-import net.thevpc.nuts.NutsSession;
-import net.thevpc.nuts.text.NutsTextPlain;
-import net.thevpc.nuts.text.NutsTexts;
+import net.thevpc.nuts.NSession;
+import net.thevpc.nuts.text.NTextPlain;
+import net.thevpc.nuts.text.NTexts;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
-import net.thevpc.nuts.text.NutsText;
-import net.thevpc.nuts.runtime.standalone.text.parser.DefaultNutsTextPlain;
+import net.thevpc.nuts.text.NText;
+import net.thevpc.nuts.runtime.standalone.text.parser.DefaultNTextPlain;
 
 public class RootParserStep extends ParserStep {
     boolean spreadLines;
     LinkedList<ParserStep> available = new LinkedList<>();
-    private NutsSession session;
-    public RootParserStep(boolean spreadLines, NutsSession session) {
+    private NSession session;
+    public RootParserStep(boolean spreadLines, NSession session) {
         this.spreadLines = spreadLines;
         this.session = session;
     }
 
     @Override
-    public void consume(char c, DefaultNutsTextNodeParser.State p, boolean wasNewLine) {
+    public void consume(char c, DefaultNTextNodeParser.State p, boolean wasNewLine) {
         p.applyPush(c, spreadLines, wasNewLine, false);
     }
 
@@ -45,35 +45,35 @@ public class RootParserStep extends ParserStep {
     }
 
     @Override
-    public NutsText toText() {
+    public NText toText() {
         if (available.size() == 1) {
             return available.get(0).toText();
         }
-        List<NutsText> all = new ArrayList<>();
+        List<NText> all = new ArrayList<>();
         boolean partial = false;
         for (ParserStep a : available) {
             if (!partial && !a.isComplete()) {
                 partial = true;
             }
-            NutsText n = a.toText();
-            if(n instanceof DefaultNutsTextPlain
+            NText n = a.toText();
+            if(n instanceof DefaultNTextPlain
                     && !all.isEmpty()
-                    && all.get(all.size()-1) instanceof  DefaultNutsTextPlain) {
+                    && all.get(all.size()-1) instanceof DefaultNTextPlain) {
                 //consecutive plain text
-                NutsTextPlain p1=(NutsTextPlain) n;
-                NutsTextPlain p2=(NutsTextPlain) all.remove(all.size()-1);
-                all.add(new DefaultNutsTextPlain(
+                NTextPlain p1=(NTextPlain) n;
+                NTextPlain p2=(NTextPlain) all.remove(all.size()-1);
+                all.add(new DefaultNTextPlain(
                         session,p1.getText()+p2.getText()
                 ));
             }else{
                 all.add(n);
             }
         }
-        return NutsTexts.of(session).ofList(all).simplify();
+        return NTexts.of(session).ofList(all).simplify();
     }
 
     @Override
-    public void end(DefaultNutsTextNodeParser.State p) {
+    public void end(DefaultNTextNodeParser.State p) {
 
     }
 

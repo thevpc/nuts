@@ -7,19 +7,19 @@ package net.thevpc.nuts.runtime.standalone.repository.impl.util;
 
 import java.util.*;
 
-import net.thevpc.nuts.NutsIdFilter;
-import net.thevpc.nuts.io.NutsPath;
-import net.thevpc.nuts.NutsSession;
-import net.thevpc.nuts.runtime.standalone.id.filter.NutsIdFilterAnd;
-import net.thevpc.nuts.runtime.standalone.id.filter.NutsIdFilterOr;
-import net.thevpc.nuts.runtime.standalone.id.filter.NutsPatternIdFilter;
+import net.thevpc.nuts.NIdFilter;
+import net.thevpc.nuts.io.NPath;
+import net.thevpc.nuts.NSession;
+import net.thevpc.nuts.runtime.standalone.id.filter.NIdFilterAnd;
+import net.thevpc.nuts.runtime.standalone.id.filter.NIdFilterOr;
+import net.thevpc.nuts.runtime.standalone.id.filter.NPatternIdFilter;
 
 /**
  * @author thevpc
  */
 public class CommonRootsByPathHelper {
 
-    private static Set<NutsPath> resolveRootIdAnd(Set<NutsPath> a, Set<NutsPath> b, NutsSession session) {
+    private static Set<NPath> resolveRootIdAnd(Set<NPath> a, Set<NPath> b, NSession session) {
         if (a == null) {
             return b;
         }
@@ -32,11 +32,11 @@ public class CommonRootsByPathHelper {
         if (b.isEmpty()) {
             return Collections.emptySet();
         }
-        NutsPath[] aa = a.toArray(new NutsPath[0]);
-        NutsPath[] bb = b.toArray(new NutsPath[0]);
-        HashSet<NutsPath> h = new HashSet<>();
-        for (NutsPath path : aa) {
-            for (NutsPath nutsPath : bb) {
+        NPath[] aa = a.toArray(new NPath[0]);
+        NPath[] bb = b.toArray(new NPath[0]);
+        HashSet<NPath> h = new HashSet<>();
+        for (NPath path : aa) {
+            for (NPath nutsPath : bb) {
                 h.add(commonRoot(path, nutsPath, session));
             }
         }
@@ -44,12 +44,12 @@ public class CommonRootsByPathHelper {
         return compact(h);
     }
 
-    private static Set<NutsPath> compact(Set<NutsPath> a) {
-        Map<String, NutsPath> x = new HashMap<>();
+    private static Set<NPath> compact(Set<NPath> a) {
+        Map<String, NPath> x = new HashMap<>();
         if (a != null) {
-            for (NutsPath t : a) {
+            for (NPath t : a) {
                 String ts=pathOf(t);
-                NutsPath o = x.get(ts);
+                NPath o = x.get(ts);
                 if (o == null || (!deepOf(o) && deepOf(t))) {
                     x.put(ts, t);
                 }
@@ -58,10 +58,10 @@ public class CommonRootsByPathHelper {
         return new HashSet<>(x.values());
     }
 
-    static private boolean deepOf(NutsPath p){
+    static private boolean deepOf(NPath p){
         return p.getName().equals("*");
     }
-    static private String pathOf(NutsPath p){
+    static private String pathOf(NPath p){
         if(p.getName().equals("*")){
             p=p.getParent();
         }
@@ -71,21 +71,21 @@ public class CommonRootsByPathHelper {
         return p.toString();
     }
 
-    private static Set<NutsPath> resolveRootIdOr(Set<NutsPath> a, Set<NutsPath> b) {
-        Map<String, NutsPath> x = new HashMap<>();
+    private static Set<NPath> resolveRootIdOr(Set<NPath> a, Set<NPath> b) {
+        Map<String, NPath> x = new HashMap<>();
         if (a != null) {
-            for (NutsPath t : a) {
+            for (NPath t : a) {
                 String ts=pathOf(t);
-                NutsPath o = x.get(ts);
+                NPath o = x.get(ts);
                 if (o == null || (!deepOf(o) && deepOf(t))) {
                     x.put(ts, t);
                 }
             }
         }
         if (b != null) {
-            for (NutsPath t : b) {
+            for (NPath t : b) {
                 String ts=pathOf(t);
-                NutsPath o = x.get(ts);
+                NPath o = x.get(ts);
                 if (o == null || (!deepOf(o) && deepOf(t))) {
                     x.put(ts, t);
                 }
@@ -94,7 +94,7 @@ public class CommonRootsByPathHelper {
         return new HashSet<>(x.values());
     }
 
-    private static NutsPath commonRoot(NutsPath a, NutsPath b, NutsSession session) {
+    private static NPath commonRoot(NPath a, NPath b, NSession session) {
         boolean a_deep;
         String a_path;
         boolean b_deep;
@@ -125,19 +125,19 @@ public class CommonRootsByPathHelper {
             }
         }
         if(a_deep || b_deep){
-            return NutsPath.of(sb.toString(),session).resolve("*");
+            return NPath.of(sb.toString(),session).resolve("*");
         }
-        return NutsPath.of(sb.toString(),session);
+        return NPath.of(sb.toString(),session);
     }
 
-    private static Set<NutsPath> resolveRootId(String groupId, String artifactId, String version,NutsSession session) {
+    private static Set<NPath> resolveRootId(String groupId, String artifactId, String version, NSession session) {
         String g = groupId;
         if (g == null) {
             g = "";
         }
         g = g.trim();
         if (g.isEmpty() || g.equals("*")) {
-            return new HashSet<>(Collections.singletonList(NutsPath.of("*", session)));
+            return new HashSet<>(Collections.singletonList(NPath.of("*", session)));
         }
         int i = g.indexOf("*");
         if (i >= 0) {
@@ -155,61 +155,61 @@ public class CommonRootsByPathHelper {
                 }
                 g+="*";
             }
-            return new HashSet<>(Collections.singletonList(NutsPath.of(g, session)));
+            return new HashSet<>(Collections.singletonList(NPath.of(g, session)));
         }
         if (artifactId.length() > 0) {
             if (!artifactId.contains("*")) {
                 if (version.length() > 0 && !version.contains("*") && !version.contains("[") && !version.contains("]")) {
-                    return new HashSet<>(Collections.singletonList(NutsPath.of(g.replace('.', '/') + "/" + artifactId + "/" + version, session)));
+                    return new HashSet<>(Collections.singletonList(NPath.of(g.replace('.', '/') + "/" + artifactId + "/" + version, session)));
                 } else {
-                    return new HashSet<>(Collections.singletonList(NutsPath.of(g.replace('.', '/') + "/" + artifactId, session)));
+                    return new HashSet<>(Collections.singletonList(NPath.of(g.replace('.', '/') + "/" + artifactId, session)));
                 }
             }
         }
-        return new HashSet<>(Collections.singletonList(NutsPath.of(g.replace('.', '/'), session)));
+        return new HashSet<>(Collections.singletonList(NPath.of(g.replace('.', '/'), session)));
     }
 
-    public static List<NutsPath> resolveRootPaths(NutsIdFilter filter, NutsSession session) {
+    public static List<NPath> resolveRootPaths(NIdFilter filter, NSession session) {
         return new ArrayList<>(CommonRootsByPathHelper.resolveRootIds(filter, session));
     }
 
-    public static Set<NutsPath> resolveRootIds(NutsIdFilter filter, NutsSession session) {
-        Set<NutsPath> v = resolveRootId0(filter, session);
+    public static Set<NPath> resolveRootIds(NIdFilter filter, NSession session) {
+        Set<NPath> v = resolveRootId0(filter, session);
         if (v == null) {
-            HashSet<NutsPath> s = new HashSet<>();
-            s.add(NutsPath.of("*",session));
+            HashSet<NPath> s = new HashSet<>();
+            s.add(NPath.of("*",session));
             return s;
         }
         return v;
     }
 
-    public static Set<NutsPath> resolveRootId0(NutsIdFilter filter, NutsSession session) {
+    public static Set<NPath> resolveRootId0(NIdFilter filter, NSession session) {
         if (filter == null) {
             return null;
         }
-        if (filter instanceof NutsIdFilterAnd) {
-            NutsIdFilterAnd f = ((NutsIdFilterAnd) filter);
-            Set<NutsPath> xx = null;
-            for (NutsIdFilter g : f.getChildren()) {
+        if (filter instanceof NIdFilterAnd) {
+            NIdFilterAnd f = ((NIdFilterAnd) filter);
+            Set<NPath> xx = null;
+            for (NIdFilter g : f.getChildren()) {
                 xx = resolveRootIdAnd(xx, resolveRootId0(g, session), session);
             }
             return xx;
         }
-        if (filter instanceof NutsIdFilterOr) {
-            NutsIdFilterOr f = ((NutsIdFilterOr) filter);
+        if (filter instanceof NIdFilterOr) {
+            NIdFilterOr f = ((NIdFilterOr) filter);
 
-            NutsIdFilter[] y = f.getChildren();
+            NIdFilter[] y = f.getChildren();
             if (y.length == 0) {
                 return null;
             }
-            Set<NutsPath> xx = resolveRootId0(y[0], session);
+            Set<NPath> xx = resolveRootId0(y[0], session);
             for (int i = 1; i < y.length; i++) {
                 xx = resolveRootIdOr(xx, resolveRootId0(y[i], session));
             }
             return xx;
         }
-        if (filter instanceof NutsPatternIdFilter) {
-            NutsPatternIdFilter f = ((NutsPatternIdFilter) filter);
+        if (filter instanceof NPatternIdFilter) {
+            NPatternIdFilter f = ((NPatternIdFilter) filter);
             return resolveRootId(f.getId().getGroupId(), f.getId().getArtifactId(), f.getId().getVersion().toString(),session);
         }
         return null;

@@ -1,10 +1,10 @@
 package net.thevpc.nuts.toolbox.njob;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.cmdline.NutsArgument;
-import net.thevpc.nuts.cmdline.NutsCommandLine;
+import net.thevpc.nuts.cmdline.NArgument;
+import net.thevpc.nuts.cmdline.NCommandLine;
 
-public class NJobMain implements NutsApplication {
+public class NJobMain implements NApplication {
 
 
     public static void main(String[] args) {
@@ -12,11 +12,11 @@ public class NJobMain implements NutsApplication {
     }
 
     @Override
-    public void run(NutsApplicationContext appContext) {
-        NutsSession session = appContext.getSession();
+    public void run(NApplicationContext appContext) {
+        NSession session = appContext.getSession();
         JobServiceCmd ts = new JobServiceCmd(appContext);
-        NutsCommandLine cmdLine = appContext.getCommandLine();
-        NutsArgument a;
+        NCommandLine cmdLine = appContext.getCommandLine();
+        NArgument a;
         while(!cmdLine.isEmpty()) {
             if (appContext.configureFirst(cmdLine)) {
                 //
@@ -34,7 +34,7 @@ public class NJobMain implements NutsApplication {
                 cmdLine.throwUnexpectedArgument();
             }
         };
-        ts.runCommands(NutsCommandLine.of(new String[]{"summary"}));
+        ts.runCommands(NCommandLine.of(new String[]{"summary"}));
     }
 
 }

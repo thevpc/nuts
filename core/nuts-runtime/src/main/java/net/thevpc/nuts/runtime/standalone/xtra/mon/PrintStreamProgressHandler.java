@@ -1,16 +1,13 @@
 package net.thevpc.nuts.runtime.standalone.xtra.mon;
 
-import net.thevpc.nuts.NutsMessage;
-import net.thevpc.nuts.NutsSession;
-import net.thevpc.nuts.util.NutsProgressEventType;
-import net.thevpc.nuts.util.NutsProgressHandlerEvent;
-import net.thevpc.nuts.util.NutsProgressMonitorModel;
-import net.thevpc.nuts.util.NutsProgressHandler;
+import net.thevpc.nuts.NMsg;
+import net.thevpc.nuts.util.NProgressHandlerEvent;
+import net.thevpc.nuts.util.NProgressHandler;
 
 import java.io.PrintStream;
 import java.util.logging.Level;
 
-public class PrintStreamProgressHandler implements NutsProgressHandler {
+public class PrintStreamProgressHandler implements NProgressHandler {
     private String messageFormat;
     private PrintStream printStream;
 
@@ -31,8 +28,8 @@ public class PrintStreamProgressHandler implements NutsProgressHandler {
     }
 
     @Override
-    public void onEvent(NutsProgressHandlerEvent event) {
-        NutsMessage message = event.getModel().getMessage();
+    public void onEvent(NProgressHandlerEvent event) {
+        NMsg message = event.getModel().getMessage();
         String msg = JLogProgressHandler.formatMessage(messageFormat, event.getModel());
         printStream.print(message.getLevel() == null ? Level.INFO : message.getLevel() + " ");
         printStream.println(msg);

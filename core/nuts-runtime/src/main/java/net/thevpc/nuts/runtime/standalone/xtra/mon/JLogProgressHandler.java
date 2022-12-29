@@ -1,6 +1,6 @@
 package net.thevpc.nuts.runtime.standalone.xtra.mon;
 
-import net.thevpc.nuts.NutsMessage;
+import net.thevpc.nuts.NMsg;
 import net.thevpc.nuts.runtime.standalone.util.MemoryUtils;
 import net.thevpc.nuts.util.*;
 
@@ -9,8 +9,8 @@ import java.util.Date;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public class JLogProgressHandler implements NutsProgressHandler {
-    private static NutsMemorySizeFormat MF = NutsMemorySizeFormat.FIXED;
+public class JLogProgressHandler implements NProgressHandler {
+    private static NMemorySizeFormat MF = NMemorySizeFormat.FIXED;
     public static final DecimalFormat PERCENT_FORMAT = new DecimalFormat("#00.00%");
     private static Logger defaultLog = Logger.getLogger(JLogProgressHandler.class.getName());
 
@@ -36,15 +36,15 @@ public class JLogProgressHandler implements NutsProgressHandler {
     }
 
     @Override
-    public void onEvent(NutsProgressHandlerEvent event) {
-        NutsMessage message = event.getModel().getMessage();
+    public void onEvent(NProgressHandlerEvent event) {
+        NMsg message = event.getModel().getMessage();
         String msg = formatMessage(messageFormat, event.getModel());
         logger.log(message.getLevel() == null ? Level.INFO : message.getLevel(), msg);
     }
 
-    public static String formatMessage(String messageFormat, NutsProgressMonitorModel model) {
+    public static String formatMessage(String messageFormat, NProgressMonitorModel model) {
         long newd = System.currentTimeMillis();
-        NutsMessage message = model.getMessage();
+        NMsg message = model.getMessage();
         return messageFormat
                 .replace("%date%", new Date(newd).toString())
                 .replace("%value%", Double.isNaN(model.getProgress()) ? "   ?%" : PERCENT_FORMAT.format(model.getProgress()))

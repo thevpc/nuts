@@ -17,7 +17,7 @@
  */
 package net.thevpc.nuts.lib.md;
 
-import net.thevpc.nuts.NutsBlankable;
+import net.thevpc.nuts.NBlankable;
 
 import java.util.Objects;
 
@@ -94,6 +94,6 @@ public class MdImage extends MdAbstractElement {
 
     @Override
     public boolean isBlank() {
-        return NutsBlankable.isBlank(imageTitle) && NutsBlankable.isBlank(imageUrl);
+        return NBlankable.isBlank(imageTitle) && NBlankable.isBlank(imageUrl);
     }
 }

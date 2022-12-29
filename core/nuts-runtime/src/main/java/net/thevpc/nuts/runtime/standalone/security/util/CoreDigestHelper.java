@@ -1,8 +1,8 @@
 package net.thevpc.nuts.runtime.standalone.security.util;
 
-import net.thevpc.nuts.io.NutsPath;
-import net.thevpc.nuts.NutsSession;
-import net.thevpc.nuts.util.NutsStringUtils;
+import net.thevpc.nuts.io.NPath;
+import net.thevpc.nuts.NSession;
+import net.thevpc.nuts.util.NStringUtils;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -23,9 +23,9 @@ public class CoreDigestHelper {
     private final MessageDigest md;
     private boolean collected;
     private String collectedString;
-    private NutsSession session;
+    private NSession session;
 
-    public CoreDigestHelper(NutsSession session) {
+    public CoreDigestHelper(NSession session) {
         this.session=session;
         try {
             md = MessageDigest.getInstance("MD5");
@@ -53,7 +53,7 @@ public class CoreDigestHelper {
 
     public CoreDigestHelper append(URL url) {
         if (url != null) {
-            Path ff = NutsPath.of(url,session).asFile();
+            Path ff = NPath.of(url,session).asFile();
             if (ff != null) {
                 append(ff);
                 return this;
@@ -145,7 +145,7 @@ public class CoreDigestHelper {
         if (!collected) {
             collected = true;
             byte[] digest = md.digest();
-            collectedString = NutsStringUtils.toHexString(digest);
+            collectedString = NStringUtils.toHexString(digest);
         }
         return collectedString;
     }

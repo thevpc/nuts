@@ -1,10 +1,10 @@
 package net.thevpc.nuts.toolbox.docusaurus;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.elem.NutsElement;
-import net.thevpc.nuts.elem.NutsElementEntry;
-import net.thevpc.nuts.elem.NutsElements;
-import net.thevpc.nuts.elem.NutsObjectElement;
+import net.thevpc.nuts.elem.NElement;
+import net.thevpc.nuts.elem.NElementEntry;
+import net.thevpc.nuts.elem.NElements;
+import net.thevpc.nuts.elem.NObjectElement;
 import net.thevpc.nuts.lib.md.MdElement;
 
 import java.io.File;
@@ -35,9 +35,9 @@ public class DocusaurusProject {
     private String docusaurusConfigBaseFolder;
     private String docusaurusBaseFolder;
 
-    private NutsSession session;
+    private NSession session;
 
-    public DocusaurusProject(String docusaurusBaseFolder, String docusaurusConfigBaseFolder,NutsSession session) {
+    public DocusaurusProject(String docusaurusBaseFolder, String docusaurusConfigBaseFolder, NSession session) {
         this.docusaurusBaseFolder = Paths.get(docusaurusBaseFolder).toAbsolutePath().toString();
         if(docusaurusConfigBaseFolder==null){
             this.docusaurusConfigBaseFolder=docusaurusBaseFolder;
@@ -50,7 +50,7 @@ public class DocusaurusProject {
         }
     }
 
-    public NutsSession getSession() {
+    public NSession getSession() {
         return session;
     }
 
@@ -106,8 +106,8 @@ public class DocusaurusProject {
         return this.docusaurusBaseFolder;
     }
 
-    public NutsObjectElement getSidebars() {
-        return loadModuleExportsFile("sidebars.js").asObject().orElse(NutsObjectElement.ofEmpty(session));
+    public NObjectElement getSidebars() {
+        return loadModuleExportsFile("sidebars.js").asObject().orElse(NObjectElement.ofEmpty(session));
     }
 
     public String getTitle() {
@@ -118,9 +118,9 @@ public class DocusaurusProject {
         return getConfig().getString("projectName").get(session);
     }
 
-    public NutsObjectElement getConfig() {
+    public NObjectElement getConfig() {
         return loadModuleExportsFile("docusaurus.config.js")
-                .asObject().orElse(NutsObjectElement.ofEmpty(session));
+                .asObject().orElse(NObjectElement.ofEmpty(session));
     }
 
     private String resolvePath(String path) {
@@ -131,12 +131,12 @@ public class DocusaurusProject {
         return p + path;
     }
 
-    public NutsElement loadModuleExportsFile(String path) {
+    public NElement loadModuleExportsFile(String path) {
         String a = null;
         try {
             a = new String(Files.readAllBytes(Paths.get(resolvePath(path))));
         } catch (IOException ex) {
-            return NutsElements.of(session).ofNull();
+            return NElements.of(session).ofNull();
         }
         //(?s) stands for single line mode in which the dot includes line breaks
         Pattern p = Pattern.compile("(?s)module.exports[ ]*=[ ]*(?<json>.*[^;])[;]?");
@@ -146,10 +146,10 @@ public class DocusaurusProject {
             json = matcher.group("json");
         }
         if (json==null) {
-            return NutsElements.of(session).ofObject().build();
+            return NElements.of(session).ofObject().build();
         }
-        return NutsElements.of(session).json()
-                .parse(json,NutsElement.class);
+        return NElements.of(session).json()
+                .parse(json, NElement.class);
     }
 
     private String toCanonicalPath(String path) {
@@ -217,7 +217,7 @@ public class DocusaurusProject {
 //        }
 //    }
 
-    public DocusaurusFileOrFolder[] LJSON_to_DocusaurusFileOrFolder_list(NutsElement a, DocusaurusFolder root) {
+    public DocusaurusFileOrFolder[] LJSON_to_DocusaurusFileOrFolder_list(NElement a, DocusaurusFolder root) {
         if (a.isString()) {
             return new DocusaurusFileOrFolder[]{
                     //DocusaurusUtils.concatPath(path, member.getValue().asString())
@@ -225,7 +225,7 @@ public class DocusaurusProject {
             };
         } else if (a.isArray()) {
             List<DocusaurusFileOrFolder> aa = new ArrayList<>();
-            for (NutsElement ljson : a.asArray().get(session)) {
+            for (NElement ljson : a.asArray().get(session)) {
                 aa.addAll(Arrays.asList(LJSON_to_DocusaurusFileOrFolder_list(ljson, root)));
             }
             return aa.toArray(new DocusaurusFileOrFolder[0]);
@@ -233,7 +233,7 @@ public class DocusaurusProject {
             List<DocusaurusFileOrFolder> aa = new ArrayList<>();
             int order = 0;
             //detect effective folder from children
-            for (NutsElementEntry member : a.asObject().get(session)) {
+            for (NElementEntry member : a.asObject().get(session)) {
                 DocusaurusFileOrFolder[] cc = LJSON_to_DocusaurusFileOrFolder_list(member.getValue(), root);
                 String rootPath = root.getPath();
                 Path parentPath = detectFileParent(cc);
@@ -248,7 +248,7 @@ public class DocusaurusProject {
                         member.getKey().asString().get(session),//no id  here!
                         member.getKey().asString().get(session),
                         ++order,
-                        NutsElements.of(session).ofObject().build(),
+                        NElements.of(session).ofObject().build(),
                         cc,
                         resolveFolderContent(parentPath),parentPath==null?null:parentPath.toString()
                 ));
@@ -285,7 +285,7 @@ public class DocusaurusProject {
         DocusaurusFileOrFolder[] someSidebars = LJSON_to_DocusaurusFileOrFolder_list(getSidebars()
                 .get("someSidebar").orNull(),  getPhysicalDocsFolder());
         return new DocusaurusFolder("/", "/", 0,
-                NutsElements.of(session).ofObject().build(), someSidebars,resolveFolderContent(getPhysicalDocsFolderBasePath()),
+                NElements.of(session).ofObject().build(), someSidebars,resolveFolderContent(getPhysicalDocsFolderBasePath()),
                 getPhysicalDocsFolder().getPath()
                 );
     }

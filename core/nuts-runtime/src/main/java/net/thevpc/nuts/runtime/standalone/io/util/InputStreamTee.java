@@ -5,9 +5,6 @@
  */
 package net.thevpc.nuts.runtime.standalone.io.util;
 
-import net.thevpc.nuts.io.NutsInputSource;
-import net.thevpc.nuts.io.NutsInputSourceMetadata;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;

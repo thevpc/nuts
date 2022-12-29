@@ -6,16 +6,16 @@
 package net.thevpc.nuts.runtime.standalone.util;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.io.NutsIOException;
-import net.thevpc.nuts.io.NutsPath;
+import net.thevpc.nuts.io.NIOException;
+import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.runtime.standalone.io.util.CoreIOUtils;
 import net.thevpc.nuts.runtime.standalone.io.util.UnzipOptions;
 import net.thevpc.nuts.runtime.standalone.io.util.ZipUtils;
-import net.thevpc.nuts.runtime.standalone.definition.DefaultNutsDefinition;
-import net.thevpc.nuts.runtime.standalone.session.NutsSessionUtils;
-import net.thevpc.nuts.util.NutsLogger;
-import net.thevpc.nuts.util.NutsLoggerOp;
-import net.thevpc.nuts.util.NutsStringUtils;
+import net.thevpc.nuts.runtime.standalone.definition.DefaultNDefinition;
+import net.thevpc.nuts.runtime.standalone.session.NSessionUtils;
+import net.thevpc.nuts.util.NLogger;
+import net.thevpc.nuts.util.NLoggerOp;
+import net.thevpc.nuts.util.NStringUtils;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -27,44 +27,44 @@ import java.util.logging.Level;
  */
 public class DefaultSourceControlHelper {
 
-    private NutsLogger LOG;
-    private NutsWorkspace ws;
+    private NLogger LOG;
+    private NWorkspace ws;
 
-    public DefaultSourceControlHelper(NutsWorkspace ws) {
+    public DefaultSourceControlHelper(NWorkspace ws) {
         this.ws = ws;
     }
 
-    protected NutsLoggerOp _LOGOP(NutsSession session) {
+    protected NLoggerOp _LOGOP(NSession session) {
         return _LOG(session).with().session(session);
     }
 
-    protected NutsLogger _LOG(NutsSession session) {
+    protected NLogger _LOG(NSession session) {
         if (LOG == null) {
-            LOG = NutsLogger.of(DefaultSourceControlHelper.class,session);
+            LOG = NLogger.of(DefaultSourceControlHelper.class,session);
         }
         return LOG;
     }
 
     //    @Override
-    public NutsId commit(Path folder, NutsSession session) {
-        NutsSessionUtils.checkSession(ws, session);
-        session.security().setSession(session).checkAllowed(NutsConstants.Permissions.DEPLOY, "commit");
+    public NId commit(Path folder, NSession session) {
+        NSessionUtils.checkSession(ws, session);
+        session.security().setSession(session).checkAllowed(NConstants.Permissions.DEPLOY, "commit");
         if (folder == null || !Files.isDirectory(folder)) {
-            throw new NutsIllegalArgumentException(session, NutsMessage.ofCstyle("not a directory %s", folder));
+            throw new NIllegalArgumentException(session, NMsg.ofCstyle("not a directory %s", folder));
         }
 
-        Path file = folder.resolve(NutsConstants.Files.DESCRIPTOR_FILE_NAME);
-        NutsDescriptor d = NutsDescriptorParser.of(session).parse(file).get(session);
-        String oldVersion = NutsStringUtils.trim(d.getId().getVersion().getValue());
-        if (oldVersion.endsWith(CoreNutsConstants.Versions.CHECKED_OUT_EXTENSION)) {
-            oldVersion = oldVersion.substring(0, oldVersion.length() - CoreNutsConstants.Versions.CHECKED_OUT_EXTENSION.length());
-            String newVersion = NutsVersion.of(oldVersion).get(session).inc().getValue();
-            NutsDefinition newVersionFound = null;
+        Path file = folder.resolve(NConstants.Files.DESCRIPTOR_FILE_NAME);
+        NDescriptor d = NDescriptorParser.of(session).parse(file).get(session);
+        String oldVersion = NStringUtils.trim(d.getId().getVersion().getValue());
+        if (oldVersion.endsWith(CoreNConstants.Versions.CHECKED_OUT_EXTENSION)) {
+            oldVersion = oldVersion.substring(0, oldVersion.length() - CoreNConstants.Versions.CHECKED_OUT_EXTENSION.length());
+            String newVersion = NVersion.of(oldVersion).get(session).inc().getValue();
+            NDefinition newVersionFound = null;
             try {
                 newVersionFound = session.fetch().setId(d.getId().builder().setVersion(newVersion).build()).setSession(session).getResultDefinition();
-            } catch (NutsNotFoundException ex) {
+            } catch (NNotFoundException ex) {
                 _LOGOP(session).level(Level.FINE).error(ex)
-                        .log(NutsMessage.ofJstyle("failed to fetch {0}", d.getId().builder().setVersion(newVersion).build()));
+                        .log(NMsg.ofJstyle("failed to fetch {0}", d.getId().builder().setVersion(newVersion).build()));
                 //ignore
             }
             if (newVersionFound == null) {
@@ -72,51 +72,51 @@ public class DefaultSourceControlHelper {
             } else {
                 d = d.builder().setId(d.getId().builder().setVersion(oldVersion + ".1").build()).build();
             }
-            NutsId newId = session.deploy().setContent(folder).setDescriptor(d).setSession(session).getResult().get(0);
+            NId newId = session.deploy().setContent(folder).setDescriptor(d).setSession(session).getResult().get(0);
             d.formatter(session).print(file);
             CoreIOUtils.delete(session, folder);
             return newId;
         } else {
-            throw new NutsUnsupportedOperationException(session, NutsMessage.ofPlain("commit not supported"));
+            throw new NUnsupportedOperationException(session, NMsg.ofPlain("commit not supported"));
         }
     }
 
     //    @Override
-    public NutsDefinition checkout(String id, Path folder, NutsSession session) {
-        return checkout(NutsId.of(id).get(session), folder, session);
+    public NDefinition checkout(String id, Path folder, NSession session) {
+        return checkout(NId.of(id).get(session), folder, session);
     }
 
     //    @Override
-    public NutsDefinition checkout(NutsId id, Path folder, NutsSession session) {
-        NutsSessionUtils.checkSession(ws, session);
-        session.security().checkAllowed(NutsConstants.Permissions.INSTALL, "checkout");
-        NutsDefinition nutToInstall = session.fetch().setId(id).setSession(session).setOptional(false).setDependencies(true).getResultDefinition();
+    public NDefinition checkout(NId id, Path folder, NSession session) {
+        NSessionUtils.checkSession(ws, session);
+        session.security().checkAllowed(NConstants.Permissions.INSTALL, "checkout");
+        NDefinition nutToInstall = session.fetch().setId(id).setSession(session).setOptional(false).setDependencies(true).getResultDefinition();
         if ("zip".equals(nutToInstall.getDescriptor().getPackaging())) {
 
             try {
-                ZipUtils.unzip(session, nutToInstall.getContent().map(Object::toString).get(session), NutsPath.of(folder,session)
+                ZipUtils.unzip(session, nutToInstall.getContent().map(Object::toString).get(session), NPath.of(folder,session)
                         .toAbsolute().toString(), new UnzipOptions().setSkipRoot(false));
             } catch (IOException ex) {
-                throw new NutsIOException(session, ex);
+                throw new NIOException(session, ex);
             }
 
-            Path file = folder.resolve(NutsConstants.Files.DESCRIPTOR_FILE_NAME);
-            NutsDescriptor d = NutsDescriptorParser.of(session).parse(file).get(session);
-            NutsVersion oldVersion = d.getId().getVersion();
-            NutsId newId = d.getId().builder().setVersion(oldVersion + CoreNutsConstants.Versions.CHECKED_OUT_EXTENSION).build();
+            Path file = folder.resolve(NConstants.Files.DESCRIPTOR_FILE_NAME);
+            NDescriptor d = NDescriptorParser.of(session).parse(file).get(session);
+            NVersion oldVersion = d.getId().getVersion();
+            NId newId = d.getId().builder().setVersion(oldVersion + CoreNConstants.Versions.CHECKED_OUT_EXTENSION).build();
             d = d.builder().setId(newId).build();
 
             d.formatter(session).print(file);
 
-            return new DefaultNutsDefinition(
+            return new DefaultNDefinition(
                     nutToInstall.getRepositoryUuid(),
                     nutToInstall.getRepositoryName(),
                     newId.getLongId(),
-                    d,NutsPath.of(folder,session).setUserCache(false).setUserTemporary(false),
+                    d, NPath.of(folder,session).setUserCache(false).setUserTemporary(false),
                     null, null, session
             );
         } else {
-            throw new NutsUnsupportedOperationException(session, NutsMessage.ofPlain("checkout not supported"));
+            throw new NUnsupportedOperationException(session, NMsg.ofPlain("checkout not supported"));
         }
     }
 }

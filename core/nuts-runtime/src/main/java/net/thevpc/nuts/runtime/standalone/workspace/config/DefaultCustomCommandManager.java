@@ -1,33 +1,43 @@
 package net.thevpc.nuts.runtime.standalone.workspace.config;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.runtime.standalone.session.NutsSessionUtils;
-import net.thevpc.nuts.runtime.standalone.workspace.NutsWorkspaceUtils;
+import net.thevpc.nuts.runtime.standalone.session.NSessionUtils;
+import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceExt;
+import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceUtils;
+import net.thevpc.nuts.spi.NSupportLevelContext;
 
 import java.util.Arrays;
 import java.util.List;
 
-public class DefaultCustomCommandManager implements NutsCustomCommandManager {
+public class DefaultCustomCommandManager implements NCustomCommandManager {
 
     public DefaultCustomCommandsModel model;
-    public NutsSession session;
+    public NSession session;
 
-    public DefaultCustomCommandManager(DefaultCustomCommandsModel model) {
-        this.model = model;
-    }
-
-    private void checkSession() {
-        NutsSessionUtils.checkSession(model.getWorkspace(), session);
+    public DefaultCustomCommandManager(NSession session) {
+        this.session = session;
+        NWorkspace w = this.session.getWorkspace();
+        NWorkspaceExt e = (NWorkspaceExt) w;
+        this.model = e.getModel().aliasesModel;
     }
 
     @Override
-    public List<NutsCommandFactoryConfig> getCommandFactories() {
+    public int getSupportLevel(NSupportLevelContext context) {
+        return DEFAULT_SUPPORT;
+    }
+
+    private void checkSession() {
+        NSessionUtils.checkSession(model.getWorkspace(), session);
+    }
+
+    @Override
+    public List<NCommandFactoryConfig> getCommandFactories() {
         checkSession();
         return Arrays.asList(model.getFactories(session));
     }
 
     @Override
-    public void addCommandFactory(NutsCommandFactoryConfig commandFactoryConfig) {
+    public void addCommandFactory(NCommandFactoryConfig commandFactoryConfig) {
         checkSession();
         model.addFactory(commandFactoryConfig, session);
     }
@@ -57,13 +67,13 @@ public class DefaultCustomCommandManager implements NutsCustomCommandManager {
     }
 
     @Override
-    public boolean addCommand(NutsCommandConfig command) {
+    public boolean addCommand(NCommandConfig command) {
         checkSession();
         return model.add(command, session);
     }
 
     @Override
-    public boolean updateCommand(NutsCommandConfig command) {
+    public boolean updateCommand(NCommandConfig command) {
         checkSession();
         return model.update(command, session);
     }
@@ -85,37 +95,37 @@ public class DefaultCustomCommandManager implements NutsCustomCommandManager {
     }
 
     @Override
-    public NutsWorkspaceCustomCommand findCommand(String name, NutsId forId, NutsId forOwner) {
+    public NWorkspaceCustomCommand findCommand(String name, NId forId, NId forOwner) {
         checkSession();
         return model.find(name, forId, forOwner, session);
     }
 
     @Override
-    public NutsWorkspaceCustomCommand findCommand(String name) {
+    public NWorkspaceCustomCommand findCommand(String name) {
         checkSession();
         return model.find(name, session);
     }
 
     @Override
-    public List<NutsWorkspaceCustomCommand> findAllCommands() {
+    public List<NWorkspaceCustomCommand> findAllCommands() {
         checkSession();
         return model.findAll(session);
     }
 
     @Override
-    public List<NutsWorkspaceCustomCommand> findCommandsByOwner(NutsId id) {
+    public List<NWorkspaceCustomCommand> findCommandsByOwner(NId id) {
         checkSession();
         return model.findByOwner(id, session);
     }
 
     @Override
-    public NutsSession getSession() {
+    public NSession getSession() {
         return session;
     }
 
     @Override
-    public NutsCustomCommandManager setSession(NutsSession session) {
-        this.session = NutsWorkspaceUtils.bindSession(model.getWorkspace(), session);
+    public NCustomCommandManager setSession(NSession session) {
+        this.session = NWorkspaceUtils.bindSession(model.getWorkspace(), session);
         return this;
     }
 }

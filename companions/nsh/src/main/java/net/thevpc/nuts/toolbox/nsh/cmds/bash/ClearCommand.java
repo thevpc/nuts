@@ -26,17 +26,17 @@
  */
 package net.thevpc.nuts.toolbox.nsh.cmds.bash;
 
-import net.thevpc.nuts.cmdline.NutsCommandLine;
-import net.thevpc.nuts.spi.NutsComponentScope;
-import net.thevpc.nuts.spi.NutsComponentScopeType;
-import net.thevpc.nuts.text.NutsTerminalCommand;
+import net.thevpc.nuts.cmdline.NCommandLine;
+import net.thevpc.nuts.spi.NComponentScope;
+import net.thevpc.nuts.spi.NComponentScopeType;
+import net.thevpc.nuts.text.NTerminalCommand;
 import net.thevpc.nuts.toolbox.nsh.SimpleJShellBuiltin;
 import net.thevpc.nuts.toolbox.nsh.jshell.JShellExecutionContext;
 
 /**
  * Created by vpc on 1/7/17.
  */
-@NutsComponentScope(NutsComponentScopeType.WORKSPACE)
+@NComponentScope(NComponentScopeType.WORKSPACE)
 public class ClearCommand extends SimpleJShellBuiltin {
 
     public ClearCommand() {
@@ -48,16 +48,16 @@ public class ClearCommand extends SimpleJShellBuiltin {
     }
 
     @Override
-    protected boolean configureFirst(NutsCommandLine commandLine, JShellExecutionContext context) {
+    protected boolean configureFirst(NCommandLine commandLine, JShellExecutionContext context) {
         //ignore all
         commandLine.skip();
         return true;
     }
 
     @Override
-    protected void execBuiltin(NutsCommandLine commandLine, JShellExecutionContext context) {
+    protected void execBuiltin(NCommandLine commandLine, JShellExecutionContext context) {
         //do nothing, return true
-        context.out().run(NutsTerminalCommand.CLEAR_SCREEN, context.getSession());
+        context.out().run(NTerminalCommand.CLEAR_SCREEN, context.getSession());
     }
 
 }

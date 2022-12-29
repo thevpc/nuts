@@ -1,40 +1,40 @@
 package net.thevpc.nuts.runtime.standalone.xtra.expr;
 
-import net.thevpc.nuts.NutsMessage;
-import net.thevpc.nuts.NutsOptional;
-import net.thevpc.nuts.NutsSession;
+import net.thevpc.nuts.NMsg;
+import net.thevpc.nuts.NOptional;
+import net.thevpc.nuts.NSession;
 import net.thevpc.nuts.util.*;
 
 import java.util.Collections;
 import java.util.List;
 
-public class EmptyRootDeclarations extends NutsExprDeclarationsBase {
-    public EmptyRootDeclarations(NutsSession session) {
+public class EmptyRootDeclarations extends NExprDeclarationsBase {
+    public EmptyRootDeclarations(NSession session) {
         setSession(session);
     }
 
     @Override
-    public NutsOptional<NutsExprFctDeclaration> getFunction(String fctName, Object... args) {
-        return NutsOptional.ofEmpty(session -> NutsMessage.ofCstyle("function not found %s", fctName));
+    public NOptional<NExprFctDeclaration> getFunction(String fctName, Object... args) {
+        return NOptional.ofEmpty(session -> NMsg.ofCstyle("function not found %s", fctName));
     }
 
     @Override
-    public NutsOptional<NutsExprConstructDeclaration> getConstruct(String constructName, NutsExprNode... args) {
-        return NutsOptional.ofEmpty(session -> NutsMessage.ofCstyle("construct not found %s", constructName));
+    public NOptional<NExprConstructDeclaration> getConstruct(String constructName, NExprNode... args) {
+        return NOptional.ofEmpty(session -> NMsg.ofCstyle("construct not found %s", constructName));
     }
 
     @Override
-    public NutsOptional<NutsExprOpDeclaration> getOperator(String opName, NutsExprOpType type, NutsExprNode... args) {
-        return NutsOptional.ofEmpty(session -> NutsMessage.ofCstyle("operator not found %s", opName));
+    public NOptional<NExprOpDeclaration> getOperator(String opName, NExprOpType type, NExprNode... args) {
+        return NOptional.ofEmpty(session -> NMsg.ofCstyle("operator not found %s", opName));
     }
 
     @Override
-    public NutsOptional<NutsExprVarDeclaration> getVar(String varName) {
-        return NutsOptional.ofEmpty(session -> NutsMessage.ofCstyle("var not found %s", varName));
+    public NOptional<NExprVarDeclaration> getVar(String varName) {
+        return NOptional.ofEmpty(session -> NMsg.ofCstyle("var not found %s", varName));
     }
 
     @Override
-    public List<NutsExprOpDeclaration> getOperators() {
+    public List<NExprOpDeclaration> getOperators() {
         return Collections.emptyList();
     }
 

@@ -12,10 +12,10 @@ public class ClassloaderAwareRunnableImpl extends ClassloaderAwareRunnable {
 
     private final Class<?> cls;
     private final JavaExecutorOptions joptions;
-    private final NutsId id;
-    private final NutsExecutionContext executionContext;
+    private final NId id;
+    private final NExecutionContext executionContext;
 
-    public ClassloaderAwareRunnableImpl(NutsId id, ClassLoader classLoader, Class<?> cls, NutsSession session, JavaExecutorOptions joptions,NutsExecutionContext executionContext) {
+    public ClassloaderAwareRunnableImpl(NId id, ClassLoader classLoader, Class<?> cls, NSession session, JavaExecutorOptions joptions, NExecutionContext executionContext) {
         super(session.copy(), classLoader);
         this.id = id;
         this.cls = cls;
@@ -26,7 +26,7 @@ public class ClassloaderAwareRunnableImpl extends ClassloaderAwareRunnable {
     @Override
     public Object runWithContext() throws Throwable {
         if (cls.getName().equals("net.thevpc.nuts.Nuts")) {
-            NutsWorkspaceOptionsBuilder o = NutsWorkspaceOptionsBuilder.of().setCommandLine(
+            NWorkspaceOptionsBuilder o = NWorkspaceOptionsBuilder.of().setCommandLine(
                     joptions.getAppArgs().toArray(new String[0]),session
             );
             List<String> appArgs;
@@ -39,8 +39,8 @@ public class ClassloaderAwareRunnableImpl extends ClassloaderAwareRunnable {
                 appArgs = o.getApplicationArguments().get();
             }
             session.configure(o.build());
-            Object oldId = NutsApplications.getSharedMap().get("nuts.embedded.application.id");
-            NutsApplications.getSharedMap().put("nuts.embedded.application.id", id);
+            Object oldId = NApplications.getSharedMap().get("nuts.embedded.application.id");
+            NApplications.getSharedMap().put("nuts.embedded.application.id", id);
             try {
                 session.exec()
                         .addCommand(appArgs)
@@ -49,37 +49,37 @@ public class ClassloaderAwareRunnableImpl extends ClassloaderAwareRunnable {
                         .setFailFast(true)
                         .run();
             } finally {
-                NutsApplications.getSharedMap().put("nuts.embedded.application.id", oldId);
+                NApplications.getSharedMap().put("nuts.embedded.application.id", oldId);
             }
             return null;
         }
         Method mainMethod = null;
         String nutsAppVersion = null;
         Object nutsApp = null;
-        NutsSession sessionCopy = getSession().copy();
+        NSession sessionCopy = getSession().copy();
         try {
-            nutsAppVersion = CoreNutsApplications.getNutsAppVersion(cls);
+            nutsAppVersion = CoreNApplications.getNutsAppVersion(cls);
             if (nutsAppVersion != null) {
-                mainMethod = cls.getMethod("run", NutsSession.class, String[].class);
+                mainMethod = cls.getMethod("run", NSession.class, String[].class);
                 mainMethod.setAccessible(true);
-                nutsApp=CoreNutsApplications.createApplicationInstance(cls,session,joptions.getAppArgs().toArray(new String[0]));
+                nutsApp= CoreNApplications.createApplicationInstance(cls,session,joptions.getAppArgs().toArray(new String[0]));
             }
         } catch (Exception rr) {
             //ignore
         }
         if (nutsAppVersion != null && nutsApp!=null) {
             //NutsWorkspace
-            NutsApplications.getSharedMap().put("nuts.embedded.application.id", id);
+            NApplications.getSharedMap().put("nuts.embedded.application.id", id);
             mainMethod.invoke(nutsApp, sessionCopy, joptions.getAppArgs().toArray(new String[0]));
         } else {
             //NutsWorkspace
 
-            NutsWorkspaceOptionsBuilder bootOptions = JavaExecutorComponent.createChildOptions(executionContext);
+            NWorkspaceOptionsBuilder bootOptions = JavaExecutorComponent.createChildOptions(executionContext);
             System.setProperty("nuts.boot.args",
                     bootOptions
-                            .toCommandLine(new NutsWorkspaceOptionsConfig().setCompact(true))
+                            .toCommandLine(new NWorkspaceOptionsConfig().setCompact(true))
                             .add(id.getLongName())
-                            .formatter(session).setShellFamily(NutsShellFamily.SH).toString()
+                            .formatter(session).setShellFamily(NShellFamily.SH).toString()
             );
             mainMethod = cls.getMethod("main", String[].class);
             mainMethod.invoke(null, new Object[]{joptions.getAppArgs().toArray(new String[0])});

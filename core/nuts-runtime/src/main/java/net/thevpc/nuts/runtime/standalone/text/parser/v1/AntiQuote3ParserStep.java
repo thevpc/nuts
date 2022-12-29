@@ -1,11 +1,11 @@
 package net.thevpc.nuts.runtime.standalone.text.parser.v1;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.runtime.standalone.text.DefaultNutsTexts;
-import net.thevpc.nuts.text.NutsTerminalCommand;
-import net.thevpc.nuts.text.NutsText;
-import net.thevpc.nuts.text.NutsTexts;
-import net.thevpc.nuts.util.NutsStringUtils;
+import net.thevpc.nuts.runtime.standalone.text.DefaultNTexts;
+import net.thevpc.nuts.text.NTerminalCommand;
+import net.thevpc.nuts.text.NText;
+import net.thevpc.nuts.text.NTexts;
+import net.thevpc.nuts.util.NStringUtils;
 
 public class AntiQuote3ParserStep extends ParserStep {
 
@@ -22,10 +22,10 @@ public class AntiQuote3ParserStep extends ParserStep {
     int status = START_QUOTES;
     char antiQuote;
     boolean spreadLines;
-    NutsSession session;
+    NSession session;
     boolean exitOnBrace;
 
-    public AntiQuote3ParserStep(char c, boolean spreadLines, NutsSession session, boolean exitOnBrace) {
+    public AntiQuote3ParserStep(char c, boolean spreadLines, NSession session, boolean exitOnBrace) {
         start.append(antiQuote = c);
         this.spreadLines = spreadLines;
         this.session = session;
@@ -37,7 +37,7 @@ public class AntiQuote3ParserStep extends ParserStep {
 //    }
 
     @Override
-    public void consume(char c, DefaultNutsTextNodeParser.State p, boolean wasNewLine) {
+    public void consume(char c, DefaultNTextNodeParser.State p, boolean wasNewLine) {
         switch (status) {
             case START_QUOTES: {
                 if (c == antiQuote) {
@@ -159,13 +159,13 @@ public class AntiQuote3ParserStep extends ParserStep {
     }
 
     @Override
-    public NutsText toText() {
+    public NText toText() {
         StringBuilder value2 = new StringBuilder(getPartialValue());
         char[] dst = new char[value2.length()];
         value2.getChars(0, value2.length(), dst, 0);
 
-        NutsTexts txt = NutsTexts.of(session);
-        DefaultNutsTexts factory0 = (DefaultNutsTexts) txt;
+        NTexts txt = NTexts.of(session);
+        DefaultNTexts factory0 = (DefaultNTexts) txt;
         int i = 0;
         int endOffset = -1;
         if (dst.length > 0 && dst[i] == '!') {
@@ -217,7 +217,7 @@ public class AntiQuote3ParserStep extends ParserStep {
                     );
                 }
             }
-            NutsTerminalCommand ntc = NutsTerminalCommand.of(cmd0, value);
+            NTerminalCommand ntc = NTerminalCommand.of(cmd0, value);
             return factory0.createCommand(
                     start2,
                     ntc,
@@ -272,7 +272,7 @@ public class AntiQuote3ParserStep extends ParserStep {
     }
 
     @Override
-    public void end(DefaultNutsTextNodeParser.State p) {
+    public void end(DefaultNTextNodeParser.State p) {
         if (!isComplete()) {
             while (end.length() < start.length()) {
                 end.append(antiQuote);
@@ -287,9 +287,9 @@ public class AntiQuote3ParserStep extends ParserStep {
 
     @Override
     public String toString() {
-        StringBuilder sb = new StringBuilder("Quoted(" + NutsStringUtils.formatStringLiteral(start.toString(), NutsStringUtils.QuoteType.DOUBLE));
+        StringBuilder sb = new StringBuilder("Quoted(" + NStringUtils.formatStringLiteral(start.toString(), NStringUtils.QuoteType.DOUBLE));
         sb.append(",");
-        sb.append(NutsStringUtils.formatStringLiteral(getPartialValue(), NutsStringUtils.QuoteType.DOUBLE));
+        sb.append(NStringUtils.formatStringLiteral(getPartialValue(), NStringUtils.QuoteType.DOUBLE));
         sb.append(",status=").append(status == 0 ? "EXPECT_START" : status == 1 ? "EXPECT_CONTENT" : status == 2 ? "EXPECT_END" : String.valueOf(status));
         sb.append(",end=");
         sb.append(end);

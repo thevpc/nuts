@@ -1,19 +1,19 @@
 package net.thevpc.nuts.toolbox.njob;
 
-import net.thevpc.nuts.NutsApplicationContext;
+import net.thevpc.nuts.NApplicationContext;
 import net.thevpc.nuts.toolbox.njob.time.WeekDay;
 
 import java.time.Instant;
 import java.util.*;
 
 public class JobService {
-    private NutsApplicationContext context;
+    private NApplicationContext context;
     private NJobConfigStore dal;
     private NJobsSubService jobs;
     private NTasksSubService tasks;
     private NProjectsSubService projects;
 
-    public JobService(NutsApplicationContext context) {
+    public JobService(NApplicationContext context) {
         this.context = context;
         this.dal = new NJobConfigStore(context);
         this.jobs = new NJobsSubService(context, dal, this);

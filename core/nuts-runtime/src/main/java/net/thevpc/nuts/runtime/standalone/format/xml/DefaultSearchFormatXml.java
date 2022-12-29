@@ -9,15 +9,15 @@ import java.io.ByteArrayOutputStream;
 import java.io.PrintWriter;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.cmdline.NutsArgument;
-import net.thevpc.nuts.cmdline.NutsCommandLine;
-import net.thevpc.nuts.elem.NutsElements;
-import net.thevpc.nuts.io.NutsPrintStream;
-import net.thevpc.nuts.runtime.standalone.format.NutsFetchDisplayOptions;
+import net.thevpc.nuts.cmdline.NArgument;
+import net.thevpc.nuts.cmdline.NCommandLine;
+import net.thevpc.nuts.elem.NElements;
+import net.thevpc.nuts.io.NStream;
+import net.thevpc.nuts.runtime.standalone.format.NFetchDisplayOptions;
 import net.thevpc.nuts.runtime.standalone.format.DefaultSearchFormatBase;
 import net.thevpc.nuts.runtime.standalone.util.xml.XmlUtils;
-import net.thevpc.nuts.text.NutsTextBuilder;
-import net.thevpc.nuts.text.NutsTexts;
+import net.thevpc.nuts.text.NTextBuilder;
+import net.thevpc.nuts.text.NTexts;
 import org.w3c.dom.Document;
 
 /**
@@ -28,13 +28,13 @@ public class DefaultSearchFormatXml extends DefaultSearchFormatBase {
 
     private boolean compact;
     private String rootName = "root";
-    private NutsCodeHighlighter codeFormat;
-    NutsTexts txt;
+    private NCodeHighlighter codeFormat;
+    NTexts txt;
 
-    public DefaultSearchFormatXml(NutsSession session, NutsPrintStream writer, NutsFetchDisplayOptions options) {
-        super(session, writer, NutsContentType.XML, options);
-        txt = NutsTexts.of(session);
-        codeFormat = NutsTexts.of(session).setSession(session).getCodeHighlighter("xml");
+    public DefaultSearchFormatXml(NSession session, NStream writer, NFetchDisplayOptions options) {
+        super(session, writer, NContentType.XML, options);
+        txt = NTexts.of(session);
+        codeFormat = NTexts.of(session).setSession(session).getCodeHighlighter("xml");
     }
 
     public String getRootName() {
@@ -43,8 +43,8 @@ public class DefaultSearchFormatXml extends DefaultSearchFormatBase {
 
     @Override
     public void start() {
-        NutsTextBuilder builder = NutsTexts.of(getSession()).ofBuilder();
-        NutsSession session = getSession();
+        NTextBuilder builder = NTexts.of(getSession()).ofBuilder();
+        NSession session = getSession();
 
         builder.append(codeFormat.tokenToText("<?", "separator", txt, session));
         builder.append(codeFormat.tokenToText("xml", "name", txt, session));
@@ -72,7 +72,7 @@ public class DefaultSearchFormatXml extends DefaultSearchFormatBase {
         ByteArrayOutputStream bos = new ByteArrayOutputStream();
 //        XmlUtils.print(String.valueOf(index), object, getWriter(), compact, false, getWorkspace());
         PrintWriter pw = new PrintWriter(bos);
-        org.w3c.dom.Element xmlElement = NutsElements.of(getSession())
+        org.w3c.dom.Element xmlElement = NElements.of(getSession())
                 .convert(object, org.w3c.dom.Element.class);
         Document doc = XmlUtils.createDocument(getSession());
         doc.adoptNode(xmlElement);
@@ -84,9 +84,9 @@ public class DefaultSearchFormatXml extends DefaultSearchFormatBase {
 
     @Override
     public void complete(long count) {
-        NutsTextBuilder builder = NutsTexts.of(getSession()).ofBuilder();
+        NTextBuilder builder = NTexts.of(getSession()).ofBuilder();
 
-        NutsSession session = getSession();
+        NSession session = getSession();
         builder.append(codeFormat.tokenToText("</", "separator", txt, session));
         builder.append(codeFormat.tokenToText(rootName, "name", txt, session));
         builder.append(codeFormat.tokenToText(">", "separator", txt, session));
@@ -96,9 +96,9 @@ public class DefaultSearchFormatXml extends DefaultSearchFormatBase {
     }
 
     @Override
-    public boolean configureFirst(NutsCommandLine cmd) {
-        NutsSession session = getSession();
-        NutsArgument a = cmd.peek().get(session);
+    public boolean configureFirst(NCommandLine cmd) {
+        NSession session = getSession();
+        NArgument a = cmd.peek().get(session);
         if (a == null) {
             return false;
         }

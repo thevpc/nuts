@@ -1,17 +1,17 @@
 package net.thevpc.nuts.toolbox.noapi.util;
 
-import net.thevpc.nuts.NutsBlankable;
-import net.thevpc.nuts.NutsSession;
+import net.thevpc.nuts.NBlankable;
+import net.thevpc.nuts.NSession;
 import net.thevpc.nuts.elem.*;
-import net.thevpc.nuts.io.NutsPath;
+import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.lib.md.MdDocument;
 import net.thevpc.nuts.lib.md.MdElement;
 import net.thevpc.nuts.lib.md.MdFactory;
 import net.thevpc.nuts.lib.md.MdWriter;
 import net.thevpc.nuts.lib.md.asciidoctor.AsciiDoctorWriter;
-import net.thevpc.nuts.spi.NutsPaths;
-import net.thevpc.nuts.text.NutsTextStyle;
-import net.thevpc.nuts.text.NutsTexts;
+import net.thevpc.nuts.spi.NPaths;
+import net.thevpc.nuts.text.NTextStyle;
+import net.thevpc.nuts.text.NTexts;
 import net.thevpc.nuts.toolbox.noapi.model.FieldInfo;
 import net.thevpc.nuts.toolbox.noapi.model.SupportedTargetType;
 import net.thevpc.nuts.toolbox.noapi.model.TypeInfo;
@@ -52,7 +52,7 @@ public class NoApiUtils {
         return MdFactory.ofListOrEmpty(all.toArray(new MdElement[0]));
     }
 
-    public static NutsElement loadElement(NutsPath source, NutsSession session) {
+    public static NElement loadElement(NPath source, NSession session) {
         boolean json = false;
 //        Path sourcePath = Paths.get(source).normalize().toAbsolutePath();
         try (BufferedReader r = new BufferedReader(new InputStreamReader(source.getInputStream()))) {
@@ -71,12 +71,12 @@ public class NoApiUtils {
         }
 
         if (json) {
-            return NutsElements.of(session).json().parse(source, NutsElement.class);
+            return NElements.of(session).json().parse(source, NElement.class);
         } else {
 //            return NutsElements.of(session).json().parse(inputStream, NutsElement.class);
             try (InputStream is = source.getInputStream()) {
                 final Object o = new Yaml().load(is);
-                return NutsElements.of(session).toElement(o);
+                return NElements.of(session).toElement(o);
             } catch (IOException ex) {
                 throw new UncheckedIOException(ex);
             }
@@ -97,7 +97,7 @@ public class NoApiUtils {
     }
 
     public static MdElement jsonTextElementInlined(Object example) {
-        if (NutsBlankable.isBlank(example)) {
+        if (NBlankable.isBlank(example)) {
             return MdFactory.text("");
         }
         String e = jsonTextString(example);
@@ -105,7 +105,7 @@ public class NoApiUtils {
     }
 
     public static MdElement jsonTextElement(Object example) {
-        if (NutsBlankable.isBlank(example)) {
+        if (NBlankable.isBlank(example)) {
             return MdFactory.text("");
         }
         String e = jsonTextString(example);
@@ -113,29 +113,29 @@ public class NoApiUtils {
     }
 
     public static String jsonTextString(Object example) {
-        if (example instanceof NutsPrimitiveElement) {
-            return ((NutsPrimitiveElement) example).toStringLiteral();
+        if (example instanceof NPrimitiveElement) {
+            return ((NPrimitiveElement) example).toStringLiteral();
         }
-        if (example instanceof NutsElementEntry) {
+        if (example instanceof NElementEntry) {
             return
-                    jsonTextString(((NutsElementEntry) example).getKey())
+                    jsonTextString(((NElementEntry) example).getKey())
                             + " : "
-                            + jsonTextString(((NutsElementEntry) example).getValue());
+                            + jsonTextString(((NElementEntry) example).getValue());
         }
-        if (example instanceof NutsArrayElement) {
+        if (example instanceof NArrayElement) {
             StringBuilder sb = new StringBuilder();
             sb.append("[");
-            Collection<NutsElement> entries = ((NutsArrayElement) example).items();
+            Collection<NElement> entries = ((NArrayElement) example).items();
             sb.append(
                     entries.stream().map(NoApiUtils::jsonTextString).collect(Collectors.joining(", "))
             );
             sb.append("]");
             return sb.toString();
         }
-        if (example instanceof NutsObjectElement) {
+        if (example instanceof NObjectElement) {
             StringBuilder sb = new StringBuilder();
             sb.append("{");
-            Collection<NutsElementEntry> entries = ((NutsObjectElement) example).entries();
+            Collection<NElementEntry> entries = ((NObjectElement) example).entries();
             sb.append(
                     entries.stream().map(NoApiUtils::jsonTextString).collect(Collectors.joining(", "))
             );
@@ -148,7 +148,7 @@ public class NoApiUtils {
     public static String toCode(TypeInfo o, boolean includeDesc, String indent, AppMessages msg) {
         String descSep = "";
         if (includeDesc) {
-            if (!NutsBlankable.isBlank(o.getDescription())) {
+            if (!NBlankable.isBlank(o.getDescription())) {
                 descSep = " // " + o.getDescription();
             }
         }
@@ -167,11 +167,11 @@ public class NoApiUtils {
             switch (o.getUserType()) {
                 case "string":
                 case "enum": {
-                    if (!NutsBlankable.isBlank(o.getMinLength()) && !NutsBlankable.isBlank(o.getMaxLength())) {
+                    if (!NBlankable.isBlank(o.getMinLength()) && !NBlankable.isBlank(o.getMaxLength())) {
                         type += ("(" + o.getMinLength().trim() + "..." + o.getMaxLength().trim() + ")");
-                    } else if (!NutsBlankable.isBlank(o.getMinLength())) {
+                    } else if (!NBlankable.isBlank(o.getMinLength())) {
                         type += (">=" + o.getMinLength().trim());
-                    } else if (!NutsBlankable.isBlank(o.getMaxLength())) {
+                    } else if (!NBlankable.isBlank(o.getMaxLength())) {
                         type += ("<=" + o.getMinLength().trim());
                     }
                     if (o.getEnumValues() != null && o.getEnumValues().size() > 0) {
@@ -183,11 +183,11 @@ public class NoApiUtils {
                 }
                 case "integer":
                 case "number": {
-                    if (!NutsBlankable.isBlank(o.getMinLength()) && !NutsBlankable.isBlank(o.getMaxLength())) {
+                    if (!NBlankable.isBlank(o.getMinLength()) && !NBlankable.isBlank(o.getMaxLength())) {
                         type += ("(" + o.getMinLength().trim() + "..." + o.getMaxLength().trim() + ")");
-                    } else if (!NutsBlankable.isBlank(o.getMinLength())) {
+                    } else if (!NBlankable.isBlank(o.getMinLength())) {
                         type += (">=" + o.getMinLength().trim());
-                    } else if (!NutsBlankable.isBlank(o.getMaxLength())) {
+                    } else if (!NBlankable.isBlank(o.getMaxLength())) {
                         type += ("<=" + o.getMinLength().trim());
                     }
                     if (o.getEnumValues() != null && o.getEnumValues().size() > 0) {
@@ -220,28 +220,28 @@ public class NoApiUtils {
         return def;
     }
 
-    public static NutsPath addExtension(NutsPath sourcePath, NutsPath parent, NutsPath target, SupportedTargetType targetType, String version, NutsSession session) {
+    public static NPath addExtension(NPath sourcePath, NPath parent, NPath target, SupportedTargetType targetType, String version, NSession session) {
         sourcePath = sourcePath.normalize().toAbsolute();
         String e = targetType.name().toLowerCase();
         if (parent == null) {
             parent = sourcePath.getParent();
         }
-        if (NutsBlankable.isBlank(target) || target.getName().equals(".pdf") || target.getName().equals(".adoc") || target.getName().equals(".json")) {
+        if (NBlankable.isBlank(target) || target.getName().equals(".pdf") || target.getName().equals(".adoc") || target.getName().equals(".json")) {
             target = parent.resolve(sourcePath.getSmartBaseName()
-                    + (NutsBlankable.isBlank(version)?"":("-" + version))
+                    + (NBlankable.isBlank(version)?"":("-" + version))
                     + "." + sourcePath.getSmartExtension());
         }
         return NoApiUtils.addExtension(target, e, session);
     }
 
-    public static NutsPath addExtension(NutsPath source, String ext, NutsSession session) {
-        NutsPath path = source.normalize().toAbsolute();
+    public static NPath addExtension(NPath source, String ext, NSession session) {
+        NPath path = source.normalize().toAbsolute();
         String n = path.getName();
-        n = NutsPath.of(n, session).getSmartBaseName() + "." + ext;
+        n = NPath.of(n, session).getSmartBaseName() + "." + ext;
         return path.getParent().resolve(n);
     }
 
-    public static void writeAdoc(MdDocument md, NutsPath target, boolean keep, SupportedTargetType type, NutsSession session) {
+    public static void writeAdoc(MdDocument md, NPath target, boolean keep, SupportedTargetType type, NSession session) {
         boolean trace = keep && session.isPlainTrace();
         String temp = null;
         String adocFile = null;
@@ -251,20 +251,20 @@ public class NoApiUtils {
             if (keep) {
                 temp = NoApiUtils.addExtension(target, "adoc", session).toString();
             } else {
-                temp = NutsPaths.of(session)
+                temp = NPaths.of(session)
                         .createTempFile("temp.adoc").toString();
             }
             adocFile = temp;
         }
 
-        try (MdWriter mw = new AsciiDoctorWriter(NutsPath.of(adocFile, session))) {
+        try (MdWriter mw = new AsciiDoctorWriter(NPath.of(adocFile, session))) {
             mw.write(md);
         }
         if (trace) {
             if (pdf) {
                 session.out().printf("generated src %s\n",
-                        NutsTexts.of(session).ofStyled(
-                                adocFile, NutsTextStyle.primary4()
+                        NTexts.of(session).ofStyled(
+                                adocFile, NTextStyle.primary4()
                         )
                 );
             }
@@ -283,7 +283,7 @@ public class NoApiUtils {
                             .toFile(new File(pdfFile))
             );
             if (session.isPlainTrace()) {
-                session.out().printf("generate  pdf file %s\n", NutsPath.of(pdfFile,session));
+                session.out().printf("generate  pdf file %s\n", NPath.of(pdfFile,session));
             }
             if (!keep) {
                 new File(temp).delete();

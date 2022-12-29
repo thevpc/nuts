@@ -23,35 +23,35 @@
  */
 package net.thevpc.nuts.runtime.standalone.definition.installstatus.filter;
 
-import net.thevpc.nuts.NutsInstallStatusFilter;
-import net.thevpc.nuts.NutsFilter;
-import net.thevpc.nuts.NutsFilterOp;
-import net.thevpc.nuts.NutsSession;
-import net.thevpc.nuts.runtime.standalone.util.filters.AbstractNutsFilter;
+import net.thevpc.nuts.NInstallStatusFilter;
+import net.thevpc.nuts.NFilter;
+import net.thevpc.nuts.NFilterOp;
+import net.thevpc.nuts.NSession;
+import net.thevpc.nuts.runtime.standalone.util.filters.AbstractNFilter;
 import net.thevpc.nuts.runtime.standalone.util.Simplifiable;
 
 /**
  *
  * @author thevpc
  */
-public abstract class AbstractInstallStatusFilter extends AbstractNutsFilter implements NutsInstallStatusFilter, Simplifiable<NutsInstallStatusFilter> {
+public abstract class AbstractInstallStatusFilter extends AbstractNFilter implements NInstallStatusFilter, Simplifiable<NInstallStatusFilter> {
 
-    public AbstractInstallStatusFilter(NutsSession session, NutsFilterOp op) {
+    public AbstractInstallStatusFilter(NSession session, NFilterOp op) {
         super(session, op);
     }
 
     @Override
-    public NutsInstallStatusFilter or(NutsInstallStatusFilter other) {
-        return or((NutsFilter) other).to(NutsInstallStatusFilter.class);
+    public NInstallStatusFilter or(NInstallStatusFilter other) {
+        return or((NFilter) other).to(NInstallStatusFilter.class);
     }
 
     @Override
-    public NutsInstallStatusFilter and(NutsInstallStatusFilter other) {
-        return and((NutsFilter) other).to(NutsInstallStatusFilter.class);
+    public NInstallStatusFilter and(NInstallStatusFilter other) {
+        return and((NFilter) other).to(NInstallStatusFilter.class);
     }
 
     @Override
-    public NutsInstallStatusFilter neg() {
-        return super.neg().to(NutsInstallStatusFilter.class);
+    public NInstallStatusFilter neg() {
+        return super.neg().to(NInstallStatusFilter.class);
     }
 }

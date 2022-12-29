@@ -25,11 +25,11 @@
  */
 package net.thevpc.nuts.toolbox.nsh.cmds.bash;
 
-import net.thevpc.nuts.cmdline.NutsArgument;
-import net.thevpc.nuts.cmdline.NutsCommandLine;
-import net.thevpc.nuts.NutsSession;
-import net.thevpc.nuts.spi.NutsComponentScope;
-import net.thevpc.nuts.spi.NutsComponentScopeType;
+import net.thevpc.nuts.cmdline.NArgument;
+import net.thevpc.nuts.cmdline.NCommandLine;
+import net.thevpc.nuts.NSession;
+import net.thevpc.nuts.spi.NComponentScope;
+import net.thevpc.nuts.spi.NComponentScopeType;
 import net.thevpc.nuts.toolbox.nsh.SimpleJShellBuiltin;
 import net.thevpc.nuts.toolbox.nsh.jshell.JShellExecutionContext;
 
@@ -39,7 +39,7 @@ import java.util.List;
 /**
  * Created by vpc on 1/7/17.
  */
-@NutsComponentScope(NutsComponentScopeType.WORKSPACE)
+@NComponentScope(NComponentScopeType.WORKSPACE)
 public class BaseNameCommand extends SimpleJShellBuiltin {
 
     public BaseNameCommand() {
@@ -47,10 +47,10 @@ public class BaseNameCommand extends SimpleJShellBuiltin {
     }
 
     @Override
-    protected boolean configureFirst(NutsCommandLine cmdLine, JShellExecutionContext context) {
+    protected boolean configureFirst(NCommandLine cmdLine, JShellExecutionContext context) {
         Options options = context.getOptions();
-        NutsSession session = context.getSession();
-        NutsArgument a = cmdLine.peek().get(session);
+        NSession session = context.getSession();
+        NArgument a = cmdLine.peek().get(session);
         switch (a.key()) {
             case "-z":
             case "--zero": {
@@ -77,7 +77,7 @@ public class BaseNameCommand extends SimpleJShellBuiltin {
 
                 } else {
                     while (!cmdLine.isEmpty()) {
-                        NutsArgument n = cmdLine.nextNonOption().get(session);
+                        NArgument n = cmdLine.nextNonOption().get(session);
                         if (options.names.isEmpty()) {
                             options.names.add(n.toString());
                         } else {
@@ -99,9 +99,9 @@ public class BaseNameCommand extends SimpleJShellBuiltin {
     }
 
     @Override
-    protected void execBuiltin(NutsCommandLine commandLine, JShellExecutionContext context) {
+    protected void execBuiltin(NCommandLine commandLine, JShellExecutionContext context) {
         Options options = context.getOptions();
-        NutsSession session = context.getSession();
+        NSession session = context.getSession();
         if (options.names.isEmpty()) {
             commandLine.throwMissingArgument();
         }

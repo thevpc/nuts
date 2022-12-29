@@ -1,10 +1,9 @@
 package net.thevpc.nuts.lib.ssh;
 
 import com.jcraft.jsch.*;
-import net.thevpc.nuts.NutsMessage;
-import net.thevpc.nuts.NutsSession;
-import net.thevpc.nuts.text.NutsTextStyle;
-import net.thevpc.nuts.text.NutsTexts;
+import net.thevpc.nuts.NMsg;
+import net.thevpc.nuts.NSession;
+import net.thevpc.nuts.text.NTextStyle;
 
 import java.io.*;
 import java.util.ArrayList;
@@ -35,23 +34,23 @@ public class SShConnection implements AutoCloseable {
 //        }
 //    };
     Session session;
-    NutsSession nutsSession;
+    NSession nSession;
     private boolean redirectErrorStream;
     private boolean failFast;
     private PrintStream out = new PrintStream(new NonClosableOutputStream(System.out));
     private PrintStream err = new PrintStream(new NonClosableOutputStream(System.err));
     private List<SshListener> listeners = new ArrayList<>();
 
-    public SShConnection(String address, NutsSession nutsSession) {
-        this(new SshAddress(address), nutsSession);
+    public SShConnection(String address, NSession nSession) {
+        this(new SshAddress(address), nSession);
     }
 
-    public SShConnection(SshAddress address, NutsSession nutsSession) {
-        init(address.getUser(), address.getHost(), address.getPort(), address.getKeyFile(), address.getPassword(), nutsSession);
+    public SShConnection(SshAddress address, NSession nSession) {
+        init(address.getUser(), address.getHost(), address.getPort(), address.getKeyFile(), address.getPassword(), nSession);
     }
 
-    public SShConnection(String user, String host, int port, String keyFilePath, String keyPassword, NutsSession nutsSession) {
-        init(user, host, port, keyFilePath, keyPassword, nutsSession);
+    public SShConnection(String user, String host, int port, String keyFilePath, String keyPassword, NSession nSession) {
+        init(user, host, port, keyFilePath, keyPassword, nSession);
     }
 
     public boolean isRedirectErrorStream() {
@@ -89,8 +88,8 @@ public class SShConnection implements AutoCloseable {
         return this;
     }
 
-    private void init(String user, String host, int port, String keyFilePath, String keyPassword, NutsSession nutsSession) {
-        this.nutsSession = nutsSession;
+    private void init(String user, String host, int port, String keyFilePath, String keyPassword, NSession nSession) {
+        this.nSession = nSession;
         try {
             JSch jsch = new JSch();
 
@@ -672,7 +671,7 @@ public class SShConnection implements AutoCloseable {
 
     public InputStream prepareStream(File file) throws FileNotFoundException {
         FileInputStream in = new FileInputStream(file);
-        NutsMessage path = NutsMessage.ofStyled(file.getPath(), NutsTextStyle.path());
+        NMsg path = NMsg.ofStyled(file.getPath(), NTextStyle.path());
         for (SshListener listener : listeners) {
             InputStream v = listener.monitorInputStream(in, file.length(), path);
             if (v != null) {

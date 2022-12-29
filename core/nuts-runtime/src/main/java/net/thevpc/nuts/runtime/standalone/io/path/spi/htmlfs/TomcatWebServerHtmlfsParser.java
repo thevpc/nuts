@@ -13,7 +13,7 @@ import java.util.regex.Pattern;
 
 public class TomcatWebServerHtmlfsParser extends AbstractHtmlfsParser {
     @Override
-    public NutsSupported<List<String>> parseHtmlTomcat(byte[] bytes, NutsSession session) {
+    public NSupported<List<String>> parseHtmlTomcat(byte[] bytes, NSession session) {
         boolean expectTomcat = false;
         try (BufferedReader br = new BufferedReader(new InputStreamReader(new ByteArrayInputStream(bytes)))) {
             String line = null;
@@ -26,7 +26,7 @@ public class TomcatWebServerHtmlfsParser extends AbstractHtmlfsParser {
             //ignore
         }
         if (!expectTomcat) {
-            return NutsSupported.invalid();
+            return NSupported.invalid();
         }
         //<a href="/maven/net/"><tt>net/</tt></a></td>
         Pattern pattern = Pattern.compile("<a href=\"(?<href>[^\"]+)\"><tt>(?<title>[^<]+)</tt></a></td>");

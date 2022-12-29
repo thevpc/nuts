@@ -60,7 +60,7 @@
 //     * @param options       options instance to fill
 //     */
 //    public static void parseNutsArguments(NutsSession session, String[] bootArguments, NutsWorkspaceOptionsBuilder options) {
-//        List<NutsMessage> showError = new ArrayList<>();
+//        List<NMsg> showError = new ArrayList<>();
 //        HashSet<String> excludedExtensions = new HashSet<>();
 //        HashSet<String> repositories = new HashSet<>();
 //        Set<String> customOptions = new LinkedHashSet<>();
@@ -887,7 +887,7 @@
 //                        a = cmdLine.nextString();
 //                        if (active) {
 //                            if (NutsBlankable.isBlank(a.getStringValue())) {
-//                                throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("missing user name"));
+//                                throw new NutsIllegalArgumentException(session, NMsg.ofCstyle("missing user name"));
 //                            }
 //                            options.setRunAs(NutsRunAs.user(a.getStringValue()));
 //                        }
@@ -942,7 +942,7 @@
 //                        cmdLine.skip();
 //                        if (active) {
 //                            if (!a.getValue().isNull()) {
-//                                throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("invalid argument for workspace: %s", a.getString()));
+//                                throw new NutsIllegalArgumentException(session, NMsg.ofCstyle("invalid argument for workspace: %s", a.getString()));
 //                            }
 //                            applicationArguments.add(NutsConstants.Ids.NUTS_SHELL);
 //                            if (!cmdLine.isEmpty()) {
@@ -1096,7 +1096,7 @@
 //                        } else {
 //                            cmdLine.skip();
 //                            if (a.isActive()) {
-//                                showError.add(NutsMessage.cstyle("nuts: invalid option %s", a.getString()));
+//                                showError.add(NMsg.ofCstyle("nuts: invalid option %s", a.getString()));
 //                            }
 //                        }
 //                    }
@@ -1125,12 +1125,12 @@
 //        )) {
 //            if (!showError.isEmpty()) {
 //                NutsTextBuilder errorMessage = NutsTexts.of(session).builder();
-//                for (NutsMessage s : showError) {
+//                for (NMsg s : showError) {
 //                    errorMessage.append(s).append("\n");
 //                }
 //                errorMessage.append("Try 'nuts --help' for more information.");
 //                if (!options.isSkipErrors()) {
-//                    throw new NutsIllegalArgumentException(session, NutsMessage.formatted(errorMessage.toString()));
+//                    throw new NutsIllegalArgumentException(session, NMsg.formatted(errorMessage.toString()));
 //                } else {
 //                    session.err().println(errorMessage.toString());
 //                }
@@ -1148,13 +1148,13 @@
 //                    Integer fileSize = NutsApiUtils.parseFileSizeInBytes(v, 1024 * 1024).orNull();
 //                    if (fileSize == null) {
 //                        if (NutsBlankable.isBlank(v)) {
-//                            throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("invalid file size : %s", v));
+//                            throw new NutsIllegalArgumentException(session, NMsg.ofCstyle("invalid file size : %s", v));
 //                        }
 //                    } else {
 //                        //always in mega
 //                        fileSize = fileSize / (1024 * 1024);
 //                        if (fileSize <= 0) {
-//                            throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("invalid file size : %s < 1Mb", v));
+//                            throw new NutsIllegalArgumentException(session, NMsg.ofCstyle("invalid file size : %s < 1Mb", v));
 //                        }
 //                    }
 //                    if (fileSize != null) {
@@ -1260,7 +1260,7 @@
 //    private static NutsStoreLocationStrategy parseNutsStoreLocationStrategy(String s, NutsSession session) {
 //        NutsStoreLocationStrategy m = NutsStoreLocationStrategy.parse(s).orNull();
 //        if (m == null && !NutsBlankable.isBlank(s)) {
-//            throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("unable to parse value for NutsStoreLocationStrategy : %s", s));
+//            throw new NutsIllegalArgumentException(session, NMsg.ofCstyle("unable to parse value for NutsStoreLocationStrategy : %s", s));
 //        }
 //        return m;
 //    }
@@ -1268,7 +1268,7 @@
 //    private static NutsOsFamily parseNutsOsFamily(String s, NutsSession session) {
 //        NutsOsFamily m = NutsOsFamily.parse(s).orNull();
 //        if (m == null && !NutsBlankable.isBlank(s)) {
-//            throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("unable to parse value for NutsStoreLocationLayout : %s", s));
+//            throw new NutsIllegalArgumentException(session, NMsg.ofCstyle("unable to parse value for NutsStoreLocationLayout : %s", s));
 //        }
 //        return m;
 //    }
@@ -1276,7 +1276,7 @@
 //    private static NutsOpenMode parseNutsOpenMode(String s, NutsSession session) {
 //        NutsOpenMode m = NutsOpenMode.parse(s).orNull();
 //        if (m == null && !NutsBlankable.isBlank(s)) {
-//            throw new NutsIllegalArgumentException(session, NutsMessage.cstyle("unable to parse value for NutsOpenMode : %s", s));
+//            throw new NutsIllegalArgumentException(session, NMsg.ofCstyle("unable to parse value for NutsOpenMode : %s", s));
 //        }
 //        return m;
 //    }

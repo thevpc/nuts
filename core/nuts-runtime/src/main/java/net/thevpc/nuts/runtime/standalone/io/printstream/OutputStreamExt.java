@@ -5,30 +5,30 @@ import net.thevpc.nuts.io.*;
 import java.io.IOException;
 import java.io.OutputStream;
 
-public class OutputStreamExt extends OutputStream implements NutsOutputTarget {
+public class OutputStreamExt extends OutputStream implements NOutputTarget {
 
     private OutputStream base;
-    private DefaultNutsOutputTargetMetadata md;
+    private DefaultNOutputTargetMetadata md;
 
-    public OutputStreamExt(OutputStream base, NutsOutputTargetMetadata md0) {
+    public OutputStreamExt(OutputStream base, NOutputTargetMetadata md0) {
         this.base = base;
-        if (base instanceof NutsOutputTarget) {
-            md = new DefaultNutsOutputTargetMetadata(((NutsOutputTarget) base).getOutputMetaData());
+        if (base instanceof NOutputTarget) {
+            md = new DefaultNOutputTargetMetadata(((NOutputTarget) base).getOutputMetaData());
         } else {
-            md = new DefaultNutsOutputTargetMetadata();
+            md = new DefaultNOutputTargetMetadata();
         }
 
 
         if (md0 == null) {
-            if (base instanceof NutsOutputTarget) {
-                md = new DefaultNutsOutputTargetMetadata(((NutsOutputTarget) base).getOutputMetaData());
+            if (base instanceof NOutputTarget) {
+                md = new DefaultNOutputTargetMetadata(((NOutputTarget) base).getOutputMetaData());
             } else {
-                md = new DefaultNutsOutputTargetMetadata();
+                md = new DefaultNOutputTargetMetadata();
             }
         } else {
-            md = new DefaultNutsOutputTargetMetadata(md0);
-            if (base instanceof NutsOutputTarget) {
-                NutsOutputTargetMetadata md2 = ((NutsOutputTarget) base).getOutputMetaData();
+            md = new DefaultNOutputTargetMetadata(md0);
+            if (base instanceof NOutputTarget) {
+                NOutputTargetMetadata md2 = ((NOutputTarget) base).getOutputMetaData();
                 if (md.getMessage().isNotPresent()) {
                     md.setMessage(md2.getMessage().orNull());
                 }
@@ -49,7 +49,7 @@ public class OutputStreamExt extends OutputStream implements NutsOutputTarget {
     }
 
     @Override
-    public NutsOutputTargetMetadata getOutputMetaData() {
+    public NOutputTargetMetadata getOutputMetaData() {
         return md;
     }
 

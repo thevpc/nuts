@@ -1,6 +1,6 @@
 package net.thevpc.nuts.toolbox.nwork.filescanner;
 
-import net.thevpc.nuts.NutsSession;
+import net.thevpc.nuts.NSession;
 import net.thevpc.nuts.util.*;
 import net.thevpc.nuts.toolbox.nwork.filescanner.tags.*;
 
@@ -31,11 +31,11 @@ public class FileScanner {
     }
 
 
-    public static Predicate<RichPath> parseExpr(String anyStr, NutsSession session) {
-        NutsExprMutableDeclarations d = NutsExpr.of(session).newMutableDeclarations(true);
-        d.declareFunction("tag", new NutsExprFct() {
+    public static Predicate<RichPath> parseExpr(String anyStr, NSession session) {
+        NExprMutableDeclarations d = NExpr.of(session).newMutableDeclarations(true);
+        d.declareFunction("tag", new NExprFct() {
             @Override
-            public Object eval(String name, List<Object> args, NutsExprDeclarations context) {
+            public Object eval(String name, List<Object> args, NExprDeclarations context) {
                 RichPath rc = (RichPath) context.getVar("this");
                 for (Object arg : args) {
                     Object v = arg;
@@ -72,7 +72,7 @@ public class FileScanner {
         d.declareVar("writable", new RichVar());
         d.declareVar("owner", new RichVar());
         d.declareVar("lastModified", new RichVar());
-        NutsExprNode node = d.parse(anyStr).get(session);
+        NExprNode node = d.parse(anyStr).get(session);
         return richPath -> {
             d.removeDeclaration(d.getVar("this").orNull());
             d.declareConstant("this", richPath);
@@ -140,17 +140,17 @@ public class FileScanner {
         return a;
     }
 
-    private static class RichVar implements NutsExprVar {
+    private static class RichVar implements NExprVar {
         public RichVar() {
         }
 
-        RichPath getThis(NutsExprDeclarations context) {
-            NutsExprVarDeclaration r = context.getVar("this").get();
+        RichPath getThis(NExprDeclarations context) {
+            NExprVarDeclaration r = context.getVar("this").get();
             return (RichPath) r.get(context);
         }
 
         @Override
-        public Object get(String name, NutsExprDeclarations context) {
+        public Object get(String name, NExprDeclarations context) {
             RichPath richPath = getThis(context);
             switch (name) {
                 case "path":
@@ -230,7 +230,7 @@ public class FileScanner {
         }
 
         @Override
-        public Object set(String name, Object value, NutsExprDeclarations context) {
+        public Object set(String name, Object value, NExprDeclarations context) {
             return get(name, context);
         }
     }

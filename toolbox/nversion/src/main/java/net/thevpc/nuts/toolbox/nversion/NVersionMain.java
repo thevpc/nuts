@@ -1,12 +1,12 @@
 package net.thevpc.nuts.toolbox.nversion;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.cmdline.NutsArgument;
-import net.thevpc.nuts.cmdline.NutsCommandLine;
-import net.thevpc.nuts.io.NutsPath;
-import net.thevpc.nuts.io.NutsPrintStream;
-import net.thevpc.nuts.text.NutsTextStyle;
-import net.thevpc.nuts.text.NutsTexts;
+import net.thevpc.nuts.cmdline.NArgument;
+import net.thevpc.nuts.cmdline.NCommandLine;
+import net.thevpc.nuts.io.NPath;
+import net.thevpc.nuts.io.NStream;
+import net.thevpc.nuts.text.NTextStyle;
+import net.thevpc.nuts.text.NTexts;
 
 import java.io.File;
 import java.io.IOException;
@@ -15,7 +15,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.*;
 
-public class NVersionMain implements NutsApplication {
+public class NVersionMain implements NApplication {
 
     private final List<PathVersionResolver> resolvers = new ArrayList<>();
 
@@ -29,7 +29,7 @@ public class NVersionMain implements NutsApplication {
         new NVersionMain().runAndExit(args);
     }
 
-    private Set<VersionDescriptor> detectVersions(String filePath, NutsApplicationContext context) throws IOException {
+    private Set<VersionDescriptor> detectVersions(String filePath, NApplicationContext context) throws IOException {
         for (PathVersionResolver r : resolvers) {
             Set<VersionDescriptor> x = r.resolve(filePath, context);
             if (x != null) {
@@ -39,25 +39,25 @@ public class NVersionMain implements NutsApplication {
         try {
             Path p = Paths.get(filePath);
             if (!Files.exists(p)) {
-                throw new NutsExecutionException(context.getSession(), NutsMessage.ofCstyle("nversion: file does not exist: %s" , p), 2);
+                throw new NExecutionException(context.getSession(), NMsg.ofCstyle("nversion: file does not exist: %s" , p), 2);
             }
             if (Files.isDirectory(p)) {
-                throw new NutsExecutionException(context.getSession(), NutsMessage.ofCstyle("nversion: unsupported directory: %s", p), 2);
+                throw new NExecutionException(context.getSession(), NMsg.ofCstyle("nversion: unsupported directory: %s", p), 2);
             }
             if (Files.isRegularFile(p)) {
-                throw new NutsExecutionException(context.getSession(), NutsMessage.ofCstyle("nversion: unsupported file: %s", filePath), 2);
+                throw new NExecutionException(context.getSession(), NMsg.ofCstyle("nversion: unsupported file: %s", filePath), 2);
             }
-        } catch (NutsExecutionException ex) {
+        } catch (NExecutionException ex) {
             throw ex;
         } catch (Exception ex) {
             //
         }
-        throw new NutsExecutionException(context.getSession(), NutsMessage.ofCstyle("nversion: unsupported path: %s", filePath), 2);
+        throw new NExecutionException(context.getSession(), NMsg.ofCstyle("nversion: unsupported path: %s", filePath), 2);
     }
 
     @Override
-    public void run(NutsApplicationContext context) {
-        NutsSession session = context.getSession();
+    public void run(NApplicationContext context) {
+        NSession session = context.getSession();
         Set<String> unsupportedFileTypes = new HashSet<>();
         Set<String> jarFiles = new HashSet<>();
         Set<String> exeFiles = new HashSet<>();
@@ -71,8 +71,8 @@ public class NVersionMain implements NutsApplication {
         boolean sort = false;
         boolean table = false;
         boolean error = false;
-        NutsCommandLine commandLine = context.getCommandLine();
-        NutsArgument a;
+        NCommandLine commandLine = context.getCommandLine();
+        NArgument a;
         int processed = 0;
         while (commandLine.hasNext()) {
             if ((a = commandLine.nextBoolean("--maven").orNull())!=null) {
@@ -110,29 +110,29 @@ public class NVersionMain implements NutsApplication {
                 Set<VersionDescriptor> value = null;
                 try {
                     processed++;
-                    value = detectVersions(NutsPath.of(arg, session).toAbsolute().toString(), context);
+                    value = detectVersions(NPath.of(arg, session).toAbsolute().toString(), context);
                 } catch (IOException e) {
-                    throw new NutsExecutionException(session,NutsMessage.ofCstyle("nversion: unable to detect version for %s",arg), e, 2);
+                    throw new NExecutionException(session, NMsg.ofCstyle("nversion: unable to detect version for %s",arg), e, 2);
                 }
                 if (!value.isEmpty()) {
                     results.put(arg, value);
                 }
             }
             if (processed == 0) {
-                throw new NutsExecutionException(session, NutsMessage.ofPlain("nversion: missing file"), 2);
+                throw new NExecutionException(session, NMsg.ofPlain("nversion: missing file"), 2);
             }
             if (table && all) {
-                throw new NutsExecutionException(session, NutsMessage.ofPlain("nversion: options conflict --table --all"), 1);
+                throw new NExecutionException(session, NMsg.ofPlain("nversion: options conflict --table --all"), 1);
             }
             if (table && longFormat) {
-                throw new NutsExecutionException(session, NutsMessage.ofPlain("nversion: options conflict --table --long"), 1);
+                throw new NExecutionException(session, NMsg.ofPlain("nversion: options conflict --table --long"), 1);
             }
 
-            NutsPrintStream out = session.out();
-            NutsPrintStream err = session.out();
-            NutsTexts text = NutsTexts.of(session);
+            NStream out = session.out();
+            NStream err = session.out();
+            NTexts text = NTexts.of(session);
             if (table) {
-                NutsPropertiesFormat tt = NutsPropertiesFormat.of(session).setSorted(sort);
+                NPropertiesFormat tt = NPropertiesFormat.of(session).setSorted(sort);
                 Properties pp = new Properties();
                 for (Map.Entry<String, Set<VersionDescriptor>> entry : results.entrySet()) {
                     VersionDescriptor o = entry.getValue().toArray(new VersionDescriptor[0])[0];
@@ -148,14 +148,14 @@ public class NVersionMain implements NutsApplication {
                 }
                 if (error) {
                     for (String t : unsupportedFileTypes) {
-                        File f = new File(NutsPath.of(t,session).toAbsolute().toString());
+                        File f = new File(NPath.of(t,session).toAbsolute().toString());
                         if (f.isFile()) {
-                            pp.setProperty(t, text.ofBuilder().append("<<ERROR>>", NutsTextStyle.error()).append(" unsupported file type").toString());
+                            pp.setProperty(t, text.ofBuilder().append("<<ERROR>>", NTextStyle.error()).append(" unsupported file type").toString());
                         } else if (f.isDirectory()) {
-                            pp.setProperty(t, text.ofBuilder().append("<<ERROR>>", NutsTextStyle.error()).append(" ignored folder").toString()
+                            pp.setProperty(t, text.ofBuilder().append("<<ERROR>>", NTextStyle.error()).append(" ignored folder").toString()
                             );
                         } else {
-                            pp.setProperty(t, text.ofBuilder().append("<<ERROR>>", NutsTextStyle.error()).append(" file not found").toString()
+                            pp.setProperty(t, text.ofBuilder().append("<<ERROR>>", NTextStyle.error()).append(" file not found").toString()
                             );
                         }
                     }
@@ -166,20 +166,20 @@ public class NVersionMain implements NutsApplication {
                 for (String k : keys) {
                     if (results.size() > 1) {
                         if (longFormat || all) {
-                            out.printf("%s:%n", text.ofStyled(k, NutsTextStyle.primary3()));
+                            out.printf("%s:%n", text.ofStyled(k, NTextStyle.primary3()));
                         } else {
-                            out.printf("%s: ", text.ofStyled(k, NutsTextStyle.primary3()));
+                            out.printf("%s: ", text.ofStyled(k, NTextStyle.primary3()));
                         }
                     }
                     Set<VersionDescriptor> v = results.get(k);
                     for (VersionDescriptor descriptor : v) {
                         if (nameFormat) {
-                            out.printf("%s%n", text.ofStyled(descriptor.getId().getShortName(), NutsTextStyle.primary4()));
+                            out.printf("%s%n", text.ofStyled(descriptor.getId().getShortName(), NTextStyle.primary4()));
                         } else if (idFormat) {
                             out.printf("%s%n", text.ofText(descriptor.getId()));
                         } else if (longFormat) {
                             out.printf("%s%n", text.ofText(descriptor.getId()));
-                            NutsPropertiesFormat f = NutsPropertiesFormat.of(session)
+                            NPropertiesFormat f = NPropertiesFormat.of(session)
                                     .setSorted(true);
                             f.setValue(descriptor.getProperties()).print(out);
                         } else {
@@ -193,7 +193,7 @@ public class NVersionMain implements NutsApplication {
                 if (error) {
                     if (!unsupportedFileTypes.isEmpty()) {
                         for (String t : unsupportedFileTypes) {
-                            File f = NutsPath.of(t,session).toAbsolute().toFile().toFile();
+                            File f = NPath.of(t,session).toAbsolute().toFile().toFile();
                             if (f.isFile()) {
                                 err.printf("%s : unsupported file type%n", t);
                             } else if (f.isDirectory()) {
@@ -206,7 +206,7 @@ public class NVersionMain implements NutsApplication {
                 }
             }
             if (!unsupportedFileTypes.isEmpty()) {
-                throw new NutsExecutionException(session, NutsMessage.ofCstyle("nversion: unsupported file types %s", unsupportedFileTypes), 3);
+                throw new NExecutionException(session, NMsg.ofCstyle("nversion: unsupported file types %s", unsupportedFileTypes), 3);
             }
         }
     }

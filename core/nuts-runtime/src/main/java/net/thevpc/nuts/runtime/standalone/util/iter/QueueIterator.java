@@ -27,10 +27,10 @@
 package net.thevpc.nuts.runtime.standalone.util.iter;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.elem.NutsElement;
-import net.thevpc.nuts.elem.NutsElements;
-import net.thevpc.nuts.util.NutsDescribables;
-import net.thevpc.nuts.util.NutsIterator;
+import net.thevpc.nuts.elem.NElement;
+import net.thevpc.nuts.elem.NElements;
+import net.thevpc.nuts.util.NDescribables;
+import net.thevpc.nuts.util.NIterator;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -38,23 +38,23 @@ import java.util.stream.Collectors;
 /**
  * Created by vpc on 1/7/17.
  */
-public class QueueIterator<T> extends NutsIteratorBase<T> {
+public class QueueIterator<T> extends NIteratorBase<T> {
 
-    private Queue<NutsIterator<? extends T>> children = new LinkedList<NutsIterator<? extends T>>();
+    private Queue<NIterator<? extends T>> children = new LinkedList<NIterator<? extends T>>();
     private int size;
 
 
     @Override
-    public NutsElement describe(NutsSession session) {
-        return NutsElements.of(session)
+    public NElement describe(NSession session) {
+        return NElements.of(session)
                 .ofObject()
                 .set("type","Queue")
                 .set("items",
-                        NutsElements.of(session).ofArray()
+                        NElements.of(session).ofArray()
                                 .addAll(
                                         new ArrayList<>(children)
                                                 .stream().map(
-                                                        x-> NutsDescribables.resolveOrDestruct(x, session)
+                                                        x-> NDescribables.resolveOrDestruct(x, session)
                                                 ).collect(Collectors.toList())
                                 )
                                 .build()
@@ -63,20 +63,20 @@ public class QueueIterator<T> extends NutsIteratorBase<T> {
                 ;
     }
 
-    public void addNonNull(NutsIterator<? extends T> child) {
+    public void addNonNull(NIterator<? extends T> child) {
         if (child != null) {
             add(child);
         }
     }
 
-    public void addNonEmpty(NutsIterator<? extends T> child) {
+    public void addNonEmpty(NIterator<? extends T> child) {
         child = IteratorUtils.nullifyIfEmpty(child);
         if (child != null) {
             add(child);
         }
     }
 
-    public void add(NutsIterator<? extends T> child) {
+    public void add(NIterator<? extends T> child) {
         if (child == null) {
             throw new NullPointerException();
         }
@@ -110,8 +110,8 @@ public class QueueIterator<T> extends NutsIteratorBase<T> {
         children.peek().remove();
     }
 
-    public NutsIterator<T>[] getChildren() {
-        return children.toArray(new NutsIterator[0]);
+    public NIterator<T>[] getChildren() {
+        return children.toArray(new NIterator[0]);
     }
 
     @Override

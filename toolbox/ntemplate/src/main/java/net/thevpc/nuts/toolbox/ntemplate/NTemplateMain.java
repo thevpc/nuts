@@ -1,11 +1,11 @@
 package net.thevpc.nuts.toolbox.ntemplate;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.cmdline.NutsCommandLineContext;
-import net.thevpc.nuts.cmdline.NutsCommandLineProcessor;
-import net.thevpc.nuts.cmdline.NutsArgument;
-import net.thevpc.nuts.cmdline.NutsCommandLine;
-import net.thevpc.nuts.io.NutsSessionTerminal;
+import net.thevpc.nuts.cmdline.NCommandLineContext;
+import net.thevpc.nuts.cmdline.NCommandLineProcessor;
+import net.thevpc.nuts.cmdline.NArgument;
+import net.thevpc.nuts.cmdline.NCommandLine;
+import net.thevpc.nuts.io.NSessionTerminal;
 import net.thevpc.nuts.toolbox.nsh.jshell.*;
 import net.thevpc.nuts.toolbox.ntemplate.filetemplate.ExprEvaluator;
 import net.thevpc.nuts.toolbox.ntemplate.filetemplate.FileTemplater;
@@ -15,20 +15,20 @@ import net.thevpc.nuts.toolbox.ntemplate.filetemplate.util.StringUtils;
 
 import java.nio.file.Path;
 
-public class NTemplateMain implements NutsApplication {
+public class NTemplateMain implements NApplication {
     TemplateConfig config = new TemplateConfig();
     private FileTemplater fileTemplater;
 
     public static void main(String[] args) {
-        NutsApplication.main(NTemplateMain.class, args);
+        NApplication.main(NTemplateMain.class, args);
     }
 
     @Override
-    public void run(NutsApplicationContext appContext) {
-        appContext.processCommandLine(new NutsCommandLineProcessor() {
+    public void run(NApplicationContext appContext) {
+        appContext.processCommandLine(new NCommandLineProcessor() {
 
             @Override
-            public boolean onCmdNextOption(NutsArgument option, NutsCommandLine commandLine, NutsCommandLineContext context) {
+            public boolean onCmdNextOption(NArgument option, NCommandLine commandLine, NCommandLineContext context) {
                 switch (option.key()) {
                     case "-i":
                     case "--init": {
@@ -56,19 +56,19 @@ public class NTemplateMain implements NutsApplication {
             }
 
             @Override
-            public boolean onCmdNextNonOption(NutsArgument nonOption, NutsCommandLine commandLine, NutsCommandLineContext context) {
-                NutsSession session = commandLine.getSession();
-                config.addSource(commandLine.next().flatMap(NutsValue::asString).get(session));
+            public boolean onCmdNextNonOption(NArgument nonOption, NCommandLine commandLine, NCommandLineContext context) {
+                NSession session = commandLine.getSession();
+                config.addSource(commandLine.next().flatMap(NValue::asString).get(session));
                 return false;
             }
 
             @Override
-            public void onCmdFinishParsing(NutsCommandLine commandLine, NutsCommandLineContext context) {
+            public void onCmdFinishParsing(NCommandLine commandLine, NCommandLineContext context) {
                 fileTemplater = new NFileTemplater(appContext);
             }
 
             @Override
-            public void onCmdExec(NutsCommandLine commandLine, NutsCommandLineContext context) {
+            public void onCmdExec(NCommandLine commandLine, NCommandLineContext context) {
                 fileTemplater.processProject(config);
             }
         });
@@ -76,11 +76,11 @@ public class NTemplateMain implements NutsApplication {
 
 
     private static class NshEvaluator implements ExprEvaluator {
-        private final NutsApplicationContext appContext;
+        private final NApplicationContext appContext;
         private final JShell shell;
         private final FileTemplater fileTemplater;
 
-        public NshEvaluator(NutsApplicationContext appContext, FileTemplater fileTemplater) {
+        public NshEvaluator(NApplicationContext appContext, FileTemplater fileTemplater) {
             this.appContext = appContext;
             this.fileTemplater = fileTemplater;
             shell = new JShell(appContext, new String[0]);
@@ -117,8 +117,8 @@ public class NTemplateMain implements NutsApplication {
         @Override
         public Object eval(String content, FileTemplater context) {
             JShellContext ctx = shell.createInlineContext(shell.getRootContext(), context.getSourcePath().orElse("nsh"), new String[0]);
-            NutsSession session = context.getSession().copy();
-            session.setTerminal(NutsSessionTerminal.ofMem(session));
+            NSession session = context.getSession().copy();
+            session.setTerminal(NSessionTerminal.ofMem(session));
             ctx.setSession(session);
             shell.executeScript(content, ctx);
             return session.out().toString();
@@ -131,7 +131,7 @@ public class NTemplateMain implements NutsApplication {
     }
 
     private static class NFileTemplater extends FileTemplater {
-        public NFileTemplater(NutsApplicationContext appContext) {
+        public NFileTemplater(NApplicationContext appContext) {
             super(appContext.getSession());
             this.setDefaultExecutor("text/ntemplate-nsh-project", new NshEvaluator(appContext, this));
             setProjectFileName("project.nsh");

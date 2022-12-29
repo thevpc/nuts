@@ -7,15 +7,15 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import net.thevpc.nuts.spi.NutsComponent;
-import net.thevpc.nuts.NutsCodeHighlighter;
-import net.thevpc.nuts.spi.NutsSupportLevelContext;
+import net.thevpc.nuts.spi.NComponent;
+import net.thevpc.nuts.NCodeHighlighter;
+import net.thevpc.nuts.spi.NSupportLevelContext;
 import net.thevpc.nuts.text.*;
 
-public class JsonCodeHighlighter implements NutsCodeHighlighter {
-    private NutsWorkspace ws;
+public class JsonCodeHighlighter implements NCodeHighlighter {
+    private NWorkspace ws;
 
-    public JsonCodeHighlighter(NutsWorkspace ws) {
+    public JsonCodeHighlighter(NWorkspace ws) {
         this.ws = ws;
     }
 
@@ -25,12 +25,12 @@ public class JsonCodeHighlighter implements NutsCodeHighlighter {
     }
 
     @Override
-    public NutsText tokenToText(String text, String nodeType, NutsTexts txt, NutsSession session) {
+    public NText tokenToText(String text, String nodeType, NTexts txt, NSession session) {
         return txt.ofPlain(text);
     }
 
     @Override
-    public int getSupportLevel(NutsSupportLevelContext context) {
+    public int getSupportLevel(NSupportLevelContext context) {
         String s = context.getConstraints();
         if(s==null){
             return DEFAULT_SUPPORT;
@@ -40,22 +40,22 @@ public class JsonCodeHighlighter implements NutsCodeHighlighter {
             case "application/json":
             case "text/json":
             {
-                return NutsComponent.DEFAULT_SUPPORT;
+                return NComponent.DEFAULT_SUPPORT;
             }
         }
-        return NutsComponent.NO_SUPPORT;
+        return NComponent.NO_SUPPORT;
     }
 
     @Override
-    public NutsText stringToText(String text, NutsTexts txt, NutsSession session) {
-        List<NutsText> all = new ArrayList<>();
+    public NText stringToText(String text, NTexts txt, NSession session) {
+        List<NText> all = new ArrayList<>();
         StringReaderExt ar = new StringReaderExt(text);
         while (ar.hasNext()) {
             switch (ar.peekChar()) {
                 case '{':
                 case '}':
                 case ':': {
-                    all.add(txt.ofStyled(String.valueOf(ar.nextChar()), NutsTextStyle.separator()));
+                    all.add(txt.ofStyled(String.valueOf(ar.nextChar()), NTextStyle.separator()));
                     break;
                 }
                 case '\'': {
@@ -81,11 +81,11 @@ public class JsonCodeHighlighter implements NutsCodeHighlighter {
                 }
                 case '.':
                 case '-':{
-                    NutsText[] d = StringReaderExtUtils.readNumber(session, ar);
+                    NText[] d = StringReaderExtUtils.readNumber(session, ar);
                     if(d!=null) {
                         all.addAll(Arrays.asList(d));
                     }else{
-                        all.add(txt.ofStyled(String.valueOf(ar.nextChar()), NutsTextStyle.separator()));
+                        all.add(txt.ofStyled(String.valueOf(ar.nextChar()), NTextStyle.separator()));
                     }
                     break;
                 }
@@ -95,7 +95,7 @@ public class JsonCodeHighlighter implements NutsCodeHighlighter {
                     }else if(ar.peekChars("/*")){
                         all.addAll(Arrays.asList(StringReaderExtUtils.readSlashStarComments(session,ar)));
                     }else{
-                        all.add(txt.ofStyled(String.valueOf(ar.nextChar()), NutsTextStyle.separator()));
+                        all.add(txt.ofStyled(String.valueOf(ar.nextChar()), NTextStyle.separator()));
                     }
                     break;
                 }
@@ -103,27 +103,27 @@ public class JsonCodeHighlighter implements NutsCodeHighlighter {
                     if(Character.isWhitespace(ar.peekChar())){
                         all.addAll(Arrays.asList(StringReaderExtUtils.readSpaces(session,ar)));
                     }else {
-                        NutsText[] d = StringReaderExtUtils.readJSIdentifier(session, ar);
+                        NText[] d = StringReaderExtUtils.readJSIdentifier(session, ar);
                         if (d != null) {
-                            if (d.length == 1 && d[0].getType() == NutsTextType.PLAIN) {
-                                String txt2 = ((NutsTextPlain) d[0]).getText();
+                            if (d.length == 1 && d[0].getType() == NTextType.PLAIN) {
+                                String txt2 = ((NTextPlain) d[0]).getText();
                                 switch (txt2) {
                                     case "true":
                                     case "false": {
-                                        d[0] = txt.ofStyled(d[0], NutsTextStyle.bool());
+                                        d[0] = txt.ofStyled(d[0], NTextStyle.bool());
                                         break;
                                     }
                                 }
                             }
                             all.addAll(Arrays.asList(d));
                         } else {
-                            all.add(txt.ofStyled(String.valueOf(ar.nextChar()), NutsTextStyle.separator()));
+                            all.add(txt.ofStyled(String.valueOf(ar.nextChar()), NTextStyle.separator()));
                         }
                     }
                     break;
                 }
             }
         }
-        return txt.ofList(all.toArray(new NutsText[0]));
+        return txt.ofList(all.toArray(new NText[0]));
     }
 }

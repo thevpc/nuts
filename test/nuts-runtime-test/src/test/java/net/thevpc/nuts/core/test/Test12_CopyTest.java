@@ -5,14 +5,14 @@
  */
 package net.thevpc.nuts.core.test;
 
-import net.thevpc.nuts.NutsSession;
+import net.thevpc.nuts.NSession;
 import net.thevpc.nuts.core.test.utils.TestUtils;
-import net.thevpc.nuts.io.NutsCp;
-import net.thevpc.nuts.io.NutsPath;
-import net.thevpc.nuts.io.NutsPathOption;
-import net.thevpc.nuts.spi.NutsPaths;
-import net.thevpc.nuts.util.NutsProgressEvent;
-import net.thevpc.nuts.util.NutsProgressListener;
+import net.thevpc.nuts.io.NCp;
+import net.thevpc.nuts.io.NPath;
+import net.thevpc.nuts.io.NPathOption;
+import net.thevpc.nuts.spi.NPaths;
+import net.thevpc.nuts.util.NProgressEvent;
+import net.thevpc.nuts.util.NProgressListener;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -28,7 +28,7 @@ import java.nio.file.Paths;
  * @author thevpc
  */
 public class Test12_CopyTest {
-    static NutsSession session;
+    static NSession session;
 
     @BeforeAll
     public static void init() {
@@ -38,13 +38,13 @@ public class Test12_CopyTest {
 
     @Test
     public void copy01() throws Exception {
-        NutsPath from = NutsPaths.of(session)
+        NPath from = NPaths.of(session)
                 .createTempFolder("source");
-        NutsPath to = NutsPaths.of(session)
+        NPath to = NPaths.of(session)
                 .createTempFolder("target");
         TestUtils.println("from="+from);
         TestUtils.println("to="+to);
-        long collect = from.list().count();
+        long collect = from.stream().count();
         Assertions.assertEquals(0L,collect);
         for (String s : new String[]{
                 "/a/b/c.txt",
@@ -62,11 +62,11 @@ public class Test12_CopyTest {
         }
         TestUtils.println("start-----------");
 
-        NutsCp.of(session).from(from).to(to)
-                .addOptions(NutsPathOption.LOG, NutsPathOption.TRACE)
-                .setProgressMonitor(new NutsProgressListener() {
+        NCp.of(session).from(from).to(to)
+                .addOptions(NPathOption.LOG, NPathOption.TRACE)
+                .setProgressMonitor(new NProgressListener() {
             @Override
-            public boolean onProgress(NutsProgressEvent event) {
+            public boolean onProgress(NProgressEvent event) {
                 TestUtils.println(event.getProgress());
                 return true;
             }

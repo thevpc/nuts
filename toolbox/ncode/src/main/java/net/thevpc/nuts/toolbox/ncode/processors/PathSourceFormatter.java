@@ -5,8 +5,8 @@
  */
 package net.thevpc.nuts.toolbox.ncode.processors;
 
-import net.thevpc.nuts.io.NutsPath;
-import net.thevpc.nuts.NutsSession;
+import net.thevpc.nuts.io.NPath;
+import net.thevpc.nuts.NSession;
 import net.thevpc.nuts.toolbox.ncode.SourceProcessor;
 import net.thevpc.nuts.toolbox.ncode.Source;
 
@@ -19,8 +19,8 @@ public class PathSourceFormatter implements SourceProcessor {
     }
 
     @Override
-    public Object process(Source source, NutsSession session) {
-        return NutsPath.of(source.getExternalPath(),session);
+    public Object process(Source source, NSession session) {
+        return NPath.of(source.getExternalPath(),session);
     }
 
 }

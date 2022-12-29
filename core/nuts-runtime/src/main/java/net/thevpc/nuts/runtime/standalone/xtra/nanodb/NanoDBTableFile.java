@@ -1,8 +1,8 @@
 package net.thevpc.nuts.runtime.standalone.xtra.nanodb;
 
-import net.thevpc.nuts.io.NutsIOException;
-import net.thevpc.nuts.NutsSession;
-import net.thevpc.nuts.util.NutsStream;
+import net.thevpc.nuts.io.NIOException;
+import net.thevpc.nuts.NSession;
+import net.thevpc.nuts.util.NStream;
 
 import java.io.*;
 import java.nio.channels.FileChannel;
@@ -17,7 +17,7 @@ public class NanoDBTableFile<T> implements Iterable<T>, AutoCloseable {
     private final File dir;
     private final String tableName;
     private final NanoDB db;
-    private final NutsSession session0;
+    private final NSession session0;
     private NanoDBOutputStream writeStream;
     private NanoDBInputStream readStream;
     private FileChannel readChannel;
@@ -26,7 +26,7 @@ public class NanoDBTableFile<T> implements Iterable<T>, AutoCloseable {
     public NanoDBTableFile(Class<T> rowType,File dir, String tableName
             , NanoDBSerializer<T> serializer
             , NanoDB db
-            , NanoDBIndexDefinition<T>[] indexDefinitions, NutsSession session0
+            , NanoDBIndexDefinition<T>[] indexDefinitions, NSession session0
     ) {
         this.session0 = session0;
         this.rowType = rowType;
@@ -39,7 +39,7 @@ public class NanoDBTableFile<T> implements Iterable<T>, AutoCloseable {
         }
     }
 
-    public static int getUTFLength(String s, NutsSession session) {
+    public static int getUTFLength(String s, NSession session) {
         ByteArrayOutputStream o = new ByteArrayOutputStream();
         int init = 0;
         try {
@@ -49,12 +49,12 @@ public class NanoDBTableFile<T> implements Iterable<T>, AutoCloseable {
             r.writeUTF(s);
             r.flush();
         } catch (IOException e) {
-            throw new NutsIOException(session, e);
+            throw new NIOException(session, e);
         }
         return o.toByteArray().length - init;
     }
 
-    public T get(long position, NutsSession session) {
+    public T get(long position, NSession session) {
         synchronized (tableLock) {
             if (readStream == null) {
                 try {
@@ -62,19 +62,19 @@ public class NanoDBTableFile<T> implements Iterable<T>, AutoCloseable {
                     readChannel = readStreamFIS.getChannel();
                     readStream = new NanoDBDefaultInputStream(readStreamFIS, session);
                 } catch (FileNotFoundException e) {
-                    throw new NutsIOException(session, e);
+                    throw new NIOException(session, e);
                 }
             }
             try {
                 readChannel.position(position);
             } catch (IOException e) {
-                throw new NutsIOException(session, e);
+                throw new NIOException(session, e);
             }
             return serializer.read(readStream, rowType, session);
         }
     }
 
-    public long add(T a, NutsSession session) {
+    public long add(T a, NSession session) {
         synchronized (tableLock) {
             File tableFile = getTableFile();
             boolean writeHeader = false;
@@ -88,7 +88,7 @@ public class NanoDBTableFile<T> implements Iterable<T>, AutoCloseable {
                 try {
                     writeStream = new NanoDBDefaultOutputStream(new FileOutputStream(tableFile, true), session);
                 } catch (FileNotFoundException e) {
-                    throw new NutsIOException(session, e);
+                    throw new NIOException(session, e);
                 }
             }
             if (writeHeader) {
@@ -102,7 +102,7 @@ public class NanoDBTableFile<T> implements Iterable<T>, AutoCloseable {
         }
     }
 
-    public void flush(NutsSession session) {
+    public void flush(NSession session) {
         synchronized (tableLock) {
             if (writeStream != null) {
                 writeStream.flush();
@@ -131,14 +131,14 @@ public class NanoDBTableFile<T> implements Iterable<T>, AutoCloseable {
         }
     }
 
-    public NutsStream<T> stream(NutsSession session) {
-        return NutsStream.of(
+    public NStream<T> stream(NSession session) {
+        return NStream.of(
                 StreamSupport.stream(
                         Spliterators.spliteratorUnknownSize(iterator(session), Spliterator.ORDERED),
                         false), session);
     }
 
-    public Iterable<T> items(NutsSession s) {
+    public Iterable<T> items(NSession s) {
         return new Iterable<T>() {
             @Override
             public Iterator<T> iterator() {
@@ -151,7 +151,7 @@ public class NanoDBTableFile<T> implements Iterable<T>, AutoCloseable {
         return iterator(session0);
     }
 
-    public Iterator<T> iterator(NutsSession session) {
+    public Iterator<T> iterator(NSession session) {
         return new Iterator<T>() {
             T nextValue;
             private NanoDBInputStream is;
@@ -171,7 +171,7 @@ public class NanoDBTableFile<T> implements Iterable<T>, AutoCloseable {
                                         new FileInputStream(getTableFile()), session
                                 );
                             } catch (IOException ex) {
-                                throw new NutsIOException(session, ex);
+                                throw new NIOException(session, ex);
                             }
                             header = is.readUTF();
                         }
@@ -194,13 +194,13 @@ public class NanoDBTableFile<T> implements Iterable<T>, AutoCloseable {
                                     return false;
                                 }
                             }
-                            if (ex instanceof NutsIOException) {
+                            if (ex instanceof NIOException) {
                                 if (ex.getCause() instanceof EOFException) {
                                     return false;
                                 }
-                                throw (NutsIOException) ex;
+                                throw (NIOException) ex;
                             }
-                            throw new NutsIOException(session, ex);
+                            throw new NIOException(session, ex);
                         }
                     }
                     return false;
@@ -214,7 +214,7 @@ public class NanoDBTableFile<T> implements Iterable<T>, AutoCloseable {
         };
     }
 
-    public void updateIndices(T a, long objectId, NutsSession session) {
+    public void updateIndices(T a, long objectId, NSession session) {
         synchronized (tableLock) {
             for (IndexInfo value : indexDefinitions.values()) {
                 NanoDBIndex fi = value.getData(session);
@@ -228,14 +228,14 @@ public class NanoDBTableFile<T> implements Iterable<T>, AutoCloseable {
         return new File(dir, tableName + ".table");
     }
 
-    public NutsStream<T> findByIndex(String indexName, Object value, NutsSession session) {
-        return NutsStream.of(
+    public NStream<T> findByIndex(String indexName, Object value, NSession session) {
+        return NStream.of(
                 resolveIndexInfo(indexName).getData(session).get(value, session)
                 .mapToObj(pos -> get(pos, session)),session);
     }
 
-    public <T> NutsStream<T> findIndexValues(String indexName, NutsSession session) {
-        return NutsStream.of(
+    public <T> NStream<T> findIndexValues(String indexName, NSession session) {
+        return NStream.of(
                 resolveIndexInfo(indexName).getData(session).findAll(session)
                 ,session);
     }
@@ -265,20 +265,20 @@ public class NanoDBTableFile<T> implements Iterable<T>, AutoCloseable {
             return def;
         }
 
-        public void flushIfDirty(NutsSession session) {
+        public void flushIfDirty(NSession session) {
             if (dirty) {
                 flush(session);
                 dirty = false;
             }
         }
 
-        public void flush(NutsSession session) {
+        public void flush(NSession session) {
             synchronized (tableLock) {
                 data.flush(session);
             }
         }
 
-        public NanoDBIndex getData(NutsSession session) {
+        public NanoDBIndex getData(NSession session) {
             synchronized (tableLock) {
                 if (data != null) {
                     return data;

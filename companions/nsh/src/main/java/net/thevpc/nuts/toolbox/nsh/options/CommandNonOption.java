@@ -28,10 +28,10 @@ package net.thevpc.nuts.toolbox.nsh.options;
 import java.util.ArrayList;
 import java.util.List;
 
-import net.thevpc.nuts.cmdline.DefaultNutsArgumentCandidate;
-import net.thevpc.nuts.cmdline.NutsArgumentCandidate;
-import net.thevpc.nuts.cmdline.NutsArgumentName;
-import net.thevpc.nuts.cmdline.NutsCommandAutoComplete;
+import net.thevpc.nuts.cmdline.DefaultNArgumentCandidate;
+import net.thevpc.nuts.cmdline.NArgumentCandidate;
+import net.thevpc.nuts.cmdline.NArgumentName;
+import net.thevpc.nuts.cmdline.NCommandAutoComplete;
 import net.thevpc.nuts.toolbox.nsh.jshell.JShellBuiltin;
 import net.thevpc.nuts.toolbox.nsh.jshell.JShellContext;
 
@@ -39,7 +39,7 @@ import net.thevpc.nuts.toolbox.nsh.jshell.JShellContext;
  *
  * @author thevpc
  */
-public class CommandNonOption implements NutsArgumentName {
+public class CommandNonOption implements NArgumentName {
 
     private JShellContext context;
     private String name;
@@ -55,10 +55,10 @@ public class CommandNonOption implements NutsArgumentName {
     }
 
     @Override
-    public List<NutsArgumentCandidate> getCandidates(NutsCommandAutoComplete context) {
-        List<NutsArgumentCandidate> all = new ArrayList<>();
+    public List<NArgumentCandidate> getCandidates(NCommandAutoComplete context) {
+        List<NArgumentCandidate> all = new ArrayList<>();
         for (JShellBuiltin command : this.context.builtins().getAll()) {
-            all.add(new DefaultNutsArgumentCandidate(command.getName()));
+            all.add(new DefaultNArgumentCandidate(command.getName()));
         }
         return all;
     }

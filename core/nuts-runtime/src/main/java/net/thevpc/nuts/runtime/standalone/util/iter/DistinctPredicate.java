@@ -1,14 +1,14 @@
 package net.thevpc.nuts.runtime.standalone.util.iter;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.elem.NutsElement;
-import net.thevpc.nuts.elem.NutsElements;
-import net.thevpc.nuts.util.NutsDescribable;
-import net.thevpc.nuts.util.NutsPredicates;
+import net.thevpc.nuts.elem.NElement;
+import net.thevpc.nuts.elem.NElements;
+import net.thevpc.nuts.util.NDescribable;
+import net.thevpc.nuts.util.NPredicates;
 
 import java.util.HashSet;
 
-class DistinctPredicate<T> extends NutsPredicates.BasePredicate<T> implements NutsDescribable {
+class DistinctPredicate<T> extends NPredicates.BasePredicate<T> implements NDescribable {
     private HashSet<T> visited = new HashSet<>();
 
     @Override
@@ -26,8 +26,8 @@ class DistinctPredicate<T> extends NutsPredicates.BasePredicate<T> implements Nu
     }
 
     @Override
-    public NutsElement describe(NutsSession session) {
-        return NutsElements.of(session).ofString("distinct");
+    public NElement describe(NSession session) {
+        return NElements.of(session).ofString("distinct");
     }
 
 }

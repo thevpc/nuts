@@ -26,13 +26,13 @@
 package net.thevpc.nuts.toolbox.nsh.cmds;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.cmdline.NutsArgument;
-import net.thevpc.nuts.cmdline.NutsCommandLine;
-import net.thevpc.nuts.elem.NutsElement;
-import net.thevpc.nuts.elem.NutsElements;
-import net.thevpc.nuts.io.NutsPath;
-import net.thevpc.nuts.spi.NutsComponentScope;
-import net.thevpc.nuts.spi.NutsComponentScopeType;
+import net.thevpc.nuts.cmdline.NArgument;
+import net.thevpc.nuts.cmdline.NCommandLine;
+import net.thevpc.nuts.elem.NElement;
+import net.thevpc.nuts.elem.NElements;
+import net.thevpc.nuts.io.NPath;
+import net.thevpc.nuts.spi.NComponentScope;
+import net.thevpc.nuts.spi.NComponentScopeType;
 import net.thevpc.nuts.toolbox.nsh.SimpleJShellBuiltin;
 import net.thevpc.nuts.toolbox.nsh.jshell.JShellContext;
 import net.thevpc.nuts.toolbox.nsh.jshell.JShellExecutionContext;
@@ -54,7 +54,7 @@ import java.util.List;
 /**
  * Created by vpc on 1/7/17.
  */
-@NutsComponentScope(NutsComponentScopeType.WORKSPACE)
+@NComponentScope(NComponentScopeType.WORKSPACE)
 public class JsonCommand extends SimpleJShellBuiltin {
 
     public JsonCommand() {
@@ -62,10 +62,10 @@ public class JsonCommand extends SimpleJShellBuiltin {
     }
 
     @Override
-    protected boolean configureFirst(NutsCommandLine commandLine, JShellExecutionContext context) {
+    protected boolean configureFirst(NCommandLine commandLine, JShellExecutionContext context) {
         Options options = context.getOptions();
-        NutsSession session = context.getSession();
-        NutsArgument a;
+        NSession session = context.getSession();
+        NArgument a;
         if ((a = commandLine.nextString("-f", "--file").orNull()) != null) {
             options.input = a.getStringValue().get(session);
             return true;
@@ -82,17 +82,17 @@ public class JsonCommand extends SimpleJShellBuiltin {
     }
 
     @Override
-    protected void execBuiltin(NutsCommandLine commandLine, JShellExecutionContext context) {
+    protected void execBuiltin(NCommandLine commandLine, JShellExecutionContext context) {
         Options options = context.getOptions();
 //        if (options.xpaths.isEmpty()) {
 //            commandLine.required();
 //        }
 
-        NutsSession session = context.getSession();
+        NSession session = context.getSession();
         if (options.queries.isEmpty()) {
-            NutsElement inputDocument = readJsonConvertElement(options.input, context.getShellContext());
-            if (session.getOutputFormat() == NutsContentType.PLAIN) {
-                session.out().printlnf(NutsElements.of(session).json().setValue(inputDocument).format());
+            NElement inputDocument = readJsonConvertElement(options.input, context.getShellContext());
+            if (session.getOutputFormat() == NContentType.PLAIN) {
+                session.out().printlnf(NElements.of(session).json().setValue(inputDocument).format());
             } else {
                 session.out().printlnf(inputDocument);
             }
@@ -106,7 +106,7 @@ public class JsonCommand extends SimpleJShellBuiltin {
                     try {
                         resultDocument = documentFactory.newDocumentBuilder().newDocument();
                     } catch (ParserConfigurationException ex) {
-                        throw new NutsExecutionException(session, NutsMessage.ofPlain("failed to create xml document"), ex, 1);
+                        throw new NExecutionException(session, NMsg.ofPlain("failed to create xml document"), ex, 1);
                     }
                     Element resultElement = resultDocument.createElement("result");
                     resultDocument.appendChild(resultElement);
@@ -119,24 +119,24 @@ public class JsonCommand extends SimpleJShellBuiltin {
                                 resultElement.appendChild(o);
                             }
                         } catch (XPathExpressionException ex) {
-                            throw new NutsExecutionException(session, NutsMessage.ofCstyle("%s", ex), ex, 103);
+                            throw new NExecutionException(session, NMsg.ofCstyle("%s", ex), ex, 103);
                         }
                     }
-                    NutsElement json = NutsElements.of(session).toElement(resultDocument);
+                    NElement json = NElements.of(session).toElement(resultDocument);
                     session.out().printlnf(json);
                     break;
                 }
                 case "jpath": {
-                    NutsElement inputDocument = readJsonConvertElement(options.input, context.getShellContext());
-                    List<NutsElement> all = new ArrayList<>();
+                    NElement inputDocument = readJsonConvertElement(options.input, context.getShellContext());
+                    List<NElement> all = new ArrayList<>();
                     for (String query : options.queries) {
-                        all.addAll(NutsElements.of(session)
+                        all.addAll(NElements.of(session)
                                 .compilePath(query)
                                 .filter(inputDocument)
                         );
                     }
                     Object result = all.size() == 1 ? all.get(0) : all;
-                    NutsElement json = NutsElements.of(session).toElement(result);
+                    NElement json = NElements.of(session).toElement(result);
                     session.out().printlnf(result);
                     break;
                 }
@@ -149,20 +149,20 @@ public class JsonCommand extends SimpleJShellBuiltin {
         return readJsonConvertAny(path, Document.class, context);
     }
 
-    private NutsElement readJsonConvertElement(String path, JShellContext context) {
-        return readJsonConvertAny(path, NutsElement.class, context);
+    private NElement readJsonConvertElement(String path, JShellContext context) {
+        return readJsonConvertAny(path, NElement.class, context);
     }
 
     private <T> T readJsonConvertAny(String path, Class<T> cls, JShellContext context) {
-        NutsSession session = context.getSession();
-        NutsElements njson = NutsElements.of(session).json();
+        NSession session = context.getSession();
+        NElements njson = NElements.of(session).json();
         T inputDocument = null;
         if (path != null) {
-            NutsPath file = NutsPath.of(path, session).toAbsolute(context.getCwd());
+            NPath file = NPath.of(path, session).toAbsolute(context.getCwd());
             if (file.exists()) {
                 inputDocument = njson.parse(file, cls);
             } else {
-                throw new NutsExecutionException(session, NutsMessage.ofCstyle("invalid path %s", path), 1);
+                throw new NExecutionException(session, NMsg.ofCstyle("invalid path %s", path), 1);
             }
         } else {
             StringBuilder sb = new StringBuilder();
@@ -172,7 +172,7 @@ public class JsonCommand extends SimpleJShellBuiltin {
                 try {
                     line = reader.readLine();
                 } catch (IOException ex) {
-                    throw new NutsExecutionException(session, NutsMessage.ofPlain("broken Input"), 2);
+                    throw new NExecutionException(session, NMsg.ofPlain("broken Input"), 2);
                 }
                 if (line == null) {
                     inputDocument = njson.parse(new StringReader(sb.toString()), cls);

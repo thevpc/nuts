@@ -26,13 +26,13 @@
 package net.thevpc.nuts.toolbox.nsh.cmds.bash;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.cmdline.NutsArgument;
-import net.thevpc.nuts.cmdline.NutsCommandLine;
-import net.thevpc.nuts.io.NutsCp;
-import net.thevpc.nuts.io.NutsPath;
-import net.thevpc.nuts.io.NutsPrintStream;
-import net.thevpc.nuts.spi.NutsComponentScope;
-import net.thevpc.nuts.spi.NutsComponentScopeType;
+import net.thevpc.nuts.cmdline.NArgument;
+import net.thevpc.nuts.cmdline.NCommandLine;
+import net.thevpc.nuts.io.NCp;
+import net.thevpc.nuts.io.NPath;
+import net.thevpc.nuts.io.NStream;
+import net.thevpc.nuts.spi.NComponentScope;
+import net.thevpc.nuts.spi.NComponentScopeType;
 import net.thevpc.nuts.text.*;
 import net.thevpc.nuts.toolbox.nsh.SimpleJShellBuiltin;
 import net.thevpc.nuts.toolbox.nsh.bundles._IOUtils;
@@ -41,7 +41,7 @@ import net.thevpc.nuts.toolbox.nsh.jshell.JShellExecutionContext;
 import net.thevpc.nuts.toolbox.nsh.util.ColumnRuler;
 import net.thevpc.nuts.toolbox.nsh.util.FileInfo;
 import net.thevpc.nuts.toolbox.nsh.util.ShellHelper;
-import net.thevpc.nuts.util.NutsStringUtils;
+import net.thevpc.nuts.util.NStringUtils;
 
 import java.io.*;
 import java.util.ArrayList;
@@ -50,7 +50,7 @@ import java.util.List;
 /**
  * Created by vpc on 1/7/17.
  */
-@NutsComponentScope(NutsComponentScopeType.WORKSPACE)
+@NComponentScope(NComponentScopeType.WORKSPACE)
 public class CatCommand extends SimpleJShellBuiltin {
 
     public CatCommand() {
@@ -58,10 +58,10 @@ public class CatCommand extends SimpleJShellBuiltin {
     }
 
     @Override
-    protected boolean configureFirst(NutsCommandLine commandLine, JShellExecutionContext context) {
-        NutsSession session = context.getSession();
+    protected boolean configureFirst(NCommandLine commandLine, JShellExecutionContext context) {
+        NSession session = context.getSession();
         Options options = context.getOptions();
-        NutsArgument a;
+        NArgument a;
 
         if (commandLine.next("-") != null) {
             options.files.add(null);
@@ -76,29 +76,29 @@ public class CatCommand extends SimpleJShellBuiltin {
             options.E = a.getBooleanValue().get(session);
             return true;
         } else if ((a = commandLine.next("-H", "--highlight", "--highlighter").orNull()) != null) {
-            options.highlighter = NutsStringUtils.trim(a.getStringValue().get(session));
+            options.highlighter = NStringUtils.trim(a.getStringValue().get(session));
             return true;
         } else if (!commandLine.isNextOption()) {
-            String path = commandLine.next().flatMap(NutsValue::asString).get(session);
-            options.files.add(new FileInfo(NutsPath.of(path, session), options.highlighter));
+            String path = commandLine.next().flatMap(NValue::asString).get(session);
+            options.files.add(new FileInfo(NPath.of(path, session), options.highlighter));
             return true;
         }
         return false;
     }
 
     @Override
-    protected void execBuiltin(NutsCommandLine commandLine, JShellExecutionContext context) {
+    protected void execBuiltin(NCommandLine commandLine, JShellExecutionContext context) {
         Options options = context.getOptions();
         if (options.files.isEmpty()) {
             options.files.add(null);
         }
-        NutsPrintStream out = context.getSession().out();
+        NStream out = context.getSession().out();
         try {
             options.currentNumber = 1;
 
             OutputStream os = null;
             boolean plain = true;
-            if (context.getSession().getOutputFormat() == NutsContentType.PLAIN) {
+            if (context.getSession().getOutputFormat() == NContentType.PLAIN) {
                 os = out.asOutputStream();
             } else {
                 plain = false;
@@ -143,26 +143,26 @@ public class CatCommand extends SimpleJShellBuiltin {
                 out.printf(results);
             }
         } catch (IOException ex) {
-            throw new NutsExecutionException(context.getSession(), NutsMessage.ofCstyle("%s", ex), ex, 100);
+            throw new NExecutionException(context.getSession(), NMsg.ofCstyle("%s", ex), ex, 100);
         }
     }
 
     private void catText2(InputStream in, Options options, JShellExecutionContext context, FileInfo info, List<CatResult> results) throws IOException {
         boolean whole = true;
-        NutsSession session = context.getSession();
+        NSession session = context.getSession();
         if (whole && info.getHighlighter() != null) {
             ByteArrayOutputStream bout = new ByteArrayOutputStream();
-            NutsCp.of(session).from(in).to(bout).run();
+            NCp.of(session).from(in).to(bout).run();
             String text = bout.toString();
-            NutsTextBuilder nutsText = NutsTexts.of(session).ofCode(info.getHighlighter(), text).highlight(session)
+            NTextBuilder nutsText = NTexts.of(session).ofCode(info.getHighlighter(), text).highlight(session)
                     .builder()
                     .flatten();
-            List<NutsText> children = nutsText.getChildren();
+            List<NText> children = nutsText.getChildren();
             Tracker tracker = new Tracker();
             boolean n = options.n;
             options.n = false;
             while (true) {
-                NutsText line = nextLine(children, session, tracker, options, true);
+                NText line = nextLine(children, session, tracker, options, true);
                 if (line != null) {
                     CatResult r = new CatResult();
                     if (n) {
@@ -187,12 +187,12 @@ public class CatCommand extends SimpleJShellBuiltin {
                 if (options.T) {
                     line = line.replace("\t", "^I");
                 }
-                NutsTextCode c = NutsTexts.of(session).ofCode(info.getHighlighter(), line);
+                NTextCode c = NTexts.of(session).ofCode(info.getHighlighter(), line);
                 line = c.highlight(session).toString();
                 if (options.E) {
                     line += "$";
                 }
-                r.line = NutsTexts.of(session).ofPlain(line);
+                r.line = NTexts.of(session).ofPlain(line);
                 options.currentNumber++;
             }
         }
@@ -206,19 +206,19 @@ public class CatCommand extends SimpleJShellBuiltin {
             }
         }
         boolean whole = true;
-        NutsSession session = context.getSession();
+        NSession session = context.getSession();
         if (whole && info.getHighlighter() != null) {
             ByteArrayOutputStream bout = new ByteArrayOutputStream();
-            NutsCp.of(session).from(in).to(bout).run();
+            NCp.of(session).from(in).to(bout).run();
             String text = bout.toString();
-            NutsTextBuilder nutsText = NutsTexts.of(session).ofCode(info.getHighlighter(), text).highlight(session)
+            NTextBuilder nutsText = NTexts.of(session).ofCode(info.getHighlighter(), text).highlight(session)
                     .builder()
                     .flatten();
-            NutsPrintStream out = NutsPrintStream.of(os, session);
-            List<NutsText> children = nutsText.getChildren();
+            NStream out = NStream.of(os, session);
+            List<NText> children = nutsText.getChildren();
             Tracker tracker = new Tracker();
             while (true) {
-                NutsText line = nextLine(children, session, tracker, options, false);
+                NText line = nextLine(children, session, tracker, options, false);
                 if (line != null) {
                     out.printf(line);
                 } else {
@@ -226,7 +226,7 @@ public class CatCommand extends SimpleJShellBuiltin {
                 }
             }
         } else {
-            NutsPrintStream out = NutsPrintStream.of(os, session);
+            NStream out = NStream.of(os, session);
             try {
 
                 //do not close!!
@@ -241,7 +241,7 @@ public class CatCommand extends SimpleJShellBuiltin {
                         line = line.replace("\t", "^I");
                     }
 
-                    NutsTextCode c = NutsTexts.of(session).ofCode(info.getHighlighter(), line);
+                    NTextCode c = NTexts.of(session).ofCode(info.getHighlighter(), line);
                     line = c.highlight(session).toString();
 
                     out.print(line);
@@ -258,11 +258,11 @@ public class CatCommand extends SimpleJShellBuiltin {
         }
     }
 
-    private NutsText nextLine(List<NutsText> t, NutsSession session, Tracker tracker, Options options, boolean skipNewline) {
-        NutsTextBuilder b = NutsTexts.of(session).ofBuilder();
+    private NText nextLine(List<NText> t, NSession session, Tracker tracker, Options options, boolean skipNewline) {
+        NTextBuilder b = NTexts.of(session).ofBuilder();
         while (!t.isEmpty()) {
-            NutsText ii = t.remove(0);
-            NutsText n = nextNode(ii, session, tracker, options);
+            NText ii = t.remove(0);
+            NText n = nextNode(ii, session, tracker, options);
             if (tracker.wasNewline) {
                 if (!skipNewline) {
                     b.append(n);
@@ -275,18 +275,18 @@ public class CatCommand extends SimpleJShellBuiltin {
         return null;
     }
 
-    private NutsText nextNode(NutsText t, NutsSession session, Tracker tracker, Options options) {
+    private NText nextNode(NText t, NSession session, Tracker tracker, Options options) {
         switch (t.getType()) {
             case PLAIN: {
-                String text = ((NutsTextPlain) t).getText();
-                NutsTextBuilder tb = NutsTexts.of(session).ofBuilder();
+                String text = ((NTextPlain) t).getText();
+                NTextBuilder tb = NTexts.of(session).ofBuilder();
                 if (options.n && tracker.wasNewline) {
                     tb.append(tracker.ruler.nextNum(tracker.line, session));
                 }
                 if (text.charAt(0) == '\n' || text.charAt(0) == '\r') {
                     //this is a new line
                     if (options.E) {
-                        tb.append("$", NutsTextStyle.separator());
+                        tb.append("$", NTextStyle.separator());
                     }
                     tb.append(text);
                     tracker.wasNewline = true;
@@ -294,7 +294,7 @@ public class CatCommand extends SimpleJShellBuiltin {
                 } else {
                     for (String s : ShellHelper.splitOn(text, '\t')) {
                         if (s.startsWith("\t")) {
-                            tb.append("^I", NutsTextStyle.separator());
+                            tb.append("^I", NTextStyle.separator());
                         } else {
                             tb.append(s);
                         }
@@ -304,17 +304,17 @@ public class CatCommand extends SimpleJShellBuiltin {
                 return tb.build();
             }
             case STYLED: {
-                NutsTextStyled tt = (NutsTextStyled) t;
-                NutsTextPlain pt = (NutsTextPlain) tt.getChild();
+                NTextStyled tt = (NTextStyled) t;
+                NTextPlain pt = (NTextPlain) tt.getChild();
 
                 String text = pt.getText();
-                NutsTextBuilder tb = NutsTexts.of(session).ofBuilder();
+                NTextBuilder tb = NTexts.of(session).ofBuilder();
                 if (options.n && tracker.wasNewline) {
                     tb.append(tracker.ruler.nextNum(tracker.line, session));
                 }
                 for (String s : ShellHelper.splitOn(text, '\t')) {
                     if (s.startsWith("\t")) {
-                        tb.append("^I", NutsTextStyle.separator());
+                        tb.append("^I", NTextStyle.separator());
                     } else {
                         tb.append(s, tt.getStyles());
                     }
@@ -323,12 +323,12 @@ public class CatCommand extends SimpleJShellBuiltin {
                 return tb.build();
             }
         }
-        throw new NutsUnsupportedOperationException(session);
+        throw new NUnsupportedOperationException(session);
     }
 
     public static class CatResult {
         Long number;
-        NutsString line;
+        NString line;
     }
 
     private static class Options {

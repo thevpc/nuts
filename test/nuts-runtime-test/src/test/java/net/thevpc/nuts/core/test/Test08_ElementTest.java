@@ -32,14 +32,14 @@ import java.util.Map;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.core.test.utils.TestUtils;
-import net.thevpc.nuts.elem.NutsElement;
-import net.thevpc.nuts.elem.NutsElements;
-import net.thevpc.nuts.elem.NutsObjectElement;
-import net.thevpc.nuts.format.NutsObjectFormat;
-import net.thevpc.nuts.text.NutsText;
-import net.thevpc.nuts.text.NutsTextStyle;
-import net.thevpc.nuts.text.NutsTextStyled;
-import net.thevpc.nuts.text.NutsTexts;
+import net.thevpc.nuts.elem.NElement;
+import net.thevpc.nuts.elem.NElements;
+import net.thevpc.nuts.elem.NObjectElement;
+import net.thevpc.nuts.format.NObjectFormat;
+import net.thevpc.nuts.text.NText;
+import net.thevpc.nuts.text.NTextStyle;
+import net.thevpc.nuts.text.NTextStyled;
+import net.thevpc.nuts.text.NTexts;
 import org.junit.jupiter.api.*;
 
 /**
@@ -47,7 +47,7 @@ import org.junit.jupiter.api.*;
  * @author thevpc
  */
 public class Test08_ElementTest {
-    static NutsSession session;
+    static NSession session;
 
     @BeforeAll
     public static void init() {
@@ -56,8 +56,8 @@ public class Test08_ElementTest {
 
     @Test
     public void test1() {
-        NutsElements e = NutsElements.of(session);
-        NutsElement p
+        NElements e = NElements.of(session);
+        NElement p
                 = e.ofArray()
                 .add(
                         e.ofObject().set("first",
@@ -101,7 +101,7 @@ public class Test08_ElementTest {
                                 .build()
                 ).build())
                 .build();
-        NutsObjectFormat ss = NutsObjectFormat.of(session).setValue(p);
+        NObjectFormat ss = NObjectFormat.of(session).setValue(p);
         ss.println();
         String json = ss.format().toString();
         String EXPECTED = "[\n"
@@ -153,7 +153,7 @@ public class Test08_ElementTest {
                 this.expected = Arrays.asList(expected);
             }
 
-            void check(List<NutsElement> a) {
+            void check(List<NElement> a) {
 
             }
         }
@@ -212,18 +212,18 @@ public class Test08_ElementTest {
         }) {
             TestUtils.println("=====================================");
             TestUtils.println("CHECKING : '" + tt.path + "'");
-            List<NutsElement> filtered1 = e.compilePath(tt.path).filter(p);
+            List<NElement> filtered1 = e.compilePath(tt.path).filter(p);
             ss.setValue(filtered1).println();
-            NutsString sexpected = NutsString.ofPlain(tt.expected.get(0), e.getSession());
-            NutsString sresult = ss.format().immutable();
+            NString sexpected = NString.ofPlain(tt.expected.get(0), e.getSession());
+            NString sresult = ss.format().immutable();
             Assertions.assertEquals(sexpected.immutable(), sresult.immutable());
         }
     }
 
     @Test
     public void testIndestructibleObjects() {
-        NutsText styledText = NutsTexts.of(session).ofStyled("Hello", NutsTextStyle.success());
-        NutsElements e = NutsElements.of(session);
+        NText styledText = NTexts.of(session).ofStyled("Hello", NTextStyle.success());
+        NElements e = NElements.of(session);
 
         //create a composite object with a styled element
         Map<String,Object> h=new HashMap<>();
@@ -231,29 +231,29 @@ public class Test08_ElementTest {
         h.put("b", styledText);
 
         //styled element are destructed to strings
-        NutsElement q = e.toElement(h);
-        NutsElement expected=e.ofObject()
+        NElement q = e.toElement(h);
+        NElement expected=e.ofObject()
                 .set("a","13")
                 .set("b","Hello").build();
         Assertions.assertEquals(expected,q);
 
 
         //prevent styled element to be destructed
-        e.setIndestructibleObjects(c->c instanceof Class && NutsTextStyled.class.isAssignableFrom((Class<?>) c));
+        e.setIndestructibleObjects(c->c instanceof Class && NTextStyled.class.isAssignableFrom((Class<?>) c));
         q = e.toElement(h);
         expected=e.ofObject()
                 .set("a","13")
                 .set("b",
-                        e.ofCustom(NutsTexts.of(session).ofStyled("Hello", NutsTextStyle.success()))
+                        e.ofCustom(NTexts.of(session).ofStyled("Hello", NTextStyle.success()))
                         ).build();
         Assertions.assertEquals(expected,q);
 
         //destruct custom elements
         e.setIndestructibleObjects(null);
-        NutsObjectElement b = e.ofObject()
+        NObjectElement b = e.ofObject()
                 .set("a", "13")
                 .set("b",
-                        e.ofCustom(NutsTexts.of(session).ofStyled("Hello", NutsTextStyle.success()))
+                        e.ofCustom(NTexts.of(session).ofStyled("Hello", NTextStyle.success()))
                 ).build();
 
         q = e.toElement(b);

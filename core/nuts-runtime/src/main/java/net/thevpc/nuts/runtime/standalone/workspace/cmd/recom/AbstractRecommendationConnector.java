@@ -1,7 +1,7 @@
 package net.thevpc.nuts.runtime.standalone.workspace.cmd.recom;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.clinfo.NutsCliInfo;
+import net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.clinfo.NCliInfo;
 
 import java.util.Locale;
 import java.util.Map;
@@ -14,18 +14,18 @@ public abstract class AbstractRecommendationConnector implements RecommendationC
     public AbstractRecommendationConnector() {
     }
 
-    private String getLocalUserUUID(NutsSession session) {
+    private String getLocalUserUUID(NSession session) {
         if (localUserUUID != null) {
             return localUserUUID;
         }
-        localUserUUID = NutsCliInfo.loadCliId(session, true);
+        localUserUUID = NCliInfo.loadCliId(session, true);
         return localUserUUID;
     }
 
     @Override
-    public Map getRecommendations(RequestQueryInfo ri, NutsRecommendationPhase phase, boolean failure, NutsSession session) {
+    public Map getRecommendations(RequestQueryInfo ri, NRecommendationPhase phase, boolean failure, NSession session) {
         validateRequest(ri, session);
-        NutsId id = NutsId.of(ri.q.getId()).ifBlankEmpty().get(session);
+        NId id = NId.of(ri.q.getId()).ifBlankEmpty().get(session);
         String name = phase.name().toLowerCase() + (failure ? "-failure" : "") + "-recommendations.json";
         String url = "/repo/" + id.getGroupId().replace('.', '/')
                 + '/' + id.getArtifactId()
@@ -35,13 +35,13 @@ public abstract class AbstractRecommendationConnector implements RecommendationC
     }
 
 
-    public abstract <T> T post(String url, RequestQueryInfo ri, Class<T> resultType, NutsSession session);
+    public abstract <T> T post(String url, RequestQueryInfo ri, Class<T> resultType, NSession session);
 
-    public void validateRequest(RequestQueryInfo ri, NutsSession session) {
+    public void validateRequest(RequestQueryInfo ri, NSession session) {
         ri.server = (ri.server == null || ri.server.trim().isEmpty()) ? "https://thevpc.net/nuts" : ri.server;
-        NutsWorkspaceEnvManager env = session.env();
+        NWorkspaceEnvManager env = session.env();
         RequestAgent agent = ri.q.getAgent();
-        NutsWorkspace ws = session.getWorkspace();
+        NWorkspace ws = session.getWorkspace();
         if (agent.getApiVersion() == null) {
             agent.setApiVersion(ws.getApiVersion().toString());
         }

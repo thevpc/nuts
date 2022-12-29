@@ -26,12 +26,12 @@
  */
 package net.thevpc.nuts.toolbox.nsh.cmds.bash;
 
-import net.thevpc.nuts.cmdline.NutsArgument;
-import net.thevpc.nuts.cmdline.NutsCommandLine;
-import net.thevpc.nuts.NutsSession;
-import net.thevpc.nuts.NutsValue;
-import net.thevpc.nuts.spi.NutsComponentScope;
-import net.thevpc.nuts.spi.NutsComponentScopeType;
+import net.thevpc.nuts.cmdline.NArgument;
+import net.thevpc.nuts.cmdline.NCommandLine;
+import net.thevpc.nuts.NSession;
+import net.thevpc.nuts.NValue;
+import net.thevpc.nuts.spi.NComponentScope;
+import net.thevpc.nuts.spi.NComponentScopeType;
 import net.thevpc.nuts.toolbox.nsh.SimpleJShellBuiltin;
 import net.thevpc.nuts.toolbox.nsh.jshell.JShellBuiltin;
 import net.thevpc.nuts.toolbox.nsh.jshell.JShellExecutionContext;
@@ -41,7 +41,7 @@ import java.util.*;
 /**
  * Created by vpc on 1/7/17.
  */
-@NutsComponentScope(NutsComponentScopeType.WORKSPACE)
+@NComponentScope(NComponentScopeType.WORKSPACE)
 public class EnableCommand extends SimpleJShellBuiltin {
 
     public EnableCommand() {
@@ -49,10 +49,10 @@ public class EnableCommand extends SimpleJShellBuiltin {
     }
 
     @Override
-    protected boolean configureFirst(NutsCommandLine commandLine, JShellExecutionContext context) {
+    protected boolean configureFirst(NCommandLine commandLine, JShellExecutionContext context) {
         Options options = context.getOptions();
-        NutsSession session = context.getSession();
-        final NutsArgument a = commandLine.peek().get(session);
+        NSession session = context.getSession();
+        final NArgument a = commandLine.peek().get(session);
         if (a.isOption()) {
             if (a.key().equals("--sort")) {
                 options.displayOptions.add(a.toString());
@@ -86,14 +86,14 @@ public class EnableCommand extends SimpleJShellBuiltin {
                 }
             }
         } else {
-            options.names.add(commandLine.next().flatMap(NutsValue::asString).get(session));
+            options.names.add(commandLine.next().flatMap(NValue::asString).get(session));
             return true;
         }
         return false;
     }
 
     @Override
-    protected void execBuiltin(NutsCommandLine commandLine, JShellExecutionContext context) {
+    protected void execBuiltin(NCommandLine commandLine, JShellExecutionContext context) {
         Options options = context.getOptions();
         if (options.p || options.names.isEmpty()) {
             Map<String, String> result = new LinkedHashMap<>();

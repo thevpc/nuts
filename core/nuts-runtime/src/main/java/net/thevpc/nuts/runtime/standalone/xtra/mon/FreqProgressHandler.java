@@ -1,18 +1,17 @@
 package net.thevpc.nuts.runtime.standalone.xtra.mon;
 
-import net.thevpc.nuts.NutsSession;
 import net.thevpc.nuts.util.*;
 
 import java.util.logging.Level;
 
-public class FreqProgressHandler implements NutsProgressHandler {
+public class FreqProgressHandler implements NProgressHandler {
     private long freq;
     private long lastMessageTime;
     private long lastProgressTime;
     private Level level = Level.INFO;
-    private NutsProgressMonitor delegate;
+    private NProgressMonitor delegate;
 
-    public FreqProgressHandler(NutsProgressMonitor delegate, long freq) {
+    public FreqProgressHandler(NProgressMonitor delegate, long freq) {
         this.delegate = delegate;
         if (freq < 0) {
             freq = 0;
@@ -20,12 +19,12 @@ public class FreqProgressHandler implements NutsProgressHandler {
         this.freq = freq;
     }
 
-    public NutsProgressMonitor getDelegate() {
+    public NProgressMonitor getDelegate() {
         return delegate;
     }
 
     @Override
-    public void onEvent(NutsProgressHandlerEvent event) {
+    public void onEvent(NProgressHandlerEvent event) {
 
         switch (event.getEventType()) {
             case PROGRESS: {
@@ -51,7 +50,7 @@ public class FreqProgressHandler implements NutsProgressHandler {
                 break;
             }
             default: {
-                NutsProgressMonitorHelper.processState(getDelegate(), event);
+                NProgressMonitorHelper.processState(getDelegate(), event);
             }
         }
     }

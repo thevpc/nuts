@@ -11,8 +11,8 @@ import net.thevpc.nuts.*;
 
 import java.io.InputStream;
 
-import net.thevpc.nuts.io.NutsCp;
-import net.thevpc.nuts.io.NutsPathOption;
+import net.thevpc.nuts.io.NCp;
+import net.thevpc.nuts.io.NPathOption;
 import net.thevpc.nuts.runtime.standalone.io.util.CoreIOUtils;
 import org.junit.jupiter.api.*;
 import net.thevpc.nuts.core.test.utils.*;
@@ -22,7 +22,7 @@ import net.thevpc.nuts.core.test.utils.*;
  * @author thevpc
  */
 public class Test22_CpTest {
-    static NutsSession session;
+    static NSession session;
 
     @BeforeAll
     public static void init() {
@@ -34,11 +34,11 @@ public class Test22_CpTest {
         final String url = "https://repo.maven.apache.org/maven2/archetype-catalog.xml";
         InputStream j1 = CoreIOUtils.getCachedUrlWithSHA1(url, "archetype-catalog", true,session);
         //just to consume the stream
-        NutsCp.of(session).from(j1).to(new ByteArrayOutputStream()).addOptions(NutsPathOption.LOG, NutsPathOption.TRACE).run();
+        NCp.of(session).from(j1).to(new ByteArrayOutputStream()).addOptions(NPathOption.LOG, NPathOption.TRACE).run();
         TestUtils.println(j1);
         InputStream j2 = CoreIOUtils.getCachedUrlWithSHA1(url, "archetype-catalog", true,session);
         //just to consume the stream
-        NutsCp.of(session).from(j2).to(new ByteArrayOutputStream()).addOptions(NutsPathOption.LOG, NutsPathOption.TRACE).run();
+        NCp.of(session).from(j2).to(new ByteArrayOutputStream()).addOptions(NPathOption.LOG, NPathOption.TRACE).run();
         TestUtils.println(j2);
     }
 

@@ -2,14 +2,14 @@ package net.thevpc.nuts.toolbox.noapi.service.docs;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.elem.*;
-import net.thevpc.nuts.io.NutsPath;
+import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.lib.md.*;
 import net.thevpc.nuts.toolbox.noapi.util.AppMessages;
 import net.thevpc.nuts.toolbox.noapi.util.NoApiUtils;
 import net.thevpc.nuts.toolbox.noapi.service.OpenApiParser;
 import net.thevpc.nuts.toolbox.noapi.util._StringUtils;
 import net.thevpc.nuts.toolbox.noapi.model.*;
-import net.thevpc.nuts.util.NutsMaps;
+import net.thevpc.nuts.util.NMaps;
 
 import java.io.InputStream;
 import java.time.LocalDate;
@@ -17,13 +17,13 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 public class MainMakdownGenerator {
-    private NutsApplicationContext appContext;
+    private NApplicationContext appContext;
     private AppMessages msg;
     private Properties httpCodes = new Properties();
     private OpenApiParser openApiParser = new OpenApiParser();
     private int maxExampleInlineLength = 80;
 
-    public MainMakdownGenerator(NutsApplicationContext appContext, AppMessages msg) {
+    public MainMakdownGenerator(NApplicationContext appContext, AppMessages msg) {
         this.appContext = appContext;
         this.msg = msg;
         try (InputStream is = getClass().getResourceAsStream("/net/thevpc/nuts/toolbox/noapi/http-codes.properties")) {
@@ -33,8 +33,8 @@ public class MainMakdownGenerator {
         }
     }
 
-    public MdDocument createMarkdown(NutsElement obj, NutsPath folder, Map<String, String> vars0, List<String> defaultAdocHeaders) {
-        NutsSession session = appContext.getSession();
+    public MdDocument createMarkdown(NElement obj, NPath folder, Map<String, String> vars0, List<String> defaultAdocHeaders) {
+        NSession session = appContext.getSession();
         MdDocumentBuilder doc = new MdDocumentBuilder();
 
         List<String> options = new ArrayList<>(defaultAdocHeaders);
@@ -45,11 +45,11 @@ public class MainMakdownGenerator {
         doc.setDate(LocalDate.now());
         doc.setSubTitle("RESTRICTED - INTERNAL");
 
-        NutsElements prv = NutsElements.of(session);
+        NElements prv = NElements.of(session);
         List<MdElement> all = new ArrayList<>();
-        NutsObjectElement entries = obj.asObject().get(session);
+        NObjectElement entries = obj.asObject().get(session);
         all.add(MdFactory.endParagraph());
-        NutsObjectElement infoObj = entries.getObject("info").orElse(prv.ofEmptyObject());
+        NObjectElement infoObj = entries.getObject("info").orElse(prv.ofEmptyObject());
         String documentTitle = infoObj.getString("title").orNull();
         doc.setTitle(documentTitle);
         String documentVersion = infoObj.getString("version").orNull();
@@ -72,8 +72,8 @@ public class MainMakdownGenerator {
         return doc.build();
     }
 
-    private void _fillConfigVars(NutsObjectElement entries, List<MdElement> all, Vars vars2) {
-        NutsSession session = appContext.getSession();
+    private void _fillConfigVars(NObjectElement entries, List<MdElement> all, Vars vars2) {
+        NSession session = appContext.getSession();
         String target = "your-company";
         vars2.putDefault("config.target", target);
         List<ConfigVar> configVars = OpenApiParser.loadConfigVars(null, entries, vars2, session);
@@ -83,12 +83,12 @@ public class MainMakdownGenerator {
         all.add(MdFactory.endParagraph());
         all.add(MdFactory.title(2, msg.get("CONFIGURATION").get()));
         all.add(NoApiUtils.asText(
-                NutsMessage.ofVstyle(msg.get("section.config.master.body").get(), NutsMaps.of("name", target)
+                NMsg.ofVstyle(msg.get("section.config.master.body").get(), NMaps.of("name", target)
                 ).toString()));
         all.add(MdFactory.endParagraph());
         all.add(MdFactory.title(3, msg.get("CUSTOM_PARAMETER_LIST").get()));
         all.add(NoApiUtils.asText(
-                NutsMessage.ofVstyle(msg.get("section.config.master.customVars.body").get(), NutsMaps.of("name", target)
+                NMsg.ofVstyle(msg.get("section.config.master.customVars.body").get(), NMaps.of("name", target)
                 ).toString()));
         all.add(MdFactory.endParagraph());
 
@@ -102,12 +102,12 @@ public class MainMakdownGenerator {
         }
     }
 
-    private Vars _fillVars(NutsObjectElement entries, Map<String, String> vars) {
+    private Vars _fillVars(NObjectElement entries, Map<String, String> vars) {
         Map<String, String> m = new LinkedHashMap<>();
 
-        NutsOptional<NutsObjectElement> v = entries.getObjectByPath("custom", "variables");
+        NOptional<NObjectElement> v = entries.getObjectByPath("custom", "variables");
         if (v.isPresent()) {
-            for (NutsElementEntry entry : v.get().entries()) {
+            for (NElementEntry entry : v.get().entries()) {
                 m.put(entry.getKey().toString(), entry.getValue().toString());
             }
         }
@@ -117,12 +117,12 @@ public class MainMakdownGenerator {
         return new Vars(m);
     }
 
-    private void _fillIntroduction(NutsObjectElement entries, List<MdElement> all, Vars vars) {
-        NutsSession session = appContext.getSession();
+    private void _fillIntroduction(NObjectElement entries, List<MdElement> all, Vars vars) {
+        NSession session = appContext.getSession();
         all.add(MdFactory.endParagraph());
         all.add(MdFactory.title(2, msg.get("INTRODUCTION").get()));
         all.add(MdFactory.endParagraph());
-        NutsObjectElement info = entries.getObject("info").orElse(NutsObjectElement.ofEmpty(session));
+        NObjectElement info = entries.getObject("info").orElse(NObjectElement.ofEmpty(session));
         all.add(NoApiUtils.asText(info.getString("description").orElse("").trim()));
         all.add(MdFactory.endParagraph());
         all.add(MdFactory.title(3, msg.get("CONTACT").get()));
@@ -130,7 +130,7 @@ public class MainMakdownGenerator {
                 msg.get("section.contact.body").get()
         ));
         all.add(MdFactory.endParagraph());
-        NutsObjectElement contact = info.getObject("contact").orElse(NutsObjectElement.ofEmpty(session));
+        NObjectElement contact = info.getObject("contact").orElse(NObjectElement.ofEmpty(session));
         all.add(MdFactory.table()
                 .addColumns(
                         MdFactory.column().setName(msg.get("NAME").get()),
@@ -147,9 +147,9 @@ public class MainMakdownGenerator {
         );
     }
 
-    private void _fillHeaders(NutsObjectElement entries, List<MdElement> all, Vars vars2) {
-        NutsSession session = appContext.getSession();
-        NutsObjectElement components = entries.getObject("components").orElse(NutsObjectElement.ofEmpty(session));
+    private void _fillHeaders(NObjectElement entries, List<MdElement> all, Vars vars2) {
+        NSession session = appContext.getSession();
+        NObjectElement components = entries.getObject("components").orElse(NObjectElement.ofEmpty(session));
         if (!components.getObject("headers").isEmpty()) {
             all.add(MdFactory.endParagraph());
             all.add(MdFactory.title(3, msg.get("HEADERS").get()));
@@ -163,7 +163,7 @@ public class MainMakdownGenerator {
                             MdFactory.column().setName(msg.get("DESCRIPTION").get())
                     );
 
-            for (NutsElementEntry ee : components.getObject("headers").orElse(NutsObjectElement.ofEmpty(session))) {
+            for (NElementEntry ee : components.getObject("headers").orElse(NObjectElement.ofEmpty(session))) {
                 String k = ee.getKey().toString();
                 k = k + (ee.getValue().asObject().get(session).getBoolean("deprecated").orElse(false) ? (" [" + msg.get("DEPRECATED").get() + "]") : "");
                 k = k + NoApiUtils.asText(requiredSuffix(ee.getValue().asObject().get(session)));
@@ -171,7 +171,7 @@ public class MainMakdownGenerator {
                         MdFactory.row().addCells(
                                 MdFactory.codeBacktick3("", k),
                                 MdFactory.codeBacktick3("", ee.getValue().asObject().get(session).getObject("schema")
-                                        .orElse(NutsObjectElement.ofEmpty(session))
+                                        .orElse(NObjectElement.ofEmpty(session))
                                         .getString("type").orElse("")),
                                 NoApiUtils.asText(ee.getValue().asObject().get(session).getString("description").orElse(""))
                         )
@@ -181,16 +181,16 @@ public class MainMakdownGenerator {
         }
     }
 
-    private void _fillSecuritySchemes(NutsObjectElement entries, List<MdElement> all, Vars vars2) {
-        NutsSession session = appContext.getSession();
-        NutsObjectElement components = entries.getObject("components").orElse(NutsObjectElement.ofEmpty(session));
-        NutsObjectElement securitySchemes = components.getObject("securitySchemes").orElse(NutsObjectElement.ofEmpty(session));
+    private void _fillSecuritySchemes(NObjectElement entries, List<MdElement> all, Vars vars2) {
+        NSession session = appContext.getSession();
+        NObjectElement components = entries.getObject("components").orElse(NObjectElement.ofEmpty(session));
+        NObjectElement securitySchemes = components.getObject("securitySchemes").orElse(NObjectElement.ofEmpty(session));
         if (!securitySchemes.isEmpty()) {
             all.add(MdFactory.endParagraph());
             all.add(MdFactory.title(3, msg.get("SECURITY_AND_AUTHENTICATION").get()));
             all.add(MdFactory.endParagraph());
             all.add(NoApiUtils.asText(msg.get("section.security.body").get()));
-            for (NutsElementEntry ee : securitySchemes) {
+            for (NElementEntry ee : securitySchemes) {
                 String type = ee.getValue().asObject().get(session).getString("type").orElse("");
                 switch (type) {
                     case "apiKey": {
@@ -283,7 +283,7 @@ public class MainMakdownGenerator {
     }
 
 
-    private void _fillSchemaTypes(NutsObjectElement entries, List<MdElement> all, Vars vars2, List<TypeCrossRef> typeCrossRefs) {
+    private void _fillSchemaTypes(NObjectElement entries, List<MdElement> all, Vars vars2, List<TypeCrossRef> typeCrossRefs) {
         Map<String, TypeInfo> allTypes = openApiParser.parseTypes(entries, appContext.getSession());
         if (allTypes.isEmpty()) {
             return;
@@ -297,21 +297,21 @@ public class MainMakdownGenerator {
                 all.add(MdFactory.title(3, entry.getKey()));
                 String d1 = v.getDescription();
                 String d2 = v.getSummary();
-                if (!NutsBlankable.isBlank(d1) && !NutsBlankable.isBlank(d2)) {
+                if (!NBlankable.isBlank(d1) && !NBlankable.isBlank(d2)) {
                     all.add(NoApiUtils.asText(d1));
                     all.add(MdFactory.text(". "));
                     all.add(NoApiUtils.asText(d2));
-                    if (!NutsBlankable.isBlank(d2) && !d2.endsWith(".")) {
+                    if (!NBlankable.isBlank(d2) && !d2.endsWith(".")) {
                         all.add(MdFactory.text("."));
                     }
-                } else if (!NutsBlankable.isBlank(d1)) {
+                } else if (!NBlankable.isBlank(d1)) {
                     all.add(NoApiUtils.asText(d1));
-                    if (!NutsBlankable.isBlank(d1) && !d1.endsWith(".")) {
+                    if (!NBlankable.isBlank(d1) && !d1.endsWith(".")) {
                         all.add(MdFactory.text("."));
                     }
-                } else if (!NutsBlankable.isBlank(d2)) {
+                } else if (!NBlankable.isBlank(d2)) {
                     all.add(NoApiUtils.asText(d2));
-                    if (!NutsBlankable.isBlank(d2) && !d2.endsWith(".")) {
+                    if (!NBlankable.isBlank(d2) && !d2.endsWith(".")) {
                         all.add(NoApiUtils.asText("."));
                     }
                 }
@@ -351,7 +351,7 @@ public class MainMakdownGenerator {
                 }
                 all.add(mdTableBuilder.build());
             }
-            if (!NutsBlankable.isBlank(v.getExample())) {
+            if (!NBlankable.isBlank(v.getExample())) {
                 all.add(MdFactory.endParagraph());
                 all.add(NoApiUtils.asText(msg.get("EXAMPLE").get()));
                 all.add(NoApiUtils.asText(":"));
@@ -362,28 +362,28 @@ public class MainMakdownGenerator {
     }
 
 
-    private void _fillApiPaths(NutsObjectElement entries, List<MdElement> all, Vars vars2, List<TypeCrossRef> typeCrossRefs) {
-        NutsSession session = appContext.getSession();
-        NutsElements prv = NutsElements.of(session);
+    private void _fillApiPaths(NObjectElement entries, List<MdElement> all, Vars vars2, List<TypeCrossRef> typeCrossRefs) {
+        NSession session = appContext.getSession();
+        NElements prv = NElements.of(session);
         all.add(MdFactory.endParagraph());
         all.add(MdFactory.title(2, msg.get("API_PATHS").get()));
-        int apiSize = entries.get(prv.ofString("paths")).flatMap(NutsElement::asObject).get(session).size();
-        all.add(NoApiUtils.asText(NutsMessage.ofVstyle(msg.get("API_PATHS.body").get(), NutsMaps.of("apiSize", apiSize)).toString()));
+        int apiSize = entries.get(prv.ofString("paths")).flatMap(NElement::asObject).get(session).size();
+        all.add(NoApiUtils.asText(NMsg.ofVstyle(msg.get("API_PATHS.body").get(), NMaps.of("apiSize", apiSize)).toString()));
         all.add(MdFactory.endParagraph());
-        for (NutsElementEntry path : entries.get(prv.ofString("paths")).flatMap(NutsElement::asObject).get(session)) {
+        for (NElementEntry path : entries.get(prv.ofString("paths")).flatMap(NElement::asObject).get(session)) {
             String url = path.getKey().asString().get(session);
             all.add(MdFactory.ul(1, MdFactory.codeBacktick3("", url)));
         }
         all.add(MdFactory.endParagraph());
         all.add(NoApiUtils.asText(msg.get("API_PATHS.text").get()));
-        NutsObjectElement schemas = entries.getObjectByPath("components", "schemas").orNull();
-        for (NutsElementEntry path : entries.get(prv.ofString("paths")).flatMap(NutsElement::asObject).get(session)) {
+        NObjectElement schemas = entries.getObjectByPath("components", "schemas").orNull();
+        for (NElementEntry path : entries.get(prv.ofString("paths")).flatMap(NElement::asObject).get(session)) {
             String url = path.getKey().asString().get(session);
-            Map<String, NutsObjectElement> calls = new HashMap<>();
+            Map<String, NObjectElement> calls = new HashMap<>();
             String dsummary = null;
             String ddescription = null;
-            NutsArrayElement dparameters = null;
-            for (NutsElementEntry ss : path.getValue().asObject().get(session)) {
+            NArrayElement dparameters = null;
+            for (NElementEntry ss : path.getValue().asObject().get(session)) {
                 String k = ss.getKey().asString().get(session);
                 switch (k) {
                     case "summary": {
@@ -403,33 +403,33 @@ public class MainMakdownGenerator {
                     }
                 }
             }
-            for (Map.Entry<String, NutsObjectElement> ee : calls.entrySet()) {
+            for (Map.Entry<String, NObjectElement> ee : calls.entrySet()) {
                 _fillApiPathMethod(ee.getKey(), ee.getValue(), all, url, prv, dsummary, ddescription, dparameters, schemas, typeCrossRefs);
             }
         }
     }
 
-    private void _fillServerList(NutsObjectElement entries, List<MdElement> all, Vars vars2) {
-        NutsSession session = appContext.getSession();
+    private void _fillServerList(NObjectElement entries, List<MdElement> all, Vars vars2) {
+        NSession session = appContext.getSession();
         all.add(MdFactory.endParagraph());
         all.add(MdFactory.title(3, "SERVER LIST"));
         all.add(NoApiUtils.asText(
                 msg.get("section.serverlist.body").get()
         ));
-        NutsElements prv = NutsElements.of(session);
-        for (NutsElement srv : entries.getArray(prv.ofString("servers")).orElse(prv.ofEmptyArray())) {
-            NutsObjectElement srvObj = (NutsObjectElement) srv.asObject().orElse(prv.ofEmptyObject());
+        NElements prv = NElements.of(session);
+        for (NElement srv : entries.getArray(prv.ofString("servers")).orElse(prv.ofEmptyArray())) {
+            NObjectElement srvObj = (NObjectElement) srv.asObject().orElse(prv.ofEmptyObject());
             all.add(MdFactory.endParagraph());
             all.add(MdFactory.title(4, vars2.format(srvObj.getString("url").orNull())));
             all.add(NoApiUtils.asText(vars2.format(srvObj.getString("description").orNull())));
-            NutsElement vars = srvObj.get(prv.ofString("variables")).orNull();
+            NElement vars = srvObj.get(prv.ofString("variables")).orNull();
             if (vars != null && !vars.isEmpty()) {
                 MdTableBuilder mdTableBuilder = MdFactory.table().addColumns(
                         MdFactory.column().setName("NAME"),
                         MdFactory.column().setName("SPEC"),
                         MdFactory.column().setName("DESCRIPTION")
                 );
-                for (NutsElementEntry variables : vars.asObject().get(session)) {
+                for (NElementEntry variables : vars.asObject().get(session)) {
                     mdTableBuilder.addRows(
                             MdFactory.row().addCells(
                                     NoApiUtils.asText(variables.getKey().asString().get(session)),
@@ -445,10 +445,10 @@ public class MainMakdownGenerator {
     }
 
 
-    private String getSmartTypeName(NutsObjectElement obj) {
+    private String getSmartTypeName(NObjectElement obj) {
         String e = _StringUtils.nvl(obj.getString("type").orNull(), "string");
         if("array".equals(e)){
-            NutsObjectElement items = obj.getObject("items").orNull();
+            NObjectElement items = obj.getObject("items").orNull();
             if(items!=null){
                 return getSmartTypeName(items)+"[]";
             }else{
@@ -458,8 +458,8 @@ public class MainMakdownGenerator {
             return e;
         }
     }
-    private void _fillApiPathMethodParam(List<NutsElement> headerParameters, List<MdElement> all, String url, List<TypeCrossRef> typeCrossRefs, String paramType) {
-        NutsSession session = appContext.getSession();
+    private void _fillApiPathMethodParam(List<NElement> headerParameters, List<MdElement> all, String url, List<TypeCrossRef> typeCrossRefs, String paramType) {
+        NSession session = appContext.getSession();
         MdTable tab = new MdTable(
                 new MdColumn[]{
                         new MdColumn(NoApiUtils.asText(msg.get("NAME").get()), MdHorizontalAlign.LEFT),
@@ -469,7 +469,7 @@ public class MainMakdownGenerator {
                 },
                 headerParameters.stream().map(
                         headerParameter -> {
-                            NutsObjectElement obj = headerParameter.asObject().orElse(NutsElements.of(session).ofEmptyObject());
+                            NObjectElement obj = headerParameter.asObject().orElse(NElements.of(session).ofEmptyObject());
                             String name = obj.getString("name").orNull();
                             boolean pdeprecated = obj.getBoolean("deprecated").orElse(false);
                             String type = getSmartTypeName(obj)
@@ -493,7 +493,7 @@ public class MainMakdownGenerator {
         all.add(tab);
     }
 
-    private String requiredSuffix(NutsObjectElement obj) {
+    private String requiredSuffix(NObjectElement obj) {
         return requiredSuffix(obj.getBoolean("required").orElse(false));
     }
 
@@ -501,14 +501,14 @@ public class MainMakdownGenerator {
         return obj ? (" [" + msg.get("REQUIRED").get() + "]") : (" [" + msg.get("OPTIONAL").get() + "]");
     }
 
-    private void _fillApiPathMethod(String method, NutsObjectElement call, List<MdElement> all, String url, NutsElements prv, String dsummary, String ddescription, NutsArrayElement dparameters, NutsObjectElement schemas, List<TypeCrossRef> typeCrossRefs) {
-        NutsSession session = appContext.getSession();
+    private void _fillApiPathMethod(String method, NObjectElement call, List<MdElement> all, String url, NElements prv, String dsummary, String ddescription, NArrayElement dparameters, NObjectElement schemas, List<TypeCrossRef> typeCrossRefs) {
+        NSession session = appContext.getSession();
         String nsummary = call.getString("summary").orElse(dsummary);
         String ndescription = call.getString("description").orElse(ddescription);
         all.add(MdFactory.endParagraph());
         all.add(MdFactory.title(3, method.toUpperCase() + " " + url));
         all.add(NoApiUtils.asText(nsummary));
-        if (!NutsBlankable.isBlank(nsummary) && !nsummary.endsWith(".")) {
+        if (!NBlankable.isBlank(nsummary) && !nsummary.endsWith(".")) {
             all.add(NoApiUtils.asText("."));
         }
         all.add(MdFactory.endParagraph());
@@ -518,18 +518,18 @@ public class MainMakdownGenerator {
         all.add(MdFactory.endParagraph());
         if (ndescription != null) {
             all.add(NoApiUtils.asText(ndescription));
-            if (!NutsBlankable.isBlank(ndescription) && !ndescription.endsWith(".")) {
+            if (!NBlankable.isBlank(ndescription) && !ndescription.endsWith(".")) {
                 all.add(NoApiUtils.asText("."));
             }
             all.add(MdFactory.endParagraph());
         }
-        NutsArrayElement parameters = call.getArray(prv.ofString("parameters"))
-                .orElseUse(() -> NutsOptional.of(dparameters))
-                .orElseGet(() -> NutsArrayElementBuilder.of(session).build());
-        List<NutsElement> headerParameters = parameters.stream().filter(x -> "header".equals(x.asObject().get(session).getString("in").orNull())).collect(Collectors.toList());
-        List<NutsElement> queryParameters = parameters.stream().filter(x -> "query".equals(x.asObject().get(session).getString("in").orNull())).collect(Collectors.toList());
-        List<NutsElement> pathParameters = parameters.stream().filter(x -> "path".equals(x.asObject().get(session).getString("in").orNull())).collect(Collectors.toList());
-        NutsObjectElement requestBody = call.getObject("requestBody").orNull();
+        NArrayElement parameters = call.getArray(prv.ofString("parameters"))
+                .orElseUse(() -> NOptional.of(dparameters))
+                .orElseGet(() -> NArrayElementBuilder.of(session).build());
+        List<NElement> headerParameters = parameters.stream().filter(x -> "header".equals(x.asObject().get(session).getString("in").orNull())).collect(Collectors.toList());
+        List<NElement> queryParameters = parameters.stream().filter(x -> "query".equals(x.asObject().get(session).getString("in").orNull())).collect(Collectors.toList());
+        List<NElement> pathParameters = parameters.stream().filter(x -> "path".equals(x.asObject().get(session).getString("in").orNull())).collect(Collectors.toList());
+        NObjectElement requestBody = call.getObject("requestBody").orNull();
         boolean withRequestHeaderParameters = !headerParameters.isEmpty();
         boolean withRequestPathParameters = !pathParameters.isEmpty();
         boolean withRequestQueryParameters = !queryParameters.isEmpty();
@@ -581,13 +581,13 @@ public class MainMakdownGenerator {
             if (withRequestBody) {
                 boolean required = requestBody.getBoolean("required").orElse(false);
                 String desc = requestBody.getString("description").orElse("");
-                NutsObjectElement r = requestBody.getObject("content").orElseGet(() -> NutsObjectElement.ofEmpty(session));
-                for (NutsElementEntry ii : r) {
+                NObjectElement r = requestBody.getObject("content").orElseGet(() -> NObjectElement.ofEmpty(session));
+                for (NElementEntry ii : r) {
                     all.add(MdFactory.endParagraph());
                     all.add(MdFactory.title(5, msg.get("REQUEST_BODY").get() + " - " + ii.getKey() +
                             requiredSuffix(required)));
                     all.add(NoApiUtils.asText(desc));
-                    if (!NutsBlankable.isBlank(desc) && !desc.endsWith(".")) {
+                    if (!NBlankable.isBlank(desc) && !desc.endsWith(".")) {
                         all.add(MdFactory.text("."));
                     }
                     TypeInfo o = openApiParser.parseOneType(ii.getValue().asObject().get(session), null, session);
@@ -596,10 +596,10 @@ public class MainMakdownGenerator {
 //                        all.add(MdFactory.endParagraph());
 //                        all.add(MdFactory.title(5, "REQUEST TYPE - " + o.ref));
                         all.add(NoApiUtils.asText(" "));
-                        all.add(NoApiUtils.asText(NutsMessage.ofVstyle(msg.get("requestType.info").get(), NutsMaps.of("type", o.getRef())).toString()));
-                        NutsElement s = schemas.get(o.getRef()).orNull();
-                        NutsElement description = null;
-                        NutsElement example = null;
+                        all.add(NoApiUtils.asText(NMsg.ofVstyle(msg.get("requestType.info").get(), NMaps.of("type", o.getRef())).toString()));
+                        NElement s = schemas.get(o.getRef()).orNull();
+                        NElement description = null;
+                        NElement example = null;
                         if (s != null) {
                             description = s.asObject().get().get("description").orNull();
                             example = s.asObject().get().get("example").orNull();
@@ -624,7 +624,7 @@ public class MainMakdownGenerator {
 
                         );
                         all.add(tab);
-                        if (!NutsBlankable.isBlank(example)) {
+                        if (!NBlankable.isBlank(example)) {
                             all.add(MdFactory.text(msg.get("request.body.example.intro").get()));
                             all.add(MdFactory.text(":\n"));
                             all.add(NoApiUtils.jsonTextElement(example));
@@ -640,30 +640,30 @@ public class MainMakdownGenerator {
 
         all.add(MdFactory.endParagraph());
         all.add(MdFactory.title(4, msg.get("RESPONSE").get()));
-        all.add(NoApiUtils.asText(NutsMessage.ofVstyle(msg.get("section.response.body").get(), NutsMaps.of("path", url)).toString()));
+        all.add(NoApiUtils.asText(NMsg.ofVstyle(msg.get("section.response.body").get(), NMaps.of("path", url)).toString()));
 
         call.getObject("responses").get(session).stream()
                 .forEach(x -> {
-                    NutsElement s = x.getKey();
-                    NutsElement v = x.getValue();
+                    NElement s = x.getKey();
+                    NElement v = x.getValue();
                     all.add(MdFactory.endParagraph());
                     String codeDescription = evalCodeDescription(s.toString());
                     all.add(MdFactory.title(5, msg.get("STATUS_CODE").get() + " - " + s
-                            + (NutsBlankable.isBlank(codeDescription) ? "" : (" - " + codeDescription))
+                            + (NBlankable.isBlank(codeDescription) ? "" : (" - " + codeDescription))
                     ));
                     String description = v.asObject().get(session).getString("description").orElse("");
                     all.add(NoApiUtils.asText(description));
-                    if (!NutsBlankable.isBlank(description) && !description.endsWith(".")) {
+                    if (!NBlankable.isBlank(description) && !description.endsWith(".")) {
                         all.add(MdFactory.text("."));
                     }
-                    for (NutsElementEntry content : v.asObject().get(session).getObject("content").orElse(NutsObjectElement.ofEmpty(session))) {
+                    for (NElementEntry content : v.asObject().get(session).getObject("content").orElse(NObjectElement.ofEmpty(session))) {
                         TypeInfo o = openApiParser.parseOneType(content.getValue().asObject().get(session), null, session);
                         if (o.getUserType().equals("$ref")) {
                             typeCrossRefs.add(new TypeCrossRef(
                                     o.getRef(),
                                     url, "Response (" + s + ")"
                             ));
-                            if (NutsBlankable.isBlank(o.getExample())) {
+                            if (NBlankable.isBlank(o.getExample())) {
                                 all.add(MdFactory.table()
                                         .addColumns(
                                                 MdFactory.column().setName(msg.get("RESPONSE_MODEL").get()),
@@ -689,7 +689,7 @@ public class MainMakdownGenerator {
                                                 )
                                         ).build()
                                 );
-                                if (!NutsBlankable.isBlank(o.getExample())) {
+                                if (!NBlankable.isBlank(o.getExample())) {
                                     all.add(MdFactory.text(msg.get("response.body.example.intro").get()));
                                     all.add(MdFactory.text(":\n"));
                                     all.add(NoApiUtils.jsonTextElement(o.getExample()));
@@ -709,7 +709,7 @@ public class MainMakdownGenerator {
                                                         )
                                                 ).build()
                                 );
-                                if (!NutsBlankable.isBlank(o.getExample())) {
+                                if (!NBlankable.isBlank(o.getExample())) {
                                     all.add(MdFactory.text(msg.get("response.body.example.intro").get()));
                                     all.add(MdFactory.text(":\n"));
                                     all.add(NoApiUtils.jsonTextElement(o.getExample()));

@@ -1,16 +1,16 @@
 package net.thevpc.nuts.lib.ssh;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.spi.NutsPathFactory;
-import net.thevpc.nuts.spi.NutsPathSPI;
+import net.thevpc.nuts.spi.NPathFactory;
+import net.thevpc.nuts.spi.NPathSPI;
 
-public class SshPathFactory implements NutsPathFactory {
+public class SshPathFactory implements NPathFactory {
     @Override
-    public NutsSupported<NutsPathSPI> createPath(String path, NutsSession session, ClassLoader classLoader) {
+    public NSupported<NPathSPI> createPath(String path, NSession session, ClassLoader classLoader) {
         try{
             if(path.startsWith("ssh:")){
                 SshPath a=new SshPath(path);
-                return NutsSupported.of(3,()->new SshNutsPath(a,session));
+                return NSupported.of(3,()->new SshNPath(a,session));
             }
         }catch (Exception ex){
             //ignore

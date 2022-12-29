@@ -1,9 +1,9 @@
 package net.thevpc.nuts.runtime.standalone.xtra.nanodb;
 
-import net.thevpc.nuts.NutsBlankable;
-import net.thevpc.nuts.NutsIllegalArgumentException;
-import net.thevpc.nuts.NutsMessage;
-import net.thevpc.nuts.NutsSession;
+import net.thevpc.nuts.NBlankable;
+import net.thevpc.nuts.NIllegalArgumentException;
+import net.thevpc.nuts.NMsg;
+import net.thevpc.nuts.NSession;
 
 import java.io.File;
 import java.util.HashMap;
@@ -19,7 +19,7 @@ public class NanoDB implements AutoCloseable {
         dir.mkdirs();
     }
 
-    public void flush(NutsSession session) {
+    public void flush(NSession session) {
         for (NanoDBTableFile value : tables.values()) {
             value.flush(session);
         }
@@ -36,31 +36,31 @@ public class NanoDB implements AutoCloseable {
         return serializers;
     }
 
-    public NanoDBTableFile findTable(String name, NutsSession session) {
+    public NanoDBTableFile findTable(String name, NSession session) {
         return tables.get(name);
     }
 
-    public NanoDBTableFile getTable(String name, NutsSession session) {
+    public NanoDBTableFile getTable(String name, NSession session) {
         NanoDBTableFile tableFile = tables.get(name);
         if (tableFile == null) {
-            throw new NutsIllegalArgumentException(session, NutsMessage.ofCstyle("table does not exists: %s", name));
+            throw new NIllegalArgumentException(session, NMsg.ofCstyle("table does not exists: %s", name));
         }
         return tableFile;
     }
 
-    public <T> NanoDBTableDefinitionBuilderFromBean<T> tableBuilder(Class<T> type, NutsSession session) {
+    public <T> NanoDBTableDefinitionBuilderFromBean<T> tableBuilder(Class<T> type, NSession session) {
         return new NanoDBTableDefinitionBuilderFromBean<>(type, this, session);
     }
 
-    public <T> NanoDBTableFile<T> createTable(NanoDBTableDefinition<T> def, NutsSession session) {
+    public <T> NanoDBTableFile<T> createTable(NanoDBTableDefinition<T> def, NSession session) {
         return createTable(def, false, session);
     }
 
-    public <T> NanoDBTableFile<T> getOrCreateTable(NanoDBTableDefinition<T> def, NutsSession session) {
+    public <T> NanoDBTableFile<T> getOrCreateTable(NanoDBTableDefinition<T> def, NSession session) {
         return createTable(def, true, session);
     }
 
-    public <T> NanoDBTableFile<T> createTable(NanoDBTableDefinition<T> def, boolean getOrCreate, NutsSession session) {
+    public <T> NanoDBTableFile<T> createTable(NanoDBTableDefinition<T> def, boolean getOrCreate, NSession session) {
         if (def == null) {
             throw new IllegalArgumentException("null table definition");
         }
@@ -71,7 +71,7 @@ public class NanoDB implements AutoCloseable {
                 return oldTable;
             }
         }
-        if (NutsBlankable.isBlank(name)) {
+        if (NBlankable.isBlank(name)) {
             throw new IllegalArgumentException("invalid table definition: null name");
         }
         NanoDBSerializer<T> serializer = def.getSerializer();
@@ -115,11 +115,11 @@ public class NanoDB implements AutoCloseable {
     }
 
 
-    public boolean containsTable(String tableName,NutsSession session) {
+    public boolean containsTable(String tableName, NSession session) {
         return tables.containsKey(tableName);
     }
 
-    public <T> NanoDBIndex<T> createIndexFor(Class<T> type,NanoDBSerializer<T> ser, File file,NutsSession session) {
+    public <T> NanoDBIndex<T> createIndexFor(Class<T> type, NanoDBSerializer<T> ser, File file, NSession session) {
         return new NanoDBDefaultIndex<T>(type,ser, new DBIndexValueStoreDefaultFactory(), new HashMap<>(), file);
     }
 }

@@ -1,14 +1,14 @@
 package net.thevpc.nuts.runtime.standalone.util.iter;
 
-import net.thevpc.nuts.elem.NutsElement;
-import net.thevpc.nuts.elem.NutsElements;
-import net.thevpc.nuts.NutsSession;
+import net.thevpc.nuts.elem.NElement;
+import net.thevpc.nuts.elem.NElements;
+import net.thevpc.nuts.NSession;
 
 import java.util.NoSuchElementException;
 import java.util.Objects;
 import java.util.function.Consumer;
 
-public class EmptyIterator<E> extends NutsIteratorBase<E> {
+public class EmptyIterator<E> extends NIteratorBase<E> {
 
     @Override
     public boolean hasNext() {
@@ -36,7 +36,7 @@ public class EmptyIterator<E> extends NutsIteratorBase<E> {
     }
 
     @Override
-    public NutsElement describe(NutsSession session) {
-        return NutsElements.of(session).ofString("empty");
+    public NElement describe(NSession session) {
+        return NElements.of(session).ofString("empty");
     }
 }

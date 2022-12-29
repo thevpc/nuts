@@ -1,9 +1,9 @@
 package net.thevpc.nuts.runtime.standalone.workspace.cmd.deploy;
 
-import net.thevpc.nuts.NutsDescriptor;
-import net.thevpc.nuts.NutsSession;
-import net.thevpc.nuts.io.NutsIOException;
-import net.thevpc.nuts.io.NutsInputSource;
+import net.thevpc.nuts.NDescriptor;
+import net.thevpc.nuts.NSession;
+import net.thevpc.nuts.io.NIOException;
+import net.thevpc.nuts.io.NInputSource;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -15,12 +15,12 @@ import java.util.List;
 class CharacterizedDeployFile implements AutoCloseable {
 
     private Path baseFile;
-    private NutsInputSource contentStreamOrPath;
+    private NInputSource contentStreamOrPath;
     private List<Path> temps = new ArrayList<>();
-    private NutsDescriptor descriptor;
-    private NutsSession session;
+    private NDescriptor descriptor;
+    private NSession session;
 
-    public CharacterizedDeployFile(NutsSession session) {
+    public CharacterizedDeployFile(NSession session) {
         this.session = session;
     }
 
@@ -37,11 +37,11 @@ class CharacterizedDeployFile implements AutoCloseable {
         return this;
     }
 
-    public NutsInputSource getContentStreamOrPath() {
+    public NInputSource getContentStreamOrPath() {
         return contentStreamOrPath;
     }
 
-    public CharacterizedDeployFile setContentStreamOrPath(NutsInputSource contentStreamOrPath) {
+    public CharacterizedDeployFile setContentStreamOrPath(NInputSource contentStreamOrPath) {
         this.contentStreamOrPath = contentStreamOrPath;
         return this;
     }
@@ -55,20 +55,20 @@ class CharacterizedDeployFile implements AutoCloseable {
         return this;
     }
 
-    public NutsDescriptor getDescriptor() {
+    public NDescriptor getDescriptor() {
         return descriptor;
     }
 
-    public CharacterizedDeployFile setDescriptor(NutsDescriptor descriptor) {
+    public CharacterizedDeployFile setDescriptor(NDescriptor descriptor) {
         this.descriptor = descriptor;
         return this;
     }
 
-    public NutsSession getSession() {
+    public NSession getSession() {
         return session;
     }
 
-    public CharacterizedDeployFile setSession(NutsSession session) {
+    public CharacterizedDeployFile setSession(NSession session) {
         this.session = session;
         return this;
     }
@@ -80,7 +80,7 @@ class CharacterizedDeployFile implements AutoCloseable {
             try {
                 Files.delete(temp);
             } catch (IOException ex) {
-                throw new NutsIOException(session, ex);
+                throw new NIOException(session, ex);
             }
             it.remove();
         }

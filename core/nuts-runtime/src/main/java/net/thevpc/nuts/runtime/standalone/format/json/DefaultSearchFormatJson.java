@@ -6,14 +6,14 @@
 package net.thevpc.nuts.runtime.standalone.format.json;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.cmdline.NutsArgument;
-import net.thevpc.nuts.cmdline.NutsCommandLine;
-import net.thevpc.nuts.elem.NutsElements;
-import net.thevpc.nuts.io.NutsPrintStream;
-import net.thevpc.nuts.runtime.standalone.format.NutsFetchDisplayOptions;
+import net.thevpc.nuts.cmdline.NArgument;
+import net.thevpc.nuts.cmdline.NCommandLine;
+import net.thevpc.nuts.elem.NElements;
+import net.thevpc.nuts.io.NStream;
+import net.thevpc.nuts.runtime.standalone.format.NFetchDisplayOptions;
 import net.thevpc.nuts.runtime.standalone.format.DefaultSearchFormatBase;
-import net.thevpc.nuts.text.NutsText;
-import net.thevpc.nuts.text.NutsTexts;
+import net.thevpc.nuts.text.NText;
+import net.thevpc.nuts.text.NTexts;
 
 /**
  *
@@ -23,13 +23,13 @@ public class DefaultSearchFormatJson extends DefaultSearchFormatBase {
 
     private boolean compact;
 
-    NutsTexts txt;
-    private NutsCodeHighlighter codeFormat;
+    NTexts txt;
+    private NCodeHighlighter codeFormat;
 
-    public DefaultSearchFormatJson(NutsSession session, NutsPrintStream writer, NutsFetchDisplayOptions options) {
-        super(session, writer, NutsContentType.JSON, options);
-        txt = NutsTexts.of(session);
-        codeFormat = NutsTexts.of(session).setSession(session).getCodeHighlighter("json");
+    public DefaultSearchFormatJson(NSession session, NStream writer, NFetchDisplayOptions options) {
+        super(session, writer, NContentType.JSON, options);
+        txt = NTexts.of(session);
+        codeFormat = NTexts.of(session).setSession(session).getCodeHighlighter("json");
     }
 
     @Override
@@ -45,9 +45,9 @@ public class DefaultSearchFormatJson extends DefaultSearchFormatBase {
     }
 
     @Override
-    public boolean configureFirst(NutsCommandLine commandLine) {
-        NutsSession session = getSession();
-        NutsArgument aa = commandLine.peek().get(session);
+    public boolean configureFirst(NCommandLine commandLine) {
+        NSession session = getSession();
+        NArgument aa = commandLine.peek().get(session);
         if (aa == null) {
             return false;
         }
@@ -70,12 +70,12 @@ public class DefaultSearchFormatJson extends DefaultSearchFormatBase {
         }else{
             getWriter().print("  ");
         }
-        String json = NutsElements.of(getSession())
+        String json = NElements.of(getSession())
                 .json().setNtf(false).setValue(object).setCompact(isCompact())
                 .format()
                 .filteredText()
                 ;
-        NutsText ee = codeFormat.stringToText(json, txt, getSession());
+        NText ee = codeFormat.stringToText(json, txt, getSession());
         getWriter().printf("%s%n", ee);
         getWriter().flush();
     }

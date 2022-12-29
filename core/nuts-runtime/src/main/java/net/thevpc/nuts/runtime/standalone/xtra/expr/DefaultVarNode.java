@@ -1,26 +1,26 @@
 package net.thevpc.nuts.runtime.standalone.xtra.expr;
 
-import net.thevpc.nuts.NutsMessage;
-import net.thevpc.nuts.NutsOptional;
-import net.thevpc.nuts.util.NutsExprDeclarations;
-import net.thevpc.nuts.util.NutsExprNode;
-import net.thevpc.nuts.util.NutsExprNodeType;
-import net.thevpc.nuts.util.NutsExprWordNode;
+import net.thevpc.nuts.NMsg;
+import net.thevpc.nuts.NOptional;
+import net.thevpc.nuts.util.NExprDeclarations;
+import net.thevpc.nuts.util.NExprNode;
+import net.thevpc.nuts.util.NExprNodeType;
+import net.thevpc.nuts.util.NExprWordNode;
 
 import java.util.Collections;
 import java.util.List;
 
-public class DefaultVarNode implements NutsExprWordNode {
+public class DefaultVarNode implements NExprWordNode {
     private final String name;
 
     @Override
-    public NutsExprNodeType getType() {
-        return NutsExprNodeType.WORD;
+    public NExprNodeType getType() {
+        return NExprNodeType.WORD;
     }
 
 
     @Override
-    public List<NutsExprNode> getChildren() {
+    public List<NExprNode> getChildren() {
         return Collections.emptyList();
     }
 
@@ -34,11 +34,11 @@ public class DefaultVarNode implements NutsExprWordNode {
     }
 
     @Override
-    public NutsOptional<Object> eval(NutsExprDeclarations context) {
+    public NOptional<Object> eval(NExprDeclarations context) {
         try {
             return context.evalGetVar(name);
         } catch (Exception ex) {
-            return NutsOptional.ofError(x -> NutsMessage.ofCstyle("error %s ", ex));
+            return NOptional.ofError(x -> NMsg.ofCstyle("error %s ", ex));
         }
     }
 

@@ -1,35 +1,35 @@
 package net.thevpc.nuts.toolbox.ndb.nmysql.remote;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.elem.NutsElements;
-import net.thevpc.nuts.io.NutsPath;
+import net.thevpc.nuts.elem.NElements;
+import net.thevpc.nuts.io.NPath;
 
 import java.util.HashMap;
 import java.util.Map;
 
 public class CachedMapFile {
-    private final NutsApplicationContext context;
+    private final NApplicationContext context;
     private Map<String, String> map;
     private boolean enabled;
-    private final NutsPath path;
+    private final NPath path;
     private boolean loaded;
 
-    public CachedMapFile(NutsApplicationContext context, String name) {
+    public CachedMapFile(NApplicationContext context, String name) {
         this(context, name, true);
     }
 
-    public CachedMapFile(NutsApplicationContext context, String name, boolean enabled) {
+    public CachedMapFile(NApplicationContext context, String name, boolean enabled) {
         this.context = context;
         this.enabled = enabled;
-        NutsId appId = context.getAppId();
+        NId appId = context.getAppId();
         path = context.getTempFolder()
                 .resolve(appId.getGroupId() + "-" + appId.getArtifactId() + "-" + appId.getVersion())
                 .resolve(name + ".json");
         if (enabled) {
             if (path.isRegularFile()) {
                 try {
-                    NutsSession session = context.getSession();
-                    map = NutsElements.of(session)
+                    NSession session = context.getSession();
+                    map = NElements.of(session)
                             .json()
                             .parse(path, Map.class);
                     loaded = true;
@@ -88,8 +88,8 @@ public class CachedMapFile {
             }
             map.put(k, v);
             try {
-                NutsSession session = context.getSession();
-                NutsElements.of(session).setValue(map)
+                NSession session = context.getSession();
+                NElements.of(session).setValue(map)
                         .json()
                         .setNtf(false)
                         .print(path);

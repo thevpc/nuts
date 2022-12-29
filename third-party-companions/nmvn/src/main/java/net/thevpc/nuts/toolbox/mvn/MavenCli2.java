@@ -1,6 +1,6 @@
 package net.thevpc.nuts.toolbox.mvn;
 
-import net.thevpc.nuts.NutsApplicationContext;
+import net.thevpc.nuts.NApplicationContext;
 import org.apache.maven.cli.MavenCli;
 
 import java.io.ByteArrayOutputStream;
@@ -10,7 +10,7 @@ import java.util.Map;
 
 public class MavenCli2 {
     ByteArrayOutputStream bos;
-    private NutsApplicationContext appContext;
+    private NApplicationContext appContext;
     private String workingDirectory;
     private String multiModuleProjectDirectory;
     private String artifactId;
@@ -19,7 +19,7 @@ public class MavenCli2 {
     private Map<String, String> options = new HashMap<>();
 
 
-    public MavenCli2(NutsApplicationContext appContext) {
+    public MavenCli2(NApplicationContext appContext) {
         this.appContext = appContext;
     }
 

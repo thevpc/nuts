@@ -40,14 +40,14 @@ import net.thevpc.nuts.*;
  */
 public class MavenFolderPathVersionResolver implements PathVersionResolver {
 
-    public Set<VersionDescriptor> resolve(String filePath, NutsApplicationContext context) {
+    public Set<VersionDescriptor> resolve(String filePath, NApplicationContext context) {
         if (Files.isRegularFile(Paths.get(filePath).resolve("pom.xml"))) {
             Properties properties = new Properties();
             Set<VersionDescriptor> all = new HashSet<>();
             try (InputStream inputStream = Files.newInputStream(Paths.get(filePath).resolve("pom.xml"))) {
-                NutsSession session = context.getSession();
-                NutsDescriptor d = NutsDescriptorParser.of(session)
-                        .setDescriptorStyle(NutsDescriptorStyle.MAVEN)
+                NSession session = context.getSession();
+                NDescriptor d = NDescriptorParser.of(session)
+                        .setDescriptorStyle(NDescriptorStyle.MAVEN)
                         .parse(inputStream).get(session);
 
                 properties.put("groupId", d.getId().getGroupId());
@@ -56,12 +56,12 @@ public class MavenFolderPathVersionResolver implements PathVersionResolver {
                 properties.put("name", d.getName());
                 properties.setProperty("nuts.version-provider", "maven");
                 if (d.getProperties() != null) {
-                    for (NutsDescriptorProperty e : d.getProperties()) {
+                    for (NDescriptorProperty e : d.getProperties()) {
                         properties.put("property." + e.getName(), e.getValue());
                     }
                 }
                 all.add(new VersionDescriptor(
-                                NutsIdBuilder.of(d.getId().getGroupId(),d.getId().getArtifactId())
+                                NIdBuilder.of(d.getId().getGroupId(),d.getId().getArtifactId())
                                 .setVersion(d.getId().getVersion())
                                 .build(),
                         properties));

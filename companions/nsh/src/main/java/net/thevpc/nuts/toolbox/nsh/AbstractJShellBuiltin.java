@@ -26,12 +26,12 @@
 package net.thevpc.nuts.toolbox.nsh;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.cmdline.NutsCommandAutoComplete;
-import net.thevpc.nuts.cmdline.NutsCommandLine;
-import net.thevpc.nuts.io.NutsMemoryPrintStream;
-import net.thevpc.nuts.io.NutsPrintStream;
-import net.thevpc.nuts.spi.NutsSupportLevelContext;
-import net.thevpc.nuts.text.NutsTexts;
+import net.thevpc.nuts.cmdline.NCommandAutoComplete;
+import net.thevpc.nuts.cmdline.NCommandLine;
+import net.thevpc.nuts.io.NMemoryStream;
+import net.thevpc.nuts.io.NStream;
+import net.thevpc.nuts.spi.NSupportLevelContext;
+import net.thevpc.nuts.text.NTexts;
 import net.thevpc.nuts.toolbox.nsh.bundles._IOUtils;
 import net.thevpc.nuts.toolbox.nsh.jshell.JShellBuiltin;
 import net.thevpc.nuts.toolbox.nsh.jshell.JShellExecutionContext;
@@ -59,27 +59,27 @@ public abstract class AbstractJShellBuiltin implements JShellBuiltin {
         this.supportLevel = supportLevel;
     }
 
-    protected NutsCommandLine cmdLine(String[] args, JShellExecutionContext context) {
-        NutsSession session = context.getSession();
-        return NutsCommandLine.of(args)
+    protected NCommandLine cmdLine(String[] args, JShellExecutionContext context) {
+        NSession session = context.getSession();
+        return NCommandLine.of(args)
                 .setAutoComplete(context.getShellContext().getAutoComplete())
                 .setCommandName(getName());
     }
 
     @Override
-    public int getSupportLevel(NutsSupportLevelContext param) {
+    public int getSupportLevel(NSupportLevelContext param) {
         return supportLevel;
     }
 
     @Override
-    public void autoComplete(JShellExecutionContext context, NutsCommandAutoComplete autoComplete) {
-        NutsCommandAutoComplete oldAutoComplete = context.getShellContext().getAutoComplete();
+    public void autoComplete(JShellExecutionContext context, NCommandAutoComplete autoComplete) {
+        NCommandAutoComplete oldAutoComplete = context.getShellContext().getAutoComplete();
         context.getShellContext().setAutoComplete(autoComplete);
         try {
             if (autoComplete == null) {
-                throw new NutsIllegalArgumentException(context.getSession(),  NutsMessage.ofPlain("missing auto-complete"));
+                throw new NIllegalArgumentException(context.getSession(),  NMsg.ofPlain("missing auto-complete"));
             }
-            NutsCommandAutoCompleteComponent best = context.getSession().extensions().createServiceLoader(NutsCommandAutoCompleteComponent.class, JShellBuiltin.class, NutsCommandAutoCompleteComponent.class.getClassLoader())
+            NCommandAutoCompleteComponent best = context.getSession().extensions().createServiceLoader(NCommandAutoCompleteComponent.class, JShellBuiltin.class, NCommandAutoCompleteComponent.class.getClassLoader())
                     .loadBest(AbstractJShellBuiltin.this);
             if (best != null) {
                 best.autoComplete(this, context);
@@ -101,16 +101,16 @@ public abstract class AbstractJShellBuiltin implements JShellBuiltin {
     public final void exec(String[] args, JShellExecutionContext context) {
         try {
             execImpl(args, context);
-        } catch (NutsExecutionException ex) {
+        } catch (NExecutionException ex) {
 //            if(ex.getExitCode()!=0) {
 //                context.err().println(ex.toString());
 //            }
             throw ex;
-        } catch (NutsException ex) {
-            throw new NutsExecutionException(context.getSession(),ex.getFormattedMessage(),ex,254);
+        } catch (NException ex) {
+            throw new NExecutionException(context.getSession(),ex.getFormattedMessage(),ex,254);
         } catch (Exception ex) {
-            throw new NutsExecutionException(context.getSession(),
-                    NutsMessage.ofNtf(NutsTexts.of(context.getSession()).ofText(ex).toString())
+            throw new NExecutionException(context.getSession(),
+                    NMsg.ofNtf(NTexts.of(context.getSession()).ofText(ex).toString())
                     ,ex,254);
         }
     }
@@ -160,22 +160,22 @@ public abstract class AbstractJShellBuiltin implements JShellBuiltin {
             if (line == null) {
                 break;
             }
-            if (!NutsBlankable.isBlank(line)) {
+            if (!NBlankable.isBlank(line)) {
                 return line;
             }
         }
         return "No help";
     }
 
-    protected void throwExecutionException(Object errObject,int errorCode,NutsSession session) {
+    protected void throwExecutionException(Object errObject, int errorCode, NSession session) {
         session=session.copy();
-        NutsPrintStream printStream = NutsMemoryPrintStream.of(session);
+        NStream printStream = NMemoryStream.of(session);
         if (errObject != null) {
             printStream.printf(errObject);
         }else{
             printStream.printf("%s: command failed with code %s%n",getName(),errorCode);
         }
-        throw new NutsExecutionException(session,NutsMessage.ofNtf(printStream.toString()), errorCode);
+        throw new NExecutionException(session, NMsg.ofNtf(printStream.toString()), errorCode);
     }
 
 }

@@ -5,10 +5,10 @@
  */
 package net.thevpc.nuts.toolbox.docusaurus;
 
-import net.thevpc.nuts.elem.NutsArrayElement;
-import net.thevpc.nuts.elem.NutsElement;
-import net.thevpc.nuts.elem.NutsObjectElement;
-import net.thevpc.nuts.NutsSession;
+import net.thevpc.nuts.elem.NArrayElement;
+import net.thevpc.nuts.elem.NElement;
+import net.thevpc.nuts.elem.NObjectElement;
+import net.thevpc.nuts.NSession;
 import net.thevpc.nuts.lib.md.MdBody;
 import net.thevpc.nuts.lib.md.MdElement;
 import net.thevpc.nuts.lib.md.MdText;
@@ -32,7 +32,7 @@ public class Docusaurus2Adoc {
     protected String projectName;
     protected String projectTitle;
     protected DocusaurusFolder rootFolder;
-    protected NutsSession session;
+    protected NSession session;
 
 //    public Docusaurus2Adoc(String projectName, String projectTitle, String[] headers, DocusaurusFolder docs,NutsSession session) {
 //        this.projectName = projectName;
@@ -44,19 +44,19 @@ public class Docusaurus2Adoc {
 
     public Docusaurus2Adoc(DocusaurusProject project) {
 
-        NutsObjectElement asciidoctorConfig = project.getConfig()
-                .getObject("customFields").orElse(NutsObjectElement.ofEmpty(session))
-                .getObject("asciidoctor").orElse(NutsObjectElement.ofEmpty(session));
+        NObjectElement asciidoctorConfig = project.getConfig()
+                .getObject("customFields").orElse(NObjectElement.ofEmpty(session))
+                .getObject("asciidoctor").orElse(NObjectElement.ofEmpty(session));
         if (asciidoctorConfig == null) {
             throw new IllegalArgumentException("missing customFields.asciidoctor in docusaurus.config.js file");
         }
-        NutsArrayElement headersJson = asciidoctorConfig.getObject("pdf")
-                .orElse(NutsObjectElement.ofEmpty(session))
+        NArrayElement headersJson = asciidoctorConfig.getObject("pdf")
+                .orElse(NObjectElement.ofEmpty(session))
                 .getArray("headers")
-                .orElse(NutsArrayElement.ofEmpty(session))
+                .orElse(NArrayElement.ofEmpty(session))
                 ;
         List<String> headersList = new ArrayList<>();
-        for (NutsElement jsonItem : headersJson) {
+        for (NElement jsonItem : headersJson) {
             headersList.add(jsonItem.asString().get(session));
         }
         this.projectName = project.getProjectName();
@@ -66,7 +66,7 @@ public class Docusaurus2Adoc {
         this.session = project.getSession();
     }
 
-    public Docusaurus2Adoc(File project, NutsSession session) {
+    public Docusaurus2Adoc(File project, NSession session) {
         this(new DocusaurusProject(project.getPath(), null, session));
     }
 

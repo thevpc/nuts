@@ -24,11 +24,11 @@
 package net.thevpc.nuts.toolbox.nsh.cmds.bash;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.cmdline.NutsArgument;
-import net.thevpc.nuts.cmdline.NutsCommandLine;
-import net.thevpc.nuts.io.NutsPath;
-import net.thevpc.nuts.spi.NutsComponentScope;
-import net.thevpc.nuts.spi.NutsComponentScopeType;
+import net.thevpc.nuts.cmdline.NArgument;
+import net.thevpc.nuts.cmdline.NCommandLine;
+import net.thevpc.nuts.io.NPath;
+import net.thevpc.nuts.spi.NComponentScope;
+import net.thevpc.nuts.spi.NComponentScopeType;
 import net.thevpc.nuts.toolbox.nsh.SimpleJShellBuiltin;
 import net.thevpc.nuts.toolbox.nsh.jshell.JShellContext;
 import net.thevpc.nuts.toolbox.nsh.jshell.JShellExecutionContext;
@@ -40,7 +40,7 @@ import java.util.List;
 /**
  * Created by vpc on 1/7/17.
  */
-@NutsComponentScope(NutsComponentScopeType.WORKSPACE)
+@NComponentScope(NComponentScopeType.WORKSPACE)
 public class SourceCommand extends SimpleJShellBuiltin {
 
     public SourceCommand() {
@@ -48,10 +48,10 @@ public class SourceCommand extends SimpleJShellBuiltin {
     }
 
     @Override
-    protected boolean configureFirst(NutsCommandLine commandLine, JShellExecutionContext context) {
+    protected boolean configureFirst(NCommandLine commandLine, JShellExecutionContext context) {
         Options options = context.getOptions();
-        NutsSession session = context.getSession();
-        final NutsArgument a = commandLine.peek().get(session);
+        NSession session = context.getSession();
+        final NArgument a = commandLine.peek().get(session);
         if (!a.isOption()) {
             options.args.addAll(Arrays.asList(commandLine.toStringArray()));
             commandLine.skipAll();
@@ -62,17 +62,17 @@ public class SourceCommand extends SimpleJShellBuiltin {
     }
 
     @Override
-    protected void execBuiltin(NutsCommandLine commandLine, JShellExecutionContext context) {
+    protected void execBuiltin(NCommandLine commandLine, JShellExecutionContext context) {
         Options options = context.getOptions();
-        NutsSession session = context.getSession();
+        NSession session = context.getSession();
         if (options.args.isEmpty()) {
             throwExecutionException("missing command", 1, session);
         }
         final String[] paths = context.vars().get("PATH", "").split(":|;");
-        NutsPath file = NutsPath.of(options.args.remove(0), session);
+        NPath file = NPath.of(options.args.remove(0), session);
         if (file.isName()) {
             for (String path : paths) {
-                NutsPath basePathFolder = NutsPath.of(path, session);
+                NPath basePathFolder = NPath.of(path, session);
                 if (basePathFolder.resolve(file).isRegularFile()) {
                     file = basePathFolder.resolve(file);
                     break;
@@ -83,7 +83,7 @@ public class SourceCommand extends SimpleJShellBuiltin {
             file=file.toAbsolute(context.getCwd());
         }
         if (!file.isRegularFile()) {
-            throwExecutionException(NutsMessage.ofCstyle("file not found : %s",file), 1, session);
+            throwExecutionException(NMsg.ofCstyle("file not found : %s",file), 1, session);
         } else {
             JShellContext c2 = context.getShellContext();
             JShellContext c = context.getShell().createInlineContext(c2, file.toString(), options.args.toArray(new String[0]));

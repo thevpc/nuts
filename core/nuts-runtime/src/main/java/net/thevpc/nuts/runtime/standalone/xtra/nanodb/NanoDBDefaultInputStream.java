@@ -1,15 +1,15 @@
 package net.thevpc.nuts.runtime.standalone.xtra.nanodb;
 
-import net.thevpc.nuts.io.NutsIOException;
-import net.thevpc.nuts.NutsSession;
+import net.thevpc.nuts.io.NIOException;
+import net.thevpc.nuts.NSession;
 
 import java.io.*;
 
 class NanoDBDefaultInputStream implements NanoDBInputStream {
     private DataInputStream in;
-    private NutsSession session;
+    private NSession session;
 
-    public NanoDBDefaultInputStream(InputStream in,NutsSession session) {
+    public NanoDBDefaultInputStream(InputStream in, NSession session) {
         this.in =(in instanceof DataInputStream)?(DataInputStream) in:new DataInputStream(in);
         this.session=session;
     }
@@ -24,7 +24,7 @@ class NanoDBDefaultInputStream implements NanoDBInputStream {
         try {
             return in.readInt();
         } catch (IOException ex) {
-            throw new NutsIOException(session,ex);
+            throw new NIOException(session,ex);
         }
     }
 
@@ -33,7 +33,7 @@ class NanoDBDefaultInputStream implements NanoDBInputStream {
         try {
             return in.readLong();
         } catch (IOException ex) {
-            throw new NutsIOException(session,ex);
+            throw new NIOException(session,ex);
         }
     }
 
@@ -42,7 +42,7 @@ class NanoDBDefaultInputStream implements NanoDBInputStream {
         try {
             return in.readFloat();
         } catch (IOException ex) {
-            throw new NutsIOException(session,ex);
+            throw new NIOException(session,ex);
         }
     }
 
@@ -51,7 +51,7 @@ class NanoDBDefaultInputStream implements NanoDBInputStream {
         try {
             return in.readDouble();
         } catch (IOException ex) {
-            throw new NutsIOException(session,ex);
+            throw new NIOException(session,ex);
         }
     }
 
@@ -60,7 +60,7 @@ class NanoDBDefaultInputStream implements NanoDBInputStream {
         try {
             return in.readUTF();
         } catch (IOException ex) {
-            throw new NutsIOException(session,ex);
+            throw new NIOException(session,ex);
         }
     }
 
@@ -69,7 +69,7 @@ class NanoDBDefaultInputStream implements NanoDBInputStream {
         try {
             in.close();
         } catch (IOException ex) {
-            throw new NutsIOException(session,ex);
+            throw new NIOException(session,ex);
         }
     }
 
@@ -78,7 +78,7 @@ class NanoDBDefaultInputStream implements NanoDBInputStream {
         try {
             return in.readByte();
         } catch (IOException ex) {
-            throw new NutsIOException(session,ex);
+            throw new NIOException(session,ex);
         }
     }
 
@@ -87,7 +87,7 @@ class NanoDBDefaultInputStream implements NanoDBInputStream {
         try {
             return in.readBoolean();
         } catch (IOException ex) {
-            throw new NutsIOException(session,ex);
+            throw new NIOException(session,ex);
         }
     }
 //    @Override

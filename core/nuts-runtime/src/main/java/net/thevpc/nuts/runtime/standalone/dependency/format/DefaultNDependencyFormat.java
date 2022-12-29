@@ -1,0 +1,255 @@
+package net.thevpc.nuts.runtime.standalone.dependency.format;
+
+import java.util.*;
+
+import net.thevpc.nuts.*;
+import net.thevpc.nuts.cmdline.NArgument;
+import net.thevpc.nuts.cmdline.NCommandLine;
+import net.thevpc.nuts.io.NStream;
+import net.thevpc.nuts.runtime.standalone.format.DefaultFormatBase;
+import net.thevpc.nuts.spi.NSupportLevelContext;
+
+public class DefaultNDependencyFormat extends DefaultFormatBase<NDependencyFormat> implements NDependencyFormat {
+
+    private boolean omitRepository;
+    private boolean omitGroup;
+    private boolean omitImportedGroup;
+    private boolean omitQuery = false;
+    //    private boolean omitFace = true;
+    private boolean highlightImportedGroup;
+    private NDependency value;
+    private Set<String> queryPropertiesOmitted = new HashSet<>();
+
+    public DefaultNDependencyFormat(NSession session) {
+        super(session, "dependency-format");
+    }
+
+    public NDependencyFormat setNtf(boolean ntf) {
+        super.setNtf(ntf);
+        return this;
+    }
+
+    @Override
+    public boolean isOmitRepository() {
+        return omitRepository;
+    }
+
+    @Override
+    public NDependencyFormat setOmitRepository(boolean omitRepository) {
+        this.omitRepository = omitRepository;
+        return this;
+    }
+
+    @Override
+    public boolean isOmitGroupId() {
+        return omitGroup;
+    }
+
+    @Override
+    public NDependencyFormat setOmitGroupId(boolean omitGroup) {
+        this.omitGroup = omitGroup;
+        return this;
+    }
+
+    @Override
+    public boolean isOmitImportedGroupId() {
+        return omitImportedGroup;
+    }
+
+    @Override
+    public NDependencyFormat setOmitImportedGroup(boolean omitImportedGroup) {
+        this.omitImportedGroup = omitImportedGroup;
+        return this;
+    }
+
+    @Override
+    public boolean isOmitOtherProperties() {
+        return omitQuery;
+    }
+
+    @Override
+    public NDependencyFormat setOmitOtherProperties(boolean value) {
+        this.omitQuery = value;
+        return this;
+    }
+
+//    @Override
+//    public boolean isOmitFace() {
+//        return omitFace;
+//    }
+//
+//    @Override
+//    public NutsDependencyFormat setOmitFace(boolean omitFace) {
+//        this.omitFace = omitFace;
+//        return this;
+//    }
+
+    @Override
+    public boolean isHighlightImportedGroup() {
+        return highlightImportedGroup;
+    }
+
+    @Override
+    public NDependencyFormat setHighlightImportedGroup(boolean highlightImportedGroup) {
+        this.highlightImportedGroup = highlightImportedGroup;
+        return this;
+    }
+
+    @Override
+    public NString format() {
+        NIdBuilder id = value.toId().builder();
+        Map<String, String> q = id.getProperties();
+        for (Map.Entry<String, String> e : q.entrySet()) {
+            switch (e.getKey()) {
+                case NConstants.IdProperties.SCOPE:
+                case NConstants.IdProperties.OPTIONAL:
+                case NConstants.IdProperties.CLASSIFIER:
+                case NConstants.IdProperties.EXCLUSIONS:
+                case NConstants.IdProperties.TYPE:
+                {
+                    break;
+                }
+                default: {
+                    if (isOmitOtherProperties()) {
+                        id.setProperty(e.getKey(), null);
+                    }
+                }
+            }
+        }
+        NIdFormat id1 = NIdFormat.of(getSession());
+        for (String omitQueryProperty : getOmitQueryProperties()) {
+            id1.setOmitProperty(omitQueryProperty,true);
+        }
+        return id1
+                .setSession(getSession())
+                .setValue(id.build())
+                .setHighlightImportedGroupId(isHighlightImportedGroup())
+                .setOmitOtherProperties(false)
+                .setOmitGroupId(isOmitGroupId())
+                .setOmitImportedGroupId(isOmitImportedGroupId())
+                .setOmitRepository(isOmitRepository())
+                .setNtf(isNtf())
+                .format();
+    }
+
+    @Override
+    public NDependency getValue() {
+        return value;
+    }
+
+    @Override
+    public NDependencyFormat setValue(NDependency id) {
+        this.value = id;
+        return this;
+    }
+
+
+    @Override
+    public boolean isOmitClassifier() {
+        return isOmitQueryProperty(NConstants.IdProperties.CLASSIFIER);
+    }
+
+    @Override
+    public NDependencyFormat setOmitClassifier(boolean value) {
+        return setOmitQueryProperty(NConstants.IdProperties.CLASSIFIER, value);
+    }
+
+    @Override
+    public boolean isOmitOptional() {
+        return isOmitQueryProperty(NConstants.IdProperties.OPTIONAL);
+    }
+
+    @Override
+    public NDependencyFormat setOmitOptional(boolean value) {
+        return setOmitQueryProperty(NConstants.IdProperties.OPTIONAL, value);
+    }
+
+    @Override
+    public boolean isOmitExclusions() {
+        return isOmitQueryProperty(NConstants.IdProperties.EXCLUSIONS);
+    }
+
+    @Override
+    public NDependencyFormat setOmitExclusions(boolean value) {
+        return setOmitQueryProperty(NConstants.IdProperties.EXCLUSIONS, value);
+    }
+
+    @Override
+    public boolean isOmitScope() {
+        return isOmitQueryProperty(NConstants.IdProperties.SCOPE);
+    }
+
+    @Override
+    public NDependencyFormat setOmitScope(boolean value) {
+        return setOmitQueryProperty(NConstants.IdProperties.SCOPE, value);
+    }
+
+
+    @Override
+    public List<String> getOmitQueryProperties() {
+        return new ArrayList<>(queryPropertiesOmitted);
+    }
+
+    @Override
+    public boolean isOmitQueryProperty(String name) {
+        return queryPropertiesOmitted.contains(name);
+    }
+
+    @Override
+    public NDependencyFormat setOmitQueryProperty(String name, boolean value) {
+        if (value) {
+            queryPropertiesOmitted.add(name);
+        } else {
+            queryPropertiesOmitted.remove(name);
+        }
+        return this;
+    }
+
+    @Override
+    public void print(NStream out) {
+        out.print(format());
+    }
+
+
+    @Override
+    public boolean configureFirst(NCommandLine commandLine) {
+        NSession session = getSession();
+        NArgument aa = commandLine.peek().get(session);
+        if (aa == null) {
+            return false;
+        }
+        boolean enabled=aa.isActive();
+        switch(aa.key()) {
+            case "--omit-env": {
+                commandLine.withNextBoolean((v, a, s) -> setOmitOtherProperties(v));
+                return true;
+            }
+//            case "--omit-face": {
+//                setOmitFace(commandLine.nextBooleanValue().get(session));
+//                return true;
+//            }
+            case "--omit-group": {
+                commandLine.withNextBoolean((v, a, s) -> setOmitGroupId(v));
+                return true;
+            }
+            case "--omit-imported-group": {
+                commandLine.withNextBoolean((v, a, s) -> setOmitImportedGroup(v));
+                return true;
+            }
+            case "--omit-repo": {
+                commandLine.withNextBoolean((v, a, s) -> setOmitRepository(v));
+                return true;
+            }
+            case "--highlight-imported-group": {
+                commandLine.withNextBoolean((v, a, s) -> setHighlightImportedGroup(v));
+                return true;
+            }
+        }
+        return false;
+    }
+
+    @Override
+    public int getSupportLevel(NSupportLevelContext context) {
+        return DEFAULT_SUPPORT;
+    }
+}

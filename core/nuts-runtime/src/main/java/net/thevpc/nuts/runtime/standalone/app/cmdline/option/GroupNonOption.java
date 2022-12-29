@@ -27,9 +27,9 @@
 package net.thevpc.nuts.runtime.standalone.app.cmdline.option;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.cmdline.DefaultNutsArgumentCandidate;
-import net.thevpc.nuts.cmdline.NutsArgumentCandidate;
-import net.thevpc.nuts.cmdline.NutsCommandAutoComplete;
+import net.thevpc.nuts.cmdline.DefaultNArgumentCandidate;
+import net.thevpc.nuts.cmdline.NArgumentCandidate;
+import net.thevpc.nuts.cmdline.NCommandAutoComplete;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -61,24 +61,24 @@ public class GroupNonOption extends DefaultNonOption {
 //    }
 
     @Override
-    public List<NutsArgumentCandidate> getCandidates(NutsCommandAutoComplete context) {
-        List<NutsArgumentCandidate> all = new ArrayList<>();
-        NutsRepository repository=context.get(NutsRepository.class);
-        NutsUserConfig securityEntityConfig=context.get(NutsUserConfig.class);
+    public List<NArgumentCandidate> getCandidates(NCommandAutoComplete context) {
+        List<NArgumentCandidate> all = new ArrayList<>();
+        NRepository repository=context.get(NRepository.class);
+        NUserConfig securityEntityConfig=context.get(NUserConfig.class);
         if (securityEntityConfig != null) {
             for (String n : securityEntityConfig.getGroups()) {
-                all.add(new DefaultNutsArgumentCandidate(n));
+                all.add(new DefaultNArgumentCandidate(n));
             }
         } else if (repository != null) {
-            for (NutsUser nutsSecurityEntityConfig : repository.security().setSession(context.getSession())
+            for (NUser nutsSecurityEntityConfig : repository.security().setSession(context.getSession())
                     .findUsers()) {
-                all.add(new DefaultNutsArgumentCandidate(nutsSecurityEntityConfig.getUser()));
+                all.add(new DefaultNArgumentCandidate(nutsSecurityEntityConfig.getUser()));
             }
         } else {
-            for (NutsUser nutsSecurityEntityConfig : context.getSession().security()
+            for (NUser nutsSecurityEntityConfig : context.getSession().security()
                     .setSession(context.getSession())
                     .findUsers()) {
-                all.add(new DefaultNutsArgumentCandidate(nutsSecurityEntityConfig.getUser()));
+                all.add(new DefaultNArgumentCandidate(nutsSecurityEntityConfig.getUser()));
             }
         }
         return all;

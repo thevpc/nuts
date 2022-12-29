@@ -25,12 +25,12 @@
  */
 package net.thevpc.nuts.toolbox.nsh.cmds.bash;
 
-import net.thevpc.nuts.cmdline.NutsArgument;
-import net.thevpc.nuts.cmdline.NutsCommandLine;
-import net.thevpc.nuts.io.NutsPath;
-import net.thevpc.nuts.NutsSession;
-import net.thevpc.nuts.spi.NutsComponentScope;
-import net.thevpc.nuts.spi.NutsComponentScopeType;
+import net.thevpc.nuts.cmdline.NArgument;
+import net.thevpc.nuts.cmdline.NCommandLine;
+import net.thevpc.nuts.io.NPath;
+import net.thevpc.nuts.NSession;
+import net.thevpc.nuts.spi.NComponentScope;
+import net.thevpc.nuts.spi.NComponentScopeType;
 import net.thevpc.nuts.toolbox.nsh.SimpleJShellBuiltin;
 import net.thevpc.nuts.toolbox.nsh.jshell.JShellExecutionContext;
 import net.thevpc.nuts.toolbox.nsh.util.ShellHelper;
@@ -43,7 +43,7 @@ import java.util.List;
  * Created by vpc on 1/7/17. ssh copy credits to Chanaka Lakmal from
  * https://medium.com/ldclakmal/scp-with-java-b7b7dbcdbc85
  */
-@NutsComponentScope(NutsComponentScopeType.WORKSPACE)
+@NComponentScope(NComponentScopeType.WORKSPACE)
 public class MkdirCommand extends SimpleJShellBuiltin {
 
     public MkdirCommand() {
@@ -51,10 +51,10 @@ public class MkdirCommand extends SimpleJShellBuiltin {
     }
 
     @Override
-    protected boolean configureFirst(NutsCommandLine commandLine, JShellExecutionContext context) {
-        NutsSession session = context.getSession();
+    protected boolean configureFirst(NCommandLine commandLine, JShellExecutionContext context) {
+        NSession session = context.getSession();
         Options options = context.getOptions();
-        NutsArgument a;
+        NArgument a;
         if ((a = commandLine.nextBoolean("--parent", "-p").orNull()) != null) {
             options.p = a.getBooleanValue().get(session);
             return true;
@@ -67,15 +67,15 @@ public class MkdirCommand extends SimpleJShellBuiltin {
     }
 
     @Override
-    protected void execBuiltin(NutsCommandLine commandLine, JShellExecutionContext context) {
+    protected void execBuiltin(NCommandLine commandLine, JShellExecutionContext context) {
         Options options = context.getOptions();
-        NutsSession session = context.getSession();
+        NSession session = context.getSession();
         options.xfiles = ShellHelper.xfilesOf(options.files, context.getCwd(), session);
         if (options.xfiles.size() < 1) {
             commandLine.throwMissingArgument();
         }
 //        ShellHelper.WsSshListener listener = new ShellHelper.WsSshListener(context.getSession());
-        for (NutsPath v : options.xfiles) {
+        for (NPath v : options.xfiles) {
 //            if (v instanceof SshXFile) {
 //                ((SshXFile) v).setListener(listener);
 //            }
@@ -90,7 +90,7 @@ public class MkdirCommand extends SimpleJShellBuiltin {
     public static class Options {
 
         List<String> files = new ArrayList<>();
-        List<NutsPath> xfiles = new ArrayList<>();
+        List<NPath> xfiles = new ArrayList<>();
 
         boolean p;
     }

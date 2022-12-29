@@ -1,13 +1,13 @@
 package net.thevpc.nuts.toolbox.ntomcat.local;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.elem.NutsElements;
-import net.thevpc.nuts.io.NutsCp;
-import net.thevpc.nuts.io.NutsPath;
-import net.thevpc.nuts.io.NutsPathOption;
-import net.thevpc.nuts.io.NutsPrintStream;
-import net.thevpc.nuts.text.NutsTextStyle;
-import net.thevpc.nuts.text.NutsTexts;
+import net.thevpc.nuts.elem.NElements;
+import net.thevpc.nuts.io.NCp;
+import net.thevpc.nuts.io.NPath;
+import net.thevpc.nuts.io.NPathOption;
+import net.thevpc.nuts.io.NStream;
+import net.thevpc.nuts.text.NTextStyle;
+import net.thevpc.nuts.text.NTexts;
 import net.thevpc.nuts.toolbox.ntomcat.NTomcatConfigVersions;
 import net.thevpc.nuts.toolbox.ntomcat.local.config.LocalTomcatAppConfig;
 import net.thevpc.nuts.toolbox.ntomcat.util._StringUtils;
@@ -25,15 +25,15 @@ public class LocalTomcatAppConfigService extends LocalTomcatServiceBase {
     private String name;
     private LocalTomcatAppConfig config;
     private LocalTomcatConfigService tomcat;
-    private NutsApplicationContext context;
-    private NutsPath sharedConfigFolder;
+    private NApplicationContext context;
+    private NPath sharedConfigFolder;
 
     public LocalTomcatAppConfigService(String name, LocalTomcatAppConfig config, LocalTomcatConfigService tomcat) {
         this.name = name;
         this.config = config;
         this.tomcat = tomcat;
         this.context = tomcat.getTomcatServer().getContext();
-        sharedConfigFolder = tomcat.getAppContext().getVersionFolder(NutsStoreLocation.CONFIG, NTomcatConfigVersions.CURRENT);
+        sharedConfigFolder = tomcat.getAppContext().getVersionFolder(NStoreLocation.CONFIG, NTomcatConfigVersions.CURRENT);
     }
 
     @Override
@@ -54,13 +54,13 @@ public class LocalTomcatAppConfigService extends LocalTomcatServiceBase {
         return Paths.get(runningFolder).resolve(name + "-" + version + "." + packaging);
     }
 
-    public NutsPath getRunningFile() {
+    public NPath getRunningFile() {
         String s = getConfig().getSourceFilePath();
-        if (!NutsBlankable.isBlank(s)) {
-            return NutsPath.of(s,getSession());
+        if (!NBlankable.isBlank(s)) {
+            return NPath.of(s,getSession());
         }
         String _runningFolder = tomcat.getConfig().getRunningFolder();
-        NutsPath runningFolder = (_runningFolder == null || _runningFolder.trim().isEmpty()) ? null : NutsPath.of(_runningFolder, getSession());
+        NPath runningFolder = (_runningFolder == null || _runningFolder.trim().isEmpty()) ? null : NPath.of(_runningFolder, getSession());
         if (runningFolder == null) {
             runningFolder = context.getSharedConfigFolder().resolve("running");
         }
@@ -68,31 +68,31 @@ public class LocalTomcatAppConfigService extends LocalTomcatServiceBase {
         return runningFolder.resolve(name + "." + packaging);
     }
 
-    private NutsSession getSession() {
+    private NSession getSession() {
         return context.getSession();
     }
 
-    public NutsPath getVersionFile() {
+    public NPath getVersionFile() {
         return sharedConfigFolder.resolve(name + ".version");
     }
 
     public String getCurrentVersion() {
-        NutsPath f = getVersionFile();
+        NPath f = getVersionFile();
         if (f.exists()) {
             return new String(f.readBytes());
         }
         return null;
     }
-    public NutsString getFormattedPath(String str) {
-        return NutsTexts.of(getSession()).ofStyled(str,NutsTextStyle.path());
+    public NString getFormattedPath(String str) {
+        return NTexts.of(getSession()).ofStyled(str, NTextStyle.path());
     }
-    public NutsString getFormattedVersion(String str) {
-        return NutsTexts.of(getSession()).ofStyled(str, NutsTextStyle.version());
+    public NString getFormattedVersion(String str) {
+        return NTexts.of(getSession()).ofStyled(str, NTextStyle.version());
     }
-    public NutsString getFormattedPrefix(String str) {
-        return NutsTexts.of(getSession()).ofBuilder()
+    public NString getFormattedPrefix(String str) {
+        return NTexts.of(getSession()).ofBuilder()
                 .append("[")
-                .append(str,NutsTextStyle.primary5())
+                .append(str, NTextStyle.primary5())
                 .append("]");
     }
 
@@ -108,17 +108,17 @@ public class LocalTomcatAppConfigService extends LocalTomcatServiceBase {
             getSession().out().printf("%s [LOG] updating version file %s to %s.\n", getFormattedPrefix(getFullName()), getFormattedVersion(_StringUtils.coalesce(version, "<DEFAULT>")), getFormattedPath(getVersionFile().toString()));
             getVersionFile().writeString(version);
             getSession().out().printf("%s [LOG] updating archive file %s -> %s.\n", getFormattedPrefix(getFullName()), getFormattedPath(getArchiveFile(version).toString()), getFormattedPath(getRunningFile().toString()));
-            NutsCp.of(getSession()).from(getArchiveFile(version))
+            NCp.of(getSession()).from(getArchiveFile(version))
                     .to(getRunningFile())
                     .run();
         }
         return this;
     }
 
-    public NutsPath getDeployFile() {
-        LocalTomcatDomainConfigService d = tomcat.getDomain(getConfig().getDomain(), NutsOpenMode.OPEN_OR_ERROR);
+    public NPath getDeployFile() {
+        LocalTomcatDomainConfigService d = tomcat.getDomain(getConfig().getDomain(), NOpenMode.OPEN_OR_ERROR);
         String deployName = getConfig().getDeployName();
-        if (NutsBlankable.isBlank(deployName)) {
+        if (NBlankable.isBlank(deployName)) {
             deployName = name + ".war";
         }
         if (!deployName.endsWith(".war")) {
@@ -127,15 +127,15 @@ public class LocalTomcatAppConfigService extends LocalTomcatServiceBase {
         return d.getDomainDeployPath().resolve(deployName);
     }
 
-    public NutsPath getDeployFolder() {
-        NutsPath f = getDeployFile();
+    public NPath getDeployFolder() {
+        NPath f = getDeployFile();
         String fn = f.getName().toString();
         return f.resolveSibling(fn.substring(0, fn.length() - ".war".length()));
     }
 
     public LocalTomcatAppConfigService resetDeployment() {
-        NutsPath deployFile = getDeployFile();
-        NutsPath deployFolder = getDeployFolder();
+        NPath deployFile = getDeployFile();
+        NPath deployFolder = getDeployFolder();
         getSession().out().printf("%s reset deployment (delete %s ).\n", getFormattedPrefix(getFullName()), getFormattedPath(deployFile.toString()));
         deployFile.delete();
         deployFolder.delete();
@@ -143,18 +143,18 @@ public class LocalTomcatAppConfigService extends LocalTomcatServiceBase {
     }
 
     public LocalTomcatAppConfigService deploy(String version) {
-        if (NutsBlankable.isBlank(version)) {
+        if (NBlankable.isBlank(version)) {
             version = getCurrentVersion();
         }
-        NutsPath runningFile = getRunningFile();
-        NutsPath deployFile = getDeployFile();
+        NPath runningFile = getRunningFile();
+        NPath deployFile = getDeployFile();
         getSession().out().printf("%s deploy %s as file %s to %s.\n",
                 getFormattedPrefix(getFullName()), getFormattedVersion(_StringUtils.coalesce(version, "<DEFAULT>")),
                 getFormattedPath(runningFile.toString()), getFormattedPath(deployFile.toString()));
-        NutsCp.of(getSession())
+        NCp.of(getSession())
                 .from(runningFile)
                 .to(deployFile)
-                .addOptions(NutsPathOption.REPLACE_EXISTING)
+                .addOptions(NPathOption.REPLACE_EXISTING)
                 .run();
         return this;
     }
@@ -165,7 +165,7 @@ public class LocalTomcatAppConfigService extends LocalTomcatServiceBase {
             if (!Files.isRegularFile(f)) {
                 throw new UncheckedIOException(new IOException("File not found " + f));
             }
-            if (NutsBlankable.isBlank(version)) {
+            if (NBlankable.isBlank(version)) {
                 version = getCurrentVersion();
             }
             Path domainDeployPath = getArchiveFile(version);
@@ -209,7 +209,7 @@ public class LocalTomcatAppConfigService extends LocalTomcatServiceBase {
     }
 
     @Override
-    public LocalTomcatAppConfigService print(NutsPrintStream out) {
+    public LocalTomcatAppConfigService print(NStream out) {
         Map<String, Object> result = new HashMap<>();
         result.put("name", getFullName());
         result.put("config", getConfig());
@@ -218,8 +218,8 @@ public class LocalTomcatAppConfigService extends LocalTomcatServiceBase {
         result.put("deployfolder", getDeployFolder());
         result.put("runningfolder", getRunningFile());
         result.put("versionFolder", getVersionFile());
-        NutsSession session = getSession();
-        NutsElements.of(session).json().setValue(result).print(out);
+        NSession session = getSession();
+        NElements.of(session).json().setValue(result).print(out);
         return this;
     }
 

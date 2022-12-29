@@ -26,10 +26,10 @@
 package net.thevpc.nuts.toolbox.nsh.cmds.bash;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.cmdline.NutsArgumentName;
-import net.thevpc.nuts.cmdline.NutsCommandLine;
-import net.thevpc.nuts.io.NutsCompress;
-import net.thevpc.nuts.io.NutsPath;
+import net.thevpc.nuts.cmdline.NArgumentName;
+import net.thevpc.nuts.cmdline.NCommandLine;
+import net.thevpc.nuts.io.NCompress;
+import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.toolbox.nsh.SimpleJShellBuiltin;
 import net.thevpc.nuts.toolbox.nsh.jshell.JShellExecutionContext;
 
@@ -46,18 +46,18 @@ public class ZipCommand extends SimpleJShellBuiltin {
     }
 
     @Override
-    protected boolean configureFirst(NutsCommandLine commandLine, JShellExecutionContext context) {
+    protected boolean configureFirst(NCommandLine commandLine, JShellExecutionContext context) {
         Options options = context.getOptions();
-        NutsSession session = context.getSession();
+        NSession session = context.getSession();
         if (commandLine.next("-r").isPresent()) {
             options.r = true;
             return true;
         } else if (commandLine.isNextOption()) {
             return false;
         } else if (commandLine.peek().get(session).isNonOption()) {
-            String path = commandLine.nextNonOption(NutsArgumentName.of("file", session))
-                    .flatMap(NutsValue::asString).get(session);
-            NutsPath file = NutsPath.of(path, session).toAbsolute(context.getCwd());
+            String path = commandLine.nextNonOption(NArgumentName.of("file", session))
+                    .flatMap(NValue::asString).get(session);
+            NPath file = NPath.of(path, session).toAbsolute(context.getCwd());
             if (options.outZip == null) {
                 options.outZip = file;
             } else {
@@ -69,18 +69,18 @@ public class ZipCommand extends SimpleJShellBuiltin {
     }
 
     @Override
-    protected void execBuiltin(NutsCommandLine commandLine, JShellExecutionContext context) {
+    protected void execBuiltin(NCommandLine commandLine, JShellExecutionContext context) {
         Options options = context.getOptions();
-        NutsSession session = context.getSession();
+        NSession session = context.getSession();
         if (options.files.isEmpty()) {
-            commandLine.throwError(NutsMessage.ofPlain("missing input-files"));
+            commandLine.throwError(NMsg.ofPlain("missing input-files"));
         }
         if (options.outZip == null) {
-            commandLine.throwError(NutsMessage.ofPlain("missing out-zip"));
+            commandLine.throwError(NMsg.ofPlain("missing out-zip"));
         }
-        NutsCompress aa = NutsCompress.of(session)
+        NCompress aa = NCompress.of(session)
                 .setTarget(options.outZip);
-        for (NutsPath file : options.files) {
+        for (NPath file : options.files) {
             aa.addSource(file);
         }
         aa.run();
@@ -88,8 +88,8 @@ public class ZipCommand extends SimpleJShellBuiltin {
 
 
     private static class Options {
-        List<NutsPath> files = new ArrayList<>();
-        NutsPath outZip = null;
+        List<NPath> files = new ArrayList<>();
+        NPath outZip = null;
 
         boolean r = false;
     }

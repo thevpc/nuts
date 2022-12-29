@@ -1,8 +1,8 @@
 package net.thevpc.nuts.runtime.standalone.util;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.format.NutsPositionType;
-import net.thevpc.nuts.util.NutsStringUtils;
+import net.thevpc.nuts.format.NPositionType;
+import net.thevpc.nuts.util.NStringUtils;
 
 /**
  * Created by vpc on 3/20/17.
@@ -85,9 +85,9 @@ public class BytesSizeFormat {
     private long high = TERA;
     private long low = BYTE;
     private int depth = Integer.MAX_VALUE;
-    private NutsSession session;
+    private NSession session;
 
-    public BytesSizeFormat(boolean leadingZeros, boolean intermediateZeros, boolean fixedLength, boolean binaryPrefix, long high, long low, int depth, NutsSession session) {
+    public BytesSizeFormat(boolean leadingZeros, boolean intermediateZeros, boolean fixedLength, boolean binaryPrefix, long high, long low, int depth, NSession session) {
         this.leadingZeros = leadingZeros;
         this.intermediateZeros = intermediateZeros;
         this.fixedLength = fixedLength;
@@ -161,7 +161,7 @@ public class BytesSizeFormat {
      * @param format  size format
      * @param session session
      */
-    public BytesSizeFormat(String format, NutsSession session) {
+    public BytesSizeFormat(String format, NSession session) {
         this.session = session;
         leadingZeros = false;
         intermediateZeros = false;
@@ -203,7 +203,7 @@ public class BytesSizeFormat {
                             depth = -1;
                         }
                         if (depth <= 0 || depth > 9) {
-                            throw new NutsIllegalArgumentException(session, NutsMessage.ofCstyle("invalid depth %s", depth));
+                            throw new NIllegalArgumentException(session, NMsg.ofCstyle("invalid depth %s", depth));
                         }
                     }
                     case 'F': {
@@ -221,7 +221,7 @@ public class BytesSizeFormat {
                         break;
                     }
                     default: {
-                        throw new NutsIllegalArgumentException(session, NutsMessage.ofCstyle("unsupported %s", c));
+                        throw new NIllegalArgumentException(session, NMsg.ofCstyle("unsupported %s", c));
                     }
                 }
             }
@@ -281,7 +281,7 @@ public class BytesSizeFormat {
 
     private String formatLeft(Object number, int size) {
         if (fixedLength) {
-            return NutsStringUtils.formatAlign(String.valueOf(number == null ? "" : number), size, NutsPositionType.FIRST);
+            return NStringUtils.formatAlign(String.valueOf(number == null ? "" : number), size, NPositionType.FIRST);
         } else {
             return String.valueOf(number);
         }

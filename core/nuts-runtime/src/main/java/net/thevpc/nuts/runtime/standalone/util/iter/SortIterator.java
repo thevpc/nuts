@@ -1,23 +1,23 @@
 package net.thevpc.nuts.runtime.standalone.util.iter;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.elem.NutsElement;
-import net.thevpc.nuts.elem.NutsElements;
-import net.thevpc.nuts.util.NutsComparator;
-import net.thevpc.nuts.util.NutsDescribables;
-import net.thevpc.nuts.util.NutsIterator;
+import net.thevpc.nuts.elem.NElement;
+import net.thevpc.nuts.elem.NElements;
+import net.thevpc.nuts.util.NComparator;
+import net.thevpc.nuts.util.NDescribables;
+import net.thevpc.nuts.util.NIterator;
 
 import java.util.Iterator;
 import java.util.List;
 
-class SortIterator<T> extends NutsIteratorBase<T> {
+class SortIterator<T> extends NIteratorBase<T> {
 
     private final boolean removeDuplicates;
-    private final NutsIterator<T> it;
-    private final NutsComparator<T> c;
+    private final NIterator<T> it;
+    private final NComparator<T> c;
     Iterator<T> base;
 
-    public SortIterator(NutsIterator<T> it, NutsComparator<T> c, boolean removeDuplicates) {
+    public SortIterator(NIterator<T> it, NComparator<T> c, boolean removeDuplicates) {
         this.removeDuplicates = removeDuplicates;
         this.it = it;
         this.c = c;
@@ -25,12 +25,12 @@ class SortIterator<T> extends NutsIteratorBase<T> {
     }
 
     @Override
-    public NutsElement describe(NutsSession session) {
-        return NutsDescribables.resolveOrDestructAsObject(base, session)
+    public NElement describe(NSession session) {
+        return NDescribables.resolveOrDestructAsObject(base, session)
                 .builder()
                 .set("sort",
-                        NutsElements.of(session).ofObject()
-                                .set("comparator", NutsDescribables.resolveOrDestruct(c, session))
+                        NElements.of(session).ofObject()
+                                .set("comparator", NDescribables.resolveOrDestruct(c, session))
                                 .set("distinct", removeDuplicates)
                                 .build()
                         )

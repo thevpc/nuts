@@ -23,9 +23,9 @@
  */
 package net.thevpc.nuts.runtime.standalone.format.tree;
 
-import net.thevpc.nuts.NutsSession;
-import net.thevpc.nuts.NutsString;
-import net.thevpc.nuts.runtime.standalone.text.util.NutsTextUtils;
+import net.thevpc.nuts.NSession;
+import net.thevpc.nuts.NString;
+import net.thevpc.nuts.runtime.standalone.text.util.NTextUtils;
 
 /**
  *
@@ -33,12 +33,12 @@ import net.thevpc.nuts.runtime.standalone.text.util.NutsTextUtils;
  */
 interface XNodeFormatter {
 
-    default NutsString[] getMultilineArray(NutsString key, Object value, NutsSession session) {
+    default NString[] getMultilineArray(NString key, Object value, NSession session) {
         return null;
     }
 
-    default NutsString stringValue(Object o, NutsSession session) {
-        return NutsTextUtils.stringValueFormatted(o, false, session);
+    default NString stringValue(Object o, NSession session) {
+        return NTextUtils.stringValueFormatted(o, false, session);
     }
     
 }

@@ -1,34 +1,34 @@
 package net.thevpc.nuts.toolbox.ntomcat.remote;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.cmdline.NutsArgument;
-import net.thevpc.nuts.cmdline.NutsCommandLine;
-import net.thevpc.nuts.io.NutsPath;
-import net.thevpc.nuts.text.NutsTextStyle;
-import net.thevpc.nuts.text.NutsTexts;
+import net.thevpc.nuts.cmdline.NArgument;
+import net.thevpc.nuts.cmdline.NCommandLine;
+import net.thevpc.nuts.io.NPath;
+import net.thevpc.nuts.text.NTextStyle;
+import net.thevpc.nuts.text.NTexts;
 import net.thevpc.nuts.toolbox.ntomcat.NTomcatConfigVersions;
 import net.thevpc.nuts.toolbox.ntomcat.remote.config.RemoteTomcatConfig;
 import net.thevpc.nuts.toolbox.ntomcat.util.TomcatUtils;
-import net.thevpc.nuts.util.NutsUnsafeFunction;
+import net.thevpc.nuts.util.NUnsafeFunction;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class RemoteTomcat {
 
-    public NutsApplicationContext context;
-    public NutsCommandLine cmdLine;
-    public NutsPath sharedConfigFolder;
+    public NApplicationContext context;
+    public NCommandLine cmdLine;
+    public NPath sharedConfigFolder;
 
-    public RemoteTomcat(NutsApplicationContext applicationContext, NutsCommandLine cmdLine) {
+    public RemoteTomcat(NApplicationContext applicationContext, NCommandLine cmdLine) {
         this.setContext(applicationContext);
         this.cmdLine = cmdLine;
-        sharedConfigFolder = applicationContext.getVersionFolder(NutsStoreLocation.CONFIG, NTomcatConfigVersions.CURRENT);
+        sharedConfigFolder = applicationContext.getVersionFolder(NStoreLocation.CONFIG, NTomcatConfigVersions.CURRENT);
     }
 
     public void runArgs() {
-        NutsSession session = getContext().getSession();
-        NutsArgument a;
+        NSession session = getContext().getSession();
+        NArgument a;
         cmdLine.setCommandName("tomcat --remote");
         while (cmdLine.hasNext()) {
             if (cmdLine.isNextOption()) {
@@ -69,12 +69,12 @@ public class RemoteTomcat {
                 }
             }
         }
-        throw new NutsExecutionException(context.getSession(), NutsMessage.ofPlain("missing tomcat action. Type: nuts tomcat --help"), 1);
+        throw new NExecutionException(context.getSession(), NMsg.ofPlain("missing tomcat action. Type: nuts tomcat --help"), 1);
     }
 
-    public void list(NutsCommandLine args) {
-        NutsSession session = getContext().getSession();
-        NutsArgument a;
+    public void list(NCommandLine args) {
+        NSession session = getContext().getSession();
+        NArgument a;
         class Helper {
 
             boolean processed = false;
@@ -104,20 +104,20 @@ public class RemoteTomcat {
         }
     }
 
-    private void add(NutsCommandLine args) {
+    private void add(NCommandLine args) {
         RemoteTomcatConfigService c = null;
         String appName = null;
         String instanceName = null;
-        NutsArgument a;
+        NArgument a;
         args.setCommandName("tomcat --remote add");
-        NutsSession session = context.getSession();
+        NSession session = context.getSession();
         while (args.hasNext()) {
             if ((a = args.nextString("--name").orNull()) != null) {
                 if (c == null) {
                     instanceName = a.getStringValue().get(session);
                     c = loadOrCreateTomcatConfig(instanceName);
                 } else {
-                    throw new NutsExecutionException(session, NutsMessage.ofPlain("instance already defined"), 2);
+                    throw new NExecutionException(session, NMsg.ofPlain("instance already defined"), 2);
                 }
             } else if ((a = args.nextString("--server").orNull()) != null) {
                 if (c == null) {
@@ -163,59 +163,59 @@ public class RemoteTomcat {
             c = loadOrCreateTomcatConfig(null);
         }
         boolean ok = false;
-        NutsTexts text = NutsTexts.of(getContext().getSession());
+        NTexts text = NTexts.of(getContext().getSession());
         while (!ok) {
             try {
                 ok = true;
-                if (NutsBlankable.isBlank(c.getConfig().getServer())) {
+                if (NBlankable.isBlank(c.getConfig().getServer())) {
                     ok = false;
                     c.getConfig().setServer(session.getTerminal()
                             .ask()
                             .forString(
-                                    NutsMessage.ofCstyle("[instance=%s] would you enter %s value ?"
-                                            , text.ofStyled(c.getName(), NutsTextStyle.primary1())
-                                            , text.ofStyled("--server", NutsTextStyle.option())
+                                    NMsg.ofCstyle("[instance=%s] would you enter %s value ?"
+                                            , text.ofStyled(c.getName(), NTextStyle.primary1())
+                                            , text.ofStyled("--server", NTextStyle.option())
                                     )
                             )
                             .setDefaultValue("ssh://login@myserver/instanceName")
                             .getValue()
                     );
                 }
-                if (NutsBlankable.isBlank(c.getConfig().getRemoteTempPath())) {
+                if (NBlankable.isBlank(c.getConfig().getRemoteTempPath())) {
                     ok = false;
                     c.getConfig()
                             .setRemoteTempPath(session.getTerminal().ask()
                                     .resetLine()
-                                    .forString(NutsMessage.ofCstyle("[instance=%s] would you enter %s value ?"
-                                            , text.ofStyled(c.getName(), NutsTextStyle.primary1())
-                                            , text.ofStyled("--remote-temp-path", NutsTextStyle.option())
+                                    .forString(NMsg.ofCstyle("[instance=%s] would you enter %s value ?"
+                                            , text.ofStyled(c.getName(), NTextStyle.primary1())
+                                            , text.ofStyled("--remote-temp-path", NTextStyle.option())
                                     )).setDefaultValue("/tmp")
                                     .getValue()
                             );
                 }
                 for (RemoteTomcatAppConfigService aa : c.getApps()) {
-                    if (NutsBlankable.isBlank(aa.getConfig().getPath())) {
+                    if (NBlankable.isBlank(aa.getConfig().getPath())) {
                         ok = false;
                         aa.getConfig().setPath(session.getTerminal().ask()
                                 .resetLine()
-                                .forString(NutsMessage.ofCstyle("[instance=%s] [app=%s] would you enter %s value ?"
-                                        , text.ofStyled(c.getName(), NutsTextStyle.primary1())
-                                        , text.ofStyled(aa.getName(), NutsTextStyle.option())
-                                        , text.ofStyled("--app.path", NutsTextStyle.option())
+                                .forString(NMsg.ofCstyle("[instance=%s] [app=%s] would you enter %s value ?"
+                                        , text.ofStyled(c.getName(), NTextStyle.primary1())
+                                        , text.ofStyled(aa.getName(), NTextStyle.option())
+                                        , text.ofStyled("--app.path", NTextStyle.option())
                                 ))
                                 .getValue());
                     }
                 }
-            } catch (NutsCancelException ex) {
-                throw new NutsExecutionException(session, NutsMessage.ofPlain("cancelled"), 1);
+            } catch (NCancelException ex) {
+                throw new NExecutionException(session, NMsg.ofPlain("cancelled"), 1);
             }
         }
         c.save();
     }
 
-    public void remove(NutsCommandLine args) {
+    public void remove(NCommandLine args) {
         RemoteTomcatServiceBase s = null;
-        NutsArgument a;
+        NArgument a;
         boolean processed = false;
         int lastExitCode = 0;
         args.setCommandName("tomcat --remote remove");
@@ -232,18 +232,18 @@ public class RemoteTomcat {
             }
         }
         if (!processed) {
-            throw new NutsExecutionException(context.getSession(), NutsMessage.ofPlain("invalid parameters"), 2);
+            throw new NExecutionException(context.getSession(), NMsg.ofPlain("invalid parameters"), 2);
         }
         if (lastExitCode != 0) {
-            throw new NutsExecutionException(context.getSession(), NutsMessage.ofPlain("tomcat remove failed"), lastExitCode);
+            throw new NExecutionException(context.getSession(), NMsg.ofPlain("tomcat remove failed"), lastExitCode);
         }
     }
 
-    private void install(NutsCommandLine args) {
-        NutsSession session = getContext().getSession();
+    private void install(NCommandLine args) {
+        NSession session = getContext().getSession();
         String conf = null;
         String app = null;
-        NutsArgument a;
+        NArgument a;
         args.setCommandName("tomcat --remote install");
         while (args.hasNext()) {
             if ((a = args.nextString("--app").orNull()) != null) {
@@ -254,11 +254,11 @@ public class RemoteTomcat {
         }
     }
 
-    private void deploy(NutsCommandLine args) {
-        NutsSession session = getContext().getSession();
+    private void deploy(NCommandLine args) {
+        NSession session = getContext().getSession();
         String app = null;
         String version = null;
-        NutsArgument a;
+        NArgument a;
         args.setCommandName("tomcat --remote deploy");
         while (args.hasNext()) {
             if ((a = args.nextString("--app").orNull()) != null) {
@@ -272,13 +272,13 @@ public class RemoteTomcat {
         loadApp(app).deploy(version);
     }
 
-    private void stop(NutsCommandLine args) {
-        NutsSession session = getContext().getSession();
+    private void stop(NCommandLine args) {
+        NSession session = getContext().getSession();
         String name = null;
-        NutsArgument a;
+        NArgument a;
         while (args.hasNext()) {
             if (args.peek().get(session).isNonOption()) {
-                name = args.nextNonOption().flatMap(NutsValue::asString).get(session);
+                name = args.nextNonOption().flatMap(NValue::asString).get(session);
                 RemoteTomcatConfigService c = loadTomcatConfig(name);
                 c.shutdown();
             } else {
@@ -287,13 +287,13 @@ public class RemoteTomcat {
         }
     }
 
-    public void restart(NutsCommandLine args, boolean shutdown) {
-        NutsSession session = context.getSession();
+    public void restart(NCommandLine args, boolean shutdown) {
+        NSession session = context.getSession();
         String instance = null;
         boolean deleteLog = false;
         boolean install = false;
         List<String> apps = new ArrayList<>();
-        NutsArgument a;
+        NArgument a;
         while (args.hasNext()) {
             if ((a = args.nextBoolean("--deleteLog").orNull()) != null) {
                 deleteLog = a.getBooleanValue().get(session);
@@ -304,7 +304,7 @@ public class RemoteTomcat {
             } else if ((a = args.nextString("--deploy").orNull()) != null) {
                 for (String s : a.getStringValue().get(session).split(",")) {
                     s = s.trim();
-                    if (!NutsBlankable.isBlank(s)) {
+                    if (!NBlankable.isBlank(s)) {
                         apps.add(s);
                     }
                 }
@@ -318,7 +318,7 @@ public class RemoteTomcat {
         }
         if (install) {
             for (String app : apps) {
-                install(NutsCommandLine.of(
+                install(NCommandLine.of(
                         new String[]{
                                 "--name",
                                 instance,
@@ -336,8 +336,8 @@ public class RemoteTomcat {
         }
     }
 
-    public void reset(NutsCommandLine args) {
-        NutsArgument a;
+    public void reset(NCommandLine args) {
+        NArgument a;
         args.setCommandName("tomcat --remote reset");
         while (args.hasNext()) {
             context.configureLast(args);
@@ -349,20 +349,20 @@ public class RemoteTomcat {
 
     public RemoteTomcatConfigService[] listConfig() {
         return
-                sharedConfigFolder.list().filter(
+                sharedConfigFolder.stream().filter(
                                 pathname -> pathname.isRegularFile() && pathname.getName().endsWith(RemoteTomcatConfigService.REMOTE_CONFIG_EXT),
                                 "isRegularFile() && matches(*" + RemoteTomcatConfigService.REMOTE_CONFIG_EXT + ")"
                         )
                         .mapUnsafe(
-                                NutsUnsafeFunction.of(x -> loadTomcatConfig(x), "loadTomcatConfig")
+                                NUnsafeFunction.of(x -> loadTomcatConfig(x), "loadTomcatConfig")
                                 , null)
                         .filterNonNull()
                         .toArray(RemoteTomcatConfigService[]::new);
     }
 
-    public void show(NutsCommandLine args) {
-        NutsSession session = context.getSession();
-        NutsArgument a;
+    public void show(NCommandLine args) {
+        NSession session = context.getSession();
+        NArgument a;
         RemoteTomcatServiceBase s;
         class Helper {
 
@@ -370,16 +370,16 @@ public class RemoteTomcat {
             boolean yaml = false;
 
             public void show(RemoteTomcatServiceBase aa) {
-                NutsSession session = getContext().getSession();
+                NSession session = getContext().getSession();
                 if (json) {
-                    session.out().printf("%s :\n", NutsTexts.of(session).ofStyled(aa.getName(), NutsTextStyle.primary4()));
+                    session.out().printf("%s :\n", NTexts.of(session).ofStyled(aa.getName(), NTextStyle.primary4()));
                     aa.println(session.out());
                 }else if (yaml) {
                     //TODO FIX ME, what to do in Yaml?
-                    session.out().printf("%s :\n", NutsTexts.of(session).ofStyled(aa.getName(), NutsTextStyle.primary4()));
+                    session.out().printf("%s :\n", NTexts.of(session).ofStyled(aa.getName(), NTextStyle.primary4()));
                     aa.println(session.out());
                 } else {
-                    session.out().printf("%s :\n", NutsTexts.of(session).ofStyled(aa.getName(), NutsTextStyle.primary4()));
+                    session.out().printf("%s :\n", NTexts.of(session).ofStyled(aa.getName(), NTextStyle.primary4()));
                     aa.println(session.out());
                 }
             }
@@ -405,7 +405,7 @@ public class RemoteTomcat {
         return t;
     }
 
-    public RemoteTomcatConfigService loadTomcatConfig(NutsPath name) {
+    public RemoteTomcatConfigService loadTomcatConfig(NPath name) {
         RemoteTomcatConfigService t = new RemoteTomcatConfigService(name, this);
         t.loadConfig();
         return t;
@@ -435,15 +435,15 @@ public class RemoteTomcat {
             RemoteTomcatConfigService u = loadOrCreateTomcatConfig(strings[0]);
             RemoteTomcatAppConfigService a = u.getAppOrNull(strings[1]);
             if (a == null) {
-                throw new NutsExecutionException(context.getSession(), NutsMessage.ofCstyle("unknown name %s. it is no domain or app", name), 3);
+                throw new NExecutionException(context.getSession(), NMsg.ofCstyle("unknown name %s. it is no domain or app", name), 3);
             }
             return a;
         }
     }
 
-    public RemoteTomcatServiceBase readBaseServiceArg(NutsCommandLine args) {
-        NutsSession session = context.getSession();
-        NutsArgument a;
+    public RemoteTomcatServiceBase readBaseServiceArg(NCommandLine args) {
+        NSession session = context.getSession();
+        NArgument a;
         if ((a = args.nextString("--name").orNull()) != null) {
             return (loadOrCreateTomcatConfig(a.getStringValue().get(session)));
         } else if ((a = args.nextString("--app").orNull()) != null) {
@@ -451,7 +451,7 @@ public class RemoteTomcat {
         } else if (args.hasNext() && args.isNextOption()) {
             return null;
         } else {
-            return (loadServiceBase(args.next().flatMap(NutsValue::asString).get(session)));
+            return (loadServiceBase(args.next().flatMap(NValue::asString).get(session)));
         }
     }
 
@@ -460,11 +460,11 @@ public class RemoteTomcat {
         return loadOrCreateTomcatConfig(strings[0]).getApp(strings[1]);
     }
 
-    public NutsApplicationContext getContext() {
+    public NApplicationContext getContext() {
         return context;
     }
 
-    public void setContext(NutsApplicationContext context) {
+    public void setContext(NApplicationContext context) {
         this.context = context;
     }
 

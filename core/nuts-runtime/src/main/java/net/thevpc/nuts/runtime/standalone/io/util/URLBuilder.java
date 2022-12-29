@@ -25,8 +25,6 @@
 */
 package net.thevpc.nuts.runtime.standalone.io.util;
 
-import net.thevpc.nuts.*;
-
 import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -37,7 +35,7 @@ import java.net.URL;
  */
 @Deprecated
 /**
- * should use {@link NutsPathParts}
+ * should use {@link NPathParts}
  */
 public class URLBuilder {
 

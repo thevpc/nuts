@@ -17,10 +17,9 @@
  */
 package net.thevpc.nuts.lib.md;
 
-import net.thevpc.nuts.NutsBlankable;
+import net.thevpc.nuts.NBlankable;
 import net.thevpc.nuts.lib.md.util.MdUtils;
 
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
@@ -121,7 +120,7 @@ public class MdXml extends MdAbstractElement {
 
     @Override
     public boolean isBlank() {
-        return NutsBlankable.isBlank(content)
+        return NBlankable.isBlank(content)
                 && (properties.isEmpty());
     }
 

@@ -26,12 +26,12 @@
 package net.thevpc.nuts.toolbox.nversion;
 
 import java.util.Set;
-import net.thevpc.nuts.NutsApplicationContext;
+import net.thevpc.nuts.NApplicationContext;
 
 /**
  *
  * @author thevpc
  */
 public interface PathVersionResolver {
-    public Set<VersionDescriptor> resolve(String filePath, NutsApplicationContext context);
+    public Set<VersionDescriptor> resolve(String filePath, NApplicationContext context);
 }

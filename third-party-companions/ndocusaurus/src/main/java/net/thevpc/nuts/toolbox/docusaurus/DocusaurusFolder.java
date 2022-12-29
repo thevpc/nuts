@@ -1,13 +1,13 @@
 package net.thevpc.nuts.toolbox.docusaurus;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.elem.NutsElement;
-import net.thevpc.nuts.elem.NutsElements;
-import net.thevpc.nuts.elem.NutsObjectElement;
+import net.thevpc.nuts.elem.NElement;
+import net.thevpc.nuts.elem.NElements;
+import net.thevpc.nuts.elem.NObjectElement;
 import net.thevpc.nuts.lib.md.MdElement;
 import net.thevpc.nuts.lib.md.docusaurus.DocusaurusUtils;
 import net.thevpc.nuts.lib.md.util.MdUtils;
-import net.thevpc.nuts.util.NutsStringUtils;
+import net.thevpc.nuts.util.NStringUtils;
 
 import java.io.IOException;
 import java.io.UncheckedIOException;
@@ -40,8 +40,8 @@ public class DocusaurusFolder implements DocusaurusFileOrFolder {
             if (x != 0) {
                 return x;
             }
-            String title1 = NutsStringUtils.trim(o1.getTitle());
-            String title2 = NutsStringUtils.trim(o2.getTitle());
+            String title1 = NStringUtils.trim(o1.getTitle());
+            String title2 = NStringUtils.trim(o2.getTitle());
             x = title1.toLowerCase().compareTo(title2.toLowerCase());
             if (x != 0) {
                 return x;
@@ -54,11 +54,11 @@ public class DocusaurusFolder implements DocusaurusFileOrFolder {
     private String shortId;
     private String title;
     private int order;
-    private NutsObjectElement config;
+    private NObjectElement config;
     private DocusaurusFileOrFolder[] children;
     private String path;
 
-    public DocusaurusFolder(String longId, String title, int order, NutsObjectElement config, DocusaurusFileOrFolder[] children, MdElement tree, String path) {
+    public DocusaurusFolder(String longId, String title, int order, NObjectElement config, DocusaurusFileOrFolder[] children, MdElement tree, String path) {
         this.longId = longId;
         String[] r = getPathArray(longId);
         this.shortId = r.length == 0 ? "/" : r[r.length - 1];
@@ -71,15 +71,15 @@ public class DocusaurusFolder implements DocusaurusFileOrFolder {
         Arrays.sort(children, DFOF_COMPARATOR);
     }
 
-    public static DocusaurusFileOrFolder ofFileOrFolder(NutsSession session, Path path, Path root, Path configRoot) {
+    public static DocusaurusFileOrFolder ofFileOrFolder(NSession session, Path path, Path root, Path configRoot) {
         return ofFileOrFolder(session, path, root, configRoot, -1);
     }
 
-    public static DocusaurusFileOrFolder ofFileOrFolder(NutsSession session, Path path, Path root, Path configRoot, int maxDepth) {
+    public static DocusaurusFileOrFolder ofFileOrFolder(NSession session, Path path, Path root, Path configRoot, int maxDepth) {
         return Files.isDirectory(path) ? DocusaurusFolder.ofFolder(session, path, root, configRoot, maxDepth) : DocusaurusPathFile.ofFile(path, root, session);
     }
 
-    public static DocusaurusFolder ofFolder(NutsSession session, Path path, Path root, Path configRoot, int maxDepth) {
+    public static DocusaurusFolder ofFolder(NSession session, Path path, Path root, Path configRoot, int maxDepth) {
         if (Files.isDirectory(path) && path.equals(root)) {
             try {
                 DocusaurusFile baseContent = null;
@@ -107,7 +107,7 @@ public class DocusaurusFolder implements DocusaurusFileOrFolder {
             Path dfi = path.resolve(FOLDER_INFO_NAME);
 //            Path cfi = configRoot.resolve(longId).resolve(".docusaurus-folder-config.json");
             int order = 1;
-            NutsElement config = null;
+            NElement config = null;
             String title = null;
             if (Files.isRegularFile(dfi)) {
                 DocusaurusFile ff = DocusaurusPathFile.ofFile(dfi, root, session);
@@ -118,7 +118,7 @@ public class DocusaurusFolder implements DocusaurusFileOrFolder {
                 }
             }
             if (config == null) {
-                config = NutsElements.of(session).ofObject().build();
+                config = NElements.of(session).ofObject().build();
             }
             if (title == null || title.trim().isEmpty()) {
                 title = path.getFileName().toString();
@@ -157,11 +157,11 @@ public class DocusaurusFolder implements DocusaurusFileOrFolder {
         }
     }
 
-    public static DocusaurusFolder ofRoot(NutsSession session, DocusaurusFileOrFolder[] children, MdElement tree, String path) {
-        return new DocusaurusFolder("/", "/", 0, NutsElements.of(session).ofObject().build(), children, tree, path);
+    public static DocusaurusFolder ofRoot(NSession session, DocusaurusFileOrFolder[] children, MdElement tree, String path) {
+        return new DocusaurusFolder("/", "/", 0, NElements.of(session).ofObject().build(), children, tree, path);
     }
 
-    public static DocusaurusFolder of(String longId, String title, int order, NutsObjectElement config, DocusaurusFileOrFolder[] children, String path) {
+    public static DocusaurusFolder of(String longId, String title, int order, NObjectElement config, DocusaurusFileOrFolder[] children, String path) {
         return new DocusaurusFolder(longId, title, order, config, children, null, path);
     }
 
@@ -202,7 +202,7 @@ public class DocusaurusFolder implements DocusaurusFileOrFolder {
         return true;
     }
 
-    public MdElement getContent(NutsSession session) {
+    public MdElement getContent(NSession session) {
         return tree;
     }
 
@@ -357,7 +357,7 @@ public class DocusaurusFolder implements DocusaurusFileOrFolder {
         return children;
     }
 
-    public NutsObjectElement getConfig() {
+    public NObjectElement getConfig() {
         return config;
     }
 

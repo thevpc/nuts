@@ -1,6 +1,6 @@
 package net.thevpc.nuts.runtime.standalone.repository.impl.maven.solrsearch;
 
-import net.thevpc.nuts.NutsBlankable;
+import net.thevpc.nuts.NBlankable;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -18,10 +18,10 @@ public class MavenSolrSearchRequest {
     public Map<String, String> toQueryMap() {
         Map<String, String> m = new HashMap<>();
         StringBuilder q = new StringBuilder();
-        if (!NutsBlankable.isBlank(g) && !g.equals("*")) {
+        if (!NBlankable.isBlank(g) && !g.equals("*")) {
             q.append("g:\"").append(g).append("\"");
         }
-        if (!NutsBlankable.isBlank(a) && !a.equals("*")) {
+        if (!NBlankable.isBlank(a) && !a.equals("*")) {
             if (q.length() > 0) {
                 q.append(" AND ");
             }

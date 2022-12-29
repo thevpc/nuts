@@ -5,10 +5,10 @@
  */
 package net.thevpc.nuts.toolbox.ncode.processors;
 
-import net.thevpc.nuts.NutsMessage;
-import net.thevpc.nuts.NutsSession;
-import net.thevpc.nuts.text.NutsTextStyle;
-import net.thevpc.nuts.text.NutsTexts;
+import net.thevpc.nuts.NMsg;
+import net.thevpc.nuts.NSession;
+import net.thevpc.nuts.text.NTextStyle;
+import net.thevpc.nuts.text.NTexts;
 import net.thevpc.nuts.toolbox.ncode.SourceProcessor;
 import net.thevpc.nuts.toolbox.ncode.Source;
 import net.thevpc.nuts.toolbox.ncode.sources.JavaTypeSource;
@@ -24,7 +24,7 @@ public class JavaSourceFormatter implements SourceProcessor {
     }
 
     @Override
-    public Object process(Source source, NutsSession session) {
+    public Object process(Source source, NSession session) {
         if (source instanceof JavaTypeSource) {
             JavaTypeSource s = (JavaTypeSource) source;
             String v1 = s.getClassVersion(false);
@@ -33,18 +33,18 @@ public class JavaSourceFormatter implements SourceProcessor {
             if (n.length() > clsNameSize) {
                 clsNameSize = n.length();
             }
-            return NutsMessage.ofCstyle(
+            return NMsg.ofCstyle(
                     "%s %s %s %s",
-                    NutsTexts.of(session).ofStyled(leftAlign(v1, 4), NutsTextStyle.config()),
-                    NutsTexts.of(session).ofStyled(leftAlign(v2, 4), NutsTextStyle.info()),
-                    NutsTexts.of(session).ofStyled(leftAlign(n, clsNameSize), NutsTextStyle.primary1()),
-                    NutsTexts.of(session).ofStyled(source.getExternalPath(), NutsTextStyle.path()),
+                    NTexts.of(session).ofStyled(leftAlign(v1, 4), NTextStyle.config()),
+                    NTexts.of(session).ofStyled(leftAlign(v2, 4), NTextStyle.info()),
+                    NTexts.of(session).ofStyled(leftAlign(n, clsNameSize), NTextStyle.primary1()),
+                    NTexts.of(session).ofStyled(source.getExternalPath(), NTextStyle.path()),
                     source.toString()
             );
         } else {
-            return NutsMessage.ofCstyle(
+            return NMsg.ofCstyle(
                     "%s : %s",
-                    NutsTexts.of(session).ofStyled("invalid source", NutsTextStyle.error()),
+                    NTexts.of(session).ofStyled("invalid source", NTextStyle.error()),
                     source.toString()
             );
         }

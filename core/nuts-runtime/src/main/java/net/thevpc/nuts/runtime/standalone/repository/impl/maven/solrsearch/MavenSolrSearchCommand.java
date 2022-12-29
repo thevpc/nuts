@@ -1,15 +1,15 @@
 package net.thevpc.nuts.runtime.standalone.repository.impl.maven.solrsearch;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.elem.NutsArrayElement;
-import net.thevpc.nuts.elem.NutsElement;
-import net.thevpc.nuts.elem.NutsElements;
-import net.thevpc.nuts.elem.NutsObjectElement;
-import net.thevpc.nuts.io.NutsPath;
+import net.thevpc.nuts.elem.NArrayElement;
+import net.thevpc.nuts.elem.NElement;
+import net.thevpc.nuts.elem.NElements;
+import net.thevpc.nuts.elem.NObjectElement;
+import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.runtime.standalone.repository.impl.maven.MavenFolderRepository;
 import net.thevpc.nuts.runtime.standalone.util.iter.IteratorBuilder;
 import net.thevpc.nuts.runtime.standalone.util.iter.IteratorUtils;
-import net.thevpc.nuts.util.NutsIterator;
+import net.thevpc.nuts.util.NIterator;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
@@ -31,29 +31,29 @@ public class MavenSolrSearchCommand {
         this.repo = repo;
     }
 
-    public boolean isSolrSearchEnabled(NutsSession session) {
-        NutsPath solrSearchUrl = getSolrSearchUrl(session);
-        String configProperty = repo.config().setSession(session).getConfigProperty("maven.solrsearch.enable").flatMap(NutsValue::asString).orNull();
+    public boolean isSolrSearchEnabled(NSession session) {
+        NPath solrSearchUrl = getSolrSearchUrl(session);
+        String configProperty = repo.config().setSession(session).getConfigProperty("maven.solrsearch.enable").flatMap(NValue::asString).orNull();
         return solrSearchUrl != null
-                && NutsValue.of(configProperty).asBoolean()
+                && NValue.of(configProperty).asBoolean()
                 .ifEmpty(true).orElse(false);
     }
 
-    public NutsIterator<NutsId> search(NutsIdFilter filter, NutsId[] baseIds, NutsFetchMode fetchMode, NutsSession session) {
-        if(fetchMode==NutsFetchMode.REMOTE){
+    public NIterator<NId> search(NIdFilter filter, NId[] baseIds, NFetchMode fetchMode, NSession session) {
+        if(fetchMode== NFetchMode.REMOTE){
             if(isSolrSearchEnabled(session)){
                 boolean someCorrect=false;
                 boolean someIncorrect=false;
-                List<NutsIterator<? extends NutsId>> list2 = new ArrayList<>();
-                NutsPath solrSearchUrl=getSolrSearchUrl(session);
-                for (NutsId baseId : baseIds) {
+                List<NIterator<? extends NId>> list2 = new ArrayList<>();
+                NPath solrSearchUrl=getSolrSearchUrl(session);
+                for (NId baseId : baseIds) {
                     MavenSolrSearchRequest r=new MavenSolrSearchRequest(
                             baseId.getGroupId(),
                             baseId.getArtifactId()
                     );
-                    Iterator<NutsId> ii = this.search(r, solrSearchUrl, filter, session);
+                    Iterator<NId> ii = this.search(r, solrSearchUrl, filter, session);
                     if(ii!=null){
-                        list2.add((NutsIterator) ii);
+                        list2.add((NIterator) ii);
                         someCorrect=true;
                     }else {
                         return null;
@@ -67,15 +67,15 @@ public class MavenSolrSearchCommand {
         return null;
     }
 
-    public NutsPath getSolrSearchUrl(NutsSession session) {
-        String a = repo.config().setSession(session).getConfigProperty("maven.solrsearch.url").flatMap(NutsValue::asString).orNull();
+    public NPath getSolrSearchUrl(NSession session) {
+        String a = repo.config().setSession(session).getConfigProperty("maven.solrsearch.url").flatMap(NValue::asString).orNull();
         if (a != null) {
-            return NutsPath.of(a, session);
+            return NPath.of(a, session);
         }
         return null;
     }
 
-    public Iterator<NutsId> search(MavenSolrSearchRequest r, NutsPath url, NutsIdFilter idFilter, NutsSession session) {
+    public Iterator<NId> search(MavenSolrSearchRequest r, NPath url, NIdFilter idFilter, NSession session) {
         if (r != null) {
             String urlString = url.toString();
             if (urlString.startsWith("htmlfs:")) {
@@ -96,25 +96,25 @@ public class MavenSolrSearchCommand {
                     }
                     index++;
                 }
-                NutsPath query = NutsPath.of(q2.toString(), session);
-                IteratorBuilder<NutsId> it = IteratorBuilder.<NutsId>ofSupplier(new Supplier<Iterator<NutsId>>() {
+                NPath query = NPath.of(q2.toString(), session);
+                IteratorBuilder<NId> it = IteratorBuilder.<NId>ofSupplier(new Supplier<Iterator<NId>>() {
                     @Override
-                    public Iterator<NutsId> get() {
-                        return new Iterator<NutsId>() {
-                            NutsArrayElement arr;
+                    public Iterator<NId> get() {
+                        return new Iterator<NId>() {
+                            NArrayElement arr;
                             int index = 0;
 
                             @Override
                             public boolean hasNext() {
                                 if (arr == null) {
-                                    NutsElement e = NutsElements.of(session)
+                                    NElement e = NElements.of(session)
                                             .setLogProgress(true)
                                             .parse(query);
                                     if (e.isObject()) {
-                                        NutsObjectElement o = e.asObject().get(session);
+                                        NObjectElement o = e.asObject().get(session);
                                         String status = o.getStringByPath("responseHeader","status").orElse("");
                                         if ("0".equals(status)) {
-                                            arr = o.getArrayByPath("response","docs").orElse(NutsArrayElement.ofEmpty(session));
+                                            arr = o.getArrayByPath("response","docs").orElse(NArrayElement.ofEmpty(session));
                                         }
                                     }
                                 }
@@ -122,26 +122,26 @@ public class MavenSolrSearchCommand {
                             }
 
                             @Override
-                            public NutsId next() {
+                            public NId next() {
                                 if (arr != null) {
                                     if (index < arr.size()) {
-                                        NutsObjectElement d = arr.getObject(index).get(session);
+                                        NObjectElement d = arr.getObject(index).get(session);
                                         String g = d.getString("g").orElse("");
                                         String a = d.getString("a").orElse("");
                                         String v = d.getString("v").orElse("");
                                         index++;
-                                        return NutsIdBuilder.of(g,a).setVersion(v).build();
+                                        return NIdBuilder.of(g,a).setVersion(v).build();
                                     }
                                 }
                                 return null;
                             }
                         };
                     }
-                }, (elems) -> NutsElements.of(elems).ofObject().set("url", query.toString()).build(), session);
+                }, (elems) -> NElements.of(elems).ofObject().set("url", query.toString()).build(), session);
                 return it.filter(y->idFilter==null||idFilter.acceptId(y,session),
                                 elems->
-                                        NutsElements.of(elems).ofObject().set(
-                                        "filterBy",NutsElements.of(elems).ofString(idFilter==null?"true":idFilter.toString())
+                                        NElements.of(elems).ofObject().set(
+                                        "filterBy", NElements.of(elems).ofString(idFilter==null?"true":idFilter.toString())
                                 ).build()
                         )
 //                        .flatMap(

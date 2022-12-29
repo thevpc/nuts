@@ -1,23 +1,23 @@
 package net.thevpc.nuts.runtime.standalone.text.parser.v1;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.runtime.standalone.text.DefaultNutsTexts;
-import net.thevpc.nuts.text.NutsText;
-import net.thevpc.nuts.text.NutsTexts;
-import net.thevpc.nuts.util.NutsStringUtils;
+import net.thevpc.nuts.runtime.standalone.text.DefaultNTexts;
+import net.thevpc.nuts.text.NText;
+import net.thevpc.nuts.text.NTexts;
+import net.thevpc.nuts.util.NStringUtils;
 
 
 public class NewLineParserStep extends ParserStep {
 
     StringBuilder start = new StringBuilder();
-    private NutsSession session;
-    public NewLineParserStep(char c, NutsSession session) {
+    private NSession session;
+    public NewLineParserStep(char c, NSession session) {
         start.append(c);
         this.session=session;
     }
 
     @Override
-    public void consume(char c, DefaultNutsTextNodeParser.State state, boolean wasNewLine) {
+    public void consume(char c, DefaultNTextNodeParser.State state, boolean wasNewLine) {
         if(c=='\n') {
             start.append(c);
         }else /*if(c=='#')*/{
@@ -34,17 +34,17 @@ public class NewLineParserStep extends ParserStep {
 
     @Override
     public void appendChild(ParserStep tt) {
-        throw new NutsUnsupportedOperationException(session);
+        throw new NUnsupportedOperationException(session);
     }
 
     @Override
-    public NutsText toText() {
-        DefaultNutsTexts factory0 = (DefaultNutsTexts) NutsTexts.of(session);
+    public NText toText() {
+        DefaultNTexts factory0 = (DefaultNTexts) NTexts.of(session);
         return factory0.ofPlain(start.toString());
     }
 
     @Override
-    public void end(DefaultNutsTextNodeParser.State p) {
+    public void end(DefaultNTextNodeParser.State p) {
         p.applyPop(this);
     }
 
@@ -54,7 +54,7 @@ public class NewLineParserStep extends ParserStep {
 
     @Override
     public String toString() {
-        StringBuilder sb = new StringBuilder("NewLine(" + NutsStringUtils.formatStringLiteral(start.toString(), NutsStringUtils.QuoteType.DOUBLE));
+        StringBuilder sb = new StringBuilder("NewLine(" + NStringUtils.formatStringLiteral(start.toString(), NStringUtils.QuoteType.DOUBLE));
         return sb.append(")").toString();
     }
 

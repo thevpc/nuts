@@ -25,9 +25,9 @@
  */
 package net.thevpc.nuts.toolbox.nsh.cmds.bash;
 
-import net.thevpc.nuts.cmdline.NutsCommandLine;
-import net.thevpc.nuts.NutsSession;
-import net.thevpc.nuts.NutsVersionFormat;
+import net.thevpc.nuts.cmdline.NCommandLine;
+import net.thevpc.nuts.NSession;
+import net.thevpc.nuts.NVersionFormat;
 import net.thevpc.nuts.toolbox.nsh.SimpleJShellBuiltin;
 import net.thevpc.nuts.toolbox.nsh.jshell.JShellExecutionContext;
 
@@ -41,20 +41,20 @@ public class VersionCommand extends SimpleJShellBuiltin {
     }
 
     @Override
-    protected boolean configureFirst(NutsCommandLine commandLine, JShellExecutionContext context) {
+    protected boolean configureFirst(NCommandLine commandLine, JShellExecutionContext context) {
         Options options = context.getOptions();
         if (options.version == null) {
-            options.version = NutsVersionFormat.of(context.getSession());
+            options.version = NVersionFormat.of(context.getSession());
         }
         return options.version.configureFirst(commandLine);
     }
 
     @Override
-    protected void execBuiltin(NutsCommandLine commandLine, JShellExecutionContext context) {
-        NutsSession session = context.getSession();
+    protected void execBuiltin(NCommandLine commandLine, JShellExecutionContext context) {
+        NSession session = context.getSession();
         Options options = context.getOptions();
         if (options.version == null) {
-            options.version = NutsVersionFormat.of(context.getSession());
+            options.version = NVersionFormat.of(context.getSession());
         }
         if(context.getSession().isPlainOut()){
             context.out().printlnf( context.getAppContext().getAppId().getVersion().getValue());
@@ -67,6 +67,6 @@ public class VersionCommand extends SimpleJShellBuiltin {
     }
 
     private static class Options {
-        NutsVersionFormat version;
+        NVersionFormat version;
     }
 }

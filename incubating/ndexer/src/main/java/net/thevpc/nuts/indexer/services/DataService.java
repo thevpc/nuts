@@ -1,9 +1,9 @@
 package net.thevpc.nuts.indexer.services;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.elem.NutsElements;
-import net.thevpc.nuts.indexer.NutsIndexerUtils;
-import net.thevpc.nuts.util.NutsStringUtils;
+import net.thevpc.nuts.elem.NElements;
+import net.thevpc.nuts.indexer.NIndexerUtils;
+import net.thevpc.nuts.util.NStringUtils;
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
@@ -55,7 +55,7 @@ public class DataService {
             index = FSDirectory.open(dirPath);
             config = new IndexWriterConfig(analyzer);
             writer = new IndexWriter(index, config);
-            Query query = NutsIndexerUtils.mapToQuery(olddata);
+            Query query = NIndexerUtils.mapToQuery(olddata);
             writer.deleteDocuments(query);
             Document document = mapToDocument(data);
             writer.addDocument(document);
@@ -68,7 +68,7 @@ public class DataService {
     private Document mapToDocument(Map<String, String> data) {
         Document document = new Document();
         for (Map.Entry<String, String> entry : data.entrySet()) {
-            document.add(new StringField(entry.getKey(), NutsStringUtils.trim(entry.getValue()), Field.Store.YES));
+            document.add(new StringField(entry.getKey(), NStringUtils.trim(entry.getValue()), Field.Store.YES));
         }
         return document;
     }
@@ -87,7 +87,7 @@ public class DataService {
             config = new IndexWriterConfig(analyzer);
             writer = new IndexWriter(index, config);
             for (Map<String, String> entity : data) {
-                Query query = NutsIndexerUtils.mapToQuery(entity);
+                Query query = NIndexerUtils.mapToQuery(entity);
                 writer.deleteDocuments(query);
             }
             writer.close();
@@ -113,7 +113,7 @@ public class DataService {
             searcher = new IndexSearcher(reader);
             topDocs = searcher.search(data == null
                             ? (query == null ? new MatchAllDocsQuery() : query)
-                            : (query == null ? NutsIndexerUtils.mapToQuery(data) : query),
+                            : (query == null ? NIndexerUtils.mapToQuery(data) : query),
                     Integer.MAX_VALUE);
             for (ScoreDoc scoreDoc : topDocs.scoreDocs) {
                 Document document = null;
@@ -130,14 +130,14 @@ public class DataService {
         return result;
     }
 
-    public List<Map<String, String>> getAllDependencies(NutsSession session, Path dirPath, NutsId id) {
-        List<Map<String, String>> rows = searchData(dirPath, NutsIndexerUtils.nutsIdToMap(id), null);
+    public List<Map<String, String>> getAllDependencies(NSession session, Path dirPath, NId id) {
+        List<Map<String, String>> rows = searchData(dirPath, NIndexerUtils.nutsIdToMap(id), null);
         if (rows.isEmpty()) {
             return null;
         }
         Map<String, String> row = rows.get(0);
         if (!row.containsKey("allDependencies")) {
-            List<NutsId> allDependencies = session.search()
+            List<NId> allDependencies = session.search()
                     .setBasePackage(false)
                     .setInlineDependencies(true)
                     .addId(id)
@@ -145,7 +145,7 @@ public class DataService {
                     .setContent(false)
                     .getResultIds().toList();
             Map<String, String> oldRow = new HashMap<>(row);
-            row.put("allDependencies", NutsElements.of(session).json()
+            row.put("allDependencies", NElements.of(session).json()
                     .setValue(allDependencies.stream().map(Object::toString)
                             .collect(Collectors.toList()))
                             .setNtf(false)
@@ -154,30 +154,30 @@ public class DataService {
             );
             updateData(dirPath, oldRow, row);
         }
-        String[] array = NutsElements.of(session).json().parse(new StringReader(row.get("allDependencies")), String[].class);
+        String[] array = NElements.of(session).json().parse(new StringReader(row.get("allDependencies")), String[].class);
         List<Map<String, String>> allDependencies = Arrays.stream(array)
-                .map(s -> NutsIndexerUtils.nutsIdToMap(NutsId.of(s).get(session)))
+                .map(s -> NIndexerUtils.nutsIdToMap(NId.of(s).get(session)))
                 .collect(Collectors.toList());
         return allDependencies;
     }
 
-    public List<Map<String, String>> getDependencies(NutsSession session, Path dirPath, NutsId id) {
-        List<Map<String, String>> rows = searchData(dirPath, NutsIndexerUtils.nutsIdToMap(id), null);
+    public List<Map<String, String>> getDependencies(NSession session, Path dirPath, NId id) {
+        List<Map<String, String>> rows = searchData(dirPath, NIndexerUtils.nutsIdToMap(id), null);
         if (rows.isEmpty()) {
             return null;
         }
         Map<String, String> row = rows.get(0);
-        String[] array = NutsElements.of(session).json().parse(new StringReader(row.get("dependencies")), String[].class);
+        String[] array = NElements.of(session).json().parse(new StringReader(row.get("dependencies")), String[].class);
         List<Map<String, String>> dependencies = Arrays.stream(array)
-                .map(s -> NutsIndexerUtils.nutsIdToMap(NutsId.of(s).get(session)))
+                .map(s -> NIndexerUtils.nutsIdToMap(NId.of(s).get(session)))
                 .collect(Collectors.toList());
         return dependencies;
     }
 
-    public List<Map<String, String>> getAllVersions(NutsSession session, Path dirPath, NutsId id) {
-        Map<String, String> data = NutsIndexerUtils.nutsIdToMap(id);
+    public List<Map<String, String>> getAllVersions(NSession session, Path dirPath, NId id) {
+        Map<String, String> data = NIndexerUtils.nutsIdToMap(id);
         List<Map<String, String>> rows =
-                searchData(dirPath, null, NutsIndexerUtils.mapToQuery(data, "version"));
+                searchData(dirPath, null, NIndexerUtils.mapToQuery(data, "version"));
         return rows;
 
     }

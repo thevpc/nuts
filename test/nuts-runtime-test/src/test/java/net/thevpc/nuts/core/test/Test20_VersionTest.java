@@ -26,7 +26,7 @@
 package net.thevpc.nuts.core.test;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.reserved.NutsReservedVersionIntervalParser;
+import net.thevpc.nuts.reserved.NReservedVersionIntervalParser;
 import net.thevpc.nuts.core.test.utils.TestUtils;
 import org.junit.jupiter.api.*;
 
@@ -34,7 +34,7 @@ import org.junit.jupiter.api.*;
  * @author thevpc
  */
 public class Test20_VersionTest {
-    static NutsSession session;
+    static NSession session;
 
     @BeforeAll
     public static void init() {
@@ -83,34 +83,34 @@ public class Test20_VersionTest {
 
     @Test
     public void test9() {
-        String value = NutsVersion.BLANK.inc(-1).getValue();
+        String value = NVersion.BLANK.inc(-1).getValue();
         TestUtils.println(value);
         Assertions.assertEquals("1", value);
     }
 
     @Test
     public void test10() {
-        NutsVersion v1 = NutsVersion.of("1.2-preview").get();
-        NutsVersion v2 = NutsVersion.of("1.2").get();
+        NVersion v1 = NVersion.of("1.2-preview").get();
+        NVersion v2 = NVersion.of("1.2").get();
         Assertions.assertTrue(v1.compareTo(v2)<0);
     }
 
     @Test
     public void test11() {
-        NutsVersion v1 = NutsVersion.of("1.2-preview").get();
-        NutsVersion v2 = NutsVersion.of("1.2.1").get();
+        NVersion v1 = NVersion.of("1.2-preview").get();
+        NVersion v2 = NVersion.of("1.2.1").get();
         Assertions.assertTrue(v1.compareTo(v2)<0);
     }
 
     @Test
     public void test12() {
-        Assertions.assertTrue(DefaultNutsVersion.compareVersions("1.2-preview","1.2.1")<0);
-        Assertions.assertTrue(DefaultNutsVersion.compareVersions("1.2","1.2.1")<0);
-        Assertions.assertTrue(DefaultNutsVersion.compareVersions("1.2-preview","1.2-rc")>0);
-        Assertions.assertTrue(DefaultNutsVersion.compareVersions("1.2-alpha","1.2-beta")<0);
-        Assertions.assertTrue(DefaultNutsVersion.compareVersions("1.2-rc","1.2-ga")<0);
-        Assertions.assertTrue(DefaultNutsVersion.compareVersions("1.2-gamma","1.2-Gamma")==0);
-        Assertions.assertTrue(DefaultNutsVersion.compareVersions("1.2-gamma","1.2-hecta")<0);
+        Assertions.assertTrue(DefaultNVersion.compareVersions("1.2-preview","1.2.1")<0);
+        Assertions.assertTrue(DefaultNVersion.compareVersions("1.2","1.2.1")<0);
+        Assertions.assertTrue(DefaultNVersion.compareVersions("1.2-preview","1.2-rc")>0);
+        Assertions.assertTrue(DefaultNVersion.compareVersions("1.2-alpha","1.2-beta")<0);
+        Assertions.assertTrue(DefaultNVersion.compareVersions("1.2-rc","1.2-ga")<0);
+        Assertions.assertTrue(DefaultNVersion.compareVersions("1.2-gamma","1.2-Gamma")==0);
+        Assertions.assertTrue(DefaultNVersion.compareVersions("1.2-gamma","1.2-hecta")<0);
     }
 
     @Test
@@ -118,8 +118,8 @@ public class Test20_VersionTest {
         checkEq("[1,2[  ,  [1,2],  [1,3]", "[1,2[, [1,2], [1,3]", session);
     }
 
-    private void checkEq(String a, String b, NutsSession session) {
-        NutsVersionFilter u = NutsVersionFilters.of(session).parse(a);
+    private void checkEq(String a, String b, NSession session) {
+        NVersionFilter u = NVersionFilters.of(session).parse(a);
         String b2 = u.toString();
         Assertions.assertEquals(b, b2);
         TestUtils.println(a + " ==> " + b);
@@ -128,18 +128,18 @@ public class Test20_VersionTest {
     @Test
     public void test14() {
         String version = "";
-        Assertions.assertEquals(true,NutsVersion.of(version).get().isBlank());
-        Assertions.assertEquals(false,NutsVersion.of(version).get().isFilter());
-        Assertions.assertEquals(false,NutsVersion.of(version).get().isNull());
-        Assertions.assertEquals(false,NutsVersion.of(version).get().isSingleValue());
+        Assertions.assertEquals(true, NVersion.of(version).get().isBlank());
+        Assertions.assertEquals(false, NVersion.of(version).get().isFilter());
+        Assertions.assertEquals(false, NVersion.of(version).get().isNull());
+        Assertions.assertEquals(false, NVersion.of(version).get().isSingleValue());
     }
     @Test
     public void test15() {
         String version = "a";
-        Assertions.assertEquals(false,NutsVersion.of(version).get().isBlank());
-        Assertions.assertEquals(false,NutsVersion.of(version).get().isFilter());
-        Assertions.assertEquals(false,NutsVersion.of(version).get().isNull());
-        Assertions.assertEquals(true,NutsVersion.of(version).get().isSingleValue());
+        Assertions.assertEquals(false, NVersion.of(version).get().isBlank());
+        Assertions.assertEquals(false, NVersion.of(version).get().isFilter());
+        Assertions.assertEquals(false, NVersion.of(version).get().isNull());
+        Assertions.assertEquals(true, NVersion.of(version).get().isSingleValue());
     }
 
     @Test
@@ -148,7 +148,7 @@ public class Test20_VersionTest {
                 "[a]","[a,a]","a,a",
                 "a,",
                 ",a"}) {
-            NutsVersion nutsVersion = NutsVersion.of(version).get();
+            NVersion nutsVersion = NVersion.of(version).get();
             Assertions.assertEquals(false, nutsVersion.isBlank(),version+".isBlank");
             Assertions.assertEquals(false, nutsVersion.isNull(),version+".isNull");
             Assertions.assertEquals(true, nutsVersion.isFilter(),version+".isFilter");
@@ -169,7 +169,7 @@ public class Test20_VersionTest {
                 ,"[,a]"
                 ,"[,]"
         }) {
-            NutsVersion nutsVersion = NutsVersion.of(version).get();
+            NVersion nutsVersion = NVersion.of(version).get();
             Assertions.assertEquals(false, nutsVersion.isBlank(),version+".isBlank");
             Assertions.assertEquals(true, nutsVersion.isFilter(),version+".isFilter");
             Assertions.assertEquals(false, nutsVersion.isNull(),version+".isNull");
@@ -185,7 +185,7 @@ public class Test20_VersionTest {
                 ,"[a,a[a"
                 ,"],a"
         }) {
-            NutsVersion nutsVersion = NutsVersion.of(version).get();
+            NVersion nutsVersion = NVersion.of(version).get();
             Assertions.assertEquals(false, nutsVersion.isBlank(),version+".isBlank");
             Assertions.assertEquals(true, nutsVersion.isFilter(),version+".isFilter");
             Assertions.assertEquals(false, nutsVersion.isNull(),version+".isNull");
@@ -199,7 +199,7 @@ public class Test20_VersionTest {
         for (String version : new String[]{
                 " a a "
         }) {
-            NutsVersion nutsVersion = NutsVersion.of(version).get();
+            NVersion nutsVersion = NVersion.of(version).get();
             Assertions.assertEquals(false, nutsVersion.isBlank(),version+".isBlank");
             Assertions.assertEquals(false, nutsVersion.isFilter(),version+".isFilter");
             Assertions.assertEquals(false, nutsVersion.isNull(),version+".isNull");
@@ -210,12 +210,12 @@ public class Test20_VersionTest {
 
     @Test
     public void test20() {
-        new NutsReservedVersionIntervalParser().parse(",,").get();
+        new NReservedVersionIntervalParser().parse(",,").get();
     }
 
     @Test
     public void test21() {
-        NutsVersion r = NutsVersion.of("0.8.4.0").get().inc(-1, 10);
+        NVersion r = NVersion.of("0.8.4.0").get().inc(-1, 10);
         Assertions.assertEquals(r.toString(),"0.8.4.10");
     }
 

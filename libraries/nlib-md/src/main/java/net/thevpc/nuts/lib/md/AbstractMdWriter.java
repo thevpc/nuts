@@ -17,7 +17,7 @@
  */
 package net.thevpc.nuts.lib.md;
 
-import net.thevpc.nuts.io.NutsPath;
+import net.thevpc.nuts.io.NPath;
 
 import java.io.*;
 
@@ -29,7 +29,7 @@ public abstract class AbstractMdWriter implements MdWriter {
         this(new PrintWriter(out));
     }
 
-    public AbstractMdWriter(NutsPath out) {
+    public AbstractMdWriter(NPath out) {
         this(out.getWriter());
     }
 

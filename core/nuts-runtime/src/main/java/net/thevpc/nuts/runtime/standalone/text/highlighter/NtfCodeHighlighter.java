@@ -1,14 +1,14 @@
 package net.thevpc.nuts.runtime.standalone.text.highlighter;
 
-import net.thevpc.nuts.NutsCodeHighlighter;
-import net.thevpc.nuts.NutsSession;
-import net.thevpc.nuts.text.NutsText;
-import net.thevpc.nuts.text.NutsTexts;
-import net.thevpc.nuts.spi.NutsComponent;
-import net.thevpc.nuts.spi.NutsSupportLevelContext;
+import net.thevpc.nuts.NCodeHighlighter;
+import net.thevpc.nuts.NSession;
+import net.thevpc.nuts.text.NText;
+import net.thevpc.nuts.text.NTexts;
+import net.thevpc.nuts.spi.NComponent;
+import net.thevpc.nuts.spi.NSupportLevelContext;
 
-public class NtfCodeHighlighter implements NutsCodeHighlighter {
-    public NtfCodeHighlighter(NutsSession session) {
+public class NtfCodeHighlighter implements NCodeHighlighter {
+    public NtfCodeHighlighter(NSession session) {
     }
 
     @Override
@@ -17,7 +17,7 @@ public class NtfCodeHighlighter implements NutsCodeHighlighter {
     }
 
     @Override
-    public int getSupportLevel(NutsSupportLevelContext context) {
+    public int getSupportLevel(NSupportLevelContext context) {
         String s = context.getConstraints();
         if(s==null){
             return DEFAULT_SUPPORT;
@@ -27,19 +27,19 @@ public class NtfCodeHighlighter implements NutsCodeHighlighter {
             case "nuts-text-format":
             case "text/x-nuts-text-format":
             {
-                return NutsComponent.DEFAULT_SUPPORT;
+                return NComponent.DEFAULT_SUPPORT;
             }
         }
-        return NutsComponent.NO_SUPPORT;
+        return NComponent.NO_SUPPORT;
     }
 
     @Override
-    public NutsText stringToText(String text, NutsTexts txt, NutsSession session) {
+    public NText stringToText(String text, NTexts txt, NSession session) {
         return txt.parse(text);
     }
 
     @Override
-    public NutsText tokenToText(String text, String tokenType, NutsTexts txt, NutsSession session) {
+    public NText tokenToText(String text, String tokenType, NTexts txt, NSession session) {
         return txt.parse(text);
     }
 }

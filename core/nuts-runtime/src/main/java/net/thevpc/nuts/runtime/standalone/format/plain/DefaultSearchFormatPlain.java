@@ -6,10 +6,10 @@
 package net.thevpc.nuts.runtime.standalone.format.plain;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.cmdline.NutsCommandLine;
-import net.thevpc.nuts.io.NutsPrintStream;
-import net.thevpc.nuts.runtime.standalone.format.NutsFetchDisplayOptions;
-import net.thevpc.nuts.runtime.standalone.format.NutsIdFormatHelper;
+import net.thevpc.nuts.cmdline.NCommandLine;
+import net.thevpc.nuts.io.NStream;
+import net.thevpc.nuts.runtime.standalone.format.NFetchDisplayOptions;
+import net.thevpc.nuts.runtime.standalone.format.NIdFormatHelper;
 import net.thevpc.nuts.runtime.standalone.format.DefaultSearchFormatBase;
 
 /**
@@ -18,12 +18,12 @@ import net.thevpc.nuts.runtime.standalone.format.DefaultSearchFormatBase;
  */
 public class DefaultSearchFormatPlain extends DefaultSearchFormatBase {
 
-    public DefaultSearchFormatPlain(NutsSession session, NutsPrintStream writer, NutsFetchDisplayOptions options) {
-        super(session, writer, NutsContentType.PLAIN,options);
+    public DefaultSearchFormatPlain(NSession session, NStream writer, NFetchDisplayOptions options) {
+        super(session, writer, NContentType.PLAIN,options);
     }
 
     @Override
-    public boolean configureFirst(NutsCommandLine cmd) {
+    public boolean configureFirst(NCommandLine cmd) {
         if (getDisplayOptions().configureFirst(cmd)) {
             return true;
         }
@@ -41,7 +41,7 @@ public class DefaultSearchFormatPlain extends DefaultSearchFormatBase {
 
     @Override
     public void next(Object object, long index) {
-        NutsIdFormatHelper fid = NutsIdFormatHelper.of(object, getSession());
+        NIdFormatHelper fid = NIdFormatHelper.of(object, getSession());
         if (fid != null) {
             formatElement(fid, index);
         } else {
@@ -52,8 +52,8 @@ public class DefaultSearchFormatPlain extends DefaultSearchFormatBase {
         }
     }
 
-    private void formatElement(NutsIdFormatHelper id, long index) {
-        NutsString s = id.getSingleColumnRow(getDisplayOptions());
+    private void formatElement(NIdFormatHelper id, long index) {
+        NString s = id.getSingleColumnRow(getDisplayOptions());
         getWriter().resetLine();
         getWriter().printf("%s", s);
         getWriter().println();

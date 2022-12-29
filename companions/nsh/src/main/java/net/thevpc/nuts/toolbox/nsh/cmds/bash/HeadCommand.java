@@ -26,11 +26,11 @@
 package net.thevpc.nuts.toolbox.nsh.cmds.bash;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.cmdline.NutsArgument;
-import net.thevpc.nuts.cmdline.NutsCommandLine;
-import net.thevpc.nuts.io.NutsPath;
-import net.thevpc.nuts.spi.NutsComponentScope;
-import net.thevpc.nuts.spi.NutsComponentScopeType;
+import net.thevpc.nuts.cmdline.NArgument;
+import net.thevpc.nuts.cmdline.NCommandLine;
+import net.thevpc.nuts.io.NPath;
+import net.thevpc.nuts.spi.NComponentScope;
+import net.thevpc.nuts.spi.NComponentScopeType;
 import net.thevpc.nuts.toolbox.nsh.SimpleJShellBuiltin;
 import net.thevpc.nuts.toolbox.nsh.jshell.JShellExecutionContext;
 
@@ -44,24 +44,24 @@ import java.util.List;
 /**
  * Created by vpc on 1/7/17.
  */
-@NutsComponentScope(NutsComponentScopeType.WORKSPACE)
+@NComponentScope(NComponentScopeType.WORKSPACE)
 public class HeadCommand extends SimpleJShellBuiltin {
     public HeadCommand() {
         super("head", DEFAULT_SUPPORT,Options.class);
     }
 
     @Override
-    protected boolean configureFirst(NutsCommandLine commandLine, JShellExecutionContext context) {
+    protected boolean configureFirst(NCommandLine commandLine, JShellExecutionContext context) {
         Options options = context.getOptions();
-        NutsSession session = context.getSession();
-        NutsArgument a = commandLine.peek().get(session);
+        NSession session = context.getSession();
+        NArgument a = commandLine.peek().get(session);
         if (a.isOption() && a.getKey().isInt()) {
             options.max = a.getKey().asInt().get(session);
             commandLine.skip();
             return true;
         } else if (!a.isOption()) {
-            String path = commandLine.next().flatMap(NutsValue::asString).get(session);
-            String file = NutsPath.of(path, session).toAbsolute(context.getCwd()).toString();
+            String path = commandLine.next().flatMap(NValue::asString).get(session);
+            String file = NPath.of(path, session).toAbsolute(context.getCwd()).toString();
             options.files.add(file);
             return true;
         }
@@ -69,9 +69,9 @@ public class HeadCommand extends SimpleJShellBuiltin {
     }
 
     @Override
-    protected void execBuiltin(NutsCommandLine commandLine, JShellExecutionContext context) {
+    protected void execBuiltin(NCommandLine commandLine, JShellExecutionContext context) {
         Options options = context.getOptions();
-        NutsSession session = context.getSession();
+        NSession session = context.getSession();
         if (options.files.isEmpty()) {
             commandLine.throwMissingArgument();
         }
@@ -82,10 +82,10 @@ public class HeadCommand extends SimpleJShellBuiltin {
 
     private void head(String file, int max, JShellExecutionContext context) {
         BufferedReader r = null;
-        NutsSession session = context.getSession();
+        NSession session = context.getSession();
         try {
             try {
-                r = new BufferedReader(new InputStreamReader(NutsPath.of(file, session)
+                r = new BufferedReader(new InputStreamReader(NPath.of(file, session)
                         .getInputStream()));
                 String line = null;
                 int count = 0;
@@ -99,7 +99,7 @@ public class HeadCommand extends SimpleJShellBuiltin {
                 }
             }
         } catch (IOException ex) {
-            throw new NutsExecutionException(session, NutsMessage.ofCstyle("%s", ex), ex, 100);
+            throw new NExecutionException(session, NMsg.ofCstyle("%s", ex), ex, 100);
         }
     }
 

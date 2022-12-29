@@ -6,11 +6,11 @@ import java.util.List;
 
 public class ParsFctNode extends AbstractOp {
     public ParsFctNode() {
-        super("(", NutsExprOpPrecedence.PARS, NutsExprOpAssociativity.LEFT, NutsExprOpType.POSTFIX);
+        super("(", NExprOpPrecedence.PARS, NExprOpAssociativity.LEFT, NExprOpType.POSTFIX);
     }
 
     @Override
-    public Object eval(String name, List<NutsExprNode> args, NutsExprDeclarations e) {
+    public Object eval(String name, List<NExprNode> args, NExprDeclarations e) {
         throw new IllegalArgumentException("unable to evaluate");
     }
 }

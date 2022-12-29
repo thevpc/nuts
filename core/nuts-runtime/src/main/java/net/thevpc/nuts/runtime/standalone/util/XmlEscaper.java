@@ -1,10 +1,10 @@
 package net.thevpc.nuts.runtime.standalone.util;
 
-import net.thevpc.nuts.util.NutsLoggerVerb;
-import net.thevpc.nuts.util.NutsLoggerOp;
-import net.thevpc.nuts.NutsMessage;
-import net.thevpc.nuts.NutsSession;
-import net.thevpc.nuts.runtime.standalone.repository.impl.maven.pom.NutsPomXmlParser;
+import net.thevpc.nuts.util.NLoggerVerb;
+import net.thevpc.nuts.util.NLoggerOp;
+import net.thevpc.nuts.NMsg;
+import net.thevpc.nuts.NSession;
+import net.thevpc.nuts.runtime.standalone.repository.impl.maven.pom.NPomXmlParser;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -45,7 +45,7 @@ public class XmlEscaper {
     }
 
 
-    public static String escapeToCode(String any, NutsSession session) {
+    public static String escapeToCode(String any, NSession session) {
         Matcher m = ENTITY_PATTERN.matcher(any);
         StringBuffer sb = new StringBuffer();
         while (m.find()) {
@@ -54,10 +54,10 @@ public class XmlEscaper {
             if (z != null) {
                 m.appendReplacement(sb, z);
             } else {
-                NutsLoggerOp.of(NutsPomXmlParser.class, session)
-                        .verb(NutsLoggerVerb.WARNING)
+                NLoggerOp.of(NPomXmlParser.class, session)
+                        .verb(NLoggerVerb.WARNING)
                         .level(Level.FINEST)
-                        .log(NutsMessage.ofCstyle("unsupported  xml entity declaration : %s", g));
+                        .log(NMsg.ofCstyle("unsupported  xml entity declaration : %s", g));
                 m.appendReplacement(sb, g);
             }
         }
@@ -65,7 +65,7 @@ public class XmlEscaper {
         return sb.toString();
     }
 
-    public static String escapeToUnicode(String any, NutsSession session) {
+    public static String escapeToUnicode(String any, NSession session) {
         Matcher m = ENTITY_PATTERN.matcher(any);
         StringBuffer sb = new StringBuffer();
         while (m.find()) {
@@ -74,10 +74,10 @@ public class XmlEscaper {
             if (z != null) {
                 m.appendReplacement(sb, z);
             } else {
-                NutsLoggerOp.of(NutsPomXmlParser.class, session)
-                        .verb(NutsLoggerVerb.WARNING)
+                NLoggerOp.of(NPomXmlParser.class, session)
+                        .verb(NLoggerVerb.WARNING)
                         .level(Level.FINEST)
-                        .log(NutsMessage.ofCstyle("unsupported  xml entity declaration : %s", g));
+                        .log(NMsg.ofCstyle("unsupported  xml entity declaration : %s", g));
                 m.appendReplacement(sb, g);
             }
         }

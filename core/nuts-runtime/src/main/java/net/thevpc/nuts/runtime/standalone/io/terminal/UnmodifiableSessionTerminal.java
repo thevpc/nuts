@@ -1,47 +1,47 @@
 package net.thevpc.nuts.runtime.standalone.io.terminal;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.io.NutsPrintStream;
-import net.thevpc.nuts.io.NutsSessionTerminal;
+import net.thevpc.nuts.io.NStream;
+import net.thevpc.nuts.io.NSessionTerminal;
 import net.thevpc.nuts.runtime.standalone.io.progress.CProgressBar;
-import net.thevpc.nuts.text.NutsTexts;
-import net.thevpc.nuts.util.NutsQuestion;
+import net.thevpc.nuts.text.NTexts;
+import net.thevpc.nuts.util.NQuestion;
 
 import java.io.InputStream;
 
-public class UnmodifiableSessionTerminal extends AbstractNutsSessionTerminal {
+public class UnmodifiableSessionTerminal extends AbstractNSessionTerminal {
 
-    private final NutsSessionTerminal base;
+    private final NSessionTerminal base;
     protected CProgressBar progressBar;
-    protected NutsSession session;
+    protected NSession session;
 
-    public UnmodifiableSessionTerminal(NutsSessionTerminal base, NutsSession session) {
+    public UnmodifiableSessionTerminal(NSessionTerminal base, NSession session) {
         this.base = base;
         this.session = session;
     }
 
     @Override
-    public String readLine(NutsPrintStream out, String promptFormat, Object... params) {
+    public String readLine(NStream out, String promptFormat, Object... params) {
         return getBase().readLine(out, promptFormat, params);
     }
 
     @Override
-    public String readLine(NutsPrintStream out, NutsMessage message) {
+    public String readLine(NStream out, NMsg message) {
         return getBase().readLine(out, message);
     }
 
     @Override
-    public char[] readPassword(NutsPrintStream out, NutsMessage message) {
+    public char[] readPassword(NStream out, NMsg message) {
         return getBase().readPassword(out, message);
     }
 
     @Override
-    public String readLine(NutsPrintStream out, NutsMessage message, NutsSession session) {
+    public String readLine(NStream out, NMsg message, NSession session) {
         return getBase().readLine(out, message, session);
     }
 
     @Override
-    public char[] readPassword(NutsPrintStream out, NutsMessage message, NutsSession session) {
+    public char[] readPassword(NStream out, NMsg message, NSession session) {
         return getBase().readPassword(out, message, session);
     }
 
@@ -68,27 +68,27 @@ public class UnmodifiableSessionTerminal extends AbstractNutsSessionTerminal {
     }
 
     @Override
-    public NutsPrintStream getOut() {
+    public NStream getOut() {
         return getBase().getOut();
     }
 
     @Override
-    public void setOut(NutsPrintStream out) {
+    public void setOut(NStream out) {
 
     }
 
     @Override
-    public NutsPrintStream getErr() {
+    public NStream getErr() {
         return getBase().getErr();
     }
 
     @Override
-    public void setErr(NutsPrintStream out) {
+    public void setErr(NStream out) {
 
     }
 
     @Override
-    public NutsSessionTerminal copy() {
+    public NSessionTerminal copy() {
         return getBase().copy();
     }
 
@@ -103,7 +103,7 @@ public class UnmodifiableSessionTerminal extends AbstractNutsSessionTerminal {
     }
 
     @Override
-    public <T> NutsQuestion<T> ask() {
+    public <T> NQuestion<T> ask() {
         return getBase()
                 .<T>ask()
                 .setSession(session);
@@ -115,12 +115,12 @@ public class UnmodifiableSessionTerminal extends AbstractNutsSessionTerminal {
     }
 
     @Override
-    public NutsPrintStream out() {
+    public NStream out() {
         return getBase().out();
     }
 
     @Override
-    public NutsPrintStream err() {
+    public NStream err() {
         return getBase().err();
     }
 
@@ -130,7 +130,7 @@ public class UnmodifiableSessionTerminal extends AbstractNutsSessionTerminal {
 //    }
 
     @Override
-    public NutsSessionTerminal printProgress(float progress, NutsMessage message) {
+    public NSessionTerminal printProgress(float progress, NMsg message) {
         if (session.isProgress()) {
             if (getBase() != null) {
                 getBase().printProgress(progress, message);
@@ -138,7 +138,7 @@ public class UnmodifiableSessionTerminal extends AbstractNutsSessionTerminal {
                 getProgressBar().printProgress(
                         Float.isNaN(progress) ? -1
                                 : (int) (progress * 100),
-                        NutsTexts.of(session).ofText(message),
+                        NTexts.of(session).ofText(message),
                         err()
                 );
             }
@@ -153,12 +153,12 @@ public class UnmodifiableSessionTerminal extends AbstractNutsSessionTerminal {
         return progressBar;
     }
 
-    public NutsSessionTerminal getBase() {
+    public NSessionTerminal getBase() {
         return base;
     }
 
     @Override
-    public NutsSession getSession() {
+    public NSession getSession() {
         return session;
     }
 }

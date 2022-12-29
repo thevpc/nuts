@@ -26,44 +26,44 @@
 package net.thevpc.nuts.runtime.standalone.executor;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.spi.NutsExecutorComponent;
-import net.thevpc.nuts.spi.NutsSupportLevelContext;
+import net.thevpc.nuts.spi.NExecutorComponent;
+import net.thevpc.nuts.spi.NSupportLevelContext;
 
 import java.util.ArrayList;
 import java.util.List;
 
 /**
  */
-public class ArtifactExecutorComponent implements NutsExecutorComponent {
+public class ArtifactExecutorComponent implements NExecutorComponent {
 
-    private NutsId id;
-    NutsSession session;
+    private NId id;
+    NSession session;
 
-    public ArtifactExecutorComponent(NutsId id,NutsSession session) {
+    public ArtifactExecutorComponent(NId id, NSession session) {
         this.id = id;
         this.session = session;
     }
 
     @Override
-    public NutsId getId() {
+    public NId getId() {
         return id;
     }
 
     @Override
-    public int getSupportLevel(NutsSupportLevelContext nutsDefinition) {
+    public int getSupportLevel(NSupportLevelContext nutsDefinition) {
         return NO_SUPPORT;
     }
 
-    public void exec(NutsExecutionContext executionContext) {
+    public void exec(NExecutionContext executionContext) {
         execHelper(executionContext,false);
     }
 
-    public void dryExec(NutsExecutionContext executionContext) {
+    public void dryExec(NExecutionContext executionContext) {
         execHelper(executionContext,true);
     }
 
-    public void execHelper(NutsExecutionContext executionContext,boolean dry) {
-        NutsDefinition nutMainFile = executionContext.getDefinition();
+    public void execHelper(NExecutionContext executionContext, boolean dry) {
+        NDefinition nutMainFile = executionContext.getDefinition();
         List<String> execArgs = executionContext.getExecutorOptions();
         List<String> appArgs = executionContext.getArguments();
 

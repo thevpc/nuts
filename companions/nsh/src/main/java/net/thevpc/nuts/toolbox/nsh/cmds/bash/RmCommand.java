@@ -26,15 +26,15 @@
 package net.thevpc.nuts.toolbox.nsh.cmds.bash;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.cmdline.NutsArgument;
-import net.thevpc.nuts.cmdline.NutsCommandLine;
-import net.thevpc.nuts.io.NutsPath;
-import net.thevpc.nuts.spi.NutsComponentScope;
-import net.thevpc.nuts.spi.NutsComponentScopeType;
+import net.thevpc.nuts.cmdline.NArgument;
+import net.thevpc.nuts.cmdline.NCommandLine;
+import net.thevpc.nuts.io.NPath;
+import net.thevpc.nuts.spi.NComponentScope;
+import net.thevpc.nuts.spi.NComponentScopeType;
 import net.thevpc.nuts.toolbox.nsh.SimpleJShellBuiltin;
 import net.thevpc.nuts.toolbox.nsh.jshell.JShellExecutionContext;
 import net.thevpc.nuts.toolbox.nsh.util.ShellHelper;
-import net.thevpc.nuts.util.NutsUtils;
+import net.thevpc.nuts.util.NUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -42,7 +42,7 @@ import java.util.List;
 /**
  * Created by vpc on 1/7/17.
  */
-@NutsComponentScope(NutsComponentScopeType.WORKSPACE)
+@NComponentScope(NComponentScopeType.WORKSPACE)
 public class RmCommand extends SimpleJShellBuiltin {
 
     public RmCommand() {
@@ -50,15 +50,15 @@ public class RmCommand extends SimpleJShellBuiltin {
     }
 
     @Override
-    protected boolean configureFirst(NutsCommandLine commandLine, JShellExecutionContext context) {
-        NutsSession session = context.getSession();
+    protected boolean configureFirst(NCommandLine commandLine, JShellExecutionContext context) {
+        NSession session = context.getSession();
         Options options = context.getOptions();
-        NutsArgument a;
+        NArgument a;
         if ((a = commandLine.nextBoolean("-R").orNull()) != null) {
             options.R = a.getBooleanValue().get(session);
             return true;
         } else if (commandLine.peek().get(session).isNonOption()) {
-            options.files.add(ShellHelper.xfileOf(commandLine.next().flatMap(NutsValue::asString).get(session),
+            options.files.add(ShellHelper.xfileOf(commandLine.next().flatMap(NValue::asString).get(session),
                     context.getCwd(), session));
             return true;
         }
@@ -66,12 +66,12 @@ public class RmCommand extends SimpleJShellBuiltin {
     }
 
     @Override
-    protected void execBuiltin(NutsCommandLine commandLine, JShellExecutionContext context) {
+    protected void execBuiltin(NCommandLine commandLine, JShellExecutionContext context) {
         Options options = context.getOptions();
-        NutsSession session = context.getSession();
-        NutsUtils.requireNonBlank(options.files, "parameters", session);
+        NSession session = context.getSession();
+        NUtils.requireNonBlank(options.files, "parameters", session);
 //        ShellHelper.WsSshListener listener = options.verbose ? new ShellHelper.WsSshListener(context.getSession()) : null;
-        for (NutsPath p : options.files) {
+        for (NPath p : options.files) {
 //            if (p instanceof SshXFile) {
 //                ((SshXFile) p).setListener(listener);
 //            }
@@ -87,7 +87,7 @@ public class RmCommand extends SimpleJShellBuiltin {
 
         boolean R = false;
         boolean verbose = false;
-        List<NutsPath> files = new ArrayList<>();
+        List<NPath> files = new ArrayList<>();
     }
 
 }

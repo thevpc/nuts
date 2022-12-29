@@ -1,23 +1,23 @@
 package net.thevpc.nuts.runtime.standalone.xtra.mon;
 
-import net.thevpc.nuts.NutsIllegalArgumentException;
-import net.thevpc.nuts.NutsMessage;
-import net.thevpc.nuts.NutsSession;
+import net.thevpc.nuts.NIllegalArgumentException;
+import net.thevpc.nuts.NMsg;
+import net.thevpc.nuts.NSession;
 import net.thevpc.nuts.util.*;
 
 import java.util.*;
 
-public class DefaultProgressMonitor implements NutsProgressMonitor {
-    public static final NutsMessage EMPTY_MESSAGE = NutsMessage.ofPlain("");
-    private List<NutsProgressListener> listeners = new ArrayList<>();
-    private DefaultNutsProgressMonitorModel model = new DefaultNutsProgressMonitorModel();
-    private NutsSession session;
+public class DefaultProgressMonitor implements NProgressMonitor {
+    public static final NMsg EMPTY_MESSAGE = NMsg.ofPlain("");
+    private List<NProgressListener> listeners = new ArrayList<>();
+    private DefaultNProgressMonitorModel model = new DefaultNProgressMonitorModel();
+    private NSession session;
     private boolean strictComputationMonitor = true;
-    private NutsProgressHandler spi;
-    private NutsProgressMonitorInc incrementor;// = new DeltaProgressMonitorInc(1E-2);
+    private NProgressHandler spi;
+    private NProgressMonitorInc incrementor;// = new DeltaProgressMonitorInc(1E-2);
 
 
-    public DefaultProgressMonitor(String id, NutsProgressHandler spi, NutsProgressMonitorInc incrementor, NutsSession session) {
+    public DefaultProgressMonitor(String id, NProgressHandler spi, NProgressMonitorInc incrementor, NSession session) {
         model.setId(id == null ? UUID.randomUUID().toString() : id);
         this.spi = spi;
         this.incrementor = incrementor;
@@ -25,7 +25,7 @@ public class DefaultProgressMonitor implements NutsProgressMonitor {
     }
 
     @Override
-    public final NutsProgressMonitor setProgress(double progress, NutsMessage message) {
+    public final NProgressMonitor setProgress(double progress, NMsg message) {
         setProgress(progress);
         if (message != null) {
             setMessage(message);
@@ -35,132 +35,132 @@ public class DefaultProgressMonitor implements NutsProgressMonitor {
 
 
     @Override
-    public NutsProgressMonitor start(NutsMessage message) {
+    public NProgressMonitor start(NMsg message) {
         if (!isStarted()) {
             model.setStarted(true);
             model.setProgress(0);
             model.getChronometer().start();
             setMessageIfNotNull(message);
-            fireEvent(NutsProgressEventType.START, "started", false);
+            fireEvent(NProgressEventType.START, "started", false);
         }
         return this;
     }
 
     @Override
-    public NutsProgressMonitor start() {
+    public NProgressMonitor start() {
         return start(null);
     }
 
 
-    public NutsProgressMonitor complete() {
+    public NProgressMonitor complete() {
         return complete(null);
     }
 
-    public NutsProgressMonitor complete(NutsMessage message) {
+    public NProgressMonitor complete(NMsg message) {
         return setTerminated(true, message);
     }
 
-    public NutsProgressMonitor undoComplete() {
+    public NProgressMonitor undoComplete() {
         return undoComplete(null);
     }
 
-    public NutsProgressMonitor undoComplete(NutsMessage message) {
+    public NProgressMonitor undoComplete(NMsg message) {
         return setTerminated(false, message);
     }
 
-    protected NutsProgressMonitor setTerminated(boolean terminated, NutsMessage message) {
+    protected NProgressMonitor setTerminated(boolean terminated, NMsg message) {
         if (terminated) {
             if (!isCompleted()) {
                 if (!isStarted()) {
                     model.setStarted(true);
                     model.getChronometer().start();
-                    fireEvent(NutsProgressEventType.START, "started", false);
+                    fireEvent(NProgressEventType.START, "started", false);
                 }
                 model.setProgress(1); // really?
                 setMessageIfNotNull(message);
                 boolean oldCompleted = model.isCompleted();
                 if (!oldCompleted) {
                     model.setCompleted(true);
-                    fireEvent(NutsProgressEventType.COMPLETE, "completed", oldCompleted);
+                    fireEvent(NProgressEventType.COMPLETE, "completed", oldCompleted);
                 }
             }
         } else {
             if (isCompleted()) {
                 model.setCompleted(false);
-                fireEvent(NutsProgressEventType.UNDO_COMPLETE, "completed", false);
+                fireEvent(NProgressEventType.UNDO_COMPLETE, "completed", false);
             }
         }
         return this;
     }
 
     @Override
-    public NutsProgressMonitor cancel() {
+    public NProgressMonitor cancel() {
         return cancel(null);
     }
 
     @Override
-    public NutsProgressMonitor cancel(NutsMessage message) {
+    public NProgressMonitor cancel(NMsg message) {
         return setCancelled(true, message);
     }
 
-    public NutsProgressMonitor undoCancel() {
+    public NProgressMonitor undoCancel() {
         return undoCancel(null);
     }
 
     @Override
-    public NutsProgressMonitor undoCancel(NutsMessage message) {
+    public NProgressMonitor undoCancel(NMsg message) {
         return setCancelled(false, message);
     }
 
-    protected NutsProgressMonitor setCancelled(boolean cancel, NutsMessage message) {
+    protected NProgressMonitor setCancelled(boolean cancel, NMsg message) {
         if (cancel) {
             if (!isCanceled()) {
                 model.setCancelled(true);
                 setMessageIfNotNull(message);
-                fireEvent(NutsProgressEventType.CANCEL, "canceled", false);
+                fireEvent(NProgressEventType.CANCEL, "canceled", false);
             }
         } else {
             if (isCanceled()) {
                 model.setCancelled(false);
                 setMessageIfNotNull(message);
-                fireEvent(NutsProgressEventType.UNDO_CANCEL, "canceled", true);
+                fireEvent(NProgressEventType.UNDO_CANCEL, "canceled", true);
             }
         }
         return this;
     }
 
     @Override
-    public NutsProgressMonitor undoSuspend() {
+    public NProgressMonitor undoSuspend() {
         return undoSuspend(null);
     }
 
     @Override
-    public NutsProgressMonitor undoSuspend(NutsMessage message) {
+    public NProgressMonitor undoSuspend(NMsg message) {
         return setSuspended(false, null);
     }
 
     @Override
-    public NutsProgressMonitor suspend() {
+    public NProgressMonitor suspend() {
         return suspend(null);
     }
 
     @Override
-    public NutsProgressMonitor suspend(NutsMessage message) {
+    public NProgressMonitor suspend(NMsg message) {
         return setSuspended(true, null);
     }
 
-    public NutsProgressMonitor setSuspended(boolean suspend, NutsMessage message) {
+    public NProgressMonitor setSuspended(boolean suspend, NMsg message) {
         if (suspend) {
             if (!isSuspended()) {
                 model.setSuspended(true);
                 setMessageIfNotNull(message);
-                fireEvent(NutsProgressEventType.SUSPEND, "suspended", false);
+                fireEvent(NProgressEventType.SUSPEND, "suspended", false);
             }
         } else {
             if (isSuspended()) {
                 model.setSuspended(false);
                 setMessageIfNotNull(message);
-                fireEvent(NutsProgressEventType.UNDO_SUSPEND, "suspended", true);
+                fireEvent(NProgressEventType.UNDO_SUSPEND, "suspended", true);
             }
         }
         return this;
@@ -180,37 +180,37 @@ public class DefaultProgressMonitor implements NutsProgressMonitor {
     }
 
     @Override
-    public NutsProgressMonitor block() {
+    public NProgressMonitor block() {
         return block(null);
     }
 
     @Override
-    public NutsProgressMonitor block(NutsMessage message) {
+    public NProgressMonitor block(NMsg message) {
         return setBlocked(true, message);
     }
 
     @Override
-    public NutsProgressMonitor undoBlock() {
+    public NProgressMonitor undoBlock() {
         return undoBlock(null);
     }
 
     @Override
-    public NutsProgressMonitor undoBlock(NutsMessage message) {
+    public NProgressMonitor undoBlock(NMsg message) {
         return setBlocked(false, message);
     }
 
-    public NutsProgressMonitor setBlocked(boolean block, NutsMessage message) {
+    public NProgressMonitor setBlocked(boolean block, NMsg message) {
         if (block) {
             if (!model.isBlocked()) {
                 model.setBlocked(true);
                 setMessageIfNotNull(message);
-                fireEvent(NutsProgressEventType.BLOCK, "blocked", false);
+                fireEvent(NProgressEventType.BLOCK, "blocked", false);
             }
         } else {
             if (model.isBlocked()) {
                 model.setBlocked(false);
                 setMessageIfNotNull(message);
-                fireEvent(NutsProgressEventType.UNDO_BLOCK, "blocked", true);
+                fireEvent(NProgressEventType.UNDO_BLOCK, "blocked", true);
             }
         }
         return this;
@@ -251,7 +251,7 @@ public class DefaultProgressMonitor implements NutsProgressMonitor {
         if (!props.isEmpty()) {
             String property = String.join(",", props);
             model.getChronometer().reset();
-            fireEvent(NutsProgressEventType.RESET, property, null);
+            fireEvent(NProgressEventType.RESET, property, null);
         }
     }
 
@@ -269,61 +269,61 @@ public class DefaultProgressMonitor implements NutsProgressMonitor {
         String old = this.model.getName();
         if (!Objects.equals(old, name)) {
             this.model.setName(name);
-            fireEvent(NutsProgressEventType.UPDATE, "name", old);
+            fireEvent(NProgressEventType.UPDATE, "name", old);
         }
     }
 
     @Override
-    public NutsMessage getDescription() {
+    public NMsg getDescription() {
         return model.getDescription();
     }
 
-    protected NutsProgressMonitor setDescription(NutsMessage desc) {
-        NutsMessage old = this.model.getDescription();
+    protected NProgressMonitor setDescription(NMsg desc) {
+        NMsg old = this.model.getDescription();
         if (!Objects.equals(old, desc)) {
             this.model.setDescription(desc);
-            fireEvent(NutsProgressEventType.UPDATE, "description", old);
+            fireEvent(NProgressEventType.UPDATE, "description", old);
         }
         return this;
     }
 
     @Override
-    public NutsProgressMonitor addListener(NutsProgressListener listener) {
+    public NProgressMonitor addListener(NProgressListener listener) {
         listeners.add(listener);
         return this;
     }
 
     @Override
-    public NutsProgressMonitor removeListener(NutsProgressListener listener) {
+    public NProgressMonitor removeListener(NProgressListener listener) {
         listeners.remove(listener);
         return this;
     }
 
     @Override
-    public NutsProgressListener[] getListeners() {
-        return listeners.toArray(new NutsProgressListener[0]);
+    public NProgressListener[] getListeners() {
+        return listeners.toArray(new NProgressListener[0]);
     }
 
-    public NutsDuration getDuration() {
+    public NDuration getDuration() {
         return model.getChronometer().getDuration();
     }
 
-    public NutsClock getStartClock() {
+    public NClock getStartClock() {
         return model.getChronometer().getStartClock();
     }
 
 
     @Override
-    public final NutsProgressMonitor setMessage(NutsMessage message) {
-        NutsMessage old = getMessage();
+    public final NProgressMonitor setMessage(NMsg message) {
+        NMsg old = getMessage();
         if (setMessage0(message)) {
-            fireEvent(NutsProgressEventType.MESSAGE, "message", old);
+            fireEvent(NProgressEventType.MESSAGE, "message", old);
         }
         return this;
     }
 
     @Override
-    public NutsMessage getMessage() {
+    public NMsg getMessage() {
         return model.getMessage();
     }
 
@@ -337,15 +337,15 @@ public class DefaultProgressMonitor implements NutsProgressMonitor {
         return model.getProgress();
     }
 
-    private final boolean setMessageIfNotNull(NutsMessage message) {
+    private final boolean setMessageIfNotNull(NMsg message) {
         if (message != null) {
             return setMessage0(message);
         }
         return false;
     }
 
-    private final boolean setMessage0(NutsMessage message) {
-        NutsMessage newMessage = message == null ? EMPTY_MESSAGE : message;
+    private final boolean setMessage0(NMsg message) {
+        NMsg newMessage = message == null ? EMPTY_MESSAGE : message;
         if (!Objects.equals(getMessage(), newMessage)) {
             model.setMessage(newMessage);
             return true;
@@ -353,20 +353,20 @@ public class DefaultProgressMonitor implements NutsProgressMonitor {
         return false;
     }
 
-    private void fireEvent(NutsProgressEventType state, String propertyName, Object oldValue) {
-        spi.onEvent(new DefaultNutsProgressHandlerEvent(state, propertyName, model, session));
-        for (NutsProgressListener listener : getListeners()) {
+    private void fireEvent(NProgressEventType state, String propertyName, Object oldValue) {
+        spi.onEvent(new DefaultNProgressHandlerEvent(state, propertyName, model, session));
+        for (NProgressListener listener : getListeners()) {
             switch (state) {
                 case START: {
-                    listener.onProgress(NutsProgressEvent.ofStart(null, getMessage(), -1, session));
+                    listener.onProgress(NProgressEvent.ofStart(null, getMessage(), -1, session));
                     break;
                 }
                 case COMPLETE: {
-                    listener.onProgress(NutsProgressEvent.ofComplete(null, getMessage(), model.getGlobalCount(), model.getGlobalDurationNanos(), model.getProgress(), model.getPartialCount(), model.getPartialDurationNanos(), model.getLength(), model.getException(), session));
+                    listener.onProgress(NProgressEvent.ofComplete(null, getMessage(), model.getGlobalCount(), model.getGlobalDurationNanos(), model.getProgress(), model.getPartialCount(), model.getPartialDurationNanos(), model.getLength(), model.getException(), session));
                     break;
                 }
                 default: {
-                    listener.onProgress(NutsProgressEvent.ofProgress(null, getMessage(), model.getGlobalCount(), model.getGlobalDurationNanos(), model.getProgress(), model.getPartialCount(), model.getPartialDurationNanos(), model.getLength(), model.getException(), session));
+                    listener.onProgress(NProgressEvent.ofProgress(null, getMessage(), model.getGlobalCount(), model.getGlobalDurationNanos(), model.getProgress(), model.getPartialCount(), model.getPartialDurationNanos(), model.getLength(), model.getException(), session));
                     break;
                 }
             }
@@ -374,7 +374,7 @@ public class DefaultProgressMonitor implements NutsProgressMonitor {
     }
 
     @Override
-    public final NutsProgressMonitor setProgress(double progress) {
+    public final NProgressMonitor setProgress(double progress) {
         if (!isStarted()) {
             start();
         }
@@ -399,7 +399,7 @@ public class DefaultProgressMonitor implements NutsProgressMonitor {
         }
         if ((progress < 0 || progress > 1) && !Double.isNaN(progress)) {
             if (strictComputationMonitor) {
-                throw new NutsIllegalArgumentException(session, NutsMessage.ofCstyle("invalid Progress value [0..1] : %s", progress));
+                throw new NIllegalArgumentException(session, NMsg.ofCstyle("invalid Progress value [0..1] : %s", progress));
             } else {
                 if (progress < 0) {
                     progress = 0;
@@ -411,7 +411,7 @@ public class DefaultProgressMonitor implements NutsProgressMonitor {
         double oldProgress = this.getProgress();
         if (oldProgress != progress) {
             model.setProgress(progress);
-            fireEvent(NutsProgressEventType.PROGRESS, "progress", oldProgress);
+            fireEvent(NProgressEventType.PROGRESS, "progress", oldProgress);
         }
         if (progress >= 1) {
             if (!isCompleted()) {
@@ -423,35 +423,35 @@ public class DefaultProgressMonitor implements NutsProgressMonitor {
 
 
     @Override
-    public final NutsProgressMonitor setProgress(long i, long max) {
+    public final NProgressMonitor setProgress(long i, long max) {
         return this.setProgress(i, max, null);
     }
 
     @Override
-    public final NutsProgressMonitor setProgress(long i, long max, NutsMessage message) {
+    public final NProgressMonitor setProgress(long i, long max, NMsg message) {
         return this.setProgress((1.0 * i / max), message);
     }
 
     @Override
-    public final NutsProgressMonitor setProgress(long i, long maxi, long j, long maxj) {
+    public final NProgressMonitor setProgress(long i, long maxi, long j, long maxj) {
         return this.setProgress(i, maxi, j, maxj, null);
     }
 
 
     @Override
-    public final NutsProgressMonitor setProgress(long i, long j, long maxi, long maxj, NutsMessage message) {
+    public final NProgressMonitor setProgress(long i, long j, long maxi, long maxj, NMsg message) {
         return this.setProgress(((1.0 * i * maxi) + j) / (maxi * maxj), message);
     }
 
     @Override
-    public final NutsProgressMonitor inc() {
+    public final NProgressMonitor inc() {
         inc(null);
         return this;
     }
 
     @Override
-    public final NutsProgressMonitor inc(NutsMessage message) {
-        NutsProgressMonitorInc incrementor = this.incrementor;
+    public final NProgressMonitor inc(NMsg message) {
+        NProgressMonitorInc incrementor = this.incrementor;
         if (incrementor == null) {
             throw new IllegalArgumentException("missing incrementor");
         }
@@ -462,9 +462,9 @@ public class DefaultProgressMonitor implements NutsProgressMonitor {
     }
 
     @Override
-    public final NutsDuration getEstimatedTotalDuration() {
+    public final NDuration getEstimatedTotalDuration() {
         double d = getProgress();
-        NutsDuration spent = getDuration();
+        NDuration spent = getDuration();
         if (spent == null) {
             return null;
         }
@@ -472,9 +472,9 @@ public class DefaultProgressMonitor implements NutsProgressMonitor {
     }
 
     @Override
-    public final NutsDuration getEstimatedRemainingDuration() {
+    public final NDuration getEstimatedRemainingDuration() {
         double d = getProgress();
-        NutsDuration spent = getDuration();
+        NDuration spent = getDuration();
         if (spent == null) {
             return null;
         }
@@ -483,42 +483,42 @@ public class DefaultProgressMonitor implements NutsProgressMonitor {
     }
 
     @Override
-    public NutsProgressMonitor setIndeterminate() {
+    public NProgressMonitor setIndeterminate() {
         return setIndeterminate(null);
     }
 
     @Override
-    public NutsProgressMonitor setIndeterminate(NutsMessage message) {
+    public NProgressMonitor setIndeterminate(NMsg message) {
         return setProgress(Double.NaN, message);
     }
 
-    public DefaultProgressMonitor setIncrementor(NutsProgressMonitorInc incrementor) {
+    public DefaultProgressMonitor setIncrementor(NProgressMonitorInc incrementor) {
         this.incrementor = incrementor;
         return this;
     }
 
-    public NutsProgressMonitorInc getIncrementor() {
+    public NProgressMonitorInc getIncrementor() {
         return incrementor;
     }
 
-    public NutsProgressHandler getSpi() {
+    public NProgressHandler getSpi() {
         return spi;
     }
 
 
     @Override
-    public NutsProgressMonitor translate(long index, long max) {
+    public NProgressMonitor translate(long index, long max) {
         return new DefaultProgressMonitor(null, new ProgressMonitorTranslator(this, 1.0 / max, index * (1.0 / max)), null, session);
     }
 
     @Override
-    public NutsProgressMonitor translate(long i, long imax, long j, long jmax) {
+    public NProgressMonitor translate(long i, long imax, long j, long jmax) {
         return new DefaultProgressMonitor(null, new ProgressMonitorTranslator(this, 1.0 / (imax * jmax), ((1.0 * i * imax) + j) / (imax * jmax)), null, session);
     }
 
     @Override
-    public NutsProgressMonitor stepInto(NutsMessage message) {
-        final NutsProgressMonitorInc incrementor = getIncrementor();
+    public NProgressMonitor stepInto(NMsg message) {
+        final NProgressMonitorInc incrementor = getIncrementor();
         if (incrementor == null) {
             throw new IllegalArgumentException("missing incrementor");
         }
@@ -531,30 +531,30 @@ public class DefaultProgressMonitor implements NutsProgressMonitor {
     }
 
     @Override
-    public NutsProgressMonitor stepInto(long index, long max) {
+    public NProgressMonitor stepInto(long index, long max) {
         return translate(1.0 / max, index * (1.0 / max));
     }
 
     @Override
-    public NutsProgressMonitor temporize(long freq) {
+    public NProgressMonitor temporize(long freq) {
         return new DefaultProgressMonitor(null, new FreqProgressHandler(this, freq), null, session);
     }
 
     @Override
-    public NutsProgressMonitor incremental(long iterations) {
+    public NProgressMonitor incremental(long iterations) {
         setIncrementor(new LongIterationProgressMonitorInc(iterations));
         return this;
     }
 
     @Override
-    public NutsProgressMonitor incremental(double delta) {
+    public NProgressMonitor incremental(double delta) {
         this.setIncrementor(new DeltaProgressMonitorInc(delta));
         return this;
     }
 
 
     @Override
-    public NutsProgressMonitor translate(double factor, double start) {
+    public NProgressMonitor translate(double factor, double start) {
         return new DefaultProgressMonitor(null, new ProgressMonitorTranslator(this, factor, start), null, session);
     }
 
@@ -564,15 +564,15 @@ public class DefaultProgressMonitor implements NutsProgressMonitor {
      * @return NutsProgressMonitor[] array that contains nulls or  translated baseMonitor
      */
     @Override
-    public NutsProgressMonitor[] split(int nbrElements) {
+    public NProgressMonitor[] split(int nbrElements) {
         double[] dd = new double[nbrElements];
         Arrays.fill(dd, 1);
         return split(dd);
     }
 
     @Override
-    public NutsProgressMonitor[] split(double... weight) {
-        NutsProgressMonitor[] all = new NutsProgressMonitor[weight.length];
+    public NProgressMonitor[] split(double... weight) {
+        NProgressMonitor[] all = new NProgressMonitor[weight.length];
         double[] coeffsOffsets = new double[weight.length];
         double[] xweight = new double[weight.length];
         double coeffsSum = 0;
@@ -595,7 +595,7 @@ public class DefaultProgressMonitor implements NutsProgressMonitor {
             if (enabledElement) {
                 all[i] = translate(xweight[i], coeffsOffsets[i]);
             } else {
-                all[i] = NutsProgressMonitors.of(session).ofSilent();
+                all[i] = NProgressMonitors.of(session).ofSilent();
             }
         }
         return all;

@@ -1,10 +1,10 @@
 package net.thevpc.nuts.runtime.standalone.text;
 
-import net.thevpc.nuts.NutsSession;
-import net.thevpc.nuts.NutsUnsupportedEnumException;
-import net.thevpc.nuts.NutsWorkspace;
-import net.thevpc.nuts.runtime.standalone.io.terminal.NutsTerminalModeOp;
-import net.thevpc.nuts.spi.NutsSystemTerminalBase;
+import net.thevpc.nuts.NSession;
+import net.thevpc.nuts.NUnsupportedEnumException;
+import net.thevpc.nuts.NWorkspace;
+import net.thevpc.nuts.runtime.standalone.io.terminal.NTerminalModeOp;
+import net.thevpc.nuts.spi.NSystemTerminalBase;
 
 import java.io.IOException;
 import java.io.OutputStream;
@@ -28,14 +28,14 @@ public class SimpleWriterOutputStream extends OutputStream implements ExtendedFo
 
     private final ByteBuffer decoderIn = ByteBuffer.allocate(128);
     private final CharBuffer decoderOut;
-    private final NutsWorkspace ws;
-    private final NutsSession session;
-    private final NutsSystemTerminalBase term;
-    public SimpleWriterOutputStream(Writer writer, CharsetDecoder decoder,NutsSystemTerminalBase term,NutsSession session) {
+    private final NWorkspace ws;
+    private final NSession session;
+    private final NSystemTerminalBase term;
+    public SimpleWriterOutputStream(Writer writer, CharsetDecoder decoder, NSystemTerminalBase term, NSession session) {
         this(writer, decoder, DEFAULT_BUFFER_SIZE, false,term,session);
     }
 
-    public SimpleWriterOutputStream(Writer writer, CharsetDecoder decoder, int bufferSize, boolean writeImmediately,NutsSystemTerminalBase term,NutsSession session) {
+    public SimpleWriterOutputStream(Writer writer, CharsetDecoder decoder, int bufferSize, boolean writeImmediately, NSystemTerminalBase term, NSession session) {
         this.session = session;
         this.ws = session.getWorkspace();
         this.writer = writer;
@@ -45,7 +45,7 @@ public class SimpleWriterOutputStream extends OutputStream implements ExtendedFo
         decoderOut = CharBuffer.allocate(bufferSize);
     }
 
-    public SimpleWriterOutputStream(Writer writer, Charset charset, int bufferSize, boolean writeImmediately,NutsSystemTerminalBase term,NutsSession session) {
+    public SimpleWriterOutputStream(Writer writer, Charset charset, int bufferSize, boolean writeImmediately, NSystemTerminalBase term, NSession session) {
         this(writer,
                 charset.newDecoder()
                         .onMalformedInput(CodingErrorAction.REPLACE)
@@ -55,19 +55,19 @@ public class SimpleWriterOutputStream extends OutputStream implements ExtendedFo
                 writeImmediately,term,session);
     }
 
-    public SimpleWriterOutputStream(Writer writer, Charset charset,NutsSystemTerminalBase term,NutsSession session) {
+    public SimpleWriterOutputStream(Writer writer, Charset charset, NSystemTerminalBase term, NSession session) {
         this(writer, charset, DEFAULT_BUFFER_SIZE, false,term,session);
     }
 
-    public SimpleWriterOutputStream(Writer writer, String charsetName, int bufferSize, boolean writeImmediately,NutsSystemTerminalBase term,NutsSession session) {
+    public SimpleWriterOutputStream(Writer writer, String charsetName, int bufferSize, boolean writeImmediately, NSystemTerminalBase term, NSession session) {
         this(writer, Charset.forName(charsetName), bufferSize, writeImmediately,term,session);
     }
 
-    public SimpleWriterOutputStream(Writer writer, String charsetName,NutsSystemTerminalBase term,NutsSession session) {
+    public SimpleWriterOutputStream(Writer writer, String charsetName, NSystemTerminalBase term, NSession session) {
         this(writer, charsetName, DEFAULT_BUFFER_SIZE, false,term,session);
     }
 
-    public SimpleWriterOutputStream(Writer writer,NutsSystemTerminalBase term,NutsSession session) {
+    public SimpleWriterOutputStream(Writer writer, NSystemTerminalBase term, NSession session) {
         this(writer, Charset.defaultCharset(), DEFAULT_BUFFER_SIZE, false,term,session);
     }
 
@@ -132,15 +132,15 @@ public class SimpleWriterOutputStream extends OutputStream implements ExtendedFo
     }
 
     @Override
-    public NutsTerminalModeOp getModeOp() {
+    public NTerminalModeOp getModeOp() {
         if(writer instanceof ExtendedFormatAware){
             return ((ExtendedFormatAware) writer).getModeOp();
         }
-        return NutsTerminalModeOp.NOP;
+        return NTerminalModeOp.NOP;
     }
 
     @Override
-    public ExtendedFormatAware convert(NutsTerminalModeOp other) {
+    public ExtendedFormatAware convert(NTerminalModeOp other) {
         if(other==null || other==getModeOp()){
             return this;
         }
@@ -164,6 +164,6 @@ public class SimpleWriterOutputStream extends OutputStream implements ExtendedFo
                 return new EscapeOutputStream(this,term,session);
             }
         }
-        throw new NutsUnsupportedEnumException(session, other);
+        throw new NUnsupportedEnumException(session, other);
     }
 }

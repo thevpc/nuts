@@ -1,10 +1,10 @@
 package net.thevpc.nuts.tutorial.naf.spring.helloworld;
 
 
-import net.thevpc.nuts.NutsApplicationContext;
-import net.thevpc.nuts.NutsSession;
-import net.thevpc.nuts.NutsWorkspace;
-import net.thevpc.nuts.io.NutsPrintStream;
+import net.thevpc.nuts.NApplicationContext;
+import net.thevpc.nuts.NSession;
+import net.thevpc.nuts.NWorkspace;
+import net.thevpc.nuts.io.NStream;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -15,13 +15,13 @@ import org.springframework.stereotype.Component;
 @Component
 public class MyBean {
     @Autowired
-    private NutsSession session;
+    private NSession session;
     @Autowired
-    private NutsWorkspace workspace;
+    private NWorkspace workspace;
     @Autowired
-    private NutsApplicationContext applicationContext;
+    private NApplicationContext applicationContext;
     @Autowired
-    private NutsPrintStream out;
+    private NStream out;
 
     public void hello() {
         out.println("##Hello##");

@@ -31,19 +31,19 @@
 package net.thevpc.nuts.toolbox.nsh.jshell;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.cmdline.NutsCommandHistory;
-import net.thevpc.nuts.io.NutsPath;
-import net.thevpc.nuts.io.NutsPrintStream;
-import net.thevpc.nuts.io.NutsSessionTerminal;
-import net.thevpc.nuts.io.NutsSystemTerminal;
-import net.thevpc.nuts.spi.NutsDefaultSupportLevelContext;
-import net.thevpc.nuts.spi.NutsSupportLevelContext;
-import net.thevpc.nuts.text.NutsTextStyle;
-import net.thevpc.nuts.text.NutsTexts;
+import net.thevpc.nuts.cmdline.NCommandHistory;
+import net.thevpc.nuts.io.NPath;
+import net.thevpc.nuts.io.NStream;
+import net.thevpc.nuts.io.NSessionTerminal;
+import net.thevpc.nuts.io.NSystemTerminal;
+import net.thevpc.nuts.spi.NDefaultSupportLevelContext;
+import net.thevpc.nuts.spi.NSupportLevelContext;
+import net.thevpc.nuts.text.NTextStyle;
+import net.thevpc.nuts.text.NTexts;
 import net.thevpc.nuts.toolbox.nsh.*;
 import net.thevpc.nuts.toolbox.nsh.jshell.parser.JShellParser;
 import net.thevpc.nuts.toolbox.nsh.jshell.util.ByteArrayPrintStream;
-import net.thevpc.nuts.util.NutsClock;
+import net.thevpc.nuts.util.NClock;
 
 import java.io.*;
 import java.util.ArrayList;
@@ -64,42 +64,42 @@ public class JShell {
     private final JShellHistory history;
     private final List<JShellVarListener> listeners = new ArrayList<>();
     protected JShellContext rootContext;
-    NutsClock boot_startMillis;
+    NClock boot_startMillis;
     private JShellEvaluator evaluator;
     private JShellErrorHandler errorHandler;
     private JShellExternalExecutor externalExecutor;
     private JShellCommandTypeResolver commandTypeResolver;
-    private NutsApplicationContext appContext;
-    private NutsPath histFile = null;
-    private NutsId appId = null;
+    private NApplicationContext appContext;
+    private NPath histFile = null;
+    private NId appId = null;
 
     /**
      * args are inherited from app context
      * @param appContext appContext
      */
-    public JShell(NutsApplicationContext appContext) {
+    public JShell(NApplicationContext appContext) {
         this(appContext,null);
     }
 
-    public JShell(NutsApplicationContext appContext, String[] args) {
+    public JShell(NApplicationContext appContext, String[] args) {
         this(appContext, appContext.getAppId(), appContext.getAppId().getArtifactId(), args);
     }
 
-    public JShell(NutsSession session, String[] args) {
-        this(NutsApplicationContext.of(new String[]{}, null, Nsh.class, null, session), null, null, args);
+    public JShell(NSession session, String[] args) {
+        this(NApplicationContext.of(new String[]{}, null, Nsh.class, null, session), null, null, args);
     }
 
-    public JShell(NutsSession session, NutsId appId, String[] args) {
-        this(NutsApplicationContext.of(new String[]{}, null, Nsh.class, null, session), appId, appId==null?null:appId.getArtifactId(), args);
+    public JShell(NSession session, NId appId, String[] args) {
+        this(NApplicationContext.of(new String[]{}, null, Nsh.class, null, session), appId, appId==null?null:appId.getArtifactId(), args);
     }
 
-    public JShell(NutsSession session, NutsId appId, String serviceName, String[] args) {
-        this(NutsApplicationContext.of(new String[]{}, null, Nsh.class, null, session), appId, serviceName, args);
+    public JShell(NSession session, NId appId, String serviceName, String[] args) {
+        this(NApplicationContext.of(new String[]{}, null, Nsh.class, null, session), appId, serviceName, args);
     }
 
-    private JShell(NutsApplicationContext appContext, NutsId appId, String serviceName, String[] args) {
+    private JShell(NApplicationContext appContext, NId appId, String serviceName, String[] args) {
         this(resolveServiceName(appContext, serviceName, appId), resolveArgs(appContext, args), new DefaultJShellOptionsParser(appContext),
-                new NshEvaluator(), new NutsCommandTypeResolver(), new NutsErrorHandler(), new NutsExternalExecutor(),
+                new NshEvaluator(), new NCommandTypeResolver(), new NErrorHandler(), new NExternalExecutor(),
                 null
         );
         boot_startMillis = appContext.getStartTime();
@@ -107,20 +107,20 @@ public class JShell {
         this.appId = appId;
         //super.setCwd(workspace.getConfigManager().getCwd());
         if (this.appId == null) {
-            this.appId = NutsIdResolver.of(appContext.getSession()).resolveId(JShell.class);
+            this.appId = NIdResolver.of(appContext.getSession()).resolveId(JShell.class);
         }
         if (this.appId == null) {
             throw new IllegalArgumentException("unable to resolve application id");
         }
         JShellContext _rootContext = getRootContext();
-        NutsSession ws = _rootContext.getSession();
+        NSession ws = _rootContext.getSession();
         JShellHistory hist = getHistory();
 
         this.appContext.getSession().env().setProperty(JShellContext.class.getName(), _rootContext);
         _rootContext.setSession(appContext.getSession());
         //add default commands
         List<JShellBuiltin> allCommand = new ArrayList<>();
-        NutsSupportLevelContext constraints = new NutsDefaultSupportLevelContext(appContext.getSession(), this);
+        NSupportLevelContext constraints = new NDefaultSupportLevelContext(appContext.getSession(), this);
 
         for (JShellBuiltin command : this.appContext.getSession().extensions().
                 createServiceLoader(JShellBuiltin.class, JShell.class, JShellBuiltin.class.getClassLoader())
@@ -135,7 +135,7 @@ public class JShell {
         _rootContext.getUserProperties().put(JShellContext.class.getName(), _rootContext);
         try {
             histFile = ws.locations().getStoreLocation(this.appId,
-                            NutsStoreLocation.VAR).resolve((serviceName==null?"":serviceName) + ".history");
+                            NStoreLocation.VAR).resolve((serviceName==null?"":serviceName) + ".history");
             hist.setHistoryFile(histFile);
             if (histFile.exists()) {
                 hist.load(histFile);
@@ -187,17 +187,17 @@ public class JShell {
         }
     }
 
-    private static String[] resolveArgs(NutsApplicationContext appContext, String[] args) {
+    private static String[] resolveArgs(NApplicationContext appContext, String[] args) {
         if (args != null) {
             return args;
         }
         return appContext.getArguments().toArray(new String[0]);
     }
 
-    private static String resolveServiceName(NutsApplicationContext appContext, String serviceName, NutsId appId) {
+    private static String resolveServiceName(NApplicationContext appContext, String serviceName, NId appId) {
         if ((serviceName == null || serviceName.trim().isEmpty())) {
             if (appId == null) {
-                appId = NutsIdResolver.of(appContext.getSession()).resolveId(JShell.class);
+                appId = NIdResolver.of(appContext.getSession()).resolveId(JShell.class);
             }
             serviceName = appId.getArtifactId();
         }
@@ -248,17 +248,17 @@ public class JShell {
         this.errorHandler = errorHandler;
     }
 
-    public List<String> findFiles(final String namePattern, boolean exact, String parent, NutsSession session) {
+    public List<String> findFiles(final String namePattern, boolean exact, String parent, NSession session) {
         if (exact) {
-            String[] all = NutsPath.of(parent, session).list()
+            String[] all = NPath.of(parent, session).stream()
                     .filter(x -> namePattern.equals(x.getName()),"name='"+namePattern+"'")
-                    .map(NutsPath::toString,"toString").toArray(String[]::new);
+                    .map(NPath::toString,"toString").toArray(String[]::new);
             return Arrays.asList(all);
         } else {
             final Pattern o = Pattern.compile(namePattern);
-            String[] all = NutsPath.of(parent, session).list()
+            String[] all = NPath.of(parent, session).stream()
                     .filter(x -> o.matcher(x.getName()).matches(),"name~~'"+namePattern+"'")
-                    .map(NutsPath::toString,"toString").toArray(String[]::new);
+                    .map(NPath::toString,"toString").toArray(String[]::new);
             return Arrays.asList(all);
         }
     }
@@ -422,11 +422,11 @@ public class JShell {
     ) {
         context.getShell().traceExecution(() -> String.join(" ", command), context);
         String cmdToken = command[0];
-        NutsPath cmdPath = NutsPath.of(cmdToken, context.getSession());
+        NPath cmdPath = NPath.of(cmdToken, context.getSession());
         if (!cmdPath.isName()) {
             final JShellExternalExecutor externalExec = getExternalExecutor();
             if (externalExec == null) {
-                throw new JShellException(context.getSession(), NutsMessage.ofCstyle("not found %s", cmdToken), 101);
+                throw new JShellException(context.getSession(), NMsg.ofCstyle("not found %s", cmdToken), 101);
             }
             return externalExec.execExternalCommand(command, context);
             //this is a path!
@@ -470,11 +470,11 @@ public class JShell {
                 if (considerExternal) {
                     final JShellExternalExecutor externalExec = getExternalExecutor();
                     if (externalExec == null) {
-                        throw new JShellException(context.getSession(), NutsMessage.ofCstyle("not found %s", cmdToken), 101);
+                        throw new JShellException(context.getSession(), NMsg.ofCstyle("not found %s", cmdToken), 101);
                     }
                     externalExec.execExternalCommand(cmds.toArray(new String[0]), context);
                 } else {
-                    throw new JShellException(context.getSession(), NutsMessage.ofCstyle("not found %s", cmdToken), 101);
+                    throw new JShellException(context.getSession(), NMsg.ofCstyle("not found %s", cmdToken), 101);
                 }
             }
         }
@@ -538,23 +538,23 @@ public class JShell {
                 return;
             }
             executeInteractive(rootContext);
-        } catch (NutsExecutionException ex) {
+        } catch (NExecutionException ex) {
             throw ex;
         } catch (Exception ex) {
-            throw new NutsExecutionException(appContext.getSession(), NutsMessage.ofCstyle("%s", ex), ex, 100);
+            throw new NExecutionException(appContext.getSession(), NMsg.ofCstyle("%s", ex), ex, 100);
         }
     }
 
     protected String readInteractiveLine(JShellContext context) {
-        NutsSessionTerminal terminal = context.getSession().getTerminal();
+        NSessionTerminal terminal = context.getSession().getTerminal();
         return terminal.readLine(getPromptString(context));
     }
 
-    protected void printHeader(NutsPrintStream out) {
-        out.resetLine().println(NutsTexts.of(appContext.getSession()).ofBuilder()
+    protected void printHeader(NStream out) {
+        out.resetLine().println(NTexts.of(appContext.getSession()).ofBuilder()
                 .appendCode("sh", "nuts")
                 .append(" shell ")
-                .append("v" + getRootContext().getWorkspace().getRuntimeId().getVersion().toString(), NutsTextStyle.version())
+                .append("v" + getRootContext().getWorkspace().getRuntimeId().getVersion().toString(), NTextStyle.version())
                 .append(" (c) thevpc 2019-2021"));
     }
 
@@ -568,12 +568,12 @@ public class JShell {
     }
 
     protected void executeInteractive(JShellContext context) {
-        NutsSession session = appContext.getSession();
-        NutsSystemTerminal.enableRichTerm(session);
+        NSession session = appContext.getSession();
+        NSystemTerminal.enableRichTerm(session);
         session.config().getSystemTerminal()
                 .setCommandAutoCompleteResolver(new NshAutoCompleter())
                 .setCommandHistory(
-                        NutsCommandHistory.of(session)
+                        NCommandHistory.of(session)
                                 .setPath(appContext.getVarFolder().resolve("nsh-history.hist"))
                 );
         prepareContext(getRootContext());
@@ -655,26 +655,26 @@ public class JShell {
         } catch (IOException e) {
             //e.printStackTrace();
         }
-        throw new NutsExecutionException(getRootContext().getSession(), NutsMessage.ofCstyle("%s", quitException), quitException.getExitCode());
+        throw new NExecutionException(getRootContext().getSession(), NMsg.ofCstyle("%s", quitException), quitException.getExitCode());
 //        throw quitException;
     }
 
     public int executeServiceFile(JShellContext context, boolean ignoreIfNotFound) {
-        NutsSession session = appContext.getSession();
+        NSession session = appContext.getSession();
         String file = context.getServiceName();
         if (file != null) {
-            file = NutsPath.of(file, session).toAbsolute(context.getCwd()).toString();
+            file = NPath.of(file, session).toAbsolute(context.getCwd()).toString();
         }
-        if (file == null || !NutsPath.of(file, session).exists()) {
+        if (file == null || !NPath.of(file, session).exists()) {
             if (ignoreIfNotFound) {
                 return 0;
             }
-            throw new JShellException(session, NutsMessage.ofCstyle("shell file not found : %s", file), 1);
+            throw new JShellException(session, NMsg.ofCstyle("shell file not found : %s", file), 1);
         }
         context.setServiceName(file);
         InputStream stream = null;
         try {
-            stream = NutsPath.of(file, session).getInputStream();
+            stream = NPath.of(file, session).getInputStream();
             JShellCommandNode ii = parseScript(stream);
             if (ii == null) {
                 return 0;
@@ -752,14 +752,14 @@ public class JShell {
 //        return getPromptString(getRootContext());
 //    }
     protected String getPromptString(JShellContext context) {
-        NutsSession ws = context.getSession();
+        NSession ws = context.getSession();
 //        String wss = ws == null ? "" : new File(getRootContext().getAbsolutePath(ws.config().getWorkspaceLocation().toString())).getName();
         String login = null;
         if (ws != null) {
             login = ws.security().getCurrentUsername();
         }
         String prompt = ((login != null && login.length() > 0 && !"anonymous".equals(login)) ? (login + "@") : "");
-        if (!NutsBlankable.isBlank(getRootContext().getServiceName())) {
+        if (!NBlankable.isBlank(getRootContext().getServiceName())) {
             prompt = prompt + getRootContext().getServiceName();
         }
         prompt += "> ";
@@ -1068,14 +1068,14 @@ public class JShell {
     }
 
     public String getVersion() {
-        NutsId nutsId = NutsIdResolver.of(appContext.getSession()).resolveId(getClass());
+        NId nutsId = NIdResolver.of(appContext.getSession()).resolveId(getClass());
         if (nutsId == null) {
             return "dev";
         }
         return nutsId.getVersion().getValue();
     }
 
-    public NutsApplicationContext getAppContext() {
+    public NApplicationContext getAppContext() {
         return appContext;
     }
 

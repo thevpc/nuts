@@ -1,32 +1,32 @@
 package net.thevpc.nuts.runtime.standalone.text;
 
-import net.thevpc.nuts.NutsSession;
-import net.thevpc.nuts.NutsUnsupportedEnumException;
-import net.thevpc.nuts.runtime.standalone.io.terminal.NutsTerminalModeOp;
-import net.thevpc.nuts.spi.NutsSystemTerminalBase;
+import net.thevpc.nuts.NSession;
+import net.thevpc.nuts.NUnsupportedEnumException;
+import net.thevpc.nuts.runtime.standalone.io.terminal.NTerminalModeOp;
+import net.thevpc.nuts.spi.NSystemTerminalBase;
 
 import java.io.OutputStream;
 
 public class FilterFormatOutputStream extends RenderedOutputStream implements ExtendedFormatAware {
-    public FilterFormatOutputStream(OutputStream out, NutsSystemTerminalBase term, NutsSession session) {
+    public FilterFormatOutputStream(OutputStream out, NSystemTerminalBase term, NSession session) {
         super(out, term, true, session);
     }
 
 
     @Override
-    public NutsTerminalModeOp getModeOp() {
-        return NutsTerminalModeOp.FILTER;
+    public NTerminalModeOp getModeOp() {
+        return NTerminalModeOp.FILTER;
     }
 
     @Override
-    public ExtendedFormatAware convert(NutsTerminalModeOp other) {
+    public ExtendedFormatAware convert(NTerminalModeOp other) {
         if (other == null || other == getModeOp()) {
             return this;
         }
         switch (other) {
             case NOP: {
                 if (out instanceof ExtendedFormatAware) {
-                    NutsTerminalModeOp m = ((ExtendedFormatAware) out).getModeOp();
+                    NTerminalModeOp m = ((ExtendedFormatAware) out).getModeOp();
                     return (ExtendedFormatAware) out;
                 }
                 return new RawOutputStream(out, getTerminal(), session);
@@ -44,7 +44,7 @@ public class FilterFormatOutputStream extends RenderedOutputStream implements Ex
                 return new UnescapeOutputStream(this, getTerminal(), session);
             }
         }
-        throw new NutsUnsupportedEnumException(session, other);
+        throw new NUnsupportedEnumException(session, other);
     }
 
 }

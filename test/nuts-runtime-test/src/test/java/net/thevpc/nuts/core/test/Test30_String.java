@@ -5,11 +5,11 @@
  */
 package net.thevpc.nuts.core.test;
 
-import net.thevpc.nuts.NutsOptional;
-import net.thevpc.nuts.io.NutsTerminalMode;
+import net.thevpc.nuts.NOptional;
+import net.thevpc.nuts.io.NTerminalMode;
 import net.thevpc.nuts.runtime.standalone.xtra.expr.StringPlaceHolderParser;
-import net.thevpc.nuts.util.NutsNameFormat;
-import net.thevpc.nuts.util.NutsStringUtils;
+import net.thevpc.nuts.util.NNameFormat;
+import net.thevpc.nuts.util.NStringUtils;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -46,19 +46,19 @@ public class Test30_String {
     public void test02() {
        Assertions.assertEquals(
                Arrays.asList("",""),
-               NutsStringUtils.split(",", ",", true, false)
+               NStringUtils.split(",", ",", true, false)
        );
     }
    @Test
     public void test03() {
-       NutsOptional<NutsTerminalMode> a = NutsTerminalMode.parse("never");
+       NOptional<NTerminalMode> a = NTerminalMode.parse("never");
        a.get();
    }
 
 
     @Test
     public void test04() {
-        String[] a = NutsNameFormat.parse("aBc_r");
+        String[] a = NNameFormat.parse("aBc_r");
         Assertions.assertArrayEquals(
                 new String[]{"a","Bc","r"},
                 a
@@ -66,7 +66,7 @@ public class Test30_String {
     }
     @Test
     public void test05() {
-        String[] a = NutsNameFormat.parse("setName");
+        String[] a = NNameFormat.parse("setName");
         Assertions.assertArrayEquals(
                 new String[]{"set","Name"},
                 a
@@ -74,7 +74,7 @@ public class Test30_String {
     }
     @Test
     public void test06() {
-        String[] a = NutsNameFormat.parse("setTHEName");
+        String[] a = NNameFormat.parse("setTHEName");
         Assertions.assertArrayEquals(
                 new String[]{"set","THEName"},
                 a
@@ -83,7 +83,7 @@ public class Test30_String {
 
     @Test
     public void test07() {
-        String[] a = NutsNameFormat.parse("/a/dAt");
+        String[] a = NNameFormat.parse("/a/dAt");
         Assertions.assertArrayEquals(
                 new String[]{"a","d","At"},
                 a
@@ -92,7 +92,7 @@ public class Test30_String {
 
     @Test
     public void test08() {
-        String[] a = NutsNameFormat.parse(".Net");
+        String[] a = NNameFormat.parse(".Net");
         Assertions.assertArrayEquals(
                 new String[]{"Net"},
                 a

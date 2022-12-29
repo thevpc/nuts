@@ -23,10 +23,10 @@
  */
 package net.thevpc.nuts.runtime.standalone.extension;
 
-import net.thevpc.nuts.NutsException;
-import net.thevpc.nuts.io.NutsIOException;
-import net.thevpc.nuts.NutsMessage;
-import net.thevpc.nuts.NutsSession;
+import net.thevpc.nuts.NException;
+import net.thevpc.nuts.io.NIOException;
+import net.thevpc.nuts.NMsg;
+import net.thevpc.nuts.NSession;
 import net.thevpc.nuts.runtime.standalone.io.util.ZipUtils;
 
 import java.io.*;
@@ -42,7 +42,7 @@ public final class CoreServiceUtils {
     private CoreServiceUtils() {
     }
 
-    public static Set<String> loadZipServiceClassNames(URL url, Class service,NutsSession session) {
+    public static Set<String> loadZipServiceClassNames(URL url, Class service, NSession session) {
         LinkedHashSet<String> found = new LinkedHashSet<>();
         try (final InputStream jarStream = url.openStream()) {
             if (jarStream != null) {
@@ -62,12 +62,12 @@ public final class CoreServiceUtils {
                 },session);
             }
         } catch (IOException ex) {
-            throw new NutsIOException(session, ex);
+            throw new NIOException(session, ex);
         }
         return found;
     }
 
-    public static List<String> loadServiceClassNames(URL u, Class<?> service, NutsSession session) {
+    public static List<String> loadServiceClassNames(URL u, Class<?> service, NSession session) {
         InputStream in = null;
         BufferedReader r = null;
         List<String> names = new ArrayList<>();
@@ -83,7 +83,7 @@ public final class CoreServiceUtils {
                 }
             }
         } catch (IOException ex) {
-            throw new NutsIOException(session,ex);
+            throw new NIOException(session,ex);
         } finally {
             try {
                 if (r != null) {
@@ -93,13 +93,13 @@ public final class CoreServiceUtils {
                     in.close();
                 }
             } catch (IOException ex2) {
-                throw new NutsIOException(session, ex2);
+                throw new NIOException(session, ex2);
             }
         }
         return names;
     }
 
-    public static List<Class> loadServiceClasses(Class service, ClassLoader classLoader, NutsSession session) {
+    public static List<Class> loadServiceClasses(Class service, ClassLoader classLoader, NSession session) {
         String fullName = "META-INF/services/" + service.getName();
         Enumeration<URL> configs;
         LinkedHashSet<String> names = new LinkedHashSet<>();
@@ -110,7 +110,7 @@ public final class CoreServiceUtils {
                 configs = classLoader.getResources(fullName);
             }
         } catch (IOException ex) {
-            throw new NutsIOException(session,ex);
+            throw new NIOException(session,ex);
         }
         while (configs.hasMoreElements()) {
             names.addAll(loadServiceClassNames(configs.nextElement(), service,session));
@@ -121,11 +121,11 @@ public final class CoreServiceUtils {
             try {
                 c = Class.forName(n, false, classLoader);
             } catch (ClassNotFoundException x) {
-                throw new NutsException(session, NutsMessage.ofCstyle("unable to load service class %s", n), x);
+                throw new NException(session, NMsg.ofCstyle("unable to load service class %s", n), x);
             }
             if (!service.isAssignableFrom(c)) {
-                throw new NutsException(session,
-                        NutsMessage.ofCstyle("not a valid type %s <> %s", c, service));
+                throw new NException(session,
+                        NMsg.ofCstyle("not a valid type %s <> %s", c, service));
             }
             classes.add(c);
         }

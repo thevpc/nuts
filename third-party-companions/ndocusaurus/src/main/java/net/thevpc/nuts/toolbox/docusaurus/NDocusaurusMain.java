@@ -1,14 +1,14 @@
 package net.thevpc.nuts.toolbox.docusaurus;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.cmdline.NutsCommandLineContext;
-import net.thevpc.nuts.cmdline.NutsCommandLineProcessor;
-import net.thevpc.nuts.cmdline.NutsArgument;
-import net.thevpc.nuts.cmdline.NutsCommandLine;
+import net.thevpc.nuts.cmdline.NCommandLineContext;
+import net.thevpc.nuts.cmdline.NCommandLineProcessor;
+import net.thevpc.nuts.cmdline.NArgument;
+import net.thevpc.nuts.cmdline.NCommandLine;
 
 import java.nio.file.Paths;
 
-public class NDocusaurusMain implements NutsApplication {
+public class NDocusaurusMain implements NApplication {
 
     boolean start;
     boolean build;
@@ -16,15 +16,15 @@ public class NDocusaurusMain implements NutsApplication {
     boolean buildPdf = false;
 
     public static void main(String[] args) {
-        NutsApplication.main(NDocusaurusMain.class, args);
+        NApplication.main(NDocusaurusMain.class, args);
     }
 
     @Override
-    public void run(NutsApplicationContext appContext) {
-        appContext.processCommandLine(new NutsCommandLineProcessor() {
+    public void run(NApplicationContext appContext) {
+        appContext.processCommandLine(new NCommandLineProcessor() {
             @Override
-            public boolean onCmdNextOption(NutsArgument option, NutsCommandLine commandLine, NutsCommandLineContext context) {
-                NutsSession session = commandLine.getSession();
+            public boolean onCmdNextOption(NArgument option, NCommandLine commandLine, NCommandLineContext context) {
+                NSession session = commandLine.getSession();
                 switch (option.key()) {
                     case "-d":
                     case "--dir": {
@@ -38,8 +38,8 @@ public class NDocusaurusMain implements NutsApplication {
             }
 
             @Override
-            public boolean onCmdNextNonOption(NutsArgument nonOption, NutsCommandLine commandLine, NutsCommandLineContext context) {
-                NutsSession session = commandLine.getSession();
+            public boolean onCmdNextNonOption(NArgument nonOption, NCommandLine commandLine, NCommandLineContext context) {
+                NSession session = commandLine.getSession();
                 switch (nonOption.asString().get(session)) {
                     case "start": {
                         commandLine.withNextBoolean((v, a, s) -> start = v);
@@ -58,17 +58,17 @@ public class NDocusaurusMain implements NutsApplication {
             }
 
             @Override
-            public void onCmdFinishParsing(NutsCommandLine commandLine, NutsCommandLineContext context) {
-                NutsSession session = commandLine.getSession();
+            public void onCmdFinishParsing(NCommandLine commandLine, NCommandLineContext context) {
+                NSession session = commandLine.getSession();
                 if (!start && !build && !buildPdf) {
                     commandLine.throwMissingArgument(
-                            NutsMessage.ofCstyle("missing command. try %s", NutsMessage.ofCode("sh", "ndocusaurus pdf | start | build"))
+                            NMsg.ofCstyle("missing command. try %s", NMsg.ofCode("sh", "ndocusaurus pdf | start | build"))
                     );
                 }
             }
 
             @Override
-            public void onCmdExec(NutsCommandLine commandLine, NutsCommandLineContext context) {
+            public void onCmdExec(NCommandLine commandLine, NCommandLineContext context) {
                 if (workdir == null) {
                     workdir = ".";
                 }
@@ -79,7 +79,7 @@ public class NDocusaurusMain implements NutsApplication {
                         .setBuildWebSite(build)
                         .setStartWebSite(start)
                         .setBuildPdf(buildPdf)
-                        .setAutoInstallNutsPackages(commandLine.getSession().boot().getBootOptions().getConfirm().orElse(NutsConfirmationMode.ASK) == NutsConfirmationMode.YES)
+                        .setAutoInstallNutsPackages(commandLine.getSession().boot().getBootOptions().getConfirm().orElse(NConfirmationMode.ASK) == NConfirmationMode.YES)
                         .run();
             }
         });

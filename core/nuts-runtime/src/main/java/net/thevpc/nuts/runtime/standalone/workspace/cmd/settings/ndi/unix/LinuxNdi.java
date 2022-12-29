@@ -1,9 +1,9 @@
 package net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.ndi.unix;
 
-import net.thevpc.nuts.NutsSession;
+import net.thevpc.nuts.NSession;
 
 public class LinuxNdi extends AnyNixNdi {
-    public LinuxNdi(NutsSession session) {
+    public LinuxNdi(NSession session) {
         super(session);
     }
 }

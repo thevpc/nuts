@@ -23,9 +23,9 @@
  */
 package net.thevpc.nuts.runtime.standalone.util.collections;
 
-import net.thevpc.nuts.NutsBlankable;
-import net.thevpc.nuts.NutsIdLocation;
-import net.thevpc.nuts.util.NutsStringUtils;
+import net.thevpc.nuts.NBlankable;
+import net.thevpc.nuts.NIdLocation;
+import net.thevpc.nuts.util.NStringUtils;
 
 import java.util.*;
 
@@ -64,8 +64,8 @@ public class CoreCollectionUtils {
         LinkedHashSet<String> set = new LinkedHashSet<>();
         if (values0 != null) {
             for (String a : values0) {
-                a = NutsStringUtils.trim(a);
-                if (!NutsBlankable.isBlank(a)) {
+                a = NStringUtils.trim(a);
+                if (!NBlankable.isBlank(a)) {
                     set.add(a);
                 }
             }
@@ -77,10 +77,10 @@ public class CoreCollectionUtils {
         return new ArrayList<>(toTrimmedNonEmptySet(values0));
     }
 
-    public static Set<NutsIdLocation> toSet(NutsIdLocation[] classifierMappings) {
-        LinkedHashSet<NutsIdLocation> set = new LinkedHashSet<>();
+    public static Set<NIdLocation> toSet(NIdLocation[] classifierMappings) {
+        LinkedHashSet<NIdLocation> set = new LinkedHashSet<>();
         if (classifierMappings != null) {
-            for (NutsIdLocation a : classifierMappings) {
+            for (NIdLocation a : classifierMappings) {
                 if (a != null) {
                     set.add(a);
                 }

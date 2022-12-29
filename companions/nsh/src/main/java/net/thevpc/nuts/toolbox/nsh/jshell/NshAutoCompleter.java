@@ -1,25 +1,25 @@
 package net.thevpc.nuts.toolbox.nsh.jshell;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.cmdline.DefaultNutsArgumentCandidate;
-import net.thevpc.nuts.cmdline.NutsArgumentCandidate;
-import net.thevpc.nuts.cmdline.NutsCommandAutoCompleteResolver;
-import net.thevpc.nuts.cmdline.NutsCommandLine;
+import net.thevpc.nuts.cmdline.DefaultNArgumentCandidate;
+import net.thevpc.nuts.cmdline.NArgumentCandidate;
+import net.thevpc.nuts.cmdline.NCommandAutoCompleteResolver;
+import net.thevpc.nuts.cmdline.NCommandLine;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-class NshAutoCompleter implements NutsCommandAutoCompleteResolver {
+class NshAutoCompleter implements NCommandAutoCompleteResolver {
 
     @Override
-    public List<NutsArgumentCandidate> resolveCandidates(NutsCommandLine commandLine, int wordIndex, NutsSession session) {
-        List<NutsArgumentCandidate> candidates = new ArrayList<>();
+    public List<NArgumentCandidate> resolveCandidates(NCommandLine commandLine, int wordIndex, NSession session) {
+        List<NArgumentCandidate> candidates = new ArrayList<>();
         JShellContext fileContext = (JShellContext) session.env().getProperties().get(JShellContext.class.getName());
 
         if (wordIndex == 0) {
             for (JShellBuiltin command : fileContext.builtins().getAll()) {
-                candidates.add(new DefaultNutsArgumentCandidate(command.getName()));
+                candidates.add(new DefaultNArgumentCandidate(command.getName()));
             }
         } else {
             List<String> autoCompleteWords = new ArrayList<>(Arrays.asList(commandLine.toStringArray()));
@@ -31,12 +31,12 @@ class NshAutoCompleter implements NutsCommandAutoCompleteResolver {
                 JShellAutoCompleteCandidate cmdCandidate = (JShellAutoCompleteCandidate) cmdCandidate0;
                 if (cmdCandidate != null) {
                     String value = cmdCandidate.getValue();
-                    if (!NutsBlankable.isBlank(value)) {
+                    if (!NBlankable.isBlank(value)) {
                         String display = cmdCandidate.getDisplay();
-                        if (NutsBlankable.isBlank(display)) {
+                        if (NBlankable.isBlank(display)) {
                             display = value;
                         }
-                        candidates.add(new DefaultNutsArgumentCandidate(value,display));
+                        candidates.add(new DefaultNArgumentCandidate(value,display));
                     }
                 }
             }

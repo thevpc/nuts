@@ -27,7 +27,7 @@
 package net.thevpc.nuts.toolbox.nsh;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.cmdline.NutsCommandLine;
+import net.thevpc.nuts.cmdline.NCommandLine;
 import net.thevpc.nuts.toolbox.nsh.jshell.JShellExecutionContext;
 
 import java.lang.reflect.Constructor;
@@ -75,17 +75,17 @@ public abstract class SimpleJShellBuiltin extends AbstractJShellBuiltin {
         }
     }
 
-    protected abstract boolean configureFirst(NutsCommandLine commandLine, JShellExecutionContext context);
+    protected abstract boolean configureFirst(NCommandLine commandLine, JShellExecutionContext context);
 
-    protected abstract void execBuiltin(NutsCommandLine commandLine, JShellExecutionContext context);
+    protected abstract void execBuiltin(NCommandLine commandLine, JShellExecutionContext context);
 
     @Override
     public void execImpl(String[] args, JShellExecutionContext context) {
         boolean conf = false;
         int maxLoops = 1000;
         boolean robustMode = false;
-        NutsSession session = context.getSession();
-        NutsCommandLine commandLine = NutsCommandLine.of(args).setCommandName(getName())
+        NSession session = context.getSession();
+        NCommandLine commandLine = NCommandLine.of(args).setCommandName(getName())
                 .setAutoComplete(context.getShellContext().getAutoComplete());
         initCommandLine(commandLine, context);
         context.setOptions(optionsSupplier==null?null:optionsSupplier.get());
@@ -119,17 +119,17 @@ public abstract class SimpleJShellBuiltin extends AbstractJShellBuiltin {
             return;
         }
         if (context.isAskHelp()) {
-            session.out().printlnf(NutsString.of(getHelp(), session));
+            session.out().printlnf(NString.of(getHelp(), session));
             return;
         }
         if (context.isAskVersion()) {
-            session.out().printlnf(NutsIdResolver.of(session).resolveId(getClass()).getVersion().toString());
+            session.out().printlnf(NIdResolver.of(session).resolveId(getClass()).getVersion().toString());
             return;
         }
         execBuiltin(commandLine, context);
     }
 
-    protected void initCommandLine(NutsCommandLine commandLine, JShellExecutionContext context) {
+    protected void initCommandLine(NCommandLine commandLine, JShellExecutionContext context) {
 
     }
 

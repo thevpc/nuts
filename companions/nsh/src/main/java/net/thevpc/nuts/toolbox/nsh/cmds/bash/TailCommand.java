@@ -26,9 +26,9 @@
 package net.thevpc.nuts.toolbox.nsh.cmds.bash;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.cmdline.NutsArgument;
-import net.thevpc.nuts.cmdline.NutsCommandLine;
-import net.thevpc.nuts.io.NutsPath;
+import net.thevpc.nuts.cmdline.NArgument;
+import net.thevpc.nuts.cmdline.NCommandLine;
+import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.toolbox.nsh.SimpleJShellBuiltin;
 import net.thevpc.nuts.toolbox.nsh.jshell.JShellExecutionContext;
 import net.thevpc.nuts.toolbox.nsh.util.ShellHelper;
@@ -51,10 +51,10 @@ public class TailCommand extends SimpleJShellBuiltin {
     }
 
     @Override
-    protected boolean configureFirst(NutsCommandLine commandLine, JShellExecutionContext context) {
+    protected boolean configureFirst(NCommandLine commandLine, JShellExecutionContext context) {
         Options options = context.getOptions();
-        NutsSession session = context.getSession();
-        NutsArgument a = commandLine.peek().get(session);
+        NSession session = context.getSession();
+        NArgument a = commandLine.peek().get(session);
         if (a.isOption()) {
             if (ShellHelper.isInt(a.asString()
                     .get(session).substring(1))) {
@@ -67,28 +67,28 @@ public class TailCommand extends SimpleJShellBuiltin {
             }
         } else {
             String path = a.asString().get(session);
-            NutsPath file = NutsPath.of(path, session).toAbsolute(context.getCwd());
+            NPath file = NPath.of(path, session).toAbsolute(context.getCwd());
             options.files.add(file);
             return true;
         }
     }
 
     @Override
-    protected void execBuiltin(NutsCommandLine commandLine, JShellExecutionContext context) {
+    protected void execBuiltin(NCommandLine commandLine, JShellExecutionContext context) {
         Options options = context.getOptions();
-        NutsSession session = context.getSession();
+        NSession session = context.getSession();
 
         if (options.files.isEmpty()) {
-            throw new NutsExecutionException(session, NutsMessage.ofPlain("not yet supported"), 2);
+            throw new NExecutionException(session, NMsg.ofPlain("not yet supported"), 2);
         }
-        for (NutsPath file : options.files) {
+        for (NPath file : options.files) {
             tail(file, options.max, context);
         }
     }
 
-    private void tail(NutsPath file, int max, JShellExecutionContext context) {
+    private void tail(NPath file, int max, JShellExecutionContext context) {
         BufferedReader r = null;
-        NutsSession session = context.getSession();
+        NSession session = context.getSession();
         try {
             try {
                 r = new BufferedReader(new InputStreamReader(file.getInputStream()));
@@ -111,12 +111,12 @@ public class TailCommand extends SimpleJShellBuiltin {
                 }
             }
         } catch (IOException ex) {
-            throw new NutsExecutionException(session, NutsMessage.ofCstyle("%s", ex), ex, 100);
+            throw new NExecutionException(session, NMsg.ofCstyle("%s", ex), ex, 100);
         }
     }
 
     private static class Options {
         int max = 0;
-        List<NutsPath> files = new ArrayList<>();
+        List<NPath> files = new ArrayList<>();
     }
 }

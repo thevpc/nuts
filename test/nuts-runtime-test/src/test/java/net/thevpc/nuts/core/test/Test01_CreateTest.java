@@ -5,11 +5,11 @@
  */
 package net.thevpc.nuts.core.test;
 
-import net.thevpc.nuts.cmdline.NutsArgument;
-import net.thevpc.nuts.cmdline.NutsCommandHistory;
-import net.thevpc.nuts.cmdline.NutsCommandLine;
-import net.thevpc.nuts.cmdline.NutsCommandLineFormat;
-import net.thevpc.nuts.concurrent.NutsLocks;
+import net.thevpc.nuts.cmdline.NArgument;
+import net.thevpc.nuts.cmdline.NCommandHistory;
+import net.thevpc.nuts.cmdline.NCommandLine;
+import net.thevpc.nuts.cmdline.NCommandLineFormat;
+import net.thevpc.nuts.concurrent.NLocks;
 import net.thevpc.nuts.core.test.utils.TestUtils;
 import net.thevpc.nuts.*;
 
@@ -17,18 +17,19 @@ import java.io.File;
 import java.io.InputStream;
 import java.util.regex.Pattern;
 
-import net.thevpc.nuts.elem.NutsElements;
-import net.thevpc.nuts.format.NutsObjectFormat;
-import net.thevpc.nuts.format.NutsTableFormat;
-import net.thevpc.nuts.format.NutsTreeFormat;
+import net.thevpc.nuts.elem.NElements;
+import net.thevpc.nuts.format.NObjectFormat;
+import net.thevpc.nuts.format.NTableFormat;
+import net.thevpc.nuts.format.NTreeFormat;
 import net.thevpc.nuts.io.*;
-import net.thevpc.nuts.spi.NutsApplicationContexts;
-import net.thevpc.nuts.spi.NutsDependencySolver;
-import net.thevpc.nuts.spi.NutsPaths;
-import net.thevpc.nuts.spi.NutsTerminals;
-import net.thevpc.nuts.text.NutsText;
-import net.thevpc.nuts.text.NutsTexts;
+import net.thevpc.nuts.spi.NApplicationContexts;
+import net.thevpc.nuts.spi.NDependencySolver;
+import net.thevpc.nuts.spi.NPaths;
+import net.thevpc.nuts.spi.NTerminals;
+import net.thevpc.nuts.text.NText;
+import net.thevpc.nuts.text.NTexts;
 import net.thevpc.nuts.util.*;
+import net.thevpc.nuts.util.NStream;
 import org.junit.jupiter.api.*;
 
 /**
@@ -40,7 +41,7 @@ public class Test01_CreateTest {
     public void minimal1()  {
         String wsPath = TestUtils.getTestBaseFolder().getPath();
 
-        NutsSession session = TestUtils.openNewTestWorkspace("--workspace", wsPath,
+        NSession session = TestUtils.openNewTestWorkspace("--workspace", wsPath,
                 "--standalone",
                 "--archetype", "minimal",
                 "--verbose",
@@ -48,8 +49,8 @@ public class Test01_CreateTest {
                 "--verbose"
         );
         Assertions.assertEquals(
-                NutsPath.of(new File(wsPath, "cache"),session),
-                session.locations().getStoreLocation(NutsStoreLocation.CACHE));
+                NPath.of(new File(wsPath, "cache"),session),
+                session.locations().getStoreLocation(NStoreLocation.CACHE));
         Assertions.assertEquals(0, session.repos().getRepositories().size());
 //        Assertions.assertEquals(new File(wsPath,  "cache/" + NutsConstants.Folders.REPOSITORIES + "/" +
 //                        session.repos().getRepositories()[0].getName() +
@@ -77,7 +78,7 @@ public class Test01_CreateTest {
                 "a\n\nb";
         TestUtils.println("-----------------------");
         TestUtils.println(str);
-        NutsText txt = NutsTexts.of(session).parse(str);
+        NText txt = NTexts.of(session).parse(str);
         TestUtils.println("-----------------------");
         TestUtils.println(txt);
     }
@@ -105,14 +106,14 @@ public class Test01_CreateTest {
     public void default1() throws Exception {
         String wsPath = TestUtils.getTestBaseFolder().getPath();
 
-        NutsSession session = TestUtils.openNewTestWorkspace(
+        NSession session = TestUtils.openNewTestWorkspace(
                 "--reset", // required for exploded repos
                 "--exploded",
                 "--archetype", "default",
                 "--verbose",
                 "--skip-companions");
         String base = "";
-        switch (NutsOsFamily.getCurrent()) {
+        switch (NOsFamily.getCurrent()) {
             case WINDOWS: {
                 base = new File(System.getProperty("user.home"), "AppData\\Local\\nuts\\cache").getPath();
                 break;
@@ -126,15 +127,15 @@ public class Test01_CreateTest {
             }
         }
         Assertions.assertEquals(
-                NutsPath.of(new File(base, new File(wsPath).getName()),session),
-                session.locations().getStoreLocation(NutsStoreLocation.CACHE));
+                NPath.of(new File(base, new File(wsPath).getName()),session),
+                session.locations().getStoreLocation(NStoreLocation.CACHE));
         Assertions.assertEquals(
-                NutsPath.of(new File(base, new File(wsPath).getName() + "/"
-                        + NutsConstants.Folders.REPOSITORIES + "/"
+                NPath.of(new File(base, new File(wsPath).getName() + "/"
+                        + NConstants.Folders.REPOSITORIES + "/"
                         + session.repos().getRepositories().get(0).getName()
                         + "/" + session.repos().getRepositories().get(0).getUuid()
                 ),session),
-                session.repos().getRepositories().get(0).config().getStoreLocation(NutsStoreLocation.CACHE));
+                session.repos().getRepositories().get(0).config().getStoreLocation(NStoreLocation.CACHE));
     }
 
     @Test
@@ -159,196 +160,196 @@ public class Test01_CreateTest {
 
     @Test
     public void createUtilTypes() {
-        NutsSession s = TestUtils.runNewTestWorkspace("--verbose","-b");
+        NSession s = TestUtils.runNewTestWorkspace("--verbose","-b");
 
         {
-            NutsPath home = NutsPath.of(new File(System.getProperty("user.home")), s);
+            NPath home = NPath.of(new File(System.getProperty("user.home")), s);
             Assertions.assertNotNull(home);
         }
 
         {
-            NutsCommandLine cmd = NutsCommandLine.of(new String[]{"cmd", "--test"});
+            NCommandLine cmd = NCommandLine.of(new String[]{"cmd", "--test"});
             Assertions.assertNotNull(cmd);
         }
 
         {
-            NutsArgument arg = NutsArgument.of("arg");
+            NArgument arg = NArgument.of("arg");
             Assertions.assertNotNull(arg);
         }
 
         {
-            NutsExpr expr = NutsExpr.of(s);
+            NExpr expr = NExpr.of(s);
             Assertions.assertNotNull(expr);
         }
 
         {
-            NutsStream<String> stream = NutsStream.of(new String[]{"a"}, s);
+            NStream<String> stream = NStream.of(new String[]{"a"}, s);
             Assertions.assertNotNull(stream);
         }
 
         {
-            Pattern g = NutsGlob.of(s).toPattern("a.*");
+            Pattern g = NGlob.of(s).toPattern("a.*");
             Assertions.assertNotNull(g);
         }
 
         {
-            InputStream stdin = NutsIO.of(s).stdin();
+            InputStream stdin = NIO.of(s).stdin();
             Assertions.assertNotNull(stdin);
         }
 
         {
-            NutsPrintStream stdout = NutsPrintStreams.of(s).stdout();
+            net.thevpc.nuts.io.NStream stdout = NPrintStreams.of(s).stdout();
             Assertions.assertNotNull(stdout);
         }
 
         {
-            NutsCommandHistory h = NutsCommandHistory.of(s);
+            NCommandHistory h = NCommandHistory.of(s);
             Assertions.assertNotNull(h);
         }
 
         {
-            NutsApplicationContexts c = NutsApplicationContexts.of(s);
+            NApplicationContexts c = NApplicationContexts.of(s);
             Assertions.assertNotNull(c);
         }
 
         {
-            NutsExecutionEntries c = NutsExecutionEntries.of(s);
+            NExecutionEntries c = NExecutionEntries.of(s);
             Assertions.assertNotNull(c);
         }
 
         {
-            NutsDigest c = NutsDigest.of(s);
+            NDigest c = NDigest.of(s);
             Assertions.assertNotNull(c);
         }
 
         {
-            NutsInputStreamMonitor c = NutsInputStreamMonitor.of(s);
+            NInputStreamMonitor c = NInputStreamMonitor.of(s);
             Assertions.assertNotNull(c);
         }
         {
-            NutsLocks c = NutsLocks.of(s);
+            NLocks c = NLocks.of(s);
             Assertions.assertNotNull(c);
         }
         {
-            NutsTerminals c = NutsTerminals.of(s);
+            NTerminals c = NTerminals.of(s);
             Assertions.assertNotNull(c);
         }
         {
-            NutsPaths c = NutsPaths.of(s);
+            NPaths c = NPaths.of(s);
             Assertions.assertNotNull(c);
         }
         {
-            NutsCp c = NutsCp.of(s);
+            NCp c = NCp.of(s);
             Assertions.assertNotNull(c);
         }
         {
-            NutsPs c = NutsPs.of(s);
+            NPs c = NPs.of(s);
             Assertions.assertNotNull(c);
         }
         {
-            NutsCompress c = NutsCompress.of(s);
+            NCompress c = NCompress.of(s);
             Assertions.assertNotNull(c);
         }
         {
-            NutsUncompress c = NutsUncompress.of(s);
+            NUncompress c = NUncompress.of(s);
             Assertions.assertNotNull(c);
         }
         {
-            NutsLogger log = NutsLogger.of(Test01_CreateTest.class, s);
+            NLogger log = NLogger.of(Test01_CreateTest.class, s);
             Assertions.assertNotNull(log);
-            NutsLoggerOp logop = NutsLoggerOp.of(Test01_CreateTest.class, s);
+            NLoggerOp logop = NLoggerOp.of(Test01_CreateTest.class, s);
             Assertions.assertNotNull(logop);
         }
         {
-            NutsIdResolver r = NutsIdResolver.of(s);
+            NIdResolver r = NIdResolver.of(s);
             Assertions.assertNotNull(r);
         }
         {
-            NutsIdFormat r = NutsIdFormat.of(s);
+            NIdFormat r = NIdFormat.of(s);
             Assertions.assertNotNull(r);
         }
         {
-            NutsIdFilters r = NutsIdFilters.of(s);
+            NIdFilters r = NIdFilters.of(s);
             Assertions.assertNotNull(r);
         }
         {
-            NutsVersionFilters r = NutsVersionFilters.of(s);
+            NVersionFilters r = NVersionFilters.of(s);
             Assertions.assertNotNull(r);
         }
         {
-            NutsDependencyFilters r = NutsDependencyFilters.of(s);
+            NDependencyFilters r = NDependencyFilters.of(s);
             Assertions.assertNotNull(r);
         }
         {
-            NutsDescriptorFilters r = NutsDescriptorFilters.of(s);
+            NDescriptorFilters r = NDescriptorFilters.of(s);
             Assertions.assertNotNull(r);
         }
         {
-            NutsInstallStatusFilters r = NutsInstallStatusFilters.of(s);
+            NInstallStatusFilters r = NInstallStatusFilters.of(s);
             Assertions.assertNotNull(r);
         }
         {
-            NutsRepositoryFilters r = NutsRepositoryFilters.of(s);
+            NRepositoryFilters r = NRepositoryFilters.of(s);
             Assertions.assertNotNull(r);
         }
         {
-            NutsElements r = NutsElements.of(s);
+            NElements r = NElements.of(s);
             Assertions.assertNotNull(r);
         }
         {
-            NutsDescriptorParser r = NutsDescriptorParser.of(s);
+            NDescriptorParser r = NDescriptorParser.of(s);
             Assertions.assertNotNull(r);
         }
         {
-            NutsArtifactCallBuilder r = NutsArtifactCallBuilder.of(s);
+            NArtifactCallBuilder r = NArtifactCallBuilder.of(s);
             Assertions.assertNotNull(r);
         }
         {
-            NutsDescriptorFormat r = NutsDescriptorFormat.of(s);
+            NDescriptorFormat r = NDescriptorFormat.of(s);
             Assertions.assertNotNull(r);
         }
         {
-            NutsDependencySolver r = NutsDependencySolver.of(s);
+            NDependencySolver r = NDependencySolver.of(s);
             Assertions.assertNotNull(r);
         }
         {
-            NutsVersionFormat r = NutsVersionFormat.of(s);
+            NVersionFormat r = NVersionFormat.of(s);
             Assertions.assertNotNull(r);
         }
         {
-            NutsFilters r = NutsFilters.of(s);
+            NFilters r = NFilters.of(s);
             Assertions.assertNotNull(r);
         }
         {
-            NutsTexts r = NutsTexts.of(s);
+            NTexts r = NTexts.of(s);
             Assertions.assertNotNull(r);
         }
         {
-            NutsObjectFormat r = NutsObjectFormat.of(s);
+            NObjectFormat r = NObjectFormat.of(s);
             Assertions.assertNotNull(r);
         }
         {
-            NutsInfoCommand r = NutsInfoCommand.of(s);
+            NInfoCommand r = NInfoCommand.of(s);
             Assertions.assertNotNull(r);
         }
         {
-            NutsExecCommandFormat r = NutsExecCommandFormat.of(s);
+            NExecCommandFormat r = NExecCommandFormat.of(s);
             Assertions.assertNotNull(r);
         }
         {
-            NutsCommandLineFormat r = NutsCommandLineFormat.of(s);
+            NCommandLineFormat r = NCommandLineFormat.of(s);
             Assertions.assertNotNull(r);
         }
         {
-            NutsTableFormat r = NutsTableFormat.of(s);
+            NTableFormat r = NTableFormat.of(s);
             Assertions.assertNotNull(r);
         }
         {
-            NutsTreeFormat r = NutsTreeFormat.of(s);
+            NTreeFormat r = NTreeFormat.of(s);
             Assertions.assertNotNull(r);
         }
         {
-            NutsPropertiesFormat r = NutsPropertiesFormat.of(s);
+            NPropertiesFormat r = NPropertiesFormat.of(s);
             Assertions.assertNotNull(r);
         }
 
@@ -357,31 +358,31 @@ public class Test01_CreateTest {
     @Test
     public void testHomePath(){
         Assertions.assertEquals(
-                NutsHomeLocation.of(null, NutsStoreLocation.APPS),
-                NutsHomeLocation.parse("system-apps").orElse(null)
+                NHomeLocation.of(null, NStoreLocation.APPS),
+                NHomeLocation.parse("system-apps").orElse(null)
         );
         Assertions.assertEquals(
-                NutsHomeLocation.of(NutsOsFamily.MACOS, NutsStoreLocation.CACHE),
-                NutsHomeLocation.parse("").orElse(NutsHomeLocation.of(NutsOsFamily.MACOS, NutsStoreLocation.CACHE) )
+                NHomeLocation.of(NOsFamily.MACOS, NStoreLocation.CACHE),
+                NHomeLocation.parse("").orElse(NHomeLocation.of(NOsFamily.MACOS, NStoreLocation.CACHE) )
         );
         Assertions.assertEquals(
-                NutsHomeLocation.of(NutsOsFamily.MACOS, NutsStoreLocation.CACHE),
-                NutsHomeLocation.parse("").orElse( NutsHomeLocation.of(NutsOsFamily.MACOS, NutsStoreLocation.CACHE))
+                NHomeLocation.of(NOsFamily.MACOS, NStoreLocation.CACHE),
+                NHomeLocation.parse("").orElse( NHomeLocation.of(NOsFamily.MACOS, NStoreLocation.CACHE))
         );
-        Assertions.assertNull(NutsHomeLocation.parse("any error").orElse(null));
+        Assertions.assertNull(NHomeLocation.parse("any error").orElse(null));
         Assertions.assertEquals(
-                NutsHomeLocation.of(null, NutsStoreLocation.APPS),
-                NutsEnum.parse(NutsHomeLocation.class, "system-apps").orElse(null)
-        );
-        Assertions.assertEquals(
-                NutsHomeLocation.of(NutsOsFamily.MACOS, NutsStoreLocation.CACHE),
-                NutsEnum.parse(NutsHomeLocation.class,"").orElse(NutsHomeLocation.of(NutsOsFamily.MACOS, NutsStoreLocation.CACHE))
+                NHomeLocation.of(null, NStoreLocation.APPS),
+                NEnum.parse(NHomeLocation.class, "system-apps").orElse(null)
         );
         Assertions.assertEquals(
-                NutsHomeLocation.of(NutsOsFamily.MACOS, NutsStoreLocation.CACHE),
-                NutsEnum.parse(NutsHomeLocation.class,"").orElse(NutsHomeLocation.of(NutsOsFamily.MACOS, NutsStoreLocation.CACHE) )
+                NHomeLocation.of(NOsFamily.MACOS, NStoreLocation.CACHE),
+                NEnum.parse(NHomeLocation.class,"").orElse(NHomeLocation.of(NOsFamily.MACOS, NStoreLocation.CACHE))
         );
-        Assertions.assertNull(NutsEnum.parse(NutsHomeLocation.class,"any error")
+        Assertions.assertEquals(
+                NHomeLocation.of(NOsFamily.MACOS, NStoreLocation.CACHE),
+                NEnum.parse(NHomeLocation.class,"").orElse(NHomeLocation.of(NOsFamily.MACOS, NStoreLocation.CACHE) )
+        );
+        Assertions.assertNull(NEnum.parse(NHomeLocation.class,"any error")
                 .orElse(null));
     }
 }

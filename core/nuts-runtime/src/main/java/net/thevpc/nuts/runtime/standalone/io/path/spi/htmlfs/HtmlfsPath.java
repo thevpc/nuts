@@ -1,20 +1,20 @@
 package net.thevpc.nuts.runtime.standalone.io.path.spi.htmlfs;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.cmdline.NutsCommandLine;
-import net.thevpc.nuts.format.NutsTreeVisitor;
+import net.thevpc.nuts.cmdline.NCommandLine;
+import net.thevpc.nuts.format.NTreeVisitor;
 import net.thevpc.nuts.io.*;
 import net.thevpc.nuts.runtime.standalone.io.path.spi.AbstractPathSPIAdapter;
-import net.thevpc.nuts.runtime.standalone.session.NutsSessionUtils;
-import net.thevpc.nuts.spi.NutsFormatSPI;
-import net.thevpc.nuts.spi.NutsPathFactory;
-import net.thevpc.nuts.spi.NutsPathSPI;
-import net.thevpc.nuts.spi.NutsUseDefault;
-import net.thevpc.nuts.text.NutsTextBuilder;
-import net.thevpc.nuts.text.NutsTextStyle;
-import net.thevpc.nuts.util.NutsLoggerOp;
-import net.thevpc.nuts.util.NutsLoggerVerb;
-import net.thevpc.nuts.util.NutsStream;
+import net.thevpc.nuts.runtime.standalone.session.NSessionUtils;
+import net.thevpc.nuts.spi.NFormatSPI;
+import net.thevpc.nuts.spi.NPathFactory;
+import net.thevpc.nuts.spi.NPathSPI;
+import net.thevpc.nuts.spi.NUseDefault;
+import net.thevpc.nuts.text.NTextBuilder;
+import net.thevpc.nuts.text.NTextStyle;
+import net.thevpc.nuts.util.NLoggerOp;
+import net.thevpc.nuts.util.NLoggerVerb;
+import net.thevpc.nuts.util.NStream;
 
 import java.io.*;
 import java.util.*;
@@ -32,10 +32,10 @@ public class HtmlfsPath extends AbstractPathSPIAdapter {
     };
     private String url;
 
-    public HtmlfsPath(String url, NutsSession session) {
-        super(NutsPath.of(url.substring(PREFIX.length()), session), session);
+    public HtmlfsPath(String url, NSession session) {
+        super(NPath.of(url.substring(PREFIX.length()), session), session);
         if (!url.startsWith(PREFIX)) {
-            throw new NutsUnsupportedArgumentException(session, NutsMessage.ofCstyle("expected prefix '%s'", PREFIX));
+            throw new NUnsupportedArgumentException(session, NMsg.ofCstyle("expected prefix '%s'", PREFIX));
         }
         this.url = url;
     }
@@ -62,37 +62,37 @@ public class HtmlfsPath extends AbstractPathSPIAdapter {
     }
 
     @Override
-    public NutsStream<NutsPath> list(NutsPath basePath) {
+    public NStream<NPath> list(NPath basePath) {
         try (InputStream q = ref.getInputStream()) {
-            return NutsStream.of(parseHtml(q).stream().map(
+            return NStream.of(parseHtml(q).stream().map(
                     x -> {
                         if (x.endsWith("/")) {
                             String a = PREFIX + ref.resolve(x);
                             if (!a.endsWith("/")) {
                                 a += "/";
                             }
-                            return NutsPath.of(new HtmlfsPath(a, session), session);
+                            return NPath.of(new HtmlfsPath(a, session), session);
                         }
                         return ref.resolve(x);
                     }), session);
         } catch (IOException e) {
-            throw new NutsIOException(session, e);
+            throw new NIOException(session, e);
         }
     }
 
     @Override
-    public NutsFormatSPI formatter(NutsPath basePath) {
+    public NFormatSPI formatter(NPath basePath) {
         return new MyPathFormat(this);
     }
 
     @Override
-    public String getProtocol(NutsPath basePath) {
+    public String getProtocol(NPath basePath) {
         return PROTOCOL;
     }
 
     @Override
-    public NutsPath resolve(NutsPath basePath, String path) {
-        if (NutsBlankable.isBlank(path)) {
+    public NPath resolve(NPath basePath, String path) {
+        if (NBlankable.isBlank(path)) {
             return basePath;
         }
         if (!path.endsWith("/")) {
@@ -102,23 +102,23 @@ public class HtmlfsPath extends AbstractPathSPIAdapter {
         if(!a.endsWith("/")){
             a+="/";
         }
-        return NutsPath.of(new HtmlfsPath(a,session), session);
+        return NPath.of(new HtmlfsPath(a,session), session);
     }
 
     @Override
-    public NutsPath resolve(NutsPath basePath, NutsPath path) {
-        if (NutsBlankable.isBlank(path)) {
+    public NPath resolve(NPath basePath, NPath path) {
+        if (NBlankable.isBlank(path)) {
             return basePath;
         }
         if (!path.toString().endsWith("/")) {
             return ref.resolve(path);
         }
-        return NutsPath.of(PREFIX + ref.resolve(path), session);
+        return NPath.of(PREFIX + ref.resolve(path), session);
     }
 
     @Override
-    public NutsPath resolveSibling(NutsPath basePath, String path) {
-        if (NutsBlankable.isBlank(path)) {
+    public NPath resolveSibling(NPath basePath, String path) {
+        if (NBlankable.isBlank(path)) {
             return basePath;
         }
         if (!path.endsWith("/")) {
@@ -128,32 +128,32 @@ public class HtmlfsPath extends AbstractPathSPIAdapter {
         if(!a.endsWith("/")){
             a+="/";
         }
-        return NutsPath.of(new HtmlfsPath(a,session), session);
+        return NPath.of(new HtmlfsPath(a,session), session);
     }
 
     @Override
-    public NutsPath resolveSibling(NutsPath basePath, NutsPath path) {
-        if (NutsBlankable.isBlank(path)) {
+    public NPath resolveSibling(NPath basePath, NPath path) {
+        if (NBlankable.isBlank(path)) {
             return basePath;
         }
         if (!path.toString().endsWith("/")) {
             return ref.resolveSibling(path);
         }
-        return NutsPath.of(PREFIX + ref.resolveSibling(path), session);
+        return NPath.of(PREFIX + ref.resolveSibling(path), session);
     }
 
-    public boolean isSymbolicLink(NutsPath basePath) {
+    public boolean isSymbolicLink(NPath basePath) {
         return false;
     }
 
     @Override
-    public boolean isOther(NutsPath basePath) {
+    public boolean isOther(NPath basePath) {
         return false;
     }
 
     @Override
-    public boolean isDirectory(NutsPath basePath) {
-        if (NutsBlankable.isBlank(basePath.getLocation()) || basePath.getLocation().endsWith("/")
+    public boolean isDirectory(NPath basePath) {
+        if (NBlankable.isBlank(basePath.getLocation()) || basePath.getLocation().endsWith("/")
                 || this.url.endsWith("/")
         ) {
             return true;
@@ -170,77 +170,77 @@ public class HtmlfsPath extends AbstractPathSPIAdapter {
     }
 
     @Override
-    public boolean isRegularFile(NutsPath basePath) {
+    public boolean isRegularFile(NPath basePath) {
         return false;
     }
 
     @Override
-    public boolean exists(NutsPath basePath) {
+    public boolean exists(NPath basePath) {
         String t = getContentType(basePath);
         return "text/html".equals(t);
     }
 
     @Override
-    public NutsPath getParent(NutsPath basePath) {
-        NutsPath p = ref.getParent();
+    public NPath getParent(NPath basePath) {
+        NPath p = ref.getParent();
         if (p == null) {
             return null;
         }
-        return NutsPath.of(PREFIX + p, session);
+        return NPath.of(PREFIX + p, session);
     }
 
     @Override
-    public NutsPath toAbsolute(NutsPath basePath, NutsPath rootPath) {
+    public NPath toAbsolute(NPath basePath, NPath rootPath) {
         if (isAbsolute(basePath)) {
             return basePath;
         }
-        return NutsPath.of(PREFIX + basePath.toAbsolute(rootPath), session);
+        return NPath.of(PREFIX + basePath.toAbsolute(rootPath), session);
     }
 
     @Override
-    public NutsPath normalize(NutsPath basePath) {
-        return NutsPath.of(PREFIX + ref.normalize(), session);
+    public NPath normalize(NPath basePath) {
+        return NPath.of(PREFIX + ref.normalize(), session);
     }
 
     @Override
-    public boolean isName(NutsPath basePath) {
+    public boolean isName(NPath basePath) {
         return false;
     }
 
     @Override
-    public NutsPath getRoot(NutsPath basePath) {
+    public NPath getRoot(NPath basePath) {
         if (isRoot(basePath)) {
             return basePath;
         }
-        return NutsPath.of(PREFIX + ref.getRoot(), session);
+        return NPath.of(PREFIX + ref.getRoot(), session);
     }
 
-    @NutsUseDefault
+    @NUseDefault
     @Override
-    public NutsStream<NutsPath> walk(NutsPath basePath, int maxDepth, NutsPathOption[] options) {
+    public NStream<NPath> walk(NPath basePath, int maxDepth, NPathOption[] options) {
         return null;
     }
 
-    @NutsUseDefault
+    @NUseDefault
     @Override
-    public void walkDfs(NutsPath basePath, NutsTreeVisitor<NutsPath> visitor, int maxDepth, NutsPathOption... options) {
+    public void walkDfs(NPath basePath, NTreeVisitor<NPath> visitor, int maxDepth, NPathOption... options) {
 
     }
 
     public List<String> parseHtml(InputStream html) {
-        byte[] bytes = NutsCp.of(session).from(html).getByteArrayResult();
-        NutsSupported<List<String>> best = Arrays.stream(PARSERS).map(p -> {
+        byte[] bytes = NCp.of(session).from(html).getByteArrayResult();
+        NSupported<List<String>> best = Arrays.stream(PARSERS).map(p -> {
                     try {
                         return p.parseHtmlTomcat(bytes, session);
                     } catch (Exception ex) {
-                        NutsLoggerOp.of(HtmlfsPath.class, session)
-                                .verb(NutsLoggerVerb.FAIL)
+                        NLoggerOp.of(HtmlfsPath.class, session)
+                                .verb(NLoggerVerb.FAIL)
                                 .level(Level.FINEST)
                                 .error(ex)
-                                .log(NutsMessage.ofCstyle("failed to parse using %s", p.getClass().getSimpleName()));
+                                .log(NMsg.ofCstyle("failed to parse using %s", p.getClass().getSimpleName()));
                     }
                     return null;
-                }).filter(p -> NutsSupported.isValid(p)).max(Comparator.comparing(NutsSupported::getSupportLevel))
+                }).filter(p -> NSupported.isValid(p)).max(Comparator.comparing(NSupported::getSupportLevel))
                 .orElse(null);
         if (best != null) {
             List<String> value = best.getValue();
@@ -252,7 +252,7 @@ public class HtmlfsPath extends AbstractPathSPIAdapter {
     }
 
     @Override
-    public boolean isLocal(NutsPath basePath) {
+    public boolean isLocal(NPath basePath) {
         return ref.isLocal();
     }
 
@@ -265,24 +265,24 @@ public class HtmlfsPath extends AbstractPathSPIAdapter {
 //        }
 //    }
 
-    public static class HtmlfsFactory implements NutsPathFactory {
-        private final NutsWorkspace ws;
+    public static class HtmlfsFactory implements NPathFactory {
+        private final NWorkspace ws;
 
-        public HtmlfsFactory(NutsWorkspace ws) {
+        public HtmlfsFactory(NWorkspace ws) {
             this.ws = ws;
         }
 
         @Override
-        public NutsSupported<NutsPathSPI> createPath(String path, NutsSession session, ClassLoader classLoader) {
-            NutsSessionUtils.checkSession(ws, session);
+        public NSupported<NPathSPI> createPath(String path, NSession session, ClassLoader classLoader) {
+            NSessionUtils.checkSession(ws, session);
             if (path.startsWith(PREFIX)) {
-                return NutsSupported.of(10, () -> new HtmlfsPath(path, session));
+                return NSupported.of(10, () -> new HtmlfsPath(path, session));
             }
             return null;
         }
     }
 
-    private static class MyPathFormat implements NutsFormatSPI {
+    private static class MyPathFormat implements NFormatSPI {
 
         private final HtmlfsPath p;
 
@@ -294,21 +294,21 @@ public class HtmlfsPath extends AbstractPathSPIAdapter {
             return "path";
         }
 
-        public NutsString asFormattedString() {
-            NutsTextBuilder sb = NutsTextBuilder.of(p.getSession());
-            sb.append(PROTOCOL, NutsTextStyle.primary1());
-            sb.append(":", NutsTextStyle.separator());
+        public NString asFormattedString() {
+            NTextBuilder sb = NTextBuilder.of(p.getSession());
+            sb.append(PROTOCOL, NTextStyle.primary1());
+            sb.append(":", NTextStyle.separator());
             sb.append(p.ref);
             return sb.build();
         }
 
         @Override
-        public void print(NutsPrintStream out) {
+        public void print(net.thevpc.nuts.io.NStream out) {
             out.print(asFormattedString());
         }
 
         @Override
-        public boolean configureFirst(NutsCommandLine commandLine) {
+        public boolean configureFirst(NCommandLine commandLine) {
             return false;
         }
     }

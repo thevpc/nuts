@@ -1,67 +1,67 @@
 package net.thevpc.nuts.runtime.standalone.io.terminal;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.util.NutsLogger;
-import net.thevpc.nuts.util.NutsLoggerVerb;
-import net.thevpc.nuts.util.NutsUtils;
+import net.thevpc.nuts.util.NLogger;
+import net.thevpc.nuts.util.NLoggerVerb;
+import net.thevpc.nuts.util.NUtils;
 
 import java.util.function.Supplier;
 import java.util.logging.Level;
 
 public class DefaultWriteTypeProcessor {
-    private NutsMessage askMessage;
-    private NutsMessage logMessage;
+    private NMsg askMessage;
+    private NMsg logMessage;
     private Supplier<RuntimeException> error;
-    private NutsLogger log;
-    private NutsConfirmationMode writeType;
-    private NutsSession session;
+    private NLogger log;
+    private NConfirmationMode writeType;
+    private NSession session;
 
-    public DefaultWriteTypeProcessor(NutsConfirmationMode writeType, NutsSession session) {
+    public DefaultWriteTypeProcessor(NConfirmationMode writeType, NSession session) {
         this.writeType = writeType;
         this.session = session;
     }
 
-    public static DefaultWriteTypeProcessor of(NutsConfirmationMode writeType, NutsSession session) {
+    public static DefaultWriteTypeProcessor of(NConfirmationMode writeType, NSession session) {
         return new DefaultWriteTypeProcessor(writeType, session);
     }
 
-    public DefaultWriteTypeProcessor ask(NutsMessage m) {
-        NutsUtils.requireNonNull(m, "message", session);
+    public DefaultWriteTypeProcessor ask(NMsg m) {
+        NUtils.requireNonNull(m, "message", session);
         this.askMessage = m;
         return this;
     }
 
-    public DefaultWriteTypeProcessor withLog(NutsLogger log, NutsMessage m) {
-        NutsUtils.requireNonNull(log, "log", session);
-        NutsUtils.requireNonNull(m, "message", session);
+    public DefaultWriteTypeProcessor withLog(NLogger log, NMsg m) {
+        NUtils.requireNonNull(log, "log", session);
+        NUtils.requireNonNull(m, "message", session);
         this.log = log;
         this.logMessage = m;
         return this;
     }
 
     public DefaultWriteTypeProcessor onError(Supplier<RuntimeException> error) {
-        NutsUtils.requireNonNull(error, "error handler", session);
+        NUtils.requireNonNull(error, "error handler", session);
         this.error = error;
         return this;
     }
 
-    private NutsMessage getValidAskMessage() {
-        NutsUtils.requireNonNull(askMessage, "message", session);
+    private NMsg getValidAskMessage() {
+        NUtils.requireNonNull(askMessage, "message", session);
         return askMessage;
     }
 
-    private NutsMessage getValidLogMessage() {
-        NutsUtils.requireNonNull(logMessage, "log message", session);
+    private NMsg getValidLogMessage() {
+        NUtils.requireNonNull(logMessage, "log message", session);
         return logMessage;
     }
 
     private Supplier<RuntimeException> getValidError() {
-        NutsUtils.requireNonNull(error, "error handler", session);
+        NUtils.requireNonNull(error, "error handler", session);
         return error;
     }
 
-    private NutsLogger getValidLog() {
-        NutsUtils.requireNonNull(log, "log", session);
+    private NLogger getValidLog() {
+        NUtils.requireNonNull(log, "log", session);
         return log;
     }
 
@@ -81,12 +81,12 @@ public class DefaultWriteTypeProcessor {
                 break;
             }
             case NO: {
-                getValidLog().with().session(session).level(Level.FINE).verb(NutsLoggerVerb.WARNING)
+                getValidLog().with().session(session).level(Level.FINE).verb(NLoggerVerb.WARNING)
                         .log(getValidLogMessage());
                 return false;
             }
         }
-        getValidLog().with().session(session).level(Level.FINE).verb(NutsLoggerVerb.WARNING)
+        getValidLog().with().session(session).level(Level.FINE).verb(NLoggerVerb.WARNING)
                 .log(getValidLogMessage());
         return true;
     }

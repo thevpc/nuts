@@ -26,9 +26,9 @@
 */
 package net.thevpc.nuts.runtime.standalone.format.json;
 
-import net.thevpc.nuts.NutsMessage;
-import net.thevpc.nuts.NutsParseException;
-import net.thevpc.nuts.NutsSession;
+import net.thevpc.nuts.NMsg;
+import net.thevpc.nuts.NParseException;
+import net.thevpc.nuts.NSession;
 
 public class JsonStatus {
 
@@ -38,9 +38,9 @@ public class JsonStatus {
     public boolean openAntiSlash;
     public boolean openSimpleQuotes;
     public boolean openDoubleQuotes;
-    public NutsSession session;
+    public NSession session;
 
-    public JsonStatus(NutsSession session) {
+    public JsonStatus(NSession session) {
         this.session = session;
     }
 
@@ -50,36 +50,36 @@ public class JsonStatus {
         }
         if (countBraces == 0) {
             if (throwError) {
-                throw new NutsParseException(session, NutsMessage.ofPlain("not an object"));
+                throw new NParseException(session, NMsg.ofPlain("not an object"));
             }
             return false;
         }
         if (openBrackets > 0) {
             if (throwError) {
-                throw new NutsParseException(session, NutsMessage.ofPlain("unbalanced brackets"));
+                throw new NParseException(session, NMsg.ofPlain("unbalanced brackets"));
             }
             return false;
         }
         if (openBraces > 0) {
             if (throwError) {
-                throw new NutsParseException(session, NutsMessage.ofPlain("unbalanced braces"));
+                throw new NParseException(session, NMsg.ofPlain("unbalanced braces"));
             }
             return false;
         }
         if (openAntiSlash) {
             if (throwError) {
-                throw new NutsParseException(session, NutsMessage.ofPlain("unbalanced anti-slash"));
+                throw new NParseException(session, NMsg.ofPlain("unbalanced anti-slash"));
             }
         }
         if (openSimpleQuotes) {
             if (throwError) {
-                throw new NutsParseException(session, NutsMessage.ofPlain("unbalanced simple quotes"));
+                throw new NParseException(session, NMsg.ofPlain("unbalanced simple quotes"));
             }
             return false;
         }
         if (openDoubleQuotes) {
             if (throwError) {
-                throw new NutsParseException(session, NutsMessage.ofPlain("unbalanced double quotes"));
+                throw new NParseException(session, NMsg.ofPlain("unbalanced double quotes"));
             }
             return false;
         }
@@ -89,13 +89,13 @@ public class JsonStatus {
     public boolean checkPartialValid(boolean throwError) {
         if (openBrackets < 0) {
             if (throwError) {
-                throw new NutsParseException(session, NutsMessage.ofPlain("unbalanced brackets"));
+                throw new NParseException(session, NMsg.ofPlain("unbalanced brackets"));
             }
             return false;
         }
         if (openBraces < 0) {
             if (throwError) {
-                throw new NutsParseException(session, NutsMessage.ofPlain("unbalanced braces"));
+                throw new NParseException(session, NMsg.ofPlain("unbalanced braces"));
             }
             return false;
         }

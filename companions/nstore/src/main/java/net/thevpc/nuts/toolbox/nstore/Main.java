@@ -25,7 +25,7 @@ public class Main extends Application implements NutsApplication {
             case UPDATE:
             case AUTO_COMPLETE:
             {
-                throw new NutsExecutionException(session,NutsMessage.cstyle("exit"),0);
+                throw new NutsExecutionException(session,NMsg.ofCstyle("exit"),0);
             }
         }
     }

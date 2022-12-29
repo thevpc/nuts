@@ -25,25 +25,26 @@ package net.thevpc.nuts.runtime.standalone.io.util;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.io.*;
-import net.thevpc.nuts.runtime.standalone.io.terminal.NutsTerminalModeOp;
+import net.thevpc.nuts.runtime.standalone.io.terminal.NTerminalModeOp;
 import net.thevpc.nuts.runtime.standalone.repository.index.CacheDB;
-import net.thevpc.nuts.runtime.standalone.session.NutsSessionUtils;
+import net.thevpc.nuts.runtime.standalone.session.NSessionUtils;
 import net.thevpc.nuts.runtime.standalone.text.ExtendedFormatAware;
 import net.thevpc.nuts.runtime.standalone.text.ExtendedFormatAwarePrintWriter;
 import net.thevpc.nuts.runtime.standalone.text.RawOutputStream;
-import net.thevpc.nuts.runtime.standalone.util.CoreNutsUtils;
+import net.thevpc.nuts.runtime.standalone.util.CoreNUtils;
 import net.thevpc.nuts.runtime.standalone.util.CoreStringUtils;
 import net.thevpc.nuts.runtime.standalone.util.DoWhenExist;
 import net.thevpc.nuts.runtime.standalone.util.DoWhenNotExists;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.util.PathInfo;
-import net.thevpc.nuts.runtime.standalone.xtra.digest.NutsDigestUtils;
+import net.thevpc.nuts.runtime.standalone.xtra.digest.NDigestUtils;
 import net.thevpc.nuts.runtime.standalone.xtra.download.DefaultHttpTransportComponent;
 import net.thevpc.nuts.runtime.standalone.xtra.nanodb.NanoDB;
 import net.thevpc.nuts.runtime.standalone.xtra.nanodb.NanoDBTableFile;
 import net.thevpc.nuts.spi.*;
-import net.thevpc.nuts.text.NutsTextStyle;
-import net.thevpc.nuts.text.NutsTexts;
+import net.thevpc.nuts.text.NTextStyle;
+import net.thevpc.nuts.text.NTexts;
 import net.thevpc.nuts.util.*;
+import net.thevpc.nuts.util.NStream;
 
 import java.io.*;
 import java.net.*;
@@ -66,7 +67,7 @@ public class CoreIOUtils {
     public static String newLineString = null;
 
     @Deprecated
-    public static PrintWriter toPrintWriter(Writer writer, NutsSystemTerminalBase term, NutsSession session) {
+    public static PrintWriter toPrintWriter(Writer writer, NSystemTerminalBase term, NSession session) {
         if (writer == null) {
             return null;
         }
@@ -76,28 +77,28 @@ public class CoreIOUtils {
             }
         }
         ExtendedFormatAwarePrintWriter s = new ExtendedFormatAwarePrintWriter(writer, term, session);
-        NutsSessionUtils.setSession(s, session);
+        NSessionUtils.setSession(s, session);
         return s;
     }
 
     @Deprecated
-    public static PrintWriter toPrintWriter(OutputStream writer, NutsSystemTerminalBase term, NutsSession session) {
+    public static PrintWriter toPrintWriter(OutputStream writer, NSystemTerminalBase term, NSession session) {
         if (writer == null) {
             return null;
         }
         ExtendedFormatAwarePrintWriter s = new ExtendedFormatAwarePrintWriter(writer, term, session);
-        NutsSessionUtils.setSession(s, session);
+        NSessionUtils.setSession(s, session);
         return s;
     }
 
     @Deprecated
-    public static OutputStream convertOutputStream(OutputStream out, NutsTerminalMode expected, NutsSystemTerminalBase term, NutsSession session) {
+    public static OutputStream convertOutputStream(OutputStream out, NTerminalMode expected, NSystemTerminalBase term, NSession session) {
         ExtendedFormatAware a = convertOutputStreamToExtendedFormatAware(out, expected, term, session);
         return (OutputStream) a;
     }
 
     @Deprecated
-    public static ExtendedFormatAware convertOutputStreamToExtendedFormatAware(OutputStream out, NutsTerminalMode expected, NutsSystemTerminalBase term, NutsSession session) {
+    public static ExtendedFormatAware convertOutputStreamToExtendedFormatAware(OutputStream out, NTerminalMode expected, NSystemTerminalBase term, NSession session) {
         if (out == null) {
             return null;
         }
@@ -109,57 +110,57 @@ public class CoreIOUtils {
         }
         switch (expected) {
             case INHERITED: {
-                return aw.convert(NutsTerminalModeOp.NOP);
+                return aw.convert(NTerminalModeOp.NOP);
             }
             case FORMATTED: {
-                return aw.convert(NutsTerminalModeOp.FORMAT);
+                return aw.convert(NTerminalModeOp.FORMAT);
             }
             case FILTERED: {
-                return aw.convert(NutsTerminalModeOp.FILTER);
+                return aw.convert(NTerminalModeOp.FILTER);
             }
             default: {
-                throw new NutsIllegalArgumentException(session, NutsMessage.ofCstyle("unsupported terminal mode %s", expected));
+                throw new NIllegalArgumentException(session, NMsg.ofCstyle("unsupported terminal mode %s", expected));
             }
         }
     }
 
-    public static String resolveRepositoryPath(NutsAddRepositoryOptions options, Path rootFolder, NutsSession session) {
-        NutsWorkspace ws = session.getWorkspace();
+    public static String resolveRepositoryPath(NAddRepositoryOptions options, Path rootFolder, NSession session) {
+        NWorkspace ws = session.getWorkspace();
         String loc = options.getLocation();
         String goodName = options.getName();
-        if (NutsBlankable.isBlank(goodName)) {
+        if (NBlankable.isBlank(goodName)) {
             goodName = options.getConfig().getName();
         }
-        if (NutsBlankable.isBlank(goodName)) {
+        if (NBlankable.isBlank(goodName)) {
             goodName = options.getName();
         }
-        if (NutsBlankable.isBlank(goodName)) {
+        if (NBlankable.isBlank(goodName)) {
             if (options.isTemporary()) {
                 goodName = "temp-" + UUID.randomUUID();
             } else {
                 goodName = "repo-" + UUID.randomUUID();
             }
         }
-        if (NutsBlankable.isBlank(loc)) {
+        if (NBlankable.isBlank(loc)) {
             if (options.isTemporary()) {
-                if (NutsBlankable.isBlank(goodName)) {
+                if (NBlankable.isBlank(goodName)) {
                     goodName = "temp";
                 }
                 if (goodName.length() < 3) {
                     goodName = goodName + "-repo";
                 }
-                loc = NutsPaths.of(session)
+                loc = NPaths.of(session)
                         .createTempFolder(goodName + "-").toString();
             } else {
-                if (NutsBlankable.isBlank(loc)) {
-                    if (NutsBlankable.isBlank(goodName)) {
-                        goodName = CoreNutsUtils.randomColorName() + "-repo";
+                if (NBlankable.isBlank(loc)) {
+                    if (NBlankable.isBlank(goodName)) {
+                        goodName = CoreNUtils.randomColorName() + "-repo";
                     }
                     loc = goodName;
                 }
             }
         }
-        return NutsPath.of(loc, session).toAbsolute(rootFolder.toString())
+        return NPath.of(loc, session).toAbsolute(rootFolder.toString())
                 .toString();
     }
 
@@ -181,8 +182,8 @@ public class CoreIOUtils {
 //        return sb.toString();
 //    }
 
-    public static NutsPrintStream resolveOut(NutsSession session) {
-        return (session.getTerminal() == null) ? NutsPrintStream.ofNull(session)
+    public static net.thevpc.nuts.io.NStream resolveOut(NSession session) {
+        return (session.getTerminal() == null) ? net.thevpc.nuts.io.NStream.ofNull(session)
                 : session.getTerminal().out();
     }
 
@@ -192,7 +193,7 @@ public class CoreIOUtils {
      * @param in  entree
      * @param out sortie
      */
-    public static void copy(Reader in, Writer out, NutsSession session) {
+    public static void copy(Reader in, Writer out, NSession session) {
         copy(in, out, DEFAULT_BUFFER_SIZE, session);
     }
 
@@ -203,7 +204,7 @@ public class CoreIOUtils {
      * @param out sortie
      * @return size copied
      */
-    public static long copy(java.io.InputStream in, OutputStream out, NutsSession session) {
+    public static long copy(java.io.InputStream in, OutputStream out, NSession session) {
         return copy(in, out, DEFAULT_BUFFER_SIZE, session);
     }
 
@@ -215,7 +216,7 @@ public class CoreIOUtils {
      * @param bufferSize bufferSize
      * @return size copied
      */
-    public static long copy(java.io.InputStream in, OutputStream out, int bufferSize, NutsSession session) {
+    public static long copy(java.io.InputStream in, OutputStream out, int bufferSize, NSession session) {
         byte[] buffer = new byte[bufferSize];
         int len;
         long count = 0;
@@ -226,7 +227,7 @@ public class CoreIOUtils {
             }
             return len;
         } catch (IOException ex) {
-            throw new NutsIOException(session, ex);
+            throw new NIOException(session, ex);
         }
     }
 
@@ -237,7 +238,7 @@ public class CoreIOUtils {
      * @param out        sortie
      * @param bufferSize bufferSize
      */
-    public static void copy(Reader in, Writer out, int bufferSize, NutsSession session) {
+    public static void copy(Reader in, Writer out, int bufferSize, NSession session) {
         char[] buffer = new char[bufferSize];
         int len;
         try {
@@ -245,11 +246,11 @@ public class CoreIOUtils {
                 out.write(buffer, 0, len);
             }
         } catch (IOException ex) {
-            throw new NutsIOException(session, ex);
+            throw new NIOException(session, ex);
         }
     }
 
-    public static String loadString(java.io.InputStream is, boolean close, NutsSession session) {
+    public static String loadString(java.io.InputStream is, boolean close, NSession session) {
         try {
             try {
                 byte[] bytes = loadByteArray(is, session);
@@ -260,11 +261,11 @@ public class CoreIOUtils {
                 }
             }
         } catch (IOException ex) {
-            throw new NutsIOException(session, ex);
+            throw new NIOException(session, ex);
         }
     }
 
-    public static String loadString(Reader is, boolean close, NutsSession session) {
+    public static String loadString(Reader is, boolean close, NSession session) {
         try {
             try {
                 char[] bytes = loadCharArray(is, session);
@@ -275,11 +276,11 @@ public class CoreIOUtils {
                 }
             }
         } catch (IOException ex) {
-            throw new NutsIOException(session, ex);
+            throw new NIOException(session, ex);
         }
     }
 
-    public static char[] loadCharArray(Reader r, NutsSession session) {
+    public static char[] loadCharArray(Reader r, NSession session) {
         CharArrayWriter out = null;
 
         try {
@@ -295,7 +296,7 @@ public class CoreIOUtils {
 
     }
 
-    public static byte[] loadByteArray(java.io.InputStream r, NutsSession session) {
+    public static byte[] loadByteArray(java.io.InputStream r, NSession session) {
         ByteArrayOutputStream out = null;
 
         try {
@@ -310,11 +311,11 @@ public class CoreIOUtils {
                 }
             }
         } catch (IOException ex) {
-            throw new NutsIOException(session, ex);
+            throw new NIOException(session, ex);
         }
     }
 
-    public static byte[] loadByteArray(java.io.InputStream r, boolean close, NutsSession session) {
+    public static byte[] loadByteArray(java.io.InputStream r, boolean close, NSession session) {
         ByteArrayOutputStream out = null;
 
         try {
@@ -332,11 +333,11 @@ public class CoreIOUtils {
                 }
             }
         } catch (IOException ex) {
-            throw new NutsIOException(session, ex);
+            throw new NIOException(session, ex);
         }
     }
 
-    public static byte[] loadByteArray(java.io.InputStream stream, int maxSize, boolean close, NutsSession session) {
+    public static byte[] loadByteArray(java.io.InputStream stream, int maxSize, boolean close, NSession session) {
         try {
             try {
                 if (maxSize > 0) {
@@ -367,11 +368,11 @@ public class CoreIOUtils {
                 }
             }
         } catch (IOException ex) {
-            throw new NutsIOException(session, ex);
+            throw new NIOException(session, ex);
         }
     }
 
-    public static long copy(java.io.InputStream from, OutputStream to, boolean closeInput, boolean closeOutput, NutsSession session) {
+    public static long copy(java.io.InputStream from, OutputStream to, boolean closeInput, boolean closeOutput, NSession session) {
         byte[] bytes = new byte[1024];//
         int count;
         long all = 0;
@@ -394,14 +395,14 @@ public class CoreIOUtils {
                 }
             }
         } catch (IOException ex) {
-            throw new NutsIOException(session, ex);
+            throw new NIOException(session, ex);
         }
     }
 
     //    public static void delete(File file) {
 //        delete(null, file);
 //    }
-    public static void delete(NutsSession session, File file) {
+    public static void delete(NSession session, File file) {
         delete(session, file.toPath());
     }
 //
@@ -409,7 +410,7 @@ public class CoreIOUtils {
 //        delete(null, file);
 //    }
 
-    public static void delete(NutsSession session, Path file) {
+    public static void delete(NSession session, Path file) {
         if (!Files.exists(file)) {
             return;
         }
@@ -421,7 +422,7 @@ public class CoreIOUtils {
             }
         }
         final int[] deleted = new int[]{0, 0, 0};
-        NutsLogger LOG = session == null ? null : NutsLogger.of(CoreIOUtils.class, session);
+        NLogger LOG = session == null ? null : NLogger.of(CoreIOUtils.class, session);
         try {
             Files.walkFileTree(file, new FileVisitor<Path>() {
                 @Override
@@ -434,14 +435,14 @@ public class CoreIOUtils {
                     try {
                         Files.delete(file);
                         if (LOG != null) {
-                            LOG.with().session(session).level(Level.FINEST).verb(NutsLoggerVerb.WARNING).log(
-                                    NutsMessage.ofJstyle("delete file {0}", file));
+                            LOG.with().session(session).level(Level.FINEST).verb(NLoggerVerb.WARNING).log(
+                                    NMsg.ofJstyle("delete file {0}", file));
                         }
                         deleted[0]++;
                     } catch (IOException e) {
                         if (LOG != null) {
-                            LOG.with().session(session).level(Level.FINEST).verb(NutsLoggerVerb.WARNING)
-                                    .log(NutsMessage.ofJstyle("failed deleting file : {0}", file)
+                            LOG.with().session(session).level(Level.FINEST).verb(NLoggerVerb.WARNING)
+                                    .log(NMsg.ofJstyle("failed deleting file : {0}", file)
                                     );
                         }
                         deleted[2]++;
@@ -459,14 +460,14 @@ public class CoreIOUtils {
                     try {
                         Files.delete(dir);
                         if (LOG != null) {
-                            LOG.with().session(session).level(Level.FINEST).verb(NutsLoggerVerb.WARNING)
-                                    .log(NutsMessage.ofJstyle("delete folder {0}", dir));
+                            LOG.with().session(session).level(Level.FINEST).verb(NLoggerVerb.WARNING)
+                                    .log(NMsg.ofJstyle("delete folder {0}", dir));
                         }
                         deleted[1]++;
                     } catch (IOException e) {
                         if (LOG != null) {
-                            LOG.with().session(session).level(Level.FINEST).verb(NutsLoggerVerb.WARNING)
-                                    .log(NutsMessage.ofJstyle("failed deleting folder: {0}", dir)
+                            LOG.with().session(session).level(Level.FINEST).verb(NLoggerVerb.WARNING)
+                                    .log(NMsg.ofJstyle("failed deleting folder: {0}", dir)
                                     );
                         }
                         deleted[2]++;
@@ -475,7 +476,7 @@ public class CoreIOUtils {
                 }
             });
         } catch (IOException ex) {
-            throw new NutsIOException(session, ex);
+            throw new NIOException(session, ex);
         }
     }
 
@@ -539,23 +540,23 @@ public class CoreIOUtils {
         }
     }
 
-    public static NutsTransportConnection getHttpClientFacade(NutsSession session, String url) {
-        NutsTransportComponent best = session.extensions()
-                .createSupported(NutsTransportComponent.class, false, url);
+    public static NTransportConnection getHttpClientFacade(NSession session, String url) {
+        NTransportComponent best = session.extensions()
+                .createSupported(NTransportComponent.class, false, url);
         if (best == null) {
             best = DefaultHttpTransportComponent.INSTANCE;
         }
         return best.open(url);
     }
 
-    public static String urlEncodeString(String s, NutsSession session) {
+    public static String urlEncodeString(String s, NSession session) {
         if (s == null || s.trim().length() == 0) {
             return "";
         }
         try {
             return URLEncoder.encode(s, "UTF-8");
         } catch (UnsupportedEncodingException e) {
-            throw new NutsIOException(session, e);
+            throw new NIOException(session, e);
         }
     }
 
@@ -567,9 +568,9 @@ public class CoreIOUtils {
         }
     }
 
-    public static URL resolveURLFromResource(Class cls, String urlPath, NutsSession session) {
+    public static URL resolveURLFromResource(Class cls, String urlPath, NSession session) {
         if (!urlPath.startsWith("/")) {
-            throw new NutsIllegalArgumentException(session, NutsMessage.ofCstyle("unable to resolve url from %s", urlPath));
+            throw new NIllegalArgumentException(session, NMsg.ofCstyle("unable to resolve url from %s", urlPath));
         }
         URL url = cls.getResource(urlPath);
         String urlFile = url.getFile();
@@ -587,7 +588,7 @@ public class CoreIOUtils {
                 try {
                     return new URL("file:" + jarFile);
                 } catch (IOException ex2) {
-                    throw new NutsIOException(session, ex2);
+                    throw new NIOException(session, ex2);
                 }
             }
         } else {
@@ -597,14 +598,14 @@ public class CoreIOUtils {
                 try {
                     return new URL(url_tostring.substring(0, url_tostring.length() - encoded.length()));
                 } catch (IOException ex) {
-                    throw new NutsIOException(session, ex);
+                    throw new NIOException(session, ex);
                 }
             }
-            throw new NutsIllegalArgumentException(session, NutsMessage.ofCstyle("unable to resolve url from %s", urlPath));
+            throw new NIllegalArgumentException(session, NMsg.ofCstyle("unable to resolve url from %s", urlPath));
         }
     }
 
-    private static String encodePath(String path, NutsSession session) {
+    private static String encodePath(String path, NSession session) {
         StringTokenizer st = new StringTokenizer(path, "/", true);
         StringBuilder encoded = new StringBuilder();
         while (st.hasMoreTokens()) {
@@ -615,14 +616,14 @@ public class CoreIOUtils {
                 try {
                     encoded.append(URLEncoder.encode(t, "UTF-8"));
                 } catch (UnsupportedEncodingException ex) {
-                    throw new NutsIllegalArgumentException(session, NutsMessage.ofCstyle("unable to encode %s", t), ex);
+                    throw new NIllegalArgumentException(session, NMsg.ofCstyle("unable to encode %s", t), ex);
                 }
             }
         }
         return encoded.toString();
     }
 
-    public static File resolveLocalFileFromResource(Class cls, String url, NutsSession session) {
+    public static File resolveLocalFileFromResource(Class cls, String url, NSession session) {
         return resolveLocalFileFromURL(resolveURLFromResource(cls, url, session));
     }
 
@@ -655,16 +656,16 @@ public class CoreIOUtils {
         return chars;
     }
 
-    public static InputStream getCachedUrlWithSHA1(String path, String sourceTypeName, boolean ignoreSha1NotFound, NutsSession session) {
-        final NutsPath cacheBasePath = session.locations().getStoreLocation(session.getWorkspace().getRuntimeId(), NutsStoreLocation.CACHE);
-        final NutsPath urlContent = cacheBasePath.resolve("urls-content");
+    public static InputStream getCachedUrlWithSHA1(String path, String sourceTypeName, boolean ignoreSha1NotFound, NSession session) {
+        final NPath cacheBasePath = session.locations().getStoreLocation(session.getWorkspace().getRuntimeId(), NStoreLocation.CACHE);
+        final NPath urlContent = cacheBasePath.resolve("urls-content");
         String sha1 = null;
         try {
             ByteArrayOutputStream t = new ByteArrayOutputStream();
-            NutsCp.of(session)
-                    .from(NutsPath.of(path + ".sha1", session)).to(t).run();
+            NCp.of(session)
+                    .from(NPath.of(path + ".sha1", session)).to(t).run();
             sha1 = t.toString().trim();
-        } catch (NutsIOException ex) {
+        } catch (NIOException ex) {
             if (!ignoreSha1NotFound) {
                 throw ex;
             }
@@ -685,7 +686,7 @@ public class CoreIOUtils {
             if (old != null && sha1.equalsIgnoreCase(old.sha1)) {
                 String cachedID = old.path;
                 if (cachedID != null) {
-                    NutsPath p = urlContent.resolve(cachedID);
+                    NPath p = urlContent.resolve(cachedID);
                     if (p.exists()) {
                         return p.getInputStream();
                     }
@@ -693,7 +694,7 @@ public class CoreIOUtils {
             }
         }
 
-        NutsPath header = NutsPath.of(path, session);
+        NPath header = NPath.of(path, session);
         long size = header.getContentLength();
         Instant lastModifiedInstant = header.getLastModifiedInstant();
         long lastModified = lastModifiedInstant == null ? 0 : lastModifiedInstant.toEpochMilli();
@@ -704,7 +705,7 @@ public class CoreIOUtils {
                 if (old != null && old.size == size) {
                     String cachedID = old.path;
                     if (cachedID != null) {
-                        NutsPath p = urlContent.resolve(cachedID);
+                        NPath p = urlContent.resolve(cachedID);
                         if (p.exists()) {
                             return p.getInputStream();
                         }
@@ -714,7 +715,7 @@ public class CoreIOUtils {
         }
 
         final String s = UUID.randomUUID().toString();
-        final NutsPath outPath = urlContent.resolve(s + "~");
+        final NPath outPath = urlContent.resolve(s + "~");
         urlContent.mkdirs();
         OutputStream p = outPath.getOutputStream();
         long finalLastModified = lastModified;
@@ -723,34 +724,34 @@ public class CoreIOUtils {
                 CachedURL ccu = new CachedURL();
                 ccu.url = path;
                 ccu.path = s;
-                ccu.sha1 = NutsDigestUtils.evalSHA1Hex(outPath, session);
+                ccu.sha1 = NDigestUtils.evalSHA1Hex(outPath, session);
                 long newSize = outPath.getContentLength();
                 ccu.size = newSize;
                 ccu.lastModified = finalLastModified;
-                NutsPath newLocalPath = urlContent.resolve(s);
+                NPath newLocalPath = urlContent.resolve(s);
                 try {
                     Files.move(outPath.toFile(), newLocalPath.toFile(), StandardCopyOption.REPLACE_EXISTING, StandardCopyOption.ATOMIC_MOVE);
                 } catch (IOException ex) {
-                    throw new NutsIOException(session, ex);
+                    throw new NIOException(session, ex);
                 }
                 cacheTable.add(ccu, session);
                 cacheTable.flush(session);
             }
         });
-        return (InputStream) NutsIO.of(session).createInputSource(ist, new DefaultNutsInputSourceMetadata(
+        return (InputStream) NIO.of(session).createInputSource(ist, new DefaultNInputSourceMetadata(
                         path,
-                        NutsMessage.ofNtf(NutsTexts.of(session).ofStyled(path, NutsTextStyle.path())),
-                        size, NutsPath.of(path, session).getContentType(), sourceTypeName
+                        NMsg.ofNtf(NTexts.of(session).ofStyled(path, NTextStyle.path())),
+                        size, NPath.of(path, session).getContentType(), sourceTypeName
                 )
         );
 
     }
 
-    public static void storeProperties(Map<String, String> props, OutputStream out, boolean sort, NutsSession session) {
+    public static void storeProperties(Map<String, String> props, OutputStream out, boolean sort, NSession session) {
         storeProperties(props, new OutputStreamWriter(out), sort, session);
     }
 
-    public static void storeProperties(Map<String, String> props, Writer w, boolean sort, NutsSession session) {
+    public static void storeProperties(Map<String, String> props, Writer w, boolean sort, NSession session) {
         try {
             Set<String> keys = props.keySet();
             if (sort) {
@@ -766,7 +767,7 @@ public class CoreIOUtils {
             }
             w.flush();
         } catch (IOException ex) {
-            throw new NutsIOException(session, ex);
+            throw new NIOException(session, ex);
         }
     }
 
@@ -827,10 +828,10 @@ public class CoreIOUtils {
                     } else if (((c < 0x0020) || (c > 0x007e))) {
                         buffer.append('\\');
                         buffer.append('u');
-                        buffer.append(NutsStringUtils.toHexChar((c >> 12) & 0xF));
-                        buffer.append(NutsStringUtils.toHexChar((c >> 8) & 0xF));
-                        buffer.append(NutsStringUtils.toHexChar((c >> 4) & 0xF));
-                        buffer.append(NutsStringUtils.toHexChar(c & 0xF));
+                        buffer.append(NStringUtils.toHexChar((c >> 12) & 0xF));
+                        buffer.append(NStringUtils.toHexChar((c >> 8) & 0xF));
+                        buffer.append(NStringUtils.toHexChar((c >> 4) & 0xF));
+                        buffer.append(NStringUtils.toHexChar(c & 0xF));
                     } else {
                         buffer.append(c);
                     }
@@ -840,38 +841,38 @@ public class CoreIOUtils {
         return buffer.toString();
     }
 
-    public static Path toPathInputSource(NutsInputSource is, List<Path> tempPaths, boolean enforceExtension, NutsSession session) {
-        boolean isPath = is instanceof NutsPath;
-        if (isPath && ((NutsPath) is).isFile()) {
-            return ((NutsPath) is).toFile();
+    public static Path toPathInputSource(NInputSource is, List<Path> tempPaths, boolean enforceExtension, NSession session) {
+        boolean isPath = is instanceof NPath;
+        if (isPath && ((NPath) is).isFile()) {
+            return ((NPath) is).toFile();
         }
-        NutsPaths tmps = NutsPaths.of(session);
+        NPaths tmps = NPaths.of(session);
         String name = is.getInputMetaData().getName().orElse("no-name");
         Path temp = tmps
                 .createTempFile(name).toFile();
-        NutsCp a = NutsCp.of(session).removeOptions(NutsPathOption.SAFE);
+        NCp a = NCp.of(session).removeOptions(NPathOption.SAFE);
         if (isPath) {
-            a.from(((NutsPath) is));
+            a.from(((NPath) is));
         } else {
             a.from(is.getInputStream());
         }
         a.to(temp).setSession(session).run();
 
         if (enforceExtension) {
-            NutsPath pp = NutsPath.of(temp, session);
+            NPath pp = NPath.of(temp, session);
             String ext = pp.getLastExtension();
             if (ext.isEmpty()) {
-                NutsContentTypes ctt = NutsContentTypes.of(session);
+                NContentTypes ctt = NContentTypes.of(session);
                 String ct = ctt.probeContentType(temp);
                 if (ct != null) {
                     List<String> e = ctt.findExtensionsByContentType(ct);
                     if (!e.isEmpty()) {
-                        NutsPath newFile = tmps.createTempFile(name + "." + e.get(0));
+                        NPath newFile = tmps.createTempFile(name + "." + e.get(0));
                         Path newFilePath = newFile.toFile();
                         try {
                             Files.move(temp, newFilePath, StandardCopyOption.REPLACE_EXISTING);
                         } catch (IOException ex) {
-                            throw new NutsIOException(session, ex);
+                            throw new NIOException(session, ex);
                         }
                         tempPaths.add(newFilePath);
                         return newFilePath;
@@ -900,12 +901,12 @@ public class CoreIOUtils {
         return new File(path).toPath().toAbsolutePath().normalize().toString();
     }
 
-    public static void copyFolder(Path src, Path dest, NutsSession session) {
+    public static void copyFolder(Path src, Path dest, NSession session) {
         try {
             Files.walk(src)
                     .forEach(source -> copy(source, dest.resolve(src.relativize(source))));
         } catch (IOException e) {
-            throw new NutsIOException(session, e);
+            throw new NIOException(session, e);
         }
     }
 
@@ -927,7 +928,7 @@ public class CoreIOUtils {
         return new InputStreamExt(in, null, null);
     }
 
-    public static boolean isObsoletePath(NutsSession session, Path path) {
+    public static boolean isObsoletePath(NSession session, Path path) {
         try {
             return isObsoleteInstant(session, Files.getLastModifiedTime(path).toInstant());
         } catch (IOException e) {
@@ -935,7 +936,7 @@ public class CoreIOUtils {
         }
     }
 
-    public static boolean isObsoletePath(NutsSession session, NutsPath path) {
+    public static boolean isObsoletePath(NSession session, NPath path) {
         try {
             Instant i = path.getLastModifiedInstant();
             if (i == null) {
@@ -947,7 +948,7 @@ public class CoreIOUtils {
         }
     }
 
-    public static boolean isObsoleteInstant(NutsSession session, Instant instant) {
+    public static boolean isObsoleteInstant(NSession session, Instant instant) {
         if (session.getExpireTime() != null) {
             return instant == null || instant.isBefore(session.getExpireTime());
         }
@@ -965,7 +966,7 @@ public class CoreIOUtils {
         return new byte[0];
     }
 
-    public static byte[] readBestEffort(int len, java.io.InputStream in, NutsSession session) {
+    public static byte[] readBestEffort(int len, java.io.InputStream in, NSession session) {
         if (len < 0) {
             throw new IndexOutOfBoundsException();
         }
@@ -982,7 +983,7 @@ public class CoreIOUtils {
         return buf2;
     }
 
-    public static int readBestEffort(byte[] b, int off, int len, java.io.InputStream in, NutsSession session) {
+    public static int readBestEffort(byte[] b, int off, int len, java.io.InputStream in, NSession session) {
         if (len < 0) {
             throw new IndexOutOfBoundsException();
         }
@@ -992,7 +993,7 @@ public class CoreIOUtils {
             try {
                 count = in.read(b, off + n, len - n);
             } catch (IOException e) {
-                throw new NutsIOException(session, e);
+                throw new NIOException(session, e);
             }
             if (count < 0) {
                 break;
@@ -1019,7 +1020,7 @@ public class CoreIOUtils {
         return true;
     }
 
-    public static boolean compareContent(Path file1, Path file2, NutsSession session) {
+    public static boolean compareContent(Path file1, Path file2, NSession session) {
         if (Files.isRegularFile(file1) && Files.isRegularFile(file2)) {
             try {
                 if (Files.size(file1) == Files.size(file2)) {
@@ -1048,16 +1049,16 @@ public class CoreIOUtils {
                     }
                 }
             } catch (IOException e) {
-                throw new NutsIOException(session, e);
+                throw new NIOException(session, e);
             }
         }
         return false;
     }
 
-    public static InputStream createBytesStream(byte[] bytes, NutsMessage message, String contentType, String kind, NutsSession session) {
-        return (InputStream) NutsIO.of(session).createInputSource(
+    public static InputStream createBytesStream(byte[] bytes, NMsg message, String contentType, String kind, NSession session) {
+        return (InputStream) NIO.of(session).createInputSource(
                 new ByteArrayInputStream(bytes),
-                new DefaultNutsInputSourceMetadata(
+                new DefaultNInputSourceMetadata(
                         message,
                         bytes.length,
                         contentType,
@@ -1124,17 +1125,17 @@ public class CoreIOUtils {
         return path1.substring(0, latestSlash + 1);
     }
 
-    public static PathInfo.Status tryWriteStatus(byte[] content, NutsPath out, NutsSession session) {
+    public static PathInfo.Status tryWriteStatus(byte[] content, NPath out, NSession session) {
         return tryWrite(content, out, DoWhenExist.IGNORE, DoWhenNotExists.IGNORE, session);
     }
 
-    public static PathInfo.Status tryWrite(byte[] content, NutsPath out, NutsSession session) {
+    public static PathInfo.Status tryWrite(byte[] content, NPath out, NSession session) {
         return tryWrite(content, out, DoWhenExist.ASK, DoWhenNotExists.CREATE, session);
     }
 
-    public static PathInfo.Status tryWrite(byte[] content, NutsPath out, /*boolean doNotWrite*/ DoWhenExist doWhenExist, DoWhenNotExists doWhenNotExist, NutsSession session) {
-        NutsUtils.requireNonNull(doWhenExist, "doWhenExist", session);
-        NutsUtils.requireNonNull(doWhenNotExist, "doWhenNotExist", session);
+    public static PathInfo.Status tryWrite(byte[] content, NPath out, /*boolean doNotWrite*/ DoWhenExist doWhenExist, DoWhenNotExists doWhenNotExist, NSession session) {
+        NUtils.requireNonNull(doWhenExist, "doWhenExist", session);
+        NUtils.requireNonNull(doWhenNotExist, "doWhenNotExist", session);
 //        System.err.println("[DEBUG] try write "+out);
         out = out.toAbsolute().normalize();
         byte[] old = null;
@@ -1162,9 +1163,9 @@ public class CoreIOUtils {
                     if (session.getTerminal().ask()
                             .resetLine()
                             .setDefaultValue(true).setSession(session)
-                            .forBoolean(NutsMessage.ofCstyle("create %s ?",
-                                    NutsTexts.of(session).ofStyled(
-                                            betterPath(out.toString()), NutsTextStyle.path()
+                            .forBoolean(NMsg.ofCstyle("create %s ?",
+                                    NTexts.of(session).ofStyled(
+                                            betterPath(out.toString()), NTextStyle.path()
                                     ))
                             ).getBooleanValue()) {
                         out.mkParentDirs();
@@ -1178,7 +1179,7 @@ public class CoreIOUtils {
                     }
                 }
                 default: {
-                    throw new NutsUnsupportedEnumException(session, doWhenNotExist);
+                    throw new NUnsupportedEnumException(session, doWhenNotExist);
                 }
             }
         } else {
@@ -1200,9 +1201,9 @@ public class CoreIOUtils {
                     if (session.getTerminal().ask()
                             .resetLine()
                             .setDefaultValue(true).setSession(session)
-                            .forBoolean(NutsMessage.ofCstyle("override %s ?",
-                                    NutsTexts.of(session).ofStyled(
-                                            betterPath(out.toString()), NutsTextStyle.path()
+                            .forBoolean(NMsg.ofCstyle("override %s ?",
+                                    NTexts.of(session).ofStyled(
+                                            betterPath(out.toString()), NTextStyle.path()
                                     ))
                             ).getBooleanValue()) {
                         out.writeBytes(content);
@@ -1215,16 +1216,16 @@ public class CoreIOUtils {
                     }
                 }
                 default: {
-                    throw new NutsUnsupportedEnumException(session, doWhenExist);
+                    throw new NUnsupportedEnumException(session, doWhenExist);
                 }
             }
         }
     }
 
-    public static Set<CopyOption> asCopyOptions(Set<NutsPathOption> noptions) {
+    public static Set<CopyOption> asCopyOptions(Set<NPathOption> noptions) {
         Set<CopyOption> joptions = new HashSet<>();
 
-        for (NutsPathOption option : noptions) {
+        for (NPathOption option : noptions) {
             switch (option) {
                 case REPLACE_EXISTING: {
                     joptions.add(StandardCopyOption.REPLACE_EXISTING);
@@ -1266,8 +1267,8 @@ public class CoreIOUtils {
 //        return writable;
 //    }
 
-    public static NutsStream<String> safeLines(byte[] bytes, NutsSession session) {
-        return NutsStream.of(
+    public static NStream<String> safeLines(byte[] bytes, NSession session) {
+        return NStream.of(
                 new Iterator<String>() {
                     BufferedReader br;
                     String line;
@@ -1307,20 +1308,20 @@ public class CoreIOUtils {
         long size;
     }
 
-    public static DefaultNutsInputSourceMetadata defaultNutsInputSourceMetadata(InputStream is) {
+    public static DefaultNInputSourceMetadata defaultNutsInputSourceMetadata(InputStream is) {
         Objects.requireNonNull(is);
-        if (is instanceof NutsInputSource) {
-            return new DefaultNutsInputSourceMetadata(((NutsInputSource) is).getInputMetaData());
+        if (is instanceof NInputSource) {
+            return new DefaultNInputSourceMetadata(((NInputSource) is).getInputMetaData());
         }
-        return new DefaultNutsInputSourceMetadata();
+        return new DefaultNInputSourceMetadata();
     }
 
-    public static DefaultNutsOutputTargetMetadata defaultNutsOutputTargetMetadata(OutputStream is) {
+    public static DefaultNOutputTargetMetadata defaultNutsOutputTargetMetadata(OutputStream is) {
         Objects.requireNonNull(is);
-        if (is instanceof NutsOutputTarget) {
-            return new DefaultNutsOutputTargetMetadata(((NutsOutputTarget) is).getOutputMetaData());
+        if (is instanceof NOutputTarget) {
+            return new DefaultNOutputTargetMetadata(((NOutputTarget) is).getOutputMetaData());
         }
-        return new DefaultNutsOutputTargetMetadata();
+        return new DefaultNOutputTargetMetadata();
     }
 
 }

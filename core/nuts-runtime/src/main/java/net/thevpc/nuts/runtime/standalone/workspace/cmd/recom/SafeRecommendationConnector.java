@@ -1,6 +1,6 @@
 package net.thevpc.nuts.runtime.standalone.workspace.cmd.recom;
 
-import net.thevpc.nuts.NutsSession;
+import net.thevpc.nuts.NSession;
 
 import java.util.Map;
 
@@ -12,7 +12,7 @@ public class SafeRecommendationConnector implements RecommendationConnector {
     }
 
     @Override
-    public Map getRecommendations(RequestQueryInfo ri, NutsRecommendationPhase phase, boolean failure, NutsSession session) {
+    public Map getRecommendations(RequestQueryInfo ri, NRecommendationPhase phase, boolean failure, NSession session) {
         try {
             return c.getRecommendations(ri, phase, failure, session);
         } catch (Exception ex) {

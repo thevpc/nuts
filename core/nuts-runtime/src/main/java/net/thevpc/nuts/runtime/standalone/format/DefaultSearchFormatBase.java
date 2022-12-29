@@ -26,39 +26,39 @@
 package net.thevpc.nuts.runtime.standalone.format;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.cmdline.NutsCommandLine;
-import net.thevpc.nuts.cmdline.NutsCommandLineConfigurable;
-import net.thevpc.nuts.format.NutsIterableFormat;
-import net.thevpc.nuts.io.NutsPrintStream;
-import net.thevpc.nuts.runtime.standalone.util.NutsConfigurableHelper;
+import net.thevpc.nuts.cmdline.NCommandLine;
+import net.thevpc.nuts.cmdline.NCommandLineConfigurable;
+import net.thevpc.nuts.format.NIterableFormat;
+import net.thevpc.nuts.io.NStream;
+import net.thevpc.nuts.runtime.standalone.util.NConfigurableHelper;
 
 /**
  *
  * @author thevpc
  */
-public abstract class DefaultSearchFormatBase implements NutsIterableFormat {
+public abstract class DefaultSearchFormatBase implements NIterableFormat {
 
-    private final NutsFetchDisplayOptions displayOptions;
-    private final NutsSession session;
-    private final NutsPrintStream writer;
-    private final NutsContentType format;
+    private final NFetchDisplayOptions displayOptions;
+    private final NSession session;
+    private final NStream writer;
+    private final NContentType format;
 
-    public DefaultSearchFormatBase(NutsSession session, NutsPrintStream writer, NutsContentType format, NutsFetchDisplayOptions options) {
+    public DefaultSearchFormatBase(NSession session, NStream writer, NContentType format, NFetchDisplayOptions options) {
         this.format = format;
         this.writer = writer;
         this.session = session;
-        displayOptions = new NutsFetchDisplayOptions(session);
+        displayOptions = new NFetchDisplayOptions(session);
         if(options!=null){
             displayOptions.configure(true, options.toCommandLineOptions());
         }
     }
 
     @Override
-    public NutsContentType getOutputFormat() {
+    public NContentType getOutputFormat() {
         return format;
     }
 
-    public NutsFetchDisplayOptions getDisplayOptions() {
+    public NFetchDisplayOptions getDisplayOptions() {
         return displayOptions;
     }
 
@@ -71,37 +71,37 @@ public abstract class DefaultSearchFormatBase implements NutsIterableFormat {
      * @return {@code this} instance
      */
     @Override
-    public boolean configure(boolean skipUnsupported, NutsCommandLine commandLine) {
-        return NutsConfigurableHelper.configure(this, getSession(), skipUnsupported, commandLine);
+    public boolean configure(boolean skipUnsupported, NCommandLine commandLine) {
+        return NConfigurableHelper.configure(this, getSession(), skipUnsupported, commandLine);
     }
 
     /**
      * configure the current command with the given arguments. This is an
-     * override of the {@link NutsCommandLineConfigurable#configure(boolean, java.lang.String...) }
+     * override of the {@link NCommandLineConfigurable#configure(boolean, java.lang.String...) }
      * to help return a more specific return type;
      *
      * @param args argument to configure with
      * @return {@code this} instance
      */
     @Override
-    public NutsIterableFormat configure(boolean skipUnsupported, String... args) {
-        return NutsConfigurableHelper.configure(this, getSession(), skipUnsupported, args, "search-" + getOutputFormat().id());
+    public NIterableFormat configure(boolean skipUnsupported, String... args) {
+        return NConfigurableHelper.configure(this, getSession(), skipUnsupported, args, "search-" + getOutputFormat().id());
     }
 
-    public NutsWorkspace getWorkspace() {
+    public NWorkspace getWorkspace() {
         return session.getWorkspace();
     }
 
-    public NutsSession getSession() {
+    public NSession getSession() {
         return session;
     }
 
-    public NutsPrintStream getWriter() {
+    public NStream getWriter() {
         return writer;
     }
 
     @Override
-    public void configureLast(NutsCommandLine commandLine) {
+    public void configureLast(NCommandLine commandLine) {
         if (!configureFirst(commandLine)) {
             commandLine.throwUnexpectedArgument();
         }

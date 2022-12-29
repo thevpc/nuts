@@ -6,10 +6,10 @@
 package net.thevpc.nuts.toolbox.docusaurus;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.elem.NutsArrayElement;
-import net.thevpc.nuts.elem.NutsElement;
-import net.thevpc.nuts.elem.NutsElements;
-import net.thevpc.nuts.elem.NutsObjectElement;
+import net.thevpc.nuts.elem.NArrayElement;
+import net.thevpc.nuts.elem.NElement;
+import net.thevpc.nuts.elem.NElements;
+import net.thevpc.nuts.elem.NObjectElement;
 import net.thevpc.nuts.lib.md.*;
 import net.thevpc.nuts.lib.md.docusaurus.DocusaurusUtils;
 import net.thevpc.nuts.lib.md.util.MdUtils;
@@ -22,11 +22,11 @@ import java.util.*;
  * @author thevpc
  */
 public class DocusaurusTreeTransform extends MdElementTransformBase {
-    private NutsSession session;
+    private NSession session;
     private int minDepth;
     private String fromPath;
     private String toPath;
-    public DocusaurusTreeTransform(NutsSession session,int minDepth,String fromPath,String toPath) {
+    public DocusaurusTreeTransform(NSession session, int minDepth, String fromPath, String toPath) {
         this.session=session;
         this.minDepth=minDepth;
         this.fromPath=fromPath;
@@ -130,7 +130,7 @@ public class DocusaurusTreeTransform extends MdElementTransformBase {
         switch (e.getTag()) {
             case "Tabs": {
                 String props = DocusaurusUtils.skipJsonJSXBrackets(e.getProperties().get("values"));
-                NutsArrayElement rows = NutsElements.of(session).parse(props).asArray().orElse(NutsArrayElement.ofEmpty(session));
+                NArrayElement rows = NElements.of(session).parse(props).asArray().orElse(NArrayElement.ofEmpty(session));
                 Map<String,MdElement> sub=new HashMap<>();
                 for (MdElement item : MdFactory.asBody(e.getContent()).getChildren()) {
                     if (item.isXml()) {
@@ -138,7 +138,7 @@ public class DocusaurusTreeTransform extends MdElementTransformBase {
                         String t = tabItem.getTag();
                         if (t.equals("TabItem")) {
                             String tt = "Unknown";
-                            NutsElement v = NutsElements.of(session).parse(tabItem.getProperties().get("value"));
+                            NElement v = NElements.of(session).parse(tabItem.getProperties().get("value"));
                             if (v != null) {
                                 tt = v.asString().get(session);
                             }
@@ -154,8 +154,8 @@ public class DocusaurusTreeTransform extends MdElementTransformBase {
                     }
                 }
                 List<MdElement> res=new ArrayList<>();
-                for (NutsElement row : rows) {
-                    MdElement r = sub.get(row.asObject().orElse(NutsObjectElement.ofEmpty(session)).getString("value").orElse(""));
+                for (NElement row : rows) {
+                    MdElement r = sub.get(row.asObject().orElse(NObjectElement.ofEmpty(session)).getString("value").orElse(""));
                     if(r!=null){
                         res.add(r);
                     }
@@ -165,14 +165,14 @@ public class DocusaurusTreeTransform extends MdElementTransformBase {
 
             case "TabItem": {
                 String tt = "Unknown";
-                NutsElement v = NutsElements.of(session).parse(e.getProperties().get("value"));
+                NElement v = NElements.of(session).parse(e.getProperties().get("value"));
                 if (v != null) {
                     tt = v.asString().get(session);
                 }
                 String props = DocusaurusUtils.skipJsonJSXBrackets(path.getParentPath().getElement().asXml().getProperties().get("values"));
-                for (NutsElement a : NutsElements.of(session).parse(props).asArray().orElse(NutsArrayElement.ofEmpty(session))) {
-                    if (tt.equals(a.asObject().orElse(NutsObjectElement.ofEmpty(session)).getString("value").orNull())) {
-                        tt = a.asObject().orElse(NutsObjectElement.ofEmpty(session)).getString("label").orNull();
+                for (NElement a : NElements.of(session).parse(props).asArray().orElse(NArrayElement.ofEmpty(session))) {
+                    if (tt.equals(a.asObject().orElse(NObjectElement.ofEmpty(session)).getString("value").orNull())) {
+                        tt = a.asObject().orElse(NObjectElement.ofEmpty(session)).getString("label").orNull();
                         break;
                     }
                 }

@@ -25,16 +25,16 @@
 */
 package net.thevpc.nuts.runtime.standalone.util.iter;
 
-import net.thevpc.nuts.elem.NutsElement;
-import net.thevpc.nuts.util.NutsDescribables;
-import net.thevpc.nuts.NutsSession;
+import net.thevpc.nuts.elem.NElement;
+import net.thevpc.nuts.util.NDescribables;
+import net.thevpc.nuts.NSession;
 
 import java.util.Iterator;
 
 /**
  * Created by vpc on 3/19/17.
  */
-public class PushBackIterator<T> extends NutsIteratorBase<T> {
+public class PushBackIterator<T> extends NIteratorBase<T> {
 
     private Iterator<T> base;
     private Boolean lastHasNext;
@@ -46,8 +46,8 @@ public class PushBackIterator<T> extends NutsIteratorBase<T> {
     }
 
     @Override
-    public NutsElement describe(NutsSession session) {
-        return NutsDescribables.resolveOrDestructAsObject(base, session)
+    public NElement describe(NSession session) {
+        return NDescribables.resolveOrDestructAsObject(base, session)
                 .builder()
                 .set("pushBack",true)
                 .build()

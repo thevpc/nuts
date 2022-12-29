@@ -7,28 +7,28 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.StringTokenizer;
 
-import net.thevpc.nuts.io.NutsInputStreamMonitor;
-import net.thevpc.nuts.io.NutsPath;
-import net.thevpc.nuts.io.NutsPrintStream;
-import net.thevpc.nuts.io.NutsSessionTerminal;
+import net.thevpc.nuts.io.NInputStreamMonitor;
+import net.thevpc.nuts.io.NPath;
+import net.thevpc.nuts.io.NStream;
+import net.thevpc.nuts.io.NSessionTerminal;
 import net.thevpc.nuts.lib.ssh.SshListener;
 import net.thevpc.nuts.toolbox.nsh.bundles._IOUtils;
 
 public class ShellHelper {
 
-    public static List<NutsPath> xfilesOf(List<String> all, String cwd, NutsSession session) {
-        List<NutsPath> xall = new ArrayList<>();
+    public static List<NPath> xfilesOf(List<String> all, String cwd, NSession session) {
+        List<NPath> xall = new ArrayList<>();
         for (String v : all) {
             xall.add(xfileOf(v, cwd,session));
         }
         return xall;
     }
 
-    public static NutsPath xfileOf(String expression, String cwd, NutsSession session) {
+    public static NPath xfileOf(String expression, String cwd, NSession session) {
         if (expression.startsWith("file:") || expression.contains("://")) {
-            return NutsPath.of(expression,session);
+            return NPath.of(expression,session);
         }
-        return NutsPath.of(_IOUtils.getAbsoluteFile2(expression, cwd, session),session);
+        return NPath.of(_IOUtils.getAbsoluteFile2(expression, cwd, session),session);
     }
 
     public static String[] splitNameAndValue(String arg) {
@@ -55,10 +55,10 @@ public class ShellHelper {
 
     public static class WsSshListener implements SshListener {
 
-        NutsPrintStream out;
-        NutsSession session;
+        NStream out;
+        NSession session;
 
-        public WsSshListener(NutsSession session) {
+        public WsSshListener(NSession session) {
             this.session = session;
             out = session.out();
         }
@@ -89,12 +89,12 @@ public class ShellHelper {
         }
 
         @Override
-        public InputStream monitorInputStream(InputStream stream, long length, NutsMessage message) {
-            return NutsInputStreamMonitor.of(session).setSource(stream).setLength(length).setName(message).create();
+        public InputStream monitorInputStream(InputStream stream, long length, NMsg message) {
+            return NInputStreamMonitor.of(session).setSource(stream).setLength(length).setName(message).create();
         }
     }
 
-    public static boolean readAccept(NutsSessionTerminal t) {
+    public static boolean readAccept(NSessionTerminal t) {
         while (true) {
             String v = t.readLine("Accept (y/n) : ?");
             if (v == null) {

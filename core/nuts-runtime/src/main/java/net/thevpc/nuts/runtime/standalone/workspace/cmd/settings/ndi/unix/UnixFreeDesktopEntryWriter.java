@@ -1,16 +1,16 @@
 package net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.ndi.unix;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.io.NutsIOException;
-import net.thevpc.nuts.io.NutsPath;
-import net.thevpc.nuts.io.NutsPrintStream;
-import net.thevpc.nuts.runtime.standalone.executor.system.NutsSysExecUtils;
+import net.thevpc.nuts.io.NIOException;
+import net.thevpc.nuts.io.NPath;
+import net.thevpc.nuts.io.NStream;
+import net.thevpc.nuts.runtime.standalone.executor.system.NSysExecUtils;
 import net.thevpc.nuts.runtime.standalone.io.util.CoreIOUtils;
 import net.thevpc.nuts.runtime.standalone.util.CoreStringUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.util.PathInfo;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.ndi.FreeDesktopEntry;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.ndi.base.AbstractFreeDesktopEntryWriter;
-import net.thevpc.nuts.util.NutsUtils;
+import net.thevpc.nuts.util.NUtils;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -39,38 +39,38 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 public class UnixFreeDesktopEntryWriter extends AbstractFreeDesktopEntryWriter {
-    private final NutsSession session;
-    private final NutsPath desktopPath;
+    private final NSession session;
+    private final NPath desktopPath;
 
-    public UnixFreeDesktopEntryWriter(NutsSession session, NutsPath desktopPath) {
+    public UnixFreeDesktopEntryWriter(NSession session, NPath desktopPath) {
         this.session = session;
         this.desktopPath = desktopPath;
     }
 
 
     @Override
-    public PathInfo[] writeShortcut(FreeDesktopEntry descriptor, NutsPath path, boolean doOverride, NutsId id) {
-        path = NutsPath.of(ensureName(path == null ? null : path.toString(), descriptor.getOrCreateDesktopEntry().getName(), "desktop"),session);
+    public PathInfo[] writeShortcut(FreeDesktopEntry descriptor, NPath path, boolean doOverride, NId id) {
+        path = NPath.of(ensureName(path == null ? null : path.toString(), descriptor.getOrCreateDesktopEntry().getName(), "desktop"),session);
         PathInfo.Status s = tryWrite(descriptor, path);
         return new PathInfo[]{new PathInfo("desktop-shortcut", id, path, s)};
     }
 
     @Override
-    public PathInfo[] writeDesktop(FreeDesktopEntry descriptor, String fileName, boolean doOverride, NutsId id) {
+    public PathInfo[] writeDesktop(FreeDesktopEntry descriptor, String fileName, boolean doOverride, NId id) {
         fileName = Paths.get(ensureName(fileName, descriptor.getOrCreateDesktopEntry().getName(), "desktop")).getFileName().toString();
-        NutsPath q = desktopPath.resolve(fileName);
+        NPath q = desktopPath.resolve(fileName);
         return writeShortcut(descriptor, q, doOverride, id);
     }
 
     @Override
-    public PathInfo[] writeMenu(FreeDesktopEntry descriptor, String fileName, boolean doOverride, NutsId id) {
+    public PathInfo[] writeMenu(FreeDesktopEntry descriptor, String fileName, boolean doOverride, NId id) {
         String desktopFileName = Paths.get(ensureName(fileName, descriptor.getOrCreateDesktopEntry().getName(), "desktop")).getFileName().toString();
 
         List<PathInfo> all = new ArrayList<>();
         FreeDesktopEntry.Group root = descriptor.getOrCreateDesktopEntry();
-        NutsPath folder4shortcuts = NutsPath.ofUserHome(session).resolve(".local/share/applications");
+        NPath folder4shortcuts = NPath.ofUserHome(session).resolve(".local/share/applications");
         folder4shortcuts.mkdirs();
-        NutsPath shortcutFile =folder4shortcuts.resolve(desktopFileName);
+        NPath shortcutFile =folder4shortcuts.resolve(desktopFileName);
         all.add(new PathInfo("desktop-icon", id,
                 shortcutFile, tryWrite(descriptor, shortcutFile)));
 
@@ -78,7 +78,7 @@ public class UnixFreeDesktopEntryWriter extends AbstractFreeDesktopEntryWriter {
         if (categories.isEmpty()) {
             categories.add("/");
         }
-        NutsPath folder4menus = NutsPath.ofUserHome(session).resolve(".config/menus/applications-merged");
+        NPath folder4menus = NPath.ofUserHome(session).resolve(".config/menus/applications-merged");
         folder4menus.mkdirs();
 
         //menu name must include category
@@ -108,7 +108,7 @@ public class UnixFreeDesktopEntryWriter extends AbstractFreeDesktopEntryWriter {
 
             ByteArrayOutputStream b = new ByteArrayOutputStream();
             tr.transform(new DOMSource(dom), new StreamResult(b));
-            NutsPath menuFile = folder4menus.resolve(menuFileName);
+            NPath menuFile = folder4menus.resolve(menuFileName);
             all.add(new PathInfo("desktop-menu", id, menuFile, CoreIOUtils.tryWrite(b.toByteArray(), menuFile, session)));
         } catch (ParserConfigurationException | TransformerException ex) {
             throw new RuntimeException(ex);
@@ -122,13 +122,13 @@ public class UnixFreeDesktopEntryWriter extends AbstractFreeDesktopEntryWriter {
     private void callMeMaye(String... command) {
         List<String> cmdList = new ArrayList<>(Arrays.asList(command));
         String sysCmd = cmdList.remove(0);
-        Path a = NutsSysExecUtils.sysWhich(sysCmd);
+        Path a = NSysExecUtils.sysWhich(sysCmd);
         if (a != null) {
             cmdList.add(0, a.toString());
             String outStr = session.exec()
                     .setCommand(cmdList)
                     .addCommand()
-                    .setExecutionType(NutsExecutionType.SYSTEM)
+                    .setExecutionType(NExecutionType.SYSTEM)
                     .setRedirectErrorStream(true).grabOutputString()
                     .run()
                     .getOutputString().trim();
@@ -206,16 +206,16 @@ public class UnixFreeDesktopEntryWriter extends AbstractFreeDesktopEntryWriter {
     }
 
     public void write(FreeDesktopEntry file, Path out) {
-        NutsPath.of(out,session).mkParentDirs();
+        NPath.of(out,session).mkParentDirs();
         try (PrintStream p = new PrintStream(Files.newOutputStream(out))) {
             write(file, p);
         } catch (IOException ex) {
-            throw new NutsIOException(session, ex);
+            throw new NIOException(session, ex);
         }
     }
 
 
-    public PathInfo.Status tryWrite(FreeDesktopEntry file, NutsPath out) {
+    public PathInfo.Status tryWrite(FreeDesktopEntry file, NPath out) {
         out.mkParentDirs();
         return CoreIOUtils.tryWrite(writeAsString(file).getBytes(), out, session);
     }
@@ -230,15 +230,15 @@ public class UnixFreeDesktopEntryWriter extends AbstractFreeDesktopEntryWriter {
 
 
     public void write(FreeDesktopEntry file, File out) {
-        NutsPath.of(out,session).mkParentDirs();
+        NPath.of(out,session).mkParentDirs();
         try (PrintStream p = new PrintStream(out)) {
             write(file, p);
         } catch (IOException ex) {
-            throw new NutsIOException(session, ex);
+            throw new NIOException(session, ex);
         }
     }
 
-    public void write(FreeDesktopEntry file, NutsPrintStream out) {
+    public void write(FreeDesktopEntry file, NStream out) {
         write(file, out.asPrintStream());
     }
 
@@ -247,9 +247,9 @@ public class UnixFreeDesktopEntryWriter extends AbstractFreeDesktopEntryWriter {
         for (FreeDesktopEntry.Group group : file.getGroups()) {
             out.println();
             String gn = group.getGroupName();
-            NutsUtils.requireNonBlank(gn, "group name", session);
+            NUtils.requireNonBlank(gn, "group name", session);
             FreeDesktopEntry.Type t = group.getType();
-            NutsUtils.requireNonNull(t, "type", session);
+            NUtils.requireNonNull(t, "type", session);
             out.println("[" + gn.trim() + "]");
             for (Map.Entry<String, Object> e : group.toMap().entrySet()) {
                 Object value = e.getValue();

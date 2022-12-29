@@ -1,30 +1,30 @@
 package net.thevpc.nuts.toolbox.njob;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.elem.NutsElements;
-import net.thevpc.nuts.io.NutsPath;
+import net.thevpc.nuts.elem.NElements;
+import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.toolbox.njob.model.Id;
 import net.thevpc.nuts.toolbox.njob.model.NJob;
 import net.thevpc.nuts.toolbox.njob.model.NProject;
 import net.thevpc.nuts.toolbox.njob.model.NTask;
-import net.thevpc.nuts.util.NutsFunction;
+import net.thevpc.nuts.util.NFunction;
 
 import java.lang.reflect.Field;
 import java.util.UUID;
 import java.util.stream.Stream;
 
 public class NJobConfigStore {
-    private NutsApplicationContext context;
-    private NutsElements json;
-    private NutsPath dbPath;
+    private NApplicationContext context;
+    private NElements json;
+    private NPath dbPath;
 
-    public NJobConfigStore(NutsApplicationContext applicationContext) {
+    public NJobConfigStore(NApplicationContext applicationContext) {
         this.context = applicationContext;
-        NutsSession session = applicationContext.getSession();
-        json = NutsElements.of(session).json().setNtf(false);
+        NSession session = applicationContext.getSession();
+        json = NElements.of(session).json().setNtf(false);
         json.setCompact(false);
         //ensure we always consider the latest config version
-        dbPath = applicationContext.getVersionFolder(NutsStoreLocation.CONFIG, NJobConfigVersions.CURRENT)
+        dbPath = applicationContext.getVersionFolder(NStoreLocation.CONFIG, NJobConfigVersions.CURRENT)
         .resolve("db");
     }
 
@@ -51,27 +51,27 @@ public class NJobConfigStore {
         return o.getSimpleName().toLowerCase();
     }
 
-    private NutsPath getObjectFile(Object o) {
+    private NPath getObjectFile(Object o) {
         return getFile(getEntityName(o.getClass()), getKey(o));
     }
 
-    private NutsPath getFile(String entityName, Object id) {
+    private NPath getFile(String entityName, Object id) {
         return dbPath.resolve(entityName).resolve(id + ".json");
     }
 
     public <T> Stream<T> search(Class<T> type) {
-        NutsPath f = getFile(getEntityName(type), "any").getParent();
-        NutsFunction<NutsPath, T> parse = NutsFunction.of(x -> json.parse(x, type), "parse");
-        return f.list().filter(
+        NPath f = getFile(getEntityName(type), "any").getParent();
+        NFunction<NPath, T> parse = NFunction.of(x -> json.parse(x, type), "parse");
+        return f.stream().filter(
                 x -> x.isRegularFile() && x.getName().endsWith(".json"),
                         "isRegularFile() && matches(*.json"+")"
                 )
-                .map(parse,session->NutsElements.of(session).ofString("parse"))
+                .map(parse,session-> NElements.of(session).ofString("parse"))
                 .filterNonNull().stream();
     }
 
     public <T> T load(Class<T> type, Object id) {
-        NutsPath f = getFile(getEntityName(type), id);
+        NPath f = getFile(getEntityName(type), id);
         if (f.exists()) {
             return json.parse(f, type);
         }
@@ -98,7 +98,7 @@ public class NJobConfigStore {
                 j.setId(generateId(NProject.class));
             }
         }
-        NutsPath objectFile = getObjectFile(o);
+        NPath objectFile = getObjectFile(o);
         objectFile.mkParentDirs();
         json.setValue(o).println(objectFile);
     }
@@ -109,7 +109,7 @@ public class NJobConfigStore {
             //test until we reach next millisecond
             String nid= UUID.randomUUID().toString();
 //                    yyyyMMddHHmmssSSS.format(new Date());
-            NutsPath f = getFile(getEntityName(clz), nid);
+            NPath f = getFile(getEntityName(clz), nid);
             if(!f.exists()){
                 return nid;
             }
@@ -121,7 +121,7 @@ public class NJobConfigStore {
     }
 
     public boolean delete(String entityName, Object id) {
-        NutsPath f = getFile(entityName, id);
+        NPath f = getFile(entityName, id);
         if (f.exists()) {
             f.delete();
             return true;

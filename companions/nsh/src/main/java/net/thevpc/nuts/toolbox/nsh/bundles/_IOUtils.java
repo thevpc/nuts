@@ -1,7 +1,7 @@
 package net.thevpc.nuts.toolbox.nsh.bundles;
 
-import net.thevpc.nuts.io.NutsPath;
-import net.thevpc.nuts.NutsSession;
+import net.thevpc.nuts.io.NPath;
+import net.thevpc.nuts.NSession;
 
 import java.io.*;
 import java.net.URL;
@@ -80,7 +80,7 @@ public class _IOUtils {
      * @param out sortie
      * @throws IOException when IO error
      */
-    public static void copy(NutsPath in, OutputStream out) throws IOException {
+    public static void copy(NPath in, OutputStream out) throws IOException {
         copy(in, out, DEFAULT_BUFFER_SIZE);
     }
 
@@ -92,7 +92,7 @@ public class _IOUtils {
      * @param bufferSize bufferSize
      * @throws IOException when IO error
      */
-    public static void copy(NutsPath in, OutputStream out, int bufferSize) throws IOException {
+    public static void copy(NPath in, OutputStream out, int bufferSize) throws IOException {
         InputStream fis = null;
 
         try {
@@ -106,8 +106,8 @@ public class _IOUtils {
 
     }
 
-    public static String getAbsoluteFile2(String path, String cwd, NutsSession session) {
-        NutsPath np = NutsPath.of(path, session);
+    public static String getAbsoluteFile2(String path, String cwd, NSession session) {
+        NPath np = NPath.of(path, session);
         if (np.isAbsolute()) {
             return path;
         }
@@ -119,7 +119,7 @@ public class _IOUtils {
                 return System.getProperty("user.home");
             default: {
                 if (path.startsWith("~/") || path.startsWith("~\\")) {
-                    return NutsPath.ofUserHome(session).resolve(path.substring(2)).normalize().toAbsolute().toString();
+                    return NPath.ofUserHome(session).resolve(path.substring(2)).normalize().toAbsolute().toString();
                 }
                 return np.toAbsolute(cwd).normalize().toAbsolute().toString();
             }

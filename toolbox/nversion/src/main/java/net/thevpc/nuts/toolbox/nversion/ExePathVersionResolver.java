@@ -31,7 +31,7 @@ import java.util.Properties;
 import java.util.Set;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.io.NutsIOException;
+import net.thevpc.nuts.io.NIOException;
 import org.boris.pecoff4j.PE;
 import org.boris.pecoff4j.ResourceDirectory;
 import org.boris.pecoff4j.ResourceEntry;
@@ -48,7 +48,7 @@ import org.boris.pecoff4j.util.ResourceHelper;
  * @author thevpc
  */
 public class ExePathVersionResolver implements PathVersionResolver{
-    public Set<VersionDescriptor>  resolve(String filePath, NutsApplicationContext context){
+    public Set<VersionDescriptor>  resolve(String filePath, NApplicationContext context){
         try {
             if(!filePath.endsWith(".exe") && !filePath.endsWith(".dll")){
                 return null;
@@ -99,10 +99,10 @@ public class ExePathVersionResolver implements PathVersionResolver{
                         }
                     }
                     p.setProperty("nuts.version-provider", "win-pe");
-                    if (!NutsBlankable.isBlank(artifactId) && !NutsBlankable.isBlank(artifactVersion)) {
-                        NutsSession session = context.getSession();
+                    if (!NBlankable.isBlank(artifactId) && !NBlankable.isBlank(artifactVersion)) {
+                        NSession session = context.getSession();
                         d.add(new VersionDescriptor(
-                                NutsIdBuilder.of().setArtifactId(artifactId).setVersion(artifactVersion).build(),
+                                NIdBuilder.of().setArtifactId(artifactId).setVersion(artifactVersion).build(),
                                 p
                         ));
                     }
@@ -110,7 +110,7 @@ public class ExePathVersionResolver implements PathVersionResolver{
             }
             return d;
         } catch (IOException ex) {
-            throw new NutsIOException(context.getSession(), ex);
+            throw new NIOException(context.getSession(), ex);
         }
     }
 }

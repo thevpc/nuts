@@ -6,9 +6,9 @@
 package net.thevpc.nuts.toolbox.docusaurus;
 
 
-import net.thevpc.nuts.elem.NutsElement;
-import net.thevpc.nuts.elem.NutsObjectElement;
-import net.thevpc.nuts.NutsSession;
+import net.thevpc.nuts.elem.NElement;
+import net.thevpc.nuts.elem.NObjectElement;
+import net.thevpc.nuts.NSession;
 import net.thevpc.nuts.lib.md.convert.Adoc2Pdf;
 import net.thevpc.nuts.lib.md.convert.Adoc2PdfConfig;
 
@@ -31,7 +31,7 @@ public class Docusaurus2Asciidoctor {
         this.project = project;
     }
 
-    public Docusaurus2Asciidoctor(File project, NutsSession session) {
+    public Docusaurus2Asciidoctor(File project, NSession session) {
         this.project = new DocusaurusProject(project.getPath(),null,session);
     }
 
@@ -40,11 +40,11 @@ public class Docusaurus2Asciidoctor {
     }
 
     public Path getAdocFile() {
-        NutsSession session = project.getSession();
+        NSession session = project.getSession();
         String asciiDoctorBaseFolder = getAsciiDoctorBaseFolder();
         String pdfOutput = getAsciiDoctorConfig()
                 .getObject("pdf")
-                .orElse(NutsObjectElement.ofEmpty(session))
+                .orElse(NObjectElement.ofEmpty(session))
                 .getString("output").orNull();
         String pn=null;
         if(pdfOutput!=null && pdfOutput.endsWith(".pdf")){
@@ -98,16 +98,16 @@ public class Docusaurus2Asciidoctor {
     }
 
     public Adoc2PdfConfig getAdoc2PdfConfig() {
-        NutsSession session = project.getSession();
+        NSession session = project.getSession();
         Adoc2PdfConfig config = new Adoc2PdfConfig();
-        NutsObjectElement asciiDoctorConfig = getAsciiDoctorConfig();
+        NObjectElement asciiDoctorConfig = getAsciiDoctorConfig();
         config.setBin(asciiDoctorConfig.getStringByPath("pdf","command","bin").get(session));
         config.setArgs(asciiDoctorConfig.getArrayByPath("pdf","command","args").get(session)
                 .stream().map(x->x.asString().get(session)).toArray(String[]::new));
         config.setWorkDir(toCanonicalFile(Paths.get(project.getDocusaurusBaseFolder())).toString());
         config.setBaseDir(toCanonicalFile(Paths.get(getAsciiDoctorBaseFolder())).toString());
         config.setInputAdoc(getAdocFile().toString());
-        NutsElement output = asciiDoctorConfig.getByPath("pdf","output"). get(session);
+        NElement output = asciiDoctorConfig.getByPath("pdf","output"). get(session);
         String pdfFile=project.getProjectName();
         if(output.isString()){
             String s=output.asString().get(session).trim();
@@ -152,7 +152,7 @@ public class Docusaurus2Asciidoctor {
     }
 
     private String getAsciiDoctorBaseFolder() {
-        NutsSession session = project.getSession();
+        NSession session = project.getSession();
         String s = getAsciiDoctorConfig().getString("path").get(session);
         if (!new File(s).isAbsolute()) {
             s = project.getDocusaurusBaseFolder() + "/" + s;
@@ -160,8 +160,8 @@ public class Docusaurus2Asciidoctor {
         return s;
     }
 
-    private NutsObjectElement getAsciiDoctorConfig() {
-        NutsSession session = project.getSession();
+    private NObjectElement getAsciiDoctorConfig() {
+        NSession session = project.getSession();
         return project.getConfig().getObjectByPath("customFields","asciidoctor").get(session);
     }
 

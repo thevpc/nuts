@@ -1,16 +1,16 @@
 package net.thevpc.nuts.toolbox.njob;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.cmdline.NutsArgument;
-import net.thevpc.nuts.cmdline.NutsCommandLine;
-import net.thevpc.nuts.format.NutsMutableTableModel;
-import net.thevpc.nuts.format.NutsTableFormat;
-import net.thevpc.nuts.text.NutsTextStyle;
-import net.thevpc.nuts.text.NutsTexts;
+import net.thevpc.nuts.cmdline.NArgument;
+import net.thevpc.nuts.cmdline.NCommandLine;
+import net.thevpc.nuts.format.NMutableTableModel;
+import net.thevpc.nuts.format.NTableFormat;
+import net.thevpc.nuts.text.NTextStyle;
+import net.thevpc.nuts.text.NTexts;
 import net.thevpc.nuts.toolbox.njob.model.NProject;
 import net.thevpc.nuts.toolbox.njob.time.TimeParser;
 import net.thevpc.nuts.toolbox.njob.time.WeekDay;
-import net.thevpc.nuts.util.NutsRef;
+import net.thevpc.nuts.util.NRef;
 
 import java.time.Instant;
 import java.time.LocalDateTime;
@@ -26,8 +26,8 @@ import java.util.stream.Stream;
 public class NProjectsSubCmd {
 
     private JobService service;
-    private NutsApplicationContext context;
-    private NutsSession session;
+    private NApplicationContext context;
+    private NSession session;
     private JobServiceCmd parent;
 
     public NProjectsSubCmd(JobServiceCmd parent) {
@@ -37,12 +37,12 @@ public class NProjectsSubCmd {
         this.session = parent.session;
     }
 
-    public void runProjectAdd(NutsCommandLine cmd) {
+    public void runProjectAdd(NCommandLine cmd) {
         NProject t = new NProject();
-        NutsRef<Boolean> list = NutsRef.of(false);
-        NutsRef<Boolean> show = NutsRef.of(false);
+        NRef<Boolean> list = NRef.of(false);
+        NRef<Boolean> show = NRef.of(false);
         while (cmd.hasNext()) {
-            NutsArgument aa = cmd.peek().get(session);
+            NArgument aa = cmd.peek().get(session);
             switch (aa.key()) {
                 case "--list":
                 case "-l": {
@@ -103,20 +103,20 @@ public class NProjectsSubCmd {
             service.projects().addProject(t);
             if (context.getSession().isPlainTrace()) {
                 context.getSession().out().printf("project %s (%s) added.\n",
-                        NutsTexts.of(context.getSession()).ofStyled(t.getId(), NutsTextStyle.primary5()),
+                        NTexts.of(context.getSession()).ofStyled(t.getId(), NTextStyle.primary5()),
                         t.getName()
                 );
             }
             if (show.get()) {
-                runProjectShow(NutsCommandLine.of(new String[]{t.getId()}));
+                runProjectShow(NCommandLine.of(new String[]{t.getId()}));
             }
             if (list.get()) {
-                runProjectList(NutsCommandLine.of(new String[0]));
+                runProjectList(NCommandLine.of(new String[0]));
             }
         }
     }
 
-    public void runProjectUpdate(NutsCommandLine cmd) {
+    public void runProjectUpdate(NCommandLine cmd) {
         class Data {
             List<NProject> projects = new ArrayList<>();
             boolean list = false;
@@ -126,7 +126,7 @@ public class NProjectsSubCmd {
         }
         Data d = new Data();
         while (cmd.hasNext()) {
-            NutsArgument aa = cmd.peek().get(session);
+            NArgument aa = cmd.peek().get(session);
             switch (aa.key()) {
                 case "-l":
                 case "--list": {
@@ -211,10 +211,10 @@ public class NProjectsSubCmd {
             }
         }
         if (d.projects.isEmpty()) {
-            cmd.throwError(NutsMessage.ofNtf("project name expected"));
+            cmd.throwError(NMsg.ofNtf("project name expected"));
         }
         if (cmd.isExecMode()) {
-            NutsTexts text = NutsTexts.of(context.getSession());
+            NTexts text = NTexts.of(context.getSession());
             for (NProject project : d.projects) {
                 for (Consumer<NProject> c : d.runLater) {
                     c.accept(project);
@@ -222,8 +222,8 @@ public class NProjectsSubCmd {
                 service.projects().updateProject(project);
                 if (context.getSession().isPlainTrace()) {
                     context.getSession().out().printf("project %s (%s) updated.\n",
-                            text.ofStyled(project.getId(), NutsTextStyle.primary5()),
-                            text.ofStyled(project.getName(), NutsTextStyle.primary1())
+                            text.ofStyled(project.getId(), NTextStyle.primary5()),
+                            text.ofStyled(project.getName(), NTextStyle.primary1())
                     );
                 }
             }
@@ -231,26 +231,26 @@ public class NProjectsSubCmd {
                 service.projects().mergeProjects(d.mergeTo, d.projects.stream().map(x -> x.getId()).toArray(String[]::new));
                 if (context.getSession().isPlainTrace()) {
                     context.getSession().out().printf("projects merged to %s.\n",
-                            NutsTexts.of(context.getSession())
-                                    .ofStyled(d.mergeTo, NutsTextStyle.primary5())
+                            NTexts.of(context.getSession())
+                                    .ofStyled(d.mergeTo, NTextStyle.primary5())
                     );
                 }
             }
             if (d.show) {
                 for (NProject t : new LinkedHashSet<>(d.projects)) {
-                    runProjectShow(NutsCommandLine.of(new String[]{t.getId()}));
+                    runProjectShow(NCommandLine.of(new String[]{t.getId()}));
                 }
             }
             if (d.list) {
-                runProjectList(NutsCommandLine.of(new String[0]));
+                runProjectList(NCommandLine.of(new String[0]));
             }
         }
     }
 
-    private void runProjectList(NutsCommandLine cmd) {
-        final NutsRef<Predicate<NProject>> whereFilter = NutsRef.ofNull();
+    private void runProjectList(NCommandLine cmd) {
+        final NRef<Predicate<NProject>> whereFilter = NRef.ofNull();
         while (cmd.hasNext()) {
-            NutsArgument aa = cmd.peek().get(session);
+            NArgument aa = cmd.peek().get(session);
             switch (aa.key()) {
                 case "-b":
                 case "-beneficiary": {
@@ -317,7 +317,7 @@ public class NProjectsSubCmd {
                     );
 
             if (context.getSession().isPlainTrace()) {
-                NutsMutableTableModel m = NutsMutableTableModel.of(session);
+                NMutableTableModel m = NMutableTableModel.of(session);
                 List<NProject> lastResults = new ArrayList<>();
                 int[] index = new int[1];
                 r.forEach(x -> {
@@ -339,7 +339,7 @@ public class NProjectsSubCmd {
                     );
                 });
                 context.getSession().setProperty("LastResults", lastResults.toArray(new NProject[0]));
-                NutsTableFormat.of(session)
+                NTableFormat.of(session)
                         .setBorder("spaces")
                         .setValue(m).println(context.getSession().out());
             } else {
@@ -348,22 +348,22 @@ public class NProjectsSubCmd {
         }
     }
 
-    private void runProjectRemove(NutsCommandLine cmd) {
-        NutsTexts text = NutsTexts.of(context.getSession());
+    private void runProjectRemove(NCommandLine cmd) {
+        NTexts text = NTexts.of(context.getSession());
         while (cmd.hasNext()) {
-            NutsArgument a = cmd.next().get(session);
+            NArgument a = cmd.next().get(session);
             if (cmd.isExecMode()) {
                 NProject t = findProject(a.toString(), cmd);
                 if (service.projects().removeProject(t.getId())) {
                     if (context.getSession().isPlainTrace()) {
                         context.getSession().out().printf("project %s removed.\n",
-                                text.ofStyled(a.toString(), NutsTextStyle.primary5())
+                                text.ofStyled(a.toString(), NTextStyle.primary5())
                         );
                     }
                 } else {
                     context.getSession().out().printf("project %s %s.\n",
-                            text.ofStyled(a.toString(), NutsTextStyle.primary5()),
-                            text.ofStyled("not found", NutsTextStyle.error())
+                            text.ofStyled(a.toString(), NTextStyle.primary5()),
+                            text.ofStyled("not found", NTextStyle.error())
                     );
                 }
             }
@@ -371,9 +371,9 @@ public class NProjectsSubCmd {
 
     }
 
-    private void runProjectShow(NutsCommandLine cmd) {
+    private void runProjectShow(NCommandLine cmd) {
         while (cmd.hasNext()) {
-            NutsArgument a = cmd.next().get(session);
+            NArgument a = cmd.next().get(session);
             NProject project = findProject(a.toString(), cmd);
             if (project == null) {
                 context.getSession().out().printf("```kw %s```: ```error not found```.\n",
@@ -395,7 +395,7 @@ public class NProjectsSubCmd {
 
     }
 
-    private NProject findProject(String pid, NutsCommandLine cmd) {
+    private NProject findProject(String pid, NCommandLine cmd) {
         NProject t = null;
         if (pid.startsWith("#")) {
             int x = JobServiceCmd.parseIntOrFF(pid.substring(1));
@@ -410,12 +410,12 @@ public class NProjectsSubCmd {
             t = service.projects().getProject(pid);
         }
         if (t == null) {
-            cmd.throwError(NutsMessage.ofCstyle("project not found: %s", pid));
+            cmd.throwError(NMsg.ofCstyle("project not found: %s", pid));
         }
         return t;
     }
 
-    public boolean runProjectCommands(NutsCommandLine cmd) {
+    public boolean runProjectCommands(NCommandLine cmd) {
         if (cmd.next("ap", "a p", "pa", "p a", "add project", "projects add").isPresent()) {
             runProjectAdd(cmd);
             return true;

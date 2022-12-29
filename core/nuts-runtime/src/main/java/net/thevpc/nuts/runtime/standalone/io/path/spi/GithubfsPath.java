@@ -1,21 +1,21 @@
 package net.thevpc.nuts.runtime.standalone.io.path.spi;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.cmdline.NutsCommandLine;
-import net.thevpc.nuts.elem.NutsElement;
-import net.thevpc.nuts.elem.NutsElements;
-import net.thevpc.nuts.format.NutsTreeVisitor;
+import net.thevpc.nuts.cmdline.NCommandLine;
+import net.thevpc.nuts.elem.NElement;
+import net.thevpc.nuts.elem.NElements;
+import net.thevpc.nuts.format.NTreeVisitor;
 import net.thevpc.nuts.io.*;
-import net.thevpc.nuts.runtime.standalone.session.NutsSessionUtils;
-import net.thevpc.nuts.spi.NutsFormatSPI;
-import net.thevpc.nuts.spi.NutsPathFactory;
-import net.thevpc.nuts.spi.NutsPathSPI;
-import net.thevpc.nuts.spi.NutsUseDefault;
-import net.thevpc.nuts.text.NutsTextBuilder;
-import net.thevpc.nuts.text.NutsTextStyle;
-import net.thevpc.nuts.util.NutsFunction;
-import net.thevpc.nuts.util.NutsStream;
-import net.thevpc.nuts.util.NutsStringUtils;
+import net.thevpc.nuts.runtime.standalone.session.NSessionUtils;
+import net.thevpc.nuts.spi.NFormatSPI;
+import net.thevpc.nuts.spi.NPathFactory;
+import net.thevpc.nuts.spi.NPathSPI;
+import net.thevpc.nuts.spi.NUseDefault;
+import net.thevpc.nuts.text.NTextBuilder;
+import net.thevpc.nuts.text.NTextStyle;
+import net.thevpc.nuts.util.NFunction;
+import net.thevpc.nuts.util.NStream;
+import net.thevpc.nuts.util.NStringUtils;
 
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -30,14 +30,14 @@ public class GithubfsPath extends AbstractPathSPIAdapter {
     private final Info info;
     private Object loaded;
 
-    public GithubfsPath(String url, NutsSession session) {
+    public GithubfsPath(String url, NSession session) {
         this(url, null, session);
     }
 
-    private GithubfsPath(String url, Info info, NutsSession session) {
-        super(NutsPath.of(url.substring(PREFIX.length()), session), session);
+    private GithubfsPath(String url, Info info, NSession session) {
+        super(NPath.of(url.substring(PREFIX.length()), session), session);
         if (!url.startsWith(PREFIX)) {
-            throw new NutsUnsupportedArgumentException(session, NutsMessage.ofCstyle("expected prefix '%s'",PREFIX));
+            throw new NUnsupportedArgumentException(session, NMsg.ofCstyle("expected prefix '%s'",PREFIX));
         }
         this.info = info;
     }
@@ -64,56 +64,56 @@ public class GithubfsPath extends AbstractPathSPIAdapter {
     }
 
     @Override
-    public NutsStream<NutsPath> list(NutsPath basePath) {
+    public NStream<NPath> list(NPath basePath) {
         Object q = load();
         if (q instanceof Info[]) {
-            return NutsStream.of((Info[]) q, session)
-                    .map(NutsFunction.of(
-                            x -> NutsPath.of(new GithubfsPath(
+            return NStream.of((Info[]) q, session)
+                    .map(NFunction.of(
+                            x -> NPath.of(new GithubfsPath(
                                     PREFIX + ref.resolve(x.name).toString(),
                                     x, session), session)
                             , "GithubfsPath::of")
                     );
         }
-        return NutsStream.ofEmpty(session);
+        return NStream.ofEmpty(session);
     }
 
     @Override
-    public NutsFormatSPI formatter(NutsPath basePath) {
+    public NFormatSPI formatter(NPath basePath) {
         return new MyPathFormat(this);
     }
 
     @Override
-    public String getProtocol(NutsPath basePath) {
+    public String getProtocol(NPath basePath) {
         return PROTOCOL;
     }
 
     @Override
-    public NutsPath resolve(NutsPath basePath, String path) {
-        return NutsPath.of(PREFIX + ref.resolve(path), session);
+    public NPath resolve(NPath basePath, String path) {
+        return NPath.of(PREFIX + ref.resolve(path), session);
     }
 
     @Override
-    public NutsPath resolve(NutsPath basePath, NutsPath path) {
-        return NutsPath.of(PREFIX + ref.resolve(path), session);
+    public NPath resolve(NPath basePath, NPath path) {
+        return NPath.of(PREFIX + ref.resolve(path), session);
     }
 
     @Override
-    public NutsPath resolveSibling(NutsPath basePath, String path) {
-        return NutsPath.of(PREFIX + ref.resolveSibling(path), session);
+    public NPath resolveSibling(NPath basePath, String path) {
+        return NPath.of(PREFIX + ref.resolveSibling(path), session);
     }
 
     @Override
-    public NutsPath resolveSibling(NutsPath basePath, NutsPath path) {
-        return NutsPath.of(PREFIX + ref.resolveSibling(path), session);
+    public NPath resolveSibling(NPath basePath, NPath path) {
+        return NPath.of(PREFIX + ref.resolveSibling(path), session);
     }
 
-    public boolean isSymbolicLink(NutsPath basePath) {
+    public boolean isSymbolicLink(NPath basePath) {
         return "symlink".equals(_type());
     }
 
     @Override
-    public boolean isOther(NutsPath basePath) {
+    public boolean isOther(NPath basePath) {
         switch (_type()) {
             case "dir":
             case "file":
@@ -126,17 +126,17 @@ public class GithubfsPath extends AbstractPathSPIAdapter {
     }
 
     @Override
-    public boolean isDirectory(NutsPath basePath) {
+    public boolean isDirectory(NPath basePath) {
         return "dir".equals(_type());
     }
 
     @Override
-    public boolean isRegularFile(NutsPath basePath) {
+    public boolean isRegularFile(NPath basePath) {
         return "file".equals(_type());
     }
 
     @Override
-    public boolean exists(NutsPath basePath) {
+    public boolean exists(NPath basePath) {
         if (info != null) {
             return true;
         }
@@ -144,7 +144,7 @@ public class GithubfsPath extends AbstractPathSPIAdapter {
     }
 
     @Override
-    public long getContentLength(NutsPath basePath) {
+    public long getContentLength(NPath basePath) {
         Info o = _fileInfo();
         if (o != null) {
             return o.size;
@@ -153,81 +153,81 @@ public class GithubfsPath extends AbstractPathSPIAdapter {
     }
 
     @Override
-    public String getContentEncoding(NutsPath basePath) {
-        NutsPath p = getDownloadPath();
+    public String getContentEncoding(NPath basePath) {
+        NPath p = getDownloadPath();
         return p == null ? null : p.getContentEncoding();
     }
 
     @Override
-    public String getContentType(NutsPath basePath) {
-        NutsPath p = getDownloadPath();
+    public String getContentType(NPath basePath) {
+        NPath p = getDownloadPath();
         return p == null ? null : p.getContentType();
     }
 
     @Override
-    public InputStream getInputStream(NutsPath basePath) {
-        NutsPath p = getDownloadPath();
+    public InputStream getInputStream(NPath basePath, NPathOption... options) {
+        NPath p = getDownloadPath();
         if (p != null) {
-            return p.getInputStream();
+            return p.getInputStream(options);
         }
-        throw new NutsIOException(session, NutsMessage.ofCstyle("not a file %s", basePath));
+        throw new NIOException(session, NMsg.ofCstyle("not a file %s", basePath));
     }
 
     @Override
-    public OutputStream getOutputStream(NutsPath basePath) {
-        throw new NutsIOException(session, NutsMessage.ofCstyle("not writable %s", basePath));
+    public OutputStream getOutputStream(NPath basePath, NPathOption... options) {
+        throw new NIOException(session, NMsg.ofCstyle("not writable %s", basePath));
     }
 
     @Override
-    public Instant getLastModifiedInstant(NutsPath basePath) {
-        NutsPath p = getDownloadPath();
+    public Instant getLastModifiedInstant(NPath basePath) {
+        NPath p = getDownloadPath();
         return p == null ? null : p.getLastModifiedInstant();
     }
 
     @Override
-    public Instant getLastAccessInstant(NutsPath basePath) {
-        NutsPath p = getDownloadPath();
+    public Instant getLastAccessInstant(NPath basePath) {
+        NPath p = getDownloadPath();
         return p == null ? null : p.getLastAccessInstant();
     }
 
     @Override
-    public Instant getCreationInstant(NutsPath basePath) {
-        NutsPath p = getDownloadPath();
+    public Instant getCreationInstant(NPath basePath) {
+        NPath p = getDownloadPath();
         return p == null ? null : p.getCreationInstant();
     }
 
     @Override
-    public NutsPath getParent(NutsPath basePath) {
+    public NPath getParent(NPath basePath) {
         if (isRoot(basePath)) {
             return null;
         }
-        NutsPath p = ref.getParent();
+        NPath p = ref.getParent();
         if (p == null) {
             return null;
         }
-        return NutsPath.of(PREFIX + p, session);
+        return NPath.of(PREFIX + p, session);
     }
 
     @Override
-    public NutsPath toAbsolute(NutsPath basePath, NutsPath rootPath) {
+    public NPath toAbsolute(NPath basePath, NPath rootPath) {
         if (isAbsolute(basePath)) {
             return basePath;
         }
-        return NutsPath.of(PREFIX + basePath.toAbsolute(rootPath), session);
+        return NPath.of(PREFIX + basePath.toAbsolute(rootPath), session);
     }
 
     @Override
-    public NutsPath normalize(NutsPath basePath) {
-        return NutsPath.of(PREFIX + ref.normalize(), session);
+    public NPath normalize(NPath basePath) {
+        return NPath.of(PREFIX + ref.normalize(), session);
     }
 
     @Override
-    public boolean isName(NutsPath basePath) {
+    public boolean isName(NPath basePath) {
         return false;
     }
 
     @Override
-    public boolean isRoot(NutsPath basePath) {
+    public boolean isRoot(NPath basePath) {
         Info f = _fileInfo();
         if (f != null) {
             if (!"dir".equals(f.type)) {
@@ -245,32 +245,32 @@ public class GithubfsPath extends AbstractPathSPIAdapter {
     }
 
     @Override
-    public NutsPath getRoot(NutsPath basePath) {
+    public NPath getRoot(NPath basePath) {
         if (isRoot(basePath)) {
             return basePath;
         }
-        return NutsPath.of(PREFIX + ref.getRoot(), session);
+        return NPath.of(PREFIX + ref.getRoot(), session);
     }
 
-    @NutsUseDefault
+    @NUseDefault
     @Override
-    public NutsStream<NutsPath> walk(NutsPath basePath, int maxDepth, NutsPathOption[] options) {
+    public NStream<NPath> walk(NPath basePath, int maxDepth, NPathOption[] options) {
         return null;
     }
 
     @Override
-    public void copyTo(NutsPath basePath, NutsPath other, NutsPathOption... options) {
-        NutsPath p = getDownloadPath();
+    public void copyTo(NPath basePath, NPath other, NPathOption... options) {
+        NPath p = getDownloadPath();
         if (p != null) {
             p.copyTo(other, options);
         } else {
-            NutsCp.of(session).from(basePath).to(other).run();
+            NCp.of(session).from(basePath).to(other).run();
         }
     }
 
-    @NutsUseDefault
+    @NUseDefault
     @Override
-    public void walkDfs(NutsPath basePath, NutsTreeVisitor<NutsPath> visitor, int maxDepth, NutsPathOption... options) {
+    public void walkDfs(NPath basePath, NTreeVisitor<NPath> visitor, int maxDepth, NPathOption... options) {
 
     }
 
@@ -281,12 +281,12 @@ public class GithubfsPath extends AbstractPathSPIAdapter {
         return loaded;
     }
 
-    private Object load(NutsPath p) {
-        NutsElements elems = NutsElements.of(session);
-        NutsElement e = elems.json().parse(ref);
+    private Object load(NPath p) {
+        NElements elems = NElements.of(session);
+        NElement e = elems.json().parse(ref);
         if (e != null) {
             if (e.isArray()) {
-                return NutsStream.of(elems.convert(e, Info[].class), session).toArray(Info[]::new);
+                return NStream.of(elems.convert(e, Info[].class), session).toArray(Info[]::new);
             } else if (e.isObject()) {
                 return elems.convert(e, Info.class);
             }
@@ -307,12 +307,12 @@ public class GithubfsPath extends AbstractPathSPIAdapter {
 
     private String _type() {
         if (info != null) {
-            return NutsStringUtils.trim(info.type);
+            return NStringUtils.trim(info.type);
         }
         Object a = load();
         if (a != null) {
             if (a instanceof Info) {
-                return NutsStringUtils.trim(((Info) a).type);
+                return NStringUtils.trim(((Info) a).type);
             }
             if (a instanceof Info[]) {
                 return "dir";
@@ -321,39 +321,39 @@ public class GithubfsPath extends AbstractPathSPIAdapter {
         return "";
     }
 
-    private NutsPath getDownloadPath() {
+    private NPath getDownloadPath() {
         Info i = _fileInfo();
         if (i != null) {
             if (_type().equals("file")) {
-                return NutsPath.of(i.download_url, session);
+                return NPath.of(i.download_url, session);
             }
         }
         return null;
     }
 
     @Override
-    public boolean isLocal(NutsPath basePath) {
+    public boolean isLocal(NPath basePath) {
         return ref.isLocal();
     }
 
-    public static class GithubfsFactory implements NutsPathFactory {
-        private final NutsWorkspace ws;
+    public static class GithubfsFactory implements NPathFactory {
+        private final NWorkspace ws;
 
-        public GithubfsFactory(NutsWorkspace ws) {
+        public GithubfsFactory(NWorkspace ws) {
             this.ws = ws;
         }
 
         @Override
-        public NutsSupported<NutsPathSPI> createPath(String path, NutsSession session, ClassLoader classLoader) {
-            NutsSessionUtils.checkSession(ws, session);
+        public NSupported<NPathSPI> createPath(String path, NSession session, ClassLoader classLoader) {
+            NSessionUtils.checkSession(ws, session);
             if (path.startsWith(PREFIX)) {
-                return NutsSupported.of(10, () -> new GithubfsPath(path, session));
+                return NSupported.of(10, () -> new GithubfsPath(path, session));
             }
             return null;
         }
     }
 
-    private static class MyPathFormat implements NutsFormatSPI {
+    private static class MyPathFormat implements NFormatSPI {
 
         private final GithubfsPath p;
 
@@ -365,21 +365,21 @@ public class GithubfsPath extends AbstractPathSPIAdapter {
             return "path";
         }
 
-        public NutsString asFormattedString() {
-            NutsTextBuilder sb = NutsTextBuilder.of(p.getSession());
-            sb.append(PROTOCOL, NutsTextStyle.primary1());
-            sb.append(":", NutsTextStyle.separator());
+        public NString asFormattedString() {
+            NTextBuilder sb = NTextBuilder.of(p.getSession());
+            sb.append(PROTOCOL, NTextStyle.primary1());
+            sb.append(":", NTextStyle.separator());
             sb.append(p.ref);
             return sb.build();
         }
 
         @Override
-        public void print(NutsPrintStream out) {
+        public void print(net.thevpc.nuts.io.NStream out) {
             out.print(asFormattedString());
         }
 
         @Override
-        public boolean configureFirst(NutsCommandLine commandLine) {
+        public boolean configureFirst(NCommandLine commandLine) {
             return false;
         }
     }

@@ -5,9 +5,9 @@
  */
 package net.thevpc.nuts.runtime.standalone.util.iter;
 
-import net.thevpc.nuts.util.NutsComparator;
-import net.thevpc.nuts.util.NutsIterator;
-import net.thevpc.nuts.NutsSession;
+import net.thevpc.nuts.util.NComparator;
+import net.thevpc.nuts.util.NIterator;
+import net.thevpc.nuts.NSession;
 
 import java.util.*;
 import java.util.function.Function;
@@ -22,15 +22,15 @@ public class IteratorUtils {
 //        return new FileDepthFirstIterator(file);
 //    }
 
-    public static <T> NutsIterator<T> safe(IteratorErrorHandlerType type, NutsIterator<T> t, NutsSession session) {
+    public static <T> NIterator<T> safe(IteratorErrorHandlerType type, NIterator<T> t, NSession session) {
         return new ErrorHandlerIterator(type, t,session);
     }
 
-    public static <T> NutsIterator<T> safeIgnore(NutsIterator<T> t,NutsSession session) {
+    public static <T> NIterator<T> safeIgnore(NIterator<T> t, NSession session) {
         return new ErrorHandlerIterator(IteratorErrorHandlerType.IGNORE, t,session);
     }
 
-    public static <T> NutsIterator<T> safePospone(NutsIterator<T> t,NutsSession session) {
+    public static <T> NIterator<T> safePospone(NIterator<T> t, NSession session) {
         return new ErrorHandlerIterator(IteratorErrorHandlerType.POSTPONE, t,session);
     }
 
@@ -38,23 +38,23 @@ public class IteratorUtils {
         return t == null || t == IteratorBuilder.EMPTY_ITERATOR;
     }
 
-    public static <T> NutsIterator<T> nonNull(NutsIterator<T> t) {
+    public static <T> NIterator<T> nonNull(NIterator<T> t) {
         if (t == null) {
             return IteratorBuilder.emptyIterator();
         }
         return t;
     }
 
-    public static <T> NutsIterator<T> concat(List<NutsIterator<? extends T>> all) {
+    public static <T> NIterator<T> concat(List<NIterator<? extends T>> all) {
         if (all == null || all.isEmpty()) {
             return IteratorBuilder.emptyIterator();
         }
         QueueIterator<T> t = new QueueIterator<>();
-        for (NutsIterator<? extends T> it : all) {
+        for (NIterator<? extends T> it : all) {
             if (!isNullOrEmpty(it)) {
                 if (it instanceof QueueIterator) {
                     QueueIterator tt = (QueueIterator) it;
-                    for (NutsIterator it1 : tt.getChildren()) {
+                    for (NIterator it1 : tt.getChildren()) {
                         t.add(it1);
                     }
                 } else {
@@ -72,24 +72,24 @@ public class IteratorUtils {
         return t;
     }
 
-    public static <T> NutsIterator<T> coalesce2(List<NutsIterator<T>> all) {
+    public static <T> NIterator<T> coalesce2(List<NIterator<T>> all) {
         return coalesce((List) all);
     }
 
-    public static <T> NutsIterator<T> coalesce(NutsIterator<? extends T>... all) {
+    public static <T> NIterator<T> coalesce(NIterator<? extends T>... all) {
         return coalesce(Arrays.asList(all));
     }
 
-    public static <T> NutsIterator<T> concat(NutsIterator<? extends T>... all) {
+    public static <T> NIterator<T> concat(NIterator<? extends T>... all) {
         return concat(Arrays.asList(all));
     }
 
-    public static <T> NutsIterator<T> concatLists(List<NutsIterator<? extends T>>... all) {
-        List<NutsIterator<? extends T>> r = new ArrayList<>();
+    public static <T> NIterator<T> concatLists(List<NIterator<? extends T>>... all) {
+        List<NIterator<? extends T>> r = new ArrayList<>();
         if (all != null) {
-            for (List<NutsIterator<? extends T>> a : all) {
+            for (List<NIterator<? extends T>> a : all) {
                 if (a != null) {
-                    for (NutsIterator<? extends T> b : a) {
+                    for (NIterator<? extends T> b : a) {
                         if (b != null) {
                             r.add(b);
                         }
@@ -100,12 +100,12 @@ public class IteratorUtils {
         return concat(r);
     }
 
-    public static <T> NutsIterator<T> coalesce(List<NutsIterator<? extends T>> all) {
+    public static <T> NIterator<T> coalesce(List<NIterator<? extends T>> all) {
         if (all == null || all.isEmpty()) {
             return IteratorBuilder.emptyIterator();
         }
         CoalesceIterator<T> t = new CoalesceIterator<>();
-        for (NutsIterator<? extends T> it : all) {
+        for (NIterator<? extends T> it : all) {
             if (!isNullOrEmpty(it)) {
                 t.add(it);
             }
@@ -150,7 +150,7 @@ public class IteratorUtils {
 //        return new ConvertedIterator<>(from, converter);
 //    }
 
-    public static <F, T> NutsIterator<T> convertNonNull(NutsIterator<F> from, Function<F, T> converter, String name) {
+    public static <F, T> NIterator<T> convertNonNull(NIterator<F> from, Function<F, T> converter, String name) {
         if (isNullOrEmpty(from)) {
             return IteratorBuilder.emptyIterator();
         }
@@ -168,7 +168,7 @@ public class IteratorUtils {
         return a;
     }
 
-    public static <T> Set<T> toSet(NutsIterator<T> it) {
+    public static <T> Set<T> toSet(NIterator<T> it) {
         if (isNullOrEmpty(it)) {
             return Collections.emptySet();
         }
@@ -179,7 +179,7 @@ public class IteratorUtils {
         return a;
     }
 
-    public static <T> Set<T> toTreeSet(NutsIterator<T> it, NutsComparator<T> c) {
+    public static <T> Set<T> toTreeSet(NIterator<T> it, NComparator<T> c) {
         if (isNullOrEmpty(it)) {
             return Collections.emptySet();
         }
@@ -190,14 +190,14 @@ public class IteratorUtils {
         return a;
     }
 
-    public static <T> NutsIterator<T> sort(NutsIterator<T> it, NutsComparator<T> c, boolean removeDuplicates) {
+    public static <T> NIterator<T> sort(NIterator<T> it, NComparator<T> c, boolean removeDuplicates) {
         if (isNullOrEmpty(it)) {
             return IteratorBuilder.emptyIterator();
         }
         return new SortIterator<>(it, c, removeDuplicates);
     }
 
-    public static <T> NutsIterator<T> distinct(NutsIterator<T> it) {
+    public static <T> NIterator<T> distinct(NIterator<T> it) {
         if (isNullOrEmpty(it)) {
             return IteratorBuilder.emptyIterator();
         }
@@ -205,7 +205,7 @@ public class IteratorUtils {
         return new FilteredIterator<>(it, filter);
     }
 
-    public static <F, T> NutsIterator<F> distinct(NutsIterator<F> it, final Function<F, T> converter) {
+    public static <F, T> NIterator<F> distinct(NIterator<F> it, final Function<F, T> converter) {
         if (isNullOrEmpty(it)) {
             return IteratorBuilder.emptyIterator();
         }
@@ -224,7 +224,7 @@ public class IteratorUtils {
         return new CollectorIterator<>(null, it);
     }
 
-    public static <T> NutsIterator<T> nullifyIfEmpty(NutsIterator<T> other) {
+    public static <T> NIterator<T> nullifyIfEmpty(NIterator<T> other) {
         if (other == null) {
             return null;
         }

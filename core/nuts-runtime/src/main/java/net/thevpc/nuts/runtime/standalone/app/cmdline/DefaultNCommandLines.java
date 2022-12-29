@@ -1,0 +1,130 @@
+package net.thevpc.nuts.runtime.standalone.app.cmdline;
+
+import net.thevpc.nuts.*;
+
+import net.thevpc.nuts.cmdline.DefaultNCommandLine;
+import net.thevpc.nuts.cmdline.NArgumentName;
+import net.thevpc.nuts.cmdline.NCommandLine;
+import net.thevpc.nuts.cmdline.NCommandLines;
+import net.thevpc.nuts.runtime.standalone.app.cmdline.option.*;
+import net.thevpc.nuts.runtime.standalone.session.NSessionUtils;
+import net.thevpc.nuts.runtime.standalone.shell.NShellHelper;
+import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceUtils;
+import net.thevpc.nuts.spi.NSupportLevelContext;
+
+public class DefaultNCommandLines implements NCommandLines {
+
+    private NWorkspace ws;
+    private NSession session;
+    private NShellFamily family = NShellFamily.getCurrent();
+
+    public DefaultNCommandLines(NSession session) {
+        this.session = session;
+        this.ws = session.getWorkspace();
+    }
+
+    public NSession getSession() {
+        return session;
+    }
+
+    public NCommandLines setSession(NSession session) {
+       this.session = NWorkspaceUtils.bindSession(ws, session);
+        return this;
+    }
+
+    public NShellFamily getShellFamily() {
+        return family;
+    }
+
+    public NCommandLines setShellFamily(NShellFamily family) {
+        this.family = family == null ? NShellFamily.getCurrent() : family;
+        return this;
+    }
+
+    public NWorkspace getWorkspace() {
+        return ws;
+    }
+
+    @Override
+    public NCommandLine parseCommandline(String line) {
+        checkSession();
+        return new DefaultNCommandLine(parseCommandLineArr(line)).setSession(getSession());
+    }
+
+    private String[] parseCommandLineArr(String line) {
+        NShellFamily f = getShellFamily();
+        if (f == null) {
+            f = NShellFamily.getCurrent();
+        }
+        return NShellHelper.of(f).parseCommandLineArr(line,session);
+    }
+
+    protected void checkSession() {
+        NSessionUtils.checkSession(ws, session);
+    }
+
+
+    @Override
+    public NArgumentName createName(String type, String label) {
+        checkSession();
+        return Factory.createName0(getSession(), type, label);
+    }
+
+    @Override
+    public NArgumentName createName(String type) {
+        checkSession();
+        return createName(type, type);
+    }
+
+    public static class Factory {
+
+        public static NArgumentName createName0(NSession session, String type, String label) {
+            if (type == null) {
+                type = "";
+            }
+            if (label == null) {
+                label = type;
+            }
+            switch (type) {
+                case "arch": {
+                    return new ArchitectureNonOption(label);
+                }
+                case "packaging": {
+                    return new PackagingNonOption(label);
+                }
+                case "extension": {
+                    return new ExtensionNonOption(type, session);
+                }
+                case "file": {
+                    return new FileNonOption(type);
+                }
+                case "boolean": {
+                    return new ValueNonOption(type, "true", "false");
+                }
+                case "repository": {
+                    return new RepositoryNonOption(label);
+                }
+                case "repository-type": {
+                    return new RepositoryTypeNonOption(label);
+                }
+                case "right": {
+                    return new PermissionNonOption(label, null, false);
+                }
+                case "user": {
+                    return new UserNonOption(label);
+                }
+                case "group": {
+                    return new GroupNonOption(label);
+                }
+                default: {
+                    return new DefaultNonOption(label);
+                }
+            }
+        }
+    }
+
+    @Override
+    public int getSupportLevel(NSupportLevelContext context) {
+        return DEFAULT_SUPPORT;
+    }
+}

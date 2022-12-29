@@ -26,23 +26,23 @@
 package net.thevpc.nuts.toolbox.nsh.cmds.bash;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.cmdline.NutsArgument;
-import net.thevpc.nuts.cmdline.NutsArgumentName;
-import net.thevpc.nuts.cmdline.NutsCommandLine;
-import net.thevpc.nuts.elem.NutsElement;
-import net.thevpc.nuts.elem.NutsElements;
-import net.thevpc.nuts.io.NutsPath;
-import net.thevpc.nuts.io.NutsPathPermission;
-import net.thevpc.nuts.io.NutsPrintStream;
-import net.thevpc.nuts.spi.NutsComponentScope;
-import net.thevpc.nuts.spi.NutsComponentScopeType;
-import net.thevpc.nuts.text.NutsTextStyle;
-import net.thevpc.nuts.text.NutsTexts;
+import net.thevpc.nuts.cmdline.NArgument;
+import net.thevpc.nuts.cmdline.NArgumentName;
+import net.thevpc.nuts.cmdline.NCommandLine;
+import net.thevpc.nuts.elem.NElement;
+import net.thevpc.nuts.elem.NElements;
+import net.thevpc.nuts.io.NPath;
+import net.thevpc.nuts.io.NPathPermission;
+import net.thevpc.nuts.io.NStream;
+import net.thevpc.nuts.spi.NComponentScope;
+import net.thevpc.nuts.spi.NComponentScopeType;
+import net.thevpc.nuts.text.NTextStyle;
+import net.thevpc.nuts.text.NTexts;
 import net.thevpc.nuts.toolbox.nsh.SimpleJShellBuiltin;
 import net.thevpc.nuts.toolbox.nsh.bundles.BytesSizeFormat;
 import net.thevpc.nuts.toolbox.nsh.jshell.JShellExecutionContext;
-import net.thevpc.nuts.util.NutsComparator;
-import net.thevpc.nuts.util.NutsStringUtils;
+import net.thevpc.nuts.util.NComparator;
+import net.thevpc.nuts.util.NStringUtils;
 
 import java.time.Instant;
 import java.time.ZoneId;
@@ -54,7 +54,7 @@ import java.util.stream.Stream;
 /**
  * Created by vpc on 1/7/17.
  */
-@NutsComponentScope(NutsComponentScopeType.WORKSPACE)
+@NComponentScope(NComponentScopeType.WORKSPACE)
 public class LsCommand extends SimpleJShellBuiltin {
 
     private static final FileSorter FILE_SORTER = new FileSorter();
@@ -69,10 +69,10 @@ public class LsCommand extends SimpleJShellBuiltin {
     }
 
     @Override
-    protected boolean configureFirst(NutsCommandLine commandLine, JShellExecutionContext context) {
+    protected boolean configureFirst(NCommandLine commandLine, JShellExecutionContext context) {
         Options options = context.getOptions();
-        NutsSession session = context.getSession();
-        NutsArgument a;
+        NSession session = context.getSession();
+        NArgument a;
         if ((a = commandLine.nextBoolean("-d", "--dir").orNull()) != null) {
             options.d = a.getBooleanValue().get(session);
             return true;
@@ -86,8 +86,8 @@ public class LsCommand extends SimpleJShellBuiltin {
             options.h = a.getBooleanValue().get(session);
             return true;
         } else if (commandLine.peek().get(session).isNonOption()) {
-            String path = commandLine.next(NutsArgumentName.of("file", session))
-                    .flatMap(NutsValue::asString).get(session);
+            String path = commandLine.next(NArgumentName.of("file", session))
+                    .flatMap(NValue::asString).get(session);
             options.paths.add(path);
             options.paths.addAll(Arrays.asList(commandLine.toStringArray()));
             commandLine.skip();
@@ -97,7 +97,7 @@ public class LsCommand extends SimpleJShellBuiltin {
     }
 
     @Override
-    protected void execBuiltin(NutsCommandLine commandLine, JShellExecutionContext context) {
+    protected void execBuiltin(NCommandLine commandLine, JShellExecutionContext context) {
         Options options = context.getOptions();
         ResultSuccess success = new ResultSuccess();
         success.workingDir = context.getAbsolutePath(".");
@@ -106,35 +106,35 @@ public class LsCommand extends SimpleJShellBuiltin {
         if (options.paths.isEmpty()) {
             options.paths.add(context.getAbsolutePath("."));
         }
-        NutsSession session = context.getSession();
-        LinkedHashMap<NutsPath, ResultGroup> filesTodos = new LinkedHashMap<>();
-        LinkedHashMap<NutsPath, ResultGroup> foldersTodos = new LinkedHashMap<>();
+        NSession session = context.getSession();
+        LinkedHashMap<NPath, ResultGroup> filesTodos = new LinkedHashMap<>();
+        LinkedHashMap<NPath, ResultGroup> foldersTodos = new LinkedHashMap<>();
         for (String path : options.paths) {
-            if (NutsBlankable.isBlank(path)) {
+            if (NBlankable.isBlank(path)) {
                 if (errors == null) {
                     errors = new ResultError();
                     errors.workingDir = context.getAbsolutePath(".");
                 }
-                errors.result.put(path, NutsMessage.ofCstyle("cannot access '%s': No such file or directory", path));
+                errors.result.put(path, NMsg.ofCstyle("cannot access '%s': No such file or directory", path));
                 continue;
             }
-            NutsPath file = NutsPath.of(path, session);
+            NPath file = NPath.of(path, session);
             if (file == null) {
                 if (errors == null) {
                     errors = new ResultError();
                     errors.workingDir = context.getAbsolutePath(".");
                 }
-                errors.result.put(path, NutsMessage.ofCstyle("cannot access '%s': No such file or directory", path));
+                errors.result.put(path, NMsg.ofCstyle("cannot access '%s': No such file or directory", path));
                 continue;
             }
-            file = file.toAbsolute(NutsPath.of(context.getCwd(), session));
+            file = file.toAbsolute(NPath.of(context.getCwd(), session));
             if (!file.exists()) {
                 exitCode = 1;
                 if (errors == null) {
                     errors = new ResultError();
                     errors.workingDir = context.getAbsolutePath(".");
                 }
-                errors.result.put(path, NutsMessage.ofCstyle("cannot access '%s': No such file or directory", file));
+                errors.result.put(path, NMsg.ofCstyle("cannot access '%s': No such file or directory", file));
             } else {
                 ResultGroup g = new ResultGroup();
                 g.name = path;
@@ -145,16 +145,16 @@ public class LsCommand extends SimpleJShellBuiltin {
                 }
             }
         }
-        for (Map.Entry<NutsPath, ResultGroup> e : filesTodos.entrySet()) {
-            NutsPath file = e.getKey();
+        for (Map.Entry<NPath, ResultGroup> e : filesTodos.entrySet()) {
+            NPath file = e.getKey();
             ResultGroup g = e.getValue();
             g.file = build(file);
             success.result.add(g);
         }
-        for (Map.Entry<NutsPath, ResultGroup> e : foldersTodos.entrySet()) {
-            NutsPath file = e.getKey();
+        for (Map.Entry<NPath, ResultGroup> e : foldersTodos.entrySet()) {
+            NPath file = e.getKey();
             ResultGroup g = e.getValue();
-            g.children = file.list()
+            g.children = file.stream()
                     .sorted(FILE_SORTER)
                     .map(this::build, "build")
                     .filter(
@@ -165,7 +165,7 @@ public class LsCommand extends SimpleJShellBuiltin {
             success.result.add(g);
         }
         if (success != null) {
-            NutsPrintStream out = session.out();
+            NStream out = session.out();
             switch (session.getOutputFormat()) {
                 case XML:
                 case JSON:
@@ -184,7 +184,7 @@ public class LsCommand extends SimpleJShellBuiltin {
                             .flatMap(x ->
                                     x.children == null ? Stream.empty() :
                                             x.children.stream().map(y -> {
-                                                Map m = (Map) NutsElements.of(session).destruct(y);
+                                                Map m = (Map) NElements.of(session).destruct(y);
                                                 m.put("group", x.name);
                                                 return m;
                                             })).collect(Collectors.toList()));
@@ -216,7 +216,7 @@ public class LsCommand extends SimpleJShellBuiltin {
         if (errors != null) {
             // if plain
 //            ResultError s = context.getResult();
-//            for (Map.Entry<String, NutsMessage> e : s.result.entrySet()) {
+//            for (Map.Entry<String, NMsg> e : s.result.entrySet()) {
 //                NutsTexts text = NutsTexts.of(session);
 //                out.printf("%s%n",
 //                        text.builder().append(e.getKey(),NutsTextStyle.primary5())
@@ -228,32 +228,32 @@ public class LsCommand extends SimpleJShellBuiltin {
         }
     }
 
-    private void printPlain(ResultItem item, Options options, NutsPrintStream out, NutsSession session) {
+    private void printPlain(ResultItem item, Options options, NStream out, NSession session) {
         if (options.l) {
             out.printf("%s%s  %s %s %s %s ",
-                    item.type, item.uperms != null ? item.uperms : item.jperms, NutsStringUtils.trim(item.owner), NutsStringUtils.trim(item.group),
+                    item.type, item.uperms != null ? item.uperms : item.jperms, NStringUtils.trim(item.owner), NStringUtils.trim(item.group),
                     options.h ? options.byteFormat.format(item.length) : String.format("%9d", item.length),
                     item.modified == null ? "" : SIMPLE_DATE_FORMAT.format(item.modified)
             );
         }
-        String name = NutsPath.of(item.path, session).getName();
-        NutsTexts text = NutsTexts.of(session);
+        String name = NPath.of(item.path, session).getName();
+        NTexts text = NTexts.of(session);
         if (item.hidden) {
-            out.println(text.ofStyled(name, NutsTextStyle.pale()));
+            out.println(text.ofStyled(name, NTextStyle.pale()));
         } else if (item.type == 'd') {
-            out.println(text.ofStyled(name, NutsTextStyle.primary3()));
+            out.println(text.ofStyled(name, NTextStyle.primary3()));
         } else if (item.exec2 || item.jperms.charAt(2) == 'x') {
-            out.println(text.ofStyled(name, NutsTextStyle.primary4()));
+            out.println(text.ofStyled(name, NTextStyle.primary4()));
         } else if (item.config) {
-            out.println(text.ofStyled(name, NutsTextStyle.primary5()));
+            out.println(text.ofStyled(name, NTextStyle.primary5()));
         } else if (item.archive) {
-            out.println(text.ofStyled(name, NutsTextStyle.primary1()));
+            out.println(text.ofStyled(name, NTextStyle.primary1()));
         } else {
             out.println(text.ofPlain(name));
         }
     }
 
-    private ResultItem build(NutsPath path) {
+    private ResultItem build(NPath path) {
         ResultItem r = new ResultItem();
         r.path = path.toString();
         r.name = path.getName();
@@ -261,8 +261,8 @@ public class LsCommand extends SimpleJShellBuiltin {
         boolean regular = path.isRegularFile();
         boolean link = path.isSymbolicLink();
         boolean other = false;
-        Set<NutsPathPermission> permissions = path.getPermissions();
-        r.jperms = (permissions.contains(NutsPathPermission.CAN_READ) ? "r" : "-") + (permissions.contains(NutsPathPermission.CAN_WRITE) ? "w" : "-") + (permissions.contains(NutsPathPermission.CAN_EXECUTE) ? "x" : "-");
+        Set<NPathPermission> permissions = path.getPermissions();
+        r.jperms = (permissions.contains(NPathPermission.CAN_READ) ? "r" : "-") + (permissions.contains(NPathPermission.CAN_WRITE) ? "w" : "-") + (permissions.contains(NPathPermission.CAN_EXECUTE) ? "x" : "-");
         r.owner = path.owner();
         r.group = path.group();
         r.modified = path.getLastModifiedInstant();
@@ -271,15 +271,15 @@ public class LsCommand extends SimpleJShellBuiltin {
         other = path.isOther();
         r.length = path.getContentLength();
         char[] perms = new char[9];
-        perms[0] = permissions.contains(NutsPathPermission.OWNER_READ) ? 'r' : '-';
-        perms[1] = permissions.contains(NutsPathPermission.OWNER_WRITE) ? 'w' : '-';
-        perms[2] = permissions.contains(NutsPathPermission.OWNER_EXECUTE) ? 'x' : '-';
-        perms[3] = permissions.contains(NutsPathPermission.GROUP_READ) ? 'r' : '-';
-        perms[4] = permissions.contains(NutsPathPermission.GROUP_WRITE) ? 'w' : '-';
-        perms[5] = permissions.contains(NutsPathPermission.GROUP_EXECUTE) ? 'x' : '-';
-        perms[6] = permissions.contains(NutsPathPermission.OTHERS_READ) ? 'r' : '-';
-        perms[7] = permissions.contains(NutsPathPermission.OTHERS_WRITE) ? 'w' : '-';
-        perms[8] = permissions.contains(NutsPathPermission.OTHERS_EXECUTE) ? 'x' : '-';
+        perms[0] = permissions.contains(NPathPermission.OWNER_READ) ? 'r' : '-';
+        perms[1] = permissions.contains(NPathPermission.OWNER_WRITE) ? 'w' : '-';
+        perms[2] = permissions.contains(NPathPermission.OWNER_EXECUTE) ? 'x' : '-';
+        perms[3] = permissions.contains(NPathPermission.GROUP_READ) ? 'r' : '-';
+        perms[4] = permissions.contains(NPathPermission.GROUP_WRITE) ? 'w' : '-';
+        perms[5] = permissions.contains(NPathPermission.GROUP_EXECUTE) ? 'x' : '-';
+        perms[6] = permissions.contains(NPathPermission.OTHERS_READ) ? 'r' : '-';
+        perms[7] = permissions.contains(NPathPermission.OTHERS_WRITE) ? 'w' : '-';
+        perms[8] = permissions.contains(NPathPermission.OTHERS_EXECUTE) ? 'x' : '-';
         r.uperms = new String(perms);
 
 
@@ -331,7 +331,7 @@ public class LsCommand extends SimpleJShellBuiltin {
 
         boolean error = true;
         String workingDir;
-        Map<String, NutsMessage> result = new HashMap<>();
+        Map<String, NMsg> result = new HashMap<>();
     }
 
     public static class ResultGroup {
@@ -364,14 +364,14 @@ public class LsCommand extends SimpleJShellBuiltin {
         boolean hidden;
     }
 
-    private static class FileSorter implements NutsComparator<NutsPath> {
+    private static class FileSorter implements NComparator<NPath> {
 
         boolean foldersFirst = true;
         boolean groupCase = true;
 //        boolean hiddenFirst = true;
 
         @Override
-        public int compare(NutsPath o1, NutsPath o2) {
+        public int compare(NPath o1, NPath o2) {
             int d1 = o1.isDirectory() ? 0 : o1.isRegularFile() ? 1 : 2;
             int d2 = o2.isDirectory() ? 0 : o2.isRegularFile() ? 1 : 2;
             int x = 0;
@@ -392,8 +392,8 @@ public class LsCommand extends SimpleJShellBuiltin {
         }
 
         @Override
-        public NutsElement describe(NutsSession session) {
-            return NutsElements.of(session).ofString("foldersFirst");
+        public NElement describe(NSession session) {
+            return NElements.of(session).ofString("foldersFirst");
         }
     }
 }

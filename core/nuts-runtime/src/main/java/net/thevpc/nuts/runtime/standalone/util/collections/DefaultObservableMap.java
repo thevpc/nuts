@@ -26,7 +26,7 @@
 */
 package net.thevpc.nuts.runtime.standalone.util.collections;
 
-import net.thevpc.nuts.util.NutsMapListener;
+import net.thevpc.nuts.util.NMapListener;
 
 import java.util.*;
 
@@ -36,10 +36,10 @@ import java.util.*;
 public class DefaultObservableMap<K, V> extends AbstractMap<K, V> implements ObservableMap<K, V> {
 
     private Map<K, V> base = new HashMap<>();
-    private List<NutsMapListener<K, V>> listeners;
+    private List<NMapListener<K, V>> listeners;
 
 
-    public void addListener(NutsMapListener<K, V> listener) {
+    public void addListener(NMapListener<K, V> listener) {
         if (listener != null) {
             if (listeners == null) {
                 listeners = new ArrayList<>();
@@ -48,7 +48,7 @@ public class DefaultObservableMap<K, V> extends AbstractMap<K, V> implements Obs
         }
     }
 
-    public void removeListener(NutsMapListener<K, V> listener) {
+    public void removeListener(NMapListener<K, V> listener) {
         if (listener != null) {
             if (listeners != null) {
                 listeners.remove(listener);
@@ -56,7 +56,7 @@ public class DefaultObservableMap<K, V> extends AbstractMap<K, V> implements Obs
         }
     }
 
-    public List<NutsMapListener<K, V>> getListeners() {
+    public List<NMapListener<K, V>> getListeners() {
         return listeners;
     }
 
@@ -65,7 +65,7 @@ public class DefaultObservableMap<K, V> extends AbstractMap<K, V> implements Obs
         if (base.containsKey(key)) {
             V old = base.put(key, value);
             if (listeners != null) {
-                for (NutsMapListener<K, V> listener : listeners) {
+                for (NMapListener<K, V> listener : listeners) {
                     listener.entryUpdated(key, value, old);
                 }
             }
@@ -73,7 +73,7 @@ public class DefaultObservableMap<K, V> extends AbstractMap<K, V> implements Obs
         } else {
             V old = base.put(key, value);
             if (listeners != null) {
-                for (NutsMapListener<K, V> listener : listeners) {
+                for (NMapListener<K, V> listener : listeners) {
                     listener.entryAdded(key, value);
                 }
             }
@@ -87,7 +87,7 @@ public class DefaultObservableMap<K, V> extends AbstractMap<K, V> implements Obs
         boolean found = base.containsKey(kkey);
         V r = base.remove(key);
         if (found && listeners != null) {
-            for (NutsMapListener<K, V> listener : listeners) {
+            for (NMapListener<K, V> listener : listeners) {
                 listener.entryRemoved(kkey, r);
             }
         }
@@ -143,7 +143,7 @@ public class DefaultObservableMap<K, V> extends AbstractMap<K, V> implements Obs
                     @Override
                     public void remove() {
                         baseIterator.remove();
-                        for (NutsMapListener<K, V> listener : listeners) {
+                        for (NMapListener<K, V> listener : listeners) {
                             listener.entryRemoved(curr.getKey(), curr.getValue());
                         }
                     }

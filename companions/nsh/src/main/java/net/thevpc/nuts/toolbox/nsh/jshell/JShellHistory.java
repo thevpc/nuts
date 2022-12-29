@@ -1,14 +1,14 @@
 package net.thevpc.nuts.toolbox.nsh.jshell;
 
-import net.thevpc.nuts.io.NutsPath;
+import net.thevpc.nuts.io.NPath;
 
 import java.io.*;
 import java.util.List;
 
 public interface JShellHistory {
-    NutsPath getHistoryFile();
+    NPath getHistoryFile();
 
-    JShellHistory setHistoryFile(NutsPath historyFile);
+    JShellHistory setHistoryFile(NPath historyFile);
 
     void add(String e);
 
@@ -30,13 +30,13 @@ public interface JShellHistory {
 
     void load() throws IOException;
 
-    void load(NutsPath reader) throws IOException;
+    void load(NPath reader) throws IOException;
 
     void load(Reader reader) throws IOException;
 
     void save() throws IOException;
 
-    void save(NutsPath writer) throws IOException;
+    void save(NPath writer) throws IOException;
 
     void save(PrintWriter writer) throws IOException;
 

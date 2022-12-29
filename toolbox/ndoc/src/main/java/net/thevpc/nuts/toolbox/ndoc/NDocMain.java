@@ -1,34 +1,34 @@
 package net.thevpc.nuts.toolbox.ndoc;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.cmdline.NutsCommandLineContext;
-import net.thevpc.nuts.cmdline.NutsCommandLineProcessor;
-import net.thevpc.nuts.cmdline.NutsArgument;
-import net.thevpc.nuts.cmdline.NutsCommandLine;
+import net.thevpc.nuts.cmdline.NCommandLineContext;
+import net.thevpc.nuts.cmdline.NCommandLineProcessor;
+import net.thevpc.nuts.cmdline.NArgument;
+import net.thevpc.nuts.cmdline.NCommandLine;
 import net.thevpc.nuts.toolbox.ndoc.doc.MdDoclet;
 import net.thevpc.nuts.toolbox.ndoc.doc.MdDocletConfig;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class NDocMain implements NutsApplication, NutsCommandLineProcessor {
+public class NDocMain implements NApplication, NCommandLineProcessor {
     private List<String> src = new ArrayList<>();
     private List<String> pck = new ArrayList<>();
     private String target;
     private String backend;
 
     public static void main(String[] args) {
-        NutsApplication.main(NDocMain.class, args);
+        NApplication.main(NDocMain.class, args);
     }
 
     @Override
-    public void run(NutsApplicationContext appContext) {
+    public void run(NApplicationContext appContext) {
         appContext.processCommandLine(this);
     }
 
     @Override
-    public boolean onCmdNextOption(NutsArgument option, NutsCommandLine commandLine, NutsCommandLineContext context) {
-        NutsSession session = commandLine.getSession();
+    public boolean onCmdNextOption(NArgument option, NCommandLine commandLine, NCommandLineContext context) {
+        NSession session = commandLine.getSession();
         switch (option.key()) {
             case "-s":
             case "--source": {
@@ -55,12 +55,12 @@ public class NDocMain implements NutsApplication, NutsCommandLineProcessor {
     }
 
     @Override
-    public boolean onCmdNextNonOption(NutsArgument nonOption, NutsCommandLine commandLine, NutsCommandLineContext context) {
+    public boolean onCmdNextNonOption(NArgument nonOption, NCommandLine commandLine, NCommandLineContext context) {
         return false;
     }
 
     @Override
-    public void onCmdExec(NutsCommandLine commandLine, NutsCommandLineContext context) {
+    public void onCmdExec(NCommandLine commandLine, NCommandLineContext context) {
         if (src.isEmpty()) {
             src.add(".");
         }

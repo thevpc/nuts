@@ -1,24 +1,24 @@
 package net.thevpc.nuts.runtime.standalone.io.path;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.io.NutsPath;
+import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.runtime.standalone.xtra.glob.GlobUtils;
-import net.thevpc.nuts.util.NutsFunction;
-import net.thevpc.nuts.util.NutsStream;
+import net.thevpc.nuts.util.NFunction;
+import net.thevpc.nuts.util.NStream;
 
 import java.util.*;
 import java.util.regex.Pattern;
 
 public class DirectoryScanner {
-    private NutsPath initialPattern;
+    private NPath initialPattern;
 //    private String root;
 //    private String patternString;
 //    private Pattern pattern;
     private PathPart[] parts;
 //    private DirectoryScannerFS fs;
-    private NutsSession session;
+    private NSession session;
 
-    public DirectoryScanner(NutsPath pattern,NutsSession session) {
+    public DirectoryScanner(NPath pattern, NSession session) {
         this.initialPattern = pattern.toAbsolute().normalize();
         this.session = session;
         parts = buildParts(initialPattern);
@@ -53,9 +53,9 @@ public class DirectoryScanner {
         return false;
     }
 
-    private static PathPart[] buildParts(NutsPath initialPattern) {
+    private static PathPart[] buildParts(NPath initialPattern) {
         List<PathPart> parts = new ArrayList<>();
-        NutsPath h=initialPattern;
+        NPath h=initialPattern;
         while(h!=null){
             String name = h.getName();
             if (containsWildcard(name)) {
@@ -67,7 +67,7 @@ public class DirectoryScanner {
             } else {
                 parts.add(0,new PlainPathPart(name));
             }
-            NutsPath p = h.getParent();
+            NPath p = h.getParent();
             if(p==h){
                 h=null;
             }else{
@@ -82,27 +82,27 @@ public class DirectoryScanner {
         return initialPattern.toString();
     }
 
-    public NutsPath[] toArray() {
-        return stream().toArray(NutsPath[]::new);
+    public NPath[] toArray() {
+        return stream().toArray(NPath[]::new);
     }
 
-    public NutsStream<NutsPath> stream() {
+    public NStream<NPath> stream() {
         return stream(null, parts, 0);
     }
 
-    private NutsStream<NutsPath> stream(NutsPath r, PathPart[] parts, int from) {
+    private NStream<NPath> stream(NPath r, PathPart[] parts, int from) {
         for (int i = from; i < parts.length; i++) {
             if (parts[i] instanceof PlainPathPart) {
                 if (r == null) {
                     r = initialPattern.getRoot();
                 }
                 if (r == null) {
-                    r=NutsPath.of(((PlainPathPart) parts[i]).value,session);
+                    r= NPath.of(((PlainPathPart) parts[i]).value,session);
                 }else {
                     r = r.resolve(((PlainPathPart) parts[i]).value);
                 }
                 if(!r.exists()){
-                    return NutsStream.ofEmpty(session);
+                    return NStream.ofEmpty(session);
                 }
             } else if (parts[i] instanceof NameWildCardPathPart) {
                 NameWildCardPathPart w = (NameWildCardPathPart) parts[i];
@@ -110,15 +110,15 @@ public class DirectoryScanner {
                     r = initialPattern.getRoot();
                 }
                 if (r == null) {
-                    return NutsStream.ofEmpty(session);
+                    return NStream.ofEmpty(session);
                 }
-                NutsStream<NutsPath> t = r.list().filter(x -> w.matchesName(x.getName()),"getName");
+                NStream<NPath> t = r.stream().filter(x -> w.matchesName(x.getName()),"getName");
                 if (parts.length - i - 1 == 0) {
                     return t;
                 } else {
                     int i0 = i;
-                    NutsFunction<NutsPath, NutsStream<NutsPath>> f = NutsFunction.of(x -> stream(x, parts, i0 + 1),"subStream");
-                    return t.flatMap((NutsFunction) f);
+                    NFunction<NPath, NStream<NPath>> f = NFunction.of(x -> stream(x, parts, i0 + 1),"subStream");
+                    return t.flatMap((NFunction) f);
                 }
             } else if (parts[i] instanceof SubPathWildCardPathPart) {
                 SubPathWildCardPathPart w = (SubPathWildCardPathPart) parts[i];
@@ -126,23 +126,23 @@ public class DirectoryScanner {
                     r = initialPattern.getRoot();
                 }
 
-                NutsStream<NutsPath> t = new SubPathWildCardPathPartIterator(w, r).stream();
+                NStream<NPath> t = new SubPathWildCardPathPartIterator(w, r).stream();
                 if (parts.length - i - 1 == 0) {
                     return t;
                 } else {
                     int i0 = i;
 
-                    NutsFunction<NutsPath, NutsStream<NutsPath>> f = NutsFunction.of(x -> stream(x, parts, i0 + 1),"subStream");
-                    return t.flatMap((NutsFunction) f).distinct();
+                    NFunction<NPath, NStream<NPath>> f = NFunction.of(x -> stream(x, parts, i0 + 1),"subStream");
+                    return t.flatMap((NFunction) f).distinct();
                 }
             } else {
-                throw new NutsIllegalArgumentException(session,NutsMessage.ofCstyle("unsupported %s",parts[i]));
+                throw new NIllegalArgumentException(session, NMsg.ofCstyle("unsupported %s",parts[i]));
             }
         }
         if (r == null) {
-            return NutsStream.ofSingleton(initialPattern.getRoot(),session);
+            return NStream.ofSingleton(initialPattern.getRoot(),session);
         }
-        return NutsStream.ofSingleton(r,session);
+        return NStream.ofSingleton(r,session);
     }
 
     private static class PathPart {
@@ -190,7 +190,7 @@ public class DirectoryScanner {
             this.pattern = GlobUtils.glob(value,"/\\");
         }
 
-        public boolean matchesSubPath(NutsPath subPath) {
+        public boolean matchesSubPath(NPath subPath) {
             return pattern.matcher(subPath.toString()).matches();
         }
 
@@ -200,13 +200,13 @@ public class DirectoryScanner {
         }
     }
 
-    private class SubPathWildCardPathPartIterator implements Iterator<NutsPath> {
-        private final Stack<NutsPath> stack=new Stack<>();
+    private class SubPathWildCardPathPartIterator implements Iterator<NPath> {
+        private final Stack<NPath> stack=new Stack<>();
         private final SubPathWildCardPathPart w;
-        NutsPath last;
-        NutsPath root;
+        NPath last;
+        NPath root;
 
-        public SubPathWildCardPathPartIterator(SubPathWildCardPathPart w, NutsPath root) {
+        public SubPathWildCardPathPartIterator(SubPathWildCardPathPart w, NPath root) {
             stack.push(root);
             this.w = w;
             this.root = root;
@@ -219,26 +219,26 @@ public class DirectoryScanner {
         }
 
         @Override
-        public NutsPath next() {
+        public NPath next() {
             return last;
         }
 
-        public NutsPath next0() {
+        public NPath next0() {
             while (!stack.isEmpty()) {
-                NutsPath pop = stack.pop();
-                NutsPath[] t = pop.list().toArray(NutsPath[]::new);
+                NPath pop = stack.pop();
+                NPath[] t = pop.stream().toArray(NPath[]::new);
                 for (int i = t.length - 1; i >= 0; i--) {
                     stack.push(t[i]);
                 }
-                if (w.matchesSubPath(pop.toRelativePath(root))) {
+                if (w.matchesSubPath(pop.toRelative(root))) {
                     return pop;
                 }
             }
             return null;
         }
 
-        public NutsStream<NutsPath> stream() {
-            return NutsStream.of(this,session);
+        public NStream<NPath> stream() {
+            return NStream.of(this,session);
         }
     }
 }

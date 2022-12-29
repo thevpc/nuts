@@ -23,7 +23,7 @@
  */
 package net.thevpc.nuts.core.test;
 
-import net.thevpc.nuts.NutsSession;
+import net.thevpc.nuts.NSession;
 import net.thevpc.nuts.core.test.utils.TestUtils;
 import net.thevpc.nuts.runtime.standalone.io.progress.CProgressBar;
 import org.junit.jupiter.api.Assertions;
@@ -34,7 +34,7 @@ import org.junit.jupiter.api.Test;
  * @author thevpc
  */
 public class Test16_TerminalProgressTest {
-    static NutsSession session;
+    static NSession session;
 
     @BeforeAll
     public static void init() {

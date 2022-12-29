@@ -6,37 +6,37 @@
 package net.thevpc.nuts.runtime.standalone.workspace.cmd.exec;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.cmdline.NutsCommandLine;
+import net.thevpc.nuts.cmdline.NCommandLine;
 
 /**
  * @author bacali95
  * @since 0.8.3
  */
-public class DefaultUnknownExecutable extends AbstractNutsExecutableCommand {
+public class DefaultUnknownExecutable extends AbstractNExecutableCommand {
 
-    NutsSession execSession;
+    NSession execSession;
 
-    public DefaultUnknownExecutable(String[] cmd, NutsSession execSession) {
-        super(cmd[0], NutsCommandLine.of(cmd).toString(), NutsExecutableType.UNKNOWN);
+    public DefaultUnknownExecutable(String[] cmd, NSession execSession) {
+        super(cmd[0], NCommandLine.of(cmd).toString(), NExecutableType.UNKNOWN);
         this.execSession = execSession;
     }
 
     @Override
-    protected NutsSession getSession() {
+    protected NSession getSession() {
         return execSession;
     }
 
     @Override
     public void execute() {
         if(execSession.isDry()){
-            throw new NutsExecutionException(execSession, NutsMessage.ofCstyle("cannot execute an unknown command : %s", name), 1);
+            throw new NExecutionException(execSession, NMsg.ofCstyle("cannot execute an unknown command : %s", name), 1);
         }else {
-            throw new NutsExecutionException(execSession, NutsMessage.ofCstyle("cannot execute an unknown command : %s", name), 1);
+            throw new NExecutionException(execSession, NMsg.ofCstyle("cannot execute an unknown command : %s", name), 1);
         }
     }
 
     @Override
-    public NutsId getId() {
+    public NId getId() {
         return null;
     }
 }

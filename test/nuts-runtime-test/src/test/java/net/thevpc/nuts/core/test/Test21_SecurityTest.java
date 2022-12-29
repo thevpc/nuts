@@ -1,11 +1,11 @@
 package net.thevpc.nuts.core.test;
 
-import net.thevpc.nuts.NutsSession;
+import net.thevpc.nuts.NSession;
 import net.thevpc.nuts.core.test.utils.TestUtils;
 import net.thevpc.nuts.runtime.standalone.io.util.CoreSecurityUtils;
-import net.thevpc.nuts.runtime.standalone.security.DefaultNutsAuthenticationAgent;
-import net.thevpc.nuts.runtime.standalone.security.PlainNutsAuthenticationAgent;
-import net.thevpc.nuts.spi.NutsAuthenticationAgent;
+import net.thevpc.nuts.runtime.standalone.security.DefaultNAuthenticationAgent;
+import net.thevpc.nuts.runtime.standalone.security.PlainNAuthenticationAgent;
+import net.thevpc.nuts.spi.NAuthenticationAgent;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -14,7 +14,7 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 public class Test21_SecurityTest {
-    static NutsSession session;
+    static NSession session;
 
     @BeforeAll
     public static void init() {
@@ -29,10 +29,10 @@ public class Test21_SecurityTest {
         TestUtils.println(new String(i));
     }
 
-    private void testHelperRetrievable(NutsAuthenticationAgent a) {
+    private void testHelperRetrievable(NAuthenticationAgent a) {
         String mySecret = "my-secret";
         Map<String,String> envProvider = new LinkedHashMap<>();
-        NutsSession session = TestUtils.openNewTestWorkspace();
+        NSession session = TestUtils.openNewTestWorkspace();
         String withAllowRetreiveId = new String(a.createCredentials(mySecret.toCharArray(), true, null, envProvider, session));
         TestUtils.println(withAllowRetreiveId);
         Assertions.assertTrue(withAllowRetreiveId.startsWith(a.getId() + ":"));
@@ -50,10 +50,10 @@ public class Test21_SecurityTest {
         Assertions.assertTrue(withoutAllowRetreiveId.startsWith(a.getId() + ":"));
     }
 
-    private void testHelperHashed(NutsAuthenticationAgent a, boolean alwaysRetrievable) {
+    private void testHelperHashed(NAuthenticationAgent a, boolean alwaysRetrievable) {
         String mySecret = "my-secret";
         Map<String,String> envProvider = new LinkedHashMap<>();
-        NutsSession session = TestUtils.openNewTestWorkspace();
+        NSession session = TestUtils.openNewTestWorkspace();
         String withoutAllowRetreiveId = new String(a.createCredentials(mySecret.toCharArray(), false, null, envProvider, session));
         TestUtils.println(withoutAllowRetreiveId);
         Assertions.assertTrue(withoutAllowRetreiveId.startsWith(a.getId() + ":"));
@@ -86,20 +86,20 @@ public class Test21_SecurityTest {
 
     @Test
     public void testCredentialsRetrievableDefault() {
-        testHelperRetrievable(new DefaultNutsAuthenticationAgent());
-        testHelperHashed(new DefaultNutsAuthenticationAgent(),false);
+        testHelperRetrievable(new DefaultNAuthenticationAgent());
+        testHelperHashed(new DefaultNAuthenticationAgent(),false);
     }
 
     @Test
     public void testCredentialsRetrievablePlain() {
-        testHelperRetrievable(new PlainNutsAuthenticationAgent());
-        testHelperHashed(new PlainNutsAuthenticationAgent(),true);
+        testHelperRetrievable(new PlainNAuthenticationAgent());
+        testHelperHashed(new PlainNAuthenticationAgent(),true);
     }
 
     @Test
     public void testCredentialsHashedDefault() {
-        testHelperRetrievable(new DefaultNutsAuthenticationAgent());
-        testHelperHashed(new DefaultNutsAuthenticationAgent(),false);
+        testHelperRetrievable(new DefaultNAuthenticationAgent());
+        testHelperHashed(new DefaultNAuthenticationAgent(),false);
     }
 
 }

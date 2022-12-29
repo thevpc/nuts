@@ -25,7 +25,7 @@
 */
 package net.thevpc.nuts.runtime.standalone.util.iter;
 
-import net.thevpc.nuts.util.NutsIterable;
+import net.thevpc.nuts.util.NIterable;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -36,16 +36,16 @@ import java.util.List;
  */
 public class IterableList<T> implements Iterable<T> {
 
-    private List<NutsIterable<T>> children = new ArrayList<>();
+    private List<NIterable<T>> children = new ArrayList<>();
 
-    public void add(NutsIterable<T> child) {
+    public void add(NIterable<T> child) {
         children.add(child);
     }
 
     @Override
     public Iterator<T> iterator() {
         QueueIterator<T> li = new QueueIterator<T>();
-        for (NutsIterable<T> child : children) {
+        for (NIterable<T> child : children) {
             li.add(child.iterator());
         }
         return li;

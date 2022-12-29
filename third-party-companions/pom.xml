@@ -13,6 +13,7 @@
         <module>ndocusaurus</module>
         <module>nmvn</module>
         <module>ntomcat</module>
+        <module>nbackup</module>
     </modules>
     <properties>
     </properties>

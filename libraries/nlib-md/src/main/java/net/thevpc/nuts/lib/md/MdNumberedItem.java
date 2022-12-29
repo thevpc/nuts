@@ -17,7 +17,7 @@
  */
 package net.thevpc.nuts.lib.md;
 
-import net.thevpc.nuts.NutsBlankable;
+import net.thevpc.nuts.NBlankable;
 
 import java.util.Arrays;
 import java.util.Objects;
@@ -100,7 +100,7 @@ public class MdNumberedItem extends MdAbstractElement {
 
     @Override
     public boolean isBlank() {
-        return NutsBlankable.isBlank(value)
-                && (children==null || Arrays.stream(children).allMatch(x->NutsBlankable.isBlank(x)));
+        return NBlankable.isBlank(value)
+                && (children==null || Arrays.stream(children).allMatch(x-> NBlankable.isBlank(x)));
     }
 }

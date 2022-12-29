@@ -1,8 +1,8 @@
 package net.thevpc.nuts.toolbox.njob;
 
-import net.thevpc.nuts.NutsApplicationContext;
-import net.thevpc.nuts.NutsIllegalArgumentException;
-import net.thevpc.nuts.NutsMessage;
+import net.thevpc.nuts.NApplicationContext;
+import net.thevpc.nuts.NIllegalArgumentException;
+import net.thevpc.nuts.NMsg;
 import net.thevpc.nuts.toolbox.njob.model.*;
 import net.thevpc.nuts.toolbox.njob.time.TimePeriod;
 import net.thevpc.nuts.toolbox.njob.time.TimePeriods;
@@ -19,11 +19,11 @@ import java.util.stream.Stream;
 
 public class NTasksSubService {
 
-    private NutsApplicationContext context;
+    private NApplicationContext context;
     private NJobConfigStore dal;
     private JobService service;
 
-    public NTasksSubService(NutsApplicationContext context, NJobConfigStore dal, JobService service) {
+    public NTasksSubService(NApplicationContext context, NJobConfigStore dal, JobService service) {
         this.context = context;
         this.dal = dal;
         this.service = service;
@@ -281,9 +281,9 @@ public class NTasksSubService {
     public boolean removeTask(String taskId) {
         long count = findAllTasks().filter(x -> taskId.equals(x.getParentTaskId())).count();
         if (count > 1) {
-            throw new NutsIllegalArgumentException(context.getSession(), NutsMessage.ofCstyle("Task is used in %d tasks. It cannot be removed.",count));
+            throw new NIllegalArgumentException(context.getSession(), NMsg.ofCstyle("Task is used in %d tasks. It cannot be removed.",count));
         } else if (count > 0) {
-            throw new NutsIllegalArgumentException(context.getSession(), NutsMessage.ofPlain("Task is used in one task. It cannot be removed."));
+            throw new NIllegalArgumentException(context.getSession(), NMsg.ofPlain("Task is used in one task. It cannot be removed."));
         }
         return dal.delete(NTask.class, taskId);
     }

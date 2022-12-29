@@ -25,10 +25,10 @@
 */
 package net.thevpc.nuts.toolbox.nutsserver;
 
-import net.thevpc.nuts.io.NutsPath;
-import net.thevpc.nuts.toolbox.nutsserver.http.NutsHttpServletFacadeContext;
-import net.thevpc.nuts.NutsSession;
-import net.thevpc.nuts.NutsWorkspace;
+import net.thevpc.nuts.io.NPath;
+import net.thevpc.nuts.toolbox.nutsserver.http.NHttpServletFacadeContext;
+import net.thevpc.nuts.NSession;
+import net.thevpc.nuts.NWorkspace;
 
 import java.io.File;
 import java.io.IOException;
@@ -43,16 +43,16 @@ import java.util.Set;
 /**
  * Created by vpc on 1/24/17.
  */
-public class FacadeCommandContext implements NutsHttpServletFacadeContext {
+public class FacadeCommandContext implements NHttpServletFacadeContext {
 
-    private NutsHttpServletFacadeContext base;
-    private NutsWorkspace workspace;
+    private NHttpServletFacadeContext base;
+    private NWorkspace workspace;
     private String serverId;
     private String command;
     private String path;
-    private NutsSession session;
+    private NSession session;
 
-    public FacadeCommandContext(NutsHttpServletFacadeContext base, String serverId, String command, String path, NutsSession session) {
+    public FacadeCommandContext(NHttpServletFacadeContext base, String serverId, String command, String path, NSession session) {
         this.base = base;
         this.workspace = session.getWorkspace();
         this.serverId = serverId;
@@ -61,7 +61,7 @@ public class FacadeCommandContext implements NutsHttpServletFacadeContext {
         this.session = session;
     }
 
-    public NutsSession getSession() {
+    public NSession getSession() {
         return session;
     }
 
@@ -73,7 +73,7 @@ public class FacadeCommandContext implements NutsHttpServletFacadeContext {
         return command;
     }
 
-    public NutsWorkspace getWorkspace() {
+    public NWorkspace getWorkspace() {
         return workspace;
     }
 
@@ -121,7 +121,7 @@ public class FacadeCommandContext implements NutsHttpServletFacadeContext {
     }
 
     @Override
-    public void sendResponseFile(int code, NutsPath file) throws IOException {
+    public void sendResponseFile(int code, NPath file) throws IOException {
         base.sendResponseFile(code, file);
     }
 

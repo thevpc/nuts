@@ -1,7 +1,7 @@
 package net.thevpc.nuts.toolbox.ntemplate.filetemplate;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.cmdline.NutsCommandLine;
+import net.thevpc.nuts.cmdline.NCommandLine;
 import net.thevpc.nuts.toolbox.nsh.SimpleJShellBuiltin;
 import net.thevpc.nuts.toolbox.nsh.jshell.JShellExecutionContext;
 import net.thevpc.nuts.toolbox.ntemplate.filetemplate.util.StringUtils;
@@ -20,13 +20,13 @@ public class ProcessCmd extends SimpleJShellBuiltin {
     }
 
     @Override
-    protected boolean configureFirst(NutsCommandLine commandLine, JShellExecutionContext context) {
+    protected boolean configureFirst(NCommandLine commandLine, JShellExecutionContext context) {
         Options o = context.getOptions();
-        NutsSession session = context.getSession();
+        NSession session = context.getSession();
         if (commandLine.isNonOption(0)) {
-            o.args.add(commandLine.next().flatMap(NutsValue::asString).get(session));
+            o.args.add(commandLine.next().flatMap(NValue::asString).get(session));
             while (commandLine.hasNext()) {
-                o.args.add(commandLine.next().flatMap(NutsValue::asString).get(session));
+                o.args.add(commandLine.next().flatMap(NValue::asString).get(session));
             }
             return true;
         }
@@ -34,10 +34,10 @@ public class ProcessCmd extends SimpleJShellBuiltin {
     }
 
     @Override
-    protected void execBuiltin(NutsCommandLine commandLine, JShellExecutionContext context) {
+    protected void execBuiltin(NCommandLine commandLine, JShellExecutionContext context) {
         Options o = context.getOptions();
         if (o.args.size() == 0) {
-            throw new NutsExecutionException(context.getSession(), NutsMessage.ofCstyle("%s : invalid arguments count", getName()), 1);
+            throw new NExecutionException(context.getSession(), NMsg.ofCstyle("%s : invalid arguments count", getName()), 1);
         }
         for (String pathString : o.args) {
             fileTemplater.getLog().debug("eval", getName() + "(" + StringUtils.toLiteralString(pathString) + ")");

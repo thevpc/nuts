@@ -1,9 +1,9 @@
 package net.thevpc.nuts.toolbox.ntomcat.remote;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.elem.NutsElements;
-import net.thevpc.nuts.io.NutsPath;
-import net.thevpc.nuts.io.NutsPrintStream;
+import net.thevpc.nuts.elem.NElements;
+import net.thevpc.nuts.io.NPath;
+import net.thevpc.nuts.io.NStream;
 import net.thevpc.nuts.toolbox.ntomcat.NTomcatConfigVersions;
 import net.thevpc.nuts.toolbox.ntomcat.local.LocalTomcatConfigService;
 import net.thevpc.nuts.toolbox.ntomcat.remote.config.RemoteTomcatAppConfig;
@@ -19,19 +19,19 @@ public class RemoteTomcatConfigService extends RemoteTomcatServiceBase {
     public static final String REMOTE_CONFIG_EXT = ".remote-config";
     private static final String NTOMCAT = "net.thevpc.nuts.toolbox:ntomcat";
     RemoteTomcatConfig config;
-    NutsApplicationContext context;
+    NApplicationContext context;
     RemoteTomcat client;
-    NutsPath sharedConfigFolder;
+    NPath sharedConfigFolder;
     private String name;
 
     public RemoteTomcatConfigService(String name, RemoteTomcat client) {
         setName(name);
         this.client = client;
         this.context = client.context;
-        sharedConfigFolder = client.getContext().getVersionFolder(NutsStoreLocation.CONFIG, NTomcatConfigVersions.CURRENT);
+        sharedConfigFolder = client.getContext().getVersionFolder(NStoreLocation.CONFIG, NTomcatConfigVersions.CURRENT);
     }
 
-    public RemoteTomcatConfigService(NutsPath file, RemoteTomcat client) {
+    public RemoteTomcatConfigService(NPath file, RemoteTomcat client) {
         this(
                 file.getName().substring(0, file.getName().length() - LocalTomcatConfigService.LOCAL_CONFIG_EXT.length()),
                 client
@@ -57,16 +57,16 @@ public class RemoteTomcatConfigService extends RemoteTomcatServiceBase {
     }
 
     @Override
-    public RemoteTomcatConfigService print(NutsPrintStream out) {
-        NutsSession session = context.getSession();
-        NutsElements.of(session).json().setValue(getConfig()).print(out);
+    public RemoteTomcatConfigService print(NStream out) {
+        NSession session = context.getSession();
+        NElements.of(session).json().setValue(getConfig()).print(out);
         out.flush();
         return this;
     }
 
     @Override
     public RemoteTomcatConfigService remove() {
-        NutsPath f = getConfigPath();
+        NPath f = getConfigPath();
         f.delete();
         return this;
     }
@@ -76,19 +76,19 @@ public class RemoteTomcatConfigService extends RemoteTomcatServiceBase {
         return this;
     }
 
-    public NutsPath getConfigPath() {
+    public NPath getConfigPath() {
         return sharedConfigFolder.resolve(name + REMOTE_CONFIG_EXT);
     }
 
     public RemoteTomcatConfigService save() {
-        NutsPath f = getConfigPath();
-        NutsSession session = context.getSession();
-        NutsElements.of(session).json().setValue(config).print(f);
+        NPath f = getConfigPath();
+        NSession session = context.getSession();
+        NElements.of(session).json().setValue(config).print(f);
         return this;
     }
 
     public boolean existsConfig() {
-        NutsPath f = getConfigPath();
+        NPath f = getConfigPath();
         return (f.exists());
     }
 
@@ -134,7 +134,7 @@ public class RemoteTomcatConfigService extends RemoteTomcatServiceBase {
 
     public String getRemoteInstanceName() {
         String n = getConfig().getRemoteName();
-        return NutsBlankable.isBlank(n) ? "default" : n;
+        return NBlankable.isBlank(n) ? "default" : n;
     }
 
     public void restart(String[] redeploy, boolean deleteOutLog) {
@@ -161,13 +161,13 @@ public class RemoteTomcatConfigService extends RemoteTomcatServiceBase {
     }
 
     public RemoteTomcatConfigService loadConfig() {
-        NutsSession session = context.getSession();
+        NSession session = context.getSession();
         if (name == null) {
-            throw new NutsExecutionException(session, NutsMessage.ofPlain("missing instance name"), 2);
+            throw new NExecutionException(session, NMsg.ofPlain("missing instance name"), 2);
         }
-        NutsPath f = getConfigPath();
+        NPath f = getConfigPath();
         if (f.exists()) {
-            config = NutsElements.of(session).json().parse(f, RemoteTomcatConfig.class);
+            config = NElements.of(session).json().parse(f, RemoteTomcatConfig.class);
             return this;
         }
         throw new NamedItemNotFoundException("instance not found : " + getName(), getName());
@@ -188,7 +188,7 @@ public class RemoteTomcatConfigService extends RemoteTomcatServiceBase {
     public RemoteTomcatAppConfigService getAppOrError(String appName) {
         RemoteTomcatAppConfig a = getConfig().getApps().get(appName);
         if (a == null) {
-            throw new NutsExecutionException(context.getSession(), NutsMessage.ofCstyle("app not found :%s", appName), 2);
+            throw new NExecutionException(context.getSession(), NMsg.ofCstyle("app not found :%s", appName), 2);
         }
         return new RemoteTomcatAppConfigService(appName, a, this);
     }

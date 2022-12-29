@@ -1,22 +1,22 @@
 package net.thevpc.nuts.runtime.standalone.text.parser.v2;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.runtime.standalone.text.AbstractNutsTextNodeParser;
-import net.thevpc.nuts.runtime.standalone.text.DefaultNutsTexts;
+import net.thevpc.nuts.runtime.standalone.text.AbstractNTextNodeParser;
+import net.thevpc.nuts.runtime.standalone.text.DefaultNTexts;
 import net.thevpc.nuts.runtime.standalone.util.collections.CharQueue;
-import net.thevpc.nuts.runtime.standalone.util.collections.NutsMatchType;
-import net.thevpc.nuts.runtime.standalone.util.collections.NutsStringMatchResult;
-import net.thevpc.nuts.text.NutsText;
-import net.thevpc.nuts.text.NutsTextStyles;
-import net.thevpc.nuts.text.NutsTextVisitor;
-import net.thevpc.nuts.text.NutsTexts;
-import net.thevpc.nuts.util.NutsRef;
+import net.thevpc.nuts.runtime.standalone.util.collections.NMatchType;
+import net.thevpc.nuts.runtime.standalone.util.collections.NStringMatchResult;
+import net.thevpc.nuts.text.NText;
+import net.thevpc.nuts.text.NTextStyles;
+import net.thevpc.nuts.text.NTextVisitor;
+import net.thevpc.nuts.text.NTexts;
+import net.thevpc.nuts.util.NRef;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Stack;
 
-public class NTFParser2 extends AbstractNutsTextNodeParser {
+public class NTFParser2 extends AbstractNTextNodeParser {
     private StringBuffer buffer = new StringBuffer();
     private static String[] SHARPS = {
             "",
@@ -41,26 +41,26 @@ public class NTFParser2 extends AbstractNutsTextNodeParser {
     }
 
     private final CharQueue q = new CharQueue();
-    private NutsTexts txt;
+    private NTexts txt;
     private boolean wasNewLine = true;
     private Stack<Embedded> stackedStyles = new Stack<>();
 
     private static class Embedded {
-        NutsTextStyles style;
+        NTextStyles style;
         int level;
         StepEnum mode;
-        List<NutsText> children = new ArrayList<>();
+        List<NText> children = new ArrayList<>();
 
-        public Embedded(StepEnum mode, NutsTextStyles style, int level) {
+        public Embedded(StepEnum mode, NTextStyles style, int level) {
             this.style = style;
             this.mode = mode;
             this.level = level;
         }
     }
 
-    public NTFParser2(NutsSession session) {
+    public NTFParser2(NSession session) {
         super(session);
-        this.txt = new DefaultNutsTexts(session);//NutsTexts.of(
+        this.txt = new DefaultNTexts(session);//NutsTexts.of(
     }
 
     @Override
@@ -102,16 +102,16 @@ public class NTFParser2 extends AbstractNutsTextNodeParser {
     }
 
     @Override
-    public NutsText read() {
+    public NText read() {
         return read(false);
     }
 
     @Override
-    public NutsText readFully() {
+    public NText readFully() {
         return read(true);
     }
 
-    public NutsText read(boolean fully) {
+    public NText read(boolean fully) {
         synchronized (q) {
             while (q.hasNext()) {
                 Embedded embedded = stackedStyles.isEmpty() ? null : stackedStyles.peek();
@@ -122,11 +122,11 @@ public class NTFParser2 extends AbstractNutsTextNodeParser {
                         if (mode != StepEnum.COMPOSITE_STYLE) {
                             buffer.append(q.read());
                         } else {
-                            NutsStringMatchResult n1 = q.peekString("}##", fully);
-                            if (n1.mode() == NutsMatchType.FULL_MATCH) {
+                            NStringMatchResult n1 = q.peekString("}##", fully);
+                            if (n1.mode() == NMatchType.FULL_MATCH) {
                                 q.read(n1.count());
                                 return pushUpCompositeStyle();
-                            } else if (n1.mode() == NutsMatchType.NO_MATCH) {
+                            } else if (n1.mode() == NMatchType.NO_MATCH) {
                                 buffer.append(q.read());
                             } else {
                                 return null;
@@ -139,7 +139,7 @@ public class NTFParser2 extends AbstractNutsTextNodeParser {
                             buffer.append(q.read());
                         } else {
                             int simpleLvl = (embedded == null ? 0 : embedded.level) + 1;
-                            NutsRef<NutsText> ret = NutsRef.ofNull();
+                            NRef<NText> ret = NRef.ofNull();
                             q.doWithPattern(
                                     new CharQueue.MultiPattern()
                                             .setFully(fully)
@@ -147,9 +147,9 @@ public class NTFParser2 extends AbstractNutsTextNodeParser {
                                                 String a = m.get();
                                                 String s = m.get("n");
                                                 wasNewLine = false;
-                                                NutsTextStyles ss = NutsTextStyles.parse(s).orNull();
+                                                NTextStyles ss = NTextStyles.parse(s).orNull();
                                                 q.read(m.count());
-                                                NutsText p = pushUp(consumeBuffer());
+                                                NText p = pushUp(consumeBuffer());
                                                 if (ss == null) {
                                                     //this is an invalid style
                                                     // just push all
@@ -165,9 +165,9 @@ public class NTFParser2 extends AbstractNutsTextNodeParser {
                                                 wasNewLine = false;
                                                 String a = m.get();
                                                 String s = m.get("n");
-                                                NutsTextStyles ss = NutsTextStyles.parse(s).orNull();
+                                                NTextStyles ss = NTextStyles.parse(s).orNull();
                                                 q.read(m.count());
-                                                NutsText p = pushUp(consumeBuffer());
+                                                NText p = pushUp(consumeBuffer());
                                                 if (ss == null) {
                                                     //this is an invalid style
                                                     // just push all
@@ -189,7 +189,7 @@ public class NTFParser2 extends AbstractNutsTextNodeParser {
                                                             //ignore leading space!
                                                             q.read();
                                                         }
-                                                        NutsText p = pushUp(consumeBuffer());
+                                                        NText p = pushUp(consumeBuffer());
                                                         pushTitle(s.length() - 1);
                                                         if (p != null) {
                                                             ret.set(p);
@@ -208,7 +208,7 @@ public class NTFParser2 extends AbstractNutsTextNodeParser {
                                                     m -> {
                                                         wasNewLine = false;
                                                         q.read(m.count());
-                                                        NutsText p = pushUp(consumeBuffer());
+                                                        NText p = pushUp(consumeBuffer());
                                                         pushSimpleStyle(m.count() - 1);
                                                         if (p != null) {
                                                             ret.set(p);
@@ -221,7 +221,7 @@ public class NTFParser2 extends AbstractNutsTextNodeParser {
                                                         int count = m.count();
                                                         q.read(count);
                                                         wasNewLine = false;
-                                                        NutsText p = pushUp(consumeBuffer());
+                                                        NText p = pushUp(consumeBuffer());
                                                         pushSimpleStyle(count - 1);
                                                         if (p != null) {
                                                             ret.set(p);
@@ -334,7 +334,7 @@ public class NTFParser2 extends AbstractNutsTextNodeParser {
                         break;
                     }
                     case '`': {
-                        NutsStringMatchResult n = q.peekPattern("```", fully);
+                        NStringMatchResult n = q.peekPattern("```", fully);
                         if (mode == StepEnum.CODE) {
                             switch (n.mode()) {
                                 case FULL_MATCH: {
@@ -358,7 +358,7 @@ public class NTFParser2 extends AbstractNutsTextNodeParser {
                             switch (n.mode()) {
                                 case FULL_MATCH: {
                                     q.read(3); // ignore extra // n.count()
-                                    NutsText p = pushUp(consumeBuffer());
+                                    NText p = pushUp(consumeBuffer());
                                     pushCode();
                                     if (p != null) {
                                         wasNewLine = false;
@@ -390,28 +390,28 @@ public class NTFParser2 extends AbstractNutsTextNodeParser {
                     Embedded e = stackedStyles.peek();
                     switch (e.mode) {
                         case SIMPLE_STYLE: {
-                            NutsText p = pushUpSimpleStyle();
+                            NText p = pushUpSimpleStyle();
                             if (p != null) {
                                 return p;
                             }
                             break;
                         }
                         case COMPOSITE_STYLE: {
-                            NutsText p = pushUpCompositeStyle();
+                            NText p = pushUpCompositeStyle();
                             if (p != null) {
                                 return p;
                             }
                             break;
                         }
                         case CODE: {
-                            NutsText p = pushUpCode();
+                            NText p = pushUpCode();
                             if (p != null) {
                                 return p;
                             }
                             break;
                         }
                         case TITLE: {
-                            NutsText p = pushUpTitle();
+                            NText p = pushUpTitle();
                             if (p != null) {
                                 return p;
                             }
@@ -429,28 +429,28 @@ public class NTFParser2 extends AbstractNutsTextNodeParser {
         }
     }
 
-    private NutsText pushUpCode() {
+    private NText pushUpCode() {
         Embedded embedded = stackedStyles.peek();
         String b = consumeBuffer();
         stackedStyles.pop();
         return pushUp(txt.ofCodeOrCommand(b));
     }
 
-    private NutsText pushUpTitle() {
+    private NText pushUpTitle() {
         Embedded embedded = stackedStyles.peek();
         pushUp(consumeBuffer());
         stackedStyles.pop();
         return pushUp(txt.ofTitle(txt.ofList(embedded.children), embedded.level));
     }
 
-    private NutsText pushUpCompositeStyle() {
+    private NText pushUpCompositeStyle() {
         Embedded embedded = stackedStyles.peek();
         pushUp(consumeBuffer());
         stackedStyles.pop();
         return pushUp(txt.ofStyled(txt.ofList(embedded.children), embedded.style));
     }
 
-    private NutsText pushUpSimpleStyle() {
+    private NText pushUpSimpleStyle() {
         Embedded embedded = stackedStyles.peek();
         wasNewLine = false;
         pushUp(consumeBuffer());
@@ -458,7 +458,7 @@ public class NTFParser2 extends AbstractNutsTextNodeParser {
         return pushUp(txt.ofStyled(txt.ofList(embedded.children), embedded.style));
     }
 
-    private void pushCompositeStyle(NutsTextStyles style) {
+    private void pushCompositeStyle(NTextStyles style) {
         stackedStyles.push(new Embedded(StepEnum.COMPOSITE_STYLE, style, 0));
     }
 
@@ -467,10 +467,10 @@ public class NTFParser2 extends AbstractNutsTextNodeParser {
     }
 
     private void pushSimpleStyle(int level) {
-        stackedStyles.push(new Embedded(StepEnum.SIMPLE_STYLE, NutsTextStyles.parse("p" + level).get(session), level));
+        stackedStyles.push(new Embedded(StepEnum.SIMPLE_STYLE, NTextStyles.parse("p" + level).get(session), level));
     }
 
-    private void pushSimpleStyle(NutsTextStyles s) {
+    private void pushSimpleStyle(NTextStyles s) {
         stackedStyles.push(new Embedded(StepEnum.SIMPLE_STYLE, s, 1));
     }
 
@@ -479,7 +479,7 @@ public class NTFParser2 extends AbstractNutsTextNodeParser {
     }
 
 
-    private NutsText pushUp(NutsText t) {
+    private NText pushUp(NText t) {
         if (t == null) {
             return null;
         }
@@ -490,7 +490,7 @@ public class NTFParser2 extends AbstractNutsTextNodeParser {
         return t;
     }
 
-    private NutsText pushUp(String t) {
+    private NText pushUp(String t) {
         if (t == null) {
             return null;
         }
@@ -513,10 +513,10 @@ public class NTFParser2 extends AbstractNutsTextNodeParser {
     }
 
     @Override
-    public long parseRemaining(NutsTextVisitor visitor) {
+    public long parseRemaining(NTextVisitor visitor) {
         long b = 0;
         while (true) {
-            NutsText n = readFully();
+            NText n = readFully();
             if (n != null) {
                 b++;
                 visitor.visit(n);
@@ -528,11 +528,11 @@ public class NTFParser2 extends AbstractNutsTextNodeParser {
     }
 
     @Override
-    public long parseIncremental(char[] buf, int off, int len, NutsTextVisitor visitor) {
+    public long parseIncremental(char[] buf, int off, int len, NTextVisitor visitor) {
         offer(buf, off, len);
         long b = 0;
         while (true) {
-            NutsText n = read();
+            NText n = read();
             if (n != null) {
                 b++;
                 visitor.visit(n);

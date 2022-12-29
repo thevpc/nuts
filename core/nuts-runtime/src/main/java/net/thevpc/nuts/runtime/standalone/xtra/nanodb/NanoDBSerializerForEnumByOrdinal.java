@@ -1,6 +1,6 @@
 package net.thevpc.nuts.runtime.standalone.xtra.nanodb;
 
-import net.thevpc.nuts.NutsSession;
+import net.thevpc.nuts.NSession;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -13,12 +13,12 @@ class NanoDBSerializerForEnumByOrdinal extends NanoDBNonNullSerializer<Enum> {
     }
 
     @Override
-    public void write(Enum obj, NanoDBOutputStream out, NutsSession session) {
+    public void write(Enum obj, NanoDBOutputStream out, NSession session) {
         out.writeInt(obj.ordinal());
     }
 
     @Override
-    public Enum read(NanoDBInputStream in, Class expectedType, NutsSession session) {
+    public Enum read(NanoDBInputStream in, Class expectedType, NSession session) {
         int o = in.readInt();
         Object[] enumConstants = constants.get(expectedType);
         if (enumConstants == null) {

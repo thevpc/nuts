@@ -25,7 +25,7 @@ package net.thevpc.nuts.core.test;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.core.test.utils.TestUtils;
-import net.thevpc.nuts.io.NutsPath;
+import net.thevpc.nuts.io.NPath;
 import org.junit.jupiter.api.*;
 
 import java.io.File;
@@ -40,7 +40,7 @@ import java.util.Set;
  */
 public class Test18_PathTest {
 
-    static NutsSession session;
+    static NSession session;
 
     @BeforeAll
     public static void init() {
@@ -51,16 +51,16 @@ public class Test18_PathTest {
     @Test
     public void testPathCreation() {
 
-        TestUtils.println(NutsPath.of("./", session));
-        TestUtils.println(NutsPath.of(".", session));
-        TestUtils.println(NutsPath.of("..", session));
-        TestUtils.println(NutsPath.of("/*", session));
+        TestUtils.println(NPath.of("./", session));
+        TestUtils.println(NPath.of(".", session));
+        TestUtils.println(NPath.of("..", session));
+        TestUtils.println(NPath.of("/*", session));
         Assertions.assertTrue(true);
     }
 
     @Test
     public void testPathTypes1() {
-        NutsPath s = NutsPath.of("http://maven.ibiblio.org/maven2/archetype-catalog.xml", session);
+        NPath s = NPath.of("http://maven.ibiblio.org/maven2/archetype-catalog.xml", session);
 
         //this is a remote file
         Assertions.assertFalse(s.isFile());
@@ -71,7 +71,7 @@ public class Test18_PathTest {
     @Test
     public void testPathTypes2() {
 
-        NutsPath s = NutsPath.of("file://maven.ibiblio.org/maven2/archetype-catalog.xml", session);
+        NPath s = NPath.of("file://maven.ibiblio.org/maven2/archetype-catalog.xml", session);
         //the file has an 'authority' (//) so it cannot be converted to a valid file
         Assertions.assertFalse(s.isFile());
         //the file is actually a file url
@@ -82,7 +82,7 @@ public class Test18_PathTest {
     @Test
     public void testPathTypes3() {
 
-        NutsPath s = NutsPath.of("file:/maven.ibiblio.org/maven2/archetype-catalog.xml", session);
+        NPath s = NPath.of("file:/maven.ibiblio.org/maven2/archetype-catalog.xml", session);
         //the file is actually a file url
         Assertions.assertTrue(s.isFile());
         //the file is actually a URL
@@ -96,7 +96,7 @@ public class Test18_PathTest {
 //        s = CoreIOUtils.createInputSource("zip://maven.ibiblio.org/maven2/toto.zip?archetype-catalog.xml");
 //        Assertions.assertFalse(s.isPath());
 //        Assertions.assertTrue(s.isURL());
-        NutsPath s = NutsPath.of("/maven.ibiblio.org/maven2/archetype-catalog.xml", session);
+        NPath s = NPath.of("/maven.ibiblio.org/maven2/archetype-catalog.xml", session);
         //the file is actually a file
         Assertions.assertTrue(s.isFile());
         //the file can be converted to URL
@@ -105,10 +105,10 @@ public class Test18_PathTest {
 
     @Test
     public void testHtmlfs1() {
-        NutsPath s = NutsPath.of("dotfilefs:https://raw.githubusercontent.com/thevpc/nuts-preview/master/net/thevpc/nuts/nuts/", session);
+        NPath s = NPath.of("dotfilefs:https://raw.githubusercontent.com/thevpc/nuts-preview/master/net/thevpc/nuts/nuts/", session);
         TestUtils.println("------------ LIST ----------");
         Set<String> children = new HashSet<>();
-        for (NutsPath nutsPath : s.list()) {
+        for (NPath nutsPath : s.stream()) {
             TestUtils.println(nutsPath);
             children.add(nutsPath.toString());
         }
@@ -123,10 +123,10 @@ public class Test18_PathTest {
 
     @Test
     public void testHtmlfs2() {
-        NutsPath s = NutsPath.of("htmlfs:" + getClass().getResource("/net/thevpc/nuts/core/test/htmlfs-tomcat-01.html"), session);
+        NPath s = NPath.of("htmlfs:" + getClass().getResource("/net/thevpc/nuts/core/test/htmlfs-tomcat-01.html"), session);
         TestUtils.println("------------ LIST ----------");
         Set<String> children = new HashSet<>();
-        for (NutsPath nutsPath : s.list()) {
+        for (NPath nutsPath : s.stream()) {
             TestUtils.println(nutsPath);
             children.add(nutsPath.toString());
         }
@@ -135,10 +135,10 @@ public class Test18_PathTest {
 
     @Test
     public void testHtmlfs3() {
-        NutsPath s = NutsPath.of("htmlfs:" + getClass().getResource("/net/thevpc/nuts/core/test/htmlfs-tomcat-02.html"), session);
+        NPath s = NPath.of("htmlfs:" + getClass().getResource("/net/thevpc/nuts/core/test/htmlfs-tomcat-02.html"), session);
         TestUtils.println("------------ LIST ----------");
         Set<String> children = new HashSet<>();
-        for (NutsPath nutsPath : s.list()) {
+        for (NPath nutsPath : s.stream()) {
             TestUtils.println(nutsPath);
             children.add(nutsPath.toString());
         }
@@ -147,10 +147,10 @@ public class Test18_PathTest {
 
     @Test
     public void testHtmlfs4() {
-        NutsPath s = NutsPath.of("htmlfs:" + getClass().getResource("/net/thevpc/nuts/core/test/htmlfs-archive-apache-01.html"), session);
+        NPath s = NPath.of("htmlfs:" + getClass().getResource("/net/thevpc/nuts/core/test/htmlfs-archive-apache-01.html"), session);
         TestUtils.println("------------ LIST ----------");
         Set<String> children = new HashSet<>();
-        for (NutsPath nutsPath : s.list()) {
+        for (NPath nutsPath : s.stream()) {
             TestUtils.println(nutsPath);
             children.add(nutsPath.toString());
         }
@@ -161,10 +161,10 @@ public class Test18_PathTest {
 
     @Test
     public void testHtmlfs5() {
-        NutsPath s = NutsPath.of("htmlfs:" + getClass().getResource("/net/thevpc/nuts/core/test/htmlfs-maven-central-01.html"), session);
+        NPath s = NPath.of("htmlfs:" + getClass().getResource("/net/thevpc/nuts/core/test/htmlfs-maven-central-01.html"), session);
         TestUtils.println("------------ LIST ----------");
         Set<String> children = new HashSet<>();
-        for (NutsPath nutsPath : s.list()) {
+        for (NPath nutsPath : s.stream()) {
             TestUtils.println(nutsPath);
             children.add(nutsPath.toString());
         }
@@ -173,10 +173,10 @@ public class Test18_PathTest {
 
     @Test
     public void testHtmlfs6() {
-        NutsPath s = NutsPath.of("htmlfs:" + getClass().getResource("/net/thevpc/nuts/core/test/htmlfs-jetty-01.html"), session);
+        NPath s = NPath.of("htmlfs:" + getClass().getResource("/net/thevpc/nuts/core/test/htmlfs-jetty-01.html"), session);
         TestUtils.println("------------ LIST ----------");
         Set<String> children = new HashSet<>();
-        for (NutsPath nutsPath : s.list()) {
+        for (NPath nutsPath : s.stream()) {
             TestUtils.println(nutsPath);
             children.add(nutsPath.toString());
         }
@@ -189,10 +189,10 @@ public class Test18_PathTest {
      */
     @Test
     public void testGithubfs() {
-        NutsPath s = NutsPath.of("githubfs:https://api.github.com/repos/thevpc/nuts/contents", session);
+        NPath s = NPath.of("githubfs:https://api.github.com/repos/thevpc/nuts/contents", session);
         TestUtils.println("------------ LIST ----------");
         Set<String> children = new HashSet<>();
-        for (NutsPath nutsPath : s.list()) {
+        for (NPath nutsPath : s.stream()) {
             TestUtils.println(nutsPath);
             children.add(nutsPath.toString());
         }
@@ -209,13 +209,13 @@ public class Test18_PathTest {
 
     @Test
     public void testHome() {
-        Assertions.assertEquals(System.getProperty("user.home"), NutsPath.ofUserHome(session).toString());
+        Assertions.assertEquals(System.getProperty("user.home"), NPath.ofUserHome(session).toString());
     }
 
     @Test
     public void testInvalidPath02() {
-        NutsPath a = NutsPath.of(System.getProperty("user.home") + "/*", session);
-        List<NutsPath> found = a.walkGlob().toList();
+        NPath a = NPath.of(System.getProperty("user.home") + "/*", session);
+        List<NPath> found = a.walkGlob().toList();
         TestUtils.println(found);
         String[] expected = new File(System.getProperty("user.home")).list();
         Assertions.assertEquals(expected==null?0:expected.length,found.size());
@@ -230,8 +230,8 @@ public class Test18_PathTest {
         TestUtils.println(Paths.get("/").getFileName());
         TestUtils.println(Paths.get("").getFileName());
 
-        NutsPath a = NutsPath.of("*", session);
-        List<NutsPath> found = a.walkGlob().toList();
+        NPath a = NPath.of("*", session);
+        List<NPath> found = a.walkGlob().toList();
         TestUtils.println(found);
         String[] expected = new File(".").list();
         Assertions.assertEquals(expected==null?0:expected.length,found.size());
@@ -239,8 +239,8 @@ public class Test18_PathTest {
 
     @Test
     public void testInvalidPath04() {
-        NutsPath a = NutsPath.of("/*", session);
-        List<NutsPath> nutsPaths = a.walkGlob().toList();
+        NPath a = NPath.of("/*", session);
+        List<NPath> nutsPaths = a.walkGlob().toList();
         System.out.println(nutsPaths);
     }
 }

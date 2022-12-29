@@ -26,11 +26,11 @@
 package net.thevpc.nuts.toolbox.nsh.cmds;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.cmdline.NutsCommandLine;
-import net.thevpc.nuts.spi.NutsComponentScope;
-import net.thevpc.nuts.spi.NutsComponentScopeType;
-import net.thevpc.nuts.text.NutsTextStyle;
-import net.thevpc.nuts.text.NutsTexts;
+import net.thevpc.nuts.cmdline.NCommandLine;
+import net.thevpc.nuts.spi.NComponentScope;
+import net.thevpc.nuts.spi.NComponentScopeType;
+import net.thevpc.nuts.text.NTextStyle;
+import net.thevpc.nuts.text.NTexts;
 import net.thevpc.nuts.toolbox.nsh.SimpleJShellBuiltin;
 import net.thevpc.nuts.toolbox.nsh.jshell.JShellAutoCompleteCandidate;
 import net.thevpc.nuts.toolbox.nsh.jshell.JShellExecutionContext;
@@ -40,7 +40,7 @@ import java.util.*;
 /**
  * Created by vpc on 1/7/17.
  */
-@NutsComponentScope(NutsComponentScopeType.WORKSPACE)
+@NComponentScope(NComponentScopeType.WORKSPACE)
 public class AutocompleteCommand extends SimpleJShellBuiltin {
 
     public AutocompleteCommand() {
@@ -48,12 +48,12 @@ public class AutocompleteCommand extends SimpleJShellBuiltin {
     }
 
     @Override
-    protected boolean configureFirst(NutsCommandLine cmdLine, JShellExecutionContext context) {
+    protected boolean configureFirst(NCommandLine cmdLine, JShellExecutionContext context) {
         Options options = context.getOptions();
-        NutsSession session = context.getSession();
+        NSession session = context.getSession();
         if (!cmdLine.isNextOption()) {
             while (cmdLine.hasNext()) {
-                String s = cmdLine.next().flatMap(NutsValue::asString).get(session);
+                String s = cmdLine.next().flatMap(NValue::asString).get(session);
                 if (options.cmd == null) {
                     options.cmd = s;
                 } else {
@@ -71,11 +71,11 @@ public class AutocompleteCommand extends SimpleJShellBuiltin {
     }
 
     @Override
-    protected void execBuiltin(NutsCommandLine commandLine, JShellExecutionContext context) {
+    protected void execBuiltin(NCommandLine commandLine, JShellExecutionContext context) {
         Options options = context.getOptions();
-        NutsSession session = context.getSession();
+        NSession session = context.getSession();
         if (options.cmd == null) {
-            throw new NutsExecutionException(session, NutsMessage.ofPlain("missing JShellCommandNode"), 1);
+            throw new NExecutionException(session, NMsg.ofPlain("missing JShellCommandNode"), 1);
         }
         if (options.index < 0) {
             options.index = options.items.size();
@@ -83,7 +83,7 @@ public class AutocompleteCommand extends SimpleJShellBuiltin {
         }
         List<JShellAutoCompleteCandidate> aa = context.getShellContext().resolveAutoCompleteCandidates(
                 options.cmd, options.items, options.index,
-                NutsCommandLine.of(options.items).toString()
+                NCommandLine.of(options.items).toString()
         );
         Properties p = new Properties();
         for (JShellAutoCompleteCandidate autoCompleteCandidate : aa) {
@@ -96,16 +96,16 @@ public class AutocompleteCommand extends SimpleJShellBuiltin {
         }
         switch (session.getOutputFormat()) {
             case PLAIN: {
-                NutsTexts text = NutsTexts.of(session);
+                NTexts text = NTexts.of(session);
                 for (String o : new TreeSet<String>((Set) p.keySet())) {
                     if (o.startsWith("-")) {
                         // option
-                        session.out().printf("%s\n", text.ofStyled(o, NutsTextStyle.primary4()));
+                        session.out().printf("%s\n", text.ofStyled(o, NTextStyle.primary4()));
                     } else if (o.startsWith("<")) {
-                        session.out().printf("%s\n", text.ofStyled(o, NutsTextStyle.primary1()));
+                        session.out().printf("%s\n", text.ofStyled(o, NTextStyle.primary1()));
                     } else {
                         session.out().printf("%s\n",
-                                text.ofStyled(o, NutsTextStyle.pale())
+                                text.ofStyled(o, NTextStyle.pale())
                         );
                     }
                 }

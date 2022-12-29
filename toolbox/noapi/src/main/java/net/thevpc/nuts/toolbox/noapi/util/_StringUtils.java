@@ -1,6 +1,6 @@
 package net.thevpc.nuts.toolbox.noapi.util;
 
-import net.thevpc.nuts.NutsBlankable;
+import net.thevpc.nuts.NBlankable;
 
 public class _StringUtils {
     public static String trim(String a){
@@ -9,7 +9,7 @@ public class _StringUtils {
     public static String nvl(String ... a){
         if(a!=null){
             for (String s : a) {
-                if(!NutsBlankable.isBlank(s)){
+                if(!NBlankable.isBlank(s)){
                     return trim(s);
                 }
             }

@@ -1,10 +1,10 @@
 package net.thevpc.nuts.toolbox.ncode;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.cmdline.NutsCommandLineContext;
-import net.thevpc.nuts.cmdline.NutsCommandLineProcessor;
-import net.thevpc.nuts.cmdline.NutsArgument;
-import net.thevpc.nuts.cmdline.NutsCommandLine;
+import net.thevpc.nuts.cmdline.NCommandLineContext;
+import net.thevpc.nuts.cmdline.NCommandLineProcessor;
+import net.thevpc.nuts.cmdline.NArgument;
+import net.thevpc.nuts.cmdline.NCommandLine;
 import net.thevpc.nuts.toolbox.ncode.bundles.strings.StringComparator;
 import net.thevpc.nuts.toolbox.ncode.bundles.strings.StringComparators;
 import net.thevpc.nuts.toolbox.ncode.filters.JavaSourceFilter;
@@ -19,25 +19,25 @@ import java.util.List;
 
 import static net.thevpc.nuts.toolbox.ncode.SourceNavigator.navigate;
 
-class NCodeMainCmdProcessor implements NutsCommandLineProcessor {
+class NCodeMainCmdProcessor implements NCommandLineProcessor {
     private List<String> paths = new ArrayList<>();
     private List<StringComparator> typeComparators = new ArrayList<>();
     private List<StringComparator> fileComparators = new ArrayList<>();
     private boolean caseInsensitive = false;
-    private NutsApplicationContext applicationContext;
+    private NApplicationContext applicationContext;
 
-    public NCodeMainCmdProcessor(NutsApplicationContext applicationContext) {
+    public NCodeMainCmdProcessor(NApplicationContext applicationContext) {
         this.applicationContext = applicationContext;
     }
 
     @Override
-    public void onCmdInitParsing(NutsCommandLine commandLine, NutsCommandLineContext context) {
+    public void onCmdInitParsing(NCommandLine commandLine, NCommandLineContext context) {
         commandLine.setExpandSimpleOptions(true);
     }
 
     @Override
-    public boolean onCmdNextOption(NutsArgument option, NutsCommandLine commandLine, NutsCommandLineContext context) {
-        NutsSession session = applicationContext.getSession();
+    public boolean onCmdNextOption(NArgument option, NCommandLine commandLine, NCommandLineContext context) {
+        NSession session = applicationContext.getSession();
         switch (option.getStringKey().get(session)) {
             case "-i": {
                 option = commandLine.nextBoolean().get(session);
@@ -76,15 +76,15 @@ class NCodeMainCmdProcessor implements NutsCommandLineProcessor {
     }
 
     @Override
-    public boolean onCmdNextNonOption(NutsArgument nonOption, NutsCommandLine commandLine, NutsCommandLineContext context) {
-        NutsSession session = applicationContext.getSession();
-        paths.add(commandLine.next().flatMap(NutsValue::asString).get(session));
+    public boolean onCmdNextNonOption(NArgument nonOption, NCommandLine commandLine, NCommandLineContext context) {
+        NSession session = applicationContext.getSession();
+        paths.add(commandLine.next().flatMap(NValue::asString).get(session));
         return true;
     }
 
     @Override
-    public void onCmdExec(NutsCommandLine commandLine, NutsCommandLineContext context) {
-        NutsSession session = applicationContext.getSession();
+    public void onCmdExec(NCommandLine commandLine, NCommandLineContext context) {
+        NSession session = applicationContext.getSession();
         if (paths.isEmpty()) {
             paths.add(".");
         }

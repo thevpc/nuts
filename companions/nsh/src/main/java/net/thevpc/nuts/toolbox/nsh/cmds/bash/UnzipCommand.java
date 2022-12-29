@@ -26,14 +26,14 @@
 package net.thevpc.nuts.toolbox.nsh.cmds.bash;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.cmdline.NutsArgument;
-import net.thevpc.nuts.cmdline.NutsCommandLine;
-import net.thevpc.nuts.io.NutsIOException;
-import net.thevpc.nuts.io.NutsUncompressVisitor;
-import net.thevpc.nuts.io.NutsPath;
-import net.thevpc.nuts.io.NutsUncompress;
-import net.thevpc.nuts.spi.NutsComponentScope;
-import net.thevpc.nuts.spi.NutsComponentScopeType;
+import net.thevpc.nuts.cmdline.NArgument;
+import net.thevpc.nuts.cmdline.NCommandLine;
+import net.thevpc.nuts.io.NIOException;
+import net.thevpc.nuts.io.NUncompressVisitor;
+import net.thevpc.nuts.io.NPath;
+import net.thevpc.nuts.io.NUncompress;
+import net.thevpc.nuts.spi.NComponentScope;
+import net.thevpc.nuts.spi.NComponentScopeType;
 import net.thevpc.nuts.toolbox.nsh.SimpleJShellBuiltin;
 import net.thevpc.nuts.toolbox.nsh.jshell.JShellExecutionContext;
 
@@ -45,7 +45,7 @@ import java.util.List;
 /**
  * Created by vpc on 1/7/17.
  */
-@NutsComponentScope(NutsComponentScopeType.WORKSPACE)
+@NComponentScope(NComponentScopeType.WORKSPACE)
 public class UnzipCommand extends SimpleJShellBuiltin {
 
     public UnzipCommand() {
@@ -53,10 +53,10 @@ public class UnzipCommand extends SimpleJShellBuiltin {
     }
 
     @Override
-    protected boolean configureFirst(NutsCommandLine commandLine, JShellExecutionContext context) {
+    protected boolean configureFirst(NCommandLine commandLine, JShellExecutionContext context) {
         Options options = context.getOptions();
-        NutsSession session = context.getSession();
-        NutsArgument a;
+        NSession session = context.getSession();
+        NArgument a;
         String mode="zip";
         while(commandLine.hasNext()){
             switch (mode){
@@ -114,19 +114,19 @@ public class UnzipCommand extends SimpleJShellBuiltin {
     }
 
     @Override
-    protected void execBuiltin(NutsCommandLine commandLine, JShellExecutionContext context) {
+    protected void execBuiltin(NCommandLine commandLine, JShellExecutionContext context) {
         Options options = context.getOptions();
-        NutsSession session = context.getSession();
+        NSession session = context.getSession();
         if (options.zfiles.isEmpty()) {
             commandLine.throwMissingArgument();
         }
         for (String path : options.zfiles) {
-            NutsPath file = NutsPath.of(path, session).toAbsolute(context.getCwd());
+            NPath file = NPath.of(path, session).toAbsolute(context.getCwd());
             try {
                 if (options.l) {
-                    NutsUncompress.of(session)
+                    NUncompress.of(session)
                             .from(file)
-                            .visit(new NutsUncompressVisitor() {
+                            .visit(new NUncompressVisitor() {
                                 @Override
                                 public boolean visitFolder(String path) {
                                     return true;
@@ -140,18 +140,18 @@ public class UnzipCommand extends SimpleJShellBuiltin {
                             });
                 } else {
                     String dir = options.dir;
-                    if (NutsBlankable.isBlank(dir)) {
+                    if (NBlankable.isBlank(dir)) {
                         dir = context.getCwd();
                     }
                     dir = context.getAbsolutePath(dir);
-                    NutsUncompress.of(session)
+                    NUncompress.of(session)
                             .from(file)
-                            .to(NutsPath.of(dir,session))
+                            .to(NPath.of(dir,session))
                             .setSkipRoot(options.skipRoot)
                             .run();
                 }
-            } catch (UncheckedIOException | NutsIOException ex) {
-                throw new NutsExecutionException(session, NutsMessage.ofCstyle("%s", ex), ex, 1);
+            } catch (UncheckedIOException | NIOException ex) {
+                throw new NExecutionException(session, NMsg.ofCstyle("%s", ex), ex, 1);
             }
         }
     }

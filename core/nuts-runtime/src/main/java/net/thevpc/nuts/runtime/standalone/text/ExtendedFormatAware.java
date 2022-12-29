@@ -5,13 +5,13 @@
  */
 package net.thevpc.nuts.runtime.standalone.text;
 
-import net.thevpc.nuts.runtime.standalone.io.terminal.NutsTerminalModeOp;
+import net.thevpc.nuts.runtime.standalone.io.terminal.NTerminalModeOp;
 
 /**
  *
  * @author thevpc
  */
 public interface ExtendedFormatAware {
-    NutsTerminalModeOp getModeOp();
-    ExtendedFormatAware convert(NutsTerminalModeOp other);
+    NTerminalModeOp getModeOp();
+    ExtendedFormatAware convert(NTerminalModeOp other);
 }

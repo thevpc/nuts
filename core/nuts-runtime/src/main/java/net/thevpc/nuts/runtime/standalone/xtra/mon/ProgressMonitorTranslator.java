@@ -1,20 +1,19 @@
 package net.thevpc.nuts.runtime.standalone.xtra.mon;
 
 
-import net.thevpc.nuts.NutsSession;
 import net.thevpc.nuts.util.*;
 
 /**
  * @author Taha Ben Salah (taha.bensalah@gmail.com)
  * %creationtime 19 juil. 2007 00:27:15
  */
-public class ProgressMonitorTranslator implements NutsProgressHandler {
+public class ProgressMonitorTranslator implements NProgressHandler {
 
     private double start;
     private double factor;
-    private NutsProgressMonitor delegate;
+    private NProgressMonitor delegate;
 
-    public ProgressMonitorTranslator(NutsProgressMonitor baseMonitor, double factor, double start) {
+    public ProgressMonitorTranslator(NProgressMonitor baseMonitor, double factor, double start) {
         this.delegate = baseMonitor;
         if (baseMonitor == null) {
             throw new NullPointerException("baseMonitor could not be null");
@@ -23,12 +22,12 @@ public class ProgressMonitorTranslator implements NutsProgressHandler {
         this.start = start;
     }
 
-    public NutsProgressMonitor getDelegate() {
+    public NProgressMonitor getDelegate() {
         return delegate;
     }
 
     @Override
-    public void onEvent(NutsProgressHandlerEvent event) {
+    public void onEvent(NProgressHandlerEvent event) {
         double progress = event.getModel().getProgress();
         double translatedProgress = Double.isNaN(progress) ? progress : (progress * factor + start);
 //        double translatedProgress = (progress-start)/factor;

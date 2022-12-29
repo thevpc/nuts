@@ -1,9 +1,9 @@
 package net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.ndi;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.io.NutsIOException;
-import net.thevpc.nuts.io.NutsPath;
-import net.thevpc.nuts.util.NutsUtils;
+import net.thevpc.nuts.io.NIOException;
+import net.thevpc.nuts.io.NPath;
+import net.thevpc.nuts.util.NUtils;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -19,24 +19,24 @@ public class NdiScriptOptions implements Cloneable {
     private boolean includeEnv;
     private boolean addNutsScript;
     //    private NutsEnvInfo env;
-    private NutsLauncherOptions launcher = new NutsLauncherOptions();
+    private NLauncherOptions launcher = new NLauncherOptions();
 
 
     private String nutsVersion;
-    private NutsSession session;
+    private NSession session;
 
-    private NutsId nutsApiId;
-    private NutsPath nutsApiJarPath;
-    private NutsWorkspaceBootConfig workspaceBootConfig;
+    private NId nutsApiId;
+    private NPath nutsApiJarPath;
+    private NWorkspaceBootConfig workspaceBootConfig;
 
     public NdiScriptOptions() {
     }
 
-    public NutsLauncherOptions getLauncher() {
+    public NLauncherOptions getLauncher() {
         return launcher;
     }
 
-    public NdiScriptOptions setLauncher(NutsLauncherOptions launcher) {
+    public NdiScriptOptions setLauncher(NLauncherOptions launcher) {
         this.launcher = launcher;
         return this;
     }
@@ -95,11 +95,11 @@ public class NdiScriptOptions implements Cloneable {
 //        return this;
 //    }
 
-    public NutsSession getSession() {
+    public NSession getSession() {
         return session;
     }
 
-    public NdiScriptOptions setSession(NutsSession session) {
+    public NdiScriptOptions setSession(NSession session) {
         this.session = session;
         return this;
     }
@@ -124,60 +124,60 @@ public class NdiScriptOptions implements Cloneable {
         return c;
     }
 
-    public NutsPath resolveNutsApiJarPath() {
+    public NPath resolveNutsApiJarPath() {
         if (nutsApiJarPath == null) {
-            NutsId nid = resolveNutsApiId();
+            NId nid = resolveNutsApiId();
             if (getLauncher().getSwitchWorkspaceLocation() == null) {
-                NutsDefinition apiDef = session.search()
+                NDefinition apiDef = session.search()
                         .addId(nid).setOptional(false).setLatest(true).setContent(true).getResultDefinitions().required();
                 nutsApiJarPath = apiDef.getContent().orNull();
             } else {
-                NutsWorkspaceBootConfig bootConfig = loadSwitchWorkspaceLocationConfig(getLauncher().getSwitchWorkspaceLocation());
-                nutsApiJarPath = NutsPath.of(bootConfig.getStoreLocation(nid, NutsStoreLocation.LIB),session);
+                NWorkspaceBootConfig bootConfig = loadSwitchWorkspaceLocationConfig(getLauncher().getSwitchWorkspaceLocation());
+                nutsApiJarPath = NPath.of(bootConfig.getStoreLocation(nid, NStoreLocation.LIB),session);
                 session.locations().getDefaultIdFilename(nid);
             }
         }
         return nutsApiJarPath;
     }
 
-    public NutsPath resolveBinFolder() {
+    public NPath resolveBinFolder() {
         return resolveNutsAppsFolder().resolve("bin");
     }
 
-    public NutsPath resolveIncFolder() {
+    public NPath resolveIncFolder() {
         return resolveNutsAppsFolder().resolve("inc");
     }
 
-    public NutsPath resolveNutsAppsFolder() {
-        NutsSession ws = session;
-        NutsWorkspaceBootConfig bootConfig = null;
-        NutsId apiId = session.getWorkspace().getApiId();
+    public NPath resolveNutsAppsFolder() {
+        NSession ws = session;
+        NWorkspaceBootConfig bootConfig = null;
+        NId apiId = session.getWorkspace().getApiId();
         if (getLauncher().getSwitchWorkspaceLocation() != null) {
             bootConfig = loadSwitchWorkspaceLocationConfig(getLauncher().getSwitchWorkspaceLocation());
-            return NutsPath.of(
-                    bootConfig.getStoreLocation(apiId, NutsStoreLocation.APPS),session
+            return NPath.of(
+                    bootConfig.getStoreLocation(apiId, NStoreLocation.APPS),session
             );
         } else {
-            return ws.locations().getStoreLocation(apiId, NutsStoreLocation.APPS);
+            return ws.locations().getStoreLocation(apiId, NStoreLocation.APPS);
         }
     }
 
-    public NutsPath resolveNutsApiAppsFolder() {
-        NutsSession ws = session;
-        NutsWorkspaceBootConfig bootConfig = null;
-        NutsId apiId = ws.getWorkspace().getApiId().builder().setVersion(nutsVersion).build();
+    public NPath resolveNutsApiAppsFolder() {
+        NSession ws = session;
+        NWorkspaceBootConfig bootConfig = null;
+        NId apiId = ws.getWorkspace().getApiId().builder().setVersion(nutsVersion).build();
         apiId = session.search().addId(apiId).setLatest(true).setFailFast(true).setContent(true)
                 .setDistinct(true)
                 .getResultDefinitions().singleton().getId();
         if (getLauncher().getSwitchWorkspaceLocation() != null) {
             bootConfig = loadSwitchWorkspaceLocationConfig(getLauncher().getSwitchWorkspaceLocation());
-            return NutsPath.of(bootConfig.getStoreLocation(apiId, NutsStoreLocation.APPS),session);
+            return NPath.of(bootConfig.getStoreLocation(apiId, NStoreLocation.APPS),session);
         } else {
-            return ws.locations().getStoreLocation(apiId, NutsStoreLocation.APPS);
+            return ws.locations().getStoreLocation(apiId, NStoreLocation.APPS);
         }
     }
 
-    public NutsDefinition resolveNutsApiDef() {
+    public NDefinition resolveNutsApiDef() {
         return session.search().addId(resolveNutsApiId())
                 .setLatest(true)
                 .setContent(true)
@@ -186,7 +186,7 @@ public class NdiScriptOptions implements Cloneable {
                 .getResultDefinitions().singleton();
     }
 
-    public NutsId resolveNutsApiId() {
+    public NId resolveNutsApiId() {
         if (nutsApiId == null) {
             if (getLauncher().getSwitchWorkspaceLocation() == null) {
                 if (nutsVersion == null) {
@@ -199,49 +199,49 @@ public class NdiScriptOptions implements Cloneable {
                             .getResultIds().singleton();
                 }
             } else {
-                NutsWorkspaceBootConfig bootConfig = loadSwitchWorkspaceLocationConfig(getLauncher().getSwitchWorkspaceLocation());
-                NutsVersion _latestVersion = null;
+                NWorkspaceBootConfig bootConfig = loadSwitchWorkspaceLocationConfig(getLauncher().getSwitchWorkspaceLocation());
+                NVersion _latestVersion = null;
                 try {
                     _latestVersion = Files.list(
-                                    Paths.get(bootConfig.getStoreLocation(session.getWorkspace().getApiId(), NutsStoreLocation.CONFIG))
+                                    Paths.get(bootConfig.getStoreLocation(session.getWorkspace().getApiId(), NStoreLocation.CONFIG))
                                             .getParent())
                             .filter(
                                     f
-                                            -> NutsVersion.of(f.getFileName().toString())
+                                            -> NVersion.of(f.getFileName().toString())
                                             .flatMap(v->v.getNumber(0))
-                                            .flatMap(NutsValue::asLong).isPresent()
-                                            && Files.exists(f.resolve(NutsConstants.Files.API_BOOT_CONFIG_FILE_NAME))
+                                            .flatMap(NValue::asLong).isPresent()
+                                            && Files.exists(f.resolve(NConstants.Files.API_BOOT_CONFIG_FILE_NAME))
                             ).map(
-                                    f -> NutsVersion.of(f.getFileName().toString()).get(session)
+                                    f -> NVersion.of(f.getFileName().toString()).get(session)
                             ).max(Comparator.naturalOrder()).orElse(null);
                 } catch (IOException e) {
-                    throw new NutsIOException(session, e);
+                    throw new NIOException(session, e);
                 }
-                NutsUtils.requireNonBlank(_latestVersion, "missing nuts-api version to link to", session);
+                NUtils.requireNonBlank(_latestVersion, "missing nuts-api version to link to", session);
                 nutsApiId = session.getWorkspace().getApiId().builder().setVersion(_latestVersion).build();
             }
         }
         return nutsApiId;
     }
 
-    public NutsVersion getNutsApiVersion() {
+    public NVersion getNutsApiVersion() {
         return resolveNutsApiId().getVersion();
     }
 
     public Path getWorkspaceLocation() {
         if (getLauncher().getSwitchWorkspaceLocation() != null) {
-            NutsWorkspaceBootConfig bootConfig = loadSwitchWorkspaceLocationConfig(getLauncher().getSwitchWorkspaceLocation());
+            NWorkspaceBootConfig bootConfig = loadSwitchWorkspaceLocationConfig(getLauncher().getSwitchWorkspaceLocation());
             return Paths.get(bootConfig.getEffectiveWorkspace());
         } else {
             return session.locations().getWorkspaceLocation().toFile();
         }
     }
 
-    public NutsWorkspaceBootConfig loadSwitchWorkspaceLocationConfig(String switchWorkspaceLocation) {
+    public NWorkspaceBootConfig loadSwitchWorkspaceLocationConfig(String switchWorkspaceLocation) {
         if (workspaceBootConfig == null) {
             workspaceBootConfig = session.config().loadBootConfig(switchWorkspaceLocation, false, true);
             if (workspaceBootConfig == null) {
-                throw new NutsIllegalArgumentException(session, NutsMessage.ofCstyle("invalid workspace: %s", switchWorkspaceLocation));
+                throw new NIllegalArgumentException(session, NMsg.ofCstyle("invalid workspace: %s", switchWorkspaceLocation));
             }
         }
         return workspaceBootConfig;

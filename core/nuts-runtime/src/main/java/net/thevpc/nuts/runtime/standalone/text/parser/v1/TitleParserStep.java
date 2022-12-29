@@ -1,26 +1,26 @@
 package net.thevpc.nuts.runtime.standalone.text.parser.v1;
 
-import net.thevpc.nuts.NutsSession;
-import net.thevpc.nuts.text.NutsTexts;
-import net.thevpc.nuts.util.NutsStringUtils;
-import net.thevpc.nuts.runtime.standalone.text.DefaultNutsTexts;
+import net.thevpc.nuts.NSession;
+import net.thevpc.nuts.text.NTexts;
+import net.thevpc.nuts.util.NStringUtils;
+import net.thevpc.nuts.runtime.standalone.text.DefaultNTexts;
 
 import java.util.ArrayList;
 import java.util.List;
-import net.thevpc.nuts.text.NutsText;
+import net.thevpc.nuts.text.NText;
 
 public class TitleParserStep extends ParserStep {
 
     StringBuilder start = new StringBuilder();
     List<ParserStep> children = new ArrayList<>();
-    private NutsSession session;
-    public TitleParserStep(String c, NutsSession session) {
+    private NSession session;
+    public TitleParserStep(String c, NSession session) {
         start.append(c);
         this.session = session;
     }
 
     @Override
-    public void consume(char c, DefaultNutsTextNodeParser.State p, boolean wasNewLine) {
+    public void consume(char c, DefaultNTextNodeParser.State p, boolean wasNewLine) {
         if (c == ' ' && children.isEmpty()) {
             start.append(c);
         } else if (c == '\n' || c == '\r') {
@@ -36,26 +36,26 @@ public class TitleParserStep extends ParserStep {
     }
 
     @Override
-    public NutsText toText() {
+    public NText toText() {
         String s = start.toString();
 //        NutsTexts text = ws.text();
-        DefaultNutsTexts factory0 = (DefaultNutsTexts) NutsTexts.of(session);
+        DefaultNTexts factory0 = (DefaultNTexts) NTexts.of(session);
         String s0=s.trim();
-        NutsText child=null;
+        NText child=null;
         if (children.size() == 1) {
             child=children.get(0).toText();
         }else{
-            List<NutsText> all = new ArrayList<>();
+            List<NText> all = new ArrayList<>();
             for (ParserStep a : children) {
                 all.add(a.toText());
             }
-            child= NutsTexts.of(session).ofList(all).simplify();
+            child= NTexts.of(session).ofList(all).simplify();
         }
         return factory0.createTitle(s,s0.length()-1 ,child,isComplete());
     }
 
     @Override
-    public void end(DefaultNutsTextNodeParser.State p) {
+    public void end(DefaultNTextNodeParser.State p) {
         p.applyPop(this);
     }
 
@@ -65,7 +65,7 @@ public class TitleParserStep extends ParserStep {
 
     @Override
     public String toString() {
-        StringBuilder sb = new StringBuilder("Title(" + NutsStringUtils.formatStringLiteral(start.toString(), NutsStringUtils.QuoteType.DOUBLE));
+        StringBuilder sb = new StringBuilder("Title(" + NStringUtils.formatStringLiteral(start.toString(), NStringUtils.QuoteType.DOUBLE));
         for (ParserStep parserStep : children) {
             sb.append(",");
             sb.append(parserStep.toString());

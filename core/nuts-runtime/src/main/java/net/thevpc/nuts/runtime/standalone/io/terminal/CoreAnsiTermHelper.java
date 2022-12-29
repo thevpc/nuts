@@ -1,15 +1,15 @@
 package net.thevpc.nuts.runtime.standalone.io.terminal;
 
-import net.thevpc.nuts.NutsExecutionType;
-import net.thevpc.nuts.NutsSession;
-import net.thevpc.nuts.NutsValue;
-import net.thevpc.nuts.spi.NutsSystemTerminalBase;
+import net.thevpc.nuts.NExecutionType;
+import net.thevpc.nuts.NSession;
+import net.thevpc.nuts.NValue;
+import net.thevpc.nuts.spi.NSystemTerminalBase;
 
 public class CoreAnsiTermHelper {
-    public static boolean isXTerm(NutsSession session) {
+    public static boolean isXTerm(NSession session) {
         try {
             String str = "cols";
-            session.exec().setExecutionType(NutsExecutionType.SYSTEM)
+            session.exec().setExecutionType(NExecutionType.SYSTEM)
                     .grabOutputString()
                     .addCommand("tput", str)
                     .setFailFast(true)
@@ -20,16 +20,16 @@ public class CoreAnsiTermHelper {
         }
     }
 
-    public static NutsSystemTerminalBase.Size evalSize(NutsSession session) {
-        Integer c = NutsValue.of(evalCapability("cols", session)).asInt().orNull();
-        Integer l = NutsValue.of(evalCapability("lines", session)).asInt().orNull();
+    public static NSystemTerminalBase.Size evalSize(NSession session) {
+        Integer c = NValue.of(evalCapability("cols", session)).asInt().orNull();
+        Integer l = NValue.of(evalCapability("lines", session)).asInt().orNull();
         if (c != null && l != null) {
-            return new NutsSystemTerminalBase.Size(c, l);
+            return new NSystemTerminalBase.Size(c, l);
         }
         return null;
     }
 
-    public static NutsSystemTerminalBase.Cursor evalCursor(NutsSession session) {
+    public static NSystemTerminalBase.Cursor evalCursor(NSession session) {
         String c = evalCapability("u7", session);
         if (c != null) {
             return null;
@@ -37,9 +37,9 @@ public class CoreAnsiTermHelper {
         return null;
     }
 
-    public static String evalCapability(String str, NutsSession session) {
+    public static String evalCapability(String str, NSession session) {
         try {
-            String d = session.exec().setExecutionType(NutsExecutionType.SYSTEM)
+            String d = session.exec().setExecutionType(NExecutionType.SYSTEM)
                     .grabOutputString()
                     .addCommand("tput", str)
                     .getOutputString();
@@ -48,7 +48,7 @@ public class CoreAnsiTermHelper {
                 return null;
             }
             //add 500 of sleep time!
-            d = session.exec().setExecutionType(NutsExecutionType.SYSTEM)
+            d = session.exec().setExecutionType(NExecutionType.SYSTEM)
                     .grabOutputString()
                     .addCommand("tput", str)
                     .setSleepMillis(500)

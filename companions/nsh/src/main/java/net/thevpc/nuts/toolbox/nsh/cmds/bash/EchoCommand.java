@@ -26,19 +26,19 @@
 package net.thevpc.nuts.toolbox.nsh.cmds.bash;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.cmdline.NutsCommandLine;
-import net.thevpc.nuts.spi.NutsComponentScope;
-import net.thevpc.nuts.spi.NutsComponentScopeType;
-import net.thevpc.nuts.text.NutsTextCode;
-import net.thevpc.nuts.text.NutsTexts;
+import net.thevpc.nuts.cmdline.NCommandLine;
+import net.thevpc.nuts.spi.NComponentScope;
+import net.thevpc.nuts.spi.NComponentScopeType;
+import net.thevpc.nuts.text.NTextCode;
+import net.thevpc.nuts.text.NTexts;
 import net.thevpc.nuts.toolbox.nsh.SimpleJShellBuiltin;
 import net.thevpc.nuts.toolbox.nsh.jshell.JShellExecutionContext;
-import net.thevpc.nuts.util.NutsStringUtils;
+import net.thevpc.nuts.util.NStringUtils;
 
 /**
  * Created by vpc on 1/7/17.
  */
-@NutsComponentScope(NutsComponentScopeType.WORKSPACE)
+@NComponentScope(NComponentScopeType.WORKSPACE)
 public class EchoCommand extends SimpleJShellBuiltin {
 
     public EchoCommand() {
@@ -46,9 +46,9 @@ public class EchoCommand extends SimpleJShellBuiltin {
     }
 
     @Override
-    protected boolean configureFirst(NutsCommandLine commandLine, JShellExecutionContext context) {
+    protected boolean configureFirst(NCommandLine commandLine, JShellExecutionContext context) {
         Options options = context.getOptions();
-        NutsSession session = context.getSession();
+        NSession session = context.getSession();
         switch (commandLine.peek().get(session).key()) {
             case "-n": {
                 commandLine.withNextBoolean((v, a, s) -> options.newLine=v);
@@ -63,7 +63,7 @@ public class EchoCommand extends SimpleJShellBuiltin {
             case "--highlight":
             case "--highlighter":
             {
-                commandLine.withNextString((v, a, s) -> options.highlighter=NutsStringUtils.trim(v));
+                commandLine.withNextString((v, a, s) -> options.highlighter= NStringUtils.trim(v));
                 return true;
             }
             default: {
@@ -83,13 +83,13 @@ public class EchoCommand extends SimpleJShellBuiltin {
     }
 
     @Override
-    protected void execBuiltin(NutsCommandLine commandLine, JShellExecutionContext context) {
+    protected void execBuiltin(NCommandLine commandLine, JShellExecutionContext context) {
         Options options = context.getOptions();
         Object ns = null;
         if (options.highlighter == null) {
             ns = options.message.toString();
         } else {
-            NutsTextCode c = NutsTexts.of(context.getSession()).ofCode(
+            NTextCode c = NTexts.of(context.getSession()).ofCode(
                     options.highlighter.isEmpty()?"ntf":options.highlighter
                     , options.message.toString());
             ns = c.highlight(context.getSession());

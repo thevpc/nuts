@@ -1,22 +1,22 @@
 package net.thevpc.nuts.runtime.standalone.format.table;
 
-import net.thevpc.nuts.NutsSession;
-import net.thevpc.nuts.format.NutsTableCellFormat;
+import net.thevpc.nuts.NSession;
+import net.thevpc.nuts.format.NTableCellFormat;
 
 /**
  *
  * @author thevpc
  * @since 0.5.5
  */
-public class DefaultTableCellFormat implements NutsTableCellFormat {
+public class DefaultTableCellFormat implements NTableCellFormat {
 
-    public static final NutsTableCellFormat INSTANCE = new DefaultTableCellFormat();
+    public static final NTableCellFormat INSTANCE = new DefaultTableCellFormat();
 
     public DefaultTableCellFormat() {
     }
 
     @Override
-    public String format(int row, int col, Object value, NutsSession session) {
+    public String format(int row, int col, Object value, NSession session) {
         return String.valueOf(value);
     }
 

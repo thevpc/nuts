@@ -24,21 +24,21 @@
 package net.thevpc.nuts.runtime.standalone.format.table;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.cmdline.NutsArgument;
-import net.thevpc.nuts.cmdline.NutsCommandLine;
-import net.thevpc.nuts.elem.NutsElement;
-import net.thevpc.nuts.elem.NutsElementEntry;
-import net.thevpc.nuts.elem.NutsElements;
+import net.thevpc.nuts.cmdline.NArgument;
+import net.thevpc.nuts.cmdline.NCommandLine;
+import net.thevpc.nuts.elem.NElement;
+import net.thevpc.nuts.elem.NElementEntry;
+import net.thevpc.nuts.elem.NElements;
 import net.thevpc.nuts.format.*;
-import net.thevpc.nuts.io.NutsIOException;
-import net.thevpc.nuts.io.NutsPrintStream;
+import net.thevpc.nuts.io.NIOException;
+import net.thevpc.nuts.io.NStream;
 import net.thevpc.nuts.runtime.standalone.format.DefaultFormatBase;
-import net.thevpc.nuts.runtime.standalone.text.util.NutsTextUtils;
+import net.thevpc.nuts.runtime.standalone.text.util.NTextUtils;
 import net.thevpc.nuts.runtime.standalone.util.CorePlatformUtils;
 import net.thevpc.nuts.runtime.standalone.util.CoreStringUtils;
 import net.thevpc.nuts.runtime.standalone.util.StringBuilder2;
-import net.thevpc.nuts.spi.NutsSupportLevelContext;
-import net.thevpc.nuts.text.NutsTexts;
+import net.thevpc.nuts.spi.NSupportLevelContext;
+import net.thevpc.nuts.text.NTexts;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -52,48 +52,48 @@ import java.util.stream.Collectors;
 /**
  * Created by vpc on 2/17/17.
  */
-public class DefaultTableFormat extends DefaultFormatBase<NutsTableFormat> implements NutsTableFormat {
+public class DefaultTableFormat extends DefaultFormatBase<NTableFormat> implements NTableFormat {
 
-    public static NutsTableBordersFormat NO_BORDER = new DefaultTableFormatBorders(
+    public static NTableBordersFormat NO_BORDER = new DefaultTableFormatBorders(
             "", "", "", "",
             "", "", "",
             "", "", "", "",
             "", "", "", ""
     );
 
-    public static NutsTableBordersFormat UNICODE_BORDER = new DefaultTableFormatBorders(
+    public static NTableBordersFormat UNICODE_BORDER = new DefaultTableFormatBorders(
             "╭", "─", "┬", "╮",
             "│", "│", "│",
             "├", "─", "┼", "┤",
             "╰", "─", "┴", "╯"
     );
 
-    public static NutsTableBordersFormat SIMPLE_BORDER = new DefaultTableFormatBorders(
+    public static NTableBordersFormat SIMPLE_BORDER = new DefaultTableFormatBorders(
             "-", "-", "-", "-",
             "|", " | ", "|",
             "|", "-", "+", "|",
             "-", "-", "-", "-"
     );
-    public static NutsTableBordersFormat FANCY_ROWS_BORDER = new DefaultTableFormatBorders(
+    public static NTableBordersFormat FANCY_ROWS_BORDER = new DefaultTableFormatBorders(
             "", "", "", "",
             "", " ", "",
             "", "─", "─", "",
             "", "", "", ""
     );
-    public static NutsTableBordersFormat SPACE_BORDER = new DefaultTableFormatBorders(
+    public static NTableBordersFormat SPACE_BORDER = new DefaultTableFormatBorders(
             "", "", "", "",
             "", " ", "",
             "", "", "", "",
             "", "", "", ""
     );
-    public static NutsTableBordersFormat FANCY_COLUMNS_BORDER = new DefaultTableFormatBorders(
+    public static NTableBordersFormat FANCY_COLUMNS_BORDER = new DefaultTableFormatBorders(
             "", "", "", "",
             "", " │ ", "",
             "", "", "", "",
             "", "", "", ""
     );
-    private NutsTableCellFormat defaultCellFormatter = DefaultTableCellFormat.INSTANCE;
-    private NutsTableCellFormat defaultHeaderFormatter = DefaultTableHeaderFormat.INSTANCE;
+    private NTableCellFormat defaultCellFormatter = DefaultTableCellFormat.INSTANCE;
+    private NTableCellFormat defaultHeaderFormatter = DefaultTableHeaderFormat.INSTANCE;
     /**
      * <pre>
      * ABBBBCBBBBD
@@ -103,12 +103,12 @@ public class DefaultTableFormat extends DefaultFormatBase<NutsTableFormat> imple
      * LMMMMNMMMMO
      * </pre>
      */
-    private NutsTableBordersFormat border = CorePlatformUtils.SUPPORTS_UTF_ENCODING ? UNICODE_BORDER : SIMPLE_BORDER;
+    private NTableBordersFormat border = CorePlatformUtils.SUPPORTS_UTF_ENCODING ? UNICODE_BORDER : SIMPLE_BORDER;
     private Object model;
     private final List<Boolean> visibleColumns = new ArrayList<>();
     private boolean visibleHeader = true;
 
-    public DefaultTableFormat(NutsSession session) {
+    public DefaultTableFormat(NSession session) {
         super(session, "table-format");
     }
 
@@ -124,7 +124,7 @@ public class DefaultTableFormat extends DefaultFormatBase<NutsTableFormat> imple
         );
     }
 
-    public static NutsTableBordersFormat parseTableBorders(String borderName) {
+    public static NTableBordersFormat parseTableBorders(String borderName) {
         switch (borderName) {
             case "spaces": {
                 return (SPACE_BORDER);
@@ -151,7 +151,7 @@ public class DefaultTableFormat extends DefaultFormatBase<NutsTableFormat> imple
         return null;
     }
 
-    public static void formatAndHorizontalAlign(StringBuilder sb, NutsPositionType a, int columns, NutsTexts tf, NutsSession session) {
+    public static void formatAndHorizontalAlign(StringBuilder sb, NPositionType a, int columns, NTexts tf, NSession session) {
         int length = tf.setSession(session).parse(sb.toString()).textLength();
         switch (a) {
             case FIRST: {
@@ -206,7 +206,7 @@ public class DefaultTableFormat extends DefaultFormatBase<NutsTableFormat> imple
                 break;
             }
             default: {
-                throw new NutsUnsupportedArgumentException(session, NutsMessage.ofCstyle("unsupported position type %s", a));
+                throw new NUnsupportedArgumentException(session, NMsg.ofCstyle("unsupported position type %s", a));
             }
         }
     }
@@ -223,21 +223,21 @@ public class DefaultTableFormat extends DefaultFormatBase<NutsTableFormat> imple
     }
 
     @Override
-    public NutsTableBordersFormat getBorder() {
+    public NTableBordersFormat getBorder() {
         return border;
     }
 
     @Override
-    public DefaultTableFormat setBorder(NutsTableBordersFormat border) {
+    public DefaultTableFormat setBorder(NTableBordersFormat border) {
         this.border = border;
         return this;
     }
 
     @Override
-    public NutsTableFormat setBorder(String borderName) {
-        NutsTableBordersFormat n = parseTableBorders(borderName);
+    public NTableFormat setBorder(String borderName) {
+        NTableBordersFormat n = parseTableBorders(borderName);
         if (n == null) {
-            throw new NutsIllegalArgumentException(getSession(), NutsMessage.ofCstyle("unsupported border. use one of : %s", getAvailableTableBorders()));
+            throw new NIllegalArgumentException(getSession(), NMsg.ofCstyle("unsupported border. use one of : %s", getAvailableTableBorders()));
         }
         setBorder(n);
         return this;
@@ -266,23 +266,23 @@ public class DefaultTableFormat extends DefaultFormatBase<NutsTableFormat> imple
         return null;
     }
 
-    public NutsTableFormat setCellFormat(NutsTableCellFormat formatter) {
+    public NTableFormat setCellFormat(NTableCellFormat formatter) {
         defaultCellFormatter = formatter == null ? DefaultTableCellFormat.INSTANCE : formatter;
         return this;
     }
 
     @Override
-    public NutsTableModel getModel() {
+    public NTableModel getModel() {
         return createTableModel(model);
     }
 
     @Override
-    public NutsTableFormat setValue(Object value) {
+    public NTableFormat setValue(Object value) {
         this.model = value;
         return this;
     }
 
-    private String getSeparator(NutsTableSeparator id) {
+    private String getSeparator(NTableSeparator id) {
         String s = border.format(id);
         if (s == null) {
             return "";
@@ -291,28 +291,28 @@ public class DefaultTableFormat extends DefaultFormatBase<NutsTableFormat> imple
     }
 
     @Override
-    public void print(NutsPrintStream w) {
-        NutsPrintStream out = getValidPrintStream(w);
+    public void print(NStream w) {
+        NStream out = getValidPrintStream(w);
         StringBuilder2 line = new StringBuilder2();
         List<Row> rows = rebuild(getSession());
         if (rows.size() > 0) {
             List<DefaultCell> cells = rows.get(0).cells;
-            NutsSession ws = getSession();
-            if ((getSeparator(NutsTableSeparator.FIRST_ROW_START)
-                    + getSeparator(NutsTableSeparator.FIRST_ROW_SEP)
-                    + getSeparator(NutsTableSeparator.FIRST_ROW_LINE)
-                    + getSeparator(NutsTableSeparator.FIRST_ROW_END)).length() > 0) {
-                line.write(getSeparator(NutsTableSeparator.FIRST_ROW_START));
+            NSession ws = getSession();
+            if ((getSeparator(NTableSeparator.FIRST_ROW_START)
+                    + getSeparator(NTableSeparator.FIRST_ROW_SEP)
+                    + getSeparator(NTableSeparator.FIRST_ROW_LINE)
+                    + getSeparator(NTableSeparator.FIRST_ROW_END)).length() > 0) {
+                line.write(getSeparator(NTableSeparator.FIRST_ROW_START));
                 for (int i = 0; i < cells.size(); i++) {
                     if (i > 0) {
-                        line.write(getSeparator(NutsTableSeparator.FIRST_ROW_SEP));
+                        line.write(getSeparator(NTableSeparator.FIRST_ROW_SEP));
                     }
                     DefaultCell cell = cells.get(i);
-                    String B = getSeparator(NutsTableSeparator.FIRST_ROW_LINE);
+                    String B = getSeparator(NTableSeparator.FIRST_ROW_LINE);
                     String s = cell.rendered.toString();
-                    line.write(CoreStringUtils.fillString(B, NutsTexts.of(ws).parse(s).textLength()));
+                    line.write(CoreStringUtils.fillString(B, NTexts.of(ws).parse(s).textLength()));
                 }
-                line.write(getSeparator(NutsTableSeparator.FIRST_ROW_END));
+                line.write(getSeparator(NTableSeparator.FIRST_ROW_END));
 
                 out.print(line.trim().newLine().toString());
                 out.flush();
@@ -320,21 +320,21 @@ public class DefaultTableFormat extends DefaultFormatBase<NutsTableFormat> imple
             }
             for (int i1 = 0; i1 < rows.size(); i1++) {
                 if (i1 > 0) {
-                    if ((getSeparator(NutsTableSeparator.MIDDLE_ROW_START)
-                            + getSeparator(NutsTableSeparator.MIDDLE_ROW_SEP)
-                            + getSeparator(NutsTableSeparator.MIDDLE_ROW_LINE)
-                            + getSeparator(NutsTableSeparator.MIDDLE_ROW_END)).length() > 0) {
-                        line.write(getSeparator(NutsTableSeparator.MIDDLE_ROW_START));
+                    if ((getSeparator(NTableSeparator.MIDDLE_ROW_START)
+                            + getSeparator(NTableSeparator.MIDDLE_ROW_SEP)
+                            + getSeparator(NTableSeparator.MIDDLE_ROW_LINE)
+                            + getSeparator(NTableSeparator.MIDDLE_ROW_END)).length() > 0) {
+                        line.write(getSeparator(NTableSeparator.MIDDLE_ROW_START));
                         for (int i = 0; i < cells.size(); i++) {
                             if (i > 0) {
-                                line.write(getSeparator(NutsTableSeparator.MIDDLE_ROW_SEP));
+                                line.write(getSeparator(NTableSeparator.MIDDLE_ROW_SEP));
                             }
                             DefaultCell cell = cells.get(i);
-                            String B = getSeparator(NutsTableSeparator.MIDDLE_ROW_LINE);
+                            String B = getSeparator(NTableSeparator.MIDDLE_ROW_LINE);
                             String s = cell.rendered.toString();
-                            line.write(CoreStringUtils.fillString(B, NutsTexts.of(ws).parse(s).textLength()));
+                            line.write(CoreStringUtils.fillString(B, NTexts.of(ws).parse(s).textLength()));
                         }
-                        line.write(getSeparator(NutsTableSeparator.MIDDLE_ROW_END));
+                        line.write(getSeparator(NTableSeparator.MIDDLE_ROW_END));
 
                         out.print(line.trim().newLine().toString());
                         out.flush();
@@ -345,38 +345,38 @@ public class DefaultTableFormat extends DefaultFormatBase<NutsTableFormat> imple
                 Row row = rows.get(i1);
                 cells = row.cells;
 
-                line.write(getSeparator(NutsTableSeparator.ROW_START));
+                line.write(getSeparator(NTableSeparator.ROW_START));
                 for (int i = 0; i < cells.size(); i++) {
                     if (i > 0) {
-                        line.write(getSeparator(NutsTableSeparator.ROW_SEP));
+                        line.write(getSeparator(NTableSeparator.ROW_SEP));
                     }
                     DefaultCell cell = cells.get(i);
                     String s = cell.rendered.toString();
                     line.write(s);
                 }
-                line.write(getSeparator(NutsTableSeparator.ROW_END));
+                line.write(getSeparator(NTableSeparator.ROW_END));
 
                 out.print(line.trim().newLine().toString());
                 out.flush();
                 line.clear();
             }
 
-            if ((getSeparator(NutsTableSeparator.LAST_ROW_START)
-                    + getSeparator(NutsTableSeparator.LAST_ROW_SEP)
-                    + getSeparator(NutsTableSeparator.LAST_ROW_LINE)
-                    + getSeparator(NutsTableSeparator.LAST_ROW_END)).length() > 0) {
-                line.write(getSeparator(NutsTableSeparator.LAST_ROW_START));
+            if ((getSeparator(NTableSeparator.LAST_ROW_START)
+                    + getSeparator(NTableSeparator.LAST_ROW_SEP)
+                    + getSeparator(NTableSeparator.LAST_ROW_LINE)
+                    + getSeparator(NTableSeparator.LAST_ROW_END)).length() > 0) {
+                line.write(getSeparator(NTableSeparator.LAST_ROW_START));
                 cells = rows.get(0).cells;
                 for (int i = 0; i < cells.size(); i++) {
                     if (i > 0) {
-                        line.write(getSeparator(NutsTableSeparator.LAST_ROW_SEP));
+                        line.write(getSeparator(NTableSeparator.LAST_ROW_SEP));
                     }
                     DefaultCell cell = cells.get(i);
-                    String B = getSeparator(NutsTableSeparator.LAST_ROW_LINE);
+                    String B = getSeparator(NTableSeparator.LAST_ROW_LINE);
                     String s = cell.rendered.toString();
-                    line.write(CoreStringUtils.fillString(B, NutsTexts.of(ws).parse(s).textLength()));
+                    line.write(CoreStringUtils.fillString(B, NTexts.of(ws).parse(s).textLength()));
                 }
-                line.write(getSeparator(NutsTableSeparator.LAST_ROW_END));
+                line.write(getSeparator(NTableSeparator.LAST_ROW_END));
             }
         }
         out.print(line.trim().toString());
@@ -392,19 +392,19 @@ public class DefaultTableFormat extends DefaultFormatBase<NutsTableFormat> imple
         try {
             w.flush();
         } catch (IOException ex) {
-            throw new NutsIOException(getSession(), ex);
+            throw new NIOException(getSession(), ex);
         }
         return out.toString();
     }
 
-    private NutsTableCellFormat getTableCellFormat(DefaultCell dc) {
+    private NTableCellFormat getTableCellFormat(DefaultCell dc) {
         return dc.isHeader() ? defaultHeaderFormatter : defaultCellFormatter;
     }
 
-    private List<Row> rebuild(NutsSession session) {
-        NutsTexts metrics = NutsTexts.of(session).setSession(session);
+    private List<Row> rebuild(NSession session) {
+        NTexts metrics = NTexts.of(session).setSession(session);
         List<Row> rows1 = new ArrayList<>();
-        NutsTableModel model = getModel();
+        NTableModel model = getModel();
         int columnsCount = model.getColumnsCount();
         int rowsCount = model.getRowsCount();
         for (int rowIndex = 0; rowIndex < rowsCount; rowIndex++) {
@@ -486,7 +486,7 @@ public class DefaultTableFormat extends DefaultFormatBase<NutsTableFormat> imple
                 cell.cy = cr0;
                 cell.x = c0;
                 cell.y = r0;
-                NutsTableCellFormat formatter = getTableCellFormat(cell);
+                NTableCellFormat formatter = getTableCellFormat(cell);
                 Object cvalue = cell.getValue();
                 cell.setRendered(new RenderedCell(
                         c0, r0, cvalue,
@@ -524,7 +524,7 @@ public class DefaultTableFormat extends DefaultFormatBase<NutsTableFormat> imple
         return effectiveRows;
     }
 
-    public NutsTableFormat setHeaderFormat(NutsTableCellFormat formatter) {
+    public NTableFormat setHeaderFormat(NTableCellFormat formatter) {
         defaultHeaderFormatter = formatter == null ? DefaultTableHeaderFormat.INSTANCE : formatter;
         return this;
     }
@@ -570,24 +570,24 @@ public class DefaultTableFormat extends DefaultFormatBase<NutsTableFormat> imple
 
     private static class SimpleCell {
         private String title;
-        private NutsString value;
+        private NString value;
 
-        public SimpleCell(String title, NutsString value) {
+        public SimpleCell(String title, NString value) {
             this.title = title;
             this.value = value;
         }
     }
 
-    private NutsTableModel createTableModel(Object o) {
-        NutsSession session = getSession();
+    private NTableModel createTableModel(Object o) {
+        NSession session = getSession();
         if (o == null) {
-            return NutsMutableTableModel.of(session);
+            return NMutableTableModel.of(session);
         }
-        if (o instanceof NutsTableModel) {
-            return (NutsTableModel) o;
+        if (o instanceof NTableModel) {
+            return (NTableModel) o;
         }
         if (o instanceof String || o instanceof Number || o instanceof Date || o instanceof Temporal || o instanceof Path || o instanceof File) {
-            List<NutsElement> a = new ArrayList<>();
+            List<NElement> a = new ArrayList<>();
             a.add(_elems().toElement(o));
             return createTableModel(_elems().toElement(a));
         }
@@ -596,7 +596,7 @@ public class DefaultTableFormat extends DefaultFormatBase<NutsTableFormat> imple
             return _model2(o, session);
         }
         if (o instanceof Map) {
-            NutsMutableTableModel model = NutsMutableTableModel.of(session);
+            NMutableTableModel model = NMutableTableModel.of(session);
             LinkedHashSet<String> columns = new LinkedHashSet<>();
             columns.add("Name");
             columns.add("Value");
@@ -612,19 +612,19 @@ public class DefaultTableFormat extends DefaultFormatBase<NutsTableFormat> imple
             return model;
         }
         if (
-                (o instanceof NutsMessage)
-                        || (o instanceof NutsString)
-                        || (o instanceof NutsFormattable)
+                (o instanceof NMsg)
+                        || (o instanceof NString)
+                        || (o instanceof NFormattable)
         ) {
-            NutsMutableTableModel model = NutsMutableTableModel.of(session);
+            NMutableTableModel model = NMutableTableModel.of(session);
             model.newRow();
             model.addCell(formatObject(o));
             return model;
         }
-        if (!(o instanceof NutsElement)) {
+        if (!(o instanceof NElement)) {
             return createTableModel(_elems().toElement(o));
         }
-        NutsElement elem = (NutsElement) o;
+        NElement elem = (NElement) o;
         switch (elem.type()) {
             case BOOLEAN:
             case INSTANT:
@@ -633,7 +633,7 @@ public class DefaultTableFormat extends DefaultFormatBase<NutsTableFormat> imple
             case INTEGER:
             case FLOAT:
             case NULL: {
-                List<NutsElement> a = new ArrayList<>();
+                List<NElement> a = new ArrayList<>();
                 a.add(elem);
                 return createTableModel(_elems().toElement(a));
             }
@@ -645,13 +645,13 @@ public class DefaultTableFormat extends DefaultFormatBase<NutsTableFormat> imple
                 return _model2(elem,session);
             }
             default: {
-                throw new NutsUnsupportedArgumentException(session, NutsMessage.ofCstyle("unsupported %s", elem.type()));
+                throw new NUnsupportedArgumentException(session, NMsg.ofCstyle("unsupported %s", elem.type()));
             }
         }
     }
 
-    public NutsMutableTableModel _model2(Object obj,NutsSession session) {
-        NutsMutableTableModel model = NutsMutableTableModel.of(session);
+    public NMutableTableModel _model2(Object obj, NSession session) {
+        NMutableTableModel model = NMutableTableModel.of(session);
         List<SimpleRow> rows=resolveColumnsFromRows(obj);
         List<String> titles=new ArrayList<>();
         Set<String> titlesSet=new HashSet<>();
@@ -695,12 +695,12 @@ public class DefaultTableFormat extends DefaultFormatBase<NutsTableFormat> imple
     }
     public List<SimpleRow> resolveColumnsFromRows(Object obj) {
         List<SimpleRow> rows = new ArrayList<>();
-        NutsSession session = getSession();
-        if (obj instanceof NutsElement) {
-            NutsElement value = (NutsElement) obj;
+        NSession session = getSession();
+        if (obj instanceof NElement) {
+            NElement value = (NElement) obj;
             switch (value.type()) {
                 case ARRAY: {
-                    for (NutsElement value2 : value.asArray().get(session).items()) {
+                    for (NElement value2 : value.asArray().get(session).items()) {
                         rows.add(resolveColumnsFromRow(value2));
                     }
                     break;
@@ -721,14 +721,14 @@ public class DefaultTableFormat extends DefaultFormatBase<NutsTableFormat> imple
     }
 
     public SimpleRow resolveColumnsFromRow(Object obj) {
-        NutsSession session = getSession();
-        if (obj instanceof NutsElement) {
-            NutsElement value = (NutsElement) obj;
+        NSession session = getSession();
+        if (obj instanceof NElement) {
+            NElement value = (NElement) obj;
             switch (value.type()) {
                 case OBJECT: {
                     SimpleRow e = new SimpleRow();
-                    for (NutsElementEntry nutsNamedValue : value.asObject().get(session).entries()) {
-                        NutsElement k = nutsNamedValue.getKey();
+                    for (NElementEntry nutsNamedValue : value.asObject().get(session).entries()) {
+                        NElement k = nutsNamedValue.getKey();
                         if (!k.isString()) {
                             k = _elems().ofString(
                                     k.toString()
@@ -741,7 +741,7 @@ public class DefaultTableFormat extends DefaultFormatBase<NutsTableFormat> imple
                 case ARRAY: {
                     SimpleRow e = new SimpleRow();
                     int column = 1;
-                    for (NutsElement value2 : value.asArray().get(session).items()) {
+                    for (NElement value2 : value.asArray().get(session).items()) {
                         e.cells.add(resolveColumnsFromCell("COL " + column,value2));
                         column++;
                     }
@@ -782,8 +782,8 @@ public class DefaultTableFormat extends DefaultFormatBase<NutsTableFormat> imple
         return new SimpleCell(title, obj == null ? null : formatObject(obj));
     }
 
-    private NutsElements _elems() {
-        return NutsElements.of(getSession()).setSession(getSession());
+    private NElements _elems() {
+        return NElements.of(getSession()).setSession(getSession());
     }
 
     @Override
@@ -792,9 +792,9 @@ public class DefaultTableFormat extends DefaultFormatBase<NutsTableFormat> imple
     }
 
     @Override
-    public boolean configureFirst(NutsCommandLine cmdLine) {
-        NutsSession session = getSession();
-        NutsArgument a;
+    public boolean configureFirst(NCommandLine cmdLine) {
+        NSession session = getSession();
+        NArgument a;
         if ((a = cmdLine.nextBoolean("--no-header").orNull()) != null) {
             boolean val = a.getBooleanValue().get(session);
             if (a.isActive()) {
@@ -822,7 +822,7 @@ public class DefaultTableFormat extends DefaultFormatBase<NutsTableFormat> imple
                     columns.put(v.toString().toLowerCase(), i);
                 }
             }
-            NutsArgument a2 = null;
+            NArgument a2 = null;
             for (Map.Entry<String, Integer> e : columns.entrySet()) {
                 if ((a2 = cmdLine.next("--" + e.getKey()).orNull()) != null) {
                     if (a2.isActive()) {
@@ -840,13 +840,13 @@ public class DefaultTableFormat extends DefaultFormatBase<NutsTableFormat> imple
         return false;
     }
 
-    private NutsString formatObject(Object any) {
+    private NString formatObject(Object any) {
         checkSession();
-        return NutsTextUtils.stringValueFormatted(any, false, getSession());
+        return NTextUtils.stringValueFormatted(any, false, getSession());
     }
 
     @Override
-    public int getSupportLevel(NutsSupportLevelContext context) {
+    public int getSupportLevel(NSupportLevelContext context) {
         return DEFAULT_SUPPORT;
     }
 
@@ -860,20 +860,20 @@ public class DefaultTableFormat extends DefaultFormatBase<NutsTableFormat> imple
         char[][] rendered;
         int rows;
         int columns;
-        NutsTableCellFormat formatter;
-        NutsTexts metrics;
-        NutsPositionType valign;
-        NutsPositionType halign;
-        NutsWorkspace ws;
-        NutsSession session;
+        NTableCellFormat formatter;
+        NTexts metrics;
+        NPositionType valign;
+        NPositionType halign;
+        NWorkspace ws;
+        NSession session;
 
-        private RenderedCell(NutsTexts metrics, NutsSession session) {
+        private RenderedCell(NTexts metrics, NSession session) {
             this.session = session;
             this.metrics = metrics;
             this.ws = session.getWorkspace();
         }
 
-        public RenderedCell(int c, int r, Object o, String str, NutsTableCellFormat formatter, NutsPositionType valign, NutsPositionType halign, NutsTexts metrics, NutsSession session) {
+        public RenderedCell(int c, int r, Object o, String str, NTableCellFormat formatter, NPositionType valign, NPositionType halign, NTexts metrics, NSession session) {
             this.session = session;
             this.ws = session.getWorkspace();
             this.formatter = formatter;
@@ -1115,7 +1115,7 @@ public class DefaultTableFormat extends DefaultFormatBase<NutsTableFormat> imple
         }
     }
 
-    public static class DefaultCell implements NutsTableCell {
+    public static class DefaultCell implements NTableCell {
 
         int colspan = 1;
         int rowspan = 1;

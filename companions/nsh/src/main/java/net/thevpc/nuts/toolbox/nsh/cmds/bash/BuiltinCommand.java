@@ -26,8 +26,8 @@
  */
 package net.thevpc.nuts.toolbox.nsh.cmds.bash;
 
-import net.thevpc.nuts.cmdline.NutsCommandLine;
-import net.thevpc.nuts.NutsSession;
+import net.thevpc.nuts.cmdline.NCommandLine;
+import net.thevpc.nuts.NSession;
 import net.thevpc.nuts.toolbox.nsh.SimpleJShellBuiltin;
 import net.thevpc.nuts.toolbox.nsh.jshell.JShellBuiltin;
 import net.thevpc.nuts.toolbox.nsh.jshell.JShellExecutionContext;
@@ -44,7 +44,7 @@ public class BuiltinCommand extends SimpleJShellBuiltin {
     }
 
     @Override
-    protected boolean configureFirst(NutsCommandLine commandLine, JShellExecutionContext context) {
+    protected boolean configureFirst(NCommandLine commandLine, JShellExecutionContext context) {
         Options o = context.getOptions();
         o.args = commandLine.toStringArray();
         commandLine.skipAll();
@@ -52,9 +52,9 @@ public class BuiltinCommand extends SimpleJShellBuiltin {
     }
 
     @Override
-    protected void execBuiltin(NutsCommandLine commandLine, JShellExecutionContext context) {
+    protected void execBuiltin(NCommandLine commandLine, JShellExecutionContext context) {
         Options o = context.getOptions();
-        NutsSession session = context.getSession();
+        NSession session = context.getSession();
         if (o.args.length > 0) {
             JShellBuiltin a = context.builtins().get(o.args[0]);
             a.exec(Arrays.copyOfRange(o.args, 1, o.args.length), context);

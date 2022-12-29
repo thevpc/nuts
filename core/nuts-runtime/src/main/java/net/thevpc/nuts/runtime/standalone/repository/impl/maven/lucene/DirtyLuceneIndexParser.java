@@ -1,32 +1,32 @@
 package net.thevpc.nuts.runtime.standalone.repository.impl.maven.lucene;
 
-import net.thevpc.nuts.elem.NutsElement;
-import net.thevpc.nuts.elem.NutsElements;
-import net.thevpc.nuts.io.NutsIOException;
-import net.thevpc.nuts.NutsSession;
+import net.thevpc.nuts.elem.NElement;
+import net.thevpc.nuts.elem.NElements;
+import net.thevpc.nuts.io.NIOException;
+import net.thevpc.nuts.NSession;
 import net.thevpc.nuts.runtime.standalone.util.collections.EvictingIntQueue;
-import net.thevpc.nuts.runtime.standalone.util.iter.NutsIteratorBase;
+import net.thevpc.nuts.runtime.standalone.util.iter.NIteratorBase;
 
 import java.io.*;
 
-public class DirtyLuceneIndexParser extends NutsIteratorBase<String> implements Closeable {
+public class DirtyLuceneIndexParser extends NIteratorBase<String> implements Closeable {
     private PushbackReader reader;
     private String last;
     private EvictingIntQueue whites = new EvictingIntQueue(10);
     private long count = 0;
     private boolean closed=false;
-    private NutsSession session;
+    private NSession session;
     private InputStream source0;
 
-    public DirtyLuceneIndexParser(InputStream reader, NutsSession session) {
+    public DirtyLuceneIndexParser(InputStream reader, NSession session) {
         this.session = session;
         this.source0 = reader;
         this.reader = new PushbackReader(new InputStreamReader(reader));
     }
 
     @Override
-    public NutsElement describe(NutsSession session) {
-        return NutsElements.of(session).ofObject()
+    public NElement describe(NSession session) {
+        return NElements.of(session).ofObject()
                 .set("type","ScanLucene")
                 .set("source",source0.toString())
                 .build();
@@ -131,7 +131,7 @@ public class DirtyLuceneIndexParser extends NutsIteratorBase<String> implements 
                 }
             }
         } catch (IOException ex) {
-            throw new NutsIOException(session,ex);
+            throw new NIOException(session,ex);
         }
         close();
         return null;
@@ -145,7 +145,7 @@ public class DirtyLuceneIndexParser extends NutsIteratorBase<String> implements 
         try {
             reader.close();
         } catch (IOException ex) {
-            throw new NutsIOException(session,ex);
+            throw new NIOException(session,ex);
         }
     }
 }

@@ -1,6 +1,6 @@
 package net.thevpc.nuts.runtime.standalone.xtra.nanodb;
 
-import net.thevpc.nuts.NutsSession;
+import net.thevpc.nuts.NSession;
 
 class NanoDBSerializerForBoolean extends NanoDBNonNullSerializer<Boolean> {
     public NanoDBSerializerForBoolean() {
@@ -8,12 +8,12 @@ class NanoDBSerializerForBoolean extends NanoDBNonNullSerializer<Boolean> {
     }
 
     @Override
-    public void write(Boolean obj, NanoDBOutputStream out, NutsSession session) {
+    public void write(Boolean obj, NanoDBOutputStream out, NSession session) {
         out.writeBoolean((Boolean) obj);
     }
 
     @Override
-    public Boolean read(NanoDBInputStream in, Class expectedType, NutsSession session) {
+    public Boolean read(NanoDBInputStream in, Class expectedType, NSession session) {
         return in.readBoolean();
     }
 }

@@ -6,8 +6,8 @@
 package net.thevpc.nuts.toolbox.nsh.jshell;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.cmdline.NutsCommandAutoComplete;
-import net.thevpc.nuts.toolbox.nsh.NutsBuiltinManager;
+import net.thevpc.nuts.cmdline.NCommandAutoComplete;
+import net.thevpc.nuts.toolbox.nsh.NBuiltinManager;
 
 import java.util.*;
 
@@ -31,9 +31,9 @@ public class DefaultJShellContext extends AbstractJShellContext {
     private JShellBuiltinManager builtinManager;
     private String cwd = System.getProperty("user.dir");
     private JShellFileSystem fileSystem;
-    private NutsCommandAutoComplete autoComplete;
+    private NCommandAutoComplete autoComplete;
     public DefaultJShellContext(JShell shell, JShellNode rootNode, JShellNode parentNode,
-                                JShellContext parentContext, NutsWorkspace workspace, NutsSession session, JShellVariables vars,
+                                JShellContext parentContext, NWorkspace workspace, NSession session, JShellVariables vars,
                                 String serviceName, String[] args
     ) {
         this(parentContext);
@@ -64,7 +64,7 @@ public class DefaultJShellContext extends AbstractJShellContext {
             for (Map.Entry<String, String> entry : System.getenv().entrySet()) {
                 vars().export(entry.getKey(), entry.getValue());
             }
-            setBuiltins(new NutsBuiltinManager());
+            setBuiltins(new NBuiltinManager());
             JShellAliasManager a = aliases();
             a.set(".", "source");
             a.set("[", "test");
@@ -253,12 +253,12 @@ public class DefaultJShellContext extends AbstractJShellContext {
 
 
     @Override
-    public NutsCommandAutoComplete getAutoComplete() {
+    public NCommandAutoComplete getAutoComplete() {
         return autoComplete;
     }
 
     @Override
-    public void setAutoComplete(NutsCommandAutoComplete autoComplete) {
+    public void setAutoComplete(NCommandAutoComplete autoComplete) {
         this.autoComplete = autoComplete;
     }
 

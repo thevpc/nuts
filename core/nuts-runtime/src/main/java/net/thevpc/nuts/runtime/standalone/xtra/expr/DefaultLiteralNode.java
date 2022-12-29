@@ -1,17 +1,17 @@
 package net.thevpc.nuts.runtime.standalone.xtra.expr;
 
-import net.thevpc.nuts.NutsOptional;
+import net.thevpc.nuts.NOptional;
 import net.thevpc.nuts.util.*;
 
 import java.util.Collections;
 import java.util.List;
 
-public class DefaultLiteralNode implements NutsExprLiteralNode {
+public class DefaultLiteralNode implements NExprLiteralNode {
     private final Object lit;
 
     @Override
-    public NutsExprNodeType getType() {
-        return NutsExprNodeType.LITERAL;
+    public NExprNodeType getType() {
+        return NExprNodeType.LITERAL;
     }
 
     @Override
@@ -20,7 +20,7 @@ public class DefaultLiteralNode implements NutsExprLiteralNode {
     }
 
     @Override
-    public List<NutsExprNode> getChildren() {
+    public List<NExprNode> getChildren() {
         return Collections.emptyList();
     }
 
@@ -34,8 +34,8 @@ public class DefaultLiteralNode implements NutsExprLiteralNode {
     }
 
     @Override
-    public NutsOptional<Object> eval(NutsExprDeclarations context) {
-        return NutsOptional.ofNullable(lit);
+    public NOptional<Object> eval(NExprDeclarations context) {
+        return NOptional.ofNullable(lit);
     }
 
     @Override

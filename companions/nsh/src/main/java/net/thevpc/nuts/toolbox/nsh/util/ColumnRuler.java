@@ -1,9 +1,9 @@
 package net.thevpc.nuts.toolbox.nsh.util;
 
-import net.thevpc.nuts.NutsSession;
-import net.thevpc.nuts.NutsString;
-import net.thevpc.nuts.text.NutsTextStyle;
-import net.thevpc.nuts.text.NutsTexts;
+import net.thevpc.nuts.NSession;
+import net.thevpc.nuts.NString;
+import net.thevpc.nuts.text.NTextStyle;
+import net.thevpc.nuts.text.NTexts;
 import net.thevpc.nuts.toolbox.nsh.bundles._StringUtils;
 
 public class ColumnRuler {
@@ -23,9 +23,9 @@ public class ColumnRuler {
         return _StringUtils.formatRight(ruleText, width)+" ";
     }
 
-    public NutsString nextNum(long nbr, NutsSession session){
-        return NutsTexts.of(session).ofStyled(next(String.valueOf(nbr)),
-                NutsTextStyle.number()
+    public NString nextNum(long nbr, NSession session){
+        return NTexts.of(session).ofStyled(next(String.valueOf(nbr)),
+                NTextStyle.number()
         );
     }
 }

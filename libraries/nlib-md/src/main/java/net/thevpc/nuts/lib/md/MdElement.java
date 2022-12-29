@@ -17,13 +17,13 @@
  */
 package net.thevpc.nuts.lib.md;
 
-import net.thevpc.nuts.NutsBlankable;
+import net.thevpc.nuts.NBlankable;
 
 /**
  *
  * @author thevpc
  */
-public interface MdElement extends NutsBlankable {
+public interface MdElement extends NBlankable {
     MdElementType type();
 
     MdAdmonition asAdmonition();

@@ -30,30 +30,30 @@ package net.thevpc.nuts.runtime.standalone.format.yaml;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.elem.*;
-import net.thevpc.nuts.io.NutsIOException;
-import net.thevpc.nuts.io.NutsPrintStream;
-import net.thevpc.nuts.runtime.standalone.elem.NutsElementStreamFormat;
+import net.thevpc.nuts.io.NIOException;
+import net.thevpc.nuts.io.NStream;
+import net.thevpc.nuts.runtime.standalone.elem.NElementStreamFormat;
 import net.thevpc.nuts.runtime.standalone.format.json.ReaderLocation;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.Reader;
 
-public class SimpleYaml implements NutsElementStreamFormat {
+public class SimpleYaml implements NElementStreamFormat {
 
-    private final NutsWorkspace ws;
+    private final NWorkspace ws;
 
-    public SimpleYaml(NutsWorkspace ws) {
+    public SimpleYaml(NWorkspace ws) {
         this.ws = ws;
     }
 
     @Override
-    public NutsElement parseElement(Reader reader, NutsElementFactoryContext context) {
+    public NElement parseElement(Reader reader, NElementFactoryContext context) {
         return new ElementParser(context).parseElement(reader);
     }
 
     @Override
-    public void printElement(NutsElement value, NutsPrintStream out, boolean compact, NutsElementFactoryContext context) {
+    public void printElement(NElement value, NStream out, boolean compact, NElementFactoryContext context) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
@@ -73,15 +73,15 @@ public class SimpleYaml implements NutsElementStreamFormat {
             this.value = value;
         }
 
-        private static Node forLiteral(NutsElement value) {
+        private static Node forLiteral(NElement value) {
             return new Node(NodeType.LITERAL, value);
         }
 
-        private static Node forArrayElement(NutsElement value) {
+        private static Node forArrayElement(NElement value) {
             return new Node(NodeType.ARRAY_ELEMENT, value);
         }
 
-        private static Node forObjectElement(NutsElementEntry value) {
+        private static Node forObjectElement(NElementEntry value) {
             return new Node(NodeType.OBJECT_ELEMENT, value);
         }
 
@@ -89,12 +89,12 @@ public class SimpleYaml implements NutsElementStreamFormat {
             return type;
         }
 
-        public NutsElement getElement() {
-            return (NutsElement) value;
+        public NElement getElement() {
+            return (NElement) value;
         }
 
-        public NutsElementEntry getEntry() {
-            return (NutsElementEntry) value;
+        public NElementEntry getEntry() {
+            return (NElementEntry) value;
         }
 
         public Object getValue() {
@@ -106,19 +106,19 @@ public class SimpleYaml implements NutsElementStreamFormat {
     private static class ElementParser {
 
         private BufferedReader reader;
-        private final NutsElementFactoryContext context;
-        private NutsElements ebuilder;
+        private final NElementFactoryContext context;
+        private NElements ebuilder;
         private int fileOffset;
         private int lineNumber;
         private int lineOffset;
         private int current;
         private boolean skipLF;
 
-        public ElementParser(NutsElementFactoryContext context) {
+        public ElementParser(NElementFactoryContext context) {
             this.context = context;
         }
 
-        public NutsElement parseElement(Reader reader) {
+        public NElement parseElement(Reader reader) {
             this.reader = (reader instanceof BufferedReader) ? this.reader : new BufferedReader(reader);
             readNext();
             return readElement(0);
@@ -159,7 +159,7 @@ public class SimpleYaml implements NutsElementStreamFormat {
                     }
                 }
             } catch (IOException ex) {
-                throw new NutsIOException(context.getSession(), ex);
+                throw new NIOException(context.getSession(), ex);
             }
             return current;
         }
@@ -193,7 +193,7 @@ public class SimpleYaml implements NutsElementStreamFormat {
             try {
                 reader.mark(1024);
             } catch (IOException ex) {
-                throw new NutsIOException(context.getSession(),ex);
+                throw new NIOException(context.getSession(),ex);
             }
         }
 
@@ -201,13 +201,13 @@ public class SimpleYaml implements NutsElementStreamFormat {
             try {
                 reader.reset();
             } catch (IOException ex) {
-                throw new NutsIOException(context.getSession(),ex);
+                throw new NIOException(context.getSession(),ex);
             }
         }
 
-        public NutsElements builder() {
+        public NElements builder() {
             if (ebuilder == null) {
-                ebuilder = NutsElements.of(context.getSession()).setSession(context.getSession());
+                ebuilder = NElements.of(context.getSession()).setSession(context.getSession());
             }
             return ebuilder;
         }
@@ -286,7 +286,7 @@ public class SimpleYaml implements NutsElementStreamFormat {
             return indent;
         }
 
-        private NutsElement readLiteral(boolean asValue) {
+        private NElement readLiteral(boolean asValue) {
             if (current == '"') {
                 readNext();
                 StringBuilder sb = new StringBuilder();
@@ -401,13 +401,13 @@ public class SimpleYaml implements NutsElementStreamFormat {
             }
         }
 
-        public NutsElement readElement(int indent) {
+        public NElement readElement(int indent) {
             Node a = readNode(indent, false);
             switch (a.type) {
                 case LITERAL:
                     return a.getElement();
                 case OBJECT_ELEMENT: {
-                    NutsObjectElementBuilder obj = builder().ofObject().add(a.getEntry());
+                    NObjectElementBuilder obj = builder().ofObject().add(a.getEntry());
                     while (true) {
                         readNewLine();
                         int newIndent = peekIndent();
@@ -428,7 +428,7 @@ public class SimpleYaml implements NutsElementStreamFormat {
                     return obj.build();
                 }
                 case ARRAY_ELEMENT: {
-                    NutsArrayElementBuilder arr = builder().ofArray().add(a.getElement());
+                    NArrayElementBuilder arr = builder().ofArray().add(a.getElement());
                     while (true) {
                         readNewLine();
                         int newIndent = peekIndent();
@@ -451,7 +451,7 @@ public class SimpleYaml implements NutsElementStreamFormat {
 
             }
             final Object r = readNode(indent, true);
-            return (NutsElement) r;
+            return (NElement) r;
         }
 
         public Node readNode(int indent, boolean asValue) {
@@ -465,21 +465,21 @@ public class SimpleYaml implements NutsElementStreamFormat {
             switch (c) {
                 case '-': {
                     if (asValue) {
-                        NutsElement li = readLiteral(true);
+                        NElement li = readLiteral(true);
                         return Node.forLiteral(li);
                     }
                     readerMark();
                     readNext();
                     if (current == ' ' || current == '\t') {
                         readNext();
-                        NutsElement li = readNode(indent, true).getElement();
+                        NElement li = readNode(indent, true).getElement();
                         return Node.forArrayElement(li);
                     } else if (current == '\n' || current == ';') {
                         readNewLine();
                         int newIndent = peekIndent();
                         if (newIndent > indent) {
                             skipWhiteSpace();
-                            NutsElement li = readElement(newIndent);
+                            NElement li = readElement(newIndent);
                             return Node.forArrayElement(li);
                         } else {
                             return Node.forArrayElement(builder().ofString(""));
@@ -487,7 +487,7 @@ public class SimpleYaml implements NutsElementStreamFormat {
                     } else {
                         readerReset();
                         readNext();
-                        NutsElement li = readLiteral(true);
+                        NElement li = readLiteral(true);
                         return Node.forLiteral(li);
                     }
                 }
@@ -499,14 +499,14 @@ public class SimpleYaml implements NutsElementStreamFormat {
                 }
                 case '?': {
                     if (asValue) {
-                        NutsElement li = readLiteral(true);
+                        NElement li = readLiteral(true);
                         return Node.forLiteral(li);
                     }
                     readerMark();
                     readNext();
                     if (current == ' ' || current == '\t') {
                         readNext();
-                        NutsElement li = readNode(indent, true).getElement();
+                        NElement li = readNode(indent, true).getElement();
                         skipWhiteSpace();
                         readNewLine();
                         skipWhiteSpace();
@@ -514,14 +514,14 @@ public class SimpleYaml implements NutsElementStreamFormat {
                         skipWhiteSpace();
                         readNewLine();
                         skipWhiteSpace();
-                        NutsElement v = readNode(indent, true).getElement();
+                        NElement v = readNode(indent, true).getElement();
                         return Node.forObjectElement(builder().ofEntry(li, v));
                     } else if (current == '\n' || current == ';') {
                         readNewLine();
                         int newIndent = peekIndent();
                         if (newIndent > indent) {
                             skipWhiteSpace();
-                            NutsElement li = readNode(newIndent, true).getElement();
+                            NElement li = readNode(newIndent, true).getElement();
                             skipWhiteSpace();
                             readNewLine();
                             skipWhiteSpace();
@@ -529,10 +529,10 @@ public class SimpleYaml implements NutsElementStreamFormat {
                             skipWhiteSpace();
                             readNewLine();
                             skipWhiteSpace();
-                            NutsElement v = readNode(newIndent, true).getElement();
+                            NElement v = readNode(newIndent, true).getElement();
                             return Node.forObjectElement(builder().ofEntry(li, v));
                         } else {
-                            NutsElement li = readNode(indent, true).getElement();
+                            NElement li = readNode(indent, true).getElement();
                             skipWhiteSpace();
                             readNewLine();
                             skipWhiteSpace();
@@ -540,18 +540,18 @@ public class SimpleYaml implements NutsElementStreamFormat {
                             skipWhiteSpace();
                             readNewLine();
                             skipWhiteSpace();
-                            NutsElement v = readNode(indent, true).getElement();
+                            NElement v = readNode(indent, true).getElement();
                             return Node.forObjectElement(builder().ofEntry(li, v));
                         }
                     } else {
                         readerReset();
                         readNext();
-                        NutsElement li = readLiteral(true);
+                        NElement li = readLiteral(true);
                         return Node.forLiteral(li);
                     }
                 }
                 default: {
-                    NutsElement li = readLiteral(false);
+                    NElement li = readLiteral(false);
                     if (asValue) {
                         return Node.forLiteral(li);
                     }
@@ -562,14 +562,14 @@ public class SimpleYaml implements NutsElementStreamFormat {
                             int newIndent = peekIndent();
                             if (newIndent > indent) {
                                 skipWhiteSpace();
-                                NutsElement v = readElement(newIndent);
+                                NElement v = readElement(newIndent);
                                 return Node.forObjectElement(builder().ofEntry(li, v));
                             } else {
                                 return Node.forObjectElement(builder().ofEntry(li, builder().ofString("")));
                             }
                         } else {
                             Node n = readNode(indent, true);
-                            NutsElement v = n.getElement();
+                            NElement v = n.getElement();
                             return Node.forObjectElement(builder().ofEntry(li, v));
                         }
                     }

@@ -1,13 +1,13 @@
 package net.thevpc.nuts.toolbox.njob;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.cmdline.NutsArgument;
-import net.thevpc.nuts.cmdline.NutsCommandLine;
-import net.thevpc.nuts.format.NutsMutableTableModel;
-import net.thevpc.nuts.format.NutsTableFormat;
-import net.thevpc.nuts.text.NutsTextBuilder;
-import net.thevpc.nuts.text.NutsTextStyle;
-import net.thevpc.nuts.text.NutsTexts;
+import net.thevpc.nuts.cmdline.NArgument;
+import net.thevpc.nuts.cmdline.NCommandLine;
+import net.thevpc.nuts.format.NMutableTableModel;
+import net.thevpc.nuts.format.NTableFormat;
+import net.thevpc.nuts.text.NTextBuilder;
+import net.thevpc.nuts.text.NTextStyle;
+import net.thevpc.nuts.text.NTexts;
 import net.thevpc.nuts.toolbox.njob.model.*;
 import net.thevpc.nuts.toolbox.njob.time.TimeParser;
 import net.thevpc.nuts.toolbox.njob.time.TimePeriod;
@@ -26,8 +26,8 @@ import java.util.stream.Stream;
 public class NTasksSubCmd {
 
     private JobService service;
-    private NutsApplicationContext context;
-    private NutsSession session;
+    private NApplicationContext context;
+    private NSession session;
     private JobServiceCmd parent;
 
     public NTasksSubCmd(JobServiceCmd parent) {
@@ -37,11 +37,11 @@ public class NTasksSubCmd {
         this.session = parent.session;
     }
 
-    public void runTaskAdd(NutsCommandLine cmd) {
+    public void runTaskAdd(NCommandLine cmd) {
         boolean list = false;
         boolean show = false;
         boolean nameVisited = false;
-        NutsArgument a;
+        NArgument a;
         List<Consumer<NTask>> runLater = new ArrayList<>();
         while (cmd.hasNext()) {
             if ((a = cmd.nextBoolean("--list", "-l").orNull()) != null) {
@@ -94,7 +94,7 @@ public class NTasksSubCmd {
                     String jobId = s;
                     NJob job = service.jobs().getJob(jobId);
                     if (job == null) {
-                        cmd.throwError(NutsMessage.ofCstyle("invalid job %s", jobId));
+                        cmd.throwError(NMsg.ofCstyle("invalid job %s", jobId));
                     }
                     t.setJobId(job.getId());
                 });
@@ -104,7 +104,7 @@ public class NTasksSubCmd {
                     String taskId = s;
                     NTask parentTask = service.tasks().getTask(taskId);
                     if (parentTask == null) {
-                        cmd.throwError(NutsMessage.ofCstyle("invalid parent task %s", taskId));
+                        cmd.throwError(NMsg.ofCstyle("invalid parent task %s", taskId));
                     }
                     t.setParentTaskId(parentTask.getId());
                 });
@@ -150,7 +150,7 @@ public class NTasksSubCmd {
                 runLater.add(t -> t.setPriority(NPriority.NORMAL));
             } else {
                 if (cmd.peek().get(session).isNonOption() && !nameVisited) {
-                    String n = cmd.next("name").flatMap(NutsValue::asString).get(session);
+                    String n = cmd.next("name").flatMap(NValue::asString).get(session);
                     runLater.add(t -> t.setName(n));
                 } else {
                     cmd.throwUnexpectedArgument();
@@ -165,20 +165,20 @@ public class NTasksSubCmd {
             service.tasks().addTask(t);
             if (context.getSession().isPlainTrace()) {
                 context.getSession().out().printf("task %s (%s) added.\n",
-                        NutsTexts.of(context.getSession()).ofStyled(t.getId(), NutsTextStyle.primary5()),
+                        NTexts.of(context.getSession()).ofStyled(t.getId(), NTextStyle.primary5()),
                         t.getName()
                 );
             }
             if (show) {
-                runTaskShow(NutsCommandLine.of(new String[]{t.getId()}));
+                runTaskShow(NCommandLine.of(new String[]{t.getId()}));
             }
             if (list) {
-                runTaskList(NutsCommandLine.of(new String[0]));
+                runTaskList(NCommandLine.of(new String[0]));
             }
         }
     }
 
-    public void runTaskUpdate(NutsCommandLine cmd) {
+    public void runTaskUpdate(NCommandLine cmd) {
         class Data{
             List<NTask> tasks = new ArrayList<>();
             boolean list = false;
@@ -187,7 +187,7 @@ public class NTasksSubCmd {
         }
         Data d=new Data();
         while (cmd.hasNext()) {
-            NutsArgument aa = cmd.peek().get(session);
+            NArgument aa = cmd.peek().get(session);
             switch(aa.key()) {
                 case "--list":
                 case "-l": {
@@ -300,7 +300,7 @@ public class NTasksSubCmd {
                     cmd.withNextString((v, a, s) -> {
                         NJob job = service.jobs().getJob(v);
                         if (job == null) {
-                            cmd.throwError(NutsMessage.ofCstyle("invalid job %s", v));
+                            cmd.throwError(NMsg.ofCstyle("invalid job %s", v));
                         }
                         d.runLater.add(t -> t.setJobId(job.getId()));
                     });
@@ -311,7 +311,7 @@ public class NTasksSubCmd {
                     cmd.withNextString((v, a, s) -> {
                         NTask parentTask = service.tasks().getTask(v);
                         if (parentTask == null) {
-                            cmd.throwError(NutsMessage.ofCstyle("invalid parent task %s", v));
+                            cmd.throwError(NMsg.ofCstyle("invalid parent task %s", v));
                         }
                         d.runLater.add(t -> t.setParentTaskId(parentTask.getId()));
                     });
@@ -393,7 +393,7 @@ public class NTasksSubCmd {
             }
         }
         if (d.tasks.isEmpty()) {
-            cmd.throwError(NutsMessage.ofNtf("task id expected"));
+            cmd.throwError(NMsg.ofNtf("task id expected"));
         }
         if (cmd.isExecMode()) {
             for (NTask task : d.tasks) {
@@ -401,28 +401,28 @@ public class NTasksSubCmd {
                     c.accept(task);
                 }
             }
-            NutsTexts text = NutsTexts.of(context.getSession());
+            NTexts text = NTexts.of(context.getSession());
             for (NTask task : new LinkedHashSet<>(d.tasks)) {
                 service.tasks().updateTask(task);
                 if (context.getSession().isPlainTrace()) {
                     context.getSession().out().printf("task %s (%s) updated.\n",
-                            text.ofStyled(task.getId(), NutsTextStyle.primary5()),
-                            text.ofStyled(task.getName(), NutsTextStyle.primary1())
+                            text.ofStyled(task.getId(), NTextStyle.primary5()),
+                            text.ofStyled(task.getName(), NTextStyle.primary1())
                     );
                 }
             }
             if (d.show) {
                 for (NTask t : new LinkedHashSet<>(d.tasks)) {
-                    runTaskList(NutsCommandLine.of(new String[]{t.getId()}));
+                    runTaskList(NCommandLine.of(new String[]{t.getId()}));
                 }
             }
             if (d.list) {
-                runTaskList(NutsCommandLine.of(new String[0]));
+                runTaskList(NCommandLine.of(new String[0]));
             }
         }
     }
 
-    private void runTaskList(NutsCommandLine cmd) {
+    private void runTaskList(NCommandLine cmd) {
         class Data{
             TimespanPattern hoursPerDay = TimespanPattern.WORK;
             int count = 100;
@@ -434,7 +434,7 @@ public class NTasksSubCmd {
         }
         Data d=new Data();
         while (cmd.hasNext()) {
-            NutsArgument aa = cmd.peek().get(session);
+            NArgument aa = cmd.peek().get(session);
             switch(aa.key()) {
                 case "-w":
                 case "--weeks": {
@@ -503,7 +503,7 @@ public class NTasksSubCmd {
                 case "--groupBy":
                 case "--groupby":
                 case "--group-by": {
-                    NutsArgument y = cmd.nextString().get(session);
+                    NArgument y = cmd.nextString().get(session);
                     switch (y.getStringValue().get(session)) {
                         case "p":
                         case "project": {
@@ -521,7 +521,7 @@ public class NTasksSubCmd {
                             break;
                         }
                         default: {
-                            cmd.pushBack(y).throwUnexpectedArgument(NutsMessage.ofPlain("invalid value"));
+                            cmd.pushBack(y).throwUnexpectedArgument(NMsg.ofPlain("invalid value"));
                         }
                     }
                     break;
@@ -595,7 +595,7 @@ public class NTasksSubCmd {
             Stream<NTask> r = service.tasks().findTasks(d.status, null, d.count, d.countType, d.whereFilter, d.groupBy, d.timeUnit, d.hoursPerDay);
 
             if (context.getSession().isPlainTrace()) {
-                NutsMutableTableModel m = NutsMutableTableModel.of(session);
+                NMutableTableModel m = NMutableTableModel.of(session);
                 List<NTask> lastResults = new ArrayList<>();
                 int[] index = new int[1];
                 r.forEach(x -> {
@@ -606,7 +606,7 @@ public class NTasksSubCmd {
                     lastResults.add(x);
                 });
                 context.getSession().setProperty("LastResults", lastResults.toArray(new NTask[0]));
-                NutsTableFormat.of(session)
+                NTableFormat.of(session)
                         .setBorder("spaces")
                         .setValue(m).println();
             } else {
@@ -620,18 +620,18 @@ public class NTasksSubCmd {
         NProject p = project == null ? null : service.projects().getProject(project);
         NTaskStatus s = x.getStatus();
         String dte0 = parent.getFormattedDate(x.getDueTime());
-        NutsTextBuilder dte = NutsTexts.of(session).ofBuilder();
+        NTextBuilder dte = NTexts.of(session).ofBuilder();
         if (s == NTaskStatus.CANCELLED || s == NTaskStatus.DONE) {
-            dte.append(dte0, NutsTextStyle.pale());
+            dte.append(dte0, NTextStyle.pale());
         } else if (x.getDueTime() != null && x.getDueTime().compareTo(Instant.now()) < 0) {
-            dte.append(dte0, NutsTextStyle.error());
+            dte.append(dte0, NTextStyle.error());
         } else {
-            dte.append(dte0, NutsTextStyle.keyword(2));
+            dte.append(dte0, NTextStyle.keyword(2));
         }
         String projectName = p != null ? p.getName() : project != null ? project : "*";
         return new Object[]{
             index,
-            NutsTexts.of(session).ofBuilder().append(x.getId(), NutsTextStyle.pale()),
+            NTexts.of(session).ofBuilder().append(x.getId(), NTextStyle.pale()),
             parent.getFlagString(x.getFlag()),
             parent.getStatusString(x.getStatus()),
             parent.getPriorityString(x.getPriority()),
@@ -641,22 +641,22 @@ public class NTasksSubCmd {
         };
     }
 
-    private void runTaskRemove(NutsCommandLine cmd) {
-        NutsTexts text = NutsTexts.of(context.getSession());
+    private void runTaskRemove(NCommandLine cmd) {
+        NTexts text = NTexts.of(context.getSession());
         while (cmd.hasNext()) {
-            NutsArgument a = cmd.next().get(session);
+            NArgument a = cmd.next().get(session);
             if (cmd.isExecMode()) {
                 NTask t = findTask(a.toString(), cmd);
                 if (service.tasks().removeTask(t.getId())) {
                     if (context.getSession().isPlainTrace()) {
                         context.getSession().out().printf("task %s removed.\n",
-                                text.ofStyled(a.toString(), NutsTextStyle.primary5())
+                                text.ofStyled(a.toString(), NTextStyle.primary5())
                         );
                     }
                 } else {
                     context.getSession().out().printf("task %s %s.\n",
-                            text.ofStyled(a.toString(), NutsTextStyle.primary5()),
-                            text.ofStyled("not found", NutsTextStyle.error())
+                            text.ofStyled(a.toString(), NTextStyle.primary5()),
+                            text.ofStyled("not found", NTextStyle.error())
                     );
                 }
             }
@@ -664,9 +664,9 @@ public class NTasksSubCmd {
 
     }
 
-    private void runTaskShow(NutsCommandLine cmd) {
+    private void runTaskShow(NCommandLine cmd) {
         while (cmd.hasNext()) {
-            NutsArgument a = cmd.next().get(session);
+            NArgument a = cmd.next().get(session);
             if (cmd.isExecMode()) {
                 NTask task = findTask(a.toString(), cmd);
                 if (task == null) {
@@ -704,7 +704,7 @@ public class NTasksSubCmd {
         }
     }
 
-    public boolean runTaskCommands(NutsCommandLine cmd) {
+    public boolean runTaskCommands(NCommandLine cmd) {
         if (cmd.next("a t", "t a", "ta", "at", "add task", "tasks add").isPresent()) {
             runTaskAdd(cmd);
             return true;
@@ -732,10 +732,10 @@ public class NTasksSubCmd {
         return false;
     }
 
-    private NTask findTask(String pid, NutsCommandLine cmd) {
+    private NTask findTask(String pid, NCommandLine cmd) {
         NTask t = null;
         if (pid.startsWith("#")) {
-            int x = NutsValue.of(pid.substring(1)).asInt().orElse(-1);
+            int x = NValue.of(pid.substring(1)).asInt().orElse(-1);
             if (x >= 1) {
                 Object lastResults = context.getSession().getProperty("LastResults");
                 if (lastResults instanceof NTask[] && x <= ((NTask[]) lastResults).length) {
@@ -747,7 +747,7 @@ public class NTasksSubCmd {
             t = service.tasks().getTask(pid);
         }
         if (t == null) {
-            cmd.throwError(NutsMessage.ofCstyle("task not found: %s", pid));
+            cmd.throwError(NMsg.ofCstyle("task not found: %s", pid));
         }
         return t;
     }

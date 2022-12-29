@@ -6,197 +6,34 @@
 package net.thevpc.nuts.toolbox.ndb.postgres;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.cmdline.NutsArgument;
-import net.thevpc.nuts.cmdline.NutsCommandLine;
-import net.thevpc.nuts.elem.NutsElements;
-import net.thevpc.nuts.io.NutsPath;
-import net.thevpc.nuts.toolbox.ndb.NdbSupport;
-import net.thevpc.nuts.toolbox.ndb.nmysql.NMySqlConfigVersions;
+import net.thevpc.nuts.cmdline.NCommandLine;
+import net.thevpc.nuts.io.NIOException;
+import net.thevpc.nuts.io.NPath;
+import net.thevpc.nuts.io.NPathOption;
+import net.thevpc.nuts.toolbox.ndb.RdbSupport;
 import net.thevpc.nuts.toolbox.ndb.nmysql.util.AtName;
 import net.thevpc.nuts.toolbox.ndb.util.NdbUtils;
-import net.thevpc.nuts.toolbox.ndb.util.SqlHelper;
-import net.thevpc.nuts.util.NutsMaps;
-import net.thevpc.nuts.util.NutsRef;
-import net.thevpc.nuts.util.NutsStringUtils;
+import net.thevpc.nuts.util.*;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.io.*;
+import java.text.SimpleDateFormat;
+import java.util.*;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipInputStream;
 
 /**
  * @author thevpc
  */
-public class NPostgreSQLMain implements NdbSupport {
+public class NPostgreSQLMain extends RdbSupport<NPostgresConfig> {
 
-    private NutsApplicationContext appContext;
-    private NutsPath sharedConfigFolder;
-    private String dbType = "postgres";
-
-    @Override
-    public void run(NutsApplicationContext appContext, NutsCommandLine commandLine) {
-        this.appContext = appContext;
-        sharedConfigFolder = appContext.getVersionFolder(NutsStoreLocation.CONFIG, NMySqlConfigVersions.CURRENT)
-                .resolve(dbType);
-        NutsArgument a;
-        commandLine.setCommandName(dbType);
-        while (commandLine.hasNext()) {
-            if (commandLine.withNextBoolean((value, arg, session) -> {
-                addConfig(commandLine);
-            }, "add")) {
-            } else if (commandLine.withNextBoolean((value, arg, session) -> {
-                updateConfig(commandLine);
-            }, "update")) {
-            } else if (commandLine.withNextBoolean((value, arg, session) -> {
-                removeConfig(commandLine);
-            }, "remove")) {
-            } else if (commandLine.withNextBoolean((value, arg, session) -> {
-                runSQL(commandLine, session);
-            }, "run-sql")) {
-            } else if (commandLine.withNextBoolean((value, arg, session) -> {
-                showTables(commandLine, session);
-            }, "show-tables")) {
-            } else {
-                commandLine.getSession().configureLast(commandLine);
-            }
-        }
+    public NPostgreSQLMain(NApplicationContext appContext) {
+        super("postgresql", NPostgresConfig.class, appContext, "org.postgresql:postgresql#42.5.1", "org.postgresql.Driver");
     }
-
-    private void validateConfig(PostgresOptions options) {
-        if (NutsBlankable.isBlank(options.name)) {
-            throw new RuntimeException("missing name");
-        }
-    }
-
-    private void addConfig(NutsCommandLine commandLine) {
-        PostgresOptions options = new PostgresOptions();
-        NutsRef<Boolean> update = NutsRef.of(false);
-        while (commandLine.hasNext()) {
-            if (fillOption(commandLine, options)) {
-                //
-            } else if (
-                    commandLine.withNextBoolean((v, a, s) -> {
-                        update.set(v);
-                    }, "--update")
-            ) {
-
-            } else {
-                commandLine.throwUnexpectedArgument();
-            }
-        }
-        options.name = NutsStringUtils.trimToNull(options.name);
-        if (NutsBlankable.isBlank(options.name)) {
-            options.name = "default";
-        }
-
-        NutsPath file = sharedConfigFolder.resolve(asFullName(options.name) + NdbUtils.SERVER_CONFIG_EXT);
-        NutsElements json = NutsElements.of(commandLine.getSession()).setNtf(false).json();
-        if (file.exists()) {
-            if (update.get()) {
-                PostgresOptions old = json.parse(file, PostgresOptions.class);
-                String oldName = old.name;
-                old.setNonNull(options);
-                old.setName(oldName);
-                json.setValue(options).print(file);
-            } else {
-                throw new RuntimeException("already found");
-            }
-        } else {
-            json.setValue(options).print(file);
-        }
-    }
-
-    private void updateConfig(NutsCommandLine commandLine) {
-        PostgresOptions options = new PostgresOptions();
-        while (commandLine.hasNext()) {
-            if (fillOption(commandLine, options)) {
-                //
-            } else {
-                commandLine.throwUnexpectedArgument();
-            }
-        }
-        options.name = NutsStringUtils.trimToNull(options.name);
-        if (NutsBlankable.isBlank(options.name)) {
-            options.name = "default";
-        }
-
-        NutsPath file = sharedConfigFolder.resolve(asFullName(options.name) + NdbUtils.SERVER_CONFIG_EXT);
-        if (!file.exists()) {
-            throw new RuntimeException("not found");
-        }
-        NutsElements json = NutsElements.of(commandLine.getSession()).setNtf(false).json();
-        PostgresOptions old = json.parse(file, PostgresOptions.class);
-        String oldName = old.name;
-        old.setNonNull(options);
-        old.setName(oldName);
-        json.setValue(options).print(file);
-    }
-
-    private String asFullName(String name) {
-        return asFullName(new AtName(name));
-    }
-
-    private String asFullName(AtName name) {
-        String cn = NdbUtils.coalesce(name.getConfigName(), "default");
-        String dn = NdbUtils.coalesce(name.getDatabaseName(), "default");
-        return cn + "-" + dn;
-    }
-
-    private NutsOptional<PostgresOptions> loadConfig(AtName name) {
-        NutsPath file = sharedConfigFolder.resolve(asFullName(name) + NdbUtils.SERVER_CONFIG_EXT);
-        if (!file.exists()) {
-            return NutsOptional.ofNamedEmpty("config " + name);
-        }
-        NutsElements json = NutsElements.of(appContext.getSession()).setNtf(false).json();
-        return NutsOptional.ofNamed(json.parse(file, PostgresOptions.class), "config " + name);
-    }
-
-    private void removeConfig(NutsCommandLine commandLine) {
-        NutsRef<AtName> name = NutsRef.ofNull(AtName.class);
-        NutsSession session = commandLine.getSession();
-        while (commandLine.hasNext()) {
-            if (commandLine.isNextOption()) {
-                switch (commandLine.peek().get(session).key()) {
-                    case "--name": {
-                        commandLine.withNextString((v, a, s) -> {
-                            if (name.isNull()) {
-                                name.set(new AtName(a.getStringValue().get(session)));
-                            } else {
-                                commandLine.throwUnexpectedArgument(NutsMessage.ofPlain("already defined"));
-                            }
-                        });
-                        break;
-                    }
-                    default: {
-                        session.configureLast(commandLine);
-                    }
-                }
-            } else {
-                if (name.isNull()) {
-                    name.set(new AtName(commandLine.next().get(session).asString().get(session)));
-                } else {
-                    commandLine.throwUnexpectedArgument();
-                }
-            }
-        }
-        if (name.isNull()) {
-            name.set(new AtName(""));
-        }
-        removeConfig(name.get());
-    }
-
-    private void removeConfig(AtName name) {
-        NutsPath file = sharedConfigFolder.resolve(asFullName(name) + NdbUtils.SERVER_CONFIG_EXT);
-        if (file.exists()) {
-            file.delete();
-        }
-    }
-
-    private void runSQL(NutsCommandLine commandLine, NutsSession session) {
-        commandLine.setCommandName(dbType + " run-sql");
-        NutsRef<AtName> name = NutsRef.ofNull(AtName.class);
-        List<String> sql = new ArrayList<>();
-        NutsRef<Boolean> forceShowSQL = NutsRef.ofNull(Boolean.class);
-        PostgresOptions otherOptions = new PostgresOptions();
+    protected void dump(NCommandLine commandLine, NSession session) {
+        commandLine.setCommandName(dbType + " dump");
+        NRef<AtName> name = NRef.ofNull(AtName.class);
+        NRef<NPath> file = NRef.ofNull(NPath.class);
+        NPostgresConfig otherOptions = createConfigInstance();
         while (commandLine.hasNext()) {
             if (commandLine.isNextOption()) {
                 switch (commandLine.peek().get(session).key()) {
@@ -206,19 +43,21 @@ public class NPostgreSQLMain implements NdbSupport {
                                 String name2 = NdbUtils.checkName(a.getStringValue().get(session), session);
                                 name.set(new AtName(name2));
                             } else {
-                                commandLine.throwUnexpectedArgument(NutsMessage.ofPlain("already defined"));
+                                commandLine.throwUnexpectedArgument(NMsg.ofPlain("already defined"));
                             }
                         });
                         break;
                     }
-                    case "--show-sql": {
-                        commandLine.withNextBoolean((v, a, s) -> {
-                            forceShowSQL.set(v);
+                    case "--file": {
+                        commandLine.withNextString((v, a, s) -> {
+                            file.set(NPath.of(v, s));
                         });
                         break;
                     }
                     default: {
                         if (fillOption(commandLine, otherOptions)) {
+
+                        } else if (appContext.configureFirst(commandLine)) {
 
                         } else {
                             session.configureLast(commandLine);
@@ -226,32 +65,129 @@ public class NPostgreSQLMain implements NdbSupport {
                     }
                 }
             } else {
-                sql.add(commandLine.next().flatMap(NutsValue::asString).get(session));
+                commandLine.throwUnexpectedArgument();
             }
         }
-        if (sql.isEmpty()) {
-            commandLine.throwMissingArgument(NutsMessage.ofPlain("sql"));
-        }
 
-        PostgresOptions options = null;
+        NPostgresConfig options = null;
         if (name.isNull()) {
             name.set(new AtName(""));
             options = loadConfig(name.get()).orNull();
             if (options == null) {
-                options = new PostgresOptions();
+                options = createConfigInstance();
             }
             options.setNonNull(otherOptions);
         } else {
             options = loadConfig(name.get()).get();
             options.setNonNull(otherOptions);
         }
-        runSQL(sql, options, forceShowSQL.get(), session);
+        revalidateOptions(options);
+        preparePgpass(options, session);
+        String simpleName = null;
+        NPath sqlPath;
+        NPath zipPath;
+        boolean sql = false;
+        boolean zip = false;
+        String simpleName0 = options.getDatabaseName() + "-" + new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss-SSS").format(new Date());
+        if (file.get() == null) {
+            simpleName = simpleName0;
+            sqlPath = NPath.of(simpleName + ".sql", session);
+            zipPath = NPath.of(simpleName + ".zip", session);
+            sql = false;
+            zip = true;
+        } else if (file.get().isDirectory()) {
+            simpleName = simpleName0;
+            sqlPath = file.get().resolve(simpleName + ".sql");
+            zipPath = file.get().resolve(simpleName + ".zip");
+            sql = false;
+            zip = true;
+        } else {
+            simpleName = file.get().getBaseName();
+            if (file.get().getName().toLowerCase().endsWith(".sql")) {
+                sqlPath = file.get();
+                zipPath = sqlPath.resolveSibling(simpleName + ".zip");
+                sql = true;
+                zip = false;
+            } else if (file.get().getName().toLowerCase().endsWith(".zip")) {
+                zipPath = file.get();
+                sqlPath = zipPath.resolveSibling(simpleName + ".sql");
+                sql = false;
+                zip = true;
+            } else {
+                sqlPath = file.get().resolveSibling(file.get().getName() + ".sql");
+                zipPath = file.get().resolveSibling(file.get().getName() + ".zip");
+                sql = false;
+                zip = true;
+            }
+        }
+        if (isRemoteCommand(options)) {
+            NPath remoteTempFolder = getRemoteTempFolder(options, session);
+            NPath remoteSQL = remoteTempFolder.resolve(simpleName0 + ".sql");
+            NPath remoteZip = remoteTempFolder.resolve(simpleName0 + ".zip");
+            run(sysSsh(options, session)
+                    .addCommand("pg_dump " + options.getDatabaseName() + " --clean --create --host=" + options.getHost() + " --port=" + options.getPort() + " --username=" + options.getUser() + " > " + remoteSQL)
+            );
+            if (zip) {
+                run(sysSsh(options, session)
+                        .addCommand("zip")
+                        .addCommand(remoteZip.toString())
+                        .addCommand(remoteSQL.toString())
+                );
+            }
+            if (!sql) {
+                run(sysSsh(options, session)
+                        .addCommand("rm " + remoteSQL)
+                );
+            } else {
+                run(sysCmd(session)
+                        .addCommand("scp", options.getRemoteUser() + "@" + options.getRemoteServer() + ":" + remoteSQL)
+                        .addCommand(sqlPath.toString())
+                );
+                run(sysSsh(options, session)
+                        .addCommand("rm")
+                        .addCommand(remoteSQL.toString())
+                );
+            }
+            if (zip) {
+                run(sysCmd(session)
+                        .addCommand("scp", options.getRemoteUser() + "@" + options.getRemoteServer() + ":" + remoteZip)
+                        .addCommand(zipPath.toString())
+                );
+                run(sysSsh(options, session)
+                        .addCommand("rm")
+                        .addCommand(remoteZip.toString())
+                );
+            }
+        } else {
+            run(sysCmd(session)
+                    .addCommand("pg_dump")
+                    .addCommand(options.getDatabaseName())
+                    .addCommand("--clean")
+                    .addCommand("--create")
+                    .addCommand("--host=" + options.getHost())
+                    .addCommand("--port=" + options.getPort())
+                    .addCommand("--username=" + options.getUser())
+                    .setRedirectOutputFile(sqlPath)
+            );
+            if (zip) {
+                run(sysCmd(session)
+                        .addCommand("zip")
+                        .addCommand(zipPath.toString())
+                        .addCommand(sqlPath.toString())
+                );
+            }
+            if (!sql) {
+                sqlPath.delete();
+            }
+        }
     }
 
-    private void showTables(NutsCommandLine commandLine, NutsSession session) {
-        commandLine.setCommandName(dbType + " show-tables");
-        NutsRef<AtName> name = NutsRef.ofNull(AtName.class);
-        PostgresOptions otherOptions = new PostgresOptions();
+
+    protected void restore(NCommandLine commandLine, NSession session) {
+        commandLine.setCommandName(dbType + " restore");
+        NRef<AtName> name = NRef.ofNull(AtName.class);
+        NRef<NPath> file = NRef.ofNull(NPath.class);
+        NPostgresConfig otherOptions = createConfigInstance();
         while (commandLine.hasNext()) {
             if (commandLine.isNextOption()) {
                 switch (commandLine.peek().get(session).key()) {
@@ -261,13 +197,21 @@ public class NPostgreSQLMain implements NdbSupport {
                                 String name2 = NdbUtils.checkName(a.getStringValue().get(session), session);
                                 name.set(new AtName(name2));
                             } else {
-                                commandLine.throwUnexpectedArgument(NutsMessage.ofPlain("already defined"));
+                                commandLine.throwUnexpectedArgument(NMsg.ofPlain("already defined"));
                             }
+                        });
+                        break;
+                    }
+                    case "--file": {
+                        commandLine.withNextString((v, a, s) -> {
+                            file.set(NPath.of(v, s));
                         });
                         break;
                     }
                     default: {
                         if (fillOption(commandLine, otherOptions)) {
+
+                        } else if (appContext.configureFirst(commandLine)) {
 
                         } else {
                             session.configureLast(commandLine);
@@ -279,12 +223,167 @@ public class NPostgreSQLMain implements NdbSupport {
             }
         }
 
-        PostgresOptions options = null;
+        NPostgresConfig options = null;
         if (name.isNull()) {
             name.set(new AtName(""));
             options = loadConfig(name.get()).orNull();
             if (options == null) {
-                options = new PostgresOptions();
+                options = createConfigInstance();
+            }
+            options.setNonNull(otherOptions);
+        } else {
+            options = loadConfig(name.get()).get();
+            options.setNonNull(otherOptions);
+        }
+        NPath sqlFile;
+        revalidateOptions(options);
+        preparePgpass(options, session);
+        if (file.get() == null) {
+            throw new NIllegalArgumentException(session, NMsg.ofPlain("missing file"));
+        } else {
+            if (file.get().isDirectory()) {
+
+            }
+            if (file.get().getName().toLowerCase().endsWith(".sql")) {
+                sqlFile = file.get();
+                run(sysCmd(session)
+                        .addCommand("pg_restore")
+                        .addCommand(options.getDatabaseName())
+                        .addCommand("--host=" + options.getHost())
+                        .addCommand("--port=" + options.getPort())
+                        .addCommand("--username=" + options.getUser())
+                        .setRedirectInputFile(sqlFile)
+                );
+            } else if (file.get().getName().toLowerCase().endsWith(".zip")) {
+                try (ZipInputStream zis = new ZipInputStream(file.get().getInputStream())) {
+                    //get the zipped file list entry
+                    ZipEntry ze = zis.getNextEntry();
+                    while (ze != null) {
+                        String fileName = ze.getName();
+                        if (fileName.endsWith("/")) {
+                            file.get().resolveSibling(fileName).mkdirs();
+                        } else {
+                            if (fileName.endsWith(".sql")) {
+                                NPath newFile = file.get().resolve(fileName);
+                                newFile.getParent().mkdirs();
+                                byte[] buffer = new byte[8196];
+                                try (OutputStream fos = newFile.getOutputStream()) {
+                                    int len;
+                                    while ((len = zis.read(buffer)) > 0) {
+                                        fos.write(buffer, 0, len);
+                                    }
+                                }
+                                run(sysCmd(session)
+                                        .addCommand("pg_restore")
+                                        .addCommand(options.getDatabaseName())
+                                        .addCommand("--host=" + options.getHost())
+                                        .addCommand("--port=" + options.getPort())
+                                        .addCommand("--username=" + options.getUser())
+                                        .setRedirectInputFile(newFile)
+                                );
+                                newFile.delete();
+                            }
+                        }
+                        ze = zis.getNextEntry();
+                    }
+                    zis.closeEntry();
+                } catch (IOException ex) {
+                    throw new NIOException(session, ex);
+                }
+            } else {
+                throw new NIllegalArgumentException(session, NMsg.ofPlain("missing file"));
+            }
+        }
+    }
+
+    protected void revalidateOptions(NPostgresConfig options) {
+        int port = NOptional.of(options.getPort()).mapIf(x -> x <= 0, x -> null, x -> x).ifBlank(5432).get();
+        String host = NOptional.of(options.getHost()).ifBlank("localhost").get();
+        String user = options.getUser();
+        String password = options.getPassword();
+        if (NBlankable.isBlank(user) && NBlankable.isBlank(password)) {
+            user = "postgres";
+            password = "postgres";
+        } else if ("postgres".equals(user) && NBlankable.isBlank(password)) {
+            password = "postgres";
+        }
+        options.setPassword(password);
+        options.setUser(user);
+        options.setHost(host);
+        options.setPort(port);
+        if (NBlankable.isBlank(options.getRemoteUser())) {
+            options.setRemoteUser(System.getProperty("user.name"));
+        }
+    }
+
+    private void preparePgpass(NPostgresConfig options, NSession session) {
+
+        if (isRemoteCommand(options)) {
+
+        } else {
+            NPath pgpass = NPath.ofUserHome(session).resolve(".pgpass");
+            String u = options.getHost() + ":" + options.getPort() + ":" + options.getDatabaseName() + ":" + options.getUser();
+            if (pgpass.exists()) {
+                String q = pgpass.getLines().filter(x -> x.startsWith(u + ":")).findFirst().orElse(null);
+                if (q != null) {
+                    String storedPassword = q.substring(u.length() + 1);
+                    if (!NBlankable.isBlank(options.getPassword()) && !Objects.equals(options.getPassword(), storedPassword)) {
+                        throw new NIllegalArgumentException(session, NMsg.ofPlain("stored password does not match"));
+                    }
+                } else {
+                    if (NBlankable.isBlank(options.getPassword())) {
+                        throw new NIllegalArgumentException(session, NMsg.ofPlain("missing password"));
+                    }
+                    pgpass.writeString(u + ":" + options.getPassword() + "\n", NPathOption.APPEND);
+                    run(sysCmd(session)
+                            .addCommand("chmod", "0600", pgpass.toString())
+                    );
+                }
+            } else {
+                pgpass.writeString(u + ":" + options.getPassword() + "\n", NPathOption.APPEND);
+            }
+        }
+    }
+
+    protected void showTables(NCommandLine commandLine, NSession session) {
+        commandLine.setCommandName(dbType + " show-tables");
+        NRef<AtName> name = NRef.ofNull(AtName.class);
+        NPostgresConfig otherOptions = createConfigInstance();
+        while (commandLine.hasNext()) {
+            if (commandLine.isNextOption()) {
+                switch (commandLine.peek().get(session).key()) {
+                    case "--name": {
+                        commandLine.withNextString((v, a, s) -> {
+                            if (name.isNull()) {
+                                String name2 = NdbUtils.checkName(a.getStringValue().get(session), session);
+                                name.set(new AtName(name2));
+                            } else {
+                                commandLine.throwUnexpectedArgument(NMsg.ofPlain("already defined"));
+                            }
+                        });
+                        break;
+                    }
+                    default: {
+                        if (fillOption(commandLine, otherOptions)) {
+
+                        } else if (appContext.configureFirst(commandLine)) {
+
+                        } else {
+                            session.configureLast(commandLine);
+                        }
+                    }
+                }
+            } else {
+                commandLine.throwUnexpectedArgument();
+            }
+        }
+
+        NPostgresConfig options = null;
+        if (name.isNull()) {
+            name.set(new AtName(""));
+            options = loadConfig(name.get()).orNull();
+            if (options == null) {
+                options = createConfigInstance();
             }
             options.setNonNull(otherOptions);
         } else {
@@ -294,61 +393,12 @@ public class NPostgreSQLMain implements NdbSupport {
         runSQL(Arrays.asList("SELECT schemaname,tablename FROM pg_catalog.pg_tables WHERE schemaname != 'pg_catalog' AND schemaname != 'information_schema'"), options, true, session);
     }
 
-    private void runSQL(List<String> sql, AtName name, Boolean forceShowSQL, NutsSession session) {
-        PostgresOptions options = loadConfig(name).get();
-        runSQL(sql, options, forceShowSQL, session);
-    }
-
-    private void runSQL(List<String> sql, PostgresOptions options, Boolean forceShowSQL, NutsSession session) {
-        if (options == null) {
-            throw new NutsIllegalArgumentException(session, NutsMessage.ofCstyle("missing config"));
-        }
-        String jdbcUrl = NutsMessage.ofVstyle("jdbc:postgresql://${server}:${port}/${database}",
-                NutsMaps.of(
-                        "server", NutsOptional.of(options.host).ifBlank("localhost").get(),
-                        "port", NutsOptional.of(options.port).mapIf(x -> x <= 0, x -> null, x -> x).ifBlank(5432).get(),
-                        "database", NutsOptional.of(options.databaseName).ifBlank("db").get()
+    protected String createJdbcURL(NPostgresConfig options) {
+        return NMsg.ofVstyle("jdbc:postgresql://${server}:${port}/${database}",
+                NMaps.of(
+                        "server", NOptional.of(options.getHost()).ifBlank("localhost").get(),
+                        "port", NOptional.of(options.getPort()).mapIf(x -> x <= 0, x -> null, x -> x).ifBlank(5432).get(),
+                        "database", NOptional.of(options.getDatabaseName()).ifBlank("db").get()
                 )).toString();
-        String user = options.user;
-        String password = options.password;
-        if (NutsBlankable.isBlank(user) && NutsBlankable.isBlank(password)) {
-            user = "postgres";
-            password = "postgres";
-        } else if ("postgres".equals(user) && NutsBlankable.isBlank(password)) {
-            password = "postgres";
-        }
-        SqlHelper.runAndWaitFor(sql, jdbcUrl, "org.postgresql:postgresql#42.5.1", "org.postgresql.Driver",
-                user, password, null,
-                forceShowSQL, session);
     }
-
-    private boolean fillOption(NutsCommandLine cmdLine, PostgresOptions options) {
-        NutsSession session = appContext.getSession();
-        NutsArgument a;
-        if ((a = cmdLine.nextString("--name").orNull()) != null) {
-            options.name = a.getStringValue().get(session);
-            return true;
-        } else if ((a = cmdLine.nextString("-h", "--host").orNull()) != null) {
-            options.host = a.getStringValue().get(session);
-            return true;
-        } else if ((a = cmdLine.nextString("-p", "--port").orNull()) != null) {
-            options.port = a.getValue().asInt().get(session);
-            return true;
-        } else if ((a = cmdLine.nextString("-n", "--dbname").orNull()) != null) {
-            options.databaseName = a.getStringValue().get(session);
-            return true;
-        } else if ((a = cmdLine.nextString("-u", "--user").orNull()) != null) {
-            options.user = a.getStringValue().get(session);
-            return true;
-        } else if ((a = cmdLine.nextString("-P", "--password").orNull()) != null) {
-            options.password = a.getStringValue().get(session);
-            return true;
-        } else if (appContext.configureFirst(cmdLine)) {
-            return true;
-        } else {
-            return false;
-        }
-    }
-
-
 }

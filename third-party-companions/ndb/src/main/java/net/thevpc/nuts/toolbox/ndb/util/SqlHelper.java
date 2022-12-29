@@ -1,9 +1,9 @@
 package net.thevpc.nuts.toolbox.ndb.util;
 
-import net.thevpc.nuts.NutsContentType;
-import net.thevpc.nuts.NutsDependencyFilters;
-import net.thevpc.nuts.NutsMessage;
-import net.thevpc.nuts.NutsSession;
+import net.thevpc.nuts.NContentType;
+import net.thevpc.nuts.NDependencyFilters;
+import net.thevpc.nuts.NMsg;
+import net.thevpc.nuts.NSession;
 
 import java.io.Closeable;
 import java.sql.*;
@@ -17,7 +17,7 @@ public class SqlHelper implements Closeable {
     private Connection connection;
     private static Map<Object, ClassLoader> cachedClassLoaders = new HashMap<>();
 
-    public static void runAndWaitFor(List<String> sql, String jdbcUrl, String id, String jdbcDriver, String user, String password, Properties properties, Boolean forceShowSQL, NutsSession session) {
+    public static void runAndWaitFor(List<String> sql, String jdbcUrl, String id, String jdbcDriver, String user, String password, Properties properties, Boolean forceShowSQL, NSession session) {
         ClassloaderAwareCallable<Object> callable = new ClassloaderAwareCallable<>(session, null,
                 SqlHelper.createClassLoader(session, id));
         callable.runAndWaitFor((ClassloaderAwareCallable.Context cc) -> {
@@ -30,10 +30,10 @@ public class SqlHelper implements Closeable {
         });
     }
 
-    public static ClassLoader createClassLoader(NutsSession session, String id) {
+    public static ClassLoader createClassLoader(NSession session, String id) {
         String z = session.getWorkspace().getUuid() + "/" + id;
         return cachedClassLoaders.computeIfAbsent(z, x -> session.search().addId(id)
-                .setDependencyFilter(NutsDependencyFilters.of(session).byRunnable())
+                .setDependencyFilter(NDependencyFilters.of(session).byRunnable())
                 .getResultClassLoader(SqlHelper.class.getClassLoader()));
     }
 
@@ -118,7 +118,7 @@ public class SqlHelper implements Closeable {
         }
     }
 
-    public void runAndPrintSql(List<String> sql, Boolean forceShowSQL, NutsSession session) {
+    public void runAndPrintSql(List<String> sql, Boolean forceShowSQL, NSession session) {
         List<String> sqlList = splitSQLList(sql);
         boolean showSQL = true;
         if (sqlList.size() == 1) {
@@ -129,14 +129,14 @@ public class SqlHelper implements Closeable {
         }
         for (String s : sqlList) {
             if (showSQL) {
-                session.out().printlnf(NutsMessage.ofCode("sql", s));
+                session.out().printlnf(NMsg.ofCode("sql", s));
             }
             try {
                 List<Object> a = runSQL2(s);
                 if (session.isPlainOut()) {
                     if (a.size() > 0) {
                         if (a.get(0) instanceof List) {
-                            session.copy().setOutputFormat(NutsContentType.TABLE)
+                            session.copy().setOutputFormat(NContentType.TABLE)
                                     .setOutputFormatOptions("--border=spaces")
                                     .out().printlnf(a);
                         } else {
@@ -149,7 +149,7 @@ public class SqlHelper implements Closeable {
                     session.out().printlnf(a);
                 }
             } catch (Exception e) {
-                session.err().printlnf(NutsMessage.ofCstyle("Error : %s", e));
+                session.err().printlnf(NMsg.ofCstyle("Error : %s", e));
             }
         }
     }

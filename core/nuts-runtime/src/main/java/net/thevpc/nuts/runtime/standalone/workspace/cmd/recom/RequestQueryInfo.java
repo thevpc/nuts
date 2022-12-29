@@ -1,6 +1,6 @@
 package net.thevpc.nuts.runtime.standalone.workspace.cmd.recom;
 
-import net.thevpc.nuts.runtime.standalone.log.NutsLogUtils;
+import net.thevpc.nuts.runtime.standalone.log.NLogUtils;
 
 public class RequestQueryInfo {
     public String server;
@@ -17,7 +17,7 @@ public class RequestQueryInfo {
     public RequestQueryInfo(String id,Throwable reason) {
         this.q = new RequestQuery();
         q.setId(id);
-        q.setReason(reason==null?null: NutsLogUtils.stacktrace(reason));
+        q.setReason(reason==null?null: NLogUtils.stacktrace(reason));
     }
 
     public String getServer() {

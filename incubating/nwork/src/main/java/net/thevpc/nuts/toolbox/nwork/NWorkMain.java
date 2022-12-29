@@ -1,10 +1,10 @@
 package net.thevpc.nuts.toolbox.nwork;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.cmdline.NutsArgument;
-import net.thevpc.nuts.cmdline.NutsCommandLine;
+import net.thevpc.nuts.cmdline.NArgument;
+import net.thevpc.nuts.cmdline.NCommandLine;
 
-public class NWorkMain implements NutsApplication {
+public class NWorkMain implements NApplication {
 
     private WorkspaceService service;
 
@@ -13,11 +13,11 @@ public class NWorkMain implements NutsApplication {
     }
 
     @Override
-    public void run(NutsApplicationContext appContext) {
+    public void run(NApplicationContext appContext) {
         this.service = new WorkspaceService(appContext);
-        NutsSession session = appContext.getSession();
-        NutsCommandLine cmdLine = appContext.getCommandLine().setCommandName("nwork");
-        NutsArgument a;
+        NSession session = appContext.getSession();
+        NCommandLine cmdLine = appContext.getCommandLine().setCommandName("nwork");
+        NArgument a;
         do {
             if (appContext.configureFirst(cmdLine)) {
                 //
@@ -32,6 +32,13 @@ public class NWorkMain implements NutsApplication {
                     service.enableScan(cmdLine, appContext, a.getBooleanValue().get(session));
                 } else {
                     service.status(cmdLine, appContext);
+                }
+                return;
+            } else if ((a = cmdLine.next("push").orNull()) != null) {
+                if (a.getValue().isBoolean()) {
+                    service.enableScan(cmdLine, appContext, a.getBooleanValue().get(session));
+                } else {
+                    service.push(cmdLine, appContext);
                 }
                 return;
             } else if ((a = cmdLine.next("list", "l").orNull()) != null) {

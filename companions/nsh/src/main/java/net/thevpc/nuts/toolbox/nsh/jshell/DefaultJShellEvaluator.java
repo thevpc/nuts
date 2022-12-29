@@ -5,7 +5,7 @@
  */
 package net.thevpc.nuts.toolbox.nsh.jshell;
 
-import net.thevpc.nuts.NutsMessage;
+import net.thevpc.nuts.NMsg;
 import net.thevpc.nuts.toolbox.nsh.jshell.util.JavaShellNonBlockingInputStream;
 import net.thevpc.nuts.toolbox.nsh.jshell.util.JavaShellNonBlockingInputStreamAdapter;
 import net.thevpc.nuts.toolbox.nsh.jshell.util.ShellUtils;
@@ -80,7 +80,7 @@ public class DefaultJShellEvaluator implements JShellEvaluator {
                 return evalSuffixAndOperation(node, context);
             }
         }
-        throw new JShellException(context.getSession(), NutsMessage.ofCstyle("unsupported suffix operator %s", opString), 1);
+        throw new JShellException(context.getSession(), NMsg.ofCstyle("unsupported suffix operator %s", opString), 1);
     }
 
     @Override
@@ -113,7 +113,7 @@ public class DefaultJShellEvaluator implements JShellEvaluator {
         } else if ("|".equals(opString)) {
             return evalBinaryPipeOperation(left, right, context);
         } else {
-            throw new JShellException(context.getSession(),NutsMessage.ofCstyle("unsupported operator %s", opString),1);
+            throw new JShellException(context.getSession(), NMsg.ofCstyle("unsupported operator %s", opString),1);
         }
     }
 

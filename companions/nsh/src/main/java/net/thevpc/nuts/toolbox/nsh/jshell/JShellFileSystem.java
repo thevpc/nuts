@@ -5,23 +5,23 @@
  */
 package net.thevpc.nuts.toolbox.nsh.jshell;
 
-import net.thevpc.nuts.NutsSession;
+import net.thevpc.nuts.NSession;
 
 /**
  * @author thevpc
  */
 public interface JShellFileSystem {
 
-    String getInitialWorkingDir(NutsSession session);
+    String getInitialWorkingDir(NSession session);
 
-    String getHomeWorkingDir(NutsSession session);
+    String getHomeWorkingDir(NSession session);
 
-    boolean isAbsolute(String path, NutsSession session);
+    boolean isAbsolute(String path, NSession session);
 
-    String getAbsolutePath(String path, NutsSession session);
+    String getAbsolutePath(String path, NSession session);
 
-    boolean isDirectory(String path, NutsSession session);
+    boolean isDirectory(String path, NSession session);
 
-    boolean exists(String path, NutsSession session);
+    boolean exists(String path, NSession session);
 
 }

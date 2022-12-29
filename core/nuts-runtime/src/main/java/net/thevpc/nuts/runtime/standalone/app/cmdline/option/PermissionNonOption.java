@@ -27,9 +27,9 @@
 package net.thevpc.nuts.runtime.standalone.app.cmdline.option;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.cmdline.DefaultNutsArgumentCandidate;
-import net.thevpc.nuts.cmdline.NutsArgumentCandidate;
-import net.thevpc.nuts.cmdline.NutsCommandAutoComplete;
+import net.thevpc.nuts.cmdline.DefaultNArgumentCandidate;
+import net.thevpc.nuts.cmdline.NArgumentCandidate;
+import net.thevpc.nuts.cmdline.NCommandAutoComplete;
 
 import java.util.*;
 
@@ -52,20 +52,20 @@ public class PermissionNonOption extends DefaultNonOption {
     }
 
     @Override
-    public List<NutsArgumentCandidate> getCandidates(NutsCommandAutoComplete context) {
-        List<NutsArgumentCandidate> all = new ArrayList<>();
-        for (String r : NutsConstants.Permissions.ALL) {
-            all.add(new DefaultNutsArgumentCandidate(r));
+    public List<NArgumentCandidate> getCandidates(NCommandAutoComplete context) {
+        List<NArgumentCandidate> all = new ArrayList<>();
+        for (String r : NConstants.Permissions.ALL) {
+            all.add(new DefaultNArgumentCandidate(r));
         }
-        Iterator<NutsArgumentCandidate> i = all.iterator();
-        NutsRepository repository=context.get(NutsRepository.class);
-        NutsUser info = repository != null ? repository.security()
+        Iterator<NArgumentCandidate> i = all.iterator();
+        NRepository repository=context.get(NRepository.class);
+        NUser info = repository != null ? repository.security()
                 .setSession(context.getSession())
                 .getEffectiveUser(user) : 
                 context.getSession().security().setSession(context.getSession()).findUser(user);
         Set<String> rights = new HashSet<>(info == null ? Collections.emptyList() : (info.getPermissions()));
         while (i.hasNext()) {
-            NutsArgumentCandidate right = i.next();
+            NArgumentCandidate right = i.next();
             if (existing) {
                 if (!rights.contains(right.getValue())) {
                     i.remove();

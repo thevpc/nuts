@@ -24,14 +24,14 @@
 package net.thevpc.nuts.runtime.standalone.repository.impl.maven;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.elem.NutsElements;
-import net.thevpc.nuts.io.NutsIOException;
-import net.thevpc.nuts.io.NutsPath;
+import net.thevpc.nuts.elem.NElements;
+import net.thevpc.nuts.io.NIOException;
+import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.runtime.standalone.repository.impl.maven.util.MavenMetadata;
 import net.thevpc.nuts.runtime.standalone.repository.impl.maven.util.MavenUtils;
-import net.thevpc.nuts.runtime.standalone.util.CoreNutsConstants;
+import net.thevpc.nuts.runtime.standalone.util.CoreNConstants;
 import net.thevpc.nuts.runtime.standalone.util.iter.IteratorBuilder;
-import net.thevpc.nuts.util.NutsIterator;
+import net.thevpc.nuts.util.NIterator;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -44,44 +44,44 @@ import java.util.List;
  */
 public class MavenRemoteXmlRepository extends MavenFolderRepository {
 
-    public MavenRemoteXmlRepository(NutsAddRepositoryOptions options, NutsSession session, NutsRepository parentRepository) {
+    public MavenRemoteXmlRepository(NAddRepositoryOptions options, NSession session, NRepository parentRepository) {
         super(options, session, parentRepository);
     }
 
     @Override
-    public NutsIterator<NutsId> findNonSingleVersionImpl(NutsId id, NutsIdFilter idFilter, NutsFetchMode fetchMode, NutsSession session) {
+    public NIterator<NId> findNonSingleVersionImpl(NId id, NIdFilter idFilter, NFetchMode fetchMode, NSession session) {
         if (!acceptedFetchNoCache(fetchMode)) {
             return IteratorBuilder.emptyIterator();
         }
         String groupId = id.getGroupId();
         String artifactId = id.getArtifactId();
-        NutsPath metadataURL = config().setSession(session).getLocationPath().resolve(groupId.replace('.', '/') + "/" + artifactId + "/maven-metadata.xml");
+        NPath metadataURL = config().setSession(session).getLocationPath().resolve(groupId.replace('.', '/') + "/" + artifactId + "/maven-metadata.xml");
 
         return IteratorBuilder.ofSupplier(
                 () -> {
-                    List<NutsId> ret = new ArrayList<>();
+                    List<NId> ret = new ArrayList<>();
                     InputStream metadataStream = null;
                     session.getTerminal().printProgress("looking for versions of %s at %s", id,metadataURL.toCompressedForm());
                     try {
                         try {
-                            metadataStream = openStream(id, metadataURL, id.builder().setFace(CoreNutsConstants.QueryFaces.CATALOG).build(), "artifact catalog", "retrieve", session);
-                        } catch (UncheckedIOException | NutsIOException ex) {
+                            metadataStream = openStream(id, metadataURL, id.builder().setFace(CoreNConstants.QueryFaces.CATALOG).build(), "artifact catalog", "retrieve", session);
+                        } catch (UncheckedIOException | NIOException ex) {
                             return IteratorBuilder.emptyIterator();
                         }
                         MavenMetadata info = MavenUtils.of(session).parseMavenMetaData(metadataStream, session);
                         if (info != null) {
                             for (String version : info.getVersions()) {
-                                final NutsId nutsId = id.builder().setVersion(version).build();
+                                final NId nutsId = id.builder().setVersion(version).build();
 
                                 if (idFilter != null && !idFilter.acceptId(nutsId, session)) {
                                     continue;
                                 }
                                 ret.add(
-                                        NutsIdBuilder.of(groupId,artifactId).setVersion(version).build()
+                                        NIdBuilder.of(groupId,artifactId).setVersion(version).build()
                                 );
                             }
                         }
-                    } catch (UncheckedIOException | NutsIOException ex) {
+                    } catch (UncheckedIOException | NIOException ex) {
                         //unable to access
                         return IteratorBuilder.emptyIterator();
                     } finally {
@@ -96,7 +96,7 @@ public class MavenRemoteXmlRepository extends MavenFolderRepository {
                     }
                     return ret.iterator();
                 }
-                , e -> NutsElements.of(e).ofObject()
+                , e -> NElements.of(e).ofObject()
                         .set("type", "ScanMavenMetadataXml")
                         .set("path", metadataURL.toString())
                         .build(),

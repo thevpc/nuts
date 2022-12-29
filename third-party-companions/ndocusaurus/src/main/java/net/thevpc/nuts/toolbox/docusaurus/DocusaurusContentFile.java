@@ -1,8 +1,8 @@
 package net.thevpc.nuts.toolbox.docusaurus;
 
-import net.thevpc.nuts.elem.NutsElement;
-import net.thevpc.nuts.elem.NutsElements;
-import net.thevpc.nuts.NutsSession;
+import net.thevpc.nuts.elem.NElement;
+import net.thevpc.nuts.elem.NElements;
+import net.thevpc.nuts.NSession;
 import net.thevpc.nuts.lib.md.MdElement;
 import net.thevpc.nuts.lib.md.docusaurus.DocusaurusMdParser;
 import net.thevpc.nuts.lib.md.docusaurus.DocusaurusUtils;
@@ -15,7 +15,7 @@ import java.util.Map;
 
 public class DocusaurusContentFile extends DocusaurusFile{
     private final MdElement tree;
-    public static DocusaurusFile ofTreeFile(Reader reader, String partialPath, String location, NutsSession session,boolean loadContent) {
+    public static DocusaurusFile ofTreeFile(Reader reader, String partialPath, String location, NSession session, boolean loadContent) {
 //        int from = root.getNameCount();
 //        int to = path.getNameCount() - 1;
 //        String partialPath = from == to ? "" : path.subpath(from, to).toString();
@@ -26,7 +26,7 @@ public class DocusaurusContentFile extends DocusaurusFile{
             String line1 = br.readLine();
             if ("---".trim().equals(line1)) {
                 Map<String, String> props = new HashMap<>();
-                NutsElement config=null;
+                NElement config=null;
                 while (true) {
                     line1 = br.readLine();
                     if (line1 == null) {
@@ -56,7 +56,7 @@ public class DocusaurusContentFile extends DocusaurusFile{
                         props.put(key, value);
                         if("type".equals(key) && value.length()>0){
                             try {
-                                config = NutsElements.of(session).json().parse(value);
+                                config = NElements.of(session).json().parse(value);
                             }catch (Exception ex){
                                 throw new IllegalArgumentException("invalid json for type in "+location);
                             }
@@ -101,12 +101,12 @@ public class DocusaurusContentFile extends DocusaurusFile{
         return null;
     }
 
-    public DocusaurusContentFile(String shortId, String longId, String title, MdElement tree, int order, NutsElement config) {
+    public DocusaurusContentFile(String shortId, String longId, String title, MdElement tree, int order, NElement config) {
         super(shortId, longId, title, order, config);
         this.tree=tree;
     }
 
-    public MdElement getContent(NutsSession session) {
+    public MdElement getContent(NSession session) {
         return this.tree;
     }
 }

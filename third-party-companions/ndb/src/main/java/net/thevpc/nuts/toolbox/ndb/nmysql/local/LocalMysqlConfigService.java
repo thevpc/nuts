@@ -1,8 +1,8 @@
 package net.thevpc.nuts.toolbox.ndb.nmysql.local;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.elem.NutsElements;
-import net.thevpc.nuts.io.NutsPath;
+import net.thevpc.nuts.elem.NElements;
+import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.toolbox.ndb.nmysql.NMySqlConfigVersions;
 import net.thevpc.nuts.toolbox.ndb.nmysql.local.config.LocalMysqlDatabaseConfig;
 import net.thevpc.nuts.toolbox.ndb.nmysql.local.config.LocalMysqlConfig;
@@ -17,12 +17,12 @@ public class LocalMysqlConfigService {
     public static final String SERVER_CONFIG_EXT = ".local-config";
     private String name;
     private LocalMysqlConfig config;
-    private NutsApplicationContext context;
-    private NutsDefinition catalinaNutsDefinition;
+    private NApplicationContext context;
+    private NDefinition catalinaNDefinition;
     private String catalinaVersion;
-    private NutsPath sharedConfigFolder;
+    private NPath sharedConfigFolder;
 
-    public LocalMysqlConfigService(NutsPath file, NutsApplicationContext context) {
+    public LocalMysqlConfigService(NPath file, NApplicationContext context) {
         this(
                 file.getName().toString().substring(0, file.getName().length() - LocalMysqlConfigService.SERVER_CONFIG_EXT.length()),
                 context
@@ -30,10 +30,10 @@ public class LocalMysqlConfigService {
         loadConfig();
     }
 
-    public LocalMysqlConfigService(String name, NutsApplicationContext context) {
+    public LocalMysqlConfigService(String name, NApplicationContext context) {
         setName(name);
         this.context = context;
-        sharedConfigFolder = getContext().getVersionFolder(NutsStoreLocation.CONFIG, NMySqlConfigVersions.CURRENT);
+        sharedConfigFolder = getContext().getVersionFolder(NStoreLocation.CONFIG, NMySqlConfigVersions.CURRENT);
     }
 
     public LocalMysqlConfigService setName(String name) {
@@ -53,17 +53,17 @@ public class LocalMysqlConfigService {
     }
 
     public LocalMysqlConfigService saveConfig() {
-        NutsPath f = getServerConfigPath();
-        NutsElements.of(context.getSession()).setNtf(false).json().setValue(config).print(f);
+        NPath f = getServerConfigPath();
+        NElements.of(context.getSession()).setNtf(false).json().setValue(config).print(f);
         return this;
     }
 
     public boolean existsConfig() {
-        NutsPath f = getServerConfigPath();
+        NPath f = getServerConfigPath();
         return f.exists();
     }
 
-    private NutsPath getServerConfigPath() {
+    private NPath getServerConfigPath() {
         return sharedConfigFolder.resolve(getName() + SERVER_CONFIG_EXT);
     }
 
@@ -71,7 +71,7 @@ public class LocalMysqlConfigService {
         List<String> apps = new ArrayList<>();
         if (args != null) {
             for (String arg : args) {
-                if (!NutsBlankable.isBlank(arg)) {
+                if (!NBlankable.isBlank(arg)) {
                     for (String s : arg.split("[, ]")) {
                         if (!s.isEmpty()) {
                             apps.add(s);
@@ -85,10 +85,10 @@ public class LocalMysqlConfigService {
 
     public LocalMysqlConfigService loadConfig() {
         String name = getName();
-        NutsPath f = getServerConfigPath();
-        NutsSession session = context.getSession();
+        NPath f = getServerConfigPath();
+        NSession session = context.getSession();
         if (f.exists()) {
-            config = NutsElements.of(session).json().parse(f, LocalMysqlConfig.class);
+            config = NElements.of(session).json().parse(f, LocalMysqlConfig.class);
             return this;
         } else if ("default".equals(name)) {
             //auto create default config
@@ -96,7 +96,7 @@ public class LocalMysqlConfigService {
             saveConfig();
             return this;
         }
-        throw new NutsIllegalArgumentException(session,NutsMessage.ofCstyle("no such mysql config : %s",name));
+        throw new NIllegalArgumentException(session, NMsg.ofCstyle("no such mysql config : %s",name));
     }
 
     public LocalMysqlConfigService removeConfig() {
@@ -105,8 +105,8 @@ public class LocalMysqlConfigService {
     }
 
     public LocalMysqlConfigService write(PrintStream out) {
-        NutsSession session = context.getSession();
-        NutsElements.of(session).json().setValue(getConfig()).setNtf(false).print(out);
+        NSession session = context.getSession();
+        NElements.of(session).json().setValue(getConfig()).setNtf(false).print(out);
         return this;
     }
 
@@ -115,7 +115,7 @@ public class LocalMysqlConfigService {
         return this;
     }
 
-    public LocalMysqlDatabaseConfigService getDatabase(String dbName, NutsOpenMode action) {
+    public LocalMysqlDatabaseConfigService getDatabase(String dbName, NOpenMode action) {
         dbName = MysqlUtils.toValidFileName(dbName, "default");
         LocalMysqlDatabaseConfig a = getConfig().getDatabases().get(dbName);
         if (a == null) {
@@ -123,7 +123,7 @@ public class LocalMysqlConfigService {
                 case OPEN_OR_NULL:
                     return null;
                 case OPEN_OR_ERROR:
-                    throw new NutsIllegalArgumentException(context.getSession(), NutsMessage.ofCstyle("local instance not found:%s@%s" ,dbName, getName()));
+                    throw new NIllegalArgumentException(context.getSession(), NMsg.ofCstyle("local instance not found:%s@%s" ,dbName, getName()));
                 case CREATE_OR_ERROR:
                 case OPEN_OR_CREATE: {
                     a = new LocalMysqlDatabaseConfig();
@@ -131,13 +131,13 @@ public class LocalMysqlConfigService {
                     return new LocalMysqlDatabaseConfigService(dbName, a, this);
                 }
                 default: {
-                    throw new NutsIllegalArgumentException(context.getSession(), NutsMessage.ofPlain("unexpected error"));
+                    throw new NIllegalArgumentException(context.getSession(), NMsg.ofPlain("unexpected error"));
                 }
             }
         }
         switch (action) {
             case CREATE_OR_ERROR: {
-                throw new NutsIllegalArgumentException(context.getSession(), NutsMessage.ofCstyle("local instance not found:%s@%s",dbName,getName()));
+                throw new NIllegalArgumentException(context.getSession(), NMsg.ofCstyle("local instance not found:%s@%s",dbName,getName()));
             }
             case OPEN_OR_ERROR:
             case OPEN_OR_NULL:
@@ -145,7 +145,7 @@ public class LocalMysqlConfigService {
                 return new LocalMysqlDatabaseConfigService(dbName, a, this);
             }
             default: {
-                throw new NutsIllegalArgumentException(context.getSession(), NutsMessage.ofPlain("unexpected error"));
+                throw new NIllegalArgumentException(context.getSession(), NMsg.ofPlain("unexpected error"));
             }
         }
     }
@@ -159,13 +159,13 @@ public class LocalMysqlConfigService {
         return a;
     }
 
-    public NutsApplicationContext getContext() {
+    public NApplicationContext getContext() {
         return context;
     }
 
     public String getMysqlCommand() {
         String s = getConfig().getMysqlCommand();
-        if (NutsBlankable.isBlank(s)) {
+        if (NBlankable.isBlank(s)) {
             s = "mysql";
         }
         return s;
@@ -173,7 +173,7 @@ public class LocalMysqlConfigService {
 
     public String getMysqldumpCommand() {
         String s = getConfig().getMysqldumpCommand();
-        if (NutsBlankable.isBlank(s)) {
+        if (NBlankable.isBlank(s)) {
             s = "mysqldump";
         }
         return s;

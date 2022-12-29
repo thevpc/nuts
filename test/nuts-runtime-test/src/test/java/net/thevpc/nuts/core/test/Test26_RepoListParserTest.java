@@ -1,6 +1,6 @@
 package net.thevpc.nuts.core.test;
 
-import net.thevpc.nuts.spi.NutsRepositoryLocation;
+import net.thevpc.nuts.spi.NRepositoryLocation;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -9,7 +9,7 @@ public class Test26_RepoListParserTest {
 
     @Test
     public void test01() {
-        NutsRepositoryLocation r = NutsRepositoryLocation.of("maven-local=maven@/home/me/.m2/repository");
+        NRepositoryLocation r = NRepositoryLocation.of("maven-local=maven@/home/me/.m2/repository");
         Assertions.assertEquals(r.getName(), "maven-local");
         Assertions.assertEquals(r.getLocationType(), "maven");
         Assertions.assertEquals(r.getPath(), "/home/me/.m2/repository");
@@ -17,7 +17,7 @@ public class Test26_RepoListParserTest {
 
     @Test
     public void test02() {
-        NutsRepositoryLocation r = NutsRepositoryLocation.of("maven@/home/me/.m2/repository");
+        NRepositoryLocation r = NRepositoryLocation.of("maven@/home/me/.m2/repository");
         Assertions.assertEquals(r.getName(), null);
         Assertions.assertEquals(r.getLocationType(), "maven");
         Assertions.assertEquals(r.getPath(), "/home/me/.m2/repository");
@@ -25,7 +25,7 @@ public class Test26_RepoListParserTest {
 
     @Test
     public void test03() {
-        NutsRepositoryLocation r = NutsRepositoryLocation.of("/home/me/.m2/repository");
+        NRepositoryLocation r = NRepositoryLocation.of("/home/me/.m2/repository");
         Assertions.assertEquals(r.getName(), null);
         Assertions.assertEquals(r.getLocationType(), null);
         Assertions.assertEquals(r.getPath(), "/home/me/.m2/repository");
@@ -33,7 +33,7 @@ public class Test26_RepoListParserTest {
 
     @Test
     public void test04() {
-        NutsRepositoryLocation r = NutsRepositoryLocation.of("repository");
+        NRepositoryLocation r = NRepositoryLocation.of("repository");
         Assertions.assertEquals(r.getName(), null);
         Assertions.assertEquals(r.getLocationType(), null);
         Assertions.assertEquals(r.getPath(), "repository");
@@ -41,7 +41,7 @@ public class Test26_RepoListParserTest {
 
     @Test
     public void test05() {
-        NutsRepositoryLocation r = NutsRepositoryLocation.of("repository=");
+        NRepositoryLocation r = NRepositoryLocation.of("repository=");
         Assertions.assertEquals(r.getName(), "repository");
         Assertions.assertEquals(r.getLocationType(), null);
         Assertions.assertEquals(r.getPath(), null);
@@ -49,7 +49,7 @@ public class Test26_RepoListParserTest {
 
     @Test
     public void test06() {
-        NutsRepositoryLocation r = NutsRepositoryLocation.of("maven@");
+        NRepositoryLocation r = NRepositoryLocation.of("maven@");
         Assertions.assertEquals(r.getName(), null);
         Assertions.assertEquals(r.getLocationType(), "maven");
         Assertions.assertEquals(r.getPath(), null);
@@ -57,7 +57,7 @@ public class Test26_RepoListParserTest {
 
     @Test
     public void test07() {
-        NutsRepositoryLocation r = NutsRepositoryLocation.of("");
+        NRepositoryLocation r = NRepositoryLocation.of("");
         Assertions.assertEquals(r.getName(), null);
         Assertions.assertEquals(r.getLocationType(), null);
         Assertions.assertEquals(r.getPath(), null);
@@ -65,7 +65,7 @@ public class Test26_RepoListParserTest {
 
     @Test
     public void test08() {
-        NutsRepositoryLocation r = NutsRepositoryLocation.of(null);
+        NRepositoryLocation r = NRepositoryLocation.of(null);
         Assertions.assertEquals(r.getName(), null);
         Assertions.assertEquals(r.getLocationType(), null);
         Assertions.assertEquals(r.getPath(), null);
@@ -73,7 +73,7 @@ public class Test26_RepoListParserTest {
 
     @Test
     public void test09() {
-        NutsRepositoryLocation r = NutsRepositoryLocation.of("@");
+        NRepositoryLocation r = NRepositoryLocation.of("@");
         Assertions.assertEquals(r.getName(), null);
         Assertions.assertEquals(r.getLocationType(), null);
         Assertions.assertEquals(r.getPath(), null);
@@ -81,7 +81,7 @@ public class Test26_RepoListParserTest {
 
     @Test
     public void test10() {
-        NutsRepositoryLocation r = NutsRepositoryLocation.of("=");
+        NRepositoryLocation r = NRepositoryLocation.of("=");
         Assertions.assertEquals(r.getName(), null);
         Assertions.assertEquals(r.getLocationType(), null);
         Assertions.assertEquals(r.getPath(), null);
@@ -89,7 +89,7 @@ public class Test26_RepoListParserTest {
 
     @Test
     public void test11() {
-        NutsRepositoryLocation r = NutsRepositoryLocation.of("=@");
+        NRepositoryLocation r = NRepositoryLocation.of("=@");
         Assertions.assertEquals(r.getName(), null);
         Assertions.assertEquals(r.getLocationType(), null);
         Assertions.assertEquals(r.getPath(), null);
@@ -97,7 +97,7 @@ public class Test26_RepoListParserTest {
 
     @Test
     public void test12() {
-        NutsRepositoryLocation r = NutsRepositoryLocation.of("@=");
+        NRepositoryLocation r = NRepositoryLocation.of("@=");
         Assertions.assertEquals(r.getName(), null);
         Assertions.assertEquals(r.getLocationType(), null);
         Assertions.assertEquals(r.getPath(), "=");

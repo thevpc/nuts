@@ -23,7 +23,7 @@
  */
 package net.thevpc.nuts.runtime.standalone.util;
 
-import net.thevpc.nuts.util.NutsEnum;
+import net.thevpc.nuts.util.NEnum;
 
 import java.util.NoSuchElementException;
 
@@ -37,8 +37,8 @@ public class CoreEnumUtils {
     }
 
     public static <T extends Enum> T parseEnumString(String val, Class<T> e, boolean lenient) {
-        if (NutsEnum.class.isAssignableFrom(e)) {
-            T r = (T) NutsEnum.parse((Class) e, val).orNull();
+        if (NEnum.class.isAssignableFrom(e)) {
+            T r = (T) NEnum.parse((Class) e, val).orNull();
             if (r != null) {
                 return r;
             }

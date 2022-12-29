@@ -1,11 +1,11 @@
 package net.thevpc.nuts.runtime.standalone.io.path.spi;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.io.NutsIOException;
-import net.thevpc.nuts.io.NutsPath;
-import net.thevpc.nuts.runtime.standalone.session.NutsSessionUtils;
-import net.thevpc.nuts.spi.NutsPathFactory;
-import net.thevpc.nuts.spi.NutsPathSPI;
+import net.thevpc.nuts.io.NIOException;
+import net.thevpc.nuts.io.NPath;
+import net.thevpc.nuts.runtime.standalone.session.NSessionUtils;
+import net.thevpc.nuts.spi.NPathFactory;
+import net.thevpc.nuts.spi.NPathSPI;
 
 import java.util.Objects;
 
@@ -13,7 +13,7 @@ public class ClassLoaderPath extends URLPath {
     private final String path;
     private final String effectivePath;
     private final ClassLoader loader;
-    private final static String fileOf(String path,boolean check, NutsSession session){
+    private final static String fileOf(String path,boolean check, NSession session){
         if(path!=null){
             if(path.startsWith("classpath:")){
                 String p=path;
@@ -25,12 +25,12 @@ public class ClassLoaderPath extends URLPath {
             }
         }
         if(check){
-            throw new NutsIOException(session, NutsMessage.ofCstyle("invalid class path file : %s",path));
+            throw new NIOException(session, NMsg.ofCstyle("invalid class path file : %s",path));
         }
         return null;
     }
 
-    public ClassLoaderPath(String path, ClassLoader loader, NutsSession session) {
+    public ClassLoaderPath(String path, ClassLoader loader, NSession session) {
         super(loader.getResource(fileOf(path,true,session)), session, true);
         this.path = path;
         this.effectivePath = fileOf(path,false,session);
@@ -42,12 +42,12 @@ public class ClassLoaderPath extends URLPath {
         return "classpath:"+effectivePath;
     }
 
-    public String getName(NutsPath basePath) {
+    public String getName(NPath basePath) {
         return URLPath.getURLName(effectivePath);
     }
 
     @Override
-    public String getLocation(NutsPath basePath) {
+    public String getLocation(NPath basePath) {
         if (url != null) {
             return super.getLocation(basePath);
         }
@@ -55,12 +55,12 @@ public class ClassLoaderPath extends URLPath {
     }
 
     @Override
-    public String getProtocol(NutsPath basePath) {
+    public String getProtocol(NPath basePath) {
         return "classpath";
     }
 
-    protected NutsPath rebuildURLPath(String other) {
-        return NutsPath.of(new ClassLoaderPath(other, loader, getSession()),getSession());
+    protected NPath rebuildURLPath(String other) {
+        return NPath.of(new ClassLoaderPath(other, loader, getSession()),getSession());
     }
 
     @Override
@@ -78,19 +78,19 @@ public class ClassLoaderPath extends URLPath {
         return Objects.hash(effectivePath, loader);
     }
 
-    public static class ClasspathFactory implements NutsPathFactory {
-        NutsWorkspace ws;
+    public static class ClasspathFactory implements NPathFactory {
+        NWorkspace ws;
 
-        public ClasspathFactory(NutsWorkspace ws) {
+        public ClasspathFactory(NWorkspace ws) {
             this.ws = ws;
         }
 
         @Override
-        public NutsSupported<NutsPathSPI> createPath(String path, NutsSession session, ClassLoader classLoader) {
-            NutsSessionUtils.checkSession(ws, session);
+        public NSupported<NPathSPI> createPath(String path, NSession session, ClassLoader classLoader) {
+            NSessionUtils.checkSession(ws, session);
             try {
                 if (path.startsWith("classpath:")) {
-                    return NutsSupported.of(10,()->new ClassLoaderPath(path, classLoader, session));
+                    return NSupported.of(10,()->new ClassLoaderPath(path, classLoader, session));
                 }
             } catch (Exception ex) {
                 //ignore

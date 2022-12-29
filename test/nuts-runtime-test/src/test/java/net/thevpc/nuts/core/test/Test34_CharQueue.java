@@ -6,7 +6,7 @@
 package net.thevpc.nuts.core.test;
 
 import net.thevpc.nuts.runtime.standalone.util.collections.CharQueue;
-import net.thevpc.nuts.runtime.standalone.util.collections.NutsMatchType;
+import net.thevpc.nuts.runtime.standalone.util.collections.NMatchType;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -39,9 +39,9 @@ public class Test34_CharQueue {
         Assertions.assertEquals('b', c);
         Assertions.assertEquals(4, q.length());
         Assertions.assertEquals("cdef", q.toString());
-        Assertions.assertEquals(NutsMatchType.FULL_MATCH, q.peekString("cdef").mode());
-        Assertions.assertEquals(NutsMatchType.PARTIAL_MATCH, q.peekString("cdefg").mode());
-        Assertions.assertEquals(NutsMatchType.NO_MATCH, q.peekString("cdgf").mode());
+        Assertions.assertEquals(NMatchType.FULL_MATCH, q.peekString("cdef").mode());
+        Assertions.assertEquals(NMatchType.PARTIAL_MATCH, q.peekString("cdefg").mode());
+        Assertions.assertEquals(NMatchType.NO_MATCH, q.peekString("cdgf").mode());
         String s = q.read(5);
         Assertions.assertEquals("cdef", s);
         Assertions.assertEquals(0, q.length());
@@ -54,17 +54,17 @@ public class Test34_CharQueue {
         CharQueue q = new CharQueue();
         q.write("###");
 
-        Assertions.assertEquals(NutsMatchType.FULL_MATCH, q.peekPattern("#").mode());
-        Assertions.assertEquals(NutsMatchType.FULL_MATCH, q.peekPattern("###").mode());
-        Assertions.assertEquals(NutsMatchType.PARTIAL_MATCH, q.peekPattern("####").mode());
-        Assertions.assertEquals(NutsMatchType.NO_MATCH, q.peekPattern("#2").mode());
+        Assertions.assertEquals(NMatchType.FULL_MATCH, q.peekPattern("#").mode());
+        Assertions.assertEquals(NMatchType.FULL_MATCH, q.peekPattern("###").mode());
+        Assertions.assertEquals(NMatchType.PARTIAL_MATCH, q.peekPattern("####").mode());
+        Assertions.assertEquals(NMatchType.NO_MATCH, q.peekPattern("#2").mode());
     }
 
     @Test
     public void test03() {
         CharQueue q = new CharQueue();
         q.write("###");
-        Assertions.assertEquals(NutsMatchType.MATCH, q.peekPattern("#*").mode());
+        Assertions.assertEquals(NMatchType.MATCH, q.peekPattern("#*").mode());
     }
 
     @Test

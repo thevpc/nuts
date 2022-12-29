@@ -1,18 +1,18 @@
 package net.thevpc.nuts.runtime.standalone.text.highlighter;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.spi.NutsSupportLevelContext;
-import net.thevpc.nuts.spi.NutsComponent;
-import net.thevpc.nuts.text.NutsText;
-import net.thevpc.nuts.text.NutsTextStyle;
-import net.thevpc.nuts.text.NutsTexts;
+import net.thevpc.nuts.spi.NSupportLevelContext;
+import net.thevpc.nuts.spi.NComponent;
+import net.thevpc.nuts.text.NText;
+import net.thevpc.nuts.text.NTextStyle;
+import net.thevpc.nuts.text.NTexts;
 
-public class CustomStyleCodeHighlighter implements NutsCodeHighlighter {
+public class CustomStyleCodeHighlighter implements NCodeHighlighter {
 
-    private NutsSession session;
-    private NutsTextStyle style;
+    private NSession session;
+    private NTextStyle style;
 
-    public CustomStyleCodeHighlighter(NutsTextStyle style, NutsSession session) {
+    public CustomStyleCodeHighlighter(NTextStyle style, NSession session) {
         this.session = session;
         this.style = style;
     }
@@ -23,18 +23,18 @@ public class CustomStyleCodeHighlighter implements NutsCodeHighlighter {
     }
 
     @Override
-    public NutsText stringToText(String text, NutsTexts txt, NutsSession session) {
+    public NText stringToText(String text, NTexts txt, NSession session) {
         return txt.ofStyled(text, style);
     }
 
     @Override
-    public NutsText tokenToText(String text, String nodeType, NutsTexts txt, NutsSession session) {
+    public NText tokenToText(String text, String nodeType, NTexts txt, NSession session) {
         return txt.ofPlain(text);
     }
 
     @Override
-    public int getSupportLevel(NutsSupportLevelContext context) {
-        return NutsComponent.DEFAULT_SUPPORT;
+    public int getSupportLevel(NSupportLevelContext context) {
+        return NComponent.DEFAULT_SUPPORT;
     }
 
 }

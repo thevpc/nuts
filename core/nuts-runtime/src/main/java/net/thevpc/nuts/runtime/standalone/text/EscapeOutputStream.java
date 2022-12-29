@@ -1,29 +1,29 @@
 package net.thevpc.nuts.runtime.standalone.text;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.io.NutsTerminalMode;
-import net.thevpc.nuts.runtime.standalone.io.terminal.NutsTerminalModeOpUtils;
+import net.thevpc.nuts.io.NTerminalMode;
+import net.thevpc.nuts.runtime.standalone.io.terminal.NTerminalModeOpUtils;
 import net.thevpc.nuts.runtime.standalone.io.outputstream.BaseTransparentFilterOutputStream;
-import net.thevpc.nuts.runtime.standalone.io.terminal.NutsTerminalModeOp;
-import net.thevpc.nuts.spi.NutsSystemTerminalBase;
+import net.thevpc.nuts.runtime.standalone.io.terminal.NTerminalModeOp;
+import net.thevpc.nuts.spi.NSystemTerminalBase;
 
 import java.io.IOException;
 import java.io.OutputStream;
 
 public class EscapeOutputStream extends BaseTransparentFilterOutputStream implements ExtendedFormatAware {
 
-    NutsWorkspace ws;
-    NutsSession session;
-    NutsSystemTerminalBase term;
+    NWorkspace ws;
+    NSession session;
+    NSystemTerminalBase term;
 
-    public EscapeOutputStream(OutputStream out, NutsSystemTerminalBase term,NutsSession session) {
+    public EscapeOutputStream(OutputStream out, NSystemTerminalBase term, NSession session) {
         super(out);
         this.session = session;
         this.term = term;
         this.ws = session.getWorkspace();
-        NutsTerminalModeOp t = NutsTerminalModeOpUtils.resolveNutsTerminalModeOp(out);
-        if (t.in() != NutsTerminalMode.FORMATTED && t.in() != NutsTerminalMode.FILTERED) {
-            throw new NutsIllegalArgumentException(session, NutsMessage.ofPlain("illegal Formatted"));
+        NTerminalModeOp t = NTerminalModeOpUtils.resolveNutsTerminalModeOp(out);
+        if (t.in() != NTerminalMode.FORMATTED && t.in() != NTerminalMode.FILTERED) {
+            throw new NIllegalArgumentException(session, NMsg.ofPlain("illegal Formatted"));
         }
     }
 
@@ -32,44 +32,44 @@ public class EscapeOutputStream extends BaseTransparentFilterOutputStream implem
     }
 
     @Override
-    public NutsTerminalModeOp getModeOp() {
-        return NutsTerminalModeOp.ESCAPE;
+    public NTerminalModeOp getModeOp() {
+        return NTerminalModeOp.ESCAPE;
     }
 
     @Override
     public void write(int b) throws IOException {
         out.write(
-                DefaultNutsTexts.escapeText0(Character.toString((char) b)).getBytes()
+                DefaultNTexts.escapeText0(Character.toString((char) b)).getBytes()
         );
     }
 
     @Override
     public void write(byte[] b, int off, int len) throws IOException {
-        byte[] bytes = DefaultNutsTexts.escapeText0(new String(b, off, len)).getBytes();
+        byte[] bytes = DefaultNTexts.escapeText0(new String(b, off, len)).getBytes();
         out.write(bytes, 0, bytes.length);
     }
 
     @Override
-    public ExtendedFormatAware convert(NutsTerminalModeOp other) {
+    public ExtendedFormatAware convert(NTerminalModeOp other) {
         if (other == null || other == getModeOp()) {
             return this;
         }
         switch (other) {
             case NOP: {
                 if (out instanceof ExtendedFormatAware) {
-                    return ((ExtendedFormatAware) out).convert(NutsTerminalModeOp.NOP);
+                    return ((ExtendedFormatAware) out).convert(NTerminalModeOp.NOP);
                 }
                 return new RawOutputStream(out, term,session);
             }
             case FORMAT: {
                 if (out instanceof ExtendedFormatAware) {
-                    return ((ExtendedFormatAware) out).convert(NutsTerminalModeOp.FORMAT);
+                    return ((ExtendedFormatAware) out).convert(NTerminalModeOp.FORMAT);
                 }
                 return new FormatOutputStream(out, term,session);
             }
             case FILTER: {
                 if (out instanceof ExtendedFormatAware) {
-                    return ((ExtendedFormatAware) out).convert(NutsTerminalModeOp.FILTER);
+                    return ((ExtendedFormatAware) out).convert(NTerminalModeOp.FILTER);
                 }
                 return this;//new FilterFormatOutputStream(out);
             }
@@ -80,6 +80,6 @@ public class EscapeOutputStream extends BaseTransparentFilterOutputStream implem
                 return ((ExtendedFormatAware) out);
             }
         }
-        throw new NutsUnsupportedEnumException(session, other);
+        throw new NUnsupportedEnumException(session, other);
     }
 }

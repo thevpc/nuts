@@ -25,14 +25,13 @@ package net.thevpc.nuts.runtime.standalone.util;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.standalone.xtra.expr.StringTokenizerUtils;
-import net.thevpc.nuts.text.NutsTextBuilder;
-import net.thevpc.nuts.util.NutsStringUtils;
+import net.thevpc.nuts.text.NTextBuilder;
+import net.thevpc.nuts.util.NStringUtils;
 
 import java.io.*;
 import java.lang.reflect.Array;
 import java.time.Instant;
 import java.util.*;
-import java.util.function.Consumer;
 import java.util.function.Predicate;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -169,7 +168,7 @@ public final class CoreStringUtils {
 
     public static String exceptionToString(Throwable ex, boolean inner) {
         String msg = null;
-        if (ex instanceof NutsNotFoundException || ex instanceof UncheckedIOException) {
+        if (ex instanceof NNotFoundException || ex instanceof UncheckedIOException) {
             if (ex.getCause() != null) {
                 Throwable ex2 = ex.getCause();
                 if (ex2 instanceof UncheckedIOException) {
@@ -209,12 +208,12 @@ public final class CoreStringUtils {
         return msg;
     }
 
-    public static NutsMessage exceptionToMessage(Throwable ex) {
+    public static NMsg exceptionToMessage(Throwable ex) {
         return exceptionToMessage(ex, false);
     }
 
-    public static NutsMessage exceptionToMessage(Throwable ex, boolean inner) {
-        NutsMessage msg = null;
+    public static NMsg exceptionToMessage(Throwable ex, boolean inner) {
+        NMsg msg = null;
         if (ex instanceof UncheckedIOException) {
             if (ex.getCause() != null) {
                 Throwable ex2 = ex.getCause();
@@ -223,9 +222,9 @@ public final class CoreStringUtils {
                 }
                 msg = exceptionToMessage(ex2, true);
             } else {
-                msg = NutsMessage.ofPlain(ex.getMessage());
+                msg = NMsg.ofPlain(ex.getMessage());
             }
-        } else if (ex instanceof NutsNotFoundException) {
+        } else if (ex instanceof NNotFoundException) {
             if (ex.getCause() != null) {
                 Throwable ex2 = ex.getCause();
                 if (ex2 instanceof UncheckedIOException) {
@@ -233,18 +232,18 @@ public final class CoreStringUtils {
                 }
                 msg = exceptionToMessage(ex2, true);
             } else {
-                msg = ((NutsNotFoundException) ex).getFormattedMessage();
+                msg = ((NNotFoundException) ex).getFormattedMessage();
             }
-        } else if (ex instanceof NutsException) {
-            msg = ((NutsException) ex).getFormattedMessage();
+        } else if (ex instanceof NException) {
+            msg = ((NException) ex).getFormattedMessage();
         } else {
             String msg2 = ex.toString();
             if (msg2.startsWith(ex.getClass().getName() + ":")) {
                 if (inner) {
                     //this is  default toString for the exception
-                    msg = NutsMessage.ofPlain(msg2.substring((ex.getClass().getName()).length() + 1).trim());
+                    msg = NMsg.ofPlain(msg2.substring((ex.getClass().getName()).length() + 1).trim());
                 } else {
-                    msg = NutsMessage.ofPlain(ex.getClass().getSimpleName() + ": " + msg2.substring((ex.getClass().getName()).length() + 1).trim());
+                    msg = NMsg.ofPlain(ex.getClass().getSimpleName() + ": " + msg2.substring((ex.getClass().getName()).length() + 1).trim());
                 }
             } else {
                 for (Class aClass : new Class[]{
@@ -255,12 +254,12 @@ public final class CoreStringUtils {
                         ReflectiveOperationException.class,
                         Error.class,}) {
                     if (aClass.isInstance(ex)) {
-                        return NutsMessage.ofPlain(ex.toString());
+                        return NMsg.ofPlain(ex.toString());
                     }
                 }
-                msg = ex.getMessage() == null ? null : NutsMessage.ofPlain(ex.getMessage());
+                msg = ex.getMessage() == null ? null : NMsg.ofPlain(ex.getMessage());
                 if (msg == null) {
-                    msg = NutsMessage.ofPlain(ex.toString());
+                    msg = NMsg.ofPlain(ex.toString());
                 }
             }
         }
@@ -302,7 +301,7 @@ public final class CoreStringUtils {
         }
     }
 
-    public static void fillString(char x, int width, NutsTextBuilder sb) {
+    public static void fillString(char x, int width, NTextBuilder sb) {
         if (width <= 0) {
             return;
         }
@@ -322,7 +321,7 @@ public final class CoreStringUtils {
         }
     }
 
-    public static void fillString(String x, int width, NutsTextBuilder sb) {
+    public static void fillString(String x, int width, NTextBuilder sb) {
         if (width <= 0) {
             return;
         }
@@ -370,7 +369,7 @@ public final class CoreStringUtils {
     }
 
     public static String joinAndTrimToNull(List<String> args){
-        return NutsStringUtils.trimToNull(
+        return NStringUtils.trimToNull(
                 String.join(",",args)
         );
     }
@@ -464,10 +463,10 @@ public final class CoreStringUtils {
             return (CoreEnumUtils.getEnumString((Enum) o));
         }
         if (o instanceof Instant) {
-            return (CoreNutsUtils.DEFAULT_DATE_TIME_FORMATTER.format(((Instant) o)));
+            return (CoreNUtils.DEFAULT_DATE_TIME_FORMATTER.format(((Instant) o)));
         }
         if (o instanceof Date) {
-            return (CoreNutsUtils.DEFAULT_DATE_TIME_FORMATTER.format(((Date) o).toInstant()));
+            return (CoreNUtils.DEFAULT_DATE_TIME_FORMATTER.format(((Date) o).toInstant()));
         }
         if (o instanceof Collection) {
             Collection c = ((Collection) o);

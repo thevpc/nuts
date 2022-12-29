@@ -25,9 +25,9 @@
 */
 package net.thevpc.nuts.runtime.standalone.app.cmdline.option;
 
-import net.thevpc.nuts.cmdline.DefaultNutsArgumentCandidate;
-import net.thevpc.nuts.cmdline.NutsArgumentCandidate;
-import net.thevpc.nuts.cmdline.NutsCommandAutoComplete;
+import net.thevpc.nuts.cmdline.DefaultNArgumentCandidate;
+import net.thevpc.nuts.cmdline.NArgumentCandidate;
+import net.thevpc.nuts.cmdline.NCommandAutoComplete;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -43,12 +43,12 @@ public class ArchitectureNonOption extends DefaultNonOption {
     }
 
     @Override
-    public List<NutsArgumentCandidate> getCandidates(NutsCommandAutoComplete context) {
-        List<NutsArgumentCandidate> all = new ArrayList<>();
-        all.add(new DefaultNutsArgumentCandidate("\"linux x86\""));
-        all.add(new DefaultNutsArgumentCandidate("\"linux x64\""));
-        all.add(new DefaultNutsArgumentCandidate("\"win x86\""));
-        all.add(new DefaultNutsArgumentCandidate("\"win x64\""));
+    public List<NArgumentCandidate> getCandidates(NCommandAutoComplete context) {
+        List<NArgumentCandidate> all = new ArrayList<>();
+        all.add(new DefaultNArgumentCandidate("\"linux x86\""));
+        all.add(new DefaultNArgumentCandidate("\"linux x64\""));
+        all.add(new DefaultNArgumentCandidate("\"win x86\""));
+        all.add(new DefaultNArgumentCandidate("\"win x64\""));
         return all;
     }
 

@@ -1,22 +1,22 @@
 package net.thevpc.nuts.runtime.standalone.executor.system;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.cmdline.NutsCommandLine;
+import net.thevpc.nuts.cmdline.NCommandLine;
 import net.thevpc.nuts.io.*;
 import net.thevpc.nuts.runtime.standalone.executor.AbstractSyncIProcessExecHelper;
-import net.thevpc.nuts.runtime.standalone.util.CoreNutsUtils;
-import net.thevpc.nuts.runtime.standalone.util.jclass.NutsJavaSdkUtils;
-import net.thevpc.nuts.runtime.standalone.workspace.NutsWorkspaceExt;
-import net.thevpc.nuts.runtime.standalone.workspace.NutsWorkspaceUtils;
-import net.thevpc.nuts.runtime.standalone.workspace.cmd.recom.NutsRecommendationPhase;
+import net.thevpc.nuts.runtime.standalone.util.CoreNUtils;
+import net.thevpc.nuts.runtime.standalone.util.jclass.NJavaSdkUtils;
+import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceExt;
+import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceUtils;
+import net.thevpc.nuts.runtime.standalone.workspace.cmd.recom.NRecommendationPhase;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.recom.RequestQueryInfo;
 import net.thevpc.nuts.runtime.standalone.xtra.expr.StringPlaceHolderParser;
-import net.thevpc.nuts.text.NutsTerminalCommand;
-import net.thevpc.nuts.text.NutsTextStyle;
-import net.thevpc.nuts.text.NutsTexts;
-import net.thevpc.nuts.util.NutsLogger;
-import net.thevpc.nuts.util.NutsLoggerVerb;
-import net.thevpc.nuts.util.NutsStringUtils;
+import net.thevpc.nuts.text.NTerminalCommand;
+import net.thevpc.nuts.text.NTextStyle;
+import net.thevpc.nuts.text.NTexts;
+import net.thevpc.nuts.util.NLogger;
+import net.thevpc.nuts.util.NLoggerVerb;
+import net.thevpc.nuts.util.NStringUtils;
 
 import java.io.File;
 import java.io.IOException;
@@ -31,25 +31,25 @@ import java.util.logging.Level;
 
 public class ProcessExecHelper extends AbstractSyncIProcessExecHelper {
 
-    NutsDefinition definition;
+    NDefinition definition;
     ProcessBuilder2 pb;
-    NutsPrintStream out;
+    NStream out;
 
-    public ProcessExecHelper(NutsDefinition definition, ProcessBuilder2 pb, NutsSession session, NutsPrintStream out) {
+    public ProcessExecHelper(NDefinition definition, ProcessBuilder2 pb, NSession session, NStream out) {
         super(session);
         this.pb = pb;
         this.out = out;
         this.definition = definition;
     }
 
-    public static ProcessExecHelper ofArgs(NutsDefinition definition, String[] args, Map<String, String> env, Path directory, NutsSessionTerminal prepareTerminal,
-                                           NutsSessionTerminal execTerminal, boolean showCommand, boolean failFast, long sleep,
-                                           boolean inheritSystemIO, boolean redirectErr, File outputFile, File inputFile,
-                                           NutsRunAs runAs,
-                                           NutsSession session) {
+    public static ProcessExecHelper ofArgs(NDefinition definition, String[] args, Map<String, String> env, Path directory, NSessionTerminal prepareTerminal,
+                                           NSessionTerminal execTerminal, boolean showCommand, boolean failFast, long sleep,
+                                           boolean inheritSystemIO, boolean redirectErr, NPath inputFile, NPath outputFile,
+                                           NRunAs runAs,
+                                           NSession session) {
         List<String> newCommands = buildEffectiveCommand(args, runAs, session);
-        NutsPrintStream out = null;
-        NutsPrintStream err = null;
+        NStream out = null;
+        NStream err = null;
         InputStream in = null;
         ProcessBuilder2 pb = new ProcessBuilder2(session);
         pb.setCommand(newCommands)
@@ -60,24 +60,26 @@ public class ProcessExecHelper extends AbstractSyncIProcessExecHelper {
         if (!inheritSystemIO) {
             if (inputFile == null) {
                 in = execTerminal.in();
-                if (NutsIO.of(session).isStdin(in)) {
+                if (NIO.of(session).isStdin(in)) {
                     in = null;
                 }
             }
             if (outputFile == null) {
                 out = execTerminal.out();
-                if (NutsIO.of(session).isStdout(out)) {
+                if (NIO.of(session).isStdout(out)) {
                     out = null;
                 }
             }
             err = execTerminal.err();
-            if (NutsIO.of(session).isStderr(err)) {
+            if (NIO.of(session).isStderr(err)) {
                 err = null;
             }
             if (out != null) {
-                out.run(NutsTerminalCommand.MOVE_LINE_START, session);
+                out.run(NTerminalCommand.MOVE_LINE_START, session);
             }
         }
+        File inputFile2=null;
+        File outputFile2=null;
         if (out == null && err == null && in == null && inputFile == null && outputFile == null) {
             pb.inheritIO();
             if (redirectErr) {
@@ -87,12 +89,20 @@ public class ProcessExecHelper extends AbstractSyncIProcessExecHelper {
             if (inputFile == null) {
                 pb.setIn(in);
             } else {
-                pb.setRedirectFileInput(inputFile);
+                if(inputFile.isLocal()) {
+                    pb.setRedirectFileInput(inputFile.toFile().toFile());
+                }else{
+                    throw new NUnsupportedArgumentException(session, NMsg.ofPlain("not supported special redirect file"));
+                }
             }
             if (outputFile == null) {
                 pb.setOutput(out == null ? null : out.asPrintStream());
             } else {
-                pb.setRedirectFileOutput(outputFile);
+                if(outputFile.isLocal()) {
+                    pb.setRedirectFileOutput(outputFile.toFile().toFile());
+                }else{
+                    throw new NUnsupportedArgumentException(session, NMsg.ofPlain("not supported special redirect file"));
+                }
             }
             if (redirectErr) {
                 pb.setRedirectErrorStream();
@@ -101,18 +111,18 @@ public class ProcessExecHelper extends AbstractSyncIProcessExecHelper {
             }
         }
 
-        NutsLogger _LL = NutsLogger.of(NutsWorkspaceUtils.class, session);
+        NLogger _LL = NLogger.of(NWorkspaceUtils.class, session);
         if (_LL.isLoggable(Level.FINEST)) {
-            _LL.with().level(Level.FINE).verb(NutsLoggerVerb.START).log(
-                    NutsMessage.ofJstyle("[exec] {0}",
-                            NutsTexts.of(session).ofCode("system",
+            _LL.with().level(Level.FINE).verb(NLoggerVerb.START).log(
+                    NMsg.ofJstyle("[exec] {0}",
+                            NTexts.of(session).ofCode("system",
                                     pb.getCommandString()
                             )));
         }
-        if (showCommand || CoreNutsUtils.isShowCommand(session)) {
-            if (prepareTerminal.out().getTerminalMode() == NutsTerminalMode.FORMATTED) {
-                prepareTerminal.out().printf("%s ", NutsTexts.of(session).ofStyled("[exec]", NutsTextStyle.primary4()));
-                prepareTerminal.out().println(NutsTexts.of(session).ofCode("system", pb.getCommandString()));
+        if (showCommand || CoreNUtils.isShowCommand(session)) {
+            if (prepareTerminal.out().getTerminalMode() == NTerminalMode.FORMATTED) {
+                prepareTerminal.out().printf("%s ", NTexts.of(session).ofStyled("[exec]", NTextStyle.primary4()));
+                prepareTerminal.out().println(NTexts.of(session).ofCode("system", pb.getCommandString()));
             } else {
                 prepareTerminal.out().print("exec ");
                 prepareTerminal.out().printf("%s%n", pb.getCommandString());
@@ -121,15 +131,15 @@ public class ProcessExecHelper extends AbstractSyncIProcessExecHelper {
         return new ProcessExecHelper(definition,pb, session, out == null ? execTerminal.out() : out);
     }
 
-    public static ProcessExecHelper ofDefinition(NutsDefinition nutMainFile,
-                                                 String[] args, Map<String, String> env, String directory, Map<String, String> execProperties, boolean showCommand, boolean failFast, long sleep, boolean inheritSystemIO, boolean redirectErr, File outputFile, File inputFile,
-                                                 NutsRunAs runAs,
-                                                 NutsSession session,
-                                                 NutsSession execSession
-    ) throws NutsExecutionException {
-        NutsId id = nutMainFile.getId();
-        Path installerFile = nutMainFile.getContent().map(NutsPath::toFile).orNull();
-        NutsPath storeFolder = nutMainFile.getInstallInformation().get(session).getInstallFolder();
+    public static ProcessExecHelper ofDefinition(NDefinition nutMainFile,
+                                                 String[] args, Map<String, String> env, String directory, Map<String, String> execProperties, boolean showCommand, boolean failFast, long sleep, boolean inheritSystemIO, boolean redirectErr, NPath outputFile, NPath inputFile,
+                                                 NRunAs runAs,
+                                                 NSession session,
+                                                 NSession execSession
+    ) throws NExecutionException {
+        NId id = nutMainFile.getId();
+        Path installerFile = nutMainFile.getContent().map(NPath::toFile).orNull();
+        NPath storeFolder = nutMainFile.getInstallInformation().get(session).getInstallFolder();
         HashMap<String, String> map = new HashMap<>();
         HashMap<String, String> envmap = new HashMap<>();
 //        for (Map.Entry<Object, Object> entry : System.getProperties().entrySet()) {
@@ -143,10 +153,10 @@ public class ProcessExecHelper extends AbstractSyncIProcessExecHelper {
             map.put("nuts.jar", nutsJarFile.toAbsolutePath().normalize().toString());
         }
         map.put("nuts.artifact", id.toString());
-        map.put("nuts.file", nutMainFile.getContent().map(NutsPath::toFile).map(Object::toString).orNull());
-        String defaultJavaCommand = NutsJavaSdkUtils.of(execSession.getWorkspace()).resolveJavaCommandByVersion("", false, session);
+        map.put("nuts.file", nutMainFile.getContent().map(NPath::toFile).map(Object::toString).orNull());
+        String defaultJavaCommand = NJavaSdkUtils.of(execSession.getWorkspace()).resolveJavaCommandByVersion("", false, session);
         if (defaultJavaCommand == null) {
-            throw new NutsExecutionException(session, NutsMessage.ofPlain("no java version was found"), 1);
+            throw new NExecutionException(session, NMsg.ofPlain("no java version was found"), 1);
         }
         map.put("nuts.java", defaultJavaCommand);
         if (map.containsKey("nuts.jar")) {
@@ -169,30 +179,30 @@ public class ProcessExecHelper extends AbstractSyncIProcessExecHelper {
             public String apply(String skey) {
                 if (skey.equals("java") || skey.startsWith("java#")) {
                     String javaVer = skey.substring(5);
-                    if (NutsBlankable.isBlank(javaVer)) {
+                    if (NBlankable.isBlank(javaVer)) {
                         return defaultJavaCommand;
                     }
-                    String s = NutsJavaSdkUtils.of(execSession.getWorkspace()).resolveJavaCommandByVersion(javaVer, false, session);
+                    String s = NJavaSdkUtils.of(execSession.getWorkspace()).resolveJavaCommandByVersion(javaVer, false, session);
                     if (s == null) {
-                        throw new NutsExecutionException(session, NutsMessage.ofCstyle("no java version %s was found", javaVer), 1);
+                        throw new NExecutionException(session, NMsg.ofCstyle("no java version %s was found", javaVer), 1);
                     }
                     return s;
                 } else if (skey.equals("javaw") || skey.startsWith("javaw#")) {
                     String javaVer = skey.substring(6);
-                    if (NutsBlankable.isBlank(javaVer)) {
+                    if (NBlankable.isBlank(javaVer)) {
                         return defaultJavaCommand;
                     }
-                    String s = NutsJavaSdkUtils.of(execSession.getWorkspace()).resolveJavaCommandByVersion(javaVer, true, session);
+                    String s = NJavaSdkUtils.of(execSession.getWorkspace()).resolveJavaCommandByVersion(javaVer, true, session);
                     if (s == null) {
-                        throw new NutsExecutionException(session, NutsMessage.ofCstyle("no java version %s was found", javaVer), 1);
+                        throw new NExecutionException(session, NMsg.ofCstyle("no java version %s was found", javaVer), 1);
                     }
                     return s;
                 } else if (skey.equals("nuts")) {
-                    NutsDefinition nutsDefinition;
-                    nutsDefinition = session.fetch().setId(NutsConstants.Ids.NUTS_API)
+                    NDefinition nDefinition;
+                    nDefinition = session.fetch().setId(NConstants.Ids.NUTS_API)
                             .setSession(session).getResultDefinition();
-                    if (nutsDefinition.getContent().isPresent()) {
-                        return ("<::expand::> " + apply("java") + " -jar " + nutsDefinition.getContent());
+                    if (nDefinition.getContent().isPresent()) {
+                        return ("<::expand::> " + apply("java") + " -jar " + nDefinition.getContent());
                     }
                     return null;
                 }
@@ -201,18 +211,18 @@ public class ProcessExecHelper extends AbstractSyncIProcessExecHelper {
         };
         for (Map.Entry<String, String> e : map.entrySet()) {
             String k = e.getKey();
-            if (!NutsBlankable.isBlank(k)) {
+            if (!NBlankable.isBlank(k)) {
                 k = k.replace('.', '_').toUpperCase();
-                if (!NutsBlankable.isBlank(e.getValue())) {
+                if (!NBlankable.isBlank(e.getValue())) {
                     envmap.put(k, e.getValue());
                 }
             }
         }
         List<String> args2 = new ArrayList<>();
         for (String arg : args) {
-            String s = NutsStringUtils.trim(StringPlaceHolderParser.replaceDollarPlaceHolders(arg, mapper));
+            String s = NStringUtils.trim(StringPlaceHolderParser.replaceDollarPlaceHolders(arg, mapper));
             if (s.startsWith("<::expand::>")) {
-                Collections.addAll(args2, NutsCommandLine.of(s, NutsShellFamily.BASH, session).setExpandSimpleOptions(false).toStringArray());
+                Collections.addAll(args2, NCommandLine.of(s, NShellFamily.BASH, session).setExpandSimpleOptions(false).toStringArray());
             } else {
                 args2.add(s);
             }
@@ -222,10 +232,10 @@ public class ProcessExecHelper extends AbstractSyncIProcessExecHelper {
         Path wsLocation = session.locations().getWorkspaceLocation().toFile();
         Path path = wsLocation.resolve(args[0]).normalize();
         if (Files.exists(path)) {
-            NutsPath.of(path, session).addPermissions(NutsPathPermission.CAN_EXECUTE);
+            NPath.of(path, session).addPermissions(NPathPermission.CAN_EXECUTE);
         }
         Path pdirectory = null;
-        if (NutsBlankable.isBlank(directory)) {
+        if (NBlankable.isBlank(directory)) {
             pdirectory = wsLocation;
         } else {
             pdirectory = wsLocation.resolve(directory);
@@ -236,15 +246,15 @@ public class ProcessExecHelper extends AbstractSyncIProcessExecHelper {
                 session);
     }
 
-    private static String resolveRootUserName(NutsSession session) {
-        NutsOsFamily sysFamily = session.env().getOsFamily();
+    private static String resolveRootUserName(NSession session) {
+        NOsFamily sysFamily = session.env().getOsFamily();
         switch (sysFamily) {
             case WINDOWS: {
                 String s = (String) session.getProperty("nuts.windows.root-user");
                 if (s == null) {
-                    s = session.config().getConfigProperty("nuts.windows.root-user").flatMap(NutsValue::asString).orNull();
+                    s = session.config().getConfigProperty("nuts.windows.root-user").flatMap(NValue::asString).orNull();
                 }
-                if (NutsBlankable.isBlank(s)) {
+                if (NBlankable.isBlank(s)) {
                     s = "Administrator";
                 }
                 return s;
@@ -255,12 +265,12 @@ public class ProcessExecHelper extends AbstractSyncIProcessExecHelper {
         }
     }
 
-    private static List<String> buildEffectiveCommand(String[] cmd, NutsRunAs runAsMode, NutsSession session) {
+    private static List<String> buildEffectiveCommand(String[] cmd, NRunAs runAsMode, NSession session) {
         //String runAsEffective = null;
-        NutsOsFamily sysFamily = session.env().getOsFamily();
+        NOsFamily sysFamily = session.env().getOsFamily();
         List<String> command = new ArrayList<>(Arrays.asList(cmd));
         if (runAsMode == null) {
-            runAsMode = NutsRunAs.CURRENT_USER;
+            runAsMode = NRunAs.CURRENT_USER;
         }
         boolean runWithGui = session.isGui() && session.env().isGraphicalDesktopEnvironment();
         String rootUserName = resolveRootUserName(session);
@@ -270,7 +280,7 @@ public class ProcessExecHelper extends AbstractSyncIProcessExecHelper {
         switch (runAsMode.getMode()) {
             case ROOT: {
                 if (rootUserName.equals(currentUserName)) {
-                    runAsMode = NutsRunAs.currentUser();
+                    runAsMode = NRunAs.currentUser();
                 }
                 break;
             }
@@ -278,10 +288,10 @@ public class ProcessExecHelper extends AbstractSyncIProcessExecHelper {
                 String s = runAsMode.getUser();
                 s = s.trim();
                 if (currentUserName.equals(s)) {
-                    runAsMode = NutsRunAs.currentUser();
+                    runAsMode = NRunAs.currentUser();
                 }
                 if (!s.equals(runAsMode.getUser())) {
-                    runAsMode = NutsRunAs.user(s);
+                    runAsMode = NRunAs.user(s);
                 }
                 break;
             }
@@ -312,7 +322,7 @@ public class ProcessExecHelper extends AbstractSyncIProcessExecHelper {
 //                        break;
 //                    }
 //                    default: {
-//                        throw new NutsIllegalArgumentException(session, NutsMessage.plain("cannot run as admin/root on unknown system OS family"));
+//                        throw new NutsIllegalArgumentException(session, NMsg.plain("cannot run as admin/root on unknown system OS family"));
 //                    }
 //                }
 //                if (System.getProperty("user.name").equals(runAsEffective.trim())) {
@@ -334,22 +344,22 @@ public class ProcessExecHelper extends AbstractSyncIProcessExecHelper {
             }
             case ROOT:
             case USER: {
-                String runAsEffective = runAsMode.getMode() == NutsRunAs.Mode.USER ? runAsMode.getUser() : rootUserName;
+                String runAsEffective = runAsMode.getMode() == NRunAs.Mode.USER ? runAsMode.getUser() : rootUserName;
                 List<String> cc = new ArrayList<>();
                 switch (sysFamily) {
                     case LINUX:
                     case MACOS:
                     case UNIX: {
                         if (runWithGui) {
-                            Set<NutsDesktopEnvironmentFamily> de = session.env().getDesktopEnvironmentFamilies();
-                            Path kdesu = NutsSysExecUtils.sysWhich("kdesu");
-                            Path gksu = NutsSysExecUtils.sysWhich("gksu");
+                            Set<NDesktopEnvironmentFamily> de = session.env().getDesktopEnvironmentFamilies();
+                            Path kdesu = NSysExecUtils.sysWhich("kdesu");
+                            Path gksu = NSysExecUtils.sysWhich("gksu");
                             String currSu = null;
-                            if (de.contains(NutsDesktopEnvironmentFamily.KDE)) {
+                            if (de.contains(NDesktopEnvironmentFamily.KDE)) {
                                 if (kdesu != null) {
                                     currSu = kdesu.toString();
                                 }
-                            } else if (de.contains(NutsDesktopEnvironmentFamily.GNOME)) {
+                            } else if (de.contains(NDesktopEnvironmentFamily.GNOME)) {
                                 if (gksu != null) {
                                     currSu = gksu.toString();
                                 }
@@ -365,14 +375,14 @@ public class ProcessExecHelper extends AbstractSyncIProcessExecHelper {
                                 }
                             }
                             if (currSu == null) {
-                                throw new NutsIllegalArgumentException(session, NutsMessage.ofPlain("unable to resolve gui su application (kdesu,gksu,...)"));
+                                throw new NIllegalArgumentException(session, NMsg.ofPlain("unable to resolve gui su application (kdesu,gksu,...)"));
                             }
                             cc.add(currSu);
                             cc.add(runAsEffective);
                         } else {
-                            Path su = NutsSysExecUtils.sysWhich("su");
+                            Path su = NSysExecUtils.sysWhich("su");
                             if (su == null) {
-                                throw new NutsIllegalArgumentException(session, NutsMessage.ofPlain("unable to resolve su application"));
+                                throw new NIllegalArgumentException(session, NMsg.ofPlain("unable to resolve su application"));
                             }
                             cc.add(su.toString());
                             cc.add("-c");
@@ -385,7 +395,7 @@ public class ProcessExecHelper extends AbstractSyncIProcessExecHelper {
                         break;
                     }
                     default: {
-                        throw new NutsIllegalArgumentException(session, NutsMessage.ofCstyle("cannot run as %s on unknown system OS family", runAsEffective));
+                        throw new NIllegalArgumentException(session, NMsg.ofCstyle("cannot run as %s on unknown system OS family", runAsEffective));
                     }
                 }
                 cc.addAll(command);
@@ -398,15 +408,15 @@ public class ProcessExecHelper extends AbstractSyncIProcessExecHelper {
                     case MACOS:
                     case UNIX: {
                         if (runWithGui) {
-                            Set<NutsDesktopEnvironmentFamily> de = session.env().getDesktopEnvironmentFamilies();
-                            Path kdesu = NutsSysExecUtils.sysWhich("kdesudo");
-                            Path gksu = NutsSysExecUtils.sysWhich("gksudo");
+                            Set<NDesktopEnvironmentFamily> de = session.env().getDesktopEnvironmentFamilies();
+                            Path kdesu = NSysExecUtils.sysWhich("kdesudo");
+                            Path gksu = NSysExecUtils.sysWhich("gksudo");
                             String currSu = null;
-                            if (de.contains(NutsDesktopEnvironmentFamily.KDE)) {
+                            if (de.contains(NDesktopEnvironmentFamily.KDE)) {
                                 if (kdesu != null) {
                                     currSu = kdesu.toString();
                                 }
-                            } else if (de.contains(NutsDesktopEnvironmentFamily.GNOME)) {
+                            } else if (de.contains(NDesktopEnvironmentFamily.GNOME)) {
                                 if (gksu != null) {
                                     currSu = gksu.toString();
                                 }
@@ -422,13 +432,13 @@ public class ProcessExecHelper extends AbstractSyncIProcessExecHelper {
                                 }
                             }
                             if (currSu == null) {
-                                throw new NutsIllegalArgumentException(session, NutsMessage.ofPlain("unable to resolve gui su application (kdesu,gksu,...)"));
+                                throw new NIllegalArgumentException(session, NMsg.ofPlain("unable to resolve gui su application (kdesu,gksu,...)"));
                             }
                             cc.add(currSu);
                         } else {
-                            Path su = NutsSysExecUtils.sysWhich("sudo");
+                            Path su = NSysExecUtils.sysWhich("sudo");
                             if (su == null) {
-                                throw new NutsIllegalArgumentException(session, NutsMessage.ofPlain("unable to resolve su application"));
+                                throw new NIllegalArgumentException(session, NMsg.ofPlain("unable to resolve su application"));
                             }
                             cc.add(su.toString());
                         }
@@ -439,19 +449,19 @@ public class ProcessExecHelper extends AbstractSyncIProcessExecHelper {
                         break;
                     }
                     default: {
-                        throw new NutsIllegalArgumentException(session, NutsMessage.ofCstyle("cannot run sudo %s on unknown system OS family", currentUserName));
+                        throw new NIllegalArgumentException(session, NMsg.ofCstyle("cannot run sudo %s on unknown system OS family", currentUserName));
                     }
                 }
                 cc.addAll(command);
                 return cc;
             }
         }
-        throw new NutsIllegalArgumentException(session, NutsMessage.ofPlain("cannot run as admin/root on unknown system OS family"));
+        throw new NIllegalArgumentException(session, NMsg.ofPlain("cannot run as admin/root on unknown system OS family"));
     }
 
     public int exec() {
         if(getSession().isDry()){
-            if (out.getTerminalMode() == NutsTerminalMode.FORMATTED) {
+            if (out.getTerminalMode() == NTerminalMode.FORMATTED) {
                 out.print("[dry] ==[exec]== ");
                 out.println(pb.getFormattedCommandString(getSession()));
             } else {
@@ -467,7 +477,7 @@ public class ProcessExecHelper extends AbstractSyncIProcessExecHelper {
                 ProcessBuilder2 p = pb.start();
                 return waitResult(p);
             } catch (IOException ex) {
-                throw new NutsIOException(getSession(), ex);
+                throw new NIOException(getSession(), ex);
             }
         }
     }
@@ -475,12 +485,12 @@ public class ProcessExecHelper extends AbstractSyncIProcessExecHelper {
     public Future<Integer> execAsync() {
         try {
             if (out != null) {
-                out.run(NutsTerminalCommand.MOVE_LINE_START, getSession());
+                out.run(NTerminalCommand.MOVE_LINE_START, getSession());
             }
             ProcessBuilder2 p = pb.start();
             return new FutureTask<Integer>(() -> waitResult(p));
         } catch (IOException ex) {
-            throw new NutsIOException(getSession(), ex);
+            throw new NIOException(getSession(), ex);
         }
     }
 
@@ -489,7 +499,7 @@ public class ProcessExecHelper extends AbstractSyncIProcessExecHelper {
         try {
             int a = p.waitFor().getResult();
             if (a != 0) {
-                err = new NutsExecutionException(getSession(), NutsMessage.ofCstyle("process returned error code %s", a), err);
+                err = new NExecutionException(getSession(), NMsg.ofCstyle("process returned error code %s", a), err);
             }
             return a;
         } catch (Exception ex) {
@@ -497,11 +507,11 @@ public class ProcessExecHelper extends AbstractSyncIProcessExecHelper {
             if (ex instanceof RuntimeException) {
                 throw (RuntimeException) err;
             }
-            throw new NutsExecutionException(getSession(), NutsMessage.ofPlain("error executing process"), err);
+            throw new NExecutionException(getSession(), NMsg.ofPlain("error executing process"), err);
         } finally {
             if (err != null) {
                 if (definition != null) {
-                    NutsWorkspaceExt.of(getSession()).getModel().recomm.getRecommendations(new RequestQueryInfo(definition.getId().toString(), err), NutsRecommendationPhase.EXEC, false, getSession());
+                    NWorkspaceExt.of(getSession()).getModel().recomm.getRecommendations(new RequestQueryInfo(definition.getId().toString(), err), NRecommendationPhase.EXEC, false, getSession());
                 }
             }
         }

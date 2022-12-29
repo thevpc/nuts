@@ -1,8 +1,8 @@
 package net.thevpc.nuts.runtime.standalone.io;
 
-import net.thevpc.nuts.io.NutsIOException;
-import net.thevpc.nuts.io.NutsPath;
-import net.thevpc.nuts.NutsSession;
+import net.thevpc.nuts.io.NIOException;
+import net.thevpc.nuts.io.NPath;
+import net.thevpc.nuts.NSession;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -45,19 +45,19 @@ public class SimpleHttpClient {
     private Instant lastModified;
     private int connectTimeout = 5000;
     private int readTimeout = 5000;
-    private NutsSession session;
+    private NSession session;
 
-    public SimpleHttpClient(URL url, NutsSession session) {
+    public SimpleHttpClient(URL url, NSession session) {
         this.url = url;
         this.session = session;
     }
 
-    public SimpleHttpClient(String url,NutsSession session) {
+    public SimpleHttpClient(String url, NSession session) {
         try {
             this.url = new URL(url);
             this.session=session;
         } catch (MalformedURLException e) {
-            throw new NutsIOException(session,e);
+            throw new NIOException(session,e);
         }
     }
 
@@ -96,7 +96,7 @@ public class SimpleHttpClient {
     }
 
     private void readHeader() {
-        NutsPath info = NutsPath.of(url,session);
+        NPath info = NPath.of(url,session);
         this.contentEncoding = info.getContentEncoding();
         this.contentType = info.getContentType();
         this.contentLength = info.getContentLength();
@@ -141,7 +141,7 @@ public class SimpleHttpClient {
             }
             return conn;
         } catch (IOException e) {
-            throw new NutsIOException(session,e);
+            throw new NIOException(session,e);
         }
     }
 
@@ -154,7 +154,7 @@ public class SimpleHttpClient {
                 return url.openStream();
             }
         } catch (IOException ex) {
-            throw new NutsIOException(session,ex);
+            throw new NIOException(session,ex);
         }
     }
 }

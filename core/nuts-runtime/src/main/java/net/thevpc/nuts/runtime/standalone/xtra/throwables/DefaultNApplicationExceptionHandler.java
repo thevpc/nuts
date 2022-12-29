@@ -1,0 +1,155 @@
+package net.thevpc.nuts.runtime.standalone.xtra.throwables;
+
+import net.thevpc.nuts.*;
+import net.thevpc.nuts.util.NApiUtils;
+import net.thevpc.nuts.boot.NWorkspaceBootOptionsBuilder;
+import net.thevpc.nuts.elem.NArrayElementBuilder;
+import net.thevpc.nuts.elem.NElements;
+import net.thevpc.nuts.io.NStream;
+import net.thevpc.nuts.runtime.standalone.log.NLogUtils;
+import net.thevpc.nuts.spi.NSupportLevelContext;
+import net.thevpc.nuts.text.NTextStyle;
+import net.thevpc.nuts.text.NTexts;
+import net.thevpc.nuts.util.NLogConfig;
+import net.thevpc.nuts.util.NLoggerOp;
+import net.thevpc.nuts.util.NUtils;
+
+import java.io.PrintStream;
+import java.util.logging.Level;
+
+public class DefaultNApplicationExceptionHandler implements NApplicationExceptionHandler {
+    @Override
+    public int processThrowable(String[] args, Throwable throwable, NSession session) {
+        NUtils.requireSession(session);
+        NWorkspaceBootOptionsBuilder bo = null;
+        bo = session.boot().getBootOptions().builder();
+        if (!session.env().isGraphicalDesktopEnvironment()) {
+            bo.setGui(false);
+        }
+
+        boolean bot = bo.getBot().orElse(false);
+        boolean showGui = !bot && bo.getGui().orElse(false);
+        boolean showTrace = bo.getDebug()!=null;
+        NLogConfig logConfig = bo.getLogConfig().orElseGet(NLogConfig::new);
+        showTrace |= (
+                logConfig.getLogTermLevel() != null
+                && logConfig.getLogTermLevel().intValue() < Level.INFO.intValue());
+        if (!showTrace) {
+            showTrace = NApiUtils.getSysBoolNutsProperty("debug", false);
+        }
+        if (bot) {
+            showTrace = false;
+            showGui = false;
+        }
+
+        int errorCode = NExceptionWithExitCodeBase.resolveExitCode(throwable).orElse(204);
+        NMsg fm = NSessionAwareExceptionBase.resolveSessionAwareExceptionBase(throwable)
+                .map(NSessionAwareExceptionBase::getFormattedMessage).orNull();
+        String m = throwable.getMessage();
+        if (m == null || m.length() < 5) {
+            m = throwable.toString();
+        }
+
+        NStream fout = null;
+        try {
+            fout = session.config().getSystemTerminal().getErr();
+            if (fm != null) {
+                fm = NMsg.ofStyled(fm, NTextStyle.error());
+            } else {
+                fm = NMsg.ofStyled(m, NTextStyle.error());
+            }
+        } catch (Exception ex2) {
+            NLoggerOp.of(NApplications.class, session).level(Level.FINE).error(ex2).log(
+                    NMsg.ofPlain("unable to get system terminal")
+            );
+        }
+        boolean showMessage=true;
+        if (fout != null) {
+            if (session.getOutputFormat() == NContentType.PLAIN) {
+                if (fm != null) {
+                    fout.println(fm);
+                } else {
+                    fout.println(m);
+                }
+                if (showTrace) {
+                    throwable.printStackTrace(fout.asPrintStream());
+                }
+                fout.flush();
+            } else {
+                if (fm != null) {
+                    session.eout().add(NElements.of(session).ofObject()
+                            .set("app-id", session.getAppId() == null ? "" : session.getAppId().toString())
+                            .set("error", NTexts.of(session).ofText(fm).filteredText())
+                            .build()
+                    );
+                    if (showTrace) {
+                        session.eout().add(NElements.of(session).ofObject().set("errorTrace",
+                                NElements.of(session).ofArray().addAll(NLogUtils.stacktraceToArray(throwable)).build()
+                        ).build());
+                    }
+                    NArrayElementBuilder e = session.eout();
+                    if (e.size() > 0) {
+                        fout.printlnf(e.build());
+                        e.clear();
+                    }
+                    fout.flush();
+                } else {
+                    session.eout().add(NElements.of(session).ofObject()
+                            .set("app-id", session.getAppId() == null ? "" : session.getAppId().toString())
+                            .set("error", m)
+                            .build());
+                    if (showTrace) {
+                        session.eout().add(NElements.of(session).ofObject().set("errorTrace",
+                                NElements.of(session).ofArray().addAll(NLogUtils.stacktraceToArray(throwable)).build()
+                        ).build());
+                    }
+                    NArrayElementBuilder e = session.eout();
+                    if (e.size() > 0) {
+                        fout.printlnf(e.build());
+                        e.clear();
+                    }
+                    fout.flush();
+                }
+                fout.flush();
+            }
+        } else {
+            PrintStream out=System.err;
+            if (fm != null) {
+                out.println(fm);
+            } else {
+                out.println(m);
+            }
+            if (showTrace) {
+                throwable.printStackTrace(out);
+            }
+            out.flush();
+        }
+        if (showGui) {
+            StringBuilder sb = new StringBuilder();
+            if (fm != null) {
+                sb.append(NTexts.of(session).ofText(fm).filteredText());
+            } else {
+                sb.append(m);
+            }
+            if (showTrace) {
+                if (sb.length() > 0) {
+                    sb.append("\n");
+                    sb.append(NLogUtils.stacktrace(throwable));
+                }
+            }
+            String title = "Nuts Package Manager - Error";
+            try {
+                javax.swing.JOptionPane.showMessageDialog(null, NMsg.ofPlain(sb.toString()).toString());
+            } catch (UnsatisfiedLinkError e) {
+                //exception may occur if the sdk is built in headless mode
+                System.err.printf("[Graphical Environment Unsupported] %s%n", title);
+            }
+        }
+        return (errorCode);
+   }
+
+    @Override
+    public int getSupportLevel(NSupportLevelContext context) {
+        return 1;
+    }
+}

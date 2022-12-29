@@ -30,11 +30,11 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.elem.NutsArrayElement;
-import net.thevpc.nuts.elem.NutsElementEntry;
-import net.thevpc.nuts.elem.NutsElements;
-import net.thevpc.nuts.elem.NutsObjectElement;
-import net.thevpc.nuts.text.NutsTexts;
+import net.thevpc.nuts.elem.NArrayElement;
+import net.thevpc.nuts.elem.NElementEntry;
+import net.thevpc.nuts.elem.NElements;
+import net.thevpc.nuts.elem.NObjectElement;
+import net.thevpc.nuts.text.NTexts;
 
 /**
  *
@@ -42,14 +42,14 @@ import net.thevpc.nuts.text.NutsTexts;
  */
 public class XNode {
 
-    NutsString key;
+    NString key;
     Object value;
-    NutsString title;
-    NutsSession session;
-    NutsWorkspace ws;
+    NString title;
+    NSession session;
+    NWorkspace ws;
     XNodeFormatter format;
 
-    public static XNode root(Object destructedObject, NutsString title, NutsSession session, XNodeFormatter format) {
+    public static XNode root(Object destructedObject, NString title, NSession session, XNodeFormatter format) {
         return new XNode(null,
                 destructedObject, ((destructedObject instanceof List)
                 || (destructedObject instanceof Map)
@@ -57,19 +57,19 @@ public class XNode {
                 session, format);
     }
 
-    public static XNode node(Object destructedObject, NutsSession session, XNodeFormatter format) {
+    public static XNode node(Object destructedObject, NSession session, XNodeFormatter format) {
         return new XNode(null, destructedObject, null, session, format);
     }
 
-    public static XNode entryNode(NutsString key, Object destructedObject, NutsSession session, XNodeFormatter format) {
+    public static XNode entryNode(NString key, Object destructedObject, NSession session, XNodeFormatter format) {
         return new XNode(key, destructedObject, null, session, format);
     }
 
-    public XNode(NutsString key, Object destructedObject, NutsString title, NutsSession session, XNodeFormatter format) {
+    public XNode(NString key, Object destructedObject, NString title, NSession session, XNodeFormatter format) {
         if (destructedObject instanceof Map && ((Map) destructedObject).size() == 1) {
             value = ((Map) destructedObject).entrySet().toArray()[0];
-        }else if (destructedObject instanceof NutsObjectElement && ((NutsObjectElement) destructedObject).size() == 1) {
-            value = ((NutsObjectElement) destructedObject).entries().toArray()[0];
+        }else if (destructedObject instanceof NObjectElement && ((NObjectElement) destructedObject).size() == 1) {
+            value = ((NObjectElement) destructedObject).entries().toArray()[0];
         } else {
             this.value = destructedObject;
         }
@@ -84,14 +84,14 @@ public class XNode {
         return toNutsString().toString();
     }
 
-    public NutsString toNutsString() {
-        NutsString keyAsElement = format.stringValue(key, session);
-        NutsString[] p = format.getMultilineArray(keyAsElement, value, session);
+    public NString toNutsString() {
+        NString keyAsElement = format.stringValue(key, session);
+        NString[] p = format.getMultilineArray(keyAsElement, value, session);
         if (p != null) {
             return keyAsElement;
         }
-        NutsString _title = resolveTitle();
-        NutsString titleOrValueAsElement = null;
+        NString _title = resolveTitle();
+        NString titleOrValueAsElement = null;
         if(getChildren()==null || getChildren().isEmpty()){
             titleOrValueAsElement = format.stringValue(_title != null ? _title : value, session);
         }else{
@@ -101,14 +101,14 @@ public class XNode {
             return titleOrValueAsElement;
         } else {
             if (isList(value) || isMap(value)) {
-                return NutsTexts.of(session).ofBuilder().append(keyAsElement);
+                return NTexts.of(session).ofBuilder().append(keyAsElement);
             } else {
-                return NutsTexts.of(session).ofBuilder().append(keyAsElement).append("=").append(titleOrValueAsElement);
+                return NTexts.of(session).ofBuilder().append(keyAsElement).append("=").append(titleOrValueAsElement);
             }
         }
     }
 
-    private NutsString resolveTitle() {
+    private NString resolveTitle() {
         if (title != null) {
             return title;
         }
@@ -119,7 +119,7 @@ public class XNode {
             if(value instanceof Map.Entry){
                 return format.stringValue(((Map.Entry) value).getKey(), session);
             }
-            return format.stringValue(((NutsElementEntry) value).getKey(), session);
+            return format.stringValue(((NElementEntry) value).getKey(), session);
         }
         if (isMap(this.value)) {
 //            Object bestElement = null;
@@ -164,8 +164,8 @@ public class XNode {
             Object v = ((Map.Entry) value).getValue();
             return getAsList(v);
         }
-        if (value instanceof NutsElementEntry) {
-            Object v = ((NutsElementEntry) value).getValue();
+        if (value instanceof NElementEntry) {
+            Object v = ((NElementEntry) value).getValue();
             return getAsList(v);
         }
         if (isList(value) || isMap(value)) {
@@ -178,7 +178,7 @@ public class XNode {
         if(value instanceof List){
             return true;
         }
-        if(value instanceof NutsArrayElement){
+        if(value instanceof NArrayElement){
             return true;
         }
         return false;
@@ -187,7 +187,7 @@ public class XNode {
         if(value instanceof Map.Entry){
             return true;
         }
-        if(value instanceof NutsElementEntry){
+        if(value instanceof NElementEntry){
             return true;
         }
         return false;
@@ -197,7 +197,7 @@ public class XNode {
         if(value instanceof Map){
             return true;
         }
-        if(value instanceof NutsObjectElement){
+        if(value instanceof NObjectElement){
             return true;
         }
         return false;
@@ -207,34 +207,34 @@ public class XNode {
         if (value instanceof List) {
             return ((List<Object>) value).stream().map(me -> node(me, session, format)).collect(Collectors.toList());
         }
-        if (value instanceof NutsArrayElement) {
-            return ((NutsArrayElement) value).stream().map(me -> node(me, session, format)).collect(Collectors.toList());
+        if (value instanceof NArrayElement) {
+            return ((NArrayElement) value).stream().map(me -> node(me, session, format)).collect(Collectors.toList());
         }
         if (value instanceof Map) {
             Map<Object, Object> m = (Map<Object, Object>) value;
             List<XNode> all = new ArrayList<>();
             for (Map.Entry<Object, Object> me : m.entrySet()) {
-                NutsString keyStr = format.stringValue(me.getKey(), session);
-                NutsString[] map = format.getMultilineArray(keyStr, me.getValue(), session);
+                NString keyStr = format.stringValue(me.getKey(), session);
+                NString[] map = format.getMultilineArray(keyStr, me.getValue(), session);
                 if (map == null) {
                     all.add(entryNode(keyStr, me.getValue(), session, format));
                 } else {
-                    all.add(entryNode(keyStr, NutsElements.of(session)
+                    all.add(entryNode(keyStr, NElements.of(session)
                             .toElement(Arrays.asList(map)), session, format));
                 }
             }
             return all;
         }
-        if (value instanceof NutsObjectElement) {
-            NutsObjectElement m = (NutsObjectElement) value;
+        if (value instanceof NObjectElement) {
+            NObjectElement m = (NObjectElement) value;
             List<XNode> all = new ArrayList<>();
-            for (NutsElementEntry me : m) {
-                NutsString keyStr = format.stringValue(me.getKey(), session);
-                NutsString[] map = format.getMultilineArray(keyStr, me.getValue(), session);
+            for (NElementEntry me : m) {
+                NString keyStr = format.stringValue(me.getKey(), session);
+                NString[] map = format.getMultilineArray(keyStr, me.getValue(), session);
                 if (map == null) {
                     all.add(entryNode(keyStr, me.getValue(), session, format));
                 } else {
-                    all.add(entryNode(keyStr, NutsElements.of(session)
+                    all.add(entryNode(keyStr, NElements.of(session)
                             .toElement(Arrays.asList(map)), session, format));
                 }
             }

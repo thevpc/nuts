@@ -8,14 +8,14 @@ package net.thevpc.nuts.runtime.standalone.format.table;
 import java.util.Arrays;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.cmdline.NutsArgument;
-import net.thevpc.nuts.cmdline.NutsCommandLine;
-import net.thevpc.nuts.format.NutsMutableTableModel;
-import net.thevpc.nuts.format.NutsTableFormat;
-import net.thevpc.nuts.io.NutsPrintStream;
-import net.thevpc.nuts.runtime.standalone.format.NutsIdFormatHelper;
+import net.thevpc.nuts.cmdline.NArgument;
+import net.thevpc.nuts.cmdline.NCommandLine;
+import net.thevpc.nuts.format.NMutableTableModel;
+import net.thevpc.nuts.format.NTableFormat;
+import net.thevpc.nuts.io.NStream;
+import net.thevpc.nuts.runtime.standalone.format.NIdFormatHelper;
 import net.thevpc.nuts.runtime.standalone.format.DefaultSearchFormatBase;
-import net.thevpc.nuts.runtime.standalone.format.NutsFetchDisplayOptions;
+import net.thevpc.nuts.runtime.standalone.format.NFetchDisplayOptions;
 import net.thevpc.nuts.runtime.standalone.util.CoreEnumUtils;
 
 /**
@@ -24,27 +24,27 @@ import net.thevpc.nuts.runtime.standalone.util.CoreEnumUtils;
  */
 public class DefaultSearchFormatTable extends DefaultSearchFormatBase {
 
-    private NutsTableFormat table;
-    private NutsMutableTableModel model;
+    private NTableFormat table;
+    private NMutableTableModel model;
 
-    public DefaultSearchFormatTable(NutsSession session, NutsPrintStream writer, NutsFetchDisplayOptions options) {
-        super(session, writer, NutsContentType.TABLE, options);
+    public DefaultSearchFormatTable(NSession session, NStream writer, NFetchDisplayOptions options) {
+        super(session, writer, NContentType.TABLE, options);
     }
 
-    public NutsMutableTableModel getTableModel(NutsSession ws) {
+    public NMutableTableModel getTableModel(NSession ws) {
         getTable(ws);
         return model;
     }
 
-    public NutsTableFormat getTable(NutsSession ws) {
+    public NTableFormat getTable(NSession ws) {
         if (table == null) {
-            table = NutsTableFormat.of(ws);
-            model = NutsMutableTableModel.of(ws);
+            table = NTableFormat.of(ws);
+            model = NMutableTableModel.of(ws);
             table.setValue(model);
             if (getSession() != null && getSession().getOutputFormatOptions() != null) {
                 for (String outputFormatOption : getSession().getOutputFormatOptions()) {
                     if (outputFormatOption != null) {
-                        table.configure(true, NutsCommandLine.of(outputFormatOption,NutsShellFamily.BASH, ws).setExpandSimpleOptions(false));
+                        table.configure(true, NCommandLine.of(outputFormatOption, NShellFamily.BASH, ws).setExpandSimpleOptions(false));
                     }
                 }
             }
@@ -53,9 +53,9 @@ public class DefaultSearchFormatTable extends DefaultSearchFormatBase {
     }
 
     @Override
-    public boolean configureFirst(NutsCommandLine cmd) {
-        NutsSession session = getSession();
-        NutsArgument a = cmd.peek().get(session);
+    public boolean configureFirst(NCommandLine cmd) {
+        NSession session = getSession();
+        NArgument a = cmd.peek().get(session);
         if (a == null) {
             return false;
         }
@@ -76,7 +76,7 @@ public class DefaultSearchFormatTable extends DefaultSearchFormatBase {
 
     @Override
     public void next(Object object, long index) {
-        NutsIdFormatHelper fid = NutsIdFormatHelper.of(object, getSession());
+        NIdFormatHelper fid = NIdFormatHelper.of(object, getSession());
         if (fid != null) {
             formatElement(fid, index);
         } else {
@@ -85,7 +85,7 @@ public class DefaultSearchFormatTable extends DefaultSearchFormatBase {
         getWriter().flush();
     }
 
-    public void formatElement(NutsIdFormatHelper id, long index) {
+    public void formatElement(NIdFormatHelper id, long index) {
         getTableModel(getSession()).newRow().addCells((Object[]) id.getMultiColumnRow(getDisplayOptions()));
     }
 

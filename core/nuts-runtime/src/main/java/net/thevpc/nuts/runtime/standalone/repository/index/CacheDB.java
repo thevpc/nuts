@@ -1,12 +1,12 @@
 package net.thevpc.nuts.runtime.standalone.repository.index;
 
-import net.thevpc.nuts.NutsId;
-import net.thevpc.nuts.NutsSession;
-import net.thevpc.nuts.NutsStoreLocation;
+import net.thevpc.nuts.NId;
+import net.thevpc.nuts.NSession;
+import net.thevpc.nuts.NStoreLocation;
 import net.thevpc.nuts.runtime.standalone.xtra.nanodb.NanoDB;
 
 public class CacheDB {
-    public static NanoDB of(NutsSession session) {
+    public static NanoDB of(NSession session) {
         synchronized (session.getWorkspace()) {
             NanoDB o = (NanoDB) session.env().getProperties().get(CacheDB.class.getName());
             if (o == null) {
@@ -14,10 +14,10 @@ public class CacheDB {
                                 session.locations().getStoreLocation(
                                         session.getWorkspace().getApiId().builder().setVersion("SHARED").build()
                                 ,
-                                NutsStoreLocation.CACHE
+                                NStoreLocation.CACHE
                         ).resolve("cachedb").toFile().toFile()
                 );
-                o.getSerializers().setSerializer(NutsId.class,()->new NanoDBNutsIdSerializer(session));
+                o.getSerializers().setSerializer(NId.class,()->new NanoDBNIdSerializer(session));
                 session.env().getProperties().put(CacheDB.class.getName(), o);
             }
             return o;

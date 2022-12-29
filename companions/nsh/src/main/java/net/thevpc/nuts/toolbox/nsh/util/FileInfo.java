@@ -1,17 +1,17 @@
 package net.thevpc.nuts.toolbox.nsh.util;
 
-import net.thevpc.nuts.io.NutsPath;
+import net.thevpc.nuts.io.NPath;
 
 public class FileInfo {
-    private NutsPath file;
+    private NPath file;
     private String highlighter;
 
-    public FileInfo(NutsPath file, String highlighter) {
+    public FileInfo(NPath file, String highlighter) {
         this.file = file;
         this.highlighter = highlighter;
     }
 
-    public NutsPath getFile() {
+    public NPath getFile() {
         return file;
     }
 

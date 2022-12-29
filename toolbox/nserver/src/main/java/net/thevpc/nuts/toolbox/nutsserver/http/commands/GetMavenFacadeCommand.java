@@ -1,11 +1,11 @@
 package net.thevpc.nuts.toolbox.nutsserver.http.commands;
 
-import net.thevpc.nuts.toolbox.nutsserver.util.NutsServerUtils;
+import net.thevpc.nuts.toolbox.nutsserver.util.NServerUtils;
 import net.thevpc.nuts.toolbox.nutsserver.util.XmlHelper;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.toolbox.nutsserver.AbstractFacadeCommand;
 import net.thevpc.nuts.toolbox.nutsserver.FacadeCommandContext;
-import net.thevpc.nuts.util.NutsStream;
+import net.thevpc.nuts.util.NStream;
 
 import java.io.IOException;
 import java.net.URI;
@@ -24,17 +24,17 @@ public class GetMavenFacadeCommand extends AbstractFacadeCommand {
     public void executeImpl(FacadeCommandContext context) throws IOException {
         URI uri = context.getRequestURI();
 //        System.out.println("get-mvn " + uri.toString());
-        List<String> split = NutsServerUtils.split(uri.toString(), "/");
+        List<String> split = NServerUtils.split(uri.toString(), "/");
         String n = split.get(split.size() - 1);
-        NutsSession session = context.getSession();
+        NSession session = context.getSession();
         if (n.endsWith(".pom")) {
             if (split.size() >= 4) {
-                NutsId id = NutsIdBuilder.of().setArtifactId(split.get(split.size() - 3))
+                NId id = NIdBuilder.of().setArtifactId(split.get(split.size() - 3))
                         .setGroupId(String.join(".", split.subList(0, split.size() - 3)))
                         .setVersion(split.get(split.size() - 2)).build();
-                NutsDefinition fetch = session.fetch().setId(id).setSession(session)
+                NDefinition fetch = session.fetch().setId(id).setSession(session)
                         .getResultDefinition();
-                NutsDescriptor d = fetch.getDescriptor();
+                NDescriptor d = fetch.getDescriptor();
                 if(context.isHeadMethod()){
                     context.sendResponseHeaders(200,-1);
                     return;
@@ -59,18 +59,18 @@ public class GetMavenFacadeCommand extends AbstractFacadeCommand {
                     }
 
                     xml.push("properties");
-                    for (NutsDescriptorProperty e : d.getProperties()) {
+                    for (NDescriptorProperty e : d.getProperties()) {
                         xml.append(e.getName(), e.getValue().asString().get(session));
                     }
                     xml.pop();
 
                     xml.push("dependencies");
-                    for (NutsDependency dependency : d.getDependencies()) {
+                    for (NDependency dependency : d.getDependencies()) {
                         xml.push("dependency")
                                 .append("groupId", dependency.getGroupId())
                                 .append("artifactId", dependency.getArtifactId())
                                 .append("version", dependency.getVersion().toString())
-                                .append("scope", NutsServerUtils.toMvnScope(dependency.getScope()))
+                                .append("scope", NServerUtils.toMvnScope(dependency.getScope()))
                                 .pop();
 
                     }
@@ -86,12 +86,12 @@ public class GetMavenFacadeCommand extends AbstractFacadeCommand {
                         //dependencyManagement
                         xml.push("dependencyManagement");
                         xml.push("dependencies");
-                        for (NutsDependency dependency : d.getStandardDependencies()) {
+                        for (NDependency dependency : d.getStandardDependencies()) {
                             xml.push("dependency")
                                     .append("groupId", dependency.getGroupId())
                                     .append("artifactId", dependency.getArtifactId())
                                     .append("version", dependency.getVersion().toString())
-                                    .append("scope", NutsServerUtils.toMvnScope(dependency.getScope()))
+                                    .append("scope", NServerUtils.toMvnScope(dependency.getScope()))
                                     .pop();
 
                         }
@@ -107,10 +107,10 @@ public class GetMavenFacadeCommand extends AbstractFacadeCommand {
             }
         } else if (n.endsWith(".jar")) {
             if (split.size() >= 4) {
-                NutsId id = NutsIdBuilder.of().setArtifactId(split.get(split.size() - 3))
+                NId id = NIdBuilder.of().setArtifactId(split.get(split.size() - 3))
                         .setGroupId(String.join(".", split.subList(0, split.size() - 3)))
                         .setVersion(split.get(split.size() - 2)).build();
-                NutsDefinition fetch = session.fetch().setId(id).setSession(session)
+                NDefinition fetch = session.fetch().setId(id).setSession(session)
                         .getResultDefinition();
                 if(fetch.getContent().isPresent()) {
                     if (context.isHeadMethod()) {
@@ -126,9 +126,9 @@ public class GetMavenFacadeCommand extends AbstractFacadeCommand {
             }
         } else if (n.equals("maven-metadata.xml")) {
             if (split.size() >= 3) {
-                NutsId id = NutsIdBuilder.of().setArtifactId(split.get(split.size() - 2))
+                NId id = NIdBuilder.of().setArtifactId(split.get(split.size() - 2))
                         .setGroupId(String.join(".", split.subList(0, split.size() - 2))).build();
-                NutsStream<NutsId> resultIds = session.search().addId(id).setDistinct(true).setSorted(true).getResultIds();
+                NStream<NId> resultIds = session.search().addId(id).setDistinct(true).setSorted(true).getResultIds();
                 if(context.isHeadMethod()){
                     context.sendResponseHeaders(200,-1);
                     return;
@@ -140,11 +140,11 @@ public class GetMavenFacadeCommand extends AbstractFacadeCommand {
                             .append("artifactId", id.getArtifactId())
                             .push("versioning")
                     ;
-                    List<NutsId> versions = resultIds.toList();
+                    List<NId> versions = resultIds.toList();
                     if (versions.size() > 0) {
                         xml.append("release", versions.get(0).getVersion().toString());
                         xml.push("versions");
-                        for (NutsId resultId : versions) {
+                        for (NId resultId : versions) {
                             xml.append("version", resultId.getVersion().toString());
                         }
                         xml.pop();

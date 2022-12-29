@@ -23,12 +23,12 @@
  */
 package net.thevpc.nuts.toolbox.nsh.cmds.bash;
 
-import net.thevpc.nuts.NutsArchFamily;
-import net.thevpc.nuts.cmdline.NutsCommandLine;
-import net.thevpc.nuts.NutsId;
-import net.thevpc.nuts.NutsSession;
-import net.thevpc.nuts.spi.NutsComponentScope;
-import net.thevpc.nuts.spi.NutsComponentScopeType;
+import net.thevpc.nuts.NArchFamily;
+import net.thevpc.nuts.cmdline.NCommandLine;
+import net.thevpc.nuts.NId;
+import net.thevpc.nuts.NSession;
+import net.thevpc.nuts.spi.NComponentScope;
+import net.thevpc.nuts.spi.NComponentScopeType;
 import net.thevpc.nuts.toolbox.nsh.SimpleJShellBuiltin;
 import net.thevpc.nuts.toolbox.nsh.jshell.JShellExecutionContext;
 
@@ -38,7 +38,7 @@ import java.util.List;
 /**
  * Created by vpc on 1/7/17.
  */
-@NutsComponentScope(NutsComponentScopeType.WORKSPACE)
+@NComponentScope(NComponentScopeType.WORKSPACE)
 public class UnameCommand extends SimpleJShellBuiltin {
 
     public UnameCommand() {
@@ -47,8 +47,8 @@ public class UnameCommand extends SimpleJShellBuiltin {
 
 
     @Override
-    protected boolean configureFirst(NutsCommandLine cmdLine, JShellExecutionContext context) {
-        NutsSession session = context.getSession();
+    protected boolean configureFirst(NCommandLine cmdLine, JShellExecutionContext context) {
+        NSession session = context.getSession();
         Options config = context.getOptions();
         switch (cmdLine.peek().get(session).key()) {
             case "-m": {
@@ -74,9 +74,9 @@ public class UnameCommand extends SimpleJShellBuiltin {
     }
 
     @Override
-    protected void execBuiltin(NutsCommandLine commandLine, JShellExecutionContext context) {
+    protected void execBuiltin(NCommandLine commandLine, JShellExecutionContext context) {
         Options config = context.getOptions();
-        NutsSession ws = context.getSession();
+        NSession ws = context.getSession();
 
         Result rr = new Result();
         rr.osDist = ws.env().getOsDist();
@@ -130,9 +130,9 @@ public class UnameCommand extends SimpleJShellBuiltin {
 
     private static class Result {
 
-        NutsId osDist;
-        NutsId os;
-        NutsArchFamily arch;
+        NId osDist;
+        NId os;
+        NArchFamily arch;
     }
 
 }

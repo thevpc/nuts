@@ -1,15 +1,15 @@
 package net.thevpc.nuts.runtime.standalone.util.iter;
 
-import net.thevpc.nuts.elem.NutsElement;
-import net.thevpc.nuts.util.NutsDescribables;
-import net.thevpc.nuts.elem.NutsElements;
-import net.thevpc.nuts.NutsSession;
+import net.thevpc.nuts.elem.NElement;
+import net.thevpc.nuts.util.NDescribables;
+import net.thevpc.nuts.elem.NElements;
+import net.thevpc.nuts.NSession;
 
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-public class CollectorIterator<T> extends NutsIteratorBase<T> {
+public class CollectorIterator<T> extends NIteratorBase<T> {
 
     private String name;
     private Iterator<T> base;
@@ -21,11 +21,11 @@ public class CollectorIterator<T> extends NutsIteratorBase<T> {
     }
 
     @Override
-    public NutsElement describe(NutsSession session) {
-        return NutsElements.of(session).ofObject()
+    public NElement describe(NSession session) {
+        return NElements.of(session).ofObject()
                 .set("type", "Collector")
                 .set("name", name)
-                .set("base", NutsDescribables.resolveOrDestruct(base, session))
+                .set("base", NDescribables.resolveOrDestruct(base, session))
                 .build();
     }
 

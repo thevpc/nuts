@@ -6,12 +6,12 @@
 package net.thevpc.nuts.toolbox.docusaurus;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.elem.NutsArrayElement;
-import net.thevpc.nuts.elem.NutsElement;
-import net.thevpc.nuts.elem.NutsElements;
-import net.thevpc.nuts.elem.NutsObjectElement;
-import net.thevpc.nuts.io.NutsIOException;
-import net.thevpc.nuts.io.NutsSessionTerminal;
+import net.thevpc.nuts.elem.NArrayElement;
+import net.thevpc.nuts.elem.NElement;
+import net.thevpc.nuts.elem.NElements;
+import net.thevpc.nuts.elem.NObjectElement;
+import net.thevpc.nuts.io.NIOException;
+import net.thevpc.nuts.io.NSessionTerminal;
 import net.thevpc.nuts.toolbox.nsh.jshell.*;
 import net.thevpc.nuts.toolbox.ntemplate.filetemplate.*;
 import net.thevpc.nuts.toolbox.ntemplate.filetemplate.util.FileProcessorUtils;
@@ -36,9 +36,9 @@ public class DocusaurusCtrl {
     private boolean autoInstallNutsPackages;
     private String ndocVersion;
     private String npmCommandPath;
-    private NutsApplicationContext appContext;
+    private NApplicationContext appContext;
 
-    public DocusaurusCtrl(DocusaurusProject project, NutsApplicationContext appContext) {
+    public DocusaurusCtrl(DocusaurusProject project, NApplicationContext appContext) {
         this.project = project;
         this.appContext = appContext;
     }
@@ -71,7 +71,7 @@ public class DocusaurusCtrl {
     }
 
     public void run() {
-        NutsSession session = project.getSession();
+        NSession session = project.getSession();
         Path base = null;
         try {
             base = Paths.get(project.getDocusaurusBaseFolder()).normalize().toRealPath();
@@ -79,7 +79,7 @@ public class DocusaurusCtrl {
             throw new UncheckedIOException("invalid Docusaurus Base Folder: " + project.getDocusaurusBaseFolder(), e);
         }
         boolean genSidebarMenu = project.getConfig()
-                .asObject().orElse(NutsObjectElement.ofEmpty(session))
+                .asObject().orElse(NObjectElement.ofEmpty(session))
                 .getBooleanByPath("customFields","docusaurus","generateSidebarMenu")
                 .orElse(false);
         Path basePath = base;
@@ -110,7 +110,7 @@ public class DocusaurusCtrl {
         if (genSidebarMenu) {
             DocusaurusFolder root = project.getPhysicalDocsFolder();
             root = new DocusaurusFolder(
-                    "someSidebar", "someSidebar", 0, NutsElements.of(session).ofObject().build(), root.getChildren(),
+                    "someSidebar", "someSidebar", 0, NElements.of(session).ofObject().build(), root.getChildren(),
                     root.getContent(session),
                     project.getPhysicalDocsFolderBasePath().toString()
             );
@@ -125,7 +125,7 @@ public class DocusaurusCtrl {
             try {
                 Files.write(base.resolve("sidebars.js"), s.getBytes());
             } catch (IOException e) {
-                throw new NutsIOException(session, NutsMessage.ofCstyle("%s", e));
+                throw new NIOException(session, NMsg.ofCstyle("%s", e));
             }
 //            System.out.println(s);
         }
@@ -192,20 +192,20 @@ public class DocusaurusCtrl {
     private void runNativeCommand(Path workFolder, String... cmd) {
         appContext.getSession()
                 .exec()
-                .setExecutionType(NutsExecutionType.EMBEDDED)
+                .setExecutionType(NExecutionType.EMBEDDED)
                 .addCommand(cmd).setDirectory(workFolder.toString())
                 .setFailFast(true).getResult();
     }
 
     private void runCommand(Path workFolder, boolean yes, String... cmd) {
-        NutsSession s = appContext.getSession().copy();
+        NSession s = appContext.getSession().copy();
         if (yes) {
-            s = s.setConfirm(NutsConfirmationMode.YES);
+            s = s.setConfirm(NConfirmationMode.YES);
         } else {
-            s = s.setConfirm(NutsConfirmationMode.ERROR);
+            s = s.setConfirm(NConfirmationMode.ERROR);
         }
         s.exec().addCommand(cmd).setDirectory(workFolder.toString())
-                .setExecutionType(NutsExecutionType.EMBEDDED)
+                .setExecutionType(NExecutionType.EMBEDDED)
                 .setFailFast(true).getResult();
     }
 
@@ -269,11 +269,11 @@ public class DocusaurusCtrl {
     }
 
     private static class NshEvaluator implements ExprEvaluator {
-        private NutsApplicationContext appContext;
+        private NApplicationContext appContext;
         private JShell shell;
         private FileTemplater fileTemplater;
 
-        public NshEvaluator(NutsApplicationContext appContext, FileTemplater fileTemplater) {
+        public NshEvaluator(NApplicationContext appContext, FileTemplater fileTemplater) {
             this.appContext = appContext;
             this.fileTemplater = fileTemplater;
             shell = new JShell(appContext, new String[0]);
@@ -308,8 +308,8 @@ public class DocusaurusCtrl {
 
         @Override
         public Object eval(String content, FileTemplater context) {
-            NutsSession session = context.getSession().copy();
-            session.setTerminal(NutsSessionTerminal.ofMem(session));
+            NSession session = context.getSession().copy();
+            session.setTerminal(NSessionTerminal.ofMem(session));
             JShellContext ctx = shell.createInlineContext(
                     shell.getRootContext(),
                     context.getSourcePath().orElseGet(() -> "nsh"), new String[0]
@@ -327,7 +327,7 @@ public class DocusaurusCtrl {
     }
 
     private static class NFileTemplater extends FileTemplater {
-        public NFileTemplater(NutsApplicationContext appContext) {
+        public NFileTemplater(NApplicationContext appContext) {
             super(appContext.getSession());
             this.setDefaultExecutor("text/ntemplate-nsh-project", new NshEvaluator(appContext, this));
             setProjectFileName("project.nsh");
@@ -339,7 +339,7 @@ public class DocusaurusCtrl {
     }
 
     private static class DocusaurusCustomVarEvaluator implements Function<String, Object> {
-        NutsElement config;
+        NElement config;
         String projectName;
         String projectTitle;
         DocusaurusProject project;
@@ -353,7 +353,7 @@ public class DocusaurusCtrl {
 
         @Override
         public Object apply(String varName) {
-            NutsSession session = project.getSession();
+            NSession session = project.getSession();
             switch (varName) {
                 case "projectName": {
                     return projectName;
@@ -365,7 +365,7 @@ public class DocusaurusCtrl {
                     String[] a = Arrays.stream(varName.split("[./]")).map(String::trim).filter(x -> !x.isEmpty())
                             .toArray(String[]::new);
                     for (String s : a) {
-                        config = config.asObject().orElse(NutsObjectElement.ofEmpty(session)).get(s).get(session);
+                        config = config.asObject().orElse(NObjectElement.ofEmpty(session)).get(s).get(session);
                     }
                     if (config.isNull()) {
                         return null;
@@ -393,8 +393,8 @@ public class DocusaurusCtrl {
 
         @Override
         public void processPath(Path source, String mimeType, FileTemplater context) {
-            NutsSession session = context.getSession();
-            NutsObjectElement config = DocusaurusFolder.ofFolder(appContext.getSession(), source.getParent(),
+            NSession session = context.getSession();
+            NObjectElement config = DocusaurusFolder.ofFolder(appContext.getSession(), source.getParent(),
                             Paths.get(context.getRootDirRequired()).resolve("docs"),
                             getPreProcessorBaseDir().resolve("src"),
                             0)
@@ -403,13 +403,13 @@ public class DocusaurusCtrl {
                     "javadoc".equals(config.getString("name").orNull())
                             || "doc".equals(config.getString("name").orNull())
             ) {
-                String[] sources = config.getArray("sources").orElse(NutsArrayElement.ofEmpty(session))
+                String[] sources = config.getArray("sources").orElse(NArrayElement.ofEmpty(session))
                         .stream().map(x->x.asString().orElse(null))
                         .filter(Objects::nonNull).toArray(String[]::new);
                 if (sources.length == 0) {
                     throw new IllegalArgumentException("missing doc sources in " + source);
                 }
-                String[] packages = config.getArray("packages").orElse(NutsArrayElement.ofEmpty(session))
+                String[] packages = config.getArray("packages").orElse(NArrayElement.ofEmpty(session))
                         .stream().map(x->x.asString().orNull()).filter(Objects::nonNull).toArray(String[]::new);
                 String target = context.getPathTranslator().translatePath(source.getParent().toString());
                 if (target == null) {

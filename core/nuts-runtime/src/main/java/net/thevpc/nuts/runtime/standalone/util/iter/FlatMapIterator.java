@@ -1,15 +1,15 @@
 package net.thevpc.nuts.runtime.standalone.util.iter;
 
-import net.thevpc.nuts.elem.NutsElement;
-import net.thevpc.nuts.util.NutsDescribables;
-import net.thevpc.nuts.elem.NutsElements;
-import net.thevpc.nuts.NutsSession;
+import net.thevpc.nuts.elem.NElement;
+import net.thevpc.nuts.util.NDescribables;
+import net.thevpc.nuts.elem.NElements;
+import net.thevpc.nuts.NSession;
 
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.function.Function;
 
-public class FlatMapIterator<TT, RR> extends NutsIteratorBase<RR> {
+public class FlatMapIterator<TT, RR> extends NIteratorBase<RR> {
 
     private final Iterator<TT> from;
     private final Function<? super TT, ? extends Iterator<? extends RR>> converter;
@@ -22,12 +22,12 @@ public class FlatMapIterator<TT, RR> extends NutsIteratorBase<RR> {
     }
 
     @Override
-    public NutsElement describe(NutsSession session) {
-        return NutsElements.of(session)
+    public NElement describe(NSession session) {
+        return NElements.of(session)
                 .ofObject()
                 .set("type","FlatMap")
-                .set("base", NutsDescribables.resolveOrDestruct(from, session))
-                .set("mapper", NutsDescribables.resolveOrDestruct(converter, session))
+                .set("base", NDescribables.resolveOrDestruct(from, session))
+                .set("mapper", NDescribables.resolveOrDestruct(converter, session))
                 .build()
                 ;
     }

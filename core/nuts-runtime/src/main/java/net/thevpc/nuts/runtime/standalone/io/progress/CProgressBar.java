@@ -1,7 +1,7 @@
 package net.thevpc.nuts.runtime.standalone.io.progress;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.io.NutsPrintStream;
+import net.thevpc.nuts.io.NStream;
 import net.thevpc.nuts.runtime.standalone.util.CorePlatformUtils;
 import net.thevpc.nuts.runtime.standalone.util.CoreStringUtils;
 
@@ -11,10 +11,10 @@ import java.util.Map;
 import java.util.function.Function;
 import java.util.logging.Level;
 
-import net.thevpc.nuts.runtime.standalone.workspace.NutsWorkspaceUtils;
+import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceUtils;
 import net.thevpc.nuts.text.*;
-import net.thevpc.nuts.util.NutsLogger;
-import net.thevpc.nuts.util.NutsLoggerVerb;
+import net.thevpc.nuts.util.NLogger;
+import net.thevpc.nuts.util.NLoggerVerb;
 
 /**
  * inspired by
@@ -29,8 +29,8 @@ public class CProgressBar {
     private int indeterminateSize = 10;
     private int maxMessage = 0;
     private float indeterminateRatio = 0.3f;
-    private NutsSession session;
-    private NutsLogger logger;
+    private NSession session;
+    private NLogger logger;
     private int columns = 3;
     private int maxColumns = 133;
     private boolean suffixMoveLineStart = true;
@@ -40,25 +40,25 @@ public class CProgressBar {
     private IndeterminatePosition indeterminatePosition = DEFAULT_INDETERMINATE_POSITION;
     private ProgressOptions options;
     private Formatter formatter;
-    private NutsWorkspace ws;
-    private static Map<String, Function<NutsSession, Formatter>> formatters = new HashMap();
+    private NWorkspace ws;
+    private static Map<String, Function<NSession, Formatter>> formatters = new HashMap();
 
     static {
         reg("", session -> {
-            NutsTexts txt = NutsTexts.of(session);
+            NTexts txt = NTexts.of(session);
             return CorePlatformUtils.SUPPORTS_UTF_ENCODING ? createFormatter("braille", session) : createFormatter("simple", session);
         });
         reg("square", session -> {
-            NutsTexts txt = NutsTexts.of(session);
+            NTexts txt = NTexts.of(session);
             if (!CorePlatformUtils.SUPPORTS_UTF_ENCODING) {
                 return null;
             }
             return new SimpleFormatter("square",
-                    new NutsText[]{
-                            txt.ofStyled("⬜", NutsTextStyle.primary1()),
-                            txt.ofStyled("⬛", NutsTextStyle.primary1()),
+                    new NText[]{
+                            txt.ofStyled("⬜", NTextStyle.primary1()),
+                            txt.ofStyled("⬛", NTextStyle.primary1()),
                     },
-                    new NutsText[]{txt.ofStyled("⬛", NutsTextStyle.primary1())},
+                    new NText[]{txt.ofStyled("⬛", NTextStyle.primary1())},
                     10,
                     -1, 10, 10
             );
@@ -68,203 +68,203 @@ public class CProgressBar {
             if (!CorePlatformUtils.SUPPORTS_UTF_ENCODING) {
                 return null;
             }
-            NutsTexts txt = NutsTexts.of(session);
+            NTexts txt = NTexts.of(session);
             return new SimpleFormatter("vbar",
-                    new NutsText[]{
-                            txt.ofStyled(" ", NutsTextStyle.primary1()),
-                            txt.ofStyled("▁", NutsTextStyle.primary1()),
-                            txt.ofStyled("▂", NutsTextStyle.primary1()),
-                            txt.ofStyled("▃", NutsTextStyle.primary1()),
-                            txt.ofStyled("▄", NutsTextStyle.primary1()),
-                            txt.ofStyled("▅", NutsTextStyle.primary1()),
-                            txt.ofStyled("▆", NutsTextStyle.primary1()),
-                            txt.ofStyled("▇", NutsTextStyle.primary1()),
-                            txt.ofStyled("█", NutsTextStyle.primary1()),
+                    new NText[]{
+                            txt.ofStyled(" ", NTextStyle.primary1()),
+                            txt.ofStyled("▁", NTextStyle.primary1()),
+                            txt.ofStyled("▂", NTextStyle.primary1()),
+                            txt.ofStyled("▃", NTextStyle.primary1()),
+                            txt.ofStyled("▄", NTextStyle.primary1()),
+                            txt.ofStyled("▅", NTextStyle.primary1()),
+                            txt.ofStyled("▆", NTextStyle.primary1()),
+                            txt.ofStyled("▇", NTextStyle.primary1()),
+                            txt.ofStyled("█", NTextStyle.primary1()),
                     },
-                    new NutsText[]{
-                            txt.ofStyled("▁", NutsTextStyle.primary1()),
-                            txt.ofStyled("▂", NutsTextStyle.primary1()),
-                            txt.ofStyled("▃", NutsTextStyle.primary1()),
-                            txt.ofStyled("▄", NutsTextStyle.primary1()),
-                            txt.ofStyled("▅", NutsTextStyle.primary1()),
-                            txt.ofStyled("▆", NutsTextStyle.primary1()),
-                            txt.ofStyled("▇", NutsTextStyle.primary1()),
-                            txt.ofStyled("█", NutsTextStyle.primary1()),
+                    new NText[]{
+                            txt.ofStyled("▁", NTextStyle.primary1()),
+                            txt.ofStyled("▂", NTextStyle.primary1()),
+                            txt.ofStyled("▃", NTextStyle.primary1()),
+                            txt.ofStyled("▄", NTextStyle.primary1()),
+                            txt.ofStyled("▅", NTextStyle.primary1()),
+                            txt.ofStyled("▆", NTextStyle.primary1()),
+                            txt.ofStyled("▇", NTextStyle.primary1()),
+                            txt.ofStyled("█", NTextStyle.primary1()),
                     },
-                    new NutsText[]{
-                            txt.ofStyled("█", NutsTextStyle.primary1()),
-                            txt.ofStyled("▇", NutsTextStyle.primary1()),
-                            txt.ofStyled("▆", NutsTextStyle.primary1()),
-                            txt.ofStyled("▅", NutsTextStyle.primary1()),
-                            txt.ofStyled("▄", NutsTextStyle.primary1()),
-                            txt.ofStyled("▃", NutsTextStyle.primary1()),
-                            txt.ofStyled("▂", NutsTextStyle.primary1()),
-                            txt.ofStyled("▁", NutsTextStyle.primary1()),
+                    new NText[]{
+                            txt.ofStyled("█", NTextStyle.primary1()),
+                            txt.ofStyled("▇", NTextStyle.primary1()),
+                            txt.ofStyled("▆", NTextStyle.primary1()),
+                            txt.ofStyled("▅", NTextStyle.primary1()),
+                            txt.ofStyled("▄", NTextStyle.primary1()),
+                            txt.ofStyled("▃", NTextStyle.primary1()),
+                            txt.ofStyled("▂", NTextStyle.primary1()),
+                            txt.ofStyled("▁", NTextStyle.primary1()),
                     },
                     1, 1, 10, 10
             );
         });
 
         reg("shadow", session -> {
-            NutsTexts txt = NutsTexts.of(session);
+            NTexts txt = NTexts.of(session);
             //" ░▒▓█"
             if (!CorePlatformUtils.SUPPORTS_UTF_ENCODING) {
                 return null;
             }
             return new SimpleFormatter("shadow",
-                    new NutsText[]{
-                            txt.ofStyled(" ", NutsTextStyle.primary1()),
-                            txt.ofStyled("░", NutsTextStyle.primary1()),
-                            txt.ofStyled("▒", NutsTextStyle.primary1()),
-                            txt.ofStyled("▓", NutsTextStyle.primary1()),
-                            txt.ofStyled("█", NutsTextStyle.primary1()),
+                    new NText[]{
+                            txt.ofStyled(" ", NTextStyle.primary1()),
+                            txt.ofStyled("░", NTextStyle.primary1()),
+                            txt.ofStyled("▒", NTextStyle.primary1()),
+                            txt.ofStyled("▓", NTextStyle.primary1()),
+                            txt.ofStyled("█", NTextStyle.primary1()),
                     },
-                    new NutsText[]{
-                            txt.ofStyled("█", NutsTextStyle.primary1()),
+                    new NText[]{
+                            txt.ofStyled("█", NTextStyle.primary1()),
                     },
                     1, 1, 10, 10
             );
         });
         reg("hbar", session -> {
-            NutsTexts txt = NutsTexts.of(session);
+            NTexts txt = NTexts.of(session);
             //" ▏▎▍▌▋▊▉█"
             if (!CorePlatformUtils.SUPPORTS_UTF_ENCODING) {
                 return null;
             }
             return new SimpleFormatter("hbar",
-                    new NutsText[]{
-                            txt.ofStyled(" ", NutsTextStyle.primary1()),
-                            txt.ofStyled("▏", NutsTextStyle.primary1()),
-                            txt.ofStyled("▎", NutsTextStyle.primary1()),
-                            txt.ofStyled("▍", NutsTextStyle.primary1()),
-                            txt.ofStyled("▌", NutsTextStyle.primary1()),
-                            txt.ofStyled("▋", NutsTextStyle.primary1()),
-                            txt.ofStyled("▊", NutsTextStyle.primary1()),
-                            txt.ofStyled("▉", NutsTextStyle.primary1()),
-                            txt.ofStyled("█", NutsTextStyle.primary1()),
+                    new NText[]{
+                            txt.ofStyled(" ", NTextStyle.primary1()),
+                            txt.ofStyled("▏", NTextStyle.primary1()),
+                            txt.ofStyled("▎", NTextStyle.primary1()),
+                            txt.ofStyled("▍", NTextStyle.primary1()),
+                            txt.ofStyled("▌", NTextStyle.primary1()),
+                            txt.ofStyled("▋", NTextStyle.primary1()),
+                            txt.ofStyled("▊", NTextStyle.primary1()),
+                            txt.ofStyled("▉", NTextStyle.primary1()),
+                            txt.ofStyled("█", NTextStyle.primary1()),
                     },
-                    new NutsText[]{
-                            txt.ofStyled("█", NutsTextStyle.primary1()),
+                    new NText[]{
+                            txt.ofStyled("█", NTextStyle.primary1()),
                     },
                     10, -1, 10, 10
             );
         });
         reg("circle", session -> {
-            NutsTexts txt = NutsTexts.of(session);
+            NTexts txt = NTexts.of(session);
             if (!CorePlatformUtils.SUPPORTS_UTF_ENCODING) {
                 return null;
             }
             return new SimpleFormatter("circle",
-                    new NutsText[]{
-                            txt.ofStyled("⚪", NutsTextStyle.primary1()),
-                            txt.ofStyled("⚫", NutsTextStyle.primary1()),
+                    new NText[]{
+                            txt.ofStyled("⚪", NTextStyle.primary1()),
+                            txt.ofStyled("⚫", NTextStyle.primary1()),
                     },
-                    new NutsText[]{txt.ofStyled("⚫", NutsTextStyle.primary1())},
+                    new NText[]{txt.ofStyled("⚫", NTextStyle.primary1())},
                     10, -1, 10, 10
             );
         });
         reg("parallelogram", session -> {
-            NutsTexts txt = NutsTexts.of(session);
+            NTexts txt = NTexts.of(session);
             if (!CorePlatformUtils.SUPPORTS_UTF_ENCODING) {
                 return null;
             }
             return new SimpleFormatter("parallelogram",
-                    new NutsText[]{
-                            txt.ofStyled("▱", NutsTextStyle.primary1()),
-                            txt.ofStyled("▰", NutsTextStyle.primary1()),
+                    new NText[]{
+                            txt.ofStyled("▱", NTextStyle.primary1()),
+                            txt.ofStyled("▰", NTextStyle.primary1()),
                     },
-                    new NutsText[]{txt.ofStyled("▰", NutsTextStyle.primary1())},
+                    new NText[]{txt.ofStyled("▰", NTextStyle.primary1())},
                     10, -1, 10, 10
             );
         });
         reg("simple", session -> {
-            NutsTexts txt = NutsTexts.of(session);
+            NTexts txt = NTexts.of(session);
             return new SimpleFormatter("simple",
-                    new NutsText[]{
-                            txt.ofStyled(" ", NutsTextStyle.primary1()),
-                            txt.ofStyled("*", NutsTextStyle.primary1()),
+                    new NText[]{
+                            txt.ofStyled(" ", NTextStyle.primary1()),
+                            txt.ofStyled("*", NTextStyle.primary1()),
                     },
-                    new NutsText[]{txt.ofStyled("*", NutsTextStyle.primary1())},
+                    new NText[]{txt.ofStyled("*", NTextStyle.primary1())},
                     null,
-                    txt.ofStyled("[", NutsTextStyle.primary4()),
-                    txt.ofStyled("]", NutsTextStyle.primary4()),
+                    txt.ofStyled("[", NTextStyle.primary4()),
+                    txt.ofStyled("]", NTextStyle.primary4()),
                     10, -1, 10, 10
             );
         });
         reg("clock", session -> {
-            NutsTexts txt = NutsTexts.of(session);
+            NTexts txt = NTexts.of(session);
             if (!CorePlatformUtils.SUPPORTS_UTF_ENCODING) {
                 return null;
             }
             //"\u25CB\u25D4\u25D1\u25D5\u25CF"
             // ○◔◑◕●
             return new SimpleFormatter("clock",
-                    new NutsText[]{
-                            txt.ofStyled("\u25CB", NutsTextStyle.primary1()),
-                            txt.ofStyled("\u25D4", NutsTextStyle.primary1()),
-                            txt.ofStyled("\u25D1", NutsTextStyle.primary1()),
-                            txt.ofStyled("\u25D5", NutsTextStyle.primary1()),
-                            txt.ofStyled("\u25CF", NutsTextStyle.primary1()),
+                    new NText[]{
+                            txt.ofStyled("\u25CB", NTextStyle.primary1()),
+                            txt.ofStyled("\u25D4", NTextStyle.primary1()),
+                            txt.ofStyled("\u25D1", NTextStyle.primary1()),
+                            txt.ofStyled("\u25D5", NTextStyle.primary1()),
+                            txt.ofStyled("\u25CF", NTextStyle.primary1()),
                     },
-                    new NutsText[]{txt.ofStyled("\u25CF", NutsTextStyle.primary1())}
+                    new NText[]{txt.ofStyled("\u25CF", NTextStyle.primary1())}
                     , 1, 1, 10, 10
             );
         });
         reg("braille", session -> {
-            NutsTexts txt = NutsTexts.of(session);
+            NTexts txt = NTexts.of(session);
             if (!CorePlatformUtils.SUPPORTS_UTF_ENCODING) {
                 return null;
             }
             //"\u25CB\u25D4\u25D1\u25D5\u25CF"
             // ○◔◑◕●
             return new SimpleFormatter("braille",
-                    new NutsText[]{
-                            txt.ofStyled("\u2800", NutsTextStyle.primary1()),// ⠀
-                            txt.ofStyled("\u2801", NutsTextStyle.primary1()),// ⠁
-                            txt.ofStyled("\u2803", NutsTextStyle.primary1()),// ⠃
-                            txt.ofStyled("\u2807", NutsTextStyle.primary1()),// ⠇
-                            txt.ofStyled("\u2846", NutsTextStyle.primary1()),// ⡆
-                            txt.ofStyled("\u28C4", NutsTextStyle.primary1()),// ⣄
-                            txt.ofStyled("\u28E0", NutsTextStyle.primary1()),// ⣠
-                            txt.ofStyled("\u28B0", NutsTextStyle.primary1()),// ⢰
-                            txt.ofStyled("\u2838", NutsTextStyle.primary1()),// ⠸
-                            txt.ofStyled("\u2819", NutsTextStyle.primary1()),// ⠙
-                            txt.ofStyled("\u2819", NutsTextStyle.primary1()),// ⠙
-                            txt.ofStyled("\u2809", NutsTextStyle.primary1()),// ⠉
+                    new NText[]{
+                            txt.ofStyled("\u2800", NTextStyle.primary1()),// ⠀
+                            txt.ofStyled("\u2801", NTextStyle.primary1()),// ⠁
+                            txt.ofStyled("\u2803", NTextStyle.primary1()),// ⠃
+                            txt.ofStyled("\u2807", NTextStyle.primary1()),// ⠇
+                            txt.ofStyled("\u2846", NTextStyle.primary1()),// ⡆
+                            txt.ofStyled("\u28C4", NTextStyle.primary1()),// ⣄
+                            txt.ofStyled("\u28E0", NTextStyle.primary1()),// ⣠
+                            txt.ofStyled("\u28B0", NTextStyle.primary1()),// ⢰
+                            txt.ofStyled("\u2838", NTextStyle.primary1()),// ⠸
+                            txt.ofStyled("\u2819", NTextStyle.primary1()),// ⠙
+                            txt.ofStyled("\u2819", NTextStyle.primary1()),// ⠙
+                            txt.ofStyled("\u2809", NTextStyle.primary1()),// ⠉
                     },
-                    new NutsText[]{
-                            txt.ofStyled("\u2815", NutsTextStyle.primary1()),// ⠕
-                            txt.ofStyled("\u2817", NutsTextStyle.primary1()),// ⠗
+                    new NText[]{
+                            txt.ofStyled("\u2815", NTextStyle.primary1()),// ⠕
+                            txt.ofStyled("\u2817", NTextStyle.primary1()),// ⠗
                     },
-                    new NutsText[]{
-                            txt.ofStyled("\u282A", NutsTextStyle.primary1()),// ⠪
-                            txt.ofStyled("\u283A", NutsTextStyle.primary1()),// ⠺
+                    new NText[]{
+                            txt.ofStyled("\u282A", NTextStyle.primary1()),// ⠪
+                            txt.ofStyled("\u283A", NTextStyle.primary1()),// ⠺
                     }
                     , 1, 1, 10, 10
             );
         });
     }
 
-    private static void reg(String name, Function<NutsSession, Formatter> f) {
+    private static void reg(String name, Function<NSession, Formatter> f) {
         formatters.put(name, f);
     }
 
-    public static CProgressBar of(NutsSession session) {
+    public static CProgressBar of(NSession session) {
         return session.getOrComputeRefProperty(CProgressBar.class.getName(), CProgressBar::new);
     }
 
-    public CProgressBar(NutsSession session) {
+    public CProgressBar(NSession session) {
         this(session, -1);
     }
 
-    public CProgressBar(NutsSession session, int determinateSize) {
+    public CProgressBar(NSession session, int determinateSize) {
         this.session = session;
-        this.logger = NutsLogger.of(CProgressBar.class, this.session);
+        this.logger = NLogger.of(CProgressBar.class, this.session);
         this.options = ProgressOptions.of(session);
         this.ws = session.getWorkspace();
-        this.formatter = createFormatter(options.get("type").flatMap(NutsValue::asString).orElse(""), session);
+        this.formatter = createFormatter(options.get("type").flatMap(NValue::asString).orElse(""), session);
         if (determinateSize <= 0) {
-            determinateSize = options.get("size").flatMap(NutsValue::asInt).orElse(formatter.getDefaultWidth());
+            determinateSize = options.get("size").flatMap(NValue::asInt).orElse(formatter.getDefaultWidth());
         }
         setDeterminateSize(determinateSize);
     }
@@ -273,8 +273,8 @@ public class CProgressBar {
         return formatters.keySet().toArray(new String[0]);
     }
 
-    public static Formatter createFormatter(String name, NutsSession session) {
-        Function<NutsSession, Formatter> e = formatters.get(name);
+    public static Formatter createFormatter(String name, NSession session) {
+        Function<NSession, Formatter> e = formatters.get(name);
         if (e != null) {
             Formatter u = e.apply(session);
             if (u != null) {
@@ -334,30 +334,30 @@ public class CProgressBar {
 
     public static class SimpleFormatter implements Formatter {
 
-        private NutsText[] style;
-        private NutsText[] intermediateForwardStyle;
-        private NutsText[] intermediateBackwardStyle;
-        private NutsText start;
-        private NutsText end;
+        private NText[] style;
+        private NText[] intermediateForwardStyle;
+        private NText[] intermediateBackwardStyle;
+        private NText start;
+        private NText end;
         private int defaultWidth;
         private int maxWidth;
         private int defaultIndeterminateWidth;
         private int maxIndeterminateWidth;
         private String name;
 
-        public SimpleFormatter(String name, NutsText[] style, int defaultWidth, int maxWidth, int defaultIndeterminateWidth, int maxIndeterminateWidth) {
+        public SimpleFormatter(String name, NText[] style, int defaultWidth, int maxWidth, int defaultIndeterminateWidth, int maxIndeterminateWidth) {
             this(name, style, null, null, null, null, defaultWidth, maxWidth, defaultIndeterminateWidth, maxIndeterminateWidth);
         }
 
-        public SimpleFormatter(String name, NutsText[] style, NutsText[] forward, int defaultWidth, int maxWidth, int defaultIndeterminateWidth, int maxIndeterminateWidth) {
+        public SimpleFormatter(String name, NText[] style, NText[] forward, int defaultWidth, int maxWidth, int defaultIndeterminateWidth, int maxIndeterminateWidth) {
             this(name, style, forward, null, null, null, defaultWidth, maxWidth, defaultIndeterminateWidth, maxIndeterminateWidth);
         }
 
-        public SimpleFormatter(String name, NutsText[] style, NutsText[] forward, NutsText[] backward, int defaultWidth, int maxWidth, int defaultIndeterminateWidth, int maxIndeterminateWidth) {
+        public SimpleFormatter(String name, NText[] style, NText[] forward, NText[] backward, int defaultWidth, int maxWidth, int defaultIndeterminateWidth, int maxIndeterminateWidth) {
             this(name, style, forward, backward, null, null, defaultWidth, maxWidth, defaultIndeterminateWidth, maxIndeterminateWidth);
         }
 
-        public SimpleFormatter(String name, NutsText[] style, NutsText[] forward, NutsText[] backward, NutsText start, NutsText end, int defaultWidth, int maxWidth, int defaultIndeterminateWidth, int maxIndeterminateWidth) {
+        public SimpleFormatter(String name, NText[] style, NText[] forward, NText[] backward, NText start, NText end, int defaultWidth, int maxWidth, int defaultIndeterminateWidth, int maxIndeterminateWidth) {
             if (forward == null) {
                 forward = style;
             }
@@ -386,11 +386,11 @@ public class CProgressBar {
         }
 
         @Override
-        public NutsText getIndicator(float itemDensity, int itemPosition) {
+        public NText getIndicator(float itemDensity, int itemPosition) {
             return getIndicator(style, itemDensity, itemPosition);
         }
 
-        public NutsText getIndicator(NutsText[] style, float itemDensity, int itemPosition) {
+        public NText getIndicator(NText[] style, float itemDensity, int itemPosition) {
             int length = style.length;
             int p = (int) (itemDensity * length);
             if (p < 0) {
@@ -402,7 +402,7 @@ public class CProgressBar {
         }
 
         @Override
-        public NutsText getIntermediateIndicator(int intermediatePosition, int indeterminateSize, int intermediateStartPosition, boolean forward) {
+        public NText getIntermediateIndicator(int intermediatePosition, int indeterminateSize, int intermediateStartPosition, boolean forward) {
             float density = (intermediatePosition * 1.f / indeterminateSize);
             if (forward) {
                 int length = intermediateForwardStyle.length;
@@ -428,12 +428,12 @@ public class CProgressBar {
         }
 
         @Override
-        public NutsText getStart() {
+        public NText getStart() {
             return start;
         }
 
         @Override
-        public NutsText getEnd() {
+        public NText getEnd() {
             return end;
         }
 
@@ -450,13 +450,13 @@ public class CProgressBar {
 
     public static interface Formatter {
 
-        NutsText getIntermediateIndicator(int intermediatePosition, int indeterminateSize, int itemPosition, boolean forward);
+        NText getIntermediateIndicator(int intermediatePosition, int indeterminateSize, int itemPosition, boolean forward);
 
-        NutsText getIndicator(float itemDensity, int itemPosition);
+        NText getIndicator(float itemDensity, int itemPosition);
 
-        NutsText getStart();
+        NText getStart();
 
-        NutsText getEnd();
+        NText getEnd();
 
         int getMaxWidth();
 
@@ -498,14 +498,14 @@ public class CProgressBar {
         return this;
     }
 
-    public CProgressBar setSession(NutsSession session) {
-        this.session = NutsWorkspaceUtils.bindSession(ws, session);
+    public CProgressBar setSession(NSession session) {
+        this.session = NWorkspaceUtils.bindSession(ws, session);
         return this;
     }
 
-    public NutsText progress(int percent) {
+    public NText progress(int percent) {
         long now = System.currentTimeMillis();
-        NutsTexts txt = NutsTexts.of(session);
+        NTexts txt = NTexts.of(session);
         if (now < lastPrint + minPeriod) {
             return txt.ofPlain("");
         }
@@ -513,7 +513,7 @@ public class CProgressBar {
         boolean indeterminate = percent < 0;
         int eSize = getEffSize(indeterminate);
         if (indeterminate) {
-            NutsTextBuilder formattedLine = txt.ofBuilder();
+            NTextBuilder formattedLine = txt.ofBuilder();
             formattedLine.append(getFormatter().getStart());
             int indeterminateSize = (int) (this.indeterminateRatio * eSize);
             boolean forward = true;
@@ -563,7 +563,7 @@ public class CProgressBar {
             double d = (eSize / 100.0 * percent);
             int x = (int) d;
             float rest = (float) (d - x);
-            NutsTextBuilder formattedLine = txt.ofBuilder();
+            NTextBuilder formattedLine = txt.ofBuilder();
             formattedLine.append(getFormatter().getStart());
             if (x > 0) {
                 for (int i = 0; i < x; i++) {
@@ -585,24 +585,24 @@ public class CProgressBar {
         }
     }
 
-    public void printProgress(int percent, NutsText msg, NutsPrintStream out) {
-        NutsText p = progress(percent, msg);
+    public void printProgress(int percent, NText msg, NStream out) {
+        NText p = progress(percent, msg);
         if (p == null || p.isEmpty()) {
             return;
         }
         Level armedLogLevel = options.getArmedLogLevel();
         if (armedLogLevel!=null) {
-            logger.with().verb(NutsLoggerVerb.PROGRESS)
+            logger.with().verb(NLoggerVerb.PROGRESS)
                     .level(armedLogLevel)
-                    .log(NutsMessage.ofNtf(p));
+                    .log(NMsg.ofNtf(p));
         } else {
             out.print(p);
         }
     }
 
-    public NutsText progress(int percent, NutsText msg) {
-        NutsTexts txt = NutsTexts.of(session);
-        NutsTextBuilder sb = txt.ofBuilder();
+    public NText progress(int percent, NText msg) {
+        NTexts txt = NTexts.of(session);
+        NTextBuilder sb = txt.ofBuilder();
         if (maxMessage < columns) {
             maxMessage = columns;
         }
@@ -619,12 +619,12 @@ public class CProgressBar {
                         sb.append("\n");
                     }
                 } else {
-                    sb.append(txt.ofCommand(NutsTerminalCommand.CLEAR_LINE));
-                    sb.append(txt.ofCommand(NutsTerminalCommand.MOVE_LINE_START));
+                    sb.append(txt.ofCommand(NTerminalCommand.CLEAR_LINE));
+                    sb.append(txt.ofCommand(NTerminalCommand.MOVE_LINE_START));
                 }
             }
         }
-        NutsText p = progress(percent);
+        NText p = progress(percent);
         if (p == null) {
             return txt.ofBlank();
         }

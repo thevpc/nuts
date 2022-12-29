@@ -1,22 +1,22 @@
 package net.thevpc.nuts.toolbox.nsh.jshell;
 
-import net.thevpc.nuts.NutsApplicationContext;
-import net.thevpc.nuts.cmdline.NutsCommandLine;
-import net.thevpc.nuts.NutsMessage;
-import net.thevpc.nuts.NutsSession;
+import net.thevpc.nuts.NApplicationContext;
+import net.thevpc.nuts.cmdline.NCommandLine;
+import net.thevpc.nuts.NMsg;
+import net.thevpc.nuts.NSession;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
 public class DefaultJShellOptionsParser implements JShellOptionsParser {
-    private NutsApplicationContext appContext;
+    private NApplicationContext appContext;
 
-    public DefaultJShellOptionsParser(NutsApplicationContext appContext) {
+    public DefaultJShellOptionsParser(NApplicationContext appContext) {
         this.appContext = appContext;
     }
 
-    protected JShellOptions createOptions(NutsApplicationContext appContext) {
+    protected JShellOptions createOptions(NApplicationContext appContext) {
         return new JShellOptions();
     }
 
@@ -199,14 +199,14 @@ public class DefaultJShellOptionsParser implements JShellOptionsParser {
     }
 
     protected void parseUnsupportedNextArgument(List<String> args, JShellOptions options) {
-        NutsSession session = appContext.getSession();
-        NutsCommandLine a = NutsCommandLine.of(args);
+        NSession session = appContext.getSession();
+        NCommandLine a = NCommandLine.of(args);
         if (session.configureFirst(a)) {
             //replace remaining...
             args.clear();
             args.addAll(Arrays.asList(a.toStringArray()));
         } else {
-            throw new JShellException(session, NutsMessage.ofCstyle("unsupported option %s", args.get(0)), 1);
+            throw new JShellException(session, NMsg.ofCstyle("unsupported option %s", args.get(0)), 1);
         }
     }
 

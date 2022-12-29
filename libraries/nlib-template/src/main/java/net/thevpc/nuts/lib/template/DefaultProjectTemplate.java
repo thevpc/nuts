@@ -20,11 +20,11 @@ import java.util.Set;
 import java.util.function.Function;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.io.NutsSessionTerminal;
-import net.thevpc.nuts.text.NutsTextStyle;
-import net.thevpc.nuts.text.NutsTexts;
-import net.thevpc.nuts.util.NutsQuestion;
-import net.thevpc.nuts.util.NutsQuestionValidator;
+import net.thevpc.nuts.io.NSessionTerminal;
+import net.thevpc.nuts.text.NTextStyle;
+import net.thevpc.nuts.text.NTexts;
+import net.thevpc.nuts.util.NQuestion;
+import net.thevpc.nuts.util.NQuestionValidator;
 import org.w3c.dom.Document;
 
 /**
@@ -36,8 +36,8 @@ public class DefaultProjectTemplate implements ProjectTemplate {
     private TemplateConsole console;
     private boolean askAll = false;
     private List<ProjectTemplateListener> configListeners = new ArrayList<>();
-    private NutsApplicationContext applicationContext;
-    private NutsSession session;
+    private NApplicationContext applicationContext;
+    private NSession session;
     private String targetRoot = "/";
     public Set<String> createPaths = new HashSet<>();
     private MessageNameFormatContext DEFAULT = new MessageNameFormatContext(true, true);
@@ -49,7 +49,7 @@ public class DefaultProjectTemplate implements ProjectTemplate {
         }
     };
 
-    public DefaultProjectTemplate(NutsApplicationContext appContext) {
+    public DefaultProjectTemplate(NApplicationContext appContext) {
         this.applicationContext = appContext;
         this.session = this.applicationContext.getSession();
         console = new TemplateConsole() {
@@ -60,24 +60,24 @@ public class DefaultProjectTemplate implements ProjectTemplate {
 
             @Override
             public String ask(String propName, String propertyTitle, StringValidator validator, String defaultValue) {
-                NutsSessionTerminal term = session.getTerminal();
-                if (session.getConfirm() == NutsConfirmationMode.YES) {
+                NSessionTerminal term = session.getTerminal();
+                if (session.getConfirm() == NConfirmationMode.YES) {
                     return defaultValue;
                 }
                 return term.ask()
                         .resetLine()
                         .forString(
-                                NutsMessage.ofNtf(
-                                        NutsTexts.of(getSession()).ofBuilder()
-                                                .append(propertyTitle, NutsTextStyle.primary4())
+                                NMsg.ofNtf(
+                                        NTexts.of(getSession()).ofBuilder()
+                                                .append(propertyTitle, NTextStyle.primary4())
                                                 .append(" (")
-                                                .append(propName, NutsTextStyle.pale())
+                                                .append(propName, NTextStyle.pale())
                                                 .append(")\n ?")
                                                 .toString()))
                         .setDefaultValue(defaultValue)
-                        .setValidator(new NutsQuestionValidator<String>() {
+                        .setValidator(new NQuestionValidator<String>() {
                             @Override
-                            public String validate(String value, NutsQuestion<String> question) throws NutsValidationException {
+                            public String validate(String value, NQuestion<String> question) throws NValidationException {
                                 return validator.validate(value);
                             }
                         }).getValue();
@@ -159,7 +159,7 @@ public class DefaultProjectTemplate implements ProjectTemplate {
         return new File(getConfigProperty("ProjectRootFolder").get());
     }
 
-    public NutsApplicationContext getApplicationContext() {
+    public NApplicationContext getApplicationContext() {
         return applicationContext;
     }
 
@@ -393,7 +393,7 @@ public class DefaultProjectTemplate implements ProjectTemplate {
         }
     }
 
-    public NutsSession getSession() {
+    public NSession getSession() {
         return session;
     }
 
@@ -413,38 +413,38 @@ public class DefaultProjectTemplate implements ProjectTemplate {
             if (!pomFile.isFile()) {
                 return null;
             }
-            NutsDescriptorParser.of(session).setDescriptorStyle(NutsDescriptorStyle.MAVEN).parse(pomFile);
+            NDescriptorParser.of(session).setDescriptorStyle(NDescriptorStyle.MAVEN).parse(pomFile);
             return pomFile;
         } catch (Exception ex) {
             throw new RuntimeException(ex);
         }
     }
 
-    public NutsDescriptor askForPomAndUpdateConfig() {
-        NutsDescriptor pomxml = askForPom();
+    public NDescriptor askForPomAndUpdateConfig() {
+        NDescriptor pomxml = askForPom();
         getConfigProperty("ProjectGroup").setValue(pomxml.getId().getGroupId());
         getConfigProperty("ProjectName").setValue(pomxml.getId().getArtifactId());
         getConfigProperty("ProjectVersion").setValue(pomxml.getId().getVersion().toString());
         return pomxml;
     }
 
-    public NutsDescriptor askForPom() {
+    public NDescriptor askForPom() {
         File p = resolvePomFile(getProjectRootFolder());
         if (p == null) {
             p = resolveFirstPomFile(getProjectRootFolder());
             if (p != null) {
                 if (!getSession().getTerminal().ask()
                         .resetLine()
-                        .forBoolean(NutsMessage.ofCstyle("accept project location %s?",
-                                NutsTexts.of(applicationContext.getSession()).ofStyled(p.getPath(), NutsTextStyle.path())))
+                        .forBoolean(NMsg.ofCstyle("accept project location %s?",
+                                NTexts.of(applicationContext.getSession()).ofStyled(p.getPath(), NTextStyle.path())))
                         .setDefaultValue(false)
                         .getBooleanValue()) {
-                    throw new NutsCancelException(getSession());
+                    throw new NCancelException(getSession());
                 }
             }
         }
         try {
-            return NutsDescriptorParser.of(session).setDescriptorStyle(NutsDescriptorStyle.MAVEN)
+            return NDescriptorParser.of(session).setDescriptorStyle(NDescriptorStyle.MAVEN)
                     .parse(new File(getProjectRootFolder(), "pom.xml")).get(session);
         } catch (Exception ex) {
             throw new RuntimeException(ex);

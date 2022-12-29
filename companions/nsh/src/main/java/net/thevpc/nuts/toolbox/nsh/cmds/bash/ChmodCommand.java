@@ -26,12 +26,12 @@
 package net.thevpc.nuts.toolbox.nsh.cmds.bash;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.cmdline.NutsArgument;
-import net.thevpc.nuts.cmdline.NutsCommandLine;
-import net.thevpc.nuts.io.NutsPath;
-import net.thevpc.nuts.io.NutsPathPermission;
-import net.thevpc.nuts.spi.NutsComponentScope;
-import net.thevpc.nuts.spi.NutsComponentScopeType;
+import net.thevpc.nuts.cmdline.NArgument;
+import net.thevpc.nuts.cmdline.NCommandLine;
+import net.thevpc.nuts.io.NPath;
+import net.thevpc.nuts.io.NPathPermission;
+import net.thevpc.nuts.spi.NComponentScope;
+import net.thevpc.nuts.spi.NComponentScopeType;
 import net.thevpc.nuts.toolbox.nsh.SimpleJShellBuiltin;
 import net.thevpc.nuts.toolbox.nsh.jshell.JShellExecutionContext;
 
@@ -40,7 +40,7 @@ import java.util.*;
 /**
  * Created by vpc on 1/7/17.
  */
-@NutsComponentScope(NutsComponentScopeType.WORKSPACE)
+@NComponentScope(NComponentScopeType.WORKSPACE)
 public class ChmodCommand extends SimpleJShellBuiltin {
 
     public ChmodCommand() {
@@ -49,14 +49,14 @@ public class ChmodCommand extends SimpleJShellBuiltin {
 
 
     @Override
-    protected boolean configureFirst(NutsCommandLine commandLine, JShellExecutionContext context) {
-        NutsSession session = context.getSession();
+    protected boolean configureFirst(NCommandLine commandLine, JShellExecutionContext context) {
+        NSession session = context.getSession();
         Options options = context.getOptions();
         //invert processing order!
         if (context.configureFirst(commandLine)) {
             return true;
         }
-        NutsArgument a = commandLine.peek().get(session);
+        NArgument a = commandLine.peek().get(session);
         String s = a.asString().get(session);
         if (s.equals("-R") || s.equals("--recursive")) {
             commandLine.skip();
@@ -102,25 +102,25 @@ public class ChmodCommand extends SimpleJShellBuiltin {
                     case 'r': {
                         if (user || (!group && !others)) {
                             if (add) {
-                                options.m.addPermissions.add(NutsPathPermission.CAN_READ);
-                                options.m.addPermissions.add(NutsPathPermission.OWNER_READ);
+                                options.m.addPermissions.add(NPathPermission.CAN_READ);
+                                options.m.addPermissions.add(NPathPermission.OWNER_READ);
                             } else {
-                                options.m.removePermissions.add(NutsPathPermission.CAN_READ);
-                                options.m.removePermissions.add(NutsPathPermission.OWNER_READ);
+                                options.m.removePermissions.add(NPathPermission.CAN_READ);
+                                options.m.removePermissions.add(NPathPermission.OWNER_READ);
                             }
                         }
                         if (group) {
                             if (add) {
-                                options.m.addPermissions.add(NutsPathPermission.GROUP_READ);
+                                options.m.addPermissions.add(NPathPermission.GROUP_READ);
                             } else {
-                                options.m.removePermissions.add(NutsPathPermission.GROUP_READ);
+                                options.m.removePermissions.add(NPathPermission.GROUP_READ);
                             }
                         }
                         if (others) {
                             if (add) {
-                                options.m.addPermissions.add(NutsPathPermission.OTHERS_READ);
+                                options.m.addPermissions.add(NPathPermission.OTHERS_READ);
                             } else {
-                                options.m.removePermissions.add(NutsPathPermission.OTHERS_READ);
+                                options.m.removePermissions.add(NPathPermission.OTHERS_READ);
                             }
                         }
                         break;
@@ -128,25 +128,25 @@ public class ChmodCommand extends SimpleJShellBuiltin {
                     case 'w': {
                         if (user || (!group && !others)) {
                             if (add) {
-                                options.m.addPermissions.add(NutsPathPermission.CAN_WRITE);
-                                options.m.addPermissions.add(NutsPathPermission.OWNER_WRITE);
+                                options.m.addPermissions.add(NPathPermission.CAN_WRITE);
+                                options.m.addPermissions.add(NPathPermission.OWNER_WRITE);
                             } else {
-                                options.m.removePermissions.add(NutsPathPermission.CAN_WRITE);
-                                options.m.removePermissions.add(NutsPathPermission.OWNER_WRITE);
+                                options.m.removePermissions.add(NPathPermission.CAN_WRITE);
+                                options.m.removePermissions.add(NPathPermission.OWNER_WRITE);
                             }
                         }
                         if (group) {
                             if (add) {
-                                options.m.addPermissions.add(NutsPathPermission.GROUP_WRITE);
+                                options.m.addPermissions.add(NPathPermission.GROUP_WRITE);
                             } else {
-                                options.m.removePermissions.add(NutsPathPermission.GROUP_WRITE);
+                                options.m.removePermissions.add(NPathPermission.GROUP_WRITE);
                             }
                         }
                         if (others) {
                             if (add) {
-                                options.m.addPermissions.add(NutsPathPermission.OTHERS_WRITE);
+                                options.m.addPermissions.add(NPathPermission.OTHERS_WRITE);
                             } else {
-                                options.m.removePermissions.add(NutsPathPermission.OTHERS_WRITE);
+                                options.m.removePermissions.add(NPathPermission.OTHERS_WRITE);
                             }
                         }
                         break;
@@ -154,25 +154,25 @@ public class ChmodCommand extends SimpleJShellBuiltin {
                     case 'x': {
                         if (user || (!group && !others)) {
                             if (add) {
-                                options.m.addPermissions.add(NutsPathPermission.CAN_EXECUTE);
-                                options.m.addPermissions.add(NutsPathPermission.OWNER_EXECUTE);
+                                options.m.addPermissions.add(NPathPermission.CAN_EXECUTE);
+                                options.m.addPermissions.add(NPathPermission.OWNER_EXECUTE);
                             } else {
-                                options.m.removePermissions.add(NutsPathPermission.CAN_EXECUTE);
-                                options.m.removePermissions.add(NutsPathPermission.OWNER_EXECUTE);
+                                options.m.removePermissions.add(NPathPermission.CAN_EXECUTE);
+                                options.m.removePermissions.add(NPathPermission.OWNER_EXECUTE);
                             }
                         }
                         if (group) {
                             if (add) {
-                                options.m.addPermissions.add(NutsPathPermission.GROUP_EXECUTE);
+                                options.m.addPermissions.add(NPathPermission.GROUP_EXECUTE);
                             } else {
-                                options.m.removePermissions.add(NutsPathPermission.GROUP_EXECUTE);
+                                options.m.removePermissions.add(NPathPermission.GROUP_EXECUTE);
                             }
                         }
                         if (others) {
                             if (add) {
-                                options.m.addPermissions.add(NutsPathPermission.OTHERS_EXECUTE);
+                                options.m.addPermissions.add(NPathPermission.OTHERS_EXECUTE);
                             } else {
-                                options.m.removePermissions.add(NutsPathPermission.OTHERS_EXECUTE);
+                                options.m.removePermissions.add(NPathPermission.OTHERS_EXECUTE);
                             }
                         }
                         break;
@@ -187,14 +187,14 @@ public class ChmodCommand extends SimpleJShellBuiltin {
     }
 
     @Override
-    protected void execBuiltin(NutsCommandLine commandLine, JShellExecutionContext context) {
-        NutsSession session = context.getSession();
+    protected void execBuiltin(NCommandLine commandLine, JShellExecutionContext context) {
+        NSession session = context.getSession();
         Options options = context.getOptions();
         if (options.files.isEmpty()) {
             commandLine.throwMissingArgument();
         }
-        LinkedHashMap<NutsPath, NutsMessage> errors = new LinkedHashMap<>();
-        for (NutsPath f : options.files) {
+        LinkedHashMap<NPath, NMsg> errors = new LinkedHashMap<>();
+        for (NPath f : options.files) {
             chmod(f, options.m, errors);
         }
         if (!errors.isEmpty()) {
@@ -202,11 +202,11 @@ public class ChmodCommand extends SimpleJShellBuiltin {
         }
     }
 
-    private void chmod(NutsPath f, Mods m, Map<NutsPath, NutsMessage> errors) {
-        f.addPermissions(m.addPermissions.toArray(new NutsPathPermission[0]));
-        f.removePermissions(m.removePermissions.toArray(new NutsPathPermission[0]));
+    private void chmod(NPath f, Mods m, Map<NPath, NMsg> errors) {
+        f.addPermissions(m.addPermissions.toArray(new NPathPermission[0]));
+        f.removePermissions(m.removePermissions.toArray(new NPathPermission[0]));
         if (f.isDirectory()) {
-            for (NutsPath file : f.list()) {
+            for (NPath file : f.stream()) {
                 chmod(file, m, errors);
             }
         }
@@ -214,20 +214,20 @@ public class ChmodCommand extends SimpleJShellBuiltin {
 
     private static class Mods {
 
-        Set<NutsPathPermission> addPermissions = new HashSet<>();
-        Set<NutsPathPermission> removePermissions = new HashSet<>();
+        Set<NPathPermission> addPermissions = new HashSet<>();
+        Set<NPathPermission> removePermissions = new HashSet<>();
         boolean recursive = false;
 
         @Override
         public String toString() {
             StringBuilder sb = new StringBuilder();
-            for (NutsPathPermission p : addPermissions) {
+            for (NPathPermission p : addPermissions) {
                 if (sb.length() > 0) {
                     sb.append(",");
                 }
                 sb.append("+").append(p.id());
             }
-            for (NutsPathPermission p : removePermissions) {
+            for (NPathPermission p : removePermissions) {
                 if (sb.length() > 0) {
                     sb.append(",");
                 }
@@ -242,7 +242,7 @@ public class ChmodCommand extends SimpleJShellBuiltin {
 
     private static class Options {
 
-        List<NutsPath> files = new ArrayList<>();
+        List<NPath> files = new ArrayList<>();
         Mods m = new Mods();
     }
 }

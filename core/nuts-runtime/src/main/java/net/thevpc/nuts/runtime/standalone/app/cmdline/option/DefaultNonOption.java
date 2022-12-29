@@ -25,10 +25,10 @@
 */
 package net.thevpc.nuts.runtime.standalone.app.cmdline.option;
 
-import net.thevpc.nuts.cmdline.DefaultNutsArgumentCandidate;
-import net.thevpc.nuts.cmdline.NutsArgumentCandidate;
-import net.thevpc.nuts.cmdline.NutsArgumentName;
-import net.thevpc.nuts.cmdline.NutsCommandAutoComplete;
+import net.thevpc.nuts.cmdline.DefaultNArgumentCandidate;
+import net.thevpc.nuts.cmdline.NArgumentCandidate;
+import net.thevpc.nuts.cmdline.NArgumentName;
+import net.thevpc.nuts.cmdline.NCommandAutoComplete;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -37,7 +37,7 @@ import java.util.List;
  *
  * @author thevpc
  */
-public class DefaultNonOption implements NutsArgumentName {
+public class DefaultNonOption implements NArgumentName {
 
     private final String name;
 
@@ -53,9 +53,9 @@ public class DefaultNonOption implements NutsArgumentName {
     }
 
     @Override
-    public List<NutsArgumentCandidate> getCandidates(NutsCommandAutoComplete context) {
-        List<NutsArgumentCandidate> list = new ArrayList<>();
-        list.add(new DefaultNutsArgumentCandidate("<" + getName() + ">"));
+    public List<NArgumentCandidate> getCandidates(NCommandAutoComplete context) {
+        List<NArgumentCandidate> list = new ArrayList<>();
+        list.add(new DefaultNArgumentCandidate("<" + getName() + ">"));
         return list;
     }
 

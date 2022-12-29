@@ -17,8 +17,8 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import net.thevpc.nuts.Nuts;
-import net.thevpc.nuts.NutsSession;
-import net.thevpc.nuts.NutsVersion;
+import net.thevpc.nuts.NSession;
+import net.thevpc.nuts.NVersion;
 import net.thevpc.nuts.runtime.standalone.io.util.CoreIOUtils;
 
 /**
@@ -32,7 +32,7 @@ public class TestUtils {
     public static final String LINUX_CACHE = new File(System.getProperty("user.home") + "/.cache/nuts").getPath();
     public static final String LINUX_TEMP = new File(System.getProperty("java.io.tmpdir") + "/" + System.getProperty("user.name") + "/nuts").getPath();
     public static final String[] NUTS_STD_FOLDERS = {LINUX_CONFIG, LINUX_CACHE, LINUX_TEMP, LINUX_APPS};
-    public static final NutsVersion NUTS_VERSION = Nuts.getVersion();
+    public static final NVersion NUTS_VERSION = Nuts.getVersion();
 
     public static FileSystemStash STASH = new FileSystemStash();
 
@@ -164,23 +164,23 @@ public class TestUtils {
         }
     }
 
-    public static NutsSession openNewMinTestWorkspace(String... args) {
+    public static NSession openNewMinTestWorkspace(String... args) {
         List<String> a=new ArrayList<>();
         a.addAll(Arrays.asList("-byZSKk"));
         a.addAll(Arrays.asList(args));
         return openOrReOpenTestWorkspace(true,false,a.toArray(new String[0]));
     }
 
-    public static NutsSession openNewTestWorkspace(String... args) {
+    public static NSession openNewTestWorkspace(String... args) {
         return openOrReOpenTestWorkspace(true,false,args);
     }
-    public static NutsSession openExistingTestWorkspace(String... args) {
+    public static NSession openExistingTestWorkspace(String... args) {
         return openOrReOpenTestWorkspace(false,false,args);
     }
-    public static NutsSession runNewTestWorkspace(String... args) {
+    public static NSession runNewTestWorkspace(String... args) {
         return openOrReOpenTestWorkspace(true,true,args);
     }
-    public static NutsSession runExistingTestWorkspace(String... args) {
+    public static NSession runExistingTestWorkspace(String... args) {
         return openOrReOpenTestWorkspace(false,true,args);
     }
 
@@ -194,7 +194,7 @@ public class TestUtils {
         }
     }
 
-    private static NutsSession openOrReOpenTestWorkspace(boolean deleteFolder, boolean run,String... args) {
+    private static NSession openOrReOpenTestWorkspace(boolean deleteFolder, boolean run, String... args) {
         try {
             String test_id = TestUtils.getCallerMethodId(2);
             File path;

@@ -1,17 +1,17 @@
 package net.thevpc.nuts.runtime.standalone.xtra.nanodb;
 
-import net.thevpc.nuts.NutsSession;
+import net.thevpc.nuts.NSession;
 
 import java.util.stream.LongStream;
 
 public interface DBIndexValueStore {
-    void add(long position, NutsSession session);
+    void add(long position, NSession session);
 
-    void addAll(long[] positions,NutsSession session);
+    void addAll(long[] positions, NSession session);
 
-    LongStream stream(NutsSession session);
+    LongStream stream(NSession session);
 
     boolean isMem();
 
-    void flush(NutsSession session);
+    void flush(NSession session);
 }

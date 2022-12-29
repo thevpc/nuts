@@ -27,10 +27,10 @@
 package net.thevpc.nuts.toolbox.nsh.cmds.bash;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.cmdline.NutsArgument;
-import net.thevpc.nuts.cmdline.NutsCommandLine;
-import net.thevpc.nuts.io.NutsPath;
-import net.thevpc.nuts.io.NutsPathPermission;
+import net.thevpc.nuts.cmdline.NArgument;
+import net.thevpc.nuts.cmdline.NCommandLine;
+import net.thevpc.nuts.io.NPath;
+import net.thevpc.nuts.io.NPathPermission;
 import net.thevpc.nuts.toolbox.nsh.SimpleJShellBuiltin;
 import net.thevpc.nuts.toolbox.nsh.jshell.JShellExecutionContext;
 
@@ -46,12 +46,12 @@ public class TestCommand extends SimpleJShellBuiltin {
         super("test", DEFAULT_SUPPORT, Options.class);
     }
 
-    private static NutsPath evalPath(Eval a, JShellExecutionContext context) {
-        return NutsPath.of(evalStr(a, context),context.getSession());
+    private static NPath evalPath(Eval a, JShellExecutionContext context) {
+        return NPath.of(evalStr(a, context),context.getSession());
     }
 
     private static String evalStr(Eval a, JShellExecutionContext context) {
-        NutsSession session = context.getSession();
+        NSession session = context.getSession();
         if (a instanceof EvalArg) {
             return ((EvalArg) a).arg.asString().get(session);
         }
@@ -59,7 +59,7 @@ public class TestCommand extends SimpleJShellBuiltin {
     }
 
     private static int evalInt(Eval a, JShellExecutionContext context) {
-        NutsSession session = context.getSession();
+        NSession session = context.getSession();
         if (a instanceof EvalArg) {
             return ((EvalArg) a).arg.asInt().get(session);
         }
@@ -188,11 +188,11 @@ public class TestCommand extends SimpleJShellBuiltin {
     }
 
     @Override
-    protected boolean configureFirst(NutsCommandLine commandLine, JShellExecutionContext context) {
-        NutsSession session = context.getSession();
+    protected boolean configureFirst(NCommandLine commandLine, JShellExecutionContext context) {
+        NSession session = context.getSession();
         commandLine.setExpandSimpleOptions(false);
         Options options=context.getOptions();
-        NutsArgument a = commandLine.next().get(session);
+        NArgument a = commandLine.next().get(session);
         switch (a.asString().get(session)) {
             case "(": {
                 options.operators.add(a.asString().get(session));
@@ -229,8 +229,8 @@ public class TestCommand extends SimpleJShellBuiltin {
     }
 
     @Override
-    protected void execBuiltin(NutsCommandLine commandLine, JShellExecutionContext context) {
-        NutsSession session = context.getSession();
+    protected void execBuiltin(NCommandLine commandLine, JShellExecutionContext context) {
+        NSession session = context.getSession();
         Options options=context.getOptions();
         if(options.operands.isEmpty()){
             throwExecutionException("result",1,session);
@@ -282,16 +282,16 @@ public class TestCommand extends SimpleJShellBuiltin {
 
     private static class EvalArg extends EvalBase {
 
-        private NutsArgument arg;
+        private NArgument arg;
 
-        public EvalArg(NutsArgument arg) {
+        public EvalArg(NArgument arg) {
             super("arg");
             this.arg = arg;
         }
 
         @Override
         public int eval(JShellExecutionContext context) {
-            NutsSession session = context.getSession();
+            NSession session = context.getSession();
             return arg.asString().get(session).length() > 0 ? 0 : 1;
         }
 
@@ -308,7 +308,7 @@ public class TestCommand extends SimpleJShellBuiltin {
 
         @Override
         public int eval(JShellExecutionContext context) {
-            NutsSession session = context.getSession();
+            NSession session = context.getSession();
             switch (type) {
                 case "!": {
                     return 1 - arg.eval(context);
@@ -322,23 +322,23 @@ public class TestCommand extends SimpleJShellBuiltin {
                     return pp.length() > 0 ? 1 : 0;
                 }
                 case "-b": {
-                    NutsPath pp = evalPath(arg, context);
+                    NPath pp = evalPath(arg, context);
                     return 1;
                 }
                 case "-c": {
-                    NutsPath pp = evalPath(arg, context);
+                    NPath pp = evalPath(arg, context);
                     return 1;
                 }
                 case "-d": {
-                    NutsPath pp = evalPath(arg, context);
+                    NPath pp = evalPath(arg, context);
                     return pp.isDirectory() ? 0 : 1;
                 }
                 case "-f": {
-                    NutsPath pp = evalPath(arg, context);
+                    NPath pp = evalPath(arg, context);
                     return pp.isRegularFile() ? 0 : 1;
                 }
                 case "-e": {
-                    NutsPath pp = evalPath(arg, context);
+                    NPath pp = evalPath(arg, context);
                     return pp.exists() ? 0 : 1;
                 }
                 case "-g":
@@ -351,7 +351,7 @@ public class TestCommand extends SimpleJShellBuiltin {
                 case "-u": {
                     if (arg instanceof EvalArg) {
                         EvalArg a = (EvalArg) arg;
-                        NutsPath pp = evalPath(arg, context);
+                        NPath pp = evalPath(arg, context);
                         //FILE exists and is a socket
                         return 1;//Files.exists(Paths.get(path)) ? 0 : 1;
                     }
@@ -359,7 +359,7 @@ public class TestCommand extends SimpleJShellBuiltin {
                 }
                 case "-N": {
                     try {
-                        NutsPath pp = evalPath(arg, context);
+                        NPath pp = evalPath(arg, context);
                         Instant lastAccessTime = pp.getLastAccessInstant();
                         Instant lastModifedTime = pp.getLastModifiedInstant();
 //                            FileTime createTime = attributes.creationTime();
@@ -370,7 +370,7 @@ public class TestCommand extends SimpleJShellBuiltin {
                 }
                 case "-O": {
                     try {
-                        NutsPath pp = evalPath(arg, context);
+                        NPath pp = evalPath(arg, context);
                         String up = pp.owner();
                         return (up!=null && up.equals(System.getProperty("user.name"))) ? 0 : 1;
                     } catch (Exception ex) {
@@ -381,31 +381,31 @@ public class TestCommand extends SimpleJShellBuiltin {
                     EvalArg a = (EvalArg) arg;
                     String path = a.arg.asString().get(session);
                     try {
-                        NutsPath pp = evalPath(arg, context);
-                        return pp.exists() && pp.getPermissions().contains(NutsPathPermission.CAN_READ) ? 0 : 1;
+                        NPath pp = evalPath(arg, context);
+                        return pp.exists() && pp.getPermissions().contains(NPathPermission.CAN_READ) ? 0 : 1;
                     } catch (Exception ex) {
                         return 1;
                     }
                 }
                 case "-w": {
                     try {
-                        NutsPath pp = evalPath(arg, context);
-                        return pp.exists() && pp.getPermissions().contains(NutsPathPermission.CAN_WRITE) ? 0 : 1;
+                        NPath pp = evalPath(arg, context);
+                        return pp.exists() && pp.getPermissions().contains(NPathPermission.CAN_WRITE) ? 0 : 1;
                     } catch (Exception ex) {
                         return 1;
                     }
                 }
                 case "-x": {
                     try {
-                        NutsPath pp = evalPath(arg, context);
-                        return pp.exists() && pp.getPermissions().contains(NutsPathPermission.CAN_EXECUTE) ? 0 : 1;
+                        NPath pp = evalPath(arg, context);
+                        return pp.exists() && pp.getPermissions().contains(NPathPermission.CAN_EXECUTE) ? 0 : 1;
                     } catch (Exception ex) {
                         return 1;
                     }
                 }
                 case "-s": {
                     try {
-                        NutsPath pp = evalPath(arg, context);
+                        NPath pp = evalPath(arg, context);
                         return pp.isRegularFile() && pp.getContentLength() > 0 ? 0 : 1;
                     } catch (Exception ex) {
                         return 1;
@@ -488,8 +488,8 @@ public class TestCommand extends SimpleJShellBuiltin {
                     return Integer.compare(s1, s2) <= 0 ? 0 : 1;
                 }
                 case "-ef": {
-                    NutsPath s1 = evalPath(arg1, context);
-                    NutsPath s2 = evalPath(arg2, context);
+                    NPath s1 = evalPath(arg1, context);
+                    NPath s2 = evalPath(arg2, context);
                     try {
 //                        Object at1 = Files.getFileAttributeView(s1, BasicFileAttributeView.class).readAttributes().fileKey();
 //                        Object at2 = Files.getFileAttributeView(s2, BasicFileAttributeView.class).readAttributes().fileKey();
@@ -499,8 +499,8 @@ public class TestCommand extends SimpleJShellBuiltin {
                     }
                 }
                 case "-nt": {
-                    NutsPath s1 = evalPath(arg1, context);
-                    NutsPath s2 = evalPath(arg2, context);
+                    NPath s1 = evalPath(arg1, context);
+                    NPath s2 = evalPath(arg2, context);
                     try {
                         Instant at1 = s1.getLastModifiedInstant();
                         Instant at2 = s2.getLastModifiedInstant();
@@ -510,8 +510,8 @@ public class TestCommand extends SimpleJShellBuiltin {
                     }
                 }
                 case "-ot": {
-                    NutsPath s1 = evalPath(arg1, context);
-                    NutsPath s2 = evalPath(arg2, context);
+                    NPath s1 = evalPath(arg1, context);
+                    NPath s2 = evalPath(arg2, context);
                     try {
                         Instant at1 = s1.getLastModifiedInstant();
                         Instant at2 = s2.getLastModifiedInstant();

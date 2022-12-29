@@ -6,8 +6,8 @@
 package net.thevpc.nuts.toolbox.docusaurus;
 
 
-import net.thevpc.nuts.elem.NutsElement;
-import net.thevpc.nuts.NutsSession;
+import net.thevpc.nuts.elem.NElement;
+import net.thevpc.nuts.NSession;
 import net.thevpc.nuts.lib.md.MdElement;
 import net.thevpc.nuts.lib.md.docusaurus.DocusaurusUtils;
 import net.thevpc.nuts.lib.md.util.MdUtils;
@@ -21,7 +21,7 @@ public abstract class DocusaurusFile implements DocusaurusFileOrFolder {
     private final String longId;
     private final String shortId;
     private final String title;
-    private final NutsElement config;
+    private final NElement config;
     private final int order;
 
 //    public static DocusaurusFile ofContent(String id, String longId, String title, String content, int menuOrder) {
@@ -33,7 +33,7 @@ public abstract class DocusaurusFile implements DocusaurusFileOrFolder {
 //    }
 
 
-    protected DocusaurusFile(String shortId, String longId, String title, int order,NutsElement config) {
+    protected DocusaurusFile(String shortId, String longId, String title, int order, NElement config) {
         this.shortId = shortId;
         this.longId = longId;
         this.title = title;
@@ -41,7 +41,7 @@ public abstract class DocusaurusFile implements DocusaurusFileOrFolder {
         this.config = config;
     }
 
-    public NutsElement getConfig() {
+    public NElement getConfig() {
         return config;
     }
 
@@ -62,7 +62,7 @@ public abstract class DocusaurusFile implements DocusaurusFileOrFolder {
     }
 
 
-    public abstract MdElement getContent(NutsSession session);
+    public abstract MdElement getContent(NSession session);
 
     @Override
     public String toString() {

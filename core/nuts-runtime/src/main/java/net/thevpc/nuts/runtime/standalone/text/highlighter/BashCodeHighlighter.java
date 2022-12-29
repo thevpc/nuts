@@ -1,9 +1,9 @@
 package net.thevpc.nuts.runtime.standalone.text.highlighter;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.io.NutsIOException;
+import net.thevpc.nuts.io.NIOException;
 import net.thevpc.nuts.runtime.standalone.xtra.expr.StringReaderExt;
-import net.thevpc.nuts.runtime.standalone.text.parser.DefaultNutsTextPlain;
+import net.thevpc.nuts.runtime.standalone.text.parser.DefaultNTextPlain;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -12,16 +12,16 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import net.thevpc.nuts.spi.NutsComponent;
-import net.thevpc.nuts.NutsCodeHighlighter;
-import net.thevpc.nuts.spi.NutsSupportLevelContext;
+import net.thevpc.nuts.spi.NComponent;
+import net.thevpc.nuts.NCodeHighlighter;
+import net.thevpc.nuts.spi.NSupportLevelContext;
 import net.thevpc.nuts.text.*;
 
-public class BashCodeHighlighter implements NutsCodeHighlighter {
+public class BashCodeHighlighter implements NCodeHighlighter {
 
-    private NutsWorkspace ws;
+    private NWorkspace ws;
 
-    public BashCodeHighlighter(NutsSession session) {
+    public BashCodeHighlighter(NSession session) {
         this.ws = session.getWorkspace();
     }
 
@@ -31,7 +31,7 @@ public class BashCodeHighlighter implements NutsCodeHighlighter {
     }
 
     @Override
-    public int getSupportLevel(NutsSupportLevelContext context) {
+    public int getSupportLevel(NSupportLevelContext context) {
         String s = context.getConstraints();
         if(s==null){
             return DEFAULT_SUPPORT;
@@ -44,46 +44,46 @@ public class BashCodeHighlighter implements NutsCodeHighlighter {
             case "ksh":
             case "text/x-shellscript":
             {
-                return NutsComponent.DEFAULT_SUPPORT;
+                return NComponent.DEFAULT_SUPPORT;
             }
             case "system": {
-                switch (NutsShellFamily.getCurrent()) {
+                switch (NShellFamily.getCurrent()) {
                     case SH:
                     case BASH:
                     case CSH:
                     case ZSH:
                     case KSH:{
-                        return NutsComponent.DEFAULT_SUPPORT + 10;
+                        return NComponent.DEFAULT_SUPPORT + 10;
                     }
                 }
-                return NutsComponent.DEFAULT_SUPPORT;
+                return NComponent.DEFAULT_SUPPORT;
             }
         }
-        return NutsComponent.NO_SUPPORT;
+        return NComponent.NO_SUPPORT;
     }
 
     @Override
-    public NutsText tokenToText(String text, String nodeType, NutsTexts txt, NutsSession session) {
+    public NText tokenToText(String text, String nodeType, NTexts txt, NSession session) {
         return txt.ofPlain(text);
     }
 
-    private NutsText[] parseCommandLine_readSimpleQuotes(StringReaderExt ar, NutsTexts txt, NutsSession session) {
+    private NText[] parseCommandLine_readSimpleQuotes(StringReaderExt ar, NTexts txt, NSession session) {
         StringBuilder sb = new StringBuilder();
         sb.append(ar.nextChar()); //quote!
-        List<NutsText> ret = new ArrayList<>();
+        List<NText> ret = new ArrayList<>();
         while (ar.hasNext()) {
             char c = ar.peekChar();
             if (c == '\\') {
                 StringBuilder sb2 = new StringBuilder();
                 sb2.append(ar.nextChar());
                 if (sb.length() > 0) {
-                    ret.add(txt.ofStyled(sb.toString(), NutsTextStyle.string(2)));
+                    ret.add(txt.ofStyled(sb.toString(), NTextStyle.string(2)));
                     sb.setLength(0);
                 }
                 if (ar.hasNext()) {
                     sb2.append(ar.nextChar());
                 }
-                ret.add(txt.ofStyled(sb2.toString(), NutsTextStyle.separator()));
+                ret.add(txt.ofStyled(sb2.toString(), NTextStyle.separator()));
                 break;
             } else if (c == '\'') {
                 sb.append(ar.nextChar());
@@ -93,15 +93,15 @@ public class BashCodeHighlighter implements NutsCodeHighlighter {
             }
         }
         if (sb.length() > 0) {
-            ret.add(txt.ofStyled(sb.toString(), NutsTextStyle.string(2)));
+            ret.add(txt.ofStyled(sb.toString(), NTextStyle.string(2)));
             sb.setLength(0);
         }
-        return ret.toArray(new NutsText[0]);
+        return ret.toArray(new NText[0]);
     }
 
-    private NutsText[] parseCommandLine_readWord(StringReaderExt ar, NutsTexts txt, NutsSession session) {
+    private NText[] parseCommandLine_readWord(StringReaderExt ar, NTexts txt, NSession session) {
         StringBuilder sb = new StringBuilder();
-        List<NutsText> ret = new ArrayList<>();
+        List<NText> ret = new ArrayList<>();
         boolean inLoop = true;
         boolean endsWithSep = false;
         while (inLoop && ar.hasNext()) {
@@ -165,23 +165,23 @@ public class BashCodeHighlighter implements NutsCodeHighlighter {
         if (ret.isEmpty()) {
             throw new IllegalArgumentException("was not expecting " + ar.peekChar() + " as part of word");
         }
-        if (ret.get(0).getType() == NutsTextType.PLAIN && isOption(((NutsTextPlain) ret.get(0)).getText())) {
-            ret.set(0, txt.ofStyled(ret.get(0), NutsTextStyle.option()));
+        if (ret.get(0).getType() == NTextType.PLAIN && isOption(((NTextPlain) ret.get(0)).getText())) {
+            ret.set(0, txt.ofStyled(ret.get(0), NTextStyle.option()));
         }
-        return ret.toArray(new NutsText[0]);
+        return ret.toArray(new NText[0]);
     }
 
-    private static NutsText[] parseCommandLine_readAntiSlash(StringReaderExt ar, NutsSession session) {
+    private static NText[] parseCommandLine_readAntiSlash(StringReaderExt ar, NSession session) {
         StringBuilder sb2 = new StringBuilder();
         sb2.append(ar.nextChar());
         if (ar.hasNext()) {
             sb2.append(ar.nextChar());
         }
-        NutsTexts factory = NutsTexts.of(session);
-        return new NutsText[]{factory.ofStyled(sb2.toString(), NutsTextStyle.separator())};
+        NTexts factory = NTexts.of(session);
+        return new NText[]{factory.ofStyled(sb2.toString(), NTextStyle.separator())};
     }
 
-    private NutsText[] parseCommandLine_readDollar(StringReaderExt ar, NutsTexts txt, NutsSession session) {
+    private NText[] parseCommandLine_readDollar(StringReaderExt ar, NTexts txt, NSession session) {
         if (ar.peekChars("$((")) {
             return parseCommandLine_readDollarPar2(ar, session, txt);
         }
@@ -209,7 +209,7 @@ public class BashCodeHighlighter implements NutsCodeHighlighter {
                 case '9': {
                     sb2.append(ar.nextChar());
                     sb2.append(ar.nextChar());
-                    return new NutsText[]{txt.ofStyled(sb2.toString(), NutsTextStyle.separator())};
+                    return new NText[]{txt.ofStyled(sb2.toString(), NTextStyle.separator())};
                 }
             }
         }
@@ -223,49 +223,49 @@ public class BashCodeHighlighter implements NutsCodeHighlighter {
             }
         }
         if (sb2.length() > 0) {
-            return new NutsText[]{
-                    txt.ofStyled("$", NutsTextStyle.separator()),
-                    txt.ofStyled(sb2.toString(), NutsTextStyle.keyword(4)),};
+            return new NText[]{
+                    txt.ofStyled("$", NTextStyle.separator()),
+                    txt.ofStyled(sb2.toString(), NTextStyle.keyword(4)),};
         }
-        return new NutsText[]{
-                txt.ofStyled("$", NutsTextStyle.separator()),};
+        return new NText[]{
+                txt.ofStyled("$", NTextStyle.separator()),};
     }
 
-    private NutsText[] parseCommandLine_readDoubleQuotes(StringReaderExt ar, NutsTexts txt, NutsSession session) {
-        List<NutsText> ret = new ArrayList<>();
+    private NText[] parseCommandLine_readDoubleQuotes(StringReaderExt ar, NTexts txt, NSession session) {
+        List<NText> ret = new ArrayList<>();
         StringBuilder sb = new StringBuilder();
 
-        ret.add(txt.ofStyled(String.valueOf(ar.nextChar()), NutsTextStyle.string()));
+        ret.add(txt.ofStyled(String.valueOf(ar.nextChar()), NTextStyle.string()));
         while (ar.hasNext()) {
             char c = ar.peekChar();
             if (c == '\\') {
                 if (sb.length() > 0) {
-                    ret.add(txt.ofStyled(sb.toString(), NutsTextStyle.string()));
+                    ret.add(txt.ofStyled(sb.toString(), NTextStyle.string()));
                     sb.setLength(0);
                 }
                 ret.addAll(Arrays.asList(parseCommandLine_readAntiSlash(ar, session)));
             } else if (c == '$') {
                 if (sb.length() > 0) {
-                    ret.add(txt.ofStyled(sb.toString(), NutsTextStyle.string()));
+                    ret.add(txt.ofStyled(sb.toString(), NTextStyle.string()));
                     sb.setLength(0);
                 }
                 ret.addAll(Arrays.asList(parseCommandLine_readDollar(ar, txt, session)));
             } else if (c == '\"') {
                 if (sb.length() > 0) {
-                    ret.add(txt.ofStyled(sb.toString(), NutsTextStyle.string()));
+                    ret.add(txt.ofStyled(sb.toString(), NTextStyle.string()));
                     sb.setLength(0);
                 }
-                ret.add(txt.ofStyled(String.valueOf(ar.nextChar()), NutsTextStyle.string()));
+                ret.add(txt.ofStyled(String.valueOf(ar.nextChar()), NTextStyle.string()));
                 break;
             } else {
                 sb.append(ar.nextChar());
             }
         }
         if (sb.length() > 0) {
-            ret.add(txt.ofStyled(sb.toString(), NutsTextStyle.string()));
+            ret.add(txt.ofStyled(sb.toString(), NTextStyle.string()));
             sb.setLength(0);
         }
-        return ret.toArray(new NutsText[0]);
+        return ret.toArray(new NText[0]);
     }
 
 
@@ -274,9 +274,9 @@ public class BashCodeHighlighter implements NutsCodeHighlighter {
         ENV,WORD,SPACE,QUOTES,SEPARATORS,OTHER,EMPTY
     }
 
-    private static TokenType resolveTokenType(NutsText n) {
-        if (n instanceof DefaultNutsTextPlain) {
-            String text = ((DefaultNutsTextPlain) n).getText();
+    private static TokenType resolveTokenType(NText n) {
+        if (n instanceof DefaultNTextPlain) {
+            String text = ((DefaultNTextPlain) n).getText();
             if (text.length() > 0) {
                 char c = text.charAt(0);
                 switch (c) {
@@ -308,18 +308,18 @@ public class BashCodeHighlighter implements NutsCodeHighlighter {
         return TokenType.OTHER;
     }
 
-    private static boolean isWhites(NutsText n) {
-        if (n instanceof DefaultNutsTextPlain) {
-            if (Character.isWhitespace(((DefaultNutsTextPlain) n).getText().charAt(0))) {
+    private static boolean isWhites(NText n) {
+        if (n instanceof DefaultNTextPlain) {
+            if (Character.isWhitespace(((DefaultNTextPlain) n).getText().charAt(0))) {
                 return true;
             }
         }
         return false;
     }
 
-    private static int indexOfFirstWord(List<NutsText> all, int from) {
+    private static int indexOfFirstWord(List<NText> all, int from) {
         for (int i = from; i < all.size(); i++) {
-            NutsText n = all.get(i);
+            NText n = all.get(i);
             switch (resolveTokenType(n)){
                 case SPACE:
                 case SEPARATORS:
@@ -330,7 +330,7 @@ public class BashCodeHighlighter implements NutsCodeHighlighter {
                     if (i == all.size() - 1) {
                         return i;
                     }
-                    NutsText p = all.get(i + 1);
+                    NText p = all.get(i + 1);
                     switch (resolveTokenType(n)) {
                         case SPACE:
                         case SEPARATORS:{
@@ -344,9 +344,9 @@ public class BashCodeHighlighter implements NutsCodeHighlighter {
         return -1;
     }
 
-    private NutsText[] parseCommandLine_readAntiQuotes(StringReaderExt ar, NutsTexts txt, NutsSession session) {
-        List<NutsText> all = new ArrayList<>();
-        all.add(txt.ofStyled(String.valueOf(ar.nextChar()), NutsTextStyle.separator()));
+    private NText[] parseCommandLine_readAntiQuotes(StringReaderExt ar, NTexts txt, NSession session) {
+        List<NText> all = new ArrayList<>();
+        all.add(txt.ofStyled(String.valueOf(ar.nextChar()), NTextStyle.separator()));
         boolean inLoop = true;
         boolean wasSpace = true;
         while (inLoop && ar.hasNext()) {
@@ -354,7 +354,7 @@ public class BashCodeHighlighter implements NutsCodeHighlighter {
             switch (c) {
                 case '`': {
                     wasSpace = false;
-                    all.add(txt.ofStyled(String.valueOf(ar.nextChar()), NutsTextStyle.separator()));
+                    all.add(txt.ofStyled(String.valueOf(ar.nextChar()), NTextStyle.separator()));
                     inLoop = false;
                     break;
                 }
@@ -363,19 +363,19 @@ public class BashCodeHighlighter implements NutsCodeHighlighter {
                 }
             }
         }
-        return all.toArray(new NutsText[0]);
+        return all.toArray(new NText[0]);
     }
 
-    private NutsText[] parseCommandLine_readDollarPar(NutsWorkspace ws, StringReaderExt ar, NutsTexts txt, NutsSession session) {
-        List<NutsText> all = new ArrayList<>();
-        all.add(txt.ofStyled(String.valueOf(ar.nextChar()) + ar.nextChar(), NutsTextStyle.separator()));
+    private NText[] parseCommandLine_readDollarPar(NWorkspace ws, StringReaderExt ar, NTexts txt, NSession session) {
+        List<NText> all = new ArrayList<>();
+        all.add(txt.ofStyled(String.valueOf(ar.nextChar()) + ar.nextChar(), NTextStyle.separator()));
         boolean inLoop = true;
         boolean wasSpace = false;
         while (inLoop && ar.hasNext()) {
             char c = ar.peekChar();
             switch (c) {
                 case ')': {
-                    all.add(txt.ofStyled(String.valueOf(ar.nextChar()), NutsTextStyle.separator()));
+                    all.add(txt.ofStyled(String.valueOf(ar.nextChar()), NTextStyle.separator()));
                     inLoop = false;
                     break;
                 }
@@ -384,12 +384,12 @@ public class BashCodeHighlighter implements NutsCodeHighlighter {
                 }
             }
         }
-        return all.toArray(new NutsText[0]);
+        return all.toArray(new NText[0]);
     }
 
-    private NutsText[] parseCommandLine_readDollarPar2(StringReaderExt ar, NutsSession session, NutsTexts txt) {
-        List<NutsText> all = new ArrayList<>();
-        all.add(txt.ofStyled(String.valueOf(ar.nextChar()) + ar.nextChar() + ar.nextChar(), NutsTextStyle.separator()));
+    private NText[] parseCommandLine_readDollarPar2(StringReaderExt ar, NSession session, NTexts txt) {
+        List<NText> all = new ArrayList<>();
+        all.add(txt.ofStyled(String.valueOf(ar.nextChar()) + ar.nextChar() + ar.nextChar(), NTextStyle.separator()));
         boolean inLoop = true;
         boolean wasSpace = true;
         while (inLoop && ar.hasNext()) {
@@ -401,13 +401,13 @@ public class BashCodeHighlighter implements NutsCodeHighlighter {
                 case '/':
                 case '%': {
                     wasSpace = false;
-                    all.add(txt.ofStyled(String.valueOf(ar.nextChars(2)), NutsTextStyle.operator()));
+                    all.add(txt.ofStyled(String.valueOf(ar.nextChars(2)), NTextStyle.operator()));
                     break;
                 }
                 case ')': {
                     if (ar.peekChars(2).equals("))")) {
                         wasSpace = false;
-                        all.add(txt.ofStyled(String.valueOf(ar.nextChars(2)), NutsTextStyle.separator()));
+                        all.add(txt.ofStyled(String.valueOf(ar.nextChars(2)), NTextStyle.separator()));
                         inLoop = false;
                     } else {
                         wasSpace = parseCommandLineStep(ar, all, 2, wasSpace, txt, session);
@@ -419,12 +419,12 @@ public class BashCodeHighlighter implements NutsCodeHighlighter {
                 }
             }
         }
-        return all.toArray(new NutsText[0]);
+        return all.toArray(new NText[0]);
     }
 
-    private NutsText[] parseCommandLine_readDollarCurlyBrackets(StringReaderExt ar, NutsTexts txt, NutsSession session) {
-        List<NutsText> all = new ArrayList<>();
-        all.add(txt.ofStyled(String.valueOf(ar.nextChar()) + ar.nextChar(), NutsTextStyle.separator()));
+    private NText[] parseCommandLine_readDollarCurlyBrackets(StringReaderExt ar, NTexts txt, NSession session) {
+        List<NText> all = new ArrayList<>();
+        all.add(txt.ofStyled(String.valueOf(ar.nextChar()) + ar.nextChar(), NTextStyle.separator()));
         boolean inLoop = true;
         int startIndex = 0;
         boolean expectedName = true;
@@ -433,7 +433,7 @@ public class BashCodeHighlighter implements NutsCodeHighlighter {
             char c = ar.peekChar();
             switch (c) {
                 case '}': {
-                    all.add(txt.ofStyled(String.valueOf(ar.nextChar()), NutsTextStyle.separator()));
+                    all.add(txt.ofStyled(String.valueOf(ar.nextChar()), NTextStyle.separator()));
                     inLoop = false;
                     break;
                 }
@@ -445,7 +445,7 @@ public class BashCodeHighlighter implements NutsCodeHighlighter {
                         if (all.size() > startIndex) {
                             TokenType t = resolveTokenType(all.get(startIndex));
                             if (t==TokenType.ENV || t==TokenType.WORD) {
-                                all.set(startIndex, txt.ofStyled(all.get(startIndex), NutsTextStyle.keyword(4)));
+                                all.set(startIndex, txt.ofStyled(all.get(startIndex), NTextStyle.keyword(4)));
                                 wasSpace = false;
                             }
                         }
@@ -453,12 +453,12 @@ public class BashCodeHighlighter implements NutsCodeHighlighter {
                 }
             }
         }
-        return all.toArray(new NutsText[0]);
+        return all.toArray(new NText[0]);
     }
 
-    private NutsText[] parseCommandLine_readPar2(StringReaderExt ar, NutsTexts txt, NutsSession session) {
-        List<NutsText> all = new ArrayList<>();
-        all.add(txt.ofStyled(String.valueOf(ar.nextChar()) + ar.nextChar(), NutsTextStyle.separator()));
+    private NText[] parseCommandLine_readPar2(StringReaderExt ar, NTexts txt, NSession session) {
+        List<NText> all = new ArrayList<>();
+        all.add(txt.ofStyled(String.valueOf(ar.nextChar()) + ar.nextChar(), NTextStyle.separator()));
         boolean inLoop = true;
         boolean wasSpace = true;
         while (inLoop && ar.hasNext()) {
@@ -466,7 +466,7 @@ public class BashCodeHighlighter implements NutsCodeHighlighter {
             switch (c) {
                 case ')': {
                     if (ar.peekChars(2).equals("))")) {
-                        all.add(txt.ofStyled(String.valueOf(ar.nextChars(2)), NutsTextStyle.separator()));
+                        all.add(txt.ofStyled(String.valueOf(ar.nextChars(2)), NTextStyle.separator()));
                         inLoop = false;
                     } else {
                         wasSpace = parseCommandLineStep(ar, all, 2, wasSpace, txt, session);
@@ -478,7 +478,7 @@ public class BashCodeHighlighter implements NutsCodeHighlighter {
                 }
             }
         }
-        return all.toArray(new NutsText[0]);
+        return all.toArray(new NText[0]);
     }
 
     /**
@@ -491,7 +491,7 @@ public class BashCodeHighlighter implements NutsCodeHighlighter {
      * @param txt txt
      * @return is space
      */
-    private boolean parseCommandLineStep(StringReaderExt ar, List<NutsText> all, int startIndex, boolean wasSpace, NutsTexts txt, NutsSession session) {
+    private boolean parseCommandLineStep(StringReaderExt ar, List<NText> all, int startIndex, boolean wasSpace, NTexts txt, NSession session) {
         char c = ar.peekChar();
         if (c <= 32) {
             all.addAll(Arrays.asList(StringReaderExtUtils.readSpaces(session, ar)));
@@ -515,46 +515,46 @@ public class BashCodeHighlighter implements NutsCodeHighlighter {
                 break;
             }
             case ';': {
-                all.add(txt.ofStyled(String.valueOf(ar.nextChar()), NutsTextStyle.separator()));
+                all.add(txt.ofStyled(String.valueOf(ar.nextChar()), NTextStyle.separator()));
                 break;
             }
             case ':': {
-                all.add(txt.ofStyled(String.valueOf(ar.nextChar()), NutsTextStyle.separator(2)));
+                all.add(txt.ofStyled(String.valueOf(ar.nextChar()), NTextStyle.separator(2)));
                 break;
             }
             case '|': {
                 if (ar.peekChars(2).equals("||")) {
-                    all.add(txt.ofStyled(ar.nextChars(2), NutsTextStyle.separator()));
+                    all.add(txt.ofStyled(ar.nextChars(2), NTextStyle.separator()));
                 } else {
-                    all.add(txt.ofStyled(String.valueOf(ar.nextChar()), NutsTextStyle.separator()));
+                    all.add(txt.ofStyled(String.valueOf(ar.nextChar()), NTextStyle.separator()));
                 }
                 break;
             }
             case '&': {
                 if (ar.peekChars(2).equals("&&")) {
-                    all.add(txt.ofStyled(ar.nextChars(2), NutsTextStyle.separator()));
+                    all.add(txt.ofStyled(ar.nextChars(2), NTextStyle.separator()));
                 } else if (ar.peekChars(3).equals("&>>")) {
-                    all.add(txt.ofStyled(ar.nextChars(3), NutsTextStyle.separator()));
+                    all.add(txt.ofStyled(ar.nextChars(3), NTextStyle.separator()));
                 } else if (ar.peekChars(2).equals("&>")) {
-                    all.add(txt.ofStyled(ar.nextChars(2), NutsTextStyle.separator()));
+                    all.add(txt.ofStyled(ar.nextChars(2), NTextStyle.separator()));
                 } else {
-                    all.add(txt.ofStyled(String.valueOf(ar.nextChar()), NutsTextStyle.separator()));
+                    all.add(txt.ofStyled(String.valueOf(ar.nextChar()), NTextStyle.separator()));
                 }
                 break;
             }
             case '>': {
                 if (ar.peekChars(2).equals(">>")) {
-                    all.add(txt.ofStyled(ar.nextChars(2), NutsTextStyle.separator()));
+                    all.add(txt.ofStyled(ar.nextChars(2), NTextStyle.separator()));
                 } else if (ar.peekChars(2).equals(">&")) {
-                    all.add(txt.ofStyled(ar.nextChars(2), NutsTextStyle.separator()));
+                    all.add(txt.ofStyled(ar.nextChars(2), NTextStyle.separator()));
                 } else {
-                    all.add(txt.ofStyled(String.valueOf(ar.nextChar()), NutsTextStyle.separator()));
+                    all.add(txt.ofStyled(String.valueOf(ar.nextChar()), NTextStyle.separator()));
                 }
                 break;
             }
             case '<': {
                 if (ar.peekChars(2).equals("<<")) {
-                    all.add(txt.ofStyled(ar.nextChars(2), NutsTextStyle.separator()));
+                    all.add(txt.ofStyled(ar.nextChars(2), NTextStyle.separator()));
                 } else {
                     StringBuilder sb = new StringBuilder();
                     sb.append(ar.peekChar(0));
@@ -579,18 +579,18 @@ public class BashCodeHighlighter implements NutsCodeHighlighter {
                         String s = ar.nextChars(sb.length());
                         String s0 = s.substring(1, s.length() - 1);
                         if (isSynopsisOption(s0)) {
-                            all.add(txt.ofStyled("<", NutsTextStyle.input()));
-                            all.add(txt.ofStyled(s0, NutsTextStyle.option()));
-                            all.add(txt.ofStyled(">", NutsTextStyle.input()));
+                            all.add(txt.ofStyled("<", NTextStyle.input()));
+                            all.add(txt.ofStyled(s0, NTextStyle.option()));
+                            all.add(txt.ofStyled(">", NTextStyle.input()));
                         } else if (isSynopsisWord(s0)) {
-                            all.add(txt.ofStyled("<", NutsTextStyle.input()));
-                            all.add(txt.ofStyled(s0, NutsTextStyle.input()));
-                            all.add(txt.ofStyled(">", NutsTextStyle.input()));
+                            all.add(txt.ofStyled("<", NTextStyle.input()));
+                            all.add(txt.ofStyled(s0, NTextStyle.input()));
+                            all.add(txt.ofStyled(">", NTextStyle.input()));
                         } else {
-                            all.add(txt.ofStyled(String.valueOf(ar.nextChar()), NutsTextStyle.separator()));
+                            all.add(txt.ofStyled(String.valueOf(ar.nextChar()), NTextStyle.separator()));
                         }
                     } else {
-                        all.add(txt.ofStyled(String.valueOf(ar.nextChar()), NutsTextStyle.separator()));
+                        all.add(txt.ofStyled(String.valueOf(ar.nextChar()), NTextStyle.separator()));
                     }
                 }
                 break;
@@ -599,7 +599,7 @@ public class BashCodeHighlighter implements NutsCodeHighlighter {
                 if (ar.peekChars("((")) {
                     all.addAll(Arrays.asList(parseCommandLine_readPar2(ar, txt, session)));
                 } else {
-                    all.add(txt.ofStyled(String.valueOf(ar.nextChar()), NutsTextStyle.separator()));
+                    all.add(txt.ofStyled(String.valueOf(ar.nextChar()), NTextStyle.separator()));
                 }
             }
             case ')':
@@ -607,7 +607,7 @@ public class BashCodeHighlighter implements NutsCodeHighlighter {
             case '}':
             case '~':
             case '!': {
-                all.add(txt.ofStyled(String.valueOf(ar.nextChar()), NutsTextStyle.separator()));
+                all.add(txt.ofStyled(String.valueOf(ar.nextChar()), NTextStyle.separator()));
                 break;
             }
             case '*':
@@ -615,7 +615,7 @@ public class BashCodeHighlighter implements NutsCodeHighlighter {
             case '[':
             case ']':
             case '=': {
-                all.add(txt.ofStyled(String.valueOf(ar.nextChar()), NutsTextStyle.separator()));
+                all.add(txt.ofStyled(String.valueOf(ar.nextChar()), NTextStyle.separator()));
                 break;
             }
             case '#': {
@@ -631,9 +631,9 @@ public class BashCodeHighlighter implements NutsCodeHighlighter {
                             sb.append(ar.nextChar());
                         }
                     }
-                    all.add(txt.ofStyled(sb.toString(), NutsTextStyle.comments()));
+                    all.add(txt.ofStyled(sb.toString(), NTextStyle.comments()));
                 } else {
-                    all.add(txt.ofStyled(String.valueOf(ar.nextChar()), NutsTextStyle.separator()));
+                    all.add(txt.ofStyled(String.valueOf(ar.nextChar()), NTextStyle.separator()));
                 }
                 break;
             }
@@ -644,7 +644,7 @@ public class BashCodeHighlighter implements NutsCodeHighlighter {
                     if (first) {
                         int i = indexOfFirstWord(all, startIndex);
                         if (i >= 0) {
-                            all.set(i, txt.ofStyled(all.get(i), NutsTextStyle.keyword()));
+                            all.set(i, txt.ofStyled(all.get(i), NTextStyle.keyword()));
                         }
                     }
                 } else {
@@ -655,14 +655,14 @@ public class BashCodeHighlighter implements NutsCodeHighlighter {
         return false;
     }
 
-    private NutsText[] parseCommandLine(String commandLineString, NutsTexts txt, NutsSession session) {
+    private NText[] parseCommandLine(String commandLineString, NTexts txt, NSession session) {
         StringReaderExt ar = new StringReaderExt(commandLineString);
-        List<NutsText> all = new ArrayList<>();
+        List<NText> all = new ArrayList<>();
         boolean wasSpace = true;
         while (ar.hasNext()) {
             wasSpace = parseCommandLineStep(ar, all, 0, wasSpace, txt, session);
         }
-        return all.toArray(new NutsText[0]);
+        return all.toArray(new NText[0]);
     }
 
     private static boolean isSynopsisOption(String s2) {
@@ -710,8 +710,8 @@ public class BashCodeHighlighter implements NutsCodeHighlighter {
     }
 
     @Override
-    public NutsText stringToText(String text, NutsTexts txt, NutsSession session) {
-        List<NutsText> all = new ArrayList<>();
+    public NText stringToText(String text, NTexts txt, NSession session) {
+        List<NText> all = new ArrayList<>();
         BufferedReader reader = new BufferedReader(new StringReader(text));
         String line = null;
         boolean first = true;
@@ -721,7 +721,7 @@ public class BashCodeHighlighter implements NutsCodeHighlighter {
                     break;
                 }
             } catch (IOException ex) {
-                throw new NutsIOException(session,ex);
+                throw new NIOException(session,ex);
             }
             if (first) {
                 first = false;
@@ -733,10 +733,10 @@ public class BashCodeHighlighter implements NutsCodeHighlighter {
         return txt.ofList(all).simplify();
     }
 
-    public NutsText next(StringReaderExt reader, boolean exitOnClosedCurlBrace, boolean exitOnClosedPar, boolean exitOnDblQuote, boolean exitOnAntiQuote, NutsTexts txt, NutsSession session) {
+    public NText next(StringReaderExt reader, boolean exitOnClosedCurlBrace, boolean exitOnClosedPar, boolean exitOnDblQuote, boolean exitOnAntiQuote, NTexts txt, NSession session) {
         boolean lineStart = true;
-        List<NutsText> all = new ArrayList<>();
-        NutsTexts factory = NutsTexts.of(session);
+        List<NText> all = new ArrayList<>();
+        NTexts factory = NTexts.of(session);
         boolean exit = false;
         while (!exit && reader.hasNext()) {
             switch (reader.peekChar()) {
@@ -746,7 +746,7 @@ public class BashCodeHighlighter implements NutsCodeHighlighter {
                         exit = true;
                     } else {
                         all.add(factory.ofStyled(
-                                reader.nextChars(1), NutsTextStyle.separator()
+                                reader.nextChars(1), NTextStyle.separator()
                         ));
                     }
                     break;
@@ -757,7 +757,7 @@ public class BashCodeHighlighter implements NutsCodeHighlighter {
                         exit = true;
                     } else {
                         all.add(factory.ofStyled(
-                                reader.nextChars(1), NutsTextStyle.separator()
+                                reader.nextChars(1), NTextStyle.separator()
                         ));
                     }
                     break;
@@ -766,11 +766,11 @@ public class BashCodeHighlighter implements NutsCodeHighlighter {
                     lineStart = false;
                     if (reader.isAvailable(2) && reader.peekChar() == '>') {
                         all.add(factory.ofStyled(
-                                reader.nextChars(2), NutsTextStyle.separator()
+                                reader.nextChars(2), NTextStyle.separator()
                         ));
                     } else {
                         all.add(factory.ofStyled(
-                                reader.nextChars(1), NutsTextStyle.separator()
+                                reader.nextChars(1), NTextStyle.separator()
                         ));
                     }
                     break;
@@ -779,19 +779,19 @@ public class BashCodeHighlighter implements NutsCodeHighlighter {
                     lineStart = false;
                     if (reader.isAvailable(2) && reader.peekChar() == '&') {
                         all.add(factory.ofStyled(
-                                reader.nextChars(2), NutsTextStyle.separator()
+                                reader.nextChars(2), NTextStyle.separator()
                         ));
                     } else if (reader.isAvailable(2) && reader.peekChar() == '>') {
                         all.add(factory.ofStyled(
-                                reader.nextChars(2), NutsTextStyle.separator()
+                                reader.nextChars(2), NTextStyle.separator()
                         ));
                     } else if (reader.isAvailable(2) && reader.peekChar() == '<') {
                         all.add(factory.ofStyled(
-                                reader.nextChars(2), NutsTextStyle.separator()
+                                reader.nextChars(2), NTextStyle.separator()
                         ));
                     } else {
                         all.add(factory.ofStyled(
-                                reader.nextChars(1), NutsTextStyle.separator()
+                                reader.nextChars(1), NTextStyle.separator()
                         ));
                     }
                     break;
@@ -800,18 +800,18 @@ public class BashCodeHighlighter implements NutsCodeHighlighter {
                     lineStart = false;
                     if (reader.isAvailable(2) && reader.peekChar() == '|') {
                         all.add(factory.ofStyled(
-                                reader.nextChars(2), NutsTextStyle.separator()
+                                reader.nextChars(2), NTextStyle.separator()
                         ));
                     } else {
                         all.add(factory.ofStyled(
-                                reader.nextChars(1), NutsTextStyle.separator()
+                                reader.nextChars(1), NTextStyle.separator()
                         ));
                     }
                     break;
                 }
                 case ';': {
                     all.add(factory.ofStyled(
-                            reader.nextChars(1), NutsTextStyle.separator()
+                            reader.nextChars(1), NTextStyle.separator()
                     ));
                     lineStart = true;
                     break;
@@ -819,11 +819,11 @@ public class BashCodeHighlighter implements NutsCodeHighlighter {
                 case '\n': {
                     if (reader.isAvailable(2) && reader.peekChar() == '\r') {
                         all.add(factory.ofStyled(
-                                reader.nextChars(2), NutsTextStyle.separator()
+                                reader.nextChars(2), NTextStyle.separator()
                         ));
                     } else {
                         all.add(factory.ofStyled(
-                                reader.nextChars(1), NutsTextStyle.separator()
+                                reader.nextChars(1), NTextStyle.separator()
                         ));
                     }
                     lineStart = true;
@@ -853,21 +853,21 @@ public class BashCodeHighlighter implements NutsCodeHighlighter {
                         if (ok) {
                             reader.nextChars(sb.length());
                             all.add(factory.ofStyled(
-                                    sb.toString(), NutsTextStyle.input()
+                                    sb.toString(), NTextStyle.input()
                             ));
                             break;
                         } else {
                             all.add(factory.ofStyled(
-                                    reader.nextChars(1), NutsTextStyle.separator()
+                                    reader.nextChars(1), NTextStyle.separator()
                             ));
                         }
                     } else if (reader.isAvailable(2) && reader.peekChar() == '<') {
                         all.add(factory.ofStyled(
-                                reader.nextChars(2), NutsTextStyle.separator()
+                                reader.nextChars(2), NTextStyle.separator()
                         ));
                     } else {
                         all.add(factory.ofStyled(
-                                reader.nextChars(1), NutsTextStyle.separator()
+                                reader.nextChars(1), NTextStyle.separator()
                         ));
                     }
                     break;
@@ -875,7 +875,7 @@ public class BashCodeHighlighter implements NutsCodeHighlighter {
                 case '\\': {
                     lineStart = false;
                     all.add(factory.ofStyled(
-                            reader.nextChars(2), NutsTextStyle.separator(2)
+                            reader.nextChars(2), NTextStyle.separator(2)
                     ));
                     break;
                 }
@@ -889,11 +889,11 @@ public class BashCodeHighlighter implements NutsCodeHighlighter {
                     if (exitOnAntiQuote) {
                         exit = true;
                     } else {
-                        List<NutsText> a = new ArrayList<>();
-                        a.add(factory.ofStyled(reader.nextChars(1), NutsTextStyle.string()));
+                        List<NText> a = new ArrayList<>();
+                        a.add(factory.ofStyled(reader.nextChars(1), NTextStyle.string()));
                         a.add(next(reader, false, false, false, true, txt, session));
                         if (reader.hasNext() && reader.peekChar() == '`') {
-                            a.add(factory.ofStyled(reader.nextChars(1), NutsTextStyle.string()));
+                            a.add(factory.ofStyled(reader.nextChars(1), NTextStyle.string()));
                         } else {
                             exit = true;
                         }
@@ -923,7 +923,7 @@ public class BashCodeHighlighter implements NutsCodeHighlighter {
                             }
                         }
                     }
-                    all.add(factory.ofStyled(sb.toString(), NutsTextStyle.string()));
+                    all.add(factory.ofStyled(sb.toString(), NTextStyle.string()));
                     break;
                 }
                 case '$': {
@@ -952,7 +952,7 @@ public class BashCodeHighlighter implements NutsCodeHighlighter {
                             case '7':
                             case '8':
                             case '9': {
-                                all.add(factory.ofStyled(reader.nextChars(2), NutsTextStyle.string()));
+                                all.add(factory.ofStyled(reader.nextChars(2), NTextStyle.string()));
                                 break;
                             }
                             default: {
@@ -962,14 +962,14 @@ public class BashCodeHighlighter implements NutsCodeHighlighter {
                                     while (reader.hasNext() && (Character.isAlphabetic(reader.peekChar()) || reader.peekChar() == '_')) {
                                         sb.append(reader.nextChar());
                                     }
-                                    all.add(factory.ofStyled(sb.toString(), NutsTextStyle.variable()));
+                                    all.add(factory.ofStyled(sb.toString(), NTextStyle.variable()));
                                 } else {
-                                    all.add(factory.ofStyled(reader.nextChars(1), NutsTextStyle.separator()));
+                                    all.add(factory.ofStyled(reader.nextChars(1), NTextStyle.separator()));
                                 }
                             }
                         }
                     } else {
-                        all.add(factory.ofStyled(reader.nextChars(1), NutsTextStyle.string()));
+                        all.add(factory.ofStyled(reader.nextChars(1), NTextStyle.string()));
                     }
                     break;
                 }
@@ -1051,7 +1051,7 @@ public class BashCodeHighlighter implements NutsCodeHighlighter {
                     }
                     if (lineStart && !reader.hasNext() || Character.isWhitespace(reader.peekChar())) {
                         //command name
-                        NutsTextStyle keyword1 = NutsTextStyle.keyword(2);
+                        NTextStyle keyword1 = NTextStyle.keyword(2);
                         switch (sb.toString()) {
                             case "if":
                             case "while":
@@ -1060,7 +1060,7 @@ public class BashCodeHighlighter implements NutsCodeHighlighter {
                             case "elif":
                             case "then":
                             case "else": {
-                                keyword1 = NutsTextStyle.keyword();
+                                keyword1 = NTextStyle.keyword();
                                 break;
                             }
                             case "cp":
@@ -1069,7 +1069,7 @@ public class BashCodeHighlighter implements NutsCodeHighlighter {
                             case "rm":
                             case "pwd":
                             case "echo": {
-                                keyword1 = NutsTextStyle.keyword(3);
+                                keyword1 = NTextStyle.keyword(3);
                                 break;
                             }
                         }
@@ -1085,26 +1085,26 @@ public class BashCodeHighlighter implements NutsCodeHighlighter {
         return factory.ofList(all).simplify();
     }
 
-    private NutsText nextDollar(StringReaderExt reader, NutsTexts txt, NutsSession session) {
-        NutsTexts factory = NutsTexts.of(session);
+    private NText nextDollar(StringReaderExt reader, NTexts txt, NSession session) {
+        NTexts factory = NTexts.of(session);
         if (reader.isAvailable(2)) {
             char c = reader.peekChar(1);
             switch (c) {
                 case '(': {
-                    List<NutsText> a = new ArrayList<>();
-                    a.add(factory.ofStyled(reader.nextChars(1), NutsTextStyle.separator()));
+                    List<NText> a = new ArrayList<>();
+                    a.add(factory.ofStyled(reader.nextChars(1), NTextStyle.separator()));
                     a.add(next(reader, false, true, false, false, txt, session));
                     if (reader.hasNext() && reader.peekChar() == ')') {
-                        a.add(factory.ofStyled(reader.nextChars(1), NutsTextStyle.separator()));
+                        a.add(factory.ofStyled(reader.nextChars(1), NTextStyle.separator()));
                     }
                     return factory.ofList(a).simplify();
                 }
                 case '{': {
-                    List<NutsText> a = new ArrayList<>();
-                    a.add(factory.ofStyled(reader.nextChars(1), NutsTextStyle.separator()));
+                    List<NText> a = new ArrayList<>();
+                    a.add(factory.ofStyled(reader.nextChars(1), NTextStyle.separator()));
                     a.add(next(reader, true, false, false, false, txt, session));
                     if (reader.hasNext() && reader.peekChar() == ')') {
-                        a.add(factory.ofStyled(reader.nextChars(1), NutsTextStyle.separator()));
+                        a.add(factory.ofStyled(reader.nextChars(1), NTextStyle.separator()));
                     }
                     return factory.ofList(a).simplify();
                 }
@@ -1123,7 +1123,7 @@ public class BashCodeHighlighter implements NutsCodeHighlighter {
                 case '7':
                 case '8':
                 case '9': {
-                    return factory.ofStyled(reader.nextChars(2), NutsTextStyle.string());
+                    return factory.ofStyled(reader.nextChars(2), NTextStyle.string());
                 }
                 default: {
                     if (Character.isAlphabetic(reader.peekChar(1))) {
@@ -1132,19 +1132,19 @@ public class BashCodeHighlighter implements NutsCodeHighlighter {
                         while (reader.hasNext() && (Character.isAlphabetic(reader.peekChar()) || reader.peekChar() == '_')) {
                             sb.append(reader.nextChar());
                         }
-                        return factory.ofStyled(sb.toString(), NutsTextStyle.variable());
+                        return factory.ofStyled(sb.toString(), NTextStyle.variable());
                     } else {
-                        return factory.ofStyled(reader.nextChars(1), NutsTextStyle.separator());
+                        return factory.ofStyled(reader.nextChars(1), NTextStyle.separator());
                     }
                 }
             }
         } else {
-            return factory.ofStyled(reader.nextChars(1), NutsTextStyle.string());
+            return factory.ofStyled(reader.nextChars(1), NTextStyle.string());
         }
     }
 
-    public NutsText nextDoubleQuotes(StringReaderExt reader, NutsSession session, NutsTexts txt) {
-        List<NutsText> all = new ArrayList<>();
+    public NText nextDoubleQuotes(StringReaderExt reader, NSession session, NTexts txt) {
+        List<NText> all = new ArrayList<>();
         boolean exit = false;
         StringBuilder sb = new StringBuilder();
         sb.append(reader.nextChar());
@@ -1161,21 +1161,21 @@ public class BashCodeHighlighter implements NutsCodeHighlighter {
                 }
                 case '$': {
                     if (sb.length() > 0) {
-                        all.add(txt.ofStyled(sb.toString(), NutsTextStyle.string()));
+                        all.add(txt.ofStyled(sb.toString(), NTextStyle.string()));
                         sb.setLength(0);
                     }
                     all.add(nextDollar(reader, txt, session));
                 }
                 case '`': {
                     if (sb.length() > 0) {
-                        all.add(txt.ofStyled(sb.toString(), NutsTextStyle.string()));
+                        all.add(txt.ofStyled(sb.toString(), NTextStyle.string()));
                         sb.setLength(0);
                     }
-                    List<NutsText> a = new ArrayList<>();
-                    a.add(txt.ofStyled(reader.nextChars(1), NutsTextStyle.string()));
+                    List<NText> a = new ArrayList<>();
+                    a.add(txt.ofStyled(reader.nextChars(1), NTextStyle.string()));
                     a.add(next(reader, false, false, false, true, txt, session));
                     if (reader.hasNext() && reader.peekChar() == '`') {
-                        a.add(txt.ofStyled(reader.nextChars(1), NutsTextStyle.string()));
+                        a.add(txt.ofStyled(reader.nextChars(1), NTextStyle.string()));
                     } else {
                         exit = true;
                     }
@@ -1188,13 +1188,13 @@ public class BashCodeHighlighter implements NutsCodeHighlighter {
             }
         }
         if (sb.length() > 0) {
-            all.add(txt.ofStyled(sb.toString(), NutsTextStyle.string()));
+            all.add(txt.ofStyled(sb.toString(), NTextStyle.string()));
             sb.setLength(0);
         }
         return txt.ofList(all).simplify();
     }
 
-    public NutsText commandToNode(String text, NutsTexts txt, NutsSession session) {
+    public NText commandToNode(String text, NTexts txt, NSession session) {
         return txt.ofList(parseCommandLine(text, txt, session));
     }
 

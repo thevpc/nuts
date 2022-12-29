@@ -24,18 +24,18 @@
 package net.thevpc.nuts.toolbox.nsh.cmds;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.cmdline.NutsArgument;
-import net.thevpc.nuts.cmdline.NutsArgumentName;
-import net.thevpc.nuts.cmdline.NutsCommandLine;
-import net.thevpc.nuts.spi.NutsComponentScope;
-import net.thevpc.nuts.spi.NutsComponentScopeType;
+import net.thevpc.nuts.cmdline.NArgument;
+import net.thevpc.nuts.cmdline.NArgumentName;
+import net.thevpc.nuts.cmdline.NCommandLine;
+import net.thevpc.nuts.spi.NComponentScope;
+import net.thevpc.nuts.spi.NComponentScopeType;
 import net.thevpc.nuts.toolbox.nsh.SimpleJShellBuiltin;
 import net.thevpc.nuts.toolbox.nsh.jshell.JShellExecutionContext;
 
 /**
  * Created by vpc on 1/7/17.
  */
-@NutsComponentScope(NutsComponentScopeType.WORKSPACE)
+@NComponentScope(NComponentScopeType.WORKSPACE)
 public class LoginCommand extends SimpleJShellBuiltin {
 
     public LoginCommand() {
@@ -43,18 +43,18 @@ public class LoginCommand extends SimpleJShellBuiltin {
     }
 
     @Override
-    protected boolean configureFirst(NutsCommandLine commandLine, JShellExecutionContext context) {
+    protected boolean configureFirst(NCommandLine commandLine, JShellExecutionContext context) {
         Options options = context.getOptions();
-        NutsSession session = context.getSession();
-        NutsArgument a = commandLine.peek().get(session);
+        NSession session = context.getSession();
+        NArgument a = commandLine.peek().get(session);
         if (!a.isOption()) {
             if (options.login == null) {
-                options.login = commandLine.next(NutsArgumentName.of("username", session))
-                        .flatMap(NutsValue::asString).get(session);
+                options.login = commandLine.next(NArgumentName.of("username", session))
+                        .flatMap(NValue::asString).get(session);
                 return true;
             } else if (options.password == null) {
-                options.password = commandLine.next(NutsArgumentName.of("password", session))
-                        .flatMap(NutsValue::asString).get(session).toCharArray();
+                options.password = commandLine.next(NArgumentName.of("password", session))
+                        .flatMap(NValue::asString).get(session).toCharArray();
                 return true;
             }
         }
@@ -62,15 +62,15 @@ public class LoginCommand extends SimpleJShellBuiltin {
     }
 
     @Override
-    protected void execBuiltin(NutsCommandLine commandLine, JShellExecutionContext context) {
+    protected void execBuiltin(NCommandLine commandLine, JShellExecutionContext context) {
         Options options = context.getOptions();
-        if (!NutsConstants.Users.ANONYMOUS.equals(options.login)
+        if (!NConstants.Users.ANONYMOUS.equals(options.login)
                 && (options.password == null
-                || NutsBlankable.isBlank(new String(options.password)))) {
-            NutsSession session = context.getSession();
+                || NBlankable.isBlank(new String(options.password)))) {
+            NSession session = context.getSession();
             options.password = session.getTerminal().ask()
                     .resetLine()
-                    .forPassword(NutsMessage.ofPlain("Password:")).getValue();
+                    .forPassword(NMsg.ofPlain("Password:")).getValue();
         }
         context.getSession().security().login(options.login, options.password);
     }

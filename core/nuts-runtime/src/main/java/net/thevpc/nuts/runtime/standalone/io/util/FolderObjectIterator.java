@@ -26,14 +26,14 @@
 package net.thevpc.nuts.runtime.standalone.io.util;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.elem.NutsElement;
-import net.thevpc.nuts.elem.NutsElements;
-import net.thevpc.nuts.io.NutsPath;
-import net.thevpc.nuts.runtime.standalone.util.iter.NutsIteratorBase;
-import net.thevpc.nuts.util.NutsDescribables;
-import net.thevpc.nuts.runtime.standalone.repository.impl.main.DefaultNutsInstalledRepository;
-import net.thevpc.nuts.util.NutsLogger;
-import net.thevpc.nuts.util.NutsLoggerOp;
+import net.thevpc.nuts.elem.NElement;
+import net.thevpc.nuts.elem.NElements;
+import net.thevpc.nuts.io.NPath;
+import net.thevpc.nuts.runtime.standalone.util.iter.NIteratorBase;
+import net.thevpc.nuts.util.NDescribables;
+import net.thevpc.nuts.runtime.standalone.repository.impl.main.DefaultNInstalledRepository;
+import net.thevpc.nuts.util.NLogger;
+import net.thevpc.nuts.util.NLoggerOp;
 
 import java.io.IOException;
 import java.util.Stack;
@@ -43,22 +43,22 @@ import java.util.logging.Level;
 /**
  * Created by vpc on 2/21/17.
  */
-public class FolderObjectIterator<T> extends NutsIteratorBase<T> {
+public class FolderObjectIterator<T> extends NIteratorBase<T> {
 //    private static final Logger LOG=Logger.getLogger(FolderNutIdIterator.class.getName());
 
     private final Stack<PathAndDepth> stack = new Stack<>();
     private final Predicate<T> filter;
-    private final NutsSession session;
+    private final NSession session;
     private final FolderIteratorModel<T> model;
-    private final NutsLogger LOG;
+    private final NLogger LOG;
     private final String name;
-    private final NutsPath folder;
+    private final NPath folder;
     private T last;
-    private NutsPath lastPath;
+    private NPath lastPath;
     private long visitedFoldersCount;
     private long visitedFilesCount;
     private final int maxDepth;
-    public FolderObjectIterator(String name, NutsPath folder, Predicate<T> filter, int maxDepth, NutsSession session, FolderIteratorModel<T> model) {
+    public FolderObjectIterator(String name, NPath folder, Predicate<T> filter, int maxDepth, NSession session, FolderIteratorModel<T> model) {
         this.session = session;
         this.filter = filter;
         this.model = model;
@@ -72,17 +72,17 @@ public class FolderObjectIterator<T> extends NutsIteratorBase<T> {
         }
         this.folder = folder;
         stack.push(new PathAndDepth(folder, 0));
-        LOG = NutsLogger.of(DefaultNutsInstalledRepository.class, session);
+        LOG = NLogger.of(DefaultNInstalledRepository.class, session);
     }
 
     @Override
-    public NutsElement describe(NutsSession session) {
-        return NutsElements.of(session).ofObject()
+    public NElement describe(NSession session) {
+        return NElements.of(session).ofObject()
                 .set("type", "ScanPath")
                 .set("name", name)
-                .set("path", NutsDescribables.resolveOrDestruct(folder, session))
+                .set("path", NDescribables.resolveOrDestruct(folder, session))
                 .set("maxDepth", maxDepth)
-                .set("filter", NutsDescribables.resolveOrDestruct(filter, session))
+                .set("filter", NDescribables.resolveOrDestruct(filter, session))
                 .build();
     }
 
@@ -97,13 +97,13 @@ public class FolderObjectIterator<T> extends NutsIteratorBase<T> {
                 boolean deep = maxDepth < 0 || file.depth < maxDepth;
                 if (file.path.isDirectory()) {
                     try {
-                        file.path.list().filter(
+                        file.path.stream().filter(
                                 pathname -> {
                                     try {
                                         return (deep && pathname.isDirectory()) || model.isObjectFile(pathname);
                                     } catch (Exception ex) {
-                                        NutsLoggerOp.of(FolderObjectIterator.class, session).level(Level.FINE).error(ex)
-                                                .log(NutsMessage.ofJstyle("unable to test desk file {0}", pathname));
+                                        NLoggerOp.of(FolderObjectIterator.class, session).level(Level.FINE).error(ex)
+                                                .log(NMsg.ofJstyle("unable to test desk file {0}", pathname));
                                         return false;
                                     }
                                 },"isDirectory || isObjectFile"
@@ -118,7 +118,7 @@ public class FolderObjectIterator<T> extends NutsIteratorBase<T> {
                         });
                     } catch (Exception ex) {
                         LOG.with().error(ex).log(
-                                NutsMessage.ofJstyle("unable to parse {0}", file.path));
+                                NMsg.ofJstyle("unable to parse {0}", file.path));
                     }
                 }
             } else {
@@ -154,7 +154,7 @@ public class FolderObjectIterator<T> extends NutsIteratorBase<T> {
         if (last != null) {
             model.remove(last, lastPath, session);
         } else {
-            throw new NutsUnsupportedOperationException(session, NutsMessage.ofPlain("unsupported remove"));
+            throw new NUnsupportedOperationException(session, NMsg.ofPlain("unsupported remove"));
         }
     }
 
@@ -173,21 +173,21 @@ public class FolderObjectIterator<T> extends NutsIteratorBase<T> {
 
     public interface FolderIteratorModel<T> {
 
-        default void remove(T object, NutsPath objectPath, NutsSession session) throws NutsExecutionException {
+        default void remove(T object, NPath objectPath, NSession session) throws NExecutionException {
 
         }
 
-        boolean isObjectFile(NutsPath pathname);
+        boolean isObjectFile(NPath pathname);
 
-        T parseObject(NutsPath pathname, NutsSession session) throws IOException;
+        T parseObject(NPath pathname, NSession session) throws IOException;
     }
 
     private static class PathAndDepth {
 
-        private final NutsPath path;
+        private final NPath path;
         private final int depth;
 
-        public PathAndDepth(NutsPath path, int depth) {
+        public PathAndDepth(NPath path, int depth) {
             this.path = path;
             this.depth = depth;
         }

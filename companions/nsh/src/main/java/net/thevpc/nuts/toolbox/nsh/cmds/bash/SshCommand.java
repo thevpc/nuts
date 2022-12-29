@@ -26,14 +26,14 @@
 package net.thevpc.nuts.toolbox.nsh.cmds.bash;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.cmdline.NutsArgument;
-import net.thevpc.nuts.cmdline.NutsCommandLine;
-import net.thevpc.nuts.io.NutsPath;
+import net.thevpc.nuts.cmdline.NArgument;
+import net.thevpc.nuts.cmdline.NCommandLine;
+import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.lib.ssh.SShConnection;
 import net.thevpc.nuts.toolbox.nsh.SimpleJShellBuiltin;
 import net.thevpc.nuts.toolbox.nsh.jshell.JShellExecutionContext;
 import net.thevpc.nuts.toolbox.nsh.util.ShellHelper;
-import net.thevpc.nuts.util.NutsUtils;
+import net.thevpc.nuts.util.NUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -49,18 +49,18 @@ public class SshCommand extends SimpleJShellBuiltin {
     }
 
     @Override
-    protected boolean configureFirst(NutsCommandLine commandLine, JShellExecutionContext context) {
+    protected boolean configureFirst(NCommandLine commandLine, JShellExecutionContext context) {
         Options o = context.getOptions();
-        NutsArgument a;
-        NutsSession session = context.getSession();
+        NArgument a;
+        NSession session = context.getSession();
         if (!o.cmd.isEmpty()) {
-            o.cmd.add(commandLine.next().flatMap(NutsValue::asString).get(session));
+            o.cmd.add(commandLine.next().flatMap(NValue::asString).get(session));
             return true;
         } else if (commandLine.peek().get(session).isNonOption()) {
             if (o.address == null) {
-                o.address = commandLine.next().flatMap(NutsValue::asString).get(session);
+                o.address = commandLine.next().flatMap(NValue::asString).get(session);
             } else {
-                o.cmd.add(commandLine.next().flatMap(NutsValue::asString).get(session));
+                o.cmd.add(commandLine.next().flatMap(NValue::asString).get(session));
             }
             return true;
         } else if ((a = commandLine.next("--nuts").orNull()) != null) {
@@ -79,7 +79,7 @@ public class SshCommand extends SimpleJShellBuiltin {
             return true;
         } else if (o.address == null || commandLine.peek().get(session).isNonOption()) {
             o.acceptDashNuts = false;
-            o.cmd.add(commandLine.next().flatMap(NutsValue::asString).get(session));
+            o.cmd.add(commandLine.next().flatMap(NValue::asString).get(session));
             return true;
         }
 
@@ -87,20 +87,20 @@ public class SshCommand extends SimpleJShellBuiltin {
     }
 
     @Override
-    protected void execBuiltin(NutsCommandLine commandLine, JShellExecutionContext context) {
+    protected void execBuiltin(NCommandLine commandLine, JShellExecutionContext context) {
         Options o = context.getOptions();
         // address --nuts [nuts options] args
-        NutsSession session = context.getSession();
-        NutsUtils.requireNonBlank(o.address, "ssh address", session);
-        NutsUtils.requireNonBlank(o.cmd, () -> NutsMessage.ofPlain("missing ssh command. Interactive ssh is not yet supported!"), session);
+        NSession session = context.getSession();
+        NUtils.requireNonBlank(o.address, "ssh address", session);
+        NUtils.requireNonBlank(o.cmd, () -> NMsg.ofPlain("missing ssh command. Interactive ssh is not yet supported!"), session);
         ShellHelper.WsSshListener listener = new ShellHelper.WsSshListener(session);
         try (SShConnection sshSession = new SShConnection(o.address, session)
                 .addListener(listener)) {
             List<String> cmd = new ArrayList<>();
             if (o.invokeNuts) {
                 String workspace = null;
-                NutsCommandLine c = NutsCommandLine.of(o.cmd.subList(1, o.cmd.size()));
-                NutsArgument arg = null;
+                NCommandLine c = NCommandLine.of(o.cmd.subList(1, o.cmd.size()));
+                NArgument arg = null;
                 while (c.hasNext()) {
                     if ((arg = c.next("--workspace").orNull()) != null) {
                         workspace = c.nextNonOption().get().asString().get(session);
@@ -110,7 +110,7 @@ public class SshCommand extends SimpleJShellBuiltin {
                         c.skip();
                     }
                 }
-                if (!NutsBlankable.isBlank(o.nutsCommand)) {
+                if (!NBlankable.isBlank(o.nutsCommand)) {
                     cmd.add(o.nutsCommand);
                 } else {
                     String userHome = null;
@@ -118,8 +118,8 @@ public class SshCommand extends SimpleJShellBuiltin {
                             .setRedirectErrorStream(true)
                             .grabOutputString().exec("echo", "$HOME");
                     userHome = sshSession.getOutputString().trim();
-                    if (NutsBlankable.isBlank(workspace)) {
-                        workspace = userHome + "/.config/nuts/" + NutsConstants.Names.DEFAULT_WORKSPACE_NAME;
+                    if (NBlankable.isBlank(workspace)) {
+                        workspace = userHome + "/.config/nuts/" + NConstants.Names.DEFAULT_WORKSPACE_NAME;
                     }
                     boolean nutsCommandFound = false;
                     int r = sshSession.setFailFast(false).
@@ -130,8 +130,8 @@ public class SshCommand extends SimpleJShellBuiltin {
                         nutsCommandFound = true;
                     }
                     if (!nutsCommandFound) {
-                        NutsPath from = session.search().addId(session.getWorkspace().getApiId()).getResultDefinitions().required().getContent().orNull();
-                        NutsUtils.requireNonNull(from, "jar file", session);
+                        NPath from = session.search().addId(session.getWorkspace().getApiId()).getResultDefinitions().required().getContent().orNull();
+                        NUtils.requireNonNull(from, "jar file", session);
                         context.out().printf("Detected nuts.jar location : %s\n", from);
                         String bootApiFileName = "nuts-" + session.getWorkspace().getApiId() + ".jar";
                         sshSession.setFailFast(true).copyLocalToRemote(from.toString(), workspace + "/" + bootApiFileName, true);

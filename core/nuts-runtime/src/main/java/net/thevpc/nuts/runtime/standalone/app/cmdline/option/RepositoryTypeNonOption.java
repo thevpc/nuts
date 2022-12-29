@@ -27,10 +27,10 @@
 package net.thevpc.nuts.runtime.standalone.app.cmdline.option;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.cmdline.DefaultNutsArgumentCandidate;
-import net.thevpc.nuts.cmdline.NutsArgumentCandidate;
-import net.thevpc.nuts.cmdline.NutsCommandAutoComplete;
-import net.thevpc.nuts.runtime.standalone.repository.util.NutsRepositoryUtils;
+import net.thevpc.nuts.cmdline.DefaultNArgumentCandidate;
+import net.thevpc.nuts.cmdline.NArgumentCandidate;
+import net.thevpc.nuts.cmdline.NCommandAutoComplete;
+import net.thevpc.nuts.runtime.standalone.repository.util.NRepositoryUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -47,23 +47,23 @@ public class RepositoryTypeNonOption extends DefaultNonOption {
     }
 
     @Override
-    public List<NutsArgumentCandidate> getCandidates(NutsCommandAutoComplete context) {
+    public List<NArgumentCandidate> getCandidates(NCommandAutoComplete context) {
         TreeSet<String> allValid = new TreeSet<>();
-        allValid.add(NutsConstants.RepoTypes.NUTS);
-        allValid.add(NutsConstants.RepoTypes.MAVEN);
-        for (NutsAddRepositoryOptions repo : context.getSession().config()
+        allValid.add(NConstants.RepoTypes.NUTS);
+        allValid.add(NConstants.RepoTypes.MAVEN);
+        for (NAddRepositoryOptions repo : context.getSession().config()
                 .setSession(context.getSession())
                 .getDefaultRepositories()) {
             if(repo.getConfig()!=null) {
-                String t = NutsRepositoryUtils.getRepoType(repo.getConfig());
-                if(!NutsBlankable.isBlank(t)){
+                String t = NRepositoryUtils.getRepoType(repo.getConfig());
+                if(!NBlankable.isBlank(t)){
                     allValid.add(t.trim());
                 }
             }
         }
-        List<NutsArgumentCandidate> all = new ArrayList<>();
+        List<NArgumentCandidate> all = new ArrayList<>();
         for (String v : allValid) {
-            all.add(new DefaultNutsArgumentCandidate(v));
+            all.add(new DefaultNArgumentCandidate(v));
         }
         return all;
     }

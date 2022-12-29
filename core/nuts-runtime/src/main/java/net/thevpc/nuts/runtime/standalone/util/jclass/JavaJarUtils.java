@@ -1,15 +1,15 @@
 package net.thevpc.nuts.runtime.standalone.util.jclass;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.io.NutsIOException;
-import net.thevpc.nuts.io.NutsPath;
+import net.thevpc.nuts.io.NIOException;
+import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.runtime.standalone.io.util.ZipUtils;
-import net.thevpc.nuts.runtime.standalone.repository.impl.maven.pom.api.NutsPom;
-import net.thevpc.nuts.runtime.standalone.repository.impl.maven.pom.NutsPomXmlParser;
+import net.thevpc.nuts.runtime.standalone.repository.impl.maven.pom.api.NPom;
+import net.thevpc.nuts.runtime.standalone.repository.impl.maven.pom.NPomXmlParser;
 import net.thevpc.nuts.runtime.standalone.util.xml.XmlUtils;
-import net.thevpc.nuts.runtime.standalone.xtra.execentries.DefaultNutsExecutionEntry;
-import net.thevpc.nuts.util.NutsRef;
-import net.thevpc.nuts.util.NutsStringUtils;
+import net.thevpc.nuts.runtime.standalone.xtra.execentries.DefaultNExecutionEntry;
+import net.thevpc.nuts.util.NRef;
+import net.thevpc.nuts.util.NStringUtils;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
@@ -62,7 +62,7 @@ public class JavaJarUtils {
         }
     }
 
-    public static NutsVersion[] parseJarClassVersions(InputStream jarStream, NutsSession session) {
+    public static NVersion[] parseJarClassVersions(InputStream jarStream, NSession session) {
         if (!(jarStream instanceof BufferedInputStream)) {
             jarStream = new BufferedInputStream(jarStream);
         }
@@ -81,15 +81,15 @@ public class JavaJarUtils {
             }
             return true;
         }, session);
-        return classes.stream().map(x -> NutsVersion.of(x).get(session)).toArray(NutsVersion[]::new);
+        return classes.stream().map(x -> NVersion.of(x).get(session)).toArray(NVersion[]::new);
     }
 
-    public static NutsVersion parseJarClassVersion(InputStream jarStream, NutsSession session) {
-        NutsVersion[] all = parseJarClassVersions(jarStream, session);
+    public static NVersion parseJarClassVersion(InputStream jarStream, NSession session) {
+        NVersion[] all = parseJarClassVersions(jarStream, session);
         if (all.length == 0) {
             return null;
         }
-        NutsVersion nb = all[0];
+        NVersion nb = all[0];
         for (int i = 1; i < all.length; i++) {
             if (nb.compareTo(all[i]) < 0) {
                 nb = all[i];
@@ -98,14 +98,14 @@ public class JavaJarUtils {
         return nb;
     }
 
-    public static List<NutsExecutionEntry> parseJarExecutionEntries(InputStream jarStream, NutsSession session) {
+    public static List<NExecutionEntry> parseJarExecutionEntries(InputStream jarStream, NSession session) {
         if (!(jarStream instanceof BufferedInputStream)) {
             jarStream = new BufferedInputStream(jarStream);
         }
-        final LinkedHashSet<NutsExecutionEntry> classes = new LinkedHashSet<>();
+        final LinkedHashSet<NExecutionEntry> classes = new LinkedHashSet<>();
         ZipUtils.visitZipStream(jarStream, (path, inputStream) -> {
             if (path.endsWith(".class")) {
-                NutsExecutionEntry mainClass = JavaClassUtils.parseClassExecutionEntry(inputStream, path, session);
+                NExecutionEntry mainClass = JavaClassUtils.parseClassExecutionEntry(inputStream, path, session);
                 if (mainClass != null) {
                     classes.add(mainClass);
                 }
@@ -114,18 +114,18 @@ public class JavaJarUtils {
                 Attributes a = manifest.getMainAttributes();
                 if (a != null) {
                     String v = a.getValue("Main-Class");
-                    if (!NutsBlankable.isBlank(v)) {
-                        v = NutsStringUtils.trim(v);
-                        classes.add(new DefaultNutsExecutionEntry(v, true, false));
+                    if (!NBlankable.isBlank(v)) {
+                        v = NStringUtils.trim(v);
+                        classes.add(new DefaultNExecutionEntry(v, true, false));
                     }
                 }
             } else if (path.startsWith("META-INF/maven/") && path.endsWith("/pom.xml")) {
-                NutsPom pom = new NutsPomXmlParser(session).parse(inputStream, session);
+                NPom pom = new NPomXmlParser(session).parse(inputStream, session);
                 final Element ee = pom.getXml().getDocumentElement();
                 if (pom.getParent() != null && pom.getParent().getArtifactId().equals("spring-boot-starter-parent")) {
-                    String springStartClass = NutsStringUtils.trim(pom.getProperties().get("start-class"));
+                    String springStartClass = NStringUtils.trim(pom.getProperties().get("start-class"));
                     if (springStartClass.length() > 0) {
-                        classes.add(new DefaultNutsExecutionEntry(springStartClass, true, false));
+                        classes.add(new DefaultNExecutionEntry(springStartClass, true, false));
                     }
                 }
                 XmlUtils.visitNode(ee, x -> {
@@ -134,30 +134,30 @@ public class JavaJarUtils {
                         if (XmlUtils.isNode(e, "build", "plugins", "plugin", "configuration", "archive", "manifest", "mainClass")) {
                             //              configuration   execution       executions      plugin
                             Node plugin = e.getParentNode().getParentNode().getParentNode().getParentNode();
-                            NutsId pluginId = parseMavenPluginElement(plugin, session);
+                            NId pluginId = parseMavenPluginElement(plugin, session);
                             if (
                                     pluginId.getShortName().equals("org.apache.maven.plugins:maven-assembly-plugin")
                                             || pluginId.getShortName().equals("org.apache.maven.plugins:maven-jar-plugin")
                             ) {
-                                String s = NutsStringUtils.trim(e.getTextContent());
+                                String s = NStringUtils.trim(e.getTextContent());
                                 if (s.length() > 0) {
                                     s = resolveMainClassString(s, pom);
-                                    classes.add(new DefaultNutsExecutionEntry(s, true, false));
+                                    classes.add(new DefaultNExecutionEntry(s, true, false));
                                 }
                             }
                         } else if (XmlUtils.isNode(e, "build", "plugins", "plugin", "executions", "execution", "configuration", "mainClass")) {
                             //              configuration   execution       executions      plugin
                             Node plugin = e.getParentNode().getParentNode().getParentNode().getParentNode();
-                            NutsId pluginId = parseMavenPluginElement(plugin, session);
+                            NId pluginId = parseMavenPluginElement(plugin, session);
                             if (
                                     pluginId.getArtifactId().equals("onejar-maven-plugin")
                                             || pluginId.getShortName().equals("org.springframework.boot:spring-boot-maven-plugin")
                                             || pluginId.getShortName().equals("org.openjfx:javafx-maven-plugin")
                             ) {
-                                String s = NutsStringUtils.trim(e.getTextContent());
+                                String s = NStringUtils.trim(e.getTextContent());
                                 if (s.length() > 0) {
                                     s = resolveMainClassString(s, pom);
-                                    classes.add(new DefaultNutsExecutionEntry(s, true, false));
+                                    classes.add(new DefaultNExecutionEntry(s, true, false));
                                 }
                             } else {
                                 //what else?
@@ -165,25 +165,25 @@ public class JavaJarUtils {
                         } else if (XmlUtils.isNode(e, "build", "plugins", "plugin", "configuration", "mainClass")) {
                             //              configuration   execution       executions      plugin
                             Node plugin = e.getParentNode().getParentNode();
-                            NutsId pluginId = parseMavenPluginElement(plugin, session);
+                            NId pluginId = parseMavenPluginElement(plugin, session);
                             if (pluginId.getShortName().equals("org.springframework.boot:spring-boot-maven-plugin")) {
-                                String s = NutsStringUtils.trim(e.getTextContent());
+                                String s = NStringUtils.trim(e.getTextContent());
                                 if (s.length() > 0) {
                                     s = resolveMainClassString(s, pom);
-                                    classes.add(new DefaultNutsExecutionEntry(s, true, false));
+                                    classes.add(new DefaultNExecutionEntry(s, true, false));
                                 }
                             }
                         } else if (XmlUtils.isNode(e, "build", "plugins", "plugin", "executions", "execution", "configuration", "transformers", "transformer", "mainClass")) {
                             //              configuration   execution       executions      plugin
                             Node plugin = e.getParentNode().getParentNode().getParentNode().getParentNode().getParentNode().getParentNode();
-                            NutsId pluginId = parseMavenPluginElement(plugin, session);
+                            NId pluginId = parseMavenPluginElement(plugin, session);
                             if (
                                     pluginId.getShortName().equals("org.apache.maven.plugins:maven-shade-plugin")
                             ) {
-                                String s = NutsStringUtils.trim(e.getTextContent());
+                                String s = NStringUtils.trim(e.getTextContent());
                                 if (s.length() > 0) {
                                     s = resolveMainClassString(s, pom);
-                                    classes.add(new DefaultNutsExecutionEntry(s, true, false));
+                                    classes.add(new DefaultNExecutionEntry(s, true, false));
                                 }
                             }
                         }
@@ -191,48 +191,48 @@ public class JavaJarUtils {
                     }
                     return true;
                 });
-            } else if (path.startsWith("META-INF/nuts/") && path.endsWith("/nuts.json") || path.equals("META-INF/" + NutsConstants.Files.DESCRIPTOR_FILE_NAME)) {
-                NutsDescriptor descriptor = NutsDescriptorParser.of(session).parse(inputStream).get(session);
-                NutsArtifactCall executor = descriptor.getExecutor();
+            } else if (path.startsWith("META-INF/nuts/") && path.endsWith("/nuts.json") || path.equals("META-INF/" + NConstants.Files.DESCRIPTOR_FILE_NAME)) {
+                NDescriptor descriptor = NDescriptorParser.of(session).parse(inputStream).get(session);
+                NArtifactCall executor = descriptor.getExecutor();
                 if (executor != null) {
                     List<String> arguments = executor.getArguments();
                     for (int i = 0; i < arguments.size(); i++) {
                         String a = arguments.get(i);
                         if (a != null) {
                             if (a.startsWith("--main-class=")) {
-                                classes.add(new DefaultNutsExecutionEntry(a.substring("--main-class=".length()), true, false));
+                                classes.add(new DefaultNExecutionEntry(a.substring("--main-class=".length()), true, false));
                             } else if (a.equals("--main-class")) {
                                 if (i + 1 < arguments.size()) {
                                     i++;
-                                    classes.add(new DefaultNutsExecutionEntry(a, true, false));
+                                    classes.add(new DefaultNExecutionEntry(a, true, false));
                                 }
                             }
                         }
                     }
                 }
-                NutsDescriptorProperty mc = descriptor.getProperty("nuts.mainClass").orNull();
+                NDescriptorProperty mc = descriptor.getProperty("nuts.mainClass").orNull();
                 if (mc != null) {
-                    String s = NutsStringUtils.trim(mc.getValue().asString().get(session));
+                    String s = NStringUtils.trim(mc.getValue().asString().get(session));
                     if (s.length() > 0) {
                         s = resolveMainClassString(s, descriptor);
-                        classes.add(new DefaultNutsExecutionEntry(s, true, false));
+                        classes.add(new DefaultNExecutionEntry(s, true, false));
                     }
                 }
             }
             return true;
         }, session);
 
-        Map<String, NutsExecutionEntry> found = new LinkedHashMap<>();
-        for (NutsExecutionEntry entry : classes) {
+        Map<String, NExecutionEntry> found = new LinkedHashMap<>();
+        for (NExecutionEntry entry : classes) {
             String cn = entry.getName();
-            NutsExecutionEntry a = found.get(cn);
+            NExecutionEntry a = found.get(cn);
             if (a == null) {
                 found.put(cn, entry);
             } else {
                 if (a.equals(entry)) {
                     //ignore
                 } else {
-                    NutsExecutionEntry e2 = new DefaultNutsExecutionEntry(
+                    NExecutionEntry e2 = new DefaultNExecutionEntry(
                             cn, entry.isDefaultEntry() || a.isDefaultEntry(),
                             entry.isApp() || a.isApp()
                     );
@@ -240,10 +240,10 @@ public class JavaJarUtils {
                 }
             }
         }
-        List<NutsExecutionEntry> ee = new ArrayList<>(found.values());
-        ee.sort(new Comparator<NutsExecutionEntry>() {
+        List<NExecutionEntry> ee = new ArrayList<>(found.values());
+        ee.sort(new Comparator<NExecutionEntry>() {
             @Override
-            public int compare(NutsExecutionEntry o1, NutsExecutionEntry o2) {
+            public int compare(NExecutionEntry o1, NExecutionEntry o2) {
                 int x = (o1.isDefaultEntry() ? 0 : 1) - (o2.isDefaultEntry() ? 0 : 1);
                 if (x != 0) {
                     return x;
@@ -258,7 +258,7 @@ public class JavaJarUtils {
         return ee;
     }
 
-    private static String resolveMainClassString(String nameOrVar, NutsPom pom) {
+    private static String resolveMainClassString(String nameOrVar, NPom pom) {
         if (nameOrVar.startsWith("${") && nameOrVar.endsWith("}")) {
             String e = pom.getProperties().get(nameOrVar.substring(2, nameOrVar.length() - 1));
             if (e != null) {
@@ -268,9 +268,9 @@ public class JavaJarUtils {
         return nameOrVar;
     }
 
-    private static String resolveMainClassString(String nameOrVar, NutsDescriptor pom) {
+    private static String resolveMainClassString(String nameOrVar, NDescriptor pom) {
         if (nameOrVar.startsWith("${") && nameOrVar.endsWith("}")) {
-            String e = pom.getPropertyValue(nameOrVar.substring(2, nameOrVar.length() - 1)).flatMap(NutsValue::asString).orNull();
+            String e = pom.getPropertyValue(nameOrVar.substring(2, nameOrVar.length() - 1)).flatMap(NValue::asString).orNull();
             if (e != null) {
                 return e;
             }
@@ -278,22 +278,22 @@ public class JavaJarUtils {
         return nameOrVar;
     }
 
-    public static NutsId parseMavenPluginElement(Node plugin, NutsSession session) {
-        NutsIdBuilder ib = NutsIdBuilder.of();
+    public static NId parseMavenPluginElement(Node plugin, NSession session) {
+        NIdBuilder ib = NIdBuilder.of();
         for (Node node : XmlUtils.iterable(plugin)) {
             Element ne = XmlUtils.asElement(node);
             if (ne != null) {
                 switch (ne.getNodeName()) {
                     case "groupId": {
-                        ib.setGroupId(NutsStringUtils.trim(ne.getTextContent()));
+                        ib.setGroupId(NStringUtils.trim(ne.getTextContent()));
                         break;
                     }
                     case "artifactId": {
-                        ib.setArtifactId(NutsStringUtils.trim(ne.getTextContent()));
+                        ib.setArtifactId(NStringUtils.trim(ne.getTextContent()));
                         break;
                     }
                     case "version": {
-                        ib.setVersion(NutsStringUtils.trim(ne.getTextContent()));
+                        ib.setVersion(NStringUtils.trim(ne.getTextContent()));
                         break;
                     }
                 }
@@ -302,24 +302,24 @@ public class JavaJarUtils {
         return ib.build();
     }
 
-    public static NutsVersion parseJarClassVersion(NutsPath path, NutsSession session) {
+    public static NVersion parseJarClassVersion(NPath path, NSession session) {
         try (InputStream is = path.getInputStream()) {
             return parseJarClassVersion(is, session);
         } catch (IOException ex) {
-            throw new NutsIOException(session, ex);
+            throw new NIOException(session, ex);
         }
     }
 
-    public static String parseDefaultModuleName(NutsPath jarStream, NutsSession session) {
+    public static String parseDefaultModuleName(NPath jarStream, NSession session) {
         try (InputStream is = jarStream.getInputStream()) {
             return parseDefaultModuleName(is, session);
         } catch (IOException ex) {
-            throw new NutsIOException(session, ex);
+            throw new NIOException(session, ex);
         }
     }
 
-    public static String parseDefaultModuleName(InputStream jarStream, NutsSession session) {
-        NutsRef<String> automaticModuleName = new NutsRef<>();
+    public static String parseDefaultModuleName(InputStream jarStream, NSession session) {
+        NRef<String> automaticModuleName = new NRef<>();
         ZipUtils.visitZipStream(jarStream, (path, inputStream) -> {
             if ("META-INF/MANIFEST.MF".equals(path)) {
                 try {
@@ -328,7 +328,7 @@ public class JavaJarUtils {
                     for (Object o : attrs.keySet()) {
                         Attributes.Name attrName = (Attributes.Name) o;
                         if ("Automatic-Module-Name".equals(attrName.toString())) {
-                            automaticModuleName.setNonNull(NutsStringUtils.trimToNull(attrs.getValue(attrName)));
+                            automaticModuleName.setNonNull(NStringUtils.trimToNull(attrs.getValue(attrName)));
                             return false;
                         }
                     }
@@ -342,19 +342,19 @@ public class JavaJarUtils {
         return automaticModuleName.get();
     }
 
-    public static JavaClassByteCode.ModuleInfo parseModuleInfo(NutsPath jar, NutsSession session) {
+    public static JavaClassByteCode.ModuleInfo parseModuleInfo(NPath jar, NSession session) {
         try (InputStream is = jar.getInputStream()) {
             return parseModuleInfo(is, session);
         } catch (IOException ex) {
-            throw new NutsIOException(session, ex);
+            throw new NIOException(session, ex);
         }
     }
 
-    public static JavaClassByteCode.ModuleInfo parseModuleInfo(InputStream jarStream, NutsSession session) {
+    public static JavaClassByteCode.ModuleInfo parseModuleInfo(InputStream jarStream, NSession session) {
         if (!(jarStream instanceof BufferedInputStream)) {
             jarStream = new BufferedInputStream(jarStream);
         }
-        NutsRef<JavaClassByteCode.ModuleInfo> ref = new NutsRef<>();
+        NRef<JavaClassByteCode.ModuleInfo> ref = new NRef<>();
         ZipUtils.visitZipStream(jarStream, (path, inputStream) -> {
             if (path.equals("module-info.class")) {
                 JavaClassByteCode s = new JavaClassByteCode(inputStream, new JavaClassByteCode.Visitor() {

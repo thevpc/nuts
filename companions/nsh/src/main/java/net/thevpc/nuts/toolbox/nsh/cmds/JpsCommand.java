@@ -26,9 +26,9 @@
 package net.thevpc.nuts.toolbox.nsh.cmds;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.cmdline.NutsCommandLine;
-import net.thevpc.nuts.spi.NutsComponentScope;
-import net.thevpc.nuts.spi.NutsComponentScopeType;
+import net.thevpc.nuts.cmdline.NCommandLine;
+import net.thevpc.nuts.spi.NComponentScope;
+import net.thevpc.nuts.spi.NComponentScopeType;
 import net.thevpc.nuts.toolbox.nsh.SimpleJShellBuiltin;
 import net.thevpc.nuts.toolbox.nsh.jshell.JShellExecutionContext;
 
@@ -41,19 +41,19 @@ import java.util.List;
 /**
  * Created by vpc on 1/7/17.
  */
-@NutsComponentScope(NutsComponentScopeType.WORKSPACE)
+@NComponentScope(NComponentScopeType.WORKSPACE)
 public class JpsCommand extends SimpleJShellBuiltin {
 
     public JpsCommand() {
         super("jps", DEFAULT_SUPPORT,Options.class);
     }
 
-    public static String resolveJpsCommand(NutsSession session) {
+    public static String resolveJpsCommand(NSession session) {
         return resolveJavaToolCommand(session, null, "jps");
     }
 
-    public static String resolveJavaToolCommand(NutsSession session, String javaHome, String javaCommand) {
-        String exe = session.env().getOsFamily().equals(NutsOsFamily.WINDOWS) ? (javaCommand + ".exe") : javaCommand;
+    public static String resolveJavaToolCommand(NSession session, String javaHome, String javaCommand) {
+        String exe = session.env().getOsFamily().equals(NOsFamily.WINDOWS) ? (javaCommand + ".exe") : javaCommand;
         if (javaHome == null) {
             javaHome = System.getProperty("java.home");
         }
@@ -80,8 +80,8 @@ public class JpsCommand extends SimpleJShellBuiltin {
     }
 
     @Override
-    protected boolean configureFirst(NutsCommandLine commandLine, JShellExecutionContext context) {
-        NutsSession session = context.getSession();
+    protected boolean configureFirst(NCommandLine commandLine, JShellExecutionContext context) {
+        NSession session = context.getSession();
         Options options = context.getOptions();
         if (commandLine.next("-l").orNull() != null) {
             options.l = true;
@@ -110,12 +110,12 @@ public class JpsCommand extends SimpleJShellBuiltin {
     }
 
     @Override
-    protected void execBuiltin(NutsCommandLine commandLine, JShellExecutionContext context) {
+    protected void execBuiltin(NCommandLine commandLine, JShellExecutionContext context) {
         Options options = context.getOptions();
         List<JpsRow> results = new ArrayList<>();
 
-        NutsExecCommand e = context.getSession().exec()
-                .setExecutionType(NutsExecutionType.SYSTEM)
+        NExecCommand e = context.getSession().exec()
+                .setExecutionType(NExecutionType.SYSTEM)
                 .addCommand(resolveJpsCommand(context.getSession()), "-l", "-v", "-m")
                 .setRedirectErrorStream(true)
                 .grabOutputString()

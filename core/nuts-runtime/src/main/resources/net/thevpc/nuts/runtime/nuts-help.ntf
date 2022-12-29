@@ -523,7 +523,7 @@ Boot Runtime Version: ###${nuts.workspace-runtime.version}###
                                             can download an artificat if and only you know its full coordinates
                     ```kw htmlfs```         for http(s) server access that is navigable by 'scrapping' its html content.
                                             At boot time, only standard 'Tomcat Http Server' standard directory servlet is supported.
-                                            later on, all nuts filesystem protocols (implemented in NutsPath) including ```kw http```,
+                                            later on, all nuts filesystem protocols (implemented in NPath) including ```kw http```,
                                             ```kw https```, ```kw htmlfs``` (that supports tomcat and httpd/apache directory listing),
                                             ```kw dotfilefs```, ```kw ssh``` and ```kw githubfs``` are supported.
                                             Remember that boot time repos are only used for installing ```sh nuts``` itself (and its

@@ -34,18 +34,18 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
-import net.thevpc.nuts.cmdline.NutsArgument;
-import net.thevpc.nuts.cmdline.NutsCommandLine;
-import net.thevpc.nuts.io.NutsCp;
-import net.thevpc.nuts.io.NutsPath;
-import net.thevpc.nuts.io.NutsPrintStream;
+import net.thevpc.nuts.cmdline.NArgument;
+import net.thevpc.nuts.cmdline.NCommandLine;
+import net.thevpc.nuts.io.NCp;
+import net.thevpc.nuts.io.NPath;
+import net.thevpc.nuts.io.NStream;
 import net.thevpc.nuts.text.*;
 import net.thevpc.nuts.toolbox.nsh.SimpleJShellBuiltin;
 import net.thevpc.nuts.toolbox.nsh.jshell.JShellExecutionContext;
 import net.thevpc.nuts.toolbox.nsh.util.ColumnRuler;
 import net.thevpc.nuts.toolbox.nsh.util.FileInfo;
-import net.thevpc.nuts.util.NutsStringUtils;
-import net.thevpc.nuts.util.NutsUtils;
+import net.thevpc.nuts.util.NStringUtils;
+import net.thevpc.nuts.util.NUtils;
 
 /**
  * Created by vpc on 1/7/17.
@@ -57,10 +57,10 @@ public class GrepCommand extends SimpleJShellBuiltin {
     }
 
     @Override
-    protected boolean configureFirst(NutsCommandLine commandLine, JShellExecutionContext context) {
-        NutsSession session = context.getSession();
+    protected boolean configureFirst(NCommandLine commandLine, JShellExecutionContext context) {
+        NSession session = context.getSession();
         Options options = context.getOptions();
-        NutsArgument a;
+        NArgument a;
         if (commandLine.next("-") != null) {
             options.files.add(null);
             return true;
@@ -80,20 +80,20 @@ public class GrepCommand extends SimpleJShellBuiltin {
             options.ignoreCase = true;
             return true;
         } else if ((a = commandLine.next("-H", "--highlight", "--highlighter").orNull()) != null) {
-            options.highlighter = NutsStringUtils.trim(a.getStringValue().get(session));
+            options.highlighter = NStringUtils.trim(a.getStringValue().get(session));
             return true;
         } else if ((a = commandLine.next("-S", "--selection-style").orNull()) != null) {
-            options.selectionStyle = NutsStringUtils.trimToNull(a.getStringValue().get(session));
+            options.selectionStyle = NStringUtils.trimToNull(a.getStringValue().get(session));
             return true;
         } else if (commandLine.next("-n").isPresent()) {
             options.n = true;
             return true;
         } else if (commandLine.peek().get(session).isNonOption()) {
             if (options.expression == null) {
-                options.expression = commandLine.next().flatMap(NutsValue::asString).get(session);
+                options.expression = commandLine.next().flatMap(NValue::asString).get(session);
             } else {
-                String path = commandLine.next().flatMap(NutsValue::asString).get(session);
-                options.files.add(new FileInfo(NutsPath.of(path, session), options.highlighter));
+                String path = commandLine.next().flatMap(NValue::asString).get(session);
+                options.files.add(new FileInfo(NPath.of(path, session), options.highlighter));
             }
             return true;
         } else {
@@ -102,14 +102,14 @@ public class GrepCommand extends SimpleJShellBuiltin {
     }
 
     @Override
-    protected void execBuiltin(NutsCommandLine commandLine, JShellExecutionContext context) {
+    protected void execBuiltin(NCommandLine commandLine, JShellExecutionContext context) {
         Options options = context.getOptions();
-        NutsPrintStream out = context.out();
+        NStream out = context.out();
         if (options.files.isEmpty()) {
             options.files.add(null);
         }
-        NutsSession session = context.getSession();
-        NutsUtils.requireNonBlank(options.expression, "expression", session);
+        NSession session = context.getSession();
+        NUtils.requireNonBlank(options.expression, "expression", session);
         String baseExpr = simpexpToRegexp(options.expression, true);
         if (options.word) {
             baseExpr = "\\b" + baseExpr + "\\b";
@@ -160,7 +160,7 @@ public class GrepCommand extends SimpleJShellBuiltin {
 
         Reader reader = null;
         boolean closeReader = false;
-        NutsSession session = context.getSession();
+        NSession session = context.getSession();
         try {
             try {
                 if (f == null) {
@@ -168,7 +168,7 @@ public class GrepCommand extends SimpleJShellBuiltin {
                     reader = new InputStreamReader(context.in());
                     processByLine(reader, options, p, f, results, session);
                 } else if (f.getFile().isDirectory()) {
-                    for (NutsPath ff : f.getFile().list()) {
+                    for (NPath ff : f.getFile().stream()) {
                         grepFile(new FileInfo(ff, f.getHighlighter()), p, options, context, true, results);
                     }
                     return 0;
@@ -178,8 +178,8 @@ public class GrepCommand extends SimpleJShellBuiltin {
                     if (f.getHighlighter() == null) {
                         processByLine(reader, options, p, f, results, session);
                     } else {
-                        String text = new String(NutsCp.of(session).from(f.getFile()).getByteArrayResult());
-                        if(NutsBlankable.isBlank(f.getHighlighter())){
+                        String text = new String(NCp.of(session).from(f.getFile()).getByteArrayResult());
+                        if(NBlankable.isBlank(f.getHighlighter())){
                             f.setHighlighter(f.getFile().getContentType());
                         }
                         processByText(text, options, p, f, results, session);
@@ -191,36 +191,36 @@ public class GrepCommand extends SimpleJShellBuiltin {
                 }
             }
         } catch (IOException ex) {
-            throw new NutsExecutionException(session, NutsMessage.ofCstyle("%s", ex), ex, 100);
+            throw new NExecutionException(session, NMsg.ofCstyle("%s", ex), ex, 100);
         }
         return 0;
     }
 
-    private boolean isNewLine(NutsText t) {
-        if (t.getType() == NutsTextType.PLAIN) {
-            String txt = ((NutsTextPlain) t).getText();
+    private boolean isNewLine(NText t) {
+        if (t.getType() == NTextType.PLAIN) {
+            String txt = ((NTextPlain) t).getText();
             return (txt.equals("\n") || txt.equals("\r\n"));
         }
         return false;
     }
 
-    private NutsTextBuilder readLine(NutsTextBuilder flattened, NutsSession session) {
+    private NTextBuilder readLine(NTextBuilder flattened, NSession session) {
         if (flattened.size() == 0) {
             return null;
         }
-        List<NutsText> r = new ArrayList<>();
+        List<NText> r = new ArrayList<>();
         while (flattened.size() > 0) {
-            NutsText t = flattened.get(0);
+            NText t = flattened.get(0);
             flattened.removeAt(0);
             if (isNewLine(t)) {
                 break;
             }
             r.add(t);
         }
-        return NutsTexts.of(session).ofBuilder().appendAll(r);
+        return NTexts.of(session).ofBuilder().appendAll(r);
     }
 
-    private void processByLine(Reader reader, Options options, Pattern p, FileInfo f, List<GrepResultItem> results, NutsSession session) throws IOException {
+    private void processByLine(Reader reader, Options options, Pattern p, FileInfo f, List<GrepResultItem> results, NSession session) throws IOException {
         try (BufferedReader r = new BufferedReader(reader)) {
             String line = null;
             long nn = 1;
@@ -234,9 +234,9 @@ public class GrepCommand extends SimpleJShellBuiltin {
         }
     }
 
-    private GrepResultItem createResult(long nn, String line, NutsTextBuilder coloredLine, Options options, Pattern p, FileInfo f, NutsSession session) {
+    private GrepResultItem createResult(long nn, String line, NTextBuilder coloredLine, Options options, Pattern p, FileInfo f, NSession session) {
         if (coloredLine == null) {
-            coloredLine = NutsTexts.of(session).ofCode(f.getHighlighter(), line).highlight(session).builder();
+            coloredLine = NTexts.of(session).ofCode(f.getHighlighter(), line).highlight(session).builder();
         }
         Matcher matcher = p.matcher(line);
         boolean anyMatch = false;
@@ -245,7 +245,7 @@ public class GrepCommand extends SimpleJShellBuiltin {
             int pos = matcher.start();
             int end = matcher.end();
             coloredLine.replace(pos, end,
-                    NutsTexts.of(session).ofStyled(
+                    NTexts.of(session).ofStyled(
                             coloredLine.substring(pos, end)
                             , selectionStyle(options)
                     )
@@ -263,15 +263,15 @@ public class GrepCommand extends SimpleJShellBuiltin {
         return null;
     }
 
-    private void processByText(String text, Options options, Pattern p, FileInfo f, List<GrepResultItem> results, NutsSession session) throws IOException {
-        NutsTextBuilder flattened = NutsTexts.of(session).ofCode(f.getHighlighter(), text).highlight(session)
+    private void processByText(String text, Options options, Pattern p, FileInfo f, List<GrepResultItem> results, NSession session) throws IOException {
+        NTextBuilder flattened = NTexts.of(session).ofCode(f.getHighlighter(), text).highlight(session)
                 .builder()
                 .flatten();
         try (BufferedReader r = new BufferedReader(new InputStreamReader(f.getFile().getInputStream()))) {
             String line = null;
             long nn = 1;
             while ((line = r.readLine()) != null) {
-                NutsTextBuilder coloredLine = readLine(flattened, session);
+                NTextBuilder coloredLine = readLine(flattened, session);
                 GrepResultItem rr = createResult(nn, line, coloredLine, options, p, f, session);
                 if (rr != null) {
                     results.add(rr);
@@ -281,13 +281,13 @@ public class GrepCommand extends SimpleJShellBuiltin {
         }
     }
 
-    public NutsTextStyles selectionStyle(Options options) {
+    public NTextStyles selectionStyle(Options options) {
         String s = options.selectionStyle;
-        NutsTextStyles def = NutsTextStyles.of(NutsTextStyle.secondary(2));
-        if (NutsBlankable.isBlank(s)) {
+        NTextStyles def = NTextStyles.of(NTextStyle.secondary(2));
+        if (NBlankable.isBlank(s)) {
             return def;
         }
-        return NutsTextStyles.parse(s).orElse(def);
+        return NTextStyles.parse(s).orElse(def);
     }
 
     private static class Options {
@@ -308,12 +308,12 @@ public class GrepCommand extends SimpleJShellBuiltin {
     }
 
     private static class GrepResultItem {
-        NutsPath path;
+        NPath path;
         long number;
-        NutsText line;
+        NText line;
         Boolean match;
 
-        public GrepResultItem(NutsPath path, long number, NutsText line,Boolean match) {
+        public GrepResultItem(NPath path, long number, NText line, Boolean match) {
             this.path = path;
             this.number = number;
             this.line = line;

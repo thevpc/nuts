@@ -1,8 +1,8 @@
 package net.thevpc.nuts.runtime.standalone.io.outputstream;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.io.NutsIOException;
-import net.thevpc.nuts.io.NutsOutputStreamTransparentAdapter;
+import net.thevpc.nuts.io.NIOException;
+import net.thevpc.nuts.io.NOutputStreamTransparentAdapter;
 
 import java.io.IOException;
 import java.io.OutputStream;
@@ -13,23 +13,23 @@ public class OutputStreamHelper implements OutputHelper {
     private OutputStream rawOutput;
     private OutputStream rawOutput0;
     private PrintStream ps;
-    private NutsSession session;
+    private NSession session;
 
-    public OutputStreamHelper(OutputStream rawOutput, NutsSession session) {
+    public OutputStreamHelper(OutputStream rawOutput, NSession session) {
         this.session = session;
         this.rawOutput = rawOutput;
         this.rawOutput0 = rawOutput;
         int loopGard = 100;
         while (loopGard > 0) {
-            if (rawOutput0 instanceof NutsOutputStreamTransparentAdapter) {
-                rawOutput0 = ((NutsOutputStreamTransparentAdapter) rawOutput0).baseOutputStream();
+            if (rawOutput0 instanceof NOutputStreamTransparentAdapter) {
+                rawOutput0 = ((NOutputStreamTransparentAdapter) rawOutput0).baseOutputStream();
             } else {
                 break;
             }
             loopGard--;
         }
-        if (rawOutput0 instanceof NutsOutputStreamTransparentAdapter) {
-            throw new NutsIllegalArgumentException(session, NutsMessage.ofPlain("invalid rawOutput"));
+        if (rawOutput0 instanceof NOutputStreamTransparentAdapter) {
+            throw new NIllegalArgumentException(session, NMsg.ofPlain("invalid rawOutput"));
         }
     }
 
@@ -38,7 +38,7 @@ public class OutputStreamHelper implements OutputHelper {
         try {
             rawOutput0.write(b, offset, len);
         } catch (IOException ex) {
-            throw new NutsIOException(session,ex);
+            throw new NIOException(session,ex);
         }
     }
     //@Override
@@ -55,7 +55,7 @@ public class OutputStreamHelper implements OutputHelper {
             try {
                 rawOutput0.write(bb, 0, bb.length);
             } catch (IOException ex) {
-                throw new NutsIOException(session,ex);
+                throw new NIOException(session,ex);
             }
         }
     }

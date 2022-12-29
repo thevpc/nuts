@@ -1,43 +1,43 @@
 package net.thevpc.nuts.toolbox.ndb.nmysql;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.io.NutsPath;
+import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.toolbox.ndb.nmysql.local.LocalMysqlConfigService;
 import net.thevpc.nuts.toolbox.ndb.nmysql.local.config.LocalMysqlConfig;
 import net.thevpc.nuts.toolbox.ndb.nmysql.remote.RemoteMysqlConfigService;
 import net.thevpc.nuts.toolbox.ndb.nmysql.remote.config.RemoteMysqlConfig;
-import net.thevpc.nuts.util.NutsUnsafeFunction;
+import net.thevpc.nuts.util.NUnsafeFunction;
 
 import java.util.logging.Logger;
 
 public class NMySqlService {
     private static final Logger LOG = Logger.getLogger(NMySqlService.class.getName());
-    private NutsApplicationContext context;
-    private NutsPath sharedConfigFolder;
+    private NApplicationContext context;
+    private NPath sharedConfigFolder;
 
-    public NMySqlService(NutsApplicationContext context) {
+    public NMySqlService(NApplicationContext context) {
         this.context = context;
-        sharedConfigFolder = context.getVersionFolder(NutsStoreLocation.CONFIG, NMySqlConfigVersions.CURRENT);
+        sharedConfigFolder = context.getVersionFolder(NStoreLocation.CONFIG, NMySqlConfigVersions.CURRENT);
     }
 
     public LocalMysqlConfigService[] listLocalConfig() {
         return
-                sharedConfigFolder.list().filter(
+                sharedConfigFolder.stream().filter(
                                 pathname -> pathname.isRegularFile() && pathname.getName().toString().endsWith(LocalMysqlConfigService.SERVER_CONFIG_EXT),
                                 "isRegularFile() && matches(*" + LocalMysqlConfigService.SERVER_CONFIG_EXT + ")"
                         )
                         .mapUnsafe(
-                                NutsUnsafeFunction.of(this::loadLocalMysqlConfig, "loadLocalMysqlConfig")
+                                NUnsafeFunction.of(this::loadLocalMysqlConfig, "loadLocalMysqlConfig")
                                 , null)
                         .filterNonNull()
                         .toArray(LocalMysqlConfigService[]::new);
     }
 
-    public LocalMysqlConfigService loadLocalMysqlConfig(String name, NutsOpenMode action) {
+    public LocalMysqlConfigService loadLocalMysqlConfig(String name, NOpenMode action) {
         LocalMysqlConfigService t = new LocalMysqlConfigService(name, context);
         if (t.existsConfig()) {
-            if (action == NutsOpenMode.CREATE_OR_ERROR) {
-                throw new NutsIllegalArgumentException(context.getSession(), NutsMessage.ofCstyle("local mysql config already exist: %s", name));
+            if (action == NOpenMode.CREATE_OR_ERROR) {
+                throw new NIllegalArgumentException(context.getSession(), NMsg.ofCstyle("local mysql config already exist: %s", name));
             }
             t.loadConfig();
         } else {
@@ -47,7 +47,7 @@ public class NMySqlService {
                     break;
                 }
                 case OPEN_OR_ERROR: {
-                    throw new NutsIllegalArgumentException(context.getSession(), NutsMessage.ofCstyle("no such local mysql config: %s", name));
+                    throw new NIllegalArgumentException(context.getSession(), NMsg.ofCstyle("no such local mysql config: %s", name));
                 }
                 case OPEN_OR_NULL: {
                     t = null;
@@ -58,11 +58,11 @@ public class NMySqlService {
         return t;
     }
 
-    public RemoteMysqlConfigService loadRemoteMysqlConfig(String name, NutsOpenMode action) {
+    public RemoteMysqlConfigService loadRemoteMysqlConfig(String name, NOpenMode action) {
         RemoteMysqlConfigService t = new RemoteMysqlConfigService(name, context);
         if (t.existsConfig()) {
-            if (action == NutsOpenMode.CREATE_OR_ERROR) {
-                throw new NutsIllegalArgumentException(context.getSession(), NutsMessage.ofCstyle("remote mysql config already exist: %s", name));
+            if (action == NOpenMode.CREATE_OR_ERROR) {
+                throw new NIllegalArgumentException(context.getSession(), NMsg.ofCstyle("remote mysql config already exist: %s", name));
             }
             t.loadConfig();
         } else {
@@ -72,7 +72,7 @@ public class NMySqlService {
                     break;
                 }
                 case OPEN_OR_ERROR: {
-                    throw new NutsIllegalArgumentException(context.getSession(), NutsMessage.ofCstyle("no such remote mysql config: %s", name));
+                    throw new NIllegalArgumentException(context.getSession(), NMsg.ofCstyle("no such remote mysql config: %s", name));
                 }
                 case OPEN_OR_NULL: {
                     t = null;
@@ -87,13 +87,13 @@ public class NMySqlService {
         return t;
     }
 
-    public LocalMysqlConfigService loadLocalMysqlConfig(NutsPath file) {
+    public LocalMysqlConfigService loadLocalMysqlConfig(NPath file) {
         LocalMysqlConfigService t = new LocalMysqlConfigService(file, context);
         t.loadConfig();
         return t;
     }
 
-    public NutsApplicationContext getContext() {
+    public NApplicationContext getContext() {
         return context;
     }
 
@@ -105,12 +105,12 @@ public class NMySqlService {
 
     public RemoteMysqlConfigService[] listRemoteConfig() {
         return
-                sharedConfigFolder.list().filter(
+                sharedConfigFolder.stream().filter(
                                 pathname -> pathname.isRegularFile() && pathname.getName().toString().endsWith(LocalMysqlConfigService.SERVER_CONFIG_EXT),
                                 "isRegularFile() && matches(*" + LocalMysqlConfigService.SERVER_CONFIG_EXT + ")"
                         )
                         .mapUnsafe(
-                                NutsUnsafeFunction.of(
+                                NUnsafeFunction.of(
                                         x -> {
                                             String nn = x.getName();
                                             return loadRemoteMysqlConfig(nn.substring(0, nn.length() - RemoteMysqlConfigService.CLIENT_CONFIG_EXT.length()));

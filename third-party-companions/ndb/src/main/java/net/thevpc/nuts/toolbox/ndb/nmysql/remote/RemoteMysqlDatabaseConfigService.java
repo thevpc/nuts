@@ -3,12 +3,12 @@ package net.thevpc.nuts.toolbox.ndb.nmysql.remote;
 import java.io.File;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.elem.NutsElements;
-import net.thevpc.nuts.io.NutsCp;
-import net.thevpc.nuts.io.NutsIOException;
-import net.thevpc.nuts.io.NutsPath;
-import net.thevpc.nuts.text.NutsTextStyle;
-import net.thevpc.nuts.text.NutsTexts;
+import net.thevpc.nuts.elem.NElements;
+import net.thevpc.nuts.io.NCp;
+import net.thevpc.nuts.io.NIOException;
+import net.thevpc.nuts.io.NPath;
+import net.thevpc.nuts.text.NTextStyle;
+import net.thevpc.nuts.text.NTexts;
 import net.thevpc.nuts.toolbox.ndb.nmysql.NMySqlService;
 import net.thevpc.nuts.toolbox.ndb.nmysql.remote.config.RemoteMysqlDatabaseConfig;
 import net.thevpc.nuts.toolbox.ndb.nmysql.local.LocalMysqlDatabaseConfigService;
@@ -27,7 +27,7 @@ import net.thevpc.nuts.toolbox.ndb.nmysql.util.MysqlUtils;
 public class RemoteMysqlDatabaseConfigService {
 
     private final RemoteMysqlDatabaseConfig config;
-    private final NutsApplicationContext context;
+    private final NApplicationContext context;
     private final RemoteMysqlConfigService client;
     private final String name;
 
@@ -58,19 +58,19 @@ public class RemoteMysqlDatabaseConfigService {
     }
 
     public void write(PrintStream out) {
-        NutsSession session = context.getSession();
-        NutsElements.of(session).json().setValue(getConfig())
+        NSession session = context.getSession();
+        NElements.of(session).json().setValue(getConfig())
                 .setNtf(false).print(out);
     }
 
     public String pull(String localPath, boolean restore, boolean deleteRemote) {
         CachedMapFile lastRun = new CachedMapFile(context, "pull-" + getName());
-        NutsSession session = context.getSession();
+        NSession session = context.getSession();
         if (lastRun.exists()) {
             if (!session.getTerminal().ask()
                     .resetLine()
                     .forBoolean(
-                            NutsMessage.ofPlain("a previous pull has failed. would you like to resume (yes) or ignore and re-run the pull (no).")
+                            NMsg.ofPlain("a previous pull has failed. would you like to resume (yes) or ignore and re-run the pull (no).")
                     )
                     .getBooleanValue()
             ) {
@@ -79,8 +79,8 @@ public class RemoteMysqlDatabaseConfigService {
         }
         NMySqlService ms = new NMySqlService(context);
         AtName locName = new AtName(getConfig().getLocalName());
-        LocalMysqlDatabaseConfigService loc = ms.loadLocalMysqlConfig(locName.getConfigName(), NutsOpenMode.OPEN_OR_ERROR)
-                .getDatabase(locName.getDatabaseName(), NutsOpenMode.OPEN_OR_ERROR);
+        LocalMysqlDatabaseConfigService loc = ms.loadLocalMysqlConfig(locName.getConfigName(), NOpenMode.OPEN_OR_ERROR)
+                .getDatabase(locName.getDatabaseName(), NOpenMode.OPEN_OR_ERROR);
         RemoteMysqlDatabaseConfig cconfig = getConfig();
         if (session.isPlainTrace()) {
             session.out().printf("%s remote restore%n", getBracketsPrefix(name));
@@ -103,37 +103,37 @@ public class RemoteMysqlDatabaseConfigService {
         if (t > 0) {
             remoteTempPath = remoteTempPath.substring(t);
         }
-        NutsElements elem = NutsElements.of(session);
+        NElements elem = NElements.of(session);
         Map<String, Object> resMap = elem.parse(remoteTempPath.getBytes(), Map.class);
         String ppath = (String) resMap.get("path");
 
-        if (NutsBlankable.isBlank(localPath)) {
+        if (NBlankable.isBlank(localPath)) {
             localPath = context.getVarFolder()
                     .resolve("pull-backups")
                     .resolve(client.getName() + "-" + getName())
                     .resolve(/*MysqlUtils.newDateString()+"-"+*/Paths.get(ppath).getFileName().toString())
                     .toString();
         }
-        NutsPath remoteFullFilePath = NutsPath.of(prepareSshServer(cconfig.getServer()) + "/" + ppath, session);
-        NutsTexts text = NutsTexts.of(session);
+        NPath remoteFullFilePath = NPath.of(prepareSshServer(cconfig.getServer()) + "/" + ppath, session);
+        NTexts text = NTexts.of(session);
         if (session.isPlainTrace()) {
             session.out().printf("%s copy '%s' to '%s'%n", getBracketsPrefix(name),
-                    text.ofStyled(remoteFullFilePath.toString(), NutsTextStyle.path()),
-                    text.ofStyled(localPath, NutsTextStyle.path())
+                    text.ofStyled(remoteFullFilePath.toString(), NTextStyle.path()),
+                    text.ofStyled(localPath, NTextStyle.path())
             );
         }
         if (lastRun.get("localPath") != null) {
             String s = lastRun.get("localPath");
-            NutsCp.of(session).from(NutsPath.of(s, session)).to(NutsPath.of(localPath, session)).run();
+            NCp.of(session).from(NPath.of(s, session)).to(NPath.of(localPath, session)).run();
         } else {
             if (Paths.get(localPath).getParent() != null) {
                 try {
                     Files.createDirectories(Paths.get(localPath).getParent());
                 } catch (IOException e) {
-                    throw new NutsIOException(session, e);
+                    throw new NIOException(session, e);
                 }
             }
-            context.getSession().exec().setExecutionType(NutsExecutionType.EMBEDDED)
+            context.getSession().exec().setExecutionType(NExecutionType.EMBEDDED)
                     .setSession(session.copy())
                     .addCommand("nsh",
                             "--bot",
@@ -177,34 +177,34 @@ public class RemoteMysqlDatabaseConfigService {
     public void push(String localPath, boolean backup) {
         NMySqlService ms = new NMySqlService(context);
         AtName locName = new AtName(getConfig().getLocalName());
-        LocalMysqlDatabaseConfigService loc = ms.loadLocalMysqlConfig(locName.getConfigName(), NutsOpenMode.OPEN_OR_ERROR)
-                .getDatabase(locName.getDatabaseName(), NutsOpenMode.OPEN_OR_ERROR);
-        NutsSession session = context.getSession();
+        LocalMysqlDatabaseConfigService loc = ms.loadLocalMysqlConfig(locName.getConfigName(), NOpenMode.OPEN_OR_ERROR)
+                .getDatabase(locName.getDatabaseName(), NOpenMode.OPEN_OR_ERROR);
+        NSession session = context.getSession();
         if (backup) {
             localPath = loc.backup(localPath).path;
         } else {
-            if (NutsBlankable.isBlank(localPath)) {
-                throw new NutsExecutionException(session, NutsMessage.ofPlain("missing local path"), 2);
+            if (NBlankable.isBlank(localPath)) {
+                throw new NExecutionException(session, NMsg.ofPlain("missing local path"), 2);
             }
         }
         if (!new File(localPath).isFile()) {
-            throw new NutsExecutionException(session, NutsMessage.ofCstyle("invalid local path %s", localPath), 2);
+            throw new NExecutionException(session, NMsg.ofCstyle("invalid local path %s", localPath), 2);
         }
         RemoteMysqlDatabaseConfig cconfig = getConfig();
         String remoteTempPath = null;
         final String searchResultString = execRemoteNuts("search --!color --json net.thevpc.nuts.toolbox:nmysql --display temp-folder --installed --first");
-        List<Map> result = NutsElements.of(session).json().parse(new StringReader(searchResultString), List.class);
+        List<Map> result = NElements.of(session).json().parse(new StringReader(searchResultString), List.class);
         if (result.isEmpty()) {
-            throw new NutsIllegalArgumentException(session, NutsMessage.ofPlain("Mysql is not installed on the remote machine"));
+            throw new NIllegalArgumentException(session, NMsg.ofPlain("Mysql is not installed on the remote machine"));
         }
         remoteTempPath = (String) result.get(0).get("temp-folder");
 
         String remoteFilePath = "/" + remoteTempPath + "-" + MysqlUtils.newDateString() + "-" + MysqlUtils.getFileName(localPath);
-        NutsPath remoteFullFilePath = NutsPath.of(prepareSshServer(cconfig.getServer()) + "/" + remoteFilePath, session);
-        NutsTexts text = NutsTexts.of(session);
+        NPath remoteFullFilePath = NPath.of(prepareSshServer(cconfig.getServer()) + "/" + remoteFilePath, session);
+        NTexts text = NTexts.of(session);
         if (session.isPlainTrace()) {
             session.out().printf("%s copy %s to %s%n", getBracketsPrefix(name),
-                    text.ofStyled(localPath, NutsTextStyle.path()),
+                    text.ofStyled(localPath, NTextStyle.path()),
                     remoteFullFilePath
             );
         }
@@ -249,8 +249,8 @@ public class RemoteMysqlDatabaseConfigService {
     }
 
     public String execRemoteNuts(String... cmd) {
-        NutsSession session = context.getSession();
-        NutsExecCommand b = session.exec()
+        NSession session = context.getSession();
+        NExecCommand b = session.exec()
                 .setSession(session.copy());
         if ("localhost".equals(this.config.getServer())) {
             b.addCommand("nuts");
@@ -272,7 +272,7 @@ public class RemoteMysqlDatabaseConfigService {
             b.addCommand(cmd);
         }
         if (session.isPlainTrace()) {
-            NutsString ff = b.formatter()
+            NString ff = b.formatter()
                     .setEnvReplacer(envEntry -> {
                         if (envEntry.getName().toLowerCase().contains("password")
                                 || envEntry.getName().toLowerCase().contains("pwd")) {
@@ -290,7 +290,7 @@ public class RemoteMysqlDatabaseConfigService {
     }
 
     private String prepareSshServer(String server) {
-        if (NutsBlankable.isBlank(server)) {
+        if (NBlankable.isBlank(server)) {
             server = "ssh://localhost";
         }
         if (!server.startsWith("ssh://")) {
@@ -299,10 +299,10 @@ public class RemoteMysqlDatabaseConfigService {
         return server;
     }
 
-    public NutsString getBracketsPrefix(String str) {
-        return NutsTexts.of(context.getSession()).ofBuilder()
+    public NString getBracketsPrefix(String str) {
+        return NTexts.of(context.getSession()).ofBuilder()
                 .append("[")
-                .append(str, NutsTextStyle.primary5())
+                .append(str, NTextStyle.primary5())
                 .append("]");
     }
 

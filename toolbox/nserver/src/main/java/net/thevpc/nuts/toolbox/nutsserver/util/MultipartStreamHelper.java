@@ -26,10 +26,10 @@
  */
 package net.thevpc.nuts.toolbox.nutsserver.util;
 
-import net.thevpc.nuts.NutsException;
-import net.thevpc.nuts.NutsIllegalArgumentException;
-import net.thevpc.nuts.NutsMessage;
-import net.thevpc.nuts.NutsSession;
+import net.thevpc.nuts.NException;
+import net.thevpc.nuts.NIllegalArgumentException;
+import net.thevpc.nuts.NMsg;
+import net.thevpc.nuts.NSession;
 
 import java.io.*;
 import java.util.Iterator;
@@ -40,10 +40,10 @@ import java.util.Iterator;
 public class MultipartStreamHelper implements Iterable<ItemStreamInfo> {
 
     private MultipartStream2 stream;
-    private NutsSession session;
+    private NSession session;
 
     public MultipartStreamHelper(InputStream input,
-                                 String contentType, NutsSession session) {
+                                 String contentType, NSession session) {
         this.session = session;
         stream = new MultipartStream2(
                 input, resolveBoundaryFromContentType(contentType, session), MultipartStream2.DEFAULT_BUFSIZE,
@@ -51,7 +51,7 @@ public class MultipartStreamHelper implements Iterable<ItemStreamInfo> {
         );
     }
 
-    private static byte[] resolveBoundaryFromContentType(String contentType, NutsSession session) {
+    private static byte[] resolveBoundaryFromContentType(String contentType, NSession session) {
         //multipart/form-data; boundary=1597f5e92b6
         for (String s : contentType.split(";")) {
             s = s.trim();
@@ -59,7 +59,7 @@ public class MultipartStreamHelper implements Iterable<ItemStreamInfo> {
                 return s.substring("boundary=".length()).getBytes();
             }
         }
-        throw new NutsIllegalArgumentException(session, NutsMessage.ofPlain("invalid boundary"));
+        throw new NIllegalArgumentException(session, NMsg.ofPlain("invalid boundary"));
     }
 
     public Iterator<ItemStreamInfo> iterator() {
@@ -123,7 +123,7 @@ public class MultipartStreamHelper implements Iterable<ItemStreamInfo> {
             } catch (RuntimeException e) {
                 throw e;
             } catch (Exception e) {
-                throw new NutsException(session, NutsMessage.ofPlain("parse multipart failed"),e);
+                throw new NException(session, NMsg.ofPlain("parse multipart failed"),e);
             }
         }
 

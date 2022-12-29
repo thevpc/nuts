@@ -9,12 +9,12 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.cmdline.NutsCommandLine;
-import net.thevpc.nuts.elem.NutsElements;
-import net.thevpc.nuts.io.NutsPrintStream;
+import net.thevpc.nuts.cmdline.NCommandLine;
+import net.thevpc.nuts.elem.NElements;
+import net.thevpc.nuts.io.NStream;
 import net.thevpc.nuts.runtime.standalone.format.DefaultSearchFormatBase;
-import net.thevpc.nuts.runtime.standalone.format.NutsFetchDisplayOptions;
-import net.thevpc.nuts.runtime.standalone.format.NutsFormatUtils;
+import net.thevpc.nuts.runtime.standalone.format.NFetchDisplayOptions;
+import net.thevpc.nuts.runtime.standalone.format.NFormatUtils;
 import net.thevpc.nuts.runtime.standalone.io.util.CoreIOUtils;
 
 /**
@@ -23,12 +23,12 @@ import net.thevpc.nuts.runtime.standalone.io.util.CoreIOUtils;
  */
 public class DefaultSearchFormatProps extends DefaultSearchFormatBase {
 
-    public DefaultSearchFormatProps(NutsSession session, NutsPrintStream writer, NutsFetchDisplayOptions options) {
-        super(session, writer, NutsContentType.PROPS,options);
+    public DefaultSearchFormatProps(NSession session, NStream writer, NFetchDisplayOptions options) {
+        super(session, writer, NContentType.PROPS,options);
     }
 
     @Override
-    public boolean configureFirst(NutsCommandLine cmd) {
+    public boolean configureFirst(NCommandLine cmd) {
         if (getDisplayOptions().configureFirst(cmd)) {
             return true;
         }
@@ -47,9 +47,9 @@ public class DefaultSearchFormatProps extends DefaultSearchFormatBase {
     @Override
     public void next(Object object, long index) {
         Map<String, String> p = new LinkedHashMap<>();
-        NutsSession session = getSession();
-        NutsFormatUtils.putAllInProps(String.valueOf(index + 1), p,
-                NutsElements.of(session)
+        NSession session = getSession();
+        NFormatUtils.putAllInProps(String.valueOf(index + 1), p,
+                NElements.of(session)
                         .toElement(object),
                 session);
         CoreIOUtils.storeProperties(p, getWriter().asPrintStream(), false, session);

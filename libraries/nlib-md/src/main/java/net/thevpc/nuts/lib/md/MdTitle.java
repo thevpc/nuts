@@ -17,7 +17,7 @@
  */
 package net.thevpc.nuts.lib.md;
 
-import net.thevpc.nuts.NutsBlankable;
+import net.thevpc.nuts.NBlankable;
 import net.thevpc.nuts.lib.md.util.MdUtils;
 
 import java.util.Arrays;
@@ -100,7 +100,7 @@ public class MdTitle extends MdParent {
 
     @Override
     public boolean isBlank() {
-        return NutsBlankable.isBlank(value)
-                && (getChildren()==null || Arrays.stream(getChildren()).allMatch(x->NutsBlankable.isBlank(x)));
+        return NBlankable.isBlank(value)
+                && (getChildren()==null || Arrays.stream(getChildren()).allMatch(x-> NBlankable.isBlank(x)));
     }
 }

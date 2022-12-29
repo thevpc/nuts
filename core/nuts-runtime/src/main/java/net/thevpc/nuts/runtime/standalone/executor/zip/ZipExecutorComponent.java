@@ -24,44 +24,44 @@
 package net.thevpc.nuts.runtime.standalone.executor.zip;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.io.NutsIOException;
-import net.thevpc.nuts.runtime.standalone.executor.exec.NutsExecHelper;
+import net.thevpc.nuts.io.NIOException;
+import net.thevpc.nuts.runtime.standalone.executor.exec.NExecHelper;
 import net.thevpc.nuts.runtime.standalone.io.util.IProcessExecHelper;
-import net.thevpc.nuts.spi.NutsComponentScope;
-import net.thevpc.nuts.spi.NutsComponentScopeType;
-import net.thevpc.nuts.spi.NutsExecutorComponent;
-import net.thevpc.nuts.spi.NutsSupportLevelContext;
-import net.thevpc.nuts.util.NutsStringUtils;
-import net.thevpc.nuts.util.NutsUtils;
+import net.thevpc.nuts.spi.NComponentScope;
+import net.thevpc.nuts.spi.NComponentScopeType;
+import net.thevpc.nuts.spi.NExecutorComponent;
+import net.thevpc.nuts.spi.NSupportLevelContext;
+import net.thevpc.nuts.util.NStringUtils;
+import net.thevpc.nuts.util.NUtils;
 
 import java.util.*;
 
 /**
  * Created by vpc on 1/7/17.
  */
-@NutsComponentScope(NutsComponentScopeType.WORKSPACE)
-public class ZipExecutorComponent implements NutsExecutorComponent {
+@NComponentScope(NComponentScopeType.WORKSPACE)
+public class ZipExecutorComponent implements NExecutorComponent {
 
-    public static NutsId ID;
-    NutsSession session;
+    public static NId ID;
+    NSession session;
 
     @Override
-    public NutsId getId() {
+    public NId getId() {
         return ID;
     }
 
     @Override
-    public void exec(NutsExecutionContext executionContext) {
+    public void exec(NExecutionContext executionContext) {
         execHelper(executionContext).exec();
     }
 
     @Override
-    public int getSupportLevel(NutsSupportLevelContext ctx) {
+    public int getSupportLevel(NSupportLevelContext ctx) {
         this.session = ctx.getSession();
         if (ID == null) {
-            ID = NutsId.of("net.thevpc.nuts.exec:zip").get(session);
+            ID = NId.of("net.thevpc.nuts.exec:zip").get(session);
         }
-        NutsDefinition def = ctx.getConstraints(NutsDefinition.class);
+        NDefinition def = ctx.getConstraints(NDefinition.class);
         if (def != null) {
             String shortName = def.getId().getShortName();
             //for executors
@@ -71,7 +71,7 @@ public class ZipExecutorComponent implements NutsExecutorComponent {
             if ("zip".equals(shortName)) {
                 return DEFAULT_SUPPORT + 10;
             }
-            switch (NutsStringUtils.trim(def.getDescriptor().getPackaging())) {
+            switch (NStringUtils.trim(def.getDescriptor().getPackaging())) {
                 case "zip": {
                     return DEFAULT_SUPPORT + 10;
                 }
@@ -81,20 +81,20 @@ public class ZipExecutorComponent implements NutsExecutorComponent {
     }
 
     //@Override
-    public IProcessExecHelper execHelper(NutsExecutionContext executionContext) {
-        NutsDefinition def = executionContext.getDefinition();
-        NutsSession session = executionContext.getSession();
+    public IProcessExecHelper execHelper(NExecutionContext executionContext) {
+        NDefinition def = executionContext.getDefinition();
+        NSession session = executionContext.getSession();
         HashMap<String, String> osEnv = new HashMap<>();
-        NutsArtifactCall executor = def.getDescriptor().getExecutor();
-        NutsUtils.requireNonNull(executor, () -> NutsMessage.ofCstyle("missing executor %s", def.getId()), session);
+        NArtifactCall executor = def.getDescriptor().getExecutor();
+        NUtils.requireNonNull(executor, () -> NMsg.ofCstyle("missing executor %s", def.getId()), session);
         List<String> args = new ArrayList<>(executionContext.getExecutorOptions());
         args.addAll(executionContext.getArguments());
         if (executor.getId() != null && !executor.getId().toString().equals("exec")) {
             // TODO: delegate to another executor!
-            throw new NutsIOException(session, NutsMessage.ofCstyle("unsupported executor %s for %s", executor.getId(), def.getId()));
+            throw new NIOException(session, NMsg.ofCstyle("unsupported executor %s for %s", executor.getId(), def.getId()));
         }
         String directory = null;
-        return NutsExecHelper.ofDefinition(def,
+        return NExecHelper.ofDefinition(def,
                 args.toArray(new String[0]), osEnv, directory, executionContext.getExecutorProperties(), true, true, executionContext.getSleepMillis(), false, false, null, null, executionContext.getRunAs(), executionContext.getSession(),
                 executionContext.getExecSession()
         );

@@ -23,7 +23,7 @@
  */
 package net.thevpc.nuts.runtime.standalone.xtra.glob;
 
-import net.thevpc.nuts.NutsBlankable;
+import net.thevpc.nuts.NBlankable;
 
 import java.util.regex.Pattern;
 
@@ -36,14 +36,14 @@ public class GlobUtils {
     public static final Pattern PATTERN_ALL = Pattern.compile(".*");
 
     public static Pattern ofExact(String pattern) {
-        if (NutsBlankable.isBlank(pattern)) {
+        if (NBlankable.isBlank(pattern)) {
             return PATTERN_ALL;
         }
         return Pattern.compile(simpexpToRegexp(pattern, false));
     }
 
     public static Pattern ofContains(String pattern) {
-        if (NutsBlankable.isBlank(pattern)) {
+        if (NBlankable.isBlank(pattern)) {
             return PATTERN_ALL;
         }
         return Pattern.compile(simpexpToRegexp(pattern, true));

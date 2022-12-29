@@ -1,6 +1,6 @@
 package net.thevpc.nuts.core.test;
 
-import net.thevpc.nuts.NutsSession;
+import net.thevpc.nuts.NSession;
 import net.thevpc.nuts.core.test.utils.TestUtils;
 import net.thevpc.nuts.runtime.standalone.repository.impl.maven.lucene.LuceneIndexImporter;
 import net.thevpc.nuts.runtime.standalone.repository.index.ArtifactsIndexDB;
@@ -9,7 +9,7 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 public class Test25_LuceneTest {
-    static NutsSession session;
+    static NSession session;
 
     @BeforeAll
     public static void init() {

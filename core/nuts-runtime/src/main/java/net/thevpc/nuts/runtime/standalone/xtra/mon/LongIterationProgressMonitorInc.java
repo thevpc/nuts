@@ -3,7 +3,7 @@ package net.thevpc.nuts.runtime.standalone.xtra.mon;
 /**
  * @author taha.bensalah@gmail.com on 7/22/16.
  */
-public class LongIterationProgressMonitorInc implements NutsProgressMonitorInc {
+public class LongIterationProgressMonitorInc implements NProgressMonitorInc {
     private double max;
     private long index;
 

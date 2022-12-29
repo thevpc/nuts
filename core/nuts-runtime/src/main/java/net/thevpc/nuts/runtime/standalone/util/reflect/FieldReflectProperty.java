@@ -23,8 +23,8 @@
  */
 package net.thevpc.nuts.runtime.standalone.util.reflect;
 
-import net.thevpc.nuts.util.NutsReflectPropertyDefaultValueStrategy;
-import net.thevpc.nuts.util.NutsReflectType;
+import net.thevpc.nuts.util.NReflectPropertyDefaultValueStrategy;
+import net.thevpc.nuts.util.NReflectType;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
@@ -37,7 +37,7 @@ public class FieldReflectProperty extends AbstractReflectProperty {
 
     private Field field;
 
-    public FieldReflectProperty(Field field, Object cleanInstance, NutsReflectType type, NutsReflectPropertyDefaultValueStrategy defaultValueStrategy) {
+    public FieldReflectProperty(Field field, Object cleanInstance, NReflectType type, NReflectPropertyDefaultValueStrategy defaultValueStrategy) {
         this.field = field;
         field.setAccessible(true);
         init(field.getName(),type, cleanInstance, field.getGenericType(),defaultValueStrategy);

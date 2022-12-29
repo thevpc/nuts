@@ -1,46 +1,45 @@
 package net.thevpc.nuts.runtime.standalone.io.progress;
 
-import net.thevpc.nuts.NutsOptional;
-import net.thevpc.nuts.NutsSession;
-import net.thevpc.nuts.NutsValue;
-import net.thevpc.nuts.elem.NutsPrimitiveElement;
-import net.thevpc.nuts.util.NutsRef;
-import net.thevpc.nuts.util.NutsStringUtils;
+import net.thevpc.nuts.NOptional;
+import net.thevpc.nuts.NSession;
+import net.thevpc.nuts.NValue;
+import net.thevpc.nuts.util.NRef;
+import net.thevpc.nuts.util.NStringUtils;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.logging.Level;
 
 public class ProgressOptions {
-    public static ProgressOptions of(NutsSession session) {
+    public static ProgressOptions of(NSession session) {
         return session.getOrComputeRefProperty(ProgressOptions.class.getName(), s -> {
             ProgressOptions o = new ProgressOptions();
             boolean enabledVisited = false;
-            Map<String, String> m = NutsStringUtils.parseMap(session.getProgressOptions(), "=", ",; ", "").get(session);
+            Map<String, String> m = NStringUtils.parseMap(session.getProgressOptions(), "=", ",; ", "").get(session);
             for (Map.Entry<String, String> e : m.entrySet()) {
                 String k = e.getKey();
                 String v = e.getValue();
                 if (!enabledVisited) {
                     if (v == null) {
-                        Boolean a = NutsValue.of(k).asBoolean().orNull();
+                        Boolean a = NValue.of(k).asBoolean().orNull();
                         if (a != null) {
                             o.setEnabled(a);
                             enabledVisited = true;
                         } else {
-                            o.put(k, NutsValue.of(v));
+                            o.put(k, NValue.of(v));
                         }
                     }else{
-                        o.put(k, NutsValue.of(v));
+                        o.put(k, NValue.of(v));
                     }
                 } else {
-                    o.put(k, NutsValue.of(v));
+                    o.put(k, NValue.of(v));
                 }
             }
             for (Map.Entry<String, String> e : session.config().getConfigMap().entrySet()) {
                 if(e.getKey().startsWith("progress.")){
                     String k = e.getKey().substring("progress.".length());
                     if(o.get(k).isNotPresent()){
-                        o.put(k,NutsValue.of(e.getValue()));
+                        o.put(k, NValue.of(e.getValue()));
                     }
                 }
             }
@@ -48,27 +47,27 @@ public class ProgressOptions {
         });
     }
 
-    private final Map<String, NutsValue> vals = new LinkedHashMap<>();
+    private final Map<String, NValue> vals = new LinkedHashMap<>();
     private boolean enabled = true;
-    private NutsRef<Level> cachedLevel= null;
+    private NRef<Level> cachedLevel= null;
 
     public boolean isEnabled() {
         return enabled;
     }
 
     public boolean isArmedNewline() {
-        NutsOptional<NutsValue> item = get("newline");
+        NOptional<NValue> item = get("newline");
         if(item.isEmpty()){
             item = get("%n");
         }
         if(item.isEmpty()){
             return false;
         }
-        return item.flatMap(NutsValue::asBoolean).orElse(false);
+        return item.flatMap(NValue::asBoolean).orElse(false);
     }
     public Level getArmedLogLevel() {
         if(cachedLevel==null){
-            cachedLevel=new NutsRef<>(
+            cachedLevel=new NRef<>(
                     getArmedLogLevel0()
             );
         }
@@ -82,20 +81,20 @@ public class ProgressOptions {
                 ids=new String[]{"log-"+level.getName().toLowerCase(),"log-verbose"};
             }
             for (String id : ids) {
-                NutsOptional<NutsValue> item = get(id);
+                NOptional<NValue> item = get(id);
                 if(!item.isEmpty()) {
-                    if(item.flatMap(NutsValue::asBoolean).orElse(true)){
+                    if(item.flatMap(NValue::asBoolean).orElse(true)){
                         return level;
                     }
                     return null;
                 }
             }
         }
-        NutsOptional<NutsValue> item = get("log");
+        NOptional<NValue> item = get("log");
         if(item.isEmpty()){
             return null;
         }
-        NutsValue iValue = item.get();
+        NValue iValue = item.get();
         String s = iValue.asString().orNull();
         if(s!=null){
             for (Level level : new Level[]{Level.OFF,Level.SEVERE,Level.WARNING,Level.INFO,Level.CONFIG,Level.FINE,Level.FINER,Level.FINEST,Level.ALL}) {
@@ -113,7 +112,7 @@ public class ProgressOptions {
         return iValue.asBoolean().orElse(true)?Level.FINEST : null;
     }
 
-    public ProgressOptions put(String k, NutsValue e) {
+    public ProgressOptions put(String k, NValue e) {
         invalidateCache();
         vals.put(k, e);
         return this;
@@ -123,9 +122,9 @@ public class ProgressOptions {
         this.cachedLevel=null;
     }
 
-    public NutsOptional<NutsValue> get(String k) {
-        NutsValue s = vals.get(k);
-        return s == null ? NutsOptional.ofNamedEmpty("property " + k) : NutsOptional.of(s);
+    public NOptional<NValue> get(String k) {
+        NValue s = vals.get(k);
+        return s == null ? NOptional.ofNamedEmpty("property " + k) : NOptional.of(s);
     }
 
 

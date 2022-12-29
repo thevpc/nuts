@@ -24,8 +24,8 @@
 package net.thevpc.nuts.runtime.standalone.io.util;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.runtime.standalone.xtra.digest.NutsDigestUtils;
-import net.thevpc.nuts.util.NutsStringUtils;
+import net.thevpc.nuts.runtime.standalone.xtra.digest.NDigestUtils;
+import net.thevpc.nuts.util.NStringUtils;
 
 import javax.crypto.Cipher;
 import javax.crypto.spec.SecretKeySpec;
@@ -42,21 +42,21 @@ import java.util.Base64;
 public class CoreSecurityUtils {
 
     public static final String ENV_KEY_PASSPHRASE = "passphrase";
-    public static final String DEFAULT_PASSPHRASE = NutsStringUtils.toHexString("It's completely nuts!!".getBytes());
+    public static final String DEFAULT_PASSPHRASE = NStringUtils.toHexString("It's completely nuts!!".getBytes());
 
-    public static char[] defaultDecryptChars(char[] data, String passphrase,NutsSession session) {
+    public static char[] defaultDecryptChars(char[] data, String passphrase, NSession session) {
         return decryptString(new String(data), passphrase,session).toCharArray();
 //        return CoreIOUtils.bytesToChars(CoreSecurityUtils.httpDecrypt(CoreIOUtils.charsToBytes(data), passphrase));
     }
 
-    public static char[] defaultEncryptChars(char[] data, String passphrase,NutsSession session) {
+    public static char[] defaultEncryptChars(char[] data, String passphrase, NSession session) {
         return encryptString(new String(data), passphrase,session).toCharArray();
 //        byte[] bytes = httpEncrypt(CoreIOUtils.charsToBytes(data), passphrase);
 //        return CoreIOUtils.bytesToChars(bytes);
     }
 
-    public static char[] defaultHashChars(char[] data, String passphrase, NutsSession session) {
-        return defaultEncryptChars(NutsDigestUtils.evalSHA1(data,session), passphrase,session);
+    public static char[] defaultHashChars(char[] data, String passphrase, NSession session) {
+        return defaultEncryptChars(NDigestUtils.evalSHA1(data,session), passphrase,session);
     }
 
 //    public static byte[] httpDecrypt(byte[] data, String passphrase) {
@@ -88,7 +88,7 @@ public class CoreSecurityUtils {
 //        }
 //    }
 
-    private static String encryptString(String strToEncrypt, String secret,NutsSession session) {
+    private static String encryptString(String strToEncrypt, String secret, NSession session) {
         try {
             //strToEncrypt must be multiple of 16 (bug in jdk11)
             byte[] bytes = strToEncrypt.getBytes(StandardCharsets.UTF_8);
@@ -110,14 +110,14 @@ public class CoreSecurityUtils {
             Cipher cipher = Cipher.getInstance("AES/ECB/PKCS5Padding");
             cipher.init(Cipher.ENCRYPT_MODE, k.secretKey);
             return Base64.getEncoder().encodeToString(cipher.doFinal(bytes));
-        } catch (NutsException ex) {
+        } catch (NException ex) {
             throw ex;
         } catch (Exception ex) {
-            throw new NutsIllegalArgumentException(session, NutsMessage.ofPlain("encryption failed"),ex);
+            throw new NIllegalArgumentException(session, NMsg.ofPlain("encryption failed"),ex);
         }
     }
 
-    private static String decryptString(String strToDecrypt, String secret,NutsSession session) {
+    private static String decryptString(String strToDecrypt, String secret, NSession session) {
         try {
             KeyInfo k = createKeyInfo(secret,session);
             Cipher cipher = Cipher.getInstance("AES/ECB/PKCS5Padding");
@@ -134,10 +134,10 @@ public class CoreSecurityUtils {
             int v= ((ch1 << 24) + (ch2 << 16) + (ch3 << 8) + (ch4 << 0));
             bytes=Arrays.copyOfRange(bytes,4,4+v);
             return new String(bytes);
-        } catch (NutsException ex) {
+        } catch (NException ex) {
             throw ex;
         } catch (Exception ex) {
-            throw new NutsIllegalArgumentException(session, NutsMessage.ofPlain("decryption failed"),ex);
+            throw new NIllegalArgumentException(session, NMsg.ofPlain("decryption failed"),ex);
         }
     }
 
@@ -147,7 +147,7 @@ public class CoreSecurityUtils {
         byte[] key;
     }
 
-    private static KeyInfo createKeyInfo(String password,NutsSession session) {
+    private static KeyInfo createKeyInfo(String password, NSession session) {
         if (password == null || password.length() == 0) {
             password = "password";
         }
@@ -159,7 +159,7 @@ public class CoreSecurityUtils {
             k.key = sha.digest(k.key);
             k.secretKey = new SecretKeySpec(k.key, "AES");
         } catch (NoSuchAlgorithmException ex) {
-            throw new NutsIllegalArgumentException(session, NutsMessage.ofPlain("encryption key building failed"),ex);
+            throw new NIllegalArgumentException(session, NMsg.ofPlain("encryption key building failed"),ex);
         }
         return k;
     }

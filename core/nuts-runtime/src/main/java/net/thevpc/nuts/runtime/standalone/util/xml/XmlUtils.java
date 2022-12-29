@@ -42,9 +42,9 @@ import javax.xml.transform.stream.StreamResult;
 
 import net.thevpc.nuts.*;
 
-import net.thevpc.nuts.io.NutsIOException;
-import net.thevpc.nuts.util.NutsLoggerOp;
-import net.thevpc.nuts.util.NutsLoggerVerb;
+import net.thevpc.nuts.io.NIOException;
+import net.thevpc.nuts.util.NLoggerOp;
+import net.thevpc.nuts.util.NLoggerVerb;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -205,11 +205,11 @@ public class XmlUtils {
         return new String(r);
     }
 
-    public static Document createDocument(NutsSession session) {
+    public static Document createDocument(NSession session) {
         return createDocumentBuilder(false, session).newDocument();
     }
 
-    public static DocumentBuilder createDocumentBuilder(boolean safe, NutsSession session) {
+    public static DocumentBuilder createDocumentBuilder(boolean safe, NSession session) {
         DocumentBuilderFactory documentFactory = DocumentBuilderFactory.newInstance();
         if (safe) {
             documentFactory.setExpandEntityReferences(false);
@@ -243,29 +243,29 @@ public class XmlUtils {
         try {
             b = documentFactory.newDocumentBuilder();
         } catch (ParserConfigurationException ex) {
-            throw new NutsIOException(session,ex);
+            throw new NIOException(session,ex);
         }
 
         b.setErrorHandler(new ErrorHandler() {
             @Override
             public void warning(SAXParseException exception) throws SAXException {
-                NutsLoggerOp.of(XmlUtils.class,session)
-                        .level(Level.FINEST).verb(NutsLoggerVerb.WARNING)
-                        .log(NutsMessage.ofJstyle("{0}",exception));
+                NLoggerOp.of(XmlUtils.class,session)
+                        .level(Level.FINEST).verb(NLoggerVerb.WARNING)
+                        .log(NMsg.ofJstyle("{0}",exception));
             }
 
             @Override
             public void error(SAXParseException exception) throws SAXException {
-                NutsLoggerOp.of(XmlUtils.class,session)
-                        .level(Level.FINEST).verb(NutsLoggerVerb.WARNING)
-                        .log(NutsMessage.ofJstyle("{0}",exception));
+                NLoggerOp.of(XmlUtils.class,session)
+                        .level(Level.FINEST).verb(NLoggerVerb.WARNING)
+                        .log(NMsg.ofJstyle("{0}",exception));
             }
 
             @Override
             public void fatalError(SAXParseException exception) throws SAXException {
-                NutsLoggerOp.of(XmlUtils.class,session)
-                        .level(Level.FINEST).verb(NutsLoggerVerb.WARNING)
-                        .log(NutsMessage.ofJstyle("{0}",exception));
+                NLoggerOp.of(XmlUtils.class,session)
+                        .level(Level.FINEST).verb(NLoggerVerb.WARNING)
+                        .log(NMsg.ofJstyle("{0}",exception));
             }
         });
         return b;
@@ -279,13 +279,13 @@ public class XmlUtils {
         }
     }
 
-    public static String documentToString(Document document,NutsSession session) {
+    public static String documentToString(Document document, NSession session) {
             ByteArrayOutputStream b = new ByteArrayOutputStream();
             writeDocument(document, new StreamResult(b), true,true,session);
             return new String(b.toByteArray());
     }
 
-    public static String elementToString(Element elem,NutsSession session) {
+    public static String elementToString(Element elem, NSession session) {
         try {
             ByteArrayOutputStream b = new ByteArrayOutputStream();
             Document d = createDocument(session);
@@ -329,13 +329,13 @@ public class XmlUtils {
             }
         };
     }
-    public static void writeDocument(Document document, StreamResult writer, boolean compact,boolean headerDeclaration,NutsSession session){
+    public static void writeDocument(Document document, StreamResult writer, boolean compact, boolean headerDeclaration, NSession session){
         TransformerFactory transformerFactory = TransformerFactory.newInstance();
         Transformer transformer;
         try {
             transformer = transformerFactory.newTransformer();
         } catch (TransformerConfigurationException ex) {
-            throw new NutsIOException(session,ex);
+            throw new NIOException(session,ex);
         }
         transformer.setOutputProperty(OutputKeys.ENCODING, "UTF-8");
         if (!compact) {
@@ -351,7 +351,7 @@ public class XmlUtils {
         try {
             transformer.transform(domSource, writer);
         } catch (TransformerException ex) {
-            throw new NutsIOException(session,ex);
+            throw new NIOException(session,ex);
         }
     }
 

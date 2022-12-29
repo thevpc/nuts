@@ -150,7 +150,7 @@ public class NutsComponentService {
             if (_id != null) {
                 NutsDefinition d = _workspace.fetch().setContent(true).setId(_id).getResultDefinition();
                 if (d != null) {
-                    NutsPath filePath = d.getPath();
+                    NPath filePath = d.getPath();
                     System.out.println(filePath);
                     InputStreamResource resource = new InputStreamResource(
                         filePath.getInputStream()

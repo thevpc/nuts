@@ -23,8 +23,8 @@
  */
 package net.thevpc.nuts.toolbox.ndb;
 
-import net.thevpc.nuts.NutsApplicationContext;
-import net.thevpc.nuts.cmdline.NutsCommandLine;
+import net.thevpc.nuts.NApplicationContext;
+import net.thevpc.nuts.cmdline.NCommandLine;
 
 /**
  *
@@ -32,5 +32,5 @@ import net.thevpc.nuts.cmdline.NutsCommandLine;
  */
 public interface NdbSupport {
 
-    void run(NutsApplicationContext context, NutsCommandLine cmdline);
+    void run(NApplicationContext context, NCommandLine cmdline);
 }

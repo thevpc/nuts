@@ -1,6 +1,6 @@
 package net.thevpc.nuts.toolbox.ntomcat.local;
 
-import net.thevpc.nuts.io.NutsPrintStream;
+import net.thevpc.nuts.io.NStream;
 
 public abstract class LocalTomcatServiceBase {
 
@@ -8,9 +8,9 @@ public abstract class LocalTomcatServiceBase {
 
     public abstract String getName();
 
-    public abstract LocalTomcatServiceBase print(NutsPrintStream out);
+    public abstract LocalTomcatServiceBase print(NStream out);
 
-    public LocalTomcatServiceBase println(NutsPrintStream out) {
+    public LocalTomcatServiceBase println(NStream out) {
         print(out);
         out.println();
         return this;

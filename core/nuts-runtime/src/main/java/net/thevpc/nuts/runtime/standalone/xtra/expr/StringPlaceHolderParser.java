@@ -1,6 +1,6 @@
 package net.thevpc.nuts.runtime.standalone.xtra.expr;
 
-import net.thevpc.nuts.NutsSession;
+import net.thevpc.nuts.NSession;
 
 import java.util.function.Function;
 import java.util.regex.Matcher;
@@ -13,7 +13,7 @@ public final class StringPlaceHolderParser {
     private StringPlaceHolderParser() {
     }
 
-    public static <T> String replaceDollarPlaceHolders(String s, T context, NutsSession session, PlaceHolderProvider<T> provider) {
+    public static <T> String replaceDollarPlaceHolders(String s, T context, NSession session, PlaceHolderProvider<T> provider) {
         return replaceDollarPlaceHolders(s, x -> provider.get(x, context, session));
     }
 
@@ -59,6 +59,6 @@ public final class StringPlaceHolderParser {
     }
 
     public interface PlaceHolderProvider<T> {
-        String get(String key, T context, NutsSession session);
+        String get(String key, T context, NSession session);
     }
 }

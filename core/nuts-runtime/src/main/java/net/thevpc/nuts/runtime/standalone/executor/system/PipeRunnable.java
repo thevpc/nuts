@@ -23,10 +23,10 @@
  */
 package net.thevpc.nuts.runtime.standalone.executor.system;
 
-import net.thevpc.nuts.util.NutsLoggerVerb;
-import net.thevpc.nuts.util.NutsLoggerOp;
-import net.thevpc.nuts.NutsMessage;
-import net.thevpc.nuts.NutsSession;
+import net.thevpc.nuts.util.NLoggerVerb;
+import net.thevpc.nuts.util.NLoggerOp;
+import net.thevpc.nuts.NMsg;
+import net.thevpc.nuts.NSession;
 import net.thevpc.nuts.runtime.standalone.io.util.NonBlockingInputStream;
 import net.thevpc.nuts.runtime.standalone.io.util.StopMonitor;
 
@@ -42,14 +42,14 @@ public class PipeRunnable implements Runnable, StopMonitor {
     private long pipedBytesCount = 0;
     private boolean requestStop = false;
     private boolean stopped = false;
-    private final NutsSession session;
+    private final NSession session;
     private final String cmd;
     private final String desc;
     private final String name;
     private final boolean renameThread;
     private byte[] bytesBuffer = new byte[10240];
 
-    public PipeRunnable(String name, String cmd, String desc, NonBlockingInputStream in, OutputStream out, boolean renameThread, NutsSession session) {
+    public PipeRunnable(String name, String cmd, String desc, NonBlockingInputStream in, OutputStream out, boolean renameThread, NSession session) {
         this.name = name;
         this.renameThread = renameThread;
         this.in = in;
@@ -83,7 +83,7 @@ public class PipeRunnable implements Runnable, StopMonitor {
 //                            .error(e)
 //                            .level(Level.FINEST)
 //                            .verb(NutsLogVerb.WARNING)
-//                            .log(NutsMessage.jstyle("lock-wait interrupted"));
+//                            .log(NMsg.jstyle("lock-wait interrupted"));
 //                }
 //            }
 //        }
@@ -100,11 +100,11 @@ public class PipeRunnable implements Runnable, StopMonitor {
                     return true;
                 }
             } catch (Exception ex) {
-                NutsLoggerOp.of(PipeRunnable.class, session)
+                NLoggerOp.of(PipeRunnable.class, session)
                         .error(ex)
                         .level(Level.FINEST)
-                        .verb(NutsLoggerVerb.WARNING)
-                        .log(NutsMessage.ofJstyle("pipe-thread exits with error: {0}", ex));
+                        .verb(NLoggerVerb.WARNING)
+                        .log(NMsg.ofJstyle("pipe-thread exits with error: {0}", ex));
                 markAsEffectivelyStopped();
             }
         } else {

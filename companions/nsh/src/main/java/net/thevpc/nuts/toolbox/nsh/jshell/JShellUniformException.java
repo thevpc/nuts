@@ -5,8 +5,8 @@
  */
 package net.thevpc.nuts.toolbox.nsh.jshell;
 
-import net.thevpc.nuts.NutsMessage;
-import net.thevpc.nuts.NutsSession;
+import net.thevpc.nuts.NMsg;
+import net.thevpc.nuts.NSession;
 
 /**
  *
@@ -16,8 +16,8 @@ public class JShellUniformException extends JShellException {
 
     private boolean quit;
 
-    public JShellUniformException(NutsSession session,int code, boolean quit, Throwable cause) {
-        super(session, NutsMessage.ofPlain("error"),cause,code);
+    public JShellUniformException(NSession session, int code, boolean quit, Throwable cause) {
+        super(session, NMsg.ofPlain("error"),cause,code);
         this.quit = quit;
     }
 

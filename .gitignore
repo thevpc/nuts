@@ -135,8 +135,6 @@
 /libraries/nlib-template/target/
 /libraries/nlib-tomcat-classloader/target/
 /tutorials/naf/nuts-spring-boot-integration/.mvn/wrapper/maven-wrapper.jar
-/tutorials/naf/nuts-spring-boot-integration/.mvn/wrapper/maven-wrapper.jar
-/tutorials/naf/nuts-spring-boot-integration/.mvn/wrapper/maven-wrapper.jar
 /documentation/presentations/001-Rationale/images/old/
 /installers/nuts-installer/nuts-installer-0.8.3.1.build_artifacts.txt
 /installers/nuts-installer/dist/nuts-installer-linux-x64-0.8.3.1.build_artifacts.txt
@@ -181,3 +179,4 @@
 /tutorials/simple-project/simple-project.iml
 /tutorials/ugly-jar-projects/springboot-project/springboot-project.iml
 /installers/nuts-installer/.idea/
+/third-party-companions/nbackup/target

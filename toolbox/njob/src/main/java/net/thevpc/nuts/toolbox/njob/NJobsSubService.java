@@ -1,8 +1,8 @@
 package net.thevpc.nuts.toolbox.njob;
 
-import net.thevpc.nuts.NutsApplicationContext;
-import net.thevpc.nuts.NutsIllegalArgumentException;
-import net.thevpc.nuts.NutsMessage;
+import net.thevpc.nuts.NApplicationContext;
+import net.thevpc.nuts.NIllegalArgumentException;
+import net.thevpc.nuts.NMsg;
 import net.thevpc.nuts.toolbox.njob.model.NJob;
 import net.thevpc.nuts.toolbox.njob.model.NJobGroup;
 import net.thevpc.nuts.toolbox.njob.model.NProject;
@@ -21,11 +21,11 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class NJobsSubService {
-    private NutsApplicationContext context;
+    private NApplicationContext context;
     private NJobConfigStore dal;
     private JobService service;
 
-    public NJobsSubService(NutsApplicationContext context, NJobConfigStore dal, JobService service) {
+    public NJobsSubService(NApplicationContext context, NJobConfigStore dal, JobService service) {
         this.context = context;
         this.dal = dal;
         this.service = service;
@@ -224,9 +224,9 @@ public class NJobsSubService {
     public boolean removeJob(String jobId) {
         long count = service.tasks().findAllTasks().filter(x -> jobId.equals(x.getJobId())).count();
         if (count > 1) {
-            throw new NutsIllegalArgumentException(context.getSession(), NutsMessage.ofCstyle("job is used in %d tasks. It cannot be removed.",count));
+            throw new NIllegalArgumentException(context.getSession(), NMsg.ofCstyle("job is used in %d tasks. It cannot be removed.",count));
         } else if (count > 0) {
-            throw new NutsIllegalArgumentException(context.getSession(),NutsMessage.ofPlain("job is used in one task. It cannot be removed."));
+            throw new NIllegalArgumentException(context.getSession(), NMsg.ofPlain("job is used in one task. It cannot be removed."));
         }
         return dal.delete(NJob.class, jobId);
     }

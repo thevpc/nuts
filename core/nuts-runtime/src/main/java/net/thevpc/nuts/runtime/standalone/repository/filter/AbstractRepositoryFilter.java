@@ -23,35 +23,35 @@
  */
 package net.thevpc.nuts.runtime.standalone.repository.filter;
 
-import net.thevpc.nuts.NutsRepositoryFilter;
-import net.thevpc.nuts.NutsFilter;
-import net.thevpc.nuts.NutsFilterOp;
-import net.thevpc.nuts.NutsSession;
-import net.thevpc.nuts.runtime.standalone.util.filters.AbstractNutsFilter;
+import net.thevpc.nuts.NRepositoryFilter;
+import net.thevpc.nuts.NFilter;
+import net.thevpc.nuts.NFilterOp;
+import net.thevpc.nuts.NSession;
+import net.thevpc.nuts.runtime.standalone.util.filters.AbstractNFilter;
 import net.thevpc.nuts.runtime.standalone.util.Simplifiable;
 
 /**
  *
  * @author thevpc
  */
-public abstract class AbstractRepositoryFilter extends AbstractNutsFilter implements NutsRepositoryFilter, Simplifiable<NutsRepositoryFilter> {
+public abstract class AbstractRepositoryFilter extends AbstractNFilter implements NRepositoryFilter, Simplifiable<NRepositoryFilter> {
 
-    public AbstractRepositoryFilter(NutsSession session, NutsFilterOp op) {
+    public AbstractRepositoryFilter(NSession session, NFilterOp op) {
         super(session, op);
     }
 
     @Override
-    public NutsRepositoryFilter or(NutsRepositoryFilter other) {
-        return or((NutsFilter) other).to(NutsRepositoryFilter.class);
+    public NRepositoryFilter or(NRepositoryFilter other) {
+        return or((NFilter) other).to(NRepositoryFilter.class);
     }
 
     @Override
-    public NutsRepositoryFilter and(NutsRepositoryFilter other) {
-        return and((NutsFilter) other).to(NutsRepositoryFilter.class);
+    public NRepositoryFilter and(NRepositoryFilter other) {
+        return and((NFilter) other).to(NRepositoryFilter.class);
     }
 
     @Override
-    public NutsRepositoryFilter neg() {
-        return super.neg().to(NutsRepositoryFilter.class);
+    public NRepositoryFilter neg() {
+        return super.neg().to(NRepositoryFilter.class);
     }
 }

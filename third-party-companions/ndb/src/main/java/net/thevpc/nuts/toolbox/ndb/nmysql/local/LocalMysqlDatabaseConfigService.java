@@ -1,9 +1,9 @@
 package net.thevpc.nuts.toolbox.ndb.nmysql.local;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.elem.NutsElements;
-import net.thevpc.nuts.text.NutsTextStyle;
-import net.thevpc.nuts.text.NutsTexts;
+import net.thevpc.nuts.elem.NElements;
+import net.thevpc.nuts.text.NTextStyle;
+import net.thevpc.nuts.text.NTexts;
 import net.thevpc.nuts.toolbox.ndb.nmysql.local.config.LocalMysqlDatabaseConfig;
 
 import java.io.File;
@@ -16,7 +16,7 @@ public class LocalMysqlDatabaseConfigService {
     private String name;
     private LocalMysqlDatabaseConfig config;
     private LocalMysqlConfigService mysql;
-    private NutsApplicationContext context;
+    private NApplicationContext context;
 
     public LocalMysqlDatabaseConfigService(String name, LocalMysqlDatabaseConfig config, LocalMysqlConfigService mysql) {
         this.name = name;
@@ -39,10 +39,10 @@ public class LocalMysqlDatabaseConfigService {
         return this;
     }
 
-    public NutsString getBracketsPrefix(String str) {
-        return NutsTexts.of(context.getSession()).ofBuilder()
+    public NString getBracketsPrefix(String str) {
+        return NTexts.of(context.getSession()).ofBuilder()
                 .append("[")
-                .append(str,NutsTextStyle.primary5())
+                .append(str, NTextStyle.primary5())
                 .append("]");
     }
 
@@ -55,15 +55,15 @@ public class LocalMysqlDatabaseConfigService {
     }
 
     public LocalMysqlDatabaseConfigService write(PrintStream out) {
-        NutsSession session = context.getSession();
-        NutsElements.of(session).json().setValue(getConfig()).setNtf(false).print(out);
+        NSession session = context.getSession();
+        NElements.of(session).json().setValue(getConfig()).setNtf(false).print(out);
         return this;
     }
 
     public ArchiveResult backup(String path) {
-        if (NutsBlankable.isBlank(path)) {
+        if (NBlankable.isBlank(path)) {
             String databaseName = getConfig().getDatabaseName();
-            if (NutsBlankable.isBlank(databaseName)) {
+            if (NBlankable.isBlank(databaseName)) {
                 databaseName = name;
             }
             path = databaseName + "-" + new SimpleDateFormat("yyyyMMddHHmm").format(new Date()) + ".sql.zip";
@@ -73,7 +73,7 @@ public class LocalMysqlDatabaseConfigService {
         }
         path= Paths.get(path).toAbsolutePath().normalize().toString();
         String password = getConfig().getPassword();
-        NutsSession session = context.getSession();
+        NSession session = context.getSession();
         char[] credentials = session.security().getCredentials(password.toCharArray());
         password = new String(credentials);
         if (path.endsWith(".sql")) {
@@ -81,8 +81,8 @@ public class LocalMysqlDatabaseConfigService {
                 session.out().printf("%s create archive %s%n", getDatabaseName(), path);
             }
 
-            NutsExecCommand cmd = session.exec()
-                    .setExecutionType(NutsExecutionType.SYSTEM)
+            NExecCommand cmd = session.exec()
+                    .setExecutionType(NExecutionType.SYSTEM)
                     .setCommand("sh", "-c",
                             "\"" + mysql.getMysqldumpCommand() + "\" -u \"$CMD_USER\" -p\"$CMD_PWD\" --databases \"$CMD_DB\" > \"$CMD_FILE\""
                     )
@@ -100,19 +100,19 @@ public class LocalMysqlDatabaseConfigService {
                 if (new File(path).exists()) {
                     new File(path).delete();
                 }
-                throw new NutsExecutionException(session, NutsMessage.ofNtf(cmd.getOutputString()), 2);
+                throw new NExecutionException(session, NMsg.ofNtf(cmd.getOutputString()), 2);
             }
         } else {
             if (session.isPlainTrace()) {
                 session.out().printf("%s create archive %s%n", getBracketsPrefix(getDatabaseName()),
-                        NutsTexts.of(session)
-                        .ofStyled(path, NutsTextStyle.path()));
+                        NTexts.of(session)
+                        .ofStyled(path, NTextStyle.path()));
             }
 //                ProcessBuilder2 p = new ProcessBuilder2().setCommand("sh", "-c",
 //                        "set -o pipefail && \"" + mysql.getMysqldumpCommand() + "\" -u \"$CMD_USER\" -p\"$CMD_PWD\" --databases \"$CMD_DB\" | gzip > \"$CMD_FILE\""
 //                )
-            NutsExecCommand cmd = session.exec()
-                    .setExecutionType(NutsExecutionType.SYSTEM)
+            NExecCommand cmd = session.exec()
+                    .setExecutionType(NExecutionType.SYSTEM)
                     .setCommand("sh", "-c",
                             "set -o pipefail && \"" + mysql.getMysqldumpCommand() + "\" -u \"$CMD_USER\" -p" + password + " --databases \"$CMD_DB\" | gzip > \"$CMD_FILE\""
                     )
@@ -140,7 +140,7 @@ public class LocalMysqlDatabaseConfigService {
                 if (new File(path).exists()) {
                     new File(path).delete();
                 }
-                throw new NutsExecutionException(session, NutsMessage.ofNtf(cmd.getOutputString()), 2);
+                throw new NExecutionException(session, NMsg.ofNtf(cmd.getOutputString()), 2);
             }
         }
     }
@@ -149,7 +149,7 @@ public class LocalMysqlDatabaseConfigService {
 //        if(!path.endsWith(".sql") && !path.endsWith(".sql.zip") && !path.endsWith(".zip")){
 //            path=path+
 //        }
-        NutsSession session = context.getSession();
+        NSession session = context.getSession();
         char[] password = session.security().getCredentials(getConfig().getPassword().toCharArray());
 
         if (path.endsWith(".sql")) {
@@ -157,7 +157,7 @@ public class LocalMysqlDatabaseConfigService {
                 session.out().printf("%s restore archive %s%n", getBracketsPrefix(getDatabaseName()), path);
             }
             int result = session.exec()
-                    .setExecutionType(NutsExecutionType.SYSTEM)
+                    .setExecutionType(NExecutionType.SYSTEM)
                     .setCommand("sh", "-c",
                             "cat \"$CMD_FILE\" | " + "\"" + mysql.getMysqlCommand() + "\" -h \"$CMD_HOST\" -u \"$CMD_USER\" \"-p$CMD_PWD\" \"$CMD_DB\""
                     )
@@ -176,7 +176,7 @@ public class LocalMysqlDatabaseConfigService {
             }
 
             int result = session.exec()
-                    .setExecutionType(NutsExecutionType.SYSTEM).setCommand("sh", "-c",
+                    .setExecutionType(NExecutionType.SYSTEM).setCommand("sh", "-c",
                             "gunzip -c \"$CMD_FILE\" | \"" + mysql.getMysqlCommand() + "\" -h \"$CMD_HOST\" -u \"$CMD_USER\" \"-p$CMD_PWD\" \"$CMD_DB\""
                     )
                     .setEnv("CMD_FILE", path)
@@ -194,7 +194,7 @@ public class LocalMysqlDatabaseConfigService {
 
     public String getDatabaseName() {
         String s = getConfig().getDatabaseName();
-        if (NutsBlankable.isBlank(s)) {
+        if (NBlankable.isBlank(s)) {
             s = name;
         }
         return s;

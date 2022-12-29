@@ -1,8 +1,8 @@
 package net.thevpc.nuts.tutorial.naf.spring.installevents;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.cmdline.NutsArgument;
-import net.thevpc.nuts.cmdline.NutsCommandLine;
+import net.thevpc.nuts.cmdline.NArgument;
+import net.thevpc.nuts.cmdline.NCommandLine;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
@@ -12,26 +12,26 @@ import java.util.List;
 import java.util.Map;
 
 @SpringBootApplication
-public class AppExample implements NutsApplication {
+public class AppExample implements NApplication {
     public static void main(String[] args) {
         SpringApplication.run(AppExample.class, args);
     }
 
     @Override
-    public void onInstallApplication(NutsApplicationContext applicationContext) {
-        NutsSession session = applicationContext.getSession();
+    public void onInstallApplication(NApplicationContext applicationContext) {
+        NSession session = applicationContext.getSession();
         session.out().printlnf("write your business logic that will be processed when the application is being installed here...");
     }
 
     @Override
-    public void onUpdateApplication(NutsApplicationContext applicationContext) {
-        NutsSession session = applicationContext.getSession();
+    public void onUpdateApplication(NApplicationContext applicationContext) {
+        NSession session = applicationContext.getSession();
         session.out().printlnf("write your business logic that will be processed when the application is being updated/upgraded here...");
     }
 
     @Override
-    public void onUninstallApplication(NutsApplicationContext applicationContext) {
-        NutsSession session = applicationContext.getSession();
+    public void onUninstallApplication(NApplicationContext applicationContext) {
+        NSession session = applicationContext.getSession();
         session.out().printlnf("write your business logic that will be processed when the application is being uninstalled/removed here...");
     }
 
@@ -41,10 +41,10 @@ public class AppExample implements NutsApplication {
      * @param context nuts application context
      */
     @Override
-    public void run(NutsApplicationContext context) {
-        NutsSession session = context.getSession();
-        NutsCommandLine cmd = context.getCommandLine();
-        NutsArgument a;
+    public void run(NApplicationContext context) {
+        NSession session = context.getSession();
+        NCommandLine cmd = context.getCommandLine();
+        NArgument a;
         String someStringOption = null;
         Boolean someBooleanOption = null;
         List<String> nonOptions = new ArrayList<>();
@@ -74,7 +74,7 @@ public class AppExample implements NutsApplication {
                 }
                 default: {
                     if (a.isNonOption()) {
-                        nonOptions.add(cmd.next().flatMap(NutsValue::asString).get(session));
+                        nonOptions.add(cmd.next().flatMap(NValue::asString).get(session));
                     } else {
                         // this is an unsupported options!
                         cmd.throwUnexpectedArgument();

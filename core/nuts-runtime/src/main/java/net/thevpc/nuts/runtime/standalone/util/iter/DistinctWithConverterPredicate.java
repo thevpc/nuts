@@ -1,16 +1,16 @@
 package net.thevpc.nuts.runtime.standalone.util.iter;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.elem.NutsElement;
-import net.thevpc.nuts.elem.NutsElements;
-import net.thevpc.nuts.util.NutsDescribable;
-import net.thevpc.nuts.util.NutsDescribables;
-import net.thevpc.nuts.util.NutsPredicates;
+import net.thevpc.nuts.elem.NElement;
+import net.thevpc.nuts.elem.NElements;
+import net.thevpc.nuts.util.NDescribable;
+import net.thevpc.nuts.util.NDescribables;
+import net.thevpc.nuts.util.NPredicates;
 
 import java.util.HashSet;
 import java.util.function.Function;
 
-class DistinctWithConverterPredicate<F, T> extends NutsPredicates.BasePredicate<F> implements NutsDescribable {
+class DistinctWithConverterPredicate<F, T> extends NPredicates.BasePredicate<F> implements NDescribable {
     private final Function<F, T> converter;
     HashSet<T> visited;
 
@@ -35,9 +35,9 @@ class DistinctWithConverterPredicate<F, T> extends NutsPredicates.BasePredicate<
     }
 
     @Override
-    public NutsElement describe(NutsSession session) {
-        return NutsElements.of(session).ofObject()
-                .set("distinctBy", NutsDescribables.resolveOrDestruct(converter, session))
+    public NElement describe(NSession session) {
+        return NElements.of(session).ofObject()
+                .set("distinctBy", NDescribables.resolveOrDestruct(converter, session))
                 .build()
                 ;
     }

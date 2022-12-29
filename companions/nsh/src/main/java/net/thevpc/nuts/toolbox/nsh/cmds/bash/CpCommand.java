@@ -26,15 +26,15 @@
 package net.thevpc.nuts.toolbox.nsh.cmds.bash;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.cmdline.NutsCommandLine;
-import net.thevpc.nuts.io.NutsCp;
-import net.thevpc.nuts.io.NutsPath;
-import net.thevpc.nuts.spi.NutsComponentScope;
-import net.thevpc.nuts.spi.NutsComponentScopeType;
+import net.thevpc.nuts.cmdline.NCommandLine;
+import net.thevpc.nuts.io.NCp;
+import net.thevpc.nuts.io.NPath;
+import net.thevpc.nuts.spi.NComponentScope;
+import net.thevpc.nuts.spi.NComponentScopeType;
 import net.thevpc.nuts.toolbox.nsh.SimpleJShellBuiltin;
 import net.thevpc.nuts.toolbox.nsh.jshell.JShellExecutionContext;
 import net.thevpc.nuts.toolbox.nsh.util.ShellHelper;
-import net.thevpc.nuts.util.NutsUtils;
+import net.thevpc.nuts.util.NUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -43,7 +43,7 @@ import java.util.List;
  * Created by vpc on 1/7/17. ssh copy credits to Chanaka Lakmal from
  * https://medium.com/ldclakmal/scp-with-java-b7b7dbcdbc85
  */
-@NutsComponentScope(NutsComponentScopeType.WORKSPACE)
+@NComponentScope(NComponentScopeType.WORKSPACE)
 public class CpCommand extends SimpleJShellBuiltin {
 
     public CpCommand() {
@@ -52,9 +52,9 @@ public class CpCommand extends SimpleJShellBuiltin {
 
 
     @Override
-    protected boolean configureFirst(NutsCommandLine commandLine, JShellExecutionContext context) {
+    protected boolean configureFirst(NCommandLine commandLine, JShellExecutionContext context) {
         Options options = context.getOptions();
-        NutsSession session = context.getSession();
+        NSession session = context.getSession();
         switch (commandLine.peek().get(session).key()) {
             case "--mkdir": {
                 commandLine.withNextBoolean((v, a, s) -> options.mkdir=v);
@@ -77,17 +77,17 @@ public class CpCommand extends SimpleJShellBuiltin {
     }
 
     @Override
-    protected void execBuiltin(NutsCommandLine commandLine, JShellExecutionContext context) {
+    protected void execBuiltin(NCommandLine commandLine, JShellExecutionContext context) {
         Options options = context.getOptions();
-        NutsSession session = context.getSession();
+        NSession session = context.getSession();
         for (String value : options.files) {
-            NutsUtils.requireNonBlank(value, "file path", session);
-            options.xfiles.add(NutsPath.of((value.contains("://") ? value :
-                    NutsPath.of(value, session).toAbsolute(session.locations().getWorkspaceLocation()).toString()
+            NUtils.requireNonBlank(value, "file path", session);
+            options.xfiles.add(NPath.of((value.contains("://") ? value :
+                    NPath.of(value, session).toAbsolute(session.locations().getWorkspaceLocation()).toString()
             ), session));
         }
         if (options.xfiles.size() < 2) {
-            throw new NutsExecutionException(session, NutsMessage.ofPlain("missing parameters"), 2);
+            throw new NExecutionException(session, NMsg.ofPlain("missing parameters"), 2);
         }
 
         options.sshlistener = new ShellHelper.WsSshListener(session);
@@ -96,9 +96,9 @@ public class CpCommand extends SimpleJShellBuiltin {
         }
     }
 
-    public void copy(NutsPath from, NutsPath to, Options o, JShellExecutionContext context) {
-        NutsSession session = context.getSession();
-        NutsCp ccp = NutsCp.of(session)
+    public void copy(NPath from, NPath to, Options o, JShellExecutionContext context) {
+        NSession session = context.getSession();
+        NCp ccp = NCp.of(session)
                 .from(from)
                 .to(to)
                 .setRecursive(o.recursive)
@@ -183,7 +183,7 @@ public class CpCommand extends SimpleJShellBuiltin {
         boolean recursive;
         ShellHelper.WsSshListener sshlistener;
         List<String> files = new ArrayList<>();
-        List<NutsPath> xfiles = new ArrayList<>();
+        List<NPath> xfiles = new ArrayList<>();
     }
 
 //    private void copyFolder(File from1, File to1) {

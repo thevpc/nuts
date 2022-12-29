@@ -1,11 +1,11 @@
 package net.thevpc.nuts.toolbox.ndb.nmysql;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.cmdline.NutsArgument;
-import net.thevpc.nuts.cmdline.NutsCommandLine;
-import net.thevpc.nuts.text.NutsTextStyle;
-import net.thevpc.nuts.text.NutsTexts;
-import net.thevpc.nuts.toolbox.ndb.NdbSupport;
+import net.thevpc.nuts.cmdline.NArgument;
+import net.thevpc.nuts.cmdline.NCommandLine;
+import net.thevpc.nuts.text.NTextStyle;
+import net.thevpc.nuts.text.NTexts;
+import net.thevpc.nuts.toolbox.ndb.RdbSupport;
 import net.thevpc.nuts.toolbox.ndb.nmysql.local.LocalMysqlConfigService;
 import net.thevpc.nuts.toolbox.ndb.nmysql.local.LocalMysqlDatabaseConfigService;
 import net.thevpc.nuts.toolbox.ndb.nmysql.local.config.LocalMysqlConfig;
@@ -18,19 +18,22 @@ import net.thevpc.nuts.toolbox.ndb.nmysql.util.AtName;
 import net.thevpc.nuts.toolbox.ndb.nmysql.util.MysqlUtils;
 import net.thevpc.nuts.toolbox.ndb.util.NdbUtils;
 import net.thevpc.nuts.toolbox.ndb.util.SqlHelper;
-import net.thevpc.nuts.util.NutsMaps;
-import net.thevpc.nuts.util.NutsRef;
+import net.thevpc.nuts.util.NMaps;
+import net.thevpc.nuts.util.NRef;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-public class NMysqlMain implements NdbSupport {
+public class NMysqlMain extends RdbSupport<NMySqlConfig> {
 
+    public NMysqlMain(NApplicationContext appContext) {
+        super("mysql", NMySqlConfig.class, appContext, "mysql:mysql-connector-java#8.0.26", "com.mysql.cj.jdbc.Driver");
+    }
 
     @Override
-    public void run(NutsApplicationContext context, NutsCommandLine commandLine) {
-        NutsSession session = context.getSession();
+    public void run(NApplicationContext context, NCommandLine commandLine) {
+        NSession session = context.getSession();
         NMySqlService service = new NMySqlService(context);
         while (commandLine.hasNext()) {
             switch (commandLine.peek().get(session).key()) {
@@ -108,8 +111,8 @@ public class NMysqlMain implements NdbSupport {
     }
 
 
-    private void runPushOrPull(NutsCommandLine commandLine, boolean pull, NMySqlService service) {
-        NutsSession session = service.getContext().getSession();
+    private void runPushOrPull(NCommandLine commandLine, boolean pull, NMySqlService service) {
+        NSession session = service.getContext().getSession();
         commandLine.setCommandName("mysql --remote " + (pull ? "pull" : "push"));
         class Data {
             AtName name = null;
@@ -124,7 +127,7 @@ public class NMysqlMain implements NdbSupport {
                             if (d.name == null) {
                                 d.name = new AtName(v);
                             } else {
-                                commandLine.throwUnexpectedArgument(NutsMessage.ofPlain("already defined"));
+                                commandLine.throwUnexpectedArgument(NMsg.ofPlain("already defined"));
                             }
                         });
                         break;
@@ -134,7 +137,7 @@ public class NMysqlMain implements NdbSupport {
                             if (d.path == null) {
                                 d.path = v;
                             } else {
-                                commandLine.throwUnexpectedArgument(NutsMessage.ofPlain("already defined"));
+                                commandLine.throwUnexpectedArgument(NMsg.ofPlain("already defined"));
                             }
                         });
                         break;
@@ -156,8 +159,8 @@ public class NMysqlMain implements NdbSupport {
         if (d.name == null) {
             d.name = new AtName("");
         }
-        RemoteMysqlConfigService c = service.loadRemoteMysqlConfig(d.name.getConfigName(), NutsOpenMode.OPEN_OR_ERROR);
-        RemoteMysqlDatabaseConfigService d1 = c.getDatabase(d.name.getDatabaseName(), NutsOpenMode.OPEN_OR_ERROR);
+        RemoteMysqlConfigService c = service.loadRemoteMysqlConfig(d.name.getConfigName(), NOpenMode.OPEN_OR_ERROR);
+        RemoteMysqlDatabaseConfigService d1 = c.getDatabase(d.name.getDatabaseName(), NOpenMode.OPEN_OR_ERROR);
         if (pull) {
             d1.pull(d.path, true, true);
         } else {
@@ -165,12 +168,12 @@ public class NMysqlMain implements NdbSupport {
         }
     }
 
-    private void runSQL(NutsCommandLine commandLine, NMySqlService service) {
-        NutsSession session = service.getContext().getSession();
+    private void runSQL(NCommandLine commandLine, NMySqlService service) {
+        NSession session = service.getContext().getSession();
         commandLine.setCommandName("mysql run-sql");
-        NutsRef<AtName> name = NutsRef.ofNull(AtName.class);
+        NRef<AtName> name = NRef.ofNull(AtName.class);
         List<String> sql = new ArrayList<>();
-        NutsRef<Boolean> forceShowSQL = NutsRef.ofNull(Boolean.class);
+        NRef<Boolean> forceShowSQL = NRef.ofNull(Boolean.class);
         while (commandLine.hasNext()) {
             if (commandLine.isNextOption()) {
                 switch (commandLine.peek().get(session).key()) {
@@ -179,7 +182,7 @@ public class NMysqlMain implements NdbSupport {
                             if (name.isNull()) {
                                 name.set(new AtName(a.getStringValue().get(session)));
                             } else {
-                                commandLine.throwUnexpectedArgument(NutsMessage.ofPlain("already defined"));
+                                commandLine.throwUnexpectedArgument(NMsg.ofPlain("already defined"));
                             }
                         });
                         break;
@@ -198,34 +201,45 @@ public class NMysqlMain implements NdbSupport {
                 if (name.isNull()) {
                     name.set(new AtName(commandLine.next().get(session).asString().get(session)));
                 } else {
-                    sql.add(commandLine.next().flatMap(NutsValue::asString).get(session));
+                    sql.add(commandLine.next().flatMap(NValue::asString).get(session));
                 }
             }
         }
         if (name.isNull()) {
             name.set(new AtName(""));
         }
-        LocalMysqlConfigService c = service.loadLocalMysqlConfig(name.get().getConfigName(), NutsOpenMode.OPEN_OR_ERROR);
-        LocalMysqlDatabaseConfigService d = c.getDatabase(name.get().getDatabaseName(), NutsOpenMode.OPEN_OR_ERROR);
+        LocalMysqlConfigService c = service.loadLocalMysqlConfig(name.get().getConfigName(), NOpenMode.OPEN_OR_ERROR);
+        LocalMysqlDatabaseConfigService d = c.getDatabase(name.get().getDatabaseName(), NOpenMode.OPEN_OR_ERROR);
         if (sql.isEmpty()) {
-            commandLine.throwMissingArgument(NutsMessage.ofPlain("sql"));
+            commandLine.throwMissingArgument(NMsg.ofPlain("sql"));
         }
-        String jdbcUrl = NutsMessage.ofVstyle("jdbc:mysql://${server}:${port}/${database}",
-                NutsMaps.of(
-                        "server", NutsOptional.of(d.getConfig().getServer()).ifBlank("localhost").get(),
-                        "port", NutsOptional.of(d.getConfig().getPort()).ifBlank(3306).get(),
-                        "database", NutsOptional.of(d.getConfig().getDatabaseName()).ifBlank("test").get()
-                )).toString();
-        SqlHelper.runAndWaitFor(sql, jdbcUrl, "mysql:mysql-connector-java#8.0.26", "com.mysql.cj.jdbc.Driver",
+        String jdbcUrl = createJdbcURL(
+                (NMySqlConfig)
+                new NMySqlConfig()
+                .setHost(d.getConfig().getServer())
+                .setPort(d.getConfig().getPort())
+                .setDatabaseName(d.getConfig().getDatabaseName())
+        );
+        SqlHelper.runAndWaitFor(sql, jdbcUrl, dbDriverPackage, dbDriverClass,
                 d.getConfig().getUser(),d.getConfig().getPassword(),null,
                 forceShowSQL.get(), session);
     }
 
-    private void runBackupOrRestore(NutsCommandLine commandLine, boolean backup, NMySqlService service) {
-        NutsSession session = service.getContext().getSession();
+    @Override
+    protected String createJdbcURL(NMySqlConfig d) {
+        return NMsg.ofVstyle("jdbc:mysql://${server}:${port}/${database}",
+                NMaps.of(
+                        "server", NOptional.of(d.getHost()).ifBlank("localhost").get(),
+                        "port", NOptional.of(d.getPort()).ifBlank(3306).get(),
+                        "database", NOptional.of(d.getDatabaseName()).ifBlank("test").get()
+                )).toString();
+    }
+
+    private void runBackupOrRestore(NCommandLine commandLine, boolean backup, NMySqlService service) {
+        NSession session = service.getContext().getSession();
         commandLine.setCommandName("mysql " + (backup ? "backup" : "restore"));
-        NutsRef<AtName> name = NutsRef.ofNull(AtName.class);
-        NutsRef<String> path = NutsRef.ofNull(String.class);
+        NRef<AtName> name = NRef.ofNull(AtName.class);
+        NRef<String> path = NRef.ofNull(String.class);
         while (commandLine.hasNext()) {
             if (commandLine.isNextOption()) {
                 switch (commandLine.peek().get(session).key()) {
@@ -234,7 +248,7 @@ public class NMysqlMain implements NdbSupport {
                             if (name.isNull()) {
                                 name.set(new AtName(a.getStringValue().get(session)));
                             } else {
-                                commandLine.throwUnexpectedArgument(NutsMessage.ofPlain("already defined"));
+                                commandLine.throwUnexpectedArgument(NMsg.ofPlain("already defined"));
                             }
                         });
                         break;
@@ -244,7 +258,7 @@ public class NMysqlMain implements NdbSupport {
                             if (path.isNull()) {
                                 path.set(v);
                             } else {
-                                commandLine.throwUnexpectedArgument(NutsMessage.ofPlain("already defined"));
+                                commandLine.throwUnexpectedArgument(NMsg.ofPlain("already defined"));
                             }
                         });
                         break;
@@ -257,7 +271,7 @@ public class NMysqlMain implements NdbSupport {
                 if (name.isNull()) {
                     name.set(new AtName(commandLine.next().get(session).asString().get(session)));
                 } else if (path.isNull()) {
-                    path.set(commandLine.next().flatMap(NutsValue::asString).get(session));
+                    path.set(commandLine.next().flatMap(NValue::asString).get(session));
                 } else {
                     commandLine.throwUnexpectedArgument();
                 }
@@ -266,9 +280,9 @@ public class NMysqlMain implements NdbSupport {
         if (name.isNull()) {
             name.set(new AtName(""));
         }
-        LocalMysqlConfigService c = service.loadLocalMysqlConfig(name.get().getConfigName(), NutsOpenMode.OPEN_OR_ERROR);
-        LocalMysqlDatabaseConfigService d = c.getDatabase(name.get().getDatabaseName(), NutsOpenMode.OPEN_OR_ERROR);
-        NutsSession s = session;
+        LocalMysqlConfigService c = service.loadLocalMysqlConfig(name.get().getConfigName(), NOpenMode.OPEN_OR_ERROR);
+        LocalMysqlDatabaseConfigService d = c.getDatabase(name.get().getDatabaseName(), NOpenMode.OPEN_OR_ERROR);
+        NSession s = session;
         if (backup) {
             if (path.isNull()) {
                 path.set(d.getDatabaseName() + "-" + MysqlUtils.newDateString());
@@ -285,13 +299,13 @@ public class NMysqlMain implements NdbSupport {
     }
 
 
-    private void createOrUpdate(NutsCommandLine commandLine, boolean add, NMySqlService service) {
-        NutsSession session = service.getContext().getSession();
+    private void createOrUpdate(NCommandLine commandLine, boolean add, NMySqlService service) {
+        NSession session = service.getContext().getSession();
         commandLine.setCommandName("mysql " + (add ? "add" : "set"));
         class Data {
             AtName name = null;
 
-            NutsArgument a;
+            NArgument a;
             Integer c_shutdown_wait_time = null;
             Integer c_startup_wait_time = null;
             Boolean c_kill = null;
@@ -318,7 +332,7 @@ public class NMysqlMain implements NdbSupport {
                             if (d.name == null) {
                                 d.name = new AtName(v);
                             } else {
-                                commandLine.throwUnexpectedArgument(NutsMessage.ofPlain("already defined"));
+                                commandLine.throwUnexpectedArgument(NMsg.ofPlain("already defined"));
                             }
                         });
                         break;
@@ -466,7 +480,7 @@ public class NMysqlMain implements NdbSupport {
                             if (d.forRemote_localName == null) {
                                 d.forRemote_localName = new AtName(v);
                             } else {
-                                commandLine.throwUnexpectedArgument(NutsMessage.ofPlain("already defined"));
+                                commandLine.throwUnexpectedArgument(NMsg.ofPlain("already defined"));
                             }
                         });
                         break;
@@ -481,7 +495,7 @@ public class NMysqlMain implements NdbSupport {
                             if (d.forRemote_remoteName == null) {
                                 d.forRemote_remoteName = new AtName(v);
                             } else {
-                                commandLine.throwUnexpectedArgument(NutsMessage.ofPlain("already defined"));
+                                commandLine.throwUnexpectedArgument(NMsg.ofPlain("already defined"));
                             }
                         });
                         break;
@@ -496,7 +510,7 @@ public class NMysqlMain implements NdbSupport {
                             if (d.forRemote_server == null) {
                                 d.forRemote_server = v;
                             } else {
-                                commandLine.throwUnexpectedArgument(NutsMessage.ofPlain("already defined"));
+                                commandLine.throwUnexpectedArgument(NMsg.ofPlain("already defined"));
                             }
                         });
                         break;
@@ -526,7 +540,7 @@ public class NMysqlMain implements NdbSupport {
                             if (d.name == null) {
                                 d.name = AtName.nextAppOption(commandLine, session);
                             } else {
-                                commandLine.throwUnexpectedArgument(NutsMessage.ofPlain("already defined"));
+                                commandLine.throwUnexpectedArgument(NMsg.ofPlain("already defined"));
                             }
                         } else {
                             service.getContext().configureLast(commandLine);
@@ -551,48 +565,48 @@ public class NMysqlMain implements NdbSupport {
         if (d.expectedRemote && d.forRemote_server == null) {
             commandLine.throwMissingArgumentByName("--server");
         }
-        NutsTexts factory = NutsTexts.of(session);
+        NTexts factory = NTexts.of(session);
         if (commandLine.isExecMode()) {
             if (!d.expectedRemote) {
-                LocalMysqlConfigService c = service.loadLocalMysqlConfig(d.name.getConfigName(), add ? NutsOpenMode.OPEN_OR_CREATE : NutsOpenMode.OPEN_OR_ERROR);
+                LocalMysqlConfigService c = service.loadLocalMysqlConfig(d.name.getConfigName(), add ? NOpenMode.OPEN_OR_CREATE : NOpenMode.OPEN_OR_ERROR);
                 boolean overrideExisting = false;
                 if (add) {
                     if (d.name.getDatabaseName().isEmpty()) {
-                        if (c.getDatabase(d.name.getDatabaseName(), NutsOpenMode.OPEN_OR_NULL) != null) {
+                        if (c.getDatabase(d.name.getDatabaseName(), NOpenMode.OPEN_OR_NULL) != null) {
                             overrideExisting = true;
                             if (!session.getTerminal().ask()
                                     .resetLine()
                                     .forBoolean(
-                                            NutsMessage.ofCstyle(
+                                            NMsg.ofCstyle(
                                                     "already exists %s. override?", factory.ofStyled(d.name.toString(),
-                                                            NutsTextStyle.primary3()
+                                                            NTextStyle.primary3()
                                                     ))
                                     )
                                     .setDefaultValue(false).getBooleanValue()) {
-                                throw new NutsExecutionException(session, NutsMessage.ofCstyle("already exists %s", d.name), 2);
+                                throw new NExecutionException(session, NMsg.ofCstyle("already exists %s", d.name), 2);
                             }
                         }
                     } else {
-                        if (c.getDatabase(d.name.getDatabaseName(), NutsOpenMode.OPEN_OR_NULL) != null) {
+                        if (c.getDatabase(d.name.getDatabaseName(), NOpenMode.OPEN_OR_NULL) != null) {
                             overrideExisting = true;
                             if (!session.getTerminal().ask()
                                     .resetLine()
                                     .forBoolean(
-                                            NutsMessage.ofCstyle("already exists %s. override?", factory.ofStyled(d.name.toString(), NutsTextStyle.primary3()
+                                            NMsg.ofCstyle("already exists %s. override?", factory.ofStyled(d.name.toString(), NTextStyle.primary3()
                                             )))
                                     .setDefaultValue(false).getBooleanValue()) {
-                                throw new NutsExecutionException(session, NutsMessage.ofCstyle("already exists %s", d.name), 2);
+                                throw new NExecutionException(session, NMsg.ofCstyle("already exists %s", d.name), 2);
                             }
                         }
                     }
                 } else {
                     if (d.name.getDatabaseName().isEmpty()) {
-                        if (c.getDatabase(d.name.getDatabaseName(), NutsOpenMode.OPEN_OR_NULL) == null) {
-                            throw new NutsExecutionException(session, NutsMessage.ofCstyle("not found %s", d.name), 2);
+                        if (c.getDatabase(d.name.getDatabaseName(), NOpenMode.OPEN_OR_NULL) == null) {
+                            throw new NExecutionException(session, NMsg.ofCstyle("not found %s", d.name), 2);
                         }
                     } else {
-                        if (c.getDatabase(d.name.getDatabaseName(), NutsOpenMode.OPEN_OR_NULL) == null) {
-                            throw new NutsExecutionException(session, NutsMessage.ofCstyle("not found  %s", d.name), 2);
+                        if (c.getDatabase(d.name.getDatabaseName(), NOpenMode.OPEN_OR_NULL) == null) {
+                            throw new NExecutionException(session, NMsg.ofCstyle("not found  %s", d.name), 2);
                         }
                     }
                 }
@@ -635,26 +649,26 @@ public class NMysqlMain implements NdbSupport {
                             if (overrideExisting) {
                                 session.out().printf("adding local config (with override) %s%n",
                                         factory.ofStyled(
-                                                NdbUtils.coalesce(d.name.getConfigName(), "default"), NutsTextStyle.primary3())
+                                                NdbUtils.coalesce(d.name.getConfigName(), "default"), NTextStyle.primary3())
                                 );
                             } else {
                                 session.out().printf("adding local config %s%n",
                                         factory.ofStyled(
-                                                NdbUtils.coalesce(d.name.getConfigName(), "default"), NutsTextStyle.primary3()));
+                                                NdbUtils.coalesce(d.name.getConfigName(), "default"), NTextStyle.primary3()));
                             }
                         } else {
                             if (overrideExisting) {
                                 session.out().printf("updating local config (with override) %s%n",
-                                        factory.ofStyled(NdbUtils.coalesce(d.name.getConfigName(), "default"), NutsTextStyle.primary3()));
+                                        factory.ofStyled(NdbUtils.coalesce(d.name.getConfigName(), "default"), NTextStyle.primary3()));
                             } else {
                                 session.out().printf("updating local config %s%n",
                                         factory.ofStyled(
-                                                NdbUtils.coalesce(d.name.getConfigName(), "default"), NutsTextStyle.primary3()));
+                                                NdbUtils.coalesce(d.name.getConfigName(), "default"), NTextStyle.primary3()));
                             }
                         }
                     }
                 } else {
-                    LocalMysqlDatabaseConfigService r = c.getDatabase(d.name.getDatabaseName(), NutsOpenMode.OPEN_OR_CREATE);
+                    LocalMysqlDatabaseConfigService r = c.getDatabase(d.name.getDatabaseName(), NOpenMode.OPEN_OR_CREATE);
                     if (d.user != null) {
                         someUpdates = true;
                         r.getConfig().setUser(d.user);
@@ -681,38 +695,38 @@ public class NMysqlMain implements NdbSupport {
                         );
                     }
                     if (r.getConfig().getUser() == null) {
-                        throw new NutsExecutionException(session, NutsMessage.ofPlain("missing --user"), 2);
+                        throw new NExecutionException(session, NMsg.ofPlain("missing --user"), 2);
                     }
                     if (r.getConfig().getPassword() == null) {
-                        throw new NutsExecutionException(session, NutsMessage.ofPlain("missing --password"), 2);
+                        throw new NExecutionException(session, NMsg.ofPlain("missing --password"), 2);
                     }
                     if (r.getConfig().getDatabaseName() == null) {
-                        throw new NutsExecutionException(session, NutsMessage.ofPlain("missing --name"), 2);
+                        throw new NExecutionException(session, NMsg.ofPlain("missing --name"), 2);
                     }
                     if (someUpdates && session.isPlainTrace()) {
                         if (add) {
                             if (overrideExisting) {
                                 session.out().printf("adding local instance (with override) %s%n",
-                                        factory.ofStyled(r.getFullName(), NutsTextStyle.primary3()));
+                                        factory.ofStyled(r.getFullName(), NTextStyle.primary3()));
                             } else {
                                 session.out().printf("adding local instance %s%n",
-                                        factory.ofStyled(r.getFullName(), NutsTextStyle.primary3()));
+                                        factory.ofStyled(r.getFullName(), NTextStyle.primary3()));
                             }
                         } else {
                             if (overrideExisting) {
                                 session.out().printf("updating local instance (with override) %s%n",
-                                        factory.ofStyled(r.getFullName(), NutsTextStyle.primary3())
+                                        factory.ofStyled(r.getFullName(), NTextStyle.primary3())
                                 );
                             } else {
                                 session.out().printf("updating local instance %s%n",
-                                        factory.ofStyled(r.getFullName(), NutsTextStyle.primary3())
+                                        factory.ofStyled(r.getFullName(), NTextStyle.primary3())
                                 );
                             }
                         }
                     }
                 }
                 if (!someUpdates) {
-                    throw new NutsExecutionException(session, NutsMessage.ofPlain("nothing to save"), 2);
+                    throw new NExecutionException(session, NMsg.ofPlain("nothing to save"), 2);
                 }
 
                 c.saveConfig();
@@ -725,45 +739,45 @@ public class NMysqlMain implements NdbSupport {
                 } else if (d.forRemote_remoteName == null) {
                     d.forRemote_remoteName = d.forRemote_localName;
                 }
-                service.loadLocalMysqlConfig(d.forRemote_localName.getConfigName(), NutsOpenMode.OPEN_OR_ERROR)
-                        .getDatabase(d.forRemote_localName.getDatabaseName(), NutsOpenMode.OPEN_OR_ERROR)
+                service.loadLocalMysqlConfig(d.forRemote_localName.getConfigName(), NOpenMode.OPEN_OR_ERROR)
+                        .getDatabase(d.forRemote_localName.getDatabaseName(), NOpenMode.OPEN_OR_ERROR)
                 ;
-                RemoteMysqlConfigService c = service.loadRemoteMysqlConfig(d.name.getConfigName(), NutsOpenMode.OPEN_OR_CREATE);
+                RemoteMysqlConfigService c = service.loadRemoteMysqlConfig(d.name.getConfigName(), NOpenMode.OPEN_OR_CREATE);
                 boolean overrideExisting = false;
                 if (add) {
                     if (d.name.getDatabaseName().isEmpty()) {
-                        if (c.getDatabase(d.name.getDatabaseName(), NutsOpenMode.OPEN_OR_NULL) != null) {
+                        if (c.getDatabase(d.name.getDatabaseName(), NOpenMode.OPEN_OR_NULL) != null) {
                             overrideExisting = true;
                             if (!session.getTerminal().ask()
                                     .resetLine()
                                     .forBoolean(
-                                            NutsMessage.ofCstyle("already exists %s. override?", factory.ofStyled(d.name.toString(), NutsTextStyle.primary3())
+                                            NMsg.ofCstyle("already exists %s. override?", factory.ofStyled(d.name.toString(), NTextStyle.primary3())
                                             ))
                                     .setDefaultValue(false).getBooleanValue()) {
-                                throw new NutsExecutionException(session, NutsMessage.ofCstyle("already exists %s", d.name), 2);
+                                throw new NExecutionException(session, NMsg.ofCstyle("already exists %s", d.name), 2);
                             }
                         }
                     } else {
-                        if (c.getDatabase(d.name.getDatabaseName(), NutsOpenMode.OPEN_OR_NULL) != null) {
+                        if (c.getDatabase(d.name.getDatabaseName(), NOpenMode.OPEN_OR_NULL) != null) {
                             overrideExisting = true;
                             if (!session.getTerminal().ask()
                                     .resetLine()
                                     .forBoolean(
-                                            NutsMessage.ofCstyle("already exists %s. override?", factory.ofStyled(d.name.toString(), NutsTextStyle.primary3())
+                                            NMsg.ofCstyle("already exists %s. override?", factory.ofStyled(d.name.toString(), NTextStyle.primary3())
                                             ))
                                     .setDefaultValue(false).getBooleanValue()) {
-                                throw new NutsExecutionException(session, NutsMessage.ofCstyle("already exists %s", d.name), 2);
+                                throw new NExecutionException(session, NMsg.ofCstyle("already exists %s", d.name), 2);
                             }
                         }
                     }
                 } else {
                     if (d.name.getDatabaseName().isEmpty()) {
-                        if (c.getDatabase(d.name.getDatabaseName(), NutsOpenMode.OPEN_OR_NULL) == null) {
-                            throw new NutsExecutionException(session, NutsMessage.ofCstyle("not found %s", d.name), 2);
+                        if (c.getDatabase(d.name.getDatabaseName(), NOpenMode.OPEN_OR_NULL) == null) {
+                            throw new NExecutionException(session, NMsg.ofCstyle("not found %s", d.name), 2);
                         }
                     } else {
-                        if (c.getDatabase(d.name.getDatabaseName(), NutsOpenMode.OPEN_OR_NULL) == null) {
-                            throw new NutsExecutionException(session, NutsMessage.ofPlain("not found  %s" + d.name), 2);
+                        if (c.getDatabase(d.name.getDatabaseName(), NOpenMode.OPEN_OR_NULL) == null) {
+                            throw new NExecutionException(session, NMsg.ofPlain("not found  %s" + d.name), 2);
                         }
                     }
                 }
@@ -777,18 +791,18 @@ public class NMysqlMain implements NdbSupport {
                         if (add) {
                             if (overrideExisting) {
                                 session.out().printf("adding remote config (with override) %s%n",
-                                        factory.ofStyled(NdbUtils.coalesce(d.name.getConfigName(), "default"), NutsTextStyle.primary3()));
+                                        factory.ofStyled(NdbUtils.coalesce(d.name.getConfigName(), "default"), NTextStyle.primary3()));
                             } else {
                                 session.out().printf("adding remote config %s%n",
-                                        factory.ofStyled(NdbUtils.coalesce(d.name.getConfigName(), "default"), NutsTextStyle.primary3()));
+                                        factory.ofStyled(NdbUtils.coalesce(d.name.getConfigName(), "default"), NTextStyle.primary3()));
                             }
                         } else {
                             if (overrideExisting) {
                                 session.out().printf("updating remote config (with override) %s%n",
-                                        factory.ofStyled(NdbUtils.coalesce(d.name.getConfigName(), "default"), NutsTextStyle.primary3()));
+                                        factory.ofStyled(NdbUtils.coalesce(d.name.getConfigName(), "default"), NTextStyle.primary3()));
                             } else {
                                 session.out().printf("updating remote config %s%n",
-                                        factory.ofStyled(NdbUtils.coalesce(d.name.getConfigName(), "default"), NutsTextStyle.primary3()));
+                                        factory.ofStyled(NdbUtils.coalesce(d.name.getConfigName(), "default"), NTextStyle.primary3()));
                             }
                         }
                     }
@@ -810,25 +824,25 @@ public class NMysqlMain implements NdbSupport {
                         if (add) {
                             if (overrideExisting) {
                                 session.out().printf("adding remote instance (with override) %s%n",
-                                        factory.ofStyled(r.getFullName(), NutsTextStyle.primary3()));
+                                        factory.ofStyled(r.getFullName(), NTextStyle.primary3()));
                             } else {
                                 session.out().printf("adding remote instance %s%n",
-                                        factory.ofStyled(r.getFullName(), NutsTextStyle.primary3()));
+                                        factory.ofStyled(r.getFullName(), NTextStyle.primary3()));
                             }
                         } else {
                             if (overrideExisting) {
                                 session.out().printf("updating remote instance (with override) %s%n",
-                                        factory.ofStyled(r.getFullName(), NutsTextStyle.primary3())
+                                        factory.ofStyled(r.getFullName(), NTextStyle.primary3())
                                 );
                             } else {
                                 session.out().printf("updating remote instance %s%n",
-                                        factory.ofStyled(r.getFullName(), NutsTextStyle.primary3()));
+                                        factory.ofStyled(r.getFullName(), NTextStyle.primary3()));
                             }
                         }
                     }
                 }
                 if (!someUpdates) {
-                    throw new NutsExecutionException(session, NutsMessage.ofPlain("nothing to save"), 2);
+                    throw new NExecutionException(session, NMsg.ofPlain("nothing to save"), 2);
                 }
 
                 c.saveConfig();
@@ -836,13 +850,13 @@ public class NMysqlMain implements NdbSupport {
         }
     }
 
-    public void runRemove(NutsCommandLine commandLine, NMySqlService service) {
-        NutsSession session = service.getContext().getSession();
+    public void runRemove(NCommandLine commandLine, NMySqlService service) {
+        NSession session = service.getContext().getSession();
         commandLine.setCommandName("mysql remove");
         List<AtName> localNames = new ArrayList<>();
         List<AtName> remoteNames = new ArrayList<>();
         boolean currentLocal = true;
-        NutsArgument a;
+        NArgument a;
 
         while (commandLine.hasNext()) {
             if (commandLine.isNextOption()) {
@@ -882,11 +896,11 @@ public class NMysqlMain implements NdbSupport {
         }
         for (AtName localName : localNames) {
             if (localName.getDatabaseName().isEmpty()) {
-                service.loadLocalMysqlConfig(localName.getConfigName(), NutsOpenMode.OPEN_OR_ERROR).removeConfig();
+                service.loadLocalMysqlConfig(localName.getConfigName(), NOpenMode.OPEN_OR_ERROR).removeConfig();
             } else {
-                LocalMysqlConfigService c = service.loadLocalMysqlConfig(localName.toString(), NutsOpenMode.OPEN_OR_NULL);
+                LocalMysqlConfigService c = service.loadLocalMysqlConfig(localName.toString(), NOpenMode.OPEN_OR_NULL);
                 if (c != null) {
-                    LocalMysqlDatabaseConfigService v = c.getDatabase(localName.getDatabaseName(), NutsOpenMode.OPEN_OR_NULL);
+                    LocalMysqlDatabaseConfigService v = c.getDatabase(localName.getDatabaseName(), NOpenMode.OPEN_OR_NULL);
                     if (v != null) {
                         v.remove();
                         c.saveConfig();
@@ -896,14 +910,14 @@ public class NMysqlMain implements NdbSupport {
         }
         for (AtName remoteName : remoteNames) {
             if (remoteName.getDatabaseName().isEmpty()) {
-                RemoteMysqlConfigService v = service.loadRemoteMysqlConfig(remoteName.getConfigName(), NutsOpenMode.OPEN_OR_NULL);
+                RemoteMysqlConfigService v = service.loadRemoteMysqlConfig(remoteName.getConfigName(), NOpenMode.OPEN_OR_NULL);
                 if (v != null) {
                     v.removeConfig();
                 }
             } else {
-                RemoteMysqlConfigService c = service.loadRemoteMysqlConfig(remoteName.getConfigName(), NutsOpenMode.OPEN_OR_NULL);
+                RemoteMysqlConfigService c = service.loadRemoteMysqlConfig(remoteName.getConfigName(), NOpenMode.OPEN_OR_NULL);
                 if (c != null) {
-                    RemoteMysqlDatabaseConfigService v = c.getDatabase(remoteName.getDatabaseName(), NutsOpenMode.OPEN_OR_NULL);
+                    RemoteMysqlDatabaseConfigService v = c.getDatabase(remoteName.getDatabaseName(), NOpenMode.OPEN_OR_NULL);
                     if (v != null) {
                         v.remove();
                         c.saveConfig();
@@ -913,13 +927,13 @@ public class NMysqlMain implements NdbSupport {
         }
     }
 
-    public Object toObject(String dbName, String confName, LocalMysqlDatabaseConfig config, boolean describe, boolean plain, NutsApplicationContext context) {
-        NutsTexts text = NutsTexts.of(context.getSession());
+    public Object toObject(String dbName, String confName, LocalMysqlDatabaseConfig config, boolean describe, boolean plain, NApplicationContext context) {
+        NTexts text = NTexts.of(context.getSession());
         if (!describe) {
             if (plain) {
                 return text.ofBuilder()
-                        .append(" [local ] ", NutsTextStyle.primary4())
-                        .append(dbName).append("@").append(confName, NutsTextStyle.primary4())
+                        .append(" [local ] ", NTextStyle.primary4())
+                        .append(dbName).append("@").append(confName, NTextStyle.primary4())
                         ;
             } else {
                 return new Object[]{"local", dbName, confName};
@@ -927,8 +941,8 @@ public class NMysqlMain implements NdbSupport {
         } else {
             if (plain) {
                 return text.ofBuilder()
-                        .append(" [local ] ", NutsTextStyle.primary4())
-                        .append(dbName).append("@").append(confName, NutsTextStyle.primary4())
+                        .append(" [local ] ", NTextStyle.primary4())
+                        .append(dbName).append("@").append(confName, NTextStyle.primary4())
                         .append(" db=").append(config.getDatabaseName())
                         .append(" user=").append(config.getUser());
             } else {
@@ -937,13 +951,13 @@ public class NMysqlMain implements NdbSupport {
         }
     }
 
-    public Object toObject(String dbName, String confName, RemoteMysqlDatabaseConfig config, boolean describe, boolean plain, NutsApplicationContext context) {
-        NutsTexts text = NutsTexts.of(context.getSession());
+    public Object toObject(String dbName, String confName, RemoteMysqlDatabaseConfig config, boolean describe, boolean plain, NApplicationContext context) {
+        NTexts text = NTexts.of(context.getSession());
         if (!describe) {
             if (plain) {
                 return text.ofBuilder()
-                        .append(" [remote] ", NutsTextStyle.primary4())
-                        .append(dbName).append("@").append(confName, NutsTextStyle.primary4())
+                        .append(" [remote] ", NTextStyle.primary4())
+                        .append(dbName).append("@").append(confName, NTextStyle.primary4())
                         ;
             } else {
                 return new Object[]{"remote", dbName, confName};
@@ -951,8 +965,8 @@ public class NMysqlMain implements NdbSupport {
         } else {
             if (plain) {
                 return text.ofBuilder()
-                        .append(" [remote] ", NutsTextStyle.primary4())
-                        .append(dbName).append("@").append(confName, NutsTextStyle.primary4())
+                        .append(" [remote] ", NTextStyle.primary4())
+                        .append(dbName).append("@").append(confName, NTextStyle.primary4())
                         .append(" local=").append(config.getLocalName())
                         .append(" remote=").append(config.getRemoteName())
                         .append(" on=").append(config.getServer())
@@ -963,8 +977,8 @@ public class NMysqlMain implements NdbSupport {
         }
     }
 
-    public void runList(NutsCommandLine commandLine, NMySqlService service, boolean describe) {
-        NutsSession session = service.getContext().getSession();
+    public void runList(NCommandLine commandLine, NMySqlService service, boolean describe) {
+        NSession session = service.getContext().getSession();
         commandLine.setCommandName("mysql list");
         List<AtName> localNames = new ArrayList<>();
         List<AtName> remoteNames = new ArrayList<>();
@@ -1011,11 +1025,11 @@ public class NMysqlMain implements NdbSupport {
             }
         } else {
             for (AtName localName : localNames) {
-                LocalMysqlConfigService c = service.loadLocalMysqlConfig(localName.getConfigName(), NutsOpenMode.OPEN_OR_ERROR);
+                LocalMysqlConfigService c = service.loadLocalMysqlConfig(localName.getConfigName(), NOpenMode.OPEN_OR_ERROR);
                 result.add(new LocaleOrRemote(c.getName(), c.getConfig(), null));
             }
             for (AtName localName : remoteNames) {
-                RemoteMysqlConfigService c = service.loadRemoteMysqlConfig(localName.getConfigName(), NutsOpenMode.OPEN_OR_ERROR);
+                RemoteMysqlConfigService c = service.loadRemoteMysqlConfig(localName.getConfigName(), NOpenMode.OPEN_OR_ERROR);
                 result.add(new LocaleOrRemote(c.getName(), null, c.getConfig()));
             }
         }
@@ -1077,4 +1091,23 @@ public class NMysqlMain implements NdbSupport {
         }
     }
 
+    @Override
+    protected void showTables(NCommandLine commandLine, NSession session) {
+        throw new NUnsupportedArgumentException(session, NMsg.ofPlain("showTables not supported"));
+    }
+
+    @Override
+    protected void dump(NCommandLine commandLine, NSession session) {
+        throw new NUnsupportedArgumentException(session, NMsg.ofPlain("dump not supported"));
+    }
+
+    @Override
+    protected void restore(NCommandLine commandLine, NSession session) {
+        throw new NUnsupportedArgumentException(session, NMsg.ofPlain("restore not supported"));
+    }
+
+    @Override
+    protected void revalidateOptions(NMySqlConfig options) {
+
+    }
 }

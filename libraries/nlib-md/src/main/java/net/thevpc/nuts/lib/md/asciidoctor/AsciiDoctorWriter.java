@@ -5,12 +5,11 @@
  */
 package net.thevpc.nuts.lib.md.asciidoctor;
 
-import net.thevpc.nuts.io.NutsPath;
+import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.lib.md.*;
 import net.thevpc.nuts.lib.md.util.MdUtils;
 
 import java.io.OutputStream;
-import java.io.PrintWriter;
 import java.io.Writer;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -34,7 +33,7 @@ public class AsciiDoctorWriter extends AbstractMdWriter {
         super(out);
     }
 
-    public AsciiDoctorWriter(NutsPath out) {
+    public AsciiDoctorWriter(NPath out) {
         super(out);
     }
 

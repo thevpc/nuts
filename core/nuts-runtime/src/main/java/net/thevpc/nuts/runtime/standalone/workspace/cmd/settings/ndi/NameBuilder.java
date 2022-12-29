@@ -2,17 +2,17 @@ package net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.ndi;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.standalone.util.CoreStringUtils;
-import net.thevpc.nuts.runtime.standalone.workspace.NutsWorkspaceUtils;
+import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceUtils;
 
 public class NameBuilder {
-    private NutsId id;
-    private NutsDescriptor descriptor;
+    private NId id;
+    private NDescriptor descriptor;
     private String preferredName;
     private String defaultName;
-    private NutsSession session;
+    private NSession session;
     private boolean preferId;
 
-    public NameBuilder(NutsId id, String preferredName, String defaultName, NutsDescriptor descriptor, NutsSession session, boolean preferId) {
+    public NameBuilder(NId id, String preferredName, String defaultName, NDescriptor descriptor, NSession session, boolean preferId) {
         this.id = id;
         this.preferredName = preferredName;
         this.descriptor = descriptor;
@@ -32,11 +32,11 @@ public class NameBuilder {
         this.defaultName = defaultName;
     }
 
-    public static NameBuilder id(NutsId id, String preferredName, String defaultName, NutsDescriptor descriptor, NutsSession session) {
+    public static NameBuilder id(NId id, String preferredName, String defaultName, NDescriptor descriptor, NSession session) {
         return new NameBuilder(id, preferredName, defaultName, descriptor, session, true);
     }
 
-    public static NameBuilder label(NutsId id, String preferredName, String defaultName, NutsDescriptor descriptor, NutsSession session) {
+    public static NameBuilder label(NId id, String preferredName, String defaultName, NDescriptor descriptor, NSession session) {
         return new NameBuilder(id, preferredName, defaultName, descriptor, session, false);
     }
 
@@ -143,7 +143,7 @@ public class NameBuilder {
                         break;
                     }
                     case 'h': {
-                        if (!NutsWorkspaceUtils.isUserDefaultWorkspace(session)) {
+                        if (!NWorkspaceUtils.isUserDefaultWorkspace(session)) {
                             h.append(session.getWorkspace().getHashName());
                         }
                         break;

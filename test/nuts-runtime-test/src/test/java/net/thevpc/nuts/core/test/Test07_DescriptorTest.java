@@ -14,7 +14,7 @@ import org.junit.jupiter.api.*;
  * @author thevpc
  */
 public class Test07_DescriptorTest {
-    static NutsSession session;
+    static NSession session;
 
     @BeforeAll
     public static void init() {
@@ -23,7 +23,7 @@ public class Test07_DescriptorTest {
 
     @Test
     public void testSearchDescriptor() {
-        NutsDefinition u = session.search().addId("org.springframework.boot:spring-boot-cli#2.4.1")
+        NDefinition u = session.search().addId("org.springframework.boot:spring-boot-cli#2.4.1")
                 .getResultDefinitions().required();
         TestUtils.println(u.getDescriptor());
         TestUtils.println(u.getId()+":"+(u.getDescriptor().isExecutable() ? "executable" : "non-executable"));
@@ -35,9 +35,9 @@ public class Test07_DescriptorTest {
     @Test
     public void testSearchDescriptor2() {
 
-        NutsDefinition u = session.fetch().setId("org.openjfx:javafx-controls#17.0.0.1")
+        NDefinition u = session.fetch().setId("org.openjfx:javafx-controls#17.0.0.1")
                 .setEffective(true).setDependencies(true).getResultDefinition();
-        for (NutsDependency dependency : u.getDescriptor().getDependencies()) {
+        for (NDependency dependency : u.getDescriptor().getDependencies()) {
             System.out.println(dependency.toString());
         }
         TestUtils.println(u.getDescriptor());

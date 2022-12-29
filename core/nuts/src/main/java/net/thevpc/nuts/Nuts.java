@@ -23,12 +23,12 @@
  */
 package net.thevpc.nuts;
 
-import net.thevpc.nuts.boot.DefaultNutsWorkspaceOptionsBuilder;
-import net.thevpc.nuts.boot.NutsBootWorkspace;
-import net.thevpc.nuts.cmdline.NutsCommandLine;
-import net.thevpc.nuts.reserved.NutsReservedBootLog;
-import net.thevpc.nuts.util.NutsApiUtils;
-import net.thevpc.nuts.util.NutsStringUtils;
+import net.thevpc.nuts.boot.DefaultNWorkspaceOptionsBuilder;
+import net.thevpc.nuts.boot.NBootWorkspace;
+import net.thevpc.nuts.cmdline.NCommandLine;
+import net.thevpc.nuts.reserved.NReservedBootLog;
+import net.thevpc.nuts.util.NApiUtils;
+import net.thevpc.nuts.util.NStringUtils;
 
 import java.time.Instant;
 import java.util.ArrayList;
@@ -48,7 +48,7 @@ public final class Nuts {
     /**
      * current Nuts version
      */
-    public static NutsVersion version;
+    public static NVersion version;
 
     /**
      * private constructor
@@ -61,20 +61,19 @@ public final class Nuts {
      *
      * @return current nuts version
      */
-    public static NutsVersion getVersion() {
+    public static NVersion getVersion() {
         if (version == null) {
             synchronized (Nuts.class) {
                 if (version == null) {
-                    String v = NutsApiUtils.resolveNutsVersionFromClassPath(new NutsReservedBootLog(null));
+                    String v = NApiUtils.resolveNutsVersionFromClassPath(new NReservedBootLog(null));
                     if (v == null) {
-                        return NutsVersion.of("0.8.4").get();
-//                        throw new NutsBootException(
-//                                NutsMessage.ofPlain(
-//                                        "unable to detect nuts version. Most likely you are missing valid compilation of nuts. pom.properties could not be resolved and hence, we are unable to resolve nuts version."
-//                                )
-//                        );
+                        throw new NBootException(
+                                NMsg.ofPlain(
+                                        "unable to detect nuts version. Most likely you are missing valid compilation of nuts. pom.properties could not be resolved and hence, we are unable to resolve nuts version."
+                                )
+                        );
                     }
-                    version = NutsVersion.of(v).get();
+                    version = NVersion.of(v).get();
                 }
             }
         }
@@ -94,12 +93,12 @@ public final class Nuts {
             runWorkspace(args);
             System.exit(0);
         } catch (Exception ex) {
-            NutsSession session = NutsSessionAwareExceptionBase.resolveSession(ex).orNull();
+            NSession session = NSessionAwareExceptionBase.resolveSession(ex).orNull();
             if (session != null) {
-                System.exit(NutsApplicationExceptionHandler.of(session)
+                System.exit(NApplicationExceptionHandler.of(session)
                         .processThrowable(args, ex, session));
             } else {
-                System.exit(NutsApiUtils.processThrowable(ex, args));
+                System.exit(NApiUtils.processThrowable(ex, args));
             }
         }
     }
@@ -115,7 +114,7 @@ public final class Nuts {
      * @param appArgs application arguments
      * @return NutsSession instance
      */
-    public static NutsSession openInheritedWorkspace(String[] overriddenNutsArgs, String... appArgs) throws NutsUnsatisfiedRequirementsException {
+    public static NSession openInheritedWorkspace(String[] overriddenNutsArgs, String... appArgs) throws NUnsatisfiedRequirementsException {
         return openInheritedWorkspace(null, overriddenNutsArgs,appArgs);
     }
 
@@ -131,15 +130,15 @@ public final class Nuts {
      * @param appArgs arguments
      * @return NutsSession instance
      */
-    public static NutsSession openInheritedWorkspace(NutsWorkspaceTerminalOptions term, String[] overriddenNutsArgs, String... appArgs) throws NutsUnsatisfiedRequirementsException {
+    public static NSession openInheritedWorkspace(NWorkspaceTerminalOptions term, String[] overriddenNutsArgs, String... appArgs) throws NUnsatisfiedRequirementsException {
         Instant startTime = Instant.now();
         List<String> nutsArgs = new ArrayList<>();
-        nutsArgs.addAll(NutsCommandLine.parseDefault(NutsStringUtils.trim(System.getProperty("nuts.boot.args"))).get().toStringList());
-        nutsArgs.addAll(NutsCommandLine.parseDefault(NutsStringUtils.trim(System.getProperty("nuts.args"))).get().toStringList());
+        nutsArgs.addAll(NCommandLine.parseDefault(NStringUtils.trim(System.getProperty("nuts.boot.args"))).get().toStringList());
+        nutsArgs.addAll(NCommandLine.parseDefault(NStringUtils.trim(System.getProperty("nuts.args"))).get().toStringList());
         if (overriddenNutsArgs != null) {
             nutsArgs.addAll(Arrays.asList(overriddenNutsArgs));
         }
-        NutsWorkspaceOptionsBuilder options = new DefaultNutsWorkspaceOptionsBuilder();
+        NWorkspaceOptionsBuilder options = new DefaultNWorkspaceOptionsBuilder();
         options.setCommandLine(nutsArgs.toArray(new String[0]),null);
         if (options.getApplicationArguments().isNotPresent()) {
             options.setApplicationArguments(new ArrayList<>());
@@ -153,7 +152,7 @@ public final class Nuts {
             options.setStdout(term.getOut());
             options.setStderr(term.getErr());
         }
-        return new NutsBootWorkspace(options).openWorkspace();
+        return new NBootWorkspace(options).openWorkspace();
     }
 
     /**
@@ -162,8 +161,8 @@ public final class Nuts {
      * @param args nuts boot arguments
      * @return new NutsSession instance
      */
-    public static NutsSession openWorkspace(String... args) throws NutsUnsatisfiedRequirementsException {
-        return new NutsBootWorkspace(null, args).openWorkspace();
+    public static NSession openWorkspace(String... args) throws NUnsatisfiedRequirementsException {
+        return new NBootWorkspace(null, args).openWorkspace();
     }
 
     /**
@@ -173,8 +172,8 @@ public final class Nuts {
      * @param args nuts boot arguments
      * @return new NutsSession instance
      */
-    public static NutsSession openWorkspace(NutsWorkspaceTerminalOptions term, String... args) throws NutsUnsatisfiedRequirementsException {
-        return new NutsBootWorkspace(term, args).openWorkspace();
+    public static NSession openWorkspace(NWorkspaceTerminalOptions term, String... args) throws NUnsatisfiedRequirementsException {
+        return new NBootWorkspace(term, args).openWorkspace();
     }
 
     /**
@@ -182,8 +181,8 @@ public final class Nuts {
      *
      * @return new NutsSession instance
      */
-    public static NutsSession openWorkspace() {
-        return openWorkspace((NutsWorkspaceOptions) null);
+    public static NSession openWorkspace() {
+        return openWorkspace((NWorkspaceOptions) null);
     }
 
     /**
@@ -192,8 +191,8 @@ public final class Nuts {
      * @param options boot options
      * @return new NutsSession instance
      */
-    public static NutsSession openWorkspace(NutsWorkspaceOptions options) {
-        return new NutsBootWorkspace(options).openWorkspace();
+    public static NSession openWorkspace(NWorkspaceOptions options) {
+        return new NBootWorkspace(options).openWorkspace();
     }
 
     /**
@@ -207,8 +206,8 @@ public final class Nuts {
      * @param args boot arguments
      * @return session
      */
-    public static NutsSession runWorkspace(NutsWorkspaceTerminalOptions term, String... args) throws NutsExecutionException {
-        return new NutsBootWorkspace(term, args).runWorkspace();
+    public static NSession runWorkspace(NWorkspaceTerminalOptions term, String... args) throws NExecutionException {
+        return new NBootWorkspace(term, args).runWorkspace();
     }
 
     /**
@@ -221,7 +220,7 @@ public final class Nuts {
      * @param args boot arguments
      * @return session
      */
-    public static NutsSession runWorkspace(String... args) throws NutsExecutionException {
-        return new NutsBootWorkspace(null, args).runWorkspace();
+    public static NSession runWorkspace(String... args) throws NExecutionException {
+        return new NBootWorkspace(null, args).runWorkspace();
     }
 }

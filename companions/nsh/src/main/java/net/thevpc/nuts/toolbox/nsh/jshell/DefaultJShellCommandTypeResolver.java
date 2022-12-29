@@ -5,7 +5,7 @@
  */
 package net.thevpc.nuts.toolbox.nsh.jshell;
 
-import net.thevpc.nuts.io.NutsPath;
+import net.thevpc.nuts.io.NPath;
 
 /**
  *
@@ -19,7 +19,7 @@ public class DefaultJShellCommandTypeResolver implements JShellCommandTypeResolv
         if (a != null) {
             return new JShellCommandType(item, "path", a, item + " is aliased to " + a);
         }
-        NutsPath path = NutsPath.of(item,context.getSession()).toAbsolute(context.getCwd());
+        NPath path = NPath.of(item,context.getSession()).toAbsolute(context.getCwd());
         if (path.exists()) {
             return new JShellCommandType(item, "path", path.toString(), item + " is " + path);
         }

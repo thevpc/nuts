@@ -1,13 +1,13 @@
 package net.thevpc.nuts.toolbox.njob;
 
-import net.thevpc.nuts.NutsApplicationContext;
+import net.thevpc.nuts.NApplicationContext;
 
 public class NCompaniesSubService {
-    private NutsApplicationContext context;
+    private NApplicationContext context;
     private NJobConfigStore dal;
     private JobService service;
 
-    public NCompaniesSubService(NutsApplicationContext context, NJobConfigStore dal, JobService service) {
+    public NCompaniesSubService(NApplicationContext context, NJobConfigStore dal, JobService service) {
         this.context = context;
         this.dal = dal;
         this.service = service;

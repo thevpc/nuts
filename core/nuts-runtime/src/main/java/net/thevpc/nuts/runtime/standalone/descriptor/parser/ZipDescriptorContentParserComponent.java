@@ -27,10 +27,10 @@
 package net.thevpc.nuts.runtime.standalone.descriptor.parser;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.io.NutsIOException;
+import net.thevpc.nuts.io.NIOException;
 import net.thevpc.nuts.runtime.standalone.io.util.ZipUtils;
 import net.thevpc.nuts.spi.*;
-import net.thevpc.nuts.util.NutsStringUtils;
+import net.thevpc.nuts.util.NStringUtils;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -42,22 +42,22 @@ import java.util.Set;
 /**
  * Created by vpc on 1/15/17.
  */
-@NutsComponentScope(NutsComponentScopeType.WORKSPACE)
-public class ZipDescriptorContentParserComponent implements NutsDescriptorContentParserComponent {
+@NComponentScope(NComponentScopeType.WORKSPACE)
+public class ZipDescriptorContentParserComponent implements NDescriptorContentParserComponent {
 
     public static final Set<String> POSSIBLE_PATHS = new LinkedHashSet<>(Arrays.asList(
-            NutsConstants.Files.DESCRIPTOR_FILE_NAME,
-            "META-INF/" + NutsConstants.Files.DESCRIPTOR_FILE_NAME,
-            "WEB-INF/" + NutsConstants.Files.DESCRIPTOR_FILE_NAME,
-            "APP-INF/" + NutsConstants.Files.DESCRIPTOR_FILE_NAME
+            NConstants.Files.DESCRIPTOR_FILE_NAME,
+            "META-INF/" + NConstants.Files.DESCRIPTOR_FILE_NAME,
+            "WEB-INF/" + NConstants.Files.DESCRIPTOR_FILE_NAME,
+            "APP-INF/" + NConstants.Files.DESCRIPTOR_FILE_NAME
     ));
     public static final Set<String> POSSIBLE_EXT = new HashSet<>(Arrays.asList("zip", "gzip", "gz","war","ear"));
 
     @Override
-    public int getSupportLevel(NutsSupportLevelContext criteria) {
-        NutsDescriptorContentParserContext constraints = criteria.getConstraints(NutsDescriptorContentParserContext.class);
+    public int getSupportLevel(NSupportLevelContext criteria) {
+        NDescriptorContentParserContext constraints = criteria.getConstraints(NDescriptorContentParserContext.class);
         if(constraints!=null) {
-            String e = NutsStringUtils.trim(constraints.getFileExtension());
+            String e = NStringUtils.trim(constraints.getFileExtension());
             if (!POSSIBLE_EXT.contains(e)) {
                 return NO_SUPPORT;
             }
@@ -66,20 +66,20 @@ public class ZipDescriptorContentParserComponent implements NutsDescriptorConten
     }
 
     @Override
-    public NutsDescriptor parse(NutsDescriptorContentParserContext parserContext) {
-        String e = NutsStringUtils.trim(parserContext.getFileExtension());
+    public NDescriptor parse(NDescriptorContentParserContext parserContext) {
+        String e = NStringUtils.trim(parserContext.getFileExtension());
         if (!POSSIBLE_EXT.contains(e)) {
             return null;
         }
         ByteArrayOutputStream buffer = new ByteArrayOutputStream();
         try {
             if (ZipUtils.extractFirstPath(parserContext.getFullStream(), POSSIBLE_PATHS, buffer, true)) {
-                NutsSession session = parserContext.getSession();
-                return NutsDescriptorParser.of(session)
+                NSession session = parserContext.getSession();
+                return NDescriptorParser.of(session)
                         .parse(buffer.toByteArray()).get(session);
             }
         } catch (IOException ex) {
-            throw new NutsIOException(parserContext.getSession(),ex);
+            throw new NIOException(parserContext.getSession(),ex);
         }
         return null;
     }

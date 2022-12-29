@@ -27,9 +27,9 @@ package net.thevpc.nuts.runtime.standalone.util.filters;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.standalone.util.Simplifiable;
-import net.thevpc.nuts.util.NutsPredicate;
-import net.thevpc.nuts.util.NutsPredicates;
-import net.thevpc.nuts.util.NutsStringUtils;
+import net.thevpc.nuts.util.NPredicate;
+import net.thevpc.nuts.util.NPredicates;
+import net.thevpc.nuts.util.NStringUtils;
 
 import java.lang.reflect.Array;
 import java.util.*;
@@ -261,35 +261,35 @@ public class CoreFilterUtils {
 //        );
 //    }
 
-    public static <T extends NutsFilter> T[]
-    getTopLevelFilters(NutsFilter idFilter, Class<T> clazz, NutsSession ws) {
+    public static <T extends NFilter> T[]
+    getTopLevelFilters(NFilter idFilter, Class<T> clazz, NSession ws) {
         return getTopLevelFilters(idFilter).stream()
-                .map(x -> NutsFilters.of(ws).as(clazz, x))
+                .map(x -> NFilters.of(ws).as(clazz, x))
                 .toArray(value -> (T[]) Array.newInstance(clazz, value));
     }
 
-    public static List<NutsFilter> getTopLevelFilters(NutsFilter idFilter) {
+    public static List<NFilter> getTopLevelFilters(NFilter idFilter) {
         if (idFilter == null) {
             return Collections.emptyList();
         }
-        if (idFilter.getFilterOp() == NutsFilterOp.AND) {
+        if (idFilter.getFilterOp() == NFilterOp.AND) {
             return idFilter.getSubFilters();
         }
         return Arrays.asList(idFilter);
     }
 
-    public static NutsIdFilter idFilterOf(Map<String, String> map, NutsIdFilter idFilter, NutsDescriptorFilter
-            descriptorFilter, NutsSession ws) {
-        return (NutsIdFilter) NutsIdFilters.of(ws).nonnull(idFilter).and(
-                CoreFilterUtils.createNutsDescriptorFilter(map, ws).and(descriptorFilter).to(NutsIdFilter.class)
+    public static NIdFilter idFilterOf(Map<String, String> map, NIdFilter idFilter, NDescriptorFilter
+            descriptorFilter, NSession ws) {
+        return (NIdFilter) NIdFilters.of(ws).nonnull(idFilter).and(
+                CoreFilterUtils.createNutsDescriptorFilter(map, ws).and(descriptorFilter).to(NIdFilter.class)
         );
     }
 
 
-    public static NutsDescriptorFilter createNutsDescriptorFilter(String arch, String os, String osDist, String
-            platform, String desktopEnv, NutsSession session) {
-        NutsDescriptorFilters d = NutsDescriptorFilters.of(session);
-        return (NutsDescriptorFilter) d.byArch(arch)
+    public static NDescriptorFilter createNutsDescriptorFilter(String arch, String os, String osDist, String
+            platform, String desktopEnv, NSession session) {
+        NDescriptorFilters d = NDescriptorFilters.of(session);
+        return (NDescriptorFilter) d.byArch(arch)
                 .and(d.byOs(os))
                 .and(d.byOsDist(osDist))
                 .and(d.byPlatform(platform))
@@ -297,29 +297,29 @@ public class CoreFilterUtils {
                 ;
     }
 
-    public static NutsDescriptorFilter createNutsDescriptorFilter(Map<String, String> faceMap, NutsSession ws) {
+    public static NDescriptorFilter createNutsDescriptorFilter(Map<String, String> faceMap, NSession ws) {
         return createNutsDescriptorFilter(
-                faceMap == null ? null : faceMap.get(NutsConstants.IdProperties.ARCH),
-                faceMap == null ? null : faceMap.get(NutsConstants.IdProperties.OS),
-                faceMap == null ? null : faceMap.get(NutsConstants.IdProperties.OS_DIST),
-                faceMap == null ? null : faceMap.get(NutsConstants.IdProperties.PLATFORM),
-                faceMap == null ? null : faceMap.get(NutsConstants.IdProperties.DESKTOP),
+                faceMap == null ? null : faceMap.get(NConstants.IdProperties.ARCH),
+                faceMap == null ? null : faceMap.get(NConstants.IdProperties.OS),
+                faceMap == null ? null : faceMap.get(NConstants.IdProperties.OS_DIST),
+                faceMap == null ? null : faceMap.get(NConstants.IdProperties.PLATFORM),
+                faceMap == null ? null : faceMap.get(NConstants.IdProperties.DESKTOP),
                 ws);
     }
 
-    public static <T> NutsPredicate<NutsId> createFilter(NutsIdFilter t, NutsSession session) {
+    public static <T> NPredicate<NId> createFilter(NIdFilter t, NSession session) {
         if (t == null) {
             return null;
         }
-        return new NutsIdFilterToPredicate(t, session);
+        return new NIdFilterToPredicate(t, session);
     }
 
 
-    public static List<NutsExtensionInformation> filterNutsExtensionInfoByLatestVersion
-            (List<NutsExtensionInformation> base) {
-        LinkedHashMap<String, NutsExtensionInformation> valid = new LinkedHashMap<>();
-        for (NutsExtensionInformation n : base) {
-            NutsExtensionInformation old = valid.get(n.getId().getShortName());
+    public static List<NExtensionInformation> filterNutsExtensionInfoByLatestVersion
+            (List<NExtensionInformation> base) {
+        LinkedHashMap<String, NExtensionInformation> valid = new LinkedHashMap<>();
+        for (NExtensionInformation n : base) {
+            NExtensionInformation old = valid.get(n.getId().getShortName());
             if (old == null || old.getId().getVersion().compareTo(n.getId().getVersion()) < 0) {
                 valid.put(n.getId().getShortName(), n);
             }
@@ -327,10 +327,10 @@ public class CoreFilterUtils {
         return new ArrayList<>(valid.values());
     }
 
-    public static List<NutsId> filterNutsIdByLatestVersion(List<NutsId> base) {
-        LinkedHashMap<String, NutsId> valid = new LinkedHashMap<>();
-        for (NutsId n : base) {
-            NutsId old = valid.get(n.getShortName());
+    public static List<NId> filterNutsIdByLatestVersion(List<NId> base) {
+        LinkedHashMap<String, NId> valid = new LinkedHashMap<>();
+        for (NId n : base) {
+            NId old = valid.get(n.getShortName());
             if (old == null || old.getVersion().compareTo(n.getVersion()) < 0) {
                 valid.put(n.getShortName(), n);
             }
@@ -338,15 +338,15 @@ public class CoreFilterUtils {
         return new ArrayList<>(valid.values());
     }
 
-    public static boolean matchesPackaging(String packaging, NutsDescriptor desc, NutsSession session) {
-        if (NutsBlankable.isBlank(packaging)) {
+    public static boolean matchesPackaging(String packaging, NDescriptor desc, NSession session) {
+        if (NBlankable.isBlank(packaging)) {
             return true;
         }
-        if (NutsBlankable.isBlank(desc.getPackaging())) {
+        if (NBlankable.isBlank(desc.getPackaging())) {
             return true;
         }
-        NutsId _v = NutsId.of(packaging).orNull();
-        NutsId _v2 = NutsId.of(desc.getPackaging()).orNull();
+        NId _v = NId.of(packaging).orNull();
+        NId _v2 = NId.of(desc.getPackaging()).orNull();
         if (_v == null || _v2 == null) {
             return _v == _v2;
         }
@@ -358,22 +358,22 @@ public class CoreFilterUtils {
         return false;
     }
 
-    public static boolean acceptDependency(NutsDependency dep, NutsSession session) {
+    public static boolean acceptDependency(NDependency dep, NSession session) {
         if (CoreFilterUtils.acceptCondition(dep.getCondition(), false, session)) {
             // fast reject jfx dependencies with different environment defined by classifier!
             if (dep.getGroupId().equals("org.openjfx") && dep.getArtifactId().startsWith("javafx")) {
-                String c = NutsStringUtils.trim(dep.getClassifier());
+                String c = NStringUtils.trim(dep.getClassifier());
                 if (c.length() > 0) {
                     String[] a = c.split("-");
                     if (a.length > 0) {
-                        NutsOsFamily o = NutsOsFamily.parse(a[0]).orNull();
+                        NOsFamily o = NOsFamily.parse(a[0]).orNull();
                         if (o != null) {
                             if (o != session.env().getOsFamily()) {
                                 return false;
                             }
                         }
                         if (a.length > 1) {
-                            NutsArchFamily af = NutsArchFamily.parse(a[1]).orNull();
+                            NArchFamily af = NArchFamily.parse(a[1]).orNull();
                             if (af != null) {
                                 if (af != session.env().getArchFamily()) {
                                     return false;
@@ -392,7 +392,7 @@ public class CoreFilterUtils {
         boolean someFalse = false;
         if (all != null) {
             for (String s : all) {
-                if (NutsBlankable.isBlank(s)) {
+                if (NBlankable.isBlank(s)) {
                     if (accepter.apply(s)) {
                         return true;
                     } else {
@@ -404,7 +404,7 @@ public class CoreFilterUtils {
         return !someFalse;
     }
 
-    public static boolean acceptCondition(NutsEnvCondition envCond, NutsEnvCondition cond2, NutsSession session) {
+    public static boolean acceptCondition(NEnvCondition envCond, NEnvCondition cond2, NSession session) {
         if (envCond == null || envCond.isBlank()) {
             return true;
         }
@@ -434,11 +434,11 @@ public class CoreFilterUtils {
         return true;
     }
 
-    public static boolean acceptCondition(NutsEnvCondition envCond, boolean currentVMOnLy, NutsSession session) {
+    public static boolean acceptCondition(NEnvCondition envCond, boolean currentVMOnLy, NSession session) {
         if (envCond == null || envCond.isBlank()) {
             return true;
         }
-        NutsWorkspaceEnvManager env = session.env();
+        NWorkspaceEnvManager env = session.env();
         if (!matchesArch(
                 env.getArchFamily().id(),
                 envCond.getArch(), session
@@ -487,7 +487,7 @@ public class CoreFilterUtils {
         return true;
     }
 
-    private static boolean matchesProperties(Map<String, String> props, NutsSession session) {
+    private static boolean matchesProperties(Map<String, String> props, NSession session) {
         for (Map.Entry<String, String> kv : props.entrySet()) {
             if (!matchesProperty(kv.getKey(), kv.getValue(), session)) {
                 return false;
@@ -511,7 +511,7 @@ public class CoreFilterUtils {
         return true;
     }
 
-    private static boolean matchesProperty(String k, String expected, NutsSession session) {
+    private static boolean matchesProperty(String k, String expected, NSession session) {
         return matchesProperty(k, expected, x -> {
             Object u = session.getProperty(x);
             if (u != null) {
@@ -527,8 +527,8 @@ public class CoreFilterUtils {
         if (expected == null) {
             return f != null;
         }
-        expected = NutsStringUtils.trim(expected);
-        f = NutsStringUtils.trim(f);
+        expected = NStringUtils.trim(expected);
+        f = NStringUtils.trim(f);
         if (expected.startsWith("!")) {
             expected = expected.substring(1).trim();
             return !expected.equals(f);
@@ -537,18 +537,18 @@ public class CoreFilterUtils {
     }
 
 
-    public static boolean matchesArch(String current, Collection<String> allConds, NutsSession session) {
-        if (NutsBlankable.isBlank(current)) {
+    public static boolean matchesArch(String current, Collection<String> allConds, NSession session) {
+        if (NBlankable.isBlank(current)) {
             return true;
         }
-        NutsId currentId = NutsId.of(current).get(session);
+        NId currentId = NId.of(current).get(session);
         if (allConds != null && allConds.size() > 0) {
             for (String cond : allConds) {
-                if (NutsBlankable.isBlank(cond)) {
+                if (NBlankable.isBlank(cond)) {
                     return true;
                 }
-                NutsId idCond = NutsId.of(cond).get(session);
-                NutsArchFamily w = NutsArchFamily.parse(idCond.getArtifactId()).orNull();
+                NId idCond = NId.of(cond).get(session);
+                NArchFamily w = NArchFamily.parse(idCond.getArtifactId()).orNull();
                 if (w != null) {
                     idCond = idCond.builder().setArtifactId(w.id()).build();
                 }
@@ -564,18 +564,18 @@ public class CoreFilterUtils {
         }
     }
 
-    public static boolean matchesOs(String os, Collection<String> allConds, NutsSession session) {
-        if (NutsBlankable.isBlank(os)) {
+    public static boolean matchesOs(String os, Collection<String> allConds, NSession session) {
+        if (NBlankable.isBlank(os)) {
             return true;
         }
-        NutsId currentId = NutsId.of(os).get(session);
+        NId currentId = NId.of(os).get(session);
         if (allConds != null && allConds.size() > 0) {
             for (String cond : allConds) {
-                if (NutsBlankable.isBlank(cond)) {
+                if (NBlankable.isBlank(cond)) {
                     return true;
                 }
-                NutsId condId = NutsId.of(cond).get(session);
-                NutsOsFamily w = NutsOsFamily.parse(condId.getArtifactId()).orNull();
+                NId condId = NId.of(cond).get(session);
+                NOsFamily w = NOsFamily.parse(condId.getArtifactId()).orNull();
                 if (w != null) {
                     condId = condId.builder().setArtifactId(w.id()).build();
                 }
@@ -587,17 +587,17 @@ public class CoreFilterUtils {
         }
     }
 
-    public static boolean matchesOsDist(String current, Collection<String> allConds, NutsSession session) {
-        if (NutsBlankable.isBlank(current)) {
+    public static boolean matchesOsDist(String current, Collection<String> allConds, NSession session) {
+        if (NBlankable.isBlank(current)) {
             return true;
         }
-        NutsId currentId = NutsId.of(current).get(session);
+        NId currentId = NId.of(current).get(session);
         if (allConds != null && allConds.size() > 0) {
             for (String cond : allConds) {
-                if (NutsBlankable.isBlank(cond)) {
+                if (NBlankable.isBlank(cond)) {
                     return true;
                 }
-                NutsId condId = NutsId.of(cond).get(session);
+                NId condId = NId.of(cond).get(session);
                 return condId.compatNewer().filter(session).acceptId(currentId, session);
             }
             return false;
@@ -607,9 +607,9 @@ public class CoreFilterUtils {
 
     }
 
-    public static boolean matchesPlatform(Collection<NutsPlatformLocation> platforms, Collection<String> allCond, NutsSession session) {
-        for (NutsPlatformLocation platform : platforms) {
-            NutsId id = platform.getId();
+    public static boolean matchesPlatform(Collection<NPlatformLocation> platforms, Collection<String> allCond, NSession session) {
+        for (NPlatformLocation platform : platforms) {
+            NId id = platform.getId();
             if (id != null) {
                 if (matchesPlatform(id.toString(), allCond, session)) {
                     return true;
@@ -619,18 +619,18 @@ public class CoreFilterUtils {
         return false;
     }
 
-    public static boolean matchesPlatform(String current, Collection<String> allConds, NutsSession session) {
-        if (NutsBlankable.isBlank(current)) {
+    public static boolean matchesPlatform(String current, Collection<String> allConds, NSession session) {
+        if (NBlankable.isBlank(current)) {
             return true;
         }
-        NutsId currentId = NutsId.of(current).get(session);
+        NId currentId = NId.of(current).get(session);
         if (allConds != null && allConds.size() > 0) {
             for (String cond : allConds) {
-                if (NutsBlankable.isBlank(cond)) {
+                if (NBlankable.isBlank(cond)) {
                     return true;
                 }
-                NutsId condId = NutsId.of(cond).get(session);
-                NutsPlatformFamily w = NutsPlatformFamily.parse(condId.getArtifactId()).orNull();
+                NId condId = NId.of(cond).get(session);
+                NPlatformFamily w = NPlatformFamily.parse(condId.getArtifactId()).orNull();
                 if (w != null) {
                     condId = condId.builder().setArtifactId(w.id()).build();
                 }
@@ -642,8 +642,8 @@ public class CoreFilterUtils {
         }
     }
 
-    public static boolean matchesDesktopEnvironment(Collection<NutsId> platforms, Collection<String> allConds, NutsSession session) {
-        for (NutsId platform : platforms) {
+    public static boolean matchesDesktopEnvironment(Collection<NId> platforms, Collection<String> allConds, NSession session) {
+        for (NId platform : platforms) {
             if (matchesDesktopEnvironment(platform.toString(), allConds, session)) {
                 return true;
             }
@@ -651,18 +651,18 @@ public class CoreFilterUtils {
         return false;
     }
 
-    public static boolean matchesDesktopEnvironment(String current, Collection<String> allConds, NutsSession session) {
-        if (NutsBlankable.isBlank(current)) {
+    public static boolean matchesDesktopEnvironment(String current, Collection<String> allConds, NSession session) {
+        if (NBlankable.isBlank(current)) {
             return true;
         }
-        NutsId currentId = NutsId.of(current).get(session);
+        NId currentId = NId.of(current).get(session);
         if (allConds != null && allConds.size() > 0) {
             for (String cond : allConds) {
-                if (NutsBlankable.isBlank(cond)) {
+                if (NBlankable.isBlank(cond)) {
                     return true;
                 }
-                NutsId condId = NutsId.of(cond).get(session);
-                NutsDesktopEnvironmentFamily w = NutsDesktopEnvironmentFamily.parse(condId.getArtifactId()).orNull();
+                NId condId = NId.of(cond).get(session);
+                NDesktopEnvironmentFamily w = NDesktopEnvironmentFamily.parse(condId.getArtifactId()).orNull();
                 if (w != null) {
                     condId = condId.builder().setArtifactId(w.id()).build();
                 }
@@ -674,8 +674,8 @@ public class CoreFilterUtils {
         }
     }
 
-    public static boolean matchesEnv(String arch, String os, String dist, String platform, String de, NutsEnvCondition
-            desc, NutsSession session) {
+    public static boolean matchesEnv(String arch, String os, String dist, String platform, String de, NEnvCondition
+            desc, NSession session) {
         if (!matchesArch(arch, desc.getArch(), session)) {
             return false;
         }
@@ -694,13 +694,13 @@ public class CoreFilterUtils {
         return true;
     }
 
-    public static List<NutsDependency> filterDependencies(NutsId from, List<NutsDependency> d0, NutsDependencyFilter
-            dependencyFilter, NutsSession session) {
+    public static List<NDependency> filterDependencies(NId from, List<NDependency> d0, NDependencyFilter
+            dependencyFilter, NSession session) {
         if (dependencyFilter == null) {
             return d0;
         }
-        List<NutsDependency> r = new ArrayList<>(d0.size());
-        for (NutsDependency nutsDependency : d0) {
+        List<NDependency> r = new ArrayList<>(d0.size());
+        for (NDependency nutsDependency : d0) {
             if (dependencyFilter.acceptDependency(from, nutsDependency, session)) {
                 r.add(nutsDependency);
             }
@@ -708,7 +708,7 @@ public class CoreFilterUtils {
         return r;
     }
 
-    public static boolean matchesSimpleNameStaticVersion(NutsId id, NutsId pattern) {
+    public static boolean matchesSimpleNameStaticVersion(NId id, NId pattern) {
         if (pattern == null) {
             return id == null;
         }
@@ -721,51 +721,51 @@ public class CoreFilterUtils {
         return pattern.getLongName().equals(id.getLongName());
     }
 
-    public static boolean acceptClassifier(NutsIdLocation location, String classifier) {
+    public static boolean acceptClassifier(NIdLocation location, String classifier) {
         if (location == null) {
             return false;
         }
-        String c0 = NutsStringUtils.trim(classifier);
-        String c1 = NutsStringUtils.trim(location.getClassifier());
+        String c0 = NStringUtils.trim(classifier);
+        String c1 = NStringUtils.trim(location.getClassifier());
         return c0.equals(c1);
     }
 
-    public static Map<String, String> toMap(NutsEnvCondition condition, NutsSession session) {
+    public static Map<String, String> toMap(NEnvCondition condition, NSession session) {
         LinkedHashMap<String, String> m = new LinkedHashMap<>();
         String s = condition.getArch().stream().map(String::trim).filter(x -> !x.isEmpty()).collect(Collectors.joining(","));
-        if (!NutsBlankable.isBlank(s)) {
-            m.put(NutsConstants.IdProperties.ARCH, s);
+        if (!NBlankable.isBlank(s)) {
+            m.put(NConstants.IdProperties.ARCH, s);
         }
         s = condition.getOs().stream().map(String::trim).filter(x -> !x.isEmpty()).collect(Collectors.joining(","));
-        if (!NutsBlankable.isBlank(s)) {
-            m.put(NutsConstants.IdProperties.OS, s);
+        if (!NBlankable.isBlank(s)) {
+            m.put(NConstants.IdProperties.OS, s);
         }
         s = condition.getOsDist().stream().map(String::trim).filter(x -> !x.isEmpty()).collect(Collectors.joining(","));
-        if (!NutsBlankable.isBlank(s)) {
-            m.put(NutsConstants.IdProperties.OS_DIST, s);
+        if (!NBlankable.isBlank(s)) {
+            m.put(NConstants.IdProperties.OS_DIST, s);
         }
         s = String.join(",", condition.getPlatform());
-        if (!NutsBlankable.isBlank(s)) {
-            m.put(NutsConstants.IdProperties.PLATFORM, s);
+        if (!NBlankable.isBlank(s)) {
+            m.put(NConstants.IdProperties.PLATFORM, s);
         }
         s = condition.getDesktopEnvironment().stream().map(String::trim).filter(x -> !x.isEmpty()).collect(Collectors.joining(","));
-        if (!NutsBlankable.isBlank(s)) {
-            m.put(NutsConstants.IdProperties.DESKTOP, s);
+        if (!NBlankable.isBlank(s)) {
+            m.put(NConstants.IdProperties.DESKTOP, s);
         }
         s = condition.getProfile().stream().map(String::trim).filter(x -> !x.isEmpty()).collect(Collectors.joining(","));
-        if (!NutsBlankable.isBlank(s)) {
-            m.put(NutsConstants.IdProperties.PROFILE, s);
+        if (!NBlankable.isBlank(s)) {
+            m.put(NConstants.IdProperties.PROFILE, s);
         }
         Map<String, String> properties = condition.getProperties();
         if (!properties.isEmpty()) {
-            m.put(NutsConstants.IdProperties.CONDITIONAL_PROPERTIES, NutsStringUtils.formatMap(properties, "=", ",", "", true));
+            m.put(NConstants.IdProperties.CONDITIONAL_PROPERTIES, NStringUtils.formatMap(properties, "=", ",", "", true));
         }
         return m;
     }
 
-    public static <T extends NutsFilter> T simplifyFilterOr(NutsSession ws, Class<T> cls, T base, NutsFilter... all) {
+    public static <T extends NFilter> T simplifyFilterOr(NSession ws, Class<T> cls, T base, NFilter... all) {
         if (all.length == 0) {
-            return NutsFilters.of(ws).always(cls);
+            return NFilters.of(ws).always(cls);
         }
         if (all.length == 1) {
             return (T) all[0].simplify();
@@ -773,12 +773,12 @@ public class CoreFilterUtils {
         List<T> all2 = new ArrayList<>();
         boolean updates = false;
         boolean someFalse = false;
-        for (NutsFilter t : all) {
+        for (NFilter t : all) {
             T t2 = t == null ? null : (T) t.simplify();
             if (t2 != null) {
                 switch (t2.getFilterOp()) {
                     case TRUE: {
-                        return NutsFilters.of(ws).always(cls);
+                        return NFilters.of(ws).always(cls);
                     }
                     case FALSE: {
                         someFalse = true;
@@ -797,9 +797,9 @@ public class CoreFilterUtils {
         }
         if (all2.isEmpty()) {
             if (someFalse) {
-                return NutsFilters.of(ws).never(cls);
+                return NFilters.of(ws).never(cls);
             }
-            return NutsFilters.of(ws).always(cls);
+            return NFilters.of(ws).always(cls);
         }
         if (all2.size() == 1) {
             return all2.get(0);
@@ -807,24 +807,24 @@ public class CoreFilterUtils {
         if (!updates) {
             return base;
         }
-        return NutsFilters.of(ws).any(cls, all2.toArray((T[]) Array.newInstance(cls, 0)));
+        return NFilters.of(ws).any(cls, all2.toArray((T[]) Array.newInstance(cls, 0)));
     }
 
-    public static <T extends NutsFilter> T simplifyFilterAnd(NutsSession ws, Class<T> cls, T base, NutsFilter... all) {
+    public static <T extends NFilter> T simplifyFilterAnd(NSession ws, Class<T> cls, T base, NFilter... all) {
         if (all.length == 0) {
-            return NutsFilters.of(ws).always(cls);
+            return NFilters.of(ws).always(cls);
         }
         if (all.length == 1) {
             return (T) all[0].simplify();
         }
         List<T> all2 = new ArrayList<>();
         boolean updates = false;
-        for (NutsFilter t : all) {
+        for (NFilter t : all) {
             T t2 = t == null ? null : (T) t.simplify();
             if (t2 != null) {
                 switch (t2.getFilterOp()) {
                     case FALSE: {
-                        return NutsFilters.of(ws).never(cls);
+                        return NFilters.of(ws).never(cls);
                     }
                     case TRUE: {
                         updates = true;
@@ -842,7 +842,7 @@ public class CoreFilterUtils {
             }
         }
         if (all2.size() == 0) {
-            return NutsFilters.of(ws).always(cls);
+            return NFilters.of(ws).always(cls);
         }
         if (all2.size() == 1) {
             return all2.get(0);
@@ -850,21 +850,21 @@ public class CoreFilterUtils {
         if (!updates) {
             return base;
         }
-        return NutsFilters.of(ws).all(cls, all2.toArray((T[]) Array.newInstance(cls, 0)));
+        return NFilters.of(ws).all(cls, all2.toArray((T[]) Array.newInstance(cls, 0)));
     }
 
-    public static <T extends NutsFilter> T simplifyFilterNone(NutsSession ws, Class<T> cls, T base, NutsFilter... all) {
+    public static <T extends NFilter> T simplifyFilterNone(NSession ws, Class<T> cls, T base, NFilter... all) {
         if (all.length == 0) {
-            return NutsFilters.of(ws).always(cls);
+            return NFilters.of(ws).always(cls);
         }
         List<T> all2 = new ArrayList<>();
         boolean updates = false;
-        for (NutsFilter t : all) {
+        for (NFilter t : all) {
             T t2 = t == null ? null : (T) t.simplify();
             if (t2 != null) {
                 switch (t2.getFilterOp()) {
                     case TRUE: {
-                        return NutsFilters.of(ws).never(cls);
+                        return NFilters.of(ws).never(cls);
                     }
                     case FALSE: {
                         updates = true;
@@ -882,12 +882,12 @@ public class CoreFilterUtils {
             }
         }
         if (all2.size() == 0) {
-            return NutsFilters.of(ws).always(cls);
+            return NFilters.of(ws).always(cls);
         }
         if (!updates) {
             return base;
         }
-        return NutsFilters.of(ws).none(cls, all2.toArray((T[]) Array.newInstance(cls, 0)));
+        return NFilters.of(ws).none(cls, all2.toArray((T[]) Array.newInstance(cls, 0)));
     }
 
     public static <T> T simplify(T any) {
@@ -920,7 +920,7 @@ public class CoreFilterUtils {
         return all.toArray((T[]) Array.newInstance(cls, 0));
     }
 
-    public static <T extends NutsFilter> T[] simplifyAndShrinkFilters(Class<T> cls, Predicate<T> onRemove, T... any) {
+    public static <T extends NFilter> T[] simplifyAndShrinkFilters(Class<T> cls, Predicate<T> onRemove, T... any) {
         List<T> all = new ArrayList<>();
         boolean updates = false;
         for (T t : any) {
@@ -944,17 +944,17 @@ public class CoreFilterUtils {
         return all.toArray((T[]) Array.newInstance(cls, 0));
     }
 
-    private static class NutsIdFilterToPredicate extends NutsPredicates.BasePredicate<NutsId> {
-        private final NutsIdFilter t;
-        private final NutsSession session;
+    private static class NIdFilterToPredicate extends NPredicates.BasePredicate<NId> {
+        private final NIdFilter t;
+        private final NSession session;
 
-        public NutsIdFilterToPredicate(NutsIdFilter t, NutsSession session) {
+        public NIdFilterToPredicate(NIdFilter t, NSession session) {
             this.t = t;
             this.session = session;
         }
 
         @Override
-        public boolean test(NutsId value) {
+        public boolean test(NId value) {
             return t.acceptId(value, session);
         }
 
@@ -967,7 +967,7 @@ public class CoreFilterUtils {
         public boolean equals(Object o) {
             if (this == o) return true;
             if (o == null || getClass() != o.getClass()) return false;
-            NutsIdFilterToPredicate that = (NutsIdFilterToPredicate) o;
+            NIdFilterToPredicate that = (NIdFilterToPredicate) o;
             return Objects.equals(t, that.t) && Objects.equals(session, that.session);
         }
 

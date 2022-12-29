@@ -1,13 +1,13 @@
 package net.thevpc.nuts.lib.template;
 
-import net.thevpc.nuts.NutsSession;
-import net.thevpc.nuts.NutsValue;
+import net.thevpc.nuts.NSession;
+import net.thevpc.nuts.NValue;
 
 public class ValidatorFactory {
 
-    private NutsSession session;
+    private NSession session;
 
-    public ValidatorFactory(NutsSession session) {
+    public ValidatorFactory(NSession session) {
         this.session = session;
     }
 
@@ -125,7 +125,7 @@ public class ValidatorFactory {
     public final StringValidator BOOLEAN = new StringValidator() {
         @Override
         public String validate(String value) {
-            Boolean b = NutsValue.of(value).asBoolean().orNull();
+            Boolean b = NValue.of(value).asBoolean().orNull();
             if (b == null) {
                 throw new IllegalArgumentException("Invalid boolean");
             }

@@ -25,10 +25,10 @@
 */
 package net.thevpc.nuts.toolbox.ndb.nmysql.util;
 
-import net.thevpc.nuts.cmdline.NutsArgument;
-import net.thevpc.nuts.cmdline.NutsCommandLine;
-import net.thevpc.nuts.NutsMessage;
-import net.thevpc.nuts.NutsSession;
+import net.thevpc.nuts.cmdline.NArgument;
+import net.thevpc.nuts.cmdline.NCommandLine;
+import net.thevpc.nuts.NMsg;
+import net.thevpc.nuts.NSession;
 import net.thevpc.nuts.toolbox.ndb.util.NdbUtils;
 
 /**
@@ -40,12 +40,12 @@ public class AtName {
     private String config;
     private String name;
 
-    public static AtName nextConfigOption(NutsCommandLine cmd, NutsSession session) {
-        NutsArgument a = cmd.nextString().get(session);
+    public static AtName nextConfigOption(NCommandLine cmd, NSession session) {
+        NArgument a = cmd.nextString().get(session);
         AtName name2 = new AtName(a.getStringValue().get(session));
         if (!name2.getConfigName().isEmpty() && !name2.getDatabaseName().isEmpty()) {
             cmd.pushBack(a);
-            cmd.throwUnexpectedArgument(NutsMessage.ofPlain("should be valid a config name"));
+            cmd.throwUnexpectedArgument(NMsg.ofPlain("should be valid a config name"));
         }
         if (name2.getConfigName().isEmpty()) {
             name2 = new AtName(name2.getDatabaseName(), "");
@@ -58,21 +58,21 @@ public class AtName {
         return NdbUtils.coalesce(name, "default") + "@" + NdbUtils.coalesce(config, "default");
     }
 
-    public static AtName nextAppOption(NutsCommandLine cmd, NutsSession session) {
-        NutsArgument a = cmd.nextString().get(session);
+    public static AtName nextAppOption(NCommandLine cmd, NSession session) {
+        NArgument a = cmd.nextString().get(session);
         return a==null?null:new AtName(a.getStringValue().get(session));
     }
 
-    public static AtName nextAppNonOption(NutsCommandLine cmd, NutsSession session) {
-        NutsArgument a = cmd.nextString().get(session);
+    public static AtName nextAppNonOption(NCommandLine cmd, NSession session) {
+        NArgument a = cmd.nextString().get(session);
         return a==null?null:new AtName(a.asString().get(session));
     }
 
-    public static AtName nextConfigNonOption(NutsCommandLine cmd, NutsSession session) {
-        NutsArgument a = cmd.peek().get(session);
+    public static AtName nextConfigNonOption(NCommandLine cmd, NSession session) {
+        NArgument a = cmd.peek().get(session);
         AtName name2 = new AtName(a.asString().get(session));
         if (!name2.getConfigName().isEmpty() && !name2.getDatabaseName().isEmpty()) {
-            cmd.throwUnexpectedArgument(NutsMessage.ofPlain("should be valid a config name"));
+            cmd.throwUnexpectedArgument(NMsg.ofPlain("should be valid a config name"));
         } else {
             cmd.skip();
         }

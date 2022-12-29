@@ -26,15 +26,15 @@
 package net.thevpc.nuts.runtime.standalone.io.progress;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.cmdline.NutsCommandLine;
+import net.thevpc.nuts.cmdline.NCommandLine;
 import net.thevpc.nuts.io.*;
 import net.thevpc.nuts.runtime.standalone.io.util.InterruptException;
 import net.thevpc.nuts.runtime.standalone.io.util.Interruptible;
-import net.thevpc.nuts.spi.NutsFormatSPI;
-import net.thevpc.nuts.text.NutsTextStyle;
-import net.thevpc.nuts.util.NutsProgressEvent;
-import net.thevpc.nuts.util.NutsProgressListener;
-import net.thevpc.nuts.io.NutsPlainPrintStream;
+import net.thevpc.nuts.spi.NFormatSPI;
+import net.thevpc.nuts.text.NTextStyle;
+import net.thevpc.nuts.util.NProgressEvent;
+import net.thevpc.nuts.util.NProgressListener;
+import net.thevpc.nuts.io.NPlainStream;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -42,24 +42,24 @@ import java.io.InputStream;
 /**
  * @author thevpc
  */
-public class MonitoredInputStream extends InputStream implements NutsInputSource, Interruptible {
+public class MonitoredInputStream extends InputStream implements NInputSource, Interruptible {
 
     private final InputStream base;
     private final long length;
-    private final NutsProgressListener monitor;
+    private final NProgressListener monitor;
     private final Object source;
-    private final NutsMessage sourceName;
+    private final NMsg sourceName;
     private long count;
     private long lastCount;
     private long startTime;
     private long lastTime;
     private boolean completed = false;
     private boolean interrupted = false;
-    private final NutsSession session;
-    private DefaultNutsInputSourceMetadata md;
+    private final NSession session;
+    private DefaultNInputSourceMetadata md;
 
-    public MonitoredInputStream(InputStream base, Object source, NutsMessage sourceName, long length, NutsProgressListener monitor, NutsSession session) {
-        this.base = (InputStream) NutsIO.of(session).createInputSource(base);
+    public MonitoredInputStream(InputStream base, Object source, NMsg sourceName, long length, NProgressListener monitor, NSession session) {
+        this.base = (InputStream) NIO.of(session).createInputSource(base);
         this.session = session;
         if (monitor == null) {
             throw new NullPointerException();
@@ -68,7 +68,7 @@ public class MonitoredInputStream extends InputStream implements NutsInputSource
         this.source = source;
         this.sourceName = sourceName;
         this.length = length;
-        this.md = new DefaultNutsInputSourceMetadata(((NutsInputSource) base).getInputMetaData());
+        this.md = new DefaultNInputSourceMetadata(((NInputSource) base).getInputMetaData());
     }
 
     @Override
@@ -191,7 +191,7 @@ public class MonitoredInputStream extends InputStream implements NutsInputSource
                 this.lastTime = now;
                 this.lastCount = 0;
                 this.count = 0;
-                monitor.onProgress(NutsProgressEvent.ofStart(source, sourceName, length, session));
+                monitor.onProgress(NProgressEvent.ofStart(source, sourceName, length, session));
             }
         }
     }
@@ -200,7 +200,7 @@ public class MonitoredInputStream extends InputStream implements NutsInputSource
         if (!completed) {
             long now = System.nanoTime();
             this.count += count;
-            if (monitor.onProgress(NutsProgressEvent.ofProgress(source, sourceName,
+            if (monitor.onProgress(NProgressEvent.ofProgress(source, sourceName,
                     this.count, now - startTime, null,
                     this.count - lastCount, now - lastTime,
                     length, null, session))) {
@@ -214,14 +214,14 @@ public class MonitoredInputStream extends InputStream implements NutsInputSource
         if (!completed) {
             completed = true;
             long now = System.nanoTime();
-            monitor.onProgress(NutsProgressEvent.ofComplete(source, sourceName,
+            monitor.onProgress(NProgressEvent.ofComplete(source, sourceName,
                     this.count, now - startTime, null,
                     this.count - lastCount, now - lastTime,
                     length, ex, session));
         }
     }
 
-    public NutsInputSourceMetadata getInputMetaData() {
+    public NInputSourceMetadata getInputMetaData() {
         return md;
     }
 
@@ -235,27 +235,27 @@ public class MonitoredInputStream extends InputStream implements NutsInputSource
     }
 
     @Override
-    public NutsFormat formatter(NutsSession session) {
-        return NutsFormat.of(session!=null?session:this.session, new NutsFormatSPI() {
+    public NFormat formatter(NSession session) {
+        return NFormat.of(session!=null?session:this.session, new NFormatSPI() {
             @Override
             public String getName() {
                 return "input-stream";
             }
 
             @Override
-            public void print(NutsPrintStream out) {
-                NutsOptional<NutsMessage> m = getInputMetaData().getMessage();
+            public void print(NStream out) {
+                NOptional<NMsg> m = getInputMetaData().getMessage();
                 if (m.isPresent()) {
                     out.print(m.get());
                 } else if (sourceName != null) {
-                    out.append(sourceName, NutsTextStyle.path());
+                    out.append(sourceName, NTextStyle.path());
                 } else {
-                    out.append(getClass().getSimpleName(), NutsTextStyle.path());
+                    out.append(getClass().getSimpleName(), NTextStyle.path());
                 }
             }
 
             @Override
-            public boolean configureFirst(NutsCommandLine commandLine) {
+            public boolean configureFirst(NCommandLine commandLine) {
                 return false;
             }
         });
@@ -263,14 +263,14 @@ public class MonitoredInputStream extends InputStream implements NutsInputSource
 
     @Override
     public String toString() {
-        NutsPlainPrintStream out = new NutsPlainPrintStream();
-        NutsOptional<NutsMessage> m = getInputMetaData().getMessage();
+        NPlainStream out = new NPlainStream();
+        NOptional<NMsg> m = getInputMetaData().getMessage();
         if (m.isPresent()) {
             out.print(m.get());
         } else if (sourceName != null) {
-            out.append(sourceName, NutsTextStyle.path());
+            out.append(sourceName, NTextStyle.path());
         } else {
-            out.append(getClass().getSimpleName(), NutsTextStyle.path());
+            out.append(getClass().getSimpleName(), NTextStyle.path());
         }
         return out.toString();
     }

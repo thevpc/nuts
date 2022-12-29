@@ -26,14 +26,14 @@
 package net.thevpc.nuts.toolbox.nsh.cmds;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.cmdline.NutsArgument;
-import net.thevpc.nuts.cmdline.NutsArgumentName;
-import net.thevpc.nuts.cmdline.NutsCommandLine;
-import net.thevpc.nuts.io.NutsPrintStream;
-import net.thevpc.nuts.spi.NutsComponentScope;
-import net.thevpc.nuts.spi.NutsComponentScopeType;
-import net.thevpc.nuts.text.NutsTextStyle;
-import net.thevpc.nuts.text.NutsTexts;
+import net.thevpc.nuts.cmdline.NArgument;
+import net.thevpc.nuts.cmdline.NArgumentName;
+import net.thevpc.nuts.cmdline.NCommandLine;
+import net.thevpc.nuts.io.NStream;
+import net.thevpc.nuts.spi.NComponentScope;
+import net.thevpc.nuts.spi.NComponentScopeType;
+import net.thevpc.nuts.text.NTextStyle;
+import net.thevpc.nuts.text.NTexts;
 import net.thevpc.nuts.toolbox.nsh.SimpleJShellBuiltin;
 import net.thevpc.nuts.toolbox.nsh.jshell.JShellExecutionContext;
 import net.thevpc.nuts.toolbox.nsh.jshell.JShellResult;
@@ -41,7 +41,7 @@ import net.thevpc.nuts.toolbox.nsh.jshell.JShellResult;
 /**
  * Created by vpc on 1/7/17.
  */
-@NutsComponentScope(NutsComponentScopeType.WORKSPACE)
+@NComponentScope(NComponentScopeType.WORKSPACE)
 public class ShowerrCommand extends SimpleJShellBuiltin {
 
     public ShowerrCommand() {
@@ -49,17 +49,17 @@ public class ShowerrCommand extends SimpleJShellBuiltin {
     }
 
     @Override
-    protected boolean configureFirst(NutsCommandLine commandLine, JShellExecutionContext context) {
+    protected boolean configureFirst(NCommandLine commandLine, JShellExecutionContext context) {
         Options options = context.getOptions();
-        NutsSession session = context.getSession();
-        NutsArgument a = commandLine.peek().get(session);
+        NSession session = context.getSession();
+        NArgument a = commandLine.peek().get(session);
         if (!a.isOption()) {
             if (options.login == null) {
-                options.login = commandLine.next(NutsArgumentName.of("username", session)).flatMap(NutsValue::asString).get(session);
+                options.login = commandLine.next(NArgumentName.of("username", session)).flatMap(NValue::asString).get(session);
                 return true;
             } else if (options.password == null) {
-                options.password = commandLine.next(NutsArgumentName.of("password", session))
-                        .flatMap(NutsValue::asString).get(session).toCharArray();
+                options.password = commandLine.next(NArgumentName.of("password", session))
+                        .flatMap(NValue::asString).get(session).toCharArray();
                 return true;
             }
         }
@@ -67,30 +67,30 @@ public class ShowerrCommand extends SimpleJShellBuiltin {
     }
 
     @Override
-    protected void execBuiltin(NutsCommandLine commandLine, JShellExecutionContext context) {
+    protected void execBuiltin(NCommandLine commandLine, JShellExecutionContext context) {
         JShellResult r = context.getShellContext().getLastResult();
-        NutsPrintStream out = context.getSession().out();
+        NStream out = context.getSession().out();
         switch (context.getSession().getOutputFormat()) {
             case PLAIN: {
                 if (r.getCode() == 0) {
                     out.println(
-                            NutsTexts.of(context.getSession()).ofStyled(
-                                    "last command ended successfully with no errors.", NutsTextStyle.success()
+                            NTexts.of(context.getSession()).ofStyled(
+                                    "last command ended successfully with no errors.", NTextStyle.success()
                             ));
                 } else {
                     out.println(
-                            NutsTexts.of(context.getSession())
-                                    .ofStyled("last command ended abnormally with the following error :", NutsTextStyle.error())
+                            NTexts.of(context.getSession())
+                                    .ofStyled("last command ended abnormally with the following error :", NTextStyle.error())
                     );
                     if (r.getMessage() != null) {
-                        out.println(NutsTexts.of(context.getSession())
-                                .ofStyled(r.getMessage(), NutsTextStyle.error()
+                        out.println(NTexts.of(context.getSession())
+                                .ofStyled(r.getMessage(), NTextStyle.error()
                                 ));
                     }
                     if (r.getStackTrace() != null) {
                         context.err().println(
-                                NutsTexts.of(context.getSession())
-                                        .ofStyled(r.getStackTrace(), NutsTextStyle.error())
+                                NTexts.of(context.getSession())
+                                        .ofStyled(r.getStackTrace(), NTextStyle.error())
                         );
                     }
                 }

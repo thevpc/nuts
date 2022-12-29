@@ -1,32 +1,32 @@
 package net.thevpc.nuts.toolbox.nutsserver.http.commands;
 
-import net.thevpc.nuts.NutsBlankable;
+import net.thevpc.nuts.NBlankable;
 import net.thevpc.nuts.toolbox.nutsserver.AbstractFacadeCommand;
 import net.thevpc.nuts.toolbox.nutsserver.FacadeCommandContext;
 import net.thevpc.nuts.toolbox.nutsserver.bundled._IOUtils;
 import net.thevpc.nuts.toolbox.nutsserver.util.ItemStreamInfo;
 import net.thevpc.nuts.toolbox.nutsserver.util.MultipartStreamHelper;
-import net.thevpc.nuts.toolbox.nutsserver.util.NutsServerUtils;
-import net.thevpc.nuts.NutsId;
-import net.thevpc.nuts.toolbox.nutsserver.http.NutsHttpServletFacade;
+import net.thevpc.nuts.toolbox.nutsserver.util.NServerUtils;
+import net.thevpc.nuts.NId;
+import net.thevpc.nuts.toolbox.nutsserver.http.NHttpServletFacade;
 
 import java.io.IOException;
 import java.util.Iterator;
 
 public class SearchFacadeCommand extends AbstractFacadeCommand {
 
-    private final NutsHttpServletFacade nutsHttpServletFacade;
+    private final NHttpServletFacade nHttpServletFacade;
 
-    public SearchFacadeCommand(NutsHttpServletFacade nutsHttpServletFacade) {
+    public SearchFacadeCommand(NHttpServletFacade nHttpServletFacade) {
         super("search");
-        this.nutsHttpServletFacade = nutsHttpServletFacade;
+        this.nHttpServletFacade = nHttpServletFacade;
     }
 
     @Override
     public void executeImpl(FacadeCommandContext context) throws IOException {
         //Content-type
         String boundary = context.getRequestHeaderFirstValue("Content-type");
-        if (NutsBlankable.isBlank(boundary)) {
+        if (NBlankable.isBlank(boundary)) {
             context.sendError(400, "Invalid JShellCommandNode Arguments : " + getName() + " . Invalid format.");
             return;
         }
@@ -52,10 +52,10 @@ public class SearchFacadeCommand extends AbstractFacadeCommand {
                     break;
             }
         }
-        Iterator<NutsId> it = context.getSession().search()
+        Iterator<NId> it = context.getSession().search()
                 .setSession(context.getSession().setTransitive(transitive))
                 .addScripts(js).addId(pattern).getResultIds().iterator();
 //                    Writer ps = new OutputStreamWriter(context.getResponseBody());
-        context.sendResponseText(200, NutsServerUtils.iteratorNutsIdToString(it));
+        context.sendResponseText(200, NServerUtils.iteratorNutsIdToString(it));
     }
 }

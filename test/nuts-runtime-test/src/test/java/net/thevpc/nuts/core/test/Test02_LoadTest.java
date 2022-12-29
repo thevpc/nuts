@@ -5,14 +5,11 @@
  */
 package net.thevpc.nuts.core.test;
 
-import net.thevpc.nuts.NutsOsFamily;
 import net.thevpc.nuts.core.test.utils.TestUtils;
 
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
 
-import net.thevpc.nuts.NutsWorkspace;
+import net.thevpc.nuts.NWorkspace;
 import org.junit.jupiter.api.*;
 
 /**
@@ -24,8 +21,8 @@ public class Test02_LoadTest {
     @Test
     public void load1() throws Exception {
 
-        NutsWorkspace w1 = TestUtils.openNewTestWorkspace("--skip-companions").getWorkspace();
-        NutsWorkspace w2 = TestUtils.openNewTestWorkspace("--skip-companions").getWorkspace();
+        NWorkspace w1 = TestUtils.openNewTestWorkspace("--skip-companions").getWorkspace();
+        NWorkspace w2 = TestUtils.openNewTestWorkspace("--skip-companions").getWorkspace();
     }
 
     @BeforeAll

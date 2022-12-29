@@ -4,8 +4,8 @@ import net.thevpc.nuts.*;
 
 public class NCompaniesSubCmd {
     private JobService service;
-    private NutsApplicationContext context;
-    private NutsSession session;
+    private NApplicationContext context;
+    private NSession session;
     private JobServiceCmd parent;
 
     public NCompaniesSubCmd(JobServiceCmd parent) {

@@ -1,19 +1,19 @@
 package net.thevpc.nuts.runtime.standalone.text;
 
-import net.thevpc.nuts.NutsUnsupportedEnumException;
-import net.thevpc.nuts.NutsWorkspace;
+import net.thevpc.nuts.NUnsupportedEnumException;
+import net.thevpc.nuts.NWorkspace;
 import net.thevpc.nuts.runtime.standalone.io.outputstream.BaseTransparentFilterOutputStream;
-import net.thevpc.nuts.runtime.standalone.io.terminal.NutsTerminalModeOp;
+import net.thevpc.nuts.runtime.standalone.io.terminal.NTerminalModeOp;
 
 import java.io.OutputStream;
-import net.thevpc.nuts.NutsSession;
-import net.thevpc.nuts.spi.NutsSystemTerminalBase;
+import net.thevpc.nuts.NSession;
+import net.thevpc.nuts.spi.NSystemTerminalBase;
 
 public class RawOutputStream extends BaseTransparentFilterOutputStream implements ExtendedFormatAware {
-    private NutsSession session;
-    private NutsWorkspace ws;
-    private NutsSystemTerminalBase term;
-    public RawOutputStream(OutputStream out, NutsSystemTerminalBase term, NutsSession session) {
+    private NSession session;
+    private NWorkspace ws;
+    private NSystemTerminalBase term;
+    public RawOutputStream(OutputStream out, NSystemTerminalBase term, NSession session) {
         super(out);
         this.session=session;
         this.term=term;
@@ -21,12 +21,12 @@ public class RawOutputStream extends BaseTransparentFilterOutputStream implement
     }
 
     @Override
-    public NutsTerminalModeOp getModeOp() {
-        return NutsTerminalModeOp.NOP;
+    public NTerminalModeOp getModeOp() {
+        return NTerminalModeOp.NOP;
     }
 
     @Override
-    public ExtendedFormatAware convert(NutsTerminalModeOp other) {
+    public ExtendedFormatAware convert(NTerminalModeOp other) {
         if (other == null || other == getModeOp()) {
             return this;
         }
@@ -47,6 +47,6 @@ public class RawOutputStream extends BaseTransparentFilterOutputStream implement
                 return new UnescapeOutputStream(this,term,session);
             }
         }
-        throw new NutsUnsupportedEnumException(session, other);
+        throw new NUnsupportedEnumException(session, other);
     }
 }

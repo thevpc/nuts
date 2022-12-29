@@ -26,12 +26,12 @@
  */
 package net.thevpc.nuts.toolbox.nsh.cmds.bash;
 
-import net.thevpc.nuts.cmdline.NutsArgument;
-import net.thevpc.nuts.cmdline.NutsCommandLine;
-import net.thevpc.nuts.NutsSession;
-import net.thevpc.nuts.NutsValue;
-import net.thevpc.nuts.spi.NutsComponentScope;
-import net.thevpc.nuts.spi.NutsComponentScopeType;
+import net.thevpc.nuts.cmdline.NArgument;
+import net.thevpc.nuts.cmdline.NCommandLine;
+import net.thevpc.nuts.NSession;
+import net.thevpc.nuts.NValue;
+import net.thevpc.nuts.spi.NComponentScope;
+import net.thevpc.nuts.spi.NComponentScopeType;
 import net.thevpc.nuts.toolbox.nsh.SimpleJShellBuiltin;
 import net.thevpc.nuts.toolbox.nsh.jshell.JShellExecutionContext;
 
@@ -41,7 +41,7 @@ import java.util.List;
 /**
  * Created by vpc on 1/7/17.
  */
-@NutsComponentScope(NutsComponentScopeType.WORKSPACE)
+@NComponentScope(NComponentScopeType.WORKSPACE)
 public class CommandCommand extends SimpleJShellBuiltin {
 
     public CommandCommand() {
@@ -50,10 +50,10 @@ public class CommandCommand extends SimpleJShellBuiltin {
 
 
     @Override
-    protected boolean configureFirst(NutsCommandLine commandLine, JShellExecutionContext context) {
-        NutsSession session = context.getSession();
+    protected boolean configureFirst(NCommandLine commandLine, JShellExecutionContext context) {
+        NSession session = context.getSession();
         Options options = context.getOptions();
-        NutsArgument a = null;
+        NArgument a = null;
         //inverse configuration order
         if (context.configureFirst(commandLine)) {
             return true;
@@ -61,7 +61,7 @@ public class CommandCommand extends SimpleJShellBuiltin {
             options.p = a.getBooleanValue().get(session);
         } else if (!commandLine.isNextOption()) {
             if (options.commandName == null) {
-                options.commandName = commandLine.next().flatMap(NutsValue::asString).get(session);
+                options.commandName = commandLine.next().flatMap(NValue::asString).get(session);
             }
             options.args.addAll(Arrays.asList(commandLine.toStringArray()));
             commandLine.skipAll();
@@ -71,7 +71,7 @@ public class CommandCommand extends SimpleJShellBuiltin {
     }
 
     @Override
-    protected void execBuiltin(NutsCommandLine commandLine, JShellExecutionContext context) {
+    protected void execBuiltin(NCommandLine commandLine, JShellExecutionContext context) {
         Options options = context.getOptions();
         if (options.commandName != null) {
             context.getShell().executePreparedCommand(options.args.toArray(new String[0]), false, true, true, context.getShellContext());

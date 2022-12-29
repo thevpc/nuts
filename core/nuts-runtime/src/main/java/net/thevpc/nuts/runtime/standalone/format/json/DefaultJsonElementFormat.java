@@ -25,36 +25,36 @@ package net.thevpc.nuts.runtime.standalone.format.json;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.elem.*;
-import net.thevpc.nuts.io.NutsIOException;
-import net.thevpc.nuts.io.NutsPrintStream;
-import net.thevpc.nuts.runtime.standalone.elem.NutsElementStreamFormat;
-import net.thevpc.nuts.util.NutsStringUtils;
+import net.thevpc.nuts.io.NIOException;
+import net.thevpc.nuts.io.NStream;
+import net.thevpc.nuts.runtime.standalone.elem.NElementStreamFormat;
+import net.thevpc.nuts.util.NStringUtils;
 
 import java.io.*;
 
 /**
  * @author thevpc
  */
-public class DefaultJsonElementFormat implements NutsElementStreamFormat {
+public class DefaultJsonElementFormat implements NElementStreamFormat {
 
-    private NutsWorkspace ws;
+    private NWorkspace ws;
 
-    public DefaultJsonElementFormat(NutsWorkspace ws) {
+    public DefaultJsonElementFormat(NWorkspace ws) {
         this.ws = ws;
     }
 
-    public NutsElement parseElement(String string, NutsElementFactoryContext context) {
+    public NElement parseElement(String string, NElementFactoryContext context) {
         if (string == null) {
             throw new NullPointerException("string is null");
         }
         return parseElement(new StringReader(string), context);
     }
 
-    public void write(NutsPrintStream out, NutsElement data, boolean compact) {
+    public void write(NStream out, NElement data, boolean compact) {
         write(out, data, compact ? null : "");
     }
 
-    private void write(NutsPrintStream out, NutsElement data, String indent) {
+    private void write(NStream out, NElement data, String indent) {
 
         switch (data.type()) {
             case NULL: {
@@ -112,10 +112,10 @@ public class DefaultJsonElementFormat implements NutsElementStreamFormat {
                             default: {
                                 sb.append('\\');
                                 sb.append('u');
-                                sb.append(NutsStringUtils.toHexChar((c >> 12) & 0xF));
-                                sb.append(NutsStringUtils.toHexChar((c >> 8) & 0xF));
-                                sb.append(NutsStringUtils.toHexChar((c >> 4) & 0xF));
-                                sb.append(NutsStringUtils.toHexChar(c & 0xF));
+                                sb.append(NStringUtils.toHexChar((c >> 12) & 0xF));
+                                sb.append(NStringUtils.toHexChar((c >> 8) & 0xF));
+                                sb.append(NStringUtils.toHexChar((c >> 4) & 0xF));
+                                sb.append(NStringUtils.toHexChar(c & 0xF));
                             }
                         }
                     } else {
@@ -132,10 +132,10 @@ public class DefaultJsonElementFormat implements NutsElementStreamFormat {
                                 if (c > 0x007e) {
                                     sb.append('\\');
                                     sb.append('u');
-                                    sb.append(NutsStringUtils.toHexChar((c >> 12) & 0xF));
-                                    sb.append(NutsStringUtils.toHexChar((c >> 8) & 0xF));
-                                    sb.append(NutsStringUtils.toHexChar((c >> 4) & 0xF));
-                                    sb.append(NutsStringUtils.toHexChar(c & 0xF));
+                                    sb.append(NStringUtils.toHexChar((c >> 12) & 0xF));
+                                    sb.append(NStringUtils.toHexChar((c >> 8) & 0xF));
+                                    sb.append(NStringUtils.toHexChar((c >> 4) & 0xF));
+                                    sb.append(NStringUtils.toHexChar(c & 0xF));
                                 } else {
                                     sb.append(c);
                                 }
@@ -149,14 +149,14 @@ public class DefaultJsonElementFormat implements NutsElementStreamFormat {
             }
 
             case ARRAY: {
-                NutsArrayElement arr = data.asArray().get();
+                NArrayElement arr = data.asArray().get();
                 if (arr.size() == 0) {
                     out.print("[]");
                 } else {
                     out.print('[');
                     boolean first = true;
                     String indent2 = indent + "  ";
-                    for (NutsElement e : arr.items()) {
+                    for (NElement e : arr.items()) {
                         if (first) {
                             first = false;
                         } else {
@@ -179,14 +179,14 @@ public class DefaultJsonElementFormat implements NutsElementStreamFormat {
                 break;
             }
             case OBJECT: {
-                NutsObjectElement obj = data.asObject().get();
+                NObjectElement obj = data.asObject().get();
                 if (obj.size() == 0) {
                     out.print("{}");
                 } else {
                     out.print('{');
                     boolean first = true;
                     String indent2 = indent + "  ";
-                    for (NutsElementEntry e : obj.entries()) {
+                    for (NElementEntry e : obj.entries()) {
                         if (first) {
                             first = false;
                         } else {
@@ -220,31 +220,31 @@ public class DefaultJsonElementFormat implements NutsElementStreamFormat {
     }
 
     @Override
-    public NutsElement parseElement(Reader reader, NutsElementFactoryContext context) {
+    public NElement parseElement(Reader reader, NElementFactoryContext context) {
         return new ElementParser(context).parseElement(reader);
     }
 
     @Override
-    public void printElement(NutsElement value, NutsPrintStream out, boolean compact, NutsElementFactoryContext context) {
+    public void printElement(NElement value, NStream out, boolean compact, NElementFactoryContext context) {
         write(out, value, compact);
     }
 
     private static class ElementParser {
 
         private BufferedReader reader;
-        private NutsElementFactoryContext context;
+        private NElementFactoryContext context;
         private int fileOffset;
         private int lineNumber;
         private int lineOffset;
         private int current;
         private boolean skipLF;
-        private NutsElements ebuilder;
+        private NElements ebuilder;
 
-        public ElementParser(NutsElementFactoryContext context) {
+        public ElementParser(NElementFactoryContext context) {
             this.context = context;
         }
 
-        public NutsElement parseElement(Reader reader) {
+        public NElement parseElement(Reader reader) {
             if (reader == null) {
                 throw new NullPointerException("reader is null");
             }
@@ -255,7 +255,7 @@ public class DefaultJsonElementFormat implements NutsElementStreamFormat {
             current = 0;
             readNext();
             skipWhiteSpaceAndComments();
-            NutsElement e = readValue();
+            NElement e = readValue();
             skipWhiteSpaceAndComments();
             if (current != -1) {
                 throw error("unexpected character");
@@ -263,7 +263,7 @@ public class DefaultJsonElementFormat implements NutsElementStreamFormat {
             return e;
         }
 
-        private NutsElement readValue() {
+        private NElement readValue() {
             switch (current) {
                 case 'n': {
                     String n = readStringLiteralUnQuoted();
@@ -320,8 +320,8 @@ public class DefaultJsonElementFormat implements NutsElementStreamFormat {
             }
         }
 
-        private NutsElement readJsonArray() {
-            NutsArrayElementBuilder array = builder().ofArray();
+        private NElement readJsonArray() {
+            NArrayElementBuilder array = builder().ofArray();
             readNext();
             skipWhiteSpaceAndComments();
             if (readChar(']')) {
@@ -343,9 +343,9 @@ public class DefaultJsonElementFormat implements NutsElementStreamFormat {
             return array.build();
         }
 
-        private NutsElement readJsonObject() {
-            NutsSession session = context.getSession();
-            NutsObjectElementBuilder object = builder().ofObject();
+        private NElement readJsonObject() {
+            NSession session = context.getSession();
+            NObjectElementBuilder object = builder().ofObject();
             readNext();
             skipWhiteSpaceAndComments();
             if (readChar('}')) {
@@ -357,7 +357,7 @@ public class DefaultJsonElementFormat implements NutsElementStreamFormat {
                 if (current == '}') {
                     break;
                 }
-                NutsElement k = readValue();
+                NElement k = readValue();
                 String name;
                 switch (k.type()) {
                     case ARRAY:
@@ -377,7 +377,7 @@ public class DefaultJsonElementFormat implements NutsElementStreamFormat {
                     throw expected("':'");
                 }
                 skipWhiteSpaceAndComments();
-                NutsElement v = readValue();
+                NElement v = readValue();
                 object.set(name, v);
                 skipWhiteSpaceAndComments();
             } while (readChar(','));
@@ -397,7 +397,7 @@ public class DefaultJsonElementFormat implements NutsElementStreamFormat {
             }
         }
 
-        private NutsElement readJsonString() {
+        private NElement readJsonString() {
             return builder().ofString(readStringLiteral());
         }
 
@@ -652,7 +652,7 @@ public class DefaultJsonElementFormat implements NutsElementStreamFormat {
             return sb.toString();
         }
 
-        private NutsElement readNumber() {
+        private NElement readNumber() {
             StringBuilder sb = new StringBuilder();
             boolean inWhile = true;
             while (inWhile) {
@@ -759,7 +759,7 @@ public class DefaultJsonElementFormat implements NutsElementStreamFormat {
                         reader.reset();
                     }
                 } catch (IOException ex) {
-                    throw new NutsIOException(context.getSession(), ex);
+                    throw new NIOException(context.getSession(), ex);
                 }
             }
             return sb.toString();
@@ -790,7 +790,7 @@ public class DefaultJsonElementFormat implements NutsElementStreamFormat {
                     }
                 }
             } catch (IOException ex) {
-                throw new NutsIOException(context.getSession(), ex);
+                throw new NIOException(context.getSession(), ex);
             }
         }
 
@@ -806,7 +806,7 @@ public class DefaultJsonElementFormat implements NutsElementStreamFormat {
         }
 
         private RuntimeException error(String message) {
-            return new NutsParseException(context.getSession(), NutsMessage.ofCstyle("%s : %s", message, getLocation().toString()));
+            return new NParseException(context.getSession(), NMsg.ofCstyle("%s : %s", message, getLocation().toString()));
         }
 
         private boolean isHexDigit() {
@@ -815,9 +815,9 @@ public class DefaultJsonElementFormat implements NutsElementStreamFormat {
                     || current >= 'A' && current <= 'F';
         }
 
-        public NutsElements builder() {
+        public NElements builder() {
             if (ebuilder == null) {
-                ebuilder = NutsElements.of(context.getSession());
+                ebuilder = NElements.of(context.getSession());
             }
             return ebuilder;
         }

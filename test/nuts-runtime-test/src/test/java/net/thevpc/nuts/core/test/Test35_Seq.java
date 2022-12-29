@@ -5,8 +5,8 @@
  */
 package net.thevpc.nuts.core.test;
 
-import net.thevpc.nuts.runtime.standalone.text.DefaultNutsTitleSequence;
-import net.thevpc.nuts.text.NutsTitleSequence;
+import net.thevpc.nuts.runtime.standalone.text.DefaultNTitleSequence;
+import net.thevpc.nuts.text.NTitleSequence;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -17,7 +17,7 @@ public class Test35_Seq {
 
     @Test
     public void test01() {
-        NutsTitleSequence s=new DefaultNutsTitleSequence();
+        NTitleSequence s=new DefaultNTitleSequence();
         System.out.println(s);
         s=s.next(5);
         Assertions.assertEquals("1.1.1.1.1.",s.toString());
@@ -27,7 +27,7 @@ public class Test35_Seq {
 
     @Test
     public void test02() {
-        NutsTitleSequence s = new DefaultNutsTitleSequence("1-A-a-*.");
+        NTitleSequence s = new DefaultNTitleSequence("1-A-a-*.");
         System.out.println(s);
         Assertions.assertEquals("",s.toString());
         s=s.next(5);
@@ -40,7 +40,7 @@ public class Test35_Seq {
 
     @Test
     public void test03() {
-        NutsTitleSequence s=new DefaultNutsTitleSequence("1-1)");
+        NTitleSequence s=new DefaultNTitleSequence("1-1)");
         System.out.println(s);
         s=s.next(5);
         Assertions.assertEquals("1-1-1-1-1)",s.toString());

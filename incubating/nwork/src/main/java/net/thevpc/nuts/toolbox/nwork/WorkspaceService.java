@@ -1,16 +1,16 @@
 package net.thevpc.nuts.toolbox.nwork;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.cmdline.NutsArgument;
-import net.thevpc.nuts.cmdline.NutsArgumentName;
-import net.thevpc.nuts.cmdline.NutsCommandLine;
-import net.thevpc.nuts.elem.NutsElements;
-import net.thevpc.nuts.format.NutsObjectFormat;
-import net.thevpc.nuts.io.NutsPath;
-import net.thevpc.nuts.io.NutsPrintStream;
-import net.thevpc.nuts.text.NutsTextBuilder;
-import net.thevpc.nuts.text.NutsTextStyle;
-import net.thevpc.nuts.text.NutsTexts;
+import net.thevpc.nuts.cmdline.NArgument;
+import net.thevpc.nuts.cmdline.NArgumentName;
+import net.thevpc.nuts.cmdline.NCommandLine;
+import net.thevpc.nuts.elem.NElements;
+import net.thevpc.nuts.format.NObjectFormat;
+import net.thevpc.nuts.io.NPath;
+import net.thevpc.nuts.io.NStream;
+import net.thevpc.nuts.text.NTextBuilder;
+import net.thevpc.nuts.text.NTextStyle;
+import net.thevpc.nuts.text.NTexts;
 import net.thevpc.nuts.toolbox.ndiff.jar.Diff;
 import net.thevpc.nuts.toolbox.ndiff.jar.DiffItem;
 import net.thevpc.nuts.toolbox.ndiff.jar.DiffResult;
@@ -18,6 +18,7 @@ import net.thevpc.nuts.toolbox.nwork.config.ProjectConfig;
 import net.thevpc.nuts.toolbox.nwork.config.RepositoryAddress;
 import net.thevpc.nuts.toolbox.nwork.config.WorkspaceConfig;
 import net.thevpc.nuts.toolbox.nwork.filescanner.FileScanner;
+import net.thevpc.nuts.util.NRef;
 
 import java.io.File;
 import java.io.IOException;
@@ -31,17 +32,17 @@ public class WorkspaceService {
 
     public static final String SCAN = "net.thevpc.nuts.toolbox.nwork.scan";
     private WorkspaceConfig config;
-    private final NutsApplicationContext appContext;
-    private final NutsPath sharedConfigFolder;
+    private final NApplicationContext appContext;
+    private final NPath sharedConfigFolder;
 
-    public WorkspaceService(NutsApplicationContext appContext) {
+    public WorkspaceService(NApplicationContext appContext) {
         this.appContext = appContext;
-        sharedConfigFolder = appContext.getVersionFolder(NutsStoreLocation.CONFIG, NWorkConfigVersions.CURRENT);
-        NutsPath c = getConfigFile();
+        sharedConfigFolder = appContext.getVersionFolder(NStoreLocation.CONFIG, NWorkConfigVersions.CURRENT);
+        NPath c = getConfigFile();
         if (c.isRegularFile()) {
             try {
-                NutsSession session = appContext.getSession();
-                config = NutsElements.of(session).json().parse(c, WorkspaceConfig.class);
+                NSession session = appContext.getSession();
+                config = NElements.of(session).json().parse(c, WorkspaceConfig.class);
             } catch (Exception ex) {
                 //
             }
@@ -103,10 +104,10 @@ public class WorkspaceService {
             c = new WorkspaceConfig();
         }
         config = c;
-        NutsPath configFile = getConfigFile();
+        NPath configFile = getConfigFile();
         configFile.mkParentDirs();
-        NutsSession session = appContext.getSession();
-        NutsElements.of(session).json().setValue(c).print(configFile);
+        NSession session = appContext.getSession();
+        NElements.of(session).json().setValue(c).print(configFile);
     }
 
     private void updateBools(Boolean[] all, boolean ok) {
@@ -136,12 +137,12 @@ public class WorkspaceService {
         }
     }
 
-    public void enableScan(NutsCommandLine commandLine, NutsApplicationContext context, boolean enable) {
-        NutsSession session = context.getSession();
+    public void enableScan(NCommandLine commandLine, NApplicationContext context, boolean enable) {
+        NSession session = context.getSession();
         int count = 0;
         while (commandLine.hasNext()) {
             if (commandLine.peek().get(session).isNonOption()) {
-                String expression = commandLine.next().flatMap(NutsValue::asString).get(session);
+                String expression = commandLine.next().flatMap(NValue::asString).get(session);
                 if (commandLine.isExecMode()) {
                     setScanEnabled(Paths.get(expression), enable);
                     count++;
@@ -152,13 +153,13 @@ public class WorkspaceService {
         }
 
         if (count == 0) {
-            throw new NutsExecutionException(session, NutsMessage.ofPlain("missing projects"), 1);
+            throw new NExecutionException(session, NMsg.ofPlain("missing projects"), 1);
         }
     }
 
-    public void list(NutsCommandLine cmd, NutsApplicationContext appContext) {
-        NutsSession session = appContext.getSession();
-        NutsArgument a;
+    public void list(NCommandLine cmd, NApplicationContext appContext) {
+        NSession session = appContext.getSession();
+        NArgument a;
         List<String> filters = new ArrayList<>();
         cmd.setCommandName("nwork list");
         while (cmd.hasNext()) {
@@ -185,42 +186,42 @@ public class WorkspaceService {
                     );
                 }
             } else {
-                NutsObjectFormat.of(session)
+                NObjectFormat.of(session)
                         .setValue(result).println();
             }
         }
     }
 
-    private NutsTextBuilder formatProjectConfig(NutsApplicationContext appContext, ProjectConfig p2) {
-        NutsTexts text = NutsTexts.of(appContext.getSession());
+    private NTextBuilder formatProjectConfig(NApplicationContext appContext, ProjectConfig p2) {
+        NTexts text = NTexts.of(appContext.getSession());
         return text.ofBuilder()
-                .append(p2.getId(), NutsTextStyle.primary4())
+                .append(p2.getId(), NTextStyle.primary4())
                 .append(" ")
                 .appendJoined(
                         text.ofPlain(", "),
                         p2.getTechnologies().stream().map(
-                                x -> text.ofStyled(x, NutsTextStyle.primary5())
+                                x -> text.ofStyled(x, NTextStyle.primary5())
                         ).collect(Collectors.toList())
                 )
                 .append(" : ")
-                .append(p2.getPath(), NutsTextStyle.path());
+                .append(p2.getPath(), NTextStyle.path());
     }
 
-    public void scan(NutsCommandLine cmdLine, NutsApplicationContext context) {
-        NutsSession session = context.getSession();
+    public void scan(NCommandLine cmdLine, NApplicationContext context) {
+        NSession session = context.getSession();
         boolean interactive = false;
-        NutsArgument a;
+        NArgument a;
         boolean run = false;
         boolean reset = false;
         List<File> toScan = new ArrayList<>();
         while (cmdLine.hasNext()) {
-            if ((a = cmdLine.nextBoolean("-i", "--interactive").orNull())!=null) {
+            if ((a = cmdLine.nextBoolean("-i", "--interactive").orNull()) != null) {
                 interactive = a.getBooleanValue().get(session);
-            } else if ((a = cmdLine.nextBoolean("-r", "--reset").orNull())!=null) {
+            } else if ((a = cmdLine.nextBoolean("-r", "--reset").orNull()) != null) {
                 reset = a.getBooleanValue().get(session);
             } else if (cmdLine.peek().get(session).isNonOption()) {
-                String folder = cmdLine.nextNonOption(NutsArgumentName.of("Folder", session))
-                        .flatMap(NutsValue::asString).get(session);
+                String folder = cmdLine.nextNonOption(NArgumentName.of("Folder", session))
+                        .flatMap(NValue::asString).get(session);
                 run = true;
                 toScan.add(new File(folder));
             } else {
@@ -242,17 +243,17 @@ public class WorkspaceService {
         }
     }
 
-    public void find(NutsCommandLine cmdLine, NutsApplicationContext context) {
-        NutsArgument a;
-        NutsSession session = context.getSession();
+    public void find(NCommandLine cmdLine, NApplicationContext context) {
+        NArgument a;
+        NSession session = context.getSession();
         List<File> toScan = new ArrayList<>();
         String where = null;
         while (cmdLine.hasNext()) {
-            if ((a = cmdLine.nextString("-w", "--where").orNull())!=null) {
+            if ((a = cmdLine.nextString("-w", "--where").orNull()) != null) {
                 where = a.getStringValue().get(session);
             } else if (cmdLine.peek().get(session).isNonOption()) {
-                String folder = cmdLine.nextNonOption(NutsArgumentName.of("Folder", session))
-                        .flatMap(NutsValue::asString).get(session);
+                String folder = cmdLine.nextNonOption(NArgumentName.of("Folder", session))
+                        .flatMap(NValue::asString).get(session);
                 toScan.add(new File(folder));
             } else {
                 context.configureLast(cmdLine);
@@ -266,8 +267,51 @@ public class WorkspaceService {
         }
     }
 
-    public void status(NutsCommandLine cmd, NutsApplicationContext appContext) {
-        NutsSession session = appContext.getSession();
+    public void push(NCommandLine commandLine, NApplicationContext appContext) {
+        commandLine.setCommandName("nwork push");
+        //rsync /home/vpc/.m2/repository/net/thevpc/nuts/nuts/0.8.4/*  vpc@thevpc.net:/home/vpc/.m2/repository/net/thevpc/nuts/nuts/0.8.4/
+        List<NId> idsToPush = new ArrayList<>();
+        NRef<String> remoteServer = NRef.ofNull(String.class);
+        NRef<String> remoteUser = NRef.ofNull(String.class);
+        while (commandLine.hasNext()) {
+            if (appContext.configureFirst(commandLine)) {
+
+            } else if (commandLine.withNextString((v, a, s) -> remoteServer.set(v), "--remote-server", "--to-server", "--to", "-t")) {
+            } else if (commandLine.withNextString((v, a, s) -> remoteUser.set(v), "--remote-user")) {
+            } else if (commandLine.isNextNonOption()) {
+                NArgument a = commandLine.next().get();
+                idsToPush.add(NId.of(a.toString()).get());
+            } else {
+                appContext.configureLast(commandLine);
+            }
+        }
+        if (idsToPush.isEmpty()) {
+            commandLine.throwMissingArgument();
+        }
+        NSession session = appContext.getSession();
+        if (remoteUser.isBlank()) {
+            remoteUser.set(System.getProperty("user.name"));
+        }
+        if (remoteServer.isBlank()) {
+            commandLine.throwMissingArgumentByName("--remote-server");
+        }
+        for (NId id : idsToPush) {
+            String groupIdPath = String.join("/", id.getGroupId().split("[.]"));
+            String p = groupIdPath + "/" + id.getArtifactId();
+            if (id.getVersion() != null) {
+                p += "/" + id.getVersion();
+            }
+            NExecCommand.of(session).addCommand(
+                            "rsync")
+                    .addCommand(NPath.ofUserHome(session).resolve(".m2/repository")
+                            .resolve(p).stream().map(NPath::toString).toList())
+                    .addCommand(remoteUser + "@" + remoteServer + ":/home/" + remoteUser + "/.m2/repository/" + p
+                    ).setFailFast(true).run();
+        }
+    }
+
+    public void status(NCommandLine cmd, NApplicationContext appContext) {
+        NSession session = appContext.getSession();
         boolean progress = true;
         boolean verbose = false;
         Boolean commitable = null;
@@ -279,32 +323,32 @@ public class WorkspaceService {
 //        NutsTableFormat tf = appContext.getWorkspace().format().table()
 //                .addHeaderCells("Id", "Local", "Remote", "Status");
         List<String> filters = new ArrayList<>();
-        NutsArgument a;
+        NArgument a;
         while (cmd.hasNext()) {
             if (appContext.configureFirst(cmd)) {
                 //consumed
 //            } else if (tf.configureFirst(cmd)) {
                 //consumed
-            } else if ((a = cmd.nextBoolean("-c", "--commitable", "--changed").orNull())!=null) {
+            } else if ((a = cmd.nextBoolean("-c", "--commitable", "--changed").orNull()) != null) {
                 commitable = a.getBooleanValue().get(session);
-            } else if ((a = cmd.nextBoolean("-d", "--dirty").orNull())!=null) {
+            } else if ((a = cmd.nextBoolean("-d", "--dirty").orNull()) != null) {
                 dirty = a.getBooleanValue().get(session);
-            } else if ((a = cmd.nextBoolean("-w", "--new").orNull())!=null) {
+            } else if ((a = cmd.nextBoolean("-w", "--new").orNull()) != null) {
                 newP = a.getBooleanValue().get(session);
-            } else if ((a = cmd.nextBoolean("-o", "--old").orNull())!=null) {
+            } else if ((a = cmd.nextBoolean("-o", "--old").orNull()) != null) {
                 old = a.getBooleanValue().get(session);
-            } else if ((a = cmd.nextBoolean("-0", "--ok", "--uptodate").orNull())!=null) {
+            } else if ((a = cmd.nextBoolean("-0", "--ok", "--uptodate").orNull()) != null) {
                 uptodate = a.getBooleanValue().get(session);
-            } else if ((a = cmd.nextBoolean("-e", "--invalid", "--error").orNull())!=null) {
+            } else if ((a = cmd.nextBoolean("-e", "--invalid", "--error").orNull()) != null) {
                 invalid = a.getBooleanValue().get(session);
-            } else if ((a = cmd.nextBoolean("-p", "--progress").orNull())!=null) {
+            } else if ((a = cmd.nextBoolean("-p", "--progress").orNull()) != null) {
                 progress = a.getBooleanValue().get(session);
-            } else if ((a = cmd.nextBoolean("-v", "--verbose").orNull())!=null) {
+            } else if ((a = cmd.nextBoolean("-v", "--verbose").orNull()) != null) {
                 verbose = a.getBooleanValue().get(session);
             } else if (cmd.isNextOption()) {
                 cmd.setCommandName("nwork check").throwUnexpectedArgument();
             } else {
-                filters.add(cmd.next().flatMap(NutsValue::asString).get(session));
+                filters.add(cmd.next().flatMap(NValue::asString).get(session));
             }
         }
 
@@ -317,7 +361,7 @@ public class WorkspaceService {
         invalid = b[4];
         dirty = b[5];
 
-        Map<String, NutsDescriptor> dependencies = new HashMap<>();
+        Map<String, NDescriptor> dependencies = new HashMap<>();
 
         List<DataRow> ddd = new ArrayList<>();
 
@@ -327,9 +371,9 @@ public class WorkspaceService {
         for (Iterator<ProjectService> iterator = all.iterator(); iterator.hasNext(); ) {
             ProjectService projectService = iterator.next();
             String id = projectService.getConfig().getId();
-            NutsDescriptor pom = projectService.getPom();
+            NDescriptor pom = projectService.getPom();
             if (pom != null) {
-                dependencies.put(NutsId.of(id).get( session).getShortName(), pom);
+                dependencies.put(NId.of(id).get(session).getShortName(), pom);
             }
         }
 
@@ -345,17 +389,17 @@ public class WorkspaceService {
             ProjectService projectService = all.get(i);
             DataRow d = new DataRow();
             d.id = projectService.getConfig().getId();
-            NutsDescriptor pom = dependencies.get(NutsId.of(d.id).get( session).getShortName());
+            NDescriptor pom = dependencies.get(NId.of(d.id).get(session).getShortName());
             if (pom != null) {
-                for (NutsDependency dependency : pom.getDependencies()) {
+                for (NDependency dependency : pom.getDependencies()) {
                     String did = dependency.getGroupId() + ":" + dependency.getArtifactId();
-                    NutsDescriptor expectedPom = dependencies.get(NutsId.of(did).get( session).getShortName());
+                    NDescriptor expectedPom = dependencies.get(NId.of(did).get(session).getShortName());
                     if (expectedPom != null) {
                         String expectedVersion = expectedPom.getId().getVersion().toString();
                         String currentVersion = dependency.getVersion().toString();
                         currentVersion = currentVersion.trim();
                         if (currentVersion.contains("$")) {
-                            for (NutsDescriptorProperty entry : pom.getProperties()) {
+                            for (NDescriptorProperty entry : pom.getProperties()) {
                                 String k = "${" + entry.getName() + "}";
                                 if (currentVersion.equals(k)) {
                                     currentVersion = entry.getValue().asString().get(session);
@@ -383,7 +427,7 @@ public class WorkspaceService {
                 d.remote = "";
                 d.status = "new";
             } else {
-                int t = NutsVersion.of(d.local).get(session).compareTo(d.remote);
+                int t = NVersion.of(d.local).get(session).compareTo(d.remote);
                 if (t > 0) {
                     d.status = "commitable";
                 } else if (t < 0) {
@@ -458,11 +502,11 @@ public class WorkspaceService {
 //            tf.addRow(d.id, d.local, d.remote, d.status);
         }
         if (!ddd.isEmpty() || !session.isPlainOut()) {
-            NutsTexts tfactory = NutsTexts.of(session);
+            NTexts tfactory = NTexts.of(session);
             if (session.isPlainOut()) {
                 for (DataRow p2 : ddd) {
                     String status = p2.status;
-                    NutsTexts tf = NutsTexts.of(session);
+                    NTexts tf = NTexts.of(session);
                     int len = tf.parse(status).textLength();
                     while (len < 10) {
                         status += " ";
@@ -471,17 +515,17 @@ public class WorkspaceService {
                     switch (tf.ofPlain(p2.status).filteredText()) {
                         case "new": {
                             session.out().printf("[%s] %s : %s",
-                                    tfactory.ofStyled("new", NutsTextStyle.primary3()),
+                                    tfactory.ofStyled("new", NTextStyle.primary3()),
                                     p2.id,
-                                    tfactory.ofStyled(p2.local, NutsTextStyle.primary2())
+                                    tfactory.ofStyled(p2.local, NTextStyle.primary2())
                             );
                             break;
                         }
                         case "commitable": {
                             session.out().printf("[%s] %s : %s - %s",
-                                    tfactory.ofStyled("commitable", NutsTextStyle.primary4()),
+                                    tfactory.ofStyled("commitable", NTextStyle.primary4()),
                                     p2.id,
-                                    tfactory.ofStyled(p2.local, NutsTextStyle.primary2()),
+                                    tfactory.ofStyled(p2.local, NTextStyle.primary2()),
                                     p2.remote
                             );
                             break;
@@ -493,7 +537,7 @@ public class WorkspaceService {
                         }
                         case "old": {
                             session.out().printf("[%s] %s : ```error %s``` - %s",
-                                    tfactory.ofStyled("old", NutsTextStyle.primary2()),
+                                    tfactory.ofStyled("old", NTextStyle.primary2()),
                                     p2.id, p2.local, p2.remote);
                             break;
                         }
@@ -514,21 +558,21 @@ public class WorkspaceService {
                         session.out().printf(" ; bad-deps:");
                         for (DiffVersion dependency : p2.dependencies) {
                             session.out().printf(" %s : %s <> expected %s", dependency.id,
-                                    NutsVersion.of(dependency.current).get(session),
-                                    NutsVersion.of(dependency.expected).get(session)
+                                    NVersion.of(dependency.current).get(session),
+                                    NVersion.of(dependency.expected).get(session)
                             );
                         }
                     }
                     session.out().println();
                 }
             } else {
-                NutsObjectFormat.of(session)
+                NObjectFormat.of(session)
                         .setValue(ddd).println();
             }
         }
     }
 
-    private void printDiffResults(String prefix, NutsPrintStream out, List<DiffItem> result) {
+    private void printDiffResults(String prefix, NStream out, List<DiffItem> result) {
         if (result != null) {
             for (DiffItem diffItem : result) {
                 out.printf("%s%s%n", prefix, diffItem);
@@ -540,8 +584,8 @@ public class WorkspaceService {
     private boolean matches(String id, List<String> filters) {
         boolean accept = filters.isEmpty();
         if (!accept) {
-            NutsSession session = appContext.getSession();
-            NutsId nid = NutsId.of(id).get( session);
+            NSession session = appContext.getSession();
+            NId nid = NId.of(id).get(session);
             for (String filter : filters) {
                 if (id.equals(filter)
                         || id.matches(wildcardToRegex(filter))
@@ -554,14 +598,14 @@ public class WorkspaceService {
         return accept;
     }
 
-    public NutsPath getConfigFile() {
+    public NPath getConfigFile() {
         return sharedConfigFolder.resolve("workspace.projects");
     }
 
     public void resetAllProjectServices() {
-        NutsPath storeLocation = sharedConfigFolder.resolve("projects");
+        NPath storeLocation = sharedConfigFolder.resolve("projects");
         if (storeLocation.isDirectory()) {
-            for (NutsPath file : storeLocation.list().toList()) {
+            for (NPath file : storeLocation.list()) {
                 if (file.isRegularFile() && file.getName().endsWith(".config")) {
                     file.delete();
                 }
@@ -571,10 +615,10 @@ public class WorkspaceService {
 
     public List<ProjectService> findProjectServices() {
         List<ProjectService> all = new ArrayList<>();
-        NutsPath storeLocation = sharedConfigFolder.resolve("projects");
+        NPath storeLocation = sharedConfigFolder.resolve("projects");
 
         if (storeLocation.isDirectory()) {
-            for (NutsPath file : storeLocation.list().toList()) {
+            for (NPath file : storeLocation.list()) {
                 if (file.isRegularFile() && file.getName().endsWith(".config")) {
                     try {
                         all.add(new ProjectService(appContext, config.getDefaultRepositoryAddress(), file));
@@ -606,13 +650,13 @@ public class WorkspaceService {
             stack.push(folder);
         }
         int scanned = 0;
-        NutsSession session = appContext.getSession();
-        boolean structuredOutContentType = session.isTrace() && session.getOutputFormat() != NutsContentType.PLAIN;
+        NSession session = appContext.getSession();
+        boolean structuredOutContentType = session.isTrace() && session.getOutputFormat() != NContentType.PLAIN;
         while (!stack.isEmpty()) {
             File folder = stack.pop();
             if (folder.isDirectory()) {
                 if (isScanEnabled(folder)) {
-                    NutsTexts text = NutsTexts.of(session);
+                    NTexts text = NTexts.of(session);
                     ProjectConfig p2 = new ProjectService(appContext, config.getDefaultRepositoryAddress(), new ProjectConfig().setPath(folder.getPath())
                     ).rebuildProjectMetadata();
                     if (p2.getTechnologies().size() > 0) {
@@ -631,20 +675,20 @@ public class WorkspaceService {
                                     session.out().printf("already registered project folder %s%n", formatProjectConfig(appContext, p2));
                                 }
                                 if (structuredOutContentType) {
-                                    result.add(new ScanResult(folder.getPath(), "already-registered", NutsMessage.ofCstyle("already registered project folder %s", formatProjectConfig(appContext, p2)).toString()));
+                                    result.add(new ScanResult(folder.getPath(), "already-registered", NMsg.ofCstyle("already registered project folder %s", formatProjectConfig(appContext, p2)).toString()));
                                 }
                             } else if (!p2.getPath().equals(p3.getPath())) {
                                 if (session.isPlainOut()) {
                                     session.out().printf("```error [CONFLICT]``` multiple paths for the same id %s. "
                                                     + "please consider adding .nuts-info file with " + SCAN + "=false  :  %s -- %s%n",
-                                            text.ofStyled(p2.getId(), NutsTextStyle.primary2()),
-                                            text.ofStyled(p2.getPath(), NutsTextStyle.path()),
-                                            text.ofStyled(p3.getPath(), NutsTextStyle.path())
+                                            text.ofStyled(p2.getId(), NTextStyle.primary2()),
+                                            text.ofStyled(p2.getPath(), NTextStyle.path()),
+                                            text.ofStyled(p3.getPath(), NTextStyle.path())
                                     );
                                 }
                                 if (structuredOutContentType) {
                                     result.add(new ScanResult(folder.getPath(), "conflict",
-                                            NutsMessage.ofCstyle(
+                                            NMsg.ofCstyle(
                                                     "[CONFLICT] multiple paths for the same id %s. "
                                                             + "please consider adding .nuts-info file with " + SCAN + "=false  :  %s -- %s",
                                                     p2.getId(),
@@ -659,7 +703,7 @@ public class WorkspaceService {
                                 }
                                 if (structuredOutContentType) {
                                     result.add(new ScanResult(folder.getPath(), "reloaded",
-                                            NutsMessage.ofCstyle(
+                                            NMsg.ofCstyle(
                                                     "reloaded project folder %s", formatProjectConfig(appContext, p2).toString()
                                             ).toString()
                                     ));
@@ -684,13 +728,13 @@ public class WorkspaceService {
                             if (interactive) {
                                 String id = session.getTerminal().readLine("enter Id %s: ",
                                         (p2.getId() == null ? "" : ("(" + text.ofPlain(p2.getId()) + ")")));
-                                if (!NutsBlankable.isBlank(id)) {
+                                if (!NBlankable.isBlank(id)) {
                                     p2.setId(id);
                                 }
                             }
                             if (structuredOutContentType) {
                                 result.add(new ScanResult(folder.getPath(), "detected",
-                                        NutsMessage.ofPlain("detected Project Folder").toString()
+                                        NMsg.ofPlain("detected Project Folder").toString()
                                 ));
                             }
 //                String repo = term.readLine("Enter Repository ####%s####: ", ((p2.getAddress() == null || p2.getAddress().getNutsRepository() == null )? "" : ("(" + p2.getAddress().getNutsRepository() + ")")));
@@ -725,10 +769,10 @@ public class WorkspaceService {
         Path ni = folder.resolve(".nuts-info");
         Map p = null;
         boolean scan = true;
-        NutsSession session = appContext.getSession();
+        NSession session = appContext.getSession();
         if (Files.isRegularFile(ni)) {
             try {
-                p = NutsElements.of(session).json().parse(ni, Map.class);
+                p = NElements.of(session).json().parse(ni, Map.class);
                 String v = p.get(SCAN) == null ? null : String.valueOf(p.get(SCAN));
                 if (v == null || "false".equals(v.trim())) {
                     scan = false;
@@ -743,7 +787,7 @@ public class WorkspaceService {
                 p = new Properties();
             }
             p.put(SCAN, enable);
-            NutsElements.of(session).json().setValue(p).print(ni);
+            NElements.of(session).json().setValue(p).print(ni);
         }
     }
 
@@ -753,8 +797,8 @@ public class WorkspaceService {
         Map p = null;
         if (ni.isFile()) {
             try {
-                NutsSession session = appContext.getSession();
-                p = NutsElements.of(session).json().parse(ni, Map.class);
+                NSession session = appContext.getSession();
+                p = NElements.of(session).json().parse(ni, Map.class);
                 String v = p.get(SCAN) == null ? null : String.valueOf(p.get(SCAN));
                 if (v == null || "false".equals(v.trim())) {
                     scan = false;
@@ -767,15 +811,15 @@ public class WorkspaceService {
         return scan;
     }
 
-    public int setWorkspaceConfigParam(NutsCommandLine cmd, NutsApplicationContext appContext) {
-        NutsSession session = appContext.getSession();
-        NutsArgument a;
+    public int setWorkspaceConfigParam(NCommandLine cmd, NApplicationContext appContext) {
+        NSession session = appContext.getSession();
+        NArgument a;
         while (cmd.hasNext()) {
-            if ((a = cmd.nextString("-r", "--repo").orNull())!=null) {
+            if ((a = cmd.nextString("-r", "--repo").orNull()) != null) {
                 WorkspaceConfig conf = getWorkspaceConfig();
                 conf.getDefaultRepositoryAddress().setNutsRepository(a.getStringValue().get(session));
                 setWorkspaceConfig(conf);
-            } else if ((a = cmd.nextString("-w", "--workspace").orNull())!=null) {
+            } else if ((a = cmd.nextString("-w", "--workspace").orNull()) != null) {
                 WorkspaceConfig conf = getWorkspaceConfig();
                 conf.getDefaultRepositoryAddress().setNutsWorkspace(a.getStringValue().get(session));
                 setWorkspaceConfig(conf);

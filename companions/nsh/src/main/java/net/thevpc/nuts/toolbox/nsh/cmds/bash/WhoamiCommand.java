@@ -26,12 +26,12 @@
 package net.thevpc.nuts.toolbox.nsh.cmds.bash;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.cmdline.NutsCommandLine;
-import net.thevpc.nuts.io.NutsPrintStream;
-import net.thevpc.nuts.spi.NutsComponentScope;
-import net.thevpc.nuts.spi.NutsComponentScopeType;
-import net.thevpc.nuts.text.NutsTextStyle;
-import net.thevpc.nuts.text.NutsTexts;
+import net.thevpc.nuts.cmdline.NCommandLine;
+import net.thevpc.nuts.io.NStream;
+import net.thevpc.nuts.spi.NComponentScope;
+import net.thevpc.nuts.spi.NComponentScopeType;
+import net.thevpc.nuts.text.NTextStyle;
+import net.thevpc.nuts.text.NTexts;
 import net.thevpc.nuts.toolbox.nsh.SimpleJShellBuiltin;
 import net.thevpc.nuts.toolbox.nsh.jshell.JShellExecutionContext;
 
@@ -40,7 +40,7 @@ import java.util.*;
 /**
  * Created by vpc on 1/7/17.
  */
-@NutsComponentScope(NutsComponentScopeType.WORKSPACE)
+@NComponentScope(NComponentScopeType.WORKSPACE)
 public class WhoamiCommand extends SimpleJShellBuiltin {
 
     public WhoamiCommand() {
@@ -48,9 +48,9 @@ public class WhoamiCommand extends SimpleJShellBuiltin {
     }
 
     @Override
-    protected boolean configureFirst(NutsCommandLine commandLine, JShellExecutionContext context) {
+    protected boolean configureFirst(NCommandLine commandLine, JShellExecutionContext context) {
         Options config = context.getOptions();
-        NutsSession session = context.getSession();
+        NSession session = context.getSession();
         switch (commandLine.peek().get(session).key()) {
             case "--all":
             case "-a": {
@@ -70,17 +70,17 @@ public class WhoamiCommand extends SimpleJShellBuiltin {
     }
 
     @Override
-    protected void execBuiltin(NutsCommandLine commandLine, JShellExecutionContext context) {
+    protected void execBuiltin(NCommandLine commandLine, JShellExecutionContext context) {
         Result result = new Result();
         Options options = context.getOptions();
         if (!options.nutsUser) {
             result.login = System.getProperty("user.name");
         } else {
-            NutsSession session = context.getSession();
+            NSession session = context.getSession();
             String login = session.security().getCurrentUsername();
             result.login = login;
             if (options.argAll) {
-                NutsUser user = session.security().findUser(login);
+                NUser user = session.security().findUser(login);
                 Set<String> groups = new TreeSet<>((user.getGroups()));
                 Set<String> rights = new TreeSet<>((user.getPermissions()));
                 Set<String> inherited = new TreeSet<>((user.getInheritedPermissions()));
@@ -92,7 +92,7 @@ public class WhoamiCommand extends SimpleJShellBuiltin {
                 if (result.groups.length == 0) {
                     result.groups = null;
                 }
-                if (!NutsConstants.Users.ADMIN.equals(login)) {
+                if (!NConstants.Users.ADMIN.equals(login)) {
                     if (!rights.isEmpty()) {
                         result.rights = rights.toArray(new String[0]);
                         if (result.rights.length == 0) {
@@ -110,11 +110,11 @@ public class WhoamiCommand extends SimpleJShellBuiltin {
                     result.remoteId = user.getRemoteIdentity();
                 }
                 List<RepoResult> rr = new ArrayList<>();
-                for (NutsRepository repository : context.getSession().repos().getRepositories()) {
-                    NutsUser ruser = repository.security().getEffectiveUser(login);
+                for (NRepository repository : context.getSession().repos().getRepositories()) {
+                    NUser ruser = repository.security().getEffectiveUser(login);
                     if (ruser != null && (ruser.getGroups().size() > 0
                             || ruser.getPermissions().size() > 0
-                            || !NutsBlankable.isBlank(ruser.getRemoteIdentity()))) {
+                            || !NBlankable.isBlank(ruser.getRemoteIdentity()))) {
                         RepoResult rt = new RepoResult();
                         rr.add(rt);
                         rt.name = repository.getName();
@@ -124,7 +124,7 @@ public class WhoamiCommand extends SimpleJShellBuiltin {
                         if (!rgroups.isEmpty()) {
                             rt.identities = rgroups.toArray(new String[0]);
                         }
-                        if (!NutsConstants.Users.ADMIN.equals(login)) {
+                        if (!NConstants.Users.ADMIN.equals(login)) {
                             if (!rrights.isEmpty()) {
                                 rt.rights = rrights.toArray(new String[0]);
                             }
@@ -144,69 +144,69 @@ public class WhoamiCommand extends SimpleJShellBuiltin {
         }
         switch (context.getSession().getOutputFormat()) {
             case PLAIN: {
-                NutsPrintStream out = context.getSession().out();
+                NStream out = context.getSession().out();
                 out.printf("%s\n", result.login);
                 if (options.nutsUser) {
-                    NutsTexts factory = NutsTexts.of(context.getSession());
+                    NTexts factory = NTexts.of(context.getSession());
                     if (result.loginStack != null) {
                         out.printf("%s      :",
-                                factory.ofStyled("stack", NutsTextStyle.primary5())
+                                factory.ofStyled("stack", NTextStyle.primary5())
                         );
                         for (String log : result.loginStack) {
                             out.printf(" %s",
-                                    factory.ofStyled(log, NutsTextStyle.primary3())
+                                    factory.ofStyled(log, NTextStyle.primary3())
                             );
                         }
                         out.println();
                     }
                     if (result.groups != null && result.groups.length > 0) {
                         out.printf("%s : %s\n",
-                                factory.ofStyled("identities", NutsTextStyle.primary5()),
+                                factory.ofStyled("identities", NTextStyle.primary5()),
                                 Arrays.toString(result.groups));
                     }
                     if (result.rights != null && result.rights.length > 0) {
                         out.printf("%s     : %s\n",
-                                factory.ofStyled("rights", NutsTextStyle.primary5()),
+                                factory.ofStyled("rights", NTextStyle.primary5()),
                                 Arrays.toString(result.rights));
                     }
                     if (result.inherited != null && result.inherited.length > 0) {
                         out.printf("%s  : %s\n",
-                                factory.ofStyled("inherited", NutsTextStyle.primary5()),
+                                factory.ofStyled("inherited", NTextStyle.primary5()),
                                 Arrays.toString(result.inherited));
                     } else {
                         out.printf("%s  : %s\n",
-                                factory.ofStyled("inherited", NutsTextStyle.primary5()),
+                                factory.ofStyled("inherited", NTextStyle.primary5()),
                                 "NONE");
                     }
                     if (result.remoteId != null) {
                         out.printf("%s  : %s\n",
-                                factory.ofStyled("remote-id", NutsTextStyle.primary5()),
+                                factory.ofStyled("remote-id", NTextStyle.primary5()),
                                 result.remoteId);
                     }
                     if (result.repos != null) {
                         for (RepoResult repo : result.repos) {
                             out.printf(
                                     "[ %s ]: \n",
-                                    factory.ofStyled(repo.name, NutsTextStyle.primary4())
+                                    factory.ofStyled(repo.name, NTextStyle.primary4())
                             );
                             if (repo.identities.length > 0) {
                                 out.printf("    %s : %s\n",
-                                        factory.ofStyled("identities", NutsTextStyle.primary5()),
+                                        factory.ofStyled("identities", NTextStyle.primary5()),
                                         Arrays.toString(repo.identities));
                             }
                             if (result.rights != null && repo.rights.length > 0) {
                                 out.printf("    %s     : %s\n",
-                                        factory.ofStyled("rights", NutsTextStyle.primary5()),
+                                        factory.ofStyled("rights", NTextStyle.primary5()),
                                         Arrays.toString(repo.rights));
                             }
                             if (repo.inherited != null && repo.inherited.length > 0) {
                                 out.printf("    %s  : %s\n",
-                                        factory.ofStyled("inherited", NutsTextStyle.primary5()),
+                                        factory.ofStyled("inherited", NTextStyle.primary5()),
                                         Arrays.toString(repo.inherited));
                             }
                             if (repo.remoteId != null) {
                                 out.printf("    %s  : %s\n",
-                                        factory.ofStyled("remote-id", NutsTextStyle.primary5()),
+                                        factory.ofStyled("remote-id", NTextStyle.primary5()),
                                         repo.remoteId);
                             }
                         }

@@ -3,45 +3,55 @@ package net.thevpc.nuts.runtime.standalone.workspace.config;
 import net.thevpc.nuts.*;
 import java.util.Set;
 
-import net.thevpc.nuts.runtime.standalone.session.NutsSessionUtils;
-import net.thevpc.nuts.runtime.standalone.workspace.NutsWorkspaceUtils;
+import net.thevpc.nuts.runtime.standalone.session.NSessionUtils;
+import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceExt;
+import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceUtils;
+import net.thevpc.nuts.spi.NSupportLevelContext;
 
-public class DefaultImportManager implements NutsImportManager {
+public class DefaultImportManager implements NImportManager {
 
     private DefaultImportModel model;
-    private NutsSession session;
+    private NSession session;
 
-    public DefaultImportManager(DefaultImportModel model) {
-        this.model = model;
+    public DefaultImportManager(NSession session) {
+        this.session = session;
+        NWorkspace w = this.session.getWorkspace();
+        NWorkspaceExt e = (NWorkspaceExt) w;
+        this.model = e.getModel().importModel;
     }
 
     @Override
-    public NutsImportManager addImports(String... importExpressions) {
+    public int getSupportLevel(NSupportLevelContext context) {
+        return DEFAULT_SUPPORT;
+    }
+
+    @Override
+    public NImportManager addImports(String... importExpressions) {
         checkSession();
         model.add(importExpressions, session);
         return this;
     }
 
     private void checkSession() {
-        NutsSessionUtils.checkSession(model.getWorkspace(), session);
+        NSessionUtils.checkSession(model.getWorkspace(), session);
     }
 
     @Override
-    public NutsImportManager clearImports() {
+    public NImportManager clearImports() {
         checkSession();
         model.removeAll(session);
         return this;
     }
 
     @Override
-    public NutsImportManager removeImports(String... importExpressions) {
+    public NImportManager removeImports(String... importExpressions) {
         checkSession();
         model.remove(importExpressions, session);
         return this;
     }
 
     @Override
-    public NutsImportManager updateImports(String[] imports) {
+    public NImportManager updateImports(String[] imports) {
         checkSession();
         model.set(imports, session);
         return this;
@@ -60,13 +70,13 @@ public class DefaultImportManager implements NutsImportManager {
     }
 
     @Override
-    public NutsSession getSession() {
+    public NSession getSession() {
         return session;
     }
 
     @Override
-    public DefaultImportManager setSession(NutsSession session) {
-        this.session = NutsWorkspaceUtils.bindSession(model.getWorkspace(), session);
+    public DefaultImportManager setSession(NSession session) {
+        this.session = NWorkspaceUtils.bindSession(model.getWorkspace(), session);
         return this;
     }
 

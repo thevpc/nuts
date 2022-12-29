@@ -6,7 +6,7 @@
 package net.thevpc.nuts.core.test;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.boot.DefaultNutsWorkspaceOptionsBuilder;
+import net.thevpc.nuts.boot.DefaultNWorkspaceOptionsBuilder;
 import net.thevpc.nuts.core.test.utils.TestUtils;
 import org.junit.jupiter.api.*;
 
@@ -18,7 +18,7 @@ import java.util.List;
  * @author thevpc
  */
 public class Test10_ExecURLTest {
-    static NutsSession session;
+    static NSession session;
 
     @BeforeAll
     public static void init() {
@@ -27,32 +27,32 @@ public class Test10_ExecURLTest {
 
     @Test
     public void execURL() {
-        TestUtils.println(NutsVersionFormat.of(session));
-        NutsSearchCommand q = session.search()
+        TestUtils.println(NVersionFormat.of(session));
+        NSearchCommand q = session.search()
                 .setId("net.thevpc.hl:hadra-build-tool#0.1.0")
                 .setRepositoryFilter("maven-central")
                 .setLatest(true);
         session.out().printlnf(q.getResultQueryPlan());
-        List<NutsId> nutsIds = q
+        List<NId> nutsIds = q
                 .getResultIds()
                 .toList();
         TestUtils.println(nutsIds);
-        List<NutsDependencies> allDeps = session.search().addId("net.thevpc.hl:hl#0.1.0")
+        List<NDependencies> allDeps = session.search().addId("net.thevpc.hl:hl#0.1.0")
                 .setDependencies(true)
                 .getResultDependencies().toList();
-        for (NutsDependencies ds : allDeps) {
-            for (NutsDependency d : ds.transitiveWithSource()) {
+        for (NDependencies ds : allDeps) {
+            for (NDependency d : ds.transitiveWithSource()) {
                 TestUtils.println(d);
             }
         }
         TestUtils.println("=============");
-        for (NutsDependencies ds : allDeps) {
-            for (NutsDependencyTreeNode d : ds.transitiveNodes()) {
+        for (NDependencies ds : allDeps) {
+            for (NDependencyTreeNode d : ds.transitiveNodes()) {
                 printlnNode(d,"");
             }
         }
         String result = session.exec()
-                .addWorkspaceOptions(new DefaultNutsWorkspaceOptionsBuilder()
+                .addWorkspaceOptions(new DefaultNWorkspaceOptionsBuilder()
                         .setBot(true)
                         .setWorkspace(session.locations().getWorkspaceLocation().resolve("temp-ws").toString())
                 )
@@ -67,9 +67,9 @@ public class Test10_ExecURLTest {
         Assertions.assertFalse(result.contains("[0m"),"Message should not contain terminal format");
     }
 
-    private void printlnNode(NutsDependencyTreeNode d, String s) {
+    private void printlnNode(NDependencyTreeNode d, String s) {
         TestUtils.println(s+d.getDependency());
-        for (NutsDependencyTreeNode child : d.getChildren()) {
+        for (NDependencyTreeNode child : d.getChildren()) {
             printlnNode(child,"  ");
         }
     }
@@ -77,7 +77,7 @@ public class Test10_ExecURLTest {
     //disabled, unless we find a good executable example jar
     //@Test
     public void execURL2() {
-        TestUtils.println(NutsVersionFormat.of(session));
+        TestUtils.println(NVersionFormat.of(session));
         String result = session.exec()
                 //there are three classes and no main-class, so need to specify the one
                 .addExecutorOption("--main-class=Version")

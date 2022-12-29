@@ -1,24 +1,24 @@
 package net.thevpc.nuts.runtime.standalone.text;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.runtime.standalone.io.terminal.NutsTerminalModeOp;
-import net.thevpc.nuts.runtime.standalone.workspace.NutsWorkspaceUtils;
-import net.thevpc.nuts.spi.NutsSessionAware;
-import net.thevpc.nuts.spi.NutsSystemTerminalBase;
-import net.thevpc.nuts.text.NutsTexts;
+import net.thevpc.nuts.runtime.standalone.io.terminal.NTerminalModeOp;
+import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceUtils;
+import net.thevpc.nuts.spi.NSessionAware;
+import net.thevpc.nuts.spi.NSystemTerminalBase;
+import net.thevpc.nuts.text.NTexts;
 
 import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.io.Writer;
 import java.util.Locale;
 
-public class ExtendedFormatAwarePrintWriter extends PrintWriter implements ExtendedFormatAware, NutsSessionAware {
-    private final NutsWorkspace ws;
-    private NutsSession session;
-    private final NutsSystemTerminalBase term;
+public class ExtendedFormatAwarePrintWriter extends PrintWriter implements ExtendedFormatAware, NSessionAware {
+    private final NWorkspace ws;
+    private NSession session;
+    private final NSystemTerminalBase term;
     private Object base = null;
 
-    public ExtendedFormatAwarePrintWriter(Writer out, NutsSystemTerminalBase term, NutsSession session) {
+    public ExtendedFormatAwarePrintWriter(Writer out, NSystemTerminalBase term, NSession session) {
         super(out);
         base = out;
         this.session = session;
@@ -26,7 +26,7 @@ public class ExtendedFormatAwarePrintWriter extends PrintWriter implements Exten
         this.ws = session.getWorkspace();
     }
 
-    public ExtendedFormatAwarePrintWriter(Writer out, boolean autoFlush, NutsSystemTerminalBase term, NutsSession session) {
+    public ExtendedFormatAwarePrintWriter(Writer out, boolean autoFlush, NSystemTerminalBase term, NSession session) {
         super(out, autoFlush);
         base = out;
         this.session = session;
@@ -34,7 +34,7 @@ public class ExtendedFormatAwarePrintWriter extends PrintWriter implements Exten
         this.ws = session.getWorkspace();
     }
 
-    public ExtendedFormatAwarePrintWriter(OutputStream out, NutsSystemTerminalBase term, NutsSession session) {
+    public ExtendedFormatAwarePrintWriter(OutputStream out, NSystemTerminalBase term, NSession session) {
         super(out);
         base = out;
         this.session = session;
@@ -42,7 +42,7 @@ public class ExtendedFormatAwarePrintWriter extends PrintWriter implements Exten
         this.ws = session.getWorkspace();
     }
 
-    public ExtendedFormatAwarePrintWriter(OutputStream out, boolean autoFlush, NutsSystemTerminalBase term, NutsSession session) {
+    public ExtendedFormatAwarePrintWriter(OutputStream out, boolean autoFlush, NSystemTerminalBase term, NSession session) {
         super(out, autoFlush);
         base = out;
         this.session = session;
@@ -51,22 +51,22 @@ public class ExtendedFormatAwarePrintWriter extends PrintWriter implements Exten
     }
 
     @Override
-    public void setSession(NutsSession session) {
-        this.session = NutsWorkspaceUtils.bindSession(ws, session);
+    public void setSession(NSession session) {
+        this.session = NWorkspaceUtils.bindSession(ws, session);
 //        this.session = session;
 //        this.ws = session==null?null:session.getWorkspace();
     }
 
     @Override
-    public NutsTerminalModeOp getModeOp() {
+    public NTerminalModeOp getModeOp() {
         if (base instanceof ExtendedFormatAware) {
             return ((ExtendedFormatAware) base).getModeOp();
         }
-        return NutsTerminalModeOp.NOP;
+        return NTerminalModeOp.NOP;
     }
 
     @Override
-    public ExtendedFormatAware convert(NutsTerminalModeOp other) {
+    public ExtendedFormatAware convert(NTerminalModeOp other) {
         if (other == null || other == getModeOp()) {
             return this;
         }
@@ -90,7 +90,7 @@ public class ExtendedFormatAwarePrintWriter extends PrintWriter implements Exten
                 return new EscapeOutputStream(new SimpleWriterOutputStream(this, term, session), term, session);
             }
         }
-        throw new NutsUnsupportedEnumException(session, other);
+        throw new NUnsupportedEnumException(session, other);
     }
 
     @Override
@@ -106,16 +106,16 @@ public class ExtendedFormatAwarePrintWriter extends PrintWriter implements Exten
     @Override
     public ExtendedFormatAwarePrintWriter format(Locale l, String format, Object... args) {
         if (l == null) {
-            print(NutsTexts.of(session).setSession(session).ofText(
-                    NutsMessage.ofCstyle(
+            print(NTexts.of(session).setSession(session).ofText(
+                    NMsg.ofCstyle(
                             format, args
                     )
             ));
         } else {
-            NutsSession s2 = this.session.copy().setLocale(l.toString());
+            NSession s2 = this.session.copy().setLocale(l.toString());
             print(
-                    NutsTexts.of(s2).ofText(
-                            NutsMessage.ofCstyle(
+                    NTexts.of(s2).ofText(
+                            NMsg.ofCstyle(
                                     format, args
                             )
                     )

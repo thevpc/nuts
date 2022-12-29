@@ -1,10 +1,10 @@
 package net.thevpc.nuts.runtime.standalone.io.path.spi.htmlfs;
 
-import net.thevpc.nuts.NutsSession;
-import net.thevpc.nuts.NutsSupported;
+import net.thevpc.nuts.NSession;
+import net.thevpc.nuts.NSupported;
 
 import java.util.List;
 
 public interface HtmlfsParser {
-    NutsSupported<List<String>> parseHtmlTomcat(byte[] bytes, NutsSession session);
+    NSupported<List<String>> parseHtmlTomcat(byte[] bytes, NSession session);
 }

@@ -42,12 +42,12 @@ package net.thevpc.nuts.toolbox.nutsserver.util;
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import net.thevpc.nuts.NutsIllegalArgumentException;
+import net.thevpc.nuts.NIllegalArgumentException;
 
 import java.io.*;
 
-import net.thevpc.nuts.NutsMessage;
-import net.thevpc.nuts.NutsSession;
+import net.thevpc.nuts.NMsg;
+import net.thevpc.nuts.NSession;
 import net.thevpc.nuts.toolbox.nutsserver.bundled._IOUtils;
 
 //        import org.apache.tomcat.util.http.fileupload.FileUploadBase.FileUploadIOException;
@@ -306,17 +306,17 @@ public class MultipartStream2 {
     public MultipartStream2(InputStream input,
                             byte[] boundary,
                             int bufSize,
-                            ProgressNotifier pNotifier, NutsSession session) {
+                            ProgressNotifier pNotifier, NSession session) {
 
         if (boundary == null) {
-            throw new NutsIllegalArgumentException(session, NutsMessage.ofPlain("boundary may not be null"));
+            throw new NIllegalArgumentException(session, NMsg.ofPlain("boundary may not be null"));
         }
         // We prepend CR/LF to the boundary to chop trailing CR/LF from
         // body-data tokens.
         this.boundaryLength = boundary.length + BOUNDARY_PREFIX.length;
         if (bufSize < this.boundaryLength + 1) {
-            throw new NutsIllegalArgumentException(
-                    null, NutsMessage.ofPlain("the buffer size specified for the MultipartStream is too small"));
+            throw new NIllegalArgumentException(
+                    null, NMsg.ofPlain("the buffer size specified for the MultipartStream is too small"));
         }
 
         this.input = input;
@@ -348,8 +348,8 @@ public class MultipartStream2 {
      * @param pNotifier An object for calling the progress listener, if any.
      */
     MultipartStream2(InputStream input,
-            byte[] boundary,
-            ProgressNotifier pNotifier,NutsSession session) {
+                     byte[] boundary,
+                     ProgressNotifier pNotifier, NSession session) {
         this(input, boundary, DEFAULT_BUFSIZE, pNotifier,session);
     }
 
@@ -571,7 +571,7 @@ public class MultipartStream2 {
      * Arbitrary large amounts of data can be processed by this method using a
      * constant size buffer. (see {@link
      * #MultipartStream2(InputStream, byte[], int,
-     * MultipartStream2.ProgressNotifier,NutsSession) constructor}).
+     * MultipartStream2.ProgressNotifier, NSession) constructor}).
      *
      * @param output The <code>Stream</code> to write data into. May be null, in
      * which case this method is equivalent to {@link #discardBodyData()}.

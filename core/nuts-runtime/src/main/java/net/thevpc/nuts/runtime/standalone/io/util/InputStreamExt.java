@@ -5,14 +5,14 @@
  */
 package net.thevpc.nuts.runtime.standalone.io.util;
 
-import net.thevpc.nuts.NutsFormat;
-import net.thevpc.nuts.NutsMessage;
-import net.thevpc.nuts.NutsOptional;
-import net.thevpc.nuts.NutsSession;
-import net.thevpc.nuts.cmdline.NutsCommandLine;
+import net.thevpc.nuts.NFormat;
+import net.thevpc.nuts.NMsg;
+import net.thevpc.nuts.NOptional;
+import net.thevpc.nuts.NSession;
+import net.thevpc.nuts.cmdline.NCommandLine;
 import net.thevpc.nuts.io.*;
-import net.thevpc.nuts.spi.NutsFormatSPI;
-import net.thevpc.nuts.text.NutsTextStyle;
+import net.thevpc.nuts.spi.NFormatSPI;
+import net.thevpc.nuts.text.NTextStyle;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -20,26 +20,26 @@ import java.io.InputStream;
 /**
  * @author thevpc
  */
-public class InputStreamExt extends InputStream implements NutsInputSource, Interruptible {
+public class InputStreamExt extends InputStream implements NInputSource, Interruptible {
 
     private InputStream base;
     private Runnable onClose;
     private boolean interrupted;
-    private DefaultNutsInputSourceMetadata md;
+    private DefaultNInputSourceMetadata md;
 
-    public InputStreamExt(InputStream base, NutsInputSourceMetadata md0, Runnable onClose) {
+    public InputStreamExt(InputStream base, NInputSourceMetadata md0, Runnable onClose) {
         this.base = base;
         this.onClose = onClose;
         if (md0 == null) {
-            if (base instanceof NutsInputSource) {
-                md = new DefaultNutsInputSourceMetadata(((NutsInputSource) base).getInputMetaData());
+            if (base instanceof NInputSource) {
+                md = new DefaultNInputSourceMetadata(((NInputSource) base).getInputMetaData());
             } else {
-                md = new DefaultNutsInputSourceMetadata();
+                md = new DefaultNInputSourceMetadata();
             }
         } else {
-            md = new DefaultNutsInputSourceMetadata(md0);
-            if (base instanceof NutsInputSource) {
-                NutsInputSourceMetadata md2 = ((NutsInputSource) base).getInputMetaData();
+            md = new DefaultNInputSourceMetadata(md0);
+            if (base instanceof NInputSource) {
+                NInputSourceMetadata md2 = ((NInputSource) base).getInputMetaData();
                 if (md.getContentLength().isNotPresent()) {
                     md.setContentLength(md2.getContentLength().orNull());
                 }
@@ -101,7 +101,7 @@ public class InputStreamExt extends InputStream implements NutsInputSource, Inte
 
 
     @Override
-    public NutsInputSourceMetadata getInputMetaData() {
+    public NInputSourceMetadata getInputMetaData() {
         return md;
     }
 
@@ -120,25 +120,25 @@ public class InputStreamExt extends InputStream implements NutsInputSource, Inte
     }
 
     @Override
-    public NutsFormat formatter(NutsSession session) {
-        return NutsFormat.of(session, new NutsFormatSPI() {
+    public NFormat formatter(NSession session) {
+        return NFormat.of(session, new NFormatSPI() {
             @Override
             public String getName() {
                 return "input-stream";
             }
 
             @Override
-            public void print(NutsPrintStream out) {
-                NutsOptional<NutsMessage> m = getInputMetaData().getMessage();
+            public void print(NStream out) {
+                NOptional<NMsg> m = getInputMetaData().getMessage();
                 if(m.isPresent()){
                     out.print(m.get());
                 }else {
-                    out.append(getClass().getSimpleName(), NutsTextStyle.path());
+                    out.append(getClass().getSimpleName(), NTextStyle.path());
                 }
             }
 
             @Override
-            public boolean configureFirst(NutsCommandLine commandLine) {
+            public boolean configureFirst(NCommandLine commandLine) {
                 return false;
             }
         });
@@ -146,12 +146,12 @@ public class InputStreamExt extends InputStream implements NutsInputSource, Inte
 
     @Override
     public String toString() {
-        NutsPlainPrintStream out = new NutsPlainPrintStream();
-        NutsOptional<NutsMessage> m = getInputMetaData().getMessage();
+        NPlainStream out = new NPlainStream();
+        NOptional<NMsg> m = getInputMetaData().getMessage();
         if (m.isPresent()) {
             out.print(m.get());
         } else {
-            out.append(getClass().getSimpleName(), NutsTextStyle.path());
+            out.append(getClass().getSimpleName(), NTextStyle.path());
         }
         return out.toString();
     }

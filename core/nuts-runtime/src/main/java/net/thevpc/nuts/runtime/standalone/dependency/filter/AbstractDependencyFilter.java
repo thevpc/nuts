@@ -23,35 +23,35 @@
  */
 package net.thevpc.nuts.runtime.standalone.dependency.filter;
 
-import net.thevpc.nuts.NutsDependencyFilter;
-import net.thevpc.nuts.NutsFilter;
-import net.thevpc.nuts.NutsFilterOp;
-import net.thevpc.nuts.NutsSession;
-import net.thevpc.nuts.runtime.standalone.util.filters.AbstractNutsFilter;
+import net.thevpc.nuts.NDependencyFilter;
+import net.thevpc.nuts.NFilter;
+import net.thevpc.nuts.NFilterOp;
+import net.thevpc.nuts.NSession;
+import net.thevpc.nuts.runtime.standalone.util.filters.AbstractNFilter;
 import net.thevpc.nuts.runtime.standalone.util.Simplifiable;
 
 /**
  *
  * @author thevpc
  */
-public abstract class AbstractDependencyFilter extends AbstractNutsFilter implements NutsDependencyFilter, Simplifiable<NutsDependencyFilter> {
+public abstract class AbstractDependencyFilter extends AbstractNFilter implements NDependencyFilter, Simplifiable<NDependencyFilter> {
 
-    public AbstractDependencyFilter(NutsSession session, NutsFilterOp op) {
+    public AbstractDependencyFilter(NSession session, NFilterOp op) {
         super(session, op);
     }
 
     @Override
-    public NutsDependencyFilter or(NutsDependencyFilter other) {
-        return or((NutsFilter) other).to(NutsDependencyFilter.class);
+    public NDependencyFilter or(NDependencyFilter other) {
+        return or((NFilter) other).to(NDependencyFilter.class);
     }
 
     @Override
-    public NutsDependencyFilter and(NutsDependencyFilter other) {
-        return and((NutsFilter) other).to(NutsDependencyFilter.class);
+    public NDependencyFilter and(NDependencyFilter other) {
+        return and((NFilter) other).to(NDependencyFilter.class);
     }
 
     @Override
-    public NutsDependencyFilter neg() {
-        return super.neg().to(NutsDependencyFilter.class);
+    public NDependencyFilter neg() {
+        return super.neg().to(NDependencyFilter.class);
     }
 }

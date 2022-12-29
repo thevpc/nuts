@@ -1,6 +1,6 @@
 package net.thevpc.nuts.runtime.standalone.xtra.expr;
 
-import net.thevpc.nuts.util.NutsExprNode;
+import net.thevpc.nuts.util.NExprNode;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
@@ -136,7 +136,7 @@ public class EvalUtils {
         }
     }
 
-    public static String wrapPars(NutsExprNode n) {
+    public static String wrapPars(NExprNode n) {
         if (n instanceof DefaultLiteralNode) {
             String s = n.toString();
             if (s.charAt(0) == '-' || s.charAt(0) == '+') {

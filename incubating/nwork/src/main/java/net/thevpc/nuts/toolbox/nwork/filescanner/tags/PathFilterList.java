@@ -1,7 +1,7 @@
 package net.thevpc.nuts.toolbox.nwork.filescanner.tags;
 
-import net.thevpc.nuts.util.NutsGlob;
-import net.thevpc.nuts.NutsSession;
+import net.thevpc.nuts.util.NGlob;
+import net.thevpc.nuts.NSession;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -15,9 +15,9 @@ class PathFilterList {
     PatternGroupConf includes;
     PatternGroupConf excludes;
     List<Path> alreadyIgnored = new ArrayList<>();
-    NutsSession session;
+    NSession session;
 
-    public PathFilterList(NutsSession session) {
+    public PathFilterList(NSession session) {
         this.session = session;
         includes = new PatternGroupConf(session);
         excludes = new PatternGroupConf(session);
@@ -86,9 +86,9 @@ class PathFilterList {
         HashSet<String> prefixes = new HashSet<>();
         HashSet<String> exact = new HashSet<>();
         HashSet<Pattern> patterns = new HashSet<>();
-        NutsSession session;
+        NSession session;
 
-        public PatternGroupConf(NutsSession session) {
+        public PatternGroupConf(NSession session) {
             this.session = session;
         }
 
@@ -105,7 +105,7 @@ class PathFilterList {
                 line = line.substring(1);
             }
             String a = (line.isEmpty() ? root : root.resolve(line)).toString();
-            NutsGlob glob = NutsGlob.of(session).setSeparator("/\\");
+            NGlob glob = NGlob.of(session).setSeparator("/\\");
             if (glob.isGlob(a)) {
                 patterns.add(glob.toPattern(a));
             } else {

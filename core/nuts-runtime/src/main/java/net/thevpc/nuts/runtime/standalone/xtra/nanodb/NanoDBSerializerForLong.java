@@ -1,6 +1,6 @@
 package net.thevpc.nuts.runtime.standalone.xtra.nanodb;
 
-import net.thevpc.nuts.NutsSession;
+import net.thevpc.nuts.NSession;
 
 class NanoDBSerializerForLong extends NanoDBNonNullSerializer<Long> {
     public NanoDBSerializerForLong() {
@@ -8,12 +8,12 @@ class NanoDBSerializerForLong extends NanoDBNonNullSerializer<Long> {
     }
 
     @Override
-    public void write(Long obj, NanoDBOutputStream out, NutsSession session) {
+    public void write(Long obj, NanoDBOutputStream out, NSession session) {
         out.writeLong((long) obj);
     }
 
     @Override
-    public Long read(NanoDBInputStream in, Class expectedType, NutsSession session) {
+    public Long read(NanoDBInputStream in, Class expectedType, NSession session) {
         return in.readLong();
     }
 }

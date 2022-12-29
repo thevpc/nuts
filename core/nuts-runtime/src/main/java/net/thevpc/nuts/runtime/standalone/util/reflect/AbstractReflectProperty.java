@@ -23,9 +23,9 @@
  */
 package net.thevpc.nuts.runtime.standalone.util.reflect;
 
-import net.thevpc.nuts.util.NutsReflectPropertyDefaultValueStrategy;
-import net.thevpc.nuts.util.NutsReflectType;
-import net.thevpc.nuts.util.NutsReflectProperty;
+import net.thevpc.nuts.util.NReflectPropertyDefaultValueStrategy;
+import net.thevpc.nuts.util.NReflectType;
+import net.thevpc.nuts.util.NReflectProperty;
 
 import java.lang.reflect.Array;
 import java.lang.reflect.Type;
@@ -36,15 +36,15 @@ import java.util.Objects;
  *
  * @author thevpc
  */
-public abstract class AbstractReflectProperty implements NutsReflectProperty {
+public abstract class AbstractReflectProperty implements NReflectProperty {
 
     private String name;
     private Object cleanInstanceValue;
     private Type propertyType;
-    private NutsReflectType type;
-    private NutsReflectPropertyDefaultValueStrategy defaultValueStrategy;
+    private NReflectType type;
+    private NReflectPropertyDefaultValueStrategy defaultValueStrategy;
 
-    protected final void init(String name, NutsReflectType type, Object cleanInstance, Type propertyType, NutsReflectPropertyDefaultValueStrategy defaultValueStrategy) {
+    protected final void init(String name, NReflectType type, Object cleanInstance, Type propertyType, NReflectPropertyDefaultValueStrategy defaultValueStrategy) {
         this.name = name;
         this.cleanInstanceValue = cleanInstance == null ? ReflectUtils.getDefaultValue(propertyType) : read(cleanInstance);
         this.type = type;
@@ -58,7 +58,7 @@ public abstract class AbstractReflectProperty implements NutsReflectProperty {
     }
 
     @Override
-    public NutsReflectType getType() {
+    public NReflectType getType() {
         return type;
     }
 
@@ -68,12 +68,12 @@ public abstract class AbstractReflectProperty implements NutsReflectProperty {
     }
 
     @Override
-    public NutsReflectPropertyDefaultValueStrategy getDefaultValueStrategy() {
+    public NReflectPropertyDefaultValueStrategy getDefaultValueStrategy() {
         return defaultValueStrategy;
     }
 
     @Override
-    public boolean isDefaultValue(Object value, NutsReflectPropertyDefaultValueStrategy strategy) {
+    public boolean isDefaultValue(Object value, NReflectPropertyDefaultValueStrategy strategy) {
         if (strategy == null) {
             strategy = getDefaultValueStrategy();
         }

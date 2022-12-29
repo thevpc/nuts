@@ -7,7 +7,7 @@ package net.thevpc.nuts.core.test;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.core.test.utils.TestUtils;
-import net.thevpc.nuts.io.NutsPath;
+import net.thevpc.nuts.io.NPath;
 import org.junit.jupiter.api.*;
 
 import java.io.File;
@@ -27,7 +27,7 @@ public class Test03_CreateLayoutTest {
 //        CoreIOUtils.delete(null, base);
 //        TestUtils.resetLinuxFolders();
         File testBaseFolder = TestUtils.getTestBaseFolder();
-        NutsSession sessionOne = TestUtils.openNewTestWorkspace(
+        NSession sessionOne = TestUtils.openNewTestWorkspace(
                 TestUtils.sarr(
                         TestUtils.createSysDirs(testBaseFolder),
                         //            "--verbose",
@@ -35,11 +35,11 @@ public class Test03_CreateLayoutTest {
                         "info"
                 )
         );
-        for (NutsStoreLocation value : NutsStoreLocation.values()) {
+        for (NStoreLocation value : NStoreLocation.values()) {
             sessionOne.out().printf("%s %s%n", value, sessionOne.locations().getStoreLocation(value));
         }
 
-        NutsSession sessionAgain = TestUtils.openExistingTestWorkspace(
+        NSession sessionAgain = TestUtils.openExistingTestWorkspace(
                 TestUtils.sarr(
                         TestUtils.createSysDirs(testBaseFolder),
                         //            "--verbose",
@@ -48,7 +48,7 @@ public class Test03_CreateLayoutTest {
                         "info"
                 ));
 
-        for (NutsStoreLocation value : NutsStoreLocation.values()) {
+        for (NStoreLocation value : NStoreLocation.values()) {
             Assertions.assertEquals(
                     sessionOne.locations().getStoreLocation(value),
                     sessionAgain.locations().getStoreLocation(value)
@@ -88,32 +88,32 @@ public class Test03_CreateLayoutTest {
 
     @Test
     public void customLayout_use_standalone() {
-        NutsSession session = TestUtils.openNewTestWorkspace("--embedded", "--standalone");
+        NSession session = TestUtils.openNewTestWorkspace("--embedded", "--standalone");
         if (NDI_COMPANIONS > 0) {
-            NutsId nshId = null;
+            NId nshId = null;
             try {
-                nshId = session.search().setInstallStatus(NutsInstallStatusFilters.of(session).byInstalled(true)).addId("nsh")
+                nshId = session.search().setInstallStatus(NInstallStatusFilters.of(session).byInstalled(true)).addId("nsh")
                         .setDistinct(true).getResultIds().singleton();
             } catch (Exception ex) {
-                nshId = session.search().setInstallStatus(NutsInstallStatusFilters.of(session).byInstalled(true)).addId("nsh")
+                nshId = session.search().setInstallStatus(NInstallStatusFilters.of(session).byInstalled(true)).addId("nsh")
                         .setDistinct(true).getResultIds().singleton();
             }
             Assertions.assertTrue(nshId.getVersion().getValue().startsWith(TestUtils.NUTS_VERSION + "."));
         }
-        NutsPath c = session.locations().getStoreLocation(NutsStoreLocation.CONFIG);
+        NPath c = session.locations().getStoreLocation(NStoreLocation.CONFIG);
         TestUtils.println(c);
         File base = session.getWorkspace().getLocation().toFile().toFile();
         TestUtils.println(new File(base, "config").getPath());
-        for (NutsStoreLocation value : NutsStoreLocation.values()) {
+        for (NStoreLocation value : NStoreLocation.values()) {
             session.out().printf("%s %s%n", value, session.locations().getStoreLocation(value));
         }
         Assertions.assertEquals(
-                NutsPath.of(base, session).resolve("apps"),
-                session.locations().getStoreLocation(NutsStoreLocation.APPS)
+                NPath.of(base, session).resolve("apps"),
+                session.locations().getStoreLocation(NStoreLocation.APPS)
         );
         Assertions.assertEquals(
-                NutsPath.of(base, session).resolve("cache"),
-                session.locations().getStoreLocation(NutsStoreLocation.CACHE)
+                NPath.of(base, session).resolve("cache"),
+                session.locations().getStoreLocation(NStoreLocation.CACHE)
         );
     }
 
@@ -136,81 +136,81 @@ public class Test03_CreateLayoutTest {
                 "--skip-companions",
                 "info");
 
-        NutsSession w = TestUtils.runExistingTestWorkspace("--system-config-home", new File(base, "system.config.ignored").getPath(),
+        NSession w = TestUtils.runExistingTestWorkspace("--system-config-home", new File(base, "system.config.ignored").getPath(),
                 "info");
         TestUtils.println("==========================");
         w.info().println();
         TestUtils.println("==========================");
         TestUtils.println(new File(base, "system.apps").getPath());
-        TestUtils.println(w.locations().getStoreLocation(NutsStoreLocation.APPS));
+        TestUtils.println(w.locations().getStoreLocation(NStoreLocation.APPS));
         Assertions.assertEquals(
-                NutsPath.of(new File(base, "system.apps"), w),
-                w.locations().getStoreLocation(NutsStoreLocation.APPS)
+                NPath.of(new File(base, "system.apps"), w),
+                w.locations().getStoreLocation(NStoreLocation.APPS)
         );
         Assertions.assertEquals(
-                NutsPath.of(new File(base, "system.config"), w),
-                w.locations().getStoreLocation(NutsStoreLocation.CONFIG)
+                NPath.of(new File(base, "system.config"), w),
+                w.locations().getStoreLocation(NStoreLocation.CONFIG)
         );
         Assertions.assertEquals(
-                NutsPath.of(new File(base, "system.var"), w),
-                w.locations().getStoreLocation(NutsStoreLocation.VAR)
+                NPath.of(new File(base, "system.var"), w),
+                w.locations().getStoreLocation(NStoreLocation.VAR)
         );
         Assertions.assertEquals(
-                NutsPath.of(new File(base, "system.log"), w),
-                w.locations().getStoreLocation(NutsStoreLocation.LOG)
+                NPath.of(new File(base, "system.log"), w),
+                w.locations().getStoreLocation(NStoreLocation.LOG)
         );
         Assertions.assertEquals(
-                NutsPath.of(new File(base, "system.temp"), w),
-                w.locations().getStoreLocation(NutsStoreLocation.TEMP)
+                NPath.of(new File(base, "system.temp"), w),
+                w.locations().getStoreLocation(NStoreLocation.TEMP)
         );
         Assertions.assertEquals(
-                NutsPath.of(new File(base, "system.cache"), w),
-                w.locations().getStoreLocation(NutsStoreLocation.CACHE)
+                NPath.of(new File(base, "system.cache"), w),
+                w.locations().getStoreLocation(NStoreLocation.CACHE)
         );
         Assertions.assertEquals(
-                NutsPath.of(new File(base, "system.lib"), w),
-                w.locations().getStoreLocation(NutsStoreLocation.LIB)
+                NPath.of(new File(base, "system.lib"), w),
+                w.locations().getStoreLocation(NStoreLocation.LIB)
         );
         Assertions.assertEquals(
-                NutsPath.of(new File(base, "system.run"), w),
-                w.locations().getStoreLocation(NutsStoreLocation.RUN)
+                NPath.of(new File(base, "system.run"), w),
+                w.locations().getStoreLocation(NStoreLocation.RUN)
         );
 
         w = TestUtils.openNewTestWorkspace(//            "--workspace", "default-workspace",
 //            "--workspace", new File(base, "system.config/default-workspace").getPath(),
                 "info");
-        TestUtils.println(w.locations().getStoreLocation(NutsStoreLocation.APPS));
+        TestUtils.println(w.locations().getStoreLocation(NStoreLocation.APPS));
         Assertions.assertEquals(
-                NutsPath.of(new File(base, "apps"), w),
-                w.locations().getStoreLocation(NutsStoreLocation.APPS)
+                NPath.of(new File(base, "apps"), w),
+                w.locations().getStoreLocation(NStoreLocation.APPS)
         );
         Assertions.assertEquals(
-                NutsPath.of(new File(base, "config"), w),
-                w.locations().getStoreLocation(NutsStoreLocation.CONFIG)
+                NPath.of(new File(base, "config"), w),
+                w.locations().getStoreLocation(NStoreLocation.CONFIG)
         );
         Assertions.assertEquals(
-                NutsPath.of(new File(base, "var"), w),
-                w.locations().getStoreLocation(NutsStoreLocation.VAR)
+                NPath.of(new File(base, "var"), w),
+                w.locations().getStoreLocation(NStoreLocation.VAR)
         );
         Assertions.assertEquals(
-                NutsPath.of(new File(base, "log"), w),
-                w.locations().getStoreLocation(NutsStoreLocation.LOG)
+                NPath.of(new File(base, "log"), w),
+                w.locations().getStoreLocation(NStoreLocation.LOG)
         );
         Assertions.assertEquals(
-                NutsPath.of(new File(base, "temp"), w),
-                w.locations().getStoreLocation(NutsStoreLocation.TEMP)
+                NPath.of(new File(base, "temp"), w),
+                w.locations().getStoreLocation(NStoreLocation.TEMP)
         );
         Assertions.assertEquals(
-                NutsPath.of(new File(base, "cache"), w),
-                w.locations().getStoreLocation(NutsStoreLocation.CACHE)
+                NPath.of(new File(base, "cache"), w),
+                w.locations().getStoreLocation(NStoreLocation.CACHE)
         );
         Assertions.assertEquals(
-                NutsPath.of(new File(base, "lib"), w),
-                w.locations().getStoreLocation(NutsStoreLocation.LIB)
+                NPath.of(new File(base, "lib"), w),
+                w.locations().getStoreLocation(NStoreLocation.LIB)
         );
         Assertions.assertEquals(
-                NutsPath.of(new File(base, "run"), w),
-                w.locations().getStoreLocation(NutsStoreLocation.RUN)
+                NPath.of(new File(base, "run"), w),
+                w.locations().getStoreLocation(NStoreLocation.RUN)
         );
     }
 

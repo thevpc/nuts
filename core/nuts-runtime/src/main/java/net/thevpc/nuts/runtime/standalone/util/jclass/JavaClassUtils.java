@@ -2,9 +2,9 @@ package net.thevpc.nuts.runtime.standalone.util.jclass;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.standalone.util.CorePlatformUtils;
-import net.thevpc.nuts.runtime.standalone.xtra.execentries.DefaultNutsExecutionEntry;
-import net.thevpc.nuts.util.NutsLoggerOp;
-import net.thevpc.nuts.util.NutsRef;
+import net.thevpc.nuts.runtime.standalone.xtra.execentries.DefaultNExecutionEntry;
+import net.thevpc.nuts.util.NLoggerOp;
+import net.thevpc.nuts.util.NRef;
 
 import java.io.BufferedInputStream;
 import java.io.InputStream;
@@ -32,11 +32,11 @@ public class JavaClassUtils {
      * @param stream stream
      * @return main class type for the given
      */
-    public static MainClassType getMainClassType(InputStream stream, NutsSession session) {
-        final NutsRef<Boolean> mainClass = new NutsRef<>();
-        final NutsRef<Boolean> nutsApp = new NutsRef<>();
-        final NutsRef<String> nutsAppVer = new NutsRef<>();
-        final NutsRef<String> className = new NutsRef<>();
+    public static MainClassType getMainClassType(InputStream stream, NSession session) {
+        final NRef<Boolean> mainClass = new NRef<>();
+        final NRef<Boolean> nutsApp = new NRef<>();
+        final NRef<String> nutsAppVer = new NRef<>();
+        final NRef<String> className = new NRef<>();
         JavaClassByteCode.Visitor cl = new JavaClassByteCode.Visitor() {
             @Override
             public boolean visitClassDeclaration(int access, String name, String superName, String[] interfaces) {
@@ -81,16 +81,16 @@ public class JavaClassUtils {
         return null;
     }
 
-    public static NutsExecutionEntry parseClassExecutionEntry(InputStream classStream, String sourceName, NutsSession session) {
+    public static NExecutionEntry parseClassExecutionEntry(InputStream classStream, String sourceName, NSession session) {
         MainClassType mainClass = null;
         try {
             mainClass = getMainClassType(classStream, session);
         } catch (Exception ex) {
-            NutsLoggerOp.of(CorePlatformUtils.class, session).level(Level.FINE).error(ex)
-                    .log(NutsMessage.ofJstyle("invalid file format {0}", sourceName));
+            NLoggerOp.of(CorePlatformUtils.class, session).level(Level.FINE).error(ex)
+                    .log(NMsg.ofJstyle("invalid file format {0}", sourceName));
         }
         if (mainClass != null) {
-            return new DefaultNutsExecutionEntry(
+            return new DefaultNExecutionEntry(
                     mainClass.getName(),
                     false,
                     mainClass.isApp()
@@ -107,7 +107,7 @@ public class JavaClassUtils {
      * @param classVersion
      * @return
      */
-    public static String classVersionToSourceVersion(String classVersion, NutsSession session) {
+    public static String classVersionToSourceVersion(String classVersion, NSession session) {
         int major;
         int minor;
         int i = classVersion.indexOf('.');
@@ -121,9 +121,9 @@ public class JavaClassUtils {
         return classVersionToSourceVersion(major, minor, session);
     }
 
-    public static String classVersionToSourceVersion(int major, int minor, NutsSession session) {
+    public static String classVersionToSourceVersion(int major, int minor, NSession session) {
         if (major < 45) {
-            throw new NutsIllegalArgumentException(session, NutsMessage.ofCstyle("invalid classVersion %s.%s", major,minor));
+            throw new NIllegalArgumentException(session, NMsg.ofCstyle("invalid classVersion %s.%s", major,minor));
         }
         if (major == 45) {
             if (minor <= 3) {
@@ -141,12 +141,12 @@ public class JavaClassUtils {
         }
     }
 
-    public static String sourceVersionToClassVersion(String sourceVersion, NutsSession session) {
-        NutsVersion v = NutsVersion.of(sourceVersion).get(session);
-        int major = v.getNumber(0).flatMap(NutsValue::asInt).orElse(0);
-        int minor = v.getNumber(1).flatMap(NutsValue::asInt).orElse(-1);
+    public static String sourceVersionToClassVersion(String sourceVersion, NSession session) {
+        NVersion v = NVersion.of(sourceVersion).get(session);
+        int major = v.getNumber(0).flatMap(NValue::asInt).orElse(0);
+        int minor = v.getNumber(1).flatMap(NValue::asInt).orElse(-1);
         if (major < 1) {
-            throw new NutsIllegalArgumentException(session, NutsMessage.ofCstyle("invalid sourceVersion %s", sourceVersion));
+            throw new NIllegalArgumentException(session, NMsg.ofCstyle("invalid sourceVersion %s", sourceVersion));
         }
         if (major == 1) {
             switch (minor) {
@@ -164,7 +164,7 @@ public class JavaClassUtils {
                 case 9:
                     return String.valueOf(46 - minor - 2);
                 default: {
-                    throw new NutsIllegalArgumentException(session, NutsMessage.ofCstyle("invalid sourceVersion %s", sourceVersion));
+                    throw new NIllegalArgumentException(session, NMsg.ofCstyle("invalid sourceVersion %s", sourceVersion));
                 }
             }
         } else {

@@ -26,10 +26,10 @@
 package net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.ndi.util;
 
 
-import net.thevpc.nuts.io.NutsIOException;
-import net.thevpc.nuts.NutsIllegalArgumentException;
-import net.thevpc.nuts.NutsMessage;
-import net.thevpc.nuts.NutsSession;
+import net.thevpc.nuts.io.NIOException;
+import net.thevpc.nuts.NIllegalArgumentException;
+import net.thevpc.nuts.NMsg;
+import net.thevpc.nuts.NSession;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.ndi.unix.AnyNixNdi;
 
 import java.io.*;
@@ -43,24 +43,24 @@ import java.util.regex.Pattern;
  */
 public class NdiUtils {
 
-    public static String generateScriptAsString(String resourcePath, NutsSession session, Function<String, String> mapper) {
+    public static String generateScriptAsString(String resourcePath, NSession session, Function<String, String> mapper) {
         ByteArrayOutputStream b = new ByteArrayOutputStream();
         BufferedWriter w = new BufferedWriter(new OutputStreamWriter(b));
         generateScript(resourcePath, session, w, mapper);
         try {
             w.flush();
         } catch (IOException ex) {
-            throw new NutsIOException(session, ex);
+            throw new NIOException(session, ex);
         }
         return b.toString();
     }
 
-    public static void generateScript(String resourcePath, NutsSession session, BufferedWriter w, Function<String, String> mapper) {
+    public static void generateScript(String resourcePath, NSession session, BufferedWriter w, Function<String, String> mapper) {
         try {
             String lineSeparator = System.getProperty("line.separator");
             URL resource = AnyNixNdi.class.getResource(resourcePath);
             if (resource == null) {
-                throw new NutsIllegalArgumentException(session, NutsMessage.ofCstyle("resource not found %s",resourcePath));
+                throw new NIllegalArgumentException(session, NMsg.ofCstyle("resource not found %s",resourcePath));
             }
             BufferedReader br = new BufferedReader(new InputStreamReader(resource.openStream()));
             String line = null;
@@ -86,7 +86,7 @@ public class NdiUtils {
             }
             w.flush();
         } catch (IOException ex) {
-            throw new NutsIOException(session, ex);
+            throw new NIOException(session, ex);
         }
     }
 

@@ -8,11 +8,11 @@ import java.util.List;
 
 public abstract class BinCompareFctNode extends AbstractOp {
     public BinCompareFctNode(String name, int precedence) {
-        super(name, precedence, NutsExprOpAssociativity.LEFT, NutsExprOpType.INFIX);
+        super(name, precedence, NExprOpAssociativity.LEFT, NExprOpType.INFIX);
     }
 
     @Override
-    public Object eval(String name, List<NutsExprNode> args, NutsExprDeclarations e) {
+    public Object eval(String name, List<NExprNode> args, NExprDeclarations e) {
         Object a = args.get(0).eval(e).get();
         Object b = args.get(1).eval(e).get();
         if (EvalUtils.isNumber(a) && EvalUtils.isNumber(b)) {

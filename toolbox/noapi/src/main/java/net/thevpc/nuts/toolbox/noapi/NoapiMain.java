@@ -1,19 +1,19 @@
 package net.thevpc.nuts.toolbox.noapi;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.cmdline.NutsCommandLineContext;
-import net.thevpc.nuts.cmdline.NutsCommandLineProcessor;
-import net.thevpc.nuts.cmdline.NutsArgument;
-import net.thevpc.nuts.cmdline.NutsCommandLine;
+import net.thevpc.nuts.cmdline.NCommandLineContext;
+import net.thevpc.nuts.cmdline.NCommandLineProcessor;
+import net.thevpc.nuts.cmdline.NArgument;
+import net.thevpc.nuts.cmdline.NCommandLine;
 import net.thevpc.nuts.toolbox.noapi.model.NoapiCmdData;
 import net.thevpc.nuts.toolbox.noapi.service.NOpenAPIService;
-import net.thevpc.nuts.util.NutsUtils;
+import net.thevpc.nuts.util.NUtils;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-public class NoapiMain implements NutsApplication {
+public class NoapiMain implements NApplication {
 
     private NOpenAPIService service;
     private NoapiCmdData ref = new NoapiCmdData();
@@ -25,13 +25,13 @@ public class NoapiMain implements NutsApplication {
     }
 
     @Override
-    public void run(NutsApplicationContext appContext) {
+    public void run(NApplicationContext appContext) {
         this.service = new NOpenAPIService(appContext);
         ref.setCommand("pdf");
-        appContext.processCommandLine(new NutsCommandLineProcessor() {
+        appContext.processCommandLine(new NCommandLineProcessor() {
             @Override
-            public boolean onCmdNextOption(NutsArgument option, NutsCommandLine commandLine, NutsCommandLineContext context) {
-                NutsSession session = commandLine.getSession();
+            public boolean onCmdNextOption(NArgument option, NCommandLine commandLine, NCommandLineContext context) {
+                NSession session = commandLine.getSession();
                 switch (option.asString().get(session)) {
                     case "--yaml": {
                         commandLine.nextBoolean();
@@ -58,7 +58,7 @@ public class NoapiMain implements NutsApplication {
                         return true;
                     }
                     case "--vars": {
-                        NutsArgument a = commandLine.nextString().get();
+                        NArgument a = commandLine.nextString().get();
                         if (a.isActive()) {
                             String vars = a.getStringValue().get();
                             ref.setVars(vars);
@@ -69,10 +69,10 @@ public class NoapiMain implements NutsApplication {
                         return true;
                     }
                     case "--var": {
-                        NutsArgument a = commandLine.nextString().get();
+                        NArgument a = commandLine.nextString().get();
                         if (a.isActive()) {
                             String vars = a.getStringValue().get();
-                            NutsArgument b = NutsArgument.of(vars);
+                            NArgument b = NArgument.of(vars);
                             if (b.isActive()) {
                                 ref.getVarsMap().put(b.getKey().toStringLiteral(), b.getValue().toStringLiteral());
                                 if (!data.isEmpty()) {
@@ -99,7 +99,7 @@ public class NoapiMain implements NutsApplication {
                         return true;
                     }
                     case "--target": {
-                        NutsArgument a = commandLine.nextString().get();
+                        NArgument a = commandLine.nextString().get();
                         if (a.isActive()) {
                             String target = a.getStringValue().get();
                             if (target.contains("*")) {
@@ -116,8 +116,8 @@ public class NoapiMain implements NutsApplication {
             }
 
             @Override
-            public boolean onCmdNextNonOption(NutsArgument nonOption, NutsCommandLine commandLine, NutsCommandLineContext context) {
-                NutsSession session = commandLine.getSession();
+            public boolean onCmdNextNonOption(NArgument nonOption, NCommandLine commandLine, NCommandLineContext context) {
+                NSession session = commandLine.getSession();
                 NoapiCmdData c = new NoapiCmdData();
                 c.setCommand(ref.getCommand());
                 c.setKeep(ref.isKeep());
@@ -125,28 +125,28 @@ public class NoapiMain implements NutsApplication {
                 c.setTarget(ref.getTarget());
                 c.setVars(ref.getVars());
                 c.setVarsMap(new HashMap<>(ref.getVarsMap()));
-                NutsArgument pathArg = commandLine.next().get(session);
+                NArgument pathArg = commandLine.next().get(session);
                 c.setPath(pathArg.key());
                 data.add(c);
                 return true;
             }
 
             @Override
-            public void onCmdFinishParsing(NutsCommandLine commandLine, NutsCommandLineContext context) {
-                NutsSession session = commandLine.getSession();
+            public void onCmdFinishParsing(NCommandLine commandLine, NCommandLineContext context) {
+                NSession session = commandLine.getSession();
                 if (data.isEmpty()) {
                     commandLine.throwMissingArgument();
                 }
                 for (NoapiCmdData d : data) {
-                    NutsUtils.requireNonBlank(d.getPath(), "path", session);
+                    NUtils.requireNonBlank(d.getPath(), "path", session);
                     if (!"pdf".equals(d.getCommand())) {
-                        throw new NutsIllegalArgumentException(session, NutsMessage.ofCstyle("unsupported command %s", d.getCommand()));
+                        throw new NIllegalArgumentException(session, NMsg.ofCstyle("unsupported command %s", d.getCommand()));
                     }
                 }
             }
 
             @Override
-            public void onCmdExec(NutsCommandLine commandLine, NutsCommandLineContext context) {
+            public void onCmdExec(NCommandLine commandLine, NCommandLineContext context) {
                 for (NoapiCmdData d : data) {
                     switch (d.getCommand()) {
                         case "pdf": {

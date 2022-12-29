@@ -1,76 +1,76 @@
 package net.thevpc.nuts.runtime.standalone.xtra.expr;
 
-import net.thevpc.nuts.NutsBlankable;
-import net.thevpc.nuts.NutsMessage;
-import net.thevpc.nuts.NutsOptional;
+import net.thevpc.nuts.NBlankable;
+import net.thevpc.nuts.NMsg;
+import net.thevpc.nuts.NOptional;
 import net.thevpc.nuts.util.*;
 
 import java.util.*;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
-public class DefaultDeclarationMutableContext extends NutsExprDeclarationsBase implements NutsExprMutableDeclarations {
+public class DefaultDeclarationMutableContext extends NExprDeclarationsBase implements NExprMutableDeclarations {
     private static DecInfo REMOVED = new DecInfo(null);
 
-    private final Map<String, DecInfo<NutsExprFctDeclaration>> userFunctions = new LinkedHashMap<>();
-    private final Map<String, DecInfo<NutsExprConstructDeclaration>> userConstructs = new LinkedHashMap<>();
-    private final Map<NutsExprOpNameAndType, DecInfo<NutsExprOpDeclaration>> ops = new LinkedHashMap<>();
-    private final Map<String, DecInfo<NutsExprVarDeclaration>> userVars = new LinkedHashMap<>();
+    private final Map<String, DecInfo<NExprFctDeclaration>> userFunctions = new LinkedHashMap<>();
+    private final Map<String, DecInfo<NExprConstructDeclaration>> userConstructs = new LinkedHashMap<>();
+    private final Map<NExprOpNameAndType, DecInfo<NExprOpDeclaration>> ops = new LinkedHashMap<>();
+    private final Map<String, DecInfo<NExprVarDeclaration>> userVars = new LinkedHashMap<>();
 
 
-    private NutsExprDeclarations parent;
+    private NExprDeclarations parent;
 
-    public DefaultDeclarationMutableContext(NutsExprDeclarations parent) {
+    public DefaultDeclarationMutableContext(NExprDeclarations parent) {
         this.parent = parent;
         setSession(parent.getSession());
     }
 
     @Override
-    public NutsOptional<NutsExprVarDeclaration> getVar(String name) {
-        DecInfo<NutsExprVarDeclaration> f = userVars.get(name);
+    public NOptional<NExprVarDeclaration> getVar(String name) {
+        DecInfo<NExprVarDeclaration> f = userVars.get(name);
         if (f != null) {
             if (f.value != null) {
-                return NutsOptional.of(f.value);
+                return NOptional.of(f.value);
             }
         } else if (parent != null) {
             return parent.getVar(name);
         }
-        return NutsOptional.ofEmpty(s -> NutsMessage.ofCstyle("var not found %s", name));
+        return NOptional.ofEmpty(s -> NMsg.ofCstyle("var not found %s", name));
     }
 
     @Override
-    public NutsOptional<NutsExprFctDeclaration> getFunction(String name, Object... args) {
-        DecInfo<NutsExprFctDeclaration> f = userFunctions.get(name);
+    public NOptional<NExprFctDeclaration> getFunction(String name, Object... args) {
+        DecInfo<NExprFctDeclaration> f = userFunctions.get(name);
         if (f != null) {
             if (f.value != null) {
-                return NutsOptional.of(f.value);
+                return NOptional.of(f.value);
             }
         } else if (parent != null) {
             return parent.getFunction(name, args);
         }
-        return NutsOptional.ofEmpty(s -> NutsMessage.ofCstyle("function not found %s", name));
+        return NOptional.ofEmpty(s -> NMsg.ofCstyle("function not found %s", name));
     }
 
     @Override
-    public NutsOptional<NutsExprConstructDeclaration> getConstruct(String name, NutsExprNode... args) {
-        DecInfo<NutsExprConstructDeclaration> f = userConstructs.get(name);
+    public NOptional<NExprConstructDeclaration> getConstruct(String name, NExprNode... args) {
+        DecInfo<NExprConstructDeclaration> f = userConstructs.get(name);
         if (f != null) {
             if (f.value != null) {
-                return NutsOptional.of(f.value);
+                return NOptional.of(f.value);
             }
         } else if (parent != null) {
             return parent.getConstruct(name, args);
         }
-        return NutsOptional.ofEmpty(s -> NutsMessage.ofCstyle("construct not found %s", name));
+        return NOptional.ofEmpty(s -> NMsg.ofCstyle("construct not found %s", name));
     }
 
     @Override
-    public NutsExprVarDeclaration declareVar(String name, NutsExprVar varImpl) {
-        if (!NutsBlankable.isBlank(name)) {
+    public NExprVarDeclaration declareVar(String name, NExprVar varImpl) {
+        if (!NBlankable.isBlank(name)) {
             if (varImpl == null) {
                 userFunctions.put(name, REMOVED);
             } else {
-                DefaultNutsExprVarDeclaration r = new DefaultNutsExprVarDeclaration(name, varImpl);
+                DefaultNExprVarDeclaration r = new DefaultNExprVarDeclaration(name, varImpl);
                 userVars.put(name, new DecInfo<>(r));
                 return r;
             }
@@ -79,22 +79,22 @@ public class DefaultDeclarationMutableContext extends NutsExprDeclarationsBase i
     }
 
     @Override
-    public NutsExprVarDeclaration declareVar(String name) {
-        return declareVar(name, new DefaultNutsExprVarImpl());
+    public NExprVarDeclaration declareVar(String name) {
+        return declareVar(name, new DefaultNExprVarImpl());
     }
 
     @Override
-    public NutsExprVarDeclaration declareConstant(String name, Object value) {
-        return declareVar(name, new DefaultNutsExprConstImpl(value));
+    public NExprVarDeclaration declareConstant(String name, Object value) {
+        return declareVar(name, new DefaultNExprConstImpl(value));
     }
 
     @Override
-    public NutsExprFctDeclaration declareFunction(String name, NutsExprFct fctImpl) {
-        if (!NutsBlankable.isBlank(name)) {
+    public NExprFctDeclaration declareFunction(String name, NExprFct fctImpl) {
+        if (!NBlankable.isBlank(name)) {
             if (fctImpl == null) {
                 userFunctions.put(name, REMOVED);
             } else {
-                DefaultNutsExprFctDeclaration r = new DefaultNutsExprFctDeclaration(name, fctImpl);
+                DefaultNExprFctDeclaration r = new DefaultNExprFctDeclaration(name, fctImpl);
                 userFunctions.put(name, new DecInfo<>(r));
                 return r;
             }
@@ -103,12 +103,12 @@ public class DefaultDeclarationMutableContext extends NutsExprDeclarationsBase i
     }
 
     @Override
-    public NutsExprConstructDeclaration declareConstruct(String name, NutsExprConstruct constructImpl) {
-        if (!NutsBlankable.isBlank(name)) {
+    public NExprConstructDeclaration declareConstruct(String name, NExprConstruct constructImpl) {
+        if (!NBlankable.isBlank(name)) {
             if (constructImpl == null) {
                 userConstructs.put(name, REMOVED);
             } else {
-                NutsExprConstructDeclaration r = new DefaultNutsExprConstructDeclaration(name, constructImpl);
+                NExprConstructDeclaration r = new DefaultNExprConstructDeclaration(name, constructImpl);
                 userConstructs.put(name, new DecInfo<>(r));
                 return r;
             }
@@ -116,128 +116,65 @@ public class DefaultDeclarationMutableContext extends NutsExprDeclarationsBase i
         return null;
     }
 
-//    @Override
-//    public List<String> getFunctionNames() {
-//        LinkedHashSet<String> all = new LinkedHashSet<>();
-//        for (Map.Entry<String, NutsExprFct> e : userFunctions.entrySet()) {
-//            all.add(e.getKey());
-//        }
-//        if (parent != null) {
-//            for (String f : parent.getFunctionNames()) {
-//                Boolean s = userFunctionsFlag.get(f);
-//                if (s == null || s.booleanValue()) {
-//                    all.add(f);
-//                }
-//            }
-//        } else {
-//            for (String f : DefaultNutsExpr.defaultFunctions.keySet()) {
-//                Boolean s = userFunctionsFlag.get(f);
-//                if (s == null || s.booleanValue()) {
-//                    all.add(f);
-//                }
-//            }
-//        }
-//        return new ArrayList<>(all);
-//    }
-
-
-//    @Override
-//    public List<String> getOperatorNames(NutsExprOpType type) {
-//        if (type == null) {
-//            LinkedHashSet<String> all = new LinkedHashSet<>();
-//            for (NutsExprOpType value : NutsExprOpType.values()) {
-//                all.addAll((getOperatorNames(value)));
-//            }
-//            return new ArrayList<>(all);
-//        }
-//        LinkedHashSet<String> all = new LinkedHashSet<>();
-//        Map<String, NutsExprOp> ops = getOps(type);
-//
-//        Map<String, Boolean> opsFlag = getOpsFlag(type);
-//
-//        for (Map.Entry<String, NutsExprOp> e : ops.entrySet()) {
-//            all.add(e.getKey());
-//        }
-//        if (parent != null) {
-//            for (String f : parent.getFunctionNames()) {
-//                Boolean s = opsFlag.get(f);
-//                if (s == null || s.booleanValue()) {
-//                    all.add(f);
-//                }
-//            }
-//        } else {
-//            for (String f :
-//                    getStaticOps(type)
-//                            .keySet()) {
-//                Boolean s = opsFlag.get(f);
-//                if (s == null || s.booleanValue()) {
-//                    all.add(f);
-//                }
-//            }
-//        }
-//        return new ArrayList<>(all);
-//    }
-
-
     @Override
-    public NutsExprOpDeclaration declareOperator(String name, NutsExprConstruct impl) {
+    public NExprOpDeclaration declareOperator(String name, NExprConstruct impl) {
         return declareOperator(name,null,impl);
     }
 
     @Override
-    public NutsExprOpDeclaration declareOperator(String name, NutsExprOpType type, NutsExprConstruct impl) {
+    public NExprOpDeclaration declareOperator(String name, NExprOpType type, NExprConstruct impl) {
         switch (name){
             case "+":{
                 if(type==null){
-                    type=NutsExprOpType.INFIX;
+                    type= NExprOpType.INFIX;
                 }
                 switch (type){
                     case INFIX:{
-                        return declareOperator(name,type, NutsExprOpPrecedence.PLUS,NutsExprOpAssociativity.LEFT, impl);
+                        return declareOperator(name,type, NExprOpPrecedence.PLUS, NExprOpAssociativity.LEFT, impl);
                     }
                 }
                 break;
             }
             case "-":{
                 if(type==null){
-                    type=NutsExprOpType.INFIX;
+                    type= NExprOpType.INFIX;
                 }
                 switch (type){
                     case INFIX:{
-                        return declareOperator(name,type, NutsExprOpPrecedence.MINUS,NutsExprOpAssociativity.LEFT, impl);
+                        return declareOperator(name,type, NExprOpPrecedence.MINUS, NExprOpAssociativity.LEFT, impl);
                     }
                 }
                 break;
             }
             case "*":{
                 if(type==null){
-                    type=NutsExprOpType.INFIX;
+                    type= NExprOpType.INFIX;
                 }
                 switch (type){
                     case INFIX:{
-                        return declareOperator(name,type, NutsExprOpPrecedence.MUL,NutsExprOpAssociativity.LEFT, impl);
+                        return declareOperator(name,type, NExprOpPrecedence.MUL, NExprOpAssociativity.LEFT, impl);
                     }
                 }
                 break;
             }
             case "/":{
                 if(type==null){
-                    type=NutsExprOpType.INFIX;
+                    type= NExprOpType.INFIX;
                 }
                 switch (type){
                     case INFIX:{
-                        return declareOperator(name,type, NutsExprOpPrecedence.DIV,NutsExprOpAssociativity.LEFT, impl);
+                        return declareOperator(name,type, NExprOpPrecedence.DIV, NExprOpAssociativity.LEFT, impl);
                     }
                 }
                 break;
             }
             case "%":{
                 if(type==null){
-                    type=NutsExprOpType.INFIX;
+                    type= NExprOpType.INFIX;
                 }
                 switch (type){
                     case INFIX:{
-                        return declareOperator(name,type, NutsExprOpPrecedence.MOD,NutsExprOpAssociativity.LEFT, impl);
+                        return declareOperator(name,type, NExprOpPrecedence.MOD, NExprOpAssociativity.LEFT, impl);
                     }
                 }
                 break;
@@ -246,11 +183,11 @@ public class DefaultDeclarationMutableContext extends NutsExprDeclarationsBase i
             case "()":
             {
                 if(type==null){
-                    type=NutsExprOpType.POSTFIX;
+                    type= NExprOpType.POSTFIX;
                 }
                 switch (type){
                     case POSTFIX:{
-                        return declareOperator(name,type, NutsExprOpPrecedence.PARS,NutsExprOpAssociativity.LEFT, impl);
+                        return declareOperator(name,type, NExprOpPrecedence.PARS, NExprOpAssociativity.LEFT, impl);
                     }
                 }
                 break;
@@ -259,11 +196,11 @@ public class DefaultDeclarationMutableContext extends NutsExprDeclarationsBase i
             case "[]":
             {
                 if(type==null){
-                    type=NutsExprOpType.POSTFIX;
+                    type= NExprOpType.POSTFIX;
                 }
                 switch (type){
                     case POSTFIX:{
-                        return declareOperator(name,type, NutsExprOpPrecedence.BRACKETS,NutsExprOpAssociativity.LEFT, impl);
+                        return declareOperator(name,type, NExprOpPrecedence.BRACKETS, NExprOpAssociativity.LEFT, impl);
                     }
                 }
                 break;
@@ -272,11 +209,11 @@ public class DefaultDeclarationMutableContext extends NutsExprDeclarationsBase i
             case "{}":
             {
                 if(type==null){
-                    type=NutsExprOpType.POSTFIX;
+                    type= NExprOpType.POSTFIX;
                 }
                 switch (type){
                     case POSTFIX:{
-                        return declareOperator(name,type, NutsExprOpPrecedence.BRACES,NutsExprOpAssociativity.LEFT, impl);
+                        return declareOperator(name,type, NExprOpPrecedence.BRACES, NExprOpAssociativity.LEFT, impl);
                     }
                 }
                 break;
@@ -285,11 +222,11 @@ public class DefaultDeclarationMutableContext extends NutsExprDeclarationsBase i
             case "?.":
             {
                 if(type==null){
-                    type=NutsExprOpType.INFIX;
+                    type= NExprOpType.INFIX;
                 }
                 switch (type){
                     case INFIX:{
-                        return declareOperator(name,type, NutsExprOpPrecedence.DOT,NutsExprOpAssociativity.LEFT, impl);
+                        return declareOperator(name,type, NExprOpPrecedence.DOT, NExprOpAssociativity.LEFT, impl);
                     }
                 }
                 break;
@@ -300,11 +237,11 @@ public class DefaultDeclarationMutableContext extends NutsExprDeclarationsBase i
             case "<<<":
             {
                 if(type==null){
-                    type=NutsExprOpType.INFIX;
+                    type= NExprOpType.INFIX;
                 }
                 switch (type){
                     case INFIX:{
-                        return declareOperator(name,type, NutsExprOpPrecedence.SHIFT,NutsExprOpAssociativity.LEFT, impl);
+                        return declareOperator(name,type, NExprOpPrecedence.SHIFT, NExprOpAssociativity.LEFT, impl);
                     }
                 }
                 break;
@@ -315,11 +252,11 @@ public class DefaultDeclarationMutableContext extends NutsExprDeclarationsBase i
             case ">=":
             {
                 if(type==null){
-                    type=NutsExprOpType.INFIX;
+                    type= NExprOpType.INFIX;
                 }
                 switch (type){
                     case INFIX:{
-                        return declareOperator(name,type, NutsExprOpPrecedence.CMP,NutsExprOpAssociativity.LEFT, impl);
+                        return declareOperator(name,type, NExprOpPrecedence.CMP, NExprOpAssociativity.LEFT, impl);
                     }
                 }
                 break;
@@ -330,11 +267,11 @@ public class DefaultDeclarationMutableContext extends NutsExprDeclarationsBase i
             case "<>":
             {
                 if(type==null){
-                    type=NutsExprOpType.INFIX;
+                    type= NExprOpType.INFIX;
                 }
                 switch (type){
                     case INFIX:{
-                        return declareOperator(name,type, NutsExprOpPrecedence.EQ,NutsExprOpAssociativity.LEFT, impl);
+                        return declareOperator(name,type, NExprOpPrecedence.EQ, NExprOpAssociativity.LEFT, impl);
                     }
                 }
                 break;
@@ -342,11 +279,11 @@ public class DefaultDeclarationMutableContext extends NutsExprDeclarationsBase i
             case "&&":
             {
                 if(type==null){
-                    type=NutsExprOpType.INFIX;
+                    type= NExprOpType.INFIX;
                 }
                 switch (type){
                     case INFIX:{
-                        return declareOperator(name,type, NutsExprOpPrecedence.AND,NutsExprOpAssociativity.LEFT, impl);
+                        return declareOperator(name,type, NExprOpPrecedence.AND, NExprOpAssociativity.LEFT, impl);
                     }
                 }
                 break;
@@ -354,11 +291,11 @@ public class DefaultDeclarationMutableContext extends NutsExprDeclarationsBase i
             case "&":
             {
                 if(type==null){
-                    type=NutsExprOpType.INFIX;
+                    type= NExprOpType.INFIX;
                 }
                 switch (type){
                     case INFIX:{
-                        return declareOperator(name,type, NutsExprOpPrecedence.AMP,NutsExprOpAssociativity.LEFT, impl);
+                        return declareOperator(name,type, NExprOpPrecedence.AMP, NExprOpAssociativity.LEFT, impl);
                     }
                 }
                 break;
@@ -366,11 +303,11 @@ public class DefaultDeclarationMutableContext extends NutsExprDeclarationsBase i
             case "||":
             {
                 if(type==null){
-                    type=NutsExprOpType.INFIX;
+                    type= NExprOpType.INFIX;
                 }
                 switch (type){
                     case INFIX:{
-                        return declareOperator(name,type, NutsExprOpPrecedence.OR,NutsExprOpAssociativity.LEFT, impl);
+                        return declareOperator(name,type, NExprOpPrecedence.OR, NExprOpAssociativity.LEFT, impl);
                     }
                 }
                 break;
@@ -378,11 +315,11 @@ public class DefaultDeclarationMutableContext extends NutsExprDeclarationsBase i
             case "|":
             {
                 if(type==null){
-                    type=NutsExprOpType.INFIX;
+                    type= NExprOpType.INFIX;
                 }
                 switch (type){
                     case INFIX:{
-                        return declareOperator(name,type, NutsExprOpPrecedence.PIPE,NutsExprOpAssociativity.LEFT, impl);
+                        return declareOperator(name,type, NExprOpPrecedence.PIPE, NExprOpAssociativity.LEFT, impl);
                     }
                 }
                 break;
@@ -390,11 +327,11 @@ public class DefaultDeclarationMutableContext extends NutsExprDeclarationsBase i
             case "??":
             {
                 if(type==null){
-                    type=NutsExprOpType.INFIX;
+                    type= NExprOpType.INFIX;
                 }
                 switch (type){
                     case INFIX:{
-                        return declareOperator(name,type, NutsExprOpPrecedence.COALESCE,NutsExprOpAssociativity.LEFT, impl);
+                        return declareOperator(name,type, NExprOpPrecedence.COALESCE, NExprOpAssociativity.LEFT, impl);
                     }
                 }
                 break;
@@ -403,19 +340,19 @@ public class DefaultDeclarationMutableContext extends NutsExprDeclarationsBase i
         throw new IllegalArgumentException("unsupported operator "+name);
     }
 
-    public NutsExprOpDeclaration declareOperator(String name, NutsExprOpType type, int precedence, NutsExprOpAssociativity associativity, NutsExprConstruct impl) {
-        if (!NutsBlankable.isBlank(name) && type != null) {
+    public NExprOpDeclaration declareOperator(String name, NExprOpType type, int precedence, NExprOpAssociativity associativity, NExprConstruct impl) {
+        if (!NBlankable.isBlank(name) && type != null) {
             if (impl == null) {
-                this.ops.put(new NutsExprOpNameAndType(name, type), REMOVED);
+                this.ops.put(new NExprOpNameAndType(name, type), REMOVED);
             } else {
-                DefaultNutsExprOpDeclaration r = new DefaultNutsExprOpDeclaration(name, new NutsExprOp() {
+                DefaultNExprOpDeclaration r = new DefaultNExprOpDeclaration(name, new NExprOp() {
                     @Override
-                    public NutsExprOpAssociativity getAssociativity() {
+                    public NExprOpAssociativity getAssociativity() {
                         return associativity;
                     }
 
                     @Override
-                    public NutsExprOpType getType() {
+                    public NExprOpType getType() {
                         return type;
                     }
 
@@ -425,11 +362,11 @@ public class DefaultDeclarationMutableContext extends NutsExprDeclarationsBase i
                     }
 
                     @Override
-                    public Object eval(String name, List<NutsExprNode> args, NutsExprDeclarations context) {
+                    public Object eval(String name, List<NExprNode> args, NExprDeclarations context) {
                         return impl.eval(name, args, context);
                     }
                 });
-                this.ops.put(new NutsExprOpNameAndType(name, type), new DecInfo<>(r));
+                this.ops.put(new NExprOpNameAndType(name, type), new DecInfo<>(r));
                 return r;
             }
         }
@@ -437,76 +374,76 @@ public class DefaultDeclarationMutableContext extends NutsExprDeclarationsBase i
     }
 
     @Override
-    public NutsOptional<NutsExprOpDeclaration> getOperator(String opName, NutsExprOpType type, NutsExprNode... nodes) {
-        DecInfo<NutsExprOpDeclaration> f = this.ops.get(new NutsExprOpNameAndType(opName, type));
+    public NOptional<NExprOpDeclaration> getOperator(String opName, NExprOpType type, NExprNode... nodes) {
+        DecInfo<NExprOpDeclaration> f = this.ops.get(new NExprOpNameAndType(opName, type));
         if (f != null) {
             if (f.value != null) {
-                return NutsOptional.of(f.value);
+                return NOptional.of(f.value);
             }
         } else if (parent != null) {
             return parent.getOperator(opName, type);
         }
-        return NutsOptional.ofEmpty(s -> NutsMessage.ofCstyle("operator not found %s", opName));
+        return NOptional.ofEmpty(s -> NMsg.ofCstyle("operator not found %s", opName));
     }
 
     @Override
-    public void resetDeclaration(NutsExprVarDeclaration member) {
+    public void resetDeclaration(NExprVarDeclaration member) {
         if (member != null) {
             userVars.remove(member.getName());
         }
     }
 
     @Override
-    public void removeDeclaration(NutsExprVarDeclaration member) {
+    public void removeDeclaration(NExprVarDeclaration member) {
         if (member != null) {
             userVars.put(member.getName(), REMOVED);
         }
     }
 
     @Override
-    public void resetDeclaration(NutsExprFctDeclaration member) {
+    public void resetDeclaration(NExprFctDeclaration member) {
         if (member != null) {
             userFunctions.remove(member.getName());
         }
     }
 
     @Override
-    public void removeDeclaration(NutsExprFctDeclaration member) {
+    public void removeDeclaration(NExprFctDeclaration member) {
         if (member != null) {
             userFunctions.put(member.getName(), REMOVED);
         }
     }
 
     @Override
-    public void resetDeclaration(NutsExprConstructDeclaration member) {
+    public void resetDeclaration(NExprConstructDeclaration member) {
         if (member != null) {
             userConstructs.remove(member.getName());
         }
     }
 
     @Override
-    public void removeDeclaration(NutsExprConstructDeclaration member) {
+    public void removeDeclaration(NExprConstructDeclaration member) {
         if (member != null) {
             userConstructs.put(member.getName(), REMOVED);
         }
     }
 
     @Override
-    public void resetDeclaration(NutsExprOpDeclaration member) {
+    public void resetDeclaration(NExprOpDeclaration member) {
         if (member != null) {
             this.ops.remove(t(member));
         }
     }
 
     @Override
-    public void removeDeclaration(NutsExprOpDeclaration member) {
+    public void removeDeclaration(NExprOpDeclaration member) {
         if (member != null) {
             this.ops.put(t(member), REMOVED);
         }
     }
 
-    private NutsExprOpNameAndType t(NutsExprOpDeclaration member) {
-        return new NutsExprOpNameAndType(member.getName(), member.getType());
+    private NExprOpNameAndType t(NExprOpDeclaration member) {
+        return new NExprOpNameAndType(member.getName(), member.getType());
     }
 
 
@@ -519,18 +456,18 @@ public class DefaultDeclarationMutableContext extends NutsExprDeclarationsBase i
     }
 
     @Override
-    public List<NutsExprOpDeclaration> getOperators() {
-        List<NutsExprOpDeclaration> all = new ArrayList<>();
+    public List<NExprOpDeclaration> getOperators() {
+        List<NExprOpDeclaration> all = new ArrayList<>();
         if (parent != null) {
-            for (NutsExprOpDeclaration o : parent.getOperators()) {
-                DecInfo<NutsExprOpDeclaration> y = this.ops.get(new NutsExprOpNameAndType(o.getName(), o.getType()));
+            for (NExprOpDeclaration o : parent.getOperators()) {
+                DecInfo<NExprOpDeclaration> y = this.ops.get(new NExprOpNameAndType(o.getName(), o.getType()));
                 if (y == null) {
                     all.add(o);
                 }
             }
         }
-        for (NutsExprOpType t : NutsExprOpType.values()) {
-            for (DecInfo<NutsExprOpDeclaration> value : this.ops.values()) {
+        for (NExprOpType t : NExprOpType.values()) {
+            for (DecInfo<NExprOpDeclaration> value : this.ops.values()) {
                 if (value.value != null) {
                     all.add(value.value);
                 }
@@ -539,34 +476,34 @@ public class DefaultDeclarationMutableContext extends NutsExprDeclarationsBase i
         return all;
     }
 
-    private static class DefaultNutsExprConstImpl implements NutsExprVar {
+    private static class DefaultNExprConstImpl implements NExprVar {
         private Object value;
 
-        public DefaultNutsExprConstImpl(Object value) {
+        public DefaultNExprConstImpl(Object value) {
             this.value = value;
         }
 
         @Override
-        public Object get(String name, NutsExprDeclarations context) {
+        public Object get(String name, NExprDeclarations context) {
             return value;
         }
 
         @Override
-        public Object set(String name, Object value, NutsExprDeclarations context) {
+        public Object set(String name, Object value, NExprDeclarations context) {
             return this.value;
         }
     }
 
-    private static class DefaultNutsExprVarImpl implements NutsExprVar {
+    private static class DefaultNExprVarImpl implements NExprVar {
         private Object value;
 
         @Override
-        public Object get(String name, NutsExprDeclarations context) {
+        public Object get(String name, NExprDeclarations context) {
             return value;
         }
 
         @Override
-        public Object set(String name, Object value, NutsExprDeclarations context) {
+        public Object set(String name, Object value, NExprDeclarations context) {
             Object old = this.value;
             this.value = value;
             return old;

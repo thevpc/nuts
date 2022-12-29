@@ -24,11 +24,11 @@
 package net.thevpc.nuts.runtime.standalone.repository.impl.maven;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.io.NutsPath;
-import net.thevpc.nuts.runtime.standalone.repository.NutsRepositorySelectorHelper;
-import net.thevpc.nuts.runtime.standalone.repository.util.NutsRepositoryUtils;
+import net.thevpc.nuts.io.NPath;
+import net.thevpc.nuts.runtime.standalone.repository.NRepositorySelectorHelper;
+import net.thevpc.nuts.runtime.standalone.repository.util.NRepositoryUtils;
 import net.thevpc.nuts.spi.*;
-import net.thevpc.nuts.util.NutsStringUtils;
+import net.thevpc.nuts.util.NStringUtils;
 
 import java.util.Arrays;
 import java.util.List;
@@ -37,30 +37,30 @@ import java.util.Objects;
 /**
  * Created by vpc on 1/15/17.
  */
-@NutsComponentScope(NutsComponentScopeType.WORKSPACE)
-public class MavenRepositoryFactoryComponent implements NutsRepositoryFactoryComponent {
+@NComponentScope(NComponentScopeType.WORKSPACE)
+public class MavenRepositoryFactoryComponent implements NRepositoryFactoryComponent {
 
     @Override
-    public List<NutsAddRepositoryOptions> getDefaultRepositories(NutsSession session) {
+    public List<NAddRepositoryOptions> getDefaultRepositories(NSession session) {
         return Arrays.asList(
-                NutsRepositorySelectorHelper.createRepositoryOptions(
-                        Objects.requireNonNull(NutsRepositoryLocation.of("maven-local", NutsRepositoryDB.of(session), session)),
+                NRepositorySelectorHelper.createRepositoryOptions(
+                        Objects.requireNonNull(NRepositoryLocation.of("maven-local", NRepositoryDB.of(session), session)),
                         true, session),
-                NutsRepositorySelectorHelper.createRepositoryOptions(
-                        Objects.requireNonNull(NutsRepositoryLocation.of("maven-central", NutsRepositoryDB.of(session), session)),
+                NRepositorySelectorHelper.createRepositoryOptions(
+                        Objects.requireNonNull(NRepositoryLocation.of("maven-central", NRepositoryDB.of(session), session)),
                         true, session)
         );
     }
 
     @Override
-    public NutsRepository create(NutsAddRepositoryOptions options, NutsSession session, NutsRepository parentRepository) {
-        final NutsRepositoryConfig config = options.getConfig();
-        String type = NutsRepositoryUtils.getRepoType(config);
-        if (NutsBlankable.isBlank(type)) {
+    public NRepository create(NAddRepositoryOptions options, NSession session, NRepository parentRepository) {
+        final NRepositoryConfig config = options.getConfig();
+        String type = NRepositoryUtils.getRepoType(config);
+        if (NBlankable.isBlank(type)) {
             return null;
         }
-        NutsPath p = NutsPath.of(config.getLocation().getPath(), session);
-        String pr = NutsStringUtils.trim(p.getProtocol());
+        NPath p = NPath.of(config.getLocation().getPath(), session);
+        String pr = NStringUtils.trim(p.getProtocol());
         switch (pr) {
             //non traversable!
             case "http":
@@ -72,20 +72,20 @@ public class MavenRepositoryFactoryComponent implements NutsRepositoryFactoryCom
     }
 
     @Override
-    public int getSupportLevel(NutsSupportLevelContext criteria) {
+    public int getSupportLevel(NSupportLevelContext criteria) {
         if (criteria == null) {
             return NO_SUPPORT;
         }
-        NutsRepositoryConfig r = criteria.getConstraints(NutsRepositoryConfig.class);
+        NRepositoryConfig r = criteria.getConstraints(NRepositoryConfig.class);
         if (r != null) {
-            String type = NutsRepositoryUtils.getRepoType(r);
-            if (NutsBlankable.isBlank(type)) {
+            String type = NRepositoryUtils.getRepoType(r);
+            if (NBlankable.isBlank(type)) {
                 return NO_SUPPORT;
             }
-            if (NutsConstants.RepoTypes.MAVEN.equals(type)) {
+            if (NConstants.RepoTypes.MAVEN.equals(type)) {
                 return DEFAULT_SUPPORT + 10;
             }
-            if (NutsBlankable.isBlank(type)) {
+            if (NBlankable.isBlank(type)) {
                 return DEFAULT_SUPPORT + 5;
             }
         }

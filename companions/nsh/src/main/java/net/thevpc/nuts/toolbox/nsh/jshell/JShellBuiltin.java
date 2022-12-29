@@ -31,14 +31,14 @@
 */
 package net.thevpc.nuts.toolbox.nsh.jshell;
 
-import net.thevpc.nuts.cmdline.NutsCommandAutoComplete;
-import net.thevpc.nuts.spi.NutsComponent;
+import net.thevpc.nuts.cmdline.NCommandAutoComplete;
+import net.thevpc.nuts.spi.NComponent;
 
 /**
  * @author thevpc (taha.bensalah@gmail.com)
  * %lastmodified 26 oct. 2004 Time: 23:06:32
  */
-public interface JShellBuiltin extends NutsComponent {
+public interface JShellBuiltin extends NComponent {
 
     /**
      * exec and return error code
@@ -57,7 +57,7 @@ public interface JShellBuiltin extends NutsComponent {
 
     String getHelpHeader();
 
-    default void autoComplete(JShellExecutionContext context, NutsCommandAutoComplete autoComplete) {
+    default void autoComplete(JShellExecutionContext context, NCommandAutoComplete autoComplete) {
 
     }
 }
