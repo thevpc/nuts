@@ -34,6 +34,7 @@ import net.thevpc.nuts.util.NUtils;
 
 import java.text.MessageFormat;
 import java.util.*;
+import java.util.function.Function;
 import java.util.logging.Level;
 
 public class NMsg {
@@ -137,6 +138,10 @@ public class NMsg {
         return of(NTextFormatStyle.VSTYLE, message, new Object[]{vars}, null, null, null);
     }
 
+    public static NMsg ofVstyle(String message, Function<String, ?> vars) {
+        return of(NTextFormatStyle.VSTYLE, message, new Object[]{vars}, null, null, null);
+    }
+
     @Deprecated
     public static NMsg ofJstyle(String message) {
         return of(NTextFormatStyle.JSTYLE, message, NO_PARAMS, null, null, null);
@@ -197,8 +202,14 @@ public class NMsg {
     private String formatAsVStyle() {
         return NStringUtils.replaceDollarString((String) message,
                 s -> {
-                    Map<String, ?> m = (Map<String, ?>) (params[0]);
-                    Object v = m.get(s);
+                    Object param = params[0];
+                    Function<String, ?> m = null;
+                    if(param instanceof Map){
+                        m=x->((Map<String, ?>) param).get(x);
+                    }else{
+                        m=(Function<String, ?>) param;
+                    }
+                    Object v = m.apply(s);
                     if (v != null) {
                         return String.valueOf(v);
                     }

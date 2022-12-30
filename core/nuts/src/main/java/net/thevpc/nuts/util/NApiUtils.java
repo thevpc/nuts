@@ -126,7 +126,7 @@ public class NApiUtils {
                 bo.setGui(false);
             }
         } catch (Exception e) {
-            //exception may occur if the sdk is build without awt package for instance!
+            //exception may occur if the sdk is built without awt package for instance!
             bo.setGui(false);
         }
         boolean bot = bo.getBot().orElse(false);
