@@ -27,9 +27,9 @@
 package net.thevpc.nuts.text;
 
 import net.thevpc.nuts.NSession;
+import net.thevpc.nuts.util.NAssert;
 import net.thevpc.nuts.util.NStream;
 import net.thevpc.nuts.NString;
-import net.thevpc.nuts.util.NUtils;
 
 import java.util.Collection;
 import java.util.List;
@@ -39,7 +39,7 @@ import java.util.List;
  */
 public interface NTextBuilder extends NString {
     static NTextBuilder of(NSession session) {
-        NUtils.requireSession(session);
+        NAssert.requireSession(session);
         return NTexts.of(session).ofBuilder();
     }
 

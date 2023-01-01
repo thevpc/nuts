@@ -9,7 +9,7 @@ import net.thevpc.nuts.*;
 import net.thevpc.nuts.cmdline.NArgumentName;
 import net.thevpc.nuts.cmdline.NCommandLine;
 import net.thevpc.nuts.elem.NElementNotFoundException;
-import net.thevpc.nuts.io.NStream;
+import net.thevpc.nuts.io.NOutStream;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.AbstractNSettingsSubCommand;
 
 import java.util.Arrays;
@@ -59,7 +59,7 @@ public class NSettingsUserSubCommand extends AbstractNSettingsSubCommand {
             }
             return true;
         } else {
-            NStream out = session.out();
+            NOutStream out = session.out();
             if (cmdLine.next("list users", "lu").isPresent()) {
                 NRepository repository = null;
                 if (editedRepo != null) {

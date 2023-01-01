@@ -33,7 +33,7 @@ import net.thevpc.nuts.lib.ssh.SShConnection;
 import net.thevpc.nuts.toolbox.nsh.SimpleJShellBuiltin;
 import net.thevpc.nuts.toolbox.nsh.jshell.JShellExecutionContext;
 import net.thevpc.nuts.toolbox.nsh.util.ShellHelper;
-import net.thevpc.nuts.util.NUtils;
+import net.thevpc.nuts.util.NAssert;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -91,8 +91,8 @@ public class SshCommand extends SimpleJShellBuiltin {
         Options o = context.getOptions();
         // address --nuts [nuts options] args
         NSession session = context.getSession();
-        NUtils.requireNonBlank(o.address, "ssh address", session);
-        NUtils.requireNonBlank(o.cmd, () -> NMsg.ofPlain("missing ssh command. Interactive ssh is not yet supported!"), session);
+        NAssert.requireNonBlank(o.address, "ssh address", session);
+        NAssert.requireNonBlank(o.cmd, () -> NMsg.ofPlain("missing ssh command. Interactive ssh is not yet supported!"), session);
         ShellHelper.WsSshListener listener = new ShellHelper.WsSshListener(session);
         try (SShConnection sshSession = new SShConnection(o.address, session)
                 .addListener(listener)) {
@@ -131,7 +131,7 @@ public class SshCommand extends SimpleJShellBuiltin {
                     }
                     if (!nutsCommandFound) {
                         NPath from = session.search().addId(session.getWorkspace().getApiId()).getResultDefinitions().required().getContent().orNull();
-                        NUtils.requireNonNull(from, "jar file", session);
+                        NAssert.requireNonNull(from, "jar file", session);
                         context.out().printf("Detected nuts.jar location : %s\n", from);
                         String bootApiFileName = "nuts-" + session.getWorkspace().getApiId() + ".jar";
                         sshSession.setFailFast(true).copyLocalToRemote(from.toString(), workspace + "/" + bootApiFileName, true);

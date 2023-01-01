@@ -9,12 +9,12 @@ import net.thevpc.nuts.*;
 import net.thevpc.nuts.cmdline.NArgument;
 import net.thevpc.nuts.cmdline.NCommandLine;
 import net.thevpc.nuts.elem.NElements;
-import net.thevpc.nuts.io.NStream;
+import net.thevpc.nuts.io.NOutStream;
 import net.thevpc.nuts.runtime.standalone.app.util.NAppUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.exec.DefaultInternalNExecutableCommand;
 import net.thevpc.nuts.text.NTextStyle;
 import net.thevpc.nuts.text.NTexts;
-import net.thevpc.nuts.util.NUtils;
+import net.thevpc.nuts.util.NAssert;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -57,10 +57,10 @@ public class DefaultNWhichInternalExecutable extends DefaultInternalNExecutableC
                 commandLine.skipAll();
             }
         }
-        NUtils.requireNonBlank(commands, "commands", session);
+        NAssert.requireNonBlank(commands, "commands", session);
         NTexts factory = NTexts.of(session);
         for (String arg : commands) {
-            NStream out = session.out();
+            NOutStream out = session.out();
             NElements elem = NElements.of(session);
             try {
                 NExecutableInformation p = execCommand.copy().setSession(session).clearCommand().configure(false, arg).which();

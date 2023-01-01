@@ -1,18 +1,18 @@
 package net.thevpc.nuts.runtime.standalone.io.terminal;
 
 import net.thevpc.nuts.NMsg;
-import net.thevpc.nuts.io.NStream;
+import net.thevpc.nuts.io.NOutStream;
 import net.thevpc.nuts.NSession;
 import net.thevpc.nuts.io.NSessionTerminal;
 
 public abstract class AbstractNSessionTerminal implements NSessionTerminal {
     @Override
-    public String readLine(NStream out, String prompt, Object... params) {
+    public String readLine(NOutStream out, String prompt, Object... params) {
         return readLine(out, NMsg.ofCstyle(prompt,params));
     }
 
     @Override
-    public char[] readPassword(NStream out, String prompt, Object... params) {
+    public char[] readPassword(NOutStream out, String prompt, Object... params) {
         return readPassword(out, NMsg.ofCstyle(prompt,params));
     }
 

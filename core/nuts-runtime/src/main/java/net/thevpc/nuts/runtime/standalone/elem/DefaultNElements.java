@@ -29,8 +29,8 @@ import net.thevpc.nuts.runtime.standalone.format.tree.DefaultSearchFormatTree;
 import net.thevpc.nuts.runtime.standalone.format.xml.DefaultSearchFormatXml;
 import net.thevpc.nuts.spi.NSupportLevelContext;
 import net.thevpc.nuts.text.NTexts;
+import net.thevpc.nuts.util.NAssert;
 import net.thevpc.nuts.util.NProgressFactory;
-import net.thevpc.nuts.util.NUtils;
 
 public class DefaultNElements extends DefaultFormatBase<NElements> implements NElements {
 
@@ -418,7 +418,7 @@ public class DefaultNElements extends DefaultFormatBase<NElements> implements NE
     public NCustomElement ofCustom(Object object) {
         checkSession();
         NSession session = getSession();
-        NUtils.requireNonNull(object, "custom element", session);
+        NAssert.requireNonNull(object, "custom element", session);
         return new DefaultNCustomElement(object, session);
     }
 
@@ -579,7 +579,7 @@ public class DefaultNElements extends DefaultFormatBase<NElements> implements NE
     }
 
     @Override
-    public NIterableFormat iter(NStream writer) {
+    public NIterableFormat iter(NOutStream writer) {
         switch (getContentType()) {
             case JSON:
                 return new DefaultSearchFormatJson(getSession(), writer, new NFetchDisplayOptions(getSession()));
@@ -643,11 +643,11 @@ public class DefaultNElements extends DefaultFormatBase<NElements> implements NE
         return false;
     }
 
-    private void print(NStream out, NElementStreamFormat format) {
+    private void print(NOutStream out, NElementStreamFormat format) {
         checkSession();
         NElement elem = toElement(value);
         if (out.isNtf()) {
-            NStream bos = NMemoryStream.of(getSession());
+            NOutStream bos = NOutMemoryStream.of(getSession());
             format.printElement(elem, bos, compact, createFactoryContext());
             out.print(NTexts.of(getSession()).ofCode(getContentType().id(), bos.toString()));
         } else {
@@ -657,7 +657,7 @@ public class DefaultNElements extends DefaultFormatBase<NElements> implements NE
     }
 
     @Override
-    public void print(NStream out) {
+    public void print(NOutStream out) {
         print(out, resolveStructuredFormat());
     }
 

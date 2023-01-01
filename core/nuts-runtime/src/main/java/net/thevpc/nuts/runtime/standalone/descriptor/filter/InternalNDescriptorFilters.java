@@ -9,7 +9,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import net.thevpc.nuts.spi.NSupportLevelContext;
-import net.thevpc.nuts.util.NUtils;
+import net.thevpc.nuts.util.NAssert;
 
 public class InternalNDescriptorFilters extends InternalNTypedFilters<NDescriptorFilter>
         implements NDescriptorFilters {
@@ -205,7 +205,7 @@ public class InternalNDescriptorFilters extends InternalNTypedFilters<NDescripto
         }
         NDescriptorFilter t = as(a);
         NSession session = getSession();
-        NUtils.requireNonNull(t, "DescriptorFilter", session);
+        NAssert.requireNonNull(t, "DescriptorFilter", session);
         return t;
     }
 

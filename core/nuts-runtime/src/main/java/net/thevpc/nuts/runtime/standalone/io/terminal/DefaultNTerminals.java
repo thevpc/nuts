@@ -1,8 +1,8 @@
 package net.thevpc.nuts.runtime.standalone.io.terminal;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.io.NMemoryStream;
-import net.thevpc.nuts.io.NStream;
+import net.thevpc.nuts.io.NOutMemoryStream;
+import net.thevpc.nuts.io.NOutStream;
 import net.thevpc.nuts.io.NSessionTerminal;
 import net.thevpc.nuts.runtime.standalone.boot.DefaultNBootModel;
 import net.thevpc.nuts.runtime.standalone.session.NSessionUtils;
@@ -50,7 +50,7 @@ public class DefaultNTerminals implements NTerminals {
     }
 
     @Override
-    public NSessionTerminal createTerminal(InputStream in, NStream out, NStream err, NSession session) {
+    public NSessionTerminal createTerminal(InputStream in, NOutStream out, NOutStream err, NSession session) {
         checkSession(session);
         return cmodel.createTerminal(in, out, err, session);
     }
@@ -80,8 +80,8 @@ public class DefaultNTerminals implements NTerminals {
     @Override
     public NSessionTerminal createMemTerminal(boolean mergeErr, NSession session) {
         ByteArrayInputStream in = new ByteArrayInputStream(new byte[0]);
-        NMemoryStream out = NMemoryStream.of(session);
-        NMemoryStream err = mergeErr ? out : NMemoryStream.of(session);
+        NOutMemoryStream out = NOutMemoryStream.of(session);
+        NOutMemoryStream err = mergeErr ? out : NOutMemoryStream.of(session);
         return createTerminal(in, out, err, session);
     }
 

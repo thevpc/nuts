@@ -6,6 +6,7 @@ import net.thevpc.nuts.format.NTreeVisitor;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.io.NPathOption;
 import net.thevpc.nuts.io.NPathPermission;
+import net.thevpc.nuts.io.NOutStream;
 import net.thevpc.nuts.spi.NFormatSPI;
 import net.thevpc.nuts.spi.NPathSPI;
 import net.thevpc.nuts.text.NTextBuilder;
@@ -326,7 +327,7 @@ public abstract class AbstractPathSPIAdapter implements NPathSPI {
         }
 
         @Override
-        public void print(net.thevpc.nuts.io.NStream out) {
+        public void print(NOutStream out) {
             out.print(asFormattedString());
         }
 

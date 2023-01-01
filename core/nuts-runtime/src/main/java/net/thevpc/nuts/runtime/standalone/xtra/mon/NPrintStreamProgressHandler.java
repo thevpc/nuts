@@ -2,7 +2,7 @@ package net.thevpc.nuts.runtime.standalone.xtra.mon;
 
 import net.thevpc.nuts.NMsg;
 import net.thevpc.nuts.NSession;
-import net.thevpc.nuts.io.NStream;
+import net.thevpc.nuts.io.NOutStream;
 import net.thevpc.nuts.util.NProgressHandlerEvent;
 import net.thevpc.nuts.util.NProgressHandler;
 
@@ -10,7 +10,7 @@ import java.util.logging.Level;
 
 public class NPrintStreamProgressHandler implements NProgressHandler {
     private String messageFormat;
-    private NStream printStream;
+    private NOutStream printStream;
 
 
     /**
@@ -19,7 +19,7 @@ public class NPrintStreamProgressHandler implements NProgressHandler {
      *
      * @param messageFormat
      */
-    public NPrintStreamProgressHandler(String messageFormat, NStream printStream, NSession session) {
+    public NPrintStreamProgressHandler(String messageFormat, NOutStream printStream, NSession session) {
         this.messageFormat = JLogProgressHandler.resolveFormat(messageFormat);
         if (printStream == null) {
             printStream = session.out();

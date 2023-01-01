@@ -38,14 +38,14 @@ import net.thevpc.nuts.cmdline.NArgument;
 import net.thevpc.nuts.cmdline.NCommandLine;
 import net.thevpc.nuts.io.NCp;
 import net.thevpc.nuts.io.NPath;
-import net.thevpc.nuts.io.NStream;
+import net.thevpc.nuts.io.NOutStream;
 import net.thevpc.nuts.text.*;
 import net.thevpc.nuts.toolbox.nsh.SimpleJShellBuiltin;
 import net.thevpc.nuts.toolbox.nsh.jshell.JShellExecutionContext;
 import net.thevpc.nuts.toolbox.nsh.util.ColumnRuler;
 import net.thevpc.nuts.toolbox.nsh.util.FileInfo;
+import net.thevpc.nuts.util.NAssert;
 import net.thevpc.nuts.util.NStringUtils;
-import net.thevpc.nuts.util.NUtils;
 
 /**
  * Created by vpc on 1/7/17.
@@ -104,12 +104,12 @@ public class GrepCommand extends SimpleJShellBuiltin {
     @Override
     protected void execBuiltin(NCommandLine commandLine, JShellExecutionContext context) {
         Options options = context.getOptions();
-        NStream out = context.out();
+        NOutStream out = context.out();
         if (options.files.isEmpty()) {
             options.files.add(null);
         }
         NSession session = context.getSession();
-        NUtils.requireNonBlank(options.expression, "expression", session);
+        NAssert.requireNonBlank(options.expression, "expression", session);
         String baseExpr = simpexpToRegexp(options.expression, true);
         if (options.word) {
             baseExpr = "\\b" + baseExpr + "\\b";

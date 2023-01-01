@@ -1,8 +1,8 @@
 package net.thevpc.nuts.util;
 
 import net.thevpc.nuts.format.NPositionType;
-import net.thevpc.nuts.io.NPlainStream;
-import net.thevpc.nuts.io.NStream;
+import net.thevpc.nuts.io.NOutPlainStream;
+import net.thevpc.nuts.io.NOutStream;
 import net.thevpc.nuts.text.NTextStyle;
 
 import java.text.DecimalFormat;
@@ -70,7 +70,7 @@ public class DefaultNDurationFormat {
         return format(NDuration.ofDuration(duration));
     }
 
-    public void formatUnit(NDuration duration, ChronoUnit unit, Set<ChronoUnit> processed, NStream out) {
+    public void formatUnit(NDuration duration, ChronoUnit unit, Set<ChronoUnit> processed, NOutStream out) {
         int uordinal = unit.ordinal();
         long unitValue = duration.get(unit);
         ChronoUnit[] chronoValues = ChronoUnit.values();
@@ -200,12 +200,12 @@ public class DefaultNDurationFormat {
     }
 
     public String format(NDuration duration) {
-        NStream sb = new NPlainStream();
+        NOutStream sb = new NOutPlainStream();
         print(duration, sb);
         return sb.toString();
     }
 
-    public void print(NDuration duration, NStream out) {
+    public void print(NDuration duration, NOutStream out) {
         HashSet<ChronoUnit> processed = new HashSet<>();
         for (ChronoUnit chronoUnit : new ChronoUnit[]{
                 ChronoUnit.YEARS, ChronoUnit.MONTHS, ChronoUnit.WEEKS, ChronoUnit.DAYS,

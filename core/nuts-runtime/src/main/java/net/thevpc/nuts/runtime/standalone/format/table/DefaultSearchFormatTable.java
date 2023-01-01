@@ -12,7 +12,7 @@ import net.thevpc.nuts.cmdline.NArgument;
 import net.thevpc.nuts.cmdline.NCommandLine;
 import net.thevpc.nuts.format.NMutableTableModel;
 import net.thevpc.nuts.format.NTableFormat;
-import net.thevpc.nuts.io.NStream;
+import net.thevpc.nuts.io.NOutStream;
 import net.thevpc.nuts.runtime.standalone.format.NIdFormatHelper;
 import net.thevpc.nuts.runtime.standalone.format.DefaultSearchFormatBase;
 import net.thevpc.nuts.runtime.standalone.format.NFetchDisplayOptions;
@@ -27,7 +27,7 @@ public class DefaultSearchFormatTable extends DefaultSearchFormatBase {
     private NTableFormat table;
     private NMutableTableModel model;
 
-    public DefaultSearchFormatTable(NSession session, NStream writer, NFetchDisplayOptions options) {
+    public DefaultSearchFormatTable(NSession session, NOutStream writer, NFetchDisplayOptions options) {
         super(session, writer, NContentType.TABLE, options);
     }
 

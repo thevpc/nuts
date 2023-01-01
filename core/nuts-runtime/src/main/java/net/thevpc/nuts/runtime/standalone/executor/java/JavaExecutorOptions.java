@@ -15,8 +15,8 @@ import net.thevpc.nuts.runtime.standalone.dependency.util.NClassLoaderUtils;
 import net.thevpc.nuts.text.NTextBuilder;
 import net.thevpc.nuts.text.NTextStyle;
 import net.thevpc.nuts.text.NTexts;
+import net.thevpc.nuts.util.NAssert;
 import net.thevpc.nuts.util.NStringUtils;
-import net.thevpc.nuts.util.NUtils;
 
 import java.net.URL;
 import java.nio.file.Path;
@@ -283,7 +283,7 @@ public final class JavaExecutorOptions {
                 }
             }
             NId finalId = id;
-            NUtils.requireNonNull(mainClass, () -> NMsg.ofCstyle("missing Main Class for %s", finalId), session);
+            NAssert.requireNonNull(mainClass, () -> NMsg.ofCstyle("missing Main Class for %s", finalId), session);
             boolean baseDetected = false;
             for (NDefinition nDefinition : nDefinitions) {
                 NClassLoaderNode nn = null;
@@ -306,7 +306,7 @@ public final class JavaExecutorOptions {
                 }
             }
             if (!isExcludeBase() && !baseDetected) {
-                NUtils.requireNonNull(path, () -> NMsg.ofCstyle("missing path %s", finalId), session);
+                NAssert.requireNonNull(path, () -> NMsg.ofCstyle("missing path %s", finalId), session);
                 currentCP.add(0, NClassLoaderUtils.definitionToClassLoaderNode(def, session));
             }
             classPathNodes.addAll(currentCP);

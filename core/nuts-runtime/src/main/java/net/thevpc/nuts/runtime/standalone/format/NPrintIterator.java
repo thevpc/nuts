@@ -11,7 +11,7 @@ import net.thevpc.nuts.*;
 import net.thevpc.nuts.elem.NElement;
 import net.thevpc.nuts.elem.NElements;
 import net.thevpc.nuts.format.NIterableFormat;
-import net.thevpc.nuts.io.NStream;
+import net.thevpc.nuts.io.NOutStream;
 import net.thevpc.nuts.runtime.standalone.util.iter.NIteratorBase;
 import net.thevpc.nuts.util.NDescribables;
 
@@ -24,11 +24,11 @@ public class NPrintIterator<T> extends NIteratorBase<T> {
     Iterator<T> curr;
     NWorkspace ws;
     NIterableFormat listFormat;
-    NStream out;
+    NOutStream out;
     NFetchDisplayOptions displayOptions;
     long count = 0;
 
-    public NPrintIterator(Iterator<T> curr, NWorkspace ws, NStream out, NFetchDisplayOptions displayOptions, NSession session) {
+    public NPrintIterator(Iterator<T> curr, NWorkspace ws, NOutStream out, NFetchDisplayOptions displayOptions, NSession session) {
         this.curr = curr;
         this.ws = ws;
         this.out = out;

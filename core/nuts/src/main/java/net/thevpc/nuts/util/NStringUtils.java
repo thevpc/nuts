@@ -57,7 +57,6 @@ public class NStringUtils {
         if (value == null) {
             return null;
         }
-
         String nfdNormalizedString = Normalizer.normalize(value, Normalizer.Form.NFD);
         Pattern pattern = Pattern.compile("\\p{InCombiningDiacriticalMarks}+");
         return pattern.matcher(nfdNormalizedString).replaceAll("");
@@ -79,6 +78,7 @@ public class NStringUtils {
                 }
                 case '"':
                 case '\'':
+                case '`':
                 case '?':
                 case '*':
                 case ':':
@@ -93,7 +93,9 @@ public class NStringUtils {
                 case '[':
                 case ']':
                 case '(':
-                case ')': {
+                case ')':
+                case '$':
+                {
                     chars[i] = ' ';
                     break;
                 }
@@ -236,65 +238,6 @@ public class NStringUtils {
             }
         }
         throw new UnsupportedOperationException();
-    }
-
-    public static String replaceDollarString(String text, Function<String, String> m) {
-        char[] t = (text == null ? new char[0] : text.toCharArray());
-        int p = 0;
-        int length = t.length;
-        StringBuilder sb = new StringBuilder(length);
-        StringBuilder n = new StringBuilder(length);
-        while (p < length) {
-            char c = t[p];
-            if (c == '$') {
-                if (p + 1 < length && t[p + 1] == '{') {
-                    p+=2;
-                    n.setLength(0);
-                    while (p < length) {
-                        c = t[p];
-                        if (c!='}') {
-                            n.append(c);
-                            p++;
-                        } else {
-                            break;
-                        }
-                    }
-                    String x = m.apply(n.toString());
-                    if (x == null) {
-                        throw new IllegalArgumentException("var not found " + n);
-                    }
-                    sb.append(x);
-                }else if (p + 1 < length && _isValidMessageVar(t[p + 1])) {
-                    p++;
-                    n.setLength(0);
-                    while (p < length) {
-                        c = t[p];
-                        if (_isValidMessageVar(c)) {
-                            n.append(c);
-                            p++;
-                        } else {
-                            p--;
-                            break;
-                        }
-                    }
-                    String x = m.apply(n.toString());
-                    if (x == null) {
-                        throw new IllegalArgumentException("var not found " + n);
-                    }
-                    sb.append(x);
-                } else {
-                    sb.append(c);
-                }
-            } else {
-                sb.append(c);
-            }
-            p++;
-        }
-        return sb.toString();
-    }
-
-    private static boolean _isValidMessageVar(char c) {
-        return (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') || (c >= '0' && c <= '9') || c == '_';
     }
 
     public static String formatStringLiteral(String text) {

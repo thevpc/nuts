@@ -25,7 +25,7 @@
  */
 package net.thevpc.nuts.toolbox.nsh;
 
-import net.thevpc.nuts.io.NStream;
+import net.thevpc.nuts.io.NOutStream;
 import net.thevpc.nuts.NSession;
 import net.thevpc.nuts.io.NSessionTerminal;
 import net.thevpc.nuts.io.NTerminalMode;
@@ -46,13 +46,13 @@ public class NshEvaluator extends DefaultJShellEvaluator {
 
     @Override
     public int evalBinaryPipeOperation(JShellCommandNode left, JShellCommandNode right, JShellContext context) {
-        final NStream nout;
+        final NOutStream nout;
         final PipedOutputStream out;
         final PipedInputStream in;
         final JavaShellNonBlockingInputStream in2;
         try {
             out = new PipedOutputStream();
-            nout = NStream.of(out, NTerminalMode.FORMATTED,null, context.getSession());
+            nout = NOutStream.of(out, NTerminalMode.FORMATTED,null, context.getSession());
             in = new PipedInputStream(out, 1024);
             in2 = (in instanceof JavaShellNonBlockingInputStream) ? (JavaShellNonBlockingInputStream) in : new JavaShellNonBlockingInputStreamAdapter("jpipe-" + right.toString(), in);
         } catch (IOException ex) {

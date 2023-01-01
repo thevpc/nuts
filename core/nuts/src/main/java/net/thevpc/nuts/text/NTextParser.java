@@ -28,7 +28,7 @@ package net.thevpc.nuts.text;
 
 import net.thevpc.nuts.NSession;
 import net.thevpc.nuts.io.NInputSource;
-import net.thevpc.nuts.util.NUtils;
+import net.thevpc.nuts.util.NAssert;
 
 import java.io.File;
 import java.io.InputStream;
@@ -41,7 +41,7 @@ import java.nio.file.Path;
  */
 public interface NTextParser {
     static NTextParser of(NSession session) {
-        NUtils.requireSession(session);
+        NAssert.requireSession(session);
         return NTexts.of(session).parser();
     }
 

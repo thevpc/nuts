@@ -30,7 +30,7 @@ import net.thevpc.nuts.cmdline.NArgument;
 import net.thevpc.nuts.cmdline.NCommandLine;
 import net.thevpc.nuts.io.NCp;
 import net.thevpc.nuts.io.NPath;
-import net.thevpc.nuts.io.NStream;
+import net.thevpc.nuts.io.NOutStream;
 import net.thevpc.nuts.spi.NComponentScope;
 import net.thevpc.nuts.spi.NComponentScopeType;
 import net.thevpc.nuts.text.*;
@@ -92,7 +92,7 @@ public class CatCommand extends SimpleJShellBuiltin {
         if (options.files.isEmpty()) {
             options.files.add(null);
         }
-        NStream out = context.getSession().out();
+        NOutStream out = context.getSession().out();
         try {
             options.currentNumber = 1;
 
@@ -214,7 +214,7 @@ public class CatCommand extends SimpleJShellBuiltin {
             NTextBuilder nutsText = NTexts.of(session).ofCode(info.getHighlighter(), text).highlight(session)
                     .builder()
                     .flatten();
-            NStream out = NStream.of(os, session);
+            NOutStream out = NOutStream.of(os, session);
             List<NText> children = nutsText.getChildren();
             Tracker tracker = new Tracker();
             while (true) {
@@ -226,7 +226,7 @@ public class CatCommand extends SimpleJShellBuiltin {
                 }
             }
         } else {
-            NStream out = NStream.of(os, session);
+            NOutStream out = NOutStream.of(os, session);
             try {
 
                 //do not close!!

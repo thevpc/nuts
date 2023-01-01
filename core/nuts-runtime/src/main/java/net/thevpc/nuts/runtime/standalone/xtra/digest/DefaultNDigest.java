@@ -34,8 +34,8 @@ import net.thevpc.nuts.spi.NFormatSPI;
 import net.thevpc.nuts.spi.NSupportLevelContext;
 import net.thevpc.nuts.text.NTextStyle;
 import net.thevpc.nuts.text.NTexts;
+import net.thevpc.nuts.util.NAssert;
 import net.thevpc.nuts.util.NStringUtils;
-import net.thevpc.nuts.util.NUtils;
 
 import java.io.*;
 import java.nio.file.Path;
@@ -117,7 +117,7 @@ public class DefaultNDigest implements NDigest {
 
     @Override
     public byte[] computeBytes() {
-        NUtils.requireNonNull(source, "source", getSession());
+        NAssert.requireNonNull(source, "source", getSession());
         try (InputStream is = new BufferedInputStream(source.getInputStream())) {
             return NDigestUtils.evalHash(is, getValidAlgo(), session);
         } catch (IOException ex) {
@@ -242,7 +242,7 @@ public class DefaultNDigest implements NDigest {
                 }
 
                 @Override
-                public void print(NStream out) {
+                public void print(NOutStream out) {
                     NOptional<NMsg> m = getInputMetaData().getMessage();
                     if (m.isPresent()) {
                         out.print(m.get());
@@ -260,7 +260,7 @@ public class DefaultNDigest implements NDigest {
 
         @Override
         public String toString() {
-            NPlainStream out = new NPlainStream();
+            NOutPlainStream out = new NOutPlainStream();
             NOptional<NMsg> m = getInputMetaData().getMessage();
             if (m.isPresent()) {
                 out.print(m.get());

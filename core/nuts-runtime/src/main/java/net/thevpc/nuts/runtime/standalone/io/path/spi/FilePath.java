@@ -23,6 +23,8 @@ import java.nio.file.*;
 import java.nio.file.attribute.*;
 import java.time.Instant;
 import java.util.*;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class FilePath implements NPathSPI {
 
@@ -45,8 +47,10 @@ public class FilePath implements NPathSPI {
     public NStream<NPath> list(NPath basePath) {
         if (Files.isDirectory(value)) {
             try {
-                return NStream.of(Files.list(value).map(x -> fastPath(x, getSession())),
-                        getSession());
+                try (Stream<Path> files = Files.list(value)) {
+                    //ensure closed!!
+                    return NStream.of(files.collect(Collectors.toList()), getSession()).map(x -> fastPath(x, getSession()));
+                }
             } catch (IOException e) {
                 //
             }
@@ -736,7 +740,7 @@ public class FilePath implements NPathSPI {
         }
 
         @Override
-        public void print(net.thevpc.nuts.io.NStream out) {
+        public void print(NOutStream out) {
             out.print(asFormattedString());
         }
 

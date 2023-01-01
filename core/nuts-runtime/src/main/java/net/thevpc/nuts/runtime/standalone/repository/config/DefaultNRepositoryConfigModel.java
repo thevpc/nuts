@@ -45,8 +45,8 @@ public class DefaultNRepositoryConfigModel implements NRepositoryConfigModel {
     public DefaultNRepositoryConfigModel(NRepository repository, NAddRepositoryOptions options, NSession session,
                                          NSpeedQualifier speed,
                                          boolean supportedMirroring, String repositoryType) {
-        NUtils.requireNonNull(options, "repository options", session);
-        NUtils.requireNonNull(options.getConfig(), "repository options config", session);
+        NAssert.requireNonNull(options, "repository options", session);
+        NAssert.requireNonNull(options.getConfig(), "repository options config", session);
         this.repositoryRef = NRepositoryUtils.optionsToRef(options);
         String storeLocation = options.getLocation();
         NRepositoryConfig config = options.getConfig();
@@ -55,10 +55,10 @@ public class DefaultNRepositoryConfigModel implements NRepositoryConfigModel {
 
         speed = speed == null ? NSpeedQualifier.NORMAL : speed;
 
-        NUtils.requireNonBlank(repositoryType, "repository type", session);
-        NUtils.requireNonBlank(repositoryName, "repository name", session);
-        NUtils.requireNonBlank(globalName, "repository global name", session);
-        NUtils.requireNonBlank(storeLocation, "repository store location", session);
+        NAssert.requireNonBlank(repositoryType, "repository type", session);
+        NAssert.requireNonBlank(repositoryName, "repository name", session);
+        NAssert.requireNonBlank(globalName, "repository global name", session);
+        NAssert.requireNonBlank(storeLocation, "repository store location", session);
         Path pfolder = Paths.get(storeLocation);
         if ((Files.exists(pfolder) && !Files.isDirectory(pfolder))) {
             throw new NInvalidRepositoryException(session, storeLocation, NMsg.ofCstyle("unable to resolve root as a valid folder %s", storeLocation));
@@ -268,7 +268,7 @@ public class DefaultNRepositoryConfigModel implements NRepositoryConfigModel {
     }
 
     public void setConfig(NRepositoryConfig newConfig, NSession session, boolean fireChange) {
-        NUtils.requireNonBlank(newConfig, "repository config", session);
+        NAssert.requireNonBlank(newConfig, "repository config", session);
         this.config = newConfig;
         if (this.config.getUuid() == null) {
             fireChange = true;

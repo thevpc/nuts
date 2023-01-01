@@ -7,7 +7,7 @@ package net.thevpc.nuts.runtime.standalone.xtra.cp;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.io.*;
-import net.thevpc.nuts.io.NStream;
+import net.thevpc.nuts.io.NOutStream;
 import net.thevpc.nuts.runtime.standalone.io.progress.NProgressUtils;
 import net.thevpc.nuts.runtime.standalone.io.progress.SingletonNInputStreamProgressFactory;
 import net.thevpc.nuts.runtime.standalone.io.util.*;
@@ -197,7 +197,7 @@ public class DefaultNCp implements NCp {
     }
 
     @Override
-    public NCp setTarget(NStream target) {
+    public NCp setTarget(NOutStream target) {
         this.target = target;
         return this;
     }
@@ -238,7 +238,7 @@ public class DefaultNCp implements NCp {
     }
 
     @Override
-    public NCp to(NStream target) {
+    public NCp to(NOutStream target) {
         return setTarget(target);
     }
 
@@ -340,7 +340,7 @@ public class DefaultNCp implements NCp {
     @Override
     public byte[] getByteArrayResult() {
         checkSession();
-        NMemoryStream b = NStream.ofInMemory(session);
+        NOutMemoryStream b = NOutStream.ofInMemory(session);
         to(b);
         removeOptions(NPathOption.SAFE);
         run();
@@ -355,8 +355,8 @@ public class DefaultNCp implements NCp {
     @Override
     public NCp run() {
         checkSession();
-        NUtils.requireNonBlank(source, "source", session);
-        NUtils.requireNonBlank(target, "target", session);
+        NAssert.requireNonBlank(source, "source", session);
+        NAssert.requireNonBlank(target, "target", session);
 
         NInputSource _source = source;
         if ((_source instanceof NPath) && ((NPath) _source).isDirectory()) {
@@ -673,8 +673,8 @@ public class DefaultNCp implements NCp {
 
     private void copyStream() {
         checkSession();
-        NUtils.requireNonBlank(source, "source", session);
-        NUtils.requireNonBlank(target, "target", session);
+        NAssert.requireNonBlank(source, "source", session);
+        NAssert.requireNonBlank(target, "target", session);
         boolean safe = options.contains(NPathOption.SAFE);
         if (safe) {
             copyStreamSafe(source, target);
@@ -749,8 +749,8 @@ public class DefaultNCp implements NCp {
     private void copyStreamOnce(NInputSource source, NOutputTarget target) {
         NInputSource _source = source;
 
-        NUtils.requireNonNull(source, "source", getSession());
-        NUtils.requireNonNull(target, "target", getSession());
+        NAssert.requireNonNull(source, "source", getSession());
+        NAssert.requireNonNull(target, "target", getSession());
         NPath _target = asValidTargetPath();
         NPath _source0 = asValidSourcePath();
         boolean _target_isPath = _target != null;

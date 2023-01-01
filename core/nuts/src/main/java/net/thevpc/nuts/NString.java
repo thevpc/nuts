@@ -29,7 +29,7 @@ package net.thevpc.nuts;
 import net.thevpc.nuts.text.NText;
 import net.thevpc.nuts.text.NTextBuilder;
 import net.thevpc.nuts.text.NTexts;
-import net.thevpc.nuts.util.NUtils;
+import net.thevpc.nuts.util.NAssert;
 
 import java.io.PrintStream;
 
@@ -43,12 +43,12 @@ public interface NString extends NBlankable {
     }
 
     static NString of(String str, NSession session) {
-        NUtils.requireSession(session);
+        NAssert.requireSession(session);
         return NTexts.of(session).parse(str);
     }
 
     static NString ofPlain(String str, NSession session) {
-        NUtils.requireSession(session);
+        NAssert.requireSession(session);
         return NTexts.of(session).ofPlain(str);
     }
 

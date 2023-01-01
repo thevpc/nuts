@@ -15,8 +15,8 @@ import net.thevpc.nuts.spi.NPaths;
 import net.thevpc.nuts.spi.NRepositorySPI;
 import net.thevpc.nuts.text.NTextStyle;
 import net.thevpc.nuts.text.NTexts;
+import net.thevpc.nuts.util.NAssert;
 import net.thevpc.nuts.util.NStringUtils;
-import net.thevpc.nuts.util.NUtils;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -116,7 +116,7 @@ public class DefaultNDeployCommand extends AbstractNDeployCommand {
                 }
             }
         }
-        NUtils.requireNonBlank(result, "package to deploy", session);
+        NAssert.requireNonBlank(result, "package to deploy", session);
         if (getSession().isTrace()) {
             switch (getSession().getOutputFormat()) {
                 case PLAIN: {
@@ -159,7 +159,7 @@ public class DefaultNDeployCommand extends AbstractNDeployCommand {
                 NFetchCommand p = this.session.fetch()
                         .setSession(session.copy().setTransitive(true));
                 characterizedFile = characterizeForDeploy(contentSource, p, getParseOptions(), session);
-                NUtils.requireNonBlank(characterizedFile.getDescriptor(), "descriptor", session);
+                NAssert.requireNonBlank(characterizedFile.getDescriptor(), "descriptor", session);
                 descriptor = characterizedFile.getDescriptor();
             }
             String name = this.session.locations().getDefaultIdFilename(descriptor.getId().builder().setFaceDescriptor().build());

@@ -5,7 +5,7 @@ import net.thevpc.nuts.elem.NElements;
 import net.thevpc.nuts.io.NCp;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.io.NPathOption;
-import net.thevpc.nuts.io.NStream;
+import net.thevpc.nuts.io.NOutStream;
 import net.thevpc.nuts.text.NTextStyle;
 import net.thevpc.nuts.text.NTexts;
 import net.thevpc.nuts.toolbox.ntomcat.NTomcatConfigVersions;
@@ -209,7 +209,7 @@ public class LocalTomcatAppConfigService extends LocalTomcatServiceBase {
     }
 
     @Override
-    public LocalTomcatAppConfigService print(NStream out) {
+    public LocalTomcatAppConfigService print(NOutStream out) {
         Map<String, Object> result = new HashMap<>();
         result.put("name", getFullName());
         result.put("config", getConfig());

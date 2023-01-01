@@ -6,7 +6,7 @@ import net.thevpc.nuts.runtime.standalone.util.filters.CoreFilterUtils;
 import net.thevpc.nuts.runtime.standalone.dependency.DefaultNDependencies;
 import net.thevpc.nuts.runtime.standalone.dependency.DefaultNDependencyTreeNode;
 import net.thevpc.nuts.spi.NDependencySolver;
-import net.thevpc.nuts.util.NUtils;
+import net.thevpc.nuts.util.NAssert;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -193,7 +193,7 @@ public class MavenNDependencySolver implements NDependencySolver {
             if (def != null) {
                 dependency = def.getId().toDependency();
             } else {
-                NUtils.requireNonNull(dependency, "dependency", session);
+                NAssert.requireNonNull(dependency, "dependency", session);
             }
         }
         if (def == null) {

@@ -7,7 +7,7 @@ import net.thevpc.nuts.concurrent.NLockBarrierException;
 import net.thevpc.nuts.concurrent.NLockReleaseException;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.runtime.standalone.util.TimePeriod;
-import net.thevpc.nuts.util.NUtils;
+import net.thevpc.nuts.util.NAssert;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -141,7 +141,7 @@ public class DefaultFileNLock implements NLock {
 
     @Override
     public synchronized boolean tryLock(long time, TimeUnit unit) {
-        NUtils.requireNonNull(unit, "unit", session);
+        NAssert.requireNonNull(unit, "unit", session);
         long now = System.currentTimeMillis();
         PollTime ptime = preferredPollTime(time, unit);
         do {
@@ -161,7 +161,7 @@ public class DefaultFileNLock implements NLock {
     }
 
     public synchronized boolean tryLockInterruptibly(long time, TimeUnit unit) throws InterruptedException {
-        NUtils.requireNonNull(unit, "unit", session);
+        NAssert.requireNonNull(unit, "unit", session);
         long now = System.currentTimeMillis();
         PollTime ptime = preferredPollTime(time, unit);
         do {

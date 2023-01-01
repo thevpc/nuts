@@ -28,7 +28,7 @@ import net.thevpc.nuts.*;
 import net.thevpc.nuts.cmdline.NCommandLineConfigurable;
 import net.thevpc.nuts.format.NIterableFormat;
 import net.thevpc.nuts.io.NPath;
-import net.thevpc.nuts.io.NStream;
+import net.thevpc.nuts.io.NOutStream;
 import net.thevpc.nuts.util.NProgressFactory;
 
 import java.io.File;
@@ -393,7 +393,7 @@ public interface NElements extends NContentTypeFormat {
 
     NElements setIndestructibleObjects(Predicate<Class> destructTypeFilter);
 
-    NIterableFormat iter(NStream out);
+    NIterableFormat iter(NOutStream out);
 
     <T> NElements setMapper(Class<T> type, NElementMapper<T> mapper);
 

@@ -88,7 +88,7 @@ class SshNPath implements NPathSPI {
             }
 
             @Override
-            public void print(net.thevpc.nuts.io.NStream out) {
+            public void print(NOutStream out) {
                 //should implement better formatting...
                 NTextStyle _sep = NTextStyle.separator();
                 NTextStyle _path = NTextStyle.path();

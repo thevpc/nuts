@@ -8,8 +8,8 @@ import net.thevpc.nuts.runtime.standalone.util.jclass.JavaClassUtils;
 import net.thevpc.nuts.text.NTextStyle;
 import net.thevpc.nuts.text.NTextStyles;
 import net.thevpc.nuts.text.NTexts;
+import net.thevpc.nuts.util.NAssert;
 import net.thevpc.nuts.util.NStream;
-import net.thevpc.nuts.util.NUtils;
 
 import java.util.*;
 import java.util.concurrent.ExecutionException;
@@ -37,10 +37,10 @@ public class DefaultNPlatformModel {
     public boolean add0(NPlatformLocation location, NSession session, boolean notify) {
 //        session = CoreNutsUtils.validate(session, workspace);
         if (location != null) {
-            NUtils.requireNonBlank(location.getProduct(), "platform location product", session);
-            NUtils.requireNonBlank(location.getName(), "platform location product", session);
-            NUtils.requireNonBlank(location.getVersion(), "platform location version", session);
-            NUtils.requireNonBlank(location.getVersion(), "platform location path", session);
+            NAssert.requireNonBlank(location.getProduct(), "platform location product", session);
+            NAssert.requireNonBlank(location.getName(), "platform location product", session);
+            NAssert.requireNonBlank(location.getVersion(), "platform location version", session);
+            NAssert.requireNonBlank(location.getVersion(), "platform location path", session);
             List<NPlatformLocation> list = getPlatforms().get(location.getPlatformType());
             if (list == null) {
                 list = new ArrayList<>();
@@ -257,15 +257,6 @@ public class DefaultNPlatformModel {
         }
         return NStream.of(ret, session);
     }
-
-//    private NutsPlatformFamily toValidPlatformName(NutsPlatformFamily type) {
-//        if (NutsBlankable.isBlank(type)) {
-//            type = "java";
-//        } else {
-//            type = NutsUtilStrings.trim(type);
-//        }
-//        return type;
-//    }
 
     public Map<NPlatformFamily, List<NPlatformLocation>> getPlatforms() {
         return model.getConfigPlatforms();

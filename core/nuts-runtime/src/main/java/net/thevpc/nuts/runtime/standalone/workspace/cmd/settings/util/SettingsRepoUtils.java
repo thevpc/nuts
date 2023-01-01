@@ -1,7 +1,7 @@
 package net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.util;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.io.NStream;
+import net.thevpc.nuts.io.NOutStream;
 import net.thevpc.nuts.text.NTextStyle;
 import net.thevpc.nuts.text.NTexts;
 
@@ -9,7 +9,7 @@ public class SettingsRepoUtils {
     public static void showRepo(NApplicationContext context, NRepository repository, String prefix) {
         boolean enabled = repository.config().isEnabled();
         String disabledString = enabled ? "" : " <DISABLED>";
-        NStream out = context.getSession().out();
+        NOutStream out = context.getSession().out();
         out.print(prefix);
         NTexts factory = NTexts.of(context.getSession());
         if (enabled) {

@@ -4,7 +4,7 @@ import net.thevpc.nuts.*;
 import net.thevpc.nuts.cmdline.NArgument;
 import net.thevpc.nuts.cmdline.NCommandLine;
 import net.thevpc.nuts.io.NPath;
-import net.thevpc.nuts.io.NStream;
+import net.thevpc.nuts.io.NOutStream;
 import net.thevpc.nuts.text.NTextStyle;
 import net.thevpc.nuts.text.NTexts;
 
@@ -128,8 +128,8 @@ public class NVersionMain implements NApplication {
                 throw new NExecutionException(session, NMsg.ofPlain("nversion: options conflict --table --long"), 1);
             }
 
-            NStream out = session.out();
-            NStream err = session.out();
+            NOutStream out = session.out();
+            NOutStream err = session.out();
             NTexts text = NTexts.of(session);
             if (table) {
                 NPropertiesFormat tt = NPropertiesFormat.of(session).setSorted(sort);

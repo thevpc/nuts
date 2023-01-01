@@ -7,15 +7,15 @@ package net.thevpc.nuts.runtime.standalone.workspace.cmd.uninstall;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.elem.NElements;
-import net.thevpc.nuts.io.NMemoryStream;
-import net.thevpc.nuts.io.NStream;
+import net.thevpc.nuts.io.NOutMemoryStream;
+import net.thevpc.nuts.io.NOutStream;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceExt;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceUtils;
 import net.thevpc.nuts.text.NText;
 import net.thevpc.nuts.text.NTextBuilder;
 import net.thevpc.nuts.text.NTextStyle;
 import net.thevpc.nuts.text.NTexts;
-import net.thevpc.nuts.util.NUtils;
+import net.thevpc.nuts.util.NAssert;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -42,7 +42,7 @@ public class DefaultNUninstallCommand extends AbstractNUninstallCommand {
         session.security().setSession(getSession()).checkAllowed(NConstants.Permissions.UNINSTALL, "uninstall");
         List<NDefinition> defs = new ArrayList<>();
         List<NId> nutsIds = this.getIds();
-        NUtils.requireNonBlank(nutsIds, "packages to uninstall", session);
+        NAssert.requireNonBlank(nutsIds, "packages to uninstall", session);
         List<NId> installed = new ArrayList<>();
         for (NId id : nutsIds) {
             List<NDefinition> resultDefinitions = session.search().addId(id)
@@ -60,7 +60,7 @@ public class DefaultNUninstallCommand extends AbstractNUninstallCommand {
             installed.addAll(resultDefinitions.stream().map(NDefinition::getId).collect(Collectors.toList()));
             defs.addAll(resultDefinitions);
         }
-        NMemoryStream mout = NMemoryStream.of(session);
+        NOutMemoryStream mout = NOutMemoryStream.of(session);
         printList(mout, "installed", "uninstalled", installed);
         mout.println("should we proceed uninstalling ?");
         NMsg cancelMessage = NMsg.ofCstyle("uninstall cancelled : %s", defs.stream()
@@ -83,7 +83,7 @@ public class DefaultNUninstallCommand extends AbstractNUninstallCommand {
         return this;
     }
 
-    private void printList(NStream out, String skind, String saction, List<NId> all) {
+    private void printList(NOutStream out, String skind, String saction, List<NId> all) {
         if (all.size() > 0) {
             if (session.isPlainOut()) {
                 NTexts text = NTexts.of(session);
@@ -115,7 +115,7 @@ public class DefaultNUninstallCommand extends AbstractNUninstallCommand {
                         .set("artifact-kind", skind)
                         .set("action-warning", saction)
                         .set("artifacts", elem.ofArray().addAll(
-                                all.stream().map(x -> x.toString()).toArray(String[]::new)
+                                all.stream().map(Object::toString).toArray(String[]::new)
                         ).build())
                         .build()
                 );

@@ -3,14 +3,14 @@ package net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.ndi.unix;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.io.NIOException;
 import net.thevpc.nuts.io.NPath;
-import net.thevpc.nuts.io.NStream;
+import net.thevpc.nuts.io.NOutStream;
 import net.thevpc.nuts.runtime.standalone.executor.system.NSysExecUtils;
 import net.thevpc.nuts.runtime.standalone.io.util.CoreIOUtils;
 import net.thevpc.nuts.runtime.standalone.util.CoreStringUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.util.PathInfo;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.ndi.FreeDesktopEntry;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.ndi.base.AbstractFreeDesktopEntryWriter;
-import net.thevpc.nuts.util.NUtils;
+import net.thevpc.nuts.util.NAssert;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -238,7 +238,7 @@ public class UnixFreeDesktopEntryWriter extends AbstractFreeDesktopEntryWriter {
         }
     }
 
-    public void write(FreeDesktopEntry file, NStream out) {
+    public void write(FreeDesktopEntry file, NOutStream out) {
         write(file, out.asPrintStream());
     }
 
@@ -247,9 +247,9 @@ public class UnixFreeDesktopEntryWriter extends AbstractFreeDesktopEntryWriter {
         for (FreeDesktopEntry.Group group : file.getGroups()) {
             out.println();
             String gn = group.getGroupName();
-            NUtils.requireNonBlank(gn, "group name", session);
+            NAssert.requireNonBlank(gn, "group name", session);
             FreeDesktopEntry.Type t = group.getType();
-            NUtils.requireNonNull(t, "type", session);
+            NAssert.requireNonNull(t, "type", session);
             out.println("[" + gn.trim() + "]");
             for (Map.Entry<String, Object> e : group.toMap().entrySet()) {
                 Object value = e.getValue();

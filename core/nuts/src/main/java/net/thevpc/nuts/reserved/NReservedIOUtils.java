@@ -297,7 +297,7 @@ public class NReservedIOUtils {
     }
 
     protected static String expandPath(String path, String base, Function<String, String> pathExpansionConverter) {
-        path = NStringUtils.replaceDollarString(path.trim(), pathExpansionConverter);
+        path = NMsg.ofVstyle(path.trim(), pathExpansionConverter).toString();
         if (isURL(path)) {
             return path;
         }

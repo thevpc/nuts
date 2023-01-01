@@ -4,9 +4,9 @@ import net.thevpc.nuts.*;
 import net.thevpc.nuts.cmdline.NArgument;
 import net.thevpc.nuts.cmdline.NCommandLine;
 import net.thevpc.nuts.io.NPath;
-import net.thevpc.nuts.io.NStream;
+import net.thevpc.nuts.io.NOutStream;
 import net.thevpc.nuts.runtime.standalone.executor.system.ProcessBuilder2;
-import net.thevpc.nuts.runtime.standalone.io.printstream.NByteArrayStream;
+import net.thevpc.nuts.runtime.standalone.io.printstream.NOutByteArrayStream;
 import net.thevpc.nuts.runtime.standalone.util.collections.CoreCollectionUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.NWorkspaceCommandBase;
 import net.thevpc.nuts.spi.NFormatSPI;
@@ -32,8 +32,8 @@ public abstract class AbstractNExecCommand extends NWorkspaceCommandBase<NExecCo
     protected NExecutionException result;
     protected boolean executed;
     protected String directory;
-    protected NStream out;
-    protected NStream err;
+    protected NOutStream out;
+    protected NOutStream err;
     protected InputStream in;
     protected NExecutionType executionType = NExecutionType.SPAWN;
     protected NRunAs runAs = NRunAs.CURRENT_USER;
@@ -268,7 +268,7 @@ public abstract class AbstractNExecCommand extends NWorkspaceCommandBase<NExecCo
     }
 
     @Override
-    public NStream getOut() {
+    public NOutStream getOut() {
         return out;
     }
 
@@ -277,7 +277,7 @@ public abstract class AbstractNExecCommand extends NWorkspaceCommandBase<NExecCo
 //        return setOut(out);
 //    }
     @Override
-    public NExecCommand setOut(NStream out) {
+    public NExecCommand setOut(NOutStream out) {
         checkSession();
         NWorkspace ws = getSession().getWorkspace();
         this.out = out;
@@ -311,7 +311,7 @@ public abstract class AbstractNExecCommand extends NWorkspaceCommandBase<NExecCo
         if (!executed) {
             run();
         }
-        NStream o = getOut();
+        NOutStream o = getOut();
         if (o instanceof SStream) {
             return o.toString();
         }
@@ -327,7 +327,7 @@ public abstract class AbstractNExecCommand extends NWorkspaceCommandBase<NExecCo
         if (isRedirectErrorStream()) {
             return getOutputString();
         }
-        NStream o = getErr();
+        NOutStream o = getErr();
         if (o instanceof SStream) {
             return o.toString();
         }
@@ -335,7 +335,7 @@ public abstract class AbstractNExecCommand extends NWorkspaceCommandBase<NExecCo
     }
 
     @Override
-    public NStream getErr() {
+    public NOutStream getErr() {
         return err;
     }
 
@@ -344,7 +344,7 @@ public abstract class AbstractNExecCommand extends NWorkspaceCommandBase<NExecCo
 //        return setErr(err);
 //    }
     @Override
-    public NExecCommand setErr(NStream err) {
+    public NExecCommand setErr(NOutStream err) {
         checkSession();
         NWorkspace ws = getSession().getWorkspace();
         this.err = err;
@@ -481,7 +481,7 @@ public abstract class AbstractNExecCommand extends NWorkspaceCommandBase<NExecCo
 
     public String getOutputString0() {
         checkSession();
-        NStream o = getOut();
+        NOutStream o = getOut();
         if (o instanceof SStream) {
             return o.toString();
         }
@@ -708,7 +708,7 @@ public abstract class AbstractNExecCommand extends NWorkspaceCommandBase<NExecCo
         return getCommandString();
     }
 
-    protected static class SStream extends NByteArrayStream {
+    protected static class SStream extends NOutByteArrayStream {
 
         public SStream(NSession session) {
             super(session);
@@ -719,7 +719,7 @@ public abstract class AbstractNExecCommand extends NWorkspaceCommandBase<NExecCo
         }
 
         @Override
-        public NStream setSession(NSession session) {
+        public NOutStream setSession(NSession session) {
             if (session == null || session == this.session) {
                 return this;
             }
@@ -737,7 +737,7 @@ public abstract class AbstractNExecCommand extends NWorkspaceCommandBase<NExecCo
             }
 
             @Override
-            public void print(NStream out) {
+            public void print(NOutStream out) {
                 out.printf(NCommandLine.of(command));
             }
 

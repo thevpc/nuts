@@ -3,7 +3,7 @@ package net.thevpc.nuts.runtime.standalone.app;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.cmdline.*;
 import net.thevpc.nuts.io.NPath;
-import net.thevpc.nuts.io.NStream;
+import net.thevpc.nuts.io.NOutStream;
 import net.thevpc.nuts.runtime.standalone.app.cmdline.NCommandLineUtils;
 import net.thevpc.nuts.runtime.standalone.session.NSessionUtils;
 import net.thevpc.nuts.runtime.standalone.util.NConfigurableHelper;
@@ -14,8 +14,8 @@ import net.thevpc.nuts.text.NText;
 import net.thevpc.nuts.text.NTextStyle;
 import net.thevpc.nuts.text.NTextTransformConfig;
 import net.thevpc.nuts.text.NTexts;
+import net.thevpc.nuts.util.NAssert;
 import net.thevpc.nuts.util.NClock;
-import net.thevpc.nuts.util.NUtils;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -47,7 +47,7 @@ public class DefaultNApplicationContext implements NApplicationContext {
     public DefaultNApplicationContext(NWorkspace workspace, NSession session, List<String> args, Class appClass, String storeId, NClock startTime) {
         this.startTime = startTime == null ? NClock.now() : startTime;
         if (workspace == null && session == null) {
-            NUtils.requireSession(session);
+            NAssert.requireSession(session);
         } else if (workspace != null) {
             if (session == null) {
                 this.session = workspace.createSession();
@@ -498,11 +498,11 @@ public class DefaultNApplicationContext implements NApplicationContext {
     private static class AppCommandAutoComplete extends NCommandAutoCompleteBase {
 
         private final ArrayList<String> words;
-        private final NStream out0;
+        private final NOutStream out0;
         private final NSession session;
         private final int wordIndex;
 
-        public AppCommandAutoComplete(NSession session, List<String> args, int wordIndex, NStream out0) {
+        public AppCommandAutoComplete(NSession session, List<String> args, int wordIndex, NOutStream out0) {
             this.session = session;
             words = new ArrayList<>(args);
             this.wordIndex = wordIndex;

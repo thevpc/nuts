@@ -241,8 +241,8 @@ public class DefaultNUncompress implements NUncompress {
             format = "zip";
         }
         NInputSource _source = source;
-        NUtils.requireNonNull(source, "source", getSession());
-        NUtils.requireNonNull(target, "target", getSession());
+        NAssert.requireNonNull(source, "source", getSession());
+        NAssert.requireNonNull(target, "target", getSession());
         NPath _target = asValidTargetPath();
         if (_target == null) {
             throw new NIllegalArgumentException(getSession(), NMsg.ofCstyle("invalid target %s", target));
@@ -303,8 +303,8 @@ public class DefaultNUncompress implements NUncompress {
         if (NBlankable.isBlank(format)) {
             format = "zip";
         }
-        NUtils.requireNonNull(source, "source", getSession());
-        NUtils.requireNonNull(target, "target", getSession());
+        NAssert.requireNonNull(source, "source", getSession());
+        NAssert.requireNonNull(target, "target", getSession());
         NPath _target = asValidTargetPath();
         if (_target == null) {
             throw new NIllegalArgumentException(getSession(), NMsg.ofCstyle("invalid target %s", target));

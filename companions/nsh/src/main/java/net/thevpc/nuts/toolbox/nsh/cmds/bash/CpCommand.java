@@ -34,7 +34,7 @@ import net.thevpc.nuts.spi.NComponentScopeType;
 import net.thevpc.nuts.toolbox.nsh.SimpleJShellBuiltin;
 import net.thevpc.nuts.toolbox.nsh.jshell.JShellExecutionContext;
 import net.thevpc.nuts.toolbox.nsh.util.ShellHelper;
-import net.thevpc.nuts.util.NUtils;
+import net.thevpc.nuts.util.NAssert;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -81,7 +81,7 @@ public class CpCommand extends SimpleJShellBuiltin {
         Options options = context.getOptions();
         NSession session = context.getSession();
         for (String value : options.files) {
-            NUtils.requireNonBlank(value, "file path", session);
+            NAssert.requireNonBlank(value, "file path", session);
             options.xfiles.add(NPath.of((value.contains("://") ? value :
                     NPath.of(value, session).toAbsolute(session.locations().getWorkspaceLocation()).toString()
             ), session));

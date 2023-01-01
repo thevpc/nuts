@@ -28,7 +28,7 @@ package net.thevpc.nuts;
 
 import net.thevpc.nuts.cmdline.NCommandLineConfigurable;
 import net.thevpc.nuts.io.NPath;
-import net.thevpc.nuts.io.NStream;
+import net.thevpc.nuts.io.NOutStream;
 import net.thevpc.nuts.io.NSessionTerminal;
 import net.thevpc.nuts.spi.NComponent;
 import net.thevpc.nuts.spi.NFormatSPI;
@@ -82,7 +82,7 @@ public interface NFormat extends NCommandLineConfigurable, NComponent {
      *
      * @param out recipient print stream
      */
-    void print(NStream out);
+    void print(NOutStream out);
 
     /**
      * format current value and write result to {@code out}
@@ -140,7 +140,7 @@ public interface NFormat extends NCommandLineConfigurable, NComponent {
      *
      * @param out recipient print stream
      */
-    void println(NStream out);
+    void println(NOutStream out);
 
     /**
      * format current value and write result to {@code out} and finally appends

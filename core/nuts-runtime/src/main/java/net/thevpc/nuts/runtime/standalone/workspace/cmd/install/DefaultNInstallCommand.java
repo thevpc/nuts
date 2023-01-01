@@ -25,7 +25,8 @@ package net.thevpc.nuts.runtime.standalone.workspace.cmd.install;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.elem.NElements;
-import net.thevpc.nuts.io.NMemoryStream;
+import net.thevpc.nuts.io.NOutMemoryStream;
+import net.thevpc.nuts.io.NOutStream;
 import net.thevpc.nuts.runtime.standalone.dependency.util.NDependencyUtils;
 import net.thevpc.nuts.runtime.standalone.util.iter.IteratorUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceExt;
@@ -173,7 +174,7 @@ public class DefaultNInstallCommand extends AbstractNInstallCommand {
         NWorkspace ws = getSession().getWorkspace();
         NWorkspaceExt dws = NWorkspaceExt.of(ws);
         NSession session = getSession();
-        net.thevpc.nuts.io.NStream out = session.out();
+        NOutStream out = session.out();
         session.security().checkAllowed(NConstants.Permissions.INSTALL, "install");
 //        LinkedHashMap<NutsId, Boolean> allToInstall = new LinkedHashMap<>();
         InstallIdList list = new InstallIdList(NInstallStrategy.INSTALL);
@@ -384,7 +385,7 @@ public class DefaultNInstallCommand extends AbstractNInstallCommand {
             }
             throw new NInstallException(getSession(), null, NMsg.ofNtf(sb.toString().trim()), null);
         }
-        NMemoryStream mout = NMemoryStream.of(session);
+        NOutMemoryStream mout = NOutMemoryStream.of(session);
         List<NId> nonIgnored = list.ids(x -> !x.ignored);
         List<NId> list_new_installed = list.ids(x -> x.doInstall && !x.isAlreadyExists());
         List<NId> list_new_required = list.ids(x -> x.doRequire && !x.doInstall && !x.isAlreadyExists());
@@ -498,7 +499,7 @@ public class DefaultNInstallCommand extends AbstractNInstallCommand {
         return this;
     }
 
-    private void printList(net.thevpc.nuts.io.NStream out, String skind, String saction, List<NId> all) {
+    private void printList(NOutStream out, String skind, String saction, List<NId> all) {
         if (all.size() > 0) {
             if (session.isPlainOut()) {
                 NTexts text = NTexts.of(session);

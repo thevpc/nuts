@@ -28,7 +28,7 @@ package net.thevpc.nuts;
 
 import net.thevpc.nuts.io.NServiceLoader;
 import net.thevpc.nuts.spi.NComponent;
-import net.thevpc.nuts.util.NUtils;
+import net.thevpc.nuts.util.NAssert;
 
 import java.util.List;
 import java.util.Set;
@@ -40,7 +40,7 @@ import java.util.Set;
  */
 public interface NExtensions extends NComponent {
     static NExtensions of(NSession session) {
-        return NUtils.requireSession(session).extensions();
+        return NAssert.requireSession(session).extensions();
     }
 
     Set<NId> getCompanionIds();

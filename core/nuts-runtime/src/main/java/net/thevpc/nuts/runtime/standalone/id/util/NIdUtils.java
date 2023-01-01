@@ -4,21 +4,21 @@ import net.thevpc.nuts.*;
 import net.thevpc.nuts.elem.NElements;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.runtime.standalone.workspace.config.NWorkspaceConfigApi;
+import net.thevpc.nuts.util.NAssert;
 import net.thevpc.nuts.util.NStringUtils;
-import net.thevpc.nuts.util.NUtils;
 
 import java.util.Map;
 
 public class NIdUtils {
     public static void checkLongId(NId id, NSession session) {
         checkShortId(id, session);
-        NUtils.requireNonBlank(id.getVersion(), () -> NMsg.ofCstyle("missing version for %s", id), session);
+        NAssert.requireNonBlank(id.getVersion(), () -> NMsg.ofCstyle("missing version for %s", id), session);
     }
 
     public static void checkShortId(NId id, NSession session) {
-        NUtils.requireNonBlank(id, "id", session);
-        NUtils.requireNonBlank(id.getGroupId(), () -> NMsg.ofCstyle("missing groupId for %s", id), session);
-        NUtils.requireNonBlank(id.getArtifactId(), () -> NMsg.ofCstyle("missing artifactId for %s", id), session);
+        NAssert.requireNonBlank(id, "id", session);
+        NAssert.requireNonBlank(id.getGroupId(), () -> NMsg.ofCstyle("missing groupId for %s", id), session);
+        NAssert.requireNonBlank(id.getArtifactId(), () -> NMsg.ofCstyle("missing artifactId for %s", id), session);
     }
 
     public static boolean isValidEffectiveId(NId id) {
@@ -32,7 +32,7 @@ public class NIdUtils {
     }
 
     public static void checkValidEffectiveId(NId id, NSession session) {
-        NUtils.requireNonBlank(id, "id", session);
+        NAssert.requireNonBlank(id, "id", session);
         if (id.toString().contains("${")) {
             throw new NIllegalArgumentException(session, NMsg.ofCstyle("unable to evaluate effective id %s", id));
         }
@@ -68,7 +68,7 @@ public class NIdUtils {
     }
 
     public static NId apiId(String apiVersion, NSession session) {
-        NUtils.requireNonBlank(apiVersion, "version", session);
+        NAssert.requireNonBlank(apiVersion, "version", session);
         if (apiVersion.equals(session.getWorkspace().getApiVersion().toString())) {
             return session.getWorkspace().getApiId();
         }
@@ -76,7 +76,7 @@ public class NIdUtils {
     }
 
     public static NId runtimeId(String runtimeVersion, NSession session) {
-        NUtils.requireNonBlank(runtimeVersion, "runtimeVersion", session);
+        NAssert.requireNonBlank(runtimeVersion, "runtimeVersion", session);
         if (runtimeVersion.equals(session.getWorkspace().getApiVersion().toString())) {
             return session.getWorkspace().getApiId();
         }
@@ -84,7 +84,7 @@ public class NIdUtils {
     }
 
     public static NId findRuntimeForApi(String apiVersion, NSession session) {
-        NUtils.requireNonBlank(apiVersion, "apiVersion", session);
+        NAssert.requireNonBlank(apiVersion, "apiVersion", session);
         if (apiVersion.equals(session.getWorkspace().getApiVersion().toString())) {
             return session.getWorkspace().getRuntimeId();
         }

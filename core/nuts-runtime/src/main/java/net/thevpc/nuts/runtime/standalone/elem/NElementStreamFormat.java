@@ -27,7 +27,7 @@ import net.thevpc.nuts.elem.NElementFactoryContext;
 
 import java.io.Reader;
 import net.thevpc.nuts.elem.NElement;
-import net.thevpc.nuts.io.NStream;
+import net.thevpc.nuts.io.NOutStream;
 
 /**
  *
@@ -37,5 +37,5 @@ public interface NElementStreamFormat {
 
     public NElement parseElement(Reader reader, NElementFactoryContext context);
 
-    public void printElement(NElement value, NStream out, boolean compact, NElementFactoryContext context);
+    public void printElement(NElement value, NOutStream out, boolean compact, NElementFactoryContext context);
 }

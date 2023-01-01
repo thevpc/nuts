@@ -96,7 +96,7 @@ public interface NOptional<T> extends NBlankable {
         return ofSingleton(collection,
                 s -> NMsg.ofCstyle("missing %s", name)
                 ,
-                s -> NMsg.ofCstyle("too many (%s>1) values for %s", collection == null ? 0 : collection.size(), name));
+                s -> NMsg.ofCstyle("too many elements %s>1 for %s", collection == null ? 0 : collection.size(), name));
     }
 
     static <T> NOptional<T> ofSingleton(Collection<T> collection, Function<NSession, NMsg> emptyMessage, Function<NSession, NMsg> errorMessage) {
@@ -105,7 +105,7 @@ public interface NOptional<T> extends NBlankable {
         }
         if (collection.size() > 1) {
             if (errorMessage == null) {
-                errorMessage = s -> NMsg.ofCstyle("too many elements %s >1", collection.size());
+                errorMessage = s -> NMsg.ofCstyle("too many elements %s>1", collection.size());
             }
             return ofError(errorMessage);
         }

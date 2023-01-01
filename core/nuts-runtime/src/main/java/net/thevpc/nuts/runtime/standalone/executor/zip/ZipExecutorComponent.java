@@ -31,8 +31,8 @@ import net.thevpc.nuts.spi.NComponentScope;
 import net.thevpc.nuts.spi.NComponentScopeType;
 import net.thevpc.nuts.spi.NExecutorComponent;
 import net.thevpc.nuts.spi.NSupportLevelContext;
+import net.thevpc.nuts.util.NAssert;
 import net.thevpc.nuts.util.NStringUtils;
-import net.thevpc.nuts.util.NUtils;
 
 import java.util.*;
 
@@ -86,7 +86,7 @@ public class ZipExecutorComponent implements NExecutorComponent {
         NSession session = executionContext.getSession();
         HashMap<String, String> osEnv = new HashMap<>();
         NArtifactCall executor = def.getDescriptor().getExecutor();
-        NUtils.requireNonNull(executor, () -> NMsg.ofCstyle("missing executor %s", def.getId()), session);
+        NAssert.requireNonNull(executor, () -> NMsg.ofCstyle("missing executor %s", def.getId()), session);
         List<String> args = new ArrayList<>(executionContext.getExecutorOptions());
         args.addAll(executionContext.getArguments());
         if (executor.getId() != null && !executor.getId().toString().equals("exec")) {

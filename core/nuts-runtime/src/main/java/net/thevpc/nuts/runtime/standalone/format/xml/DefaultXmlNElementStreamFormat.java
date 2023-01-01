@@ -31,8 +31,8 @@ import net.thevpc.nuts.*;
 import net.thevpc.nuts.elem.NElement;
 import net.thevpc.nuts.elem.NElementFactoryContext;
 import net.thevpc.nuts.io.NIOException;
-import net.thevpc.nuts.io.NMemoryStream;
-import net.thevpc.nuts.io.NStream;
+import net.thevpc.nuts.io.NOutMemoryStream;
+import net.thevpc.nuts.io.NOutStream;
 import net.thevpc.nuts.runtime.standalone.elem.NElementStreamFormat;
 import net.thevpc.nuts.runtime.standalone.util.xml.XmlUtils;
 import net.thevpc.nuts.text.NTexts;
@@ -64,11 +64,11 @@ public class DefaultXmlNElementStreamFormat implements NElementStreamFormat {
     }
 
     @Override
-    public void printElement(NElement value, NStream out, boolean compact, NElementFactoryContext context) {
+    public void printElement(NElement value, NOutStream out, boolean compact, NElementFactoryContext context) {
         NSession session = context.getSession();
         Document doc = (Document) context.elementToObject(value, Document.class);
         if (out.isNtf()) {
-            NStream bos = NMemoryStream.of(context.getSession());
+            NOutStream bos = NOutMemoryStream.of(context.getSession());
             XmlUtils.writeDocument(doc, new StreamResult(bos.asPrintStream()), compact, true, session);
             out.print(NTexts.of(context.getSession()).ofCode("xml", bos.toString()));
         } else {

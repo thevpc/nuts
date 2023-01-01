@@ -34,8 +34,8 @@ import net.thevpc.nuts.runtime.standalone.xtra.expr.StringPlaceHolderParser;
 import net.thevpc.nuts.spi.NExecutorComponent;
 import net.thevpc.nuts.text.NTextStyle;
 import net.thevpc.nuts.text.NTexts;
+import net.thevpc.nuts.util.NAssert;
 import net.thevpc.nuts.util.NStream;
-import net.thevpc.nuts.util.NUtils;
 
 import java.io.File;
 import java.nio.file.Files;
@@ -89,16 +89,16 @@ public class DefaultNExecCommand extends AbstractNExecCommand {
         }
         switch (executionType) {
             case OPEN: {
-                NUtils.requireNonNull(commandDefinition, "artifact definition", session);
-                NUtils.requireNonBlank(command, "command", session);
+                NAssert.requireNonNull(commandDefinition, "artifact definition", session);
+                NAssert.requireNonBlank(command, "command", session);
                 String[] ts = command.toArray(new String[0]);
                 exec = new DefaultNOpenExecutable(ts, getExecutorOptions().toArray(new String[0]), traceSession, execSession, this);
                 break;
             }
             case SYSTEM: {
                 NExecutionType finalExecutionType = executionType;
-                NUtils.requireNull(commandDefinition, () -> NMsg.ofCstyle("unable to run artifact as %s cmd", finalExecutionType), session);
-                NUtils.requireNonBlank(command, "command", session);
+                NAssert.requireNull(commandDefinition, () -> NMsg.ofCstyle("unable to run artifact as %s cmd", finalExecutionType), session);
+                NAssert.requireNonBlank(command, "command", session);
                 String[] ts = command.toArray(new String[0]);
                 List<String> tsl = new ArrayList<>(Arrays.asList(ts));
                 if (CoreStringUtils.firstIndexOf(ts[0], new char[]{'/', '\\'}) < 0) {
@@ -122,7 +122,7 @@ public class DefaultNExecCommand extends AbstractNExecCommand {
                     return ws_execDef(commandDefinition, commandDefinition.getId().getLongName(), ts, getExecutorOptions(), workspaceOptions, env, directory, failFast,
                             executionType, runAs, traceSession, execSession);
                 } else {
-                    NUtils.requireNonBlank(command, "command", session);
+                    NAssert.requireNonBlank(command, "command", session);
                     String[] ts = command.toArray(new String[0]);
                     exec = execEmbeddedOrExternal(ts, getExecutorOptions(), getWorkspaceOptions(), traceSession, execSession);
                 }
@@ -174,7 +174,7 @@ public class DefaultNExecCommand extends AbstractNExecCommand {
     }
 
     private NExecutableInformationExt execEmbeddedOrExternal(String[] cmd, List<String> executorOptions, List<String> workspaceOptions, NSession prepareSession, NSession execSession) {
-        NUtils.requireNonBlank(cmd, "command", session);
+        NAssert.requireNonBlank(cmd, "command", session);
         String[] args = new String[cmd.length - 1];
         System.arraycopy(cmd, 1, args, 0, args.length);
         String cmdName = cmd[0];

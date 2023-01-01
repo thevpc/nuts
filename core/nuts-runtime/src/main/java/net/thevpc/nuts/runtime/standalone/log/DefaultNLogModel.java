@@ -24,7 +24,7 @@
 package net.thevpc.nuts.runtime.standalone.log;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.io.NStream;
+import net.thevpc.nuts.io.NOutStream;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceExt;
 import net.thevpc.nuts.util.NLogConfig;
 import net.thevpc.nuts.util.NLogger;
@@ -43,7 +43,7 @@ import java.util.logging.Logger;
 public class DefaultNLogModel {
     private static Handler[] EMPTY = new Handler[0];
     private NWorkspace workspace;
-    private NStream out;
+    private NOutStream out;
     private Handler consoleHandler;
     private Handler fileHandler;
     private NLogConfig logConfig = new NLogConfig();
@@ -194,7 +194,7 @@ public class DefaultNLogModel {
 
     public void updateTermHandler(LogRecord record) {
         NSession session = NLogUtils.resolveSession(record, workspace);
-        NStream out = session.err();
+        NOutStream out = session.err();
         if (out != this.out || consoleHandler == null) {
             this.out = out;
             if (consoleHandler != null) {

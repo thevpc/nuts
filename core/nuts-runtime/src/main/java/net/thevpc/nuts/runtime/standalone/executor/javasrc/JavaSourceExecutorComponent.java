@@ -26,7 +26,7 @@ package net.thevpc.nuts.runtime.standalone.executor.javasrc;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.cmdline.NCommandLine;
 import net.thevpc.nuts.io.NPath;
-import net.thevpc.nuts.io.NStream;
+import net.thevpc.nuts.io.NOutStream;
 import net.thevpc.nuts.runtime.standalone.definition.DefaultNDefinition;
 import net.thevpc.nuts.runtime.standalone.executor.java.JavaExecutorComponent;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceExt;
@@ -62,7 +62,7 @@ public class JavaSourceExecutorComponent implements NExecutorComponent {
             NDefinition nutMainFile = executionContext.getDefinition();//executionContext.getWorkspace().fetch(.getId().toString(), true, false);
             Path javaFile = nutMainFile.getContent().map(NPath::toFile).orNull();
             String folder = "__temp_folder";
-            NStream out = executionContext.getSession().out();
+            NOutStream out = executionContext.getSession().out();
             out.println(NTexts.of(executionContext.getSession()).ofStyled("compile", NTextStyle.primary4()));
             out.printf("%s%n",
                     NCommandLine.of(

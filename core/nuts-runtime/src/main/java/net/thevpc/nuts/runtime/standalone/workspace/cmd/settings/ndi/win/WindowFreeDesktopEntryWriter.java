@@ -4,13 +4,13 @@ import net.thevpc.nuts.*;
 import net.thevpc.nuts.cmdline.NCommandLine;
 import net.thevpc.nuts.io.NIOException;
 import net.thevpc.nuts.io.NPath;
-import net.thevpc.nuts.io.NStream;
+import net.thevpc.nuts.io.NOutStream;
 import net.thevpc.nuts.runtime.standalone.io.util.CoreIOUtils;
 import net.thevpc.nuts.runtime.optional.mslink.OptionalMsLinkHelper;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.util.PathInfo;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.ndi.FreeDesktopEntry;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.ndi.base.AbstractFreeDesktopEntryWriter;
-import net.thevpc.nuts.util.NUtils;
+import net.thevpc.nuts.util.NAssert;
 
 import java.io.File;
 import java.io.IOException;
@@ -135,7 +135,7 @@ public class WindowFreeDesktopEntryWriter extends AbstractFreeDesktopEntryWriter
         }
     }
 
-    public void write(FreeDesktopEntry file, NStream out) {
+    public void write(FreeDesktopEntry file, NOutStream out) {
         write(file, out.asPrintStream());
     }
 
@@ -144,9 +144,9 @@ public class WindowFreeDesktopEntryWriter extends AbstractFreeDesktopEntryWriter
         for (FreeDesktopEntry.Group group : file.getGroups()) {
             out.println();
             String gn = group.getGroupName();
-            NUtils.requireNonBlank(gn, "group name", session);
+            NAssert.requireNonBlank(gn, "group name", session);
             FreeDesktopEntry.Type t = group.getType();
-            NUtils.requireNonBlank(t, "type", session);
+            NAssert.requireNonBlank(t, "type", session);
             out.println("[" + gn.trim() + "]");
             for (Map.Entry<String, Object> e : group.toMap().entrySet()) {
                 Object v = e.getValue();

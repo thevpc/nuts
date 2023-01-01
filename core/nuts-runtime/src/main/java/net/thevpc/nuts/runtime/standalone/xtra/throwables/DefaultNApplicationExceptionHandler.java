@@ -1,18 +1,15 @@
 package net.thevpc.nuts.runtime.standalone.xtra.throwables;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.util.NApiUtils;
+import net.thevpc.nuts.util.*;
 import net.thevpc.nuts.boot.NWorkspaceBootOptionsBuilder;
 import net.thevpc.nuts.elem.NArrayElementBuilder;
 import net.thevpc.nuts.elem.NElements;
-import net.thevpc.nuts.io.NStream;
+import net.thevpc.nuts.io.NOutStream;
 import net.thevpc.nuts.runtime.standalone.log.NLogUtils;
 import net.thevpc.nuts.spi.NSupportLevelContext;
 import net.thevpc.nuts.text.NTextStyle;
 import net.thevpc.nuts.text.NTexts;
-import net.thevpc.nuts.util.NLogConfig;
-import net.thevpc.nuts.util.NLoggerOp;
-import net.thevpc.nuts.util.NUtils;
 
 import java.io.PrintStream;
 import java.util.logging.Level;
@@ -20,7 +17,7 @@ import java.util.logging.Level;
 public class DefaultNApplicationExceptionHandler implements NApplicationExceptionHandler {
     @Override
     public int processThrowable(String[] args, Throwable throwable, NSession session) {
-        NUtils.requireSession(session);
+        NAssert.requireSession(session);
         NWorkspaceBootOptionsBuilder bo = null;
         bo = session.boot().getBootOptions().builder();
         if (!session.env().isGraphicalDesktopEnvironment()) {
@@ -50,7 +47,7 @@ public class DefaultNApplicationExceptionHandler implements NApplicationExceptio
             m = throwable.toString();
         }
 
-        NStream fout = null;
+        NOutStream fout = null;
         try {
             fout = session.config().getSystemTerminal().getErr();
             if (fm != null) {

@@ -26,7 +26,7 @@
 package net.thevpc.nuts.elem;
 
 import net.thevpc.nuts.NSession;
-import net.thevpc.nuts.util.NUtils;
+import net.thevpc.nuts.util.NAssert;
 
 import java.util.Collection;
 import java.util.Map;
@@ -40,7 +40,7 @@ import java.util.Map;
 public interface NObjectElementBuilder extends NElementBuilder {
 
     static NObjectElementBuilder of(NSession session) {
-        NUtils.requireSession(session);
+        NAssert.requireSession(session);
         return NElements.of(session).ofObject();
     }
 

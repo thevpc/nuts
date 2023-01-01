@@ -38,9 +38,9 @@ import java.io.Writer;
 import java.util.Locale;
 import java.util.Map;
 
-public interface NStream extends NOutputTarget {
+public interface NOutStream extends NOutputTarget {
 
-    static NStream ofNull(NSession session) {
+    static NOutStream ofNull(NSession session) {
         return NIO.of(session).createNullPrintStream();
     }
 
@@ -51,11 +51,11 @@ public interface NStream extends NOutputTarget {
      * @param session session
      * @return new in-memory NutsPrintStream implementation
      */
-    static NMemoryStream ofInMemory(NSession session) {
+    static NOutMemoryStream ofInMemory(NSession session) {
         return NIO.of(session).createInMemoryPrintStream();
     }
 
-    static NStream of(OutputStream out, NSession session) {
+    static NOutStream of(OutputStream out, NSession session) {
         return NIO.of(session).createPrintStream(out);
     }
 
@@ -70,11 +70,11 @@ public interface NStream extends NOutputTarget {
      * @param session  session
      * @return {@code mode} supporting PrintStream
      */
-    static NStream of(OutputStream out, NTerminalMode mode, NSystemTerminalBase terminal, NSession session) {
+    static NOutStream of(OutputStream out, NTerminalMode mode, NSystemTerminalBase terminal, NSession session) {
         return NIO.of(session).createPrintStream(out, mode, terminal);
     }
 
-    static NStream of(Writer out, NSession session) {
+    static NOutStream of(Writer out, NSession session) {
         return NIO.of(session).createPrintStream(out);
     }
 
@@ -86,79 +86,79 @@ public interface NStream extends NOutputTarget {
      * @param session new session
      * @return a new instance of NutsPrintStream
      */
-    NStream setSession(NSession session);
+    NOutStream setSession(NSession session);
 
-    NStream flush();
+    NOutStream flush();
 
-    NStream close();
+    NOutStream close();
 
-    NStream write(byte[] b);
+    NOutStream write(byte[] b);
 
-    NStream write(int b);
+    NOutStream write(int b);
 
-    NStream write(byte[] buf, int off, int len);
+    NOutStream write(byte[] buf, int off, int len);
 
-    NStream write(char[] buf);
+    NOutStream write(char[] buf);
 
-    NStream write(char[] buf, int off, int len);
+    NOutStream write(char[] buf, int off, int len);
 
-    NStream print(NMsg b);
+    NOutStream print(NMsg b);
 
-    NStream print(NString b);
+    NOutStream print(NString b);
 
-    NStream print(boolean b);
+    NOutStream print(boolean b);
 
-    NStream print(char c);
+    NOutStream print(char c);
 
-    NStream print(int i);
+    NOutStream print(int i);
 
-    NStream print(long l);
+    NOutStream print(long l);
 
-    NStream print(float f);
+    NOutStream print(float f);
 
-    NStream print(double d);
+    NOutStream print(double d);
 
-    NStream print(char[] s);
+    NOutStream print(char[] s);
 
-    NStream print(String s);
+    NOutStream print(String s);
 
-    NStream print(Object obj);
+    NOutStream print(Object obj);
 
-    NStream printf(Object obj);
+    NOutStream printf(Object obj);
 
-    NStream printlnf(Object obj);
+    NOutStream printlnf(Object obj);
 
-    NStream println();
+    NOutStream println();
 
-    NStream println(boolean x);
+    NOutStream println(boolean x);
 
-    NStream println(char x);
+    NOutStream println(char x);
 
-    NStream println(NMsg b);
+    NOutStream println(NMsg b);
 
-    NStream println(NString b);
+    NOutStream println(NString b);
 
-    NStream println(int x);
+    NOutStream println(int x);
 
-    NStream println(long x);
+    NOutStream println(long x);
 
-    NStream println(float x);
+    NOutStream println(float x);
 
-    NStream println(double x);
+    NOutStream println(double x);
 
-    NStream println(char[] x);
+    NOutStream println(char[] x);
 
-    NStream println(String x);
+    NOutStream println(String x);
 
-    NStream println(Object x);
+    NOutStream println(Object x);
 
-    NStream append(Object text, NTextStyle style);
+    NOutStream append(Object text, NTextStyle style);
 
-    NStream append(Object text, NTextStyles styles);
+    NOutStream append(Object text, NTextStyles styles);
 
-    NStream resetLine();
+    NOutStream resetLine();
 
-    NStream printf(String format, Object... args);
+    NOutStream printf(String format, Object... args);
 
     /**
      * print java formatted string (with {})
@@ -170,27 +170,27 @@ public interface NStream extends NOutputTarget {
      * @param args   format args
      * @return {@code this} instance
      */
-    NStream printj(String format, Object... args);
+    NOutStream printj(String format, Object... args);
 
-    NStream printlnj(String format, Object... args);
+    NOutStream printlnj(String format, Object... args);
 
-    NStream printv(String format, Map<String,?> args);
+    NOutStream printv(String format, Map<String,?> args);
 
-    NStream printlnv(String format, Map<String,?> args);
+    NOutStream printlnv(String format, Map<String,?> args);
 
-    NStream printlnf(String format, Object... args);
+    NOutStream printlnf(String format, Object... args);
 
-    NStream printf(Locale l, String format, Object... args);
+    NOutStream printf(Locale l, String format, Object... args);
 
-    NStream format(String format, Object... args);
+    NOutStream format(String format, Object... args);
 
-    NStream format(Locale l, String format, Object... args);
+    NOutStream format(Locale l, String format, Object... args);
 
-    NStream append(CharSequence csq);
+    NOutStream append(CharSequence csq);
 
-    NStream append(CharSequence csq, int start, int end);
+    NOutStream append(CharSequence csq, int start, int end);
 
-    NStream append(char c);
+    NOutStream append(char c);
 
     NTerminalMode getTerminalMode();
 
@@ -202,9 +202,9 @@ public interface NStream extends NOutputTarget {
      * @param other new mode
      * @return a new instance of NutsPrintStream (if the mode changes)
      */
-    NStream setTerminalMode(NTerminalMode other);
+    NOutStream setTerminalMode(NTerminalMode other);
 
-    NStream run(NTerminalCommand command, NSession session);
+    NOutStream run(NTerminalCommand command, NSession session);
 
     OutputStream asOutputStream();
 

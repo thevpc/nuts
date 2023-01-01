@@ -1,9 +1,9 @@
 package net.thevpc.nuts.runtime.standalone.io.terminal;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.util.NAssert;
 import net.thevpc.nuts.util.NLogger;
 import net.thevpc.nuts.util.NLoggerVerb;
-import net.thevpc.nuts.util.NUtils;
 
 import java.util.function.Supplier;
 import java.util.logging.Level;
@@ -26,42 +26,42 @@ public class DefaultWriteTypeProcessor {
     }
 
     public DefaultWriteTypeProcessor ask(NMsg m) {
-        NUtils.requireNonNull(m, "message", session);
+        NAssert.requireNonNull(m, "message", session);
         this.askMessage = m;
         return this;
     }
 
     public DefaultWriteTypeProcessor withLog(NLogger log, NMsg m) {
-        NUtils.requireNonNull(log, "log", session);
-        NUtils.requireNonNull(m, "message", session);
+        NAssert.requireNonNull(log, "log", session);
+        NAssert.requireNonNull(m, "message", session);
         this.log = log;
         this.logMessage = m;
         return this;
     }
 
     public DefaultWriteTypeProcessor onError(Supplier<RuntimeException> error) {
-        NUtils.requireNonNull(error, "error handler", session);
+        NAssert.requireNonNull(error, "error handler", session);
         this.error = error;
         return this;
     }
 
     private NMsg getValidAskMessage() {
-        NUtils.requireNonNull(askMessage, "message", session);
+        NAssert.requireNonNull(askMessage, "message", session);
         return askMessage;
     }
 
     private NMsg getValidLogMessage() {
-        NUtils.requireNonNull(logMessage, "log message", session);
+        NAssert.requireNonNull(logMessage, "log message", session);
         return logMessage;
     }
 
     private Supplier<RuntimeException> getValidError() {
-        NUtils.requireNonNull(error, "error handler", session);
+        NAssert.requireNonNull(error, "error handler", session);
         return error;
     }
 
     private NLogger getValidLog() {
-        NUtils.requireNonNull(log, "log", session);
+        NAssert.requireNonNull(log, "log", session);
         return log;
     }
 

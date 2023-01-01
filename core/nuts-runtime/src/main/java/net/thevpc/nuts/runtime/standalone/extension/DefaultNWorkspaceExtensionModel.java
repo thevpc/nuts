@@ -26,10 +26,7 @@ import net.thevpc.nuts.runtime.standalone.workspace.config.NWorkspaceConfigBoot;
 import net.thevpc.nuts.runtime.standalone.workspace.config.NWorkspaceConfigManagerExt;
 import net.thevpc.nuts.runtime.standalone.xtra.expr.StringTokenizerUtils;
 import net.thevpc.nuts.spi.*;
-import net.thevpc.nuts.util.NLogger;
-import net.thevpc.nuts.util.NLoggerOp;
-import net.thevpc.nuts.util.NLoggerVerb;
-import net.thevpc.nuts.util.NUtils;
+import net.thevpc.nuts.util.*;
 
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -133,7 +130,7 @@ public class DefaultNWorkspaceExtensionModel {
 
     // @Override
     public List<NExtensionInformation> findExtensions(NId id, String extensionType, NSession session) {
-        NUtils.requireNonBlank(id.getVersion(), "version", session);
+        NAssert.requireNonBlank(id.getVersion(), "version", session);
         List<NExtensionInformation> ret = new ArrayList<>();
         List<String> allUrls = new ArrayList<>();
         for (String r : getExtensionRepositoryLocations(id)) {
@@ -440,7 +437,7 @@ public class DefaultNWorkspaceExtensionModel {
     public NWorkspaceExtension wireExtension(NId id, NFetchCommand options) {
         NSession session = options.getSession();
         NSessionUtils.checkSession(ws, session);
-        NUtils.requireNonNull(id, "extension id", session);
+        NAssert.requireNonNull(id, "extension id", session);
         NId wired = CoreNUtils.findNutsIdBySimpleName(id, extensions.keySet());
         if (wired != null) {
             throw new NExtensionAlreadyRegisteredException(session, id, wired.toString());

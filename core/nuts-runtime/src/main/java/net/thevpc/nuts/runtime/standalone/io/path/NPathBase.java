@@ -383,7 +383,7 @@ public abstract class NPathBase implements NPath {
         }
 
         @Override
-        public void print(net.thevpc.nuts.io.NStream out) {
+        public void print(NOutStream out) {
             out.print(NTexts.of(p.session).ofStyled(p.toNutsString(), NTextStyle.path()));
         }
 

@@ -6,7 +6,7 @@ import net.thevpc.nuts.runtime.standalone.util.filters.InternalNTypedFilters;
 import java.util.List;
 
 import net.thevpc.nuts.spi.NSupportLevelContext;
-import net.thevpc.nuts.util.NUtils;
+import net.thevpc.nuts.util.NAssert;
 
 public class InternalNInstallStatusFilters extends InternalNTypedFilters<NInstallStatusFilter>
         implements NInstallStatusFilters {
@@ -77,7 +77,7 @@ public class InternalNInstallStatusFilters extends InternalNTypedFilters<NInstal
         }
         NInstallStatusFilter t = as(a);
         NSession session = getSession();
-        NUtils.requireNonNull(t, "InstallStatusFilter", session);
+        NAssert.requireNonNull(t, "InstallStatusFilter", session);
         return t;
     }
 

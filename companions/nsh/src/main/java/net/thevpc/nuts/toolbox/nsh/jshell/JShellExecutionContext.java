@@ -3,7 +3,7 @@ package net.thevpc.nuts.toolbox.nsh.jshell;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.cmdline.NCommandAutoComplete;
 import net.thevpc.nuts.cmdline.NCommandLine;
-import net.thevpc.nuts.io.NStream;
+import net.thevpc.nuts.io.NOutStream;
 import net.thevpc.nuts.io.NTerminalMode;
 
 import java.io.InputStream;
@@ -16,9 +16,9 @@ public interface JShellExecutionContext {
 
     InputStream in();
 
-    NStream out();
+    NOutStream out();
 
-    NStream err();
+    NOutStream err();
 
     NWorkspace getWorkspace();
 

@@ -12,7 +12,7 @@ import net.thevpc.nuts.*;
 import net.thevpc.nuts.cmdline.NArgument;
 import net.thevpc.nuts.cmdline.NCommandLine;
 import net.thevpc.nuts.elem.NElements;
-import net.thevpc.nuts.io.NStream;
+import net.thevpc.nuts.io.NOutStream;
 import net.thevpc.nuts.runtime.standalone.format.NFetchDisplayOptions;
 import net.thevpc.nuts.runtime.standalone.format.DefaultSearchFormatBase;
 import net.thevpc.nuts.runtime.standalone.util.xml.XmlUtils;
@@ -31,7 +31,7 @@ public class DefaultSearchFormatXml extends DefaultSearchFormatBase {
     private NCodeHighlighter codeFormat;
     NTexts txt;
 
-    public DefaultSearchFormatXml(NSession session, NStream writer, NFetchDisplayOptions options) {
+    public DefaultSearchFormatXml(NSession session, NOutStream writer, NFetchDisplayOptions options) {
         super(session, writer, NContentType.XML, options);
         txt = NTexts.of(session);
         codeFormat = NTexts.of(session).setSession(session).getCodeHighlighter("xml");

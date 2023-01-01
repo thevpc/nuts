@@ -83,8 +83,8 @@ public class DefaultNCompress implements NCompress {
 
     public void runZip() {
         checkSession();
-        NUtils.requireNonBlank(sources, "source", session);
-        NUtils.requireNonBlank(target, "target", session);
+        NAssert.requireNonBlank(sources, "source", session);
+        NAssert.requireNonBlank(target, "target", session);
         _LOG(session).with().level(Level.FINEST).verb(NLoggerVerb.START).log(NMsg.ofJstyle("compress {0} to {1}", sources, target));
         try {
             OutputStream fW = null;

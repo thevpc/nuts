@@ -7,7 +7,7 @@ import net.thevpc.nuts.runtime.standalone.io.util.NInstallStatusIdFilter;
 import java.util.List;
 
 import net.thevpc.nuts.spi.NSupportLevelContext;
-import net.thevpc.nuts.util.NUtils;
+import net.thevpc.nuts.util.NAssert;
 
 public class InternalNIdFilters extends InternalNTypedFilters<NIdFilter> implements NIdFilters {
 
@@ -90,7 +90,7 @@ public class InternalNIdFilters extends InternalNTypedFilters<NIdFilter> impleme
         }
         NIdFilter t = as(a);
         NSession session = getSession();
-        NUtils.requireNonNull(t, "IdFilter", session);
+        NAssert.requireNonNull(t, "IdFilter", session);
         return t;
     }
 

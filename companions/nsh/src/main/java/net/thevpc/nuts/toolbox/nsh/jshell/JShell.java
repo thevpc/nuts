@@ -33,7 +33,7 @@ package net.thevpc.nuts.toolbox.nsh.jshell;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.cmdline.NCommandHistory;
 import net.thevpc.nuts.io.NPath;
-import net.thevpc.nuts.io.NStream;
+import net.thevpc.nuts.io.NOutStream;
 import net.thevpc.nuts.io.NSessionTerminal;
 import net.thevpc.nuts.io.NSystemTerminal;
 import net.thevpc.nuts.spi.NDefaultSupportLevelContext;
@@ -550,7 +550,7 @@ public class JShell {
         return terminal.readLine(getPromptString(context));
     }
 
-    protected void printHeader(NStream out) {
+    protected void printHeader(NOutStream out) {
         out.resetLine().println(NTexts.of(appContext.getSession()).ofBuilder()
                 .appendCode("sh", "nuts")
                 .append(" shell ")

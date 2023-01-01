@@ -57,8 +57,8 @@ public class NJLineTerminal extends NSystemTerminalBaseImpl {
     private static final Logger LOG = Logger.getLogger(NJLineTerminal.class.getName());
     private Terminal terminal;
     private LineReader reader;
-    private NStream out;
-    private NStream err;
+    private NOutStream out;
+    private NOutStream err;
     private InputStream in;
     private NCommandAutoCompleteResolver autoCompleteResolver;
     private NCommandHistory commandHistory;
@@ -227,13 +227,13 @@ public class NJLineTerminal extends NSystemTerminalBaseImpl {
         if (reader instanceof LineReaderImpl) {
             ((LineReaderImpl) reader).setHistory(new NJLineHistory(reader, session, this));
         }
-        this.out = NStream.of(
+        this.out = NOutStream.of(
                 new TransparentPrintStream(
                         new PrintStream(reader.getTerminal().output(), true),
                         System.out
                 ),
                 NTerminalMode.FORMATTED, this, session);
-        this.err = NStream.of(
+        this.err = NOutStream.of(
                 new TransparentPrintStream(
                         new PrintStream(reader.getTerminal().output(), true),
                         System.err
@@ -267,7 +267,7 @@ public class NJLineTerminal extends NSystemTerminalBaseImpl {
     }
 
     @Override
-    public String readLine(NStream out, NMsg message, NSession session) {
+    public String readLine(NOutStream out, NMsg message, NSession session) {
         prepare(session);
         if (out == null) {
             out = getOut();
@@ -290,7 +290,7 @@ public class NJLineTerminal extends NSystemTerminalBaseImpl {
     }
 
     @Override
-    public char[] readPassword(NStream out, NMsg message, NSession session) {
+    public char[] readPassword(NOutStream out, NMsg message, NSession session) {
         prepare(session);
         if (out == null) {
             return reader.readLine(NTexts.of(session).ofText(message).toString(), '*').toCharArray();
@@ -306,12 +306,12 @@ public class NJLineTerminal extends NSystemTerminalBaseImpl {
     }
 
     @Override
-    public NStream getOut() {
+    public NOutStream getOut() {
         return out;
     }
 
     @Override
-    public NStream getErr() {
+    public NOutStream getErr() {
         return err;
     }
 

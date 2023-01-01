@@ -1,22 +1,22 @@
 package net.thevpc.nuts.runtime.standalone.io.printstream;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.io.NMemoryStream;
-import net.thevpc.nuts.io.NStream;
+import net.thevpc.nuts.io.NOutMemoryStream;
+import net.thevpc.nuts.io.NOutStream;
 import net.thevpc.nuts.text.NTextStyle;
 import net.thevpc.nuts.text.NTexts;
 
 import java.io.ByteArrayOutputStream;
 import java.io.OutputStream;
 
-public class NByteArrayStream extends NStreamRaw implements NMemoryStream {
-    public NByteArrayStream(NSession session) {
+public class NOutByteArrayStream extends NOutStreamRaw implements NOutMemoryStream {
+    public NOutByteArrayStream(NSession session) {
         super(new ByteArrayOutputStream(), null, null, session, new Bindings(),null);
         getOutputMetaData().setMessage(
                 NMsg.ofNtf(NTexts.of(session).ofStyled("<memory-buffer>", NTextStyle.path()))
         );
     }
-    protected NByteArrayStream(ByteArrayOutputStream bos, NSession session) {
+    protected NOutByteArrayStream(ByteArrayOutputStream bos, NSession session) {
         super(bos, null, null, session, new Bindings(),null);
         getOutputMetaData().setMessage(
                 NMsg.ofNtf(NTexts.of(session).ofStyled("<memory-buffer>", NTextStyle.path()))
@@ -24,11 +24,11 @@ public class NByteArrayStream extends NStreamRaw implements NMemoryStream {
     }
 
     @Override
-    public NStream setSession(NSession session) {
+    public NOutStream setSession(NSession session) {
         if(session==null || session==this.session){
             return this;
         }
-        return new NByteArrayStream((ByteArrayOutputStream) out,session);
+        return new NOutByteArrayStream((ByteArrayOutputStream) out,session);
     }
 
     @Override

@@ -4,9 +4,9 @@ import net.thevpc.nuts.*;
 import net.thevpc.nuts.cmdline.NArgument;
 import net.thevpc.nuts.cmdline.NCommandLine;
 import net.thevpc.nuts.cmdline.NCommandLineConfigurable;
-import net.thevpc.nuts.io.NStream;
+import net.thevpc.nuts.io.NOutStream;
 import net.thevpc.nuts.io.NSessionTerminal;
-import net.thevpc.nuts.runtime.standalone.io.printstream.NByteArrayStream;
+import net.thevpc.nuts.runtime.standalone.io.printstream.NOutByteArrayStream;
 import net.thevpc.nuts.runtime.standalone.app.gui.CoreNUtilGui;
 import net.thevpc.nuts.runtime.standalone.session.NSessionUtils;
 import net.thevpc.nuts.runtime.standalone.util.NConfigurableHelper;
@@ -26,7 +26,7 @@ import java.util.List;
 public class DefaultNQuestion<T> implements NQuestion<T> {
 
     private final NSessionTerminal terminal;
-    private final NStream out;
+    private final NOutStream out;
     private final NWorkspace ws;
     private NMsg message;
     private NMsg cancelMessage;
@@ -44,7 +44,7 @@ public class DefaultNQuestion<T> implements NQuestion<T> {
     private boolean password = false;
     private Object lastResult = null;
 
-    public DefaultNQuestion(NWorkspace ws, NSessionTerminal terminal, NStream out) {
+    public DefaultNQuestion(NWorkspace ws, NSessionTerminal terminal, NOutStream out) {
         this.ws = ws;
         this.terminal = terminal;
         this.out = out;
@@ -62,12 +62,12 @@ public class DefaultNQuestion<T> implements NQuestion<T> {
                 }
                 case ERROR: {
                     if (cancelMessage != null) {
-                        NByteArrayStream os = new NByteArrayStream(getSession());
+                        NOutByteArrayStream os = new NOutByteArrayStream(getSession());
                         os.printf(cancelMessage);
                         os.flush();
                         throw new NCancelException(getSession(), NMsg.ofNtf(os.toString()));
                     } else {
-                        NByteArrayStream os = new NByteArrayStream(getSession());
+                        NOutByteArrayStream os = new NOutByteArrayStream(getSession());
                         os.printf(message);
                         os.flush();
                         throw new NCancelException(getSession(), NMsg.ofCstyle("cancelled : %s", NMsg.ofNtf(os.toString())));
@@ -76,7 +76,7 @@ public class DefaultNQuestion<T> implements NQuestion<T> {
             }
         }
         if (!getSession().isPlainOut()) {
-            NByteArrayStream os = new NByteArrayStream(getSession());
+            NOutByteArrayStream os = new NOutByteArrayStream(getSession());
             os.printf(message);
             os.flush();
             throw new NExecutionException(getSession(), NMsg.ofCstyle(
@@ -108,11 +108,11 @@ public class DefaultNQuestion<T> implements NQuestion<T> {
             _acceptedValues = new ArrayList<>();
         }
         while (true) {
-            NStream out = this.out;
+            NOutStream out = this.out;
             ByteArrayOutputStream bos = null;
             if (gui) {
                 bos = new ByteArrayOutputStream();
-                out = NStream.of(bos, session);
+                out = NOutStream.of(bos, session);
             }
             if (resetLine) {
                 out.resetLine();

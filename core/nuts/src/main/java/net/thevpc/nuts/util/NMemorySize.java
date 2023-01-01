@@ -4,7 +4,7 @@ import net.thevpc.nuts.*;
 import net.thevpc.nuts.cmdline.NArgument;
 import net.thevpc.nuts.cmdline.NCommandLine;
 import net.thevpc.nuts.elem.NMapBy;
-import net.thevpc.nuts.io.NStream;
+import net.thevpc.nuts.io.NOutStream;
 import net.thevpc.nuts.spi.NFormatSPI;
 
 import java.io.IOException;
@@ -849,7 +849,7 @@ public class NMemorySize implements Serializable, NFormattable {
             }
 
             @Override
-            public void print(NStream out) {
+            public void print(NOutStream out) {
                 NMemorySizeFormat.of(fixed, iec).print(NMemorySize.this, out);
             }
 

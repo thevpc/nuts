@@ -40,8 +40,8 @@ public class NNameFormat {
             @NMapBy(name = "leading") NWordFormat leading,
             @NMapBy(name = "next") NWordFormat next,
             @NMapBy(name = "sep") String sep) {
-        NUtils.requireNonNull(leading, "leading");
-        NUtils.requireNonNull(next, "next");
+        NAssert.requireNonNull(leading, "leading");
+        NAssert.requireNonNull(next, "next");
         this.leading = leading;
         this.next = next;
         this.sep = sep;

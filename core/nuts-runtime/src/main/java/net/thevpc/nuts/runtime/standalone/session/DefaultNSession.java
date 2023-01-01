@@ -30,7 +30,7 @@ import net.thevpc.nuts.cmdline.NCommandLineConfigurable;
 import net.thevpc.nuts.elem.NArrayElementBuilder;
 import net.thevpc.nuts.elem.NElements;
 import net.thevpc.nuts.format.NIterableFormat;
-import net.thevpc.nuts.io.NStream;
+import net.thevpc.nuts.io.NOutStream;
 import net.thevpc.nuts.io.NSessionTerminal;
 import net.thevpc.nuts.io.NTerminalMode;
 import net.thevpc.nuts.runtime.standalone.elem.DefaultNArrayElementBuilder;
@@ -960,7 +960,7 @@ public class DefaultNSession implements Cloneable, NSession {
     }
 
     @Override
-    public NStream out() {
+    public NOutStream out() {
         return terminal.out();
     }
 
@@ -970,7 +970,7 @@ public class DefaultNSession implements Cloneable, NSession {
     }
 
     @Override
-    public NStream err() {
+    public NOutStream err() {
         return terminal.err();
     }
 
@@ -1003,7 +1003,7 @@ public class DefaultNSession implements Cloneable, NSession {
             if (a.getSession() != this) {
                 throw new NIllegalArgumentException(this, NMsg.ofPlain("session mismatch"));
             }
-            NStream o = a.getOut();
+            NOutStream o = a.getOut();
         }
 //        this.out0 = (terminal.fout());
 //        this.err0 = (terminal.ferr());

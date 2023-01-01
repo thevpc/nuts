@@ -15,7 +15,7 @@ import net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.ndi.script.From
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.ndi.script.SimpleScriptBuilder;
 import net.thevpc.nuts.text.NTextStyle;
 import net.thevpc.nuts.text.NTexts;
-import net.thevpc.nuts.util.NUtils;
+import net.thevpc.nuts.util.NAssert;
 
 import java.io.*;
 import java.nio.file.Files;
@@ -790,7 +790,7 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
 
     public PathInfo[] createShortcut(NDesktopIntegrationItem nDesktopIntegrationItem, NdiScriptOptions options) {
         String apiVersion = options.getNutsApiVersion().toString();
-        NUtils.requireNonBlank(apiVersion, "nuts-api version to link to", session);
+        NAssert.requireNonBlank(apiVersion, "nuts-api version to link to", session);
         NId apiId = session.getWorkspace().getApiId().builder().setVersion(apiVersion).build();
         NDefinition apiDefinition = session.search().addId(apiId).setFailFast(true).setLatest(true).setContent(true)
                 .setDistinct(true)

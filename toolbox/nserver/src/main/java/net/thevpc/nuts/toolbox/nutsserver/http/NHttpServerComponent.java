@@ -28,7 +28,7 @@ package net.thevpc.nuts.toolbox.nutsserver.http;
 
 import com.sun.net.httpserver.*;
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.io.NStream;
+import net.thevpc.nuts.io.NOutStream;
 import net.thevpc.nuts.spi.NSupportLevelContext;
 import net.thevpc.nuts.text.NTextStyle;
 import net.thevpc.nuts.text.NTexts;
@@ -36,7 +36,7 @@ import net.thevpc.nuts.toolbox.nutsserver.NServer;
 import net.thevpc.nuts.toolbox.nutsserver.NServerComponent;
 import net.thevpc.nuts.toolbox.nutsserver.NServerConstants;
 import net.thevpc.nuts.toolbox.nutsserver.ServerConfig;
-import net.thevpc.nuts.util.NUtils;
+import net.thevpc.nuts.util.NAssert;
 
 import javax.net.ssl.*;
 import java.io.*;
@@ -105,7 +105,7 @@ public class NHttpServerComponent implements NServerComponent {
     public NServer start(NSession invokerSession, ServerConfig config) {
         NHttpServerConfig httpConfig = (NHttpServerConfig) config;
         Map<String, NSession> workspaces = httpConfig.getWorkspaces();
-        NUtils.requireSession(invokerSession);
+        NAssert.requireSession(invokerSession);
         if (workspaces.isEmpty()) {
             workspaces.put("", invokerSession);
         }
@@ -172,8 +172,8 @@ public class NHttpServerComponent implements NServerComponent {
         }
         server.setExecutor(executor);
         if (httpConfig.isTls()) {
-            NUtils.requireNonBlank(httpConfig.getSslKeystorePassphrase(), "sslKeystorePassphrase", invokerSession);
-            NUtils.requireNonBlank(httpConfig.getSslKeystoreCertificate(), "sslKeystoreCertificate", invokerSession);
+            NAssert.requireNonBlank(httpConfig.getSslKeystorePassphrase(), "sslKeystorePassphrase", invokerSession);
+            NAssert.requireNonBlank(httpConfig.getSslKeystoreCertificate(), "sslKeystoreCertificate", invokerSession);
             try {
                 SSLContext sslContext = SSLContext.getInstance("TLS");
 
@@ -230,7 +230,7 @@ public class NHttpServerComponent implements NServerComponent {
             }
         });
         server.start();
-        NStream out = session.out();
+        NOutStream out = session.out();
         NTexts factory = NTexts.of(session);
         out.printf("Nuts Http Service '%s' running %s at %s\n", serverId,
                 factory.ofStyled(

@@ -29,7 +29,7 @@ import net.thevpc.nuts.cmdline.NCommandHistoryEntry;
 import net.thevpc.nuts.io.NIOException;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.spi.NSupportLevelContext;
-import net.thevpc.nuts.util.NUtils;
+import net.thevpc.nuts.util.NAssert;
 
 import java.io.*;
 import java.nio.file.Path;
@@ -55,7 +55,7 @@ public class NCommandHistoryImpl implements NCommandHistory {
     @Override
     public void load() {
         entries.clear();
-        NUtils.requireNonNull(path, "path", session);
+        NAssert.requireNonNull(path, "path", session);
         if (path.exists()) {
             try (InputStream in = path.getInputStream()) {
                 load(in);
@@ -67,7 +67,7 @@ public class NCommandHistoryImpl implements NCommandHistory {
 
     @Override
     public void save() {
-        NUtils.requireNonNull(path, "path", session);
+        NAssert.requireNonNull(path, "path", session);
         path.mkParentDirs();
         try (OutputStream out = path.getOutputStream()) {
             save(out);

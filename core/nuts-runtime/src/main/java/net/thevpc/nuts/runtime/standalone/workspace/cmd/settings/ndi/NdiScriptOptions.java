@@ -3,7 +3,7 @@ package net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.ndi;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.io.NIOException;
 import net.thevpc.nuts.io.NPath;
-import net.thevpc.nuts.util.NUtils;
+import net.thevpc.nuts.util.NAssert;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -217,7 +217,7 @@ public class NdiScriptOptions implements Cloneable {
                 } catch (IOException e) {
                     throw new NIOException(session, e);
                 }
-                NUtils.requireNonBlank(_latestVersion, "missing nuts-api version to link to", session);
+                NAssert.requireNonBlank(_latestVersion, "missing nuts-api version to link to", session);
                 nutsApiId = session.getWorkspace().getApiId().builder().setVersion(_latestVersion).build();
             }
         }

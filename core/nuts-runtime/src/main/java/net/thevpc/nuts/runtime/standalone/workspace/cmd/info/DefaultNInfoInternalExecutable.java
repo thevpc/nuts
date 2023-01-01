@@ -5,7 +5,7 @@
  */
 package net.thevpc.nuts.runtime.standalone.workspace.cmd.info;
 
-import net.thevpc.nuts.io.NStream;
+import net.thevpc.nuts.io.NOutStream;
 import net.thevpc.nuts.NSession;
 import net.thevpc.nuts.runtime.standalone.app.util.NAppUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.exec.DefaultInternalNExecutableCommand;
@@ -30,7 +30,7 @@ public class DefaultNInfoInternalExecutable extends DefaultInternalNExecutableCo
             showDefaultHelp();
             return;
         }
-        NStream out = getSession().out();
+        NOutStream out = getSession().out();
         getSession().info().configure(false, args).println(out);
     }
 

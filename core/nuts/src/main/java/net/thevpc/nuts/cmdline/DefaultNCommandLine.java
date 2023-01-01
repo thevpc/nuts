@@ -28,8 +28,8 @@ import net.thevpc.nuts.reserved.ReservedSimpleCharQueue;
 import net.thevpc.nuts.text.NTextBuilder;
 import net.thevpc.nuts.text.NTextStyle;
 import net.thevpc.nuts.text.NTexts;
+import net.thevpc.nuts.util.NAssert;
 import net.thevpc.nuts.util.NStringUtils;
-import net.thevpc.nuts.util.NUtils;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -270,7 +270,7 @@ public class DefaultNCommandLine implements NCommandLine {
 
     @Override
     public NCommandLine pushBack(NArgument arg) {
-        NUtils.requireNonNull(arg, "argument");
+        NAssert.requireNonNull(arg, "argument");
         lookahead.add(0, arg);
         return this;
     }
@@ -833,7 +833,7 @@ public class DefaultNCommandLine implements NCommandLine {
 
     @Override
     public NCommandLineFormat formatter(NSession session) {
-        return NCommandLineFormat.of(NUtils.requireSession(session!=null?session:this.session)).setValue(this);
+        return NCommandLineFormat.of(NAssert.requireSession(session!=null?session:this.session)).setValue(this);
     }
 
 

@@ -6,8 +6,8 @@ import net.thevpc.nuts.runtime.standalone.util.collections.CoreCollectionUtils;
 import net.thevpc.nuts.spi.NRepositoryDB;
 import net.thevpc.nuts.spi.NRepositoryLocation;
 import net.thevpc.nuts.spi.NRepositorySelectorList;
+import net.thevpc.nuts.util.NAssert;
 import net.thevpc.nuts.util.NPlatformUtils;
-import net.thevpc.nuts.util.NUtils;
 
 import java.util.HashMap;
 import java.util.Objects;
@@ -54,7 +54,7 @@ public class NRepositorySelectorHelper {
 
     public static NAddRepositoryOptions createCustomRepositoryOptions(String name, String url, boolean requireName, NSession session) {
         if ((name == null || name.isEmpty()) && requireName) {
-            NUtils.requireNonBlank(name, "repository name (<name>=<url>)", session);
+            NAssert.requireNonBlank(name, "repository name (<name>=<url>)", session);
         }
         if (name == null || name.isEmpty()) {
             name = url;
@@ -72,8 +72,8 @@ public class NRepositorySelectorHelper {
                 name = name.substring(1);
             }
         }
-        NUtils.requireNonBlank(name, "repository name (<name>=<url>)", session);
-        NUtils.requireNonBlank(url, "repository url (<name>=<url>)", session);
+        NAssert.requireNonBlank(name, "repository name (<name>=<url>)", session);
+        NAssert.requireNonBlank(url, "repository url (<name>=<url>)", session);
         return new NAddRepositoryOptions().setName(name)
                 .setFailSafe(false).setCreate(true)
                 .setOrder((!NBlankable.isBlank(url) && NPath.of(url, session).isFile())

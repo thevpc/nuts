@@ -48,7 +48,7 @@ public interface NSessionTerminal {
         return NTerminals.of(session).createTerminal(parent, session);
     }
 
-    static NSessionTerminal of(InputStream in, NStream out, NStream err, NSession session) {
+    static NSessionTerminal of(InputStream in, NOutStream out, NOutStream err, NSession session) {
         return NTerminals.of(session).createTerminal(in, out, err, session);
     }
 
@@ -60,29 +60,29 @@ public interface NSessionTerminal {
         return NTerminals.of(session).createMemTerminal(mergeError, session);
     }
 
-    String readLine(NStream out, String prompt, Object... params);
+    String readLine(NOutStream out, String prompt, Object... params);
 
-    char[] readPassword(NStream out, String prompt, Object... params);
+    char[] readPassword(NOutStream out, String prompt, Object... params);
 
-    String readLine(NStream out, NMsg message);
+    String readLine(NOutStream out, NMsg message);
 
-    char[] readPassword(NStream out, NMsg message);
+    char[] readPassword(NOutStream out, NMsg message);
 
-    String readLine(NStream out, NMsg message, NSession session);
+    String readLine(NOutStream out, NMsg message, NSession session);
 
-    char[] readPassword(NStream out, NMsg message, NSession session);
+    char[] readPassword(NOutStream out, NMsg message, NSession session);
 
     InputStream getIn();
 
     void setIn(InputStream in);
 
-    NStream getOut();
+    NOutStream getOut();
 
-    void setOut(NStream out);
+    void setOut(NOutStream out);
 
-    NStream getErr();
+    NOutStream getErr();
 
-    void setErr(NStream out);
+    void setErr(NOutStream out);
 
     //    NutsSystemTerminalBase geTerminalBase();
 //
@@ -137,14 +137,14 @@ public interface NSessionTerminal {
      *
      * @return terminal's output stream
      */
-    NStream out();
+    NOutStream out();
 
     /**
      * return terminal's error stream
      *
      * @return terminal's error stream
      */
-    NStream err();
+    NOutStream err();
 
     /**
      * print progress with a message

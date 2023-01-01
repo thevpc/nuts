@@ -9,7 +9,7 @@ import net.thevpc.nuts.*;
 import net.thevpc.nuts.cmdline.NCommandLine;
 import net.thevpc.nuts.format.NMutableTableModel;
 import net.thevpc.nuts.format.NTableFormat;
-import net.thevpc.nuts.io.NStream;
+import net.thevpc.nuts.io.NOutStream;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.AbstractNSettingsSubCommand;
 
 import java.util.ArrayList;
@@ -27,7 +27,7 @@ public class NSettingsJavaSubCommand extends AbstractNSettingsSubCommand {
         if (autoSave == null) {
             autoSave = false;
         }
-        NStream out = session.out();
+        NOutStream out = session.out();
         NWorkspaceConfigManager conf = session.config();
         NPlatformManager platforms = session.env().platforms();
         if (cmdLine.next("add java").isPresent()) {

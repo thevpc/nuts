@@ -180,7 +180,7 @@ public class DefaultNTexts implements NTexts {
             }
             case VSTYLE: {
                 Object[] finalParams = params;
-                String a = NStringUtils.replaceDollarString((String) msg,
+                String a = NMsg.ofVstyle((String) msg,
                         s -> {
                             Map<String, ?> mm =
                                     (finalParams == null) ? new LinkedHashMap<>() :
@@ -191,7 +191,7 @@ public class DefaultNTexts implements NTexts {
                             }
                             return "${" + s + "}";
                         }
-                );
+                ).toString();
                 return txt.parse(a);
             }
             case PLAIN: {

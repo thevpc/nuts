@@ -34,7 +34,7 @@ import net.thevpc.nuts.spi.NFormatSPI;
 import net.thevpc.nuts.text.NTextStyle;
 import net.thevpc.nuts.util.NProgressEvent;
 import net.thevpc.nuts.util.NProgressListener;
-import net.thevpc.nuts.io.NPlainStream;
+import net.thevpc.nuts.io.NOutPlainStream;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -243,7 +243,7 @@ public class MonitoredInputStream extends InputStream implements NInputSource, I
             }
 
             @Override
-            public void print(NStream out) {
+            public void print(NOutStream out) {
                 NOptional<NMsg> m = getInputMetaData().getMessage();
                 if (m.isPresent()) {
                     out.print(m.get());
@@ -263,7 +263,7 @@ public class MonitoredInputStream extends InputStream implements NInputSource, I
 
     @Override
     public String toString() {
-        NPlainStream out = new NPlainStream();
+        NOutPlainStream out = new NOutPlainStream();
         NOptional<NMsg> m = getInputMetaData().getMessage();
         if (m.isPresent()) {
             out.print(m.get());

@@ -36,8 +36,8 @@ import java.util.Map;
 import java.util.Set;
 
 import net.thevpc.nuts.spi.NRepositorySPI;
+import net.thevpc.nuts.util.NAssert;
 import net.thevpc.nuts.util.NStringUtils;
-import net.thevpc.nuts.util.NUtils;
 
 /**
  *
@@ -61,11 +61,11 @@ public class DefaultNPushCommand extends AbstractDefaultNPushCommand {
                 throw new NIllegalArgumentException(getSession(), NMsg.ofCstyle("invalid version %s", id.getVersion()));
             }
             NDefinition file = session.fetch().setId(id).setSession(session.copy().setTransitive(false)).setContent(true).getResultDefinition();
-            NUtils.requireNonNull(file, "content to push", session);
+            NAssert.requireNonNull(file, "content to push", session);
             toProcess.put(id, file);
         }
         NWorkspaceExt dws = NWorkspaceExt.of(ws);
-        NUtils.requireNonBlank(toProcess, "package tp push", session);
+        NAssert.requireNonBlank(toProcess, "package tp push", session);
         for (Map.Entry<NId, NDefinition> entry : toProcess.entrySet()) {
             NId id = entry.getKey();
             NDefinition file = entry.getValue();

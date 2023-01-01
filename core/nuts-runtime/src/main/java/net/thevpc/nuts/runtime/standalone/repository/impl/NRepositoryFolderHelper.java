@@ -30,9 +30,9 @@ import net.thevpc.nuts.runtime.standalone.xtra.digest.NDigestUtils;
 import net.thevpc.nuts.spi.NDeployRepositoryCommand;
 import net.thevpc.nuts.spi.NRepositorySPI;
 import net.thevpc.nuts.spi.NRepositoryUndeployCommand;
+import net.thevpc.nuts.util.NAssert;
 import net.thevpc.nuts.util.NIterator;
 import net.thevpc.nuts.util.NLogger;
-import net.thevpc.nuts.util.NUtils;
 
 import java.io.*;
 import java.nio.file.FileVisitResult;
@@ -364,7 +364,7 @@ public class NRepositoryFolderHelper {
         NInputSource inputSource = null;
         if (deployment.getContent() == null) {
             if (!NDescriptorUtils.isNoContent(descriptor)) {
-                NUtils.requireNonNull(deployment.getContent(), ()-> NMsg.ofCstyle("invalid deployment; missing content for %s", deployment.getId()), session);
+                NAssert.requireNonNull(deployment.getContent(), ()-> NMsg.ofCstyle("invalid deployment; missing content for %s", deployment.getId()), session);
             }
         } else {
             inputSource = NIO.of(session).createMultiRead(deployment.getContent());

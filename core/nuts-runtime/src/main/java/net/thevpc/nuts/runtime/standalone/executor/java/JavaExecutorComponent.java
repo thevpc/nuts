@@ -27,7 +27,7 @@ import net.thevpc.nuts.*;
 import net.thevpc.nuts.boot.NClassLoaderNode;
 import net.thevpc.nuts.cmdline.NCommandLine;
 import net.thevpc.nuts.io.NPath;
-import net.thevpc.nuts.io.NStream;
+import net.thevpc.nuts.io.NOutStream;
 import net.thevpc.nuts.io.NTerminalMode;
 import net.thevpc.nuts.runtime.standalone.executor.AbstractSyncIProcessExecHelper;
 import net.thevpc.nuts.runtime.standalone.executor.embedded.ClassloaderAwareRunnableImpl;
@@ -376,10 +376,10 @@ public class JavaExecutorComponent implements NExecutorComponent {
 
         private final NDefinition def;
         private final JavaExecutorOptions joptions;
-        private final NStream out;
+        private final NOutStream out;
         private final NExecutionContext executionContext;
 
-        public EmbeddedProcessExecHelper(NDefinition def, NSession session, JavaExecutorOptions joptions, NStream out, NExecutionContext executionContext) {
+        public EmbeddedProcessExecHelper(NDefinition def, NSession session, JavaExecutorOptions joptions, NOutStream out, NExecutionContext executionContext) {
             super(session);
             this.def = def;
             this.joptions = joptions;

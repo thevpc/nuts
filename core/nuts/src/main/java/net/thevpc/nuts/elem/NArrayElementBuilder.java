@@ -26,7 +26,7 @@
 package net.thevpc.nuts.elem;
 
 import net.thevpc.nuts.NSession;
-import net.thevpc.nuts.util.NUtils;
+import net.thevpc.nuts.util.NAssert;
 
 import java.util.Collection;
 import java.util.List;
@@ -41,7 +41,7 @@ import java.util.List;
 public interface NArrayElementBuilder extends NElementBuilder {
 
     static NArrayElementBuilder of(NSession session) {
-        NUtils.requireSession(session);
+        NAssert.requireSession(session);
         return NElements.of(session).ofArray();
     }
 

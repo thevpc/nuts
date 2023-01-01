@@ -9,8 +9,8 @@ import net.thevpc.nuts.runtime.standalone.workspace.DefaultNWorkspace;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceExt;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceUtils;
 import net.thevpc.nuts.spi.NRepositorySPI;
+import net.thevpc.nuts.util.NAssert;
 import net.thevpc.nuts.util.NStringUtils;
-import net.thevpc.nuts.util.NUtils;
 
 import java.util.Map;
 
@@ -65,7 +65,7 @@ public class DefaultNWorkspaceLocationModel {
 
 
     public void setStoreLocation(NStoreLocation folderType, String location, NSession session) {
-        NUtils.requireNonNull(folderType, "store root folder", session);
+        NAssert.requireNonNull(folderType, "store root folder", session);
         cfg().onPreUpdateConfig("store-location", session);
         cfg().getStoreModelBoot().setStoreLocations(new NStoreLocationsMap(cfg().getStoreModelBoot().getStoreLocations()).set(folderType, location).toMapOrNull());
         cfg().onPostUpdateConfig("store-location", session);
@@ -187,7 +187,7 @@ public class DefaultNWorkspaceLocationModel {
 
 
     public String getDefaultIdContentExtension(String packaging, NSession session) {
-        NUtils.requireNonBlank(packaging, "packaging", session);
+        NAssert.requireNonBlank(packaging, "packaging", session);
         switch (packaging) {
             case "jar":
             case "bundle":
@@ -246,7 +246,7 @@ public class DefaultNWorkspaceLocationModel {
                 if (f.equals("cache") || f.endsWith(".cache")) {
                     return "." + f;
                 }
-                NUtils.requireNonBlank(f, ()-> NMsg.ofCstyle("missing face in %s", id), session);
+                NAssert.requireNonBlank(f, ()-> NMsg.ofCstyle("missing face in %s", id), session);
                 throw new NIllegalArgumentException(session, NMsg.ofCstyle("unsupported face %s in %s", f, id));
             }
         }

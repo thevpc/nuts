@@ -7,7 +7,7 @@ import net.thevpc.nuts.cmdline.NCommandLine;
 import net.thevpc.nuts.elem.NElements;
 import net.thevpc.nuts.format.NObjectFormat;
 import net.thevpc.nuts.io.NPath;
-import net.thevpc.nuts.io.NStream;
+import net.thevpc.nuts.io.NOutStream;
 import net.thevpc.nuts.text.NTextBuilder;
 import net.thevpc.nuts.text.NTextStyle;
 import net.thevpc.nuts.text.NTexts;
@@ -572,7 +572,7 @@ public class WorkspaceService {
         }
     }
 
-    private void printDiffResults(String prefix, NStream out, List<DiffItem> result) {
+    private void printDiffResults(String prefix, NOutStream out, List<DiffItem> result) {
         if (result != null) {
             for (DiffItem diffItem : result) {
                 out.printf("%s%s%n", prefix, diffItem);

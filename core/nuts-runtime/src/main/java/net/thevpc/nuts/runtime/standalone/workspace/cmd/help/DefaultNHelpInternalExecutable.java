@@ -9,7 +9,7 @@ import net.thevpc.nuts.*;
 import net.thevpc.nuts.cmdline.NArgument;
 import net.thevpc.nuts.cmdline.NCommandLine;
 import net.thevpc.nuts.io.NPath;
-import net.thevpc.nuts.io.NStream;
+import net.thevpc.nuts.io.NOutStream;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceExt;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.exec.DefaultInternalNExecutableCommand;
 import net.thevpc.nuts.text.NText;
@@ -82,7 +82,7 @@ public class DefaultNHelpInternalExecutable extends DefaultInternalNExecutableCo
             );
         }
         NContentType outputFormat = session.getOutputFormat();
-        NStream fout = NStream.ofInMemory(session);
+        NOutStream fout = NOutStream.ofInMemory(session);
         if (!helpColors && helpFor.isEmpty()) {
             fout.println(NWorkspaceExt.of(session.getWorkspace()).getHelpText(session));
             fout.flush();

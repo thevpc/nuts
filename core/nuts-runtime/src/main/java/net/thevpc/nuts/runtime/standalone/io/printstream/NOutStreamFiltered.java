@@ -1,15 +1,15 @@
 package net.thevpc.nuts.runtime.standalone.io.printstream;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.io.NStream;
+import net.thevpc.nuts.io.NOutStream;
 import net.thevpc.nuts.io.NTerminalMode;
 import net.thevpc.nuts.text.NTerminalCommand;
 import net.thevpc.nuts.text.NTextStyle;
 
 import java.io.OutputStream;
 
-public class NStreamFiltered extends NStreamRendered {
-    public NStreamFiltered(NStreamBase base, NSession session, Bindings bindings) {
+public class NOutStreamFiltered extends NOutStreamRendered {
+    public NOutStreamFiltered(NOutStreamBase base, NSession session, Bindings bindings) {
         super(base, session, NTerminalMode.FILTERED,
                 bindings);
         getOutputMetaData().setMessage(
@@ -22,25 +22,25 @@ public class NStreamFiltered extends NStreamRendered {
     }
 
     @Override
-    public NStream setSession(NSession session) {
+    public NOutStream setSession(NSession session) {
         if (session == null || session == this.session) {
             return this;
         }
-        return new NStreamFiltered(base, session, new Bindings());
+        return new NOutStreamFiltered(base, session, new Bindings());
     }
 
     @Override
-    protected NStream convertImpl(NTerminalMode other) {
+    protected NOutStream convertImpl(NTerminalMode other) {
         switch (other) {
             case FORMATTED: {
-                return new NStreamFormatted(base, getSession(), bindings);
+                return new NOutStreamFormatted(base, getSession(), bindings);
             }
         }
         throw new NIllegalArgumentException(base.getSession(), NMsg.ofCstyle("unsupported %s -> %s", getTerminalMode(), other));
     }
 
     @Override
-    public NStream run(NTerminalCommand command, NSession session) {
+    public NOutStream run(NTerminalCommand command, NSession session) {
         //do nothing!!
         return this;
     }

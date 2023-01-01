@@ -17,7 +17,7 @@ import net.thevpc.nuts.runtime.standalone.repository.impl.maven.util.MavenReposi
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceUtils;
 import net.thevpc.nuts.spi.NRepositorySPI;
 import net.thevpc.nuts.text.NTexts;
-import net.thevpc.nuts.util.NUtils;
+import net.thevpc.nuts.util.NAssert;
 
 /**
  * @author thevpc
@@ -44,7 +44,7 @@ public class DefaultNUpdateStatisticsCommand extends AbstractNUpdateStatisticsCo
         }
         for (Path repositoryPath : getPaths()) {
             processed = true;
-            NUtils.requireNonBlank(repositoryPath, "location", session);
+            NAssert.requireNonBlank(repositoryPath, "location", session);
             if (!Files.isDirectory(repositoryPath)) {
                 throw new NIllegalArgumentException(getSession(), NMsg.ofCstyle("expected folder at location %s",repositoryPath));
             }
@@ -98,7 +98,7 @@ public class DefaultNUpdateStatisticsCommand extends AbstractNUpdateStatisticsCo
 
     @Override
     public void add(String repo) {
-        NUtils.requireNonBlank(repo, "repository or path", session);
+        NAssert.requireNonBlank(repo, "repository or path", session);
         if (repo.equals(".") || repo.equals("..") || repo.contains("/") || repo.contains("\\")) {
             addPath(Paths.get(repo));
         } else {

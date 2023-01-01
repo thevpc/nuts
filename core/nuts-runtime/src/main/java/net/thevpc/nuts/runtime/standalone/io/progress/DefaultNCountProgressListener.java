@@ -5,7 +5,7 @@
  */
 package net.thevpc.nuts.runtime.standalone.io.progress;
 
-import net.thevpc.nuts.io.NStream;
+import net.thevpc.nuts.io.NOutStream;
 import net.thevpc.nuts.runtime.standalone.util.BytesSizeFormat;
 import net.thevpc.nuts.runtime.standalone.util.CoreStringUtils;
 import net.thevpc.nuts.text.NTextBuilder;
@@ -21,7 +21,7 @@ import java.text.DecimalFormat;
  */
 public class DefaultNCountProgressListener implements NProgressListener/*, NutsOutputStreamTransparentAdapter*/ {
 
-    private NStream out;
+    private NOutStream out;
     private int minLength;
 
     public DefaultNCountProgressListener() {

@@ -26,19 +26,19 @@ public class DefaultNPrintStreams implements NPrintStreams {
     }
 
     @Override
-    public NStream createNullPrintStream() {
+    public NOutStream createNullPrintStream() {
         checkSession();
         return getBootModel().nullPrintStream();
     }
 
     @Override
-    public NMemoryStream createInMemoryPrintStream() {
+    public NOutMemoryStream createInMemoryPrintStream() {
         checkSession();
-        return new NByteArrayStream(getSession());
+        return new NOutByteArrayStream(getSession());
     }
 
     @Override
-    public NStream createPrintStream(OutputStream out, NTerminalMode expectedMode, NSystemTerminalBase term) {
+    public NOutStream createPrintStream(OutputStream out, NTerminalMode expectedMode, NSystemTerminalBase term) {
         if (out == null) {
             return null;
         }
@@ -64,18 +64,18 @@ public class DefaultNPrintStreams implements NPrintStreams {
             return ((NPrintStreamAdapter) out).getBasePrintStream().setTerminalMode(expectedMode);
         }
         return
-                new NStreamRaw(out, null, null, session, new NStreamBase.Bindings(), term)
+                new NOutStreamRaw(out, null, null, session, new NOutStreamBase.Bindings(), term)
                         .setTerminalMode(expectedMode)
                 ;
     }
 
     @Override
-    public NStream createPrintStream(OutputStream out) {
+    public NOutStream createPrintStream(OutputStream out) {
         checkSession();
-        return new NStreamRaw(out, null, null, session, new NStreamBase.Bindings(), null);
+        return new NOutStreamRaw(out, null, null, session, new NOutStreamBase.Bindings(), null);
     }
 
-    public NStream createPrintStream(Writer out, NTerminalMode mode, NSystemTerminalBase terminal) {
+    public NOutStream createPrintStream(Writer out, NTerminalMode mode, NSystemTerminalBase terminal) {
         checkSession();
         if (mode == null) {
             mode = NTerminalMode.INHERITED;
@@ -91,13 +91,13 @@ public class DefaultNPrintStreams implements NPrintStreams {
     }
 
     @Override
-    public NStream createPrintStream(Writer out) {
+    public NOutStream createPrintStream(Writer out) {
         checkSession();
         return createPrintStream(out, NTerminalMode.INHERITED, null);
     }
 
     @Override
-    public boolean isStdout(NStream out) {
+    public boolean isStdout(NOutStream out) {
         if (out == null) {
             return false;
         }
@@ -105,14 +105,14 @@ public class DefaultNPrintStreams implements NPrintStreams {
         if (out == st.out()) {
             return true;
         }
-        if (out instanceof NStreamRendered) {
-            return isStdout(((NStreamRendered) out).getBase());
+        if (out instanceof NOutStreamRendered) {
+            return isStdout(((NOutStreamRendered) out).getBase());
         }
-        return out instanceof NStreamSystem;
+        return out instanceof NOutStreamSystem;
     }
 
     @Override
-    public boolean isStderr(NStream out) {
+    public boolean isStderr(NOutStream out) {
         if (out == null) {
             return false;
         }
@@ -120,19 +120,19 @@ public class DefaultNPrintStreams implements NPrintStreams {
         if (out == st.err()) {
             return true;
         }
-        if (out instanceof NStreamRendered) {
-            return isStderr(((NStreamRendered) out).getBase());
+        if (out instanceof NOutStreamRendered) {
+            return isStderr(((NOutStreamRendered) out).getBase());
         }
-        return out instanceof NStreamSystem;
+        return out instanceof NOutStreamSystem;
     }
 
     @Override
-    public NStream stdout() {
+    public NOutStream stdout() {
         return getBootModel().getSystemTerminal().out();
     }
 
     @Override
-    public NStream stderr() {
+    public NOutStream stderr() {
         return getBootModel().getSystemTerminal().err();
     }
 

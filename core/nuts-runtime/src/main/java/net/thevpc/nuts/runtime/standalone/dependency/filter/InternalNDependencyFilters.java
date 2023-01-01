@@ -3,7 +3,7 @@ package net.thevpc.nuts.runtime.standalone.dependency.filter;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.standalone.util.filters.InternalNTypedFilters;
 import net.thevpc.nuts.spi.NSupportLevelContext;
-import net.thevpc.nuts.util.NUtils;
+import net.thevpc.nuts.util.NAssert;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -81,7 +81,7 @@ public class InternalNDependencyFilters extends InternalNTypedFilters<NDependenc
         }
         NDependencyFilter t = as(a);
         NSession session = getSession();
-        NUtils.requireNonNull(t, "InstallDependencyFilter", session);
+        NAssert.requireNonNull(t, "InstallDependencyFilter", session);
         return t;
     }
 

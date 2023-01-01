@@ -14,7 +14,7 @@ import net.thevpc.nuts.runtime.standalone.executor.system.NSysExecUtils;
 import net.thevpc.nuts.runtime.standalone.io.util.NonBlockingInputStreamAdapter;
 import net.thevpc.nuts.runtime.standalone.executor.system.PipeRunnable;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.AbstractNSettingsSubCommand;
-import net.thevpc.nuts.util.NUtils;
+import net.thevpc.nuts.util.NAssert;
 
 import java.io.PrintStream;
 import java.net.InetAddress;
@@ -49,7 +49,7 @@ public class NSettingsConnectSubCommand extends AbstractNSettingsSubCommand {
             }
             String login = null;
             int port = -1;
-            NUtils.requireNonBlank(server, "server", session);
+            NAssert.requireNonBlank(server, "server", session);
             if (server.contains("@")) {
                 login = server.substring(0, server.indexOf("@"));
                 server = server.substring(server.indexOf("@") + 1);

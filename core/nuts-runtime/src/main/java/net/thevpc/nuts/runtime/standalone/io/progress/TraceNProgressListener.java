@@ -6,7 +6,7 @@
 package net.thevpc.nuts.runtime.standalone.io.progress;
 
 import net.thevpc.nuts.NMsg;
-import net.thevpc.nuts.io.NStream;
+import net.thevpc.nuts.io.NOutStream;
 import net.thevpc.nuts.runtime.standalone.util.BytesSizeFormat;
 import net.thevpc.nuts.runtime.standalone.util.CoreStringUtils;
 import net.thevpc.nuts.text.NText;
@@ -27,7 +27,7 @@ import java.util.logging.Level;
 public class TraceNProgressListener implements NProgressListener/*, NutsOutputStreamTransparentAdapter*/ {
     private static DecimalFormat df = new DecimalFormat("##0.00");
 
-    private NStream out;
+    private NOutStream out;
     private int minLength;
     private CProgressBar bar;
     private boolean optionsProcessed = false;

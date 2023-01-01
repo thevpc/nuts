@@ -15,7 +15,7 @@ import java.io.Writer;
 import java.util.Locale;
 import java.util.Map;
 
-public class NPlainStream implements NStream {
+public class NOutPlainStream implements NOutStream {
     private StringBuilder sb = new StringBuilder();
     private NSession session;
     private DefaultNOutputTargetMetadata md = new DefaultNOutputTargetMetadata();
@@ -41,53 +41,53 @@ public class NPlainStream implements NStream {
     }
 
     @Override
-    public NStream setSession(NSession session) {
+    public NOutStream setSession(NSession session) {
         this.session = session;
         return this;
     }
 
     @Override
-    public NStream flush() {
+    public NOutStream flush() {
         return this;
     }
 
     @Override
-    public NStream close() {
+    public NOutStream close() {
         return this;
     }
 
     @Override
-    public NStream write(byte[] b) {
+    public NOutStream write(byte[] b) {
         sb.append(new String(b));
         return this;
     }
 
     @Override
-    public NStream write(int b) {
+    public NOutStream write(int b) {
         sb.append((char) b);
         return this;
     }
 
     @Override
-    public NStream write(byte[] buf, int off, int len) {
+    public NOutStream write(byte[] buf, int off, int len) {
         sb.append(new String(buf, off, len));
         return this;
     }
 
     @Override
-    public NStream write(char[] buf) {
+    public NOutStream write(char[] buf) {
         sb.append(buf);
         return this;
     }
 
     @Override
-    public NStream write(char[] buf, int off, int len) {
+    public NOutStream write(char[] buf, int off, int len) {
         sb.append(buf, off, len);
         return this;
     }
 
     @Override
-    public NStream print(NMsg b) {
+    public NOutStream print(NMsg b) {
         if (b != null) {
             sb.append(b);
         }
@@ -95,7 +95,7 @@ public class NPlainStream implements NStream {
     }
 
     @Override
-    public NStream print(NString b) {
+    public NOutStream print(NString b) {
         if (b != null) {
             sb.append(b);
         }
@@ -103,240 +103,240 @@ public class NPlainStream implements NStream {
     }
 
     @Override
-    public NStream print(boolean b) {
+    public NOutStream print(boolean b) {
         sb.append(b);
         return this;
     }
 
     @Override
-    public NStream print(char c) {
+    public NOutStream print(char c) {
         sb.append(c);
         return this;
     }
 
     @Override
-    public NStream print(int i) {
+    public NOutStream print(int i) {
         sb.append(i);
         return this;
     }
 
     @Override
-    public NStream print(long l) {
+    public NOutStream print(long l) {
         sb.append(l);
         return this;
     }
 
     @Override
-    public NStream print(float f) {
+    public NOutStream print(float f) {
         sb.append(f);
         return this;
     }
 
     @Override
-    public NStream print(double d) {
+    public NOutStream print(double d) {
         sb.append(d);
         return this;
     }
 
     @Override
-    public NStream print(char[] s) {
+    public NOutStream print(char[] s) {
         sb.append(s);
         return this;
     }
 
     @Override
-    public NStream print(String s) {
+    public NOutStream print(String s) {
         sb.append(s);
         return this;
     }
 
     @Override
-    public NStream print(Object obj) {
+    public NOutStream print(Object obj) {
         sb.append(obj);
         return this;
     }
 
     @Override
-    public NStream printf(Object obj) {
+    public NOutStream printf(Object obj) {
         sb.append(obj);
         return this;
     }
 
     @Override
-    public NStream printlnf(Object obj) {
+    public NOutStream printlnf(Object obj) {
         sb.append(obj);
         println();
         return this;
     }
 
     @Override
-    public NStream println() {
+    public NOutStream println() {
         sb.append("\n");
         return this;
     }
 
     @Override
-    public NStream println(boolean x) {
+    public NOutStream println(boolean x) {
         sb.append(x);
         println();
         return this;
     }
 
     @Override
-    public NStream println(char x) {
+    public NOutStream println(char x) {
         sb.append(x);
         println();
         return this;
     }
 
     @Override
-    public NStream println(NMsg b) {
+    public NOutStream println(NMsg b) {
         sb.append(b);
         println();
         return this;
     }
 
     @Override
-    public NStream println(NString b) {
+    public NOutStream println(NString b) {
         sb.append(b);
         println();
         return this;
     }
 
     @Override
-    public NStream println(int x) {
+    public NOutStream println(int x) {
         sb.append(x);
         println();
         return this;
     }
 
     @Override
-    public NStream println(long x) {
+    public NOutStream println(long x) {
         sb.append(x);
         println();
         return this;
     }
 
     @Override
-    public NStream println(float x) {
+    public NOutStream println(float x) {
         sb.append(x);
         println();
         return this;
     }
 
     @Override
-    public NStream println(double x) {
+    public NOutStream println(double x) {
         sb.append(x);
         println();
         return this;
     }
 
     @Override
-    public NStream println(char[] x) {
+    public NOutStream println(char[] x) {
         sb.append(x);
         println();
         return this;
     }
 
     @Override
-    public NStream println(String x) {
+    public NOutStream println(String x) {
         sb.append(x);
         println();
         return this;
     }
 
     @Override
-    public NStream println(Object x) {
+    public NOutStream println(Object x) {
         sb.append(x);
         println();
         return this;
     }
 
     @Override
-    public NStream append(Object text, NTextStyle style) {
+    public NOutStream append(Object text, NTextStyle style) {
         sb.append(text);
         return this;
     }
 
     @Override
-    public NStream append(Object text, NTextStyles styles) {
+    public NOutStream append(Object text, NTextStyles styles) {
         sb.append(text);
         return this;
     }
 
     @Override
-    public NStream resetLine() {
+    public NOutStream resetLine() {
         return this;
     }
 
     @Override
-    public NStream printf(String format, Object... args) {
+    public NOutStream printf(String format, Object... args) {
         print(NMsg.ofCstyle(format, args));
         return this;
     }
 
     @Override
-    public NStream printj(String format, Object... args) {
+    public NOutStream printj(String format, Object... args) {
         print(NMsg.ofJstyle(format, args));
         return this;
     }
 
     @Override
-    public NStream printlnj(String format, Object... args) {
+    public NOutStream printlnj(String format, Object... args) {
         println(NMsg.ofJstyle(format, args));
         return this;
     }
 
     @Override
-    public NStream printv(String format, Map<String, ?> args) {
+    public NOutStream printv(String format, Map<String, ?> args) {
         print(NMsg.ofVstyle(format, args));
         return this;
     }
 
     @Override
-    public NStream printlnv(String format, Map<String, ?> args) {
+    public NOutStream printlnv(String format, Map<String, ?> args) {
         println(NMsg.ofVstyle(format, args));
         return this;
     }
 
     @Override
-    public NStream printlnf(String format, Object... args) {
+    public NOutStream printlnf(String format, Object... args) {
         println(NMsg.ofCstyle(format, args));
         return this;
     }
 
     @Override
-    public NStream printf(Locale l, String format, Object... args) {
+    public NOutStream printf(Locale l, String format, Object... args) {
         print(NMsg.ofCstyle(format, args));
         return this;
     }
 
     @Override
-    public NStream format(String format, Object... args) {
+    public NOutStream format(String format, Object... args) {
         print(NMsg.ofCstyle(format, args));
         return this;
     }
 
     @Override
-    public NStream format(Locale l, String format, Object... args) {
+    public NOutStream format(Locale l, String format, Object... args) {
         print(NMsg.ofCstyle(format, args));
         return this;
     }
 
     @Override
-    public NStream append(CharSequence csq) {
+    public NOutStream append(CharSequence csq) {
         print(csq);
         return this;
     }
 
     @Override
-    public NStream append(CharSequence csq, int start, int end) {
+    public NOutStream append(CharSequence csq, int start, int end) {
         sb.append(csq, start, end);
         return this;
     }
 
     @Override
-    public NStream append(char c) {
+    public NOutStream append(char c) {
         sb.append(c);
         return this;
     }
@@ -352,12 +352,12 @@ public class NPlainStream implements NStream {
     }
 
     @Override
-    public NStream setTerminalMode(NTerminalMode other) {
+    public NOutStream setTerminalMode(NTerminalMode other) {
         return this;
     }
 
     @Override
-    public NStream run(NTerminalCommand command, NSession session) {
+    public NOutStream run(NTerminalCommand command, NSession session) {
         return this;
     }
 

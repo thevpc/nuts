@@ -5,12 +5,12 @@ import net.thevpc.nuts.boot.DefaultNWorkspaceOptionsBuilder;
 import net.thevpc.nuts.cmdline.NArgument;
 import net.thevpc.nuts.cmdline.NArgumentName;
 import net.thevpc.nuts.cmdline.NCommandLine;
-import net.thevpc.nuts.io.NStream;
+import net.thevpc.nuts.io.NOutStream;
 import net.thevpc.nuts.text.NTextStyle;
 import net.thevpc.nuts.text.NTexts;
 import net.thevpc.nuts.toolbox.nutsserver.bundled._IOUtils;
 import net.thevpc.nuts.toolbox.nutsserver.http.NHttpServerConfig;
-import net.thevpc.nuts.util.NUtils;
+import net.thevpc.nuts.util.NAssert;
 
 import java.io.*;
 import java.net.InetAddress;
@@ -62,7 +62,7 @@ public class NServerMain implements NApplication {
         cmdLine.setCommandName("nuts-server list").throwUnexpectedArgument();
         if (cmdLine.isExecMode()) {
             List<NServer> servers = serverManager.getServers();
-            NStream out = session.out();
+            NOutStream out = session.out();
             if (servers.isEmpty()) {
                 out.print("No Server is Running by current instance\n");
             }
@@ -169,7 +169,7 @@ public class NServerMain implements NApplication {
                         wsContext = "";
                     }
                     if (NBlankable.isBlank(wsContext)) {
-                        NUtils.requireNonNull(context.getWorkspace(), "workspace", session);
+                        NAssert.requireNonNull(context.getWorkspace(), "workspace", session);
                         nSession = session;
                         server.workspaces.put(wsContext, nSession);
                     } else {
@@ -204,8 +204,8 @@ public class NServerMain implements NApplication {
                         config.getWorkspaces().putAll(server.workspaces);
                         if ("https".equals(server.serverType)) {
                             config.setTls(true);
-                            NUtils.requireNonBlank(server.sslCertificate, "SSL certificate", session);
-                            NUtils.requireNonBlank(server.sslPassphrase, "SSL passphrase", session);
+                            NAssert.requireNonBlank(server.sslCertificate, "SSL certificate", session);
+                            NAssert.requireNonBlank(server.sslPassphrase, "SSL passphrase", session);
                             try {
                                 config.setSslKeystoreCertificate(_IOUtils.loadByteArray(new File(server.sslCertificate)));
                             } catch (IOException e) {
@@ -445,7 +445,7 @@ public class NServerMain implements NApplication {
         }
 
         SrvInfo current() {
-            NUtils.requireNonBlank(all, "server type", session);
+            NAssert.requireNonBlank(all, "server type", session);
             return all.get(all.size() - 1);
         }
     }

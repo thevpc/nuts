@@ -7,7 +7,7 @@ import net.thevpc.nuts.cmdline.NArgument;
 import net.thevpc.nuts.cmdline.NCommandLine;
 import net.thevpc.nuts.toolbox.noapi.model.NoapiCmdData;
 import net.thevpc.nuts.toolbox.noapi.service.NOpenAPIService;
-import net.thevpc.nuts.util.NUtils;
+import net.thevpc.nuts.util.NAssert;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -138,7 +138,7 @@ public class NoapiMain implements NApplication {
                     commandLine.throwMissingArgument();
                 }
                 for (NoapiCmdData d : data) {
-                    NUtils.requireNonBlank(d.getPath(), "path", session);
+                    NAssert.requireNonBlank(d.getPath(), "path", session);
                     if (!"pdf".equals(d.getCommand())) {
                         throw new NIllegalArgumentException(session, NMsg.ofCstyle("unsupported command %s", d.getCommand()));
                     }

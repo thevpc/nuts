@@ -25,7 +25,7 @@
 package net.thevpc.nuts;
 
 import net.thevpc.nuts.text.NTexts;
-import net.thevpc.nuts.util.NUtils;
+import net.thevpc.nuts.util.NAssert;
 
 /**
  * Base Nuts Exception. Parent of all Nuts defined Exceptions.
@@ -50,7 +50,7 @@ public class NException extends RuntimeException implements NSessionAwareExcepti
      */
     public NException(NSession session, NMsg message) {
         super(NException.messageToString(message, session));
-        NUtils.requireSession(session);
+        NAssert.requireSession(session);
         this.session = session;
         this.formattedMessage = NException.validateFormattedMessage(message);
     }
@@ -103,7 +103,7 @@ public class NException extends RuntimeException implements NSessionAwareExcepti
     }
 
     static NString messageToFormattedString(NMsg message, NSession session) {
-        NUtils.requireSession(session);
+        NAssert.requireSession(session);
         return NTexts.of(session).ofText(validateFormattedMessage(message));
     }
 

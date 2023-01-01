@@ -33,9 +33,9 @@ public class ProcessExecHelper extends AbstractSyncIProcessExecHelper {
 
     NDefinition definition;
     ProcessBuilder2 pb;
-    NStream out;
+    NOutStream out;
 
-    public ProcessExecHelper(NDefinition definition, ProcessBuilder2 pb, NSession session, NStream out) {
+    public ProcessExecHelper(NDefinition definition, ProcessBuilder2 pb, NSession session, NOutStream out) {
         super(session);
         this.pb = pb;
         this.out = out;
@@ -48,8 +48,8 @@ public class ProcessExecHelper extends AbstractSyncIProcessExecHelper {
                                            NRunAs runAs,
                                            NSession session) {
         List<String> newCommands = buildEffectiveCommand(args, runAs, session);
-        NStream out = null;
-        NStream err = null;
+        NOutStream out = null;
+        NOutStream err = null;
         InputStream in = null;
         ProcessBuilder2 pb = new ProcessBuilder2(session);
         pb.setCommand(newCommands)

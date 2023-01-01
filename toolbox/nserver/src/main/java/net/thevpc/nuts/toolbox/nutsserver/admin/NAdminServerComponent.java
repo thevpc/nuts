@@ -26,12 +26,12 @@
 package net.thevpc.nuts.toolbox.nutsserver.admin;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.io.NStream;
+import net.thevpc.nuts.io.NOutStream;
 import net.thevpc.nuts.spi.NSupportLevelContext;
 import net.thevpc.nuts.text.NTextStyle;
 import net.thevpc.nuts.text.NTexts;
 import net.thevpc.nuts.toolbox.nutsserver.*;
-import net.thevpc.nuts.util.NUtils;
+import net.thevpc.nuts.util.NAssert;
 
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
@@ -56,7 +56,7 @@ public class NAdminServerComponent implements NServerComponent {
 
     public NServer start(NSession invokerWorkspace, ServerConfig config) {
         AdminServerConfig httpConfig = (AdminServerConfig) config;
-        NUtils.requireSession(invokerWorkspace);
+        NAssert.requireSession(invokerWorkspace);
         NSession session = invokerWorkspace;
         String serverId = httpConfig.getServerId();
         InetAddress address = httpConfig.getAddress();
@@ -90,7 +90,7 @@ public class NAdminServerComponent implements NServerComponent {
             backlog = 10;
         }
         InetSocketAddress inetSocketAddress = new InetSocketAddress(address, port);
-        NStream out = session.out();
+        NOutStream out = session.out();
         NTexts factory = NTexts.of(session);
         out.printf("Nuts Admin Service '%s' running %s at %s\n", serverId, factory.ofStyled("telnet nsh", NTextStyle.primary1()), inetSocketAddress);
         out.printf("Serving workspace : %s\n", invokerWorkspace.locations().getWorkspaceLocation());

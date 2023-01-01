@@ -301,7 +301,7 @@ public class NJavaSdkUtils {
 
     public NPlatformLocation resolveJdkLocation(String path, String preferredName, NSession session) {
         NSessionUtils.checkSession(ws, session);
-        NUtils.requireNonBlank(path, "path", session);
+        NAssert.requireNonBlank(path, "path", session);
         String appSuffix = session.env().getOsFamily() == NOsFamily.WINDOWS ? ".exe" : "";
         Path bin = Paths.get(path).resolve("bin");
         Path javaExePath = bin.resolve("java" + appSuffix);
@@ -392,7 +392,7 @@ public class NJavaSdkUtils {
     }
 
     public NId createJdkId(String version, NSession session) {
-        NUtils.requireNonBlank(version, "version", session);
+        NAssert.requireNonBlank(version, "version", session);
         NVersion jv = NVersion.of(version).get( session);
         long n1 = jv.getNumber(0).flatMap(NValue::asLong).orElse(0L);
         long n2 = jv.getNumber(1).flatMap(NValue::asLong).orElse(0L);

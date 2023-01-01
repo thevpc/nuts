@@ -8,7 +8,7 @@ import net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.ndi.NdiScriptOp
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.ndi.NSettingsNdiSubCommand;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.ndi.SystemNdi;
 import net.thevpc.nuts.spi.NSupportLevelContext;
-import net.thevpc.nuts.util.NUtils;
+import net.thevpc.nuts.util.NAssert;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -151,7 +151,7 @@ public class DefaultNWorkspaceEnvManager implements NWorkspaceEnvManager {
     @Override
     public NSupportMode getDesktopIntegrationSupport(NDesktopIntegrationItem item) {
         checkSession();
-        NUtils.requireNonBlank(item, "item", session);
+        NAssert.requireNonBlank(item, "item", session);
         switch (item) {
             case DESKTOP: {
                 NSupportMode a = session.boot().getBootOptions().getDesktopLauncher().orNull();

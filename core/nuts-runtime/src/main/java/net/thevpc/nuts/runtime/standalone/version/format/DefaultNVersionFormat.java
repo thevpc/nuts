@@ -3,7 +3,7 @@ package net.thevpc.nuts.runtime.standalone.version.format;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.cmdline.NArgument;
 import net.thevpc.nuts.cmdline.NCommandLine;
-import net.thevpc.nuts.io.NStream;
+import net.thevpc.nuts.io.NOutStream;
 import net.thevpc.nuts.io.NTerminalMode;
 import net.thevpc.nuts.runtime.standalone.format.DefaultFormatBase;
 import net.thevpc.nuts.spi.NSupportLevelContext;
@@ -100,7 +100,7 @@ public class DefaultNVersionFormat extends DefaultFormatBase<NVersionFormat> imp
     }
 
     @Override
-    public void print(NStream out) {
+    public void print(NOutStream out) {
         checkSession();
         if (!isNtf()) {
             out = out.setTerminalMode(NTerminalMode.FILTERED);

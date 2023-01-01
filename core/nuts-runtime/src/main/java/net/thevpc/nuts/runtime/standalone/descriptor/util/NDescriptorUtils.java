@@ -1,17 +1,13 @@
 package net.thevpc.nuts.runtime.standalone.descriptor.util;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.util.DefaultNProperties;
+import net.thevpc.nuts.util.*;
 import net.thevpc.nuts.runtime.standalone.id.util.NIdUtils;
 import net.thevpc.nuts.runtime.standalone.util.CoreNUtils;
 import net.thevpc.nuts.runtime.standalone.util.CoreStringUtils;
 import net.thevpc.nuts.runtime.standalone.util.MapToFunction;
 import net.thevpc.nuts.runtime.standalone.util.collections.CoreArrayUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceExt;
-import net.thevpc.nuts.util.NLoggerOp;
-import net.thevpc.nuts.util.NLoggerVerb;
-import net.thevpc.nuts.util.NStringUtils;
-import net.thevpc.nuts.util.NUtils;
 
 import java.util.*;
 import java.util.function.Function;
@@ -94,7 +90,7 @@ public class NDescriptorUtils {
     }
 
     public static void checkValidEffectiveDescriptor(NDescriptor effectiveDescriptor, NSession session) {
-        NUtils.requireNonNull(effectiveDescriptor, "effective descriptor", session);
+        NAssert.requireNonNull(effectiveDescriptor, "effective descriptor", session);
         boolean topException = false;
         try {
             for (NId parent : effectiveDescriptor.getParents()) {

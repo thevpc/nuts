@@ -8,7 +8,7 @@ package net.thevpc.nuts.runtime.standalone.format;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.cmdline.NCommandLine;
 import net.thevpc.nuts.cmdline.NCommandLineConfigurable;
-import net.thevpc.nuts.io.NStream;
+import net.thevpc.nuts.io.NOutStream;
 import net.thevpc.nuts.runtime.standalone.session.NSessionUtils;
 import net.thevpc.nuts.runtime.standalone.util.NConfigurableHelper;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceUtils;
@@ -53,7 +53,7 @@ public abstract class DefaultFormatBase0<T> implements NCommandLineConfigurable 
 //        return getValidPrintWriter(null);
 //    }
 
-    public NStream getValidPrintStream(NStream out) {
+    public NOutStream getValidPrintStream(NOutStream out) {
         checkSession();
         if (out == null) {
             out = getSession().getTerminal().getOut();
@@ -61,7 +61,7 @@ public abstract class DefaultFormatBase0<T> implements NCommandLineConfigurable 
         return out;
     }
 
-    public NStream getValidPrintStream() {
+    public NOutStream getValidPrintStream() {
         return getValidPrintStream(null);
     }
 

@@ -3,7 +3,7 @@ package net.thevpc.nuts.toolbox.ntomcat.local;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.elem.NElements;
 import net.thevpc.nuts.io.NPath;
-import net.thevpc.nuts.io.NStream;
+import net.thevpc.nuts.io.NOutStream;
 import net.thevpc.nuts.text.NTextStyle;
 import net.thevpc.nuts.text.NTexts;
 import net.thevpc.nuts.toolbox.ntomcat.local.config.LocalTomcatDomainConfig;
@@ -67,7 +67,7 @@ public class LocalTomcatDomainConfigService extends LocalTomcatServiceBase {
                 .append("]");
     }
 
-    public LocalTomcatDomainConfigService print(NStream out) {
+    public LocalTomcatDomainConfigService print(NOutStream out) {
         NSession session = getSession();
         NElements.of(session).json().setValue(getConfig()).print(out);
         return this;

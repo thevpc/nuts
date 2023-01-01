@@ -1,5 +1,6 @@
 package net.thevpc.nuts.toolbox.noapi.model;
 
+import net.thevpc.nuts.NMsg;
 import net.thevpc.nuts.util.NStringUtils;
 
 import java.util.Map;
@@ -18,6 +19,6 @@ public class Vars {
     }
 
     public String format(String a) {
-        return NStringUtils.replaceDollarString(a, s -> m.get(s));
+        return NMsg.ofVstyle(a, s -> m.get(s)).toString();
     }
 }

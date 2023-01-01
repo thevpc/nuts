@@ -198,7 +198,7 @@ public class Test01_CreateTest {
         }
 
         {
-            net.thevpc.nuts.io.NStream stdout = NPrintStreams.of(s).stdout();
+            NOutStream stdout = NPrintStreams.of(s).stdout();
             Assertions.assertNotNull(stdout);
         }
 

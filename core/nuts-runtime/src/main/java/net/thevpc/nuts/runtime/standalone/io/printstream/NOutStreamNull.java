@@ -1,7 +1,7 @@
 package net.thevpc.nuts.runtime.standalone.io.printstream;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.io.NStream;
+import net.thevpc.nuts.io.NOutStream;
 import net.thevpc.nuts.io.NTerminalMode;
 import net.thevpc.nuts.text.NTerminalCommand;
 import net.thevpc.nuts.text.NTextStyle;
@@ -9,7 +9,7 @@ import net.thevpc.nuts.text.NTextStyle;
 import java.io.IOException;
 import java.io.OutputStream;
 
-public class NStreamNull extends NStreamBase {
+public class NOutStreamNull extends NOutStreamBase {
 
     private OutputStream nullOS = new OutputStream() {
         @Override
@@ -18,57 +18,57 @@ public class NStreamNull extends NStreamBase {
         }
     };
 
-    public NStreamNull(NSession session) {
+    public NOutStreamNull(NSession session) {
         super(false, NTerminalMode.INHERITED, session, new Bindings(), null);
         getOutputMetaData().setMessage(
                 NMsg.ofStyled("<null-stream>", NTextStyle.path()));
     }
 
     @Override
-    public NStream setSession(NSession session) {
+    public NOutStream setSession(NSession session) {
         if (session == null || session == this.session) {
             return this;
         }
-        return new NStreamNull(session);
+        return new NOutStreamNull(session);
     }
 
     @Override
-    protected NStream convertImpl(NTerminalMode other) {
+    protected NOutStream convertImpl(NTerminalMode other) {
         return this;
     }
 
     @Override
-    public NStream flush() {
+    public NOutStream flush() {
         return this;
     }
 
     @Override
-    public NStream close() {
+    public NOutStream close() {
         return this;
     }
 
     @Override
-    public NStream write(int b) {
+    public NOutStream write(int b) {
         return this;
     }
 
     @Override
-    public NStream write(byte[] buf, int off, int len) {
+    public NOutStream write(byte[] buf, int off, int len) {
         return this;
     }
 
     @Override
-    public NStream write(char[] buf, int off, int len) {
+    public NOutStream write(char[] buf, int off, int len) {
         return this;
     }
 
     @Override
-    public NStream print(String s) {
+    public NOutStream print(String s) {
         return this;
     }
 
     @Override
-    public NStream run(NTerminalCommand command, NSession session) {
+    public NOutStream run(NTerminalCommand command, NSession session) {
         return this;
     }
 

@@ -28,8 +28,8 @@ package net.thevpc.nuts.io;
 
 import net.thevpc.nuts.NSession;
 
-public interface NMemoryStream extends NStream {
-    static NMemoryStream of(NSession session) {
+public interface NOutMemoryStream extends NOutStream {
+    static NOutMemoryStream of(NSession session) {
         return NIO.of(session).createInMemoryPrintStream();
     }
 

@@ -1,7 +1,7 @@
 package net.thevpc.nuts.runtime.standalone.io.terminal;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.io.NStream;
+import net.thevpc.nuts.io.NOutStream;
 import net.thevpc.nuts.io.NSessionTerminal;
 import net.thevpc.nuts.runtime.standalone.io.progress.CProgressBar;
 import net.thevpc.nuts.text.NTexts;
@@ -21,27 +21,27 @@ public class UnmodifiableSessionTerminal extends AbstractNSessionTerminal {
     }
 
     @Override
-    public String readLine(NStream out, String promptFormat, Object... params) {
+    public String readLine(NOutStream out, String promptFormat, Object... params) {
         return getBase().readLine(out, promptFormat, params);
     }
 
     @Override
-    public String readLine(NStream out, NMsg message) {
+    public String readLine(NOutStream out, NMsg message) {
         return getBase().readLine(out, message);
     }
 
     @Override
-    public char[] readPassword(NStream out, NMsg message) {
+    public char[] readPassword(NOutStream out, NMsg message) {
         return getBase().readPassword(out, message);
     }
 
     @Override
-    public String readLine(NStream out, NMsg message, NSession session) {
+    public String readLine(NOutStream out, NMsg message, NSession session) {
         return getBase().readLine(out, message, session);
     }
 
     @Override
-    public char[] readPassword(NStream out, NMsg message, NSession session) {
+    public char[] readPassword(NOutStream out, NMsg message, NSession session) {
         return getBase().readPassword(out, message, session);
     }
 
@@ -68,22 +68,22 @@ public class UnmodifiableSessionTerminal extends AbstractNSessionTerminal {
     }
 
     @Override
-    public NStream getOut() {
+    public NOutStream getOut() {
         return getBase().getOut();
     }
 
     @Override
-    public void setOut(NStream out) {
+    public void setOut(NOutStream out) {
 
     }
 
     @Override
-    public NStream getErr() {
+    public NOutStream getErr() {
         return getBase().getErr();
     }
 
     @Override
-    public void setErr(NStream out) {
+    public void setErr(NOutStream out) {
 
     }
 
@@ -115,12 +115,12 @@ public class UnmodifiableSessionTerminal extends AbstractNSessionTerminal {
     }
 
     @Override
-    public NStream out() {
+    public NOutStream out() {
         return getBase().out();
     }
 
     @Override
-    public NStream err() {
+    public NOutStream err() {
         return getBase().err();
     }
 

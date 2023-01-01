@@ -27,7 +27,7 @@ package net.thevpc.nuts.toolbox.nsh.cmds.bash;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.cmdline.NCommandLine;
-import net.thevpc.nuts.io.NStream;
+import net.thevpc.nuts.io.NOutStream;
 import net.thevpc.nuts.spi.NComponentScope;
 import net.thevpc.nuts.spi.NComponentScopeType;
 import net.thevpc.nuts.text.NTextStyle;
@@ -144,7 +144,7 @@ public class WhoamiCommand extends SimpleJShellBuiltin {
         }
         switch (context.getSession().getOutputFormat()) {
             case PLAIN: {
-                NStream out = context.getSession().out();
+                NOutStream out = context.getSession().out();
                 out.printf("%s\n", result.login);
                 if (options.nutsUser) {
                     NTexts factory = NTexts.of(context.getSession());

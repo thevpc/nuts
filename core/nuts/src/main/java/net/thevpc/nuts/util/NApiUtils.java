@@ -203,7 +203,7 @@ public class NApiUtils {
 
 
     public static <T> T getOrCreateRefProperty(String name, Class<T> type, NSession session, Supplier<T> sup) {
-        NUtils.requireSession(session);
+        NAssert.requireSession(session);
         name = NStringUtils.trim(name);
         if (NBlankable.isBlank(name)) {
             name = "default";

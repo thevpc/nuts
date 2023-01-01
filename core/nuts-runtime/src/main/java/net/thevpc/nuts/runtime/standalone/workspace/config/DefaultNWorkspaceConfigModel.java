@@ -30,7 +30,7 @@ import net.thevpc.nuts.elem.NElement;
 import net.thevpc.nuts.elem.NElements;
 import net.thevpc.nuts.io.NIOException;
 import net.thevpc.nuts.io.NPath;
-import net.thevpc.nuts.io.NStream;
+import net.thevpc.nuts.io.NOutStream;
 import net.thevpc.nuts.io.NSessionTerminal;
 import net.thevpc.nuts.runtime.standalone.boot.DefaultNBootModel;
 import net.thevpc.nuts.runtime.standalone.definition.DefaultNDefinition;
@@ -1498,7 +1498,7 @@ public class DefaultNWorkspaceConfigModel {
         this.terminal = terminal;
     }
 
-    public NSessionTerminal createTerminal(InputStream in, NStream out, NStream err, NSession session) {
+    public NSessionTerminal createTerminal(InputStream in, NOutStream out, NOutStream err, NSession session) {
         NSessionTerminal t = createTerminal(session);
         if (in != null) {
             t.setIn(in);

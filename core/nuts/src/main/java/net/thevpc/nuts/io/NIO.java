@@ -50,9 +50,9 @@ public interface NIO extends NComponent {
 
     InputStream stdin();
 
-    NStream createNullPrintStream();
+    NOutStream createNullPrintStream();
 
-    NMemoryStream createInMemoryPrintStream();
+    NOutMemoryStream createInMemoryPrintStream();
 
     /**
      * create print stream that supports the given {@code mode}. If the given
@@ -64,21 +64,21 @@ public interface NIO extends NComponent {
      * @param terminal terminal
      * @return {@code mode} supporting PrintStream
      */
-    NStream createPrintStream(OutputStream out, NTerminalMode mode, NSystemTerminalBase terminal);
+    NOutStream createPrintStream(OutputStream out, NTerminalMode mode, NSystemTerminalBase terminal);
 
-    NStream createPrintStream(OutputStream out);
+    NOutStream createPrintStream(OutputStream out);
 
-    NStream createPrintStream(Writer out, NTerminalMode mode, NSystemTerminalBase terminal);
+    NOutStream createPrintStream(Writer out, NTerminalMode mode, NSystemTerminalBase terminal);
 
-    NStream createPrintStream(Writer out);
+    NOutStream createPrintStream(Writer out);
 
-    boolean isStdout(NStream out);
+    boolean isStdout(NOutStream out);
 
-    boolean isStderr(NStream out);
+    boolean isStderr(NOutStream out);
 
-    NStream stdout();
+    NOutStream stdout();
 
-    NStream stderr();
+    NOutStream stderr();
 
     NInputSource createMultiRead(NInputSource source);
 

@@ -6,7 +6,7 @@ import net.thevpc.nuts.NSession;
 import net.thevpc.nuts.NWorkspace;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceExt;
 import net.thevpc.nuts.spi.NSessionAware;
-import net.thevpc.nuts.util.NUtils;
+import net.thevpc.nuts.util.NAssert;
 
 import java.util.Objects;
 
@@ -22,7 +22,7 @@ public class NSessionUtils {
     }
 
     public static void checkSession(NWorkspace ws, NSession session) {
-        NUtils.requireSession(session);
+        NAssert.requireSession(session);
         if (!Objects.equals(session.getWorkspace().getUuid(), ws.getUuid())) {
             throw new NIllegalArgumentException(defaultSession(ws), NMsg.ofCstyle("invalid session %s != %s ; %s != %s ; %s != %s ; ",
                     session.getWorkspace().getName(), ws.getName(),

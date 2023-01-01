@@ -6,7 +6,7 @@ import net.thevpc.nuts.cmdline.NCommandLine;
 import net.thevpc.nuts.elem.NElements;
 import net.thevpc.nuts.format.NObjectFormat;
 import net.thevpc.nuts.io.NPath;
-import net.thevpc.nuts.io.NStream;
+import net.thevpc.nuts.io.NOutStream;
 import net.thevpc.nuts.text.NTextStyle;
 import net.thevpc.nuts.text.NTexts;
 import net.thevpc.nuts.toolbox.ntomcat.NTomcatConfigVersions;
@@ -196,7 +196,7 @@ public class LocalTomcat {
         if (args.isExecMode()) {
             NTexts factory = NTexts.of(session);
             if (session.isPlainOut()) {
-                NStream out = session.out();
+                NOutStream out = session.out();
                 for (RunningTomcat jpsResult : TomcatUtils.getRunningInstances(context)) {
                     switch (format.get()) {
                         case "long": {

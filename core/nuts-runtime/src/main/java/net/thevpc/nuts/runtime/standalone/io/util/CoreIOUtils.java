@@ -182,8 +182,8 @@ public class CoreIOUtils {
 //        return sb.toString();
 //    }
 
-    public static net.thevpc.nuts.io.NStream resolveOut(NSession session) {
-        return (session.getTerminal() == null) ? net.thevpc.nuts.io.NStream.ofNull(session)
+    public static NOutStream resolveOut(NSession session) {
+        return (session.getTerminal() == null) ? NOutStream.ofNull(session)
                 : session.getTerminal().out();
     }
 
@@ -1134,8 +1134,8 @@ public class CoreIOUtils {
     }
 
     public static PathInfo.Status tryWrite(byte[] content, NPath out, /*boolean doNotWrite*/ DoWhenExist doWhenExist, DoWhenNotExists doWhenNotExist, NSession session) {
-        NUtils.requireNonNull(doWhenExist, "doWhenExist", session);
-        NUtils.requireNonNull(doWhenNotExist, "doWhenNotExist", session);
+        NAssert.requireNonNull(doWhenExist, "doWhenExist", session);
+        NAssert.requireNonNull(doWhenNotExist, "doWhenNotExist", session);
 //        System.err.println("[DEBUG] try write "+out);
         out = out.toAbsolute().normalize();
         byte[] old = null;

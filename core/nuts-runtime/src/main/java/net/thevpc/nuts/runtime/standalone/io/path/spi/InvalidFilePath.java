@@ -387,7 +387,7 @@ public class InvalidFilePath implements NPathSPI {
         }
 
         @Override
-        public void print(net.thevpc.nuts.io.NStream out) {
+        public void print(NOutStream out) {
             out.print(asFormattedString());
         }
 
