@@ -175,7 +175,7 @@ public class NElementPathFilter {
 
         public ArrItemCollectorJsonPath(NSession session) {
             this.session = session;
-            builder = NElements.of(session).setSession(session);
+            builder = NElements.of(session);
         }
 
         @Override
@@ -626,7 +626,7 @@ public class NElementPathFilter {
                 u = new HashSet<>();
                 matchContext.put("unique", u);
             }
-            String v = NElements.of(session).setSession(session).json().setNtf(false).setValue(value).format()
+            String v = NElements.of(session).json().setNtf(false).setValue(value).format()
                     .filteredText();
             if (u.contains(v)) {
                 return false;

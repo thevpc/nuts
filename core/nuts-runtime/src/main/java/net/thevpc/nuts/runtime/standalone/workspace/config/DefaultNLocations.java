@@ -9,12 +9,12 @@ import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceExt;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceUtils;
 import net.thevpc.nuts.spi.NSupportLevelContext;
 
-public class DefaultNWorkspaceLocationManager implements NWorkspaceLocationManager {
+public class DefaultNLocations implements NLocations {
 
     private NSession session;
     private DefaultNWorkspaceLocationModel model;
 
-    public DefaultNWorkspaceLocationManager(NSession session) {
+    public DefaultNLocations(NSession session) {
         this.session = session;
         NWorkspace w = this.session.getWorkspace();
         NWorkspaceExt e = (NWorkspaceExt) w;
@@ -127,7 +127,7 @@ public class DefaultNWorkspaceLocationManager implements NWorkspaceLocationManag
     }
 
     @Override
-    public NWorkspaceLocationManager setStoreLocation(NStoreLocation folderType, String location) {
+    public NLocations setStoreLocation(NStoreLocation folderType, String location) {
         checkSession();
         model.setStoreLocation(folderType, location, session);
         return this;
@@ -138,21 +138,21 @@ public class DefaultNWorkspaceLocationManager implements NWorkspaceLocationManag
     }
 
     @Override
-    public NWorkspaceLocationManager setStoreLocationStrategy(NStoreLocationStrategy strategy) {
+    public NLocations setStoreLocationStrategy(NStoreLocationStrategy strategy) {
         checkSession();
         model.setStoreLocationStrategy(strategy, session);
         return this;
     }
 
     @Override
-    public NWorkspaceLocationManager setStoreLocationLayout(NOsFamily layout) {
+    public NLocations setStoreLocationLayout(NOsFamily layout) {
         checkSession();
         model.setStoreLocationLayout(layout, session);
         return this;
     }
 
     @Override
-    public NWorkspaceLocationManager setHomeLocation(NHomeLocation homeType, String location) {
+    public NLocations setHomeLocation(NHomeLocation homeType, String location) {
         checkSession();
         model.setHomeLocation(homeType, location, session);
         return this;
@@ -164,7 +164,7 @@ public class DefaultNWorkspaceLocationManager implements NWorkspaceLocationManag
     }
 
     @Override
-    public NWorkspaceLocationManager setSession(NSession session) {
+    public NLocations setSession(NSession session) {
         this.session = NWorkspaceUtils.bindSession(model.getWorkspace(), session);
         return this;
     }

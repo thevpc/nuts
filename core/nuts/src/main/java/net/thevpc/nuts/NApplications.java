@@ -223,7 +223,7 @@ public final class NApplications {
 
     public static void runApplication(NApplication applicationInstance, NApplicationContext applicationContext) {
         NSession session = applicationContext.getSession();
-        boolean inherited = session.boot().getBootOptions().getInherited().orElse(false);
+        boolean inherited = NBootManager.of(session).getBootOptions().getInherited().orElse(false);
         NLogger.of(NApplications.class, session).with().level(Level.FINE).verb(NLoggerVerb.START)
                 .log(
                         NMsg.ofJstyle(

@@ -1,7 +1,7 @@
 package net.thevpc.nuts.runtime.standalone.io.terminal;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.boot.NWorkspaceBootOptions;
+import net.thevpc.nuts.boot.NBootOptions;
 import net.thevpc.nuts.cmdline.NCommandAutoCompleteResolver;
 import net.thevpc.nuts.cmdline.NCommandHistory;
 import net.thevpc.nuts.io.*;
@@ -41,7 +41,7 @@ public class DefaultNSystemTerminalBaseBoot extends NSystemTerminalBaseImpl {
                 bo.getStderr().orElse(System.err),
                 "boot"
         );
-        NWorkspaceBootOptions bOptions = bootModel.getBootEffectiveOptions();
+        NBootOptions bOptions = bootModel.getBootEffectiveOptions();
         NTerminalMode terminalMode = bOptions.getUserOptions().get().getTerminalMode().orElse(NTerminalMode.DEFAULT);
         if (terminalMode == NTerminalMode.DEFAULT) {
             if (bOptions.getUserOptions().get().getBot().orElse(false)) {
@@ -180,7 +180,7 @@ public class DefaultNSystemTerminalBaseBoot extends NSystemTerminalBaseImpl {
         String s = NAnsiTermHelper.of(session).styled(styles, session);
         if (s != null) {
             try {
-                NWorkspaceTerminalOptions bootStdFd = session.boot().getBootTerminal();
+                NWorkspaceTerminalOptions bootStdFd = NBootManager.of(session).getBootTerminal();
                 bootStdFd.getOut().write(s.getBytes());
             } catch (IOException e) {
                 throw new NIOException(session, e);

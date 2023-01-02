@@ -22,7 +22,7 @@ public abstract class RemoteNWorkspace extends AbstractNWorkspace {
                     .set("cmd", commandName)
                     .set("body", body).build();
             NString json = e.setValue(q).format();
-            String wsURL = session.boot().getBootOptions().getWorkspace().orNull();
+            String wsURL = NBootManager.of(session).getBootOptions().getWorkspace().orNull();
             byte[] result = cli.request("nuts/ws:"+wsURL, json.toString().getBytes());
             NObjectElement resultObject = e.parse(result, NObjectElement.class);
             NElements prv = NElements.of(session);

@@ -3,7 +3,7 @@ package net.thevpc.nuts.toolbox.noapi;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.cmdline.NCommandLineContext;
 import net.thevpc.nuts.cmdline.NCommandLineProcessor;
-import net.thevpc.nuts.cmdline.NArgument;
+import net.thevpc.nuts.cmdline.NArg;
 import net.thevpc.nuts.cmdline.NCommandLine;
 import net.thevpc.nuts.toolbox.noapi.model.NoapiCmdData;
 import net.thevpc.nuts.toolbox.noapi.service.NOpenAPIService;
@@ -30,7 +30,7 @@ public class NoapiMain implements NApplication {
         ref.setCommand("pdf");
         appContext.processCommandLine(new NCommandLineProcessor() {
             @Override
-            public boolean onCmdNextOption(NArgument option, NCommandLine commandLine, NCommandLineContext context) {
+            public boolean onCmdNextOption(NArg option, NCommandLine commandLine, NCommandLineContext context) {
                 NSession session = commandLine.getSession();
                 switch (option.asString().get(session)) {
                     case "--yaml": {
@@ -58,7 +58,7 @@ public class NoapiMain implements NApplication {
                         return true;
                     }
                     case "--vars": {
-                        NArgument a = commandLine.nextString().get();
+                        NArg a = commandLine.nextString().get();
                         if (a.isActive()) {
                             String vars = a.getStringValue().get();
                             ref.setVars(vars);
@@ -69,10 +69,10 @@ public class NoapiMain implements NApplication {
                         return true;
                     }
                     case "--var": {
-                        NArgument a = commandLine.nextString().get();
+                        NArg a = commandLine.nextString().get();
                         if (a.isActive()) {
                             String vars = a.getStringValue().get();
-                            NArgument b = NArgument.of(vars);
+                            NArg b = NArg.of(vars);
                             if (b.isActive()) {
                                 ref.getVarsMap().put(b.getKey().toStringLiteral(), b.getValue().toStringLiteral());
                                 if (!data.isEmpty()) {
@@ -99,7 +99,7 @@ public class NoapiMain implements NApplication {
                         return true;
                     }
                     case "--target": {
-                        NArgument a = commandLine.nextString().get();
+                        NArg a = commandLine.nextString().get();
                         if (a.isActive()) {
                             String target = a.getStringValue().get();
                             if (target.contains("*")) {
@@ -116,7 +116,7 @@ public class NoapiMain implements NApplication {
             }
 
             @Override
-            public boolean onCmdNextNonOption(NArgument nonOption, NCommandLine commandLine, NCommandLineContext context) {
+            public boolean onCmdNextNonOption(NArg nonOption, NCommandLine commandLine, NCommandLineContext context) {
                 NSession session = commandLine.getSession();
                 NoapiCmdData c = new NoapiCmdData();
                 c.setCommand(ref.getCommand());
@@ -125,7 +125,7 @@ public class NoapiMain implements NApplication {
                 c.setTarget(ref.getTarget());
                 c.setVars(ref.getVars());
                 c.setVarsMap(new HashMap<>(ref.getVarsMap()));
-                NArgument pathArg = commandLine.next().get(session);
+                NArg pathArg = commandLine.next().get(session);
                 c.setPath(pathArg.key());
                 data.add(c);
                 return true;

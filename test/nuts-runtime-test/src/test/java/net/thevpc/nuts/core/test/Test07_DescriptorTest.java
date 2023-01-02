@@ -23,7 +23,7 @@ public class Test07_DescriptorTest {
 
     @Test
     public void testSearchDescriptor() {
-        NDefinition u = session.search().addId("org.springframework.boot:spring-boot-cli#2.4.1")
+        NDefinition u = NSearchCommand.of(session).addId("org.springframework.boot:spring-boot-cli#2.4.1")
                 .getResultDefinitions().required();
         TestUtils.println(u.getDescriptor());
         TestUtils.println(u.getId()+":"+(u.getDescriptor().isExecutable() ? "executable" : "non-executable"));
@@ -35,7 +35,7 @@ public class Test07_DescriptorTest {
     @Test
     public void testSearchDescriptor2() {
 
-        NDefinition u = session.fetch().setId("org.openjfx:javafx-controls#17.0.0.1")
+        NDefinition u = NFetchCommand.of(session).setId("org.openjfx:javafx-controls#17.0.0.1")
                 .setEffective(true).setDependencies(true).getResultDefinition();
         for (NDependency dependency : u.getDescriptor().getDependencies()) {
             System.out.println(dependency.toString());

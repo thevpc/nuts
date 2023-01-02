@@ -1,5 +1,6 @@
 package net.thevpc.nuts.indexer;
 
+import net.thevpc.nuts.NLocations;
 import net.thevpc.nuts.boot.DefaultNWorkspaceOptionsBuilder;
 import net.thevpc.nuts.Nuts;
 import net.thevpc.nuts.NSession;
@@ -19,7 +20,7 @@ public class NWorkspacePool {
     public NSession openWorkspace(String ws) {
         NSession o = pool.get(ws);
         if (o == null) {
-            if (app.getApplicationContext().getSession().locations().getWorkspaceLocation().toString().equals(ws)) {
+            if (NLocations.of(app.getApplicationContext().getSession()).getWorkspaceLocation().toString().equals(ws)) {
                 o = app.getApplicationContext().getSession();
             } else {
                 o = Nuts.openWorkspace(new DefaultNWorkspaceOptionsBuilder()

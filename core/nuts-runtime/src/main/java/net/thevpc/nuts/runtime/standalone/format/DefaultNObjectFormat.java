@@ -85,7 +85,7 @@ public class DefaultNObjectFormat extends DefaultFormatBase<NObjectFormat> imple
         NSession session = getSession();
         NContentTypeFormat base = createObjectFormat();
         base.setSession(session);
-        base.configure(true, session.boot().getBootOptions().getOutputFormatOptions().orElseGet(Collections::emptyList).toArray(new String[0]));
+        base.configure(true, NBootManager.of(session).getBootOptions().getOutputFormatOptions().orElseGet(Collections::emptyList).toArray(new String[0]));
         base.configure(true, session.getOutputFormatOptions().toArray(new String[0]));
         return base;
     }

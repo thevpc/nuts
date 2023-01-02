@@ -9,7 +9,7 @@ import java.net.URL;
 import java.util.List;
 import java.util.Set;
 
-public interface NWorkspaceBootOptions extends NWorkspaceOptions {
+public interface NBootOptions extends NWorkspaceOptions {
     NOptional<NWorkspaceOptions> getUserOptions();
 
     NOptional<String> getBootRepositories();
@@ -33,8 +33,8 @@ public interface NWorkspaceBootOptions extends NWorkspaceOptions {
     NOptional<NDescriptor> getRuntimeBootDescriptor();
 
     @Override
-    NWorkspaceBootOptionsBuilder builder();
+    NBootOptionsBuilder builder();
 
     @Override
-    NWorkspaceBootOptions readOnly();
+    NBootOptions readOnly();
 }

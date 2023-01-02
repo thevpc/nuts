@@ -49,7 +49,7 @@ public class Nsh implements NApplication {
                 }
                 //id will not include version or
                 String nshIdStr = applicationContext.getAppId().getShortName();
-                NWorkspaceConfigManager cfg = session.config();
+                NConfigs cfg = NConfigs.of(session);
 //        HashMap<String, String> parameters = new HashMap<>();
 //        parameters.put("forList", nshIdStr + " --!color -c find-forCommand");
 //        parameters.put("find", nshIdStr + " --!color -c find-forCommand %n");
@@ -72,9 +72,9 @@ public class Nsh implements NApplication {
                     if (!CONTEXTUAL_BUILTINS.contains(command.getName())) {
                         // avoid recursive definition!
                         // disable trace, summary will be traced later!
-                        if (session.copy().setTrace(false)
+                        if (NCustomCommandManager.of(session.copy().setTrace(false)
                                 .setConfirm(NConfirmationMode.YES)
-                                .commands()
+                                )
                                 .addCommand(new NCommandConfig()
                                         .setFactoryId("nsh")
                                         .setName(command.getName())
@@ -113,13 +113,13 @@ public class Nsh implements NApplication {
                     }
                 }
                 cfg.save(false);
-                if (session.boot().getBootOptions().getInitScripts()
+                if (NBootManager.of(session).getBootOptions().getInitScripts()
                         .ifEmpty(true)
                         .orElse(false)) {
-                    boolean initLaunchers =  session.boot().getBootOptions().getInitLaunchers()
+                    boolean initLaunchers =  NBootManager.of(session).getBootOptions().getInitLaunchers()
                             .ifEmpty(true)
                             .orElse(false);
-                    session.env().addLauncher(
+                    NEnvs.of(session).addLauncher(
                             new NLauncherOptions()
                                     .setId(session.getAppId())
                                     .setCreateScript(true)
@@ -148,13 +148,13 @@ public class Nsh implements NApplication {
         try {
             NSession session = applicationContext.getSession();
             try {
-                session.commands().removeCommandFactory("nsh");
+                NCustomCommandManager.of(session).removeCommandFactory("nsh");
             } catch (Exception notFound) {
                 //ignore!
             }
-            for (NWorkspaceCustomCommand command : session.commands().findCommandsByOwner(applicationContext.getAppId())) {
+            for (NWorkspaceCustomCommand command : NCustomCommandManager.of(session).findCommandsByOwner(applicationContext.getAppId())) {
                 try {
-                    session.commands().removeCommand(command.getName());
+                    NCustomCommandManager.of(session).removeCommand(command.getName());
                 } catch (Exception ex) {
                     if (applicationContext.getSession().isPlainTrace()) {
                         NTexts factory = NTexts.of(session);

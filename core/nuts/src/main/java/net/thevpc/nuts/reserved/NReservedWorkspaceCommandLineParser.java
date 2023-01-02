@@ -27,7 +27,7 @@ package net.thevpc.nuts.reserved;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.util.NApiUtils;
-import net.thevpc.nuts.cmdline.NArgument;
+import net.thevpc.nuts.cmdline.NArg;
 import net.thevpc.nuts.cmdline.NCommandLine;
 import net.thevpc.nuts.io.NTerminalMode;
 import net.thevpc.nuts.util.NLogConfig;
@@ -76,7 +76,7 @@ public final class NReservedWorkspaceCommandLineParser {
                 .registerSpecialSimpleOption("-version");
         boolean explicitConfirm = false;
         while (cmdLine.hasNext()) {
-            NArgument a = cmdLine.peek().get(session);
+            NArg a = cmdLine.peek().get(session);
 
             if (a.isOption()) {
                 boolean active = a.isActive();
@@ -1140,7 +1140,7 @@ public final class NReservedWorkspaceCommandLineParser {
     }
 
     private static void parseLogLevel(NLogConfig logConfig, NCommandLine cmdLine, boolean enabled, NSession session) {
-        NArgument a = cmdLine.peek().get(session);
+        NArg a = cmdLine.peek().get(session);
         switch (a.key()) {
             case "--log-file-size": {
                 a = cmdLine.nextString().get(session);

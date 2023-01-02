@@ -24,6 +24,7 @@
 package net.thevpc.nuts.toolbox.nsh.cmds.bash;
 
 import net.thevpc.nuts.NArchFamily;
+import net.thevpc.nuts.NEnvs;
 import net.thevpc.nuts.cmdline.NCommandLine;
 import net.thevpc.nuts.NId;
 import net.thevpc.nuts.NSession;
@@ -79,9 +80,9 @@ public class UnameCommand extends SimpleJShellBuiltin {
         NSession ws = context.getSession();
 
         Result rr = new Result();
-        rr.osDist = ws.env().getOsDist();
-        rr.os = ws.env().getOs();
-        rr.arch = ws.env().getArchFamily();
+        rr.osDist = NEnvs.of(ws).getOsDist();
+        rr.os = NEnvs.of(ws).getOs();
+        rr.arch = NEnvs.of(ws).getArchFamily();
         if (!config.farch && !config.fos && !config.fdist) {
             config.farch = true;
             config.fos = true;

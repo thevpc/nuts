@@ -25,7 +25,7 @@ public class DefaultNRepositoryFilter extends AbstractRepositoryFilter{
         for (String exactRepo : exactRepos) {
             li=li.merge(NRepositorySelectorList.of(exactRepo, db,session));
         }
-        NRepositoryLocation[] input = session.repos().getRepositories().stream()
+        NRepositoryLocation[] input = NRepositories.of(session).getRepositories().stream()
                 .map(x -> x.config().getLocation().setName(x.getName()))
                 .toArray(NRepositoryLocation[]::new);
         String[] names = Arrays.stream(li.resolve(input,db)).map(NRepositoryLocation::getName).toArray(String[]::new);
@@ -62,7 +62,7 @@ public class DefaultNRepositoryFilter extends AbstractRepositoryFilter{
     @Override
     public NRepositoryFilter simplify() {
         if(exactRepos.isEmpty() && wildcardRepos.isEmpty()){
-            return getSession().repos().filter().always();
+            return NRepositories.of(getSession()).filter().always();
         }
         return this;
     }

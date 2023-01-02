@@ -27,8 +27,8 @@
 package net.thevpc.nuts.reserved;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.boot.NWorkspaceBootOptions;
-import net.thevpc.nuts.boot.NWorkspaceBootOptionsBuilder;
+import net.thevpc.nuts.boot.NBootOptions;
+import net.thevpc.nuts.boot.NBootOptionsBuilder;
 import net.thevpc.nuts.spi.NRepositoryLocation;
 import net.thevpc.nuts.util.NLogger;
 import net.thevpc.nuts.util.NLoggerVerb;
@@ -601,7 +601,7 @@ public final class NReservedMavenUtils {
     }
 
     static VersionAndPath resolveLatestMavenId(NId zId, String path, Predicate<NVersion> filter,
-                                               NLogger bLog, NRepositoryLocation repoUrl2, boolean stopFirst, NWorkspaceBootOptionsBuilder options) {
+                                               NLogger bLog, NRepositoryLocation repoUrl2, boolean stopFirst, NBootOptionsBuilder options) {
         NDescriptorStyle descType = NDescriptorStyle.MAVEN;
         if (NConstants.RepoTypes.NUTS.equalsIgnoreCase(repoUrl2.getLocationType())) {
             descType = NDescriptorStyle.NUTS;
@@ -715,7 +715,7 @@ public final class NReservedMavenUtils {
      * @return latest runtime version
      */
     public static NId resolveLatestMavenId(NId zId, Predicate<NVersion> filter,
-                                           NLogger bLog, Collection<NRepositoryLocation> bootRepositories, NWorkspaceBootOptionsBuilder options) {
+                                           NLogger bLog, Collection<NRepositoryLocation> bootRepositories, NBootOptionsBuilder options) {
         if (bLog.isLoggable(Level.FINEST)) {
             if (bootRepositories.isEmpty()) {
                 bLog.with().level(Level.FINEST).verb(NLoggerVerb.START).log(NMsg.ofJstyle("search for {0} nuts there are no repositories to look into.", zId));
@@ -778,7 +778,7 @@ public final class NReservedMavenUtils {
     }
 
     public static File getBootCacheJar(NId vid, NRepositoryLocation[] repositories, NRepositoryLocation cacheFolder, boolean useCache, String name,
-                                       Instant expire, NReservedErrorInfoList errorList, NWorkspaceBootOptions bOptions,
+                                       Instant expire, NReservedErrorInfoList errorList, NBootOptions bOptions,
                                        Function<String, String> pathExpansionConverter, NLogger bLog) {
         File f = getBootCacheFile(vid, getFileName(vid, "jar"), repositories, cacheFolder, useCache, expire, errorList, bOptions, pathExpansionConverter, bLog);
         if (f == null) {
@@ -790,7 +790,7 @@ public final class NReservedMavenUtils {
 
     static File getBootCacheFile(NId vid, String fileName, NRepositoryLocation[] repositories, NRepositoryLocation cacheFolder,
                                  boolean useCache, Instant expire, NReservedErrorInfoList errorList,
-                                 NWorkspaceBootOptions bOptions,
+                                 NBootOptions bOptions,
                                  Function<String, String> pathExpansionConverter, NLogger bLog) {
         String path = getPathFile(vid, fileName);
         if (useCache && cacheFolder != null) {
@@ -814,7 +814,7 @@ public final class NReservedMavenUtils {
 
     private static File getBootCacheFile(NId nutsId, String path, NRepositoryLocation repository0, NRepositoryLocation cacheFolder,
                                          boolean useCache, Instant expire, NReservedErrorInfoList errorList,
-                                         NWorkspaceBootOptions bOptions, Function<String, String> pathExpansionConverter,
+                                         NBootOptions bOptions, Function<String, String> pathExpansionConverter,
                                          NLogger bLog) {
         boolean cacheLocalFiles = true;//Boolean.getBoolean("nuts.cache.cache-local-files");
         String repository = repository0.getPath();

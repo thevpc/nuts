@@ -27,8 +27,8 @@
 package net.thevpc.nuts.runtime.standalone.app.cmdline.option;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.cmdline.DefaultNArgumentCandidate;
-import net.thevpc.nuts.cmdline.NArgumentCandidate;
+import net.thevpc.nuts.cmdline.DefaultNArgCandidate;
+import net.thevpc.nuts.cmdline.NArgCandidate;
 import net.thevpc.nuts.cmdline.NCommandAutoComplete;
 
 import java.util.ArrayList;
@@ -61,24 +61,23 @@ public class GroupNonOption extends DefaultNonOption {
 //    }
 
     @Override
-    public List<NArgumentCandidate> getCandidates(NCommandAutoComplete context) {
-        List<NArgumentCandidate> all = new ArrayList<>();
+    public List<NArgCandidate> getCandidates(NCommandAutoComplete context) {
+        List<NArgCandidate> all = new ArrayList<>();
         NRepository repository=context.get(NRepository.class);
         NUserConfig securityEntityConfig=context.get(NUserConfig.class);
         if (securityEntityConfig != null) {
             for (String n : securityEntityConfig.getGroups()) {
-                all.add(new DefaultNArgumentCandidate(n));
+                all.add(new DefaultNArgCandidate(n));
             }
         } else if (repository != null) {
             for (NUser nutsSecurityEntityConfig : repository.security().setSession(context.getSession())
                     .findUsers()) {
-                all.add(new DefaultNArgumentCandidate(nutsSecurityEntityConfig.getUser()));
+                all.add(new DefaultNArgCandidate(nutsSecurityEntityConfig.getUser()));
             }
         } else {
-            for (NUser nutsSecurityEntityConfig : context.getSession().security()
-                    .setSession(context.getSession())
+            for (NUser nutsSecurityEntityConfig : NWorkspaceSecurityManager.of(context.getSession())
                     .findUsers()) {
-                all.add(new DefaultNArgumentCandidate(nutsSecurityEntityConfig.getUser()));
+                all.add(new DefaultNArgCandidate(nutsSecurityEntityConfig.getUser()));
             }
         }
         return all;

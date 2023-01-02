@@ -74,7 +74,7 @@ public class CommandForIdNInstallerComponent implements NInstallerComponent {
                                                 definition.getInstallInformation().get(session).getInstallStatus().withInstalled(true)
                                         )
                         );
-                NExecCommand cmd = session.exec()
+                NExecCommand cmd = NExecCommand.of(session)
                         .setSession(executionContext.getExecSession())
                         .setCommand(def2)
                         .addCommand("--nuts-exec-mode=" + mode);
@@ -84,7 +84,7 @@ public class CommandForIdNInstallerComponent implements NInstallerComponent {
                     cmd.addExecutorOptions("--nuts-auto-install=false");
                 }
                 cmd.addCommand(executionContext.getArguments())
-                        .setExecutionType(session.boot().getBootOptions().getExecutionType().orNull())
+                        .setExecutionType(NBootManager.of(session).getBootOptions().getExecutionType().orNull())
                         .setFailFast(true)
                         .run();
             }
@@ -104,10 +104,10 @@ public class CommandForIdNInstallerComponent implements NInstallerComponent {
                     eargs.add(evalString(a, mode, executionContext));
                 }
                 eargs.addAll(executionContext.getArguments());
-                executionContext.getExecSession().exec()
+                NExecCommand.of(executionContext.getExecSession())
                         .setCommand(def2)
                         .addCommand(eargs)
-                        .setExecutionType(executionContext.getExecSession().boot().getBootOptions().getExecutionType().orNull())
+                        .setExecutionType(NBootManager.of(executionContext.getExecSession()).getBootOptions().getExecutionType().orNull())
                         .setExecutionType(
                                 "nsh".equals(def2.getId().getArtifactId()) ?
                                         NExecutionType.EMBEDDED : NExecutionType.SPAWN

@@ -8,7 +8,7 @@ package net.thevpc.nuts.runtime.standalone.format.table;
 import java.util.Arrays;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.cmdline.NArgument;
+import net.thevpc.nuts.cmdline.NArg;
 import net.thevpc.nuts.cmdline.NCommandLine;
 import net.thevpc.nuts.format.NMutableTableModel;
 import net.thevpc.nuts.format.NTableFormat;
@@ -55,7 +55,7 @@ public class DefaultSearchFormatTable extends DefaultSearchFormatBase {
     @Override
     public boolean configureFirst(NCommandLine cmd) {
         NSession session = getSession();
-        NArgument a = cmd.peek().get(session);
+        NArg a = cmd.peek().get(session);
         if (a == null) {
             return false;
         }

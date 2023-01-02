@@ -5,7 +5,7 @@ import java.io.PrintWriter;
 import java.util.*;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.cmdline.NArgument;
+import net.thevpc.nuts.cmdline.NArg;
 import net.thevpc.nuts.cmdline.NCommandLine;
 import net.thevpc.nuts.elem.NElements;
 import net.thevpc.nuts.format.*;
@@ -238,7 +238,7 @@ public class DefaultNTreeFormat extends DefaultFormatBase<NTreeFormat> implement
     @Override
     public boolean configureFirst(NCommandLine commandLine) {
         NSession session = getSession();
-        NArgument aa = commandLine.peek().orNull();
+        NArg aa = commandLine.peek().orNull();
         if (aa == null) {
             return false;
         }
@@ -268,7 +268,7 @@ public class DefaultNTreeFormat extends DefaultFormatBase<NTreeFormat> implement
                 return true;
             }
             case DefaultNPropertiesFormat.OPTION_MULTILINE_PROPERTY: {
-                NArgument i = commandLine.nextString().get(session);
+                NArg i = commandLine.nextString().get(session);
                 if (enabled) {
                     addMultilineProperty(i.key(), i.getStringValue().get(session));
                 }

@@ -6,7 +6,7 @@
 package net.thevpc.nuts.toolbox.nbackup;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.cmdline.NArgument;
+import net.thevpc.nuts.cmdline.NArg;
 import net.thevpc.nuts.cmdline.NCommandLine;
 import net.thevpc.nuts.cmdline.NCommandLineContext;
 import net.thevpc.nuts.cmdline.NCommandLineProcessor;
@@ -32,8 +32,8 @@ public class NBackup implements NApplication {
         applicationContext.processCommandLine(new NCommandLineProcessor() {
 
             @Override
-            public boolean onCmdNextNonOption(NArgument nonOption, NCommandLine commandLine, NCommandLineContext context) {
-                NArgument a = commandLine.next().get();
+            public boolean onCmdNextNonOption(NArg nonOption, NCommandLine commandLine, NCommandLineContext context) {
+                NArg a = commandLine.next().get();
                 switch (a.toString()) {
                     case "pull": {
                         runPull(commandLine, applicationContext);
@@ -77,7 +77,7 @@ public class NBackup implements NApplication {
             }
 
             @Override
-            public boolean onCmdNextOption(NArgument option, NCommandLine commandLine, NCommandLineContext context) {
+            public boolean onCmdNextOption(NArg option, NCommandLine commandLine, NCommandLineContext context) {
                 if (commandLine.withNextString((v, a, s) -> {
                     options.config.setRemoteServer(v);
                 }, "--server")) {
@@ -116,8 +116,8 @@ public class NBackup implements NApplication {
             }
 
             @Override
-            public boolean onCmdNextNonOption(NArgument nonOption, NCommandLine commandLine, NCommandLineContext context) {
-                NArgument a = commandLine.next().get();
+            public boolean onCmdNextNonOption(NArg nonOption, NCommandLine commandLine, NCommandLineContext context) {
+                NArg a = commandLine.next().get();
                 addPath(a.toString());
                 return true;
             }

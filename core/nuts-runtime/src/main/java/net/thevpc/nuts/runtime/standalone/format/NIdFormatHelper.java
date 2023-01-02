@@ -30,7 +30,7 @@ import java.util.stream.Collectors;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.standalone.workspace.config.NRepositoryConfigManagerExt;
-import net.thevpc.nuts.runtime.standalone.workspace.config.NWorkspaceConfigManagerExt;
+import net.thevpc.nuts.runtime.standalone.workspace.config.NConfigsExt;
 import net.thevpc.nuts.runtime.standalone.repository.impl.main.NInstalledRepository;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceExt;
 import net.thevpc.nuts.runtime.standalone.util.CoreNUtils;
@@ -155,27 +155,27 @@ public class NIdFormatHelper {
     }
 
     private static FormatHelper getFormatHelper(NSession session) {
-        FormatHelper h = (FormatHelper) session.env().getProperties().get(FormatHelper.class.getName());
+        FormatHelper h = (FormatHelper) NEnvs.of(session).getProperties().get(FormatHelper.class.getName());
         if (h != null) {
             return h;
         }
-        FormatHelperResetListener h2 = (FormatHelperResetListener) session.env()
+        FormatHelperResetListener h2 = (FormatHelperResetListener) NEnvs.of(session)
                 .getProperty(FormatHelperResetListener.class.getName())
                 .map(NValue::getRaw).orNull()
                 ;
         if (h2 == null) {
             h2 = new FormatHelperResetListener();
-            session.events().addWorkspaceListener(h2);
+            NEvents.of(session).addWorkspaceListener(h2);
         }
         h = new FormatHelper(session);
-        session.env().setProperty(FormatHelper.class.getName(), h);
+        NEnvs.of(session).setProperty(FormatHelper.class.getName(), h);
         return h;
     }
 
     public static class FormatHelperResetListener implements NWorkspaceListener, NRepositoryListener {
 
-        private void _onReset(NSession ws) {
-            ws.env().setProperty(FormatHelper.class.getName(), null);
+        private void _onReset(NSession session) {
+            NEnvs.of(session).setProperty(FormatHelper.class.getName(), null);
         }
 
         @Override
@@ -241,7 +241,7 @@ public class NIdFormatHelper {
             }
             int z = 0;
             Stack<NRepository> stack = new Stack<>();
-            for (NRepository repository : session.repos()
+            for (NRepository repository : NRepositories.of(session)
                     .setSession(session)
                     .getRepositories()) {
                 stack.push(repository);
@@ -268,7 +268,7 @@ public class NIdFormatHelper {
                 return maxUserNameSize;
             }
             int z = "anonymous".length();
-            NWorkspaceConfigManagerExt wc = NWorkspaceConfigManagerExt.of(session.config());
+            NConfigsExt wc = NConfigsExt.of(NConfigs.of(session));
             NUserConfig[] users = wc.getModel().getStoredConfigSecurity().getUsers();
             if (users != null) {
                 for (NUserConfig user : users) {
@@ -279,7 +279,7 @@ public class NIdFormatHelper {
                 }
             }
             Stack<NRepository> stack = new Stack<>();
-            for (NRepository repository : session.repos().getRepositories()) {
+            for (NRepository repository : NRepositories.of(session).getRepositories()) {
                 stack.push(repository);
             }
             while (!stack.isEmpty()) {
@@ -345,8 +345,8 @@ public class NIdFormatHelper {
     }
 
     public NString buildMain(NFetchDisplayOptions oo, NDisplayProperty dp) {
-        NSession ws = session;
-        NTexts text = NTexts.of(ws);
+        NSession session = this.session;
+        NTexts text = NTexts.of(session);
         if (oo.isRequireDefinition()) {
             buildLong();
         }
@@ -422,7 +422,7 @@ public class NIdFormatHelper {
             }
             case INSTALL_DATE: {
                 if (def != null && def.getInstallInformation().isPresent()) {
-                    return stringValue(def.getInstallInformation().get(session).getCreatedInstant());
+                    return stringValue(def.getInstallInformation().get(this.session).getCreatedInstant());
                 }
                 return text.ofStyled("<null>", NTextStyle.pale());
             }
@@ -433,8 +433,7 @@ public class NIdFormatHelper {
                         rname = def.getRepositoryName();
                     }
                     if (def.getRepositoryUuid() != null) {
-                        NRepository r = session.repos()
-                                .setSession(session.copy().setTransitive(false))
+                        NRepository r = NRepositories.of(this.session.copy().setTransitive(false))
                                 .findRepositoryById(def.getRepositoryUuid());
                         if (r != null) {
                             rname = r.getName();
@@ -455,8 +454,7 @@ public class NIdFormatHelper {
                 }
                 if (ruuid == null && id != null) {
                     String p = id.getRepository();
-                    NRepository r = session.repos()
-                            .setSession(session.copy().setTransitive(false))
+                    NRepository r = NRepositories.of(this.session.copy().setTransitive(false))
                             .findRepositoryByName(p);
                     if (r != null) {
                         ruuid = r.getUuid();
@@ -466,56 +464,56 @@ public class NIdFormatHelper {
             }
             case INSTALL_USER: {
                 if (def != null && def.getInstallInformation().isPresent()) {
-                    return stringValue(def.getInstallInformation().get(session).getInstallUser());
+                    return stringValue(def.getInstallInformation().get(this.session).getInstallUser());
                 }
                 return text.ofStyled("nobody", NTextStyle.error());
             }
             case CACHE_FOLDER: {
                 if (def != null) {
-                    return stringValue(ws.locations().getStoreLocation(def.getId(), NStoreLocation.CACHE));
+                    return stringValue(NLocations.of(session).getStoreLocation(def.getId(), NStoreLocation.CACHE));
                 }
                 return text.ofStyled("<null>", NTextStyle.error());
             }
             case CONFIG_FOLDER: {
                 if (def != null) {
-                    return stringValue(ws.locations().getStoreLocation(def.getId(), NStoreLocation.CONFIG));
+                    return stringValue(NLocations.of(session).getStoreLocation(def.getId(), NStoreLocation.CONFIG));
                 }
                 return text.ofStyled("<null>", NTextStyle.error());
             }
             case LIB_FOLDER: {
                 if (def != null) {
-                    return stringValue(ws.locations().getStoreLocation(def.getId(), NStoreLocation.LIB));
+                    return stringValue(NLocations.of(session).getStoreLocation(def.getId(), NStoreLocation.LIB));
                 }
                 return text.ofStyled("<null>", NTextStyle.error());
             }
             case LOG_FOLDER: {
                 if (def != null) {
-                    return stringValue(ws.locations().getStoreLocation(def.getId(), NStoreLocation.LOG));
+                    return stringValue(NLocations.of(session).getStoreLocation(def.getId(), NStoreLocation.LOG));
                 }
                 return text.ofStyled("<null>", NTextStyle.error());
             }
             case TEMP_FOLDER: {
                 if (def != null) {
-                    return stringValue(ws.locations().getStoreLocation(def.getId(), NStoreLocation.TEMP));
+                    return stringValue(NLocations.of(session).getStoreLocation(def.getId(), NStoreLocation.TEMP));
                 }
                 return text.ofStyled("<null>", NTextStyle.error());
             }
             case VAR_LOCATION: {
                 if (def != null) {
-                    return stringValue(ws.locations().getStoreLocation(def.getId(), NStoreLocation.VAR));
+                    return stringValue(NLocations.of(session).getStoreLocation(def.getId(), NStoreLocation.VAR));
                 }
                 return text.ofStyled("<null>", NTextStyle.error());
             }
             case APPS_FOLDER: {
                 if (def != null) {
-                    return stringValue(ws.locations().getStoreLocation(def.getId(), NStoreLocation.APPS));
+                    return stringValue(NLocations.of(session).getStoreLocation(def.getId(), NStoreLocation.APPS));
                 }
                 return text.ofStyled("<null>", NTextStyle.error());
             }
             case EXEC_ENTRY: {
                 if (def != null && def.getContent().isPresent()) {
                     List<NString> results = new ArrayList<>();
-                    for (NExecutionEntry entry : NExecutionEntries.of(session).parse(def.getContent().get())) {
+                    for (NExecutionEntry entry : NExecutionEntries.of(this.session).parse(def.getContent().get())) {
                         if (entry.isDefaultEntry()) {
                             //should all mark?
                             results.add(text.ofPlain(entry.getName()));
@@ -535,7 +533,7 @@ public class NIdFormatHelper {
             }
             case INSTALL_FOLDER: {
                 if (def != null && def.getInstallInformation().isPresent()) {
-                    return stringValue(def.getInstallInformation().get(session).getInstallFolder());
+                    return stringValue(def.getInstallInformation().get(this.session).getInstallFolder());
                 }
                 return text.ofStyled("<null>", NTextStyle.pale());
             }
@@ -575,7 +573,7 @@ public class NIdFormatHelper {
             }
 
             default: {
-                throw new NUnsupportedEnumException(session, dp);
+                throw new NUnsupportedEnumException(this.session, dp);
             }
         }
     }
@@ -599,7 +597,7 @@ public class NIdFormatHelper {
 
             try {
                 if (this.installStatus.isNonDeployed() || def == null) {
-                    this.defFetched = session.fetch().setId(id).setSession(
+                    this.defFetched = NFetchCommand.of(session).setId(id).setSession(
                             session.copy().setFetchStrategy(NFetchStrategy.OFFLINE)
                     )
                             .setContent(true)

@@ -3,7 +3,7 @@ package net.thevpc.nuts.runtime.standalone.text;
 import net.thevpc.nuts.NIllegalArgumentException;
 import net.thevpc.nuts.NMsg;
 import net.thevpc.nuts.NSession;
-import net.thevpc.nuts.cmdline.NArgument;
+import net.thevpc.nuts.cmdline.NArg;
 import net.thevpc.nuts.cmdline.NCommandLine;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.runtime.standalone.util.CoreStringUtils;
@@ -166,7 +166,7 @@ public class DefaultNTextTransformer implements NTextTransformer {
                             t.getText()
                     ).orNull();
                     if (cmd != null && cmd.length() > 0) {
-                        String p = cmd.next().flatMap(NArgument::asString).orNull();
+                        String p = cmd.next().flatMap(NArg::asString).orNull();
                         NPath newP = resolveRelativePath(p, config.getCurrentDir());
                         NText n = txt.parser().parse(newP);
                         //do not continue

@@ -208,11 +208,11 @@ public abstract class AbstractNRepository implements NRepository, NRepositorySPI
     }
 
     protected String getIdExtension(NId id, NSession session) {
-        return session.locations().getDefaultIdExtension(id);
+        return NLocations.of(session).getDefaultIdExtension(id);
     }
 
     public NPath getIdBasedir(NId id, NSession session) {
-        return session.locations().getDefaultIdBasedir(id);
+        return NLocations.of(session).getDefaultIdBasedir(id);
     }
 
     public String getIdFilename(NId id, NSession session) {

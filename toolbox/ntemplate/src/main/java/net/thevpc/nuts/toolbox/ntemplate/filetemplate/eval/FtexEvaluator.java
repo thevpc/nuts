@@ -1,5 +1,6 @@
 package net.thevpc.nuts.toolbox.ntemplate.filetemplate.eval;
 
+import net.thevpc.nuts.NExecCommand;
 import net.thevpc.nuts.cmdline.NCommandLine;
 import net.thevpc.nuts.NSession;
 import net.thevpc.nuts.toolbox.ntemplate.filetemplate.ExprEvaluator;
@@ -229,7 +230,7 @@ public class FtexEvaluator implements ExprEvaluator {
 
     private Object evalAntiQuotesString(String value, FileTemplater ctx) {
         NSession session = ctx.getSession();
-        return session.exec().addCommand(
+        return NExecCommand.of(session).addCommand(
                         NCommandLine.parseDefault(value).get(session).toStringArray()
         ).setDirectory(ctx.getWorkingDirRequired())
                 .grabOutputString()

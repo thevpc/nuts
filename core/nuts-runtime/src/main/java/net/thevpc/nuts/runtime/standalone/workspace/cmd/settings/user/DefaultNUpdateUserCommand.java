@@ -26,7 +26,7 @@ package net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.user;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.standalone.workspace.config.NRepositoryConfigManagerExt;
-import net.thevpc.nuts.runtime.standalone.workspace.config.NWorkspaceConfigManagerExt;
+import net.thevpc.nuts.runtime.standalone.workspace.config.NConfigsExt;
 import net.thevpc.nuts.runtime.standalone.util.CoreStringUtils;
 
 import java.util.*;
@@ -47,8 +47,8 @@ public class DefaultNUpdateUserCommand extends AbstractNUpdateUserCommand {
     @Override
     public NUpdateUserCommand run() {
         checkSession();
-        NSession ws = getSession();
-        NWorkspaceSecurityManager sec = ws.security().setSession(ws);
+        NSession session = getSession();
+        NWorkspaceSecurityManager sec = NWorkspaceSecurityManager.of(session);
         if (!(getCredentials()==null || NBlankable.isBlank(new String(getCredentials())))) {
             sec.checkAllowed(NConstants.Permissions.SET_PASSWORD, "set-user-credentials");
             String currentLogin = sec.getCurrentUsername();
@@ -61,23 +61,23 @@ public class DefaultNUpdateUserCommand extends AbstractNUpdateUserCommand {
             }
             if (repository != null) {
                 NRepositoryConfigModel rconf = NRepositoryConfigManagerExt.of(repository.config()).getModel();
-                NUserConfig u = rconf.getUser(login, ws);
+                NUserConfig u = rconf.getUser(login, session);
                 if (u == null) {
-                    throw new NIllegalArgumentException(ws, NMsg.ofCstyle("no such user %s", login));
+                    throw new NIllegalArgumentException(session, NMsg.ofCstyle("no such user %s", login));
                 }
                 fillNutsUserConfig(u);
 
-                rconf.setUser(u, session);
+                rconf.setUser(u, this.session);
 
             } else {
-                DefaultNWorkspaceConfigModel wconf = NWorkspaceConfigManagerExt.of(session.config()).getModel();
-                NUserConfig u = wconf.getUser(login, ws);
+                DefaultNWorkspaceConfigModel wconf = NConfigsExt.of(NConfigs.of(this.session)).getModel();
+                NUserConfig u = wconf.getUser(login, session);
                 if (u == null) {
-                    throw new NIllegalArgumentException(ws, NMsg.ofCstyle("no such user %s", login));
+                    throw new NIllegalArgumentException(session, NMsg.ofCstyle("no such user %s", login));
                 }
 
                 fillNutsUserConfig(u);
-                wconf.setUser(u, session);
+                wconf.setUser(u, this.session);
             }
         }
         return this;
@@ -85,11 +85,11 @@ public class DefaultNUpdateUserCommand extends AbstractNUpdateUserCommand {
 
     protected void fillNutsUserConfig(NUserConfig u) {
         checkSession();
-        NSession ws = getSession();
-        NWorkspaceSecurityManager wsec = ws.security().setSession(ws);
+        NSession session = getSession();
+        NWorkspaceSecurityManager wsec = NWorkspaceSecurityManager.of(session);
         String currentLogin = wsec.getCurrentUsername();
         if (!currentLogin.equals(login)) {
-            repository.security().setSession(ws).checkAllowed(NConstants.Permissions.ADMIN, "set-user-credentials");
+            repository.security().setSession(session).checkAllowed(NConstants.Permissions.ADMIN, "set-user-credentials");
         }
         if (!wsec.isAllowed(NConstants.Permissions.ADMIN)) {
             wsec.checkCredentials(u.getCredentials().toCharArray(),

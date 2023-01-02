@@ -1,9 +1,6 @@
 package net.thevpc.nuts.runtime.standalone.io.inputstream;
 
-import net.thevpc.nuts.NMsg;
-import net.thevpc.nuts.NSession;
-import net.thevpc.nuts.NString;
-import net.thevpc.nuts.NWorkspaceOptions;
+import net.thevpc.nuts.*;
 import net.thevpc.nuts.io.*;
 import net.thevpc.nuts.runtime.standalone.boot.DefaultNBootModel;
 import net.thevpc.nuts.runtime.standalone.io.printstream.*;
@@ -12,7 +9,7 @@ import net.thevpc.nuts.runtime.standalone.io.util.InputStreamExt;
 import net.thevpc.nuts.runtime.standalone.io.util.NullInputStream;
 import net.thevpc.nuts.runtime.standalone.text.SimpleWriterOutputStream;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceExt;
-import net.thevpc.nuts.runtime.standalone.workspace.config.DefaultNWorkspaceConfigManager;
+import net.thevpc.nuts.runtime.standalone.workspace.config.DefaultNConfigs;
 import net.thevpc.nuts.runtime.standalone.workspace.config.DefaultNWorkspaceConfigModel;
 import net.thevpc.nuts.spi.NPaths;
 import net.thevpc.nuts.spi.NSupportLevelContext;
@@ -71,7 +68,7 @@ public class DefaultNIO implements NIO {
         if (out == null) {
             return null;
         }
-        NWorkspaceOptions woptions = session.boot().setSession(session).getBootOptions();
+        NWorkspaceOptions woptions = NBootManager.of(session).getBootOptions();
         NTerminalMode expectedMode0 = woptions.getTerminalMode().orElse(NTerminalMode.DEFAULT);
         if (expectedMode0 == NTerminalMode.DEFAULT) {
             if (woptions.getBot().orElse(false)) {
@@ -174,7 +171,7 @@ public class DefaultNIO implements NIO {
     }
 
     private DefaultNWorkspaceConfigModel getConfigModel() {
-        return ((DefaultNWorkspaceConfigManager) session.config()).getModel();
+        return ((DefaultNConfigs) NConfigs.of(session)).getModel();
     }
 
     @Override

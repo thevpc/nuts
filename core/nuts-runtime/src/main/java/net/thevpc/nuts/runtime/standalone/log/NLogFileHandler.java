@@ -81,7 +81,7 @@ public class NLogFileHandler extends FileHandler {
         if(session==null){
             session=this.session;
         }
-        NLogConfig logConfig = session.boot().getBootOptions().getLogConfig().orElseGet(NLogConfig::new);
+        NLogConfig logConfig = NBootManager.of(session).getBootOptions().getLogConfig().orElseGet(NLogConfig::new);
         Level sessionLogLevel = session.getLogFileLevel();
         if (sessionLogLevel == null) {
             if (logConfig != null) {

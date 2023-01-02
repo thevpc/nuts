@@ -41,9 +41,9 @@ import java.util.Set;
  * @app.category Config
  * @since 0.5.4
  */
-public interface NWorkspaceConfigManager extends NComponent {
-    static NWorkspaceConfigManager of(NSession session) {
-        return NExtensions.of(session).createSupported(NWorkspaceConfigManager.class);
+public interface NConfigs extends NComponent {
+    static NConfigs of(NSession session) {
+        return NExtensions.of(session).createSupported(NConfigs.class);
     }
 
     NWorkspaceStoredConfig stored();
@@ -83,7 +83,7 @@ public interface NWorkspaceConfigManager extends NComponent {
 
     NSession getSession();
 
-    NWorkspaceConfigManager setSession(NSession session);
+    NConfigs setSession(NSession session);
 
 
     /**
@@ -99,7 +99,7 @@ public interface NWorkspaceConfigManager extends NComponent {
      * @param terminal system terminal
      * @return {@code this} instance
      */
-    NWorkspaceConfigManager setSystemTerminal(NSystemTerminalBase terminal);
+    NConfigs setSystemTerminal(NSystemTerminalBase terminal);
 
     /**
      * return workspace default terminal
@@ -114,7 +114,7 @@ public interface NWorkspaceConfigManager extends NComponent {
      * @param terminal terminal
      * @return {@code this} instance
      */
-    NWorkspaceConfigManager setDefaultTerminal(NSessionTerminal terminal);
+    NConfigs setDefaultTerminal(NSessionTerminal terminal);
 
     Map<String, String> getConfigMap();
 
@@ -125,5 +125,5 @@ public interface NWorkspaceConfigManager extends NComponent {
      * @param value    value
      * @return {@code this} instance
      */
-    NWorkspaceConfigManager setConfigProperty(String property, String value);
+    NConfigs setConfigProperty(String property, String value);
 }

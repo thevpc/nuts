@@ -190,8 +190,7 @@ public class DocusaurusCtrl {
     }
 
     private void runNativeCommand(Path workFolder, String... cmd) {
-        appContext.getSession()
-                .exec()
+        NExecCommand.of(appContext.getSession())
                 .setExecutionType(NExecutionType.EMBEDDED)
                 .addCommand(cmd).setDirectory(workFolder.toString())
                 .setFailFast(true).getResult();
@@ -204,7 +203,7 @@ public class DocusaurusCtrl {
         } else {
             s = s.setConfirm(NConfirmationMode.ERROR);
         }
-        s.exec().addCommand(cmd).setDirectory(workFolder.toString())
+        NExecCommand.of(s).addCommand(cmd).setDirectory(workFolder.toString())
                 .setExecutionType(NExecutionType.EMBEDDED)
                 .setFailFast(true).getResult();
     }

@@ -64,7 +64,7 @@ public interface NCommandAutoComplete {
      *
      * @return current candidates
      */
-    List<NArgumentCandidate> getCandidates();
+    List<NArgCandidate> getCandidates();
 
     /**
      * candidates index
@@ -78,6 +78,6 @@ public interface NCommandAutoComplete {
      *
      * @param value candidate
      */
-    void addCandidate(NArgumentCandidate value);
+    void addCandidate(NArgCandidate value);
 
 }

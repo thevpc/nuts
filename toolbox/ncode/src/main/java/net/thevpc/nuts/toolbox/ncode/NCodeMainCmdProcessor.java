@@ -3,7 +3,7 @@ package net.thevpc.nuts.toolbox.ncode;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.cmdline.NCommandLineContext;
 import net.thevpc.nuts.cmdline.NCommandLineProcessor;
-import net.thevpc.nuts.cmdline.NArgument;
+import net.thevpc.nuts.cmdline.NArg;
 import net.thevpc.nuts.cmdline.NCommandLine;
 import net.thevpc.nuts.toolbox.ncode.bundles.strings.StringComparator;
 import net.thevpc.nuts.toolbox.ncode.bundles.strings.StringComparators;
@@ -36,7 +36,7 @@ class NCodeMainCmdProcessor implements NCommandLineProcessor {
     }
 
     @Override
-    public boolean onCmdNextOption(NArgument option, NCommandLine commandLine, NCommandLineContext context) {
+    public boolean onCmdNextOption(NArg option, NCommandLine commandLine, NCommandLineContext context) {
         NSession session = applicationContext.getSession();
         switch (option.getStringKey().get(session)) {
             case "-i": {
@@ -76,7 +76,7 @@ class NCodeMainCmdProcessor implements NCommandLineProcessor {
     }
 
     @Override
-    public boolean onCmdNextNonOption(NArgument nonOption, NCommandLine commandLine, NCommandLineContext context) {
+    public boolean onCmdNextNonOption(NArg nonOption, NCommandLine commandLine, NCommandLineContext context) {
         NSession session = applicationContext.getSession();
         paths.add(commandLine.next().flatMap(NValue::asString).get(session));
         return true;

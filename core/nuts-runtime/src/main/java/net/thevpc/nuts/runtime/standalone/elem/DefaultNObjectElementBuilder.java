@@ -248,7 +248,7 @@ public class DefaultNObjectElementBuilder implements NObjectElementBuilder {
     }
 
     private NElements _elements() {
-        return NElements.of(session).setSession(session);
+        return NElements.of(session);
     }
 
     @Override

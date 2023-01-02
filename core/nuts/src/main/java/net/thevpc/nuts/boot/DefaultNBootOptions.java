@@ -48,7 +48,7 @@ import java.util.function.Supplier;
  * @app.category Internal
  * @since 0.5.4
  */
-public class DefaultNWorkspaceBootOptions extends DefaultNWorkspaceOptions implements NWorkspaceBootOptions {
+public class DefaultNBootOptions extends DefaultNWorkspaceOptions implements NBootOptions {
     private static final long serialVersionUID = 1;
     /**
      * bootRepositories list (; separated) where to look for runtime
@@ -100,29 +100,29 @@ public class DefaultNWorkspaceBootOptions extends DefaultNWorkspaceOptions imple
     private final NDescriptor runtimeBootDescriptor;
     private final NWorkspaceOptions userOptions;
 
-    public DefaultNWorkspaceBootOptions(List<String> outputFormatOptions, List<String> customOptions, NVersion apiVersion,
-                                        NId runtimeId, String javaCommand, String javaOptions, String workspace,
-                                        String outLinePrefix, String errLinePrefix, String name, Boolean skipCompanions,
-                                        Boolean skipWelcome, Boolean skipBoot, Boolean global, Boolean gui,
-                                        Boolean dry, Boolean recover, Boolean reset, Boolean commandVersion, Boolean commandHelp, Boolean inherited, Boolean switchWorkspace, Boolean cached, Boolean indexed, Boolean transitive, Boolean bot, NIsolationLevel isolation, Boolean initLaunchers, Boolean initScripts, Boolean initPlatforms, Boolean initJava, List<String> excludedExtensions, List<String> repositories, String userName,
-                                        char[] credentials, NTerminalMode terminalMode, Boolean readOnly,
-                                        Boolean trace, String progressOptions, String dependencySolver,
-                                        NLogConfig logConfig, NConfirmationMode confirm, NContentType outputFormat,
-                                        List<String> applicationArguments, NOpenMode openMode, Instant creationTime,
-                                        Supplier<ClassLoader> classLoaderSupplier, List<String> executorOptions,
-                                        String debug, NExecutionType executionType, NRunAs runAs,
-                                        String archetype, Map<NStoreLocation, String> storeLocations,
-                                        Map<NHomeLocation, String> homeLocations, NOsFamily storeLocationLayout,
-                                        NStoreLocationStrategy storeLocationStrategy,
-                                        NStoreLocationStrategy repositoryStoreLocationStrategy, NFetchStrategy fetchStrategy,
-                                        InputStream stdin,
-                                        PrintStream stdout, PrintStream stderr, ExecutorService executorService,
-                                        Instant expireTime, List<NMsg> errors, Boolean skipErrors, String locale,
-                                        String theme, String uuid, String bootRepositories, NClassLoaderNode runtimeBootDependencyNode,
-                                        List<NDescriptor> extensionBootDescriptors, List<NClassLoaderNode> extensionBootDependencyNodes,
-                                        List<URL> classWorldURLs, Set<String> extensionsSet, NBootWorkspaceFactory bootWorkspaceFactory, NDescriptor runtimeBootDescriptor, ClassLoader classWorldLoader,
-                                        NWorkspaceOptions userOptions,
-                                        NSupportMode desktopLauncher, NSupportMode menuLauncher, NSupportMode userLauncher) {
+    public DefaultNBootOptions(List<String> outputFormatOptions, List<String> customOptions, NVersion apiVersion,
+                               NId runtimeId, String javaCommand, String javaOptions, String workspace,
+                               String outLinePrefix, String errLinePrefix, String name, Boolean skipCompanions,
+                               Boolean skipWelcome, Boolean skipBoot, Boolean global, Boolean gui,
+                               Boolean dry, Boolean recover, Boolean reset, Boolean commandVersion, Boolean commandHelp, Boolean inherited, Boolean switchWorkspace, Boolean cached, Boolean indexed, Boolean transitive, Boolean bot, NIsolationLevel isolation, Boolean initLaunchers, Boolean initScripts, Boolean initPlatforms, Boolean initJava, List<String> excludedExtensions, List<String> repositories, String userName,
+                               char[] credentials, NTerminalMode terminalMode, Boolean readOnly,
+                               Boolean trace, String progressOptions, String dependencySolver,
+                               NLogConfig logConfig, NConfirmationMode confirm, NContentType outputFormat,
+                               List<String> applicationArguments, NOpenMode openMode, Instant creationTime,
+                               Supplier<ClassLoader> classLoaderSupplier, List<String> executorOptions,
+                               String debug, NExecutionType executionType, NRunAs runAs,
+                               String archetype, Map<NStoreLocation, String> storeLocations,
+                               Map<NHomeLocation, String> homeLocations, NOsFamily storeLocationLayout,
+                               NStoreLocationStrategy storeLocationStrategy,
+                               NStoreLocationStrategy repositoryStoreLocationStrategy, NFetchStrategy fetchStrategy,
+                               InputStream stdin,
+                               PrintStream stdout, PrintStream stderr, ExecutorService executorService,
+                               Instant expireTime, List<NMsg> errors, Boolean skipErrors, String locale,
+                               String theme, String uuid, String bootRepositories, NClassLoaderNode runtimeBootDependencyNode,
+                               List<NDescriptor> extensionBootDescriptors, List<NClassLoaderNode> extensionBootDependencyNodes,
+                               List<URL> classWorldURLs, Set<String> extensionsSet, NBootWorkspaceFactory bootWorkspaceFactory, NDescriptor runtimeBootDescriptor, ClassLoader classWorldLoader,
+                               NWorkspaceOptions userOptions,
+                               NSupportMode desktopLauncher, NSupportMode menuLauncher, NSupportMode userLauncher) {
         super(apiVersion, runtimeId, workspace, name, javaCommand, javaOptions, outLinePrefix,
                 errLinePrefix, userName, credentials, progressOptions, dependencySolver, debug, archetype,
                 locale, theme, logConfig, confirm, outputFormat, openMode, executionType, storeLocationStrategy,
@@ -155,8 +155,8 @@ public class DefaultNWorkspaceBootOptions extends DefaultNWorkspaceOptions imple
     }
 
     @Override
-    public NWorkspaceBootOptionsBuilder builder() {
-        return (NWorkspaceBootOptionsBuilder) new DefaultNWorkspaceBootOptionsBuilder().setAll(this);
+    public NBootOptionsBuilder builder() {
+        return (NBootOptionsBuilder) new DefaultNBootOptionsBuilder().setAll(this);
     }
 
     @Override
@@ -217,7 +217,7 @@ public class DefaultNWorkspaceBootOptions extends DefaultNWorkspaceOptions imple
     }
 
     @Override
-    public NWorkspaceBootOptions readOnly() {
+    public NBootOptions readOnly() {
         return this;
     }
 }

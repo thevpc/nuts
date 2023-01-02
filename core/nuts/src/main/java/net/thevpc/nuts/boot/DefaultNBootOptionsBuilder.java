@@ -40,7 +40,7 @@ import java.util.*;
  * @app.category Internal
  * @since 0.5.4
  */
-public final class DefaultNWorkspaceBootOptionsBuilder extends DefaultNWorkspaceOptionsBuilder implements NWorkspaceBootOptionsBuilder {
+public final class DefaultNBootOptionsBuilder extends DefaultNWorkspaceOptionsBuilder implements NBootOptionsBuilder {
     private static final long serialVersionUID = 1;
     /**
      * bootRepositories list (; separated) where to look for runtime
@@ -95,7 +95,7 @@ public final class DefaultNWorkspaceBootOptionsBuilder extends DefaultNWorkspace
      */
     private NWorkspaceOptions userOptions;
 
-    public DefaultNWorkspaceBootOptionsBuilder() {
+    public DefaultNBootOptionsBuilder() {
     }
 
     @Override
@@ -104,24 +104,24 @@ public final class DefaultNWorkspaceBootOptionsBuilder extends DefaultNWorkspace
     }
 
     @Override
-    public NWorkspaceBootOptionsBuilder setUserOptions(NWorkspaceOptions userOptions) {
+    public NBootOptionsBuilder setUserOptions(NWorkspaceOptions userOptions) {
         this.userOptions = userOptions;
         return this;
     }
 
     @Override
-    public NWorkspaceBootOptionsBuilder copy() {
+    public NBootOptionsBuilder copy() {
         return builder();
     }
 
     @Override
-    public NWorkspaceBootOptionsBuilder builder() {
-        return new DefaultNWorkspaceBootOptionsBuilder().setAll(this);
+    public NBootOptionsBuilder builder() {
+        return new DefaultNBootOptionsBuilder().setAll(this);
     }
 
     @Override
-    public NWorkspaceBootOptions build() {
-        return new DefaultNWorkspaceBootOptions(
+    public NBootOptions build() {
+        return new DefaultNBootOptions(
                 getOutputFormatOptions().orNull(), getCustomOptions().orNull(), getApiVersion().orNull(), getRuntimeId().orNull(), getJavaCommand().orNull()
                 , getJavaOptions().orNull(), getWorkspace().orNull(), getOutLinePrefix().orNull(), getErrLinePrefix().orNull()
                 , getName().orNull(), getSkipCompanions().orNull(), getSkipWelcome().orNull(), getSkipBoot().orNull()
@@ -144,10 +144,10 @@ public final class DefaultNWorkspaceBootOptionsBuilder extends DefaultNWorkspace
                 getDesktopLauncher().orNull(), getMenuLauncher().orNull(), getUserLauncher().orNull());
     }
 
-    public DefaultNWorkspaceBootOptionsBuilder setAll(DefaultNWorkspaceOptionsBuilder other) {
+    public DefaultNBootOptionsBuilder setAll(DefaultNWorkspaceOptionsBuilder other) {
         super.setAll(other);
-        if (other instanceof DefaultNWorkspaceBootOptionsBuilder) {
-            DefaultNWorkspaceBootOptionsBuilder b = (DefaultNWorkspaceBootOptionsBuilder) other;
+        if (other instanceof DefaultNBootOptionsBuilder) {
+            DefaultNBootOptionsBuilder b = (DefaultNBootOptionsBuilder) other;
             setBootRepositories(b.getBootRepositories().orNull());
             setRuntimeBootDependencyNode(b.getRuntimeBootDependencyNode().orNull());
             setExtensionBootDescriptors(b.getExtensionBootDescriptors().orNull());
@@ -168,7 +168,7 @@ public final class DefaultNWorkspaceBootOptionsBuilder extends DefaultNWorkspace
     }
 
     @Override
-    public DefaultNWorkspaceBootOptionsBuilder setBootRepositories(String bootRepositories) {
+    public DefaultNBootOptionsBuilder setBootRepositories(String bootRepositories) {
         this.bootRepositories = NStringUtils.trimToNull(bootRepositories);
         return this;
     }
@@ -178,7 +178,7 @@ public final class DefaultNWorkspaceBootOptionsBuilder extends DefaultNWorkspace
     }
 
     @Override
-    public DefaultNWorkspaceBootOptionsBuilder setRuntimeBootDependencyNode(NClassLoaderNode runtimeBootDependencyNode) {
+    public DefaultNBootOptionsBuilder setRuntimeBootDependencyNode(NClassLoaderNode runtimeBootDependencyNode) {
         this.runtimeBootDependencyNode = runtimeBootDependencyNode;
         return this;
     }
@@ -188,7 +188,7 @@ public final class DefaultNWorkspaceBootOptionsBuilder extends DefaultNWorkspace
     }
 
     @Override
-    public DefaultNWorkspaceBootOptionsBuilder setExtensionBootDescriptors(List<NDescriptor> extensionBootDescriptors) {
+    public DefaultNBootOptionsBuilder setExtensionBootDescriptors(List<NDescriptor> extensionBootDescriptors) {
         this.extensionBootDescriptors = NReservedCollectionUtils.nonNullList(extensionBootDescriptors);
         return this;
     }
@@ -198,7 +198,7 @@ public final class DefaultNWorkspaceBootOptionsBuilder extends DefaultNWorkspace
     }
 
     @Override
-    public DefaultNWorkspaceBootOptionsBuilder setExtensionBootDependencyNodes(List<NClassLoaderNode> extensionBootDependencyNodes) {
+    public DefaultNBootOptionsBuilder setExtensionBootDependencyNodes(List<NClassLoaderNode> extensionBootDependencyNodes) {
         this.extensionBootDependencyNodes = NReservedCollectionUtils.nonNullList(extensionBootDependencyNodes);
         return this;
     }
@@ -208,7 +208,7 @@ public final class DefaultNWorkspaceBootOptionsBuilder extends DefaultNWorkspace
     }
 
     @Override
-    public DefaultNWorkspaceBootOptionsBuilder setBootWorkspaceFactory(NBootWorkspaceFactory bootWorkspaceFactory) {
+    public DefaultNBootOptionsBuilder setBootWorkspaceFactory(NBootWorkspaceFactory bootWorkspaceFactory) {
         this.bootWorkspaceFactory = bootWorkspaceFactory;
         return this;
     }
@@ -218,7 +218,7 @@ public final class DefaultNWorkspaceBootOptionsBuilder extends DefaultNWorkspace
     }
 
     @Override
-    public DefaultNWorkspaceBootOptionsBuilder setClassWorldURLs(List<URL> classWorldURLs) {
+    public DefaultNBootOptionsBuilder setClassWorldURLs(List<URL> classWorldURLs) {
         this.classWorldURLs = NReservedCollectionUtils.nonNullList(classWorldURLs);
         return this;
     }
@@ -228,7 +228,7 @@ public final class DefaultNWorkspaceBootOptionsBuilder extends DefaultNWorkspace
     }
 
     @Override
-    public DefaultNWorkspaceBootOptionsBuilder setClassWorldLoader(ClassLoader classWorldLoader) {
+    public DefaultNBootOptionsBuilder setClassWorldLoader(ClassLoader classWorldLoader) {
         this.classWorldLoader = classWorldLoader;
         return this;
     }
@@ -238,7 +238,7 @@ public final class DefaultNWorkspaceBootOptionsBuilder extends DefaultNWorkspace
     }
 
     @Override
-    public DefaultNWorkspaceBootOptionsBuilder setUuid(String uuid) {
+    public DefaultNBootOptionsBuilder setUuid(String uuid) {
         this.uuid = NStringUtils.trimToNull(uuid);
         return this;
     }
@@ -248,7 +248,7 @@ public final class DefaultNWorkspaceBootOptionsBuilder extends DefaultNWorkspace
     }
 
     @Override
-    public DefaultNWorkspaceBootOptionsBuilder setExtensionsSet(Set<String> extensionsSet) {
+    public DefaultNBootOptionsBuilder setExtensionsSet(Set<String> extensionsSet) {
         this.extensionsSet = NReservedCollectionUtils.nonNullSet(extensionsSet);
         return this;
     }
@@ -258,7 +258,7 @@ public final class DefaultNWorkspaceBootOptionsBuilder extends DefaultNWorkspace
     }
 
     @Override
-    public DefaultNWorkspaceBootOptionsBuilder setRuntimeBootDescriptor(NDescriptor runtimeBootDescriptor) {
+    public DefaultNBootOptionsBuilder setRuntimeBootDescriptor(NDescriptor runtimeBootDescriptor) {
         this.runtimeBootDescriptor = runtimeBootDescriptor;
         return this;
     }
@@ -266,8 +266,8 @@ public final class DefaultNWorkspaceBootOptionsBuilder extends DefaultNWorkspace
     @Override
     public NWorkspaceOptionsBuilder setAll(NWorkspaceOptions other) {
         super.setAll(other);
-        if (other instanceof NWorkspaceBootOptions) {
-            NWorkspaceBootOptions o = (NWorkspaceBootOptions) other;
+        if (other instanceof NBootOptions) {
+            NBootOptions o = (NBootOptions) other;
             setUserOptions(o.getUserOptions().orNull());
             setBootRepositories(o.getBootRepositories().orNull());
             setRuntimeBootDependencyNode(o.getRuntimeBootDependencyNode().orNull());
@@ -286,8 +286,8 @@ public final class DefaultNWorkspaceBootOptionsBuilder extends DefaultNWorkspace
     @Override
     public NWorkspaceOptionsBuilder setAllPresent(NWorkspaceOptions other) {
         super.setAllPresent(other);
-        if (other instanceof NWorkspaceBootOptions) {
-            NWorkspaceBootOptions o = (NWorkspaceBootOptions) other;
+        if (other instanceof NBootOptions) {
+            NBootOptions o = (NBootOptions) other;
             if (o.getUserOptions().isPresent()) {
                 setUserOptions(o.getUserOptions().orNull());
             }
@@ -324,7 +324,7 @@ public final class DefaultNWorkspaceBootOptionsBuilder extends DefaultNWorkspace
     }
 
     @Override
-    public NWorkspaceBootOptions readOnly() {
+    public NBootOptions readOnly() {
         return build();
     }
 }

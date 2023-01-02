@@ -25,7 +25,7 @@
  */
 package net.thevpc.nuts.toolbox.nsh.cmds.bash;
 
-import net.thevpc.nuts.cmdline.NArgument;
+import net.thevpc.nuts.cmdline.NArg;
 import net.thevpc.nuts.cmdline.NCommandLine;
 import net.thevpc.nuts.NSession;
 import net.thevpc.nuts.spi.NComponentScope;
@@ -53,7 +53,7 @@ public class SetCommand extends SimpleJShellBuiltin {
     protected boolean configureFirst(NCommandLine commandLine, JShellExecutionContext context) {
         NSession session = context.getSession();
         Options options = context.getOptions();
-        NArgument a = commandLine.peek().get(session);
+        NArg a = commandLine.peek().get(session);
         if (a.isNonOption()) {
             if (a.isKeyValue()) {
                 options.vars.put(a.key(), a.getStringValue().get(session));

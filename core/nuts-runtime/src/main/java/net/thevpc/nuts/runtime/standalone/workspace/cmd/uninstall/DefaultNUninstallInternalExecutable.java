@@ -6,6 +6,7 @@
 package net.thevpc.nuts.runtime.standalone.workspace.cmd.uninstall;
 
 import net.thevpc.nuts.NSession;
+import net.thevpc.nuts.NUninstallCommand;
 import net.thevpc.nuts.runtime.standalone.app.util.NAppUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.exec.DefaultInternalNExecutableCommand;
 
@@ -29,7 +30,7 @@ public class DefaultNUninstallInternalExecutable extends DefaultInternalNExecuta
             showDefaultHelp();
             return;
         }
-        getSession().uninstall().configure(false, args).run();
+        NUninstallCommand.of(getSession()).configure(false, args).run();
     }
 
 }

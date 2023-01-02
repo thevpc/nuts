@@ -21,7 +21,7 @@ public class DefaultNUndeployCommand extends AbstractNUndeployCommand {
         checkSession();
         NSession session = getSession();
         for (NId id : ids) {
-            NDefinition p = getSession().search()
+            NDefinition p = NSearchCommand.of(getSession())
                     .setSession(session
                             .copy()
                             .setFetchStrategy(isOffline() ? NFetchStrategy.OFFLINE : NFetchStrategy.ONLINE)
@@ -30,12 +30,12 @@ public class DefaultNUndeployCommand extends AbstractNUndeployCommand {
                     .addRepositoryFilter(NRepositoryFilters.of(session).byName(getRepository()))
                     //skip 'installed' repository
                     .setRepositoryFilter(
-                            session.repos().filter().byName(DefaultNInstalledRepository.INSTALLED_REPO_UUID).neg()
+                            NRepositories.of(session).filter().byName(DefaultNInstalledRepository.INSTALLED_REPO_UUID).neg()
                     )
                     .setDistinct(true)
                     .setFailFast(true)
                     .getResultDefinitions().required();
-            NRepository repository1 = session.repos().setSession(getSession()).getRepository(p.getRepositoryUuid());
+            NRepository repository1 = NRepositories.of(session).setSession(getSession()).getRepository(p.getRepositoryUuid());
             NRepositorySPI repoSPI = NWorkspaceUtils.of(getSession()).repoSPI(repository1);
             repoSPI.undeploy()
                     .setId(p.getId()).setSession(getSession())

@@ -26,7 +26,7 @@
 package net.thevpc.nuts.runtime.standalone.boot;
 
 import net.thevpc.nuts.NWorkspace;
-import net.thevpc.nuts.boot.NWorkspaceBootOptions;
+import net.thevpc.nuts.boot.NBootOptions;
 import net.thevpc.nuts.runtime.standalone.workspace.DefaultNWorkspace;
 import net.thevpc.nuts.spi.NBootWorkspaceFactory;
 import net.thevpc.nuts.spi.NComponent;
@@ -40,12 +40,12 @@ public class DefaultNBootWorkspaceFactory implements NBootWorkspaceFactory {
     }
 
     @Override
-    public int getBootSupportLevel(NWorkspaceBootOptions options) {
+    public int getBootSupportLevel(NBootOptions options) {
         return NComponent.DEFAULT_SUPPORT;
     }
 
     @Override
-    public NWorkspace createWorkspace(NWorkspaceBootOptions bOptions) {
+    public NWorkspace createWorkspace(NBootOptions bOptions) {
         String workspaceLocation = bOptions.getWorkspace().orNull();
         if(workspaceLocation!=null && workspaceLocation.matches("[a-z-]+://.*")){
             String protocol=workspaceLocation.substring(0,workspaceLocation.indexOf("://"));

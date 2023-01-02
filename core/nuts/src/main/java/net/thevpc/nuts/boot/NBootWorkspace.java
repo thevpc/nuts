@@ -66,7 +66,7 @@ public final class NBootWorkspace {
     private final Instant creationTime = Instant.now();
     private final NWorkspaceOptions userOptions;
     private final NReservedBootLog bLog;
-    private final NWorkspaceBootOptionsBuilder computedOptions = new DefaultNWorkspaceBootOptionsBuilder();
+    private final NBootOptionsBuilder computedOptions = new DefaultNBootOptionsBuilder();
     private final NReservedBootRepositoryDB repositoryDB;
     private final Function<String, String> pathExpansionConverter = new Function<String, String>() {
         @Override
@@ -105,7 +105,7 @@ public final class NBootWorkspace {
         }
     };
     private int newInstanceRequirements = 0;
-    private NWorkspaceBootOptionsBuilder lastWorkspaceOptions;
+    private NBootOptionsBuilder lastWorkspaceOptions;
     private Set<NRepositoryLocation> parsedBootRuntimeDependenciesRepositories;
     private Set<NRepositoryLocation> parsedBootRuntimeRepositories;
     private boolean preparedWorkspace;
@@ -181,7 +181,7 @@ public final class NBootWorkspace {
         this.bLog.setOptions(this.computedOptions);
     }
 
-    private static void revalidateLocations(NWorkspaceBootOptionsBuilder bootOptions, String workspaceName, boolean immediateLocation, NIsolationLevel sandboxMode) {
+    private static void revalidateLocations(NBootOptionsBuilder bootOptions, String workspaceName, boolean immediateLocation, NIsolationLevel sandboxMode) {
         if (NBlankable.isBlank(bootOptions.getName())) {
             bootOptions.setName(workspaceName);
         }
@@ -348,7 +348,7 @@ public final class NBootWorkspace {
         return cmd.toArray(new String[0]);
     }
 
-    public NWorkspaceBootOptionsBuilder getOptions() {
+    public NBootOptionsBuilder getOptions() {
         return computedOptions;
     }
 
@@ -390,7 +390,7 @@ public final class NBootWorkspace {
                 }
             }
             String workspaceName = null;
-            NWorkspaceBootOptionsBuilder lastConfigLoaded = null;
+            NBootOptionsBuilder lastConfigLoaded = null;
             String lastNutsWorkspaceJsonConfigPath = null;
             boolean immediateLocation = false;
             boolean resetFlag = computedOptions.getReset().orElse(false);
@@ -440,7 +440,7 @@ public final class NBootWorkspace {
                     for (int i = 0; i < maxDepth; i++) {
                         lastNutsWorkspaceJsonConfigPath = NReservedUtils.isValidWorkspaceName(_ws) ? NPlatformUtils.getWorkspaceLocation(null, computedOptions.getGlobal().orElse(false), NReservedUtils.resolveValidWorkspaceName(_ws)) : NReservedIOUtils.getAbsolutePath(_ws);
 
-                        NWorkspaceBootOptionsBuilder configLoaded = NReservedBootConfigLoader.loadBootConfig(lastNutsWorkspaceJsonConfigPath, bLog);
+                        NBootOptionsBuilder configLoaded = NReservedBootConfigLoader.loadBootConfig(lastNutsWorkspaceJsonConfigPath, bLog);
                         if (configLoaded == null) {
                             //not loaded
                             break;
@@ -462,11 +462,11 @@ public final class NBootWorkspace {
                 computedOptions.setWorkspace(lastNutsWorkspaceJsonConfigPath);
                 computedOptions.setName(lastConfigLoaded.getName().orNull());
                 computedOptions.setUuid(lastConfigLoaded.getUuid().orNull());
-                NWorkspaceBootOptionsBuilder curr;
+                NBootOptionsBuilder curr;
                 if (!resetFlag) {
                     curr = computedOptions;
                 } else {
-                    lastWorkspaceOptions = new DefaultNWorkspaceBootOptionsBuilder();
+                    lastWorkspaceOptions = new DefaultNBootOptionsBuilder();
                     curr = lastWorkspaceOptions;
                     curr.setWorkspace(lastNutsWorkspaceJsonConfigPath);
                     curr.setName(lastConfigLoaded.getName().orNull());
@@ -1053,7 +1053,7 @@ public final class NBootWorkspace {
         NSession session = this.openWorkspace();
         NWorkspace workspace = session.getWorkspace();
         String message = "workspace started successfully";
-        NWorkspaceBootOptions o = this.getOptions();
+        NBootOptions o = this.getOptions();
         if (workspace == null) {
             fallbackInstallActionUnavailable(message);
             throw new NBootException(NMsg.ofCstyle("workspace not available to run : %s", NCommandLine.of(o.getApplicationArguments().get())));
@@ -1082,9 +1082,9 @@ public final class NBootWorkspace {
             if (o.getSkipWelcome().orElse(false)) {
                 return session;
             }
-            session.setDry(computedOptions.getDry().orElse(false)).exec().addCommand("welcome").addExecutorOptions(o.getExecutorOptions().orNull()).setExecutionType(o.getExecutionType().orElse(NExecutionType.SPAWN)).setFailFast(true).run();
+            NExecCommand.of(session.setDry(computedOptions.getDry().orElse(false))).addCommand("welcome").addExecutorOptions(o.getExecutorOptions().orNull()).setExecutionType(o.getExecutionType().orElse(NExecutionType.SPAWN)).setFailFast(true).run();
         } else {
-            session.setDry(computedOptions.getDry().orElse(false)).exec().addCommand(o.getApplicationArguments().get()).addExecutorOptions(o.getExecutorOptions().orNull()).setExecutionType(o.getExecutionType().orElse(NExecutionType.SPAWN)).setFailFast(true).run();
+            NExecCommand.of(session.setDry(computedOptions.getDry().orElse(false))).addCommand(o.getApplicationArguments().get()).addExecutorOptions(o.getExecutorOptions().orNull()).setExecutionType(o.getExecutionType().orElse(NExecutionType.SPAWN)).setFailFast(true).run();
         }
         return session;
     }

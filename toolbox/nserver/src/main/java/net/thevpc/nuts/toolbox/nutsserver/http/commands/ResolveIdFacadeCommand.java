@@ -1,5 +1,6 @@
 package net.thevpc.nuts.toolbox.nutsserver.http.commands;
 
+import net.thevpc.nuts.NFetchCommand;
 import net.thevpc.nuts.NId;
 import net.thevpc.nuts.toolbox.nutsserver.AbstractFacadeCommand;
 import net.thevpc.nuts.toolbox.nutsserver.FacadeCommandContext;
@@ -21,7 +22,7 @@ public class ResolveIdFacadeCommand extends AbstractFacadeCommand {
         boolean transitive = parameters.containsKey("transitive");
         NId fetch = null;
         try {
-            fetch = context.getSession().fetch().setId(id)
+            fetch = NFetchCommand.of(context.getSession()).setId(id)
                     .setSession(context.getSession().copy().setTransitive(transitive))
                     .getResultId();
         } catch (Exception exc) {

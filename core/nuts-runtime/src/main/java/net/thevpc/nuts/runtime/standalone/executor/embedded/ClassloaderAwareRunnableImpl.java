@@ -42,7 +42,7 @@ public class ClassloaderAwareRunnableImpl extends ClassloaderAwareRunnable {
             Object oldId = NApplications.getSharedMap().get("nuts.embedded.application.id");
             NApplications.getSharedMap().put("nuts.embedded.application.id", id);
             try {
-                session.exec()
+                NExecCommand.of(session)
                         .addCommand(appArgs)
                         .addExecutorOptions(o.getExecutorOptions().orNull())
                         .setExecutionType(o.getExecutionType().orNull())

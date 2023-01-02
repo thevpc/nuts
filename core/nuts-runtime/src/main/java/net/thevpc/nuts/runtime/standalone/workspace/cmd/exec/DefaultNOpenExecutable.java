@@ -6,7 +6,7 @@
 package net.thevpc.nuts.runtime.standalone.workspace.cmd.exec;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.cmdline.NArgument;
+import net.thevpc.nuts.cmdline.NArg;
 import net.thevpc.nuts.cmdline.NCommandLine;
 import net.thevpc.nuts.runtime.standalone.executor.system.NSysExecUtils;
 import net.thevpc.nuts.text.NText;
@@ -44,7 +44,7 @@ public class DefaultNOpenExecutable extends AbstractNExecutableCommand {
         this.execSession = execSession;
         NCommandLine commandLine = NCommandLine.of(this.executorOptions);
         while (commandLine.hasNext()) {
-            NArgument aa = commandLine.peek().get(session);
+            NArg aa = commandLine.peek().get(session);
             switch (aa.key()) {
                 case "--show-command": {
                     commandLine.withNextBoolean((v, a, s) -> this.showCommand = (v));
@@ -55,7 +55,7 @@ public class DefaultNOpenExecutable extends AbstractNExecutableCommand {
                 }
             }
         }
-        switch (session.env().getOsFamily()) {
+        switch (NEnvs.of(session).getOsFamily()) {
             case LINUX: {
                 Path execPath = NSysExecUtils.sysWhich("xdg-open");
                 if (execPath != null) {
@@ -112,7 +112,7 @@ public class DefaultNOpenExecutable extends AbstractNExecutableCommand {
 
     @Override
     public NText getHelpText() {
-        switch (execSession.env().getOsFamily()) {
+        switch (NEnvs.of(execSession).getOsFamily()) {
             case WINDOWS: {
                 return NTexts.of(session).ofStyled("No help available. Try " + getName() + " /help", NTextStyle.error());
             }

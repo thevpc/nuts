@@ -26,8 +26,8 @@
 package net.thevpc.nuts.toolbox.nsh.cmds.bash;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.cmdline.NArgument;
-import net.thevpc.nuts.cmdline.NArgumentName;
+import net.thevpc.nuts.cmdline.NArg;
+import net.thevpc.nuts.cmdline.NArgName;
 import net.thevpc.nuts.cmdline.NCommandLine;
 import net.thevpc.nuts.elem.NElement;
 import net.thevpc.nuts.elem.NElements;
@@ -72,7 +72,7 @@ public class LsCommand extends SimpleJShellBuiltin {
     protected boolean configureFirst(NCommandLine commandLine, JShellExecutionContext context) {
         Options options = context.getOptions();
         NSession session = context.getSession();
-        NArgument a;
+        NArg a;
         if ((a = commandLine.nextBoolean("-d", "--dir").orNull()) != null) {
             options.d = a.getBooleanValue().get(session);
             return true;
@@ -86,7 +86,7 @@ public class LsCommand extends SimpleJShellBuiltin {
             options.h = a.getBooleanValue().get(session);
             return true;
         } else if (commandLine.peek().get(session).isNonOption()) {
-            String path = commandLine.next(NArgumentName.of("file", session))
+            String path = commandLine.next(NArgName.of("file", session))
                     .flatMap(NValue::asString).get(session);
             options.paths.add(path);
             options.paths.addAll(Arrays.asList(commandLine.toStringArray()));

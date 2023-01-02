@@ -26,8 +26,8 @@
 package net.thevpc.nuts.reserved;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.boot.DefaultNWorkspaceBootOptionsBuilder;
-import net.thevpc.nuts.boot.NWorkspaceBootOptionsBuilder;
+import net.thevpc.nuts.boot.DefaultNBootOptionsBuilder;
+import net.thevpc.nuts.boot.NBootOptionsBuilder;
 import net.thevpc.nuts.util.NLogger;
 import net.thevpc.nuts.util.NLoggerVerb;
 
@@ -45,7 +45,7 @@ import java.util.logging.Level;
  */
 public final class NReservedBootConfigLoader {
 
-    public static NWorkspaceBootOptionsBuilder loadBootConfig(String workspaceLocation, NLogger bLog) {
+    public static NBootOptionsBuilder loadBootConfig(String workspaceLocation, NLogger bLog) {
         File bootFile = new File(workspaceLocation, NConstants.Files.WORKSPACE_CONFIG_FILE_NAME);
         try {
             if (bootFile.isFile()) {
@@ -64,10 +64,10 @@ public final class NReservedBootConfigLoader {
         return null;
     }
 
-    private static NWorkspaceBootOptionsBuilder loadBootConfigJSON(String json, NLogger bLog) {
+    private static NBootOptionsBuilder loadBootConfigJSON(String json, NLogger bLog) {
         NReservedJsonParser parser = new NReservedJsonParser(new StringReader(json));
         Map<String, Object> jsonObject = parser.parseObject();
-        NWorkspaceBootOptionsBuilder c = new DefaultNWorkspaceBootOptionsBuilder();
+        NBootOptionsBuilder c = new DefaultNBootOptionsBuilder();
         NVersion configVersion = NVersion.of((String) jsonObject.get("configVersion")).ifBlankEmpty()
                 .orElseUse(()-> NVersion.of((String) jsonObject.get("createApiVersion")))
                 .orElse(NVersion.BLANK);
@@ -115,7 +115,7 @@ public final class NReservedBootConfigLoader {
      * @param jsonObject config JSON object
      */
     @SuppressWarnings("unchecked")
-    private static void loadConfigVersion507(NWorkspaceBootOptionsBuilder config, Map<String, Object> jsonObject,
+    private static void loadConfigVersion507(NBootOptionsBuilder config, Map<String, Object> jsonObject,
                                              NLogger bLog) {
         bLog.with().level(Level.CONFIG).verb(NLoggerVerb.INFO).log( NMsg.ofPlain("config version compatibility : 0.5.7"));
         config.setUuid((String) jsonObject.get("uuid"));
@@ -195,7 +195,7 @@ public final class NReservedBootConfigLoader {
      * @param jsonObject config JSON object
      */
     @SuppressWarnings("unchecked")
-    private static void loadConfigVersion506(NWorkspaceBootOptionsBuilder config, Map<String, Object> jsonObject,
+    private static void loadConfigVersion506(NBootOptionsBuilder config, Map<String, Object> jsonObject,
                                              NLogger bLog) {
         bLog.with().level(Level.CONFIG).verb(NLoggerVerb.INFO).log( NMsg.ofPlain("config version compatibility : 0.5.6"));
         config.setUuid((String) jsonObject.get("uuid"));
@@ -229,7 +229,7 @@ public final class NReservedBootConfigLoader {
      * @param config     config object to fill
      * @param jsonObject config JSON object
      */
-    private static void loadConfigVersion502(NWorkspaceBootOptionsBuilder config, Map<String, Object> jsonObject,
+    private static void loadConfigVersion502(NBootOptionsBuilder config, Map<String, Object> jsonObject,
                                              NLogger bLog) {
         bLog.with().level(Level.CONFIG).verb(NLoggerVerb.INFO).log( NMsg.ofPlain("config version compatibility : 0.5.2"));
         config.setUuid((String) jsonObject.get("uuid"));

@@ -368,14 +368,14 @@ public class CoreFilterUtils {
                     if (a.length > 0) {
                         NOsFamily o = NOsFamily.parse(a[0]).orNull();
                         if (o != null) {
-                            if (o != session.env().getOsFamily()) {
+                            if (o != NEnvs.of(session).getOsFamily()) {
                                 return false;
                             }
                         }
                         if (a.length > 1) {
                             NArchFamily af = NArchFamily.parse(a[1]).orNull();
                             if (af != null) {
-                                if (af != session.env().getArchFamily()) {
+                                if (af != NEnvs.of(session).getArchFamily()) {
                                     return false;
                                 }
                             }
@@ -438,7 +438,7 @@ public class CoreFilterUtils {
         if (envCond == null || envCond.isBlank()) {
             return true;
         }
-        NWorkspaceEnvManager env = session.env();
+        NEnvs env = NEnvs.of(session);
         if (!matchesArch(
                 env.getArchFamily().id(),
                 envCond.getArch(), session

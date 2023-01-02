@@ -1,6 +1,6 @@
 package net.thevpc.nuts.runtime.standalone.util;
 
-import net.thevpc.nuts.cmdline.NArgument;
+import net.thevpc.nuts.cmdline.NArg;
 import net.thevpc.nuts.NSession;
 import net.thevpc.nuts.runtime.standalone.xtra.expr.StringTokenizerUtils;
 
@@ -15,7 +15,7 @@ public class NDebugString {
     private int maxPort;
     private boolean tcp;
     private boolean suspend;
-    private final List<NArgument> options = new ArrayList<>();
+    private final List<NArg> options = new ArrayList<>();
 
     public NDebugString() {
     }
@@ -28,7 +28,7 @@ public class NDebugString {
             d.setEnabled(true);
             d.setSuspend(true);
             for (String a : StringTokenizerUtils.splitDefault(str)) {
-                NArgument na = NArgument.of(a);
+                NArg na = NArg.of(a);
                 switch (na.getKey().asString().orElse("")) {
                     case "s":
                     case "suspend": {
@@ -75,12 +75,12 @@ public class NDebugString {
         return d;
     }
 
-    public List<NArgument> getOptions() {
+    public List<NArg> getOptions() {
         return options;
     }
 
-    public NArgument getOption(String key) {
-        for (NArgument option : options) {
+    public NArg getOption(String key) {
+        for (NArg option : options) {
             if (Objects.equals(option.getKey().asString(), key)) {
                 return option;
             }
@@ -162,7 +162,7 @@ public class NDebugString {
         if(isSuspend()){
             sb.append(",suspend");
         }
-        for (NArgument option : options) {
+        for (NArg option : options) {
             sb.append(",").append(option);
         }
         return sb.toString();

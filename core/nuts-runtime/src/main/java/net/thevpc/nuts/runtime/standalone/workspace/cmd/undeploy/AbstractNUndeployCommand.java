@@ -1,7 +1,7 @@
 package net.thevpc.nuts.runtime.standalone.workspace.cmd.undeploy;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.cmdline.NArgument;
+import net.thevpc.nuts.cmdline.NArg;
 import net.thevpc.nuts.cmdline.NCommandLine;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.NWorkspaceCommandBase;
 import net.thevpc.nuts.spi.NSupportLevelContext;
@@ -125,7 +125,7 @@ public abstract class AbstractNUndeployCommand extends NWorkspaceCommandBase<NUn
 
     @Override
     public boolean configureFirst(NCommandLine cmdLine) {
-        NArgument aa = cmdLine.peek().orNull();
+        NArg aa = cmdLine.peek().orNull();
         if (aa == null) {
             return false;
         }

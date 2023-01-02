@@ -3,7 +3,7 @@ package net.thevpc.nuts.runtime.standalone.format.props;
 import java.util.*;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.cmdline.NArgument;
+import net.thevpc.nuts.cmdline.NArg;
 import net.thevpc.nuts.cmdline.NCommandLine;
 import net.thevpc.nuts.elem.NArrayElement;
 import net.thevpc.nuts.elem.NElementEntry;
@@ -40,9 +40,9 @@ public class DefaultNPropertiesFormat extends DefaultFormatBase<NPropertiesForma
 
     @Override
     public boolean configureFirst(NCommandLine commandLine) {
-        NArgument a;
+        NArg a;
         if ((a = commandLine.nextString(OPTION_MULTILINE_PROPERTY).orNull()) != null) {
-            NArgument i = NArgument.of(a.getStringValue().get(getSession()));
+            NArg i = NArg.of(a.getStringValue().get(getSession()));
             if (i.isActive()) {
                 addMultilineProperty(i.getKey().asString().get(getSession()), i.getStringValue().get(getSession()));
             }

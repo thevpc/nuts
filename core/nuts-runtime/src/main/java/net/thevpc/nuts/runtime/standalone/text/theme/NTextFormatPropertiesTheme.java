@@ -48,7 +48,7 @@ public class NTextFormatPropertiesTheme implements NTextFormatTheme {
                     throw new NIOException(session, e);
                 }
             } else {
-                NPath themeFile = session.locations().getStoreLocation(
+                NPath themeFile = NLocations.of(session).getStoreLocation(
                         NId.ofRuntime("SHARED").get(session),
                         NStoreLocation.CONFIG
                 ).resolve("themes").resolve(name);

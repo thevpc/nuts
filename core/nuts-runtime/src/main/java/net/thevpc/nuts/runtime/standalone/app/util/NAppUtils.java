@@ -1,6 +1,6 @@
 package net.thevpc.nuts.runtime.standalone.app.util;
 
-import net.thevpc.nuts.cmdline.NArgument;
+import net.thevpc.nuts.cmdline.NArg;
 import net.thevpc.nuts.cmdline.NCommandLine;
 import net.thevpc.nuts.NSession;
 
@@ -9,7 +9,7 @@ public class NAppUtils {
         if (isIncludesHelpOption(args)) {
             NCommandLine cmdLine = NCommandLine.of(args);
             while (cmdLine.hasNext()) {
-                NArgument a = cmdLine.peek().get(session);
+                NArg a = cmdLine.peek().get(session);
                 if (a.isOption()) {
                     switch(a.key()) {
                         case "--help": {

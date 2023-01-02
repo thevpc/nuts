@@ -108,7 +108,7 @@ public class NRepositorySelectorHelper {
                                 new NRepositoryConfig()
                                         .setLocation(NRepositoryLocation.of("nuts@"
                                                 + NPath.of(NPlatformUtils.getPlatformHomeFolder(null,
-                                                        NStoreLocation.LIB, session.config().stored().getHomeLocations(),
+                                                        NStoreLocation.LIB, NConfigs.of(session).stored().getHomeLocations(),
                                                         true,
                                                         NConstants.Names.DEFAULT_WORKSPACE_NAME), session)
                                                         .resolve(NConstants.Folders.ID)

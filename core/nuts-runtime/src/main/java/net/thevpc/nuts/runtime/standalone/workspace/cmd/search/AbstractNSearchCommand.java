@@ -24,7 +24,7 @@
 package net.thevpc.nuts.runtime.standalone.workspace.cmd.search;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.cmdline.NArgument;
+import net.thevpc.nuts.cmdline.NArg;
 import net.thevpc.nuts.cmdline.NCommandLine;
 import net.thevpc.nuts.elem.NElement;
 import net.thevpc.nuts.elem.NElements;
@@ -727,7 +727,7 @@ public abstract class AbstractNSearchCommand extends DefaultNQueryBaseOptions<NS
     public NStream<NPath> getResultStoreLocations(NStoreLocation location) {
         checkSession();
         return postProcessResult(IteratorBuilder.of(getResultDefinitionIteratorBase(isContent(), isEffective()), session)
-                .map(NFunction.of(x -> getSession().locations().getStoreLocation(x.getId(), location), "getStoreLocation(" + location.id() + ")"))
+                .map(NFunction.of(x -> NLocations.of(getSession()).getStoreLocation(x.getId(), location), "getStoreLocation(" + location.id() + ")"))
                 .notNull());
     }
 
@@ -855,7 +855,7 @@ public abstract class AbstractNSearchCommand extends DefaultNQueryBaseOptions<NS
 
     @Override
     public boolean configureFirst(NCommandLine cmdLine) {
-        NArgument a = cmdLine.peek().get(session);
+        NArg a = cmdLine.peek().get(session);
         if (a == null) {
             return false;
         }
@@ -935,7 +935,7 @@ public abstract class AbstractNSearchCommand extends DefaultNQueryBaseOptions<NS
                 return true;
             }
             case "--optional": {
-                NArgument val = cmdLine.nextString().get(session);
+                NArg val = cmdLine.nextString().get(session);
                 if (enabled) {
                     this.setOptional(val.getValue().asBoolean().orNull());
                 }
@@ -954,7 +954,7 @@ public abstract class AbstractNSearchCommand extends DefaultNQueryBaseOptions<NS
                 return true;
             }
             case "--deployed": {
-                NArgument b = cmdLine.nextBoolean().get(session);
+                NArg b = cmdLine.nextBoolean().get(session);
                 if (enabled) {
                     checkSession();
                     this.setInstallStatus(NInstallStatusFilters.of(session).byDeployed(b.getBooleanValue().get(session)));
@@ -963,7 +963,7 @@ public abstract class AbstractNSearchCommand extends DefaultNQueryBaseOptions<NS
             }
             case "-i":
             case "--installed": {
-                NArgument b = cmdLine.nextBoolean().get(session);
+                NArg b = cmdLine.nextBoolean().get(session);
                 if (enabled) {
                     checkSession();
                     this.setInstallStatus(
@@ -973,7 +973,7 @@ public abstract class AbstractNSearchCommand extends DefaultNQueryBaseOptions<NS
                 return true;
             }
             case "--required": {
-                NArgument b = cmdLine.nextBoolean().get(session);
+                NArg b = cmdLine.nextBoolean().get(session);
                 if (enabled) {
                     checkSession();
                     this.setInstallStatus(NInstallStatusFilters.of(session).byRequired(b.getBooleanValue().get(session)));
@@ -981,7 +981,7 @@ public abstract class AbstractNSearchCommand extends DefaultNQueryBaseOptions<NS
                 return true;
             }
             case "--obsolete": {
-                NArgument b = cmdLine.nextBoolean().get(session);
+                NArg b = cmdLine.nextBoolean().get(session);
                 if (enabled) {
                     checkSession();
                     this.setInstallStatus(NInstallStatusFilters.of(session).byObsolete(b.getBooleanValue().get(session)));
@@ -989,7 +989,7 @@ public abstract class AbstractNSearchCommand extends DefaultNQueryBaseOptions<NS
                 return true;
             }
             case "--status": {
-                NArgument aa = cmdLine.nextString().get(session);
+                NArg aa = cmdLine.nextString().get(session);
                 if (enabled) {
                     checkSession();
                     this.setInstallStatus(NInstallStatusFilters.of(session).parse(aa.getStringValue().get(session)));

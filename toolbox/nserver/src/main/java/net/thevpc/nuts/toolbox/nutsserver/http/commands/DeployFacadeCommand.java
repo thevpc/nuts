@@ -56,7 +56,7 @@ public class DeployFacadeCommand extends AbstractFacadeCommand {
                 case "content":
                     contentFile = NPaths.of(session)
                             .createTempFile(
-                                    session.locations().getDefaultIdFilename(
+                                    NLocations.of(session).getDefaultIdFilename(
                                             descriptor.getId().builder().setFaceDescriptor().build()
                                     )).toString();
                     NCp.of(session)
@@ -70,7 +70,7 @@ public class DeployFacadeCommand extends AbstractFacadeCommand {
         if (contentFile == null) {
             context.sendError(400, "invalid JShellCommandNode arguments : " + getName() + " : missing file");
         }
-        NId id = session.deploy().setContent(NPath.of(contentFile,session))
+        NId id = NDeployCommand.of(session).setContent(NPath.of(contentFile,session))
                 .setSha1(receivedContentHash)
                 .setDescriptor(descriptor)
                 .setSession(session.copy())

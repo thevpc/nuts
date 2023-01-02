@@ -24,10 +24,10 @@
 package net.thevpc.nuts.reserved;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.boot.DefaultNWorkspaceBootOptionsBuilder;
+import net.thevpc.nuts.boot.DefaultNBootOptionsBuilder;
 import net.thevpc.nuts.util.NApiUtils;
-import net.thevpc.nuts.boot.NWorkspaceBootOptions;
-import net.thevpc.nuts.boot.NWorkspaceBootOptionsBuilder;
+import net.thevpc.nuts.boot.NBootOptions;
+import net.thevpc.nuts.boot.NBootOptionsBuilder;
 import net.thevpc.nuts.cmdline.NCommandLine;
 import net.thevpc.nuts.elem.NArrayElementBuilder;
 import net.thevpc.nuts.elem.NElements;
@@ -211,7 +211,7 @@ public final class NReservedUtils {
         return false;
     }
 
-    public static String getHome(NStoreLocation storeFolder, NWorkspaceBootOptions bOptions) {
+    public static String getHome(NStoreLocation storeFolder, NBootOptions bOptions) {
         return NPlatformUtils.getPlatformHomeFolder(
                 bOptions.getStoreLocationLayout().orNull(),
                 storeFolder,
@@ -222,7 +222,7 @@ public final class NReservedUtils {
     }
 
 
-    public static String getStoreLocationPath(NWorkspaceBootOptions bOptions, NStoreLocation value) {
+    public static String getStoreLocationPath(NBootOptions bOptions, NStoreLocation value) {
         Map<NStoreLocation, String> storeLocations = bOptions.getStoreLocations().orNull();
         if (storeLocations != null) {
             return storeLocations.get(value);
@@ -235,7 +235,7 @@ public final class NReservedUtils {
      * @param locations   of type NutsStoreLocation, Path of File
      * @param readline
      */
-    public static long deleteStoreLocations(NWorkspaceBootOptions lastBootOptions, NWorkspaceBootOptions o, boolean includeRoot,
+    public static long deleteStoreLocations(NBootOptions lastBootOptions, NBootOptions o, boolean includeRoot,
                                             NLogger bLog, Object[] locations, Supplier<String> readline) {
         if (lastBootOptions == null) {
             return 0;
@@ -264,7 +264,7 @@ public final class NReservedUtils {
                 throw new NNoSessionCancelException(NMsg.ofPlain("cancel delete folder"));
             }
         }
-        NWorkspaceConfigManager conf = null;
+        NConfigs conf = null;
         List<Path> folders = new ArrayList<>();
         if (includeRoot) {
             folders.add(Paths.get(lastBootOptions.getWorkspace().get()));
@@ -286,7 +286,7 @@ public final class NReservedUtils {
                 }
             }
         }
-        NWorkspaceBootOptionsBuilder optionsCopy = o.builder();
+        NBootOptionsBuilder optionsCopy = o.builder();
         if (optionsCopy.getBot().orElse(false) || !NReservedGuiUtils.isGraphicalDesktopEnvironment()) {
             optionsCopy.setGui(false);
         }
@@ -294,12 +294,12 @@ public final class NReservedUtils {
     }
 
     public static long deleteAndConfirmAll(Path[] folders, boolean force, String header, NSession session,
-                                           NLogger bLog, NWorkspaceBootOptions bOptions, Supplier<String> readline) {
+                                           NLogger bLog, NBootOptions bOptions, Supplier<String> readline) {
         return deleteAndConfirmAll(folders, force, new NReservedDeleteFilesContextImpl(), header, session, bLog, bOptions, readline);
     }
 
     private static long deleteAndConfirmAll(Path[] folders, boolean force, NReservedDeleteFilesContext refForceAll,
-                                            String header, NSession session, NLogger bLog, NWorkspaceBootOptions bOptions, Supplier<String> readline) {
+                                            String header, NSession session, NLogger bLog, NBootOptions bOptions, Supplier<String> readline) {
         long count = 0;
         boolean headerWritten = false;
         if (folders != null) {
@@ -327,7 +327,7 @@ public final class NReservedUtils {
     }
 
     private static long deleteAndConfirm(Path directory, boolean force, NReservedDeleteFilesContext refForceAll,
-                                         NSession session, NLogger bLog, NWorkspaceBootOptions bOptions, Supplier<String> readline) {
+                                         NSession session, NLogger bLog, NBootOptions bOptions, Supplier<String> readline) {
         if (Files.exists(directory)) {
             if (!force && !refForceAll.isForce() && refForceAll.accept(directory)) {
                 String line = null;
@@ -457,7 +457,7 @@ public final class NReservedUtils {
         return sb.toString();
     }
 
-    public static boolean isAcceptDependency(NDependency s, NWorkspaceBootOptions bOptions) {
+    public static boolean isAcceptDependency(NDependency s, NBootOptions bOptions) {
         boolean bootOptionals = NReservedNUtilWorkspaceOptions.isBootOptional(bOptions);
         //by default ignore optionals
         String o = s.getOptional();
@@ -898,16 +898,16 @@ public final class NReservedUtils {
         }
 
         NSession session = NSessionAwareExceptionBase.resolveSession(ex).orNull();
-        NWorkspaceBootOptionsBuilder bo = null;
+        NBootOptionsBuilder bo = null;
         if (session != null) {
-            bo = session.boot().getBootOptions().builder();
+            bo = NBootManager.of(session).getBootOptions().builder();
             if (bo.getGui().orElse(false)) {
-                if (!session.env().isGraphicalDesktopEnvironment()) {
+                if (!NEnvs.of(session).isGraphicalDesktopEnvironment()) {
                     bo.setGui(false);
                 }
             }
         } else {
-            NWorkspaceBootOptionsBuilder options = new DefaultNWorkspaceBootOptionsBuilder();
+            NBootOptionsBuilder options = new DefaultNBootOptionsBuilder();
             //load inherited
             String nutsArgs = NStringUtils.trim(
                     NStringUtils.trim(System.getProperty("nuts.boot.args"))
@@ -959,7 +959,7 @@ public final class NReservedUtils {
         if (out == null) {
             if (session != null) {
                 try {
-                    fout = session.config().getSystemTerminal().getErr();
+                    fout = NConfigs.of(session).getSystemTerminal().getErr();
                     if (fm != null) {
                         fm = NMsg.ofNtf(NTexts.of(session).ofBuilder().append(fm, NTextStyle.error()).build());
                     } else {

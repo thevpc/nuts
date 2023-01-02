@@ -26,7 +26,7 @@
 package net.thevpc.nuts.toolbox.nsh.cmds.bash;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.cmdline.NArgument;
+import net.thevpc.nuts.cmdline.NArg;
 import net.thevpc.nuts.cmdline.NCommandLine;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.spi.NComponentScope;
@@ -53,7 +53,7 @@ public class HistoryCommand extends SimpleJShellBuiltin {
     protected boolean configureFirst(NCommandLine commandLine, JShellExecutionContext context) {
         Options options = context.getOptions();
         NSession session = context.getSession();
-        NArgument a;
+        NArg a;
         if (commandLine.next("-c", "--clear").isPresent()) {
             options.action = Action.CLEAR;
             commandLine.setCommandName(getName()).throwUnexpectedArgument();
@@ -130,7 +130,7 @@ public class HistoryCommand extends SimpleJShellBuiltin {
 
                         shistory.save();
                     } else {
-                        shistory.save(NPath.of(options.sval, session).toAbsolute(session.locations().getWorkspaceLocation()));
+                        shistory.save(NPath.of(options.sval, session).toAbsolute(NLocations.of(session).getWorkspaceLocation()));
                     }
                 } catch (IOException ex) {
                     throw new NExecutionException(session, NMsg.ofCstyle("%s", ex), ex, 100);
@@ -143,7 +143,7 @@ public class HistoryCommand extends SimpleJShellBuiltin {
                         shistory.clear();
                         shistory.load();
                     } else {
-                        shistory.load(NPath.of(options.sval, session).toAbsolute(session.locations().getWorkspaceLocation()));
+                        shistory.load(NPath.of(options.sval, session).toAbsolute(NLocations.of(session).getWorkspaceLocation()));
                     }
                 } catch (IOException ex) {
                     throw new NExecutionException(session, NMsg.ofCstyle("%s", ex), ex, 100);

@@ -9,7 +9,6 @@
  * dependencies at runtime. Nuts is not tied to java and is a good choice
  * to share shell scripts and other 'things' . Its based on an extensible
  * architecture to help supporting a large range of sub managers / repositories.
- *
  * <br>
  * <p>
  * Copyright [2020] [thevpc]
@@ -26,70 +25,40 @@
  */
 package net.thevpc.nuts.cmdline;
 
+import net.thevpc.nuts.NSession;
+
 import java.io.Serializable;
-import java.util.Objects;
+import java.util.List;
 
 /**
- * Argument Candidate used in Auto Complete.
- * <p>
+ * Non Option Argument specification
  *
  * @author thevpc
  * @app.category Command Line
  * @since 0.5.5
  */
-public class DefaultNArgumentCandidate implements Serializable, NArgumentCandidate {
+public interface NArgName extends Serializable {
 
-    private final String value;
-    private final String display;
-
-    /**
-     * @param value value
-     */
-    public DefaultNArgumentCandidate(String value) {
-        this.value = value;
-        this.display = value;
+    static NArgName of(String type, String label, NSession session) {
+        return NCommandLines.of(session).createName(type, label);
     }
 
-    public DefaultNArgumentCandidate(String value, String display) {
-        this.value = value;
-        this.display = display;
+    static NArgName of(String type, NSession session) {
+        return NCommandLines.of(session).createName(type);
     }
 
     /**
-     * argument value
+     * argument name
      *
-     * @return argument value
+     * @return argument name
      */
-    @Override
-    public String getValue() {
-        return value;
-    }
+    String getName();
 
     /**
-     * human display
+     * argument candidate values
      *
-     * @return human display
+     * @param context autocomplete
+     * @return candidates list
      */
-    @Override
-    public String getDisplay() {
-        return display;
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(value, display);
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        DefaultNArgumentCandidate that = (DefaultNArgumentCandidate) o;
-        return Objects.equals(value, that.value) && Objects.equals(display, that.display);
-    }
-
-    @Override
-    public String toString() {
-        return String.valueOf(value);
-    }
+    List<NArgCandidate> getCandidates(NCommandAutoComplete context);
 }

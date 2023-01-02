@@ -26,7 +26,7 @@
 package net.thevpc.nuts.toolbox.nsh.cmds;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.cmdline.NArgument;
+import net.thevpc.nuts.cmdline.NArg;
 import net.thevpc.nuts.cmdline.NCommandLine;
 import net.thevpc.nuts.elem.NElement;
 import net.thevpc.nuts.elem.NElements;
@@ -65,7 +65,7 @@ public class JsonCommand extends SimpleJShellBuiltin {
     protected boolean configureFirst(NCommandLine commandLine, JShellExecutionContext context) {
         Options options = context.getOptions();
         NSession session = context.getSession();
-        NArgument a;
+        NArg a;
         if ((a = commandLine.nextString("-f", "--file").orNull()) != null) {
             options.input = a.getStringValue().get(session);
             return true;

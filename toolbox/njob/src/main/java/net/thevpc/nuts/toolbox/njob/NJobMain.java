@@ -1,7 +1,7 @@
 package net.thevpc.nuts.toolbox.njob;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.cmdline.NArgument;
+import net.thevpc.nuts.cmdline.NArg;
 import net.thevpc.nuts.cmdline.NCommandLine;
 
 public class NJobMain implements NApplication {
@@ -16,7 +16,7 @@ public class NJobMain implements NApplication {
         NSession session = appContext.getSession();
         JobServiceCmd ts = new JobServiceCmd(appContext);
         NCommandLine cmdLine = appContext.getCommandLine();
-        NArgument a;
+        NArg a;
         while(!cmdLine.isEmpty()) {
             if (appContext.configureFirst(cmdLine)) {
                 //

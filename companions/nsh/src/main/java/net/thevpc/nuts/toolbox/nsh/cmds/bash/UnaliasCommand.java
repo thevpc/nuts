@@ -25,7 +25,7 @@
  */
 package net.thevpc.nuts.toolbox.nsh.cmds.bash;
 
-import net.thevpc.nuts.cmdline.NArgument;
+import net.thevpc.nuts.cmdline.NArg;
 import net.thevpc.nuts.cmdline.NCommandLine;
 import net.thevpc.nuts.NSession;
 import net.thevpc.nuts.spi.NComponentScope;
@@ -51,7 +51,7 @@ public class UnaliasCommand extends SimpleJShellBuiltin {
     protected boolean configureFirst(NCommandLine commandLine, JShellExecutionContext context) {
         Options options = context.getOptions();
         NSession session = context.getSession();
-        NArgument aa = commandLine.peek().get(session);
+        NArg aa = commandLine.peek().get(session);
         if (aa.isOption()) {
             if (aa.key().equals("-a")) {
                 commandLine.withNextBoolean((v, a, s) -> options.all= v);

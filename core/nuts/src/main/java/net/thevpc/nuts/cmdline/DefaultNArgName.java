@@ -32,16 +32,16 @@ import java.util.List;
  *
  * @author thevpc
  */
-public class DefaultNArgumentName implements NArgumentName {
+public class DefaultNArgName implements NArgName {
 
     private final String name;
     private final String type;
 
-    public DefaultNArgumentName(String name) {
+    public DefaultNArgName(String name) {
         this.name = name;
         this.type = null;
     }
-    public DefaultNArgumentName(String name, String type) {
+    public DefaultNArgName(String name, String type) {
         this.name = name;
         this.type = type;
     }
@@ -56,9 +56,9 @@ public class DefaultNArgumentName implements NArgumentName {
     }
 
     @Override
-    public List<NArgumentCandidate> getCandidates(NCommandAutoComplete context) {
-        List<NArgumentCandidate> list = new ArrayList<>();
-        list.add(new DefaultNArgumentCandidate("<" + getName() + ">"));
+    public List<NArgCandidate> getCandidates(NCommandAutoComplete context) {
+        List<NArgCandidate> list = new ArrayList<>();
+        list.add(new DefaultNArgCandidate("<" + getName() + ">"));
         return list;
     }
 

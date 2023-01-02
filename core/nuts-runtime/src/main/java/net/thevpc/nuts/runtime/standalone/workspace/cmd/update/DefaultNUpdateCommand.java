@@ -6,7 +6,7 @@
 package net.thevpc.nuts.runtime.standalone.workspace.cmd.update;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.cmdline.NArgument;
+import net.thevpc.nuts.cmdline.NArg;
 import net.thevpc.nuts.cmdline.NCommandLine;
 import net.thevpc.nuts.elem.NArrayElementBuilder;
 import net.thevpc.nuts.elem.NElement;
@@ -18,7 +18,7 @@ import net.thevpc.nuts.runtime.standalone.util.iter.IteratorUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceExt;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.DefaultNUpdateResult;
 import net.thevpc.nuts.runtime.standalone.workspace.config.DefaultNWorkspaceConfigModel;
-import net.thevpc.nuts.runtime.standalone.workspace.config.NWorkspaceConfigManagerExt;
+import net.thevpc.nuts.runtime.standalone.workspace.config.NConfigsExt;
 import net.thevpc.nuts.runtime.standalone.repository.impl.main.NInstalledRepository;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceUtils;
 import net.thevpc.nuts.text.NTextStyle;
@@ -95,7 +95,7 @@ public class DefaultNUpdateCommand extends AbstractNUpdateCommand {
 
     @Override
     public boolean configureFirst(NCommandLine cmdLine) {
-        NArgument a = cmdLine.peek().get(session);
+        NArg a = cmdLine.peek().get(session);
         if (a == null) {
             return false;
         }
@@ -253,7 +253,7 @@ public class DefaultNUpdateCommand extends AbstractNUpdateCommand {
 
         HashSet<NId> baseRegulars = new HashSet<>(ids);
         if (isInstalled()) {
-            baseRegulars.addAll(getSession().search().setSession(getSession())
+            baseRegulars.addAll(NSearchCommand.of(getSession()).setSession(getSession())
                     .setInstallStatus(NInstallStatusFilters.of(getSession()).byInstalled(true))
                     .getResultIds().stream().map(NId::getShortId).collect(Collectors.toList()));
             // This bloc is to handle packages that were installed by their jar/content but was removed for any reason!
@@ -291,14 +291,14 @@ public class DefaultNUpdateCommand extends AbstractNUpdateCommand {
         resultFixes = IteratorUtils.toList(IteratorUtils.convertNonNull(ir.searchInstallInformation(session), new Function<NInstallInformation, FixAction>() {
             @Override
             public FixAction apply(NInstallInformation nInstallInformation) {
-                NId id = getSession().search().setInstallStatus(
+                NId id = NSearchCommand.of(getSession()).setInstallStatus(
                         NInstallStatusFilters.of(session).byInstalled(true)
                 ).addId(nInstallInformation.getId()).getResultIds().first();
                 if (id == null) {
                     return new FixAction(nInstallInformation.getId(), "MissingInstallation") {
                         @Override
                         public void fix(NSession session) {
-                            session.install().addId(getId()).run();
+                            NInstallCommand.of(session).addId(getId()).run();
                         }
                     };
                 }
@@ -471,7 +471,7 @@ public class DefaultNUpdateCommand extends AbstractNUpdateCommand {
         DefaultNUpdateResult r = new DefaultNUpdateResult();
         r.setId(id.getShortId());
         boolean shouldUpdateDefault = false;
-        NDefinition d0 = session.search().addId(id).setSession(session)
+        NDefinition d0 = NSearchCommand.of(session).addId(id).setSession(session)
                 .setInstallStatus(NInstallStatusFilters.of(session).byDeployed(true))
                 .setOptional(false).setFailFast(false)//.setDefaultVersions(true)
                 .sort(DEFAULT_THEN_LATEST_VERSION_FIRST)
@@ -491,7 +491,7 @@ public class DefaultNUpdateCommand extends AbstractNUpdateCommand {
             newAnywhereSession.setExpireTime(now);
         }
 
-        NSearchCommand sc = session.search().addId(d0.getId().getShortId())
+        NSearchCommand sc = NSearchCommand.of(session).addId(d0.getId().getShortId())
                 .setSession(newAnywhereSession)
                 .setFailFast(false)
                 .setLatest(true)
@@ -541,7 +541,7 @@ public class DefaultNUpdateCommand extends AbstractNUpdateCommand {
     private NFetchCommand fetch0() {
         checkSession();
         NWorkspace ws = getSession().getWorkspace();
-        return session.fetch().setContent(true).setEffective(true);
+        return NFetchCommand.of(session).setContent(true).setEffective(true);
     }
 
     private void applyFixes() {
@@ -579,14 +579,14 @@ public class DefaultNUpdateCommand extends AbstractNUpdateCommand {
         boolean requireSave = false;
         NSession validWorkspaceSession = getSession();
         final NOutStream out = validWorkspaceSession.out();
-        boolean accept = getSession().config().getDefaultTerminal().ask()
+        boolean accept = NConfigs.of(getSession()).getDefaultTerminal().ask()
                 .resetLine()
                 .forBoolean(NMsg.ofPlain("would you like to apply updates?")).setDefaultValue(true)
                 .setSession(validWorkspaceSession).getValue();
         if (validWorkspaceSession.isAsk() && !accept) {
             throw new NCancelException(getSession());
         }
-        NWorkspaceConfigManagerExt wcfg = NWorkspaceConfigManagerExt.of(session.config());
+        NConfigsExt wcfg = NConfigsExt.of(NConfigs.of(session));
         boolean apiUpdateAvailable = apiUpdate != null && apiUpdate.getAvailable() != null && !apiUpdate.isUpdateApplied();
         boolean runtimeUpdateAvailable = runtimeUpdate != null && runtimeUpdate.getAvailable() != null && !runtimeUpdate.isUpdateApplied();
         boolean apiUpdateApplicable = apiUpdateAvailable && !apiUpdate.isUpdateApplied();
@@ -639,7 +639,7 @@ public class DefaultNUpdateCommand extends AbstractNUpdateCommand {
             applyRegularUpdate((DefaultNUpdateResult) component);
         }
 
-        if (session.config().setSession(validWorkspaceSession).save(requireSave)) {
+        if (NConfigs.of(session).setSession(validWorkspaceSession).save(requireSave)) {
             if (_LOG(session).isLoggable(Level.INFO)) {
                 _LOGOP(session).level(Level.INFO).verb(NLoggerVerb.WARNING)
                         .log(NMsg.ofPlain("workspace is updated. Nuts should be restarted for changes to take effect."));
@@ -710,8 +710,8 @@ public class DefaultNUpdateCommand extends AbstractNUpdateCommand {
 //        NutsSession sessionOffline = session.copy().setFetchMode(NutsFetchMode.OFFLINE);
         switch (type) {
             case API: {
-                oldId = session.config().stored().getApiId();
-                NId confId = session.config().stored().getApiId();
+                oldId = NConfigs.of(session).stored().getApiId();
+                NId confId = NConfigs.of(session).stored().getApiId();
                 if (confId != null) {
                     oldId = confId;
                 }
@@ -725,7 +725,7 @@ public class DefaultNUpdateCommand extends AbstractNUpdateCommand {
                     //ignore
                 }
                 try {
-                    newId = getSession().search().setSession(session.copy().setFetchStrategy(NFetchStrategy.ANYWHERE))
+                    newId = NSearchCommand.of(getSession()).setSession(session.copy().setFetchStrategy(NFetchStrategy.ANYWHERE))
                             .addId(NConstants.Ids.NUTS_API + "#" + v).setLatest(true).getResultIds().first();
                     newFile = newId == null ? null : latestOnlineDependencies(fetch0()).setFailFast(false).setSession(session).setId(newId).getResultDefinition();
                 } catch (NNotFoundException ex) {
@@ -736,7 +736,7 @@ public class DefaultNUpdateCommand extends AbstractNUpdateCommand {
             }
             case RUNTIME: {
                 oldId = ws.getRuntimeId();
-                NId confId = getSession().config().stored().getRuntimeId();
+                NId confId = NConfigs.of(getSession()).stored().getRuntimeId();
                 if (confId != null) {
                     oldId = confId;
                 }
@@ -749,7 +749,7 @@ public class DefaultNUpdateCommand extends AbstractNUpdateCommand {
                     }
                 }
                 try {
-                    NSearchCommand se = getSession().search()
+                    NSearchCommand se = NSearchCommand.of(getSession())
                             .addId(oldFile != null ? oldFile.getId().builder().setVersion("").build().toString() : NConstants.Ids.NUTS_RUNTIME)
                             .setRuntime(true)
                             .setTargetApiVersion(bootApiVersion)
@@ -843,7 +843,7 @@ public class DefaultNUpdateCommand extends AbstractNUpdateCommand {
         NDefinition d0 = r.getInstalled();
         NDefinition d1 = r.getAvailable();
         if (d0 == null) {
-            getSession().security().checkAllowed(NConstants.Permissions.UPDATE, "update");
+            NWorkspaceSecurityManager.of(getSession()).checkAllowed(NConstants.Permissions.UPDATE, "update");
             dws.updateImpl(d1, new String[0], true, session);
             r.setUpdateApplied(true);
         } else if (d1 == null) {
@@ -854,7 +854,7 @@ public class DefaultNUpdateCommand extends AbstractNUpdateCommand {
             if (v1.compareTo(v0) <= 0) {
                 //no update needed!
                 if (/*session.isYes() || */r.isUpdateForced()) {
-                    getSession().security().checkAllowed(NConstants.Permissions.UPDATE, "update");
+                    NWorkspaceSecurityManager.of(getSession()).checkAllowed(NConstants.Permissions.UPDATE, "update");
                     dws.updateImpl(d1, new String[0], true, session);
                     r.setUpdateApplied(true);
                     r.setUpdateForced(true);
@@ -862,7 +862,7 @@ public class DefaultNUpdateCommand extends AbstractNUpdateCommand {
                     dws.getInstalledRepository().setDefaultVersion(d1.getId(), session);
                 }
             } else {
-                getSession().security().checkAllowed(NConstants.Permissions.UPDATE, "update");
+                NWorkspaceSecurityManager.of(getSession()).checkAllowed(NConstants.Permissions.UPDATE, "update");
                 dws.updateImpl(d1, new String[0], true, session);
                 r.setUpdateApplied(true);
             }

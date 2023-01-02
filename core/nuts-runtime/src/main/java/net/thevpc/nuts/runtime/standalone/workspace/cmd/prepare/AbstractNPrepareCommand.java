@@ -8,7 +8,7 @@ package net.thevpc.nuts.runtime.standalone.workspace.cmd.prepare;
 import net.thevpc.nuts.NId;
 import net.thevpc.nuts.NPrepareCommand;
 import net.thevpc.nuts.NSession;
-import net.thevpc.nuts.cmdline.NArgument;
+import net.thevpc.nuts.cmdline.NArg;
 import net.thevpc.nuts.cmdline.NCommandLine;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.NWorkspaceCommandBase;
 import net.thevpc.nuts.spi.NSupportLevelContext;
@@ -93,7 +93,7 @@ public abstract class AbstractNPrepareCommand extends NWorkspaceCommandBase<NPre
 
     @Override
     public boolean configureFirst(NCommandLine cmdLine) {
-        NArgument a = cmdLine.peek().get(session);
+        NArg a = cmdLine.peek().get(session);
         if (a == null) {
             return false;
         }

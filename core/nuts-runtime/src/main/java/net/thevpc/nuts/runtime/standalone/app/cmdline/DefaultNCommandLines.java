@@ -3,7 +3,7 @@ package net.thevpc.nuts.runtime.standalone.app.cmdline;
 import net.thevpc.nuts.*;
 
 import net.thevpc.nuts.cmdline.DefaultNCommandLine;
-import net.thevpc.nuts.cmdline.NArgumentName;
+import net.thevpc.nuts.cmdline.NArgName;
 import net.thevpc.nuts.cmdline.NCommandLine;
 import net.thevpc.nuts.cmdline.NCommandLines;
 import net.thevpc.nuts.runtime.standalone.app.cmdline.option.*;
@@ -65,20 +65,20 @@ public class DefaultNCommandLines implements NCommandLines {
 
 
     @Override
-    public NArgumentName createName(String type, String label) {
+    public NArgName createName(String type, String label) {
         checkSession();
         return Factory.createName0(getSession(), type, label);
     }
 
     @Override
-    public NArgumentName createName(String type) {
+    public NArgName createName(String type) {
         checkSession();
         return createName(type, type);
     }
 
     public static class Factory {
 
-        public static NArgumentName createName0(NSession session, String type, String label) {
+        public static NArgName createName0(NSession session, String type, String label) {
             if (type == null) {
                 type = "";
             }

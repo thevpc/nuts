@@ -83,7 +83,7 @@ public class CpCommand extends SimpleJShellBuiltin {
         for (String value : options.files) {
             NAssert.requireNonBlank(value, "file path", session);
             options.xfiles.add(NPath.of((value.contains("://") ? value :
-                    NPath.of(value, session).toAbsolute(session.locations().getWorkspaceLocation()).toString()
+                    NPath.of(value, session).toAbsolute(NLocations.of(session).getWorkspaceLocation()).toString()
             ), session));
         }
         if (options.xfiles.size() < 2) {

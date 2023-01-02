@@ -1,5 +1,6 @@
 package net.thevpc.nuts.toolbox.nutsserver.http.commands;
 
+import net.thevpc.nuts.NFetchCommand;
 import net.thevpc.nuts.toolbox.nutsserver.AbstractFacadeCommand;
 import net.thevpc.nuts.toolbox.nutsserver.FacadeCommandContext;
 
@@ -21,7 +22,7 @@ public class FetchHashFacadeCommand extends AbstractFacadeCommand {
         boolean transitive = parameters.containsKey("transitive");
         String hash = null;
         try {
-            hash = context.getSession().fetch().setId(id).setSession(context.getSession().copy().setTransitive(transitive))
+            hash = NFetchCommand.of(context.getSession()).setId(id).setSession(context.getSession().copy().setTransitive(transitive))
                     .getResultContentHash();
         } catch (Exception exc) {
             //

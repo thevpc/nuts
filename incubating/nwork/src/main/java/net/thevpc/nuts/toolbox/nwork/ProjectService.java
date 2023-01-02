@@ -1,7 +1,7 @@
 package net.thevpc.nuts.toolbox.nwork;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.boot.DefaultNWorkspaceBootOptionsBuilder;
+import net.thevpc.nuts.boot.DefaultNBootOptionsBuilder;
 import net.thevpc.nuts.elem.NElements;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.toolbox.nwork.config.ProjectConfig;
@@ -210,9 +210,9 @@ public class ProjectService {
             }
             try {
                 NSession s = null;
-                if (a.getNutsWorkspace() != null && a.getNutsWorkspace().trim().length() > 0 && !a.getNutsWorkspace().equals(session.locations().getWorkspaceLocation().toString())) {
+                if (a.getNutsWorkspace() != null && a.getNutsWorkspace().trim().length() > 0 && !a.getNutsWorkspace().equals(NLocations.of(session).getWorkspaceLocation().toString())) {
                     s = Nuts.openWorkspace(
-                            new DefaultNWorkspaceBootOptionsBuilder()
+                            new DefaultNBootOptionsBuilder()
                                     .setOpenMode(NOpenMode.OPEN_OR_ERROR)
                                     .setReadOnly(true)
                                     .setWorkspace(a.getNutsWorkspace())
@@ -221,7 +221,7 @@ public class ProjectService {
                 } else {
                     s = session;
                 }
-                List<NDefinition> found = s.search()
+                List<NDefinition> found = NSearchCommand.of(s)
                         .addId(sid)
                         .addRepositoryFilter(NRepositoryFilters.of(s).byName(nutsRepository))
                         .setLatest(true).setSession(s).setContent(true).getResultDefinitions().toList();
@@ -261,9 +261,9 @@ public class ProjectService {
                                 .setDescriptorStyle(NDescriptorStyle.MAVEN)
                                 .parse(new File(f, "pom.xml")).get(session);
                         NSession s = null;
-                        if (a.getNutsWorkspace() != null && a.getNutsWorkspace().trim().length() > 0 && !a.getNutsWorkspace().equals(session.locations().getWorkspaceLocation().toString())) {
+                        if (a.getNutsWorkspace() != null && a.getNutsWorkspace().trim().length() > 0 && !a.getNutsWorkspace().equals(NLocations.of(session).getWorkspaceLocation().toString())) {
                             s = Nuts.openWorkspace(
-                                    new DefaultNWorkspaceBootOptionsBuilder()
+                                    new DefaultNBootOptionsBuilder()
                                             .setOpenMode(NOpenMode.OPEN_OR_ERROR)
                                             .setReadOnly(true)
                                             .setWorkspace(a.getNutsWorkspace())
@@ -272,7 +272,7 @@ public class ProjectService {
                         } else {
                             s = session;
                         }
-                        List<NId> found = s.search()
+                        List<NId> found = NSearchCommand.of(s)
                                 .addId(g.getId().getGroupId() + ":" + g.getId().getArtifactId())
                                 .addRepositoryFilter(NRepositoryFilters.of(s).byName(nutsRepository))
                                 .setLatest(true).setSession(s).getResultIds().toList();

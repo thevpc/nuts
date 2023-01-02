@@ -55,7 +55,7 @@ public interface NCommandLineProcessor {
      * @param context session
      * @return true if the argument can be processed, false otherwise.
      */
-    default boolean onCmdNextOption(NArgument option, NCommandLine commandLine, NCommandLineContext context){
+    default boolean onCmdNextOption(NArg option, NCommandLine commandLine, NCommandLineContext context){
         return false;
     }
 
@@ -69,7 +69,7 @@ public interface NCommandLineProcessor {
      * @param context session
      * @return true if the argument can be processed, false otherwise.
      */
-    default boolean onCmdNextNonOption(NArgument nonOption, NCommandLine commandLine, NCommandLineContext context){
+    default boolean onCmdNextNonOption(NArg nonOption, NCommandLine commandLine, NCommandLineContext context){
         return false;
     }
 

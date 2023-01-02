@@ -113,10 +113,10 @@ public class JShell {
             throw new IllegalArgumentException("unable to resolve application id");
         }
         JShellContext _rootContext = getRootContext();
-        NSession ws = _rootContext.getSession();
+        NSession rSession = _rootContext.getSession();
         JShellHistory hist = getHistory();
 
-        this.appContext.getSession().env().setProperty(JShellContext.class.getName(), _rootContext);
+        NEnvs.of(this.appContext.getSession()).setProperty(JShellContext.class.getName(), _rootContext);
         _rootContext.setSession(appContext.getSession());
         //add default commands
         List<JShellBuiltin> allCommand = new ArrayList<>();
@@ -134,7 +134,7 @@ public class JShell {
         _rootContext.builtins().set(allCommand.toArray(new JShellBuiltin[0]));
         _rootContext.getUserProperties().put(JShellContext.class.getName(), _rootContext);
         try {
-            histFile = ws.locations().getStoreLocation(this.appId,
+            histFile = NLocations.of(rSession).getStoreLocation(this.appId,
                             NStoreLocation.VAR).resolve((serviceName==null?"":serviceName) + ".history");
             hist.setHistoryFile(histFile);
             if (histFile.exists()) {
@@ -143,7 +143,7 @@ public class JShell {
         } catch (Exception ex) {
             LOG.log(Level.SEVERE, "error resolving history file", ex);
         }
-        ws.env().setProperty(JShellHistory.class.getName(), hist);
+        NEnvs.of(rSession).setProperty(JShellHistory.class.getName(), hist);
     }
 
 
@@ -570,7 +570,7 @@ public class JShell {
     protected void executeInteractive(JShellContext context) {
         NSession session = appContext.getSession();
         NSystemTerminal.enableRichTerm(session);
-        session.config().getSystemTerminal()
+        NConfigs.of(session).getSystemTerminal()
                 .setCommandAutoCompleteResolver(new NshAutoCompleter())
                 .setCommandHistory(
                         NCommandHistory.of(session)
@@ -756,7 +756,7 @@ public class JShell {
 //        String wss = ws == null ? "" : new File(getRootContext().getAbsolutePath(ws.config().getWorkspaceLocation().toString())).getName();
         String login = null;
         if (ws != null) {
-            login = ws.security().getCurrentUsername();
+            login = NWorkspaceSecurityManager.of(ws).getCurrentUsername();
         }
         String prompt = ((login != null && login.length() > 0 && !"anonymous".equals(login)) ? (login + "@") : "");
         if (!NBlankable.isBlank(getRootContext().getServiceName())) {

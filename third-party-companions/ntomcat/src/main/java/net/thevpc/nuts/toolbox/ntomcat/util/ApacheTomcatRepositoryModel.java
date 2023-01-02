@@ -207,8 +207,8 @@ public class ApacheTomcatRepositoryModel implements NRepositoryModel {
 
     public String getIdLocalFile(NId id, NFetchMode fetchMode, NRepository repository, NSession session) {
         return repository.config().getStoreLocation()
-                .resolve(session.locations().getDefaultIdBasedir(id))
-                .resolve(session.locations().getDefaultIdFilename(id))
+                .resolve(NLocations.of(session).getDefaultIdBasedir(id))
+                .resolve(NLocations.of(session).getDefaultIdFilename(id))
                 .toString();
     }
 

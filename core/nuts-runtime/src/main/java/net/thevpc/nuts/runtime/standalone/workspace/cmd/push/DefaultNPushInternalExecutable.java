@@ -5,6 +5,7 @@
  */
 package net.thevpc.nuts.runtime.standalone.workspace.cmd.push;
 
+import net.thevpc.nuts.NPushCommand;
 import net.thevpc.nuts.NSession;
 import net.thevpc.nuts.runtime.standalone.app.util.NAppUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.exec.DefaultInternalNExecutableCommand;
@@ -29,7 +30,7 @@ public class DefaultNPushInternalExecutable extends DefaultInternalNExecutableCo
             showDefaultHelp();
             return;
         }
-        getSession().push().configure(false, args).run();
+        NPushCommand.of(getSession()).configure(false, args).run();
     }
 
 }

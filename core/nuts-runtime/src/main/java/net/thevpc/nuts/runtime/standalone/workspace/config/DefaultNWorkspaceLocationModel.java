@@ -95,7 +95,7 @@ public class DefaultNWorkspaceLocationModel {
         if (repositoryIdOrName == null) {
             return getStoreLocation(folderType, session);
         }
-        NRepository repositoryById = session.repos().setSession(session).getRepository(repositoryIdOrName);
+        NRepository repositoryById = NRepositories.of(session).setSession(session).getRepository(repositoryIdOrName);
         NRepositorySPI nRepositorySPI = NWorkspaceUtils.of(session).repoSPI(repositoryById);
         return nRepositorySPI.config().getStoreLocation(folderType);
     }

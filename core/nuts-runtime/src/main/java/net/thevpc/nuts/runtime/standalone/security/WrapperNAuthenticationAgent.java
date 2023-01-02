@@ -50,7 +50,7 @@ class WrapperNAuthenticationAgent {
         String b = new String(a);
         int x = b.indexOf(':');
         if (x <= 0) {
-            if (session.boot().getBootOptions().getRecover().orElse(false)) {
+            if (NBootManager.of(session).getBootOptions().getRecover().orElse(false)) {
                 //All stored passwords will be reset to 'secret'
                 session.err().println("```error RECOVER MODE : Password could no be parsed due a change in encryption spec. WIll use new default agent```");
                 return null;

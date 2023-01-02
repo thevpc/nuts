@@ -12,7 +12,7 @@ import java.util.function.Predicate;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
-import net.thevpc.nuts.cmdline.NArgument;
+import net.thevpc.nuts.cmdline.NArg;
 import net.thevpc.nuts.cmdline.NCommandLine;
 import net.thevpc.nuts.format.NObjectFormat;
 import net.thevpc.nuts.io.NPath;
@@ -48,7 +48,7 @@ public class DefaultNInfoCommand extends DefaultFormatBase<NInfoCommand> impleme
         Object oldRepos = s.map.get("repos");
         if (oldRepos instanceof String) {
             Map<String, Object> repositories = new LinkedHashMap<>();
-            for (NRepository repository : s.session.repos().setSession(getSession()).getRepositories()) {
+            for (NRepository repository : NRepositories.of(s.session).getRepositories()) {
                 repositories.put(repository.getName(), buildRepoRepoMap(repository, true, null));
             }
             return repositories;
@@ -67,7 +67,7 @@ public class DefaultNInfoCommand extends DefaultFormatBase<NInfoCommand> impleme
             if(v!=null){
                 return v;
             }
-            NRepository repo = s.session.repos().setSession(getSession()).getRepository(s.string);
+            NRepository repo = NRepositories.of(s.session).getRepository(s.string);
             if(repo!=null){
                 return buildRepoRepoMap(repo, true, null);
             }
@@ -191,7 +191,7 @@ public class DefaultNInfoCommand extends DefaultFormatBase<NInfoCommand> impleme
     @Override
     public boolean configureFirst(NCommandLine cmdLine) {
         NSession session = getSession();
-        NArgument a = cmdLine.peek().get(session);
+        NArg a = cmdLine.peek().get(session);
         if (a == null) {
             return false;
         }
@@ -222,7 +222,7 @@ public class DefaultNInfoCommand extends DefaultFormatBase<NInfoCommand> impleme
             }
             case "--add": {
                 String aa = cmdLine.nextString().get(session).getStringValue().get(session);
-                NArgument val = NArgument.of(aa);
+                NArg val = NArg.of(aa);
                 if (enabled) {
                     extraProperties.put(val.key(), val.getStringValue().get(session));
                 }
@@ -277,7 +277,7 @@ public class DefaultNInfoCommand extends DefaultFormatBase<NInfoCommand> impleme
                     requests.add(r);
                 }
                 while (true) {
-                    NArgument p = cmdLine.peek().orNull();
+                    NArg p = cmdLine.peek().orNull();
                     if (p != null && !p.isOption()) {
                         cmdLine.skip();
                         if (enabled) {
@@ -317,7 +317,7 @@ public class DefaultNInfoCommand extends DefaultFormatBase<NInfoCommand> impleme
         props.put("nuts-runtime-classpath",
                 session -> {
                     NTexts txt = NTexts.of(session);
-                    List<URL> cl = session.boot().getBootClassWorldURLs();
+                    List<URL> cl = NBootManager.of(session).getBootClassWorldURLs();
                     List<NPath> runtimeClassPath = new ArrayList<>();
                     if (cl != null) {
                         for (URL url : cl) {
@@ -336,53 +336,53 @@ public class DefaultNInfoCommand extends DefaultFormatBase<NInfoCommand> impleme
                 }
         );
         props.put("nuts-workspace-id", session -> NTexts.of(session).ofStyled(stringValue(session.getWorkspace().getUuid()), NTextStyle.path()));
-        props.put("nuts-store-layout", session -> session.locations().getStoreLocationLayout());
-        props.put("nuts-store-strategy", session -> session.locations().getStoreLocationStrategy());
-        props.put("nuts-repo-store-strategy", session -> session.locations().getRepositoryStoreLocationStrategy());
-        props.put("nuts-global", session -> session.boot().getBootOptions().getGlobal().orNull());
-        props.put("nuts-workspace", session -> session.locations().getWorkspaceLocation());
+        props.put("nuts-store-layout", session -> NLocations.of(session).getStoreLocationLayout());
+        props.put("nuts-store-strategy", session -> NLocations.of(session).getStoreLocationStrategy());
+        props.put("nuts-repo-store-strategy", session -> NLocations.of(session).getRepositoryStoreLocationStrategy());
+        props.put("nuts-global", session -> NBootManager.of(session).getBootOptions().getGlobal().orNull());
+        props.put("nuts-workspace", session -> NLocations.of(session).getWorkspaceLocation());
         for (NStoreLocation folderType : NStoreLocation.values()) {
-            props.put("nuts-workspace-" + folderType.id(), session -> session.locations().getStoreLocation(folderType));
+            props.put("nuts-workspace-" + folderType.id(), session -> NLocations.of(session).getStoreLocation(folderType));
         }
-        props.put("nuts-open-mode", session -> session.boot().getBootOptions().getOpenMode().orNull());
-        props.put("nuts-isolation-level", session -> session.boot().getBootOptions().getIsolationLevel().orNull());
-        props.put("nuts-secure", session -> (session.security().isSecure()));
-        props.put("nuts-gui", session -> session.boot().getBootOptions().getGui().orNull());
-        props.put("nuts-inherited", session -> session.boot().getBootOptions().getInherited().orNull());
-        props.put("nuts-recover", session -> session.boot().getBootOptions().getRecover().orNull());
-        props.put("nuts-reset", session -> session.boot().getBootOptions().getReset().orNull());
-        props.put("nuts-read-only", session -> session.boot().getBootOptions().getReadOnly().orNull());
-        props.put("nuts-debug", session -> NDebugString.of(session.boot().getBootOptions().getDebug().orNull(), getSession()));
-        props.put("nuts-bot", session -> session.boot().getBootOptions().getBot().orNull());
-        props.put("nuts-trace", session -> session.boot().getBootOptions().getTrace().orNull());
-        props.put("nuts-indexed", session -> session.boot().getBootOptions().getIndexed().orNull());
-        props.put("nuts-transitive", session -> session.boot().getBootOptions().getTransitive().orNull());
-        props.put("nuts-fetch-strategy", session -> session.boot().getBootOptions().getFetchStrategy().orNull());
-        props.put("nuts-execution-type", session -> session.boot().getBootOptions().getExecutionType().orNull());
-        props.put("nuts-dry", session -> session.boot().getBootOptions().getDry().orNull());
-        props.put("nuts-output-format", session -> session.boot().getBootOptions().getOutputFormat().orNull());
-        props.put("nuts-confirm", session -> session.boot().getBootOptions().getConfirm().orNull());
-        props.put("nuts-dependency-solver", session -> session.boot().getBootOptions().getDependencySolver().orNull());
-        props.put("nuts-progress-options", session -> session.boot().getBootOptions().getProgressOptions().orNull());
+        props.put("nuts-open-mode", session -> NBootManager.of(session).getBootOptions().getOpenMode().orNull());
+        props.put("nuts-isolation-level", session -> NBootManager.of(session).getBootOptions().getIsolationLevel().orNull());
+        props.put("nuts-secure", session -> (NWorkspaceSecurityManager.of(session).isSecure()));
+        props.put("nuts-gui", session -> NBootManager.of(session).getBootOptions().getGui().orNull());
+        props.put("nuts-inherited", session -> NBootManager.of(session).getBootOptions().getInherited().orNull());
+        props.put("nuts-recover", session -> NBootManager.of(session).getBootOptions().getRecover().orNull());
+        props.put("nuts-reset", session -> NBootManager.of(session).getBootOptions().getReset().orNull());
+        props.put("nuts-read-only", session -> NBootManager.of(session).getBootOptions().getReadOnly().orNull());
+        props.put("nuts-debug", session -> NDebugString.of(NBootManager.of(session).getBootOptions().getDebug().orNull(), getSession()));
+        props.put("nuts-bot", session -> NBootManager.of(session).getBootOptions().getBot().orNull());
+        props.put("nuts-trace", session -> NBootManager.of(session).getBootOptions().getTrace().orNull());
+        props.put("nuts-indexed", session -> NBootManager.of(session).getBootOptions().getIndexed().orNull());
+        props.put("nuts-transitive", session -> NBootManager.of(session).getBootOptions().getTransitive().orNull());
+        props.put("nuts-fetch-strategy", session -> NBootManager.of(session).getBootOptions().getFetchStrategy().orNull());
+        props.put("nuts-execution-type", session -> NBootManager.of(session).getBootOptions().getExecutionType().orNull());
+        props.put("nuts-dry", session -> NBootManager.of(session).getBootOptions().getDry().orNull());
+        props.put("nuts-output-format", session -> NBootManager.of(session).getBootOptions().getOutputFormat().orNull());
+        props.put("nuts-confirm", session -> NBootManager.of(session).getBootOptions().getConfirm().orNull());
+        props.put("nuts-dependency-solver", session -> NBootManager.of(session).getBootOptions().getDependencySolver().orNull());
+        props.put("nuts-progress-options", session -> NBootManager.of(session).getBootOptions().getProgressOptions().orNull());
         props.put("nuts-progress", session -> session.isProgress());
-        props.put("nuts-terminal-mode", session -> session.boot().getBootOptions().getTerminalMode().orNull());
-        props.put("nuts-cached", session -> session.boot().getBootOptions().getCached().orNull());
-        props.put("nuts-skip-companions", session -> session.boot().getBootOptions().getSkipCompanions().orNull());
-        props.put("nuts-skip-welcome", session -> session.boot().getBootOptions().getSkipWelcome().orNull());
-        props.put("nuts-skip-boot", session -> session.boot().getBootOptions().getSkipBoot().orNull());
-        props.put("nuts-init-platforms", session -> session.boot().getBootOptions().getInitPlatforms().orNull());
-        props.put("nuts-init-java", session -> session.boot().getBootOptions().getInitJava().orNull());
-        props.put("nuts-init-launchers", session -> session.boot().getBootOptions().getInitLaunchers().orNull());
-        props.put("nuts-init-scripts", session -> session.boot().getBootOptions().getInitScripts().orNull());
-        props.put("nuts-desktop-launcher", session -> session.boot().getBootOptions().getDesktopLauncher().orNull());
-        props.put("nuts-menu-launcher", session -> session.boot().getBootOptions().getMenuLauncher().orNull());
-        props.put("nuts-user-launcher", session -> session.boot().getBootOptions().getUserLauncher().orNull());
-        props.put("nuts-locale", session -> session.boot().getBootOptions().getLocale().orNull());
-        props.put("nuts-theme", session -> session.boot().getBootOptions().getTheme().orNull());
-        props.put("nuts-username", session -> session.boot().getBootOptions().getUserName().orNull());
+        props.put("nuts-terminal-mode", session -> NBootManager.of(session).getBootOptions().getTerminalMode().orNull());
+        props.put("nuts-cached", session -> NBootManager.of(session).getBootOptions().getCached().orNull());
+        props.put("nuts-skip-companions", session -> NBootManager.of(session).getBootOptions().getSkipCompanions().orNull());
+        props.put("nuts-skip-welcome", session -> NBootManager.of(session).getBootOptions().getSkipWelcome().orNull());
+        props.put("nuts-skip-boot", session -> NBootManager.of(session).getBootOptions().getSkipBoot().orNull());
+        props.put("nuts-init-platforms", session -> NBootManager.of(session).getBootOptions().getInitPlatforms().orNull());
+        props.put("nuts-init-java", session -> NBootManager.of(session).getBootOptions().getInitJava().orNull());
+        props.put("nuts-init-launchers", session -> NBootManager.of(session).getBootOptions().getInitLaunchers().orNull());
+        props.put("nuts-init-scripts", session -> NBootManager.of(session).getBootOptions().getInitScripts().orNull());
+        props.put("nuts-desktop-launcher", session -> NBootManager.of(session).getBootOptions().getDesktopLauncher().orNull());
+        props.put("nuts-menu-launcher", session -> NBootManager.of(session).getBootOptions().getMenuLauncher().orNull());
+        props.put("nuts-user-launcher", session -> NBootManager.of(session).getBootOptions().getUserLauncher().orNull());
+        props.put("nuts-locale", session -> NBootManager.of(session).getBootOptions().getLocale().orNull());
+        props.put("nuts-theme", session -> NBootManager.of(session).getBootOptions().getTheme().orNull());
+        props.put("nuts-username", session -> NBootManager.of(session).getBootOptions().getUserName().orNull());
         props.put("nuts-solver",
                 session -> {
-                    String ds = NDependencySolverUtils.resolveSolverName(session.boot().getBootOptions().getDependencySolver().orNull());
+                    String ds = NDependencySolverUtils.resolveSolverName(NBootManager.of(session).getBootOptions().getDependencySolver().orNull());
                     List<String> allDs = NDependencySolver.getSolverNames(session);
                     return NTexts.of(session).ofStyled(
                             ds,
@@ -393,7 +393,7 @@ public class DefaultNInfoCommand extends DefaultFormatBase<NInfoCommand> impleme
         );
         props.put("nuts-solver-list",
                 session -> {
-                    String ds = NDependencySolverUtils.resolveSolverName(session.boot().getBootOptions().getDependencySolver().orNull());
+                    String ds = NDependencySolverUtils.resolveSolverName(NBootManager.of(session).getBootOptions().getDependencySolver().orNull());
                     List<String> allDs = NDependencySolver.getSolverNames(session);
                     NTexts txt = NTexts.of(session);
                     return txt.ofBuilder().appendJoined(";",
@@ -403,10 +403,10 @@ public class DefaultNInfoCommand extends DefaultFormatBase<NInfoCommand> impleme
                     );
                 }
         );
-        props.put("sys-terminal-flags", session -> session.boot().getBootTerminal().getFlags());
-        props.put("sys-terminal-mode", session -> session.boot().getBootOptions().getTerminalMode().orElse(NTerminalMode.DEFAULT));
+        props.put("sys-terminal-flags", session -> NBootManager.of(session).getBootTerminal().getFlags());
+        props.put("sys-terminal-mode", session -> NBootManager.of(session).getBootOptions().getTerminalMode().orElse(NTerminalMode.DEFAULT));
         props.put("java-version", session -> NVersion.of(System.getProperty("java.version")).get(session));
-        props.put("platform", session -> session.env().getPlatform());
+        props.put("platform", session -> NEnvs.of(session).getPlatform());
         props.put("java-home", session -> NPath.of(System.getProperty("java.home"), session));
         props.put("java-executable", session -> NPath.of(NJavaSdkUtils.of(session).resolveJavaCommandByHome(null, getSession()), session));
         props.put("java-classpath",
@@ -423,38 +423,38 @@ public class DefaultNInfoCommand extends DefaultFormatBase<NInfoCommand> impleme
                                 .collect(Collectors.toList())
                 )
         );
-        props.put("os-name", session -> session.env().getOs());
-        props.put("os-family", session -> session.env().getOsFamily());
-        props.put("os-dist", session -> session.env().getOsDist());
-        props.put("os-arch", session -> session.env().getArch());
-        props.put("os-arch-family", session -> session.env().getArchFamily());
-        props.put("os-desktop", session -> session.env().getDesktopEnvironment());
-        props.put("os-desktops", session -> session.env().getDesktopEnvironments());
-        props.put("os-desktop-family", session -> session.env().getDesktopEnvironmentFamily());
-        props.put("os-desktop-families", session -> session.env().getDesktopEnvironmentFamilies());
-        props.put("os-desktop-path", session -> session.env().getDesktopPath());
-        props.put("os-desktop-launcher", session -> session.env().getDesktopIntegrationSupport(NDesktopIntegrationItem.DESKTOP));
-        props.put("os-menu-launcher", session -> session.env().getDesktopIntegrationSupport(NDesktopIntegrationItem.MENU));
-        props.put("os-user-launcher", session -> session.env().getDesktopIntegrationSupport(NDesktopIntegrationItem.USER));
-        props.put("os-shell", session -> session.env().getShellFamily());
-        props.put("os-shells", session -> session.env().getShellFamilies());
+        props.put("os-name", session -> NEnvs.of(session).getOs());
+        props.put("os-family", session -> NEnvs.of(session).getOsFamily());
+        props.put("os-dist", session -> NEnvs.of(session).getOsDist());
+        props.put("os-arch", session -> NEnvs.of(session).getArch());
+        props.put("os-arch-family", session -> NEnvs.of(session).getArchFamily());
+        props.put("os-desktop", session -> NEnvs.of(session).getDesktopEnvironment());
+        props.put("os-desktops", session -> NEnvs.of(session).getDesktopEnvironments());
+        props.put("os-desktop-family", session -> NEnvs.of(session).getDesktopEnvironmentFamily());
+        props.put("os-desktop-families", session -> NEnvs.of(session).getDesktopEnvironmentFamilies());
+        props.put("os-desktop-path", session -> NEnvs.of(session).getDesktopPath());
+        props.put("os-desktop-launcher", session -> NEnvs.of(session).getDesktopIntegrationSupport(NDesktopIntegrationItem.DESKTOP));
+        props.put("os-menu-launcher", session -> NEnvs.of(session).getDesktopIntegrationSupport(NDesktopIntegrationItem.MENU));
+        props.put("os-user-launcher", session -> NEnvs.of(session).getDesktopIntegrationSupport(NDesktopIntegrationItem.USER));
+        props.put("os-shell", session -> NEnvs.of(session).getShellFamily());
+        props.put("os-shells", session -> NEnvs.of(session).getShellFamilies());
         props.put("os-username", session -> stringValue(System.getProperty("user.name")));
         props.put("user-home", NPath::ofUserHome);
         props.put("user-dir", NPath::ofUserDirectory);
         props.put("command-line-long",
-                session -> session.boot().getBootOptions().toCommandLine(new NWorkspaceOptionsConfig().setCompact(false))
+                session -> NBootManager.of(session).getBootOptions().toCommandLine(new NWorkspaceOptionsConfig().setCompact(false))
         );
-        props.put("command-line-short", session -> session.boot().getBootOptions().toCommandLine(new NWorkspaceOptionsConfig().setCompact(true)));
-        props.put("inherited", session -> session.boot().getBootOptions().getInherited().orElse(false));
+        props.put("command-line-short", session -> NBootManager.of(session).getBootOptions().toCommandLine(new NWorkspaceOptionsConfig().setCompact(true)));
+        props.put("inherited", session -> NBootManager.of(session).getBootOptions().getInherited().orElse(false));
         // nuts-boot-args must always be parsed in bash format
         props.put("inherited-nuts-boot-args", session -> NCommandLine.of(System.getProperty("nuts.boot.args"), NShellFamily.SH, session).format(session));
         props.put("inherited-nuts-args", session -> NCommandLine.of(System.getProperty("nuts.args"), NShellFamily.SH, session)
                 .format(session)
         );
-        props.put("creation-started", session -> session.boot().getCreationStartTime());
-        props.put("creation-finished", session -> session.boot().getCreationFinishTime());
-        props.put("creation-within", session -> CoreTimeUtils.formatPeriodMilli(session.boot().getCreationDuration()).trim());
-        props.put("repositories-count", session -> (session.repos().setSession(getSession()).getRepositories().size()));
+        props.put("creation-started", session -> NBootManager.of(session).getCreationStartTime());
+        props.put("creation-finished", session -> NBootManager.of(session).getCreationFinishTime());
+        props.put("creation-within", session -> CoreTimeUtils.formatPeriodMilli(NBootManager.of(session).getCreationDuration()).trim());
+        props.put("repositories-count", session -> (NRepositories.of(session).setSession(getSession()).getRepositories().size()));
         return props;
     }
 
@@ -510,8 +510,8 @@ public class DefaultNInfoCommand extends DefaultFormatBase<NInfoCommand> impleme
         String prefix = null;
         FilteredMap props = new FilteredMap(filter);
         NSession session = getSession();
-        NWorkspaceConfigManager rt = session.config();
-        NWorkspaceOptions options = session.boot().getBootOptions();
+        NConfigs rt = NConfigs.of(session);
+        NWorkspaceOptions options = NBootManager.of(session).getBootOptions();
         Set<String> extraKeys = new TreeSet<>(extraProperties.keySet());
 
         props.put("name", stringValue(session.getWorkspace().getName()));
@@ -520,7 +520,7 @@ public class DefaultNInfoCommand extends DefaultFormatBase<NInfoCommand> impleme
         props.put("nuts-api-id", session.getWorkspace().getApiId());
         props.put("nuts-runtime-id", session.getWorkspace().getRuntimeId());
         props.put("nuts-app-id", session.getAppId());
-        List<URL> cl = session.boot().getBootClassWorldURLs();
+        List<URL> cl = NBootManager.of(session).getBootClassWorldURLs();
         List<NPath> runtimeClassPath = new ArrayList<>();
         if (cl != null) {
             for (URL url : cl) {
@@ -541,17 +541,17 @@ public class DefaultNInfoCommand extends DefaultFormatBase<NInfoCommand> impleme
                 txt.ofBuilder().appendJoined(";", runtimeClassPath)
         );
         props.put("nuts-workspace-id", txt.ofStyled(stringValue(session.getWorkspace().getUuid()), NTextStyle.path()));
-        props.put("nuts-store-layout", session.locations().getStoreLocationLayout());
-        props.put("nuts-store-strategy", session.locations().getStoreLocationStrategy());
-        props.put("nuts-repo-store-strategy", session.locations().getRepositoryStoreLocationStrategy());
+        props.put("nuts-store-layout", NLocations.of(session).getStoreLocationLayout());
+        props.put("nuts-store-strategy", NLocations.of(session).getStoreLocationStrategy());
+        props.put("nuts-repo-store-strategy", NLocations.of(session).getRepositoryStoreLocationStrategy());
         props.put("nuts-global", options.getGlobal().orNull());
-        props.put("nuts-workspace", session.locations().getWorkspaceLocation());
+        props.put("nuts-workspace", NLocations.of(session).getWorkspaceLocation());
         for (NStoreLocation folderType : NStoreLocation.values()) {
-            props.put("nuts-workspace-" + folderType.id(), session.locations().getStoreLocation(folderType));
+            props.put("nuts-workspace-" + folderType.id(), NLocations.of(session).getStoreLocation(folderType));
         }
         props.put("nuts-open-mode", options.getOpenMode().orNull());
         props.put("nuts-isolation-level", options.getIsolationLevel().orNull());
-        props.put("nuts-secure", (session.security().isSecure()));
+        props.put("nuts-secure", (NWorkspaceSecurityManager.of(session).isSecure()));
         props.put("nuts-gui", options.getGui().orNull());
         props.put("nuts-inherited", options.getInherited().orNull());
         props.put("nuts-recover", options.getRecover().orNull());
@@ -602,12 +602,12 @@ public class DefaultNInfoCommand extends DefaultFormatBase<NInfoCommand> impleme
                 )
 
         );
-        NWorkspaceTerminalOptions b = session.boot().getBootTerminal();
+        NWorkspaceTerminalOptions b = NBootManager.of(session).getBootTerminal();
         props.put("sys-terminal-flags", b.getFlags());
-        NTerminalMode terminalMode = session.boot().getBootOptions().getTerminalMode().orElse(NTerminalMode.DEFAULT);
+        NTerminalMode terminalMode = NBootManager.of(session).getBootOptions().getTerminalMode().orElse(NTerminalMode.DEFAULT);
         props.put("sys-terminal-mode", terminalMode);
         props.put("java-version", NVersion.of(System.getProperty("java.version")).get(session));
-        props.put("platform", session.env().getPlatform());
+        props.put("platform", NEnvs.of(session).getPlatform());
         props.put("java-home", NPath.of(System.getProperty("java.home"), session));
         props.put("java-executable", NPath.of(NJavaSdkUtils.of(session).resolveJavaCommandByHome(null, getSession()), session));
         props.put("java-classpath",
@@ -624,47 +624,48 @@ public class DefaultNInfoCommand extends DefaultFormatBase<NInfoCommand> impleme
                                 .collect(Collectors.toList())
                 )
         );
-        props.put("os-name", session.env().getOs());
-        props.put("os-family", (session.env().getOsFamily()));
-        if (session.env().getOsDist() != null) {
-            props.put("os-dist", (session.env().getOsDist()));
+        props.put("os-name", NEnvs.of(session).getOs());
+        props.put("os-family", (NEnvs.of(session).getOsFamily()));
+        if (NEnvs.of(session).getOsDist() != null) {
+            props.put("os-dist", (NEnvs.of(session).getOsDist()));
         }
-        props.put("os-arch", session.env().getArch());
-        props.put("os-arch-family", session.env().getArchFamily());
-        props.put("os-desktop", session.env().getDesktopEnvironment());
-        props.put("os-desktops", session.env().getDesktopEnvironments());
-        props.put("os-desktop-family", session.env().getDesktopEnvironmentFamily());
-        props.put("os-desktop-families", session.env().getDesktopEnvironmentFamilies());
-        props.put("os-desktop-path", session.env().getDesktopPath());
-        props.put("os-desktop-launcher", session.env().getDesktopIntegrationSupport(NDesktopIntegrationItem.DESKTOP));
-        props.put("os-menu-launcher", session.env().getDesktopIntegrationSupport(NDesktopIntegrationItem.MENU));
-        props.put("os-user-launcher", session.env().getDesktopIntegrationSupport(NDesktopIntegrationItem.USER));
-        props.put("os-shell", session.env().getShellFamily());
-        props.put("os-shells", session.env().getShellFamilies());
+        NEnvs envs = NEnvs.of(session);
+        props.put("os-arch", envs.getArch());
+        props.put("os-arch-family", envs.getArchFamily());
+        props.put("os-desktop", envs.getDesktopEnvironment());
+        props.put("os-desktops", envs.getDesktopEnvironments());
+        props.put("os-desktop-family", envs.getDesktopEnvironmentFamily());
+        props.put("os-desktop-families", envs.getDesktopEnvironmentFamilies());
+        props.put("os-desktop-path", envs.getDesktopPath());
+        props.put("os-desktop-launcher", envs.getDesktopIntegrationSupport(NDesktopIntegrationItem.DESKTOP));
+        props.put("os-menu-launcher", envs.getDesktopIntegrationSupport(NDesktopIntegrationItem.MENU));
+        props.put("os-user-launcher", envs.getDesktopIntegrationSupport(NDesktopIntegrationItem.USER));
+        props.put("os-shell", envs.getShellFamily());
+        props.put("os-shells", envs.getShellFamilies());
         props.put("os-username", stringValue(System.getProperty("user.name")));
         props.put("user-home", NPath.ofUserHome(session));
         props.put("user-dir", NPath.ofUserDirectory(session));
         props.put("command-line-long",
-                session.boot().getBootOptions().toCommandLine(new NWorkspaceOptionsConfig().setCompact(false))
+                NBootManager.of(session).getBootOptions().toCommandLine(new NWorkspaceOptionsConfig().setCompact(false))
         );
-        props.put("command-line-short", session.boot().getBootOptions().toCommandLine(new NWorkspaceOptionsConfig().setCompact(true)));
-        props.put("inherited", session.boot().getBootOptions().getInherited().orElse(false));
+        props.put("command-line-short", NBootManager.of(session).getBootOptions().toCommandLine(new NWorkspaceOptionsConfig().setCompact(true)));
+        props.put("inherited", NBootManager.of(session).getBootOptions().getInherited().orElse(false));
         // nuts-boot-args must always be parsed in bash format
         props.put("inherited-nuts-boot-args", NCommandLine.of(System.getProperty("nuts.boot.args"), NShellFamily.SH, session).format(session));
         props.put("inherited-nuts-args", NCommandLine.of(System.getProperty("nuts.args"), NShellFamily.SH, session)
                 .format(session)
         );
-        props.put("creation-started", session.boot().getCreationStartTime());
-        props.put("creation-finished", session.boot().getCreationFinishTime());
-        props.put("creation-within", CoreTimeUtils.formatPeriodMilli(session.boot().getCreationDuration()).trim());
-        props.put("repositories-count", (session.repos().setSession(getSession()).getRepositories().size()));
+        props.put("creation-started", NBootManager.of(session).getCreationStartTime());
+        props.put("creation-finished", NBootManager.of(session).getCreationFinishTime());
+        props.put("creation-within", CoreTimeUtils.formatPeriodMilli(NBootManager.of(session).getCreationDuration()).trim());
+        props.put("repositories-count", (NRepositories.of(session).setSession(getSession()).getRepositories().size()));
         for (String extraKey : extraKeys) {
             props.put(extraKey, extraProperties.get(extraKey));
         }
         if (deep) {
             Map<String, Object> repositories = new LinkedHashMap<>();
             props.put("repos", repositories);
-            for (NRepository repository : session.repos().setSession(getSession()).getRepositories()) {
+            for (NRepository repository : NRepositories.of(session).setSession(getSession()).getRepositories()) {
                 repositories.put(repository.getName(), buildRepoRepoMap(repository, deep, prefix));
             }
         }

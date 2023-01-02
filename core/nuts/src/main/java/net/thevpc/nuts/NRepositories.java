@@ -31,9 +31,9 @@ import java.util.List;
 /**
  * @app.category Base
  */
-public interface NRepositoryManager extends NComponent {
-    static NRepositoryManager of(NSession session) {
-        return NExtensions.of(session).createSupported(NRepositoryManager.class);
+public interface NRepositories extends NComponent {
+    static NRepositories of(NSession session) {
+        return NExtensions.of(session).createSupported(NRepositories.class);
     }
 
     NRepositoryFilters filter();
@@ -91,15 +91,15 @@ public interface NRepositoryManager extends NComponent {
 
     NRepository getRepository(String repositoryIdOrName) throws NRepositoryNotFoundException;
 
-    NRepositoryManager removeRepository(String locationOrRepositoryId);
+    NRepositories removeRepository(String locationOrRepositoryId);
 
     List<NRepository> getRepositories();
 
     ///////////////
-    NRepositoryManager removeAllRepositories();
+    NRepositories removeAllRepositories();
 
     NSession getSession();
 
-    NRepositoryManager setSession(NSession session);
+    NRepositories setSession(NSession session);
 
 }

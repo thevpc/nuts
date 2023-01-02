@@ -1,7 +1,7 @@
 package net.thevpc.nuts.tutorial.naf.spring.installevents;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.cmdline.NArgument;
+import net.thevpc.nuts.cmdline.NArg;
 import net.thevpc.nuts.cmdline.NCommandLine;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -44,7 +44,7 @@ public class AppExample implements NApplication {
     public void run(NApplicationContext context) {
         NSession session = context.getSession();
         NCommandLine cmd = context.getCommandLine();
-        NArgument a;
+        NArg a;
         String someStringOption = null;
         Boolean someBooleanOption = null;
         List<String> nonOptions = new ArrayList<>();

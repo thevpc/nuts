@@ -26,7 +26,7 @@
 package net.thevpc.nuts.toolbox.nsh.cmds.bash;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.cmdline.NArgument;
+import net.thevpc.nuts.cmdline.NArg;
 import net.thevpc.nuts.cmdline.NCommandLine;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.lib.ssh.SShConnection;
@@ -51,7 +51,7 @@ public class SshCommand extends SimpleJShellBuiltin {
     @Override
     protected boolean configureFirst(NCommandLine commandLine, JShellExecutionContext context) {
         Options o = context.getOptions();
-        NArgument a;
+        NArg a;
         NSession session = context.getSession();
         if (!o.cmd.isEmpty()) {
             o.cmd.add(commandLine.next().flatMap(NValue::asString).get(session));
@@ -100,7 +100,7 @@ public class SshCommand extends SimpleJShellBuiltin {
             if (o.invokeNuts) {
                 String workspace = null;
                 NCommandLine c = NCommandLine.of(o.cmd.subList(1, o.cmd.size()));
-                NArgument arg = null;
+                NArg arg = null;
                 while (c.hasNext()) {
                     if ((arg = c.next("--workspace").orNull()) != null) {
                         workspace = c.nextNonOption().get().asString().get(session);
@@ -130,7 +130,7 @@ public class SshCommand extends SimpleJShellBuiltin {
                         nutsCommandFound = true;
                     }
                     if (!nutsCommandFound) {
-                        NPath from = session.search().addId(session.getWorkspace().getApiId()).getResultDefinitions().required().getContent().orNull();
+                        NPath from = NSearchCommand.of(session).addId(session.getWorkspace().getApiId()).getResultDefinitions().required().getContent().orNull();
                         NAssert.requireNonNull(from, "jar file", session);
                         context.out().printf("Detected nuts.jar location : %s\n", from);
                         String bootApiFileName = "nuts-" + session.getWorkspace().getApiId() + ".jar";

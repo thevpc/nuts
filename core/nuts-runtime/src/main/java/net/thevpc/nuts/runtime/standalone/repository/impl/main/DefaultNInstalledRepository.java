@@ -24,7 +24,7 @@
 package net.thevpc.nuts.runtime.standalone.repository.impl.main;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.boot.NWorkspaceBootOptions;
+import net.thevpc.nuts.boot.NBootOptions;
 import net.thevpc.nuts.concurrent.NLocks;
 import net.thevpc.nuts.elem.NElements;
 import net.thevpc.nuts.io.NIOException;
@@ -74,7 +74,7 @@ public class DefaultNInstalledRepository extends AbstractNRepository implements 
     private final Map<NId, String> cachedDefaultVersions = new LRUMap<>(200);
     private NLogger LOG;
 
-    public DefaultNInstalledRepository(NWorkspace ws, NWorkspaceBootOptions bOptions) {
+    public DefaultNInstalledRepository(NWorkspace ws, NBootOptions bOptions) {
         this.workspace = ws;
         this.initSession = NSessionUtils.defaultSession(ws);
         this.deployments = new NRepositoryFolderHelper(this,
@@ -121,7 +121,7 @@ public class DefaultNInstalledRepository extends AbstractNRepository implements 
 
     @Override
     public NIterator<NInstallInformation> searchInstallInformation(NSession session) {
-        NPath rootFolder = session.locations().getStoreLocation(NStoreLocation.CONFIG).resolve(NConstants.Folders.ID);
+        NPath rootFolder = NLocations.of(session).getStoreLocation(NStoreLocation.CONFIG).resolve(NConstants.Folders.ID);
         return new FolderObjectIterator<NInstallInformation>("NutsInstallInformation",
                 rootFolder,
                 null, -1, session, new FolderObjectIterator.FolderIteratorModel<NInstallInformation>() {
@@ -156,7 +156,7 @@ public class DefaultNInstalledRepository extends AbstractNRepository implements 
                 return p;
             }
         }
-        NPath pp = session.locations().getStoreLocation(id
+        NPath pp = NLocations.of(session).getStoreLocation(id
                         //.setAlternative("")
                         .builder().setVersion("ANY").build(), NStoreLocation.CONFIG)
                 .resolveSibling("default-version");
@@ -178,7 +178,7 @@ public class DefaultNInstalledRepository extends AbstractNRepository implements 
     public void setDefaultVersion(NId id, NSession session) {
         NId baseVersion = id.getShortId();
         String version = id.getVersion().getValue();
-        NPath pp = session.locations().getStoreLocation(id
+        NPath pp = NLocations.of(session).getStoreLocation(id
                         //                .setAlternative("")
                         .builder().setVersion("ANY").build(), NStoreLocation.CONFIG)
                 .resolveSibling("default-version");
@@ -217,7 +217,7 @@ public class DefaultNInstalledRepository extends AbstractNRepository implements 
         InstallInfoConfig ii = getInstallInfoConfig(id, null, session);
         try {
             String repository = id.getRepository();
-            NRepository r = session.repos().findRepository(repository);
+            NRepository r = NRepositories.of(session).findRepository(repository);
             if (ii == null) {
                 ii = new InstallInfoConfig();
                 ii.setId(id);
@@ -354,7 +354,7 @@ public class DefaultNInstalledRepository extends AbstractNRepository implements 
     @Override
     public void unrequire(NId requiredId, NId requestorId, NDependencyScope scope, NSession session) {
         Instant now = Instant.now();
-        String user = session.security().getCurrentUsername();
+        String user = NWorkspaceSecurityManager.of(session).getCurrentUsername();
         boolean succeeded = false;
         try {
             if (scope == null) {
@@ -390,7 +390,7 @@ public class DefaultNInstalledRepository extends AbstractNRepository implements 
     }
 
     public NId pathToId(NPath path, NSession session) {
-        NPath rootFolder = session.locations().getStoreLocation(NStoreLocation.CONFIG).resolve(NConstants.Folders.ID);
+        NPath rootFolder = NLocations.of(session).getStoreLocation(NStoreLocation.CONFIG).resolve(NConstants.Folders.ID);
         String p = path.toString().substring(rootFolder.toString().length());
         List<String> split = StringTokenizerUtils.split(p, "/\\");
         if (split.size() >= 4) {
@@ -466,7 +466,7 @@ public class DefaultNInstalledRepository extends AbstractNRepository implements 
                         }
                     }
                 }
-                if (changeStatus && !session.config().isReadOnly()) {
+                if (changeStatus && !NConfigs.of(session).isReadOnly()) {
                     NLocks.of(session).setSource(path).call(() -> {
                                 _LOGOP(session).level(Level.CONFIG)
                                         .log(NMsg.ofJstyle("install-info upgraded {0}", finalPath));
@@ -486,7 +486,7 @@ public class DefaultNInstalledRepository extends AbstractNRepository implements 
     }
 
     public NIterator<InstallInfoConfig> searchInstallConfig(NSession session) {
-        NPath rootFolder = session.locations().getStoreLocation(NStoreLocation.CONFIG).resolve(NConstants.Folders.ID);
+        NPath rootFolder = NLocations.of(session).getStoreLocation(NStoreLocation.CONFIG).resolve(NConstants.Folders.ID);
         return new FolderObjectIterator<InstallInfoConfig>("InstallInfoConfig",
                 rootFolder,
                 null, -1, session, new FolderObjectIterator.FolderIteratorModel<InstallInfoConfig>() {
@@ -531,7 +531,7 @@ public class DefaultNInstalledRepository extends AbstractNRepository implements 
         NInstallStatus s = NInstallStatus.of(ii.isInstalled(), ii.isRequired(), obsolete, defaultVersion);
         return new DefaultNInstallInfo(ii.getId(),
                 s,
-                session.locations().getStoreLocation(ii.getId(), NStoreLocation.APPS),
+                NLocations.of(session).getStoreLocation(ii.getId(), NStoreLocation.APPS),
                 ii.getCreationDate(),
                 ii.getLastModificationDate(),
                 ii.getCreationUser(),
@@ -621,7 +621,7 @@ public class DefaultNInstalledRepository extends AbstractNRepository implements 
 
     private void saveCreate(InstallInfoConfig ii, NSession session) {
         Instant now = Instant.now();
-        String user = session.security().getCurrentUsername();
+        String user = NWorkspaceSecurityManager.of(session).getCurrentUsername();
         if (ii.getCreationUser() == null) {
             ii.setCreationUser(user);
         }
@@ -634,7 +634,7 @@ public class DefaultNInstalledRepository extends AbstractNRepository implements 
 
     private void saveUpdate(InstallInfoConfig ii, InstallInfoConfig ii0, NSession session) {
         Instant now = Instant.now();
-        String user = session.security().getCurrentUsername();
+        String user = NWorkspaceSecurityManager.of(session).getCurrentUsername();
         if (ii.getCreationUser() == null) {
             ii.setCreationUser(user);
         }
@@ -676,7 +676,7 @@ public class DefaultNInstalledRepository extends AbstractNRepository implements 
     }
 
     public NPath getPath(NId id, String name, NSession session) {
-        return session.locations().setSession(session).getStoreLocation(id, NStoreLocation.CONFIG).resolve(name);
+        return NLocations.of(session).getStoreLocation(id, NStoreLocation.CONFIG).resolve(name);
     }
 
     /////////////////////////////////////////////////////////////////////////////////////////////
@@ -786,7 +786,7 @@ public class DefaultNInstalledRepository extends AbstractNRepository implements 
             public NSearchVersionsRepositoryCommand run() {
                 if (getFilter() instanceof NInstallStatusIdFilter) {
                     NPath installFolder
-                            = getSession().locations().getStoreLocation(getId()
+                            = NLocations.of(getSession()).getStoreLocation(getId()
                             .builder().setVersion("ANY").build(), NStoreLocation.CONFIG).getParent();
                     if (installFolder.isDirectory()) {
                         final NVersionFilter filter0 = getId().getVersion().filter(getSession());
@@ -850,7 +850,7 @@ public class DefaultNInstalledRepository extends AbstractNRepository implements 
         InstallLogItemTable.of(session)
                 .add(new NInstallLogRecord(
                         Instant.now(),
-                        session.security().getCurrentUsername(),
+                        NWorkspaceSecurityManager.of(session).getCurrentUsername(),
                         action,
                         id, requestor, message, succeeded
                 ), session);

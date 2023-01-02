@@ -1,7 +1,7 @@
 package net.thevpc.nuts.toolbox.njob;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.cmdline.NArgument;
+import net.thevpc.nuts.cmdline.NArg;
 import net.thevpc.nuts.cmdline.NCommandLine;
 import net.thevpc.nuts.format.NMutableTableModel;
 import net.thevpc.nuts.format.NTableFormat;
@@ -42,7 +42,7 @@ public class NProjectsSubCmd {
         NRef<Boolean> list = NRef.of(false);
         NRef<Boolean> show = NRef.of(false);
         while (cmd.hasNext()) {
-            NArgument aa = cmd.peek().get(session);
+            NArg aa = cmd.peek().get(session);
             switch (aa.key()) {
                 case "--list":
                 case "-l": {
@@ -126,7 +126,7 @@ public class NProjectsSubCmd {
         }
         Data d = new Data();
         while (cmd.hasNext()) {
-            NArgument aa = cmd.peek().get(session);
+            NArg aa = cmd.peek().get(session);
             switch (aa.key()) {
                 case "-l":
                 case "--list": {
@@ -250,7 +250,7 @@ public class NProjectsSubCmd {
     private void runProjectList(NCommandLine cmd) {
         final NRef<Predicate<NProject>> whereFilter = NRef.ofNull();
         while (cmd.hasNext()) {
-            NArgument aa = cmd.peek().get(session);
+            NArg aa = cmd.peek().get(session);
             switch (aa.key()) {
                 case "-b":
                 case "-beneficiary": {
@@ -351,7 +351,7 @@ public class NProjectsSubCmd {
     private void runProjectRemove(NCommandLine cmd) {
         NTexts text = NTexts.of(context.getSession());
         while (cmd.hasNext()) {
-            NArgument a = cmd.next().get(session);
+            NArg a = cmd.next().get(session);
             if (cmd.isExecMode()) {
                 NProject t = findProject(a.toString(), cmd);
                 if (service.projects().removeProject(t.getId())) {
@@ -373,7 +373,7 @@ public class NProjectsSubCmd {
 
     private void runProjectShow(NCommandLine cmd) {
         while (cmd.hasNext()) {
-            NArgument a = cmd.next().get(session);
+            NArg a = cmd.next().get(session);
             NProject project = findProject(a.toString(), cmd);
             if (project == null) {
                 context.getSession().out().printf("```kw %s```: ```error not found```.\n",

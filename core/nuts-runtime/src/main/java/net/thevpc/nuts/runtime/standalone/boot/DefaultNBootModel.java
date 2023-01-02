@@ -24,8 +24,8 @@
 package net.thevpc.nuts.runtime.standalone.boot;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.boot.NWorkspaceBootOptions;
-import net.thevpc.nuts.cmdline.DefaultNArgument;
+import net.thevpc.nuts.boot.NBootOptions;
+import net.thevpc.nuts.cmdline.DefaultNArg;
 import net.thevpc.nuts.io.NOutStream;
 import net.thevpc.nuts.io.NSystemTerminal;
 import net.thevpc.nuts.runtime.optional.jansi.OptionalJansi;
@@ -59,7 +59,7 @@ public class DefaultNBootModel implements NBootModel {
     protected NWorkspace workspace;
     protected boolean firstBoot;
     protected boolean initializing;
-    protected NWorkspaceBootOptions bOptions;
+    protected NBootOptions bOptions;
     protected NSession bootSession;
     private Map<String, NValue> customBootOptions;
     private NWorkspaceTerminalOptions bootTerminal;
@@ -70,7 +70,7 @@ public class DefaultNBootModel implements NBootModel {
         this.workspace = workspace;
     }
 
-    public void init(NWorkspaceBootOptions bOption0) {
+    public void init(NBootOptions bOption0) {
         this.initializing = true;
         NWorkspaceModel _model = NWorkspaceExt.of(workspace).getModel();
         this.bootSession = new DefaultNSession(workspace, bOption0);
@@ -186,7 +186,7 @@ public class DefaultNBootModel implements NBootModel {
         if (old != this.systemTerminal) {
             NWorkspaceEvent event = null;
             if (session != null) {
-                for (NWorkspaceListener workspaceListener : session.events().getWorkspaceListeners()) {
+                for (NWorkspaceListener workspaceListener : NEvents.of(session).getWorkspaceListeners()) {
                     if (event == null) {
                         event = new DefaultNWorkspaceEvent(session, null, "systemTerminal", old, this.systemTerminal);
                     }
@@ -220,7 +220,7 @@ public class DefaultNBootModel implements NBootModel {
             //that's ok
         } else {
             NId extId = NId.of("net.thevpc.nuts.ext:next-term#" + session.getWorkspace().getApiVersion()).get(session);
-            if (!session.config().isExcludedExtension(extId.toString(), session.boot().getBootOptions())) {
+            if (!NConfigs.of(session).isExcludedExtension(extId.toString(), NBootManager.of(session).getBootOptions())) {
                 NExtensions extensions = session.extensions();
                 extensions.setSession(session).loadExtension(extId);
                 NSystemTerminal systemTerminal = createSystemTerminal(
@@ -266,7 +266,7 @@ public class DefaultNBootModel implements NBootModel {
         return syst;
     }
 
-    public NWorkspaceBootOptions getBootEffectiveOptions() {
+    public NBootOptions getBootEffectiveOptions() {
         return bOptions;
     }
 
@@ -340,7 +340,7 @@ public class DefaultNBootModel implements NBootModel {
             if (properties != null) {
                 for (String property : properties) {
                     if (property != null) {
-                        DefaultNArgument a = new DefaultNArgument(property);
+                        DefaultNArg a = new DefaultNArg(property);
                         if (a.isActive()) {
                             String key = a.getKey().asString().orElse("");
                             this.customBootOptions.put(key, NValue.of(a.getStringValue().orElse(null)));

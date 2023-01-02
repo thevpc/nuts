@@ -24,7 +24,7 @@
 package net.thevpc.nuts.runtime.standalone.executor.system;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.cmdline.DefaultNArgument;
+import net.thevpc.nuts.cmdline.DefaultNArg;
 import net.thevpc.nuts.cmdline.NCommandLine;
 import net.thevpc.nuts.cmdline.NCommandLineFormatStrategy;
 import net.thevpc.nuts.io.NPath;
@@ -67,7 +67,7 @@ public class ProcessBuilder2 {
     }
 
     private static String formatArg(String s, NSession session) {
-        DefaultNArgument a = new DefaultNArgument(s);
+        DefaultNArg a = new DefaultNArg(s);
         StringBuilder sb = new StringBuilder();
         NTexts factory = NTexts.of(session);
         if (a.isKeyValue()) {

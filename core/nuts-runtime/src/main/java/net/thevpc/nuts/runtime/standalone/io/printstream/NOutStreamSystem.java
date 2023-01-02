@@ -78,7 +78,7 @@ public class NOutStreamSystem extends NOutStreamBase {
         if (ansi != null) {
             return ansi ? NTerminalMode.ANSI : NTerminalMode.INHERITED;
         }
-        NWorkspaceTerminalOptions b = session.boot().getBootTerminal();
+        NWorkspaceTerminalOptions b = NBootManager.of(session).getBootTerminal();
         if (b.getFlags().contains("ansi")) {
             return NTerminalMode.ANSI;
         } else {

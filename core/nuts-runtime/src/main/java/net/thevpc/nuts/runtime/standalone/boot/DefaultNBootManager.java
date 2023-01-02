@@ -25,11 +25,11 @@ package net.thevpc.nuts.runtime.standalone.boot;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.boot.NClassLoaderNode;
-import net.thevpc.nuts.boot.NWorkspaceBootOptions;
+import net.thevpc.nuts.boot.NBootOptions;
 import net.thevpc.nuts.runtime.standalone.session.NSessionUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceExt;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceUtils;
-import net.thevpc.nuts.runtime.standalone.workspace.config.DefaultNWorkspaceConfigManager;
+import net.thevpc.nuts.runtime.standalone.workspace.config.DefaultNConfigs;
 import net.thevpc.nuts.runtime.standalone.workspace.config.DefaultNWorkspaceConfigModel;
 import net.thevpc.nuts.spi.NSupportLevelContext;
 
@@ -87,7 +87,7 @@ public class DefaultNBootManager implements NBootManager {
 
 
     @Override
-    public NWorkspaceBootOptions getBootOptions() {
+    public NBootOptions getBootOptions() {
         checkSession();
         return _configModel().getBootModel().getBootEffectiveOptions();
     }
@@ -142,7 +142,7 @@ public class DefaultNBootManager implements NBootManager {
     }
 
     private DefaultNWorkspaceConfigModel _configModel() {
-        DefaultNWorkspaceConfigManager config = (DefaultNWorkspaceConfigManager) session.config();
+        DefaultNConfigs config = (DefaultNConfigs) NConfigs.of(session);
         DefaultNWorkspaceConfigModel configModel = config.getModel();
         return configModel;
     }

@@ -66,7 +66,7 @@ public class DefaultNApplicationContext implements NApplicationContext {
             NCommandLine execModeCommand = NCommandLine.parseDefault(
                     args.get(0).substring(args.get(0).indexOf('=') + 1)).get(session);
             if (execModeCommand.hasNext()) {
-                NArgument a = execModeCommand.next().get(session);
+                NArg a = execModeCommand.next().get(session);
                 switch (a.key()) {
                     case "auto-complete": {
                         mode = NApplicationMode.AUTO_COMPLETE;
@@ -120,7 +120,7 @@ public class DefaultNApplicationContext implements NApplicationContext {
         //always copy the session to bind to appId
         this.session.setAppId(appId);
 //        NutsWorkspaceConfigManager cfg = workspace.config();
-        NWorkspaceLocationManager locations = session.locations();
+        NLocations locations = NLocations.of(session);
         for (NStoreLocation folder : NStoreLocation.values()) {
             setFolder(folder, locations.getStoreLocation(this.appId, folder));
             setSharedFolder(folder, locations.getStoreLocation(this.appId.builder().setVersion("SHARED").build(), folder));
@@ -274,7 +274,7 @@ public class DefaultNApplicationContext implements NApplicationContext {
                 return r;
             }
         }
-        return session.locations().getStoreLocation(newId, location);
+        return NLocations.of(session).getStoreLocation(newId, location);
     }
 
     @Override
@@ -401,7 +401,7 @@ public class DefaultNApplicationContext implements NApplicationContext {
 
     @Override
     public boolean configureFirst(NCommandLine cmd) {
-        NArgument a = cmd.peek().orNull();
+        NArg a = cmd.peek().orNull();
         if (a == null) {
             return false;
         }
@@ -530,8 +530,8 @@ public class DefaultNApplicationContext implements NApplicationContext {
         }
 
         @Override
-        protected NArgumentCandidate addCandidatesImpl(NArgumentCandidate value) {
-            NArgumentCandidate c = super.addCandidatesImpl(value);
+        protected NArgCandidate addCandidatesImpl(NArgCandidate value) {
+            NArgCandidate c = super.addCandidatesImpl(value);
             String v = value.getValue();
             if (v == null) {
                 throw new NExecutionException(session, NMsg.ofPlain("candidate cannot be null"), 2);

@@ -27,8 +27,8 @@
 package net.thevpc.nuts.runtime.standalone.app.cmdline.option;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.cmdline.DefaultNArgumentCandidate;
-import net.thevpc.nuts.cmdline.NArgumentCandidate;
+import net.thevpc.nuts.cmdline.DefaultNArgCandidate;
+import net.thevpc.nuts.cmdline.NArgCandidate;
 import net.thevpc.nuts.cmdline.NCommandAutoComplete;
 import net.thevpc.nuts.runtime.standalone.repository.util.NRepositoryUtils;
 
@@ -47,11 +47,11 @@ public class RepositoryTypeNonOption extends DefaultNonOption {
     }
 
     @Override
-    public List<NArgumentCandidate> getCandidates(NCommandAutoComplete context) {
+    public List<NArgCandidate> getCandidates(NCommandAutoComplete context) {
         TreeSet<String> allValid = new TreeSet<>();
         allValid.add(NConstants.RepoTypes.NUTS);
         allValid.add(NConstants.RepoTypes.MAVEN);
-        for (NAddRepositoryOptions repo : context.getSession().config()
+        for (NAddRepositoryOptions repo : NConfigs.of(context.getSession())
                 .setSession(context.getSession())
                 .getDefaultRepositories()) {
             if(repo.getConfig()!=null) {
@@ -61,9 +61,9 @@ public class RepositoryTypeNonOption extends DefaultNonOption {
                 }
             }
         }
-        List<NArgumentCandidate> all = new ArrayList<>();
+        List<NArgCandidate> all = new ArrayList<>();
         for (String v : allValid) {
-            all.add(new DefaultNArgumentCandidate(v));
+            all.add(new DefaultNArgCandidate(v));
         }
         return all;
     }

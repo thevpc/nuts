@@ -1,7 +1,7 @@
 package net.thevpc.nuts.toolbox.njob;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.cmdline.NArgument;
+import net.thevpc.nuts.cmdline.NArg;
 import net.thevpc.nuts.cmdline.NCommandLine;
 import net.thevpc.nuts.format.NMutableTableModel;
 import net.thevpc.nuts.format.NTableFormat;
@@ -38,7 +38,7 @@ public class NJobsSubCmd {
         NRef<Boolean> list = NRef.of(false);
         NRef<Boolean> show = NRef.of(false);
         while (cmd.hasNext()) {
-            NArgument aa = cmd.peek().get();
+            NArg aa = cmd.peek().get();
             switch (aa.key()) {
                 case "--list":
                 case "-l": {
@@ -116,7 +116,7 @@ public class NJobsSubCmd {
         Data d = new Data();
         List<Consumer<NJob>> runLater = new ArrayList<>();
         while (cmd.hasNext()) {
-            NArgument a = cmd.peek().get(session);
+            NArg a = cmd.peek().get(session);
             switch (a.key()) {
                 case "--list":
                 case "-l": {
@@ -270,7 +270,7 @@ public class NJobsSubCmd {
     private void runJobRemove(NCommandLine cmd) {
         NTexts text = NTexts.of(context.getSession());
         while (cmd.hasNext()) {
-            NArgument a = cmd.next().get(session);
+            NArg a = cmd.next().get(session);
             NJob t = findJob(a.toString(), cmd);
             if (cmd.isExecMode()) {
                 if (service.jobs().removeJob(t.getId())) {
@@ -292,7 +292,7 @@ public class NJobsSubCmd {
 
     private void runJobShow(NCommandLine cmd) {
         while (cmd.hasNext()) {
-            NArgument a = cmd.next().get(session);
+            NArg a = cmd.next().get(session);
             if (cmd.isExecMode()) {
                 NJob job = findJob(a.toString(), cmd);
                 if (job == null) {
@@ -333,7 +333,7 @@ public class NJobsSubCmd {
         }
         Data d = new Data();
         while (cmd.hasNext()) {
-            NArgument a = cmd.peek().get(session);
+            NArg a = cmd.peek().get(session);
             switch (a.key()) {
                 case "-w":
                 case "--weeks": {

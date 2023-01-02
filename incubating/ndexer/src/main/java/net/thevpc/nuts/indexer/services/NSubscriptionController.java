@@ -2,6 +2,7 @@ package net.thevpc.nuts.indexer.services;
 
 import javax.annotation.PostConstruct;
 
+import net.thevpc.nuts.NRepositories;
 import net.thevpc.nuts.NSession;
 import net.thevpc.nuts.indexer.NIndexSubscriberListManager;
 import net.thevpc.nuts.indexer.NWorkspacePool;
@@ -41,7 +42,7 @@ public class NSubscriptionController {
     public ResponseEntity<Void> subscribe(@RequestParam("workspaceLocation") String workspaceLocation,
             @RequestParam("repositoryUuid") String repositoryUuid) {
         NSession session = workspacePool.openWorkspace(workspaceLocation);
-        List<NRepository> repositories = session.repos().getRepositories();
+        List<NRepository> repositories = NRepositories.of(session).getRepositories();
         for (NRepository repository : repositories) {
             if (repository.getUuid().equals(repositoryUuid)) {
                 this.subscriberManager.subscribe(repositoryUuid,
@@ -57,7 +58,7 @@ public class NSubscriptionController {
     public ResponseEntity<Void> unsubscribe(@RequestParam("workspaceLocation") String workspaceLocation,
             @RequestParam("repositoryUuid") String repositoryUuid) {
         NSession session = workspacePool.openWorkspace(workspaceLocation);
-        List<NRepository> repositories = session.repos().getRepositories();
+        List<NRepository> repositories = NRepositories.of(session).getRepositories();
         for (NRepository repository : repositories) {
             if (repository.getUuid().equals(repositoryUuid)) {
                 this.subscriberManager.unsubscribe(repositoryUuid,
@@ -73,7 +74,7 @@ public class NSubscriptionController {
             @RequestParam("repositoryUuid") String repositoryUuid) {
         System.out.println(workspaceLocation + " " + repositoryUuid);
         NSession session = workspacePool.openWorkspace(workspaceLocation);
-        List<NRepository> repositories = session.repos().getRepositories();
+        List<NRepository> repositories = NRepositories.of(session).getRepositories();
         for (NRepository repository : repositories) {
             if (repository.getUuid().equals(repositoryUuid)) {
                 boolean subscribed = this.subscriberManager.isSubscribed(repositoryUuid,

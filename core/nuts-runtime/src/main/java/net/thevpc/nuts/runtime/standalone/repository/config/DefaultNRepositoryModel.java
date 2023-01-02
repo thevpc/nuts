@@ -13,7 +13,7 @@ import net.thevpc.nuts.spi.*;
 import net.thevpc.nuts.runtime.standalone.repository.impl.NSimpleRepositoryWrapper;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceExt;
 import net.thevpc.nuts.runtime.standalone.workspace.config.NRepositoryConfigManagerExt;
-import net.thevpc.nuts.runtime.standalone.workspace.config.NWorkspaceConfigManagerExt;
+import net.thevpc.nuts.runtime.standalone.workspace.config.NConfigsExt;
 import net.thevpc.nuts.runtime.standalone.event.DefaultNWorkspaceEvent;
 import net.thevpc.nuts.runtime.standalone.io.util.CoreIOUtils;
 import net.thevpc.nuts.runtime.standalone.util.CoreNUtils;
@@ -155,11 +155,11 @@ public class DefaultNRepositoryModel {
     }
 
     public void removeRepository(String repositoryId, NSession session) {
-        session.security().setSession(session).checkAllowed(NConstants.Permissions.REMOVE_REPOSITORY, "remove-repository");
+        NWorkspaceSecurityManager.of(session).checkAllowed(NConstants.Permissions.REMOVE_REPOSITORY, "remove-repository");
         final NRepository repository = repositoryRegistryHelper.removeRepository(repositoryId, session);
         if (repository != null) {
-            session.config().save();
-            NWorkspaceConfigManagerExt config = NWorkspaceConfigManagerExt.of(session.config());
+            NConfigs.of(session).save();
+            NConfigsExt config = NConfigsExt.of(NConfigs.of(session));
             config.getModel().fireConfigurationChanged("config-main", session, ConfigEventType.MAIN);
             NWorkspaceUtils.of(session).events().fireOnRemoveRepository(new DefaultNWorkspaceEvent(session, repository, "repository", repository, null));
         }
@@ -174,9 +174,9 @@ public class DefaultNRepositoryModel {
     protected void addRepository(NRepository repo, NSession session, boolean temp, boolean enabled) {
         repositoryRegistryHelper.addRepository(repo, session);
         repo.setEnabled(enabled, session);
-        session.config().save();
+        NConfigs.of(session).save();
         if (!temp) {
-            NWorkspaceConfigManagerExt config = NWorkspaceConfigManagerExt.of(session.config());
+            NConfigsExt config = NConfigsExt.of(NConfigs.of(session));
             config.getModel().fireConfigurationChanged("config-main", session, ConfigEventType.MAIN);
             if (repo != null) {
                 // repo would be null if the repo is not accessible
@@ -206,7 +206,7 @@ public class DefaultNRepositoryModel {
         NRepositoryModel repoModel = options.getRepositoryModel();
         if (rootFolder == null) {
             if (parentRepository == null) {
-                NWorkspaceConfigManagerExt cc = NWorkspaceConfigManagerExt.of(session.config());
+                NConfigsExt cc = NConfigsExt.of(NConfigs.of(session));
                 rootFolder = options.isTemporary() ?
                         cc.getModel().getTempRepositoriesRoot(session).toFile()
                         : cc.getModel().getRepositoriesRoot(session).toFile();
@@ -262,9 +262,9 @@ public class DefaultNRepositoryModel {
                 options.setConfig(conf);
                 if (options.isEnabled()) {
                     options.setEnabled(
-                            session.boot().getBootOptions().getRepositories() == null
+                            NBootManager.of(session).getBootOptions().getRepositories() == null
                                     || NRepositorySelectorList.ofAll(
-                                            session.boot().getBootOptions().getRepositories().orNull(),
+                                            NBootManager.of(session).getBootOptions().getRepositories().orNull(),
                                     NRepositoryDB.of(session),session
                             ).acceptExisting(
                                     conf.getLocation().setName(options.getName())
@@ -274,9 +274,9 @@ public class DefaultNRepositoryModel {
                 options.setConfig(conf);
                 if (options.isEnabled()) {
                     options.setEnabled(
-                            session.boot().getBootOptions().getRepositories() == null
+                            NBootManager.of(session).getBootOptions().getRepositories() == null
                                     || NRepositorySelectorList.ofAll(
-                                            session.boot().getBootOptions().getRepositories().orNull(),
+                                            NBootManager.of(session).getBootOptions().getRepositories().orNull(),
                                     NRepositoryDB.of(session),session
                             ).acceptExisting(
                                     conf.getLocation().setName(options.getName())
@@ -354,7 +354,7 @@ public class DefaultNRepositoryModel {
                 }
                 conf = elem.json().parse(file, NRepositoryConfig.class);
             } catch (RuntimeException ex) {
-                if (session.boot().getBootOptions().getRecover().orElse(false)) {
+                if (NBootManager.of(session).getBootOptions().getRecover().orElse(false)) {
                     onLoadRepositoryError(file, name, null, ex, session);
                 } else {
                     throw ex;
@@ -369,16 +369,16 @@ public class DefaultNRepositoryModel {
     }
 
     private void onLoadRepositoryError(NPath file, String name, String uuid, Throwable ex, NSession session) {
-        NWorkspaceConfigManager wconfig = session.config().setSession(session);
-        NBootManager wboot = session.boot().setSession(session);
-        NWorkspaceEnvManager wenv = session.env().setSession(session);
+        NConfigs wconfig = NConfigs.of(session).setSession(session);
+        NBootManager wboot = NBootManager.of(session);
+        NEnvs wenv = NEnvs.of(session);
         if (wconfig.isReadOnly()) {
             throw new NIOException(session, NMsg.ofCstyle("error loading repository %s", file), ex);
         }
         String fileName = "nuts-repository" + (name == null ? "" : ("-") + name) + (uuid == null ? "" : ("-") + uuid) + "-" + Instant.now().toString();
         LOG.with().session(session).level(Level.SEVERE).verb(NLoggerVerb.FAIL).log(
                 NMsg.ofJstyle("erroneous repository config file. Unable to load file {0} : {1}", file, ex));
-        NPath logError = session.locations().getStoreLocation(getWorkspace().getApiId(), NStoreLocation.LOG)
+        NPath logError = NLocations.of(session).getStoreLocation(getWorkspace().getApiId(), NStoreLocation.LOG)
                 .resolve("invalid-config");
         try {
             logError.mkParentDirs();
@@ -395,11 +395,11 @@ public class DefaultNRepositoryModel {
         }
 
         try (PrintStream o = new PrintStream(logError.resolve(fileName + ".error").getOutputStream())) {
-            o.printf("workspace.path:%s%n", session.locations().getWorkspaceLocation());
+            o.printf("workspace.path:%s%n", NLocations.of(session).getWorkspaceLocation());
             o.printf("repository.path:%s%n", file);
             o.printf("workspace.options:%s%n", wboot.getBootOptions().toCommandLine(new NWorkspaceOptionsConfig().setCompact(false)));
             for (NStoreLocation location : NStoreLocation.values()) {
-                o.printf("location." + location.id() + ":%s%n", session.locations().getStoreLocation(location));
+                o.printf("location." + location.id() + ":%s%n", NLocations.of(session).getStoreLocation(location));
             }
             o.printf("java.class.path:%s%n", System.getProperty("java.class.path"));
             o.println();

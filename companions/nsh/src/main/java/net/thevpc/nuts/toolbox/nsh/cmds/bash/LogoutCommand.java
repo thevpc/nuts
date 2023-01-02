@@ -26,6 +26,7 @@
  */
 package net.thevpc.nuts.toolbox.nsh.cmds.bash;
 
+import net.thevpc.nuts.NWorkspaceSecurityManager;
 import net.thevpc.nuts.cmdline.NCommandLine;
 import net.thevpc.nuts.spi.NComponentScope;
 import net.thevpc.nuts.spi.NComponentScopeType;
@@ -52,6 +53,6 @@ public class LogoutCommand extends SimpleJShellBuiltin {
 
     @Override
     protected void execBuiltin(NCommandLine commandLine, JShellExecutionContext context) {
-        context.getSession().security().logout();
+        NWorkspaceSecurityManager.of(context.getSession()).logout();
     }
 }

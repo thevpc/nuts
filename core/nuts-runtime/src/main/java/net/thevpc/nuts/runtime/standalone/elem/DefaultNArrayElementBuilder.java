@@ -282,7 +282,7 @@ public class DefaultNArrayElementBuilder implements NArrayElementBuilder {
     }
 
     private NElements _elements() {
-        return NElements.of(session).setSession(session);
+        return NElements.of(session);
     }
 //
 //    private NutsPrimitiveElementBuilder _primitive() {

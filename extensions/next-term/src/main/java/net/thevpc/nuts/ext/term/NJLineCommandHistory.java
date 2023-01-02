@@ -109,7 +109,7 @@ public class NJLineCommandHistory implements NCommandHistory {
 
     @Override
     public int getSupportLevel(NSupportLevelContext context) {
-        NSystemTerminal st = context.getSession().config().getSystemTerminal();
+        NSystemTerminal st = NConfigs.of(context.getSession()).getSystemTerminal();
         boolean jline=false;
         NSystemTerminalBase b = st.getBase();
         if(b!=null){

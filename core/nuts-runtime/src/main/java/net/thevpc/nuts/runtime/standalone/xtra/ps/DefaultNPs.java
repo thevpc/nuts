@@ -54,7 +54,7 @@ public class DefaultNPs implements NPs {
     @Override
     public boolean isSupportedKillProcess(){
         checkSession();
-        NOsFamily f = getSession().env().getOsFamily();
+        NOsFamily f = NEnvs.of(getSession()).getOsFamily();
         return f == NOsFamily.LINUX || f == NOsFamily.MACOS || f == NOsFamily.UNIX;
     }
 
@@ -62,7 +62,7 @@ public class DefaultNPs implements NPs {
     @Override
     public boolean killProcess(String processId) {
         checkSession();
-        return getSession().exec()
+        return NExecCommand.of(getSession())
                 .addCommand("kill", "-9", processId)
                 .getResult()==0;
     }
@@ -112,7 +112,7 @@ public class DefaultNPs implements NPs {
             return v;
         }
         NVersionFilter nvf = NBlankable.isBlank(version) ? null : NVersion.of(version).get(session).filter(session);
-        NPlatformLocation[] availableJava = session.env().platforms().setSession(session).findPlatforms(NPlatformFamily.JAVA,
+        NPlatformLocation[] availableJava = NEnvs.of(session).platforms().setSession(session).findPlatforms(NPlatformFamily.JAVA,
                 java -> "jdk".equals(java.getPackaging()) && (nvf == null || nvf.acceptVersion(NVersion.of(java.getVersion()).get(session), session))
         ).toArray(NPlatformLocation[]::new);
         for (NPlatformLocation java : availableJava) {
@@ -169,7 +169,7 @@ public class DefaultNPs implements NPs {
             if (jdkHome != null) {
                 cmd = jdkHome + File.separator + "bin" + File.separator + cmd;
             }
-            b = getSession().exec()
+            b = NExecCommand.of(getSession())
                     .setExecutionType(NExecutionType.SYSTEM)
                     .addCommand(cmd)
                     .addCommand("-l" + (mainArgs ? "m" : "") + (vmArgs ? "v" : ""))

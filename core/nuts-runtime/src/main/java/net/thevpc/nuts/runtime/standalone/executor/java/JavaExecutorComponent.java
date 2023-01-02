@@ -107,7 +107,7 @@ public class JavaExecutorComponent implements NExecutorComponent {
     public static NWorkspaceOptionsBuilder createChildOptions(NExecutionContext executionContext) {
         NSession session = executionContext.getSession();
         NSession execSession = executionContext.getExecSession();
-        NWorkspaceOptionsBuilder options = session.boot().getBootOptions().builder();
+        NWorkspaceOptionsBuilder options = NBootManager.of(session).getBootOptions().builder();
 
         //copy session parameters to the newly created workspace
         options.setDry(execSession.isDry());

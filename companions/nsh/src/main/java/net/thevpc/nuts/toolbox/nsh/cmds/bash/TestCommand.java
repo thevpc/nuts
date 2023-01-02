@@ -27,7 +27,7 @@
 package net.thevpc.nuts.toolbox.nsh.cmds.bash;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.cmdline.NArgument;
+import net.thevpc.nuts.cmdline.NArg;
 import net.thevpc.nuts.cmdline.NCommandLine;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.io.NPathPermission;
@@ -192,7 +192,7 @@ public class TestCommand extends SimpleJShellBuiltin {
         NSession session = context.getSession();
         commandLine.setExpandSimpleOptions(false);
         Options options=context.getOptions();
-        NArgument a = commandLine.next().get(session);
+        NArg a = commandLine.next().get(session);
         switch (a.asString().get(session)) {
             case "(": {
                 options.operators.add(a.asString().get(session));
@@ -282,9 +282,9 @@ public class TestCommand extends SimpleJShellBuiltin {
 
     private static class EvalArg extends EvalBase {
 
-        private NArgument arg;
+        private NArg arg;
 
-        public EvalArg(NArgument arg) {
+        public EvalArg(NArg arg) {
             super("arg");
             this.arg = arg;
         }

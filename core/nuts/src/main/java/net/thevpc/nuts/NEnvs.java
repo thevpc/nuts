@@ -26,29 +26,78 @@ package net.thevpc.nuts;
 
 import net.thevpc.nuts.spi.NComponent;
 
+import java.nio.file.Path;
+import java.util.Map;
 import java.util.Set;
 
 /**
+ * @author thevpc
  * @app.category Base
  */
-public interface NImportManager extends NComponent {
-    static NImportManager of(NSession session) {
-        return NExtensions.of(session).createSupported(NImportManager.class);
+public interface NEnvs extends NComponent {
+    static NEnvs of(NSession session) {
+        return NExtensions.of(session).createSupported(NEnvs.class);
     }
 
-    NImportManager addImports(String... importExpression);
+    /**
+     * @return properties
+     * @since 0.8.1
+     */
+    Map<String, Object> getProperties();
 
-    NImportManager clearImports();
+    /**
+     * return property raw value
+     *
+     * @param property property name
+     * @return property raw value
+     * @since 0.8.1
+     */
+    NOptional<NValue> getProperty(String property);
 
-    NImportManager removeImports(String... importExpression);
+    /**
+     * @param property property
+     * @param value    value
+     * @return {@code this} instance
+     * @since 0.8.1
+     */
+    NEnvs setProperty(String property, Object value);
 
-    NImportManager updateImports(String[] imports);
+    NOsFamily getOsFamily();
 
-    Set<String> getAllImports();
+    Set<NShellFamily> getShellFamilies();
 
-    boolean isImportedGroupId(String groupId);
+    NShellFamily getShellFamily();
+
+    NId getDesktopEnvironment();
+
+    Set<NId> getDesktopEnvironments();
+
+    NDesktopEnvironmentFamily getDesktopEnvironmentFamily();
+
+    Set<NDesktopEnvironmentFamily> getDesktopEnvironmentFamilies();
+
+    NPlatformManager platforms();
+
+    NId getPlatform();
+
+    NId getOs();
+
+    NId getOsDist();
+
+    NId getArch();
+
+    NArchFamily getArchFamily();
 
     NSession getSession();
 
-    NImportManager setSession(NSession session);
+    NEnvs setSession(NSession session);
+
+    boolean isGraphicalDesktopEnvironment();
+
+    NSupportMode getDesktopIntegrationSupport(NDesktopIntegrationItem target);
+
+    Path getDesktopPath();
+
+    void addLauncher(NLauncherOptions launcher);
+
 }

@@ -207,7 +207,7 @@ public class DefaultNWorkspaceEnvManagerModel {
             return Collections.singleton(
                     NIdBuilder.of().setArtifactId(NDesktopEnvironmentFamily.HEADLESS.id()).build());
         }
-        switch (session.env().getOsFamily()) {
+        switch (NEnvs.of(session).getOsFamily()) {
             case WINDOWS: {
                 return Collections.singleton(NIdBuilder.of().setArtifactId(NDesktopEnvironmentFamily.WINDOWS_SHELL.id()).build());
             }

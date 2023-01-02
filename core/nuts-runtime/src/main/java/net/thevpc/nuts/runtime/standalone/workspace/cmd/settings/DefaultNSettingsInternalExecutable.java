@@ -6,7 +6,7 @@
 package net.thevpc.nuts.runtime.standalone.workspace.cmd.settings;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.cmdline.NArgument;
+import net.thevpc.nuts.cmdline.NArg;
 import net.thevpc.nuts.cmdline.NCommandLine;
 import net.thevpc.nuts.io.NOutStream;
 import net.thevpc.nuts.runtime.standalone.app.util.NAppUtils;
@@ -44,7 +44,7 @@ public class DefaultNSettingsInternalExecutable extends DefaultInternalNExecutab
         Boolean autoSave = true;
         NCommandLine cmd = NCommandLine.of(args);
         boolean empty = true;
-        NArgument a;
+        NArg a;
         do {
             a = cmd.peek().get(session);
             if(a==null){

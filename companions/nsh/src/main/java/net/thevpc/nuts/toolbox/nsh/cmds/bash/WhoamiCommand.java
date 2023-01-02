@@ -77,14 +77,14 @@ public class WhoamiCommand extends SimpleJShellBuiltin {
             result.login = System.getProperty("user.name");
         } else {
             NSession session = context.getSession();
-            String login = session.security().getCurrentUsername();
+            String login = NWorkspaceSecurityManager.of(session).getCurrentUsername();
             result.login = login;
             if (options.argAll) {
-                NUser user = session.security().findUser(login);
+                NUser user = NWorkspaceSecurityManager.of(session).findUser(login);
                 Set<String> groups = new TreeSet<>((user.getGroups()));
                 Set<String> rights = new TreeSet<>((user.getPermissions()));
                 Set<String> inherited = new TreeSet<>((user.getInheritedPermissions()));
-                result.loginStack = session.security().getCurrentLoginStack();
+                result.loginStack = NWorkspaceSecurityManager.of(session).getCurrentLoginStack();
                 if (result.loginStack.length <= 1) {
                     result.loginStack = null;
                 }
@@ -110,7 +110,7 @@ public class WhoamiCommand extends SimpleJShellBuiltin {
                     result.remoteId = user.getRemoteIdentity();
                 }
                 List<RepoResult> rr = new ArrayList<>();
-                for (NRepository repository : context.getSession().repos().getRepositories()) {
+                for (NRepository repository : NRepositories.of(context.getSession()).getRepositories()) {
                     NUser ruser = repository.security().getEffectiveUser(login);
                     if (ruser != null && (ruser.getGroups().size() > 0
                             || ruser.getPermissions().size() > 0

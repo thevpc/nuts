@@ -39,7 +39,7 @@ public class NExecHelper extends AbstractSyncIProcessExecHelper {
         NOutStream out = null;
         NOutStream err = null;
         InputStream in = null;
-        NExecCommand pb = session.exec();
+        NExecCommand pb = NExecCommand.of(session);
         NCommandLineUtils.OptionsAndArgs optionsAndArgs = NCommandLineUtils.parseOptionsFirst(args);
         pb.setCommand(optionsAndArgs.getArgs())
                 .addExecutorOptions(optionsAndArgs.getOptions())
@@ -100,7 +100,7 @@ public class NExecHelper extends AbstractSyncIProcessExecHelper {
                             commandOut
                     ));
         }
-        if (showCommand || session.boot().getCustomBootOption("---show-command")
+        if (showCommand || NBootManager.of(session).getCustomBootOption("---show-command")
                 .flatMap(NValue::asBoolean)
                 .orElse(false)) {
             if (prepareTerminal.out().getTerminalMode() == NTerminalMode.FORMATTED) {
@@ -120,7 +120,7 @@ public class NExecHelper extends AbstractSyncIProcessExecHelper {
                                            NSession session,
                                            NSession execSession
     ) throws NExecutionException {
-        Path wsLocation = session.locations().getWorkspaceLocation().toFile();
+        Path wsLocation = NLocations.of(session).getWorkspaceLocation().toFile();
         Path pdirectory = null;
         if (NBlankable.isBlank(directory)) {
             pdirectory = wsLocation;

@@ -48,7 +48,7 @@ public class DefaultSourceControlHelper {
     //    @Override
     public NId commit(Path folder, NSession session) {
         NSessionUtils.checkSession(ws, session);
-        session.security().setSession(session).checkAllowed(NConstants.Permissions.DEPLOY, "commit");
+        NWorkspaceSecurityManager.of(session).checkAllowed(NConstants.Permissions.DEPLOY, "commit");
         if (folder == null || !Files.isDirectory(folder)) {
             throw new NIllegalArgumentException(session, NMsg.ofCstyle("not a directory %s", folder));
         }
@@ -61,7 +61,7 @@ public class DefaultSourceControlHelper {
             String newVersion = NVersion.of(oldVersion).get(session).inc().getValue();
             NDefinition newVersionFound = null;
             try {
-                newVersionFound = session.fetch().setId(d.getId().builder().setVersion(newVersion).build()).setSession(session).getResultDefinition();
+                newVersionFound = NFetchCommand.of(session).setId(d.getId().builder().setVersion(newVersion).build()).setSession(session).getResultDefinition();
             } catch (NNotFoundException ex) {
                 _LOGOP(session).level(Level.FINE).error(ex)
                         .log(NMsg.ofJstyle("failed to fetch {0}", d.getId().builder().setVersion(newVersion).build()));
@@ -72,7 +72,7 @@ public class DefaultSourceControlHelper {
             } else {
                 d = d.builder().setId(d.getId().builder().setVersion(oldVersion + ".1").build()).build();
             }
-            NId newId = session.deploy().setContent(folder).setDescriptor(d).setSession(session).getResult().get(0);
+            NId newId = NDeployCommand.of(session).setContent(folder).setDescriptor(d).setSession(session).getResult().get(0);
             d.formatter(session).print(file);
             CoreIOUtils.delete(session, folder);
             return newId;
@@ -89,8 +89,8 @@ public class DefaultSourceControlHelper {
     //    @Override
     public NDefinition checkout(NId id, Path folder, NSession session) {
         NSessionUtils.checkSession(ws, session);
-        session.security().checkAllowed(NConstants.Permissions.INSTALL, "checkout");
-        NDefinition nutToInstall = session.fetch().setId(id).setSession(session).setOptional(false).setDependencies(true).getResultDefinition();
+        NWorkspaceSecurityManager.of(session).checkAllowed(NConstants.Permissions.INSTALL, "checkout");
+        NDefinition nutToInstall = NFetchCommand.of(session).setId(id).setSession(session).setOptional(false).setDependencies(true).getResultDefinition();
         if ("zip".equals(nutToInstall.getDescriptor().getPackaging())) {
 
             try {

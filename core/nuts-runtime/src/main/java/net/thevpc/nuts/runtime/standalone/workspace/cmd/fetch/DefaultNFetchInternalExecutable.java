@@ -5,6 +5,7 @@
  */
 package net.thevpc.nuts.runtime.standalone.workspace.cmd.fetch;
 
+import net.thevpc.nuts.NFetchCommand;
 import net.thevpc.nuts.NSession;
 import net.thevpc.nuts.runtime.standalone.app.util.NAppUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.exec.DefaultInternalNExecutableCommand;
@@ -29,7 +30,7 @@ public class DefaultNFetchInternalExecutable extends DefaultInternalNExecutableC
             showDefaultHelp();
             return;
         }
-        getSession().fetch().configure(false, args).run();
+        NFetchCommand.of(getSession()).configure(false, args).run();
     }
 
 }

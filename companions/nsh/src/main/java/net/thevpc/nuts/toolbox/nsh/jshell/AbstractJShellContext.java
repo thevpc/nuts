@@ -139,7 +139,7 @@ public abstract class AbstractJShellContext implements JShellContext {
             command.autoComplete(new DefaultJShellExecutionContext(this, command), autoComplete);
         } else {
             NSession session = this.getSession();
-            List<NId> nutsIds = session.search()
+            List<NId> nutsIds = NSearchCommand.of(session)
                     .addId(commandName)
                     .setLatest(true)
                     .addScope(NDependencyScopePattern.RUN)
@@ -148,14 +148,14 @@ public abstract class AbstractJShellContext implements JShellContext {
                     .getResultIds().toList();
             if (nutsIds.size() == 1) {
                 NId selectedId = nutsIds.get(0);
-                NDefinition def = session.search().addId(selectedId).setEffective(true).setSession(this.getSession()
+                NDefinition def = NSearchCommand.of(session).addId(selectedId).setEffective(true).setSession(this.getSession()
                         .copy().setFetchStrategy(NFetchStrategy.OFFLINE)).getResultDefinitions().required();
                 NDescriptor d = def.getDescriptor();
                 String nuts_autocomplete_support = NStringUtils.trim(d.getPropertyValue("nuts.autocomplete").flatMap(NValue::asString).get(session));
                 if (d.isApplication()
                         || "true".equalsIgnoreCase(nuts_autocomplete_support)
                         || "supported".equalsIgnoreCase(nuts_autocomplete_support)) {
-                    NExecCommand t = session.exec()
+                    NExecCommand t = NExecCommand.of(session)
                             .grabOutputString()
                             .grabErrorString()
                             .addCommand(
@@ -186,7 +186,7 @@ public abstract class AbstractJShellContext implements JShellContext {
                                             display = value;
                                         }
                                         autoComplete.addCandidate(
-                                                new DefaultNArgumentCandidate(
+                                                new DefaultNArgCandidate(
                                                         value
                                                 )
                                         );
@@ -203,7 +203,7 @@ public abstract class AbstractJShellContext implements JShellContext {
 
         }
         List<JShellAutoCompleteCandidate> all = new ArrayList<>();
-        for (NArgumentCandidate a : autoComplete.getCandidates()) {
+        for (NArgCandidate a : autoComplete.getCandidates()) {
             all.add(new JShellAutoCompleteCandidate(a.getValue(), a.getDisplay()));
         }
         return all;

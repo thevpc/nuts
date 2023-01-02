@@ -33,9 +33,9 @@ import java.util.Map;
  * @author thevpc
  * @app.category Base
  */
-public interface NWorkspaceLocationManager extends NComponent {
-    static NWorkspaceLocationManager of(NSession session) {
-        return NExtensions.of(session).createSupported(NWorkspaceLocationManager.class);
+public interface NLocations extends NComponent {
+    static NLocations of(NSession session) {
+        return NExtensions.of(session).createSupported(NLocations.class);
     }
     NPath getHomeLocation(NStoreLocation folderType);
 
@@ -49,13 +49,13 @@ public interface NWorkspaceLocationManager extends NComponent {
 
     NStoreLocationStrategy getStoreLocationStrategy();
 
-    NWorkspaceLocationManager setStoreLocationStrategy(NStoreLocationStrategy strategy);
+    NLocations setStoreLocationStrategy(NStoreLocationStrategy strategy);
 
     NStoreLocationStrategy getRepositoryStoreLocationStrategy();
 
     NOsFamily getStoreLocationLayout();
 
-    NWorkspaceLocationManager setStoreLocationLayout(NOsFamily layout);
+    NLocations setStoreLocationLayout(NOsFamily layout);
 
     /**
      * all home locations key/value map where keys are in the form "location"
@@ -85,12 +85,12 @@ public interface NWorkspaceLocationManager extends NComponent {
 
     NPath getWorkspaceLocation();
 
-    NWorkspaceLocationManager setStoreLocation(NStoreLocation folderType, String location);
+    NLocations setStoreLocation(NStoreLocation folderType, String location);
 
-    NWorkspaceLocationManager setHomeLocation(NHomeLocation homeType, String location);
+    NLocations setHomeLocation(NHomeLocation homeType, String location);
 
     NSession getSession();
 
-    NWorkspaceLocationManager setSession(NSession session);
+    NLocations setSession(NSession session);
 
 }

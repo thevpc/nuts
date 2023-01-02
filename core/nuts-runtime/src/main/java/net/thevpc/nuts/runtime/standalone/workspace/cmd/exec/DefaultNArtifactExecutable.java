@@ -6,7 +6,7 @@
 package net.thevpc.nuts.runtime.standalone.workspace.cmd.exec;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.cmdline.NArgument;
+import net.thevpc.nuts.cmdline.NArg;
 import net.thevpc.nuts.cmdline.NCommandLine;
 import net.thevpc.nuts.io.NOutStream;
 
@@ -62,7 +62,7 @@ public class DefaultNArtifactExecutable extends AbstractNExecutableCommand {
 
         }
         for (String option : executorOptions) {
-            NArgument a = NArgument.of(option);
+            NArg a = NArg.of(option);
             if (a.key().equals("--nuts-auto-install")) {
                 if (a.isKeyValue()) {
                     autoInstall = a.isNegated() != a.getBooleanValue().get(session);
@@ -86,7 +86,7 @@ public class DefaultNArtifactExecutable extends AbstractNExecutableCommand {
     public void execute() {
         if (execSession.isDry()) {
             if (autoInstall && !def.getInstallInformation().get(session).getInstallStatus().isInstalled()) {
-                execSession.security().checkAllowed(NConstants.Permissions.AUTO_INSTALL, commandName);
+                NWorkspaceSecurityManager.of(execSession).checkAllowed(NConstants.Permissions.AUTO_INSTALL, commandName);
                 NOutStream out = execSession.out();
                 out.printf("[dry] ==install== %s%n", def.getId().getLongName());
             }
@@ -96,8 +96,8 @@ public class DefaultNArtifactExecutable extends AbstractNExecutableCommand {
         NInstallStatus installStatus = def.getInstallInformation().get(session).getInstallStatus();
         if (!installStatus.isInstalled()) {
             if (autoInstall) {
-                session.install().setSession(session).addId(def.getId()).run();
-                NInstallStatus st = session.fetch().setSession(session).setId(def.getId()).getResultDefinition().getInstallInformation().get(session).getInstallStatus();
+                NInstallCommand.of(session).addId(def.getId()).run();
+                NInstallStatus st = NFetchCommand.of(session).setId(def.getId()).getResultDefinition().getInstallInformation().get(session).getInstallStatus();
                 if (!st.isInstalled()) {
                     throw new NUnexpectedException(execSession, NMsg.ofCstyle("auto installation of %s failed", def.getId()));
                 }
@@ -106,9 +106,9 @@ public class DefaultNArtifactExecutable extends AbstractNExecutableCommand {
             }
         } else if (installStatus.isObsolete()) {
             if (autoInstall) {
-                session.install()
+                NInstallCommand.of(session)
                         .configure(true, "--reinstall")
-                        .setSession(session).addId(def.getId()).run();
+                        .addId(def.getId()).run();
             }
         }
 //        LinkedHashSet<NutsDependency> reinstall = new LinkedHashSet<>();

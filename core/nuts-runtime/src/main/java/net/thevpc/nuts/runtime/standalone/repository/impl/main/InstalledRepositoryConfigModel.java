@@ -123,7 +123,7 @@ class InstalledRepositoryConfigModel implements NRepositoryConfigModel {
 
     @Override
     public NStoreLocationStrategy getStoreLocationStrategy(NSession session) {
-        return session.locations().getRepositoryStoreLocationStrategy();
+        return NLocations.of(session).getRepositoryStoreLocationStrategy();
     }
 
     @Override
@@ -248,7 +248,7 @@ class InstalledRepositoryConfigModel implements NRepositoryConfigModel {
     @Override
     public Map<String, String> toMap(boolean inherit, NSession session) {
         if (inherit) {
-            return session.config().getConfigMap();
+            return NConfigs.of(session).getConfigMap();
         }
         return new HashMap<>();
     }
@@ -262,7 +262,7 @@ class InstalledRepositoryConfigModel implements NRepositoryConfigModel {
     public NOptional<NValue> get(String key, boolean inherit, NSession session) {
         NOptional<NValue> o = NOptional.ofEmpty(s -> NMsg.ofCstyle("repo config property not found : %s", key));
         if (inherit) {
-            return o.orElseUse(()->session.config().getConfigProperty(key));
+            return o.orElseUse(()->NConfigs.of(session).getConfigProperty(key));
         }
         return o;
     }

@@ -1,7 +1,7 @@
 package net.thevpc.nuts.toolbox.nversion;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.cmdline.NArgument;
+import net.thevpc.nuts.cmdline.NArg;
 import net.thevpc.nuts.cmdline.NCommandLine;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.io.NOutStream;
@@ -72,7 +72,7 @@ public class NVersionMain implements NApplication {
         boolean table = false;
         boolean error = false;
         NCommandLine commandLine = context.getCommandLine();
-        NArgument a;
+        NArg a;
         int processed = 0;
         while (commandLine.hasNext()) {
             if ((a = commandLine.nextBoolean("--maven").orNull())!=null) {

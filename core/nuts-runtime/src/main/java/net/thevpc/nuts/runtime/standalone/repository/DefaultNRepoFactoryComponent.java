@@ -67,7 +67,7 @@ public class DefaultNRepoFactoryComponent implements NRepositoryFactoryComponent
     @Override
     public List<NAddRepositoryOptions> getDefaultRepositories(NSession session) {
         List<NAddRepositoryOptions> all=new ArrayList<>();
-        if (!session.config().isGlobal()) {
+        if (!NConfigs.of(session).isGlobal()) {
             all.add(NRepositorySelectorHelper.createRepositoryOptions(
                     Objects.requireNonNull(NRepositoryLocation.of("system", NRepositoryDB.of(session), session)),
                     true, session));

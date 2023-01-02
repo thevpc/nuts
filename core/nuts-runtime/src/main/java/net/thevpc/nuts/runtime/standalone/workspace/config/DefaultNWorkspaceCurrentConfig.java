@@ -123,7 +123,7 @@ public final class DefaultNWorkspaceCurrentConfig {
             apiId = NId.ofApi(Nuts.getVersion()).get(session);
         }
         if (storeLocationLayout == null) {
-            storeLocationLayout = session.env().getOsFamily();
+            storeLocationLayout = NEnvs.of(session).getOsFamily();
         }
         return this;
     }
@@ -413,11 +413,11 @@ public final class DefaultNWorkspaceCurrentConfig {
         }
         switch (folderType) {
             case CACHE:
-                return storeLocation.resolve(NConstants.Folders.ID).resolve(session.locations().getDefaultIdBasedir(id));
+                return storeLocation.resolve(NConstants.Folders.ID).resolve(NLocations.of(session).getDefaultIdBasedir(id));
             case CONFIG:
-                return storeLocation.resolve(NConstants.Folders.ID).resolve(session.locations().getDefaultIdBasedir(id));
+                return storeLocation.resolve(NConstants.Folders.ID).resolve(NLocations.of(session).getDefaultIdBasedir(id));
         }
-        return storeLocation.resolve(session.locations().getDefaultIdBasedir(id));
+        return storeLocation.resolve(NLocations.of(session).getDefaultIdBasedir(id));
     }
 
 }

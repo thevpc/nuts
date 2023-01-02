@@ -62,7 +62,7 @@ public class ZipInstallerComponent implements NInstallerComponent {
     public void install(NExecutionContext executionContext) {
         DefaultNDefinition nutsDefinition = (DefaultNDefinition) executionContext.getDefinition();
         NSession session = executionContext.getSession();
-        NPath installFolder = session.locations().getStoreLocation(nutsDefinition.getId(), NStoreLocation.APPS);
+        NPath installFolder = NLocations.of(session).getStoreLocation(nutsDefinition.getId(), NStoreLocation.APPS);
 
         String skipRoot = (String) executionContext.getExecutorProperties().get("unzip-skip-root");
         try {
@@ -76,8 +76,7 @@ public class ZipInstallerComponent implements NInstallerComponent {
         }
         nutsDefinition.setInstallInformation(NWorkspaceExt.of(session).getInstalledRepository().getInstallInformation(nutsDefinition.getId(), executionContext.getExecSession()));
         if (executionContext.getExecutorOptions().size() > 0) {
-            session
-                    .exec()
+            NExecCommand.of(session)
                     .addCommand(executionContext.getExecutorOptions())
                     .setSession(executionContext.getExecSession())
                     .setEnv(executionContext.getExecutorProperties())

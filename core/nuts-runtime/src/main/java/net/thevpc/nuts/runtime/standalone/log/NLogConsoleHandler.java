@@ -1,5 +1,6 @@
 package net.thevpc.nuts.runtime.standalone.log;
 
+import net.thevpc.nuts.NBootManager;
 import net.thevpc.nuts.util.NLogConfig;
 import net.thevpc.nuts.io.NOutStream;
 import net.thevpc.nuts.NSession;
@@ -45,7 +46,7 @@ public class NLogConsoleHandler extends StreamHandler {
         if (session.isBot()) {
             return false;
         }
-        NLogConfig logConfig = session.boot().getBootOptions().getLogConfig().orElseGet(NLogConfig::new);
+        NLogConfig logConfig = NBootManager.of(session).getBootOptions().getLogConfig().orElseGet(NLogConfig::new);
         Level sessionLogLevel = session.getLogTermLevel();
         if (sessionLogLevel == null) {
             if (logConfig != null) {

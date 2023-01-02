@@ -1,7 +1,7 @@
 package net.thevpc.nuts.runtime.standalone.version.format;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.cmdline.NArgument;
+import net.thevpc.nuts.cmdline.NArg;
 import net.thevpc.nuts.cmdline.NCommandLine;
 import net.thevpc.nuts.io.NOutStream;
 import net.thevpc.nuts.io.NTerminalMode;
@@ -34,7 +34,7 @@ public class DefaultNVersionFormat extends DefaultFormatBase<NVersionFormat> imp
     public boolean configureFirst(NCommandLine commandLine) {
         checkSession();
         NSession session = getSession();
-        NArgument aa = commandLine.peek().get(session);
+        NArg aa = commandLine.peek().get(session);
         if (aa == null) {
             return false;
         }
@@ -46,8 +46,8 @@ public class DefaultNVersionFormat extends DefaultFormatBase<NVersionFormat> imp
                 return true;
             }
             case "--add": {
-                NArgument aa2 = commandLine.nextString().get(session);
-                NArgument r = NArgument.of(aa2.getStringValue().get(session));
+                NArg aa2 = commandLine.nextString().get(session);
+                NArg r = NArg.of(aa2.getStringValue().get(session));
                 if (enabled) {
                     this.all = true;
                     this.extraProperties.put(r.key(), r.getStringValue().get(session));
@@ -137,7 +137,7 @@ public class DefaultNVersionFormat extends DefaultFormatBase<NVersionFormat> imp
         props.put("nuts-runtime-version", ws.getWorkspace().getRuntimeId().getVersion().toString());
         if (all) {
             props.put("java-version", System.getProperty("java.version"));
-            props.put("os-version", ws.env().getOs().getVersion().toString());
+            props.put("os-version", NEnvs.of(ws).getOs().getVersion().toString());
         }
         for (String extraKey : extraKeys) {
             props.put(extraKey, extraProperties.get(extraKey));

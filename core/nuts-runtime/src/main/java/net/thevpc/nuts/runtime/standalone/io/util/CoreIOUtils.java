@@ -657,7 +657,7 @@ public class CoreIOUtils {
     }
 
     public static InputStream getCachedUrlWithSHA1(String path, String sourceTypeName, boolean ignoreSha1NotFound, NSession session) {
-        final NPath cacheBasePath = session.locations().getStoreLocation(session.getWorkspace().getRuntimeId(), NStoreLocation.CACHE);
+        final NPath cacheBasePath = NLocations.of(session).getStoreLocation(session.getWorkspace().getRuntimeId(), NStoreLocation.CACHE);
         final NPath urlContent = cacheBasePath.resolve("urls-content");
         String sha1 = null;
         try {

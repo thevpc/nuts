@@ -8,12 +8,12 @@ import net.thevpc.nuts.util.NMapListener;
 
 import java.util.List;
 
-public class DefaultNWorkspaceEventManager implements NWorkspaceEventManager {
+public class DefaultNEvents implements NEvents {
 
     private DefaultNWorkspaceEventModel model;
     private NSession session;
 
-    public DefaultNWorkspaceEventManager(NSession session) {
+    public DefaultNEvents(NSession session) {
         this.session = session;
         NWorkspace w = this.session.getWorkspace();
         NWorkspaceExt e = (NWorkspaceExt) w;
@@ -39,19 +39,19 @@ public class DefaultNWorkspaceEventManager implements NWorkspaceEventManager {
     }
 
     @Override
-    public NWorkspaceEventManager setSession(NSession session) {
+    public NEvents setSession(NSession session) {
         this.session = NWorkspaceUtils.bindSession(model.getWorkspace(), session);
         return this;
     }
 
     @Override
-    public NWorkspaceEventManager removeRepositoryListener(NRepositoryListener listener) {
+    public NEvents removeRepositoryListener(NRepositoryListener listener) {
         model.removeRepositoryListener(listener);
         return this;
     }
 
     @Override
-    public NWorkspaceEventManager addRepositoryListener(NRepositoryListener listener) {
+    public NEvents addRepositoryListener(NRepositoryListener listener) {
         model.addRepositoryListener(listener);
         return this;
     }
@@ -62,13 +62,13 @@ public class DefaultNWorkspaceEventManager implements NWorkspaceEventManager {
     }
 
     @Override
-    public NWorkspaceEventManager addUserPropertyListener(NMapListener<String, Object> listener) {
+    public NEvents addUserPropertyListener(NMapListener<String, Object> listener) {
         model.addUserPropertyListener(listener);
         return this;
     }
 
     @Override
-    public NWorkspaceEventManager removeUserPropertyListener(NMapListener<String, Object> listener) {
+    public NEvents removeUserPropertyListener(NMapListener<String, Object> listener) {
         model.removeUserPropertyListener(listener);
         return this;
     }
@@ -79,13 +79,13 @@ public class DefaultNWorkspaceEventManager implements NWorkspaceEventManager {
     }
 
     @Override
-    public NWorkspaceEventManager removeWorkspaceListener(NWorkspaceListener listener) {
+    public NEvents removeWorkspaceListener(NWorkspaceListener listener) {
         model.removeWorkspaceListener(listener);
         return this;
     }
 
     @Override
-    public NWorkspaceEventManager addWorkspaceListener(NWorkspaceListener listener) {
+    public NEvents addWorkspaceListener(NWorkspaceListener listener) {
         model.addWorkspaceListener(listener);
         return this;
     }
@@ -96,13 +96,13 @@ public class DefaultNWorkspaceEventManager implements NWorkspaceEventManager {
     }
 
     @Override
-    public NWorkspaceEventManager removeInstallListener(NInstallListener listener) {
+    public NEvents removeInstallListener(NInstallListener listener) {
         model.removeInstallListener(listener);
         return this;
     }
 
     @Override
-    public NWorkspaceEventManager addInstallListener(NInstallListener listener) {
+    public NEvents addInstallListener(NInstallListener listener) {
         model.addInstallListener(listener);
         return this;
     }

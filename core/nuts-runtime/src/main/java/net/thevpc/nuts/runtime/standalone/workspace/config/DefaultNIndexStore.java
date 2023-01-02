@@ -171,7 +171,7 @@ public class DefaultNIndexStore extends AbstractNIndexStore {
     @Override
     public NIndexStore subscribe(NSession session) {
         String uu = "http://localhost:7070/indexer/subscription/subscribe?workspaceLocation="
-                + CoreIOUtils.urlEncodeString(session.locations().getWorkspaceLocation().toString(),session)
+                + CoreIOUtils.urlEncodeString(NLocations.of(session).getWorkspaceLocation().toString(),session)
                 + "&repositoryUuid=" + CoreIOUtils.urlEncodeString(getRepository().getUuid(),session);
         try {
             NPath.of(uu,session).getInputStream();
@@ -184,7 +184,7 @@ public class DefaultNIndexStore extends AbstractNIndexStore {
     @Override
     public NIndexStore unsubscribe(NSession session) {
         String uu = "http://localhost:7070/indexer/subscription/unsubscribe?workspaceLocation="
-                + CoreIOUtils.urlEncodeString(session.locations().getWorkspaceLocation().toString(),session)
+                + CoreIOUtils.urlEncodeString(NLocations.of(session).getWorkspaceLocation().toString(),session)
                 + "&repositoryUuid=" + CoreIOUtils.urlEncodeString(getRepository().getUuid(),session);
         try {
             NPath.of(uu,session).getInputStream();
@@ -197,7 +197,7 @@ public class DefaultNIndexStore extends AbstractNIndexStore {
     @Override
     public boolean isSubscribed(NSession session) {
         String uu = "http://localhost:7070/indexer/subscription/isSubscribed?workspaceLocation="
-                + CoreIOUtils.urlEncodeString(session.locations().getWorkspaceLocation().toString(),session)
+                + CoreIOUtils.urlEncodeString(NLocations.of(session).getWorkspaceLocation().toString(),session)
                 + "&repositoryUuid=" + CoreIOUtils.urlEncodeString(getRepository().getUuid(),session);
         try {
             return new Scanner(NPath.of(uu,session).getInputStream()).nextBoolean();

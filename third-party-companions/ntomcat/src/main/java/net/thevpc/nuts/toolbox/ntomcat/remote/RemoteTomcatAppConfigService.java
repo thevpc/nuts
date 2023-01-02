@@ -50,7 +50,7 @@ public class RemoteTomcatAppConfigService extends RemoteTomcatServiceBase {
         if (!server.startsWith("ssh://")) {
             server = "ssh://" + server;
         }
-        session.exec()
+        NExecCommand.of(session)
                 .addCommand(
                         "nsh",
                         "--bot",
@@ -76,8 +76,7 @@ public class RemoteTomcatAppConfigService extends RemoteTomcatServiceBase {
         if (!fileAdded) {
             cmd.add(config.getPath());
         }
-        NExecCommand s = session
-                .exec()
+        NExecCommand s = NExecCommand.of(session)
                 .setRedirectErrorStream(true)
                 .grabOutputString()
                 .addCommand(cmd).run();

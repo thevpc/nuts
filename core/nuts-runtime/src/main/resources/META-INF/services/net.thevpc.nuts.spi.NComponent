@@ -47,14 +47,14 @@ net.thevpc.nuts.runtime.standalone.workspace.cmd.uninstall.DefaultNUninstallComm
 net.thevpc.nuts.runtime.standalone.workspace.cmd.update.DefaultNUpdateCommand
 net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.updatestats.DefaultNUpdateStatisticsCommand
 net.thevpc.nuts.runtime.standalone.boot.DefaultNBootManager
-net.thevpc.nuts.runtime.standalone.workspace.config.DefaultNWorkspaceEnvManager
-net.thevpc.nuts.runtime.standalone.workspace.config.DefaultNWorkspaceLocationManager
-net.thevpc.nuts.runtime.standalone.workspace.config.DefaultImportManager
+net.thevpc.nuts.runtime.standalone.workspace.config.DefaultNEnvs
+net.thevpc.nuts.runtime.standalone.workspace.config.DefaultNLocations
+net.thevpc.nuts.runtime.standalone.workspace.config.DefaultImports
 net.thevpc.nuts.runtime.standalone.workspace.config.DefaultCustomCommandManager
-net.thevpc.nuts.runtime.standalone.event.DefaultNWorkspaceEventManager
+net.thevpc.nuts.runtime.standalone.event.DefaultNEvents
 net.thevpc.nuts.runtime.standalone.security.DefaultNWorkspaceSecurityManager
-net.thevpc.nuts.runtime.standalone.repository.config.DefaultNRepositoryManager
-net.thevpc.nuts.runtime.standalone.workspace.config.DefaultNWorkspaceConfigManager
+net.thevpc.nuts.runtime.standalone.repository.config.DefaultNRepositories
+net.thevpc.nuts.runtime.standalone.workspace.config.DefaultNConfigs
 net.thevpc.nuts.runtime.standalone.extension.DefaultNExtensions
 
 

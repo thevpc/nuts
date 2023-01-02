@@ -26,6 +26,7 @@
 */
 package net.thevpc.nuts.toolbox.nsh;
 
+import net.thevpc.nuts.NExecCommand;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.NSession;
 import net.thevpc.nuts.toolbox.nsh.jshell.JShellContext;
@@ -50,7 +51,7 @@ public class NCommandTypeResolver implements JShellCommandTypeResolver {
             path = context.getCwd() + "/" + item;
         }
         NSession session = context.getSession();
-        final NExecutableInformation w = session.exec().addCommand(item).which();
+        final NExecutableInformation w = NExecCommand.of(session).addCommand(item).which();
         if (w != null) {
             return new JShellCommandType(item, "nuts " + w.getType().toString().toLowerCase(), w.getValue(), w.getDescription());
         }

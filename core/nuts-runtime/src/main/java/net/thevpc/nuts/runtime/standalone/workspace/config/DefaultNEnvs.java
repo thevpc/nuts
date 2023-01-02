@@ -22,14 +22,14 @@ import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class DefaultNWorkspaceEnvManager implements NWorkspaceEnvManager {
+public class DefaultNEnvs implements NEnvs {
 
     public static final Pattern UNIX_USER_DIRS_PATTERN = Pattern.compile("^\\s*(?<k>[A-Z_]+)\\s*=\\s*(?<v>.*)$");
     private final DefaultNWorkspaceEnvManagerModel model;
     protected DefaultNPlatformModel sdkModel;
     private NSession session;
 
-    public DefaultNWorkspaceEnvManager(NSession session) {
+    public DefaultNEnvs(NSession session) {
         this.session = session;
         NWorkspace w = this.session.getWorkspace();
         NWorkspaceExt e = (NWorkspaceExt) w;
@@ -55,7 +55,7 @@ public class DefaultNWorkspaceEnvManager implements NWorkspaceEnvManager {
     }
 
     @Override
-    public NWorkspaceEnvManager setProperty(String property, Object value) {
+    public NEnvs setProperty(String property, Object value) {
         checkSession();
         model.setProperty(property, value);
         return this;
@@ -137,7 +137,7 @@ public class DefaultNWorkspaceEnvManager implements NWorkspaceEnvManager {
     }
 
     @Override
-    public NWorkspaceEnvManager setSession(NSession session) {
+    public NEnvs setSession(NSession session) {
         this.session = NWorkspaceUtils.bindSession(model.getWorkspace(), session);
         return this;
     }
@@ -154,21 +154,21 @@ public class DefaultNWorkspaceEnvManager implements NWorkspaceEnvManager {
         NAssert.requireNonBlank(item, "item", session);
         switch (item) {
             case DESKTOP: {
-                NSupportMode a = session.boot().getBootOptions().getDesktopLauncher().orNull();
+                NSupportMode a = NBootManager.of(session).getBootOptions().getDesktopLauncher().orNull();
                 if (a != null) {
                     return a;
                 }
                 break;
             }
             case MENU: {
-                NSupportMode a = session.boot().getBootOptions().getMenuLauncher().orNull();
+                NSupportMode a = NBootManager.of(session).getBootOptions().getMenuLauncher().orNull();
                 if (a != null) {
                     return a;
                 }
                 break;
             }
             case USER: {
-                NSupportMode a = session.boot().getBootOptions().getUserLauncher().orNull();
+                NSupportMode a = NBootManager.of(session).getBootOptions().getUserLauncher().orNull();
                 if (a != null) {
                     return a;
                 }
@@ -273,7 +273,7 @@ public class DefaultNWorkspaceEnvManager implements NWorkspaceEnvManager {
     public void addLauncher(NLauncherOptions launcher) {
         checkSession();
         //apply isolation!
-        NIsolationLevel isolation = session.boot().getBootOptions().getIsolationLevel().orElse(NIsolationLevel.SYSTEM);
+        NIsolationLevel isolation = NBootManager.of(session).getBootOptions().getIsolationLevel().orElse(NIsolationLevel.SYSTEM);
         if (isolation.compareTo(NIsolationLevel.CONFINED) >= 0) {
             launcher.setCreateDesktopLauncher(NSupportMode.NEVER);
             launcher.setCreateMenuLauncher(NSupportMode.NEVER);
@@ -302,7 +302,7 @@ public class DefaultNWorkspaceEnvManager implements NWorkspaceEnvManager {
     }
 
     private DefaultNWorkspaceConfigModel _configModel() {
-        DefaultNWorkspaceConfigManager config = (DefaultNWorkspaceConfigManager) session.config();
+        DefaultNConfigs config = (DefaultNConfigs) NConfigs.of(session);
         return config.getModel();
     }
 

@@ -54,10 +54,9 @@ public class NAdminServerComponent implements NServerComponent {
         return (c == null || c instanceof AdminServerConfig) ? DEFAULT_SUPPORT : NO_SUPPORT;
     }
 
-    public NServer start(NSession invokerWorkspace, ServerConfig config) {
+    public NServer start(NSession session, ServerConfig config) {
         AdminServerConfig httpConfig = (AdminServerConfig) config;
-        NAssert.requireSession(invokerWorkspace);
-        NSession session = invokerWorkspace;
+        NAssert.requireSession(session);
         String serverId = httpConfig.getServerId();
         InetAddress address = httpConfig.getAddress();
         int port = httpConfig.getPort();
@@ -93,8 +92,8 @@ public class NAdminServerComponent implements NServerComponent {
         NOutStream out = session.out();
         NTexts factory = NTexts.of(session);
         out.printf("Nuts Admin Service '%s' running %s at %s\n", serverId, factory.ofStyled("telnet nsh", NTextStyle.primary1()), inetSocketAddress);
-        out.printf("Serving workspace : %s\n", invokerWorkspace.locations().getWorkspaceLocation());
-        AdminServerRunnable myNutsServer = new AdminServerRunnable(serverId, port, backlog, address, executor, invokerWorkspace, session);
+        out.printf("Serving workspace : %s\n", NLocations.of(session).getWorkspaceLocation());
+        AdminServerRunnable myNutsServer = new AdminServerRunnable(serverId, port, backlog, address, executor, session, session);
 
         executor.execute(myNutsServer);
         return myNutsServer;

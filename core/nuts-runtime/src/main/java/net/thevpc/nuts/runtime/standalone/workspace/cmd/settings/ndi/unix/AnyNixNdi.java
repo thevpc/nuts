@@ -27,7 +27,7 @@ public class AnyNixNdi extends BaseSystemNdi {
     }
 
     protected NShellFamily[] getShellGroups() {
-        Set<NShellFamily> all=new LinkedHashSet<>(session.env().getShellFamilies());
+        Set<NShellFamily> all=new LinkedHashSet<>(NEnvs.of(session).getShellFamilies());
         all.retainAll(Arrays.asList(NShellFamily.SH, NShellFamily.FISH));
         return all.toArray(new NShellFamily[0]);
     }
@@ -63,10 +63,10 @@ public class AnyNixNdi extends BaseSystemNdi {
                         factory.ofBuilder().appendJoined(", ",
                                 Arrays.stream(updatedPaths).map(x ->
                                         factory.ofStyled(x.getPath().getName(), NTextStyle.path())).collect(Collectors.toList())),
-                        session.locations().getWorkspaceLocation()
+                        NLocations.of(session).getWorkspaceLocation()
                 );
             }
-            final String sysRcName = NShellHelper.of(session.env().getShellFamily()).getSysRcName();
+            final String sysRcName = NShellHelper.of(NEnvs.of(session).getShellFamily()).getSysRcName();
             session.getTerminal().ask()
                     .resetLine()
                     .forBoolean(NMsg.ofCstyle(
@@ -125,7 +125,7 @@ public class AnyNixNdi extends BaseSystemNdi {
     @Override
     protected FreeDesktopEntryWriter createFreeDesktopEntryWriter() {
         return new UnixFreeDesktopEntryWriter(session,
-                session.env().getDesktopPath()==null?null: NPath.of(session.env().getDesktopPath(),getSession())
+                NEnvs.of(session).getDesktopPath()==null?null: NPath.of(NEnvs.of(session).getDesktopPath(),getSession())
         );
     }
 

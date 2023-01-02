@@ -26,7 +26,7 @@
 package net.thevpc.nuts.toolbox.nsh.cmds.bash;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.cmdline.NArgumentName;
+import net.thevpc.nuts.cmdline.NArgName;
 import net.thevpc.nuts.cmdline.NCommandLine;
 import net.thevpc.nuts.io.NCompress;
 import net.thevpc.nuts.io.NPath;
@@ -55,7 +55,7 @@ public class ZipCommand extends SimpleJShellBuiltin {
         } else if (commandLine.isNextOption()) {
             return false;
         } else if (commandLine.peek().get(session).isNonOption()) {
-            String path = commandLine.nextNonOption(NArgumentName.of("file", session))
+            String path = commandLine.nextNonOption(NArgName.of("file", session))
                     .flatMap(NValue::asString).get(session);
             NPath file = NPath.of(path, session).toAbsolute(context.getCwd());
             if (options.outZip == null) {

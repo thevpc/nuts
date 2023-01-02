@@ -39,13 +39,13 @@ public class DefaultNUninstallCommand extends AbstractNUninstallCommand {
         checkSession();
         NSession session = getSession();
         NWorkspaceExt dws = NWorkspaceExt.of(session.getWorkspace());
-        session.security().setSession(getSession()).checkAllowed(NConstants.Permissions.UNINSTALL, "uninstall");
+        NWorkspaceSecurityManager.of(session).checkAllowed(NConstants.Permissions.UNINSTALL, "uninstall");
         List<NDefinition> defs = new ArrayList<>();
         List<NId> nutsIds = this.getIds();
         NAssert.requireNonBlank(nutsIds, "packages to uninstall", session);
         List<NId> installed = new ArrayList<>();
         for (NId id : nutsIds) {
-            List<NDefinition> resultDefinitions = session.search().addId(id)
+            List<NDefinition> resultDefinitions = NSearchCommand.of(session).addId(id)
                     .setInstallStatus(NInstallStatusFilters.of(session).byInstalled(true))
                     .setSession(session.copy().setTransitive(false))
                     .setOptional(false).setEffective(true)

@@ -6,8 +6,8 @@
 package net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.connect;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.cmdline.NArgument;
-import net.thevpc.nuts.cmdline.NArgumentName;
+import net.thevpc.nuts.cmdline.NArg;
+import net.thevpc.nuts.cmdline.NArgName;
 import net.thevpc.nuts.cmdline.NCommandLine;
 import net.thevpc.nuts.concurrent.NScheduler;
 import net.thevpc.nuts.runtime.standalone.executor.system.NSysExecUtils;
@@ -33,14 +33,14 @@ public class NSettingsConnectSubCommand extends AbstractNSettingsSubCommand {
         if (commandLine.next("connect").isPresent()) {
             char[] password = null;
             String server = null;
-            NArgument a;
+            NArg a;
             while (commandLine.hasNext()) {
                 if ((a = commandLine.nextString("--password").orNull()) != null) {
                     password = a.getValue().asString().orElse("").toCharArray();
                 } else if (commandLine.isNextOption()) {
                     session.configureLast(commandLine);
                 } else {
-                    server = commandLine.nextNonOption(NArgumentName.of("ServerAddress",session)).flatMap(NValue::asString).get(session);
+                    server = commandLine.nextNonOption(NArgName.of("ServerAddress",session)).flatMap(NValue::asString).get(session);
                     commandLine.setCommandName("settings connect").throwUnexpectedArgument();
                 }
             }

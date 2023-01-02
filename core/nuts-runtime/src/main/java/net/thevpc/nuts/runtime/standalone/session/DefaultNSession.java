@@ -24,7 +24,7 @@
 package net.thevpc.nuts.runtime.standalone.session;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.cmdline.NArgument;
+import net.thevpc.nuts.cmdline.NArg;
 import net.thevpc.nuts.cmdline.NCommandLine;
 import net.thevpc.nuts.cmdline.NCommandLineConfigurable;
 import net.thevpc.nuts.elem.NArrayElementBuilder;
@@ -95,7 +95,7 @@ public class DefaultNSession implements Cloneable, NSession {
 
     public DefaultNSession(NWorkspace ws) {
         this.ws = new NWorkspaceSessionAwareImpl(this, ws);
-        setAll(NSessionUtils.defaultSession(ws).boot().getBootOptions());
+        setAll(NBootManager.of(NSessionUtils.defaultSession(ws)).getBootOptions());
     }
 
     public DefaultNSession(NWorkspace ws, NWorkspaceOptions options) {
@@ -132,7 +132,7 @@ public class DefaultNSession implements Cloneable, NSession {
 
     @Override
     public boolean configureFirst(NCommandLine cmdLine) {
-        NArgument a = cmdLine.peek().orNull();
+        NArg a = cmdLine.peek().orNull();
         if (a != null) {
             boolean active = a.isActive();
             switch (a.key()) {
@@ -263,7 +263,7 @@ public class DefaultNSession implements Cloneable, NSession {
                     return true;
                 }
                 case "--trace": {
-                    NArgument v = cmdLine.nextBoolean().get(this);
+                    NArg v = cmdLine.nextBoolean().get(this);
                     if (active) {
                         this.setTrace(v.getBooleanValue().get(this));
                     }
@@ -278,7 +278,7 @@ public class DefaultNSession implements Cloneable, NSession {
                     break;
                 }
                 case "--progress": {
-                    NArgument v = cmdLine.next().get(this);
+                    NArg v = cmdLine.next().get(this);
                     if (active) {
                         String s = a.getStringValue().orNull();
                         if (a.isNegated()) {
@@ -529,7 +529,7 @@ public class DefaultNSession implements Cloneable, NSession {
         if (b) {
             return false;
         }
-        return (trace != null) ? trace : boot().getBootOptions().getTrace().orElse(true);
+        return (trace != null) ? trace : NBootManager.of(this).getBootOptions().getTrace().orElse(true);
     }
 
     @Override
@@ -596,7 +596,7 @@ public class DefaultNSession implements Cloneable, NSession {
         if (bot != null) {
             return bot;
         }
-        return boot().getBootOptions().getBot().orElse(false);
+        return NBootManager.of(this).getBootOptions().getBot().orElse(false);
     }
 
     @Override
@@ -630,7 +630,7 @@ public class DefaultNSession implements Cloneable, NSession {
         if (this.outputFormat != null) {
             return this.outputFormat;
         }
-        NContentType o = boot().getBootOptions().getOutputFormat().orNull();
+        NContentType o = NBootManager.of(this).getBootOptions().getOutputFormat().orNull();
         if (o != null) {
             return o;
         }
@@ -784,7 +784,7 @@ public class DefaultNSession implements Cloneable, NSession {
         if (fetchStrategy != null) {
             return fetchStrategy;
         }
-        NFetchStrategy wfetchStrategy = boot().getBootOptions().getFetchStrategy().orNull();
+        NFetchStrategy wfetchStrategy = NBootManager.of(this).getBootOptions().getFetchStrategy().orNull();
         if (wfetchStrategy != null) {
             return wfetchStrategy;
         }
@@ -909,7 +909,7 @@ public class DefaultNSession implements Cloneable, NSession {
 
     @Override
     public NConfirmationMode getConfirm() {
-        NConfirmationMode cm = (confirm != null) ? confirm : boot().getBootOptions().getConfirm().orNull();
+        NConfirmationMode cm = (confirm != null) ? confirm : NBootManager.of(this).getBootOptions().getConfirm().orNull();
         if (isBot()) {
             if (cm == null) {
                 return NConfirmationMode.ERROR;
@@ -1022,7 +1022,7 @@ public class DefaultNSession implements Cloneable, NSession {
         if (transitive != null) {
             return transitive;
         }
-        return boot().getBootOptions().getTransitive().orElse(true);
+        return NBootManager.of(this).getBootOptions().getTransitive().orElse(true);
     }
 
     @Override
@@ -1036,7 +1036,7 @@ public class DefaultNSession implements Cloneable, NSession {
         if (cached != null) {
             return cached;
         }
-        return boot().getBootOptions().getCached().orElse(true);
+        return NBootManager.of(this).getBootOptions().getCached().orElse(true);
     }
 
     @Override
@@ -1050,7 +1050,7 @@ public class DefaultNSession implements Cloneable, NSession {
         if (indexed != null) {
             return indexed;
         }
-        return boot().getBootOptions().getIndexed().orElse(false);
+        return NBootManager.of(this).getBootOptions().getIndexed().orElse(false);
     }
 
     @Override
@@ -1095,7 +1095,7 @@ public class DefaultNSession implements Cloneable, NSession {
         if (gui != null) {
             return gui;
         }
-        return boot().getBootOptions().getGui().orElse(false);
+        return NBootManager.of(this).getBootOptions().getGui().orElse(false);
     }
 
     @Override
@@ -1129,7 +1129,7 @@ public class DefaultNSession implements Cloneable, NSession {
     @Override
     public boolean isDry() {
         if (dry == null) {
-            return boot().getBootOptions().getDry().orElse(false);
+            return NBootManager.of(this).getBootOptions().getDry().orElse(false);
         }
         return dry;
     }
@@ -1278,7 +1278,7 @@ public class DefaultNSession implements Cloneable, NSession {
         if (executionType != null) {
             return executionType;
         }
-        return boot().getBootOptions().getExecutionType().orElse(NExecutionType.SPAWN);
+        return NBootManager.of(this).getBootOptions().getExecutionType().orElse(NExecutionType.SPAWN);
     }
 
     @Override
@@ -1290,7 +1290,7 @@ public class DefaultNSession implements Cloneable, NSession {
     @Override
     public String getDebug() {
         if (debug == null) {
-            return boot().getBootOptions().getDebug().orNull();
+            return NBootManager.of(this).getBootOptions().getDebug().orNull();
         }
         return debug;
     }
@@ -1304,7 +1304,7 @@ public class DefaultNSession implements Cloneable, NSession {
     @Override
     public String getLocale() {
         if (locale == null) {
-            return boot().getBootOptions().getLocale().orNull();
+            return NBootManager.of(this).getBootOptions().getLocale().orNull();
         }
         return locale;
     }
@@ -1319,7 +1319,7 @@ public class DefaultNSession implements Cloneable, NSession {
         if (runAs != null) {
             return runAs;
         }
-        NRunAs r = boot().getBootOptions().getRunAs().orNull();
+        NRunAs r = NBootManager.of(this).getBootOptions().getRunAs().orNull();
         if (r != null) {
             return r;
         }
@@ -1343,104 +1343,8 @@ public class DefaultNSession implements Cloneable, NSession {
     }
 
     @Override
-    public NSearchCommand search() {
-        return NSearchCommand.of(this);
-    }
-
-    @Override
-    public NFetchCommand fetch() {
-        return NFetchCommand.of(this);
-    }
-
-    @Override
-    public NDeployCommand deploy() {
-        return NDeployCommand.of(this);
-    }
-
-    @Override
-    public NUndeployCommand undeploy() {
-        return NUndeployCommand.of(this);
-    }
-
-    @Override
-    public NExecCommand exec() {
-        return NExecCommand.of(this);
-    }
-
-    @Override
-    public NInstallCommand install() {
-        return NInstallCommand.of(this);
-    }
-
-    @Override
-    public NUninstallCommand uninstall() {
-        return NUninstallCommand.of(this);
-    }
-
-    @Override
-    public NUpdateCommand update() {
-        return NUpdateCommand.of(this);
-    }
-
-    @Override
-    public NPushCommand push() {
-        return NPushCommand.of(this);
-    }
-
-    public NInfoCommand info() {
-        return NInfoCommand.of(this);
-    }
-
-    @Override
     public NExtensions extensions() {
         return new DefaultNExtensions(this);
-    }
-
-    @Override
-    public NWorkspaceConfigManager config() {
-        return NWorkspaceConfigManager.of(this);
-    }
-
-    @Override
-    public NRepositoryManager repos() {
-        return NRepositoryManager.of(this);
-    }
-
-    @Override
-    public NWorkspaceSecurityManager security() {
-        return NWorkspaceSecurityManager.of(this);
-    }
-
-
-    @Override
-    public NWorkspaceEventManager events() {
-        return NWorkspaceEventManager.of(this);
-    }
-
-
-    @Override
-    public NImportManager imports() {
-        return NImportManager.of(this);
-    }
-
-    @Override
-    public NCustomCommandManager commands() {
-        return NCustomCommandManager.of(this);
-    }
-
-    @Override
-    public NWorkspaceLocationManager locations() {
-        return NWorkspaceLocationManager.of(this);
-    }
-
-    @Override
-    public NWorkspaceEnvManager env() {
-        return NWorkspaceEnvManager.of(this);
-    }
-
-    @Override
-    public NBootManager boot() {
-        return NBootManager.of(this);
     }
 
     @Override
@@ -1455,7 +1359,7 @@ public class DefaultNSession implements Cloneable, NSession {
     }
 
     private void parseLogLevel(NCommandLine cmdLine, boolean enabled) {
-        NArgument a = cmdLine.peek().get(this);
+        NArg a = cmdLine.peek().get(this);
         switch (a.key()) {
             //these options are just ignored!
 //            case "--log-file-size": {

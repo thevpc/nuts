@@ -5,7 +5,7 @@ import net.thevpc.nuts.io.*;
 import net.thevpc.nuts.runtime.standalone.text.SimpleWriterOutputStream;
 import net.thevpc.nuts.runtime.standalone.boot.DefaultNBootManager;
 import net.thevpc.nuts.runtime.standalone.boot.NBootModel;
-import net.thevpc.nuts.runtime.standalone.workspace.config.DefaultNWorkspaceConfigManager;
+import net.thevpc.nuts.runtime.standalone.workspace.config.DefaultNConfigs;
 import net.thevpc.nuts.runtime.standalone.workspace.config.DefaultNWorkspaceConfigModel;
 import net.thevpc.nuts.spi.NSupportLevelContext;
 import net.thevpc.nuts.spi.NSystemTerminalBase;
@@ -42,7 +42,7 @@ public class DefaultNPrintStreams implements NPrintStreams {
         if (out == null) {
             return null;
         }
-        NWorkspaceOptions woptions = session.boot().setSession(session).getBootOptions();
+        NWorkspaceOptions woptions = NBootManager.of(session).getBootOptions();
         NTerminalMode expectedMode0 = woptions.getTerminalMode().orElse(NTerminalMode.DEFAULT);
         if (expectedMode0 == NTerminalMode.DEFAULT) {
             if (woptions.getBot().orElse(false)) {
@@ -145,11 +145,11 @@ public class DefaultNPrintStreams implements NPrintStreams {
     }
 
     private DefaultNWorkspaceConfigModel getConfigModel() {
-        return ((DefaultNWorkspaceConfigManager) session.config()).getModel();
+        return ((DefaultNConfigs) NConfigs.of(session)).getModel();
     }
 
     private NBootModel getBootModel() {
-        return ((DefaultNBootManager) session.boot()).getModel();
+        return ((DefaultNBootManager) NBootManager.of(session)).getModel();
     }
 
 }

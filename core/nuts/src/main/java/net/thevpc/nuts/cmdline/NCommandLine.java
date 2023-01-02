@@ -92,7 +92,7 @@ import java.util.List;
  * @app.category Command Line
  * @since 0.5.5
  */
-public interface NCommandLine extends Iterable<NArgument>, NFormattable, NBlankable {
+public interface NCommandLine extends Iterable<NArg>, NFormattable, NBlankable {
 
     static NCommandLine of(String[] args) {
         return new DefaultNCommandLine(args);
@@ -275,7 +275,7 @@ public interface NCommandLine extends Iterable<NArgument>, NFormattable, NBlanka
      * @param arg argument
      * @return {@code this} instance
      */
-    NCommandLine pushBack(NArgument arg);
+    NCommandLine pushBack(NArg arg);
 
     /**
      * consume (remove) the first argument and return it return null if not
@@ -283,7 +283,7 @@ public interface NCommandLine extends Iterable<NArgument>, NFormattable, NBlanka
      *
      * @return next argument
      */
-    NOptional<NArgument> next();
+    NOptional<NArg> next();
 
     /**
      * consume (remove) the first argument and return it while adding a hint to
@@ -293,7 +293,7 @@ public interface NCommandLine extends Iterable<NArgument>, NFormattable, NBlanka
      * @param name expected argument name
      * @return next argument
      */
-    NOptional<NArgument> next(NArgumentName name);
+    NOptional<NArg> next(NArgName name);
 
     /**
      * consume (remove) the first option and return it while adding a hint to
@@ -303,7 +303,7 @@ public interface NCommandLine extends Iterable<NArgument>, NFormattable, NBlanka
      * @param option expected option name
      * @return next argument
      */
-    NOptional<NArgument> nextOption(String option);
+    NOptional<NArg> nextOption(String option);
 
     /**
      * the first argument to consume without removing/consuming it or null if
@@ -311,7 +311,7 @@ public interface NCommandLine extends Iterable<NArgument>, NFormattable, NBlanka
      *
      * @return the first argument to consume without removing/consuming it
      */
-    NOptional<NArgument> peek();
+    NOptional<NArg> peek();
 
     boolean isNextOption();
 
@@ -331,7 +331,7 @@ public interface NCommandLine extends Iterable<NArgument>, NFormattable, NBlanka
      * @param names names
      * @return next argument
      */
-    NOptional<NArgument> nextBoolean(String... names);
+    NOptional<NArg> nextBoolean(String... names);
 
     /**
      * next argument with boolean value equivalent to
@@ -339,20 +339,20 @@ public interface NCommandLine extends Iterable<NArgument>, NFormattable, NBlanka
      *
      * @return next argument
      */
-    NOptional<NArgument> nextBoolean();
+    NOptional<NArg> nextBoolean();
 
     /**
      * consume next argument with boolean value and run {@code consumer}
      *
      * @return true if active
      */
-    boolean withNextBoolean(NArgumentConsumer<Boolean> consumer);
+    boolean withNextBoolean(NArgProcessor<Boolean> consumer);
 
-    boolean withNextOptionalBoolean(NArgumentConsumer<NOptional<Boolean>> consumer);
+    boolean withNextOptionalBoolean(NArgProcessor<NOptional<Boolean>> consumer);
 
-    boolean withNextOptionalBoolean(NArgumentConsumer<NOptional<Boolean>> consumer, String... names);
+    boolean withNextOptionalBoolean(NArgProcessor<NOptional<Boolean>> consumer, String... names);
 
-    boolean withNextTrue(NArgumentConsumer<Boolean> consumer);
+    boolean withNextTrue(NArgProcessor<Boolean> consumer);
 
     /**
      * consume next argument with boolean value and run {@code consumer}
@@ -360,14 +360,14 @@ public interface NCommandLine extends Iterable<NArgument>, NFormattable, NBlanka
      * @param names names
      * @return true if active
      */
-    boolean withNextBoolean(NArgumentConsumer<Boolean> consumer, String... names);
+    boolean withNextBoolean(NArgProcessor<Boolean> consumer, String... names);
 
-    boolean withNextTrue(NArgumentConsumer<Boolean> consumer, String... names);
+    boolean withNextTrue(NArgProcessor<Boolean> consumer, String... names);
 
 
-    boolean withNextOptionalString(NArgumentConsumer<NOptional<String>> consumer);
+    boolean withNextOptionalString(NArgProcessor<NOptional<String>> consumer);
 
-    boolean withNextOptionalString(NArgumentConsumer<NOptional<String>> consumer, String... names);
+    boolean withNextOptionalString(NArgProcessor<NOptional<String>> consumer, String... names);
 
     /**
      * next argument with string value. equivalent to
@@ -376,14 +376,14 @@ public interface NCommandLine extends Iterable<NArgument>, NFormattable, NBlanka
      * @param names names
      * @return next argument
      */
-    NOptional<NArgument> nextString(String... names);
+    NOptional<NArg> nextString(String... names);
 
     /**
      * consume next argument with string value and run {@code consumer}
      *
      * @return true if active
      */
-    boolean withNextString(NArgumentConsumer<String> consumer);
+    boolean withNextString(NArgProcessor<String> consumer);
 
     /**
      * consume next argument with string value and run {@code consumer}
@@ -391,7 +391,7 @@ public interface NCommandLine extends Iterable<NArgument>, NFormattable, NBlanka
      * @param names names
      * @return true if active
      */
-    boolean withNextString(NArgumentConsumer<String> consumer, String... names);
+    boolean withNextString(NArgProcessor<String> consumer, String... names);
 
 
     /**
@@ -399,7 +399,7 @@ public interface NCommandLine extends Iterable<NArgument>, NFormattable, NBlanka
      *
      * @return true if active
      */
-    boolean withNextValue(NArgumentConsumer<NValue> consumer);
+    boolean withNextValue(NArgProcessor<NValue> consumer);
 
     /**
      * consume next argument and run {@code consumer}
@@ -407,7 +407,7 @@ public interface NCommandLine extends Iterable<NArgument>, NFormattable, NBlanka
      * @param names names
      * @return true if active
      */
-    boolean withNextValue(NArgumentConsumer<NValue> consumer, String... names);
+    boolean withNextValue(NArgProcessor<NValue> consumer, String... names);
 
     /**
      * next argument with string value. equivalent to
@@ -415,7 +415,7 @@ public interface NCommandLine extends Iterable<NArgument>, NFormattable, NBlanka
      *
      * @return next argument
      */
-    NOptional<NArgument> nextString();
+    NOptional<NArg> nextString();
 
     NOptional<NValue> nextStringValue(String... names);
 
@@ -433,7 +433,7 @@ public interface NCommandLine extends Iterable<NArgument>, NFormattable, NBlanka
      * @param names names
      * @return next argument
      */
-    NOptional<NArgument> next(String... names);
+    NOptional<NArg> next(String... names);
 
     /**
      * next argument with any value type (may having not a value).
@@ -442,7 +442,7 @@ public interface NCommandLine extends Iterable<NArgument>, NFormattable, NBlanka
      * @param names       names
      * @return next argument
      */
-    NOptional<NArgument> next(NArgumentType expectValue, String... names);
+    NOptional<NArg> next(NArgumentType expectValue, String... names);
 
     /**
      * next argument if it exists and it is a non option. Return null in all
@@ -450,16 +450,7 @@ public interface NCommandLine extends Iterable<NArgument>, NFormattable, NBlanka
      *
      * @return next argument if it exists and it is a non option
      */
-    NOptional<NArgument> nextNonOption();
-
-    /**
-     * next argument if it exists and it is a non option. Return null in all
-     * other cases.
-     *
-     * @param name argument specification (may be null)
-     * @return next argument if it exists and it is a non option
-     */
-    NOptional<NArgument> nextNonOption(NArgumentName name);
+    NOptional<NArg> nextNonOption();
 
     /**
      * next argument if it exists and it is a non option. Return null in all
@@ -468,7 +459,16 @@ public interface NCommandLine extends Iterable<NArgument>, NFormattable, NBlanka
      * @param name argument specification (may be null)
      * @return next argument if it exists and it is a non option
      */
-    NOptional<NArgument> nextNonOption(String name);
+    NOptional<NArg> nextNonOption(NArgName name);
+
+    /**
+     * next argument if it exists and it is a non option. Return null in all
+     * other cases.
+     *
+     * @param name argument specification (may be null)
+     * @return next argument if it exists and it is a non option
+     */
+    NOptional<NArg> nextNonOption(String name);
 
     /**
      * consume all words and return consumed count
@@ -515,7 +515,7 @@ public interface NCommandLine extends Iterable<NArgument>, NFormattable, NBlanka
      * @param name argument key name
      * @return find first argument with argument key name
      */
-    NOptional<NArgument> find(String name);
+    NOptional<NArg> find(String name);
 
     /**
      * return argument at given index
@@ -523,7 +523,7 @@ public interface NCommandLine extends Iterable<NArgument>, NFormattable, NBlanka
      * @param index argument index
      * @return argument at given index
      */
-    NOptional<NArgument> get(int index);
+    NOptional<NArg> get(int index);
 
     /**
      * return true if any argument is equal to the given name
@@ -564,7 +564,7 @@ public interface NCommandLine extends Iterable<NArgument>, NFormattable, NBlanka
 
     List<String> toStringList();
 
-    NArgument[] toArgumentArray();
+    NArg[] toArgumentArray();
 
     /**
      * true if the argument and index exists and is option

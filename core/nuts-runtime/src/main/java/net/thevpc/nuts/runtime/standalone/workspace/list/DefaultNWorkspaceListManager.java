@@ -37,7 +37,7 @@ public class DefaultNWorkspaceListManager implements NWorkspaceListManager {
                     new NWorkspaceLocation()
                             .setUuid(session.getWorkspace().getUuid())
                             .setName(NConstants.Names.DEFAULT_WORKSPACE_NAME)
-                            .setLocation(this.defaultSession.locations().getWorkspaceLocation().toString())
+                            .setLocation(NLocations.of(this.defaultSession).getWorkspaceLocation().toString())
             );
             this.save(session);
         }
@@ -56,8 +56,7 @@ public class DefaultNWorkspaceListManager implements NWorkspaceListManager {
     }
 
     private NPath getConfigFile(NSession session) {
-        return session
-                        .locations()
+        return NLocations.of(session)
                         .getStoreLocation(NIdResolver.of(session).resolveId(DefaultNWorkspaceListManager.class),
                                 NStoreLocation.CONFIG)
                 .resolve(name + "-nuts-workspace-list.json");
@@ -87,10 +86,11 @@ public class DefaultNWorkspaceListManager implements NWorkspaceListManager {
     @Override
     public NSession addWorkspace(String path, NSession session) {
         NSession ss = this.createWorkspace(path);
+        NLocations locations = NLocations.of(ss);
         NWorkspaceLocation workspaceLocation = new NWorkspaceLocation()
                 .setUuid(ss.getWorkspace().getUuid())
-                .setName(ss.locations().getWorkspaceLocation().getName())
-                .setLocation(ss.locations().getWorkspaceLocation().toString());
+                .setName(locations.getWorkspaceLocation().getName())
+                .setLocation(locations.getWorkspaceLocation().toString());
         workspaces.put(ss.getWorkspace().getUuid(), workspaceLocation);
         this.save(session);
         return ss;

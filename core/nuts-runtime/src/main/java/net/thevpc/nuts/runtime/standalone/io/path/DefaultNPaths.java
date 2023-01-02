@@ -8,7 +8,7 @@ import net.thevpc.nuts.runtime.standalone.io.path.spi.URLPath;
 import net.thevpc.nuts.runtime.standalone.io.util.CoreIOUtils;
 import net.thevpc.nuts.runtime.standalone.session.NSessionUtils;
 import net.thevpc.nuts.runtime.standalone.util.StringBuilder2;
-import net.thevpc.nuts.runtime.standalone.workspace.config.DefaultNWorkspaceConfigManager;
+import net.thevpc.nuts.runtime.standalone.workspace.config.DefaultNConfigs;
 import net.thevpc.nuts.runtime.standalone.workspace.config.DefaultNWorkspaceConfigModel;
 import net.thevpc.nuts.spi.NPathSPI;
 import net.thevpc.nuts.spi.NPaths;
@@ -99,7 +99,7 @@ public class DefaultNPaths implements NPaths {
     }
 
     private DefaultNWorkspaceConfigModel getModel() {
-        return ((DefaultNWorkspaceConfigManager) session.config()).getModel();
+        return ((DefaultNConfigs) NConfigs.of(session)).getModel();
     }
 
     @Override
@@ -152,9 +152,9 @@ public class DefaultNPaths implements NPaths {
         NPath rootFolder = null;
         NRepository repositoryById = null;
         if (repositoryId == null) {
-            rootFolder = session.locations().setSession(session).getStoreLocation(NStoreLocation.TEMP);
+            rootFolder = NLocations.of(session).getStoreLocation(NStoreLocation.TEMP);
         } else {
-            repositoryById = session.repos().setSession(session).getRepository(repositoryId);
+            repositoryById = NRepositories.of(session).setSession(session).getRepository(repositoryId);
             rootFolder = repositoryById.config().setSession(session).getStoreLocation(NStoreLocation.TEMP);
         }
         NId appId = session.getAppId();
@@ -162,7 +162,7 @@ public class DefaultNPaths implements NPaths {
             appId = session.getWorkspace().getRuntimeId();
         }
         if (appId != null) {
-            rootFolder = rootFolder.resolve(NConstants.Folders.ID).resolve(session.locations().getDefaultIdBasedir(appId));
+            rootFolder = rootFolder.resolve(NConstants.Folders.ID).resolve(NLocations.of(session).getDefaultIdBasedir(appId));
         }
         if (name == null) {
             name = "";

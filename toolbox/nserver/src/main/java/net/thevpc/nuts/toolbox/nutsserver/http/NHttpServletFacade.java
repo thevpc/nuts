@@ -23,6 +23,7 @@
  */
 package net.thevpc.nuts.toolbox.nutsserver.http;
 
+import net.thevpc.nuts.NSearchCommand;
 import net.thevpc.nuts.NSession;
 import net.thevpc.nuts.toolbox.nutsserver.http.commands.*;
 import net.thevpc.nuts.toolbox.nutsserver.util.NServerUtils;
@@ -188,7 +189,7 @@ public class NHttpServletFacade {
             List<NId> fetch = null;
             try {
                 NSession session = context.getSession();
-                fetch = session.search().setSession(
+                fetch = NSearchCommand.of(session).setSession(
                         context.getSession().copy().setTransitive(transitive)
                 )
                         .addId(id).getResultIds().toList();

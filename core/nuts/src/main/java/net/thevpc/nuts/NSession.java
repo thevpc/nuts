@@ -608,134 +608,15 @@ public interface NSession extends NCommandLineConfigurable, NCommandLineContext 
 
     //COMMANDS
 
-    /**
-     * @return new search command instance
-     * @since 0.8.3
-     */
-    NSearchCommand search();
-
-    /**
-     * @return new fetch command instance
-     * @since 0.8.3
-     */
-    NFetchCommand fetch();
-
-    /**
-     * @return new deploy command instance
-     * @since 0.8.3
-     */
-    NDeployCommand deploy();
-
-    /**
-     * @return new undeploy command instance
-     * @since 0.8.3
-     */
-    NUndeployCommand undeploy();
-
-    /**
-     * @return new execution command instance
-     * @since 0.8.3
-     */
-    NExecCommand exec();
-
-    /**
-     * @return new installation command instance
-     * @since 0.8.3
-     */
-    NInstallCommand install();
-
-    /**
-     * @return new un-installation command instance
-     * @since 0.8.3
-     */
-    NUninstallCommand uninstall();
-
-    /**
-     * @return new update command instance
-     * @since 0.8.3
-     */
-    NUpdateCommand update();
-
-    /**
-     * @return new push command instance
-     * @since 0.8.3
-     */
-    NPushCommand push();
-
-    /**
-     * create info format instance
-     *
-     * @return info format
-     * @since 0.8.3
-     */
-    NInfoCommand info();
-
     ////////////////////////////////////
     /// CONFIG
     ////////////////////////////////////
-
-    /**
-     * @return new alias/custom command manager instance
-     * @since 0.8.3
-     */
-    NCustomCommandManager commands();
 
     /**
      * @return new extension manager instance
      * @since 0.8.3
      */
     NExtensions extensions();
-
-    /**
-     * @return new config manager instance
-     * @since 0.8.3
-     */
-    NWorkspaceConfigManager config();
-
-    /**
-     * @return new repo manager instance
-     * @since 0.8.3
-     */
-    NRepositoryManager repos();
-
-    /**
-     * @return new security manager instance
-     * @since 0.8.3
-     */
-    NWorkspaceSecurityManager security();
-
-    /**
-     * @return new events manager instance
-     * @since 0.8.3
-     */
-
-    NWorkspaceEventManager events();
-
-
-    /**
-     * @return new import manager instance
-     * @since 0.8.3
-     */
-    NImportManager imports();
-
-
-    /**
-     * @return new location manager instance
-     * @since 0.8.3
-     */
-    NWorkspaceLocationManager locations();
-
-    /**
-     * @return new env manager instance
-     * @since 0.8.3
-     */
-    NWorkspaceEnvManager env();
-
-    /**
-     * @return new boot manager instance
-     * @since 0.8.3
-     */
-    NBootManager boot();
 
     /**
      * return dependency solver Name

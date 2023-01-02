@@ -2,8 +2,8 @@ package net.thevpc.nuts.toolbox.nutsserver;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.boot.DefaultNWorkspaceOptionsBuilder;
-import net.thevpc.nuts.cmdline.NArgument;
-import net.thevpc.nuts.cmdline.NArgumentName;
+import net.thevpc.nuts.cmdline.NArg;
+import net.thevpc.nuts.cmdline.NArgName;
 import net.thevpc.nuts.cmdline.NCommandLine;
 import net.thevpc.nuts.io.NOutStream;
 import net.thevpc.nuts.text.NTextStyle;
@@ -94,7 +94,7 @@ public class NServerMain implements NApplication {
                 break;
             }
             count++;
-            s = cmdLine.nextNonOption(NArgumentName.of("ServerName", session)).flatMap(NValue::asString).get(session);
+            s = cmdLine.nextNonOption(NArgName.of("ServerName", session)).flatMap(NValue::asString).get(session);
             if (cmdLine.isExecMode()) {
                 serverManager.stopServer(s);
             }
@@ -105,7 +105,7 @@ public class NServerMain implements NApplication {
         NSession session = context.getSession();
         NWorkspaceServerManager serverManager = new DefaultNWorkspaceServerManager(session);
         SrvInfoList servers = new SrvInfoList(session);
-        NArgument a;
+        NArg a;
         while (commandLine.hasNext()) {
             if (commandLine.next("--http").isPresent()) {
                 servers.add().serverType = "http";
@@ -309,7 +309,7 @@ public class NServerMain implements NApplication {
         NSession session = context.getSession();
         NWorkspaceServerManager serverManager = new DefaultNWorkspaceServerManager(session);
         SrvInfoList servers = new SrvInfoList(session);
-        NArgument a;
+        NArg a;
         while (commandLine.hasNext()) {
             if (commandLine.next("--http").isPresent()) {
                 servers.add().serverType = "http";

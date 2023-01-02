@@ -1,7 +1,7 @@
 package net.thevpc.nuts.toolbox.ndb.derby;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.cmdline.NArgument;
+import net.thevpc.nuts.cmdline.NArg;
 import net.thevpc.nuts.cmdline.NCommandLine;
 import net.thevpc.nuts.io.NPsInfo;
 
@@ -16,7 +16,7 @@ public class RunningDerby {
         pid =r.getPid();
         argsLine=r.getCommandLine();
         NCommandLine cmdline = NCommandLine.parseSystem(r.getCommandLine(),session).get(session).setExpandSimpleOptions(false);
-        NArgument a=null;
+        NArg a=null;
         while(cmdline.hasNext()){
             if((a=cmdline.nextString("-Dderby.system.home").orNull())!=null) {
                 home = a.getStringValue().get(session);

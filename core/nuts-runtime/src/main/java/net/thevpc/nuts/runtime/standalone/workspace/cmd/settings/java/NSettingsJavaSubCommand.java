@@ -28,8 +28,8 @@ public class NSettingsJavaSubCommand extends AbstractNSettingsSubCommand {
             autoSave = false;
         }
         NOutStream out = session.out();
-        NWorkspaceConfigManager conf = session.config();
-        NPlatformManager platforms = session.env().platforms();
+        NConfigs conf = NConfigs.of(session);
+        NPlatformManager platforms = NEnvs.of(session).platforms();
         if (cmdLine.next("add java").isPresent()) {
             if (cmdLine.next("--search").isPresent()) {
                 List<String> extraLocations = new ArrayList<>();

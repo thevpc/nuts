@@ -97,7 +97,7 @@ public class MavenNDependencySolver implements NDependencySolver {
                         ) {
                             NDefinition def2 = null;
                             try {
-                                def2 = session.search()
+                                def2 = NSearchCommand.of(session)
                                         .addId(dependency.toId())
                                         .setSession(session).setEffective(true)
                                         .setContent(shouldIncludeContent)
@@ -139,7 +139,7 @@ public class MavenNDependencySolver implements NDependencySolver {
                         ) && !currentNode.exclusions.contains(dependency.toId().getShortId())) {
                             NDefinition def2 = null;
                             try {
-                                def2 = session.search()
+                                def2 = NSearchCommand.of(session)
                                         .addId(dependency.toId())
                                         .setSession(session).setEffective(true)
                                         .setContent(shouldIncludeContent)
@@ -197,7 +197,7 @@ public class MavenNDependencySolver implements NDependencySolver {
             }
         }
         if (def == null) {
-            def = session.search()
+            def = NSearchCommand.of(session)
                     .addId(dependency.toId()).setSession(session
                     ).setEffective(true)
                     .setContent(shouldIncludeContent)
@@ -413,7 +413,7 @@ public class MavenNDependencySolver implements NDependencySolver {
 //            return false;
 //        }
 //        if (!os.isEmpty()) {
-//            NutsOsFamily eos = session.env().getOsFamily();
+//            NutsOsFamily eos = NEnvs.of(session).getOsFamily();
 //            boolean osOk = false;
 //            for (String e : os.split("[,; ]")) {
 //                if (!e.isEmpty()) {
@@ -428,7 +428,7 @@ public class MavenNDependencySolver implements NDependencySolver {
 //            }
 //        }
 //        if (!arch.isEmpty()) {
-//            NutsArchFamily earch = session.env().getArchFamily();
+//            NutsArchFamily earch = NEnvs.of(session).getArchFamily();
 //            if (earch != null) {
 //                boolean archOk = false;
 //                for (String e : arch.split("[,; ]")) {
@@ -450,13 +450,13 @@ public class MavenNDependencySolver implements NDependencySolver {
 //    public NutsDependencyFilter getEffDependencyFilter(NutsSession session) {
 //        if (effDependencyFilter == null) {
 //            if (dependencyFilter == null) {
-//                effDependencyFilter = session.dependency().filter().byOs(session.env().getOsFamily())
-//                        .and(session.dependency().filter().byArch(session.env().getArchFamily()));
+//                effDependencyFilter = session.dependency().filter().byOs(NEnvs.of(session).getOsFamily())
+//                        .and(session.dependency().filter().byArch(NEnvs.of(session).getArchFamily()));
 //            } else {
 //                effDependencyFilter
 //                        = dependencyFilter
-//                                .and(session.dependency().filter().byOs(session.env().getOsFamily()))
-//                                .and(session.dependency().filter().byArch(session.env().getArchFamily()));
+//                                .and(session.dependency().filter().byOs(NEnvs.of(session).getOsFamily()))
+//                                .and(session.dependency().filter().byArch(NEnvs.of(session).getArchFamily()));
 //            }
 //
 //        }

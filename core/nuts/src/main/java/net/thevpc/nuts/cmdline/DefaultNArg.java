@@ -39,7 +39,7 @@ import java.util.regex.Pattern;
 /**
  * @author thevpc
  */
-public class DefaultNArgument implements NArgument {
+public class DefaultNArg implements NArg {
     public static final String KEY_PATTERN_STRING="[a-zA-Z0-9_.@&^$%][a-zA-Z0-9_.@&^$%+!-]*";
     public static final Pattern PATTERN_OPTION_EQ = Pattern.compile("^((?<optp>[-]+|[+]+)(?<cmt>//)?(?<flg>[!~])?)?(?<optk>"+KEY_PATTERN_STRING+")?(?<opts>[=](?<optv>.*))?(?<optr>.*)$");
     public static final Pattern PATTERN_OPTION_COL = Pattern.compile("^((?<optp>[-]+|[+]+)(?<cmt>//)?(?<flg>[!~])?)?(?<optk>"+KEY_PATTERN_STRING+")?(?<opts>[:](?<optv>.*))?(?<optr>.*)$");
@@ -81,7 +81,7 @@ public class DefaultNArgument implements NArgument {
     private final boolean option;
     private final String expression;
 
-    public DefaultNArgument(String expression) {
+    public DefaultNArg(String expression) {
         this(expression, '=');
     }
 
@@ -92,7 +92,7 @@ public class DefaultNArgument implements NArgument {
      * @param expression expression
      * @param eq         equals
      */
-    public DefaultNArgument(String expression, char eq) {
+    public DefaultNArg(String expression, char eq) {
         this.eq = (eq == '\0' ? '=' : eq);
         this.expression = expression;
         Pattern currOptionsPattern;
@@ -219,7 +219,7 @@ public class DefaultNArgument implements NArgument {
     }
 
     @Override
-    public NArgument required() {
+    public NArg required() {
         if (expression == null) {
             throw new NoSuchElementException("missing value");
         }

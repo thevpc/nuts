@@ -128,13 +128,13 @@ public class NdiScriptOptions implements Cloneable {
         if (nutsApiJarPath == null) {
             NId nid = resolveNutsApiId();
             if (getLauncher().getSwitchWorkspaceLocation() == null) {
-                NDefinition apiDef = session.search()
+                NDefinition apiDef = NSearchCommand.of(session)
                         .addId(nid).setOptional(false).setLatest(true).setContent(true).getResultDefinitions().required();
                 nutsApiJarPath = apiDef.getContent().orNull();
             } else {
                 NWorkspaceBootConfig bootConfig = loadSwitchWorkspaceLocationConfig(getLauncher().getSwitchWorkspaceLocation());
                 nutsApiJarPath = NPath.of(bootConfig.getStoreLocation(nid, NStoreLocation.LIB),session);
-                session.locations().getDefaultIdFilename(nid);
+                NLocations.of(session).getDefaultIdFilename(nid);
             }
         }
         return nutsApiJarPath;
@@ -149,7 +149,6 @@ public class NdiScriptOptions implements Cloneable {
     }
 
     public NPath resolveNutsAppsFolder() {
-        NSession ws = session;
         NWorkspaceBootConfig bootConfig = null;
         NId apiId = session.getWorkspace().getApiId();
         if (getLauncher().getSwitchWorkspaceLocation() != null) {
@@ -158,27 +157,26 @@ public class NdiScriptOptions implements Cloneable {
                     bootConfig.getStoreLocation(apiId, NStoreLocation.APPS),session
             );
         } else {
-            return ws.locations().getStoreLocation(apiId, NStoreLocation.APPS);
+            return NLocations.of(session).getStoreLocation(apiId, NStoreLocation.APPS);
         }
     }
 
     public NPath resolveNutsApiAppsFolder() {
-        NSession ws = session;
         NWorkspaceBootConfig bootConfig = null;
-        NId apiId = ws.getWorkspace().getApiId().builder().setVersion(nutsVersion).build();
-        apiId = session.search().addId(apiId).setLatest(true).setFailFast(true).setContent(true)
+        NId apiId = session.getWorkspace().getApiId().builder().setVersion(nutsVersion).build();
+        apiId = NSearchCommand.of(session).addId(apiId).setLatest(true).setFailFast(true).setContent(true)
                 .setDistinct(true)
                 .getResultDefinitions().singleton().getId();
         if (getLauncher().getSwitchWorkspaceLocation() != null) {
             bootConfig = loadSwitchWorkspaceLocationConfig(getLauncher().getSwitchWorkspaceLocation());
             return NPath.of(bootConfig.getStoreLocation(apiId, NStoreLocation.APPS),session);
         } else {
-            return ws.locations().getStoreLocation(apiId, NStoreLocation.APPS);
+            return NLocations.of(session).getStoreLocation(apiId, NStoreLocation.APPS);
         }
     }
 
     public NDefinition resolveNutsApiDef() {
-        return session.search().addId(resolveNutsApiId())
+        return NSearchCommand.of(session).addId(resolveNutsApiId())
                 .setLatest(true)
                 .setContent(true)
                 .setFailFast(true)
@@ -192,7 +190,7 @@ public class NdiScriptOptions implements Cloneable {
                 if (nutsVersion == null) {
                     nutsApiId = session.getWorkspace().getApiId();
                 } else {
-                    nutsApiId = session.search().addId(
+                    nutsApiId = NSearchCommand.of(session).addId(
                                     session.getWorkspace().getApiId().builder().setVersion(nutsVersion).build()
                             ).setLatest(true)
                             .setDistinct(true)
@@ -233,13 +231,13 @@ public class NdiScriptOptions implements Cloneable {
             NWorkspaceBootConfig bootConfig = loadSwitchWorkspaceLocationConfig(getLauncher().getSwitchWorkspaceLocation());
             return Paths.get(bootConfig.getEffectiveWorkspace());
         } else {
-            return session.locations().getWorkspaceLocation().toFile();
+            return NLocations.of(session).getWorkspaceLocation().toFile();
         }
     }
 
     public NWorkspaceBootConfig loadSwitchWorkspaceLocationConfig(String switchWorkspaceLocation) {
         if (workspaceBootConfig == null) {
-            workspaceBootConfig = session.config().loadBootConfig(switchWorkspaceLocation, false, true);
+            workspaceBootConfig = NConfigs.of(session).loadBootConfig(switchWorkspaceLocation, false, true);
             if (workspaceBootConfig == null) {
                 throw new NIllegalArgumentException(session, NMsg.ofCstyle("invalid workspace: %s", switchWorkspaceLocation));
             }

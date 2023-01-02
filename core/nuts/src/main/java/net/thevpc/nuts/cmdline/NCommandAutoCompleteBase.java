@@ -44,7 +44,7 @@ public abstract class NCommandAutoCompleteBase implements NCommandAutoComplete {
     /**
      * candidates map
      */
-    private final LinkedHashMap<String, NArgumentCandidate> candidates = new LinkedHashMap<>();
+    private final LinkedHashMap<String, NArgCandidate> candidates = new LinkedHashMap<>();
 
     @Override
     public NWorkspace getWorkspace() {
@@ -62,7 +62,7 @@ public abstract class NCommandAutoCompleteBase implements NCommandAutoComplete {
      * @return possible candidates
      */
     @Override
-    public List<NArgumentCandidate> getCandidates() {
+    public List<NArgCandidate> getCandidates() {
         return new ArrayList<>(candidates.values());
     }
 
@@ -72,7 +72,7 @@ public abstract class NCommandAutoCompleteBase implements NCommandAutoComplete {
      * @param value candidate
      */
     @Override
-    public void addCandidate(NArgumentCandidate value) {
+    public void addCandidate(NArgCandidate value) {
         if (value != null && !value.getValue().trim().isEmpty()) {
             addCandidatesImpl(value);
         }
@@ -84,7 +84,7 @@ public abstract class NCommandAutoCompleteBase implements NCommandAutoComplete {
      * @param value candidate
      * @return {@code this} instance
      */
-    protected NArgumentCandidate addCandidatesImpl(NArgumentCandidate value) {
+    protected NArgCandidate addCandidatesImpl(NArgCandidate value) {
         return candidates.put(value.getValue(), value);
     }
 

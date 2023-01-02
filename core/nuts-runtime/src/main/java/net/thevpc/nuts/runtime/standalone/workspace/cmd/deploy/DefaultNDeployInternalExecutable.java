@@ -5,6 +5,7 @@
  */
 package net.thevpc.nuts.runtime.standalone.workspace.cmd.deploy;
 
+import net.thevpc.nuts.NDeployCommand;
 import net.thevpc.nuts.NSession;
 import net.thevpc.nuts.runtime.standalone.app.util.NAppUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.exec.DefaultInternalNExecutableCommand;
@@ -28,7 +29,7 @@ public class DefaultNDeployInternalExecutable extends DefaultInternalNExecutable
             showDefaultHelp();
             return;
         }
-        getSession().deploy().configure(false, args).run();
+        NDeployCommand.of(getSession()).configure(false, args).run();
     }
 
 }

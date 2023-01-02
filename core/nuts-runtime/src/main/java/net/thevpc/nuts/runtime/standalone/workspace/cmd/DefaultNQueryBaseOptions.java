@@ -6,7 +6,7 @@
 package net.thevpc.nuts.runtime.standalone.workspace.cmd;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.cmdline.NArgument;
+import net.thevpc.nuts.cmdline.NArg;
 import net.thevpc.nuts.cmdline.NCommandLine;
 import net.thevpc.nuts.runtime.standalone.format.NFetchDisplayOptions;
 import net.thevpc.nuts.runtime.standalone.dependency.NDependencyScopes;
@@ -264,7 +264,7 @@ public abstract class DefaultNQueryBaseOptions<T extends NWorkspaceCommand> exte
         if (getDisplayOptions().configureFirst(cmdLine)) {
             return true;
         }
-        NArgument a = cmdLine.peek().get(session);
+        NArg a = cmdLine.peek().get(session);
         if (a == null) {
             return false;
         }
@@ -327,7 +327,7 @@ public abstract class DefaultNQueryBaseOptions<T extends NWorkspaceCommand> exte
         if(NBlankable.isBlank(filter)){
             this.repositoryFilter = null;
         }else {
-            this.repositoryFilter = getSession().repos().filter().byName(filter);
+            this.repositoryFilter = NRepositories.of(getSession()).filter().byName(filter);
         }
         return (T) this;
     }

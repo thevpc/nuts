@@ -39,7 +39,7 @@ public abstract class AbstractRecommendationConnector implements RecommendationC
 
     public void validateRequest(RequestQueryInfo ri, NSession session) {
         ri.server = (ri.server == null || ri.server.trim().isEmpty()) ? "https://thevpc.net/nuts" : ri.server;
-        NWorkspaceEnvManager env = session.env();
+        NEnvs env = NEnvs.of(session);
         RequestAgent agent = ri.q.getAgent();
         NWorkspace ws = session.getWorkspace();
         if (agent.getApiVersion() == null) {

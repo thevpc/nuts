@@ -1,7 +1,7 @@
 package net.thevpc.nuts.toolbox.ntomcat.remote;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.cmdline.NArgument;
+import net.thevpc.nuts.cmdline.NArg;
 import net.thevpc.nuts.cmdline.NCommandLine;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.text.NTextStyle;
@@ -28,7 +28,7 @@ public class RemoteTomcat {
 
     public void runArgs() {
         NSession session = getContext().getSession();
-        NArgument a;
+        NArg a;
         cmdLine.setCommandName("tomcat --remote");
         while (cmdLine.hasNext()) {
             if (cmdLine.isNextOption()) {
@@ -74,7 +74,7 @@ public class RemoteTomcat {
 
     public void list(NCommandLine args) {
         NSession session = getContext().getSession();
-        NArgument a;
+        NArg a;
         class Helper {
 
             boolean processed = false;
@@ -108,7 +108,7 @@ public class RemoteTomcat {
         RemoteTomcatConfigService c = null;
         String appName = null;
         String instanceName = null;
-        NArgument a;
+        NArg a;
         args.setCommandName("tomcat --remote add");
         NSession session = context.getSession();
         while (args.hasNext()) {
@@ -215,7 +215,7 @@ public class RemoteTomcat {
 
     public void remove(NCommandLine args) {
         RemoteTomcatServiceBase s = null;
-        NArgument a;
+        NArg a;
         boolean processed = false;
         int lastExitCode = 0;
         args.setCommandName("tomcat --remote remove");
@@ -243,7 +243,7 @@ public class RemoteTomcat {
         NSession session = getContext().getSession();
         String conf = null;
         String app = null;
-        NArgument a;
+        NArg a;
         args.setCommandName("tomcat --remote install");
         while (args.hasNext()) {
             if ((a = args.nextString("--app").orNull()) != null) {
@@ -258,7 +258,7 @@ public class RemoteTomcat {
         NSession session = getContext().getSession();
         String app = null;
         String version = null;
-        NArgument a;
+        NArg a;
         args.setCommandName("tomcat --remote deploy");
         while (args.hasNext()) {
             if ((a = args.nextString("--app").orNull()) != null) {
@@ -275,7 +275,7 @@ public class RemoteTomcat {
     private void stop(NCommandLine args) {
         NSession session = getContext().getSession();
         String name = null;
-        NArgument a;
+        NArg a;
         while (args.hasNext()) {
             if (args.peek().get(session).isNonOption()) {
                 name = args.nextNonOption().flatMap(NValue::asString).get(session);
@@ -293,7 +293,7 @@ public class RemoteTomcat {
         boolean deleteLog = false;
         boolean install = false;
         List<String> apps = new ArrayList<>();
-        NArgument a;
+        NArg a;
         while (args.hasNext()) {
             if ((a = args.nextBoolean("--deleteLog").orNull()) != null) {
                 deleteLog = a.getBooleanValue().get(session);
@@ -337,7 +337,7 @@ public class RemoteTomcat {
     }
 
     public void reset(NCommandLine args) {
-        NArgument a;
+        NArg a;
         args.setCommandName("tomcat --remote reset");
         while (args.hasNext()) {
             context.configureLast(args);
@@ -362,7 +362,7 @@ public class RemoteTomcat {
 
     public void show(NCommandLine args) {
         NSession session = context.getSession();
-        NArgument a;
+        NArg a;
         RemoteTomcatServiceBase s;
         class Helper {
 
@@ -443,7 +443,7 @@ public class RemoteTomcat {
 
     public RemoteTomcatServiceBase readBaseServiceArg(NCommandLine args) {
         NSession session = context.getSession();
-        NArgument a;
+        NArg a;
         if ((a = args.nextString("--name").orNull()) != null) {
             return (loadOrCreateTomcatConfig(a.getStringValue().get(session)));
         } else if ((a = args.nextString("--app").orNull()) != null) {

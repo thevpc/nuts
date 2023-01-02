@@ -1,9 +1,6 @@
 package net.thevpc.nuts.toolbox.ndb.util;
 
-import net.thevpc.nuts.NContentType;
-import net.thevpc.nuts.NDependencyFilters;
-import net.thevpc.nuts.NMsg;
-import net.thevpc.nuts.NSession;
+import net.thevpc.nuts.*;
 
 import java.io.Closeable;
 import java.sql.*;
@@ -32,7 +29,7 @@ public class SqlHelper implements Closeable {
 
     public static ClassLoader createClassLoader(NSession session, String id) {
         String z = session.getWorkspace().getUuid() + "/" + id;
-        return cachedClassLoaders.computeIfAbsent(z, x -> session.search().addId(id)
+        return cachedClassLoaders.computeIfAbsent(z, x -> NSearchCommand.of(session).addId(id)
                 .setDependencyFilter(NDependencyFilters.of(session).byRunnable())
                 .getResultClassLoader(SqlHelper.class.getClassLoader()));
     }

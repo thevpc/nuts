@@ -166,7 +166,7 @@ public class CorePlatformUtils {
             CoreStringUtils.clear(osVersion);
             try {
                 osVersion.append(
-                        session.exec().setExecutionType(NExecutionType.SYSTEM)
+                        NExecCommand.of(session).setExecutionType(NExecutionType.SYSTEM)
                                 .setCommand("uname", "-r")
                                 .setRedirectErrorStream(true)
                                 .grabOutputString()

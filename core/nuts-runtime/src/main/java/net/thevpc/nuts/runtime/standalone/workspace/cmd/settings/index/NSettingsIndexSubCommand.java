@@ -6,7 +6,7 @@
 package net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.index;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.cmdline.NArgument;
+import net.thevpc.nuts.cmdline.NArg;
 import net.thevpc.nuts.cmdline.NCommandLine;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.AbstractNSettingsSubCommand;
 
@@ -21,7 +21,7 @@ public class NSettingsIndexSubCommand extends AbstractNSettingsSubCommand {
     @Override
     public boolean exec(NCommandLine cmdLine, Boolean autoSave, NSession session) {
         String name = "settings update stats";
-        NArgument a;
+        NArg a;
         if (cmdLine.next("update stats").isPresent()) {
             List<String> repos = new ArrayList<>();
             while (cmdLine.hasNext()) {
@@ -36,7 +36,7 @@ public class NSettingsIndexSubCommand extends AbstractNSettingsSubCommand {
     }
 
     private void updateStatistics(NSession session, String[] repos) {
-        NWorkspaceConfigManager cfg = session.config();
+        NConfigs cfg = NConfigs.of(session);
         NUpdateStatisticsCommand cmd = NUpdateStatisticsCommand.of(session);
         for (String repo : repos) {
             cmd.add(repo);

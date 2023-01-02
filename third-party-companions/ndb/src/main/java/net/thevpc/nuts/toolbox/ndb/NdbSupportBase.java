@@ -1,7 +1,7 @@
 package net.thevpc.nuts.toolbox.ndb;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.cmdline.NArgument;
+import net.thevpc.nuts.cmdline.NArg;
 import net.thevpc.nuts.cmdline.NCommandLine;
 import net.thevpc.nuts.elem.NElements;
 import net.thevpc.nuts.io.NPath;
@@ -26,7 +26,7 @@ public abstract class NdbSupportBase<C extends NdbConfig> implements NdbSupport 
 
     @Override
     public void run(NApplicationContext appContext, NCommandLine commandLine) {
-        NArgument a;
+        NArg a;
         commandLine.setCommandName(dbType);
         while (commandLine.hasNext()) {
             if (commandLine.withNextBoolean((value, arg, session) -> {
@@ -147,7 +147,7 @@ public abstract class NdbSupportBase<C extends NdbConfig> implements NdbSupport 
 
     protected boolean fillOption(NCommandLine cmdLine, C options) {
         NSession session = appContext.getSession();
-        NArgument a;
+        NArg a;
         if ((a = cmdLine.nextString("--name").orNull()) != null) {
             options.setName(a.getStringValue().get(session));
             return true;

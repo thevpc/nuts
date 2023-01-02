@@ -8,7 +8,7 @@ package net.thevpc.nuts.util;
 import net.thevpc.nuts.NFormat;
 import net.thevpc.nuts.NFormattable;
 import net.thevpc.nuts.NSession;
-import net.thevpc.nuts.cmdline.NArgument;
+import net.thevpc.nuts.cmdline.NArg;
 import net.thevpc.nuts.cmdline.NCommandLine;
 import net.thevpc.nuts.elem.NMapBy;
 import net.thevpc.nuts.io.NOutStream;
@@ -285,7 +285,7 @@ public class NChronometer implements Serializable, NFormattable {
 
             @Override
             public boolean configureFirst(NCommandLine commandLine) {
-                NArgument a = commandLine.peek().get(session);
+                NArg a = commandLine.peek().get(session);
                 switch (a.key()) {
                     case "--mode": {
                         a = commandLine.nextString().get(session);

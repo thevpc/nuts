@@ -1,7 +1,7 @@
 package net.thevpc.nuts.toolbox.njob;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.cmdline.NArgument;
+import net.thevpc.nuts.cmdline.NArg;
 import net.thevpc.nuts.cmdline.NCommandLine;
 import net.thevpc.nuts.format.NMutableTableModel;
 import net.thevpc.nuts.format.NTableFormat;
@@ -41,7 +41,7 @@ public class NTasksSubCmd {
         boolean list = false;
         boolean show = false;
         boolean nameVisited = false;
-        NArgument a;
+        NArg a;
         List<Consumer<NTask>> runLater = new ArrayList<>();
         while (cmd.hasNext()) {
             if ((a = cmd.nextBoolean("--list", "-l").orNull()) != null) {
@@ -187,7 +187,7 @@ public class NTasksSubCmd {
         }
         Data d=new Data();
         while (cmd.hasNext()) {
-            NArgument aa = cmd.peek().get(session);
+            NArg aa = cmd.peek().get(session);
             switch(aa.key()) {
                 case "--list":
                 case "-l": {
@@ -434,7 +434,7 @@ public class NTasksSubCmd {
         }
         Data d=new Data();
         while (cmd.hasNext()) {
-            NArgument aa = cmd.peek().get(session);
+            NArg aa = cmd.peek().get(session);
             switch(aa.key()) {
                 case "-w":
                 case "--weeks": {
@@ -503,7 +503,7 @@ public class NTasksSubCmd {
                 case "--groupBy":
                 case "--groupby":
                 case "--group-by": {
-                    NArgument y = cmd.nextString().get(session);
+                    NArg y = cmd.nextString().get(session);
                     switch (y.getStringValue().get(session)) {
                         case "p":
                         case "project": {
@@ -644,7 +644,7 @@ public class NTasksSubCmd {
     private void runTaskRemove(NCommandLine cmd) {
         NTexts text = NTexts.of(context.getSession());
         while (cmd.hasNext()) {
-            NArgument a = cmd.next().get(session);
+            NArg a = cmd.next().get(session);
             if (cmd.isExecMode()) {
                 NTask t = findTask(a.toString(), cmd);
                 if (service.tasks().removeTask(t.getId())) {
@@ -666,7 +666,7 @@ public class NTasksSubCmd {
 
     private void runTaskShow(NCommandLine cmd) {
         while (cmd.hasNext()) {
-            NArgument a = cmd.next().get(session);
+            NArg a = cmd.next().get(session);
             if (cmd.isExecMode()) {
                 NTask task = findTask(a.toString(), cmd);
                 if (task == null) {

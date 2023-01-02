@@ -26,7 +26,7 @@
 package net.thevpc.nuts.toolbox.nsh.cmds.bash;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.cmdline.NArgument;
+import net.thevpc.nuts.cmdline.NArg;
 import net.thevpc.nuts.cmdline.NCommandLine;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.io.NPathPermission;
@@ -56,7 +56,7 @@ public class ChmodCommand extends SimpleJShellBuiltin {
         if (context.configureFirst(commandLine)) {
             return true;
         }
-        NArgument a = commandLine.peek().get(session);
+        NArg a = commandLine.peek().get(session);
         String s = a.asString().get(session);
         if (s.equals("-R") || s.equals("--recursive")) {
             commandLine.skip();

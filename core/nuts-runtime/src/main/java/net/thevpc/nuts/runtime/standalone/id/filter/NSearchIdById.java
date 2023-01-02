@@ -26,10 +26,7 @@
 */
 package net.thevpc.nuts.runtime.standalone.id.filter;
 
-import net.thevpc.nuts.NDescriptor;
-import net.thevpc.nuts.NId;
-import net.thevpc.nuts.NSearchId;
-import net.thevpc.nuts.NSession;
+import net.thevpc.nuts.*;
 
 /**
  *
@@ -50,7 +47,7 @@ public class NSearchIdById implements NSearchId {
 
     @Override
     public NDescriptor getDescriptor(NSession session) {
-        return session.fetch().setId(id).getResultDescriptor();
+        return NFetchCommand.of(session).setId(id).getResultDescriptor();
     }
 
 }

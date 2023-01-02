@@ -20,12 +20,12 @@ public class NIndexerUtils {
 
     public static Path getCacheDir(NSession session, String entity) {
         String k = "NutsIndexerUtils.CACHE." + entity;
-        String m = session.env().getProperty(k).flatMap(NValue::asString).orNull();
+        String m = NEnvs.of(session).getProperty(k).flatMap(NValue::asString).orNull();
         if (m == null) {
-            m = session.locations()
+            m = NLocations.of(session)
                     .getStoreLocation(NIdResolver.of(session).resolveId(NIndexerUtils.class),
                             NStoreLocation.CACHE) + File.separator + entity;
-            session.env().setProperty(k, m);
+            NEnvs.of(session).setProperty(k, m);
         }
         return new File(m).toPath();
     }

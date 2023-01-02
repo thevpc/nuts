@@ -3,7 +3,7 @@ package net.thevpc.nuts.toolbox.docusaurus;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.cmdline.NCommandLineContext;
 import net.thevpc.nuts.cmdline.NCommandLineProcessor;
-import net.thevpc.nuts.cmdline.NArgument;
+import net.thevpc.nuts.cmdline.NArg;
 import net.thevpc.nuts.cmdline.NCommandLine;
 
 import java.nio.file.Paths;
@@ -23,7 +23,7 @@ public class NDocusaurusMain implements NApplication {
     public void run(NApplicationContext appContext) {
         appContext.processCommandLine(new NCommandLineProcessor() {
             @Override
-            public boolean onCmdNextOption(NArgument option, NCommandLine commandLine, NCommandLineContext context) {
+            public boolean onCmdNextOption(NArg option, NCommandLine commandLine, NCommandLineContext context) {
                 NSession session = commandLine.getSession();
                 switch (option.key()) {
                     case "-d":
@@ -38,7 +38,7 @@ public class NDocusaurusMain implements NApplication {
             }
 
             @Override
-            public boolean onCmdNextNonOption(NArgument nonOption, NCommandLine commandLine, NCommandLineContext context) {
+            public boolean onCmdNextNonOption(NArg nonOption, NCommandLine commandLine, NCommandLineContext context) {
                 NSession session = commandLine.getSession();
                 switch (nonOption.asString().get(session)) {
                     case "start": {
@@ -79,7 +79,7 @@ public class NDocusaurusMain implements NApplication {
                         .setBuildWebSite(build)
                         .setStartWebSite(start)
                         .setBuildPdf(buildPdf)
-                        .setAutoInstallNutsPackages(commandLine.getSession().boot().getBootOptions().getConfirm().orElse(NConfirmationMode.ASK) == NConfirmationMode.YES)
+                        .setAutoInstallNutsPackages(NBootManager.of(commandLine.getSession()).getBootOptions().getConfirm().orElse(NConfirmationMode.ASK) == NConfirmationMode.YES)
                         .run();
             }
         });

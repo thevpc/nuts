@@ -25,45 +25,30 @@
 package net.thevpc.nuts;
 
 import net.thevpc.nuts.spi.NComponent;
-import net.thevpc.nuts.util.NMapListener;
 
-import java.util.List;
+import java.util.Set;
 
 /**
- * @author thevpc
- * @app.category Events
+ * @app.category Base
  */
-public interface NWorkspaceEventManager extends NComponent {
-    static NWorkspaceEventManager of(NSession session) {
-        return NExtensions.of(session).createSupported(NWorkspaceEventManager.class);
+public interface NImports extends NComponent {
+    static NImports of(NSession session) {
+        return NExtensions.of(session).createSupported(NImports.class);
     }
 
-    NWorkspaceEventManager removeRepositoryListener(NRepositoryListener listener);
+    NImports addImports(String... importExpression);
 
-    NWorkspaceEventManager addRepositoryListener(NRepositoryListener listener);
+    NImports clearImports();
 
-    List<NRepositoryListener> getRepositoryListeners();
+    NImports removeImports(String... importExpression);
 
-    NWorkspaceEventManager addUserPropertyListener(NMapListener<String, Object> listener);
+    NImports updateImports(String[] imports);
 
-    NWorkspaceEventManager removeUserPropertyListener(NMapListener<String, Object> listener);
+    Set<String> getAllImports();
 
-    List<NMapListener<String, Object>> getUserPropertyListeners();
-
-    NWorkspaceEventManager removeWorkspaceListener(NWorkspaceListener listener);
-
-    NWorkspaceEventManager addWorkspaceListener(NWorkspaceListener listener);
-
-    List<NWorkspaceListener> getWorkspaceListeners();
-
-    NWorkspaceEventManager removeInstallListener(NInstallListener listener);
-
-    NWorkspaceEventManager addInstallListener(NInstallListener listener);
-
-    List<NInstallListener> getInstallListeners();
+    boolean isImportedGroupId(String groupId);
 
     NSession getSession();
 
-    NWorkspaceEventManager setSession(NSession session);
-
+    NImports setSession(NSession session);
 }

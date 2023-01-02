@@ -237,7 +237,7 @@ public class NHttpSrvRepository extends NCachedRepository {
     }
 
     private String[] resolveEncryptedAuth(NSession session) {
-        String login = session.security().setSession(session).getCurrentUsername();
+        String login = NWorkspaceSecurityManager.of(session).getCurrentUsername();
         NUserConfig security = NRepositoryConfigManagerExt.of(config()).getModel().getUser(login, session);
         String newLogin = "";
         char[] credentials = new char[0];
@@ -247,7 +247,7 @@ public class NHttpSrvRepository extends NCachedRepository {
         } else {
             newLogin = security.getRemoteIdentity();
             if (NBlankable.isBlank(newLogin)) {
-                NUser security2 = session.security().findUser(login);
+                NUser security2 = NWorkspaceSecurityManager.of(session).findUser(login);
                 if (security2 != null) {
                     newLogin = security2.getRemoteIdentity();
                 }
@@ -263,7 +263,7 @@ public class NHttpSrvRepository extends NCachedRepository {
             }
             if (security != null) {
                 credentials = security.getRemoteCredentials() == null ? null : security.getRemoteCredentials().toCharArray();
-                credentials = session.security().getCredentials(credentials);
+                credentials = NWorkspaceSecurityManager.of(session).getCredentials(credentials);
             }
         }
 

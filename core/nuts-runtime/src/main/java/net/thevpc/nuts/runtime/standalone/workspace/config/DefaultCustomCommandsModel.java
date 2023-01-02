@@ -82,7 +82,7 @@ public class DefaultCustomCommandsModel {
             oldCommandFactory.setParameters(commandFactoryConfig.getParameters() == null ? null : new LinkedHashMap<>(commandFactoryConfig.getParameters()));
             oldCommandFactory.setPriority(commandFactoryConfig.getPriority());
         }
-        NWorkspaceConfigManagerExt.of(session.config())
+        NConfigsExt.of(NConfigs.of(session))
                 .getModel().fireConfigurationChanged("command", session, ConfigEventType.MAIN);
     }
 
@@ -133,7 +133,7 @@ public class DefaultCustomCommandsModel {
             if (factoryId.equals(factory.getFactoryId())) {
                 removeMe = factory;
                 iterator.remove();
-                NWorkspaceConfigManagerExt.of(session.config())
+                NConfigsExt.of(NConfigs.of(session))
                         .getModel()
                         .fireConfigurationChanged("command", session, ConfigEventType.MAIN);
                 break;
@@ -146,7 +146,7 @@ public class DefaultCustomCommandsModel {
                 if (factoryId.equals(commandFactory.getFactoryId())) {
                     removeMeConfig = commandFactory;
                     iterator.remove();
-                    NWorkspaceConfigManagerExt.of(session.config()).getModel()
+                    NConfigsExt.of(NConfigs.of(session)).getModel()
                             .fireConfigurationChanged("command", session, ConfigEventType.MAIN);
                     break;
                 }

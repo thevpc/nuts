@@ -27,7 +27,7 @@ package net.thevpc.nuts.runtime.standalone.descriptor.parser;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.DefaultNArtifactCall;
-import net.thevpc.nuts.cmdline.NArgument;
+import net.thevpc.nuts.cmdline.NArg;
 import net.thevpc.nuts.cmdline.NCommandLine;
 import net.thevpc.nuts.runtime.standalone.repository.impl.maven.util.MavenUtils;
 import net.thevpc.nuts.util.NRef;
@@ -169,7 +169,7 @@ public class JarDescriptorContentParserComponent implements NDescriptorContentPa
         }
         boolean alwaysSelectAllMainClasses = false;
         NCommandLine cmd = NCommandLine.of(parserContext.getParseOptions());
-        NArgument a;
+        NArg a;
         while (!cmd.isEmpty()) {
             if ((a = cmd.nextBoolean("--all-mains").orNull()) != null) {
                 alwaysSelectAllMainClasses = a.getBooleanValue().get(session);

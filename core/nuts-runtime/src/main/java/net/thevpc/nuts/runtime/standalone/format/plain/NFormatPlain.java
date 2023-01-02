@@ -6,7 +6,7 @@
 package net.thevpc.nuts.runtime.standalone.format.plain;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.cmdline.NArgument;
+import net.thevpc.nuts.cmdline.NArg;
 import net.thevpc.nuts.cmdline.NCommandLine;
 import net.thevpc.nuts.elem.NArrayElement;
 import net.thevpc.nuts.elem.NElement;
@@ -56,13 +56,13 @@ public class NFormatPlain extends DefaultFormatBase<NContentTypeFormat> implemen
     @Override
     public boolean configureFirst(NCommandLine commandLine) {
         NSession session = getSession();
-        NArgument n = commandLine.peek().orNull();
+        NArg n = commandLine.peek().orNull();
         if (n != null) {
-            NArgument a;
+            NArg a;
             boolean enabled = n.isActive();
             if ((a = commandLine.nextString(DefaultNPropertiesFormat.OPTION_MULTILINE_PROPERTY).get(session)) != null) {
                 if (enabled) {
-                    NArgument i = NArgument.of(a.getStringValue().get(session));
+                    NArg i = NArg.of(a.getStringValue().get(session));
                     extraConfig.add(a.asString().get(session));
                     addMultilineProperty(i.key(), i.getStringValue().get(session));
                 }

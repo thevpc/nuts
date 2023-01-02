@@ -6,7 +6,7 @@
 package net.thevpc.nuts.toolbox.ndb.derby;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.cmdline.NArgument;
+import net.thevpc.nuts.cmdline.NArg;
 import net.thevpc.nuts.cmdline.NCommandLine;
 import net.thevpc.nuts.io.NOutStream;
 import net.thevpc.nuts.text.NTextStyle;
@@ -33,7 +33,7 @@ public class NDerbyMain extends RdbSupport<NDerbyConfig> {
     @Override
     public void run(NApplicationContext appContext, NCommandLine commandLine) {
         NSession session = appContext.getSession();
-        NArgument a;
+        NArg a;
         NDerbyConfig options = new NDerbyConfig();
         commandLine.setCommandName("derby");
         while (commandLine.hasNext()) {
@@ -174,7 +174,7 @@ public class NDerbyMain extends RdbSupport<NDerbyConfig> {
     public void status(NCommandLine cmdLine, NDerbyConfig options) {
         NSession session = appContext.getSession();
         cmdLine.setCommandName("tomcat --local status");
-        NArgument a;
+        NArg a;
         while (cmdLine.hasNext()) {
             if (_opt(cmdLine, options)) {
                 //
@@ -195,7 +195,7 @@ public class NDerbyMain extends RdbSupport<NDerbyConfig> {
 
     private boolean _opt(NCommandLine cmdLine, NDerbyConfig options) {
         NSession session = appContext.getSession();
-        NArgument a;
+        NArg a;
         if ((a = cmdLine.nextString("-v", "--derby-version").orNull()) != null) {
             options.setDerbyVersion(a.getStringValue().get(session));
             return true;
@@ -232,7 +232,7 @@ public class NDerbyMain extends RdbSupport<NDerbyConfig> {
         NSession session = appContext.getSession();
         String format = "default";
         args.setCommandName("tomcat --local ps");
-        NArgument a;
+        NArg a;
         while (args.hasNext()) {
             if ((a = args.nextBoolean("-l", "--long").orNull()) != null) {
                 format = "long";
@@ -284,7 +284,7 @@ public class NDerbyMain extends RdbSupport<NDerbyConfig> {
     public void versions(NCommandLine args, NDerbyConfig options) {
         NSession session = appContext.getSession();
         args.setCommandName("tomcat --local versions");
-        NArgument a;
+        NArg a;
         while (args.hasNext()) {
             if (_opt(args, options)) {
                 //

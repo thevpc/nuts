@@ -28,7 +28,7 @@ import java.util.List;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.cmdline.DefaultNCommandAutoComplete;
-import net.thevpc.nuts.cmdline.NArgumentCandidate;
+import net.thevpc.nuts.cmdline.NArgCandidate;
 import net.thevpc.nuts.cmdline.NCommandAutoCompleteResolver;
 import net.thevpc.nuts.cmdline.NCommandLine;
 
@@ -42,8 +42,8 @@ public class JobAutoCompleter implements NCommandAutoCompleteResolver {
     }
 
     @Override
-    public List<NArgumentCandidate> resolveCandidates(NCommandLine commandLine, int wordIndex, NSession session) {
-        JobServiceCmd fileContext = (JobServiceCmd) session.env().getProperties().get(JobServiceCmd.class.getName());
+    public List<NArgCandidate> resolveCandidates(NCommandLine commandLine, int wordIndex, NSession session) {
+        JobServiceCmd fileContext = (JobServiceCmd) NEnvs.of(session).getProperties().get(JobServiceCmd.class.getName());
         DefaultNCommandAutoComplete autoComplete = new DefaultNCommandAutoComplete()
                 .setSession(session)
                 .setCurrentWordIndex(wordIndex)

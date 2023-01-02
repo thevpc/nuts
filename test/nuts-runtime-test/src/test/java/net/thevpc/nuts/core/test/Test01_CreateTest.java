@@ -5,7 +5,7 @@
  */
 package net.thevpc.nuts.core.test;
 
-import net.thevpc.nuts.cmdline.NArgument;
+import net.thevpc.nuts.cmdline.NArg;
 import net.thevpc.nuts.cmdline.NCommandHistory;
 import net.thevpc.nuts.cmdline.NCommandLine;
 import net.thevpc.nuts.cmdline.NCommandLineFormat;
@@ -50,12 +50,12 @@ public class Test01_CreateTest {
         );
         Assertions.assertEquals(
                 NPath.of(new File(wsPath, "cache"),session),
-                session.locations().getStoreLocation(NStoreLocation.CACHE));
-        Assertions.assertEquals(0, session.repos().getRepositories().size());
+                NLocations.of(session).getStoreLocation(NStoreLocation.CACHE));
+        Assertions.assertEquals(0, NRepositories.of(session).getRepositories().size());
 //        Assertions.assertEquals(new File(wsPath,  "cache/" + NutsConstants.Folders.REPOSITORIES + "/" +
-//                        session.repos().getRepositories()[0].getName() +
-//                        "/" + session.repos().getRepositories()[0].getUuid()).getPath(),
-//                session.repos().getRepositories()[0].config().getStoreLocation(NutsStoreLocation.CACHE));
+//                        NRepositories.of(session).getRepositories()[0].getName() +
+//                        "/" + NRepositories.of(session).getRepositories()[0].getUuid()).getPath(),
+//                NRepositories.of(session).getRepositories()[0].config().getStoreLocation(NutsStoreLocation.CACHE));
 
 //        String str="     __        __    \n" +
 //                "  /\\ \\ \\ _  __/ /______\n" +
@@ -128,14 +128,14 @@ public class Test01_CreateTest {
         }
         Assertions.assertEquals(
                 NPath.of(new File(base, new File(wsPath).getName()),session),
-                session.locations().getStoreLocation(NStoreLocation.CACHE));
+                NLocations.of(session).getStoreLocation(NStoreLocation.CACHE));
         Assertions.assertEquals(
                 NPath.of(new File(base, new File(wsPath).getName() + "/"
                         + NConstants.Folders.REPOSITORIES + "/"
-                        + session.repos().getRepositories().get(0).getName()
-                        + "/" + session.repos().getRepositories().get(0).getUuid()
+                        + NRepositories.of(session).getRepositories().get(0).getName()
+                        + "/" + NRepositories.of(session).getRepositories().get(0).getUuid()
                 ),session),
-                session.repos().getRepositories().get(0).config().getStoreLocation(NStoreLocation.CACHE));
+                NRepositories.of(session).getRepositories().get(0).config().getStoreLocation(NStoreLocation.CACHE));
     }
 
     @Test
@@ -173,7 +173,7 @@ public class Test01_CreateTest {
         }
 
         {
-            NArgument arg = NArgument.of("arg");
+            NArg arg = NArg.of("arg");
             Assertions.assertNotNull(arg);
         }
 

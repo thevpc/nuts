@@ -27,8 +27,8 @@
 package net.thevpc.nuts.runtime.standalone.app.cmdline.option;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.cmdline.DefaultNArgumentCandidate;
-import net.thevpc.nuts.cmdline.NArgumentCandidate;
+import net.thevpc.nuts.cmdline.DefaultNArgCandidate;
+import net.thevpc.nuts.cmdline.NArgCandidate;
 import net.thevpc.nuts.cmdline.NCommandAutoComplete;
 
 import java.util.ArrayList;
@@ -47,18 +47,18 @@ public class RepositoryNonOption extends DefaultNonOption {
 
 
     @Override
-    public List<NArgumentCandidate> getCandidates(NCommandAutoComplete context) {
-        List<NArgumentCandidate> all = new ArrayList<>();
+    public List<NArgCandidate> getCandidates(NCommandAutoComplete context) {
+        List<NArgCandidate> all = new ArrayList<>();
         NRepository repository=context.get(NRepository.class);
         if(repository!=null){
             if (repository.config().isSupportedMirroring()) {
                 for (NRepository repo : repository.config().setSession(context.getSession()).getMirrors()) {
-                    all.add(new DefaultNArgumentCandidate(repo.getName()));
+                    all.add(new DefaultNArgCandidate(repo.getName()));
                 }
             }
         }else{
-            for (NRepository repo : context.getSession().repos().setSession(context.getSession()).getRepositories()) {
-                all.add(new DefaultNArgumentCandidate(repo.getName()));
+            for (NRepository repo : NRepositories.of(context.getSession()).getRepositories()) {
+                all.add(new DefaultNArgCandidate(repo.getName()));
             }
 
         }

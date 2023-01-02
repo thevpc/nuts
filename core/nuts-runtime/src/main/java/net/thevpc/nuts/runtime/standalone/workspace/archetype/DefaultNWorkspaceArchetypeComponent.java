@@ -29,7 +29,7 @@ import net.thevpc.nuts.*;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.spi.*;
 import net.thevpc.nuts.runtime.standalone.repository.NRepositorySelectorHelper;
-import net.thevpc.nuts.runtime.standalone.workspace.config.DefaultNWorkspaceConfigManager;
+import net.thevpc.nuts.runtime.standalone.workspace.config.DefaultNConfigs;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceUtils;
 import net.thevpc.nuts.util.NLogger;
 
@@ -48,7 +48,7 @@ public class DefaultNWorkspaceArchetypeComponent implements NWorkspaceArchetypeC
     @Override
     public void initializeWorkspace(NSession session) {
         this.LOG = NLogger.of(DefaultNWorkspaceArchetypeComponent.class,session);
-        DefaultNWorkspaceConfigManager rm = (DefaultNWorkspaceConfigManager) session.config();
+        DefaultNConfigs rm = (DefaultNConfigs) NConfigs.of(session);
         LinkedHashMap<String, NAddRepositoryOptions> def = new LinkedHashMap<>();
         List<NRepositoryLocation> defaults = new ArrayList<>();
         for (NAddRepositoryOptions d : rm.getDefaultRepositories()) {
@@ -69,10 +69,10 @@ public class DefaultNWorkspaceArchetypeComponent implements NWorkspaceArchetypeC
                 if(!NBlankable.isBlank(s.getName())){
                     r.setName(oo.getName());
                 }
-                session.repos().addRepository(r);
+                NRepositories.of(session).addRepository(r);
                 def.remove(sloc);
             } else {
-                session.repos().addRepository(oo
+                NRepositories.of(session).addRepository(oo
                         //.setTemporary(!defaults.containsKey(oo.getName()))
                 );
             }
@@ -80,18 +80,18 @@ public class DefaultNWorkspaceArchetypeComponent implements NWorkspaceArchetypeC
 //        for (NutsAddRepositoryOptions d : def.values()) {
 //            ws.repos().addRepository(d);
 //        }
-        session.imports().addImports(new String[]{
+        NImports.of(session).addImports(new String[]{
                 "net.thevpc.nuts.toolbox",
                 "net.thevpc"
         });
 
-        session.security().updateUser(NConstants.Users.ANONYMOUS)
+        NWorkspaceSecurityManager.of(session).updateUser(NConstants.Users.ANONYMOUS)
                 .resetPermissions()
                 //.addRights(NutsConstants.Rights.FETCH_DESC, NutsConstants.Rights.FETCH_CONTENT)
                 .run();
 
         //has read rights
-        session.security().setSession(session).addUser("user")
+        NWorkspaceSecurityManager.of(session).addUser("user")
                 .setCredentials("user".toCharArray()).addPermissions(
                         NConstants.Permissions.FETCH_DESC,
                         NConstants.Permissions.FETCH_CONTENT,
@@ -105,7 +105,7 @@ public class DefaultNWorkspaceArchetypeComponent implements NWorkspaceArchetypeC
 
     @Override
     public void startWorkspace(NSession session) {
-        NBootManager boot = session.boot();
+        NBootManager boot = NBootManager.of(session);
         boolean initializePlatforms = boot.getBootOptions().getInitPlatforms().ifEmpty(true).get(session);
         boolean initializeJava = boot.getBootOptions().getInitJava().ifEmpty(initializePlatforms).get(session);
         boolean initializeScripts = boot.getBootOptions().getInitScripts().ifEmpty(true).get(session);
@@ -120,7 +120,7 @@ public class DefaultNWorkspaceArchetypeComponent implements NWorkspaceArchetypeC
         if (initializeScripts || initializeLaunchers) {
             NWorkspaceUtils.of(session).installScriptsAndLaunchers(initializeLaunchers);
         }
-        Boolean skipCompanions = session.boot().getBootOptions().getSkipCompanions().orElse(false);
+        Boolean skipCompanions = NBootManager.of(session).getBootOptions().getSkipCompanions().orElse(false);
         if (!skipCompanions) {
             NWorkspaceUtils.of(session).installCompanions();
         }

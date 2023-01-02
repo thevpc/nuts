@@ -25,46 +25,46 @@ public class NWorkspaceVarExpansionFunction implements Function<String, String> 
     public String apply(String from) {
         switch (from) {
             case "home.config":
-                return str(session.locations().getHomeLocation(NStoreLocation.CONFIG));
+                return str(NLocations.of(session).getHomeLocation(NStoreLocation.CONFIG));
             case "home.apps":
-                return str(session.locations().getHomeLocation(NStoreLocation.APPS));
+                return str(NLocations.of(session).getHomeLocation(NStoreLocation.APPS));
             case "home.lib":
-                return str(session.locations().getHomeLocation(NStoreLocation.LIB));
+                return str(NLocations.of(session).getHomeLocation(NStoreLocation.LIB));
             case "home.temp":
-                return str(session.locations().getHomeLocation(NStoreLocation.TEMP));
+                return str(NLocations.of(session).getHomeLocation(NStoreLocation.TEMP));
             case "home.var":
-                return str(session.locations().getHomeLocation(NStoreLocation.VAR));
+                return str(NLocations.of(session).getHomeLocation(NStoreLocation.VAR));
             case "home.cache":
-                return str(session.locations().getHomeLocation(NStoreLocation.CACHE));
+                return str(NLocations.of(session).getHomeLocation(NStoreLocation.CACHE));
             case "home.log":
-                return str(session.locations().getHomeLocation(NStoreLocation.LOG));
+                return str(NLocations.of(session).getHomeLocation(NStoreLocation.LOG));
             case "home.run":
-                return str(session.locations().getHomeLocation(NStoreLocation.RUN));
+                return str(NLocations.of(session).getHomeLocation(NStoreLocation.RUN));
             case "workspace.hash-name":
                 return session.getWorkspace().getHashName();
             case "workspace.name":
                 return session.getWorkspace().getName();
             case "workspace.location":
             case "workspace":
-                return session.locations().getWorkspaceLocation().toString();
+                return NLocations.of(session).getWorkspaceLocation().toString();
             case "user.home":
                 return System.getProperty("user.home");
             case "workspace.config":
-                return session.locations().getStoreLocation(NStoreLocation.CONFIG).toString();
+                return NLocations.of(session).getStoreLocation(NStoreLocation.CONFIG).toString();
             case "workspace.lib":
-                return session.locations().getStoreLocation(NStoreLocation.LIB).toString();
+                return NLocations.of(session).getStoreLocation(NStoreLocation.LIB).toString();
             case "workspace.apps":
-                return session.locations().getStoreLocation(NStoreLocation.APPS).toString();
+                return NLocations.of(session).getStoreLocation(NStoreLocation.APPS).toString();
             case "workspace.cache":
-                return session.locations().getStoreLocation(NStoreLocation.CACHE).toString();
+                return NLocations.of(session).getStoreLocation(NStoreLocation.CACHE).toString();
             case "workspace.run":
-                return session.locations().getStoreLocation(NStoreLocation.RUN).toString();
+                return NLocations.of(session).getStoreLocation(NStoreLocation.RUN).toString();
             case "workspace.temp":
-                return session.locations().getStoreLocation(NStoreLocation.TEMP).toString();
+                return NLocations.of(session).getStoreLocation(NStoreLocation.TEMP).toString();
             case "workspace.log":
-                return session.locations().getStoreLocation(NStoreLocation.LOG).toString();
+                return NLocations.of(session).getStoreLocation(NStoreLocation.LOG).toString();
             case "workspace.var":
-                return session.locations().getStoreLocation(NStoreLocation.VAR).toString();
+                return NLocations.of(session).getStoreLocation(NStoreLocation.VAR).toString();
             case "nuts.boot.version":
                 return session.getWorkspace().getApiVersion().toString();
             case "nuts.boot.id":
@@ -84,19 +84,19 @@ public class NWorkspaceVarExpansionFunction implements Function<String, String> 
             case "nuts.workspace-boot.id":
                 return NId.ofApi(Nuts.getVersion()).get().toString();
             case "nuts.workspace-runtime.version": {
-                String rt = session.boot().getBootOptions().getRuntimeId().map(Object::toString).orNull();
+                String rt = NBootManager.of(session).getBootOptions().getRuntimeId().map(Object::toString).orNull();
                 return rt == null ? session.getWorkspace().getRuntimeId().getVersion().toString() : rt.contains("#")
                         ? rt.substring(rt.indexOf("#") + 1)
                         : rt;
             }
             case "nuts.workspace-runtime.id": {
-                String rt = session.boot().getBootOptions().getRuntimeId().map(Object::toString).orNull();
+                String rt = NBootManager.of(session).getBootOptions().getRuntimeId().map(Object::toString).orNull();
                 return rt == null ? session.getWorkspace().getRuntimeId().getVersion().toString() : rt.contains("#")
                         ? rt
                         : (NConstants.Ids.NUTS_RUNTIME + "#" + rt);
             }
             default: {
-                Object v = session.info().getPropertyValue(from);
+                Object v = NInfoCommand.of(session).getPropertyValue(from);
                 if (v != null) {
                     return NTexts.of(session).ofText(v).filteredText();
                 }

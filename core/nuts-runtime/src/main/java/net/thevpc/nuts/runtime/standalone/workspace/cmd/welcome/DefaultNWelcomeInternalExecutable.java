@@ -6,7 +6,7 @@
 package net.thevpc.nuts.runtime.standalone.workspace.cmd.welcome;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.cmdline.NArgument;
+import net.thevpc.nuts.cmdline.NArg;
 import net.thevpc.nuts.cmdline.NCommandLine;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.runtime.standalone.app.util.NAppUtils;
@@ -40,7 +40,7 @@ public class DefaultNWelcomeInternalExecutable extends DefaultInternalNExecutabl
         NSession session = getSession();
         NCommandLine commandLine = NCommandLine.of(args);
         while (commandLine.hasNext()) {
-            NArgument a = commandLine.peek().get(session);
+            NArg a = commandLine.peek().get(session);
             if (a.isOption()) {
                 switch(a.key()) {
                     default: {
@@ -66,7 +66,7 @@ public class DefaultNWelcomeInternalExecutable extends DefaultInternalNExecutabl
             welcome.put("api-version", session.getWorkspace().getApiVersion());
             welcome.put("runtime-id", session.getWorkspace().getRuntimeId().builder().setVersion("").build());
             welcome.put("runtime-version", session.getWorkspace().getRuntimeId().getVersion());
-            welcome.put("workspace", session.locations().getWorkspaceLocation());
+            welcome.put("workspace", NLocations.of(session).getWorkspaceLocation());
             welcome.put("hash-name", NPath.of(session.getWorkspace().getHashName(),session));
             if (session.isPlainOut()) {
                 session = session.copy().setOutputFormat(NContentType.PROPS);

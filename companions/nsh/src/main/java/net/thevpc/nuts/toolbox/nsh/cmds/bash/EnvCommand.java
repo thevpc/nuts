@@ -26,7 +26,7 @@
 package net.thevpc.nuts.toolbox.nsh.cmds.bash;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.cmdline.NArgument;
+import net.thevpc.nuts.cmdline.NArg;
 import net.thevpc.nuts.cmdline.NCommandLine;
 import net.thevpc.nuts.spi.NComponentScope;
 import net.thevpc.nuts.spi.NComponentScopeType;
@@ -49,7 +49,7 @@ public class EnvCommand extends SimpleJShellBuiltin {
     protected boolean configureFirst(NCommandLine commandLine, JShellExecutionContext context) {
         Options options = context.getOptions();
         NSession session = context.getSession();
-        NArgument a = commandLine.peek().get(session);
+        NArg a = commandLine.peek().get(session);
         switch (options.readStatus) {
             case 0: {
                 switch (a.key()) {
@@ -167,7 +167,7 @@ public class EnvCommand extends SimpleJShellBuiltin {
                 context.getSession().out().printlnf(env);
             }
         } else {
-            final NExecCommand e = context.getSession().exec().addCommand(options.command)
+            final NExecCommand e = NExecCommand.of(context.getSession()).addCommand(options.command)
                     .setEnv(env)
                     .setFailFast(true);
             if (options.dir != null) {

@@ -37,17 +37,17 @@ public class DefaultNWorkspaceEventModel {
 
     
     public void addUserPropertyListener(NMapListener<String, Object> listener) {
-        ((ObservableMap<String, Object>) NSessionUtils.defaultSession(ws).env().getProperties()).addListener(listener);
+        ((ObservableMap<String, Object>) NEnvs.of(NSessionUtils.defaultSession(ws)).getProperties()).addListener(listener);
     }
 
     
     public void removeUserPropertyListener(NMapListener<String, Object> listener) {
-        ((ObservableMap<String, Object>) NSessionUtils.defaultSession(ws).env().getProperties()).removeListener(listener);
+        ((ObservableMap<String, Object>) NEnvs.of(NSessionUtils.defaultSession(ws)).getProperties()).removeListener(listener);
     }
 
     
     public List<NMapListener<String, Object>> getUserPropertyListeners() {
-        return ((ObservableMap<String, Object>) NSessionUtils.defaultSession(ws).env().getProperties()).getListeners();
+        return ((ObservableMap<String, Object>) NEnvs.of(NSessionUtils.defaultSession(ws)).getProperties()).getListeners();
     }
 
     

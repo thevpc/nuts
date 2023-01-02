@@ -90,12 +90,12 @@ public class MavenFolderRepository extends NFolderRepositoryBase {
     }
 
     private NRepository getLocalMavenRepo(NSession session) {
-        for (NRepository nRepository : session.repos().setSession(session).getRepositories()) {
+        for (NRepository nRepository : NRepositories.of(session).setSession(session).getRepositories()) {
             if (nRepository.getRepositoryType().equals(NConstants.RepoTypes.MAVEN)
                     && nRepository.config().getLocationPath() != null
                     && nRepository.config().getLocationPath().toString()
                     .equals(
-                            Paths.get(NPath.of("~/.m2", session).toAbsolute(session.locations().getWorkspaceLocation()).toString()).toString()
+                            Paths.get(NPath.of("~/.m2", session).toAbsolute(NLocations.of(session).getWorkspaceLocation()).toString()).toString()
                     )) {
                 return nRepository;
             }
@@ -171,7 +171,7 @@ public class MavenFolderRepository extends NFolderRepositoryBase {
             }
             case NConstants.QueryFaces.CONTENT: {
                 String packaging = q.get(NConstants.IdProperties.PACKAGING);
-                return session.locations().getDefaultIdContentExtension(packaging);
+                return NLocations.of(session).getDefaultIdContentExtension(packaging);
             }
             default: {
                 throw new NUnsupportedArgumentException(session, NMsg.ofCstyle("unsupported fact %s", f));

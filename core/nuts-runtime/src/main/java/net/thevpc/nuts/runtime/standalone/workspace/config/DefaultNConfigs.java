@@ -39,12 +39,12 @@ import java.util.stream.Collectors;
 /**
  * @author thevpc
  */
-public class DefaultNWorkspaceConfigManager implements NWorkspaceConfigManager, NWorkspaceConfigManagerExt {
+public class DefaultNConfigs implements NConfigs, NConfigsExt {
 
     private final DefaultNWorkspaceConfigModel model;
     private NSession session;
 
-    public DefaultNWorkspaceConfigManager(NSession session) {
+    public DefaultNConfigs(NSession session) {
         this.session = session;
         NWorkspace w = this.session.getWorkspace();
         NWorkspaceExt e = (NWorkspaceExt) w;
@@ -148,7 +148,7 @@ public class DefaultNWorkspaceConfigManager implements NWorkspaceConfigManager, 
         return session;
     }
 
-    public NWorkspaceConfigManager setSession(NSession session) {
+    public NConfigs setSession(NSession session) {
         this.session = NWorkspaceUtils.bindSession(model.getWorkspace(), session);
         return this;
     }
@@ -167,8 +167,8 @@ public class DefaultNWorkspaceConfigManager implements NWorkspaceConfigManager, 
                 + "workspaceBootId=" + s1
                 + ", workspaceRuntimeId=" + s2
                 + ", workspace=" + ((model.getCurrentConfig() == null) ? "NULL" : ("'" +
-                NSessionUtils.defaultSession(model.getWorkspace())
-                        .locations().getWorkspaceLocation() + '\''))
+                NLocations.of(NSessionUtils.defaultSession(model.getWorkspace()))
+                        .getWorkspaceLocation() + '\''))
                 + '}';
     }
 
@@ -208,7 +208,7 @@ public class DefaultNWorkspaceConfigManager implements NWorkspaceConfigManager, 
     }
 
     @Override
-    public NWorkspaceConfigManager setSystemTerminal(NSystemTerminalBase terminal) {
+    public NConfigs setSystemTerminal(NSystemTerminalBase terminal) {
         checkSession();
         NWorkspaceExt.of(session).getModel().bootModel.setSystemTerminal(terminal, getSession());
         return this;
@@ -221,7 +221,7 @@ public class DefaultNWorkspaceConfigManager implements NWorkspaceConfigManager, 
     }
 
     @Override
-    public NWorkspaceConfigManager setDefaultTerminal(NSessionTerminal terminal) {
+    public NConfigs setDefaultTerminal(NSessionTerminal terminal) {
         checkSession();
         model.setTerminal(terminal, session);
         return this;
@@ -240,7 +240,7 @@ public class DefaultNWorkspaceConfigManager implements NWorkspaceConfigManager, 
     }
 
     @Override
-    public NWorkspaceConfigManager setConfigProperty(String property, String value) {
+    public NConfigs setConfigProperty(String property, String value) {
         checkSession();
         model.setConfigProperty(property, value, session);
         model.save(getSession());

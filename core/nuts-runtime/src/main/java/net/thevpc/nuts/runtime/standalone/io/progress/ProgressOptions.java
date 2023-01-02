@@ -1,5 +1,6 @@
 package net.thevpc.nuts.runtime.standalone.io.progress;
 
+import net.thevpc.nuts.NConfigs;
 import net.thevpc.nuts.NOptional;
 import net.thevpc.nuts.NSession;
 import net.thevpc.nuts.NValue;
@@ -35,7 +36,7 @@ public class ProgressOptions {
                     o.put(k, NValue.of(v));
                 }
             }
-            for (Map.Entry<String, String> e : session.config().getConfigMap().entrySet()) {
+            for (Map.Entry<String, String> e : NConfigs.of(session).getConfigMap().entrySet()) {
                 if(e.getKey().startsWith("progress.")){
                     String k = e.getKey().substring("progress.".length());
                     if(o.get(k).isNotPresent()){

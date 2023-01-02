@@ -72,7 +72,7 @@ public class DefaultNPlatformModel {
                             NPath.of(location.getPath(), session)
                     );
                 }
-                NWorkspaceConfigManagerExt.of(session.config())
+                NConfigsExt.of(NConfigs.of(session))
                         .getModel()
                         .fireConfigurationChanged("platform", session, ConfigEventType.MAIN);
             }
@@ -94,7 +94,7 @@ public class DefaultNPlatformModel {
             List<NPlatformLocation> list = getPlatforms().get(location.getPlatformType());
             if (list != null) {
                 if (list.remove(location)) {
-                    NWorkspaceConfigManagerExt.of(session.config())
+                    NConfigsExt.of(NConfigs.of(session))
                             .getModel()
                             .fireConfigurationChanged("platform", session, ConfigEventType.MAIN);
                     return true;

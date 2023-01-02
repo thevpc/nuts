@@ -6,7 +6,7 @@
 package net.thevpc.nuts.runtime.standalone.workspace.cmd.help;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.cmdline.NArgument;
+import net.thevpc.nuts.cmdline.NArg;
 import net.thevpc.nuts.cmdline.NCommandLine;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.io.NOutStream;
@@ -45,12 +45,12 @@ public class DefaultNHelpInternalExecutable extends DefaultInternalNExecutableCo
         NCommandLine cmdLine = NCommandLine.of(args);
         boolean helpColors = false;
         while (cmdLine.hasNext()) {
-            NArgument a = cmdLine.peek().get(session);
+            NArg a = cmdLine.peek().get(session);
             if (a.isOption()) {
                 switch (a.key()) {
                     case "--colors":
                     case "--ntf": {
-                        NArgument c = cmdLine.nextBoolean().get(session);
+                        NArg c = cmdLine.nextBoolean().get(session);
                         if (c.isActive()) {
                             helpColors = c.getBooleanValue().get(session);
                         }
@@ -95,7 +95,7 @@ public class DefaultNHelpInternalExecutable extends DefaultInternalNExecutableCo
                 fout.flush();
             } else {
                 try {
-                    w = session.exec().addCommand(arg).which();
+                    w = NExecCommand.of(session).addCommand(arg).which();
                 } catch (Exception ex) {
                     LOG.with().session(session).level(Level.FINE).error(ex).log(NMsg.ofJstyle("failed to execute : {0}", arg));
                     //ignore

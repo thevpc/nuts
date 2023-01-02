@@ -52,6 +52,6 @@ public class NReadOnlyException extends NException {
      * @param session workspace
      */
     public NReadOnlyException(NSession session) {
-        this(session, session == null ? null : String.valueOf(session.locations().getWorkspaceLocation()));
+        this(session, session == null ? null : String.valueOf(NLocations.of(session).getWorkspaceLocation()));
     }
 }

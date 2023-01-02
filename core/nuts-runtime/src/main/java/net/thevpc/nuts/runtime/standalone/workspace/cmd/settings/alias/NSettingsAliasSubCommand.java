@@ -6,7 +6,7 @@
 package net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.alias;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.cmdline.NArgument;
+import net.thevpc.nuts.cmdline.NArg;
 import net.thevpc.nuts.cmdline.NCommandLine;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.AbstractNSettingsSubCommand;
 
@@ -28,14 +28,14 @@ public class NSettingsAliasSubCommand extends AbstractNSettingsSubCommand {
             List<String> toList = new ArrayList<>();
             while (cmdLine.hasNext()) {
                 if (!cmdLine.isNextOption()) {
-                    NArgument a = cmdLine.next().get(session);
+                    NArg a = cmdLine.next().get(session);
                     toList.add(a.toString());
                 } else {
                     cmdLine.throwUnexpectedArgument();
                 }
             }
             if (cmdLine.isExecMode()) {
-                List<NWorkspaceCustomCommand> r = session.commands().findAllCommands()
+                List<NWorkspaceCustomCommand> r = NCustomCommandManager.of(session).findAllCommands()
                         .stream()
                         .filter(new Predicate<NWorkspaceCustomCommand>() {
                             @Override
@@ -82,9 +82,9 @@ public class NSettingsAliasSubCommand extends AbstractNSettingsSubCommand {
         } else if (cmdLine.next("remove alias").isPresent()) {
             if (cmdLine.isExecMode()) {
                 while (cmdLine.hasNext()) {
-                    session.commands().removeCommand(cmdLine.next().get(session).toString());
+                    NCustomCommandManager.of(session).removeCommand(cmdLine.next().get(session).toString());
                 }
-                session.config().save();
+                NConfigs.of(session).save();
             }
             return true;
         } else if (cmdLine.next("add alias").isPresent()) {
@@ -93,7 +93,7 @@ public class NSettingsAliasSubCommand extends AbstractNSettingsSubCommand {
                 LinkedHashMap<String, AliasInfo> toAdd = new LinkedHashMap<>();
                 while (cmdLine.hasNext()) {
                     if (!cmdLine.isNextOption()) {
-                        NArgument a = cmdLine.next().get(session);
+                        NArg a = cmdLine.next().get(session);
                         if (a.isKeyValue()) {
                             if (n != null) {
                                 cmdLine.pushBack(a);
@@ -118,7 +118,7 @@ public class NSettingsAliasSubCommand extends AbstractNSettingsSubCommand {
                     cmdLine.next().get(session);
                 }
                 for (AliasInfo value : toAdd.values()) {
-                    session.commands()
+                    NCustomCommandManager.of(session)
                             .addCommand(
                                     new NCommandConfig()
                                             .setCommand(NCommandLine.of(value.command, NShellFamily.BASH, session).setExpandSimpleOptions(false).toStringArray())
@@ -128,7 +128,7 @@ public class NSettingsAliasSubCommand extends AbstractNSettingsSubCommand {
                                                             .setExpandSimpleOptions(false).toStringList())
                             );
                 }
-                session.config().save();
+                NConfigs.of(session).save();
             }
             return true;
         }
@@ -138,7 +138,7 @@ public class NSettingsAliasSubCommand extends AbstractNSettingsSubCommand {
         NCommandLine cmdLine2 = NCommandLine.of(aliasValue, NShellFamily.BASH, session).setExpandSimpleOptions(false);
         List<String> executionOptions = new ArrayList<>();
         while (cmdLine2.hasNext()) {
-            NArgument r = cmdLine2.peek().get(session);
+            NArg r = cmdLine2.peek().get(session);
             if (r.isOption()) {
                 executionOptions.add(cmdLine2.next().flatMap(NValue::asString).get(session));
             } else {

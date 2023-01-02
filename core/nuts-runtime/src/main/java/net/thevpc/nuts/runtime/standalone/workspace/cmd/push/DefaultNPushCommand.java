@@ -60,7 +60,7 @@ public class DefaultNPushCommand extends AbstractDefaultNPushCommand {
             if (NStringUtils.trim(id.getVersion().getValue()).endsWith(CoreNConstants.Versions.CHECKED_OUT_EXTENSION)) {
                 throw new NIllegalArgumentException(getSession(), NMsg.ofCstyle("invalid version %s", id.getVersion()));
             }
-            NDefinition file = session.fetch().setId(id).setSession(session.copy().setTransitive(false)).setContent(true).getResultDefinition();
+            NDefinition file = NFetchCommand.of(session).setId(id).setSession(session.copy().setTransitive(false)).setContent(true).getResultDefinition();
             NAssert.requireNonNull(file, "content to push", session);
             toProcess.put(id, file);
         }
@@ -111,7 +111,7 @@ public class DefaultNPushCommand extends AbstractDefaultNPushCommand {
                             ));
                 }
             } else {
-                NRepository repo = session.repos().getRepository(this.getRepository());
+                NRepository repo = NRepositories.of(session).getRepository(this.getRepository());
                 if (!repo.config().isEnabled()) {
                     throw new NIllegalArgumentException(getSession(), NMsg.ofCstyle("repository %s is disabled", repo.getName()));
                 }

@@ -5,7 +5,9 @@
  */
 package net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.imports;
 
-import net.thevpc.nuts.cmdline.NArgumentName;
+import net.thevpc.nuts.NConfigs;
+import net.thevpc.nuts.NImports;
+import net.thevpc.nuts.cmdline.NArgName;
 import net.thevpc.nuts.cmdline.NCommandLine;
 import net.thevpc.nuts.NSession;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.AbstractNSettingsSubCommand;
@@ -21,7 +23,7 @@ public class NSettingsImportSubCommand extends AbstractNSettingsSubCommand {
         if (cmdLine.next("list imports", "li").isPresent()) {
             cmdLine.setCommandName("config list imports").throwUnexpectedArgument();
             if (cmdLine.isExecMode()) {
-                for (String imp : (session.imports().getAllImports())) {
+                for (String imp : (NImports.of(session).getAllImports())) {
                     session.out().printf("%s%n", imp);
                 }
             }
@@ -29,32 +31,32 @@ public class NSettingsImportSubCommand extends AbstractNSettingsSubCommand {
         } else if (cmdLine.next("clear imports", "ci").isPresent()) {
             cmdLine.setCommandName("config clear imports").throwUnexpectedArgument();
             if (cmdLine.isExecMode()) {
-                session.imports().clearImports();
-                session.config().save();
+                NImports.of(session).clearImports();
+                NConfigs.of(session).save();
             }
             return true;
         } else if (cmdLine.next("import", "ia").isPresent()) {
             do {
-                String a = cmdLine.nextNonOption(NArgumentName.of("import",session)).get(session)
+                String a = cmdLine.nextNonOption(NArgName.of("import",session)).get(session)
                         .asString().get(session);
                 if (cmdLine.isExecMode()) {
-                    session.imports().addImports(new String[]{a});
+                    NImports.of(session).addImports(new String[]{a});
                 }
             } while (cmdLine.hasNext());
             if (cmdLine.isExecMode()) {
-                session.config().save();
+                NConfigs.of(session).save();
             }
             return true;
         } else if (cmdLine.next("unimport", "ir").isPresent()) {
             while (cmdLine.hasNext()) {
-                String ii = cmdLine.nextNonOption(NArgumentName.of("import",session)).get(session)
+                String ii = cmdLine.nextNonOption(NArgName.of("import",session)).get(session)
                         .asString().get(session);
                 if (cmdLine.isExecMode()) {
-                    session.imports().removeImports(new String[]{ii});
+                    NImports.of(session).removeImports(new String[]{ii});
                 }
             }
             if (cmdLine.isExecMode()) {
-                session.config().save();
+                NConfigs.of(session).save();
             }
             return true;
         }

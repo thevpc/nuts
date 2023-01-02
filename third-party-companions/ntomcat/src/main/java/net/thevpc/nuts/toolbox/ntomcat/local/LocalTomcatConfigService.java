@@ -312,7 +312,7 @@ public class LocalTomcatConfigService extends LocalTomcatServiceBase {
         NPath catalinaBase = getCatalinaBase();
         boolean catalinaBaseUpdated = false;
         catalinaBaseUpdated |= mkdirs(catalinaBase);
-        String ext = getSession().env().getOsFamily() == NOsFamily.WINDOWS ? "bat" : "sh";
+        String ext = NEnvs.of(getSession()).getOsFamily() == NOsFamily.WINDOWS ? "bat" : "sh";
         catalinaBaseUpdated |= checkExec(catalinaHome.resolve("bin").resolve("catalina." + ext));
         LocalTomcatConfig c = getConfig();
         catalinaBaseUpdated |= mkdirs(catalinaBase.resolve("logs"));
@@ -369,12 +369,12 @@ public class LocalTomcatConfigService extends LocalTomcatServiceBase {
         NPath catalinaHome = getCatalinaHome();
         NPath catalinaBase = getCatalinaBase();
         NSession session = getSession();
-        String ext = session.env().getOsFamily() == NOsFamily.WINDOWS ? "bat" : "sh";
+        String ext = NEnvs.of(session).getOsFamily() == NOsFamily.WINDOWS ? "bat" : "sh";
 
         //b.
 //        b.setOutput(context.getSession().out());
 //        b.setErr(context.getSession().err());
-        NExecCommand b = session.exec()
+        NExecCommand b = NExecCommand.of(session)
                 .setExecutionType(NExecutionType.SYSTEM).setSession(session);
         b.addCommand(catalinaHome + "/bin/catalina." + ext);
         b.addCommand(catalinaCommand);
@@ -491,7 +491,7 @@ public class LocalTomcatConfigService extends LocalTomcatServiceBase {
         catalinaVersion = catalinaVersion.trim();
         NSession session = getSession();
         if (catalinaVersion.isEmpty()) {
-            NVersion javaVersion = session.env().getPlatform().getVersion();
+            NVersion javaVersion = NEnvs.of(session).getPlatform().getVersion();
             //  http://tomcat.apache.org/whichversion.html
             if (javaVersion.compareTo("1.8") >= 0) {
                 catalinaVersion = "[9,10.1[";
@@ -519,11 +519,11 @@ public class LocalTomcatConfigService extends LocalTomcatServiceBase {
             String cid="org.apache.catalina:apache-tomcat";//+"#"+cv;
             cid= NIdBuilder.of().setAll(NId.of(cid).get()).setCondition(
                     new DefaultNEnvConditionBuilder()
-                            .addPlatform(session.env().getPlatform().toString())
+                            .addPlatform(NEnvs.of(session).getPlatform().toString())
             ).toString();
 
-            NSearchCommand searchLatestCommand = session.search().addId(cid)
-                    .setSession(getSession()).setLatest(true);
+            NSearchCommand searchLatestCommand = NSearchCommand.of(session).addId(cid)
+                    .setLatest(true);
             NDefinition r = searchLatestCommand
                     .setInstallStatus(NInstallStatusFilters.of(session).byDeployed(true))
                     .getResultDefinitions().first();
@@ -541,8 +541,7 @@ public class LocalTomcatConfigService extends LocalTomcatServiceBase {
                 return r;
             } else {
                 //TODO: FIX install return
-                catalinaNDefinition = session
-                        .install()
+                catalinaNDefinition = NInstallCommand.of(session)
                         .addId(r.getId())
                         .setSession(getSession().copy().addListener(new NInstallListener() {
                             @Override

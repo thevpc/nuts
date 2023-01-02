@@ -1,7 +1,7 @@
 package net.thevpc.nuts.toolbox.ntomcat;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.cmdline.NArgument;
+import net.thevpc.nuts.cmdline.NArg;
 import net.thevpc.nuts.cmdline.NCommandLine;
 import net.thevpc.nuts.toolbox.ntomcat.remote.RemoteTomcat;
 import net.thevpc.nuts.toolbox.ntomcat.local.LocalTomcat;
@@ -16,9 +16,9 @@ public class NTomcatMain implements NApplication {
     @Override
     public void run(NApplicationContext appContext) {
         NSession session = appContext.getSession();
-        NRepository apacheRepo = session.repos().findRepository("apache-tomcat");
+        NRepository apacheRepo = NRepositories.of(session).findRepository("apache-tomcat");
         if (apacheRepo == null) {
-            session.repos().addRepository(
+            NRepositories.of(session).addRepository(
                     new NAddRepositoryOptions()
                             .setRepositoryModel(new ApacheTomcatRepositoryModel())
                             .setTemporary(true)
@@ -29,7 +29,7 @@ public class NTomcatMain implements NApplication {
         Boolean local = null;
         boolean skipFirst = false;
         if (cmdLine.hasNext()) {
-            NArgument a = cmdLine.peek().get(session);
+            NArg a = cmdLine.peek().get(session);
             String s = a.asString().orElse("");
             if ((s.equals   ("--remote") || s.equals("-r"))) {
                 cmdLine.skip();

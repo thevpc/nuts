@@ -25,7 +25,7 @@ package net.thevpc.nuts.runtime.standalone.repository.impl.maven.util;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.DefaultNArtifactCall;
-import net.thevpc.nuts.cmdline.NArgument;
+import net.thevpc.nuts.cmdline.NArg;
 import net.thevpc.nuts.cmdline.NCommandLine;
 import net.thevpc.nuts.format.NPositionType;
 import net.thevpc.nuts.io.NIOException;
@@ -66,19 +66,19 @@ public class MavenUtils {
     }
 
     public static MavenUtils of(NSession session) {
-        MavenUtils wp = (MavenUtils) session.env().getProperties().get(MavenUtils.class.getName());
+        MavenUtils wp = (MavenUtils) NEnvs.of(session).getProperties().get(MavenUtils.class.getName());
         if (wp == null) {
             wp = new MavenUtils(session);
-            session.env().setProperty(MavenUtils.class.getName(), wp);
+            NEnvs.of(session).setProperty(MavenUtils.class.getName(), wp);
         }
         return wp;
     }
 
     public static NPomIdResolver createPomIdResolver(NSession session) {
-        NPomIdResolver wp = (NPomIdResolver) session.env().getProperties().get(NPomIdResolver.class.getName());
+        NPomIdResolver wp = (NPomIdResolver) NEnvs.of(session).getProperties().get(NPomIdResolver.class.getName());
         if (wp == null) {
             wp = new NPomIdResolver(session);
-            session.env().setProperty(NPomIdResolver.class.getName(), wp);
+            NEnvs.of(session).setProperty(NPomIdResolver.class.getName(), wp);
         }
         return wp;
     }
@@ -458,7 +458,7 @@ public class MavenUtils {
                 if (parentId != null) {
                     if (!CoreNUtils.isEffectiveId(parentId)) {
                         try {
-                            parentDescriptor = session.fetch().setId(parentId).setEffective(true)
+                            parentDescriptor = NFetchCommand.of(session).setId(parentId).setEffective(true)
                                     .setSession(
                                             session.copy().setTransitive(true)
                                                     .setFetchStrategy(
@@ -505,7 +505,7 @@ public class MavenUtils {
                         NDescriptor d = cache.get(pid);
                         if (d == null) {
                             try {
-                                d = session.fetch().setId(pid).setEffective(true).setSession(session).getResultDescriptor();
+                                d = NFetchCommand.of(session).setId(pid).setEffective(true).setSession(session).getResultDescriptor();
                             } catch (NException ex) {
                                 throw ex;
                             } catch (Exception ex) {
@@ -801,7 +801,7 @@ public class MavenUtils {
         Map<String, String> callProps = new LinkedHashMap<>();
         List<String> callPropsAsArgs = new ArrayList<>();
         while (cl.hasNext() && cl.isNextOption()) {
-            NArgument a = cl.next().get(session);
+            NArg a = cl.next().get(session);
             callPropsAsArgs.add(a.toString());
             if (a.isKeyValue()) {
                 callProps.put(a.getStringKey().get(session), a.getStringValue().get(session));

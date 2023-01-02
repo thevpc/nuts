@@ -1,8 +1,8 @@
 package net.thevpc.nuts.runtime.standalone.io.ask;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.cmdline.DefaultNArgument;
-import net.thevpc.nuts.cmdline.NArgument;
+import net.thevpc.nuts.cmdline.DefaultNArg;
+import net.thevpc.nuts.cmdline.NArg;
 import net.thevpc.nuts.runtime.standalone.util.CoreEnumUtils;
 import net.thevpc.nuts.util.NQuestion;
 import net.thevpc.nuts.util.NQuestionParser;
@@ -61,7 +61,7 @@ public class DefaultNResponseParser<T> implements NQuestionParser<T> {
                     response = String.valueOf(response);
                 }
                 String sReponse = response.toString();
-                NArgument a = new DefaultNArgument(sReponse);
+                NArg a = new DefaultNArg(sReponse);
                 if (!a.isBoolean()) {
                     throw new NIllegalArgumentException(session, NMsg.ofCstyle("invalid response %s", sReponse));
                 }

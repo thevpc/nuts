@@ -29,7 +29,7 @@ package net.thevpc.nuts.runtime.standalone.app.cmdline.option;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import net.thevpc.nuts.cmdline.NArgumentCandidate;
+import net.thevpc.nuts.cmdline.NArgCandidate;
 import net.thevpc.nuts.cmdline.NCommandAutoComplete;
 
 /**
@@ -46,7 +46,7 @@ public class ValueNonOption extends DefaultNonOption {
     }
 
     @Override
-    public List<NArgumentCandidate> getCandidates(NCommandAutoComplete context) {
+    public List<NArgCandidate> getCandidates(NCommandAutoComplete context) {
         return new ArrayList(Arrays.asList(values));
     }
 

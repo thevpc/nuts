@@ -35,7 +35,7 @@ public class DefaultNUpdateStatisticsCommand extends AbstractNUpdateStatisticsCo
         checkSession();
         for (String repository : getRepositrories()) {
             processed = true;
-            NRepository repo = getSession().repos().getRepository(repository);
+            NRepository repo = NRepositories.of(getSession()).getRepository(repository);
             NRepositorySPI repoSPI = NWorkspaceUtils.of(session).repoSPI(repo);
             repoSPI.updateStatistics()
                     .setSession(session)
@@ -62,7 +62,7 @@ public class DefaultNUpdateStatisticsCommand extends AbstractNUpdateStatisticsCo
             if (mavenRepoRootFiles != null && mavenRepoRootFiles.length > 3) {
                 new MavenRepositoryFolderHelper(null, getSession(), NPath.of(repositoryPath,session)).reindexFolder(getSession());
                 if (session.isPlainTrace()) {
-                    session.getTerminal().out().resetLine().printf("[%s] updated maven index %s%n", getSession().locations().getWorkspaceLocation(), repositoryPath);
+                    session.getTerminal().out().resetLine().printf("[%s] updated maven index %s%n", NLocations.of(getSession()).getWorkspaceLocation(), repositoryPath);
                 }
             } else {
                 File[] nutsRepoRootFiles = repositoryPath.toFile().listFiles(x
@@ -74,18 +74,18 @@ public class DefaultNUpdateStatisticsCommand extends AbstractNUpdateStatisticsCo
                     throw new NIllegalArgumentException(getSession(), NMsg.ofPlain("unsupported repository folder"));
                 }
                 if (session.isPlainTrace()) {
-                    session.out().resetLine().printf("[%s] updated stats %s%n", getSession().locations().getWorkspaceLocation(), repositoryPath);
+                    session.out().resetLine().printf("[%s] updated stats %s%n", NLocations.of(getSession()).getWorkspaceLocation(), repositoryPath);
                 }
             }
         }
         NTexts factory = NTexts.of(getSession());
         if (!processed) {
             if (session.isPlainTrace()) {
-                session.out().resetLine().printf("%s updating workspace stats%n", getSession().locations().getWorkspaceLocation());
+                session.out().resetLine().printf("%s updating workspace stats%n", NLocations.of(getSession()).getWorkspaceLocation());
             }
-            for (NRepository repo : getSession().repos().getRepositories()) {
+            for (NRepository repo : NRepositories.of(getSession()).getRepositories()) {
                 if (session.isPlainTrace()) {
-                    session.out().resetLine().printf("%s updating stats %s%n", getSession().locations().getWorkspaceLocation(), repo);
+                    session.out().resetLine().printf("%s updating stats %s%n", NLocations.of(getSession()).getWorkspaceLocation(), repo);
                 }
                 NWorkspaceUtils.of(session).repoSPI(repo).updateStatistics()
                         .setSession(session)

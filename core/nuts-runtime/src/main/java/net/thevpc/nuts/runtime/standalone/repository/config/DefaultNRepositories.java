@@ -11,12 +11,12 @@ import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceExt;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceUtils;
 import net.thevpc.nuts.spi.NSupportLevelContext;
 
-public class DefaultNRepositoryManager implements NRepositoryManager {
+public class DefaultNRepositories implements NRepositories {
 
     private DefaultNRepositoryModel model;
     private NSession session;
 
-    public DefaultNRepositoryManager(NSession session) {
+    public DefaultNRepositories(NSession session) {
         this.session = session;
         NWorkspace w = this.session.getWorkspace();
         NWorkspaceExt e = (NWorkspaceExt) w;
@@ -34,7 +34,7 @@ public class DefaultNRepositoryManager implements NRepositoryManager {
     }
 
     @Override
-    public NRepositoryManager setSession(NSession session) {
+    public NRepositories setSession(NSession session) {
         this.session = NWorkspaceUtils.bindSession(model.getWorkspace(), session);
         return this;
     }
@@ -79,14 +79,14 @@ public class DefaultNRepositoryManager implements NRepositoryManager {
     }
 
     @Override
-    public NRepositoryManager removeRepository(String repositoryId) {
+    public NRepositories removeRepository(String repositoryId) {
         checkSession();
         model.removeRepository(repositoryId, session);
         return this;
     }
 
     @Override
-    public NRepositoryManager removeAllRepositories() {
+    public NRepositories removeAllRepositories() {
         checkSession();
         model.removeAllRepositories(session);
         return this;

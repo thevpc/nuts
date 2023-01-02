@@ -1,7 +1,7 @@
 package net.thevpc.nuts.runtime.standalone.io.ask;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.cmdline.NArgument;
+import net.thevpc.nuts.cmdline.NArg;
 import net.thevpc.nuts.cmdline.NCommandLine;
 import net.thevpc.nuts.cmdline.NCommandLineConfigurable;
 import net.thevpc.nuts.io.NOutStream;
@@ -85,7 +85,7 @@ public class DefaultNQuestion<T> implements NQuestion<T> {
             ), 243);
         }
 
-        boolean gui = session.isGui() && session.env().isGraphicalDesktopEnvironment();
+        boolean gui = session.isGui() && NEnvs.of(session).isGraphicalDesktopEnvironment();
 
         NMsg message = this.getMessage();
 //        if (message.endsWith("\n")) {
@@ -271,7 +271,7 @@ public class DefaultNQuestion<T> implements NQuestion<T> {
         NMsg title = NMsg.ofCstyle("Nuts Package Manager - %s", getSession().getWorkspace().getApiId().getVersion());
         if (session.getAppId() != null) {
             try {
-                NDefinition def = session.search().setId(session.getAppId())
+                NDefinition def = NSearchCommand.of(session).setId(session.getAppId())
                         .setEffective(true).setLatest(true).getResultDefinitions().first();
                 if (def != null) {
                     String n = def.getEffectiveDescriptor().get(session).getName();
@@ -511,7 +511,7 @@ public class DefaultNQuestion<T> implements NQuestion<T> {
 
     @Override
     public boolean configureFirst(NCommandLine commandLine) {
-        NArgument aa = commandLine.peek().get(session);
+        NArg aa = commandLine.peek().get(session);
         if (aa == null) {
             return false;
         }

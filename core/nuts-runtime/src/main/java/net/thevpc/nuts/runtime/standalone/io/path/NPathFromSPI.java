@@ -227,7 +227,7 @@ public class NPathFromSPI extends NPathBase {
         String s = StringPlaceHolderParser.replaceDollarPlaceHolders(toString(), resolver);
         if (s.length() > 0) {
             if (s.startsWith("~")) {
-                NWorkspaceLocationManager locations = session.locations();
+                NLocations locations = NLocations.of(session);
                 if (s.equals("~~")) {
                     NPath nutsHome = locations.getHomeLocation(NStoreLocation.CONFIG);
                     return nutsHome.normalize();

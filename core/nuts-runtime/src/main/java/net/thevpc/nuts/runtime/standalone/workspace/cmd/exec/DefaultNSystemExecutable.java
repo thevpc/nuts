@@ -5,11 +5,8 @@
  */
 package net.thevpc.nuts.runtime.standalone.workspace.cmd.exec;
 
-import net.thevpc.nuts.NExecCommand;
-import net.thevpc.nuts.NExecutableType;
-import net.thevpc.nuts.NId;
-import net.thevpc.nuts.NSession;
-import net.thevpc.nuts.cmdline.NArgument;
+import net.thevpc.nuts.*;
+import net.thevpc.nuts.cmdline.NArg;
 import net.thevpc.nuts.cmdline.NCommandLine;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.runtime.standalone.executor.system.ProcessExecHelper;
@@ -48,7 +45,7 @@ public class DefaultNSystemExecutable extends AbstractNExecutableCommand {
         this.execSession = execSession;
         NCommandLine commandLine = NCommandLine.of(this.executorOptions);
         while (commandLine.hasNext()) {
-            NArgument aa = commandLine.peek().get(session);
+            NArg aa = commandLine.peek().get(session);
             switch (aa.key()) {
                 case "--show-command": {
                     commandLine.withNextBoolean((v, a, s) -> this.showCommand = (v));
@@ -94,7 +91,7 @@ public class DefaultNSystemExecutable extends AbstractNExecutableCommand {
 
     @Override
     public NText getHelpText() {
-        switch (execSession.env().getOsFamily()) {
+        switch (NEnvs.of(execSession).getOsFamily()) {
             case WINDOWS: {
                 return NTexts.of(session).ofStyled(
                         "No help available. Try " + getName() + " /help",

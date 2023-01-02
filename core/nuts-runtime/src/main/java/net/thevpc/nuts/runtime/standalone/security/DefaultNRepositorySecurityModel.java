@@ -10,7 +10,7 @@ import net.thevpc.nuts.runtime.standalone.repository.config.DefaultNRepoConfigMa
 import net.thevpc.nuts.runtime.standalone.session.NSessionUtils;
 import net.thevpc.nuts.runtime.standalone.util.collections.CoreCollectionUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.config.NRepositoryConfigManagerExt;
-import net.thevpc.nuts.runtime.standalone.workspace.config.NWorkspaceConfigManagerExt;
+import net.thevpc.nuts.runtime.standalone.workspace.config.NConfigsExt;
 import net.thevpc.nuts.spi.NAuthenticationAgent;
 import net.thevpc.nuts.util.NStringUtils;
 
@@ -85,7 +85,7 @@ public class DefaultNRepositorySecurityModel {
     }
 
     public boolean isAllowed(String right, NSession session) {
-        NWorkspaceSecurityManager sec = session.security();
+        NWorkspaceSecurityManager sec = NWorkspaceSecurityManager.of(session);
         if (!sec.isSecure()) {
             return true;
         }
@@ -166,7 +166,7 @@ public class DefaultNRepositorySecurityModel {
                     .getModel()
                     .getStoredConfig(session).getAuthenticationAgent();
         }
-        NAuthenticationAgent a = NWorkspaceConfigManagerExt.of(session.config())
+        NAuthenticationAgent a = NConfigsExt.of(NConfigs.of(session))
                 .getModel()
                 .createAuthenticationAgent(id, session);
         return a;
@@ -176,7 +176,7 @@ public class DefaultNRepositorySecurityModel {
 //        options = CoreNutsUtils.validate(options, repository.getWorkspace());
         DefaultNRepoConfigManager cc = (DefaultNRepoConfigManager) repository.config().setSession(session);
 
-        if (NWorkspaceConfigManagerExt.of(session.config())
+        if (NConfigsExt.of(NConfigs.of(session))
                 .getModel().createAuthenticationAgent(authenticationAgent, session) == null) {
             throw new NIllegalArgumentException(session,
                     NMsg.ofCstyle("unsupported Authentication Agent %s", authenticationAgent)

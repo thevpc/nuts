@@ -27,7 +27,7 @@ package net.thevpc.nuts.runtime.standalone.workspace.archetype;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.spi.*;
-import net.thevpc.nuts.runtime.standalone.workspace.config.DefaultNWorkspaceConfigManager;
+import net.thevpc.nuts.runtime.standalone.workspace.config.DefaultNConfigs;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceUtils;
 import net.thevpc.nuts.util.NLogger;
 
@@ -46,7 +46,7 @@ public class ServerNWorkspaceArchetypeComponent implements NWorkspaceArchetypeCo
     @Override
     public void initializeWorkspace(NSession session) {
         this.LOG = NLogger.of(ServerNWorkspaceArchetypeComponent.class, session);
-        DefaultNWorkspaceConfigManager rm = (DefaultNWorkspaceConfigManager) session.config();
+        DefaultNConfigs rm = (DefaultNConfigs) NConfigs.of(session);
         NRepositoryLocation[] br = rm.getModel().resolveBootRepositoriesList(session).resolve(
                 new NRepositoryLocation[]{
                         NRepositoryLocation.of("maven-local", null),
@@ -55,11 +55,11 @@ public class ServerNWorkspaceArchetypeComponent implements NWorkspaceArchetypeCo
                 },
                 NRepositoryDB.of(session)
         );
-        NRepositoryManager repos = session.repos().setSession(session);
+        NRepositories repos = NRepositories.of(session).setSession(session);
         for (NRepositoryLocation s : br) {
             repos.addRepository(s.toString());
         }
-        NWorkspaceSecurityManager sec = session.security().setSession(session);
+        NWorkspaceSecurityManager sec = NWorkspaceSecurityManager.of(session);
 
         //has read rights
         sec.addUser("guest").setCredentials("user".toCharArray()).addPermissions(
@@ -69,7 +69,7 @@ public class ServerNWorkspaceArchetypeComponent implements NWorkspaceArchetypeCo
         ).run();
 
         //has write rights
-        sec = session.security().setSession(session);
+        sec = NWorkspaceSecurityManager.of(session);
         sec.addUser("contributor").setCredentials("user".toCharArray()).addPermissions(
                 NConstants.Permissions.FETCH_DESC,
                 NConstants.Permissions.FETCH_CONTENT,
@@ -80,7 +80,7 @@ public class ServerNWorkspaceArchetypeComponent implements NWorkspaceArchetypeCo
 
     @Override
     public void startWorkspace(NSession session) {
-        NBootManager boot = session.boot();
+        NBootManager boot = NBootManager.of(session);
         boolean initializePlatforms = boot.getBootOptions().getInitPlatforms().ifEmpty(true).get(session);
         boolean initializeJava = boot.getBootOptions().getInitJava().ifEmpty(initializePlatforms).get(session);
         boolean initializeScripts = boot.getBootOptions().getInitScripts().ifEmpty(true).get(session);
@@ -95,7 +95,7 @@ public class ServerNWorkspaceArchetypeComponent implements NWorkspaceArchetypeCo
         if (initializeScripts || initializeLaunchers) {
             NWorkspaceUtils.of(session).installScriptsAndLaunchers(initializeLaunchers);
         }
-        Boolean skipCompanions = session.boot().getBootOptions().getSkipCompanions().orElse(true);
+        Boolean skipCompanions = NBootManager.of(session).getBootOptions().getSkipCompanions().orElse(true);
         if (!skipCompanions) {
             NWorkspaceUtils.of(session).installCompanions();
         }

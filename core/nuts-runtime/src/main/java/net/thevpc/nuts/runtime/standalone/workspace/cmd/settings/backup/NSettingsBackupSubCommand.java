@@ -6,7 +6,7 @@
 package net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.backup;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.cmdline.NArgument;
+import net.thevpc.nuts.cmdline.NArg;
 import net.thevpc.nuts.cmdline.NCommandLine;
 import net.thevpc.nuts.elem.NElements;
 import net.thevpc.nuts.elem.NObjectElement;
@@ -34,7 +34,7 @@ public class NSettingsBackupSubCommand extends AbstractNSettingsSubCommand {
         if (commandLine.next("backup").isPresent()) {
             commandLine.setCommandName("settings backup");
             String file = null;
-            NArgument a;
+            NArg a;
             while (commandLine.hasNext()) {
                 if ((a = commandLine.nextString("--file", "-f").orNull()) != null) {
                     file = a.getValue().asString().orElse("");
@@ -46,11 +46,11 @@ public class NSettingsBackupSubCommand extends AbstractNSettingsSubCommand {
             }
             if (commandLine.isExecMode()) {
                 List<String> all = new ArrayList<>();
-                all.add(session.locations().getWorkspaceLocation().toFile()
+                all.add(NLocations.of(session).getWorkspaceLocation().toFile()
                         .resolve("nuts-workspace.json").toString()
                 );
                 for (NStoreLocation value : NStoreLocation.values()) {
-                    NPath r = session.locations().getStoreLocation(value);
+                    NPath r = NLocations.of(session).getStoreLocation(value);
                     if (r.isDirectory()) {
                         all.add(r.toString());
                     }
@@ -76,7 +76,7 @@ public class NSettingsBackupSubCommand extends AbstractNSettingsSubCommand {
             commandLine.setCommandName("settings restore");
             String file = null;
             String ws = null;
-            NArgument a;
+            NArg a;
             while (commandLine.hasNext()) {
                 if ((a = commandLine.nextString("--file", "-f").orNull()) != null) {
                     file = a.getValue().asString().orElse("");
@@ -134,7 +134,7 @@ public class NSettingsBackupSubCommand extends AbstractNSettingsSubCommand {
                     commandLine.throwMissingArgument(NMsg.ofCstyle("not a valid file : %s", file));
                 }
                 String platformHomeFolder = NPlatformUtils.getWorkspaceLocation(null,
-                        session.config().stored().isGlobal(), ws);
+                        NConfigs.of(session).stored().isGlobal(), ws);
                 NUncompress.of(session)
                         .from(NPath.of(file,session))
                         .to(NPath.of(platformHomeFolder,session))

@@ -108,7 +108,7 @@ public class FromTemplateScriptBuilder extends AbstractScriptBuilder {
     public String buildString() {
         try {
             //Path script = getScriptFile(name);
-            NDefinition anyIdDef = getSession().search().addId(getAnyId()).setLatest(true)
+            NDefinition anyIdDef = NSearchCommand.of(getSession()).addId(getAnyId()).setLatest(true)
                     .setDistinct(true)
                     .getResultDefinitions().singleton();
             NId anyId = anyIdDef.getId();
@@ -158,27 +158,27 @@ public class FromTemplateScriptBuilder extends AbstractScriptBuilder {
                                     case "NUTS_VERSION":
                                         return getSession().getWorkspace().getApiVersion().toString();
                                     case "NUTS_WORKSPACE":
-                                        return getSession().locations().getWorkspaceLocation().toString();
+                                        return NLocations.of(getSession()).getWorkspaceLocation().toString();
                                     case "NUTS_WORKSPACE_APPS":
-                                        return str(getSession().locations().getStoreLocation(NStoreLocation.APPS));
+                                        return str(NLocations.of(getSession()).getStoreLocation(NStoreLocation.APPS));
                                     case "NUTS_WORKSPACE_CONFIG":
-                                        return str(getSession().locations().getStoreLocation(NStoreLocation.CONFIG));
+                                        return str(NLocations.of(getSession()).getStoreLocation(NStoreLocation.CONFIG));
                                     case "NUTS_WORKSPACE_CACHE":
-                                        return str(getSession().locations().getStoreLocation(NStoreLocation.CACHE));
+                                        return str(NLocations.of(getSession()).getStoreLocation(NStoreLocation.CACHE));
                                     case "NUTS_WORKSPACE_LIB":
-                                        return str(getSession().locations().getStoreLocation(NStoreLocation.LIB));
+                                        return str(NLocations.of(getSession()).getStoreLocation(NStoreLocation.LIB));
                                     case "NUTS_WORKSPACE_LOG":
-                                        return str(getSession().locations().getStoreLocation(NStoreLocation.LOG));
+                                        return str(NLocations.of(getSession()).getStoreLocation(NStoreLocation.LOG));
                                     case "NUTS_WORKSPACE_RUN":
-                                        return str(getSession().locations().getStoreLocation(NStoreLocation.RUN));
+                                        return str(NLocations.of(getSession()).getStoreLocation(NStoreLocation.RUN));
                                     case "NUTS_WORKSPACE_TEMP":
-                                        return str(getSession().locations().getStoreLocation(NStoreLocation.TEMP));
+                                        return str(NLocations.of(getSession()).getStoreLocation(NStoreLocation.TEMP));
                                     case "NUTS_WORKSPACE_VAR":
-                                        return str(getSession().locations().getStoreLocation(NStoreLocation.VAR));
+                                        return str(NLocations.of(getSession()).getStoreLocation(NStoreLocation.VAR));
                                     case "NUTS_JAR_EXPR": {
                                         String NUTS_JAR_PATH = options.resolveNutsApiJarPath().toString();
-                                        if (NUTS_JAR_PATH.startsWith(getSession().locations().getStoreLocation(NStoreLocation.LIB).toString())) {
-                                            String pp = NUTS_JAR_PATH.substring(getSession().locations().getStoreLocation(NStoreLocation.LIB).toString().length());
+                                        if (NUTS_JAR_PATH.startsWith(NLocations.of(getSession()).getStoreLocation(NStoreLocation.LIB).toString())) {
+                                            String pp = NUTS_JAR_PATH.substring(NLocations.of(getSession()).getStoreLocation(NStoreLocation.LIB).toString().length());
                                             return NShellHelper.of(getShellFamily()).varRef("NUTS_WORKSPACE_LIB") + pp;
                                         } else {
                                             return NUTS_JAR_PATH;
@@ -187,7 +187,7 @@ public class FromTemplateScriptBuilder extends AbstractScriptBuilder {
                                     case "NUTS_WORKSPACE_BINDIR_EXPR": {
                                         //="${NUTS_WORKSPACE_APPS}/id/net/thevpc/nuts/nuts/0.8.2/bin"
                                         return NShellHelper.of(getShellFamily()).varRef("NUTS_WORKSPACE_APPS") + options.resolveBinFolder().toString().substring(
-                                                getSession().locations().getStoreLocation(NStoreLocation.APPS).toString().length()
+                                                NLocations.of(getSession()).getStoreLocation(NStoreLocation.APPS).toString().length()
                                         );
                                     }
                                     default: {

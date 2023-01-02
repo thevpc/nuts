@@ -158,7 +158,7 @@ public class DefaultNArtifactPathExecutable extends AbstractNExecutableCommand {
                         URLBuilder ub = new URLBuilder(((NPath) c.getStreamOrPath()).toURL().toString());
                         try {
                             c.setContentFile(CoreIOUtils.toPathInputSource(
-                                    NPath.of(ub.resolveSibling(session.locations().getDefaultIdFilename(c.getDescriptor().getId())).toURL(), session),
+                                    NPath.of(ub.resolveSibling(NLocations.of(session).getDefaultIdFilename(c.getDescriptor().getId())).toURL(), session),
                                     c.getTemps(), true, session));
                         } catch (Exception ex) {
                             //TODO FIX ME
@@ -181,7 +181,7 @@ public class DefaultNArtifactPathExecutable extends AbstractNExecutableCommand {
                                     URLBuilder ub = new URLBuilder(((NPath)c.getStreamOrPath()).toURL().toString());
                                     try {
                                         c.setContentFile(CoreIOUtils.toPathInputSource(
-                                                NPath.of(ub.resolveSibling(session.locations()
+                                                NPath.of(ub.resolveSibling(NLocations.of(session)
                                                         .getDefaultIdFilename(c.getDescriptor().getId())).toURL(), session),
                                                 c.getTemps(), true, session));
                                     } catch (Exception ex) {

@@ -34,7 +34,7 @@ import net.thevpc.nuts.runtime.standalone.workspace.DefaultNWorkspace;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceExt;
 import net.thevpc.nuts.runtime.standalone.workspace.config.ConfigEventType;
 import net.thevpc.nuts.runtime.standalone.workspace.config.DefaultNWorkspaceConfigModel;
-import net.thevpc.nuts.runtime.standalone.workspace.config.NWorkspaceConfigManagerExt;
+import net.thevpc.nuts.runtime.standalone.workspace.config.NConfigsExt;
 import net.thevpc.nuts.runtime.standalone.workspace.config.NWorkspaceConfigSecurity;
 import net.thevpc.nuts.runtime.standalone.xtra.digest.NDigestUtils;
 import net.thevpc.nuts.spi.NAuthenticationAgent;
@@ -66,8 +66,8 @@ public class DefaultNWorkspaceSecurityModel {
 
     public DefaultNWorkspaceSecurityModel(final DefaultNWorkspace ws) {
         this.ws = ws;
-        this.agent = new WrapperNAuthenticationAgent(ws, (session) -> session.config().getConfigMap(), (x, s) -> getAuthenticationAgent(x, s));
-        NSessionUtils.defaultSession(ws).events().addWorkspaceListener(new ClearAuthOnWorkspaceChange());
+        this.agent = new WrapperNAuthenticationAgent(ws, (session) -> NConfigs.of(session).getConfigMap(), (x, s) -> getAuthenticationAgent(x, s));
+        NEvents.of(NSessionUtils.defaultSession(ws)).addWorkspaceListener(new ClearAuthOnWorkspaceChange());
     }
 
     protected NLoggerOp _LOGOP(NSession session) {
@@ -120,9 +120,9 @@ public class DefaultNWorkspaceSecurityModel {
                 _LOGOP(session).level(Level.CONFIG).verb(NLoggerVerb.WARNING)
                         .log(NMsg.ofJstyle("{0} user has no credentials. reset to default", NConstants.Users.ADMIN));
             }
-            NUserConfig u = NWorkspaceConfigManagerExt.of(session.config()).getModel().getUser(NConstants.Users.ADMIN, session);
+            NUserConfig u = NConfigsExt.of(NConfigs.of(session)).getModel().getUser(NConstants.Users.ADMIN, session);
             u.setCredentials(CoreStringUtils.chrToStr(createCredentials("admin".toCharArray(), false, null, session)));
-            NWorkspaceConfigManagerExt.of(session.config()).getModel().setUser(u, session);
+            NConfigsExt.of(NConfigs.of(session)).getModel().setUser(u, session);
         }
 
         char[] credentials = NDigestUtils.evalSHA1(adminPassword, session);
@@ -133,7 +133,7 @@ public class DefaultNWorkspaceSecurityModel {
         Arrays.fill(credentials, '\0');
         boolean activated = false;
         if (isSecure(session)) {
-            NWorkspaceConfigManagerExt.of(session.config()).getModel().setSecure(false, session);
+            NConfigsExt.of(NConfigs.of(session)).getModel().setSecure(false, session);
             activated = true;
         }
         return activated;
@@ -151,7 +151,7 @@ public class DefaultNWorkspaceSecurityModel {
         }
         Arrays.fill(credentials, '\0');
         if (!isSecure(session)) {
-            NWorkspaceConfigManagerExt.of(session.config()).getModel().setSecure(true, session);
+            NConfigsExt.of(NConfigs.of(session)).getModel().setSecure(true, session);
             deactivated = true;
         }
         return deactivated;
@@ -178,7 +178,7 @@ public class DefaultNWorkspaceSecurityModel {
 
 
     public NUser findUser(String username, NSession session) {
-        NUserConfig security = NWorkspaceConfigManagerExt.of(session.config()).getModel().getUser(username, session);
+        NUserConfig security = NConfigsExt.of(NConfigs.of(session)).getModel().getUser(username, session);
         Stack<String> inherited = new Stack<>();
         if (security != null) {
             Stack<String> visited = new Stack<>();
@@ -188,7 +188,7 @@ public class DefaultNWorkspaceSecurityModel {
             while (!curr.empty()) {
                 String s = curr.pop();
                 visited.add(s);
-                NUserConfig ss = NWorkspaceConfigManagerExt.of(session.config()).getModel().getUser(s, session);
+                NUserConfig ss = NConfigsExt.of(NConfigs.of(session)).getModel().getUser(s, session);
                 if (ss != null) {
                     inherited.addAll(ss.getPermissions());
                     for (String group : ss.getGroups()) {
@@ -205,7 +205,7 @@ public class DefaultNWorkspaceSecurityModel {
 
     public List<NUser> findUsers(NSession session) {
         List<NUser> all = new ArrayList<>();
-        for (NUserConfig secu : NWorkspaceConfigManagerExt.of(session.config()).getModel().getUsers(session)) {
+        for (NUserConfig secu : NConfigsExt.of(NConfigs.of(session)).getModel().getUsers(session)) {
             all.add(findUser(secu.getUser(), session));
         }
         return all;
@@ -242,7 +242,7 @@ public class DefaultNWorkspaceSecurityModel {
         if (aa != null) {
             return aa;
         }
-        NUserConfig s = NWorkspaceConfigManagerExt.of(session.config()).getModel().getUser(n, session);
+        NUserConfig s = NConfigsExt.of(NConfigs.of(session)).getModel().getUser(n, session);
         if (s != null) {
             List<String> rr = s.getPermissions();
             aa = new NAuthorizations(CoreCollectionUtils.nonNullList(rr));
@@ -276,7 +276,7 @@ public class DefaultNWorkspaceSecurityModel {
             if (ea != null) {
                 return ea;
             }
-            NUserConfig uc = NWorkspaceConfigManagerExt.of(session.config()).getModel().getUser(n, session);
+            NUserConfig uc = NConfigsExt.of(NConfigs.of(session)).getModel().getUser(n, session);
             if (uc != null) {
                 for (String g : uc.getGroups()) {
                     if (!visitedGroups.contains(g)) {
@@ -387,10 +387,10 @@ public class DefaultNWorkspaceSecurityModel {
     public NAuthenticationAgent getAuthenticationAgent(String authenticationAgentId, NSession session) {
         authenticationAgentId = NStringUtils.trim(authenticationAgentId);
         if (NBlankable.isBlank(authenticationAgentId)) {
-            authenticationAgentId = NWorkspaceConfigManagerExt.of(session.config())
+            authenticationAgentId = NConfigsExt.of(NConfigs.of(session))
                     .getModel().getStoredConfigSecurity().getAuthenticationAgent();
         }
-        NAuthenticationAgent a = NWorkspaceConfigManagerExt.of(session.config())
+        NAuthenticationAgent a = NConfigsExt.of(NConfigs.of(session))
                 .getModel().createAuthenticationAgent(authenticationAgentId, session);
         return a;
     }
@@ -398,7 +398,7 @@ public class DefaultNWorkspaceSecurityModel {
 
     public void setAuthenticationAgent(String authenticationAgentId, NSession session) {
 
-        DefaultNWorkspaceConfigModel cc = NWorkspaceConfigManagerExt.of(session.config()).getModel();
+        DefaultNWorkspaceConfigModel cc = NConfigsExt.of(NConfigs.of(session)).getModel();
 
         if (cc.createAuthenticationAgent(authenticationAgentId, session) == null) {
             throw new NIllegalArgumentException(session,
@@ -415,7 +415,7 @@ public class DefaultNWorkspaceSecurityModel {
 
 
     public boolean isSecure(NSession session) {
-        return NWorkspaceConfigManagerExt.of(session.config()).getModel().getStoredConfigSecurity().isSecure();
+        return NConfigsExt.of(NConfigs.of(session)).getModel().getStoredConfigSecurity().isSecure();
     }
 
 

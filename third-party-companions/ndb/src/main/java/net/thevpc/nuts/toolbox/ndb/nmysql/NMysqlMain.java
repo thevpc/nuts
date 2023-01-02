@@ -1,7 +1,7 @@
 package net.thevpc.nuts.toolbox.ndb.nmysql;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.cmdline.NArgument;
+import net.thevpc.nuts.cmdline.NArg;
 import net.thevpc.nuts.cmdline.NCommandLine;
 import net.thevpc.nuts.text.NTextStyle;
 import net.thevpc.nuts.text.NTexts;
@@ -305,7 +305,7 @@ public class NMysqlMain extends RdbSupport<NMySqlConfig> {
         class Data {
             AtName name = null;
 
-            NArgument a;
+            NArg a;
             Integer c_shutdown_wait_time = null;
             Integer c_startup_wait_time = null;
             Boolean c_kill = null;
@@ -676,7 +676,7 @@ public class NMysqlMain extends RdbSupport<NMySqlConfig> {
                     if (d.password != null) {
                         someUpdates = true;
                         r.getConfig().setPassword(
-                                new String(session.security().createCredentials(d.password.toCharArray(), true,
+                                new String(NWorkspaceSecurityManager.of(session).createCredentials(d.password.toCharArray(), true,
                                         null))
                         );
                     }
@@ -688,7 +688,7 @@ public class NMysqlMain extends RdbSupport<NMySqlConfig> {
                         r.getConfig().setDatabaseName(d.dbname);
                     }
                     if (d.askPassword || (!add && d.password == null)) {
-                        r.getConfig().setPassword(new String(session.security()
+                        r.getConfig().setPassword(new String(NWorkspaceSecurityManager.of(session)
                                         .createCredentials(session.getTerminal().readPassword("Password"), true,
                                                 null)
                                 )
@@ -856,7 +856,7 @@ public class NMysqlMain extends RdbSupport<NMySqlConfig> {
         List<AtName> localNames = new ArrayList<>();
         List<AtName> remoteNames = new ArrayList<>();
         boolean currentLocal = true;
-        NArgument a;
+        NArg a;
 
         while (commandLine.hasNext()) {
             if (commandLine.isNextOption()) {

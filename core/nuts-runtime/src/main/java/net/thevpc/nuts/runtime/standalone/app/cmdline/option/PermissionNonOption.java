@@ -27,8 +27,8 @@
 package net.thevpc.nuts.runtime.standalone.app.cmdline.option;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.cmdline.DefaultNArgumentCandidate;
-import net.thevpc.nuts.cmdline.NArgumentCandidate;
+import net.thevpc.nuts.cmdline.DefaultNArgCandidate;
+import net.thevpc.nuts.cmdline.NArgCandidate;
 import net.thevpc.nuts.cmdline.NCommandAutoComplete;
 
 import java.util.*;
@@ -52,20 +52,20 @@ public class PermissionNonOption extends DefaultNonOption {
     }
 
     @Override
-    public List<NArgumentCandidate> getCandidates(NCommandAutoComplete context) {
-        List<NArgumentCandidate> all = new ArrayList<>();
+    public List<NArgCandidate> getCandidates(NCommandAutoComplete context) {
+        List<NArgCandidate> all = new ArrayList<>();
         for (String r : NConstants.Permissions.ALL) {
-            all.add(new DefaultNArgumentCandidate(r));
+            all.add(new DefaultNArgCandidate(r));
         }
-        Iterator<NArgumentCandidate> i = all.iterator();
+        Iterator<NArgCandidate> i = all.iterator();
         NRepository repository=context.get(NRepository.class);
         NUser info = repository != null ? repository.security()
                 .setSession(context.getSession())
-                .getEffectiveUser(user) : 
-                context.getSession().security().setSession(context.getSession()).findUser(user);
+                .getEffectiveUser(user) :
+                NWorkspaceSecurityManager.of(context.getSession()).findUser(user);
         Set<String> rights = new HashSet<>(info == null ? Collections.emptyList() : (info.getPermissions()));
         while (i.hasNext()) {
-            NArgumentCandidate right = i.next();
+            NArgCandidate right = i.next();
             if (existing) {
                 if (!rights.contains(right.getValue())) {
                     i.remove();

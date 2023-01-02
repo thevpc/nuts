@@ -2,6 +2,8 @@ package net.thevpc.nuts.toolbox.nutsserver.http.commands;
 
 import net.thevpc.nuts.NConstants;
 import net.thevpc.nuts.NDefinition;
+import net.thevpc.nuts.NFetchCommand;
+import net.thevpc.nuts.NSearchCommand;
 import net.thevpc.nuts.toolbox.nutsserver.AbstractFacadeCommand;
 import net.thevpc.nuts.toolbox.nutsserver.FacadeCommandContext;
 
@@ -29,7 +31,7 @@ public class GetBootFacadeCommand extends AbstractFacadeCommand {
             }
         }
         if (version == null) {
-            NDefinition def = context.getSession().search().addId(NConstants.Ids.NUTS_API).setLatest(true).setContent(true).getResultDefinitions().first();
+            NDefinition def = NSearchCommand.of(context.getSession()).addId(NConstants.Ids.NUTS_API).setLatest(true).setContent(true).getResultDefinitions().first();
             if (def != null && def.getContent().isPresent()) {
                 context.addResponseHeader("content-disposition", "attachment; filename=\"nuts-" + def.getId().getVersion().toString() + ".jar\"");
                 context.sendResponseFile(200, def.getContent().orNull());
@@ -37,7 +39,7 @@ public class GetBootFacadeCommand extends AbstractFacadeCommand {
                 context.sendError(404, "File Note Found");
             }
         } else {
-            NDefinition def = context.getSession().fetch().setId(NConstants.Ids.NUTS_API + "#" + version).setContent(true).getResultDefinition();
+            NDefinition def = NFetchCommand.of(context.getSession()).setId(NConstants.Ids.NUTS_API + "#" + version).setContent(true).getResultDefinition();
             if (def != null && def.getContent().isPresent()) {
                 context.addResponseHeader("content-disposition", "attachment; filename=\"nuts-" + def.getId().getVersion().toString() + ".jar\"");
                 context.sendResponseFile(200, def.getContent().orNull());

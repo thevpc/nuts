@@ -116,7 +116,7 @@ public class NResourcePath implements NPathSPI {
             urlPathLookedUp = true;
             try {
                 String loc = location;
-                ClassLoader resultClassLoader = getSession().search().addIds(
+                ClassLoader resultClassLoader = NSearchCommand.of(getSession()).addIds(
                                 this.ids.toArray(new NId[0])
                         ).setLatest(true).setContent(true).setDependencies(true)
                         .setDependencyFilter(

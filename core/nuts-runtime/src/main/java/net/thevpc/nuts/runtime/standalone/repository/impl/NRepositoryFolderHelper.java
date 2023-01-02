@@ -90,14 +90,14 @@ public class NRepositoryFolderHelper {
     public NPath getLongIdLocalFolder(NId id, NSession session) {
         NIdUtils.checkLongId(id, session);
         if (repo == null) {
-            return getStoreLocation().resolve(session.locations().setSession(session).getDefaultIdBasedir(id));
+            return getStoreLocation().resolve(NLocations.of(session).getDefaultIdBasedir(id));
         }
         return getStoreLocation().resolve(NRepositoryExt0.of(repo).getIdBasedir(id, session));
     }
 
     public NPath getLongIdLocalFile(NId id, NSession session) {
         if (repo == null) {
-            return getLongIdLocalFolder(id, session).resolve(session.locations().setSession(session).getDefaultIdFilename(id));
+            return getLongIdLocalFolder(id, session).resolve(NLocations.of(session).getDefaultIdFilename(id));
         }
         return getLongIdLocalFolder(id, session).resolve(NRepositoryExt0.of(repo).getIdFilename(id, session));
     }
@@ -105,7 +105,7 @@ public class NRepositoryFolderHelper {
     public NPath getShortIdLocalFolder(NId id, NSession session) {
         NIdUtils.checkShortId(id, session);
         if (repo == null) {
-            return getStoreLocation().resolve(session.locations().getDefaultIdBasedir(id.builder().setVersion("").build()));
+            return getStoreLocation().resolve(NLocations.of(session).getDefaultIdBasedir(id.builder().setVersion("").build()));
         }
         return getStoreLocation().resolve(NRepositoryExt0.of(repo).getIdBasedir(id.builder().setVersion("").build(), session));
     }
@@ -129,7 +129,7 @@ public class NRepositoryFolderHelper {
 
     protected String getIdFilename(NId id, NSession session) {
         if (repo == null) {
-            return session.locations().getDefaultIdFilename(id);
+            return NLocations.of(session).getDefaultIdFilename(id);
         }
         return NRepositoryExt0.of(repo).getIdFilename(id, session);
     }

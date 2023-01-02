@@ -200,7 +200,7 @@ public class DefaultNSearchCommand extends AbstractNSearchCommand {
         NDescriptorFilter _descriptorFilter = dfilter.always();
         NIdFilter _idFilter = NIdFilters.of(this.session).always();
         NDependencyFilter depFilter = NDependencyFilters.of(session).always();
-        NRepositoryFilter rfilter = this.session.repos().filter().always();
+        NRepositoryFilter rfilter = NRepositories.of(this.session).filter().always();
         for (String j : this.getScripts()) {
             if (!NBlankable.isBlank(j)) {
                 if (CoreStringUtils.containsTopWord(j, "descriptor")) {
@@ -562,7 +562,7 @@ public class DefaultNSearchCommand extends AbstractNSearchCommand {
                             if (!installedIds.isEmpty()) {
                                 nutsId2.addAll(installedIds);
                             } else {
-                                for (String aImport : session.imports().getAllImports()) {
+                                for (String aImport : NImports.of(session).getAllImports()) {
                                     //example import(net.thevpc),search(pnote) ==>net.thevpc:pnote
                                     nutsId2.add(nutsId.builder().setGroupId(aImport).build());
                                     //example import(net.thevpc),search(pnote) ==>net.thevpc.pnote:pnote
@@ -617,7 +617,7 @@ public class DefaultNSearchCommand extends AbstractNSearchCommand {
                     }
                     if (nutsId.getGroupId() == null) {
                         //now will look with *:artifactId pattern
-                        NSearchCommand search2 = session.search()
+                        NSearchCommand search2 = NSearchCommand.of(session)
                                 .setSession(session)
                                 .setRepositoryFilter(search.getRepositoryFilter())
                                 .setDescriptorFilter(search.getDescriptorFilter());

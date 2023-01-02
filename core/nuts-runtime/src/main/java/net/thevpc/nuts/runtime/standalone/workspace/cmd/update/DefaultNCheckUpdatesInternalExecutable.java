@@ -6,6 +6,7 @@
 package net.thevpc.nuts.runtime.standalone.workspace.cmd.update;
 
 import net.thevpc.nuts.NSession;
+import net.thevpc.nuts.NUpdateCommand;
 import net.thevpc.nuts.runtime.standalone.app.util.NAppUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.exec.DefaultInternalNExecutableCommand;
 
@@ -29,7 +30,7 @@ public class DefaultNCheckUpdatesInternalExecutable extends DefaultInternalNExec
             showDefaultHelp();
             return;
         }
-        getSession().update().configure(false, args).checkUpdates();
+        NUpdateCommand.of(getSession()).configure(false, args).checkUpdates();
     }
 
 }

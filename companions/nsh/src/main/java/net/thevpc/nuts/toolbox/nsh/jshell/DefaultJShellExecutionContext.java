@@ -2,7 +2,7 @@ package net.thevpc.nuts.toolbox.nsh.jshell;
 
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.cmdline.NArgument;
+import net.thevpc.nuts.cmdline.NArg;
 import net.thevpc.nuts.cmdline.NCommandAutoComplete;
 import net.thevpc.nuts.cmdline.NCommandLine;
 import net.thevpc.nuts.io.NOutStream;
@@ -69,7 +69,7 @@ public class DefaultJShellExecutionContext implements JShellExecutionContext {
     }
     @Override
     public boolean configureFirst(NCommandLine cmd) {
-        NArgument a = cmd.peek().get(session);
+        NArg a = cmd.peek().get(session);
         if (a == null) {
             return false;
         }

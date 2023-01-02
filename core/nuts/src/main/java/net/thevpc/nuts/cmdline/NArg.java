@@ -36,7 +36,7 @@ import net.thevpc.nuts.NValue;
  * @app.category Command Line
  * @since 0.5.5
  */
-public interface NArgument extends NValue {
+public interface NArg extends NValue {
 
     /**
      * create instance for the given value and with the given session
@@ -44,8 +44,8 @@ public interface NArgument extends NValue {
      * @param value   value
      * @return new instance
      */
-    static NArgument of(String value) {
-        return new DefaultNArgument(value);
+    static NArg of(String value) {
+        return new DefaultNArg(value);
     }
 
     /**
@@ -120,7 +120,7 @@ public interface NArgument extends NValue {
      *
      * @return {@code this} instance
      */
-    NArgument required();
+    NArg required();
 
     /**
      * true if the argument is in the form key=value
@@ -183,18 +183,18 @@ public interface NArgument extends NValue {
      * neither ! nor // or = argument parts as they are parsed separately. Here
      * are some examples of getStringKey() result for some common arguments
      * <ul>
-     * <li>Argument("key").getArgumentKey() ==&gt; "key" </li>
-     * <li>Argument("key=value").getArgumentKey() ==&gt; "key" </li>
-     * <li>Argument("--key=value").getArgumentKey() ==&gt; "--key"
+     * <li>Argument("key").getKey() ==&gt; "key" </li>
+     * <li>Argument("key=value").getKey() ==&gt; "key" </li>
+     * <li>Argument("--key=value").getKey() ==&gt; "--key"
      * </li>
-     * <li>Argument("--!key=value").getArgumentKey() ==&gt; "--key"
+     * <li>Argument("--!key=value").getKey() ==&gt; "--key"
      * </li>
-     * <li>Argument("--!//key=value").getArgumentKey() ==&gt; "--key"
+     * <li>Argument("--!//key=value").getKey() ==&gt; "--key"
      * </li>
-     * <li>Argument("--//!key=value").getArgumentKey() ==&gt; "--key"
+     * <li>Argument("--//!key=value").getKey() ==&gt; "--key"
      * </li>
      * </ul>
-     * equivalent to {@code getArgumentKey().getString()}
+     * equivalent to {@code getKey().getString()}
      *
      * @return string key
      */

@@ -54,7 +54,7 @@ import java.util.stream.Collectors;
 public class DefaultNCommandLine implements NCommandLine {
 
     protected LinkedList<String> args = new LinkedList<>();
-    protected List<NArgument> lookahead = new ArrayList<>();
+    protected List<NArg> lookahead = new ArrayList<>();
     protected boolean expandSimpleOptions = true;
     protected Set<String> specialSimpleOptions = new HashSet<>();
     protected String commandName;
@@ -129,7 +129,7 @@ public class DefaultNCommandLine implements NCommandLine {
             char c0 = option.charAt(0);
             char c1 = option.charAt(1);
             char c2 = option.charAt(2);
-            if ((c0 == '-' || c0 == '+') && DefaultNArgument.isSimpleKey(c1) && DefaultNArgument.isSimpleKey(c2)) {
+            if ((c0 == '-' || c0 == '+') && DefaultNArg.isSimpleKey(c1) && DefaultNArg.isSimpleKey(c2)) {
                 specialSimpleOptions.add(option);
                 return this;
             }
@@ -143,7 +143,7 @@ public class DefaultNCommandLine implements NCommandLine {
         if (option == null) {
             return false;
         }
-        DefaultNArgument a = new DefaultNArgument(option);
+        DefaultNArg a = new DefaultNArg(option);
         String p = a.getOptionPrefix().asString().orNull();
         if (p == null || p.length() != 1) {
             return false;
@@ -269,42 +269,42 @@ public class DefaultNCommandLine implements NCommandLine {
     }
 
     @Override
-    public NCommandLine pushBack(NArgument arg) {
+    public NCommandLine pushBack(NArg arg) {
         NAssert.requireNonNull(arg, "argument");
         lookahead.add(0, arg);
         return this;
     }
 
     @Override
-    public NOptional<NArgument> next() {
+    public NOptional<NArg> next() {
         return next(expandSimpleOptions);
     }
 
     @Override
-    public NOptional<NArgument> next(NArgumentName name) {
+    public NOptional<NArg> next(NArgName name) {
         return next(name, false);
     }
 
     @Override
-    public NOptional<NArgument> nextOption(String option) {
-        if (!new DefaultNArgument(option).isOption()) {
+    public NOptional<NArg> nextOption(String option) {
+        if (!new DefaultNArg(option).isOption()) {
             return errorOptionalCstyle("%s is not an option", option);
         }
-        return next(new DefaultNArgumentName(option), true);
+        return next(new DefaultNArgName(option), true);
     }
 
     @Override
     public boolean isNextOption() {
-        return peek().map(NArgument::isOption).orElse(false);
+        return peek().map(NArg::isOption).orElse(false);
     }
 
     @Override
     public boolean isNextNonOption() {
-        return peek().map(NArgument::isNonOption).orElse(false);
+        return peek().map(NArg::isNonOption).orElse(false);
     }
 
     @Override
-    public NOptional<NArgument> peek() {
+    public NOptional<NArg> peek() {
         return get(0);
     }
 
@@ -314,30 +314,30 @@ public class DefaultNCommandLine implements NCommandLine {
     }
 
     @Override
-    public NOptional<NArgument> nextBoolean(String... names) {
+    public NOptional<NArg> nextBoolean(String... names) {
         return next(NArgumentType.BOOLEAN, names);
     }
 
     @Override
-    public NOptional<NArgument> nextString(String... names) {
+    public NOptional<NArg> nextString(String... names) {
         return next(NArgumentType.STRING, names);
     }
 
     @Override
-    public NOptional<NArgument> nextString() {
+    public NOptional<NArg> nextString() {
         return nextString(new String[0]);
     }
 
     @Override
-    public NOptional<NArgument> nextBoolean() {
+    public NOptional<NArg> nextBoolean() {
         return nextBoolean(new String[0]);
     }
 
     @Override
-    public boolean withNextOptionalBoolean(NArgumentConsumer<NOptional<Boolean>> consumer) {
-        NOptional<NArgument> v = nextBoolean();
+    public boolean withNextOptionalBoolean(NArgProcessor<NOptional<Boolean>> consumer) {
+        NOptional<NArg> v = nextBoolean();
         if (v.isPresent()) {
-            NArgument a = v.get(session);
+            NArg a = v.get(session);
             if (a.isActive()) {
                 consumer.run(a.getBooleanValue(), a, session);
                 return true;
@@ -347,10 +347,10 @@ public class DefaultNCommandLine implements NCommandLine {
     }
 
     @Override
-    public boolean withNextOptionalBoolean(NArgumentConsumer<NOptional<Boolean>> consumer, String... names) {
-        NOptional<NArgument> v = nextBoolean(names);
+    public boolean withNextOptionalBoolean(NArgProcessor<NOptional<Boolean>> consumer, String... names) {
+        NOptional<NArg> v = nextBoolean(names);
         if (v.isPresent()) {
-            NArgument a = v.get(session);
+            NArg a = v.get(session);
             if (a.isActive()) {
                 consumer.run(a.getBooleanValue(), a, session);
                 return true;
@@ -360,10 +360,10 @@ public class DefaultNCommandLine implements NCommandLine {
     }
 
     @Override
-    public boolean withNextOptionalString(NArgumentConsumer<NOptional<String>> consumer) {
-        NOptional<NArgument> v = nextBoolean();
+    public boolean withNextOptionalString(NArgProcessor<NOptional<String>> consumer) {
+        NOptional<NArg> v = nextBoolean();
         if (v.isPresent()) {
-            NArgument a = v.get(session);
+            NArg a = v.get(session);
             if (a.isActive()) {
                 consumer.run(a.getStringValue(), a, session);
                 return true;
@@ -373,10 +373,10 @@ public class DefaultNCommandLine implements NCommandLine {
     }
 
     @Override
-    public boolean withNextOptionalString(NArgumentConsumer<NOptional<String>> consumer, String... names) {
-        NOptional<NArgument> v = nextBoolean(names);
+    public boolean withNextOptionalString(NArgProcessor<NOptional<String>> consumer, String... names) {
+        NOptional<NArg> v = nextBoolean(names);
         if (v.isPresent()) {
-            NArgument a = v.get(session);
+            NArg a = v.get(session);
             if (a.isActive()) {
                 consumer.run(a.getStringValue(), a, session);
                 return true;
@@ -388,10 +388,10 @@ public class DefaultNCommandLine implements NCommandLine {
 
 
     @Override
-    public boolean withNextBoolean(NArgumentConsumer<Boolean> consumer) {
-        NOptional<NArgument> v = nextBoolean();
+    public boolean withNextBoolean(NArgProcessor<Boolean> consumer) {
+        NOptional<NArg> v = nextBoolean();
         if (v.isPresent()) {
-            NArgument a = v.get(session);
+            NArg a = v.get(session);
             if (a.isActive()) {
                 consumer.run(a.getBooleanValue().get(session), a, session);
                 return true;
@@ -401,7 +401,7 @@ public class DefaultNCommandLine implements NCommandLine {
     }
 
     @Override
-    public boolean withNextTrue(NArgumentConsumer<Boolean> consumer) {
+    public boolean withNextTrue(NArgProcessor<Boolean> consumer) {
         return withNextBoolean((value, arg, session1) -> {
             if (value) {
                 consumer.run(true, arg, session1);
@@ -410,10 +410,10 @@ public class DefaultNCommandLine implements NCommandLine {
     }
 
     @Override
-    public boolean withNextTrue(NArgumentConsumer<Boolean> consumer, String... names) {
-        return withNextBoolean(new NArgumentConsumer<Boolean>() {
+    public boolean withNextTrue(NArgProcessor<Boolean> consumer, String... names) {
+        return withNextBoolean(new NArgProcessor<Boolean>() {
             @Override
-            public void run(Boolean value, NArgument arg, NSession session) {
+            public void run(Boolean value, NArg arg, NSession session) {
                 if (value) {
                     consumer.run(true, arg, session);
                 }
@@ -422,10 +422,10 @@ public class DefaultNCommandLine implements NCommandLine {
     }
 
     @Override
-    public boolean withNextBoolean(NArgumentConsumer<Boolean> consumer, String... names) {
-        NOptional<NArgument> v = nextBoolean(names);
+    public boolean withNextBoolean(NArgProcessor<Boolean> consumer, String... names) {
+        NOptional<NArg> v = nextBoolean(names);
         if (v.isPresent()) {
-            NArgument a = v.get(session);
+            NArg a = v.get(session);
             if (a.isActive()) {
                 consumer.run(a.getBooleanValue().get(session), a, session);
                 return true;
@@ -435,10 +435,10 @@ public class DefaultNCommandLine implements NCommandLine {
     }
 
     @Override
-    public boolean withNextString(NArgumentConsumer<String> consumer) {
-        NOptional<NArgument> v = nextString();
+    public boolean withNextString(NArgProcessor<String> consumer) {
+        NOptional<NArg> v = nextString();
         if (v.isPresent()) {
-            NArgument a = v.get(session);
+            NArg a = v.get(session);
             if (a.isActive()) {
                 consumer.run(a.getStringValue().get(session), a, session);
                 return true;
@@ -448,10 +448,10 @@ public class DefaultNCommandLine implements NCommandLine {
     }
 
     @Override
-    public boolean withNextString(NArgumentConsumer<String> consumer, String... names) {
-        NOptional<NArgument> v = nextString(names);
+    public boolean withNextString(NArgProcessor<String> consumer, String... names) {
+        NOptional<NArg> v = nextString(names);
         if (v.isPresent()) {
-            NArgument a = v.get(session);
+            NArg a = v.get(session);
             if (a.isActive()) {
                 consumer.run(a.getStringValue().get(session), a, session);
                 return true;
@@ -461,10 +461,10 @@ public class DefaultNCommandLine implements NCommandLine {
     }
 
     @Override
-    public boolean withNextValue(NArgumentConsumer<NValue> consumer) {
-        NOptional<NArgument> v = nextString();
+    public boolean withNextValue(NArgProcessor<NValue> consumer) {
+        NOptional<NArg> v = nextString();
         if (v.isPresent()) {
-            NArgument a = v.get(session);
+            NArg a = v.get(session);
             if (a.isActive()) {
                 consumer.run(a.getValue(), a, session);
                 return true;
@@ -474,10 +474,10 @@ public class DefaultNCommandLine implements NCommandLine {
     }
 
     @Override
-    public boolean withNextValue(NArgumentConsumer<NValue> consumer, String... names) {
-        NOptional<NArgument> v = nextString(names);
+    public boolean withNextValue(NArgProcessor<NValue> consumer, String... names) {
+        NOptional<NArg> v = nextString(names);
         if (v.isPresent()) {
-            NArgument a = v.get(session);
+            NArg a = v.get(session);
             if (a.isActive()) {
                 consumer.run(a.getValue(), a, session);
                 return true;
@@ -498,27 +498,27 @@ public class DefaultNCommandLine implements NCommandLine {
 
     @Override
     public NOptional<NValue> nextStringValue(String... names) {
-        return nextString(names).map(NArgument::getValue);
+        return nextString(names).map(NArg::getValue);
     }
 
     @Override
     public NOptional<NValue> nextBooleanValue(String... names) {
-        return nextBoolean(names).map(NArgument::getValue);
+        return nextBoolean(names).map(NArg::getValue);
     }
 
     @Override
-    public NOptional<NArgument> next(String... names) {
+    public NOptional<NArg> next(String... names) {
         return next(NArgumentType.DEFAULT, names);
     }
 
     @Override
-    public NOptional<NArgument> next(NArgumentType expectValue, String... names) {
+    public NOptional<NArg> next(NArgumentType expectValue, String... names) {
         if (expectValue == null) {
             expectValue = NArgumentType.DEFAULT;
         }
         if (names.length == 0) {
             if (hasNext()) {
-                NArgument peeked = peek().orNull();
+                NArg peeked = peek().orNull();
                 NOptional<String> string = peeked.getKey().asString();
                 if (string.isError()) {
                     return NOptional.ofError(string.getMessage());
@@ -531,8 +531,8 @@ public class DefaultNCommandLine implements NCommandLine {
             }
         } else {
             if (isAutoCompleteMode()) {
-                NArgumentCandidate[] candidates = resolveRecommendations(expectValue, names, autoComplete.getCurrentWordIndex());
-                for (NArgumentCandidate c : candidates) {
+                NArgCandidate[] candidates = resolveRecommendations(expectValue, names, autoComplete.getCurrentWordIndex());
+                for (NArgCandidate c : candidates) {
                     autoComplete.addCandidate(c);
                 }
             }
@@ -547,7 +547,7 @@ public class DefaultNCommandLine implements NCommandLine {
                 continue;
             }
             String name = nameSeqArray[nameSeqArray.length - 1];
-            NArgument p = get(nameSeqArray.length - 1).orNull();
+            NArg p = get(nameSeqArray.length - 1).orNull();
             if (p != null) {
                 NOptional<String> pks = p.getKey().asString();
                 if (pks.isPresent() && pks.get().equals(name)) {
@@ -561,7 +561,7 @@ public class DefaultNCommandLine implements NCommandLine {
                             if (p.isKeyValue()) {
                                 return NOptional.of(p);
                             } else {
-                                NArgument r2 = peek().orNull();
+                                NArg r2 = peek().orNull();
                                 if (r2 != null && !r2.isOption()) {
                                     skip();
                                     return NOptional.of(createArgument(p.asString().orElse("") + eq + r2.asString().orElse("")));
@@ -626,17 +626,17 @@ public class DefaultNCommandLine implements NCommandLine {
     }
 
     @Override
-    public NOptional<NArgument> nextNonOption(NArgumentName name) {
+    public NOptional<NArg> nextNonOption(NArgName name) {
         return next(name, true);
     }
 
     @Override
-    public NOptional<NArgument> nextNonOption(String name) {
-        return nextNonOption(new DefaultNArgumentName(name));
+    public NOptional<NArg> nextNonOption(String name) {
+        return nextNonOption(new DefaultNArgName(name));
     }
 
     @Override
-    public NOptional<NArgument> nextNonOption() {
+    public NOptional<NArg> nextNonOption() {
         if (hasNext() && !isNextOption()) {
             return next();
         }
@@ -683,7 +683,7 @@ public class DefaultNCommandLine implements NCommandLine {
     @Override
     public boolean accept(int index, String... values) {
         for (int i = 0; i < values.length; i++) {
-            NArgument argument = get(index + i).orNull();
+            NArg argument = get(index + i).orNull();
             if (argument == null) {
                 return false;
             }
@@ -695,7 +695,7 @@ public class DefaultNCommandLine implements NCommandLine {
     }
 
     @Override
-    public NOptional<NArgument> find(String name) {
+    public NOptional<NArg> find(String name) {
         int index = indexOf(name);
         if (index >= 0) {
             return get(index);
@@ -704,7 +704,7 @@ public class DefaultNCommandLine implements NCommandLine {
     }
 
     @Override
-    public NOptional<NArgument> get(int index) {
+    public NOptional<NArg> get(int index) {
         if (index < 0) {
             return emptyOptionalCstyle("missing argument");
         }
@@ -731,7 +731,7 @@ public class DefaultNCommandLine implements NCommandLine {
     public int indexOf(String name) {
         int i = 0;
         while (i < length()) {
-            NOptional<NArgument> g = get(i);
+            NOptional<NArg> g = get(i);
             if (g.isPresent() && g.get().getKey().asString().orElse("").equals(name)) {
                 return i;
             }
@@ -758,7 +758,7 @@ public class DefaultNCommandLine implements NCommandLine {
     @Override
     public List<String> toStringList() {
         List<String> all = new ArrayList<>(length());
-        for (NArgument nutsArgument : lookahead) {
+        for (NArg nutsArgument : lookahead) {
             all.add(nutsArgument.asString().orElse(""));
         }
         all.addAll(args);
@@ -766,23 +766,23 @@ public class DefaultNCommandLine implements NCommandLine {
     }
 
     @Override
-    public NArgument[] toArgumentArray() {
-        List<NArgument> aa = new ArrayList<>();
+    public NArg[] toArgumentArray() {
+        List<NArg> aa = new ArrayList<>();
         while (hasNext()) {
             aa.add(next().get());
         }
         lookahead.addAll(aa);
-        return aa.toArray(new NArgument[0]);
+        return aa.toArray(new NArg[0]);
     }
 
     @Override
     public boolean isOption(int index) {
-        return get(index).map(NArgument::isOption).orElse(false);
+        return get(index).map(NArg::isOption).orElse(false);
     }
 
     @Override
     public boolean isNonOption(int index) {
-        return get(index).map(NArgument::isNonOption).orElse(false);
+        return get(index).map(NArg::isNonOption).orElse(false);
     }
 
     public NCommandLine setArguments(List<String> arguments) {
@@ -837,9 +837,9 @@ public class DefaultNCommandLine implements NCommandLine {
     }
 
 
-    private NArgumentCandidate[] resolveRecommendations(NArgumentType expectValue, String[] names, int autoCompleteCurrentWordIndex) {
+    private NArgCandidate[] resolveRecommendations(NArgumentType expectValue, String[] names, int autoCompleteCurrentWordIndex) {
         //nameSeqArray
-        List<NArgumentCandidate> candidates = new ArrayList<>();
+        List<NArgCandidate> candidates = new ArrayList<>();
         for (String nameSeq : names) {
             String[] nameSeqArray = NStringUtils.split(nameSeq, " ").toArray(new String[0]);
             if (nameSeqArray.length > 0) {
@@ -848,7 +848,7 @@ public class DefaultNCommandLine implements NCommandLine {
                 boolean skipToNext = false;
                 for (int j = 0; j < i; j++) {
                     String a = nameSeqArray[j];
-                    NArgument x = get(j).orNull();
+                    NArg x = get(j).orNull();
                     if (x != null) {
                         String xs = x.asString().orElse("");
                         if (xs.length() > 0 && !xs.equals(a)) {
@@ -863,7 +863,7 @@ public class DefaultNCommandLine implements NCommandLine {
                 skipToNext = false;
                 if (i < nameSeqArray.length - 1) {
                     String a = nameSeqArray[i];
-                    NArgument x = get(i).orNull();
+                    NArg x = get(i).orNull();
                     if (x != null) {
                         String xs = x.asString().orElse("");
                         if (xs.length() > 0 && xs.equals(a)) {
@@ -886,7 +886,7 @@ public class DefaultNCommandLine implements NCommandLine {
 //                            }
                             skipToNext = true;
                         } else if (xs.length() > 0 && a.startsWith(xs) && !xs.equals(a)) {
-                            candidates.add(new DefaultNArgumentCandidate(a));
+                            candidates.add(new DefaultNArgCandidate(a));
                             skipToNext = true;
                         } else {
                             skipToNext = true;
@@ -898,10 +898,10 @@ public class DefaultNCommandLine implements NCommandLine {
                 }
                 if (getWordIndex() + nameSeqArray.length - 1 == autoCompleteCurrentWordIndex) {
                     String name = nameSeqArray[nameSeqArray.length - 1];
-                    NArgument p = get(nameSeqArray.length - 1).orNull();
+                    NArg p = get(nameSeqArray.length - 1).orNull();
                     if (p != null) {
                         if (name.startsWith(p.getKey().asString().orElse(""))) {
-                            candidates.add(new DefaultNArgumentCandidate(name));
+                            candidates.add(new DefaultNArgCandidate(name));
 //                            switch (expectValue) {
 //                                case ANY: {
 //                                    candidates.add(createCandidate("<AnyValueFor" + pgetKey().getString() + ">"));
@@ -921,17 +921,17 @@ public class DefaultNCommandLine implements NCommandLine {
 //                            }
                         }
                     } else {
-                        candidates.add(new DefaultNArgumentCandidate(name));
+                        candidates.add(new DefaultNArgCandidate(name));
                     }
                 }
             }
         }
-        return candidates.toArray(new NArgumentCandidate[0]);
+        return candidates.toArray(new NArgCandidate[0]);
     }
 
     private boolean isPrefixed(String[] nameSeqArray) {
         for (int i = 0; i < nameSeqArray.length - 1; i++) {
-            NArgument x = get(i).orNull();
+            NArg x = get(i).orNull();
             if (x == null || !x.asString().orElse("").equals(nameSeqArray[i])) {
                 return false;
             }
@@ -939,19 +939,19 @@ public class DefaultNCommandLine implements NCommandLine {
         return true;
     }
 
-    public NOptional<NArgument> next(NArgumentName name, boolean forceNonOption) {
+    public NOptional<NArg> next(NArgName name, boolean forceNonOption) {
         if (hasNext() && (!forceNonOption || !isNextOption())) {
             if (isAutoComplete()) {
-                List<NArgumentCandidate> values = name == null ? null : name.getCandidates(getAutoComplete());
+                List<NArgCandidate> values = name == null ? null : name.getCandidates(getAutoComplete());
                 if (values == null || values.isEmpty()) {
-                    autoComplete.addCandidate(new DefaultNArgumentCandidate(name == null ? "<value>" : name.getName()));
+                    autoComplete.addCandidate(new DefaultNArgCandidate(name == null ? "<value>" : name.getName()));
                 } else {
-                    for (NArgumentCandidate value : values) {
+                    for (NArgCandidate value : values) {
                         autoComplete.addCandidate(value);
                     }
                 }
             }
-            NArgument r = peek().orNull();
+            NArg r = peek().orNull();
             skip();
             if (r == null) {
                 return emptyOptionalCstyle("expected argument");
@@ -960,11 +960,11 @@ public class DefaultNCommandLine implements NCommandLine {
         } else {
             if (autoComplete != null) {
                 if (isAutoComplete()) {
-                    List<NArgumentCandidate> values = name == null ? null : name.getCandidates(getAutoComplete());
+                    List<NArgCandidate> values = name == null ? null : name.getCandidates(getAutoComplete());
                     if (values == null || values.isEmpty()) {
-                        autoComplete.addCandidate(new DefaultNArgumentCandidate(name == null ? "<value>" : name.getName()));
+                        autoComplete.addCandidate(new DefaultNArgCandidate(name == null ? "<value>" : name.getName()));
                     } else {
-                        for (NArgumentCandidate value : values) {
+                        for (NArgCandidate value : values) {
                             autoComplete.addCandidate(value);
                         }
                     }
@@ -979,7 +979,7 @@ public class DefaultNCommandLine implements NCommandLine {
         //ignored
     }
 
-    public NOptional<NArgument> next(boolean expandSimpleOptions) {
+    public NOptional<NArg> next(boolean expandSimpleOptions) {
         if (ensureNext(expandSimpleOptions, false)) {
             if (!lookahead.isEmpty()) {
                 return NOptional.of(lookahead.remove(0));
@@ -1037,8 +1037,8 @@ public class DefaultNCommandLine implements NCommandLine {
                         cc.append(negChar);
                     }
                     cc.append(c);
-                    if (DefaultNArgument.isSimpleKey(c)) {
-                        while (vv.hasNext() && (vv.peek() != eq && !DefaultNArgument.isSimpleKey(vv.peek()))) {
+                    if (DefaultNArg.isSimpleKey(c)) {
+                        while (vv.hasNext() && (vv.peek() != eq && !DefaultNArg.isSimpleKey(vv.peek()))) {
                             cc.append(vv.read());
                         }
                         if (vv.hasNext() && vv.peek() == eq) {
@@ -1064,8 +1064,8 @@ public class DefaultNCommandLine implements NCommandLine {
         return false;
     }
 
-    private NArgument createArgument(String v) {
-        return new DefaultNArgument(v, eq);
+    private NArg createArgument(String v) {
+        return new DefaultNArg(v, eq);
     }
 
     private boolean isAutoComplete() {
@@ -1102,7 +1102,7 @@ public class DefaultNCommandLine implements NCommandLine {
     }
 
     @Override
-    public Iterator<NArgument> iterator() {
+    public Iterator<NArg> iterator() {
         return Arrays.asList(toArgumentArray()).iterator();
     }
 
@@ -1292,7 +1292,7 @@ public class DefaultNCommandLine implements NCommandLine {
     @Override
     public void process(NCommandLineProcessor processor, NCommandLineContext context) {
         NCommandLine cmd = this;
-        NArgument a;
+        NArg a;
         processor.onCmdInitParsing(cmd, context);
         while (cmd.hasNext()) {
             a = cmd.peek().get(session);
@@ -1303,7 +1303,7 @@ public class DefaultNCommandLine implements NCommandLine {
                 consumed = processor.onCmdNextNonOption(a, cmd, context);
             }
             if (consumed) {
-                NArgument next = cmd.peek().orNull();
+                NArg next = cmd.peek().orNull();
                 //reference equality!
                 if (next == a) {
                     //was not consumed!

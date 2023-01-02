@@ -7,7 +7,7 @@ import net.thevpc.nuts.io.NSessionTerminal;
 import net.thevpc.nuts.runtime.standalone.boot.DefaultNBootModel;
 import net.thevpc.nuts.runtime.standalone.session.NSessionUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceExt;
-import net.thevpc.nuts.runtime.standalone.workspace.config.DefaultNWorkspaceConfigManager;
+import net.thevpc.nuts.runtime.standalone.workspace.config.DefaultNConfigs;
 import net.thevpc.nuts.runtime.standalone.workspace.config.DefaultNWorkspaceConfigModel;
 import net.thevpc.nuts.spi.NSupportLevelContext;
 import net.thevpc.nuts.spi.NTerminals;
@@ -23,7 +23,7 @@ public class DefaultNTerminals implements NTerminals {
 
     public DefaultNTerminals(NSession session) {
         this.ws = session.getWorkspace();
-        this.cmodel = ((DefaultNWorkspaceConfigManager) session.config()).getModel();
+        this.cmodel = ((DefaultNConfigs) NConfigs.of(session)).getModel();
         bootModel = NWorkspaceExt.of(session.getWorkspace()).getModel().bootModel;
     }
 

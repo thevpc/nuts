@@ -65,7 +65,7 @@ public class Test13_TerminalModeTest {
                 Assertions.assertThrows(NIllegalArgumentException.class,()->
 
                         {
-                            NSystemTerminal systemTerminal = session.config().getSystemTerminal();
+                            NSystemTerminal systemTerminal = NConfigs.of(session).getSystemTerminal();
                             NOutStream sysInitMode = systemTerminal.out();
                             TestUtils.println(
                                     "sys-init="+(sysInitMode.getTerminalMode()==null?"default": sysInitMode.getTerminalMode().id())
@@ -95,7 +95,7 @@ public class Test13_TerminalModeTest {
                 );
                 return;
             }else{
-                NSystemTerminal systemTerminal = session.config().getSystemTerminal();
+                NSystemTerminal systemTerminal = NConfigs.of(session).getSystemTerminal();
                 NOutStream sysInitMode = systemTerminal.out();
                 NSessionTerminal terminal = NSessionTerminal.of(session);
                 NOutStream out = terminal.out().setTerminalMode(systemMode);

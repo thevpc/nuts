@@ -137,7 +137,7 @@ public class DataService {
         }
         Map<String, String> row = rows.get(0);
         if (!row.containsKey("allDependencies")) {
-            List<NId> allDependencies = session.search()
+            List<NId> allDependencies = NSearchCommand.of(session)
                     .setBasePackage(false)
                     .setInlineDependencies(true)
                     .addId(id)

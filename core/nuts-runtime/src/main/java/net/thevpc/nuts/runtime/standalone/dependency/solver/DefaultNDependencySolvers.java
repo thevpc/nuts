@@ -1,8 +1,9 @@
 package net.thevpc.nuts.runtime.standalone.dependency.solver;
 
+import net.thevpc.nuts.NConfigs;
 import net.thevpc.nuts.NSession;
 import net.thevpc.nuts.runtime.standalone.session.NSessionUtils;
-import net.thevpc.nuts.runtime.standalone.workspace.config.DefaultNWorkspaceConfigManager;
+import net.thevpc.nuts.runtime.standalone.workspace.config.DefaultNConfigs;
 import net.thevpc.nuts.spi.NDependencySolvers;
 import net.thevpc.nuts.NWorkspace;
 import net.thevpc.nuts.spi.NDependencySolver;
@@ -25,14 +26,14 @@ public class DefaultNDependencySolvers implements NDependencySolvers {
     @Override
     public NDependencySolver createSolver(String solverName, NSession session) {
         NSessionUtils.checkSession(ws, session);
-        DefaultNWorkspaceConfigManager config = (DefaultNWorkspaceConfigManager)session.config();
+        DefaultNConfigs config = (DefaultNConfigs) NConfigs.of(session);
         return config.createDependencySolver(solverName);
     }
 
     @Override
     public List<String> getSolverNames(NSession session) {
         NSessionUtils.checkSession(ws, session);
-        DefaultNWorkspaceConfigManager config = (DefaultNWorkspaceConfigManager)session.config();
+        DefaultNConfigs config = (DefaultNConfigs)NConfigs.of(session);
         return config.getDependencySolverNames();
     }
 

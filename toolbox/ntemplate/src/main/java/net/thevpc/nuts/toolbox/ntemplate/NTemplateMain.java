@@ -3,7 +3,7 @@ package net.thevpc.nuts.toolbox.ntemplate;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.cmdline.NCommandLineContext;
 import net.thevpc.nuts.cmdline.NCommandLineProcessor;
-import net.thevpc.nuts.cmdline.NArgument;
+import net.thevpc.nuts.cmdline.NArg;
 import net.thevpc.nuts.cmdline.NCommandLine;
 import net.thevpc.nuts.io.NSessionTerminal;
 import net.thevpc.nuts.toolbox.nsh.jshell.*;
@@ -28,7 +28,7 @@ public class NTemplateMain implements NApplication {
         appContext.processCommandLine(new NCommandLineProcessor() {
 
             @Override
-            public boolean onCmdNextOption(NArgument option, NCommandLine commandLine, NCommandLineContext context) {
+            public boolean onCmdNextOption(NArg option, NCommandLine commandLine, NCommandLineContext context) {
                 switch (option.key()) {
                     case "-i":
                     case "--init": {
@@ -56,7 +56,7 @@ public class NTemplateMain implements NApplication {
             }
 
             @Override
-            public boolean onCmdNextNonOption(NArgument nonOption, NCommandLine commandLine, NCommandLineContext context) {
+            public boolean onCmdNextNonOption(NArg nonOption, NCommandLine commandLine, NCommandLineContext context) {
                 NSession session = commandLine.getSession();
                 config.addSource(commandLine.next().flatMap(NValue::asString).get(session));
                 return false;

@@ -1,8 +1,8 @@
 package net.thevpc.nuts.toolbox.nwork;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.cmdline.NArgument;
-import net.thevpc.nuts.cmdline.NArgumentName;
+import net.thevpc.nuts.cmdline.NArg;
+import net.thevpc.nuts.cmdline.NArgName;
 import net.thevpc.nuts.cmdline.NCommandLine;
 import net.thevpc.nuts.elem.NElements;
 import net.thevpc.nuts.format.NObjectFormat;
@@ -159,7 +159,7 @@ public class WorkspaceService {
 
     public void list(NCommandLine cmd, NApplicationContext appContext) {
         NSession session = appContext.getSession();
-        NArgument a;
+        NArg a;
         List<String> filters = new ArrayList<>();
         cmd.setCommandName("nwork list");
         while (cmd.hasNext()) {
@@ -210,7 +210,7 @@ public class WorkspaceService {
     public void scan(NCommandLine cmdLine, NApplicationContext context) {
         NSession session = context.getSession();
         boolean interactive = false;
-        NArgument a;
+        NArg a;
         boolean run = false;
         boolean reset = false;
         List<File> toScan = new ArrayList<>();
@@ -220,7 +220,7 @@ public class WorkspaceService {
             } else if ((a = cmdLine.nextBoolean("-r", "--reset").orNull()) != null) {
                 reset = a.getBooleanValue().get(session);
             } else if (cmdLine.peek().get(session).isNonOption()) {
-                String folder = cmdLine.nextNonOption(NArgumentName.of("Folder", session))
+                String folder = cmdLine.nextNonOption(NArgName.of("Folder", session))
                         .flatMap(NValue::asString).get(session);
                 run = true;
                 toScan.add(new File(folder));
@@ -244,7 +244,7 @@ public class WorkspaceService {
     }
 
     public void find(NCommandLine cmdLine, NApplicationContext context) {
-        NArgument a;
+        NArg a;
         NSession session = context.getSession();
         List<File> toScan = new ArrayList<>();
         String where = null;
@@ -252,7 +252,7 @@ public class WorkspaceService {
             if ((a = cmdLine.nextString("-w", "--where").orNull()) != null) {
                 where = a.getStringValue().get(session);
             } else if (cmdLine.peek().get(session).isNonOption()) {
-                String folder = cmdLine.nextNonOption(NArgumentName.of("Folder", session))
+                String folder = cmdLine.nextNonOption(NArgName.of("Folder", session))
                         .flatMap(NValue::asString).get(session);
                 toScan.add(new File(folder));
             } else {
@@ -279,7 +279,7 @@ public class WorkspaceService {
             } else if (commandLine.withNextString((v, a, s) -> remoteServer.set(v), "--remote-server", "--to-server", "--to", "-t")) {
             } else if (commandLine.withNextString((v, a, s) -> remoteUser.set(v), "--remote-user")) {
             } else if (commandLine.isNextNonOption()) {
-                NArgument a = commandLine.next().get();
+                NArg a = commandLine.next().get();
                 idsToPush.add(NId.of(a.toString()).get());
             } else {
                 appContext.configureLast(commandLine);
@@ -323,7 +323,7 @@ public class WorkspaceService {
 //        NutsTableFormat tf = appContext.getWorkspace().format().table()
 //                .addHeaderCells("Id", "Local", "Remote", "Status");
         List<String> filters = new ArrayList<>();
-        NArgument a;
+        NArg a;
         while (cmd.hasNext()) {
             if (appContext.configureFirst(cmd)) {
                 //consumed
@@ -813,7 +813,7 @@ public class WorkspaceService {
 
     public int setWorkspaceConfigParam(NCommandLine cmd, NApplicationContext appContext) {
         NSession session = appContext.getSession();
-        NArgument a;
+        NArg a;
         while (cmd.hasNext()) {
             if ((a = cmd.nextString("-r", "--repo").orNull()) != null) {
                 WorkspaceConfig conf = getWorkspaceConfig();

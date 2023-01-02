@@ -3,7 +3,7 @@ package net.thevpc.nuts.runtime.standalone.dependency.format;
 import java.util.*;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.cmdline.NArgument;
+import net.thevpc.nuts.cmdline.NArg;
 import net.thevpc.nuts.cmdline.NCommandLine;
 import net.thevpc.nuts.io.NOutStream;
 import net.thevpc.nuts.runtime.standalone.format.DefaultFormatBase;
@@ -214,7 +214,7 @@ public class DefaultNDependencyFormat extends DefaultFormatBase<NDependencyForma
     @Override
     public boolean configureFirst(NCommandLine commandLine) {
         NSession session = getSession();
-        NArgument aa = commandLine.peek().get(session);
+        NArg aa = commandLine.peek().get(session);
         if (aa == null) {
             return false;
         }

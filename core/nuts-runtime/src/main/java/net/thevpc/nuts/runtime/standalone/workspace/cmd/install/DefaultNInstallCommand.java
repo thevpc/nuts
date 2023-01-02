@@ -83,7 +83,7 @@ public class DefaultNInstallCommand extends AbstractNInstallCommand {
             }
         }
         try {
-            def.definition = session.fetch().setId(id)
+            def.definition = NFetchCommand.of(session).setId(id)
                     .setContent(true)
                     .setEffective(true)
                     .setDependencies(includeDeps)
@@ -175,12 +175,12 @@ public class DefaultNInstallCommand extends AbstractNInstallCommand {
         NWorkspaceExt dws = NWorkspaceExt.of(ws);
         NSession session = getSession();
         NOutStream out = session.out();
-        session.security().checkAllowed(NConstants.Permissions.INSTALL, "install");
+        NWorkspaceSecurityManager.of(session).checkAllowed(NConstants.Permissions.INSTALL, "install");
 //        LinkedHashMap<NutsId, Boolean> allToInstall = new LinkedHashMap<>();
         InstallIdList list = new InstallIdList(NInstallStrategy.INSTALL);
         for (Map.Entry<NId, NInstallStrategy> idAndStrategy : this.getIdMap().entrySet()) {
             if (!list.isVisited(idAndStrategy.getKey())) {
-                List<NId> allIds = session.search().addId(idAndStrategy.getKey()).setSession(session).setLatest(true).getResultIds().toList();
+                List<NId> allIds = NSearchCommand.of(session).addId(idAndStrategy.getKey()).setSession(session).setLatest(true).getResultIds().toList();
                 if (allIds.isEmpty()) {
                     throw new NNotFoundException(getSession(), idAndStrategy.getKey());
                 }
@@ -195,7 +195,7 @@ public class DefaultNInstallCommand extends AbstractNInstallCommand {
             list.emptyCommand=false;
             for (NId sid : session.extensions().getCompanionIds()) {
                 if (!list.isVisited(sid)) {
-                    List<NId> allIds = session.search().setSession(session).addId(sid).setLatest(true).setTargetApiVersion(ws.getApiVersion()).getResultIds().toList();
+                    List<NId> allIds = NSearchCommand.of(session).addId(sid).setLatest(true).setTargetApiVersion(ws.getApiVersion()).getResultIds().toList();
                     if (allIds.isEmpty()) {
                         throw new NNotFoundException(getSession(), sid);
                     }
@@ -215,7 +215,7 @@ public class DefaultNInstallCommand extends AbstractNInstallCommand {
             // In all cases, even though search may be empty we considere that the list is not empty
             // so that no empty exception is thrown
             list.emptyCommand=false;
-            for (NId resultId : session.search().setSession(session).setInstallStatus(
+            for (NId resultId : NSearchCommand.of(session).setInstallStatus(
                     NInstallStatusFilters.of(session).byInstalled(true)).getResultIds()) {
                 list.addForInstall(resultId, getInstalled(), true);
             }
@@ -410,7 +410,7 @@ public class DefaultNInstallCommand extends AbstractNInstallCommand {
             }else {
                 mout.println("should we proceed installation?");
             }
-            if (!getSession().config().getDefaultTerminal().ask()
+            if (!NConfigs.of(getSession()).getDefaultTerminal().ask()
                     .resetLine()
                     .setSession(session)
                     .forBoolean(NMsg.ofNtf(mout.toString()))
@@ -427,7 +427,7 @@ public class DefaultNInstallCommand extends AbstractNInstallCommand {
                 printList(mout, "installed", "re-reinstalled", installed_ignored);
             }
             mout.println("should we proceed?");
-            if (!getSession().config().getDefaultTerminal().ask()
+            if (!NConfigs.of(getSession()).getDefaultTerminal().ask()
                     .resetLine()
                     .setSession(session)
                     .forBoolean(NMsg.ofNtf(mout.toString()))
@@ -469,7 +469,7 @@ public class DefaultNInstallCommand extends AbstractNInstallCommand {
                                 .log(NMsg.ofJstyle("failed to install {0}", info.id));
                         failedList.add(info.id);
                         if (session.isPlainTrace()) {
-                            if (!getSession().config().getDefaultTerminal().ask()
+                            if (!NConfigs.of(getSession()).getDefaultTerminal().ask()
                                     .resetLine()
                                     .setSession(session)
                                     .forBoolean(NMsg.ofCstyle("%s %s and its dependencies... Continue installation?",

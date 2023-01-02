@@ -5,7 +5,7 @@ import net.thevpc.nuts.elem.NElements;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.runtime.standalone.session.NSessionUtils;
 import net.thevpc.nuts.runtime.standalone.util.filters.CoreFilterUtils;
-import net.thevpc.nuts.runtime.standalone.workspace.config.NWorkspaceConfigManagerExt;
+import net.thevpc.nuts.runtime.standalone.workspace.config.NConfigsExt;
 import net.thevpc.nuts.runtime.standalone.workspace.config.ConfigEventType;
 import net.thevpc.nuts.util.NLogger;
 import net.thevpc.nuts.util.NLoggerOp;
@@ -71,7 +71,7 @@ public class ConfigNWorkspaceCommandFactory implements NWorkspaceCommandFactory 
 
     public NPath getStoreLocation(NSession session) {
         checkSession(session);
-        return session.locations().getStoreLocation(session.getWorkspace().getApiId(), NStoreLocation.APPS);
+        return NLocations.of(session).getStoreLocation(session.getWorkspace().getApiId(), NStoreLocation.APPS);
     }
 
     private NPath getCommandsFolder(NSession session) {
@@ -86,7 +86,7 @@ public class ConfigNWorkspaceCommandFactory implements NWorkspaceCommandFactory 
         NPath file = getCommandsFolder(session).resolve(name + NConstants.Files.NUTS_COMMAND_FILE_EXTENSION);
         if (file.exists()) {
             file.delete();
-            NWorkspaceConfigManagerExt.of(session.config()).getModel().fireConfigurationChanged("command", session, ConfigEventType.MAIN);
+            NConfigsExt.of(NConfigs.of(session)).getModel().fireConfigurationChanged("command", session, ConfigEventType.MAIN);
         }
     }
 
@@ -99,7 +99,7 @@ public class ConfigNWorkspaceCommandFactory implements NWorkspaceCommandFactory 
         NPath path = getCommandsFolder(session).resolve(command.getName() + NConstants.Files.NUTS_COMMAND_FILE_EXTENSION);
         NElements.of(session).json().setValue(command)
                 .setNtf(false).print(path);
-        NWorkspaceConfigManagerExt.of(session.config()).getModel().fireConfigurationChanged("command", session, ConfigEventType.MAIN);
+        NConfigsExt.of(NConfigs.of(session)).getModel().fireConfigurationChanged("command", session, ConfigEventType.MAIN);
     }
 
     public List<NCommandConfig> findCommands(NId id, NSession session) {

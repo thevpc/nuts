@@ -27,7 +27,7 @@
 package net.thevpc.nuts.util;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.boot.DefaultNWorkspaceBootOptionsBuilder;
+import net.thevpc.nuts.boot.DefaultNBootOptionsBuilder;
 import net.thevpc.nuts.cmdline.NCommandLine;
 import net.thevpc.nuts.cmdline.NCommandLineFormatStrategy;
 import net.thevpc.nuts.reserved.*;
@@ -119,7 +119,7 @@ public class NApiUtils {
     }
 
     public static int processThrowable(Throwable ex, String[] args) {
-        DefaultNWorkspaceBootOptionsBuilder bo = new DefaultNWorkspaceBootOptionsBuilder();
+        DefaultNBootOptionsBuilder bo = new DefaultNBootOptionsBuilder();
         bo.setCommandLine(args, null);
         try {
             if (NApiUtils.isGraphicalDesktopEnvironment()) {

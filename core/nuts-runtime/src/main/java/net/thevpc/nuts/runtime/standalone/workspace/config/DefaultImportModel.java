@@ -74,7 +74,7 @@ public class DefaultImportModel {
             }
         }
         getStoreModelMain().setImports(new ArrayList<>(simports));
-        NWorkspaceConfigManagerExt.of(session.config())
+        NConfigsExt.of(NConfigs.of(session))
                 .getModel()
                 .fireConfigurationChanged("import", session, ConfigEventType.MAIN);
     }

@@ -295,7 +295,7 @@ public class DefaultNExecCommand extends AbstractNExecCommand {
                     }
                 }
                 NWorkspaceCustomCommand command = null;
-                command = prepareSession.commands().findCommand(goodKw);
+                command = NCustomCommandManager.of(prepareSession).findCommand(goodKw);
                 if (command != null) {
                     NCommandExecOptions o = new NCommandExecOptions().setExecutorOptions(executorOptions).setDirectory(directory).setFailFast(failFast)
                             .setExecutionType(executionType).setEnv(env);
@@ -330,7 +330,7 @@ public class DefaultNExecCommand extends AbstractNExecCommand {
         if (nid == null) {
             return null;
         }
-        List<NId> ff = traceSession.search().addId(nid).setOptional(false).setLatest(true).setFailFast(false)
+        List<NId> ff = NSearchCommand.of(traceSession).addId(nid).setOptional(false).setLatest(true).setFailFast(false)
                 .setInstallStatus(NInstallStatusFilters.of(session).byDeployed(true))
                 .getResultDefinitions().stream()
                 .sorted(Comparator.comparing(x -> !x.getInstallInformation().get(session).isDefaultVersion())) // default first
@@ -349,7 +349,7 @@ public class DefaultNExecCommand extends AbstractNExecCommand {
                     );
                     traceSession.out().flush();
                 }
-                ff = traceSession.search().addId(nid).setSession(traceSession.copy().setFetchStrategy(NFetchStrategy.ONLINE))
+                ff = NSearchCommand.of(traceSession).addId(nid).setSession(traceSession.copy().setFetchStrategy(NFetchStrategy.ONLINE))
                         .setOptional(false).setFailFast(false)
                         .setLatest(true)
                         //                        .configure(true,"--trace-monitor")
@@ -371,13 +371,13 @@ public class DefaultNExecCommand extends AbstractNExecCommand {
 
     public boolean isUserCommand(String s) {
         checkSession();
-        NSession ws = getSession();
+        NSession session = getSession();
         String p = System.getenv().get("PATH");
         if (p != null) {
             char r = File.pathSeparatorChar;
             for (String z : p.split("" + r)) {
                 Path t = Paths.get(z);
-                switch (ws.env().getOsFamily()) {
+                switch (NEnvs.of(session).getOsFamily()) {
                     case WINDOWS: {
                         if (Files.isRegularFile(t.resolve(s))) {
                             return true;
@@ -407,7 +407,7 @@ public class DefaultNExecCommand extends AbstractNExecCommand {
     protected NExecutableInformationExt ws_execId(NId goodId, String commandName, String[] appArgs, List<String> executorOptions,
                                                   List<String> workspaceOptions, NExecutionType executionType, NRunAs runAs,
                                                   NSession session, NSession execSession) {
-        NDefinition def = session.fetch().setId(goodId)
+        NDefinition def = NFetchCommand.of(session).setId(goodId)
                 .setDependencies(true)
                 .setFailFast(true)
                 .setEffective(true)
@@ -437,7 +437,7 @@ public class DefaultNExecCommand extends AbstractNExecCommand {
         NSessionUtils.checkSession(ws, this.session);
         checkSession();
         NWorkspace ws = getSession().getWorkspace();
-        this.session.security().checkAllowed(NConstants.Permissions.EXEC, commandName);
+        NWorkspaceSecurityManager.of(this.session).checkAllowed(NConstants.Permissions.EXEC, commandName);
         NSessionUtils.checkSession(ws, execSession);
         NSessionUtils.checkSession(ws, session);
         if (def != null && def.getContent().isPresent()) {
@@ -465,7 +465,7 @@ public class DefaultNExecCommand extends AbstractNExecCommand {
                     }
                     if (eid.getGroupId() != null) {
                         //nutsDefinition
-                        NStream<NDefinition> q = getSession().search().addId(eid).setLatest(true)
+                        NStream<NDefinition> q = NSearchCommand.of(getSession()).addId(eid).setLatest(true)
                                 .setDistinct(true)
                                 .getResultDefinitions();
                         NDefinition[] availableExecutors = q.stream().limit(2).toArray(NDefinition[]::new);

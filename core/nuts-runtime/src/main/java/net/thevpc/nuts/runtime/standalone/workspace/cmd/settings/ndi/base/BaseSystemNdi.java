@@ -34,7 +34,7 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
     public NdiScriptInfo[] getSysRC(NdiScriptOptions options) {
         List<NdiScriptInfo> scriptInfos = new ArrayList<>();
         Set<String> visited = new LinkedHashSet<>();
-        for (NShellFamily sf : session.env().getShellFamilies()) {
+        for (NShellFamily sf : NEnvs.of(session).getShellFamilies()) {
             String z = NShellHelper.of(sf).getSysRcName();
             if (!visited.contains(z)) {
                 visited.add(z);
@@ -178,7 +178,7 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
             }
             NDefinition fetched = null;
             if (nid.getVersion().isBlank()) {
-                fetched = session.search()
+                fetched = NSearchCommand.of(session)
                         .setSession(session.copy())
                         .addId(options.getId()).setLatest(true).getResultDefinitions().required();
                 nid = fetched.getId().getShortId();
@@ -268,7 +268,7 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
         List<String> idsToInstall = Arrays.asList(all);
         NSession session = options.getSession();
         NSessionUtils.checkSession(getSession().getWorkspace(), options.getSession());
-        Path workspaceLocation = session.locations().getWorkspaceLocation().toFile();
+        Path workspaceLocation = NLocations.of(session).getWorkspaceLocation().toFile();
         List<PathInfo> result = new ArrayList<>();
         Boolean systemWideConfig = options.getLauncher().getSwitchWorkspace();
         if (!idsToInstall.isEmpty()) {
@@ -411,11 +411,11 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
     }
 
     private NDefinition loadIdDefinition(NId nid) {
-        return session.search().addId(nid).setLatest(true).setEffective(true).setDistinct(true).getResultDefinitions().singleton();
+        return NSearchCommand.of(session).addId(nid).setLatest(true).setEffective(true).setDistinct(true).getResultDefinitions().singleton();
     }
 
     public NSupportMode getDesktopIntegrationSupport(NDesktopIntegrationItem target) {
-        return session.env().getDesktopIntegrationSupport(target);
+        return NEnvs.of(session).getDesktopIntegrationSupport(target);
     }
 
     protected boolean matchCondition(NSupportMode createDesktop, NSupportMode desktopIntegrationSupport) {
@@ -430,7 +430,7 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
     }
 
     public NWorkspaceBootConfig loadSwitchWorkspaceLocationConfig(String switchWorkspaceLocation) {
-        NWorkspaceBootConfig bootConfig = session.config().loadBootConfig(switchWorkspaceLocation, false, true);
+        NWorkspaceBootConfig bootConfig = NConfigs.of(session).loadBootConfig(switchWorkspaceLocation, false, true);
         if (bootConfig == null) {
             throw new NIllegalArgumentException(session, NMsg.ofCstyle("invalid workspace: %s", switchWorkspaceLocation));
         }
@@ -715,7 +715,7 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
             }
             return getPreferredIconPath(rt);
         }
-        NDefinition appDef = session.search().addId(appId).setLatest(true).setEffective(true).setDistinct(true).getResultDefinitions().singleton();
+        NDefinition appDef = NSearchCommand.of(session).addId(appId).setLatest(true).setEffective(true).setDistinct(true).getResultDefinitions().singleton();
         String descAppIcon = resolveBestIcon(appDef.getId(),appDef.getDescriptor().getIcons());
         if (descAppIcon == null) {
             if (isNutsBootId(appDef.getId())
@@ -753,7 +753,7 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
             NPath p0 = NPath.of(descAppIcon, session);
             descAppIcon=toAbsoluteIconPath(appId, descAppIcon);
             String bestName = descAppIconDigest + "." + p0.getLastExtension();
-            NPath localIconPath = session.locations().getStoreLocation(appDef.getId(), NStoreLocation.CACHE)
+            NPath localIconPath = NLocations.of(session).getStoreLocation(appDef.getId(), NStoreLocation.CACHE)
                     .resolve("icons")
                     .resolve(bestName);
             if (localIconPath.isRegularFile()) {
@@ -776,7 +776,7 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
     }
 
     public Path getShortcutPath(NdiScriptOptions options) {
-        NDefinition appDef = options.getSession().search()
+        NDefinition appDef = NSearchCommand.of(options.getSession())
                 .addId(options.getId())
                 .setLatest(true)
                 .setEffective(true)
@@ -792,7 +792,7 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
         String apiVersion = options.getNutsApiVersion().toString();
         NAssert.requireNonBlank(apiVersion, "nuts-api version to link to", session);
         NId apiId = session.getWorkspace().getApiId().builder().setVersion(apiVersion).build();
-        NDefinition apiDefinition = session.search().addId(apiId).setFailFast(true).setLatest(true).setContent(true)
+        NDefinition apiDefinition = NSearchCommand.of(session).addId(apiId).setFailFast(true).setLatest(true).setContent(true)
                 .setDistinct(true)
                 .getResultDefinitions().singleton();
 

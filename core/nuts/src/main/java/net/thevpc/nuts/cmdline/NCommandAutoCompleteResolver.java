@@ -45,5 +45,5 @@ public interface NCommandAutoCompleteResolver {
      * @param session     session
      * @return possible candidates
      */
-    List<NArgumentCandidate> resolveCandidates(NCommandLine commandLine, int wordIndex, NSession session);
+    List<NArgCandidate> resolveCandidates(NCommandLine commandLine, int wordIndex, NSession session);
 }

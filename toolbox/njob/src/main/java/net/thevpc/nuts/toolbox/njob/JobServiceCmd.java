@@ -306,13 +306,13 @@ public class JobServiceCmd {
     public void runInteractive(NCommandLine cmdLine) {
         NSession session = context.getSession();
         NSystemTerminal.enableRichTerm(session);
-        session.config().getSystemTerminal()
+        NConfigs.of(session).getSystemTerminal()
                 .setCommandAutoCompleteResolver(new JobAutoCompleter())
                 .setCommandHistory(
                         NCommandHistory.of(session)
                                 .setPath(context.getVarFolder().resolve("njob-history.hist"))
                 );
-        session.env().setProperty(JobServiceCmd.class.getName(), this);
+        NEnvs.of(session).setProperty(JobServiceCmd.class.getName(), this);
 
 //        session.setTerminal(
 //                session.io().term().createTerminal(

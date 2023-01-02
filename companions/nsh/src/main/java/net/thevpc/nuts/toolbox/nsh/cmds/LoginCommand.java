@@ -24,8 +24,8 @@
 package net.thevpc.nuts.toolbox.nsh.cmds;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.cmdline.NArgument;
-import net.thevpc.nuts.cmdline.NArgumentName;
+import net.thevpc.nuts.cmdline.NArg;
+import net.thevpc.nuts.cmdline.NArgName;
 import net.thevpc.nuts.cmdline.NCommandLine;
 import net.thevpc.nuts.spi.NComponentScope;
 import net.thevpc.nuts.spi.NComponentScopeType;
@@ -46,14 +46,14 @@ public class LoginCommand extends SimpleJShellBuiltin {
     protected boolean configureFirst(NCommandLine commandLine, JShellExecutionContext context) {
         Options options = context.getOptions();
         NSession session = context.getSession();
-        NArgument a = commandLine.peek().get(session);
+        NArg a = commandLine.peek().get(session);
         if (!a.isOption()) {
             if (options.login == null) {
-                options.login = commandLine.next(NArgumentName.of("username", session))
+                options.login = commandLine.next(NArgName.of("username", session))
                         .flatMap(NValue::asString).get(session);
                 return true;
             } else if (options.password == null) {
-                options.password = commandLine.next(NArgumentName.of("password", session))
+                options.password = commandLine.next(NArgName.of("password", session))
                         .flatMap(NValue::asString).get(session).toCharArray();
                 return true;
             }
@@ -72,7 +72,7 @@ public class LoginCommand extends SimpleJShellBuiltin {
                     .resetLine()
                     .forPassword(NMsg.ofPlain("Password:")).getValue();
         }
-        context.getSession().security().login(options.login, options.password);
+        NWorkspaceSecurityManager.of(context.getSession()).login(options.login, options.password);
     }
 
     private static class Options {

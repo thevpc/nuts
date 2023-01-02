@@ -69,7 +69,7 @@ public class DefaultNWorkspaceCustomCommand implements NWorkspaceCustomCommand {
             r.addAll(Arrays.asList(args));
             args = r.toArray(new String[0]);
 
-            session.exec()
+            NExecCommand.of(session)
                     .addCommand(args)
                     .addExecutorOptions(executorOptions)
                     .setDirectory(options.getDirectory())
@@ -89,7 +89,7 @@ public class DefaultNWorkspaceCustomCommand implements NWorkspaceCustomCommand {
             r.addAll(Arrays.asList(args));
             args = r.toArray(new String[0]);
 
-            session.exec()
+            NExecCommand.of(session)
                     .addCommand(args)
                     .addExecutorOptions(executorOptions)
                     .setDirectory(options.getDirectory())
@@ -114,7 +114,7 @@ public class DefaultNWorkspaceCustomCommand implements NWorkspaceCustomCommand {
         if (helpCommand != null && helpCommand.size() > 0) {
             try {
                 return NTexts.of(session).ofPlain(
-                        session.exec()
+                        NExecCommand.of(session)
                                 .addCommand(helpCommand)
                                 .setFailFast(false)
                                 .setRedirectErrorStream(true)

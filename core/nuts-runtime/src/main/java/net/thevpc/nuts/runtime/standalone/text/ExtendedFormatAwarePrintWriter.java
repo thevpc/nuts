@@ -106,7 +106,7 @@ public class ExtendedFormatAwarePrintWriter extends PrintWriter implements Exten
     @Override
     public ExtendedFormatAwarePrintWriter format(Locale l, String format, Object... args) {
         if (l == null) {
-            print(NTexts.of(session).setSession(session).ofText(
+            print(NTexts.of(session).ofText(
                     NMsg.ofCstyle(
                             format, args
                     )

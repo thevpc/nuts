@@ -55,7 +55,7 @@ public interface NCommandLines extends NComponent {
      * @param type create argument type
      * @return argument name
      */
-    default NArgumentName createName(String type) {
+    default NArgName createName(String type) {
         return createName(type, type);
     }
 
@@ -66,7 +66,7 @@ public interface NCommandLines extends NComponent {
      * @param label argument label
      * @return argument name
      */
-    NArgumentName createName(String type, String label);
+    NArgName createName(String type, String label);
 
 
     NSession getSession();

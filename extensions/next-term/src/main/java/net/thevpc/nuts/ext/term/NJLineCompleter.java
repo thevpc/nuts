@@ -1,7 +1,7 @@
 package net.thevpc.nuts.ext.term;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.cmdline.NArgumentCandidate;
+import net.thevpc.nuts.cmdline.NArgCandidate;
 import net.thevpc.nuts.cmdline.NCommandAutoCompleteResolver;
 import net.thevpc.nuts.cmdline.NCommandLine;
 import org.jline.reader.Candidate;
@@ -30,9 +30,9 @@ class NJLineCompleter implements Completer {
             if (line.words().size() > 0) {
                 commandLine.setCommandName(line.words().get(0));
             }
-            List<NArgumentCandidate> nArgumentCandidates = autoCompleteResolver.resolveCandidates(commandLine, line.wordIndex(), session);
-            if (nArgumentCandidates != null) {
-                for (NArgumentCandidate cmdCandidate : nArgumentCandidates) {
+            List<NArgCandidate> nArgCandidates = autoCompleteResolver.resolveCandidates(commandLine, line.wordIndex(), session);
+            if (nArgCandidates != null) {
+                for (NArgCandidate cmdCandidate : nArgCandidates) {
                     if (cmdCandidate != null) {
                         String value = cmdCandidate.getValue();
                         if (value != null && value.length() > 0) {

@@ -28,7 +28,7 @@ public class Test10_ExecURLTest {
     @Test
     public void execURL() {
         TestUtils.println(NVersionFormat.of(session));
-        NSearchCommand q = session.search()
+        NSearchCommand q = NSearchCommand.of(session)
                 .setId("net.thevpc.hl:hadra-build-tool#0.1.0")
                 .setRepositoryFilter("maven-central")
                 .setLatest(true);
@@ -37,7 +37,7 @@ public class Test10_ExecURLTest {
                 .getResultIds()
                 .toList();
         TestUtils.println(nutsIds);
-        List<NDependencies> allDeps = session.search().addId("net.thevpc.hl:hl#0.1.0")
+        List<NDependencies> allDeps = NSearchCommand.of(session).addId("net.thevpc.hl:hl#0.1.0")
                 .setDependencies(true)
                 .getResultDependencies().toList();
         for (NDependencies ds : allDeps) {
@@ -51,10 +51,10 @@ public class Test10_ExecURLTest {
                 printlnNode(d,"");
             }
         }
-        String result = session.exec()
+        String result = NExecCommand.of(session)
                 .addWorkspaceOptions(new DefaultNWorkspaceOptionsBuilder()
                         .setBot(true)
-                        .setWorkspace(session.locations().getWorkspaceLocation().resolve("temp-ws").toString())
+                        .setWorkspace(NLocations.of(session).getWorkspaceLocation().resolve("temp-ws").toString())
                 )
                 //.addExecutorOption("--main-class=Version")
                 .addCommand(
@@ -78,7 +78,7 @@ public class Test10_ExecURLTest {
     //@Test
     public void execURL2() {
         TestUtils.println(NVersionFormat.of(session));
-        String result = session.exec()
+        String result = NExecCommand.of(session)
                 //there are three classes and no main-class, so need to specify the one
                 .addExecutorOption("--main-class=Version")
 //                .addExecutorOption("--main-class=junit.runner.Version")

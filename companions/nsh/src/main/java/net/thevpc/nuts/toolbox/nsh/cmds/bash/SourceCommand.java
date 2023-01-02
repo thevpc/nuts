@@ -24,7 +24,7 @@
 package net.thevpc.nuts.toolbox.nsh.cmds.bash;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.cmdline.NArgument;
+import net.thevpc.nuts.cmdline.NArg;
 import net.thevpc.nuts.cmdline.NCommandLine;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.spi.NComponentScope;
@@ -51,7 +51,7 @@ public class SourceCommand extends SimpleJShellBuiltin {
     protected boolean configureFirst(NCommandLine commandLine, JShellExecutionContext context) {
         Options options = context.getOptions();
         NSession session = context.getSession();
-        final NArgument a = commandLine.peek().get(session);
+        final NArg a = commandLine.peek().get(session);
         if (!a.isOption()) {
             options.args.addAll(Arrays.asList(commandLine.toStringArray()));
             commandLine.skipAll();

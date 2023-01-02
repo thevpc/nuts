@@ -25,9 +25,8 @@
 */
 package net.thevpc.nuts.runtime.standalone.security;
 
-import net.thevpc.nuts.NConstants;
-import net.thevpc.nuts.NUserConfig;
-import net.thevpc.nuts.runtime.standalone.workspace.config.NWorkspaceConfigManagerExt;
+import net.thevpc.nuts.*;
+import net.thevpc.nuts.runtime.standalone.workspace.config.NConfigsExt;
 import net.thevpc.nuts.runtime.standalone.util.CoreStringUtils;
 import com.sun.security.auth.UserPrincipal;
 
@@ -38,7 +37,6 @@ import javax.security.auth.login.LoginException;
 import javax.security.auth.spi.LoginModule;
 import java.io.IOException;
 import java.util.Map;
-import net.thevpc.nuts.NSession;
 
 public class NWorkspaceLoginModule implements LoginModule {
 
@@ -97,12 +95,12 @@ public class NWorkspaceLoginModule implements LoginModule {
                 this.login = name;
                 return true;
             }
-            NUserConfig registeredUser = NWorkspaceConfigManagerExt.of(session.config())
+            NUserConfig registeredUser = NConfigsExt.of(NConfigs.of(session))
                     .getModel()
                     .getUser(name, session);
             if (registeredUser != null) {
                 try {
-                    session.security()
+                    NWorkspaceSecurityManager.of(session)
                             .checkCredentials(registeredUser.getCredentials().toCharArray(),password);
                     this.login = name;
                     return true;

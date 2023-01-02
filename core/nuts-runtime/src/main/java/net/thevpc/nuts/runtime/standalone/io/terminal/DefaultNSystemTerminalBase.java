@@ -50,7 +50,7 @@ public class DefaultNSystemTerminalBase extends NSystemTerminalBaseImpl {
     public int getSupportLevel(NSupportLevelContext criteria) {
         this.session = criteria.getSession();
         this.workspace = session.getWorkspace();
-        NWorkspaceOptions options = session.boot().getBootOptions();
+        NWorkspaceOptions options = NBootManager.of(session).getBootOptions();
         NTerminalMode terminalMode = options.getTerminalMode().orElse(NTerminalMode.DEFAULT);
         NWorkspaceTerminalOptions bootStdFd = NWorkspaceExt.of(session).getModel().bootModel.getBootTerminal();
         if (terminalMode == NTerminalMode.DEFAULT) {
@@ -172,7 +172,7 @@ public class DefaultNSystemTerminalBase extends NSystemTerminalBaseImpl {
         String s = NAnsiTermHelper.of(session).command(command, session);
         if(s!=null) {
             try {
-                NWorkspaceTerminalOptions bootStdFd = session.boot().getBootTerminal();
+                NWorkspaceTerminalOptions bootStdFd = NBootManager.of(session).getBootTerminal();
                 bootStdFd.getOut().write(s.getBytes());
             } catch (IOException e) {
                 throw new NIOException(session, e);
@@ -185,7 +185,7 @@ public class DefaultNSystemTerminalBase extends NSystemTerminalBaseImpl {
         String s = NAnsiTermHelper.of(session).styled(styles, session);
         if (s != null) {
             try {
-                NWorkspaceTerminalOptions bootStdFd = session.boot().getBootTerminal();
+                NWorkspaceTerminalOptions bootStdFd = NBootManager.of(session).getBootTerminal();
                 bootStdFd.getOut().write(s.getBytes());
             } catch (IOException e) {
                 throw new NIOException(session, e);
@@ -195,8 +195,8 @@ public class DefaultNSystemTerminalBase extends NSystemTerminalBaseImpl {
 
     //    @Override
 //    public int getColumns() {
-//        int tputCallTimeout = session.boot().getBootCustomArgument("---nuts.term.tput.call.timeout").getValue().getInt(60);
-//        Integer w = session.boot().getBootCustomArgument("---nuts.term.width").getValue().getInt(null);
+//        int tputCallTimeout = NBootManager.of(session).getBootCustomArgument("---nuts.term.tput.call.timeout").getValue().getInt(60);
+//        Integer w = NBootManager.of(session).getBootCustomArgument("---nuts.term.width").getValue().getInt(null);
 //        if (w == null) {
 //            if (tput_cols == null) {
 //                tput_cols = new NutsCachedValue<>(new DefaultAnsiEscapeCommand.TputEvaluator(session), tputCallTimeout);

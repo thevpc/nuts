@@ -1,6 +1,6 @@
 package net.thevpc.nuts.cmdline;
 
-public interface NArgumentCandidate {
+public interface NArgCandidate {
     String getValue();
 
     String getDisplay();

@@ -7,7 +7,7 @@ package net.thevpc.nuts.runtime.standalone.extension;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.boot.NClassLoaderNode;
-import net.thevpc.nuts.boot.NWorkspaceBootOptions;
+import net.thevpc.nuts.boot.NBootOptions;
 import net.thevpc.nuts.elem.NElements;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.io.NServiceLoader;
@@ -23,7 +23,7 @@ import net.thevpc.nuts.runtime.standalone.util.filters.CoreFilterUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.DefaultNWorkspaceFactory;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceFactory;
 import net.thevpc.nuts.runtime.standalone.workspace.config.NWorkspaceConfigBoot;
-import net.thevpc.nuts.runtime.standalone.workspace.config.NWorkspaceConfigManagerExt;
+import net.thevpc.nuts.runtime.standalone.workspace.config.NConfigsExt;
 import net.thevpc.nuts.runtime.standalone.xtra.expr.StringTokenizerUtils;
 import net.thevpc.nuts.spi.*;
 import net.thevpc.nuts.util.*;
@@ -171,7 +171,7 @@ public class DefaultNWorkspaceExtensionModel {
         return a;
     }
 
-    public void onInitializeWorkspace(NWorkspaceBootOptions bOptions, ClassLoader bootClassLoader, NSession session) {
+    public void onInitializeWorkspace(NBootOptions bOptions, ClassLoader bootClassLoader, NSession session) {
         objectFactory.discoverTypes(
                 NId.of(bOptions.getRuntimeBootDependencyNode().get().getId()).get(session),
                 bOptions.getRuntimeBootDependencyNode().get().getURL(),
@@ -234,7 +234,7 @@ public class DefaultNWorkspaceExtensionModel {
 //        }
 //    }
     public Set<Class> discoverTypes(NId id, ClassLoader classLoader, NSession session) {
-        URL url = session.fetch().setId(id).setSession(session).setContent(true).getResultContent().asURL();
+        URL url = NFetchCommand.of(session).setId(id).setSession(session).setContent(true).getResultContent().asURL();
         return objectFactory.discoverTypes(id, url, classLoader, session);
     }
 
@@ -363,7 +363,7 @@ public class DefaultNWorkspaceExtensionModel {
                     someUpdates = true;
                 } else {
                     //load extension
-                    NDefinition def = session.search()
+                    NDefinition def = NSearchCommand.of(session)
                             .setSession(session)
                             .addId(extension).setTargetApiVersion(ws.getApiVersion())
                             .setContent(true)
@@ -397,7 +397,7 @@ public class DefaultNWorkspaceExtensionModel {
 
     private void updateLoadedExtensionURLs(NSession session) {
         loadedExtensionURLs.clear();
-        for (NDefinition def : session.search().addIds(loadedExtensionIds.toArray(new NId[0]))
+        for (NDefinition def : NSearchCommand.of(session).addIds(loadedExtensionIds.toArray(new NId[0]))
                 .setTargetApiVersion(ws.getApiVersion())
                 .setSession(session)
                 .setContent(true)
@@ -444,7 +444,7 @@ public class DefaultNWorkspaceExtensionModel {
         }
 
         _LOGOP(session).level(Level.FINE).verb(NLoggerVerb.ADD).log(NMsg.ofJstyle("installing extension {0}", id));
-        NDefinition nDefinitions = session.search()
+        NDefinition nDefinitions = NSearchCommand.of(session)
                 .setAll(options)
                 .addId(id)
                 .setOptional(false)
@@ -584,7 +584,7 @@ public class DefaultNWorkspaceExtensionModel {
     public String[] getExtensionRepositoryLocations(NId appId) {
         //should parse this form config?
         //or should be parse from and extension component?
-        String repos = NSessionUtils.defaultSession(ws).config()
+        String repos = NConfigs.of(NSessionUtils.defaultSession(ws))
                 .getConfigProperty("nuts.bootstrap-repository-locations").flatMap(NValue::asString).orElse("") + ";" //                + NutsConstants.BootstrapURLs.LOCAL_NUTS_FOLDER
                 //                + ";" + NutsConstants.BootstrapURLs.REMOTE_NUTS_GIT
                 ;
@@ -599,12 +599,12 @@ public class DefaultNWorkspaceExtensionModel {
 
     protected URL expandURL(String url, NSession session) {
         return NPath.of(url,session)
-                .toAbsolute(session.locations().getWorkspaceLocation())
+                .toAbsolute(NLocations.of(session).getWorkspaceLocation())
                 .toURL();
     }
 
-    private NWorkspaceConfigManagerExt configExt() {
-        return NWorkspaceConfigManagerExt.of(NSessionUtils.defaultSession(ws).config());
+    private NConfigsExt configExt() {
+        return NConfigsExt.of(NConfigs.of(NSessionUtils.defaultSession(ws)));
     }
     //    @Override
 //    public boolean addExtension(NutsId extensionId) {

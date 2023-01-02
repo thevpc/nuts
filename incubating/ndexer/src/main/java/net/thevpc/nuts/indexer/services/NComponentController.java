@@ -231,9 +231,9 @@ public class NComponentController {
                 Map<String, String> data = NIndexerUtils.nutsIdToMap(id);
                 List<Map<String, String>> list = this.dataService.searchData(NIndexerUtils.getCacheDir(session, subscriber.cacheFolderName()), data, null);
                 if (list.isEmpty()) {
-                    Iterator<NDefinition> it = session.search()
+                    Iterator<NDefinition> it = NSearchCommand.of(session)
                             .setRepositoryFilter(
-                                    session.repos().filter().byUuid(subscriber.getUuid())
+                                    NRepositories.of(session).filter().byUuid(subscriber.getUuid())
                             )
                             .addId(id)
                             .setFailFast(false)

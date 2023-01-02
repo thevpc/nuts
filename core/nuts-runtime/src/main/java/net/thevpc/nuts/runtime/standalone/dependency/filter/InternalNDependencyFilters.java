@@ -205,18 +205,18 @@ public class InternalNDependencyFilters extends InternalNTypedFilters<NDependenc
     @Override
     public NDependencyFilter byCurrentDesktop() {
         checkSession();
-        return byDesktop(getSession().env().getDesktopEnvironmentFamilies());
+        return byDesktop(NEnvs.of(getSession()).getDesktopEnvironmentFamilies());
     }
 
     public NDependencyFilter byCurrentArch() {
         checkSession();
-        return byArch(getSession().env().getArchFamily());
+        return byArch(NEnvs.of(getSession()).getArchFamily());
     }
 
     @Override
     public NDependencyFilter byCurrentOs() {
         checkSession();
-        return byOs(getSession().env().getOsFamily());
+        return byOs(NEnvs.of(getSession()).getOsFamily());
     }
 
     @Override

@@ -24,7 +24,7 @@
 package net.thevpc.nuts.runtime.standalone.format.table;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.cmdline.NArgument;
+import net.thevpc.nuts.cmdline.NArg;
 import net.thevpc.nuts.cmdline.NCommandLine;
 import net.thevpc.nuts.elem.NElement;
 import net.thevpc.nuts.elem.NElementEntry;
@@ -402,7 +402,7 @@ public class DefaultTableFormat extends DefaultFormatBase<NTableFormat> implemen
     }
 
     private List<Row> rebuild(NSession session) {
-        NTexts metrics = NTexts.of(session).setSession(session);
+        NTexts metrics = NTexts.of(session);
         List<Row> rows1 = new ArrayList<>();
         NTableModel model = getModel();
         int columnsCount = model.getColumnsCount();
@@ -794,7 +794,7 @@ public class DefaultTableFormat extends DefaultFormatBase<NTableFormat> implemen
     @Override
     public boolean configureFirst(NCommandLine cmdLine) {
         NSession session = getSession();
-        NArgument a;
+        NArg a;
         if ((a = cmdLine.nextBoolean("--no-header").orNull()) != null) {
             boolean val = a.getBooleanValue().get(session);
             if (a.isActive()) {
@@ -822,7 +822,7 @@ public class DefaultTableFormat extends DefaultFormatBase<NTableFormat> implemen
                     columns.put(v.toString().toLowerCase(), i);
                 }
             }
-            NArgument a2 = null;
+            NArg a2 = null;
             for (Map.Entry<String, Integer> e : columns.entrySet()) {
                 if ((a2 = cmdLine.next("--" + e.getKey()).orNull()) != null) {
                     if (a2.isActive()) {

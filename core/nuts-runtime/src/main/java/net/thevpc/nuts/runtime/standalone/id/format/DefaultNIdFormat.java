@@ -1,7 +1,7 @@
 package net.thevpc.nuts.runtime.standalone.id.format;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.cmdline.NArgument;
+import net.thevpc.nuts.cmdline.NArg;
 import net.thevpc.nuts.cmdline.NCommandLine;
 import net.thevpc.nuts.io.NOutStream;
 import net.thevpc.nuts.runtime.standalone.dependency.NDependencyScopes;
@@ -171,7 +171,7 @@ public class DefaultNIdFormat extends DefaultFormatBase<NIdFormat> implements NI
         if (!isOmitGroupId()) {
             if (!NBlankable.isBlank(id.getGroupId())) {
                 boolean importedGroup2 = NConstants.Ids.NUTS_GROUP_ID.equals(id.getGroupId());
-                boolean importedGroup = getSession().imports().getAllImports().contains(id.getGroupId());
+                boolean importedGroup = NImports.of(getSession()).getAllImports().contains(id.getGroupId());
                 if (!(importedGroup && isOmitImportedGroupId())) {
                     if (importedGroup || importedGroup2) {
                         sb.append(id.getGroupId(), NTextStyle.pale());
@@ -311,7 +311,7 @@ public class DefaultNIdFormat extends DefaultFormatBase<NIdFormat> implements NI
     @Override
     public boolean configureFirst(NCommandLine commandLine) {
         NSession session = getSession();
-        NArgument aa = commandLine.peek().get(session);
+        NArg aa = commandLine.peek().get(session);
         if (aa == null) {
             return false;
         }

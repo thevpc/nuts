@@ -2,7 +2,7 @@ package net.thevpc.nuts.runtime.standalone.executor.java;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.boot.NClassLoaderNode;
-import net.thevpc.nuts.cmdline.NArgument;
+import net.thevpc.nuts.cmdline.NArg;
 import net.thevpc.nuts.cmdline.NCommandLine;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.runtime.standalone.descriptor.util.NDescriptorUtils;
@@ -76,7 +76,7 @@ public final class JavaExecutorOptions {
 //        List<NutsClassLoaderNode> extraCp = new ArrayList<>();
         //will accept all -- and - based options!
         NCommandLine cmdLine = NCommandLine.of(getExecArgs()).setExpandSimpleOptions(false);
-        NArgument a;
+        NArg a;
         List<NClassLoaderNode> currentCP = new ArrayList<>();
         while (cmdLine.hasNext()) {
             a = cmdLine.peek().get(session);
@@ -173,7 +173,7 @@ public final class JavaExecutorOptions {
                     break;
                 }
                 case "-s": {
-                    NArgument s = cmdLine.next().get(session);
+                    NArg s = cmdLine.next().get(session);
                     getJvmArgs().add("-Dswing.aatext=true");
                     getJvmArgs().add("-Dawt.useSystemAAFontSettings=on");
                     getJvmArgs().add("-Dapple.laf.useScreenMenuBar=true");
@@ -193,7 +193,7 @@ public final class JavaExecutorOptions {
         appArgs.addAll(appendArgs);
 
         List<NDefinition> nDefinitions = new ArrayList<>();
-        NSearchCommand se = session.search().setSession(session);
+        NSearchCommand se = NSearchCommand.of(session);
         if (tempId) {
             for (NDependency dependency : descriptor.getDependencies()) {
                 se.addId(dependency.toId());
@@ -507,7 +507,7 @@ public final class JavaExecutorOptions {
 
     private void addNp(List<NClassLoaderNode> classPath, String value) {
         NSession searchSession = this.session;
-        NSearchCommand ns = session.search().setLatest(true)
+        NSearchCommand ns = NSearchCommand.of(session).setLatest(true)
                 .setSession(searchSession);
         for (String n : StringTokenizerUtils.splitDefault(value)) {
             if (!NBlankable.isBlank(n)) {
@@ -515,8 +515,8 @@ public final class JavaExecutorOptions {
             }
         }
         for (NId nutsId : ns.getResultIds()) {
-            NDefinition f = session
-                    .search().addId(nutsId).setSession(searchSession).setLatest(true).getResultDefinitions().required();
+            NDefinition f = NSearchCommand.of(session).addId(nutsId)
+                    .setSession(searchSession).setLatest(true).getResultDefinitions().required();
             classPath.add(NClassLoaderUtils.definitionToClassLoaderNode(f, session));
         }
     }

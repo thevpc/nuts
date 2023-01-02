@@ -148,7 +148,7 @@ public class ProcessExecHelper extends AbstractSyncIProcessExecHelper {
         for (Map.Entry<String, String> entry : execProperties.entrySet()) {
             map.put(entry.getKey(), entry.getValue());
         }
-        Path nutsJarFile = session.fetch().setNutsApi().setSession(session).getResultPath();
+        Path nutsJarFile = NFetchCommand.of(session).setNutsApi().setSession(session).getResultPath();
         if (nutsJarFile != null) {
             map.put("nuts.jar", nutsJarFile.toAbsolutePath().normalize().toString());
         }
@@ -162,7 +162,7 @@ public class ProcessExecHelper extends AbstractSyncIProcessExecHelper {
         if (map.containsKey("nuts.jar")) {
             map.put("nuts.cmd", map.get("nuts.java") + " -jar " + map.get("nuts.jar"));
         }
-        map.put("nuts.workspace", session.locations().getWorkspaceLocation().toString());
+        map.put("nuts.workspace", NLocations.of(session).getWorkspaceLocation().toString());
         if (installerFile != null) {
             map.put("nuts.installer", installerFile.toString());
         }
@@ -199,7 +199,7 @@ public class ProcessExecHelper extends AbstractSyncIProcessExecHelper {
                     return s;
                 } else if (skey.equals("nuts")) {
                     NDefinition nDefinition;
-                    nDefinition = session.fetch().setId(NConstants.Ids.NUTS_API)
+                    nDefinition = NFetchCommand.of(session).setId(NConstants.Ids.NUTS_API)
                             .setSession(session).getResultDefinition();
                     if (nDefinition.getContent().isPresent()) {
                         return ("<::expand::> " + apply("java") + " -jar " + nDefinition.getContent());
@@ -229,7 +229,7 @@ public class ProcessExecHelper extends AbstractSyncIProcessExecHelper {
         }
         args = args2.toArray(new String[0]);
 
-        Path wsLocation = session.locations().getWorkspaceLocation().toFile();
+        Path wsLocation = NLocations.of(session).getWorkspaceLocation().toFile();
         Path path = wsLocation.resolve(args[0]).normalize();
         if (Files.exists(path)) {
             NPath.of(path, session).addPermissions(NPathPermission.CAN_EXECUTE);
@@ -247,12 +247,12 @@ public class ProcessExecHelper extends AbstractSyncIProcessExecHelper {
     }
 
     private static String resolveRootUserName(NSession session) {
-        NOsFamily sysFamily = session.env().getOsFamily();
+        NOsFamily sysFamily = NEnvs.of(session).getOsFamily();
         switch (sysFamily) {
             case WINDOWS: {
                 String s = (String) session.getProperty("nuts.windows.root-user");
                 if (s == null) {
-                    s = session.config().getConfigProperty("nuts.windows.root-user").flatMap(NValue::asString).orNull();
+                    s = NConfigs.of(session).getConfigProperty("nuts.windows.root-user").flatMap(NValue::asString).orNull();
                 }
                 if (NBlankable.isBlank(s)) {
                     s = "Administrator";
@@ -267,12 +267,12 @@ public class ProcessExecHelper extends AbstractSyncIProcessExecHelper {
 
     private static List<String> buildEffectiveCommand(String[] cmd, NRunAs runAsMode, NSession session) {
         //String runAsEffective = null;
-        NOsFamily sysFamily = session.env().getOsFamily();
+        NOsFamily sysFamily = NEnvs.of(session).getOsFamily();
         List<String> command = new ArrayList<>(Arrays.asList(cmd));
         if (runAsMode == null) {
             runAsMode = NRunAs.CURRENT_USER;
         }
-        boolean runWithGui = session.isGui() && session.env().isGraphicalDesktopEnvironment();
+        boolean runWithGui = session.isGui() && NEnvs.of(session).isGraphicalDesktopEnvironment();
         String rootUserName = resolveRootUserName(session);
         String currentUserName = System.getProperty("user.name");
 
@@ -351,7 +351,7 @@ public class ProcessExecHelper extends AbstractSyncIProcessExecHelper {
                     case MACOS:
                     case UNIX: {
                         if (runWithGui) {
-                            Set<NDesktopEnvironmentFamily> de = session.env().getDesktopEnvironmentFamilies();
+                            Set<NDesktopEnvironmentFamily> de = NEnvs.of(session).getDesktopEnvironmentFamilies();
                             Path kdesu = NSysExecUtils.sysWhich("kdesu");
                             Path gksu = NSysExecUtils.sysWhich("gksu");
                             String currSu = null;
@@ -408,7 +408,7 @@ public class ProcessExecHelper extends AbstractSyncIProcessExecHelper {
                     case MACOS:
                     case UNIX: {
                         if (runWithGui) {
-                            Set<NDesktopEnvironmentFamily> de = session.env().getDesktopEnvironmentFamilies();
+                            Set<NDesktopEnvironmentFamily> de = NEnvs.of(session).getDesktopEnvironmentFamilies();
                             Path kdesu = NSysExecUtils.sysWhich("kdesudo");
                             Path gksu = NSysExecUtils.sysWhich("gksudo");
                             String currSu = null;

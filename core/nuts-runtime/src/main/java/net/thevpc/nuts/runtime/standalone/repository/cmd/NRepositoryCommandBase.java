@@ -6,7 +6,7 @@
 package net.thevpc.nuts.runtime.standalone.repository.cmd;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.cmdline.NArgument;
+import net.thevpc.nuts.cmdline.NArg;
 import net.thevpc.nuts.cmdline.NCommandLine;
 import net.thevpc.nuts.cmdline.NCommandLineConfigurable;
 import net.thevpc.nuts.runtime.standalone.session.NSessionUtils;
@@ -107,7 +107,7 @@ public abstract class NRepositoryCommandBase<T extends NRepositoryCommand> imple
     @Override
     public boolean configureFirst(NCommandLine cmdLine) {
         checkSession();
-        NArgument a = cmdLine.peek().orNull();
+        NArg a = cmdLine.peek().orNull();
         if (a == null) {
             return false;
         }

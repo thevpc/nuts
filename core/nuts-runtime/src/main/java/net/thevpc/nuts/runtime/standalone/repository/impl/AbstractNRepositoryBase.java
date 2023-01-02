@@ -71,7 +71,7 @@ public abstract class AbstractNRepositoryBase extends AbstractNRepository implem
         this.workspace = initSession.getWorkspace();
         this.parentRepository = parent;
         this.configModel = new DefaultNRepositoryConfigModel(this, options, initSession,speed, supportedMirroring, repositoryType);
-        this.nIndexStore = initSession.config().getIndexStoreClientFactory().createIndexStore(this);
+        this.nIndexStore = NConfigs.of(initSession).getIndexStoreClientFactory().createIndexStore(this);
 //        setEnabled(options.isEnabled(), initSession);
     }
 
@@ -167,16 +167,16 @@ public abstract class AbstractNRepositoryBase extends AbstractNRepository implem
     }
 
     protected String getIdComponentExtension(String packaging, NSession session) {
-        return session.locations().getDefaultIdContentExtension(packaging);
+        return NLocations.of(session).getDefaultIdContentExtension(packaging);
     }
 
     protected String getIdExtension(NId id, NSession session) {
-        return session.locations().getDefaultIdExtension(id);
+        return NLocations.of(session).getDefaultIdExtension(id);
     }
 
     @Override
     public NPath getIdBasedir(NId id, NSession session) {
-        return session.locations().setSession(session).getDefaultIdBasedir(id);
+        return NLocations.of(session).getDefaultIdBasedir(id);
     }
 
     public NPath getIdRemotePath(NId id, NSession session) {

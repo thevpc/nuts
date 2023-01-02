@@ -1,7 +1,7 @@
 package net.thevpc.nuts.runtime.standalone.workspace.cmd.exec;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.cmdline.NArgument;
+import net.thevpc.nuts.cmdline.NArg;
 import net.thevpc.nuts.cmdline.NCommandLine;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.io.NOutStream;
@@ -409,7 +409,7 @@ public abstract class AbstractNExecCommand extends NWorkspaceCommandBase<NExecCo
 
     @Override
     public NExecCommand copy() {
-        return session.exec().setAll(this);
+        return NExecCommand.of(session).setAll(this);
     }
 
     @Override
@@ -506,7 +506,7 @@ public abstract class AbstractNExecCommand extends NWorkspaceCommandBase<NExecCo
 
     @Override
     public boolean configureFirst(NCommandLine cmdLine) {
-        NArgument a = cmdLine.peek().orNull();
+        NArg a = cmdLine.peek().orNull();
         if (a == null) {
             return false;
         }
@@ -566,7 +566,7 @@ public abstract class AbstractNExecCommand extends NWorkspaceCommandBase<NExecCo
                 return true;
             }
             case "--run-as": {
-                NArgument s = cmdLine.nextString().get(session);
+                NArg s = cmdLine.nextString().get(session);
                 if (enabled) {
                     setRunAs(NRunAs.user(s.getStringValue().ifBlankEmpty().get(session)));
                 }
@@ -580,7 +580,7 @@ public abstract class AbstractNExecCommand extends NWorkspaceCommandBase<NExecCo
                 return true;
             }
             case "--inherit-system-io": {
-                NArgument val = cmdLine.nextBoolean().get(session);
+                NArg val = cmdLine.nextBoolean().get(session);
                 if (enabled) {
                     setInheritSystemIO(val.getBooleanValue().get(session));
                 }

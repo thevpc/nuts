@@ -1,7 +1,7 @@
 package net.thevpc.nuts.toolbox.mvn;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.cmdline.NArgument;
+import net.thevpc.nuts.cmdline.NArg;
 import net.thevpc.nuts.cmdline.NCommandLine;
 import net.thevpc.nuts.spi.NPaths;
 
@@ -44,7 +44,7 @@ public class NMvnMain implements NApplication {
         List<String> args2 = new ArrayList<>();
         Options o = new Options();
         NCommandLine cmd = appContext.getCommandLine();
-        NArgument a;
+        NArg a;
         while (cmd.hasNext()) {
             if (command == null) {
                 if (appContext.configureFirst(cmd)) {

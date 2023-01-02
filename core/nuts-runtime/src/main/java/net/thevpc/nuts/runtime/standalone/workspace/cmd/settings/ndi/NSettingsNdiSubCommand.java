@@ -1,7 +1,7 @@
 package net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.ndi;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.cmdline.NArgument;
+import net.thevpc.nuts.cmdline.NArg;
 import net.thevpc.nuts.cmdline.NCommandLine;
 import net.thevpc.nuts.io.NIOException;
 import net.thevpc.nuts.runtime.standalone.io.util.CoreIOUtils;
@@ -24,7 +24,7 @@ public class NSettingsNdiSubCommand extends AbstractNSettingsSubCommand {
 
     public static SystemNdi createNdi(NSession session) {
         SystemNdi ndi = null;
-        NWorkspaceEnvManager workspaceEnvManager = session.env();
+        NEnvs workspaceEnvManager = NEnvs.of(session);
         switch (workspaceEnvManager.getOsFamily()) {
             case LINUX:
             case UNIX: {
@@ -182,7 +182,7 @@ public class NSettingsNdiSubCommand extends AbstractNSettingsSubCommand {
                 case "--installed": {
                     commandLine.withNextTrue((v, a, s) -> {
                         session.setConfirm(NConfirmationMode.YES);
-                        for (NId resultId : session.search().setInstallStatus(
+                        for (NId resultId : NSearchCommand.of(session).setInstallStatus(
                                 NInstallStatusFilters.of(session).byInstalled(true)
                         ).getResultIds()) {
                             d.idsToInstall.add(resultId.getLongName());
@@ -196,7 +196,7 @@ public class NSettingsNdiSubCommand extends AbstractNSettingsSubCommand {
                     commandLine.withNextTrue((v, a, s) -> {
                         session.setConfirm(NConfirmationMode.YES);
                         for (NId companion : session.extensions().getCompanionIds()) {
-                            d.idsToInstall.add(session.search().addId(companion).setLatest(true).getResultIds().required().getLongName());
+                            d.idsToInstall.add(NSearchCommand.of(session).addId(companion).setLatest(true).getResultIds().required().getLongName());
                             d.missingAnyArgument = false;
                         }
                     });
@@ -241,7 +241,7 @@ public class NSettingsNdiSubCommand extends AbstractNSettingsSubCommand {
                 if (d.ignoreUnsupportedOs) {
                     return;
                 }
-                throw new NExecutionException(session, NMsg.ofCstyle("platform not supported : %s", session.env().getOs()), 2);
+                throw new NExecutionException(session, NMsg.ofCstyle("platform not supported : %s", NEnvs.of(session).getOs()), 2);
             }
             if (!d.idsToInstall.isEmpty()) {
                 printResults(session, ndi.addScript(d.options, d.idsToInstall.toArray(new String[0])));
@@ -279,7 +279,7 @@ public class NSettingsNdiSubCommand extends AbstractNSettingsSubCommand {
         ArrayList<String> idsToUninstall = new ArrayList<>();
         boolean forceAll = false;
         boolean missingAnyArgument = true;
-        NArgument a;
+        NArg a;
         boolean ignoreUnsupportedOs = false;
         while (commandLine.hasNext()) {
             if ((a = commandLine.nextString("--ignore-unsupported-os").orNull()) != null) {
@@ -305,7 +305,7 @@ public class NSettingsNdiSubCommand extends AbstractNSettingsSubCommand {
                 if (ignoreUnsupportedOs) {
                     return;
                 }
-                throw new NExecutionException(session, NMsg.ofCstyle("platform not supported : %s", session.env().getOs()), 2);
+                throw new NExecutionException(session, NMsg.ofCstyle("platform not supported : %s", NEnvs.of(session).getOs()), 2);
             }
             boolean subTrace = session.isTrace();
             if (!session.isPlainTrace()) {
@@ -418,7 +418,7 @@ public class NSettingsNdiSubCommand extends AbstractNSettingsSubCommand {
                 if (d.ignoreUnsupportedOs) {
                     return;
                 }
-                throw new NExecutionException(session, NMsg.ofCstyle("platform not supported : %s ", session.env().getOs()), 2);
+                throw new NExecutionException(session, NMsg.ofCstyle("platform not supported : %s ", NEnvs.of(session).getOs()), 2);
             }
             if (d.switchWorkspaceLocation != null || d.switchWorkspaceApi != null) {
                 NdiScriptOptions oo = new NdiScriptOptions()

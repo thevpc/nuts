@@ -5,6 +5,7 @@
  */
 package net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.archetype;
 
+import net.thevpc.nuts.NConfigs;
 import net.thevpc.nuts.cmdline.NCommandLine;
 import net.thevpc.nuts.NSession;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.AbstractNSettingsSubCommand;
@@ -19,7 +20,7 @@ public class NSettingsArchetypeSubCommand extends AbstractNSettingsSubCommand {
     public boolean exec(NCommandLine cmdLine, Boolean autoSave, NSession session) {
         if (cmdLine.next("list archetypes", "la").isPresent()) {
             if (cmdLine.isExecMode()) {
-                session.out().printlnf(session.config().getAvailableArchetypes());
+                session.out().printlnf(NConfigs.of(session).getAvailableArchetypes());
             }
             return true;
         }

@@ -25,7 +25,7 @@ package net.thevpc.nuts.runtime.standalone.workspace.archetype;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.spi.*;
-import net.thevpc.nuts.runtime.standalone.workspace.config.DefaultNWorkspaceConfigManager;
+import net.thevpc.nuts.runtime.standalone.workspace.config.DefaultNConfigs;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceUtils;
 import net.thevpc.nuts.util.NLogger;
 
@@ -46,16 +46,16 @@ public class MinimalNWorkspaceArchetypeComponent implements NWorkspaceArchetypeC
         this.LOG = NLogger.of(MinimalNWorkspaceArchetypeComponent.class, session);
 //        NutsWorkspace ws = session.getWorkspace();
 
-        DefaultNWorkspaceConfigManager rm = (DefaultNWorkspaceConfigManager) session.config();
+        DefaultNConfigs rm = (DefaultNConfigs) NConfigs.of(session);
 //        defaults.put(NutsConstants.Names.DEFAULT_REPOSITORY_NAME, null);
         NRepositoryLocation[] br = rm.getModel().resolveBootRepositoriesList(session).resolve(
                 new NRepositoryLocation[0], NRepositoryDB.of(session));
-        NRepositoryManager repos = session.repos().setSession(session);
+        NRepositories repos = NRepositories.of(session).setSession(session);
         for (NRepositoryLocation s : br) {
             repos.addRepository(s.toString());
         }
         //simple rights for minimal utilization
-        NUpdateUserCommand uu = session.security().setSession(session)
+        NUpdateUserCommand uu = NWorkspaceSecurityManager.of(session)
                 .updateUser(NConstants.Users.ANONYMOUS);
 //        for (String right : NutsConstants.Rights.RIGHTS) {
 //            if (!NutsConstants.Rights.ADMIN.equals(right)) {
@@ -67,7 +67,7 @@ public class MinimalNWorkspaceArchetypeComponent implements NWorkspaceArchetypeC
 
     @Override
     public void startWorkspace(NSession session) {
-        NBootManager boot = session.boot();
+        NBootManager boot = NBootManager.of(session);
         boolean initializePlatforms = boot.getBootOptions().getInitPlatforms().ifEmpty(true).get(session);
         boolean initializeJava = boot.getBootOptions().getInitJava().ifEmpty(initializePlatforms).get(session);
         boolean initializeScripts = boot.getBootOptions().getInitScripts().ifEmpty(true).get(session);
@@ -81,7 +81,7 @@ public class MinimalNWorkspaceArchetypeComponent implements NWorkspaceArchetypeC
         if (initializeScripts || initializeLaunchers) {
             NWorkspaceUtils.of(session).installScriptsAndLaunchers(initializeLaunchers);
         }
-        Boolean skipCompanions = session.boot().getBootOptions().getSkipCompanions().orElse(true);
+        Boolean skipCompanions = NBootManager.of(session).getBootOptions().getSkipCompanions().orElse(true);
         if (!skipCompanions) {
             NWorkspaceUtils.of(session).installCompanions();
         }

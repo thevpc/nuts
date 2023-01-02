@@ -2,7 +2,7 @@ package net.thevpc.nuts.core.test;
 
 import net.thevpc.nuts.NSession;
 import net.thevpc.nuts.core.test.utils.TestUtils;
-import net.thevpc.nuts.cmdline.DefaultNArgument;
+import net.thevpc.nuts.cmdline.DefaultNArg;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -17,7 +17,7 @@ public class Test28_Argument {
 
     @Test
     public void test01() {
-        DefaultNArgument a = new DefaultNArgument("-a=2");
+        DefaultNArg a = new DefaultNArg("-a=2");
         Assertions.assertTrue(a.isOption());
         Assertions.assertTrue(a.isActive());
         Assertions.assertFalse(a.isNegated());
@@ -30,7 +30,7 @@ public class Test28_Argument {
 
     @Test
     public void test02() {
-        DefaultNArgument a = new DefaultNArgument("-//a=2");
+        DefaultNArg a = new DefaultNArg("-//a=2");
         Assertions.assertTrue(a.isOption());
         Assertions.assertFalse(a.isActive());
         Assertions.assertFalse(a.isNegated());
@@ -43,7 +43,7 @@ public class Test28_Argument {
 
     @Test
     public void test03() {
-        DefaultNArgument a = new DefaultNArgument("-!a=2");
+        DefaultNArg a = new DefaultNArg("-!a=2");
         Assertions.assertTrue(a.isOption());
         Assertions.assertTrue(a.isActive());
         Assertions.assertTrue(a.isNegated());
@@ -56,7 +56,7 @@ public class Test28_Argument {
 
     @Test
     public void test04() {
-        DefaultNArgument a = new DefaultNArgument("-!a");
+        DefaultNArg a = new DefaultNArg("-!a");
         Assertions.assertTrue(a.isOption());
         Assertions.assertTrue(a.isActive());
         Assertions.assertTrue(a.isNegated());
@@ -69,7 +69,7 @@ public class Test28_Argument {
 
     @Test
     public void test05() {
-        DefaultNArgument a = new DefaultNArgument("-!=a");
+        DefaultNArg a = new DefaultNArg("-!=a");
         Assertions.assertTrue(a.isOption());
         Assertions.assertTrue(a.isActive());
         Assertions.assertTrue(a.isNegated());
@@ -83,7 +83,7 @@ public class Test28_Argument {
     @Test
     public void test06() {
         NSession session= TestUtils.openNewMinTestWorkspace();
-        DefaultNArgument a = new DefaultNArgument("-!=");
+        DefaultNArg a = new DefaultNArg("-!=");
         Assertions.assertTrue(a.isOption());
         Assertions.assertTrue(a.isActive());
         Assertions.assertTrue(a.isNegated());
@@ -96,7 +96,7 @@ public class Test28_Argument {
 
     @Test
     public void test07() {
-        DefaultNArgument a = new DefaultNArgument("-!");
+        DefaultNArg a = new DefaultNArg("-!");
         Assertions.assertTrue(a.isOption());
         Assertions.assertTrue(a.isActive());
         Assertions.assertTrue(a.isNegated());
@@ -109,7 +109,7 @@ public class Test28_Argument {
 
     @Test
     public void test08() {
-        DefaultNArgument a = new DefaultNArgument("-");
+        DefaultNArg a = new DefaultNArg("-");
         Assertions.assertTrue(a.isOption());
         Assertions.assertTrue(a.isActive());
         Assertions.assertFalse(a.isNegated());
@@ -122,7 +122,7 @@ public class Test28_Argument {
 
     @Test
     public void test09() {
-        DefaultNArgument a = new DefaultNArgument("");
+        DefaultNArg a = new DefaultNArg("");
         Assertions.assertTrue(a.isNonOption());
         Assertions.assertTrue(a.isActive());
         Assertions.assertFalse(a.isNegated());
@@ -135,7 +135,7 @@ public class Test28_Argument {
 
     @Test
     public void test10() {
-        DefaultNArgument a = new DefaultNArgument("c=/a");
+        DefaultNArg a = new DefaultNArg("c=/a");
         Assertions.assertTrue(a.isNonOption());
         Assertions.assertTrue(a.isActive());
         Assertions.assertFalse(a.isNegated());
@@ -148,7 +148,7 @@ public class Test28_Argument {
 
     @Test
     public void test11() {
-        DefaultNArgument a = new DefaultNArgument("c");
+        DefaultNArg a = new DefaultNArg("c");
         Assertions.assertTrue(a.isNonOption());
         Assertions.assertTrue(a.isActive());
         Assertions.assertFalse(a.isNegated());
@@ -161,7 +161,7 @@ public class Test28_Argument {
 
     @Test
     public void test12() {
-        DefaultNArgument a = new DefaultNArgument("!//c=30");
+        DefaultNArg a = new DefaultNArg("!//c=30");
         Assertions.assertTrue(a.isNonOption());
         Assertions.assertTrue(a.isActive());
         Assertions.assertFalse(a.isNegated());
@@ -174,7 +174,7 @@ public class Test28_Argument {
 
     @Test
     public void test13() {
-        DefaultNArgument a = new DefaultNArgument("!");
+        DefaultNArg a = new DefaultNArg("!");
         Assertions.assertTrue(a.isNonOption());
         Assertions.assertTrue(a.isActive());
         Assertions.assertFalse(a.isNegated());
@@ -187,7 +187,7 @@ public class Test28_Argument {
 
     @Test
     public void test14() {
-        DefaultNArgument a = new DefaultNArgument("");
+        DefaultNArg a = new DefaultNArg("");
         Assertions.assertTrue(a.isNonOption());
         Assertions.assertTrue(a.isActive());
         Assertions.assertFalse(a.isNegated());

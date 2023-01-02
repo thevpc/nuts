@@ -6,7 +6,7 @@
 package net.thevpc.nuts.core.test;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.boot.DefaultNWorkspaceBootOptionsBuilder;
+import net.thevpc.nuts.boot.DefaultNBootOptionsBuilder;
 import net.thevpc.nuts.core.test.utils.TestUtils;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
@@ -21,7 +21,7 @@ public class Test29_DependencyTest {
 
     @BeforeAll
     public static void init() {
-        System.out.println(new DefaultNWorkspaceBootOptionsBuilder().toString());
+        System.out.println(new DefaultNBootOptionsBuilder().toString());
         session = TestUtils.openNewMinTestWorkspace();
     }
 

@@ -250,7 +250,7 @@ public class DefaultNFetchCommand extends AbstractNFetchCommand {
                             NId id1 = NIdUtils.createContentFaceId(foundDefinition.getId(), foundDefinition.getDescriptor(), session);
                             Path copyTo = options.getLocation();
                             if (copyTo != null && Files.isDirectory(copyTo)) {
-                                copyTo = copyTo.resolve(_ws.locations().getDefaultIdFilename(id1));
+                                copyTo = copyTo.resolve(NLocations.of(_ws).getDefaultIdFilename(id1));
                             }
 //                        boolean escalateMode = false;
                             boolean contentSuccessful = false;
@@ -406,8 +406,8 @@ public class DefaultNFetchCommand extends AbstractNFetchCommand {
         boolean nutsApp = nutsDescriptor.isApplication();
         NSession session = getSession();
         if (jar.getName().toLowerCase().endsWith(".jar") && jar.isRegularFile()) {
-            NPath cachePath = session.locations().getStoreLocation(nutsDescriptor.getId(), NStoreLocation.CACHE)
-                    .resolve(session.locations().getDefaultIdFilename(nutsDescriptor.getId()
+            NPath cachePath = NLocations.of(session).getStoreLocation(nutsDescriptor.getId(), NStoreLocation.CACHE)
+                    .resolve(NLocations.of(session).getDefaultIdFilename(nutsDescriptor.getId()
                                     .builder()
                                     .setFace("info.cache")
                                     .build()
@@ -469,8 +469,8 @@ public class DefaultNFetchCommand extends AbstractNFetchCommand {
         NWorkspaceUtils wu = NWorkspaceUtils.of(session);
         NElements elem = NElements.of(getSession());
         if (withCache) {
-            cachePath = session.locations().getStoreLocation(id, NStoreLocation.CACHE, repo.getUuid())
-                    .resolve(session.locations().getDefaultIdFilename(id.builder().setFace("def.cache").build()));
+            cachePath = NLocations.of(session).getStoreLocation(id, NStoreLocation.CACHE, repo.getUuid())
+                    .resolve(NLocations.of(session).getDefaultIdFilename(id.builder().setFace("def.cache").build()));
             if (cachePath.isRegularFile()) {
                 try {
                     if (CoreIOUtils.isObsoletePath(session, cachePath)) {
@@ -480,7 +480,7 @@ public class DefaultNFetchCommand extends AbstractNFetchCommand {
                         DefaultNDefinition d = elem.setSession(session)
                                 .json().parse(cachePath, DefaultNDefinition.class);
                         if (d != null) {
-                            NRepositoryManager rr = session.copy().setTransitive(true).repos();
+                            NRepositories rr = NRepositories.of(session.copy().setTransitive(true));
                             NRepository repositoryById = rr.findRepositoryById(d.getRepositoryUuid());
                             NRepository repositoryByName = rr.findRepositoryByName(d.getRepositoryName());
                             if (repositoryById == null || repositoryByName == null) {

@@ -26,7 +26,7 @@ package net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.user;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.standalone.workspace.config.NRepositoryConfigManagerExt;
-import net.thevpc.nuts.runtime.standalone.workspace.config.NWorkspaceConfigManagerExt;
+import net.thevpc.nuts.runtime.standalone.workspace.config.NConfigsExt;
 import net.thevpc.nuts.runtime.standalone.util.CoreStringUtils;
 
 /**
@@ -60,13 +60,13 @@ public class DefaultNAddUserCommand extends AbstractNAddUserCommand {
         } else {
             checkSession();
             NSession ws = getSession();
-            NWorkspaceSecurityManager sec = ws.security();
+            NWorkspaceSecurityManager sec = NWorkspaceSecurityManager.of(ws);
             NUserConfig security = new NUserConfig(getUsername(),
                     CoreStringUtils.chrToStr(sec.createCredentials(getCredentials(), false, null)),
                     getGroups(), getPermissions());
             security.setRemoteIdentity(getRemoteIdentity());
             security.setRemoteCredentials(CoreStringUtils.chrToStr(sec.createCredentials(getRemoteCredentials(), true, null)));
-            NWorkspaceConfigManagerExt.of(ws.config()).getModel()
+            NConfigsExt.of(NConfigs.of(ws)).getModel()
                     .setUser(security, ws);
         }
         return this;

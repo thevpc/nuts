@@ -68,7 +68,7 @@ public final class NClassLoaderUtils {
             }
         }
         try {
-            cc = session.fetch().setId(d.getDependency().toId())
+            cc = NFetchCommand.of(session).setId(d.getDependency().toId())
                     .setSession(session)
                     .getResultContent();
         }catch (NNotFoundException ex){

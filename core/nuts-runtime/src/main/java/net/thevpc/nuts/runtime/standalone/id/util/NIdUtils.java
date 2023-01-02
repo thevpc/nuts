@@ -88,7 +88,7 @@ public class NIdUtils {
         if (apiVersion.equals(session.getWorkspace().getApiVersion().toString())) {
             return session.getWorkspace().getRuntimeId();
         }
-        NPath apiBoot = session.locations().getStoreLocation(apiId(apiVersion, session), NStoreLocation.CONFIG).resolve(NConstants.Files.API_BOOT_CONFIG_FILE_NAME);
+        NPath apiBoot = NLocations.of(session).getStoreLocation(apiId(apiVersion, session), NStoreLocation.CONFIG).resolve(NConstants.Files.API_BOOT_CONFIG_FILE_NAME);
         if (apiBoot.isRegularFile()) {
             NWorkspaceConfigApi c = NElements.of(session)
                     .setSession(session)
@@ -97,12 +97,12 @@ public class NIdUtils {
                 return c.getRuntimeId();
             }
         }
-        NId foundRT = session.search().addId(NId.ofRuntime("").get())
+        NId foundRT = NSearchCommand.of(session).addId(NId.ofRuntime("").get())
                 .setLatest(true)
                 .setTargetApiVersion(NVersion.of(apiVersion).get(session))
                 .setSession(session.copy().setFetchStrategy(NFetchStrategy.OFFLINE)).getResultIds().first();
         if (foundRT == null && session.getFetchStrategy() != NFetchStrategy.OFFLINE) {
-            foundRT = session.search().addId(NId.ofRuntime("").get())
+            foundRT = NSearchCommand.of(session).addId(NId.ofRuntime("").get())
                     .setLatest(true)
                     .setTargetApiVersion(NVersion.of(apiVersion).get(session))
                     .setSession(session).getResultIds().first();

@@ -5,6 +5,7 @@
  */
 package net.thevpc.nuts.runtime.standalone.workspace.cmd.search;
 
+import net.thevpc.nuts.NSearchCommand;
 import net.thevpc.nuts.NSession;
 import net.thevpc.nuts.runtime.standalone.app.util.NAppUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.exec.DefaultInternalNExecutableCommand;
@@ -29,7 +30,7 @@ public class DefaultNSearchInternalExecutable extends DefaultInternalNExecutable
             showDefaultHelp();
             return;
         }
-        getSession().search().setSession(getSession())
+        NSearchCommand.of(getSession())
                 .configure(false, args).run();
     }
 

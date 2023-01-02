@@ -2,7 +2,7 @@ package net.thevpc.nuts.runtime.standalone.xtra.throwables;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.util.*;
-import net.thevpc.nuts.boot.NWorkspaceBootOptionsBuilder;
+import net.thevpc.nuts.boot.NBootOptionsBuilder;
 import net.thevpc.nuts.elem.NArrayElementBuilder;
 import net.thevpc.nuts.elem.NElements;
 import net.thevpc.nuts.io.NOutStream;
@@ -18,9 +18,9 @@ public class DefaultNApplicationExceptionHandler implements NApplicationExceptio
     @Override
     public int processThrowable(String[] args, Throwable throwable, NSession session) {
         NAssert.requireSession(session);
-        NWorkspaceBootOptionsBuilder bo = null;
-        bo = session.boot().getBootOptions().builder();
-        if (!session.env().isGraphicalDesktopEnvironment()) {
+        NBootOptionsBuilder bo = null;
+        bo = NBootManager.of(session).getBootOptions().builder();
+        if (!NEnvs.of(session).isGraphicalDesktopEnvironment()) {
             bo.setGui(false);
         }
 
@@ -49,7 +49,7 @@ public class DefaultNApplicationExceptionHandler implements NApplicationExceptio
 
         NOutStream fout = null;
         try {
-            fout = session.config().getSystemTerminal().getErr();
+            fout = NConfigs.of(session).getSystemTerminal().getErr();
             if (fm != null) {
                 fm = NMsg.ofStyled(fm, NTextStyle.error());
             } else {

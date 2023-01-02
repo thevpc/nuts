@@ -53,7 +53,7 @@ public class JpsCommand extends SimpleJShellBuiltin {
     }
 
     public static String resolveJavaToolCommand(NSession session, String javaHome, String javaCommand) {
-        String exe = session.env().getOsFamily().equals(NOsFamily.WINDOWS) ? (javaCommand + ".exe") : javaCommand;
+        String exe = NEnvs.of(session).getOsFamily().equals(NOsFamily.WINDOWS) ? (javaCommand + ".exe") : javaCommand;
         if (javaHome == null) {
             javaHome = System.getProperty("java.home");
         }
@@ -114,7 +114,7 @@ public class JpsCommand extends SimpleJShellBuiltin {
         Options options = context.getOptions();
         List<JpsRow> results = new ArrayList<>();
 
-        NExecCommand e = context.getSession().exec()
+        NExecCommand e = NExecCommand.of(context.getSession())
                 .setExecutionType(NExecutionType.SYSTEM)
                 .addCommand(resolveJpsCommand(context.getSession()), "-l", "-v", "-m")
                 .setRedirectErrorStream(true)

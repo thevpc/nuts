@@ -26,7 +26,7 @@
 package net.thevpc.nuts.toolbox.nsh.cmds.bash;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.cmdline.NArgument;
+import net.thevpc.nuts.cmdline.NArg;
 import net.thevpc.nuts.cmdline.NCommandLine;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.toolbox.nsh.SimpleJShellBuiltin;
@@ -54,7 +54,7 @@ public class TailCommand extends SimpleJShellBuiltin {
     protected boolean configureFirst(NCommandLine commandLine, JShellExecutionContext context) {
         Options options = context.getOptions();
         NSession session = context.getSession();
-        NArgument a = commandLine.peek().get(session);
+        NArg a = commandLine.peek().get(session);
         if (a.isOption()) {
             if (ShellHelper.isInt(a.asString()
                     .get(session).substring(1))) {

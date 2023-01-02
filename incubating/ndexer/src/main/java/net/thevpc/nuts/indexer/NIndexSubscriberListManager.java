@@ -11,17 +11,17 @@ public class NIndexSubscriberListManager {
     private String name;
     private Map<String, NIndexSubscriber> subscribers = new LinkedHashMap<>();
     private NIndexSubscriberListConfig config;
-    private NSession defaultWorkspace;
+    private NSession defaultSession;
 
     public NIndexSubscriberListManager(NSession session, String name) {
-        this.defaultWorkspace = session;
-        if (name==null || name.trim().isEmpty()) {
+        this.defaultSession = session;
+        if (name == null || name.trim().isEmpty()) {
             name = "default";
         }
         this.name = name.trim();
         NPath file = getConfigFile(session);
         if (file.exists()) {
-            this.config = NElements.of(defaultWorkspace).json().parse(file, NIndexSubscriberListConfig.class);
+            this.config = NElements.of(defaultSession).json().parse(file, NIndexSubscriberListConfig.class);
             if (this.config.getSubscribers() != null) {
                 for (NIndexSubscriber var : this.config.getSubscribers()) {
                     this.subscribers.put(var.getUuid(), var);
@@ -36,8 +36,7 @@ public class NIndexSubscriberListManager {
     }
 
     private NPath getConfigFile(NSession session) {
-        return session
-                .locations()
+        return NLocations.of(session)
                 .getStoreLocation(NIdResolver.of(session)
                                 .resolveId(NIndexSubscriberListManager.class),
                         NStoreLocation.CONFIG).resolve(
@@ -85,7 +84,7 @@ public class NIndexSubscriberListManager {
     }
 
     private String getRepositoryNameFromUuid(String repositoryUuid) {
-        List<NRepository> repositories = defaultWorkspace.repos().getRepositories();
+        List<NRepository> repositories = NRepositories.of(defaultSession).getRepositories();
         for (NRepository repository : repositories) {
             if (repository.getUuid().equals(repositoryUuid)) {
                 return repository.getName();
@@ -100,7 +99,7 @@ public class NIndexSubscriberListManager {
                 ? null
                 : new ArrayList<>(this.subscribers.values()));
         NPath file = getConfigFile(session);
-        NElements.of(defaultWorkspace).json().setValue(this.config)
+        NElements.of(defaultSession).json().setValue(this.config)
                 .setNtf(false).print(file);
     }
 
@@ -122,6 +121,6 @@ public class NIndexSubscriberListManager {
     }
 
     public NSession getDefaultWorkspace() {
-        return defaultWorkspace;
+        return defaultSession;
     }
 }

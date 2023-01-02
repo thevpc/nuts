@@ -6,7 +6,7 @@
 package net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.delete;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.cmdline.NArgument;
+import net.thevpc.nuts.cmdline.NArg;
 import net.thevpc.nuts.cmdline.NCommandLine;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.AbstractNSettingsSubCommand;
@@ -54,7 +54,7 @@ public class NSettingsDeleteFoldersSubCommand extends AbstractNSettingsSubComman
                 Set<NStoreLocation> locationsToDelete = new HashSet<>();
                 locationsToDelete.add(value);
                 while (cmdLine.hasNext()) {
-                    NArgument a;
+                    NArg a;
                     if ((a = cmdLine.nextBoolean("-y", "--yes").orNull()) != null) {
                         force = a.getBooleanValue().get(session);
                     } else if (!cmdLine.isNextOption()) {
@@ -80,7 +80,7 @@ public class NSettingsDeleteFoldersSubCommand extends AbstractNSettingsSubComman
     }
 
     private void deleteWorkspaceFolder(NSession session, NStoreLocation folder, boolean force) {
-        NPath sstoreLocation = session.locations().getStoreLocation(folder);
+        NPath sstoreLocation = NLocations.of(session).getStoreLocation(folder);
         if (sstoreLocation != null) {
             NTexts factory = NTexts.of(session);
             if (sstoreLocation.exists()) {
@@ -97,13 +97,13 @@ public class NSettingsDeleteFoldersSubCommand extends AbstractNSettingsSubComman
                 }
             }
         }
-        for (NRepository repository : session.repos().getRepositories()) {
+        for (NRepository repository : NRepositories.of(session).getRepositories()) {
             deleteRepoFolder(repository, session, folder, force);
         }
     }
 
     private void deleteRepoFolder(NRepository repository, NSession session, NStoreLocation folder, boolean force) {
-        NPath sstoreLocation = session.locations().getStoreLocation(folder);
+        NPath sstoreLocation = NLocations.of(session).getStoreLocation(folder);
         if (sstoreLocation != null) {
             NTexts factory = NTexts.of(session);
             if (sstoreLocation.exists()) {
@@ -128,13 +128,13 @@ public class NSettingsDeleteFoldersSubCommand extends AbstractNSettingsSubComman
     }
 
     private void deleteCache(NSession session, boolean force) {
-        NPath sstoreLocation = session.locations().getStoreLocation(NStoreLocation.CACHE);
+        NPath sstoreLocation = NLocations.of(session).getStoreLocation(NStoreLocation.CACHE);
         if (sstoreLocation != null) {
             //            File cache = new File(storeLocation);
             if (sstoreLocation.exists()) {
                 sstoreLocation.delete();
             }
-            for (NRepository repository : session.repos().getRepositories()) {
+            for (NRepository repository : NRepositories.of(session).getRepositories()) {
                 deleteRepoCache(repository, session, force);
             }
         }

@@ -107,17 +107,17 @@ public class NJavaSdkUtils {
             requestedJavaVersion = "[" + singleVersion + ",[";
         }
         NVersionFilter requestedVersionFilter = NVersionFilters.of(session).byValue(requestedJavaVersion).get();
-        NPlatformLocation bestJava = session.env().platforms()
+        NPlatformLocation bestJava = NEnvs.of(session).platforms()
                 .findPlatformByVersion(NPlatformFamily.JAVA, requestedVersionFilter);
         if (bestJava == null) {
-            String appSuffix = session.env().getOsFamily() == NOsFamily.WINDOWS ? ".exe" : "";
+            String appSuffix = NEnvs.of(session).getOsFamily() == NOsFamily.WINDOWS ? ".exe" : "";
             String packaging = "jre";
             if (new File(System.getProperty("java.home"), "bin" + File.separator + "javac" + (appSuffix)).isFile()) {
                 packaging = "jdk";
             }
             String product = "JDK";
             NPlatformLocation current = new NPlatformLocation(
-                    session.env().getPlatform(),
+                    NEnvs.of(session).getPlatform(),
                     product,
                     product + "-" + System.getProperty("java.version"),
                     System.getProperty("java.home"),
@@ -151,7 +151,7 @@ public class NJavaSdkUtils {
 
     public NPlatformLocation[] searchJdkLocations(NSession session) {
         String[] conf = {};
-        switch (session.env().getOsFamily()) {
+        switch (NEnvs.of(session).getOsFamily()) {
             case LINUX:
             case UNIX:
             case UNKNOWN: {
@@ -191,7 +191,7 @@ public class NJavaSdkUtils {
         if (base != null) {
             all.add(CompletableFuture.completedFuture(new NPlatformLocation[]{base}));
         }
-        switch (session.env().getOsFamily()) {
+        switch (NEnvs.of(session).getOsFamily()) {
             case LINUX:
             case UNIX:
             case UNKNOWN: {
@@ -302,7 +302,7 @@ public class NJavaSdkUtils {
     public NPlatformLocation resolveJdkLocation(String path, String preferredName, NSession session) {
         NSessionUtils.checkSession(ws, session);
         NAssert.requireNonBlank(path, "path", session);
-        String appSuffix = session.env().getOsFamily() == NOsFamily.WINDOWS ? ".exe" : "";
+        String appSuffix = NEnvs.of(session).getOsFamily() == NOsFamily.WINDOWS ? ".exe" : "";
         Path bin = Paths.get(path).resolve("bin");
         Path javaExePath = bin.resolve("java" + appSuffix);
         if (!Files.isRegularFile(javaExePath)) {
@@ -317,7 +317,7 @@ public class NJavaSdkUtils {
             //I do not know why but sometimes, the process exists before receiving stdout result!!
             final int MAX_ITER = 5;
             for (int i = 0; i < MAX_ITER; i++) {
-                NExecCommand cmd = session.exec()
+                NExecCommand cmd = NExecCommand.of(session)
                         .setSession(session)
                         .setExecutionType(NExecutionType.SYSTEM)
                         .addCommand(javaExePath.toString(), "-version")
@@ -422,9 +422,9 @@ public class NJavaSdkUtils {
         }
         String bestJavaPath = nutsPlatformLocation.getPath();
         //if (bestJavaPath.contains("/") || bestJavaPath.contains("\\") || bestJavaPath.equals(".") || bestJavaPath.equals("..")) {
-        NPath file = NPath.of(bestJavaPath, session).toAbsolute(session.locations().getWorkspaceLocation());
+        NPath file = NPath.of(bestJavaPath, session).toAbsolute(NLocations.of(session).getWorkspaceLocation());
         //if (file.isDirectory() && file.resolve("bin").isDirectory()) {
-        boolean winOs = session.env().getOsFamily() == NOsFamily.WINDOWS;
+        boolean winOs = NEnvs.of(session).getOsFamily() == NOsFamily.WINDOWS;
         if (winOs) {
             if (javaw) {
                 bestJavaPath = file.resolve("bin").resolve("javaw.exe").toString();
@@ -440,7 +440,7 @@ public class NJavaSdkUtils {
     }
 
     public String resolveJavaCommandByHome(String javaHome, NSession session) {
-        String appSuffix = session.env().getOsFamily() == NOsFamily.WINDOWS ? ".exe" : "";
+        String appSuffix = NEnvs.of(session).getOsFamily() == NOsFamily.WINDOWS ? ".exe" : "";
         String exe = "java" + appSuffix;
         if (javaHome == null || javaHome.isEmpty()) {
             javaHome = System.getProperty("java.home");

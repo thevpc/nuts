@@ -75,7 +75,7 @@ public class NFolderRepository extends NFolderRepositoryBase {
             }
             case NConstants.QueryFaces.CONTENT: {
                 String packaging = q.get(NConstants.IdProperties.PACKAGING);
-                return session.locations().getDefaultIdContentExtension(packaging);
+                return NLocations.of(session).getDefaultIdContentExtension(packaging);
             }
             default: {
                 throw new NUnsupportedArgumentException(session, NMsg.ofCstyle("unsupported fact %s", f));

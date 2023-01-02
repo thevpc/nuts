@@ -108,9 +108,9 @@ public class DefaultNDeployCommand extends AbstractNDeployCommand {
             runDeployFile();
         }
         if (ids.size() > 0) {
-            for (NId nutsId : session.search().setSession(getSession())
+            for (NId nutsId : NSearchCommand.of(session).setSession(getSession())
                     .addIds(ids.toArray(new NId[0])).setLatest(true).setRepositoryFilter(fromRepository).getResultIds()) {
-                NDefinition fetched = session.fetch().setContent(true).setId(nutsId).setSession(getSession()).getResultDefinition();
+                NDefinition fetched = NFetchCommand.of(session).setContent(true).setId(nutsId).setSession(getSession()).getResultDefinition();
                 if (fetched.getContent().isPresent()) {
                     runDeployFile(fetched.getContent().get(session), fetched.getDescriptor(), null);
                 }
@@ -156,13 +156,13 @@ public class DefaultNDeployCommand extends AbstractNDeployCommand {
         Path contentFile2 = null;
         try {
             if (descriptor == null) {
-                NFetchCommand p = this.session.fetch()
+                NFetchCommand p = NFetchCommand.of(this.session)
                         .setSession(session.copy().setTransitive(true));
                 characterizedFile = characterizeForDeploy(contentSource, p, getParseOptions(), session);
                 NAssert.requireNonBlank(characterizedFile.getDescriptor(), "descriptor", session);
                 descriptor = characterizedFile.getDescriptor();
             }
-            String name = this.session.locations().getDefaultIdFilename(descriptor.getId().builder().setFaceDescriptor().build());
+            String name = NLocations.of(this.session).getDefaultIdFilename(descriptor.getId().builder().setFaceDescriptor().build());
             tempFile = NPaths.of(session)
                     .createTempFile(name).toFile();
             NCp.of(this.session).setSession(session).from(contentSource.getInputStream()).to(tempFile).addOptions(NPathOption.SAFE).run();
@@ -242,7 +242,7 @@ public class DefaultNDeployCommand extends AbstractNDeployCommand {
                         return this;
                     }
                 } else {
-                    NRepository repo = getSession().repos().getRepository(repository);
+                    NRepository repo = NRepositories.of(getSession()).getRepository(repository);
                     if (repo == null) {
                         throw new NRepositoryNotFoundException(getSession(), repository);
                     }

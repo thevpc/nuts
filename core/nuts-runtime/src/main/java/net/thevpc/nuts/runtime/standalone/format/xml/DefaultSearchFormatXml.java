@@ -9,7 +9,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.PrintWriter;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.cmdline.NArgument;
+import net.thevpc.nuts.cmdline.NArg;
 import net.thevpc.nuts.cmdline.NCommandLine;
 import net.thevpc.nuts.elem.NElements;
 import net.thevpc.nuts.io.NOutStream;
@@ -34,7 +34,7 @@ public class DefaultSearchFormatXml extends DefaultSearchFormatBase {
     public DefaultSearchFormatXml(NSession session, NOutStream writer, NFetchDisplayOptions options) {
         super(session, writer, NContentType.XML, options);
         txt = NTexts.of(session);
-        codeFormat = NTexts.of(session).setSession(session).getCodeHighlighter("xml");
+        codeFormat = NTexts.of(session).getCodeHighlighter("xml");
     }
 
     public String getRootName() {
@@ -98,7 +98,7 @@ public class DefaultSearchFormatXml extends DefaultSearchFormatBase {
     @Override
     public boolean configureFirst(NCommandLine cmd) {
         NSession session = getSession();
-        NArgument a = cmd.peek().get(session);
+        NArg a = cmd.peek().get(session);
         if (a == null) {
             return false;
         }

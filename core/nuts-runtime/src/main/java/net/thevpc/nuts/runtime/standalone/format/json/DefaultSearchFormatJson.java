@@ -6,7 +6,7 @@
 package net.thevpc.nuts.runtime.standalone.format.json;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.cmdline.NArgument;
+import net.thevpc.nuts.cmdline.NArg;
 import net.thevpc.nuts.cmdline.NCommandLine;
 import net.thevpc.nuts.elem.NElements;
 import net.thevpc.nuts.io.NOutStream;
@@ -29,7 +29,7 @@ public class DefaultSearchFormatJson extends DefaultSearchFormatBase {
     public DefaultSearchFormatJson(NSession session, NOutStream writer, NFetchDisplayOptions options) {
         super(session, writer, NContentType.JSON, options);
         txt = NTexts.of(session);
-        codeFormat = NTexts.of(session).setSession(session).getCodeHighlighter("json");
+        codeFormat = NTexts.of(session).getCodeHighlighter("json");
     }
 
     @Override
@@ -47,7 +47,7 @@ public class DefaultSearchFormatJson extends DefaultSearchFormatBase {
     @Override
     public boolean configureFirst(NCommandLine commandLine) {
         NSession session = getSession();
-        NArgument aa = commandLine.peek().get(session);
+        NArg aa = commandLine.peek().get(session);
         if (aa == null) {
             return false;
         }

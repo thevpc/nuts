@@ -1,7 +1,7 @@
 package net.thevpc.nuts.util;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.cmdline.NArgument;
+import net.thevpc.nuts.cmdline.NArg;
 import net.thevpc.nuts.cmdline.NCommandLine;
 import net.thevpc.nuts.elem.NMapBy;
 import net.thevpc.nuts.io.NOutStream;
@@ -855,7 +855,7 @@ public class NMemorySize implements Serializable, NFormattable {
 
             @Override
             public boolean configureFirst(NCommandLine commandLine) {
-                NArgument a = commandLine.peek().get(session);
+                NArg a = commandLine.peek().get(session);
                 switch (a.key()) {
                     case "--iec": {
                         a = commandLine.nextBoolean().get(session);

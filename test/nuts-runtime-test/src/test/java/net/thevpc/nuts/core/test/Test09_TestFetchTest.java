@@ -9,7 +9,7 @@ public class Test09_TestFetchTest {
     @Test
     public void test(){
         NSession session = TestUtils.openNewTestWorkspace();
-        NDefinition resultDefinition = session.fetch().setId("org.springframework.boot:spring-boot#2.4.1")
+        NDefinition resultDefinition = NFetchCommand.of(session).setId("org.springframework.boot:spring-boot#2.4.1")
                 .setDependencies(true)
                 .setContent(true)
                 .getResultDefinition();

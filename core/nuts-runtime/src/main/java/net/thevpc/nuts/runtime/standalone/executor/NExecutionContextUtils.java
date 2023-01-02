@@ -13,35 +13,35 @@ public class NExecutionContextUtils {
                     return (definition.getId().toString());
                 }
                 case "NUTS_ID_APPS": {
-                    NPath v = session.locations().getStoreLocation(definition.getId(), NStoreLocation.APPS);
+                    NPath v = NLocations.of(session).getStoreLocation(definition.getId(), NStoreLocation.APPS);
                     return (v.toString());
                 }
                 case "NUTS_ID_CONFIG": {
-                    NPath v = session.locations().getStoreLocation(definition.getId(), NStoreLocation.CONFIG);
+                    NPath v = NLocations.of(session).getStoreLocation(definition.getId(), NStoreLocation.CONFIG);
                     return (v.toString());
                 }
                 case "NUTS_ID_LOG": {
-                    NPath v = session.locations().getStoreLocation(definition.getId(), NStoreLocation.LOG);
+                    NPath v = NLocations.of(session).getStoreLocation(definition.getId(), NStoreLocation.LOG);
                     return (v.toString());
                 }
                 case "NUTS_ID_CACHE": {
-                    NPath v = session.locations().getStoreLocation(definition.getId(), NStoreLocation.CACHE);
+                    NPath v = NLocations.of(session).getStoreLocation(definition.getId(), NStoreLocation.CACHE);
                     return (v.toString());
                 }
                 case "NUTS_ID_LIB": {
-                    NPath v = session.locations().getStoreLocation(definition.getId(), NStoreLocation.LIB);
+                    NPath v = NLocations.of(session).getStoreLocation(definition.getId(), NStoreLocation.LIB);
                     return (v.toString());
                 }
                 case "NUTS_ID_RUN": {
-                    NPath v = session.locations().getStoreLocation(definition.getId(), NStoreLocation.RUN);
+                    NPath v = NLocations.of(session).getStoreLocation(definition.getId(), NStoreLocation.RUN);
                     return (v.toString());
                 }
                 case "NUTS_ID_TEMP": {
-                    NPath v = session.locations().getStoreLocation(definition.getId(), NStoreLocation.TEMP);
+                    NPath v = NLocations.of(session).getStoreLocation(definition.getId(), NStoreLocation.TEMP);
                     return (v.toString());
                 }
                 case "NUTS_ID_VAR": {
-                    NPath v = session.locations().getStoreLocation(definition.getId(), NStoreLocation.VAR);
+                    NPath v = NLocations.of(session).getStoreLocation(definition.getId(), NStoreLocation.VAR);
                     return (v.toString());
                 }
             }

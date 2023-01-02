@@ -1,8 +1,8 @@
 package net.thevpc.nuts.toolbox.nsh.jshell;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.cmdline.DefaultNArgumentCandidate;
-import net.thevpc.nuts.cmdline.NArgumentCandidate;
+import net.thevpc.nuts.cmdline.DefaultNArgCandidate;
+import net.thevpc.nuts.cmdline.NArgCandidate;
 import net.thevpc.nuts.cmdline.NCommandAutoCompleteResolver;
 import net.thevpc.nuts.cmdline.NCommandLine;
 
@@ -13,13 +13,13 @@ import java.util.List;
 class NshAutoCompleter implements NCommandAutoCompleteResolver {
 
     @Override
-    public List<NArgumentCandidate> resolveCandidates(NCommandLine commandLine, int wordIndex, NSession session) {
-        List<NArgumentCandidate> candidates = new ArrayList<>();
-        JShellContext fileContext = (JShellContext) session.env().getProperties().get(JShellContext.class.getName());
+    public List<NArgCandidate> resolveCandidates(NCommandLine commandLine, int wordIndex, NSession session) {
+        List<NArgCandidate> candidates = new ArrayList<>();
+        JShellContext fileContext = (JShellContext) NEnvs.of(session).getProperties().get(JShellContext.class.getName());
 
         if (wordIndex == 0) {
             for (JShellBuiltin command : fileContext.builtins().getAll()) {
-                candidates.add(new DefaultNArgumentCandidate(command.getName()));
+                candidates.add(new DefaultNArgCandidate(command.getName()));
             }
         } else {
             List<String> autoCompleteWords = new ArrayList<>(Arrays.asList(commandLine.toStringArray()));
@@ -36,7 +36,7 @@ class NshAutoCompleter implements NCommandAutoCompleteResolver {
                         if (NBlankable.isBlank(display)) {
                             display = value;
                         }
-                        candidates.add(new DefaultNArgumentCandidate(value,display));
+                        candidates.add(new DefaultNArgCandidate(value,display));
                     }
                 }
             }

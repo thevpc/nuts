@@ -85,7 +85,7 @@ public class MavenRepositoryFolderHelper {
 
     public NPath getIdLocalFile(NId id, NSession session) {
         return getStoreLocation().resolve(NRepositoryExt.of(repo).getIdBasedir(id, session))
-                .resolve(session.locations().getDefaultIdFilename(id));
+                .resolve(NLocations.of(session).getDefaultIdFilename(id));
     }
 
     public NPath fetchContentImpl(NId id, Path localPath, NSession session) {
@@ -102,7 +102,7 @@ public class MavenRepositoryFolderHelper {
 
     protected String getIdFilename(NId id, NSession session) {
         if (repo == null) {
-            return session.locations().getDefaultIdFilename(id);
+            return NLocations.of(session).getDefaultIdFilename(id);
         }
         return NRepositoryExt.of(repo).getIdFilename(id, session);
     }

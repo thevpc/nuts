@@ -24,7 +24,7 @@
 package net.thevpc.nuts;
 
 import net.thevpc.nuts.boot.NClassLoaderNode;
-import net.thevpc.nuts.boot.NWorkspaceBootOptions;
+import net.thevpc.nuts.boot.NBootOptions;
 import net.thevpc.nuts.spi.NComponent;
 
 import java.net.URL;
@@ -54,7 +54,7 @@ public interface NBootManager extends NComponent {
 
     NOptional<NValue> getCustomBootOption(String... names);
 
-    NWorkspaceBootOptions getBootOptions();
+    NBootOptions getBootOptions();
 
     ClassLoader getBootClassLoader();
 

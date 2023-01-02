@@ -241,10 +241,11 @@ public class NHttpServerComponent implements NServerComponent {
             out.print("Serving workspace : ");
             for (Map.Entry<String, NSession> entry : workspaces.entrySet()) {
                 String k = entry.getKey();
+                NSession ksession = entry.getValue();
                 if (k.equals("")) {
-                    out.printf("%s\n", entry.getValue().locations().getWorkspaceLocation());
+                    out.printf("%s\n", NLocations.of(ksession).getWorkspaceLocation());
                 } else {
-                    out.printf("%s : %s\n", k, entry.getValue().locations().getWorkspaceLocation());
+                    out.printf("%s : %s\n", k, NLocations.of(ksession).getWorkspaceLocation());
                 }
             }
         } else {
@@ -254,7 +255,7 @@ public class NHttpServerComponent implements NServerComponent {
                 if (k.equals("")) {
                     k = "<default>";
                 }
-                out.printf("\t%s : %s\n", k, entry.getValue().locations().getWorkspaceLocation());
+                out.printf("\t%s : %s\n", k, NLocations.of(entry.getValue()).getWorkspaceLocation());
             }
         }
         final String finalServerId = serverId;

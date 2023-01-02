@@ -26,15 +26,15 @@
  */
 package net.thevpc.nuts.reserved;
 
-import net.thevpc.nuts.cmdline.NArgument;
-import net.thevpc.nuts.boot.NWorkspaceBootOptions;
+import net.thevpc.nuts.cmdline.NArg;
+import net.thevpc.nuts.boot.NBootOptions;
 
 import java.util.Collections;
 
 public class NReservedNUtilWorkspaceOptions {
-    static boolean isBootOptional(String name, NWorkspaceBootOptions bOptions) {
+    static boolean isBootOptional(String name, NBootOptions bOptions) {
         for (String property : bOptions.getCustomOptions().orElseGet(Collections::emptyList)) {
-            NArgument a = NArgument.of(property);
+            NArg a = NArg.of(property);
             if (a.getKey().asString().orElse("").equals("boot-" + name)) {
                 return true;
             }
@@ -42,9 +42,9 @@ public class NReservedNUtilWorkspaceOptions {
         return false;
     }
 
-    static boolean isBootOptional(NWorkspaceBootOptions bOptions) {
+    static boolean isBootOptional(NBootOptions bOptions) {
         for (String property : bOptions.getCustomOptions().orElseGet(Collections::emptyList)) {
-            NArgument a = NArgument.of(property);
+            NArg a = NArg.of(property);
             if (a.getKey().asString().orElse("").equals("boot-optional")) {
                 return a.getValue().asBoolean().orElse(true);
             }

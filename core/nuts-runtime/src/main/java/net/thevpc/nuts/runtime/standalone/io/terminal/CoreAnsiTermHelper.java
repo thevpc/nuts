@@ -1,5 +1,6 @@
 package net.thevpc.nuts.runtime.standalone.io.terminal;
 
+import net.thevpc.nuts.NExecCommand;
 import net.thevpc.nuts.NExecutionType;
 import net.thevpc.nuts.NSession;
 import net.thevpc.nuts.NValue;
@@ -9,7 +10,7 @@ public class CoreAnsiTermHelper {
     public static boolean isXTerm(NSession session) {
         try {
             String str = "cols";
-            session.exec().setExecutionType(NExecutionType.SYSTEM)
+            NExecCommand.of(session).setExecutionType(NExecutionType.SYSTEM)
                     .grabOutputString()
                     .addCommand("tput", str)
                     .setFailFast(true)
@@ -39,7 +40,7 @@ public class CoreAnsiTermHelper {
 
     public static String evalCapability(String str, NSession session) {
         try {
-            String d = session.exec().setExecutionType(NExecutionType.SYSTEM)
+            String d = NExecCommand.of(session).setExecutionType(NExecutionType.SYSTEM)
                     .grabOutputString()
                     .addCommand("tput", str)
                     .getOutputString();
@@ -48,7 +49,7 @@ public class CoreAnsiTermHelper {
                 return null;
             }
             //add 500 of sleep time!
-            d = session.exec().setExecutionType(NExecutionType.SYSTEM)
+            d = NExecCommand.of(session).setExecutionType(NExecutionType.SYSTEM)
                     .grabOutputString()
                     .addCommand("tput", str)
                     .setSleepMillis(500)

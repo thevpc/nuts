@@ -522,7 +522,7 @@ public class CoreNUtils {
                 if (rt.equals(depId.getShortName())) {
                     return NIdType.RUNTIME;
                 } else {
-                    for (NClassLoaderNode n : session.boot().getBootExtensionClassLoaderNode()) {
+                    for (NClassLoaderNode n : NBootManager.of(session).getBootExtensionClassLoaderNode()) {
                         if (NId.of(n.getId()).orElse(NId.BLANK).equalsShortId(depId)) {
                             return NIdType.EXTENSION;
                         }
@@ -534,7 +534,7 @@ public class CoreNUtils {
     }
 
     public static List<NId> resolveNutsApiIdsFromId(NId id, NSession session) {
-        List<NDependency> deps = session.fetch().setId(id).setDependencies(true).getResultDefinition()
+        List<NDependency> deps = NFetchCommand.of(session).setId(id).setDependencies(true).getResultDefinition()
                 .getDependencies().get(session).transitive().toList();
         return resolveNutsApiIdsFromDependencyList(deps, session);
     }
@@ -592,20 +592,20 @@ public class CoreNUtils {
     }
 
     public static boolean isCustomTrue(String name, NSession session) {
-        return session.boot().getCustomBootOption(name)
+        return NBootManager.of(session).getCustomBootOption(name)
                 .ifEmpty(NValue.of("true"))
                 .flatMap(NValue::asBoolean)
                 .orElse(false);
     }
 
     public static boolean isCustomFalse(String name, NSession session) {
-        return session.boot().getCustomBootOption(name)
+        return NBootManager.of(session).getCustomBootOption(name)
                 .flatMap(NValue::asBoolean)
                 .orElse(false);
     }
 
     public static boolean isShowCommand(NSession session) {
-        return session.boot().getCustomBootOption("---show-command")
+        return NBootManager.of(session).getCustomBootOption("---show-command")
                 .flatMap(NValue::asBoolean)
                 .orElse(false);
     }

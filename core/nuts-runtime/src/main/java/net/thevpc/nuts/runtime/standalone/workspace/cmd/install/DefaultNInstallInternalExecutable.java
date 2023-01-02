@@ -5,6 +5,7 @@
  */
 package net.thevpc.nuts.runtime.standalone.workspace.cmd.install;
 
+import net.thevpc.nuts.NInstallCommand;
 import net.thevpc.nuts.NSession;
 import net.thevpc.nuts.runtime.standalone.app.util.NAppUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.exec.DefaultInternalNExecutableCommand;
@@ -29,6 +30,6 @@ public class DefaultNInstallInternalExecutable extends DefaultInternalNExecutabl
             showDefaultHelp();
             return;
         }
-        getSession().install().configure(false, args).run();
+        NInstallCommand.of(getSession()).configure(false, args).run();
     }
 }
