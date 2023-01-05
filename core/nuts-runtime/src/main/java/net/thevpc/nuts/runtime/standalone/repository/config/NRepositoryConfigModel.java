@@ -139,7 +139,7 @@ public interface NRepositoryConfigModel {
     Map<String, String> toMap(NSession session);
 
 
-    NOptional<NValue> get(String key, boolean inherit, NSession session);
+    NOptional<NLiteral> get(String key, boolean inherit, NSession session);
 
     void set(String property, String value, NSession session);
 

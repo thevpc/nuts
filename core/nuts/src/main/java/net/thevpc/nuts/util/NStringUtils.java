@@ -432,7 +432,7 @@ public class NStringUtils {
                 return NOptional.of(Level.CONFIG);
             }
         }
-        Integer i = NValue.of(value).asInt().orNull();
+        Integer i = NLiteral.of(value).asInt().orNull();
         if (i != null) {
             switch (i) {
                 case Integer.MAX_VALUE:

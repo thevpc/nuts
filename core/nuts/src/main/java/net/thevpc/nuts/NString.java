@@ -43,12 +43,10 @@ public interface NString extends NBlankable {
     }
 
     static NString of(String str, NSession session) {
-        NAssert.requireSession(session);
         return NTexts.of(session).parse(str);
     }
 
     static NString ofPlain(String str, NSession session) {
-        NAssert.requireSession(session);
         return NTexts.of(session).ofPlain(str);
     }
 

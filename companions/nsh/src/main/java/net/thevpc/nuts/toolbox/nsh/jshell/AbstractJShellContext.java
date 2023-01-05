@@ -151,7 +151,7 @@ public abstract class AbstractJShellContext implements JShellContext {
                 NDefinition def = NSearchCommand.of(session).addId(selectedId).setEffective(true).setSession(this.getSession()
                         .copy().setFetchStrategy(NFetchStrategy.OFFLINE)).getResultDefinitions().required();
                 NDescriptor d = def.getDescriptor();
-                String nuts_autocomplete_support = NStringUtils.trim(d.getPropertyValue("nuts.autocomplete").flatMap(NValue::asString).get(session));
+                String nuts_autocomplete_support = NStringUtils.trim(d.getPropertyValue("nuts.autocomplete").flatMap(NLiteral::asString).get(session));
                 if (d.isApplication()
                         || "true".equalsIgnoreCase(nuts_autocomplete_support)
                         || "supported".equalsIgnoreCase(nuts_autocomplete_support)) {
@@ -176,9 +176,9 @@ public abstract class AbstractJShellContext implements JShellContext {
                                     String value = null;
                                     String display = null;
                                     if (args.hasNext()) {
-                                        value = args.next().flatMap(NValue::asString).get(session);
+                                        value = args.next().flatMap(NLiteral::asString).get(session);
                                         if (args.hasNext()) {
-                                            display = args.next().flatMap(NValue::asString).get(session);
+                                            display = args.next().flatMap(NLiteral::asString).get(session);
                                         }
                                     }
                                     if (value != null) {

@@ -13,62 +13,62 @@ public abstract class AbstractNNavigatableElement extends AbstractNElement imple
     }
     @Override
     public NOptional<String> getStringByPath(String... keys) {
-        return getByPath(keys).flatMap(NValue::asString);
+        return getByPath(keys).flatMap(NLiteral::asString);
     }
 
     @Override
     public NOptional<Integer> getIntByPath(String... keys) {
-        return getByPath(keys).flatMap(NValue::asInt);
+        return getByPath(keys).flatMap(NLiteral::asInt);
     }
 
     @Override
     public NOptional<Long> getLongByPath(String... keys) {
-        return getByPath(keys).flatMap(NValue::asLong);
+        return getByPath(keys).flatMap(NLiteral::asLong);
     }
 
     @Override
     public NOptional<Float> getFloatByPath(String... keys) {
-        return getByPath(keys).flatMap(NValue::asFloat);
+        return getByPath(keys).flatMap(NLiteral::asFloat);
     }
 
     @Override
     public NOptional<Double> getDoubleByPath(String... keys) {
-        return getByPath(keys).flatMap(NValue::asDouble);
+        return getByPath(keys).flatMap(NLiteral::asDouble);
     }
 
     @Override
     public NOptional<Boolean> getBooleanByPath(String... keys) {
-        return getByPath(keys).flatMap(NValue::asBoolean);
+        return getByPath(keys).flatMap(NLiteral::asBoolean);
     }
 
     @Override
     public NOptional<Byte> getByteByPath(String... keys) {
-        return getByPath(keys).flatMap(NValue::asByte);
+        return getByPath(keys).flatMap(NLiteral::asByte);
     }
 
     @Override
     public NOptional<Short> getShortByPath(String... keys) {
-        return getByPath(keys).flatMap(NValue::asShort);
+        return getByPath(keys).flatMap(NLiteral::asShort);
     }
 
     @Override
     public NOptional<Instant> getInstantByPath(String... keys) {
-        return getByPath(keys).flatMap(NValue::asInstant);
+        return getByPath(keys).flatMap(NLiteral::asInstant);
     }
 
     @Override
     public NOptional<BigInteger> getBigIntByPath(String... keys) {
-        return getByPath(keys).flatMap(NValue::asBigInt);
+        return getByPath(keys).flatMap(NLiteral::asBigInt);
     }
 
     @Override
     public NOptional<BigDecimal> getBigDecimalByPath(String... keys) {
-        return getByPath(keys).flatMap(NValue::asBigDecimal);
+        return getByPath(keys).flatMap(NLiteral::asBigDecimal);
     }
 
     @Override
     public NOptional<Number> getNumberByPath(String... keys) {
-        return getByPath(keys).flatMap(NValue::asNumber);
+        return getByPath(keys).flatMap(NLiteral::asNumber);
     }
     @Override
     public NOptional<NArrayElement> getArray(String key) {
@@ -102,112 +102,112 @@ public abstract class AbstractNNavigatableElement extends AbstractNElement imple
 
     @Override
     public NOptional<String> getString(String key) {
-        return get(key).flatMap(NValue::asString);
+        return get(key).flatMap(NLiteral::asString);
     }
 
     @Override
     public NOptional<String> getString(NElement key) {
-        return get(key).flatMap(NValue::asString);
+        return get(key).flatMap(NLiteral::asString);
     }
 
     @Override
     public NOptional<Boolean> getBoolean(String key) {
-        return get(key).flatMap(NValue::asBoolean);
+        return get(key).flatMap(NLiteral::asBoolean);
     }
 
     @Override
     public NOptional<Boolean> getBoolean(NElement key) {
-        return get(key).flatMap(NValue::asBoolean);
+        return get(key).flatMap(NLiteral::asBoolean);
     }
 
     @Override
     public NOptional<Number> getNumber(String key) {
-        return get(key).flatMap(NValue::asNumber);
+        return get(key).flatMap(NLiteral::asNumber);
     }
 
     @Override
     public NOptional<Number> getNumber(NElement key) {
-        return get(key).flatMap(NValue::asNumber);
+        return get(key).flatMap(NLiteral::asNumber);
     }
 
     @Override
     public NOptional<Byte> getByte(String key) {
-        return get(key).flatMap(NValue::asByte);
+        return get(key).flatMap(NLiteral::asByte);
     }
 
     @Override
     public NOptional<Byte> getByte(NElement key) {
-        return get(key).flatMap(NValue::asByte);
+        return get(key).flatMap(NLiteral::asByte);
     }
 
     @Override
     public NOptional<Integer> getInt(String key) {
-        return get(key).flatMap(NValue::asInt);
+        return get(key).flatMap(NLiteral::asInt);
     }
 
     @Override
     public NOptional<Integer> getInt(NElement key) {
-        return get(key).flatMap(NValue::asInt);
+        return get(key).flatMap(NLiteral::asInt);
     }
 
     @Override
     public NOptional<Long> getLong(String key) {
-        return get(key).flatMap(NValue::asLong);
+        return get(key).flatMap(NLiteral::asLong);
     }
 
     @Override
     public NOptional<Long> getLong(NElement key) {
-        return get(key).flatMap(NValue::asLong);
+        return get(key).flatMap(NLiteral::asLong);
     }
 
     @Override
     public NOptional<Short> getShort(String key) {
-        return get(key).flatMap(NValue::asShort);
+        return get(key).flatMap(NLiteral::asShort);
     }
 
     @Override
     public NOptional<Short> getShort(NElement key) {
-        return get(key).flatMap(NValue::asShort);
+        return get(key).flatMap(NLiteral::asShort);
     }
 
     @Override
     public NOptional<Instant> getInstant(String key) {
-        return get(key).flatMap(NValue::asInstant);
+        return get(key).flatMap(NLiteral::asInstant);
     }
 
     @Override
     public NOptional<Instant> getInstant(NElement key) {
-        return get(key).flatMap(NValue::asInstant);
+        return get(key).flatMap(NLiteral::asInstant);
     }
 
     @Override
     public NOptional<Float> getFloat(String key) {
-        return get(key).flatMap(NValue::asFloat);
+        return get(key).flatMap(NLiteral::asFloat);
     }
 
     @Override
     public NOptional<Float> getFloat(NElement key) {
-        return get(key).flatMap(NValue::asFloat);
+        return get(key).flatMap(NLiteral::asFloat);
     }
 
     @Override
     public NOptional<Double> getDouble(String key) {
-        return get(key).flatMap(NValue::asDouble);
+        return get(key).flatMap(NLiteral::asDouble);
     }
 
     @Override
     public NOptional<Double> getDouble(NElement key) {
-        return get(key).flatMap(NValue::asDouble);
+        return get(key).flatMap(NLiteral::asDouble);
     }
 
     @Override
     public NOptional<BigInteger> getBigInt(NElement key) {
-        return get(key).flatMap(NValue::asBigInt);
+        return get(key).flatMap(NLiteral::asBigInt);
     }
 
     @Override
     public NOptional<BigDecimal> getBigDecimal(NElement key) {
-        return get(key).flatMap(NValue::asBigDecimal);
+        return get(key).flatMap(NLiteral::asBigDecimal);
     }
 
     @Override

@@ -56,7 +56,7 @@ public class ZipCommand extends SimpleJShellBuiltin {
             return false;
         } else if (commandLine.peek().get(session).isNonOption()) {
             String path = commandLine.nextNonOption(NArgName.of("file", session))
-                    .flatMap(NValue::asString).get(session);
+                    .flatMap(NLiteral::asString).get(session);
             NPath file = NPath.of(path, session).toAbsolute(context.getCwd());
             if (options.outZip == null) {
                 options.outZip = file;

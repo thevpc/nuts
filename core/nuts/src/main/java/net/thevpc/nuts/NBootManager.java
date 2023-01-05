@@ -52,7 +52,7 @@ public interface NBootManager extends NComponent {
      */
     boolean isFirstBoot();
 
-    NOptional<NValue> getCustomBootOption(String... names);
+    NOptional<NLiteral> getCustomBootOption(String... names);
 
     NBootOptions getBootOptions();
 

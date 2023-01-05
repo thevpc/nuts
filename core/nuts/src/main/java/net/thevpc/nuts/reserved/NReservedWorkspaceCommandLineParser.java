@@ -507,7 +507,7 @@ public final class NReservedWorkspaceCommandLineParser {
                                 if (a.isNegated()) {
                                     options.setDebug(
                                             String.valueOf(!
-                                                    NValue.of(a.getStringValue().get(session)).asBoolean()
+                                                    NLiteral.of(a.getStringValue().get(session)).asBoolean()
                                                             .ifEmpty(true).ifError(false).get()));
                                 } else {
                                     options.setDebug(a.getStringValue().get(session));

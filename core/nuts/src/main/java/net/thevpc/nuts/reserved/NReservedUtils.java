@@ -187,8 +187,8 @@ public final class NReservedUtils {
 
     public static boolean getSysBoolNutsProperty(String property, boolean defaultValue) {
         return
-                NValue.of(System.getProperty("nuts." + property)).asBoolean().ifEmpty(defaultValue).orElse(false)
-                        || NValue.of(System.getProperty("nuts.export." + property)).asBoolean().ifEmpty(defaultValue).orElse(false)
+                NLiteral.of(System.getProperty("nuts." + property)).asBoolean().ifEmpty(defaultValue).orElse(false)
+                        || NLiteral.of(System.getProperty("nuts.export." + property)).asBoolean().ifEmpty(defaultValue).orElse(false)
                 ;
     }
 
@@ -378,7 +378,7 @@ public final class NReservedUtils {
                     refForceAll.setForce(true);
                 } else if ("c".equalsIgnoreCase(line)) {
                     throw new NCancelException(session);
-                } else if (!NValue.of(line).asBoolean().orElse(false)) {
+                } else if (!NLiteral.of(line).asBoolean().orElse(false)) {
                     refForceAll.ignore(directory);
                     return 0;
                 }

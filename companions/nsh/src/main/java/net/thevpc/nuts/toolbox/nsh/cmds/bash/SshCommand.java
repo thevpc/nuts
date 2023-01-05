@@ -54,13 +54,13 @@ public class SshCommand extends SimpleJShellBuiltin {
         NArg a;
         NSession session = context.getSession();
         if (!o.cmd.isEmpty()) {
-            o.cmd.add(commandLine.next().flatMap(NValue::asString).get(session));
+            o.cmd.add(commandLine.next().flatMap(NLiteral::asString).get(session));
             return true;
         } else if (commandLine.peek().get(session).isNonOption()) {
             if (o.address == null) {
-                o.address = commandLine.next().flatMap(NValue::asString).get(session);
+                o.address = commandLine.next().flatMap(NLiteral::asString).get(session);
             } else {
-                o.cmd.add(commandLine.next().flatMap(NValue::asString).get(session));
+                o.cmd.add(commandLine.next().flatMap(NLiteral::asString).get(session));
             }
             return true;
         } else if ((a = commandLine.next("--nuts").orNull()) != null) {
@@ -79,7 +79,7 @@ public class SshCommand extends SimpleJShellBuiltin {
             return true;
         } else if (o.address == null || commandLine.peek().get(session).isNonOption()) {
             o.acceptDashNuts = false;
-            o.cmd.add(commandLine.next().flatMap(NValue::asString).get(session));
+            o.cmd.add(commandLine.next().flatMap(NLiteral::asString).get(session));
             return true;
         }
 

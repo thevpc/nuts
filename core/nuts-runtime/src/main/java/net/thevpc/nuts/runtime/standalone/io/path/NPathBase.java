@@ -184,16 +184,16 @@ public abstract class NPathBase implements NPath {
 
     public String[] getSmartParts() {
         String n = getName();
-        NValue[] vals = NVersion.of(n).get().split();
+        NLiteral[] vals = NVersion.of(n).get().split();
         int lastDot = -1;
         for (int i = vals.length - 1; i >= 0; i--) {
-            NValue v = vals[i];
+            NLiteral v = vals[i];
             String u = v.asString().get();
             if (u.equals(".")) {
                 if (i == vals.length - 1) {
                     return rebuildSmartParts(vals, i);
                 }
-                NValue v2 = vals[i + 1];
+                NLiteral v2 = vals[i + 1];
                 if (v2.isNumber()) {
                     //check if the part before is also a number
                     if (i > 0 && vals[i - 1].isNumber()) {
@@ -219,14 +219,14 @@ public abstract class NPathBase implements NPath {
         return rebuildSmartParts(vals, lastDot);
     }
 
-    private String[] rebuildSmartParts(NValue[] vals, int split) {
+    private String[] rebuildSmartParts(NLiteral[] vals, int split) {
         return new String[]{
                 concatSmartParts(vals, 0, split),
                 concatSmartParts(vals, split + 1, vals.length),
         };
     }
 
-    private String concatSmartParts(NValue[] vals, int from, int to) {
+    private String concatSmartParts(NLiteral[] vals, int from, int to) {
         StringBuilder sb = new StringBuilder();
         for (int i = from; i < to; i++) {
             sb.append(vals[i].asString().get());

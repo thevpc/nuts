@@ -34,7 +34,7 @@ public class NElementMapperNId implements NElementMapper<NId> {
     @Override
     public NId createObject(NElement o, Type typeOfResult, NElementFactoryContext context) {
         NSession session = context.getSession();
-        return NId.of(o.asPrimitive().flatMap(NValue::asString).get(session)).get(session);
+        return NId.of(o.asPrimitive().flatMap(NLiteral::asString).get(session)).get(session);
     }
 
 }

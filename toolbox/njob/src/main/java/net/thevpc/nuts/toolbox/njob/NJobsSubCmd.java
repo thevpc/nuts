@@ -337,7 +337,7 @@ public class NJobsSubCmd {
             switch (a.key()) {
                 case "-w":
                 case "--weeks": {
-                    cmd.withNextValue((v, r, s) -> {
+                    cmd.withNextStringLiteral((v, r, s) -> {
                         d.countType = ChronoUnit.WEEKS;
                         d.count = v.asInt().get(session);
                     });
@@ -345,7 +345,7 @@ public class NJobsSubCmd {
                 }
                 case "-m":
                 case "--months": {
-                    cmd.withNextValue((v, r, s) -> {
+                    cmd.withNextStringLiteral((v, r, s) -> {
                         d.countType = ChronoUnit.MONTHS;
                         d.count = v.asInt().get(session);
                     });
@@ -353,7 +353,7 @@ public class NJobsSubCmd {
                     break;
                 }
                 case "-l": {
-                    cmd.withNextValue((v, r, s) -> {
+                    cmd.withNextStringLiteral((v, r, s) -> {
                         d.countType = null;
                         d.count = v.asInt().get(session);
                     });

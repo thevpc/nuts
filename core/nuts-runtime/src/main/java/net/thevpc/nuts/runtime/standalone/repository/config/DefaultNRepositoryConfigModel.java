@@ -701,8 +701,8 @@ public class DefaultNRepositoryConfigModel implements NRepositoryConfigModel {
 
 
     @Override
-    public NOptional<NValue> get(String key, boolean inherit, NSession session) {
-        NOptional<NValue> o = config_getEnv(key, inherit, session);
+    public NOptional<NLiteral> get(String key, boolean inherit, NSession session) {
+        NOptional<NLiteral> o = config_getEnv(key, inherit, session);
         if (o.isBlank() && inherit) {
             return o.orElseUse(() -> NConfigs.of(session).getConfigProperty(key));
         }
@@ -722,7 +722,7 @@ public class DefaultNRepositoryConfigModel implements NRepositoryConfigModel {
     ////////////////////////////////////////////
 
 
-    public NOptional<NValue> config_getEnv(String key, boolean inherit, NSession session) {
+    public NOptional<NLiteral> config_getEnv(String key, boolean inherit, NSession session) {
         NRepositoryConfigModel model = ((DefaultNRepoConfigManager) repository.config()).getModel();
         NRepositoryConfig config = model.getConfig(session);
         String t = null;
@@ -730,7 +730,7 @@ public class DefaultNRepositoryConfigModel implements NRepositoryConfigModel {
             t = config.getEnv().get(key);
         }
         if (!NBlankable.isBlank(t)) {
-            return NOptional.of(NValue.of(t));
+            return NOptional.of(NLiteral.of(t));
         }
         if (inherit) {
             return NConfigs.of(session).getConfigProperty(key);

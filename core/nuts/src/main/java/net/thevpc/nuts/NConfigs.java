@@ -118,7 +118,7 @@ public interface NConfigs extends NComponent {
 
     Map<String, String> getConfigMap();
 
-    NOptional<NValue> getConfigProperty(String property);
+    NOptional<NLiteral> getConfigProperty(String property);
 
     /**
      * @param property property

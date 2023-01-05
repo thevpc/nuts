@@ -60,7 +60,7 @@ public class HeadCommand extends SimpleJShellBuiltin {
             commandLine.skip();
             return true;
         } else if (!a.isOption()) {
-            String path = commandLine.next().flatMap(NValue::asString).get(session);
+            String path = commandLine.next().flatMap(NLiteral::asString).get(session);
             String file = NPath.of(path, session).toAbsolute(context.getCwd()).toString();
             options.files.add(file);
             return true;

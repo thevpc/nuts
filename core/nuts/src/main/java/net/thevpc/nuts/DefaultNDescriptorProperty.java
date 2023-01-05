@@ -5,10 +5,10 @@ import java.util.Objects;
 
 public class DefaultNDescriptorProperty implements NDescriptorProperty {
     private final String name;
-    private final NValue value;
+    private final NLiteral value;
     private final NEnvCondition condition;
 
-    public DefaultNDescriptorProperty(String name, NValue value, NEnvCondition condition) {
+    public DefaultNDescriptorProperty(String name, NLiteral value, NEnvCondition condition) {
         this.name = name;
         this.value = value;
         this.condition = condition == null ? NEnvCondition.BLANK : condition.readOnly();
@@ -20,7 +20,7 @@ public class DefaultNDescriptorProperty implements NDescriptorProperty {
     }
 
     @Override
-    public NValue getValue() {
+    public NLiteral getValue() {
         return value;
     }
 

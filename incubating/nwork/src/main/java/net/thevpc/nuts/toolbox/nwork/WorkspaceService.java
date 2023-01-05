@@ -142,7 +142,7 @@ public class WorkspaceService {
         int count = 0;
         while (commandLine.hasNext()) {
             if (commandLine.peek().get(session).isNonOption()) {
-                String expression = commandLine.next().flatMap(NValue::asString).get(session);
+                String expression = commandLine.next().flatMap(NLiteral::asString).get(session);
                 if (commandLine.isExecMode()) {
                     setScanEnabled(Paths.get(expression), enable);
                     count++;
@@ -221,7 +221,7 @@ public class WorkspaceService {
                 reset = a.getBooleanValue().get(session);
             } else if (cmdLine.peek().get(session).isNonOption()) {
                 String folder = cmdLine.nextNonOption(NArgName.of("Folder", session))
-                        .flatMap(NValue::asString).get(session);
+                        .flatMap(NLiteral::asString).get(session);
                 run = true;
                 toScan.add(new File(folder));
             } else {
@@ -253,7 +253,7 @@ public class WorkspaceService {
                 where = a.getStringValue().get(session);
             } else if (cmdLine.peek().get(session).isNonOption()) {
                 String folder = cmdLine.nextNonOption(NArgName.of("Folder", session))
-                        .flatMap(NValue::asString).get(session);
+                        .flatMap(NLiteral::asString).get(session);
                 toScan.add(new File(folder));
             } else {
                 context.configureLast(cmdLine);
@@ -348,7 +348,7 @@ public class WorkspaceService {
             } else if (cmd.isNextOption()) {
                 cmd.setCommandName("nwork check").throwUnexpectedArgument();
             } else {
-                filters.add(cmd.next().flatMap(NValue::asString).get(session));
+                filters.add(cmd.next().flatMap(NLiteral::asString).get(session));
             }
         }
 

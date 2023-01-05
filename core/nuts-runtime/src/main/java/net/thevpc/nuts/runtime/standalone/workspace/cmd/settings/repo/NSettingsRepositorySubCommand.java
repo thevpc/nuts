@@ -115,7 +115,7 @@ public class NSettingsRepositorySubCommand extends AbstractNSettingsSubCommand {
                                 d.repositoryName = n.getStringKey().get(session);
                                 d.location = n.getStringValue().get(session);
                             } else {
-                                d.location = cmdLine.next().flatMap(NValue::asString).get(session);
+                                d.location = cmdLine.next().flatMap(NLiteral::asString).get(session);
                                 String loc2 = NRepositoryDB.of(session).getRepositoryLocationByName(d.location);
                                 if (loc2 != null) {
                                     d.repositoryName = d.location;
@@ -170,7 +170,7 @@ public class NSettingsRepositorySubCommand extends AbstractNSettingsSubCommand {
                             } else if (repositoryName.isNotNull()) {
                                 cmdLine.throwUnexpectedArgument();
                             } else {
-                                repositoryName.set(cmdLine.next().flatMap(NValue::asString).get(session));
+                                repositoryName.set(cmdLine.next().flatMap(NLiteral::asString).get(session));
                             }
                         }
                         break;
@@ -210,7 +210,7 @@ public class NSettingsRepositorySubCommand extends AbstractNSettingsSubCommand {
                                 } else if (parent.isNotNull()) {
                                     cmdLine.throwUnexpectedArgument();
                                 } else {
-                                    parent.set(cmdLine.next().flatMap(NValue::asString).get(session));
+                                    parent.set(cmdLine.next().flatMap(NLiteral::asString).get(session));
                                 }
                             }
                             break;
@@ -231,17 +231,17 @@ public class NSettingsRepositorySubCommand extends AbstractNSettingsSubCommand {
             enableRepo(cmdLine, autoSave, session, false);
             return true;
         } else if (cmdLine.next("edit repo", "er").isPresent()) {
-            String repoId = cmdLine.nextNonOption(NArgName.of("RepositoryName", session)).flatMap(NValue::asString).get(session);
+            String repoId = cmdLine.nextNonOption(NArgName.of("RepositoryName", session)).flatMap(NLiteral::asString).get(session);
             if (cmdLine.next("add repo", "ar").isPresent()) {
-                String repositoryName = cmdLine.nextNonOption(NArgName.of("NewRepositoryName", session)).flatMap(NValue::asString).get(session);
-                String location = cmdLine.nextNonOption(NArgName.of("folder", session)).flatMap(NValue::asString).get(session);
+                String repositoryName = cmdLine.nextNonOption(NArgName.of("NewRepositoryName", session)).flatMap(NLiteral::asString).get(session);
+                String location = cmdLine.nextNonOption(NArgName.of("folder", session)).flatMap(NLiteral::asString).get(session);
 
                 NRepository editedRepo = NRepositories.of(session).getRepository(repoId);
                 NRepository repo = editedRepo.config().addMirror(new NAddRepositoryOptions().setName(repositoryName).setLocation(repositoryName).setConfig(new NRepositoryConfig().setName(repositoryName).setLocation(NRepositoryLocation.of(location))));
                 NConfigs.of(session).save();
 
             } else if (cmdLine.next("remove repo", "rr").isPresent()) {
-                String location = cmdLine.nextNonOption(NArgName.of("RepositoryName", session)).flatMap(NValue::asString).get(session);
+                String location = cmdLine.nextNonOption(NArgName.of("RepositoryName", session)).flatMap(NLiteral::asString).get(session);
                 NRepository editedRepo = NRepositories.of(session).getRepository(repoId);
                 editedRepo.config().removeMirror(location);
                 NConfigs.of(session).save();
@@ -305,7 +305,7 @@ public class NSettingsRepositorySubCommand extends AbstractNSettingsSubCommand {
                         if (aa.isOption()) {
                             cmdLine.throwUnexpectedArgument();
                         } else if (repositoryName.isNull()) {
-                            repositoryName.set(cmdLine.next().flatMap(NValue::asString).get(session));
+                            repositoryName.set(cmdLine.next().flatMap(NLiteral::asString).get(session));
                         } else {
                             cmdLine.throwUnexpectedArgument();
                         }

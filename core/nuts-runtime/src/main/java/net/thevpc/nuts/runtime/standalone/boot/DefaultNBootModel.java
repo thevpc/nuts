@@ -61,7 +61,7 @@ public class DefaultNBootModel implements NBootModel {
     protected boolean initializing;
     protected NBootOptions bOptions;
     protected NSession bootSession;
-    private Map<String, NValue> customBootOptions;
+    private Map<String, NLiteral> customBootOptions;
     private NWorkspaceTerminalOptions bootTerminal;
     private NLogger LOG;
     private NSystemTerminal systemTerminal;
@@ -318,9 +318,9 @@ public class DefaultNBootModel implements NBootModel {
         return bootSession;
     }
 
-    public NOptional<NValue> getCustomBootOption(String... names) {
+    public NOptional<NLiteral> getCustomBootOption(String... names) {
         for (String name : names) {
-            NValue r = getCustomBootOptions().get(name);
+            NLiteral r = getCustomBootOptions().get(name);
             if (r != null) {
                 return NOptional.of(r);
             }
@@ -328,12 +328,12 @@ public class DefaultNBootModel implements NBootModel {
         return NOptional.ofNamedEmpty("options "+ Arrays.asList(names));
     }
 
-    public NOptional<NValue> getCustomBootOption(String name) {
-        NValue r = getCustomBootOptions().get(name);
+    public NOptional<NLiteral> getCustomBootOption(String name) {
+        NLiteral r = getCustomBootOptions().get(name);
         return NOptional.ofNamed(r, "option " + name);
     }
 
-    public Map<String, NValue> getCustomBootOptions() {
+    public Map<String, NLiteral> getCustomBootOptions() {
         if (customBootOptions == null) {
             customBootOptions = new LinkedHashMap<>();
             List<String> properties = bOptions.getUserOptions().get().getCustomOptions().orNull();
@@ -343,7 +343,7 @@ public class DefaultNBootModel implements NBootModel {
                         DefaultNArg a = new DefaultNArg(property);
                         if (a.isActive()) {
                             String key = a.getKey().asString().orElse("");
-                            this.customBootOptions.put(key, NValue.of(a.getStringValue().orElse(null)));
+                            this.customBootOptions.put(key, NLiteral.of(a.getStringValue().orElse(null)));
                         }
                     }
                 }

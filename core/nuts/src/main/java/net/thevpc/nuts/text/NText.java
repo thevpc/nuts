@@ -37,7 +37,6 @@ import net.thevpc.nuts.util.NAssert;
  */
 public interface NText extends NString {
     static NString parse(String str, NSession session) {
-        NAssert.requireSession(session);
         return NTexts.of(session).parse(str);
     }
 

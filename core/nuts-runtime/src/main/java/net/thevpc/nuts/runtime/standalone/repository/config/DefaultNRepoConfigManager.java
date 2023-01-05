@@ -219,12 +219,12 @@ public class DefaultNRepoConfigManager implements NRepositoryConfigManager, NRep
     }
 
     @Override
-    public NOptional<NValue> getConfigProperty(String key, boolean inherit) {
+    public NOptional<NLiteral> getConfigProperty(String key, boolean inherit) {
         NSessionUtils.checkSession(model.getWorkspace(), session);
         return model.get(key, inherit, getSession());
     }
     @Override
-    public NOptional<NValue> getConfigProperty(String property) {
+    public NOptional<NLiteral> getConfigProperty(String property) {
         NSessionUtils.checkSession(model.getWorkspace(), session);
         return getConfigProperty(property, true);
     }

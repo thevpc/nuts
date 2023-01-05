@@ -309,7 +309,7 @@ public class DefaultNSession implements Cloneable, NSession {
                             if (a.isNegated()) {
                                 this.setDebug(
                                         String.valueOf(!
-                                                NValue.of(a.getStringValue().get(this)).asBoolean()
+                                                NLiteral.of(a.getStringValue().get(this)).asBoolean()
                                                         .ifEmpty(true).orElse(false)
                                         ));
                             } else {

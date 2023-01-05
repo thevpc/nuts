@@ -1,7 +1,7 @@
 package net.thevpc.nuts.lib.template;
 
 import net.thevpc.nuts.NSession;
-import net.thevpc.nuts.NValue;
+import net.thevpc.nuts.NLiteral;
 
 public class ValidatorFactory {
 
@@ -125,7 +125,7 @@ public class ValidatorFactory {
     public final StringValidator BOOLEAN = new StringValidator() {
         @Override
         public String validate(String value) {
-            Boolean b = NValue.of(value).asBoolean().orNull();
+            Boolean b = NLiteral.of(value).asBoolean().orNull();
             if (b == null) {
                 throw new IllegalArgumentException("Invalid boolean");
             }

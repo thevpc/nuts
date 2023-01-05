@@ -1448,13 +1448,13 @@ public class DefaultNWorkspaceConfigModel {
                     executorService = NBootManager.of(session).getBootOptions().getExecutorService().orNull();
                     if (executorService == null) {
 
-                        int minPoolSize = getConfigProperty("nuts.threads.min", session).flatMap(NValue::asInt).orElse(2);
+                        int minPoolSize = getConfigProperty("nuts.threads.min", session).flatMap(NLiteral::asInt).orElse(2);
                         if (minPoolSize < 1) {
                             minPoolSize = 60;
                         } else if (minPoolSize > 500) {
                             minPoolSize = 500;
                         }
-                        int maxPoolSize = getConfigProperty("nuts.threads.max", session).flatMap(NValue::asInt).orElse(60);
+                        int maxPoolSize = getConfigProperty("nuts.threads.max", session).flatMap(NLiteral::asInt).orElse(60);
                         if (maxPoolSize < 1) {
                             maxPoolSize = 60;
                         } else if (maxPoolSize > 500) {
@@ -1465,7 +1465,7 @@ public class DefaultNWorkspaceConfigModel {
                         }
                         TimePeriod defaultPeriod = new TimePeriod(3, TimeUnit.SECONDS);
                         TimePeriod period = TimePeriod.parse(
-                                getConfigProperty("nuts.threads.keep-alive", session).flatMap(NValue::asString).orNull(),
+                                getConfigProperty("nuts.threads.keep-alive", session).flatMap(NLiteral::asString).orNull(),
                                 TimeUnit.SECONDS
                         ).orElse(defaultPeriod);
                         if (period.getCount() < 0) {
@@ -1578,11 +1578,11 @@ public class DefaultNWorkspaceConfigModel {
         return p;
     }
 
-    public NOptional<NValue> getConfigProperty(String property, NSession session) {
+    public NOptional<NLiteral> getConfigProperty(String property, NSession session) {
         Map<String, String> env = getStoreModelMain().getEnv();
         if (env != null) {
             String v = env.get(property);
-            return NOptional.of(v == null ? null : NValue.of(v));
+            return NOptional.of(v == null ? null : NLiteral.of(v));
         }
         return NOptional.ofEmpty(s -> NMsg.ofCstyle("config property not found : %s", property));
     }

@@ -638,7 +638,7 @@ public class DefaultNTexts implements NTexts {
                 }
                 if (x < cc.length()) {
                     NTextStyle found = NTextStyle.of(NTextStyleType.valueOf(expandAlias(kind.toUpperCase().substring(0, x))),
-                            NValue.of(kind.substring(x)).asInt().orElse(0)
+                            NLiteral.of(kind.substring(x)).asInt().orElse(0)
                     );
                     return new CustomStyleCodeHighlighter(found, session);
                 } else {

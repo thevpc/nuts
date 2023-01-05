@@ -101,7 +101,7 @@ public class NExecHelper extends AbstractSyncIProcessExecHelper {
                     ));
         }
         if (showCommand || NBootManager.of(session).getCustomBootOption("---show-command")
-                .flatMap(NValue::asBoolean)
+                .flatMap(NLiteral::asBoolean)
                 .orElse(false)) {
             if (prepareTerminal.out().getTerminalMode() == NTerminalMode.FORMATTED) {
                 prepareTerminal.out().printf("%s ", NTexts.of(session).ofStyled("[exec]", NTextStyle.primary4()));

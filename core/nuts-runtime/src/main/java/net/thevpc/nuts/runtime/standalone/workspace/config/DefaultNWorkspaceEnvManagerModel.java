@@ -311,10 +311,10 @@ public class DefaultNWorkspaceEnvManagerModel {
         return userProperties;
     }
 
-    public NOptional<NValue> getProperty(String property, NSession session) {
+    public NOptional<NLiteral> getProperty(String property, NSession session) {
         Object v = userProperties.get(property);
         return NOptional.of(
-                v == null ? null : NValue.of(v)
+                v == null ? null : NLiteral.of(v)
         );
     }
 

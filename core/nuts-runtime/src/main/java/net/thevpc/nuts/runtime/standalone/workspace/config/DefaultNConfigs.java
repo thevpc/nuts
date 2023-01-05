@@ -234,7 +234,7 @@ public class DefaultNConfigs implements NConfigs, NConfigsExt {
     }
 
     @Override
-    public NOptional<NValue> getConfigProperty(String property) {
+    public NOptional<NLiteral> getConfigProperty(String property) {
         checkSession();
         return model.getConfigProperty(property, getSession());
     }

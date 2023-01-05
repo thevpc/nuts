@@ -314,7 +314,7 @@ public abstract class AbstractNInstallCommand extends NWorkspaceCommandBase<NIns
             }
             case "-s":
             case "--strategy": {
-                String val = commandLine.nextString().flatMap(NValue::asString).get(session);
+                String val = commandLine.nextString().flatMap(NLiteral::asString).get(session);
                 if (enabled) {
                     this.setStrategy(CoreEnumUtils.parseEnumString(val, NInstallStrategy.class, false));
                 }

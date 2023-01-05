@@ -49,7 +49,7 @@ public class DefaultNEnvs implements NEnvs {
     }
 
     @Override
-    public NOptional<NValue> getProperty(String property) {
+    public NOptional<NLiteral> getProperty(String property) {
         checkSession();
         return model.getProperty(property, getSession());
     }

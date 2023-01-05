@@ -390,7 +390,7 @@ public class NTextStyle implements NEnum {
         switch (t) {
             case FORE_TRUE_COLOR:
             case BACK_TRUE_COLOR: {
-                Integer ii = NValue.of("0x" + nbr).asInt().orNull();
+                Integer ii = NLiteral.of("0x" + nbr).asInt().orNull();
                 if (ii == null) {
                     if (NBlankable.isBlank(key)) {
                         ii = 0;
@@ -401,7 +401,7 @@ public class NTextStyle implements NEnum {
                 return NOptional.of(NTextStyle.of(t, ii));
             }
             default: {
-                Integer ii = NValue.of(nbr).asInt().orNull();
+                Integer ii = NLiteral.of(nbr).asInt().orNull();
                 if (ii == null) {
                     if (NBlankable.isBlank(key)) {
                         ii = 0;

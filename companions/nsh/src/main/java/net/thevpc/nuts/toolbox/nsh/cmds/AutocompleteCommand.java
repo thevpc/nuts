@@ -53,7 +53,7 @@ public class AutocompleteCommand extends SimpleJShellBuiltin {
         NSession session = context.getSession();
         if (!cmdLine.isNextOption()) {
             while (cmdLine.hasNext()) {
-                String s = cmdLine.next().flatMap(NValue::asString).get(session);
+                String s = cmdLine.next().flatMap(NLiteral::asString).get(session);
                 if (options.cmd == null) {
                     options.cmd = s;
                 } else {

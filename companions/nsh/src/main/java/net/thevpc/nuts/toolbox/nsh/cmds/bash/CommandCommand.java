@@ -29,7 +29,7 @@ package net.thevpc.nuts.toolbox.nsh.cmds.bash;
 import net.thevpc.nuts.cmdline.NArg;
 import net.thevpc.nuts.cmdline.NCommandLine;
 import net.thevpc.nuts.NSession;
-import net.thevpc.nuts.NValue;
+import net.thevpc.nuts.NLiteral;
 import net.thevpc.nuts.spi.NComponentScope;
 import net.thevpc.nuts.spi.NComponentScopeType;
 import net.thevpc.nuts.toolbox.nsh.SimpleJShellBuiltin;
@@ -61,7 +61,7 @@ public class CommandCommand extends SimpleJShellBuiltin {
             options.p = a.getBooleanValue().get(session);
         } else if (!commandLine.isNextOption()) {
             if (options.commandName == null) {
-                options.commandName = commandLine.next().flatMap(NValue::asString).get(session);
+                options.commandName = commandLine.next().flatMap(NLiteral::asString).get(session);
             }
             options.args.addAll(Arrays.asList(commandLine.toStringArray()));
             commandLine.skipAll();

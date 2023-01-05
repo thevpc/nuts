@@ -215,7 +215,7 @@ public interface NVersion extends Serializable, /*NutsTokenFilter, */NFormattabl
      * @param index version part index
      * @return element at given index.
      */
-    NOptional<NValue> get(int index);
+    NOptional<NLiteral> get(int index);
 
 
     /**
@@ -226,7 +226,7 @@ public interface NVersion extends Serializable, /*NutsTokenFilter, */NFormattabl
      *
      * @return all elements
      */
-    NValue[] split();
+    NLiteral[] split();
 
     /**
      * number element at given index. if the index is negative will return from right (-1 is the first starting from the right).
@@ -244,7 +244,7 @@ public interface NVersion extends Serializable, /*NutsTokenFilter, */NFormattabl
      * @param index version part index
      * @return element at given index.
      */
-    NOptional<NValue> getNumber(int index);
+    NOptional<NLiteral> getNumber(int index);
 
     boolean isLatestVersion();
 

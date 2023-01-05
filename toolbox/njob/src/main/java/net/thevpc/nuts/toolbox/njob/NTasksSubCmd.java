@@ -150,7 +150,7 @@ public class NTasksSubCmd {
                 runLater.add(t -> t.setPriority(NPriority.NORMAL));
             } else {
                 if (cmd.peek().get(session).isNonOption() && !nameVisited) {
-                    String n = cmd.next("name").flatMap(NValue::asString).get(session);
+                    String n = cmd.next("name").flatMap(NLiteral::asString).get(session);
                     runLater.add(t -> t.setName(n));
                 } else {
                     cmd.throwUnexpectedArgument();
@@ -735,7 +735,7 @@ public class NTasksSubCmd {
     private NTask findTask(String pid, NCommandLine cmd) {
         NTask t = null;
         if (pid.startsWith("#")) {
-            int x = NValue.of(pid.substring(1)).asInt().orElse(-1);
+            int x = NLiteral.of(pid.substring(1)).asInt().orElse(-1);
             if (x >= 1) {
                 Object lastResults = context.getSession().getProperty("LastResults");
                 if (lastResults instanceof NTask[] && x <= ((NTask[]) lastResults).length) {

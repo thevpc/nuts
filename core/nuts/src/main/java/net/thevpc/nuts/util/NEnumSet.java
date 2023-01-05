@@ -2,7 +2,7 @@ package net.thevpc.nuts.util;
 
 import net.thevpc.nuts.NMsg;
 import net.thevpc.nuts.NOptional;
-import net.thevpc.nuts.NValue;
+import net.thevpc.nuts.NLiteral;
 
 import java.lang.reflect.Array;
 import java.lang.reflect.Constructor;
@@ -123,7 +123,7 @@ public class NEnumSet<T extends Enum<T>> implements Iterable<T> {
         }
         List<String> z = NStringUtils.split(value, ",;|+", true, true);
         if (z.size() == 1) {
-            NOptional<BigInteger> lng = NValue.of(z.get(0)).asBigInt();
+            NOptional<BigInteger> lng = NLiteral.of(z.get(0)).asBigInt();
             if (lng.isPresent()) {
                 return NOptional.of(ofTypeBitSet(setType, lng.get(), type));
             }

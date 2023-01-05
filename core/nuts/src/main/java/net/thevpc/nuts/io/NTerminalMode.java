@@ -28,7 +28,7 @@ package net.thevpc.nuts.io;
 
 import net.thevpc.nuts.util.NEnum;
 import net.thevpc.nuts.NOptional;
-import net.thevpc.nuts.NValue;
+import net.thevpc.nuts.NLiteral;
 import net.thevpc.nuts.util.NNameFormat;
 import net.thevpc.nuts.util.NStringUtils;
 
@@ -88,7 +88,7 @@ public enum NTerminalMode implements NEnum {
                 case "H":
                     return NOptional.of(INHERITED);
                 default:{
-                    Boolean b = NValue.of(normalizedValue).asBoolean().orNull();
+                    Boolean b = NLiteral.of(normalizedValue).asBoolean().orNull();
                     if(b!=null){
                         return NOptional.of(b?FORMATTED:FILTERED);
                     }

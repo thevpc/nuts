@@ -70,8 +70,8 @@ public class ApacheTomcatRepositoryModel implements NRepositoryModel {
             }
             if (found) {
                 // http://tomcat.apache.org/whichversion.html
-                int i = id.getVersion().getNumber(0).flatMap(NValue::asInt).orElse(-1);
-                int j = id.getVersion().getNumber(1).flatMap(NValue::asInt).orElse(-1);
+                int i = id.getVersion().getNumber(0).flatMap(NLiteral::asInt).orElse(-1);
+                int j = id.getVersion().getNumber(1).flatMap(NLiteral::asInt).orElse(-1);
                 String javaVersion = "";
                 if (i <= 0) {
                     //
@@ -202,7 +202,7 @@ public class ApacheTomcatRepositoryModel implements NRepositoryModel {
         if (version.compareTo("4.1.27") == 0) {
             bin = "binaries";
         }
-        return HTTPS_ARCHIVE_APACHE_ORG_DIST_TOMCAT + "tomcat-" + version.get(0).flatMap(NValue::asString).orElse("unknown") + "/v" + version + "/" + bin + "/" + prefix + version + extension;
+        return HTTPS_ARCHIVE_APACHE_ORG_DIST_TOMCAT + "tomcat-" + version.get(0).flatMap(NLiteral::asString).orElse("unknown") + "/v" + version + "/" + bin + "/" + prefix + version + extension;
     }
 
     public String getIdLocalFile(NId id, NFetchMode fetchMode, NRepository repository, NSession session) {

@@ -143,8 +143,8 @@ public class JavaClassUtils {
 
     public static String sourceVersionToClassVersion(String sourceVersion, NSession session) {
         NVersion v = NVersion.of(sourceVersion).get(session);
-        int major = v.getNumber(0).flatMap(NValue::asInt).orElse(0);
-        int minor = v.getNumber(1).flatMap(NValue::asInt).orElse(-1);
+        int major = v.getNumber(0).flatMap(NLiteral::asInt).orElse(0);
+        int minor = v.getNumber(1).flatMap(NLiteral::asInt).orElse(-1);
         if (major < 1) {
             throw new NIllegalArgumentException(session, NMsg.ofCstyle("invalid sourceVersion %s", sourceVersion));
         }

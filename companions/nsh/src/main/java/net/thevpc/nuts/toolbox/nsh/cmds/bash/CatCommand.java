@@ -79,7 +79,7 @@ public class CatCommand extends SimpleJShellBuiltin {
             options.highlighter = NStringUtils.trim(a.getStringValue().get(session));
             return true;
         } else if (!commandLine.isNextOption()) {
-            String path = commandLine.next().flatMap(NValue::asString).get(session);
+            String path = commandLine.next().flatMap(NLiteral::asString).get(session);
             options.files.add(new FileInfo(NPath.of(path, session), options.highlighter));
             return true;
         }

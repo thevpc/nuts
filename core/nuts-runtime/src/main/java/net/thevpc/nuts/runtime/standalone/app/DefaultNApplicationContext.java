@@ -92,7 +92,7 @@ public class DefaultNApplicationContext implements NApplicationContext {
                     case "update": {
                         mode = NApplicationMode.UPDATE;
                         if (execModeCommand.hasNext()) {
-                            appPreviousVersion = NVersion.of(execModeCommand.next().flatMap(NValue::asString).get(session)).get(session);
+                            appPreviousVersion = NVersion.of(execModeCommand.next().flatMap(NLiteral::asString).get(session)).get(session);
                         }
                         modeArgs = execModeCommand.toStringList();
                         execModeCommand.skipAll();

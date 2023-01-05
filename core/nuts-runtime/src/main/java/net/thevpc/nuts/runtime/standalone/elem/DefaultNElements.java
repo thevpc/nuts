@@ -388,7 +388,7 @@ public class DefaultNElements extends DefaultFormatBase<NElements> implements NE
 
     @Override
     public NPrimitiveElement ofBoolean(String value) {
-        NOptional<Boolean> o = NValue.of(value).asBoolean();
+        NOptional<Boolean> o = NLiteral.of(value).asBoolean();
         if (o.isEmpty()) {
             return ofNull();
         }
@@ -515,7 +515,7 @@ public class DefaultNElements extends DefaultFormatBase<NElements> implements NE
         if (value == null) {
             return ofNull();
         }
-        return new DefaultNPrimitiveElement(NElementType.INSTANT, DefaultNValue.parseInstant(value).get(getSession()), getSession());
+        return new DefaultNPrimitiveElement(NElementType.INSTANT, DefaultNLiteral.parseInstant(value).get(getSession()), getSession());
     }
 
     @Override

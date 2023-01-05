@@ -28,7 +28,7 @@ package net.thevpc.nuts.toolbox.nsh.cmds.bash;
 
 import net.thevpc.nuts.cmdline.NCommandLine;
 import net.thevpc.nuts.NSession;
-import net.thevpc.nuts.NValue;
+import net.thevpc.nuts.NLiteral;
 import net.thevpc.nuts.spi.NComponentScope;
 import net.thevpc.nuts.spi.NComponentScopeType;
 import net.thevpc.nuts.toolbox.nsh.SimpleJShellBuiltin;
@@ -50,7 +50,7 @@ public class CdCommand extends SimpleJShellBuiltin {
         Options options = context.getOptions();
         if (commandLine.peek().get(session).isNonOption()) {
             if (options.dirname == null) {
-                options.dirname = commandLine.next().flatMap(NValue::asString).get(session);
+                options.dirname = commandLine.next().flatMap(NLiteral::asString).get(session);
                 return true;
             } else {
                 commandLine.throwUnexpectedArgument();

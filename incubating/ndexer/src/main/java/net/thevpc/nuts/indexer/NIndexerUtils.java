@@ -20,7 +20,7 @@ public class NIndexerUtils {
 
     public static Path getCacheDir(NSession session, String entity) {
         String k = "NutsIndexerUtils.CACHE." + entity;
-        String m = NEnvs.of(session).getProperty(k).flatMap(NValue::asString).orNull();
+        String m = NEnvs.of(session).getProperty(k).flatMap(NLiteral::asString).orNull();
         if (m == null) {
             m = NLocations.of(session)
                     .getStoreLocation(NIdResolver.of(session).resolveId(NIndexerUtils.class),

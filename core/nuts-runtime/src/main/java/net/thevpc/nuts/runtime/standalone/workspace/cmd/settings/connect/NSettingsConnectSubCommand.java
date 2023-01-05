@@ -40,7 +40,7 @@ public class NSettingsConnectSubCommand extends AbstractNSettingsSubCommand {
                 } else if (commandLine.isNextOption()) {
                     session.configureLast(commandLine);
                 } else {
-                    server = commandLine.nextNonOption(NArgName.of("ServerAddress",session)).flatMap(NValue::asString).get(session);
+                    server = commandLine.nextNonOption(NArgName.of("ServerAddress",session)).flatMap(NLiteral::asString).get(session);
                     commandLine.setCommandName("settings connect").throwUnexpectedArgument();
                 }
             }
@@ -55,7 +55,7 @@ public class NSettingsConnectSubCommand extends AbstractNSettingsSubCommand {
                 server = server.substring(server.indexOf("@") + 1);
             }
             if (server.contains(":")) {
-                port =  NValue.of(server.substring(server.indexOf(":") + 1)).asInt().orElse(-1);
+                port =  NLiteral.of(server.substring(server.indexOf(":") + 1)).asInt().orElse(-1);
                 server = server.substring(0, server.indexOf(":"));
             }
             if (!NBlankable.isBlank(login) && NBlankable.isBlank(password)) {

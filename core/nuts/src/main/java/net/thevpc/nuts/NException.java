@@ -103,7 +103,6 @@ public class NException extends RuntimeException implements NSessionAwareExcepti
     }
 
     static NString messageToFormattedString(NMsg message, NSession session) {
-        NAssert.requireSession(session);
         return NTexts.of(session).ofText(validateFormattedMessage(message));
     }
 

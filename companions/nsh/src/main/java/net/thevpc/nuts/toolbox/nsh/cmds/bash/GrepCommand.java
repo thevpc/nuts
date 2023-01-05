@@ -90,9 +90,9 @@ public class GrepCommand extends SimpleJShellBuiltin {
             return true;
         } else if (commandLine.peek().get(session).isNonOption()) {
             if (options.expression == null) {
-                options.expression = commandLine.next().flatMap(NValue::asString).get(session);
+                options.expression = commandLine.next().flatMap(NLiteral::asString).get(session);
             } else {
-                String path = commandLine.next().flatMap(NValue::asString).get(session);
+                String path = commandLine.next().flatMap(NLiteral::asString).get(session);
                 options.files.add(new FileInfo(NPath.of(path, session), options.highlighter));
             }
             return true;

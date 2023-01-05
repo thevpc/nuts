@@ -94,7 +94,7 @@ public class NServerMain implements NApplication {
                 break;
             }
             count++;
-            s = cmdLine.nextNonOption(NArgName.of("ServerName", session)).flatMap(NValue::asString).get(session);
+            s = cmdLine.nextNonOption(NArgName.of("ServerName", session)).flatMap(NLiteral::asString).get(session);
             if (cmdLine.isExecMode()) {
                 serverManager.stopServer(s);
             }

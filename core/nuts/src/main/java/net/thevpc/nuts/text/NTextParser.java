@@ -41,7 +41,6 @@ import java.nio.file.Path;
  */
 public interface NTextParser {
     static NTextParser of(NSession session) {
-        NAssert.requireSession(session);
         return NTexts.of(session).parser();
     }
 

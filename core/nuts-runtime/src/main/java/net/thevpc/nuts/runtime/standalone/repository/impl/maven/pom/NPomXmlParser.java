@@ -398,7 +398,7 @@ public class NPomXmlParser {
                     for (int j = 0; j < dependenciesChildList.getLength(); j++) {
                         Element dependenciesElem = toElement(dependenciesChildList.item(j), "dependencies");
                         if (dependenciesElem != null) {
-                            dependenciesManagement.addAll(parseDependencies(elem1, session, visitor, context, osAndArch, PomMode.PROFILE_DEPENDENCY_MANAGEMENT).getObject());
+                            dependenciesManagement.addAll(parseDependencies(dependenciesElem, session, visitor, context, osAndArch, PomMode.PROFILE_DEPENDENCY_MANAGEMENT).getObject());
                         }
                     }
                     break;
@@ -850,7 +850,15 @@ public class NPomXmlParser {
                     }
                     case "dependencyManagement": {
                         OsAndArch osAndArch = new OsAndArch(props, session);
-                        depsMan.addAll(parseDependencies(elem1, session, visitor, context, osAndArch, PomMode.ROOT_DEPENDENCY_MANAGEMENT).getObject());
+                        NodeList dependenciesChildList = elem1.getChildNodes();
+                        for (int j = 0; j < dependenciesChildList.getLength(); j++) {
+                            Element dependenciesElem = toElement(dependenciesChildList.item(j), "dependencies");
+                            if (dependenciesElem != null) {
+                                depsMan.addAll(parseDependencies(dependenciesElem, session, visitor, context, osAndArch, PomMode.ROOT_DEPENDENCY_MANAGEMENT).getObject());
+                            }
+                        }
+
+
                         break;
                     }
                     case "dependencies": {

@@ -467,7 +467,7 @@ public class DefaultNFetchCommand extends AbstractNFetchCommand {
         boolean withCache = !(repo instanceof DefaultNInstalledRepository) && session.isCached();
         NPath cachePath = null;
         NWorkspaceUtils wu = NWorkspaceUtils.of(session);
-        NElements elem = NElements.of(getSession());
+        NElements elem = NElements.of(session);
         if (withCache) {
             cachePath = NLocations.of(session).getStoreLocation(id, NStoreLocation.CACHE, repo.getUuid())
                     .resolve(NLocations.of(session).getDefaultIdFilename(id.builder().setFace("def.cache").build()));
@@ -559,7 +559,7 @@ public class DefaultNFetchCommand extends AbstractNFetchCommand {
             );
             if (withCache) {
                 try {
-                    elem.json().setSession(session).setValue(result)
+                    elem.json().setValue(result)
                             .setNtf(false).print(cachePath);
                 } catch (Exception ex) {
                     //

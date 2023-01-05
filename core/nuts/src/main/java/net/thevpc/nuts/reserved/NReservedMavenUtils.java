@@ -462,7 +462,7 @@ public final class NReservedMavenUtils {
                                                         NVersion.of(version).get()).get()
                                                 .builder()
                                                 .setProperty(NConstants.IdProperties.OPTIONAL, "" +
-                                                        NValue.of(optional).asBoolean().orElse(false))
+                                                        NLiteral.of(optional).asBoolean().orElse(false))
                                                 .setCondition(
                                                         new DefaultNEnvConditionBuilder()
                                                                 .setOs(Arrays.asList(osMap.get(groupId + ":" + artifactId)))

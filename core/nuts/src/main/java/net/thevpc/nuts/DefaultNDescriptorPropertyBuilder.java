@@ -38,7 +38,7 @@ public class DefaultNDescriptorPropertyBuilder implements NDescriptorPropertyBui
     private static final long serialVersionUID = 1L;
 
     private String name;
-    private NValue value = NValue.of(null);
+    private NLiteral value = NLiteral.of(null);
     private NEnvConditionBuilder condition;
 
     public DefaultNDescriptorPropertyBuilder() {
@@ -54,7 +54,7 @@ public class DefaultNDescriptorPropertyBuilder implements NDescriptorPropertyBui
         return name;
     }
 
-    public NValue getValue() {
+    public NLiteral getValue() {
         return value;
     }
 
@@ -76,7 +76,7 @@ public class DefaultNDescriptorPropertyBuilder implements NDescriptorPropertyBui
 
     @Override
     public NDescriptorPropertyBuilder setValue(String value) {
-        this.value = NValue.of(value);
+        this.value = NLiteral.of(value);
         return this;
     }
 

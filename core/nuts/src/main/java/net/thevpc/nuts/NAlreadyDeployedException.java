@@ -27,8 +27,7 @@
 package net.thevpc.nuts;
 
 /**
- * Exception fired in {@link NWorkspace#deploy()} method if the package is
- * already deployed Created by vpc on 1/15/17.
+ * Exception fired if the package is already deployed Created by vpc on 1/15/17.
  *
  * @author thevpc
  * @app.category Exceptions

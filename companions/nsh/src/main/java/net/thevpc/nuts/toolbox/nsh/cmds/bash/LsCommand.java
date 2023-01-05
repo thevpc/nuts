@@ -87,7 +87,7 @@ public class LsCommand extends SimpleJShellBuiltin {
             return true;
         } else if (commandLine.peek().get(session).isNonOption()) {
             String path = commandLine.next(NArgName.of("file", session))
-                    .flatMap(NValue::asString).get(session);
+                    .flatMap(NLiteral::asString).get(session);
             options.paths.add(path);
             options.paths.addAll(Arrays.asList(commandLine.toStringArray()));
             commandLine.skip();

@@ -27,7 +27,7 @@ package net.thevpc.nuts.cmdline;
 
 import net.thevpc.nuts.NMsg;
 import net.thevpc.nuts.NOptional;
-import net.thevpc.nuts.NValue;
+import net.thevpc.nuts.NLiteral;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
@@ -231,8 +231,8 @@ public class DefaultNArg implements NArg {
         return value != null;
     }
 
-    public NValue getOptionPrefix() {
-        return NValue.of(optionPrefix);
+    public NLiteral getOptionPrefix() {
+        return NLiteral.of(optionPrefix);
     }
 
     @Override
@@ -241,13 +241,13 @@ public class DefaultNArg implements NArg {
     }
 
     @Override
-    public NValue getOptionName() {
-        return NValue.of(optionName);
+    public NLiteral getOptionName() {
+        return NLiteral.of(optionName);
     }
 
     @Override
-    public NValue getValue() {
-        return NValue.of(value);
+    public NLiteral getValue() {
+        return NLiteral.of(value);
     }
 
     @Override
@@ -271,12 +271,12 @@ public class DefaultNArg implements NArg {
     }
 
     @Override
-    public NValue getKey() {
-        return NValue.of(key == null ? expression : key);
+    public NLiteral getKey() {
+        return NLiteral.of(key == null ? expression : key);
     }
 
-    private NValue toValue() {
-        return NValue.of(expression);
+    private NLiteral toValue() {
+        return NLiteral.of(expression);
     }
 
     @Override

@@ -104,7 +104,7 @@ public class NTextFormatPropertiesTheme implements NTextFormatTheme {
                         while (r.hasNext() && r.peekChar() >= '0' && r.peekChar() <= '9') {
                             mod.append(r.nextChar());
                         }
-                        sb.append(variant % (NValue.of(mod.toString()).asInt().orElse(1)));
+                        sb.append(variant % (NLiteral.of(mod.toString()).asInt().orElse(1)));
                     } else {
                         r.nextChar();
                         sb.append(variant);
@@ -119,7 +119,7 @@ public class NTextFormatPropertiesTheme implements NTextFormatTheme {
     }
 
     private int getVarValAsInt(String n) {
-        return NValue.of(props.getProperty(n)).asInt().orElse(0);
+        return NLiteral.of(props.getProperty(n)).asInt().orElse(0);
     }
 
     private String getProp(NTextStyleType t, String variant) {
@@ -195,14 +195,14 @@ public class NTextFormatPropertiesTheme implements NTextFormatTheme {
             case FORE_TRUE_COLOR:
             case BACK_COLOR:
             case BACK_TRUE_COLOR: {
-                Integer ii = NValue.of(n).asInt().orNull();
+                Integer ii = NLiteral.of(n).asInt().orNull();
                 if (ii == null) {
                     ii = getVarValAsInt(n);
                 }
                 return NTextStyles.of(NTextStyle.of(st, ii));
             }
             default: {
-                Integer ii = NValue.of(n).asInt().orNull();
+                Integer ii = NLiteral.of(n).asInt().orNull();
                 if (ii == null) {
                     ii = getVarValAsInt(n);
                 }

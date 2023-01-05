@@ -161,7 +161,7 @@ public class NIdFormatHelper {
         }
         FormatHelperResetListener h2 = (FormatHelperResetListener) NEnvs.of(session)
                 .getProperty(FormatHelperResetListener.class.getName())
-                .map(NValue::getRaw).orNull()
+                .map(NLiteral::getRaw).orNull()
                 ;
         if (h2 == null) {
             h2 = new FormatHelperResetListener();

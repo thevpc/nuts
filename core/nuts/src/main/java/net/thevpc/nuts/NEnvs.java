@@ -52,7 +52,7 @@ public interface NEnvs extends NComponent {
      * @return property raw value
      * @since 0.8.1
      */
-    NOptional<NValue> getProperty(String property);
+    NOptional<NLiteral> getProperty(String property);
 
     /**
      * @param property property

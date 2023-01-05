@@ -665,7 +665,7 @@ public class DefaultNDescriptorBuilder implements NDescriptorBuilder {
     }
 
     @Override
-    public NOptional<NValue> getPropertyValue(String name) {
+    public NOptional<NLiteral> getPropertyValue(String name) {
         return getProperty(name).map(NDescriptorProperty::getValue);
     }
 

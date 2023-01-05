@@ -188,7 +188,7 @@ public class DefaultNArrayElement extends AbstractNArrayElement {
 
     @Override
     public NOptional<NElement> get(String key) {
-        return NValue.of(key).asInt().flatMap(this::get);
+        return NLiteral.of(key).asInt().flatMap(this::get);
     }
 
     @Override

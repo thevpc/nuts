@@ -295,8 +295,8 @@ public abstract class DefaultNQueryBaseOptions<T extends NWorkspaceCommand> exte
 //                return true;
 //            }
             case "--optional": {
-                cmdLine.withNextValue((v,r,s)->this.setOptional(
-                        NValue.of(v.asString().get(session)).asBoolean()
+                cmdLine.withNextStringLiteral((v, r, s)->this.setOptional(
+                        NLiteral.of(v.asString().get(session)).asBoolean()
                                 .orNull()));
                 return true;
             }

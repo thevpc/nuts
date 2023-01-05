@@ -58,7 +58,7 @@ public class RmCommand extends SimpleJShellBuiltin {
             options.R = a.getBooleanValue().get(session);
             return true;
         } else if (commandLine.peek().get(session).isNonOption()) {
-            options.files.add(ShellHelper.xfileOf(commandLine.next().flatMap(NValue::asString).get(session),
+            options.files.add(ShellHelper.xfileOf(commandLine.next().flatMap(NLiteral::asString).get(session),
                     context.getCwd(), session));
             return true;
         }

@@ -41,7 +41,6 @@ import java.util.List;
 public interface NArrayElementBuilder extends NElementBuilder {
 
     static NArrayElementBuilder of(NSession session) {
-        NAssert.requireSession(session);
         return NElements.of(session).ofArray();
     }
 

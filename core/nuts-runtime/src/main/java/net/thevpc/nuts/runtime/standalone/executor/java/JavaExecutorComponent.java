@@ -266,11 +266,11 @@ public class JavaExecutorComponent implements NExecutorComponent {
                     }
                 }
                 // fix infinite recursion
-                int maxDepth = Math.abs(NValue.of(sysProperties.getProperty("nuts.export.watchdog.max-depth")).asInt().orElse(24));
+                int maxDepth = Math.abs(NLiteral.of(sysProperties.getProperty("nuts.export.watchdog.max-depth")).asInt().orElse(24));
                 if (maxDepth > 64) {
                     maxDepth = 64;
                 }
-                int currentDepth = NValue.of(sysProperties.getProperty("nuts.export.watchdog.depth")).asInt().orElse(-1);
+                int currentDepth = NLiteral.of(sysProperties.getProperty("nuts.export.watchdog.depth")).asInt().orElse(-1);
                 currentDepth++;
                 if (currentDepth > maxDepth) {
                     session.err().println("[[Process Stack Overflow Error]]");

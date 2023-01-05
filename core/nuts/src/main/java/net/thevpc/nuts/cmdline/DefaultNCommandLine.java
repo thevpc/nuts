@@ -229,9 +229,9 @@ public class DefaultNCommandLine implements NCommandLine {
 
     @Override
     public NCommandLine throwMissingArgumentByName(String argumentName) {
-        if(NBlankable.isBlank(argumentName)){
+        if (NBlankable.isBlank(argumentName)) {
             throwMissingArgument();
-        }else{
+        } else {
             if (isEmpty()) {
                 if (autoComplete != null) {
                     skipAll();
@@ -361,7 +361,7 @@ public class DefaultNCommandLine implements NCommandLine {
 
     @Override
     public boolean withNextOptionalString(NArgProcessor<NOptional<String>> consumer) {
-        NOptional<NArg> v = nextBoolean();
+        NOptional<NArg> v = nextString();
         if (v.isPresent()) {
             NArg a = v.get(session);
             if (a.isActive()) {
@@ -374,7 +374,7 @@ public class DefaultNCommandLine implements NCommandLine {
 
     @Override
     public boolean withNextOptionalString(NArgProcessor<NOptional<String>> consumer, String... names) {
-        NOptional<NArg> v = nextBoolean(names);
+        NOptional<NArg> v = nextString(names);
         if (v.isPresent()) {
             NArg a = v.get(session);
             if (a.isActive()) {
@@ -384,7 +384,6 @@ public class DefaultNCommandLine implements NCommandLine {
         }
         return false;
     }
-
 
 
     @Override
@@ -411,12 +410,9 @@ public class DefaultNCommandLine implements NCommandLine {
 
     @Override
     public boolean withNextTrue(NArgProcessor<Boolean> consumer, String... names) {
-        return withNextBoolean(new NArgProcessor<Boolean>() {
-            @Override
-            public void run(Boolean value, NArg arg, NSession session) {
-                if (value) {
-                    consumer.run(true, arg, session);
-                }
+        return withNextBoolean((value, arg, session) -> {
+            if (value) {
+                consumer.run(true, arg, session);
             }
         }, names);
     }
@@ -461,7 +457,7 @@ public class DefaultNCommandLine implements NCommandLine {
     }
 
     @Override
-    public boolean withNextValue(NArgProcessor<NValue> consumer) {
+    public boolean withNextStringLiteral(NArgProcessor<NLiteral> consumer) {
         NOptional<NArg> v = nextString();
         if (v.isPresent()) {
             NArg a = v.get(session);
@@ -474,7 +470,7 @@ public class DefaultNCommandLine implements NCommandLine {
     }
 
     @Override
-    public boolean withNextValue(NArgProcessor<NValue> consumer, String... names) {
+    public boolean withNextStringLiteral(NArgProcessor<NLiteral> consumer, String... names) {
         NOptional<NArg> v = nextString(names);
         if (v.isPresent()) {
             NArg a = v.get(session);
@@ -487,22 +483,35 @@ public class DefaultNCommandLine implements NCommandLine {
     }
 
     @Override
-    public NOptional<NValue> nextStringValue() {
-        return nextStringValue(new String[0]);
+    public boolean withNextLiteral(NArgProcessor<NLiteral> consumer) {
+        NOptional<NArg> v = next();
+        if (v.isPresent()) {
+            NArg a = v.get(session);
+            if (a.isActive()) {
+                consumer.run(a.getValue(), a, session);
+                return true;
+            }
+        }
+        return false;
     }
 
     @Override
-    public NOptional<NValue> nextBooleanValue() {
-        return nextBooleanValue(new String[0]);
+    public NOptional<NLiteral> nextStringLiteral() {
+        return nextStringLiteral(new String[0]);
     }
 
     @Override
-    public NOptional<NValue> nextStringValue(String... names) {
+    public NOptional<NLiteral> nextBooleanLiteral() {
+        return nextBooleanLiteral(new String[0]);
+    }
+
+    @Override
+    public NOptional<NLiteral> nextStringLiteral(String... names) {
         return nextString(names).map(NArg::getValue);
     }
 
     @Override
-    public NOptional<NValue> nextBooleanValue(String... names) {
+    public NOptional<NLiteral> nextBooleanLiteral(String... names) {
         return nextBoolean(names).map(NArg::getValue);
     }
 
@@ -833,7 +842,7 @@ public class DefaultNCommandLine implements NCommandLine {
 
     @Override
     public NCommandLineFormat formatter(NSession session) {
-        return NCommandLineFormat.of(NAssert.requireSession(session!=null?session:this.session)).setValue(this);
+        return NCommandLineFormat.of(session != null ? session : this.session).setValue(this);
     }
 
 

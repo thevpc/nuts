@@ -218,7 +218,7 @@ public class MavenUtils {
                     urlDesc == null ? "pom.xml" : urlDesc, session);
             NPom pom = new NPomXmlParser(session).parse(bytesStream, session);
             LinkedHashSet<NDescriptorFlag> flags = new LinkedHashSet<>();
-            if (NValue.of(pom.getProperties().get("nuts.executable")).asBoolean().orElse(false)) {
+            if (NLiteral.of(pom.getProperties().get("nuts.executable")).asBoolean().orElse(false)) {
                 flags.add(NDescriptorFlag.EXEC);
             } else {
                 final Element ee = pom.getXml().getDocumentElement();
@@ -238,15 +238,15 @@ public class MavenUtils {
                     flags.add(NDescriptorFlag.EXEC);
                 }
             }
-            if (NValue.of(pom.getProperties().get("nuts.application")).asBoolean().orElse(false)) {
+            if (NLiteral.of(pom.getProperties().get("nuts.application")).asBoolean().orElse(false)) {
                 flags.add(NDescriptorFlag.APP);
                 flags.add(NDescriptorFlag.EXEC);
             }
-            if (NValue.of(pom.getProperties().get("nuts.gui")).asBoolean().orElse(false)) {
+            if (NLiteral.of(pom.getProperties().get("nuts.gui")).asBoolean().orElse(false)) {
                 flags.add(NDescriptorFlag.GUI);
                 flags.add(NDescriptorFlag.EXEC);
             }
-            if (NValue.of(pom.getProperties().get("nuts.term")).asBoolean().orElse(false)) {
+            if (NLiteral.of(pom.getProperties().get("nuts.term")).asBoolean().orElse(false)) {
                 flags.add(NDescriptorFlag.TERM);
                 flags.add(NDescriptorFlag.EXEC);
             }
@@ -534,7 +534,7 @@ public class MavenUtils {
                 NDescriptorProperty nutsPackaging = nutsDescriptor.getProperty("nuts-packaging").orNull();
                 if (nutsPackaging != null && !NBlankable.isBlank(nutsPackaging.getValue())) {
                     nutsDescriptor = nutsDescriptor.builder().setPackaging(nutsDescriptor.getPropertyValue("nuts-packaging")
-                                    .flatMap(NValue::asString).get(session))
+                                    .flatMap(NLiteral::asString).get(session))
                             .build();
                 }
                 properties.put("pom.groupId", thisId.getGroupId());

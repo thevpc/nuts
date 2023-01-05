@@ -399,7 +399,7 @@ public interface NCommandLine extends Iterable<NArg>, NFormattable, NBlankable {
      *
      * @return true if active
      */
-    boolean withNextValue(NArgProcessor<NValue> consumer);
+    boolean withNextStringLiteral(NArgProcessor<NLiteral> consumer);
 
     /**
      * consume next argument and run {@code consumer}
@@ -407,24 +407,26 @@ public interface NCommandLine extends Iterable<NArg>, NFormattable, NBlankable {
      * @param names names
      * @return true if active
      */
-    boolean withNextValue(NArgProcessor<NValue> consumer, String... names);
+    boolean withNextStringLiteral(NArgProcessor<NLiteral> consumer, String... names);
 
-    /**
-     * next argument with string value. equivalent to
-     * next(NutsArgumentType.STRING,{})
-     *
-     * @return next argument
-     */
+    boolean withNextLiteral(NArgProcessor<NLiteral> consumer);
+
+        /**
+         * next argument with string value. equivalent to
+         * next(NutsArgumentType.STRING,{})
+         *
+         * @return next argument
+         */
     NOptional<NArg> nextString();
 
-    NOptional<NValue> nextStringValue(String... names);
+    NOptional<NLiteral> nextStringLiteral(String... names);
 
-    NOptional<NValue> nextBooleanValue(String... names);
+    NOptional<NLiteral> nextBooleanLiteral(String... names);
 
 
-    NOptional<NValue> nextStringValue();
+    NOptional<NLiteral> nextStringLiteral();
 
-    NOptional<NValue> nextBooleanValue();
+    NOptional<NLiteral> nextBooleanLiteral();
 
     /**
      * next argument with any value type (may have not a value). equivalent to

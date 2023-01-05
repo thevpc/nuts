@@ -36,11 +36,11 @@ import java.util.Objects;
  * @author thevpc
  */
 class DefaultNPrimitiveElement extends AbstractNElement implements NPrimitiveElement {
-    private final NValue value;
+    private final NLiteral value;
 
     DefaultNPrimitiveElement(NElementType type, Object value, NSession session) {
         super(type, session);
-        this.value = NValue.of(value);
+        this.value = NLiteral.of(value);
     }
 
 

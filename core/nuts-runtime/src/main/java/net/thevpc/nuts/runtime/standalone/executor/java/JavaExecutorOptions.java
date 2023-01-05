@@ -183,7 +183,7 @@ public final class JavaExecutorOptions {
                     break;
                 }
                 default: {
-                    getJvmArgs().add(cmdLine.next().flatMap(NValue::asString).get(session));
+                    getJvmArgs().add(cmdLine.next().flatMap(NLiteral::asString).get(session));
                 }
             }
         }
@@ -407,7 +407,7 @@ public final class JavaExecutorOptions {
                                 .setSession(session)
                                 .forString(NMsg.ofNtf(msgString))
                                 .setValidator((value, question) -> {
-                                    Integer anyInt = NValue.of(value).asInt().orNull();
+                                    Integer anyInt = NLiteral.of(value).asInt().orNull();
                                     if (anyInt != null) {
                                         int i = anyInt;
                                         if (i >= 1 && i <= possibleClasses.size()) {
@@ -433,7 +433,7 @@ public final class JavaExecutorOptions {
 
     private String resolveMainClass(String name, List<String> possibleClasses) {
         if (name != null) {
-            Integer v = NValue.of(name).asInt().orNull();
+            Integer v = NLiteral.of(name).asInt().orNull();
             if (v != null) {
                 if (v >= 1 && v <= possibleClasses.size()) {
                     return possibleClasses.get(v - 1);

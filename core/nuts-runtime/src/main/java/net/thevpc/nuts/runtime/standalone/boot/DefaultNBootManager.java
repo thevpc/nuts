@@ -80,7 +80,7 @@ public class DefaultNBootManager implements NBootManager {
     }
 
     @Override
-    public NOptional<NValue> getCustomBootOption(String... names) {
+    public NOptional<NLiteral> getCustomBootOption(String... names) {
         checkSession();
         return model.getCustomBootOption(names);
     }

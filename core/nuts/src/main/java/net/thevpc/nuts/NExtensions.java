@@ -57,10 +57,7 @@ public interface NExtensions extends NComponent {
      * create supported extension implementation or return null.
      *
      * @param <T>             extension type class
-     * @param <V>             extension context type
      * @param type            extension type
-     * @param required        required
-     * @param supportCriteria context
      * @return valid instance or null if no extension implementation was found
      */
     <T extends NComponent> T createSupported(Class<T> type);

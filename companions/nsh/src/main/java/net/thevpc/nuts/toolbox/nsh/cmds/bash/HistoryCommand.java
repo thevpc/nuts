@@ -72,7 +72,7 @@ public class HistoryCommand extends SimpleJShellBuiltin {
             if (a.isKeyValue()) {
                 options.sval = a.getStringValue().get(session);
             } else if (!commandLine.isEmpty()) {
-                options.sval = commandLine.next().flatMap(NValue::asString).get(session);
+                options.sval = commandLine.next().flatMap(NLiteral::asString).get(session);
             }
             commandLine.setCommandName(getName()).throwUnexpectedArgument();
             return true;
@@ -81,7 +81,7 @@ public class HistoryCommand extends SimpleJShellBuiltin {
             if (a.isKeyValue()) {
                 options.sval = a.getStringValue().get(session);
             } else if (!commandLine.isEmpty()) {
-                options.sval = commandLine.next().flatMap(NValue::asString).get(session);
+                options.sval = commandLine.next().flatMap(NLiteral::asString).get(session);
             }
             commandLine.setCommandName(getName()).throwUnexpectedArgument();
             return true;

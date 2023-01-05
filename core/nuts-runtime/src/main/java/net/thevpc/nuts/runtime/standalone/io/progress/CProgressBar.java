@@ -262,9 +262,9 @@ public class CProgressBar {
         this.logger = NLogger.of(CProgressBar.class, this.session);
         this.options = ProgressOptions.of(session);
         this.ws = session.getWorkspace();
-        this.formatter = createFormatter(options.get("type").flatMap(NValue::asString).orElse(""), session);
+        this.formatter = createFormatter(options.get("type").flatMap(NLiteral::asString).orElse(""), session);
         if (determinateSize <= 0) {
-            determinateSize = options.get("size").flatMap(NValue::asInt).orElse(formatter.getDefaultWidth());
+            determinateSize = options.get("size").flatMap(NLiteral::asInt).orElse(formatter.getDefaultWidth());
         }
         setDeterminateSize(determinateSize);
     }

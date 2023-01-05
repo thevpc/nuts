@@ -24,9 +24,9 @@ public class ProcessCmd extends SimpleJShellBuiltin {
         Options o = context.getOptions();
         NSession session = context.getSession();
         if (commandLine.isNonOption(0)) {
-            o.args.add(commandLine.next().flatMap(NValue::asString).get(session));
+            o.args.add(commandLine.next().flatMap(NLiteral::asString).get(session));
             while (commandLine.hasNext()) {
-                o.args.add(commandLine.next().flatMap(NValue::asString).get(session));
+                o.args.add(commandLine.next().flatMap(NLiteral::asString).get(session));
             }
             return true;
         }

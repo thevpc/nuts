@@ -58,7 +58,7 @@ public class NTemplateMain implements NApplication {
             @Override
             public boolean onCmdNextNonOption(NArg nonOption, NCommandLine commandLine, NCommandLineContext context) {
                 NSession session = commandLine.getSession();
-                config.addSource(commandLine.next().flatMap(NValue::asString).get(session));
+                config.addSource(commandLine.next().flatMap(NLiteral::asString).get(session));
                 return false;
             }
 

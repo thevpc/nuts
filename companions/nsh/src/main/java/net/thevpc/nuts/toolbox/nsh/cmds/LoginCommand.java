@@ -50,11 +50,11 @@ public class LoginCommand extends SimpleJShellBuiltin {
         if (!a.isOption()) {
             if (options.login == null) {
                 options.login = commandLine.next(NArgName.of("username", session))
-                        .flatMap(NValue::asString).get(session);
+                        .flatMap(NLiteral::asString).get(session);
                 return true;
             } else if (options.password == null) {
                 options.password = commandLine.next(NArgName.of("password", session))
-                        .flatMap(NValue::asString).get(session).toCharArray();
+                        .flatMap(NLiteral::asString).get(session).toCharArray();
                 return true;
             }
         }

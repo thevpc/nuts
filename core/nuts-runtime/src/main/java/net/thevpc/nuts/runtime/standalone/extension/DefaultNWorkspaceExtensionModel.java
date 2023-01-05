@@ -585,7 +585,7 @@ public class DefaultNWorkspaceExtensionModel {
         //should parse this form config?
         //or should be parse from and extension component?
         String repos = NConfigs.of(NSessionUtils.defaultSession(ws))
-                .getConfigProperty("nuts.bootstrap-repository-locations").flatMap(NValue::asString).orElse("") + ";" //                + NutsConstants.BootstrapURLs.LOCAL_NUTS_FOLDER
+                .getConfigProperty("nuts.bootstrap-repository-locations").flatMap(NLiteral::asString).orElse("") + ";" //                + NutsConstants.BootstrapURLs.LOCAL_NUTS_FOLDER
                 //                + ";" + NutsConstants.BootstrapURLs.REMOTE_NUTS_GIT
                 ;
         List<String> urls = new ArrayList<>();

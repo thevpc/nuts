@@ -39,7 +39,6 @@ import java.util.List;
  */
 public interface NTextBuilder extends NString {
     static NTextBuilder of(NSession session) {
-        NAssert.requireSession(session);
         return NTexts.of(session).ofBuilder();
     }
 

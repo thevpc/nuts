@@ -213,7 +213,7 @@ public interface NDescriptor extends Serializable, NBlankable, NFormattable {
      * @return custom property value by name
      * @since 0.8.3
      */
-    NOptional<NValue> getPropertyValue(String name);
+    NOptional<NLiteral> getPropertyValue(String name);
 
     /**
      * create new builder filled with this descriptor fields.

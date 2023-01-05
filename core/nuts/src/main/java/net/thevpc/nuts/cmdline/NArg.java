@@ -27,7 +27,7 @@
 package net.thevpc.nuts.cmdline;
 
 import net.thevpc.nuts.NOptional;
-import net.thevpc.nuts.NValue;
+import net.thevpc.nuts.NLiteral;
 
 /**
  * Command Line Argument
@@ -36,7 +36,7 @@ import net.thevpc.nuts.NValue;
  * @app.category Command Line
  * @since 0.5.5
  */
-public interface NArg extends NValue {
+public interface NArg extends NLiteral {
 
     /**
      * create instance for the given value and with the given session
@@ -135,7 +135,7 @@ public interface NArg extends NValue {
      * @return option prefix part  ('-' and '--')
      * @since 0.5.7
      */
-    NValue getOptionPrefix();
+    NLiteral getOptionPrefix();
 
     /**
      * return query value separator
@@ -151,7 +151,7 @@ public interface NArg extends NValue {
      * @return option key part excluding prefix ('-' and '--')
      * @since 0.5.7
      */
-    NValue getOptionName();
+    NLiteral getOptionName();
 
     /**
      * return new instance (never null) of the value part of the argument (after
@@ -174,7 +174,7 @@ public interface NArg extends NValue {
      * @return new instance (never null) of the value part of the argument
      * (after =)
      */
-    NValue getValue();
+    NLiteral getValue();
 
     NOptional<Boolean> getBooleanValue();
 
@@ -198,7 +198,7 @@ public interface NArg extends NValue {
      *
      * @return string key
      */
-    NValue getKey();
+    NLiteral getKey();
 
 
 }

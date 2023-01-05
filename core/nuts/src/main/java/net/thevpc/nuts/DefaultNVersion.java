@@ -387,46 +387,46 @@ public class DefaultNVersion implements NVersion {
         return getParts().getDigitCount();
     }
 
-    public NValue[] split() {
+    public NLiteral[] split() {
         VersionParts parts = getParts();
         int size = parts.size();
-        NValue[] all = new NValue[size];
+        NLiteral[] all = new NLiteral[size];
         for (int i = 0; i < size; i++) {
-            all[i] = NValue.of(parts.get(i).string);
+            all[i] = NLiteral.of(parts.get(i).string);
         }
         return all;
     }
 
-    public NOptional<NValue> get(int index) {
+    public NOptional<NLiteral> get(int index) {
         VersionParts parts = getParts();
         int size = parts.size();
         if (index >= 0) {
             if (index < parts.size()) {
-                return NOptional.of(NValue.of(parts.get(index).string));
+                return NOptional.of(NLiteral.of(parts.get(index).string));
             }
         } else {
             int x = size + index;
             if (x >= 0 && x < parts.size()) {
-                return NOptional.of(NValue.of(parts.get(x).string));
+                return NOptional.of(NLiteral.of(parts.get(x).string));
             }
         }
         return NOptional.ofEmpty(session -> NMsg.ofCstyle("version part not found : %s", index));
     }
 
-    public NOptional<NValue> getNumber(int level) {
+    public NOptional<NLiteral> getNumber(int level) {
         VersionParts parts = getParts();
         int size = parts.getDigitCount();
         if (level >= 0) {
             VersionPart digit = parts.getDigit(level);
             return NOptional.of(
-                    digit == null ? null : NValue.of(digit.string),
+                    digit == null ? null : NLiteral.of(digit.string),
                     s -> NMsg.ofCstyle("missing number at %s", level)
             );
         } else {
             int x = size + level;
             VersionPart digit = x >= 0 ? parts.getDigit(x) : null;
             return NOptional.of(
-                    digit == null ? null : NValue.of(digit.string),
+                    digit == null ? null : NLiteral.of(digit.string),
                     s -> NMsg.ofCstyle("missing number at %s", level)
             );
         }

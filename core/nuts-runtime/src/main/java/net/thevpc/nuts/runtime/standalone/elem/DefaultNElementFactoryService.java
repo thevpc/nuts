@@ -175,7 +175,7 @@ public class DefaultNElementFactoryService implements NElementFactoryService {
         setCoreMapper(NDescriptorPropertyBuilder.class, F_DESCRIPTOR_PROPERTY_BUILDER);
         setCoreMapper(NEnum.class, F_NUTS_ENUM);
         setCoreMapper(NRepositoryLocation.class, F_NUTS_REPO_LOCATION);
-        setCoreMapper(NValue.class, new NElementMapperNValue());
+        setCoreMapper(NLiteral.class, new NElementMapperNLiteral());
         this.ws = ws;
         this.session = session;
     }

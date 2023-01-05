@@ -46,7 +46,7 @@ public interface NDescriptorProperty extends NBlankable {
      *
      * @return property value
      */
-    NValue getValue();
+    NLiteral getValue();
 
     /**
      * property condition

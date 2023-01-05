@@ -25,7 +25,7 @@ public class NSettingsIndexSubCommand extends AbstractNSettingsSubCommand {
         if (cmdLine.next("update stats").isPresent()) {
             List<String> repos = new ArrayList<>();
             while (cmdLine.hasNext()) {
-                repos.add(cmdLine.next().flatMap(NValue::asString).get(session));
+                repos.add(cmdLine.next().flatMap(NLiteral::asString).get(session));
             }
             updateStatistics(session, repos.toArray(new String[0]));
             cmdLine.setCommandName(name).throwUnexpectedArgument();

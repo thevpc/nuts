@@ -188,22 +188,22 @@ public abstract class AbstractNElement implements NElement {
 
     @Override
     public NOptional<String> asString() {
-        return asPrimitive().flatMap(NValue::asString);
+        return asPrimitive().flatMap(NLiteral::asString);
     }
 
     @Override
     public NOptional<Number> asNumber() {
-        return asPrimitive().flatMap(NValue::asNumber);
+        return asPrimitive().flatMap(NLiteral::asNumber);
     }
 
     @Override
     public NOptional<BigInteger> asBigInt() {
-        return asPrimitive().flatMap(NValue::asBigInt);
+        return asPrimitive().flatMap(NLiteral::asBigInt);
     }
 
     @Override
     public NOptional<BigDecimal> asBigDecimal() {
-        return asPrimitive().flatMap(NValue::asBigDecimal);
+        return asPrimitive().flatMap(NLiteral::asBigDecimal);
     }
 
     @Override
@@ -216,42 +216,42 @@ public abstract class AbstractNElement implements NElement {
 
     @Override
     public NOptional<Boolean> asBoolean() {
-        return asPrimitive().flatMap(NValue::asBoolean);
+        return asPrimitive().flatMap(NLiteral::asBoolean);
     }
 
     @Override
     public NOptional<Byte> asByte() {
-        return asPrimitive().flatMap(NValue::asByte);
+        return asPrimitive().flatMap(NLiteral::asByte);
     }
 
     @Override
     public NOptional<Double> asDouble() {
-        return asPrimitive().flatMap(NValue::asDouble);
+        return asPrimitive().flatMap(NLiteral::asDouble);
     }
 
     @Override
     public NOptional<Float> asFloat() {
-        return asPrimitive().flatMap(NValue::asFloat);
+        return asPrimitive().flatMap(NLiteral::asFloat);
     }
 
     @Override
     public NOptional<Instant> asInstant() {
-        return asPrimitive().flatMap(NValue::asInstant);
+        return asPrimitive().flatMap(NLiteral::asInstant);
     }
 
     @Override
     public NOptional<Integer> asInt() {
-        return asPrimitive().flatMap(NValue::asInt);
+        return asPrimitive().flatMap(NLiteral::asInt);
     }
 
     @Override
     public NOptional<Long> asLong() {
-        return asPrimitive().flatMap(NValue::asLong);
+        return asPrimitive().flatMap(NLiteral::asLong);
     }
 
     @Override
     public NOptional<Short> asShort() {
-        return asPrimitive().flatMap(NValue::asShort);
+        return asPrimitive().flatMap(NLiteral::asShort);
     }
 
     @Override

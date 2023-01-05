@@ -430,7 +430,7 @@ public class CoreNUtils {
             }
             int a = 0;
             for (String part : s.split("\\.")) {
-                a = a * 100 + NValue.of(part).asInt().orElse(0);
+                a = a * 100 + NLiteral.of(part).asInt().orElse(0);
             }
             return a;
         } catch (Exception ex) {
@@ -593,20 +593,20 @@ public class CoreNUtils {
 
     public static boolean isCustomTrue(String name, NSession session) {
         return NBootManager.of(session).getCustomBootOption(name)
-                .ifEmpty(NValue.of("true"))
-                .flatMap(NValue::asBoolean)
+                .ifEmpty(NLiteral.of("true"))
+                .flatMap(NLiteral::asBoolean)
                 .orElse(false);
     }
 
     public static boolean isCustomFalse(String name, NSession session) {
         return NBootManager.of(session).getCustomBootOption(name)
-                .flatMap(NValue::asBoolean)
+                .flatMap(NLiteral::asBoolean)
                 .orElse(false);
     }
 
     public static boolean isShowCommand(NSession session) {
         return NBootManager.of(session).getCustomBootOption("---show-command")
-                .flatMap(NValue::asBoolean)
+                .flatMap(NLiteral::asBoolean)
                 .orElse(false);
     }
 

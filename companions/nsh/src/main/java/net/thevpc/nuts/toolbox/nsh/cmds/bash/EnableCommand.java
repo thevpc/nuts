@@ -29,7 +29,7 @@ package net.thevpc.nuts.toolbox.nsh.cmds.bash;
 import net.thevpc.nuts.cmdline.NArg;
 import net.thevpc.nuts.cmdline.NCommandLine;
 import net.thevpc.nuts.NSession;
-import net.thevpc.nuts.NValue;
+import net.thevpc.nuts.NLiteral;
 import net.thevpc.nuts.spi.NComponentScope;
 import net.thevpc.nuts.spi.NComponentScopeType;
 import net.thevpc.nuts.toolbox.nsh.SimpleJShellBuiltin;
@@ -86,7 +86,7 @@ public class EnableCommand extends SimpleJShellBuiltin {
                 }
             }
         } else {
-            options.names.add(commandLine.next().flatMap(NValue::asString).get(session));
+            options.names.add(commandLine.next().flatMap(NLiteral::asString).get(session));
             return true;
         }
         return false;

@@ -272,14 +272,14 @@ public class NElementPathFilter {
                                 if (vir.indexOf('-') > 0) {
                                     String[] inter = vir.split("-");
                                     if (inter.length == 2
-                                            && NValue.of(inter[0]).isInt()
-                                            && NValue.of(inter[1]).isInt()) {
+                                            && NLiteral.of(inter[0]).isInt()
+                                            && NLiteral.of(inter[1]).isInt()) {
                                         int a = Integer.parseInt(inter[0]);
                                         int b = Integer.parseInt(inter[1]);
                                         ors.add(new NElementNameMatcherValueInterval(a, b));
                                     }
                                 } else {
-                                    if (NValue.of(vir).isInt()) {
+                                    if (NLiteral.of(vir).isInt()) {
                                         int a = Integer.parseInt(vir);
                                         ors.add(new NElementNameMatcherValue(a));
                                     }
@@ -328,7 +328,7 @@ public class NElementPathFilter {
                     if (s.startsWith(":#")) {
                         s = s.substring(2);
                         return createIndexValueInervalMatcher(s);
-                    } else if (NValue.of(s).isInt()) {
+                    } else if (NLiteral.of(s).isInt()) {
                         return new NElementIndexMatcherForValue(Integer.parseInt(s));
                     } else if (s.matches("[0-9][0-9,-]+")) {
                         return createIndexValueInervalMatcher(s);
@@ -346,13 +346,13 @@ public class NElementPathFilter {
                 if (vir.length() > 0) {
                     if (vir.indexOf('-') > 0) {
                         String[] inter = vir.split("-");
-                        if (inter.length == 2 && NValue.of(inter[0]).isInt() && NValue.of(inter[1]).isInt()) {
+                        if (inter.length == 2 && NLiteral.of(inter[0]).isInt() && NLiteral.of(inter[1]).isInt()) {
                             int a = Integer.parseInt(inter[0]);
                             int b = Integer.parseInt(inter[1]);
                             ors.add(new NElementIndexMatcherValueInterval(a, b));
                         }
                     } else {
-                        if (NValue.of(vir).isInt()) {
+                        if (NLiteral.of(vir).isInt()) {
                             ors.add(new NElementIndexMatcherForValue(Integer.parseInt(vir)));
                         }
                     }

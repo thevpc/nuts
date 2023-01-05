@@ -57,7 +57,7 @@ public class WgetCommand extends SimpleJShellBuiltin {
             return true;
         } else if (!commandLine.isNextOption()) {
             while (commandLine.hasNext()) {
-                options.files.add(commandLine.next().flatMap(NValue::asString).get(session));
+                options.files.add(commandLine.next().flatMap(NLiteral::asString).get(session));
             }
             return true;
         }

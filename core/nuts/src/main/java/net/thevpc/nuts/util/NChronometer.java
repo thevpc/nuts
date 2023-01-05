@@ -82,7 +82,7 @@ public class NChronometer implements Serializable, NFormattable {
     /**
      * restart chronometer and returns a stopped snapshot/copy of the current
      *
-     * @return
+     * @return {@code this} instance
      */
     public NChronometer restart() {
         stop();
@@ -95,8 +95,8 @@ public class NChronometer implements Serializable, NFormattable {
      * restart chronometer with new name and returns a stopped snapshot/copy of
      * the current (with old name)
      *
-     * @param newName
-     * @return
+     * @param newName newName
+     * @return {@code this} instance
      */
     public NChronometer restart(String newName) {
         stop();

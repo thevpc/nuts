@@ -270,7 +270,7 @@ public class JavaJarUtils {
 
     private static String resolveMainClassString(String nameOrVar, NDescriptor pom) {
         if (nameOrVar.startsWith("${") && nameOrVar.endsWith("}")) {
-            String e = pom.getPropertyValue(nameOrVar.substring(2, nameOrVar.length() - 1)).flatMap(NValue::asString).orNull();
+            String e = pom.getPropertyValue(nameOrVar.substring(2, nameOrVar.length() - 1)).flatMap(NLiteral::asString).orNull();
             if (e != null) {
                 return e;
             }

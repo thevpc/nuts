@@ -3,7 +3,7 @@ package net.thevpc.nuts.runtime.standalone.io.terminal;
 import net.thevpc.nuts.NExecCommand;
 import net.thevpc.nuts.NExecutionType;
 import net.thevpc.nuts.NSession;
-import net.thevpc.nuts.NValue;
+import net.thevpc.nuts.NLiteral;
 import net.thevpc.nuts.spi.NSystemTerminalBase;
 
 public class CoreAnsiTermHelper {
@@ -22,8 +22,8 @@ public class CoreAnsiTermHelper {
     }
 
     public static NSystemTerminalBase.Size evalSize(NSession session) {
-        Integer c = NValue.of(evalCapability("cols", session)).asInt().orNull();
-        Integer l = NValue.of(evalCapability("lines", session)).asInt().orNull();
+        Integer c = NLiteral.of(evalCapability("cols", session)).asInt().orNull();
+        Integer l = NLiteral.of(evalCapability("lines", session)).asInt().orNull();
         if (c != null && l != null) {
             return new NSystemTerminalBase.Size(c, l);
         }

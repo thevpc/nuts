@@ -18,7 +18,7 @@ public class Test07_DescriptorTest {
 
     @BeforeAll
     public static void init() {
-        session = TestUtils.openNewMinTestWorkspace();
+        session = TestUtils.openNewMinTestWorkspace("--verbose");
     }
 
     @Test
@@ -36,6 +36,21 @@ public class Test07_DescriptorTest {
     public void testSearchDescriptor2() {
 
         NDefinition u = NFetchCommand.of(session).setId("org.openjfx:javafx-controls#17.0.0.1")
+                .setEffective(true).setDependencies(true).getResultDefinition();
+        for (NDependency dependency : u.getDescriptor().getDependencies()) {
+            System.out.println(dependency.toString());
+        }
+        TestUtils.println(u.getDescriptor());
+        TestUtils.println(u.getEffectiveDescriptor().get(session));
+        TestUtils.println(u.getId()+":"+(u.getDescriptor().isExecutable() ? "executable" : "non-executable"));
+        TestUtils.println(u.getId()+":"+(u.getDescriptor().isApplication() ? "app" : "non-app"));
+        Assertions.assertTrue(!u.getDescriptor().isExecutable());
+        Assertions.assertTrue(!u.getDescriptor().isApplication());
+    }
+
+    @Test
+    public void testSearchDescriptor3() {
+        NDefinition u = NFetchCommand.of(session).setId("ch.qos.logback:logback-classic#1.2.11")
                 .setEffective(true).setDependencies(true).getResultDefinition();
         for (NDependency dependency : u.getDescriptor().getDependencies()) {
             System.out.println(dependency.toString());

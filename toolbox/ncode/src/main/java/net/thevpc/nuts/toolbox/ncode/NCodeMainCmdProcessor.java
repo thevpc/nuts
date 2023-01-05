@@ -78,7 +78,7 @@ class NCodeMainCmdProcessor implements NCommandLineProcessor {
     @Override
     public boolean onCmdNextNonOption(NArg nonOption, NCommandLine commandLine, NCommandLineContext context) {
         NSession session = applicationContext.getSession();
-        paths.add(commandLine.next().flatMap(NValue::asString).get(session));
+        paths.add(commandLine.next().flatMap(NLiteral::asString).get(session));
         return true;
     }
 

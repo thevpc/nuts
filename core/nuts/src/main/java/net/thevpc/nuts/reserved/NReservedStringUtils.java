@@ -3,7 +3,7 @@ package net.thevpc.nuts.reserved;
 import net.thevpc.nuts.NBlankable;
 import net.thevpc.nuts.NMsg;
 import net.thevpc.nuts.NOptional;
-import net.thevpc.nuts.NValue;
+import net.thevpc.nuts.NLiteral;
 import net.thevpc.nuts.util.NStringUtils;
 
 import java.util.*;
@@ -34,7 +34,7 @@ public class NReservedStringUtils {
             return NOptional.ofEmpty(session -> NMsg.ofPlain("empty size"));
         }
         value = value.trim();
-        Integer i = NValue.of(value).asInt().orNull();
+        Integer i = NLiteral.of(value).asInt().orNull();
         if (i != null) {
             if (defaultMultiplier != null) {
                 return NOptional.of(i * defaultMultiplier);
@@ -45,7 +45,7 @@ public class NReservedStringUtils {
         for (String s : new String[]{"kb", "mb", "gb", "k", "m", "g"}) {
             if (value.toLowerCase().endsWith(s)) {
                 String v = value.substring(0, value.length() - s.length()).trim();
-                i = NValue.of(v).asInt().orNull();
+                i = NLiteral.of(v).asInt().orNull();
                 if (i != null) {
                     switch (s) {
                         case "k":

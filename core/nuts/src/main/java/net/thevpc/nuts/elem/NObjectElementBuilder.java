@@ -40,7 +40,6 @@ import java.util.Map;
 public interface NObjectElementBuilder extends NElementBuilder {
 
     static NObjectElementBuilder of(NSession session) {
-        NAssert.requireSession(session);
         return NElements.of(session).ofObject();
     }
 

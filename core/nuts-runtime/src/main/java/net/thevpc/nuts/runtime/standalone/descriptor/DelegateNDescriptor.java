@@ -145,7 +145,7 @@ public abstract class DelegateNDescriptor extends AbstractNDescriptor {
     }
 
     @Override
-    public NOptional<NValue> getPropertyValue(String name) {
+    public NOptional<NLiteral> getPropertyValue(String name) {
         return getBase().getPropertyValue(name);
     }
 

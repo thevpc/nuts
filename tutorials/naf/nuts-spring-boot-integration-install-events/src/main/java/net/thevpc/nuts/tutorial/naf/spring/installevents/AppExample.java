@@ -74,7 +74,7 @@ public class AppExample implements NApplication {
                 }
                 default: {
                     if (a.isNonOption()) {
-                        nonOptions.add(cmd.next().flatMap(NValue::asString).get(session));
+                        nonOptions.add(cmd.next().flatMap(NLiteral::asString).get(session));
                     } else {
                         // this is an unsupported options!
                         cmd.throwUnexpectedArgument();

@@ -135,11 +135,11 @@ public interface NRepositoryConfigManager {
 
     Map<String, String> getConfigMap(boolean inherit);
 
-    NOptional<NValue> getConfigProperty(String key, boolean inherit);
+    NOptional<NLiteral> getConfigProperty(String key, boolean inherit);
 
     Map<String, String> getConfigMap();
 
-    NOptional<NValue> getConfigProperty(String property);
+    NOptional<NLiteral> getConfigProperty(String property);
 
     NRepositoryConfigManager setConfigProperty(String property, String value);
 }

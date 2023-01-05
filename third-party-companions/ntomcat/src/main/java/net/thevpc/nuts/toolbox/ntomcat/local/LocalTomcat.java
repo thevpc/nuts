@@ -749,7 +749,7 @@ public class LocalTomcat {
             } else if (commandLine.isNextOption() && TomcatUtils.isPositiveInt(commandLine.peek()
                     .get(session)
                     .asString().get(session).substring(1))) {
-                count = Integer.parseInt(commandLine.next().flatMap(NValue::asString).get(session).substring(1));
+                count = Integer.parseInt(commandLine.next().flatMap(NLiteral::asString).get(session).substring(1));
             } else {
                 context.configureLast(commandLine);
             }
@@ -1041,7 +1041,7 @@ public class LocalTomcat {
         } else if (args.hasNext() && args.isNextOption()) {
             return null;
         } else if (args.hasNext()) {
-            return (loadServiceBase(args.next().flatMap(NValue::asString).get(session), autoCreate));
+            return (loadServiceBase(args.next().flatMap(NLiteral::asString).get(session), autoCreate));
         } else {
             return null;
         }

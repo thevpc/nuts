@@ -99,7 +99,7 @@ public final class NReservedBootConfigLoader {
         try {
             int a = 0;
             for (String part : s.toString().split("\\.")) {
-                a = a * 100 + NValue.of(part).asInt().orElse(0);
+                a = a * 100 + NLiteral.of(part).asInt().orElse(0);
             }
             return a;
         } catch (Exception ex) {

@@ -259,8 +259,8 @@ class InstalledRepositoryConfigModel implements NRepositoryConfigModel {
     }
 
     @Override
-    public NOptional<NValue> get(String key, boolean inherit, NSession session) {
-        NOptional<NValue> o = NOptional.ofEmpty(s -> NMsg.ofCstyle("repo config property not found : %s", key));
+    public NOptional<NLiteral> get(String key, boolean inherit, NSession session) {
+        NOptional<NLiteral> o = NOptional.ofEmpty(s -> NMsg.ofCstyle("repo config property not found : %s", key));
         if (inherit) {
             return o.orElseUse(()->NConfigs.of(session).getConfigProperty(key));
         }

@@ -37,7 +37,7 @@ import net.thevpc.nuts.util.NDescribable;
  * @app.category Elements
  * @since 0.5.6
  */
-public interface NElement extends NDescribable, NBlankable, NValue {
+public interface NElement extends NDescribable, NBlankable, NLiteral {
 
     /**
      * element type

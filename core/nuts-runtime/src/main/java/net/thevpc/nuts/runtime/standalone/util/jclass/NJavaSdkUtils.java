@@ -394,8 +394,8 @@ public class NJavaSdkUtils {
     public NId createJdkId(String version, NSession session) {
         NAssert.requireNonBlank(version, "version", session);
         NVersion jv = NVersion.of(version).get( session);
-        long n1 = jv.getNumber(0).flatMap(NValue::asLong).orElse(0L);
-        long n2 = jv.getNumber(1).flatMap(NValue::asLong).orElse(0L);
+        long n1 = jv.getNumber(0).flatMap(NLiteral::asLong).orElse(0L);
+        long n2 = jv.getNumber(1).flatMap(NLiteral::asLong).orElse(0L);
         long classFileId = 0;
         String standard = n1 + "." + n2;
         if (n1 == 1) {

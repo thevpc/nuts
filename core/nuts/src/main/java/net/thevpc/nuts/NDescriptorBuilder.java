@@ -391,7 +391,7 @@ public interface NDescriptorBuilder extends NDescriptor {
      * @return first property value
      * @since 0.8.3
      */
-    NOptional<NValue> getPropertyValue(String name);
+    NOptional<NLiteral> getPropertyValue(String name);
 
     /**
      * return id type

@@ -224,7 +224,7 @@ public class NSettingsNdiSubCommand extends AbstractNSettingsSubCommand {
                     if (commandLine.isNextOption()) {
                         session.configureLast(commandLine);
                     } else {
-                        d.idsToInstall.add(commandLine.next().flatMap(NValue::asString).get(session));
+                        d.idsToInstall.add(commandLine.next().flatMap(NLiteral::asString).get(session));
                         d.missingAnyArgument = false;
                     }
                 }
@@ -266,7 +266,7 @@ public class NSettingsNdiSubCommand extends AbstractNSettingsSubCommand {
                 return NSupportMode.PREFERRED;
             }
             default: {
-                if (NValue.of(s).asBoolean().get(session)) {
+                if (NLiteral.of(s).asBoolean().get(session)) {
                     return NSupportMode.PREFERRED;
                 } else {
                     return NSupportMode.NEVER;
@@ -289,7 +289,7 @@ public class NSettingsNdiSubCommand extends AbstractNSettingsSubCommand {
             } else if (commandLine.isNextOption()) {
                 session.configureLast(commandLine);
             } else {
-                idsToUninstall.add(commandLine.next().flatMap(NValue::asString).get(session));
+                idsToUninstall.add(commandLine.next().flatMap(NLiteral::asString).get(session));
                 missingAnyArgument = false;
             }
         }
@@ -401,9 +401,9 @@ public class NSettingsNdiSubCommand extends AbstractNSettingsSubCommand {
                     if (commandLine.isNextOption()) {
                         commandLine.throwUnexpectedArgument();
                     } else if (d.switchWorkspaceLocation == null) {
-                        d.switchWorkspaceLocation = commandLine.next().flatMap(NValue::asString).get(session);
+                        d.switchWorkspaceLocation = commandLine.next().flatMap(NLiteral::asString).get(session);
                     } else if (d.switchWorkspaceApi == null) {
-                        d.switchWorkspaceApi = commandLine.next().flatMap(NValue::asString).get(session);
+                        d.switchWorkspaceApi = commandLine.next().flatMap(NLiteral::asString).get(session);
                     } else if (commandLine.isNextOption()) {
                         session.configureLast(commandLine);
                     } else {

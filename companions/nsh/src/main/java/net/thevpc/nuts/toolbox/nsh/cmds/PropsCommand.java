@@ -53,13 +53,13 @@ public class PropsCommand extends SimpleJShellBuiltin {
         Options o = context.getOptions();
         NSession session = context.getSession();
         if (commandLine.next("get").isPresent()) {
-            o.property = commandLine.next().flatMap(NValue::asString).get(session);
+            o.property = commandLine.next().flatMap(NLiteral::asString).get(session);
             o.action = "get";
             while (commandLine.hasNext()) {
                 if (commandLine.next("--xml").isPresent()) {
                     o.sourceFormat = Format.XML;
                     o.sourceType = SourceType.FILE;
-                    o.sourceFile = commandLine.nextNonOption(NArgName.of("file",session)).flatMap(NValue::asString).get(session);
+                    o.sourceFile = commandLine.nextNonOption(NArgName.of("file",session)).flatMap(NLiteral::asString).get(session);
 
                 } else if (commandLine.next("--system").isPresent()) {
                     o.sourceFormat = Format.PROPS;
@@ -69,12 +69,12 @@ public class PropsCommand extends SimpleJShellBuiltin {
                 } else if (commandLine.next("--props").isPresent()) {
                     o.sourceFormat = Format.PROPS;
                     o.sourceType = SourceType.FILE;
-                    o.sourceFile = commandLine.nextNonOption(NArgName.of("file",session)).flatMap(NValue::asString).get(session);
+                    o.sourceFile = commandLine.nextNonOption(NArgName.of("file",session)).flatMap(NLiteral::asString).get(session);
 
                 } else if (commandLine.next("--file").isPresent()) {
                     o.sourceFormat = Format.AUTO;
                     o.sourceType = SourceType.FILE;
-                    o.sourceFile = commandLine.nextNonOption(NArgName.of("file",session)).flatMap(NValue::asString).get(session);
+                    o.sourceFile = commandLine.nextNonOption(NArgName.of("file",session)).flatMap(NLiteral::asString).get(session);
                 } else {
                     commandLine.setCommandName(getName()).throwUnexpectedArgument();
                 }
@@ -82,8 +82,8 @@ public class PropsCommand extends SimpleJShellBuiltin {
             }
             return true;
         } else if (commandLine.next("set").isPresent()) {
-            String k = commandLine.next().flatMap(NValue::asString).get(session);
-            String v = commandLine.next().flatMap(NValue::asString).get(session);
+            String k = commandLine.next().flatMap(NLiteral::asString).get(session);
+            String v = commandLine.next().flatMap(NLiteral::asString).get(session);
             o.updates.put(k, v);
             o.action = "set";
             while (commandLine.hasNext()) {
@@ -92,16 +92,16 @@ public class PropsCommand extends SimpleJShellBuiltin {
                 } else if (commandLine.next("--to-props-file").isPresent()) {
                     o.targetFormat = Format.PROPS;
                     o.targetType = TargetType.FILE;
-                    o.targetFile = commandLine.nextNonOption(NArgName.of("file",session)).flatMap(NValue::asString).get(session);
+                    o.targetFile = commandLine.nextNonOption(NArgName.of("file",session)).flatMap(NLiteral::asString).get(session);
 
                 } else if (commandLine.next("--to-xml-file").isPresent()) {
                     o.targetFormat = Format.XML;
                     o.targetType = TargetType.FILE;
-                    o.targetFile = commandLine.nextNonOption(NArgName.of("file",session)).flatMap(NValue::asString).get(session);
+                    o.targetFile = commandLine.nextNonOption(NArgName.of("file",session)).flatMap(NLiteral::asString).get(session);
                 } else if (commandLine.next("--to-file").isPresent()) {
                     o.targetFormat = Format.AUTO;
                     o.targetType = TargetType.FILE;
-                    o.targetFile = commandLine.nextNonOption(NArgName.of("file",session)).flatMap(NValue::asString).get(session);
+                    o.targetFile = commandLine.nextNonOption(NArgName.of("file",session)).flatMap(NLiteral::asString).get(session);
 
                 } else if (commandLine.next("--print-props").isPresent()) {
                     o.targetFormat = Format.PROPS;
@@ -123,7 +123,7 @@ public class PropsCommand extends SimpleJShellBuiltin {
                 } else if (commandLine.next("--xml").isPresent()) {
                     o.sourceFormat = Format.XML;
                     o.sourceType = SourceType.FILE;
-                    o.sourceFile = commandLine.nextNonOption(NArgName.of("file",session)).flatMap(NValue::asString).get(session);
+                    o.sourceFile = commandLine.nextNonOption(NArgName.of("file",session)).flatMap(NLiteral::asString).get(session);
 
                 } else if (commandLine.next("--system").isPresent()) {
                     o.sourceFormat = Format.PROPS;
@@ -133,11 +133,11 @@ public class PropsCommand extends SimpleJShellBuiltin {
                 } else if (commandLine.next("--props").isPresent()) {
                     o.sourceFormat = Format.PROPS;
                     o.sourceType = SourceType.FILE;
-                    o.sourceFile = commandLine.nextNonOption(NArgName.of("file",session)).flatMap(NValue::asString).get(session);
+                    o.sourceFile = commandLine.nextNonOption(NArgName.of("file",session)).flatMap(NLiteral::asString).get(session);
                 } else if (commandLine.next("--file").isPresent()) {
                     o.sourceFormat = Format.AUTO;
                     o.sourceType = SourceType.FILE;
-                    o.sourceFile = commandLine.nextNonOption(NArgName.of("file",session)).flatMap(NValue::asString).get(session);
+                    o.sourceFile = commandLine.nextNonOption(NArgName.of("file",session)).flatMap(NLiteral::asString).get(session);
                 } else {
                     commandLine.setCommandName(getName()).throwUnexpectedArgument();
                 }
@@ -149,7 +149,7 @@ public class PropsCommand extends SimpleJShellBuiltin {
                 if (commandLine.next("--xml").isPresent()) {
                     o.sourceFormat = Format.XML;
                     o.sourceType = SourceType.FILE;
-                    o.sourceFile = commandLine.nextNonOption(NArgName.of("file",session)).flatMap(NValue::asString).get(session);
+                    o.sourceFile = commandLine.nextNonOption(NArgName.of("file",session)).flatMap(NLiteral::asString).get(session);
 
                 } else if (commandLine.next("--system").isPresent()) {
                     o.sourceFormat = Format.PROPS;
@@ -159,12 +159,12 @@ public class PropsCommand extends SimpleJShellBuiltin {
                 } else if (commandLine.next("--props").isPresent()) {
                     o.sourceFormat = Format.PROPS;
                     o.sourceType = SourceType.FILE;
-                    o.sourceFile = commandLine.nextNonOption(NArgName.of("file",session)).flatMap(NValue::asString).get(session);
+                    o.sourceFile = commandLine.nextNonOption(NArgName.of("file",session)).flatMap(NLiteral::asString).get(session);
 
                 } else if (commandLine.next("--file").isPresent()) {
                     o.sourceFormat = Format.AUTO;
                     o.sourceType = SourceType.FILE;
-                    o.sourceFile = commandLine.nextNonOption(NArgName.of("file",session)).flatMap(NValue::asString).get(session);
+                    o.sourceFile = commandLine.nextNonOption(NArgName.of("file",session)).flatMap(NLiteral::asString).get(session);
                 } else if (commandLine.next("--sort").isPresent()) {
                     o.sort = true;
                     session.addOutputFormatOptions("--sort");
