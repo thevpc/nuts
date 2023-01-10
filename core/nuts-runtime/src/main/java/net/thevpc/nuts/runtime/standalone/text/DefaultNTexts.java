@@ -142,6 +142,70 @@ public class DefaultNTexts implements NTexts {
         NSessionUtils.checkSession(ws, getSession());
     }
 
+    private boolean isSpecialLiteral(Object m) {
+        if (m == null) {
+            return true;
+        }
+        if (m instanceof Number) {
+            return true;
+        }
+        if (m instanceof Temporal) {
+            return true;
+        }
+        if (m instanceof Date) {
+            return true;
+        }
+        if (m instanceof Boolean) {
+            return true;
+        }
+        if (m instanceof String) {
+            return true;
+        }
+        if (m instanceof StringBuilder) {
+            return true;
+        }
+        return false;
+    }
+
+    private NTextStyles getSpecialLiteralType(Object m) {
+        if (m == null) {
+            return NTextStyles.of(NTextStyle.warn());
+        }
+        if (m instanceof Number) {
+            return NTextStyles.of(NTextStyle.number());
+        }
+        if (m instanceof Temporal) {
+            return NTextStyles.of(NTextStyle.date());
+        }
+        if (m instanceof Date) {
+            return NTextStyles.of(NTextStyle.date());
+        }
+        if (m instanceof Boolean) {
+            return NTextStyles.of(NTextStyle.bool());
+        }
+        return NTextStyles.of();
+    }
+
+    private NText asLiteralOrText(Object m, String format, NTexts txt) {
+        if (m == null) {
+            return txt.ofStyled("null", NTextStyle.danger());
+        }
+        if (m instanceof Number) {
+            return txt.ofStyled(String.valueOf(m), NTextStyle.number());
+        }
+        if (m instanceof Temporal) {
+            return txt.ofStyled(String.valueOf(m), NTextStyle.date());
+        }
+        if (m instanceof Date) {
+            return txt.ofStyled(String.valueOf(m), NTextStyle.date());
+        }
+        if (m instanceof Boolean) {
+            return txt.ofStyled(String.valueOf(m), NTextStyle.keyword());
+        }
+        return txt.ofText(m);
+    }
+
+
     private NText _NMsg_toString(NMsg m) {
         checkSession();
         NTextFormatStyle format = m.getFormat();
@@ -155,28 +219,85 @@ public class DefaultNTexts implements NTexts {
         Object msg = m.getMessage();
         String sLocale = getSession() == null ? null : getSession().getLocale();
         Locale locale = NBlankable.isBlank(sLocale) ? null : new Locale(sLocale);
-        Object[] args2 = new Object[params.length];
         NTexts txt = NTexts.of(getSession());
-        for (int i = 0; i < args2.length; i++) {
-            Object a = params[i];
-            if (a == null) {
-                //do nothing, support format pattern
-                args2[i] = null;
-            } else if (a instanceof Number || a instanceof Date || a instanceof Temporal) {
-                //do nothing, support format pattern
-                args2[i] = a;
-            } else {
-                args2[i] = txt.ofText(a).toString();
-            }
-        }
         switch (format) {
             case CSTYLE: {
+                String smsg = (String) msg;
+                NFormattedTextParts r = NFormattedTextParts.parseCStyle(smsg);
                 StringBuilder sb = new StringBuilder();
-                new Formatter(sb, locale).format((String) msg, args2);
+                int paramIndex = 0;
+                for (NFormattedTextPart part : r.getParts()) {
+                    if (part.isFormat()) {
+                        if(part.getValue().equals("%%")) {
+                            sb.append("%");
+                        }else if(part.getValue().equals("%n")){
+                            sb.append("\n");
+                        }else {
+                            if (paramIndex < 0 || paramIndex >= params.length) {
+                                throw new NIllegalArgumentException(session, NMsg.ofPlain("invalid index in message"));
+                            }
+                            Object a = params[paramIndex];
+                            if (a == null) {
+                                sb.append((String) null);
+                            } else if (isSpecialLiteral(a)) {
+                                StringBuilder sb2 = new StringBuilder();
+                                new Formatter(sb2, locale).format(part.getValue(), a);
+                                sb.append(txt.ofStyled(sb2.toString(), getSpecialLiteralType(a)));
+                            } else {
+                                StringBuilder sb2 = new StringBuilder();
+                                new Formatter(sb2, locale).format(part.getValue(), txt.ofText(a));
+                                sb.append(sb2);
+                            }
+                            paramIndex++;
+                        }
+                    } else {
+                        sb.append(part.getValue());
+                    }
+                }
                 return txt.parse(sb.toString());
             }
             case JSTYLE: {
-                return txt.parse(MessageFormat.format((String) msg, args2));
+                String smsg = (String) msg;
+                NFormattedTextParts r = NFormattedTextParts.parseJStyle(smsg);
+                StringBuilder sb = new StringBuilder();
+                int gParamIndex = 0;
+                for (NFormattedTextPart part : r.getParts()) {
+                    if (part.isFormat()) {
+                        String formatExt = "";
+                        String formatPart = part.getValue();
+                        int paramIndex = -1;
+                        int commaPos = formatPart.indexOf(',');
+                        if (commaPos >= 0) {
+                            String paramIndexStr = formatPart.substring(0, commaPos).trim();
+                            if (paramIndexStr.isEmpty()) {
+                                paramIndex = gParamIndex;
+                            } else {
+                                paramIndex = NLiteral.of(paramIndexStr).asInt().get();
+                            }
+                            formatExt = formatPart.substring(commaPos + 1);
+                        } else {
+                            String paramIndexStr = formatPart.trim();
+                            if (paramIndexStr.isEmpty()) {
+                                paramIndex = gParamIndex;
+                            } else {
+                                paramIndex = NLiteral.of(paramIndexStr).asInt().get();
+                            }
+                        }
+                        Object a = params[paramIndex];
+                        if (a == null) {
+                            sb.append((String) null);
+                        } else if (isSpecialLiteral(a)) {
+                            String sb2 = MessageFormat.format("{0" + formatExt + "}", a);
+                            sb.append(txt.ofStyled(sb2, getSpecialLiteralType(a)));
+                        } else {
+                            sb.append(MessageFormat.format("{0" + formatExt + "}", txt.ofText(a)));
+                        }
+                        gParamIndex++;
+                    } else {
+                        sb.append(part.getValue());
+                    }
+                }
+                return txt.parse(sb.toString());
             }
             case VSTYLE: {
                 Object[] finalParams = params;
@@ -187,7 +308,7 @@ public class DefaultNTexts implements NTexts {
                                             (Map<String, ?>) finalParams[0];
                             Object v = mm.get(s);
                             if (v != null) {
-                                return String.valueOf(v);
+                                return asLiteralOrText(v, "", txt);
                             }
                             return "${" + s + "}";
                         }
@@ -1006,7 +1127,6 @@ public class DefaultNTexts implements NTexts {
     }
 
     private interface NTextMapper {
-
         NText ofText(Object t, NTexts texts, NSession session);
     }
 }
