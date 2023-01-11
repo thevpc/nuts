@@ -101,7 +101,7 @@ class NCodeMainCmdProcessor implements NCommandLineProcessor {
                 navigate(SourceFactory.create(new File(path)), new PathSourceFilter(fileComparators), new PathSourceFormatter(), session, results);
             }
         }
-        session.out().printlnf(results);
+        session.out().println(results);
     }
 
 }

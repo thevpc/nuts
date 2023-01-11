@@ -1,7 +1,7 @@
 package net.thevpc.nuts.runtime.standalone.io.printstream;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.io.NOutStream;
+import net.thevpc.nuts.io.NOutputStream;
 import net.thevpc.nuts.io.NTerminalMode;
 import net.thevpc.nuts.spi.NSystemTerminalBase;
 import net.thevpc.nuts.text.NTerminalCommand;
@@ -15,18 +15,18 @@ import java.io.UnsupportedEncodingException;
 /**
  * Print stream from custom output streams like ByteArrayOutputStream
  */
-public class NOutStreamRaw extends NOutStreamBase {
+public class NOutputStreamRaw extends NOutputStreamBase {
     protected OutputStream out;
     private PrintStream base;
 
-    protected NOutStreamRaw(OutputStream out, PrintStream base, Boolean autoFlush, NTerminalMode mode, NSession session, Bindings bindings, NSystemTerminalBase term) {
+    protected NOutputStreamRaw(OutputStream out, PrintStream base, Boolean autoFlush, NTerminalMode mode, NSession session, Bindings bindings, NSystemTerminalBase term) {
         super(autoFlush == null || autoFlush, mode, session, bindings, term);
         getOutputMetaData().setMessage(NMsg.ofNtf(NTexts.of(session).ofStyled("<raw-stream>", NTextStyle.path())));
         this.out = out;
         this.base = base;
     }
 
-    public NOutStreamRaw(OutputStream out, Boolean autoFlush, String encoding, NSession session, Bindings bindings, NSystemTerminalBase term) {
+    public NOutputStreamRaw(OutputStream out, Boolean autoFlush, String encoding, NSession session, Bindings bindings, NSystemTerminalBase term) {
         super(true, NTerminalMode.INHERITED, session, bindings, term);
         getOutputMetaData().setMessage(NMsg.ofNtf(NTexts.of(session).ofStyled("<raw-stream>", NTextStyle.path())));
         this.out = out;
@@ -72,15 +72,15 @@ public class NOutStreamRaw extends NOutStreamBase {
     }
 
     @Override
-    public NOutStream flush() {
+    public NOutputStream flush() {
         base.flush();
         return this;
     }
 
     @Override
-    public NOutStream close() {
+    public NOutputStream close() {
         if (getTerminalMode() == NTerminalMode.ANSI) {
-            write("\033[0m".getBytes());
+            print("\033[0m".getBytes());
             flush();
         }
         base.close();
@@ -88,19 +88,23 @@ public class NOutStreamRaw extends NOutStreamBase {
     }
 
     @Override
-    public NOutStream write(int b) {
+    public NOutputStream write(int b) {
         base.write(b);
         return this;
     }
 
     @Override
-    public NOutStream write(byte[] buf, int off, int len) {
-        base.write(buf, off, len);
+    public NOutputStream write(byte[] buf, int off, int len) {
+        if (buf == null) {
+            base.print("null");
+        } else {
+            base.write(buf, off, len);
+        }
         return this;
     }
 
     @Override
-    public NOutStream write(char[] s, int off, int len) {
+    public NOutputStream write(char[] s, int off, int len) {
         if (s == null) {
             base.print("null");
         } else {
@@ -109,42 +113,31 @@ public class NOutStreamRaw extends NOutStreamBase {
         return this;
     }
 
-    @Override
-    public NOutStream print(String s) {
-        base.print(s);
-        return this;
-    }
 
     @Override
-    public NOutStream setSession(NSession session) {
+    public NOutputStream setSession(NSession session) {
         if (session == null || session == this.session) {
             return this;
         }
-        return new NOutStreamRaw(out, base, autoFlash, getTerminalMode(), session, new Bindings(), getTerminal());
+        return new NOutputStreamRaw(out, base, autoFlash, getTerminalMode(), session, new Bindings(), getTerminal());
     }
 
     @Override
-    public NOutStream run(NTerminalCommand command, NSession session) {
+    public NOutputStream run(NTerminalCommand command, NSession session) {
         return this;
     }
 
     @Override
-    public NOutStream print(char[] s) {
-        base.print(s);
-        return this;
-    }
-
-    @Override
-    protected NOutStream convertImpl(NTerminalMode other) {
+    protected NOutputStream convertImpl(NTerminalMode other) {
         switch (other) {
             case FORMATTED: {
-                return new NOutStreamFormatted(this, getSession(), bindings);
+                return new NOutputStreamFormatted(this, getSession(), bindings);
             }
             case FILTERED: {
-                return new NOutStreamFiltered(this, getSession(), bindings);
+                return new NOutputStreamFiltered(this, getSession(), bindings);
             }
         }
-        throw new NIllegalArgumentException(getSession(), NMsg.ofCstyle("unsupported %s -> %s", getTerminalMode(), other));
+        throw new NIllegalArgumentException(getSession(), NMsg.ofC("unsupported %s -> %s", getTerminalMode(), other));
     }
 
     @Override

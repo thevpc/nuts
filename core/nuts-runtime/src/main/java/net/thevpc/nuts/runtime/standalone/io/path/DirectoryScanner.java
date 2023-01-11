@@ -136,7 +136,7 @@ public class DirectoryScanner {
                     return t.flatMap((NFunction) f).distinct();
                 }
             } else {
-                throw new NIllegalArgumentException(session, NMsg.ofCstyle("unsupported %s",parts[i]));
+                throw new NIllegalArgumentException(session, NMsg.ofC("unsupported %s",parts[i]));
             }
         }
         if (r == null) {

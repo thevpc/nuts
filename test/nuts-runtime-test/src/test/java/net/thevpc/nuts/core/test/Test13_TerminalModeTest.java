@@ -7,7 +7,7 @@ package net.thevpc.nuts.core.test;
 
 import net.thevpc.nuts.core.test.utils.TestUtils;
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.io.NOutStream;
+import net.thevpc.nuts.io.NOutputStream;
 import net.thevpc.nuts.io.NSessionTerminal;
 import net.thevpc.nuts.io.NSystemTerminal;
 import net.thevpc.nuts.io.NTerminalMode;
@@ -66,14 +66,14 @@ public class Test13_TerminalModeTest {
 
                         {
                             NSystemTerminal systemTerminal = NConfigs.of(session).getSystemTerminal();
-                            NOutStream sysInitMode = systemTerminal.out();
+                            NOutputStream sysInitMode = systemTerminal.out();
                             TestUtils.println(
                                     "sys-init="+(sysInitMode.getTerminalMode()==null?"default": sysInitMode.getTerminalMode().id())
                                             +", sys-fixed="+(systemMode==null?"default":systemMode.id())
                                             +" ->"+sessionMode.id());
 
                             NSessionTerminal terminal = NSessionTerminal.of(session);
-                            NOutStream out = terminal.out().setTerminalMode(systemMode);
+                            NOutputStream out = terminal.out().setTerminalMode(systemMode);
                             NTerminalMode initMode = out.getTerminalMode();
                             Assertions.assertEquals(systemMode,initMode);
                             TestUtils.println(
@@ -96,9 +96,9 @@ public class Test13_TerminalModeTest {
                 return;
             }else{
                 NSystemTerminal systemTerminal = NConfigs.of(session).getSystemTerminal();
-                NOutStream sysInitMode = systemTerminal.out();
+                NOutputStream sysInitMode = systemTerminal.out();
                 NSessionTerminal terminal = NSessionTerminal.of(session);
-                NOutStream out = terminal.out().setTerminalMode(systemMode);
+                NOutputStream out = terminal.out().setTerminalMode(systemMode);
                 NTerminalMode initMode = out.getTerminalMode();
                 Assertions.assertEquals(systemMode,initMode);
                 TestUtils.println(
@@ -121,17 +121,17 @@ public class Test13_TerminalModeTest {
     public void testBuilder(){
         NText c = NTexts.of(session).ofCode("java", "public static void main(String[] args){}")
                 .highlight(session);
-        session.out().printlnf(c);
+        session.out().println(c);
 
         NText word_static = c.builder().substring(7, 13);
-        session.out().printlnf(word_static);
+        session.out().println(word_static);
         Assertions.assertEquals("##{keyword:static}##\u001E",word_static.toString());
 
         NText portion_npar = c.builder().substring(22, 24);
-        session.out().printlnf(portion_npar);
+        session.out().println(portion_npar);
         Assertions.assertEquals("n##{separator:(}##\u001E",portion_npar.toString());
         NText rep=c.builder().replace(23,24, NTexts.of(session).ofStyled("()(", NTextStyle.danger())).build();
-        session.out().printlnf(rep);
+        session.out().println(rep);
         Assertions.assertEquals("##{keyword:public}##\u001E ##{keyword:static}##\u001E ##{keyword:void}##\u001E main##{danger:()(}##\u001EString##{separator:[}##\u001E##{separator:]}##\u001E args##{separator:)}##\u001E##{separator:{}##\u001E##{separator:}}##\u001E",
                 rep.toString());
     }

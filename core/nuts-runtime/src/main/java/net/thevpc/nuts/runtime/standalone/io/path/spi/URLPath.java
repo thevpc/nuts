@@ -233,7 +233,7 @@ public class URLPath implements NPathSPI {
     @Override
     public URL toURL(NPath basePath) {
         if (url == null) {
-            throw new NIOException(getSession(), NMsg.ofCstyle("unable to resolve url %s", toString()));
+            throw new NIOException(getSession(), NMsg.ofC("unable to resolve url %s", toString()));
         }
         return url;
     }
@@ -244,7 +244,7 @@ public class URLPath implements NPathSPI {
         if (f != null) {
             return f.toPath();
         }
-        throw new NIOException(getSession(), NMsg.ofCstyle("unable to resolve file %s", toString()));
+        throw new NIOException(getSession(), NMsg.ofC("unable to resolve file %s", toString()));
     }
 
     public boolean isSymbolicLink(NPath basePath) {
@@ -371,7 +371,7 @@ public class URLPath implements NPathSPI {
 
     public InputStream getInputStream(NPath basePath, NPathOption... options) {
         if (url == null) {
-            throw new NIOException(getSession(), NMsg.ofCstyle("unable to resolve input stream %s", toString()));
+            throw new NIOException(getSession(), NMsg.ofC("unable to resolve input stream %s", toString()));
         }
         NTransportComponent best = session.extensions()
                 .createSupported(NTransportComponent.class, false, url);
@@ -385,7 +385,7 @@ public class URLPath implements NPathSPI {
     public OutputStream getOutputStream(NPath basePath, NPathOption... options) {
         try {
             if (url == null) {
-                throw new NIOException(getSession(), NMsg.ofCstyle("unable to resolve output stream %s", toString()));
+                throw new NIOException(getSession(), NMsg.ofC("unable to resolve output stream %s", toString()));
             }
             return url.openConnection().getOutputStream();
         } catch (IOException e) {
@@ -407,7 +407,7 @@ public class URLPath implements NPathSPI {
                 return;
             }
         }
-        throw new NIOException(getSession(), NMsg.ofCstyle("unable to delete %s", toString()));
+        throw new NIOException(getSession(), NMsg.ofC("unable to delete %s", toString()));
     }
 
     @Override
@@ -419,7 +419,7 @@ public class URLPath implements NPathSPI {
                 return;
             }
         }
-        throw new NIOException(getSession(), NMsg.ofCstyle("unable to mkdir %s", toString()));
+        throw new NIOException(getSession(), NMsg.ofC("unable to mkdir %s", toString()));
     }
 
     @Override
@@ -605,7 +605,7 @@ public class URLPath implements NPathSPI {
 
     @Override
     public void moveTo(NPath basePath, NPath other, NPathOption... options) {
-        throw new NIOException(session, NMsg.ofCstyle("unable to move %s", this));
+        throw new NIOException(session, NMsg.ofC("unable to move %s", this));
     }
 
     @Override
@@ -627,7 +627,7 @@ public class URLPath implements NPathSPI {
                     }
                     case SKIP_SIBLINGS:
                     case SKIP_SUBTREE: {
-                        throw new NIllegalArgumentException(session, NMsg.ofCstyle("unsupported %s", r));
+                        throw new NIllegalArgumentException(session, NMsg.ofC("unsupported %s", r));
                     }
                 }
             } else if (x.isRegularFile()) {
@@ -641,7 +641,7 @@ public class URLPath implements NPathSPI {
                     }
                     case SKIP_SIBLINGS:
                     case SKIP_SUBTREE: {
-                        throw new NIllegalArgumentException(session, NMsg.ofCstyle("unsupported %s", r));
+                        throw new NIllegalArgumentException(session, NMsg.ofC("unsupported %s", r));
                     }
                 }
             }
@@ -777,7 +777,7 @@ public class URLPath implements NPathSPI {
         }
 
         @Override
-        public void print(NOutStream out) {
+        public void print(NOutputStream out) {
             out.print(asFormattedString());
         }
 

@@ -126,7 +126,7 @@ public class SqlHelper implements Closeable {
         }
         for (String s : sqlList) {
             if (showSQL) {
-                session.out().printlnf(NMsg.ofCode("sql", s));
+                session.out().println(NMsg.ofCode("sql", s));
             }
             try {
                 List<Object> a = runSQL2(s);
@@ -135,18 +135,18 @@ public class SqlHelper implements Closeable {
                         if (a.get(0) instanceof List) {
                             session.copy().setOutputFormat(NContentType.TABLE)
                                     .setOutputFormatOptions("--border=spaces")
-                                    .out().printlnf(a);
+                                    .out().println(a);
                         } else {
                             for (Object o : a) {
-                                session.out().printlnf(o);
+                                session.out().println(o);
                             }
                         }
                     }
                 } else {
-                    session.out().printlnf(a);
+                    session.out().println(a);
                 }
             } catch (Exception e) {
-                session.err().printlnf(NMsg.ofCstyle("Error : %s", e));
+                session.err().println(NMsg.ofC("Error : %s", e));
             }
         }
     }

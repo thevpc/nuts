@@ -224,7 +224,7 @@ public class NJobsSubService {
     public boolean removeJob(String jobId) {
         long count = service.tasks().findAllTasks().filter(x -> jobId.equals(x.getJobId())).count();
         if (count > 1) {
-            throw new NIllegalArgumentException(context.getSession(), NMsg.ofCstyle("job is used in %d tasks. It cannot be removed.",count));
+            throw new NIllegalArgumentException(context.getSession(), NMsg.ofC("job is used in %d tasks. It cannot be removed.",count));
         } else if (count > 0) {
             throw new NIllegalArgumentException(context.getSession(), NMsg.ofPlain("job is used in one task. It cannot be removed."));
         }

@@ -155,8 +155,7 @@ public class NReservedBootLog implements NLogger {
     }
 
     public void outln(String msg, Object... p) {
-        this.bootTerminal.getOut().printf(msg, p);
-        this.bootTerminal.getOut().printf("%n");
+        this.bootTerminal.getOut().println(NMsg.ofC(msg, p));
         this.bootTerminal.getOut().flush();
     }
 

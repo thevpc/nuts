@@ -13,7 +13,7 @@ import net.thevpc.nuts.*;
 import net.thevpc.nuts.cmdline.NCommandLine;
 import net.thevpc.nuts.format.NTreeFormat;
 import net.thevpc.nuts.format.NTreeNodeFormat;
-import net.thevpc.nuts.io.NOutStream;
+import net.thevpc.nuts.io.NOutputStream;
 import net.thevpc.nuts.runtime.standalone.format.NIdFormatHelper;
 import net.thevpc.nuts.runtime.standalone.format.DefaultSearchFormatBase;
 import net.thevpc.nuts.runtime.standalone.format.NFetchDisplayOptions;
@@ -40,7 +40,7 @@ public class DefaultSearchFormatTree extends DefaultSearchFormatBase {
         }
     };
 
-    public DefaultSearchFormatTree(NSession session, NOutStream writer, NFetchDisplayOptions options) {
+    public DefaultSearchFormatTree(NSession session, NOutputStream writer, NFetchDisplayOptions options) {
         super(session, writer, NContentType.TREE, options);
     }
 

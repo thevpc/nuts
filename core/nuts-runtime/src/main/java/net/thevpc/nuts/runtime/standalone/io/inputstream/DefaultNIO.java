@@ -52,19 +52,19 @@ public class DefaultNIO implements NIO {
 
 
     @Override
-    public NOutStream createNullPrintStream() {
+    public NOutputStream createNullOutputStream() {
         checkSession();
         return getBootModel().nullPrintStream();
     }
 
     @Override
-    public NOutMemoryStream createInMemoryPrintStream() {
+    public NMemoryOutputStream createInMemoryOutputStream() {
         checkSession();
-        return new NOutByteArrayStream(getSession());
+        return new NByteArrayOutputStream(getSession());
     }
 
     @Override
-    public NOutStream createPrintStream(OutputStream out, NTerminalMode expectedMode, NSystemTerminalBase term) {
+    public NOutputStream createOutputStream(OutputStream out, NTerminalMode expectedMode, NSystemTerminalBase term) {
         if (out == null) {
             return null;
         }
@@ -86,22 +86,22 @@ public class DefaultNIO implements NIO {
                 expectedMode = NTerminalMode.FILTERED;
             }
         }
-        if (out instanceof NPrintStreamAdapter) {
-            return ((NPrintStreamAdapter) out).getBasePrintStream().setTerminalMode(expectedMode);
+        if (out instanceof NOutputStreamAdapter) {
+            return ((NOutputStreamAdapter) out).getBaseOutputStream().setTerminalMode(expectedMode);
         }
         return
-                new NOutStreamRaw(out, null, null, session, new NOutStreamBase.Bindings(), term)
+                new NOutputStreamRaw(out, null, null, session, new NOutputStreamBase.Bindings(), term)
                         .setTerminalMode(expectedMode)
                 ;
     }
 
     @Override
-    public NOutStream createPrintStream(OutputStream out) {
+    public NOutputStream createOutputStream(OutputStream out) {
         checkSession();
-        return new NOutStreamRaw(out, null, null, session, new NOutStreamBase.Bindings(), null);
+        return new NOutputStreamRaw(out, null, null, session, new NOutputStreamBase.Bindings(), null);
     }
 
-    public NOutStream createPrintStream(Writer out, NTerminalMode mode, NSystemTerminalBase terminal) {
+    public NOutputStream createOutputStream(Writer out, NTerminalMode mode, NSystemTerminalBase terminal) {
         checkSession();
         if (mode == null) {
             mode = NTerminalMode.INHERITED;
@@ -109,21 +109,21 @@ public class DefaultNIO implements NIO {
         if (out == null) {
             return null;
         }
-        if (out instanceof NPrintStreamAdapter) {
-            return ((NPrintStreamAdapter) out).getBasePrintStream().setTerminalMode(mode);
+        if (out instanceof NOutputStreamAdapter) {
+            return ((NOutputStreamAdapter) out).getBaseOutputStream().setTerminalMode(mode);
         }
         SimpleWriterOutputStream w = new SimpleWriterOutputStream(out, terminal, session);
-        return createPrintStream(w, mode, terminal);
+        return createOutputStream(w, mode, terminal);
     }
 
     @Override
-    public NOutStream createPrintStream(Writer out) {
+    public NOutputStream createOutputStream(Writer out) {
         checkSession();
-        return createPrintStream(out, NTerminalMode.INHERITED, null);
+        return createOutputStream(out, NTerminalMode.INHERITED, null);
     }
 
     @Override
-    public boolean isStdout(NOutStream out) {
+    public boolean isStdout(NOutputStream out) {
         if (out == null) {
             return false;
         }
@@ -131,14 +131,14 @@ public class DefaultNIO implements NIO {
         if (out == st.out()) {
             return true;
         }
-        if (out instanceof NOutStreamRendered) {
-            return isStdout(((NOutStreamRendered) out).getBase());
+        if (out instanceof NOutputStreamRendered) {
+            return isStdout(((NOutputStreamRendered) out).getBase());
         }
-        return out instanceof NOutStreamSystem;
+        return out instanceof NOutputStreamSystem;
     }
 
     @Override
-    public boolean isStderr(NOutStream out) {
+    public boolean isStderr(NOutputStream out) {
         if (out == null) {
             return false;
         }
@@ -146,19 +146,19 @@ public class DefaultNIO implements NIO {
         if (out == st.err()) {
             return true;
         }
-        if (out instanceof NOutStreamRendered) {
-            return isStderr(((NOutStreamRendered) out).getBase());
+        if (out instanceof NOutputStreamRendered) {
+            return isStderr(((NOutputStreamRendered) out).getBase());
         }
-        return out instanceof NOutStreamSystem;
+        return out instanceof NOutputStreamSystem;
     }
 
     @Override
-    public NOutStream stdout() {
+    public NOutputStream stdout() {
         return getBootModel().getSystemTerminal().out();
     }
 
     @Override
-    public NOutStream stderr() {
+    public NOutputStream stderr() {
         return getBootModel().getSystemTerminal().err();
     }
 

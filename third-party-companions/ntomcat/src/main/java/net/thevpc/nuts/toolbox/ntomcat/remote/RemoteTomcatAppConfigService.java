@@ -4,7 +4,7 @@ import net.thevpc.nuts.*;
 import net.thevpc.nuts.cmdline.NCommandLine;
 import net.thevpc.nuts.elem.NElements;
 import net.thevpc.nuts.format.NObjectFormat;
-import net.thevpc.nuts.io.NOutStream;
+import net.thevpc.nuts.io.NOutputStream;
 import net.thevpc.nuts.text.NTextStyle;
 import net.thevpc.nuts.text.NTexts;
 import net.thevpc.nuts.toolbox.ntomcat.remote.config.RemoteTomcatAppConfig;
@@ -36,7 +36,7 @@ public class RemoteTomcatAppConfigService extends RemoteTomcatServiceBase {
         String localWarPath = this.config.getPath();
         NSession session = context.getSession();
         if (!new File(localWarPath).exists()) {
-            throw new NExecutionException(session, NMsg.ofCstyle("missing source war file %s", localWarPath), 2);
+            throw new NExecutionException(session, NMsg.ofC("missing source war file %s", localWarPath), 2);
         }
         String remoteTempPath = cconfig.getRemoteTempPath();
         if (NBlankable.isBlank(remoteTempPath)) {
@@ -100,7 +100,7 @@ public class RemoteTomcatAppConfigService extends RemoteTomcatServiceBase {
                     remoteFilePath
             );
         } else {
-            throw new NExecutionException(session, NMsg.ofCstyle("unable to detect file version of %s.\n%s",localWarPath ,
+            throw new NExecutionException(session, NMsg.ofC("unable to detect file version of %s.\n%s",localWarPath ,
                     s.getOutputString()), 2);
         }
     }
@@ -126,7 +126,7 @@ public class RemoteTomcatAppConfigService extends RemoteTomcatServiceBase {
         return name;
     }
 
-    public RemoteTomcatAppConfigService print(NOutStream out) {
+    public RemoteTomcatAppConfigService print(NOutputStream out) {
         NSession session = context.getSession();
         Map<String, Object> m = new LinkedHashMap<>();
         m.put("config-name", getName());
@@ -137,7 +137,7 @@ public class RemoteTomcatAppConfigService extends RemoteTomcatServiceBase {
 
     public RemoteTomcatAppConfigService remove() {
         client.getConfig().getApps().remove(name);
-        context.getSession().out().printf("%s app removed.\n", getBracketsPrefix(name));
+        context.getSession().out().println(NMsg.ofC("%s app removed.", getBracketsPrefix(name)));
         return this;
 
     }

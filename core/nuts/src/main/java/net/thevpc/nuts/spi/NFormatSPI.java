@@ -27,7 +27,7 @@
 package net.thevpc.nuts.spi;
 
 import net.thevpc.nuts.cmdline.NCommandLine;
-import net.thevpc.nuts.io.NOutStream;
+import net.thevpc.nuts.io.NOutputStream;
 
 /**
  * Base Format Interface used to print "things".
@@ -45,7 +45,7 @@ public interface NFormatSPI {
      *
      * @param out recipient print stream
      */
-    void print(NOutStream out);
+    void print(NOutputStream out);
 
     /**
      * ask {@code this} instance to configure with the very first argument of

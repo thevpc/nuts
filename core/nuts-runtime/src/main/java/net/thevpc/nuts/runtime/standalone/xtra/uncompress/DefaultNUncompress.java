@@ -84,7 +84,7 @@ public class DefaultNUncompress implements NUncompress {
                 break;
             }
             default: {
-                throw new NUnsupportedArgumentException(getSession(), NMsg.ofCstyle("unsupported compression format %s", format));
+                throw new NUnsupportedArgumentException(getSession(), NMsg.ofC("unsupported compression format %s", format));
             }
         }
         return this;
@@ -245,7 +245,7 @@ public class DefaultNUncompress implements NUncompress {
         NAssert.requireNonNull(target, "target", getSession());
         NPath _target = asValidTargetPath();
         if (_target == null) {
-            throw new NIllegalArgumentException(getSession(), NMsg.ofCstyle("invalid target %s", target));
+            throw new NIllegalArgumentException(getSession(), NMsg.ofC("invalid target %s", target));
         }
         if (options.contains(NPathOption.LOG)
                 || options.contains(NPathOption.TRACE)
@@ -263,7 +263,7 @@ public class DefaultNUncompress implements NUncompress {
 //            LOG.log(Level.FINE, "downloading url {0} to file {1}", new Object[]{path, file});
 //        } else {
         _LOGOP(session).level(Level.FINEST).verb(NLoggerVerb.START)
-                .log(NMsg.ofJstyle("uncompress {0} to {1}", _source, target));
+                .log(NMsg.ofJ("uncompress {0} to {1}", _source, target));
         Path folder = _target.toFile();
         NPath.of(folder, session).mkdirs();
 
@@ -278,7 +278,7 @@ public class DefaultNUncompress implements NUncompress {
                 break;
             }
             default: {
-                throw new NUnsupportedArgumentException(getSession(), NMsg.ofCstyle("unsupported format %s", format));
+                throw new NUnsupportedArgumentException(getSession(), NMsg.ofC("unsupported format %s", format));
             }
         }
         return this;
@@ -307,7 +307,7 @@ public class DefaultNUncompress implements NUncompress {
         NAssert.requireNonNull(target, "target", getSession());
         NPath _target = asValidTargetPath();
         if (_target == null) {
-            throw new NIllegalArgumentException(getSession(), NMsg.ofCstyle("invalid target %s", target));
+            throw new NIllegalArgumentException(getSession(), NMsg.ofC("invalid target %s", target));
         }
         NInputSource _source = source;
         if (options.contains(NPathOption.LOG)
@@ -323,7 +323,7 @@ public class DefaultNUncompress implements NUncompress {
         }
 
         _LOGOP(session).level(Level.FINEST).verb(NLoggerVerb.START)
-                .log(NMsg.ofJstyle("uncompress {0} to {1}", _source, target));
+                .log(NMsg.ofJ("uncompress {0} to {1}", _source, target));
         Path folder = _target.toFile();
         NPath.of(folder, session).mkdirs();
 
@@ -338,7 +338,7 @@ public class DefaultNUncompress implements NUncompress {
                 break;
             }
             default: {
-                throw new NUnsupportedArgumentException(getSession(), NMsg.ofCstyle("unsupported format %s", format));
+                throw new NUnsupportedArgumentException(getSession(), NMsg.ofC("unsupported format %s", format));
             }
         }
         return this;
@@ -383,7 +383,7 @@ public class DefaultNUncompress implements NUncompress {
                         } else {
                             Path newFile = folder.resolve(fileName);
                             _LOGOP(session).level(Level.FINEST).verb(NLoggerVerb.WARNING)
-                                    .log(NMsg.ofJstyle("file unzip : {0}", newFile));
+                                    .log(NMsg.ofJ("file unzip : {0}", newFile));
                             //create all non exists folders
                             //else you will hit FileNotFoundException for compressed folder
                             if (newFile.getParent() != null) {
@@ -405,7 +405,7 @@ public class DefaultNUncompress implements NUncompress {
             }
         } catch (IOException ex) {
             _LOGOP(session).level(Level.CONFIG).verb(NLoggerVerb.FAIL).log(
-                    NMsg.ofJstyle("error uncompressing {0} to {1} : {2}",
+                    NMsg.ofJ("error uncompressing {0} to {1} : {2}",
                             _source, target, ex));
             throw new NIOException(session, ex);
         }
@@ -474,7 +474,7 @@ public class DefaultNUncompress implements NUncompress {
             }
         } catch (IOException ex) {
             _LOGOP(session).level(Level.CONFIG).verb(NLoggerVerb.FAIL)
-                    .log(NMsg.ofJstyle("error uncompressing {0} to {1} : {2}",
+                    .log(NMsg.ofJ("error uncompressing {0} to {1} : {2}",
                             _source, target, ex));
             throw new NIOException(session, ex);
         }
@@ -503,7 +503,7 @@ public class DefaultNUncompress implements NUncompress {
                     //get the zipped file list entry
                     Path newFile = folder.resolve(n);
                     _LOGOP(session).level(Level.FINEST).verb(NLoggerVerb.WARNING)
-                            .log(NMsg.ofJstyle("file unzip : {0}", newFile));
+                            .log(NMsg.ofJ("file unzip : {0}", newFile));
                     //create all non exists folders
                     //else you will hit FileNotFoundException for compressed folder
                     if (newFile.getParent() != null) {
@@ -521,7 +521,7 @@ public class DefaultNUncompress implements NUncompress {
             }
         } catch (IOException ex) {
             _LOGOP(session).level(Level.CONFIG).verb(NLoggerVerb.FAIL)
-                    .log(NMsg.ofJstyle("error uncompressing {0} to {1} : {2}", _source,
+                    .log(NMsg.ofJ("error uncompressing {0} to {1} : {2}", _source,
                             target, ex));
             throw new NIOException(session, ex);
         }
@@ -567,7 +567,7 @@ public class DefaultNUncompress implements NUncompress {
             }
         } catch (IOException ex) {
             _LOGOP(session).level(Level.CONFIG).verb(NLoggerVerb.FAIL)
-                    .log(NMsg.ofJstyle("error uncompressing {0} to {1} : {2}", _source,
+                    .log(NMsg.ofJ("error uncompressing {0} to {1} : {2}", _source,
                             target, ex));
             throw new NIOException(session, ex);
         }

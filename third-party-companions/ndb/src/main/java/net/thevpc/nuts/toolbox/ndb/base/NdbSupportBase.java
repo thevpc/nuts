@@ -234,7 +234,7 @@ public abstract class NdbSupportBase<C extends NdbConfig> implements NdbSupport 
     }
 
     public NExecCommand run(NExecCommand cmd) {
-        cmd.getSession().out().printlnf(cmd);
+        cmd.getSession().out().println(cmd);
         cmd.run();
         return cmd;
     }

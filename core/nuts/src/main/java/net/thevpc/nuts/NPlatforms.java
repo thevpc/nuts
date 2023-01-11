@@ -26,6 +26,7 @@
  */
 package net.thevpc.nuts;
 
+import net.thevpc.nuts.spi.NComponent;
 import net.thevpc.nuts.util.NStream;
 
 import java.util.function.Predicate;
@@ -33,7 +34,10 @@ import java.util.function.Predicate;
 /**
  * @app.category Toolkit
  */
-public interface NPlatformManager {
+public interface NPlatforms extends NComponent {
+    static NPlatforms of(NSession session) {
+        return NExtensions.of(session).createSupported(NPlatforms.class);
+    }
     boolean addPlatform(NPlatformLocation location);
 
     boolean updatePlatform(NPlatformLocation oldLocation, NPlatformLocation newLocation);
@@ -75,5 +79,5 @@ public interface NPlatformManager {
 
     NSession getSession();
 
-    NPlatformManager setSession(NSession session);
+    NPlatforms setSession(NSession session);
 }

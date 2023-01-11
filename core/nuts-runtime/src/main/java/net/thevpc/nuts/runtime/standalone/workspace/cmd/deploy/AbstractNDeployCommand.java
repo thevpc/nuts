@@ -237,7 +237,7 @@ public abstract class AbstractNDeployCommand extends NWorkspaceCommandBase<NDepl
         checkSession();
         result.add(new Result(nid, repository, source));
 //        if (getSession().isPlainTrace()) {
-//            getSession().getTerminal().out().resetLine().printf("Nuts %s deployed successfully to %s%n",
+//            getSession().getTerminal().out().resetLine().print(NMsg.ofC("Nuts %s deployed successfully to %s%n",
 //                    nid,
 //                    NutsTexts.of(session).ofStyled(toRepository == null ? "<default-repo>" : toRepository, NutsTextStyle.primary3())
 //            );

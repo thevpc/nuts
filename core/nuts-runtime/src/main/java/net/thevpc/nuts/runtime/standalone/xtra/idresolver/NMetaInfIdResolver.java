@@ -55,7 +55,7 @@ public class NMetaInfIdResolver {
                     NLoggerOp.of(NPomXmlParser.class,session)
                             .verb(NLoggerVerb.WARNING)
                             .level(Level.FINEST)
-                            .log(NMsg.ofCstyle("failed to parse pom file %s : %s", url, ex));
+                            .log(NMsg.ofC("failed to parse pom file %s : %s", url, ex));
                 }
             }
         }
@@ -86,7 +86,7 @@ public class NMetaInfIdResolver {
                     NLoggerOp.of(NPomXmlParser.class,session)
                             .verb(NLoggerVerb.WARNING)
                             .level(Level.FINEST)
-                            .log(NMsg.ofCstyle("failed to parse pom file %s : %s", url, ex));
+                            .log(NMsg.ofC("failed to parse pom file %s : %s", url, ex));
                 }
             }
         }
@@ -122,7 +122,7 @@ public class NMetaInfIdResolver {
             NLoggerOp.of(NPomXmlParser.class,session)
                     .verb(NLoggerVerb.WARNING)
                     .level(Level.FINEST)
-                    .log(NMsg.ofCstyle("failed to parse class %s : %s", clazz.getName(), ex));
+                    .log(NMsg.ofC("failed to parse class %s : %s", clazz.getName(), ex));
         }
         if(all.isEmpty() && JavaClassUtils.isCGLib(clazz)){
             Class s = JavaClassUtils.unwrapCGLib(clazz);

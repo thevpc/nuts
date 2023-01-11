@@ -45,6 +45,6 @@ public abstract class NWorkspaceException extends NException {
     public NWorkspaceException(NSession session, NMsg message, Throwable ex) {
         super(session,
                 message == null
-                        ? NMsg.ofCstyle("workspace %s has encountered problem", session.getWorkspace().getName()) : message, ex);
+                        ? NMsg.ofC("workspace %s has encountered problem", session.getWorkspace().getName()) : message, ex);
     }
 }

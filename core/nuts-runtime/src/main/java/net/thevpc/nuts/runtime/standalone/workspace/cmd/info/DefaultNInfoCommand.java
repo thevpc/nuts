@@ -16,7 +16,7 @@ import net.thevpc.nuts.cmdline.NArg;
 import net.thevpc.nuts.cmdline.NCommandLine;
 import net.thevpc.nuts.format.NObjectFormat;
 import net.thevpc.nuts.io.NPath;
-import net.thevpc.nuts.io.NOutStream;
+import net.thevpc.nuts.io.NOutputStream;
 import net.thevpc.nuts.io.NTerminalMode;
 import net.thevpc.nuts.runtime.standalone.format.DefaultFormatBase;
 import net.thevpc.nuts.runtime.standalone.util.*;
@@ -139,7 +139,7 @@ public class DefaultNInfoCommand extends DefaultFormatBase<NInfoCommand> impleme
     }
 
     @Override
-    public void print(NOutStream w) {
+    public void print(NOutputStream w) {
         checkSession();
         List<String> args = new ArrayList<>();
         args.add("--escape-text=false");
@@ -164,7 +164,7 @@ public class DefaultNInfoCommand extends DefaultFormatBase<NInfoCommand> impleme
                 result = v;
             } else {
                 if (!isLenient()) {
-                    throw new NIllegalArgumentException(getSession(), NMsg.ofCstyle("property not found : %s", key));
+                    throw new NIllegalArgumentException(getSession(), NMsg.ofC("property not found : %s", key));
                 }
             }
         } else {
@@ -176,7 +176,7 @@ public class DefaultNInfoCommand extends DefaultFormatBase<NInfoCommand> impleme
                     e.put(request, t.get(request));
                 } else {
                     if (!isLenient()) {
-                        throw new NIllegalArgumentException(getSession(), NMsg.ofCstyle("property not found : %s", request));
+                        throw new NIllegalArgumentException(getSession(), NMsg.ofC("property not found : %s", request));
                     }
                 }
             }

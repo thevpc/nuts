@@ -73,7 +73,7 @@ public class NIdPathIterator extends NIteratorBase<NId> {
         NPath startUrl = rootFolder;
         if (basePath != null) {
             if (basePath.isAbsolute()) {
-                throw new NIllegalArgumentException(session, NMsg.ofCstyle("expected relative path : %s", basePath));
+                throw new NIllegalArgumentException(session, NMsg.ofC("expected relative path : %s", basePath));
             } else {
                 startUrl = startUrl.resolve(basePath);
             }
@@ -100,20 +100,20 @@ public class NIdPathIterator extends NIteratorBase<NId> {
         while (!stack.isEmpty()) {
             PathAndDepth file = stack.pop();
             if (file.folder) {
-                session.getTerminal().printProgress("%-14s %-8s %-8s %s", repository.getName(), kind, "search folder", file.path.toCompressedForm());
+                session.getTerminal().printProgress(NMsg.ofC("%-14s %-8s %-8s %s", repository.getName(), kind, "search folder", file.path.toCompressedForm()));
                 visitedFoldersCount++;
                 NPath[] children = new NPath[0];
                 try {
                     children = file.path.stream().toArray(NPath[]::new);
                 } catch (NIOException ex) {
                     //just log without stack trace!
-                    session.getTerminal().printProgress("%-14s %-8s %-8s %s %s", repository.getName(), kind, "search folder", file.path.toCompressedForm(), NTexts.of(session).ofStyled("failed!", NTextStyle.error()));
+                    session.getTerminal().printProgress(NMsg.ofC("%-14s %-8s %-8s %s %s", repository.getName(), kind, "search folder", file.path.toCompressedForm(), NTexts.of(session).ofStyled("failed!", NTextStyle.error())));
                     NLoggerOp.of(NIdPathIterator.class, session).level(Level.FINE)//.error(ex)
-                            .log(NMsg.ofJstyle("error listing : {0} : {1} : {2}", file.path, toString(), ex.toString()));
+                            .log(NMsg.ofJ("error listing : {0} : {1} : {2}", file.path, toString(), ex.toString()));
                 } catch (Exception ex) {
-                    session.getTerminal().printProgress("%-14s %-8s %-8s %s %s", repository.getName(), kind, "search folder", file.path.toCompressedForm(), NTexts.of(session).ofStyled("failed!", NTextStyle.error()));
+                    session.getTerminal().printProgress(NMsg.ofC("%-14s %-8s %-8s %s %s", repository.getName(), kind, "search folder", file.path.toCompressedForm(), NTexts.of(session).ofStyled("failed!", NTextStyle.error())));
                     NLoggerOp.of(NIdPathIterator.class, session).level(Level.FINE).error(ex)
-                            .log(NMsg.ofJstyle("error listing : {0} : {1}", file.path, toString()));
+                            .log(NMsg.ofJ("error listing : {0} : {1}", file.path, toString()));
                 }
                 boolean deep = file.depth < maxDepth;
                 for (NPath child : children) {
@@ -135,7 +135,7 @@ public class NIdPathIterator extends NIteratorBase<NId> {
                     t = model.parseId(file.path, rootFolder, filter, repository, session);
                 } catch (Exception ex) {
                     NLoggerOp.of(NIdPathIterator.class, session).level(Level.FINE).error(ex)
-                            .log(NMsg.ofJstyle("error parsing : {0} : {1}", file.path, toString()));
+                            .log(NMsg.ofJ("error parsing : {0} : {1}", file.path, toString()));
                 }
                 if (t != null) {
                     last = t;

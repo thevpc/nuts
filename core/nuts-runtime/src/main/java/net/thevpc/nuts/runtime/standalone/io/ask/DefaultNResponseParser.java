@@ -63,13 +63,13 @@ public class DefaultNResponseParser<T> implements NQuestionParser<T> {
                 String sReponse = response.toString();
                 NArg a = new DefaultNArg(sReponse);
                 if (!a.isBoolean()) {
-                    throw new NIllegalArgumentException(session, NMsg.ofCstyle("invalid response %s", sReponse));
+                    throw new NIllegalArgumentException(session, NMsg.ofC("invalid response %s", sReponse));
                 }
                 return (T) (Object) a.asBoolean().get(session);
             }
 
             default: {
-                throw new NUnsupportedArgumentException(session, NMsg.ofCstyle("unsupported type %s", type.getName()));
+                throw new NUnsupportedArgumentException(session, NMsg.ofC("unsupported type %s", type.getName()));
             }
         }
     }

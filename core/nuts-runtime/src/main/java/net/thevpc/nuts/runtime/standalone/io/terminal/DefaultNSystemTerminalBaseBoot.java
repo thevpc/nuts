@@ -6,7 +6,7 @@ import net.thevpc.nuts.cmdline.NCommandAutoCompleteResolver;
 import net.thevpc.nuts.cmdline.NCommandHistory;
 import net.thevpc.nuts.io.*;
 import net.thevpc.nuts.runtime.standalone.boot.DefaultNBootModel;
-import net.thevpc.nuts.runtime.standalone.io.printstream.NOutStreamSystem;
+import net.thevpc.nuts.runtime.standalone.io.printstream.NOutputStreamSystem;
 import net.thevpc.nuts.runtime.standalone.session.NSessionUtils;
 import net.thevpc.nuts.spi.*;
 import net.thevpc.nuts.text.NTerminalCommand;
@@ -21,8 +21,8 @@ import java.util.Scanner;
 public class DefaultNSystemTerminalBaseBoot extends NSystemTerminalBaseImpl {
 
     private final Scanner scanner;
-    private final NOutStream out;
-    private final NOutStream err;
+    private final NOutputStream out;
+    private final NOutputStream err;
     private final InputStream in;
     private final NWorkspace workspace;
     private final NSession session;
@@ -54,9 +54,9 @@ public class DefaultNSystemTerminalBaseBoot extends NSystemTerminalBaseImpl {
                 }
             }
         }
-        this.out = new NOutStreamSystem(bootStdFd.getOut(), null, null, bootStdFd.getFlags().contains("ansi"),
+        this.out = new NOutputStreamSystem(bootStdFd.getOut(), null, null, bootStdFd.getFlags().contains("ansi"),
                 bootModel.getBootSession(), this).setTerminalMode(terminalMode);
-        this.err = new NOutStreamSystem(bootStdFd.getErr(), null, null, bootStdFd.getFlags().contains("ansi"),
+        this.err = new NOutputStreamSystem(bootStdFd.getErr(), null, null, bootStdFd.getFlags().contains("ansi"),
                 bootModel.getBootSession(), this).setTerminalMode(terminalMode);
         this.in = bootStdFd.getIn();
         this.scanner = new Scanner(this.in);
@@ -75,7 +75,7 @@ public class DefaultNSystemTerminalBaseBoot extends NSystemTerminalBaseImpl {
         return DEFAULT_SUPPORT;
     }
 
-    public String readLine(NOutStream out, NMsg message, NSession session) {
+    public String readLine(NOutputStream out, NMsg message, NSession session) {
         if (out == null) {
             out = getOut();
         }
@@ -83,14 +83,14 @@ public class DefaultNSystemTerminalBaseBoot extends NSystemTerminalBaseImpl {
             out = NIO.of(session).stdout();
         }
         if (message != null) {
-            out.printf("%s", message);
+            out.print(message);
             out.flush();
         }
         return scanner.nextLine();
     }
 
     @Override
-    public char[] readPassword(NOutStream out, NMsg message, NSession session) {
+    public char[] readPassword(NOutputStream out, NMsg message, NSession session) {
         if (out == null) {
             out = getOut();
         }
@@ -98,7 +98,7 @@ public class DefaultNSystemTerminalBaseBoot extends NSystemTerminalBaseImpl {
             out = NIO.of(session).stdout();
         }
         if (message != null) {
-            out.printf("%s", message);
+            out.print(message);
             out.flush();
         }
         return scanner.nextLine().toCharArray();
@@ -110,12 +110,12 @@ public class DefaultNSystemTerminalBaseBoot extends NSystemTerminalBaseImpl {
     }
 
     @Override
-    public NOutStream getOut() {
+    public NOutputStream getOut() {
         return this.out;
     }
 
     @Override
-    public NOutStream getErr() {
+    public NOutputStream getErr() {
         return this.err;
     }
 

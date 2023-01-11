@@ -35,7 +35,7 @@ public class HtmlfsPath extends AbstractPathSPIAdapter {
     public HtmlfsPath(String url, NSession session) {
         super(NPath.of(url.substring(PREFIX.length()), session), session);
         if (!url.startsWith(PREFIX)) {
-            throw new NUnsupportedArgumentException(session, NMsg.ofCstyle("expected prefix '%s'", PREFIX));
+            throw new NUnsupportedArgumentException(session, NMsg.ofC("expected prefix '%s'", PREFIX));
         }
         this.url = url;
     }
@@ -237,7 +237,7 @@ public class HtmlfsPath extends AbstractPathSPIAdapter {
                                 .verb(NLoggerVerb.FAIL)
                                 .level(Level.FINEST)
                                 .error(ex)
-                                .log(NMsg.ofCstyle("failed to parse using %s", p.getClass().getSimpleName()));
+                                .log(NMsg.ofC("failed to parse using %s", p.getClass().getSimpleName()));
                     }
                     return null;
                 }).filter(p -> NSupported.isValid(p)).max(Comparator.comparing(NSupported::getSupportLevel))
@@ -303,7 +303,7 @@ public class HtmlfsPath extends AbstractPathSPIAdapter {
         }
 
         @Override
-        public void print(NOutStream out) {
+        public void print(NOutputStream out) {
             out.print(asFormattedString());
         }
 

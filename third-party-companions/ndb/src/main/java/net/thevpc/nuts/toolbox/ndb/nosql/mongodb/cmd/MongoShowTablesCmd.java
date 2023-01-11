@@ -38,7 +38,7 @@ public class MongoShowTablesCmd extends ShowTablesCmd<NMongoConfig> {
                             return x.asObject().get().get("name").get();
                         })
                         .collect(Collectors.toList());
-                session.out().printlnf(databases);
+                session.out().println(databases);
             });
         });
     }

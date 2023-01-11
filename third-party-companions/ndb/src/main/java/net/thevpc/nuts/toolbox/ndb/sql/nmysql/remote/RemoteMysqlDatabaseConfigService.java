@@ -44,7 +44,7 @@ public class RemoteMysqlDatabaseConfigService {
 
     public RemoteMysqlDatabaseConfigService remove() {
         client.getConfig().getDatabases().remove(name);
-        context.getSession().out().printf("%s db config removed.%n", getBracketsPrefix(name));
+        context.getSession().out().println(NMsg.ofC("%s db config removed.", getBracketsPrefix(name)));
         return this;
 
     }
@@ -83,7 +83,7 @@ public class RemoteMysqlDatabaseConfigService {
                 .getDatabase(locName.getDatabaseName(), NOpenMode.OPEN_OR_ERROR);
         RemoteMysqlDatabaseConfig cconfig = getConfig();
         if (session.isPlainTrace()) {
-            session.out().printf("%s remote restore%n", getBracketsPrefix(name));
+            session.out().println(NMsg.ofC("%s remote restore", getBracketsPrefix(name)));
         }
         String remoteTempPath = null;
         if (lastRun.get("remoteTempPath") != null) {
@@ -117,10 +117,10 @@ public class RemoteMysqlDatabaseConfigService {
         NPath remoteFullFilePath = NPath.of(prepareSshServer(cconfig.getServer()) + "/" + ppath, session);
         NTexts text = NTexts.of(session);
         if (session.isPlainTrace()) {
-            session.out().printf("%s copy '%s' to '%s'%n", getBracketsPrefix(name),
+            session.out().println(NMsg.ofC("%s copy '%s' to '%s'", getBracketsPrefix(name),
                     text.ofStyled(remoteFullFilePath.toString(), NTextStyle.path()),
                     text.ofStyled(localPath, NTextStyle.path())
-            );
+            ));
         }
         if (lastRun.get("localPath") != null) {
             String s = lastRun.get("localPath");
@@ -157,8 +157,8 @@ public class RemoteMysqlDatabaseConfigService {
 
         if (deleteRemote) {
             if (session.isPlainTrace()) {
-                session.out().printf("%s delete %s%n", getBracketsPrefix(name),
-                        remoteFullFilePath);
+                session.out().println(NMsg.ofC("%s delete %s", getBracketsPrefix(name),
+                        remoteFullFilePath));
             }
             if (!lastRun.is("deleted")) {
                 execRemoteNuts(
@@ -188,7 +188,7 @@ public class RemoteMysqlDatabaseConfigService {
             }
         }
         if (!new File(localPath).isFile()) {
-            throw new NExecutionException(session, NMsg.ofCstyle("invalid local path %s", localPath), 2);
+            throw new NExecutionException(session, NMsg.ofC("invalid local path %s", localPath), 2);
         }
         RemoteMysqlDatabaseConfig cconfig = getConfig();
         String remoteTempPath = null;
@@ -203,10 +203,10 @@ public class RemoteMysqlDatabaseConfigService {
         NPath remoteFullFilePath = NPath.of(prepareSshServer(cconfig.getServer()) + "/" + remoteFilePath, session);
         NTexts text = NTexts.of(session);
         if (session.isPlainTrace()) {
-            session.out().printf("%s copy %s to %s%n", getBracketsPrefix(name),
+            session.out().println(NMsg.ofC("%s copy %s to %s", getBracketsPrefix(name),
                     text.ofStyled(localPath, NTextStyle.path()),
                     remoteFullFilePath
-            );
+            ));
         }
         NExecCommand.of(session)
                 .addCommand(
@@ -221,10 +221,10 @@ public class RemoteMysqlDatabaseConfigService {
                 .setFailFast(true)
                 .run();
         if (session.isPlainTrace()) {
-            session.out().printf("%s remote restore %s%n",
+            session.out().println(NMsg.ofC("%s remote restore %s",
                     getBracketsPrefix(name),
                     remoteFullFilePath
-            );
+            ));
         }
         execRemoteNuts(
                 "net.thevpc.nuts.toolbox:nmysql",
@@ -234,8 +234,8 @@ public class RemoteMysqlDatabaseConfigService {
                 remoteFilePath
         );
         if (session.isPlainTrace()) {
-            session.out().printf("%s delete %s%n",
-                    getBracketsPrefix(name), remoteFilePath);
+            session.out().println(NMsg.ofC("%s delete %s",
+                    getBracketsPrefix(name), remoteFilePath));
         }
         execRemoteNuts(
                 "nsh",
@@ -281,7 +281,7 @@ public class RemoteMysqlDatabaseConfigService {
                         return null;
                     })
                     .format();
-            session.out().printf("[exec] %s%n", ff);
+            session.out().println(NMsg.ofC("[exec] %s", ff));
         }
         b.setRedirectErrorStream(true)
                 .grabOutputString()

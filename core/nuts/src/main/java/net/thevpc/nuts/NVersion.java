@@ -64,7 +64,7 @@ public interface NVersion extends Serializable, /*NutsTokenFilter, */NFormattabl
         if (PATTERN.matcher(version2).matches()) {
             return NOptional.of(new DefaultNVersion(version2));
         }
-        return NOptional.ofError(s -> NMsg.ofCstyle("invalid version format : %s", version));
+        return NOptional.ofError(s -> NMsg.ofC("invalid version format : %s", version));
     }
 
     /**

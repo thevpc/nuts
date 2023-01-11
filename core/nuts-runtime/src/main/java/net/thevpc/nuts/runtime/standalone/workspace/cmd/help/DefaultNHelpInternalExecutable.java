@@ -9,7 +9,7 @@ import net.thevpc.nuts.*;
 import net.thevpc.nuts.cmdline.NArg;
 import net.thevpc.nuts.cmdline.NCommandLine;
 import net.thevpc.nuts.io.NPath;
-import net.thevpc.nuts.io.NOutStream;
+import net.thevpc.nuts.io.NOutputStream;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceExt;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.exec.DefaultInternalNExecutableCommand;
 import net.thevpc.nuts.text.NText;
@@ -82,7 +82,7 @@ public class DefaultNHelpInternalExecutable extends DefaultInternalNExecutableCo
             );
         }
         NContentType outputFormat = session.getOutputFormat();
-        NOutStream fout = NOutStream.ofInMemory(session);
+        NOutputStream fout = NOutputStream.ofInMemory(session);
         if (!helpColors && helpFor.isEmpty()) {
             fout.println(NWorkspaceExt.of(session.getWorkspace()).getHelpText(session));
             fout.flush();
@@ -97,7 +97,7 @@ public class DefaultNHelpInternalExecutable extends DefaultInternalNExecutableCo
                 try {
                     w = NExecCommand.of(session).addCommand(arg).which();
                 } catch (Exception ex) {
-                    LOG.with().session(session).level(Level.FINE).error(ex).log(NMsg.ofJstyle("failed to execute : {0}", arg));
+                    LOG.with().session(session).level(Level.FINE).error(ex).log(NMsg.ofJ("failed to execute : {0}", arg));
                     //ignore
                 }
                 if (w != null) {
@@ -109,7 +109,7 @@ public class DefaultNHelpInternalExecutable extends DefaultInternalNExecutableCo
                 }
             }
         }
-        session.out().printlnf(NString.of(fout.toString(), session));
+        session.out().println(NString.of(fout.toString(), session));
     }
 
 }

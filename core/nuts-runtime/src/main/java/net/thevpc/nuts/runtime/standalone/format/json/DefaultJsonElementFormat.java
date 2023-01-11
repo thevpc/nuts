@@ -26,7 +26,7 @@ package net.thevpc.nuts.runtime.standalone.format.json;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.elem.*;
 import net.thevpc.nuts.io.NIOException;
-import net.thevpc.nuts.io.NOutStream;
+import net.thevpc.nuts.io.NOutputStream;
 import net.thevpc.nuts.runtime.standalone.elem.NElementStreamFormat;
 import net.thevpc.nuts.util.NStringUtils;
 
@@ -50,11 +50,11 @@ public class DefaultJsonElementFormat implements NElementStreamFormat {
         return parseElement(new StringReader(string), context);
     }
 
-    public void write(NOutStream out, NElement data, boolean compact) {
+    public void write(NOutputStream out, NElement data, boolean compact) {
         write(out, data, compact ? null : "");
     }
 
-    private void write(NOutStream out, NElement data, String indent) {
+    private void write(NOutputStream out, NElement data, String indent) {
 
         switch (data.type()) {
             case NULL: {
@@ -225,7 +225,7 @@ public class DefaultJsonElementFormat implements NElementStreamFormat {
     }
 
     @Override
-    public void printElement(NElement value, NOutStream out, boolean compact, NElementFactoryContext context) {
+    public void printElement(NElement value, NOutputStream out, boolean compact, NElementFactoryContext context) {
         write(out, value, compact);
     }
 
@@ -806,7 +806,7 @@ public class DefaultJsonElementFormat implements NElementStreamFormat {
         }
 
         private RuntimeException error(String message) {
-            return new NParseException(context.getSession(), NMsg.ofCstyle("%s : %s", message, getLocation().toString()));
+            return new NParseException(context.getSession(), NMsg.ofC("%s : %s", message, getLocation().toString()));
         }
 
         private boolean isHexDigit() {

@@ -50,7 +50,7 @@ public class DefaultSourceControlHelper {
         NSessionUtils.checkSession(ws, session);
         NWorkspaceSecurityManager.of(session).checkAllowed(NConstants.Permissions.DEPLOY, "commit");
         if (folder == null || !Files.isDirectory(folder)) {
-            throw new NIllegalArgumentException(session, NMsg.ofCstyle("not a directory %s", folder));
+            throw new NIllegalArgumentException(session, NMsg.ofC("not a directory %s", folder));
         }
 
         Path file = folder.resolve(NConstants.Files.DESCRIPTOR_FILE_NAME);
@@ -64,7 +64,7 @@ public class DefaultSourceControlHelper {
                 newVersionFound = NFetchCommand.of(session).setId(d.getId().builder().setVersion(newVersion).build()).setSession(session).getResultDefinition();
             } catch (NNotFoundException ex) {
                 _LOGOP(session).level(Level.FINE).error(ex)
-                        .log(NMsg.ofJstyle("failed to fetch {0}", d.getId().builder().setVersion(newVersion).build()));
+                        .log(NMsg.ofJ("failed to fetch {0}", d.getId().builder().setVersion(newVersion).build()));
                 //ignore
             }
             if (newVersionFound == null) {

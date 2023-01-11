@@ -35,7 +35,7 @@ import java.util.concurrent.Executor;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.cmdline.NCommandLine;
-import net.thevpc.nuts.io.NOutStream;
+import net.thevpc.nuts.io.NOutputStream;
 import net.thevpc.nuts.io.NSessionTerminal;
 import net.thevpc.nuts.io.NTerminalMode;
 import net.thevpc.nuts.spi.NComponent;
@@ -123,7 +123,7 @@ public class AdminServerRunnable implements NServer, Runnable {
                             try {
                                 try {
                                     PrintStream out = new PrintStream(finalAccept.getOutputStream());
-                                    NOutStream eout = NOutStream.of(out, NTerminalMode.FORMATTED, null,invokerSession);
+                                    NOutputStream eout = NOutputStream.of(out, NTerminalMode.FORMATTED, null,invokerSession);
                                     NSession session = invokerSession;
                                     session.setTerminal(
                                             NSessionTerminal.of(
@@ -141,13 +141,13 @@ public class AdminServerRunnable implements NServer, Runnable {
                                     finalAccept.close();
                                 }
                             } catch (IOException e) {
-                                session.err().printf("%s\n", e);
+                                session.err().println(e);
                             }
                         }
 
                     });
                 } catch (Exception ex) {
-                    session.err().printf("%s\n", ex);
+                    session.err().println(ex);
                 }
             }
         } finally {
@@ -187,7 +187,7 @@ public class AdminServerRunnable implements NServer, Runnable {
             try {
                 socket.close();
             } catch (IOException ex) {
-                throw new NExecutionException(context.getSession(), NMsg.ofCstyle("%s",ex), ex, 100);
+                throw new NExecutionException(context.getSession(), NMsg.ofC("%s",ex), ex, 100);
             }
         }
     }

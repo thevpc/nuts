@@ -1,36 +1,33 @@
 package net.thevpc.nuts.runtime.standalone.io.terminal;
 
 import net.thevpc.nuts.NMsg;
-import net.thevpc.nuts.io.NOutStream;
+import net.thevpc.nuts.io.NOutputStream;
 import net.thevpc.nuts.NSession;
 import net.thevpc.nuts.io.NSessionTerminal;
 
 public abstract class AbstractNSessionTerminal implements NSessionTerminal {
     @Override
-    public String readLine(NOutStream out, String prompt, Object... params) {
-        return readLine(out, NMsg.ofCstyle(prompt,params));
+    public char[] readPassword(NMsg prompt) {
+        return readPassword(out(), prompt);
     }
 
     @Override
-    public char[] readPassword(NOutStream out, String prompt, Object... params) {
-        return readPassword(out, NMsg.ofCstyle(prompt,params));
+    public char[] readPassword(NOutputStream out, NMsg prompt) {
+        return readPassword((out == null ? out() : out), prompt, getSession());
     }
 
-    @Override
-    public NSessionTerminal printProgress(float progress, String prompt, Object... params) {
-        printProgress(progress, NMsg.ofCstyle(prompt,params));
-        return this;
+    public String readLine(NOutputStream out, NMsg message) {
+        return readLine((out == null ? out() : out), message, getSession());
     }
 
-    @Override
-    public NSessionTerminal printProgress(String prompt, Object... params) {
-        printProgress(Float.NaN,prompt,params);
-        return this;
+    public String readLine(NMsg message) {
+        return readLine(out(), message, getSession());
     }
+
 
     @Override
     public NSessionTerminal printProgress(NMsg message) {
-        printProgress(Float.NaN,message);
+        printProgress(Float.NaN, message);
         return this;
     }
 

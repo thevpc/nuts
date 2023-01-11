@@ -97,7 +97,7 @@ public class DefaultNExecCommand extends AbstractNExecCommand {
             }
             case SYSTEM: {
                 NExecutionType finalExecutionType = executionType;
-                NAssert.requireNull(commandDefinition, () -> NMsg.ofCstyle("unable to run artifact as %s cmd", finalExecutionType), session);
+                NAssert.requireNull(commandDefinition, () -> NMsg.ofC("unable to run artifact as %s cmd", finalExecutionType), session);
                 NAssert.requireNonBlank(command, "command", session);
                 String[] ts = command.toArray(new String[0]);
                 List<String> tsl = new ArrayList<>(Arrays.asList(ts));
@@ -129,7 +129,7 @@ public class DefaultNExecCommand extends AbstractNExecCommand {
                 break;
             }
             default: {
-                throw new NUnsupportedArgumentException(getSession(), NMsg.ofCstyle("invalid execution type %s", executionType));
+                throw new NUnsupportedArgumentException(getSession(), NMsg.ofC("invalid execution type %s", executionType));
             }
         }
         return exec;
@@ -146,7 +146,7 @@ public class DefaultNExecCommand extends AbstractNExecCommand {
             String p = getExtraErrorMessage();
             if (p != null) {
                 result = new NExecutionException(getSession(),
-                        NMsg.ofCstyle("execution failed with code %s and message : %s", ex.getExitCode(), p),
+                        NMsg.ofC("execution failed with code %s and message : %s", ex.getExitCode(), p),
                         ex, ex.getExitCode());
             } else {
                 result = ex;
@@ -157,11 +157,11 @@ public class DefaultNExecCommand extends AbstractNExecCommand {
             if (exitCode != 0) {
                 if (!NBlankable.isBlank(p)) {
                     result = new NExecutionException(getSession(),
-                            NMsg.ofCstyle("execution of (%s) failed with code %s ; error was : %s ; notes : %s", exitCode, exec, ex, p),
+                            NMsg.ofC("execution of (%s) failed with code %s ; error was : %s ; notes : %s", exitCode, exec, ex, p),
                             ex, exitCode);
                 } else {
                     result = new NExecutionException(getSession(),
-                            NMsg.ofCstyle("execution of (%s) failed with code %s ; error was : %s", exitCode, exec, ex),
+                            NMsg.ofC("execution of (%s) failed with code %s ; error was : %s", exitCode, exec, ex),
                             ex, exitCode);
                 }
             }
@@ -210,7 +210,7 @@ public class DefaultNExecCommand extends AbstractNExecCommand {
             if (goodId != null) {
                 cmdKind = CmdKind.ID;
             } else {
-                throw new NNotFoundException(getSession(), null, NMsg.ofCstyle("unable to resolve id %", cmdName));
+                throw new NNotFoundException(getSession(), null, NMsg.ofC("unable to resolve id %", cmdName));
             }
         } else {
             if (cmdName.endsWith("!")) {
@@ -322,7 +322,7 @@ public class DefaultNExecCommand extends AbstractNExecCommand {
                 }
             }
         }
-        throw new NNotFoundException(getSession(), goodId, NMsg.ofCstyle("unable to resolve id %", cmdName));
+        throw new NNotFoundException(getSession(), goodId, NMsg.ofC("unable to resolve id %", cmdName));
     }
 
     protected NId findExecId(NId nid, NSession traceSession, boolean forceInstalled, boolean ignoreIfUserCommand) {
@@ -341,12 +341,12 @@ public class DefaultNExecCommand extends AbstractNExecCommand {
                     return null;
                 }
                 //now search online
-                // this helps recovering from "invalid default parseVersion" issue
+                // this helps recover from "invalid default parseVersion" issue
                 if (traceSession.isPlainTrace()) {
-                    traceSession.out().resetLine().printf("%s is %s, will search for it online. Type ```error CTRL^C``` to stop...\n",
+                    traceSession.out().resetLine().println(NMsg.ofC("%s is %s, will search for it online. Type ```error CTRL^C``` to stop...",
                             nid,
                             NTexts.of(session).ofStyled("not installed", NTextStyle.error())
-                    );
+                    ));
                     traceSession.out().flush();
                 }
                 ff = NSearchCommand.of(traceSession).addId(nid).setSession(traceSession.copy().setFetchStrategy(NFetchStrategy.ONLINE))
@@ -362,7 +362,7 @@ public class DefaultNExecCommand extends AbstractNExecCommand {
             List<NVersion> versions = ff.stream().map(NId::getVersion).distinct().collect(Collectors.toList());
             if (versions.size() > 1) {
                 throw new NTooManyElementsException(getSession(),
-                        NMsg.ofCstyle("%s can be resolved to all (%d) of %s", nid, ff.size(), ff)
+                        NMsg.ofC("%s can be resolved to all (%d) of %s", nid, ff.size(), ff)
                 );
             }
         }
@@ -470,12 +470,12 @@ public class DefaultNExecCommand extends AbstractNExecCommand {
                                 .getResultDefinitions();
                         NDefinition[] availableExecutors = q.stream().limit(2).toArray(NDefinition[]::new);
                         if (availableExecutors.length > 1) {
-                            throw new NTooManyElementsException(this.session, NMsg.ofCstyle("too many results for executor %s", eid));
+                            throw new NTooManyElementsException(this.session, NMsg.ofC("too many results for executor %s", eid));
                         } else if (availableExecutors.length == 1) {
                             execComponent = new ArtifactExecutorComponent(availableExecutors[0].getId(), this.session);
                         } else {
                             // availableExecutors.length=0;
-                            throw new NNotFoundException(this.session, eid, NMsg.ofCstyle("executor not found %s", eid));
+                            throw new NNotFoundException(this.session, eid, NMsg.ofC("executor not found %s", eid));
                         }
                     }
                 }

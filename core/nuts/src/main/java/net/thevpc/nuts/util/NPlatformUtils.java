@@ -353,7 +353,7 @@ public final class NPlatformUtils {
                 }
             }
         }
-        throw new NBootException(NMsg.ofCstyle("unsupported %s/%s for %s", platformOsFamily, location, workspaceName));
+        throw new NBootException(NMsg.ofC("unsupported %s/%s for %s", platformOsFamily, location, workspaceName));
     }
 
     public static String getWindowsProgramFiles() {
@@ -441,9 +441,9 @@ public final class NPlatformUtils {
                     global, workspaceLocation);
             if (NBlankable.isBlank(platformHomeFolder)) {
                 if (session == null) {
-                    throw new NBootException(NMsg.ofCstyle("missing Home for %s", location.id()));
+                    throw new NBootException(NMsg.ofC("missing Home for %s", location.id()));
                 } else {
-                    throw new NIllegalArgumentException(session, NMsg.ofCstyle("missing Home for %s", location.id()));
+                    throw new NIllegalArgumentException(session, NMsg.ofC("missing Home for %s", location.id()));
                 }
             }
             homes[location.ordinal()] = platformHomeFolder;

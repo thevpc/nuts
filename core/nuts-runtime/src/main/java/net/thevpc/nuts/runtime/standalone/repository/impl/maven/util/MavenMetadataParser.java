@@ -180,7 +180,7 @@ public class MavenMetadataParser {
             info.setLastUpdated(lastUpdated.toString().trim().isEmpty() ? null : new SimpleDateFormat("yyyyMMddHHmmss").parse(lastUpdated.toString().trim()));
         } catch (Exception ex) {
             LOG.with().session(session).level(Level.SEVERE).error(ex)
-                    .log(NMsg.ofJstyle("failed to parse date {0} : {1}", lastUpdated, ex));
+                    .log(NMsg.ofJ("failed to parse date {0} : {1}", lastUpdated, ex));
         }
         for (String version : versions) {
             info.getVersions().add(version.trim());

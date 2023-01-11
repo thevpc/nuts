@@ -48,7 +48,7 @@ public interface NSessionTerminal {
         return NTerminals.of(session).createTerminal(parent, session);
     }
 
-    static NSessionTerminal of(InputStream in, NOutStream out, NOutStream err, NSession session) {
+    static NSessionTerminal of(InputStream in, NOutputStream out, NOutputStream err, NSession session) {
         return NTerminals.of(session).createTerminal(in, out, err, session);
     }
 
@@ -60,29 +60,53 @@ public interface NSessionTerminal {
         return NTerminals.of(session).createMemTerminal(mergeError, session);
     }
 
-    String readLine(NOutStream out, String prompt, Object... params);
+    String readLine(NOutputStream out, NMsg message);
 
-    char[] readPassword(NOutStream out, String prompt, Object... params);
 
-    String readLine(NOutStream out, NMsg message);
+    String readLine(NOutputStream out, NMsg message, NSession session);
 
-    char[] readPassword(NOutStream out, NMsg message);
-
-    String readLine(NOutStream out, NMsg message, NSession session);
-
-    char[] readPassword(NOutStream out, NMsg message, NSession session);
+    /**
+     * Reads password as a single line of text from the terminal's input stream.
+     *
+     * @param prompt prompt message
+     * @return A string containing the line read from the terminal's input
+     * stream, not including any line-termination characters, or {@code null}
+     * if an end of stream has been reached.
+     * @throws java.io.UncheckedIOException If an I/O error occurs.
+     */
+    char[] readPassword(NMsg prompt);
+    /**
+     * Reads password as a single line of text from the terminal's input stream.
+     *
+     * @param prompt prompt message
+     * @return A string containing the line read from the terminal's input
+     * stream, not including any line-termination characters, or {@code null}
+     * if an end of stream has been reached.
+     * @throws java.io.UncheckedIOException If an I/O error occurs.
+     */
+    char[] readPassword(NOutputStream out, NMsg prompt);
+    /**
+     * Reads password as a single line of text from the terminal's input stream.
+     *
+     * @param prompt prompt message
+     * @return A string containing the line read from the terminal's input
+     * stream, not including any line-termination characters, or {@code null}
+     * if an end of stream has been reached.
+     * @throws java.io.UncheckedIOException If an I/O error occurs.
+     */
+    char[] readPassword(NOutputStream out, NMsg prompt, NSession session);
 
     InputStream getIn();
 
     void setIn(InputStream in);
 
-    NOutStream getOut();
+    NOutputStream getOut();
 
-    void setOut(NOutStream out);
+    void setOut(NOutputStream out);
 
-    NOutStream getErr();
+    NOutputStream getErr();
 
-    void setErr(NOutStream out);
+    void setErr(NOutputStream out);
 
     //    NutsSystemTerminalBase geTerminalBase();
 //
@@ -90,31 +114,18 @@ public interface NSessionTerminal {
 //
     NSessionTerminal copy();
 
-//    void setParent(NutsSystemTerminalBase parent);
 
     /**
      * Reads a single line of text from the terminal's input stream.
      *
-     * @param promptFormat prompt message format (cstyle)
-     * @param params       prompt message parameters
+     * @param prompt prompt message
      * @return A string containing the line read from the terminal's input
      * stream, not including any line-termination characters, or {@code null}
      * if an end of stream has been reached.
      * @throws java.io.UncheckedIOException If an I/O error occurs.
      */
-    String readLine(String promptFormat, Object... params);
+    String readLine(NMsg prompt);
 
-    /**
-     * Reads password as a single line of text from the terminal's input stream.
-     *
-     * @param promptFormat prompt message format (cstyle)
-     * @param params       prompt message parameters
-     * @return A string containing the line read from the terminal's input
-     * stream, not including any line-termination characters, or {@code null}
-     * if an end of stream has been reached.
-     * @throws java.io.UncheckedIOException If an I/O error occurs.
-     */
-    char[] readPassword(String promptFormat, Object... params);
 
     /**
      * create a {@link NQuestion} to write a question to the terminal's
@@ -137,33 +148,15 @@ public interface NSessionTerminal {
      *
      * @return terminal's output stream
      */
-    NOutStream out();
+    NOutputStream out();
 
     /**
      * return terminal's error stream
      *
      * @return terminal's error stream
      */
-    NOutStream err();
+    NOutputStream err();
 
-    /**
-     * print progress with a message
-     *
-     * @param progress 0.0f-1.0f value
-     * @param prompt   message
-     * @param params   message prams
-     * @return {@code this} instance
-     */
-    NSessionTerminal printProgress(float progress, String prompt, Object... params);
-
-    /**
-     * print indefinite progress with a message
-     *
-     * @param prompt message
-     * @param params message prams
-     * @return {@code this} instance
-     */
-    NSessionTerminal printProgress(String prompt, Object... params);
 
     /**
      * print progress with a message

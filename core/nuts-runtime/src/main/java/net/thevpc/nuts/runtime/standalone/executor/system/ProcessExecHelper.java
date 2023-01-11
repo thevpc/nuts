@@ -33,9 +33,9 @@ public class ProcessExecHelper extends AbstractSyncIProcessExecHelper {
 
     NDefinition definition;
     ProcessBuilder2 pb;
-    NOutStream out;
+    NOutputStream out;
 
-    public ProcessExecHelper(NDefinition definition, ProcessBuilder2 pb, NSession session, NOutStream out) {
+    public ProcessExecHelper(NDefinition definition, ProcessBuilder2 pb, NSession session, NOutputStream out) {
         super(session);
         this.pb = pb;
         this.out = out;
@@ -48,8 +48,8 @@ public class ProcessExecHelper extends AbstractSyncIProcessExecHelper {
                                            NRunAs runAs,
                                            NSession session) {
         List<String> newCommands = buildEffectiveCommand(args, runAs, session);
-        NOutStream out = null;
-        NOutStream err = null;
+        NOutputStream out = null;
+        NOutputStream err = null;
         InputStream in = null;
         ProcessBuilder2 pb = new ProcessBuilder2(session);
         pb.setCommand(newCommands)
@@ -114,18 +114,18 @@ public class ProcessExecHelper extends AbstractSyncIProcessExecHelper {
         NLogger _LL = NLogger.of(NWorkspaceUtils.class, session);
         if (_LL.isLoggable(Level.FINEST)) {
             _LL.with().level(Level.FINE).verb(NLoggerVerb.START).log(
-                    NMsg.ofJstyle("[exec] {0}",
+                    NMsg.ofJ("[exec] {0}",
                             NTexts.of(session).ofCode("system",
                                     pb.getCommandString()
                             )));
         }
         if (showCommand || CoreNUtils.isShowCommand(session)) {
             if (prepareTerminal.out().getTerminalMode() == NTerminalMode.FORMATTED) {
-                prepareTerminal.out().printf("%s ", NTexts.of(session).ofStyled("[exec]", NTextStyle.primary4()));
+                prepareTerminal.out().print(NMsg.ofC("%s ", NTexts.of(session).ofStyled("[exec]", NTextStyle.primary4())));
                 prepareTerminal.out().println(NTexts.of(session).ofCode("system", pb.getCommandString()));
             } else {
                 prepareTerminal.out().print("exec ");
-                prepareTerminal.out().printf("%s%n", pb.getCommandString());
+                prepareTerminal.out().println(NMsg.ofPlain(pb.getCommandString()));
             }
         }
         return new ProcessExecHelper(definition,pb, session, out == null ? execTerminal.out() : out);
@@ -184,7 +184,7 @@ public class ProcessExecHelper extends AbstractSyncIProcessExecHelper {
                     }
                     String s = NJavaSdkUtils.of(execSession.getWorkspace()).resolveJavaCommandByVersion(javaVer, false, session);
                     if (s == null) {
-                        throw new NExecutionException(session, NMsg.ofCstyle("no java version %s was found", javaVer), 1);
+                        throw new NExecutionException(session, NMsg.ofC("no java version %s was found", javaVer), 1);
                     }
                     return s;
                 } else if (skey.equals("javaw") || skey.startsWith("javaw#")) {
@@ -194,7 +194,7 @@ public class ProcessExecHelper extends AbstractSyncIProcessExecHelper {
                     }
                     String s = NJavaSdkUtils.of(execSession.getWorkspace()).resolveJavaCommandByVersion(javaVer, true, session);
                     if (s == null) {
-                        throw new NExecutionException(session, NMsg.ofCstyle("no java version %s was found", javaVer), 1);
+                        throw new NExecutionException(session, NMsg.ofC("no java version %s was found", javaVer), 1);
                     }
                     return s;
                 } else if (skey.equals("nuts")) {
@@ -395,7 +395,7 @@ public class ProcessExecHelper extends AbstractSyncIProcessExecHelper {
                         break;
                     }
                     default: {
-                        throw new NIllegalArgumentException(session, NMsg.ofCstyle("cannot run as %s on unknown system OS family", runAsEffective));
+                        throw new NIllegalArgumentException(session, NMsg.ofC("cannot run as %s on unknown system OS family", runAsEffective));
                     }
                 }
                 cc.addAll(command);
@@ -449,7 +449,7 @@ public class ProcessExecHelper extends AbstractSyncIProcessExecHelper {
                         break;
                     }
                     default: {
-                        throw new NIllegalArgumentException(session, NMsg.ofCstyle("cannot run sudo %s on unknown system OS family", currentUserName));
+                        throw new NIllegalArgumentException(session, NMsg.ofC("cannot run sudo %s on unknown system OS family", currentUserName));
                     }
                 }
                 cc.addAll(command);
@@ -466,7 +466,7 @@ public class ProcessExecHelper extends AbstractSyncIProcessExecHelper {
                 out.println(pb.getFormattedCommandString(getSession()));
             } else {
                 out.print("[dry] exec ");
-                out.printf("%s%n", pb.getCommandString());
+                out.println(NMsg.ofPlain(pb.getCommandString()));
             }
             return 0;
         }else {
@@ -499,7 +499,7 @@ public class ProcessExecHelper extends AbstractSyncIProcessExecHelper {
         try {
             int a = p.waitFor().getResult();
             if (a != 0) {
-                err = new NExecutionException(getSession(), NMsg.ofCstyle("process returned error code %s", a), err);
+                err = new NExecutionException(getSession(), NMsg.ofC("process returned error code %s", a), err);
             }
             return a;
         } catch (Exception ex) {

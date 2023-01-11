@@ -5,6 +5,7 @@ import net.thevpc.nuts.cmdline.NArg;
 import net.thevpc.nuts.cmdline.NCommandLine;
 import net.thevpc.nuts.format.NMutableTableModel;
 import net.thevpc.nuts.format.NTableFormat;
+import net.thevpc.nuts.io.NOutputStream;
 import net.thevpc.nuts.text.NTextBuilder;
 import net.thevpc.nuts.text.NTextStyle;
 import net.thevpc.nuts.text.NTexts;
@@ -94,7 +95,7 @@ public class NTasksSubCmd {
                     String jobId = s;
                     NJob job = service.jobs().getJob(jobId);
                     if (job == null) {
-                        cmd.throwError(NMsg.ofCstyle("invalid job %s", jobId));
+                        cmd.throwError(NMsg.ofC("invalid job %s", jobId));
                     }
                     t.setJobId(job.getId());
                 });
@@ -104,7 +105,7 @@ public class NTasksSubCmd {
                     String taskId = s;
                     NTask parentTask = service.tasks().getTask(taskId);
                     if (parentTask == null) {
-                        cmd.throwError(NMsg.ofCstyle("invalid parent task %s", taskId));
+                        cmd.throwError(NMsg.ofC("invalid parent task %s", taskId));
                     }
                     t.setParentTaskId(parentTask.getId());
                 });
@@ -164,10 +165,10 @@ public class NTasksSubCmd {
             }
             service.tasks().addTask(t);
             if (context.getSession().isPlainTrace()) {
-                context.getSession().out().printf("task %s (%s) added.\n",
+                context.getSession().out().println(NMsg.ofC("task %s (%s) added.",
                         NTexts.of(context.getSession()).ofStyled(t.getId(), NTextStyle.primary5()),
                         t.getName()
-                );
+                ));
             }
             if (show) {
                 runTaskShow(NCommandLine.of(new String[]{t.getId()}));
@@ -300,7 +301,7 @@ public class NTasksSubCmd {
                     cmd.withNextString((v, a, s) -> {
                         NJob job = service.jobs().getJob(v);
                         if (job == null) {
-                            cmd.throwError(NMsg.ofCstyle("invalid job %s", v));
+                            cmd.throwError(NMsg.ofC("invalid job %s", v));
                         }
                         d.runLater.add(t -> t.setJobId(job.getId()));
                     });
@@ -311,7 +312,7 @@ public class NTasksSubCmd {
                     cmd.withNextString((v, a, s) -> {
                         NTask parentTask = service.tasks().getTask(v);
                         if (parentTask == null) {
-                            cmd.throwError(NMsg.ofCstyle("invalid parent task %s", v));
+                            cmd.throwError(NMsg.ofC("invalid parent task %s", v));
                         }
                         d.runLater.add(t -> t.setParentTaskId(parentTask.getId()));
                     });
@@ -405,10 +406,10 @@ public class NTasksSubCmd {
             for (NTask task : new LinkedHashSet<>(d.tasks)) {
                 service.tasks().updateTask(task);
                 if (context.getSession().isPlainTrace()) {
-                    context.getSession().out().printf("task %s (%s) updated.\n",
+                    context.getSession().out().println(NMsg.ofC("task %s (%s) updated.",
                             text.ofStyled(task.getId(), NTextStyle.primary5()),
                             text.ofStyled(task.getName(), NTextStyle.primary1())
-                    );
+                    ));
                 }
             }
             if (d.show) {
@@ -610,7 +611,7 @@ public class NTasksSubCmd {
                         .setBorder("spaces")
                         .setValue(m).println();
             } else {
-                context.getSession().out().printf(r.collect(Collectors.toList()));
+                context.getSession().out().print(r.collect(Collectors.toList()));
             }
         }
     }
@@ -649,15 +650,15 @@ public class NTasksSubCmd {
                 NTask t = findTask(a.toString(), cmd);
                 if (service.tasks().removeTask(t.getId())) {
                     if (context.getSession().isPlainTrace()) {
-                        context.getSession().out().printf("task %s removed.\n",
+                        context.getSession().out().println(NMsg.ofC("task %s removed.",
                                 text.ofStyled(a.toString(), NTextStyle.primary5())
-                        );
+                        ));
                     }
                 } else {
-                    context.getSession().out().printf("task %s %s.\n",
+                    context.getSession().out().println(NMsg.ofC("task %s %s.",
                             text.ofStyled(a.toString(), NTextStyle.primary5()),
                             text.ofStyled("not found", NTextStyle.error())
-                    );
+                    ));
                 }
             }
         }
@@ -669,36 +670,37 @@ public class NTasksSubCmd {
             NArg a = cmd.next().get(session);
             if (cmd.isExecMode()) {
                 NTask task = findTask(a.toString(), cmd);
+                NOutputStream out = context.getSession().out();
                 if (task == null) {
-                    context.getSession().out().printf("```kw %s```: ```error not found```.\n",
+                    out.println(NMsg.ofC("```kw %s```: ```error not found```.",
                             a.toString()
-                    );
+                    ));
                 } else {
-                    context.getSession().out().printf("```kw %s```:\n",
+                    out.println(NMsg.ofC("```kw %s```:",
                             task.getId()
-                    );
+                    ));
                     String prefix = "\t                    ";
-                    context.getSession().out().printf("\t```kw2 task name```     : %s\n", JobServiceCmd.formatWithPrefix(task.getName(), prefix));
-                    context.getSession().out().printf("\t```kw2 status```        : %s\n", JobServiceCmd.formatWithPrefix(task.getStatus(), prefix));
-                    context.getSession().out().printf("\t```kw2 priority```      : %s\n", JobServiceCmd.formatWithPrefix(task.getPriority(), prefix));
+                    out.println(NMsg.ofC("\t```kw2 task name```     : %s", JobServiceCmd.formatWithPrefix(task.getName(), prefix)));
+                    out.println(NMsg.ofC("\t```kw2 status```        : %s", JobServiceCmd.formatWithPrefix(task.getStatus(), prefix)));
+                    out.println(NMsg.ofC("\t```kw2 priority```      : %s", JobServiceCmd.formatWithPrefix(task.getPriority(), prefix)));
                     String project = task.getProject();
                     NProject p = service.projects().getProject(project);
                     if (project == null || project.length() == 0) {
-                        context.getSession().out().printf("\t```kw2 project```       : %s\n", "");
+                        out.println(NMsg.ofC("\t```kw2 project```       : %s", ""));
                     } else {
-                        context.getSession().out().printf("\t```kw2 project```       : %s (%s)\n", project, JobServiceCmd.formatWithPrefix((p == null ? "?" : p.getName()), prefix));
+                        out.println(NMsg.ofC("\t```kw2 project```       : %s (%s)", project, JobServiceCmd.formatWithPrefix((p == null ? "?" : p.getName()), prefix)));
                     }
-                    context.getSession().out().printf("\t```kw2 flag```          : %s\n", JobServiceCmd.formatWithPrefix(task.getFlag(), prefix));
-                    context.getSession().out().printf("\t```kw2 parent id```     : %s\n", JobServiceCmd.formatWithPrefix(task.getParentTaskId(), prefix));
-                    context.getSession().out().printf("\t```kw2 job id```        : %s\n", JobServiceCmd.formatWithPrefix(task.getJobId(), prefix));
-                    context.getSession().out().printf("\t```kw2 due time```      : %s\n", JobServiceCmd.formatWithPrefix(task.getDueTime(), prefix));
-                    context.getSession().out().printf("\t```kw2 start time```    : %s\n", JobServiceCmd.formatWithPrefix(task.getStartTime(), prefix));
-                    context.getSession().out().printf("\t```kw2 end time```      : %s\n", JobServiceCmd.formatWithPrefix(task.getEndTime(), prefix));
-                    context.getSession().out().printf("\t```kw2 duration```      : %s\n", JobServiceCmd.formatWithPrefix(task.getDuration(), prefix));
-                    context.getSession().out().printf("\t```kw2 duration extra```: %s\n", JobServiceCmd.formatWithPrefix(task.getInternalDuration(), prefix));
-                    context.getSession().out().printf("\t```kw2 creation time``` : %s\n", JobServiceCmd.formatWithPrefix(task.getCreationTime(), prefix));
-                    context.getSession().out().printf("\t```kw2 modif. time```   : %s\n", JobServiceCmd.formatWithPrefix(task.getModificationTime(), prefix));
-                    context.getSession().out().printf("\t```kw2 observations```  : %s\n", JobServiceCmd.formatWithPrefix(task.getObservations(), prefix));
+                    out.println(NMsg.ofC("\t```kw2 flag```          : %s", JobServiceCmd.formatWithPrefix(task.getFlag(), prefix)));
+                    out.println(NMsg.ofC("\t```kw2 parent id```     : %s", JobServiceCmd.formatWithPrefix(task.getParentTaskId(), prefix)));
+                    out.println(NMsg.ofC("\t```kw2 job id```        : %s", JobServiceCmd.formatWithPrefix(task.getJobId(), prefix)));
+                    out.println(NMsg.ofC("\t```kw2 due time```      : %s", JobServiceCmd.formatWithPrefix(task.getDueTime(), prefix)));
+                    out.println(NMsg.ofC("\t```kw2 start time```    : %s", JobServiceCmd.formatWithPrefix(task.getStartTime(), prefix)));
+                    out.println(NMsg.ofC("\t```kw2 end time```      : %s", JobServiceCmd.formatWithPrefix(task.getEndTime(), prefix)));
+                    out.println(NMsg.ofC("\t```kw2 duration```      : %s", JobServiceCmd.formatWithPrefix(task.getDuration(), prefix)));
+                    out.println(NMsg.ofC("\t```kw2 duration extra```: %s", JobServiceCmd.formatWithPrefix(task.getInternalDuration(), prefix)));
+                    out.println(NMsg.ofC("\t```kw2 creation time``` : %s", JobServiceCmd.formatWithPrefix(task.getCreationTime(), prefix)));
+                    out.println(NMsg.ofC("\t```kw2 modif. time```   : %s", JobServiceCmd.formatWithPrefix(task.getModificationTime(), prefix)));
+                    out.println(NMsg.ofC("\t```kw2 observations```  : %s", JobServiceCmd.formatWithPrefix(task.getObservations(), prefix)));
                 }
             }
         }
@@ -747,7 +749,7 @@ public class NTasksSubCmd {
             t = service.tasks().getTask(pid);
         }
         if (t == null) {
-            cmd.throwError(NMsg.ofCstyle("task not found: %s", pid));
+            cmd.throwError(NMsg.ofC("task not found: %s", pid));
         }
         return t;
     }

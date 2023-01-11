@@ -71,7 +71,7 @@ public class DefaultNWelcomeInternalExecutable extends DefaultInternalNExecutabl
             if (session.isPlainOut()) {
                 session = session.copy().setOutputFormat(NContentType.PROPS);
             }
-            session.out().resetLine().printlnf(welcome);
+            session.out().resetLine().println(welcome);
         }
     }
 

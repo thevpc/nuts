@@ -25,7 +25,7 @@ public class ClassLoaderPath extends URLPath {
             }
         }
         if(check){
-            throw new NIOException(session, NMsg.ofCstyle("invalid class path file : %s",path));
+            throw new NIOException(session, NMsg.ofC("invalid class path file : %s",path));
         }
         return null;
     }

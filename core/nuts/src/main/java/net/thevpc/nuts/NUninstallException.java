@@ -54,6 +54,6 @@ public class NUninstallException extends NInstallationException {
      */
     public NUninstallException(NSession session, NId id, NMsg msg, Throwable ex) {
         super(session, id,
-                msg == null ? NMsg.ofCstyle("unable to uninstall %s", (id == null ? "<null>" : id)) : msg, ex);
+                msg == null ? NMsg.ofC("unable to uninstall %s", (id == null ? "<null>" : id)) : msg, ex);
     }
 }

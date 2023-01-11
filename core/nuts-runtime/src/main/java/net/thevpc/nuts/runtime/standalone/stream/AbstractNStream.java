@@ -112,7 +112,7 @@ public abstract class AbstractNStream<T> implements NStream<T> {
         if (n != null) {
             throw new NNotFoundException(session, n);
         }
-        throw new NNotFoundException(session, null, NMsg.ofCstyle("artifact not found: %s%s", (nutsBase == null ? "<null>" : nutsBase)), null);
+        throw new NNotFoundException(session, null, NMsg.ofC("artifact not found: %s%s", (nutsBase == null ? "<null>" : nutsBase)), null);
     }
 
     @Override
@@ -121,7 +121,7 @@ public abstract class AbstractNStream<T> implements NStream<T> {
         if (it.hasNext()) {
             T t = it.next();
             if (it.hasNext()) {
-                throw new NTooManyElementsException(session, NMsg.ofCstyle("too many results for %s", nutsBase));
+                throw new NTooManyElementsException(session, NMsg.ofC("too many results for %s", nutsBase));
             }
             return t;
         } else {
@@ -129,7 +129,7 @@ public abstract class AbstractNStream<T> implements NStream<T> {
             if (nid != null) {
                 throw new NNotFoundException(session, nid);
             }
-            throw new NNotFoundException(session, null, NMsg.ofCstyle("result not found for %s", nutsBase));
+            throw new NNotFoundException(session, null, NMsg.ofC("result not found for %s", nutsBase));
         }
     }
 
@@ -425,12 +425,12 @@ public abstract class AbstractNStream<T> implements NStream<T> {
 
     @Override
     public NOptional<T> findAny() {
-        return NOptional.ofOptional(stream().findAny(), s-> NMsg.ofCstyle("missing : %S",nutsBase));
+        return NOptional.ofOptional(stream().findAny(), s-> NMsg.ofC("missing : %S",nutsBase));
     }
 
     @Override
     public NOptional<T> findFirst() {
-        return NOptional.ofOptional(stream().findFirst(), s-> NMsg.ofCstyle("missing : %S",nutsBase));
+        return NOptional.ofOptional(stream().findFirst(), s-> NMsg.ofC("missing : %S",nutsBase));
     }
 
     @Override
@@ -475,12 +475,12 @@ public abstract class AbstractNStream<T> implements NStream<T> {
 
     @Override
     public NOptional<T> min(Comparator<? super T> comparator) {
-        return NOptional.ofOptional(stream().min(comparator), s-> NMsg.ofCstyle("missing : %S",nutsBase));
+        return NOptional.ofOptional(stream().min(comparator), s-> NMsg.ofC("missing : %S",nutsBase));
     }
 
     @Override
     public NOptional<T> max(Comparator<? super T> comparator) {
-        return NOptional.ofOptional(stream().max(comparator), s-> NMsg.ofCstyle("missing : %S",nutsBase));
+        return NOptional.ofOptional(stream().max(comparator), s-> NMsg.ofC("missing : %S",nutsBase));
     }
 
     @Override

@@ -69,7 +69,7 @@ public class NPushException extends NException {
      * @param cause   cause
      */
     public NPushException(NSession session, NId id, NMsg message, Throwable cause) {
-        super(session, message == null ? NMsg.ofCstyle("unable to push %s", id == null ? "<null>" : id) : message, cause);
+        super(session, message == null ? NMsg.ofC("unable to push %s", id == null ? "<null>" : id) : message, cause);
         this.id = id;
     }
 

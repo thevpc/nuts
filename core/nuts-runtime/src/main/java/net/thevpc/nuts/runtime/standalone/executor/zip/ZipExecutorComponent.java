@@ -86,12 +86,12 @@ public class ZipExecutorComponent implements NExecutorComponent {
         NSession session = executionContext.getSession();
         HashMap<String, String> osEnv = new HashMap<>();
         NArtifactCall executor = def.getDescriptor().getExecutor();
-        NAssert.requireNonNull(executor, () -> NMsg.ofCstyle("missing executor %s", def.getId()), session);
+        NAssert.requireNonNull(executor, () -> NMsg.ofC("missing executor %s", def.getId()), session);
         List<String> args = new ArrayList<>(executionContext.getExecutorOptions());
         args.addAll(executionContext.getArguments());
         if (executor.getId() != null && !executor.getId().toString().equals("exec")) {
             // TODO: delegate to another executor!
-            throw new NIOException(session, NMsg.ofCstyle("unsupported executor %s for %s", executor.getId(), def.getId()));
+            throw new NIOException(session, NMsg.ofC("unsupported executor %s for %s", executor.getId(), def.getId()));
         }
         String directory = null;
         return NExecHelper.ofDefinition(def,

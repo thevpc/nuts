@@ -6,7 +6,7 @@ import net.thevpc.nuts.cmdline.NCommandLine;
 import net.thevpc.nuts.elem.NElements;
 import net.thevpc.nuts.format.NObjectFormat;
 import net.thevpc.nuts.io.NPath;
-import net.thevpc.nuts.io.NOutStream;
+import net.thevpc.nuts.io.NOutputStream;
 import net.thevpc.nuts.text.NTextStyle;
 import net.thevpc.nuts.text.NTexts;
 import net.thevpc.nuts.toolbox.ntomcat.NTomcatConfigVersions;
@@ -106,7 +106,7 @@ public class LocalTomcat {
                         ps(cmdLine);
                         return;
                     default:
-                        throw new NExecutionException(session, NMsg.ofCstyle("unsupported action %s", a.asString()), 1);
+                        throw new NExecutionException(session, NMsg.ofC("unsupported action %s", a.asString()), 1);
                 }
             }
         }
@@ -141,10 +141,10 @@ public class LocalTomcat {
                     List<LocalTomcatAppConfigService> apps = c.getApps();
                     if (!apps.isEmpty()) {
                         if (isHeader()) {
-                            session.out().printf("[[\\[%s\\]]]:\n", "Apps");
+                            session.out().println(NMsg.ofC("[%s]:", "Apps"));
                         }
                         for (LocalTomcatAppConfigService app : apps) {
-                            session.out().printf("%s\n", app.getName());
+                            session.out().print(NMsg.ofPlain(app.getName()));
                         }
                     }
                 }
@@ -152,10 +152,10 @@ public class LocalTomcat {
                     List<LocalTomcatDomainConfigService> domains = c.getDomains();
                     if (!domains.isEmpty()) {
                         if (isHeader()) {
-                            session.out().printf("[[\\[%s\\]]]:\n", "Domains");
+                            session.out().println(NMsg.ofC("[%s]:", "Domains"));
                         }
                         for (LocalTomcatDomainConfigService app : domains) {
-                            session.out().printf("%s\n", app.getName());
+                            session.out().println(NMsg.ofPlain(app.getName()));
                         }
                     }
                 }
@@ -196,12 +196,12 @@ public class LocalTomcat {
         if (args.isExecMode()) {
             NTexts factory = NTexts.of(session);
             if (session.isPlainOut()) {
-                NOutStream out = session.out();
+                NOutputStream out = session.out();
                 for (RunningTomcat jpsResult : TomcatUtils.getRunningInstances(context)) {
                     switch (format.get()) {
                         case "long": {
                             NCommandLine nutsArguments = NCommandLine.parseSystem(jpsResult.getArgsLine(), session).orNull();
-                            out.printf("%s: %s %s: v%s %s: %s %s: %s %s: %s\n",
+                            out.println(NMsg.ofC("%s: %s %s: v%s %s: %s %s: %s %s: %s",
                                     NMsg.ofStyled("pid", NTextStyle.comments()),
                                     factory.ofStyled(jpsResult.getPid(), NTextStyle.primary1()),
                                     NMsg.ofStyled("version", NTextStyle.comments()),
@@ -212,13 +212,11 @@ public class LocalTomcat {
                                     NMsg.ofStyled(jpsResult.getBase() == null ? "?" : jpsResult.getBase(), NTextStyle.path()),
                                     NMsg.ofStyled("cmd", NTextStyle.comments()),
                                     nutsArguments == null ? jpsResult.getArgsLine() : nutsArguments
-                            );
+                            ));
                             break;
                         }
                         default: {
-                            out.printf("%s\n",
-                                    factory.ofStyled(jpsResult.getPid(), NTextStyle.primary1())
-                            );
+                            out.println(factory.ofStyled(jpsResult.getPid(), NTextStyle.primary1()));
                             break;
                         }
                     }
@@ -404,7 +402,7 @@ public class LocalTomcat {
                     LocalTomcatConfigService s = nextLocalTomcatConfigService(args, NOpenMode.OPEN_OR_ERROR);
                     if (session.getTerminal().ask()
                             .resetLine()
-                            .forBoolean(NMsg.ofCstyle("Confirm Deleting %s?", s.getName())).setDefaultValue(true).getBooleanValue()) {
+                            .forBoolean(NMsg.ofC("Confirm Deleting %s?", s.getName())).setDefaultValue(true).getBooleanValue()) {
                         s.remove();
                     }
                     return;
@@ -413,7 +411,7 @@ public class LocalTomcat {
                     LocalTomcatDomainConfigService s = nextLocalTomcatDomainConfigService(args, NOpenMode.OPEN_OR_ERROR);
                     if (session.getTerminal().ask()
                             .resetLine()
-                            .forBoolean(NMsg.ofCstyle("Confirm Deleting %s?", s.getName())).setDefaultValue(true).getBooleanValue()) {
+                            .forBoolean(NMsg.ofC("Confirm Deleting %s?", s.getName())).setDefaultValue(true).getBooleanValue()) {
                         s.remove();
                         s.getTomcat().save();
                     }
@@ -423,7 +421,7 @@ public class LocalTomcat {
                     LocalTomcatAppConfigService s = nextLocalTomcatAppConfigService(args, NOpenMode.OPEN_OR_ERROR);
                     if (session.getTerminal().ask()
                             .resetLine()
-                            .forBoolean(NMsg.ofCstyle("Confirm Deleting %s?", s.getName())).setDefaultValue(true).getBooleanValue()) {
+                            .forBoolean(NMsg.ofC("Confirm Deleting %s?", s.getName())).setDefaultValue(true).getBooleanValue()) {
                         s.remove();
                         s.getTomcat().save();
                     }
@@ -470,9 +468,9 @@ public class LocalTomcat {
             c.printStatus();
         } else {
             if (session.isPlainOut()) {
-                session.out().printf("%s Tomcat %s.\n", getBracketsPrefix(name),
+                session.out().println(NMsg.ofC("%s Tomcat %s.", getBracketsPrefix(name),
                         NTexts.of(session).ofStyled("not found", NTextStyle.error())
-                );
+                ));
             } else {
                 session.eout().add(
                         NElements.of(session).ofObject()
@@ -756,7 +754,7 @@ public class LocalTomcat {
         }
         LocalTomcatConfigService c = toLocalTomcatConfigService(s);
         if (path) {
-            getContext().getSession().out().printf("%s\n", c.getOutLogFile());
+            getContext().getSession().out().println(c.getOutLogFile());
         } else {
             c.showOutLog(count);
         }
@@ -936,10 +934,10 @@ public class LocalTomcat {
             LocalTomcatDomainConfigService d = u.getDomain(strings[1], null);
             LocalTomcatAppConfigService a = u.getApp(strings[1], null);
             if (d != null && a != null) {
-                throw new NExecutionException(context.getSession(), NMsg.ofCstyle("ambiguous name %s. Could be either domain or app", name), 3);
+                throw new NExecutionException(context.getSession(), NMsg.ofC("ambiguous name %s. Could be either domain or app", name), 3);
             }
             if (d == null && a == null) {
-                throw new NExecutionException(context.getSession(), NMsg.ofCstyle("unknown name %s. it is no domain nor app", name), 3);
+                throw new NExecutionException(context.getSession(), NMsg.ofC("unknown name %s. it is no domain nor app", name), 3);
             }
             if (d != null) {
                 return d;

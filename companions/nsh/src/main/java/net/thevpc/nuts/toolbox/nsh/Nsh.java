@@ -45,7 +45,7 @@ public class Nsh implements NApplication {
             @Override
             public void onCmdExec(NCommandLine commandLine, NCommandLineContext context) {
                 if (session.isTrace() || session.isYes()) {
-                    log.level(Level.CONFIG).verb(NLoggerVerb.INFO).log(NMsg.ofJstyle("[nsh] activating options trace={0} yes={1}", session.isTrace(), session.isYes()));
+                    log.level(Level.CONFIG).verb(NLoggerVerb.INFO).log(NMsg.ofJ("[nsh] activating options trace={0} yes={1}", session.isTrace(), session.isYes()));
                 }
                 //id will not include version or
                 String nshIdStr = applicationContext.getAppId().getShortName();
@@ -90,26 +90,26 @@ public class Nsh implements NApplication {
                 }
 
                 if (firstInstalled.size() > 0) {
-                    log.level(Level.CONFIG).verb(NLoggerVerb.INFO).log(NMsg.ofJstyle("[nsh] registered {0} nsh commands : {1}", firstInstalled.size(),
+                    log.level(Level.CONFIG).verb(NLoggerVerb.INFO).log(NMsg.ofJ("[nsh] registered {0} nsh commands : {1}", firstInstalled.size(),
                             String.join(", ", firstInstalled)));
                 }
                 if (reinstalled.size() > 0) {
-                    log.level(Level.CONFIG).verb(NLoggerVerb.INFO).log(NMsg.ofJstyle("[nsh] re-registered {0} nsh commands : {1}", reinstalled.size(),
+                    log.level(Level.CONFIG).verb(NLoggerVerb.INFO).log(NMsg.ofJ("[nsh] re-registered {0} nsh commands : {1}", reinstalled.size(),
                             String.join(", ", reinstalled)));
                 }
                 if (session.isPlainTrace()) {
                     NTexts factory = NTexts.of(session);
                     if (firstInstalled.size() > 0) {
-                        session.out().printf("registered %s nsh commands : %s \n",
+                        session.out().println(NMsg.ofC("registered %s nsh commands : %s",
                                 factory.ofStyled("" + firstInstalled.size(), NTextStyle.primary3())
                                 , factory.ofStyled(String.join(", ", firstInstalled), NTextStyle.primary3())
-                        );
+                        ));
                     }
                     if (reinstalled.size() > 0) {
-                        session.out().printf("re-registered %s nsh commands : %s \n",
+                        session.out().println(NMsg.ofC("re-registered %s nsh commands : %s",
                                 factory.ofStyled("" + reinstalled.size(), NTextStyle.primary3())
                                 , factory.ofStyled(String.join(", ", reinstalled), NTextStyle.primary3())
-                        );
+                        ));
                     }
                 }
                 cfg.save(false);
@@ -158,9 +158,9 @@ public class Nsh implements NApplication {
                 } catch (Exception ex) {
                     if (applicationContext.getSession().isPlainTrace()) {
                         NTexts factory = NTexts.of(session);
-                        applicationContext.getSession().err().printf("unable to uninstall %s.\n",
+                        applicationContext.getSession().err().println(NMsg.ofC("unable to uninstall %s.",
                                 factory.ofStyled(command.getName(), NTextStyle.primary3())
-                        );
+                        ));
                     }
                 }
             }

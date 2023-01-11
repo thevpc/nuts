@@ -66,14 +66,14 @@ public class NSettingsAliasSubCommand extends AbstractNSettingsSubCommand {
                                             NWorkspaceCustomCommand::getName,
                                             x -> NCommandLine.of(x.getCommand()).toString(),
                                             (x, y) -> {
-                                                throw new NIllegalArgumentException(session, NMsg.ofCstyle("duplicate %s", x));
+                                                throw new NIllegalArgumentException(session, NMsg.ofC("duplicate %s", x));
                                             },
                                             //preserve order
                                             LinkedHashMap::new
                                     ))
                     ).println();
                 } else {
-                    session.out().printlnf(
+                    session.out().println(
                             r.stream().map(x -> new AliasInfo(x, session)).collect(Collectors.toList())
                     );
                 }

@@ -20,7 +20,7 @@ public class NSettingsArchetypeSubCommand extends AbstractNSettingsSubCommand {
     public boolean exec(NCommandLine cmdLine, Boolean autoSave, NSession session) {
         if (cmdLine.next("list archetypes", "la").isPresent()) {
             if (cmdLine.isExecMode()) {
-                session.out().printlnf(NConfigs.of(session).getAvailableArchetypes());
+                session.out().println(NConfigs.of(session).getAvailableArchetypes());
             }
             return true;
         }

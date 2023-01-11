@@ -127,7 +127,7 @@ public class CpCommand extends SimpleJShellBuiltin {
 //                }
 //            }
 //            if (context.getSession().isPlainTrace()) {
-//                context.out().printf("[[\\[CP\\]]] %s -> %s\n", from, to);
+//                context.out().print(NMsg.ofC("[[\\[CP\\]]] %s -> %s\n", from, to);
 //            }
 //            try {
 //                IOUtils.copy(from1, to1);
@@ -165,7 +165,7 @@ public class CpCommand extends SimpleJShellBuiltin {
 //                FileUtils.createParents(to1);
 //            }
 //            if (context.getSession().isPlainTrace()) {
-//                context.out().printf("[[\\[CP\\]]] %s -> %s\n", from, to);
+//                context.out().print(NMsg.ofC("[[\\[CP\\]]] %s -> %s\n", from, to);
 //            }
 //            try {
 //                IOUtils.copy(from1, to1);

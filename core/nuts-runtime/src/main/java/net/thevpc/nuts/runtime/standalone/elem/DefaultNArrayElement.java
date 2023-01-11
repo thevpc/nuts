@@ -74,7 +74,7 @@ public class DefaultNArrayElement extends AbstractNArrayElement {
         if(index>=0 && index<values.length){
             return NOptional.of(values[index]);
         }
-        return NOptional.ofError(s-> NMsg.ofCstyle("invalid array index %s not in [%s,%s[",index,0,values.length));
+        return NOptional.ofError(s-> NMsg.ofC("invalid array index %s not in [%s,%s[",index,0,values.length));
     }
 
     @Override

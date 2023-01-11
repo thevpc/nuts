@@ -2,7 +2,7 @@ package net.thevpc.nuts.util;
 
 import net.thevpc.nuts.NExtensions;
 import net.thevpc.nuts.NSession;
-import net.thevpc.nuts.io.NOutStream;
+import net.thevpc.nuts.io.NOutputStream;
 import net.thevpc.nuts.spi.NComponent;
 
 import java.io.PrintStream;
@@ -24,9 +24,9 @@ public interface NProgressMonitors extends NComponent {
 
     NProgressMonitor ofPrintStream(String messageFormat, PrintStream printStream);
 
-    NProgressMonitor ofPrintStream(NOutStream printStream);
+    NProgressMonitor ofPrintStream(NOutputStream printStream);
 
-    NProgressMonitor ofPrintStream(String messageFormat, NOutStream printStream);
+    NProgressMonitor ofPrintStream(String messageFormat, NOutputStream printStream);
 
     NProgressMonitor ofLogger(String messageFormat, Logger printStream);
 

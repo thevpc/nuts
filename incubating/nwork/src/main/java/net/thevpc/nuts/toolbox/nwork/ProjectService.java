@@ -280,7 +280,7 @@ public class ProjectService {
                             return found.get(0).getVersion().toString();
                         }
                     } catch (Exception e) {
-                        throw new NIllegalArgumentException(session, NMsg.ofCstyle("unable to process %s", f), e);
+                        throw new NIllegalArgumentException(session, NMsg.ofC("unable to process %s", f), e);
                     }
                 }
             }

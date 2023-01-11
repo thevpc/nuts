@@ -14,7 +14,6 @@ import net.thevpc.nuts.runtime.standalone.workspace.cmd.exec.DefaultInternalNExe
 import net.thevpc.nuts.text.NText;
 
 /**
- *
  * @author thevpc
  */
 public class DefaultNLicenseInternalExecutable extends DefaultInternalNExecutableCommand {
@@ -25,7 +24,7 @@ public class DefaultNLicenseInternalExecutable extends DefaultInternalNExecutabl
 
     @Override
     public void execute() {
-        if(getSession().isDry()){
+        if (getSession().isDry()) {
             dryExecute();
             return;
         }
@@ -41,11 +40,7 @@ public class DefaultNLicenseInternalExecutable extends DefaultInternalNExecutabl
         }
 
         NText licenseString = NWorkspaceExt.of(session.getWorkspace()).getLicenseText(session);
-        if (session.isPlainOut()) {
-            session.out().println(licenseString);
-        } else {
-            session.out().printlnf(licenseString);
-        }
+        session.out().println(licenseString);
     }
 
 }

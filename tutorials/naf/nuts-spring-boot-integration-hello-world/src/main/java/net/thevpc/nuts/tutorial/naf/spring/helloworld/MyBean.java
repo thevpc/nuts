@@ -4,7 +4,7 @@ package net.thevpc.nuts.tutorial.naf.spring.helloworld;
 import net.thevpc.nuts.NApplicationContext;
 import net.thevpc.nuts.NSession;
 import net.thevpc.nuts.NWorkspace;
-import net.thevpc.nuts.io.NOutStream;
+import net.thevpc.nuts.io.NOutputStream;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -21,7 +21,7 @@ public class MyBean {
     @Autowired
     private NApplicationContext applicationContext;
     @Autowired
-    private NOutStream out;
+    private NOutputStream out;
 
     public void hello() {
         out.println("##Hello##");

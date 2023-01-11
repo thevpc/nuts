@@ -77,7 +77,7 @@ public class NNotFoundException extends NException {
      */
     public NNotFoundException(NSession session, NId id, NIdInvalidDependency[] dependencies, NIdInvalidLocation[] locations, Throwable cause) {
         super(session,
-                NMsg.ofCstyle("artifact not found: %s%s", (id == null ? "<null>" : id), dependenciesToString(dependencies))
+                NMsg.ofC("artifact not found: %s%s", (id == null ? "<null>" : id), dependenciesToString(dependencies))
                 , cause);
         this.id = id;
         if (locations != null) {
@@ -98,7 +98,7 @@ public class NNotFoundException extends NException {
      */
     public NNotFoundException(NSession session, NId id, NMsg message, Throwable cause) {
         super(
-                session, message == null ? NMsg.ofCstyle("no such nuts : %s", (id == null ? "<null>" : id)) : message,
+                session, message == null ? NMsg.ofC("no such nuts : %s", (id == null ? "<null>" : id)) : message,
                 cause);
         this.id = id;
     }

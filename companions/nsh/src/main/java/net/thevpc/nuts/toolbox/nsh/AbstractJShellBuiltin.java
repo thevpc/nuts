@@ -28,8 +28,8 @@ package net.thevpc.nuts.toolbox.nsh;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.cmdline.NCommandAutoComplete;
 import net.thevpc.nuts.cmdline.NCommandLine;
-import net.thevpc.nuts.io.NOutMemoryStream;
-import net.thevpc.nuts.io.NOutStream;
+import net.thevpc.nuts.io.NMemoryOutputStream;
+import net.thevpc.nuts.io.NOutputStream;
 import net.thevpc.nuts.spi.NSupportLevelContext;
 import net.thevpc.nuts.text.NTexts;
 import net.thevpc.nuts.toolbox.nsh.bundles._IOUtils;
@@ -169,11 +169,11 @@ public abstract class AbstractJShellBuiltin implements JShellBuiltin {
 
     protected void throwExecutionException(Object errObject, int errorCode, NSession session) {
         session=session.copy();
-        NOutStream printStream = NOutMemoryStream.of(session);
+        NOutputStream printStream = NMemoryOutputStream.of(session);
         if (errObject != null) {
-            printStream.printf(errObject);
+            printStream.print(errObject);
         }else{
-            printStream.printf("%s: command failed with code %s%n",getName(),errorCode);
+            printStream.println(NMsg.ofC("%s: command failed with code %s",getName(),errorCode));
         }
         throw new NExecutionException(session, NMsg.ofNtf(printStream.toString()), errorCode);
     }

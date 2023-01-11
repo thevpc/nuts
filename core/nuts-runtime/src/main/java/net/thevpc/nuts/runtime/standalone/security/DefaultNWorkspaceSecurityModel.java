@@ -118,7 +118,7 @@ public class DefaultNWorkspaceSecurityModel {
         if (adminSecurity == null || !adminSecurity.hasCredentials()) {
             if (_LOG(session).isLoggable(Level.CONFIG)) {
                 _LOGOP(session).level(Level.CONFIG).verb(NLoggerVerb.WARNING)
-                        .log(NMsg.ofJstyle("{0} user has no credentials. reset to default", NConstants.Users.ADMIN));
+                        .log(NMsg.ofJ("{0} user has no credentials. reset to default", NConstants.Users.ADMIN));
             }
             NUserConfig u = NConfigsExt.of(NConfigs.of(session)).getModel().getUser(NConstants.Users.ADMIN, session);
             u.setCredentials(CoreStringUtils.chrToStr(createCredentials("admin".toCharArray(), false, null, session)));
@@ -230,9 +230,9 @@ public class DefaultNWorkspaceSecurityModel {
     public void checkAllowed(String permission, String operationName, NSession session) {
         if (!isAllowed(permission, session)) {
             if (NBlankable.isBlank(operationName)) {
-                throw new NSecurityException(session, NMsg.ofCstyle("%s not allowed!", permission));
+                throw new NSecurityException(session, NMsg.ofC("%s not allowed!", permission));
             } else {
-                throw new NSecurityException(session, NMsg.ofCstyle("%s : %s not allowed!", operationName, permission));
+                throw new NSecurityException(session, NMsg.ofC("%s : %s not allowed!", operationName, permission));
             }
         }
     }
@@ -402,7 +402,7 @@ public class DefaultNWorkspaceSecurityModel {
 
         if (cc.createAuthenticationAgent(authenticationAgentId, session) == null) {
             throw new NIllegalArgumentException(session,
-                    NMsg.ofCstyle("unsupported Authentication Agent %s", authenticationAgentId)
+                    NMsg.ofC("unsupported Authentication Agent %s", authenticationAgentId)
             );
         }
 

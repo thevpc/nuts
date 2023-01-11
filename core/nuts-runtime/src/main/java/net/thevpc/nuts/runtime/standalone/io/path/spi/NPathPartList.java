@@ -21,11 +21,11 @@ public class NPathPartList implements Iterable<NPathPart> {
             NPathPart p = list.get(i);
             if (p.isName()) {
                 if (i > 0) {
-                    throw new NIllegalArgumentException(session, NMsg.ofCstyle("invalid part %s at %i", p, i));
+                    throw new NIllegalArgumentException(session, NMsg.ofC("invalid part %s at %i", p, i));
                 }
             } else if (p.isTrailingSeparator()) {
                 if (i != list.size() - 1) {
-                    throw new NIllegalArgumentException(session, NMsg.ofCstyle("invalid part %s at %i", p, i));
+                    throw new NIllegalArgumentException(session, NMsg.ofC("invalid part %s at %i", p, i));
                 }
             }
         }

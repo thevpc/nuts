@@ -31,7 +31,7 @@ import net.thevpc.nuts.boot.NBootOptionsBuilder;
 import net.thevpc.nuts.cmdline.NCommandLine;
 import net.thevpc.nuts.elem.NArrayElementBuilder;
 import net.thevpc.nuts.elem.NElements;
-import net.thevpc.nuts.io.NOutStream;
+import net.thevpc.nuts.io.NOutputStream;
 import net.thevpc.nuts.text.NTextStyle;
 import net.thevpc.nuts.text.NTexts;
 import net.thevpc.nuts.util.*;
@@ -248,7 +248,7 @@ public final class NReservedUtils {
                             + "You need to provide default response (-y|-n) for resetting/recovering workspace. "
                             + "You was asked to confirm deleting folders as part as recover/reset option."), 243);
         }
-        bLog.with().level(Level.FINEST).verb(NLoggerVerb.WARNING).log(NMsg.ofJstyle("delete workspace location(s) at : {0}", lastBootOptions.getWorkspace()));
+        bLog.with().level(Level.FINEST).verb(NLoggerVerb.WARNING).log(NMsg.ofJ("delete workspace location(s) at : {0}", lastBootOptions.getWorkspace()));
         boolean force = false;
         switch (confirm) {
             case ASK: {
@@ -282,7 +282,7 @@ public final class NReservedUtils {
                 } else if (ovalue instanceof File) {
                     folders.add(((File) ovalue).toPath());
                 } else {
-                    throw new NBootException(NMsg.ofCstyle("unsupported path type : %s", ovalue));
+                    throw new NBootException(NMsg.ofC("unsupported path type : %s", ovalue));
                 }
             }
         }
@@ -313,7 +313,7 @@ public final class NReservedUtils {
                                     if (session != null) {
                                         session.err().println(header);
                                     } else {
-                                        bLog.with().level(Level.WARNING).verb(NLoggerVerb.WARNING).log( NMsg.ofJstyle("{0}", header));
+                                        bLog.with().level(Level.WARNING).verb(NLoggerVerb.WARNING).log( NMsg.ofJ("{0}", header));
                                     }
                                 }
                             }
@@ -335,7 +335,7 @@ public final class NReservedUtils {
                     line = session.getTerminal().ask()
                             .resetLine()
                             .forString(
-                                    NMsg.ofCstyle(
+                                    NMsg.ofC(
                                             "do you confirm deleting %s [y/n/c/a] (default 'n') ?", directory
                                     )).setSession(session).getValue();
                 } else {
@@ -348,7 +348,7 @@ public final class NReservedUtils {
                     } else {
                         if (bOptions.getGui().orElse(false)) {
                             line = NReservedGuiUtils.inputString(
-                                    NMsg.ofCstyle("do you confirm deleting %s [y/n/c/a] (default 'n') ?", directory).toString(),
+                                    NMsg.ofC("do you confirm deleting %s [y/n/c/a] (default 'n') ?", directory).toString(),
                                     null, readline, bLog
                             );
                         } else {
@@ -367,7 +367,7 @@ public final class NReservedUtils {
                                 }
                                 case ASK: {
                                     // Level.OFF is to force logging in all cases
-                                    bLog.with().level(Level.OFF).verb(NLoggerVerb.WARNING).log( NMsg.ofJstyle("do you confirm deleting {0} [y/n/c/a] (default 'n') ? : ", directory));
+                                    bLog.with().level(Level.OFF).verb(NLoggerVerb.WARNING).log( NMsg.ofJ("do you confirm deleting {0} [y/n/c/a] (default 'n') ? : ", directory));
                                     line = readline.get();
                                 }
                             }
@@ -423,7 +423,7 @@ public final class NReservedUtils {
                     }
                 });
                 count[0]++;
-                bLog.with().level(Level.FINEST).verb(NLoggerVerb.WARNING).log( NMsg.ofJstyle("delete folder : {0} ({1} files/folders deleted)", directory, count[0]));
+                bLog.with().level(Level.FINEST).verb(NLoggerVerb.WARNING).log( NMsg.ofJ("delete folder : {0} ({1} files/folders deleted)", directory, count[0]));
             } catch (IOException ex) {
                 throw new UncheckedIOException(ex);
             }
@@ -546,7 +546,7 @@ public final class NReservedUtils {
 
     public static boolean acceptVersion(NVersion one, NVersion other) {
         if (!other.isSingleValue()) {
-            throw new NBootException(NMsg.ofCstyle("expected single value version: %s", other));
+            throw new NBootException(NMsg.ofC("expected single value version: %s", other));
         }
         List<NVersionInterval> ii = one.intervals().get();
         if (ii.isEmpty()) {
@@ -600,7 +600,7 @@ public final class NReservedUtils {
             return NOptional.of(idBuilder.setCondition(conditionBuilder)
                     .setProperties(idProperties).build());
         }
-        return NOptional.ofError(session -> NMsg.ofCstyle("invalid id format : %s", nutsId));
+        return NOptional.ofError(session -> NMsg.ofC("invalid id format : %s", nutsId));
     }
 
     private static void setIdProperty(String key, String value, NIdBuilder builder, NEnvConditionBuilder sb, Map<String, String> props) {
@@ -775,7 +775,7 @@ public final class NReservedUtils {
                 }
             } catch (Exception e) {
                 //ignore
-                bLog.with().level(Level.FINEST).verb(NLoggerVerb.FAIL).log( NMsg.ofJstyle("unable to undo NDI : {0}", e.toString()));
+                bLog.with().level(Level.FINEST).verb(NLoggerVerb.FAIL).log( NMsg.ofJ("unable to undo NDI : {0}", e.toString()));
             }
         }
     }
@@ -955,7 +955,7 @@ public final class NReservedUtils {
         NMsg fm = NSessionAwareExceptionBase.resolveSessionAwareExceptionBase(ex).map(NSessionAwareExceptionBase::getFormattedMessage)
                 .orNull();
         String m = NReservedLangUtils.getErrorMessage(ex);
-        NOutStream fout = null;
+        NOutputStream fout = null;
         if (out == null) {
             if (session != null) {
                 try {
@@ -1015,7 +1015,7 @@ public final class NReservedUtils {
                         }
                         NArrayElementBuilder e = session.eout();
                         if (e.size() > 0) {
-                            fout.printlnf(e.build());
+                            fout.println(e.build());
                             e.clear();
                         }
                         fout.flush();
@@ -1031,7 +1031,7 @@ public final class NReservedUtils {
                         }
                         NArrayElementBuilder e = session.eout();
                         if (e.size() > 0) {
-                            fout.printlnf(e.build());
+                            fout.println(e.build());
                             e.clear();
                         }
                         fout.flush();

@@ -28,7 +28,7 @@ public class MongoCountCmd extends CountCmd<NMongoConfig> {
                     docWhere.putAll(Document.parse(s));
                 }
             }
-            session.out().printlnf(mongoCollection.countDocuments(docWhere));
+            session.out().println(mongoCollection.countDocuments(docWhere));
         });
     }
 

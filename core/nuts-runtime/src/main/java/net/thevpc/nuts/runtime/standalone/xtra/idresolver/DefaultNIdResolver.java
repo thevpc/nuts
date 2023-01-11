@@ -33,7 +33,7 @@ public class DefaultNIdResolver implements NIdResolver {
             NLoggerOp.of(NPomXmlParser.class, session)
                     .verb(NLoggerVerb.WARNING)
                     .level(Level.FINEST)
-                    .log(NMsg.ofCstyle(
+                    .log(NMsg.ofC(
                             "multiple ids found : %s for class %s and id %s",
                             Arrays.asList(pomIds), clazz, defaultValue
                     ));

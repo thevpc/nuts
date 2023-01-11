@@ -78,7 +78,7 @@ public class DefaultNArtifactPathExecutable extends AbstractNExecutableCommand {
     public void executeHelper() {
         try (final CharacterizedExecFile c = characterizeForExec(NPath.of(cmdName, session), session, executorOptions)) {
             if (c.getDescriptor() == null) {
-                throw new NNotFoundException(execSession, null, NMsg.ofCstyle("unable to resolve a valid descriptor for %s", cmdName), null);
+                throw new NNotFoundException(execSession, null, NMsg.ofC("unable to resolve a valid descriptor for %s", cmdName), null);
             }
             String tempFolder = NPaths.of(session)
                     .createTempFolder("exec-path-").toString();
@@ -114,7 +114,7 @@ public class DefaultNArtifactPathExecutable extends AbstractNExecutableCommand {
                     CoreIOUtils.delete(session, Paths.get(tempFolder));
                 } catch (UncheckedIOException | NIOException e) {
                     LOG.with().session(session).level(Level.FINEST).verb(NLoggerVerb.FAIL)
-                            .log(NMsg.ofJstyle("unable to delete temp folder created for execution : {0}", tempFolder));
+                            .log(NMsg.ofJ("unable to delete temp folder created for execution : {0}", tempFolder));
                 }
             }
         }
@@ -128,7 +128,7 @@ public class DefaultNArtifactPathExecutable extends AbstractNExecutableCommand {
             c.setContentFile(CoreIOUtils.toPathInputSource(contentFile, c.getTemps(), true, session));
             Path fileSource = c.getContentFile();
             if (!Files.exists(fileSource)) {
-                throw new NIllegalArgumentException(session, NMsg.ofCstyle("file does not exists %s", fileSource));
+                throw new NIllegalArgumentException(session, NMsg.ofC("file does not exists %s", fileSource));
             }
             if (Files.isDirectory(fileSource)) {
                 Path ext = fileSource.resolve(NConstants.Files.DESCRIPTOR_FILE_NAME);
@@ -196,7 +196,7 @@ public class DefaultNArtifactPathExecutable extends AbstractNExecutableCommand {
                         }
                     }
                     if (c.getContentFile() == null) {
-                        throw new NIllegalArgumentException(session, NMsg.ofCstyle("unable to locale package for %s", c.getStreamOrPath()));
+                        throw new NIllegalArgumentException(session, NMsg.ofC("unable to locale package for %s", c.getStreamOrPath()));
                     }
                 } else {
                     c.setDescriptor(NDescriptorContentResolver.resolveNutsDescriptorFromFileContent(c.getContentFile(), execOptions, session));
@@ -211,7 +211,7 @@ public class DefaultNArtifactPathExecutable extends AbstractNExecutableCommand {
                     }
                 }
             } else {
-                throw new NIllegalArgumentException(session, NMsg.ofCstyle("path does not denote a valid file or folder %s", c.getStreamOrPath()));
+                throw new NIllegalArgumentException(session, NMsg.ofC("path does not denote a valid file or folder %s", c.getStreamOrPath()));
             }
         } catch (IOException ex) {
             throw new NIOException(session, ex);

@@ -205,7 +205,7 @@ public class MavenNDependencySolver implements NDependencySolver {
                     .setLatest(true).getResultDefinitions().required();
         }
         if (def.getEffectiveDescriptor().isNotPresent()) {
-            throw new NIllegalArgumentException(session, NMsg.ofCstyle("expected an effective definition for %s", def.getId()));
+            throw new NIllegalArgumentException(session, NMsg.ofC("expected an effective definition for %s", def.getId()));
         }
         NDependencyTreeNodeBuild info = new NDependencyTreeNodeBuild(null, def, dependency, dependency, 0, session);
         for (NId exclusion : dependency.getExclusions()) {
@@ -388,7 +388,7 @@ public class MavenNDependencySolver implements NDependencySolver {
                 effDescriptor = def.getEffectiveDescriptor().orNull();
                 if (effDescriptor == null) {
                     throw new NIllegalArgumentException(session,
-                            NMsg.ofCstyle("expected an effective definition for %s", def.getId()));
+                            NMsg.ofC("expected an effective definition for %s", def.getId()));
                 }
             }
             return effDescriptor;

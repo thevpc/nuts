@@ -191,10 +191,10 @@ public class DefaultNArg implements NArg {
     public NOptional<String> getStringValue() {
         return getValue().asString()
                 .ifEmptyUse(
-                        () -> NOptional.ofEmpty(s -> NMsg.ofCstyle("missing value for : %s", getKey().asString().orElse("")))
+                        () -> NOptional.ofEmpty(s -> NMsg.ofC("missing value for : %s", getKey().asString().orElse("")))
                 )
                 .ifErrorUse(
-                        () -> NOptional.ofEmpty(s -> NMsg.ofCstyle("erroneous value for : %s", getKey().asString().orElse("")))
+                        () -> NOptional.ofEmpty(s -> NMsg.ofC("erroneous value for : %s", getKey().asString().orElse("")))
                 );
     }
 
@@ -255,18 +255,18 @@ public class DefaultNArg implements NArg {
         if (isNegated()) {
             return getValue().asBoolean().ifEmpty(true).map(x -> isNegated() != x)
                     .ifEmptyUse(
-                            () -> NOptional.ofEmpty(s -> NMsg.ofCstyle("missing value for : %s", getKey().asString().orElse("")))
+                            () -> NOptional.ofEmpty(s -> NMsg.ofC("missing value for : %s", getKey().asString().orElse("")))
                     )
                     .ifErrorUse(
-                            () -> NOptional.ofEmpty(s -> NMsg.ofCstyle("erroneous value for : %s", getKey().asString().orElse("")))
+                            () -> NOptional.ofEmpty(s -> NMsg.ofC("erroneous value for : %s", getKey().asString().orElse("")))
                     );
         }
         return getValue().asBoolean()
                 .ifEmptyUse(
-                        () -> NOptional.ofEmpty(s -> NMsg.ofCstyle("missing value for : %s", getKey().asString().orElse("")))
+                        () -> NOptional.ofEmpty(s -> NMsg.ofC("missing value for : %s", getKey().asString().orElse("")))
                 )
                 .ifErrorUse(
-                        () -> NOptional.ofEmpty(s -> NMsg.ofCstyle("erroneous value for : %s", getKey().asString().orElse("")))
+                        () -> NOptional.ofEmpty(s -> NMsg.ofC("erroneous value for : %s", getKey().asString().orElse("")))
                 );
     }
 

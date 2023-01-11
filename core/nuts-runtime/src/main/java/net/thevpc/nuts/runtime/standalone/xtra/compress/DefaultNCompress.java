@@ -85,7 +85,7 @@ public class DefaultNCompress implements NCompress {
         checkSession();
         NAssert.requireNonBlank(sources, "source", session);
         NAssert.requireNonBlank(target, "target", session);
-        _LOG(session).with().level(Level.FINEST).verb(NLoggerVerb.START).log(NMsg.ofJstyle("compress {0} to {1}", sources, target));
+        _LOG(session).with().level(Level.FINEST).verb(NLoggerVerb.START).log(NMsg.ofJ("compress {0} to {1}", sources, target));
         try {
             OutputStream fW = null;
             ZipOutputStream zip = null;
@@ -150,11 +150,11 @@ public class DefaultNCompress implements NCompress {
                     }
                 }
             } else {
-                throw new NIllegalArgumentException(getSession(), NMsg.ofCstyle("unsupported target %s", target));
+                throw new NIllegalArgumentException(getSession(), NMsg.ofC("unsupported target %s", target));
             }
         } catch (IOException ex) {
             _LOG(session).with().level(Level.CONFIG).verb(NLoggerVerb.FAIL)
-                    .log(NMsg.ofJstyle("error compressing {0} to {1} : {2}",
+                    .log(NMsg.ofJ("error compressing {0} to {1} : {2}",
                             sources, target, ex));
             throw new NIOException(session, ex);
         }
@@ -243,7 +243,7 @@ public class DefaultNCompress implements NCompress {
                 break;
             }
             default: {
-                throw new NUnsupportedArgumentException(getSession(), NMsg.ofCstyle("unsupported compression format %s", format));
+                throw new NUnsupportedArgumentException(getSession(), NMsg.ofC("unsupported compression format %s", format));
             }
         }
         return this;
@@ -414,7 +414,7 @@ public class DefaultNCompress implements NCompress {
                 break;
             }
             default: {
-                throw new NUnsupportedArgumentException(getSession(), NMsg.ofCstyle("unsupported compression format %s", getFormat()));
+                throw new NUnsupportedArgumentException(getSession(), NMsg.ofC("unsupported compression format %s", getFormat()));
             }
         }
         return this;

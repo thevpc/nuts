@@ -46,7 +46,7 @@ public class NWorkspaceNotFoundException extends NBootException {
      * @param workspaceLocation location
      */
     public NWorkspaceNotFoundException(String workspaceLocation) {
-        super(NMsg.ofCstyle("no such workspace %s", (workspaceLocation == null ? "<null>" : workspaceLocation))
+        super(NMsg.ofC("no such workspace %s", (workspaceLocation == null ? "<null>" : workspaceLocation))
                 , null);
         this.workspaceLocation = workspaceLocation;
     }

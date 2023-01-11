@@ -57,7 +57,7 @@ public class XmlEscaper {
                 NLoggerOp.of(NPomXmlParser.class, session)
                         .verb(NLoggerVerb.WARNING)
                         .level(Level.FINEST)
-                        .log(NMsg.ofCstyle("unsupported  xml entity declaration : %s", g));
+                        .log(NMsg.ofC("unsupported  xml entity declaration : %s", g));
                 m.appendReplacement(sb, g);
             }
         }
@@ -77,7 +77,7 @@ public class XmlEscaper {
                 NLoggerOp.of(NPomXmlParser.class, session)
                         .verb(NLoggerVerb.WARNING)
                         .level(Level.FINEST)
-                        .log(NMsg.ofCstyle("unsupported  xml entity declaration : %s", g));
+                        .log(NMsg.ofC("unsupported  xml entity declaration : %s", g));
                 m.appendReplacement(sb, g);
             }
         }

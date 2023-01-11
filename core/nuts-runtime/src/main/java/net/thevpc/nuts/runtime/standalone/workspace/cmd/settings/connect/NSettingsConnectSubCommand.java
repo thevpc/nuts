@@ -59,7 +59,7 @@ public class NSettingsConnectSubCommand extends AbstractNSettingsSubCommand {
                 server = server.substring(0, server.indexOf(":"));
             }
             if (!NBlankable.isBlank(login) && NBlankable.isBlank(password)) {
-                password = session.getTerminal().readPassword("Password:");
+                password = session.getTerminal().readPassword(NMsg.ofPlain("Password:"));
             }
             Socket socket = null;
             try {
@@ -75,7 +75,7 @@ public class NSettingsConnectSubCommand extends AbstractNSettingsSubCommand {
                         out.printf("connect ==%s %s== %n", login, new String(password));
                     }
                     while (true) {
-                        String line = session.getTerminal().readLine("");
+                        String line = session.getTerminal().readLine(NMsg.ofPlain(""));
                         if (line == null) {
                             break;
                         }

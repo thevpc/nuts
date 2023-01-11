@@ -29,9 +29,9 @@ public class DefaultUnknownExecutable extends AbstractNExecutableCommand {
     @Override
     public void execute() {
         if(execSession.isDry()){
-            throw new NExecutionException(execSession, NMsg.ofCstyle("cannot execute an unknown command : %s", name), 1);
+            throw new NExecutionException(execSession, NMsg.ofC("cannot execute an unknown command : %s", name), 1);
         }else {
-            throw new NExecutionException(execSession, NMsg.ofCstyle("cannot execute an unknown command : %s", name), 1);
+            throw new NExecutionException(execSession, NMsg.ofC("cannot execute an unknown command : %s", name), 1);
         }
     }
 

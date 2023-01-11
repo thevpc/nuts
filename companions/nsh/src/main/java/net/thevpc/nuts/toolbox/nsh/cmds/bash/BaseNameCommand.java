@@ -138,7 +138,7 @@ public class BaseNameCommand extends SimpleJShellBuiltin {
                 break;
             }
             default: {
-                session.out().printlnf(results);
+                session.out().println(results);
             }
         }
     }

@@ -92,7 +92,7 @@ public class FolderObjectIterator<T> extends NIteratorBase<T> {
         while (!stack.isEmpty()) {
             PathAndDepth file = stack.pop();
             if (file.path.isDirectory()) {
-                session.getTerminal().printProgress("%-8s %s", "browse", file.path.toCompressedForm());
+                session.getTerminal().printProgress(NMsg.ofC("%-8s %s", "browse", file.path.toCompressedForm()));
                 visitedFoldersCount++;
                 boolean deep = maxDepth < 0 || file.depth < maxDepth;
                 if (file.path.isDirectory()) {
@@ -103,7 +103,7 @@ public class FolderObjectIterator<T> extends NIteratorBase<T> {
                                         return (deep && pathname.isDirectory()) || model.isObjectFile(pathname);
                                     } catch (Exception ex) {
                                         NLoggerOp.of(FolderObjectIterator.class, session).level(Level.FINE).error(ex)
-                                                .log(NMsg.ofJstyle("unable to test desk file {0}", pathname));
+                                                .log(NMsg.ofJ("unable to test desk file {0}", pathname));
                                         return false;
                                     }
                                 },"isDirectory || isObjectFile"
@@ -118,7 +118,7 @@ public class FolderObjectIterator<T> extends NIteratorBase<T> {
                         });
                     } catch (Exception ex) {
                         LOG.with().error(ex).log(
-                                NMsg.ofJstyle("unable to parse {0}", file.path));
+                                NMsg.ofJ("unable to parse {0}", file.path));
                     }
                 }
             } else {

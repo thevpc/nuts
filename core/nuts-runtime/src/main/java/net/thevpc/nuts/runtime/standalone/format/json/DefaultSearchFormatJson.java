@@ -9,7 +9,7 @@ import net.thevpc.nuts.*;
 import net.thevpc.nuts.cmdline.NArg;
 import net.thevpc.nuts.cmdline.NCommandLine;
 import net.thevpc.nuts.elem.NElements;
-import net.thevpc.nuts.io.NOutStream;
+import net.thevpc.nuts.io.NOutputStream;
 import net.thevpc.nuts.runtime.standalone.format.NFetchDisplayOptions;
 import net.thevpc.nuts.runtime.standalone.format.DefaultSearchFormatBase;
 import net.thevpc.nuts.text.NText;
@@ -26,7 +26,7 @@ public class DefaultSearchFormatJson extends DefaultSearchFormatBase {
     NTexts txt;
     private NCodeHighlighter codeFormat;
 
-    public DefaultSearchFormatJson(NSession session, NOutStream writer, NFetchDisplayOptions options) {
+    public DefaultSearchFormatJson(NSession session, NOutputStream writer, NFetchDisplayOptions options) {
         super(session, writer, NContentType.JSON, options);
         txt = NTexts.of(session);
         codeFormat = NTexts.of(session).getCodeHighlighter("json");
@@ -76,7 +76,7 @@ public class DefaultSearchFormatJson extends DefaultSearchFormatBase {
                 .filteredText()
                 ;
         NText ee = codeFormat.stringToText(json, txt, getSession());
-        getWriter().printf("%s%n", ee);
+        getWriter().println(ee);
         getWriter().flush();
     }
 

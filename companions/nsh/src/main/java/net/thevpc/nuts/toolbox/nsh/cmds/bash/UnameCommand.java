@@ -116,7 +116,7 @@ public class UnameCommand extends SimpleJShellBuiltin {
                 break;
             }
             default: {
-                context.getSession().out().printlnf(rr);
+                context.getSession().out().println(rr);
             }
         }
     }

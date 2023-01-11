@@ -47,6 +47,6 @@ public class NElementMapperNFilter implements NElementMapper<NFilter> {
                 }
             }
         }
-        throw new NUnsupportedArgumentException(context.getSession(), NMsg.ofCstyle("unsupported parse of %s",to));
+        throw new NUnsupportedArgumentException(context.getSession(), NMsg.ofC("unsupported parse of %s",to));
     }
 }

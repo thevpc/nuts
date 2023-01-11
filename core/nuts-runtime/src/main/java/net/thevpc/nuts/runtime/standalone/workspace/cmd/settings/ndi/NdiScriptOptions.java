@@ -239,7 +239,7 @@ public class NdiScriptOptions implements Cloneable {
         if (workspaceBootConfig == null) {
             workspaceBootConfig = NConfigs.of(session).loadBootConfig(switchWorkspaceLocation, false, true);
             if (workspaceBootConfig == null) {
-                throw new NIllegalArgumentException(session, NMsg.ofCstyle("invalid workspace: %s", switchWorkspaceLocation));
+                throw new NIllegalArgumentException(session, NMsg.ofC("invalid workspace: %s", switchWorkspaceLocation));
             }
         }
         return workspaceBootConfig;

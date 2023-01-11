@@ -47,7 +47,7 @@ public class RemoteNExecCommand extends AbstractNExecCommand {
             String p = getExtraErrorMessage();
             if (p != null) {
                 result = new NExecutionException(session,
-                        NMsg.ofCstyle("execution failed with code %d and message : %s", 244, p),
+                        NMsg.ofC("execution failed with code %d and message : %s", 244, p),
                         ex, 244);
             } else {
                 result = new NExecutionException(session, NMsg.ofPlain("remote command failed"), ex, 244);

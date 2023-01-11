@@ -74,28 +74,29 @@ public class NSettingsLogSubCommand extends AbstractNSettingsSubCommand {
         } else if (cmdLine.next("get loglevel").isPresent()) {
             if (cmdLine.isExecMode()) {
                 Logger rootLogger = Logger.getLogger("");
-                session.out().printf("%s%n", rootLogger.getLevel().toString());
+                session.out().println(rootLogger.getLevel());
             }
         } else if (cmdLine.next("install-log").isPresent()) {
             if (cmdLine.isExecMode()) {
                 if(session.isPlainOut()) {
                     for (NInstallLogRecord r : NWorkspaceExt.of(session).getInstalledRepository().findLog(session)) {
                         NTexts txt = NTexts.of(session);
-                        session.out().printf("%s %s %s %s %s %s %s%n",
-                                r.getDate(),
-                                r.getUser(),
-                                r.getAction(),
-                                r.isSucceeded()?
-                                        txt.ofStyled("Succeeded", NTextStyle.success())
-                                        :
-                                        txt.ofStyled("Failed", NTextStyle.fail()),
-                                r.getId()==null?"":r.getId(),
-                                r.getForId()==null?"":r.getForId(),
-                                NStringUtils.trim(r.getMessage())
+                        session.out().print(
+                                NMsg.ofC("%s %s %s %s %s %s %s%n",
+                                        r.getDate(),
+                                        r.getUser(),
+                                        r.getAction(),
+                                        r.isSucceeded()?
+                                                txt.ofStyled("Succeeded", NTextStyle.success())
+                                                :
+                                                txt.ofStyled("Failed", NTextStyle.fail()),
+                                        r.getId()==null?"":r.getId(),
+                                        r.getForId()==null?"":r.getForId(),
+                                        NStringUtils.trim(r.getMessage()))
                         );
                     }
                 }else{
-                    session.out().printlnf(
+                    session.out().println(
                             NWorkspaceExt.of(session).getInstalledRepository().findLog(session).toList()
                     );
                 }

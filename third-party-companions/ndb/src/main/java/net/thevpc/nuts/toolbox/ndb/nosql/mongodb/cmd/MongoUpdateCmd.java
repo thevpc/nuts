@@ -38,7 +38,7 @@ public class MongoUpdateCmd extends UpdateCmd<NMongoConfig> {
             UpdateResult r = eq.getOne() ?
                     mongoCollection.updateOne(docWhere, docSet)
                     : mongoCollection.updateMany(docWhere, docSet);
-            session.out().printlnf(r);
+            session.out().println(r);
         });
     }
 

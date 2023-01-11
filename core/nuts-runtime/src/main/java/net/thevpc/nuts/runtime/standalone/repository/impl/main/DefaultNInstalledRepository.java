@@ -139,7 +139,7 @@ public class DefaultNInstalledRepository extends AbstractNRepository implements 
                     }
                 } catch (Exception ex) {
                     _LOGOP(session).error(ex)
-                            .log(NMsg.ofJstyle("unable to parse {0}", path));
+                            .log(NMsg.ofJ("unable to parse {0}", path));
                 }
                 return null;
             }
@@ -241,7 +241,7 @@ public class DefaultNInstalledRepository extends AbstractNRepository implements 
             succeeded = true;
         } catch (UncheckedIOException | NIOException ex) {
             throw new NNotInstallableException(session, id,
-                    NMsg.ofCstyle("failed to install %s : %s", id, ex)
+                    NMsg.ofC("failed to install %s : %s", id, ex)
                     , ex);
         } finally {
             addLog(NInstallLogAction.INSTALL, id, forId, null, succeeded, session);
@@ -469,7 +469,7 @@ public class DefaultNInstalledRepository extends AbstractNRepository implements 
                 if (changeStatus && !NConfigs.of(session).isReadOnly()) {
                     NLocks.of(session).setSource(path).call(() -> {
                                 _LOGOP(session).level(Level.CONFIG)
-                                        .log(NMsg.ofJstyle("install-info upgraded {0}", finalPath));
+                                        .log(NMsg.ofJ("install-info upgraded {0}", finalPath));
                                 c.setConfigVersion(workspace.getApiVersion());
                                 elem.json().setValue(c)
                                         .setNtf(false)
@@ -503,7 +503,7 @@ public class DefaultNInstalledRepository extends AbstractNRepository implements 
                         return c;
                     }
                 } catch (Exception ex) {
-                    _LOGOP(session).error(ex).log(NMsg.ofJstyle("unable to parse {0}", path));
+                    _LOGOP(session).error(ex).log(NMsg.ofJ("unable to parse {0}", path));
                 }
                 return null;
             }
@@ -587,7 +587,7 @@ public class DefaultNInstalledRepository extends AbstractNRepository implements 
                 ii.setRequired(_require);
                 saveCreate(ii,session);
             } catch (UncheckedIOException | NIOException ex) {
-                throw new NNotInstallableException(session, id, NMsg.ofCstyle("failed to install %s : %s", id, ex), ex);
+                throw new NNotInstallableException(session, id, NMsg.ofC("failed to install %s : %s", id, ex), ex);
             }
             DefaultNInstallInfo uu = (DefaultNInstallInfo) getInstallInformation(ii, session);
             uu.setWasInstalled(false);
@@ -729,7 +729,7 @@ public class DefaultNInstalledRepository extends AbstractNRepository implements 
             @Override
             public NPushRepositoryCommand run() {
                 throw new NIllegalArgumentException(getSession(),
-                        NMsg.ofCstyle("unsupported push() for %s repository", getName())
+                        NMsg.ofC("unsupported push() for %s repository", getName())
                 );
             }
         };

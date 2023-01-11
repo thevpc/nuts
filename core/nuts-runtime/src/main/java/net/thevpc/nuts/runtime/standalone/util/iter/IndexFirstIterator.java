@@ -69,7 +69,7 @@ public class IndexFirstIterator<T> extends NIteratorBase<T> {
                     NLoggerOp.of(IndexFirstIterator.class,session)
                             .verb(NLoggerVerb.WARNING)
                             .level(Level.FINEST)
-                            .log(NMsg.ofCstyle("error evaluating Iterator 'hasNext()' : %s", ex));
+                            .log(NMsg.ofC("error evaluating Iterator 'hasNext()' : %s", ex));
                     other = null;
                     return false;
                 }

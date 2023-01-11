@@ -50,7 +50,7 @@ public class ErrorHandlerIterator<T> extends NIteratorBase<T> {
             NLoggerOp.of(IndexFirstIterator.class,session)
                     .verb(NLoggerVerb.WARNING)
                     .level(Level.FINEST)
-                    .log(NMsg.ofCstyle("error evaluating Iterator 'hasNext()' : %s", ex));
+                    .log(NMsg.ofC("error evaluating Iterator 'hasNext()' : %s", ex));
             switch (type) {
                 case IGNORE: {
                     // do nothing

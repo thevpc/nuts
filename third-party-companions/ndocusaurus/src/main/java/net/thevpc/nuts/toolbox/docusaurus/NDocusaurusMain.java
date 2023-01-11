@@ -62,7 +62,7 @@ public class NDocusaurusMain implements NApplication {
                 NSession session = commandLine.getSession();
                 if (!start && !build && !buildPdf) {
                     commandLine.throwMissingArgument(
-                            NMsg.ofCstyle("missing command. try %s", NMsg.ofCode("sh", "ndocusaurus pdf | start | build"))
+                            NMsg.ofC("missing command. try %s", NMsg.ofCode("sh", "ndocusaurus pdf | start | build"))
                     );
                 }
             }

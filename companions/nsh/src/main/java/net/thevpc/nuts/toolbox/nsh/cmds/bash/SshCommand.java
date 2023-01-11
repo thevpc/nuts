@@ -132,7 +132,7 @@ public class SshCommand extends SimpleJShellBuiltin {
                     if (!nutsCommandFound) {
                         NPath from = NSearchCommand.of(session).addId(session.getWorkspace().getApiId()).getResultDefinitions().required().getContent().orNull();
                         NAssert.requireNonNull(from, "jar file", session);
-                        context.out().printf("Detected nuts.jar location : %s\n", from);
+                        context.out().println(NMsg.ofC("Detected nuts.jar location : %s", from));
                         String bootApiFileName = "nuts-" + session.getWorkspace().getApiId() + ".jar";
                         sshSession.setFailFast(true).copyLocalToRemote(from.toString(), workspace + "/" + bootApiFileName, true);
                         String javaCmd = null;

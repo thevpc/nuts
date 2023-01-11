@@ -30,7 +30,7 @@ import net.thevpc.nuts.cmdline.NArg;
 import net.thevpc.nuts.cmdline.NCommandLine;
 import net.thevpc.nuts.io.NCp;
 import net.thevpc.nuts.io.NPath;
-import net.thevpc.nuts.io.NOutStream;
+import net.thevpc.nuts.io.NOutputStream;
 import net.thevpc.nuts.spi.NComponentScope;
 import net.thevpc.nuts.spi.NComponentScopeType;
 import net.thevpc.nuts.text.*;
@@ -92,7 +92,7 @@ public class CatCommand extends SimpleJShellBuiltin {
         if (options.files.isEmpty()) {
             options.files.add(null);
         }
-        NOutStream out = context.getSession().out();
+        NOutputStream out = context.getSession().out();
         try {
             options.currentNumber = 1;
 
@@ -140,10 +140,10 @@ public class CatCommand extends SimpleJShellBuiltin {
                 }
             }
             if (!plain) {
-                out.printf(results);
+                out.print(results);
             }
         } catch (IOException ex) {
-            throw new NExecutionException(context.getSession(), NMsg.ofCstyle("%s", ex), ex, 100);
+            throw new NExecutionException(context.getSession(), NMsg.ofC("%s", ex), ex, 100);
         }
     }
 
@@ -214,19 +214,19 @@ public class CatCommand extends SimpleJShellBuiltin {
             NTextBuilder nutsText = NTexts.of(session).ofCode(info.getHighlighter(), text).highlight(session)
                     .builder()
                     .flatten();
-            NOutStream out = NOutStream.of(os, session);
+            NOutputStream out = NOutputStream.of(os, session);
             List<NText> children = nutsText.getChildren();
             Tracker tracker = new Tracker();
             while (true) {
                 NText line = nextLine(children, session, tracker, options, false);
                 if (line != null) {
-                    out.printf(line);
+                    out.print(line);
                 } else {
                     break;
                 }
             }
         } else {
-            NOutStream out = NOutStream.of(os, session);
+            NOutputStream out = NOutputStream.of(os, session);
             try {
 
                 //do not close!!

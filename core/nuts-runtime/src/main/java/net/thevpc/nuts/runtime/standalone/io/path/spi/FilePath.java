@@ -243,21 +243,21 @@ public class FilePath implements NPathSPI {
                 }
             }
         } else {
-            throw new NIOException(getSession(), NMsg.ofCstyle("unable to delete path %s", value));
+            throw new NIOException(getSession(), NMsg.ofC("unable to delete path %s", value));
         }
     }
 
     @Override
     public void mkdir(boolean parents, NPath basePath) {
         if (Files.isRegularFile(value)) {
-            throw new NIOException(getSession(), NMsg.ofCstyle("unable to create folder out of regular file %s", value));
+            throw new NIOException(getSession(), NMsg.ofC("unable to create folder out of regular file %s", value));
         } else if (Files.isDirectory(value)) {
             return;
         } else {
             try {
                 Files.createDirectories(value);
             } catch (IOException e) {
-                throw new NIOException(getSession(), NMsg.ofCstyle("unable to create folders %s", value));
+                throw new NIOException(getSession(), NMsg.ofC("unable to create folders %s", value));
             }
         }
     }
@@ -740,7 +740,7 @@ public class FilePath implements NPathSPI {
         }
 
         @Override
-        public void print(NOutStream out) {
+        public void print(NOutputStream out) {
             out.print(asFormattedString());
         }
 

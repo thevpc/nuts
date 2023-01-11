@@ -3,16 +3,26 @@ package net.thevpc.nuts.runtime.standalone.workspace.config;
 import java.util.function.Predicate;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.standalone.session.NSessionUtils;
+import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceExt;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceUtils;
+import net.thevpc.nuts.spi.NSupportLevelContext;
 import net.thevpc.nuts.util.NStream;
 
-public class DefaultNPlatformManager implements NPlatformManager {
+public class DefaultNPlatforms implements NPlatforms {
 
     private DefaultNPlatformModel model;
     private NSession session;
 
-    public DefaultNPlatformManager(DefaultNPlatformModel model) {
-        this.model = model;
+    public DefaultNPlatforms(NSession session) {
+        this.session = session;
+        NWorkspace w = this.session.getWorkspace();
+        NWorkspaceExt e = (NWorkspaceExt) w;
+        this.model = e.getModel().sdkModel;
+    }
+
+    @Override
+    public int getSupportLevel(NSupportLevelContext context) {
+        return DEFAULT_SUPPORT;
     }
 
     public DefaultNPlatformModel getModel() {
@@ -25,7 +35,7 @@ public class DefaultNPlatformManager implements NPlatformManager {
     }
 
     @Override
-    public NPlatformManager setSession(NSession session) {
+    public NPlatforms setSession(NSession session) {
         this.session = NWorkspaceUtils.bindSession(model.getWorkspace(), session);
         return this;
     }

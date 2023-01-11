@@ -406,7 +406,7 @@ public class NCompressedPathBase extends NPathBase {
         }
 
         @Override
-        public void print(NOutStream out) {
+        public void print(NOutputStream out) {
             out.print(asFormattedString());
         }
 

@@ -143,7 +143,7 @@ public class DefaultNWorkspaceExtensionModel {
                     s = NElements.of(session).json().parse(rr, DefaultNExtensionInformation[].class);
                 } catch (IOException ex) {
                     _LOGOP(session).level(Level.SEVERE).error(ex)
-                            .log(NMsg.ofJstyle("failed to parse NutsExtensionInformation from {0} : {1}", u, ex));
+                            .log(NMsg.ofJ("failed to parse NutsExtensionInformation from {0} : {1}", u, ex));
                 }
                 if (s != null) {
                     for (NExtensionInformation nutsExtensionInfo : s) {
@@ -303,7 +303,7 @@ public class DefaultNWorkspaceExtensionModel {
             return true;
         }
         _LOGOP(session).level(Level.FINE).verb(NLoggerVerb.WARNING)
-                .log(NMsg.ofJstyle("Bootstrap Extension Point {0} => {1} ignored. Already registered", extensionPointType.getName(), extensionImpl.getClass().getName()));
+                .log(NMsg.ofJ("Bootstrap Extension Point {0} => {1} ignored. Already registered", extensionPointType.getName(), extensionImpl.getClass().getName()));
         return false;
     }
 
@@ -314,7 +314,7 @@ public class DefaultNWorkspaceExtensionModel {
             return true;
         }
         _LOGOP(session).level(Level.FINE).verb(NLoggerVerb.WARNING)
-                .log(NMsg.ofJstyle("Bootstrap Extension Point {0} => {1} ignored. Already registered", extensionPointType.getName(), extensionType.getName()));
+                .log(NMsg.ofJ("Bootstrap Extension Point {0} => {1} ignored. Already registered", extensionPointType.getName(), extensionType.getName()));
         return false;
     }
 
@@ -372,10 +372,10 @@ public class DefaultNWorkspaceExtensionModel {
                             .setLatest(true)
                             .getResultDefinitions().required();
                     if (def == null || def.getContent().isNotPresent()) {
-                        throw new NIllegalArgumentException(session, NMsg.ofCstyle("extension not found: %s", extension));
+                        throw new NIllegalArgumentException(session, NMsg.ofC("extension not found: %s", extension));
                     }
                     if (def.getDescriptor().getIdType() != NIdType.EXTENSION) {
-                        throw new NIllegalArgumentException(session, NMsg.ofCstyle("not an extension: %s" ,extension));
+                        throw new NIllegalArgumentException(session, NMsg.ofC("not an extension: %s" ,extension));
                     }
 //                    ws.install().setSession(session).id(def.getId());
                     workspaceExtensionsClassLoader.add(NClassLoaderUtils.definitionToClassLoaderNode(def, session));
@@ -384,7 +384,7 @@ public class DefaultNWorkspaceExtensionModel {
                     //and the add to classpath
                     loadedExtensionIds.add(extension);
                     _LOGOP(session).verb(NLoggerVerb.SUCCESS)
-                            .log(NMsg.ofJstyle("extension {0} loaded", def.getId()
+                            .log(NMsg.ofJ("extension {0} loaded", def.getId()
                             ));
                     someUpdates = true;
                 }
@@ -417,7 +417,7 @@ public class DefaultNWorkspaceExtensionModel {
             ).findFirst().orElse(null);
             if (u != null) {
                 if (session.isPlainTrace()) {
-                    session.out().printf("extensions %s unloaded\n", u);
+                    session.out().println(NMsg.ofC("extensions %s unloaded", u));
                 }
                 loadedExtensionIds.remove(u);
                 unloadedExtensions.add(u);
@@ -443,7 +443,7 @@ public class DefaultNWorkspaceExtensionModel {
             throw new NExtensionAlreadyRegisteredException(session, id, wired.toString());
         }
 
-        _LOGOP(session).level(Level.FINE).verb(NLoggerVerb.ADD).log(NMsg.ofJstyle("installing extension {0}", id));
+        _LOGOP(session).level(Level.FINE).verb(NLoggerVerb.ADD).log(NMsg.ofJ("installing extension {0}", id));
         NDefinition nDefinitions = NSearchCommand.of(session)
                 .setAll(options)
                 .addId(id)
@@ -468,7 +468,7 @@ public class DefaultNWorkspaceExtensionModel {
 //            }
 //        }
         extensions.put(id, workspaceExtension);
-        _LOGOP(session).level(Level.FINE).verb(NLoggerVerb.ADD).log(NMsg.ofJstyle("extension {0} installed successfully", id));
+        _LOGOP(session).level(Level.FINE).verb(NLoggerVerb.ADD).log(NMsg.ofJ("extension {0} installed successfully", id));
         NTerminalSpec spec = new NDefaultTerminalSpec();
         if (session.getTerminal() != null) {
             spec.setProperty("ignoreClass", session.getTerminal().getClass());
@@ -476,7 +476,7 @@ public class DefaultNWorkspaceExtensionModel {
         NSessionTerminal newTerminal = createTerminal(spec, session);
         if (newTerminal != null) {
             _LOGOP(session).level(Level.FINE).verb(NLoggerVerb.UPDATE)
-                    .log(NMsg.ofJstyle("extension {0} changed Terminal configuration. Reloading Session Terminal", id));
+                    .log(NMsg.ofJ("extension {0} changed Terminal configuration. Reloading Session Terminal", id));
             session.setTerminal(newTerminal);
         }
         return workspaceExtension;
@@ -513,7 +513,7 @@ public class DefaultNWorkspaceExtensionModel {
                             zipFile.close();
                         } catch (IOException ex) {
                             _LOGOP(session).level(Level.SEVERE)
-                                    .error(ex).log(NMsg.ofJstyle("failed to close zip file {0} : {1}",
+                                    .error(ex).log(NMsg.ofJ("failed to close zip file {0} : {1}",
                                     file.getContent().orNull(), ex));
                             //ignore return false;
                         }

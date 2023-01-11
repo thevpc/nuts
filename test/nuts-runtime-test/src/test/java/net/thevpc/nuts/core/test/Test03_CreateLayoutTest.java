@@ -36,7 +36,7 @@ public class Test03_CreateLayoutTest {
                 )
         );
         for (NStoreLocation value : NStoreLocation.values()) {
-            sessionOne.out().printf("%s %s%n", value, NLocations.of(sessionOne).getStoreLocation(value));
+            sessionOne.out().println(NMsg.ofC("%s %s", value, NLocations.of(sessionOne).getStoreLocation(value)));
         }
 
         NSession sessionAgain = TestUtils.openExistingTestWorkspace(
@@ -105,7 +105,7 @@ public class Test03_CreateLayoutTest {
         File base = session.getWorkspace().getLocation().toFile().toFile();
         TestUtils.println(new File(base, "config").getPath());
         for (NStoreLocation value : NStoreLocation.values()) {
-            session.out().printf("%s %s%n", value, NLocations.of(session).getStoreLocation(value));
+            session.out().println(NMsg.ofC("%s %s", value, NLocations.of(session).getStoreLocation(value)));
         }
         Assertions.assertEquals(
                 NPath.of(base, session).resolve("apps"),

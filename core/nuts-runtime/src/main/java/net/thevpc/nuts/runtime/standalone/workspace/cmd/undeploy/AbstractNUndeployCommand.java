@@ -100,7 +100,7 @@ public abstract class AbstractNUndeployCommand extends NWorkspaceCommandBase<NUn
         if (session.isTrace()) {
             if (session.getOutputFormat() == null || session.getOutputFormat() == NContentType.PLAIN) {
                 if (session.getOutputFormat() == null || session.getOutputFormat() == NContentType.PLAIN) {
-                    session.getTerminal().out().printf("Nuts %s undeployed successfully%n", id);
+                    session.getTerminal().out().println(NMsg.ofC("Nuts %s undeployed successfully", id));
                 }
             }
         }

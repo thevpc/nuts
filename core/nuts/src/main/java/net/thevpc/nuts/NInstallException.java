@@ -54,7 +54,7 @@ public class NInstallException extends NInstallationException {
      * @param ex      exception
      */
     public NInstallException(NSession session, NId id, NMsg msg, Throwable ex) {
-        super(session, id, msg == null ? NMsg.ofCstyle("unable to install %s", (id == null ? "<null>" : id)) : msg, ex);
+        super(session, id, msg == null ? NMsg.ofC("unable to install %s", (id == null ? "<null>" : id)) : msg, ex);
     }
 
 

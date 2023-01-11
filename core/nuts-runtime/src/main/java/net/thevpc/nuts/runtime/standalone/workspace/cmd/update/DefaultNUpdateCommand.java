@@ -12,7 +12,7 @@ import net.thevpc.nuts.elem.NArrayElementBuilder;
 import net.thevpc.nuts.elem.NElement;
 import net.thevpc.nuts.elem.NElements;
 import net.thevpc.nuts.format.NPositionType;
-import net.thevpc.nuts.io.NOutStream;
+import net.thevpc.nuts.io.NOutputStream;
 import net.thevpc.nuts.runtime.standalone.util.CoreNUtils;
 import net.thevpc.nuts.runtime.standalone.util.iter.IteratorUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceExt;
@@ -196,7 +196,7 @@ public class DefaultNUpdateCommand extends AbstractNUpdateCommand {
                     //FIX ME
                     if (!dd.getVersion().filter(session2).acceptVersion(updated.getId().getVersion(), session2)) {
                         throw new NIllegalArgumentException(getSession(),
-                                NMsg.ofCstyle("%s unsatisfied  : %s", dd, updated.getId().getVersion())
+                                NMsg.ofC("%s unsatisfied  : %s", dd, updated.getId().getVersion())
                         );
                     }
                 }
@@ -310,9 +310,9 @@ public class DefaultNUpdateCommand extends AbstractNUpdateCommand {
 
     protected void traceFixes() {
         if (resultFixes != null) {
-            NOutStream out = getSession().out();
+            NOutputStream out = getSession().out();
             for (FixAction n : resultFixes) {
-                out.printf("[```error FIX```] %s %s %n", n.getId(), n.getProblemKey());
+                out.println(NMsg.ofC("[```error FIX```] %s %s", n.getId(), n.getProblemKey()));
             }
         }
     }
@@ -320,7 +320,7 @@ public class DefaultNUpdateCommand extends AbstractNUpdateCommand {
     protected void traceUpdates(NWorkspaceUpdateResult result) {
         checkSession();
         NSession session = getSession();
-        NOutStream out = getSession().out();
+        NOutputStream out = getSession().out();
         List<NUpdateResult> all = result.getAllResults();
         List<NUpdateResult> updates = result.getUpdatable();
         List<NUpdateResult> notInstalled = result.getAllResults().stream()
@@ -346,23 +346,23 @@ public class DefaultNUpdateCommand extends AbstractNUpdateCommand {
         });
         if (getSession().isPlainTrace()) {
             if (notInstalled.size() == 0 && updates.size() == 0) {
-                out.resetLine().printf("all packages are %s. You are running latest version%s.%n",
+                out.resetLine().println(NMsg.ofC("all packages are %s. You are running latest version%s.",
                         NTexts.of(session).ofStyled("up-to-date", NTextStyle.success()),
-                        result.getAllResults().size() > 1 ? "s" : "");
+                        result.getAllResults().size() > 1 ? "s" : ""));
             } else {
                 if (updates.size() > 0 && notInstalled.size() > 0) {
-                    out.resetLine().printf("workspace has %s package%s not installed and %s package%s to update.%n",
+                    out.resetLine().println(NMsg.ofC("workspace has %s package%s not installed and %s package%s to update.",
                             NTexts.of(session).ofStyled("" + notInstalled.size(), NTextStyle.primary1()),
                             (notInstalled.size() > 1 ? "s" : ""),
                             NTexts.of(session).ofStyled("" + updates.size(), NTextStyle.primary1()),
                             (updates.size() > 1 ? "s" : "")
-                    );
+                    ));
                 } else if (updates.size() > 0) {
-                    out.resetLine().printf("workspace has %s package%s to update.%n", NTexts.of(session).ofStyled("" + updates.size(), NTextStyle.primary1()),
-                            (updates.size() > 1 ? "s" : ""));
+                    out.resetLine().println(NMsg.ofC("workspace has %s package%s to update.", NTexts.of(session).ofStyled("" + updates.size(), NTextStyle.primary1()),
+                            (updates.size() > 1 ? "s" : "")));
                 } else if (notInstalled.size() > 0) {
-                    out.resetLine().printf("workspace has %s package%s not installed.%n", NTexts.of(session).ofStyled("" + notInstalled.size(), NTextStyle.primary1()),
-                            (notInstalled.size() > 1 ? "s" : ""));
+                    out.resetLine().println(NMsg.ofC("workspace has %s package%s not installed.", NTexts.of(session).ofStyled("" + notInstalled.size(), NTextStyle.primary1()),
+                            (notInstalled.size() > 1 ? "s" : "")));
                 }
                 int widthCol1 = 2;
                 int widthCol2 = 2;
@@ -373,23 +373,23 @@ public class DefaultNUpdateCommand extends AbstractNUpdateCommand {
                 NTexts factory = NTexts.of(session);
                 for (NUpdateResult update : all) {
                     if (update.getInstalled() == null) {
-                        out.printf("%s  : %s%n",
+                        out.println(NMsg.ofC("%s  : %s",
                                 factory.ofStyled(NStringUtils.formatAlign(update.getId().toString(), widthCol2, NPositionType.FIRST), NTextStyle.primary6()),
-                                factory.ofStyled("not installed", NTextStyle.error()));
+                                factory.ofStyled("not installed", NTextStyle.error())));
                     } else if (update.isUpdateVersionAvailable()) {
-                        out.printf("%s  : %s => %s%n",
+                        out.println(NMsg.ofC("%s  : %s => %s",
                                 factory.ofStyled(NStringUtils.formatAlign(update.getInstalled().getId().getVersion().toString(), widthCol2, NPositionType.FIRST), NTextStyle.primary6()),
                                 NStringUtils.formatAlign(update.getAvailable().getId().getShortName(), widthCol1, NPositionType.FIRST),
-                                factory.ofPlain(update.getAvailable().getId().getVersion().toString()));
+                                factory.ofPlain(update.getAvailable().getId().getVersion().toString())));
                     } else if (update.isUpdateStatusAvailable()) {
-                        out.printf("%s  : %s => %s%n",
+                        out.println(NMsg.ofC("%s  : %s => %s",
                                 factory.ofStyled(NStringUtils.formatAlign(update.getInstalled().getId().getVersion().toString(), widthCol2, NPositionType.FIRST), NTextStyle.primary6()),
                                 NStringUtils.formatAlign(update.getAvailable().getId().getShortName(), widthCol1, NPositionType.FIRST),
-                                factory.ofStyled("set as default", NTextStyle.primary4()));
+                                factory.ofStyled("set as default", NTextStyle.primary4())));
                     } else {
-                        out.printf("%s  : %s%n",
+                        out.println(NMsg.ofC("%s  : %s",
                                 factory.ofStyled(NStringUtils.formatAlign(update.getInstalled().getId().getVersion().toString(), widthCol2, NPositionType.FIRST), NTextStyle.primary6()),
-                                factory.ofStyled("up-to-date", NTextStyle.warn()));
+                                factory.ofStyled("up-to-date", NTextStyle.warn())));
                     }
                 }
             }
@@ -397,7 +397,7 @@ public class DefaultNUpdateCommand extends AbstractNUpdateCommand {
             NElements e = NElements.of(getSession());
 
             if (updates.size() == 0 && notInstalled.size() == 0) {
-                out.printlnf(e.ofObject()
+                out.println(e.ofObject()
                         .set("message", "all packages are up-to-date. You are running latest version" + (result.getAllResults().size() > 1 ? "s" : "") + ".")
                         .build());
             } else {
@@ -430,7 +430,7 @@ public class DefaultNUpdateCommand extends AbstractNUpdateCommand {
                                 .build());
                     }
                 }
-                out.printlnf(arrayElementBuilder.build());
+                out.println(arrayElementBuilder.build());
             }
         }
     }
@@ -465,7 +465,7 @@ public class DefaultNUpdateCommand extends AbstractNUpdateCommand {
             updateEvenIfExisting = session.getTerminal().ask()
                     .resetLine()
                     .setDefaultValue(true).setSession(session)
-                    .forBoolean(NMsg.ofCstyle("version is too restrictive. Do you intend to force update of %s ?", id))
+                    .forBoolean(NMsg.ofC("version is too restrictive. Do you intend to force update of %s ?", id))
                     .getBooleanValue();
         }
         DefaultNUpdateResult r = new DefaultNUpdateResult();
@@ -547,10 +547,10 @@ public class DefaultNUpdateCommand extends AbstractNUpdateCommand {
     private void applyFixes() {
         if (resultFixes != null) {
             NSession session = getSession();
-            NOutStream out = session.out();
+            NOutputStream out = session.out();
             for (FixAction n : resultFixes) {
                 n.fix(session);
-                out.printf("[```error FIX```] unable to %s %s %n", n.getId(), n.getProblemKey());
+                out.println(NMsg.ofC("[```error FIX```] unable to %s %s ", n.getId(), n.getProblemKey()));
             }
         }
     }
@@ -567,9 +567,9 @@ public class DefaultNUpdateCommand extends AbstractNUpdateCommand {
                 .collect(Collectors.toList());
         if (!notInstalled.isEmpty()) {
             if (notInstalled.size() == 1) {
-                throw new NIllegalArgumentException(getSession(), NMsg.ofCstyle("%s is not yet installed for it to be updated.", notInstalled.get(0)));
+                throw new NIllegalArgumentException(getSession(), NMsg.ofC("%s is not yet installed for it to be updated.", notInstalled.get(0)));
             } else {
-                throw new NIllegalArgumentException(getSession(), NMsg.ofCstyle("%s are not yet installed for them to be updated.", notInstalled));
+                throw new NIllegalArgumentException(getSession(), NMsg.ofC("%s are not yet installed for them to be updated.", notInstalled));
             }
         }
         if (result.getUpdatesCount() == 0) {
@@ -578,7 +578,7 @@ public class DefaultNUpdateCommand extends AbstractNUpdateCommand {
         NWorkspaceUtils.of(getSession()).checkReadOnly();
         boolean requireSave = false;
         NSession validWorkspaceSession = getSession();
-        final NOutStream out = validWorkspaceSession.out();
+        final NOutputStream out = validWorkspaceSession.out();
         boolean accept = NConfigs.of(getSession()).getDefaultTerminal().ask()
                 .resetLine()
                 .forBoolean(NMsg.ofPlain("would you like to apply updates?")).setDefaultValue(true)
@@ -586,7 +586,6 @@ public class DefaultNUpdateCommand extends AbstractNUpdateCommand {
         if (validWorkspaceSession.isAsk() && !accept) {
             throw new NCancelException(getSession());
         }
-        NConfigsExt wcfg = NConfigsExt.of(NConfigs.of(session));
         boolean apiUpdateAvailable = apiUpdate != null && apiUpdate.getAvailable() != null && !apiUpdate.isUpdateApplied();
         boolean runtimeUpdateAvailable = runtimeUpdate != null && runtimeUpdate.getAvailable() != null && !runtimeUpdate.isUpdateApplied();
         boolean apiUpdateApplicable = apiUpdateAvailable && !apiUpdate.isUpdateApplied();
@@ -660,16 +659,16 @@ public class DefaultNUpdateCommand extends AbstractNUpdateCommand {
         NDefinition d1 = r.getAvailable();
 //        final String simpleName = d0 != null ? d0.getId().getShortName() : d1 != null ? d1.getId().getShortName() : id.getShortName();
         final NId simpleId = d0 != null ? d0.getId().getShortId() : d1 != null ? d1.getId().getShortId() : id.getShortId();
-        final NOutStream out = getSession().out();
+        final NOutputStream out = getSession().out();
         NTexts factory = NTexts.of(session);
         if (r.isUpdateApplied()) {
             if (r.isUpdateForced()) {
                 if (d0 == null) {
-                    out.resetLine().printf("%s is %s to latest version %s%n",
+                    out.resetLine().println(NMsg.ofC("%s is %s to latest version %s",
                             simpleId,
                             factory.ofStyled("updated", NTextStyle.primary3()),
                             d1 == null ? null : d1.getId().getVersion()
-                    );
+                    ));
                 } else if (d1 == null) {
                     //this is very interesting. Why the hell is this happening?
                 } else {
@@ -677,21 +676,21 @@ public class DefaultNUpdateCommand extends AbstractNUpdateCommand {
                     NVersion v1 = d1.getId().getVersion();
                     if (v1.compareTo(v0) <= 0) {
                         if (v1.compareTo(v0) == 0) {
-                            out.resetLine().printf("%s is %s to %s %n",
+                            out.resetLine().println(NMsg.ofC("%s is %s to %s",
                                     simpleId,
                                     factory.ofStyled("forced", NTextStyle.primary3()),
-                                    d0.getId().getVersion());
+                                    d0.getId().getVersion()));
                         } else {
-                            out.resetLine().printf("%s is %s from %s to older version %s%n",
+                            out.resetLine().println(NMsg.ofC("%s is %s from %s to older version %s",
                                     simpleId,
                                     factory.ofStyled("forced", NTextStyle.primary3()),
-                                    d0.getId().getVersion(), d1.getId().getVersion());
+                                    d0.getId().getVersion(), d1.getId().getVersion()));
                         }
                     } else {
-                        out.resetLine().printf("%s is %s from %s to latest version %s%n",
+                        out.resetLine().println(NMsg.ofC("%s is %s from %s to latest version %s",
                                 simpleId,
                                 factory.ofStyled("updated", NTextStyle.primary3()),
-                                d0.getId().getVersion(), d1.getId().getVersion());
+                                d0.getId().getVersion(), d1.getId().getVersion()));
                     }
                 }
             }
@@ -729,7 +728,7 @@ public class DefaultNUpdateCommand extends AbstractNUpdateCommand {
                             .addId(NConstants.Ids.NUTS_API + "#" + v).setLatest(true).getResultIds().first();
                     newFile = newId == null ? null : latestOnlineDependencies(fetch0()).setFailFast(false).setSession(session).setId(newId).getResultDefinition();
                 } catch (NNotFoundException ex) {
-                    _LOGOP(session).level(Level.SEVERE).error(ex).log(NMsg.ofJstyle("error : {0}", ex));
+                    _LOGOP(session).level(Level.SEVERE).error(ex).log(NMsg.ofJ("error : {0}", ex));
                     //ignore
                 }
                 break;
@@ -744,7 +743,7 @@ public class DefaultNUpdateCommand extends AbstractNUpdateCommand {
                     try {
                         oldFile = fetch0().setId(oldId).setSession(session.copy().setFetchStrategy(NFetchStrategy.ONLINE)).getResultDefinition();
                     } catch (NNotFoundException ex) {
-                        _LOGOP(session).level(Level.SEVERE).error(ex).log(NMsg.ofJstyle("error : {0}", ex));
+                        _LOGOP(session).level(Level.SEVERE).error(ex).log(NMsg.ofJ("error : {0}", ex));
                         //ignore
                     }
                 }
@@ -763,7 +762,7 @@ public class DefaultNUpdateCommand extends AbstractNUpdateCommand {
                             .setFailFast(false)
                             .getResultDefinition();
                 } catch (NNotFoundException ex) {
-                    _LOGOP(session).level(Level.SEVERE).error(ex).log(NMsg.ofJstyle("error : {0}", ex));
+                    _LOGOP(session).level(Level.SEVERE).error(ex).log(NMsg.ofJ("error : {0}", ex));
                     //ignore
                 }
                 break;
@@ -838,7 +837,7 @@ public class DefaultNUpdateCommand extends AbstractNUpdateCommand {
         }
         NWorkspaceExt dws = NWorkspaceExt.of(ws);
         NSession session = getSession();
-        final NOutStream out = session.out();
+        final NOutputStream out = session.out();
 //        NutsId id = r.getId();
         NDefinition d0 = r.getInstalled();
         NDefinition d1 = r.getAvailable();

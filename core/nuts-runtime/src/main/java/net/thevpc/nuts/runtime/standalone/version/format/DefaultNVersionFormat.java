@@ -3,7 +3,7 @@ package net.thevpc.nuts.runtime.standalone.version.format;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.cmdline.NArg;
 import net.thevpc.nuts.cmdline.NCommandLine;
-import net.thevpc.nuts.io.NOutStream;
+import net.thevpc.nuts.io.NOutputStream;
 import net.thevpc.nuts.io.NTerminalMode;
 import net.thevpc.nuts.runtime.standalone.format.DefaultFormatBase;
 import net.thevpc.nuts.spi.NSupportLevelContext;
@@ -100,22 +100,22 @@ public class DefaultNVersionFormat extends DefaultFormatBase<NVersionFormat> imp
     }
 
     @Override
-    public void print(NOutStream out) {
+    public void print(NOutputStream out) {
         checkSession();
         if (!isNtf()) {
             out = out.setTerminalMode(NTerminalMode.FILTERED);
         }
         if (getSession().isPlainOut()) {
             if (isWorkspaceVersion()) {
-                out.printf("%s/%s", getSession().getWorkspace().getApiVersion(), getSession().getWorkspace().getRuntimeId().getVersion());
+                out.print((NMsg.ofC("%s/%s", getSession().getWorkspace().getApiVersion(), getSession().getWorkspace().getRuntimeId().getVersion())));
             } else {
-                out.printf("%s", NTexts.of(getSession()).ofStyled(
+                out.print(NTexts.of(getSession()).ofStyled(
                         getVersion().toString(), NTextStyle.version()
                 ));
             }
         } else {
             if (isWorkspaceVersion()) {
-                out.printf(buildProps());
+                out.print(buildProps());
             } else {
                 out.print(
                         NTexts.of(getSession()).ofStyled(

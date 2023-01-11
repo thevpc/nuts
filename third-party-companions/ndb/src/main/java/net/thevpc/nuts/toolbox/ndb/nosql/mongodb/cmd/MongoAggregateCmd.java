@@ -155,7 +155,7 @@ public class MongoAggregateCmd extends NdbCmd<NMongoConfig> {
                     }
                 }
             }
-            session.out().printlnf(values);
+            session.out().println(values);
         });
     }
 

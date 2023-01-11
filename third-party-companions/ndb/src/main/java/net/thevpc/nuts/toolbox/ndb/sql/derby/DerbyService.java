@@ -139,14 +139,14 @@ public class DerbyService {
             if (optional) {
                 Path r = NFetchCommand.of(context.getSession()).setLocation(targetFile).setId(id).setFailFast(false).getResultPath();
                 if (r != null) {
-                    LOG.with().session(context.getSession()).level(Level.FINEST).verb(NLoggerVerb.READ).log(NMsg.ofJstyle("downloading {0} to {1}", id, targetFile));
+                    LOG.with().session(context.getSession()).level(Level.FINEST).verb(NLoggerVerb.READ).log(NMsg.ofJ("downloading {0} to {1}", id, targetFile));
                 }
             } else {
                 NFetchCommand.of(context.getSession()).setLocation(targetFile).setId(id).setFailFast(true).getResultPath();
-                LOG.with().session(context.getSession()).level(Level.FINEST).verb(NLoggerVerb.READ).log(NMsg.ofJstyle("downloading {0} to {1}", id, targetFile));
+                LOG.with().session(context.getSession()).level(Level.FINEST).verb(NLoggerVerb.READ).log(NMsg.ofJ("downloading {0} to {1}", id, targetFile));
             }
         } else {
-            LOG.with().session(context.getSession()).level(Level.FINEST).verb(NLoggerVerb.READ).log(NMsg.ofJstyle("using {0} form {1}", id, targetFile));
+            LOG.with().session(context.getSession()).level(Level.FINEST).verb(NLoggerVerb.READ).log(NMsg.ofJ("using {0} form {1}", id, targetFile));
         }
         return targetFile;
     }
@@ -211,7 +211,7 @@ public class DerbyService {
                         .replace("${{DB_PATH}}", derbyDataHomeRoot.toString());
                 Files.write(policy, permissions.getBytes());
             } catch (IOException ex) {
-                throw new NExecutionException(context.getSession(), NMsg.ofCstyle("unable to create %s",policy), 1);
+                throw new NExecutionException(context.getSession(), NMsg.ofC("unable to create %s",policy), 1);
             }
         }
         //use named jar because derby does test upon jar names at runtime (what a shame !!!)

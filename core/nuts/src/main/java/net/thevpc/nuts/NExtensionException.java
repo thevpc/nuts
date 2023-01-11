@@ -59,7 +59,7 @@ public abstract class NExtensionException extends NException {
     public NExtensionException(NSession session, NId extensionId, NMsg message, Throwable cause) {
         super(session,
                 message == null
-                        ? NMsg.ofCstyle("extension %s has encountered problem", (extensionId == null ? "<null>" : extensionId)) : message, cause);
+                        ? NMsg.ofC("extension %s has encountered problem", (extensionId == null ? "<null>" : extensionId)) : message, cause);
         this.id = extensionId;
     }
 

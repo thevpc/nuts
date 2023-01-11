@@ -34,7 +34,7 @@
 //                            ws.io().path(contentFile),
 //                            context.getSession()
 //                    );
-//                    context.out().printf("Folder ####%s#### initialized with ####%s####\n", contentFile, nf.getId());
+//                    context.out().print(NMsg.ofC("Folder ####%s#### initialized with ####%s####\n", contentFile, nf.getId());
 //                }
 //            }
 //        }

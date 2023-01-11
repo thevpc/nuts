@@ -49,7 +49,7 @@ public class DotfilefsPath extends AbstractPathSPIAdapter {
     public DotfilefsPath(String url, NSession session) {
         super(NPath.of(url.substring(PREFIX.length()), session), session);
         if (!url.startsWith(PREFIX)) {
-            throw new NUnsupportedArgumentException(session, NMsg.ofCstyle("expected prefix '%s'", PREFIX));
+            throw new NUnsupportedArgumentException(session, NMsg.ofC("expected prefix '%s'", PREFIX));
         }
     }
 
@@ -212,7 +212,7 @@ public class DotfilefsPath extends AbstractPathSPIAdapter {
         String dotFilesUrl = baseUrl + "/" + CoreNConstants.Files.DOT_FILES;
         NVersion versionString = NVersion.of("0.5.5").get(session);
         try {
-            session.getTerminal().printProgress("%-8s %s", "browse", NPath.of(baseUrl, session).toCompressedForm());
+            session.getTerminal().printProgress(NMsg.ofC("%-8s %s", "browse", NPath.of(baseUrl, session).toCompressedForm()));
             foldersFileStream = NInputStreamMonitor.of(session).setSource(NPath.of(dotFilesUrl, session)).create();
             List<String> splitted = StringTokenizerUtils.splitNewLine(CoreIOUtils.loadString(foldersFileStream, true, session));
             for (String s : splitted) {
@@ -264,7 +264,7 @@ public class DotfilefsPath extends AbstractPathSPIAdapter {
             }
         } catch (UncheckedIOException | NIOException ex) {
             NLoggerOp.of(DotfilefsPath.class, session).level(Level.FINE).verb(NLoggerVerb.FAIL)
-                    .log(NMsg.ofJstyle("unable to navigate : file not found {0}", dotFilesUrl));
+                    .log(NMsg.ofJ("unable to navigate : file not found {0}", dotFilesUrl));
         }
         if (versionString.compareTo("0.5.7") < 0) {
             if (folders) {
@@ -276,7 +276,7 @@ public class DotfilefsPath extends AbstractPathSPIAdapter {
                             .stream().map(x -> x.trim()).filter(x -> x.length() > 0).toArray(String[]::new);
                 } catch (IOException | UncheckedIOException | NIOException ex) {
                     NLoggerOp.of(DotfilefsPath.class, session).level(Level.FINE).verb(NLoggerVerb.FAIL)
-                            .log(NMsg.ofJstyle("unable to navigate : file not found {0}", dotFolderUrl));
+                            .log(NMsg.ofJ("unable to navigate : file not found {0}", dotFolderUrl));
                 }
                 if (foldersFileContent != null) {
                     for (String folder : foldersFileContent) {
@@ -313,7 +313,7 @@ public class DotfilefsPath extends AbstractPathSPIAdapter {
         }
 
         @Override
-        public void print(NOutStream out) {
+        public void print(NOutputStream out) {
             out.print(asFormattedString());
         }
 

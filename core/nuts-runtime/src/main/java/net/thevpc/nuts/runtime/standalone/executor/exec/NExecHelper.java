@@ -23,9 +23,9 @@ import java.util.logging.Level;
 public class NExecHelper extends AbstractSyncIProcessExecHelper {
 
     NExecCommand pb;
-    NOutStream out;
+    NOutputStream out;
 
-    public NExecHelper(NExecCommand pb, NSession session, NOutStream out) {
+    public NExecHelper(NExecCommand pb, NSession session, NOutputStream out) {
         super(session);
         this.pb = pb;
         this.out = out;
@@ -36,8 +36,8 @@ public class NExecHelper extends AbstractSyncIProcessExecHelper {
                                      boolean inheritSystemIO, boolean redirectErr, File outputFile, File inputFile,
                                      NRunAs runAs,
                                      NSession session) {
-        NOutStream out = null;
-        NOutStream err = null;
+        NOutputStream out = null;
+        NOutputStream err = null;
         InputStream in = null;
         NExecCommand pb = NExecCommand.of(session);
         NCommandLineUtils.OptionsAndArgs optionsAndArgs = NCommandLineUtils.parseOptionsFirst(args);
@@ -96,7 +96,7 @@ public class NExecHelper extends AbstractSyncIProcessExecHelper {
         NCommandLine commandOut = NCommandLine.of(pb.getCommand());
         if (_LL.isLoggable(Level.FINEST)) {
             _LL.with().level(Level.FINE).verb(NLoggerVerb.START).log(
-                    NMsg.ofJstyle("[exec] {0}",
+                    NMsg.ofJ("[exec] {0}",
                             commandOut
                     ));
         }
@@ -104,11 +104,11 @@ public class NExecHelper extends AbstractSyncIProcessExecHelper {
                 .flatMap(NLiteral::asBoolean)
                 .orElse(false)) {
             if (prepareTerminal.out().getTerminalMode() == NTerminalMode.FORMATTED) {
-                prepareTerminal.out().printf("%s ", NTexts.of(session).ofStyled("[exec]", NTextStyle.primary4()));
+                prepareTerminal.out().print(NMsg.ofC("%s ", NTexts.of(session).ofStyled("[exec]", NTextStyle.primary4())));
                 prepareTerminal.out().println(NTexts.of(session).ofText(commandOut));
             } else {
                 prepareTerminal.out().print("exec ");
-                prepareTerminal.out().printf("%s%n", commandOut);
+                prepareTerminal.out().println(commandOut);
             }
         }
         return new NExecHelper(pb, session, out == null ? execTerminal.out() : out);
@@ -141,7 +141,7 @@ public class NExecHelper extends AbstractSyncIProcessExecHelper {
                 out.println(pb.format());
             } else {
                 out.print("[dry] exec ");
-                out.printf("%s%n", pb.format());
+                out.println(pb.format());
             }
             return 0;
         }

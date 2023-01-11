@@ -100,19 +100,19 @@ public class AutocompleteCommand extends SimpleJShellBuiltin {
                 for (String o : new TreeSet<String>((Set) p.keySet())) {
                     if (o.startsWith("-")) {
                         // option
-                        session.out().printf("%s\n", text.ofStyled(o, NTextStyle.primary4()));
+                        session.out().println(NMsg.ofC("%s", text.ofStyled(o, NTextStyle.primary4())));
                     } else if (o.startsWith("<")) {
-                        session.out().printf("%s\n", text.ofStyled(o, NTextStyle.primary1()));
+                        session.out().println(NMsg.ofC("%s", text.ofStyled(o, NTextStyle.primary1())));
                     } else {
-                        session.out().printf("%s\n",
+                        session.out().println(NMsg.ofC("%s",
                                 text.ofStyled(o, NTextStyle.pale())
-                        );
+                        ));
                     }
                 }
                 break;
             }
             default: {
-                session.out().printlnf(p);
+                session.out().println(p);
             }
         }
     }

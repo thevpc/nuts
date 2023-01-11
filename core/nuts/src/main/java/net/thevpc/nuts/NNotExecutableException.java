@@ -46,7 +46,7 @@ public class NNotExecutableException extends NExecutionException {
      * @param id      artifact id
      */
     public NNotExecutableException(NSession session, NId id) {
-        super(session, NMsg.ofCstyle("not executable %s", (id == null ? "<null>" : id)), -1);
+        super(session, NMsg.ofC("not executable %s", (id == null ? "<null>" : id)), -1);
         this.id = id;
     }
 

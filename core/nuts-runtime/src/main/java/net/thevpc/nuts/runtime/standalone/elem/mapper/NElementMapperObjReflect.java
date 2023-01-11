@@ -142,7 +142,7 @@ public class NElementMapperObjReflect implements NElementMapper<Object> {
         }
         int mod = c.getModifiers();
         if (Modifier.isAbstract(mod)) {
-            throw new NIllegalArgumentException(session, NMsg.ofCstyle("cannot instantiate abstract class %s", typeOfResult));
+            throw new NIllegalArgumentException(session, NMsg.ofC("cannot instantiate abstract class %s", typeOfResult));
         }
         NReflectType m = defaultNutsElementFactoryService.getTypesRepository().getType(typeOfResult);
         Object instance;

@@ -147,7 +147,7 @@ public class JpsCommand extends SimpleJShellBuiltin {
                 results.add(r);
             }
         }
-        context.getSession().out().printlnf(results);
+        context.getSession().out().println(results);
     }
 
     private static class JpsRow {

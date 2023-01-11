@@ -37,7 +37,7 @@ public class MongoReplaceCmd extends ReplaceCmd<NMongoConfig> {
                     docWhere,
                     docSet
             );
-            session.out().printlnf(z);
+            session.out().println(z);
         });
     }
 

@@ -76,8 +76,6 @@ public interface NEnvs extends NComponent {
 
     Set<NDesktopEnvironmentFamily> getDesktopEnvironmentFamilies();
 
-    NPlatformManager platforms();
-
     NId getPlatform();
 
     NId getOs();

@@ -5,7 +5,7 @@ import net.thevpc.nuts.boot.DefaultNWorkspaceOptionsBuilder;
 import net.thevpc.nuts.cmdline.NArg;
 import net.thevpc.nuts.cmdline.NArgName;
 import net.thevpc.nuts.cmdline.NCommandLine;
-import net.thevpc.nuts.io.NOutStream;
+import net.thevpc.nuts.io.NOutputStream;
 import net.thevpc.nuts.text.NTextStyle;
 import net.thevpc.nuts.text.NTexts;
 import net.thevpc.nuts.toolbox.nutsserver.bundled._IOUtils;
@@ -62,21 +62,21 @@ public class NServerMain implements NApplication {
         cmdLine.setCommandName("nuts-server list").throwUnexpectedArgument();
         if (cmdLine.isExecMode()) {
             List<NServer> servers = serverManager.getServers();
-            NOutStream out = session.out();
+            NOutputStream out = session.out();
             if (servers.isEmpty()) {
                 out.print("No Server is Running by current instance\n");
             }
             NTexts text = NTexts.of(session);
             for (NServer o : servers) {
                 if (o.isRunning()) {
-                    out.printf("%s %s\n",
+                    out.println(NMsg.ofC("%s %s",
                             text.ofStyled("running", NTextStyle.primary4()),
                             o.getServerId()
-                    );
+                    ));
                 } else {
-                    out.printf("%s %s\n",
+                    out.println(NMsg.ofC("%s %s",
                             text.ofStyled("stopped", NTextStyle.primary4()),
-                            o.getServerId());
+                            o.getServerId()));
                 }
             }
         }
@@ -148,7 +148,7 @@ public class NServerMain implements NApplication {
                 }
                 if (servers.current().workspaceLocations.containsKey(serverContext)) {
                     throw new NIllegalArgumentException(session,
-                            NMsg.ofCstyle("nuts-server: server workspace context already defined %s", serverContext));
+                            NMsg.ofC("nuts-server: server workspace context already defined %s", serverContext));
                 }
                 servers.current().workspaceLocations.put(serverContext, ws);
             } else {
@@ -231,7 +231,7 @@ public class NServerMain implements NApplication {
                     }
                     default:
                         throw new NIllegalArgumentException(session,
-                                NMsg.ofCstyle("nuts-server: unsupported server type %s", server.serverType)
+                                NMsg.ofC("nuts-server: unsupported server type %s", server.serverType)
                         );
                 }
                 serverManager.startServer(config0);
@@ -272,7 +272,7 @@ public class NServerMain implements NApplication {
                 }
             } else {
                 throw new NIllegalArgumentException(context.getSession(),
-                        NMsg.ofCstyle("invalid Host : %s", v.protocol)
+                        NMsg.ofC("invalid Host : %s", v.protocol)
                 );
             }
             return v;
@@ -391,17 +391,17 @@ public class NServerMain implements NApplication {
             if (session.isPlainOut()) {
                 NTexts text = NTexts.of(session);
                 for (StatusResult result : results) {
-                    session.out().printf(
-                            "%s server at %s is %s%n",
+                    session.out().println(NMsg.ofC(
+                            "%s server at %s is %s",
                             text.ofStyled(result.type, NTextStyle.primary4()),
                             result.host,
                             result.status.equals("stopped") ?
                                     text.ofStyled("stopped", NTextStyle.error()) :
                                     text.ofStyled("alive", NTextStyle.success())
-                    );
+                    ));
                 }
             } else {
-                session.out().printlnf(results);
+                session.out().println(results);
             }
         }
     }

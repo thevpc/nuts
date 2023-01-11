@@ -61,18 +61,18 @@ public interface NEnum {
         try {
             m = type.getMethod("parse", String.class);
         } catch (Exception ex) {
-            NMsg msg = NMsg.ofCstyle("NutsEnum %s must implement a public static method parse(String,NutsSession)", type.getName());
+            NMsg msg = NMsg.ofC("NutsEnum %s must implement a public static method parse(String,NutsSession)", type.getName());
             return NOptional.ofError(session -> msg,ex);
         }
         if (!Modifier.isStatic(m.getModifiers()) || !Modifier.isPublic(m.getModifiers()) || !m.getReturnType().equals(NOptional.class)) {
-            NMsg msg = NMsg.ofCstyle("NutsEnum %s must implement a public static method parse(String,NutsSession)", type.getName());
+            NMsg msg = NMsg.ofC("NutsEnum %s must implement a public static method parse(String,NutsSession)", type.getName());
             return NOptional.ofError(session -> msg);
         }
         NOptional<T> r;
         try {
             r = (NOptional<T>) m.invoke(null, value);
         } catch (Exception ex) {
-            NMsg msg = NMsg.ofCstyle("failed executing %s.parse(String) ", type.getName());
+            NMsg msg = NMsg.ofC("failed executing %s.parse(String) ", type.getName());
             return NOptional.ofError(session -> msg,ex);
         }
         return r;

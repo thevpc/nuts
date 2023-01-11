@@ -12,10 +12,12 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintStream;
 import java.io.Writer;
+import java.time.temporal.Temporal;
+import java.util.Date;
 import java.util.Locale;
 import java.util.Map;
 
-public class NOutPlainStream implements NOutStream {
+public class NPlainOutputStream implements NOutputStream {
     private StringBuilder sb = new StringBuilder();
     private NSession session;
     private DefaultNOutputTargetMetadata md = new DefaultNOutputTargetMetadata();
@@ -41,53 +43,47 @@ public class NOutPlainStream implements NOutStream {
     }
 
     @Override
-    public NOutStream setSession(NSession session) {
+    public NOutputStream setSession(NSession session) {
         this.session = session;
         return this;
     }
 
     @Override
-    public NOutStream flush() {
+    public NOutputStream flush() {
         return this;
     }
 
     @Override
-    public NOutStream close() {
+    public NOutputStream close() {
         return this;
     }
 
     @Override
-    public NOutStream write(byte[] b) {
+    public NOutputStream print(byte[] b) {
         sb.append(new String(b));
         return this;
     }
 
     @Override
-    public NOutStream write(int b) {
+    public NOutputStream write(int b) {
         sb.append((char) b);
         return this;
     }
 
     @Override
-    public NOutStream write(byte[] buf, int off, int len) {
+    public NOutputStream print(byte[] buf, int off, int len) {
         sb.append(new String(buf, off, len));
         return this;
     }
 
     @Override
-    public NOutStream write(char[] buf) {
-        sb.append(buf);
-        return this;
-    }
-
-    @Override
-    public NOutStream write(char[] buf, int off, int len) {
+    public NOutputStream print(char[] buf, int off, int len) {
         sb.append(buf, off, len);
         return this;
     }
 
     @Override
-    public NOutStream print(NMsg b) {
+    public NOutputStream print(NMsg b) {
         if (b != null) {
             sb.append(b);
         }
@@ -95,249 +91,177 @@ public class NOutPlainStream implements NOutStream {
     }
 
     @Override
-    public NOutStream print(NString b) {
+    public NOutputStream print(NString b) {
         if (b != null) {
             sb.append(b);
         }
         return this;
     }
 
+
     @Override
-    public NOutStream print(boolean b) {
+    public NOutputStream print(boolean b) {
         sb.append(b);
         return this;
     }
 
     @Override
-    public NOutStream print(char c) {
+    public NOutputStream print(char c) {
         sb.append(c);
         return this;
     }
 
     @Override
-    public NOutStream print(int i) {
+    public NOutputStream print(int i) {
         sb.append(i);
         return this;
     }
 
     @Override
-    public NOutStream print(long l) {
+    public NOutputStream print(long l) {
         sb.append(l);
         return this;
     }
 
     @Override
-    public NOutStream print(float f) {
+    public NOutputStream print(float f) {
         sb.append(f);
         return this;
     }
 
     @Override
-    public NOutStream print(double d) {
+    public NOutputStream print(double d) {
         sb.append(d);
         return this;
     }
 
     @Override
-    public NOutStream print(char[] s) {
+    public NOutputStream print(char[] s) {
         sb.append(s);
         return this;
     }
 
     @Override
-    public NOutStream print(String s) {
+    public NOutputStream print(String s) {
         sb.append(s);
         return this;
     }
 
     @Override
-    public NOutStream print(Object obj) {
+    public NOutputStream print(Object obj) {
         sb.append(obj);
         return this;
     }
 
     @Override
-    public NOutStream printf(Object obj) {
-        sb.append(obj);
-        return this;
-    }
-
-    @Override
-    public NOutStream printlnf(Object obj) {
-        sb.append(obj);
-        println();
-        return this;
-    }
-
-    @Override
-    public NOutStream println() {
+    public NOutputStream println() {
         sb.append("\n");
         return this;
     }
 
     @Override
-    public NOutStream println(boolean x) {
+    public NOutputStream println(boolean x) {
         sb.append(x);
         println();
         return this;
     }
 
     @Override
-    public NOutStream println(char x) {
+    public NOutputStream println(char x) {
         sb.append(x);
         println();
         return this;
     }
 
     @Override
-    public NOutStream println(NMsg b) {
+    public NOutputStream println(NMsg b) {
         sb.append(b);
         println();
         return this;
     }
 
     @Override
-    public NOutStream println(NString b) {
+    public NOutputStream println(NString b) {
         sb.append(b);
         println();
         return this;
     }
 
     @Override
-    public NOutStream println(int x) {
+    public NOutputStream println(int x) {
         sb.append(x);
         println();
         return this;
     }
 
     @Override
-    public NOutStream println(long x) {
+    public NOutputStream println(long x) {
         sb.append(x);
         println();
         return this;
     }
 
     @Override
-    public NOutStream println(float x) {
+    public NOutputStream println(float x) {
         sb.append(x);
         println();
         return this;
     }
 
     @Override
-    public NOutStream println(double x) {
+    public NOutputStream println(double x) {
         sb.append(x);
         println();
         return this;
     }
 
     @Override
-    public NOutStream println(char[] x) {
+    public NOutputStream println(char[] x) {
         sb.append(x);
         println();
         return this;
     }
 
     @Override
-    public NOutStream println(String x) {
+    public NOutputStream println(String x) {
         sb.append(x);
         println();
         return this;
     }
 
     @Override
-    public NOutStream println(Object x) {
+    public NOutputStream println(Object x) {
         sb.append(x);
         println();
         return this;
     }
 
     @Override
-    public NOutStream append(Object text, NTextStyle style) {
+    public NOutputStream print(Object text, NTextStyle style) {
         sb.append(text);
         return this;
     }
 
     @Override
-    public NOutStream append(Object text, NTextStyles styles) {
+    public NOutputStream print(Object text, NTextStyles styles) {
         sb.append(text);
         return this;
     }
 
     @Override
-    public NOutStream resetLine() {
+    public NOutputStream resetLine() {
         return this;
     }
 
     @Override
-    public NOutStream printf(String format, Object... args) {
-        print(NMsg.ofCstyle(format, args));
+    public NOutputStream print(CharSequence csq) {
+        sb.append(csq);
         return this;
     }
 
     @Override
-    public NOutStream printj(String format, Object... args) {
-        print(NMsg.ofJstyle(format, args));
-        return this;
-    }
-
-    @Override
-    public NOutStream printlnj(String format, Object... args) {
-        println(NMsg.ofJstyle(format, args));
-        return this;
-    }
-
-    @Override
-    public NOutStream printv(String format, Map<String, ?> args) {
-        print(NMsg.ofVstyle(format, args));
-        return this;
-    }
-
-    @Override
-    public NOutStream printlnv(String format, Map<String, ?> args) {
-        println(NMsg.ofVstyle(format, args));
-        return this;
-    }
-
-    @Override
-    public NOutStream printlnf(String format, Object... args) {
-        println(NMsg.ofCstyle(format, args));
-        return this;
-    }
-
-    @Override
-    public NOutStream printf(Locale l, String format, Object... args) {
-        print(NMsg.ofCstyle(format, args));
-        return this;
-    }
-
-    @Override
-    public NOutStream format(String format, Object... args) {
-        print(NMsg.ofCstyle(format, args));
-        return this;
-    }
-
-    @Override
-    public NOutStream format(Locale l, String format, Object... args) {
-        print(NMsg.ofCstyle(format, args));
-        return this;
-    }
-
-    @Override
-    public NOutStream append(CharSequence csq) {
-        print(csq);
-        return this;
-    }
-
-    @Override
-    public NOutStream append(CharSequence csq, int start, int end) {
+    public NOutputStream print(CharSequence csq, int start, int end) {
         sb.append(csq, start, end);
-        return this;
-    }
-
-    @Override
-    public NOutStream append(char c) {
-        sb.append(c);
         return this;
     }
 
@@ -352,12 +276,12 @@ public class NOutPlainStream implements NOutStream {
     }
 
     @Override
-    public NOutStream setTerminalMode(NTerminalMode other) {
+    public NOutputStream setTerminalMode(NTerminalMode other) {
         return this;
     }
 
     @Override
-    public NOutStream run(NTerminalCommand command, NSession session) {
+    public NOutputStream run(NTerminalCommand command, NSession session) {
         return this;
     }
 
@@ -409,5 +333,78 @@ public class NOutPlainStream implements NOutStream {
     @Override
     public String toString() {
         return sb.toString();
+    }
+
+    @Override
+    public NOutputStream write(byte[] buf, int off, int len) {
+        sb.append(new String(buf, off, len));
+        return this;
+    }
+
+    @Override
+    public NOutputStream write(char[] buf, int off, int len) {
+        sb.append(buf, off, len);
+        return this;
+    }
+
+    public NOutputStream printNull() {
+        sb.append("null");
+        return this;
+    }
+
+    @Override
+    public NOutputStream print(Boolean b) {
+        if (b == null) {
+            return printNull();
+        }
+        return print(String.valueOf(b));
+    }
+
+    @Override
+    public NOutputStream print(Number b) {
+        if (b == null) {
+            return printNull();
+        }
+        return print(String.valueOf(b));
+    }
+
+    @Override
+    public NOutputStream print(Temporal b) {
+        if (b == null) {
+            return printNull();
+        }
+        return print(String.valueOf(b));
+    }
+
+    @Override
+    public NOutputStream print(Date b) {
+        if (b == null) {
+            return printNull();
+        }
+        return print(String.valueOf(b));
+    }
+
+    @Override
+    public NOutputStream println(Number b) {
+        if (b == null) {
+            return printNull();
+        }
+        return print(String.valueOf(b));
+    }
+
+    @Override
+    public NOutputStream println(Temporal b) {
+        if (b == null) {
+            return printNull();
+        }
+        return print(String.valueOf(b));
+    }
+
+    @Override
+    public NOutputStream println(Date b) {
+        if (b == null) {
+            return printNull();
+        }
+        return print(String.valueOf(b));
     }
 }

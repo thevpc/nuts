@@ -103,12 +103,12 @@ public class NPathFromSPI extends NPathBase {
                 }
                 return bos.toByteArray();
             } catch (IOException e) {
-                throw new NIOException(getSession(), NMsg.ofCstyle("unable to read file %s", this), e);
+                throw new NIOException(getSession(), NMsg.ofC("unable to read file %s", this), e);
             }
         }
         int ilen = (int) len;
         if (len > Integer.MAX_VALUE - 8) {
-            throw new NIOException(getSession(), NMsg.ofCstyle("file is too large %s", this));
+            throw new NIOException(getSession(), NMsg.ofC("file is too large %s", this));
         }
         byte[] buffer = new byte[ilen];
         try (InputStream is = getInputStream(options)) {
@@ -118,14 +118,14 @@ public class NPathFromSPI extends NPathBase {
                 offset += count;
             }
             if (offset < ilen) {
-                throw new NIOException(getSession(), NMsg.ofCstyle("premature read stop %s", this));
+                throw new NIOException(getSession(), NMsg.ofC("premature read stop %s", this));
             }
             if (is.read() >= 0) {
-                throw new NIOException(getSession(), NMsg.ofCstyle("invalid %s", this));
+                throw new NIOException(getSession(), NMsg.ofC("invalid %s", this));
             }
             return buffer;
         } catch (IOException e) {
-            throw new NIOException(getSession(), NMsg.ofCstyle("unable to read file %s", this), e);
+            throw new NIOException(getSession(), NMsg.ofC("unable to read file %s", this), e);
         }
     }
 
@@ -134,7 +134,7 @@ public class NPathFromSPI extends NPathBase {
         try (OutputStream os = getOutputStream()) {
             os.write(bytes);
         } catch (IOException ex) {
-            throw new NIOException(getSession(), NMsg.ofCstyle("unable to write to %s", this));
+            throw new NIOException(getSession(), NMsg.ofC("unable to write to %s", this));
         }
         return this;
     }

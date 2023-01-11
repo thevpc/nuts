@@ -95,9 +95,9 @@ public class EchoCommand extends SimpleJShellBuiltin {
             ns = c.highlight(context.getSession());
         }
         if (options.newLine) {
-            context.getSession().out().printlnf(ns);
+            context.getSession().out().println(ns);
         } else {
-            context.getSession().out().printf(ns);
+            context.getSession().out().print(ns);
         }
     }
 

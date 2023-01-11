@@ -29,7 +29,7 @@ public class MongoInsertCmd extends InsertCmd<NMongoConfig> {
                     d.putAll(Document.parse(s));
                 }
             }
-            session.out().printlnf(mongoCollection.insertOne(d));
+            session.out().println(mongoCollection.insertOne(d));
         });
     }
 }

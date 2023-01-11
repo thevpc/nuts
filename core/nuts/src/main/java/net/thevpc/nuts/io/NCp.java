@@ -202,7 +202,7 @@ public interface NCp extends NComponent {
      * @param target target to copy to
      * @return {@code this} instance
      */
-    NCp setTarget(NOutStream target);
+    NCp setTarget(NOutputStream target);
 
     /**
      * update target to copy from
@@ -254,7 +254,7 @@ public interface NCp extends NComponent {
      * @param target target
      * @return {@code this} instance
      */
-    NCp to(NOutStream target);
+    NCp to(NOutputStream target);
 
     /**
      * update target to copy from

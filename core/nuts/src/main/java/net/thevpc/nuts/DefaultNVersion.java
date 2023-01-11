@@ -253,7 +253,7 @@ public class DefaultNVersion implements NVersion {
         int commas = 0;
         int seps = 0;
         String s = expression.trim();
-        NOptional<String> emptyVersion = NOptional.ofEmpty(session -> NMsg.ofCstyle("not a single value : %s", expression));
+        NOptional<String> emptyVersion = NOptional.ofEmpty(session -> NMsg.ofC("not a single value : %s", expression));
         if (s.isEmpty()) {
             return emptyVersion;
         }
@@ -410,7 +410,7 @@ public class DefaultNVersion implements NVersion {
                 return NOptional.of(NLiteral.of(parts.get(x).string));
             }
         }
-        return NOptional.ofEmpty(session -> NMsg.ofCstyle("version part not found : %s", index));
+        return NOptional.ofEmpty(session -> NMsg.ofC("version part not found : %s", index));
     }
 
     public NOptional<NLiteral> getNumber(int level) {
@@ -420,14 +420,14 @@ public class DefaultNVersion implements NVersion {
             VersionPart digit = parts.getDigit(level);
             return NOptional.of(
                     digit == null ? null : NLiteral.of(digit.string),
-                    s -> NMsg.ofCstyle("missing number at %s", level)
+                    s -> NMsg.ofC("missing number at %s", level)
             );
         } else {
             int x = size + level;
             VersionPart digit = x >= 0 ? parts.getDigit(x) : null;
             return NOptional.of(
                     digit == null ? null : NLiteral.of(digit.string),
-                    s -> NMsg.ofCstyle("missing number at %s", level)
+                    s -> NMsg.ofC("missing number at %s", level)
             );
         }
     }

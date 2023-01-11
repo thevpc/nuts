@@ -68,7 +68,7 @@ public class DefaultNPaths implements NPaths {
         }
         NPath p = getModel().resolve(path, session, classLoader);
         if (p == null) {
-            throw new NIllegalArgumentException(session, NMsg.ofCstyle("unable to resolve path from %s", path));
+            throw new NIllegalArgumentException(session, NMsg.ofC("unable to resolve path from %s", path));
         }
         return p;
     }
@@ -209,7 +209,7 @@ public class DefaultNPaths implements NPaths {
                     //
                 }
             }
-            throw new NIOException(session, NMsg.ofCstyle("could not create temp directory: %s*%s", rootFolder + File.separator + prefix, ext));
+            throw new NIOException(session, NMsg.ofC("could not create temp directory: %s*%s", rootFolder + File.separator + prefix, ext));
         } else {
             try {
                 return NPath.of(File.createTempFile(prefix.toString(), ext.toString(), rootFolder.toFile().toFile()).toPath(), session)

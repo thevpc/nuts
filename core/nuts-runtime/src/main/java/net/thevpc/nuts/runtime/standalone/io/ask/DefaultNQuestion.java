@@ -4,9 +4,9 @@ import net.thevpc.nuts.*;
 import net.thevpc.nuts.cmdline.NArg;
 import net.thevpc.nuts.cmdline.NCommandLine;
 import net.thevpc.nuts.cmdline.NCommandLineConfigurable;
-import net.thevpc.nuts.io.NOutStream;
+import net.thevpc.nuts.io.NOutputStream;
 import net.thevpc.nuts.io.NSessionTerminal;
-import net.thevpc.nuts.runtime.standalone.io.printstream.NOutByteArrayStream;
+import net.thevpc.nuts.runtime.standalone.io.printstream.NByteArrayOutputStream;
 import net.thevpc.nuts.runtime.standalone.app.gui.CoreNUtilGui;
 import net.thevpc.nuts.runtime.standalone.session.NSessionUtils;
 import net.thevpc.nuts.runtime.standalone.util.NConfigurableHelper;
@@ -26,7 +26,7 @@ import java.util.List;
 public class DefaultNQuestion<T> implements NQuestion<T> {
 
     private final NSessionTerminal terminal;
-    private final NOutStream out;
+    private final NOutputStream out;
     private final NWorkspace ws;
     private NMsg message;
     private NMsg cancelMessage;
@@ -44,7 +44,7 @@ public class DefaultNQuestion<T> implements NQuestion<T> {
     private boolean password = false;
     private Object lastResult = null;
 
-    public DefaultNQuestion(NWorkspace ws, NSessionTerminal terminal, NOutStream out) {
+    public DefaultNQuestion(NWorkspace ws, NSessionTerminal terminal, NOutputStream out) {
         this.ws = ws;
         this.terminal = terminal;
         this.out = out;
@@ -62,24 +62,24 @@ public class DefaultNQuestion<T> implements NQuestion<T> {
                 }
                 case ERROR: {
                     if (cancelMessage != null) {
-                        NOutByteArrayStream os = new NOutByteArrayStream(getSession());
-                        os.printf(cancelMessage);
+                        NByteArrayOutputStream os = new NByteArrayOutputStream(getSession());
+                        os.print(cancelMessage);
                         os.flush();
                         throw new NCancelException(getSession(), NMsg.ofNtf(os.toString()));
                     } else {
-                        NOutByteArrayStream os = new NOutByteArrayStream(getSession());
-                        os.printf(message);
+                        NByteArrayOutputStream os = new NByteArrayOutputStream(getSession());
+                        os.print(message);
                         os.flush();
-                        throw new NCancelException(getSession(), NMsg.ofCstyle("cancelled : %s", NMsg.ofNtf(os.toString())));
+                        throw new NCancelException(getSession(), NMsg.ofC("cancelled : %s", NMsg.ofNtf(os.toString())));
                     }
                 }
             }
         }
         if (!getSession().isPlainOut()) {
-            NOutByteArrayStream os = new NOutByteArrayStream(getSession());
-            os.printf(message);
+            NByteArrayOutputStream os = new NByteArrayOutputStream(getSession());
+            os.print(message);
             os.flush();
-            throw new NExecutionException(getSession(), NMsg.ofCstyle(
+            throw new NExecutionException(getSession(), NMsg.ofC(
                     "unable to switch to interactive mode for non plain text output format. "
                             + "You need to provide default response (-y|-n) for question : %s", os
             ), 243);
@@ -108,16 +108,16 @@ public class DefaultNQuestion<T> implements NQuestion<T> {
             _acceptedValues = new ArrayList<>();
         }
         while (true) {
-            NOutStream out = this.out;
+            NOutputStream out = this.out;
             ByteArrayOutputStream bos = null;
             if (gui) {
                 bos = new ByteArrayOutputStream();
-                out = NOutStream.of(bos, session);
+                out = NOutputStream.of(bos, session);
             }
             if (resetLine) {
                 out.resetLine();
             }
-            out.printf(message);
+            out.print(message);
             boolean first = true;
             if (this.getDefaultValue() != null) {
                 if (first) {
@@ -126,11 +126,11 @@ public class DefaultNQuestion<T> implements NQuestion<T> {
                 } else {
                     out.print(", ");
                 }
-                out.printf("default is %s", NTexts.of(session).ofStyled(ff.format(this.getDefaultValue(), this), NTextStyle.primary1()));
+                out.print(NMsg.ofC("default is %s", NTexts.of(session).ofStyled(ff.format(this.getDefaultValue(), this), NTextStyle.primary1())));
             }
             if (getHintMessage() != null) {
                 out.print(" (");
-                out.printf(getHintMessage());
+                out.print(getHintMessage());
                 out.print(")");
             } else {
                 if (_acceptedValues.size() > 0) {
@@ -148,7 +148,7 @@ public class DefaultNQuestion<T> implements NQuestion<T> {
                         }
                         sb.append(ff.format(acceptedValue, this));
                     }
-                    out.printf("accepts %s", NTexts.of(session).ofStyled(sb.toString(), NTextStyle.primary4()));
+                    out.print(NMsg.ofC("accepts %s", NTexts.of(session).ofStyled(sb.toString(), NTextStyle.primary4())));
                 }
                 if (!first) {
                     out.print(")");
@@ -183,7 +183,7 @@ public class DefaultNQuestion<T> implements NQuestion<T> {
                     out.print("?\n");
                     out.flush();
                     if (gui) {
-                        out.printf("\t Please enter value or ```error %s``` to cancel : ", "cancel!");
+                        out.print(NMsg.ofC("\t Please enter value or ```error %s``` to cancel : ", "cancel!"));
                         out.flush();
                         String v0 = showGuiInput(bos.toString(), true);
                         if (v0 == null) {
@@ -191,12 +191,12 @@ public class DefaultNQuestion<T> implements NQuestion<T> {
                         }
                         v = v0.toCharArray();
                     } else {
-                        v = terminal.readPassword("\t Please enter value or ```error %s``` to cancel : ", "cancel!");
+                        v = terminal.readPassword(NMsg.ofC("\t Please enter value or ```error %s``` to cancel : ", "cancel!"));
                     }
                 } else {
                     out.flush();
                     if (gui) {
-                        out.printf(" ");
+                        out.print(" ");
                         out.flush();
                         String v0 = showGuiInput(bos.toString(), true);
                         if (v0 == null) {
@@ -204,7 +204,7 @@ public class DefaultNQuestion<T> implements NQuestion<T> {
                         }
                         v = v0.toCharArray();
                     } else {
-                        v = terminal.readPassword(" ");
+                        v = terminal.readPassword(NMsg.ofPlain(" "));
                     }
                 }
                 if (Arrays.equals("cancel!".toCharArray(), v)) {
@@ -218,7 +218,7 @@ public class DefaultNQuestion<T> implements NQuestion<T> {
                 } catch (NCancelException ex) {
                     throw ex;
                 } catch (Exception ex) {
-                    out.printf("```error ERROR``` : %s%n", ex);
+                    out.println(NMsg.ofC("```error ERROR``` : %s", ex));
                 }
             } else {
                 String v;
@@ -226,7 +226,7 @@ public class DefaultNQuestion<T> implements NQuestion<T> {
                     out.print("?\n");
                     out.flush();
                     if (gui) {
-                        out.printf("\t Please enter value or ```error %s``` to cancel : ", "cancel!");
+                        out.print(NMsg.ofC("\t Please enter value or ```error %s``` to cancel : ", "cancel!"));
                         out.flush();
                         String v0 = showGuiInput(bos.toString(), false);
                         if (v0 == null) {
@@ -234,12 +234,12 @@ public class DefaultNQuestion<T> implements NQuestion<T> {
                         }
                         v = v0;
                     } else {
-                        v = terminal.readLine("\t Please enter value or ```error %s``` to cancel : ", "cancel!");
+                        v = terminal.readLine(NMsg.ofC("\t Please enter value or ```error %s``` to cancel : ", "cancel!"));
                     }
                 } else {
                     out.flush();
                     if (gui) {
-                        out.printf(" ? : ");
+                        out.print(" ? : ");
                         out.flush();
                         String v0 = showGuiInput(bos.toString(), false);
                         if (v0 == null) {
@@ -247,7 +247,7 @@ public class DefaultNQuestion<T> implements NQuestion<T> {
                         }
                         v = v0;
                     } else {
-                        v = terminal.readLine(" ? : ");
+                        v = terminal.readLine(NMsg.ofPlain(" ? : "));
                     }
                 }
                 try {
@@ -259,7 +259,7 @@ public class DefaultNQuestion<T> implements NQuestion<T> {
                 } catch (NCancelException ex) {
                     throw ex;
                 } catch (Exception ex) {
-                    out.printf("```error ERROR``` : %s%n", ex);
+                    out.println(NMsg.ofC("```error ERROR``` : %s", ex));
                 }
             }
             extraInfo = true;
@@ -268,7 +268,7 @@ public class DefaultNQuestion<T> implements NQuestion<T> {
 
     private String showGuiInput(String str, boolean pwd) {
         String ft = NTexts.of(getSession()).parse(str).filteredText();
-        NMsg title = NMsg.ofCstyle("Nuts Package Manager - %s", getSession().getWorkspace().getApiId().getVersion());
+        NMsg title = NMsg.ofC("Nuts Package Manager - %s", getSession().getWorkspace().getApiId().getVersion());
         if (session.getAppId() != null) {
             try {
                 NDefinition def = NSearchCommand.of(session).setId(session.getAppId())
@@ -276,7 +276,7 @@ public class DefaultNQuestion<T> implements NQuestion<T> {
                 if (def != null) {
                     String n = def.getEffectiveDescriptor().get(session).getName();
                     if (!NBlankable.isBlank(n)) {
-                        title = NMsg.ofCstyle("%s - %s", n, def.getEffectiveDescriptor().get(session).getId().getVersion());
+                        title = NMsg.ofC("%s - %s", n, def.getEffectiveDescriptor().get(session).getId().getVersion());
                     }
                 }
             } catch (Exception ex) {

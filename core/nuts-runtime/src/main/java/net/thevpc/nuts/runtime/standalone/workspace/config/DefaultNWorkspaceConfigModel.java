@@ -30,7 +30,7 @@ import net.thevpc.nuts.elem.NElement;
 import net.thevpc.nuts.elem.NElements;
 import net.thevpc.nuts.io.NIOException;
 import net.thevpc.nuts.io.NPath;
-import net.thevpc.nuts.io.NOutStream;
+import net.thevpc.nuts.io.NOutputStream;
 import net.thevpc.nuts.io.NSessionTerminal;
 import net.thevpc.nuts.runtime.standalone.boot.DefaultNBootModel;
 import net.thevpc.nuts.runtime.standalone.definition.DefaultNDefinition;
@@ -226,7 +226,7 @@ public class DefaultNWorkspaceConfigModel {
 
         if (force || storeModelMainChanged) {
             List<NPlatformLocation> plainSdks = new ArrayList<>();
-            plainSdks.addAll(NEnvs.of(session).platforms().findPlatforms().toList());
+            plainSdks.addAll(NPlatforms.of(session).findPlatforms().toList());
             storeModelMain.setPlatforms(plainSdks);
             storeModelMain.setRepositories(
                     NRepositories.of(session).getRepositories().stream().filter(x -> !x.config().isTemporary())
@@ -587,7 +587,7 @@ public class DefaultNWorkspaceConfigModel {
                     aconfig = compat.parseApiConfig(olderId, session);
                     if (aconfig != null) {
                         // ask
-                        if (session.getTerminal().ask().forBoolean(NMsg.ofCstyle("import older config %s into %s", olderId, apiId))
+                        if (session.getTerminal().ask().forBoolean(NMsg.ofC("import older config %s into %s", olderId, apiId))
                                 .setDefaultValue(true)
                                 .getBooleanValue()
                         ) {
@@ -919,7 +919,7 @@ public class DefaultNWorkspaceConfigModel {
         if (c != null) {
             return c.create(session);
         }
-        throw new NIllegalArgumentException(session, NMsg.ofCstyle("dependency solver not found %s", name));
+        throw new NIllegalArgumentException(session, NMsg.ofC("dependency solver not found %s", name));
     }
 
     private Map<String, NDependencySolverFactory> getSolversMap(NSession session) {
@@ -1032,7 +1032,7 @@ public class DefaultNWorkspaceConfigModel {
 
     private void setConfigMain(NWorkspaceConfigMain config, NSession session, boolean fire) {
         this.storeModelMain = config == null ? new NWorkspaceConfigMain() : config;
-        DefaultNPlatformManager d = (DefaultNPlatformManager) NEnvs.of(session).platforms();
+        DefaultNPlatforms d = (DefaultNPlatforms) NPlatforms.of(session);
         d.getModel().setPlatforms(this.storeModelMain.getPlatforms().toArray(new NPlatformLocation[0]), session);
         NRepositories repos = NRepositories.of(session);
         repos.removeAllRepositories();
@@ -1312,7 +1312,7 @@ public class DefaultNWorkspaceConfigModel {
         DefaultNWorkspaceConfigModel wconfig = this;
         Path file = NLocations.of(session).getWorkspaceLocation().toFile().resolve(NConstants.Files.WORKSPACE_CONFIG_FILE_NAME);
         if (wconfig.isReadOnly()) {
-            throw new NIOException(session, NMsg.ofCstyle("unable to load config file %s", file), ex);
+            throw new NIOException(session, NMsg.ofC("unable to load config file %s", file), ex);
         }
         String fileSuffix = Instant.now().toString();
         fileSuffix = fileSuffix.replace(':', '-');
@@ -1320,20 +1320,20 @@ public class DefaultNWorkspaceConfigModel {
         NPath logError = NLocations.of(session).getStoreLocation(ws.getApiId(), NStoreLocation.LOG).resolve("invalid-config");
         NPath logFile = logError.resolve(fileName + ".error");
         _LOGOP(session).level(Level.SEVERE).verb(NLoggerVerb.FAIL)
-                .log(NMsg.ofJstyle("erroneous workspace config file. Unable to load file {0} : {1}", file, ex));
+                .log(NMsg.ofJ("erroneous workspace config file. Unable to load file {0} : {1}", file, ex));
 
         try {
             logFile.mkParentDirs();
         } catch (Exception ex1) {
-            throw new NIOException(session, NMsg.ofCstyle("unable to log workspace error while loading config file %s : %s", file, ex1), ex);
+            throw new NIOException(session, NMsg.ofC("unable to log workspace error while loading config file %s : %s", file, ex1), ex);
         }
         NPath newfile = logError.resolve(fileName + ".json");
         _LOGOP(session).level(Level.SEVERE).verb(NLoggerVerb.FAIL)
-                .log(NMsg.ofJstyle("erroneous workspace config file will be replaced by a fresh one. Old config is copied to {0}\n error logged to  {1}", newfile.toString(), logFile));
+                .log(NMsg.ofJ("erroneous workspace config file will be replaced by a fresh one. Old config is copied to {0}\n error logged to  {1}", newfile.toString(), logFile));
         try {
             Files.move(file, newfile.toFile());
         } catch (IOException e) {
-            throw new NIOException(session, NMsg.ofCstyle("unable to load and re-create config file %s : %s", file, e), ex);
+            throw new NIOException(session, NMsg.ofC("unable to load and re-create config file %s : %s", file, e), ex);
         }
 
         try (PrintStream o = new PrintStream(logFile.getOutputStream())) {
@@ -1385,9 +1385,9 @@ public class DefaultNWorkspaceConfigModel {
             return createNutsVersionCompat(version, session).parseConfig(bytes, session);
         } catch (Exception ex) {
             _LOGOP(session).level(Level.SEVERE).verb(NLoggerVerb.FAIL)
-                    .log(NMsg.ofJstyle("erroneous workspace config file. Unable to load file {0} : {1}",
+                    .log(NMsg.ofJ("erroneous workspace config file. Unable to load file {0} : {1}",
                             file, ex));
-            throw new NIOException(session, NMsg.ofCstyle("unable to load config file %s", file), ex);
+            throw new NIOException(session, NMsg.ofC("unable to load config file %s", file), ex);
         }
     }
 
@@ -1498,7 +1498,7 @@ public class DefaultNWorkspaceConfigModel {
         this.terminal = terminal;
     }
 
-    public NSessionTerminal createTerminal(InputStream in, NOutStream out, NOutStream err, NSession session) {
+    public NSessionTerminal createTerminal(InputStream in, NOutputStream out, NOutputStream err, NSession session) {
         NSessionTerminal t = createTerminal(session);
         if (in != null) {
             t.setIn(in);
@@ -1584,7 +1584,7 @@ public class DefaultNWorkspaceConfigModel {
             String v = env.get(property);
             return NOptional.of(v == null ? null : NLiteral.of(v));
         }
-        return NOptional.ofEmpty(s -> NMsg.ofCstyle("config property not found : %s", property));
+        return NOptional.ofEmpty(s -> NMsg.ofC("config property not found : %s", property));
     }
 
     public void setConfigProperty(String property, String value, NSession session) {

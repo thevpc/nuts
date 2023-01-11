@@ -25,7 +25,7 @@
 //                String id = cmdLine.required().nextNonOption(new DefaultNonOption("NewNutsId")).toString();
 //                if (cmdLine.isExecMode()) {
 //                    push.id(id).run();
-//                    context.out().printf("%s pushed successfully\n", id);
+//                    context.out().print(NMsg.ofC("%s pushed successfully\n", id);
 //                }
 //            }
 //        } while (cmdLine.hasNext());

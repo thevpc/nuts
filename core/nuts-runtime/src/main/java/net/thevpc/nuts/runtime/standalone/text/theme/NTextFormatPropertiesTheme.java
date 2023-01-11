@@ -25,7 +25,7 @@ public class NTextFormatPropertiesTheme implements NTextFormatTheme {
             try (InputStream is = NPath.of(name, session).getInputStream()) {
                 props.load(is);
             } catch (IOException e) {
-                throw new NIllegalArgumentException(session, NMsg.ofCstyle("invalid theme: %s", name), e);
+                throw new NIllegalArgumentException(session, NMsg.ofC("invalid theme: %s", name), e);
             }
         } else {
             if (cls == null) {
@@ -37,7 +37,7 @@ public class NTextFormatPropertiesTheme implements NTextFormatTheme {
                     InputStream inStream = null;
                     inStream = u.openStream();
                     if (inStream == null) {
-                        throw new NIllegalArgumentException(session, NMsg.ofCstyle("invalid theme: %s", name));
+                        throw new NIllegalArgumentException(session, NMsg.ofC("invalid theme: %s", name));
                     }
                     try {
                         props.load(inStream);
@@ -56,10 +56,10 @@ public class NTextFormatPropertiesTheme implements NTextFormatTheme {
                     try (InputStream inStream = themeFile.getInputStream()) {
                         props.load(inStream);
                     } catch (IOException e) {
-                        throw new NIllegalArgumentException(session, NMsg.ofCstyle("invalid theme: %s", name), e);
+                        throw new NIllegalArgumentException(session, NMsg.ofC("invalid theme: %s", name), e);
                     }
                 } else {
-                    throw new NIllegalArgumentException(session, NMsg.ofCstyle("invalid theme: %s", name));
+                    throw new NIllegalArgumentException(session, NMsg.ofC("invalid theme: %s", name));
                 }
             }
         }
@@ -138,7 +138,7 @@ public class NTextFormatPropertiesTheme implements NTextFormatTheme {
     public NTextStyles toBasicStyles(NTextStyle style, NSession session, int maxLoop) {
         if (maxLoop <= 0) {
             throw new NIllegalArgumentException(session,
-                    NMsg.ofCstyle("invalid ntf theme for %s(%s). infinite loop", style.getType(), style.getVariant()));
+                    NMsg.ofC("invalid ntf theme for %s(%s). infinite loop", style.getType(), style.getVariant()));
         }
         if (style.getType().basic()) {
             return NTextStyles.of(style);

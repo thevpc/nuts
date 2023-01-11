@@ -74,7 +74,7 @@ public class NConfigurableHelper {
                 String[] after = commandLine.toStringArray();
                 if (Arrays.equals(before, after)) {
                     throw new NIllegalArgumentException(session,
-                            NMsg.ofCstyle(
+                            NMsg.ofC(
                                     "bad implementation of configureFirst in class %s."
                                             + " commandLine is not consumed; perhaps missing skip() class."
                                             + " args = %s" , c.getClass().getName(), Arrays.toString(after)

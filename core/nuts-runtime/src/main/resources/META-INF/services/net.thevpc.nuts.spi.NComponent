@@ -28,6 +28,7 @@ net.thevpc.nuts.runtime.standalone.executor.system.ProcessExecutorComponent
 
 net.thevpc.nuts.runtime.standalone.repository.impl.maven.MavenRepositoryFactoryComponent
 net.thevpc.nuts.runtime.standalone.workspace.config.DefaultNIndexStoreFactory
+net.thevpc.nuts.runtime.standalone.workspace.config.DefaultNPlatforms
 net.thevpc.nuts.runtime.standalone.security.DefaultNAuthenticationAgent
 net.thevpc.nuts.runtime.standalone.log.DefaultNLogManager
 net.thevpc.nuts.runtime.standalone.workspace.list.DefaultNWorkspaceListManager
@@ -99,7 +100,6 @@ net.thevpc.nuts.runtime.standalone.xtra.contenttype.DefaultNContentTypes
 net.thevpc.nuts.runtime.standalone.xtra.download.DefaultHttpTransportComponent
 net.thevpc.nuts.runtime.standalone.io.path.DefaultNPaths
 net.thevpc.nuts.runtime.standalone.io.inputstream.DefaultNIO
-net.thevpc.nuts.runtime.standalone.io.printstream.DefaultNPrintStreams
 net.thevpc.nuts.runtime.standalone.xtra.execentries.DefaultNExecutionEntries
 net.thevpc.nuts.runtime.standalone.xtra.digest.DefaultNDigest
 net.thevpc.nuts.runtime.standalone.io.progress.DefaultNInputStreamMonitor

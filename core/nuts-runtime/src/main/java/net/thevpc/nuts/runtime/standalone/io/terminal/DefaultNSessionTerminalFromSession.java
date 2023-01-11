@@ -17,8 +17,8 @@ public class DefaultNSessionTerminalFromSession extends AbstractNSessionTerminal
 
     protected NWorkspace ws;
     protected NSession session;
-    protected NOutStream out;
-    protected NOutStream err;
+    protected NOutputStream out;
+    protected NOutputStream err;
     protected NPrintStreamCache outCache=new NPrintStreamCache();
     protected NPrintStreamCache errCache=new NPrintStreamCache();
     protected InputStream in;
@@ -53,18 +53,9 @@ public class DefaultNSessionTerminalFromSession extends AbstractNSessionTerminal
         return this.inReader;
     }
 
-    @Override
-    public String readLine(NOutStream out, NMsg message) {
-        return readLine(out, message, session);
-    }
 
     @Override
-    public char[] readPassword(NOutStream out, NMsg message) {
-        return readPassword(out, message, session);
-    }
-
-    @Override
-    public String readLine(NOutStream out, NMsg message, NSession session) {
+    public String readLine(NOutputStream out, NMsg message, NSession session) {
         if (session == null) {
             session = this.session;
         }
@@ -81,7 +72,7 @@ public class DefaultNSessionTerminalFromSession extends AbstractNSessionTerminal
                 return parent.readLine(out, message, session);
             }
         }
-        out.printf("%s", message);
+        out.print(message);
         out.flush();
         try {
             return getReader().readLine();
@@ -91,7 +82,7 @@ public class DefaultNSessionTerminalFromSession extends AbstractNSessionTerminal
     }
 
     @Override
-    public char[] readPassword(NOutStream out, NMsg message, NSession session) {
+    public char[] readPassword(NOutputStream out, NMsg prompt, NSession session) {
         if (session == null) {
             session = this.session;
         }
@@ -104,9 +95,9 @@ public class DefaultNSessionTerminalFromSession extends AbstractNSessionTerminal
 
         if (this.in == null && parent != null) {
             if (this.out == null) {
-                return parent.readPassword(out, message, session);
+                return parent.readPassword(out, prompt, session);
             } else {
-                return parent.readPassword(out, message, session);
+                return parent.readPassword(out, prompt, session);
             }
         }
 
@@ -119,14 +110,14 @@ public class DefaultNSessionTerminalFromSession extends AbstractNSessionTerminal
         if ((
                 in == NIO.of(session).stdin()
         ) && ((cons = System.console()) != null)) {
-            String txt = NTexts.of(session).ofText(message).toString();
+            String txt = NTexts.of(session).ofText(prompt).toString();
             if ((passwd = cons.readPassword("%s", txt)) != null) {
                 return passwd;
             } else {
                 return null;
             }
         } else {
-            out.printf("%s", message);
+            out.print(prompt);
             out.flush();
             Scanner s = new Scanner(in);
             return s.nextLine().toCharArray();
@@ -151,11 +142,11 @@ public class DefaultNSessionTerminalFromSession extends AbstractNSessionTerminal
     }
 
     @Override
-    public NOutStream getOut() {
+    public NOutputStream getOut() {
         if (out == null) {
             NSessionTerminal p = getParent();
             if (p != null) {
-                NOutStream o = p.getOut();
+                NOutputStream o = p.getOut();
                 if(o!=null){
                     return outCache.get(o,getSession());
                 }
@@ -165,7 +156,7 @@ public class DefaultNSessionTerminalFromSession extends AbstractNSessionTerminal
     }
 
     @Override
-    public void setOut(NOutStream out) {
+    public void setOut(NOutputStream out) {
         if (out != null) {
             out = out.setSession(session);
         }
@@ -173,11 +164,11 @@ public class DefaultNSessionTerminalFromSession extends AbstractNSessionTerminal
     }
 
     @Override
-    public NOutStream getErr() {
+    public NOutputStream getErr() {
         if (err == null) {
             NSessionTerminal p = getParent();
             if (p != null) {
-                NOutStream o = p.getErr();
+                NOutputStream o = p.getErr();
                 if(o!=null){
                     return errCache.get(o,getSession());
                 }
@@ -187,7 +178,7 @@ public class DefaultNSessionTerminalFromSession extends AbstractNSessionTerminal
     }
 
     @Override
-    public void setErr(NOutStream err) {
+    public void setErr(NOutputStream err) {
         if (err != null) {
             err = err.setSession(session);
         }
@@ -201,15 +192,6 @@ public class DefaultNSessionTerminalFromSession extends AbstractNSessionTerminal
         return r;
     }
 
-    @Override
-    public String readLine(String prompt, Object... params) {
-        return readLine(out(), prompt, params);
-    }
-
-    @Override
-    public char[] readPassword(String prompt, Object... params) {
-        return readPassword(out(), prompt, params);
-    }
 
     @Override
     public <T> NQuestion<T> ask() {
@@ -225,12 +207,12 @@ public class DefaultNSessionTerminalFromSession extends AbstractNSessionTerminal
     }
 
     @Override
-    public NOutStream out() {
+    public NOutputStream out() {
         return getOut();
     }
 
     @Override
-    public NOutStream err() {
+    public NOutputStream err() {
         return getErr();
     }
 

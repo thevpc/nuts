@@ -43,7 +43,7 @@ public class NDescriptorContentResolver {
                                 .level(Level.FINE)
                                 .verb(NLoggerVerb.WARNING)
                                 .error(e)
-                                .log(NMsg.ofCstyle("error parsing %s with %s", localPath, parser.getClass().getSimpleName() + ". Error ignored"));
+                                .log(NMsg.ofC("error parsing %s with %s", localPath, parser.getClass().getSimpleName() + ". Error ignored"));
                         //e.printStackTrace();
                     }
                     if (desc != null) {

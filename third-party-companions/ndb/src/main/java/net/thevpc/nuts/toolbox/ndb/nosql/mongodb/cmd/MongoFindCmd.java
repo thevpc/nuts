@@ -60,7 +60,7 @@ public class MongoFindCmd extends FindCmd<NMongoConfig> {
             r.forEach(x -> {
                 values.add(x);
             });
-            session.out().printlnf(values);
+            session.out().println(values);
         });
     }
 }

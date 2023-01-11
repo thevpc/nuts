@@ -63,14 +63,14 @@ public class DefaultNPlatformModel {
             list.add(location);
             if (notify) {
                 if (session.isPlainTrace()) {
-                    session.out().resetLine().printf("%s %s %s (%s) %s at %s%n",
+                    session.out().resetLine().println(NMsg.ofC("%s %s %s (%s) %s at %s",
                             NTexts.of(session).ofStyled("install", NTextStyles.of(NTextStyle.success())),
                             location.getId().getShortName(),
                             location.getPackaging(),
                             location.getProduct(),
                             NVersion.of(location.getVersion()).get(session),
                             NPath.of(location.getPath(), session)
-                    );
+                    ));
                 }
                 NConfigsExt.of(NConfigs.of(session))
                         .getModel()

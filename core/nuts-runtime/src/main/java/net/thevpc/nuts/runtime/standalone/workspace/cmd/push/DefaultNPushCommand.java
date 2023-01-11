@@ -58,7 +58,7 @@ public class DefaultNPushCommand extends AbstractDefaultNPushCommand {
         Map<NId, NDefinition> toProcess = new LinkedHashMap<>();
         for (NId id : this.getIds()) {
             if (NStringUtils.trim(id.getVersion().getValue()).endsWith(CoreNConstants.Versions.CHECKED_OUT_EXTENSION)) {
-                throw new NIllegalArgumentException(getSession(), NMsg.ofCstyle("invalid version %s", id.getVersion()));
+                throw new NIllegalArgumentException(getSession(), NMsg.ofC("invalid version %s", id.getVersion()));
             }
             NDefinition file = NFetchCommand.of(session).setId(id).setSession(session.copy().setTransitive(false)).setContent(true).getResultDefinition();
             NAssert.requireNonNull(file, "content to push", session);
@@ -103,7 +103,7 @@ public class DefaultNPushCommand extends AbstractDefaultNPushCommand {
                     }
                 }
                 if (!ok) {
-                    throw new NPushException(session,id, NMsg.ofCstyle(
+                    throw new NPushException(session,id, NMsg.ofC(
                             "unable to push %s to repository %s : %s",
                             id == null ? "<null>" : id,
                             this.getRepository(),
@@ -113,7 +113,7 @@ public class DefaultNPushCommand extends AbstractDefaultNPushCommand {
             } else {
                 NRepository repo = NRepositories.of(session).getRepository(this.getRepository());
                 if (!repo.config().isEnabled()) {
-                    throw new NIllegalArgumentException(getSession(), NMsg.ofCstyle("repository %s is disabled", repo.getName()));
+                    throw new NIllegalArgumentException(getSession(), NMsg.ofC("repository %s is disabled", repo.getName()));
                 }
                 NId effId = NIdUtils.createContentFaceId(id.builder().setPropertiesQuery("").build(), file.getDescriptor(),session) //                        .setAlternative(NutsUtilStrings.trim(file.getDescriptor().getAlternative()))
                         ;

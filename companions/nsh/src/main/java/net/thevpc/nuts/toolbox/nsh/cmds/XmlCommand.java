@@ -95,10 +95,10 @@ public class XmlCommand extends SimpleJShellBuiltin {
                 try (InputStream is = file.getInputStream()) {
                     doc = dBuilder.parse(is);
                 } catch (Exception ex) {
-                    throw new NExecutionException(session, NMsg.ofCstyle("invalid xml %s", options.input), ex, 2);
+                    throw new NExecutionException(session, NMsg.ofC("invalid xml %s", options.input), ex, 2);
                 }
             } else {
-                throw new NExecutionException(session, NMsg.ofCstyle("invalid path %s", options.input), 1);
+                throw new NExecutionException(session, NMsg.ofC("invalid path %s", options.input), 1);
             }
         } else {
             StringBuilder sb = new StringBuilder();
@@ -114,7 +114,7 @@ public class XmlCommand extends SimpleJShellBuiltin {
                     try {
                         doc = dBuilder.parse(new InputSource(new StringReader(sb.toString())));
                     } catch (Exception ex) {
-                        throw new NExecutionException(session, NMsg.ofCstyle("invalid xml : %s", sb), ex, 2);
+                        throw new NExecutionException(session, NMsg.ofC("invalid xml : %s", sb), ex, 2);
                     }
                     break;
                 } else {
@@ -140,13 +140,13 @@ public class XmlCommand extends SimpleJShellBuiltin {
             try {
                 result.add((NodeList) xPath.compile(query).evaluate(doc, XPathConstants.NODESET));
             } catch (XPathExpressionException ex) {
-                throw new NExecutionException(session, NMsg.ofCstyle("%s", ex), ex, 103);
+                throw new NExecutionException(session, NMsg.ofC("%s", ex), ex, 103);
             }
         }
         if (all.size() == 1) {
-            session.out().printlnf(all.get(0));
+            session.out().println(all.get(0));
         } else {
-            session.out().printlnf(all);
+            session.out().println(all);
         }
     }
 

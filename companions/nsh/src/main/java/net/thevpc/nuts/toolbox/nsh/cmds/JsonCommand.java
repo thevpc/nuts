@@ -92,9 +92,9 @@ public class JsonCommand extends SimpleJShellBuiltin {
         if (options.queries.isEmpty()) {
             NElement inputDocument = readJsonConvertElement(options.input, context.getShellContext());
             if (session.getOutputFormat() == NContentType.PLAIN) {
-                session.out().printlnf(NElements.of(session).json().setValue(inputDocument).format());
+                session.out().println(NElements.of(session).json().setValue(inputDocument).format());
             } else {
-                session.out().printlnf(inputDocument);
+                session.out().println(inputDocument);
             }
         } else {
             switch (options.queryType) {
@@ -119,11 +119,11 @@ public class JsonCommand extends SimpleJShellBuiltin {
                                 resultElement.appendChild(o);
                             }
                         } catch (XPathExpressionException ex) {
-                            throw new NExecutionException(session, NMsg.ofCstyle("%s", ex), ex, 103);
+                            throw new NExecutionException(session, NMsg.ofC("%s", ex), ex, 103);
                         }
                     }
                     NElement json = NElements.of(session).toElement(resultDocument);
-                    session.out().printlnf(json);
+                    session.out().println(json);
                     break;
                 }
                 case "jpath": {
@@ -137,7 +137,7 @@ public class JsonCommand extends SimpleJShellBuiltin {
                     }
                     Object result = all.size() == 1 ? all.get(0) : all;
                     NElement json = NElements.of(session).toElement(result);
-                    session.out().printlnf(result);
+                    session.out().println(json);
                     break;
                 }
             }
@@ -162,7 +162,7 @@ public class JsonCommand extends SimpleJShellBuiltin {
             if (file.exists()) {
                 inputDocument = njson.parse(file, cls);
             } else {
-                throw new NExecutionException(session, NMsg.ofCstyle("invalid path %s", path), 1);
+                throw new NExecutionException(session, NMsg.ofC("invalid path %s", path), 1);
             }
         } else {
             StringBuilder sb = new StringBuilder();

@@ -1254,7 +1254,7 @@ public abstract class AbstractNSearchCommand extends DefaultNQueryBaseOptions<NS
             f = NContentType.TREE;
         }
         NSession session2 = session.copy().setOutputFormat(f);
-        session2.out().printlnf(n);
+        session2.out().println(n);
     }
 
 

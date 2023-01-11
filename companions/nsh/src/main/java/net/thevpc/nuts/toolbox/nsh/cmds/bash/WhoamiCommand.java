@@ -27,7 +27,7 @@ package net.thevpc.nuts.toolbox.nsh.cmds.bash;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.cmdline.NCommandLine;
-import net.thevpc.nuts.io.NOutStream;
+import net.thevpc.nuts.io.NOutputStream;
 import net.thevpc.nuts.spi.NComponentScope;
 import net.thevpc.nuts.spi.NComponentScopeType;
 import net.thevpc.nuts.text.NTextStyle;
@@ -144,70 +144,70 @@ public class WhoamiCommand extends SimpleJShellBuiltin {
         }
         switch (context.getSession().getOutputFormat()) {
             case PLAIN: {
-                NOutStream out = context.getSession().out();
-                out.printf("%s\n", result.login);
+                NOutputStream out = context.getSession().out();
+                out.println(NMsg.ofC("%s", result.login));
                 if (options.nutsUser) {
                     NTexts factory = NTexts.of(context.getSession());
                     if (result.loginStack != null) {
-                        out.printf("%s      :",
+                        out.print(NMsg.ofC("%s      :",
                                 factory.ofStyled("stack", NTextStyle.primary5())
-                        );
+                        ));
                         for (String log : result.loginStack) {
-                            out.printf(" %s",
+                            out.print(NMsg.ofC(" %s",
                                     factory.ofStyled(log, NTextStyle.primary3())
-                            );
+                            ));
                         }
                         out.println();
                     }
                     if (result.groups != null && result.groups.length > 0) {
-                        out.printf("%s : %s\n",
+                        out.println(NMsg.ofC("%s : %s",
                                 factory.ofStyled("identities", NTextStyle.primary5()),
-                                Arrays.toString(result.groups));
+                                Arrays.toString(result.groups)));
                     }
                     if (result.rights != null && result.rights.length > 0) {
-                        out.printf("%s     : %s\n",
+                        out.println(NMsg.ofC("%s     : %s",
                                 factory.ofStyled("rights", NTextStyle.primary5()),
-                                Arrays.toString(result.rights));
+                                Arrays.toString(result.rights)));
                     }
                     if (result.inherited != null && result.inherited.length > 0) {
-                        out.printf("%s  : %s\n",
+                        out.println(NMsg.ofC("%s  : %s",
                                 factory.ofStyled("inherited", NTextStyle.primary5()),
-                                Arrays.toString(result.inherited));
+                                Arrays.toString(result.inherited)));
                     } else {
-                        out.printf("%s  : %s\n",
+                        out.println(NMsg.ofC("%s  : %s",
                                 factory.ofStyled("inherited", NTextStyle.primary5()),
-                                "NONE");
+                                "NONE"));
                     }
                     if (result.remoteId != null) {
-                        out.printf("%s  : %s\n",
+                        out.println(NMsg.ofC("%s  : %s",
                                 factory.ofStyled("remote-id", NTextStyle.primary5()),
-                                result.remoteId);
+                                result.remoteId));
                     }
                     if (result.repos != null) {
                         for (RepoResult repo : result.repos) {
-                            out.printf(
-                                    "[ %s ]: \n",
+                            out.println(NMsg.ofC(
+                                    "[ %s ]: ",
                                     factory.ofStyled(repo.name, NTextStyle.primary4())
-                            );
+                            ));
                             if (repo.identities.length > 0) {
-                                out.printf("    %s : %s\n",
+                                out.println(NMsg.ofC("    %s : %s",
                                         factory.ofStyled("identities", NTextStyle.primary5()),
-                                        Arrays.toString(repo.identities));
+                                        Arrays.toString(repo.identities)));
                             }
                             if (result.rights != null && repo.rights.length > 0) {
-                                out.printf("    %s     : %s\n",
+                                out.println(NMsg.ofC("    %s     : %s",
                                         factory.ofStyled("rights", NTextStyle.primary5()),
-                                        Arrays.toString(repo.rights));
+                                        Arrays.toString(repo.rights)));
                             }
                             if (repo.inherited != null && repo.inherited.length > 0) {
-                                out.printf("    %s  : %s\n",
+                                out.println(NMsg.ofC("    %s  : %s",
                                         factory.ofStyled("inherited", NTextStyle.primary5()),
-                                        Arrays.toString(repo.inherited));
+                                        Arrays.toString(repo.inherited)));
                             }
                             if (repo.remoteId != null) {
-                                out.printf("    %s  : %s\n",
+                                out.println(NMsg.ofC("    %s  : %s",
                                         factory.ofStyled("remote-id", NTextStyle.primary5()),
-                                        repo.remoteId);
+                                        repo.remoteId));
                             }
                         }
                     }
@@ -215,7 +215,7 @@ public class WhoamiCommand extends SimpleJShellBuiltin {
                 break;
             }
             default: {
-                context.getSession().out().printlnf(result);
+                context.getSession().out().println(result);
             }
         }
     }

@@ -44,9 +44,9 @@ public class DefaultNRepositorySecurityModel {
         NSessionUtils.checkSession(repository.getWorkspace(), session);
         if (!isAllowed(right, session)) {
             if (NBlankable.isBlank(operationName)) {
-                throw new NSecurityException(session, NMsg.ofCstyle("%s not allowed!",right));
+                throw new NSecurityException(session, NMsg.ofC("%s not allowed!",right));
             } else {
-                throw new NSecurityException(session, NMsg.ofCstyle("%s : %s not allowed!",operationName,right));
+                throw new NSecurityException(session, NMsg.ofC("%s : %s not allowed!",operationName,right));
             }
         }
 //        return this;
@@ -179,7 +179,7 @@ public class DefaultNRepositorySecurityModel {
         if (NConfigsExt.of(NConfigs.of(session))
                 .getModel().createAuthenticationAgent(authenticationAgent, session) == null) {
             throw new NIllegalArgumentException(session,
-                    NMsg.ofCstyle("unsupported Authentication Agent %s", authenticationAgent)
+                    NMsg.ofC("unsupported Authentication Agent %s", authenticationAgent)
             );
         }
 

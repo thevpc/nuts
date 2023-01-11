@@ -203,7 +203,7 @@ public class BytesSizeFormat {
                             depth = -1;
                         }
                         if (depth <= 0 || depth > 9) {
-                            throw new NIllegalArgumentException(session, NMsg.ofCstyle("invalid depth %s", depth));
+                            throw new NIllegalArgumentException(session, NMsg.ofC("invalid depth %s", depth));
                         }
                     }
                     case 'F': {
@@ -221,7 +221,7 @@ public class BytesSizeFormat {
                         break;
                     }
                     default: {
-                        throw new NIllegalArgumentException(session, NMsg.ofCstyle("unsupported %s", c));
+                        throw new NIllegalArgumentException(session, NMsg.ofC("unsupported %s", c));
                     }
                 }
             }

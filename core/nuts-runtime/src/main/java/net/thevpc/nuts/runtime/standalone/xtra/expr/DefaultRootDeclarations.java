@@ -409,7 +409,7 @@ public class DefaultRootDeclarations extends NExprDeclarationsBase {
     public NOptional<NExprFctDeclaration> getFunction(String fctName, Object... args) {
         return NOptional.of(
                 defaultFunctions.get(fctName),
-                s -> NMsg.ofCstyle("function not found %s", fctName)
+                s -> NMsg.ofC("function not found %s", fctName)
         );
     }
 
@@ -417,7 +417,7 @@ public class DefaultRootDeclarations extends NExprDeclarationsBase {
     public NOptional<NExprConstructDeclaration> getConstruct(String constructName, NExprNode... args) {
         return NOptional.of(
                 defaultConstructs.get(constructName),
-                s -> NMsg.ofCstyle("construct not found %s", constructName)
+                s -> NMsg.ofC("construct not found %s", constructName)
         );
     }
 
@@ -425,7 +425,7 @@ public class DefaultRootDeclarations extends NExprDeclarationsBase {
     public NOptional<NExprOpDeclaration> getOperator(String opName, NExprOpType type, NExprNode... args) {
         return NOptional.of(
                 ops.get(new NExprOpNameAndType(opName, type)),
-                s -> NMsg.ofCstyle("operator not found %s", opName)
+                s -> NMsg.ofC("operator not found %s", opName)
         );
     }
 
@@ -433,7 +433,7 @@ public class DefaultRootDeclarations extends NExprDeclarationsBase {
     public NOptional<NExprVarDeclaration> getVar(String varName) {
         return NOptional.of(
                 defaultVars.get(varName),
-                s -> NMsg.ofCstyle("var not found %s", varName)
+                s -> NMsg.ofC("var not found %s", varName)
         );
     }
 

@@ -6,8 +6,6 @@
 package net.thevpc.nuts.toolbox.ndb.sql.postgres;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.cmdline.NCommandLine;
-import net.thevpc.nuts.io.NIOException;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.io.NPathOption;
 import net.thevpc.nuts.toolbox.ndb.sql.postgres.cmd.PostgresDumpCmd;
@@ -15,14 +13,9 @@ import net.thevpc.nuts.toolbox.ndb.sql.postgres.cmd.PostgresRestoreCmd;
 import net.thevpc.nuts.toolbox.ndb.sql.postgres.cmd.PostgresShowDatabasesCmd;
 import net.thevpc.nuts.toolbox.ndb.sql.postgres.cmd.PostgresShowTablesCmd;
 import net.thevpc.nuts.toolbox.ndb.sql.sqlbase.SqlSupport;
-import net.thevpc.nuts.toolbox.ndb.sql.nmysql.util.AtName;
 import net.thevpc.nuts.util.*;
 
-import java.io.*;
-import java.text.SimpleDateFormat;
 import java.util.*;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipInputStream;
 
 /**
  * @author thevpc
@@ -87,7 +80,7 @@ public class NPostgreSQLMain extends SqlSupport<NPostgresConfig> {
     }
 
     public String createJdbcURL(NPostgresConfig options) {
-        return NMsg.ofVstyle("jdbc:postgresql://${server}:${port}/${database}",
+        return NMsg.ofV("jdbc:postgresql://${server}:${port}/${database}",
                 NMaps.of(
                         "server", NOptional.of(options.getHost()).ifBlank("localhost").get(),
                         "port", NOptional.of(options.getPort()).mapIf(x -> x <= 0, x -> null, x -> x).ifBlank(5432).get(),

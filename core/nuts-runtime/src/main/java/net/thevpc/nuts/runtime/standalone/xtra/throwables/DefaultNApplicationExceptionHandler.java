@@ -5,7 +5,7 @@ import net.thevpc.nuts.util.*;
 import net.thevpc.nuts.boot.NBootOptionsBuilder;
 import net.thevpc.nuts.elem.NArrayElementBuilder;
 import net.thevpc.nuts.elem.NElements;
-import net.thevpc.nuts.io.NOutStream;
+import net.thevpc.nuts.io.NOutputStream;
 import net.thevpc.nuts.runtime.standalone.log.NLogUtils;
 import net.thevpc.nuts.spi.NSupportLevelContext;
 import net.thevpc.nuts.text.NTextStyle;
@@ -47,7 +47,7 @@ public class DefaultNApplicationExceptionHandler implements NApplicationExceptio
             m = throwable.toString();
         }
 
-        NOutStream fout = null;
+        NOutputStream fout = null;
         try {
             fout = NConfigs.of(session).getSystemTerminal().getErr();
             if (fm != null) {
@@ -86,7 +86,7 @@ public class DefaultNApplicationExceptionHandler implements NApplicationExceptio
                     }
                     NArrayElementBuilder e = session.eout();
                     if (e.size() > 0) {
-                        fout.printlnf(e.build());
+                        fout.println(e.build());
                         e.clear();
                     }
                     fout.flush();
@@ -102,7 +102,7 @@ public class DefaultNApplicationExceptionHandler implements NApplicationExceptio
                     }
                     NArrayElementBuilder e = session.eout();
                     if (e.size() > 0) {
-                        fout.printlnf(e.build());
+                        fout.println(e.build());
                         e.clear();
                     }
                     fout.flush();

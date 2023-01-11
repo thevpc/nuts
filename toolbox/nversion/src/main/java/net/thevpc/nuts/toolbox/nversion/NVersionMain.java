@@ -4,7 +4,7 @@ import net.thevpc.nuts.*;
 import net.thevpc.nuts.cmdline.NArg;
 import net.thevpc.nuts.cmdline.NCommandLine;
 import net.thevpc.nuts.io.NPath;
-import net.thevpc.nuts.io.NOutStream;
+import net.thevpc.nuts.io.NOutputStream;
 import net.thevpc.nuts.text.NTextStyle;
 import net.thevpc.nuts.text.NTexts;
 
@@ -39,20 +39,20 @@ public class NVersionMain implements NApplication {
         try {
             Path p = Paths.get(filePath);
             if (!Files.exists(p)) {
-                throw new NExecutionException(context.getSession(), NMsg.ofCstyle("nversion: file does not exist: %s" , p), 2);
+                throw new NExecutionException(context.getSession(), NMsg.ofC("nversion: file does not exist: %s" , p), 2);
             }
             if (Files.isDirectory(p)) {
-                throw new NExecutionException(context.getSession(), NMsg.ofCstyle("nversion: unsupported directory: %s", p), 2);
+                throw new NExecutionException(context.getSession(), NMsg.ofC("nversion: unsupported directory: %s", p), 2);
             }
             if (Files.isRegularFile(p)) {
-                throw new NExecutionException(context.getSession(), NMsg.ofCstyle("nversion: unsupported file: %s", filePath), 2);
+                throw new NExecutionException(context.getSession(), NMsg.ofC("nversion: unsupported file: %s", filePath), 2);
             }
         } catch (NExecutionException ex) {
             throw ex;
         } catch (Exception ex) {
             //
         }
-        throw new NExecutionException(context.getSession(), NMsg.ofCstyle("nversion: unsupported path: %s", filePath), 2);
+        throw new NExecutionException(context.getSession(), NMsg.ofC("nversion: unsupported path: %s", filePath), 2);
     }
 
     @Override
@@ -112,7 +112,7 @@ public class NVersionMain implements NApplication {
                     processed++;
                     value = detectVersions(NPath.of(arg, session).toAbsolute().toString(), context);
                 } catch (IOException e) {
-                    throw new NExecutionException(session, NMsg.ofCstyle("nversion: unable to detect version for %s",arg), e, 2);
+                    throw new NExecutionException(session, NMsg.ofC("nversion: unable to detect version for %s",arg), e, 2);
                 }
                 if (!value.isEmpty()) {
                     results.put(arg, value);
@@ -128,8 +128,8 @@ public class NVersionMain implements NApplication {
                 throw new NExecutionException(session, NMsg.ofPlain("nversion: options conflict --table --long"), 1);
             }
 
-            NOutStream out = session.out();
-            NOutStream err = session.out();
+            NOutputStream out = session.out();
+            NOutputStream err = session.out();
             NTexts text = NTexts.of(session);
             if (table) {
                 NPropertiesFormat tt = NPropertiesFormat.of(session).setSorted(sort);
@@ -166,24 +166,24 @@ public class NVersionMain implements NApplication {
                 for (String k : keys) {
                     if (results.size() > 1) {
                         if (longFormat || all) {
-                            out.printf("%s:%n", text.ofStyled(k, NTextStyle.primary3()));
+                            out.println(NMsg.ofC("%s:", text.ofStyled(k, NTextStyle.primary3())));
                         } else {
-                            out.printf("%s: ", text.ofStyled(k, NTextStyle.primary3()));
+                            out.print(NMsg.ofC("%s: ", text.ofStyled(k, NTextStyle.primary3())));
                         }
                     }
                     Set<VersionDescriptor> v = results.get(k);
                     for (VersionDescriptor descriptor : v) {
                         if (nameFormat) {
-                            out.printf("%s%n", text.ofStyled(descriptor.getId().getShortName(), NTextStyle.primary4()));
+                            out.println(NMsg.ofC("%s", text.ofStyled(descriptor.getId().getShortName(), NTextStyle.primary4())));
                         } else if (idFormat) {
-                            out.printf("%s%n", text.ofText(descriptor.getId()));
+                            out.println(NMsg.ofC("%s", text.ofText(descriptor.getId())));
                         } else if (longFormat) {
-                            out.printf("%s%n", text.ofText(descriptor.getId()));
+                            out.println(NMsg.ofC("%s", text.ofText(descriptor.getId())));
                             NPropertiesFormat f = NPropertiesFormat.of(session)
                                     .setSorted(true);
                             f.setValue(descriptor.getProperties()).print(out);
                         } else {
-                            out.printf("%s%n", text.ofText(descriptor.getId().getVersion()));
+                            out.println(NMsg.ofC("%s", text.ofText(descriptor.getId().getVersion())));
                         }
                         if (!all) {
                             break;
@@ -195,18 +195,18 @@ public class NVersionMain implements NApplication {
                         for (String t : unsupportedFileTypes) {
                             File f = NPath.of(t,session).toAbsolute().toFile().toFile();
                             if (f.isFile()) {
-                                err.printf("%s : unsupported file type%n", t);
+                                err.println(NMsg.ofC("%s : unsupported file type%n", t));
                             } else if (f.isDirectory()) {
-                                err.printf("%s : ignored folder%n", t);
+                                err.println(NMsg.ofC("%s : ignored folder%n", t));
                             } else {
-                                err.printf("%s : file not found%n", t);
+                                err.println(NMsg.ofC("%s : file not found%n", t));
                             }
                         }
                     }
                 }
             }
             if (!unsupportedFileTypes.isEmpty()) {
-                throw new NExecutionException(session, NMsg.ofCstyle("nversion: unsupported file types %s", unsupportedFileTypes), 3);
+                throw new NExecutionException(session, NMsg.ofC("nversion: unsupported file types %s", unsupportedFileTypes), 3);
             }
         }
     }

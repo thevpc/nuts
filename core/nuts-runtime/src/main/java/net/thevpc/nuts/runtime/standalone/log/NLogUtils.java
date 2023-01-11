@@ -75,7 +75,7 @@ public class NLogUtils {
                                 lvl.intValue() <= Level.INFO.intValue() ? NLoggerVerb.INFO :
                                         lvl.intValue() <= Level.FINE.intValue() ? NLoggerVerb.DEBUG :
                                                 NLoggerVerb.DEBUG,
-                NMsg.ofJstyle(record.getMessage(),
+                NMsg.ofJ(record.getMessage(),
                         record.getParameters()),
                 record.getMillis(),
                 record.getThrown()
@@ -230,7 +230,7 @@ public class NLogUtils {
         long time = (startTime != 0) ? (System.currentTimeMillis() - startTime) : 0;
         String modeString = NStringUtils.formatAlign(fetchMode.id(), 7, NPositionType.FIRST);
         log.with().session(session).level(lvl).verb(tracePhase).time(time)
-                .log(NMsg.ofJstyle("[{0}] {1} {2} {3} {4}",
+                .log(NMsg.ofJ("[{0}] {1} {2} {3} {4}",
                         modeString,
                         NStringUtils.formatAlign(name, 20, NPositionType.FIRST),
                         NStringUtils.formatAlign(title, 18, NPositionType.FIRST),
@@ -244,7 +244,7 @@ public class NLogUtils {
             String fetchString = "[" + NStringUtils.formatAlign(fetchMode.id(), 7, NPositionType.FIRST) + "] ";
             log.with().level(Level.FINEST)
                     .verb(tracePhase).time(time)
-                    .log(NMsg.ofJstyle("{0}{1} {2}",
+                    .log(NMsg.ofJ("{0}{1} {2}",
                             fetchString,
                             id,
                             NStringUtils.formatAlign(message, 18, NPositionType.FIRST)

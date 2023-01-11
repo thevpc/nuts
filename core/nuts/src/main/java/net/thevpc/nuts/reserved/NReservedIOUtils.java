@@ -96,10 +96,10 @@ public class NReservedIOUtils {
                         props.load(inputStream);
                         chrono.stop();
                         NDuration time = chrono.getDuration();
-                        bLog.with().level(Level.CONFIG).verb(NLoggerVerb.SUCCESS).log(NMsg.ofJstyle("load cached file from  {0}" + ((!time.isZero()) ? " (time {1})" : ""), cacheFile.getPath(), chrono));
+                        bLog.with().level(Level.CONFIG).verb(NLoggerVerb.SUCCESS).log(NMsg.ofJ("load cached file from  {0}" + ((!time.isZero()) ? " (time {1})" : ""), cacheFile.getPath(), chrono));
                         return props;
                     } catch (IOException ex) {
-                        bLog.with().level(Level.CONFIG).verb(NLoggerVerb.FAIL).log(NMsg.ofJstyle("invalid cache. Ignored {0} : {1}", cacheFile.getPath(), ex.toString()));
+                        bLog.with().level(Level.CONFIG).verb(NLoggerVerb.FAIL).log(NMsg.ofJ("invalid cache. Ignored {0} : {1}", cacheFile.getPath(), ex.toString()));
                     } finally {
                         if (inputStream != null) {
                             try {
@@ -142,18 +142,18 @@ public class NReservedIOUtils {
                                 }
                                 NDuration time = chrono.getDuration();
                                 if (cachedRecovered) {
-                                    bLog.with().level(Level.CONFIG).verb(NLoggerVerb.CACHE).log(NMsg.ofJstyle("recover cached prp file {0} (from {1})" + ((!time.isZero()) ? " (time {2})" : ""), cacheFile.getPath(), urlString, time));
+                                    bLog.with().level(Level.CONFIG).verb(NLoggerVerb.CACHE).log(NMsg.ofJ("recover cached prp file {0} (from {1})" + ((!time.isZero()) ? " (time {2})" : ""), cacheFile.getPath(), urlString, time));
                                 } else {
-                                    bLog.with().level(Level.CONFIG).verb(NLoggerVerb.CACHE).log(NMsg.ofJstyle("cache prp file {0} (from {1})" + ((!time.isZero()) ? " (time {2})" : ""), cacheFile.getPath(), urlString, time));
+                                    bLog.with().level(Level.CONFIG).verb(NLoggerVerb.CACHE).log(NMsg.ofJ("cache prp file {0} (from {1})" + ((!time.isZero()) ? " (time {2})" : ""), cacheFile.getPath(), urlString, time));
                                 }
                                 return props;
                             }
                         }
                         NDuration time = chrono.getDuration();
-                        bLog.with().level(Level.CONFIG).verb(NLoggerVerb.SUCCESS).log(NMsg.ofJstyle("load props file from  {0}" + ((!time.isZero()) ? " (time {1})" : ""), urlString, time));
+                        bLog.with().level(Level.CONFIG).verb(NLoggerVerb.SUCCESS).log(NMsg.ofJ("load props file from  {0}" + ((!time.isZero()) ? " (time {1})" : ""), urlString, time));
                     } else {
                         NDuration time = chrono.getDuration();
-                        bLog.with().level(Level.CONFIG).verb(NLoggerVerb.FAIL).log(NMsg.ofJstyle("load props file from  {0}" + ((!time.isZero()) ? " (time {1})" : ""), urlString, time));
+                        bLog.with().level(Level.CONFIG).verb(NLoggerVerb.FAIL).log(NMsg.ofJ("load props file from  {0}" + ((!time.isZero()) ? " (time {1})" : ""), urlString, time));
                     }
                 }
             } finally {
@@ -163,7 +163,7 @@ public class NReservedIOUtils {
             }
         } catch (Exception e) {
             NDuration time = chrono.getDuration();
-            bLog.with().level(Level.CONFIG).verb(NLoggerVerb.FAIL).log(NMsg.ofJstyle("load props file from  {0}" + ((!time.isZero()) ? " (time {1})" : ""), String.valueOf(url),
+            bLog.with().level(Level.CONFIG).verb(NLoggerVerb.FAIL).log(NMsg.ofJ("load props file from  {0}" + ((!time.isZero()) ? " (time {1})" : ""), String.valueOf(url),
                     time));
         }
         return props;
@@ -241,13 +241,13 @@ public class NReservedIOUtils {
             to.getParentFile().mkdirs();
         }
         if (ff == null || !ff.exists()) {
-            bLog.with().level(Level.CONFIG).verb(NLoggerVerb.FAIL).log(NMsg.ofJstyle("not found {0}", ff));
+            bLog.with().level(Level.CONFIG).verb(NLoggerVerb.FAIL).log(NMsg.ofJ("not found {0}", ff));
             throw new FileNotFoundException(ff == null ? "" : ff.getPath());
         }
         try {
             Files.copy(ff.toPath(), to.toPath(), StandardCopyOption.REPLACE_EXISTING);
         } catch (IOException ex) {
-            bLog.with().level(Level.CONFIG).verb(NLoggerVerb.FAIL).log(NMsg.ofJstyle("error copying {0} to {1} : {2}", ff, to, ex.toString()));
+            bLog.with().level(Level.CONFIG).verb(NLoggerVerb.FAIL).log(NMsg.ofJ("error copying {0} to {1} : {2}", ff, to, ex.toString()));
             throw ex;
         }
     }
@@ -262,7 +262,7 @@ public class NReservedIOUtils {
                 if (!to.getParentFile().isDirectory()) {
                     boolean mkdirs = to.getParentFile().mkdirs();
                     if (!mkdirs) {
-                        bLog.with().level(Level.CONFIG).verb(NLoggerVerb.FAIL).log(NMsg.ofJstyle("error creating folder {0}", url));
+                        bLog.with().level(Level.CONFIG).verb(NLoggerVerb.FAIL).log(NMsg.ofJ("error creating folder {0}", url));
                     }
                 }
             }
@@ -270,10 +270,10 @@ public class NReservedIOUtils {
             FileOutputStream fos = new FileOutputStream(to);
             fos.getChannel().transferFrom(rbc, 0, Long.MAX_VALUE);
         } catch (FileNotFoundException|UncheckedIOException ex) {
-            bLog.with().level(Level.CONFIG).verb(NLoggerVerb.FAIL).log(NMsg.ofJstyle("not found {0}", url));
+            bLog.with().level(Level.CONFIG).verb(NLoggerVerb.FAIL).log(NMsg.ofJ("not found {0}", url));
             throw ex;
         } catch (IOException ex) {
-            bLog.with().level(Level.CONFIG).verb(NLoggerVerb.FAIL).log(NMsg.ofJstyle("error copying {0} to {1} : {2}", url, to, ex.toString()));
+            bLog.with().level(Level.CONFIG).verb(NLoggerVerb.FAIL).log(NMsg.ofJ("error copying {0} to {1} : {2}", url, to, ex.toString()));
             throw ex;
         }
     }
@@ -297,7 +297,7 @@ public class NReservedIOUtils {
     }
 
     protected static String expandPath(String path, String base, Function<String, String> pathExpansionConverter) {
-        path = NMsg.ofVstyle(path.trim(), pathExpansionConverter).toString();
+        path = NMsg.ofV(path.trim(), pathExpansionConverter).toString();
         if (isURL(path)) {
             return path;
         }
@@ -324,7 +324,7 @@ public class NReservedIOUtils {
                     }
                 }
             } catch (Exception ex0) {
-                bLog.with().level(Level.FINEST).verb(NLoggerVerb.FAIL).log(NMsg.ofJstyle("unable to get LastModifiedTime for file : {0}", path.toString(), ex0.toString()));
+                bLog.with().level(Level.FINEST).verb(NLoggerVerb.FAIL).log(NMsg.ofJ("unable to get LastModifiedTime for file : {0}", path.toString(), ex0.toString()));
             }
         }
         return proceed;

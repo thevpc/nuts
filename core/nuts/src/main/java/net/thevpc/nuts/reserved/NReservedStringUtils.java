@@ -62,7 +62,7 @@ public class NReservedStringUtils {
             }
         }
         String finalValue = value;
-        return NOptional.ofError(session -> NMsg.ofCstyle("invalid size :%s", finalValue));
+        return NOptional.ofError(session -> NMsg.ofC("invalid size :%s", finalValue));
     }
 
     public static int firstIndexOf(String string, char[] chars) {

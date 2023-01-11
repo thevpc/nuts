@@ -46,7 +46,7 @@ public class DefaultNDeployCommand extends AbstractNDeployCommand {
             c.setBaseFile(CoreIOUtils.toPathInputSource(contentFile, c.getTemps(), true, session));
             c.setContentStreamOrPath(contentFile);
             if (!Files.exists(c.getBaseFile())) {
-                throw new NIllegalArgumentException(session, NMsg.ofCstyle("file does not exists %s", c.getBaseFile()));
+                throw new NIllegalArgumentException(session, NMsg.ofC("file does not exists %s", c.getBaseFile()));
             }
             if (c.getDescriptor() == null) {
                 NInputSource p = c.getContentStreamOrPath();
@@ -91,7 +91,7 @@ public class DefaultNDeployCommand extends AbstractNDeployCommand {
                     }
                 }
             } else {
-                throw new NIllegalArgumentException(session, NMsg.ofCstyle("path does not denote a valid file or folder %s", c.getContentStreamOrPath()));
+                throw new NIllegalArgumentException(session, NMsg.ofC("path does not denote a valid file or folder %s", c.getContentStreamOrPath()));
             }
         } catch (IOException ex) {
             throw new NIOException(session, ex);
@@ -121,16 +121,17 @@ public class DefaultNDeployCommand extends AbstractNDeployCommand {
             switch (getSession().getOutputFormat()) {
                 case PLAIN: {
                     for (Result nid : result) {
-                        getSession().getTerminal().out().resetLine().printf("%s deployed successfully as %s to %s%n",
+                        getSession().getTerminal().out().resetLine().println(NMsg.ofC(
+                                "%s deployed successfully as %s to %s",
                                 nid.source,
                                 nid.id,
                                 NTexts.of(session).ofStyled(nid.repository, NTextStyle.primary3())
-                        );
+                        ));
                     }
                     break;
                 }
                 default: {
-                    getSession().out().printlnf(result);
+                    getSession().out().println(result);
                 }
             }
         }
@@ -214,12 +215,12 @@ public class DefaultNDeployCommand extends AbstractNDeployCommand {
                     }
                 }
                 if (descriptor == null) {
-                    throw new NNotFoundException(getSession(), null, NMsg.ofCstyle("artifact not found at %s", contentFile));
+                    throw new NNotFoundException(getSession(), null, NMsg.ofC("artifact not found at %s", contentFile));
                 }
                 //remove workspace
                 descriptor = descriptor.builder().setId(descriptor.getId().builder().setRepository(null).build()).build();
                 if (NStringUtils.trim(descriptor.getId().getVersion().getValue()).endsWith(CoreNConstants.Versions.CHECKED_OUT_EXTENSION)) {
-                    throw new NIllegalArgumentException(getSession(), NMsg.ofCstyle("invalid version %s", descriptor.getId().getVersion()));
+                    throw new NIllegalArgumentException(getSession(), NMsg.ofC("invalid version %s", descriptor.getId().getVersion()));
                 }
 
                 NId effId = dws.resolveEffectiveId(descriptor, session);
@@ -318,7 +319,7 @@ public class DefaultNDeployCommand extends AbstractNDeployCommand {
                     d.disposeMultiRead();
                 }
             } else {
-                throw new NException(getSession(), NMsg.ofCstyle("unexpected type %s", descriptor.getClass().getName()));
+                throw new NException(getSession(), NMsg.ofC("unexpected type %s", descriptor.getClass().getName()));
             }
         }
     }

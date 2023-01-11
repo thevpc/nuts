@@ -109,7 +109,7 @@ public class HistoryCommand extends SimpleJShellBuiltin {
                     String historyElement = history.get(i);
                     result.put(String.valueOf(offset + i + 1), historyElement);
                 }
-                session.out().printlnf(result);
+                session.out().println(result);
                 break;
             }
             case CLEAR: {
@@ -133,7 +133,7 @@ public class HistoryCommand extends SimpleJShellBuiltin {
                         shistory.save(NPath.of(options.sval, session).toAbsolute(NLocations.of(session).getWorkspaceLocation()));
                     }
                 } catch (IOException ex) {
-                    throw new NExecutionException(session, NMsg.ofCstyle("%s", ex), ex, 100);
+                    throw new NExecutionException(session, NMsg.ofC("%s", ex), ex, 100);
                 }
                 return;
             }
@@ -146,12 +146,12 @@ public class HistoryCommand extends SimpleJShellBuiltin {
                         shistory.load(NPath.of(options.sval, session).toAbsolute(NLocations.of(session).getWorkspaceLocation()));
                     }
                 } catch (IOException ex) {
-                    throw new NExecutionException(session, NMsg.ofCstyle("%s", ex), ex, 100);
+                    throw new NExecutionException(session, NMsg.ofC("%s", ex), ex, 100);
                 }
                 return;
             }
             default: {
-                throw new NUnsupportedArgumentException(session, NMsg.ofCstyle("unsupported %s", String.valueOf(options.action)));
+                throw new NUnsupportedArgumentException(session, NMsg.ofC("unsupported %s", String.valueOf(options.action)));
             }
         }
     }

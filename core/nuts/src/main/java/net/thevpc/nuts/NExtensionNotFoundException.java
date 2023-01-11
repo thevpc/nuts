@@ -54,12 +54,12 @@ public class NExtensionNotFoundException extends NExtensionException {
     public NExtensionNotFoundException(NSession session, Class missingType, Object criteria) {
         super(session, null,
                 criteria == null ?
-                        NMsg.ofCstyle(
+                        NMsg.ofC(
                                 "extension %s could not found: type %s could not be wired",
                                 missingType.getSimpleName(),
                                 missingType.getName()
                         ) :
-                        NMsg.ofCstyle(
+                        NMsg.ofC(
                                 "extension %s could not found: type %s could not be wired with %s",
                                 missingType.getSimpleName(),
                                 missingType.getName(),

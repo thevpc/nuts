@@ -3,7 +3,7 @@ package net.thevpc.nuts.toolbox.nsh.jshell;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.cmdline.*;
 import net.thevpc.nuts.io.NPath;
-import net.thevpc.nuts.io.NOutStream;
+import net.thevpc.nuts.io.NOutputStream;
 import net.thevpc.nuts.util.NFunction;
 import net.thevpc.nuts.util.NStringUtils;
 
@@ -31,12 +31,12 @@ public abstract class AbstractJShellContext implements JShellContext {
     }
 
     @Override
-    public NOutStream out() {
+    public NOutputStream out() {
         return getSession().getTerminal().getOut();
     }
 
     @Override
-    public NOutStream err() {
+    public NOutputStream err() {
         return getSession().getTerminal().getErr();
     }
 
@@ -53,7 +53,7 @@ public abstract class AbstractJShellContext implements JShellContext {
                         if (out.available() > 0) {
                             x = out.read(buffer);
                             if (x > 0) {
-                                out().write(buffer, 0, x);
+                                out().print(buffer, 0, x);
                                 some = true;
                             }
                         }
@@ -66,7 +66,7 @@ public abstract class AbstractJShellContext implements JShellContext {
                         if (err.available() > 0) {
                             x = err.read(buffer);
                             if (x > 0) {
-                                err().write(buffer, 0, x);
+                                err().print(buffer, 0, x);
                                 some = true;
                             }
                         }
@@ -98,7 +98,7 @@ public abstract class AbstractJShellContext implements JShellContext {
     @Override
     public JShellContext setOut(PrintStream out) {
         getSession().getTerminal().setOut(
-                NOutStream.of(out, getSession())
+                NOutputStream.of(out, getSession())
         );
 //        commandContext.getTerminal().setOut(workspace.createPrintStream(out,
 //                true//formatted
@@ -108,7 +108,7 @@ public abstract class AbstractJShellContext implements JShellContext {
 
     public JShellContext setErr(PrintStream err) {
         getSession().getTerminal().setErr(
-                NOutStream.of(err, getSession())
+                NOutputStream.of(err, getSession())
         );
         return this;
     }

@@ -59,11 +59,11 @@ public class NParseEnumException extends NException {
     public NParseEnumException(NSession session, NMsg message, String invalidValue, Class enumType) {
         super(session,
                 message == null ? (
-                        NMsg.ofCstyle("invalid value %s of type %s", invalidValue, enumType.getName()))
+                        NMsg.ofC("invalid value %s of type %s", invalidValue, enumType.getName()))
                         : message
         );
         if (enumType == null || (!Enum.class.isAssignableFrom(enumType) && !NEnum.class.isAssignableFrom(enumType))) {
-            throw new NIllegalArgumentException(session, NMsg.ofCstyle("failed creating NutsParseEnumException for %s", (enumType == null ? null : enumType.getName())));
+            throw new NIllegalArgumentException(session, NMsg.ofC("failed creating NutsParseEnumException for %s", (enumType == null ? null : enumType.getName())));
         }
         this.enumType = enumType;
         this.invalidValue = invalidValue;

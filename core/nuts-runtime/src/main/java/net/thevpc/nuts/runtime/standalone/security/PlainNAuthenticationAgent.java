@@ -80,6 +80,6 @@ public class PlainNAuthenticationAgent implements NAuthenticationAgent {
                 }
             }
         }
-        throw new NSecurityException(session, NMsg.ofCstyle("credential id must start with '%s:'", getId()));
+        throw new NSecurityException(session, NMsg.ofC("credential id must start with '%s:'", getId()));
     }
 }

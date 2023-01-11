@@ -73,14 +73,14 @@ public class DefaultNDeployRepositoryCommand extends AbstractNDeployRepositoryCo
                     xrepo.getIndexStore().revalidate(this.getId(), session);
                 } catch (NException ex) {
                     _LOGOP(session).level(Level.FINEST).verb(NLoggerVerb.FAIL)
-                            .log(NMsg.ofJstyle("error revalidating Indexer for {0} : {1}", getRepo().getName(), ex));
+                            .log(NMsg.ofJ("error revalidating Indexer for {0} : {1}", getRepo().getName(), ex));
                 }
             }
             _LOGOP(session).level(Level.FINEST).verb(NLoggerVerb.SUCCESS)
-                    .log(NMsg.ofJstyle("{0} deploy {1}", NStringUtils.formatAlign(getRepo().getName(), 20, NPositionType.FIRST), this.getId()));
+                    .log(NMsg.ofJ("{0} deploy {1}", NStringUtils.formatAlign(getRepo().getName(), 20, NPositionType.FIRST), this.getId()));
         } catch (RuntimeException ex) {
             _LOGOP(session).level(Level.FINEST).verb(NLoggerVerb.FAIL)
-                    .log(NMsg.ofJstyle("{0} deploy {1}", NStringUtils.formatAlign(getRepo().getName(), 20, NPositionType.FIRST), this.getId()));
+                    .log(NMsg.ofJ("{0} deploy {1}", NStringUtils.formatAlign(getRepo().getName(), 20, NPositionType.FIRST), this.getId()));
             throw ex;
         }
         return this;

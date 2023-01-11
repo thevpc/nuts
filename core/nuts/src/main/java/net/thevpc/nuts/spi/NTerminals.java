@@ -27,7 +27,7 @@
 package net.thevpc.nuts.spi;
 
 import net.thevpc.nuts.NExtensions;
-import net.thevpc.nuts.io.NOutStream;
+import net.thevpc.nuts.io.NOutputStream;
 import net.thevpc.nuts.NSession;
 import net.thevpc.nuts.io.NSessionTerminal;
 
@@ -79,7 +79,7 @@ public interface NTerminals extends NComponent {
      * @param session session
      * @return new terminal
      */
-    NSessionTerminal createTerminal(InputStream in, NOutStream out, NOutStream err, NSession session);
+    NSessionTerminal createTerminal(InputStream in, NOutputStream out, NOutputStream err, NSession session);
 
     /**
      * return new terminal bound to the given parent terminal and session.

@@ -121,11 +121,11 @@ public final class CoreServiceUtils {
             try {
                 c = Class.forName(n, false, classLoader);
             } catch (ClassNotFoundException x) {
-                throw new NException(session, NMsg.ofCstyle("unable to load service class %s", n), x);
+                throw new NException(session, NMsg.ofC("unable to load service class %s", n), x);
             }
             if (!service.isAssignableFrom(c)) {
                 throw new NException(session,
-                        NMsg.ofCstyle("not a valid type %s <> %s", c, service));
+                        NMsg.ofC("not a valid type %s <> %s", c, service));
             }
             classes.add(c);
         }

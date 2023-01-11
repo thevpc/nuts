@@ -47,7 +47,7 @@ public class NAssert {
 
 
     public static <T> T requireNonNull(T object, String name, NSession session) {
-        return requireNonNull(object, () -> NMsg.ofCstyle("%s should not be null", createName(name)), session);
+        return requireNonNull(object, () -> NMsg.ofC("%s should not be null", createName(name)), session);
     }
 
     public static <T> T requireNonNull(T object, NSession session) {
@@ -60,7 +60,7 @@ public class NAssert {
 
     public static void requireNull(Object object, String name, NSession session) {
         if (object != null) {
-            throw creatIllegalArgumentException(session, NMsg.ofCstyle("%s must be null", createName(name)));
+            throw creatIllegalArgumentException(session, NMsg.ofC("%s must be null", createName(name)));
         }
     }
 
@@ -73,7 +73,7 @@ public class NAssert {
 
     public static <T> T requireNonBlank(T object, String name, NSession session) {
         if (NBlankable.isBlank(object)) {
-            throw creatIllegalArgumentException(session, NMsg.ofCstyle("%s should not be blank", createName(name)));
+            throw creatIllegalArgumentException(session, NMsg.ofC("%s should not be blank", createName(name)));
         }
         return object;
     }

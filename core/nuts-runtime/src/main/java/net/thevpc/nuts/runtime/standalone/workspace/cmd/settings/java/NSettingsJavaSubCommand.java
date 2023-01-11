@@ -9,7 +9,7 @@ import net.thevpc.nuts.*;
 import net.thevpc.nuts.cmdline.NCommandLine;
 import net.thevpc.nuts.format.NMutableTableModel;
 import net.thevpc.nuts.format.NTableFormat;
-import net.thevpc.nuts.io.NOutStream;
+import net.thevpc.nuts.io.NOutputStream;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.AbstractNSettingsSubCommand;
 
 import java.util.ArrayList;
@@ -27,9 +27,9 @@ public class NSettingsJavaSubCommand extends AbstractNSettingsSubCommand {
         if (autoSave == null) {
             autoSave = false;
         }
-        NOutStream out = session.out();
+        NOutputStream out = session.out();
         NConfigs conf = NConfigs.of(session);
-        NPlatformManager platforms = NEnvs.of(session).platforms();
+        NPlatforms platforms = NPlatforms.of(session);
         if (cmdLine.next("add java").isPresent()) {
             if (cmdLine.next("--search").isPresent()) {
                 List<String> extraLocations = new ArrayList<>();

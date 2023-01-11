@@ -101,7 +101,7 @@ public class LocalTomcatConfigService extends LocalTomcatServiceBase {
     }
 
     @Override
-    public LocalTomcatConfigService print(NOutStream out) {
+    public LocalTomcatConfigService print(NOutputStream out) {
         Map<String, Object> result = new LinkedHashMap<>();
         result.put("config-name", getName());
         result.put("version", getValidCatalinaVersion());
@@ -250,15 +250,15 @@ public class LocalTomcatConfigService extends LocalTomcatServiceBase {
         if (getSession().isPlainOut()) {
             switch (getStatus()) {
                 case RUNNING: {
-                    getSession().out().printf("%s Tomcat %s.\n", getFormattedPrefix(getName()), getFormattedSuccess("running"));
+                    getSession().out().print(NMsg.ofC("%s Tomcat %s.\n", getFormattedPrefix(getName()), getFormattedSuccess("running")));
                     break;
                 }
                 case STOPPED: {
-                    getSession().out().printf("%s Tomcat %s.\n", getFormattedPrefix(getName()), getFormattedError("stopped"));
+                    getSession().out().print(NMsg.ofC("%s Tomcat %s.\n", getFormattedPrefix(getName()), getFormattedError("stopped")));
                     break;
                 }
                 case OUT_OF_MEMORY: {
-                    getSession().out().printf("%s Tomcat %s.\n", getFormattedPrefix(getName()), getFormattedError("out-of-memory"));
+                    getSession().out().print(NMsg.ofC("%s Tomcat %s.\n", getFormattedPrefix(getName()), getFormattedError("out-of-memory")));
                     break;
                 }
             }
@@ -357,7 +357,7 @@ public class LocalTomcatConfigService extends LocalTomcatServiceBase {
         }
         if (catalinaBaseUpdated) {
             if (getSession().isPlainOut()) {
-                getSession().out().printf("%s updated catalina base %s\n", getFormattedPrefix(getName()), catalinaBase);
+                getSession().out().print(NMsg.ofC("%s updated catalina base %s\n", getFormattedPrefix(getName()), catalinaBase));
             }
             return true;
         }
@@ -405,7 +405,7 @@ public class LocalTomcatConfigService extends LocalTomcatServiceBase {
         NElements elem = NElements.of(session);
         if ("start".equals(catalinaCommand)) {
             if (session.isPlainOut()) {
-                session.out().printf("%s starting Tomcat on port " + getHttpConnectorPort() + ". CMD=%s.\n", getFormattedPrefix(getName()), b.toString());
+                session.out().print(NMsg.ofC("%s starting Tomcat on port " + getHttpConnectorPort() + ". CMD=%s.\n", getFormattedPrefix(getName()), b.toString()));
                 b.getResult();
             } else {
                 b.grabOutputString();
@@ -421,7 +421,7 @@ public class LocalTomcatConfigService extends LocalTomcatServiceBase {
             }
         } else if ("stop".equals(catalinaCommand)) {
             if (session.isPlainOut()) {
-                session.out().printf("%s stopping Tomcat. CMD=%s.\n", getFormattedPrefix(getName()), b.toString());
+                session.out().print(NMsg.ofC("%s stopping Tomcat. CMD=%s.\n", getFormattedPrefix(getName()), b.toString()));
                 b.getResult();
             } else {
                 b.grabOutputString();
@@ -454,7 +454,7 @@ public class LocalTomcatConfigService extends LocalTomcatServiceBase {
         if (jpsResult != null) {
             NSession session = getSession();
             if (session.isPlainOut()) {
-                session.out().printf("%s Tomcat already started on port " + getHttpConnectorPort() + ".\n", getFormattedPrefix(getName()));
+                session.out().print(NMsg.ofC("%s Tomcat already started on port " + getHttpConnectorPort() + ".\n", getFormattedPrefix(getName())));
             } else {
                 session.eout().add(
                         NElements.of(session).ofObject()
@@ -547,9 +547,9 @@ public class LocalTomcatConfigService extends LocalTomcatServiceBase {
                             @Override
                             public void onInstall(NInstallEvent event) {
                                 if (getSession().isPlainOut()) {
-                                    getSession().out().printf("%s Tomcat installed to catalina home %s\n", getFormattedPrefix(getName()),
+                                    getSession().out().print(NMsg.ofC("%s Tomcat installed to catalina home %s\n", getFormattedPrefix(getName()),
                                             event.getDefinition().getInstallInformation().get(session).getInstallFolder()
-                                    );
+                                    ));
                                 }
                             }
                         })).getResult().required();
@@ -569,7 +569,7 @@ public class LocalTomcatConfigService extends LocalTomcatServiceBase {
             }
             NPath c = getDefaulDeployFolder(domain).resolve(contextName + ".war");
             if (getSession().isPlainOut()) {
-                getSession().out().printf("%s deploy file file %s to %s.\n", getFormattedPrefix(getName()), file, c);
+                getSession().out().print(NMsg.ofC("%s deploy file file %s to %s.\n", getFormattedPrefix(getName()), file, c));
             }
             NCp.of(getSession()).from(file).to(c).run();
         } else {
@@ -580,7 +580,7 @@ public class LocalTomcatConfigService extends LocalTomcatServiceBase {
     public boolean stop() {
         if (getRunningTomcat() == null) {
             if (getSession().isPlainOut()) {
-                getSession().out().printf("%s Tomcat already stopped.\n", getFormattedPrefix(getName()));
+                getSession().out().print(NMsg.ofC("%s Tomcat already stopped.\n", getFormattedPrefix(getName())));
             }
             return false;
         }
@@ -612,7 +612,7 @@ public class LocalTomcatConfigService extends LocalTomcatServiceBase {
     public boolean restart(String[] deployApps, boolean deleteLog) {
         stop();
         if (getRunningTomcat() != null) {
-            throw new NExecutionException(getSession(), NMsg.ofCstyle("server %s is running. it cannot be stopped!", getName()), 2);
+            throw new NExecutionException(getSession(), NMsg.ofC("server %s is running. it cannot be stopped!", getName()), 2);
         }
         start(deployApps, deleteLog);
         return true;
@@ -625,7 +625,7 @@ public class LocalTomcatConfigService extends LocalTomcatServiceBase {
         NElements elem = NElements.of(session);
         if (y == AppStatus.RUNNING) {
             if (session.isPlainOut()) {
-                session.out().printf("%s Tomcat started on port " + getHttpConnectorPort() + ".\n", getFormattedPrefix(getName()));
+                session.out().print(NMsg.ofC("%s Tomcat started on port " + getHttpConnectorPort() + ".\n", getFormattedPrefix(getName())));
             } else {
                 session.eout().add(elem
                         .ofObject()
@@ -641,7 +641,7 @@ public class LocalTomcatConfigService extends LocalTomcatServiceBase {
             RunningTomcat ps = getRunningTomcat();
             if (ps != null) {
                 if (session.isPlainOut()) {
-                    session.out().printf("%s Tomcat started on port" + getHttpConnectorPort() + " .\n", getFormattedPrefix(getName()));
+                    session.out().print(NMsg.ofC("%s Tomcat started on port" + getHttpConnectorPort() + " .\n", getFormattedPrefix(getName())));
                     return AppStatus.RUNNING;
                 } else {
                     session.eout().add(elem
@@ -674,7 +674,7 @@ public class LocalTomcatConfigService extends LocalTomcatServiceBase {
             y = getStatus(domain, app);
             if (y == AppStatus.RUNNING) {
                 if (session.isPlainOut()) {
-                    session.out().printf("%s Tomcat started on port " + getHttpConnectorPort() + ".\n", getFormattedPrefix(getName()));
+                    session.out().print(NMsg.ofC("%s Tomcat started on port " + getHttpConnectorPort() + ".\n", getFormattedPrefix(getName())));
                 } else {
                     session.eout().add(elem
                             .ofObject()
@@ -691,7 +691,7 @@ public class LocalTomcatConfigService extends LocalTomcatServiceBase {
         }
         if (y == AppStatus.OUT_OF_MEMORY) {
             if (session.isPlainOut()) {
-                session.out().printf("%s Tomcat out of memory.\n", getFormattedPrefix(getName()));
+                session.out().print(NMsg.ofC("%s Tomcat out of memory.\n", getFormattedPrefix(getName())));
             } else {
                 session.eout().add(elem
                         .ofObject()
@@ -714,7 +714,7 @@ public class LocalTomcatConfigService extends LocalTomcatServiceBase {
         NSession session = getSession();
         if (ps == null) {
             if (session.isPlainOut()) {
-                session.out().printf("%s Tomcat stopped.\n", getFormattedPrefix(getName()));
+                session.out().print(NMsg.ofC("%s Tomcat stopped.\n", getFormattedPrefix(getName())));
             } else {
                 session.eout().add(NElements.of(session)
                         .ofObject()
@@ -729,7 +729,7 @@ public class LocalTomcatConfigService extends LocalTomcatServiceBase {
             return true;
         }
         for (int i = 0; i < timeout; i++) {
-            session.out().printf("%s waiting Tomcat process to die.\n", getFormattedPrefix(getName()));
+            session.out().print(NMsg.ofC("%s waiting Tomcat process to die.\n", getFormattedPrefix(getName())));
             try {
                 Thread.sleep(1000);
             } catch (InterruptedException e) {
@@ -738,7 +738,7 @@ public class LocalTomcatConfigService extends LocalTomcatServiceBase {
             ps = getRunningTomcat();
             if (ps == null) {
                 if (session.isPlainOut()) {
-                    session.out().printf("%s Tomcat stopped.\n", getFormattedPrefix(getName()));
+                    session.out().print(NMsg.ofC("%s Tomcat stopped.\n", getFormattedPrefix(getName())));
                 } else {
                     session.eout().add(NElements.of(session)
                             .ofObject()
@@ -760,7 +760,7 @@ public class LocalTomcatConfigService extends LocalTomcatServiceBase {
 
                 if (NPs.of(session).killProcess(ps.getPid())) {
                     if (session.isPlainOut()) {
-                        session.out().printf("%s Tomcat process killed (%s).\n", getFormattedPrefix(getName()), ps.getPid());
+                        session.out().print(NMsg.ofC("%s Tomcat process killed (%s).\n", getFormattedPrefix(getName()), ps.getPid()));
                     } else {
                         session.eout().add(NElements.of(session)
                                 .ofObject()
@@ -776,7 +776,7 @@ public class LocalTomcatConfigService extends LocalTomcatServiceBase {
                     return true;
                 } else {
                     if (session.isPlainOut()) {
-                        session.out().printf("%s Tomcat process could not be killed ( %s).\n", getFormattedPrefix(getName()), ps.getPid());
+                        session.out().print(NMsg.ofC("%s Tomcat process could not be killed ( %s).\n", getFormattedPrefix(getName()), ps.getPid()));
                     } else {
                         session.eout().add(NElements.of(session)
                                 .ofObject()
@@ -797,7 +797,7 @@ public class LocalTomcatConfigService extends LocalTomcatServiceBase {
         ps = getRunningTomcat();
         if (ps != null) {
             if (session.isPlainOut()) {
-                session.out().printf("%s Tomcat process could not be terminated (%s).\n", getFormattedPrefix(getName()), ps.getPid());
+                session.out().print(NMsg.ofC("%s Tomcat process could not be terminated (%s).\n", getFormattedPrefix(getName()), ps.getPid()));
             } else {
                 session.eout().add(NElements.of(session)
                         .ofObject()
@@ -813,7 +813,7 @@ public class LocalTomcatConfigService extends LocalTomcatServiceBase {
             return true;
         }
         if (session.isPlainOut()) {
-            session.out().printf("%s\n", getFormattedError("Tomcat stopped"));
+            session.out().print(NMsg.ofC("%s\n", getFormattedError("Tomcat stopped")));
         } else {
             session.eout().add(NElements.of(session)
                     .ofObject()
@@ -925,7 +925,7 @@ public class LocalTomcatConfigService extends LocalTomcatServiceBase {
             switch (mode) {
                 case OPEN_OR_ERROR: {
                     if (a == null) {
-                        throw new NExecutionException(getSession(), NMsg.ofCstyle("app not found : %s", appName), 2);
+                        throw new NExecutionException(getSession(), NMsg.ofC("app not found : %s", appName), 2);
                     }
                     break;
                 }
@@ -934,7 +934,7 @@ public class LocalTomcatConfigService extends LocalTomcatServiceBase {
                         a = new LocalTomcatAppConfig();
                         getConfig().getApps().put(appName, a);
                     } else {
-                        throw new NExecutionException(getSession(), NMsg.ofCstyle("app already found : %s", appName), 2);
+                        throw new NExecutionException(getSession(), NMsg.ofC("app already found : %s", appName), 2);
                     }
                     break;
                 }
@@ -961,7 +961,7 @@ public class LocalTomcatConfigService extends LocalTomcatServiceBase {
             switch (mode) {
                 case OPEN_OR_ERROR: {
                     if (a == null) {
-                        throw new NExecutionException(getSession(), NMsg.ofCstyle("domain not found : %s", domainName), 2);
+                        throw new NExecutionException(getSession(), NMsg.ofC("domain not found : %s", domainName), 2);
                     }
                     break;
                 }
@@ -970,7 +970,7 @@ public class LocalTomcatConfigService extends LocalTomcatServiceBase {
                         a = new LocalTomcatDomainConfig();
                         getConfig().getDomains().put(domainName, a);
                     } else {
-                        throw new NExecutionException(getSession(), NMsg.ofCstyle("domain already found : %s", domainName), 2);
+                        throw new NExecutionException(getSession(), NMsg.ofC("domain already found : %s", domainName), 2);
                     }
                     break;
                 }
@@ -1003,7 +1003,7 @@ public class LocalTomcatConfigService extends LocalTomcatServiceBase {
         NPath file = getLogFolder().resolve("catalina.out");
         if (file.isRegularFile()) {
             if (getSession().isPlainOut()) {
-                getSession().out().printf("%s delete log file %s.\n", getFormattedPrefix(getName()), file);
+                getSession().out().print(NMsg.ofC("%s delete log file %s.\n", getFormattedPrefix(getName()), file));
             }
             file.delete();
         }
@@ -1015,7 +1015,7 @@ public class LocalTomcatConfigService extends LocalTomcatServiceBase {
             tempFolder.stream()
                     .forEach(file -> {
                         if (getSession().isPlainOut()) {
-                            getSession().out().printf("%s delete temp file %s.\n", getFormattedPrefix(getName()), file);
+                            getSession().out().print(NMsg.ofC("%s delete temp file %s.\n", getFormattedPrefix(getName()), file));
                         }
                         file.delete();
                     });
@@ -1028,7 +1028,7 @@ public class LocalTomcatConfigService extends LocalTomcatServiceBase {
             workFolder.stream()
                     .forEach(file -> {
                         if (getSession().isPlainOut()) {
-                            getSession().out().printf("%s delete work file %s.\n", getFormattedPrefix(getName()), file);
+                            getSession().out().print(NMsg.ofC("%s delete work file %s.\n", getFormattedPrefix(getName()), file));
                         }
                         file.delete();
                     });
@@ -1066,7 +1066,7 @@ public class LocalTomcatConfigService extends LocalTomcatServiceBase {
                                     || n.endsWith(".log")) {
                                 //this is a log file, will delete it
                                 if (getSession().isPlainOut()) {
-                                    getSession().out().printf("%s delete log file %s.\n", getFormattedPrefix(getName()), file);
+                                    getSession().out().print(NMsg.ofC("%s delete log file %s.\n", getFormattedPrefix(getName()), file));
                                 }
                                 file.delete();
                             }
@@ -1262,7 +1262,7 @@ public class LocalTomcatConfigService extends LocalTomcatServiceBase {
             }
         } catch (SAXException | IOException | ParserConfigurationException | TransformerException ex) {
             if (getSession().isPlainOut()) {
-                getSession().err().printf("```error ERROR:``` : %s%n", ex);
+                getSession().err().println((NMsg.ofC("```error ERROR:``` : %s", ex)));
             }
             //
         }

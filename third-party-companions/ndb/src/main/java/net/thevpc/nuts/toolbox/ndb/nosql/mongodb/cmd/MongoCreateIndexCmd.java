@@ -28,7 +28,7 @@ public class MongoCreateIndexCmd extends CreateIndexCmd<NMongoConfig> {
                     docSet.putAll(Document.parse(s));
                 }
             }
-            session.out().printlnf(mongoCollection.createIndex(docSet));
+            session.out().println(mongoCollection.createIndex(docSet));
         });
     }
 

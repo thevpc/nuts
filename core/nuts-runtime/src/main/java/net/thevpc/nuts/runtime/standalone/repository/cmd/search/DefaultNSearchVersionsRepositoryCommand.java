@@ -59,7 +59,7 @@ public class DefaultNSearchVersionsRepositoryCommand extends AbstractNSearchVers
                         d = xrepo.getIndexStore().searchVersions(id, session);
                     } catch (NException ex) {
                         _LOGOP(session).level(Level.FINEST).verb(NLoggerVerb.FAIL)
-                                .log(NMsg.ofJstyle("error finding version with Indexer for {0} : {1}", getRepo().getName(), ex));
+                                .log(NMsg.ofJ("error finding version with Indexer for {0} : {1}", getRepo().getName(), ex));
                     }
                     if (d != null && filter != null) {
                         resultList.add(
@@ -79,7 +79,7 @@ public class DefaultNSearchVersionsRepositoryCommand extends AbstractNSearchVers
             return this;
         } catch (RuntimeException ex) {
             _LOGOP(session).level(Level.FINEST).verb(NLoggerVerb.FAIL)
-                    .log(NMsg.ofJstyle("[{0}] {1} {2} {3}",
+                    .log(NMsg.ofJ("[{0}] {1} {2} {3}",
                             NStringUtils.formatAlign(getFetchMode().toString(), 7, NPositionType.FIRST),
                             NStringUtils.formatAlign(getRepo().getName(), 20, NPositionType.FIRST),
                             NStringUtils.formatAlign("Fetch versions for", 24, NPositionType.FIRST),

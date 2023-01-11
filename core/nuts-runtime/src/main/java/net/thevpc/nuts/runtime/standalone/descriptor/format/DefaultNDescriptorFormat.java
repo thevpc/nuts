@@ -3,7 +3,7 @@ package net.thevpc.nuts.runtime.standalone.descriptor.format;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.cmdline.NCommandLine;
 import net.thevpc.nuts.elem.NElements;
-import net.thevpc.nuts.io.NOutStream;
+import net.thevpc.nuts.io.NOutputStream;
 import net.thevpc.nuts.runtime.standalone.format.DefaultFormatBase;
 import net.thevpc.nuts.spi.NSupportLevelContext;
 import net.thevpc.nuts.text.NTextCode;
@@ -65,7 +65,7 @@ public class DefaultNDescriptorFormat extends DefaultFormatBase<NDescriptorForma
     }
 
     @Override
-    public void print(NOutStream out) {
+    public void print(NOutputStream out) {
         checkSession();
         if (isNtf()) {
             ByteArrayOutputStream os=new ByteArrayOutputStream();

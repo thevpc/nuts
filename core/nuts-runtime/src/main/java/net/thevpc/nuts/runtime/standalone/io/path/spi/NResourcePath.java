@@ -47,7 +47,7 @@ public class NResourcePath implements NPathSPI {
                 idsStr = path.substring("nuts-resource://(".length(), x);
                 location = path.substring(x + 1);
             } else {
-                throw new NIllegalArgumentException(session, NMsg.ofCstyle("invalid path %s", path));
+                throw new NIllegalArgumentException(session, NMsg.ofC("invalid path %s", path));
             }
         } else if (path.startsWith("nuts-resource://")) {
             int x = path.indexOf('/', "nuts-resource://".length());
@@ -55,10 +55,10 @@ public class NResourcePath implements NPathSPI {
                 idsStr = path.substring("nuts-resource://".length(), x);
                 location = path.substring(x);
             } else {
-                throw new NIllegalArgumentException(session, NMsg.ofCstyle("invalid path %s", path));
+                throw new NIllegalArgumentException(session, NMsg.ofC("invalid path %s", path));
             }
         } else {
-            throw new NIllegalArgumentException(session, NMsg.ofCstyle("invalid path %s", path));
+            throw new NIllegalArgumentException(session, NMsg.ofC("invalid path %s", path));
         }
         this.ids = StringTokenizerUtils.splitSemiColon(idsStr).stream().map(x -> {
             x = x.trim();
@@ -201,7 +201,7 @@ public class NResourcePath implements NPathSPI {
         if (up != null) {
             return up.toURL();
         }
-        throw new NIOException(getSession(), NMsg.ofCstyle("unable to resolve url from %s", toString()));
+        throw new NIOException(getSession(), NMsg.ofC("unable to resolve url from %s", toString()));
     }
 
     @Override
@@ -210,7 +210,7 @@ public class NResourcePath implements NPathSPI {
         if (up != null) {
             return up.toFile();
         }
-        throw new NIOException(getSession(), NMsg.ofCstyle("unable to resolve file from %s", toString()));
+        throw new NIOException(getSession(), NMsg.ofC("unable to resolve file from %s", toString()));
     }
 
     @Override
@@ -287,7 +287,7 @@ public class NResourcePath implements NPathSPI {
     public InputStream getInputStream(NPath basePath, NPathOption... options) {
         NPath up = toURLPath();
         if (up == null) {
-            throw new NIOException(getSession(), NMsg.ofCstyle("unable to resolve input stream %s", toString()));
+            throw new NIOException(getSession(), NMsg.ofC("unable to resolve input stream %s", toString()));
         }
         return up.getInputStream();
     }
@@ -296,7 +296,7 @@ public class NResourcePath implements NPathSPI {
     public OutputStream getOutputStream(NPath basePath, NPathOption... options) {
         NPath up = toURLPath();
         if (up == null) {
-            throw new NIOException(getSession(), NMsg.ofCstyle("unable to resolve output stream %s", toString()));
+            throw new NIOException(getSession(), NMsg.ofC("unable to resolve output stream %s", toString()));
         }
         return up.getOutputStream();
     }
@@ -310,7 +310,7 @@ public class NResourcePath implements NPathSPI {
     public void delete(NPath basePath, boolean recurse) {
         NPath up = toURLPath();
         if (up == null) {
-            throw new NIOException(getSession(), NMsg.ofCstyle("unable to delete %s", toString()));
+            throw new NIOException(getSession(), NMsg.ofC("unable to delete %s", toString()));
         }
         up.delete(recurse);
     }
@@ -319,7 +319,7 @@ public class NResourcePath implements NPathSPI {
     public void mkdir(boolean parents, NPath basePath) {
         NPath up = toURLPath();
         if (up == null) {
-            throw new NIOException(getSession(), NMsg.ofCstyle("unable to mkdir %s", toString()));
+            throw new NIOException(getSession(), NMsg.ofC("unable to mkdir %s", toString()));
         }
         up.mkdir(parents);
     }
@@ -454,7 +454,7 @@ public class NResourcePath implements NPathSPI {
 
     @Override
     public void moveTo(NPath basePath, NPath other, NPathOption... options) {
-        throw new NIOException(session, NMsg.ofCstyle("unable to move %s", this));
+        throw new NIOException(session, NMsg.ofC("unable to move %s", this));
     }
 
     @Override
@@ -564,7 +564,7 @@ public class NResourcePath implements NPathSPI {
         }
 
         @Override
-        public void print(NOutStream out) {
+        public void print(NOutputStream out) {
             out.print(asFormattedString());
         }
 

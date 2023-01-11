@@ -53,7 +53,7 @@ public class NUnsupportedEnumException extends NException {
      */
     public NUnsupportedEnumException(NSession session, NMsg message, Enum enumValue) {
         super(session,
-                message != null ? message : NMsg.ofCstyle(
+                message != null ? message : NMsg.ofC(
                         "unexpected/unsupported enum %s of type %s", enumValue, enumValue.getClass().getName())
         );
         this.enumValue = enumValue;
@@ -70,7 +70,7 @@ public class NUnsupportedEnumException extends NException {
     public NUnsupportedEnumException(NSession session, NMsg message, String stringValue, Enum enumValue) {
         super(session,
                 message == null ? (
-                        NMsg.ofCstyle("unexpected/unsupported value %s of type %s", stringValue, enumValue.getClass().getName()))
+                        NMsg.ofC("unexpected/unsupported value %s of type %s", stringValue, enumValue.getClass().getName()))
                         : message
         );
     }

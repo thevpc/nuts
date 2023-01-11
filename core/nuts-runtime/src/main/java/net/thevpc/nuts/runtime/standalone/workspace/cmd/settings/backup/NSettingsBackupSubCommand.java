@@ -99,7 +99,7 @@ public class NSettingsBackupSubCommand extends AbstractNSettingsSubCommand {
                 file += ".zip";
             }
             if (!Files.isRegularFile(Paths.get(file))) {
-                commandLine.throwMissingArgument(NMsg.ofCstyle("not a valid file : %s", file));
+                commandLine.throwMissingArgument(NMsg.ofC("not a valid file : %s", file));
             }
             if (commandLine.isExecMode()) {
                 NObjectElement[] nutsWorkspaceConfigRef = new NObjectElement[1];
@@ -124,14 +124,14 @@ public class NSettingsBackupSubCommand extends AbstractNSettingsSubCommand {
                             }
                         });
                 if (nutsWorkspaceConfigRef[0] == null) {
-                    commandLine.throwMissingArgument(NMsg.ofCstyle("not a valid file : %s", file));
+                    commandLine.throwMissingArgument(NMsg.ofC("not a valid file : %s", file));
                 }
                 if (ws == null || ws.isEmpty()) {
                     NElements prv = elem.setSession(session);
                     ws = nutsWorkspaceConfigRef[0].getString("name").get(session);
                 }
                 if (ws == null || ws.isEmpty()) {
-                    commandLine.throwMissingArgument(NMsg.ofCstyle("not a valid file : %s", file));
+                    commandLine.throwMissingArgument(NMsg.ofC("not a valid file : %s", file));
                 }
                 String platformHomeFolder = NPlatformUtils.getWorkspaceLocation(null,
                         NConfigs.of(session).stored().isGlobal(), ws);
@@ -140,7 +140,7 @@ public class NSettingsBackupSubCommand extends AbstractNSettingsSubCommand {
                         .to(NPath.of(platformHomeFolder,session))
                         .setSkipRoot(true).run();
                 if (session.isPlainTrace()) {
-                    session.out().printf("restore %s to %s %n", file, platformHomeFolder);
+                    session.out().println(NMsg.ofC("restore %s to %s", file, platformHomeFolder));
                 }
             }
             return true;

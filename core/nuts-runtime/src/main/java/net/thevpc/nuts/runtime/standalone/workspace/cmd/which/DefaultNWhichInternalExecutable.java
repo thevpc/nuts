@@ -9,7 +9,7 @@ import net.thevpc.nuts.*;
 import net.thevpc.nuts.cmdline.NArg;
 import net.thevpc.nuts.cmdline.NCommandLine;
 import net.thevpc.nuts.elem.NElements;
-import net.thevpc.nuts.io.NOutStream;
+import net.thevpc.nuts.io.NOutputStream;
 import net.thevpc.nuts.runtime.standalone.app.util.NAppUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.exec.DefaultInternalNExecutableCommand;
 import net.thevpc.nuts.text.NTextStyle;
@@ -60,7 +60,7 @@ public class DefaultNWhichInternalExecutable extends DefaultInternalNExecutableC
         NAssert.requireNonBlank(commands, "commands", session);
         NTexts factory = NTexts.of(session);
         for (String arg : commands) {
-            NOutStream out = session.out();
+            NOutputStream out = session.out();
             NElements elem = NElements.of(session);
             try {
                 NExecutableInformation p = execCommand.copy().setSession(session).clearCommand().configure(false, arg).which();
@@ -68,13 +68,13 @@ public class DefaultNWhichInternalExecutable extends DefaultInternalNExecutableC
                 switch (p.getType()) {
                     case SYSTEM: {
                         if (session.isPlainOut()) {
-                            out.printf("%s : %s %s%n",
+                            out.println(NMsg.ofC("%s : %s %s",
                                     factory.ofStyled(arg, NTextStyle.primary4()),
                                     factory.ofStyled("system command", NTextStyle.primary6())
-                                    , p.getDescription());
+                                    , p.getDescription()));
 
                         } else {
-                            session.out().printlnf(
+                            session.out().println(
                                     elem.ofObject()
                                             .set("name", arg)
                                             .set("type", "system-command")
@@ -86,14 +86,14 @@ public class DefaultNWhichInternalExecutable extends DefaultInternalNExecutableC
                     }
                     case ALIAS: {
                         if (session.isPlainOut()) {
-                            out.printf("%s : %s (owner %s ) : %s%n",
+                            out.println(NMsg.ofC("%s : %s (owner %s ) : %s",
                                     factory.ofStyled(arg, NTextStyle.primary4()),
                                     factory.ofStyled("nuts alias", NTextStyle.primary6()),
                                     p.getId(),
                                     NCommandLine.of(NCustomCommandManager.of(session).findCommand(p.getName()).getCommand())
-                            );
+                            ));
                         } else {
-                            session.out().printlnf(
+                            session.out().println(
                                     elem.ofObject()
                                             .set("name", arg)
                                             .set("type", "alias")
@@ -110,17 +110,17 @@ public class DefaultNWhichInternalExecutable extends DefaultInternalNExecutableC
                             if (nid != null) {
                                 throw new NNotFoundException(session, nid);
                             } else {
-                                throw new NNotFoundException(session, null, NMsg.ofCstyle("artifact not found: %s%s", (arg == null ? "<null>" : arg)));
+                                throw new NNotFoundException(session, null, NMsg.ofC("artifact not found: %s%s", (arg == null ? "<null>" : arg)));
                             }
                         }
                         if (session.isPlainOut()) {
-                            out.printf("%s : %s %s%n",
+                            out.println(NMsg.ofC("%s : %s %s",
                                     factory.ofStyled(arg, NTextStyle.primary4()),
                                     factory.ofStyled("artifact", NTextStyle.primary6()),
                                     p.getId()/*, p.getDescription()*/
-                            );
+                            ));
                         } else {
-                            session.out().printlnf(
+                            session.out().println(
                                     elem.ofObject()
                                             .set("name", arg)
                                             .set("type", "artifact")
@@ -133,12 +133,12 @@ public class DefaultNWhichInternalExecutable extends DefaultInternalNExecutableC
                     }
                     case INTERNAL: {
                         if (session.isPlainOut()) {
-                            out.printf("%s : %s %n",
+                            out.println(NMsg.ofC("%s : %s",
                                     factory.ofStyled("internal command", NTextStyle.primary6()),
                                     factory.ofStyled(arg, NTextStyle.primary4())
-                            );
+                            ));
                         } else {
-                            session.out().printlnf(
+                            session.out().println(
                                     elem.ofObject()
                                             .set("name", arg)
                                             .set("type", "internal-command")
@@ -150,12 +150,12 @@ public class DefaultNWhichInternalExecutable extends DefaultInternalNExecutableC
                     }
                     case UNKNOWN: {
                         if (session.isPlainOut()) {
-                            out.printf("%s : %s %n",
+                            out.println(NMsg.ofC("%s : %s",
                                     factory.ofStyled("unknown command", NTextStyle.primary6()),
                                     factory.ofStyled(arg, NTextStyle.primary4())
-                            );
+                            ));
                         } else {
-                            session.out().printlnf(
+                            session.out().println(
                                     elem.ofObject()
                                             .set("name", arg)
                                             .set("type", "unknown-command")
@@ -170,7 +170,7 @@ public class DefaultNWhichInternalExecutable extends DefaultInternalNExecutableC
 //                }
             } catch (NNotFoundException ex) {
                 if (session.isPlainOut()) {
-                    out.printf("%s : %s%n", factory.ofStyled(arg, NTextStyle.primary4()), factory.ofStyled("not found", NTextStyle.error()));
+                    out.println(NMsg.ofC("%s : %s", factory.ofStyled(arg, NTextStyle.primary4()), factory.ofStyled("not found", NTextStyle.error())));
                 } else {
                     NElements e = elem;
                     session.eout().add(

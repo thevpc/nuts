@@ -11,7 +11,7 @@ import net.thevpc.nuts.NSession;
 import net.thevpc.nuts.cmdline.NArg;
 import net.thevpc.nuts.cmdline.NCommandLine;
 import net.thevpc.nuts.elem.NMapBy;
-import net.thevpc.nuts.io.NOutStream;
+import net.thevpc.nuts.io.NOutputStream;
 import net.thevpc.nuts.spi.NFormatSPI;
 import net.thevpc.nuts.text.NTextStyle;
 
@@ -271,10 +271,10 @@ public class NChronometer implements Serializable, NFormattable {
             }
 
             @Override
-            public void print(NOutStream out) {
+            public void print(NOutputStream out) {
                 if (name != null) {
-                    out.append(name);
-                    out.append("=", NTextStyle.separator());
+                    out.print(name);
+                    out.print("=", NTextStyle.separator());
                 }
                 out.print(getDuration().formatter(session)
                         .configure(true,

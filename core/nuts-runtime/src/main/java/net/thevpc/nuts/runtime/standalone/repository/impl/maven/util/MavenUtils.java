@@ -188,7 +188,7 @@ public class MavenUtils {
                 dependencyScope = NDependencyScope.parse(s).orElse(NDependencyScope.API);
                 if (dependencyScope == null) {
                     LOG.with().session(session).level(Level.FINER).verb(NLoggerVerb.FAIL)
-                            .log(NMsg.ofJstyle("unable to parse maven scope {0} for {1}", s, d));
+                            .log(NMsg.ofJ("unable to parse maven scope {0} for {1}", s, d));
                     dependencyScope = NDependencyScope.API;
                 }
             }
@@ -260,7 +260,7 @@ public class MavenUtils {
             }
             String fetchString = "[" + NStringUtils.formatAlign(fetchMode.id(), 7, NPositionType.FIRST) + "] ";
             LOG.with().session(session).level(Level.FINEST).verb(NLoggerVerb.SUCCESS).time(time)
-                    .log(NMsg.ofJstyle("{0}{1} parse pom    {2}", fetchString,
+                    .log(NMsg.ofJ("{0}{1} parse pom    {2}", fetchString,
                             NStringUtils.formatAlign(repository == null ? "<no-repo>" : repository.getName(), 20, NPositionType.FIRST),
                             NTexts.of(session).ofStyled(urlDesc, NTextStyle.path())
                     ));
@@ -389,8 +389,8 @@ public class MavenUtils {
         } catch (Exception e) {
             long time = System.currentTimeMillis() - startTime;
             LOG.with().session(session).level(Level.FINEST).verb(NLoggerVerb.FAIL).time(time)
-                    .log(NMsg.ofJstyle("caching pom file {0}", urlDesc));
-            throw new NParseException(session, NMsg.ofCstyle("error parsing %s", urlDesc), e);
+                    .log(NMsg.ofJ("caching pom file {0}", urlDesc));
+            throw new NParseException(session, NMsg.ofC("error parsing %s", urlDesc), e);
         }
     }
 
@@ -422,14 +422,14 @@ public class MavenUtils {
 
     public NDescriptor parsePomXmlAndResolveParents(NPath path, NFetchMode fetchMode, NRepository repository) throws IOException {
         try {
-            session.getTerminal().printProgress("%-8s %s", "parse", path.toCompressedForm());
+            session.getTerminal().printProgress(NMsg.ofC("%-8s %s", "parse", path.toCompressedForm()));
             try (InputStream is = path.getInputStream()) {
                 NDescriptor nutsDescriptor = parsePomXmlAndResolveParents(is, fetchMode, path.toString(), repository);
                 if (nutsDescriptor.getId().getArtifactId() == null) {
-                    //why name is null ? should checkout!
+                    //why name is null ? should check out!
                     if (LOG.isLoggable(Level.FINE)) {
                         LOG.with().session(session).level(Level.FINE).verb(NLoggerVerb.FAIL)
-                                .log(NMsg.ofJstyle("unable to fetch Valid Nuts from {0} : resolved id was {1}", path, nutsDescriptor.getId()));
+                                .log(NMsg.ofJ("unable to fetch valid descriptor artifactId from {0} : resolved id was {1}", path, nutsDescriptor.getId()));
                     }
                     return null;
                 }
@@ -470,7 +470,7 @@ public class MavenUtils {
                         } catch (NException ex) {
                             throw ex;
                         } catch (Exception ex) {
-                            throw new NNotFoundException(session, nutsDescriptor.getId(), NMsg.ofCstyle("unable to resolve %s parent %s", nutsDescriptor.getId(), parentId, ex));
+                            throw new NNotFoundException(session, nutsDescriptor.getId(), NMsg.ofC("unable to resolve %s parent %s", nutsDescriptor.getId(), parentId, ex));
                         }
                         parentId = parentDescriptor.getId();
                     }
@@ -509,7 +509,7 @@ public class MavenUtils {
                             } catch (NException ex) {
                                 throw ex;
                             } catch (Exception ex) {
-                                throw new NNotFoundException(session, nutsDescriptor.getId(), NMsg.ofCstyle("unable to resolve %s parent %s", nutsDescriptor.getId(), pid, ex));
+                                throw new NNotFoundException(session, nutsDescriptor.getId(), NMsg.ofC("unable to resolve %s parent %s", nutsDescriptor.getId(), pid, ex));
                             }
                         }
                         done.add(pid.getShortName());
@@ -527,7 +527,7 @@ public class MavenUtils {
                         }
                     }
                     if (CoreNUtils.containsVars(thisId)) {
-                        throw new NNotFoundException(session, nutsDescriptor.getId(), NMsg.ofCstyle("unable to resolve %s parent %s", nutsDescriptor.getId(), parentId));
+                        throw new NNotFoundException(session, nutsDescriptor.getId(), NMsg.ofC("unable to resolve %s parent %s", nutsDescriptor.getId(), parentId));
                     }
                     nutsDescriptor = nutsDescriptor.builder().setId(thisId).build();
                 }
@@ -555,7 +555,7 @@ public class MavenUtils {
         } catch (IOException ex) {
             throw new NIOException(session, ex);
         } catch (Exception ex) {
-            throw new NParseException(session, NMsg.ofCstyle("error Parsing %s", urlDesc), ex);
+            throw new NParseException(session, NMsg.ofC("error Parsing %s", urlDesc), ex);
         }
         return nutsDescriptor;
     }
@@ -653,22 +653,22 @@ public class MavenUtils {
 //                    String artifactId = dependency.getArtifactId();
 //                    String scope = dependency.getScope();
 //                    if (NutsBlankable.isBlank(groupId)) {
-//                        throw new NutsIllegalArgumentException(session, NMsg.ofCstyle("unexpected empty groupId"));
+//                        throw new NutsIllegalArgumentException(session, NMsg.ofC("unexpected empty groupId"));
 //                    } else if (groupId.contains("$")) {
-//                        throw new NutsIllegalArgumentException(session, NMsg.ofCstyle("unexpected maven variable in groupId=%s", groupId));
+//                        throw new NutsIllegalArgumentException(session, NMsg.ofC("unexpected maven variable in groupId=%s", groupId));
 //                    }
 //                    if (NutsBlankable.isBlank(artifactId)) {
-//                        throw new NutsIllegalArgumentException(session, NMsg.ofCstyle("unexpected empty artifactId"));
+//                        throw new NutsIllegalArgumentException(session, NMsg.ofC("unexpected empty artifactId"));
 //                    } else if (artifactId.contains("$")) {
-//                        throw new NutsIllegalArgumentException(session, NMsg.ofCstyle("unexpected maven variable in artifactId=%s", artifactId));
+//                        throw new NutsIllegalArgumentException(session, NMsg.ofC("unexpected maven variable in artifactId=%s", artifactId));
 //                    }
 //                    if (NutsBlankable.isBlank(version)) {
-//                        throw new NutsIllegalArgumentException(session, NMsg.ofCstyle("unexpected empty version"));
+//                        throw new NutsIllegalArgumentException(session, NMsg.ofC("unexpected empty version"));
 //                    } else if (version.contains("$")) {
-//                        throw new NutsIllegalArgumentException(session, NMsg.ofCstyle("unexpected maven version in version=%s", version));
+//                        throw new NutsIllegalArgumentException(session, NMsg.ofC("unexpected maven version in version=%s", version));
 //                    }
 //                    if (!NutsBlankable.isBlank(scope) && groupId.contains("$")) {
-//                        throw new NutsIllegalArgumentException(session, NMsg.ofCstyle("unexpected maven variable in scope=%s", scope));
+//                        throw new NutsIllegalArgumentException(session, NMsg.ofC("unexpected maven variable in scope=%s", scope));
 //                    }
 //                    if (NutsDependencyScope.parse(dependency.getScope()).orElse( NutsDependencyScope.API)
 //                            == NutsDependencyScope.API) {

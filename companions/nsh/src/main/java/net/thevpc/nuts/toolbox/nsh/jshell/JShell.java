@@ -33,7 +33,7 @@ package net.thevpc.nuts.toolbox.nsh.jshell;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.cmdline.NCommandHistory;
 import net.thevpc.nuts.io.NPath;
-import net.thevpc.nuts.io.NOutStream;
+import net.thevpc.nuts.io.NOutputStream;
 import net.thevpc.nuts.io.NSessionTerminal;
 import net.thevpc.nuts.io.NSystemTerminal;
 import net.thevpc.nuts.spi.NDefaultSupportLevelContext;
@@ -75,10 +75,11 @@ public class JShell {
 
     /**
      * args are inherited from app context
+     *
      * @param appContext appContext
      */
     public JShell(NApplicationContext appContext) {
-        this(appContext,null);
+        this(appContext, null);
     }
 
     public JShell(NApplicationContext appContext, String[] args) {
@@ -90,7 +91,7 @@ public class JShell {
     }
 
     public JShell(NSession session, NId appId, String[] args) {
-        this(NApplicationContext.of(new String[]{}, null, Nsh.class, null, session), appId, appId==null?null:appId.getArtifactId(), args);
+        this(NApplicationContext.of(new String[]{}, null, Nsh.class, null, session), appId, appId == null ? null : appId.getArtifactId(), args);
     }
 
     public JShell(NSession session, NId appId, String serviceName, String[] args) {
@@ -135,7 +136,7 @@ public class JShell {
         _rootContext.getUserProperties().put(JShellContext.class.getName(), _rootContext);
         try {
             histFile = NLocations.of(rSession).getStoreLocation(this.appId,
-                            NStoreLocation.VAR).resolve((serviceName==null?"":serviceName) + ".history");
+                    NStoreLocation.VAR).resolve((serviceName == null ? "" : serviceName) + ".history");
             hist.setHistoryFile(histFile);
             if (histFile.exists()) {
                 hist.load(histFile);
@@ -251,14 +252,14 @@ public class JShell {
     public List<String> findFiles(final String namePattern, boolean exact, String parent, NSession session) {
         if (exact) {
             String[] all = NPath.of(parent, session).stream()
-                    .filter(x -> namePattern.equals(x.getName()),"name='"+namePattern+"'")
-                    .map(NPath::toString,"toString").toArray(String[]::new);
+                    .filter(x -> namePattern.equals(x.getName()), "name='" + namePattern + "'")
+                    .map(NPath::toString, "toString").toArray(String[]::new);
             return Arrays.asList(all);
         } else {
             final Pattern o = Pattern.compile(namePattern);
             String[] all = NPath.of(parent, session).stream()
-                    .filter(x -> o.matcher(x.getName()).matches(),"name~~'"+namePattern+"'")
-                    .map(NPath::toString,"toString").toArray(String[]::new);
+                    .filter(x -> o.matcher(x.getName()).matches(), "name~~'" + namePattern + "'")
+                    .map(NPath::toString, "toString").toArray(String[]::new);
             return Arrays.asList(all);
         }
     }
@@ -426,7 +427,7 @@ public class JShell {
         if (!cmdPath.isName()) {
             final JShellExternalExecutor externalExec = getExternalExecutor();
             if (externalExec == null) {
-                throw new JShellException(context.getSession(), NMsg.ofCstyle("not found %s", cmdToken), 101);
+                throw new JShellException(context.getSession(), NMsg.ofC("not found %s", cmdToken), 101);
             }
             return externalExec.execExternalCommand(command, context);
             //this is a path!
@@ -470,11 +471,11 @@ public class JShell {
                 if (considerExternal) {
                     final JShellExternalExecutor externalExec = getExternalExecutor();
                     if (externalExec == null) {
-                        throw new JShellException(context.getSession(), NMsg.ofCstyle("not found %s", cmdToken), 101);
+                        throw new JShellException(context.getSession(), NMsg.ofC("not found %s", cmdToken), 101);
                     }
                     externalExec.execExternalCommand(cmds.toArray(new String[0]), context);
                 } else {
-                    throw new JShellException(context.getSession(), NMsg.ofCstyle("not found %s", cmdToken), 101);
+                    throw new JShellException(context.getSession(), NMsg.ofC("not found %s", cmdToken), 101);
                 }
             }
         }
@@ -541,7 +542,7 @@ public class JShell {
         } catch (NExecutionException ex) {
             throw ex;
         } catch (Exception ex) {
-            throw new NExecutionException(appContext.getSession(), NMsg.ofCstyle("%s", ex), ex, 100);
+            throw new NExecutionException(appContext.getSession(), NMsg.ofC("%s", ex), ex, 100);
         }
     }
 
@@ -550,7 +551,7 @@ public class JShell {
         return terminal.readLine(getPromptString(context));
     }
 
-    protected void printHeader(NOutStream out) {
+    protected void printHeader(NOutputStream out) {
         out.resetLine().println(NTexts.of(appContext.getSession()).ofBuilder()
                 .appendCode("sh", "nuts")
                 .append(" shell ")
@@ -564,7 +565,7 @@ public class JShell {
     }
 
     protected void executeVersion(JShellContext context) {
-        context.out().printf("v%s\n", APP_VERSION);
+        context.out().println(NMsg.ofC("v%s", APP_VERSION));
     }
 
     protected void executeInteractive(JShellContext context) {
@@ -655,7 +656,7 @@ public class JShell {
         } catch (IOException e) {
             //e.printStackTrace();
         }
-        throw new NExecutionException(getRootContext().getSession(), NMsg.ofCstyle("%s", quitException), quitException.getExitCode());
+        throw new NExecutionException(getRootContext().getSession(), NMsg.ofC("%s", quitException), quitException.getExitCode());
 //        throw quitException;
     }
 
@@ -669,7 +670,7 @@ public class JShell {
             if (ignoreIfNotFound) {
                 return 0;
             }
-            throw new JShellException(session, NMsg.ofCstyle("shell file not found : %s", file), 1);
+            throw new JShellException(session, NMsg.ofC("shell file not found : %s", file), 1);
         }
         context.setServiceName(file);
         InputStream stream = null;
@@ -729,7 +730,7 @@ public class JShell {
                 throw new JShellUniformException(context.getSession(), getErrorHandler().errorToCode(th), true, th);
             }
             onResult(th, context);
-            context.err().printf("error: %s%n", th);
+            context.err().println(NMsg.ofC("error: %s", th));
             return getErrorHandler().errorToCode(th);
         }
     }
@@ -751,7 +752,7 @@ public class JShell {
     //    public String getPromptString() {
 //        return getPromptString(getRootContext());
 //    }
-    protected String getPromptString(JShellContext context) {
+    protected NMsg getPromptString(JShellContext context) {
         NSession ws = context.getSession();
 //        String wss = ws == null ? "" : new File(getRootContext().getAbsolutePath(ws.config().getWorkspaceLocation().toString())).getName();
         String login = null;
@@ -763,7 +764,7 @@ public class JShell {
             prompt = prompt + getRootContext().getServiceName();
         }
         prompt += "> ";
-        return prompt;
+        return NMsg.ofPlain(prompt);
     }
 
     protected String getPromptString0(JShellContext context) {

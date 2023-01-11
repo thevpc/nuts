@@ -100,15 +100,15 @@ public class JobServiceCmd {
             long jobsCount = service.jobs().findMonthJobs(null).count();
             long allJobsCount = service.jobs().findLastJobs(null, -1, null, null, null, null, null).count();
             NTexts text = NTexts.of(context.getSession());
-            context.getSession().out().printf("%s open task%s\n", text.ofStyled("" + tasksCount, NTextStyle.primary1()), tasksCount == 1 ? "" : "s");
-            context.getSession().out().printf("%s job%s %s\n", text.ofStyled("" + allJobsCount, NTextStyle.primary1()), allJobsCount == 1 ? "" : "s",
+            context.getSession().out().print(NMsg.ofC("%s open task%s\n", text.ofStyled("" + tasksCount, NTextStyle.primary1()), tasksCount == 1 ? "" : "s"));
+            context.getSession().out().print(NMsg.ofC("%s job%s %s\n", text.ofStyled("" + allJobsCount, NTextStyle.primary1()), allJobsCount == 1 ? "" : "s",
                     allJobsCount == 0 ? ""
                             : text.ofBuilder()
                             .append("(")
                             .append("" + jobsCount, NTextStyle.primary1())
                             .append(" this month)")
-            );
-            context.getSession().out().printf("%s project%s\n", text.ofStyled("" + projectsCount, NTextStyle.primary1()), projectsCount == 1 ? "" : "s");
+            ));
+            context.getSession().out().print(NMsg.ofC("%s project%s\n", text.ofStyled("" + projectsCount, NTextStyle.primary1()), projectsCount == 1 ? "" : "s"));
         }
     }
 
@@ -209,7 +209,7 @@ public class JobServiceCmd {
             case 5:
                 return NTexts.of(session).ofStyled(x, NTextStyle.primary5());
         }
-        throw new NIllegalArgumentException(context.getSession(), NMsg.ofCstyle("invalid index %s", index));
+        throw new NIllegalArgumentException(context.getSession(), NMsg.ofC("invalid index %s", index));
     }
 
     protected NString getFlagString(NFlag x) {
@@ -321,17 +321,17 @@ public class JobServiceCmd {
 //        ));
         NTexts text = NTexts.of(session);
 
-        session.out().printf(
+        session.out().print(NMsg.ofC(
                 "%s interactive mode. type %s to quit.%n",
                 text.ofStyled(context.getAppId().getArtifactId() + " " + context.getAppId().getVersion(), NTextStyle.primary1()),
                 text.ofStyled("q", NTextStyle.error())
-        );
+        ));
         InputStream in = session.getTerminal().in();
         Exception lastError = null;
         while (true) {
             String line = null;
             try {
-                line = session.getTerminal().readLine("> ");
+                line = session.getTerminal().readLine(NMsg.ofPlain("> "));
             } catch (NoSuchElementException e) {
             }
             if (line == null) {
@@ -361,7 +361,7 @@ public class JobServiceCmd {
                     if (m == null) {
                         m = ex.toString();
                     }
-                    session.err().printf("```error ERROR: %s```\n", m);
+                    session.err().print(NMsg.ofC("```error ERROR: %s```\n", m));
                 }
             }
         }

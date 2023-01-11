@@ -4,7 +4,7 @@ import net.thevpc.nuts.*;
 import net.thevpc.nuts.cmdline.NArg;
 import net.thevpc.nuts.cmdline.NCommandLine;
 import net.thevpc.nuts.elem.NMapBy;
-import net.thevpc.nuts.io.NOutStream;
+import net.thevpc.nuts.io.NOutputStream;
 import net.thevpc.nuts.spi.NFormatSPI;
 
 import java.io.IOException;
@@ -849,7 +849,7 @@ public class NMemorySize implements Serializable, NFormattable {
             }
 
             @Override
-            public void print(NOutStream out) {
+            public void print(NOutputStream out) {
                 NMemorySizeFormat.of(fixed, iec).print(NMemorySize.this, out);
             }
 
@@ -906,7 +906,7 @@ public class NMemorySize implements Serializable, NFormattable {
                     } else {
                         String finalValue = value;
                         int finalR = r;
-                        return NOptional.ofError(s -> NMsg.ofCstyle(
+                        return NOptional.ofError(s -> NMsg.ofC(
                                 "unexpected char %s in memory size : %s",
                                 String.valueOf((char) finalR),
                                 String.valueOf(finalValue)
@@ -921,13 +921,13 @@ public class NMemorySize implements Serializable, NFormattable {
             }
         } catch (IOException ie) {
             String finalValue1 = value;
-            return NOptional.ofError(s -> NMsg.ofCstyle(
+            return NOptional.ofError(s -> NMsg.ofC(
                     "erroneous memory size : %s",
                     String.valueOf(finalValue1)
             ), ie);
         }
         String finalValue1 = value;
-        return NOptional.ofError(s -> NMsg.ofCstyle(
+        return NOptional.ofError(s -> NMsg.ofC(
                 "erroneous memory size : %s",
                 String.valueOf(finalValue1)
         ));

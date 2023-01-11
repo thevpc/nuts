@@ -11,7 +11,7 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 public class NFormattedTextParts {
-    private static Pattern CSTYLE_PATTERN = Pattern.compile("%(\\d+\\$)?([-#+ 0,(\\<]*)?(\\d+)?(\\.\\d+)?([tT])?([a-zA-Z%])");
+    private static Pattern CFORMAT_PATTERN = Pattern.compile("%(\\d+\\$)?([-#+ 0,(\\<]*)?(\\d+)?(\\.\\d+)?([tT])?([a-zA-Z%])");
     private List<NFormattedTextPart> parts;
     private List<String> formats;
     private String type;
@@ -27,7 +27,7 @@ public class NFormattedTextParts {
 
     public static NFormattedTextParts parseJStyle(String msg) {
         if (msg == null) {
-            return new NFormattedTextParts("jstyle", Collections.emptyList());
+            return new NFormattedTextParts("jformat", Collections.emptyList());
         }
         List<NFormattedTextPart> al = new ArrayList<>();
         int length = msg.length();
@@ -67,35 +67,35 @@ public class NFormattedTextParts {
             al.add(new NFormattedTextPart(!inText, sb.toString()));
             sb.setLength(0);
         }
-        return new NFormattedTextParts("jstyle", al);
+        return new NFormattedTextParts("jformat", al);
     }
 
-    public static NFormattedTextParts parseCStyle(String msg) {
+    public static NFormattedTextParts parseCFormat(String msg) {
         if (msg == null) {
-            return new NFormattedTextParts("cstyle", Collections.emptyList());
+            return new NFormattedTextParts("cformat", Collections.emptyList());
         }
         List<NFormattedTextPart> al = new ArrayList<>();
-        Matcher m = CSTYLE_PATTERN.matcher(msg);
+        Matcher m = CFORMAT_PATTERN.matcher(msg);
         int length = msg.length();
         for (int i = 0; i < length; ) {
             if (m.find(i)) {
                 if (m.start() != i) {
-                    checkCStyleText(msg, i, m.start());
+                    checkCFormatText(msg, i, m.start());
                     al.add(new NFormattedTextPart(false, msg.substring(i, m.start())));
                 }
 
                 al.add(new NFormattedTextPart(true, m.group()));
                 i = m.end();
             } else {
-                checkCStyleText(msg, i, length);
+                checkCFormatText(msg, i, length);
                 al.add(new NFormattedTextPart(false, msg.substring(i)));
                 break;
             }
         }
-        return new NFormattedTextParts("cstyle", al);
+        return new NFormattedTextParts("cformat", al);
     }
 
-    private static void checkCStyleText(String s, int start, int end) {
+    private static void checkCFormatText(String s, int start, int end) {
         for (int i = start; i < end; i++) {
             // Any '%' found in the region starts an invalid format specifier.
             if (s.charAt(i) == '%') {
@@ -116,7 +116,7 @@ public class NFormattedTextParts {
     public String getFormatFor(int index) {
         String[] formats1 = getFormats();
         switch (type) {
-            case "jstyle": {
+            case "jformat": {
                 int i = 0;
                 for (String s : formats1) {
                     if (s.isEmpty()) {
@@ -139,7 +139,7 @@ public class NFormattedTextParts {
                 }
                 return null;
             }
-            case "cstyle": {
+            case "cformat": {
                 return getFormatAt(index);
             }
         }

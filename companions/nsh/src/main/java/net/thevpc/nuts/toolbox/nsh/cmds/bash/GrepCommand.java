@@ -38,7 +38,7 @@ import net.thevpc.nuts.cmdline.NArg;
 import net.thevpc.nuts.cmdline.NCommandLine;
 import net.thevpc.nuts.io.NCp;
 import net.thevpc.nuts.io.NPath;
-import net.thevpc.nuts.io.NOutStream;
+import net.thevpc.nuts.io.NOutputStream;
 import net.thevpc.nuts.text.*;
 import net.thevpc.nuts.toolbox.nsh.SimpleJShellBuiltin;
 import net.thevpc.nuts.toolbox.nsh.jshell.JShellExecutionContext;
@@ -104,7 +104,7 @@ public class GrepCommand extends SimpleJShellBuiltin {
     @Override
     protected void execBuiltin(NCommandLine commandLine, JShellExecutionContext context) {
         Options options = context.getOptions();
-        NOutStream out = context.out();
+        NOutputStream out = context.out();
         if (options.files.isEmpty()) {
             options.files.add(null);
         }
@@ -134,7 +134,7 @@ public class GrepCommand extends SimpleJShellBuiltin {
                 for (GrepResultItem result : results) {
                     if (options.n) {
                         if (result.path != null && prefixFileName) {
-                            out.printf(result.path);
+                            out.print(result.path);
                             out.print(":");
                         }
                         out.print(ruler.nextNum(result.number, session));
@@ -145,9 +145,9 @@ public class GrepCommand extends SimpleJShellBuiltin {
             }
             default: {
                 if (options.n) {
-                    out.printlnf(results);
+                    out.println(results);
                 } else {
-                    out.printlnf(results.stream().map(r -> r.line).collect(Collectors.toList()));
+                    out.println(results.stream().map(r -> r.line).collect(Collectors.toList()));
                 }
             }
         }
@@ -191,7 +191,7 @@ public class GrepCommand extends SimpleJShellBuiltin {
                 }
             }
         } catch (IOException ex) {
-            throw new NExecutionException(session, NMsg.ofCstyle("%s", ex), ex, 100);
+            throw new NExecutionException(session, NMsg.ofC("%s", ex), ex, 100);
         }
         return 0;
     }

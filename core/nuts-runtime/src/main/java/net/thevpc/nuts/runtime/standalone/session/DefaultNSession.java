@@ -30,7 +30,7 @@ import net.thevpc.nuts.cmdline.NCommandLineConfigurable;
 import net.thevpc.nuts.elem.NArrayElementBuilder;
 import net.thevpc.nuts.elem.NElements;
 import net.thevpc.nuts.format.NIterableFormat;
-import net.thevpc.nuts.io.NOutStream;
+import net.thevpc.nuts.io.NOutputStream;
 import net.thevpc.nuts.io.NSessionTerminal;
 import net.thevpc.nuts.io.NTerminalMode;
 import net.thevpc.nuts.runtime.standalone.elem.DefaultNArrayElementBuilder;
@@ -693,7 +693,7 @@ public class DefaultNSession implements Cloneable, NSession {
             }
             return cloned;
         } catch (CloneNotSupportedException e) {
-            throw new NUnsupportedOperationException(this, NMsg.ofCstyle("clone failed for type %s", getClass().getName()), e);
+            throw new NUnsupportedOperationException(this, NMsg.ofC("clone failed for type %s", getClass().getName()), e);
         }
     }
 
@@ -821,7 +821,7 @@ public class DefaultNSession implements Cloneable, NSession {
                 }
             }
             if (!ok) {
-                throw new NIllegalArgumentException(this, NMsg.ofCstyle("unsupported Listener %s : %s", listener.getClass().getName(), listener));
+                throw new NIllegalArgumentException(this, NMsg.ofC("unsupported Listener %s : %s", listener.getClass().getName(), listener));
             }
         }
         return this;
@@ -960,7 +960,7 @@ public class DefaultNSession implements Cloneable, NSession {
     }
 
     @Override
-    public NOutStream out() {
+    public NOutputStream out() {
         return terminal.out();
     }
 
@@ -970,7 +970,7 @@ public class DefaultNSession implements Cloneable, NSession {
     }
 
     @Override
-    public NOutStream err() {
+    public NOutputStream err() {
         return terminal.err();
     }
 
@@ -1003,7 +1003,7 @@ public class DefaultNSession implements Cloneable, NSession {
             if (a.getSession() != this) {
                 throw new NIllegalArgumentException(this, NMsg.ofPlain("session mismatch"));
             }
-            NOutStream o = a.getOut();
+            NOutputStream o = a.getOut();
         }
 //        this.out0 = (terminal.fout());
 //        this.err0 = (terminal.ferr());
@@ -1266,7 +1266,7 @@ public class DefaultNSession implements Cloneable, NSession {
     public NSession flush() {
         NArrayElementBuilder e = eout();
         if (e.size() > 0) {
-            out().printlnf(e.build());
+            out().println(e.build());
             e.clear();
         }
         out().flush();
@@ -1369,13 +1369,13 @@ public class DefaultNSession implements Cloneable, NSession {
 //                    Integer fileSize = NutsApiUtils.parseFileSizeInBytes(v, 1024 * 1024, null, null);
 //                    if (fileSize == null) {
 //                        if (NutsBlankable.isBlank(v)) {
-//                            throw new NutsBootException(NMsg.ofCstyle("invalid file size : %s", v));
+//                            throw new NutsBootException(NMsg.ofC("invalid file size : %s", v));
 //                        }
 //                    } else {
 //                        //always in mega
 //                        fileSize = fileSize / (1024 * 1024);
 //                        if (fileSize <= 0) {
-//                            throw new NutsBootException(NMsg.ofCstyle("invalid file size : %s < 1Mb", v));
+//                            throw new NutsBootException(NMsg.ofC("invalid file size : %s < 1Mb", v));
 //                        }
 //                    }
 //                    if (fileSize != null) {

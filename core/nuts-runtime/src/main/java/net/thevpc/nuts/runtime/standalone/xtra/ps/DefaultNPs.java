@@ -111,8 +111,9 @@ public class DefaultNPs implements NPs {
         if (v != null) {
             return v;
         }
+        NPlatforms platforms = NPlatforms.of(session);
         NVersionFilter nvf = NBlankable.isBlank(version) ? null : NVersion.of(version).get(session).filter(session);
-        NPlatformLocation[] availableJava = NEnvs.of(session).platforms().setSession(session).findPlatforms(NPlatformFamily.JAVA,
+        NPlatformLocation[] availableJava = platforms.setSession(session).findPlatforms(NPlatformFamily.JAVA,
                 java -> "jdk".equals(java.getPackaging()) && (nvf == null || nvf.acceptVersion(NVersion.of(java.getVersion()).get(session), session))
         ).toArray(NPlatformLocation[]::new);
         for (NPlatformLocation java : availableJava) {
@@ -123,7 +124,7 @@ public class DefaultNPs implements NPs {
             }
         }
         throw new NExecutionException(session,
-                NMsg.ofCstyle("unable to resolve a valid jdk installation. "
+                NMsg.ofC("unable to resolve a valid jdk installation. "
                 + "Either run nuts with a valid JDK/SDK (not JRE) or register a valid one using 'nuts settings' command. "
                 + "All the followings are invalid : \n%s",
                 String.join("\n", detectedJavaHomes)
@@ -152,7 +153,7 @@ public class DefaultNPs implements NPs {
             return getResultListJava("");
         } else {
             if (isFailFast()) {
-                throw new NIllegalArgumentException(getSession(), NMsg.ofCstyle("unsupported list processes of type : %s" , processType));
+                throw new NIllegalArgumentException(getSession(), NMsg.ofC("unsupported list processes of type : %s" , processType));
             }
             return new NEmptyStream<>(getSession(), "process-" + processType);
         }

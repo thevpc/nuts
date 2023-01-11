@@ -226,7 +226,7 @@ public class DefaultNTextTransformer implements NTextTransformer {
             if (p.exists()) {
                 return p;
             }
-            throw new NIllegalArgumentException(session, NMsg.ofCstyle("unable to resolve path %s", path));
+            throw new NIllegalArgumentException(session, NMsg.ofC("unable to resolve path %s", path));
         }
         return NPath.of(path, getClass().getClassLoader(), session);
     }

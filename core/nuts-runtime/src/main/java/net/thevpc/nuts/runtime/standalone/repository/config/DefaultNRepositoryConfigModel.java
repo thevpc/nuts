@@ -61,7 +61,7 @@ public class DefaultNRepositoryConfigModel implements NRepositoryConfigModel {
         NAssert.requireNonBlank(storeLocation, "repository store location", session);
         Path pfolder = Paths.get(storeLocation);
         if ((Files.exists(pfolder) && !Files.isDirectory(pfolder))) {
-            throw new NInvalidRepositoryException(session, storeLocation, NMsg.ofCstyle("unable to resolve root as a valid folder %s", storeLocation));
+            throw new NInvalidRepositoryException(session, storeLocation, NMsg.ofC("unable to resolve root as a valid folder %s", storeLocation));
         }
 
         this.repositoryRegistryHelper = new NRepositoryRegistryHelper(repository.getWorkspace());
@@ -253,7 +253,7 @@ public class DefaultNRepositoryConfigModel implements NRepositoryConfigModel {
 
                 }
                 default: {
-                    throw new NIllegalArgumentException(session, NMsg.ofCstyle("unsupported strategy type %s", getStoreLocation()));
+                    throw new NIllegalArgumentException(session, NMsg.ofC("unsupported strategy type %s", getStoreLocation()));
                 }
             }
         }
@@ -280,7 +280,7 @@ public class DefaultNRepositoryConfigModel implements NRepositoryConfigModel {
         }
         if (!Objects.equals(NRepositoryUtils.getRepoType(config), repositoryType)) {
             throw new NIllegalArgumentException(session,
-                    NMsg.ofCstyle("invalid Repository Type : expected %s, found %s", repositoryType, NRepositoryUtils.getRepoType(config))
+                    NMsg.ofC("invalid Repository Type : expected %s, found %s", repositoryType, NRepositoryUtils.getRepoType(config))
             );
         }
 
@@ -427,13 +427,13 @@ public class DefaultNRepositoryConfigModel implements NRepositoryConfigModel {
             if (_LOG(session).isLoggable(Level.CONFIG)) {
                 if (created) {
                     _LOGOP(session).level(Level.CONFIG).verb(NLoggerVerb.SUCCESS)
-                            .log(NMsg.ofJstyle(
+                            .log(NMsg.ofJ(
                                     "{0} created repository {1} at {2}",
                                     NStringUtils.formatAlign(repository.getName(), 20, NPositionType.FIRST), repository.getName(),
                                     getStoreLocation()
                             ));
                 } else {
-                    _LOGOP(session).level(Level.CONFIG).verb(NLoggerVerb.SUCCESS).log(NMsg.ofJstyle(
+                    _LOGOP(session).level(Level.CONFIG).verb(NLoggerVerb.SUCCESS).log(NMsg.ofJ(
                             "{0} updated repository {1} at {2}",
                             NStringUtils.formatAlign(repository.getName(), 20, NPositionType.FIRST), repository.getName(),
                             getStoreLocation()
@@ -538,7 +538,7 @@ public class DefaultNRepositoryConfigModel implements NRepositoryConfigModel {
     @Override
     public void removeMirror(String repositoryId, NSession session) {
         if (!isSupportedMirroring(session)) {
-            throw new NUnsupportedOperationException(session, NMsg.ofCstyle("unsupported operation '%s'", "removeMirror"));
+            throw new NUnsupportedOperationException(session, NMsg.ofC("unsupported operation '%s'", "removeMirror"));
         }
 //        options = CoreNutsUtils.validate(options, repository.getWorkspace());
         repository.security().setSession(session).checkAllowed(NConstants.Permissions.REMOVE_REPOSITORY, "remove-repository");
@@ -578,7 +578,7 @@ public class DefaultNRepositoryConfigModel implements NRepositoryConfigModel {
                         y = m;
                     } else {
                         throw new NIllegalArgumentException(session,
-                                NMsg.ofCstyle("ambiguous repository name %s ; found two Ids %s and %s",
+                                NMsg.ofC("ambiguous repository name %s ; found two Ids %s and %s",
                                         repositoryNameOrId, y.getUuid(), m.getUuid()
                                 )
                         );
@@ -605,7 +605,7 @@ public class DefaultNRepositoryConfigModel implements NRepositoryConfigModel {
                         y = m;
                     } else {
                         throw new NIllegalArgumentException(session,
-                                NMsg.ofCstyle("ambiguous repository name %s ; found two Ids %s and %s",
+                                NMsg.ofC("ambiguous repository name %s ; found two Ids %s and %s",
                                         repositoryNameOrId, y.getUuid(), m.getUuid()
                                 )
                         );
@@ -632,7 +632,7 @@ public class DefaultNRepositoryConfigModel implements NRepositoryConfigModel {
                         y = m;
                     } else {
                         throw new NIllegalArgumentException(session,
-                                NMsg.ofCstyle("ambiguous repository name %s ; found two Ids %s and %s",
+                                NMsg.ofC("ambiguous repository name %s ; found two Ids %s and %s",
                                         repositoryNameOrId, y.getUuid(), m.getUuid()
                                 )
                         );
@@ -650,7 +650,7 @@ public class DefaultNRepositoryConfigModel implements NRepositoryConfigModel {
 
     public NRepository addMirror(NAddRepositoryOptions options, NSession session) {
         if (!isSupportedMirroring(session)) {
-            throw new NUnsupportedOperationException(session, NMsg.ofCstyle("unsupported operation '%s'", "addMirror"));
+            throw new NUnsupportedOperationException(session, NMsg.ofC("unsupported operation '%s'", "addMirror"));
         }
         if (options.isTemporary()) {
             return null;
@@ -735,7 +735,7 @@ public class DefaultNRepositoryConfigModel implements NRepositoryConfigModel {
         if (inherit) {
             return NConfigs.of(session).getConfigProperty(key);
         }
-        return NOptional.ofEmpty(s -> NMsg.ofCstyle("repository property not found : %s", key));
+        return NOptional.ofEmpty(s -> NMsg.ofC("repository property not found : %s", key));
     }
 
     private Map<String, String> config_getEnv(boolean inherit, NSession session) {

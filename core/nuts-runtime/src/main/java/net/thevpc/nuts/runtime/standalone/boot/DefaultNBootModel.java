@@ -26,11 +26,11 @@ package net.thevpc.nuts.runtime.standalone.boot;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.boot.NBootOptions;
 import net.thevpc.nuts.cmdline.DefaultNArg;
-import net.thevpc.nuts.io.NOutStream;
+import net.thevpc.nuts.io.NOutputStream;
 import net.thevpc.nuts.io.NSystemTerminal;
 import net.thevpc.nuts.runtime.optional.jansi.OptionalJansi;
 import net.thevpc.nuts.runtime.standalone.event.DefaultNWorkspaceEvent;
-import net.thevpc.nuts.runtime.standalone.io.printstream.NOutStreamNull;
+import net.thevpc.nuts.runtime.standalone.io.printstream.NOutputStreamNull;
 import net.thevpc.nuts.runtime.standalone.io.terminal.*;
 import net.thevpc.nuts.runtime.standalone.session.DefaultNSession;
 import net.thevpc.nuts.runtime.standalone.session.NSessionUtils;
@@ -55,7 +55,7 @@ import java.util.logging.Level;
  */
 public class DefaultNBootModel implements NBootModel {
 
-    public NOutStream nullOut;
+    public NOutputStream nullOut;
     protected NWorkspace workspace;
     protected boolean firstBoot;
     protected boolean initializing;
@@ -82,7 +82,7 @@ public class DefaultNBootModel implements NBootModel {
 
         this.systemTerminal = NutsSystemTerminal_of_NutsSystemTerminalBase(sys, bootSession);
         this.bootSession.setTerminal(new DefaultNSessionTerminalFromSystem(bootSession, this.systemTerminal));
-        this.nullOut = new NOutStreamNull(bootSession);
+        this.nullOut = new NOutputStreamNull(bootSession);
     }
 
     public static NWorkspaceTerminalOptions detectAnsiTerminalSupport(NOsFamily os, NWorkspaceOptions bOption, boolean boot, NSession session) {
@@ -256,7 +256,7 @@ public class DefaultNBootModel implements NBootModel {
                 NSessionUtils.setSession(syst, session);
             } catch (Exception ex) {
                 _LOGOP(session).level(Level.FINEST).verb(NLoggerVerb.WARNING)
-                        .log(NMsg.ofJstyle("unable to create system terminal : {0}", ex));
+                        .log(NMsg.ofJ("unable to create system terminal : {0}", ex));
                 DefaultNSystemTerminalBase b = new DefaultNSystemTerminalBase();
                 NSessionUtils.setSession(b, session);
                 syst = new DefaultSystemTerminal(b);
@@ -297,7 +297,7 @@ public class DefaultNBootModel implements NBootModel {
         return this;
     }
 
-    public NOutStream nullPrintStream() {
+    public NOutputStream nullPrintStream() {
         return nullOut;
         //return createPrintStream(NullOutputStream.INSTANCE, NutsTerminalMode.FILTERED, session);
     }

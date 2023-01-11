@@ -229,7 +229,7 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
         if (f.isRegularFile()) {
             if (session.getTerminal().ask()
                     .resetLine()
-                    .forBoolean(NMsg.ofCstyle("tool %s will be removed. Confirm?",
+                    .forBoolean(NMsg.ofC("tool %s will be removed. Confirm?",
                             factory.ofStyled(CoreIOUtils.betterPath(f.toString()), NTextStyle.path())
                     ))
                     .setDefaultValue(true)
@@ -237,7 +237,7 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
                     .getBooleanValue()) {
                 f.delete();
                 if (session.isPlainTrace()) {
-                    session.out().printf("tool %s removed.%n", factory.ofStyled(CoreIOUtils.betterPath(f.toString()), NTextStyle.path()));
+                    session.out().println(NMsg.ofC("tool %s removed.", factory.ofStyled(CoreIOUtils.betterPath(f.toString()), NTextStyle.path())));
                 }
             }
         }
@@ -250,10 +250,10 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
         PathInfo[] v = createBootScripts(options);
 
         if (session.isPlainTrace()) {
-            session.out().printf("```sh nuts``` switched to workspace %s to point to %s\n",
+            session.out().println(NMsg.ofC("```sh nuts``` switched to workspace %s to point to %s",
                     options.getWorkspaceLocation(),
                     options.getNutsApiVersion()
-            );
+            ));
         }
         return v;
     }
@@ -279,7 +279,7 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
             for (String id : idsToInstall) {
                 NId nid = NId.of(id).get( session);
                 if (nid == null) {
-                    throw new NExecutionException(session, NMsg.ofCstyle("unable to create script for %s : invalid id", id), 100);
+                    throw new NExecutionException(session, NMsg.ofC("unable to create script for %s : invalid id", id), 100);
                 }
                 if (!nid.getVersion().isBlank()) {
                     includeEnv = true;
@@ -310,7 +310,7 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
 
                     result.addAll(Arrays.asList(createArtifactScript(oo)));
                 } catch (UncheckedIOException | NIOException e) {
-                    throw new NExecutionException(session, NMsg.ofCstyle("unable to add launcher for %s : %s", id, e), e);
+                    throw new NExecutionException(session, NMsg.ofC("unable to add launcher for %s : %s", id, e), e);
                 }
             }
             if (!bootAlreadyProcessed && !nonNutsIds.isEmpty()) {
@@ -325,7 +325,7 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
                 try {
                     NId nid = NId.of(id).get(session);
                     if (nid == null) {
-                        throw new NExecutionException(session, NMsg.ofCstyle("unable to create script for %s : invalid id", id), 100);
+                        throw new NExecutionException(session, NMsg.ofC("unable to create script for %s : invalid id", id), 100);
                     }
                     NdiScriptOptions oo = options.copy()
                             .setId(id);
@@ -335,7 +335,7 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
                     oo.setSession(session);
                     result.addAll(Arrays.asList(createArtifactScript(oo)));
                 } catch (UncheckedIOException | NIOException e) {
-                    throw new NExecutionException(session, NMsg.ofCstyle("unable to add launcher for %s : %s", id, e), e);
+                    throw new NExecutionException(session, NMsg.ofC("unable to add launcher for %s : %s", id, e), e);
                 }
             }
 //            result.addAll(Arrays.asList(configurePath(
@@ -432,7 +432,7 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
     public NWorkspaceBootConfig loadSwitchWorkspaceLocationConfig(String switchWorkspaceLocation) {
         NWorkspaceBootConfig bootConfig = NConfigs.of(session).loadBootConfig(switchWorkspaceLocation, false, true);
         if (bootConfig == null) {
-            throw new NIllegalArgumentException(session, NMsg.ofCstyle("invalid workspace: %s", switchWorkspaceLocation));
+            throw new NIllegalArgumentException(session, NMsg.ofC("invalid workspace: %s", switchWorkspaceLocation));
         }
         return bootConfig;
     }

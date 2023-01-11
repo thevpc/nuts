@@ -37,7 +37,7 @@ public class GithubfsPath extends AbstractPathSPIAdapter {
     private GithubfsPath(String url, Info info, NSession session) {
         super(NPath.of(url.substring(PREFIX.length()), session), session);
         if (!url.startsWith(PREFIX)) {
-            throw new NUnsupportedArgumentException(session, NMsg.ofCstyle("expected prefix '%s'",PREFIX));
+            throw new NUnsupportedArgumentException(session, NMsg.ofC("expected prefix '%s'",PREFIX));
         }
         this.info = info;
     }
@@ -170,12 +170,12 @@ public class GithubfsPath extends AbstractPathSPIAdapter {
         if (p != null) {
             return p.getInputStream(options);
         }
-        throw new NIOException(session, NMsg.ofCstyle("not a file %s", basePath));
+        throw new NIOException(session, NMsg.ofC("not a file %s", basePath));
     }
 
     @Override
     public OutputStream getOutputStream(NPath basePath, NPathOption... options) {
-        throw new NIOException(session, NMsg.ofCstyle("not writable %s", basePath));
+        throw new NIOException(session, NMsg.ofC("not writable %s", basePath));
     }
 
     @Override
@@ -374,7 +374,7 @@ public class GithubfsPath extends AbstractPathSPIAdapter {
         }
 
         @Override
-        public void print(NOutStream out) {
+        public void print(NOutputStream out) {
             out.print(asFormattedString());
         }
 

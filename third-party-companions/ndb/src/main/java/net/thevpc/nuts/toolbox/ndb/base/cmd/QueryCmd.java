@@ -187,7 +187,7 @@ public class QueryCmd<C extends NdbConfig> extends NdbCmd<C> {
                 break;
             }
             default: {
-                throw new NIllegalArgumentException(session, NMsg.ofCstyle("unsupported %s", eq.getCommand()));
+                throw new NIllegalArgumentException(session, NMsg.ofC("unsupported %s", eq.getCommand()));
             }
         }
     }

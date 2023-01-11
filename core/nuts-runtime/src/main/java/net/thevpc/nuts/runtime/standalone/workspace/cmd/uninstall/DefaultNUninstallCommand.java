@@ -7,8 +7,8 @@ package net.thevpc.nuts.runtime.standalone.workspace.cmd.uninstall;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.elem.NElements;
-import net.thevpc.nuts.io.NOutMemoryStream;
-import net.thevpc.nuts.io.NOutStream;
+import net.thevpc.nuts.io.NMemoryOutputStream;
+import net.thevpc.nuts.io.NOutputStream;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceExt;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceUtils;
 import net.thevpc.nuts.text.NText;
@@ -55,15 +55,15 @@ public class DefaultNUninstallCommand extends AbstractNUninstallCommand {
                     .getResultDefinitions().toList();
             resultDefinitions.removeIf(it -> !it.getInstallInformation().get(session).isInstalledOrRequired());
             if (resultDefinitions.isEmpty()) {
-                throw new NIllegalArgumentException(getSession(), NMsg.ofCstyle("not installed : %s", id));
+                throw new NIllegalArgumentException(getSession(), NMsg.ofC("not installed : %s", id));
             }
             installed.addAll(resultDefinitions.stream().map(NDefinition::getId).collect(Collectors.toList()));
             defs.addAll(resultDefinitions);
         }
-        NOutMemoryStream mout = NOutMemoryStream.of(session);
+        NMemoryOutputStream mout = NMemoryOutputStream.of(session);
         printList(mout, "installed", "uninstalled", installed);
         mout.println("should we proceed uninstalling ?");
-        NMsg cancelMessage = NMsg.ofCstyle("uninstall cancelled : %s", defs.stream()
+        NMsg cancelMessage = NMsg.ofC("uninstall cancelled : %s", defs.stream()
                 .map(NDefinition::getId)
                 .map(NId::getFullName)
                 .collect(Collectors.joining(", ")));
@@ -83,7 +83,7 @@ public class DefaultNUninstallCommand extends AbstractNUninstallCommand {
         return this;
     }
 
-    private void printList(NOutStream out, String skind, String saction, List<NId> all) {
+    private void printList(NOutputStream out, String skind, String saction, List<NId> all) {
         if (all.size() > 0) {
             if (session.isPlainOut()) {
                 NTexts text = NTexts.of(session);

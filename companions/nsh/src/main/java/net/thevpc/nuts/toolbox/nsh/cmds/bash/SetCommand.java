@@ -74,7 +74,7 @@ public class SetCommand extends SimpleJShellBuiltin {
             for (JShellFunction function : context.functions().getAll()) {
                 results.add(function.getDefinition());
             }
-            context.getSession().out().printlnf(results);
+            context.getSession().out().println(results);
         } else {
             for (Map.Entry<String, String> entry : options.vars.entrySet()) {
                 context.vars().set(entry.getKey(), entry.getValue());

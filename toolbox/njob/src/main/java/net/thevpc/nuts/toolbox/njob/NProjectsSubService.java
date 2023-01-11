@@ -30,7 +30,7 @@ public class NProjectsSubService {
         p.setId(null);
         NProject p0 = getProject(name);
         if (p0 != null) {
-            throw new NIllegalArgumentException(context.getSession(), NMsg.ofCstyle("project already exists: %d", name));
+            throw new NIllegalArgumentException(context.getSession(), NMsg.ofC("project already exists: %d", name));
         }
         if (p.getBeneficiary() == null) {
             p.setBeneficiary("unspecified");
@@ -91,7 +91,7 @@ public class NProjectsSubService {
     public NProject getProjectOrError(String projectNameOrId) {
         NProject p = getProject(projectNameOrId);
         if (p == null) {
-            throw new NIllegalArgumentException(context.getSession(), NMsg.ofCstyle("project not found %s", projectNameOrId));
+            throw new NIllegalArgumentException(context.getSession(), NMsg.ofC("project not found %s", projectNameOrId));
         }
         return p;
     }
@@ -120,7 +120,7 @@ public class NProjectsSubService {
                 }
                 sb.append(countTasks > 1 ? "one task" : (countTasks + " task"));
             }
-            throw new NIllegalArgumentException(context.getSession(), NMsg.ofCstyle("Project is used in %s. It cannot be removed.",sb));
+            throw new NIllegalArgumentException(context.getSession(), NMsg.ofC("Project is used in %s. It cannot be removed.",sb));
         }
         return dal.delete(NProject.class, projectName);
     }

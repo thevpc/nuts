@@ -73,16 +73,16 @@ public class DefaultNDescriptorParser implements NDescriptorParser {
                     startParsing = true;
                     return parse(is, true);
                 } catch (RuntimeException ex) {
-                    return NOptional.ofError(session1 -> NMsg.ofCstyle("unable to parse descriptor from %s : %S", path,ex),ex);
+                    return NOptional.ofError(session1 -> NMsg.ofC("unable to parse descriptor from %s : %S", path,ex),ex);
                 }
             } catch (IOException ex) {
                 if (!startParsing) {
-                    return NOptional.ofError(session1 -> NMsg.ofCstyle("unable to parse descriptor from %s : file not found", path),ex);
+                    return NOptional.ofError(session1 -> NMsg.ofC("unable to parse descriptor from %s : file not found", path),ex);
                 }
-                return NOptional.ofError(session1 -> NMsg.ofCstyle("unable to parse descriptor from %s : %S", path,ex),ex);
+                return NOptional.ofError(session1 -> NMsg.ofC("unable to parse descriptor from %s : %S", path,ex),ex);
             }
         } catch (Exception ex) {
-            return NOptional.ofError(session1 -> NMsg.ofCstyle("unable to parse descriptor from %s : %s", path, ex),ex);
+            return NOptional.ofError(session1 -> NMsg.ofC("unable to parse descriptor from %s : %s", path, ex),ex);
         }
     }
 
@@ -126,7 +126,7 @@ public class DefaultNDescriptorParser implements NDescriptorParser {
         try {
             return NOptional.of(parseNonLenient(in, closeStream));
         } catch (Exception ex) {
-            return NOptional.ofError(session1 -> NMsg.ofCstyle("unable to parse descriptor : %s", ex),ex);
+            return NOptional.ofError(session1 -> NMsg.ofC("unable to parse descriptor : %s", ex),ex);
         }
     }
 
@@ -291,7 +291,7 @@ public class DefaultNDescriptorParser implements NDescriptorParser {
                                     .setDependencies(new ArrayList<>(deps))
                                     .build();
                         }
-                        throw new NParseException(getSession(), NMsg.ofCstyle("unable to parse Descriptor for Manifest from %s", in));
+                        throw new NParseException(getSession(), NMsg.ofC("unable to parse Descriptor for Manifest from %s", in));
                     } catch (IOException ex) {
                         throw new NIOException(getSession(), ex);
                     }

@@ -78,7 +78,7 @@ public class NFolderRepository extends NFolderRepositoryBase {
                 return NLocations.of(session).getDefaultIdContentExtension(packaging);
             }
             default: {
-                throw new NUnsupportedArgumentException(session, NMsg.ofCstyle("unsupported fact %s", f));
+                throw new NUnsupportedArgumentException(session, NMsg.ofC("unsupported fact %s", f));
             }
         }
     }

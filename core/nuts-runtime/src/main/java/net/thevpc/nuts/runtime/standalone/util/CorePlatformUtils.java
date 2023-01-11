@@ -217,7 +217,7 @@ public class CorePlatformUtils {
                     }
                 }
             } catch (Exception e) {
-                session.err().printf("error: %s%n", CoreStringUtils.exceptionToMessage(e));
+                session.err().println(NMsg.ofC("error: %s", CoreStringUtils.exceptionToMessage(e)));
             }
         }
         Map<String, String> m = new HashMap<>();
@@ -317,7 +317,7 @@ public class CorePlatformUtils {
 
     public static boolean checkAcceptCondition(NEnvCondition condition, boolean currentVM, NSession session) {
         if (!CoreFilterUtils.acceptCondition(condition, currentVM, session)) {
-            throw new NIllegalArgumentException(session, NMsg.ofCstyle("environment %s is rejected by %s", currentVM, condition));
+            throw new NIllegalArgumentException(session, NMsg.ofC("environment %s is rejected by %s", currentVM, condition));
         }
         return true;
     }
@@ -338,7 +338,7 @@ public class CorePlatformUtils {
                             try {
                                 Class<?> aClass = (classLoader == null ? Thread.currentThread().getContextClassLoader() : classLoader).loadClass(clz);
                                 if (terminal != null) {
-                                    terminal.out().printf("loaded %s from %s%n", aClass, file);
+                                    terminal.out().println(NMsg.ofC("loaded %s from %s", aClass, file));
                                 }
                                 return true;
                             } catch (ClassNotFoundException e) {

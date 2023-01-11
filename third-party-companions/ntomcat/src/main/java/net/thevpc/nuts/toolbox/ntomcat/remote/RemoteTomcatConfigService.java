@@ -3,7 +3,7 @@ package net.thevpc.nuts.toolbox.ntomcat.remote;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.elem.NElements;
 import net.thevpc.nuts.io.NPath;
-import net.thevpc.nuts.io.NOutStream;
+import net.thevpc.nuts.io.NOutputStream;
 import net.thevpc.nuts.toolbox.ntomcat.NTomcatConfigVersions;
 import net.thevpc.nuts.toolbox.ntomcat.local.LocalTomcatConfigService;
 import net.thevpc.nuts.toolbox.ntomcat.remote.config.RemoteTomcatAppConfig;
@@ -57,7 +57,7 @@ public class RemoteTomcatConfigService extends RemoteTomcatServiceBase {
     }
 
     @Override
-    public RemoteTomcatConfigService print(NOutStream out) {
+    public RemoteTomcatConfigService print(NOutputStream out) {
         NSession session = context.getSession();
         NElements.of(session).json().setValue(getConfig()).print(out);
         out.flush();
@@ -188,7 +188,7 @@ public class RemoteTomcatConfigService extends RemoteTomcatServiceBase {
     public RemoteTomcatAppConfigService getAppOrError(String appName) {
         RemoteTomcatAppConfig a = getConfig().getApps().get(appName);
         if (a == null) {
-            throw new NExecutionException(context.getSession(), NMsg.ofCstyle("app not found :%s", appName), 2);
+            throw new NExecutionException(context.getSession(), NMsg.ofC("app not found :%s", appName), 2);
         }
         return new RemoteTomcatAppConfigService(appName, a, this);
     }

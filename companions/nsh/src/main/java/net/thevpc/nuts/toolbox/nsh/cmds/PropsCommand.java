@@ -205,7 +205,7 @@ public class PropsCommand extends SimpleJShellBuiltin {
                     }
                     storeProperties(p, o, context);
                 } catch (Exception ex) {
-                    throw new NExecutionException(session, NMsg.ofCstyle("%s", ex), ex, 100);
+                    throw new NExecutionException(session, NMsg.ofC("%s", ex), ex, 100);
                 }
                 return;
             }
@@ -214,7 +214,7 @@ public class PropsCommand extends SimpleJShellBuiltin {
                 return;
             }
             default: {
-                throw new NExecutionException(session, NMsg.ofCstyle("props: Unsupported action %s", o.action), 2);
+                throw new NExecutionException(session, NMsg.ofC("props: Unsupported action %s", o.action), 2);
             }
         }
     }
@@ -258,7 +258,7 @@ public class PropsCommand extends SimpleJShellBuiltin {
         } else if (file.toLowerCase().endsWith(".xml")) {
             return Format.XML;
         }
-        throw new NExecutionException(context.getSession(), NMsg.ofCstyle("unknown file format %s", file), 2);
+        throw new NExecutionException(context.getSession(), NMsg.ofC("unknown file format %s", file), 2);
     }
 
     private Map<String, String> readProperties(Options o, JShellExecutionContext context) {
@@ -286,7 +286,7 @@ public class PropsCommand extends SimpleJShellBuiltin {
                 }
             }
         } catch (Exception ex) {
-            throw new NExecutionException(context.getSession(), NMsg.ofCstyle("%s", ex), ex, 100);
+            throw new NExecutionException(context.getSession(), NMsg.ofC("%s", ex), ex, 100);
         }
         return p;
     }

@@ -1,7 +1,7 @@
 package net.thevpc.nuts.tutorial.naf.spring.helloworld;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.io.NOutStream;
+import net.thevpc.nuts.io.NOutputStream;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
@@ -13,7 +13,7 @@ public class AppExample implements NApplication {
 
     @Override
     public void run(NApplicationContext context) {
-        NOutStream out = context.getSession().out();
+        NOutputStream out = context.getSession().out();
         out.println("Hello ##World##");
     }
 }

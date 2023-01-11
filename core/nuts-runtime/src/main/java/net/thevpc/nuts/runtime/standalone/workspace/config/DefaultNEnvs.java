@@ -98,11 +98,6 @@ public class DefaultNEnvs implements NEnvs {
     }
 
     @Override
-    public NPlatformManager platforms() {
-        return new DefaultNPlatformManager(sdkModel).setSession(getSession());
-    }
-
-    @Override
     public NId getPlatform() {
 //        checkSession();
         return model.getPlatform(session);
@@ -359,11 +354,11 @@ public class DefaultNEnvs implements NEnvs {
 //    public void addLauncherOld(NutsLauncherOptions launcher) {
 //        checkSession();
 //        if (launcher == null) {
-//            throw new NutsIllegalArgumentException(getSession(), NMsg.ofCstyle("missing launcher options"));
+//            throw new NutsIllegalArgumentException(getSession(), NMsg.ofC("missing launcher options"));
 //        }
 //        NutsId id = launcher.getId();
 //        if (id == null) {
-//            throw new NutsIllegalArgumentException(getSession(), NMsg.ofCstyle("missing id"));
+//            throw new NutsIllegalArgumentException(getSession(), NMsg.ofC("missing id"));
 //        }
 //
 //        NutsWorkspace ws = getSession().getWorkspace();

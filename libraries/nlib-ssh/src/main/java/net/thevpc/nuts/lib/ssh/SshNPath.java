@@ -88,7 +88,7 @@ class SshNPath implements NPathSPI {
             }
 
             @Override
-            public void print(NOutStream out) {
+            public void print(NOutputStream out) {
                 //should implement better formatting...
                 NTextStyle _sep = NTextStyle.separator();
                 NTextStyle _path = NTextStyle.path();
@@ -218,12 +218,12 @@ class SshNPath implements NPathSPI {
 
     @Override
     public URL toURL(NPath basePath) {
-        throw new NIOException(getSession(), NMsg.ofCstyle("unable to resolve url from %s", toString()));
+        throw new NIOException(getSession(), NMsg.ofC("unable to resolve url from %s", toString()));
     }
 
     @Override
     public Path toFile(NPath basePath) {
-        throw new NIOException(getSession(), NMsg.ofCstyle("unable to resolve file from %s", toString()));
+        throw new NIOException(getSession(), NMsg.ofC("unable to resolve file from %s", toString()));
     }
 
     //    @Override
@@ -306,7 +306,7 @@ class SshNPath implements NPathSPI {
 
     @Override
     public boolean exists(NPath basePath) {
-        throw new NIOException(getSession(), NMsg.ofCstyle("not supported exists for %s", toString()));
+        throw new NIOException(getSession(), NMsg.ofC("not supported exists for %s", toString()));
     }
 
     @Override
@@ -336,7 +336,7 @@ class SshNPath implements NPathSPI {
 
     @Override
     public OutputStream getOutputStream(NPath basePath, NPathOption... options) {
-        throw new NIOException(getSession(), NMsg.ofCstyle("not supported output stream for %s", toString()));
+        throw new NIOException(getSession(), NMsg.ofC("not supported output stream for %s", toString()));
     }
 
     @Override
@@ -542,7 +542,7 @@ class SshNPath implements NPathSPI {
                     r = c.execStringCommand("mv " + path.getPath() + " " + sp);
                 }
                 if (r != 0) {
-                    throw new NIOException(session, NMsg.ofCstyle("unable to move %s", this));
+                    throw new NIOException(session, NMsg.ofC("unable to move %s", this));
                 }
                 return;
             }
@@ -570,7 +570,7 @@ class SshNPath implements NPathSPI {
                     }
                     case SKIP_SIBLINGS:
                     case SKIP_SUBTREE: {
-                        throw new NIllegalArgumentException(session, NMsg.ofCstyle("unsupported %s", r));
+                        throw new NIllegalArgumentException(session, NMsg.ofC("unsupported %s", r));
                     }
                 }
             } else if (x.isRegularFile()) {
@@ -584,7 +584,7 @@ class SshNPath implements NPathSPI {
                     }
                     case SKIP_SIBLINGS:
                     case SKIP_SUBTREE: {
-                        throw new NIllegalArgumentException(session, NMsg.ofCstyle("unsupported %s", r));
+                        throw new NIllegalArgumentException(session, NMsg.ofC("unsupported %s", r));
                     }
                 }
             }

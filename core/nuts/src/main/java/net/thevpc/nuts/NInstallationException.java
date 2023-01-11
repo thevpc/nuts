@@ -48,7 +48,7 @@ public abstract class NInstallationException extends NException {
      * @param ex      exception
      */
     public NInstallationException(NSession session, NId id, NMsg msg, Throwable ex) {
-        super(session, msg == null ? NMsg.ofCstyle("failed to install %s", (id == null ? "<null>" : id)) : msg, ex);
+        super(session, msg == null ? NMsg.ofC("failed to install %s", (id == null ? "<null>" : id)) : msg, ex);
         this.id = id;
     }
 

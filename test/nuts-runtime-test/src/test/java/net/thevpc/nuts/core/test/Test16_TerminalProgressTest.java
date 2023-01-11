@@ -23,6 +23,7 @@
  */
 package net.thevpc.nuts.core.test;
 
+import net.thevpc.nuts.NMsg;
 import net.thevpc.nuts.NSession;
 import net.thevpc.nuts.core.test.utils.TestUtils;
 import net.thevpc.nuts.runtime.standalone.io.progress.CProgressBar;
@@ -46,7 +47,7 @@ public class Test16_TerminalProgressTest {
     public void test1() throws Exception {
         for (int i = 0; i < 100; i++) {
             Thread.sleep(100);
-            session.getTerminal().printProgress((i / 100f), "message %s", i);
+            session.getTerminal().printProgress((i / 100f), NMsg.ofC("message %s", i));
         }
     }
 
@@ -80,7 +81,7 @@ public class Test16_TerminalProgressTest {
             rr.setFormatter(formatter);
             for (int i = 0; i < 100; i++) {
 //                System.out.printf("%2d ::" + rr.progress(i) + "\n", i);
-                session.out().printf("%2d ::" + rr.progress(i) + "\n", i);
+                session.out().println(NMsg.ofC("%2d ::" + rr.progress(i), i));
             }
             for (int i = 0; i < 12; i++) {
                 int finalI = i;

@@ -5,7 +5,7 @@ import net.thevpc.nuts.*;
 import net.thevpc.nuts.cmdline.NArg;
 import net.thevpc.nuts.cmdline.NCommandAutoComplete;
 import net.thevpc.nuts.cmdline.NCommandLine;
-import net.thevpc.nuts.io.NOutStream;
+import net.thevpc.nuts.io.NOutputStream;
 import net.thevpc.nuts.io.NTerminalMode;
 
 import java.io.InputStream;
@@ -48,12 +48,12 @@ public class DefaultJShellExecutionContext implements JShellExecutionContext {
     }
 
     @Override
-    public NOutStream out() {
+    public NOutputStream out() {
         return getSession().out();
     }
 
     @Override
-    public NOutStream err() {
+    public NOutputStream err() {
         return getSession().err();
     }
 
@@ -91,10 +91,10 @@ public class DefaultJShellExecutionContext implements JShellExecutionContext {
                 break;
 //                cmd.skip();
 //                if (cmd.isExecMode()) {
-//                    out().printf("%s%n", NutsIdResolver.of(getSession()).resolveId(getClass()).getVersion().toString());
+//                    out().print(NMsg.ofC("%s%n", NutsIdResolver.of(getSession()).resolveId(getClass()).getVersion().toString()));
 //                    cmd.skipAll();
 //                }
-//                throw new NutsExecutionException(shellContext.getSession(), NMsg.ofCstyle("Help"), 0);
+//                throw new NutsExecutionException(shellContext.getSession(), NMsg.ofC("Help"), 0);
             }
             default: {
                 if (getSession() != null && getSession().configureFirst(cmd)) {
@@ -174,13 +174,13 @@ public class DefaultJShellExecutionContext implements JShellExecutionContext {
 
     @Override
     public JShellExecutionContext setOut(PrintStream out) {
-        getSession().getTerminal().setErr(NOutStream.of(out, getSession()));
+        getSession().getTerminal().setErr(NOutputStream.of(out, getSession()));
         return this;
     }
 
     @Override
     public JShellExecutionContext setErr(PrintStream err) {
-        getSession().getTerminal().setErr(NOutStream.of(err, getSession()));
+        getSession().getTerminal().setErr(NOutputStream.of(err, getSession()));
         return this;
     }
 

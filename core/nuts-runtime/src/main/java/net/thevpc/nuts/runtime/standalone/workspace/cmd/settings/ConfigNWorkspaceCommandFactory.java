@@ -121,7 +121,7 @@ public class ConfigNWorkspaceCommandFactory implements NWorkspaceCommandFactory 
                 try {
                     c = NElements.of(session).json().parse(file, NCommandConfig.class);
                 } catch (Exception ex) {
-                    _LOGOP(session).level(Level.FINE).error(ex).log(NMsg.ofJstyle("unable to parse {0}", file));
+                    _LOGOP(session).level(Level.FINE).error(ex).log(NMsg.ofJ("unable to parse {0}", file));
                     //
                 }
                 if (c != null) {

@@ -61,7 +61,7 @@ public class NHttpSrvRepository extends NCachedRepository {
             remoteId = getRemoteId(session);
         } catch (Exception ex) {
             LOG.with().session(session).level(Level.WARNING).verb(NLoggerVerb.FAIL)
-                    .log(NMsg.ofJstyle("unable to initialize Repository NutsId for repository {0}", options.getLocation()));
+                    .log(NMsg.ofJ("unable to initialize Repository NutsId for repository {0}", options.getLocation()));
         }
     }
 
@@ -75,7 +75,7 @@ public class NHttpSrvRepository extends NCachedRepository {
                 remoteId = NId.of(httpGetString(getUrl("/version"), session)).get(session);
             } catch (Exception ex) {
                 LOG.with().session(session).level(Level.WARNING).verb(NLoggerVerb.FAIL)
-                        .log(NMsg.ofJstyle("unable to resolve Repository NutsId for remote repository {0}", config().getLocation()));
+                        .log(NMsg.ofJ("unable to resolve Repository NutsId for remote repository {0}", config().getLocation()));
             }
         }
         return remoteId;
@@ -109,7 +109,7 @@ public class NHttpSrvRepository extends NCachedRepository {
             throw new NNotFoundException(session, id, new NFetchModeNotSupportedException(session, this, fetchMode, id.toString(), null));
         }
         boolean transitive = session.isTransitive();
-        session.getTerminal().printProgress("loading descriptor for ", id.getLongId());
+        session.getTerminal().printProgress(NMsg.ofC("loading descriptor for %s", id.getLongId()));
         try (InputStream stream = NPath.of(getUrl("/fetch-descriptor?id=" + CoreIOUtils.urlEncodeString(id.toString(), session) + (transitive ? ("&transitive") : "") + "&" + resolveAuthURLPart(session)), session).getInputStream()) {
             NDescriptor descriptor = NDescriptorParser.of(session).parse(stream).get(session);
             if (descriptor != null) {
@@ -132,7 +132,7 @@ public class NHttpSrvRepository extends NCachedRepository {
         boolean transitive = session.isTransitive();
         InputStream ret = null;
         try {
-            session.getTerminal().printProgress("search version for %s", id.getLongId(), session);
+            session.getTerminal().printProgress(NMsg.ofC("search version for %s", id.getLongId()));
             ret = NPath.of(getUrl("/find-versions?id=" + CoreIOUtils.urlEncodeString(id.toString(), session) + (transitive ? ("&transitive") : "") + "&" + resolveAuthURLPart(session)), session).getInputStream();
         } catch (UncheckedIOException | NIOException e) {
             return IteratorBuilder.emptyIterator();
@@ -153,7 +153,7 @@ public class NHttpSrvRepository extends NCachedRepository {
             return null;
         }
 
-        session.getTerminal().printProgress("search into %s ", Arrays.toString(basePaths));
+        session.getTerminal().printProgress(NMsg.ofC("search into %s ", Arrays.toString(basePaths)));
         boolean transitive = session.isTransitive();
         InputStream ret = null;
         String[] ulp = resolveEncryptedAuth(session);
@@ -221,13 +221,13 @@ public class NHttpSrvRepository extends NCachedRepository {
 
     private String httpGetString(String url, NSession session) {
         LOG.with().session(session).level(Level.FINEST).verb(NLoggerVerb.START)
-                .log(NMsg.ofJstyle("get URL{0}", url));
+                .log(NMsg.ofJ("get URL{0}", url));
         return CoreIOUtils.loadString(NPath.of(url, session).getInputStream(), true, session);
     }
 
     private InputStream httpUpload(String url, NSession session, NTransportParamPart... parts) {
         LOG.with().session(session).level(Level.FINEST).verb(NLoggerVerb.START)
-                .log(NMsg.ofJstyle("uploading URL {0}", url));
+                .log(NMsg.ofJ("uploading URL {0}", url));
         return CoreIOUtils.getHttpClientFacade(session, url).upload(parts);
     }
 

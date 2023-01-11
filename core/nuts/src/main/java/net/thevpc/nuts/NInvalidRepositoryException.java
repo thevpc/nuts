@@ -43,7 +43,7 @@ public class NInvalidRepositoryException extends NRepositoryException {
      */
     public NInvalidRepositoryException(NSession session, String repository, NMsg message) {
         super(session, repository,
-                NMsg.ofCstyle("invalid repository %s : %s", (repository == null ? "<null>" : repository), message)
+                NMsg.ofC("invalid repository %s : %s", (repository == null ? "<null>" : repository), message)
                 , null);
     }
 

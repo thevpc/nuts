@@ -55,7 +55,7 @@ public class DefaultProjectTemplate implements ProjectTemplate {
         console = new TemplateConsole() {
             @Override
             public void println(String message, Object... params) {
-                session.out().printf(message + "\n", params);
+                session.out().println(NMsg.ofC(message, params));
             }
 
             @Override
@@ -435,7 +435,7 @@ public class DefaultProjectTemplate implements ProjectTemplate {
             if (p != null) {
                 if (!getSession().getTerminal().ask()
                         .resetLine()
-                        .forBoolean(NMsg.ofCstyle("accept project location %s?",
+                        .forBoolean(NMsg.ofC("accept project location %s?",
                                 NTexts.of(applicationContext.getSession()).ofStyled(p.getPath(), NTextStyle.path())))
                         .setDefaultValue(false)
                         .getBooleanValue()) {

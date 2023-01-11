@@ -24,7 +24,7 @@ public class NSessionUtils {
     public static void checkSession(NWorkspace ws, NSession session) {
         NAssert.requireSession(session);
         if (!Objects.equals(session.getWorkspace().getUuid(), ws.getUuid())) {
-            throw new NIllegalArgumentException(defaultSession(ws), NMsg.ofCstyle("invalid session %s != %s ; %s != %s ; %s != %s ; ",
+            throw new NIllegalArgumentException(defaultSession(ws), NMsg.ofC("invalid session %s != %s ; %s != %s ; %s != %s ; ",
                     session.getWorkspace().getName(), ws.getName(),
                     session.getWorkspace().getLocation(), ws.getLocation(),
                     session.getWorkspace().getUuid(), ws.getUuid()

@@ -34,7 +34,7 @@ public class DefaultNWorkspaceLocationModel {
 
     public void setHomeLocation(NHomeLocation homeType, String location, NSession session) {
 //        if (homeType == null) {
-//            throw new NutsIllegalArgumentException(session, NMsg.ofCstyle("invalid store root folder null"));
+//            throw new NutsIllegalArgumentException(session, NMsg.ofC("invalid store root folder null"));
 //        }
 //        session = CoreNutsUtils.validate(session, ws);
         cfg().onPreUpdateConfig("home-location", session);
@@ -246,8 +246,8 @@ public class DefaultNWorkspaceLocationModel {
                 if (f.equals("cache") || f.endsWith(".cache")) {
                     return "." + f;
                 }
-                NAssert.requireNonBlank(f, ()-> NMsg.ofCstyle("missing face in %s", id), session);
-                throw new NIllegalArgumentException(session, NMsg.ofCstyle("unsupported face %s in %s", f, id));
+                NAssert.requireNonBlank(f, ()-> NMsg.ofC("missing face in %s", id), session);
+                throw new NIllegalArgumentException(session, NMsg.ofC("unsupported face %s in %s", f, id));
             }
         }
     }

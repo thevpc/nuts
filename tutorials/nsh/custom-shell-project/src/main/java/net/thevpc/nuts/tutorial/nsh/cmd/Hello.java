@@ -1,6 +1,8 @@
 package net.thevpc.nuts.tutorial.nsh.cmd;
 
 import java.util.HashMap;
+
+import net.thevpc.nuts.NMsg;
 import net.thevpc.nuts.cmdline.NCommandLine;
 import net.thevpc.nuts.NSession;
 import net.thevpc.nuts.spi.NComponentScope;
@@ -97,7 +99,7 @@ public class Hello extends SimpleJShellBuiltin {
             // it will be formatted according to your "output format" (aka json, or any thing else)
             // you can try running your app with
             // nuts my-shell --json -c hello --complex --who=NoneOfYourBusiness
-            session.out().printf(new HashMap.SimpleEntry<String, String>(
+            session.out().print(new HashMap.SimpleEntry<String, String>(
                     "hello",
                     o.who == null ? System.getProperty("user.home") : o.who
             ));
@@ -109,7 +111,7 @@ public class Hello extends SimpleJShellBuiltin {
             // '###' for another color
             // you can see NTF for more details on coloring
             // or just issue "nuts help --ntf" in your commandline
-            session.out().printlnf("hello ##%s##", o.who == null ? System.getProperty("user.home") : o.who);
+            session.out().println(NMsg.ofC("hello ##%s##", o.who == null ? System.getProperty("user.home") : o.who));
         }
     }
 

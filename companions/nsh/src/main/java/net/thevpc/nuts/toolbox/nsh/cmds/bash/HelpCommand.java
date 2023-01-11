@@ -113,7 +113,7 @@ public class HelpCommand extends SimpleJShellBuiltin {
                     }
                 }
                 for (JShellBuiltin cmd : commands) {
-                    context.out().printf("%s : ", text.ofStyled(_StringUtils.formatLeft(cmd.getName(), max), NTextStyle.primary4()));
+                    context.out().print(NMsg.ofC("%s : ", text.ofStyled(_StringUtils.formatLeft(cmd.getName(), max), NTextStyle.primary4())));
                     context.out().println(ss.apply(cmd.getHelpHeader())); //formatted
                 }
             } else {
@@ -121,11 +121,11 @@ public class HelpCommand extends SimpleJShellBuiltin {
                 for (String commandName : options.commandNames) {
                     JShellBuiltin command1 = context.builtins().find(commandName);
                     if (command1 == null) {
-                        context.err().printf("command not found : %s\n", text.ofStyled(commandName, NTextStyle.error()));
+                        context.err().println(NMsg.ofC("command not found : %s", text.ofStyled(commandName, NTextStyle.error())));
                         x = 1;
                     } else {
                         String help = command1.getHelp();
-                        context.out().printf("%s : %s\f", text.ofStyled("COMMAND", NTextStyle.primary4()), "commandName");
+                        context.out().print(NMsg.ofC("%s : %s\f", text.ofStyled("COMMAND", NTextStyle.primary4()), "commandName"));
                         context.out().println(ss.apply(help));
                     }
                 }

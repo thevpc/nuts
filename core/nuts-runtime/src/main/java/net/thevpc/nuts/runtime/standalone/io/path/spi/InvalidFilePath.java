@@ -152,11 +152,11 @@ public class InvalidFilePath implements NPathSPI {
     }
 
     public InputStream getInputStream(NPath basePath, NPathOption... options) {
-        throw new NIOException(session, NMsg.ofCstyle("path not found %s", this));
+        throw new NIOException(session, NMsg.ofC("path not found %s", this));
     }
 
     public OutputStream getOutputStream(NPath basePath, NPathOption... options) {
-        throw new NIOException(session, NMsg.ofCstyle("path not found %s", this));
+        throw new NIOException(session, NMsg.ofC("path not found %s", this));
     }
 
     @Override
@@ -166,12 +166,12 @@ public class InvalidFilePath implements NPathSPI {
 
     @Override
     public void delete(NPath basePath, boolean recurse) {
-        throw new NIOException(getSession(), NMsg.ofCstyle("unable to delete path %s", this));
+        throw new NIOException(getSession(), NMsg.ofC("unable to delete path %s", this));
     }
 
     @Override
     public void mkdir(boolean parents, NPath basePath) {
-        throw new NIOException(getSession(), NMsg.ofCstyle("unable to create folder out of regular file %s", this));
+        throw new NIOException(getSession(), NMsg.ofC("unable to create folder out of regular file %s", this));
     }
 
     @Override
@@ -387,7 +387,7 @@ public class InvalidFilePath implements NPathSPI {
         }
 
         @Override
-        public void print(NOutStream out) {
+        public void print(NOutputStream out) {
             out.print(asFormattedString());
         }
 
@@ -399,12 +399,12 @@ public class InvalidFilePath implements NPathSPI {
 
     @Override
     public void moveTo(NPath basePath, NPath other, NPathOption... options) {
-        throw new NIOException(session, NMsg.ofCstyle("unable to move %s",this));
+        throw new NIOException(session, NMsg.ofC("unable to move %s",this));
     }
 
     @Override
     public void copyTo(NPath basePath, NPath other, NPathOption... options) {
-        throw new NIOException(session, NMsg.ofCstyle("unable to copy %s",this));
+        throw new NIOException(session, NMsg.ofC("unable to copy %s",this));
     }
     @Override
     public NPath getRoot(NPath basePath) {

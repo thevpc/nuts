@@ -49,17 +49,17 @@ public final class NReservedBootConfigLoader {
         File bootFile = new File(workspaceLocation, NConstants.Files.WORKSPACE_CONFIG_FILE_NAME);
         try {
             if (bootFile.isFile()) {
-                bLog.with().level(Level.CONFIG).verb(NLoggerVerb.READ).log( NMsg.ofJstyle("load boot file : {0}", bootFile.getPath()));
+                bLog.with().level(Level.CONFIG).verb(NLoggerVerb.READ).log( NMsg.ofJ("load boot file : {0}", bootFile.getPath()));
                 String json = NReservedIOUtils.readStringFromFile(bootFile).trim();
                 if (json.length() > 0) {
                     return loadBootConfigJSON(json, bLog);
                 }
             }
             if (bLog.isLoggable(Level.FINEST)) {
-                bLog.with().level(Level.CONFIG).verb(NLoggerVerb.FAIL).log(NMsg.ofJstyle("previous Workspace config not found at {0}", bootFile.getPath()));
+                bLog.with().level(Level.CONFIG).verb(NLoggerVerb.FAIL).log(NMsg.ofJ("previous Workspace config not found at {0}", bootFile.getPath()));
             }
         } catch (Exception ex) {
-            bLog.with().level(Level.CONFIG).verb(NLoggerVerb.FAIL).error(ex).log(NMsg.ofJstyle("unable to load nuts version file {0}.\n", bootFile));
+            bLog.with().level(Level.CONFIG).verb(NLoggerVerb.FAIL).error(ex).log(NMsg.ofJ("unable to load nuts version file {0}.\n", bootFile));
         }
         return null;
     }
@@ -74,22 +74,22 @@ public final class NReservedBootConfigLoader {
 
         if (configVersion.isBlank()) {
             configVersion = Nuts.getVersion();
-            bLog.with().level(Level.FINEST).verb(NLoggerVerb.FAIL).log(NMsg.ofJstyle("unable to detect config version. Fallback to {0}", configVersion));
+            bLog.with().level(Level.FINEST).verb(NLoggerVerb.FAIL).log(NMsg.ofJ("unable to detect config version. Fallback to {0}", configVersion));
         }
         if (configVersion == null) {
         }
         int buildNumber = getApiVersionOrdinalNumber(configVersion);
         if (buildNumber <= 501) {
             //load nothing!
-            bLog.with().level(Level.CONFIG).verb(NLoggerVerb.READ).log( NMsg.ofJstyle("detect config version {0} ( considered as 0.5.1, very old config, ignored)", configVersion));
+            bLog.with().level(Level.CONFIG).verb(NLoggerVerb.READ).log( NMsg.ofJ("detect config version {0} ( considered as 0.5.1, very old config, ignored)", configVersion));
         } else if (buildNumber <= 505) {
-            bLog.with().level(Level.CONFIG).verb(NLoggerVerb.READ).log(NMsg.ofJstyle("detect config version {0} ( compatible with 0.5.2 config file )", configVersion));
+            bLog.with().level(Level.CONFIG).verb(NLoggerVerb.READ).log(NMsg.ofJ("detect config version {0} ( compatible with 0.5.2 config file )", configVersion));
             loadConfigVersion502(c, jsonObject, bLog);
         } else if (buildNumber <= 506) {
-            bLog.with().level(Level.CONFIG).verb(NLoggerVerb.READ).log(NMsg.ofJstyle("detect config version {0} ( compatible with 0.5.6 config file )", configVersion));
+            bLog.with().level(Level.CONFIG).verb(NLoggerVerb.READ).log(NMsg.ofJ("detect config version {0} ( compatible with 0.5.6 config file )", configVersion));
             loadConfigVersion506(c, jsonObject, bLog);
         } else {
-            bLog.with().level(Level.CONFIG).verb(NLoggerVerb.READ).log(NMsg.ofJstyle("detect config version {0} ( compatible with 0.5.7 config file )", configVersion));
+            bLog.with().level(Level.CONFIG).verb(NLoggerVerb.READ).log(NMsg.ofJ("detect config version {0} ( compatible with 0.5.7 config file )", configVersion));
             loadConfigVersion507(c, jsonObject, bLog);
         }
         return c;
@@ -277,7 +277,7 @@ public final class NReservedBootConfigLoader {
                         break;
                     }
                     default: {
-                        throw new NBootException(NMsg.ofCstyle("unsupported os-family %s", osFamily));
+                        throw new NBootException(NMsg.ofC("unsupported os-family %s", osFamily));
                     }
                 }
                 v = (String) jsonObject.get(k);

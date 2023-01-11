@@ -17,7 +17,7 @@ public class NReservedOptionalError<T> extends NReservedOptionalThrowable<T> imp
                 if (error1 == null) {
                     return NMsg.ofPlain("erroneous value");
                 } else {
-                    return NMsg.ofCstyle("erroneous value : %s", NReservedLangUtils.getErrorMessage(error));
+                    return NMsg.ofC("erroneous value : %s", NReservedLangUtils.getErrorMessage(error));
                 }
             };
         }

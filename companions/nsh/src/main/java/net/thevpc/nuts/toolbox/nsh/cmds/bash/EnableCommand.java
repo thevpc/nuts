@@ -107,7 +107,7 @@ public class EnableCommand extends SimpleJShellBuiltin {
                     }
                     //if list
 //                    for (String s : ((List<String>) context.getResult())) {
-//                        context.out().printf("%s%n",
+//                        context.out().print(NMsg.ofC("%s%n",
 //                                text.builder().append("enable: ", NutsTextStyle.error())
 //                                        .append(s, NutsTextStyle.primary5())
 //                                        .append(" ")
@@ -117,7 +117,7 @@ public class EnableCommand extends SimpleJShellBuiltin {
                     break;
                 }
                 default: {
-                    context.getSession().out().printlnf(result);
+                    context.getSession().out().println(result);
                 }
             }
         } else if (options.n) {

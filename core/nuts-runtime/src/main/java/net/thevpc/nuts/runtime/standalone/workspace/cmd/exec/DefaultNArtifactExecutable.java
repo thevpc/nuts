@@ -8,7 +8,7 @@ package net.thevpc.nuts.runtime.standalone.workspace.cmd.exec;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.cmdline.NArg;
 import net.thevpc.nuts.cmdline.NCommandLine;
-import net.thevpc.nuts.io.NOutStream;
+import net.thevpc.nuts.io.NOutputStream;
 
 import java.util.*;
 
@@ -87,8 +87,8 @@ public class DefaultNArtifactExecutable extends AbstractNExecutableCommand {
         if (execSession.isDry()) {
             if (autoInstall && !def.getInstallInformation().get(session).getInstallStatus().isInstalled()) {
                 NWorkspaceSecurityManager.of(execSession).checkAllowed(NConstants.Permissions.AUTO_INSTALL, commandName);
-                NOutStream out = execSession.out();
-                out.printf("[dry] ==install== %s%n", def.getId().getLongName());
+                NOutputStream out = execSession.out();
+                out.println(NMsg.ofC("[dry] ==install== %s", def.getId().getLongName()));
             }
             execCommand.ws_execId(def, commandName, appArgs, executorOptions, workspaceOptions, env, dir, failFast, false, session, execSession.copy().setDry(true), executionType, runAs);
             return;
@@ -99,10 +99,10 @@ public class DefaultNArtifactExecutable extends AbstractNExecutableCommand {
                 NInstallCommand.of(session).addId(def.getId()).run();
                 NInstallStatus st = NFetchCommand.of(session).setId(def.getId()).getResultDefinition().getInstallInformation().get(session).getInstallStatus();
                 if (!st.isInstalled()) {
-                    throw new NUnexpectedException(execSession, NMsg.ofCstyle("auto installation of %s failed", def.getId()));
+                    throw new NUnexpectedException(execSession, NMsg.ofC("auto installation of %s failed", def.getId()));
                 }
             } else {
-                throw new NUnexpectedException(execSession, NMsg.ofCstyle("you must install %s to be able to run it", def.getId()));
+                throw new NUnexpectedException(execSession, NMsg.ofC("you must install %s to be able to run it", def.getId()));
             }
         } else if (installStatus.isObsolete()) {
             if (autoInstall) {

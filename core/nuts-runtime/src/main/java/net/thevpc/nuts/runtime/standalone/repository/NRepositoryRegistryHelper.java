@@ -73,16 +73,16 @@ public class NRepositoryRegistryHelper {
             ii = repositoriesByUuid.get(uuid);
             if (ii != null) {
                 throw new NIllegalArgumentException(session,
-                        NMsg.ofCstyle("repository with the same uuid already exists % / %s", ii.repo.getUuid(), ii.repo.getName())
+                        NMsg.ofC("repository with the same uuid already exists % / %s", ii.repo.getUuid(), ii.repo.getName())
                 );
             }
         }
         ii = repositoriesByName.get(name);
         if (ii != null) {
-            throw new NIllegalArgumentException(session, NMsg.ofCstyle("repository with the same name already exists %s / %s", ii.repo.getUuid(), ii.repo.getName()));
+            throw new NIllegalArgumentException(session, NMsg.ofC("repository with the same name already exists %s / %s", ii.repo.getUuid(), ii.repo.getName()));
         }
         if (!name.matches("[a-zA-Z][.a-zA-Z0-9_-]*")) {
-            throw new NIllegalArgumentException(session, NMsg.ofCstyle("invalid repository name %s", name));
+            throw new NIllegalArgumentException(session, NMsg.ofC("invalid repository name %s", name));
         }
         RepoAndRef rr = new RepoAndRef(repository);
         rr.ref = repositoryRef;

@@ -31,7 +31,7 @@ import net.thevpc.nuts.elem.NElementEntry;
 import net.thevpc.nuts.elem.NElements;
 import net.thevpc.nuts.format.*;
 import net.thevpc.nuts.io.NIOException;
-import net.thevpc.nuts.io.NOutStream;
+import net.thevpc.nuts.io.NOutputStream;
 import net.thevpc.nuts.runtime.standalone.format.DefaultFormatBase;
 import net.thevpc.nuts.runtime.standalone.text.util.NTextUtils;
 import net.thevpc.nuts.runtime.standalone.util.CorePlatformUtils;
@@ -206,7 +206,7 @@ public class DefaultTableFormat extends DefaultFormatBase<NTableFormat> implemen
                 break;
             }
             default: {
-                throw new NUnsupportedArgumentException(session, NMsg.ofCstyle("unsupported position type %s", a));
+                throw new NUnsupportedArgumentException(session, NMsg.ofC("unsupported position type %s", a));
             }
         }
     }
@@ -237,7 +237,7 @@ public class DefaultTableFormat extends DefaultFormatBase<NTableFormat> implemen
     public NTableFormat setBorder(String borderName) {
         NTableBordersFormat n = parseTableBorders(borderName);
         if (n == null) {
-            throw new NIllegalArgumentException(getSession(), NMsg.ofCstyle("unsupported border. use one of : %s", getAvailableTableBorders()));
+            throw new NIllegalArgumentException(getSession(), NMsg.ofC("unsupported border. use one of : %s", getAvailableTableBorders()));
         }
         setBorder(n);
         return this;
@@ -291,8 +291,8 @@ public class DefaultTableFormat extends DefaultFormatBase<NTableFormat> implemen
     }
 
     @Override
-    public void print(NOutStream w) {
-        NOutStream out = getValidPrintStream(w);
+    public void print(NOutputStream w) {
+        NOutputStream out = getValidPrintStream(w);
         StringBuilder2 line = new StringBuilder2();
         List<Row> rows = rebuild(getSession());
         if (rows.size() > 0) {
@@ -645,7 +645,7 @@ public class DefaultTableFormat extends DefaultFormatBase<NTableFormat> implemen
                 return _model2(elem,session);
             }
             default: {
-                throw new NUnsupportedArgumentException(session, NMsg.ofCstyle("unsupported %s", elem.type()));
+                throw new NUnsupportedArgumentException(session, NMsg.ofC("unsupported %s", elem.type()));
             }
         }
     }

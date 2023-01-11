@@ -24,66 +24,14 @@
  * <br>
  * ====================================================================
  */
-package net.thevpc.nuts.text;
+package net.thevpc.nuts.io;
 
-import net.thevpc.nuts.util.NEnum;
-import net.thevpc.nuts.NOptional;
-import net.thevpc.nuts.util.NNameFormat;
-import net.thevpc.nuts.util.NStringUtils;
+import net.thevpc.nuts.NSession;
 
-import java.util.Locale;
-
-/**
- * @author thevpc
- * @app.category Format
- */
-public enum NTextFormatStyle implements NEnum {
-    /**
-     * @see java.util.Formatter
-     * @see String#format(Locale, String, Object...)
-     */
-    CSTYLE,
-    /**
-     * @see java.text.MessageFormat
-     */
-    JSTYLE,
-    /**
-     * with var place holders
-     */
-    VSTYLE,
-    /**
-     * plain text
-     */
-    PLAIN,
-    /**
-     * NTF format without arguments.
-     * was (formatted)
-     */
-    NTF,
-    /**
-     * plain format given style
-     *
-     * @since 0.8.4
-     */
-    STYLED,
-    /**
-     * code
-     */
-    CODE,
-    ;
-    private final String id;
-
-    NTextFormatStyle() {
-        this.id = NNameFormat.ID_NAME.format(name());
+public interface NMemoryOutputStream extends NOutputStream {
+    static NMemoryOutputStream of(NSession session) {
+        return NIO.of(session).createInMemoryOutputStream();
     }
 
-    public static NOptional<NTextFormatStyle> parse(String value) {
-        return NStringUtils.parseEnum(value, NTextFormatStyle.class);
-    }
-
-
-    @Override
-    public String id() {
-        return id;
-    }
+    byte[] getBytes();
 }

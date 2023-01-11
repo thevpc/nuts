@@ -43,7 +43,7 @@ public class NanoDB implements AutoCloseable {
     public NanoDBTableFile getTable(String name, NSession session) {
         NanoDBTableFile tableFile = tables.get(name);
         if (tableFile == null) {
-            throw new NIllegalArgumentException(session, NMsg.ofCstyle("table does not exists: %s", name));
+            throw new NIllegalArgumentException(session, NMsg.ofC("table does not exists: %s", name));
         }
         return tableFile;
     }

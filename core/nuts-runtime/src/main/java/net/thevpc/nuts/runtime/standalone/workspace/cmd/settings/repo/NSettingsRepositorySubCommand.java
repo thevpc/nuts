@@ -12,7 +12,7 @@ import net.thevpc.nuts.cmdline.NCommandLine;
 import net.thevpc.nuts.format.NMutableTableModel;
 import net.thevpc.nuts.format.NTableFormat;
 import net.thevpc.nuts.io.NPath;
-import net.thevpc.nuts.io.NOutStream;
+import net.thevpc.nuts.io.NOutputStream;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.AbstractNSettingsSubCommand;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.user.NSettingsUserSubCommand;
 import net.thevpc.nuts.spi.NRepositoryDB;
@@ -72,7 +72,7 @@ public class NSettingsRepositorySubCommand extends AbstractNSettingsSubCommand {
 //            return true;
 //
 //        } else {
-        NOutStream out = session.out();
+        NOutputStream out = session.out();
         if (cmdLine.next("add repo", "ar").isPresent()) {
             class Data {
                 String location = null;
@@ -142,7 +142,7 @@ public class NSettingsRepositorySubCommand extends AbstractNSettingsSubCommand {
                     NRepository p = NRepositories.of(session).getRepository(d.parent);
                     repo = p.config().addMirror(o);
                 }
-                out.printlnf("repository %s added successfully", repo.getName());
+                out.println(NMsg.ofC("repository %s added successfully", repo.getName()));
                 NConfigs.of(session).save();
 
             }
@@ -220,7 +220,7 @@ public class NSettingsRepositorySubCommand extends AbstractNSettingsSubCommand {
             }
             if (cmdLine.isExecMode()) {
                 List<NRepository> r = parent.isNull() ? NRepositories.of(session).getRepositories() : NRepositories.of(session).getRepository(parent.get()).config().getMirrors();
-                out.printlnf(r.stream().map(x -> repoInfo(x, session.getOutputFormat() != NContentType.TABLE && session.getOutputFormat() != NContentType.PLAIN, session)).toArray());
+                out.println(r.stream().map(x -> repoInfo(x, session.getOutputFormat() != NContentType.TABLE && session.getOutputFormat() != NContentType.PLAIN, session)).toArray());
             }
             return true;
 
@@ -258,7 +258,7 @@ public class NSettingsRepositorySubCommand extends AbstractNSettingsSubCommand {
             } else if (cmdLine.next("list repos", "lr").isPresent()) {
                 NRepository editedRepo = NRepositories.of(session).getRepository(repoId);
                 List<NRepository> linkRepositories = editedRepo.config().setSession(session).isSupportedMirroring() ? editedRepo.config().setSession(session).getMirrors() : Collections.emptyList();
-                out.printf("%s sub repositories.%n", linkRepositories.size());
+                out.println(NMsg.ofC("%s sub repositories.", linkRepositories.size()));
                 NTableFormat t = NTableFormat.of(session);
                 NMutableTableModel m = NMutableTableModel.of(session);
                 t.setValue(m);
@@ -271,17 +271,17 @@ public class NSettingsRepositorySubCommand extends AbstractNSettingsSubCommand {
                 for (NRepository repository : linkRepositories) {
                     m.addRow(NTexts.of(session).ofStyled(repository.getName(), NTextStyle.primary4()), repository.config().isEnabled() ? repository.isEnabled(session) ? NTexts.of(session).ofStyled("ENABLED", NTextStyle.success()) : NTexts.of(session).ofStyled("<RT-DISABLED>", NTextStyle.error()) : NTexts.of(session).ofStyled("<DISABLED>", NTextStyle.error()), repository.getRepositoryType(), repository.config().getLocation().toString());
                 }
-                out.printf(t.toString());
+                out.print(t);
             } else if (cmdLine.next("-h", "-?", "--help").isPresent()) {
-                out.printf("edit repository %s add repo ...%n", repoId);
-                out.printf("edit repository %s remove repo ...%n", repoId);
-                out.printf("edit repository %s list repos ...%n", repoId);
+                out.println(NMsg.ofC("edit repository %s add repo ...", repoId));
+                out.println(NMsg.ofC("edit repository %s remove repo ...", repoId));
+                out.println(NMsg.ofC("edit repository %s list repos ...", repoId));
             } else {
                 NRepository editedRepo = NRepositories.of(session).getRepository(repoId);
                 if (NSettingsUserSubCommand.exec(editedRepo, cmdLine, autoSave, session)) {
                     //okkay
                 } else {
-                    throw new NIllegalArgumentException(session, NMsg.ofCstyle("config edit repo: Unsupported command %s", cmdLine));
+                    throw new NIllegalArgumentException(session, NMsg.ofC("config edit repo: Unsupported command %s", cmdLine));
                 }
             }
             return true;

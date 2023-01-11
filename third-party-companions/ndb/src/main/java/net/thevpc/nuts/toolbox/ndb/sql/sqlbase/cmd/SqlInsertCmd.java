@@ -46,7 +46,7 @@ public class SqlInsertCmd<C extends NdbConfig> extends InsertCmd<C> {
                     }
                     int i = s.indexOf('=');
                     if (i < 0) {
-                        throw new NIllegalArgumentException(session, NMsg.ofCstyle("invalid %s", s));
+                        throw new NIllegalArgumentException(session, NMsg.ofC("invalid %s", s));
                     }
                     setKeys.append(s, 0, i);
                     setVals.append(s, i + 1, s.length());

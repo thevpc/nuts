@@ -7,7 +7,7 @@ package net.thevpc.nuts.runtime.standalone.xtra.cp;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.io.*;
-import net.thevpc.nuts.io.NOutStream;
+import net.thevpc.nuts.io.NOutputStream;
 import net.thevpc.nuts.runtime.standalone.io.progress.NProgressUtils;
 import net.thevpc.nuts.runtime.standalone.io.progress.SingletonNInputStreamProgressFactory;
 import net.thevpc.nuts.runtime.standalone.io.util.*;
@@ -197,7 +197,7 @@ public class DefaultNCp implements NCp {
     }
 
     @Override
-    public NCp setTarget(NOutStream target) {
+    public NCp setTarget(NOutputStream target) {
         this.target = target;
         return this;
     }
@@ -238,7 +238,7 @@ public class DefaultNCp implements NCp {
     }
 
     @Override
-    public NCp to(NOutStream target) {
+    public NCp to(NOutputStream target) {
         return setTarget(target);
     }
 
@@ -340,7 +340,7 @@ public class DefaultNCp implements NCp {
     @Override
     public byte[] getByteArrayResult() {
         checkSession();
-        NOutMemoryStream b = NOutStream.ofInMemory(session);
+        NMemoryOutputStream b = NOutputStream.ofInMemory(session);
         to(b);
         removeOptions(NPathOption.SAFE);
         run();
@@ -362,7 +362,7 @@ public class DefaultNCp implements NCp {
         if ((_source instanceof NPath) && ((NPath) _source).isDirectory()) {
             // this is a directory!!!
             if (!(target instanceof NPath)) {
-                throw new NIllegalArgumentException(getSession(), NMsg.ofCstyle("unsupported copy of directory to %s", target));
+                throw new NIllegalArgumentException(getSession(), NMsg.ofC("unsupported copy of directory to %s", target));
             }
             Path fromPath = ((NPath) _source).toFile();
             Path toPath = ((NPath) target).toFile();
@@ -701,7 +701,7 @@ public class DefaultNCp implements NCp {
             try {
                 NLoggerOp lop = _LOGOP(session);
                 if (i > 1 && lop.isLoggable(Level.FINEST)) {
-                    lop.level(Level.FINEST).verb(NLoggerVerb.START).log(NMsg.ofJstyle("repeat download #{0} {1}",
+                    lop.level(Level.FINEST).verb(NLoggerVerb.START).log(NMsg.ofJ("repeat download #{0} {1}",
                             i,
                             source));
                 }
@@ -765,7 +765,7 @@ public class DefaultNCp implements NCp {
             m = NMsg.ofPlain("copy");
         }
         if (options.contains(NPathOption.LOG)) {
-            session.getTerminal().printProgress("%-14s %s to %s", m, loggedSrc, loggedTarget);
+            session.getTerminal().printProgress(NMsg.ofC("%-14s %s to %s", m, loggedSrc, loggedTarget));
         }
         if (options.contains(NPathOption.LOG)
                 || options.contains(NPathOption.TRACE)
@@ -784,7 +784,7 @@ public class DefaultNCp implements NCp {
         }
         NLoggerOp lop = _LOGOP(session);
         if (lop.isLoggable(Level.FINEST)) {
-            lop.level(Level.FINEST).verb(NLoggerVerb.START).log(NMsg.ofJstyle("{0} {1} to {2}",
+            lop.level(Level.FINEST).verb(NLoggerVerb.START).log(NMsg.ofJ("{0} {1} to {2}",
                     m,
                     loggedSrc,
                     loggedTarget));
@@ -877,7 +877,7 @@ public class DefaultNCp implements NCp {
             }
         } catch (IOException ex) {
             lop.level(Level.CONFIG).verb(NLoggerVerb.FAIL)
-                    .log(NMsg.ofJstyle("error copying {0} to {1} : {2}", _source,
+                    .log(NMsg.ofJ("error copying {0} to {1} : {2}", _source,
                             target, ex));
             throw new NIOException(session, ex);
         }
@@ -890,7 +890,7 @@ public class DefaultNCp implements NCp {
             } catch (NCpValidatorException ex) {
                 throw ex;
             } catch (Exception ex) {
-                throw new NCpValidatorException(session, NMsg.ofCstyle("validate file %s failed", temp), ex);
+                throw new NCpValidatorException(session, NMsg.ofC("validate file %s failed", temp), ex);
             }
         }
     }

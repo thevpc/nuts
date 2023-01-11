@@ -45,7 +45,7 @@ public class NWorkspaceAlreadyExistsException extends NBootException {
      * @param workspaceLocation location
      */
     public NWorkspaceAlreadyExistsException(String workspaceLocation) {
-        super(NMsg.ofCstyle("workspace already exists %s", (workspaceLocation == null ? "<null>" : workspaceLocation)), null);
+        super(NMsg.ofC("workspace already exists %s", (workspaceLocation == null ? "<null>" : workspaceLocation)), null);
         this.workspaceLocation = workspaceLocation;
     }
 
@@ -56,7 +56,7 @@ public class NWorkspaceAlreadyExistsException extends NBootException {
      * @param err               exception
      */
     public NWorkspaceAlreadyExistsException(String workspaceLocation, Throwable err) {
-        super(NMsg.ofCstyle("workspace already exists %s", (workspaceLocation == null ? "<null>" : workspaceLocation)), err);
+        super(NMsg.ofC("workspace already exists %s", (workspaceLocation == null ? "<null>" : workspaceLocation)), err);
         this.workspaceLocation = workspaceLocation;
     }
 

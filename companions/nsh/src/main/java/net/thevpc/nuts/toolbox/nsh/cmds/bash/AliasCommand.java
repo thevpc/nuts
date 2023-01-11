@@ -25,6 +25,7 @@
  */
 package net.thevpc.nuts.toolbox.nsh.cmds.bash;
 
+import net.thevpc.nuts.NMsg;
 import net.thevpc.nuts.cmdline.NArg;
 import net.thevpc.nuts.cmdline.NCommandLine;
 import net.thevpc.nuts.NSession;
@@ -93,15 +94,15 @@ public class AliasCommand extends SimpleJShellBuiltin {
             case PLAIN: {
                 for (ResultItem resultItem : outRes) {
                     if (resultItem.value == null) {
-                        context.getSession().err().printf("alias : %s ```error not found```%n", resultItem.name);
+                        context.getSession().err().println(NMsg.ofC("alias : %s ```error not found```", resultItem.name));
                     } else {
-                        context.getSession().out().printf("alias : %s ='%s'%n", resultItem.name, resultItem.value);
+                        context.getSession().out().println(NMsg.ofC("alias : %s ='%s'", resultItem.name, resultItem.value));
                     }
                 }
                 break;
             }
             default: {
-                context.getSession().out().printlnf(outRes);
+                context.getSession().out().println(outRes);
             }
         }
         if (!errRes.isEmpty()) {

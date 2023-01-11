@@ -33,7 +33,7 @@ public class JavaSourceFormatter implements SourceProcessor {
             if (n.length() > clsNameSize) {
                 clsNameSize = n.length();
             }
-            return NMsg.ofCstyle(
+            return NMsg.ofC(
                     "%s %s %s %s",
                     NTexts.of(session).ofStyled(leftAlign(v1, 4), NTextStyle.config()),
                     NTexts.of(session).ofStyled(leftAlign(v2, 4), NTextStyle.info()),
@@ -42,7 +42,7 @@ public class JavaSourceFormatter implements SourceProcessor {
                     source.toString()
             );
         } else {
-            return NMsg.ofCstyle(
+            return NMsg.ofC(
                     "%s : %s",
                     NTexts.of(session).ofStyled("invalid source", NTextStyle.error()),
                     source.toString()

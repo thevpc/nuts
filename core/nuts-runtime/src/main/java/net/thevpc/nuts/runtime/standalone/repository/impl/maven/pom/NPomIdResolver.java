@@ -68,7 +68,7 @@ public class NPomIdResolver {
                     NLoggerOp.of(NPomXmlParser.class,session)
                             .verb(NLoggerVerb.WARNING)
                             .level(Level.FINEST)
-                            .log(NMsg.ofCstyle("failed to parse pom file %s : %s", s2, ex));
+                            .log(NMsg.ofC("failed to parse pom file %s : %s", s2, ex));
                 }
             }
         }
@@ -95,7 +95,7 @@ public class NPomIdResolver {
             NLoggerOp.of(NPomXmlParser.class,session)
                     .verb(NLoggerVerb.WARNING)
                     .level(Level.FINEST)
-                    .log(NMsg.ofCstyle("failed to parse class %s : %s", clazz.getName(), ex));
+                    .log(NMsg.ofC("failed to parse class %s : %s", clazz.getName(), ex));
         }
         if(all.isEmpty() && JavaClassUtils.isCGLib(clazz)){
             Class s = JavaClassUtils.unwrapCGLib(clazz);
@@ -116,7 +116,7 @@ public class NPomIdResolver {
             NLoggerOp.of(NPomXmlParser.class,session)
                     .verb(NLoggerVerb.WARNING)
                     .level(Level.FINEST)
-                    .log(NMsg.ofCstyle(
+                    .log(NMsg.ofC(
                             "multiple ids found : %s for class %s and id %s",
                             Arrays.asList(pomIds),clazz,defaultValue
                     ));

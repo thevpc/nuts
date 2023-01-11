@@ -34,7 +34,7 @@ public class SyntaxParser {
         NToken peeked = tokens.peek();
         if (peeked != null) {
             return NOptional.ofError(
-                    s -> NMsg.ofCstyle("unexpected token %s, after reading %s", peeked, e.get())
+                    s -> NMsg.ofC("unexpected token %s, after reading %s", peeked, e.get())
             );
         }
         return e;
@@ -247,7 +247,7 @@ public class SyntaxParser {
             //if right associative
 //            NutsExpr.Node q = nextNonTerminal(precedenceIndex);
 //            if (q == null) {
-//                throw new NutsIllegalArgumentException(session, NMsg.ofCstyle("expected expression"));
+//                throw new NutsIllegalArgumentException(session, NMsg.ofC("expected expression"));
 //            }
 //            return new DefaultOpNode(opName(infixOp), NutsExpr.OpType.INFIX, withCache.precedences[precedenceIndex], new NutsExpr.Node[]{first,q});
             //else
@@ -449,7 +449,7 @@ public class SyntaxParser {
             }
         }
         NToken ftok = t;
-        return NOptional.ofError(s -> NMsg.ofCstyle("unsupported %s", ftok));
+        return NOptional.ofError(s -> NMsg.ofC("unsupported %s", ftok));
     }
 
 }

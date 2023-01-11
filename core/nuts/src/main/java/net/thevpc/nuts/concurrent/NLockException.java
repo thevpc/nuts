@@ -68,7 +68,7 @@ public class NLockException extends NException {
      */
     public NLockException(NSession session, NMsg message, Object lockedObject, Object lockObject) {
         super(session,
-                message == null ? NMsg.ofCstyle("item already locked %s", lockedObject)
+                message == null ? NMsg.ofC("item already locked %s", lockedObject)
                         : message
         );
         this.lockedObject = lockedObject;
@@ -86,7 +86,7 @@ public class NLockException extends NException {
      */
     public NLockException(NSession session, NMsg message, Object lockedObject, Object lockObject, Throwable cause) {
         super(session,
-                message == null ? NMsg.ofCstyle("item already locked %s", lockedObject)
+                message == null ? NMsg.ofC("item already locked %s", lockedObject)
                         : message, cause
         );
         this.lockedObject = lockedObject;

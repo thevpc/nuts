@@ -14,15 +14,15 @@ import java.util.function.Supplier;
 public interface NOptional<T> extends NBlankable {
 
     static <T> NOptional<T> ofNamedEmpty(String name) {
-        return ofEmpty(s -> NMsg.ofCstyle("missing %s", name));
+        return ofEmpty(s -> NMsg.ofC("missing %s", name));
     }
 
     static <T> NOptional<T> ofNamedError(String name) {
-        return ofError(s -> NMsg.ofCstyle("error evaluating %s", name));
+        return ofError(s -> NMsg.ofC("error evaluating %s", name));
     }
 
     static <T> NOptional<T> ofNamedError(String name, Throwable throwable) {
-        return ofError(s -> NMsg.ofCstyle("error evaluating %s", name), throwable);
+        return ofError(s -> NMsg.ofC("error evaluating %s", name), throwable);
     }
 
     static <T> NOptional<T> ofEmpty() {
@@ -51,7 +51,7 @@ public interface NOptional<T> extends NBlankable {
     }
 
     static <T> NOptional<T> ofNamed(T value, String name) {
-        return of(value, s -> NMsg.ofCstyle("missing %s", name));
+        return of(value, s -> NMsg.ofC("missing %s", name));
     }
 
     static <T> NOptional<T> of(T value, Function<NSession, NMsg> emptyMessage) {
@@ -66,7 +66,7 @@ public interface NOptional<T> extends NBlankable {
     }
 
     static <T> NOptional<T> ofNamedOptional(Optional<T> optional, String name) {
-        return ofOptional(optional, s -> NMsg.ofCstyle("missing %s", name));
+        return ofOptional(optional, s -> NMsg.ofC("missing %s", name));
     }
 
     static <T> NOptional<T> ofOptional(Optional<T> optional, Function<NSession, NMsg> errorMessage) {
@@ -85,7 +85,7 @@ public interface NOptional<T> extends NBlankable {
             return ofSingleton(collection, null, null);
         }
         return ofFirst(collection,
-                s -> NMsg.ofCstyle("missing %s", name)
+                s -> NMsg.ofC("missing %s", name)
         );
     }
 
@@ -94,9 +94,9 @@ public interface NOptional<T> extends NBlankable {
             return ofSingleton(collection, null, null);
         }
         return ofSingleton(collection,
-                s -> NMsg.ofCstyle("missing %s", name)
+                s -> NMsg.ofC("missing %s", name)
                 ,
-                s -> NMsg.ofCstyle("too many elements %s>1 for %s", collection == null ? 0 : collection.size(), name));
+                s -> NMsg.ofC("too many elements %s>1 for %s", collection == null ? 0 : collection.size(), name));
     }
 
     static <T> NOptional<T> ofSingleton(Collection<T> collection, Function<NSession, NMsg> emptyMessage, Function<NSession, NMsg> errorMessage) {
@@ -105,7 +105,7 @@ public interface NOptional<T> extends NBlankable {
         }
         if (collection.size() > 1) {
             if (errorMessage == null) {
-                errorMessage = s -> NMsg.ofCstyle("too many elements %s>1", collection.size());
+                errorMessage = s -> NMsg.ofC("too many elements %s>1", collection.size());
             }
             return ofError(errorMessage);
         }

@@ -77,11 +77,11 @@ public final class NReservedJsonParser {
             Object a = nextElement();
             int p = st.nextToken();
             if (p != StreamTokenizer.TT_EOF) {
-                throw new NBootException(NMsg.ofCstyle("json syntax error :  encountered %s", st));
+                throw new NBootException(NMsg.ofC("json syntax error :  encountered %s", st));
             }
             return a;
         } catch (IOException ex) {
-            throw new NBootException(NMsg.ofCstyle("json syntax error : %s", ex.getMessage()), ex);
+            throw new NBootException(NMsg.ofC("json syntax error : %s", ex.getMessage()), ex);
         }
     }
 
@@ -100,7 +100,7 @@ public final class NReservedJsonParser {
                     case "null":
                         return null;
                     default:
-                        throw new NBootException(NMsg.ofCstyle("json syntax error : %s", st.sval));
+                        throw new NBootException(NMsg.ofC("json syntax error : %s", st.sval));
                 }
             }
             case '\"': {
@@ -115,7 +115,7 @@ public final class NReservedJsonParser {
                 return nextObject();
             }
             default: {
-                throw new NBootException(NMsg.ofCstyle("json syntax error : %s", str(p)));
+                throw new NBootException(NMsg.ofC("json syntax error : %s", str(p)));
             }
         }
     }
@@ -124,7 +124,7 @@ public final class NReservedJsonParser {
         List<Object> arr = new ArrayList<>();
         int p = st.nextToken();
         if (p != '[') {
-            throw new NBootException(NMsg.ofCstyle("json syntax error : %s", str(p)));
+            throw new NBootException(NMsg.ofC("json syntax error : %s", str(p)));
         }
         p = st.nextToken();
         if (p == ']') {
@@ -141,7 +141,7 @@ public final class NReservedJsonParser {
                     arr.add(nextElement());
                     break;
                 default:
-                    throw new NBootException(NMsg.ofCstyle("json syntax error : %s", str(p)));
+                    throw new NBootException(NMsg.ofC("json syntax error : %s", str(p)));
             }
         }
         throw new NBootException(NMsg.ofPlain("json syntax error : missing ]"));
@@ -151,7 +151,7 @@ public final class NReservedJsonParser {
         int encountered = st.nextToken();
         if (encountered != expected) {
             throw new NBootException(
-                    NMsg.ofCstyle("json syntax error : expected %s  , encountered %s", str(expected), str(encountered))
+                    NMsg.ofC("json syntax error : expected %s  , encountered %s", str(expected), str(encountered))
             );
         }
     }
@@ -159,7 +159,7 @@ public final class NReservedJsonParser {
     private Object[] nextKeyValue() throws IOException {
         Object t = nextElement();
         if (!(t instanceof String)) {
-            throw new NBootException(NMsg.ofCstyle("json syntax error : expected entry name, , encountered %s", t));
+            throw new NBootException(NMsg.ofC("json syntax error : expected entry name, , encountered %s", t));
         }
         readChar(':');
         Object v = nextElement();
@@ -170,7 +170,7 @@ public final class NReservedJsonParser {
         Map<String, Object> map = new LinkedHashMap<>();
         int p = st.nextToken();
         if (p != '{') {
-            throw new NBootException(NMsg.ofCstyle("json syntax error : %s", p));
+            throw new NBootException(NMsg.ofC("json syntax error : %s", p));
         }
         p = st.nextToken();
         if (p == '}') {
@@ -189,7 +189,7 @@ public final class NReservedJsonParser {
                     map.put((String) kv[0], kv[1]);
                     break;
                 default:
-                    throw new NBootException(NMsg.ofCstyle("json syntax error : %s", p));
+                    throw new NBootException(NMsg.ofC("json syntax error : %s", p));
             }
         }
         throw new NBootException(NMsg.ofPlain("json syntax error : Missing }"));

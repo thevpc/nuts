@@ -1,7 +1,7 @@
 package net.thevpc.nuts.toolbox.nsh.jshell;
 
 import net.thevpc.nuts.cmdline.NCommandAutoComplete;
-import net.thevpc.nuts.io.NOutStream;
+import net.thevpc.nuts.io.NOutputStream;
 import net.thevpc.nuts.NSession;
 import net.thevpc.nuts.NWorkspace;
 
@@ -28,9 +28,9 @@ public interface JShellContext {
 
     InputStream in();
 
-    NOutStream out();
+    NOutputStream out();
 
-    NOutStream err();
+    NOutputStream err();
 
     JShellVariables vars();
 

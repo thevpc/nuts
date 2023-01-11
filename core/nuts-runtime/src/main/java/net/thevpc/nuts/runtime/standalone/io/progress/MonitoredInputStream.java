@@ -34,7 +34,7 @@ import net.thevpc.nuts.spi.NFormatSPI;
 import net.thevpc.nuts.text.NTextStyle;
 import net.thevpc.nuts.util.NProgressEvent;
 import net.thevpc.nuts.util.NProgressListener;
-import net.thevpc.nuts.io.NOutPlainStream;
+import net.thevpc.nuts.io.NPlainOutputStream;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -243,14 +243,14 @@ public class MonitoredInputStream extends InputStream implements NInputSource, I
             }
 
             @Override
-            public void print(NOutStream out) {
+            public void print(NOutputStream out) {
                 NOptional<NMsg> m = getInputMetaData().getMessage();
                 if (m.isPresent()) {
                     out.print(m.get());
                 } else if (sourceName != null) {
-                    out.append(sourceName, NTextStyle.path());
+                    out.print(sourceName, NTextStyle.path());
                 } else {
-                    out.append(getClass().getSimpleName(), NTextStyle.path());
+                    out.print(getClass().getSimpleName(), NTextStyle.path());
                 }
             }
 
@@ -263,14 +263,14 @@ public class MonitoredInputStream extends InputStream implements NInputSource, I
 
     @Override
     public String toString() {
-        NOutPlainStream out = new NOutPlainStream();
+        NPlainOutputStream out = new NPlainOutputStream();
         NOptional<NMsg> m = getInputMetaData().getMessage();
         if (m.isPresent()) {
             out.print(m.get());
         } else if (sourceName != null) {
-            out.append(sourceName, NTextStyle.path());
+            out.print(sourceName, NTextStyle.path());
         } else {
-            out.append(getClass().getSimpleName(), NTextStyle.path());
+            out.print(getClass().getSimpleName(), NTextStyle.path());
         }
         return out.toString();
     }

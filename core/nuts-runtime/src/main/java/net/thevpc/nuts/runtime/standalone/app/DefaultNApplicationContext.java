@@ -3,7 +3,7 @@ package net.thevpc.nuts.runtime.standalone.app;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.cmdline.*;
 import net.thevpc.nuts.io.NPath;
-import net.thevpc.nuts.io.NOutStream;
+import net.thevpc.nuts.io.NOutputStream;
 import net.thevpc.nuts.runtime.standalone.app.cmdline.NCommandLineUtils;
 import net.thevpc.nuts.runtime.standalone.session.NSessionUtils;
 import net.thevpc.nuts.runtime.standalone.util.NConfigurableHelper;
@@ -99,7 +99,7 @@ public class DefaultNApplicationContext implements NApplicationContext {
                         break;
                     }
                     default: {
-                        throw new NExecutionException(session, NMsg.ofCstyle("Unsupported nuts-exec-mode : %s", args.get(0)), 205);
+                        throw new NExecutionException(session, NMsg.ofC("Unsupported nuts-exec-mode : %s", args.get(0)), 205);
                     }
                 }
             }
@@ -112,7 +112,7 @@ public class DefaultNApplicationContext implements NApplicationContext {
             _appId = NIdResolver.of(session).resolveId(appClass);
         }
         if (_appId == null) {
-            throw new NExecutionException(session, NMsg.ofCstyle("invalid Nuts Application (%s). Id cannot be resolved", appClass.getName()), 203);
+            throw new NExecutionException(session, NMsg.ofC("invalid Nuts Application (%s). Id cannot be resolved", appClass.getName()), 203);
         }
         this.args = (args);
         this.appId = (_appId);
@@ -185,7 +185,7 @@ public class DefaultNApplicationContext implements NApplicationContext {
                 .setFlatten(true)
         );
         if (h == null) {
-            getSession().out().printlnf("Help is %s.", NTexts.of(getSession()).ofStyled("missing", NTextStyle.error()));
+            getSession().out().println(NMsg.ofC("Help is %s.", NMsg.ofStyled("missing", NTextStyle.error())));
         } else {
             getSession().out().println(h);
         }
@@ -437,7 +437,7 @@ public class DefaultNApplicationContext implements NApplicationContext {
                 cmd.skip();
                 if (enabled) {
                     if (cmd.isExecMode()) {
-                        getSession().out().printf("%s%n", NIdResolver.of(session).resolveId(getClass()).getVersion().toString());
+                        getSession().out().println(NIdResolver.of(session).resolveId(getClass()).getVersion());
                         cmd.skipAll();
                     }
                     throw new NExecutionException(session, NMsg.ofPlain("version"), 0);
@@ -498,11 +498,11 @@ public class DefaultNApplicationContext implements NApplicationContext {
     private static class AppCommandAutoComplete extends NCommandAutoCompleteBase {
 
         private final ArrayList<String> words;
-        private final NOutStream out0;
+        private final NOutputStream out0;
         private final NSession session;
         private final int wordIndex;
 
-        public AppCommandAutoComplete(NSession session, List<String> args, int wordIndex, NOutStream out0) {
+        public AppCommandAutoComplete(NSession session, List<String> args, int wordIndex, NOutputStream out0) {
             this.session = session;
             words = new ArrayList<>(args);
             this.wordIndex = wordIndex;
@@ -538,9 +538,9 @@ public class DefaultNApplicationContext implements NApplicationContext {
             }
             String d = value.getDisplay();
             if (Objects.equals(v, d) || d == null) {
-                out0.printf("%s%n", AUTO_COMPLETE_CANDIDATE_PREFIX + NCommandLineUtils.escapeArgument(v));
+                out0.println(NMsg.ofC("%s", AUTO_COMPLETE_CANDIDATE_PREFIX + NCommandLineUtils.escapeArgument(v)));
             } else {
-                out0.printf("%s%n", AUTO_COMPLETE_CANDIDATE_PREFIX + NCommandLineUtils.escapeArgument(v) + " " + NCommandLineUtils.escapeArgument(d));
+                out0.println(NMsg.ofC("%s", AUTO_COMPLETE_CANDIDATE_PREFIX + NCommandLineUtils.escapeArgument(v) + " " + NCommandLineUtils.escapeArgument(d)));
             }
             return c;
         }

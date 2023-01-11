@@ -3,7 +3,7 @@ package net.thevpc.nuts.toolbox.ntomcat.local;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.elem.NElements;
 import net.thevpc.nuts.io.NPath;
-import net.thevpc.nuts.io.NOutStream;
+import net.thevpc.nuts.io.NOutputStream;
 import net.thevpc.nuts.text.NTextStyle;
 import net.thevpc.nuts.text.NTexts;
 import net.thevpc.nuts.toolbox.ntomcat.local.config.LocalTomcatDomainConfig;
@@ -57,7 +57,7 @@ public class LocalTomcatDomainConfigService extends LocalTomcatServiceBase {
                 aa.remove();
             }
         }
-        getSession().out().printf("%s domain removed.\n", getBracketsPrefix(name));
+        getSession().out().println(NMsg.ofC("%s domain removed.", getBracketsPrefix(name)));
         return this;
     }
     public NString getBracketsPrefix(String str) {
@@ -67,7 +67,7 @@ public class LocalTomcatDomainConfigService extends LocalTomcatServiceBase {
                 .append("]");
     }
 
-    public LocalTomcatDomainConfigService print(NOutStream out) {
+    public LocalTomcatDomainConfigService print(NOutputStream out) {
         NSession session = getSession();
         NElements.of(session).json().setValue(getConfig()).print(out);
         return this;

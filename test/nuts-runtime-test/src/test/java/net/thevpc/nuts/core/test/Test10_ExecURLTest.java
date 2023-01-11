@@ -32,7 +32,7 @@ public class Test10_ExecURLTest {
                 .setId("net.thevpc.hl:hadra-build-tool#0.1.0")
                 .setRepositoryFilter("maven-central")
                 .setLatest(true);
-        session.out().printlnf(q.getResultQueryPlan());
+        session.out().println(q.getResultQueryPlan());
         List<NId> nutsIds = q
                 .getResultIds()
                 .toList();

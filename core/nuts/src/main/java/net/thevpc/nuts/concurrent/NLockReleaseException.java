@@ -56,7 +56,7 @@ public class NLockReleaseException extends NLockException {
      */
     public NLockReleaseException(NSession session, NMsg message, Object lockedObject, Object lockObject) {
         super(session,
-                message == null ? NMsg.ofCstyle("unable to release lock for %s", lockedObject)
+                message == null ? NMsg.ofC("unable to release lock for %s", lockedObject)
                         : message, lockedObject, lockObject
         );
     }
@@ -72,7 +72,7 @@ public class NLockReleaseException extends NLockException {
      */
     public NLockReleaseException(NSession session, NMsg message, Object lockedObject, Object lockObject, Throwable cause) {
         super(session,
-                message == null ? NMsg.ofCstyle("unable to release lock for %s", lockedObject)
+                message == null ? NMsg.ofC("unable to release lock for %s", lockedObject)
                         : message, lockObject, cause
         );
     }

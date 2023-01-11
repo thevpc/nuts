@@ -5,6 +5,7 @@ import net.thevpc.nuts.cmdline.NArg;
 import net.thevpc.nuts.cmdline.NCommandLine;
 import net.thevpc.nuts.format.NMutableTableModel;
 import net.thevpc.nuts.format.NTableFormat;
+import net.thevpc.nuts.io.NOutputStream;
 import net.thevpc.nuts.text.NTextStyle;
 import net.thevpc.nuts.text.NTexts;
 import net.thevpc.nuts.toolbox.njob.model.NProject;
@@ -102,10 +103,10 @@ public class NProjectsSubCmd {
         if (cmd.isExecMode()) {
             service.projects().addProject(t);
             if (context.getSession().isPlainTrace()) {
-                context.getSession().out().printf("project %s (%s) added.\n",
+                context.getSession().out().println(NMsg.ofC("project %s (%s) added.",
                         NTexts.of(context.getSession()).ofStyled(t.getId(), NTextStyle.primary5()),
                         t.getName()
-                );
+                ));
             }
             if (show.get()) {
                 runProjectShow(NCommandLine.of(new String[]{t.getId()}));
@@ -221,19 +222,19 @@ public class NProjectsSubCmd {
                 }
                 service.projects().updateProject(project);
                 if (context.getSession().isPlainTrace()) {
-                    context.getSession().out().printf("project %s (%s) updated.\n",
+                    context.getSession().out().println(NMsg.ofC("project %s (%s) updated.",
                             text.ofStyled(project.getId(), NTextStyle.primary5()),
                             text.ofStyled(project.getName(), NTextStyle.primary1())
-                    );
+                    ));
                 }
             }
             if (d.mergeTo != null) {
                 service.projects().mergeProjects(d.mergeTo, d.projects.stream().map(x -> x.getId()).toArray(String[]::new));
                 if (context.getSession().isPlainTrace()) {
-                    context.getSession().out().printf("projects merged to %s.\n",
+                    context.getSession().out().println(NMsg.ofC("projects merged to %s.",
                             NTexts.of(context.getSession())
                                     .ofStyled(d.mergeTo, NTextStyle.primary5())
-                    );
+                    ));
                 }
             }
             if (d.show) {
@@ -343,7 +344,7 @@ public class NProjectsSubCmd {
                         .setBorder("spaces")
                         .setValue(m).println(context.getSession().out());
             } else {
-                context.getSession().out().printf(r.collect(Collectors.toList()));
+                context.getSession().out().print(r.collect(Collectors.toList()));
             }
         }
     }
@@ -354,17 +355,18 @@ public class NProjectsSubCmd {
             NArg a = cmd.next().get(session);
             if (cmd.isExecMode()) {
                 NProject t = findProject(a.toString(), cmd);
+                NOutputStream out = context.getSession().out();
                 if (service.projects().removeProject(t.getId())) {
                     if (context.getSession().isPlainTrace()) {
-                        context.getSession().out().printf("project %s removed.\n",
+                        out.println(NMsg.ofC("project %s removed.",
                                 text.ofStyled(a.toString(), NTextStyle.primary5())
-                        );
+                        ));
                     }
                 } else {
-                    context.getSession().out().printf("project %s %s.\n",
+                    out.println(NMsg.ofC("project %s %s.",
                             text.ofStyled(a.toString(), NTextStyle.primary5()),
                             text.ofStyled("not found", NTextStyle.error())
-                    );
+                    ));
                 }
             }
         }
@@ -375,21 +377,22 @@ public class NProjectsSubCmd {
         while (cmd.hasNext()) {
             NArg a = cmd.next().get(session);
             NProject project = findProject(a.toString(), cmd);
+            NOutputStream out = context.getSession().out();
             if (project == null) {
-                context.getSession().out().printf("```kw %s```: ```error not found```.\n",
+                out.println(NMsg.ofC("```kw %s```: ```error not found```.",
                         a.toString()
-                );
+                ));
             } else {
-                context.getSession().out().printf("```kw %s```:\n",
+                out.println(NMsg.ofC("```kw %s```:",
                         project.getId()
-                );
+                ));
                 String prefix = "\t                    ";
-                context.getSession().out().printf("\t```kw2 project name```  : %s\n", JobServiceCmd.formatWithPrefix(project.getName(), prefix));
-                context.getSession().out().printf("\t```kw2 beneficiary```   : %s\n", JobServiceCmd.formatWithPrefix(project.getBeneficiary(), prefix));
-                context.getSession().out().printf("\t```kw2 company```       : %s\n", JobServiceCmd.formatWithPrefix(project.getCompany(), prefix));
-                context.getSession().out().printf("\t```kw2 start time```    : %s\n", JobServiceCmd.formatWithPrefix(project.getStartTime(), prefix));
-                context.getSession().out().printf("\t```kw2 start week day```: %s\n", JobServiceCmd.formatWithPrefix(project.getStartWeekDay(), prefix));
-                context.getSession().out().printf("\t```kw2 observations```  : %s\n", JobServiceCmd.formatWithPrefix(project.getObservations(), prefix));
+                out.println(NMsg.ofC("\t```kw2 project name```  : %s", JobServiceCmd.formatWithPrefix(project.getName(), prefix)));
+                out.println(NMsg.ofC("\t```kw2 beneficiary```   : %s", JobServiceCmd.formatWithPrefix(project.getBeneficiary(), prefix)));
+                out.println(NMsg.ofC("\t```kw2 company```       : %s", JobServiceCmd.formatWithPrefix(project.getCompany(), prefix)));
+                out.println(NMsg.ofC("\t```kw2 start time```    : %s", JobServiceCmd.formatWithPrefix(project.getStartTime(), prefix)));
+                out.println(NMsg.ofC("\t```kw2 start week day```: %s", JobServiceCmd.formatWithPrefix(project.getStartWeekDay(), prefix)));
+                out.println(NMsg.ofC("\t```kw2 observations```  : %s", JobServiceCmd.formatWithPrefix(project.getObservations(), prefix)));
             }
         }
 
@@ -410,7 +413,7 @@ public class NProjectsSubCmd {
             t = service.projects().getProject(pid);
         }
         if (t == null) {
-            cmd.throwError(NMsg.ofCstyle("project not found: %s", pid));
+            cmd.throwError(NMsg.ofC("project not found: %s", pid));
         }
         return t;
     }

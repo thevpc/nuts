@@ -148,10 +148,10 @@ public class ShNShellHelper extends AbstractNixNShellHelper {
                             break;
                         }
                         case '\'': {
-                            throw new NParseException(session, NMsg.ofCstyle("illegal char %s", c));
+                            throw new NParseException(session, NMsg.ofC("illegal char %s", c));
                         }
                         case '"': {
-                            throw new NParseException(session, NMsg.ofCstyle("illegal char %s", c));
+                            throw new NParseException(session, NMsg.ofC("illegal char %s", c));
                         }
                         case '\\': {
                             i++;

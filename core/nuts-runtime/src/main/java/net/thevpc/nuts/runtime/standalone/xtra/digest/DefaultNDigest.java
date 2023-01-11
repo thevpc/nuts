@@ -180,7 +180,7 @@ public class DefaultNDigest implements NDigest {
             MessageDigest.getInstance(algorithm);
             this.algorithm = algorithm;
         } catch (NoSuchAlgorithmException ex) {
-            throw new NIllegalArgumentException(getSession(), NMsg.ofCstyle("unable to resolve algo: %s", algorithm), ex);
+            throw new NIllegalArgumentException(getSession(), NMsg.ofC("unable to resolve algo: %s", algorithm), ex);
         }
         return this;
     }
@@ -242,12 +242,12 @@ public class DefaultNDigest implements NDigest {
                 }
 
                 @Override
-                public void print(NOutStream out) {
+                public void print(NOutputStream out) {
                     NOptional<NMsg> m = getInputMetaData().getMessage();
                     if (m.isPresent()) {
                         out.print(m.get());
                     } else {
-                        out.append(getClass().getSimpleName(), NTextStyle.path());
+                        out.print(getClass().getSimpleName(), NTextStyle.path());
                     }
                 }
 
@@ -260,12 +260,12 @@ public class DefaultNDigest implements NDigest {
 
         @Override
         public String toString() {
-            NOutPlainStream out = new NOutPlainStream();
+            NPlainOutputStream out = new NPlainOutputStream();
             NOptional<NMsg> m = getInputMetaData().getMessage();
             if (m.isPresent()) {
                 out.print(m.get());
             } else {
-                out.append(getClass().getSimpleName(), NTextStyle.path());
+                out.print(getClass().getSimpleName(), NTextStyle.path());
             }
             return out.toString();
         }

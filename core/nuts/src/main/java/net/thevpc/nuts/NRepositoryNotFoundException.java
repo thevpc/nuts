@@ -43,7 +43,7 @@ public class NRepositoryNotFoundException extends NRepositoryException {
      */
     public NRepositoryNotFoundException(NSession session, String repository) {
         super(session, repository,
-                NMsg.ofCstyle("no such repository %s", (repository == null ? "<null>" : repository))
+                NMsg.ofC("no such repository %s", (repository == null ? "<null>" : repository))
                 , null);
     }
 

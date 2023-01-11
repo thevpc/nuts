@@ -1,7 +1,7 @@
 package net.thevpc.nuts.runtime.standalone.io.terminal;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.io.NOutStream;
+import net.thevpc.nuts.io.NOutputStream;
 import net.thevpc.nuts.io.NSessionTerminal;
 import net.thevpc.nuts.runtime.standalone.io.progress.CProgressBar;
 import net.thevpc.nuts.text.NTexts;
@@ -21,41 +21,14 @@ public class UnmodifiableSessionTerminal extends AbstractNSessionTerminal {
     }
 
     @Override
-    public String readLine(NOutStream out, String promptFormat, Object... params) {
-        return getBase().readLine(out, promptFormat, params);
+    public String readLine(NOutputStream out, NMsg message, NSession session) {
+        return getBase().readLine(out, message, session!=null?session:getSession());
     }
 
     @Override
-    public String readLine(NOutStream out, NMsg message) {
-        return getBase().readLine(out, message);
+    public char[] readPassword(NOutputStream out, NMsg prompt, NSession session) {
+        return getBase().readPassword(out, prompt, session!=null?session:getSession());
     }
-
-    @Override
-    public char[] readPassword(NOutStream out, NMsg message) {
-        return getBase().readPassword(out, message);
-    }
-
-    @Override
-    public String readLine(NOutStream out, NMsg message, NSession session) {
-        return getBase().readLine(out, message, session);
-    }
-
-    @Override
-    public char[] readPassword(NOutStream out, NMsg message, NSession session) {
-        return getBase().readPassword(out, message, session);
-    }
-
-//    @Override
-//    public NutsTerminal sendOutCommand(NutsTerminalCommand command) {
-//        getBase().sendOutCommand(command);
-//        return this;
-//    }
-//
-//    @Override
-//    public NutsTerminal sendErrCommand(NutsTerminalCommand command) {
-//        getBase().sendErrCommand(command);
-//        return this;
-//    }
 
     @Override
     public InputStream getIn() {
@@ -68,38 +41,28 @@ public class UnmodifiableSessionTerminal extends AbstractNSessionTerminal {
     }
 
     @Override
-    public NOutStream getOut() {
+    public NOutputStream getOut() {
         return getBase().getOut();
     }
 
     @Override
-    public void setOut(NOutStream out) {
+    public void setOut(NOutputStream out) {
 
     }
 
     @Override
-    public NOutStream getErr() {
+    public NOutputStream getErr() {
         return getBase().getErr();
     }
 
     @Override
-    public void setErr(NOutStream out) {
+    public void setErr(NOutputStream out) {
 
     }
 
     @Override
     public NSessionTerminal copy() {
         return getBase().copy();
-    }
-
-    @Override
-    public String readLine(String promptFormat, Object... params) {
-        return getBase().readLine(promptFormat, params);
-    }
-
-    @Override
-    public char[] readPassword(String prompt, Object... params) {
-        return getBase().readPassword(prompt, params);
     }
 
     @Override
@@ -115,12 +78,12 @@ public class UnmodifiableSessionTerminal extends AbstractNSessionTerminal {
     }
 
     @Override
-    public NOutStream out() {
+    public NOutputStream out() {
         return getBase().out();
     }
 
     @Override
-    public NOutStream err() {
+    public NOutputStream err() {
         return getBase().err();
     }
 

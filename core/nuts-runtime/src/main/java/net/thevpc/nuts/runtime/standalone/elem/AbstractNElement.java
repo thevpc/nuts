@@ -53,7 +53,7 @@ public abstract class AbstractNElement implements NElement {
         if (this instanceof NPrimitiveElement) {
             return NOptional.of((NPrimitiveElement) this);
         }
-        return NOptional.ofError(s -> NMsg.ofCstyle("unable to cast % to primitive: %s", type().id(), this));
+        return NOptional.ofError(s -> NMsg.ofC("unable to cast % to primitive: %s", type().id(), this));
     }
 
     @Override
@@ -61,21 +61,21 @@ public abstract class AbstractNElement implements NElement {
         if (this instanceof NObjectElement) {
             return NOptional.of((NObjectElement) this);
         }
-        return NOptional.ofError(s -> NMsg.ofCstyle("unable to cast % to object: %s", type().id(), this));
+        return NOptional.ofError(s -> NMsg.ofC("unable to cast % to object: %s", type().id(), this));
     }
     @Override
     public NOptional<NNavigatableElement> asNavigatable() {
         if (this instanceof NNavigatableElement) {
             return NOptional.of((NNavigatableElement) this);
         }
-        return NOptional.ofError(s -> NMsg.ofCstyle("unable to cast % to object/array: %s", type().id(), this));
+        return NOptional.ofError(s -> NMsg.ofC("unable to cast % to object/array: %s", type().id(), this));
     }
 
     public NOptional<NCustomElement> asCustom() {
         if (this instanceof NCustomElement) {
             return NOptional.of((NCustomElement) this);
         }
-        return NOptional.ofError(s -> NMsg.ofCstyle("unable to cast % to custom: %s", type().id(), this));
+        return NOptional.ofError(s -> NMsg.ofC("unable to cast % to custom: %s", type().id(), this));
     }
 
     @Override
@@ -83,7 +83,7 @@ public abstract class AbstractNElement implements NElement {
         if (this instanceof NArrayElement) {
             return NOptional.of((NArrayElement) this);
         }
-        return NOptional.ofError(s -> NMsg.ofCstyle("unable to cast % to array: %s", type().id(), this));
+        return NOptional.ofError(s -> NMsg.ofC("unable to cast % to array: %s", type().id(), this));
     }
 
     @Override

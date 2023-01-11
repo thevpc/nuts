@@ -57,7 +57,7 @@ public class VersionCommand extends SimpleJShellBuiltin {
             options.version = NVersionFormat.of(context.getSession());
         }
         if(context.getSession().isPlainOut()){
-            context.out().printlnf( context.getAppContext().getAppId().getVersion().getValue());
+            context.out().println( context.getAppContext().getAppId().getVersion().getValue());
         }else {
             options.version
                     .setSession(session)

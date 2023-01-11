@@ -1,15 +1,15 @@
 package net.thevpc.nuts.runtime.standalone.io.printstream;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.io.NOutStream;
+import net.thevpc.nuts.io.NOutputStream;
 import net.thevpc.nuts.io.NTerminalMode;
 import net.thevpc.nuts.text.NTerminalCommand;
 import net.thevpc.nuts.text.NTextStyle;
 
 import java.io.OutputStream;
 
-public class NOutStreamFiltered extends NOutStreamRendered {
-    public NOutStreamFiltered(NOutStreamBase base, NSession session, Bindings bindings) {
+public class NOutputStreamFiltered extends NOutputStreamRendered {
+    public NOutputStreamFiltered(NOutputStreamBase base, NSession session, Bindings bindings) {
         super(base, session, NTerminalMode.FILTERED,
                 bindings);
         getOutputMetaData().setMessage(
@@ -22,25 +22,25 @@ public class NOutStreamFiltered extends NOutStreamRendered {
     }
 
     @Override
-    public NOutStream setSession(NSession session) {
+    public NOutputStream setSession(NSession session) {
         if (session == null || session == this.session) {
             return this;
         }
-        return new NOutStreamFiltered(base, session, new Bindings());
+        return new NOutputStreamFiltered(base, session, new Bindings());
     }
 
     @Override
-    protected NOutStream convertImpl(NTerminalMode other) {
+    protected NOutputStream convertImpl(NTerminalMode other) {
         switch (other) {
             case FORMATTED: {
-                return new NOutStreamFormatted(base, getSession(), bindings);
+                return new NOutputStreamFormatted(base, getSession(), bindings);
             }
         }
-        throw new NIllegalArgumentException(base.getSession(), NMsg.ofCstyle("unsupported %s -> %s", getTerminalMode(), other));
+        throw new NIllegalArgumentException(base.getSession(), NMsg.ofC("unsupported %s -> %s", getTerminalMode(), other));
     }
 
     @Override
-    public NOutStream run(NTerminalCommand command, NSession session) {
+    public NOutputStream run(NTerminalCommand command, NSession session) {
         //do nothing!!
         return this;
     }

@@ -47,7 +47,7 @@ public abstract class DefaultFormatBase<T extends NFormat> extends DefaultFormat
 //    }
 
     @Override
-    public NOutStream getValidPrintStream(NOutStream out) {
+    public NOutputStream getValidPrintStream(NOutputStream out) {
         checkSession();
         if (out == null) {
             out = getSession().getTerminal().getOut();
@@ -56,14 +56,14 @@ public abstract class DefaultFormatBase<T extends NFormat> extends DefaultFormat
     }
 
     @Override
-    public NOutStream getValidPrintStream() {
+    public NOutputStream getValidPrintStream() {
         return getValidPrintStream(null);
     }
 
     @Override
     public NString format() {
         checkSession();
-        NOutStream out = NOutMemoryStream.of(getSession());
+        NOutputStream out = NMemoryOutputStream.of(getSession());
         print(out);
         return isNtf() ?
                 NTexts.of(getSession()).parse(out.toString())
@@ -85,7 +85,7 @@ public abstract class DefaultFormatBase<T extends NFormat> extends DefaultFormat
     }
 
     @Override
-    public abstract void print(NOutStream out);
+    public abstract void print(NOutputStream out);
 
     //    @Override
 //    public void print(PrintStream out) {
@@ -99,11 +99,11 @@ public abstract class DefaultFormatBase<T extends NFormat> extends DefaultFormat
     public void print(Writer out) {
         checkSession();
         if (out == null) {
-            NOutStream pout = getValidPrintStream();
+            NOutputStream pout = getValidPrintStream();
             print(pout);
             pout.flush();
         } else {
-            NOutStream pout = NOutStream.of(out, getSession());
+            NOutputStream pout = NOutputStream.of(out, getSession());
             print(pout);
             pout.flush();
         }
@@ -112,9 +112,9 @@ public abstract class DefaultFormatBase<T extends NFormat> extends DefaultFormat
     @Override
     public void print(OutputStream out) {
         checkSession();
-        NOutStream p =
+        NOutputStream p =
                 out == null ? getValidPrintStream() :
-                        NOutStream.of(out, getSession());
+                        NOutputStream.of(out, getSession());
         print(p);
         p.flush();
     }
@@ -151,20 +151,20 @@ public abstract class DefaultFormatBase<T extends NFormat> extends DefaultFormat
     public void println(Writer w) {
         checkSession();
         if (w == null) {
-            NOutStream pout = getValidPrintStream();
+            NOutputStream pout = getValidPrintStream();
             println(pout);
             pout.flush();
         } else {
-            NOutStream pout = NOutStream.of(w, getSession());
+            NOutputStream pout = NOutputStream.of(w, getSession());
             println(pout);
             pout.flush();
         }
     }
 
     @Override
-    public void println(NOutStream out) {
+    public void println(NOutputStream out) {
         checkSession();
-        NOutStream p = getValidPrintStream(out);
+        NOutputStream p = getValidPrintStream(out);
         print(out);
         p.println();
         p.flush();
@@ -174,11 +174,11 @@ public abstract class DefaultFormatBase<T extends NFormat> extends DefaultFormat
     public void println(OutputStream out) {
         checkSession();
         if (out == null) {
-            NOutStream pout = getValidPrintStream();
+            NOutputStream pout = getValidPrintStream();
             println(pout);
             pout.flush();
         } else {
-            NOutStream pout = NOutStream.of(out, getSession());
+            NOutputStream pout = NOutputStream.of(out, getSession());
             println(pout);
             pout.flush();
         }

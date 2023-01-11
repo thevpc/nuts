@@ -188,7 +188,7 @@ public class NApiUtils {
         if (objectValue == null) {
             if (!NBlankable.isBlank(stringValue)) {
                 if (session == null) {
-                    throw new NBootException(NMsg.ofCstyle("invalid value %s of type %s", stringValue, enumType.getName()));
+                    throw new NBootException(NMsg.ofC("invalid value %s of type %s", stringValue, enumType.getName()));
                 }
                 throw new NParseEnumException(session, stringValue, NCommandLineFormatStrategy.class);
             }

@@ -6,7 +6,6 @@ import net.thevpc.nuts.NSession;
 import net.thevpc.nuts.elem.NElements;
 import net.thevpc.nuts.toolbox.ndb.ExtendedQuery;
 import net.thevpc.nuts.toolbox.ndb.NdbConfig;
-import net.thevpc.nuts.toolbox.ndb.base.cmd.InsertCmd;
 import net.thevpc.nuts.toolbox.ndb.base.cmd.RenameTableCmd;
 import net.thevpc.nuts.toolbox.ndb.sql.sqlbase.SqlSupport;
 
@@ -47,7 +46,7 @@ public class SqlRenameTableCmd<C extends NdbConfig> extends RenameTableCmd<C> {
                     }
                     int i = s.indexOf('=');
                     if (i < 0) {
-                        throw new NIllegalArgumentException(session, NMsg.ofCstyle("invalid %s", s));
+                        throw new NIllegalArgumentException(session, NMsg.ofC("invalid %s", s));
                     }
                     setKeys.append(s, 0, i);
                     setVals.append(s, i + 1, s.length());

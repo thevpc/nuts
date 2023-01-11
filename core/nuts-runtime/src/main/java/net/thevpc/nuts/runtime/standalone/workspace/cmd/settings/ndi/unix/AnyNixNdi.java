@@ -2,7 +2,7 @@ package net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.ndi.unix;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.io.NPath;
-import net.thevpc.nuts.io.NOutStream;
+import net.thevpc.nuts.io.NOutputStream;
 import net.thevpc.nuts.runtime.standalone.shell.NShellHelper;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.util.PathInfo;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.ndi.FreeDesktopEntryWriter;
@@ -55,7 +55,7 @@ public class AnyNixNdi extends BaseSystemNdi {
         NTexts factory = NTexts.of(session);
         if (Arrays.stream(updatedPaths).anyMatch(x -> x.getStatus() != PathInfo.Status.DISCARDED) && session.isTrace()) {
             if (session.isPlainTrace()) {
-                session.out().resetLine().printf("%s %s to point to workspace %s%n",
+                session.out().resetLine().println(NMsg.ofC("%s %s to point to workspace %s",
                         session.isYes() ?
                                 factory.ofStyled("force updating", NTextStyle.warn().append(NTextStyle.underlined())) :
                                 factory.ofStyled("force updating", NTextStyle.warn())
@@ -64,12 +64,12 @@ public class AnyNixNdi extends BaseSystemNdi {
                                 Arrays.stream(updatedPaths).map(x ->
                                         factory.ofStyled(x.getPath().getName(), NTextStyle.path())).collect(Collectors.toList())),
                         NLocations.of(session).getWorkspaceLocation()
-                );
+                ));
             }
             final String sysRcName = NShellHelper.of(NEnvs.of(session).getShellFamily()).getSysRcName();
             session.getTerminal().ask()
                     .resetLine()
-                    .forBoolean(NMsg.ofCstyle(
+                    .forBoolean(NMsg.ofC(
                             "```error ATTENTION``` You may need to re-run terminal or issue \"%s\" in your current terminal for new environment to take effect.%n"
                                     + "Please type %s if you agree, %s if you need more explanation or %s to cancel updates.",
                             factory.ofStyled(". ~/" + sysRcName, NTextStyle.path()),
@@ -96,14 +96,14 @@ public class AnyNixNdi extends BaseSystemNdi {
                                 return true;
                             }
                             if ("why".equalsIgnoreCase(r)) {
-                                NOutStream out = session.out();
+                                NOutputStream out = session.out();
                                 out.resetLine();
-                                out.printf("\\\"%s\\\" is a special file in your home that is invoked upon each interactive terminal launch.%n", factory.ofStyled(sysRcName, NTextStyle.path()));
+                                out.println(NMsg.ofC("\\\"%s\\\" is a special file in your home that is invoked upon each interactive terminal launch.", factory.ofStyled(sysRcName, NTextStyle.path())));
                                 out.print("It helps configuring environment variables. ```sh nuts``` make usage of such facility to update your **PATH** env variable\n");
                                 out.print("to point to current ```sh nuts``` workspace, so that when you call a ```sh nuts``` command it will be resolved correctly...\n");
-                                out.printf("However updating \\\"%s\\\" does not affect the running process/terminal. So you have basically two choices :%n", factory.ofStyled(sysRcName, NTextStyle.path()));
+                                out.println(NMsg.ofC("However updating \\\"%s\\\" does not affect the running process/terminal. So you have basically two choices :", factory.ofStyled(sysRcName, NTextStyle.path())));
                                 out.print(" - Either to restart the process/terminal (konsole, term, xterm, sh, bash, ...)%n");
-                                out.printf(" - Or to run by your self the \\\"%s\\\" script (don\\'t forget the leading dot)%n", factory.ofStyled(". ~/" + sysRcName, NTextStyle.path()));
+                                out.println(NMsg.ofC(" - Or to run by your self the \\\"%s\\\" script (don\\'t forget the leading dot)", factory.ofStyled(". ~/" + sysRcName, NTextStyle.path())));
                                 throw new NValidationException(session, NMsg.ofPlain("Try again..."));
                             } else if ("cancel".equalsIgnoreCase(r) || "cancel!".equalsIgnoreCase(r)) {
                                 throw new NCancelException(session);

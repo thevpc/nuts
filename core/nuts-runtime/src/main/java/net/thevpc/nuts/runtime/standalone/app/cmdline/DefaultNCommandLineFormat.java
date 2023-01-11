@@ -5,7 +5,7 @@ import net.thevpc.nuts.cmdline.NCommandLine;
 import net.thevpc.nuts.cmdline.NCommandLineFormat;
 import net.thevpc.nuts.cmdline.NCommandLineFormatStrategy;
 import net.thevpc.nuts.cmdline.NCommandLines;
-import net.thevpc.nuts.io.NOutStream;
+import net.thevpc.nuts.io.NOutputStream;
 import net.thevpc.nuts.runtime.standalone.format.DefaultFormatBase;
 import net.thevpc.nuts.runtime.standalone.shell.NShellHelper;
 import net.thevpc.nuts.spi.NSupportLevelContext;
@@ -71,7 +71,7 @@ public class DefaultNCommandLineFormat extends DefaultFormatBase<NCommandLineFor
     }
 
     @Override
-    public void print(NOutStream out) {
+    public void print(NOutputStream out) {
         checkSession();
         if (value != null) {
             String cmd =
@@ -83,7 +83,7 @@ public class DefaultNCommandLineFormat extends DefaultFormatBase<NCommandLineFor
                                             .setExpectEnv(true)
                             );
             if (isNtf()) {
-                out.printf(
+                out.println(
                         NTexts.of(getSession()).ofCode("system", cmd)
                 );
             } else {

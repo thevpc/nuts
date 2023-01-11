@@ -33,7 +33,7 @@ public class MongoDeleteCmd extends DeleteCmd<NMongoConfig> {
             DeleteResult r = eq.getOne() ?
                     mongoCollection.deleteOne(docWhere)
                     : mongoCollection.deleteMany(docWhere);
-            session.out().printlnf(r);
+            session.out().println(r);
         });
     }
 

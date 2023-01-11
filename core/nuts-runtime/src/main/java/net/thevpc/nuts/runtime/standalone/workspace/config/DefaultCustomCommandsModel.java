@@ -1,7 +1,7 @@
 package net.thevpc.nuts.runtime.standalone.workspace.config;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.io.NOutStream;
+import net.thevpc.nuts.io.NOutputStream;
 import net.thevpc.nuts.runtime.standalone.workspace.DefaultNWorkspace;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.CommandNWorkspaceCommandFactory;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.ConfigNWorkspaceCommandFactory;
@@ -42,11 +42,11 @@ public class DefaultCustomCommandsModel {
     public void addFactory(NCommandFactoryConfig commandFactoryConfig, NSession session) {
 //        session = CoreNutsUtils.validate(session, workspace);
         if (commandFactoryConfig == null || commandFactoryConfig.getFactoryId() == null || commandFactoryConfig.getFactoryId().isEmpty() || !commandFactoryConfig.getFactoryId().trim().equals(commandFactoryConfig.getFactoryId())) {
-            throw new NIllegalArgumentException(session, NMsg.ofCstyle("invalid WorkspaceCommandFactory %s", commandFactoryConfig));
+            throw new NIllegalArgumentException(session, NMsg.ofC("invalid WorkspaceCommandFactory %s", commandFactoryConfig));
         }
         for (NWorkspaceCommandFactory factory : commandFactories) {
             if (commandFactoryConfig.getFactoryId().equals(factory.getFactoryId())) {
-                throw new NIllegalArgumentException(session, NMsg.ofCstyle("factory already registered : %s", factory.getFactoryId()));
+                throw new NIllegalArgumentException(session, NMsg.ofC("factory already registered : %s", factory.getFactoryId()));
             }
         }
         NWorkspaceCommandFactory f = null;
@@ -124,7 +124,7 @@ public class DefaultCustomCommandsModel {
             if (!error) {
                 return false;
             }
-            throw new NIllegalArgumentException(session, NMsg.ofCstyle("invalid WorkspaceCommandFactory %s", factoryId));
+            throw new NIllegalArgumentException(session, NMsg.ofC("invalid WorkspaceCommandFactory %s", factoryId));
         }
         NWorkspaceCommandFactory removeMe = null;
         NCommandFactoryConfig removeMeConfig = null;
@@ -156,7 +156,7 @@ public class DefaultCustomCommandsModel {
             if (!error) {
                 return false;
             }
-            throw new NIllegalArgumentException(session, NMsg.ofCstyle("command factory does not exists %s", factoryId));
+            throw new NIllegalArgumentException(session, NMsg.ofC("command factory does not exists %s", factoryId));
         }
         return true;
     }
@@ -169,7 +169,7 @@ public class DefaultCustomCommandsModel {
                 || command.getCommand() == null
                 || command.getCommand().size() == 0) {
             throw new NIllegalArgumentException(session,
-                    NMsg.ofCstyle("invalid command %s", (command == null ? "<NULL>" : command.getName()))
+                    NMsg.ofC("invalid command %s", (command == null ? "<NULL>" : command.getName()))
             );
         }
         NCommandConfig oldCommand = defaultCommandFactory.findCommand(command.getName(), session);
@@ -181,7 +181,7 @@ public class DefaultCustomCommandsModel {
             if (!session.getTerminal().ask()
                     .resetLine()
                     .setDefaultValue(false)
-                    .forBoolean(NMsg.ofCstyle("override existing command %s ?",
+                    .forBoolean(NMsg.ofC("override existing command %s ?",
                             NTexts.of(session).ofStyled(
                                     command.getName(), NTextStyle.primary1()
                             ))
@@ -194,11 +194,11 @@ public class DefaultCustomCommandsModel {
         } else {
             defaultCommandFactory.installCommand(command, session);
             if (session.isPlainTrace()) {
-                NOutStream out = session.getTerminal().out();
+                NOutputStream out = session.getTerminal().out();
                 NTexts text = NTexts.of(session);
-                out.printf("%s command %s%n",
+                out.println(NMsg.ofC("%s command %s",
                         text.ofStyled("install", NTextStyle.success()),
-                        text.ofStyled(command.getName(), NTextStyle.primary3()));
+                        text.ofStyled(command.getName(), NTextStyle.primary3())));
             }
             return true;
         }
@@ -212,7 +212,7 @@ public class DefaultCustomCommandsModel {
                 || command.getCommand() == null
                 || command.getCommand().size() == 0) {
             throw new NIllegalArgumentException(session,
-                    NMsg.ofCstyle("invalid command %s", (command == null ? "<NULL>" : command.getName()))
+                    NMsg.ofC("invalid command %s", (command == null ? "<NULL>" : command.getName()))
             );
         }
         NCommandConfig oldCommand = defaultCommandFactory.findCommand(command.getName(), session);
@@ -223,16 +223,16 @@ public class DefaultCustomCommandsModel {
             defaultCommandFactory.uninstallCommand(command.getName(), session);
             defaultCommandFactory.installCommand(command, session);
             if (session.isPlainTrace()) {
-                NOutStream out = session.getTerminal().out();
+                NOutputStream out = session.getTerminal().out();
                 NTexts text = NTexts.of(session);
-                out.printf("%s command %s%n",
+                out.println(NMsg.ofC("%s command %s",
                         text.ofStyled("update ", NTextStyles.of(NTextStyle.success(), NTextStyle.underlined())),
-                        text.ofStyled(command.getName(), NTextStyle.primary3()));
+                        text.ofStyled(command.getName(), NTextStyle.primary3())));
             }
             return true;
         } else {
             throw new NIllegalArgumentException(session,
-                    NMsg.ofCstyle("command not found %s", command.getName())
+                    NMsg.ofC("command not found %s", command.getName())
             );
         }
     }
@@ -240,7 +240,7 @@ public class DefaultCustomCommandsModel {
     public void remove(String name, NSession session) {
         if (NBlankable.isBlank(name)) {
             throw new NIllegalArgumentException(session,
-                    NMsg.ofCstyle("invalid command : %s", (name == null ? "<NULL>" : name))
+                    NMsg.ofC("invalid command : %s", (name == null ? "<NULL>" : name))
             );
         }
 //        options = CoreNutsUtils.validate(options, workspace);
@@ -248,13 +248,13 @@ public class DefaultCustomCommandsModel {
         NCommandConfig command = defaultCommandFactory.findCommand(name, session);
         if (command == null) {
             throw new NIllegalArgumentException(session,
-                    NMsg.ofCstyle("command does not exists %s", name)
+                    NMsg.ofC("command does not exists %s", name)
             );
         }
         defaultCommandFactory.uninstallCommand(name, session);
         if (session.isPlainTrace()) {
-            NOutStream out = session.getTerminal().out();
-            out.printf("%s command %s%n", "uninstall", NTexts.of(session).ofStyled(name, NTextStyle.primary3()));
+            NOutputStream out = session.getTerminal().out();
+            out.println(NMsg.ofC("%s command %s", "uninstall", NTexts.of(session).ofStyled(name, NTextStyle.primary3())));
         }
     }
 
@@ -305,7 +305,7 @@ public class DefaultCustomCommandsModel {
         if (c.getCommand() == null || c.getCommand().size() == 0) {
 
             _LOGOP(session).level(Level.WARNING).verb(NLoggerVerb.FAIL)
-                    .log(NMsg.ofJstyle("invalid command definition ''{0}''. Missing command . Ignored", c.getName()));
+                    .log(NMsg.ofJ("invalid command definition ''{0}''. Missing command . Ignored", c.getName()));
             return null;
         }
 //        if (c.getOwner() == null) {

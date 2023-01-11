@@ -43,7 +43,7 @@ public class NRepositoryAlreadyRegisteredException extends NRepositoryException 
      */
     public NRepositoryAlreadyRegisteredException(NSession session, String repository) {
         super(session, repository,
-                NMsg.ofCstyle("repository already registered %s", (repository == null ? "<null>" : repository))
+                NMsg.ofC("repository already registered %s", (repository == null ? "<null>" : repository))
                 , null);
     }
 
@@ -56,7 +56,7 @@ public class NRepositoryAlreadyRegisteredException extends NRepositoryException 
      */
     public NRepositoryAlreadyRegisteredException(NSession session, String repository, Throwable err) {
         super(session, repository,
-                NMsg.ofCstyle("repository already registered %s", (repository == null ? "<null>" : repository))
+                NMsg.ofC("repository already registered %s", (repository == null ? "<null>" : repository))
                 , err);
     }
 }

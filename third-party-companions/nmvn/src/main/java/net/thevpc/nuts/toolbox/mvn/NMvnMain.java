@@ -86,7 +86,7 @@ public class NMvnMain implements NApplication {
                     if (r == 0) {
                         return;
                     } else {
-                        throw new NExecutionException(session, NMsg.ofCstyle("Maven Call exited with code %d", r), r);
+                        throw new NExecutionException(session, NMsg.ofC("Maven Call exited with code %d", r), r);
                     }
                 }
                 case "get": {
@@ -115,7 +115,7 @@ public class NMvnMain implements NApplication {
                     if (r == 0) {
                         return;
                     } else {
-                        throw new NExecutionException(session, NMsg.ofCstyle("Maven Call exited with code %s", r), r);
+                        throw new NExecutionException(session, NMsg.ofC("Maven Call exited with code %s", r), r);
                     }
                 }
             }

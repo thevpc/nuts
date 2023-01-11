@@ -48,10 +48,10 @@ public class NOpenAPIService {
         }
         NPath sourcePath = NPath.of(source, session).normalize().toAbsolute();
         if (!sourcePath.exists()) {
-            throw new NNoSuchElementException(session, NMsg.ofCstyle("file not found %s", sourcePath));
+            throw new NNoSuchElementException(session, NMsg.ofC("file not found %s", sourcePath));
         }
         if (session.isPlainTrace()) {
-            session.out().printf("read open-api file %s\n", sourcePath);
+            session.out().println(NMsg.ofC("read open-api file %s", sourcePath));
         }
         String sourceBaseName = sourcePath.getSmartBaseName();
         NElement apiElement = NoApiUtils.loadElement(sourcePath, appContext.getSession());
@@ -68,7 +68,7 @@ public class NOpenAPIService {
         NPath openApiFileCopy = targetPathObj.resolveSibling(targetPathObj.getSmartBaseName() + "." + sourcePath.getLastExtension());
         sourcePath.copyTo(openApiFileCopy);
         if (session.isPlainTrace()) {
-            session.out().printf("copy open-api file %s\n", openApiFileCopy);
+            session.out().println(NMsg.ofC("copy open-api file %s", openApiFileCopy));
         }
 
         NPath targetParent = targetPathObj.getParent();
@@ -90,7 +90,7 @@ public class NOpenAPIService {
             NPath configFileCopy = targetPathObj.resolveSibling(cf.getSmartBaseName() +"-"+documentVersion+ "." + cf.getSmartExtension());
             cf.copyTo(configFileCopy);
             if (session.isPlainTrace()) {
-                session.out().printf("copy  config  file %s\n", configFileCopy);
+                session.out().println(NMsg.ofC("copy  config  file %s", configFileCopy));
             }
             NPath targetPathObj2 = NoApiUtils.addExtension(sourcePath, parentPath, NPath.of(target, session), targetType, "", session);
             generateConfigDocument(z, apiElement, parentPath, sourceFolder, targetPathObj2.getSmartBaseName(),targetPathObj.getName(), targetType, keep, vars);

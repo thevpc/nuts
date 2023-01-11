@@ -5,7 +5,7 @@ import java.util.*;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.cmdline.NArg;
 import net.thevpc.nuts.cmdline.NCommandLine;
-import net.thevpc.nuts.io.NOutStream;
+import net.thevpc.nuts.io.NOutputStream;
 import net.thevpc.nuts.runtime.standalone.format.DefaultFormatBase;
 import net.thevpc.nuts.spi.NSupportLevelContext;
 
@@ -206,7 +206,7 @@ public class DefaultNDependencyFormat extends DefaultFormatBase<NDependencyForma
     }
 
     @Override
-    public void print(NOutStream out) {
+    public void print(NOutputStream out) {
         out.print(format());
     }
 

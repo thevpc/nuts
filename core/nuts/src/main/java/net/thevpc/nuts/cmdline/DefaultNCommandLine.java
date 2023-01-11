@@ -134,7 +134,7 @@ public class DefaultNCommandLine implements NCommandLine {
                 return this;
             }
         }
-        throwError(NMsg.ofCstyle("invalid special option %s", option));
+        throwError(NMsg.ofC("invalid special option %s", option));
         return this;
     }
 
@@ -199,7 +199,7 @@ public class DefaultNCommandLine implements NCommandLine {
 
     @Override
     public NCommandLine throwUnexpectedArgument(NString errorMessage) {
-        return throwUnexpectedArgument(NMsg.ofCstyle("%s", errorMessage));
+        return throwUnexpectedArgument(NMsg.ofC("%s", errorMessage));
     }
 
     @Override
@@ -217,7 +217,7 @@ public class DefaultNCommandLine implements NCommandLine {
                 sb.append(", %s");
                 ep.add(errorMessage);
             }
-            throwError(NMsg.ofCstyle(sb.toString(), ep.toArray()));
+            throwError(NMsg.ofC(sb.toString(), ep.toArray()));
         }
         return this;
     }
@@ -237,7 +237,7 @@ public class DefaultNCommandLine implements NCommandLine {
                     skipAll();
                     return this;
                 }
-                throwError(NMsg.ofCstyle("missing argument %s", NMsg.ofStyled(argumentName, NTextStyle.keyword())));
+                throwError(NMsg.ofC("missing argument %s", NMsg.ofStyled(argumentName, NTextStyle.keyword())));
             }
             return this;
         }
@@ -258,7 +258,7 @@ public class DefaultNCommandLine implements NCommandLine {
                 sb.append(", %s");
                 ep.add(errorMessage);
             }
-            throwError(NMsg.ofCstyle(sb.toString(), ep.toArray()));
+            throwError(NMsg.ofC(sb.toString(), ep.toArray()));
         }
         return this;
     }
@@ -288,7 +288,7 @@ public class DefaultNCommandLine implements NCommandLine {
     @Override
     public NOptional<NArg> nextOption(String option) {
         if (!new DefaultNArg(option).isOption()) {
-            return errorOptionalCstyle("%s is not an option", option);
+            return errorOptionalCformat("%s is not an option", option);
         }
         return next(new DefaultNArgName(option), true);
     }
@@ -603,34 +603,34 @@ public class DefaultNCommandLine implements NCommandLine {
                             break;
                         }
                         default: {
-                            return errorOptionalCstyle("unsupported %s", highlightText(String.valueOf(expectValue)));
+                            return errorOptionalCformat("unsupported %s", highlightText(String.valueOf(expectValue)));
                         }
                     }
                 }
             }
 
         }
-        return emptyOptionalCstyle("missing argument");
+        return emptyOptionalCformat("missing argument");
     }
 
-    private <T> NOptional<T> emptyOptionalCstyle(String str, Object... args) {
+    private <T> NOptional<T> emptyOptionalCformat(String str, Object... args) {
         List<Object> a = new ArrayList<>();
         if (!NBlankable.isBlank(getCommandName())) {
             a.add(getCommandName());
             a.addAll(Arrays.asList(args));
-            return NOptional.ofEmpty(s -> NMsg.ofCstyle("%s : " + str, a.toArray()));
+            return NOptional.ofEmpty(s -> NMsg.ofC("%s : " + str, a.toArray()));
         } else {
             a.addAll(Arrays.asList(args));
         }
-        return NOptional.ofEmpty(s -> NMsg.ofCstyle(str, a.toArray()));
+        return NOptional.ofEmpty(s -> NMsg.ofC(str, a.toArray()));
     }
 
-    private <T> NOptional<T> errorOptionalCstyle(String str, Object... args) {
+    private <T> NOptional<T> errorOptionalCformat(String str, Object... args) {
         return NOptional.ofError(s -> {
             if (!NBlankable.isBlank(getCommandName())) {
-                return NMsg.ofCstyle("%s : %s ", getCommandName(), NMsg.ofCstyle(str, args));
+                return NMsg.ofC("%s : %s ", getCommandName(), NMsg.ofC(str, args));
             }
-            return NMsg.ofCstyle(str, args);
+            return NMsg.ofC(str, args);
         });
     }
 
@@ -649,7 +649,7 @@ public class DefaultNCommandLine implements NCommandLine {
         if (hasNext() && !isNextOption()) {
             return next();
         }
-        return emptyOptionalCstyle("missing non-option");
+        return emptyOptionalCformat("missing non-option");
     }
 
 
@@ -709,13 +709,13 @@ public class DefaultNCommandLine implements NCommandLine {
         if (index >= 0) {
             return get(index);
         }
-        return emptyOptionalCstyle("missing argument");
+        return emptyOptionalCformat("missing argument");
     }
 
     @Override
     public NOptional<NArg> get(int index) {
         if (index < 0) {
-            return emptyOptionalCstyle("missing argument");
+            return emptyOptionalCformat("missing argument");
         }
         if (index < lookahead.size()) {
             return NOptional.of(lookahead.get(index));
@@ -728,7 +728,7 @@ public class DefaultNCommandLine implements NCommandLine {
         if (index < lookahead.size()) {
             return NOptional.of(lookahead.get(index));
         }
-        return emptyOptionalCstyle("missing argument");
+        return emptyOptionalCformat("missing argument");
     }
 
     @Override
@@ -816,21 +816,21 @@ public class DefaultNCommandLine implements NCommandLine {
             if (NBlankable.isBlank(commandName)) {
                 throw new IllegalArgumentException(message.toString());
             }
-            throw new IllegalArgumentException(NMsg.ofCstyle("%s : %s", commandName, message).toString());
+            throw new IllegalArgumentException(NMsg.ofC("%s : %s", commandName, message).toString());
         }
         if (NBlankable.isBlank(commandName)) {
             throw new NIllegalArgumentException(session, message);
         }
-        throw new NIllegalArgumentException(session, NMsg.ofCstyle("%s : %s", commandName, message));
+        throw new NIllegalArgumentException(session, NMsg.ofC("%s : %s", commandName, message));
     }
 
     @Override
     public void throwError(NString message) {
         if (session == null) {
             if (!NBlankable.isBlank(commandName)) {
-                throw new IllegalArgumentException(NMsg.ofCstyle("%s : %s", commandName, message).toString());
+                throw new IllegalArgumentException(NMsg.ofC("%s : %s", commandName, message).toString());
             }
-            throw new IllegalArgumentException(NMsg.ofCstyle("%s", commandName, message).toString());
+            throw new IllegalArgumentException(NMsg.ofC("%s", commandName, message).toString());
         }
         NTextBuilder m = NTexts.of(session).ofBuilder();
         if (!NBlankable.isBlank(commandName)) {
@@ -963,7 +963,7 @@ public class DefaultNCommandLine implements NCommandLine {
             NArg r = peek().orNull();
             skip();
             if (r == null) {
-                return emptyOptionalCstyle("expected argument");
+                return emptyOptionalCformat("expected argument");
             }
             return NOptional.of(r);
         } else {
@@ -981,9 +981,9 @@ public class DefaultNCommandLine implements NCommandLine {
                 return NOptional.of(createArgument(""));
             }
             if (hasNext() && (!forceNonOption || !isNextOption())) {
-                return emptyOptionalCstyle("unexpected option %s", highlightText(String.valueOf(peek().get().asString())));
+                return emptyOptionalCformat("unexpected option %s", highlightText(String.valueOf(peek().get().asString())));
             }
-            return emptyOptionalCstyle("missing argument %s", highlightText(String.valueOf(name == null ? "value" : name.getName())));
+            return emptyOptionalCformat("missing argument %s", highlightText(String.valueOf(name == null ? "value" : name.getName())));
         }
         //ignored
     }
@@ -996,7 +996,7 @@ public class DefaultNCommandLine implements NCommandLine {
             String v = args.removeFirst();
             return NOptional.of(createArgument(v));
         } else {
-            return emptyOptionalCstyle("missing argument");
+            return emptyOptionalCformat("missing argument");
         }
     }
 
@@ -1178,7 +1178,7 @@ public class DefaultNCommandLine implements NCommandLine {
                         }
                         case '\'':
                         case '"': {
-                            return NOptional.ofError(session -> NMsg.ofCstyle("illegal char %s", c));
+                            return NOptional.ofError(session -> NMsg.ofC("illegal char %s", c));
                         }
                         case '\\': {
                             i++;
@@ -1316,7 +1316,7 @@ public class DefaultNCommandLine implements NCommandLine {
                 //reference equality!
                 if (next == a) {
                     //was not consumed!
-                    throwError(NMsg.ofCstyle("%s must consume the option: %s",
+                    throwError(NMsg.ofC("%s must consume the option: %s",
                             (a.isOption() ? "nextOption" : "nextNonOption"),
                             a));
                 }

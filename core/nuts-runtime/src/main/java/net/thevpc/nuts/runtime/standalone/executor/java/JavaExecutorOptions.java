@@ -60,7 +60,7 @@ public final class JavaExecutorOptions {
         if (tempId) {
             descriptor = def.getDescriptor();
 //            if (!CoreNutsUtils.isEffectiveId(id)) {
-//                throw new NutsException(session, NMsg.ofCstyle("id should be effective : %s", id));
+//                throw new NutsException(session, NMsg.ofC("id should be effective : %s", id));
 //            }
             id = descriptor.getId();
         } else {
@@ -234,26 +234,26 @@ public final class JavaExecutorOptions {
         }
         NPlatformLocation nutsPlatformLocation = NJavaSdkUtils.of(session).resolveJdkLocation(getJavaVersion(), session);
         if (nutsPlatformLocation == null) {
-            throw new NExecutionException(session, NMsg.ofCstyle("no java version %s was found", NStringUtils.trim(getJavaVersion())), 1);
+            throw new NExecutionException(session, NMsg.ofC("no java version %s was found", NStringUtils.trim(getJavaVersion())), 1);
         }
         javaEffVersion = nutsPlatformLocation.getVersion();
         javaCommand = NJavaSdkUtils.of(session).resolveJavaCommandByVersion(nutsPlatformLocation, javaw, session);
         if (javaCommand == null) {
-            throw new NExecutionException(session, NMsg.ofCstyle("no java version %s was found", getJavaVersion()), 1);
+            throw new NExecutionException(session, NMsg.ofC("no java version %s was found", getJavaVersion()), 1);
         }
         java9 = NVersion.of(javaVersion).get(session).compareTo("1.8") > 0;
         if (this.jar) {
             if (this.mainClass != null) {
                 if (session.isPlainOut()) {
-                    session.getTerminal().err().printf("ignored main-class=%s. running jar!%n", getMainClass());
+                    session.getTerminal().err().println((NMsg.ofC("ignored main-class=%s. running jar!", getMainClass())));
                 }
             }
             if (!currentCP.isEmpty()) {
                 if (session.isPlainOut()) {
-                    session.getTerminal().err().printf("ignored class-path=%s. running jar!%n", currentCP
+                    session.getTerminal().err().println(NMsg.ofC("ignored class-path=%s. running jar!", currentCP
                             .stream()
                             .map(x -> x.getURL().toString()).collect(Collectors.joining(","))
-                    );
+                    ));
                 }
             }
             if (this.excludeBase) {
@@ -283,7 +283,7 @@ public final class JavaExecutorOptions {
                 }
             }
             NId finalId = id;
-            NAssert.requireNonNull(mainClass, () -> NMsg.ofCstyle("missing Main Class for %s", finalId), session);
+            NAssert.requireNonNull(mainClass, () -> NMsg.ofC("missing Main Class for %s", finalId), session);
             boolean baseDetected = false;
             for (NDefinition nDefinition : nDefinitions) {
                 NClassLoaderNode nn = null;
@@ -306,7 +306,7 @@ public final class JavaExecutorOptions {
                 }
             }
             if (!isExcludeBase() && !baseDetected) {
-                NAssert.requireNonNull(path, () -> NMsg.ofCstyle("missing path %s", finalId), session);
+                NAssert.requireNonNull(path, () -> NMsg.ofC("missing path %s", finalId), session);
                 currentCP.add(0, NClassLoaderUtils.definitionToClassLoaderNode(def, session));
             }
             classPathNodes.addAll(currentCP);
@@ -368,7 +368,7 @@ public final class JavaExecutorOptions {
                 List<String> possibleClasses = StringTokenizerUtils.split(getMainClass(), ":");
                 switch (possibleClasses.size()) {
                     case 0:
-                        throw new NIllegalArgumentException(session, NMsg.ofCstyle("missing Main-Class in Manifest for %s", id));
+                        throw new NIllegalArgumentException(session, NMsg.ofC("missing Main-Class in Manifest for %s", id));
                     case 1:
                         //
                         break;
@@ -377,7 +377,7 @@ public final class JavaExecutorOptions {
                                 || session.isBot()
 //                                    || !session.isAsk()
                         ) {
-                            throw new NExecutionException(session, NMsg.ofCstyle("multiple runnable classes detected : %s", possibleClasses), 102);
+                            throw new NExecutionException(session, NMsg.ofC("multiple runnable classes detected : %s", possibleClasses), 102);
                         }
                         NTexts text = NTexts.of(session);
                         NTextBuilder msgString = text.ofBuilder();
@@ -460,7 +460,7 @@ public final class JavaExecutorOptions {
                         return extraPossibilities.get(0);
                     }
                     if (extraPossibilities.size() > 1) {
-                        throw new NIllegalArgumentException(session, NMsg.ofCstyle("ambiguous main-class %s matches all of %s",
+                        throw new NIllegalArgumentException(session, NMsg.ofC("ambiguous main-class %s matches all of %s",
                                 name, extraPossibilities.toString()
                         ));
                     }
@@ -476,7 +476,7 @@ public final class JavaExecutorOptions {
                         return extraPossibilities.get(0);
                     }
                     if (extraPossibilities.size() > 1) {
-                        throw new NIllegalArgumentException(session, NMsg.ofCstyle("ambiguous main-class %s matches all of from %s",
+                        throw new NIllegalArgumentException(session, NMsg.ofC("ambiguous main-class %s matches all of from %s",
                                 name, extraPossibilities.toString()
                         ));
                     }

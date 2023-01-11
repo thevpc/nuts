@@ -43,7 +43,7 @@ public class NReadOnlyException extends NException {
      * @param location location
      */
     public NReadOnlyException(NSession session, String location) {
-        super(session, NMsg.ofCstyle("cannot update readonly workspace %s", NTexts.of(session).ofStyled(location, NTextStyle.path())));
+        super(session, NMsg.ofC("cannot update readonly workspace %s", NTexts.of(session).ofStyled(location, NTextStyle.path())));
     }
 
     /**

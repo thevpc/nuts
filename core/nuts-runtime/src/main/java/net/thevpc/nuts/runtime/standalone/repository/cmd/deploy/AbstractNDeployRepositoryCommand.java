@@ -134,7 +134,7 @@ public abstract class AbstractNDeployRepositoryCommand extends NRepositoryComman
         if (this.getId().getVersion().isReleaseVersion()
                 || this.getId().getVersion().isLatestVersion()
         ) {
-            throw new NIllegalArgumentException(session, NMsg.ofCstyle("invalid version %s", this.getId().getVersion()));
+            throw new NIllegalArgumentException(session, NMsg.ofC("invalid version %s", this.getId().getVersion()));
         }
     }
 

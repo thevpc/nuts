@@ -63,25 +63,21 @@ public abstract class DefaultInternalNExecutableCommand extends AbstractNExecuta
     public void dryExecute() {
         NSession session = getSession();
         if (NAppUtils.processHelpOptions(args, getSession())) {
-            if (getSession().isPlainOut()) {
-                session.out().println("[dry] ==show-help==");
-            } else {
-                session.out().printlnf("[dry] ==show-help==");
-            }
+            session.out().println("[dry] ==show-help==");
             return;
         }
         NTexts text = NTexts.of(session);
         if (getSession().isPlainOut()) {
-            session.out().printlnf("[dry] %s%n",
+            session.out().println(NMsg.ofC("[dry] %s%n",
                     text.ofBuilder()
                             .append("internal", NTextStyle.pale())
                             .append(" ")
                             .append(getName(), NTextStyle.primary5())
                             .append(" ")
                             .append(NCommandLine.of(args))
-            );
+            ));
         } else {
-            session.out().printlnf(NMsg.ofCstyle(
+            session.out().println(NMsg.ofC(
                             "[dry] %s",
                             text.ofBuilder()
                                     .append("internal", NTextStyle.pale())

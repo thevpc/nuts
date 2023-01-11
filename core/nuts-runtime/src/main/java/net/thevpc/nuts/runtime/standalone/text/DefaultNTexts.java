@@ -2,6 +2,7 @@ package net.thevpc.nuts.runtime.standalone.text;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.io.NIO;
+import net.thevpc.nuts.io.NOutputStream;
 import net.thevpc.nuts.runtime.standalone.io.path.NFormatFromSPI;
 import net.thevpc.nuts.runtime.standalone.session.NSessionUtils;
 import net.thevpc.nuts.runtime.standalone.util.collections.ClassMap;
@@ -20,7 +21,9 @@ import java.lang.reflect.Array;
 import java.net.URL;
 import java.nio.file.Path;
 import java.text.MessageFormat;
+import java.time.Duration;
 import java.time.temporal.Temporal;
+import java.time.temporal.TemporalAmount;
 import java.util.*;
 import java.util.logging.Level;
 
@@ -44,16 +47,40 @@ public class DefaultNTexts implements NTexts {
         register(NString.class, (o, t, s) -> ((NString) o).toText());
         register(InputStream.class, (o, t, s) -> t.ofStyled(NIO.of(s).createInputSource((InputStream) o).getInputMetaData().getName().orElse(o.toString()), NTextStyle.path()));
         register(OutputStream.class, (o, t, s) -> t.ofStyled(o.toString(), NTextStyle.path()));
+        register(NOutputStream.class, (o, t, s) -> t.ofStyled(o.toString(), NTextStyle.path()));
         register(Writer.class, (o, t, s) -> t.ofStyled(o.toString(), NTextStyle.path()));
         register(NEnum.class, (o, t, s) -> t.ofStyled(((NEnum) o).id(), NTextStyle.option()));
         register(Enum.class, (o, t, s) -> (o instanceof NEnum) ? t.ofStyled(((NEnum) o).id(), NTextStyle.option()) : ofStyled(((Enum<?>) o).name(), NTextStyle.option()));
         register(Number.class, (o, t, s) -> t.ofStyled(o.toString(), NTextStyle.number()));
         register(Date.class, (o, t, s) -> t.ofStyled(o.toString(), NTextStyle.date()));
         register(Temporal.class, (o, t, s) -> t.ofStyled(o.toString(), NTextStyle.date()));
+        register(TemporalAmount.class, (o, t, s) -> t.ofStyled(o.toString(), NTextStyle.date()));
         register(Boolean.class, (o, t, s) -> t.ofStyled(o.toString(), NTextStyle.bool()));
         register(Path.class, (o, t, s) -> t.ofStyled(o.toString(), NTextStyle.path()));
         register(File.class, (o, t, s) -> t.ofStyled(o.toString(), NTextStyle.path()));
         register(URL.class, (o, t, s) -> t.ofStyled(o.toString(), NTextStyle.path()));
+        register(Level.class, (o, t, s) -> {
+            switch (((Level) o).getName()) {
+                case "OFF":
+                    return t.ofStyled(o.toString(), NTextStyle.pale());
+                case "SEVERE":
+                    return t.ofStyled(o.toString(), NTextStyle.error());
+                case "WARNING":
+                    return t.ofStyled(o.toString(), NTextStyle.warn());
+                case "INFO":
+                    return t.ofStyled(o.toString(), NTextStyle.info());
+                case "CONFIG":
+                    return t.ofStyled(o.toString(), NTextStyle.config());
+                case "FINE":
+                case "FINER":
+                case "FINEST":
+                    return t.ofStyled(o.toString(), NTextStyle.pale());
+                case "ALL":
+                    return t.ofStyled(o.toString(), NTextStyle.success());
+                default:
+                    return t.ofStyled(o.toString(), NTextStyle.bold());
+            }
+        });
         register(Throwable.class, (o, t, s) -> t.ofStyled(
                 ofText(CoreStringUtils.exceptionToMessage((Throwable) o)),
                 NTextStyle.error()
@@ -208,9 +235,9 @@ public class DefaultNTexts implements NTexts {
 
     private NText _NMsg_toString(NMsg m) {
         checkSession();
-        NTextFormatStyle format = m.getFormat();
+        NTextFormatType format = m.getFormat();
         if (format == null) {
-            format = NTextFormatStyle.JSTYLE;
+            format = NTextFormatType.JFORMAT;
         }
         Object[] params = m.getParams();
         if (params == null) {
@@ -221,18 +248,18 @@ public class DefaultNTexts implements NTexts {
         Locale locale = NBlankable.isBlank(sLocale) ? null : new Locale(sLocale);
         NTexts txt = NTexts.of(getSession());
         switch (format) {
-            case CSTYLE: {
+            case CFORMAT: {
                 String smsg = (String) msg;
-                NFormattedTextParts r = NFormattedTextParts.parseCStyle(smsg);
+                NFormattedTextParts r = NFormattedTextParts.parseCFormat(smsg);
                 StringBuilder sb = new StringBuilder();
                 int paramIndex = 0;
                 for (NFormattedTextPart part : r.getParts()) {
                     if (part.isFormat()) {
-                        if(part.getValue().equals("%%")) {
+                        if (part.getValue().equals("%%")) {
                             sb.append("%");
-                        }else if(part.getValue().equals("%n")){
+                        } else if (part.getValue().equals("%n")) {
                             sb.append("\n");
-                        }else {
+                        } else {
                             if (paramIndex < 0 || paramIndex >= params.length) {
                                 throw new NIllegalArgumentException(session, NMsg.ofPlain("invalid index in message"));
                             }
@@ -256,7 +283,7 @@ public class DefaultNTexts implements NTexts {
                 }
                 return txt.parse(sb.toString());
             }
-            case JSTYLE: {
+            case JFORMAT: {
                 String smsg = (String) msg;
                 NFormattedTextParts r = NFormattedTextParts.parseJStyle(smsg);
                 StringBuilder sb = new StringBuilder();
@@ -299,9 +326,9 @@ public class DefaultNTexts implements NTexts {
                 }
                 return txt.parse(sb.toString());
             }
-            case VSTYLE: {
+            case VFORMAT: {
                 Object[] finalParams = params;
-                String a = NMsg.ofVstyle((String) msg,
+                String a = NMsg.ofV((String) msg,
                         s -> {
                             Map<String, ?> mm =
                                     (finalParams == null) ? new LinkedHashMap<>() :
@@ -556,7 +583,7 @@ public class DefaultNTexts implements NTexts {
 
     private void checkValidSeparator(char sep) {
         if (sep != ':' && !Character.isWhitespace(sep)) {
-            throw new NIllegalArgumentException(session, NMsg.ofCstyle("invalid separator '%s'", sep));
+            throw new NIllegalArgumentException(session, NMsg.ofC("invalid separator '%s'", sep));
         }
     }
 
@@ -1116,7 +1143,7 @@ public class DefaultNTexts implements NTexts {
             NLoggerOp.of(AbstractNTextNodeParser.class, session)
                     .verb(NLoggerVerb.WARNING)
                     .level(Level.FINEST)
-                    .log(NMsg.ofCstyle("error parsing : %s", text));
+                    .log(NMsg.ofC("error parsing : %s", text));
             return text;
         }
     }

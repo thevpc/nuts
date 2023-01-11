@@ -166,7 +166,7 @@ public class NRepositoryMirroringHelper {
             throw new NNotFoundException(session, id);
         }
         if (!repo.config().setSession(session).isSupportedMirroring()) {
-            throw new NPushException(session, id, NMsg.ofCstyle("unable to push %s. no repository found.", id == null ? "<null>" : id));
+            throw new NPushException(session, id, NMsg.ofC("unable to push %s. no repository found.", id == null ? "<null>" : id));
         }
         NRepository repo = this.repo;
         if (NBlankable.isBlank(repository)) {
@@ -178,10 +178,10 @@ public class NRepositoryMirroringHelper {
                 }
             }
             if (all.isEmpty()) {
-                throw new NPushException(session, id, NMsg.ofCstyle("unable to push %s. no repository found.", id == null ? "<null>" : id));
+                throw new NPushException(session, id, NMsg.ofC("unable to push %s. no repository found.", id == null ? "<null>" : id));
             } else if (all.size() > 1) {
                 throw new NPushException(session, id,
-                        NMsg.ofCstyle("unable to perform push for %s. at least two Repositories (%s) provides the same nuts %s",
+                        NMsg.ofC("unable to perform push for %s. at least two Repositories (%s) provides the same nuts %s",
                                 id,
                                 all.stream().map(NRepository::getName).collect(Collectors.joining(",")),
                                 id

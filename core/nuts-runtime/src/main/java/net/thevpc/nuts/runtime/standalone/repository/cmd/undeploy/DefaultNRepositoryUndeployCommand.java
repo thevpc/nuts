@@ -57,14 +57,14 @@ public class DefaultNRepositoryUndeployCommand extends AbstractNRepositoryUndepl
                     xrepo.getIndexStore().invalidate(this.getId(), session);
                 } catch (NException ex) {
                     _LOGOP(session).level(Level.FINEST).verb(NLoggerVerb.FAIL).log(
-                            NMsg.ofJstyle("error invalidating Indexer for {0} : {1}", getRepo().getName(), ex));
+                            NMsg.ofJ("error invalidating Indexer for {0} : {1}", getRepo().getName(), ex));
                 }
             }
             _LOGOP(session).level(Level.FINEST).verb(NLoggerVerb.SUCCESS)
-                    .log(NMsg.ofJstyle("{0} undeploy {1}", NStringUtils.formatAlign(getRepo().getName(), 20, NPositionType.FIRST), this.getId()));
+                    .log(NMsg.ofJ("{0} undeploy {1}", NStringUtils.formatAlign(getRepo().getName(), 20, NPositionType.FIRST), this.getId()));
         } catch (RuntimeException ex) {
             _LOGOP(session).level(Level.FINEST).verb(NLoggerVerb.FAIL)
-                    .log(NMsg.ofJstyle("{0} undeploy {1}", NStringUtils.formatAlign(getRepo().getName(), 20, NPositionType.FIRST), this.getId()));
+                    .log(NMsg.ofJ("{0} undeploy {1}", NStringUtils.formatAlign(getRepo().getName(), 20, NPositionType.FIRST), this.getId()));
         }
         return this;
     }

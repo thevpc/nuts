@@ -56,7 +56,7 @@ public class NAlreadyInstalledException extends NInstallationException {
      * @param cause   exception
      */
     public NAlreadyInstalledException(NSession session, NId id, NMsg msg, Exception cause) {
-        super(session, id, msg == null ? NMsg.ofCstyle("already installed %s", (id == null ? "<null>" : id)) : msg, cause);
+        super(session, id, msg == null ? NMsg.ofC("already installed %s", (id == null ? "<null>" : id)) : msg, cause);
     }
 
 }

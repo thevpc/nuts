@@ -41,9 +41,9 @@ public class SimpleRecommendationConnector extends AbstractRecommendationConnect
             }
             return elems.parse(http.getInputStream(), resultType);
         } catch (IOException ex) {
-            throw new NIOException(session, NMsg.ofCstyle("recommendations are not available : %s",ex.toString()), ex);
+            throw new NIOException(session, NMsg.ofC("recommendations are not available : %s",ex.toString()), ex);
         } catch (Exception ex) {
-            throw new NIllegalArgumentException(session, NMsg.ofCstyle("unexpected error : %s",ex.toString()), ex);
+            throw new NIllegalArgumentException(session, NMsg.ofC("unexpected error : %s",ex.toString()), ex);
         }
     }
 

@@ -75,7 +75,7 @@ public final class NReservedGuiUtils {
             return line;
         } catch (UnsatisfiedLinkError e) {
             //exception may occur if the sdk is built in headless mode
-            bLog.with().level(Level.OFF).verb(NLoggerVerb.WARNING).log( NMsg.ofJstyle("[Graphical Environment Unsupported] {0}", title));
+            bLog.with().level(Level.OFF).verb(NLoggerVerb.WARNING).log( NMsg.ofJ("[Graphical Environment Unsupported] {0}", title));
             if (in == null) {
                 return new Scanner(System.in).nextLine();
             }
@@ -91,7 +91,7 @@ public final class NReservedGuiUtils {
             javax.swing.JOptionPane.showMessageDialog(null, message);
         } catch (UnsatisfiedLinkError e) {
             //exception may occur if the sdk is built in headless mode
-            bLog.with().level(Level.OFF).verb(NLoggerVerb.WARNING).log( NMsg.ofJstyle("[Graphical Environment Unsupported] {0}", title));
+            bLog.with().level(Level.OFF).verb(NLoggerVerb.WARNING).log( NMsg.ofJ("[Graphical Environment Unsupported] {0}", title));
         }
     }
 }

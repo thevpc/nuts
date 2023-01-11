@@ -79,14 +79,14 @@ public interface NSystemTerminal extends NSystemTerminalBase {
      *
      * @return terminal's output stream
      */
-    NOutStream out();
+    NOutputStream out();
 
     /**
      * return terminal's error stream
      *
      * @return terminal's error stream
      */
-    NOutStream err();
+    NOutputStream err();
 
     /**
      * print progress with a message

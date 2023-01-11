@@ -45,7 +45,7 @@ public class DefaultNQuestionFormat<T> implements NQuestionFormat<T> {
                 return Arrays.asList(true, false);
             }
             default: {
-                throw new NUnsupportedArgumentException(session, NMsg.ofCstyle("unsupported type %s", type.getName()));
+                throw new NUnsupportedArgumentException(session, NMsg.ofC("unsupported type %s", type.getName()));
             }
         }
     }

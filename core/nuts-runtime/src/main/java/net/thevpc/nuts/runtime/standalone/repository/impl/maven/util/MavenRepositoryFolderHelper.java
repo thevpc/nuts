@@ -224,7 +224,7 @@ public class MavenRepositoryFolderHelper {
                                 }
                             } catch (Exception ex) {
                                 _LOGOP(session).level(Level.SEVERE).error(ex)
-                                        .log(NMsg.ofJstyle("failed to parse metadata xml for {0} : {1}", metadataxml, ex));
+                                        .log(NMsg.ofJ("failed to parse metadata xml for {0} : {1}", metadataxml, ex));
                                 //ignore any error!
                             }
                             MavenMetadata m = new MavenMetadata();

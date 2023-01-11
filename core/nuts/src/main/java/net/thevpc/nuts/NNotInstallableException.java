@@ -55,6 +55,6 @@ public class NNotInstallableException extends NInstallationException {
      */
     public NNotInstallableException(NSession session, NId id, NMsg msg, Exception ex) {
         super(session, id,
-                msg == null ? NMsg.ofCstyle("not installed %s", (id == null ? "<null>" : id)) : msg, ex);
+                msg == null ? NMsg.ofC("not installed %s", (id == null ? "<null>" : id)) : msg, ex);
     }
 }

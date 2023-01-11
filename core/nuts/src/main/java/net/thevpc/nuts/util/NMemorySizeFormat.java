@@ -1,8 +1,8 @@
 package net.thevpc.nuts.util;
 
 import net.thevpc.nuts.format.NPositionType;
-import net.thevpc.nuts.io.NOutPlainStream;
-import net.thevpc.nuts.io.NOutStream;
+import net.thevpc.nuts.io.NPlainOutputStream;
+import net.thevpc.nuts.io.NOutputStream;
 import net.thevpc.nuts.text.NTextStyle;
 
 import java.text.DecimalFormat;
@@ -55,7 +55,7 @@ public class NMemorySizeFormat {
         this.fixed = fixed;
     }
 
-    public void formatUnit(NMemorySize memorySize, NMemoryUnit unit, Set<NMemoryUnit> processed, NOutStream out) {
+    public void formatUnit(NMemorySize memorySize, NMemoryUnit unit, Set<NMemoryUnit> processed, NOutputStream out) {
         if (iec != null) {
             memorySize = memorySize.withIEC(iec);
         }
@@ -81,10 +81,10 @@ public class NMemorySizeFormat {
         }
         if (accept(unit, memorySize)) {
             if (!empty) {
-                out.append(' ');
+                out.print(' ');
             }
-            out.append(formatNumber(unitValue, unit), NTextStyle.number());
-            out.append(unitString(unit, iiec), NTextStyle.info());
+            out.print(formatNumber(unitValue, unit), NTextStyle.number());
+            out.print(unitString(unit, iiec), NTextStyle.info());
             processed.add(unit);
         }
     }
@@ -97,12 +97,12 @@ public class NMemorySizeFormat {
     }
 
     public String format(NMemorySize memorySize) {
-        NOutStream sb = new NOutPlainStream();
+        NOutputStream sb = new NPlainOutputStream();
         print(memorySize, sb);
         return sb.toString();
     }
 
-    public void print(NMemorySize memorySize, NOutStream out) {
+    public void print(NMemorySize memorySize, NOutputStream out) {
         if (iec != null) {
             memorySize = memorySize.withIEC(iec);
         }
@@ -116,8 +116,8 @@ public class NMemorySizeFormat {
             formatUnit(memorySize, chronoUnit, processed, out);
         }
         if (processed.isEmpty()) {
-            out.append(formatNumber(0, memorySize.getSmallestUnit()), NTextStyle.number());
-            out.append(unitString(memorySize.getSmallestUnit(), memorySize.isIEC()), NTextStyle.info());
+            out.print(formatNumber(0, memorySize.getSmallestUnit()), NTextStyle.number());
+            out.print(unitString(memorySize.getSmallestUnit(), memorySize.isIEC()), NTextStyle.info());
         }
     }
 

@@ -20,19 +20,19 @@ public class AppExample implements NApplication {
     @Override
     public void onInstallApplication(NApplicationContext applicationContext) {
         NSession session = applicationContext.getSession();
-        session.out().printlnf("write your business logic that will be processed when the application is being installed here...");
+        session.out().println("write your business logic that will be processed when the application is being installed here...");
     }
 
     @Override
     public void onUpdateApplication(NApplicationContext applicationContext) {
         NSession session = applicationContext.getSession();
-        session.out().printlnf("write your business logic that will be processed when the application is being updated/upgraded here...");
+        session.out().println("write your business logic that will be processed when the application is being updated/upgraded here...");
     }
 
     @Override
     public void onUninstallApplication(NApplicationContext applicationContext) {
         NSession session = applicationContext.getSession();
-        session.out().printlnf("write your business logic that will be processed when the application is being uninstalled/removed here...");
+        session.out().println("write your business logic that will be processed when the application is being uninstalled/removed here...");
     }
 
     /**
@@ -94,7 +94,7 @@ public class AppExample implements NApplication {
             result.put("someStringOption", someStringOption);
             result.put("someBooleanOption", someBooleanOption);
             result.put("nonOptions", nonOptions);
-            session.out().printlnf(result);
+            session.out().println(result);
         }
     }
 

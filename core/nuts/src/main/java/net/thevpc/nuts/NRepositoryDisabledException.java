@@ -43,7 +43,7 @@ public class NRepositoryDisabledException extends NRepositoryException {
      */
     public NRepositoryDisabledException(NSession session, String repository) {
         super(session, repository,
-                NMsg.ofCstyle("repository %s is not enabled", (repository == null ? "<null>" : repository))
+                NMsg.ofC("repository %s is not enabled", (repository == null ? "<null>" : repository))
                 , null);
     }
 

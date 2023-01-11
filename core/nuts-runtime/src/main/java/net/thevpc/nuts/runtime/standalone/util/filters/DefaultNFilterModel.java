@@ -58,7 +58,7 @@ public class DefaultNFilterModel {
                 return NInstallStatusFilters.of(session);
             }
         }
-        throw new NIllegalArgumentException(session, NMsg.ofCstyle("unsupported filter type: %s", type));
+        throw new NIllegalArgumentException(session, NMsg.ofC("unsupported filter type: %s", type));
     }
 
     public <T extends NFilter> T always(Class<T> type, NSession session) {
@@ -194,7 +194,7 @@ public class DefaultNFilterModel {
                 return (T) new NDescriptorFilterNone(session, all.toArray(new NDescriptorFilter[0]));
             }
         }
-        throw new NIllegalArgumentException(session, NMsg.ofCstyle("unsupported filter type: %s", type));
+        throw new NIllegalArgumentException(session, NMsg.ofC("unsupported filter type: %s", type));
     }
 
     public <T extends NFilter> T none(NFilter[] others, NSession session) {
@@ -303,7 +303,7 @@ public class DefaultNFilterModel {
         if (NInstallStatusFilter.class.isAssignableFrom(c1)) {
             return (Class<T>) NInstallStatusFilter.class;
         }
-        throw new NIllegalArgumentException(session, NMsg.ofCstyle("cannot detect filter type for %s", c1));
+        throw new NIllegalArgumentException(session, NMsg.ofC("cannot detect filter type for %s", c1));
     }
 
     public <T extends NFilter> Class<T> detectType(Class<? extends NFilter> c1, Class<? extends NFilter> c2, NSession session) {
@@ -317,7 +317,7 @@ public class DefaultNFilterModel {
             if (NDescriptorFilter.class.isAssignableFrom(c2)) {
                 return (Class<T>) NDescriptorFilter.class;
             }
-            throw new NIllegalArgumentException(session, NMsg.ofCstyle("cannot detect common type for %s and %s", c1, c2));
+            throw new NIllegalArgumentException(session, NMsg.ofC("cannot detect common type for %s and %s", c1, c2));
         }
         if (NIdFilter.class.isAssignableFrom(c1)) {
             if (NVersionFilter.class.isAssignableFrom(c2)) {
@@ -329,7 +329,7 @@ public class DefaultNFilterModel {
             if (NDescriptorFilter.class.isAssignableFrom(c2)) {
                 return (Class<T>) NDescriptorFilter.class;
             }
-            throw new NIllegalArgumentException(session, NMsg.ofCstyle("cannot detect common type for %s and %s",c1,c2));
+            throw new NIllegalArgumentException(session, NMsg.ofC("cannot detect common type for %s and %s",c1,c2));
         }
         if (NDescriptorFilter.class.isAssignableFrom(c1)) {
             if (NVersionFilter.class.isAssignableFrom(c2)) {
@@ -341,27 +341,27 @@ public class DefaultNFilterModel {
             if (NDescriptorFilter.class.isAssignableFrom(c2)) {
                 return (Class<T>) NDescriptorFilter.class;
             }
-            throw new NIllegalArgumentException(session, NMsg.ofCstyle("cannot detect common type for %s and %s",c1,c2));
+            throw new NIllegalArgumentException(session, NMsg.ofC("cannot detect common type for %s and %s",c1,c2));
         }
         if (NDependencyFilter.class.isAssignableFrom(c1)) {
             if (NDependencyFilter.class.isAssignableFrom(c2)) {
                 return (Class<T>) NDependencyFilter.class;
             }
-            throw new NIllegalArgumentException(session, NMsg.ofCstyle("cannot detect common type for %s and %s",c1,c2));
+            throw new NIllegalArgumentException(session, NMsg.ofC("cannot detect common type for %s and %s",c1,c2));
         }
         if (NRepositoryFilter.class.isAssignableFrom(c1)) {
             if (NRepositoryFilter.class.isAssignableFrom(c2)) {
                 return (Class<T>) NRepositoryFilter.class;
             }
-            throw new NIllegalArgumentException(session, NMsg.ofCstyle("cannot detect common type for %s and %s",c1,c2));
+            throw new NIllegalArgumentException(session, NMsg.ofC("cannot detect common type for %s and %s",c1,c2));
         }
         if (NInstallStatusFilter.class.isAssignableFrom(c1)) {
             if (NInstallStatusFilter.class.isAssignableFrom(c2)) {
                 return (Class<T>) NInstallStatusFilter.class;
             }
-            throw new NIllegalArgumentException(session, NMsg.ofCstyle("cannot detect common type for %s and %s",c1,c2));
+            throw new NIllegalArgumentException(session, NMsg.ofC("cannot detect common type for %s and %s",c1,c2));
         }
-        throw new NIllegalArgumentException(session, NMsg.ofCstyle("cannot detect common type for %s and %s",c1,c2));
+        throw new NIllegalArgumentException(session, NMsg.ofC("cannot detect common type for %s and %s",c1,c2));
     }
 
 }

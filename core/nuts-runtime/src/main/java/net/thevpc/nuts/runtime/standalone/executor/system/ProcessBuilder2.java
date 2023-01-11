@@ -387,25 +387,25 @@ public class ProcessBuilder2 {
                 if (base.redirectErrorStream()) {
                     if (isGrabOutputString()) {
                         throw new NExecutionException(session,
-                                NMsg.ofCstyle("execution failed with code %d and message : %s. Command was %s", result, getOutputString(),
+                                NMsg.ofC("execution failed with code %d and message : %s. Command was %s", result, getOutputString(),
                                         NCommandLine.of(getCommand())),
                                 result);
                     }
                 } else {
                     if (isGrabErrorString()) {
                         throw new NExecutionException(session,
-                                NMsg.ofCstyle("execution failed with code %d and message : %s. Command was %s", result, getOutputString(),
+                                NMsg.ofC("execution failed with code %d and message : %s. Command was %s", result, getOutputString(),
                                         NCommandLine.of(getCommand())),
                                 result);
                     }
                     if (isGrabOutputString()) {
-                        throw new NExecutionException(session, NMsg.ofCstyle(
+                        throw new NExecutionException(session, NMsg.ofC(
                                 "execution failed with code %d and message : %s. Command was %s", result, getOutputString(),
                                 NCommandLine.of(getCommand())
                         ), result);
                     }
                 }
-                throw new NExecutionException(session, NMsg.ofCstyle("execution failed with code %d. Command was %s", result,
+                throw new NExecutionException(session, NMsg.ofC("execution failed with code %d. Command was %s", result,
                         NCommandLine.of(getCommand())
                 ), result);
             }

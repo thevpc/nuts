@@ -52,7 +52,7 @@ public class ConfigMarkdownGenerator {
         String apiDocumentIdFromApi = apiElement.getStringByPath("custom", "openapi-document-id").get(session);
         if (!NBlankable.isBlank(apiDocumentIdFromConfig)) {
             if (!Objects.equals(apiDocumentIdFromConfig, apiDocumentIdFromApi)) {
-                throw new NIllegalArgumentException(session, NMsg.ofCstyle("invalid api version %s <> %s", apiDocumentIdFromConfig, apiDocumentIdFromApi));
+                throw new NIllegalArgumentException(session, NMsg.ofC("invalid api version %s <> %s", apiDocumentIdFromConfig, apiDocumentIdFromApi));
             }
         }
         List<String> options = new ArrayList<>(defaultAdocHeaders);
@@ -94,7 +94,7 @@ public class ConfigMarkdownGenerator {
         all.add(MdFactory.endParagraph());
         String targetName = configElement.getString("target-name").get(session);
         all.add(NoApiUtils.asText(
-                NMsg.ofVstyle(msg.get("section.config.introduction.body").get(), NMaps.of("name", targetName)
+                NMsg.ofV(msg.get("section.config.introduction.body").get(), NMaps.of("name", targetName)
                 ).toString()));
 
         all.add(MdFactory.endParagraph());
@@ -153,7 +153,7 @@ public class ConfigMarkdownGenerator {
         all.add(MdFactory.endParagraph());
         all.add(MdFactory.title(2, msg.get("CONFIGURATION").get()));
         all.add(NoApiUtils.asText(
-                NMsg.ofVstyle(msg.get("section.config.body").get(), NMaps.of("name", targetName)
+                NMsg.ofV(msg.get("section.config.body").get(), NMaps.of("name", targetName)
                 ).toString()));
 
         if (!NBlankable.isBlank(observations)) {
@@ -164,7 +164,7 @@ public class ConfigMarkdownGenerator {
         all.add(MdFactory.endParagraph());
         all.add(MdFactory.title(3, msg.get("CUSTOM_PARAMETER_LIST").get()));
         all.add(NoApiUtils.asText(
-                NMsg.ofVstyle(msg.get("section.config.customVars.body").get(), NMaps.of("name", targetName)
+                NMsg.ofV(msg.get("section.config.customVars.body").get(), NMaps.of("name", targetName)
                 ).toString()));
         all.add(MdFactory.endParagraph());
 

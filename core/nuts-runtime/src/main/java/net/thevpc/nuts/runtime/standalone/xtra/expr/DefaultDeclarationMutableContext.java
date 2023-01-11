@@ -35,7 +35,7 @@ public class DefaultDeclarationMutableContext extends NExprDeclarationsBase impl
         } else if (parent != null) {
             return parent.getVar(name);
         }
-        return NOptional.ofEmpty(s -> NMsg.ofCstyle("var not found %s", name));
+        return NOptional.ofEmpty(s -> NMsg.ofC("var not found %s", name));
     }
 
     @Override
@@ -48,7 +48,7 @@ public class DefaultDeclarationMutableContext extends NExprDeclarationsBase impl
         } else if (parent != null) {
             return parent.getFunction(name, args);
         }
-        return NOptional.ofEmpty(s -> NMsg.ofCstyle("function not found %s", name));
+        return NOptional.ofEmpty(s -> NMsg.ofC("function not found %s", name));
     }
 
     @Override
@@ -61,7 +61,7 @@ public class DefaultDeclarationMutableContext extends NExprDeclarationsBase impl
         } else if (parent != null) {
             return parent.getConstruct(name, args);
         }
-        return NOptional.ofEmpty(s -> NMsg.ofCstyle("construct not found %s", name));
+        return NOptional.ofEmpty(s -> NMsg.ofC("construct not found %s", name));
     }
 
     @Override
@@ -383,7 +383,7 @@ public class DefaultDeclarationMutableContext extends NExprDeclarationsBase impl
         } else if (parent != null) {
             return parent.getOperator(opName, type);
         }
-        return NOptional.ofEmpty(s -> NMsg.ofCstyle("operator not found %s", opName));
+        return NOptional.ofEmpty(s -> NMsg.ofC("operator not found %s", opName));
     }
 
     @Override

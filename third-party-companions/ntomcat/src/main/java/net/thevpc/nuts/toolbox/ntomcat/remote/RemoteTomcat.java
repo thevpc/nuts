@@ -83,7 +83,7 @@ public class RemoteTomcat {
                 processed = true;
                 List<RemoteTomcatAppConfigService> apps = c.getApps();
                 for (RemoteTomcatAppConfigService app : apps) {
-                    context.getSession().out().printf("%s\n", app.getName());
+                    context.getSession().out().println(NMsg.ofPlain(app.getName()));
                 }
             }
         }
@@ -172,7 +172,7 @@ public class RemoteTomcat {
                     c.getConfig().setServer(session.getTerminal()
                             .ask()
                             .forString(
-                                    NMsg.ofCstyle("[instance=%s] would you enter %s value ?"
+                                    NMsg.ofC("[instance=%s] would you enter %s value ?"
                                             , text.ofStyled(c.getName(), NTextStyle.primary1())
                                             , text.ofStyled("--server", NTextStyle.option())
                                     )
@@ -186,7 +186,7 @@ public class RemoteTomcat {
                     c.getConfig()
                             .setRemoteTempPath(session.getTerminal().ask()
                                     .resetLine()
-                                    .forString(NMsg.ofCstyle("[instance=%s] would you enter %s value ?"
+                                    .forString(NMsg.ofC("[instance=%s] would you enter %s value ?"
                                             , text.ofStyled(c.getName(), NTextStyle.primary1())
                                             , text.ofStyled("--remote-temp-path", NTextStyle.option())
                                     )).setDefaultValue("/tmp")
@@ -198,7 +198,7 @@ public class RemoteTomcat {
                         ok = false;
                         aa.getConfig().setPath(session.getTerminal().ask()
                                 .resetLine()
-                                .forString(NMsg.ofCstyle("[instance=%s] [app=%s] would you enter %s value ?"
+                                .forString(NMsg.ofC("[instance=%s] [app=%s] would you enter %s value ?"
                                         , text.ofStyled(c.getName(), NTextStyle.primary1())
                                         , text.ofStyled(aa.getName(), NTextStyle.option())
                                         , text.ofStyled("--app.path", NTextStyle.option())
@@ -372,14 +372,14 @@ public class RemoteTomcat {
             public void show(RemoteTomcatServiceBase aa) {
                 NSession session = getContext().getSession();
                 if (json) {
-                    session.out().printf("%s :\n", NTexts.of(session).ofStyled(aa.getName(), NTextStyle.primary4()));
+                    session.out().println(NMsg.ofC("%s :", NTexts.of(session).ofStyled(aa.getName(), NTextStyle.primary4())));
                     aa.println(session.out());
                 }else if (yaml) {
                     //TODO FIX ME, what to do in Yaml?
-                    session.out().printf("%s :\n", NTexts.of(session).ofStyled(aa.getName(), NTextStyle.primary4()));
+                    session.out().println(NMsg.ofC("%s :", NTexts.of(session).ofStyled(aa.getName(), NTextStyle.primary4())));
                     aa.println(session.out());
                 } else {
-                    session.out().printf("%s :\n", NTexts.of(session).ofStyled(aa.getName(), NTextStyle.primary4()));
+                    session.out().println(NMsg.ofC("%s :", NTexts.of(session).ofStyled(aa.getName(), NTextStyle.primary4())));
                     aa.println(session.out());
                 }
             }
@@ -435,7 +435,7 @@ public class RemoteTomcat {
             RemoteTomcatConfigService u = loadOrCreateTomcatConfig(strings[0]);
             RemoteTomcatAppConfigService a = u.getAppOrNull(strings[1]);
             if (a == null) {
-                throw new NExecutionException(context.getSession(), NMsg.ofCstyle("unknown name %s. it is no domain or app", name), 3);
+                throw new NExecutionException(context.getSession(), NMsg.ofC("unknown name %s. it is no domain or app", name), 3);
             }
             return a;
         }

@@ -40,7 +40,7 @@ public final class NReservedLangUtils {
                 }
             }
         }
-        return NOptional.ofEmpty(x -> NMsg.ofCstyle("error with type %s not found", type.getSimpleName()));
+        return NOptional.ofEmpty(x -> NMsg.ofC("error with type %s not found", type.getSimpleName()));
     }
 
     public static String[] stacktraceToArray(Throwable th) {

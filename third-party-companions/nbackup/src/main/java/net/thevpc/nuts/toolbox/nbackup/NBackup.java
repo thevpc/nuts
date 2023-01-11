@@ -28,7 +28,7 @@ public class NBackup implements NApplication {
     @Override
     public void run(NApplicationContext applicationContext) {
         NSession session = applicationContext.getSession();
-        session.out().printlnf(NMsg.ofCstyle("%s Backup Tool.", NMsg.ofStyled("Nuts", NTextStyle.keyword())));
+        session.out().println(NMsg.ofC("%s Backup Tool.", NMsg.ofStyled("Nuts", NTextStyle.keyword())));
         applicationContext.processCommandLine(new NCommandLineProcessor() {
 
             @Override
@@ -139,7 +139,7 @@ public class NBackup implements NApplication {
                     config = new Config();
                 }
                 NSession session = applicationContext.getSession();
-                session.out().printlnf(NMsg.ofCstyle("Config File %s", getConfigFile()));
+                session.out().println(NMsg.ofC("Config File %s", getConfigFile()));
 
                 switch (options.cmd) {
                     case SAVE: {
@@ -163,7 +163,7 @@ public class NBackup implements NApplication {
                         if (NBlankable.isBlank(config.getLocalPath())) {
                             commandLine.throwMissingArgumentByName("--local");
                         }
-                        session.out().printlnf(NMsg.ofCstyle("Using local path %s", NMsg.ofStyled(config.getLocalPath(), NTextStyle.path())));
+                        session.out().println(NMsg.ofC("Using local path %s", NMsg.ofStyled(config.getLocalPath(), NTextStyle.path())));
                         for (DecoratedPath path : config.getPaths()) {
                             get(path, config, session);
                         }
@@ -191,12 +191,12 @@ public class NBackup implements NApplication {
                         config.getRemoteUser() + "@" + config.getRemoteServer() + ":" + remotePath,
                         localPath};
                 NPath.of(localPath, session).getParent().mkdirs();
-                session.out().printlnf(NMsg.ofCstyle("[%s] Backup %s from %s.",
+                session.out().println(NMsg.ofC("[%s] Backup %s from %s.",
                         NMsg.ofStyled(config.getRemoteServer(), NTextStyle.warn()),
                         NMsg.ofStyled(name, NTextStyle.keyword()),
                         NMsg.ofStyled(remotePath, NTextStyle.path())
                 ));
-                session.out().printlnf(NCommandLine.of(cmd));
+                session.out().println(NCommandLine.of(cmd));
                 NExecCommand.of(session).addCommand(cmd).setFailFast(true).run();
             }
         }, applicationContext);

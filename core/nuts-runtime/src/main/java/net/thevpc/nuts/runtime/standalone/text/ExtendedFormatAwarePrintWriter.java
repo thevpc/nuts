@@ -107,7 +107,7 @@ public class ExtendedFormatAwarePrintWriter extends PrintWriter implements Exten
     public ExtendedFormatAwarePrintWriter format(Locale l, String format, Object... args) {
         if (l == null) {
             print(NTexts.of(session).ofText(
-                    NMsg.ofCstyle(
+                    NMsg.ofC(
                             format, args
                     )
             ));
@@ -115,7 +115,7 @@ public class ExtendedFormatAwarePrintWriter extends PrintWriter implements Exten
             NSession s2 = this.session.copy().setLocale(l.toString());
             print(
                     NTexts.of(s2).ofText(
-                            NMsg.ofCstyle(
+                            NMsg.ofC(
                                     format, args
                             )
                     )

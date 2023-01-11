@@ -164,7 +164,7 @@ public class EnvCommand extends SimpleJShellBuiltin {
                     context.getSession().out().println(e.getKey() + "=" + e.getValue());
                 }
             } else {
-                context.getSession().out().printlnf(env);
+                context.getSession().out().println(env);
             }
         } else {
             final NExecCommand e = NExecCommand.of(context.getSession()).addCommand(options.command)

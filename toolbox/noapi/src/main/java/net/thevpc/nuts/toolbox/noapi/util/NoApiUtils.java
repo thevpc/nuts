@@ -1,6 +1,7 @@
 package net.thevpc.nuts.toolbox.noapi.util;
 
 import net.thevpc.nuts.NBlankable;
+import net.thevpc.nuts.NMsg;
 import net.thevpc.nuts.NSession;
 import net.thevpc.nuts.elem.*;
 import net.thevpc.nuts.io.NPath;
@@ -262,11 +263,11 @@ public class NoApiUtils {
         }
         if (trace) {
             if (pdf) {
-                session.out().printf("generated src %s\n",
+                session.out().println(NMsg.ofC("generated src %s",
                         NTexts.of(session).ofStyled(
                                 adocFile, NTextStyle.primary4()
                         )
-                );
+                ));
             }
         }
         if (pdf) {
@@ -283,7 +284,7 @@ public class NoApiUtils {
                             .toFile(new File(pdfFile))
             );
             if (session.isPlainTrace()) {
-                session.out().printf("generate  pdf file %s\n", NPath.of(pdfFile,session));
+                session.out().println(NMsg.ofC("generate  pdf file %s", NPath.of(pdfFile,session)));
             }
             if (!keep) {
                 new File(temp).delete();

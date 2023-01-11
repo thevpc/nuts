@@ -28,7 +28,7 @@ package net.thevpc.nuts.toolbox.nutsserver.http;
 
 import com.sun.net.httpserver.*;
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.io.NOutStream;
+import net.thevpc.nuts.io.NOutputStream;
 import net.thevpc.nuts.spi.NSupportLevelContext;
 import net.thevpc.nuts.text.NTextStyle;
 import net.thevpc.nuts.text.NTexts;
@@ -230,22 +230,22 @@ public class NHttpServerComponent implements NServerComponent {
             }
         });
         server.start();
-        NOutStream out = session.out();
+        NOutputStream out = session.out();
         NTexts factory = NTexts.of(session);
-        out.printf("Nuts Http Service '%s' running %s at %s\n", serverId,
+        out.println(NMsg.ofC("Nuts Http Service '%s' running %s at %s", serverId,
                 factory.ofStyled(
                         (httpConfig.isTls() ? "https" : "http"), NTextStyle.primary1()
                 ),
-                inetSocketAddress);
+                inetSocketAddress));
         if (workspaces.size() == 1) {
             out.print("Serving workspace : ");
             for (Map.Entry<String, NSession> entry : workspaces.entrySet()) {
                 String k = entry.getKey();
                 NSession ksession = entry.getValue();
                 if (k.equals("")) {
-                    out.printf("%s\n", NLocations.of(ksession).getWorkspaceLocation());
+                    out.println(NLocations.of(ksession).getWorkspaceLocation());
                 } else {
-                    out.printf("%s : %s\n", k, NLocations.of(ksession).getWorkspaceLocation());
+                    out.println((NMsg.ofC("%s : %s", k, NLocations.of(ksession).getWorkspaceLocation())));
                 }
             }
         } else {
@@ -255,7 +255,7 @@ public class NHttpServerComponent implements NServerComponent {
                 if (k.equals("")) {
                     k = "<default>";
                 }
-                out.printf("\t%s : %s\n", k, NLocations.of(entry.getValue()).getWorkspaceLocation());
+                out.println(NMsg.ofC("\t%s : %s", k, NLocations.of(entry.getValue()).getWorkspaceLocation()));
             }
         }
         final String finalServerId = serverId;

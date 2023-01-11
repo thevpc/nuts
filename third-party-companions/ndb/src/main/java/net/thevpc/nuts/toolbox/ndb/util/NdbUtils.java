@@ -37,7 +37,7 @@ public class NdbUtils {
 
     public static String checkName(String name, NSession session) {
         if (!isName(name)) {
-            throw new NIllegalArgumentException(session, NMsg.ofCstyle("invalid name %s", name));
+            throw new NIllegalArgumentException(session, NMsg.ofC("invalid name %s", name));
         }
         return name;
     }

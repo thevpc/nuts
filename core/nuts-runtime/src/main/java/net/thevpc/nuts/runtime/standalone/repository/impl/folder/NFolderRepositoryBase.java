@@ -52,12 +52,12 @@ public abstract class NFolderRepositoryBase extends NCachedRepository {
             } finally {
                 LOG.with().level(Level.FINEST).verb(NLoggerVerb.SUCCESS)
                         .time(System.currentTimeMillis() - now)
-                        .log(NMsg.ofCstyle("check available %s : success", getName()));
+                        .log(NMsg.ofC("check available %s : success", getName()));
             }
         } catch (Exception e) {
             LOG.with().level(Level.FINEST).verb(NLoggerVerb.FAIL)
                     .time(System.currentTimeMillis() - now)
-                    .log(NMsg.ofCstyle("check available %s : failed", getName()));
+                    .log(NMsg.ofC("check available %s : failed", getName()));
             return false;
         }
     }
@@ -107,9 +107,9 @@ public abstract class NFolderRepositoryBase extends NCachedRepository {
             //                                                "maven.solrsearch.enable","true"
             list.add(
                     (NIterator) IteratorBuilder.ofRunnable(
-                            () -> session.getTerminal().printProgress("%-14s %-8s %s", getName(), "browse",
+                            () -> session.getTerminal().printProgress(NMsg.ofC("%-14s %-8s %s", getName(), "browse",
                                     (basePath == null ? repoRoot : repoRoot.resolve(basePath)).toCompressedForm()
-                            ),
+                            )),
                             "Log",
 
                             session).build());
@@ -206,7 +206,7 @@ public abstract class NFolderRepositoryBase extends NCachedRepository {
         return IteratorBuilder.ofSupplier(
                 () -> {
                     List<NId> ret = new ArrayList<>();
-                    session.getTerminal().printProgress("looking for versions of %s at %s", id, foldersFileUrl.toCompressedForm());
+                    session.getTerminal().printProgress(NMsg.ofC("looking for versions of %s at %s", id, foldersFileUrl.toCompressedForm()));
                     NPath[] all = foldersFileUrl.stream().filter(
                             NPath::isDirectory, "isDirectory"
                     ).toArray(NPath[]::new);
@@ -238,7 +238,7 @@ public abstract class NFolderRepositoryBase extends NCachedRepository {
             return IteratorBuilder.ofSupplier(
                     () -> {
                         List<NId> ret = new ArrayList<>();
-                        session.getTerminal().printProgress("%-14s %-8s %s", getName(), "search", metadataURL.toCompressedForm());
+                        session.getTerminal().printProgress(NMsg.ofC("%-14s %-8s %s", getName(), "search", metadataURL.toCompressedForm()));
                         if (metadataURL.isRegularFile()) {
                             // ok found!!
                             ret.add(id);
@@ -251,7 +251,7 @@ public abstract class NFolderRepositoryBase extends NCachedRepository {
                             .build(),
                     session).build();
         } else {
-            throw new NIllegalArgumentException(session, NMsg.ofCstyle("expected single version in %s", id));
+            throw new NIllegalArgumentException(session, NMsg.ofC("expected single version in %s", id));
         }
     }
 
@@ -289,8 +289,8 @@ public abstract class NFolderRepositoryBase extends NCachedRepository {
                 break;
             }
             default: {
-                _LOGOP(session).level(Level.SEVERE).error(new NIllegalArgumentException(session, NMsg.ofCstyle("unsupported Hash Type %s", id.getFace())))
-                        .log(NMsg.ofJstyle("[BUG] unsupported Hash Type {0}", id.getFace()));
+                _LOGOP(session).level(Level.SEVERE).error(new NIllegalArgumentException(session, NMsg.ofC("unsupported Hash Type %s", id.getFace())))
+                        .log(NMsg.ofJ("[BUG] unsupported Hash Type {0}", id.getFace()));
                 throw new IOException("unsupported hash type " + id.getFace());
             }
         }
@@ -325,7 +325,7 @@ public abstract class NFolderRepositoryBase extends NCachedRepository {
     }
 
     public InputStream openStream(NId id, NPath path, Object source, String typeName, String action, NSession session) {
-        session.getTerminal().printProgress("%-14s %-8s %s",getName(), action, path.toCompressedForm());
+        session.getTerminal().printProgress(NMsg.ofC("%-14s %-8s %s",getName(), action, path.toCompressedForm()));
         return NInputStreamMonitor.of(session).setSource(path).setOrigin(source).setSourceTypeName(typeName).create();
     }
 

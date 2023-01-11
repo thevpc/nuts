@@ -78,7 +78,7 @@ public class DefaultNRepositoryModel {
                         y = m;
                     } else {
                         throw new NIllegalArgumentException(session,
-                                NMsg.ofCstyle("ambiguous repository name %s found two Ids %s and %s",
+                                NMsg.ofC("ambiguous repository name %s found two Ids %s and %s",
                                         repositoryNameOrId, y.getUuid(), m.getUuid()
                                 )
                         );
@@ -104,7 +104,7 @@ public class DefaultNRepositoryModel {
                         y = m;
                     } else {
                         throw new NIllegalArgumentException(session,
-                                NMsg.ofCstyle("ambiguous repository name %s found two Ids %s and %s",
+                                NMsg.ofC("ambiguous repository name %s found two Ids %s and %s",
                                         repositoryNameOrId, y.getUuid(), m.getUuid()
                                 )
                         );
@@ -130,7 +130,7 @@ public class DefaultNRepositoryModel {
                         y = m;
                     } else {
                         throw new NIllegalArgumentException(session,
-                                NMsg.ofCstyle("ambiguous repository name %s found two Ids %s and %s",
+                                NMsg.ofC("ambiguous repository name %s found two Ids %s and %s",
                                         repositoryNameOrId, y.getUuid(), m.getUuid()
                                 )
 
@@ -256,7 +256,7 @@ public class DefaultNRepositoryModel {
                         return null;
                     }
                     throw new NInvalidRepositoryException(session, options.getLocation(),
-                            NMsg.ofCstyle("invalid repository location ", options.getLocation())
+                            NMsg.ofC("invalid repository location ", options.getLocation())
                     );
                 }
                 options.setConfig(conf);
@@ -308,13 +308,13 @@ public class DefaultNRepositoryModel {
                 if (NBlankable.isBlank(repoType)) {
                     throw new NInvalidRepositoryException(session, options.getName(), NMsg.ofPlain("unable to detect valid type for temporary repository"));
                 } else {
-                    throw new NInvalidRepositoryException(session, options.getName(), NMsg.ofCstyle("invalid repository type %s", repoType));
+                    throw new NInvalidRepositoryException(session, options.getName(), NMsg.ofC("invalid repository type %s", repoType));
                 }
             } else {
                 if (NBlankable.isBlank(repoType)) {
-                    throw new NInvalidRepositoryException(session, options.getName(), NMsg.ofCstyle("unable to detect valid type for repository %s",options.getName()));
+                    throw new NInvalidRepositoryException(session, options.getName(), NMsg.ofC("unable to detect valid type for repository %s",options.getName()));
                 } else {
-                    throw new NInvalidRepositoryException(session, options.getName(), NMsg.ofCstyle("invalid repository type %s", repoType));
+                    throw new NInvalidRepositoryException(session, options.getName(), NMsg.ofC("invalid repository type %s", repoType));
                 }
             }
         } catch (RuntimeException ex) {
@@ -373,25 +373,25 @@ public class DefaultNRepositoryModel {
         NBootManager wboot = NBootManager.of(session);
         NEnvs wenv = NEnvs.of(session);
         if (wconfig.isReadOnly()) {
-            throw new NIOException(session, NMsg.ofCstyle("error loading repository %s", file), ex);
+            throw new NIOException(session, NMsg.ofC("error loading repository %s", file), ex);
         }
         String fileName = "nuts-repository" + (name == null ? "" : ("-") + name) + (uuid == null ? "" : ("-") + uuid) + "-" + Instant.now().toString();
         LOG.with().session(session).level(Level.SEVERE).verb(NLoggerVerb.FAIL).log(
-                NMsg.ofJstyle("erroneous repository config file. Unable to load file {0} : {1}", file, ex));
+                NMsg.ofJ("erroneous repository config file. Unable to load file {0} : {1}", file, ex));
         NPath logError = NLocations.of(session).getStoreLocation(getWorkspace().getApiId(), NStoreLocation.LOG)
                 .resolve("invalid-config");
         try {
             logError.mkParentDirs();
         } catch (Exception ex1) {
-            throw new NIOException(session, NMsg.ofCstyle("unable to log repository error while loading config file %s : %s", file, ex1), ex);
+            throw new NIOException(session, NMsg.ofC("unable to log repository error while loading config file %s : %s", file, ex1), ex);
         }
         NPath newfile = logError.resolve(fileName + ".json");
         LOG.with().session(session).level(Level.SEVERE).verb(NLoggerVerb.FAIL)
-                .log(NMsg.ofJstyle("erroneous repository config file will be replaced by a fresh one. Old config is copied to {0}", newfile));
+                .log(NMsg.ofJ("erroneous repository config file will be replaced by a fresh one. Old config is copied to {0}", newfile));
         try {
             Files.move(file.toFile(), newfile.toFile());
         } catch (IOException e) {
-            throw new NIOException(session, NMsg.ofCstyle("nable to load and re-create repository config file %s : %s", file, e), ex);
+            throw new NIOException(session, NMsg.ofC("nable to load and re-create repository config file %s : %s", file, e), ex);
         }
 
         try (PrintStream o = new PrintStream(logError.resolve(fileName + ".error").getOutputStream())) {

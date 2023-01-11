@@ -55,7 +55,7 @@ public class NDescriptorIdFilter extends AbstractIdFilter implements NIdFilter, 
                     nutsDescriptor = NWorkspaceExt.of(session.getWorkspace()).resolveEffectiveDescriptor(descriptor, session);
                 } catch (Exception ex) {
                     LOG.with().session(session).level(Level.FINE).error(ex)
-                            .log( NMsg.ofJstyle("failed to resolve effective desc {0} for {1}", descriptor.getId(),id));
+                            .log( NMsg.ofJ("failed to resolve effective desc {0} for {1}", descriptor.getId(),id));
                     //throw new NutsException(e);
                 }
                 descriptor = nutsDescriptor;
@@ -65,7 +65,7 @@ public class NDescriptorIdFilter extends AbstractIdFilter implements NIdFilter, 
             if (LOG.isLoggable(Level.FINER)) {
                 LOG.with().session(session).level(Level.FINER).verb(NLoggerVerb.FAIL)
                         .log(
-                                NMsg.ofJstyle("unable to fetch descriptor for {0} : {1}",
+                                NMsg.ofJ("unable to fetch descriptor for {0} : {1}",
                         id,ex)
                         );
             }

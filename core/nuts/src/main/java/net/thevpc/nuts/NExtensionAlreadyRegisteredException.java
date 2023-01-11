@@ -48,7 +48,7 @@ public class NExtensionAlreadyRegisteredException extends NExtensionException {
      */
     public NExtensionAlreadyRegisteredException(NSession session, NId id, String installed) {
         super(session, id,
-                NMsg.ofCstyle("extension already registered %s  as %", (id == null ? "<null>" : id), installed)
+                NMsg.ofC("extension already registered %s  as %", (id == null ? "<null>" : id), installed)
                 , null);
         this.installed = installed;
     }
@@ -62,7 +62,7 @@ public class NExtensionAlreadyRegisteredException extends NExtensionException {
      * @param cause     cause
      */
     public NExtensionAlreadyRegisteredException(NSession session, NId id, String installed, Throwable cause) {
-        super(session, id, NMsg.ofCstyle("extension already registered %s  as %", (id == null ? "<null>" : id), installed), cause);
+        super(session, id, NMsg.ofC("extension already registered %s  as %", (id == null ? "<null>" : id), installed), cause);
         this.installed = installed;
     }
 

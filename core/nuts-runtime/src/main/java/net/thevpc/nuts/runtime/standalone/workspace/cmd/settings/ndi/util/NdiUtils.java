@@ -60,7 +60,7 @@ public class NdiUtils {
             String lineSeparator = System.getProperty("line.separator");
             URL resource = AnyNixNdi.class.getResource(resourcePath);
             if (resource == null) {
-                throw new NIllegalArgumentException(session, NMsg.ofCstyle("resource not found %s",resourcePath));
+                throw new NIllegalArgumentException(session, NMsg.ofC("resource not found %s",resourcePath));
             }
             BufferedReader br = new BufferedReader(new InputStreamReader(resource.openStream()));
             String line = null;

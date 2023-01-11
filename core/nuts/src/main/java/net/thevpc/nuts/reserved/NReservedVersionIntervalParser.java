@@ -95,7 +95,7 @@ public class NReservedVersionIntervalParser {
                                 break;
                             }
                             default: {
-                                return NOptional.ofError((s) -> NMsg.ofCstyle("unexpected  %s", ((char) t)));
+                                return NOptional.ofError((s) -> NMsg.ofC("unexpected  %s", ((char) t)));
                             }
                         }
                         break;
@@ -107,7 +107,7 @@ public class NReservedVersionIntervalParser {
                                 break;
                             }
                             default: {
-                                return NOptional.ofError(s -> NMsg.ofCstyle("expected ',' found %s", ((char) t)));
+                                return NOptional.ofError(s -> NMsg.ofC("expected ',' found %s", ((char) t)));
                             }
                         }
                         break;
@@ -124,7 +124,7 @@ public class NReservedVersionIntervalParser {
                                 break;
                             }
                             default: {
-                                return NOptional.ofError(s -> NMsg.ofCstyle("unexpected %s", ((char) t)));
+                                return NOptional.ofError(s -> NMsg.ofC("unexpected %s", ((char) t)));
                             }
                         }
                         break;
@@ -152,7 +152,7 @@ public class NReservedVersionIntervalParser {
                                 break;
                             }
                             default: {
-                                return NOptional.ofError(s -> NMsg.ofCstyle("unexpected %s", ((char) t)));
+                                return NOptional.ofError(s -> NMsg.ofC("unexpected %s", ((char) t)));
                             }
                         }
                         break;
@@ -173,7 +173,7 @@ public class NReservedVersionIntervalParser {
                                 break;
                             }
                             default: {
-                                return NOptional.ofError(s -> NMsg.ofCstyle("unexpected %s", ((char) t)));
+                                return NOptional.ofError(s -> NMsg.ofC("unexpected %s", ((char) t)));
                             }
                         }
                         break;
@@ -189,21 +189,21 @@ public class NReservedVersionIntervalParser {
                                 break;
                             }
                             default: {
-                                return NOptional.ofError(s -> NMsg.ofCstyle("unexpected %s", ((char) t)));
+                                return NOptional.ofError(s -> NMsg.ofC("unexpected %s", ((char) t)));
                             }
                         }
                         break;
                     }
                     default: {
-                        return NOptional.ofError(s -> NMsg.ofCstyle("unsupported state %s", state));
+                        return NOptional.ofError(s -> NMsg.ofC("unsupported state %s", state));
                     }
                 }
             }
             if (state != NEXT_COMMA && state != NEXT) {
-                return NOptional.ofError(s -> NMsg.ofCstyle("invalid state %s", state));
+                return NOptional.ofError(s -> NMsg.ofC("invalid state %s", state));
             }
         } catch (IOException ex) {
-            return NOptional.ofError(s -> NMsg.ofCstyle("parse version failed: %s : ", version, ex));
+            return NOptional.ofError(s -> NMsg.ofC("parse version failed: %s : ", version, ex));
         }
         return NOptional.ofNamed(dd, "version");
     }

@@ -56,7 +56,7 @@ public class NLockAcquireException extends NLockException {
      */
     public NLockAcquireException(NSession session, NMsg message, Object lockedObject, Object lockObject) {
         super(session,
-                message == null ? NMsg.ofCstyle("unable to acquire lock for %s", lockedObject)
+                message == null ? NMsg.ofC("unable to acquire lock for %s", lockedObject)
                         : message, lockedObject, lockObject
         );
     }
@@ -72,7 +72,7 @@ public class NLockAcquireException extends NLockException {
      */
     public NLockAcquireException(NSession session, NMsg message, Object lockedObject, Object lockObject, Throwable cause) {
         super(session,
-                message == null ? NMsg.ofCstyle("unable to acquire lock for %s", lockedObject)
+                message == null ? NMsg.ofC("unable to acquire lock for %s", lockedObject)
                         : message, lockObject, cause
         );
     }

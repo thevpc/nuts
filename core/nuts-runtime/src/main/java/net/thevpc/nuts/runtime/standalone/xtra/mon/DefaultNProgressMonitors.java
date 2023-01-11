@@ -1,7 +1,7 @@
 package net.thevpc.nuts.runtime.standalone.xtra.mon;
 
 import net.thevpc.nuts.NSession;
-import net.thevpc.nuts.io.NOutStream;
+import net.thevpc.nuts.io.NOutputStream;
 import net.thevpc.nuts.spi.NSupportLevelContext;
 import net.thevpc.nuts.util.NProgressHandler;
 import net.thevpc.nuts.util.NProgressMonitors;
@@ -82,12 +82,12 @@ public class DefaultNProgressMonitors implements NProgressMonitors {
     }
 
     @Override
-    public NProgressMonitor ofPrintStream(NOutStream printStream) {
+    public NProgressMonitor ofPrintStream(NOutputStream printStream) {
         return ofPrintStream(null, printStream);
     }
 
     @Override
-    public NProgressMonitor ofPrintStream(String messageFormat, NOutStream printStream) {
+    public NProgressMonitor ofPrintStream(String messageFormat, NOutputStream printStream) {
         return new DefaultProgressMonitor(null,
                 new NPrintStreamProgressHandler(messageFormat, printStream, getSession()),
                 null, getSession()

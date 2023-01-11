@@ -7,7 +7,7 @@ import net.thevpc.nuts.cmdline.NCommandLine;
 import net.thevpc.nuts.elem.NElements;
 import net.thevpc.nuts.format.NObjectFormat;
 import net.thevpc.nuts.io.NPath;
-import net.thevpc.nuts.io.NOutStream;
+import net.thevpc.nuts.io.NOutputStream;
 import net.thevpc.nuts.text.NTextBuilder;
 import net.thevpc.nuts.text.NTextStyle;
 import net.thevpc.nuts.text.NTexts;
@@ -238,7 +238,7 @@ public class WorkspaceService {
 
             int scanned = scan(toScan, interactive);
             if (appContext.getSession().isPlainOut()) {
-                appContext.getSession().out().printf("##SUMMARY## : %s projects scanned%n", scanned);
+                appContext.getSession().out().println(NMsg.ofC("##SUMMARY## : %s projects scanned", scanned));
             }
         }
     }
@@ -262,7 +262,7 @@ public class WorkspaceService {
         if (cmdLine.isExecMode()) {
             int scanned = find(toScan, where);
             if (appContext.getSession().isPlainOut()) {
-                appContext.getSession().out().printf("##SUMMARY## : %s projects scanned%n", scanned);
+                appContext.getSession().out().println(NMsg.ofC("##SUMMARY## : %s projects scanned", scanned));
             }
         }
     }
@@ -415,7 +415,7 @@ public class WorkspaceService {
             }
             if (progress && session.isPlainOut()) {
                 maxSize = Math.max(maxSize, projectService.getConfig().getId().length());
-                session.out().resetLine().printf("(%s / %s) %s", (i + 1), all.size(), _StringUtils.alignLeft(projectService.getConfig().getId(), maxSize));
+                session.out().resetLine().print(NMsg.ofC("(%s / %s) %s", (i + 1), all.size(), _StringUtils.alignLeft(projectService.getConfig().getId(), maxSize)));
             }
             d.local = projectService.detectLocalVersion();
             d.remote = d.local == null ? null : projectService.detectRemoteVersion();
@@ -514,53 +514,53 @@ public class WorkspaceService {
                     }
                     switch (tf.ofPlain(p2.status).filteredText()) {
                         case "new": {
-                            session.out().printf("[%s] %s : %s",
+                            session.out().print(NMsg.ofC("[%s] %s : %s",
                                     tfactory.ofStyled("new", NTextStyle.primary3()),
                                     p2.id,
                                     tfactory.ofStyled(p2.local, NTextStyle.primary2())
-                            );
+                            ));
                             break;
                         }
                         case "commitable": {
-                            session.out().printf("[%s] %s : %s - %s",
+                            session.out().print(NMsg.ofC("[%s] %s : %s - %s",
                                     tfactory.ofStyled("commitable", NTextStyle.primary4()),
                                     p2.id,
                                     tfactory.ofStyled(p2.local, NTextStyle.primary2()),
                                     p2.remote
-                            );
+                            ));
                             break;
                         }
                         case "dirty": {
-                            session.out().printf("[```error dirty```] %s : ```error %s``` - %s", p2.id, p2.local, p2.remote);
+                            session.out().print(NMsg.ofC("[```error dirty```] %s : ```error %s``` - %s", p2.id, p2.local, p2.remote));
                             printDiffResults("  ", session.out(), p2.details);
                             break;
                         }
                         case "old": {
-                            session.out().printf("[%s] %s : ```error %s``` - %s",
+                            session.out().print(NMsg.ofC("[%s] %s : ```error %s``` - %s",
                                     tfactory.ofStyled("old", NTextStyle.primary2()),
-                                    p2.id, p2.local, p2.remote);
+                                    p2.id, p2.local, p2.remote));
                             break;
                         }
                         case "invalid": {
-                            session.out().printf("[```error invalid```invalid ] %s : ```error %s``` - %s", p2.id, p2.local, p2.remote);
+                            session.out().print(NMsg.ofC("[```error invalid```invalid ] %s : ```error %s``` - %s", p2.id, p2.local, p2.remote));
                             break;
                         }
                         case "uptodate": {
-                            session.out().printf("[uptodate] %s : %s", p2.id, p2.local);
+                            session.out().print(NMsg.ofC("[uptodate] %s : %s", p2.id, p2.local));
                             break;
                         }
                         default: {
-                            session.out().printf("[%s] %s : %s - %s", status, p2.id, p2.local, p2.remote);
+                            session.out().print(NMsg.ofC("[%s] %s : %s - %s", status, p2.id, p2.local, p2.remote));
                             break;
                         }
                     }
                     if (p2.dependencies.size() > 0) {
-                        session.out().printf(" ; bad-deps:");
+                        session.out().print(NMsg.ofC(" ; bad-deps:"));
                         for (DiffVersion dependency : p2.dependencies) {
-                            session.out().printf(" %s : %s <> expected %s", dependency.id,
+                            session.out().print(NMsg.ofC(" %s : %s <> expected %s", dependency.id,
                                     NVersion.of(dependency.current).get(session),
                                     NVersion.of(dependency.expected).get(session)
-                            );
+                            ));
                         }
                     }
                     session.out().println();
@@ -572,10 +572,10 @@ public class WorkspaceService {
         }
     }
 
-    private void printDiffResults(String prefix, NOutStream out, List<DiffItem> result) {
+    private void printDiffResults(String prefix, NOutputStream out, List<DiffItem> result) {
         if (result != null) {
             for (DiffItem diffItem : result) {
-                out.printf("%s%s%n", prefix, diffItem);
+                out.println(NMsg.ofC("%s%s", prefix, diffItem));
                 printDiffResults(prefix + "  ", out, diffItem.children());
             }
         }
@@ -638,7 +638,7 @@ public class WorkspaceService {
         }
         fs.getSource().addAll(folders.stream().map(File::toPath).collect(Collectors.toSet()));
         fs.scan().forEach(x -> {
-            appContext.getSession().out().printf("%s%n", x);
+            appContext.getSession().out().println(x);
         });
         return 0;
     }
@@ -672,23 +672,23 @@ public class WorkspaceService {
                             if (p3.equals(p2)) {
                                 //no updates!
                                 if (session.isPlainOut()) {
-                                    session.out().printf("already registered project folder %s%n", formatProjectConfig(appContext, p2));
+                                    session.out().println(NMsg.ofC("already registered project folder %s", formatProjectConfig(appContext, p2)));
                                 }
                                 if (structuredOutContentType) {
-                                    result.add(new ScanResult(folder.getPath(), "already-registered", NMsg.ofCstyle("already registered project folder %s", formatProjectConfig(appContext, p2)).toString()));
+                                    result.add(new ScanResult(folder.getPath(), "already-registered", NMsg.ofC("already registered project folder %s", formatProjectConfig(appContext, p2)).toString()));
                                 }
                             } else if (!p2.getPath().equals(p3.getPath())) {
                                 if (session.isPlainOut()) {
-                                    session.out().printf("```error [CONFLICT]``` multiple paths for the same id %s. "
-                                                    + "please consider adding .nuts-info file with " + SCAN + "=false  :  %s -- %s%n",
+                                    session.out().println(NMsg.ofC("```error [CONFLICT]``` multiple paths for the same id %s. "
+                                                    + "please consider adding .nuts-info file with " + SCAN + "=false  :  %s -- %s",
                                             text.ofStyled(p2.getId(), NTextStyle.primary2()),
                                             text.ofStyled(p2.getPath(), NTextStyle.path()),
                                             text.ofStyled(p3.getPath(), NTextStyle.path())
-                                    );
+                                    ));
                                 }
                                 if (structuredOutContentType) {
                                     result.add(new ScanResult(folder.getPath(), "conflict",
-                                            NMsg.ofCstyle(
+                                            NMsg.ofC(
                                                     "[CONFLICT] multiple paths for the same id %s. "
                                                             + "please consider adding .nuts-info file with " + SCAN + "=false  :  %s -- %s",
                                                     p2.getId(),
@@ -699,11 +699,11 @@ public class WorkspaceService {
                                 }
                             } else {
                                 if (session.isPlainOut()) {
-                                    session.out().printf("reloaded project folder %s%n", formatProjectConfig(appContext, p2));
+                                    session.out().println(NMsg.ofC("reloaded project folder %s", formatProjectConfig(appContext, p2)));
                                 }
                                 if (structuredOutContentType) {
                                     result.add(new ScanResult(folder.getPath(), "reloaded",
-                                            NMsg.ofCstyle(
+                                            NMsg.ofC(
                                                     "reloaded project folder %s", formatProjectConfig(appContext, p2).toString()
                                             ).toString()
                                     ));
@@ -723,11 +723,11 @@ public class WorkspaceService {
                         } else {
 
                             if (session.isPlainOut()) {
-                                session.out().printf("detected Project Folder %s%n", formatProjectConfig(appContext, p2));
+                                session.out().println(NMsg.ofC("detected Project Folder %s", formatProjectConfig(appContext, p2)));
                             }
                             if (interactive) {
-                                String id = session.getTerminal().readLine("enter Id %s: ",
-                                        (p2.getId() == null ? "" : ("(" + text.ofPlain(p2.getId()) + ")")));
+                                String id = session.getTerminal().readLine(NMsg.ofC("enter Id %s: ",
+                                        (p2.getId() == null ? "" : ("(" + text.ofPlain(p2.getId()) + ")"))));
                                 if (!NBlankable.isBlank(id)) {
                                     p2.setId(id);
                                 }
@@ -760,7 +760,7 @@ public class WorkspaceService {
             }
         }
         if (structuredOutContentType) {
-            session.out().printlnf(result);
+            session.out().println(result);
         }
         return scanned;
     }

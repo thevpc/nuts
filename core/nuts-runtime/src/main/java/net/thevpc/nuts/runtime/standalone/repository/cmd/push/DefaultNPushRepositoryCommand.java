@@ -48,12 +48,12 @@ public class DefaultNPushRepositoryCommand extends AbstractNPushRepositoryComman
         try {
             NRepositoryExt.of(getRepo()).pushImpl(this);
                 _LOGOP(session).level(Level.FINEST).verb(NLoggerVerb.SUCCESS)
-                        .log(NMsg.ofJstyle("{0} push {1}", NStringUtils.formatAlign(getRepo().getName(), 20, NPositionType.FIRST), getId()));
+                        .log(NMsg.ofJ("{0} push {1}", NStringUtils.formatAlign(getRepo().getName(), 20, NPositionType.FIRST), getId()));
         } catch (RuntimeException ex) {
 
             if (_LOG(session).isLoggable(Level.FINEST)) {
                 _LOGOP(session).level(Level.FINEST).verb(NLoggerVerb.FAIL)
-                        .log(NMsg.ofJstyle("{0} push {1}", NStringUtils.formatAlign(getRepo().getName(), 20, NPositionType.FIRST), getId()));
+                        .log(NMsg.ofJ("{0} push {1}", NStringUtils.formatAlign(getRepo().getName(), 20, NPositionType.FIRST), getId()));
             }
         }
         return this;

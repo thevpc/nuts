@@ -82,7 +82,7 @@ public class NDescriptorUtils {
             }
         }
         if (groupId == null || artifactId == null || NBlankable.isBlank(version)) {
-            throw new NIllegalArgumentException(session, NMsg.ofCstyle("invalid descriptor id %s:%s#%s", groupId, artifactId, version));
+            throw new NIllegalArgumentException(session, NMsg.ofC("invalid descriptor id %s:%s#%s", groupId, artifactId, version));
         }
         return nutsDescriptor.builder()
                 .setId(NIdBuilder.of(groupId, artifactId).setVersion(version).build())
@@ -102,13 +102,13 @@ public class NDescriptorUtils {
                     if (dependency.isOptional()) {
                         NLoggerOp.of(NDescriptorUtils.class, session)
                                 .verb(NLoggerVerb.WARNING).level(Level.FINE)
-                                .log(NMsg.ofJstyle("{0} is using dependency {1} which defines an unresolved variable. This is a potential bug.",
+                                .log(NMsg.ofJ("{0} is using dependency {1} which defines an unresolved variable. This is a potential bug.",
                                         effectiveDescriptor.getId(),
                                         dependency
                                 ));
                     } else {
                         topException = true;
-                        throw new NIllegalArgumentException(session, NMsg.ofJstyle("{0} is using dependency {1} which defines an unresolved variable. This is a potential bug.",
+                        throw new NIllegalArgumentException(session, NMsg.ofJ("{0} is using dependency {1} which defines an unresolved variable. This is a potential bug.",
                                 effectiveDescriptor.getId(),
                                 dependency
                         ));
@@ -123,7 +123,7 @@ public class NDescriptorUtils {
                     // so just log a warning, this is not an error but a very bad practice from the dependency maintainer!
                     NLoggerOp.of(NDescriptorUtils.class, session)
                             .verb(NLoggerVerb.WARNING).level(Level.FINE)
-                            .log(NMsg.ofJstyle("{0} is using standard-dependency {1} which defines an unresolved variable. This is a potential bug.",
+                            .log(NMsg.ofJ("{0} is using standard-dependency {1} which defines an unresolved variable. This is a potential bug.",
                                     effectiveDescriptor.getId(),
                                     dependency
                             ));
@@ -133,9 +133,9 @@ public class NDescriptorUtils {
             if (topException) {
                 throw ex;
             }
-            throw new NIllegalArgumentException(session, NMsg.ofCstyle("unable to evaluate effective descriptor for %s", effectiveDescriptor.getId()), ex);
+            throw new NIllegalArgumentException(session, NMsg.ofC("unable to evaluate effective descriptor for %s", effectiveDescriptor.getId()), ex);
         } catch (Exception ex) {
-            throw new NIllegalArgumentException(session, NMsg.ofCstyle("unable to evaluate effective descriptor for %s", effectiveDescriptor.getId()), ex);
+            throw new NIllegalArgumentException(session, NMsg.ofC("unable to evaluate effective descriptor for %s", effectiveDescriptor.getId()), ex);
         }
 
     }
@@ -453,7 +453,7 @@ public class NDescriptorUtils {
             }
             oldMap = newMap;
         }
-        throw new NIllegalArgumentException(session, NMsg.ofCstyle("too many recursion applying properties %s", updated));
+        throw new NIllegalArgumentException(session, NMsg.ofC("too many recursion applying properties %s", updated));
     }
 
     private static Map<String, NDependency> depsAsMap(List<NDependency> arr, NSession session) {
@@ -469,12 +469,12 @@ public class NDescriptorUtils {
                     NLoggerOp.of(DefaultNDescriptorBuilder.class, session)
                             .level(Level.FINER)
                             .verb(NLoggerVerb.WARNING)
-                            .log(NMsg.ofCstyle("dependency %s is duplicated", d));
+                            .log(NMsg.ofC("dependency %s is duplicated", d));
                 } else {
                     NLoggerOp.of(DefaultNDescriptorBuilder.class, session)
                             .level(Level.FINER)
                             .verb(NLoggerVerb.WARNING)
-                            .log(NMsg.ofCstyle("dependency %s is overridden by %s", a, d));
+                            .log(NMsg.ofC("dependency %s is overridden by %s", a, d));
                 }
             }
         }

@@ -291,7 +291,7 @@ public interface NApplicationContext extends NCommandLineConfigurable, NCommandL
      *                 if (next == a) {
      *                     //was not consumed!
      *                     throw new NutsIllegalArgumentException(session,
-     *                             NMsg.ofCstyle("%s must consume the option: %s",
+     *                             NMsg.ofC("%s must consume the option: %s",
      *                                     (a.isOption() ? "nextOption" : "nextNonOption"),
      *                                     a));
      *                 }

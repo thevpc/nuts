@@ -53,7 +53,7 @@ public class NReservedClassLoaderUtils {
             if (!node.isIncludedInClasspath()) {
                 urls.add(node.getURL());
             } else {
-                bLog.with().level(Level.WARNING).verb(NLoggerVerb.CACHE).log( NMsg.ofJstyle("url will not be loaded (already in classloader) : {0}", node.getURL()));
+                bLog.with().level(Level.WARNING).verb(NLoggerVerb.CACHE).log( NMsg.ofJ("url will not be loaded (already in classloader) : {0}", node.getURL()));
             }
             for (NClassLoaderNode dependency : node.getDependencies()) {
                 fillBootDependencyNodes(dependency, urls, visitedIds, bLog);
@@ -146,7 +146,7 @@ public class NReservedClassLoaderUtils {
                 }
                 File file = NReservedIOUtils.toFile(url);
                 if (file == null) {
-                    throw new NBootException(NMsg.ofCstyle("unsupported classpath item; expected a file path: %s", url));
+                    throw new NBootException(NMsg.ofC("unsupported classpath item; expected a file path: %s", url));
                 }
                 ZipFile zipFile = null;
                 try {
@@ -163,11 +163,11 @@ public class NReservedClassLoaderUtils {
                             URL incp = contextClassLoader.getResource(zname);
                             String clz = zname.substring(0, zname.length() - 6).replace('/', '.');
                             if (incp != null) {
-                                bLog.with().level(Level.FINEST).verb(NLoggerVerb.SUCCESS).log( NMsg.ofJstyle("url {0} is already in classpath. checked class {1} successfully",
+                                bLog.with().level(Level.FINEST).verb(NLoggerVerb.SUCCESS).log( NMsg.ofJ("url {0} is already in classpath. checked class {1} successfully",
                                         url, clz));
                                 return true;
                             } else {
-                                bLog.with().level(Level.FINEST).verb(NLoggerVerb.INFO).log( NMsg.ofJstyle("url {0} is not in classpath. failed to check class {1}",
+                                bLog.with().level(Level.FINEST).verb(NLoggerVerb.INFO).log( NMsg.ofJ("url {0} is not in classpath. failed to check class {1}",
                                         url, clz));
                                 return false;
                             }
@@ -187,7 +187,7 @@ public class NReservedClassLoaderUtils {
         } catch (IOException e) {
             //
         }
-        bLog.with().level(Level.FINEST).verb(NLoggerVerb.FAIL).log( NMsg.ofJstyle("url {0} is not in classpath. no class found to check", url));
+        bLog.with().level(Level.FINEST).verb(NLoggerVerb.FAIL).log( NMsg.ofJ("url {0} is not in classpath. no class found to check", url));
         return false;
     }
 }

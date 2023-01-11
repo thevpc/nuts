@@ -83,12 +83,12 @@ public class MainMakdownGenerator {
         all.add(MdFactory.endParagraph());
         all.add(MdFactory.title(2, msg.get("CONFIGURATION").get()));
         all.add(NoApiUtils.asText(
-                NMsg.ofVstyle(msg.get("section.config.master.body").get(), NMaps.of("name", target)
+                NMsg.ofV(msg.get("section.config.master.body").get(), NMaps.of("name", target)
                 ).toString()));
         all.add(MdFactory.endParagraph());
         all.add(MdFactory.title(3, msg.get("CUSTOM_PARAMETER_LIST").get()));
         all.add(NoApiUtils.asText(
-                NMsg.ofVstyle(msg.get("section.config.master.customVars.body").get(), NMaps.of("name", target)
+                NMsg.ofV(msg.get("section.config.master.customVars.body").get(), NMaps.of("name", target)
                 ).toString()));
         all.add(MdFactory.endParagraph());
 
@@ -368,7 +368,7 @@ public class MainMakdownGenerator {
         all.add(MdFactory.endParagraph());
         all.add(MdFactory.title(2, msg.get("API_PATHS").get()));
         int apiSize = entries.get(prv.ofString("paths")).flatMap(NElement::asObject).get(session).size();
-        all.add(NoApiUtils.asText(NMsg.ofVstyle(msg.get("API_PATHS.body").get(), NMaps.of("apiSize", apiSize)).toString()));
+        all.add(NoApiUtils.asText(NMsg.ofV(msg.get("API_PATHS.body").get(), NMaps.of("apiSize", apiSize)).toString()));
         all.add(MdFactory.endParagraph());
         for (NElementEntry path : entries.get(prv.ofString("paths")).flatMap(NElement::asObject).get(session)) {
             String url = path.getKey().asString().get(session);
@@ -596,7 +596,7 @@ public class MainMakdownGenerator {
 //                        all.add(MdFactory.endParagraph());
 //                        all.add(MdFactory.title(5, "REQUEST TYPE - " + o.ref));
                         all.add(NoApiUtils.asText(" "));
-                        all.add(NoApiUtils.asText(NMsg.ofVstyle(msg.get("requestType.info").get(), NMaps.of("type", o.getRef())).toString()));
+                        all.add(NoApiUtils.asText(NMsg.ofV(msg.get("requestType.info").get(), NMaps.of("type", o.getRef())).toString()));
                         NElement s = schemas.get(o.getRef()).orNull();
                         NElement description = null;
                         NElement example = null;
@@ -640,7 +640,7 @@ public class MainMakdownGenerator {
 
         all.add(MdFactory.endParagraph());
         all.add(MdFactory.title(4, msg.get("RESPONSE").get()));
-        all.add(NoApiUtils.asText(NMsg.ofVstyle(msg.get("section.response.body").get(), NMaps.of("path", url)).toString()));
+        all.add(NoApiUtils.asText(NMsg.ofV(msg.get("section.response.body").get(), NMaps.of("path", url)).toString()));
 
         call.getObject("responses").get(session).stream()
                 .forEach(x -> {

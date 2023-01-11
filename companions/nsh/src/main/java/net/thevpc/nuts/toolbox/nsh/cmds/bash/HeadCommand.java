@@ -99,7 +99,7 @@ public class HeadCommand extends SimpleJShellBuiltin {
                 }
             }
         } catch (IOException ex) {
-            throw new NExecutionException(session, NMsg.ofCstyle("%s", ex), ex, 100);
+            throw new NExecutionException(session, NMsg.ofC("%s", ex), ex, 100);
         }
     }
 

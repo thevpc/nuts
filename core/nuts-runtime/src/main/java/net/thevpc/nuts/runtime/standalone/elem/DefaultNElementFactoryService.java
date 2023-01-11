@@ -209,7 +209,7 @@ public class DefaultNElementFactoryService implements NElementFactoryService {
         }
         Class cls = ReflectUtils.getRawClass(type);
         if(NSession.class.isAssignableFrom(cls)){
-            throw new NIllegalArgumentException(session, NMsg.ofCstyle(
+            throw new NIllegalArgumentException(session, NMsg.ofC(
                     "%s is not serializable", type
             ));
         }
@@ -230,7 +230,7 @@ public class DefaultNElementFactoryService implements NElementFactoryService {
         if (r != null) {
             return r;
         }
-        throw new NIllegalArgumentException(session, NMsg.ofCstyle(
+        throw new NIllegalArgumentException(session, NMsg.ofC(
                 "unable to find serialization factory for %s", type
         ));
     }

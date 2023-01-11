@@ -9,7 +9,7 @@ import net.thevpc.nuts.*;
 import net.thevpc.nuts.cmdline.NArgName;
 import net.thevpc.nuts.cmdline.NCommandLine;
 import net.thevpc.nuts.elem.NElementNotFoundException;
-import net.thevpc.nuts.io.NOutStream;
+import net.thevpc.nuts.io.NOutputStream;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.AbstractNSettingsSubCommand;
 
 import java.util.Arrays;
@@ -59,7 +59,7 @@ public class NSettingsUserSubCommand extends AbstractNSettingsSubCommand {
             }
             return true;
         } else {
-            NOutStream out = session.out();
+            NOutputStream out = session.out();
             if (cmdLine.next("list users", "lu").isPresent()) {
                 NRepository repository = null;
                 if (editedRepo != null) {
@@ -77,13 +77,13 @@ public class NSettingsUserSubCommand extends AbstractNSettingsSubCommand {
                         security = repository.security().findUsers();
                     }
                     for (NUser u : security) {
-                        out.printf("User: %s%n", u.getUser());
+                        out.println(NMsg.ofC("User: %s", u.getUser()));
                         if (!NBlankable.isBlank(u.getRemoteIdentity())) {
-                            out.printf("   Mapper to  : %s%n", u.getRemoteIdentity());
+                            out.println(NMsg.ofC("   Mapper to  : %s", u.getRemoteIdentity()));
                         }
-                        out.printf("   Password   : %s%n", (u.hasCredentials() ? "Set" : "None"));
-                        out.printf("   Groups     : %s%n", (u.getGroups().size() == 0 ? "None" : u.getGroups()));
-                        out.printf("   Rights     : %s%n", (u.getPermissions().size() == 0 ? "None" : u.getPermissions()));
+                        out.println(NMsg.ofC("   Password   : %s", (u.hasCredentials() ? "Set" : "None")));
+                        out.println(NMsg.ofC("   Groups     : %s", (u.getGroups().size() == 0 ? "None" : u.getGroups())));
+                        out.println(NMsg.ofC("   Rights     : %s", (u.getPermissions().size() == 0 ? "None" : u.getPermissions())));
                     }
                 }
                 return true;
@@ -121,10 +121,10 @@ public class NSettingsUserSubCommand extends AbstractNSettingsSubCommand {
                     }
 
                     if (oldPassword == null && !admin) {
-                        oldPassword = session.getTerminal().readPassword("Old Password:");
+                        oldPassword = session.getTerminal().readPassword(NMsg.ofPlain("Old Password:"));
                     }
                     if (password == null) {
-                        password = session.getTerminal().readPassword("Password:");
+                        password = session.getTerminal().readPassword(NMsg.ofPlain("Password:"));
                     }
 
                     if (repository == null) {
@@ -155,7 +155,7 @@ public class NSettingsUserSubCommand extends AbstractNSettingsSubCommand {
                         u = repository.security().getEffectiveUser(user);
                     }
                     if (u == null) {
-                        throw new NElementNotFoundException(session, NMsg.ofCstyle("no such user %s", user));
+                        throw new NElementNotFoundException(session, NMsg.ofC("no such user %s", user));
                     }
                 }
                 //            NutsUserConfig u = null;
@@ -277,7 +277,7 @@ public class NSettingsUserSubCommand extends AbstractNSettingsSubCommand {
                 if (cmdLine.isExecMode()) {
                     char[] credentials = null;
                     if (!NWorkspaceSecurityManager.of(session).isAdmin()) {
-                        credentials = session.getTerminal().readPassword("Enter password : ");
+                        credentials = session.getTerminal().readPassword(NMsg.ofPlain("Enter password : "));
                     }
                     if (NWorkspaceSecurityManager.of(session).setSecureMode(false, credentials)) {
                         out.println("<<unsecure box activated.Anonymous has all rights.>>");
@@ -293,7 +293,7 @@ public class NSettingsUserSubCommand extends AbstractNSettingsSubCommand {
             } else if (cmdLine.next("secure").isPresent()) {
                 char[] credentials = null;
                 if (!NWorkspaceSecurityManager.of(session).isAdmin()) {
-                    credentials = session.getTerminal().readPassword("Enter password : ");
+                    credentials = session.getTerminal().readPassword(NMsg.ofPlain("Enter password : "));
                 }
                 NRepository repository = null;
                 if (editedRepo != null) {

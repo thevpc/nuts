@@ -34,6 +34,7 @@ import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.io.NUncompress;
 import net.thevpc.nuts.spi.NComponentScope;
 import net.thevpc.nuts.spi.NComponentScopeType;
+import net.thevpc.nuts.text.NTextStyle;
 import net.thevpc.nuts.toolbox.nsh.SimpleJShellBuiltin;
 import net.thevpc.nuts.toolbox.nsh.jshell.JShellExecutionContext;
 
@@ -49,7 +50,7 @@ import java.util.List;
 public class UnzipCommand extends SimpleJShellBuiltin {
 
     public UnzipCommand() {
-        super("unzip", DEFAULT_SUPPORT,Options.class);
+        super("unzip", DEFAULT_SUPPORT, Options.class);
     }
 
     @Override
@@ -57,55 +58,55 @@ public class UnzipCommand extends SimpleJShellBuiltin {
         Options options = context.getOptions();
         NSession session = context.getSession();
         NArg a;
-        String mode="zip";
-        while(commandLine.hasNext()){
-            switch (mode){
-                case "zip":{
+        String mode = "zip";
+        while (commandLine.hasNext()) {
+            switch (mode) {
+                case "zip": {
                     if ((a = commandLine.nextBoolean("-l").orNull()) != null) {
                         options.l = a.getBooleanValue().get(session);
                     } else if ((a = commandLine.nextString("-d").orNull()) != null) {
                         options.dir = a.getStringValue().get(session);
                     } else if (!commandLine.isNextOption()) {
                         String s = commandLine.next().get(session).toString();
-                        if(options.zfiles.isEmpty()||s.toLowerCase().endsWith(".zip")) {
+                        if (options.zfiles.isEmpty() || s.toLowerCase().endsWith(".zip")) {
                             options.zfiles.add(s);
-                        }else{
+                        } else {
                             options.internFiles.add(s);
-                            mode="internFiles";
+                            mode = "internFiles";
                         }
-                    }else{
+                    } else {
                         commandLine.throwUnexpectedArgument();
                     }
                     break;
                 }
-                case "internFiles":{
+                case "internFiles": {
                     if ((a = commandLine.nextBoolean("-l").orNull()) != null) {
                         options.l = a.getBooleanValue().get(session);
                     } else if ((a = commandLine.nextString("-d").orNull()) != null) {
                         options.dir = a.getStringValue().get(session);
                     } else if ((a = commandLine.nextString("-x").orNull()) != null) {
                         options.xFiles.add(a.getStringValue().get(session));
-                        mode="xFiles";
+                        mode = "xFiles";
                     } else if (!commandLine.isNextOption()) {
                         options.xFiles.add(commandLine.next().get(session).toString());
-                    }else{
+                    } else {
                         commandLine.throwUnexpectedArgument();
                     }
                     break;
                 }
-                case "xFiles":{
+                case "xFiles": {
                     if ((a = commandLine.nextBoolean("-l").orNull()) != null) {
                         options.l = a.getBooleanValue().get(session);
                     } else if ((a = commandLine.nextString("-d").orNull()) != null) {
                         options.dir = a.getStringValue().get(session);
                     } else if (!commandLine.isNextOption()) {
                         options.xFiles.add(commandLine.next().get(session).toString());
-                    }else{
+                    } else {
                         commandLine.throwUnexpectedArgument();
                     }
                     break;
                 }
-                default:{
+                default: {
                     commandLine.throwUnexpectedArgument();
                 }
             }
@@ -134,7 +135,7 @@ public class UnzipCommand extends SimpleJShellBuiltin {
 
                                 @Override
                                 public boolean visitFile(String path, InputStream inputStream) {
-                                    session.out().printf("%s\n", path);
+                                    session.out().print(NMsg.ofStyled(path, NTextStyle.path()));
                                     return true;
                                 }
                             });
@@ -146,12 +147,12 @@ public class UnzipCommand extends SimpleJShellBuiltin {
                     dir = context.getAbsolutePath(dir);
                     NUncompress.of(session)
                             .from(file)
-                            .to(NPath.of(dir,session))
+                            .to(NPath.of(dir, session))
                             .setSkipRoot(options.skipRoot)
                             .run();
                 }
             } catch (UncheckedIOException | NIOException ex) {
-                throw new NExecutionException(session, NMsg.ofCstyle("%s", ex), ex, 1);
+                throw new NExecutionException(session, NMsg.ofC("%s", ex), ex, 1);
             }
         }
     }

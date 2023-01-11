@@ -121,10 +121,10 @@ public class NCachedRepository extends AbstractNRepositoryBase {
                     }
                     return NOptional.of(success);
                 } else {
-                    return NOptional.ofError(session1 -> NMsg.ofCstyle("nuts descriptor not found %s",id), new NNotFoundException(session, id));
+                    return NOptional.ofError(session1 -> NMsg.ofC("nuts descriptor not found %s",id), new NNotFoundException(session, id));
                 }
             } catch (RuntimeException ex) {
-                return NOptional.ofError(session1 -> NMsg.ofCstyle("nuts descriptor not found %s",id), ex);
+                return NOptional.ofError(session1 -> NMsg.ofC("nuts descriptor not found %s",id), ex);
             }
         });
         if (res.isPresent()) {
@@ -193,7 +193,7 @@ public class NCachedRepository extends AbstractNRepositoryBase {
             //ignore error
         } catch (Exception ex) {
             _LOGOP(session).level(Level.FINEST).verb(NLoggerVerb.FAIL).error(ex)
-                    .log(NMsg.ofJstyle("search versions error : {0}", ex));
+                    .log(NMsg.ofJ("search versions error : {0}", ex));
             //ignore....
         }
         NIterator<NId> namedNutIdIterator = IteratorBuilder.ofConcat(all, session).distinct(
@@ -242,7 +242,7 @@ public class NCachedRepository extends AbstractNRepositoryBase {
                     }
                     return NOptional.of(NPath.of(localPath2, session).setUserCache(true).setUserTemporary(false));
                 } else {
-                    return NOptional.ofError(session1 -> NMsg.ofCstyle("nuts content not found %s",id),new NNotFoundException(session, id));
+                    return NOptional.ofError(session1 -> NMsg.ofC("nuts content not found %s",id),new NNotFoundException(session, id));
                 }
             } else {
                 NPath c2 = null;
@@ -255,9 +255,9 @@ public class NCachedRepository extends AbstractNRepositoryBase {
                 if (c2 != null) {
                     return NOptional.of(c2);
                 } else if (impl2Ex != null) {
-                    return NOptional.ofError(session1 -> NMsg.ofCstyle("nuts content not found %s",id),impl2Ex);
+                    return NOptional.ofError(session1 -> NMsg.ofC("nuts content not found %s",id),impl2Ex);
                 } else {
-                    return NOptional.ofError(session1 -> NMsg.ofCstyle("nuts content not found %s",id),new NNotFoundException(session, id));
+                    return NOptional.ofError(session1 -> NMsg.ofC("nuts content not found %s",id),new NNotFoundException(session, id));
                 }
             }
         });
@@ -317,7 +317,7 @@ public class NCachedRepository extends AbstractNRepositoryBase {
         } catch (Exception ex) {
             //ignore....
             _LOGOP(session).level(Level.SEVERE).error(ex)
-                    .log(NMsg.ofJstyle("search latest versions error : {0}", ex));
+                    .log(NMsg.ofJ("search latest versions error : {0}", ex));
         }
         if (p != null) {
             li.add(p);
@@ -383,7 +383,7 @@ public class NCachedRepository extends AbstractNRepositoryBase {
                 //ignore
             } catch (Exception ex) {
                 _LOGOP(session).level(Level.SEVERE).error(ex)
-                        .log(NMsg.ofJstyle("search latest versions error : {0}", ex));
+                        .log(NMsg.ofJ("search latest versions error : {0}", ex));
                 //ignore....
             }
             return mirroring.searchLatestVersion(bestId, id, filter, fetchMode, session);

@@ -119,11 +119,11 @@ public abstract class SimpleJShellBuiltin extends AbstractJShellBuiltin {
             return;
         }
         if (context.isAskHelp()) {
-            session.out().printlnf(NString.of(getHelp(), session));
+            session.out().println(NString.of(getHelp(), session));
             return;
         }
         if (context.isAskVersion()) {
-            session.out().printlnf(NIdResolver.of(session).resolveId(getClass()).getVersion().toString());
+            session.out().println(NIdResolver.of(session).resolveId(getClass()).getVersion());
             return;
         }
         execBuiltin(commandLine, context);

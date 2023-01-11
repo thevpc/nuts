@@ -31,7 +31,7 @@ public abstract class RemoteNWorkspace extends AbstractNWorkspace {
                 return resultObject.get("body").orNull();
             } else {
                 //TODO mush deserialize exception
-                throw new NException(session, NMsg.ofCstyle("unable to call %s",
+                throw new NException(session, NMsg.ofC("unable to call %s",
                         NTexts.of(session).ofStyled(commandName, NTextStyle.primary1())));
             }
         }

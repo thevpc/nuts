@@ -30,7 +30,7 @@ public class AppMessages {
             if(parent != null) {
                 return parent.get(key);
             }
-            return NOptional.ofError(s -> NMsg.ofCstyle("key not found : %s", key));
+            return NOptional.ofError(s -> NMsg.ofC("key not found : %s", key));
         }
         return NOptional.of(value);
     }

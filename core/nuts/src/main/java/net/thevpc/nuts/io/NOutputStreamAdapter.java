@@ -26,48 +26,6 @@
  */
 package net.thevpc.nuts.io;
 
-import net.thevpc.nuts.NExtensions;
-import net.thevpc.nuts.NSession;
-import net.thevpc.nuts.spi.NComponent;
-import net.thevpc.nuts.spi.NSystemTerminalBase;
-
-import java.io.OutputStream;
-import java.io.Writer;
-
-public interface NPrintStreams extends NComponent {
-    static NPrintStreams of(NSession session) {
-       return NExtensions.of(session).createSupported(NPrintStreams.class, true, session);
-    }
-
-
-    NOutStream createNullPrintStream();
-
-    NOutMemoryStream createInMemoryPrintStream();
-
-    /**
-     * create print stream that supports the given {@code mode}. If the given
-     * {@code out} is a PrintStream that supports {@code mode}, it should be
-     * returned without modification.
-     *
-     * @param out  stream to wrap
-     * @param mode mode to support
-     * @param terminal terminal
-     * @return {@code mode} supporting PrintStream
-     */
-    NOutStream createPrintStream(OutputStream out, NTerminalMode mode, NSystemTerminalBase terminal);
-
-    NOutStream createPrintStream(OutputStream out);
-
-    NOutStream createPrintStream(Writer out, NTerminalMode mode, NSystemTerminalBase terminal);
-
-    NOutStream createPrintStream(Writer out);
-
-    boolean isStdout(NOutStream out);
-
-    boolean isStderr(NOutStream out);
-
-    NOutStream stdout();
-
-    NOutStream stderr();
-
+public interface NOutputStreamAdapter {
+    NOutputStream getBaseOutputStream();
 }

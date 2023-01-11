@@ -11,10 +11,10 @@ public class TestDev {
 
 
         NString s = NTexts.of(session).ofText(
-                NMsg.ofCstyle("%s", "Hello")
+                NMsg.ofC("%s", "Hello")
         );
 
-        session.out().printf("%s\n", "Hello");
-        session.out().printf("%s", NMsg.ofPlain("Hello"));
+        session.out().println(NMsg.ofC("%s", "Hello"));
+        session.out().println(NMsg.ofC("%s", NMsg.ofPlain("Hello")));
     }
 }

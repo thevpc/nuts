@@ -16,11 +16,12 @@ import net.thevpc.nuts.format.NTableFormat;
 import net.thevpc.nuts.format.NTableModel;
 import net.thevpc.nuts.format.NTreeFormat;
 import net.thevpc.nuts.format.NTreeModel;
-import net.thevpc.nuts.io.NOutStream;
+import net.thevpc.nuts.io.NOutputStream;
 import net.thevpc.nuts.runtime.standalone.format.DefaultFormatBase;
 import net.thevpc.nuts.runtime.standalone.format.props.DefaultNPropertiesFormat;
 import net.thevpc.nuts.runtime.standalone.util.xml.XmlUtils;
 import net.thevpc.nuts.spi.NSupportLevelContext;
+import net.thevpc.nuts.text.NTexts;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -85,13 +86,13 @@ public class NFormatPlain extends DefaultFormatBase<NContentTypeFormat> implemen
     private String getFormattedPrimitiveValue(NElement value) {
         switch (value.type()) {
             default: {
-                throw new NUnsupportedArgumentException(getSession(), NMsg.ofCstyle("invalid element type: %s", value.type()));
+                throw new NUnsupportedArgumentException(getSession(), NMsg.ofC("invalid element type: %s", value.type()));
             }
         }
     }
 
     @Override
-    public void print(NOutStream w) {
+    public void print(NOutputStream w) {
         checkSession();
         Object value = getValue();
         NSession session = getSession();
@@ -137,8 +138,8 @@ public class NFormatPlain extends DefaultFormatBase<NContentTypeFormat> implemen
                     NElements.of(session).setValue(value).setNtf(isNtf()).configure(true, extraConfig.toArray(new String[0])).print(w);
                 }
             }else{
-                NOutStream out = getValidPrintStream(w);
-                out.printf("%s", value);
+                NOutputStream out = getValidPrintStream(w);
+                out.print(NTexts.of(session).ofText(value));
                 out.flush();
             }
         }

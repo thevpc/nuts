@@ -877,7 +877,7 @@ public final class NReservedWorkspaceCommandLineParser {
                         cmdLine.skip();
                         if (active) {
                             if (!a.getValue().isNull()) {
-                                throw new NBootException(NMsg.ofCstyle("invalid argument for workspace: %s", a.asString()));
+                                throw new NBootException(NMsg.ofC("invalid argument for workspace: %s", a.asString()));
                             }
                             applicationArguments.add(NConstants.Ids.NUTS_SHELL);
                             if (!cmdLine.isEmpty()) {
@@ -1099,7 +1099,7 @@ public final class NReservedWorkspaceCommandLineParser {
                         } else {
                             cmdLine.skip();
                             if (a.isActive()) {
-                                showError.add(NMsg.ofCstyle("nuts: invalid option %s", a.asString().orNull()));
+                                showError.add(NMsg.ofC("nuts: invalid option %s", a.asString().orNull()));
                             }
                         }
                     }
@@ -1149,13 +1149,13 @@ public final class NReservedWorkspaceCommandLineParser {
                     Integer fileSize = NApiUtils.parseFileSizeInBytes(v, 1024 * 1024).orNull();
                     if (fileSize == null) {
                         if (NBlankable.isBlank(v)) {
-                            throw new NBootException(NMsg.ofCstyle("invalid file size : %s", v));
+                            throw new NBootException(NMsg.ofC("invalid file size : %s", v));
                         }
                     } else {
                         //always in mega
                         fileSize = fileSize / (1024 * 1024);
                         if (fileSize <= 0) {
-                            throw new NBootException(NMsg.ofCstyle("invalid file size : %s < 1Mb", v));
+                            throw new NBootException(NMsg.ofC("invalid file size : %s < 1Mb", v));
                         }
                     }
                     if (fileSize != null) {
@@ -1263,7 +1263,7 @@ public final class NReservedWorkspaceCommandLineParser {
     private static NStoreLocationStrategy parseNutsStoreLocationStrategy(String s) {
         NStoreLocationStrategy m = NStoreLocationStrategy.parse(s).orNull();
         if (m == null && !NBlankable.isBlank(s)) {
-            throw new NBootException(NMsg.ofCstyle("unable to parse value for NutsStoreLocationStrategy : %s", s));
+            throw new NBootException(NMsg.ofC("unable to parse value for NutsStoreLocationStrategy : %s", s));
         }
         return m;
     }
@@ -1271,7 +1271,7 @@ public final class NReservedWorkspaceCommandLineParser {
     private static NOsFamily parseNutsOsFamily(String s) {
         NOsFamily m = NOsFamily.parse(s).orNull();
         if (m == null && !NBlankable.isBlank(s)) {
-            throw new NBootException(NMsg.ofCstyle("unable to parse value for NutsOsFamily : %s", s));
+            throw new NBootException(NMsg.ofC("unable to parse value for NutsOsFamily : %s", s));
         }
         return m;
     }
@@ -1279,7 +1279,7 @@ public final class NReservedWorkspaceCommandLineParser {
     private static NOpenMode parseNutsOpenMode(String s) {
         NOpenMode m = NOpenMode.parse(s).orNull();
         if (m == null && !NBlankable.isBlank(s)) {
-            throw new NBootException(NMsg.ofCstyle("unable to parse value for NutsOpenMode : %s", s));
+            throw new NBootException(NMsg.ofC("unable to parse value for NutsOpenMode : %s", s));
         }
         return m;
     }

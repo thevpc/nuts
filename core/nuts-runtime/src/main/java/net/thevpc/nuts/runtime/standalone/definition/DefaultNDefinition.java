@@ -54,7 +54,7 @@ public class DefaultNDefinition implements NDefinition {
         this.content = content;
         this.id = id;
         if (!id.isLongId()) {
-            throw new NIllegalArgumentException(session, NMsg.ofCstyle("id should not have query defined in descriptors : %s",id));
+            throw new NIllegalArgumentException(session, NMsg.ofC("id should not have query defined in descriptors : %s",id));
         }
         this.installInformation = install;
         this.repositoryUuid = repoUuid;
@@ -121,22 +121,22 @@ public class DefaultNDefinition implements NDefinition {
 
     @Override
     public NOptional<NPath> getContent() {
-        return NOptional.of(content, s-> NMsg.ofCstyle("content not found for id %s",getId()));
+        return NOptional.of(content, s-> NMsg.ofC("content not found for id %s",getId()));
     }
 
     @Override
     public NOptional<NDescriptor> getEffectiveDescriptor() {
-        return NOptional.of(effectiveDescriptor, s-> NMsg.ofCstyle("unable to get effectiveDescriptor for id %s. You need to call search.setEffective(...) first.",getId()));
+        return NOptional.of(effectiveDescriptor, s-> NMsg.ofC("unable to get effectiveDescriptor for id %s. You need to call search.setEffective(...) first.",getId()));
     }
 
     @Override
     public NOptional<NInstallInformation> getInstallInformation() {
-        return NOptional.of(installInformation, s-> NMsg.ofCstyle("unable to get install information for id %s.",getId()));
+        return NOptional.of(installInformation, s-> NMsg.ofC("unable to get install information for id %s.",getId()));
     }
 
     @Override
     public NOptional<NDependencies> getDependencies() {
-        return NOptional.of(dependencies, s-> NMsg.ofCstyle("unable to get dependencies for id %s. You need to call search.setDependencies(...) first.",getId()));
+        return NOptional.of(dependencies, s-> NMsg.ofC("unable to get dependencies for id %s. You need to call search.setDependencies(...) first.",getId()));
     }
 
     public DefaultNDefinition setContent(NPath content) {

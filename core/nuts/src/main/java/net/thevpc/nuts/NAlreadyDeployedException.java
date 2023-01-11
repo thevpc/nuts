@@ -56,7 +56,7 @@ public class NAlreadyDeployedException extends NInstallationException {
      * @param cause   cuse
      */
     public NAlreadyDeployedException(NSession session, NId id, NMsg msg, Throwable cause) {
-        super(session, id, msg == null ? NMsg.ofCstyle("already deployed %s", (id == null ? "<null>" : id)) : msg, cause);
+        super(session, id, msg == null ? NMsg.ofC("already deployed %s", (id == null ? "<null>" : id)) : msg, cause);
     }
 
 }

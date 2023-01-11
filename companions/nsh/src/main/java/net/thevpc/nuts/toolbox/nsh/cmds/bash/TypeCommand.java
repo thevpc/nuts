@@ -117,7 +117,7 @@ public class TypeCommand extends SimpleJShellBuiltin {
                 break;
             }
             default: {
-                context.getSession().out().printlnf(result);
+                context.getSession().out().println(result);
             }
         }
     }

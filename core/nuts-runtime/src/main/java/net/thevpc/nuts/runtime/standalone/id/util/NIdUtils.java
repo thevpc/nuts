@@ -12,13 +12,13 @@ import java.util.Map;
 public class NIdUtils {
     public static void checkLongId(NId id, NSession session) {
         checkShortId(id, session);
-        NAssert.requireNonBlank(id.getVersion(), () -> NMsg.ofCstyle("missing version for %s", id), session);
+        NAssert.requireNonBlank(id.getVersion(), () -> NMsg.ofC("missing version for %s", id), session);
     }
 
     public static void checkShortId(NId id, NSession session) {
         NAssert.requireNonBlank(id, "id", session);
-        NAssert.requireNonBlank(id.getGroupId(), () -> NMsg.ofCstyle("missing groupId for %s", id), session);
-        NAssert.requireNonBlank(id.getArtifactId(), () -> NMsg.ofCstyle("missing artifactId for %s", id), session);
+        NAssert.requireNonBlank(id.getGroupId(), () -> NMsg.ofC("missing groupId for %s", id), session);
+        NAssert.requireNonBlank(id.getArtifactId(), () -> NMsg.ofC("missing artifactId for %s", id), session);
     }
 
     public static boolean isValidEffectiveId(NId id) {
@@ -34,7 +34,7 @@ public class NIdUtils {
     public static void checkValidEffectiveId(NId id, NSession session) {
         NAssert.requireNonBlank(id, "id", session);
         if (id.toString().contains("${")) {
-            throw new NIllegalArgumentException(session, NMsg.ofCstyle("unable to evaluate effective id %s", id));
+            throw new NIllegalArgumentException(session, NMsg.ofC("unable to evaluate effective id %s", id));
         }
     }
 

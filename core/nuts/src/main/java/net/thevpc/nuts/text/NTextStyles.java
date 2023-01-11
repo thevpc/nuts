@@ -72,7 +72,7 @@ public final class NTextStyles implements Iterable<NTextStyle>, NEnum {
     public static NOptional<NTextStyles> parse(String value) {
         value = NStringUtils.trim(value);
         if (value.isEmpty()) {
-            return NOptional.ofEmpty(s -> NMsg.ofCstyle("%s is empty", NTextStyles.class.getSimpleName()));
+            return NOptional.ofEmpty(s -> NMsg.ofC("%s is empty", NTextStyles.class.getSimpleName()));
         }
         List<NTextStyle> all = new ArrayList<>();
         for (String s : NStringUtils.split(value, ",", true, true)) {
@@ -81,7 +81,7 @@ public final class NTextStyles implements Iterable<NTextStyle>, NEnum {
                 NTextStyle a = NTextStyle.parse(s).orNull();
                 if (a == null) {
                     String finalValue = value;
-                    return NOptional.ofError(session -> NMsg.ofCstyle("%s invalid value : %s", NTextStyles.class.getSimpleName(), finalValue));
+                    return NOptional.ofError(session -> NMsg.ofC("%s invalid value : %s", NTextStyles.class.getSimpleName(), finalValue));
                 }
                 all.add(a);
             }

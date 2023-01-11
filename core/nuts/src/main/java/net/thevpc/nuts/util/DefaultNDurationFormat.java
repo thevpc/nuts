@@ -1,8 +1,8 @@
 package net.thevpc.nuts.util;
 
 import net.thevpc.nuts.format.NPositionType;
-import net.thevpc.nuts.io.NOutPlainStream;
-import net.thevpc.nuts.io.NOutStream;
+import net.thevpc.nuts.io.NPlainOutputStream;
+import net.thevpc.nuts.io.NOutputStream;
 import net.thevpc.nuts.text.NTextStyle;
 
 import java.text.DecimalFormat;
@@ -70,7 +70,7 @@ public class DefaultNDurationFormat {
         return format(NDuration.ofDuration(duration));
     }
 
-    public void formatUnit(NDuration duration, ChronoUnit unit, Set<ChronoUnit> processed, NOutStream out) {
+    public void formatUnit(NDuration duration, ChronoUnit unit, Set<ChronoUnit> processed, NOutputStream out) {
         int uordinal = unit.ordinal();
         long unitValue = duration.get(unit);
         ChronoUnit[] chronoValues = ChronoUnit.values();
@@ -99,10 +99,10 @@ public class DefaultNDurationFormat {
             case DAYS: {
                 if (accept(unit, duration)) {
                     if (!empty) {
-                        out.append(' ');
+                        out.print(' ');
                     }
-                    out.append(formatNumber(unitValue, unit), NTextStyle.number());
-                    out.append(unitString(unit), NTextStyle.info());
+                    out.print(formatNumber(unitValue, unit), NTextStyle.number());
+                    out.print(unitString(unit), NTextStyle.info());
                     processed.add(unit);
                 }
                 break;
@@ -110,16 +110,16 @@ public class DefaultNDurationFormat {
             case HOURS: {
                 if (mode == NDurationFormatMode.CLOCK) {
                     if (!empty) {
-                        out.append(' ');
+                        out.print(' ');
                     }
-                    out.append(formatNumber(unitValue, unit), NTextStyle.number());
+                    out.print(formatNumber(unitValue, unit), NTextStyle.number());
                     processed.add(unit);
                 } else if (accept(unit, duration)) {
                     if (!empty) {
-                        out.append(' ');
+                        out.print(' ');
                     }
-                    out.append(formatNumber(unitValue, unit), NTextStyle.number());
-                    out.append(unitString(unit), NTextStyle.info());
+                    out.print(formatNumber(unitValue, unit), NTextStyle.number());
+                    out.print(unitString(unit), NTextStyle.info());
                     processed.add(unit);
                 }
                 break;
@@ -128,17 +128,17 @@ public class DefaultNDurationFormat {
             case SECONDS: {
                 if (mode == NDurationFormatMode.CLOCK) {
                     if (processed.contains(chronoValues[unit.ordinal() + 1])) {
-                        out.append(':');
+                        out.print(':');
                     }
-                    out.append(formatNumber(unitValue, unit), NTextStyle.number());
+                    out.print(formatNumber(unitValue, unit), NTextStyle.number());
                     processed.add(unit);
                 } else {
                     if (accept(unit, duration)) {
                         if (!empty) {
-                            out.append(' ');
+                            out.print(' ');
                         }
-                        out.append(formatNumber(unitValue, unit), NTextStyle.number());
-                        out.append(unitString(unit), NTextStyle.info());
+                        out.print(formatNumber(unitValue, unit), NTextStyle.number());
+                        out.print(unitString(unit), NTextStyle.info());
                         processed.add(unit);
                     }
                 }
@@ -147,19 +147,19 @@ public class DefaultNDurationFormat {
             case MILLIS: {
                 if (mode == NDurationFormatMode.CLOCK) {
                     if (!processed.contains(ChronoUnit.SECONDS)) {
-                        out.append("00.", NTextStyle.number());
+                        out.print("00.", NTextStyle.number());
                     } else {
-                        out.append('.', NTextStyle.number());
+                        out.print('.', NTextStyle.number());
                     }
-                    out.append(formatNumber(unitValue, unit), NTextStyle.number());
+                    out.print(formatNumber(unitValue, unit), NTextStyle.number());
                     processed.add(unit);
                 } else {
                     if (accept(unit, duration)) {
                         if (!processed.isEmpty()) {
-                            out.append(" ");
+                            out.print(" ");
                         }
-                        out.append(formatNumber(unitValue, unit), NTextStyle.number());
-                        out.append(unitString(unit), NTextStyle.info());
+                        out.print(formatNumber(unitValue, unit), NTextStyle.number());
+                        out.print(unitString(unit), NTextStyle.info());
                         processed.add(unit);
                     }
                 }
@@ -168,15 +168,15 @@ public class DefaultNDurationFormat {
             case MICROS:
             case NANOS: {
                 if (mode == NDurationFormatMode.CLOCK) {
-                    out.append(formatNumber(unitValue, unit), NTextStyle.number());
+                    out.print(formatNumber(unitValue, unit), NTextStyle.number());
                     processed.add(unit);
                 } else {
                     if (accept(unit, duration)) {
                         if (!processed.isEmpty()) {
-                            out.append(" ");
+                            out.print(" ");
                         }
-                        out.append(formatNumber(unitValue, unit), NTextStyle.number());
-                        out.append(unitString(unit), NTextStyle.info());
+                        out.print(formatNumber(unitValue, unit), NTextStyle.number());
+                        out.print(unitString(unit), NTextStyle.info());
                         processed.add(unit);
                     }
                 }
@@ -200,12 +200,12 @@ public class DefaultNDurationFormat {
     }
 
     public String format(NDuration duration) {
-        NOutStream sb = new NOutPlainStream();
+        NOutputStream sb = new NPlainOutputStream();
         print(duration, sb);
         return sb.toString();
     }
 
-    public void print(NDuration duration, NOutStream out) {
+    public void print(NDuration duration, NOutputStream out) {
         HashSet<ChronoUnit> processed = new HashSet<>();
         for (ChronoUnit chronoUnit : new ChronoUnit[]{
                 ChronoUnit.YEARS, ChronoUnit.MONTHS, ChronoUnit.WEEKS, ChronoUnit.DAYS,
@@ -215,8 +215,8 @@ public class DefaultNDurationFormat {
             formatUnit(duration, chronoUnit, processed, out);
         }
         if (processed.isEmpty()) {
-            out.append(formatNumber(0, duration.getSmallestUnit()), NTextStyle.number());
-            out.append(unitString(duration.getSmallestUnit()), NTextStyle.info());
+            out.print(formatNumber(0, duration.getSmallestUnit()), NTextStyle.number());
+            out.print(unitString(duration.getSmallestUnit()), NTextStyle.info());
         } else if (mode == NDurationFormatMode.CLOCK) {
             if (processed.contains(ChronoUnit.MILLIS)) {
                 processed.add(ChronoUnit.SECONDS);
@@ -233,7 +233,7 @@ public class DefaultNDurationFormat {
             if (processed.size() == 1) {
                 for (ChronoUnit chronoUnit : processed) {
                     if (chronoUnit.ordinal() <= ChronoUnit.HOURS.ordinal()) {
-                        out.append(unitString(chronoUnit), NTextStyle.info());
+                        out.print(unitString(chronoUnit), NTextStyle.info());
                     }
                 }
             }

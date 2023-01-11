@@ -88,11 +88,11 @@ public class DocusaurusCtrl {
 //            Files.walk(base).filter(x->Files.isDirectory(base))
             Path docs = basePath.resolve("docs");
             if (Files.isDirectory(basePath.resolve("node_modules")) && Files.isRegularFile(basePath.resolve("docusaurus.config.js"))) {
-                session.out().printf("clear folder %s%n", docs);
+                session.out().print(NMsg.ofC("clear folder %s%n", docs));
                 deletePathChildren(docs);
             }
 
-            session.out().printf("process template %s -> %s%n", preProcessor, getTargetBaseDir());
+            session.out().print(NMsg.ofC("process template %s -> %s%n", preProcessor, getTargetBaseDir()));
             TemplateConfig config = new TemplateConfig()
                     .setProjectPath(preProcessor.toString())
                     .setTargetFolder(getTargetBaseDir().toString());
@@ -118,27 +118,27 @@ public class DocusaurusCtrl {
                     root.toJSON(1)
                     + "\n};";
             if (session.isPlainOut()) {
-                session.out().printf("build sidebar %s%n", base.resolve("sidebars.js"));
-                session.out().printf("\tusing release folder : %s%n", project.getPhysicalDocsFolderBasePath());
-                session.out().printf("\tusing config folder  : %s%n", project.getPhysicalDocsFolderConfigPath());
+                session.out().print(NMsg.ofC("build sidebar %s%n", base.resolve("sidebars.js")));
+                session.out().print(NMsg.ofC("\tusing release folder : %s%n", project.getPhysicalDocsFolderBasePath()));
+                session.out().print(NMsg.ofC("\tusing config folder  : %s%n", project.getPhysicalDocsFolderConfigPath()));
             }
             try {
                 Files.write(base.resolve("sidebars.js"), s.getBytes());
             } catch (IOException e) {
-                throw new NIOException(session, NMsg.ofCstyle("%s", e));
+                throw new NIOException(session, NMsg.ofC("%s", e));
             }
 //            System.out.println(s);
         }
         if (isBuildPdf() && !project.getConfig().getStringByPath("customFields","asciidoctor","path")
                 .isEmpty()) {
             Docusaurus2Asciidoctor d2a = new Docusaurus2Asciidoctor(project);
-            session.out().printf("build adoc file : %s%n", d2a.getAdocFile());
+            session.out().print(NMsg.ofC("build adoc file : %s%n", d2a.getAdocFile()));
             d2a.createAdocFile();
-            session.out().printf("build pdf  file : %s%n", d2a.getPdfFile());
+            session.out().print(NMsg.ofC("build pdf  file : %s%n", d2a.getPdfFile()));
             d2a.createPdfFile();
         }
         if (isBuildWebSite()) {
-            session.out().printf("build website%n");
+            session.out().print(NMsg.ofC("build website%n"));
             runNativeCommand(base, getEffectiveNpmCommandPath(), "run-script", "build");
             String copyBuildPath = project.getConfig().getStringByPath("customFields","copyBuildPath")
                     .get(session);

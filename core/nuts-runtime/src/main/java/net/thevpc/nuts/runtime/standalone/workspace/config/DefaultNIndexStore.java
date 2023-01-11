@@ -92,7 +92,7 @@ public class DefaultNIndexStore extends AbstractNIndexStore {
         return IteratorBuilder.ofSupplier(
                 () -> {
                     if (isInaccessible()) {
-                        throw new NIndexerNotAccessibleException(session, NMsg.ofCstyle("index search failed for %s",getRepository().getName()));
+                        throw new NIndexerNotAccessibleException(session, NMsg.ofC("index search failed for %s",getRepository().getName()));
 //                        return IteratorUtils.emptyIterator();
                     }
                     String uu = getIndexURL(session).resolve(NConstants.Folders.ID) + "?repositoryUuid=" + getRepository().getUuid();
@@ -104,7 +104,7 @@ public class DefaultNIndexStore extends AbstractNIndexStore {
                                 .iterator();
                     } catch (UncheckedIOException | NIOException e) {
                         setInaccessible();
-                        throw new NIndexerNotAccessibleException(session, NMsg.ofCstyle("index search failed for %s",getRepository().getName()));
+                        throw new NIndexerNotAccessibleException(session, NMsg.ofC("index search failed for %s",getRepository().getName()));
 //                        return IteratorUtils.emptyIterator();
                     }
                 },
@@ -176,7 +176,7 @@ public class DefaultNIndexStore extends AbstractNIndexStore {
         try {
             NPath.of(uu,session).getInputStream();
         } catch (UncheckedIOException | NIOException e) {
-            throw new NUnsupportedOperationException(session, NMsg.ofCstyle("unable to subscribe for repository%s", getRepository().getName()), e);
+            throw new NUnsupportedOperationException(session, NMsg.ofC("unable to subscribe for repository%s", getRepository().getName()), e);
         }
         return this;
     }
@@ -189,7 +189,7 @@ public class DefaultNIndexStore extends AbstractNIndexStore {
         try {
             NPath.of(uu,session).getInputStream();
         } catch (UncheckedIOException | NIOException e) {
-            throw new NUnsupportedOperationException(session, NMsg.ofCstyle("unable to unsubscribe for repository %s", getRepository().getName()), e);
+            throw new NUnsupportedOperationException(session, NMsg.ofC("unable to unsubscribe for repository %s", getRepository().getName()), e);
         }
         return this;
     }

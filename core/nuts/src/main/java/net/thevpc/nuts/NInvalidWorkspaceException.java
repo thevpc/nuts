@@ -47,7 +47,7 @@ public class NInvalidWorkspaceException extends NBootException {
      */
     public NInvalidWorkspaceException(String workspaceLocation, NMsg errorMessage) {
         super(
-                NMsg.ofCstyle("invalid workspace %s : %s", (workspaceLocation == null ? "<null>" : workspaceLocation), errorMessage)
+                NMsg.ofC("invalid workspace %s : %s", (workspaceLocation == null ? "<null>" : workspaceLocation), errorMessage)
                 , null);
         this.workspaceLocation = workspaceLocation;
     }

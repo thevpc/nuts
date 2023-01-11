@@ -11,7 +11,7 @@ import java.util.Map;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.cmdline.NCommandLine;
 import net.thevpc.nuts.elem.NElements;
-import net.thevpc.nuts.io.NOutStream;
+import net.thevpc.nuts.io.NOutputStream;
 import net.thevpc.nuts.runtime.standalone.format.DefaultSearchFormatBase;
 import net.thevpc.nuts.runtime.standalone.format.NFetchDisplayOptions;
 import net.thevpc.nuts.runtime.standalone.format.NFormatUtils;
@@ -23,7 +23,7 @@ import net.thevpc.nuts.runtime.standalone.io.util.CoreIOUtils;
  */
 public class DefaultSearchFormatProps extends DefaultSearchFormatBase {
 
-    public DefaultSearchFormatProps(NSession session, NOutStream writer, NFetchDisplayOptions options) {
+    public DefaultSearchFormatProps(NSession session, NOutputStream writer, NFetchDisplayOptions options) {
         super(session, writer, NContentType.PROPS,options);
     }
 

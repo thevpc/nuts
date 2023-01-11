@@ -82,7 +82,7 @@ public class PomAndUnsupportedJavaExecutorComponent implements NExecutorComponen
 
             @Override
             public int exec() {
-                throw new NIOException(getSession(), NMsg.ofCstyle("unsupported execution of %s with packaging %s",
+                throw new NIOException(getSession(), NMsg.ofC("unsupported execution of %s with packaging %s",
                         executionContext.getDefinition().getId(),
                         executionContext.getDefinition().getDescriptor().getPackaging()
                 ));

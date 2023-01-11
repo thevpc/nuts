@@ -146,7 +146,7 @@ public class NRepositoryHelper {
         public void fireOnAddRepository(NRepositoryEvent event) {
             if (u._LOG(event.getSession()).isLoggable(Level.FINEST)) {
                 u._LOGOP(event.getSession()).level(Level.FINEST).verb(NLoggerVerb.ADD)
-                        .log(NMsg.ofJstyle("{0} add    repo {1}", NStringUtils.formatAlign(u.repo.getName(), 20, NPositionType.FIRST), event
+                        .log(NMsg.ofJ("{0} add    repo {1}", NStringUtils.formatAlign(u.repo.getName(), 20, NPositionType.FIRST), event
                                 .getRepository().getName())
                         );
             }
@@ -164,7 +164,7 @@ public class NRepositoryHelper {
         public void fireOnRemoveRepository(NRepositoryEvent event) {
             if (u._LOG(event.getSession()).isLoggable(Level.FINEST)) {
                 u._LOGOP(event.getSession()).level(Level.FINEST).verb(NLoggerVerb.REMOVE).log(
-                        NMsg.ofJstyle("{0} remove repo {1}", NStringUtils.formatAlign(u.repo.getName(), 20, NPositionType.FIRST), event
+                        NMsg.ofJ("{0} remove repo {1}", NStringUtils.formatAlign(u.repo.getName(), 20, NPositionType.FIRST), event
                                 .getRepository().getName()));
             }
             for (NRepositoryListener listener : u.repo.getRepositoryListeners()) {

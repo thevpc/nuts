@@ -9,7 +9,7 @@ import java.util.StringTokenizer;
 
 import net.thevpc.nuts.io.NInputStreamMonitor;
 import net.thevpc.nuts.io.NPath;
-import net.thevpc.nuts.io.NOutStream;
+import net.thevpc.nuts.io.NOutputStream;
 import net.thevpc.nuts.io.NSessionTerminal;
 import net.thevpc.nuts.lib.ssh.SshListener;
 import net.thevpc.nuts.toolbox.nsh.bundles._IOUtils;
@@ -55,7 +55,7 @@ public class ShellHelper {
 
     public static class WsSshListener implements SshListener {
 
-        NOutStream out;
+        NOutputStream out;
         NSession session;
 
         public WsSshListener(NSession session) {
@@ -70,21 +70,21 @@ public class ShellHelper {
         @Override
         public void onExec(String command) {
             if (isTrace()) {
-                out.printf("##:primary4:[SSH-EXEC]## %s\n", command);
+                out.println(NMsg.ofC("##:primary4:[SSH-EXEC]## %s", command));
             }
         }
 
         @Override
         public void onGet(String from, String to, boolean mkdir) {
             if (isTrace()) {
-                out.printf("##:primary4:[SSH-GET ]## %s -> %s\n", from, to);
+                out.println(NMsg.ofC("##:primary4:[SSH-GET ]## %s -> %s", from, to));
             }
         }
 
         @Override
         public void onPut(String from, String to, boolean mkdir) {
             if (isTrace()) {
-                out.printf("##:primary4:[SSH-PUT ]## %s -> %s\n", from, to);
+                out.println(NMsg.ofC("##:primary4:[SSH-PUT ]## %s -> %s", from, to));
             }
         }
 
@@ -96,7 +96,7 @@ public class ShellHelper {
 
     public static boolean readAccept(NSessionTerminal t) {
         while (true) {
-            String v = t.readLine("Accept (y/n) : ?");
+            String v = t.readLine(NMsg.ofPlain("Accept (y/n) : ?"));
             if (v == null) {
                 return false;
             }

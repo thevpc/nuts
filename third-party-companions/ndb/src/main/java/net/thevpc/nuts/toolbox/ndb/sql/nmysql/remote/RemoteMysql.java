@@ -93,7 +93,7 @@ package net.thevpc.nuts.toolbox.ndb.sql.nmysql.remote;
 //                case PLAIN: {
 //                    for (Map.Entry<String, RemoteMysqlConfig> cnf : result.entrySet()) {
 //                        for (Map.Entry<String, RemoteMysqlDatabaseConfig> db : cnf.getValue().getDatabases().entrySet()) {
-//                            getContext().getSession().out().printf("%s\\@#####%s#####%n", db.getKey(), cnf.getKey());
+//                            getContext().getSession().out().print(NMsg.ofC("%s\\@#####%s#####%n", db.getKey(), cnf.getKey());
 //                        }
 //                    }
 //                    break;
@@ -231,15 +231,15 @@ package net.thevpc.nuts.toolbox.ndb.sql.nmysql.remote;
 //                if (context.getSession().isPlainTrace()) {
 //                    if (add) {
 //                        if (overrideExisting) {
-//                            context.getSession().out().printf("adding config (with override) ####%s####%n", NdbUtils.coalesce(name.getConfigName(), "default"));
+//                            context.getSession().out().print(NMsg.ofC("adding config (with override) ####%s####%n", NdbUtils.coalesce(name.getConfigName(), "default"));
 //                        } else {
-//                            context.getSession().out().printf("adding config ####%s####%n", NdbUtils.coalesce(name.getConfigName(), "default"));
+//                            context.getSession().out().print(NMsg.ofC("adding config ####%s####%n", NdbUtils.coalesce(name.getConfigName(), "default"));
 //                        }
 //                    } else {
 //                        if (overrideExisting) {
-//                            context.getSession().out().printf("updating config (with override) ####%s####%n", NdbUtils.coalesce(name.getConfigName(), "default"));
+//                            context.getSession().out().print(NMsg.ofC("updating config (with override) ####%s####%n", NdbUtils.coalesce(name.getConfigName(), "default"));
 //                        } else {
-//                            context.getSession().out().printf("updating config ####%s####%n", NdbUtils.coalesce(name.getConfigName(), "default"));
+//                            context.getSession().out().print(NMsg.ofC("updating config ####%s####%n", NdbUtils.coalesce(name.getConfigName(), "default"));
 //                        }
 //                    }
 //                }
@@ -260,15 +260,15 @@ package net.thevpc.nuts.toolbox.ndb.sql.nmysql.remote;
 //                if (context.getSession().isPlainTrace()) {
 //                    if (add) {
 //                        if (overrideExisting) {
-//                            context.getSession().out().printf("adding db (with override) ####%s####%n", r.getFullName());
+//                            context.getSession().out().print(NMsg.ofC("adding db (with override) ####%s####%n", r.getFullName());
 //                        } else {
-//                            context.getSession().out().printf("adding db ####%s####%n", r.getFullName());
+//                            context.getSession().out().print(NMsg.ofC("adding db ####%s####%n", r.getFullName());
 //                        }
 //                    } else {
 //                        if (overrideExisting) {
-//                            context.getSession().out().printf("updating db (with override) ####%s####%n", r.getFullName());
+//                            context.getSession().out().print(NMsg.ofC("updating db (with override) ####%s####%n", r.getFullName());
 //                        } else {
-//                            context.getSession().out().printf("updating db ####%s####%n", r.getFullName());
+//                            context.getSession().out().print(NMsg.ofC("updating db ####%s####%n", r.getFullName());
 //                        }
 //                    }
 //                }

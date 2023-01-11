@@ -1,19 +1,19 @@
 package net.thevpc.nuts.runtime.standalone.io.printstream;
 
-import net.thevpc.nuts.io.NOutStream;
-import net.thevpc.nuts.io.NPrintStreamAdapter;
+import net.thevpc.nuts.io.NOutputStream;
+import net.thevpc.nuts.io.NOutputStreamAdapter;
 
 import java.io.OutputStream;
 
-public class OutputStreamFromNPrintStream extends OutputStream implements NPrintStreamAdapter {
+public class OutputStreamFromNOutputStream extends OutputStream implements NOutputStreamAdapter {
 
-    private NOutStream base;
+    private NOutputStream base;
 
-    public OutputStreamFromNPrintStream(NOutStream base) {
+    public OutputStreamFromNOutputStream(NOutputStream base) {
         this.base = base;
     }
 
-    public NOutStream getBasePrintStream() {
+    public NOutputStream getBaseOutputStream() {
         return base;
     }
 
@@ -24,12 +24,12 @@ public class OutputStreamFromNPrintStream extends OutputStream implements NPrint
 
     @Override
     public void write(byte[] b) {
-        base.write(b);
+        base.print(b);
     }
 
     @Override
     public void write(byte[] b, int off, int len) {
-        base.write(b, off, len);
+        base.print(b, off, len);
     }
 
     @Override

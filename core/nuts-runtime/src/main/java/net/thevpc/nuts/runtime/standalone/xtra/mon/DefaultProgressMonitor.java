@@ -399,7 +399,7 @@ public class DefaultProgressMonitor implements NProgressMonitor {
         }
         if ((progress < 0 || progress > 1) && !Double.isNaN(progress)) {
             if (strictComputationMonitor) {
-                throw new NIllegalArgumentException(session, NMsg.ofCstyle("invalid Progress value [0..1] : %s", progress));
+                throw new NIllegalArgumentException(session, NMsg.ofC("invalid Progress value [0..1] : %s", progress));
             } else {
                 if (progress < 0) {
                     progress = 0;

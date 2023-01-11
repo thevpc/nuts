@@ -25,9 +25,9 @@ public class NSettingsDeleteFoldersSubCommand extends AbstractNSettingsSubComman
         NPath s = repository.config().getStoreLocation(NStoreLocation.CACHE);
         if (s != null) {
             if (s.exists()) {
-                session.out().printf("```error deleting``` %s folder %s ...%n",
+                session.out().println(NMsg.ofC("```error deleting``` %s folder %s ...",
                         NTexts.of(session).ofStyled("cache", NTextStyle.primary1())
-                        , s);
+                        , s));
                 if (force
                         || session.getTerminal().ask()
                         .resetLine()
@@ -84,10 +84,10 @@ public class NSettingsDeleteFoldersSubCommand extends AbstractNSettingsSubComman
         if (sstoreLocation != null) {
             NTexts factory = NTexts.of(session);
             if (sstoreLocation.exists()) {
-                session.out().printf("```error deleting``` %s for workspace %s folder %s ...%n",
+                session.out().println(NMsg.ofC("```error deleting``` %s for workspace %s folder %s ...",
                         factory.ofStyled(folder.id(), NTextStyle.primary1()),
                         factory.ofStyled(session.getWorkspace().getName(), NTextStyle.primary1()),
-                        factory.ofStyled(sstoreLocation.toString(), NTextStyle.path()));
+                        factory.ofStyled(sstoreLocation.toString(), NTextStyle.path())));
                 if (force
                         || session.getTerminal().ask()
                         .resetLine()
@@ -107,10 +107,10 @@ public class NSettingsDeleteFoldersSubCommand extends AbstractNSettingsSubComman
         if (sstoreLocation != null) {
             NTexts factory = NTexts.of(session);
             if (sstoreLocation.exists()) {
-                session.out().printf("```error deleting``` %s for repository %s folder %s ...%n",
+                session.out().println(NMsg.ofC("```error deleting``` %s for repository %s folder %s ...",
                         factory.ofStyled(folder.id(), NTextStyle.primary1()),
                         factory.ofStyled(repository.getName(), NTextStyle.primary1()),
-                        factory.ofStyled(sstoreLocation.toString(), NTextStyle.path()));
+                        factory.ofStyled(sstoreLocation.toString(), NTextStyle.path())));
                 if (force
                         || session.getTerminal().ask()
                         .resetLine()

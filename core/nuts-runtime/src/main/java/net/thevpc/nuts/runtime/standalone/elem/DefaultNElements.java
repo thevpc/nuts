@@ -214,14 +214,14 @@ public class DefaultNElements extends DefaultFormatBase<NElements> implements NE
                     } catch (UncheckedIOException ex) {
                         throw new NIOException(getSession(), ex);
                     } catch (RuntimeException ex) {
-                        throw new NParseException(getSession(), NMsg.ofCstyle("unable to parse path %s", path), ex);
+                        throw new NParseException(getSession(), NMsg.ofC("unable to parse path %s", path), ex);
                     }
                 } catch (IOException ex) {
-                    throw new NParseException(getSession(), NMsg.ofCstyle("unable to parse path %s", path), ex);
+                    throw new NParseException(getSession(), NMsg.ofC("unable to parse path %s", path), ex);
                 }
             }
         }
-        throw new NIllegalArgumentException(getSession(), NMsg.ofCstyle("invalid content type %s. Only structured content types are allowed.", contentType));
+        throw new NIllegalArgumentException(getSession(), NMsg.ofC("invalid content type %s. Only structured content types are allowed.", contentType));
     }
 
     @Override
@@ -235,7 +235,7 @@ public class DefaultNElements extends DefaultFormatBase<NElements> implements NE
                 return parse(new InputStreamReader(prepareInputStream(inputStream, null)), clazz);
             }
         }
-        throw new NIllegalArgumentException(getSession(), NMsg.ofCstyle("invalid content type %s. Only structured content types are allowed.", contentType));
+        throw new NIllegalArgumentException(getSession(), NMsg.ofC("invalid content type %s. Only structured content types are allowed.", contentType));
     }
 
     @Override
@@ -249,7 +249,7 @@ public class DefaultNElements extends DefaultFormatBase<NElements> implements NE
                 return parse(new StringReader(string), clazz);
             }
         }
-        throw new NIllegalArgumentException(getSession(), NMsg.ofCstyle("invalid content type %s. Only structured content types are allowed.", contentType));
+        throw new NIllegalArgumentException(getSession(), NMsg.ofC("invalid content type %s. Only structured content types are allowed.", contentType));
     }
 
     @Override
@@ -263,7 +263,7 @@ public class DefaultNElements extends DefaultFormatBase<NElements> implements NE
                 return parse(new InputStreamReader(prepareInputStream(new ByteArrayInputStream(bytes), null)), clazz);
             }
         }
-        throw new NIllegalArgumentException(getSession(), NMsg.ofCstyle("invalid content type %s. Only structured content types are allowed.", contentType));
+        throw new NIllegalArgumentException(getSession(), NMsg.ofC("invalid content type %s. Only structured content types are allowed.", contentType));
     }
 
     @Override
@@ -497,7 +497,7 @@ public class DefaultNElements extends DefaultFormatBase<NElements> implements NE
 
             }
         }
-        throw new NParseException(getSession(), NMsg.ofCstyle("unable to parse number %s", value));
+        throw new NParseException(getSession(), NMsg.ofC("unable to parse number %s", value));
     }
 
     @Override
@@ -579,7 +579,7 @@ public class DefaultNElements extends DefaultFormatBase<NElements> implements NE
     }
 
     @Override
-    public NIterableFormat iter(NOutStream writer) {
+    public NIterableFormat iter(NOutputStream writer) {
         switch (getContentType()) {
             case JSON:
                 return new DefaultSearchFormatJson(getSession(), writer, new NFetchDisplayOptions(getSession()));
@@ -594,7 +594,7 @@ public class DefaultNElements extends DefaultFormatBase<NElements> implements NE
             case PROPS:
                 return new DefaultSearchFormatProps(getSession(), writer, new NFetchDisplayOptions(getSession()));
         }
-        throw new NUnsupportedOperationException(getSession(), NMsg.ofCstyle("unsupported iterator for %s", getContentType()));
+        throw new NUnsupportedOperationException(getSession(), NMsg.ofC("unsupported iterator for %s", getContentType()));
     }
 
     @Override
@@ -621,7 +621,7 @@ public class DefaultNElements extends DefaultFormatBase<NElements> implements NE
                 throw new NUnsupportedEnumException(getSession(), contentType);
             }
         }
-        throw new NIllegalArgumentException(getSession(), NMsg.ofCstyle("invalid content type %s. Only structured content types are allowed.", contentType));
+        throw new NIllegalArgumentException(getSession(), NMsg.ofC("invalid content type %s. Only structured content types are allowed.", contentType));
     }
 
     private DefaultNElementFactoryContext createFactoryContext() {
@@ -643,11 +643,11 @@ public class DefaultNElements extends DefaultFormatBase<NElements> implements NE
         return false;
     }
 
-    private void print(NOutStream out, NElementStreamFormat format) {
+    private void print(NOutputStream out, NElementStreamFormat format) {
         checkSession();
         NElement elem = toElement(value);
         if (out.isNtf()) {
-            NOutStream bos = NOutMemoryStream.of(getSession());
+            NOutputStream bos = NMemoryOutputStream.of(getSession());
             format.printElement(elem, bos, compact, createFactoryContext());
             out.print(NTexts.of(getSession()).ofCode(getContentType().id(), bos.toString()));
         } else {
@@ -657,7 +657,7 @@ public class DefaultNElements extends DefaultFormatBase<NElements> implements NE
     }
 
     @Override
-    public void print(NOutStream out) {
+    public void print(NOutputStream out) {
         print(out, resolveStructuredFormat());
     }
 

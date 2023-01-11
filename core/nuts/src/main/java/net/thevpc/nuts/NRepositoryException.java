@@ -46,7 +46,7 @@ public abstract class NRepositoryException extends NException {
      */
     public NRepositoryException(NSession session, String repository, NMsg message, Throwable ex) {
         super(session,
-                message == null ? NMsg.ofCstyle("repository %s has encountered problem", (repository == null ? "<null>" : repository)) : message, ex);
+                message == null ? NMsg.ofC("repository %s has encountered problem", (repository == null ? "<null>" : repository)) : message, ex);
         this.repository = repository;
     }
 

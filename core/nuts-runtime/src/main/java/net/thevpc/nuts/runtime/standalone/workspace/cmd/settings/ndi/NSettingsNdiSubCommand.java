@@ -241,7 +241,7 @@ public class NSettingsNdiSubCommand extends AbstractNSettingsSubCommand {
                 if (d.ignoreUnsupportedOs) {
                     return;
                 }
-                throw new NExecutionException(session, NMsg.ofCstyle("platform not supported : %s", NEnvs.of(session).getOs()), 2);
+                throw new NExecutionException(session, NMsg.ofC("platform not supported : %s", NEnvs.of(session).getOs()), 2);
             }
             if (!d.idsToInstall.isEmpty()) {
                 printResults(session, ndi.addScript(d.options, d.idsToInstall.toArray(new String[0])));
@@ -305,7 +305,7 @@ public class NSettingsNdiSubCommand extends AbstractNSettingsSubCommand {
                 if (ignoreUnsupportedOs) {
                     return;
                 }
-                throw new NExecutionException(session, NMsg.ofCstyle("platform not supported : %s", NEnvs.of(session).getOs()), 2);
+                throw new NExecutionException(session, NMsg.ofC("platform not supported : %s", NEnvs.of(session).getOs()), 2);
             }
             boolean subTrace = session.isTrace();
             if (!session.isPlainTrace()) {
@@ -320,7 +320,7 @@ public class NSettingsNdiSubCommand extends AbstractNSettingsSubCommand {
                                 session.copy().setTrace(subTrace)
                         );
                     } catch (UncheckedIOException | NIOException e) {
-                        throw new NExecutionException(session, NMsg.ofCstyle("unable to run script %s : %s", id, e), e);
+                        throw new NExecutionException(session, NMsg.ofC("unable to run script %s : %s", id, e), e);
                     }
                 }
             }
@@ -418,7 +418,7 @@ public class NSettingsNdiSubCommand extends AbstractNSettingsSubCommand {
                 if (d.ignoreUnsupportedOs) {
                     return;
                 }
-                throw new NExecutionException(session, NMsg.ofCstyle("platform not supported : %s ", NEnvs.of(session).getOs()), 2);
+                throw new NExecutionException(session, NMsg.ofC("platform not supported : %s ", NEnvs.of(session).getOs()), 2);
             }
             if (d.switchWorkspaceLocation != null || d.switchWorkspaceApi != null) {
                 NdiScriptOptions oo = new NdiScriptOptions()
@@ -440,20 +440,22 @@ public class NSettingsNdiSubCommand extends AbstractNSettingsSubCommand {
             if (session.isPlainTrace()) {
                 int namesSize = Arrays.stream(result).mapToInt(x -> x.getPath().getName().length()).max().orElse(1);
                 for (PathInfo ndiScriptInfo : result) {
-                    session.out().resetLine().printf("%s script %-" + namesSize + "s for %s"
-                                    + " at %s%n",
+                    NTexts txt = NTexts.of(session);
+                    session.out().resetLine().println(NMsg.ofC(
+                            "%s script %-" + namesSize + "s for %s"
+                                    + " at %s",
                             (ndiScriptInfo.getStatus() == PathInfo.Status.OVERRIDDEN)
-                                    ? NTexts.of(session).ofStyled("re-install", NTextStyles.of(NTextStyle.success(), NTextStyle.underlined()))
-                                    : NTexts.of(session).ofStyled("install", NTextStyle.success())
+                                    ? txt.ofStyled("re-install", NTextStyles.of(NTextStyle.success(), NTextStyle.underlined()))
+                                    : txt.ofStyled("install", NTextStyle.success())
                             ,
-                            NTexts.of(session).ofStyled(ndiScriptInfo.getPath().getName(), NTextStyle.path()),
+                            txt.ofStyled(ndiScriptInfo.getPath().getName(), NTextStyle.path()),
                             ndiScriptInfo.getId(),
-                            NTexts.of(session).ofStyled(CoreIOUtils.betterPath(ndiScriptInfo.getPath().toString()), NTextStyle.path())
-                    );
+                            txt.ofStyled(CoreIOUtils.betterPath(ndiScriptInfo.getPath().toString()), NTextStyle.path())
+                    ));
                 }
 
             } else {
-                session.out().printlnf(result);
+                session.out().println(result);
             }
         }
     }

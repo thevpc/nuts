@@ -140,7 +140,7 @@ public class NoapiMain implements NApplication {
                 for (NoapiCmdData d : data) {
                     NAssert.requireNonBlank(d.getPath(), "path", session);
                     if (!"pdf".equals(d.getCommand())) {
-                        throw new NIllegalArgumentException(session, NMsg.ofCstyle("unsupported command %s", d.getCommand()));
+                        throw new NIllegalArgumentException(session, NMsg.ofC("unsupported command %s", d.getCommand()));
                     }
                 }
             }

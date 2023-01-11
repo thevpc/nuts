@@ -56,7 +56,7 @@ public class NLockBarrierException extends NLockException {
      */
     public NLockBarrierException(NSession session, NMsg message, Object lockedObject, Object lockObject) {
         super(session,
-                message == null ? NMsg.ofCstyle("item already locked %s", lockedObject)
+                message == null ? NMsg.ofC("item already locked %s", lockedObject)
                         : message, lockedObject, lockObject
         );
     }
@@ -72,7 +72,7 @@ public class NLockBarrierException extends NLockException {
      */
     public NLockBarrierException(NSession session, NMsg message, Object lockedObject, Object lockObject, Throwable cause) {
         super(session,
-                message == null ? NMsg.ofCstyle("item already locked %s", lockedObject)
+                message == null ? NMsg.ofC("item already locked %s", lockedObject)
                         : message, lockObject, cause
         );
     }

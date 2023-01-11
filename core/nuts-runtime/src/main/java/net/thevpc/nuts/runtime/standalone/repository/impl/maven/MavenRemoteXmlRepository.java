@@ -61,7 +61,7 @@ public class MavenRemoteXmlRepository extends MavenFolderRepository {
                 () -> {
                     List<NId> ret = new ArrayList<>();
                     InputStream metadataStream = null;
-                    session.getTerminal().printProgress("looking for versions of %s at %s", id,metadataURL.toCompressedForm());
+                    session.getTerminal().printProgress(NMsg.ofC("looking for versions of %s at %s", id,metadataURL.toCompressedForm()));
                     try {
                         try {
                             metadataStream = openStream(id, metadataURL, id.builder().setFace(CoreNConstants.QueryFaces.CATALOG).build(), "artifact catalog", "retrieve", session);

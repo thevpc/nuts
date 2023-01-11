@@ -26,7 +26,7 @@ public abstract class NReservedOptionalThrowable<T> extends NReservedOptionalImp
 
     protected NMsg prepareMessage(NMsg m) {
         if (DEBUG) {
-            return NMsg.ofCstyle("%s.\n    call stack:\n%s\n    root stack:\n%s", m,
+            return NMsg.ofC("%s.\n    call stack:\n%s\n    root stack:\n%s", m,
                     NReservedLangUtils.stacktrace(new Throwable()),
                     NReservedLangUtils.stacktrace(rootStack)
             );

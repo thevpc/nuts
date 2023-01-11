@@ -33,7 +33,7 @@ import net.thevpc.nuts.elem.NElement;
 import net.thevpc.nuts.elem.NElements;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.io.NPathPermission;
-import net.thevpc.nuts.io.NOutStream;
+import net.thevpc.nuts.io.NOutputStream;
 import net.thevpc.nuts.spi.NComponentScope;
 import net.thevpc.nuts.spi.NComponentScopeType;
 import net.thevpc.nuts.text.NTextStyle;
@@ -115,7 +115,7 @@ public class LsCommand extends SimpleJShellBuiltin {
                     errors = new ResultError();
                     errors.workingDir = context.getAbsolutePath(".");
                 }
-                errors.result.put(path, NMsg.ofCstyle("cannot access '%s': No such file or directory", path));
+                errors.result.put(path, NMsg.ofC("cannot access '%s': No such file or directory", path));
                 continue;
             }
             NPath file = NPath.of(path, session);
@@ -124,7 +124,7 @@ public class LsCommand extends SimpleJShellBuiltin {
                     errors = new ResultError();
                     errors.workingDir = context.getAbsolutePath(".");
                 }
-                errors.result.put(path, NMsg.ofCstyle("cannot access '%s': No such file or directory", path));
+                errors.result.put(path, NMsg.ofC("cannot access '%s': No such file or directory", path));
                 continue;
             }
             file = file.toAbsolute(NPath.of(context.getCwd(), session));
@@ -134,7 +134,7 @@ public class LsCommand extends SimpleJShellBuiltin {
                     errors = new ResultError();
                     errors.workingDir = context.getAbsolutePath(".");
                 }
-                errors.result.put(path, NMsg.ofCstyle("cannot access '%s': No such file or directory", file));
+                errors.result.put(path, NMsg.ofC("cannot access '%s': No such file or directory", file));
             } else {
                 ResultGroup g = new ResultGroup();
                 g.name = path;
@@ -165,7 +165,7 @@ public class LsCommand extends SimpleJShellBuiltin {
             success.result.add(g);
         }
         if (success != null) {
-            NOutStream out = session.out();
+            NOutputStream out = session.out();
             switch (session.getOutputFormat()) {
                 case XML:
                 case JSON:
@@ -173,14 +173,14 @@ public class LsCommand extends SimpleJShellBuiltin {
                 case TREE:
                 case TSON:
                 case PROPS: {
-                    out.printlnf(success
+                    out.println(success
                             .result
                             .stream().collect(Collectors.toMap(x -> x.name, x -> x.children))
                     );
                     break;
                 }
                 case TABLE: {
-                    out.printlnf(success.result.stream()
+                    out.println(success.result.stream()
                             .flatMap(x ->
                                     x.children == null ? Stream.empty() :
                                             x.children.stream().map(y -> {
@@ -200,7 +200,7 @@ public class LsCommand extends SimpleJShellBuiltin {
                                 out.println();
                             }
                             if (options.paths.size() > 1) {
-                                out.printf("%s:\n", resultGroup.name);
+                                out.println(NMsg.ofC("%s:", resultGroup.name));
                             }
                             for (ResultItem resultItem : resultGroup.children) {
                                 printPlain(resultItem, options, out, session);
@@ -228,13 +228,13 @@ public class LsCommand extends SimpleJShellBuiltin {
         }
     }
 
-    private void printPlain(ResultItem item, Options options, NOutStream out, NSession session) {
+    private void printPlain(ResultItem item, Options options, NOutputStream out, NSession session) {
         if (options.l) {
-            out.printf("%s%s  %s %s %s %s ",
+            out.print(NMsg.ofC("%s%s  %s %s %s %s ",
                     item.type, item.uperms != null ? item.uperms : item.jperms, NStringUtils.trim(item.owner), NStringUtils.trim(item.group),
                     options.h ? options.byteFormat.format(item.length) : String.format("%9d", item.length),
                     item.modified == null ? "" : SIMPLE_DATE_FORMAT.format(item.modified)
-            );
+            ));
         }
         String name = NPath.of(item.path, session).getName();
         NTexts text = NTexts.of(session);

@@ -27,15 +27,15 @@ package net.thevpc.nuts.runtime.standalone.io.printstream;
 
 import java.io.PrintStream;
 import net.thevpc.nuts.io.NOutputStreamTransparentAdapter;
-import net.thevpc.nuts.io.NOutStream;
+import net.thevpc.nuts.io.NOutputStream;
 import net.thevpc.nuts.runtime.standalone.text.ExtendedFormatAware;
 
 /**
  *
  * @author thevpc
  */
-public interface NOutStreamExt extends
-        NOutStream,
+public interface NOutputStreamExt extends
+        NOutputStream,
         NOutputStreamTransparentAdapter,
         ExtendedFormatAware {
     PrintStream basePrintStream();

@@ -60,7 +60,7 @@ public class ApacheTomcatRepositoryModel implements NRepositoryModel {
 
             }
             if (url != null) {
-                session.getTerminal().printProgress(NMsg.ofCstyle("peek %s", url));
+                session.getTerminal().printProgress(NMsg.ofC("peek %s", url));
                 try (InputStream inputStream = url.openStream()) {
                     //ws.io().copy().from(r).getByteArrayResult();
                     found = true;

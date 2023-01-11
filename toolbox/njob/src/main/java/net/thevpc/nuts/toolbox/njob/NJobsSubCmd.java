@@ -5,6 +5,7 @@ import net.thevpc.nuts.cmdline.NArg;
 import net.thevpc.nuts.cmdline.NCommandLine;
 import net.thevpc.nuts.format.NMutableTableModel;
 import net.thevpc.nuts.format.NTableFormat;
+import net.thevpc.nuts.io.NOutputStream;
 import net.thevpc.nuts.text.NTextStyle;
 import net.thevpc.nuts.text.NTexts;
 import net.thevpc.nuts.toolbox.njob.model.*;
@@ -93,10 +94,10 @@ public class NJobsSubCmd {
         if (cmd.isExecMode()) {
             service.jobs().addJob(t);
             if (context.getSession().isPlainTrace()) {
-                context.getSession().out().printf("job %s (%s) added.\n",
+                context.getSession().out().println(NMsg.ofC("job %s (%s) added.",
                         NTexts.of(context.getSession()).ofStyled(t.getId(), NTextStyle.primary5()),
                         t.getName()
-                );
+                ));
             }
             if (show.get()) {
                 runJobShow(NCommandLine.of(new String[]{t.getId()}));
@@ -222,10 +223,10 @@ public class NJobsSubCmd {
             for (NJob job : new LinkedHashSet<>(d.jobs)) {
                 service.jobs().updateJob(job);
                 if (context.getSession().isPlainTrace()) {
-                    context.getSession().out().printf("job %s (%s) updated.\n",
+                    context.getSession().out().println(NMsg.ofC("job %s (%s) updated.",
                             text.ofStyled(job.getId(), NTextStyle.primary5()),
                             text.ofStyled(job.getName(), NTextStyle.primary1())
-                    );
+                    ));
                 }
             }
             if (d.show) {
@@ -275,15 +276,15 @@ public class NJobsSubCmd {
             if (cmd.isExecMode()) {
                 if (service.jobs().removeJob(t.getId())) {
                     if (context.getSession().isPlainTrace()) {
-                        context.getSession().out().printf("job %s removed.\n",
+                        context.getSession().out().println(NMsg.ofC("job %s removed.",
                                 text.ofStyled(a.toString(), NTextStyle.primary5())
-                        );
+                        ));
                     }
                 } else {
-                    context.getSession().out().printf("job %s %s.\n",
+                    context.getSession().out().println(NMsg.ofC("job %s %s.",
                             text.ofStyled(a.toString(), NTextStyle.primary5()),
                             text.ofStyled("not found", NTextStyle.error())
-                    );
+                    ));
                 }
             }
         }
@@ -295,27 +296,28 @@ public class NJobsSubCmd {
             NArg a = cmd.next().get(session);
             if (cmd.isExecMode()) {
                 NJob job = findJob(a.toString(), cmd);
+                NOutputStream out = context.getSession().out();
                 if (job == null) {
-                    context.getSession().out().printf("```kw %s```: ```error not found```.\n",
+                    out.println(NMsg.ofC("```kw %s```: ```error not found```.",
                             a.toString()
-                    );
+                    ));
                 } else {
-                    context.getSession().out().printf("```kw %s```:\n",
+                    out.println(NMsg.ofC("```kw %s```:",
                             job.getId()
-                    );
+                    ));
                     String prefix = "\t                    ";
-                    context.getSession().out().printf("\t```kw2 job name```      : %s:\n", JobServiceCmd.formatWithPrefix(job.getName(), prefix));
+                    out.println(NMsg.ofC("\t```kw2 job name```      : %s:", JobServiceCmd.formatWithPrefix(job.getName(), prefix)));
                     String project = job.getProject();
                     NProject p = service.projects().getProject(project);
                     if (project == null || project.length() == 0) {
-                        context.getSession().out().printf("\t```kw2 project```       : %s\n", "");
+                        out.println(NMsg.ofC("\t```kw2 project```       : %s", ""));
                     } else {
-                        context.getSession().out().printf("\t```kw2 project```       : %s (%s)\n", project, JobServiceCmd.formatWithPrefix(p == null ? "?" : p.getName(), prefix));
+                        out.println(NMsg.ofC("\t```kw2 project```       : %s (%s)", project, JobServiceCmd.formatWithPrefix(p == null ? "?" : p.getName(), prefix)));
                     }
-                    context.getSession().out().printf("\t```kw2 duration```      : %s\n", JobServiceCmd.formatWithPrefix(job.getDuration(), prefix));
-                    context.getSession().out().printf("\t```kw2 start time```    : %s\n", JobServiceCmd.formatWithPrefix(job.getStartTime(), prefix));
-                    context.getSession().out().printf("\t```kw2 duration extra```: %s\n", JobServiceCmd.formatWithPrefix(job.getInternalDuration(), prefix));
-                    context.getSession().out().printf("\t```kw2 observations```  : %s\n", JobServiceCmd.formatWithPrefix(job.getObservations(), prefix));
+                    out.println(NMsg.ofC("\t```kw2 duration```      : %s", JobServiceCmd.formatWithPrefix(job.getDuration(), prefix)));
+                    out.println(NMsg.ofC("\t```kw2 start time```    : %s", JobServiceCmd.formatWithPrefix(job.getStartTime(), prefix)));
+                    out.println(NMsg.ofC("\t```kw2 duration extra```: %s", JobServiceCmd.formatWithPrefix(job.getInternalDuration(), prefix)));
+                    out.println(NMsg.ofC("\t```kw2 observations```  : %s", JobServiceCmd.formatWithPrefix(job.getObservations(), prefix)));
                 }
             }
         }
@@ -498,7 +500,7 @@ public class NJobsSubCmd {
                         .setBorder("spaces")
                         .setValue(m).println();
             } else {
-                context.getSession().out().printf(r.collect(Collectors.toList()));
+                context.getSession().out().print(r.collect(Collectors.toList()));
             }
         }
     }
@@ -518,7 +520,7 @@ public class NJobsSubCmd {
             t = service.jobs().getJob(pid);
         }
         if (t == null) {
-            cmd.throwError(NMsg.ofCstyle("job not found: %s", pid));
+            cmd.throwError(NMsg.ofC("job not found: %s", pid));
         }
         return t;
     }

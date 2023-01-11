@@ -139,7 +139,7 @@ public class DefaultNWorkspaceFactory implements NWorkspaceFactory {
                 obj = (T) resolveInstance(c, type, session);
             } catch (Exception e) {
                 LOG.with().session(validLogSession(session)).level(Level.FINEST).verb(NLoggerVerb.FAIL).error(e)
-                        .log(NMsg.ofJstyle("unable to instantiate {0} for {1} : {2}", c, type, e));
+                        .log(NMsg.ofJ("unable to instantiate {0} for {1} : {2}", c, type, e));
             }
             if (obj != null) {
                 all.add(obj);
@@ -187,11 +187,11 @@ public class DefaultNWorkspaceFactory implements NWorkspaceFactory {
     public <T> void registerInstance(Class<T> extensionPoint, T implementation, NSession session) {
         checkSession(session);
         if (isRegisteredInstance(extensionPoint, implementation, session)) {
-            throw new NIllegalArgumentException(session, NMsg.ofCstyle("already registered Extension %s for %s", implementation, extensionPoint.getName()));
+            throw new NIllegalArgumentException(session, NMsg.ofC("already registered Extension %s for %s", implementation, extensionPoint.getName()));
         }
         if (LOG.isLoggable(Level.CONFIG)) {
             LOG.with().session(validLogSession(session)).level(Level.FINEST).verb(NLoggerVerb.ADD)
-                    .log(NMsg.ofJstyle("bind    {0} for impl instance {1}", NStringUtils.formatAlign(extensionPoint.getSimpleName(), 40, NPositionType.FIRST),
+                    .log(NMsg.ofJ("bind    {0} for impl instance {1}", NStringUtils.formatAlign(extensionPoint.getSimpleName(), 40, NPositionType.FIRST),
                             implementation.getClass().getName()));
         }
         instances.add(extensionPoint, implementation);
@@ -201,11 +201,11 @@ public class DefaultNWorkspaceFactory implements NWorkspaceFactory {
     public void registerType(Class extensionPoint, Class implementation, NId source, NSession session) {
         checkSession(session);
         if (isRegisteredType(extensionPoint, implementation.getName(), session)) {
-            throw new NIllegalArgumentException(session, NMsg.ofCstyle("already registered Extension %s for %s", implementation.getName(), extensionPoint.getName()));
+            throw new NIllegalArgumentException(session, NMsg.ofC("already registered Extension %s for %s", implementation.getName(), extensionPoint.getName()));
         }
         if (LOG.isLoggable(Level.CONFIG)) {
             LOG.with().session(validLogSession(session)).level(Level.FINEST).verb(NLoggerVerb.ADD)
-                    .log(NMsg.ofJstyle("bind    {0} for impl type {1}", NStringUtils.formatAlign(extensionPoint.getSimpleName(), 40, NPositionType.FIRST),
+                    .log(NMsg.ofJ("bind    {0} for impl type {1}", NStringUtils.formatAlign(extensionPoint.getSimpleName(), 40, NPositionType.FIRST),
                             implementation.getName()));
         }
         IdCache t = discoveredCacheById.get(source);
@@ -308,18 +308,18 @@ public class DefaultNWorkspaceFactory implements NWorkspaceFactory {
         T theInstance = null;
         CachedConstructor<T> ctrl = getCtrl0(t, session);
         if (ctrl == null) {
-            throw new NFactoryException(session, NMsg.ofCstyle("instantiate '%s' failed. missing constructor", t));
+            throw new NFactoryException(session, NMsg.ofC("instantiate '%s' failed. missing constructor", t));
         }
         try {
             theInstance = ctrl.ctrl().newInstance(ctrl.args(session));
         } catch (InstantiationException | InvocationTargetException e) {
             if (isBootstrapLogType(apiType)) {
                 //do not use log. this is a bug that must be resolved fast!
-                safeLog(NMsg.ofCstyle("unable to instantiate %s as %s", apiType, t), e, session);
+                safeLog(NMsg.ofC("unable to instantiate %s as %s", apiType, t), e, session);
             } else {
                 if (LOG.isLoggable(Level.FINEST)) {
                     LOG.with().session(validLogSession(session)).level(Level.FINEST).verb(NLoggerVerb.FAIL).error(e)
-                            .log(NMsg.ofJstyle("unable to instantiate {0}", t));
+                            .log(NMsg.ofJ("unable to instantiate {0}", t));
                 }
             }
             Throwable cause = e.getCause();
@@ -329,18 +329,18 @@ public class DefaultNWorkspaceFactory implements NWorkspaceFactory {
             if (cause instanceof RuntimeException) {
                 throw (RuntimeException) cause;
             }
-            throw new NFactoryException(session, NMsg.ofCstyle("instantiate '%s' failed", t), cause);
+            throw new NFactoryException(session, NMsg.ofC("instantiate '%s' failed", t), cause);
         } catch (IllegalAccessException e) {
             if (isBootstrapLogType(apiType)) {
                 //do not use log. this is a bug that must be resolved fast!
-                safeLog(NMsg.ofCstyle("unable to instantiate %s as %s", apiType, t), e, session);
+                safeLog(NMsg.ofC("unable to instantiate %s as %s", apiType, t), e, session);
             } else {
                 if (LOG.isLoggable(Level.FINEST)) {
                     LOG.with().session(validLogSession(session)).level(Level.FINEST).verb(NLoggerVerb.FAIL).error(e)
-                            .log(NMsg.ofJstyle("unable to instantiate {0}", t));
+                            .log(NMsg.ofJ("unable to instantiate {0}", t));
                 }
             }
-            throw new NFactoryException(session, NMsg.ofCstyle("instantiate '%s' failed", t), e);
+            throw new NFactoryException(session, NMsg.ofC("instantiate '%s' failed", t), e);
         }
         //initialize?
         return theInstance;
@@ -354,12 +354,12 @@ public class DefaultNWorkspaceFactory implements NWorkspaceFactory {
         } catch (InstantiationException e) {
             if (isBootstrapLogType(apiType)) {
                 //do not use log. this is a bug that must be resolved fast!
-                safeLog(NMsg.ofCstyle("unable to instantiate %s as %s", apiType, t), e, session);
+                safeLog(NMsg.ofC("unable to instantiate %s as %s", apiType, t), e, session);
             } else {
 
                 if (LOG.isLoggable(Level.FINEST)) {
                     LOG.with().session(validLogSession(session)).level(Level.FINEST).verb(NLoggerVerb.FAIL).error(e)
-                            .log(NMsg.ofJstyle("unable to instantiate {0}", t));
+                            .log(NMsg.ofJ("unable to instantiate {0}", t));
                 }
             }
             Throwable cause = e.getCause();
@@ -369,21 +369,21 @@ public class DefaultNWorkspaceFactory implements NWorkspaceFactory {
             if (cause instanceof RuntimeException) {
                 throw (RuntimeException) cause;
             }
-            throw new NFactoryException(session, NMsg.ofCstyle("instantiate '%s' failed", t), cause);
+            throw new NFactoryException(session, NMsg.ofC("instantiate '%s' failed", t), cause);
         } catch (Exception e) {
             if (isBootstrapLogType(apiType)) {
                 //do not use log. this is a bug that must be resolved fast!
-                safeLog(NMsg.ofCstyle("unable to instantiate %s as %s", apiType, t), e, session);
+                safeLog(NMsg.ofC("unable to instantiate %s as %s", apiType, t), e, session);
             } else {
                 if (LOG.isLoggable(Level.FINEST)) {
                     LOG.with().session(validLogSession(session)).level(Level.FINEST).verb(NLoggerVerb.FAIL).error(e)
-                            .log(NMsg.ofJstyle("unable to instantiate {0}", t));
+                            .log(NMsg.ofJ("unable to instantiate {0}", t));
                 }
             }
             if (e instanceof RuntimeException) {
                 throw (RuntimeException) e;
             }
-            throw new NFactoryException(session, NMsg.ofCstyle("instantiate '%s' failed", t), e);
+            throw new NFactoryException(session, NMsg.ofC("instantiate '%s' failed", t), e);
         }
         //initialize?
         return t1;
@@ -452,7 +452,7 @@ public class DefaultNWorkspaceFactory implements NWorkspaceFactory {
                             }
                             default: {
                                 LOG.with().session(validLogSession(session)).level(Level.FINEST).verb(NLoggerVerb.FAIL)
-                                        .log(NMsg.ofJstyle("invalid scope {0} ; expected {1} for  {2}",
+                                        .log(NMsg.ofJ("invalid scope {0} ; expected {1} for  {2}",
                                                 implScope.value(),
                                                 apiScope.value(),
                                                 implType.getName()
@@ -500,7 +500,7 @@ public class DefaultNWorkspaceFactory implements NWorkspaceFactory {
             if (old == null || !old.equals(implType.getName())) {
                 _alreadyLogger.put(baseType.getName(), implType.getName());
                 LOG.with().session(validLogSession(session)).level(Level.FINEST).verb(NLoggerVerb.READ)
-                        .log(NMsg.ofJstyle("resolve {0} to  ```underlined {1}``` {2}",
+                        .log(NMsg.ofJ("resolve {0} to  ```underlined {1}``` {2}",
                                 NStringUtils.formatAlign(baseType.getSimpleName(), 40, NPositionType.FIRST),
                                 scope,
                                 implType.getName()
@@ -550,7 +550,7 @@ public class DefaultNWorkspaceFactory implements NWorkspaceFactory {
                 singletons.put(type, o);
                 if (LOG.isLoggable(Level.CONFIG)) {
                     LOG.with().session(validLogSession(session)).level(Level.FINEST).verb(NLoggerVerb.READ)
-                            .log(NMsg.ofJstyle("resolve {0} to  ```underlined singleton``` {1}", NStringUtils.formatAlign(apiType.getSimpleName(), 40, NPositionType.FIRST), o.getClass().getName()));
+                            .log(NMsg.ofJ("resolve {0} to  ```underlined singleton``` {1}", NStringUtils.formatAlign(apiType.getSimpleName(), 40, NPositionType.FIRST), o.getClass().getName()));
                 }
             }
             return (T) o;
@@ -558,7 +558,7 @@ public class DefaultNWorkspaceFactory implements NWorkspaceFactory {
             T o = instantiate0(type, argTypes, args, apiType, session);
             if (LOG.isLoggable(Level.CONFIG)) {
                 LOG.with().session(validLogSession(session)).level(Level.FINEST).verb(NLoggerVerb.READ)
-                        .log(NMsg.ofJstyle("resolve {0} to  ```underlined prototype``` {1}", NStringUtils.formatAlign(apiType.getSimpleName(), 40, NPositionType.FIRST), o.getClass().getName()));
+                        .log(NMsg.ofJ("resolve {0} to  ```underlined prototype``` {1}", NStringUtils.formatAlign(apiType.getSimpleName(), 40, NPositionType.FIRST), o.getClass().getName()));
             }
             return o;
         }
@@ -572,7 +572,7 @@ public class DefaultNWorkspaceFactory implements NWorkspaceFactory {
             //if static instance found, always return it!
             if (LOG.isLoggable(Level.CONFIG)) {
                 LOG.with().session(validLogSession(session)).level(Level.FINEST).verb(NLoggerVerb.READ)
-                        .log(NMsg.ofJstyle("resolve {0} to singleton {1}", NStringUtils.formatAlign(type.getSimpleName(), 40, NPositionType.FIRST), one.getClass().getName()));
+                        .log(NMsg.ofJ("resolve {0} to singleton {1}", NStringUtils.formatAlign(type.getSimpleName(), 40, NPositionType.FIRST), one.getClass().getName()));
             }
             return (T) one;
         }
@@ -583,7 +583,7 @@ public class DefaultNWorkspaceFactory implements NWorkspaceFactory {
         for (Class<T> t : extensionTypes) {
             return instantiate0(t, session, type);
         }
-        throw new NElementNotFoundException(session, NMsg.ofCstyle("type %s not found", type));
+        throw new NElementNotFoundException(session, NMsg.ofC("type %s not found", type));
     }
 
     public <T> List<T> createAll(Class<T> type, Class[] argTypes, Object[] args, NSession session) {
@@ -594,7 +594,7 @@ public class DefaultNWorkspaceFactory implements NWorkspaceFactory {
                 obj = (T) resolveInstance(c, type, argTypes, args, session);
             } catch (Exception e) {
                 LOG.with().session(validLogSession(session)).level(Level.WARNING).verb(NLoggerVerb.FAIL).error(e)
-                        .log(NMsg.ofJstyle("unable to instantiate {0} for {1} : {2}", c, type, e));
+                        .log(NMsg.ofJ("unable to instantiate {0} for {1} : {2}", c, type, e));
             }
             if (obj != null) {
                 all.add(obj);
@@ -649,12 +649,12 @@ public class DefaultNWorkspaceFactory implements NWorkspaceFactory {
                         c = Class.forName(n, false, bootClassLoader);
                     } catch (ClassNotFoundException x) {
                         LOG.with().session(validLogSession(session)).verb(NLoggerVerb.WARNING).level(Level.FINE).error(x)
-                                .log(NMsg.ofJstyle("not a valid type {0}", c));
+                                .log(NMsg.ofJ("not a valid type {0}", c));
                     }
                     if (c != null) {
                         if (!serviceClass.isAssignableFrom(c)) {
                             LOG.with().session(validLogSession(session)).verb(NLoggerVerb.WARNING).level(Level.FINE)
-                                    .log(NMsg.ofJstyle("not a valid type {0} <> {1}, ignore...", c, serviceClass));
+                                    .log(NMsg.ofJ("not a valid type {0} <> {1}, ignore...", c, serviceClass));
                         } else {
                             cc.add(c);
                         }

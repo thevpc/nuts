@@ -119,7 +119,7 @@ public class CoreIOUtils {
                 return aw.convert(NTerminalModeOp.FILTER);
             }
             default: {
-                throw new NIllegalArgumentException(session, NMsg.ofCstyle("unsupported terminal mode %s", expected));
+                throw new NIllegalArgumentException(session, NMsg.ofC("unsupported terminal mode %s", expected));
             }
         }
     }
@@ -182,8 +182,8 @@ public class CoreIOUtils {
 //        return sb.toString();
 //    }
 
-    public static NOutStream resolveOut(NSession session) {
-        return (session.getTerminal() == null) ? NOutStream.ofNull(session)
+    public static NOutputStream resolveOut(NSession session) {
+        return (session.getTerminal() == null) ? NOutputStream.ofNull(session)
                 : session.getTerminal().out();
     }
 
@@ -436,13 +436,13 @@ public class CoreIOUtils {
                         Files.delete(file);
                         if (LOG != null) {
                             LOG.with().session(session).level(Level.FINEST).verb(NLoggerVerb.WARNING).log(
-                                    NMsg.ofJstyle("delete file {0}", file));
+                                    NMsg.ofJ("delete file {0}", file));
                         }
                         deleted[0]++;
                     } catch (IOException e) {
                         if (LOG != null) {
                             LOG.with().session(session).level(Level.FINEST).verb(NLoggerVerb.WARNING)
-                                    .log(NMsg.ofJstyle("failed deleting file : {0}", file)
+                                    .log(NMsg.ofJ("failed deleting file : {0}", file)
                                     );
                         }
                         deleted[2]++;
@@ -461,13 +461,13 @@ public class CoreIOUtils {
                         Files.delete(dir);
                         if (LOG != null) {
                             LOG.with().session(session).level(Level.FINEST).verb(NLoggerVerb.WARNING)
-                                    .log(NMsg.ofJstyle("delete folder {0}", dir));
+                                    .log(NMsg.ofJ("delete folder {0}", dir));
                         }
                         deleted[1]++;
                     } catch (IOException e) {
                         if (LOG != null) {
                             LOG.with().session(session).level(Level.FINEST).verb(NLoggerVerb.WARNING)
-                                    .log(NMsg.ofJstyle("failed deleting folder: {0}", dir)
+                                    .log(NMsg.ofJ("failed deleting folder: {0}", dir)
                                     );
                         }
                         deleted[2]++;
@@ -570,7 +570,7 @@ public class CoreIOUtils {
 
     public static URL resolveURLFromResource(Class cls, String urlPath, NSession session) {
         if (!urlPath.startsWith("/")) {
-            throw new NIllegalArgumentException(session, NMsg.ofCstyle("unable to resolve url from %s", urlPath));
+            throw new NIllegalArgumentException(session, NMsg.ofC("unable to resolve url from %s", urlPath));
         }
         URL url = cls.getResource(urlPath);
         String urlFile = url.getFile();
@@ -601,7 +601,7 @@ public class CoreIOUtils {
                     throw new NIOException(session, ex);
                 }
             }
-            throw new NIllegalArgumentException(session, NMsg.ofCstyle("unable to resolve url from %s", urlPath));
+            throw new NIllegalArgumentException(session, NMsg.ofC("unable to resolve url from %s", urlPath));
         }
     }
 
@@ -616,7 +616,7 @@ public class CoreIOUtils {
                 try {
                     encoded.append(URLEncoder.encode(t, "UTF-8"));
                 } catch (UnsupportedEncodingException ex) {
-                    throw new NIllegalArgumentException(session, NMsg.ofCstyle("unable to encode %s", t), ex);
+                    throw new NIllegalArgumentException(session, NMsg.ofC("unable to encode %s", t), ex);
                 }
             }
         }
@@ -1155,7 +1155,7 @@ public class CoreIOUtils {
                     out.mkParentDirs();
                     out.writeBytes(content);
                     if (session.isPlainTrace()) {
-                        session.out().resetLine().printf("create file %s%n", out);
+                        session.out().resetLine().println(NMsg.ofC("create file %s", out));
                     }
                     return PathInfo.Status.CREATED;
                 }
@@ -1163,7 +1163,7 @@ public class CoreIOUtils {
                     if (session.getTerminal().ask()
                             .resetLine()
                             .setDefaultValue(true).setSession(session)
-                            .forBoolean(NMsg.ofCstyle("create %s ?",
+                            .forBoolean(NMsg.ofC("create %s ?",
                                     NTexts.of(session).ofStyled(
                                             betterPath(out.toString()), NTextStyle.path()
                                     ))
@@ -1171,7 +1171,7 @@ public class CoreIOUtils {
                         out.mkParentDirs();
                         out.writeBytes(content);
                         if (session.isPlainTrace()) {
-                            session.out().resetLine().printf("create file %s%n", out);
+                            session.out().resetLine().println(NMsg.ofC("create file %s", out));
                         }
                         return PathInfo.Status.CREATED;
                     } else {
@@ -1193,7 +1193,7 @@ public class CoreIOUtils {
                 case OVERRIDE: {
                     out.writeBytes(content);
                     if (session.isPlainTrace()) {
-                        session.out().resetLine().printf("update file %s%n", out);
+                        session.out().resetLine().println(NMsg.ofC("update file %s", out));
                     }
                     return PathInfo.Status.OVERRIDDEN;
                 }
@@ -1201,14 +1201,14 @@ public class CoreIOUtils {
                     if (session.getTerminal().ask()
                             .resetLine()
                             .setDefaultValue(true).setSession(session)
-                            .forBoolean(NMsg.ofCstyle("override %s ?",
+                            .forBoolean(NMsg.ofC("override %s ?",
                                     NTexts.of(session).ofStyled(
                                             betterPath(out.toString()), NTextStyle.path()
                                     ))
                             ).getBooleanValue()) {
                         out.writeBytes(content);
                         if (session.isPlainTrace()) {
-                            session.out().resetLine().printf("update file %s%n", out);
+                            session.out().resetLine().println(NMsg.ofC("update file %s", out));
                         }
                         return PathInfo.Status.OVERRIDDEN;
                     } else {

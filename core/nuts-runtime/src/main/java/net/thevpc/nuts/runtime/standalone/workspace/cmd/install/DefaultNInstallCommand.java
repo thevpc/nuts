@@ -25,8 +25,8 @@ package net.thevpc.nuts.runtime.standalone.workspace.cmd.install;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.elem.NElements;
-import net.thevpc.nuts.io.NOutMemoryStream;
-import net.thevpc.nuts.io.NOutStream;
+import net.thevpc.nuts.io.NMemoryOutputStream;
+import net.thevpc.nuts.io.NOutputStream;
 import net.thevpc.nuts.runtime.standalone.dependency.util.NDependencyUtils;
 import net.thevpc.nuts.runtime.standalone.util.iter.IteratorUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceExt;
@@ -113,7 +113,7 @@ public class DefaultNInstallCommand extends AbstractNInstallCommand {
             }
         }else{
             _LOGOP(session).verb(NLoggerVerb.WARNING).level(Level.FINE)
-                    .log(NMsg.ofJstyle("failed to retrieve {0}", def.id));
+                    .log(NMsg.ofJ("failed to retrieve {0}", def.id));
         }
         return def.definition;
     }
@@ -174,7 +174,7 @@ public class DefaultNInstallCommand extends AbstractNInstallCommand {
         NWorkspace ws = getSession().getWorkspace();
         NWorkspaceExt dws = NWorkspaceExt.of(ws);
         NSession session = getSession();
-        NOutStream out = session.out();
+        NOutputStream out = session.out();
         NWorkspaceSecurityManager.of(session).checkAllowed(NConstants.Permissions.INSTALL, "install");
 //        LinkedHashMap<NutsId, Boolean> allToInstall = new LinkedHashMap<>();
         InstallIdList list = new InstallIdList(NInstallStrategy.INSTALL);
@@ -273,7 +273,7 @@ public class DefaultNInstallCommand extends AbstractNInstallCommand {
                         break;
                     }
                     default: {
-                        throw new NUnexpectedException(getSession(), NMsg.ofCstyle("unsupported strategy %s", strategy));
+                        throw new NUnexpectedException(getSession(), NMsg.ofC("unsupported strategy %s", strategy));
                     }
                 }
             } else if (info.getOldInstallStatus().isObsolete()) {
@@ -307,7 +307,7 @@ public class DefaultNInstallCommand extends AbstractNInstallCommand {
                         break;
                     }
                     default: {
-                        throw new NUnexpectedException(getSession(), NMsg.ofCstyle("unsupported strategy %s", strategy));
+                        throw new NUnexpectedException(getSession(), NMsg.ofC("unsupported strategy %s", strategy));
                     }
                 }
             } else if (info.getOldInstallStatus().isInstalled()) {
@@ -335,7 +335,7 @@ public class DefaultNInstallCommand extends AbstractNInstallCommand {
                         break;
                     }
                     default: {
-                        throw new NUnexpectedException(getSession(), NMsg.ofCstyle("unsupported strategy %s", strategy));
+                        throw new NUnexpectedException(getSession(), NMsg.ofC("unsupported strategy %s", strategy));
                     }
                 }
             } else if (info.getOldInstallStatus().isRequired()) {
@@ -364,11 +364,11 @@ public class DefaultNInstallCommand extends AbstractNInstallCommand {
                         break;
                     }
                     default: {
-                        throw new NUnexpectedException(getSession(), NMsg.ofCstyle("unsupported strategy %s", strategy));
+                        throw new NUnexpectedException(getSession(), NMsg.ofC("unsupported strategy %s", strategy));
                     }
                 }
             } else {
-                throw new NUnexpectedException(getSession(), NMsg.ofCstyle("unsupported status %s", info.oldInstallStatus));
+                throw new NUnexpectedException(getSession(), NMsg.ofC("unsupported status %s", info.oldInstallStatus));
             }
         }
         Map<String, List<InstallIdInfo>> error = list.infos().stream().filter(x -> x.doError != null).collect(Collectors.groupingBy(installIdInfo -> installIdInfo.doError));
@@ -385,7 +385,7 @@ public class DefaultNInstallCommand extends AbstractNInstallCommand {
             }
             throw new NInstallException(getSession(), null, NMsg.ofNtf(sb.toString().trim()), null);
         }
-        NOutMemoryStream mout = NOutMemoryStream.of(session);
+        NMemoryOutputStream mout = NMemoryOutputStream.of(session);
         List<NId> nonIgnored = list.ids(x -> !x.ignored);
         List<NId> list_new_installed = list.ids(x -> x.doInstall && !x.isAlreadyExists());
         List<NId> list_new_required = list.ids(x -> x.doRequire && !x.doInstall && !x.isAlreadyExists());
@@ -416,10 +416,10 @@ public class DefaultNInstallCommand extends AbstractNInstallCommand {
                     .forBoolean(NMsg.ofNtf(mout.toString()))
                     .setDefaultValue(true)
                     .setCancelMessage(
-                            NMsg.ofCstyle("installation cancelled : %s ", nonIgnored.stream().map(NId::getFullName).collect(Collectors.joining(", ")))
+                            NMsg.ofC("installation cancelled : %s ", nonIgnored.stream().map(NId::getFullName).collect(Collectors.joining(", ")))
                     )
                     .getBooleanValue()) {
-                throw new NCancelException(getSession(), NMsg.ofCstyle("installation cancelled: %s", nonIgnored.stream().map(NId::getFullName).collect(Collectors.joining(", "))));
+                throw new NCancelException(getSession(), NMsg.ofC("installation cancelled: %s", nonIgnored.stream().map(NId::getFullName).collect(Collectors.joining(", "))));
             }
         } else if (!installed_ignored.isEmpty()) {
             //all packages are already installed, ask if we need to re-install!
@@ -433,10 +433,10 @@ public class DefaultNInstallCommand extends AbstractNInstallCommand {
                     .forBoolean(NMsg.ofNtf(mout.toString()))
                     .setDefaultValue(true)
                     .setCancelMessage(
-                            NMsg.ofCstyle("installation cancelled : %s ", nonIgnored.stream().map(NId::getFullName).collect(Collectors.joining(", ")))
+                            NMsg.ofC("installation cancelled : %s ", nonIgnored.stream().map(NId::getFullName).collect(Collectors.joining(", ")))
                     )
                     .getBooleanValue()) {
-                throw new NCancelException(getSession(), NMsg.ofCstyle("installation cancelled: %s", nonIgnored.stream().map(NId::getFullName).collect(Collectors.joining(", "))));
+                throw new NCancelException(getSession(), NMsg.ofC("installation cancelled: %s", nonIgnored.stream().map(NId::getFullName).collect(Collectors.joining(", "))));
             }
             //force installation
             for (InstallIdInfo info : list.infos()) {
@@ -466,22 +466,22 @@ public class DefaultNInstallCommand extends AbstractNInstallCommand {
                         }
                     } catch (RuntimeException ex) {
                         _LOGOP(session).error(ex).verb(NLoggerVerb.WARNING).level(Level.FINE)
-                                .log(NMsg.ofJstyle("failed to install {0}", info.id));
+                                .log(NMsg.ofJ("failed to install {0}", info.id));
                         failedList.add(info.id);
                         if (session.isPlainTrace()) {
                             if (!NConfigs.of(getSession()).getDefaultTerminal().ask()
                                     .resetLine()
                                     .setSession(session)
-                                    .forBoolean(NMsg.ofCstyle("%s %s and its dependencies... Continue installation?",
+                                    .forBoolean(NMsg.ofC("%s %s and its dependencies... Continue installation?",
                                             NMsg.ofStyled("failed to install", NTextStyle.error()),
                                             info.id))
                                     .setDefaultValue(true)
                                     .getBooleanValue()) {
-                                session.out().resetLine().printlnf("%s ```error installation cancelled with error:``` %s%n", info.id, ex);
+                                session.out().resetLine().println(NMsg.ofC("%s ```error installation cancelled with error:``` %s%n", info.id, ex));
                                 result = new NDefinition[0];
                                 return this;
                             } else {
-                                session.out().resetLine().printlnf("%s ```error installation cancelled with error:``` %s%n", info.id, ex);
+                                session.out().resetLine().println(NMsg.ofC("%s ```error installation cancelled with error:``` %s%n", info.id, ex));
                             }
                         } else {
                             throw ex;
@@ -499,7 +499,7 @@ public class DefaultNInstallCommand extends AbstractNInstallCommand {
         return this;
     }
 
-    private void printList(NOutStream out, String skind, String saction, List<NId> all) {
+    private void printList(NOutputStream out, String skind, String saction, List<NId> all) {
         if (all.size() > 0) {
             if (session.isPlainOut()) {
                 NTexts text = NTexts.of(session);

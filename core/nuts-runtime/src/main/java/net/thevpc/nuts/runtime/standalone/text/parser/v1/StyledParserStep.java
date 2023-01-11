@@ -628,7 +628,7 @@ public class StyledParserStep extends ParserStep {
                 if (s != null) {
                     return text.ofStyled(a, s);
                 }
-                throw new NIllegalArgumentException(session, NMsg.ofCstyle("unable to resolve style from %s",name.toString()));
+                throw new NIllegalArgumentException(session, NMsg.ofC("unable to resolve style from %s",name.toString()));
             }
         }
         throw new NUnsupportedEnumException(session, curState);

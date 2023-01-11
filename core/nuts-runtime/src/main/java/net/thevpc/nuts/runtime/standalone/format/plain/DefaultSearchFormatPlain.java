@@ -7,7 +7,7 @@ package net.thevpc.nuts.runtime.standalone.format.plain;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.cmdline.NCommandLine;
-import net.thevpc.nuts.io.NOutStream;
+import net.thevpc.nuts.io.NOutputStream;
 import net.thevpc.nuts.runtime.standalone.format.NFetchDisplayOptions;
 import net.thevpc.nuts.runtime.standalone.format.NIdFormatHelper;
 import net.thevpc.nuts.runtime.standalone.format.DefaultSearchFormatBase;
@@ -18,7 +18,7 @@ import net.thevpc.nuts.runtime.standalone.format.DefaultSearchFormatBase;
  */
 public class DefaultSearchFormatPlain extends DefaultSearchFormatBase {
 
-    public DefaultSearchFormatPlain(NSession session, NOutStream writer, NFetchDisplayOptions options) {
+    public DefaultSearchFormatPlain(NSession session, NOutputStream writer, NFetchDisplayOptions options) {
         super(session, writer, NContentType.PLAIN,options);
     }
 
@@ -55,7 +55,7 @@ public class DefaultSearchFormatPlain extends DefaultSearchFormatBase {
     private void formatElement(NIdFormatHelper id, long index) {
         NString s = id.getSingleColumnRow(getDisplayOptions());
         getWriter().resetLine();
-        getWriter().printf("%s", s);
+        getWriter().print(s);
         getWriter().println();
         getWriter().flush();
     }

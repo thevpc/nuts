@@ -96,7 +96,7 @@ public class LocalMysqlConfigService {
             saveConfig();
             return this;
         }
-        throw new NIllegalArgumentException(session, NMsg.ofCstyle("no such mysql config : %s",name));
+        throw new NIllegalArgumentException(session, NMsg.ofC("no such mysql config : %s",name));
     }
 
     public LocalMysqlConfigService removeConfig() {
@@ -123,7 +123,7 @@ public class LocalMysqlConfigService {
                 case OPEN_OR_NULL:
                     return null;
                 case OPEN_OR_ERROR:
-                    throw new NIllegalArgumentException(context.getSession(), NMsg.ofCstyle("local instance not found:%s@%s" ,dbName, getName()));
+                    throw new NIllegalArgumentException(context.getSession(), NMsg.ofC("local instance not found:%s@%s" ,dbName, getName()));
                 case CREATE_OR_ERROR:
                 case OPEN_OR_CREATE: {
                     a = new LocalMysqlDatabaseConfig();
@@ -137,7 +137,7 @@ public class LocalMysqlConfigService {
         }
         switch (action) {
             case CREATE_OR_ERROR: {
-                throw new NIllegalArgumentException(context.getSession(), NMsg.ofCstyle("local instance not found:%s@%s",dbName,getName()));
+                throw new NIllegalArgumentException(context.getSession(), NMsg.ofC("local instance not found:%s@%s",dbName,getName()));
             }
             case OPEN_OR_ERROR:
             case OPEN_OR_NULL:
