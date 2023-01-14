@@ -31,7 +31,7 @@ import net.thevpc.nuts.boot.NBootOptionsBuilder;
 import net.thevpc.nuts.cmdline.NCommandLine;
 import net.thevpc.nuts.elem.NArrayElementBuilder;
 import net.thevpc.nuts.elem.NElements;
-import net.thevpc.nuts.io.NOutputStream;
+import net.thevpc.nuts.io.NPrintStream;
 import net.thevpc.nuts.text.NTextStyle;
 import net.thevpc.nuts.text.NTexts;
 import net.thevpc.nuts.util.*;
@@ -955,7 +955,7 @@ public final class NReservedUtils {
         NMsg fm = NSessionAwareExceptionBase.resolveSessionAwareExceptionBase(ex).map(NSessionAwareExceptionBase::getFormattedMessage)
                 .orNull();
         String m = NReservedLangUtils.getErrorMessage(ex);
-        NOutputStream fout = null;
+        NPrintStream fout = null;
         if (out == null) {
             if (session != null) {
                 try {

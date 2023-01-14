@@ -2,7 +2,7 @@ package net.thevpc.nuts.runtime.standalone.text;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.io.NIO;
-import net.thevpc.nuts.io.NOutputStream;
+import net.thevpc.nuts.io.NPrintStream;
 import net.thevpc.nuts.runtime.standalone.io.path.NFormatFromSPI;
 import net.thevpc.nuts.runtime.standalone.session.NSessionUtils;
 import net.thevpc.nuts.runtime.standalone.util.collections.ClassMap;
@@ -21,7 +21,6 @@ import java.lang.reflect.Array;
 import java.net.URL;
 import java.nio.file.Path;
 import java.text.MessageFormat;
-import java.time.Duration;
 import java.time.temporal.Temporal;
 import java.time.temporal.TemporalAmount;
 import java.util.*;
@@ -45,9 +44,9 @@ public class DefaultNTexts implements NTexts {
         register(NFormattable.class, (o, t, s) -> (((NFormattable) o).formatter(session).setSession(getSession()).setNtf(true).format()).toText());
         register(NMsg.class, (o, t, s) -> _NMsg_toString((NMsg) o));
         register(NString.class, (o, t, s) -> ((NString) o).toText());
-        register(InputStream.class, (o, t, s) -> t.ofStyled(NIO.of(s).createInputSource((InputStream) o).getInputMetaData().getName().orElse(o.toString()), NTextStyle.path()));
+        register(InputStream.class, (o, t, s) -> t.ofStyled(NIO.of(s).ofInputSource((InputStream) o).getInputMetaData().getName().orElse(o.toString()), NTextStyle.path()));
         register(OutputStream.class, (o, t, s) -> t.ofStyled(o.toString(), NTextStyle.path()));
-        register(NOutputStream.class, (o, t, s) -> t.ofStyled(o.toString(), NTextStyle.path()));
+        register(NPrintStream.class, (o, t, s) -> t.ofStyled(o.toString(), NTextStyle.path()));
         register(Writer.class, (o, t, s) -> t.ofStyled(o.toString(), NTextStyle.path()));
         register(NEnum.class, (o, t, s) -> t.ofStyled(((NEnum) o).id(), NTextStyle.option()));
         register(Enum.class, (o, t, s) -> (o instanceof NEnum) ? t.ofStyled(((NEnum) o).id(), NTextStyle.option()) : ofStyled(((Enum<?>) o).name(), NTextStyle.option()));

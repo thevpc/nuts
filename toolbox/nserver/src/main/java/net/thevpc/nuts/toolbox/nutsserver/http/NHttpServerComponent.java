@@ -28,7 +28,7 @@ package net.thevpc.nuts.toolbox.nutsserver.http;
 
 import com.sun.net.httpserver.*;
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.io.NOutputStream;
+import net.thevpc.nuts.io.NPrintStream;
 import net.thevpc.nuts.spi.NSupportLevelContext;
 import net.thevpc.nuts.text.NTextStyle;
 import net.thevpc.nuts.text.NTexts;
@@ -230,7 +230,7 @@ public class NHttpServerComponent implements NServerComponent {
             }
         });
         server.start();
-        NOutputStream out = session.out();
+        NPrintStream out = session.out();
         NTexts factory = NTexts.of(session);
         out.println(NMsg.ofC("Nuts Http Service '%s' running %s at %s", serverId,
                 factory.ofStyled(

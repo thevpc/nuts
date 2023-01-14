@@ -26,11 +26,11 @@ package net.thevpc.nuts.runtime.standalone.boot;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.boot.NBootOptions;
 import net.thevpc.nuts.cmdline.DefaultNArg;
-import net.thevpc.nuts.io.NOutputStream;
+import net.thevpc.nuts.io.NPrintStream;
 import net.thevpc.nuts.io.NSystemTerminal;
 import net.thevpc.nuts.runtime.optional.jansi.OptionalJansi;
 import net.thevpc.nuts.runtime.standalone.event.DefaultNWorkspaceEvent;
-import net.thevpc.nuts.runtime.standalone.io.printstream.NOutputStreamNull;
+import net.thevpc.nuts.runtime.standalone.io.printstream.NPrintStreamNull;
 import net.thevpc.nuts.runtime.standalone.io.terminal.*;
 import net.thevpc.nuts.runtime.standalone.session.DefaultNSession;
 import net.thevpc.nuts.runtime.standalone.session.NSessionUtils;
@@ -55,7 +55,7 @@ import java.util.logging.Level;
  */
 public class DefaultNBootModel implements NBootModel {
 
-    public NOutputStream nullOut;
+    public NPrintStream nullOut;
     protected NWorkspace workspace;
     protected boolean firstBoot;
     protected boolean initializing;
@@ -82,7 +82,7 @@ public class DefaultNBootModel implements NBootModel {
 
         this.systemTerminal = NutsSystemTerminal_of_NutsSystemTerminalBase(sys, bootSession);
         this.bootSession.setTerminal(new DefaultNSessionTerminalFromSystem(bootSession, this.systemTerminal));
-        this.nullOut = new NOutputStreamNull(bootSession);
+        this.nullOut = new NPrintStreamNull(bootSession);
     }
 
     public static NWorkspaceTerminalOptions detectAnsiTerminalSupport(NOsFamily os, NWorkspaceOptions bOption, boolean boot, NSession session) {
@@ -297,7 +297,7 @@ public class DefaultNBootModel implements NBootModel {
         return this;
     }
 
-    public NOutputStream nullPrintStream() {
+    public NPrintStream nullPrintStream() {
         return nullOut;
         //return createPrintStream(NullOutputStream.INSTANCE, NutsTerminalMode.FILTERED, session);
     }

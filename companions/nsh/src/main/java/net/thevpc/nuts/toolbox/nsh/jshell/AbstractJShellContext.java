@@ -3,7 +3,7 @@ package net.thevpc.nuts.toolbox.nsh.jshell;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.cmdline.*;
 import net.thevpc.nuts.io.NPath;
-import net.thevpc.nuts.io.NOutputStream;
+import net.thevpc.nuts.io.NPrintStream;
 import net.thevpc.nuts.util.NFunction;
 import net.thevpc.nuts.util.NStringUtils;
 
@@ -31,12 +31,12 @@ public abstract class AbstractJShellContext implements JShellContext {
     }
 
     @Override
-    public NOutputStream out() {
+    public NPrintStream out() {
         return getSession().getTerminal().getOut();
     }
 
     @Override
-    public NOutputStream err() {
+    public NPrintStream err() {
         return getSession().getTerminal().getErr();
     }
 
@@ -98,7 +98,7 @@ public abstract class AbstractJShellContext implements JShellContext {
     @Override
     public JShellContext setOut(PrintStream out) {
         getSession().getTerminal().setOut(
-                NOutputStream.of(out, getSession())
+                NPrintStream.of(out, getSession())
         );
 //        commandContext.getTerminal().setOut(workspace.createPrintStream(out,
 //                true//formatted
@@ -108,7 +108,7 @@ public abstract class AbstractJShellContext implements JShellContext {
 
     public JShellContext setErr(PrintStream err) {
         getSession().getTerminal().setErr(
-                NOutputStream.of(err, getSession())
+                NPrintStream.of(err, getSession())
         );
         return this;
     }

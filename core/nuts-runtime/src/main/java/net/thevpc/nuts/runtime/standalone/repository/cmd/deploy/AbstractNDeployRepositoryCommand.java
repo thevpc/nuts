@@ -98,7 +98,7 @@ public abstract class AbstractNDeployRepositoryCommand extends NRepositoryComman
     @Override
     public NDeployRepositoryCommand setContent(InputStream content) {
         checkSession();
-        this.content = content == null ? null : NIO.of(getSession()).createInputSource(content);
+        this.content = content == null ? null : NIO.of(getSession()).ofInputSource(content);
         return this;
     }
 

@@ -9,7 +9,7 @@ import net.thevpc.nuts.*;
 import net.thevpc.nuts.cmdline.NArg;
 import net.thevpc.nuts.cmdline.NCommandLine;
 import net.thevpc.nuts.elem.NElements;
-import net.thevpc.nuts.io.NOutputStream;
+import net.thevpc.nuts.io.NPrintStream;
 import net.thevpc.nuts.runtime.standalone.app.util.NAppUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.exec.DefaultInternalNExecutableCommand;
 import net.thevpc.nuts.text.NTextStyle;
@@ -60,7 +60,7 @@ public class DefaultNWhichInternalExecutable extends DefaultInternalNExecutableC
         NAssert.requireNonBlank(commands, "commands", session);
         NTexts factory = NTexts.of(session);
         for (String arg : commands) {
-            NOutputStream out = session.out();
+            NPrintStream out = session.out();
             NElements elem = NElements.of(session);
             try {
                 NExecutableInformation p = execCommand.copy().setSession(session).clearCommand().configure(false, arg).which();

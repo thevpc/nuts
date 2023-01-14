@@ -31,7 +31,7 @@ import net.thevpc.nuts.elem.NElementEntry;
 import net.thevpc.nuts.elem.NElements;
 import net.thevpc.nuts.format.*;
 import net.thevpc.nuts.io.NIOException;
-import net.thevpc.nuts.io.NOutputStream;
+import net.thevpc.nuts.io.NPrintStream;
 import net.thevpc.nuts.runtime.standalone.format.DefaultFormatBase;
 import net.thevpc.nuts.runtime.standalone.text.util.NTextUtils;
 import net.thevpc.nuts.runtime.standalone.util.CorePlatformUtils;
@@ -291,8 +291,8 @@ public class DefaultTableFormat extends DefaultFormatBase<NTableFormat> implemen
     }
 
     @Override
-    public void print(NOutputStream w) {
-        NOutputStream out = getValidPrintStream(w);
+    public void print(NPrintStream w) {
+        NPrintStream out = getValidPrintStream(w);
         StringBuilder2 line = new StringBuilder2();
         List<Row> rows = rebuild(getSession());
         if (rows.size() > 0) {

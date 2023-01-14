@@ -16,7 +16,7 @@ import net.thevpc.nuts.cmdline.NArg;
 import net.thevpc.nuts.cmdline.NCommandLine;
 import net.thevpc.nuts.format.NObjectFormat;
 import net.thevpc.nuts.io.NPath;
-import net.thevpc.nuts.io.NOutputStream;
+import net.thevpc.nuts.io.NPrintStream;
 import net.thevpc.nuts.io.NTerminalMode;
 import net.thevpc.nuts.runtime.standalone.format.DefaultFormatBase;
 import net.thevpc.nuts.runtime.standalone.util.*;
@@ -139,7 +139,7 @@ public class DefaultNInfoCommand extends DefaultFormatBase<NInfoCommand> impleme
     }
 
     @Override
-    public void print(NOutputStream w) {
+    public void print(NPrintStream w) {
         checkSession();
         List<String> args = new ArrayList<>();
         args.add("--escape-text=false");

@@ -38,7 +38,7 @@ import net.thevpc.nuts.cmdline.NArg;
 import net.thevpc.nuts.cmdline.NCommandLine;
 import net.thevpc.nuts.io.NCp;
 import net.thevpc.nuts.io.NPath;
-import net.thevpc.nuts.io.NOutputStream;
+import net.thevpc.nuts.io.NPrintStream;
 import net.thevpc.nuts.text.*;
 import net.thevpc.nuts.toolbox.nsh.SimpleJShellBuiltin;
 import net.thevpc.nuts.toolbox.nsh.jshell.JShellExecutionContext;
@@ -104,7 +104,7 @@ public class GrepCommand extends SimpleJShellBuiltin {
     @Override
     protected void execBuiltin(NCommandLine commandLine, JShellExecutionContext context) {
         Options options = context.getOptions();
-        NOutputStream out = context.out();
+        NPrintStream out = context.out();
         if (options.files.isEmpty()) {
             options.files.add(null);
         }

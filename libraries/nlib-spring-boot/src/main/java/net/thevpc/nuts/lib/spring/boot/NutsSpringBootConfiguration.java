@@ -2,7 +2,7 @@ package net.thevpc.nuts.lib.spring.boot;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.cmdline.NCommandLine;
-import net.thevpc.nuts.io.NOutputStream;
+import net.thevpc.nuts.io.NPrintStream;
 import net.thevpc.nuts.io.NSessionTerminal;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.ApplicationArguments;
@@ -31,7 +31,7 @@ public class NutsSpringBootConfiguration {
     }
 
     @Bean
-    public NOutputStream nutsOut(ApplicationArguments applicationArguments) {
+    public NPrintStream nutsOut(ApplicationArguments applicationArguments) {
         return nutsSession(applicationArguments).out();
     }
 

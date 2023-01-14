@@ -12,7 +12,7 @@ import net.thevpc.nuts.cmdline.NCommandLine;
 import net.thevpc.nuts.format.NMutableTableModel;
 import net.thevpc.nuts.format.NTableFormat;
 import net.thevpc.nuts.io.NPath;
-import net.thevpc.nuts.io.NOutputStream;
+import net.thevpc.nuts.io.NPrintStream;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.AbstractNSettingsSubCommand;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.user.NSettingsUserSubCommand;
 import net.thevpc.nuts.spi.NRepositoryDB;
@@ -72,7 +72,7 @@ public class NSettingsRepositorySubCommand extends AbstractNSettingsSubCommand {
 //            return true;
 //
 //        } else {
-        NOutputStream out = session.out();
+        NPrintStream out = session.out();
         if (cmdLine.next("add repo", "ar").isPresent()) {
             class Data {
                 String location = null;

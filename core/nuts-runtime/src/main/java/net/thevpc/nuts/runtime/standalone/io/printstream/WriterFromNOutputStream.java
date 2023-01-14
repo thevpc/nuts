@@ -1,20 +1,20 @@
 package net.thevpc.nuts.runtime.standalone.io.printstream;
 
-import net.thevpc.nuts.io.NOutputStream;
+import net.thevpc.nuts.io.NPrintStream;
 import net.thevpc.nuts.io.NOutputStreamAdapter;
 
 import java.io.IOException;
 import java.io.Writer;
 
 public class WriterFromNOutputStream extends Writer implements NOutputStreamAdapter {
-    private NOutputStream base;
+    private NPrintStream base;
 
-    public WriterFromNOutputStream(NOutputStream base) {
+    public WriterFromNOutputStream(NPrintStream base) {
         this.base = base;
     }
 
     @Override
-    public NOutputStream getBaseOutputStream() {
+    public NPrintStream getBaseOutputStream() {
         return base;
     }
 

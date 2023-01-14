@@ -5,7 +5,7 @@ import net.thevpc.nuts.*;
 import net.thevpc.nuts.cmdline.NArg;
 import net.thevpc.nuts.cmdline.NCommandAutoComplete;
 import net.thevpc.nuts.cmdline.NCommandLine;
-import net.thevpc.nuts.io.NOutputStream;
+import net.thevpc.nuts.io.NPrintStream;
 import net.thevpc.nuts.io.NTerminalMode;
 
 import java.io.InputStream;
@@ -48,12 +48,12 @@ public class DefaultJShellExecutionContext implements JShellExecutionContext {
     }
 
     @Override
-    public NOutputStream out() {
+    public NPrintStream out() {
         return getSession().out();
     }
 
     @Override
-    public NOutputStream err() {
+    public NPrintStream err() {
         return getSession().err();
     }
 
@@ -174,13 +174,13 @@ public class DefaultJShellExecutionContext implements JShellExecutionContext {
 
     @Override
     public JShellExecutionContext setOut(PrintStream out) {
-        getSession().getTerminal().setErr(NOutputStream.of(out, getSession()));
+        getSession().getTerminal().setErr(NPrintStream.of(out, getSession()));
         return this;
     }
 
     @Override
     public JShellExecutionContext setErr(PrintStream err) {
-        getSession().getTerminal().setErr(NOutputStream.of(err, getSession()));
+        getSession().getTerminal().setErr(NPrintStream.of(err, getSession()));
         return this;
     }
 

@@ -8,7 +8,7 @@ package net.thevpc.nuts.runtime.standalone.workspace.cmd.settings;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.cmdline.NArg;
 import net.thevpc.nuts.cmdline.NCommandLine;
-import net.thevpc.nuts.io.NOutputStream;
+import net.thevpc.nuts.io.NPrintStream;
 import net.thevpc.nuts.runtime.standalone.app.util.NAppUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.exec.DefaultInternalNExecutableCommand;
 
@@ -83,7 +83,7 @@ public class DefaultNSettingsInternalExecutable extends DefaultInternalNExecutab
                             return;
                         }
                         if (cmd.hasNext()) {
-                            NOutputStream out = session.err();
+                            NPrintStream out = session.err();
                             out.println(NMsg.ofC("unexpected %s", cmd.peek()));
                             out.println("type for more help : nuts settings -h");
                             throw new NExecutionException(session, NMsg.ofC("unexpected %s", cmd.peek()), 1);
@@ -93,7 +93,7 @@ public class DefaultNSettingsInternalExecutable extends DefaultInternalNExecutab
                 }
         } while (cmd.hasNext());
         if (empty) {
-            NOutputStream out = session.err();
+            NPrintStream out = session.err();
             out.println("missing settings command");
             out.println("type for more help : nuts settings -h");
             throw new NExecutionException(session, NMsg.ofPlain("missing settings command"), 1);

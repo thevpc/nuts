@@ -3,7 +3,7 @@ package net.thevpc.nuts.runtime.standalone.io.terminal;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.cmdline.NCommandAutoCompleteResolver;
 import net.thevpc.nuts.cmdline.NCommandHistory;
-import net.thevpc.nuts.io.NOutputStream;
+import net.thevpc.nuts.io.NPrintStream;
 import net.thevpc.nuts.io.NSystemTerminal;
 import net.thevpc.nuts.runtime.standalone.io.progress.CProgressBar;
 import net.thevpc.nuts.spi.NSupportLevelContext;
@@ -82,12 +82,12 @@ public abstract class AbstractSystemTerminalAdapter extends NSystemTerminalBaseI
     }
 
     @Override
-    public NOutputStream out() {
+    public NPrintStream out() {
         return getOut();
     }
 
     @Override
-    public NOutputStream err() {
+    public NPrintStream err() {
         return getErr();
     }
 
@@ -162,12 +162,12 @@ public abstract class AbstractSystemTerminalAdapter extends NSystemTerminalBaseI
     }
 
     @Override
-    public String readLine(NOutputStream out, NMsg message, NSession session) {
+    public String readLine(NPrintStream out, NMsg message, NSession session) {
         return getBase().readLine(out, message,session);
     }
 
     @Override
-    public char[] readPassword(NOutputStream out, NMsg message, NSession session) {
+    public char[] readPassword(NPrintStream out, NMsg message, NSession session) {
         return getBase().readPassword(out, message, session);
     }
 
@@ -177,12 +177,12 @@ public abstract class AbstractSystemTerminalAdapter extends NSystemTerminalBaseI
     }
 
     @Override
-    public NOutputStream getOut() {
+    public NPrintStream getOut() {
         return getBase().getOut();
     }
 
     @Override
-    public NOutputStream getErr() {
+    public NPrintStream getErr() {
         return getBase().getErr();
     }
 

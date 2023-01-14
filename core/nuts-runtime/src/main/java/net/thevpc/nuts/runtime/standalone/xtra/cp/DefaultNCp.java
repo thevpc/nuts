@@ -7,7 +7,7 @@ package net.thevpc.nuts.runtime.standalone.xtra.cp;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.io.*;
-import net.thevpc.nuts.io.NOutputStream;
+import net.thevpc.nuts.io.NPrintStream;
 import net.thevpc.nuts.runtime.standalone.io.progress.NProgressUtils;
 import net.thevpc.nuts.runtime.standalone.io.progress.SingletonNInputStreamProgressFactory;
 import net.thevpc.nuts.runtime.standalone.io.util.*;
@@ -105,7 +105,7 @@ public class DefaultNCp implements NCp {
     @Override
     public NCp setSource(InputStream source) {
         checkSession();
-        this.source = source == null ? null : NIO.of(session).createInputSource(source);
+        this.source = source == null ? null : NIO.of(session).ofInputSource(source);
         return this;
     }
 
@@ -137,7 +137,7 @@ public class DefaultNCp implements NCp {
     @Override
     public NCp setSource(byte[] source) {
         checkSession();
-        this.source = source == null ? null : NIO.of(session).createInputSource(new ByteArrayInputStream(source));
+        this.source = source == null ? null : NIO.of(session).ofInputSource(new ByteArrayInputStream(source));
         return this;
     }
 
@@ -192,12 +192,12 @@ public class DefaultNCp implements NCp {
     @Override
     public NCp setTarget(OutputStream target) {
         checkSession();
-        this.target = target == null ? null : NIO.of(session).createOutputTarget(target);
+        this.target = target == null ? null : NIO.of(session).ofOutputTarget(target);
         return this;
     }
 
     @Override
-    public NCp setTarget(NOutputStream target) {
+    public NCp setTarget(NPrintStream target) {
         this.target = target;
         return this;
     }
@@ -238,7 +238,7 @@ public class DefaultNCp implements NCp {
     }
 
     @Override
-    public NCp to(NOutputStream target) {
+    public NCp to(NPrintStream target) {
         return setTarget(target);
     }
 
@@ -340,7 +340,7 @@ public class DefaultNCp implements NCp {
     @Override
     public byte[] getByteArrayResult() {
         checkSession();
-        NMemoryOutputStream b = NOutputStream.ofInMemory(session);
+        NMemoryPrintStream b = NPrintStream.ofInMemory(session);
         to(b);
         removeOptions(NPathOption.SAFE);
         run();
@@ -777,7 +777,7 @@ public class DefaultNCp implements NCp {
             monitor.setTraceProgress(options.contains(NPathOption.TRACE));
             monitor.setOrigin(getSourceOrigin());
             monitor.setSourceTypeName(getSourceTypeName());
-            _source = NIO.of(session).createInputSource(
+            _source = NIO.of(session).ofInputSource(
                     monitor.setProgressFactory(getProgressFactory())
                             .setLogProgress(options.contains(NPathOption.LOG))
                             .create());

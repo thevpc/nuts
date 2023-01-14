@@ -26,7 +26,7 @@ package net.thevpc.nuts.spi;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.cmdline.NCommandAutoCompleteResolver;
 import net.thevpc.nuts.cmdline.NCommandHistory;
-import net.thevpc.nuts.io.NOutputStream;
+import net.thevpc.nuts.io.NPrintStream;
 import net.thevpc.nuts.text.NTerminalCommand;
 import net.thevpc.nuts.text.NTextStyles;
 
@@ -42,15 +42,15 @@ import java.util.Objects;
  * @since 0.5.4
  */
 public interface NSystemTerminalBase extends NComponent {
-    String readLine(NOutputStream out, NMsg message, NSession session);
+    String readLine(NPrintStream out, NMsg message, NSession session);
 
-    char[] readPassword(NOutputStream out, NMsg message, NSession session);
+    char[] readPassword(NPrintStream out, NMsg message, NSession session);
 
     InputStream getIn();
 
-    NOutputStream getOut();
+    NPrintStream getOut();
 
-    NOutputStream getErr();
+    NPrintStream getErr();
 
     default NCommandAutoCompleteResolver getAutoCompleteResolver() {
         return null;

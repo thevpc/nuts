@@ -33,7 +33,7 @@ import net.thevpc.nuts.elem.NElements;
 import net.thevpc.nuts.format.NTableFormat;
 import net.thevpc.nuts.format.NTableModel;
 import net.thevpc.nuts.io.*;
-import net.thevpc.nuts.io.NOutputStream;
+import net.thevpc.nuts.io.NPrintStream;
 import net.thevpc.nuts.text.*;
 import net.thevpc.nuts.util.DefaultNProperties;
 import net.thevpc.nuts.runtime.standalone.boot.DefaultNBootModel;
@@ -490,7 +490,7 @@ public class DefaultNWorkspace extends AbstractNWorkspace implements NWorkspaceE
                 }
                 //should install default
                 if (defaultSession().isPlainTrace() && !_boot.getBootOptions().getSkipWelcome().orElse(false)) {
-                    NOutputStream out = defaultSession().out();
+                    NPrintStream out = defaultSession().out();
                     out.resetLine();
                     StringBuilder version = new StringBuilder(nutsVersion.toString());
                     CoreStringUtils.fillString(' ', 25 - version.length(), version);
@@ -900,7 +900,7 @@ public class DefaultNWorkspace extends AbstractNWorkspace implements NWorkspaceE
         } catch (Exception ex2) {
             //just ignore
         }
-        NOutputStream out = session.out();
+        NPrintStream out = session.out();
         NInstallInformation newNInstallInformation = null;
         boolean remoteRepo = true;
         try {
@@ -1615,7 +1615,7 @@ public class DefaultNWorkspace extends AbstractNWorkspace implements NWorkspaceE
                               boolean eraseFiles,
                               boolean traceBeforeEvent,
                               NSession session) {
-        NOutputStream out = CoreIOUtils.resolveOut(session);
+        NPrintStream out = CoreIOUtils.resolveOut(session);
         if (runInstaller) {
             NInstallerComponent installerComponent = getInstaller(def, session);
             if (installerComponent != null) {

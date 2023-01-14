@@ -3,7 +3,7 @@ package net.thevpc.nuts.runtime.standalone.id.format;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.cmdline.NArg;
 import net.thevpc.nuts.cmdline.NCommandLine;
-import net.thevpc.nuts.io.NOutputStream;
+import net.thevpc.nuts.io.NPrintStream;
 import net.thevpc.nuts.runtime.standalone.dependency.NDependencyScopes;
 import net.thevpc.nuts.runtime.standalone.format.DefaultFormatBase;
 import net.thevpc.nuts.runtime.standalone.util.filters.CoreFilterUtils;
@@ -291,7 +291,7 @@ public class DefaultNIdFormat extends DefaultFormatBase<NIdFormat> implements NI
     }
 
     @Override
-    public void print(NOutputStream out) {
+    public void print(NPrintStream out) {
         out.print(format());
     }
 

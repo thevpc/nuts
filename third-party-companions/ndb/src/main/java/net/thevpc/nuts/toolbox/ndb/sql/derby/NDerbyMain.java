@@ -8,7 +8,7 @@ package net.thevpc.nuts.toolbox.ndb.sql.derby;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.cmdline.NArg;
 import net.thevpc.nuts.cmdline.NCommandLine;
-import net.thevpc.nuts.io.NOutputStream;
+import net.thevpc.nuts.io.NPrintStream;
 import net.thevpc.nuts.text.NTextStyle;
 import net.thevpc.nuts.text.NTexts;
 import net.thevpc.nuts.toolbox.ndb.sql.sqlbase.SqlSupport;
@@ -247,7 +247,7 @@ public class NDerbyMain extends SqlSupport<NDerbyConfig> {
         NTexts factory = NTexts.of(session);
         if (args.isExecMode()) {
             if (session.isPlainOut()) {
-                NOutputStream out = session.out();
+                NPrintStream out = session.out();
                 for (RunningDerby jpsResult : DerbyUtils.getRunningInstances(appContext)) {
                     switch (format) {
                         case "short": {

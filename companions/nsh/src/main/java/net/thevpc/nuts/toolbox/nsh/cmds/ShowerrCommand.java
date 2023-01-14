@@ -29,7 +29,7 @@ import net.thevpc.nuts.*;
 import net.thevpc.nuts.cmdline.NArg;
 import net.thevpc.nuts.cmdline.NArgName;
 import net.thevpc.nuts.cmdline.NCommandLine;
-import net.thevpc.nuts.io.NOutputStream;
+import net.thevpc.nuts.io.NPrintStream;
 import net.thevpc.nuts.spi.NComponentScope;
 import net.thevpc.nuts.spi.NComponentScopeType;
 import net.thevpc.nuts.text.NTextStyle;
@@ -69,7 +69,7 @@ public class ShowerrCommand extends SimpleJShellBuiltin {
     @Override
     protected void execBuiltin(NCommandLine commandLine, JShellExecutionContext context) {
         JShellResult r = context.getShellContext().getLastResult();
-        NOutputStream out = context.getSession().out();
+        NPrintStream out = context.getSession().out();
         switch (context.getSession().getOutputFormat()) {
             case PLAIN: {
                 if (r.getCode() == 0) {

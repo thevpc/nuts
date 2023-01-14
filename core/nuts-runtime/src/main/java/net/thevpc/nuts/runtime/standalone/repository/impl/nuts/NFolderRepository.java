@@ -98,7 +98,7 @@ public class NFolderRepository extends NFolderRepositoryBase {
                 try {
                     stream = getStream(idDesc, "artifact descriptor", "retrieve", session);
                     bytes = CoreIOUtils.loadByteArray(stream, true, session);
-                    name = NIO.of(session).createInputSource(stream).getInputMetaData().getName().orElse("no-name");
+                    name = NIO.of(session).ofInputSource(stream).getInputMetaData().getName().orElse("no-name");
                     nutsDescriptor = MavenUtils.of(session).parsePomXmlAndResolveParents(
                             CoreIOUtils.createBytesStream(bytes, NMsg.ofNtf(name), "application/json", "nuts.json", session)
                             , fetchMode, getIdRemotePath(id, session).toString(), this);
@@ -133,7 +133,7 @@ public class NFolderRepository extends NFolderRepositoryBase {
                         );
                 stream = openStream(id, pomURL, id, "artifact descriptor", "retrieve", session);
                 bytes = CoreIOUtils.loadByteArray(stream, true, session);
-                name = NIO.of(session).createInputSource(stream).getInputMetaData().getName().orElse("no-name");
+                name = NIO.of(session).ofInputSource(stream).getInputMetaData().getName().orElse("no-name");
                 nutsDescriptor = MavenUtils.of(session).parsePomXmlAndResolveParents(
                         CoreIOUtils.createBytesStream(bytes, NMsg.ofNtf(name), "text/xml", "pom.xml", session)
                         , fetchMode, getIdRemotePath(id, session).toString(), this);

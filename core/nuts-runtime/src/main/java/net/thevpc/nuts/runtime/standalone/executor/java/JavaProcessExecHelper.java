@@ -2,7 +2,7 @@ package net.thevpc.nuts.runtime.standalone.executor.java;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.io.NPath;
-import net.thevpc.nuts.io.NOutputStream;
+import net.thevpc.nuts.io.NPrintStream;
 import net.thevpc.nuts.runtime.standalone.executor.AbstractSyncIProcessExecHelper;
 import net.thevpc.nuts.runtime.standalone.executor.system.ProcessExecHelper;
 import net.thevpc.nuts.runtime.standalone.util.CoreNUtils;
@@ -42,7 +42,7 @@ class JavaProcessExecHelper extends AbstractSyncIProcessExecHelper {
     @Override
     public int exec() {
         if (execSession.isDry()) {
-            NOutputStream out = execSession.out();
+            NPrintStream out = execSession.out();
             out.println("[dry] ==[nuts-exec]== ");
             for (int i = 0; i < xargs.size(); i++) {
                 NString xarg = xargs.get(i);
@@ -70,7 +70,7 @@ class JavaProcessExecHelper extends AbstractSyncIProcessExecHelper {
 
     private ProcessExecHelper preExec() {
         if (joptions.isShowCommand() || CoreNUtils.isShowCommand(getSession())) {
-            NOutputStream out = execSession.out();
+            NPrintStream out = execSession.out();
             out.println(NMsg.ofC("%s ", NTexts.of(ws).ofStyled("nuts-exec", NTextStyle.primary1())));
             for (int i = 0; i < xargs.size(); i++) {
                 NString xarg = xargs.get(i);

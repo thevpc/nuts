@@ -29,7 +29,7 @@ import net.thevpc.nuts.*;
 import net.thevpc.nuts.cmdline.NCommandLine;
 import net.thevpc.nuts.cmdline.NCommandLineConfigurable;
 import net.thevpc.nuts.format.NIterableFormat;
-import net.thevpc.nuts.io.NOutputStream;
+import net.thevpc.nuts.io.NPrintStream;
 import net.thevpc.nuts.runtime.standalone.util.NConfigurableHelper;
 
 /**
@@ -40,10 +40,10 @@ public abstract class DefaultSearchFormatBase implements NIterableFormat {
 
     private final NFetchDisplayOptions displayOptions;
     private final NSession session;
-    private final NOutputStream writer;
+    private final NPrintStream writer;
     private final NContentType format;
 
-    public DefaultSearchFormatBase(NSession session, NOutputStream writer, NContentType format, NFetchDisplayOptions options) {
+    public DefaultSearchFormatBase(NSession session, NPrintStream writer, NContentType format, NFetchDisplayOptions options) {
         this.format = format;
         this.writer = writer;
         this.session = session;
@@ -96,7 +96,7 @@ public abstract class DefaultSearchFormatBase implements NIterableFormat {
         return session;
     }
 
-    public NOutputStream getWriter() {
+    public NPrintStream getWriter() {
         return writer;
     }
 

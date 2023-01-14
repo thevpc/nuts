@@ -1,7 +1,7 @@
 package net.thevpc.nuts.runtime.standalone.workspace.config;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.io.NOutputStream;
+import net.thevpc.nuts.io.NPrintStream;
 import net.thevpc.nuts.runtime.standalone.workspace.DefaultNWorkspace;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.CommandNWorkspaceCommandFactory;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.ConfigNWorkspaceCommandFactory;
@@ -194,7 +194,7 @@ public class DefaultCustomCommandsModel {
         } else {
             defaultCommandFactory.installCommand(command, session);
             if (session.isPlainTrace()) {
-                NOutputStream out = session.getTerminal().out();
+                NPrintStream out = session.getTerminal().out();
                 NTexts text = NTexts.of(session);
                 out.println(NMsg.ofC("%s command %s",
                         text.ofStyled("install", NTextStyle.success()),
@@ -223,7 +223,7 @@ public class DefaultCustomCommandsModel {
             defaultCommandFactory.uninstallCommand(command.getName(), session);
             defaultCommandFactory.installCommand(command, session);
             if (session.isPlainTrace()) {
-                NOutputStream out = session.getTerminal().out();
+                NPrintStream out = session.getTerminal().out();
                 NTexts text = NTexts.of(session);
                 out.println(NMsg.ofC("%s command %s",
                         text.ofStyled("update ", NTextStyles.of(NTextStyle.success(), NTextStyle.underlined())),
@@ -253,7 +253,7 @@ public class DefaultCustomCommandsModel {
         }
         defaultCommandFactory.uninstallCommand(name, session);
         if (session.isPlainTrace()) {
-            NOutputStream out = session.getTerminal().out();
+            NPrintStream out = session.getTerminal().out();
             out.println(NMsg.ofC("%s command %s", "uninstall", NTexts.of(session).ofStyled(name, NTextStyle.primary3())));
         }
     }

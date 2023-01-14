@@ -1,15 +1,15 @@
 package net.thevpc.nuts.runtime.standalone.io.printstream;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.io.NOutputStream;
+import net.thevpc.nuts.io.NPrintStream;
 import net.thevpc.nuts.io.NTerminalMode;
 import net.thevpc.nuts.text.NTerminalCommand;
 import net.thevpc.nuts.text.NTextStyle;
 
 import java.io.OutputStream;
 
-public class NOutputStreamFiltered extends NOutputStreamRendered {
-    public NOutputStreamFiltered(NOutputStreamBase base, NSession session, Bindings bindings) {
+public class NPrintStreamFiltered extends NPrintStreamRendered {
+    public NPrintStreamFiltered(NPrintStreamBase base, NSession session, Bindings bindings) {
         super(base, session, NTerminalMode.FILTERED,
                 bindings);
         getOutputMetaData().setMessage(
@@ -22,25 +22,25 @@ public class NOutputStreamFiltered extends NOutputStreamRendered {
     }
 
     @Override
-    public NOutputStream setSession(NSession session) {
+    public NPrintStream setSession(NSession session) {
         if (session == null || session == this.session) {
             return this;
         }
-        return new NOutputStreamFiltered(base, session, new Bindings());
+        return new NPrintStreamFiltered(base, session, new Bindings());
     }
 
     @Override
-    protected NOutputStream convertImpl(NTerminalMode other) {
+    protected NPrintStream convertImpl(NTerminalMode other) {
         switch (other) {
             case FORMATTED: {
-                return new NOutputStreamFormatted(base, getSession(), bindings);
+                return new NPrintStreamFormatted(base, getSession(), bindings);
             }
         }
         throw new NIllegalArgumentException(base.getSession(), NMsg.ofC("unsupported %s -> %s", getTerminalMode(), other));
     }
 
     @Override
-    public NOutputStream run(NTerminalCommand command, NSession session) {
+    public NPrintStream run(NTerminalCommand command, NSession session) {
         //do nothing!!
         return this;
     }

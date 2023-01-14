@@ -33,7 +33,7 @@ import net.thevpc.nuts.elem.NElement;
 import net.thevpc.nuts.elem.NElements;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.io.NPathPermission;
-import net.thevpc.nuts.io.NOutputStream;
+import net.thevpc.nuts.io.NPrintStream;
 import net.thevpc.nuts.spi.NComponentScope;
 import net.thevpc.nuts.spi.NComponentScopeType;
 import net.thevpc.nuts.text.NTextStyle;
@@ -165,7 +165,7 @@ public class LsCommand extends SimpleJShellBuiltin {
             success.result.add(g);
         }
         if (success != null) {
-            NOutputStream out = session.out();
+            NPrintStream out = session.out();
             switch (session.getOutputFormat()) {
                 case XML:
                 case JSON:
@@ -228,7 +228,7 @@ public class LsCommand extends SimpleJShellBuiltin {
         }
     }
 
-    private void printPlain(ResultItem item, Options options, NOutputStream out, NSession session) {
+    private void printPlain(ResultItem item, Options options, NPrintStream out, NSession session) {
         if (options.l) {
             out.print(NMsg.ofC("%s%s  %s %s %s %s ",
                     item.type, item.uperms != null ? item.uperms : item.jperms, NStringUtils.trim(item.owner), NStringUtils.trim(item.group),

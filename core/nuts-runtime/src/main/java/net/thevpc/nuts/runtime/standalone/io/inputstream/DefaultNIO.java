@@ -52,19 +52,19 @@ public class DefaultNIO implements NIO {
 
 
     @Override
-    public NOutputStream createNullOutputStream() {
+    public NPrintStream ofNullPrintStream() {
         checkSession();
         return getBootModel().nullPrintStream();
     }
 
     @Override
-    public NMemoryOutputStream createInMemoryOutputStream() {
+    public NMemoryPrintStream ofInMemoryPrintStream() {
         checkSession();
-        return new NByteArrayOutputStream(getSession());
+        return new NByteArrayPrintStream(getSession());
     }
 
     @Override
-    public NOutputStream createOutputStream(OutputStream out, NTerminalMode expectedMode, NSystemTerminalBase term) {
+    public NPrintStream ofPrintStream(OutputStream out, NTerminalMode expectedMode, NSystemTerminalBase term) {
         if (out == null) {
             return null;
         }
@@ -90,18 +90,18 @@ public class DefaultNIO implements NIO {
             return ((NOutputStreamAdapter) out).getBaseOutputStream().setTerminalMode(expectedMode);
         }
         return
-                new NOutputStreamRaw(out, null, null, session, new NOutputStreamBase.Bindings(), term)
+                new NPrintStreamRaw(out, null, null, session, new NPrintStreamBase.Bindings(), term)
                         .setTerminalMode(expectedMode)
                 ;
     }
 
     @Override
-    public NOutputStream createOutputStream(OutputStream out) {
+    public NPrintStream ofPrintStream(OutputStream out) {
         checkSession();
-        return new NOutputStreamRaw(out, null, null, session, new NOutputStreamBase.Bindings(), null);
+        return new NPrintStreamRaw(out, null, null, session, new NPrintStreamBase.Bindings(), null);
     }
 
-    public NOutputStream createOutputStream(Writer out, NTerminalMode mode, NSystemTerminalBase terminal) {
+    public NPrintStream ofPrintStream(Writer out, NTerminalMode mode, NSystemTerminalBase terminal) {
         checkSession();
         if (mode == null) {
             mode = NTerminalMode.INHERITED;
@@ -113,17 +113,17 @@ public class DefaultNIO implements NIO {
             return ((NOutputStreamAdapter) out).getBaseOutputStream().setTerminalMode(mode);
         }
         SimpleWriterOutputStream w = new SimpleWriterOutputStream(out, terminal, session);
-        return createOutputStream(w, mode, terminal);
+        return ofPrintStream(w, mode, terminal);
     }
 
     @Override
-    public NOutputStream createOutputStream(Writer out) {
+    public NPrintStream ofPrintStream(Writer out) {
         checkSession();
-        return createOutputStream(out, NTerminalMode.INHERITED, null);
+        return ofPrintStream(out, NTerminalMode.INHERITED, null);
     }
 
     @Override
-    public boolean isStdout(NOutputStream out) {
+    public boolean isStdout(NPrintStream out) {
         if (out == null) {
             return false;
         }
@@ -131,14 +131,14 @@ public class DefaultNIO implements NIO {
         if (out == st.out()) {
             return true;
         }
-        if (out instanceof NOutputStreamRendered) {
-            return isStdout(((NOutputStreamRendered) out).getBase());
+        if (out instanceof NPrintStreamRendered) {
+            return isStdout(((NPrintStreamRendered) out).getBase());
         }
-        return out instanceof NOutputStreamSystem;
+        return out instanceof NPrintStreamSystem;
     }
 
     @Override
-    public boolean isStderr(NOutputStream out) {
+    public boolean isStderr(NPrintStream out) {
         if (out == null) {
             return false;
         }
@@ -146,19 +146,19 @@ public class DefaultNIO implements NIO {
         if (out == st.err()) {
             return true;
         }
-        if (out instanceof NOutputStreamRendered) {
-            return isStderr(((NOutputStreamRendered) out).getBase());
+        if (out instanceof NPrintStreamRendered) {
+            return isStderr(((NPrintStreamRendered) out).getBase());
         }
-        return out instanceof NOutputStreamSystem;
+        return out instanceof NPrintStreamSystem;
     }
 
     @Override
-    public NOutputStream stdout() {
+    public NPrintStream stdout() {
         return getBootModel().getSystemTerminal().out();
     }
 
     @Override
-    public NOutputStream stderr() {
+    public NPrintStream stderr() {
         return getBootModel().getSystemTerminal().err();
     }
 
@@ -175,12 +175,12 @@ public class DefaultNIO implements NIO {
     }
 
     @Override
-    public NInputSource createInputSource(InputStream inputStream) {
-        return createInputSource(inputStream, null);
+    public NInputSource ofInputSource(InputStream inputStream) {
+        return ofInputSource(inputStream, null);
     }
 
     @Override
-    public NInputSource createInputSource(InputStream inputStream, NInputSourceMetadata metadata) {
+    public NInputSource ofInputSource(InputStream inputStream, NInputSourceMetadata metadata) {
         if (inputStream == null) {
             return null;
         }
@@ -206,7 +206,7 @@ public class DefaultNIO implements NIO {
     }
 
     @Override
-    public NInputSource createMultiRead(NInputSource source) {
+    public NInputSource ofMultiRead(NInputSource source) {
         if (source.isMultiRead()) {
             return source;
         }
@@ -222,23 +222,23 @@ public class DefaultNIO implements NIO {
     }
 
     @Override
-    public NInputSource createInputSource(byte[] bytes) {
-        return createInputSource(new ByteArrayInputStream(bytes));
+    public NInputSource ofInputSource(byte[] bytes) {
+        return ofInputSource(new ByteArrayInputStream(bytes));
     }
 
 
     @Override
-    public NInputSource createInputSource(byte[] inputStream, NInputSourceMetadata metadata) {
-        return createInputSource(new ByteArrayInputStream(inputStream), metadata);
+    public NInputSource ofInputSource(byte[] inputStream, NInputSourceMetadata metadata) {
+        return ofInputSource(new ByteArrayInputStream(inputStream), metadata);
     }
 
     @Override
-    public NOutputTarget createOutputTarget(OutputStream output) {
-        return createOutputTarget(output, null);
+    public NOutputTarget ofOutputTarget(OutputStream output) {
+        return ofOutputTarget(output, null);
     }
 
     @Override
-    public NOutputTarget createOutputTarget(OutputStream output, NOutputTargetMetadata metadata) {
+    public NOutputTarget ofOutputTarget(OutputStream output, NOutputTargetMetadata metadata) {
         if (output == null) {
             return null;
         }

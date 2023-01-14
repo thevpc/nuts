@@ -16,7 +16,7 @@ import net.thevpc.nuts.format.NTableFormat;
 import net.thevpc.nuts.format.NTableModel;
 import net.thevpc.nuts.format.NTreeFormat;
 import net.thevpc.nuts.format.NTreeModel;
-import net.thevpc.nuts.io.NOutputStream;
+import net.thevpc.nuts.io.NPrintStream;
 import net.thevpc.nuts.runtime.standalone.format.DefaultFormatBase;
 import net.thevpc.nuts.runtime.standalone.format.props.DefaultNPropertiesFormat;
 import net.thevpc.nuts.runtime.standalone.util.xml.XmlUtils;
@@ -92,7 +92,7 @@ public class NFormatPlain extends DefaultFormatBase<NContentTypeFormat> implemen
     }
 
     @Override
-    public void print(NOutputStream w) {
+    public void print(NPrintStream w) {
         checkSession();
         Object value = getValue();
         NSession session = getSession();
@@ -138,7 +138,7 @@ public class NFormatPlain extends DefaultFormatBase<NContentTypeFormat> implemen
                     NElements.of(session).setValue(value).setNtf(isNtf()).configure(true, extraConfig.toArray(new String[0])).print(w);
                 }
             }else{
-                NOutputStream out = getValidPrintStream(w);
+                NPrintStream out = getValidPrintStream(w);
                 out.print(NTexts.of(session).ofText(value));
                 out.flush();
             }

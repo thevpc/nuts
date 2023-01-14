@@ -198,7 +198,7 @@ public class Test01_CreateTest {
         }
 
         {
-            NOutputStream stdout = NIO.of(s).stdout();
+            NPrintStream stdout = NIO.of(s).stdout();
             Assertions.assertNotNull(stdout);
         }
 

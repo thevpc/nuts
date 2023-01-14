@@ -23,7 +23,7 @@
  */
 package net.thevpc.nuts.runtime.standalone.boot;
 
-import net.thevpc.nuts.io.NOutputStream;
+import net.thevpc.nuts.io.NPrintStream;
 import net.thevpc.nuts.io.NSystemTerminal;
 
 /**
@@ -35,7 +35,7 @@ public interface NBootModel {
     boolean isInitializing();
     boolean isFirstBoot();
 
-    NOutputStream nullPrintStream();
+    NPrintStream nullPrintStream();
 
     NSystemTerminal getSystemTerminal();
 }

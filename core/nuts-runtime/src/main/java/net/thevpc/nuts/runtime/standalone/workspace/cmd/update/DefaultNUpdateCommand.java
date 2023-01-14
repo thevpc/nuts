@@ -12,13 +12,12 @@ import net.thevpc.nuts.elem.NArrayElementBuilder;
 import net.thevpc.nuts.elem.NElement;
 import net.thevpc.nuts.elem.NElements;
 import net.thevpc.nuts.format.NPositionType;
-import net.thevpc.nuts.io.NOutputStream;
+import net.thevpc.nuts.io.NPrintStream;
 import net.thevpc.nuts.runtime.standalone.util.CoreNUtils;
 import net.thevpc.nuts.runtime.standalone.util.iter.IteratorUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceExt;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.DefaultNUpdateResult;
 import net.thevpc.nuts.runtime.standalone.workspace.config.DefaultNWorkspaceConfigModel;
-import net.thevpc.nuts.runtime.standalone.workspace.config.NConfigsExt;
 import net.thevpc.nuts.runtime.standalone.repository.impl.main.NInstalledRepository;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceUtils;
 import net.thevpc.nuts.text.NTextStyle;
@@ -310,7 +309,7 @@ public class DefaultNUpdateCommand extends AbstractNUpdateCommand {
 
     protected void traceFixes() {
         if (resultFixes != null) {
-            NOutputStream out = getSession().out();
+            NPrintStream out = getSession().out();
             for (FixAction n : resultFixes) {
                 out.println(NMsg.ofC("[```error FIX```] %s %s", n.getId(), n.getProblemKey()));
             }
@@ -320,7 +319,7 @@ public class DefaultNUpdateCommand extends AbstractNUpdateCommand {
     protected void traceUpdates(NWorkspaceUpdateResult result) {
         checkSession();
         NSession session = getSession();
-        NOutputStream out = getSession().out();
+        NPrintStream out = getSession().out();
         List<NUpdateResult> all = result.getAllResults();
         List<NUpdateResult> updates = result.getUpdatable();
         List<NUpdateResult> notInstalled = result.getAllResults().stream()
@@ -547,7 +546,7 @@ public class DefaultNUpdateCommand extends AbstractNUpdateCommand {
     private void applyFixes() {
         if (resultFixes != null) {
             NSession session = getSession();
-            NOutputStream out = session.out();
+            NPrintStream out = session.out();
             for (FixAction n : resultFixes) {
                 n.fix(session);
                 out.println(NMsg.ofC("[```error FIX```] unable to %s %s ", n.getId(), n.getProblemKey()));
@@ -578,7 +577,7 @@ public class DefaultNUpdateCommand extends AbstractNUpdateCommand {
         NWorkspaceUtils.of(getSession()).checkReadOnly();
         boolean requireSave = false;
         NSession validWorkspaceSession = getSession();
-        final NOutputStream out = validWorkspaceSession.out();
+        final NPrintStream out = validWorkspaceSession.out();
         boolean accept = NConfigs.of(getSession()).getDefaultTerminal().ask()
                 .resetLine()
                 .forBoolean(NMsg.ofPlain("would you like to apply updates?")).setDefaultValue(true)
@@ -659,7 +658,7 @@ public class DefaultNUpdateCommand extends AbstractNUpdateCommand {
         NDefinition d1 = r.getAvailable();
 //        final String simpleName = d0 != null ? d0.getId().getShortName() : d1 != null ? d1.getId().getShortName() : id.getShortName();
         final NId simpleId = d0 != null ? d0.getId().getShortId() : d1 != null ? d1.getId().getShortId() : id.getShortId();
-        final NOutputStream out = getSession().out();
+        final NPrintStream out = getSession().out();
         NTexts factory = NTexts.of(session);
         if (r.isUpdateApplied()) {
             if (r.isUpdateForced()) {
@@ -837,7 +836,7 @@ public class DefaultNUpdateCommand extends AbstractNUpdateCommand {
         }
         NWorkspaceExt dws = NWorkspaceExt.of(ws);
         NSession session = getSession();
-        final NOutputStream out = session.out();
+        final NPrintStream out = session.out();
 //        NutsId id = r.getId();
         NDefinition d0 = r.getInstalled();
         NDefinition d1 = r.getAvailable();

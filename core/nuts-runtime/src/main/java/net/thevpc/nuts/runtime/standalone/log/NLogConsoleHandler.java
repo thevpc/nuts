@@ -2,7 +2,7 @@ package net.thevpc.nuts.runtime.standalone.log;
 
 import net.thevpc.nuts.NBootManager;
 import net.thevpc.nuts.util.NLogConfig;
-import net.thevpc.nuts.io.NOutputStream;
+import net.thevpc.nuts.io.NPrintStream;
 import net.thevpc.nuts.NSession;
 
 import java.io.PrintStream;
@@ -13,16 +13,16 @@ import java.util.logging.StreamHandler;
 
 public class NLogConsoleHandler extends StreamHandler {
 
-    private NOutputStream out;
+    private NPrintStream out;
     private NSession session;
 
-    public NLogConsoleHandler(NOutputStream out, boolean closeable, NSession session) {
+    public NLogConsoleHandler(NPrintStream out, boolean closeable, NSession session) {
         this.session = session;
         setFormatter(new NLogRichFormatter(session, false));
         setOutputStream(out, closeable);
     }
 
-    public synchronized void setOutputStream(NOutputStream out, boolean closable) throws SecurityException {
+    public synchronized void setOutputStream(NPrintStream out, boolean closable) throws SecurityException {
         flush();
         this.out = out;
         if (closable) {

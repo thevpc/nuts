@@ -8,7 +8,7 @@ package net.thevpc.nuts.runtime.standalone.workspace.cmd.exec;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.cmdline.NArg;
 import net.thevpc.nuts.cmdline.NCommandLine;
-import net.thevpc.nuts.io.NOutputStream;
+import net.thevpc.nuts.io.NPrintStream;
 
 import java.util.*;
 
@@ -87,7 +87,7 @@ public class DefaultNArtifactExecutable extends AbstractNExecutableCommand {
         if (execSession.isDry()) {
             if (autoInstall && !def.getInstallInformation().get(session).getInstallStatus().isInstalled()) {
                 NWorkspaceSecurityManager.of(execSession).checkAllowed(NConstants.Permissions.AUTO_INSTALL, commandName);
-                NOutputStream out = execSession.out();
+                NPrintStream out = execSession.out();
                 out.println(NMsg.ofC("[dry] ==install== %s", def.getId().getLongName()));
             }
             execCommand.ws_execId(def, commandName, appArgs, executorOptions, workspaceOptions, env, dir, failFast, false, session, execSession.copy().setDry(true), executionType, runAs);

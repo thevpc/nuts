@@ -267,7 +267,7 @@ public class DefaultNCompress implements NCompress {
         if (source == null) {
             throw new NIllegalArgumentException(session, NMsg.ofPlain("null source"));
         }
-        this.sources.add(NIO.of(session).createInputSource(source));
+        this.sources.add(NIO.of(session).ofInputSource(source));
         return this;
     }
 
@@ -320,7 +320,7 @@ public class DefaultNCompress implements NCompress {
             this.target = null;
         } else {
             checkSession();
-            this.target = NIO.of(session).createOutputTarget(target);
+            this.target = NIO.of(session).ofOutputTarget(target);
         }
         return this;
     }

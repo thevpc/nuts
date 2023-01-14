@@ -4,7 +4,7 @@ import net.thevpc.nuts.*;
 import net.thevpc.nuts.format.NObjectFormat;
 import net.thevpc.nuts.io.DefaultNOutputTargetMetadata;
 import net.thevpc.nuts.io.NOutputTargetMetadata;
-import net.thevpc.nuts.io.NOutputStream;
+import net.thevpc.nuts.io.NPrintStream;
 import net.thevpc.nuts.io.NTerminalMode;
 import net.thevpc.nuts.spi.NSystemTerminalBase;
 import net.thevpc.nuts.text.*;
@@ -16,7 +16,7 @@ import java.io.Writer;
 import java.time.temporal.Temporal;
 import java.util.Date;
 
-public abstract class NOutputStreamBase implements NOutputStream {
+public abstract class NPrintStreamBase implements NPrintStream {
     private static String LINE_SEP = System.getProperty("line.separator");
     protected NSession session;
     protected Bindings bindings;
@@ -28,7 +28,7 @@ public abstract class NOutputStreamBase implements NOutputStream {
     private NSystemTerminalBase term;
     private DefaultNOutputTargetMetadata md = new DefaultNOutputTargetMetadata();
 
-    public NOutputStreamBase(boolean autoFlash, NTerminalMode mode, NSession session, Bindings bindings, NSystemTerminalBase term) {
+    public NPrintStreamBase(boolean autoFlash, NTerminalMode mode, NSession session, Bindings bindings, NSystemTerminalBase term) {
         NAssert.requireNonNull(mode, "mode", session);
         this.bindings = bindings;
         this.autoFlash = autoFlash;
@@ -41,7 +41,7 @@ public abstract class NOutputStreamBase implements NOutputStream {
         return md;
     }
 
-    protected abstract NOutputStream convertImpl(NTerminalMode other);
+    protected abstract NPrintStream convertImpl(NTerminalMode other);
 
     @Override
     public String toString() {
@@ -53,11 +53,11 @@ public abstract class NOutputStreamBase implements NOutputStream {
     }
 
     @Override
-    public NOutputStream print(byte[] b) {
+    public NPrintStream print(byte[] b) {
         return print(b, 0, b.length);
     }
 
-    private NOutputStream printNormalized(NText b) {
+    private NPrintStream printNormalized(NText b) {
         if (b != null) {
             switch (b.getType()) {
                 case LIST: {
@@ -102,7 +102,7 @@ public abstract class NOutputStreamBase implements NOutputStream {
     }
 
     @Override
-    public NOutputStream print(NString b) {
+    public NPrintStream print(NString b) {
         if (b == null) {
             return printNull();
         }
@@ -116,7 +116,7 @@ public abstract class NOutputStreamBase implements NOutputStream {
     }
 
     @Override
-    public NOutputStream print(NMsg b) {
+    public NPrintStream print(NMsg b) {
         if (b == null) {
             return printNull();
         }
@@ -125,13 +125,13 @@ public abstract class NOutputStreamBase implements NOutputStream {
     }
 
     @Override
-    public NOutputStream print(boolean b) {
+    public NPrintStream print(boolean b) {
         this.print(txt().ofText(b));
         return this;
     }
 
     @Override
-    public NOutputStream print(Boolean b) {
+    public NPrintStream print(Boolean b) {
         if (b == null) {
             return printNull();
         } else if (isNtf()) {
@@ -147,13 +147,13 @@ public abstract class NOutputStreamBase implements NOutputStream {
     }
 
     @Override
-    public NOutputStream print(char c) {
+    public NPrintStream print(char c) {
         this.print(String.valueOf(c));
         return this;
     }
 
     @Override
-    public NOutputStream print(int i) {
+    public NPrintStream print(int i) {
         if (isNtf()) {
             this.print(String.valueOf(i));
         } else {
@@ -163,25 +163,25 @@ public abstract class NOutputStreamBase implements NOutputStream {
     }
 
     @Override
-    public NOutputStream print(long l) {
+    public NPrintStream print(long l) {
         this.print(txt().ofText(l));
         return this;
     }
 
     @Override
-    public NOutputStream print(float f) {
+    public NPrintStream print(float f) {
         this.print(txt().ofText(f));
         return this;
     }
 
     @Override
-    public NOutputStream print(double d) {
+    public NPrintStream print(double d) {
         this.print(txt().ofText(d));
         return this;
     }
 
     @Override
-    public NOutputStream print(Number d) {
+    public NPrintStream print(Number d) {
         if (d == null) {
             return printNull();
         }
@@ -190,7 +190,7 @@ public abstract class NOutputStreamBase implements NOutputStream {
     }
 
     @Override
-    public NOutputStream print(Temporal d) {
+    public NPrintStream print(Temporal d) {
         if (d == null) {
             return printNull();
         }
@@ -199,7 +199,7 @@ public abstract class NOutputStreamBase implements NOutputStream {
     }
 
     @Override
-    public NOutputStream print(Date d) {
+    public NPrintStream print(Date d) {
         if (d == null) {
             return printNull();
         }
@@ -208,28 +208,28 @@ public abstract class NOutputStreamBase implements NOutputStream {
     }
 
     @Override
-    public NOutputStream println(Number d) {
+    public NPrintStream println(Number d) {
         print(d);
         println();
         return this;
     }
 
     @Override
-    public NOutputStream println(Temporal d) {
+    public NPrintStream println(Temporal d) {
         print(d);
         println();
         return this;
     }
 
     @Override
-    public NOutputStream println(Date d) {
+    public NPrintStream println(Date d) {
         print(d);
         println();
         return this;
     }
 
     @Override
-    public NOutputStream print(char[] s) {
+    public NPrintStream print(char[] s) {
         if (s == null) {
             return printNull();
         }
@@ -238,7 +238,7 @@ public abstract class NOutputStreamBase implements NOutputStream {
     }
 
     @Override
-    public NOutputStream print(Object obj) {
+    public NPrintStream print(Object obj) {
         if (obj == null) {
             return this.printNull();
         } else if (obj instanceof CharSequence) {
@@ -263,12 +263,12 @@ public abstract class NOutputStreamBase implements NOutputStream {
         return this;
     }
 
-    protected NOutputStream printNull() {
+    protected NPrintStream printNull() {
         return print("null");
     }
 
     @Override
-    public NOutputStream println() {
+    public NPrintStream println() {
         this.print(LINE_SEP);
         if (this.autoFlash) {
             flush();
@@ -277,96 +277,96 @@ public abstract class NOutputStreamBase implements NOutputStream {
     }
 
     @Override
-    public NOutputStream println(boolean x) {
+    public NPrintStream println(boolean x) {
         print(x);
         println();
         return this;
     }
 
     @Override
-    public NOutputStream println(char x) {
+    public NPrintStream println(char x) {
         print(x);
         println();
         return this;
     }
 
     @Override
-    public NOutputStream println(NString b) {
+    public NPrintStream println(NString b) {
         this.print(b);
         this.println();
         return this;
     }
 
     @Override
-    public NOutputStream println(NMsg b) {
+    public NPrintStream println(NMsg b) {
         this.println(txt().ofText(b));
         return this;
     }
 
     @Override
-    public NOutputStream println(int x) {
+    public NPrintStream println(int x) {
         print(x);
         println();
         return this;
     }
 
     @Override
-    public NOutputStream println(long x) {
+    public NPrintStream println(long x) {
         print(x);
         println();
         return this;
     }
 
     @Override
-    public NOutputStream println(float x) {
+    public NPrintStream println(float x) {
         print(x);
         println();
         return this;
     }
 
     @Override
-    public NOutputStream println(double x) {
+    public NPrintStream println(double x) {
         print(x);
         println();
         return this;
     }
 
     @Override
-    public NOutputStream println(char[] x) {
+    public NPrintStream println(char[] x) {
         print(x);
         println();
         return this;
     }
 
     @Override
-    public NOutputStream println(String x) {
+    public NPrintStream println(String x) {
         print(x);
         println();
         return this;
     }
 
     @Override
-    public NOutputStream println(Object x) {
+    public NPrintStream println(Object x) {
         print(x);
         println();
         return this;
     }
 
     @Override
-    public NOutputStream resetLine() {
+    public NPrintStream resetLine() {
         run(NTerminalCommand.CLEAR_LINE, session);
         run(NTerminalCommand.MOVE_LINE_START, session);
         return this;
     }
 
     @Override
-    public NOutputStream print(CharSequence csq) {
+    public NPrintStream print(CharSequence csq) {
         print(csq, 0, csq.length());
         return this;
     }
 
     @Override
-    public NOutputStream print(CharSequence csq, int start, int end) {
+    public NPrintStream print(CharSequence csq, int start, int end) {
         int bufferLength = Math.min(4096, (end - start));
         int i = start;
         while (i < end) {
@@ -389,7 +389,7 @@ public abstract class NOutputStreamBase implements NOutputStream {
     }
 
     @Override
-    public NOutputStream setTerminalMode(NTerminalMode other) {
+    public NPrintStream setTerminalMode(NTerminalMode other) {
         if (other == null || other == this.getTerminalMode()) {
             return this;
         }
@@ -462,20 +462,20 @@ public abstract class NOutputStreamBase implements NOutputStream {
     }
 
     public static class Bindings {
-        protected NOutputStreamBase raw;
-        protected NOutputStreamBase filtered;
-        protected NOutputStreamBase ansi;
-        protected NOutputStreamBase inherited;
-        protected NOutputStreamBase formatted;
+        protected NPrintStreamBase raw;
+        protected NPrintStreamBase filtered;
+        protected NPrintStreamBase ansi;
+        protected NPrintStreamBase inherited;
+        protected NPrintStreamBase formatted;
     }
 
     @Override
-    public NOutputStream print(Object text, NTextStyle style) {
+    public NPrintStream print(Object text, NTextStyle style) {
         return print(text, NTextStyles.of(style));
     }
 
     @Override
-    public NOutputStream print(Object text, NTextStyles styles) {
+    public NPrintStream print(Object text, NTextStyles styles) {
         if (text != null) {
             NTexts txt = txt();
             if (styles == null || styles.size() == 0) {
@@ -488,7 +488,7 @@ public abstract class NOutputStreamBase implements NOutputStream {
     }
 
     @Override
-    public NOutputStream print(String s) {
+    public NPrintStream print(String s) {
         if (s == null) {
             return printNull();
         } else {
@@ -499,12 +499,12 @@ public abstract class NOutputStreamBase implements NOutputStream {
     }
 
     @Override
-    public NOutputStream print(byte[] buf, int off, int len) {
+    public NPrintStream print(byte[] buf, int off, int len) {
         return write(buf, off, len);
     }
 
     @Override
-    public NOutputStream print(char[] buf, int off, int len) {
+    public NPrintStream print(char[] buf, int off, int len) {
         return write(buf, off, len);
     }
 }

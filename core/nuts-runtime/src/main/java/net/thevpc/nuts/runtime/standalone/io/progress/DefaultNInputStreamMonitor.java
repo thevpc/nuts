@@ -115,7 +115,7 @@ public class DefaultNInputStreamMonitor implements NInputStreamMonitor {
 
     @Override
     public NInputStreamMonitor setSource(InputStream path) {
-        this.source = path == null ? null : NIO.of(session).createInputSource(path);
+        this.source = path == null ? null : NIO.of(session).ofInputSource(path);
         return this;
     }
 
@@ -162,7 +162,7 @@ public class DefaultNInputStreamMonitor implements NInputStreamMonitor {
         if (sourceTypeName == null) {
             sourceTypeName = source.getInputMetaData().getKind().orElse("nuts-Path");
         }
-        return (InputStream) NIO.of(session).createInputSource(
+        return (InputStream) NIO.of(session).ofInputSource(
                 NProgressUtils.monitor(openedStream, source, sourceName, size, new SilentStartNProgressListenerAdapter(monitor, sourceName), session),
                 new DefaultNInputSourceMetadata(source.getInputMetaData())
                         .setKind(sourceTypeName)

@@ -7,8 +7,8 @@ package net.thevpc.nuts.runtime.standalone.workspace.cmd.uninstall;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.elem.NElements;
-import net.thevpc.nuts.io.NMemoryOutputStream;
-import net.thevpc.nuts.io.NOutputStream;
+import net.thevpc.nuts.io.NMemoryPrintStream;
+import net.thevpc.nuts.io.NPrintStream;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceExt;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceUtils;
 import net.thevpc.nuts.text.NText;
@@ -60,7 +60,7 @@ public class DefaultNUninstallCommand extends AbstractNUninstallCommand {
             installed.addAll(resultDefinitions.stream().map(NDefinition::getId).collect(Collectors.toList()));
             defs.addAll(resultDefinitions);
         }
-        NMemoryOutputStream mout = NMemoryOutputStream.of(session);
+        NMemoryPrintStream mout = NMemoryPrintStream.of(session);
         printList(mout, "installed", "uninstalled", installed);
         mout.println("should we proceed uninstalling ?");
         NMsg cancelMessage = NMsg.ofC("uninstall cancelled : %s", defs.stream()
@@ -83,7 +83,7 @@ public class DefaultNUninstallCommand extends AbstractNUninstallCommand {
         return this;
     }
 
-    private void printList(NOutputStream out, String skind, String saction, List<NId> all) {
+    private void printList(NPrintStream out, String skind, String saction, List<NId> all) {
         if (all.size() > 0) {
             if (session.isPlainOut()) {
                 NTexts text = NTexts.of(session);

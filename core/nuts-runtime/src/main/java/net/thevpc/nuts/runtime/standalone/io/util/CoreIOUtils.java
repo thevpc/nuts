@@ -182,8 +182,8 @@ public class CoreIOUtils {
 //        return sb.toString();
 //    }
 
-    public static NOutputStream resolveOut(NSession session) {
-        return (session.getTerminal() == null) ? NOutputStream.ofNull(session)
+    public static NPrintStream resolveOut(NSession session) {
+        return (session.getTerminal() == null) ? NPrintStream.ofNull(session)
                 : session.getTerminal().out();
     }
 
@@ -738,7 +738,7 @@ public class CoreIOUtils {
                 cacheTable.flush(session);
             }
         });
-        return (InputStream) NIO.of(session).createInputSource(ist, new DefaultNInputSourceMetadata(
+        return (InputStream) NIO.of(session).ofInputSource(ist, new DefaultNInputSourceMetadata(
                         path,
                         NMsg.ofNtf(NTexts.of(session).ofStyled(path, NTextStyle.path())),
                         size, NPath.of(path, session).getContentType(), sourceTypeName
@@ -1056,7 +1056,7 @@ public class CoreIOUtils {
     }
 
     public static InputStream createBytesStream(byte[] bytes, NMsg message, String contentType, String kind, NSession session) {
-        return (InputStream) NIO.of(session).createInputSource(
+        return (InputStream) NIO.of(session).ofInputSource(
                 new ByteArrayInputStream(bytes),
                 new DefaultNInputSourceMetadata(
                         message,

@@ -23,9 +23,9 @@ import java.util.logging.Level;
 public class NExecHelper extends AbstractSyncIProcessExecHelper {
 
     NExecCommand pb;
-    NOutputStream out;
+    NPrintStream out;
 
-    public NExecHelper(NExecCommand pb, NSession session, NOutputStream out) {
+    public NExecHelper(NExecCommand pb, NSession session, NPrintStream out) {
         super(session);
         this.pb = pb;
         this.out = out;
@@ -36,8 +36,8 @@ public class NExecHelper extends AbstractSyncIProcessExecHelper {
                                      boolean inheritSystemIO, boolean redirectErr, File outputFile, File inputFile,
                                      NRunAs runAs,
                                      NSession session) {
-        NOutputStream out = null;
-        NOutputStream err = null;
+        NPrintStream out = null;
+        NPrintStream err = null;
         InputStream in = null;
         NExecCommand pb = NExecCommand.of(session);
         NCommandLineUtils.OptionsAndArgs optionsAndArgs = NCommandLineUtils.parseOptionsFirst(args);

@@ -7,7 +7,7 @@ package net.thevpc.nuts.core.test;
 
 import net.thevpc.nuts.core.test.utils.TestUtils;
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.io.NOutputStream;
+import net.thevpc.nuts.io.NPrintStream;
 import net.thevpc.nuts.io.NSessionTerminal;
 import net.thevpc.nuts.io.NSystemTerminal;
 import net.thevpc.nuts.io.NTerminalMode;
@@ -66,14 +66,14 @@ public class Test13_TerminalModeTest {
 
                         {
                             NSystemTerminal systemTerminal = NConfigs.of(session).getSystemTerminal();
-                            NOutputStream sysInitMode = systemTerminal.out();
+                            NPrintStream sysInitMode = systemTerminal.out();
                             TestUtils.println(
                                     "sys-init="+(sysInitMode.getTerminalMode()==null?"default": sysInitMode.getTerminalMode().id())
                                             +", sys-fixed="+(systemMode==null?"default":systemMode.id())
                                             +" ->"+sessionMode.id());
 
                             NSessionTerminal terminal = NSessionTerminal.of(session);
-                            NOutputStream out = terminal.out().setTerminalMode(systemMode);
+                            NPrintStream out = terminal.out().setTerminalMode(systemMode);
                             NTerminalMode initMode = out.getTerminalMode();
                             Assertions.assertEquals(systemMode,initMode);
                             TestUtils.println(
@@ -96,9 +96,9 @@ public class Test13_TerminalModeTest {
                 return;
             }else{
                 NSystemTerminal systemTerminal = NConfigs.of(session).getSystemTerminal();
-                NOutputStream sysInitMode = systemTerminal.out();
+                NPrintStream sysInitMode = systemTerminal.out();
                 NSessionTerminal terminal = NSessionTerminal.of(session);
-                NOutputStream out = terminal.out().setTerminalMode(systemMode);
+                NPrintStream out = terminal.out().setTerminalMode(systemMode);
                 NTerminalMode initMode = out.getTerminalMode();
                 Assertions.assertEquals(systemMode,initMode);
                 TestUtils.println(

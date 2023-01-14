@@ -27,7 +27,7 @@ import net.thevpc.nuts.cmdline.NCommandLineConfigurable;
 import net.thevpc.nuts.cmdline.NCommandLineContext;
 import net.thevpc.nuts.elem.NArrayElementBuilder;
 import net.thevpc.nuts.format.NIterableFormat;
-import net.thevpc.nuts.io.NOutputStream;
+import net.thevpc.nuts.io.NPrintStream;
 import net.thevpc.nuts.io.NSessionTerminal;
 import net.thevpc.nuts.util.NMapListener;
 
@@ -422,7 +422,7 @@ public interface NSession extends NCommandLineConfigurable, NCommandLineContext 
      *
      * @return current output stream
      */
-    NOutputStream out();
+    NPrintStream out();
 
     InputStream in();
 
@@ -431,7 +431,7 @@ public interface NSession extends NCommandLineConfigurable, NCommandLineContext 
      *
      * @return current error stream
      */
-    NOutputStream err();
+    NPrintStream err();
 
     /**
      * return new instance of iterable output

@@ -35,7 +35,7 @@ import java.util.concurrent.Executor;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.cmdline.NCommandLine;
-import net.thevpc.nuts.io.NOutputStream;
+import net.thevpc.nuts.io.NPrintStream;
 import net.thevpc.nuts.io.NSessionTerminal;
 import net.thevpc.nuts.io.NTerminalMode;
 import net.thevpc.nuts.spi.NComponent;
@@ -123,7 +123,7 @@ public class AdminServerRunnable implements NServer, Runnable {
                             try {
                                 try {
                                     PrintStream out = new PrintStream(finalAccept.getOutputStream());
-                                    NOutputStream eout = NOutputStream.of(out, NTerminalMode.FORMATTED, null,invokerSession);
+                                    NPrintStream eout = NPrintStream.of(out, NTerminalMode.FORMATTED, null,invokerSession);
                                     NSession session = invokerSession;
                                     session.setTerminal(
                                             NSessionTerminal.of(

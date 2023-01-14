@@ -579,7 +579,7 @@ public class DefaultNElements extends DefaultFormatBase<NElements> implements NE
     }
 
     @Override
-    public NIterableFormat iter(NOutputStream writer) {
+    public NIterableFormat iter(NPrintStream writer) {
         switch (getContentType()) {
             case JSON:
                 return new DefaultSearchFormatJson(getSession(), writer, new NFetchDisplayOptions(getSession()));
@@ -643,11 +643,11 @@ public class DefaultNElements extends DefaultFormatBase<NElements> implements NE
         return false;
     }
 
-    private void print(NOutputStream out, NElementStreamFormat format) {
+    private void print(NPrintStream out, NElementStreamFormat format) {
         checkSession();
         NElement elem = toElement(value);
         if (out.isNtf()) {
-            NOutputStream bos = NMemoryOutputStream.of(getSession());
+            NPrintStream bos = NMemoryPrintStream.of(getSession());
             format.printElement(elem, bos, compact, createFactoryContext());
             out.print(NTexts.of(getSession()).ofCode(getContentType().id(), bos.toString()));
         } else {
@@ -657,7 +657,7 @@ public class DefaultNElements extends DefaultFormatBase<NElements> implements NE
     }
 
     @Override
-    public void print(NOutputStream out) {
+    public void print(NPrintStream out) {
         print(out, resolveStructuredFormat());
     }
 

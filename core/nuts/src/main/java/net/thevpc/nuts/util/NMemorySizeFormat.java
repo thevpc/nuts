@@ -1,8 +1,8 @@
 package net.thevpc.nuts.util;
 
 import net.thevpc.nuts.format.NPositionType;
-import net.thevpc.nuts.io.NPlainOutputStream;
-import net.thevpc.nuts.io.NOutputStream;
+import net.thevpc.nuts.io.NPlainPrintStream;
+import net.thevpc.nuts.io.NPrintStream;
 import net.thevpc.nuts.text.NTextStyle;
 
 import java.text.DecimalFormat;
@@ -55,7 +55,7 @@ public class NMemorySizeFormat {
         this.fixed = fixed;
     }
 
-    public void formatUnit(NMemorySize memorySize, NMemoryUnit unit, Set<NMemoryUnit> processed, NOutputStream out) {
+    public void formatUnit(NMemorySize memorySize, NMemoryUnit unit, Set<NMemoryUnit> processed, NPrintStream out) {
         if (iec != null) {
             memorySize = memorySize.withIEC(iec);
         }
@@ -97,12 +97,12 @@ public class NMemorySizeFormat {
     }
 
     public String format(NMemorySize memorySize) {
-        NOutputStream sb = new NPlainOutputStream();
+        NPrintStream sb = new NPlainPrintStream();
         print(memorySize, sb);
         return sb.toString();
     }
 
-    public void print(NMemorySize memorySize, NOutputStream out) {
+    public void print(NMemorySize memorySize, NPrintStream out) {
         if (iec != null) {
             memorySize = memorySize.withIEC(iec);
         }

@@ -31,7 +31,7 @@ import net.thevpc.nuts.elem.NElements;
 import net.thevpc.nuts.format.NObjectFormat;
 import net.thevpc.nuts.format.NTableFormat;
 import net.thevpc.nuts.format.NTreeFormat;
-import net.thevpc.nuts.io.NOutputStream;
+import net.thevpc.nuts.io.NPrintStream;
 import net.thevpc.nuts.io.NSessionTerminal;
 import net.thevpc.nuts.runtime.standalone.format.plain.NFormatPlain;
 import net.thevpc.nuts.spi.NSupportLevelContext;
@@ -185,7 +185,7 @@ public class DefaultNObjectFormat extends DefaultFormatBase<NObjectFormat> imple
     }
 
     @Override
-    public void print(NOutputStream out) {
+    public void print(NPrintStream out) {
         getBase().print(out);
     }
 
@@ -215,7 +215,7 @@ public class DefaultNObjectFormat extends DefaultFormatBase<NObjectFormat> imple
     }
 
     @Override
-    public void println(NOutputStream out) {
+    public void println(NPrintStream out) {
         getBase().println(out);
     }
 

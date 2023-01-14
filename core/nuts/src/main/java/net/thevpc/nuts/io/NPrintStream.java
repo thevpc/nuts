@@ -38,10 +38,10 @@ import java.io.Writer;
 import java.time.temporal.Temporal;
 import java.util.Date;
 
-public interface NOutputStream extends NOutputTarget {
+public interface NPrintStream extends NOutputTarget {
 
-    static NOutputStream ofNull(NSession session) {
-        return NIO.of(session).createNullOutputStream();
+    static NPrintStream ofNull(NSession session) {
+        return NIO.of(session).ofNullPrintStream();
     }
 
     /**
@@ -51,12 +51,12 @@ public interface NOutputStream extends NOutputTarget {
      * @param session session
      * @return new in-memory NutsPrintStream implementation
      */
-    static NMemoryOutputStream ofInMemory(NSession session) {
-        return NIO.of(session).createInMemoryOutputStream();
+    static NMemoryPrintStream ofInMemory(NSession session) {
+        return NIO.of(session).ofInMemoryPrintStream();
     }
 
-    static NOutputStream of(OutputStream out, NSession session) {
-        return NIO.of(session).createOutputStream(out);
+    static NPrintStream of(OutputStream out, NSession session) {
+        return NIO.of(session).ofPrintStream(out);
     }
 
     /**
@@ -70,12 +70,12 @@ public interface NOutputStream extends NOutputTarget {
      * @param session  session
      * @return {@code mode} supporting PrintStream
      */
-    static NOutputStream of(OutputStream out, NTerminalMode mode, NSystemTerminalBase terminal, NSession session) {
-        return NIO.of(session).createOutputStream(out, mode, terminal);
+    static NPrintStream of(OutputStream out, NTerminalMode mode, NSystemTerminalBase terminal, NSession session) {
+        return NIO.of(session).ofPrintStream(out, mode, terminal);
     }
 
-    static NOutputStream of(Writer out, NSession session) {
-        return NIO.of(session).createOutputStream(out);
+    static NPrintStream of(Writer out, NSession session) {
+        return NIO.of(session).ofPrintStream(out);
     }
 
     NSession getSession();
@@ -86,87 +86,87 @@ public interface NOutputStream extends NOutputTarget {
      * @param session new session
      * @return a new instance of NutsPrintStream
      */
-    NOutputStream setSession(NSession session);
+    NPrintStream setSession(NSession session);
 
-    NOutputStream flush();
+    NPrintStream flush();
 
-    NOutputStream close();
+    NPrintStream close();
 
-    NOutputStream print(byte[] b);
+    NPrintStream print(byte[] b);
 
-    NOutputStream write(int b);
+    NPrintStream write(int b);
 
 
-    NOutputStream write(byte[] buf, int off, int len);
-    NOutputStream write(char[] buf, int off, int len);
+    NPrintStream write(byte[] buf, int off, int len);
+    NPrintStream write(char[] buf, int off, int len);
 
-    NOutputStream print(byte[] buf, int off, int len);
-    NOutputStream print(char[] buf, int off, int len);
+    NPrintStream print(byte[] buf, int off, int len);
+    NPrintStream print(char[] buf, int off, int len);
 
-    NOutputStream print(NMsg b);
+    NPrintStream print(NMsg b);
 
-    NOutputStream print(NString b);
+    NPrintStream print(NString b);
 
-    NOutputStream print(Boolean b);
-    NOutputStream print(boolean b);
+    NPrintStream print(Boolean b);
+    NPrintStream print(boolean b);
 
-    NOutputStream print(char c);
+    NPrintStream print(char c);
 
-    NOutputStream print(int i);
+    NPrintStream print(int i);
 
-    NOutputStream print(long l);
+    NPrintStream print(long l);
 
-    NOutputStream print(float f);
+    NPrintStream print(float f);
 
-    NOutputStream print(double d);
+    NPrintStream print(double d);
 
-    NOutputStream print(char[] s);
+    NPrintStream print(char[] s);
 
-    NOutputStream print(Number d);
-    NOutputStream print(Temporal d);
+    NPrintStream print(Number d);
+    NPrintStream print(Temporal d);
 
-    NOutputStream print(Date d) ;
-    NOutputStream print(String s);
+    NPrintStream print(Date d) ;
+    NPrintStream print(String s);
 
-    NOutputStream print(Object obj);
+    NPrintStream print(Object obj);
 
-    NOutputStream println();
+    NPrintStream println();
 
-    NOutputStream println(Number d);
-    NOutputStream println(Temporal d);
+    NPrintStream println(Number d);
+    NPrintStream println(Temporal d);
 
-    NOutputStream println(Date d) ;
-    NOutputStream println(boolean x);
+    NPrintStream println(Date d) ;
+    NPrintStream println(boolean x);
 
-    NOutputStream println(char x);
+    NPrintStream println(char x);
 
-    NOutputStream println(NMsg b);
+    NPrintStream println(NMsg b);
 
-    NOutputStream println(NString b);
+    NPrintStream println(NString b);
 
-    NOutputStream println(int x);
+    NPrintStream println(int x);
 
-    NOutputStream println(long x);
+    NPrintStream println(long x);
 
-    NOutputStream println(float x);
+    NPrintStream println(float x);
 
-    NOutputStream println(double x);
+    NPrintStream println(double x);
 
-    NOutputStream println(char[] x);
+    NPrintStream println(char[] x);
 
-    NOutputStream println(String x);
+    NPrintStream println(String x);
 
-    NOutputStream println(Object x);
+    NPrintStream println(Object x);
 
-    NOutputStream print(Object text, NTextStyle style);
+    NPrintStream print(Object text, NTextStyle style);
 
-    NOutputStream print(Object text, NTextStyles styles);
+    NPrintStream print(Object text, NTextStyles styles);
 
-    NOutputStream resetLine();
+    NPrintStream resetLine();
 
-    NOutputStream print(CharSequence csq);
+    NPrintStream print(CharSequence csq);
 
-    NOutputStream print(CharSequence csq, int start, int end);
+    NPrintStream print(CharSequence csq, int start, int end);
 
     NTerminalMode getTerminalMode();
 
@@ -178,9 +178,9 @@ public interface NOutputStream extends NOutputTarget {
      * @param other new mode
      * @return a new instance of NutsPrintStream (if the mode changes)
      */
-    NOutputStream setTerminalMode(NTerminalMode other);
+    NPrintStream setTerminalMode(NTerminalMode other);
 
-    NOutputStream run(NTerminalCommand command, NSession session);
+    NPrintStream run(NTerminalCommand command, NSession session);
 
     OutputStream asOutputStream();
 

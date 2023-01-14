@@ -57,8 +57,8 @@ public class NJLineTerminal extends NSystemTerminalBaseImpl {
     private static final Logger LOG = Logger.getLogger(NJLineTerminal.class.getName());
     private Terminal terminal;
     private LineReader reader;
-    private NOutputStream out;
-    private NOutputStream err;
+    private NPrintStream out;
+    private NPrintStream err;
     private InputStream in;
     private NCommandAutoCompleteResolver autoCompleteResolver;
     private NCommandHistory commandHistory;
@@ -227,13 +227,13 @@ public class NJLineTerminal extends NSystemTerminalBaseImpl {
         if (reader instanceof LineReaderImpl) {
             ((LineReaderImpl) reader).setHistory(new NJLineHistory(reader, session, this));
         }
-        this.out = NOutputStream.of(
+        this.out = NPrintStream.of(
                 new TransparentPrintStream(
                         new PrintStream(reader.getTerminal().output(), true),
                         System.out
                 ),
                 NTerminalMode.FORMATTED, this, session);
-        this.err = NOutputStream.of(
+        this.err = NPrintStream.of(
                 new TransparentPrintStream(
                         new PrintStream(reader.getTerminal().output(), true),
                         System.err
@@ -267,7 +267,7 @@ public class NJLineTerminal extends NSystemTerminalBaseImpl {
     }
 
     @Override
-    public String readLine(NOutputStream out, NMsg message, NSession session) {
+    public String readLine(NPrintStream out, NMsg message, NSession session) {
         prepare(session);
         if (out == null) {
             out = getOut();
@@ -290,7 +290,7 @@ public class NJLineTerminal extends NSystemTerminalBaseImpl {
     }
 
     @Override
-    public char[] readPassword(NOutputStream out, NMsg message, NSession session) {
+    public char[] readPassword(NPrintStream out, NMsg message, NSession session) {
         prepare(session);
         if (out == null) {
             return reader.readLine(NTexts.of(session).ofText(message).toString(), '*').toCharArray();
@@ -306,12 +306,12 @@ public class NJLineTerminal extends NSystemTerminalBaseImpl {
     }
 
     @Override
-    public NOutputStream getOut() {
+    public NPrintStream getOut() {
         return out;
     }
 
     @Override
-    public NOutputStream getErr() {
+    public NPrintStream getErr() {
         return err;
     }
 

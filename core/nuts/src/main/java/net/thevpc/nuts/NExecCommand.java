@@ -25,7 +25,7 @@ package net.thevpc.nuts;
 
 import net.thevpc.nuts.cmdline.NCommandLineConfigurable;
 import net.thevpc.nuts.io.NPath;
-import net.thevpc.nuts.io.NOutputStream;
+import net.thevpc.nuts.io.NPrintStream;
 
 import java.io.InputStream;
 import java.util.Collection;
@@ -250,7 +250,7 @@ public interface NExecCommand extends NWorkspaceCommand {
      *
      * @return new command output stream (standard output destination)
      */
-    NOutputStream getOut();
+    NPrintStream getOut();
 
     /**
      * set new command output stream (standard output destination)
@@ -258,7 +258,7 @@ public interface NExecCommand extends NWorkspaceCommand {
      * @param out standard output destination
      * @return {@code this} instance
      */
-    NExecCommand setOut(NOutputStream out);
+    NExecCommand setOut(NPrintStream out);
 
     /**
      * grab to memory standard output
@@ -293,7 +293,7 @@ public interface NExecCommand extends NWorkspaceCommand {
      *
      * @return new command error stream (standard error destination)
      */
-    NOutputStream getErr();
+    NPrintStream getErr();
 
     /**
      * set new command error stream (standard error destination)
@@ -301,7 +301,7 @@ public interface NExecCommand extends NWorkspaceCommand {
      * @param err standard error destination
      * @return {@code this} instance
      */
-    NExecCommand setErr(NOutputStream err);
+    NExecCommand setErr(NPrintStream err);
 
     /**
      * return execution type

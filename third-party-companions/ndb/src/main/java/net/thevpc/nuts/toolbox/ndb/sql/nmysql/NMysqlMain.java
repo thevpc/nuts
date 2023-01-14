@@ -3,7 +3,7 @@ package net.thevpc.nuts.toolbox.ndb.sql.nmysql;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.cmdline.NArg;
 import net.thevpc.nuts.cmdline.NCommandLine;
-import net.thevpc.nuts.io.NOutputStream;
+import net.thevpc.nuts.io.NPrintStream;
 import net.thevpc.nuts.text.NTextStyle;
 import net.thevpc.nuts.text.NTexts;
 import net.thevpc.nuts.toolbox.ndb.sql.sqlbase.SqlSupport;
@@ -568,7 +568,7 @@ public class NMysqlMain extends SqlSupport<NMySqlConfig> {
         }
         NTexts factory = NTexts.of(session);
         if (commandLine.isExecMode()) {
-            NOutputStream out = session.out();
+            NPrintStream out = session.out();
             if (!d.expectedRemote) {
                 LocalMysqlConfigService c = service.loadLocalMysqlConfig(d.name.getConfigName(), add ? NOpenMode.OPEN_OR_CREATE : NOpenMode.OPEN_OR_ERROR);
                 boolean overrideExisting = false;

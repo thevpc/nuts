@@ -6,7 +6,7 @@
 package net.thevpc.nuts.runtime.standalone.workspace.cmd.version;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.io.NOutputStream;
+import net.thevpc.nuts.io.NPrintStream;
 import net.thevpc.nuts.runtime.standalone.app.util.NAppUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.exec.DefaultInternalNExecutableCommand;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.exec.DefaultNExecCommand;
@@ -35,7 +35,7 @@ public class DefaultNVersionInternalExecutable extends DefaultInternalNExecutabl
             return;
         }
         NWorkspace ws = getSession().getWorkspace();
-        NOutputStream out = getSession().out();
+        NPrintStream out = getSession().out();
         NVersionFormat.of(getSession()).configure(false, args).println(out);
     }
 

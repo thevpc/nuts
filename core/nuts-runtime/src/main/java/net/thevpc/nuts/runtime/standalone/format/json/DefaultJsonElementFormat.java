@@ -26,7 +26,7 @@ package net.thevpc.nuts.runtime.standalone.format.json;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.elem.*;
 import net.thevpc.nuts.io.NIOException;
-import net.thevpc.nuts.io.NOutputStream;
+import net.thevpc.nuts.io.NPrintStream;
 import net.thevpc.nuts.runtime.standalone.elem.NElementStreamFormat;
 import net.thevpc.nuts.util.NStringUtils;
 
@@ -50,11 +50,11 @@ public class DefaultJsonElementFormat implements NElementStreamFormat {
         return parseElement(new StringReader(string), context);
     }
 
-    public void write(NOutputStream out, NElement data, boolean compact) {
+    public void write(NPrintStream out, NElement data, boolean compact) {
         write(out, data, compact ? null : "");
     }
 
-    private void write(NOutputStream out, NElement data, String indent) {
+    private void write(NPrintStream out, NElement data, String indent) {
 
         switch (data.type()) {
             case NULL: {
@@ -225,7 +225,7 @@ public class DefaultJsonElementFormat implements NElementStreamFormat {
     }
 
     @Override
-    public void printElement(NElement value, NOutputStream out, boolean compact, NElementFactoryContext context) {
+    public void printElement(NElement value, NPrintStream out, boolean compact, NElementFactoryContext context) {
         write(out, value, compact);
     }
 

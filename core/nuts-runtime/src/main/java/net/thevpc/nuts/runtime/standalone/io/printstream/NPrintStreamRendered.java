@@ -1,15 +1,15 @@
 package net.thevpc.nuts.runtime.standalone.io.printstream;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.io.NOutputStream;
+import net.thevpc.nuts.io.NPrintStream;
 import net.thevpc.nuts.io.NTerminalMode;
 import net.thevpc.nuts.runtime.standalone.text.FormatOutputStreamSupport;
 
-public abstract class NOutputStreamRendered extends NOutputStreamBase {
+public abstract class NPrintStreamRendered extends NPrintStreamBase {
     protected FormatOutputStreamSupport support;
-    protected NOutputStreamBase base;
+    protected NPrintStreamBase base;
 
-    public NOutputStreamRendered(NOutputStreamBase base, NSession session, NTerminalMode mode, Bindings bindings) {
+    public NPrintStreamRendered(NPrintStreamBase base, NSession session, NTerminalMode mode, Bindings bindings) {
         super(true, mode, session, bindings, base.getTerminal());
         this.base = base;
         this.support = new FormatOutputStreamSupport(new NPrintStreamHelper(base), session, base.getTerminal(),
@@ -17,48 +17,48 @@ public abstract class NOutputStreamRendered extends NOutputStreamBase {
         );
     }
 
-    public NOutputStreamBase getBase() {
+    public NPrintStreamBase getBase() {
         return base;
     }
 
     @Override
-    public NOutputStream flush() {
+    public NPrintStream flush() {
         support.flush();
         base.flush();
         return this;
     }
 
     @Override
-    public NOutputStream close() {
+    public NPrintStream close() {
         flush();
         base.close();
         return this;
     }
 
     @Override
-    public NOutputStream write(int b) {
+    public NPrintStream write(int b) {
         support.processByte(b);
         return this;
     }
 
     @Override
-    public NOutputStream write(byte[] buf, int off, int len) {
+    public NPrintStream write(byte[] buf, int off, int len) {
         support.processBytes(buf, off, len);
         return this;
     }
 
     @Override
-    public NOutputStream write(char[] buf, int off, int len) {
+    public NPrintStream write(char[] buf, int off, int len) {
         support.processChars(buf, off, len);
         return this;
     }
 
 
     @Override
-    protected NOutputStream convertImpl(NTerminalMode other) {
+    protected NPrintStream convertImpl(NTerminalMode other) {
         switch (other) {
             case FILTERED: {
-                return new NOutputStreamFiltered(base, getSession(), bindings);
+                return new NPrintStreamFiltered(base, getSession(), bindings);
             }
         }
         throw new NIllegalArgumentException(base.getSession(), NMsg.ofC("unsupported %s -> %s", getTerminalMode(), other));

@@ -1,6 +1,6 @@
 package net.thevpc.nuts.toolbox.ntomcat.remote;
 
-import net.thevpc.nuts.io.NOutputStream;
+import net.thevpc.nuts.io.NPrintStream;
 
 public abstract class RemoteTomcatServiceBase {
 
@@ -8,9 +8,9 @@ public abstract class RemoteTomcatServiceBase {
 
     public abstract String getName();
 
-    public abstract RemoteTomcatServiceBase print(NOutputStream out);
+    public abstract RemoteTomcatServiceBase print(NPrintStream out);
 
-    public RemoteTomcatServiceBase println(NOutputStream out) {
+    public RemoteTomcatServiceBase println(NPrintStream out) {
         print(out);
         out.println();
         return this;

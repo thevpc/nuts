@@ -17,8 +17,8 @@ public class DefaultNSessionTerminalFromSession extends AbstractNSessionTerminal
 
     protected NWorkspace ws;
     protected NSession session;
-    protected NOutputStream out;
-    protected NOutputStream err;
+    protected NPrintStream out;
+    protected NPrintStream err;
     protected NPrintStreamCache outCache=new NPrintStreamCache();
     protected NPrintStreamCache errCache=new NPrintStreamCache();
     protected InputStream in;
@@ -55,7 +55,7 @@ public class DefaultNSessionTerminalFromSession extends AbstractNSessionTerminal
 
 
     @Override
-    public String readLine(NOutputStream out, NMsg message, NSession session) {
+    public String readLine(NPrintStream out, NMsg message, NSession session) {
         if (session == null) {
             session = this.session;
         }
@@ -82,7 +82,7 @@ public class DefaultNSessionTerminalFromSession extends AbstractNSessionTerminal
     }
 
     @Override
-    public char[] readPassword(NOutputStream out, NMsg prompt, NSession session) {
+    public char[] readPassword(NPrintStream out, NMsg prompt, NSession session) {
         if (session == null) {
             session = this.session;
         }
@@ -142,11 +142,11 @@ public class DefaultNSessionTerminalFromSession extends AbstractNSessionTerminal
     }
 
     @Override
-    public NOutputStream getOut() {
+    public NPrintStream getOut() {
         if (out == null) {
             NSessionTerminal p = getParent();
             if (p != null) {
-                NOutputStream o = p.getOut();
+                NPrintStream o = p.getOut();
                 if(o!=null){
                     return outCache.get(o,getSession());
                 }
@@ -156,7 +156,7 @@ public class DefaultNSessionTerminalFromSession extends AbstractNSessionTerminal
     }
 
     @Override
-    public void setOut(NOutputStream out) {
+    public void setOut(NPrintStream out) {
         if (out != null) {
             out = out.setSession(session);
         }
@@ -164,11 +164,11 @@ public class DefaultNSessionTerminalFromSession extends AbstractNSessionTerminal
     }
 
     @Override
-    public NOutputStream getErr() {
+    public NPrintStream getErr() {
         if (err == null) {
             NSessionTerminal p = getParent();
             if (p != null) {
-                NOutputStream o = p.getErr();
+                NPrintStream o = p.getErr();
                 if(o!=null){
                     return errCache.get(o,getSession());
                 }
@@ -178,7 +178,7 @@ public class DefaultNSessionTerminalFromSession extends AbstractNSessionTerminal
     }
 
     @Override
-    public void setErr(NOutputStream err) {
+    public void setErr(NPrintStream err) {
         if (err != null) {
             err = err.setSession(session);
         }
@@ -207,12 +207,12 @@ public class DefaultNSessionTerminalFromSession extends AbstractNSessionTerminal
     }
 
     @Override
-    public NOutputStream out() {
+    public NPrintStream out() {
         return getOut();
     }
 
     @Override
-    public NOutputStream err() {
+    public NPrintStream err() {
         return getErr();
     }
 

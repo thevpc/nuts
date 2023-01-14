@@ -34,7 +34,7 @@ import net.thevpc.nuts.spi.NFormatSPI;
 import net.thevpc.nuts.text.NTextStyle;
 import net.thevpc.nuts.util.NProgressEvent;
 import net.thevpc.nuts.util.NProgressListener;
-import net.thevpc.nuts.io.NPlainOutputStream;
+import net.thevpc.nuts.io.NPlainPrintStream;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -59,7 +59,7 @@ public class MonitoredInputStream extends InputStream implements NInputSource, I
     private DefaultNInputSourceMetadata md;
 
     public MonitoredInputStream(InputStream base, Object source, NMsg sourceName, long length, NProgressListener monitor, NSession session) {
-        this.base = (InputStream) NIO.of(session).createInputSource(base);
+        this.base = (InputStream) NIO.of(session).ofInputSource(base);
         this.session = session;
         if (monitor == null) {
             throw new NullPointerException();
@@ -243,7 +243,7 @@ public class MonitoredInputStream extends InputStream implements NInputSource, I
             }
 
             @Override
-            public void print(NOutputStream out) {
+            public void print(NPrintStream out) {
                 NOptional<NMsg> m = getInputMetaData().getMessage();
                 if (m.isPresent()) {
                     out.print(m.get());
@@ -263,7 +263,7 @@ public class MonitoredInputStream extends InputStream implements NInputSource, I
 
     @Override
     public String toString() {
-        NPlainOutputStream out = new NPlainOutputStream();
+        NPlainPrintStream out = new NPlainPrintStream();
         NOptional<NMsg> m = getInputMetaData().getMessage();
         if (m.isPresent()) {
             out.print(m.get());

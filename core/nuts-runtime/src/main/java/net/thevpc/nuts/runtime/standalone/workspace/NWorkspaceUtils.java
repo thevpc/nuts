@@ -6,7 +6,7 @@
 package net.thevpc.nuts.runtime.standalone.workspace;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.io.NOutputStream;
+import net.thevpc.nuts.io.NPrintStream;
 import net.thevpc.nuts.runtime.standalone.format.NFetchDisplayOptions;
 import net.thevpc.nuts.runtime.standalone.format.NPrintIterator;
 import net.thevpc.nuts.runtime.standalone.repository.NRepositoryHelper;
@@ -219,7 +219,7 @@ public class NWorkspaceUtils {
     }
 
     public <T> NIterator<T> decoratePrint(NIterator<T> it, NSession session, NFetchDisplayOptions displayOptions) {
-        final NOutputStream out = validateSession(session).getTerminal().getOut();
+        final NPrintStream out = validateSession(session).getTerminal().getOut();
         return new NPrintIterator<>(it, ws, out, displayOptions, session);
     }
 
@@ -259,7 +259,7 @@ public class NWorkspaceUtils {
             _LOG(session).with().session(session).level(Level.FINEST).verb(NLoggerVerb.WARNING).error(ex)
                     .log(NMsg.ofJ("unable to resolve default JRE/JDK locations : {0}", ex));
             if (session.isPlainTrace()) {
-                NOutputStream out = session.out();
+                NPrintStream out = session.out();
                 out.resetLine();
                 out.println(NMsg.ofC("%s :  %s",
                         NMsg.ofStyled("unable to resolve default JRE/JDK locations", NTextStyle.error()),
@@ -297,7 +297,7 @@ public class NWorkspaceUtils {
             _LOG(session).with().session(session).level(Level.FINEST).verb(NLoggerVerb.WARNING).error(ex)
                     .log(NMsg.ofJ("unable to resolve default JRE/JDK locations : {0}", ex));
             if (session.isPlainTrace()) {
-                NOutputStream out = session.out();
+                NPrintStream out = session.out();
                 out.resetLine();
                 out.println(NMsg.ofC("Ms :  %s", NMsg.ofStyled("unable to resolve default JRE/JDK locations", NTextStyle.error()), ex));
             }
@@ -321,7 +321,7 @@ public class NWorkspaceUtils {
             _LOG(session).with().session(session).level(Level.FINEST).verb(NLoggerVerb.WARNING).error(ex)
                     .log(NMsg.ofJ("unable to install desktop launchers : {0}", ex));
             if (session.isPlainTrace()) {
-                NOutputStream out = session.out();
+                NPrintStream out = session.out();
                 out.resetLine();
                 out.println(NMsg.ofC("%s :  %s",
                         NMsg.ofStyled("unable to install desktop launchers", NTextStyle.error()),
@@ -337,7 +337,7 @@ public class NWorkspaceUtils {
             return;
         }
         if (session.isPlainTrace()) {
-            NOutputStream out = session.out();
+            NPrintStream out = session.out();
             out.resetLine();
             out.println(NMsg.ofC("looking for recommended companion tools to install... detected : %s",
                     text.ofBuilder().appendJoined(text.ofPlain(","),
@@ -352,7 +352,7 @@ public class NWorkspaceUtils {
             _LOG(session).with().session(session).level(Level.FINEST).verb(NLoggerVerb.WARNING).error(ex)
                     .log(NMsg.ofJ("unable to install companions : {0}", ex));
             if (session.isPlainTrace()) {
-                NOutputStream out = session.out();
+                NPrintStream out = session.out();
                 out.resetLine();
                 out.println(NMsg.ofC("%s :  %s "
                                 + "this happens when none of the following repositories are able to locate them : %s\n",

@@ -43,6 +43,9 @@ public interface NIO extends NComponent {
     static InputStream ofNullInputStream(NSession session) {
         return of(session).ofNullInputStream();
     }
+    static NPrintStream ofNullPrintStream(NSession session) {
+        return of(session).ofNullPrintStream();
+    }
 
     InputStream ofNullInputStream();
 
@@ -50,9 +53,9 @@ public interface NIO extends NComponent {
 
     InputStream stdin();
 
-    NOutputStream createNullOutputStream();
+    NPrintStream ofNullPrintStream();
 
-    NMemoryOutputStream createInMemoryOutputStream();
+    NMemoryPrintStream ofInMemoryPrintStream();
 
     /**
      * create print stream that supports the given {@code mode}. If the given
@@ -64,31 +67,31 @@ public interface NIO extends NComponent {
      * @param terminal terminal
      * @return {@code mode} supporting PrintStream
      */
-    NOutputStream createOutputStream(OutputStream out, NTerminalMode mode, NSystemTerminalBase terminal);
+    NPrintStream ofPrintStream(OutputStream out, NTerminalMode mode, NSystemTerminalBase terminal);
 
-    NOutputStream createOutputStream(OutputStream out);
+    NPrintStream ofPrintStream(OutputStream out);
 
-    NOutputStream createOutputStream(Writer out, NTerminalMode mode, NSystemTerminalBase terminal);
+    NPrintStream ofPrintStream(Writer out, NTerminalMode mode, NSystemTerminalBase terminal);
 
-    NOutputStream createOutputStream(Writer out);
+    NPrintStream ofPrintStream(Writer out);
 
-    boolean isStdout(NOutputStream out);
+    boolean isStdout(NPrintStream out);
 
-    boolean isStderr(NOutputStream out);
+    boolean isStderr(NPrintStream out);
 
-    NOutputStream stdout();
+    NPrintStream stdout();
 
-    NOutputStream stderr();
+    NPrintStream stderr();
 
-    NInputSource createMultiRead(NInputSource source);
+    NInputSource ofMultiRead(NInputSource source);
 
-    NInputSource createInputSource(InputStream inputStream);
-    NInputSource createInputSource(InputStream inputStream, NInputSourceMetadata metadata);
-    NInputSource createInputSource(byte[] inputStream);
+    NInputSource ofInputSource(InputStream inputStream);
+    NInputSource ofInputSource(InputStream inputStream, NInputSourceMetadata metadata);
+    NInputSource ofInputSource(byte[] inputStream);
 
-    NInputSource createInputSource(byte[] inputStream, NInputSourceMetadata metadata);
+    NInputSource ofInputSource(byte[] inputStream, NInputSourceMetadata metadata);
 
-    NOutputTarget createOutputTarget(OutputStream inputStream);
+    NOutputTarget ofOutputTarget(OutputStream inputStream);
 
-    NOutputTarget createOutputTarget(OutputStream inputStream, NOutputTargetMetadata metadata);
+    NOutputTarget ofOutputTarget(OutputStream inputStream, NOutputTargetMetadata metadata);
 }

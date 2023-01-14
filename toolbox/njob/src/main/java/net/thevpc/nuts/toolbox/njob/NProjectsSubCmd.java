@@ -5,7 +5,7 @@ import net.thevpc.nuts.cmdline.NArg;
 import net.thevpc.nuts.cmdline.NCommandLine;
 import net.thevpc.nuts.format.NMutableTableModel;
 import net.thevpc.nuts.format.NTableFormat;
-import net.thevpc.nuts.io.NOutputStream;
+import net.thevpc.nuts.io.NPrintStream;
 import net.thevpc.nuts.text.NTextStyle;
 import net.thevpc.nuts.text.NTexts;
 import net.thevpc.nuts.toolbox.njob.model.NProject;
@@ -355,7 +355,7 @@ public class NProjectsSubCmd {
             NArg a = cmd.next().get(session);
             if (cmd.isExecMode()) {
                 NProject t = findProject(a.toString(), cmd);
-                NOutputStream out = context.getSession().out();
+                NPrintStream out = context.getSession().out();
                 if (service.projects().removeProject(t.getId())) {
                     if (context.getSession().isPlainTrace()) {
                         out.println(NMsg.ofC("project %s removed.",
@@ -377,7 +377,7 @@ public class NProjectsSubCmd {
         while (cmd.hasNext()) {
             NArg a = cmd.next().get(session);
             NProject project = findProject(a.toString(), cmd);
-            NOutputStream out = context.getSession().out();
+            NPrintStream out = context.getSession().out();
             if (project == null) {
                 out.println(NMsg.ofC("```kw %s```: ```error not found```.",
                         a.toString()

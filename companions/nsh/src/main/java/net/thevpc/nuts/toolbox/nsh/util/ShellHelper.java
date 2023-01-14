@@ -9,7 +9,7 @@ import java.util.StringTokenizer;
 
 import net.thevpc.nuts.io.NInputStreamMonitor;
 import net.thevpc.nuts.io.NPath;
-import net.thevpc.nuts.io.NOutputStream;
+import net.thevpc.nuts.io.NPrintStream;
 import net.thevpc.nuts.io.NSessionTerminal;
 import net.thevpc.nuts.lib.ssh.SshListener;
 import net.thevpc.nuts.toolbox.nsh.bundles._IOUtils;
@@ -55,7 +55,7 @@ public class ShellHelper {
 
     public static class WsSshListener implements SshListener {
 
-        NOutputStream out;
+        NPrintStream out;
         NSession session;
 
         public WsSshListener(NSession session) {

@@ -9,7 +9,7 @@ import net.thevpc.nuts.cmdline.NArg;
 import net.thevpc.nuts.cmdline.NCommandLine;
 import net.thevpc.nuts.elem.NElements;
 import net.thevpc.nuts.format.*;
-import net.thevpc.nuts.io.NOutputStream;
+import net.thevpc.nuts.io.NPrintStream;
 import net.thevpc.nuts.runtime.standalone.util.CorePlatformUtils;
 import net.thevpc.nuts.runtime.standalone.format.DefaultFormatBase;
 import net.thevpc.nuts.runtime.standalone.format.props.DefaultNPropertiesFormat;
@@ -145,7 +145,7 @@ public class DefaultNTreeFormat extends DefaultFormatBase<NTreeFormat> implement
     @Override
     public String toString() {
         ByteArrayOutputStream b = new ByteArrayOutputStream();
-        NOutputStream out = NOutputStream.of(b, getSession());
+        NPrintStream out = NPrintStream.of(b, getSession());
         NTreeModel tree = getModel();
         print(tree, "", NPositionType.FIRST, tree.getRoot(), out, isEffectiveOmitRoot(), 0, false);
         out.flush();
@@ -153,13 +153,13 @@ public class DefaultNTreeFormat extends DefaultFormatBase<NTreeFormat> implement
     }
 
     @Override
-    public void print(NOutputStream out) {
+    public void print(NPrintStream out) {
         NTreeModel tree = getModel();
         print(tree, "", NPositionType.FIRST, tree.getRoot(), out, isEffectiveOmitRoot(), 0, false);
         out.flush();
     }
 
-    private boolean print(NTreeModel tree, String prefix, NPositionType type, Object o, NOutputStream out, boolean hideRoot, int depth, boolean prefixNewLine) {
+    private boolean print(NTreeModel tree, String prefix, NPositionType type, Object o, NPrintStream out, boolean hideRoot, int depth, boolean prefixNewLine) {
         checkSession();
         Object oValue = o;
         if (oValue instanceof XNode) {

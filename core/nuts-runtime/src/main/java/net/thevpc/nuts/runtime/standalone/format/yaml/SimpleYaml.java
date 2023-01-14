@@ -31,7 +31,7 @@ package net.thevpc.nuts.runtime.standalone.format.yaml;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.elem.*;
 import net.thevpc.nuts.io.NIOException;
-import net.thevpc.nuts.io.NOutputStream;
+import net.thevpc.nuts.io.NPrintStream;
 import net.thevpc.nuts.runtime.standalone.elem.NElementStreamFormat;
 import net.thevpc.nuts.runtime.standalone.format.json.ReaderLocation;
 
@@ -53,7 +53,7 @@ public class SimpleYaml implements NElementStreamFormat {
     }
 
     @Override
-    public void printElement(NElement value, NOutputStream out, boolean compact, NElementFactoryContext context) {
+    public void printElement(NElement value, NPrintStream out, boolean compact, NElementFactoryContext context) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 

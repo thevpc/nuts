@@ -1,14 +1,14 @@
 package net.thevpc.nuts.runtime.standalone.io.terminal;
 
-import net.thevpc.nuts.io.NOutputStream;
+import net.thevpc.nuts.io.NPrintStream;
 import net.thevpc.nuts.NSession;
 
 public class NPrintStreamCache {
-    private NOutputStream base;
-    private NOutputStream result;
+    private NPrintStream base;
+    private NPrintStream result;
     private NSession session;
 
-    public NOutputStream get(NOutputStream base, NSession session){
+    public NPrintStream get(NPrintStream base, NSession session){
         if(base.getSession()==session){
             return base;
         }

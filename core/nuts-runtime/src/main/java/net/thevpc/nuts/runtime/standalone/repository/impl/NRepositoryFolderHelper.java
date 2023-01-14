@@ -367,7 +367,7 @@ public class NRepositoryFolderHelper {
                 NAssert.requireNonNull(deployment.getContent(), ()-> NMsg.ofC("invalid deployment; missing content for %s", deployment.getId()), session);
             }
         } else {
-            inputSource = NIO.of(session).createMultiRead(deployment.getContent());
+            inputSource = NIO.of(session).ofMultiRead(deployment.getContent());
             inputSource.getInputMetaData().setKind("package content");
             if (descriptor == null) {
                 try (final CharacterizedExecFile c = DefaultNArtifactPathExecutable.characterizeForExec(inputSource, session, null)) {
@@ -386,7 +386,7 @@ public class NRepositoryFolderHelper {
             if (!DefaultWriteTypeProcessor
                     .of(writeType, session)
                     .ask(NMsg.ofC("override deployment for %s?", id))
-                    .withLog(_LOG(session), NMsg.ofC("nuts deployment overridden {0}", id))
+                    .withLog(_LOG(session), NMsg.ofC("nuts deployment overridden %s", id))
                     .onError(() -> new NAlreadyDeployedException(session, finalId))
                     .process()) {
                 return descriptor;
@@ -426,7 +426,7 @@ public class NRepositoryFolderHelper {
             if (!DefaultWriteTypeProcessor
                     .of(writeType, session)
                     .ask(NMsg.ofC("override descriptor file for %s?", id))
-                    .withLog(_LOG(session), NMsg.ofC("nuts descriptor file overridden {0}", id))
+                    .withLog(_LOG(session), NMsg.ofC("nuts descriptor file overridden %s", id))
                     .onError(() -> new NAlreadyDeployedException(session, id))
                     .process()) {
                 return descFile;
@@ -437,7 +437,7 @@ public class NRepositoryFolderHelper {
             desc.formatter(session).setNtf(false).print(descFile);
             byte[] bytes = NDigest.of(session).sha1().setSource(desc).computeString().getBytes();
             NCp.of(session)
-                    .from(NIO.of(session).createInputSource(
+                    .from(NIO.of(session).ofInputSource(
                                     new ByteArrayInputStream(bytes)
                                     , new DefaultNInputSourceMetadata(
                                             NMsg.ofC("sha1://%s", desc.getId()),
@@ -476,7 +476,7 @@ public class NRepositoryFolderHelper {
             if (!DefaultWriteTypeProcessor
                     .of(writeType, session)
                     .ask(NMsg.ofC("override content file for %s?", id))
-                    .withLog(_LOG(session), NMsg.ofC("nuts content file overridden {0}", id))
+                    .withLog(_LOG(session), NMsg.ofC("nuts content file overridden %s", id))
                     .onError(() -> new NAlreadyDeployedException(session, id))
                     .process()) {
                 return pckFile;

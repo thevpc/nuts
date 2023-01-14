@@ -5,7 +5,7 @@ import net.thevpc.nuts.boot.DefaultNWorkspaceOptionsBuilder;
 import net.thevpc.nuts.cmdline.NArg;
 import net.thevpc.nuts.cmdline.NArgName;
 import net.thevpc.nuts.cmdline.NCommandLine;
-import net.thevpc.nuts.io.NOutputStream;
+import net.thevpc.nuts.io.NPrintStream;
 import net.thevpc.nuts.text.NTextStyle;
 import net.thevpc.nuts.text.NTexts;
 import net.thevpc.nuts.toolbox.nutsserver.bundled._IOUtils;
@@ -62,7 +62,7 @@ public class NServerMain implements NApplication {
         cmdLine.setCommandName("nuts-server list").throwUnexpectedArgument();
         if (cmdLine.isExecMode()) {
             List<NServer> servers = serverManager.getServers();
-            NOutputStream out = session.out();
+            NPrintStream out = session.out();
             if (servers.isEmpty()) {
                 out.print("No Server is Running by current instance\n");
             }

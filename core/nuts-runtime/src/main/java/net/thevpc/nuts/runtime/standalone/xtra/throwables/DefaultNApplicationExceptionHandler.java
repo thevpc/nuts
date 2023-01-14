@@ -5,7 +5,7 @@ import net.thevpc.nuts.util.*;
 import net.thevpc.nuts.boot.NBootOptionsBuilder;
 import net.thevpc.nuts.elem.NArrayElementBuilder;
 import net.thevpc.nuts.elem.NElements;
-import net.thevpc.nuts.io.NOutputStream;
+import net.thevpc.nuts.io.NPrintStream;
 import net.thevpc.nuts.runtime.standalone.log.NLogUtils;
 import net.thevpc.nuts.spi.NSupportLevelContext;
 import net.thevpc.nuts.text.NTextStyle;
@@ -47,7 +47,7 @@ public class DefaultNApplicationExceptionHandler implements NApplicationExceptio
             m = throwable.toString();
         }
 
-        NOutputStream fout = null;
+        NPrintStream fout = null;
         try {
             fout = NConfigs.of(session).getSystemTerminal().getErr();
             if (fm != null) {

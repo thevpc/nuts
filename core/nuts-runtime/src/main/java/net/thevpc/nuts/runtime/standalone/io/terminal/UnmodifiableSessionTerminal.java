@@ -1,7 +1,7 @@
 package net.thevpc.nuts.runtime.standalone.io.terminal;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.io.NOutputStream;
+import net.thevpc.nuts.io.NPrintStream;
 import net.thevpc.nuts.io.NSessionTerminal;
 import net.thevpc.nuts.runtime.standalone.io.progress.CProgressBar;
 import net.thevpc.nuts.text.NTexts;
@@ -21,12 +21,12 @@ public class UnmodifiableSessionTerminal extends AbstractNSessionTerminal {
     }
 
     @Override
-    public String readLine(NOutputStream out, NMsg message, NSession session) {
+    public String readLine(NPrintStream out, NMsg message, NSession session) {
         return getBase().readLine(out, message, session!=null?session:getSession());
     }
 
     @Override
-    public char[] readPassword(NOutputStream out, NMsg prompt, NSession session) {
+    public char[] readPassword(NPrintStream out, NMsg prompt, NSession session) {
         return getBase().readPassword(out, prompt, session!=null?session:getSession());
     }
 
@@ -41,22 +41,22 @@ public class UnmodifiableSessionTerminal extends AbstractNSessionTerminal {
     }
 
     @Override
-    public NOutputStream getOut() {
+    public NPrintStream getOut() {
         return getBase().getOut();
     }
 
     @Override
-    public void setOut(NOutputStream out) {
+    public void setOut(NPrintStream out) {
 
     }
 
     @Override
-    public NOutputStream getErr() {
+    public NPrintStream getErr() {
         return getBase().getErr();
     }
 
     @Override
-    public void setErr(NOutputStream out) {
+    public void setErr(NPrintStream out) {
 
     }
 
@@ -78,12 +78,12 @@ public class UnmodifiableSessionTerminal extends AbstractNSessionTerminal {
     }
 
     @Override
-    public NOutputStream out() {
+    public NPrintStream out() {
         return getBase().out();
     }
 
     @Override
-    public NOutputStream err() {
+    public NPrintStream err() {
         return getBase().err();
     }
 

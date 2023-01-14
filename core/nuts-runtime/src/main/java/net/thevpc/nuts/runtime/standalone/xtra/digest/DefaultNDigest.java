@@ -72,7 +72,7 @@ public class DefaultNDigest implements NDigest {
         if (source == null) {
             this.source = null;
         } else {
-            this.source = NIO.of(session).createInputSource(source);
+            this.source = NIO.of(session).ofInputSource(source);
         }
         return this;
     }
@@ -98,7 +98,7 @@ public class DefaultNDigest implements NDigest {
     @Override
     public NDigest setSource(byte[] source) {
         checkSession();
-        this.source = source == null ? null : NIO.of(session).createInputSource(new ByteArrayInputStream(source));
+        this.source = source == null ? null : NIO.of(session).ofInputSource(new ByteArrayInputStream(source));
         return null;
     }
 
@@ -242,7 +242,7 @@ public class DefaultNDigest implements NDigest {
                 }
 
                 @Override
-                public void print(NOutputStream out) {
+                public void print(NPrintStream out) {
                     NOptional<NMsg> m = getInputMetaData().getMessage();
                     if (m.isPresent()) {
                         out.print(m.get());
@@ -260,7 +260,7 @@ public class DefaultNDigest implements NDigest {
 
         @Override
         public String toString() {
-            NPlainOutputStream out = new NPlainOutputStream();
+            NPlainPrintStream out = new NPlainPrintStream();
             NOptional<NMsg> m = getInputMetaData().getMessage();
             if (m.isPresent()) {
                 out.print(m.get());

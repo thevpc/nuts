@@ -115,7 +115,7 @@ public class DefaultNUncompress implements NUncompress {
     @Override
     public NUncompress setSource(InputStream source) {
         checkSession();
-        this.source = source == null ? null : NIO.of(session).createInputSource(source);
+        this.source = source == null ? null : NIO.of(session).ofInputSource(source);
         return this;
     }
 
@@ -256,7 +256,7 @@ public class DefaultNUncompress implements NUncompress {
             monitor.setTraceProgress(options.contains(NPathOption.TRACE));
             monitor.setProgressFactory(getProgressFactory());
             monitor.setSource(_source);
-            _source = NIO.of(session).createInputSource(monitor.create());
+            _source = NIO.of(session).ofInputSource(monitor.create());
         }
         //boolean _source_isPath = _source.isPath();
 //        if (!path.toLowerCase().startsWith("file://")) {
@@ -319,7 +319,7 @@ public class DefaultNUncompress implements NUncompress {
             monitor.setTraceProgress(options.contains(NPathOption.TRACE));
             monitor.setProgressFactory(getProgressFactory());
             monitor.setSource(source);
-            _source = NIO.of(session).createInputSource(monitor.create());
+            _source = NIO.of(session).ofInputSource(monitor.create());
         }
 
         _LOGOP(session).level(Level.FINEST).verb(NLoggerVerb.START)

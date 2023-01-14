@@ -10,7 +10,7 @@ import net.thevpc.nuts.elem.NElementEntry;
 import net.thevpc.nuts.elem.NElements;
 import net.thevpc.nuts.elem.NObjectElement;
 import net.thevpc.nuts.format.NPositionType;
-import net.thevpc.nuts.io.NOutputStream;
+import net.thevpc.nuts.io.NPrintStream;
 import net.thevpc.nuts.runtime.standalone.format.DefaultFormatBase;
 import net.thevpc.nuts.runtime.standalone.format.ObjectOutputFormatWriterHelper;
 import net.thevpc.nuts.runtime.standalone.util.CoreStringUtils;
@@ -142,9 +142,9 @@ public class DefaultNPropertiesFormat extends DefaultFormatBase<NPropertiesForma
     }
 
     @Override
-    public void print(NOutputStream w) {
+    public void print(NPrintStream w) {
         checkSession();
-        NOutputStream out = getValidPrintStream(w);
+        NPrintStream out = getValidPrintStream(w);
         Map<Object, Object> mm;
         Map model = buildModel();
         if (sorted) {
@@ -187,7 +187,7 @@ public class DefaultNPropertiesFormat extends DefaultFormatBase<NPropertiesForma
 //        }
 //        return sb.toString();
 //    }
-    private void printMap(NOutputStream out, NString prefix, Map<Object, Object> props) {
+    private void printMap(NPrintStream out, NString prefix, Map<Object, Object> props) {
         int len = 1;
         for (Object extraKey : props.keySet()) {
             int x = stringValue(extraKey).textLength();
@@ -215,11 +215,11 @@ public class DefaultNPropertiesFormat extends DefaultFormatBase<NPropertiesForma
         return sep;
     }
 
-    private void printKeyValue(NOutputStream out, NString prefix, int len, NString key, NString value) {
+    private void printKeyValue(NPrintStream out, NString prefix, int len, NString key, NString value) {
         printKeyValue(out, prefix, len, getMultilineSeparator(key), key, value);
     }
 
-    private void printKeyValue(NOutputStream out, NString prefix, int len, String fancySep, NString key, NString value) {
+    private void printKeyValue(NPrintStream out, NString prefix, int len, String fancySep, NString key, NString value) {
         NTexts txt = NTexts.of(getSession());
         if (prefix == null) {
             prefix = txt.ofBlank();

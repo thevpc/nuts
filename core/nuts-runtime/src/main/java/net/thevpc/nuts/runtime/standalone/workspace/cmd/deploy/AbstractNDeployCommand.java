@@ -66,7 +66,7 @@ public abstract class AbstractNDeployCommand extends NWorkspaceCommandBase<NDepl
     @Override
     public NDeployCommand setContent(InputStream stream) {
         checkSession();
-        content = stream == null ? null : NIO.of(session).createInputSource(stream);
+        content = stream == null ? null : NIO.of(session).ofInputSource(stream);
         return this;
     }
 
@@ -78,7 +78,7 @@ public abstract class AbstractNDeployCommand extends NWorkspaceCommandBase<NDepl
 
     @Override
     public NDeployCommand setContent(byte[] content) {
-        this.content = content == null ? null : NIO.of(session).createInputSource(content);
+        this.content = content == null ? null : NIO.of(session).ofInputSource(content);
         return this;
     }
 

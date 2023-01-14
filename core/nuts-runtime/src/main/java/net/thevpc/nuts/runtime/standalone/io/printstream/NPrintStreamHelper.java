@@ -1,12 +1,12 @@
 package net.thevpc.nuts.runtime.standalone.io.printstream;
 
-import net.thevpc.nuts.io.NOutputStream;
+import net.thevpc.nuts.io.NPrintStream;
 import net.thevpc.nuts.runtime.standalone.io.outputstream.OutputHelper;
 
 public class NPrintStreamHelper implements OutputHelper {
-    private NOutputStream out;
+    private NPrintStream out;
 
-    public NPrintStreamHelper(NOutputStream out) {
+    public NPrintStreamHelper(NPrintStream out) {
         this.out = out;
     }
 
@@ -20,7 +20,7 @@ public class NPrintStreamHelper implements OutputHelper {
         out.flush();
     }
 
-    public NOutputStream out() {
+    public NPrintStream out() {
         return out;
     }
 }

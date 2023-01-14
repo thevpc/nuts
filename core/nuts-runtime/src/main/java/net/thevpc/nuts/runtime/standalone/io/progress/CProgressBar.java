@@ -1,7 +1,7 @@
 package net.thevpc.nuts.runtime.standalone.io.progress;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.io.NOutputStream;
+import net.thevpc.nuts.io.NPrintStream;
 import net.thevpc.nuts.runtime.standalone.util.CorePlatformUtils;
 import net.thevpc.nuts.runtime.standalone.util.CoreStringUtils;
 
@@ -585,7 +585,7 @@ public class CProgressBar {
         }
     }
 
-    public void printProgress(int percent, NText msg, NOutputStream out) {
+    public void printProgress(int percent, NText msg, NPrintStream out) {
         NText p = progress(percent, msg);
         if (p == null || p.isEmpty()) {
             return;

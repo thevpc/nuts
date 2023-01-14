@@ -101,7 +101,7 @@ public class LocalTomcatConfigService extends LocalTomcatServiceBase {
     }
 
     @Override
-    public LocalTomcatConfigService print(NOutputStream out) {
+    public LocalTomcatConfigService print(NPrintStream out) {
         Map<String, Object> result = new LinkedHashMap<>();
         result.put("config-name", getName());
         result.put("version", getValidCatalinaVersion());

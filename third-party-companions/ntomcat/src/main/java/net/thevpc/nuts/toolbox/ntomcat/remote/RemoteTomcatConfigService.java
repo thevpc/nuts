@@ -3,7 +3,7 @@ package net.thevpc.nuts.toolbox.ntomcat.remote;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.elem.NElements;
 import net.thevpc.nuts.io.NPath;
-import net.thevpc.nuts.io.NOutputStream;
+import net.thevpc.nuts.io.NPrintStream;
 import net.thevpc.nuts.toolbox.ntomcat.NTomcatConfigVersions;
 import net.thevpc.nuts.toolbox.ntomcat.local.LocalTomcatConfigService;
 import net.thevpc.nuts.toolbox.ntomcat.remote.config.RemoteTomcatAppConfig;
@@ -57,7 +57,7 @@ public class RemoteTomcatConfigService extends RemoteTomcatServiceBase {
     }
 
     @Override
-    public RemoteTomcatConfigService print(NOutputStream out) {
+    public RemoteTomcatConfigService print(NPrintStream out) {
         NSession session = context.getSession();
         NElements.of(session).json().setValue(getConfig()).print(out);
         out.flush();

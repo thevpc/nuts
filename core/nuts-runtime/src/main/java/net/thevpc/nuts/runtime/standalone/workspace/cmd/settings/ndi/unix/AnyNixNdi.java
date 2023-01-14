@@ -2,7 +2,7 @@ package net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.ndi.unix;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.io.NPath;
-import net.thevpc.nuts.io.NOutputStream;
+import net.thevpc.nuts.io.NPrintStream;
 import net.thevpc.nuts.runtime.standalone.shell.NShellHelper;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.util.PathInfo;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.ndi.FreeDesktopEntryWriter;
@@ -96,7 +96,7 @@ public class AnyNixNdi extends BaseSystemNdi {
                                 return true;
                             }
                             if ("why".equalsIgnoreCase(r)) {
-                                NOutputStream out = session.out();
+                                NPrintStream out = session.out();
                                 out.resetLine();
                                 out.println(NMsg.ofC("\\\"%s\\\" is a special file in your home that is invoked upon each interactive terminal launch.", factory.ofStyled(sysRcName, NTextStyle.path())));
                                 out.print("It helps configuring environment variables. ```sh nuts``` make usage of such facility to update your **PATH** env variable\n");

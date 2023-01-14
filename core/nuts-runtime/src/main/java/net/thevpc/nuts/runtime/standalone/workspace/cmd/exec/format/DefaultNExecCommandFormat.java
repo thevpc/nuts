@@ -2,7 +2,7 @@ package net.thevpc.nuts.runtime.standalone.workspace.cmd.exec.format;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.cmdline.NCommandLine;
-import net.thevpc.nuts.io.NOutputStream;
+import net.thevpc.nuts.io.NPrintStream;
 import net.thevpc.nuts.runtime.standalone.format.DefaultFormatBase;
 import net.thevpc.nuts.spi.NSupportLevelContext;
 
@@ -118,11 +118,11 @@ public class DefaultNExecCommandFormat extends DefaultFormatBase<NExecCommandFor
     }
 
     @Override
-    public void print(NOutputStream out) {
+    public void print(NPrintStream out) {
         StringBuilder sb = new StringBuilder();
         NExecCommand ec = getValue();
-        NOutputStream _out = ec.getOut();
-        NOutputStream err = ec.getErr();
+        NPrintStream _out = ec.getOut();
+        NPrintStream err = ec.getErr();
         InputStream in = ec.getIn();
         Map<String, String> env = ec.getEnv();
         List<String> command = ec.getCommand();

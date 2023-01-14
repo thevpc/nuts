@@ -3,7 +3,7 @@ package net.thevpc.nuts.runtime.standalone.app;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.cmdline.*;
 import net.thevpc.nuts.io.NPath;
-import net.thevpc.nuts.io.NOutputStream;
+import net.thevpc.nuts.io.NPrintStream;
 import net.thevpc.nuts.runtime.standalone.app.cmdline.NCommandLineUtils;
 import net.thevpc.nuts.runtime.standalone.session.NSessionUtils;
 import net.thevpc.nuts.runtime.standalone.util.NConfigurableHelper;
@@ -498,11 +498,11 @@ public class DefaultNApplicationContext implements NApplicationContext {
     private static class AppCommandAutoComplete extends NCommandAutoCompleteBase {
 
         private final ArrayList<String> words;
-        private final NOutputStream out0;
+        private final NPrintStream out0;
         private final NSession session;
         private final int wordIndex;
 
-        public AppCommandAutoComplete(NSession session, List<String> args, int wordIndex, NOutputStream out0) {
+        public AppCommandAutoComplete(NSession session, List<String> args, int wordIndex, NPrintStream out0) {
             this.session = session;
             words = new ArrayList<>(args);
             this.wordIndex = wordIndex;

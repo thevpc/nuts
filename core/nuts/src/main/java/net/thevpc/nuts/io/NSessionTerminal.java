@@ -48,7 +48,7 @@ public interface NSessionTerminal {
         return NTerminals.of(session).createTerminal(parent, session);
     }
 
-    static NSessionTerminal of(InputStream in, NOutputStream out, NOutputStream err, NSession session) {
+    static NSessionTerminal of(InputStream in, NPrintStream out, NPrintStream err, NSession session) {
         return NTerminals.of(session).createTerminal(in, out, err, session);
     }
 
@@ -60,10 +60,10 @@ public interface NSessionTerminal {
         return NTerminals.of(session).createMemTerminal(mergeError, session);
     }
 
-    String readLine(NOutputStream out, NMsg message);
+    String readLine(NPrintStream out, NMsg message);
 
 
-    String readLine(NOutputStream out, NMsg message, NSession session);
+    String readLine(NPrintStream out, NMsg message, NSession session);
 
     /**
      * Reads password as a single line of text from the terminal's input stream.
@@ -84,7 +84,7 @@ public interface NSessionTerminal {
      * if an end of stream has been reached.
      * @throws java.io.UncheckedIOException If an I/O error occurs.
      */
-    char[] readPassword(NOutputStream out, NMsg prompt);
+    char[] readPassword(NPrintStream out, NMsg prompt);
     /**
      * Reads password as a single line of text from the terminal's input stream.
      *
@@ -94,19 +94,19 @@ public interface NSessionTerminal {
      * if an end of stream has been reached.
      * @throws java.io.UncheckedIOException If an I/O error occurs.
      */
-    char[] readPassword(NOutputStream out, NMsg prompt, NSession session);
+    char[] readPassword(NPrintStream out, NMsg prompt, NSession session);
 
     InputStream getIn();
 
     void setIn(InputStream in);
 
-    NOutputStream getOut();
+    NPrintStream getOut();
 
-    void setOut(NOutputStream out);
+    void setOut(NPrintStream out);
 
-    NOutputStream getErr();
+    NPrintStream getErr();
 
-    void setErr(NOutputStream out);
+    void setErr(NPrintStream out);
 
     //    NutsSystemTerminalBase geTerminalBase();
 //
@@ -148,14 +148,14 @@ public interface NSessionTerminal {
      *
      * @return terminal's output stream
      */
-    NOutputStream out();
+    NPrintStream out();
 
     /**
      * return terminal's error stream
      *
      * @return terminal's error stream
      */
-    NOutputStream err();
+    NPrintStream err();
 
 
     /**

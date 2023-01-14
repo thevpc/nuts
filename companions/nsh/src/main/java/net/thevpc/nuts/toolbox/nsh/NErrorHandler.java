@@ -27,8 +27,7 @@
 package net.thevpc.nuts.toolbox.nsh;
 
 import net.thevpc.nuts.NMsg;
-import net.thevpc.nuts.io.NOutputStream;
-import net.thevpc.nuts.text.NTexts;
+import net.thevpc.nuts.io.NPrintStream;
 import net.thevpc.nuts.toolbox.nsh.jshell.*;
 import net.thevpc.nuts.NExecutionException;
 import net.thevpc.nuts.text.NTextStyle;
@@ -60,7 +59,7 @@ public class NErrorHandler implements JShellErrorHandler {
 
     @Override
     public void onError(String message, Throwable th, JShellContext context) {
-        NOutputStream err = context.getSession().getTerminal().err();
+        NPrintStream err = context.getSession().getTerminal().err();
         err.println(NMsg.ofStyled(message, NTextStyle.error()));
         err.flush();
     }

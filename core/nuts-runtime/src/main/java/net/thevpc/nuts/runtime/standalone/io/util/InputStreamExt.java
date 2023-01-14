@@ -128,7 +128,7 @@ public class InputStreamExt extends InputStream implements NInputSource, Interru
             }
 
             @Override
-            public void print(NOutputStream out) {
+            public void print(NPrintStream out) {
                 NOptional<NMsg> m = getInputMetaData().getMessage();
                 if(m.isPresent()){
                     out.print(m.get());
@@ -146,7 +146,7 @@ public class InputStreamExt extends InputStream implements NInputSource, Interru
 
     @Override
     public String toString() {
-        NPlainOutputStream out = new NPlainOutputStream();
+        NPlainPrintStream out = new NPlainPrintStream();
         NOptional<NMsg> m = getInputMetaData().getMessage();
         if (m.isPresent()) {
             out.print(m.get());

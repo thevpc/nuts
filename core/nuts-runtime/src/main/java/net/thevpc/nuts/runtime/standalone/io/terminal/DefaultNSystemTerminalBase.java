@@ -4,7 +4,7 @@ import net.thevpc.nuts.*;
 import net.thevpc.nuts.cmdline.NCommandAutoCompleteResolver;
 import net.thevpc.nuts.cmdline.NCommandHistory;
 import net.thevpc.nuts.io.*;
-import net.thevpc.nuts.runtime.standalone.io.printstream.NOutputStreamSystem;
+import net.thevpc.nuts.runtime.standalone.io.printstream.NPrintStreamSystem;
 import net.thevpc.nuts.runtime.standalone.util.NCachedValue;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceExt;
 import net.thevpc.nuts.spi.*;
@@ -26,8 +26,8 @@ public class DefaultNSystemTerminalBase extends NSystemTerminalBaseImpl {
     private Scanner scanner;
     private NTerminalMode outMode = NTerminalMode.FORMATTED;
     private NTerminalMode errMode = NTerminalMode.FORMATTED;
-    private NOutputStream out;
-    private NOutputStream err;
+    private NPrintStream out;
+    private NPrintStream err;
     private InputStream in;
     private NWorkspace workspace;
     private NSession session;
@@ -67,9 +67,9 @@ public class DefaultNSystemTerminalBase extends NSystemTerminalBaseImpl {
             termCursor =new NCachedValue<>(session -> null, THIRTY_SECONDS);
             termSize =new NCachedValue<>(session -> null, THIRTY_SECONDS);
         }
-        this.out = new NOutputStreamSystem(bootStdFd.getOut(), null, null, bootStdFd.getFlags().contains("ansi"),
+        this.out = new NPrintStreamSystem(bootStdFd.getOut(), null, null, bootStdFd.getFlags().contains("ansi"),
                 session, this).setTerminalMode(terminalMode);
-        this.err = new NOutputStreamSystem(bootStdFd.getErr(), null, null, bootStdFd.getFlags().contains("ansi"),
+        this.err = new NPrintStreamSystem(bootStdFd.getErr(), null, null, bootStdFd.getFlags().contains("ansi"),
                 session, this).setTerminalMode(terminalMode);
         this.in = bootStdFd.getIn();
         this.scanner = new Scanner(this.in);
@@ -77,7 +77,7 @@ public class DefaultNSystemTerminalBase extends NSystemTerminalBaseImpl {
     }
 
     @Override
-    public String readLine(NOutputStream out, NMsg message, NSession session) {
+    public String readLine(NPrintStream out, NMsg message, NSession session) {
         if (out == null) {
             out = getOut();
         }
@@ -92,7 +92,7 @@ public class DefaultNSystemTerminalBase extends NSystemTerminalBaseImpl {
     }
 
     @Override
-    public char[] readPassword(NOutputStream out, NMsg message, NSession session) {
+    public char[] readPassword(NPrintStream out, NMsg message, NSession session) {
         if (out == null) {
             out = getOut();
         }
@@ -112,12 +112,12 @@ public class DefaultNSystemTerminalBase extends NSystemTerminalBaseImpl {
     }
 
     @Override
-    public NOutputStream getOut() {
+    public NPrintStream getOut() {
         return this.out;
     }
 
     @Override
-    public NOutputStream getErr() {
+    public NPrintStream getErr() {
         return this.err;
     }
 

@@ -5,7 +5,7 @@ import net.thevpc.nuts.cmdline.NArg;
 import net.thevpc.nuts.cmdline.NCommandLine;
 import net.thevpc.nuts.format.NMutableTableModel;
 import net.thevpc.nuts.format.NTableFormat;
-import net.thevpc.nuts.io.NOutputStream;
+import net.thevpc.nuts.io.NPrintStream;
 import net.thevpc.nuts.text.NTextBuilder;
 import net.thevpc.nuts.text.NTextStyle;
 import net.thevpc.nuts.text.NTexts;
@@ -670,7 +670,7 @@ public class NTasksSubCmd {
             NArg a = cmd.next().get(session);
             if (cmd.isExecMode()) {
                 NTask task = findTask(a.toString(), cmd);
-                NOutputStream out = context.getSession().out();
+                NPrintStream out = context.getSession().out();
                 if (task == null) {
                     out.println(NMsg.ofC("```kw %s```: ```error not found```.",
                             a.toString()

@@ -3,7 +3,7 @@ package net.thevpc.nuts.runtime.standalone.io.path;
 import net.thevpc.nuts.NFormat;
 import net.thevpc.nuts.NSession;
 import net.thevpc.nuts.cmdline.NCommandLine;
-import net.thevpc.nuts.io.NOutputStream;
+import net.thevpc.nuts.io.NPrintStream;
 import net.thevpc.nuts.runtime.standalone.format.DefaultFormatBase;
 import net.thevpc.nuts.spi.NFormatSPI;
 import net.thevpc.nuts.spi.NSupportLevelContext;
@@ -17,7 +17,7 @@ public class NFormatFromSPI extends DefaultFormatBase<NFormat> {
     }
 
     @Override
-    public void print(NOutputStream out) {
+    public void print(NPrintStream out) {
         spi.print(out);
     }
 

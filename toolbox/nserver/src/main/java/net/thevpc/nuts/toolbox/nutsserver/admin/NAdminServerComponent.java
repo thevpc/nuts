@@ -26,7 +26,7 @@
 package net.thevpc.nuts.toolbox.nutsserver.admin;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.io.NOutputStream;
+import net.thevpc.nuts.io.NPrintStream;
 import net.thevpc.nuts.spi.NSupportLevelContext;
 import net.thevpc.nuts.text.NTextStyle;
 import net.thevpc.nuts.text.NTexts;
@@ -89,7 +89,7 @@ public class NAdminServerComponent implements NServerComponent {
             backlog = 10;
         }
         InetSocketAddress inetSocketAddress = new InetSocketAddress(address, port);
-        NOutputStream out = session.out();
+        NPrintStream out = session.out();
         NTexts factory = NTexts.of(session);
         out.println((NMsg.ofC("Nuts Admin Service '%s' running %s at %s", serverId, factory.ofStyled("telnet nsh", NTextStyle.primary1()), inetSocketAddress)));
         out.println((NMsg.ofC("Serving workspace : %s", NLocations.of(session).getWorkspaceLocation())));
