@@ -178,6 +178,9 @@ public final class NBootWorkspace {
         this.computedOptions.setLocale(this.computedOptions.getLocale().orElse(Locale.getDefault().toString()));
         this.computedOptions.setOutputFormat(this.computedOptions.getOutputFormat().orElse(NContentType.PLAIN));
         this.computedOptions.setCreationTime(this.computedOptions.getCreationTime().orElse(creationTime));
+        if(this.computedOptions.getApplicationArguments().isEmpty()){
+            this.computedOptions.setApplicationArguments(new ArrayList<>());
+        }
         this.bLog.setOptions(this.computedOptions);
     }
 
