@@ -226,7 +226,7 @@ public class DefaultNLiteral implements NLiteral {
         if (svalue.matches("false|disable|disabled|no|none|never|n|off|ko|f")) {
             return NOptional.of(false);
         }
-        return NOptional.ofError(session -> NMsg.ofC("invalid boolean % ", svalue));
+        return NOptional.ofError(session -> NMsg.ofC("invalid boolean %s", svalue));
     }
 
     public NOptional<Long> asLong() {

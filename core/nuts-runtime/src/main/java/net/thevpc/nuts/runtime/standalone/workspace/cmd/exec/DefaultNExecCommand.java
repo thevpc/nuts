@@ -210,7 +210,7 @@ public class DefaultNExecCommand extends AbstractNExecCommand {
             if (goodId != null) {
                 cmdKind = CmdKind.ID;
             } else {
-                throw new NNotFoundException(getSession(), null, NMsg.ofC("unable to resolve id %", cmdName));
+                throw new NNotFoundException(getSession(), null, NMsg.ofC("unable to resolve id %s", cmdName));
             }
         } else {
             if (cmdName.endsWith("!")) {
@@ -322,7 +322,7 @@ public class DefaultNExecCommand extends AbstractNExecCommand {
                 }
             }
         }
-        throw new NNotFoundException(getSession(), goodId, NMsg.ofC("unable to resolve id %", cmdName));
+        throw new NNotFoundException(getSession(), goodId, NMsg.ofC("unable to resolve id %s", cmdName));
     }
 
     protected NId findExecId(NId nid, NSession traceSession, boolean forceInstalled, boolean ignoreIfUserCommand) {

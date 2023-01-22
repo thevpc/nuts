@@ -134,12 +134,42 @@ public class NMsg {
         return of(NTextFormatType.CFORMAT, message, params, null, null, null);
     }
 
+    public static NMsg ofV(String message, NMsgParam... params) {
+        Map<String, Object> vars = new LinkedHashMap<>();
+        if (params != null) {
+            for (NMsgParam param : params) {
+                String e = param.getName();
+                if (vars.containsKey(e)) {
+                    throw new IllegalArgumentException("duplicate key " + e);
+                }
+                vars.put(e, param.getValue());
+            }
+        }
+        return ofV(message, vars);
+    }
+
     public static NMsg ofV(String message, Map<String, ?> vars) {
         return of(NTextFormatType.VFORMAT, message, new Object[]{vars}, null, null, null);
     }
 
     public static NMsg ofV(String message, Function<String, ?> vars) {
         return of(NTextFormatType.VFORMAT, message, new Object[]{vars}, null, null, null);
+    }
+
+    public static NMsg ofJ(String message, NMsgParam... params) {
+        if (params == null) {
+            return ofJ(message, new Object[]{null});
+        }
+        Object[] paramsAsObjects = Arrays.stream(params).map(NMsgParam::getValue).toArray();
+        return ofJ(message, paramsAsObjects);
+    }
+
+    public static NMsg ofC(String message, NMsgParam... params) {
+        if (params == null) {
+            return ofC(message, new Object[]{null});
+        }
+        Object[] paramsAsObjects = Arrays.stream(params).map(NMsgParam::getValue).toArray();
+        return ofC(message, paramsAsObjects);
     }
 
     @Deprecated
@@ -184,7 +214,53 @@ public class NMsg {
                 return sb.toString();
             }
             case JFORMAT: {
-                return MessageFormat.format((String) message, params);
+                //must process special case of {}
+                String sMsg = (String) message;
+                if (sMsg.contains("{}")) {
+                    StringBuilder sb = new StringBuilder();
+                    char[] chars = sMsg.toCharArray();
+                    int currentIndex = 0;
+                    for (int i = 0; i < chars.length; i++) {
+                        char c = chars[i];
+                        if (c == '{') {
+                            StringBuilder sb2 = new StringBuilder();
+                            i++;
+                            while (i < chars.length) {
+                                char c2 = chars[i];
+                                if (c2 == '}') {
+                                    break;
+                                } else if (c2 == '\\') {
+                                    sb2.append(c2);
+                                    i++;
+                                    if (i < chars.length) {
+                                        c2 = chars[i];
+                                        sb2.append(c2);
+                                    }
+                                } else {
+                                    sb2.append(c2);
+                                }
+                            }
+                            String s2 = sb2.toString();
+                            if (s2.isEmpty()) {
+                                s2 = String.valueOf(currentIndex);
+                            } else if (s2.trim().startsWith(":")) {
+                                s2 = String.valueOf(currentIndex) + s2;
+                            }
+                            sb.append("{").append(s2).append("}");
+                            currentIndex++;
+                        } else if (c == '\\') {
+                            sb.append(c);
+                            i++;
+                            if (i < chars.length) {
+                                sb.append(c);
+                            }
+                        } else {
+                            sb.append(c);
+                        }
+                    }
+                    sMsg = sb.toString();
+                }
+                return MessageFormat.format(sMsg, params);
             }
             case VFORMAT: {
                 return formatAsVStyle();
@@ -273,7 +349,7 @@ public class NMsg {
         return sb.toString();
     }
 
-    private static boolean _isValidMessageVar(char c) {
+    static boolean _isValidMessageVar(char c) {
         return (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') || (c >= '0' && c <= '9') || c == '_';
     }
 

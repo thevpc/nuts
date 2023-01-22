@@ -1,5 +1,6 @@
 package net.thevpc.nuts.runtime.standalone.xtra.mon;
 
+import net.thevpc.nuts.NMsgTemplate;
 import net.thevpc.nuts.NSession;
 import net.thevpc.nuts.io.NPrintStream;
 import net.thevpc.nuts.spi.NSupportLevelContext;
@@ -43,12 +44,12 @@ public class DefaultNProgressMonitors implements NProgressMonitors {
 
 
     @Override
-    public NProgressMonitor ofLogger(String message, long freq) {
+    public NProgressMonitor ofLogger(NMsgTemplate message, long freq) {
         return ofLogger(message, null).temporize(freq);
     }
 
     @Override
-    public NProgressMonitor ofLogger(String message, long freq, Logger out) {
+    public NProgressMonitor ofLogger(NMsgTemplate message, long freq, Logger out) {
         return ofLogger(message, out).temporize(freq);
     }
 
@@ -58,12 +59,12 @@ public class DefaultNProgressMonitors implements NProgressMonitors {
     }
 
     @Override
-    public NProgressMonitor ofOut(String message, long freq) {
+    public NProgressMonitor ofOut(NMsgTemplate message, long freq) {
         return ofOut(message).temporize(freq);
     }
 
     @Override
-    public NProgressMonitor ofOut(String message, long freq, PrintStream out) {
+    public NProgressMonitor ofOut(NMsgTemplate message, long freq, PrintStream out) {
         return ofPrintStream(message, out).temporize(freq);
     }
 
@@ -74,7 +75,7 @@ public class DefaultNProgressMonitors implements NProgressMonitors {
     }
 
     @Override
-    public NProgressMonitor ofPrintStream(String messageFormat, PrintStream printStream) {
+    public NProgressMonitor ofPrintStream(NMsgTemplate messageFormat, PrintStream printStream) {
         return new DefaultProgressMonitor(null,
                 new PrintStreamProgressHandler(messageFormat, printStream),
                 null, getSession()
@@ -87,7 +88,7 @@ public class DefaultNProgressMonitors implements NProgressMonitors {
     }
 
     @Override
-    public NProgressMonitor ofPrintStream(String messageFormat, NPrintStream printStream) {
+    public NProgressMonitor ofPrintStream(NMsgTemplate messageFormat, NPrintStream printStream) {
         return new DefaultProgressMonitor(null,
                 new NPrintStreamProgressHandler(messageFormat, printStream, getSession()),
                 null, getSession()
@@ -95,7 +96,7 @@ public class DefaultNProgressMonitors implements NProgressMonitors {
     }
 
     @Override
-    public NProgressMonitor ofLogger(String messageFormat, Logger printStream) {
+    public NProgressMonitor ofLogger(NMsgTemplate messageFormat, Logger printStream) {
         return new DefaultProgressMonitor(null,
                 new JLogProgressHandler(messageFormat, printStream),
                 null, getSession()
@@ -118,7 +119,7 @@ public class DefaultNProgressMonitors implements NProgressMonitors {
     }
 
     @Override
-    public NProgressMonitor ofOut(String messageFormat) {
+    public NProgressMonitor ofOut(NMsgTemplate messageFormat) {
         return ofPrintStream(messageFormat, System.out);
     }
 
@@ -133,7 +134,7 @@ public class DefaultNProgressMonitors implements NProgressMonitors {
     }
 
     @Override
-    public NProgressMonitor ofSysErr(String messageFormat) {
+    public NProgressMonitor ofSysErr(NMsgTemplate messageFormat) {
         return ofPrintStream(messageFormat, System.err);
     }
 
@@ -148,7 +149,7 @@ public class DefaultNProgressMonitors implements NProgressMonitors {
     }
 
     @Override
-    public NProgressMonitor ofErr(String messageFormat) {
+    public NProgressMonitor ofErr(NMsgTemplate messageFormat) {
         return ofPrintStream(messageFormat, System.err);
     }
 

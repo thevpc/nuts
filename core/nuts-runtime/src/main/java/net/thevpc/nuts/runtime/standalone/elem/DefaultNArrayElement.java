@@ -28,15 +28,12 @@ import java.time.Instant;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.elem.*;
 
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Iterator;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
 /**
- *
  * @author thevpc
  */
 public class DefaultNArrayElement extends AbstractNArrayElement {
@@ -71,10 +68,10 @@ public class DefaultNArrayElement extends AbstractNArrayElement {
 
     @Override
     public NOptional<NElement> get(int index) {
-        if(index>=0 && index<values.length){
+        if (index >= 0 && index < values.length) {
             return NOptional.of(values[index]);
         }
-        return NOptional.ofError(s-> NMsg.ofC("invalid array index %s not in [%s,%s[",index,0,values.length));
+        return NOptional.ofError(s -> NMsg.ofC("invalid array index %s not in [%s,%s[", index, 0, values.length));
     }
 
     @Override
@@ -131,7 +128,6 @@ public class DefaultNArrayElement extends AbstractNArrayElement {
     public NOptional<NObjectElement> getObject(int index) {
         return get(index).flatMap(NElement::asObject);
     }
-
 
 
     @Override
@@ -193,14 +189,37 @@ public class DefaultNArrayElement extends AbstractNArrayElement {
 
     @Override
     public NOptional<NElement> get(NElement key) {
-        return key.isString()?key.asString().flatMap(this::get):key.asInt().flatMap(this::get);
+        return key.isString() ? key.asString().flatMap(this::get) : key.asInt().flatMap(this::get);
+    }
+
+    @Override
+    public List<NElement> getAll(NElement s) {
+        int index = -1;
+        if (s.isString()) {
+            NOptional<Integer> ii = NLiteral.of(s.asString().get()).asInt();
+            if (ii.isPresent()) {
+                index = ii.get();
+            } else {
+                return Collections.emptyList();
+            }
+        } else if (s.isInt()) {
+            index = s.asInt().get();
+        } else {
+            return Collections.emptyList();
+        }
+
+        NOptional<NElement> a = get(index);
+        if (a.isPresent()) {
+            return Arrays.asList(a.get());
+        }
+        return Collections.emptyList();
     }
 
     @Override
     public Collection<NElementEntry> entries() {
         return IntStream.range(0, size())
                 .boxed()
-                .map(x->new DefaultNElementEntry(
+                .map(x -> new DefaultNElementEntry(
                         NElements.of(session).ofString(String.valueOf(x)),
                         get(x).orNull()
                 )).collect(Collectors.toList());

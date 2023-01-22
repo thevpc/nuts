@@ -1,6 +1,8 @@
 package net.thevpc.nuts.runtime.standalone.xtra.mon;
 
 import net.thevpc.nuts.NMsg;
+import net.thevpc.nuts.NMsgParam;
+import net.thevpc.nuts.NMsgTemplate;
 import net.thevpc.nuts.runtime.standalone.util.MemoryUtils;
 import net.thevpc.nuts.util.*;
 
@@ -18,7 +20,7 @@ public class JLogProgressHandler implements NProgressHandler {
         defaultLog.setUseParentHandlers(false);
     }
 
-    private String messageFormat;
+    private NMsgTemplate messageFormat;
     private Logger logger;
 
     /**
@@ -27,7 +29,7 @@ public class JLogProgressHandler implements NProgressHandler {
      *
      * @param messageFormat
      */
-    public JLogProgressHandler(String messageFormat, Logger logger) {
+    public JLogProgressHandler(NMsgTemplate messageFormat, Logger logger) {
         this.messageFormat = resolveFormat(messageFormat);
         if (logger == null) {
             logger = defaultLog;
@@ -38,30 +40,56 @@ public class JLogProgressHandler implements NProgressHandler {
     @Override
     public void onEvent(NProgressHandlerEvent event) {
         NMsg message = event.getModel().getMessage();
-        String msg = formatMessage(messageFormat, event.getModel());
-        logger.log(message.getLevel() == null ? Level.INFO : message.getLevel(), msg);
+        NMsg msg = formatMessage(messageFormat, event.getModel());
+        logger.log(message.getLevel() == null ? Level.INFO : message.getLevel(), msg.toString());
     }
 
-    public static String formatMessage(String messageFormat, NProgressMonitorModel model) {
+    public static NMsg formatMessage(NMsgTemplate messageFormat, NProgressMonitorModel model) {
         long newd = System.currentTimeMillis();
         NMsg message = model.getMessage();
-        return messageFormat
-                .replace("%date%", new Date(newd).toString())
-                .replace("%value%", Double.isNaN(model.getProgress()) ? "   ?%" : PERCENT_FORMAT.format(model.getProgress()))
-                .replace("%inuse-mem%", MF.format(MemoryUtils.inUseMemory()))
-                .replace("%free-mem%", MF.format(MemoryUtils.maxFreeMemory()))
-                .replace("%message%", message.toString());
+        return messageFormat.build(
+                NMsgParam.of("message",()-> message),
+                NMsgParam.of("date",()-> new Date(newd)),
+                NMsgParam.of("progress",()-> Double.isNaN(model.getProgress()) ? "   ?%" : PERCENT_FORMAT.format(model.getProgress())),
+                NMsgParam.of("inuse",()->MF.format(MemoryUtils.inUseMemory())),
+                NMsgParam.of("free",()-> MF.format(MemoryUtils.maxFreeMemory()))
+        );
     }
 
-    public static String resolveFormat(String messageFormat) {
-        if (messageFormat == null || messageFormat.isEmpty()) {
-            messageFormat = "%inuse-mem% | %free-mem% | %progress% : %message%";
+    public static NMsgTemplate resolveFormat(NMsgTemplate messageFormat) {
+        if (messageFormat == null) {
+            messageFormat = NMsgTemplate.ofV("$inuse | $free | $progress : $message");
         }
-        if (!messageFormat.contains("%message%")) {
-            if (!messageFormat.endsWith(" ")) {
-                messageFormat += " ";
+        if (messageFormat.getParamNames().length==0) {
+            switch (messageFormat.getFormat()){
+                case VFORMAT:{
+                    String message = messageFormat.getMessage();
+                    if (!message.endsWith(" ")) {
+                        message += " ";
+                    }
+                    message += "$message";
+                    messageFormat=NMsgTemplate.ofV(message);
+                    break;
+                }
+                case CFORMAT:{
+                    String message = messageFormat.getMessage();
+                    if (!message.endsWith(" ")) {
+                        message += " ";
+                    }
+                    message += "%s";
+                    messageFormat=NMsgTemplate.ofC(message);
+                    break;
+                }
+                case JFORMAT:{
+                    String message = messageFormat.getMessage();
+                    if (!message.endsWith(" ")) {
+                        message += " ";
+                    }
+                    message += "{0}";
+                    messageFormat=NMsgTemplate.ofJ(message);
+                    break;
+                }
             }
-            messageFormat += "%message%";
         }
         return messageFormat;
     }

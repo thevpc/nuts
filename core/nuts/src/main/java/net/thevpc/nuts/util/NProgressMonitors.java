@@ -1,6 +1,7 @@
 package net.thevpc.nuts.util;
 
 import net.thevpc.nuts.NExtensions;
+import net.thevpc.nuts.NMsgTemplate;
 import net.thevpc.nuts.NSession;
 import net.thevpc.nuts.io.NPrintStream;
 import net.thevpc.nuts.spi.NComponent;
@@ -22,13 +23,13 @@ public interface NProgressMonitors extends NComponent {
 
     NProgressMonitor ofPrintStream(PrintStream printStream);
 
-    NProgressMonitor ofPrintStream(String messageFormat, PrintStream printStream);
+    NProgressMonitor ofPrintStream(NMsgTemplate messageFormat, PrintStream printStream);
 
     NProgressMonitor ofPrintStream(NPrintStream printStream);
 
-    NProgressMonitor ofPrintStream(String messageFormat, NPrintStream printStream);
+    NProgressMonitor ofPrintStream(NMsgTemplate messageFormat, NPrintStream printStream);
 
-    NProgressMonitor ofLogger(String messageFormat, Logger printStream);
+    NProgressMonitor ofLogger(NMsgTemplate messageFormat, Logger printStream);
 
     NProgressMonitor ofLogger(Logger printStream);
 
@@ -36,29 +37,29 @@ public interface NProgressMonitors extends NComponent {
 
     NProgressMonitor ofLogger();
 
-    NProgressMonitor ofOut(String messageFormat);
+    NProgressMonitor ofOut(NMsgTemplate messageFormat);
 
     NProgressMonitor ofSysOut();
 
     NProgressMonitor ofSysErr();
 
-    NProgressMonitor ofSysErr(String messageFormat);
+    NProgressMonitor ofSysErr(NMsgTemplate messageFormat);
 
     NProgressMonitor ofOut();
 
     NProgressMonitor ofErr();
 
-    NProgressMonitor ofErr(String messageFormat);
+    NProgressMonitor ofErr(NMsgTemplate messageFormat);
 
-    NProgressMonitor ofLogger(String message, long freq);
+    NProgressMonitor ofLogger(NMsgTemplate message, long freq);
 
-    NProgressMonitor ofLogger(String message, long freq, Logger out);
+    NProgressMonitor ofLogger(NMsgTemplate message, long freq, Logger out);
 
     NProgressMonitor ofOut(long freq);
 
-    NProgressMonitor ofOut(String message, long freq);
+    NProgressMonitor ofOut(NMsgTemplate message, long freq);
 
-    NProgressMonitor ofOut(String message, long freq, PrintStream out);
+    NProgressMonitor ofOut(NMsgTemplate message, long freq, PrintStream out);
 
     NProgressMonitor of(NProgressMonitor monitor);
     NProgressMonitor of(NProgressHandler monitor);

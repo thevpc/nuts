@@ -25,10 +25,11 @@
  */
 package net.thevpc.nuts.elem;
 
+import net.thevpc.nuts.NOptional;
 import net.thevpc.nuts.NSession;
-import net.thevpc.nuts.util.NAssert;
 
 import java.util.Collection;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -60,7 +61,21 @@ public interface NObjectElementBuilder extends NElementBuilder {
 
     NObjectElementBuilder set(String name, String value);
 
+    NObjectElementBuilder add(NElement name, NElement value);
+
+    NObjectElementBuilder add(String name, NElement value);
+
+    NObjectElementBuilder add(String name, boolean value);
+
+    NObjectElementBuilder add(String name, int value);
+
+    NObjectElementBuilder add(String name, double value);
+
+    NObjectElementBuilder add(String name, String value);
+
     NObjectElementBuilder addAll(Map<NElement, NElement> other);
+    NObjectElementBuilder addAll(List<NElementEntry> other);
+    NObjectElementBuilder setAll(Map<NElement, NElement> other);
 
     /**
      * remove all properties
@@ -76,6 +91,7 @@ public interface NObjectElementBuilder extends NElementBuilder {
      * @return this {@code this} instance
      */
     NObjectElementBuilder remove(String name);
+    NObjectElementBuilder removeAll(String name);
 
     /**
      * return value for name or null.
@@ -84,7 +100,7 @@ public interface NObjectElementBuilder extends NElementBuilder {
      * @param name key name
      * @return value for name or null
      */
-    NElement get(String name);
+    NOptional<NElement> get(String name);
 
     /**
      * object (key,value) attributes
@@ -92,6 +108,9 @@ public interface NObjectElementBuilder extends NElementBuilder {
      * @return object attributes
      */
     Collection<NElementEntry> children();
+
+    public List<NElement> getAll(NElement s);
+
 
     /**
      * element count
@@ -116,16 +135,8 @@ public interface NObjectElementBuilder extends NElementBuilder {
      * @param other other instance
      * @return this {@code this} instance
      */
-    NObjectElementBuilder set(NObjectElementBuilder other);
+    NObjectElementBuilder setAll(NObjectElementBuilder other);
 
-    /**
-     * set all properties from the given {@code other} instance.
-     * all properties not found in {@code other} will be retained.
-     *
-     * @param other other instance
-     * @return this {@code this} instance
-     */
-    NObjectElementBuilder add(NObjectElement other);
 
     /**
      * set all properties from the given {@code other} instance.
@@ -144,6 +155,8 @@ public interface NObjectElementBuilder extends NElementBuilder {
      */
     NObjectElementBuilder add(NElementEntry entry);
 
+    NObjectElementBuilder set(NElementEntry entry);
+
     /**
      * create a immutable instance of {@link NObjectElement} representing
      * this builder.
@@ -153,6 +166,9 @@ public interface NObjectElementBuilder extends NElementBuilder {
     NObjectElement build();
 
     NObjectElementBuilder remove(NElement name);
+
+    NObjectElementBuilder removeAll(NElement name);
+
 
     NObjectElementBuilder set(NElement name, NElement value);
 
@@ -164,7 +180,7 @@ public interface NObjectElementBuilder extends NElementBuilder {
 
     NObjectElementBuilder set(NElement name, int value);
 
-    NElement get(NElement s);
+    NOptional<NElement> get(NElement s);
 
     /**
      * add all  key value entries binding
@@ -175,9 +191,10 @@ public interface NObjectElementBuilder extends NElementBuilder {
     NObjectElementBuilder addAll(NElementEntry... entries);
 
     /**
-     * add all  key value entries binding
+     * set all properties from the given {@code other} instance.
+     * all properties not found in {@code other} will be retained.
      *
-     * @param other other entry
+     * @param other other instance
      * @return this {@code this} instance
      */
     NObjectElementBuilder addAll(NObjectElement other);

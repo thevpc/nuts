@@ -9,15 +9,19 @@ import java.util.stream.Stream;
 
 public class DefaultNObjectElement extends AbstractNObjectElement {
 
-    private Map<NElement, NElement> values = new LinkedHashMap<>();
+    private List<NElementEntry> values = new ArrayList<>();
+    private Map<NElement, List<Integer>> indexes = new HashMap<>();
     private NElements elements;
 
-    public DefaultNObjectElement(Map<NElement, NElement> values, NSession session) {
+    public DefaultNObjectElement(List<NElementEntry> values, NSession session) {
         super(session);
         if (values != null) {
-            for (Map.Entry<NElement, NElement> e : values.entrySet()) {
-                if (e.getKey() != null && e.getValue() != null) {
-                    this.values.put(e.getKey(), e.getValue());
+            for (NElementEntry e : values) {
+                NElement key = e.getKey();
+                if (key != null && e.getValue() != null) {
+                    int index = this.values.size();
+                    this.values.add(new DefaultNElementEntry(key, e.getValue()));
+                    indexes.computeIfAbsent(key, x -> new ArrayList<>()).add(index);
                 }
             }
         }
@@ -34,24 +38,33 @@ public class DefaultNObjectElement extends AbstractNObjectElement {
             elements = NElements.of(session);
         }
         NPrimitiveElement newKey = elements.ofString(s);
-        NElement value = values.get(newKey);
-        return NOptional.ofNamed(value, "property " + s);
+        return get(newKey);
     }
 
     @Override
     public NOptional<NElement> get(NElement s) {
-        return NOptional.ofNamed(values.get(s), "property " + s);
+        List<NElement> a = getAll(s);
+        return NOptional.ofNamedSingleton(a, "property " + s);
+    }
+
+    @Override
+    public List<NElement> getAll(NElement s) {
+        List<Integer> integers = indexes.get(s);
+        if (integers == null) {
+            return new ArrayList<>();
+        }
+        return integers.stream().map(x -> values.get(x).getValue()).collect(Collectors.toList());
     }
 
 
     @Override
     public Collection<NElementEntry> entries() {
-        return values.entrySet().stream().map(x -> new DefaultNElementEntry(x.getKey(), x.getValue())).collect(Collectors.toList());
+        return new ArrayList<>(values);
     }
 
     @Override
     public Stream<NElementEntry> stream() {
-        return values.entrySet().stream().map(x -> new DefaultNElementEntry(x.getKey(), x.getValue()));
+        return values.stream();
     }
 
     @Override

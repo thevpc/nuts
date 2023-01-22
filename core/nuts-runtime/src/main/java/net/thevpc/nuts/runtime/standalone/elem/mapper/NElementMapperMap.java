@@ -7,10 +7,7 @@ import net.thevpc.nuts.runtime.standalone.elem.DefaultNObjectElement;
 
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.Map;
-import java.util.TreeMap;
+import java.util.*;
 
 public class NElementMapperMap implements NElementMapper<Map> {
 
@@ -38,13 +35,13 @@ public class NElementMapperMap implements NElementMapper<Map> {
     @Override
     public NElement createElement(Map o, Type typeOfSrc, NElementFactoryContext context) {
         Map je = (Map) o;
-        Map<NElement, NElement> m = new LinkedHashMap<>();
+        List<NElementEntry> m = new ArrayList<>();
         if (je != null) {
             for (Object e0 : je.entrySet()) {
                 Map.Entry e = (Map.Entry) e0;
                 NElement k = context.objectToElement(e.getKey(), null);
                 NElement v = context.objectToElement(e.getValue(), null);
-                m.put(k, v);
+                m.add(new DefaultNElementEntry(k, v));
             }
         }
         return new DefaultNObjectElement(m, context.getSession());

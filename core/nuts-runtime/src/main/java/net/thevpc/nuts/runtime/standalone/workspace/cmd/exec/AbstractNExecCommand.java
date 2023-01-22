@@ -107,7 +107,13 @@ public abstract class AbstractNExecCommand extends NWorkspaceCommandBase<NExecCo
         if (this.command == null) {
             this.command = new ArrayList<>();
         }
-        this.command.addAll(Arrays.asList(command));
+        if(command!=null){
+            for (String s : command) {
+                if(s!=null){
+                    this.command.add(s);
+                }
+            }
+        }
         return this;
     }
 
@@ -116,7 +122,13 @@ public abstract class AbstractNExecCommand extends NWorkspaceCommandBase<NExecCo
         if (this.command == null) {
             this.command = new ArrayList<>();
         }
-        this.command.addAll(command);
+        if(command!=null){
+            for (String s : command) {
+                if(s!=null){
+                    this.command.add(s);
+                }
+            }
+        }
         return this;
     }
 

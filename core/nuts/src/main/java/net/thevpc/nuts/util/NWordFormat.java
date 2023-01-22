@@ -7,20 +7,28 @@ public enum NWordFormat {
     UNCAPITALIZED;
 
     public String formatWord(String value) {
-        switch (this) {
-            case UPPERCASE:
-                return value.toUpperCase();
-            case LOWERCASE:
-                return value.toLowerCase();
-            case CAPITALIZED: {
-                char[] c = value.toCharArray();
-                c[0] = Character.toUpperCase(c[0]);
-                return new String(c);
-            }
-            case UNCAPITALIZED: {
-                char[] c = value.toCharArray();
-                c[0] = Character.toLowerCase(c[0]);
-                return new String(c);
+        if(value!=null) {
+            switch (this) {
+                case UPPERCASE:
+                    return value.toUpperCase();
+                case LOWERCASE:
+                    return value.toLowerCase();
+                case CAPITALIZED: {
+                    if (value.length() > 0) {
+                        char[] c = value.toCharArray();
+                        c[0] = Character.toUpperCase(c[0]);
+                        return new String(c);
+                    }
+                    break;
+                }
+                case UNCAPITALIZED: {
+                    if (value.length() > 0) {
+                        char[] c = value.toCharArray();
+                        c[0] = Character.toLowerCase(c[0]);
+                        return new String(c);
+                    }
+                    break;
+                }
             }
         }
         throw new UnsupportedOperationException();

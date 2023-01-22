@@ -4,7 +4,7 @@ import net.thevpc.nuts.spi.NRepositoryLocation;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-public class Test26_RepoListParserTest {
+public class Test38_RepoListParserTest {
 
 
     @Test

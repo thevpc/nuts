@@ -29,6 +29,7 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.time.Instant;
 import java.util.Collection;
+import java.util.List;
 
 /**
  * Object implementation of Nuts Element type. Nuts Element types are generic
@@ -79,6 +80,7 @@ public interface NNavigatableElement extends NElement {
     NOptional<NNavigatableElement> getNavigatableByPath(String... keys);
 
     NOptional<NElement> get(NElement key);
+    List<NElement> getAll(NElement s);
 
     NOptional<NArrayElement> getArray(String key);
 
