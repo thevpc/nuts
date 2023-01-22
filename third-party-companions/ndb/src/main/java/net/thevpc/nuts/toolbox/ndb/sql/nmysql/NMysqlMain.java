@@ -3,9 +3,11 @@ package net.thevpc.nuts.toolbox.ndb.sql.nmysql;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.cmdline.NArg;
 import net.thevpc.nuts.cmdline.NCommandLine;
+import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.io.NPrintStream;
 import net.thevpc.nuts.text.NTextStyle;
 import net.thevpc.nuts.text.NTexts;
+import net.thevpc.nuts.toolbox.ndb.base.CmdRedirect;
 import net.thevpc.nuts.toolbox.ndb.sql.sqlbase.SqlSupport;
 import net.thevpc.nuts.toolbox.ndb.sql.nmysql.local.LocalMysqlConfigService;
 import net.thevpc.nuts.toolbox.ndb.sql.nmysql.local.LocalMysqlDatabaseConfigService;
@@ -1097,5 +1099,15 @@ public class NMysqlMain extends SqlSupport<NMySqlConfig> {
     @Override
     public void revalidateOptions(NMySqlConfig options) {
 
+    }
+
+    @Override
+    public CmdRedirect createDumpCommand(NPath remoteSql, NMySqlConfig options, NSession session) {
+        throw new RuntimeException("unsupported dump");
+    }
+
+    @Override
+    public CmdRedirect createRestoreCommand(NPath remoteSql, NMySqlConfig options, NSession session) {
+        throw new RuntimeException("unsupported restore");
     }
 }

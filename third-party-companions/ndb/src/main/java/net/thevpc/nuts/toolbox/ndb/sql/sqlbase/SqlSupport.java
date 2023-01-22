@@ -1,11 +1,10 @@
 package net.thevpc.nuts.toolbox.ndb.sql.sqlbase;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.cmdline.NCommandLine;
 import net.thevpc.nuts.elem.NElements;
-import net.thevpc.nuts.toolbox.ndb.ExtendedQuery;
 import net.thevpc.nuts.toolbox.ndb.NdbConfig;
 import net.thevpc.nuts.toolbox.ndb.base.NdbSupportBase;
+import net.thevpc.nuts.toolbox.ndb.base.cmd.CopyDBCmd;
 import net.thevpc.nuts.toolbox.ndb.sql.sqlbase.cmd.*;
 import net.thevpc.nuts.toolbox.ndb.sql.nmysql.util.AtName;
 import net.thevpc.nuts.toolbox.ndb.util.SqlHelper;
@@ -31,10 +30,11 @@ public abstract class SqlSupport<C extends NdbConfig> extends NdbSupportBase<C> 
         declareNdbCmd(new SqlQueryCmd<>(this));
         declareNdbCmd(new SqlRenameTableCmd<>(this));
         declareNdbCmd(new SqlReplaceCmd<>(this));
-        declareNdbCmd(new SqlRestoreTableCmd<>(this));
+        declareNdbCmd(new SqlRestoreCmd<>(this));
         declareNdbCmd(new SqlShowDatabasesCmd<>(this));
         declareNdbCmd(new SqlShowTablesCmd<>(this));
         declareNdbCmd(new SqlUpdateCmd<>(this));
+        declareNdbCmd(new CopyDBCmd<>(this));
     }
 
 //    @Override

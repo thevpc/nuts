@@ -1,29 +1,25 @@
 package net.thevpc.nuts.toolbox.ndb.nosql.mongodb.cmd;
 
-import com.mongodb.client.FindIterable;
-import net.thevpc.nuts.NBlankable;
 import net.thevpc.nuts.NSession;
 import net.thevpc.nuts.elem.NElement;
 import net.thevpc.nuts.elem.NElements;
 import net.thevpc.nuts.toolbox.ndb.ExtendedQuery;
-import net.thevpc.nuts.toolbox.ndb.base.cmd.FindCmd;
 import net.thevpc.nuts.toolbox.ndb.base.cmd.ShowDatabasesCmd;
 import net.thevpc.nuts.toolbox.ndb.nosql.mongodb.NMongoConfig;
-import net.thevpc.nuts.toolbox.ndb.nosql.mongodb.NMongoMain;
-import org.bson.Document;
+import net.thevpc.nuts.toolbox.ndb.nosql.mongodb.NMongoSupport;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
 public class MongoShowDatabasesCmd extends ShowDatabasesCmd<NMongoConfig> {
-    public MongoShowDatabasesCmd(NMongoMain support) {
+    public MongoShowDatabasesCmd(NMongoSupport support) {
         super(support);
     }
 
     @Override
-    public NMongoMain getSupport() {
-        return (NMongoMain) super.getSupport();
+    public NMongoSupport getSupport() {
+        return (NMongoSupport) super.getSupport();
     }
 
     protected void runShowDatabases(ExtendedQuery eq, NMongoConfig options, NSession session) {

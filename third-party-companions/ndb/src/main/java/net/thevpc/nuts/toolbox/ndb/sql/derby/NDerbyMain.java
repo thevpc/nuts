@@ -8,9 +8,11 @@ package net.thevpc.nuts.toolbox.ndb.sql.derby;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.cmdline.NArg;
 import net.thevpc.nuts.cmdline.NCommandLine;
+import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.io.NPrintStream;
 import net.thevpc.nuts.text.NTextStyle;
 import net.thevpc.nuts.text.NTexts;
+import net.thevpc.nuts.toolbox.ndb.base.CmdRedirect;
 import net.thevpc.nuts.toolbox.ndb.sql.sqlbase.SqlSupport;
 import net.thevpc.nuts.toolbox.ndb.sql.nmysql.util.AtName;
 import net.thevpc.nuts.toolbox.ndb.util.SqlHelper;
@@ -301,5 +303,15 @@ public class NDerbyMain extends SqlSupport<NDerbyConfig> {
     @Override
     public void revalidateOptions(NDerbyConfig options) {
 
+    }
+
+    @Override
+    public CmdRedirect createDumpCommand(NPath remoteSql, NDerbyConfig options, NSession session) {
+        throw new RuntimeException("not supported dump");
+    }
+
+    @Override
+    public CmdRedirect createRestoreCommand(NPath remoteSql, NDerbyConfig options, NSession session) {
+        throw new RuntimeException("not supported restore");
     }
 }

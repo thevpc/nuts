@@ -1,7 +1,6 @@
 package net.thevpc.nuts.toolbox.ndb.nosql.mongodb.cmd;
 
 import com.mongodb.client.AggregateIterable;
-import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoCursor;
 import net.thevpc.nuts.NApplicationContext;
 import net.thevpc.nuts.NBlankable;
@@ -10,30 +9,22 @@ import net.thevpc.nuts.cmdline.NCommandLine;
 import net.thevpc.nuts.toolbox.ndb.ExtendedQuery;
 import net.thevpc.nuts.toolbox.ndb.base.NdbCmd;
 import net.thevpc.nuts.toolbox.ndb.nosql.mongodb.NMongoConfig;
-import net.thevpc.nuts.toolbox.ndb.nosql.mongodb.NMongoMain;
+import net.thevpc.nuts.toolbox.ndb.nosql.mongodb.NMongoSupport;
 import net.thevpc.nuts.toolbox.ndb.sql.nmysql.util.AtName;
 import net.thevpc.nuts.util.NRef;
-import org.bson.BsonArray;
-import org.bson.BsonValue;
-import org.bson.Document;
-import org.bson.codecs.*;
-import org.bson.codecs.configuration.CodecRegistries;
-import org.bson.codecs.configuration.CodecRegistry;
 import org.bson.conversions.Bson;
-import org.bson.json.JsonReader;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 public class MongoAggregateCmd extends NdbCmd<NMongoConfig> {
-    public MongoAggregateCmd(NMongoMain support) {
+    public MongoAggregateCmd(NMongoSupport support) {
         super(support, "aggregate");
     }
 
     @Override
-    public NMongoMain getSupport() {
-        return (NMongoMain) super.getSupport();
+    public NMongoSupport getSupport() {
+        return (NMongoSupport) super.getSupport();
     }
 
     @Override

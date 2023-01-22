@@ -1,23 +1,20 @@
 package net.thevpc.nuts.toolbox.ndb.nosql.mongodb.cmd;
 
 import com.mongodb.MongoNamespace;
-import net.thevpc.nuts.NBlankable;
 import net.thevpc.nuts.NSession;
 import net.thevpc.nuts.toolbox.ndb.ExtendedQuery;
-import net.thevpc.nuts.toolbox.ndb.base.cmd.CountCmd;
 import net.thevpc.nuts.toolbox.ndb.base.cmd.RenameTableCmd;
 import net.thevpc.nuts.toolbox.ndb.nosql.mongodb.NMongoConfig;
-import net.thevpc.nuts.toolbox.ndb.nosql.mongodb.NMongoMain;
-import org.bson.Document;
+import net.thevpc.nuts.toolbox.ndb.nosql.mongodb.NMongoSupport;
 
 public class MongoRenameTableCmd extends RenameTableCmd<NMongoConfig> {
-    public MongoRenameTableCmd(NMongoMain support) {
+    public MongoRenameTableCmd(NMongoSupport support) {
         super(support);
     }
 
     @Override
-    public NMongoMain getSupport() {
-        return (NMongoMain) super.getSupport();
+    public NMongoSupport getSupport() {
+        return (NMongoSupport) super.getSupport();
     }
 
 

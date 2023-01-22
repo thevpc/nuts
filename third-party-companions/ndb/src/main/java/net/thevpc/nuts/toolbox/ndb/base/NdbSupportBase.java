@@ -5,7 +5,6 @@ import net.thevpc.nuts.cmdline.NArg;
 import net.thevpc.nuts.cmdline.NCommandLine;
 import net.thevpc.nuts.elem.NElements;
 import net.thevpc.nuts.io.NPath;
-import net.thevpc.nuts.toolbox.ndb.ExtendedQuery;
 import net.thevpc.nuts.toolbox.ndb.NdbConfig;
 import net.thevpc.nuts.toolbox.ndb.base.cmd.*;
 import net.thevpc.nuts.toolbox.ndb.sql.nmysql.NMySqlConfigVersions;
@@ -16,6 +15,7 @@ import net.thevpc.nuts.util.NStringUtils;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 public abstract class NdbSupportBase<C extends NdbConfig> implements NdbSupport {
     protected Class<C> configClass;
@@ -25,6 +25,7 @@ public abstract class NdbSupportBase<C extends NdbConfig> implements NdbSupport 
     protected Map<String, NdbCmd<C>> commands = new HashMap<>();
 
     public NdbSupportBase(String dbType, Class<C> configClass, NApplicationContext appContext) {
+        this.dbType = dbType;
         this.configClass = configClass;
         this.appContext = appContext;
         this.sharedConfigFolder = appContext.getVersionFolder(NStoreLocation.CONFIG, NMySqlConfigVersions.CURRENT)
@@ -58,7 +59,7 @@ public abstract class NdbSupportBase<C extends NdbConfig> implements NdbSupport 
     @Override
     public void run(NApplicationContext appContext, NCommandLine commandLine) {
         NArg a;
-        commandLine.setCommandName(dbType);
+        commandLine.setCommandName("ndb "+dbType);
         while (commandLine.hasNext()) {
             boolean ok = false;
             for (NdbCmd<C> cc : commands.values()) {
@@ -80,6 +81,16 @@ public abstract class NdbSupportBase<C extends NdbConfig> implements NdbSupport 
         }
     }
 
+    public NOptional<NdbCmd<C>> findCommand(String name) {
+        for (NdbCmd<C> value : commands.values()) {
+            for (String valueName : value.getNames()) {
+                if (Objects.equals(valueName, name)) {
+                    return NOptional.of(value);
+                }
+            }
+        }
+        return NOptional.ofNamedEmpty("command " + name);
+    }
 
     protected boolean runExtraCommand(NApplicationContext appContext, NCommandLine commandLine) {
         return false;
@@ -261,10 +272,41 @@ public abstract class NdbSupportBase<C extends NdbConfig> implements NdbSupport 
         return sharedConfigFolder;
     }
 
-    public boolean isRemoteCommand(C options) {
-        return
-                !NBlankable.isBlank(options.getRemoteServer())
-                        || !NBlankable.isBlank(options.getRemoteUser());
+    public boolean isRemoteHost(String host) {
+        if (NBlankable.isBlank(host)) {
+            return false;
+        }
+        if (host.trim().equals("localhost")) {
+            return false;
+        }
+        if (host.trim().startsWith("127.0.0.")) {
+            return false;
+        }
+        return true;
     }
 
+    public boolean isRemoteCommand(C options) {
+        return isRemoteHost(options.getRemoteServer());
+    }
+
+    public DumpRestoreMode getDumpRestoreMode(C options, NSession session) {
+        return DumpRestoreMode.FILE;
+    }
+
+    public <C extends NdbConfig> String getDumpExt(C options, NSession session) {
+        return ".sql";
+    }
+
+    public abstract CmdRedirect createDumpCommand(NPath remoteSql, C options, NSession session);
+
+    public abstract CmdRedirect createRestoreCommand(NPath remoteSql, C options, NSession session);
+
+    public void prepareDump(C options, NSession session) {
+
+    }
+
+    public enum DumpRestoreMode {
+        FILE,
+        FOLDER
+    }
 }

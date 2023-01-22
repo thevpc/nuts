@@ -4,9 +4,9 @@ import net.thevpc.nuts.NApplication;
 import net.thevpc.nuts.NApplicationContext;
 import net.thevpc.nuts.cmdline.NCommandLine;
 import net.thevpc.nuts.toolbox.ndb.sql.derby.NDerbyMain;
-import net.thevpc.nuts.toolbox.ndb.nosql.mongodb.NMongoMain;
+import net.thevpc.nuts.toolbox.ndb.nosql.mongodb.NMongoSupport;
 import net.thevpc.nuts.toolbox.ndb.sql.nmysql.NMysqlMain;
-import net.thevpc.nuts.toolbox.ndb.sql.postgres.NPostgreSQLMain;
+import net.thevpc.nuts.toolbox.ndb.sql.postgres.NPostgresSupport;
 
 public class NdbMain implements NApplication {
 
@@ -28,10 +28,10 @@ public class NdbMain implements NApplication {
                 new NDerbyMain(context).run(context, commandLine);
                 return;
             } else if (commandLine.next("mongo", "mongodb").isPresent()) {
-                new NMongoMain(context).run(context, commandLine);
+                new NMongoSupport(context).run(context, commandLine);
                 return;
             } else if (commandLine.next("postgres", "postgresql").isPresent()) {
-                new NPostgreSQLMain(context).run(context, commandLine);
+                new NPostgresSupport(context).run(context, commandLine);
                 return;
             } else {
                 context.configureLast(commandLine);

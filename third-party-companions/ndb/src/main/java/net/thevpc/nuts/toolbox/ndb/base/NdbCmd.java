@@ -150,7 +150,25 @@ public abstract class NdbCmd<C extends NdbConfig> {
     }
 
     public NExecCommand sysSsh(C options, NSession session) {
-        return getSupport().sysSsh(options,session);
+        return getSupport().sysSsh(options, session);
+    }
+
+    protected void sshPull(NPath remote, NPath local, C options, NSession session) {
+        run(sysCmd(session)
+                .addCommand("scp", options.getRemoteUser() + "@" + options.getRemoteServer() + ":" + remote)
+                .addCommand(local.toString())
+        );
+    }
+
+    protected void sshPush(NPath local, NPath remote, C options, NSession session) {
+        run(sysCmd(session)
+                .addCommand("scp", local.toString())
+                .addCommand(options.getRemoteUser() + "@" + options.getRemoteServer() + ":" + remote.toString())
+        );
+    }
+
+    protected void sshRm(NPath upRestorePath, C options, NSession session) {
+        run(sysSsh(options, session).addCommand("rm -rf " + upRestorePath.toString()));
     }
 
     public NExecCommand run(NExecCommand cmd) {

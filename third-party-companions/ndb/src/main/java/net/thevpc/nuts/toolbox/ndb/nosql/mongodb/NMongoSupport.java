@@ -5,22 +5,15 @@
  */
 package net.thevpc.nuts.toolbox.ndb.nosql.mongodb;
 
-import com.mongodb.MongoNamespace;
 import com.mongodb.client.*;
-import com.mongodb.client.result.DeleteResult;
-import com.mongodb.client.result.UpdateResult;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.cmdline.NCommandLine;
-import net.thevpc.nuts.elem.NElement;
-import net.thevpc.nuts.elem.NElements;
-import net.thevpc.nuts.io.NIOException;
 import net.thevpc.nuts.io.NPath;
-import net.thevpc.nuts.io.NPathOption;
-import net.thevpc.nuts.toolbox.ndb.ExtendedQuery;
+import net.thevpc.nuts.toolbox.ndb.NdbConfig;
+import net.thevpc.nuts.toolbox.ndb.base.CmdRedirect;
 import net.thevpc.nuts.toolbox.ndb.base.NdbSupportBase;
+import net.thevpc.nuts.toolbox.ndb.base.cmd.CopyDBCmd;
 import net.thevpc.nuts.toolbox.ndb.nosql.mongodb.cmd.*;
-import net.thevpc.nuts.toolbox.ndb.sql.nmysql.util.AtName;
-import net.thevpc.nuts.util.NRef;
 import org.bson.BsonArray;
 import org.bson.BsonValue;
 import org.bson.Document;
@@ -31,21 +24,13 @@ import org.bson.conversions.Bson;
 import org.bson.json.JsonReader;
 import org.slf4j.LoggerFactory;
 
-import java.io.IOException;
-import java.io.OutputStream;
-import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.function.Consumer;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import java.util.stream.Collectors;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipInputStream;
 
 /**
  * @author thevpc
  */
-public class NMongoMain extends NdbSupportBase<NMongoConfig> {
+public class NMongoSupport extends NdbSupportBase<NMongoConfig> {
     private static void setMongoLogEnabled(boolean enable) {
         if (enable) {
             ((ch.qos.logback.classic.Logger) LoggerFactory.getLogger(org.slf4j.Logger.ROOT_LOGGER_NAME)).setLevel(ch.qos.logback.classic.Level.DEBUG);
@@ -54,7 +39,7 @@ public class NMongoMain extends NdbSupportBase<NMongoConfig> {
         }
     }
 
-    public NMongoMain(NApplicationContext appContext) {
+    public NMongoSupport(NApplicationContext appContext) {
         super("mongodb", NMongoConfig.class, appContext);
         setMongoLogEnabled(false);
         declareNdbCmd(new MongoFindCmd(this));
@@ -68,6 +53,9 @@ public class NMongoMain extends NdbSupportBase<NMongoConfig> {
         declareNdbCmd(new MongoCreateIndexCmd(this));
         declareNdbCmd(new MongoRenameTableCmd(this));
         declareNdbCmd(new MongoAggregateCmd(this));
+        declareNdbCmd(new MongoDumpCmd(this));
+        declareNdbCmd(new MongoRestoreCmd(this));
+        declareNdbCmd(new CopyDBCmd<>(this));
     }
 
     public static void doWithMongoCollection(NMongoConfig options, String collection, Consumer<MongoCollection> consumer) {
@@ -125,8 +113,10 @@ public class NMongoMain extends NdbSupportBase<NMongoConfig> {
         options.setUser(user);
         options.setHost(host);
         options.setPort(port);
-        if (NBlankable.isBlank(options.getRemoteUser())) {
-            options.setRemoteUser(System.getProperty("user.name"));
+        if (isRemoteHost(options.getRemoteServer())) {
+            if (NBlankable.isBlank(options.getRemoteUser())) {
+                options.setRemoteUser(System.getProperty("user.name"));
+            }
         }
     }
 
@@ -148,5 +138,53 @@ public class NMongoMain extends NdbSupportBase<NMongoConfig> {
         } else {
             return Arrays.asList(Document.parse(JSON_DATA));
         }
+    }
+
+
+    public <C extends NdbConfig> String getDumpExt(C options, NSession session) {
+        return ""; //folder
+    }
+
+    public CmdRedirect createDumpCommand(NPath remoteSql, NMongoConfig options, NSession session) {
+        List<String> cmd = new ArrayList<>();
+        cmd.add("mongodump");
+        cmd.add("--quiet");
+        if (!NBlankable.isBlank(options.getHost())) {
+            cmd.add("--host=" + options.getHost());
+        }
+        if(options.getPort()!=null && options.getPort().intValue()>0) {
+            cmd.add("--port=" + options.getPort());
+        }
+        if (!NBlankable.isBlank(options.getUser())) {
+            cmd.add("--username=" + options.getUser());
+        }
+        cmd.add("--db=" + options.getDatabaseName());
+        cmd.add("--out=" + remoteSql.toString());
+        return new CmdRedirect(NCommandLine.of(cmd), null);
+    }
+
+
+    public CmdRedirect createRestoreCommand(NPath remoteSql, NMongoConfig options, NSession session) {
+        List<String> cmd = new ArrayList<>();
+        cmd.add("mongorestore");
+        cmd.add("--quiet");
+        if (!NBlankable.isBlank(options.getHost())) {
+            cmd.add("--host=" + options.getHost());
+        }
+        if(options.getPort()!=null && options.getPort().intValue()>0) {
+            cmd.add("--port=" + options.getPort());
+        }
+        cmd.add("--db=" + options.getDatabaseName());
+        cmd.add("--drop");
+        if (!NBlankable.isBlank(options.getUser())) {
+            cmd.add("--username=" + options.getUser());
+        }
+        cmd.add(remoteSql.toString());
+        return new CmdRedirect(NCommandLine.of(cmd), null);
+    }
+
+    @Override
+    public DumpRestoreMode getDumpRestoreMode(NMongoConfig options, NSession session) {
+        return DumpRestoreMode.FOLDER;
     }
 }

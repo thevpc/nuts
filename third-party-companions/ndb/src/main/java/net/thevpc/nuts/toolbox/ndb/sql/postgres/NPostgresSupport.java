@@ -6,8 +6,12 @@
 package net.thevpc.nuts.toolbox.ndb.sql.postgres;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.cmdline.NCommandLine;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.io.NPathOption;
+import net.thevpc.nuts.toolbox.ndb.NdbConfig;
+import net.thevpc.nuts.toolbox.ndb.base.CmdRedirect;
+import net.thevpc.nuts.toolbox.ndb.base.cmd.CopyDBCmd;
 import net.thevpc.nuts.toolbox.ndb.sql.postgres.cmd.PostgresDumpCmd;
 import net.thevpc.nuts.toolbox.ndb.sql.postgres.cmd.PostgresRestoreCmd;
 import net.thevpc.nuts.toolbox.ndb.sql.postgres.cmd.PostgresShowDatabasesCmd;
@@ -20,9 +24,9 @@ import java.util.*;
 /**
  * @author thevpc
  */
-public class NPostgreSQLMain extends SqlSupport<NPostgresConfig> {
+public class NPostgresSupport extends SqlSupport<NPostgresConfig> {
 
-    public NPostgreSQLMain(NApplicationContext appContext) {
+    public NPostgresSupport(NApplicationContext appContext) {
         super("postgresql", NPostgresConfig.class, appContext, "org.postgresql:postgresql#42.5.1", "org.postgresql.Driver");
         declareNdbCmd(new PostgresShowTablesCmd(this));
         declareNdbCmd(new PostgresShowDatabasesCmd(this));
@@ -45,12 +49,14 @@ public class NPostgreSQLMain extends SqlSupport<NPostgresConfig> {
         options.setUser(user);
         options.setHost(host);
         options.setPort(port);
-        if (NBlankable.isBlank(options.getRemoteUser())) {
-            options.setRemoteUser(System.getProperty("user.name"));
+        if (isRemoteHost(options.getRemoteServer())) {
+            if (NBlankable.isBlank(options.getRemoteUser())) {
+                options.setRemoteUser(System.getProperty("user.name"));
+            }
         }
     }
 
-    public void preparePgpass(NPostgresConfig options, NSession session) {
+    public void prepareDump(NPostgresConfig options, NSession session) {
 
         if (isRemoteCommand(options)) {
 
@@ -87,4 +93,39 @@ public class NPostgreSQLMain extends SqlSupport<NPostgresConfig> {
                         "database", NOptional.of(options.getDatabaseName()).ifBlank("db").get()
                 )).toString();
     }
+
+
+    public CmdRedirect createDumpCommand(NPath remoteSql, NPostgresConfig options, NSession session) {
+        return new CmdRedirect(
+                NCommandLine.of(
+                        new String[]{
+                                "pg_dump",
+                                options.getDatabaseName(),
+                                "--clean",
+                                "--create",
+                                "--host=" + options.getHost(),
+                                "--port=" + options.getPort(),
+                                "--username=" + options.getUser()
+                        }
+                )
+                , remoteSql
+        );
+    }
+
+
+    public CmdRedirect createRestoreCommand(NPath remoteSql, NPostgresConfig options, NSession session) {
+        return new CmdRedirect(
+                NCommandLine.of(
+                        new String[]{
+                                "pg_restore",
+                                options.getDatabaseName(),
+                                "--host=" + options.getHost(),
+                                "--port=" + options.getPort(),
+                                "--username=" + options.getUser()
+                        }
+                )
+                , remoteSql
+        );
+    }
+
 }

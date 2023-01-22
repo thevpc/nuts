@@ -4,20 +4,19 @@ import com.mongodb.client.result.UpdateResult;
 import net.thevpc.nuts.NBlankable;
 import net.thevpc.nuts.NSession;
 import net.thevpc.nuts.toolbox.ndb.ExtendedQuery;
-import net.thevpc.nuts.toolbox.ndb.base.cmd.InsertCmd;
 import net.thevpc.nuts.toolbox.ndb.base.cmd.UpdateCmd;
 import net.thevpc.nuts.toolbox.ndb.nosql.mongodb.NMongoConfig;
-import net.thevpc.nuts.toolbox.ndb.nosql.mongodb.NMongoMain;
+import net.thevpc.nuts.toolbox.ndb.nosql.mongodb.NMongoSupport;
 import org.bson.Document;
 
 public class MongoUpdateCmd extends UpdateCmd<NMongoConfig> {
-    public MongoUpdateCmd(NMongoMain support) {
+    public MongoUpdateCmd(NMongoSupport support) {
         super(support);
     }
 
     @Override
-    public NMongoMain getSupport() {
-        return (NMongoMain) super.getSupport();
+    public NMongoSupport getSupport() {
+        return (NMongoSupport) super.getSupport();
     }
 
     @Override
