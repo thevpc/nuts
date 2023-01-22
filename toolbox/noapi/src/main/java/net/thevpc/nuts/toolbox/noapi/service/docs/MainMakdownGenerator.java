@@ -130,6 +130,7 @@ public class MainMakdownGenerator {
                 msg.get("section.contact.body").get()
         ));
         all.add(MdFactory.endParagraph());
+
         NObjectElement contact = info.getObject("contact").orElse(NObjectElement.ofEmpty(session));
         all.add(MdFactory.table()
                 .addColumns(
@@ -145,6 +146,46 @@ public class MainMakdownGenerator {
                         )
                 ).build()
         );
+        all.add(MdFactory.endParagraph());
+
+        all.add(MdFactory.title(3, msg.get("CHANGES").get()));
+        all.add(NoApiUtils.asText(
+                msg.get("section.changes.body").get()
+        ));
+        all.add(MdFactory.endParagraph());
+
+        NArrayElement changeLog = info.getArray("changes").orElse(NArrayElement.ofEmpty(session));
+        MdTableBuilder changeLogTable = MdFactory.table()
+                .addColumns(
+                        MdFactory.column().setName(msg.get("DATE").get()),
+                        MdFactory.column().setName(msg.get("VERSION").get()),
+                        MdFactory.column().setName(msg.get("DESCRIPTION").get())
+                );
+        for (NElement nElement : changeLog) {
+            changeLogTable.addRows(
+                    MdFactory.row().addCells(
+                            NoApiUtils.asText(nElement.asObject().get().getString("date").orElse("")),
+                            NoApiUtils.asText(nElement.asObject().get().getString("version").orElse("")),
+                            NoApiUtils.asText(nElement.asObject().get().getString("title").orElse(""))
+                    )
+            );
+        }
+
+        all.add(changeLogTable.build());
+        all.add(MdFactory.endParagraph());
+        for (NElement nElement : changeLog) {
+            NObjectElement oo = nElement.asObject().get();
+            all.add(MdFactory.title(4, "VERSION " + oo.getString("version").get()+" : "+oo.getString("title").get()));
+            all.add(MdFactory.endParagraph());
+            all.add(NoApiUtils.asText(
+                    oo.getString("observations").get()
+            ));
+            all.add(MdFactory.endParagraph());
+            for (NElement item : oo.getArray("details").orElse(NArrayElement.ofEmpty(session))) {
+                all.add(MdFactory.ul(1,NoApiUtils.asText(item.asString().get())));
+            }
+            all.add(MdFactory.endParagraph());
+        }
     }
 
     private void _fillHeaders(NObjectElement entries, List<MdElement> all, Vars vars2) {
@@ -447,17 +488,18 @@ public class MainMakdownGenerator {
 
     private String getSmartTypeName(NObjectElement obj) {
         String e = _StringUtils.nvl(obj.getString("type").orNull(), "string");
-        if("array".equals(e)){
+        if ("array".equals(e)) {
             NObjectElement items = obj.getObject("items").orNull();
-            if(items!=null){
-                return getSmartTypeName(items)+"[]";
-            }else{
+            if (items != null) {
+                return getSmartTypeName(items) + "[]";
+            } else {
                 return e;
             }
-        }else{
+        } else {
             return e;
         }
     }
+
     private void _fillApiPathMethodParam(List<NElement> headerParameters, List<MdElement> all, String url, List<TypeCrossRef> typeCrossRefs, String paramType) {
         NSession session = appContext.getSession();
         MdTable tab = new MdTable(
