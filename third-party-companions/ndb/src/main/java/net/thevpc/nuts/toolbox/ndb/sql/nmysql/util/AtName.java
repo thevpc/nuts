@@ -41,7 +41,7 @@ public class AtName {
     private String name;
 
     public static AtName nextConfigOption(NCommandLine cmd, NSession session) {
-        NArg a = cmd.nextString().get(session);
+        NArg a = cmd.nextEntry().get(session);
         AtName name2 = new AtName(a.getStringValue().get(session));
         if (!name2.getConfigName().isEmpty() && !name2.getDatabaseName().isEmpty()) {
             cmd.pushBack(a);
@@ -59,12 +59,12 @@ public class AtName {
     }
 
     public static AtName nextAppOption(NCommandLine cmd, NSession session) {
-        NArg a = cmd.nextString().get(session);
+        NArg a = cmd.nextEntry().get(session);
         return a==null?null:new AtName(a.getStringValue().get(session));
     }
 
     public static AtName nextAppNonOption(NCommandLine cmd, NSession session) {
-        NArg a = cmd.nextString().get(session);
+        NArg a = cmd.nextEntry().get(session);
         return a==null?null:new AtName(a.asString().get(session));
     }
 

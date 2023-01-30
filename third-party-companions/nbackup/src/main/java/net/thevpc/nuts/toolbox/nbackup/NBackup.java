@@ -6,10 +6,7 @@
 package net.thevpc.nuts.toolbox.nbackup;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.cmdline.NArg;
-import net.thevpc.nuts.cmdline.NCommandLine;
-import net.thevpc.nuts.cmdline.NCommandLineContext;
-import net.thevpc.nuts.cmdline.NCommandLineProcessor;
+import net.thevpc.nuts.cmdline.*;
 import net.thevpc.nuts.elem.NElements;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.text.NTextStyle;
@@ -78,35 +75,35 @@ public class NBackup implements NApplication {
 
             @Override
             public boolean onCmdNextOption(NArg option, NCommandLine commandLine, NCommandLineContext context) {
-                if (commandLine.withNextString((v, a, s) -> {
+                if (commandLine.withNextEntry((v, a, s) -> {
                     options.config.setRemoteServer(v);
                 }, "--server")) {
                     return true;
-                } else if (commandLine.withNextString((v, a, s) -> {
+                } else if (commandLine.withNextEntry((v, a, s) -> {
                     options.config.setRemoteUser(v);
                 }, "--user")) {
                     return true;
-                } else if (commandLine.withNextString((v, a, s) -> {
+                } else if (commandLine.withNextEntry((v, a, s) -> {
                     options.config.setLocalPath(v);
                 }, "--local")) {
                     return true;
-                } else if (commandLine.withNextString((v, a, s) -> {
+                } else if (commandLine.withNextEntry((v, a, s) -> {
                     addPath(v);
                 }, "--add-path")) {
                     return true;
-                } else if (commandLine.withNextString((v, a, s) -> {
+                } else if (commandLine.withNextEntry((v, a, s) -> {
                     options.config.getPaths().removeIf(x -> Objects.equals(String.valueOf(x).trim(), v.trim()));
                 }, "--remove-path")) {
                     return true;
-                } else if (commandLine.withNextBoolean((v, a, s) -> {
+                } else if (commandLine.withNextFlag((v, a, s) -> {
                     options.config.getPaths().clear();
                 }, "--clear-paths")) {
                     return true;
-                } else if (commandLine.withNextBoolean((v, a, s) -> {
+                } else if (commandLine.withNextFlag((v, a, s) -> {
                     options.cmd = Cmd.SAVE;
                 }, "--save")) {
                     return true;
-                } else if (commandLine.withNextBoolean((v, a, s) -> {
+                } else if (commandLine.withNextFlag((v, a, s) -> {
                     options.cmd = Cmd.SHOW;
                 }, "--show")) {
                     return true;
@@ -199,6 +196,6 @@ public class NBackup implements NApplication {
                 session.out().println(NCommandLine.of(cmd));
                 NExecCommand.of(session).addCommand(cmd).setFailFast(true).run();
             }
-        }, applicationContext);
+        }, new DefaultNCommandLineContext(applicationContext));
     }
 }

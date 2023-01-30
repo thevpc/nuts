@@ -37,31 +37,31 @@ public abstract class NdbCmd<C extends NdbConfig> {
     protected boolean fillOption(NCommandLine cmdLine, C options) {
         NSession session = support.getAppContext().getSession();
         NArg a;
-        if ((a = cmdLine.nextString("--name").orNull()) != null) {
+        if ((a = cmdLine.nextEntry("--name").orNull()) != null) {
             options.setName(a.getStringValue().get(session));
             return true;
-        } else if ((a = cmdLine.nextString("-h", "--host").orNull()) != null) {
+        } else if ((a = cmdLine.nextEntry("-h", "--host").orNull()) != null) {
             options.setHost(a.getStringValue().get(session));
             return true;
-        } else if ((a = cmdLine.nextString("-p", "--port").orNull()) != null) {
+        } else if ((a = cmdLine.nextEntry("-p", "--port").orNull()) != null) {
             options.setPort(a.getValue().asInt().get(session));
             return true;
-        } else if ((a = cmdLine.nextString("-n", "--dbname").orNull()) != null) {
+        } else if ((a = cmdLine.nextEntry("-n", "--dbname").orNull()) != null) {
             options.setDatabaseName(a.getStringValue().get(session));
             return true;
-        } else if ((a = cmdLine.nextString("-u", "--user").orNull()) != null) {
+        } else if ((a = cmdLine.nextEntry("-u", "--user").orNull()) != null) {
             options.setUser(a.getStringValue().get(session));
             return true;
-        } else if ((a = cmdLine.nextString("-P", "--password").orNull()) != null) {
+        } else if ((a = cmdLine.nextEntry("-P", "--password").orNull()) != null) {
             options.setPassword(a.getStringValue().get(session));
             return true;
-        } else if ((a = cmdLine.nextString("--remote-server").orNull()) != null) {
+        } else if ((a = cmdLine.nextEntry("--remote-server").orNull()) != null) {
             options.setRemoteServer(a.getStringValue().get(session));
             return true;
-        } else if ((a = cmdLine.nextString("--remote-user").orNull()) != null) {
+        } else if ((a = cmdLine.nextEntry("--remote-user").orNull()) != null) {
             options.setRemoteUser(a.getStringValue().get(session));
             return true;
-        } else if ((a = cmdLine.nextString("--remote-temp-folder").orNull()) != null) {
+        } else if ((a = cmdLine.nextEntry("--remote-temp-folder").orNull()) != null) {
             options.setRemoteTempFolder(a.getStringValue().get(session));
             return true;
         } else if (fillExtraOption(cmdLine, options)) {
@@ -100,7 +100,7 @@ public abstract class NdbCmd<C extends NdbConfig> {
     }
 
     protected void readConfigNameOption(NCommandLine commandLine, NSession session, NRef<AtName> name) {
-        commandLine.withNextString((v, a, s) -> {
+        commandLine.withNextEntry((v, a, s) -> {
             if (name.isNull()) {
                 String name2 = NdbUtils.checkName(a.getStringValue().get(session), session);
                 name.set(new AtName(name2));

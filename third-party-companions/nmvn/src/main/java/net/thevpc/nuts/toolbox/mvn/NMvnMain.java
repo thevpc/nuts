@@ -49,7 +49,7 @@ public class NMvnMain implements NApplication {
             if (command == null) {
                 if (appContext.configureFirst(cmd)) {
                     //fo nothing
-                } else if ((a = cmd.nextBoolean("-j", "--json").orNull()) != null) {
+                } else if ((a = cmd.nextFlag("-j", "--json").orNull()) != null) {
                     o.json = a.getBooleanValue().get(session);
                 } else if ((a = cmd.next("build").orNull()) != null) {
                     command = "build";
@@ -122,7 +122,7 @@ public class NMvnMain implements NApplication {
         }
     }
 
-//    public void prepareM2Home(NutsApplicationContext appContext){
+//    public void prepareM2Home(NApplicationContext appContext){
 //        Path configFolder = appContext.getConfigFolder();
 //        if(!Files.isRegularFile(configFolder.resolve(".mvn/maven.config"))){
 //            if(!Files.isDirectory(configFolder.resolve(".mvn"))){

@@ -245,7 +245,7 @@ public class DefaultNTreeFormat extends DefaultFormatBase<NTreeFormat> implement
         boolean enabled = aa.isActive();
         switch (aa.key()) {
             case "--border": {
-                commandLine.withNextString((v, a, s) -> {
+                commandLine.withNextEntry((v, a, s) -> {
                     switch (NStringUtils.trim(v)) {
                         case "simple": {
                             setLinkFormat(LINK_ASCII_FORMATTER);
@@ -260,15 +260,15 @@ public class DefaultNTreeFormat extends DefaultFormatBase<NTreeFormat> implement
                 return true;
             }
             case "--omit-root": {
-                commandLine.withNextBoolean((v, a, s) -> setOmitRoot(v));
+                commandLine.withNextFlag((v, a, s) -> setOmitRoot(v));
                 return true;
             }
             case "--infinite": {
-                commandLine.withNextBoolean((v, a, s) -> infinite = (v));
+                commandLine.withNextFlag((v, a, s) -> infinite = (v));
                 return true;
             }
             case DefaultNPropertiesFormat.OPTION_MULTILINE_PROPERTY: {
-                NArg i = commandLine.nextString().get(session);
+                NArg i = commandLine.nextEntry().get(session);
                 if (enabled) {
                     addMultilineProperty(i.key(), i.getStringValue().get(session));
                 }

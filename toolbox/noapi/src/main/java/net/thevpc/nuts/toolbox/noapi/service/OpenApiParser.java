@@ -1,10 +1,7 @@
 package net.thevpc.nuts.toolbox.noapi.service;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.elem.NArrayElement;
-import net.thevpc.nuts.elem.NElement;
-import net.thevpc.nuts.elem.NElementEntry;
-import net.thevpc.nuts.elem.NObjectElement;
+import net.thevpc.nuts.elem.*;
 import net.thevpc.nuts.toolbox.noapi.model.ConfigVar;
 import net.thevpc.nuts.toolbox.noapi.model.FieldInfo;
 import net.thevpc.nuts.toolbox.noapi.model.TypeInfo;
@@ -57,7 +54,7 @@ public class OpenApiParser {
         return new ArrayList<>(all.values());
     }
 
-    public TypeInfo parseOneType(NObjectElement value, String name0, NSession session) {
+    public TypeInfo parseOneType(NObjectElement value, String name0, NSession session, Map<String, TypeInfo> allTypes) {
         NObjectElement v = value.asObject().get(session);
         TypeInfo tt = new TypeInfo();
         tt.setName(v.getString("name").orElse(name0));
@@ -92,16 +89,40 @@ public class OpenApiParser {
             tt.setSmartName(tt.getRef());
         } else if ("array".equals(tt.getType())) {
             NObjectElement items = v.getObject("items").orNull();
-            if(items==null){
-                TypeInfo a=new TypeInfo();
+            if (items == null) {
+                TypeInfo a = new TypeInfo();
                 a.setType("string");
                 a.setSmartName(a.getType());
                 tt.setArrayComponentType(a);
-                tt.setSmartName(a.getSmartName()+"[]");
-            }else {
-                TypeInfo a = parseOneType(items, null, session);
+                TypeInfo refType = allTypes.get(a.getSmartName());
+                tt.setSmartName(a.getSmartName() + "[]");
+                Object e = a.getExample();
+                if (e == null && refType != null) {
+                    e = refType.getExample();
+                }
+                if (e != null) {
+                    if(e instanceof NElement){
+                        tt.setExample(NElements.of(session).ofArray().add((NElement) e).build());
+                    }else {
+                        tt.setExample(Arrays.asList(e));
+                    }
+                }
+            } else {
+                TypeInfo a = parseOneType(items, null, session, allTypes);
                 tt.setArrayComponentType(a);
-                tt.setSmartName(a.getSmartName()+"[]");
+                tt.setSmartName(a.getSmartName() + "[]");
+                TypeInfo refType = allTypes.get(a.getSmartName());
+                Object e = a.getExample();
+                if (e == null && refType != null) {
+                    e = refType.getExample();
+                }
+                if (e != null) {
+                    if(e instanceof NElement){
+                        tt.setExample(NElements.of(session).ofArray().add((NElement) e).build());
+                    }else {
+                        tt.setExample(Arrays.asList(e));
+                    }
+                }
             }
             tt.setUserType(tt.getSmartName());
         } else if (value.get("properties").orNull() != null || "object".equals(tt.getType())) {
@@ -126,7 +147,7 @@ public class OpenApiParser {
                     ff.summary = prop.getString("summary").orNull();
                     ff.example = prop.getString("example").orNull();
                     ff.required = requiredSet.contains(ff.name);
-                    ff.schema = parseOneType(prop, null, session);
+                    ff.schema = parseOneType(prop, null, session, allTypes);
                     tt.getFields().add(ff);
                 }
                 return tt;
@@ -172,7 +193,7 @@ public class OpenApiParser {
         for (NElementEntry entry : schemas) {
             String name0 = entry.getKey().asString().get(session);
             NElement value = entry.getValue();
-            TypeInfo a = parseOneType(value.asObject().get(session), name0, session);
+            TypeInfo a = parseOneType(value.asObject().get(session), name0, session, res);
             if (a != null) {
                 res.put(name0, a);
             }

@@ -58,7 +58,7 @@ public class HistoryCommand extends SimpleJShellBuiltin {
             options.action = Action.CLEAR;
             commandLine.setCommandName(getName()).throwUnexpectedArgument();
             return true;
-        } else if ((a = commandLine.nextString("-d", "--delete").orNull()) != null) {
+        } else if ((a = commandLine.nextEntry("-d", "--delete").orNull()) != null) {
             options.action = Action.DELETE;
             options.ival = a.getValue().asInt().get(session);
             commandLine.setCommandName(getName()).throwUnexpectedArgument();

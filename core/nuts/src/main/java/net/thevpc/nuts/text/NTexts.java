@@ -36,12 +36,10 @@ import java.util.List;
 /**
  * @app.category Format
  */
-public interface NTexts extends NComponent {
+public interface NTexts extends NComponent, NSessionProvider{
     static NTexts of(NSession session) {
        return NExtensions.of(session).createSupported(NTexts.class);
     }
-
-    NSession getSession();
 
     NTexts setSession(NSession session);
 

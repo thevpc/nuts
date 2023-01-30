@@ -35,13 +35,13 @@ import net.thevpc.nuts.reserved.NReservedLangUtils;
  * @app.category Exceptions
  * @since 0.5.4
  */
-public interface NSessionAwareExceptionBase extends NExceptionBase {
+public interface NSessionAwareExceptionBase extends NExceptionBase, NSessionProvider {
     static NOptional<NSessionAwareExceptionBase> resolveSessionAwareExceptionBase(Throwable th) {
-        return NReservedLangUtils.findThrowable(th, NSessionAwareExceptionBase.class,null);
+        return NReservedLangUtils.findThrowable(th, NSessionAwareExceptionBase.class, null);
     }
 
     static NOptional<NSession> resolveSession(Throwable th) {
-        return resolveSessionAwareExceptionBase(th). map(NSessionAwareExceptionBase::getSession);
+        return resolveSessionAwareExceptionBase(th).map(NSessionAwareExceptionBase::getSession);
     }
 
     /**
@@ -50,6 +50,4 @@ public interface NSessionAwareExceptionBase extends NExceptionBase {
      * @return current workspace
      */
     NWorkspace getWorkspace();
-
-    NSession getSession();
 }

@@ -517,7 +517,7 @@ public class DefaultNQuestion<T> implements NQuestion<T> {
         }
         switch (aa.key()) {
             case "trace-confirmation": {
-                commandLine.withNextBoolean((v, a, s) -> this.traceConfirmation = v);
+                commandLine.withNextFlag((v, a, s) -> this.traceConfirmation = v);
                 break;
             }
         }

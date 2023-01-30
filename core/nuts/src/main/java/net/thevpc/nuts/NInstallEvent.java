@@ -33,7 +33,7 @@ package net.thevpc.nuts;
  * @app.category Events
  * @since 0.5.6
  */
-public interface NInstallEvent {
+public interface NInstallEvent extends NSessionProvider {
 
     /**
      * return artifact definition
@@ -48,13 +48,6 @@ public interface NInstallEvent {
      * @return current workspace
      */
     NWorkspace getWorkspace();
-
-    /**
-     * return current session
-     *
-     * @return current session
-     */
-    NSession getSession();
 
     /**
      * return true if installation was forced

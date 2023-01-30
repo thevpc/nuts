@@ -5,7 +5,7 @@ import net.thevpc.nuts.*;
 import java.util.logging.Level;
 import java.util.logging.LogRecord;
 
-public class NLogRecord extends LogRecord {
+public class NLogRecord extends LogRecord implements NSessionProvider{
     private NSession session;
     private NMsg nmsg;
     private NLoggerVerb verb;

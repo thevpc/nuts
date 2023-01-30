@@ -61,27 +61,27 @@ public class EnableCommand extends SimpleJShellBuiltin {
         } else if (a.isOption()) {
             switch(a.key()) {
                 case "-a": {
-                    commandLine.withNextBoolean((v, r, s) -> options.a = v);
+                    commandLine.withNextFlag((v, r, s) -> options.a = v);
                     return true;
                 }
                 case "-d": {
-                    commandLine.withNextBoolean((v, r, s) -> options.d = v);
+                    commandLine.withNextFlag((v, r, s) -> options.d = v);
                     return true;
                 }
                 case "-n": {
-                    commandLine.withNextBoolean((v, r, s) -> options.n = v);
+                    commandLine.withNextFlag((v, r, s) -> options.n = v);
                     return true;
                 }
                 case "-p": {
-                    commandLine.withNextBoolean((v, r, s) -> options.p = v);
+                    commandLine.withNextFlag((v, r, s) -> options.p = v);
                     return true;
                 }
                 case "-s": {
-                    commandLine.withNextBoolean((v, r, s) -> options.s = v);
+                    commandLine.withNextFlag((v, r, s) -> options.s = v);
                     return true;
                 }
                 case "-f": {
-                    commandLine.withNextString((v, r, s) -> options.file = v);
+                    commandLine.withNextEntry((v, r, s) -> options.file = v);
                     return true;
                 }
             }

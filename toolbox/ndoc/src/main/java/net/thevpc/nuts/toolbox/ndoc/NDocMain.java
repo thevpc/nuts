@@ -32,22 +32,22 @@ public class NDocMain implements NApplication, NCommandLineProcessor {
         switch (option.key()) {
             case "-s":
             case "--source": {
-                commandLine.withNextString((v, r, s) -> src.add(v));
+                commandLine.withNextEntry((v, r, s) -> src.add(v));
                 return true;
             }
             case "-t":
             case "--target": {
-                commandLine.withNextString((v, r, s) -> target=v);
+                commandLine.withNextEntry((v, r, s) -> target=v);
                 return true;
             }
             case "-p":
             case "--package": {
-                commandLine.withNextString((v, r, s) -> pck.add(v));
+                commandLine.withNextEntry((v, r, s) -> pck.add(v));
                 return true;
             }
             case "-b":
             case "--backend": {
-                commandLine.withNextString((v, r, s) -> backend=v);
+                commandLine.withNextEntry((v, r, s) -> backend=v);
                 return true;
             }
         }

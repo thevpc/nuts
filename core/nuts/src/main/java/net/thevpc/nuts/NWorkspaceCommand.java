@@ -37,14 +37,7 @@ import net.thevpc.nuts.spi.NComponent;
  * @app.category Commands
  * @since 0.5.5
  */
-public interface NWorkspaceCommand extends NCommandLineConfigurable, NComponent {
-
-    /**
-     * return session
-     *
-     * @return session
-     */
-    NSession getSession();
+public interface NWorkspaceCommand extends NCommandLineConfigurable, NComponent, NSessionProvider {
 
     /**
      * update session

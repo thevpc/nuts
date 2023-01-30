@@ -35,7 +35,7 @@ import net.thevpc.nuts.io.NPath;
  * @app.category Events
  * @since 0.5.3
  */
-public interface NContentEvent {
+public interface NContentEvent extends NSessionProvider {
 
     /**
      * artifact path
@@ -56,8 +56,6 @@ public interface NContentEvent {
      *
      * @return session
      */
-    NSession getSession();
-
     /**
      * current repository
      *

@@ -18,7 +18,7 @@ public class RunningDerby {
         NCommandLine cmdline = NCommandLine.parseSystem(r.getCommandLine(),session).get(session).setExpandSimpleOptions(false);
         NArg a=null;
         while(cmdline.hasNext()){
-            if((a=cmdline.nextString("-Dderby.system.home").orNull())!=null) {
+            if((a=cmdline.nextEntry("-Dderby.system.home").orNull())!=null) {
                 home = a.getStringValue().get(session);
             }else{
                 cmdline.skip();

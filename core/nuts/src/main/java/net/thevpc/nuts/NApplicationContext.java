@@ -42,7 +42,7 @@ import java.util.List;
  * @app.category Application
  * @since 0.5.5
  */
-public interface NApplicationContext extends NCommandLineConfigurable, NCommandLineContext {
+public interface NApplicationContext extends NCommandLineConfigurable,NSessionProvider {
     /**
      * string that prefix each auto complete candidate
      */
@@ -125,13 +125,6 @@ public interface NApplicationContext extends NCommandLineConfigurable, NCommandL
      * @return current workspace
      */
     NWorkspace getWorkspace();
-
-    /**
-     * current session
-     *
-     * @return current session
-     */
-    NSession getSession();
 
     /**
      * create a new session
@@ -274,97 +267,7 @@ public interface NApplicationContext extends NCommandLineConfigurable, NCommandL
      * create new NutsCommandLine and consume it with the given processor.
      * This method is equivalent to the following code
      * <pre>
-     *         NutsCommandLine cmd = getCommandLine();
-     *         NutsArgument a;
-     *         commandLineProcessor.onCmdInitParsing(cmd, this);
-     *         while (cmd.hasNext()) {
-     *             a = cmd.peek();
-     *             boolean consumed;
-     *             if (a.isOption()) {
-     *                 consumed = commandLineProcessor.onCmdNextOption(a, cmd, this);
-     *             } else {
-     *                 consumed = commandLineProcessor.onCmdNextNonOption(a, cmd, this);
-     *             }
-     *             if (consumed) {
-     *                 NutsArgument next = cmd.peek();
-     *                 //reference equality!
-     *                 if (next == a) {
-     *                     //was not consumed!
-     *                     throw new NutsIllegalArgumentException(session,
-     *                             NMsg.ofC("%s must consume the option: %s",
-     *                                     (a.isOption() ? "nextOption" : "nextNonOption"),
-     *                                     a));
-     *                 }
-     *             } else if (!configureFirst(cmd)) {
-     *                 cmd.throwUnexpectedArgument();
-     *             }
-     *         }
-     *         commandLineProcessor.onCmdFinishParsing(cmd, this);
-     *
-     *         // test if application is running in exec mode
-     *         // (and not in autoComplete mode)
-     *         if (this.isExecMode()) {
-     *             //do the good staff here
-     *             commandLineProcessor.onCmdExec(cmd, this);
-     *         } else if (this.getAutoComplete() != null) {
-     *             commandLineProcessor.onCmdAutoComplete(this.getAutoComplete(), this);
-     *         }
-     * </pre>
-     * <p>
-     * This is an example of its usage
-     * <pre>
-     *     applicationContext.processCommandLine(new NutsAppCmdProcessor() {
-     *             HLCWithOptions hl = new HL().withOptions();
-     *             boolean noMoreOptions=false;
-     *             &#64;Override
-     *             public boolean onCmdNextOption(NutsArgument argument, NutsCommandLine cmdLine, NutsApplicationContext context) {
-     *                 if(!noMoreOptions){
-     *                     return false;
-     *                 }
-     *                 switch (argument.getKey().getString()) {
-     *                     case "--clean": {
-     *                         hl.clean(cmdLine.nextBooleanValue().get(session));
-     *                         return true;
-     *                     }
-     *                     case "-i":
-     *                     case "--incremental":{
-     *                         hl.setIncremental(cmdLine.nextBooleanValue().get(session));
-     *                         return true;
-     *                     }
-     *                     case "-r":
-     *                     case "--root":{
-     *                         hl.setProjectRoot(cmdLine.nextString().getStringValue());
-     *                         return true;
-     *                     }
-     *                 }
-     *                 return false;
-     *             }
-     *
-     *             &#64;Override
-     *             public boolean onCmdNextNonOption(NutsArgument argument, NutsCommandLine cmdLine, NutsApplicationContext context) {
-     *                 String s = argument.getString();
-     *                 if(isURL(s)){
-     *                     hl.includeFileURL(s);
-     *                 }else{
-     *                     hl.includeFile(s);
-     *                 }
-     *                 noMoreOptions=true;
-     *                 return true;
-     *             }
-     *
-     *             private boolean isURL(String s) {
-     *                 return
-     *                         s.startsWith("file:")
-     *                         ||s.startsWith("http:")
-     *                         ||s.startsWith("https:")
-     *                         ;
-     *             }
-     *
-     *             &#64;Override
-     *             public void onCmdExec(NutsCommandLine cmdLine, NutsApplicationContext context) {
-     *                 hl.compile();
-     *             }
-     *         });
+     * getCommandLine().process(commandLineProcessor, new DefaultNCommandLineContext(this));
      * </pre>
      *
      * @param commandLineProcessor commandLineProcessor

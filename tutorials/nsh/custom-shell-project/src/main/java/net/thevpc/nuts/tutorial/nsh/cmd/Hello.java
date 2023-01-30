@@ -68,7 +68,7 @@ public class Hello extends SimpleJShellBuiltin {
                 //        --who=me
                 //        or (using spaces)
                 //        --who me
-                cmdline.withNextString((v, aa, session) -> o.who = v);
+                cmdline.withNextEntry((v, aa, session) -> o.who = v);
                 //return true to say that the option was successfully processed
                 return true;
             }
@@ -81,7 +81,7 @@ public class Hello extends SimpleJShellBuiltin {
                 //        --complex
                 //        it can even be negated with '~' or '!'
                 //        --!complex
-                cmdline.withNextBoolean((value, arg, session) -> o.complex = value);
+                cmdline.withNextFlag((value, arg, session) -> o.complex = value);
                 //return true to say that the option was successfully processed
                 return true;
             }

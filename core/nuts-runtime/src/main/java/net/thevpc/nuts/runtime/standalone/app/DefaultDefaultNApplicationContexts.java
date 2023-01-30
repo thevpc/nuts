@@ -20,10 +20,6 @@ public class DefaultDefaultNApplicationContexts implements NApplicationContexts 
     }
 
     public NApplicationContext create(String[] args, NClock startTime, Class appClass, String storeId) {
-//        if (session == null) {
-//            checkSession(this.session);
-//            session = this.session;
-//        }
         return new DefaultNApplicationContext(session.getWorkspace(), session, new ArrayList<>(Arrays.asList(args)), appClass, storeId, startTime);
     }
 

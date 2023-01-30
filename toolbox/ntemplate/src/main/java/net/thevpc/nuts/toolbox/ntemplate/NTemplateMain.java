@@ -32,22 +32,22 @@ public class NTemplateMain implements NApplication {
                 switch (option.key()) {
                     case "-i":
                     case "--init": {
-                        commandLine.withNextString((v, r, s) -> config.addInitScript(v));
+                        commandLine.withNextEntry((v, r, s) -> config.addInitScript(v));
                         return true;
                     }
                     case "-s":
                     case "--scriptType": {
-                        commandLine.withNextString((v, r, s) -> config.setScriptType(v));
+                        commandLine.withNextEntry((v, r, s) -> config.setScriptType(v));
                         return true;
                     }
                     case "-t":
                     case "--to": {
-                        commandLine.withNextString((v, r, s) -> config.setTargetFolder(v));
+                        commandLine.withNextEntry((v, r, s) -> config.setTargetFolder(v));
                         return true;
                     }
                     case "-p":
                     case "--project": {
-                        commandLine.withNextString((v, r, s) -> config.setProjectPath(v));
+                        commandLine.withNextEntry((v, r, s) -> config.setProjectPath(v));
                         return true;
                     }
 

@@ -163,11 +163,11 @@ public class LocalTomcat {
         }
         Helper x = new Helper();
         while (args.hasNext()) {
-            if ((a = args.nextBoolean("-a", "--apps").orNull()) != null) {
+            if ((a = args.nextFlag("-a", "--apps").orNull()) != null) {
                 x.apps = a.getBooleanValue().get(session);
-            } else if ((a = args.nextBoolean("-d", "--domains").orNull()) != null) {
+            } else if ((a = args.nextFlag("-d", "--domains").orNull()) != null) {
                 x.domains = a.getBooleanValue().get(session);
-            } else if ((a = args.nextBoolean("-i", "--instances").orNull()) != null) {
+            } else if ((a = args.nextFlag("-i", "--instances").orNull()) != null) {
                 x.instances = a.getBooleanValue().get(session);
             } else {
                 context.configureLast(cmdLine);
@@ -188,7 +188,7 @@ public class LocalTomcat {
         NRef<String> format = NRef.of("default");
         args.setCommandName("tomcat --local show");
         while (args.hasNext()) {
-            if (args.withNextTrue((b, a, ss) -> format.set("long"), "-l", "--long")) {
+            if (args.withNextTrueFlag((b, a, ss) -> format.set("long"), "-l", "--long")) {
             } else {
                 context.configureLast(cmdLine);
             }
@@ -288,51 +288,51 @@ public class LocalTomcat {
         NSession session = getContext().getSession();
         args.setCommandName("tomcat --local add");
         while (args.hasNext()) {
-            if ((a = args.nextString("--catalina-version", "--tomcat-version", "--version").orNull()) != null) {
+            if ((a = args.nextEntry("--catalina-version", "--tomcat-version", "--version").orNull()) != null) {
                 if (c == null) {
                     c = openTomcatConfig("", autoCreate);
                 }
                 c.getConfig().setCatalinaVersion(a.getStringValue().get(session));
                 c.getConfig().setCatalinaHome(null);
                 c.getConfig().setCatalinaBase(null);
-            } else if ((a = args.nextString("--catalina-base").orNull()) != null) {
+            } else if ((a = args.nextEntry("--catalina-base").orNull()) != null) {
                 if (c == null) {
                     c = openTomcatConfig("", autoCreate);
                 }
                 c.getConfig().setCatalinaBase(a.getStringValue().get(session));
-            } else if ((a = args.nextString("--catalina-home").orNull()) != null) {
+            } else if ((a = args.nextEntry("--catalina-home").orNull()) != null) {
                 if (c == null) {
                     c = openTomcatConfig("", autoCreate);
                 }
                 c.getConfig().setCatalinaHome(a.getStringValue().get(session));
                 c.getConfig().setCatalinaBase(null);
                 c.getConfig().setCatalinaVersion(null);
-            } else if ((a = args.nextString("--shutdown-wait-time").orNull()) != null) {
+            } else if ((a = args.nextEntry("--shutdown-wait-time").orNull()) != null) {
                 if (c == null) {
                     c = openTomcatConfig("", autoCreate);
                 }
                 c.getConfig().setShutdownWaitTime(a.getValue().asInt().get(session));
-            } else if ((a = args.nextString("--archive-folder").orNull()) != null) {
+            } else if ((a = args.nextEntry("--archive-folder").orNull()) != null) {
                 if (c == null) {
                     c = openTomcatConfig("", NOpenMode.OPEN_OR_ERROR);
                 }
                 c.getConfig().setArchiveFolder(a.getStringValue().get(session));
-            } else if ((a = args.nextString("--running-folder").orNull()) != null) {
+            } else if ((a = args.nextEntry("--running-folder").orNull()) != null) {
                 if (c == null) {
                     c = openTomcatConfig("", NOpenMode.OPEN_OR_ERROR);
                 }
                 c.getConfig().setRunningFolder(a.getStringValue().get(session));
-            } else if ((a = args.nextString("--http-port").orNull()) != null) {
+            } else if ((a = args.nextEntry("--http-port").orNull()) != null) {
                 if (c == null) {
                     c = openTomcatConfig("", NOpenMode.OPEN_OR_ERROR);
                 }
                 c.setHttpConnectorPort(false, a.getValue().asInt().get(session));
-            } else if ((a = args.nextString("--port").orNull()) != null) {
+            } else if ((a = args.nextEntry("--port").orNull()) != null) {
                 if (c == null) {
                     c = openTomcatConfig("", NOpenMode.OPEN_OR_ERROR);
                 }
                 c.setHttpConnectorPort(false, a.getValue().asInt().get(session));
-            } else if ((a = args.nextBoolean("-d", "--dev").orNull()) != null) {
+            } else if ((a = args.nextFlag("-d", "--dev").orNull()) != null) {
                 if (c == null) {
                     c = openTomcatConfig("", NOpenMode.OPEN_OR_ERROR);
                 }
@@ -352,7 +352,7 @@ public class LocalTomcat {
         boolean changed = false;
         args.setCommandName("tomcat --local add");
         while (args.hasNext()) {
-            if ((a = args.nextString("--log").orNull()) != null) {
+            if ((a = args.nextEntry("--log").orNull()) != null) {
                 c.getConfig().setLogFile(a.getStringValue().get(session));
                 changed = true;
             } else {
@@ -370,15 +370,15 @@ public class LocalTomcat {
         boolean changed = false;
         args.setCommandName("tomcat --local add");
         while (args.hasNext()) {
-            if ((a = args.nextString("--source").orNull()) != null) {
+            if ((a = args.nextEntry("--source").orNull()) != null) {
                 String value = a.getStringValue().get(session);
                 c.getConfig().setSourceFilePath(value);
                 changed = true;
-            } else if ((a = args.nextString("--deploy").orNull()) != null) {
+            } else if ((a = args.nextEntry("--deploy").orNull()) != null) {
                 String value = a.getStringValue().get(session);
                 c.getConfig().setDeployName(value);
                 changed = true;
-            } else if ((a = args.nextString("--domain").orNull()) != null) {
+            } else if ((a = args.nextEntry("--domain").orNull()) != null) {
                 String value = a.getStringValue().get(session);
                 //check that domain exists!!
                 c.getTomcat().getDomain(value, NOpenMode.OPEN_OR_ERROR);
@@ -491,13 +491,13 @@ public class LocalTomcat {
         NArg a;
         args.setCommandName("tomcat --local install");
         while (args.hasNext()) {
-            if ((a = args.nextString("--name").orNull()) != null) {
+            if ((a = args.nextEntry("--name").orNull()) != null) {
                 s = openTomcatConfig(a.getStringValue().get(session), NOpenMode.OPEN_OR_ERROR);
-            } else if ((a = args.nextString("--app").orNull()) != null) {
+            } else if ((a = args.nextEntry("--app").orNull()) != null) {
                 app = loadApp(a.getStringValue().get(session), NOpenMode.OPEN_OR_ERROR);
-            } else if ((a = args.nextString("--version").orNull()) != null) {
+            } else if ((a = args.nextEntry("--version").orNull()) != null) {
                 version = a.getStringValue().get(session);
-            } else if ((a = args.nextString("--file").orNull()) != null) {
+            } else if ((a = args.nextEntry("--file").orNull()) != null) {
                 file = a.getStringValue().get(session);
             } else if ((a = args.nextNonOption().get(session)) != null) {
                 if (file == null) {
@@ -544,7 +544,7 @@ public class LocalTomcat {
         boolean processed = false;
         args.setCommandName("tomcat --local delete-log");
         while (args.hasNext()) {
-            if ((a = args.nextBoolean("-a", "--all").orNull()) != null) {
+            if ((a = args.nextFlag("-a", "--all").orNull()) != null) {
                 all = a.getBooleanValue().get(session);
             } else if ((s = readBaseServiceArg(args, NOpenMode.OPEN_OR_ERROR)) != null) {
                 LocalTomcatConfigService c = toLocalTomcatConfigService(s);
@@ -665,28 +665,28 @@ public class LocalTomcat {
         int newValue = -1;
         List<Runnable> runnables = new ArrayList<>();
         while (args.hasNext()) {
-            if ((a = args.nextBoolean("--redirect").orNull()) != null) {
+            if ((a = args.nextFlag("--redirect").orNull()) != null) {
                 redirect = a.getBooleanValue().get(session);
-            } else if ((a = args.nextBoolean("--shutdown").orNull()) != null) {
+            } else if ((a = args.nextFlag("--shutdown").orNull()) != null) {
                 type = "shutdown";
-            } else if ((a = args.nextBoolean("--ajp").orNull()) != null) {
+            } else if ((a = args.nextFlag("--ajp").orNull()) != null) {
                 type = "ajp";
-            } else if ((a = args.nextString("--set").orNull()) != null) {
+            } else if ((a = args.nextEntry("--set").orNull()) != null) {
                 newValue = a.getValue().asInt().get(session);
                 setValue = true;
-            } else if ((a = args.nextString("--set-port").orNull()) != null) {
+            } else if ((a = args.nextEntry("--set-port").orNull()) != null) {
                 int port = a.getValue().asInt().get(session);
                 runnables.add(() -> c.setHttpConnectorPort(false, port));
-            } else if ((a = args.nextString("--set-redirect-port").orNull()) != null) {
+            } else if ((a = args.nextEntry("--set-redirect-port").orNull()) != null) {
                 int port = a.getValue().asInt().get(session);
                 runnables.add(() -> c.setHttpConnectorPort(true, port));
-            } else if ((a = args.nextString("--set-shutdown-port").orNull()) != null) {
+            } else if ((a = args.nextEntry("--set-shutdown-port").orNull()) != null) {
                 int port = a.getValue().asInt().get(session);
                 runnables.add(() -> c.setShutdownPort(port));
-            } else if ((a = args.nextString("--set-ajp-port").orNull()) != null) {
+            } else if ((a = args.nextEntry("--set-ajp-port").orNull()) != null) {
                 int port = a.getValue().asInt().get(session);
                 runnables.add(() -> c.setAjpConnectorPort(false, port));
-            } else if ((a = args.nextString("--set-redirect-ajp-port").orNull()) != null) {
+            } else if ((a = args.nextEntry("--set-redirect-ajp-port").orNull()) != null) {
                 int port = a.getValue().asInt().get(session);
                 runnables.add(() -> c.setAjpConnectorPort(true, port));
             } else {
@@ -742,7 +742,7 @@ public class LocalTomcat {
         NArg a;
         commandLine.setCommandName("tomcat --local log");
         while (commandLine.hasNext()) {
-            if ((a = commandLine.nextString("--path").orNull()) != null) {
+            if ((a = commandLine.nextEntry("--path").orNull()) != null) {
                 path = true;
             } else if (commandLine.isNextOption() && TomcatUtils.isPositiveInt(commandLine.peek()
                     .get(session)
@@ -771,13 +771,13 @@ public class LocalTomcat {
         NArg a;
         args.setCommandName("tomcat --local deploy-file");
         while (args.hasNext()) {
-            if ((a = args.nextString("--file").orNull()) != null) {
+            if ((a = args.nextEntry("--file").orNull()) != null) {
                 file = a.getStringValue().get(session);
-            } else if ((a = args.nextString("--name").orNull()) != null) {
+            } else if ((a = args.nextEntry("--name").orNull()) != null) {
                 instance = a.getStringValue().get(session);
-            } else if ((a = args.nextString("--context").orNull()) != null) {
+            } else if ((a = args.nextEntry("--context").orNull()) != null) {
                 contextName = a.getStringValue().get(session);
-            } else if ((a = args.nextString("--domain").orNull()) != null) {
+            } else if ((a = args.nextEntry("--domain").orNull()) != null) {
                 domain = a.getStringValue().get(session);
             } else if ((a = args.nextNonOption().orNull()) != null) {
                 if (file == null) {
@@ -803,9 +803,9 @@ public class LocalTomcat {
         NArg a;
         args.setCommandName("tomcat --local deploy");
         while (args.hasNext()) {
-            if ((a = args.nextString("--version").orNull()) != null) {
+            if ((a = args.nextEntry("--version").orNull()) != null) {
                 version = a.getStringValue().get(session);
-            } else if ((a = args.nextString("--app").orNull()) != null) {
+            } else if ((a = args.nextEntry("--app").orNull()) != null) {
                 app = a.getStringValue().get(session);
             } else if ((a = args.nextNonOption().orNull()) != null) {
                 if (app == null) {
@@ -831,26 +831,26 @@ public class LocalTomcat {
         args.setCommandName("tomcat restart");
         while (args.hasNext()) {
             NArg a = null;
-            if ((a = args.nextBoolean("--delete-out-log").orNull()) != null) {
+            if ((a = args.nextFlag("--delete-out-log").orNull()) != null) {
                 deleteLog = a.getBooleanValue().get(session);
-            } else if ((a = args.nextString("--deploy").orNull()) != null) {
+            } else if ((a = args.nextEntry("--deploy").orNull()) != null) {
                 apps.add(a.getStringValue().get(session));
-            } else if ((a = args.nextString("--port").orNull()) != null) {
+            } else if ((a = args.nextEntry("--port").orNull()) != null) {
                 int port = a.getValue().asInt().get(session);
                 runnables.add(() -> srvRef[0].setHttpConnectorPort(false, port));
-            } else if ((a = args.nextString("--http-port").orNull()) != null) {
+            } else if ((a = args.nextEntry("--http-port").orNull()) != null) {
                 int port = a.getValue().asInt().get(session);
                 runnables.add(() -> srvRef[0].setHttpConnectorPort(false, port));
-            } else if ((a = args.nextString("--redirect-port").orNull()) != null) {
+            } else if ((a = args.nextEntry("--redirect-port").orNull()) != null) {
                 int port = a.getValue().asInt().get(session);
                 runnables.add(() -> srvRef[0].setHttpConnectorPort(true, port));
-            } else if ((a = args.nextString("--shutdown-port").orNull()) != null) {
+            } else if ((a = args.nextEntry("--shutdown-port").orNull()) != null) {
                 int port = a.getValue().asInt().get(session);
                 runnables.add(() -> srvRef[0].setShutdownPort(port));
-            } else if ((a = args.nextString("--ajp-port").orNull()) != null) {
+            } else if ((a = args.nextEntry("--ajp-port").orNull()) != null) {
                 int port = a.getValue().asInt().get(session);
                 runnables.add(() -> srvRef[0].setAjpConnectorPort(false, port));
-            } else if ((a = args.nextString("--redirect-ajp-port").orNull()) != null) {
+            } else if ((a = args.nextEntry("--redirect-ajp-port").orNull()) != null) {
                 int port = a.getValue().asInt().get(session);
                 runnables.add(() -> srvRef[0].setAjpConnectorPort(true, port));
             } else if ((a = args.nextNonOption().orNull()) != null) {
@@ -1027,11 +1027,11 @@ public class LocalTomcat {
     public LocalTomcatServiceBase readBaseServiceArg(NCommandLine args, NOpenMode autoCreate) {
         NSession session = getContext().getSession();
         NArg a;
-        if ((a = args.nextString("--name").orNull()) != null) {
+        if ((a = args.nextEntry("--name").orNull()) != null) {
             return (loadServiceBase(a.getStringValue().get(session), autoCreate));
-        } else if ((a = args.nextString("--app").orNull()) != null) {
+        } else if ((a = args.nextEntry("--app").orNull()) != null) {
             return (loadApp(a.getStringValue().get(session), autoCreate));
-        } else if ((a = args.nextString("--domain").orNull()) != null) {
+        } else if ((a = args.nextEntry("--domain").orNull()) != null) {
             return (loadDomain(a.getStringValue().get(session), autoCreate));
             //TODO: should remove this line?
         } else if (args.hasNext() && args.isNextOption() && args.peek().get(session).isDouble()) {

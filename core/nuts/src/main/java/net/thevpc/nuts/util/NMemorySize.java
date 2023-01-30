@@ -858,14 +858,14 @@ public class NMemorySize implements Serializable, NFormattable {
                 NArg a = commandLine.peek().get(session);
                 switch (a.key()) {
                     case "--iec": {
-                        a = commandLine.nextBoolean().get(session);
+                        a = commandLine.nextFlag().get(session);
                         if (a.isActive()) {
                             iec = a.getBooleanValue().get();
                         }
                         return true;
                     }
                     case "--fixed": {
-                        a = commandLine.nextBoolean().get(session);
+                        a = commandLine.nextFlag().get(session);
                         if (a.isActive()) {
                             fixed = a.getBooleanValue().get();
                         }

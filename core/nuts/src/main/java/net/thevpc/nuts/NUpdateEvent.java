@@ -31,7 +31,7 @@ package net.thevpc.nuts;
  * @app.category Events
  * @since 0.5.6
  */
-public interface NUpdateEvent {
+public interface NUpdateEvent extends NSessionProvider {
 
     NDefinition getOldValue();
 
@@ -39,7 +39,6 @@ public interface NUpdateEvent {
 
     NWorkspace getWorkspace();
 
-    NSession getSession();
 
     boolean isForce();
 }

@@ -268,12 +268,12 @@ public abstract class AbstractDefaultNPushCommand extends NWorkspaceCommandBase<
         switch (a.key()) {
             case "-o":
             case "--offline": {
-                cmdLine.withNextBoolean((v, r, s) -> setOffline(v));
+                cmdLine.withNextFlag((v, r, s) -> setOffline(v));
                 return true;
             }
             case "-x":
             case "--freeze": {
-                cmdLine.withNextString((v, r, s) -> {
+                cmdLine.withNextEntry((v, r, s) -> {
                     for (String id : v.split(",")) {
                         addLockedId(id);
                     }
@@ -283,12 +283,12 @@ public abstract class AbstractDefaultNPushCommand extends NWorkspaceCommandBase<
             case "-r":
             case "-repository":
             case "--from": {
-                cmdLine.withNextString((v, r, s) -> setRepository(v));
+                cmdLine.withNextEntry((v, r, s) -> setRepository(v));
                 return true;
             }
             case "-g":
             case "--args": {
-                cmdLine.withNextTrue((v, r, s) -> {
+                cmdLine.withNextTrueFlag((v, r, s) -> {
                     this.addArgs(cmdLine.toStringArray());
                     cmdLine.skipAll();
                 });

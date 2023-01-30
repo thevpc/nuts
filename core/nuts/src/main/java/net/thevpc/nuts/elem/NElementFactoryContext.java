@@ -24,6 +24,7 @@
 package net.thevpc.nuts.elem;
 
 import net.thevpc.nuts.NSession;
+import net.thevpc.nuts.NSessionProvider;
 import net.thevpc.nuts.NWorkspace;
 
 import java.lang.reflect.Type;
@@ -33,9 +34,7 @@ import java.util.function.Predicate;
 /**
  * @author thevpc
  */
-public interface NElementFactoryContext {
-
-    NSession getSession();
+public interface NElementFactoryContext extends NSessionProvider {
 
     Predicate<Class> getIndestructibleObjects();
 

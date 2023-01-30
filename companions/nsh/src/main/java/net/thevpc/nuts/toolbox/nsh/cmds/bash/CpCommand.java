@@ -57,18 +57,18 @@ public class CpCommand extends SimpleJShellBuiltin {
         NSession session = context.getSession();
         switch (commandLine.peek().get(session).key()) {
             case "--mkdir": {
-                commandLine.withNextBoolean((v, a, s) -> options.mkdir=v);
+                commandLine.withNextFlag((v, a, s) -> options.mkdir=v);
                 return true;
             }
             case "-r":
             case "-R":
             case "--recursive": {
-                commandLine.withNextBoolean((v, a, s) -> options.recursive=v);
+                commandLine.withNextFlag((v, a, s) -> options.recursive=v);
                 return true;
             }
             default: {
                 if (commandLine.peek().get(session).isNonOption()) {
-                    commandLine.withNextString((v, a, s) -> options.files.add(v));
+                    commandLine.withNextEntry((v, a, s) -> options.files.add(v));
                     return true;
                 }
             }

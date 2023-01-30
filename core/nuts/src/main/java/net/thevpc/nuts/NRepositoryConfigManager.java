@@ -34,7 +34,7 @@ import java.util.Map;
  * @app.category Config
  * @since 0.5.4
  */
-public interface NRepositoryConfigManager {
+public interface NRepositoryConfigManager extends NSessionProvider {
 
     /**
      * global name is independent from workspace
@@ -59,6 +59,7 @@ public interface NRepositoryConfigManager {
 
 
     NRepositoryLocation getLocation();
+
     NPath getLocationPath();
 
     /**
@@ -128,8 +129,6 @@ public interface NRepositoryConfigManager {
     NRepositoryConfigManager removeMirror(String repositoryId);
 
     NStoreLocationStrategy getStoreLocationStrategy();
-
-    NSession getSession();
 
     NRepositoryConfigManager setSession(NSession session);
 

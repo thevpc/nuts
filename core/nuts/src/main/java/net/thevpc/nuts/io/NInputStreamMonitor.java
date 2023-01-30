@@ -40,17 +40,10 @@ import java.nio.file.Path;
  * @author thevpc
  * @app.category Toolkit
  */
-public interface NInputStreamMonitor extends NComponent {
+public interface NInputStreamMonitor extends NComponent, NSessionProvider {
     static NInputStreamMonitor of(NSession session) {
-       return NExtensions.of(session).createSupported(NInputStreamMonitor.class);
+        return NExtensions.of(session).createSupported(NInputStreamMonitor.class);
     }
-
-    /**
-     * return current session
-     *
-     * @return current session
-     */
-    NSession getSession();
 
     /**
      * update current session

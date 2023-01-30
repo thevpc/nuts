@@ -47,9 +47,9 @@ import java.util.Set;
  * @app.category Toolkit
  * @since 0.5.4
  */
-public interface NCompress extends NComponent {
+public interface NCompress extends NComponent, NSessionProvider {
     static NCompress of(NSession session) {
-       return NExtensions.of(session).createSupported(NCompress.class);
+        return NExtensions.of(session).createSupported(NCompress.class);
     }
 
     /**
@@ -92,6 +92,7 @@ public interface NCompress extends NComponent {
     List<NInputSource> getSources();
 
     NCompress addSource(NInputSource source);
+
     /**
      * add source to compress
      *
@@ -161,6 +162,7 @@ public interface NCompress extends NComponent {
     NCompress setTarget(Path target);
 
     NCompress setTarget(NOutputTarget target);
+
     /**
      * update target
      *
@@ -224,13 +226,6 @@ public interface NCompress extends NComponent {
      * @return {@code this} instance
      */
     NCompress to(File target);
-
-    /**
-     * return current session
-     *
-     * @return current session
-     */
-    NSession getSession();
 
     /**
      * update current session

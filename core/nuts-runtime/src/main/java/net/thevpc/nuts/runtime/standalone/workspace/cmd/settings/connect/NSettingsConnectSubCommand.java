@@ -35,7 +35,7 @@ public class NSettingsConnectSubCommand extends AbstractNSettingsSubCommand {
             String server = null;
             NArg a;
             while (commandLine.hasNext()) {
-                if ((a = commandLine.nextString("--password").orNull()) != null) {
+                if ((a = commandLine.nextEntry("--password").orNull()) != null) {
                     password = a.getValue().asString().orElse("").toCharArray();
                 } else if (commandLine.isNextOption()) {
                     session.configureLast(commandLine);

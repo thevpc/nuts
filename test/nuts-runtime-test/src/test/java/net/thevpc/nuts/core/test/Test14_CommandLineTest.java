@@ -227,10 +227,10 @@ public class Test14_CommandLineTest {
         NArg a=null;
         int x=0;
         while(cmdline.hasNext()){
-            if((a=cmdline.nextString("-Dcatalina.home").orNull())!=null) {
+            if((a=cmdline.nextEntry("-Dcatalina.home").orNull())!=null) {
                 NPath.of(a.getStringValue().get(session),session);
                 x++;
-            }else if((a=cmdline.nextString("-Dcatalina.base").orNull())!=null){
+            }else if((a=cmdline.nextEntry("-Dcatalina.base").orNull())!=null){
                 a.getStringValue().get(session);
                 x++;
             }else{

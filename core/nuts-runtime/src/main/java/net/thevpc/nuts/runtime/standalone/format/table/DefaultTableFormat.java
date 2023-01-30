@@ -795,19 +795,19 @@ public class DefaultTableFormat extends DefaultFormatBase<NTableFormat> implemen
     public boolean configureFirst(NCommandLine cmdLine) {
         NSession session = getSession();
         NArg a;
-        if ((a = cmdLine.nextBoolean("--no-header").orNull()) != null) {
+        if ((a = cmdLine.nextFlag("--no-header").orNull()) != null) {
             boolean val = a.getBooleanValue().get(session);
             if (a.isActive()) {
                 setVisibleHeader(!val);
             }
             return true;
-        } else if ((a = cmdLine.nextBoolean("--header").orNull()) != null) {
+        } else if ((a = cmdLine.nextFlag("--header").orNull()) != null) {
             boolean val = a.getBooleanValue().get(session);
             if (a.isActive()) {
                 setVisibleHeader(val);
             }
             return true;
-        } else if ((a = cmdLine.nextString("--border").orNull()) != null) {
+        } else if ((a = cmdLine.nextEntry("--border").orNull()) != null) {
             if (a.isActive()) {
                 setBorder(a.getValue().asString().orElse(""));
             }

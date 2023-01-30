@@ -62,10 +62,10 @@ public class XmlCommand extends SimpleJShellBuiltin {
         NSession session = context.getSession();
         Options options = context.getOptions();
         NArg a;
-        if ((a = commandLine.nextString("-f", "--file").orNull()) != null) {
+        if ((a = commandLine.nextEntry("-f", "--file").orNull()) != null) {
             options.input = a.getStringValue().get(session);
             return true;
-        } else if ((a = commandLine.nextString("-q", "--xpath").orNull()) != null) {
+        } else if ((a = commandLine.nextEntry("-q", "--xpath").orNull()) != null) {
             options.xpaths.add(a.getStringValue().get(session));
             return true;
         }

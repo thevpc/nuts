@@ -180,7 +180,7 @@ public final class NApplications {
      * @param nutsArgs            nutsArgs arguments
      * @param appArgs             application arguments
      * @param session             caller workspace session (or null to create an inherited workspace)
-     * @return NutsApplicationContext instance
+     * @return NApplicationContext instance
      */
     public static NApplicationContext createApplicationContext(NApplication applicationInstance, String[] nutsArgs, String[] appArgs, NSession session) {
         NClock startTime = NClock.now();

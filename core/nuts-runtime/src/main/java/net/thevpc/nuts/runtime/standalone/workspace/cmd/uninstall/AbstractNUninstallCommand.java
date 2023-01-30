@@ -159,12 +159,12 @@ public abstract class AbstractNUninstallCommand extends NWorkspaceCommandBase<NU
         switch (aa.key()) {
             case "-e":
             case "--erase": {
-                cmdLine.withNextBoolean((v, a, s) -> this.setErase(v));
+                cmdLine.withNextFlag((v, a, s) -> this.setErase(v));
                 return true;
             }
             case "-g":
             case "--args": {
-                cmdLine.withNextBoolean((v, a, s) -> {
+                cmdLine.withNextFlag((v, a, s) -> {
                     this.addArgs(cmdLine.toStringArray());
                     cmdLine.skipAll();
                 });

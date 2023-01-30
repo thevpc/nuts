@@ -2,12 +2,11 @@ package net.thevpc.nuts.util;
 
 import net.thevpc.nuts.NOptional;
 import net.thevpc.nuts.NSession;
+import net.thevpc.nuts.NSessionProvider;
 
 import java.util.List;
 
-public interface NExprDeclarations {
-
-    NSession getSession();
+public interface NExprDeclarations extends NSessionProvider {
 
     NExprDeclarations setSession(NSession session);
 

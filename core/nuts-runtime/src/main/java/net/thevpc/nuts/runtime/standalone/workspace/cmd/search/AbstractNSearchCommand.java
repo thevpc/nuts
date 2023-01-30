@@ -862,99 +862,99 @@ public abstract class AbstractNSearchCommand extends DefaultNQueryBaseOptions<NS
         boolean enabled = a.isActive();
         switch (a.key()) {
             case "--inline-dependencies": {
-                cmdLine.withNextBoolean((v, r, s) -> this.setInlineDependencies(v));
+                cmdLine.withNextFlag((v, r, s) -> this.setInlineDependencies(v));
                 return true;
             }
             case "-L":
             case "--latest":
             case "--latest-versions": {
-                cmdLine.withNextBoolean((v, r, s) -> this.setLatest(v));
+                cmdLine.withNextFlag((v, r, s) -> this.setLatest(v));
                 return true;
             }
             case "--distinct": {
-                cmdLine.withNextBoolean((v, r, s) -> this.setDistinct(v));
+                cmdLine.withNextFlag((v, r, s) -> this.setDistinct(v));
                 return true;
             }
             case "--default":
             case "--default-versions": {
-                cmdLine.withNextOptionalBoolean((v, r, s) -> this.setDefaultVersions(v.ifError(false).orElse(null)));
+                cmdLine.withNextOptionalFlag((v, r, s) -> this.setDefaultVersions(v.ifError(false).orElse(null)));
                 return true;
             }
             case "--duplicates": {
-                cmdLine.withNextBoolean((v, r, s) -> this.setDistinct(!v));
+                cmdLine.withNextFlag((v, r, s) -> this.setDistinct(!v));
                 return true;
             }
             case "-s":
             case "--sort": {
-                cmdLine.withNextBoolean((v, r, s) -> this.setSorted(v));
+                cmdLine.withNextFlag((v, r, s) -> this.setSorted(v));
                 return true;
             }
             case "--base": {
-                cmdLine.withNextBoolean((v, r, s) -> this.includeBasePackage = v);
+                cmdLine.withNextFlag((v, r, s) -> this.includeBasePackage = v);
                 return true;
             }
             case "--lib":
             case "--libs": {
-                cmdLine.withNextBoolean((v, r, s) -> this.setLib(v));
+                cmdLine.withNextFlag((v, r, s) -> this.setLib(v));
                 return true;
             }
             case "--app":
             case "--apps": {
-                cmdLine.withNextBoolean((v, r, s) -> this.setExec(v));
+                cmdLine.withNextFlag((v, r, s) -> this.setExec(v));
                 return true;
             }
             case "--companion":
             case "--companions": {
-                cmdLine.withNextBoolean((v, r, s) -> this.setCompanion(v));
+                cmdLine.withNextFlag((v, r, s) -> this.setCompanion(v));
                 return true;
             }
             case "--extension":
             case "--extensions": {
-                cmdLine.withNextBoolean((v, r, s) -> this.setExtension(v));
+                cmdLine.withNextFlag((v, r, s) -> this.setExtension(v));
                 return true;
             }
             case "--runtime": {
-                cmdLine.withNextBoolean((v, r, s) -> this.setRuntime(v));
+                cmdLine.withNextFlag((v, r, s) -> this.setRuntime(v));
                 return true;
             }
             case "--api-version": {
-                cmdLine.withNextString((v, r, s) -> this.setTargetApiVersion(NVersion.of(v).get(getSession())));
+                cmdLine.withNextEntry((v, r, s) -> this.setTargetApiVersion(NVersion.of(v).get(getSession())));
                 return true;
             }
             case "--nuts-app":
             case "--nuts-apps": {
-                cmdLine.withNextBoolean((v, r, s) -> this.setApplication(v));
+                cmdLine.withNextFlag((v, r, s) -> this.setApplication(v));
                 return true;
             }
             case "--arch": {
-                cmdLine.withNextString((v, r, s) -> this.addArch(v));
+                cmdLine.withNextEntry((v, r, s) -> this.addArch(v));
                 return true;
             }
             case "--packaging": {
-                cmdLine.withNextString((v, r, s) -> this.addPackaging(v));
+                cmdLine.withNextEntry((v, r, s) -> this.addPackaging(v));
                 return true;
             }
             case "--optional": {
-                NArg val = cmdLine.nextString().get(session);
+                NArg val = cmdLine.nextEntry().get(session);
                 if (enabled) {
                     this.setOptional(val.getValue().asBoolean().orNull());
                 }
                 return true;
             }
             case "--script": {
-                cmdLine.withNextString((v, r, s) -> this.addScripts(v));
+                cmdLine.withNextEntry((v, r, s) -> this.addScripts(v));
                 return true;
             }
             case "--id": {
-                cmdLine.withNextString((v, r, s) -> this.addId(v));
+                cmdLine.withNextEntry((v, r, s) -> this.addId(v));
                 return true;
             }
             case "--locked-id": {
-                cmdLine.withNextString((v, r, s) -> this.addLockedId(v));
+                cmdLine.withNextEntry((v, r, s) -> this.addLockedId(v));
                 return true;
             }
             case "--deployed": {
-                NArg b = cmdLine.nextBoolean().get(session);
+                NArg b = cmdLine.nextFlag().get(session);
                 if (enabled) {
                     checkSession();
                     this.setInstallStatus(NInstallStatusFilters.of(session).byDeployed(b.getBooleanValue().get(session)));
@@ -963,7 +963,7 @@ public abstract class AbstractNSearchCommand extends DefaultNQueryBaseOptions<NS
             }
             case "-i":
             case "--installed": {
-                NArg b = cmdLine.nextBoolean().get(session);
+                NArg b = cmdLine.nextFlag().get(session);
                 if (enabled) {
                     checkSession();
                     this.setInstallStatus(
@@ -973,7 +973,7 @@ public abstract class AbstractNSearchCommand extends DefaultNQueryBaseOptions<NS
                 return true;
             }
             case "--required": {
-                NArg b = cmdLine.nextBoolean().get(session);
+                NArg b = cmdLine.nextFlag().get(session);
                 if (enabled) {
                     checkSession();
                     this.setInstallStatus(NInstallStatusFilters.of(session).byRequired(b.getBooleanValue().get(session)));
@@ -981,7 +981,7 @@ public abstract class AbstractNSearchCommand extends DefaultNQueryBaseOptions<NS
                 return true;
             }
             case "--obsolete": {
-                NArg b = cmdLine.nextBoolean().get(session);
+                NArg b = cmdLine.nextFlag().get(session);
                 if (enabled) {
                     checkSession();
                     this.setInstallStatus(NInstallStatusFilters.of(session).byObsolete(b.getBooleanValue().get(session)));
@@ -989,7 +989,7 @@ public abstract class AbstractNSearchCommand extends DefaultNQueryBaseOptions<NS
                 return true;
             }
             case "--status": {
-                NArg aa = cmdLine.nextString().get(session);
+                NArg aa = cmdLine.nextEntry().get(session);
                 if (enabled) {
                     checkSession();
                     this.setInstallStatus(NInstallStatusFilters.of(session).parse(aa.getStringValue().get(session)));

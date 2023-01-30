@@ -178,7 +178,7 @@ public interface NSearchCommand extends NWorkspaceCommand {
     boolean isApplication();
 
     /**
-     * set nuts app filter. if true nuts app (implementing NutsApplication) only
+     * set nuts app filter. if true Nuts app (implementing NApplication) only
      * are retrieved.
      *
      * @param enable ap filter

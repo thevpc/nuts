@@ -26,6 +26,7 @@
 package net.thevpc.nuts.cmdline;
 
 import net.thevpc.nuts.NSession;
+import net.thevpc.nuts.NSessionProvider;
 import net.thevpc.nuts.NWorkspace;
 
 import java.util.List;
@@ -37,9 +38,7 @@ import java.util.List;
  * @app.category Command Line
  * @since 0.5.5
  */
-public interface NCommandAutoComplete {
-
-    NSession getSession();
+public interface NCommandAutoComplete extends NSessionProvider {
 
     NWorkspace getWorkspace();
 

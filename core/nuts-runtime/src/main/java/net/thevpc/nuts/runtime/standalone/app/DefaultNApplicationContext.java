@@ -5,6 +5,7 @@ import net.thevpc.nuts.cmdline.*;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.io.NPrintStream;
 import net.thevpc.nuts.runtime.standalone.app.cmdline.NCommandLineUtils;
+import net.thevpc.nuts.runtime.standalone.session.DefaultNSession;
 import net.thevpc.nuts.runtime.standalone.session.NSessionUtils;
 import net.thevpc.nuts.runtime.standalone.util.NConfigurableHelper;
 import net.thevpc.nuts.runtime.standalone.util.jclass.JavaClassUtils;
@@ -57,9 +58,10 @@ public class DefaultNApplicationContext implements NApplicationContext {
             }
             this.workspace = this.session.getWorkspace();
         } else {
-            this.session = session;
-            this.workspace = session.getWorkspace(); //get a worspace session aware!
+            this.session = session.copy();
+            this.workspace = session.getWorkspace(); //get a workspace session aware!
         }
+        ((DefaultNSession)this.session).setApplicationContext(this);
         session = this.session;//will be used later
         int wordIndex = -1;
         if (args.size() > 0 && args.get(0).startsWith("--nuts-exec-mode=")) {
@@ -352,7 +354,7 @@ public class DefaultNApplicationContext implements NApplicationContext {
 
     @Override
     public void processCommandLine(NCommandLineProcessor commandLineProcessor) {
-        getCommandLine().process(commandLineProcessor, new AppContextNCommandLineContext(this));
+        getCommandLine().process(commandLineProcessor, new DefaultNCommandLineContext(this));
     }
 
     @Override
@@ -546,31 +548,4 @@ public class DefaultNApplicationContext implements NApplicationContext {
         }
     }
 
-    private static class AppContextNCommandLineContext implements NCommandLineContext {
-        private NApplicationContext context;
-
-        public AppContextNCommandLineContext(NApplicationContext context) {
-            this.context = context;
-        }
-
-        @Override
-        public Object configure(boolean skipUnsupported, String... args) {
-            return this.context.configure(skipUnsupported, args);
-        }
-
-        @Override
-        public boolean configure(boolean skipUnsupported, NCommandLine commandLine) {
-            return this.context.configure(skipUnsupported, commandLine);
-        }
-
-        @Override
-        public boolean configureFirst(NCommandLine commandLine) {
-            return this.context.configureFirst(commandLine);
-        }
-
-        @Override
-        public void configureLast(NCommandLine commandLine) {
-            this.context.configureLast(commandLine);
-        }
-    }
 }

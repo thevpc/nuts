@@ -61,7 +61,7 @@ public class NFormatPlain extends DefaultFormatBase<NContentTypeFormat> implemen
         if (n != null) {
             NArg a;
             boolean enabled = n.isActive();
-            if ((a = commandLine.nextString(DefaultNPropertiesFormat.OPTION_MULTILINE_PROPERTY).get(session)) != null) {
+            if ((a = commandLine.nextEntry(DefaultNPropertiesFormat.OPTION_MULTILINE_PROPERTY).get(session)) != null) {
                 if (enabled) {
                     NArg i = NArg.of(a.getStringValue().get(session));
                     extraConfig.add(a.asString().get(session));

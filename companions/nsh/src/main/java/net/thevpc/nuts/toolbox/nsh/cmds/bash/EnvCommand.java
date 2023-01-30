@@ -54,53 +54,53 @@ public class EnvCommand extends SimpleJShellBuiltin {
             case 0: {
                 switch (a.key()) {
                     case "--sort": {
-                        commandLine.withNextBoolean((v, r, s) -> options.sort = v);
+                        commandLine.withNextFlag((v, r, s) -> options.sort = v);
                         return true;
                     }
                     case "--external":
                     case "--spawn":
                     case "-x": {
-                        commandLine.withNextTrue((v, r, s) -> options.executionType = NExecutionType.SPAWN);
+                        commandLine.withNextTrueFlag((v, r, s) -> options.executionType = NExecutionType.SPAWN);
                         return true;
                     }
                     case "--embedded":
                     case "-b": {
-                        commandLine.withNextTrue((v, r, s) -> options.executionType = NExecutionType.EMBEDDED);
+                        commandLine.withNextTrueFlag((v, r, s) -> options.executionType = NExecutionType.EMBEDDED);
                         return true;
                     }
                     case "--system": {
-                        commandLine.withNextTrue((v, r, s) -> options.executionType = NExecutionType.SYSTEM);
+                        commandLine.withNextTrueFlag((v, r, s) -> options.executionType = NExecutionType.SYSTEM);
                         return true;
                     }
                     case "--current-user": {
-                        commandLine.withNextTrue((v, r, s) -> options.runAs = NRunAs.currentUser());
+                        commandLine.withNextTrueFlag((v, r, s) -> options.runAs = NRunAs.currentUser());
                         return true;
                     }
                     case "--as-root": {
-                        commandLine.withNextTrue((v, r, s) -> options.runAs = NRunAs.root());
+                        commandLine.withNextTrueFlag((v, r, s) -> options.runAs = NRunAs.root());
                         return true;
                     }
                     case "--sudo": {
-                        commandLine.withNextTrue((v, r, s) -> options.runAs = NRunAs.sudo());
+                        commandLine.withNextTrueFlag((v, r, s) -> options.runAs = NRunAs.sudo());
                         return true;
                     }
                     case "--as-user": {
-                        commandLine.withNextString((v, r, s) -> options.runAs = NRunAs.user(v));
+                        commandLine.withNextEntry((v, r, s) -> options.runAs = NRunAs.user(v));
                         return true;
                     }
                     case "-C":
                     case "--chdir": {
-                        commandLine.withNextString((v, r, s) -> options.dir = v);
+                        commandLine.withNextEntry((v, r, s) -> options.dir = v);
                         return true;
                     }
                     case "-u":
                     case "--unset": {
-                        commandLine.withNextString((v, r, s) -> options.unsetVers.add(v));
+                        commandLine.withNextEntry((v, r, s) -> options.unsetVers.add(v));
                         return true;
                     }
                     case "-i":
                     case "--ignore-environment": {
-                        commandLine.withNextBoolean((v, r, s) -> options.ignoreEnvironment = v);
+                        commandLine.withNextFlag((v, r, s) -> options.ignoreEnvironment = v);
                         return true;
                     }
                     case "-": {

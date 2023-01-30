@@ -215,9 +215,9 @@ public class WorkspaceService {
         boolean reset = false;
         List<File> toScan = new ArrayList<>();
         while (cmdLine.hasNext()) {
-            if ((a = cmdLine.nextBoolean("-i", "--interactive").orNull()) != null) {
+            if ((a = cmdLine.nextFlag("-i", "--interactive").orNull()) != null) {
                 interactive = a.getBooleanValue().get(session);
-            } else if ((a = cmdLine.nextBoolean("-r", "--reset").orNull()) != null) {
+            } else if ((a = cmdLine.nextFlag("-r", "--reset").orNull()) != null) {
                 reset = a.getBooleanValue().get(session);
             } else if (cmdLine.peek().get(session).isNonOption()) {
                 String folder = cmdLine.nextNonOption(NArgName.of("Folder", session))
@@ -249,7 +249,7 @@ public class WorkspaceService {
         List<File> toScan = new ArrayList<>();
         String where = null;
         while (cmdLine.hasNext()) {
-            if ((a = cmdLine.nextString("-w", "--where").orNull()) != null) {
+            if ((a = cmdLine.nextEntry("-w", "--where").orNull()) != null) {
                 where = a.getStringValue().get(session);
             } else if (cmdLine.peek().get(session).isNonOption()) {
                 String folder = cmdLine.nextNonOption(NArgName.of("Folder", session))
@@ -276,8 +276,8 @@ public class WorkspaceService {
         while (commandLine.hasNext()) {
             if (appContext.configureFirst(commandLine)) {
 
-            } else if (commandLine.withNextString((v, a, s) -> remoteServer.set(v), "--remote-server", "--to-server", "--to", "-t")) {
-            } else if (commandLine.withNextString((v, a, s) -> remoteUser.set(v), "--remote-user")) {
+            } else if (commandLine.withNextEntry((v, a, s) -> remoteServer.set(v), "--remote-server", "--to-server", "--to", "-t")) {
+            } else if (commandLine.withNextEntry((v, a, s) -> remoteUser.set(v), "--remote-user")) {
             } else if (commandLine.isNextNonOption()) {
                 NArg a = commandLine.next().get();
                 idsToPush.add(NId.of(a.toString()).get());
@@ -329,21 +329,21 @@ public class WorkspaceService {
                 //consumed
 //            } else if (tf.configureFirst(cmd)) {
                 //consumed
-            } else if ((a = cmd.nextBoolean("-c", "--commitable", "--changed").orNull()) != null) {
+            } else if ((a = cmd.nextFlag("-c", "--commitable", "--changed").orNull()) != null) {
                 commitable = a.getBooleanValue().get(session);
-            } else if ((a = cmd.nextBoolean("-d", "--dirty").orNull()) != null) {
+            } else if ((a = cmd.nextFlag("-d", "--dirty").orNull()) != null) {
                 dirty = a.getBooleanValue().get(session);
-            } else if ((a = cmd.nextBoolean("-w", "--new").orNull()) != null) {
+            } else if ((a = cmd.nextFlag("-w", "--new").orNull()) != null) {
                 newP = a.getBooleanValue().get(session);
-            } else if ((a = cmd.nextBoolean("-o", "--old").orNull()) != null) {
+            } else if ((a = cmd.nextFlag("-o", "--old").orNull()) != null) {
                 old = a.getBooleanValue().get(session);
-            } else if ((a = cmd.nextBoolean("-0", "--ok", "--uptodate").orNull()) != null) {
+            } else if ((a = cmd.nextFlag("-0", "--ok", "--uptodate").orNull()) != null) {
                 uptodate = a.getBooleanValue().get(session);
-            } else if ((a = cmd.nextBoolean("-e", "--invalid", "--error").orNull()) != null) {
+            } else if ((a = cmd.nextFlag("-e", "--invalid", "--error").orNull()) != null) {
                 invalid = a.getBooleanValue().get(session);
-            } else if ((a = cmd.nextBoolean("-p", "--progress").orNull()) != null) {
+            } else if ((a = cmd.nextFlag("-p", "--progress").orNull()) != null) {
                 progress = a.getBooleanValue().get(session);
-            } else if ((a = cmd.nextBoolean("-v", "--verbose").orNull()) != null) {
+            } else if ((a = cmd.nextFlag("-v", "--verbose").orNull()) != null) {
                 verbose = a.getBooleanValue().get(session);
             } else if (cmd.isNextOption()) {
                 cmd.setCommandName("nwork check").throwUnexpectedArgument();
@@ -815,11 +815,11 @@ public class WorkspaceService {
         NSession session = appContext.getSession();
         NArg a;
         while (cmd.hasNext()) {
-            if ((a = cmd.nextString("-r", "--repo").orNull()) != null) {
+            if ((a = cmd.nextEntry("-r", "--repo").orNull()) != null) {
                 WorkspaceConfig conf = getWorkspaceConfig();
                 conf.getDefaultRepositoryAddress().setNutsRepository(a.getStringValue().get(session));
                 setWorkspaceConfig(conf);
-            } else if ((a = cmd.nextString("-w", "--workspace").orNull()) != null) {
+            } else if ((a = cmd.nextEntry("-w", "--workspace").orNull()) != null) {
                 WorkspaceConfig conf = getWorkspaceConfig();
                 conf.getDefaultRepositoryAddress().setNutsWorkspace(a.getStringValue().get(session));
                 setWorkspaceConfig(conf);

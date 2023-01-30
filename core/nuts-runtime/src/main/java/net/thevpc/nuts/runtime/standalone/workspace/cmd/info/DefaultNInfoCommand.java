@@ -199,14 +199,14 @@ public class DefaultNInfoCommand extends DefaultFormatBase<NInfoCommand> impleme
         switch (a.key()) {
             case "-r":
             case "--repos": {
-                boolean val = cmdLine.nextBoolean().get(session).getBooleanValue().get(session);
+                boolean val = cmdLine.nextFlag().get(session).getBooleanValue().get(session);
                 if (enabled) {
                     this.setShowRepositories(val);
                 }
                 return true;
             }
             case "--fancy": {
-                boolean val = cmdLine.nextBoolean().get(session).getBooleanValue().get(session);
+                boolean val = cmdLine.nextFlag().get(session).getBooleanValue().get(session);
                 if (enabled) {
                     this.setFancy(val);
                 }
@@ -214,14 +214,14 @@ public class DefaultNInfoCommand extends DefaultFormatBase<NInfoCommand> impleme
             }
             case "-l":
             case "--lenient": {
-                boolean val = cmdLine.nextBoolean().get(session).getBooleanValue().get(session);
+                boolean val = cmdLine.nextFlag().get(session).getBooleanValue().get(session);
                 if (enabled) {
                     this.setLenient(val);
                 }
                 return true;
             }
             case "--add": {
-                String aa = cmdLine.nextString().get(session).getStringValue().get(session);
+                String aa = cmdLine.nextEntry().get(session).getStringValue().get(session);
                 NArg val = NArg.of(aa);
                 if (enabled) {
                     extraProperties.put(val.key(), val.getStringValue().get(session));
@@ -272,7 +272,7 @@ public class DefaultNInfoCommand extends DefaultFormatBase<NInfoCommand> impleme
             }
             case "-g":
             case "--get": {
-                String r = cmdLine.nextString().get(session).getStringValue().get(session);
+                String r = cmdLine.nextEntry().get(session).getStringValue().get(session);
                 if (enabled) {
                     requests.add(r);
                 }

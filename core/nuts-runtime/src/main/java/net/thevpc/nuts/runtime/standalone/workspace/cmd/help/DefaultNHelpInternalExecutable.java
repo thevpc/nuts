@@ -50,7 +50,7 @@ public class DefaultNHelpInternalExecutable extends DefaultInternalNExecutableCo
                 switch (a.key()) {
                     case "--colors":
                     case "--ntf": {
-                        NArg c = cmdLine.nextBoolean().get(session);
+                        NArg c = cmdLine.nextFlag().get(session);
                         if (c.isActive()) {
                             helpColors = c.getBooleanValue().get(session);
                         }

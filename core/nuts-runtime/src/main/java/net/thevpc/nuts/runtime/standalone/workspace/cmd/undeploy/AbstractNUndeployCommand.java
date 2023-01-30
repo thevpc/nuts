@@ -132,13 +132,13 @@ public abstract class AbstractNUndeployCommand extends NWorkspaceCommandBase<NUn
         boolean enabled = aa.isActive();
         switch (aa.key()) {
             case "--offline": {
-                cmdLine.withNextBoolean((v, a, s) -> setOffline(v));
+                cmdLine.withNextFlag((v, a, s) -> setOffline(v));
                 return true;
             }
             case "-r":
             case "-repository":
             case "--from": {
-                cmdLine.withNextString((v, a, s) -> setRepository(v));
+                cmdLine.withNextEntry((v, a, s) -> setRepository(v));
                 break;
             }
 

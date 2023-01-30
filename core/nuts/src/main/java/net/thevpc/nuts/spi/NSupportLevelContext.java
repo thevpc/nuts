@@ -26,15 +26,14 @@
 package net.thevpc.nuts.spi;
 
 import net.thevpc.nuts.NSession;
+import net.thevpc.nuts.NSessionProvider;
 import net.thevpc.nuts.NWorkspace;
 
 /**
  * @author thevpc
  * @app.category SPI Base
  */
-public interface NSupportLevelContext {
-
-    NSession getSession();
+public interface NSupportLevelContext extends NSessionProvider {
 
     NWorkspace getWorkspace();
 
@@ -49,7 +48,7 @@ public interface NSupportLevelContext {
     /**
      * return constraints casted to T, returns null if not compatible
      *
-     * @param <T> expected type
+     * @param <T>      expected type
      * @param expected expected
      * @return constraints casted to T, returns null if not compatible
      */

@@ -47,7 +47,7 @@ public class DefaultNOpenExecutable extends AbstractNExecutableCommand {
             NArg aa = commandLine.peek().get(session);
             switch (aa.key()) {
                 case "--show-command": {
-                    commandLine.withNextBoolean((v, a, s) -> this.showCommand = (v));
+                    commandLine.withNextFlag((v, a, s) -> this.showCommand = (v));
                     break;
                 }
                 default: {

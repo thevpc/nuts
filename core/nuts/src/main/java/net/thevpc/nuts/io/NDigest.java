@@ -28,6 +28,7 @@ package net.thevpc.nuts.io;
 import net.thevpc.nuts.NDescriptor;
 import net.thevpc.nuts.NExtensions;
 import net.thevpc.nuts.NSession;
+import net.thevpc.nuts.NSessionProvider;
 import net.thevpc.nuts.spi.NComponent;
 
 import java.io.File;
@@ -43,7 +44,7 @@ import java.security.MessageDigest;
  * @app.category Input Output
  * @since 0.5.5
  */
-public interface NDigest extends NComponent {
+public interface NDigest extends NComponent, NSessionProvider {
     static NDigest of(NSession session) {
        return NExtensions.of(session).createSupported(NDigest.class);
     }
@@ -125,8 +126,6 @@ public interface NDigest extends NComponent {
      * @return {@code this} instance
      */
     NDigest md5();
-
-    NSession getSession();
 
     NDigest setSession(NSession session);
 

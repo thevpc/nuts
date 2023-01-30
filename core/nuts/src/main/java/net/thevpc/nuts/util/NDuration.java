@@ -1077,7 +1077,7 @@ public class NDuration implements Serializable, NFormattable {
                 NArg a = commandLine.peek().get(session);
                 switch (a.key()) {
                     case "--mode": {
-                        a = commandLine.nextString().get(session);
+                        a = commandLine.nextEntry().get(session);
                         if (a.isActive()) {
                             formatMode = NDurationFormatMode.parse(a.getStringValue().get()).get();
                         }

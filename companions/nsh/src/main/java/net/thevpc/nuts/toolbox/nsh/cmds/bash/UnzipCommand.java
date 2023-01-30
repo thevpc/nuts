@@ -62,9 +62,9 @@ public class UnzipCommand extends SimpleJShellBuiltin {
         while (commandLine.hasNext()) {
             switch (mode) {
                 case "zip": {
-                    if ((a = commandLine.nextBoolean("-l").orNull()) != null) {
+                    if ((a = commandLine.nextFlag("-l").orNull()) != null) {
                         options.l = a.getBooleanValue().get(session);
-                    } else if ((a = commandLine.nextString("-d").orNull()) != null) {
+                    } else if ((a = commandLine.nextEntry("-d").orNull()) != null) {
                         options.dir = a.getStringValue().get(session);
                     } else if (!commandLine.isNextOption()) {
                         String s = commandLine.next().get(session).toString();
@@ -80,11 +80,11 @@ public class UnzipCommand extends SimpleJShellBuiltin {
                     break;
                 }
                 case "internFiles": {
-                    if ((a = commandLine.nextBoolean("-l").orNull()) != null) {
+                    if ((a = commandLine.nextFlag("-l").orNull()) != null) {
                         options.l = a.getBooleanValue().get(session);
-                    } else if ((a = commandLine.nextString("-d").orNull()) != null) {
+                    } else if ((a = commandLine.nextEntry("-d").orNull()) != null) {
                         options.dir = a.getStringValue().get(session);
-                    } else if ((a = commandLine.nextString("-x").orNull()) != null) {
+                    } else if ((a = commandLine.nextEntry("-x").orNull()) != null) {
                         options.xFiles.add(a.getStringValue().get(session));
                         mode = "xFiles";
                     } else if (!commandLine.isNextOption()) {
@@ -95,9 +95,9 @@ public class UnzipCommand extends SimpleJShellBuiltin {
                     break;
                 }
                 case "xFiles": {
-                    if ((a = commandLine.nextBoolean("-l").orNull()) != null) {
+                    if ((a = commandLine.nextFlag("-l").orNull()) != null) {
                         options.l = a.getBooleanValue().get(session);
-                    } else if ((a = commandLine.nextString("-d").orNull()) != null) {
+                    } else if ((a = commandLine.nextEntry("-d").orNull()) != null) {
                         options.dir = a.getStringValue().get(session);
                     } else if (!commandLine.isNextOption()) {
                         options.xFiles.add(commandLine.next().get(session).toString());

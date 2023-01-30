@@ -26,6 +26,7 @@
 package net.thevpc.nuts.spi;
 
 import net.thevpc.nuts.NSession;
+import net.thevpc.nuts.NSessionProvider;
 import net.thevpc.nuts.NWorkspace;
 
 import java.io.InputStream;
@@ -37,7 +38,7 @@ import java.util.List;
  * @app.category SPI Base
  * @since 0.5.4
  */
-public interface NDescriptorContentParserContext {
+public interface NDescriptorContentParserContext extends NSessionProvider {
 
     /**
      * command line options that can be parsed to
@@ -97,11 +98,5 @@ public interface NDescriptorContentParserContext {
      */
     NWorkspace getWorkspace();
 
-    /**
-     * return session
-     *
-     * @return session
-     */
-    NSession getSession();
 
 }

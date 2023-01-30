@@ -29,7 +29,7 @@ import net.thevpc.nuts.util.NClock;
 
 /**
  * Nuts Application is the Top Level interface to be handled by nuts as rich console
- * application. By default NutsApplication classes :
+ * application. By default, NApplication classes :
  * <ul>
  * <li>have a nutsApplication=true in their descriptor file (in maven descriptor you should add a property nuts.application=true)</li>
  * <li>support inheritance of all workspace options (from caller nuts process)</li>
@@ -40,112 +40,234 @@ import net.thevpc.nuts.util.NClock;
  * <li>have many default options enabled (such as --help, --version, --json,--table, etc.) and thus supports natively multi output channels</li>
  * <li>have a well defined storage layout (with temp, lib, config folders, etc...)</li>
  * </ul>
- * Typically a Nuts Application follows this code pattern :
+ * Typically, a Nuts Application follows this code pattern :
  * <pre>
- *   public class MyApplication implements NutsApplication{
+ *   package org.example.test;
+ *
+ * import net.thevpc.nuts.NApplication;
+ * import net.thevpc.nuts.NApplicationContext;
+ * import net.thevpc.nuts.cmdline.NArg;
+ * import net.thevpc.nuts.cmdline.NCommandLine;
+ * import net.thevpc.nuts.cmdline.NCommandLineContext;
+ * import net.thevpc.nuts.cmdline.NCommandLineProcessor;
+ *
+ * import java.util.ArrayList;
+ * import java.util.List;
+ *
+ * public class MyApplication1 implements NApplication {
  *     public static void main(String[] args) {
  *         // just create an instance and call runAndExit in the main method
- *         new MyApplication().runAndExit(args);
+ *         new MyApplication1().runAndExit(args);
  *     }
+ *
+ *     public void run(NApplicationContext applicationContext) {
+ *         applicationContext.processCommandLine(new NCommandLineProcessor() {
+ *             boolean noMoreOptions = false;
+ *             boolean clean = false;
+ *             List<String> params = new ArrayList<>();
+ *
+ *             public boolean onCmdNextOption(NArg option, NCommandLine commandLine, NCommandLineContext context) {
+ *                 if (!noMoreOptions) {
+ *                     return false;
+ *                 }
+ *                 switch (option.key()) {
+ *                     case "-c":
+ *                     case "--clean": {
+ *                         NArg a = commandLine.nextFlag().get();
+ *                         if (a.isEnabled()) {
+ *                             clean = a.getBooleanValue().get();
+ *                         }
+ *                         return true;
+ *                     }
+ *                 }
+ *                 return false;
+ *             }
+ *
+ *             public boolean onCmdNextNonOption(NArg nonOption, NCommandLine commandLine, NCommandLineContext context) {
+ *                 params.add(commandLine.next().get().toString());
+ *                 return true;
+ *             }
+ *
+ *             public void onCmdExec(NCommandLine commandLine, NCommandLineContext context) {
+ *                 if(clean){
+ *                     commandLine.getSession().out().println("cleaned!");
+ *                 }
+ *             }
+ *         });
+ *     }
+ * }
+ * </pre>
+ * another example of using this class is :
+ * <pre>
+ *     package org.example.test;
+ *
+ * import net.thevpc.nuts.*;
+ * import net.thevpc.nuts.cmdline.NArg;
+ * import net.thevpc.nuts.cmdline.NCommandLine;
+ *
+ * import java.util.ArrayList;
+ * import java.util.List;
+ *
+ * public class MyApplication2 implements NApplication {
+ *     public static void main(String[] args) {
+ *         // just create an instance and call runAndExit in the main method
+ *         new MyApplication2().runAndExit(args);
+ *     }
+ *
  *     // do the main staff in launch method
- *     public void run(NutsApplicationContext appContext) {
- *         boolean myBooleanOption=false;
- *         NutsCommandLine cmdLine=appContext.getCommandLine()
- *         boolean boolOption=false;
- *         String stringOption=null;
- *         Argument a;
- *         while(cmdLine.hasNext()){
- *             if(appContext.configureFirst(cmdLine)){
- *                 //do nothing
- *             }else {
- *                  a=cmdLine.peek();
- *                  switch(a.getKey().getString())[
- *                      case "-o": case "--option":{
- *                          boolOption=cmdLine.nextBooleanValue().get(session);
- *                          break;
- *                      }
- *                      case "-n": case "--name":{
- *                          stringOption=cmdLine.nextString().getStringValue().get(session);
- *                          break;
- *                      }
- *                      default:{
- *                          cmdLine.throwUnexpectedArgument();
- *                      }
- *                  }
+ *     public void run(NApplicationContext appContext) {
+ *         NSession session = appContext.getSession();
+ *         NCommandLine cmdLine = appContext.getCommandLine();
+ *         boolean boolOption = false;
+ *         String stringOption = null;
+ *         List<String> others = new ArrayList<>();
+ *         NArg a;
+ *         while (cmdLine.hasNext()) {
+ *             a = cmdLine.peek().get();
+ *             if (a.isOption()) {
+ *                 switch (a.key()) {
+ *                     case "-o":
+ *                     case "--option": {
+ *                         a = cmdLine.nextFlag().get(session);
+ *                         if (a.isEnabled()) {
+ *                             boolOption = a.getBooleanValue().get(session);
+ *                         }
+ *                         break;
+ *                     }
+ *                     case "-n":
+ *                     case "--name": {
+ *                         a = cmdLine.nextEntry().get(session);
+ *                         if (a.isEnabled()) {
+ *                             stringOption = a.getStringValue().get(session);
+ *                         }
+ *                         break;
+ *                     }
+ *                     default: {
+ *                         appContext.configureLast(cmdLine);
+ *                     }
+ *                 }
+ *             } else {
+ *                 others.add(cmdLine.next().get().toString());
  *             }
  *         }
  *         // test if application is running in exec mode
  *         // (and not in autoComplete mode)
- *         if(cmdLine.isExecMode()){
- *              //do the good staff here
+ *         if (cmdLine.isExecMode()) {
+ *             //do the good staff here
+ *             session.out().println(NMsg.ofC("boolOption=%s stringOption=%s others=%s", boolOption, stringOption, others));
  *         }
  *     }
- *   }
+ * }
  * </pre>
- * another example of using this class is :
+ *
+ * and yet another example of using this class is :
  * <pre>
- *     public class HLMain implements NutsApplication {
- *         public static void main(String[] args) {
- *            // just create an instance and call runAndExit in the main method
- *            new HLMain().runAndExit(args);
+ *package org.example.test;
+ *
+ * import net.thevpc.nuts.NApplication;
+ * import net.thevpc.nuts.NApplicationContext;
+ * import net.thevpc.nuts.NMsg;
+ * import net.thevpc.nuts.NSession;
+ * import net.thevpc.nuts.cmdline.NArg;
+ * import net.thevpc.nuts.cmdline.NCommandLine;
+ * import net.thevpc.nuts.util.NRef;
+ *
+ * import java.util.ArrayList;
+ * import java.util.List;
+ *
+ * public class MyApplication3 implements NApplication {
+ *     public static void main(String[] args) {
+ *         // just create an instance and call runAndExit in the main method
+ *         new MyApplication3().runAndExit(args);
+ *     }
+ *
+ *     // do the main staff in launch method
+ *     public void run(NApplicationContext appContext) {
+ *         NSession session = appContext.getSession();
+ *         NCommandLine cmdLine = appContext.getCommandLine();
+ *         NRef<Boolean> boolOption = NRef.of(false);
+ *         NRef<String> stringOption = NRef.ofNull();
+ *         List<String> others = new ArrayList<>();
+ *         NArg a;
+ *         while (cmdLine.hasNext()) {
+ *             a = cmdLine.peek().get();
+ *             if (a.isOption()) {
+ *                 switch (a.key()) {
+ *                     case "-o":
+ *                     case "--option": {
+ *                         cmdLine.withNextFlag((v, e, s)->boolOption.set(v));
+ *                         break;
+ *                     }
+ *                     case "-n":
+ *                     case "--name": {
+ *                         cmdLine.withNextEntry((v, e, s)->stringOption.set(v));
+ *                         break;
+ *                     }
+ *                     default: {
+ *                         appContext.configureLast(cmdLine);
+ *                     }
+ *                 }
+ *             } else {
+ *                 others.add(cmdLine.next().get().toString());
+ *             }
  *         }
- *
- *         &#64;Override
- *         public void run(NutsApplicationContext applicationContext) {
- *             applicationContext.processCommandLine(new NutsAppCmdProcessor() {
- *                 HLCWithOptions hl = new HL().withOptions();
- *                 boolean noMoreOptions=false;
- *                 &#64;Override
- *                 public boolean onNextOption(NutsArgument argument, NutsCommandLine cmdLine) {
- *                     if(!noMoreOptions){
- *                         return false;
- *                     }
- *                     switch (argument.getKey().getString()) {
- *                         case "--clean": {
- *                             hl.clean(cmdLine.nextBooleanValue().get(session));
- *                             return true;
- *                         }
- *                         case "-i":
- *                         case "--incremental":{
- *                             hl.setIncremental(cmdLine.nextBooleanValue().get(session));
- *                             return true;
- *                         }
- *                         case "-r":
- *                         case "--root":{
- *                             hl.setProjectRoot(cmdLine.nextString().getStringValue());
- *                             return true;
- *                         }
- *                     }
- *                     return false;
- *                 }
- *
- *                 &#64;Override
- *                 public boolean onNextNonOption(NutsArgument argument, NutsCommandLine cmdLine) {
- *                     String s = argument.getString();
- *                     if(isURL(s)){
- *                         hl.includeFileURL(s);
- *                     }else{
- *                         hl.includeFile(s);
- *                     }
- *                     noMoreOptions=true;
- *                     return true;
- *                 }
- *
- *                 private boolean isURL(String s) {
- *                     return
- *                             s.startsWith("file:")
- *                             ||s.startsWith("http:")
- *                             ||s.startsWith("https:")
- *                             ;
- *                 }
- *
- *                 &#64;Override
- *                 public void onExec() {
- *                     hl.compile();
- *                 }
- *             });
+ *         // test if application is running in exec mode
+ *         // (and not in autoComplete mode)
+ *         if (cmdLine.isExecMode()) {
+ *             //do the good staff here
+ *             session.out().println(NMsg.ofC("boolOption=%s stringOption=%s others=%s", boolOption, stringOption, others));
  *         }
  *     }
+ * }
+ * </pre>
+ *
+ * and yet another good way to use it is :
+ * <pre>
+ *     package org.example.test;
+ *
+ * import net.thevpc.nuts.NApplication;
+ * import net.thevpc.nuts.NApplicationContext;
+ * import net.thevpc.nuts.NMsg;
+ * import net.thevpc.nuts.NSession;
+ * import net.thevpc.nuts.cmdline.NArg;
+ * import net.thevpc.nuts.cmdline.NCommandLine;
+ * import net.thevpc.nuts.util.NRef;
+ *
+ * import java.util.ArrayList;
+ * import java.util.List;
+ *
+ * public class MyApplication4 implements NApplication {
+ *     public static void main(String[] args) {
+ *         // just create an instance and call runAndExit in the main method
+ *         new MyApplication4().runAndExit(args);
+ *     }
+ *
+ *     // do the main staff in launch method
+ *     public void run(NApplicationContext appContext) {
+ *         NSession session = appContext.getSession();
+ *         NCommandLine cmdLine = appContext.getCommandLine();
+ *         NRef<Boolean> boolOption = NRef.of(false);
+ *         NRef<String> stringOption = NRef.ofNull();
+ *         List<String> others = new ArrayList<>();
+ *         while (cmdLine.hasNext()) {
+ *             if(cmdLine.withNextFlag((v, a, s)->boolOption.set(v),"-o","--option")) {
+ *
+ *             }else if(cmdLine.withNextEntry((v, a, s)->stringOption.set(v),"-n","--name")){
+ *
+ *             }else if(cmdLine.hasNextOption()){
+ *                 appContext.configureLast(cmdLine);
+ *             }else{
+ *                 others.add(cmdLine.nextString().get());
+ *             }
+ *         }
+ *         // test if application is running in exec mode
+ *         // (and not in autoComplete mode)
+ *         if (cmdLine.isExecMode()) {
+ *             //do the good staff here
+ *             session.out().println(NMsg.ofC("boolOption=%s stringOption=%s others=%s", boolOption, stringOption, others));
+ *         }
+ *     }
+ * }
  * </pre>
  *
  * @author thevpc
@@ -157,7 +279,7 @@ public interface NApplication {
     /**
      * creates an instance of {@code appType} and calls runAndExit.
      * <p>
-     * This method is intended be called in main methods of NutsApplication
+     * This method is intended be called in main methods of NApplication
      * classes.
      *
      * @param <T>     application type
@@ -236,7 +358,7 @@ public interface NApplication {
      * @param nutsArgs  nuts arguments
      * @param appArgs      app arguments
      * @param startTime start time
-     * @return new instance of NutsApplicationContext or null
+     * @return new instance of NApplicationContext or null
      */
     default NApplicationContext createApplicationContext(NSession session, String[] nutsArgs, String[] appArgs, NClock startTime) {
         return null;

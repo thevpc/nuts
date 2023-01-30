@@ -36,7 +36,7 @@ import java.util.stream.Collectors;
 
 /**
  * <pre>
- * CommandLine args=new CommandLine(Arrays.asList("--!deleteLog","--deploy","/deploy/path","--deploy=/other-deploy/path","some-param"));
+ * NCommandLine args=new DefaultNCommandLine(Arrays.asList("--!deleteLog","--deploy","/deploy/path","--deploy=/other-deploy/path","some-param"));
  * Argument a;
  * while (args.hasNext()) {
  * if ((a = args.nextBoolean("--deleteLog").orNull()) != null) {
@@ -49,7 +49,7 @@ import java.util.stream.Collectors;
  * args.throwUnexpectedArgument();
  * }
  * }
- * </pre> Created by vpc on 12/7/16.
+ * </pre>
  */
 public class DefaultNCommandLine implements NCommandLine {
 
@@ -281,6 +281,11 @@ public class DefaultNCommandLine implements NCommandLine {
     }
 
     @Override
+    public NOptional<String> nextString() {
+        return next().map(Object::toString);
+    }
+
+    @Override
     public NOptional<NArg> next(NArgName name) {
         return next(name, false);
     }
@@ -314,28 +319,38 @@ public class DefaultNCommandLine implements NCommandLine {
     }
 
     @Override
-    public NOptional<NArg> nextBoolean(String... names) {
-        return next(NArgumentType.BOOLEAN, names);
+    public boolean hasNextOption() {
+        return hasNext() && peek().get().isOption();
     }
 
     @Override
-    public NOptional<NArg> nextString(String... names) {
-        return next(NArgumentType.STRING, names);
+    public boolean hasNextNonOption() {
+        return hasNext() && peek().get().isNonOption();
     }
 
     @Override
-    public NOptional<NArg> nextString() {
-        return nextString(new String[0]);
+    public NOptional<NArg> nextFlag(String... names) {
+        return next(NArgumentType.FLAG, names);
     }
 
     @Override
-    public NOptional<NArg> nextBoolean() {
-        return nextBoolean(new String[0]);
+    public NOptional<NArg> nextEntry(String... names) {
+        return next(NArgumentType.ENTRY, names);
     }
 
     @Override
-    public boolean withNextOptionalBoolean(NArgProcessor<NOptional<Boolean>> consumer) {
-        NOptional<NArg> v = nextBoolean();
+    public NOptional<NArg> nextEntry() {
+        return nextEntry(new String[0]);
+    }
+
+    @Override
+    public NOptional<NArg> nextFlag() {
+        return nextFlag(new String[0]);
+    }
+
+    @Override
+    public boolean withNextOptionalFlag(NArgProcessor<NOptional<Boolean>> consumer) {
+        NOptional<NArg> v = nextFlag();
         if (v.isPresent()) {
             NArg a = v.get(session);
             if (a.isActive()) {
@@ -347,8 +362,8 @@ public class DefaultNCommandLine implements NCommandLine {
     }
 
     @Override
-    public boolean withNextOptionalBoolean(NArgProcessor<NOptional<Boolean>> consumer, String... names) {
-        NOptional<NArg> v = nextBoolean(names);
+    public boolean withNextOptionalFlag(NArgProcessor<NOptional<Boolean>> consumer, String... names) {
+        NOptional<NArg> v = nextFlag(names);
         if (v.isPresent()) {
             NArg a = v.get(session);
             if (a.isActive()) {
@@ -360,8 +375,8 @@ public class DefaultNCommandLine implements NCommandLine {
     }
 
     @Override
-    public boolean withNextOptionalString(NArgProcessor<NOptional<String>> consumer) {
-        NOptional<NArg> v = nextString();
+    public boolean withNextOptionalEntry(NArgProcessor<NOptional<String>> consumer) {
+        NOptional<NArg> v = nextEntry();
         if (v.isPresent()) {
             NArg a = v.get(session);
             if (a.isActive()) {
@@ -373,8 +388,8 @@ public class DefaultNCommandLine implements NCommandLine {
     }
 
     @Override
-    public boolean withNextOptionalString(NArgProcessor<NOptional<String>> consumer, String... names) {
-        NOptional<NArg> v = nextString(names);
+    public boolean withNextOptionalEntry(NArgProcessor<NOptional<String>> consumer, String... names) {
+        NOptional<NArg> v = nextEntry(names);
         if (v.isPresent()) {
             NArg a = v.get(session);
             if (a.isActive()) {
@@ -387,8 +402,8 @@ public class DefaultNCommandLine implements NCommandLine {
 
 
     @Override
-    public boolean withNextBoolean(NArgProcessor<Boolean> consumer) {
-        NOptional<NArg> v = nextBoolean();
+    public boolean withNextFlag(NArgProcessor<Boolean> consumer) {
+        NOptional<NArg> v = nextFlag();
         if (v.isPresent()) {
             NArg a = v.get(session);
             if (a.isActive()) {
@@ -400,8 +415,8 @@ public class DefaultNCommandLine implements NCommandLine {
     }
 
     @Override
-    public boolean withNextTrue(NArgProcessor<Boolean> consumer) {
-        return withNextBoolean((value, arg, session1) -> {
+    public boolean withNextTrueFlag(NArgProcessor<Boolean> consumer) {
+        return withNextFlag((value, arg, session1) -> {
             if (value) {
                 consumer.run(true, arg, session1);
             }
@@ -409,8 +424,8 @@ public class DefaultNCommandLine implements NCommandLine {
     }
 
     @Override
-    public boolean withNextTrue(NArgProcessor<Boolean> consumer, String... names) {
-        return withNextBoolean((value, arg, session) -> {
+    public boolean withNextTrueFlag(NArgProcessor<Boolean> consumer, String... names) {
+        return withNextFlag((value, arg, session) -> {
             if (value) {
                 consumer.run(true, arg, session);
             }
@@ -418,8 +433,8 @@ public class DefaultNCommandLine implements NCommandLine {
     }
 
     @Override
-    public boolean withNextBoolean(NArgProcessor<Boolean> consumer, String... names) {
-        NOptional<NArg> v = nextBoolean(names);
+    public boolean withNextFlag(NArgProcessor<Boolean> consumer, String... names) {
+        NOptional<NArg> v = nextFlag(names);
         if (v.isPresent()) {
             NArg a = v.get(session);
             if (a.isActive()) {
@@ -431,8 +446,8 @@ public class DefaultNCommandLine implements NCommandLine {
     }
 
     @Override
-    public boolean withNextString(NArgProcessor<String> consumer) {
-        NOptional<NArg> v = nextString();
+    public boolean withNextEntry(NArgProcessor<String> consumer) {
+        NOptional<NArg> v = nextEntry();
         if (v.isPresent()) {
             NArg a = v.get(session);
             if (a.isActive()) {
@@ -444,8 +459,8 @@ public class DefaultNCommandLine implements NCommandLine {
     }
 
     @Override
-    public boolean withNextString(NArgProcessor<String> consumer, String... names) {
-        NOptional<NArg> v = nextString(names);
+    public boolean withNextEntry(NArgProcessor<String> consumer, String... names) {
+        NOptional<NArg> v = nextEntry(names);
         if (v.isPresent()) {
             NArg a = v.get(session);
             if (a.isActive()) {
@@ -457,8 +472,8 @@ public class DefaultNCommandLine implements NCommandLine {
     }
 
     @Override
-    public boolean withNextStringLiteral(NArgProcessor<NLiteral> consumer) {
-        NOptional<NArg> v = nextString();
+    public boolean withNextEntryValue(NArgProcessor<NLiteral> consumer) {
+        NOptional<NArg> v = nextEntry();
         if (v.isPresent()) {
             NArg a = v.get(session);
             if (a.isActive()) {
@@ -470,8 +485,8 @@ public class DefaultNCommandLine implements NCommandLine {
     }
 
     @Override
-    public boolean withNextStringLiteral(NArgProcessor<NLiteral> consumer, String... names) {
-        NOptional<NArg> v = nextString(names);
+    public boolean withNextEntryValue(NArgProcessor<NLiteral> consumer, String... names) {
+        NOptional<NArg> v = nextEntry(names);
         if (v.isPresent()) {
             NArg a = v.get(session);
             if (a.isActive()) {
@@ -483,7 +498,7 @@ public class DefaultNCommandLine implements NCommandLine {
     }
 
     @Override
-    public boolean withNextLiteral(NArgProcessor<NLiteral> consumer) {
+    public boolean withNextValue(NArgProcessor<NLiteral> consumer) {
         NOptional<NArg> v = next();
         if (v.isPresent()) {
             NArg a = v.get(session);
@@ -496,23 +511,23 @@ public class DefaultNCommandLine implements NCommandLine {
     }
 
     @Override
-    public NOptional<NLiteral> nextStringLiteral() {
-        return nextStringLiteral(new String[0]);
+    public NOptional<NLiteral> nextEntryValue() {
+        return nextEntryValue(new String[0]);
     }
 
     @Override
-    public NOptional<NLiteral> nextBooleanLiteral() {
-        return nextBooleanLiteral(new String[0]);
+    public NOptional<NLiteral> nextFlagValue() {
+        return nextFlagValue(new String[0]);
     }
 
     @Override
-    public NOptional<NLiteral> nextStringLiteral(String... names) {
-        return nextString(names).map(NArg::getValue);
+    public NOptional<NLiteral> nextEntryValue(String... names) {
+        return nextEntry(names).map(NArg::getValue);
     }
 
     @Override
-    public NOptional<NLiteral> nextBooleanLiteral(String... names) {
-        return nextBoolean(names).map(NArg::getValue);
+    public NOptional<NLiteral> nextFlagValue(String... names) {
+        return nextFlag(names).map(NArg::getValue);
     }
 
     @Override
@@ -521,9 +536,9 @@ public class DefaultNCommandLine implements NCommandLine {
     }
 
     @Override
-    public NOptional<NArg> next(NArgumentType expectValue, String... names) {
-        if (expectValue == null) {
-            expectValue = NArgumentType.DEFAULT;
+    public NOptional<NArg> next(NArgumentType expectedValue, String... names) {
+        if (expectedValue == null) {
+            expectedValue = NArgumentType.DEFAULT;
         }
         if (names.length == 0) {
             if (hasNext()) {
@@ -540,7 +555,7 @@ public class DefaultNCommandLine implements NCommandLine {
             }
         } else {
             if (isAutoCompleteMode()) {
-                NArgCandidate[] candidates = resolveRecommendations(expectValue, names, autoComplete.getCurrentWordIndex());
+                NArgCandidate[] candidates = resolveRecommendations(expectedValue, names, autoComplete.getCurrentWordIndex());
                 for (NArgCandidate c : candidates) {
                     autoComplete.addCandidate(c);
                 }
@@ -560,12 +575,12 @@ public class DefaultNCommandLine implements NCommandLine {
             if (p != null) {
                 NOptional<String> pks = p.getKey().asString();
                 if (pks.isPresent() && pks.get().equals(name)) {
-                    switch (expectValue) {
+                    switch (expectedValue) {
                         case DEFAULT: {
                             skip(nameSeqArray.length);
                             return NOptional.of(p);
                         }
-                        case STRING: {
+                        case ENTRY: {
                             skip(nameSeqArray.length);
                             if (p.isKeyValue()) {
                                 return NOptional.of(p);
@@ -579,7 +594,7 @@ public class DefaultNCommandLine implements NCommandLine {
                                 }
                             }
                         }
-                        case BOOLEAN: {
+                        case FLAG: {
                             skip(nameSeqArray.length);
                             if (p.isNegated()) {
                                 if (p.isKeyValue()) {
@@ -603,7 +618,7 @@ public class DefaultNCommandLine implements NCommandLine {
                             break;
                         }
                         default: {
-                            return errorOptionalCformat("unsupported %s", highlightText(String.valueOf(expectValue)));
+                            return errorOptionalCformat("unsupported %s", highlightText(String.valueOf(expectedValue)));
                         }
                     }
                 }
@@ -1300,6 +1315,10 @@ public class DefaultNCommandLine implements NCommandLine {
 
     @Override
     public void process(NCommandLineProcessor processor, NCommandLineContext context) {
+        if (context == null) {
+            context = new DefaultNCommandLineContext(null);
+        }
+        NCommandLineConfigurable configurable = context.getConfigurable();
         NCommandLine cmd = this;
         NArg a;
         processor.onCmdInitParsing(cmd, context);
@@ -1320,7 +1339,9 @@ public class DefaultNCommandLine implements NCommandLine {
                             (a.isOption() ? "nextOption" : "nextNonOption"),
                             a));
                 }
-            } else if (!context.configureFirst(cmd)) {
+            } else if (configurable != null && !configurable.configureFirst(cmd)) {
+                cmd.throwUnexpectedArgument();
+            } else {
                 cmd.throwUnexpectedArgument();
             }
         }

@@ -59,7 +59,7 @@ import java.util.Set;
  * @app.category Input Output
  * @since 0.5.4
  */
-public interface NCp extends NComponent {
+public interface NCp extends NComponent,NSessionProvider {
     static NCp of(NSession session) {
        return NExtensions.of(session).createSupported(NCp.class);
     }
@@ -318,13 +318,6 @@ public interface NCp extends NComponent {
     boolean isMkdirs();
 
     NCp setMkdirs(boolean mkdirs);
-
-    /**
-     * return current session
-     *
-     * @return current session
-     */
-    NSession getSession();
 
     /**
      * update current session

@@ -54,7 +54,7 @@ public class RmCommand extends SimpleJShellBuiltin {
         NSession session = context.getSession();
         Options options = context.getOptions();
         NArg a;
-        if ((a = commandLine.nextBoolean("-R").orNull()) != null) {
+        if ((a = commandLine.nextFlag("-R").orNull()) != null) {
             options.R = a.getBooleanValue().get(session);
             return true;
         } else if (commandLine.peek().get(session).isNonOption()) {

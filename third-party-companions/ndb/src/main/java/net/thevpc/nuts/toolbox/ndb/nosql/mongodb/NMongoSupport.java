@@ -148,7 +148,7 @@ public class NMongoSupport extends NdbSupportBase<NMongoConfig> {
     public CmdRedirect createDumpCommand(NPath remoteSql, NMongoConfig options, NSession session) {
         List<String> cmd = new ArrayList<>();
         cmd.add("mongodump");
-        cmd.add("--quiet");
+        //cmd.add("--quiet");
         if (!NBlankable.isBlank(options.getHost())) {
             cmd.add("--host=" + options.getHost());
         }
@@ -167,7 +167,7 @@ public class NMongoSupport extends NdbSupportBase<NMongoConfig> {
     public CmdRedirect createRestoreCommand(NPath remoteSql, NMongoConfig options, NSession session) {
         List<String> cmd = new ArrayList<>();
         cmd.add("mongorestore");
-        cmd.add("--quiet");
+        //cmd.add("--quiet");
         if (!NBlankable.isBlank(options.getHost())) {
             cmd.add("--host=" + options.getHost());
         }

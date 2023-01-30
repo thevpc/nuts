@@ -55,7 +55,7 @@ public class NSettingsDeleteFoldersSubCommand extends AbstractNSettingsSubComman
                 locationsToDelete.add(value);
                 while (cmdLine.hasNext()) {
                     NArg a;
-                    if ((a = cmdLine.nextBoolean("-y", "--yes").orNull()) != null) {
+                    if ((a = cmdLine.nextFlag("-y", "--yes").orNull()) != null) {
                         force = a.getBooleanValue().get(session);
                     } else if (!cmdLine.isNextOption()) {
                         String s = cmdLine.peek().get(session).asString().get();

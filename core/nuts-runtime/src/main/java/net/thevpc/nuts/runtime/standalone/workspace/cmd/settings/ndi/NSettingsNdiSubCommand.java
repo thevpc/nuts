@@ -70,24 +70,24 @@ public class NSettingsNdiSubCommand extends AbstractNSettingsSubCommand {
             switch (commandLine.peek().get().key()) {
                 case "-t":
                 case "--fetch": {
-                    commandLine.withNextBoolean((v, a, s) -> d.options.setFetch(v));
+                    commandLine.withNextFlag((v, a, s) -> d.options.setFetch(v));
                     break;
                 }
                 case "-d":
                 case "--workdir": {
-                    commandLine.withNextString((v, a, s) -> d.options.getLauncher().setWorkingDirectory(v));
+                    commandLine.withNextEntry((v, a, s) -> d.options.getLauncher().setWorkingDirectory(v));
                     break;
                 }
                 case "--icon": {
-                    commandLine.withNextString((v, a, s) -> d.options.getLauncher().setIcon(v));
+                    commandLine.withNextEntry((v, a, s) -> d.options.getLauncher().setIcon(v));
                     break;
                 }
                 case "--menu": {
-                    commandLine.withNextString((v, a, s) -> d.options.getLauncher().setCreateMenuLauncher(parseCond(v, session)));
+                    commandLine.withNextEntry((v, a, s) -> d.options.getLauncher().setCreateMenuLauncher(parseCond(v, session)));
                     break;
                 }
                 case "--menu-category": {
-                    commandLine.withNextString((v, a, s) -> {
+                    commandLine.withNextEntry((v, a, s) -> {
                         d.options.getLauncher().setMenuCategory(v);
                         if (d.options.getLauncher().getMenuCategory() != null && !d.options.getLauncher().getMenuCategory().isEmpty()) {
                             if (d.options.getLauncher().getCreateMenuLauncher() == NSupportMode.NEVER) {
@@ -98,11 +98,11 @@ public class NSettingsNdiSubCommand extends AbstractNSettingsSubCommand {
                     break;
                 }
                 case "--desktop": {
-                    commandLine.withNextString((v, a, s) -> d.options.getLauncher().setCreateDesktopLauncher(parseCond(v, session)));
+                    commandLine.withNextEntry((v, a, s) -> d.options.getLauncher().setCreateDesktopLauncher(parseCond(v, session)));
                     break;
                 }
                 case "--desktop-name": {
-                    commandLine.withNextString((v, a, s) -> {
+                    commandLine.withNextEntry((v, a, s) -> {
                         d.options.getLauncher().setShortcutName(v);
                         if (d.options.getLauncher().getCreateDesktopLauncher() == NSupportMode.NEVER) {
                             d.options.getLauncher().setCreateDesktopLauncher(NSupportMode.PREFERRED);
@@ -111,7 +111,7 @@ public class NSettingsNdiSubCommand extends AbstractNSettingsSubCommand {
                     break;
                 }
                 case "--menu-name": {
-                    commandLine.withNextString((v, a, s) -> {
+                    commandLine.withNextEntry((v, a, s) -> {
                         d.options.getLauncher().setShortcutName(v);
                         if (d.options.getLauncher().getCreateDesktopLauncher() == NSupportMode.NEVER) {
                             d.options.getLauncher().setCreateMenuLauncher(NSupportMode.PREFERRED);
@@ -120,7 +120,7 @@ public class NSettingsNdiSubCommand extends AbstractNSettingsSubCommand {
                     break;
                 }
                 case "--shortcut-name": {
-                    commandLine.withNextString((v, a, s) -> {
+                    commandLine.withNextEntry((v, a, s) -> {
                         d.options.getLauncher().setShortcutName(v);
                         if (d.options.getLauncher().getCreateUserLauncher() == NSupportMode.NEVER) {
                             d.options.getLauncher().setCreateUserLauncher(NSupportMode.PREFERRED);
@@ -129,7 +129,7 @@ public class NSettingsNdiSubCommand extends AbstractNSettingsSubCommand {
                     break;
                 }
                 case "--shortcut-path": {
-                    commandLine.withNextString((v, a, s) -> {
+                    commandLine.withNextEntry((v, a, s) -> {
                         d.options.getLauncher().setCustomShortcutPath(v);
                         if (d.options.getLauncher().getCreateUserLauncher() == NSupportMode.NEVER) {
                             d.options.getLauncher().setCreateUserLauncher(NSupportMode.PREFERRED);
@@ -140,47 +140,47 @@ public class NSettingsNdiSubCommand extends AbstractNSettingsSubCommand {
                 case "-x":
                 case "--external":
                 case "--spawn": {
-                    commandLine.withNextTrue((v, a, s) -> d.options.getLauncher().getNutsOptions().add("--spawn"));
+                    commandLine.withNextTrueFlag((v, a, s) -> d.options.getLauncher().getNutsOptions().add("--spawn"));
                     break;
                 }
                 case "-b":
                 case "--embedded": {
-                    commandLine.withNextTrue((v, a, s) -> d.options.getLauncher().getNutsOptions().add("--embedded"));
+                    commandLine.withNextTrueFlag((v, a, s) -> d.options.getLauncher().getNutsOptions().add("--embedded"));
                     break;
                 }
                 case "--terminal": {
-                    commandLine.withNextBoolean((v, a, s) -> d.options.getLauncher().setOpenTerminal(v));
+                    commandLine.withNextFlag((v, a, s) -> d.options.getLauncher().setOpenTerminal(v));
                     break;
                 }
                 case "-e":
                 case "--env": {
-                    commandLine.withNextBoolean((v, a, s) -> d.options.setIncludeEnv(v));
+                    commandLine.withNextFlag((v, a, s) -> d.options.setIncludeEnv(v));
                     break;
                 }
                 case "--system": {
-                    commandLine.withNextTrue((v, a, s) -> d.options.getLauncher().getNutsOptions().add("--system"));
+                    commandLine.withNextTrueFlag((v, a, s) -> d.options.getLauncher().getNutsOptions().add("--system"));
                     break;
                 }
                 case "--current-user": {
-                    commandLine.withNextTrue((v, a, s) -> d.options.getLauncher().getNutsOptions().add("--current-user"));
+                    commandLine.withNextTrueFlag((v, a, s) -> d.options.getLauncher().getNutsOptions().add("--current-user"));
                     break;
                 }
                 case "--as-root": {
-                    commandLine.withNextTrue((v, a, s) -> d.options.getLauncher().getNutsOptions().add("--as-root"));
+                    commandLine.withNextTrueFlag((v, a, s) -> d.options.getLauncher().getNutsOptions().add("--as-root"));
                     break;
                 }
                 case "--run-as": {
-                    commandLine.withNextString((v, a, s) -> d.options.getLauncher().getNutsOptions().add("--run-as=" + v));
+                    commandLine.withNextEntry((v, a, s) -> d.options.getLauncher().getNutsOptions().add("--run-as=" + v));
                     break;
                 }
                 case "-X":
                 case "--exec-options": {
-                    commandLine.withNextString((v, a, s) -> d.options.getLauncher().getNutsOptions().add("--exec-options=" + v));
+                    commandLine.withNextEntry((v, a, s) -> d.options.getLauncher().getNutsOptions().add("--exec-options=" + v));
                     break;
                 }
                 case "-i":
                 case "--installed": {
-                    commandLine.withNextTrue((v, a, s) -> {
+                    commandLine.withNextTrueFlag((v, a, s) -> {
                         session.setConfirm(NConfirmationMode.YES);
                         for (NId resultId : NSearchCommand.of(session).setInstallStatus(
                                 NInstallStatusFilters.of(session).byInstalled(true)
@@ -193,7 +193,7 @@ public class NSettingsNdiSubCommand extends AbstractNSettingsSubCommand {
                 }
                 case "-c":
                 case "--companions": {
-                    commandLine.withNextTrue((v, a, s) -> {
+                    commandLine.withNextTrueFlag((v, a, s) -> {
                         session.setConfirm(NConfirmationMode.YES);
                         for (NId companion : session.extensions().getCompanionIds()) {
                             d.idsToInstall.add(NSearchCommand.of(session).addId(companion).setLatest(true).getResultIds().required().getLongName());
@@ -203,21 +203,21 @@ public class NSettingsNdiSubCommand extends AbstractNSettingsSubCommand {
                     break;
                 }
                 case "--switch": {
-                    commandLine.withNextBoolean((v, a, s) -> d.options.getLauncher().setSwitchWorkspace(v));
+                    commandLine.withNextFlag((v, a, s) -> d.options.getLauncher().setSwitchWorkspace(v));
                     break;
                 }
                 case "--ignore-unsupported-os": {
-                    commandLine.withNextBoolean((v, a, s) -> d.ignoreUnsupportedOs = v);
+                    commandLine.withNextFlag((v, a, s) -> d.ignoreUnsupportedOs = v);
                     break;
                 }
                 case "-w":
                 case "--workspace": {
-                    commandLine.withNextString((v, a, s) -> d.options.getLauncher().setSwitchWorkspaceLocation(v));
+                    commandLine.withNextEntry((v, a, s) -> d.options.getLauncher().setSwitchWorkspaceLocation(v));
                     break;
                 }
                 case "-n":
                 case "--name": {
-                    commandLine.withNextString((v, a, s) -> d.options.getLauncher().setCustomScriptPath(v));
+                    commandLine.withNextEntry((v, a, s) -> d.options.getLauncher().setCustomScriptPath(v));
                     break;
                 }
                 default: {
@@ -282,7 +282,7 @@ public class NSettingsNdiSubCommand extends AbstractNSettingsSubCommand {
         NArg a;
         boolean ignoreUnsupportedOs = false;
         while (commandLine.hasNext()) {
-            if ((a = commandLine.nextString("--ignore-unsupported-os").orNull()) != null) {
+            if ((a = commandLine.nextEntry("--ignore-unsupported-os").orNull()) != null) {
                 if (a.isActive()) {
                     ignoreUnsupportedOs = a.getBooleanValue().get(session);
                 }
@@ -341,25 +341,25 @@ public class NSettingsNdiSubCommand extends AbstractNSettingsSubCommand {
         while (commandLine.hasNext()) {
             switch (commandLine.peek().get().key()) {
                 case "--ignore-unsupported-os": {
-                    commandLine.withNextBoolean((v, a, s) -> d.ignoreUnsupportedOs = v);
+                    commandLine.withNextFlag((v, a, s) -> d.ignoreUnsupportedOs = v);
                     break;
                 }
                 case "-w":
                 case "--workspace": {
-                    commandLine.withNextString((v, a, s) -> d.switchWorkspaceLocation = v);
+                    commandLine.withNextEntry((v, a, s) -> d.switchWorkspaceLocation = v);
                     break;
                 }
                 case "-a":
                 case "--api": {
-                    commandLine.withNextString((v, a, s) -> d.switchWorkspaceApi = v);
+                    commandLine.withNextEntry((v, a, s) -> d.switchWorkspaceApi = v);
                     break;
                 }
                 case "--menu": {
-                    commandLine.withNextString((v, a, s) -> d.createMenu = parseCond(v, session));
+                    commandLine.withNextEntry((v, a, s) -> d.createMenu = parseCond(v, session));
                     break;
                 }
                 case "--menu-category": {
-                    commandLine.withNextString((v, a, s) -> {
+                    commandLine.withNextEntry((v, a, s) -> {
                         d.menuCategory = v;
                         if (d.menuCategory != null && !d.menuCategory.isEmpty()) {
                             if (d.createMenu == NSupportMode.NEVER) {
@@ -370,7 +370,7 @@ public class NSettingsNdiSubCommand extends AbstractNSettingsSubCommand {
                     break;
                 }
                 case "--menu-name": {
-                    commandLine.withNextString((v, a, s) -> {
+                    commandLine.withNextEntry((v, a, s) -> {
                         d.shortcutName = v;
                         if (d.shortcutName != null && !d.shortcutName.isEmpty()) {
                             if (d.createMenu == NSupportMode.NEVER) {
@@ -381,7 +381,7 @@ public class NSettingsNdiSubCommand extends AbstractNSettingsSubCommand {
                     break;
                 }
                 case "--desktop-name": {
-                    commandLine.withNextString((v, a, s) -> {
+                    commandLine.withNextEntry((v, a, s) -> {
                         d.shortcutName = v;
                         if (d.shortcutName != null && !d.shortcutName.isEmpty()) {
                             if (d.createDesktop == NSupportMode.NEVER) {
@@ -392,7 +392,7 @@ public class NSettingsNdiSubCommand extends AbstractNSettingsSubCommand {
                     break;
                 }
                 case "--desktop": {
-                    commandLine.withNextString((v, a, s) -> {
+                    commandLine.withNextEntry((v, a, s) -> {
                         d.createDesktop = parseCond(v, session);
                     });
                     break;

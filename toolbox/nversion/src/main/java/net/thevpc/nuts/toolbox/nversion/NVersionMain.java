@@ -75,27 +75,27 @@ public class NVersionMain implements NApplication {
         NArg a;
         int processed = 0;
         while (commandLine.hasNext()) {
-            if ((a = commandLine.nextBoolean("--maven").orNull())!=null) {
+            if ((a = commandLine.nextFlag("--maven").orNull())!=null) {
                 maven = a.getBooleanValue().get(session);
-            } else if ((a = commandLine.nextBoolean("--win-pe").orNull())!=null) {
+            } else if ((a = commandLine.nextFlag("--win-pe").orNull())!=null) {
                 winPE = a.getBooleanValue().get(session);
-            } else if ((a = commandLine.nextBoolean("--exe").orNull())!=null) {
+            } else if ((a = commandLine.nextFlag("--exe").orNull())!=null) {
                 winPE = a.getBooleanValue().get(session);
-            } else if ((a = commandLine.nextBoolean("--dll").orNull())!=null) {
+            } else if ((a = commandLine.nextFlag("--dll").orNull())!=null) {
                 winPE = a.getBooleanValue().get(session);
-            } else if ((a = commandLine.nextBoolean("--long").orNull())!=null) {
+            } else if ((a = commandLine.nextFlag("--long").orNull())!=null) {
                 longFormat = a.getBooleanValue().get(session);
-            } else if ((a = commandLine.nextBoolean("--name").orNull())!=null) {
+            } else if ((a = commandLine.nextFlag("--name").orNull())!=null) {
                 nameFormat = a.getBooleanValue().get(session);
-            } else if ((a = commandLine.nextBoolean("--sort").orNull())!=null) {
+            } else if ((a = commandLine.nextFlag("--sort").orNull())!=null) {
                 sort = a.getBooleanValue().get(session);
-            } else if ((a = commandLine.nextBoolean("--id").orNull())!=null) {
+            } else if ((a = commandLine.nextFlag("--id").orNull())!=null) {
                 idFormat = a.getBooleanValue().get(session);
-            } else if ((a = commandLine.nextBoolean("--all").orNull())!=null) {
+            } else if ((a = commandLine.nextFlag("--all").orNull())!=null) {
                 all = a.getBooleanValue().get(session);
-            } else if ((a = commandLine.nextBoolean("--table").orNull())!=null) {
+            } else if ((a = commandLine.nextFlag("--table").orNull())!=null) {
                 table = a.getBooleanValue().get(session);
-            } else if ((a = commandLine.nextBoolean("--error").orNull())!=null) {
+            } else if ((a = commandLine.nextFlag("--error").orNull())!=null) {
                 error = a.getBooleanValue().get(session);
             } else if (commandLine.peek().get(session).isNonOption()) {
                 a = commandLine.next().get(session);

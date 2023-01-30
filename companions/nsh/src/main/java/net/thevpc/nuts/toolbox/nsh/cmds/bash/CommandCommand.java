@@ -57,7 +57,7 @@ public class CommandCommand extends SimpleJShellBuiltin {
         //inverse configuration order
         if (context.configureFirst(commandLine)) {
             return true;
-        } else if ((a = commandLine.nextBoolean("-p").orNull()) != null) {
+        } else if ((a = commandLine.nextFlag("-p").orNull()) != null) {
             options.p = a.getBooleanValue().get(session);
         } else if (!commandLine.isNextOption()) {
             if (options.commandName == null) {

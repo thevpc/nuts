@@ -26,6 +26,7 @@
  */
 package net.thevpc.nuts.spi;
 
+import net.thevpc.nuts.NSessionProvider;
 import net.thevpc.nuts.cmdline.NCommandLineConfigurable;
 import net.thevpc.nuts.NSession;
 
@@ -35,15 +36,13 @@ import net.thevpc.nuts.NSession;
  * @author thevpc
  * @app.category SPI Base
  */
-public interface NRepositoryCommand extends NCommandLineConfigurable {
+public interface NRepositoryCommand extends NCommandLineConfigurable, NSessionProvider {
 
     /**
      * return session
      *
      * @return {@code this} instance
      */
-    NSession getSession();
-
     /**
      * set session
      *

@@ -73,16 +73,16 @@ public class LsCommand extends SimpleJShellBuiltin {
         Options options = context.getOptions();
         NSession session = context.getSession();
         NArg a;
-        if ((a = commandLine.nextBoolean("-d", "--dir").orNull()) != null) {
+        if ((a = commandLine.nextFlag("-d", "--dir").orNull()) != null) {
             options.d = a.getBooleanValue().get(session);
             return true;
-        } else if ((a = commandLine.nextBoolean("-l", "--list").orNull()) != null) {
+        } else if ((a = commandLine.nextFlag("-l", "--list").orNull()) != null) {
             options.l = a.getBooleanValue().get(session);
             return true;
-        } else if ((a = commandLine.nextBoolean("-a", "--all").orNull()) != null) {
+        } else if ((a = commandLine.nextFlag("-a", "--all").orNull()) != null) {
             options.a = a.getBooleanValue().get(session);
             return true;
-        } else if ((a = commandLine.nextBoolean("-h").orNull()) != null) {
+        } else if ((a = commandLine.nextFlag("-h").orNull()) != null) {
             options.h = a.getBooleanValue().get(session);
             return true;
         } else if (commandLine.peek().get(session).isNonOption()) {

@@ -55,7 +55,7 @@ public class AppExample implements NApplication {
                     // your-app --some-string-option=yourValue
                     // your-app --some-string-option yourValue
 
-                    a = cmd.nextString().get(session);
+                    a = cmd.nextEntry().get(session);
                     if (a.isActive()) {
                         someStringOption = a.getStringValue().get(session);
                     }
@@ -66,7 +66,7 @@ public class AppExample implements NApplication {
                     // your-app --some-boolean-option=true
                     // your-app --some-boolean-option
                     // your-app --!some-string-option
-                    a = cmd.nextBoolean().get(session);
+                    a = cmd.nextFlag().get(session);
                     if (a.isActive()) {
                         someBooleanOption = a.getBooleanValue().get(session);
                     }

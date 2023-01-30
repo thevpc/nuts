@@ -270,20 +270,20 @@ public abstract class DefaultNQueryBaseOptions<T extends NWorkspaceCommand> exte
         }
         switch(a.key()) {
             case "--failfast": {
-                cmdLine.withNextBoolean((v,r,s)->this.setFailFast(v));
+                cmdLine.withNextFlag((v, r, s)->this.setFailFast(v));
                 return true;
             }
             case "-r":
             case "--repository": {
-                cmdLine.withNextString((v,r,s)->addRepositoryFilter(NRepositoryFilters.of(getSession()).byName(v)));
+                cmdLine.withNextEntry((v, r, s)->addRepositoryFilter(NRepositoryFilters.of(getSession()).byName(v)));
                 return true;
             }
             case "--dependencies": {
-                cmdLine.withNextBoolean((v,r,s)->this.setDependencies(v));
+                cmdLine.withNextFlag((v, r, s)->this.setDependencies(v));
                 return true;
             }
             case "--scope": {
-                cmdLine.withNextString((v,r,s)->this.addScope(NDependencyScopePattern.parse(v).orElse(NDependencyScopePattern.API)));
+                cmdLine.withNextEntry((v, r, s)->this.addScope(NDependencyScopePattern.parse(v).orElse(NDependencyScopePattern.API)));
                 return true;
             }
 
@@ -295,21 +295,21 @@ public abstract class DefaultNQueryBaseOptions<T extends NWorkspaceCommand> exte
 //                return true;
 //            }
             case "--optional": {
-                cmdLine.withNextStringLiteral((v, r, s)->this.setOptional(
+                cmdLine.withNextEntryValue((v, r, s)->this.setOptional(
                         NLiteral.of(v.asString().get(session)).asBoolean()
                                 .orNull()));
                 return true;
             }
             case "--effective": {
-                cmdLine.withNextBoolean((v,r,s)->this.setEffective(v));
+                cmdLine.withNextFlag((v, r, s)->this.setEffective(v));
                 return true;
             }
             case "--content": {
-                cmdLine.withNextBoolean((v,r,s)->this.setContent(v));
+                cmdLine.withNextFlag((v, r, s)->this.setContent(v));
                 return true;
             }
             case "--location": {
-                cmdLine.withNextString((v,r,s)->this.setLocation(NBlankable.isBlank(v) ? null : Paths.get(v)));
+                cmdLine.withNextEntry((v, r, s)->this.setLocation(NBlankable.isBlank(v) ? null : Paths.get(v)));
                 return true;
             }
         }

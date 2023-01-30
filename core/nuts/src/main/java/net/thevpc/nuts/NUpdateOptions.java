@@ -36,7 +36,7 @@ import java.io.Serializable;
  * @app.category Commands
  * @since 0.5.7
  */
-public class NUpdateOptions implements Serializable {
+public class NUpdateOptions implements Serializable,NSessionProvider {
     private static final long serialVersionUID = 1;
 
     /**

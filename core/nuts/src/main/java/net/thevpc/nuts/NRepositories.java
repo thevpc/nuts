@@ -31,7 +31,7 @@ import java.util.List;
 /**
  * @app.category Base
  */
-public interface NRepositories extends NComponent {
+public interface NRepositories extends NComponent, NSessionProvider {
     static NRepositories of(NSession session) {
         return NExtensions.of(session).createSupported(NRepositories.class);
     }
@@ -97,8 +97,6 @@ public interface NRepositories extends NComponent {
 
     ///////////////
     NRepositories removeAllRepositories();
-
-    NSession getSession();
 
     NRepositories setSession(NSession session);
 

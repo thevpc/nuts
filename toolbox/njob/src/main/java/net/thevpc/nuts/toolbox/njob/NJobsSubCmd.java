@@ -43,39 +43,39 @@ public class NJobsSubCmd {
             switch (aa.key()) {
                 case "--list":
                 case "-l": {
-                    cmd.withNextBoolean((v,a,s)->list.set(true));
+                    cmd.withNextFlag((v, a, s)->list.set(true));
                     break;
                 }
                 case "--show":
                 case "-s": {
-                    cmd.withNextBoolean((v,a,s)->show.set(true));
+                    cmd.withNextFlag((v, a, s)->show.set(true));
                     break;
                 }
                 case "--time":
                 case "--on":
                 case "--start":
                 case "-t": {
-                    cmd.withNextString((v,a,s)->t.setStartTime(new TimeParser().parseInstant(v, false)));
+                    cmd.withNextEntry((v, a, s)->t.setStartTime(new TimeParser().parseInstant(v, false)));
                     break;
                 }
                 case "--at": {
-                    cmd.withNextString((v,a,s)->t.setStartTime(new TimeParser().setTimeOnly(true).parseInstant(v, false)));
+                    cmd.withNextEntry((v, a, s)->t.setStartTime(new TimeParser().setTimeOnly(true).parseInstant(v, false)));
                     break;
                 }
                 case "--for":
                 case "--project":
                 case "-p": {
-                    cmd.withNextString((v,a,s)->t.setProject(v));
+                    cmd.withNextEntry((v, a, s)->t.setProject(v));
                     break;
                 }
                 case "--obs":
                 case "-o": {
-                    cmd.withNextString((v,a,s)->t.setObservations(v));
+                    cmd.withNextEntry((v, a, s)->t.setObservations(v));
                     break;
                 }
                 case "--duration":
                 case "-d": {
-                    cmd.withNextString((v,a,s)->t.setDuration(TimePeriod.parse(v, false)));
+                    cmd.withNextEntry((v, a, s)->t.setDuration(TimePeriod.parse(v, false)));
                     break;
                 }
                 default: {
@@ -121,16 +121,16 @@ public class NJobsSubCmd {
             switch (a.key()) {
                 case "--list":
                 case "-l": {
-                    cmd.withNextBoolean((v, r, s) -> d.list = v);
+                    cmd.withNextFlag((v, r, s) -> d.list = v);
                     break;
                 }
                 case "--show":
                 case "-s": {
-                    cmd.withNextBoolean((v, r, s) -> d.show = v);
+                    cmd.withNextFlag((v, r, s) -> d.show = v);
                     break;
                 }
                 case "--start": {
-                    cmd.withNextString((v, r, s) -> {
+                    cmd.withNextEntry((v, r, s) -> {
                         Instant vv = new TimeParser().parseInstant(v, false);
                         runLater.add(t -> t.setStartTime(vv));
                     });
@@ -138,13 +138,13 @@ public class NJobsSubCmd {
                 }
                 case "-t":
                 case "--on": {
-                    cmd.withNextString((v, r, s) -> {
+                    cmd.withNextEntry((v, r, s) -> {
                         runLater.add(t -> t.setStartTime(TimePeriod.parseOpPeriodAsInstant(v, t.getStartTime(), true)));
                     });
                     break;
                 }
                 case "--at": {
-                    cmd.withNextString((v, r, s) -> {
+                    cmd.withNextEntry((v, r, s) -> {
                         Instant vv = new TimeParser().setTimeOnly(true).parseInstant(v, false);
                         runLater.add(t -> t.setStartTime(vv));
                     });
@@ -152,7 +152,7 @@ public class NJobsSubCmd {
                 }
                 case "-d":
                 case "--duration": {
-                    cmd.withNextString((v, r, s) -> {
+                    cmd.withNextEntry((v, r, s) -> {
                         TimePeriod vv = TimePeriod.parse(v, false);
                         runLater.add(t -> t.setDuration(vv));
                     });
@@ -160,7 +160,7 @@ public class NJobsSubCmd {
                 }
                 case "-n":
                 case "--name": {
-                    cmd.withNextString((v, r, s) -> {
+                    cmd.withNextEntry((v, r, s) -> {
                         runLater.add(t -> t.setName(v));
 
                     });
@@ -168,14 +168,14 @@ public class NJobsSubCmd {
                 }
                 case "-p":
                 case "--project": {
-                    cmd.withNextString((v, r, s) -> {
+                    cmd.withNextEntry((v, r, s) -> {
                         runLater.add(t -> t.setProject(v));
                     });
                     break;
                 }
                 case "-o":
                 case "--obs": {
-                    cmd.withNextString((v, r, s) -> {
+                    cmd.withNextEntry((v, r, s) -> {
                         runLater.add(t -> t.setObservations(v));
                     });
                     break;
@@ -183,7 +183,7 @@ public class NJobsSubCmd {
                 case "-o+":
                 case "--obs+":
                 case "+obs": {
-                    cmd.withNextString((v, r, s) -> {
+                    cmd.withNextEntry((v, r, s) -> {
                         runLater.add(t -> {
                             String ss = t.getObservations();
                             if (ss == null) {
@@ -339,7 +339,7 @@ public class NJobsSubCmd {
             switch (a.key()) {
                 case "-w":
                 case "--weeks": {
-                    cmd.withNextStringLiteral((v, r, s) -> {
+                    cmd.withNextEntryValue((v, r, s) -> {
                         d.countType = ChronoUnit.WEEKS;
                         d.count = v.asInt().get(session);
                     });
@@ -347,7 +347,7 @@ public class NJobsSubCmd {
                 }
                 case "-m":
                 case "--months": {
-                    cmd.withNextStringLiteral((v, r, s) -> {
+                    cmd.withNextEntryValue((v, r, s) -> {
                         d.countType = ChronoUnit.MONTHS;
                         d.count = v.asInt().get(session);
                     });
@@ -355,7 +355,7 @@ public class NJobsSubCmd {
                     break;
                 }
                 case "-l": {
-                    cmd.withNextStringLiteral((v, r, s) -> {
+                    cmd.withNextEntryValue((v, r, s) -> {
                         d.countType = null;
                         d.count = v.asInt().get(session);
                     });
@@ -364,7 +364,7 @@ public class NJobsSubCmd {
                 }
                 case "-u":
                 case "--unit": {
-                    cmd.withNextString((v, r, s) -> {
+                    cmd.withNextEntry((v, r, s) -> {
                         d.timeUnit = TimePeriod.parseUnit(v, false);
                     });
                     break;
@@ -374,7 +374,7 @@ public class NJobsSubCmd {
                 case "--groupBy":
                 case "--groupby":
                 case "--group-by": {
-                    cmd.withNextString((v, r, s) -> {
+                    cmd.withNextEntry((v, r, s) -> {
                         switch (v) {
                             case "p":
                             case "project": {
@@ -400,7 +400,7 @@ public class NJobsSubCmd {
                 }
                 case "-p":
                 case "--project": {
-                    cmd.withNextString((v, r, s) -> {
+                    cmd.withNextEntry((v, r, s) -> {
                         Predicate<String> sp = parent.createProjectFilter(v);
                         Predicate<NJob> t = x -> sp.test(x.getProject());
                         d.whereFilter = parent.appendPredicate(d.whereFilter, t);
@@ -408,7 +408,7 @@ public class NJobsSubCmd {
                     break;
                 }
                 case "--name": {
-                    cmd.withNextString((v, r, s) -> {
+                    cmd.withNextEntry((v, r, s) -> {
                         Predicate<String> sp = parent.createStringFilter(v);
                         Predicate<NJob> t = x -> sp.test(x.getName());
                         d.whereFilter = parent.appendPredicate(d.whereFilter, t);
@@ -417,7 +417,7 @@ public class NJobsSubCmd {
                 }
                 case "-b":
                 case "--beneficiary": {
-                    cmd.withNextString((v, r, s) -> {
+                    cmd.withNextEntry((v, r, s) -> {
                         Predicate<String> sp = parent.createStringFilter(v);
                         Predicate<NJob> t = x -> {
                             NProject project = service.projects().getProject(x.getProject());
@@ -429,7 +429,7 @@ public class NJobsSubCmd {
                 }
                 case "-c":
                 case "--company": {
-                    cmd.withNextString((v, r, s) -> {
+                    cmd.withNextEntry((v, r, s) -> {
                         Predicate<String> sp = parent.createStringFilter(v);
                         Predicate<NJob> t = x -> {
                             NProject project = service.projects().getProject(x.getProject());
@@ -441,7 +441,7 @@ public class NJobsSubCmd {
                 }
                 case "-d":
                 case "--duration": {
-                    cmd.withNextString((v, r, s) -> {
+                    cmd.withNextEntry((v, r, s) -> {
                         Predicate<TimePeriod> p = TimePeriod.parseFilter(v, false);
                         Predicate<NJob> t = x -> p.test(x.getDuration());
                         d.whereFilter = parent.appendPredicate(d.whereFilter, t);
@@ -451,7 +451,7 @@ public class NJobsSubCmd {
                 case "-t":
                 case "--startTime":
                 case "--start-time": {
-                    cmd.withNextString((v, r, s) -> {
+                    cmd.withNextEntry((v, r, s) -> {
                         Predicate<Instant> t = new TimeParser().parseInstantFilter(v, false);
                         d.whereFilter = parent.appendPredicate(d.whereFilter, x -> t.test(x.getStartTime()));
 

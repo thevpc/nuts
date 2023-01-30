@@ -54,10 +54,10 @@ public class UnsetCommand extends SimpleJShellBuiltin {
         NArg aa = commandLine.peek().get(session);
         if (aa.isOption()) {
             if (aa.key().equals("-v")) {
-                commandLine.withNextBoolean((v, a, s) -> options.fct= !v);
+                commandLine.withNextFlag((v, a, s) -> options.fct= !v);
                 return true;
             } else if (aa.key().equals("-f")) {
-                commandLine.withNextBoolean((v, a, s) -> options.fct= v);
+                commandLine.withNextFlag((v, a, s) -> options.fct= v);
                 return true;
             }
         } else {

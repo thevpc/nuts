@@ -35,13 +35,11 @@ import java.util.List;
 /**
  * @author thevpc
  */
-public interface NBootManager extends NComponent {
+public interface NBootManager extends NComponent, NSessionProvider {
 
     static NBootManager of(NSession session) {
         return NExtensions.of(session).createSupported(NBootManager.class);
     }
-
-    NSession getSession();
 
     NBootManager setSession(NSession session);
 

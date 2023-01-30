@@ -34,7 +34,7 @@ import java.util.Set;
  * @author thevpc
  * @app.category Base
  */
-public interface NEnvs extends NComponent {
+public interface NEnvs extends NComponent,NSessionProvider {
     static NEnvs of(NSession session) {
         return NExtensions.of(session).createSupported(NEnvs.class);
     }
@@ -85,8 +85,6 @@ public interface NEnvs extends NComponent {
     NId getArch();
 
     NArchFamily getArchFamily();
-
-    NSession getSession();
 
     NEnvs setSession(NSession session);
 

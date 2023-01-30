@@ -59,7 +59,7 @@ public class DateCommand extends SimpleJShellBuiltin {
             case "-d":
             case "--date": {
                 if (context.getShell().getOptions().isNsh()) {
-                    a = cmdLine.nextString().get(session);
+                    a = cmdLine.nextEntry().get(session);
                     if (a.isActive()) {
                         options.date = a.getStringValue().get(session);
                     }
@@ -72,7 +72,7 @@ public class DateCommand extends SimpleJShellBuiltin {
             case "-f":
             case "--file": {
                 if (context.getShell().getOptions().isNsh()) {
-                    a = cmdLine.nextString().get(session);
+                    a = cmdLine.nextEntry().get(session);
                     if (a.isActive()) {
                         options.file = a.getStringValue().get(session);
                     }
@@ -165,7 +165,7 @@ public class DateCommand extends SimpleJShellBuiltin {
             }
             case "--debug": {
                 if (context.getShell().getOptions().isNsh()) {
-                    a = cmdLine.nextBoolean().get(session);
+                    a = cmdLine.nextFlag().get(session);
                     if (a.isActive()) {
                         options.debug = a.getBooleanValue().get(session);
                     }
@@ -179,7 +179,7 @@ public class DateCommand extends SimpleJShellBuiltin {
             case "--utc":
             case "--universal": {
                 if (context.getShell().getOptions().isNsh()) {
-                    a = cmdLine.nextBoolean().get(session);
+                    a = cmdLine.nextFlag().get(session);
                     if (a.isActive()) {
                         options.utc = a.getBooleanValue().get(session);
                     }
@@ -192,7 +192,7 @@ public class DateCommand extends SimpleJShellBuiltin {
             case "-R":
             case "--rfc-email": {
                 if (context.getShell().getOptions().isNsh()) {
-                    a = cmdLine.nextBoolean().get(session);
+                    a = cmdLine.nextFlag().get(session);
                     if (a.isActive()) {
                         options.rfcMail = a.getBooleanValue().get(session);
                     }

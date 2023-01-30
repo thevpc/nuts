@@ -31,7 +31,7 @@ import java.util.Set;
 /**
  * @app.category Base
  */
-public interface NImports extends NComponent {
+public interface NImports extends NComponent, NSessionProvider {
     static NImports of(NSession session) {
         return NExtensions.of(session).createSupported(NImports.class);
     }
@@ -47,8 +47,6 @@ public interface NImports extends NComponent {
     Set<String> getAllImports();
 
     boolean isImportedGroupId(String groupId);
-
-    NSession getSession();
 
     NImports setSession(NSession session);
 }

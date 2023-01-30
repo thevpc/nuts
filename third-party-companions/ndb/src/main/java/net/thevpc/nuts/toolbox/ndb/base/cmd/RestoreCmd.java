@@ -37,7 +37,7 @@ public class RestoreCmd<C extends NdbConfig> extends NdbCmd<C> {
                         break;
                     }
                     case "--file": {
-                        commandLine.withNextString((v, a, s) -> {
+                        commandLine.withNextEntry((v, a, s) -> {
                             file.set(NPath.of(v, s));
                         });
                         break;
@@ -159,7 +159,7 @@ public class RestoreCmd<C extends NdbConfig> extends NdbCmd<C> {
                             NPath unzippedFolder = file.get().resolveSibling(file.get().getLongBaseName());
                             NExecCommand zipExec = sysCmd(session)
                                     .addCommand("unzip")
-                                    .addCommand("-q")
+                                    .addCommand(session.isTrace()?null:"-q")
                                     .addCommand("-o")
                                     .addCommand(zipPath.toString())
                                     .addCommand("-d")

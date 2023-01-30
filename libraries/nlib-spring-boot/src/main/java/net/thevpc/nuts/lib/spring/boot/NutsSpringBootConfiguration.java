@@ -59,9 +59,9 @@ public class NutsSpringBootConfiguration {
         if (bootApps.isEmpty()) {
             throw new IllegalArgumentException("nuts application not found. missing bean with @SpringBootApplication");
         } else if (bootApps.size() == 1) {
-            throw new IllegalArgumentException("nuts application not found : found the following bean but it does not implement NutsApplication interface : " + bootApps.keySet().toArray()[0]);
+            throw new IllegalArgumentException("nuts application not found : found the following bean but it does not implement NApplication interface : " + bootApps.keySet().toArray()[0]);
         } else {
-            throw new IllegalArgumentException("nuts application not found : found the following beans but they do not implement NutsApplication interface : " + bootApps.keySet());
+            throw new IllegalArgumentException("nuts application not found : found the following beans but they do not implement NApplication interface : " + bootApps.keySet());
         }
     }
 

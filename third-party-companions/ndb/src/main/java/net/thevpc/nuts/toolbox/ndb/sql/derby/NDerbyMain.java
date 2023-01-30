@@ -50,19 +50,19 @@ public class NDerbyMain extends SqlSupport<NDerbyConfig> {
                 return;
             } else if ((a = commandLine.next("rt", "runtime", "runtimeinfo", "runtime-info").orNull()) != null) {
                 options.setCmd(Command.runtimeinfo);
-            } else if ((a = commandLine.nextString("trace").orNull()) != null) {
+            } else if ((a = commandLine.nextEntry("trace").orNull()) != null) {
                 options.setCmd(Command.trace);
                 options.setExtraArg(a.getStringValue().get(session));
-            } else if ((a = commandLine.nextString("trace-directory", "tracedirectory").orNull()) != null) {
+            } else if ((a = commandLine.nextEntry("trace-directory", "tracedirectory").orNull()) != null) {
                 options.setCmd(Command.tracedirectory);
                 options.setExtraArg(a.getStringValue().get(session));
-            } else if ((a = commandLine.nextString("max-threads", "maxthreads").orNull()) != null) {
+            } else if ((a = commandLine.nextEntry("max-threads", "maxthreads").orNull()) != null) {
                 options.setCmd(Command.maxthreads);
                 options.setExtraArg(a.getStringValue().get(session));
-            } else if ((a = commandLine.nextString("time-slice", "timeslice").orNull()) != null) {
+            } else if ((a = commandLine.nextEntry("time-slice", "timeslice").orNull()) != null) {
                 options.setCmd(Command.timeslice);
                 options.setExtraArg(a.getStringValue().get(session));
-            } else if ((a = commandLine.nextString("log-connections", "logconnections").orNull()) != null) {
+            } else if ((a = commandLine.nextEntry("log-connections", "logconnections").orNull()) != null) {
                 options.setCmd(Command.logconnections);
                 options.setExtraArg(a.getStringValue().get(session));
             } else if ((a = commandLine.next("stop", "shutdown").orNull()) != null) {
@@ -122,7 +122,7 @@ public class NDerbyMain extends SqlSupport<NDerbyConfig> {
             if (commandLine.isNextOption()) {
                 switch (commandLine.peek().get(session).key()) {
                     case "--name": {
-                        commandLine.withNextString((v, a, s) -> {
+                        commandLine.withNextEntry((v, a, s) -> {
                             if (name.isNull()) {
                                 name.set(new AtName(a.getStringValue().get(session)));
                             } else {
@@ -132,7 +132,7 @@ public class NDerbyMain extends SqlSupport<NDerbyConfig> {
                         break;
                     }
                     case "--show-sql": {
-                        commandLine.withNextBoolean((v, a, s) -> {
+                        commandLine.withNextFlag((v, a, s) -> {
                             forceShowSQL.set(v);
                         });
                         break;
@@ -198,28 +198,28 @@ public class NDerbyMain extends SqlSupport<NDerbyConfig> {
     private boolean _opt(NCommandLine cmdLine, NDerbyConfig options) {
         NSession session = appContext.getSession();
         NArg a;
-        if ((a = cmdLine.nextString("-v", "--derby-version").orNull()) != null) {
+        if ((a = cmdLine.nextEntry("-v", "--derby-version").orNull()) != null) {
             options.setDerbyVersion(a.getStringValue().get(session));
             return true;
-        } else if ((a = cmdLine.nextString("-H", "--home").orNull()) != null) {
+        } else if ((a = cmdLine.nextEntry("-H", "--home").orNull()) != null) {
             options.setDerbyDataHomeRoot(a.getStringValue().get(session));
             return true;
-        } else if ((a = cmdLine.nextString("--nb").orNull()) != null) {
+        } else if ((a = cmdLine.nextEntry("--nb").orNull()) != null) {
             options.setDerbyDataHomeRoot(System.getProperty("user.home") + File.separator + ".netbeans-derby");
             return true;
 //        } else if ((a = cmdLine.nextString("--nb","--netbeans").orNull()) != null) {
 //            options.derbyDataHomeReplace = System.getProperty("user.home") + "/.netbeans-derby";
 //            return true;
-        } else if ((a = cmdLine.nextString("-h", "--host").orNull()) != null) {
+        } else if ((a = cmdLine.nextEntry("-h", "--host").orNull()) != null) {
             options.setHost(a.getStringValue().get(session));
             return true;
-        } else if ((a = cmdLine.nextString("-p", "--port").orNull()) != null) {
+        } else if ((a = cmdLine.nextEntry("-p", "--port").orNull()) != null) {
             options.setPort(a.getValue().asInt().get(session));
             return true;
-        } else if ((a = cmdLine.nextString("-ssl", "--ssl").orNull()) != null) {
+        } else if ((a = cmdLine.nextEntry("-ssl", "--ssl").orNull()) != null) {
             options.setSslmode(SSLMode.valueOf(a.getStringValue().get(session)));
             return true;
-        } else if ((a = cmdLine.nextString("-n", "--dbname").orNull()) != null) {
+        } else if ((a = cmdLine.nextEntry("-n", "--dbname").orNull()) != null) {
             options.setDatabaseName(a.getStringValue().get(session));
             return true;
         } else if (appContext.configureFirst(cmdLine)) {
@@ -236,9 +236,9 @@ public class NDerbyMain extends SqlSupport<NDerbyConfig> {
         args.setCommandName("tomcat --local ps");
         NArg a;
         while (args.hasNext()) {
-            if ((a = args.nextBoolean("-l", "--long").orNull()) != null) {
+            if ((a = args.nextFlag("-l", "--long").orNull()) != null) {
                 format = "long";
-            } else if ((a = args.nextBoolean("-s", "--short").orNull()) != null) {
+            } else if ((a = args.nextFlag("-s", "--short").orNull()) != null) {
                 format = "short";
             } else if (_opt(args, options)) {
                 //

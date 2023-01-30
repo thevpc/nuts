@@ -31,7 +31,7 @@ public class ShowTablesCmd<C extends NdbConfig> extends NdbCmd<C> {
                         break;
                     }
                     case "--long": {
-                        commandLine.withNextBoolean((v,a,s)-> eq.setLongMode(v));
+                        commandLine.withNextFlag((v, a, s)-> eq.setLongMode(v));
                         break;
                     }
                     default: {

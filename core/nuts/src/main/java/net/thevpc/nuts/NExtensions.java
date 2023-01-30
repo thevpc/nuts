@@ -38,7 +38,7 @@ import java.util.Set;
  * @app.category Extensions
  * @since 0.5.4
  */
-public interface NExtensions extends NComponent {
+public interface NExtensions extends NComponent ,NSessionProvider{
     static NExtensions of(NSession session) {
         return NAssert.requireSession(session).extensions();
     }
@@ -111,8 +111,6 @@ public interface NExtensions extends NComponent {
      * @return extension ids
      */
     List<NId> getConfigExtensions();
-
-    NSession getSession();
 
     NExtensions setSession(NSession session);
 

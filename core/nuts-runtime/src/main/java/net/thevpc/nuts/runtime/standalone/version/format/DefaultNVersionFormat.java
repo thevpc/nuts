@@ -42,11 +42,11 @@ public class DefaultNVersionFormat extends DefaultFormatBase<NVersionFormat> imp
         switch (aa.key()) {
             case "-a":
             case "--all": {
-                commandLine.withNextBoolean((v, a, s) -> this.all = v);
+                commandLine.withNextFlag((v, a, s) -> this.all = v);
                 return true;
             }
             case "--add": {
-                NArg aa2 = commandLine.nextString().get(session);
+                NArg aa2 = commandLine.nextEntry().get(session);
                 NArg r = NArg.of(aa2.getStringValue().get(session));
                 if (enabled) {
                     this.all = true;

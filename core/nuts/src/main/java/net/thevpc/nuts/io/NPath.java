@@ -28,6 +28,7 @@ package net.thevpc.nuts.io;
 
 import net.thevpc.nuts.NFormattable;
 import net.thevpc.nuts.NSession;
+import net.thevpc.nuts.NSessionProvider;
 import net.thevpc.nuts.format.NTreeVisitor;
 import net.thevpc.nuts.spi.NPathSPI;
 import net.thevpc.nuts.spi.NPaths;
@@ -50,7 +51,7 @@ import java.util.stream.Stream;
  *
  * @app.category Input Output
  */
-public interface NPath extends NFormattable, NInputSource, NOutputTarget {
+public interface NPath extends NFormattable, NInputSource, NOutputTarget, NSessionProvider {
     static NPath of(URL path, NSession session) {
         return NPaths.of(session).createPath(path);
     }
@@ -251,8 +252,6 @@ public interface NPath extends NFormattable, NInputSource, NOutputTarget {
     BufferedWriter getBufferedWriter(NPathOption... options);
 
     BufferedWriter getBufferedWriter(Charset cs, NPathOption... options);
-
-    NSession getSession();
 
     NPath delete();
 

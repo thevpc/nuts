@@ -171,7 +171,7 @@ public class JarDescriptorContentParserComponent implements NDescriptorContentPa
         NCommandLine cmd = NCommandLine.of(parserContext.getParseOptions());
         NArg a;
         while (!cmd.isEmpty()) {
-            if ((a = cmd.nextBoolean("--all-mains").orNull()) != null) {
+            if ((a = cmd.nextFlag("--all-mains").orNull()) != null) {
                 alwaysSelectAllMainClasses = a.getBooleanValue().get(session);
             } else {
                 cmd.skip();

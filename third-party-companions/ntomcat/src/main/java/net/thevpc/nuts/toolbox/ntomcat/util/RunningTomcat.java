@@ -22,9 +22,9 @@ public class RunningTomcat {
                 .get(session).setExpandSimpleOptions(false);
         NArg a=null;
         while(cmdline.hasNext()){
-            if((a=cmdline.nextString("-Dcatalina.home").orNull())!=null) {
+            if((a=cmdline.nextEntry("-Dcatalina.home").orNull())!=null) {
                 home = NPath.of(a.getStringValue().get(session),session);
-            }else if((a=cmdline.nextString("-Dcatalina.base").orNull())!=null){
+            }else if((a=cmdline.nextEntry("-Dcatalina.base").orNull())!=null){
                 base=a.getStringValue().get(session);
             }else{
                 cmdline.skip();

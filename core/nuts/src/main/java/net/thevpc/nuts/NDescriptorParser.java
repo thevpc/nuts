@@ -40,10 +40,10 @@ import java.nio.file.Path;
  * @author thevpc
  * @app.category Descriptor
  */
-public interface NDescriptorParser extends NComponent {
+public interface NDescriptorParser extends NComponent, NSessionProvider {
 
     static NDescriptorParser of(NSession session) {
-       return NExtensions.of(session).createSupported(NDescriptorParser.class);
+        return NExtensions.of(session).createSupported(NDescriptorParser.class);
     }
 
     /**
@@ -105,8 +105,6 @@ public interface NDescriptorParser extends NComponent {
     NDescriptorStyle getDescriptorStyle();
 
     NDescriptorParser setDescriptorStyle(NDescriptorStyle descriptorStyle);
-
-    NSession getSession();
 
     NDescriptorParser setSession(NSession session);
 

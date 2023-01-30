@@ -12,7 +12,6 @@ import net.thevpc.nuts.toolbox.ndb.sql.sqlbase.SqlSupport;
 import net.thevpc.nuts.util.NRef;
 
 import java.io.IOException;
-import java.io.OutputStream;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
@@ -39,7 +38,7 @@ public class SqlRestoreCmd<C extends NdbConfig> extends RestoreCmd<C> {
                         break;
                     }
                     case "--file": {
-                        commandLine.withNextString((v, a, s) -> {
+                        commandLine.withNextEntry((v, a, s) -> {
                             file.set(NPath.of(v, s));
                         });
                         break;

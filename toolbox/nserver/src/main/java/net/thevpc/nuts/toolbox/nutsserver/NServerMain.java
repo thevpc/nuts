@@ -113,15 +113,15 @@ public class NServerMain implements NApplication {
                 servers.add().serverType = "https";
             } else if (commandLine.next("--admin").isPresent()) {
                 servers.add().serverType = "admin";
-            } else if ((a = commandLine.nextBoolean("-R", "--read-only").orNull()) != null) {
+            } else if ((a = commandLine.nextFlag("-R", "--read-only").orNull()) != null) {
                 servers.current().readOnly = a.getBooleanValue().get(session);
-            } else if ((a = commandLine.nextString("-n", "--name").orNull()) != null) {
+            } else if ((a = commandLine.nextEntry("-n", "--name").orNull()) != null) {
                 servers.current().name = a.getStringValue().get(session);
-            } else if ((a = commandLine.nextString("-a", "--address").orNull()) != null) {
+            } else if ((a = commandLine.nextEntry("-a", "--address").orNull()) != null) {
                 servers.current().addr = a.getStringValue().get(session);
-            } else if ((a = commandLine.nextString("-p", "--port").orNull()) != null) {
+            } else if ((a = commandLine.nextEntry("-p", "--port").orNull()) != null) {
                 servers.current().port = a.getValue().asInt().get(session);
-            } else if ((a = commandLine.nextString("-h", "--host").orNull()) != null || (a = commandLine.nextNonOption().orNull()) != null) {
+            } else if ((a = commandLine.nextEntry("-h", "--host").orNull()) != null || (a = commandLine.nextNonOption().orNull()) != null) {
                 StringBuilder s = new StringBuilder();
                 if (a.key().equals("-h") || a.key().equals("--host")) {
                     s.append(a.getStringValue());
@@ -133,13 +133,13 @@ public class NServerMain implements NApplication {
                     u.protocol = "http";
                 }
                 servers.add().set(u);
-            } else if ((a = commandLine.nextString("-l", "--backlog").orNull()) != null) {
+            } else if ((a = commandLine.nextEntry("-l", "--backlog").orNull()) != null) {
                 servers.current().port = a.getValue().asInt().get(session);
-            } else if ((a = commandLine.nextString("--ssl-certificate").orNull()) != null) {
+            } else if ((a = commandLine.nextEntry("--ssl-certificate").orNull()) != null) {
                 servers.current().sslCertificate = a.getStringValue().get(session);
-            } else if ((a = commandLine.nextString("--ssl-passphrase").orNull()) != null) {
+            } else if ((a = commandLine.nextEntry("--ssl-passphrase").orNull()) != null) {
                 servers.current().sslPassphrase = a.getStringValue().get(session);
-            } else if ((a = commandLine.nextString("-w", "--workspace").orNull()) != null) {
+            } else if ((a = commandLine.nextEntry("-w", "--workspace").orNull()) != null) {
                 String ws = a.asString().get(session);
                 String serverContext = "";
                 if (ws.contains("@")) {
@@ -317,11 +317,11 @@ public class NServerMain implements NApplication {
                 servers.add().serverType = "https";
             } else if (commandLine.next("--admin").isPresent()) {
                 servers.add().serverType = "admin";
-            } else if ((a = commandLine.nextString("-a", "--address").orNull()) != null) {
+            } else if ((a = commandLine.nextEntry("-a", "--address").orNull()) != null) {
                 servers.current().addr = a.getStringValue().get(session);
-            } else if ((a = commandLine.nextString("-p", "--port").orNull()) != null) {
+            } else if ((a = commandLine.nextEntry("-p", "--port").orNull()) != null) {
                 servers.current().port = a.getValue().asInt().get(session);
-            } else if ((a = commandLine.nextString("-h", "--host").orNull()) != null || (a = commandLine.nextNonOption().orNull()) != null) {
+            } else if ((a = commandLine.nextEntry("-h", "--host").orNull()) != null || (a = commandLine.nextNonOption().orNull()) != null) {
                 StringBuilder s = new StringBuilder();
                 if (a.key().equals("-h") || a.key().equals("--host")) {
                     s.append(a.getStringValue());

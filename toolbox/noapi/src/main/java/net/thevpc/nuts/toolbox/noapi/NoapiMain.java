@@ -34,7 +34,7 @@ public class NoapiMain implements NApplication {
                 NSession session = commandLine.getSession();
                 switch (option.asString().get(session)) {
                     case "--yaml": {
-                        commandLine.nextBoolean();
+                        commandLine.nextFlag();
                         ref.setOpenAPIFormat("yaml");
                         if (!data.isEmpty()) {
                             data.get(data.size() - 1).setOpenAPIFormat("yaml");
@@ -42,7 +42,7 @@ public class NoapiMain implements NApplication {
                         return true;
                     }
                     case "--json": {
-                        commandLine.nextBoolean();
+                        commandLine.nextFlag();
                         ref.setOpenAPIFormat("json");
                         if (!data.isEmpty()) {
                             data.get(data.size() - 1).setOpenAPIFormat("json");
@@ -50,7 +50,7 @@ public class NoapiMain implements NApplication {
                         return true;
                     }
                     case "--keep": {
-                        commandLine.nextBoolean();
+                        commandLine.nextFlag();
                         ref.setKeep(true);
                         if (!data.isEmpty()) {
                             data.get(data.size() - 1).setKeep(true);
@@ -58,7 +58,7 @@ public class NoapiMain implements NApplication {
                         return true;
                     }
                     case "--vars": {
-                        NArg a = commandLine.nextString().get();
+                        NArg a = commandLine.nextEntry().get();
                         if (a.isActive()) {
                             String vars = a.getStringValue().get();
                             ref.setVars(vars);
@@ -69,7 +69,7 @@ public class NoapiMain implements NApplication {
                         return true;
                     }
                     case "--var": {
-                        NArg a = commandLine.nextString().get();
+                        NArg a = commandLine.nextEntry().get();
                         if (a.isActive()) {
                             String vars = a.getStringValue().get();
                             NArg b = NArg.of(vars);
@@ -83,7 +83,7 @@ public class NoapiMain implements NApplication {
                         return true;
                     }
                     case "--open-api": {
-                        commandLine.nextBoolean();
+                        commandLine.nextFlag();
                         ref.setOpenAPI(true);
                         if (!data.isEmpty()) {
                             data.get(data.size() - 1).setOpenAPI(true);
@@ -91,7 +91,7 @@ public class NoapiMain implements NApplication {
                         return true;
                     }
                     case "--pdf": {
-                        commandLine.nextBoolean();
+                        commandLine.nextFlag();
                         ref.setCommand("pdf");
                         if (!data.isEmpty()) {
                             data.get(data.size() - 1).setCommand("pdf");
@@ -99,7 +99,7 @@ public class NoapiMain implements NApplication {
                         return true;
                     }
                     case "--target": {
-                        NArg a = commandLine.nextString().get();
+                        NArg a = commandLine.nextEntry().get();
                         if (a.isActive()) {
                             String target = a.getStringValue().get();
                             if (target.contains("*")) {

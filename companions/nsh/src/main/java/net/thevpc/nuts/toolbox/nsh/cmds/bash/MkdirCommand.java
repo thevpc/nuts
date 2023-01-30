@@ -55,7 +55,7 @@ public class MkdirCommand extends SimpleJShellBuiltin {
         NSession session = context.getSession();
         Options options = context.getOptions();
         NArg a;
-        if ((a = commandLine.nextBoolean("--parent", "-p").orNull()) != null) {
+        if ((a = commandLine.nextFlag("--parent", "-p").orNull()) != null) {
             options.p = a.getBooleanValue().get(session);
             return true;
         } else if (commandLine.peek().get(session).isNonOption()) {

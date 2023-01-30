@@ -122,7 +122,7 @@ public class DumpCmd<C extends NdbConfig> extends NdbCmd<C> {
                         break;
                     }
                     case "--file": {
-                        commandLine.withNextString((v, a, s) -> {
+                        commandLine.withNextEntry((v, a, s) -> {
                             file.set(NPath.of(v, s));
                         });
                         break;
@@ -140,71 +140,73 @@ public class DumpCmd<C extends NdbConfig> extends NdbCmd<C> {
         revalidateOptions(options);
         getSupport().prepareDump(options, session);
         String simpleName = null;
-        NPath sqlPath;
+        NPath plainFolderPath;
         NPath zipPath;
-        boolean sql = false;
+        boolean plainFolder = false;
         boolean zip = false;
         String simpleName0 = options.getDatabaseName() + "-" + new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss-SSS").format(new Date());
         String dumpExt = NStringUtils.trim(getSupport().getDumpExt(options, session));
         if (file.get() == null) {
             simpleName = simpleName0;
-            sqlPath = NPath.of(simpleName + dumpExt, session);
+            plainFolderPath = NPath.of(simpleName + dumpExt, session);
             zipPath = NPath.of(simpleName + ".zip", session);
-            sql = false;
+            plainFolder = false;
             zip = true;
         } else if (file.get().isDirectory()) {
             simpleName = simpleName0;
-            sqlPath = file.get().resolve(simpleName + dumpExt);
+            plainFolderPath = file.get().resolve(simpleName + dumpExt);
             zipPath = file.get().resolve(simpleName + ".zip");
-            sql = false;
+            plainFolder = false;
             zip = true;
         } else {
             simpleName = file.get().getBaseName();
             if (file.get().getName().toLowerCase().endsWith(".zip")) {
                 zipPath = file.get();
-                sqlPath = zipPath.resolveSibling(simpleName + dumpExt);
-                sql = false;
+                plainFolderPath = zipPath.resolveSibling(simpleName + dumpExt);
+                plainFolder = false;
                 zip = true;
             } else if (dumpExt.length() > 0 && file.get().getName().toLowerCase().endsWith(dumpExt)) {
-                sqlPath = file.get();
-                zipPath = sqlPath.resolveSibling(simpleName + ".zip");
-                sql = true;
+                plainFolderPath = file.get();
+                zipPath = plainFolderPath.resolveSibling(simpleName + ".zip");
+                plainFolder = true;
                 zip = false;
             } else {
-                sqlPath = file.get().resolveSibling(file.get().getName() + dumpExt);
+                plainFolderPath = file.get().resolveSibling(file.get().getName() + dumpExt);
                 zipPath = file.get().resolveSibling(file.get().getName() + ".zip");
-                sql = false;
+                plainFolder = false;
                 zip = true;
             }
         }
         if (isRemoteCommand(options)) {
             NPath remoteTempFolder = getSupport().getRemoteTempFolder(options, session);
-            NPath remoteSQL = remoteTempFolder.resolve(simpleName0 + dumpExt);
+            NPath remotePlainFolder = remoteTempFolder.resolve(simpleName0 + dumpExt);
             NPath remoteZip = remoteTempFolder.resolve(simpleName0 + ".zip");
-            CmdRedirect dumpCommand = getSupport().createDumpCommand(remoteSQL, options, session);
+            CmdRedirect dumpCommand = getSupport().createDumpCommand(remotePlainFolder, options, session);
             run(getSupport().sysSsh(options, session)
                     .addCommand(dumpCommand.toString())
             );
             if (zip) {
                 run(sysSsh(options, session)
-                        .addCommand("zip")
-                        .addCommand("-q")
-                        .addCommand(remoteZip.toString())
-                        .addCommand(remoteSQL.toString())
+                        .addCommand("cd "+remotePlainFolder.resolve(
+                                options.getDatabaseName()
+                                ).toString()+" ; zip -q -r "
+                                +remoteZip.toString()
+                                +" ."
+                        )
                 );
             }
-            if (!sql) {
-                sshRm(remoteSQL,options, session);
+            if (!plainFolder) {
+                sshRm(remotePlainFolder,options, session);
             } else {
-                sshPull(remoteSQL,sqlPath,options, session);
-                sshRm(remoteSQL,options, session);
+                sshPull(remotePlainFolder,plainFolderPath,options, session);
+                sshRm(remotePlainFolder,options, session);
             }
             if (zip) {
                 sshPull(remoteZip,zipPath,options, session);
-                sshRm(remoteSQL,options, session);
+                sshRm(remotePlainFolder,options, session);
             }
         } else {
-            CmdRedirect dumpCommand = getSupport().createDumpCommand(sqlPath, options, session);
+            CmdRedirect dumpCommand = getSupport().createDumpCommand(plainFolderPath, options, session);
             NExecCommand nExecCommand = sysCmd(session).addCommand(dumpCommand.getCmd().toStringArray());
             if (dumpCommand.getPath() != null) {
                 nExecCommand.setRedirectOutputFile(dumpCommand.getPath());
@@ -215,18 +217,19 @@ public class DumpCmd<C extends NdbConfig> extends NdbCmd<C> {
                         .addCommand("zip")
                         .addCommand("-q")
                         ;
-                if (sqlPath.isDirectory()) {
+                if (plainFolderPath.isDirectory()) {
                     zipExec.addCommand("-r");
                     if (true) {
                         zipExec.addCommand("-j");
                     }
                 }
                 zipExec.addCommand(zipPath.toString());
-                zipExec.addCommand(sqlPath.toString());
+                zipExec.addCommand(plainFolderPath.toString());
+                zipExec.setDirectory(plainFolderPath.resolve(options.getDatabaseName()).toString());
                 run(zipExec);
             }
-            if (!sql) {
-                sqlPath.deleteTree();
+            if (!plainFolder) {
+                plainFolderPath.deleteTree();
             }
         }
     }

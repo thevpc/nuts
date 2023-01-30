@@ -28,7 +28,7 @@ public class AddConfigCmd<C extends NdbConfig> extends NdbCmd<C> {
             if (fillOption(commandLine, options)) {
                 //
             } else if (
-                    commandLine.withNextBoolean((v, a, s) -> {
+                    commandLine.withNextFlag((v, a, s) -> {
                         update.set(v);
                     }, "--update")
             ) {

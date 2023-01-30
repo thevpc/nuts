@@ -404,6 +404,7 @@ public class MainMakdownGenerator {
 
 
     private void _fillApiPaths(NObjectElement entries, List<MdElement> all, Vars vars2, List<TypeCrossRef> typeCrossRefs) {
+        Map<String, TypeInfo> allTypes = openApiParser.parseTypes(entries, appContext.getSession());
         NSession session = appContext.getSession();
         NElements prv = NElements.of(session);
         all.add(MdFactory.endParagraph());
@@ -445,7 +446,7 @@ public class MainMakdownGenerator {
                 }
             }
             for (Map.Entry<String, NObjectElement> ee : calls.entrySet()) {
-                _fillApiPathMethod(ee.getKey(), ee.getValue(), all, url, prv, dsummary, ddescription, dparameters, schemas, typeCrossRefs);
+                _fillApiPathMethod(ee.getKey(), ee.getValue(), all, url, prv, dsummary, ddescription, dparameters, schemas, typeCrossRefs,allTypes);
             }
         }
     }
@@ -543,7 +544,10 @@ public class MainMakdownGenerator {
         return obj ? (" [" + msg.get("REQUIRED").get() + "]") : (" [" + msg.get("OPTIONAL").get() + "]");
     }
 
-    private void _fillApiPathMethod(String method, NObjectElement call, List<MdElement> all, String url, NElements prv, String dsummary, String ddescription, NArrayElement dparameters, NObjectElement schemas, List<TypeCrossRef> typeCrossRefs) {
+    private void _fillApiPathMethod(String method, NObjectElement call, List<MdElement> all, String url, NElements prv,
+                                    String dsummary, String ddescription, NArrayElement dparameters,
+                                    NObjectElement schemas, List<TypeCrossRef> typeCrossRefs,Map<String, TypeInfo> allTypes) {
+
         NSession session = appContext.getSession();
         String nsummary = call.getString("summary").orElse(dsummary);
         String ndescription = call.getString("description").orElse(ddescription);
@@ -632,7 +636,7 @@ public class MainMakdownGenerator {
                     if (!NBlankable.isBlank(desc) && !desc.endsWith(".")) {
                         all.add(MdFactory.text("."));
                     }
-                    TypeInfo o = openApiParser.parseOneType(ii.getValue().asObject().get(session), null, session);
+                    TypeInfo o = openApiParser.parseOneType(ii.getValue().asObject().get(session), null, session, allTypes);
                     if (o.getRef() != null) {
                         typeCrossRefs.add(new TypeCrossRef(o.getRef(), url, "Request Body"));
 //                        all.add(MdFactory.endParagraph());
@@ -699,7 +703,7 @@ public class MainMakdownGenerator {
                         all.add(MdFactory.text("."));
                     }
                     for (NElementEntry content : v.asObject().get(session).getObject("content").orElse(NObjectElement.ofEmpty(session))) {
-                        TypeInfo o = openApiParser.parseOneType(content.getValue().asObject().get(session), null, session);
+                        TypeInfo o = openApiParser.parseOneType(content.getValue().asObject().get(session), null, session, allTypes);
                         if (o.getUserType().equals("$ref")) {
                             typeCrossRefs.add(new TypeCrossRef(
                                     o.getRef(),
@@ -759,14 +763,33 @@ public class MainMakdownGenerator {
                             }
                         } else {
                             all.add(MdFactory.endParagraph());
-                            all.add(MdFactory.title(6, msg.get("RESPONSE_MODEL").get() + " - " + content.getKey()));
-//                        all.add(MdFactory.endParagraph());
-                            if (o.getRef() != null) {
-                                all.add(MdFactory.title(6, msg.get("RESPONSE_TYPE").get() + " - " + o.getRef()));
-                            } else {
-                                all.add(MdFactory.text("\n"));
-                                all.add(NoApiUtils.codeElement(o, true, "", msg));
+
+                            all.add(MdFactory.table()
+                                    .addColumns(
+                                            MdFactory.column().setName(msg.get("RESPONSE_MODEL").get()),
+                                            MdFactory.column().setName(msg.get("RESPONSE_TYPE").get())
+                                    )
+                                    .addRows(
+                                            MdFactory.row().addCells(
+                                                    NoApiUtils.asText(content.getKey().asString().get(session)),
+                                                    NoApiUtils.codeElement(o, true, "", msg)
+                                                    //NoApiUtils.asText(o.getRef())
+                                            )
+                                    ).build()
+                            );
+                            if (!NBlankable.isBlank(o.getExample())) {
+                                all.add(MdFactory.text(msg.get("response.body.example.intro").get()));
+                                all.add(MdFactory.text(":\n"));
+                                all.add(NoApiUtils.jsonTextElement(o.getExample()));
                             }
+//                            all.add(MdFactory.title(6, msg.get("RESPONSE_MODEL").get() + " - " + content.getKey()));
+////                        all.add(MdFactory.endParagraph());
+//                            if (o.getRef() != null) {
+//                                all.add(MdFactory.title(6, msg.get("RESPONSE_TYPE").get() + " - " + o.getRef()));
+//                            } else {
+//                                all.add(MdFactory.text("\n"));
+//                                all.add(NoApiUtils.codeElement(o, true, "", msg));
+//                            }
                         }
                     }
                 });

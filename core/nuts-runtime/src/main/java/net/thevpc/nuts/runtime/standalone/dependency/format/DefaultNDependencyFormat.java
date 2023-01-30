@@ -221,7 +221,7 @@ public class DefaultNDependencyFormat extends DefaultFormatBase<NDependencyForma
         boolean enabled=aa.isActive();
         switch(aa.key()) {
             case "--omit-env": {
-                commandLine.withNextBoolean((v, a, s) -> setOmitOtherProperties(v));
+                commandLine.withNextFlag((v, a, s) -> setOmitOtherProperties(v));
                 return true;
             }
 //            case "--omit-face": {
@@ -229,19 +229,19 @@ public class DefaultNDependencyFormat extends DefaultFormatBase<NDependencyForma
 //                return true;
 //            }
             case "--omit-group": {
-                commandLine.withNextBoolean((v, a, s) -> setOmitGroupId(v));
+                commandLine.withNextFlag((v, a, s) -> setOmitGroupId(v));
                 return true;
             }
             case "--omit-imported-group": {
-                commandLine.withNextBoolean((v, a, s) -> setOmitImportedGroup(v));
+                commandLine.withNextFlag((v, a, s) -> setOmitImportedGroup(v));
                 return true;
             }
             case "--omit-repo": {
-                commandLine.withNextBoolean((v, a, s) -> setOmitRepository(v));
+                commandLine.withNextFlag((v, a, s) -> setOmitRepository(v));
                 return true;
             }
             case "--highlight-imported-group": {
-                commandLine.withNextBoolean((v, a, s) -> setHighlightImportedGroup(v));
+                commandLine.withNextFlag((v, a, s) -> setHighlightImportedGroup(v));
                 return true;
             }
         }

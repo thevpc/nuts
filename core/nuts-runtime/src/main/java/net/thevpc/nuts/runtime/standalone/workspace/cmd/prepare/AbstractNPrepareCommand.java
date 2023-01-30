@@ -99,19 +99,19 @@ public abstract class AbstractNPrepareCommand extends NWorkspaceCommandBase<NPre
         }
         if (super.configureFirst(cmdLine)) {
             return true;
-        } else if (cmdLine.withNextString((v, arg, s) -> {
+        } else if (cmdLine.withNextEntry((v, arg, s) -> {
             setUserName(v);
         }, "--user")) {
             return true;
-        } else if (cmdLine.withNextString((v, arg, s) -> {
+        } else if (cmdLine.withNextEntry((v, arg, s) -> {
             setTargetServer(v);
         }, "--target-server")) {
             return true;
-        } else if (cmdLine.withNextString((v, arg, s) -> {
+        } else if (cmdLine.withNextEntry((v, arg, s) -> {
             setVersion(v);
         }, "--version")) {
             return true;
-        } else if (cmdLine.withNextString((v, arg, s) -> {
+        } else if (cmdLine.withNextEntry((v, arg, s) -> {
             this.targetHome = v;
         }, "--target-home")) {
             return true;

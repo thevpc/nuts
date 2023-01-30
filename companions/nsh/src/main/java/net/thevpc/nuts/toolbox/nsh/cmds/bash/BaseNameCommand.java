@@ -61,12 +61,12 @@ public class BaseNameCommand extends SimpleJShellBuiltin {
             case "-a":
             case "--all":
             case "--multi": {
-                cmdLine.withNextBoolean((v, r, s) -> options.multi = v);
+                cmdLine.withNextFlag((v, r, s) -> options.multi = v);
                 return true;
             }
             case "-s":
             case "--suffix": {
-                cmdLine.withNextString((v, r, s) -> {
+                cmdLine.withNextEntry((v, r, s) -> {
                     options.suffix = v;
                     options.multi = true;
                 });

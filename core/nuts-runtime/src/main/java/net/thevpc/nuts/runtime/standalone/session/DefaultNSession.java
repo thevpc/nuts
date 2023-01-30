@@ -92,6 +92,7 @@ public class DefaultNSession implements Cloneable, NSession {
     private NId appId;
     private String locale;
     private boolean iterableOut;
+    private NApplicationContext applicationContext;
 
     public DefaultNSession(NWorkspace ws) {
         this.ws = new NWorkspaceSessionAwareImpl(this, ws);
@@ -138,7 +139,7 @@ public class DefaultNSession implements Cloneable, NSession {
             switch (a.key()) {
                 case "-T":
                 case "--output-format-option": {
-                    a = cmdLine.nextString().get(this);
+                    a = cmdLine.nextEntry().get(this);
                     if (active) {
                         this.addOutputFormatOptions(a.getStringValue().orElse(""));
                     }
@@ -146,7 +147,7 @@ public class DefaultNSession implements Cloneable, NSession {
                 }
                 case "-O":
                 case "--output-format":
-                    a = cmdLine.nextString().get(this);
+                    a = cmdLine.nextEntry().get(this);
                     if (active) {
                         String t = a.getStringValue().orElse("");
                         int i = CoreStringUtils.firstIndexOf(t, new char[]{' ', ';', ':', '='});
@@ -263,14 +264,14 @@ public class DefaultNSession implements Cloneable, NSession {
                     return true;
                 }
                 case "--trace": {
-                    NArg v = cmdLine.nextBoolean().get(this);
+                    NArg v = cmdLine.nextFlag().get(this);
                     if (active) {
                         this.setTrace(v.getBooleanValue().get(this));
                     }
                     return true;
                 }
                 case "--solver": {
-                    a = cmdLine.nextString().get(this);
+                    a = cmdLine.nextEntry().get(this);
                     if (active) {
                         String s = a.getStringValue().get(this);
                         this.setDependencySolver(s);
@@ -321,7 +322,7 @@ public class DefaultNSession implements Cloneable, NSession {
                 }
                 case "-f":
                 case "--fetch": {
-                    a = cmdLine.nextString().get(this);
+                    a = cmdLine.nextEntry().get(this);
                     if (active) {
                         this.setFetchStrategy(a.getStringValue().flatMap(NFetchStrategy::parse).get(this));
                     }
@@ -329,7 +330,7 @@ public class DefaultNSession implements Cloneable, NSession {
                 }
                 case "-a":
                 case "--anywhere": {
-                    a = cmdLine.nextBoolean().get(this);
+                    a = cmdLine.nextFlag().get(this);
                     if (active && a.getBooleanValue().get(this)) {
                         this.setFetchStrategy(NFetchStrategy.ANYWHERE);
                     }
@@ -337,21 +338,21 @@ public class DefaultNSession implements Cloneable, NSession {
                 }
                 case "-F":
                 case "--offline": {
-                    a = cmdLine.nextBoolean().get(this);
+                    a = cmdLine.nextFlag().get(this);
                     if (active && a.getBooleanValue().get(this)) {
                         this.setFetchStrategy(NFetchStrategy.OFFLINE);
                     }
                     return true;
                 }
                 case "--online": {
-                    a = cmdLine.nextBoolean().get(this);
+                    a = cmdLine.nextFlag().get(this);
                     if (active && a.getBooleanValue().get(this)) {
                         this.setFetchStrategy(NFetchStrategy.ONLINE);
                     }
                     return true;
                 }
                 case "--remote": {
-                    a = cmdLine.nextBoolean().get(this);
+                    a = cmdLine.nextFlag().get(this);
                     if (active && a.getBooleanValue().get(this)) {
                         this.setFetchStrategy(NFetchStrategy.REMOTE);
                     }
@@ -374,7 +375,7 @@ public class DefaultNSession implements Cloneable, NSession {
                 }
                 case "-B":
                 case "--bot": {
-                    a = cmdLine.nextBoolean().get(this);
+                    a = cmdLine.nextFlag().get(this);
                     if (active && a.getBooleanValue().get(this)) {
                         getTerminal().setOut(getTerminal().out().setTerminalMode(NTerminalMode.FILTERED));
                         getTerminal().setErr(getTerminal().err().setTerminalMode(NTerminalMode.FILTERED));
@@ -388,28 +389,28 @@ public class DefaultNSession implements Cloneable, NSession {
                 }
                 case "--dry":
                 case "-D": {
-                    a = cmdLine.nextBoolean().get(this);
+                    a = cmdLine.nextFlag().get(this);
                     if (active) {
                         setDry(a.getBooleanValue().get(this));
                     }
                     return true;
                 }
                 case "--out-line-prefix": {
-                    a = cmdLine.nextString().get(this);
+                    a = cmdLine.nextEntry().get(this);
                     if (active) {
                         this.setOutLinePrefix(a.getStringValue().get(this));
                     }
                     return true;
                 }
                 case "--err-line-prefix": {
-                    a = cmdLine.nextString().get(this);
+                    a = cmdLine.nextEntry().get(this);
                     if (active) {
                         this.setErrLinePrefix(a.getStringValue().get(this));
                     }
                     return true;
                 }
                 case "--line-prefix": {
-                    a = cmdLine.nextString().get(this);
+                    a = cmdLine.nextEntry().get(this);
                     if (active) {
                         this.setOutLinePrefix(a.getStringValue().get(this));
                         this.setErrLinePrefix(a.getStringValue().get(this));
@@ -418,7 +419,7 @@ public class DefaultNSession implements Cloneable, NSession {
                 }
                 case "--embedded":
                 case "-b": {
-                    a = cmdLine.nextBoolean().get(this);
+                    a = cmdLine.nextFlag().get(this);
                     if (active && a.getBooleanValue().get(this)) {
                         setExecutionType(NExecutionType.EMBEDDED);
                     }
@@ -428,42 +429,42 @@ public class DefaultNSession implements Cloneable, NSession {
                 case "--external":
                 case "--spawn":
                 case "-x": {
-                    a = cmdLine.nextBoolean().get(this);
+                    a = cmdLine.nextFlag().get(this);
                     if (active && a.getBooleanValue().get(this)) {
                         setExecutionType(NExecutionType.SPAWN);
                     }
                     break;
                 }
                 case "--system": {
-                    a = cmdLine.nextBoolean().get(this);
+                    a = cmdLine.nextFlag().get(this);
                     if (active && a.getBooleanValue().get(this)) {
                         setExecutionType(NExecutionType.SYSTEM);
                     }
                     break;
                 }
                 case "--current-user": {
-                    a = cmdLine.nextBoolean().get(this);
+                    a = cmdLine.nextFlag().get(this);
                     if (active && a.getBooleanValue().get(this)) {
                         setRunAs(NRunAs.currentUser());
                     }
                     break;
                 }
                 case "--as-root": {
-                    a = cmdLine.nextBoolean().get(this);
+                    a = cmdLine.nextFlag().get(this);
                     if (active && a.getBooleanValue().get(this)) {
                         setRunAs(NRunAs.root());
                     }
                     break;
                 }
                 case "--sudo": {
-                    a = cmdLine.nextBoolean().get(this);
+                    a = cmdLine.nextFlag().get(this);
                     if (active && a.getBooleanValue().get(this)) {
                         setRunAs(NRunAs.sudo());
                     }
                     break;
                 }
                 case "--as-user": {
-                    a = cmdLine.nextString().get(this);
+                    a = cmdLine.nextEntry().get(this);
                     if (active) {
                         setRunAs(NRunAs.user(a.getStringValue().get(this)));
                     }
@@ -686,6 +687,7 @@ public class DefaultNSession implements Cloneable, NSession {
             cloned.refProperties = new NPropertiesHolder();
             cloned.outputFormatOptions = outputFormatOptions == null ? null : new ArrayList<>(outputFormatOptions);
             cloned.listeners = null;
+            cloned.applicationContext = applicationContext;
             if (listeners != null) {
                 for (NListener listener : getListeners()) {
                     cloned.addListener(listener);
@@ -735,6 +737,9 @@ public class DefaultNSession implements Cloneable, NSession {
         this.eout = other.eout();
         this.appId = other.getAppId();
         this.dependencySolver = other.getDependencySolver();
+        if (this.applicationContext == null) {
+            this.applicationContext = other.getApplicationContext();
+        }
         return this;
     }
 
@@ -1492,5 +1497,15 @@ public class DefaultNSession implements Cloneable, NSession {
         v = supplier.apply(this);
         setRefProperty(name, v);
         return (T) v;
+    }
+
+
+    public NApplicationContext getApplicationContext() {
+        return applicationContext;
+    }
+
+    public DefaultNSession setApplicationContext(NApplicationContext applicationContext) {
+        this.applicationContext = applicationContext;
+        return this;
     }
 }

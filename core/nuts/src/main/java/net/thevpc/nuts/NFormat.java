@@ -46,7 +46,7 @@ import java.nio.file.Path;
  * @app.category Format
  * @since 0.5.5
  */
-public interface NFormat extends NCommandLineConfigurable, NComponent {
+public interface NFormat extends NCommandLineConfigurable, NComponent, NSessionProvider {
     static NFormat of(NSession session, NFormatSPI spi) {
         return NTexts.of(session).createFormat(spi);
     }
@@ -181,13 +181,6 @@ public interface NFormat extends NCommandLineConfigurable, NComponent {
      * @param file recipient file
      */
     void println(File file);
-
-    /**
-     * session associated to this format instance
-     *
-     * @return session associated to this format instance
-     */
-    NSession getSession();
 
     /**
      * update session

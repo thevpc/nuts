@@ -33,14 +33,7 @@ package net.thevpc.nuts;
  * @app.category Events
  * @since 0.5.4
  */
-public interface NRepositoryEvent {
-
-    /**
-     * current session
-     *
-     * @return current session
-     */
-    NSession getSession();
+public interface NRepositoryEvent extends NSessionProvider {
 
     /**
      * current workspace

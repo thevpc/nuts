@@ -33,7 +33,7 @@ import java.util.List;
  * @author thevpc
  * @app.category Events
  */
-public interface NEvents extends NComponent {
+public interface NEvents extends NComponent, NSessionProvider {
     static NEvents of(NSession session) {
         return NExtensions.of(session).createSupported(NEvents.class);
     }
@@ -61,8 +61,6 @@ public interface NEvents extends NComponent {
     NEvents addInstallListener(NInstallListener listener);
 
     List<NInstallListener> getInstallListeners();
-
-    NSession getSession();
 
     NEvents setSession(NSession session);
 

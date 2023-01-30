@@ -36,7 +36,7 @@ import java.util.List;
  * @author thevpc
  * @app.category Config
  */
-public interface NCustomCommandManager extends NComponent {
+public interface NCustomCommandManager extends NComponent,NSessionProvider {
     static NCustomCommandManager of(NSession session) {
         return NExtensions.of(session).createSupported(NCustomCommandManager.class);
     }
@@ -151,13 +151,6 @@ public interface NCustomCommandManager extends NComponent {
      * @return all registered and factory defined commands by owner
      */
     List<NWorkspaceCustomCommand> findCommandsByOwner(NId id);
-
-    /**
-     * current session
-     *
-     * @return current session
-     */
-    NSession getSession();
 
     /**
      * update current session

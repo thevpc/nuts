@@ -66,14 +66,14 @@ public class JsonCommand extends SimpleJShellBuiltin {
         Options options = context.getOptions();
         NSession session = context.getSession();
         NArg a;
-        if ((a = commandLine.nextString("-f", "--file").orNull()) != null) {
+        if ((a = commandLine.nextEntry("-f", "--file").orNull()) != null) {
             options.input = a.getStringValue().get(session);
             return true;
-        } else if ((a = commandLine.nextString("-q").orNull()) != null) {
+        } else if ((a = commandLine.nextEntry("-q").orNull()) != null) {
             options.queryType = "jpath";
             options.queries.add(a.getStringValue().get(session));
             return true;
-        } else if ((a = commandLine.nextString("--xpath").orNull()) != null) {
+        } else if ((a = commandLine.nextEntry("--xpath").orNull()) != null) {
             options.queryType = "xpath";
             options.queries.add(a.getStringValue().get(session));
             return true;

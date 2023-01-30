@@ -35,18 +35,18 @@ public class CountCmd<C extends NdbConfig> extends NdbCmd<C> {
                         case "--entity":
                         case "--table":
                         case "--collection": {
-                            commandLine.withNextString((v, a, s) -> eq.setTable(v));
+                            commandLine.withNextEntry((v, a, s) -> eq.setTable(v));
                             break;
                         }
                         case "--where": {
                             status = "--where";
-                            commandLine.withNextBoolean((v, a, s) -> {
+                            commandLine.withNextFlag((v, a, s) -> {
                             });
                             break;
                         }
                         case "--set": {
                             status = "--set";
-                            commandLine.withNextBoolean((v, a, s) -> {
+                            commandLine.withNextFlag((v, a, s) -> {
                             });
                             break;
                         }

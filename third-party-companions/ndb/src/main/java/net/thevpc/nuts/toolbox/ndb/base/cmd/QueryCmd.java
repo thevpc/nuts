@@ -32,34 +32,34 @@ public class QueryCmd<C extends NdbConfig> extends NdbCmd<C> {
                             break;
                         }
                         case "--command": {
-                            commandLine.withNextString((v, a, s) -> eq.setCommand(v));
+                            commandLine.withNextEntry((v, a, s) -> eq.setCommand(v));
                             break;
                         }
                         case "--entity":
                         case "--table":
                         case "--collection": {
-                            commandLine.withNextString((v, a, s) -> eq.setTable(v));
+                            commandLine.withNextEntry((v, a, s) -> eq.setTable(v));
                             break;
                         }
                         case "--where": {
                             status = "--where";
-                            commandLine.withNextBoolean((v, a, s) -> {
+                            commandLine.withNextFlag((v, a, s) -> {
                             });
                             break;
                         }
                         case "--one": {
-                            commandLine.withNextBoolean((v, a, s) -> eq.setOne(v));
+                            commandLine.withNextFlag((v, a, s) -> eq.setOne(v));
                             break;
                         }
                         case "--set": {
                             status = "--set";
-                            commandLine.withNextBoolean((v, a, s) -> {
+                            commandLine.withNextFlag((v, a, s) -> {
                             });
                             break;
                         }
                         case "--sort": {
                             status = "--sort";
-                            commandLine.withNextBoolean((v, a, s) -> {
+                            commandLine.withNextFlag((v, a, s) -> {
                             });
                             break;
                         }
@@ -73,13 +73,13 @@ public class QueryCmd<C extends NdbConfig> extends NdbCmd<C> {
                     switch (commandLine.peek().get(session).key()) {
                         case "--set": {
                             status = "--set";
-                            commandLine.withNextBoolean((v, a, s) -> {
+                            commandLine.withNextFlag((v, a, s) -> {
                             });
                             break;
                         }
                         case "--sort": {
                             status = "--sort";
-                            commandLine.withNextBoolean((v, a, s) -> {
+                            commandLine.withNextFlag((v, a, s) -> {
                             });
                             break;
                         }
@@ -93,13 +93,13 @@ public class QueryCmd<C extends NdbConfig> extends NdbCmd<C> {
                     switch (commandLine.peek().get(session).key()) {
                         case "--where": {
                             status = "--where";
-                            commandLine.withNextBoolean((v, a, s) -> {
+                            commandLine.withNextFlag((v, a, s) -> {
                             });
                             break;
                         }
                         case "--sort": {
                             status = "--sort";
-                            commandLine.withNextBoolean((v, a, s) -> {
+                            commandLine.withNextFlag((v, a, s) -> {
                             });
                             break;
                         }
@@ -113,13 +113,13 @@ public class QueryCmd<C extends NdbConfig> extends NdbCmd<C> {
                     switch (commandLine.peek().get(session).key()) {
                         case "--where": {
                             status = "--where";
-                            commandLine.withNextBoolean((v, a, s) -> {
+                            commandLine.withNextFlag((v, a, s) -> {
                             });
                             break;
                         }
                         case "--set": {
                             status = "--set";
-                            commandLine.withNextBoolean((v, a, s) -> {
+                            commandLine.withNextFlag((v, a, s) -> {
                             });
                             break;
                         }

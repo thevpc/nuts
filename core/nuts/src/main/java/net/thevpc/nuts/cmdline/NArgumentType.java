@@ -47,14 +47,14 @@ public enum NArgumentType implements NEnum {
      * argument that accepts a string as value. Either the string is included in
      * the argument itself (--option=value) or succeeds it (--option value).
      */
-    STRING,
+    ENTRY,
     /**
      * argument that accepts a boolean as value. Either the boolean is not
      * defined (--option), is included in the argument itself (--option=true) or
      * succeeds it (--option true). Parsing boolean is also aware of negated
      * options (--!option) that will be interpreted as (--option=false).
      */
-    BOOLEAN;
+    FLAG;
 
     /**
      * lower-cased identifier for the enum entry

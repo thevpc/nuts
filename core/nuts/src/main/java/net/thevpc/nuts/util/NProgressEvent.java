@@ -27,6 +27,7 @@ package net.thevpc.nuts.util;
 
 import net.thevpc.nuts.NMsg;
 import net.thevpc.nuts.NSession;
+import net.thevpc.nuts.NSessionProvider;
 import net.thevpc.nuts.NWorkspace;
 
 /**
@@ -36,7 +37,7 @@ import net.thevpc.nuts.NWorkspace;
  * @app.category Toolkit
  * @since 0.5.8
  */
-public interface NProgressEvent {
+public interface NProgressEvent extends NSessionProvider {
 
     static NProgressEvent ofStart(Object source, NMsg message, long length, NSession session) {
         return new DefaultNProgressEvent(source, message, 0, 0, null, 0, 0,
@@ -57,13 +58,6 @@ public interface NProgressEvent {
         return new DefaultNProgressEvent(source, message, globalCount, globalDurationNanos, percent, partialCount, partialDurationNanos,
                 length, exception, session, null, NProgressEventType.PROGRESS);
     }
-
-    /**
-     * Nuts Session
-     *
-     * @return Nuts Session
-     */
-    NSession getSession();
 
     /**
      * Nuts Workspace

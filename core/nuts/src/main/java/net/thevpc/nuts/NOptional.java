@@ -11,7 +11,7 @@ import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 
-public interface NOptional<T> extends NBlankable {
+public interface NOptional<T> extends NBlankable, NSessionProvider {
 
     static <T> NOptional<T> ofNamedEmpty(String name) {
         return ofEmpty(s -> NMsg.ofC("missing %s", name));
@@ -184,6 +184,7 @@ public interface NOptional<T> extends NBlankable {
     T orElseGet(Supplier<? extends T> other);
 
     NOptional<T> orElseOf(Supplier<T> other);
+
     NOptional<T> orElseOfNullable(Supplier<T> other);
 
     NOptional<T> orElseUse(Supplier<NOptional<T>> other);
@@ -225,6 +226,7 @@ public interface NOptional<T> extends NBlankable {
     NOptional<T> ifBlankUse(Supplier<NOptional<T>> other);
 
     NOptional<T> ifNullUse(Supplier<NOptional<T>> other);
+
     NOptional<T> ifNullEmpty();
 
     NOptional<T> ifErrorUse(Supplier<NOptional<T>> other);
@@ -274,13 +276,6 @@ public interface NOptional<T> extends NBlankable {
      * @return {@code this} instance
      */
     NOptional<T> setSession(NSession session);
-
-    /**
-     * return default session or null
-     *
-     * @return default session or null
-     */
-    NSession getSession();
 
 
 }

@@ -27,6 +27,7 @@ package net.thevpc.nuts.util;
 
 import net.thevpc.nuts.NMsg;
 import net.thevpc.nuts.NSession;
+import net.thevpc.nuts.NSessionProvider;
 import net.thevpc.nuts.cmdline.NCommandLineConfigurable;
 
 import java.util.List;
@@ -40,7 +41,7 @@ import java.util.List;
  * @app.category Toolkit
  * @since 0.5.4
  */
-public interface NQuestion<T> extends NCommandLineConfigurable {
+public interface NQuestion<T> extends NCommandLineConfigurable, NSessionProvider {
 
     boolean isResetLine();
 
@@ -114,7 +115,7 @@ public interface NQuestion<T> extends NCommandLineConfigurable {
     /**
      * ask for message of type enum
      *
-     * @param msg message
+     * @param msg      message
      * @param enumType enumType
      * @return ask for message of type enum
      * @since 0.8.3
@@ -176,8 +177,6 @@ public interface NQuestion<T> extends NCommandLineConfigurable {
     Boolean getBooleanValue();
 
     T getValue();
-
-    NSession getSession();
 
     NQuestion<T> setSession(NSession session);
 

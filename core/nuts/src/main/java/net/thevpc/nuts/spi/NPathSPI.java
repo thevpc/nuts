@@ -41,7 +41,7 @@ import java.time.Instant;
 import java.util.List;
 import java.util.Set;
 
-public interface NPathSPI {
+public interface NPathSPI extends NSessionProvider {
 
     NStream<NPath> list(NPath basePath);
 
@@ -90,8 +90,6 @@ public interface NPathSPI {
     InputStream getInputStream(NPath basePath, NPathOption... options);
 
     OutputStream getOutputStream(NPath basePath, NPathOption... options);
-
-    NSession getSession();
 
     void delete(NPath basePath, boolean recurse);
 

@@ -31,9 +31,7 @@ package net.thevpc.nuts;
  * @app.category Events
  * @since 0.5.4
  */
-public interface NWorkspaceEvent {
-
-    NSession getSession();
+public interface NWorkspaceEvent extends NSessionProvider {
 
     NWorkspace getWorkspace();
 

@@ -37,7 +37,7 @@ import java.util.List;
 /**
  * @app.category Base
  */
-public interface NExecutionEntries extends NComponent {
+public interface NExecutionEntries extends NComponent,NSessionProvider {
     static NExecutionEntries of(NSession session) {
        return NExtensions.of(session).createSupported(NExecutionEntries.class);
     }
@@ -71,8 +71,6 @@ public interface NExecutionEntries extends NComponent {
      * @return execution entries (class names with main method)
      */
     List<NExecutionEntry> parse(InputStream inputStream, String type, String sourceName);
-
-    NSession getSession();
 
     NExecutionEntries setSession(NSession session);
 }

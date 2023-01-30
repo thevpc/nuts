@@ -33,10 +33,11 @@ import java.util.Map;
  * @author thevpc
  * @app.category Base
  */
-public interface NLocations extends NComponent {
+public interface NLocations extends NComponent, NSessionProvider {
     static NLocations of(NSession session) {
         return NExtensions.of(session).createSupported(NLocations.class);
     }
+
     NPath getHomeLocation(NStoreLocation folderType);
 
     NPath getStoreLocation(NStoreLocation folderType);
@@ -88,8 +89,6 @@ public interface NLocations extends NComponent {
     NLocations setStoreLocation(NStoreLocation folderType, String location);
 
     NLocations setHomeLocation(NHomeLocation homeType, String location);
-
-    NSession getSession();
 
     NLocations setSession(NSession session);
 

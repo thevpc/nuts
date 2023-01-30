@@ -46,7 +46,7 @@ import java.util.logging.Level;
  * @app.category Base
  * @since 0.5.4
  */
-public interface NSession extends NCommandLineConfigurable, NCommandLineContext {
+public interface NSession extends NCommandLineConfigurable {
 
     /**
      * When true, operations are invited to print to output stream extra
@@ -645,5 +645,8 @@ public interface NSession extends NCommandLineConfigurable, NCommandLineContext 
      * @since 0.8.4
      */
     <T> T getOrComputeRefProperty(String name, Function<NSession, T> supplier);
+
+
+    NApplicationContext getApplicationContext();
 
 }

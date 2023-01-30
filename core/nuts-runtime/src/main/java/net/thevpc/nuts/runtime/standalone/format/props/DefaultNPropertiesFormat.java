@@ -41,23 +41,23 @@ public class DefaultNPropertiesFormat extends DefaultFormatBase<NPropertiesForma
     @Override
     public boolean configureFirst(NCommandLine commandLine) {
         NArg a;
-        if ((a = commandLine.nextString(OPTION_MULTILINE_PROPERTY).orNull()) != null) {
+        if ((a = commandLine.nextEntry(OPTION_MULTILINE_PROPERTY).orNull()) != null) {
             NArg i = NArg.of(a.getStringValue().get(getSession()));
             if (i.isActive()) {
                 addMultilineProperty(i.getKey().asString().get(getSession()), i.getStringValue().get(getSession()));
             }
             return true;
-        } else if ((a = commandLine.nextBoolean("--compact").orNull()) != null) {
+        } else if ((a = commandLine.nextFlag("--compact").orNull()) != null) {
             if (a.isActive()) {
                 this.compact = a.getBooleanValue().get(getSession());
             }
             return true;
-        } else if ((a = commandLine.nextBoolean("--props").orNull()) != null) {
+        } else if ((a = commandLine.nextFlag("--props").orNull()) != null) {
             if (a.isActive()) {
                 this.javaProps = a.getBooleanValue().get(getSession());
             }
             return true;
-        } else if ((a = commandLine.nextBoolean("--escape-text").orNull()) != null) {
+        } else if ((a = commandLine.nextFlag("--escape-text").orNull()) != null) {
             if (a.isActive()) {
                 this.escapeText = a.getBooleanValue().get(getSession());
             }

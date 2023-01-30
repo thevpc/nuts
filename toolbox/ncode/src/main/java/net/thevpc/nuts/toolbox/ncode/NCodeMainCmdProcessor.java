@@ -40,16 +40,16 @@ class NCodeMainCmdProcessor implements NCommandLineProcessor {
         NSession session = applicationContext.getSession();
         switch (option.getStringKey().get(session)) {
             case "-i": {
-                option = commandLine.nextBoolean().get(session);
+                option = commandLine.nextFlag().get(session);
                 caseInsensitive = option.getBooleanValue().get(session);
                 return true;
             }
             case "-t": {
-                typeComparators.add(comp(commandLine.nextString().get(session).getStringValue().get(session)));
+                typeComparators.add(comp(commandLine.nextEntry().get(session).getStringValue().get(session)));
                 return true;
             }
             case "-f": {
-                fileComparators.add(comp(commandLine.nextString().get(session).getStringValue().get(session)));
+                fileComparators.add(comp(commandLine.nextEntry().get(session).getStringValue().get(session)));
                 return true;
             }
         }

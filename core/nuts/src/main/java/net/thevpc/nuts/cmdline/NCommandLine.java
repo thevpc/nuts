@@ -92,7 +92,7 @@ import java.util.List;
  * @app.category Command Line
  * @since 0.5.5
  */
-public interface NCommandLine extends Iterable<NArg>, NFormattable, NBlankable {
+public interface NCommandLine extends Iterable<NArg>, NFormattable, NBlankable,NSessionProvider {
 
     static NCommandLine of(String[] args) {
         return new DefaultNCommandLine(args);
@@ -261,11 +261,11 @@ public interface NCommandLine extends Iterable<NArg>, NFormattable, NBlankable {
     NCommandLine throwMissingArgumentByName(String argumentName);
 
 
-        /**
-         * throw exception if command line is not empty
-         *
-         * @return {@code this} instance
-         */
+    /**
+     * throw exception if command line is not empty
+     *
+     * @return {@code this} instance
+     */
     NCommandLine throwUnexpectedArgument();
 
     /**
@@ -284,6 +284,8 @@ public interface NCommandLine extends Iterable<NArg>, NFormattable, NBlankable {
      * @return next argument
      */
     NOptional<NArg> next();
+
+    NOptional<String> nextString();
 
     /**
      * consume (remove) the first argument and return it while adding a hint to
@@ -324,35 +326,39 @@ public interface NCommandLine extends Iterable<NArg>, NFormattable, NBlankable {
      */
     boolean hasNext();
 
+    boolean hasNextOption();
+
+    boolean hasNextNonOption();
+
     /**
      * next argument with boolean value equivalent to
-     * next(NutsArgumentType.STRING,names)
+     * next(NArgumentType.STRING,names)
      *
      * @param names names
      * @return next argument
      */
-    NOptional<NArg> nextBoolean(String... names);
+    NOptional<NArg> nextFlag(String... names);
 
     /**
      * next argument with boolean value equivalent to
-     * next(NutsArgumentType.STRING,{})
+     * next(NArgumentType.ENTRY,{})
      *
      * @return next argument
      */
-    NOptional<NArg> nextBoolean();
+    NOptional<NArg> nextFlag();
 
     /**
      * consume next argument with boolean value and run {@code consumer}
      *
      * @return true if active
      */
-    boolean withNextBoolean(NArgProcessor<Boolean> consumer);
+    boolean withNextFlag(NArgProcessor<Boolean> consumer);
 
-    boolean withNextOptionalBoolean(NArgProcessor<NOptional<Boolean>> consumer);
+    boolean withNextOptionalFlag(NArgProcessor<NOptional<Boolean>> consumer);
 
-    boolean withNextOptionalBoolean(NArgProcessor<NOptional<Boolean>> consumer, String... names);
+    boolean withNextOptionalFlag(NArgProcessor<NOptional<Boolean>> consumer, String... names);
 
-    boolean withNextTrue(NArgProcessor<Boolean> consumer);
+    boolean withNextTrueFlag(NArgProcessor<Boolean> consumer);
 
     /**
      * consume next argument with boolean value and run {@code consumer}
@@ -360,30 +366,30 @@ public interface NCommandLine extends Iterable<NArg>, NFormattable, NBlankable {
      * @param names names
      * @return true if active
      */
-    boolean withNextBoolean(NArgProcessor<Boolean> consumer, String... names);
+    boolean withNextFlag(NArgProcessor<Boolean> consumer, String... names);
 
-    boolean withNextTrue(NArgProcessor<Boolean> consumer, String... names);
+    boolean withNextTrueFlag(NArgProcessor<Boolean> consumer, String... names);
 
 
-    boolean withNextOptionalString(NArgProcessor<NOptional<String>> consumer);
+    boolean withNextOptionalEntry(NArgProcessor<NOptional<String>> consumer);
 
-    boolean withNextOptionalString(NArgProcessor<NOptional<String>> consumer, String... names);
+    boolean withNextOptionalEntry(NArgProcessor<NOptional<String>> consumer, String... names);
 
     /**
      * next argument with string value. equivalent to
-     * next(NutsArgumentType.STRING,names)
+     * next(NArgumentType.ENTRY,names)
      *
      * @param names names
      * @return next argument
      */
-    NOptional<NArg> nextString(String... names);
+    NOptional<NArg> nextEntry(String... names);
 
     /**
      * consume next argument with string value and run {@code consumer}
      *
      * @return true if active
      */
-    boolean withNextString(NArgProcessor<String> consumer);
+    boolean withNextEntry(NArgProcessor<String> consumer);
 
     /**
      * consume next argument with string value and run {@code consumer}
@@ -391,7 +397,7 @@ public interface NCommandLine extends Iterable<NArg>, NFormattable, NBlankable {
      * @param names names
      * @return true if active
      */
-    boolean withNextString(NArgProcessor<String> consumer, String... names);
+    boolean withNextEntry(NArgProcessor<String> consumer, String... names);
 
 
     /**
@@ -399,7 +405,7 @@ public interface NCommandLine extends Iterable<NArg>, NFormattable, NBlankable {
      *
      * @return true if active
      */
-    boolean withNextStringLiteral(NArgProcessor<NLiteral> consumer);
+    boolean withNextEntryValue(NArgProcessor<NLiteral> consumer);
 
     /**
      * consume next argument and run {@code consumer}
@@ -407,30 +413,30 @@ public interface NCommandLine extends Iterable<NArg>, NFormattable, NBlankable {
      * @param names names
      * @return true if active
      */
-    boolean withNextStringLiteral(NArgProcessor<NLiteral> consumer, String... names);
+    boolean withNextEntryValue(NArgProcessor<NLiteral> consumer, String... names);
 
-    boolean withNextLiteral(NArgProcessor<NLiteral> consumer);
+    boolean withNextValue(NArgProcessor<NLiteral> consumer);
 
-        /**
-         * next argument with string value. equivalent to
-         * next(NutsArgumentType.STRING,{})
-         *
-         * @return next argument
-         */
-    NOptional<NArg> nextString();
+    /**
+     * next argument as entry (key=value). equivalent to
+     * next(NArgumentType.ENTRY,{})
+     *
+     * @return next argument
+     */
+    NOptional<NArg> nextEntry();
 
-    NOptional<NLiteral> nextStringLiteral(String... names);
+    NOptional<NLiteral> nextEntryValue(String... names);
 
-    NOptional<NLiteral> nextBooleanLiteral(String... names);
+    NOptional<NLiteral> nextFlagValue(String... names);
 
 
-    NOptional<NLiteral> nextStringLiteral();
+    NOptional<NLiteral> nextEntryValue();
 
-    NOptional<NLiteral> nextBooleanLiteral();
+    NOptional<NLiteral> nextFlagValue();
 
     /**
      * next argument with any value type (may have not a value). equivalent to
-     * {@code next(NutsArgumentType.ANY,names)}
+     * {@code next(NArgumentType.ANY,names)}
      *
      * @param names names
      * @return next argument
@@ -626,7 +632,6 @@ public interface NCommandLine extends Iterable<NArg>, NFormattable, NBlankable {
     NCommandLine add(String argument);
 
     NCommandLine addAll(List<String> arguments);
-    NSession getSession();
 
     NCommandLine setSession(NSession session);
 

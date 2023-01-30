@@ -54,7 +54,7 @@ public class UnaliasCommand extends SimpleJShellBuiltin {
         NArg aa = commandLine.peek().get(session);
         if (aa.isOption()) {
             if (aa.key().equals("-a")) {
-                commandLine.withNextBoolean((v, a, s) -> options.all= v);
+                commandLine.withNextFlag((v, a, s) -> options.all= v);
                 return true;
             }
         } else {

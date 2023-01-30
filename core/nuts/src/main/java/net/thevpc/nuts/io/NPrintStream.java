@@ -38,7 +38,7 @@ import java.io.Writer;
 import java.time.temporal.Temporal;
 import java.util.Date;
 
-public interface NPrintStream extends NOutputTarget {
+public interface NPrintStream extends NOutputTarget, NSessionProvider {
 
     static NPrintStream ofNull(NSession session) {
         return NIO.of(session).ofNullPrintStream();
@@ -78,7 +78,6 @@ public interface NPrintStream extends NOutputTarget {
         return NIO.of(session).ofPrintStream(out);
     }
 
-    NSession getSession();
 
     /**
      * update session and return a new instance
@@ -98,9 +97,11 @@ public interface NPrintStream extends NOutputTarget {
 
 
     NPrintStream write(byte[] buf, int off, int len);
+
     NPrintStream write(char[] buf, int off, int len);
 
     NPrintStream print(byte[] buf, int off, int len);
+
     NPrintStream print(char[] buf, int off, int len);
 
     NPrintStream print(NMsg b);
@@ -108,6 +109,7 @@ public interface NPrintStream extends NOutputTarget {
     NPrintStream print(NString b);
 
     NPrintStream print(Boolean b);
+
     NPrintStream print(boolean b);
 
     NPrintStream print(char c);
@@ -123,9 +125,11 @@ public interface NPrintStream extends NOutputTarget {
     NPrintStream print(char[] s);
 
     NPrintStream print(Number d);
+
     NPrintStream print(Temporal d);
 
-    NPrintStream print(Date d) ;
+    NPrintStream print(Date d);
+
     NPrintStream print(String s);
 
     NPrintStream print(Object obj);
@@ -133,9 +137,11 @@ public interface NPrintStream extends NOutputTarget {
     NPrintStream println();
 
     NPrintStream println(Number d);
+
     NPrintStream println(Temporal d);
 
-    NPrintStream println(Date d) ;
+    NPrintStream println(Date d);
+
     NPrintStream println(boolean x);
 
     NPrintStream println(char x);

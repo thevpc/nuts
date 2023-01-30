@@ -38,7 +38,7 @@ import java.util.Map;
  * @author thevpc
  * @since 0.5.4 %category Base
  */
-public interface NExecutionContextBuilder {
+public interface NExecutionContextBuilder extends NSessionProvider{
 
     /**
      * command name
@@ -98,7 +98,6 @@ public interface NExecutionContextBuilder {
      */
     NSession getExecSession();
 
-    NSession getSession();
 
     /**
      * execution environment

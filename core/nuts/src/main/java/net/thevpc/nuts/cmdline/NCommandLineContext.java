@@ -26,6 +26,10 @@
  */
 package net.thevpc.nuts.cmdline;
 
+import net.thevpc.nuts.NApplicationContext;
+import net.thevpc.nuts.NSession;
+import net.thevpc.nuts.NSessionProvider;
+
 /**
  * The processor is called to process the command line arguments.
  * <ul>
@@ -38,5 +42,18 @@ package net.thevpc.nuts.cmdline;
  * @author thevpc
  * @app.category Command Line
  */
-public interface NCommandLineContext extends NCommandLineConfigurable {
+public interface NCommandLineContext extends NSessionProvider {
+    /**
+     * applicationContext or null
+     * @return applicationContext or null
+     */
+    NApplicationContext getApplicationContext();
+
+    Object getSource();
+
+    /**
+     * configurable or null
+     * @return configurable or null
+     */
+    NCommandLineConfigurable getConfigurable();
 }

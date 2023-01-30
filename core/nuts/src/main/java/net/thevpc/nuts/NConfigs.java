@@ -41,7 +41,7 @@ import java.util.Set;
  * @app.category Config
  * @since 0.5.4
  */
-public interface NConfigs extends NComponent {
+public interface NConfigs extends NComponent,NSessionProvider {
     static NConfigs of(NSession session) {
         return NExtensions.of(session).createSupported(NConfigs.class);
     }
@@ -80,8 +80,6 @@ public interface NConfigs extends NComponent {
     String getJavaOptions();
 
     boolean isGlobal();
-
-    NSession getSession();
 
     NConfigs setSession(NSession session);
 

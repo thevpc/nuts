@@ -39,7 +39,7 @@ import java.util.List;
  * @app.category Security
  * @since 0.5.4
  */
-public interface NWorkspaceSecurityManager extends NComponent {
+public interface NWorkspaceSecurityManager extends NComponent, NSessionProvider {
     static NWorkspaceSecurityManager of(NSession session) {
         return NExtensions.of(session).createSupported(NWorkspaceSecurityManager.class);
     }
@@ -233,8 +233,6 @@ public interface NWorkspaceSecurityManager extends NComponent {
      * @return credentials-id
      */
     char[] createCredentials(char[] credentials, boolean allowRetrieve, char[] credentialId);
-
-    NSession getSession();
 
     NWorkspaceSecurityManager setSession(NSession session);
 

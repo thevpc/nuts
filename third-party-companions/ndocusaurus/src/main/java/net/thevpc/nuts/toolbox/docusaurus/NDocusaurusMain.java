@@ -29,7 +29,7 @@ public class NDocusaurusMain implements NApplication {
                     case "-d":
                     case "--dir": {
                         if (workdir == null) {
-                            commandLine.withNextString((v, a, s) -> workdir = v);
+                            commandLine.withNextEntry((v, a, s) -> workdir = v);
                             return true;
                         }
                     }
@@ -42,15 +42,15 @@ public class NDocusaurusMain implements NApplication {
                 NSession session = commandLine.getSession();
                 switch (nonOption.asString().get(session)) {
                     case "start": {
-                        commandLine.withNextBoolean((v, a, s) -> start = v);
+                        commandLine.withNextFlag((v, a, s) -> start = v);
                         return true;
                     }
                     case "build": {
-                        commandLine.withNextBoolean((v, a, s) -> build = v);
+                        commandLine.withNextFlag((v, a, s) -> build = v);
                         return true;
                     }
                     case "pdf": {
-                        commandLine.withNextBoolean((v, a, s) -> buildPdf = v);
+                        commandLine.withNextFlag((v, a, s) -> buildPdf = v);
                         return true;
                     }
                 }

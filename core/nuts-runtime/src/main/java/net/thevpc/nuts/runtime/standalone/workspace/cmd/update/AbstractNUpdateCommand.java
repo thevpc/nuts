@@ -445,34 +445,34 @@ public abstract class AbstractNUpdateCommand extends NWorkspaceCommandBase<NUpda
 //            }
             case "-i":
             case "--installed": {
-                cmdLine.withNextBoolean((v, r, s) -> this.setInstalled(v));
+                cmdLine.withNextFlag((v, r, s) -> this.setInstalled(v));
                 return true;
             }
             case "-r":
             case "--runtime": {
-                cmdLine.withNextBoolean((v, r, s) -> this.setRuntime(v));
+                cmdLine.withNextFlag((v, r, s) -> this.setRuntime(v));
                 return true;
             }
             case "-A":
             case "--api": {
-                cmdLine.withNextBoolean((v, r, s) -> this.setApi(v));
+                cmdLine.withNextFlag((v, r, s) -> this.setApi(v));
                 return true;
             }
 
             case "-e":
             case "--extensions": {
-                cmdLine.withNextBoolean((v, r, s) -> this.setExtensions(v));
+                cmdLine.withNextFlag((v, r, s) -> this.setExtensions(v));
                 return true;
             }
             case "-c":
             case "--companions": {
-                cmdLine.withNextBoolean((v, r, s) -> this.setCompanions(v));
+                cmdLine.withNextFlag((v, r, s) -> this.setCompanions(v));
                 return true;
             }
             case "-v":
             case "--api-version":
             case "--to-version": {
-                cmdLine.withNextString((v, r, s) -> this.setApiVersion(NVersion.of(v).get(getSession())));
+                cmdLine.withNextEntry((v, r, s) -> this.setApiVersion(NVersion.of(v).get(getSession())));
                 return true;
             }
             case "-g":

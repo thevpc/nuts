@@ -95,7 +95,7 @@ public final class NReservedWorkspaceCommandLineParser {
 
                     case "-w":
                     case "--workspace": {
-                        a = cmdLine.nextString().get(session);
+                        a = cmdLine.nextEntry().get(session);
                         String file = a.getStringValue().orElse("");
                         if (active) {
                             options.setWorkspace(file);
@@ -104,7 +104,7 @@ public final class NReservedWorkspaceCommandLineParser {
                     }
                     case "--user":
                     case "-u": {
-                        a = cmdLine.nextString().get(session);
+                        a = cmdLine.nextEntry().get(session);
                         String v = a.getStringValue().orElse("");
                         if (active) {
                             options.setUserName(v);
@@ -113,7 +113,7 @@ public final class NReservedWorkspaceCommandLineParser {
                     }
                     case "--password":
                     case "-p": {
-                        a = cmdLine.nextString().get(session);
+                        a = cmdLine.nextEntry().get(session);
                         String v = a.getStringValue().orElse("");
                         if (active) {
                             options.setCredentials(v.toCharArray());
@@ -123,7 +123,7 @@ public final class NReservedWorkspaceCommandLineParser {
                     case "-V":
                     case "--boot-version":
                     case "--boot-api-version": {
-                        a = cmdLine.nextString().get(session);
+                        a = cmdLine.nextEntry().get(session);
                         String v = a.getStringValue().get(session);
                         if (active) {
                             options.setApiVersion(NVersion.of(v).get(session));
@@ -131,7 +131,7 @@ public final class NReservedWorkspaceCommandLineParser {
                         break;
                     }
                     case "--boot-runtime": {
-                        a = cmdLine.nextString().get(session);
+                        a = cmdLine.nextEntry().get(session);
                         String br = a.getStringValue().orElse("");
                         if (active) {
                             if (br.indexOf("#") > 0) {
@@ -146,7 +146,7 @@ public final class NReservedWorkspaceCommandLineParser {
                     case "--java":
                     case "--boot-java":
                     case "-j": {
-                        a = cmdLine.nextString().get(session);
+                        a = cmdLine.nextEntry().get(session);
                         String v = a.getStringValue().orElse("");
                         if (active) {
                             options.setJavaCommand(v);
@@ -155,7 +155,7 @@ public final class NReservedWorkspaceCommandLineParser {
                     }
                     case "--java-home":
                     case "--boot-java-home": {
-                        a = cmdLine.nextString().get(session);
+                        a = cmdLine.nextEntry().get(session);
                         String v = a.getStringValue().get(session);
                         if (active) {
                             options.setJavaCommand(NReservedUtils.resolveJavaCommand(v));
@@ -165,7 +165,7 @@ public final class NReservedWorkspaceCommandLineParser {
                     case "--java-options":
                     case "--boot-java-options":
                     case "-J": {
-                        a = cmdLine.nextString().get(session);
+                        a = cmdLine.nextEntry().get(session);
                         String v = a.getStringValue().orElse("");
                         if (active) {
                             options.setJavaOptions(v);
@@ -183,7 +183,7 @@ public final class NReservedWorkspaceCommandLineParser {
                     // but They will be ignored elsewhere if the workspace already 
                     // exists : configured parameters will be in use.
                     case "--name": {
-                        a = cmdLine.nextString().get(session);
+                        a = cmdLine.nextEntry().get(session);
                         String v = a.getStringValue().get(session);
                         if (active) {
                             options.setName(v);
@@ -192,7 +192,7 @@ public final class NReservedWorkspaceCommandLineParser {
                     }
                     case "--archetype":
                     case "-A": {
-                        a = cmdLine.nextString().get(session);
+                        a = cmdLine.nextEntry().get(session);
                         String v = a.getStringValue().get(session);
                         if (active) {
                             options.setArchetype(v);
@@ -200,7 +200,7 @@ public final class NReservedWorkspaceCommandLineParser {
                         break;
                     }
                     case "--store-strategy": {
-                        a = cmdLine.nextString().get(session);
+                        a = cmdLine.nextEntry().get(session);
                         String v = a.getStringValue().orElse("");
                         if (active) {
                             options.setStoreLocationStrategy(parseNutsStoreLocationStrategy(v));
@@ -210,7 +210,7 @@ public final class NReservedWorkspaceCommandLineParser {
                     case "-S":
                     case "--standalone":
                     case "--standalone-workspace": {
-                        a = cmdLine.nextBoolean().get(session);
+                        a = cmdLine.nextFlag().get(session);
                         if (active && a.getBooleanValue().get(session)) {
                             options.setStoreLocationStrategy(NStoreLocationStrategy.STANDALONE);
                         }
@@ -220,7 +220,7 @@ public final class NReservedWorkspaceCommandLineParser {
                     case "-E":
                     case "--exploded":
                     case "--exploded-workspace": {
-                        a = cmdLine.nextBoolean().get(session);
+                        a = cmdLine.nextFlag().get(session);
                         if (active && a.getBooleanValue().get(session)) {
                             options.setStoreLocationStrategy(NStoreLocationStrategy.EXPLODED);
                         }
@@ -228,7 +228,7 @@ public final class NReservedWorkspaceCommandLineParser {
                     }
 
                     case "--repo-store-strategy": {
-                        a = cmdLine.nextString().get(session);
+                        a = cmdLine.nextEntry().get(session);
                         String v = a.getStringValue().get(session);
                         if (active) {
                             options.setRepositoryStoreLocationStrategy(parseNutsStoreLocationStrategy(v));
@@ -236,21 +236,21 @@ public final class NReservedWorkspaceCommandLineParser {
                         break;
                     }
                     case "--exploded-repositories": {
-                        a = cmdLine.nextBoolean().get(session);
+                        a = cmdLine.nextFlag().get(session);
                         if (active && a.getBooleanValue().get(session)) {
                             options.setRepositoryStoreLocationStrategy(NStoreLocationStrategy.EXPLODED);
                         }
                         break;
                     }
                     case "--standalone-repositories": {
-                        a = cmdLine.nextBoolean().get(session);
+                        a = cmdLine.nextFlag().get(session);
                         if (active && a.getBooleanValue().get(session)) {
                             options.setRepositoryStoreLocationStrategy(NStoreLocationStrategy.STANDALONE);
                         }
                         break;
                     }
                     case "--store-layout": {
-                        a = cmdLine.nextString().get(session);
+                        a = cmdLine.nextEntry().get(session);
                         String v = a.getStringValue().get(session);
                         if (active) {
                             options.setStoreLocationLayout(parseNutsOsFamily(v));
@@ -258,35 +258,35 @@ public final class NReservedWorkspaceCommandLineParser {
                         break;
                     }
                     case "--system-layout": {
-                        a = cmdLine.nextBoolean().get(session);
+                        a = cmdLine.nextFlag().get(session);
                         if (active && a.getBooleanValue().get(session)) {
                             options.setStoreLocationLayout(null);
                         }
                         break;
                     }
                     case "--windows-layout": {
-                        a = cmdLine.nextBoolean().get(session);
+                        a = cmdLine.nextFlag().get(session);
                         if (active && a.getBooleanValue().get(session)) {
                             options.setStoreLocationLayout(NOsFamily.WINDOWS);
                         }
                         break;
                     }
                     case "--macos-layout": {
-                        a = cmdLine.nextBoolean().get(session);
+                        a = cmdLine.nextFlag().get(session);
                         if (active && a.getBooleanValue().get(session)) {
                             options.setStoreLocationLayout(NOsFamily.MACOS);
                         }
                         break;
                     }
                     case "--linux-layout": {
-                        a = cmdLine.nextBoolean().get(session);
+                        a = cmdLine.nextFlag().get(session);
                         if (active && a.getBooleanValue().get(session)) {
                             options.setStoreLocationLayout(NOsFamily.LINUX);
                         }
                         break;
                     }
                     case "--unix-layout": {
-                        a = cmdLine.nextBoolean().get(session);
+                        a = cmdLine.nextFlag().get(session);
                         if (active && a.getBooleanValue().get(session)) {
                             options.setStoreLocationLayout(NOsFamily.UNIX);
                         }
@@ -299,7 +299,7 @@ public final class NReservedWorkspaceCommandLineParser {
                     case "--temp-location":
                     case "--cache-location":
                     case "--lib-location": {
-                        a = cmdLine.nextString().get(session);
+                        a = cmdLine.nextEntry().get(session);
                         String v = a.getStringValue().get(session);
                         if (active) {
                             NStoreLocation m = NStoreLocation.valueOf(k.substring(2, k.indexOf('-', 2)).toUpperCase());
@@ -315,7 +315,7 @@ public final class NReservedWorkspaceCommandLineParser {
                     case "--system-cache-home":
                     case "--system-lib-home":
                     case "--system-run-home": {
-                        a = cmdLine.nextString().get(session);
+                        a = cmdLine.nextEntry().get(session);
                         String v = a.getStringValue().get(session);
                         NStoreLocation folder = NStoreLocation.valueOf(
                                 k.substring(3 + "system".length(), k.indexOf('-', 3 + "system".length())).toUpperCase());
@@ -356,7 +356,7 @@ public final class NReservedWorkspaceCommandLineParser {
                     case "--unix-cache-home":
                     case "--unix-lib-home":
                     case "--unix-run-home": {
-                        a = cmdLine.nextString().get(session);
+                        a = cmdLine.nextEntry().get(session);
                         String v = a.getStringValue().get(session);
                         NOsFamily layout = NOsFamily.valueOf(k.substring(2, k.indexOf('-', 2)).toUpperCase());
                         NStoreLocation folder = NStoreLocation.valueOf(k.substring(3 + layout.toString().length(), k.indexOf('-', 3 + layout.toString().length())).toUpperCase());
@@ -367,7 +367,7 @@ public final class NReservedWorkspaceCommandLineParser {
                     }
                     case "--skip-companions":
                     case "-k": {
-                        a = cmdLine.nextBoolean().get(session);
+                        a = cmdLine.nextFlag().get(session);
                         if (active) {
                             options.setSkipCompanions(a.getBooleanValue().get());
                         }
@@ -375,7 +375,7 @@ public final class NReservedWorkspaceCommandLineParser {
                     }
                     case "--skip-welcome":
                     case "-K": {
-                        a = cmdLine.nextBoolean().get(session);
+                        a = cmdLine.nextFlag().get(session);
                         if (active) {
                             options.setSkipWelcome(a.getBooleanValue().get(session));
                         }
@@ -383,14 +383,14 @@ public final class NReservedWorkspaceCommandLineParser {
                     }
                     case "--skip-boot":
                     case "-Q": {
-                        a = cmdLine.nextBoolean().get(session);
+                        a = cmdLine.nextFlag().get(session);
                         if (active) {
                             options.setSkipBoot(a.getBooleanValue().get(session));
                         }
                         break;
                     }
                     case "--switch": {
-                        a = cmdLine.nextBoolean().get(session);
+                        a = cmdLine.nextFlag().get(session);
                         if (active) {
                             options.setSwitchWorkspace(a.getBooleanValue().orElse(true));
                         }
@@ -409,7 +409,7 @@ public final class NReservedWorkspaceCommandLineParser {
                     // to any java child process (as system property -D...) 
                     case "-g":
                     case "--global": {
-                        a = cmdLine.nextBoolean().get(session);
+                        a = cmdLine.nextFlag().get(session);
                         if (active) {
                             options.setGlobal(a.getBooleanValue().get(session));
                         }
@@ -417,7 +417,7 @@ public final class NReservedWorkspaceCommandLineParser {
                     }
 
                     case "--gui": {
-                        a = cmdLine.nextBoolean().get(session);
+                        a = cmdLine.nextFlag().get(session);
                         if (active) {
                             options.setGui(a.getBooleanValue().get(session));
                         }
@@ -436,7 +436,7 @@ public final class NReservedWorkspaceCommandLineParser {
                     }
                     case "-B":
                     case "--bot": {
-                        a = cmdLine.nextBoolean().get(session);
+                        a = cmdLine.nextFlag().get(session);
                         if (active) {
                             options.setBot(a.getBooleanValue().get(session));
                         }
@@ -444,7 +444,7 @@ public final class NReservedWorkspaceCommandLineParser {
                     }
                     case "-R":
                     case "--read-only": {
-                        a = cmdLine.nextBoolean().get(session);
+                        a = cmdLine.nextFlag().get(session);
                         if (active && a.getBooleanValue().get(session)) {
                             options.setReadOnly(a.getBooleanValue().get(session));
                         }
@@ -452,7 +452,7 @@ public final class NReservedWorkspaceCommandLineParser {
                     }
                     case "-t":
                     case "--trace": {
-                        a = cmdLine.nextBoolean().get(session);
+                        a = cmdLine.nextFlag().get(session);
                         if (active) {
                             options.setTrace(a.getBooleanValue().get(session));
                         }
@@ -482,7 +482,7 @@ public final class NReservedWorkspaceCommandLineParser {
                         break;
                     }
                     case "--solver": {
-                        a = cmdLine.nextString().get(session);
+                        a = cmdLine.nextEntry().get(session);
                         if (active) {
                             String s = a.getStringValue().get(session);
                             options.setDependencySolver(s);
@@ -491,7 +491,7 @@ public final class NReservedWorkspaceCommandLineParser {
                     }
                     case "--dry":
                     case "-D": {
-                        a = cmdLine.nextBoolean().get(session);
+                        a = cmdLine.nextFlag().get(session);
                         if (active) {
                             options.setDry(a.getBooleanValue().get(session));
                         }
@@ -566,7 +566,7 @@ public final class NReservedWorkspaceCommandLineParser {
                     }
                     case "-X":
                     case "--exclude-extension": {
-                        a = cmdLine.nextString().get(session);
+                        a = cmdLine.nextEntry().get(session);
                         String v = a.getStringValue().get(session);
                         if (active) {
                             excludedExtensions.add(v);
@@ -579,7 +579,7 @@ public final class NReservedWorkspaceCommandLineParser {
                     case "--repo":
                     case "--repos":
                     case "-r": {
-                        a = cmdLine.nextString().get(session);
+                        a = cmdLine.nextEntry().get(session);
                         String v = a.getStringValue().get(session);
                         if (active) {
                             repositories.add(v);
@@ -590,14 +590,14 @@ public final class NReservedWorkspaceCommandLineParser {
                     case "--output-format-option":
                     case "-T":
                         if (active) {
-                            options.addOutputFormatOptions(cmdLine.nextString().get(session).getStringValue().get(session));
+                            options.addOutputFormatOptions(cmdLine.nextEntry().get(session).getStringValue().get(session));
                         } else {
                             cmdLine.skip();
                         }
                         break;
                     case "-O":
                     case "--output-format":
-                        a = cmdLine.nextString().get(session);
+                        a = cmdLine.nextEntry().get(session);
                         if (active) {
                             String t = a.getStringValue().orElse("");
                             int i = NReservedStringUtils.firstIndexOf(t, new char[]{' ', ';', ':', '='});
@@ -668,7 +668,7 @@ public final class NReservedWorkspaceCommandLineParser {
                         break;
                     case "--yes":
                     case "-y": {
-                        a = cmdLine.nextBoolean().get(session);
+                        a = cmdLine.nextFlag().get(session);
                         if (active && a.getBooleanValue().get(session)) {
                             explicitConfirm = true;
                             options.setConfirm(NConfirmationMode.YES);
@@ -677,7 +677,7 @@ public final class NReservedWorkspaceCommandLineParser {
                     }
                     case "--no":
                     case "-n": {
-                        a = cmdLine.nextBoolean().get(session);
+                        a = cmdLine.nextFlag().get(session);
                         if (active && a.getBooleanValue().get(session)) {
                             explicitConfirm = true;
                             options.setConfirm(NConfirmationMode.NO);
@@ -685,7 +685,7 @@ public final class NReservedWorkspaceCommandLineParser {
                         break;
                     }
                     case "--error": {
-                        a = cmdLine.nextBoolean().get(session);
+                        a = cmdLine.nextFlag().get(session);
                         if (active && a.getBooleanValue().get(session)) {
                             explicitConfirm = true;
                             options.setConfirm(NConfirmationMode.ERROR);
@@ -693,7 +693,7 @@ public final class NReservedWorkspaceCommandLineParser {
                         break;
                     }
                     case "--ask": {
-                        a = cmdLine.nextBoolean().get(session);
+                        a = cmdLine.nextFlag().get(session);
                         if (active && a.getBooleanValue().get(session)) {
                             explicitConfirm = true;
                             options.setConfirm(NConfirmationMode.ASK);
@@ -701,21 +701,21 @@ public final class NReservedWorkspaceCommandLineParser {
                         break;
                     }
                     case "--cached": {
-                        a = cmdLine.nextBoolean().get(session);
+                        a = cmdLine.nextFlag().get(session);
                         if (active && a.getBooleanValue().get(session)) {
                             options.setCached(a.getBooleanValue().get(session));
                         }
                         break;
                     }
                     case "--indexed": {
-                        a = cmdLine.nextBoolean().get(session);
+                        a = cmdLine.nextFlag().get(session);
                         if (active && a.getBooleanValue().get(session)) {
                             options.setIndexed(a.getBooleanValue().get(session));
                         }
                         break;
                     }
                     case "--transitive": {
-                        a = cmdLine.nextBoolean().get(session);
+                        a = cmdLine.nextFlag().get(session);
                         if (active) {
                             options.setTransitive(a.getBooleanValue().get(session));
                         }
@@ -723,7 +723,7 @@ public final class NReservedWorkspaceCommandLineParser {
                     }
                     case "-f":
                     case "--fetch": {
-                        a = cmdLine.nextString().get(session);
+                        a = cmdLine.nextEntry().get(session);
                         if (active) {
                             options.setFetchStrategy(a.getStringValue()
                                     .flatMap(NFetchStrategy::parse).get(session));
@@ -732,7 +732,7 @@ public final class NReservedWorkspaceCommandLineParser {
                     }
                     case "-a":
                     case "--anywhere": {
-                        a = cmdLine.nextBoolean().get(session);
+                        a = cmdLine.nextFlag().get(session);
                         if (active && a.getBooleanValue().get(session)) {
                             options.setFetchStrategy(NFetchStrategy.ANYWHERE);
                         }
@@ -740,21 +740,21 @@ public final class NReservedWorkspaceCommandLineParser {
                     }
                     case "-F":
                     case "--offline": {
-                        a = cmdLine.nextBoolean().get(session);
+                        a = cmdLine.nextFlag().get(session);
                         if (active && a.getBooleanValue().get(session)) {
                             options.setFetchStrategy(NFetchStrategy.OFFLINE);
                         }
                         break;
                     }
                     case "--online": {
-                        a = cmdLine.nextBoolean().get(session);
+                        a = cmdLine.nextFlag().get(session);
                         if (active && a.getBooleanValue().get(session)) {
                             options.setFetchStrategy(NFetchStrategy.ONLINE);
                         }
                         break;
                     }
                     case "--remote": {
-                        a = cmdLine.nextBoolean().get(session);
+                        a = cmdLine.nextFlag().get(session);
                         if (active && a.getBooleanValue().get(session)) {
                             options.setFetchStrategy(NFetchStrategy.REMOTE);
                         }
@@ -774,7 +774,7 @@ public final class NReservedWorkspaceCommandLineParser {
                     // as well but still they are not persistent.
                     case "--embedded":
                     case "-b": {
-                        a = cmdLine.nextBoolean().get(session);
+                        a = cmdLine.nextFlag().get(session);
                         if (active && a.getBooleanValue().get(session)) {
                             options.setExecutionType(NExecutionType.EMBEDDED);
                         }
@@ -782,7 +782,7 @@ public final class NReservedWorkspaceCommandLineParser {
                         break;
                     }
                     case "--open-file": {
-                        a = cmdLine.nextBoolean().get(session);
+                        a = cmdLine.nextFlag().get(session);
                         if (active && a.getBooleanValue().get(session)) {
                             options.setExecutionType(NExecutionType.OPEN);
                         }
@@ -792,7 +792,7 @@ public final class NReservedWorkspaceCommandLineParser {
                     case "--external":
                     case "--spawn":
                     case "-x": {
-                        a = cmdLine.nextBoolean().get(session);
+                        a = cmdLine.nextFlag().get(session);
                         if (active && a.getBooleanValue().get(session)) {
                             options.setExecutionType(NExecutionType.SPAWN);
                         }
@@ -800,7 +800,7 @@ public final class NReservedWorkspaceCommandLineParser {
                     }
                     case "--user-cmd"://deprecated since 0.8.1
                     case "--system": {
-                        a = cmdLine.nextBoolean().get(session);
+                        a = cmdLine.nextFlag().get(session);
                         if (active && a.getBooleanValue().get(session)) {
                             options.setExecutionType(NExecutionType.SYSTEM);
                         }
@@ -808,21 +808,21 @@ public final class NReservedWorkspaceCommandLineParser {
                     }
                     case "--root-cmd": //deprecated since 0.8.1
                     case "--as-root": {
-                        a = cmdLine.nextBoolean().get(session);
+                        a = cmdLine.nextFlag().get(session);
                         if (active && a.getBooleanValue().get(session)) {
                             options.setRunAs(NRunAs.root());
                         }
                         break;
                     }
                     case "--current-user": {
-                        a = cmdLine.nextBoolean().get(session);
+                        a = cmdLine.nextFlag().get(session);
                         if (active && a.getBooleanValue().get(session)) {
                             options.setRunAs(NRunAs.currentUser());
                         }
                         break;
                     }
                     case "--run-as": {
-                        a = cmdLine.nextString().get(session);
+                        a = cmdLine.nextEntry().get(session);
                         if (active) {
                             options.setRunAs(NRunAs.user(a.getStringValue().get(session)));
                         }
@@ -830,7 +830,7 @@ public final class NReservedWorkspaceCommandLineParser {
                     }
                     case "-o":
                     case "--open-mode": {
-                        a = cmdLine.nextString().get(session);
+                        a = cmdLine.nextEntry().get(session);
                         String v = a.getStringValue().get(session);
                         if (active) {
                             options.setOpenMode(parseNutsOpenMode(v));
@@ -839,7 +839,7 @@ public final class NReservedWorkspaceCommandLineParser {
                     }
                     case "--open-or-error":
                     case "--open": {
-                        a = cmdLine.nextBoolean().get(session);
+                        a = cmdLine.nextFlag().get(session);
                         if (active && a.getBooleanValue().get(session)) {
                             options.setOpenMode(NOpenMode.OPEN_OR_ERROR);
                         }
@@ -847,21 +847,21 @@ public final class NReservedWorkspaceCommandLineParser {
                     }
                     case "--create-or-error":
                     case "--create": {
-                        a = cmdLine.nextBoolean().get(session);
+                        a = cmdLine.nextFlag().get(session);
                         if (active && a.getBooleanValue().get(session)) {
                             options.setOpenMode(NOpenMode.CREATE_OR_ERROR);
                         }
                         break;
                     }
                     case "--open-or-create": {
-                        a = cmdLine.nextBoolean().get(session);
+                        a = cmdLine.nextFlag().get(session);
                         if (active && a.getBooleanValue().get(session)) {
                             options.setOpenMode(NOpenMode.OPEN_OR_CREATE);
                         }
                         break;
                     }
                     case "--open-or-null": {
-                        a = cmdLine.nextBoolean().get(session);
+                        a = cmdLine.nextFlag().get(session);
                         if (active && a.getBooleanValue().get(session)) {
                             options.setOpenMode(NOpenMode.OPEN_OR_NULL);
                         }
@@ -895,7 +895,7 @@ public final class NReservedWorkspaceCommandLineParser {
                     case "-version":
                     case "-v":
                     case "--version": {
-                        a = cmdLine.nextBoolean().get(session);
+                        a = cmdLine.nextFlag().get(session);
                         if (active) {
                             options.setCommandVersion(a.isActive());
                         }
@@ -903,7 +903,7 @@ public final class NReservedWorkspaceCommandLineParser {
                     }
                     case "-Z":
                     case "--reset": {
-                        a = cmdLine.nextBoolean().get(session);
+                        a = cmdLine.nextFlag().get(session);
                         if (active) {
                             if (a.getBooleanValue().get(session)) {
                                 options.setReset(true);
@@ -916,7 +916,7 @@ public final class NReservedWorkspaceCommandLineParser {
                     }
                     case "-z":
                     case "--recover": {
-                        a = cmdLine.nextBoolean().get(session);
+                        a = cmdLine.nextFlag().get(session);
                         if (active) {
                             if (a.getBooleanValue().get(session)) {
                                 options.setReset(false);
@@ -938,21 +938,21 @@ public final class NReservedWorkspaceCommandLineParser {
                         break;
                     }
                     case "--out-line-prefix": {
-                        a = cmdLine.nextString().get(session);
+                        a = cmdLine.nextEntry().get(session);
                         if (active) {
                             options.setOutLinePrefix(a.getStringValue().get(session));
                         }
                         break;
                     }
                     case "--err-line-prefix": {
-                        a = cmdLine.nextString().get(session);
+                        a = cmdLine.nextEntry().get(session);
                         if (active) {
                             options.setErrLinePrefix(a.getStringValue().get(session));
                         }
                         break;
                     }
                     case "--line-prefix": {
-                        a = cmdLine.nextString().get(session);
+                        a = cmdLine.nextEntry().get(session);
                         if (active) {
                             options.setOutLinePrefix(a.getStringValue().get(session));
                             options.setErrLinePrefix(a.getStringValue().get(session));
@@ -961,7 +961,7 @@ public final class NReservedWorkspaceCommandLineParser {
                     }
                     case "-e":
                     case "--exec": {
-                        a = cmdLine.nextBoolean().get(session);
+                        a = cmdLine.nextFlag().get(session);
                         if (active && a.getBooleanValue().get(session)) {
                             while ((a = cmdLine.next().orNull()) != null) {
                                 if (a.isOption()) {
@@ -980,14 +980,14 @@ public final class NReservedWorkspaceCommandLineParser {
                     case "-?":
                     case "--help":
                     case "-h": {
-                        a = cmdLine.nextBoolean().get(session);
+                        a = cmdLine.nextFlag().get(session);
                         if (active) {
                             options.setCommandHelp(a.getBooleanValue().get(session));
                         }
                         break;
                     }
                     case "--skip-errors": {
-                        a = cmdLine.nextBoolean().get(session);
+                        a = cmdLine.nextFlag().get(session);
                         if (active) {
                             options.setSkipErrors(a.getBooleanValue().get(session));
                         }
@@ -995,84 +995,84 @@ public final class NReservedWorkspaceCommandLineParser {
                     }
                     case "-L":
                     case "--locale": {
-                        a = cmdLine.nextString().get(session);
+                        a = cmdLine.nextEntry().get(session);
                         if (active) {
                             options.setLocale(a.getStringValue().get(session));
                         }
                         break;
                     }
                     case "--theme": {
-                        a = cmdLine.nextString().get(session);
+                        a = cmdLine.nextEntry().get(session);
                         if (active) {
                             options.setTheme(a.getStringValue().get(session));
                         }
                         break;
                     }
                     case "--sandbox": {
-                        a = cmdLine.nextBoolean().get(session);
+                        a = cmdLine.nextFlag().get(session);
                         if (active) {
                             options.setIsolationLevel(a.getBooleanValue().get(session) ? NIsolationLevel.SANDBOX : null);
                         }
                         break;
                     }
                     case "--confined": {
-                        a = cmdLine.nextBoolean().get(session);
+                        a = cmdLine.nextFlag().get(session);
                         if (active) {
                             options.setIsolationLevel(a.getBooleanValue().get(session) ? NIsolationLevel.CONFINED : null);
                         }
                         break;
                     }
                     case "--isolation-level": {
-                        a = cmdLine.nextString().get(session);
+                        a = cmdLine.nextEntry().get(session);
                         if (active) {
                             options.setIsolationLevel(a.getStringValue().flatMap(NIsolationLevel::parse).get(session));
                         }
                         break;
                     }
                     case "--init-launchers": {
-                        a = cmdLine.nextBoolean().get(session);
+                        a = cmdLine.nextFlag().get(session);
                         if (active) {
                             options.setInitLaunchers(a.getBooleanValue().get(session));
                         }
                         break;
                     }
                     case "--init-java": {
-                        a = cmdLine.nextBoolean().get(session);
+                        a = cmdLine.nextFlag().get(session);
                         if (active) {
                             options.setInitJava(a.getBooleanValue().get(session));
                         }
                         break;
                     }
                     case "--init-platforms": {
-                        a = cmdLine.nextBoolean().get(session);
+                        a = cmdLine.nextFlag().get(session);
                         if (active) {
                             options.setInitPlatforms(a.getBooleanValue().get(session));
                         }
                         break;
                     }
                     case "--init-scripts": {
-                        a = cmdLine.nextBoolean().get(session);
+                        a = cmdLine.nextFlag().get(session);
                         if (active) {
                             options.setInitScripts(a.getBooleanValue().get(session));
                         }
                         break;
                     }
                     case "--desktop-launcher": {
-                        a = cmdLine.nextString().get(session);
+                        a = cmdLine.nextEntry().get(session);
                         if (active) {
                             options.setDesktopLauncher(a.getStringValue().flatMap(NSupportMode::parse).get(session));
                         }
                         break;
                     }
                     case "--menu-launcher": {
-                        a = cmdLine.nextString().get(session);
+                        a = cmdLine.nextEntry().get(session);
                         if (active) {
                             options.setMenuLauncher(a.getStringValue().flatMap(NSupportMode::parse).get(session));
                         }
                         break;
                     }
                     case "--user-launcher": {
-                        a = cmdLine.nextString().get(session);
+                        a = cmdLine.nextEntry().get(session);
                         if (active) {
                             options.setUserLauncher(a.getStringValue().flatMap(NSupportMode::parse).get(session));
                         }
@@ -1143,7 +1143,7 @@ public final class NReservedWorkspaceCommandLineParser {
         NArg a = cmdLine.peek().get(session);
         switch (a.key()) {
             case "--log-file-size": {
-                a = cmdLine.nextString().get(session);
+                a = cmdLine.nextEntry().get(session);
                 String v = a.getStringValue().get(session);
                 if (enabled) {
                     Integer fileSize = NApiUtils.parseFileSizeInBytes(v, 1024 * 1024).orNull();
@@ -1166,7 +1166,7 @@ public final class NReservedWorkspaceCommandLineParser {
             }
 
             case "--log-file-count": {
-                a = cmdLine.nextString().get(session);
+                a = cmdLine.nextEntry().get(session);
                 if (enabled) {
                     logConfig.setLogFileCount(a.getValue().asInt().get(session));
                 }
@@ -1174,7 +1174,7 @@ public final class NReservedWorkspaceCommandLineParser {
             }
 
             case "--log-file-name": {
-                a = cmdLine.nextString().get(session);
+                a = cmdLine.nextEntry().get(session);
                 String v = a.getStringValue().get(session);
                 if (enabled) {
                     logConfig.setLogFileName(v);
@@ -1183,7 +1183,7 @@ public final class NReservedWorkspaceCommandLineParser {
             }
 
             case "--log-file-base": {
-                a = cmdLine.nextString().get(session);
+                a = cmdLine.nextEntry().get(session);
                 String v = a.getStringValue().get(session);
                 if (enabled) {
                     logConfig.setLogFileBase(v);

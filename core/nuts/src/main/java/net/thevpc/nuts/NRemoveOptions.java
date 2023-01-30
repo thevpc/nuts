@@ -33,7 +33,7 @@ import java.util.Objects;
  * @app.category Commands
  * @since 0.5.4
  */
-public class NRemoveOptions {
+public class NRemoveOptions implements NSessionProvider{
 
     private boolean erase = false;
     private NSession session;

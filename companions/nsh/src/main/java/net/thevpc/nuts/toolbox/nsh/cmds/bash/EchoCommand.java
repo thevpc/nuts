@@ -51,19 +51,19 @@ public class EchoCommand extends SimpleJShellBuiltin {
         NSession session = context.getSession();
         switch (commandLine.peek().get(session).key()) {
             case "-n": {
-                commandLine.withNextBoolean((v, a, s) -> options.newLine=v);
+                commandLine.withNextFlag((v, a, s) -> options.newLine=v);
                 return true;
             }
             case "-p":
             case "--plain": {
-                commandLine.withNextTrue((v, a, s) -> options.highlighter=null);
+                commandLine.withNextTrueFlag((v, a, s) -> options.highlighter=null);
                 return true;
             }
             case "-H":
             case "--highlight":
             case "--highlighter":
             {
-                commandLine.withNextString((v, a, s) -> options.highlighter= NStringUtils.trim(v));
+                commandLine.withNextEntry((v, a, s) -> options.highlighter= NStringUtils.trim(v));
                 return true;
             }
             default: {

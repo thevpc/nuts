@@ -34,10 +34,11 @@ import java.util.function.Predicate;
 /**
  * @app.category Toolkit
  */
-public interface NPlatforms extends NComponent {
+public interface NPlatforms extends NComponent, NSessionProvider {
     static NPlatforms of(NSession session) {
         return NExtensions.of(session).createSupported(NPlatforms.class);
     }
+
     boolean addPlatform(NPlatformLocation location);
 
     boolean updatePlatform(NPlatformLocation oldLocation, NPlatformLocation newLocation);
@@ -76,8 +77,6 @@ public interface NPlatforms extends NComponent {
     NStream<NPlatformLocation> findPlatforms();
 
     NStream<NPlatformLocation> findPlatforms(NPlatformFamily type);
-
-    NSession getSession();
 
     NPlatforms setSession(NSession session);
 }

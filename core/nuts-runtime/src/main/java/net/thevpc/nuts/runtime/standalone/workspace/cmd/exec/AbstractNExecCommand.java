@@ -578,7 +578,7 @@ public abstract class AbstractNExecCommand extends NWorkspaceCommandBase<NExecCo
                 return true;
             }
             case "--run-as": {
-                NArg s = cmdLine.nextString().get(session);
+                NArg s = cmdLine.nextEntry().get(session);
                 if (enabled) {
                     setRunAs(NRunAs.user(s.getStringValue().ifBlankEmpty().get(session)));
                 }
@@ -592,7 +592,7 @@ public abstract class AbstractNExecCommand extends NWorkspaceCommandBase<NExecCo
                 return true;
             }
             case "--inherit-system-io": {
-                NArg val = cmdLine.nextBoolean().get(session);
+                NArg val = cmdLine.nextFlag().get(session);
                 if (enabled) {
                     setInheritSystemIO(val.getBooleanValue().get(session));
                 }
@@ -600,7 +600,7 @@ public abstract class AbstractNExecCommand extends NWorkspaceCommandBase<NExecCo
             }
             case "-dry":
             case "-d": {
-                boolean val = cmdLine.nextBoolean().get(session).getBooleanValue().get(session);
+                boolean val = cmdLine.nextFlag().get(session).getBooleanValue().get(session);
                 if (enabled) {
                     getSession().setDry(val);
                 }

@@ -38,7 +38,7 @@ import java.util.Map;
  * @app.category Base
  * @since 0.5.4
  */
-public interface NExecutionContext {
+public interface NExecutionContext extends NSessionProvider {
 
     /**
      * command name
@@ -58,6 +58,7 @@ public interface NExecutionContext {
 
     /**
      * extra executor arguments tha are passed to nuts aware applications
+     *
      * @return all nuts arguments
      */
     List<String> getWorkspaceOptions();
@@ -103,8 +104,6 @@ public interface NExecutionContext {
      * @return current session
      */
     NSession getExecSession();
-
-    NSession getSession();
 
     /**
      * execution environment

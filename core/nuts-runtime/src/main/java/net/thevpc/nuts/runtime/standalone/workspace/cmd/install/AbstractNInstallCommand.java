@@ -304,17 +304,17 @@ public abstract class AbstractNInstallCommand extends NWorkspaceCommandBase<NIns
         switch (aa.key()) {
             case "-c":
             case "--companions": {
-                commandLine.withNextBoolean((v, a, s) -> this.setCompanions(v));
+                commandLine.withNextFlag((v, a, s) -> this.setCompanions(v));
                 return true;
             }
             case "-i":
             case "--installed": {
-                commandLine.withNextBoolean((v, a, s) -> this.setInstalled(v));
+                commandLine.withNextFlag((v, a, s) -> this.setInstalled(v));
                 return true;
             }
             case "-s":
             case "--strategy": {
-                String val = commandLine.nextString().flatMap(NLiteral::asString).get(session);
+                String val = commandLine.nextEntry().flatMap(NLiteral::asString).get(session);
                 if (enabled) {
                     this.setStrategy(CoreEnumUtils.parseEnumString(val, NInstallStrategy.class, false));
                 }
