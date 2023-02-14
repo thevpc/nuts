@@ -26,7 +26,7 @@
  */
 package net.thevpc.nuts.spi;
 
-import net.thevpc.nuts.cmdline.NCommandLine;
+import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.io.NPrintStream;
 
 /**
@@ -57,6 +57,6 @@ public interface NFormatSPI {
      * @param commandLine arguments to configure with
      * @return true when the at least one argument was processed
      */
-    boolean configureFirst(NCommandLine commandLine);
+    boolean configureFirst(NCmdLine commandLine);
 
 }

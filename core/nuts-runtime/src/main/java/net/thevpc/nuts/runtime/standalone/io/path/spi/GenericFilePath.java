@@ -1,7 +1,7 @@
 package net.thevpc.nuts.runtime.standalone.io.path.spi;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.cmdline.NCommandLine;
+import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.format.NTreeVisitor;
 import net.thevpc.nuts.io.*;
 import net.thevpc.nuts.runtime.standalone.session.NSessionUtils;
@@ -467,7 +467,7 @@ public class GenericFilePath implements NPathSPI {
         }
 
         @Override
-        public boolean configureFirst(NCommandLine commandLine) {
+        public boolean configureFirst(NCmdLine commandLine) {
             return false;
         }
     }

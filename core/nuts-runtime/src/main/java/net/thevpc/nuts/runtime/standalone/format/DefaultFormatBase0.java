@@ -6,8 +6,8 @@
 package net.thevpc.nuts.runtime.standalone.format;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.cmdline.NCommandLine;
-import net.thevpc.nuts.cmdline.NCommandLineConfigurable;
+import net.thevpc.nuts.cmdline.NCmdLine;
+import net.thevpc.nuts.cmdline.NCmdLineConfigurable;
 import net.thevpc.nuts.io.NPrintStream;
 import net.thevpc.nuts.runtime.standalone.session.NSessionUtils;
 import net.thevpc.nuts.runtime.standalone.util.NConfigurableHelper;
@@ -17,7 +17,7 @@ import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceUtils;
  *
  * @author thevpc
  */
-public abstract class DefaultFormatBase0<T> implements NCommandLineConfigurable {
+public abstract class DefaultFormatBase0<T> implements NCmdLineConfigurable {
 
     private final NWorkspace workspace;
     private NSession session;
@@ -82,7 +82,7 @@ public abstract class DefaultFormatBase0<T> implements NCommandLineConfigurable 
 
     /**
      * configure the current command with the given arguments. This is an
-     * override of the {@link NCommandLineConfigurable#configure(boolean, java.lang.String...)
+     * override of the {@link NCmdLineConfigurable#configure(boolean, java.lang.String...)
      * }
      * to help return a more specific return type;
      *
@@ -103,7 +103,7 @@ public abstract class DefaultFormatBase0<T> implements NCommandLineConfigurable 
      * @return {@code this} instance
      */
     @Override
-    public final boolean configure(boolean skipUnsupported, NCommandLine commandLine) {
+    public final boolean configure(boolean skipUnsupported, NCmdLine commandLine) {
         return NConfigurableHelper.configure(this, getSession(), skipUnsupported, commandLine);
     }
 
@@ -117,7 +117,7 @@ public abstract class DefaultFormatBase0<T> implements NCommandLineConfigurable 
     }
 
     @Override
-    public void configureLast(NCommandLine commandLine) {
+    public void configureLast(NCmdLine commandLine) {
         if (!configureFirst(commandLine)) {
             commandLine.throwUnexpectedArgument();
         }

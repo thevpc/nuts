@@ -26,7 +26,7 @@
 package net.thevpc.nuts.toolbox.nsh.cmds.bash;
 
 import net.thevpc.nuts.cmdline.NArg;
-import net.thevpc.nuts.cmdline.NCommandLine;
+import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.NSession;
 import net.thevpc.nuts.spi.NComponentScope;
 import net.thevpc.nuts.spi.NComponentScopeType;
@@ -47,7 +47,7 @@ public class BaseNameCommand extends SimpleJShellBuiltin {
     }
 
     @Override
-    protected boolean configureFirst(NCommandLine cmdLine, JShellExecutionContext context) {
+    protected boolean configureFirst(NCmdLine cmdLine, JShellExecutionContext context) {
         Options options = context.getOptions();
         NSession session = context.getSession();
         NArg a = cmdLine.peek().get(session);
@@ -99,7 +99,7 @@ public class BaseNameCommand extends SimpleJShellBuiltin {
     }
 
     @Override
-    protected void execBuiltin(NCommandLine commandLine, JShellExecutionContext context) {
+    protected void execBuiltin(NCmdLine commandLine, JShellExecutionContext context) {
         Options options = context.getOptions();
         NSession session = context.getSession();
         if (options.names.isEmpty()) {

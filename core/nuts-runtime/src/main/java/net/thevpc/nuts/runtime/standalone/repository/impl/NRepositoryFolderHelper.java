@@ -32,7 +32,7 @@ import net.thevpc.nuts.spi.NRepositorySPI;
 import net.thevpc.nuts.spi.NRepositoryUndeployCommand;
 import net.thevpc.nuts.util.NAssert;
 import net.thevpc.nuts.util.NIterator;
-import net.thevpc.nuts.util.NLogger;
+import net.thevpc.nuts.util.NLog;
 
 import java.io.*;
 import java.nio.file.FileVisitResult;
@@ -53,7 +53,7 @@ public class NRepositoryFolderHelper {
     private final NSession ws;
     private final NPath rootPath;
     private final boolean cacheFolder;
-    private NLogger LOG;
+    private NLog LOG;
     private boolean readEnabled = true;
     private boolean writeEnabled = true;
     private final String kind;
@@ -409,9 +409,9 @@ public class NRepositoryFolderHelper {
         return descriptor.builder().setId(id.getLongId()).build();
     }
 
-    protected NLogger _LOG(NSession session) {
+    protected NLog _LOG(NSession session) {
         if (LOG == null) {
-            LOG = NLogger.of(DefaultNFetchContentRepositoryCommand.class, session);
+            LOG = NLog.of(DefaultNFetchContentRepositoryCommand.class, session);
         }
         return LOG;
     }

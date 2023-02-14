@@ -1,6 +1,6 @@
 package net.thevpc.nuts.toolbox.nsh.jshell;
 
-import net.thevpc.nuts.cmdline.NCommandAutoComplete;
+import net.thevpc.nuts.cmdline.NCmdLineAutoComplete;
 import net.thevpc.nuts.NSession;
 import net.thevpc.nuts.NWorkspace;
 
@@ -136,12 +136,12 @@ public class JShellContextForSource extends AbstractJShellContext{
     }
 
     @Override
-    public NCommandAutoComplete getAutoComplete() {
+    public NCmdLineAutoComplete getAutoComplete() {
         return other.getAutoComplete();
     }
 
     @Override
-    public void setAutoComplete(NCommandAutoComplete value) {
+    public void setAutoComplete(NCmdLineAutoComplete value) {
         other.setAutoComplete(value);
     }
 

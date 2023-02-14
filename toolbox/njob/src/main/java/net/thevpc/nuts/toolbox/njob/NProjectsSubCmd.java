@@ -2,7 +2,7 @@ package net.thevpc.nuts.toolbox.njob;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.cmdline.NArg;
-import net.thevpc.nuts.cmdline.NCommandLine;
+import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.format.NMutableTableModel;
 import net.thevpc.nuts.format.NTableFormat;
 import net.thevpc.nuts.io.NPrintStream;
@@ -38,7 +38,7 @@ public class NProjectsSubCmd {
         this.session = parent.session;
     }
 
-    public void runProjectAdd(NCommandLine cmd) {
+    public void runProjectAdd(NCmdLine cmd) {
         NProject t = new NProject();
         NRef<Boolean> list = NRef.of(false);
         NRef<Boolean> show = NRef.of(false);
@@ -109,15 +109,15 @@ public class NProjectsSubCmd {
                 ));
             }
             if (show.get()) {
-                runProjectShow(NCommandLine.of(new String[]{t.getId()}));
+                runProjectShow(NCmdLine.of(new String[]{t.getId()}));
             }
             if (list.get()) {
-                runProjectList(NCommandLine.of(new String[0]));
+                runProjectList(NCmdLine.of(new String[0]));
             }
         }
     }
 
-    public void runProjectUpdate(NCommandLine cmd) {
+    public void runProjectUpdate(NCmdLine cmd) {
         class Data {
             List<NProject> projects = new ArrayList<>();
             boolean list = false;
@@ -239,16 +239,16 @@ public class NProjectsSubCmd {
             }
             if (d.show) {
                 for (NProject t : new LinkedHashSet<>(d.projects)) {
-                    runProjectShow(NCommandLine.of(new String[]{t.getId()}));
+                    runProjectShow(NCmdLine.of(new String[]{t.getId()}));
                 }
             }
             if (d.list) {
-                runProjectList(NCommandLine.of(new String[0]));
+                runProjectList(NCmdLine.of(new String[0]));
             }
         }
     }
 
-    private void runProjectList(NCommandLine cmd) {
+    private void runProjectList(NCmdLine cmd) {
         final NRef<Predicate<NProject>> whereFilter = NRef.ofNull();
         while (cmd.hasNext()) {
             NArg aa = cmd.peek().get(session);
@@ -349,7 +349,7 @@ public class NProjectsSubCmd {
         }
     }
 
-    private void runProjectRemove(NCommandLine cmd) {
+    private void runProjectRemove(NCmdLine cmd) {
         NTexts text = NTexts.of(context.getSession());
         while (cmd.hasNext()) {
             NArg a = cmd.next().get(session);
@@ -373,7 +373,7 @@ public class NProjectsSubCmd {
 
     }
 
-    private void runProjectShow(NCommandLine cmd) {
+    private void runProjectShow(NCmdLine cmd) {
         while (cmd.hasNext()) {
             NArg a = cmd.next().get(session);
             NProject project = findProject(a.toString(), cmd);
@@ -398,7 +398,7 @@ public class NProjectsSubCmd {
 
     }
 
-    private NProject findProject(String pid, NCommandLine cmd) {
+    private NProject findProject(String pid, NCmdLine cmd) {
         NProject t = null;
         if (pid.startsWith("#")) {
             int x = JobServiceCmd.parseIntOrFF(pid.substring(1));
@@ -418,7 +418,7 @@ public class NProjectsSubCmd {
         return t;
     }
 
-    public boolean runProjectCommands(NCommandLine cmd) {
+    public boolean runProjectCommands(NCmdLine cmd) {
         if (cmd.next("ap", "a p", "pa", "p a", "add project", "projects add").isPresent()) {
             runProjectAdd(cmd);
             return true;

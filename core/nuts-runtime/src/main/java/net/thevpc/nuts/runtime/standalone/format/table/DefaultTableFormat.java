@@ -25,7 +25,7 @@ package net.thevpc.nuts.runtime.standalone.format.table;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.cmdline.NArg;
-import net.thevpc.nuts.cmdline.NCommandLine;
+import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.elem.NElement;
 import net.thevpc.nuts.elem.NElementEntry;
 import net.thevpc.nuts.elem.NElements;
@@ -792,7 +792,7 @@ public class DefaultTableFormat extends DefaultFormatBase<NTableFormat> implemen
     }
 
     @Override
-    public boolean configureFirst(NCommandLine cmdLine) {
+    public boolean configureFirst(NCmdLine cmdLine) {
         NSession session = getSession();
         NArg a;
         if ((a = cmdLine.nextFlag("--no-header").orNull()) != null) {

@@ -2,7 +2,7 @@ package net.thevpc.nuts.toolbox.njob;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.cmdline.NArg;
-import net.thevpc.nuts.cmdline.NCommandLine;
+import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.format.NMutableTableModel;
 import net.thevpc.nuts.format.NTableFormat;
 import net.thevpc.nuts.io.NPrintStream;
@@ -38,7 +38,7 @@ public class NTasksSubCmd {
         this.session = parent.session;
     }
 
-    public void runTaskAdd(NCommandLine cmd) {
+    public void runTaskAdd(NCmdLine cmd) {
         boolean list = false;
         boolean show = false;
         boolean nameVisited = false;
@@ -171,15 +171,15 @@ public class NTasksSubCmd {
                 ));
             }
             if (show) {
-                runTaskShow(NCommandLine.of(new String[]{t.getId()}));
+                runTaskShow(NCmdLine.of(new String[]{t.getId()}));
             }
             if (list) {
-                runTaskList(NCommandLine.of(new String[0]));
+                runTaskList(NCmdLine.of(new String[0]));
             }
         }
     }
 
-    public void runTaskUpdate(NCommandLine cmd) {
+    public void runTaskUpdate(NCmdLine cmd) {
         class Data{
             List<NTask> tasks = new ArrayList<>();
             boolean list = false;
@@ -414,16 +414,16 @@ public class NTasksSubCmd {
             }
             if (d.show) {
                 for (NTask t : new LinkedHashSet<>(d.tasks)) {
-                    runTaskList(NCommandLine.of(new String[]{t.getId()}));
+                    runTaskList(NCmdLine.of(new String[]{t.getId()}));
                 }
             }
             if (d.list) {
-                runTaskList(NCommandLine.of(new String[0]));
+                runTaskList(NCmdLine.of(new String[0]));
             }
         }
     }
 
-    private void runTaskList(NCommandLine cmd) {
+    private void runTaskList(NCmdLine cmd) {
         class Data{
             TimespanPattern hoursPerDay = TimespanPattern.WORK;
             int count = 100;
@@ -642,7 +642,7 @@ public class NTasksSubCmd {
         };
     }
 
-    private void runTaskRemove(NCommandLine cmd) {
+    private void runTaskRemove(NCmdLine cmd) {
         NTexts text = NTexts.of(context.getSession());
         while (cmd.hasNext()) {
             NArg a = cmd.next().get(session);
@@ -665,7 +665,7 @@ public class NTasksSubCmd {
 
     }
 
-    private void runTaskShow(NCommandLine cmd) {
+    private void runTaskShow(NCmdLine cmd) {
         while (cmd.hasNext()) {
             NArg a = cmd.next().get(session);
             if (cmd.isExecMode()) {
@@ -706,7 +706,7 @@ public class NTasksSubCmd {
         }
     }
 
-    public boolean runTaskCommands(NCommandLine cmd) {
+    public boolean runTaskCommands(NCmdLine cmd) {
         if (cmd.next("a t", "t a", "ta", "at", "add task", "tasks add").isPresent()) {
             runTaskAdd(cmd);
             return true;
@@ -734,7 +734,7 @@ public class NTasksSubCmd {
         return false;
     }
 
-    private NTask findTask(String pid, NCommandLine cmd) {
+    private NTask findTask(String pid, NCmdLine cmd) {
         NTask t = null;
         if (pid.startsWith("#")) {
             int x = NLiteral.of(pid.substring(1)).asInt().orElse(-1);

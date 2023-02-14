@@ -28,7 +28,7 @@ package net.thevpc.nuts.util;
 import net.thevpc.nuts.NMsg;
 import net.thevpc.nuts.NSession;
 import net.thevpc.nuts.NSessionProvider;
-import net.thevpc.nuts.cmdline.NCommandLineConfigurable;
+import net.thevpc.nuts.cmdline.NCmdLineConfigurable;
 
 import java.util.List;
 
@@ -41,7 +41,7 @@ import java.util.List;
  * @app.category Toolkit
  * @since 0.5.4
  */
-public interface NQuestion<T> extends NCommandLineConfigurable, NSessionProvider {
+public interface NQuestion<T> extends NCmdLineConfigurable, NSessionProvider {
 
     boolean isResetLine();
 
@@ -182,7 +182,7 @@ public interface NQuestion<T> extends NCommandLineConfigurable, NSessionProvider
 
     /**
      * configure the current command with the given arguments. This is an
-     * override of the {@link NCommandLineConfigurable#configure(boolean, java.lang.String...) }
+     * override of the {@link NCmdLineConfigurable#configure(boolean, java.lang.String...) }
      * to help return a more specific return type;
      *
      * @param args argument to configure with

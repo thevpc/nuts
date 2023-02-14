@@ -28,8 +28,8 @@ package net.thevpc.nuts.util;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.boot.DefaultNBootOptionsBuilder;
-import net.thevpc.nuts.cmdline.NCommandLine;
-import net.thevpc.nuts.cmdline.NCommandLineFormatStrategy;
+import net.thevpc.nuts.cmdline.NCmdLine;
+import net.thevpc.nuts.cmdline.NCmdLineFormatStrategy;
 import net.thevpc.nuts.reserved.*;
 
 import java.lang.reflect.Array;
@@ -111,10 +111,10 @@ public class NApiUtils {
     }
 
     public static String[] parseCommandLineArray(String commandLineString) {
-        return NCommandLine.parseDefault(commandLineString).get().toStringArray();
+        return NCmdLine.parseDefault(commandLineString).get().toStringArray();
     }
 
-    public static int processThrowable(Throwable ex, NLogger out) {
+    public static int processThrowable(Throwable ex, NLog out) {
         return NReservedUtils.processThrowable(ex, out);
     }
 
@@ -144,7 +144,7 @@ public class NApiUtils {
         return processThrowable(ex, null, true, showStackTrace, gui);
     }
 
-    public static int processThrowable(Throwable ex, NLogger out, boolean showMessage, boolean showStackTrace, boolean showGui) {
+    public static int processThrowable(Throwable ex, NLog out, boolean showMessage, boolean showStackTrace, boolean showGui) {
         return NReservedUtils.processThrowable(ex, out, showMessage, showStackTrace, showGui);
     }
 
@@ -156,7 +156,7 @@ public class NApiUtils {
         return NReservedUtils.getSysBoolNutsProperty(property, defaultValue);
     }
 
-    public static String resolveNutsVersionFromClassPath(NLogger bLog) {
+    public static String resolveNutsVersionFromClassPath(NLog bLog) {
         return NReservedMavenUtils.resolveNutsApiVersionFromClassPath(bLog);
     }
 
@@ -190,7 +190,7 @@ public class NApiUtils {
                 if (session == null) {
                     throw new NBootException(NMsg.ofC("invalid value %s of type %s", stringValue, enumType.getName()));
                 }
-                throw new NParseEnumException(session, stringValue, NCommandLineFormatStrategy.class);
+                throw new NParseEnumException(session, stringValue, NCmdLineFormatStrategy.class);
             }
         }
     }

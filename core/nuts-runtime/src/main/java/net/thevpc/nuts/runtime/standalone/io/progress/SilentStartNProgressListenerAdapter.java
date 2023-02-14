@@ -6,7 +6,7 @@ import net.thevpc.nuts.util.*;
 import java.util.logging.Level;
 
 class SilentStartNProgressListenerAdapter implements NProgressListener {
-    private NLogger LOG;
+    private NLog LOG;
     private final NProgressListener delegate;
     private final NMsg path;
 
@@ -15,13 +15,13 @@ class SilentStartNProgressListenerAdapter implements NProgressListener {
         this.path = path;
     }
 
-    protected NLoggerOp _LOGOP(NSession session) {
+    protected NLogOp _LOGOP(NSession session) {
         return _LOG(session).with().session(session);
     }
 
-    protected NLogger _LOG(NSession session) {
+    protected NLog _LOG(NSession session) {
         if (LOG == null) {
-            LOG = NLogger.of(SilentStartNProgressListenerAdapter.class,session);
+            LOG = NLog.of(SilentStartNProgressListenerAdapter.class,session);
         }
         return LOG;
     }
@@ -35,10 +35,10 @@ class SilentStartNProgressListenerAdapter implements NProgressListener {
             case COMPLETE:{
                 boolean b=delegate.onProgress(event);
                 if (event.getError() != null) {
-                    _LOGOP(event.getSession()).level(Level.FINEST).verb(NLoggerVerb.FAIL)
+                    _LOGOP(event.getSession()).level(Level.FINEST).verb(NLogVerb.FAIL)
                             .log(NMsg.ofJ("download failed    : {0}", path));
                 } else {
-                    _LOGOP(event.getSession()).level(Level.FINEST).verb(NLoggerVerb.SUCCESS)
+                    _LOGOP(event.getSession()).level(Level.FINEST).verb(NLogVerb.SUCCESS)
                             .log(NMsg.ofJ( "download succeeded : {0}", path));
                 }
                 return b;

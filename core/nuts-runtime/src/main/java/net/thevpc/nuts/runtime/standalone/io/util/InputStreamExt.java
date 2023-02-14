@@ -9,7 +9,7 @@ import net.thevpc.nuts.NFormat;
 import net.thevpc.nuts.NMsg;
 import net.thevpc.nuts.NOptional;
 import net.thevpc.nuts.NSession;
-import net.thevpc.nuts.cmdline.NCommandLine;
+import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.io.*;
 import net.thevpc.nuts.spi.NFormatSPI;
 import net.thevpc.nuts.text.NTextStyle;
@@ -138,7 +138,7 @@ public class InputStreamExt extends InputStream implements NInputSource, Interru
             }
 
             @Override
-            public boolean configureFirst(NCommandLine commandLine) {
+            public boolean configureFirst(NCmdLine commandLine) {
                 return false;
             }
         });

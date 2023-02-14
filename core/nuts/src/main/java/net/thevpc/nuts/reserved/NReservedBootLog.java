@@ -43,7 +43,7 @@ import java.util.logging.LogRecord;
  * @author thevpc
  * @app.category Internal
  */
-public class NReservedBootLog implements NLogger {
+public class NReservedBootLog implements NLog {
 
     /**
      * Universal Data and time format "yyyy-MM-dd HH:mm:ss.SSS"
@@ -65,19 +65,19 @@ public class NReservedBootLog implements NLogger {
         this.bootTerminal = new NWorkspaceTerminalOptions(in, out, err);
     }
 
-    public void log(Level lvl, NLoggerVerb logVerb, NMsg message) {
+    public void log(Level lvl, NLogVerb logVerb, NMsg message) {
         if (isLoggable(lvl)) {
             doLog(lvl, logVerb, message == null ? "" : message.toString());
         }
     }
 
     @Override
-    public void log(NSession session, Level level, NLoggerVerb verb, NMsg msg, Throwable thrown) {
+    public void log(NSession session, Level level, NLogVerb verb, NMsg msg, Throwable thrown) {
         log(level, verb,msg, thrown);
     }
 
     @Override
-    public void log(NSession session, Level level, NLoggerVerb verb, Supplier<NMsg> msgSupplier, Supplier<Throwable> errorSupplier) {
+    public void log(NSession session, Level level, NLogVerb verb, Supplier<NMsg> msgSupplier, Supplier<Throwable> errorSupplier) {
         if (isLoggable(level)) {
             log(level, verb,msgSupplier.get(), errorSupplier.get());
         }
@@ -85,31 +85,31 @@ public class NReservedBootLog implements NLogger {
 
     @Override
     public void log(LogRecord record) {
-        NLoggerVerb verb=null;
+        NLogVerb verb=null;
         if(record instanceof NLogRecord){
             verb = ((NLogRecord) record).getVerb();
         }
         Level level = record.getLevel();
         if(verb==null){
             if (level.intValue()>=Level.SEVERE.intValue()) {
-                verb = NLoggerVerb.FAIL;
+                verb = NLogVerb.FAIL;
             }else if (level.intValue()>=Level.WARNING.intValue()){
-                verb= NLoggerVerb.WARNING;
+                verb= NLogVerb.WARNING;
             }else if (level.intValue()>=Level.INFO.intValue()){
-                verb= NLoggerVerb.INFO;
+                verb= NLogVerb.INFO;
             }else {
-                verb= NLoggerVerb.INFO;
+                verb= NLogVerb.INFO;
             }
         }
         log(level,verb, NMsg.ofPlain(record.getMessage()),record.getThrown());
     }
 
     @Override
-    public NLoggerOp with() {
-        return new LoggerOp(this);
+    public NLogOp with() {
+        return new LogOp(this);
     }
 
-    public void log(Level lvl, NLoggerVerb logVerb, NMsg message, Throwable err) {
+    public void log(Level lvl, NLogVerb logVerb, NMsg message, Throwable err) {
         if (isLoggable(lvl)) {
             doLog(lvl, logVerb, message == null ? "" : message.toString());
             if(err!=null) {
@@ -118,7 +118,7 @@ public class NReservedBootLog implements NLogger {
         }
     }
 
-    private void doLog(Level lvl, NLoggerVerb logVerb, String s) {
+    private void doLog(Level lvl, NLogVerb logVerb, String s) {
         errln("%s %-7s %-7s : %s", DEFAULT_DATE_TIME_FORMATTER.format(Instant.now()), lvl, logVerb, s);
     }
 
@@ -170,17 +170,17 @@ public class NReservedBootLog implements NLogger {
         return inScanner.nextLine();
     }
 
-    private static class LoggerOp implements NLoggerOp {
+    private static class LogOp implements NLogOp {
         private NSession session;
         private NReservedBootLog logger;
         private Level level = Level.FINE;
-        private NLoggerVerb verb;
+        private NLogVerb verb;
         private NMsg msg;
         private long time;
         private Supplier<NMsg> msgSupplier;
         private Throwable error;
 
-        public LoggerOp(NReservedBootLog logger) {
+        public LogOp(NReservedBootLog logger) {
             this.logger = logger;
         }
 
@@ -189,25 +189,25 @@ public class NReservedBootLog implements NLogger {
         }
 
         @Override
-        public NLoggerOp session(NSession session) {
+        public NLogOp session(NSession session) {
             this.session = session;
             return this;
         }
 
         @Override
-        public NLoggerOp verb(NLoggerVerb verb) {
+        public NLogOp verb(NLogVerb verb) {
             this.verb = verb;
             return this;
         }
 
         @Override
-        public NLoggerOp level(Level level) {
+        public NLogOp level(Level level) {
             this.level = level == null ? Level.FINE : level;
             return this;
         }
 
         @Override
-        public NLoggerOp error(Throwable error) {
+        public NLogOp error(Throwable error) {
             this.error = error;
             return this;
         }
@@ -225,7 +225,7 @@ public class NReservedBootLog implements NLogger {
         }
 
         @Override
-        public NLoggerOp time(long time) {
+        public NLogOp time(long time) {
             this.time = time;
             return this;
         }

@@ -6,13 +6,13 @@
 package net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.log;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.cmdline.NCommandLine;
+import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceExt;
 import net.thevpc.nuts.runtime.standalone.repository.impl.main.NInstallLogRecord;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.AbstractNSettingsSubCommand;
 import net.thevpc.nuts.text.NTextStyle;
 import net.thevpc.nuts.text.NTexts;
-import net.thevpc.nuts.util.NLogger;
+import net.thevpc.nuts.util.NLog;
 import net.thevpc.nuts.util.NStringUtils;
 
 import java.util.logging.Level;
@@ -25,44 +25,44 @@ import java.util.logging.Logger;
 public class NSettingsLogSubCommand extends AbstractNSettingsSubCommand {
 
     @Override
-    public boolean exec(NCommandLine cmdLine, Boolean autoSave, NSession session) {
+    public boolean exec(NCmdLine cmdLine, Boolean autoSave, NSession session) {
         if (cmdLine.next("set loglevel", "sll").isPresent()) {
 //            NutsWorkspaceConfigManager configManager = context.getWorkspace().config();
             if (cmdLine.next("verbose", "finest").isPresent()) {
                 if (cmdLine.isExecMode()) {
-                    NLogger.setTermLevel(Level.FINEST,session);
+                    NLog.setTermLevel(Level.FINEST,session);
                 }
             } else if (cmdLine.next("fine").isPresent()) {
                 if (cmdLine.isExecMode()) {
-                    NLogger.setTermLevel(Level.FINE,session);
+                    NLog.setTermLevel(Level.FINE,session);
                 }
             } else if (cmdLine.next("finer").isPresent()) {
                 if (cmdLine.isExecMode()) {
-                    NLogger.setTermLevel(Level.FINER,session);
+                    NLog.setTermLevel(Level.FINER,session);
                 }
             } else if (cmdLine.next("info").isPresent()) {
                 if (cmdLine.isExecMode()) {
-                    NLogger.setTermLevel(Level.INFO,session);
+                    NLog.setTermLevel(Level.INFO,session);
                 }
             } else if (cmdLine.next("warning").isPresent()) {
                 if (cmdLine.isExecMode()) {
-                    NLogger.setTermLevel(Level.WARNING,session);
+                    NLog.setTermLevel(Level.WARNING,session);
                 }
             } else if (cmdLine.next("severe", "error").isPresent()) {
                 if (cmdLine.isExecMode()) {
-                    NLogger.setTermLevel(Level.SEVERE,session);
+                    NLog.setTermLevel(Level.SEVERE,session);
                 }
             } else if (cmdLine.next("config").isPresent()) {
                 if (cmdLine.isExecMode()) {
-                    NLogger.setTermLevel(Level.CONFIG,session);
+                    NLog.setTermLevel(Level.CONFIG,session);
                 }
             } else if (cmdLine.next("off").isPresent()) {
                 if (cmdLine.isExecMode()) {
-                    NLogger.setTermLevel(Level.OFF,session);
+                    NLog.setTermLevel(Level.OFF,session);
                 }
             } else if (cmdLine.next("all").isPresent()) {
                 if (cmdLine.isExecMode()) {
-                    NLogger.setTermLevel(Level.ALL,session);
+                    NLog.setTermLevel(Level.ALL,session);
                 }
             } else {
                 if (cmdLine.isExecMode()) {

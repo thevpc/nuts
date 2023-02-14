@@ -9,8 +9,8 @@ import net.thevpc.nuts.*;
 import net.thevpc.nuts.elem.NElement;
 import net.thevpc.nuts.elem.NElements;
 import net.thevpc.nuts.util.NDescribables;
-import net.thevpc.nuts.util.NLoggerOp;
-import net.thevpc.nuts.util.NLoggerVerb;
+import net.thevpc.nuts.util.NLogOp;
+import net.thevpc.nuts.util.NLogVerb;
 
 import java.util.Iterator;
 import java.util.logging.Level;
@@ -66,8 +66,8 @@ public class IndexFirstIterator<T> extends NIteratorBase<T> {
                     }
                     index = null;
                 } catch (NIndexerNotAccessibleException ex) {
-                    NLoggerOp.of(IndexFirstIterator.class,session)
-                            .verb(NLoggerVerb.WARNING)
+                    NLogOp.of(IndexFirstIterator.class,session)
+                            .verb(NLogVerb.WARNING)
                             .level(Level.FINEST)
                             .log(NMsg.ofC("error evaluating Iterator 'hasNext()' : %s", ex));
                     other = null;

@@ -28,9 +28,9 @@ import java.util.logging.Level;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.format.NPositionType;
-import net.thevpc.nuts.util.NLogger;
-import net.thevpc.nuts.util.NLoggerOp;
-import net.thevpc.nuts.util.NLoggerVerb;
+import net.thevpc.nuts.util.NLog;
+import net.thevpc.nuts.util.NLogOp;
+import net.thevpc.nuts.util.NLogVerb;
 import net.thevpc.nuts.runtime.standalone.repository.impl.NRepositoryExt;
 import net.thevpc.nuts.spi.NDeployRepositoryCommand;
 import net.thevpc.nuts.util.NStringUtils;
@@ -41,19 +41,19 @@ import net.thevpc.nuts.util.NStringUtils;
  */
 public class DefaultNDeployRepositoryCommand extends AbstractNDeployRepositoryCommand {
 
-    private NLogger LOG;
+    private NLog LOG;
 
     public DefaultNDeployRepositoryCommand(NRepository repo) {
         super(repo);
     }
 
-    protected NLoggerOp _LOGOP(NSession session) {
+    protected NLogOp _LOGOP(NSession session) {
         return _LOG(session).with().session(session);
     }
 
-    protected NLogger _LOG(NSession session) {
+    protected NLog _LOG(NSession session) {
         if (LOG == null) {
-            LOG = NLogger.of(DefaultNDeployRepositoryCommand.class,session);
+            LOG = NLog.of(DefaultNDeployRepositoryCommand.class,session);
         }
         return LOG;
     }
@@ -72,14 +72,14 @@ public class DefaultNDeployRepositoryCommand extends AbstractNDeployRepositoryCo
                 try {
                     xrepo.getIndexStore().revalidate(this.getId(), session);
                 } catch (NException ex) {
-                    _LOGOP(session).level(Level.FINEST).verb(NLoggerVerb.FAIL)
+                    _LOGOP(session).level(Level.FINEST).verb(NLogVerb.FAIL)
                             .log(NMsg.ofJ("error revalidating Indexer for {0} : {1}", getRepo().getName(), ex));
                 }
             }
-            _LOGOP(session).level(Level.FINEST).verb(NLoggerVerb.SUCCESS)
+            _LOGOP(session).level(Level.FINEST).verb(NLogVerb.SUCCESS)
                     .log(NMsg.ofJ("{0} deploy {1}", NStringUtils.formatAlign(getRepo().getName(), 20, NPositionType.FIRST), this.getId()));
         } catch (RuntimeException ex) {
-            _LOGOP(session).level(Level.FINEST).verb(NLoggerVerb.FAIL)
+            _LOGOP(session).level(Level.FINEST).verb(NLogVerb.FAIL)
                     .log(NMsg.ofJ("{0} deploy {1}", NStringUtils.formatAlign(getRepo().getName(), 20, NPositionType.FIRST), this.getId()));
             throw ex;
         }

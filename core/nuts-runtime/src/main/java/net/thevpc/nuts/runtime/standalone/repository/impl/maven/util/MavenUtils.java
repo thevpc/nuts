@@ -26,7 +26,7 @@ package net.thevpc.nuts.runtime.standalone.repository.impl.maven.util;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.DefaultNArtifactCall;
 import net.thevpc.nuts.cmdline.NArg;
-import net.thevpc.nuts.cmdline.NCommandLine;
+import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.format.NPositionType;
 import net.thevpc.nuts.io.NIOException;
 import net.thevpc.nuts.io.NPath;
@@ -41,8 +41,8 @@ import net.thevpc.nuts.runtime.standalone.io.util.CoreIOUtils;
 import net.thevpc.nuts.runtime.standalone.util.CoreNUtils;
 import net.thevpc.nuts.text.NTextStyle;
 import net.thevpc.nuts.text.NTexts;
-import net.thevpc.nuts.util.NLogger;
-import net.thevpc.nuts.util.NLoggerVerb;
+import net.thevpc.nuts.util.NLog;
+import net.thevpc.nuts.util.NLogVerb;
 import net.thevpc.nuts.util.NStringUtils;
 import org.w3c.dom.Element;
 
@@ -57,12 +57,12 @@ import java.util.stream.Collectors;
  */
 public class MavenUtils {
 
-    private final NLogger LOG;
+    private final NLog LOG;
     private final NSession session;
 
     private MavenUtils(NSession session) {
         this.session = session;
-        LOG = NLogger.of(MavenUtils.class, session);
+        LOG = NLog.of(MavenUtils.class, session);
     }
 
     public static MavenUtils of(NSession session) {
@@ -187,7 +187,7 @@ public class MavenUtils {
             default: {
                 dependencyScope = NDependencyScope.parse(s).orElse(NDependencyScope.API);
                 if (dependencyScope == null) {
-                    LOG.with().session(session).level(Level.FINER).verb(NLoggerVerb.FAIL)
+                    LOG.with().session(session).level(Level.FINER).verb(NLogVerb.FAIL)
                             .log(NMsg.ofJ("unable to parse maven scope {0} for {1}", s, d));
                     dependencyScope = NDependencyScope.API;
                 }
@@ -259,7 +259,7 @@ public class MavenUtils {
                 fetchMode = NFetchMode.REMOTE;
             }
             String fetchString = "[" + NStringUtils.formatAlign(fetchMode.id(), 7, NPositionType.FIRST) + "] ";
-            LOG.with().session(session).level(Level.FINEST).verb(NLoggerVerb.SUCCESS).time(time)
+            LOG.with().session(session).level(Level.FINEST).verb(NLogVerb.SUCCESS).time(time)
                     .log(NMsg.ofJ("{0}{1} parse pom    {2}", fetchString,
                             NStringUtils.formatAlign(repository == null ? "<no-repo>" : repository.getName(), 20, NPositionType.FIRST),
                             NTexts.of(session).ofStyled(urlDesc, NTextStyle.path())
@@ -388,7 +388,7 @@ public class MavenUtils {
                     .build();
         } catch (Exception e) {
             long time = System.currentTimeMillis() - startTime;
-            LOG.with().session(session).level(Level.FINEST).verb(NLoggerVerb.FAIL).time(time)
+            LOG.with().session(session).level(Level.FINEST).verb(NLogVerb.FAIL).time(time)
                     .log(NMsg.ofJ("caching pom file {0}", urlDesc));
             throw new NParseException(session, NMsg.ofC("error parsing %s", urlDesc), e);
         }
@@ -428,7 +428,7 @@ public class MavenUtils {
                 if (nutsDescriptor.getId().getArtifactId() == null) {
                     //why name is null ? should check out!
                     if (LOG.isLoggable(Level.FINE)) {
-                        LOG.with().session(session).level(Level.FINE).verb(NLoggerVerb.FAIL)
+                        LOG.with().session(session).level(Level.FINE).verb(NLogVerb.FAIL)
                                 .log(NMsg.ofJ("unable to fetch valid descriptor artifactId from {0} : resolved id was {1}", path, nutsDescriptor.getId()));
                     }
                     return null;
@@ -796,7 +796,7 @@ public class MavenUtils {
         if (callString == null) {
             return null;
         }
-        NCommandLine cl = NCommandLine.of(callString, NShellFamily.BASH, session).setExpandSimpleOptions(false);
+        NCmdLine cl = NCmdLine.of(callString, NShellFamily.BASH, session).setExpandSimpleOptions(false);
         NId callId = null;
         Map<String, String> callProps = new LinkedHashMap<>();
         List<String> callPropsAsArgs = new ArrayList<>();

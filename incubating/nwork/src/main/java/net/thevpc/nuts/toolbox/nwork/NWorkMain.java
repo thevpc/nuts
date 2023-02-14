@@ -2,7 +2,7 @@ package net.thevpc.nuts.toolbox.nwork;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.cmdline.NArg;
-import net.thevpc.nuts.cmdline.NCommandLine;
+import net.thevpc.nuts.cmdline.NCmdLine;
 
 public class NWorkMain implements NApplication {
 
@@ -16,7 +16,7 @@ public class NWorkMain implements NApplication {
     public void run(NApplicationContext appContext) {
         this.service = new WorkspaceService(appContext);
         NSession session = appContext.getSession();
-        NCommandLine cmdLine = appContext.getCommandLine().setCommandName("nwork");
+        NCmdLine cmdLine = appContext.getCommandLine().setCommandName("nwork");
         NArg a;
         do {
             if (appContext.configureFirst(cmdLine)) {

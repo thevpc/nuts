@@ -7,7 +7,7 @@ import net.thevpc.nuts.NSession;
 import net.thevpc.nuts.indexer.NIndexSubscriberListManager;
 import net.thevpc.nuts.indexer.NWorkspacePool;
 import net.thevpc.nuts.NRepository;
-import net.thevpc.nuts.NWorkspaceListManager;
+import net.thevpc.nuts.NWorkspaceList;
 import net.thevpc.nuts.indexer.NIndexSubscriberListManagerPool;
 import net.thevpc.nuts.indexer.NWorkspaceListManagerPool;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,7 +29,7 @@ public class NSubscriptionController {
     private NIndexSubscriberListManagerPool indexSubscriberListManagerPool;
     @Autowired
     private NWorkspacePool workspacePool;
-    private NWorkspaceListManager workspaceManager;
+    private NWorkspaceList workspaceManager;
     private NIndexSubscriberListManager subscriberManager;
 
     @PostConstruct

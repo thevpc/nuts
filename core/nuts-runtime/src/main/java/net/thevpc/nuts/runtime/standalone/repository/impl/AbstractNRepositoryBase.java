@@ -42,8 +42,8 @@ import java.util.*;
 import java.util.logging.Level;
 import net.thevpc.nuts.runtime.standalone.xtra.glob.GlobUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.config.NRepositoryConfigManagerExt;
-import net.thevpc.nuts.util.NLogger;
-import net.thevpc.nuts.util.NLoggerVerb;
+import net.thevpc.nuts.util.NLog;
+import net.thevpc.nuts.util.NLogVerb;
 
 /**
  * Created by vpc on 1/18/17.
@@ -53,12 +53,12 @@ public abstract class AbstractNRepositoryBase extends AbstractNRepository implem
     private static final long serialVersionUID = 1L;
     protected NIndexStore nIndexStore;
 
-    private final NLogger LOG;
+    private final NLog LOG;
 
     public AbstractNRepositoryBase(NAddRepositoryOptions options, NSession session, NRepository parentRepository, NSpeedQualifier speed, boolean supportedMirroring, String repositoryType, boolean supportsDeploy) {
         this.initSession=session;
         this.supportsDeploy=supportsDeploy;
-        LOG = NLogger.of(AbstractNRepositoryBase.class,session);
+        LOG = NLog.of(AbstractNRepositoryBase.class,session);
         init(options, session, parentRepository, speed, supportedMirroring, repositoryType);
     }
 
@@ -132,7 +132,7 @@ public abstract class AbstractNRepositoryBase extends AbstractNRepository implem
         return a;
     }
 
-    protected void traceMessage(NSession session, NFetchMode fetchMode, Level lvl, NId id, NLoggerVerb tracePhase, String title, long startTime, NMsg extraMessage) {
+    protected void traceMessage(NSession session, NFetchMode fetchMode, Level lvl, NId id, NLogVerb tracePhase, String title, long startTime, NMsg extraMessage) {
         NLogUtils.traceMessage(LOG, lvl, getName(), session, fetchMode, id, tracePhase, title, startTime, extraMessage);
     }
 

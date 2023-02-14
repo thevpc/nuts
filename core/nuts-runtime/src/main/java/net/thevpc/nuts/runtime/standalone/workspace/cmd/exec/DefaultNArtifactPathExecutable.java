@@ -6,7 +6,7 @@
 package net.thevpc.nuts.runtime.standalone.workspace.cmd.exec;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.cmdline.NCommandLine;
+import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.io.NIOException;
 import net.thevpc.nuts.io.NInputSource;
 import net.thevpc.nuts.io.NPath;
@@ -18,8 +18,8 @@ import net.thevpc.nuts.runtime.standalone.security.util.CoreDigestHelper;
 import net.thevpc.nuts.runtime.standalone.util.filters.CoreFilterUtils;
 import net.thevpc.nuts.spi.NDependencySolver;
 import net.thevpc.nuts.spi.NPaths;
-import net.thevpc.nuts.util.NLogger;
-import net.thevpc.nuts.util.NLoggerVerb;
+import net.thevpc.nuts.util.NLog;
+import net.thevpc.nuts.util.NLogVerb;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -36,7 +36,7 @@ import java.util.logging.Level;
  */
 public class DefaultNArtifactPathExecutable extends AbstractNExecutableCommand {
 
-    private final NLogger LOG;
+    private final NLog LOG;
     String cmdName;
     String[] args;
     List<String> executorOptions;
@@ -49,9 +49,9 @@ public class DefaultNArtifactPathExecutable extends AbstractNExecutableCommand {
 
     public DefaultNArtifactPathExecutable(String cmdName, String[] args, List<String> executorOptions, List<String> workspaceOptions, NExecutionType executionType, NRunAs runAs, NSession session, NSession execSession, DefaultNExecCommand execCommand, boolean inheritSystemIO) {
         super(cmdName,
-                NCommandLine.of(args).toString(),
+                NCmdLine.of(args).toString(),
                 NExecutableType.ARTIFACT);
-        LOG = NLogger.of(DefaultNArtifactPathExecutable.class, session);
+        LOG = NLog.of(DefaultNArtifactPathExecutable.class, session);
         this.runAs = runAs;
         this.cmdName = cmdName;
         this.args = args;
@@ -113,7 +113,7 @@ public class DefaultNArtifactPathExecutable extends AbstractNExecutableCommand {
                 try {
                     CoreIOUtils.delete(session, Paths.get(tempFolder));
                 } catch (UncheckedIOException | NIOException e) {
-                    LOG.with().session(session).level(Level.FINEST).verb(NLoggerVerb.FAIL)
+                    LOG.with().session(session).level(Level.FINEST).verb(NLogVerb.FAIL)
                             .log(NMsg.ofJ("unable to delete temp folder created for execution : {0}", tempFolder));
                 }
             }
@@ -221,7 +221,7 @@ public class DefaultNArtifactPathExecutable extends AbstractNExecutableCommand {
 
     @Override
     public String toString() {
-        return "nuts " + cmdName + " " + NCommandLine.of(args).toString();
+        return "nuts " + cmdName + " " + NCmdLine.of(args).toString();
     }
 
     @Override

@@ -26,7 +26,7 @@
 package net.thevpc.nuts.toolbox.nsh.cmds.bash;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.cmdline.NCommandLine;
+import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.io.NPrintStream;
 import net.thevpc.nuts.spi.NComponentScope;
 import net.thevpc.nuts.spi.NComponentScopeType;
@@ -48,7 +48,7 @@ public class WhoamiCommand extends SimpleJShellBuiltin {
     }
 
     @Override
-    protected boolean configureFirst(NCommandLine commandLine, JShellExecutionContext context) {
+    protected boolean configureFirst(NCmdLine commandLine, JShellExecutionContext context) {
         Options config = context.getOptions();
         NSession session = context.getSession();
         switch (commandLine.peek().get(session).key()) {
@@ -70,7 +70,7 @@ public class WhoamiCommand extends SimpleJShellBuiltin {
     }
 
     @Override
-    protected void execBuiltin(NCommandLine commandLine, JShellExecutionContext context) {
+    protected void execBuiltin(NCmdLine commandLine, JShellExecutionContext context) {
         Result result = new Result();
         Options options = context.getOptions();
         if (!options.nutsUser) {

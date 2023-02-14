@@ -3,7 +3,7 @@ package net.thevpc.nuts.runtime.standalone.shell;
 import net.thevpc.nuts.NOsFamily;
 import net.thevpc.nuts.NSession;
 import net.thevpc.nuts.NShellFamily;
-import net.thevpc.nuts.runtime.standalone.app.cmdline.NCommandLineShellOptions;
+import net.thevpc.nuts.runtime.standalone.app.cmdline.NCmdLineShellOptions;
 
 public interface NShellHelper {
     static NShellHelper of(NShellFamily shellFamily) {
@@ -64,7 +64,7 @@ public interface NShellHelper {
 
     String[] parseCommandLineArr(String line, NSession session) ;
 
-    String escapeArgument(String arg, NCommandLineShellOptions options) ;
+    String escapeArgument(String arg, NCmdLineShellOptions options) ;
 
-    String escapeArguments(String[] args, NCommandLineShellOptions options);
+    String escapeArguments(String[] args, NCmdLineShellOptions options);
 }

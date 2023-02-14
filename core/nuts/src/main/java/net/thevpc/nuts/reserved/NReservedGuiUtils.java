@@ -28,8 +28,8 @@ package net.thevpc.nuts.reserved;
 
 import net.thevpc.nuts.Nuts;
 import net.thevpc.nuts.NMsg;
-import net.thevpc.nuts.util.NLogger;
-import net.thevpc.nuts.util.NLoggerVerb;
+import net.thevpc.nuts.util.NLog;
+import net.thevpc.nuts.util.NLogVerb;
 
 import java.util.Scanner;
 import java.util.function.Supplier;
@@ -60,7 +60,7 @@ public final class NReservedGuiUtils {
         }
     }
 
-    public static String inputString(String message, String title, Supplier<String> in, NLogger bLog) {
+    public static String inputString(String message, String title, Supplier<String> in, NLog bLog) {
         try {
             if (title == null) {
                 title = "Nuts Package Manager - " + Nuts.getVersion();
@@ -75,7 +75,7 @@ public final class NReservedGuiUtils {
             return line;
         } catch (UnsatisfiedLinkError e) {
             //exception may occur if the sdk is built in headless mode
-            bLog.with().level(Level.OFF).verb(NLoggerVerb.WARNING).log( NMsg.ofJ("[Graphical Environment Unsupported] {0}", title));
+            bLog.with().level(Level.OFF).verb(NLogVerb.WARNING).log( NMsg.ofJ("[Graphical Environment Unsupported] {0}", title));
             if (in == null) {
                 return new Scanner(System.in).nextLine();
             }
@@ -83,7 +83,7 @@ public final class NReservedGuiUtils {
         }
     }
 
-    public static void showMessage(String message, String title, NLogger bLog) {
+    public static void showMessage(String message, String title, NLog bLog) {
         if (title == null) {
             title = "Nuts Package Manager";
         }
@@ -91,7 +91,7 @@ public final class NReservedGuiUtils {
             javax.swing.JOptionPane.showMessageDialog(null, message);
         } catch (UnsatisfiedLinkError e) {
             //exception may occur if the sdk is built in headless mode
-            bLog.with().level(Level.OFF).verb(NLoggerVerb.WARNING).log( NMsg.ofJ("[Graphical Environment Unsupported] {0}", title));
+            bLog.with().level(Level.OFF).verb(NLogVerb.WARNING).log( NMsg.ofJ("[Graphical Environment Unsupported] {0}", title));
         }
     }
 }

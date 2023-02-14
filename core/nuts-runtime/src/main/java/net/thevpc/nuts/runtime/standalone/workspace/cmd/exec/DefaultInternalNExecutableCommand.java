@@ -6,7 +6,7 @@
 package net.thevpc.nuts.runtime.standalone.workspace.cmd.exec;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.cmdline.NCommandLine;
+import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.runtime.standalone.app.util.NAppUtils;
 import net.thevpc.nuts.text.NText;
@@ -74,7 +74,7 @@ public abstract class DefaultInternalNExecutableCommand extends AbstractNExecuta
                             .append(" ")
                             .append(getName(), NTextStyle.primary5())
                             .append(" ")
-                            .append(NCommandLine.of(args))
+                            .append(NCmdLine.of(args))
             ));
         } else {
             session.out().println(NMsg.ofC(
@@ -84,7 +84,7 @@ public abstract class DefaultInternalNExecutableCommand extends AbstractNExecuta
                                     .append(" ")
                                     .append(getName(), NTextStyle.primary5())
                                     .append(" ")
-                                    .append(NCommandLine.of(args))
+                                    .append(NCmdLine.of(args))
                     )
             );
         }
@@ -92,7 +92,7 @@ public abstract class DefaultInternalNExecutableCommand extends AbstractNExecuta
 
     @Override
     public String toString() {
-        return getName() + " " + NCommandLine.of(args).toString();
+        return getName() + " " + NCmdLine.of(args).toString();
     }
 
 }

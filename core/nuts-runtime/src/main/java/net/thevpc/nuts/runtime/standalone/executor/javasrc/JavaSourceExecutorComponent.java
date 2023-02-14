@@ -24,7 +24,7 @@
 package net.thevpc.nuts.runtime.standalone.executor.javasrc;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.cmdline.NCommandLine;
+import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.io.NPrintStream;
 import net.thevpc.nuts.runtime.standalone.definition.DefaultNDefinition;
@@ -65,7 +65,7 @@ public class JavaSourceExecutorComponent implements NExecutorComponent {
             NPrintStream out = executionContext.getSession().out();
             out.println(NTexts.of(executionContext.getSession()).ofStyled("compile", NTextStyle.primary4()));
             out.println(
-                    NCommandLine.of(
+                    NCmdLine.of(
                             new String[]{
                                     "embedded-javac",
                                     "-d",

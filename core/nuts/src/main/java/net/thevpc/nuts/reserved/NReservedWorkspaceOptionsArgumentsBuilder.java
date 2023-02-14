@@ -1,7 +1,7 @@
 package net.thevpc.nuts.reserved;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.cmdline.NCommandLine;
+import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.io.NTerminalMode;
 import net.thevpc.nuts.util.NEnum;
 import net.thevpc.nuts.util.NLogConfig;
@@ -350,7 +350,7 @@ public class NReservedWorkspaceOptionsArgumentsBuilder {
     }
 
 
-    public NCommandLine toCommandLine() {
+    public NCmdLine toCommandLine() {
         NVersion apiVersionObj = config.getApiVersion();
         List<String> arguments = new ArrayList<>();
 
@@ -533,7 +533,7 @@ public class NReservedWorkspaceOptionsArgumentsBuilder {
         }
         arguments.addAll(options.getExecutorOptions().orElseGet(Collections::emptyList));
         arguments.addAll(options.getApplicationArguments().orElseGet(Collections::emptyList));
-        return NCommandLine.of(arguments);
+        return NCmdLine.of(arguments);
     }
 
 }

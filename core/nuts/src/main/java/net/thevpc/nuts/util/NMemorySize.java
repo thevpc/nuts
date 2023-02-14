@@ -2,7 +2,7 @@ package net.thevpc.nuts.util;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.cmdline.NArg;
-import net.thevpc.nuts.cmdline.NCommandLine;
+import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.elem.NMapBy;
 import net.thevpc.nuts.io.NPrintStream;
 import net.thevpc.nuts.spi.NFormatSPI;
@@ -854,7 +854,7 @@ public class NMemorySize implements Serializable, NFormattable {
             }
 
             @Override
-            public boolean configureFirst(NCommandLine commandLine) {
+            public boolean configureFirst(NCmdLine commandLine) {
                 NArg a = commandLine.peek().get(session);
                 switch (a.key()) {
                     case "--iec": {

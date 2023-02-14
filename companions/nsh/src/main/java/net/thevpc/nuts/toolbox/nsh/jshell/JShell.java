@@ -31,7 +31,7 @@
 package net.thevpc.nuts.toolbox.nsh.jshell;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.cmdline.NCommandHistory;
+import net.thevpc.nuts.cmdline.NCmdLineHistory;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.io.NPrintStream;
 import net.thevpc.nuts.io.NSessionTerminal;
@@ -445,8 +445,8 @@ public class JShell {
                 } catch (Exception ex) {
                     Logger.getLogger(JShell.class.getName()).log(Level.SEVERE, null, ex);
                 }
-                if (node0 instanceof JShellCommandLineNode) {
-                    JShellCommandLineNode nn = (JShellCommandLineNode) node0;
+                if (node0 instanceof JShellCmdLineNode) {
+                    JShellCmdLineNode nn = (JShellCmdLineNode) node0;
                     List<String> newCmd = new ArrayList<>();
                     for (JShellArgumentNode item : nn) {
                         newCmd.addAll(Arrays.asList(item.evalString(context)));
@@ -574,7 +574,7 @@ public class JShell {
         NConfigs.of(session).getSystemTerminal()
                 .setCommandAutoCompleteResolver(new NshAutoCompleter())
                 .setCommandHistory(
-                        NCommandHistory.of(session)
+                        NCmdLineHistory.of(session)
                                 .setPath(appContext.getVarFolder().resolve("nsh-history.hist"))
                 );
         prepareContext(getRootContext());

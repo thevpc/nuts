@@ -2,7 +2,7 @@ package net.thevpc.nuts.toolbox.ndb.base;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.cmdline.NArg;
-import net.thevpc.nuts.cmdline.NCommandLine;
+import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.elem.NElements;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.toolbox.ndb.NdbConfig;
@@ -57,7 +57,7 @@ public abstract class NdbSupportBase<C extends NdbConfig> implements NdbSupport 
     }
 
     @Override
-    public void run(NApplicationContext appContext, NCommandLine commandLine) {
+    public void run(NApplicationContext appContext, NCmdLine commandLine) {
         NArg a;
         commandLine.setCommandName("ndb "+dbType);
         while (commandLine.hasNext()) {
@@ -92,7 +92,7 @@ public abstract class NdbSupportBase<C extends NdbConfig> implements NdbSupport 
         return NOptional.ofNamedEmpty("command " + name);
     }
 
-    protected boolean runExtraCommand(NApplicationContext appContext, NCommandLine commandLine) {
+    protected boolean runExtraCommand(NApplicationContext appContext, NCmdLine commandLine) {
         return false;
     }
 
@@ -131,12 +131,12 @@ public abstract class NdbSupportBase<C extends NdbConfig> implements NdbSupport 
     }
 
 
-    protected boolean fillExtraOption(NCommandLine cmdLine, C options) {
+    protected boolean fillExtraOption(NCmdLine cmdLine, C options) {
         return false;
     }
 
 
-    protected boolean fillOption(NCommandLine cmdLine, C options) {
+    protected boolean fillOption(NCmdLine cmdLine, C options) {
         NSession session = appContext.getSession();
         NArg a;
         if ((a = cmdLine.nextEntry("--name").orNull()) != null) {
@@ -173,15 +173,15 @@ public abstract class NdbSupportBase<C extends NdbConfig> implements NdbSupport 
         }
     }
 
-    protected boolean fillAddConfigOption(NCommandLine commandLine) {
+    protected boolean fillAddConfigOption(NCmdLine commandLine) {
         return false;
     }
 
-    protected boolean fillRemoveConfigOption(NCommandLine commandLine) {
+    protected boolean fillRemoveConfigOption(NCmdLine commandLine) {
         return false;
     }
 
-    protected boolean fillUpdateConfigOption(NCommandLine commandLine) {
+    protected boolean fillUpdateConfigOption(NCmdLine commandLine) {
         return false;
     }
 
@@ -197,7 +197,7 @@ public abstract class NdbSupportBase<C extends NdbConfig> implements NdbSupport 
     }
 
 
-    protected void addConfig(NCommandLine commandLine) {
+    protected void addConfig(NCmdLine commandLine) {
         C options = createConfigInstance();
         NRef<Boolean> update = NRef.of(false);
         while (commandLine.hasNext()) {
@@ -303,6 +303,14 @@ public abstract class NdbSupportBase<C extends NdbConfig> implements NdbSupport 
 
     public void prepareDump(C options, NSession session) {
 
+    }
+
+    public boolean isFolderArchive(C options) {
+        return false;
+    }
+
+    public String getZipSubFolder(C options) {
+        return null;
     }
 
     public enum DumpRestoreMode {

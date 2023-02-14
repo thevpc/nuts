@@ -17,6 +17,7 @@
         <module>ntemplate</module>
         <module>nversion</module>
         <module>ncode</module>
+        <module>nlog</module>
     </modules>
     <properties>
     </properties>

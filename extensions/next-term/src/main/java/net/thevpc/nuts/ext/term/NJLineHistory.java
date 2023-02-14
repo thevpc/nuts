@@ -12,8 +12,8 @@ import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
 import java.time.Instant;
 import java.util.*;
-import net.thevpc.nuts.cmdline.NCommandHistory;
-import net.thevpc.nuts.cmdline.NCommandHistoryEntry;
+import net.thevpc.nuts.cmdline.NCmdLineHistory;
+import net.thevpc.nuts.cmdline.NCmdLineHistoryEntry;
 import net.thevpc.nuts.NSession;
 
 class NJLineHistory implements History {
@@ -23,22 +23,22 @@ class NJLineHistory implements History {
     public static final int DEFAULT_HISTORY_FILE_SIZE = 10000;
 
     private NJLineTerminal terminal;
-    private NJLineCommandHistory defaultHistory;
+    private NJLineCmdLineHistory defaultHistory;
     private int index = 0;
     private LineReader reader;
 
     public NJLineHistory(LineReader reader, NSession session, NJLineTerminal terminal) {
         this.session = session;
         this.terminal = terminal;
-        defaultHistory = new NJLineCommandHistory(session);
+        defaultHistory = new NJLineCmdLineHistory(session);
         attach(reader);
     }
 
     @Override
     public void add(Instant time, String line) {
-        NCommandHistory h = getNutsCommandHistory();
+        NCmdLineHistory h = getNutsCommandHistory();
         if (h.size() > 0) {
-            NCommandHistoryEntry last = h.getEntry(h.size() - 1);
+            NCmdLineHistoryEntry last = h.getEntry(h.size() - 1);
             if(last!=null && last.getLine().equals(line)){
                 //remove duplicates by default!
                 return;
@@ -60,7 +60,7 @@ class NJLineHistory implements History {
         }
     }
 
-    private NCommandHistory getNutsCommandHistory() {
+    private NCmdLineHistory getNutsCommandHistory() {
         if (terminal.getCommandHistory() != null) {
             return terminal.getCommandHistory();
         }
@@ -112,7 +112,7 @@ class NJLineHistory implements History {
 
     @Override
     public String get(int index) {
-        NCommandHistory h = getNutsCommandHistory();
+        NCmdLineHistory h = getNutsCommandHistory();
         if (index < h.size()) {
             return h.getEntry(index).getLine();
         } else {
@@ -125,21 +125,21 @@ class NJLineHistory implements History {
     }
 
     public ListIterator<Entry> iterator(int index) {
-        ListIterator<NCommandHistoryEntry> li = getNutsCommandHistory().iterator(index);
+        ListIterator<NCmdLineHistoryEntry> li = getNutsCommandHistory().iterator(index);
         return new ListIterator<Entry>() {
             @Override
             public boolean hasNext() {
                 return li.hasNext();
             }
 
-            private Entry mapTo(NCommandHistoryEntry h) {
+            private Entry mapTo(NCmdLineHistoryEntry h) {
                 if (h == null) {
                     return null;
                 }
                 if (h instanceof Entry) {
                     return (Entry) h;
                 } else {
-                    return new NJLineCommandHistoryEntry(h.getIndex(), h.getTime(), h.getLine());
+                    return new NJLineCmdLineHistoryEntry(h.getIndex(), h.getTime(), h.getLine());
                 }
             }
 
@@ -175,12 +175,12 @@ class NJLineHistory implements History {
 
             @Override
             public void set(Entry e) {
-                li.set(new NJLineCommandHistoryEntry(e.index(), e.time(), e.line()));
+                li.set(new NJLineCmdLineHistoryEntry(e.index(), e.time(), e.line()));
             }
 
             @Override
             public void add(Entry e) {
-                li.add(new NJLineCommandHistoryEntry(e.index(), e.time(), e.line()));
+                li.add(new NJLineCmdLineHistoryEntry(e.index(), e.time(), e.line()));
             }
         };
     }

@@ -26,7 +26,7 @@
  */
 package net.thevpc.nuts;
 
-import net.thevpc.nuts.cmdline.NCommandLineConfigurable;
+import net.thevpc.nuts.cmdline.NCmdLineConfigurable;
 import net.thevpc.nuts.spi.NComponent;
 
 /**
@@ -37,7 +37,7 @@ import net.thevpc.nuts.spi.NComponent;
  * @app.category Commands
  * @since 0.5.5
  */
-public interface NWorkspaceCommand extends NCommandLineConfigurable, NComponent, NSessionProvider {
+public interface NWorkspaceCommand extends NCmdLineConfigurable, NComponent, NSessionProvider {
 
     /**
      * update session
@@ -56,7 +56,7 @@ public interface NWorkspaceCommand extends NCommandLineConfigurable, NComponent,
 
     /**
      * configure the current command with the given arguments. This is an
-     * override of the {@link NCommandLineConfigurable#configure(boolean, java.lang.String...) }
+     * override of the {@link NCmdLineConfigurable#configure(boolean, java.lang.String...) }
      * to help return a more specific return type;
      *
      * @param args argument to configure with

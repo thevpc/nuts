@@ -106,7 +106,7 @@ public class DefaultNWorkspaceConfigModel {
     protected NWorkspaceConfigSecurity storeModelSecurity = new NWorkspaceConfigSecurity();
     protected NWorkspaceConfigMain storeModelMain = new NWorkspaceConfigMain();
     protected Map<String, NDependencySolverFactory> dependencySolvers;
-    private NLogger LOG;
+    private NLog LOG;
     private DefaultNWorkspaceCurrentConfig currentConfig;
     private boolean storeModelBootChanged = false;
     private boolean storeModelApiChanged = false;
@@ -145,13 +145,13 @@ public class DefaultNWorkspaceConfigModel {
         //        this.excludedRepositoriesSet = this.options.getExcludedRepositories() == null ? null : new HashSet<>(CoreStringUtils.split(Arrays.asList(this.options.getExcludedRepositories()), " ,;"));
     }
 
-    protected NLoggerOp _LOGOP(NSession session) {
+    protected NLogOp _LOGOP(NSession session) {
         return _LOG(session).with().session(session);
     }
 
-    protected NLogger _LOG(NSession session) {
+    protected NLog _LOG(NSession session) {
         if (LOG == null) {
-            LOG = NLogger.of(DefaultNWorkspaceConfigModel.class, session);
+            LOG = NLog.of(DefaultNWorkspaceConfigModel.class, session);
         }
         return LOG;
     }
@@ -1319,7 +1319,7 @@ public class DefaultNWorkspaceConfigModel {
         String fileName = "nuts-workspace-" + fileSuffix;
         NPath logError = NLocations.of(session).getStoreLocation(ws.getApiId(), NStoreLocation.LOG).resolve("invalid-config");
         NPath logFile = logError.resolve(fileName + ".error");
-        _LOGOP(session).level(Level.SEVERE).verb(NLoggerVerb.FAIL)
+        _LOGOP(session).level(Level.SEVERE).verb(NLogVerb.FAIL)
                 .log(NMsg.ofJ("erroneous workspace config file. Unable to load file {0} : {1}", file, ex));
 
         try {
@@ -1328,7 +1328,7 @@ public class DefaultNWorkspaceConfigModel {
             throw new NIOException(session, NMsg.ofC("unable to log workspace error while loading config file %s : %s", file, ex1), ex);
         }
         NPath newfile = logError.resolve(fileName + ".json");
-        _LOGOP(session).level(Level.SEVERE).verb(NLoggerVerb.FAIL)
+        _LOGOP(session).level(Level.SEVERE).verb(NLogVerb.FAIL)
                 .log(NMsg.ofJ("erroneous workspace config file will be replaced by a fresh one. Old config is copied to {0}\n error logged to  {1}", newfile.toString(), logFile));
         try {
             Files.move(file, newfile.toFile());
@@ -1384,7 +1384,7 @@ public class DefaultNWorkspaceConfigModel {
             }
             return createNutsVersionCompat(version, session).parseConfig(bytes, session);
         } catch (Exception ex) {
-            _LOGOP(session).level(Level.SEVERE).verb(NLoggerVerb.FAIL)
+            _LOGOP(session).level(Level.SEVERE).verb(NLogVerb.FAIL)
                     .log(NMsg.ofJ("erroneous workspace config file. Unable to load file {0} : {1}",
                             file, ex));
             throw new NIOException(session, NMsg.ofC("unable to load config file %s", file), ex);

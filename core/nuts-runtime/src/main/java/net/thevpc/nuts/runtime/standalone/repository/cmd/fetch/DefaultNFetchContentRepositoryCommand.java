@@ -33,9 +33,9 @@ import net.thevpc.nuts.runtime.standalone.util.CoreNUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceUtils;
 import net.thevpc.nuts.spi.NFetchContentRepositoryCommand;
 import net.thevpc.nuts.spi.NRepositorySPI;
-import net.thevpc.nuts.util.NLogger;
-import net.thevpc.nuts.util.NLoggerOp;
-import net.thevpc.nuts.util.NLoggerVerb;
+import net.thevpc.nuts.util.NLog;
+import net.thevpc.nuts.util.NLogOp;
+import net.thevpc.nuts.util.NLogVerb;
 
 import java.util.logging.Level;
 
@@ -45,19 +45,19 @@ import java.util.logging.Level;
  */
 public class DefaultNFetchContentRepositoryCommand extends AbstractNFetchContentRepositoryCommand {
 
-    private NLogger LOG;
+    private NLog LOG;
 
     public DefaultNFetchContentRepositoryCommand(NRepository repo) {
         super(repo);
     }
 
-    protected NLoggerOp _LOGOP(NSession session) {
+    protected NLogOp _LOGOP(NSession session) {
         return _LOG(session).with().session(session);
     }
 
-    protected NLogger _LOG(NSession session) {
+    protected NLog _LOG(NSession session) {
         if (LOG == null) {
-            LOG = NLogger.of(DefaultNFetchContentRepositoryCommand.class,session);
+            LOG = NLog.of(DefaultNFetchContentRepositoryCommand.class,session);
         }
         return LOG;
     }
@@ -84,11 +84,11 @@ public class DefaultNFetchContentRepositoryCommand extends AbstractNFetchContent
             if (f == null) {
                 throw new NNotFoundException(getSession(), id);
             }
-            NLogUtils.traceMessage(_LOG(session), Level.FINER, repo.getName(), session, getFetchMode(), id.getLongId(), NLoggerVerb.SUCCESS, "fetch package", startTime, null);
+            NLogUtils.traceMessage(_LOG(session), Level.FINER, repo.getName(), session, getFetchMode(), id.getLongId(), NLogVerb.SUCCESS, "fetch package", startTime, null);
             result = f;
         } catch (RuntimeException ex) {
             if (!CoreNUtils.isUnsupportedFetchModeException(ex)) {
-                NLogUtils.traceMessage(_LOG(session), Level.FINEST, repo.getName(), session, getFetchMode(), id.getLongId(), NLoggerVerb.FAIL, "fetch package", startTime, CoreStringUtils.exceptionToMessage(ex));
+                NLogUtils.traceMessage(_LOG(session), Level.FINEST, repo.getName(), session, getFetchMode(), id.getLongId(), NLogVerb.FAIL, "fetch package", startTime, CoreStringUtils.exceptionToMessage(ex));
             }
             throw ex;
         }

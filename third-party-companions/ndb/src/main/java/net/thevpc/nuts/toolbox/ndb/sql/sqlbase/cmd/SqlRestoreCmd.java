@@ -1,7 +1,7 @@
 package net.thevpc.nuts.toolbox.ndb.sql.sqlbase.cmd;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.cmdline.NCommandLine;
+import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.io.NIOException;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.toolbox.ndb.NdbConfig;
@@ -12,6 +12,7 @@ import net.thevpc.nuts.toolbox.ndb.sql.sqlbase.SqlSupport;
 import net.thevpc.nuts.util.NRef;
 
 import java.io.IOException;
+import java.io.OutputStream;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
@@ -25,7 +26,7 @@ public class SqlRestoreCmd<C extends NdbConfig> extends RestoreCmd<C> {
         return (SqlSupport<C>) super.getSupport();
     }
 
-    public void run(NApplicationContext appContext, NCommandLine commandLine) {
+    public void run(NApplicationContext appContext, NCmdLine commandLine) {
         NSession session = appContext.getSession();
         NRef<AtName> name = NRef.ofNull(AtName.class);
         NRef<NPath> file = NRef.ofNull(NPath.class);
@@ -81,8 +82,17 @@ public class SqlRestoreCmd<C extends NdbConfig> extends RestoreCmd<C> {
                             file.get().resolveSibling(fileName).mkdirs();
                         } else {
                             if (fileName.endsWith(dumpExt)) {
-                                NPath newFile = file.get().resolve(fileName);
+                                NPath newFile = file.get().resolveSibling(NPath.of(fileName, session).getName());
                                 newFile.getParent().mkdirs();
+                                try (OutputStream fos = newFile.getOutputStream()) {
+                                    byte[] buffer = new byte[2048];
+                                    int count;
+                                    while ((count = zis.read(buffer)) > 0) {
+                                        fos.write(buffer, 0, count);
+                                    }
+                                    zis.closeEntry();
+                                }
+
                                 CmdRedirect restoreCommand = getSupport().createRestoreCommand(newFile, options, session);
                                 NExecCommand nExecCommand = sysCmd(session).addCommand(restoreCommand.getCmd().toStringArray());
                                 if (restoreCommand.getPath() != null) {

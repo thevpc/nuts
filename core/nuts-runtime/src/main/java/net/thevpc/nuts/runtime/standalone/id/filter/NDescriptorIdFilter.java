@@ -12,8 +12,8 @@ import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.standalone.util.filters.CoreFilterUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceExt;
 import net.thevpc.nuts.runtime.standalone.repository.impl.maven.util.MavenRepositoryFolderHelper;
-import net.thevpc.nuts.util.NLogger;
-import net.thevpc.nuts.util.NLoggerVerb;
+import net.thevpc.nuts.util.NLog;
+import net.thevpc.nuts.util.NLogVerb;
 import net.thevpc.nuts.runtime.standalone.util.CoreNUtils;
 import net.thevpc.nuts.runtime.standalone.util.Simplifiable;
 
@@ -23,7 +23,7 @@ import net.thevpc.nuts.runtime.standalone.util.Simplifiable;
  */
 public class NDescriptorIdFilter extends AbstractIdFilter implements NIdFilter, Simplifiable<NIdFilter> {
 
-    private NLogger LOG;
+    private NLog LOG;
     private final NDescriptorFilter filter;
 
     public NDescriptorIdFilter(NDescriptorFilter filter, NSession session) {
@@ -42,7 +42,7 @@ public class NDescriptorIdFilter extends AbstractIdFilter implements NIdFilter, 
             return true;
         }
         if(LOG==null){
-            LOG= NLogger.of(MavenRepositoryFolderHelper.class,session);
+            LOG= NLog.of(MavenRepositoryFolderHelper.class,session);
         }
         NDescriptor descriptor = null;
         try {
@@ -63,7 +63,7 @@ public class NDescriptorIdFilter extends AbstractIdFilter implements NIdFilter, 
         } catch (Exception ex) {
             //suppose we cannot retrieve descriptor
             if (LOG.isLoggable(Level.FINER)) {
-                LOG.with().session(session).level(Level.FINER).verb(NLoggerVerb.FAIL)
+                LOG.with().session(session).level(Level.FINER).verb(NLogVerb.FAIL)
                         .log(
                                 NMsg.ofJ("unable to fetch descriptor for {0} : {1}",
                         id,ex)

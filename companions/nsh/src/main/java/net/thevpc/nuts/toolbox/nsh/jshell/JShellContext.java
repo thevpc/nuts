@@ -1,6 +1,6 @@
 package net.thevpc.nuts.toolbox.nsh.jshell;
 
-import net.thevpc.nuts.cmdline.NCommandAutoComplete;
+import net.thevpc.nuts.cmdline.NCmdLineAutoComplete;
 import net.thevpc.nuts.io.NPrintStream;
 import net.thevpc.nuts.NSession;
 import net.thevpc.nuts.NWorkspace;
@@ -106,9 +106,9 @@ public interface JShellContext {
 
     NWorkspace getWorkspace();
 
-    NCommandAutoComplete getAutoComplete();
+    NCmdLineAutoComplete getAutoComplete();
 
-    void setAutoComplete(NCommandAutoComplete value);
+    void setAutoComplete(NCmdLineAutoComplete value);
 
     void setFunctionManager(JShellFunctionManager functionManager);
 

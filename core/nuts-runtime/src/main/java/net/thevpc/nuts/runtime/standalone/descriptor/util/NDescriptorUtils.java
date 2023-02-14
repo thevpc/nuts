@@ -100,8 +100,8 @@ public class NDescriptorUtils {
             for (NDependency dependency : effectiveDescriptor.getDependencies()) {
                 if (!NIdUtils.isValidEffectiveId(dependency.toId())) {
                     if (dependency.isOptional()) {
-                        NLoggerOp.of(NDescriptorUtils.class, session)
-                                .verb(NLoggerVerb.WARNING).level(Level.FINE)
+                        NLogOp.of(NDescriptorUtils.class, session)
+                                .verb(NLogVerb.WARNING).level(Level.FINE)
                                 .log(NMsg.ofJ("{0} is using dependency {1} which defines an unresolved variable. This is a potential bug.",
                                         effectiveDescriptor.getId(),
                                         dependency
@@ -121,8 +121,8 @@ public class NDescriptorUtils {
                 if (!NIdUtils.isValidEffectiveId(dependency.toId())) {
                     // sometimes the variable is defined later in the pom that uses this POM standard Dependencies
                     // so just log a warning, this is not an error but a very bad practice from the dependency maintainer!
-                    NLoggerOp.of(NDescriptorUtils.class, session)
-                            .verb(NLoggerVerb.WARNING).level(Level.FINE)
+                    NLogOp.of(NDescriptorUtils.class, session)
+                            .verb(NLogVerb.WARNING).level(Level.FINE)
                             .log(NMsg.ofJ("{0} is using standard-dependency {1} which defines an unresolved variable. This is a potential bug.",
                                     effectiveDescriptor.getId(),
                                     dependency
@@ -466,14 +466,14 @@ public class NDescriptorUtils {
             } else {
                 NDependency a = m.get(e);
                 if (a.equals(d)) {
-                    NLoggerOp.of(DefaultNDescriptorBuilder.class, session)
+                    NLogOp.of(DefaultNDescriptorBuilder.class, session)
                             .level(Level.FINER)
-                            .verb(NLoggerVerb.WARNING)
+                            .verb(NLogVerb.WARNING)
                             .log(NMsg.ofC("dependency %s is duplicated", d));
                 } else {
-                    NLoggerOp.of(DefaultNDescriptorBuilder.class, session)
+                    NLogOp.of(DefaultNDescriptorBuilder.class, session)
                             .level(Level.FINER)
-                            .verb(NLoggerVerb.WARNING)
+                            .verb(NLogVerb.WARNING)
                             .log(NMsg.ofC("dependency %s is overridden by %s", a, d));
                 }
             }

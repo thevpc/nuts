@@ -7,7 +7,7 @@ package net.thevpc.nuts.runtime.standalone.repository.cmd.push;
 
 import net.thevpc.nuts.NId;
 import net.thevpc.nuts.NRepository;
-import net.thevpc.nuts.cmdline.NCommandLine;
+import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.runtime.standalone.repository.cmd.NRepositoryCommandBase;
 import net.thevpc.nuts.runtime.standalone.util.collections.CoreCollectionUtils;
 import net.thevpc.nuts.spi.NPushRepositoryCommand;
@@ -31,7 +31,7 @@ public abstract class AbstractNPushRepositoryCommand extends NRepositoryCommandB
     }
 
     @Override
-    public boolean configureFirst(NCommandLine cmd) {
+    public boolean configureFirst(NCmdLine cmd) {
         if (super.configureFirst(cmd)) {
             return true;
         }

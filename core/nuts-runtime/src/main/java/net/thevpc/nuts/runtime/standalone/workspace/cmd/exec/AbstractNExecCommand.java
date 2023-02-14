@@ -2,7 +2,7 @@ package net.thevpc.nuts.runtime.standalone.workspace.cmd.exec;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.cmdline.NArg;
-import net.thevpc.nuts.cmdline.NCommandLine;
+import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.io.NPrintStream;
 import net.thevpc.nuts.runtime.standalone.executor.system.ProcessBuilder2;
@@ -517,7 +517,7 @@ public abstract class AbstractNExecCommand extends NWorkspaceCommandBase<NExecCo
     }
 
     @Override
-    public boolean configureFirst(NCommandLine cmdLine) {
+    public boolean configureFirst(NCmdLine cmdLine) {
         NArg a = cmdLine.peek().orNull();
         if (a == null) {
             return false;
@@ -750,11 +750,11 @@ public abstract class AbstractNExecCommand extends NWorkspaceCommandBase<NExecCo
 
             @Override
             public void print(NPrintStream out) {
-                out.print(NCommandLine.of(command));
+                out.print(NCmdLine.of(command));
             }
 
             @Override
-            public boolean configureFirst(NCommandLine commandLine) {
+            public boolean configureFirst(NCmdLine commandLine) {
                 return false;
             }
         });

@@ -24,6 +24,7 @@
 package net.thevpc.nuts;
 
 import net.thevpc.nuts.reserved.*;
+import net.thevpc.nuts.util.NStringMapFormat;
 import net.thevpc.nuts.util.NStringUtils;
 
 import java.util.*;
@@ -384,7 +385,7 @@ public class DefaultNDependencyBuilder implements NDependencyBuilder {
 
     @Override
     public NDependencyBuilder addPropertiesQuery(String propertiesQuery) {
-        return addProperties(NStringUtils.parseDefaultMap(propertiesQuery).get());
+        return addProperties(NStringMapFormat.DEFAULT.parse(propertiesQuery).get());
     }
 
     @Override
@@ -410,13 +411,13 @@ public class DefaultNDependencyBuilder implements NDependencyBuilder {
 
     @Override
     public NDependencyBuilder setPropertiesQuery(String propertiesQuery) {
-        setProperties(NStringUtils.parseDefaultMap(propertiesQuery).get());
+        setProperties(NStringMapFormat.DEFAULT.parse(propertiesQuery).get());
         return this;
     }
 
     @Override
     public String getPropertiesQuery() {
-        return NStringUtils.formatDefaultMap(properties);
+        return NStringMapFormat.DEFAULT.format(properties);
     }
 
     @Override

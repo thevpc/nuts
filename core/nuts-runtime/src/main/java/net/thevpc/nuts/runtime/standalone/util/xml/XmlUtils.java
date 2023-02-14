@@ -43,8 +43,8 @@ import javax.xml.transform.stream.StreamResult;
 import net.thevpc.nuts.*;
 
 import net.thevpc.nuts.io.NIOException;
-import net.thevpc.nuts.util.NLoggerOp;
-import net.thevpc.nuts.util.NLoggerVerb;
+import net.thevpc.nuts.util.NLogOp;
+import net.thevpc.nuts.util.NLogVerb;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -249,22 +249,22 @@ public class XmlUtils {
         b.setErrorHandler(new ErrorHandler() {
             @Override
             public void warning(SAXParseException exception) throws SAXException {
-                NLoggerOp.of(XmlUtils.class,session)
-                        .level(Level.FINEST).verb(NLoggerVerb.WARNING)
+                NLogOp.of(XmlUtils.class,session)
+                        .level(Level.FINEST).verb(NLogVerb.WARNING)
                         .log(NMsg.ofJ("{0}",exception));
             }
 
             @Override
             public void error(SAXParseException exception) throws SAXException {
-                NLoggerOp.of(XmlUtils.class,session)
-                        .level(Level.FINEST).verb(NLoggerVerb.WARNING)
+                NLogOp.of(XmlUtils.class,session)
+                        .level(Level.FINEST).verb(NLogVerb.WARNING)
                         .log(NMsg.ofJ("{0}",exception));
             }
 
             @Override
             public void fatalError(SAXParseException exception) throws SAXException {
-                NLoggerOp.of(XmlUtils.class,session)
-                        .level(Level.FINEST).verb(NLoggerVerb.WARNING)
+                NLogOp.of(XmlUtils.class,session)
+                        .level(Level.FINEST).verb(NLogVerb.WARNING)
                         .log(NMsg.ofJ("{0}",exception));
             }
         });

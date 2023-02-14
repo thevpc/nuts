@@ -1,7 +1,7 @@
 package net.thevpc.nuts.runtime.standalone.io.path.spi;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.cmdline.NCommandLine;
+import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.format.NTreeVisitor;
 import net.thevpc.nuts.io.*;
 import net.thevpc.nuts.runtime.standalone.session.NSessionUtils;
@@ -14,8 +14,8 @@ import net.thevpc.nuts.spi.NPathSPI;
 import net.thevpc.nuts.spi.NUseDefault;
 import net.thevpc.nuts.text.NTextBuilder;
 import net.thevpc.nuts.text.NTextStyle;
-import net.thevpc.nuts.util.NLoggerOp;
-import net.thevpc.nuts.util.NLoggerVerb;
+import net.thevpc.nuts.util.NLogOp;
+import net.thevpc.nuts.util.NLogVerb;
 import net.thevpc.nuts.util.NStream;
 
 import java.io.*;
@@ -263,7 +263,7 @@ public class DotfilefsPath extends AbstractPathSPIAdapter {
                 }
             }
         } catch (UncheckedIOException | NIOException ex) {
-            NLoggerOp.of(DotfilefsPath.class, session).level(Level.FINE).verb(NLoggerVerb.FAIL)
+            NLogOp.of(DotfilefsPath.class, session).level(Level.FINE).verb(NLogVerb.FAIL)
                     .log(NMsg.ofJ("unable to navigate : file not found {0}", dotFilesUrl));
         }
         if (versionString.compareTo("0.5.7") < 0) {
@@ -275,7 +275,7 @@ public class DotfilefsPath extends AbstractPathSPIAdapter {
                     foldersFileContent = StringTokenizerUtils.splitNewLine(CoreIOUtils.loadString(stream, true, session))
                             .stream().map(x -> x.trim()).filter(x -> x.length() > 0).toArray(String[]::new);
                 } catch (IOException | UncheckedIOException | NIOException ex) {
-                    NLoggerOp.of(DotfilefsPath.class, session).level(Level.FINE).verb(NLoggerVerb.FAIL)
+                    NLogOp.of(DotfilefsPath.class, session).level(Level.FINE).verb(NLogVerb.FAIL)
                             .log(NMsg.ofJ("unable to navigate : file not found {0}", dotFolderUrl));
                 }
                 if (foldersFileContent != null) {
@@ -318,7 +318,7 @@ public class DotfilefsPath extends AbstractPathSPIAdapter {
         }
 
         @Override
-        public boolean configureFirst(NCommandLine commandLine) {
+        public boolean configureFirst(NCmdLine commandLine) {
             return false;
         }
     }

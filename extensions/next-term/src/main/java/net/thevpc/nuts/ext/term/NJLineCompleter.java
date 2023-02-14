@@ -2,8 +2,8 @@ package net.thevpc.nuts.ext.term;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.cmdline.NArgCandidate;
-import net.thevpc.nuts.cmdline.NCommandAutoCompleteResolver;
-import net.thevpc.nuts.cmdline.NCommandLine;
+import net.thevpc.nuts.cmdline.NCmdLine;
+import net.thevpc.nuts.cmdline.NCmdLineAutoCompleteResolver;
 import org.jline.reader.Candidate;
 import org.jline.reader.Completer;
 import org.jline.reader.LineReader;
@@ -23,10 +23,10 @@ class NJLineCompleter implements Completer {
 
     @Override
     public void complete(LineReader reader, final ParsedLine line, List<Candidate> candidates) {
-        NCommandAutoCompleteResolver autoCompleteResolver = nutsJLineTerminal.getAutoCompleteResolver();
+        NCmdLineAutoCompleteResolver autoCompleteResolver = nutsJLineTerminal.getAutoCompleteResolver();
         if (autoCompleteResolver != null) {
 
-            NCommandLine commandLine = NCommandLine.of(line.words());
+            NCmdLine commandLine = NCmdLine.of(line.words());
             if (line.words().size() > 0) {
                 commandLine.setCommandName(line.words().get(0));
             }

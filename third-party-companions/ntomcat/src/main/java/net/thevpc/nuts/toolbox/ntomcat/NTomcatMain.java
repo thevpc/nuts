@@ -2,7 +2,7 @@ package net.thevpc.nuts.toolbox.ntomcat;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.cmdline.NArg;
-import net.thevpc.nuts.cmdline.NCommandLine;
+import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.toolbox.ntomcat.remote.RemoteTomcat;
 import net.thevpc.nuts.toolbox.ntomcat.local.LocalTomcat;
 import net.thevpc.nuts.toolbox.ntomcat.util.ApacheTomcatRepositoryModel;
@@ -25,7 +25,7 @@ public class NTomcatMain implements NApplication {
                             
             );
         }
-        NCommandLine cmdLine = appContext.getCommandLine();
+        NCmdLine cmdLine = appContext.getCommandLine();
         Boolean local = null;
         boolean skipFirst = false;
         if (cmdLine.hasNext()) {

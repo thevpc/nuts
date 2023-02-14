@@ -7,7 +7,7 @@ package net.thevpc.nuts.runtime.standalone.workspace.cmd.settings;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.cmdline.NArg;
-import net.thevpc.nuts.cmdline.NCommandLine;
+import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.io.NPrintStream;
 import net.thevpc.nuts.runtime.standalone.app.util.NAppUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.exec.DefaultInternalNExecutableCommand;
@@ -42,7 +42,7 @@ public class DefaultNSettingsInternalExecutable extends DefaultInternalNExecutab
 //                Thread.currentThread().getContextClassLoader());
 
         Boolean autoSave = true;
-        NCommandLine cmd = NCommandLine.of(args);
+        NCmdLine cmd = NCmdLine.of(args);
         boolean empty = true;
         NArg a;
         do {

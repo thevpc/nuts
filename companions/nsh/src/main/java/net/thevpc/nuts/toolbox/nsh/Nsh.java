@@ -1,17 +1,17 @@
 package net.thevpc.nuts.toolbox.nsh;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.cmdline.NCommandLineContext;
-import net.thevpc.nuts.cmdline.NCommandLineProcessor;
-import net.thevpc.nuts.cmdline.NCommandLine;
+import net.thevpc.nuts.cmdline.NCmdLine;
+import net.thevpc.nuts.cmdline.NCmdLineProcessor;
+import net.thevpc.nuts.cmdline.NCmdLineContext;
 import net.thevpc.nuts.text.NTextStyle;
 import net.thevpc.nuts.text.NTexts;
 import net.thevpc.nuts.toolbox.nsh.jshell.DefaultJShellOptionsParser;
 import net.thevpc.nuts.toolbox.nsh.jshell.JShell;
 import net.thevpc.nuts.toolbox.nsh.jshell.JShellBuiltin;
 import net.thevpc.nuts.toolbox.nsh.jshell.JShellOptions;
-import net.thevpc.nuts.util.NLoggerOp;
-import net.thevpc.nuts.util.NLoggerVerb;
+import net.thevpc.nuts.util.NLogOp;
+import net.thevpc.nuts.util.NLogVerb;
 
 import java.util.Arrays;
 import java.util.HashSet;
@@ -33,19 +33,19 @@ public class Nsh implements NApplication {
 
     @Override
     public void onInstallApplication(NApplicationContext applicationContext) {
-        NLoggerOp log = NLoggerOp.of(Nsh.class, applicationContext.getSession());
-        log.level(Level.CONFIG).verb(NLoggerVerb.START).log(NMsg.ofPlain("[nsh] Installation..."));
+        NLogOp log = NLogOp.of(Nsh.class, applicationContext.getSession());
+        log.level(Level.CONFIG).verb(NLogVerb.START).log(NMsg.ofPlain("[nsh] Installation..."));
         NSession session = applicationContext.getSession();
-        applicationContext.processCommandLine(new NCommandLineProcessor() {
+        applicationContext.processCommandLine(new NCmdLineProcessor() {
             @Override
-            public void onCmdInitParsing(NCommandLine commandLine, NCommandLineContext context) {
+            public void onCmdInitParsing(NCmdLine commandLine, NCmdLineContext context) {
                 commandLine.setCommandName("nsh --nuts-exec-mode=install");
             }
 
             @Override
-            public void onCmdExec(NCommandLine commandLine, NCommandLineContext context) {
+            public void onCmdExec(NCmdLine commandLine, NCmdLineContext context) {
                 if (session.isTrace() || session.isYes()) {
-                    log.level(Level.CONFIG).verb(NLoggerVerb.INFO).log(NMsg.ofJ("[nsh] activating options trace={0} yes={1}", session.isTrace(), session.isYes()));
+                    log.level(Level.CONFIG).verb(NLogVerb.INFO).log(NMsg.ofJ("[nsh] activating options trace={0} yes={1}", session.isTrace(), session.isYes()));
                 }
                 //id will not include version or
                 String nshIdStr = applicationContext.getAppId().getShortName();
@@ -72,7 +72,7 @@ public class Nsh implements NApplication {
                     if (!CONTEXTUAL_BUILTINS.contains(command.getName())) {
                         // avoid recursive definition!
                         // disable trace, summary will be traced later!
-                        if (NCustomCommandManager.of(session.copy().setTrace(false)
+                        if (NCommands.of(session.copy().setTrace(false)
                                 .setConfirm(NConfirmationMode.YES)
                                 )
                                 .addCommand(new NCommandConfig()
@@ -90,11 +90,11 @@ public class Nsh implements NApplication {
                 }
 
                 if (firstInstalled.size() > 0) {
-                    log.level(Level.CONFIG).verb(NLoggerVerb.INFO).log(NMsg.ofJ("[nsh] registered {0} nsh commands : {1}", firstInstalled.size(),
+                    log.level(Level.CONFIG).verb(NLogVerb.INFO).log(NMsg.ofJ("[nsh] registered {0} nsh commands : {1}", firstInstalled.size(),
                             String.join(", ", firstInstalled)));
                 }
                 if (reinstalled.size() > 0) {
-                    log.level(Level.CONFIG).verb(NLoggerVerb.INFO).log(NMsg.ofJ("[nsh] re-registered {0} nsh commands : {1}", reinstalled.size(),
+                    log.level(Level.CONFIG).verb(NLogVerb.INFO).log(NMsg.ofJ("[nsh] re-registered {0} nsh commands : {1}", reinstalled.size(),
                             String.join(", ", reinstalled)));
                 }
                 if (session.isPlainTrace()) {
@@ -134,8 +134,8 @@ public class Nsh implements NApplication {
 
     @Override
     public void onUpdateApplication(NApplicationContext applicationContext) {
-        NLoggerOp log = NLoggerOp.of(Nsh.class, applicationContext.getSession());
-        log.level(Level.CONFIG).verb(NLoggerVerb.INFO).log(NMsg.ofPlain("[nsh] update..."));
+        NLogOp log = NLogOp.of(Nsh.class, applicationContext.getSession());
+        log.level(Level.CONFIG).verb(NLogVerb.INFO).log(NMsg.ofPlain("[nsh] update..."));
         NVersion currentVersion = applicationContext.getAppVersion();
         NVersion previousVersion = applicationContext.getAppPreviousVersion();
         onInstallApplication(applicationContext);
@@ -143,18 +143,18 @@ public class Nsh implements NApplication {
 
     @Override
     public void onUninstallApplication(NApplicationContext applicationContext) {
-        NLoggerOp log = NLoggerOp.of(Nsh.class, applicationContext.getSession());
-        log.level(Level.CONFIG).verb(NLoggerVerb.INFO).log(NMsg.ofPlain("[nsh] uninstallation..."));
+        NLogOp log = NLogOp.of(Nsh.class, applicationContext.getSession());
+        log.level(Level.CONFIG).verb(NLogVerb.INFO).log(NMsg.ofPlain("[nsh] uninstallation..."));
         try {
             NSession session = applicationContext.getSession();
             try {
-                NCustomCommandManager.of(session).removeCommandFactory("nsh");
+                NCommands.of(session).removeCommandFactory("nsh");
             } catch (Exception notFound) {
                 //ignore!
             }
-            for (NWorkspaceCustomCommand command : NCustomCommandManager.of(session).findCommandsByOwner(applicationContext.getAppId())) {
+            for (NCustomCommand command : NCommands.of(session).findCommandsByOwner(applicationContext.getAppId())) {
                 try {
-                    NCustomCommandManager.of(session).removeCommand(command.getName());
+                    NCommands.of(session).removeCommand(command.getName());
                 } catch (Exception ex) {
                     if (applicationContext.getSession().isPlainTrace()) {
                         NTexts factory = NTexts.of(session);

@@ -25,7 +25,7 @@
  */
 package net.thevpc.nuts.toolbox.nsh.cmds.bash;
 
-import net.thevpc.nuts.cmdline.NCommandLine;
+import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.NSession;
 import net.thevpc.nuts.NVersionFormat;
 import net.thevpc.nuts.toolbox.nsh.SimpleJShellBuiltin;
@@ -41,7 +41,7 @@ public class VersionCommand extends SimpleJShellBuiltin {
     }
 
     @Override
-    protected boolean configureFirst(NCommandLine commandLine, JShellExecutionContext context) {
+    protected boolean configureFirst(NCmdLine commandLine, JShellExecutionContext context) {
         Options options = context.getOptions();
         if (options.version == null) {
             options.version = NVersionFormat.of(context.getSession());
@@ -50,7 +50,7 @@ public class VersionCommand extends SimpleJShellBuiltin {
     }
 
     @Override
-    protected void execBuiltin(NCommandLine commandLine, JShellExecutionContext context) {
+    protected void execBuiltin(NCmdLine commandLine, JShellExecutionContext context) {
         NSession session = context.getSession();
         Options options = context.getOptions();
         if (options.version == null) {

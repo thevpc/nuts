@@ -28,7 +28,7 @@ package net.thevpc.nuts.runtime.standalone.app.cmdline.option;
 import net.thevpc.nuts.cmdline.DefaultNArgCandidate;
 import net.thevpc.nuts.cmdline.NArgCandidate;
 import net.thevpc.nuts.cmdline.NArgName;
-import net.thevpc.nuts.cmdline.NCommandAutoComplete;
+import net.thevpc.nuts.cmdline.NCmdLineAutoComplete;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -53,7 +53,7 @@ public class DefaultNonOption implements NArgName {
     }
 
     @Override
-    public List<NArgCandidate> getCandidates(NCommandAutoComplete context) {
+    public List<NArgCandidate> getCandidates(NCmdLineAutoComplete context) {
         List<NArgCandidate> list = new ArrayList<>();
         list.add(new DefaultNArgCandidate("<" + getName() + ">"));
         return list;

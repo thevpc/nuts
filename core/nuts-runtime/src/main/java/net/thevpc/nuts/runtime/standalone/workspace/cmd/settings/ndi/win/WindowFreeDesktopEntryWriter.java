@@ -1,7 +1,7 @@
 package net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.ndi.win;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.cmdline.NCommandLine;
+import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.io.NIOException;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.io.NPrintStream;
@@ -70,7 +70,7 @@ public class WindowFreeDesktopEntryWriter extends AbstractFreeDesktopEntryWriter
         if (wd == null) {
             wd = System.getProperty("user.home");
         }
-        String[] cmd = NCommandLine.parseDefault(root.getExec()).get(session).setExpandSimpleOptions(false).toStringArray();
+        String[] cmd = NCmdLine.parseDefault(root.getExec()).get(session).setExpandSimpleOptions(false).toStringArray();
         List<String> categories = new ArrayList<>(root.getCategories());
         if (categories.isEmpty()) {
             categories.add("/");

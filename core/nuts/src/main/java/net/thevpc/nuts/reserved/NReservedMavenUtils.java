@@ -30,8 +30,8 @@ import net.thevpc.nuts.*;
 import net.thevpc.nuts.boot.NBootOptions;
 import net.thevpc.nuts.boot.NBootOptionsBuilder;
 import net.thevpc.nuts.spi.NRepositoryLocation;
-import net.thevpc.nuts.util.NLogger;
-import net.thevpc.nuts.util.NLoggerVerb;
+import net.thevpc.nuts.util.NLog;
+import net.thevpc.nuts.util.NLogVerb;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -186,7 +186,7 @@ public final class NReservedMavenUtils {
         return id.getGroupId().replace('.', '/') + '/' + id.getArtifactId() + '/' + id.getVersion() + "/" + name;
     }
 
-    public static File resolveOrDownloadJar(NId nutsId, NRepositoryLocation[] repositories, NRepositoryLocation cacheFolder, NLogger bLog, boolean includeDesc, Instant expire, NReservedErrorInfoList errors) {
+    public static File resolveOrDownloadJar(NId nutsId, NRepositoryLocation[] repositories, NRepositoryLocation cacheFolder, NLog bLog, boolean includeDesc, Instant expire, NReservedErrorInfoList errors) {
         File cachedJarFile = new File(resolveMavenFullPath(cacheFolder, nutsId, "jar"));
         if (cachedJarFile.isFile()) {
             if (NReservedIOUtils.isFileAccessible(cachedJarFile.toPath(), expire, bLog)) {
@@ -194,7 +194,7 @@ public final class NReservedMavenUtils {
             }
         }
         for (NRepositoryLocation r : repositories) {
-            bLog.with().level(Level.FINE).verb(NLoggerVerb.CACHE).log(NMsg.ofJ("checking {0} from {1}", nutsId, r));
+            bLog.with().level(Level.FINE).verb(NLogVerb.CACHE).log(NMsg.ofJ("checking {0} from {1}", nutsId, r));
 //                File file = toFile(r);
             if (includeDesc) {
                 String path = resolveMavenFullPath(r, nutsId, "pom");
@@ -203,25 +203,25 @@ public final class NReservedMavenUtils {
                     NReservedIOUtils.copy(new URL(path), cachedPomFile, bLog);
                 } catch (Exception ex) {
                     errors.add(new NReservedErrorInfo(nutsId, r.toString(), path, "unable to load descriptor", ex));
-                    bLog.with().level(Level.SEVERE).verb(NLoggerVerb.FAIL).log(NMsg.ofJ("unable to load descriptor {0} from {1}.\n", nutsId, r));
+                    bLog.with().level(Level.SEVERE).verb(NLogVerb.FAIL).log(NMsg.ofJ("unable to load descriptor {0} from {1}.\n", nutsId, r));
                     continue;
                 }
             }
             String path = resolveMavenFullPath(r, nutsId, "jar");
             try {
                 NReservedIOUtils.copy(new URL(path), cachedJarFile, bLog);
-                bLog.with().level(Level.CONFIG).verb(NLoggerVerb.CACHE).log(NMsg.ofJ("cache jar file {0}", cachedJarFile.getPath()));
+                bLog.with().level(Level.CONFIG).verb(NLogVerb.CACHE).log(NMsg.ofJ("cache jar file {0}", cachedJarFile.getPath()));
                 errors.removeErrorsFor(nutsId);
                 return cachedJarFile;
             } catch (Exception ex) {
                 errors.add(new NReservedErrorInfo(nutsId, r.toString(), path, "unable to load binaries", ex));
-                bLog.with().level(Level.SEVERE).verb(NLoggerVerb.FAIL).log(NMsg.ofJ("unable to load binaries {0} from {1}.\n", nutsId, r));
+                bLog.with().level(Level.SEVERE).verb(NLogVerb.FAIL).log(NMsg.ofJ("unable to load binaries {0} from {1}.\n", nutsId, r));
             }
         }
         return null;
     }
 
-    public static Set<NId> loadDependenciesFromId(NId rid, NLogger bLog, Collection<NRepositoryLocation> repos) {
+    public static Set<NId> loadDependenciesFromId(NId rid, NLog bLog, Collection<NRepositoryLocation> repos) {
         String urlPath = NReservedUtils.idToPath(rid) + "/" + rid.getArtifactId() + "-" + rid.getVersion() + ".pom";
         Set<NId> deps = null;
         for (NRepositoryLocation baseUrl : repos) {
@@ -275,7 +275,7 @@ public final class NReservedMavenUtils {
         return li;
     }
 
-    public static List<NRepositoryLocation> loadAllMavenRepos(NLogger logger) {
+    public static List<NRepositoryLocation> loadAllMavenRepos(NLog logger) {
         List<NRepositoryLocation> all = new ArrayList<>();
         all.add(new NRepositoryLocation("maven-local", "maven", System.getProperty("user.home") + NReservedIOUtils.getNativePath("/.m2/repository")));
         all.add(new NRepositoryLocation("maven-central", "maven", "https://repo.maven.apache.org/maven2"));
@@ -283,7 +283,7 @@ public final class NReservedMavenUtils {
         return all;
     }
 
-    public static List<NRepositoryLocation> loadSettingsRepos(NLogger bLog) {
+    public static List<NRepositoryLocation> loadSettingsRepos(NLog bLog) {
         URL u = null;
         File r = null;
         try {
@@ -293,13 +293,13 @@ public final class NReservedMavenUtils {
             }
             u = r.toURI().toURL();
         } catch (MalformedURLException e) {
-            bLog.with().level(Level.SEVERE).verb(NLoggerVerb.FAIL).error(e).log(NMsg.ofJ("unable to load {0}.", r));
+            bLog.with().level(Level.SEVERE).verb(NLogVerb.FAIL).error(e).log(NMsg.ofJ("unable to load {0}.", r));
             return new ArrayList<>();
         }
         return loadSettingsRepos(u, bLog);
     }
 
-    public static List<NRepositoryLocation> loadSettingsRepos(URL url, NLogger bLog) {
+    public static List<NRepositoryLocation> loadSettingsRepos(URL url, NLog bLog) {
         ArrayList<NRepositoryLocation> list = new ArrayList<>();
         InputStream xml = null;
         try {
@@ -338,7 +338,7 @@ public final class NReservedMavenUtils {
             }
 
         } catch (Exception ex) {
-            bLog.with().level(Level.FINE).verb(NLoggerVerb.FAIL).error(ex).log(NMsg.ofJ("unable to loadSettingsRepos {0}", url));
+            bLog.with().level(Level.FINE).verb(NLogVerb.FAIL).error(ex).log(NMsg.ofJ("unable to loadSettingsRepos {0}", url));
             return Collections.emptyList();
         } finally {
             if (xml != null) {
@@ -352,7 +352,7 @@ public final class NReservedMavenUtils {
         return list;
     }
 
-    static Set<NId> loadDependenciesFromPomUrl(String url, NLogger bLog) {
+    static Set<NId> loadDependenciesFromPomUrl(String url, NLog bLog) {
         LinkedHashSet<NId> depsSet = new LinkedHashSet<>();
         InputStream xml = null;
         try {
@@ -539,7 +539,7 @@ public final class NReservedMavenUtils {
             depsSet.addAll(ok);
 
         } catch (Exception ex) {
-            bLog.with().level(Level.FINE).verb(NLoggerVerb.FAIL).error(ex).log(NMsg.ofJ("unable to loadDependenciesAndRepositoriesFromPomUrl {0}", url));
+            bLog.with().level(Level.FINE).verb(NLogVerb.FAIL).error(ex).log(NMsg.ofJ("unable to loadDependenciesAndRepositoriesFromPomUrl {0}", url));
         } finally {
             if (xml != null) {
                 try {
@@ -553,7 +553,7 @@ public final class NReservedMavenUtils {
         return depsSet;
     }
 
-    static List<NVersion> detectVersionsFromMetaData(String mavenMetadata, NLogger bLog) {
+    static List<NVersion> detectVersionsFromMetaData(String mavenMetadata, NLog bLog) {
         List<NVersion> all = new ArrayList<>();
         try {
             URL runtimeMetadata = new URL(mavenMetadata);
@@ -568,7 +568,7 @@ public final class NReservedMavenUtils {
                 //ignore
             }
             if (is != null) {
-                bLog.with().level(Level.FINEST).verb(NLoggerVerb.SUCCESS).log(NMsg.ofJ("parsing {0}", mavenMetadata));
+                bLog.with().level(Level.FINEST).verb(NLogVerb.SUCCESS).log(NMsg.ofJ("parsing {0}", mavenMetadata));
                 Document doc = builder.parse(is);
                 Element c = doc.getDocumentElement();
                 for (int i = 0; i < c.getChildNodes().getLength(); i++) {
@@ -594,14 +594,14 @@ public final class NReservedMavenUtils {
                 }
             }
         } catch (Exception ex) {
-            bLog.with().level(Level.FINE).verb(NLoggerVerb.FAIL).error(ex).log(NMsg.ofJ("unable to parse {0}", mavenMetadata));
+            bLog.with().level(Level.FINE).verb(NLogVerb.FAIL).error(ex).log(NMsg.ofJ("unable to parse {0}", mavenMetadata));
             // ignore any error
         }
         return all;
     }
 
     static VersionAndPath resolveLatestMavenId(NId zId, String path, Predicate<NVersion> filter,
-                                               NLogger bLog, NRepositoryLocation repoUrl2, boolean stopFirst, NBootOptionsBuilder options) {
+                                               NLog bLog, NRepositoryLocation repoUrl2, boolean stopFirst, NBootOptionsBuilder options) {
         NDescriptorStyle descType = NDescriptorStyle.MAVEN;
         if (NConstants.RepoTypes.NUTS.equalsIgnoreCase(repoUrl2.getLocationType())) {
             descType = NDescriptorStyle.NUTS;
@@ -638,7 +638,7 @@ public final class NReservedMavenUtils {
                                                 bestVersion = p;
                                                 bestPath = "local location : " + jarPath;
                                                 if (bLog != null) {
-                                                    bLog.with().level(Level.FINEST).verb(NLoggerVerb.SUCCESS).log(NMsg.ofJ("{0}#{1} found in {2} as {3}", zId, bestVersion, repoUrl2, bestPath));
+                                                    bLog.with().level(Level.FINEST).verb(NLogVerb.SUCCESS).log(NMsg.ofJ("{0}#{1} found in {2} as {3}", zId, bestVersion, repoUrl2, bestPath));
                                                 }
                                                 if (stopFirst) {
                                                     break;
@@ -676,7 +676,7 @@ public final class NReservedMavenUtils {
                                 bestVersion = p;
                                 bestPath = "remote file " + basePath;
                                 if (bLog != null) {
-                                    bLog.with().level(Level.FINEST).verb(NLoggerVerb.SUCCESS).log(NMsg.ofJ("{0}#{1} found in {2} as {3}", zId, bestVersion, repoUrl2, bestPath));
+                                    bLog.with().level(Level.FINEST).verb(NLogVerb.SUCCESS).log(NMsg.ofJ("{0}#{1} found in {2} as {3}", zId, bestVersion, repoUrl2, bestPath));
                                 }
                                 if (stopFirst) {
                                     break;
@@ -693,7 +693,7 @@ public final class NReservedMavenUtils {
                                 bestVersion = p;
                                 bestPath = "remote file " + mavenMetadata;
                                 if (bLog != null) {
-                                    bLog.with().level(Level.FINEST).verb(NLoggerVerb.SUCCESS).log(NMsg.ofJ("{0}#{1} found in {2} as {3}", zId, bestVersion, repoUrl2, bestPath));
+                                    bLog.with().level(Level.FINEST).verb(NLogVerb.SUCCESS).log(NMsg.ofJ("{0}#{1} found in {2} as {3}", zId, bestVersion, repoUrl2, bestPath));
                                 }
                                 if (stopFirst) {
                                     break;
@@ -715,16 +715,16 @@ public final class NReservedMavenUtils {
      * @return latest runtime version
      */
     public static NId resolveLatestMavenId(NId zId, Predicate<NVersion> filter,
-                                           NLogger bLog, Collection<NRepositoryLocation> bootRepositories, NBootOptionsBuilder options) {
+                                           NLog bLog, Collection<NRepositoryLocation> bootRepositories, NBootOptionsBuilder options) {
         if (bLog.isLoggable(Level.FINEST)) {
             if (bootRepositories.isEmpty()) {
-                bLog.with().level(Level.FINEST).verb(NLoggerVerb.START).log(NMsg.ofJ("search for {0} nuts there are no repositories to look into.", zId));
+                bLog.with().level(Level.FINEST).verb(NLogVerb.START).log(NMsg.ofJ("search for {0} nuts there are no repositories to look into.", zId));
             } else if (bootRepositories.size() == 1) {
-                bLog.with().level(Level.FINEST).verb(NLoggerVerb.START).log(NMsg.ofJ("search for {0} in: {1}", zId, bootRepositories.toArray()[0]));
+                bLog.with().level(Level.FINEST).verb(NLogVerb.START).log(NMsg.ofJ("search for {0} in: {1}", zId, bootRepositories.toArray()[0]));
             } else {
-                bLog.with().level(Level.FINEST).verb(NLoggerVerb.START).log(NMsg.ofJ("search for {0} in: ", zId));
+                bLog.with().level(Level.FINEST).verb(NLogVerb.START).log(NMsg.ofJ("search for {0} in: ", zId));
                 for (NRepositoryLocation repoUrl : bootRepositories) {
-                    bLog.with().level(Level.FINEST).verb(NLoggerVerb.START).log(NMsg.ofJ("    {0}", repoUrl));
+                    bLog.with().level(Level.FINEST).verb(NLogVerb.START).log(NMsg.ofJ("    {0}", repoUrl));
                 }
             }
         }
@@ -748,11 +748,11 @@ public final class NReservedMavenUtils {
             return null;
         }
         NId iid = NId.of(zId.getGroupId(), zId.getArtifactId(), bestVersion).get();
-        bLog.with().level(Level.FINEST).verb(NLoggerVerb.SUCCESS).log(NMsg.ofJ("resolve {0} from {1}", iid, bestPath));
+        bLog.with().level(Level.FINEST).verb(NLogVerb.SUCCESS).log(NMsg.ofJ("resolve {0} from {1}", iid, bestPath));
         return iid;
     }
 
-    private static List<NVersion> detectVersionsFromHtmlfsTomcatDirectoryListing(String basePath, NLogger bLog) {
+    private static List<NVersion> detectVersionsFromHtmlfsTomcatDirectoryListing(String basePath, NLog bLog) {
         List<NVersion> all = new ArrayList<>();
         try (InputStream in = NReservedIOUtils.openStream(new URL(basePath), bLog)) {
             List<String> p = new HtmlfsTomcatDirectoryListParser().parse(in);
@@ -779,7 +779,7 @@ public final class NReservedMavenUtils {
 
     public static File getBootCacheJar(NId vid, NRepositoryLocation[] repositories, NRepositoryLocation cacheFolder, boolean useCache, String name,
                                        Instant expire, NReservedErrorInfoList errorList, NBootOptions bOptions,
-                                       Function<String, String> pathExpansionConverter, NLogger bLog) {
+                                       Function<String, String> pathExpansionConverter, NLog bLog) {
         File f = getBootCacheFile(vid, getFileName(vid, "jar"), repositories, cacheFolder, useCache, expire, errorList, bOptions, pathExpansionConverter, bLog);
         if (f == null) {
             throw new NInvalidWorkspaceException(bOptions.getWorkspace().orNull(),
@@ -791,7 +791,7 @@ public final class NReservedMavenUtils {
     static File getBootCacheFile(NId vid, String fileName, NRepositoryLocation[] repositories, NRepositoryLocation cacheFolder,
                                  boolean useCache, Instant expire, NReservedErrorInfoList errorList,
                                  NBootOptions bOptions,
-                                 Function<String, String> pathExpansionConverter, NLogger bLog) {
+                                 Function<String, String> pathExpansionConverter, NLog bLog) {
         String path = getPathFile(vid, fileName);
         if (useCache && cacheFolder != null) {
 
@@ -815,7 +815,7 @@ public final class NReservedMavenUtils {
     private static File getBootCacheFile(NId nutsId, String path, NRepositoryLocation repository0, NRepositoryLocation cacheFolder,
                                          boolean useCache, Instant expire, NReservedErrorInfoList errorList,
                                          NBootOptions bOptions, Function<String, String> pathExpansionConverter,
-                                         NLogger bLog) {
+                                         NLog bLog) {
         boolean cacheLocalFiles = true;//Boolean.getBoolean("nuts.cache.cache-local-files");
         String repository = repository0.getPath();
         //we know exactly the file path, so we will trim "htmlfs:" protocol
@@ -828,7 +828,7 @@ public final class NReservedMavenUtils {
             try {
                 repositoryFolder = NReservedIOUtils.toFile(new URL(repository));
             } catch (Exception ex) {
-                bLog.with().level(Level.FINE).verb(NLoggerVerb.FAIL).error(ex).log(NMsg.ofJ("unable to convert url to file : {0}", repository));
+                bLog.with().level(Level.FINE).verb(NLogVerb.FAIL).error(ex).log(NMsg.ofJ("unable to convert url to file : {0}", repository));
                 //ignore
             }
         } else {
@@ -865,11 +865,11 @@ public final class NReservedMavenUtils {
             if (file.isFile()) {
                 ff = file;
             } else {
-                bLog.with().level(Level.CONFIG).verb(NLoggerVerb.FAIL).log(NMsg.ofJ("locate {0}", file));
+                bLog.with().level(Level.CONFIG).verb(NLogVerb.FAIL).log(NMsg.ofJ("locate {0}", file));
             }
         } else {
             File file = new File(repoFolder, path.replace('/', File.separatorChar));
-            bLog.with().level(Level.CONFIG).verb(NLoggerVerb.FAIL).log(NMsg.ofJ("locate {0} ; repository is not a valid folder : {1}", file, repoFolder));
+            bLog.with().level(Level.CONFIG).verb(NLogVerb.FAIL).log(NMsg.ofJ("locate {0} ; repository is not a valid folder : {1}", file, repoFolder));
         }
 
         if (ff != null) {
@@ -890,15 +890,15 @@ public final class NReservedMavenUtils {
                     }
                     if (to.isFile()) {
                         NReservedIOUtils.copy(ff, to, bLog);
-                        bLog.with().level(Level.CONFIG).verb(NLoggerVerb.CACHE).log(NMsg.ofJ("recover cached {0} file {0} to {1}", ext, ff, to));
+                        bLog.with().level(Level.CONFIG).verb(NLogVerb.CACHE).log(NMsg.ofJ("recover cached {0} file {0} to {1}", ext, ff, to));
                     } else {
                         NReservedIOUtils.copy(ff, to, bLog);
-                        bLog.with().level(Level.CONFIG).verb(NLoggerVerb.CACHE).log(NMsg.ofJ("cache {0} file {0} to {1}", ext, ff, to));
+                        bLog.with().level(Level.CONFIG).verb(NLogVerb.CACHE).log(NMsg.ofJ("cache {0} file {0} to {1}", ext, ff, to));
                     }
                     return to;
                 } catch (IOException ex) {
                     errorList.add(new NReservedErrorInfo(nutsId, repository, ff.getPath(), "unable to cache", ex));
-                    bLog.with().level(Level.CONFIG).verb(NLoggerVerb.FAIL).log(NMsg.ofJ("error caching file {0} to {1} : {2}", ff, to, ex.toString()));
+                    bLog.with().level(Level.CONFIG).verb(NLogVerb.FAIL).log(NMsg.ofJ("error caching file {0} to {1} : {2}", ff, to, ex.toString()));
                     //not found
                 }
                 return ff;
@@ -909,11 +909,11 @@ public final class NReservedMavenUtils {
         return null;
     }
 
-    public static String resolveNutsApiVersionFromClassPath(NLogger bLog) {
+    public static String resolveNutsApiVersionFromClassPath(NLog bLog) {
         return resolveNutsApiPomPattern("version", bLog);
     }
 
-    public static String resolveNutsApiPomPattern(String propName, NLogger bLog) {
+    public static String resolveNutsApiPomPattern(String propName, NLog bLog) {
 //        boolean devMode = false;
         String propValue = null;
         try {

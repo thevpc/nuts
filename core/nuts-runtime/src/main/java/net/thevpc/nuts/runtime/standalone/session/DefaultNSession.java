@@ -25,8 +25,8 @@ package net.thevpc.nuts.runtime.standalone.session;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.cmdline.NArg;
-import net.thevpc.nuts.cmdline.NCommandLine;
-import net.thevpc.nuts.cmdline.NCommandLineConfigurable;
+import net.thevpc.nuts.cmdline.NCmdLine;
+import net.thevpc.nuts.cmdline.NCmdLineConfigurable;
 import net.thevpc.nuts.elem.NArrayElementBuilder;
 import net.thevpc.nuts.elem.NElements;
 import net.thevpc.nuts.format.NIterableFormat;
@@ -106,7 +106,7 @@ public class DefaultNSession implements Cloneable, NSession {
 
     /**
      * configure the current command with the given arguments. This is an
-     * override of the {@link NCommandLineConfigurable#configure(boolean, java.lang.String...)
+     * override of the {@link NCmdLineConfigurable#configure(boolean, java.lang.String...)
      * }
      * to help return a more specific return type;
      *
@@ -127,12 +127,12 @@ public class DefaultNSession implements Cloneable, NSession {
      * @return {@code this} instance
      */
     @Override
-    public final boolean configure(boolean skipUnsupported, NCommandLine commandLine) {
+    public final boolean configure(boolean skipUnsupported, NCmdLine commandLine) {
         return NConfigurableHelper.configure(this, this, skipUnsupported, commandLine);
     }
 
     @Override
-    public boolean configureFirst(NCommandLine cmdLine) {
+    public boolean configureFirst(NCmdLine cmdLine) {
         NArg a = cmdLine.peek().orNull();
         if (a != null) {
             boolean active = a.isActive();
@@ -1363,7 +1363,7 @@ public class DefaultNSession implements Cloneable, NSession {
         return this;
     }
 
-    private void parseLogLevel(NCommandLine cmdLine, boolean enabled) {
+    private void parseLogLevel(NCmdLine cmdLine, boolean enabled) {
         NArg a = cmdLine.peek().get(this);
         switch (a.key()) {
             //these options are just ignored!
@@ -1483,7 +1483,7 @@ public class DefaultNSession implements Cloneable, NSession {
     }
 
     @Override
-    public void configureLast(NCommandLine commandLine) {
+    public void configureLast(NCmdLine commandLine) {
         if (!configureFirst(commandLine)) {
             commandLine.throwUnexpectedArgument();
         }

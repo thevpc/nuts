@@ -29,7 +29,6 @@ package net.thevpc.nuts.util;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.format.NPositionType;
 import net.thevpc.nuts.reserved.NReservedUtils;
-import net.thevpc.nuts.reserved.NReservedStringMapParser;
 import net.thevpc.nuts.reserved.NReservedStringUtils;
 
 import java.text.Normalizer;
@@ -363,30 +362,6 @@ public class NStringUtils {
             }
         }
         return sb.toString();
-    }
-
-    public static NOptional<Map<String, String>> parseDefaultMap(String text) {
-        return parseMap(text, "=", "&", "");
-    }
-
-    public static NOptional<Map<String, String>> parseMap(String text, String eqSeparators, String entrySeparators) {
-        return parseMap(text, eqSeparators, entrySeparators, "");
-    }
-
-    public static NOptional<Map<String, String>> parseMap(String text, String eqSeparators, String entrySeparators, String escapeChars) {
-        return NReservedStringMapParser.of(eqSeparators, entrySeparators, escapeChars).parse(text);
-    }
-
-    public static String formatDefaultMap(Map<String, String> map) {
-        return formatMap(map, "=", "&", "?", true);
-    }
-
-    public static String formatMap(Map<String, String> map, String eqSeparators, String entrySeparators, boolean sort) {
-        return formatMap(map, eqSeparators, entrySeparators, "", sort);
-    }
-
-    public static String formatMap(Map<String, String> map, String eqSeparators, String entrySeparators, String escapeChars, boolean sort) {
-        return NReservedStringMapParser.of(eqSeparators, entrySeparators, escapeChars).format(map, sort);
     }
 
     public static NOptional<List<String>> parsePropertyIdList(String s) {

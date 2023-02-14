@@ -41,19 +41,6 @@ public class SourceNavigator {
 
     }
 
-    //    public static void main(String[] args) {
-//         navigate(SourceFactory.create(new File("/home/vpc/NetBeansProjects/IA3/")),new SourceProcessor() {
-//
-//            @Override
-//            public boolean process(Source source) {
-//                System.out.println(source.getClass().getSimpleName()+"   "+source.getExternalPath());
-//                if(source instanceof JavaTypeSource){
-//                    System.out.println("     "+((JavaTypeSource)source).getClassName());
-//                }
-//                return true;
-//            }
-//        });
-//    }
     private static class ExitException extends RuntimeException {
 
     }

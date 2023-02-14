@@ -1,8 +1,8 @@
 package net.thevpc.nuts.runtime.standalone.io.terminal;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.cmdline.NCommandAutoCompleteResolver;
-import net.thevpc.nuts.cmdline.NCommandHistory;
+import net.thevpc.nuts.cmdline.NCmdLineAutoCompleteResolver;
+import net.thevpc.nuts.cmdline.NCmdLineHistory;
 import net.thevpc.nuts.io.*;
 import net.thevpc.nuts.runtime.standalone.io.printstream.NPrintStreamSystem;
 import net.thevpc.nuts.runtime.standalone.util.NCachedValue;
@@ -10,7 +10,7 @@ import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceExt;
 import net.thevpc.nuts.spi.*;
 import net.thevpc.nuts.text.NTerminalCommand;
 import net.thevpc.nuts.text.NTextStyles;
-import net.thevpc.nuts.util.NLogger;
+import net.thevpc.nuts.util.NLog;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -22,7 +22,7 @@ public class DefaultNSystemTerminalBase extends NSystemTerminalBaseImpl {
     NCachedValue<Cursor> termCursor;
     NCachedValue<Size> termSize;
 
-    private NLogger LOG;
+    private NLog LOG;
     private Scanner scanner;
     private NTerminalMode outMode = NTerminalMode.FORMATTED;
     private NTerminalMode errMode = NTerminalMode.FORMATTED;
@@ -31,17 +31,17 @@ public class DefaultNSystemTerminalBase extends NSystemTerminalBaseImpl {
     private InputStream in;
     private NWorkspace workspace;
     private NSession session;
-    private NCommandHistory history;
+    private NCmdLineHistory history;
     private String commandHighlighter;
-    private NCommandAutoCompleteResolver commandAutoCompleteResolver;
+    private NCmdLineAutoCompleteResolver commandAutoCompleteResolver;
 
     public DefaultNSystemTerminalBase() {
 
     }
 
-    private NLogger _LOG() {
+    private NLog _LOG() {
         if (LOG == null && session != null) {
-            LOG = NLogger.of(NSystemTerminalBase.class, session);
+            LOG = NLog.of(NSystemTerminalBase.class, session);
         }
         return LOG;
     }
@@ -122,7 +122,7 @@ public class DefaultNSystemTerminalBase extends NSystemTerminalBaseImpl {
     }
 
     @Override
-    public NCommandAutoCompleteResolver getAutoCompleteResolver() {
+    public NCmdLineAutoCompleteResolver getAutoCompleteResolver() {
         return commandAutoCompleteResolver;
     }
 
@@ -132,18 +132,18 @@ public class DefaultNSystemTerminalBase extends NSystemTerminalBaseImpl {
     }
 
     @Override
-    public NSystemTerminalBase setCommandAutoCompleteResolver(NCommandAutoCompleteResolver autoCompleteResolver) {
+    public NSystemTerminalBase setCommandAutoCompleteResolver(NCmdLineAutoCompleteResolver autoCompleteResolver) {
         this.commandAutoCompleteResolver = autoCompleteResolver;
         return this;
     }
 
     @Override
-    public NCommandHistory getCommandHistory() {
+    public NCmdLineHistory getCommandHistory() {
         return history;
     }
 
     @Override
-    public NSystemTerminalBase setCommandHistory(NCommandHistory history) {
+    public NSystemTerminalBase setCommandHistory(NCmdLineHistory history) {
         this.history = history;
         return this;
     }

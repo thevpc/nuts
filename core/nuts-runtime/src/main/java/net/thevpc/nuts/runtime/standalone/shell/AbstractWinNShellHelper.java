@@ -1,8 +1,8 @@
 package net.thevpc.nuts.runtime.standalone.shell;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.cmdline.NCommandLineFormatStrategy;
-import net.thevpc.nuts.runtime.standalone.app.cmdline.NCommandLineShellOptions;
+import net.thevpc.nuts.cmdline.NCmdLineFormatStrategy;
+import net.thevpc.nuts.runtime.standalone.app.cmdline.NCmdLineShellOptions;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -160,19 +160,19 @@ public abstract class AbstractWinNShellHelper implements NShellHelper {
         return i;
     }
 
-    public String escapeArgument(String arg, NCommandLineShellOptions options) {
+    public String escapeArgument(String arg, NCmdLineShellOptions options) {
         if(arg == null || arg.isEmpty()){
             return "\"\"";
         }
         if(options==null){
-            options=new NCommandLineShellOptions();
+            options=new NCmdLineShellOptions();
         }
         if(options.getSession()==null){
             throw new NMissingSessionException();
         }
-        NCommandLineFormatStrategy s = options.getFormatStrategy();
-        if(s==null|| s== NCommandLineFormatStrategy.DEFAULT){
-            s= NCommandLineFormatStrategy.SUPPORT_QUOTES;
+        NCmdLineFormatStrategy s = options.getFormatStrategy();
+        if(s==null|| s== NCmdLineFormatStrategy.DEFAULT){
+            s= NCmdLineFormatStrategy.SUPPORT_QUOTES;
         }
         int ii = arg.indexOf('=');
         if(ii>=0) {
@@ -258,7 +258,7 @@ public abstract class AbstractWinNShellHelper implements NShellHelper {
                         case '`':
                         case '~':
                         {
-                            return escapeArgument(arg,options.copy().setFormatStrategy(NCommandLineFormatStrategy.REQUIRE_QUOTES));
+                            return escapeArgument(arg,options.copy().setFormatStrategy(NCmdLineFormatStrategy.REQUIRE_QUOTES));
                         }
                         case '\n':
                         case '\r':
@@ -315,9 +315,9 @@ public abstract class AbstractWinNShellHelper implements NShellHelper {
     }
 
     @Override
-    public String escapeArguments(String[] args, NCommandLineShellOptions options) {
+    public String escapeArguments(String[] args, NCmdLineShellOptions options) {
         if(options==null){
-            options=new NCommandLineShellOptions();
+            options=new NCmdLineShellOptions();
         }else{
             options=options.copy();
         }

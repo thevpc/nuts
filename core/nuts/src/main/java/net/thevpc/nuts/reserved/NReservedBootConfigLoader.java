@@ -28,8 +28,8 @@ package net.thevpc.nuts.reserved;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.boot.DefaultNBootOptionsBuilder;
 import net.thevpc.nuts.boot.NBootOptionsBuilder;
-import net.thevpc.nuts.util.NLogger;
-import net.thevpc.nuts.util.NLoggerVerb;
+import net.thevpc.nuts.util.NLog;
+import net.thevpc.nuts.util.NLogVerb;
 
 import java.io.File;
 import java.io.StringReader;
@@ -45,26 +45,26 @@ import java.util.logging.Level;
  */
 public final class NReservedBootConfigLoader {
 
-    public static NBootOptionsBuilder loadBootConfig(String workspaceLocation, NLogger bLog) {
+    public static NBootOptionsBuilder loadBootConfig(String workspaceLocation, NLog bLog) {
         File bootFile = new File(workspaceLocation, NConstants.Files.WORKSPACE_CONFIG_FILE_NAME);
         try {
             if (bootFile.isFile()) {
-                bLog.with().level(Level.CONFIG).verb(NLoggerVerb.READ).log( NMsg.ofJ("load boot file : {0}", bootFile.getPath()));
+                bLog.with().level(Level.CONFIG).verb(NLogVerb.READ).log( NMsg.ofJ("load boot file : {0}", bootFile.getPath()));
                 String json = NReservedIOUtils.readStringFromFile(bootFile).trim();
                 if (json.length() > 0) {
                     return loadBootConfigJSON(json, bLog);
                 }
             }
             if (bLog.isLoggable(Level.FINEST)) {
-                bLog.with().level(Level.CONFIG).verb(NLoggerVerb.FAIL).log(NMsg.ofJ("previous Workspace config not found at {0}", bootFile.getPath()));
+                bLog.with().level(Level.CONFIG).verb(NLogVerb.FAIL).log(NMsg.ofJ("previous Workspace config not found at {0}", bootFile.getPath()));
             }
         } catch (Exception ex) {
-            bLog.with().level(Level.CONFIG).verb(NLoggerVerb.FAIL).error(ex).log(NMsg.ofJ("unable to load nuts version file {0}.\n", bootFile));
+            bLog.with().level(Level.CONFIG).verb(NLogVerb.FAIL).error(ex).log(NMsg.ofJ("unable to load nuts version file {0}.\n", bootFile));
         }
         return null;
     }
 
-    private static NBootOptionsBuilder loadBootConfigJSON(String json, NLogger bLog) {
+    private static NBootOptionsBuilder loadBootConfigJSON(String json, NLog bLog) {
         NReservedJsonParser parser = new NReservedJsonParser(new StringReader(json));
         Map<String, Object> jsonObject = parser.parseObject();
         NBootOptionsBuilder c = new DefaultNBootOptionsBuilder();
@@ -74,22 +74,22 @@ public final class NReservedBootConfigLoader {
 
         if (configVersion.isBlank()) {
             configVersion = Nuts.getVersion();
-            bLog.with().level(Level.FINEST).verb(NLoggerVerb.FAIL).log(NMsg.ofJ("unable to detect config version. Fallback to {0}", configVersion));
+            bLog.with().level(Level.FINEST).verb(NLogVerb.FAIL).log(NMsg.ofJ("unable to detect config version. Fallback to {0}", configVersion));
         }
         if (configVersion == null) {
         }
         int buildNumber = getApiVersionOrdinalNumber(configVersion);
         if (buildNumber <= 501) {
             //load nothing!
-            bLog.with().level(Level.CONFIG).verb(NLoggerVerb.READ).log( NMsg.ofJ("detect config version {0} ( considered as 0.5.1, very old config, ignored)", configVersion));
+            bLog.with().level(Level.CONFIG).verb(NLogVerb.READ).log( NMsg.ofJ("detect config version {0} ( considered as 0.5.1, very old config, ignored)", configVersion));
         } else if (buildNumber <= 505) {
-            bLog.with().level(Level.CONFIG).verb(NLoggerVerb.READ).log(NMsg.ofJ("detect config version {0} ( compatible with 0.5.2 config file )", configVersion));
+            bLog.with().level(Level.CONFIG).verb(NLogVerb.READ).log(NMsg.ofJ("detect config version {0} ( compatible with 0.5.2 config file )", configVersion));
             loadConfigVersion502(c, jsonObject, bLog);
         } else if (buildNumber <= 506) {
-            bLog.with().level(Level.CONFIG).verb(NLoggerVerb.READ).log(NMsg.ofJ("detect config version {0} ( compatible with 0.5.6 config file )", configVersion));
+            bLog.with().level(Level.CONFIG).verb(NLogVerb.READ).log(NMsg.ofJ("detect config version {0} ( compatible with 0.5.6 config file )", configVersion));
             loadConfigVersion506(c, jsonObject, bLog);
         } else {
-            bLog.with().level(Level.CONFIG).verb(NLoggerVerb.READ).log(NMsg.ofJ("detect config version {0} ( compatible with 0.5.7 config file )", configVersion));
+            bLog.with().level(Level.CONFIG).verb(NLogVerb.READ).log(NMsg.ofJ("detect config version {0} ( compatible with 0.5.7 config file )", configVersion));
             loadConfigVersion507(c, jsonObject, bLog);
         }
         return c;
@@ -116,8 +116,8 @@ public final class NReservedBootConfigLoader {
      */
     @SuppressWarnings("unchecked")
     private static void loadConfigVersion507(NBootOptionsBuilder config, Map<String, Object> jsonObject,
-                                             NLogger bLog) {
-        bLog.with().level(Level.CONFIG).verb(NLoggerVerb.INFO).log( NMsg.ofPlain("config version compatibility : 0.5.7"));
+                                             NLog bLog) {
+        bLog.with().level(Level.CONFIG).verb(NLogVerb.INFO).log( NMsg.ofPlain("config version compatibility : 0.5.7"));
         config.setUuid((String) jsonObject.get("uuid"));
         config.setName((String) jsonObject.get("name"));
         config.setWorkspace((String) jsonObject.get("workspace"));
@@ -196,8 +196,8 @@ public final class NReservedBootConfigLoader {
      */
     @SuppressWarnings("unchecked")
     private static void loadConfigVersion506(NBootOptionsBuilder config, Map<String, Object> jsonObject,
-                                             NLogger bLog) {
-        bLog.with().level(Level.CONFIG).verb(NLoggerVerb.INFO).log( NMsg.ofPlain("config version compatibility : 0.5.6"));
+                                             NLog bLog) {
+        bLog.with().level(Level.CONFIG).verb(NLogVerb.INFO).log( NMsg.ofPlain("config version compatibility : 0.5.6"));
         config.setUuid((String) jsonObject.get("uuid"));
         config.setName((String) jsonObject.get("name"));
         config.setWorkspace((String) jsonObject.get("workspace"));
@@ -230,8 +230,8 @@ public final class NReservedBootConfigLoader {
      * @param jsonObject config JSON object
      */
     private static void loadConfigVersion502(NBootOptionsBuilder config, Map<String, Object> jsonObject,
-                                             NLogger bLog) {
-        bLog.with().level(Level.CONFIG).verb(NLoggerVerb.INFO).log( NMsg.ofPlain("config version compatibility : 0.5.2"));
+                                             NLog bLog) {
+        bLog.with().level(Level.CONFIG).verb(NLogVerb.INFO).log( NMsg.ofPlain("config version compatibility : 0.5.2"));
         config.setUuid((String) jsonObject.get("uuid"));
         config.setName((String) jsonObject.get("name"));
         config.setWorkspace((String) jsonObject.get("workspace"));

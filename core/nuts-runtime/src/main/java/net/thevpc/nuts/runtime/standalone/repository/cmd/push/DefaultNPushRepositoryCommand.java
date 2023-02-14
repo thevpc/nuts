@@ -12,9 +12,9 @@ import net.thevpc.nuts.format.NPositionType;
 import net.thevpc.nuts.runtime.standalone.repository.impl.NRepositoryExt;
 import net.thevpc.nuts.runtime.standalone.session.NSessionUtils;
 import net.thevpc.nuts.spi.NPushRepositoryCommand;
-import net.thevpc.nuts.util.NLogger;
-import net.thevpc.nuts.util.NLoggerOp;
-import net.thevpc.nuts.util.NLoggerVerb;
+import net.thevpc.nuts.util.NLog;
+import net.thevpc.nuts.util.NLogOp;
+import net.thevpc.nuts.util.NLogVerb;
 import net.thevpc.nuts.util.NStringUtils;
 
 /**
@@ -23,19 +23,19 @@ import net.thevpc.nuts.util.NStringUtils;
  */
 public class DefaultNPushRepositoryCommand extends AbstractNPushRepositoryCommand {
 
-    private NLogger LOG;
+    private NLog LOG;
 
     public DefaultNPushRepositoryCommand(NRepository repo) {
         super(repo);
     }
 
-    protected NLoggerOp _LOGOP(NSession session) {
+    protected NLogOp _LOGOP(NSession session) {
         return _LOG(session).with().session(session);
     }
 
-    protected NLogger _LOG(NSession session) {
+    protected NLog _LOG(NSession session) {
         if (LOG == null) {
-            LOG = NLogger.of(DefaultNPushRepositoryCommand.class,session);
+            LOG = NLog.of(DefaultNPushRepositoryCommand.class,session);
         }
         return LOG;
     }
@@ -47,12 +47,12 @@ public class DefaultNPushRepositoryCommand extends AbstractNPushRepositoryComman
         getRepo().security().setSession(session).checkAllowed(NConstants.Permissions.PUSH, "push");
         try {
             NRepositoryExt.of(getRepo()).pushImpl(this);
-                _LOGOP(session).level(Level.FINEST).verb(NLoggerVerb.SUCCESS)
+                _LOGOP(session).level(Level.FINEST).verb(NLogVerb.SUCCESS)
                         .log(NMsg.ofJ("{0} push {1}", NStringUtils.formatAlign(getRepo().getName(), 20, NPositionType.FIRST), getId()));
         } catch (RuntimeException ex) {
 
             if (_LOG(session).isLoggable(Level.FINEST)) {
-                _LOGOP(session).level(Level.FINEST).verb(NLoggerVerb.FAIL)
+                _LOGOP(session).level(Level.FINEST).verb(NLogVerb.FAIL)
                         .log(NMsg.ofJ("{0} push {1}", NStringUtils.formatAlign(getRepo().getName(), 20, NPositionType.FIRST), getId()));
             }
         }

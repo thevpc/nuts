@@ -49,8 +49,8 @@ import net.thevpc.nuts.DefaultNVersion;
 import net.thevpc.nuts.runtime.standalone.repository.NIdPathIterator;
 import net.thevpc.nuts.runtime.standalone.repository.NIdPathIteratorBase;
 import net.thevpc.nuts.runtime.standalone.xtra.digest.NDigestUtils;
-import net.thevpc.nuts.util.NLogger;
-import net.thevpc.nuts.util.NLoggerOp;
+import net.thevpc.nuts.util.NLogOp;
+import net.thevpc.nuts.util.NLog;
 
 /**
  *
@@ -58,7 +58,7 @@ import net.thevpc.nuts.util.NLoggerOp;
  */
 public class MavenRepositoryFolderHelper {
 
-    private NLogger LOG;
+    private NLog LOG;
     private NRepository repo;
     private NWorkspace ws;
     private NPath rootPath;
@@ -72,13 +72,13 @@ public class MavenRepositoryFolderHelper {
         this.rootPath = rootPath;
     }
 
-    protected NLoggerOp _LOGOP(NSession session) {
+    protected NLogOp _LOGOP(NSession session) {
         return _LOG(session).with().session(session);
     }
 
-    protected NLogger _LOG(NSession session) {
+    protected NLog _LOG(NSession session) {
         if (LOG == null) {
-            LOG = NLogger.of(MavenRepositoryFolderHelper.class,session);
+            LOG = NLog.of(MavenRepositoryFolderHelper.class,session);
         }
         return LOG;
     }

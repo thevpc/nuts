@@ -10,7 +10,7 @@ import java.io.PrintWriter;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.cmdline.NArg;
-import net.thevpc.nuts.cmdline.NCommandLine;
+import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.elem.NElements;
 import net.thevpc.nuts.io.NPrintStream;
 import net.thevpc.nuts.runtime.standalone.format.NFetchDisplayOptions;
@@ -96,7 +96,7 @@ public class DefaultSearchFormatXml extends DefaultSearchFormatBase {
     }
 
     @Override
-    public boolean configureFirst(NCommandLine cmd) {
+    public boolean configureFirst(NCmdLine cmd) {
         NSession session = getSession();
         NArg a = cmd.peek().get(session);
         if (a == null) {

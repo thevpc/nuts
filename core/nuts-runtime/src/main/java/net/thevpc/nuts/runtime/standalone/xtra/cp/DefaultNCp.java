@@ -34,7 +34,7 @@ import java.util.logging.Level;
 public class DefaultNCp implements NCp {
 
     private final NWorkspace ws;
-    private NLogger LOG;
+    private NLog LOG;
     private NCpValidator checker;
     private boolean skipRoot = false;
     private int maxRepeatCount = 3;
@@ -76,13 +76,13 @@ public class DefaultNCp implements NCp {
         return DEFAULT_SUPPORT;
     }
 
-    protected NLoggerOp _LOGOP(NSession session) {
+    protected NLogOp _LOGOP(NSession session) {
         return _LOG(session).with().session(session);
     }
 
-    protected NLogger _LOG(NSession session) {
+    protected NLog _LOG(NSession session) {
         if (LOG == null) {
-            LOG = NLogger.of(DefaultNCp.class, session);
+            LOG = NLog.of(DefaultNCp.class, session);
         }
         return LOG;
     }
@@ -699,9 +699,9 @@ public class DefaultNCp implements NCp {
         }
         for (int i = repeatCount; i <= maxRepeatCount; i++) {
             try {
-                NLoggerOp lop = _LOGOP(session);
+                NLogOp lop = _LOGOP(session);
                 if (i > 1 && lop.isLoggable(Level.FINEST)) {
-                    lop.level(Level.FINEST).verb(NLoggerVerb.START).log(NMsg.ofJ("repeat download #{0} {1}",
+                    lop.level(Level.FINEST).verb(NLogVerb.START).log(NMsg.ofJ("repeat download #{0} {1}",
                             i,
                             source));
                 }
@@ -782,9 +782,9 @@ public class DefaultNCp implements NCp {
                             .setLogProgress(options.contains(NPathOption.LOG))
                             .create());
         }
-        NLoggerOp lop = _LOGOP(session);
+        NLogOp lop = _LOGOP(session);
         if (lop.isLoggable(Level.FINEST)) {
-            lop.level(Level.FINEST).verb(NLoggerVerb.START).log(NMsg.ofJ("{0} {1} to {2}",
+            lop.level(Level.FINEST).verb(NLogVerb.START).log(NMsg.ofJ("{0} {1} to {2}",
                     m,
                     loggedSrc,
                     loggedTarget));
@@ -876,7 +876,7 @@ public class DefaultNCp implements NCp {
                 }
             }
         } catch (IOException ex) {
-            lop.level(Level.CONFIG).verb(NLoggerVerb.FAIL)
+            lop.level(Level.CONFIG).verb(NLogVerb.FAIL)
                     .log(NMsg.ofJ("error copying {0} to {1} : {2}", _source,
                             target, ex));
             throw new NIOException(session, ex);

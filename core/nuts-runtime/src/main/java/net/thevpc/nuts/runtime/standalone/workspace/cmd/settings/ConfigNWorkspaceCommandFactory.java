@@ -7,8 +7,8 @@ import net.thevpc.nuts.runtime.standalone.session.NSessionUtils;
 import net.thevpc.nuts.runtime.standalone.util.filters.CoreFilterUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.config.NConfigsExt;
 import net.thevpc.nuts.runtime.standalone.workspace.config.ConfigEventType;
-import net.thevpc.nuts.util.NLogger;
-import net.thevpc.nuts.util.NLoggerOp;
+import net.thevpc.nuts.util.NLog;
+import net.thevpc.nuts.util.NLogOp;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -17,20 +17,20 @@ import java.util.logging.Level;
 
 public class ConfigNWorkspaceCommandFactory implements NWorkspaceCommandFactory {
 
-    private NLogger LOG;
+    private NLog LOG;
     private NWorkspace ws;
 
     public ConfigNWorkspaceCommandFactory(NWorkspace ws) {
         this.ws = ws;
     }
 
-    protected NLoggerOp _LOGOP(NSession session) {
+    protected NLogOp _LOGOP(NSession session) {
         return _LOG(session).with().session(session);
     }
 
-    protected NLogger _LOG(NSession session) {
+    protected NLog _LOG(NSession session) {
         if (LOG == null) {
-            LOG = NLogger.of(ConfigNWorkspaceCommandFactory.class, session);
+            LOG = NLog.of(ConfigNWorkspaceCommandFactory.class, session);
         }
         return LOG;
     }

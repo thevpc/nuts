@@ -26,7 +26,7 @@
 package net.thevpc.nuts.toolbox.nsh.cmds.bash;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.cmdline.NCommandLine;
+import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.io.NCp;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.io.NPathOption;
@@ -49,7 +49,7 @@ public class WgetCommand extends SimpleJShellBuiltin {
     }
 
     @Override
-    protected boolean configureFirst(NCommandLine commandLine, JShellExecutionContext context) {
+    protected boolean configureFirst(NCmdLine commandLine, JShellExecutionContext context) {
         Options options = context.getOptions();
         NSession session = context.getSession();
         if (commandLine.next("-O", "--output-document").isPresent()) {
@@ -65,7 +65,7 @@ public class WgetCommand extends SimpleJShellBuiltin {
     }
 
     @Override
-    protected void execBuiltin(NCommandLine commandLine, JShellExecutionContext context) {
+    protected void execBuiltin(NCmdLine commandLine, JShellExecutionContext context) {
         Options options = context.getOptions();
         if (options.files.isEmpty()) {
             throw new NExecutionException(context.getSession(), NMsg.ofPlain("wget: Missing Files"), 2);

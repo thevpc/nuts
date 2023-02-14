@@ -42,7 +42,7 @@ import java.util.List;
  * @app.category Application
  * @since 0.5.5
  */
-public interface NApplicationContext extends NCommandLineConfigurable,NSessionProvider {
+public interface NApplicationContext extends NCmdLineConfigurable,NSessionProvider {
     /**
      * string that prefix each auto complete candidate
      */
@@ -82,11 +82,11 @@ public interface NApplicationContext extends NCommandLineConfigurable,NSessionPr
      *
      * @return Auto complete instance
      */
-    NCommandAutoComplete getAutoComplete();
+    NCmdLineAutoComplete getAutoComplete();
 
     /**
      * configure the current command with the given arguments. This is an
-     * override of the {@link NCommandLineConfigurable#configure(boolean, java.lang.String...) }
+     * override of the {@link NCmdLineConfigurable#configure(boolean, java.lang.String...) }
      * to help return a more specific return type;
      *
      * @param skipUnsupported when true, all unsupported options are skipped
@@ -99,12 +99,12 @@ public interface NApplicationContext extends NCommandLineConfigurable,NSessionPr
     /**
      * calls configureFirst and ensure this is the last test.
      * If the argument is not supported, throws unsupported argument
-     * by calling {@link NCommandLine#throwUnexpectedArgument()}
+     * by calling {@link NCmdLine#throwUnexpectedArgument()}
      *
      * @param commandLine arguments to configure with
      * @since 0.7.1
      */
-    void configureLast(NCommandLine commandLine);
+    void configureLast(NCmdLine commandLine);
 
     /**
      * print application help to the default out ({@code getSession().out()})
@@ -261,20 +261,20 @@ public interface NApplicationContext extends NCommandLineConfigurable,NSessionPr
      *
      * @return a new instance of command line arguments to process
      */
-    NCommandLine getCommandLine();
+    NCmdLine getCommandLine();
 
     /**
      * create new NutsCommandLine and consume it with the given processor.
      * This method is equivalent to the following code
      * <pre>
-     * getCommandLine().process(commandLineProcessor, new DefaultNCommandLineContext(this));
+     * getCommandLine().process(commandLineProcessor, new DefaultNCmdLineContext(this));
      * </pre>
      *
      * @param commandLineProcessor commandLineProcessor
      * @throws NullPointerException if the commandLineProcessor is null
      * @since 0.7.0
      */
-    void processCommandLine(NCommandLineProcessor commandLineProcessor);
+    void processCommandLine(NCmdLineProcessor commandLineProcessor);
 
     /**
      * application store folder path for the given {@code location}

@@ -1,7 +1,7 @@
 package net.thevpc.nuts.runtime.optional.mslink;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.cmdline.NCommandLine;
+import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.io.NIOException;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.runtime.standalone.io.util.CoreIOUtils;
@@ -59,10 +59,10 @@ public class OptionalMsLinkHelper {
             //
         }
         byte[] oldContent=CoreIOUtils.loadFileContentLenient(outputFile);
-        String[] cmd = NCommandLine.parseDefault(command).get(session).setExpandSimpleOptions(false).toStringArray();
+        String[] cmd = NCmdLine.parseDefault(command).get(session).setExpandSimpleOptions(false).toStringArray();
         mslinks.ShellLink se = mslinks.ShellLink.createLink(cmd[0])
                 .setWorkingDir(wd)
-                .setCMDArgs(NCommandLine.of(
+                .setCMDArgs(NCmdLine.of(
                         Arrays.copyOfRange(cmd, 1, cmd.length)
                 ).toString());
 

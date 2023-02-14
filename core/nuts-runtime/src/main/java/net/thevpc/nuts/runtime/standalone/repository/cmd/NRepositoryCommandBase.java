@@ -7,8 +7,8 @@ package net.thevpc.nuts.runtime.standalone.repository.cmd;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.cmdline.NArg;
-import net.thevpc.nuts.cmdline.NCommandLine;
-import net.thevpc.nuts.cmdline.NCommandLineConfigurable;
+import net.thevpc.nuts.cmdline.NCmdLine;
+import net.thevpc.nuts.cmdline.NCmdLineConfigurable;
 import net.thevpc.nuts.runtime.standalone.session.NSessionUtils;
 import net.thevpc.nuts.runtime.standalone.util.NConfigurableHelper;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceUtils;
@@ -77,7 +77,7 @@ public abstract class NRepositoryCommandBase<T extends NRepositoryCommand> imple
 
     /**
      * configure the current command with the given arguments. This is an
-     * override of the {@link NCommandLineConfigurable#configure(boolean, java.lang.String...)
+     * override of the {@link NCmdLineConfigurable#configure(boolean, java.lang.String...)
      * }
      * to help return a more specific return type;
      *
@@ -99,13 +99,13 @@ public abstract class NRepositoryCommandBase<T extends NRepositoryCommand> imple
      * @return {@code this} instance
      */
     @Override
-    public boolean configure(boolean skipUnsupported, NCommandLine commandLine) {
+    public boolean configure(boolean skipUnsupported, NCmdLine commandLine) {
         checkSession();
         return NConfigurableHelper.configure(this, getSession(), skipUnsupported, commandLine);
     }
 
     @Override
-    public boolean configureFirst(NCommandLine cmdLine) {
+    public boolean configureFirst(NCmdLine cmdLine) {
         checkSession();
         NArg a = cmdLine.peek().orNull();
         if (a == null) {
@@ -124,7 +124,7 @@ public abstract class NRepositoryCommandBase<T extends NRepositoryCommand> imple
     public abstract T run();
 
     @Override
-    public void configureLast(NCommandLine commandLine) {
+    public void configureLast(NCmdLine commandLine) {
         if (!configureFirst(commandLine)) {
             commandLine.throwUnexpectedArgument();
         }

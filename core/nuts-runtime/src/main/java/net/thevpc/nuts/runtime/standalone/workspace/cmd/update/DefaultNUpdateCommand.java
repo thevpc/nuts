@@ -7,7 +7,7 @@ package net.thevpc.nuts.runtime.standalone.workspace.cmd.update;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.cmdline.NArg;
-import net.thevpc.nuts.cmdline.NCommandLine;
+import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.elem.NArrayElementBuilder;
 import net.thevpc.nuts.elem.NElement;
 import net.thevpc.nuts.elem.NElements;
@@ -23,7 +23,7 @@ import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceUtils;
 import net.thevpc.nuts.text.NTextStyle;
 import net.thevpc.nuts.text.NTexts;
 import net.thevpc.nuts.util.NComparator;
-import net.thevpc.nuts.util.NLoggerVerb;
+import net.thevpc.nuts.util.NLogVerb;
 import net.thevpc.nuts.util.NStringUtils;
 
 import java.time.Instant;
@@ -93,7 +93,7 @@ public class DefaultNUpdateCommand extends AbstractNUpdateCommand {
     }
 
     @Override
-    public boolean configureFirst(NCommandLine cmdLine) {
+    public boolean configureFirst(NCmdLine cmdLine) {
         NArg a = cmdLine.peek().get(session);
         if (a == null) {
             return false;
@@ -639,7 +639,7 @@ public class DefaultNUpdateCommand extends AbstractNUpdateCommand {
 
         if (NConfigs.of(session).setSession(validWorkspaceSession).save(requireSave)) {
             if (_LOG(session).isLoggable(Level.INFO)) {
-                _LOGOP(session).level(Level.INFO).verb(NLoggerVerb.WARNING)
+                _LOGOP(session).level(Level.INFO).verb(NLogVerb.WARNING)
                         .log(NMsg.ofPlain("workspace is updated. Nuts should be restarted for changes to take effect."));
             }
             if (apiUpdate != null && apiUpdate.isUpdatable() && !apiUpdate.isUpdateApplied()) {

@@ -1,7 +1,7 @@
 package net.thevpc.nuts.toolbox.ndb.base.cmd;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.cmdline.NCommandLine;
+import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.toolbox.ndb.ExtendedQuery;
 import net.thevpc.nuts.toolbox.ndb.NdbConfig;
 import net.thevpc.nuts.toolbox.ndb.base.NdbCmd;
@@ -18,7 +18,7 @@ public class FindCmd<C extends NdbConfig> extends NdbCmd<C> {
     }
 
     @Override
-    public void run(NApplicationContext appContext, NCommandLine commandLine) {
+    public void run(NApplicationContext appContext, NCmdLine commandLine) {
         NSession session = appContext.getSession();
         NRef<AtName> name = NRef.ofNull(AtName.class);
         ExtendedQuery eq = new ExtendedQuery(getName());

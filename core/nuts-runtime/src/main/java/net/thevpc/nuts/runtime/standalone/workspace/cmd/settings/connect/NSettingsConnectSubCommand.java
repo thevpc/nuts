@@ -8,7 +8,7 @@ package net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.connect;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.cmdline.NArg;
 import net.thevpc.nuts.cmdline.NArgName;
-import net.thevpc.nuts.cmdline.NCommandLine;
+import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.concurrent.NScheduler;
 import net.thevpc.nuts.runtime.standalone.executor.system.NSysExecUtils;
 import net.thevpc.nuts.runtime.standalone.io.util.NonBlockingInputStreamAdapter;
@@ -28,7 +28,7 @@ public class NSettingsConnectSubCommand extends AbstractNSettingsSubCommand {
     public static final int DEFAULT_ADMIN_SERVER_PORT = 8898;
 
     @Override
-    public boolean exec(NCommandLine commandLine, Boolean autoSave, NSession session) {
+    public boolean exec(NCmdLine commandLine, Boolean autoSave, NSession session) {
         String cmd0 = commandLine.toString();
         if (commandLine.next("connect").isPresent()) {
             char[] password = null;

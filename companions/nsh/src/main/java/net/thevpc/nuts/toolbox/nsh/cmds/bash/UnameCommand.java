@@ -25,7 +25,7 @@ package net.thevpc.nuts.toolbox.nsh.cmds.bash;
 
 import net.thevpc.nuts.NArchFamily;
 import net.thevpc.nuts.NEnvs;
-import net.thevpc.nuts.cmdline.NCommandLine;
+import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.NId;
 import net.thevpc.nuts.NSession;
 import net.thevpc.nuts.spi.NComponentScope;
@@ -48,7 +48,7 @@ public class UnameCommand extends SimpleJShellBuiltin {
 
 
     @Override
-    protected boolean configureFirst(NCommandLine cmdLine, JShellExecutionContext context) {
+    protected boolean configureFirst(NCmdLine cmdLine, JShellExecutionContext context) {
         NSession session = context.getSession();
         Options config = context.getOptions();
         switch (cmdLine.peek().get(session).key()) {
@@ -75,7 +75,7 @@ public class UnameCommand extends SimpleJShellBuiltin {
     }
 
     @Override
-    protected void execBuiltin(NCommandLine commandLine, JShellExecutionContext context) {
+    protected void execBuiltin(NCmdLine commandLine, JShellExecutionContext context) {
         Options config = context.getOptions();
         NSession ws = context.getSession();
 

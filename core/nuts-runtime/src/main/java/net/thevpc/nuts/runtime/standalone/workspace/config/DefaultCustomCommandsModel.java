@@ -5,13 +5,13 @@ import net.thevpc.nuts.io.NPrintStream;
 import net.thevpc.nuts.runtime.standalone.workspace.DefaultNWorkspace;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.CommandNWorkspaceCommandFactory;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.ConfigNWorkspaceCommandFactory;
-import net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.alias.DefaultNWorkspaceCustomCommand;
+import net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.alias.DefaultNCustomCommand;
 import net.thevpc.nuts.text.NTextStyle;
 import net.thevpc.nuts.text.NTextStyles;
 import net.thevpc.nuts.text.NTexts;
-import net.thevpc.nuts.util.NLogger;
-import net.thevpc.nuts.util.NLoggerOp;
-import net.thevpc.nuts.util.NLoggerVerb;
+import net.thevpc.nuts.util.NLog;
+import net.thevpc.nuts.util.NLogOp;
+import net.thevpc.nuts.util.NLogVerb;
 
 import java.util.*;
 import java.util.logging.Level;
@@ -20,7 +20,7 @@ public class DefaultCustomCommandsModel {
 
     private final ConfigNWorkspaceCommandFactory defaultCommandFactory;
     private final List<NWorkspaceCommandFactory> commandFactories = new ArrayList<>();
-    public NLogger LOG;
+    public NLog LOG;
     private NWorkspace workspace;
 
     public DefaultCustomCommandsModel(NWorkspace ws) {
@@ -28,13 +28,13 @@ public class DefaultCustomCommandsModel {
         defaultCommandFactory = new ConfigNWorkspaceCommandFactory(ws);
     }
 
-    protected NLoggerOp _LOGOP(NSession session) {
+    protected NLogOp _LOGOP(NSession session) {
         return _LOG(session).with().session(session);
     }
 
-    protected NLogger _LOG(NSession session) {
+    protected NLog _LOG(NSession session) {
         if (LOG == null) {
-            LOG = NLogger.of(DefaultCustomCommandsModel.class, session);
+            LOG = NLog.of(DefaultCustomCommandsModel.class, session);
         }
         return LOG;
     }
@@ -262,7 +262,7 @@ public class DefaultCustomCommandsModel {
         return ((DefaultNWorkspace) workspace).getConfigModel().getStoreModelMain();
     }
 
-    public NWorkspaceCustomCommand find(String name, NSession session) {
+    public NCustomCommand find(String name, NSession session) {
         NCommandConfig c = defaultCommandFactory.findCommand(name, session);
         if (c == null) {
             for (NWorkspaceCommandFactory commandFactory : commandFactories) {
@@ -278,8 +278,8 @@ public class DefaultCustomCommandsModel {
         return toDefaultNWorkspaceCommand(c, session);
     }
 
-    public List<NWorkspaceCustomCommand> findAll(NSession session) {
-        HashMap<String, NWorkspaceCustomCommand> all = new HashMap<>();
+    public List<NCustomCommand> findAll(NSession session) {
+        HashMap<String, NCustomCommand> all = new HashMap<>();
         for (NCommandConfig command : defaultCommandFactory.findCommands(session)) {
             all.put(command.getName(), toDefaultNWorkspaceCommand(command, session));
         }
@@ -293,18 +293,18 @@ public class DefaultCustomCommandsModel {
         return new ArrayList<>(all.values());
     }
 
-    public List<NWorkspaceCustomCommand> findByOwner(NId id, NSession session) {
-        HashMap<String, NWorkspaceCustomCommand> all = new HashMap<>();
+    public List<NCustomCommand> findByOwner(NId id, NSession session) {
+        HashMap<String, NCustomCommand> all = new HashMap<>();
         for (NCommandConfig command : defaultCommandFactory.findCommands(id, session)) {
             all.put(command.getName(), toDefaultNWorkspaceCommand(command, session));
         }
         return new ArrayList<>(all.values());
     }
 
-    private NWorkspaceCustomCommand toDefaultNWorkspaceCommand(NCommandConfig c, NSession session) {
+    private NCustomCommand toDefaultNWorkspaceCommand(NCommandConfig c, NSession session) {
         if (c.getCommand() == null || c.getCommand().size() == 0) {
 
-            _LOGOP(session).level(Level.WARNING).verb(NLoggerVerb.FAIL)
+            _LOGOP(session).level(Level.WARNING).verb(NLogVerb.FAIL)
                     .log(NMsg.ofJ("invalid command definition ''{0}''. Missing command . Ignored", c.getName()));
             return null;
         }
@@ -312,7 +312,7 @@ public class DefaultCustomCommandsModel {
 //            LOG.log(Level.WARNING, "Invalid Command Definition ''{0}''. Missing Owner. Ignored", c.getName());
 //            return null;
 //        }
-        return new DefaultNWorkspaceCustomCommand(workspace)
+        return new DefaultNCustomCommand(workspace)
                 .setCommand(c.getCommand())
                 .setFactoryId(c.getFactoryId())
                 .setOwner(c.getOwner())
@@ -329,8 +329,8 @@ public class DefaultCustomCommandsModel {
         return new NCommandFactoryConfig[0];
     }
 
-    public NWorkspaceCustomCommand find(String name, NId forId, NId forOwner, NSession session) {
-        NWorkspaceCustomCommand a = find(name, session);
+    public NCustomCommand find(String name, NId forId, NId forOwner, NSession session) {
+        NCustomCommand a = find(name, session);
         if (a != null && a.getCommand() != null && a.getCommand().size() > 0) {
             NId i = NId.of(a.getCommand().get(0)).orNull();
             if (i != null

@@ -1,10 +1,10 @@
 package net.thevpc.nuts.toolbox.noapi;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.cmdline.NCommandLineContext;
-import net.thevpc.nuts.cmdline.NCommandLineProcessor;
+import net.thevpc.nuts.cmdline.NCmdLine;
+import net.thevpc.nuts.cmdline.NCmdLineContext;
+import net.thevpc.nuts.cmdline.NCmdLineProcessor;
 import net.thevpc.nuts.cmdline.NArg;
-import net.thevpc.nuts.cmdline.NCommandLine;
 import net.thevpc.nuts.toolbox.noapi.model.NoapiCmdData;
 import net.thevpc.nuts.toolbox.noapi.service.NOpenAPIService;
 import net.thevpc.nuts.util.NAssert;
@@ -28,9 +28,9 @@ public class NoapiMain implements NApplication {
     public void run(NApplicationContext appContext) {
         this.service = new NOpenAPIService(appContext);
         ref.setCommand("pdf");
-        appContext.processCommandLine(new NCommandLineProcessor() {
+        appContext.processCommandLine(new NCmdLineProcessor() {
             @Override
-            public boolean onCmdNextOption(NArg option, NCommandLine commandLine, NCommandLineContext context) {
+            public boolean onCmdNextOption(NArg option, NCmdLine commandLine, NCmdLineContext context) {
                 NSession session = commandLine.getSession();
                 switch (option.asString().get(session)) {
                     case "--yaml": {
@@ -116,7 +116,7 @@ public class NoapiMain implements NApplication {
             }
 
             @Override
-            public boolean onCmdNextNonOption(NArg nonOption, NCommandLine commandLine, NCommandLineContext context) {
+            public boolean onCmdNextNonOption(NArg nonOption, NCmdLine commandLine, NCmdLineContext context) {
                 NSession session = commandLine.getSession();
                 NoapiCmdData c = new NoapiCmdData();
                 c.setCommand(ref.getCommand());
@@ -132,7 +132,7 @@ public class NoapiMain implements NApplication {
             }
 
             @Override
-            public void onCmdFinishParsing(NCommandLine commandLine, NCommandLineContext context) {
+            public void onCmdFinishParsing(NCmdLine commandLine, NCmdLineContext context) {
                 NSession session = commandLine.getSession();
                 if (data.isEmpty()) {
                     commandLine.throwMissingArgument();
@@ -146,7 +146,7 @@ public class NoapiMain implements NApplication {
             }
 
             @Override
-            public void onCmdExec(NCommandLine commandLine, NCommandLineContext context) {
+            public void onCmdExec(NCmdLine commandLine, NCmdLineContext context) {
                 for (NoapiCmdData d : data) {
                     switch (d.getCommand()) {
                         case "pdf": {

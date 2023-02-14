@@ -1,7 +1,7 @@
 package net.thevpc.nuts.runtime.standalone.workspace.cmd.settings;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.cmdline.NCommandLine;
+import net.thevpc.nuts.cmdline.NCmdLine;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -33,7 +33,7 @@ public class CommandNWorkspaceCommandFactory implements NWorkspaceCommandFactory
             findCommand = validateCommand(p.get("find"));
             execCommand = validateCommand(p.get("exec"));
             String slistCommand = p.get("list");
-            listCommand = slistCommand == null ? new String[0] : NCommandLine.of(slistCommand, NShellFamily.BASH, ws).setExpandSimpleOptions(false).toStringArray();
+            listCommand = slistCommand == null ? new String[0] : NCmdLine.of(slistCommand, NShellFamily.BASH, ws).setExpandSimpleOptions(false).toStringArray();
             if (listCommand.length > 0 && !listCommand[0].contains(":")) {
                 listCommand = new String[0];
             }
@@ -54,7 +54,7 @@ public class CommandNWorkspaceCommandFactory implements NWorkspaceCommandFactory
         if (command == null) {
             return new String[0];
         }
-        String[] commandArr = NCommandLine.of(command, NShellFamily.BASH, ws).setExpandSimpleOptions(false).toStringArray();
+        String[] commandArr = NCmdLine.of(command, NShellFamily.BASH, ws).setExpandSimpleOptions(false).toStringArray();
         if (commandArr.length == 0) {
             return commandArr;
         }

@@ -27,7 +27,7 @@
 package net.thevpc.nuts.spi;
 
 import net.thevpc.nuts.NSessionProvider;
-import net.thevpc.nuts.cmdline.NCommandLineConfigurable;
+import net.thevpc.nuts.cmdline.NCmdLineConfigurable;
 import net.thevpc.nuts.NSession;
 
 /**
@@ -36,7 +36,7 @@ import net.thevpc.nuts.NSession;
  * @author thevpc
  * @app.category SPI Base
  */
-public interface NRepositoryCommand extends NCommandLineConfigurable, NSessionProvider {
+public interface NRepositoryCommand extends NCmdLineConfigurable, NSessionProvider {
 
     /**
      * return session
@@ -60,7 +60,7 @@ public interface NRepositoryCommand extends NCommandLineConfigurable, NSessionPr
 
     /**
      * configure the current command with the given arguments. This is an
-     * override of the {@link NCommandLineConfigurable#configure(boolean, java.lang.String...) }
+     * override of the {@link NCmdLineConfigurable#configure(boolean, java.lang.String...) }
      * to help return a more specific return type;
      *
      * @param skipUnsupported when true, all unsupported options are skipped

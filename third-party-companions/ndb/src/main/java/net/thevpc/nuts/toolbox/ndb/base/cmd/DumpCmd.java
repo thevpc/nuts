@@ -1,7 +1,7 @@
 package net.thevpc.nuts.toolbox.ndb.base.cmd;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.cmdline.NCommandLine;
+import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.toolbox.ndb.NdbConfig;
 import net.thevpc.nuts.toolbox.ndb.base.CmdRedirect;
@@ -23,7 +23,7 @@ public class DumpCmd<C extends NdbConfig> extends NdbCmd<C> {
 
 
 //    @Override
-//    public void run(NApplicationContext appContext, NCommandLine commandLine) {
+//    public void run(NApplicationContext appContext, NCmdLine commandLine) {
 //        NRef<AtName> name = NRef.ofNull(AtName.class);
 //        ExtendedQuery eq = new ExtendedQuery(getName());
 //        C otherOptions = createConfigInstance();
@@ -109,7 +109,7 @@ public class DumpCmd<C extends NdbConfig> extends NdbCmd<C> {
 //    }
 
 
-    public void run(NApplicationContext appContext, NCommandLine commandLine) {
+    public void run(NApplicationContext appContext, NCmdLine commandLine) {
         NSession session = appContext.getSession();
         NRef<AtName> name = NRef.ofNull(AtName.class);
         NRef<NPath> file = NRef.ofNull(NPath.class);
@@ -186,24 +186,42 @@ public class DumpCmd<C extends NdbConfig> extends NdbCmd<C> {
                     .addCommand(dumpCommand.toString())
             );
             if (zip) {
-                run(sysSsh(options, session)
-                        .addCommand("cd "+remotePlainFolder.resolve(
-                                options.getDatabaseName()
-                                ).toString()+" ; zip -q -r "
-                                +remoteZip.toString()
-                                +" ."
-                        )
-                );
+                if (getSupport().isFolderArchive(options)) {
+                    String sf = getSupport().getZipSubFolder(options);
+                    if (NBlankable.isBlank(sf)) {
+                        run(sysSsh(options, session)
+                                .addCommand("cd " + remotePlainFolder.toString() + " ; zip -q -r "
+                                        + remoteZip.toString()
+                                        + " ."
+                                )
+                        );
+                    } else {
+                        run(sysSsh(options, session)
+                                .addCommand("cd " + remotePlainFolder.resolve(sf).toString() + " ; zip -q -r "
+                                        + remoteZip.toString()
+                                        + " ."
+                                )
+                        );
+                    }
+                } else {
+                    run(sysSsh(options, session)
+                            .addCommand("zip -q -r "
+                                    + remoteZip.toString()
+                                    + " "
+                                    + remotePlainFolder.toString()
+                            )
+                    );
+                }
             }
             if (!plainFolder) {
-                sshRm(remotePlainFolder,options, session);
+                sshRm(remotePlainFolder, options, session);
             } else {
-                sshPull(remotePlainFolder,plainFolderPath,options, session);
-                sshRm(remotePlainFolder,options, session);
+                sshPull(remotePlainFolder, plainFolderPath, options, session);
+                sshRm(remotePlainFolder, options, session);
             }
             if (zip) {
-                sshPull(remoteZip,zipPath,options, session);
-                sshRm(remotePlainFolder,options, session);
+                sshPull(remoteZip, zipPath, options, session);
+                sshRm(remotePlainFolder, options, session);
             }
         } else {
             CmdRedirect dumpCommand = getSupport().createDumpCommand(plainFolderPath, options, session);
@@ -213,20 +231,56 @@ public class DumpCmd<C extends NdbConfig> extends NdbCmd<C> {
             }
             run(nExecCommand);
             if (zip) {
-                NExecCommand zipExec = sysCmd(session)
-                        .addCommand("zip")
-                        .addCommand("-q")
-                        ;
-                if (plainFolderPath.isDirectory()) {
-                    zipExec.addCommand("-r");
-                    if (true) {
-                        zipExec.addCommand("-j");
+                if (getSupport().isFolderArchive(options)) {
+                    String sf = getSupport().getZipSubFolder(options);
+                    if (NBlankable.isBlank(sf)) {
+                        NExecCommand zipExec = sysCmd(session)
+                                .addCommand("zip")
+                                .addCommand("-q");
+                        if (plainFolderPath.isDirectory()) {
+                            zipExec.addCommand("-r");
+                            if (true) {
+                                zipExec.addCommand("-j");
+                            }
+                        }
+                        zipExec.addCommand(zipPath.toString());
+                        zipExec.addCommand(".");
+                        zipExec.setDirectory(plainFolderPath.toString());
+                        run(zipExec);
+                    } else {
+
+                        NExecCommand zipExec = sysCmd(session)
+                                .addCommand("zip")
+                                .addCommand("-q");
+                        if (plainFolderPath.isDirectory()) {
+                            zipExec.addCommand("-r");
+                            if (true) {
+                                zipExec.addCommand("-j");
+                            }
+                        }
+                        zipExec.addCommand(zipPath.toString());
+                        zipExec.addCommand(".");
+                        zipExec.setDirectory(plainFolderPath.resolve(sf).toString());
+                        run(zipExec);
                     }
+                } else {
+                    NExecCommand zipExec = sysCmd(session)
+                            .addCommand("zip")
+                            .addCommand("-q");
+                    if (plainFolderPath.isDirectory()) {
+                        zipExec.addCommand("-r");
+                        if (true) {
+                            zipExec.addCommand("-j");
+                        }
+                    }
+                    zipExec.addCommand(zipPath.toString());
+                    zipExec.addCommand(plainFolderPath.toString());
+                    zipExec.setDirectory(plainFolderPath.getParent().toString());
+                    run(zipExec);
                 }
-                zipExec.addCommand(zipPath.toString());
-                zipExec.addCommand(plainFolderPath.toString());
-                zipExec.setDirectory(plainFolderPath.resolve(options.getDatabaseName()).toString());
-                run(zipExec);
+
+
+
             }
             if (!plainFolder) {
                 plainFolderPath.deleteTree();

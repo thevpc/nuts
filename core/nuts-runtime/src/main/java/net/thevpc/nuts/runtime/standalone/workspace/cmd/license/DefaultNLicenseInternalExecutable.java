@@ -7,7 +7,7 @@ package net.thevpc.nuts.runtime.standalone.workspace.cmd.license;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.cmdline.NArg;
-import net.thevpc.nuts.cmdline.NCommandLine;
+import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.runtime.standalone.app.util.NAppUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceExt;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.exec.DefaultInternalNExecutableCommand;
@@ -33,7 +33,7 @@ public class DefaultNLicenseInternalExecutable extends DefaultInternalNExecutabl
             return;
         }
         NSession session = getSession();
-        NCommandLine commandLine = NCommandLine.of(args);
+        NCmdLine commandLine = NCmdLine.of(args);
         while (commandLine.hasNext()) {
             NArg a = commandLine.peek().get(session);
             session.configureLast(commandLine);

@@ -6,7 +6,7 @@
 package net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.clinfo;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.cmdline.NCommandLine;
+import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.AbstractNSettingsSubCommand;
 
 /**
@@ -15,7 +15,7 @@ import net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.AbstractNSettin
 public class NCliInfoSubCommand extends AbstractNSettingsSubCommand {
 
     @Override
-    public boolean exec(NCommandLine commandLine, Boolean autoSave, NSession session) {
+    public boolean exec(NCmdLine commandLine, Boolean autoSave, NSession session) {
         if (commandLine.next("cli-id").isPresent()) {
             if(commandLine.isEmpty()){
                 doLoadCliId(session);

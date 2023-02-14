@@ -13,8 +13,8 @@ import java.util.logging.Level;
 
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceUtils;
 import net.thevpc.nuts.text.*;
-import net.thevpc.nuts.util.NLogger;
-import net.thevpc.nuts.util.NLoggerVerb;
+import net.thevpc.nuts.util.NLog;
+import net.thevpc.nuts.util.NLogVerb;
 
 /**
  * inspired by
@@ -30,7 +30,7 @@ public class CProgressBar {
     private int maxMessage = 0;
     private float indeterminateRatio = 0.3f;
     private NSession session;
-    private NLogger logger;
+    private NLog logger;
     private int columns = 3;
     private int maxColumns = 133;
     private boolean suffixMoveLineStart = true;
@@ -259,7 +259,7 @@ public class CProgressBar {
 
     public CProgressBar(NSession session, int determinateSize) {
         this.session = session;
-        this.logger = NLogger.of(CProgressBar.class, this.session);
+        this.logger = NLog.of(CProgressBar.class, this.session);
         this.options = ProgressOptions.of(session);
         this.ws = session.getWorkspace();
         this.formatter = createFormatter(options.get("type").flatMap(NLiteral::asString).orElse(""), session);
@@ -592,7 +592,7 @@ public class CProgressBar {
         }
         Level armedLogLevel = options.getArmedLogLevel();
         if (armedLogLevel!=null) {
-            logger.with().verb(NLoggerVerb.PROGRESS)
+            logger.with().verb(NLogVerb.PROGRESS)
                     .level(armedLogLevel)
                     .log(NMsg.ofNtf(p));
         } else {

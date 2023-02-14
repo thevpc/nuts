@@ -47,9 +47,9 @@ import net.thevpc.nuts.util.NClock;
  * import net.thevpc.nuts.NApplication;
  * import net.thevpc.nuts.NApplicationContext;
  * import net.thevpc.nuts.cmdline.NArg;
- * import net.thevpc.nuts.cmdline.NCommandLine;
- * import net.thevpc.nuts.cmdline.NCommandLineContext;
- * import net.thevpc.nuts.cmdline.NCommandLineProcessor;
+ * import net.thevpc.nuts.cmdline.NCmdLine;
+ * import net.thevpc.nuts.cmdline.NCmdLineContext;
+ * import net.thevpc.nuts.cmdline.NCmdLineProcessor;
  *
  * import java.util.ArrayList;
  * import java.util.List;
@@ -61,12 +61,12 @@ import net.thevpc.nuts.util.NClock;
  *     }
  *
  *     public void run(NApplicationContext applicationContext) {
- *         applicationContext.processCommandLine(new NCommandLineProcessor() {
+ *         applicationContext.processCommandLine(new NCmdLineProcessor() {
  *             boolean noMoreOptions = false;
  *             boolean clean = false;
  *             List<String> params = new ArrayList<>();
  *
- *             public boolean onCmdNextOption(NArg option, NCommandLine commandLine, NCommandLineContext context) {
+ *             public boolean onCmdNextOption(NArg option, NCmdLine commandLine, NCmdLineContext context) {
  *                 if (!noMoreOptions) {
  *                     return false;
  *                 }
@@ -83,12 +83,12 @@ import net.thevpc.nuts.util.NClock;
  *                 return false;
  *             }
  *
- *             public boolean onCmdNextNonOption(NArg nonOption, NCommandLine commandLine, NCommandLineContext context) {
+ *             public boolean onCmdNextNonOption(NArg nonOption, NCmdLine commandLine, NCmdLineContext context) {
  *                 params.add(commandLine.next().get().toString());
  *                 return true;
  *             }
  *
- *             public void onCmdExec(NCommandLine commandLine, NCommandLineContext context) {
+ *             public void onCmdExec(NCmdLine commandLine, NCmdLineContext context) {
  *                 if(clean){
  *                     commandLine.getSession().out().println("cleaned!");
  *                 }
@@ -103,7 +103,7 @@ import net.thevpc.nuts.util.NClock;
  *
  * import net.thevpc.nuts.*;
  * import net.thevpc.nuts.cmdline.NArg;
- * import net.thevpc.nuts.cmdline.NCommandLine;
+ * import net.thevpc.nuts.cmdline.NCmdLine;
  *
  * import java.util.ArrayList;
  * import java.util.List;
@@ -117,7 +117,7 @@ import net.thevpc.nuts.util.NClock;
  *     // do the main staff in launch method
  *     public void run(NApplicationContext appContext) {
  *         NSession session = appContext.getSession();
- *         NCommandLine cmdLine = appContext.getCommandLine();
+ *         NCmdLine cmdLine = appContext.getCommandLine();
  *         boolean boolOption = false;
  *         String stringOption = null;
  *         List<String> others = new ArrayList<>();
@@ -169,7 +169,7 @@ import net.thevpc.nuts.util.NClock;
  * import net.thevpc.nuts.NMsg;
  * import net.thevpc.nuts.NSession;
  * import net.thevpc.nuts.cmdline.NArg;
- * import net.thevpc.nuts.cmdline.NCommandLine;
+ * import net.thevpc.nuts.cmdline.NCmdLine;
  * import net.thevpc.nuts.util.NRef;
  *
  * import java.util.ArrayList;
@@ -184,7 +184,7 @@ import net.thevpc.nuts.util.NClock;
  *     // do the main staff in launch method
  *     public void run(NApplicationContext appContext) {
  *         NSession session = appContext.getSession();
- *         NCommandLine cmdLine = appContext.getCommandLine();
+ *         NCmdLine cmdLine = appContext.getCommandLine();
  *         NRef<Boolean> boolOption = NRef.of(false);
  *         NRef<String> stringOption = NRef.ofNull();
  *         List<String> others = new ArrayList<>();
@@ -230,7 +230,7 @@ import net.thevpc.nuts.util.NClock;
  * import net.thevpc.nuts.NMsg;
  * import net.thevpc.nuts.NSession;
  * import net.thevpc.nuts.cmdline.NArg;
- * import net.thevpc.nuts.cmdline.NCommandLine;
+ * import net.thevpc.nuts.cmdline.NCmdLine;
  * import net.thevpc.nuts.util.NRef;
  *
  * import java.util.ArrayList;
@@ -245,7 +245,7 @@ import net.thevpc.nuts.util.NClock;
  *     // do the main staff in launch method
  *     public void run(NApplicationContext appContext) {
  *         NSession session = appContext.getSession();
- *         NCommandLine cmdLine = appContext.getCommandLine();
+ *         NCmdLine cmdLine = appContext.getCommandLine();
  *         NRef<Boolean> boolOption = NRef.of(false);
  *         NRef<String> stringOption = NRef.ofNull();
  *         List<String> others = new ArrayList<>();

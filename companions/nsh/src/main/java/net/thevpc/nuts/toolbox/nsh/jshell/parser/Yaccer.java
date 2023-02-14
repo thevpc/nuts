@@ -940,7 +940,7 @@ public class Yaccer {
         }
     }
 
-    public static class ArgumentsLine implements JShellCommandLineNode {
+    public static class ArgumentsLine implements JShellCmdLineNode {
         List<Argument> args;
 
         public ArgumentsLine(List<Argument> args) {

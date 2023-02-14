@@ -24,6 +24,8 @@
 package net.thevpc.nuts;
 
 import net.thevpc.nuts.reserved.*;
+import net.thevpc.nuts.util.NStringMapFormat;
+import net.thevpc.nuts.util.NStringMapFormatBuilder;
 import net.thevpc.nuts.util.NStringUtils;
 
 import java.util.*;
@@ -32,6 +34,7 @@ import java.util.*;
  * Created by vpc on 1/5/17.
  */
 public class DefaultNDependency implements NDependency {
+    private static NStringMapFormat COMMA_MAP = NStringMapFormat.COMMA_FORMAT.builder().setEscapeChars("&").build();
 
     public static final long serialVersionUID = 1L;
     private final String repository;
@@ -49,7 +52,7 @@ public class DefaultNDependency implements NDependency {
     public DefaultNDependency(String repository, String groupId, String artifactId, String classifier, NVersion version, String scope, String optional, List<NId> exclusions,
                               NEnvCondition condition, String type,
                               Map<String, String> properties) {
-        this(repository, groupId, artifactId, classifier, version, scope, optional, exclusions, condition, type, NStringUtils.formatDefaultMap(properties));
+        this(repository, groupId, artifactId, classifier, version, scope, optional, exclusions, condition, type, NStringMapFormat.DEFAULT.format(properties));
     }
 
     public DefaultNDependency(String repository, String groupId, String artifactId, String classifier, NVersion version, String scope, String optional, List<NId> exclusions,
@@ -77,7 +80,7 @@ public class DefaultNDependency implements NDependency {
         }
         this.condition = condition == null ? NEnvCondition.BLANK : condition;
         this.type = NStringUtils.trimToNull(type);
-        this.properties = NStringUtils.formatDefaultMap(NStringUtils.parseDefaultMap(properties).get());
+        this.properties = NStringMapFormat.DEFAULT.format(NStringMapFormat.DEFAULT.parse(properties).get());
     }
 
     @Override
@@ -196,7 +199,7 @@ public class DefaultNDependency implements NDependency {
 
     @Override
     public Map<String, String> getProperties() {
-        return NStringUtils.parseDefaultMap(properties).get();
+        return NStringMapFormat.DEFAULT.parse(properties).get();
     }
 
     @Override
@@ -268,7 +271,7 @@ public class DefaultNDependency implements NDependency {
             }
             if (!condition.getProperties().isEmpty()) {
                 p.put(NConstants.IdProperties.CONDITIONAL_PROPERTIES,
-                        NStringUtils.formatMap(condition.getProperties(), "=", ",", "&", true)
+                        COMMA_MAP.format(condition.getProperties())
                 );
             }
         }
@@ -279,7 +282,7 @@ public class DefaultNDependency implements NDependency {
         }
         if (!p.isEmpty()) {
             sb.append("?");
-            sb.append(NStringUtils.formatDefaultMap(p));
+            sb.append(NStringMapFormat.DEFAULT.format(p));
         }
         return sb.toString();
     }

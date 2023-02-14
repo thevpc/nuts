@@ -32,8 +32,8 @@ import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.runtime.standalone.util.iter.NIteratorBase;
 import net.thevpc.nuts.util.NDescribables;
 import net.thevpc.nuts.runtime.standalone.repository.impl.main.DefaultNInstalledRepository;
-import net.thevpc.nuts.util.NLogger;
-import net.thevpc.nuts.util.NLoggerOp;
+import net.thevpc.nuts.util.NLog;
+import net.thevpc.nuts.util.NLogOp;
 
 import java.io.IOException;
 import java.util.Stack;
@@ -50,7 +50,7 @@ public class FolderObjectIterator<T> extends NIteratorBase<T> {
     private final Predicate<T> filter;
     private final NSession session;
     private final FolderIteratorModel<T> model;
-    private final NLogger LOG;
+    private final NLog LOG;
     private final String name;
     private final NPath folder;
     private T last;
@@ -72,7 +72,7 @@ public class FolderObjectIterator<T> extends NIteratorBase<T> {
         }
         this.folder = folder;
         stack.push(new PathAndDepth(folder, 0));
-        LOG = NLogger.of(DefaultNInstalledRepository.class, session);
+        LOG = NLog.of(DefaultNInstalledRepository.class, session);
     }
 
     @Override
@@ -102,7 +102,7 @@ public class FolderObjectIterator<T> extends NIteratorBase<T> {
                                     try {
                                         return (deep && pathname.isDirectory()) || model.isObjectFile(pathname);
                                     } catch (Exception ex) {
-                                        NLoggerOp.of(FolderObjectIterator.class, session).level(Level.FINE).error(ex)
+                                        NLogOp.of(FolderObjectIterator.class, session).level(Level.FINE).error(ex)
                                                 .log(NMsg.ofJ("unable to test desk file {0}", pathname));
                                         return false;
                                     }

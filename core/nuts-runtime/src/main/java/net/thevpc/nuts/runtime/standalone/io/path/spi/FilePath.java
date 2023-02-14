@@ -1,7 +1,7 @@
 package net.thevpc.nuts.runtime.standalone.io.path.spi;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.cmdline.NCommandLine;
+import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.format.NTreeVisitResult;
 import net.thevpc.nuts.format.NTreeVisitor;
 import net.thevpc.nuts.io.*;
@@ -745,7 +745,7 @@ public class FilePath implements NPathSPI {
         }
 
         @Override
-        public boolean configureFirst(NCommandLine commandLine) {
+        public boolean configureFirst(NCmdLine commandLine) {
             return false;
         }
     }

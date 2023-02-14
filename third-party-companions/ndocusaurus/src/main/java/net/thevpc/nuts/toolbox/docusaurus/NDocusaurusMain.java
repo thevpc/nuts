@@ -1,10 +1,10 @@
 package net.thevpc.nuts.toolbox.docusaurus;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.cmdline.NCommandLineContext;
-import net.thevpc.nuts.cmdline.NCommandLineProcessor;
+import net.thevpc.nuts.cmdline.NCmdLineContext;
+import net.thevpc.nuts.cmdline.NCmdLineProcessor;
 import net.thevpc.nuts.cmdline.NArg;
-import net.thevpc.nuts.cmdline.NCommandLine;
+import net.thevpc.nuts.cmdline.NCmdLine;
 
 import java.nio.file.Paths;
 
@@ -21,9 +21,9 @@ public class NDocusaurusMain implements NApplication {
 
     @Override
     public void run(NApplicationContext appContext) {
-        appContext.processCommandLine(new NCommandLineProcessor() {
+        appContext.processCommandLine(new NCmdLineProcessor() {
             @Override
-            public boolean onCmdNextOption(NArg option, NCommandLine commandLine, NCommandLineContext context) {
+            public boolean onCmdNextOption(NArg option, NCmdLine commandLine, NCmdLineContext context) {
                 NSession session = commandLine.getSession();
                 switch (option.key()) {
                     case "-d":
@@ -38,7 +38,7 @@ public class NDocusaurusMain implements NApplication {
             }
 
             @Override
-            public boolean onCmdNextNonOption(NArg nonOption, NCommandLine commandLine, NCommandLineContext context) {
+            public boolean onCmdNextNonOption(NArg nonOption, NCmdLine commandLine, NCmdLineContext context) {
                 NSession session = commandLine.getSession();
                 switch (nonOption.asString().get(session)) {
                     case "start": {
@@ -58,7 +58,7 @@ public class NDocusaurusMain implements NApplication {
             }
 
             @Override
-            public void onCmdFinishParsing(NCommandLine commandLine, NCommandLineContext context) {
+            public void onCmdFinishParsing(NCmdLine commandLine, NCmdLineContext context) {
                 NSession session = commandLine.getSession();
                 if (!start && !build && !buildPdf) {
                     commandLine.throwMissingArgument(
@@ -68,7 +68,7 @@ public class NDocusaurusMain implements NApplication {
             }
 
             @Override
-            public void onCmdExec(NCommandLine commandLine, NCommandLineContext context) {
+            public void onCmdExec(NCmdLine commandLine, NCmdLineContext context) {
                 if (workdir == null) {
                     workdir = ".";
                 }

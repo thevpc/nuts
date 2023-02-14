@@ -39,7 +39,7 @@ import net.thevpc.nuts.runtime.standalone.util.CoreEnumUtils;
 import net.thevpc.nuts.text.NTextBuilder;
 import net.thevpc.nuts.text.NTextStyle;
 import net.thevpc.nuts.text.NTexts;
-import net.thevpc.nuts.util.NLogger;
+import net.thevpc.nuts.util.NLog;
 
 /**
  *
@@ -47,7 +47,7 @@ import net.thevpc.nuts.util.NLogger;
  */
 public class NIdFormatHelper {
 
-    private NLogger LOG;
+    private NLog LOG;
     NId id;
     NInstallStatus installStatus = NInstallStatus.NONE;
     Boolean executable = null;
@@ -114,7 +114,7 @@ public class NIdFormatHelper {
     }
 
     private NIdFormatHelper(NId id, NDescriptor desc, NDefinition def, NDependency dep, NSession session) {
-        LOG = NLogger.of(NIdFormatHelper.class,session);
+        LOG = NLog.of(NIdFormatHelper.class,session);
         if (id == null) {
             if (def != null) {
                 id = def.getId();

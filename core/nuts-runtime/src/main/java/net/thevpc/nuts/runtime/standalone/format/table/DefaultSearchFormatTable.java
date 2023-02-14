@@ -9,7 +9,7 @@ import java.util.Arrays;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.cmdline.NArg;
-import net.thevpc.nuts.cmdline.NCommandLine;
+import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.format.NMutableTableModel;
 import net.thevpc.nuts.format.NTableFormat;
 import net.thevpc.nuts.io.NPrintStream;
@@ -44,7 +44,7 @@ public class DefaultSearchFormatTable extends DefaultSearchFormatBase {
             if (getSession() != null && getSession().getOutputFormatOptions() != null) {
                 for (String outputFormatOption : getSession().getOutputFormatOptions()) {
                     if (outputFormatOption != null) {
-                        table.configure(true, NCommandLine.of(outputFormatOption, NShellFamily.BASH, ws).setExpandSimpleOptions(false));
+                        table.configure(true, NCmdLine.of(outputFormatOption, NShellFamily.BASH, ws).setExpandSimpleOptions(false));
                     }
                 }
             }
@@ -53,7 +53,7 @@ public class DefaultSearchFormatTable extends DefaultSearchFormatBase {
     }
 
     @Override
-    public boolean configureFirst(NCommandLine cmd) {
+    public boolean configureFirst(NCmdLine cmd) {
         NSession session = getSession();
         NArg a = cmd.peek().get(session);
         if (a == null) {

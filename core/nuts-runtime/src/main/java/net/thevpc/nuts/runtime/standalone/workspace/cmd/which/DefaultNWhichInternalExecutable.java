@@ -7,7 +7,7 @@ package net.thevpc.nuts.runtime.standalone.workspace.cmd.which;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.cmdline.NArg;
-import net.thevpc.nuts.cmdline.NCommandLine;
+import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.elem.NElements;
 import net.thevpc.nuts.io.NPrintStream;
 import net.thevpc.nuts.runtime.standalone.app.util.NAppUtils;
@@ -45,7 +45,7 @@ public class DefaultNWhichInternalExecutable extends DefaultInternalNExecutableC
         }
         List<String> commands = new ArrayList<String>();
 //        NutsWorkspace ws = getSession().getWorkspace();
-        NCommandLine commandLine = NCommandLine.of(args);
+        NCmdLine commandLine = NCmdLine.of(args);
         while (commandLine.hasNext()) {
             NArg a = commandLine.peek().get(session);
             if (a.isOption()) {
@@ -90,7 +90,7 @@ public class DefaultNWhichInternalExecutable extends DefaultInternalNExecutableC
                                     factory.ofStyled(arg, NTextStyle.primary4()),
                                     factory.ofStyled("nuts alias", NTextStyle.primary6()),
                                     p.getId(),
-                                    NCommandLine.of(NCustomCommandManager.of(session).findCommand(p.getName()).getCommand())
+                                    NCmdLine.of(NCommands.of(session).findCommand(p.getName()).getCommand())
                             ));
                         } else {
                             session.out().println(

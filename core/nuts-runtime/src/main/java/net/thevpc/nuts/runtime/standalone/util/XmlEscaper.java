@@ -1,7 +1,7 @@
 package net.thevpc.nuts.runtime.standalone.util;
 
-import net.thevpc.nuts.util.NLoggerVerb;
-import net.thevpc.nuts.util.NLoggerOp;
+import net.thevpc.nuts.util.NLogOp;
+import net.thevpc.nuts.util.NLogVerb;
 import net.thevpc.nuts.NMsg;
 import net.thevpc.nuts.NSession;
 import net.thevpc.nuts.runtime.standalone.repository.impl.maven.pom.NPomXmlParser;
@@ -54,8 +54,8 @@ public class XmlEscaper {
             if (z != null) {
                 m.appendReplacement(sb, z);
             } else {
-                NLoggerOp.of(NPomXmlParser.class, session)
-                        .verb(NLoggerVerb.WARNING)
+                NLogOp.of(NPomXmlParser.class, session)
+                        .verb(NLogVerb.WARNING)
                         .level(Level.FINEST)
                         .log(NMsg.ofC("unsupported  xml entity declaration : %s", g));
                 m.appendReplacement(sb, g);
@@ -74,8 +74,8 @@ public class XmlEscaper {
             if (z != null) {
                 m.appendReplacement(sb, z);
             } else {
-                NLoggerOp.of(NPomXmlParser.class, session)
-                        .verb(NLoggerVerb.WARNING)
+                NLogOp.of(NPomXmlParser.class, session)
+                        .verb(NLogVerb.WARNING)
                         .level(Level.FINEST)
                         .log(NMsg.ofC("unsupported  xml entity declaration : %s", g));
                 m.appendReplacement(sb, g);

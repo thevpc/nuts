@@ -3,7 +3,7 @@ package net.thevpc.nuts.runtime.standalone.util.jclass;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.standalone.util.CorePlatformUtils;
 import net.thevpc.nuts.runtime.standalone.xtra.execentries.DefaultNExecutionEntry;
-import net.thevpc.nuts.util.NLoggerOp;
+import net.thevpc.nuts.util.NLogOp;
 import net.thevpc.nuts.util.NRef;
 
 import java.io.BufferedInputStream;
@@ -90,7 +90,7 @@ public class JavaClassUtils {
         try {
             mainClass = getMainClassType(classStream, session);
         } catch (Exception ex) {
-            NLoggerOp.of(CorePlatformUtils.class, session).level(Level.FINE).error(ex)
+            NLogOp.of(CorePlatformUtils.class, session).level(Level.FINE).error(ex)
                     .log(NMsg.ofJ("invalid file format {0}", sourceName));
         }
         if (mainClass != null) {

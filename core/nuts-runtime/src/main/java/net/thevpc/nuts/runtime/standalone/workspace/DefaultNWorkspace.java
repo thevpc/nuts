@@ -26,14 +26,15 @@ package net.thevpc.nuts.runtime.standalone.workspace;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.boot.NBootOptions;
 import net.thevpc.nuts.cmdline.NArg;
-import net.thevpc.nuts.cmdline.NCommandLine;
-import net.thevpc.nuts.cmdline.NCommandLines;
+import net.thevpc.nuts.cmdline.NCmdLine;
+import net.thevpc.nuts.cmdline.NCmdLines;
 import net.thevpc.nuts.elem.NElementNotFoundException;
 import net.thevpc.nuts.elem.NElements;
 import net.thevpc.nuts.format.NTableFormat;
 import net.thevpc.nuts.format.NTableModel;
 import net.thevpc.nuts.io.*;
 import net.thevpc.nuts.io.NPrintStream;
+import net.thevpc.nuts.runtime.standalone.log.DefaultNLog;
 import net.thevpc.nuts.text.*;
 import net.thevpc.nuts.util.DefaultNProperties;
 import net.thevpc.nuts.runtime.standalone.boot.DefaultNBootModel;
@@ -47,7 +48,6 @@ import net.thevpc.nuts.runtime.standalone.id.util.NIdUtils;
 import net.thevpc.nuts.runtime.standalone.installer.CommandForIdNInstallerComponent;
 import net.thevpc.nuts.runtime.standalone.io.util.CoreIOUtils;
 import net.thevpc.nuts.runtime.standalone.log.DefaultNLogModel;
-import net.thevpc.nuts.runtime.standalone.log.DefaultNLogger;
 import net.thevpc.nuts.runtime.standalone.repository.NRepositorySelectorHelper;
 import net.thevpc.nuts.runtime.standalone.repository.config.DefaultNRepositoryModel;
 import net.thevpc.nuts.runtime.standalone.repository.impl.main.DefaultNInstalledRepository;
@@ -100,7 +100,7 @@ public class DefaultNWorkspace extends AbstractNWorkspace implements NWorkspaceE
     public static final String VERSION_COMMAND_ALIAS_CONFIG = "0.8.0";
     public static final String VERSION_COMMAND_ALIAS_CONFIG_FACTORY = "0.8.0";
     public static final String VERSION_USER_CONFIG = "0.8.0";
-    public NLogger LOG;
+    public NLog LOG;
     private NWorkspaceModel wsModel;
 
     public DefaultNWorkspace(NBootOptions info) {
@@ -177,7 +177,7 @@ public class DefaultNWorkspace extends AbstractNWorkspace implements NWorkspaceE
             this.wsModel = new NWorkspaceModel(this);
             this.wsModel.bootModel = new DefaultNBootModel(this);
             this.wsModel.bootModel.init(bOption0);
-            this.LOG = new DefaultNLogger(this, defaultSession(), DefaultNWorkspace.class, true);
+            this.LOG = new DefaultNLog(this, defaultSession(), DefaultNWorkspace.class, true);
 
             NBootOptions bootOptions = this.wsModel.bootModel.getBootEffectiveOptions();
             NWorkspaceOptions userOptions = bootOptions.getUserOptions().get();
@@ -235,24 +235,24 @@ public class DefaultNWorkspace extends AbstractNWorkspace implements NWorkspaceE
                     .setDefaultTerminal(NSessionTerminal.of(defaultSession())
                     );
             wsModel.bootModel.bootSession().setTerminal(NSessionTerminal.of(wsModel.bootModel.bootSession()));
-            ((DefaultNLogger) LOG).resumeTerminal(defaultSession());
+            ((DefaultNLog) LOG).resumeTerminal(defaultSession());
 
             NTexts text = NTexts.of(defaultSession());
             try {
                 text.getTheme();
             } catch (Exception ex) {
-                LOG.with().level(Level.CONFIG).verb(NLoggerVerb.FAIL).session(defaultSession())
+                LOG.with().level(Level.CONFIG).verb(NLogVerb.FAIL).session(defaultSession())
                         .log(NMsg.ofJ("unable to load theme {0}. Reset to default!", bootOptions.getTheme()));
                 text.setTheme("");//set default!
             }
 
-            NLoggerOp LOGCRF = LOG.with().level(Level.CONFIG).verb(NLoggerVerb.READ).session(defaultSession());
-            NLoggerOp LOGCSF = LOG.with().level(Level.CONFIG).verb(NLoggerVerb.START).session(defaultSession());
+            NLogOp LOGCRF = LOG.with().level(Level.CONFIG).verb(NLogVerb.READ).session(defaultSession());
+            NLogOp LOGCSF = LOG.with().level(Level.CONFIG).verb(NLogVerb.START).session(defaultSession());
 //        NutsFormatManager formats = this.formats().setSession(defaultSession());
             NElements elems = NElements.of(defaultSession());
             if (LOG.isLoggable(Level.CONFIG)) {
                 //just log known implementations
-                NCommandLines.of(defaultSession());
+                NCmdLines.of(defaultSession());
                 NTerminals.of(defaultSession());
                 NIO.of(defaultSession());
                 NVersionFormat.of(defaultSession());
@@ -346,10 +346,10 @@ public class DefaultNWorkspace extends AbstractNWorkspace implements NWorkspaceE
                 LOGCRF.log(NMsg.ofJ("   nuts-open-mode                 : {0}", NTextUtils.formatLogValue(text, userOptions.getOpenMode().orNull(), bootOptions.getOpenMode().orNull())));
                 LOGCRF.log(NMsg.ofJ("   nuts-inherited                 : {0}", NTextUtils.formatLogValue(text, userOptions.getInherited().orNull(), bootOptions.getInherited().orNull())));
                 LOGCRF.log(NMsg.ofJ("   nuts-inherited-nuts-boot-args  : {0}", System.getProperty("nuts.boot.args") == null ? NTextUtils.desc(null, text)
-                        : NTextUtils.desc(NCommandLine.of(System.getProperty("nuts.boot.args"), NShellFamily.SH, defaultSession()), text)
+                        : NTextUtils.desc(NCmdLine.of(System.getProperty("nuts.boot.args"), NShellFamily.SH, defaultSession()), text)
                 ));
                 LOGCRF.log(NMsg.ofJ("   nuts-inherited-nuts-args     : {0}", System.getProperty("nuts.args") == null ? NTextUtils.desc(null, text)
-                        : NTextUtils.desc(text.ofText(NCommandLine.of(System.getProperty("nuts.args"), NShellFamily.SH, defaultSession())), text)
+                        : NTextUtils.desc(text.ofText(NCmdLine.of(System.getProperty("nuts.args"), NShellFamily.SH, defaultSession())), text)
                 ));
                 LOGCRF.log(NMsg.ofJ("   nuts-open-mode               : {0}", NTextUtils.formatLogValue(text, bootOptions.getOpenMode().orNull(), bootOptions.getOpenMode().orElse(NOpenMode.OPEN_OR_CREATE))));
                 NEnvs senvs = NEnvs.of(defaultSession());
@@ -421,7 +421,7 @@ public class DefaultNWorkspace extends AbstractNWorkspace implements NWorkspaceE
                 //workspace wasn't loaded. Create new configuration...
                 justInstalled = true;
                 NWorkspaceUtils.of(defaultSession()).checkReadOnly();
-                LOG.with().session(defaultSession()).level(Level.CONFIG).verb(NLoggerVerb.SUCCESS)
+                LOG.with().session(defaultSession()).level(Level.CONFIG).verb(NLogVerb.SUCCESS)
                         .log(NMsg.ofJ("creating {0} workspace at {1}",
                                 text.ofStyled("new", NTextStyle.info()),
                                 NLocations.of(defaultSession()).getWorkspaceLocation()
@@ -485,7 +485,7 @@ public class DefaultNWorkspace extends AbstractNWorkspace implements NWorkspaceE
                 }
                 NVersion nutsVersion = getRuntimeId().getVersion();
                 if (LOG.isLoggable(Level.CONFIG)) {
-                    LOG.with().session(defaultSession()).level(Level.CONFIG).verb(NLoggerVerb.SUCCESS)
+                    LOG.with().session(defaultSession()).level(Level.CONFIG).verb(NLogVerb.SUCCESS)
                             .log(NMsg.ofJ("nuts workspace v{0} created.", nutsVersion));
                 }
                 //should install default
@@ -553,13 +553,13 @@ public class DefaultNWorkspace extends AbstractNWorkspace implements NWorkspaceE
                     try {
                         NInstallCommand.of(defaultSession()).setInstalled(true).getResult();
                     } catch (Exception ex) {
-                        LOG.with().session(defaultSession()).level(Level.SEVERE).verb(NLoggerVerb.FAIL)
+                        LOG.with().session(defaultSession()).level(Level.SEVERE).verb(NLogVerb.FAIL)
                                 .error(ex)
                                 .log(NMsg.ofJ("reinstall artifacts failed : {0}", ex));
                     }
                 }
                 if (NRepositories.of(defaultSession()).getRepositories().size() == 0) {
-                    LOG.with().session(defaultSession()).level(Level.CONFIG).verb(NLoggerVerb.FAIL)
+                    LOG.with().session(defaultSession()).level(Level.CONFIG).verb(NLogVerb.FAIL)
                             .log(NMsg.ofPlain("workspace has no repositories. Will re-create defaults"));
                     justInstalledArchetype = initializeWorkspace(bootOptions.getArchetype().orNull(), defaultSession());
                 }
@@ -616,7 +616,7 @@ public class DefaultNWorkspace extends AbstractNWorkspace implements NWorkspaceE
                 NWorkspaceSecurityManager.of(defaultSession()).login(bootOptions.getUserName().get(), password);
             }
             wsModel.configModel.setEndCreateTime(Instant.now());
-            LOG.with().session(defaultSession()).level(Level.FINE).verb(NLoggerVerb.SUCCESS)
+            LOG.with().session(defaultSession()).level(Level.FINE).verb(NLogVerb.SUCCESS)
                     .log(
                             NMsg.ofC("%s workspace loaded in %s",
                                     NMsg.ofCode("nuts"),
@@ -702,7 +702,7 @@ public class DefaultNWorkspace extends AbstractNWorkspace implements NWorkspaceE
     }
 
     protected NDescriptor _resolveEffectiveDescriptor(NDescriptor descriptor, NSession session) {
-        LOG.with().session(session).level(Level.FINEST).verb(NLoggerVerb.START)
+        LOG.with().session(session).level(Level.FINEST).verb(NLogVerb.START)
                 .log(NMsg.ofJ("resolve effective {0}", descriptor.getId()));
         checkSession(session);
         NDescriptorBuilder descrWithParents = _applyParentDescriptors(descriptor, session).builder();
@@ -801,7 +801,7 @@ public class DefaultNWorkspace extends AbstractNWorkspace implements NWorkspaceE
                     }
                 }
                 if (d.getVersion().isBlank()) {
-                    LOG.with().session(session).level(Level.FINE).verb(NLoggerVerb.FAIL)
+                    LOG.with().session(session).level(Level.FINE).verb(NLogVerb.FAIL)
                             .log(NMsg.ofJ("failed to resolve effective version for {0}", d));
                 }
             }
@@ -1338,8 +1338,8 @@ public class DefaultNWorkspace extends AbstractNWorkspace implements NWorkspaceE
     public String resolveCommandName(NId id, NSession session) {
         checkSession(session);
         String nn = id.getArtifactId();
-        NCustomCommandManager aliases = NCustomCommandManager.of(session);
-        NWorkspaceCustomCommand c = aliases.findCommand(nn);
+        NCommands aliases = NCommands.of(session);
+        NCustomCommand c = aliases.findCommand(nn);
         if (c != null) {
             if (CoreFilterUtils.matchesSimpleNameStaticVersion(c.getOwner(), id)) {
                 return nn;
@@ -1395,18 +1395,18 @@ public class DefaultNWorkspace extends AbstractNWorkspace implements NWorkspaceE
                     .getUser(NConstants.Users.ADMIN, session);
             if (adminSecurity == null || NBlankable.isBlank(adminSecurity.getCredentials())) {
                 if (LOG.isLoggable(Level.CONFIG)) {
-                    LOG.with().session(session).level(Level.CONFIG).verb(NLoggerVerb.FAIL)
+                    LOG.with().session(session).level(Level.CONFIG).verb(NLogVerb.FAIL)
                             .log(NMsg.ofJ("{0} user has no credentials. reset to default", NConstants.Users.ADMIN));
                 }
                 NWorkspaceSecurityManager.of(session)
                         .updateUser(NConstants.Users.ADMIN).credentials("admin".toCharArray())
                         .run();
             }
-            for (NCommandFactoryConfig commandFactory : NCustomCommandManager.of(session).getCommandFactories()) {
+            for (NCommandFactoryConfig commandFactory : NCommands.of(session).getCommandFactories()) {
                 try {
-                    NCustomCommandManager.of(session).addCommandFactory(commandFactory);
+                    NCommands.of(session).addCommandFactory(commandFactory);
                 } catch (Exception e) {
-                    LOG.with().session(session).level(Level.SEVERE).verb(NLoggerVerb.FAIL)
+                    LOG.with().session(session).level(Level.SEVERE).verb(NLogVerb.FAIL)
                             .log(NMsg.ofJ("unable to instantiate Command Factory {0}", commandFactory));
                 }
             }

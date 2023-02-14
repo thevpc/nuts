@@ -26,7 +26,7 @@
 package net.thevpc.nuts.toolbox.nsh.cmds;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.cmdline.NCommandLine;
+import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.spi.NComponentScope;
 import net.thevpc.nuts.spi.NComponentScopeType;
 import net.thevpc.nuts.text.NTextStyle;
@@ -48,7 +48,7 @@ public class AutocompleteCommand extends SimpleJShellBuiltin {
     }
 
     @Override
-    protected boolean configureFirst(NCommandLine cmdLine, JShellExecutionContext context) {
+    protected boolean configureFirst(NCmdLine cmdLine, JShellExecutionContext context) {
         Options options = context.getOptions();
         NSession session = context.getSession();
         if (!cmdLine.isNextOption()) {
@@ -71,7 +71,7 @@ public class AutocompleteCommand extends SimpleJShellBuiltin {
     }
 
     @Override
-    protected void execBuiltin(NCommandLine commandLine, JShellExecutionContext context) {
+    protected void execBuiltin(NCmdLine commandLine, JShellExecutionContext context) {
         Options options = context.getOptions();
         NSession session = context.getSession();
         if (options.cmd == null) {
@@ -83,7 +83,7 @@ public class AutocompleteCommand extends SimpleJShellBuiltin {
         }
         List<JShellAutoCompleteCandidate> aa = context.getShellContext().resolveAutoCompleteCandidates(
                 options.cmd, options.items, options.index,
-                NCommandLine.of(options.items).toString()
+                NCmdLine.of(options.items).toString()
         );
         Properties p = new Properties();
         for (JShellAutoCompleteCandidate autoCompleteCandidate : aa) {

@@ -44,7 +44,7 @@ import java.util.zip.ZipFile;
  */
 public class DefaultNWorkspaceExtensionModel {
 
-    private NLogger LOG;
+    private NLog LOG;
     private final Set<Class> SUPPORTED_EXTENSION_TYPES = new HashSet<>(
             Arrays.asList(//order is important!!because auto-wiring should follow this very order
                     //                    NutsPrintStreamFormattedNull.class,
@@ -80,13 +80,13 @@ public class DefaultNWorkspaceExtensionModel {
         setExcludedExtensions(excludedExtensions);
     }
 
-    protected NLoggerOp _LOGOP(NSession session) {
+    protected NLogOp _LOGOP(NSession session) {
         return _LOG(session).with().session(session);
     }
 
-    protected NLogger _LOG(NSession session) {
+    protected NLog _LOG(NSession session) {
         if (LOG == null) {
-            LOG = NLogger.of(DefaultNWorkspaceExtensionModel.class,session);
+            LOG = NLog.of(DefaultNWorkspaceExtensionModel.class,session);
         }
         return LOG;
     }
@@ -302,7 +302,7 @@ public class DefaultNWorkspaceExtensionModel {
             objectFactory.registerInstance(extensionPointType, extensionImpl, session);
             return true;
         }
-        _LOGOP(session).level(Level.FINE).verb(NLoggerVerb.WARNING)
+        _LOGOP(session).level(Level.FINE).verb(NLogVerb.WARNING)
                 .log(NMsg.ofJ("Bootstrap Extension Point {0} => {1} ignored. Already registered", extensionPointType.getName(), extensionImpl.getClass().getName()));
         return false;
     }
@@ -313,7 +313,7 @@ public class DefaultNWorkspaceExtensionModel {
             objectFactory.registerType(extensionPointType, extensionType, source, session);
             return true;
         }
-        _LOGOP(session).level(Level.FINE).verb(NLoggerVerb.WARNING)
+        _LOGOP(session).level(Level.FINE).verb(NLogVerb.WARNING)
                 .log(NMsg.ofJ("Bootstrap Extension Point {0} => {1} ignored. Already registered", extensionPointType.getName(), extensionType.getName()));
         return false;
     }
@@ -383,7 +383,7 @@ public class DefaultNWorkspaceExtensionModel {
                     //should check current classpath
                     //and the add to classpath
                     loadedExtensionIds.add(extension);
-                    _LOGOP(session).verb(NLoggerVerb.SUCCESS)
+                    _LOGOP(session).verb(NLogVerb.SUCCESS)
                             .log(NMsg.ofJ("extension {0} loaded", def.getId()
                             ));
                     someUpdates = true;
@@ -443,7 +443,7 @@ public class DefaultNWorkspaceExtensionModel {
             throw new NExtensionAlreadyRegisteredException(session, id, wired.toString());
         }
 
-        _LOGOP(session).level(Level.FINE).verb(NLoggerVerb.ADD).log(NMsg.ofJ("installing extension {0}", id));
+        _LOGOP(session).level(Level.FINE).verb(NLogVerb.ADD).log(NMsg.ofJ("installing extension {0}", id));
         NDefinition nDefinitions = NSearchCommand.of(session)
                 .setAll(options)
                 .addId(id)
@@ -468,14 +468,14 @@ public class DefaultNWorkspaceExtensionModel {
 //            }
 //        }
         extensions.put(id, workspaceExtension);
-        _LOGOP(session).level(Level.FINE).verb(NLoggerVerb.ADD).log(NMsg.ofJ("extension {0} installed successfully", id));
+        _LOGOP(session).level(Level.FINE).verb(NLogVerb.ADD).log(NMsg.ofJ("extension {0} installed successfully", id));
         NTerminalSpec spec = new NDefaultTerminalSpec();
         if (session.getTerminal() != null) {
             spec.setProperty("ignoreClass", session.getTerminal().getClass());
         }
         NSessionTerminal newTerminal = createTerminal(spec, session);
         if (newTerminal != null) {
-            _LOGOP(session).level(Level.FINE).verb(NLoggerVerb.UPDATE)
+            _LOGOP(session).level(Level.FINE).verb(NLogVerb.UPDATE)
                     .log(NMsg.ofJ("extension {0} changed Terminal configuration. Reloading Session Terminal", id));
             session.setTerminal(newTerminal);
         }

@@ -27,24 +27,24 @@ import java.util.Arrays;
 import java.util.List;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.cmdline.DefaultNCommandAutoComplete;
+import net.thevpc.nuts.cmdline.DefaultNCmdLineAutoComplete;
 import net.thevpc.nuts.cmdline.NArgCandidate;
-import net.thevpc.nuts.cmdline.NCommandAutoCompleteResolver;
-import net.thevpc.nuts.cmdline.NCommandLine;
+import net.thevpc.nuts.cmdline.NCmdLine;
+import net.thevpc.nuts.cmdline.NCmdLineAutoCompleteResolver;
 
 /**
  *
  * @author thevpc
  */
-public class JobAutoCompleter implements NCommandAutoCompleteResolver {
+public class JobAutoCompleter implements NCmdLineAutoCompleteResolver {
 
     public JobAutoCompleter() {
     }
 
     @Override
-    public List<NArgCandidate> resolveCandidates(NCommandLine commandLine, int wordIndex, NSession session) {
+    public List<NArgCandidate> resolveCandidates(NCmdLine commandLine, int wordIndex, NSession session) {
         JobServiceCmd fileContext = (JobServiceCmd) NEnvs.of(session).getProperties().get(JobServiceCmd.class.getName());
-        DefaultNCommandAutoComplete autoComplete = new DefaultNCommandAutoComplete()
+        DefaultNCmdLineAutoComplete autoComplete = new DefaultNCmdLineAutoComplete()
                 .setSession(session)
                 .setCurrentWordIndex(wordIndex)
                 .setLine(commandLine.toString()).setWords(

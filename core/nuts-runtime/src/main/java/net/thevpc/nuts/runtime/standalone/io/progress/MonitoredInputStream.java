@@ -26,7 +26,7 @@
 package net.thevpc.nuts.runtime.standalone.io.progress;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.cmdline.NCommandLine;
+import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.io.*;
 import net.thevpc.nuts.runtime.standalone.io.util.InterruptException;
 import net.thevpc.nuts.runtime.standalone.io.util.Interruptible;
@@ -255,7 +255,7 @@ public class MonitoredInputStream extends InputStream implements NInputSource, I
             }
 
             @Override
-            public boolean configureFirst(NCommandLine commandLine) {
+            public boolean configureFirst(NCmdLine commandLine) {
                 return false;
             }
         });

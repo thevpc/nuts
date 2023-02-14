@@ -29,7 +29,7 @@ package net.thevpc.nuts.runtime.standalone.app.cmdline.option;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.cmdline.DefaultNArgCandidate;
 import net.thevpc.nuts.cmdline.NArgCandidate;
-import net.thevpc.nuts.cmdline.NCommandAutoComplete;
+import net.thevpc.nuts.cmdline.NCmdLineAutoComplete;
 import net.thevpc.nuts.runtime.standalone.repository.util.NRepositoryUtils;
 
 import java.util.ArrayList;
@@ -47,7 +47,7 @@ public class RepositoryTypeNonOption extends DefaultNonOption {
     }
 
     @Override
-    public List<NArgCandidate> getCandidates(NCommandAutoComplete context) {
+    public List<NArgCandidate> getCandidates(NCmdLineAutoComplete context) {
         TreeSet<String> allValid = new TreeSet<>();
         allValid.add(NConstants.RepoTypes.NUTS);
         allValid.add(NConstants.RepoTypes.MAVEN);

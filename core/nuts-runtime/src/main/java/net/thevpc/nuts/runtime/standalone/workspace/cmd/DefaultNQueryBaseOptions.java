@@ -7,7 +7,7 @@ package net.thevpc.nuts.runtime.standalone.workspace.cmd;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.cmdline.NArg;
-import net.thevpc.nuts.cmdline.NCommandLine;
+import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.runtime.standalone.format.NFetchDisplayOptions;
 import net.thevpc.nuts.runtime.standalone.dependency.NDependencyScopes;
 
@@ -257,7 +257,7 @@ public abstract class DefaultNQueryBaseOptions<T extends NWorkspaceCommand> exte
     }
 
     @Override
-    public boolean configureFirst(NCommandLine cmdLine) {
+    public boolean configureFirst(NCmdLine cmdLine) {
         if (super.configureFirst(cmdLine)) {
             return true;
         }

@@ -28,8 +28,8 @@ package net.thevpc.nuts.runtime.standalone.util;
 import java.util.Arrays;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.cmdline.NCommandLine;
-import net.thevpc.nuts.cmdline.NCommandLineConfigurable;
+import net.thevpc.nuts.cmdline.NCmdLine;
+import net.thevpc.nuts.cmdline.NCmdLineConfigurable;
 
 /**
  *
@@ -39,7 +39,7 @@ public class NConfigurableHelper {
 
     /**
      * configure the current command with the given arguments. This is an
-     * override of the {@link NCommandLineConfigurable#configure(boolean, java.lang.String...) }
+     * override of the {@link NCmdLineConfigurable#configure(boolean, java.lang.String...) }
      * to help return a more specific return type;
      *
      * @param c argument configurable
@@ -50,12 +50,12 @@ public class NConfigurableHelper {
      * @param <T> {@code this} Type
      * @return {@code this} instance
      */
-    public static <T> T configure(NCommandLineConfigurable c, NSession session, boolean skipUnsupported, String[] args, String commandName) {
-        c.configure(skipUnsupported, NCommandLine.of(args).setCommandName(commandName));
+    public static <T> T configure(NCmdLineConfigurable c, NSession session, boolean skipUnsupported, String[] args, String commandName) {
+        c.configure(skipUnsupported, NCmdLine.of(args).setCommandName(commandName));
         return (T) c;
     }
 
-    public static boolean configure(NCommandLineConfigurable c, NSession session, boolean skipUnsupported, NCommandLine commandLine) {
+    public static boolean configure(NCmdLineConfigurable c, NSession session, boolean skipUnsupported, NCmdLine commandLine) {
         boolean conf = false;
         int maxLoops = 1000;
         boolean robustMode = false;

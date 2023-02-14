@@ -31,8 +31,8 @@ import net.thevpc.nuts.runtime.standalone.util.collections.ClassClassMap;
 import net.thevpc.nuts.runtime.standalone.util.collections.ListMap;
 import net.thevpc.nuts.runtime.standalone.extension.CoreServiceUtils;
 import net.thevpc.nuts.spi.*;
-import net.thevpc.nuts.util.NLogger;
-import net.thevpc.nuts.util.NLoggerVerb;
+import net.thevpc.nuts.util.NLog;
+import net.thevpc.nuts.util.NLogVerb;
 import net.thevpc.nuts.util.NStringUtils;
 
 import java.io.PrintStream;
@@ -48,7 +48,7 @@ import java.util.stream.Collectors;
  */
 public class DefaultNWorkspaceFactory implements NWorkspaceFactory {
 
-    private final NLogger LOG;
+    private final NLog LOG;
     private final ListMap<Class, Object> instances = new ListMap<>();
     private final Map<Class, Object> singletons = new HashMap<>();
     private final Map<NId, IdCache> discoveredCacheById = new HashMap<>();
@@ -138,7 +138,7 @@ public class DefaultNWorkspaceFactory implements NWorkspaceFactory {
             try {
                 obj = (T) resolveInstance(c, type, session);
             } catch (Exception e) {
-                LOG.with().session(validLogSession(session)).level(Level.FINEST).verb(NLoggerVerb.FAIL).error(e)
+                LOG.with().session(validLogSession(session)).level(Level.FINEST).verb(NLogVerb.FAIL).error(e)
                         .log(NMsg.ofJ("unable to instantiate {0} for {1} : {2}", c, type, e));
             }
             if (obj != null) {
@@ -190,7 +190,7 @@ public class DefaultNWorkspaceFactory implements NWorkspaceFactory {
             throw new NIllegalArgumentException(session, NMsg.ofC("already registered Extension %s for %s", implementation, extensionPoint.getName()));
         }
         if (LOG.isLoggable(Level.CONFIG)) {
-            LOG.with().session(validLogSession(session)).level(Level.FINEST).verb(NLoggerVerb.ADD)
+            LOG.with().session(validLogSession(session)).level(Level.FINEST).verb(NLogVerb.ADD)
                     .log(NMsg.ofJ("bind    {0} for impl instance {1}", NStringUtils.formatAlign(extensionPoint.getSimpleName(), 40, NPositionType.FIRST),
                             implementation.getClass().getName()));
         }
@@ -204,7 +204,7 @@ public class DefaultNWorkspaceFactory implements NWorkspaceFactory {
             throw new NIllegalArgumentException(session, NMsg.ofC("already registered Extension %s for %s", implementation.getName(), extensionPoint.getName()));
         }
         if (LOG.isLoggable(Level.CONFIG)) {
-            LOG.with().session(validLogSession(session)).level(Level.FINEST).verb(NLoggerVerb.ADD)
+            LOG.with().session(validLogSession(session)).level(Level.FINEST).verb(NLogVerb.ADD)
                     .log(NMsg.ofJ("bind    {0} for impl type {1}", NStringUtils.formatAlign(extensionPoint.getSimpleName(), 40, NPositionType.FIRST),
                             implementation.getName()));
         }
@@ -318,7 +318,7 @@ public class DefaultNWorkspaceFactory implements NWorkspaceFactory {
                 safeLog(NMsg.ofC("unable to instantiate %s as %s", apiType, t), e, session);
             } else {
                 if (LOG.isLoggable(Level.FINEST)) {
-                    LOG.with().session(validLogSession(session)).level(Level.FINEST).verb(NLoggerVerb.FAIL).error(e)
+                    LOG.with().session(validLogSession(session)).level(Level.FINEST).verb(NLogVerb.FAIL).error(e)
                             .log(NMsg.ofJ("unable to instantiate {0}", t));
                 }
             }
@@ -336,7 +336,7 @@ public class DefaultNWorkspaceFactory implements NWorkspaceFactory {
                 safeLog(NMsg.ofC("unable to instantiate %s as %s", apiType, t), e, session);
             } else {
                 if (LOG.isLoggable(Level.FINEST)) {
-                    LOG.with().session(validLogSession(session)).level(Level.FINEST).verb(NLoggerVerb.FAIL).error(e)
+                    LOG.with().session(validLogSession(session)).level(Level.FINEST).verb(NLogVerb.FAIL).error(e)
                             .log(NMsg.ofJ("unable to instantiate {0}", t));
                 }
             }
@@ -358,7 +358,7 @@ public class DefaultNWorkspaceFactory implements NWorkspaceFactory {
             } else {
 
                 if (LOG.isLoggable(Level.FINEST)) {
-                    LOG.with().session(validLogSession(session)).level(Level.FINEST).verb(NLoggerVerb.FAIL).error(e)
+                    LOG.with().session(validLogSession(session)).level(Level.FINEST).verb(NLogVerb.FAIL).error(e)
                             .log(NMsg.ofJ("unable to instantiate {0}", t));
                 }
             }
@@ -376,7 +376,7 @@ public class DefaultNWorkspaceFactory implements NWorkspaceFactory {
                 safeLog(NMsg.ofC("unable to instantiate %s as %s", apiType, t), e, session);
             } else {
                 if (LOG.isLoggable(Level.FINEST)) {
-                    LOG.with().session(validLogSession(session)).level(Level.FINEST).verb(NLoggerVerb.FAIL).error(e)
+                    LOG.with().session(validLogSession(session)).level(Level.FINEST).verb(NLogVerb.FAIL).error(e)
                             .log(NMsg.ofJ("unable to instantiate {0}", t));
                 }
             }
@@ -451,7 +451,7 @@ public class DefaultNWorkspaceFactory implements NWorkspaceFactory {
                                 break;
                             }
                             default: {
-                                LOG.with().session(validLogSession(session)).level(Level.FINEST).verb(NLoggerVerb.FAIL)
+                                LOG.with().session(validLogSession(session)).level(Level.FINEST).verb(NLogVerb.FAIL)
                                         .log(NMsg.ofJ("invalid scope {0} ; expected {1} for  {2}",
                                                 implScope.value(),
                                                 apiScope.value(),
@@ -481,9 +481,9 @@ public class DefaultNWorkspaceFactory implements NWorkspaceFactory {
             //skip logging this to avoid infinite recursion
             case "net.thevpc.nuts.spi.NPaths":
             case "net.thevpc.nuts.text.NTexts":
-            case "net.thevpc.nuts.spi.NLogManager":
-            case "net.thevpc.nuts.util.NLogger":
-            case "net.thevpc.nuts.util.NLoggerOp": {
+            case "net.thevpc.nuts.spi.NLogs":
+            case "net.thevpc.nuts.util.NLog":
+            case "net.thevpc.nuts.util.NLogOp": {
                 return true;
             }
         }
@@ -499,7 +499,7 @@ public class DefaultNWorkspaceFactory implements NWorkspaceFactory {
             String old = _alreadyLogger.get(baseType.getName());
             if (old == null || !old.equals(implType.getName())) {
                 _alreadyLogger.put(baseType.getName(), implType.getName());
-                LOG.with().session(validLogSession(session)).level(Level.FINEST).verb(NLoggerVerb.READ)
+                LOG.with().session(validLogSession(session)).level(Level.FINEST).verb(NLogVerb.READ)
                         .log(NMsg.ofJ("resolve {0} to  ```underlined {1}``` {2}",
                                 NStringUtils.formatAlign(baseType.getSimpleName(), 40, NPositionType.FIRST),
                                 scope,
@@ -549,7 +549,7 @@ public class DefaultNWorkspaceFactory implements NWorkspaceFactory {
                 o = instantiate0(type, session, apiType);
                 singletons.put(type, o);
                 if (LOG.isLoggable(Level.CONFIG)) {
-                    LOG.with().session(validLogSession(session)).level(Level.FINEST).verb(NLoggerVerb.READ)
+                    LOG.with().session(validLogSession(session)).level(Level.FINEST).verb(NLogVerb.READ)
                             .log(NMsg.ofJ("resolve {0} to  ```underlined singleton``` {1}", NStringUtils.formatAlign(apiType.getSimpleName(), 40, NPositionType.FIRST), o.getClass().getName()));
                 }
             }
@@ -557,7 +557,7 @@ public class DefaultNWorkspaceFactory implements NWorkspaceFactory {
         } else {
             T o = instantiate0(type, argTypes, args, apiType, session);
             if (LOG.isLoggable(Level.CONFIG)) {
-                LOG.with().session(validLogSession(session)).level(Level.FINEST).verb(NLoggerVerb.READ)
+                LOG.with().session(validLogSession(session)).level(Level.FINEST).verb(NLogVerb.READ)
                         .log(NMsg.ofJ("resolve {0} to  ```underlined prototype``` {1}", NStringUtils.formatAlign(apiType.getSimpleName(), 40, NPositionType.FIRST), o.getClass().getName()));
             }
             return o;
@@ -571,7 +571,7 @@ public class DefaultNWorkspaceFactory implements NWorkspaceFactory {
         if (one != null) {
             //if static instance found, always return it!
             if (LOG.isLoggable(Level.CONFIG)) {
-                LOG.with().session(validLogSession(session)).level(Level.FINEST).verb(NLoggerVerb.READ)
+                LOG.with().session(validLogSession(session)).level(Level.FINEST).verb(NLogVerb.READ)
                         .log(NMsg.ofJ("resolve {0} to singleton {1}", NStringUtils.formatAlign(type.getSimpleName(), 40, NPositionType.FIRST), one.getClass().getName()));
             }
             return (T) one;
@@ -593,7 +593,7 @@ public class DefaultNWorkspaceFactory implements NWorkspaceFactory {
             try {
                 obj = (T) resolveInstance(c, type, argTypes, args, session);
             } catch (Exception e) {
-                LOG.with().session(validLogSession(session)).level(Level.WARNING).verb(NLoggerVerb.FAIL).error(e)
+                LOG.with().session(validLogSession(session)).level(Level.WARNING).verb(NLogVerb.FAIL).error(e)
                         .log(NMsg.ofJ("unable to instantiate {0} for {1} : {2}", c, type, e));
             }
             if (obj != null) {
@@ -635,7 +635,7 @@ public class DefaultNWorkspaceFactory implements NWorkspaceFactory {
             this.workspace = workspace;
         }
 
-        public IdCache(NId id, URL url, ClassLoader bootClassLoader, NLogger LOG, Class[] extensionPoints, NSession session, NWorkspace workspace) {
+        public IdCache(NId id, URL url, ClassLoader bootClassLoader, NLog LOG, Class[] extensionPoints, NSession session, NWorkspace workspace) {
             this.id = id;
             this.url = url;
             this.workspace = workspace;
@@ -648,12 +648,12 @@ public class DefaultNWorkspaceFactory implements NWorkspaceFactory {
                     try {
                         c = Class.forName(n, false, bootClassLoader);
                     } catch (ClassNotFoundException x) {
-                        LOG.with().session(validLogSession(session)).verb(NLoggerVerb.WARNING).level(Level.FINE).error(x)
+                        LOG.with().session(validLogSession(session)).verb(NLogVerb.WARNING).level(Level.FINE).error(x)
                                 .log(NMsg.ofJ("not a valid type {0}", c));
                     }
                     if (c != null) {
                         if (!serviceClass.isAssignableFrom(c)) {
-                            LOG.with().session(validLogSession(session)).verb(NLoggerVerb.WARNING).level(Level.FINE)
+                            LOG.with().session(validLogSession(session)).verb(NLogVerb.WARNING).level(Level.FINE)
                                     .log(NMsg.ofJ("not a valid type {0} <> {1}, ignore...", c, serviceClass));
                         } else {
                             cc.add(c);

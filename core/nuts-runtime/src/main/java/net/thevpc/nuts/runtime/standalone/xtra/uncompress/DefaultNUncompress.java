@@ -32,7 +32,7 @@ import java.util.zip.ZipInputStream;
  */
 public class DefaultNUncompress implements NUncompress {
 
-    private NLogger LOG;
+    private NLog LOG;
 
     private boolean skipRoot = false;
     private boolean safe = true;
@@ -54,13 +54,13 @@ public class DefaultNUncompress implements NUncompress {
         return DEFAULT_SUPPORT;
     }
 
-    protected NLoggerOp _LOGOP(NSession session) {
+    protected NLogOp _LOGOP(NSession session) {
         return _LOG(session).with().session(session);
     }
 
-    protected NLogger _LOG(NSession session) {
+    protected NLog _LOG(NSession session) {
         if (LOG == null) {
-            LOG = NLogger.of(DefaultNUncompress.class, session);
+            LOG = NLog.of(DefaultNUncompress.class, session);
         }
         return LOG;
     }
@@ -262,7 +262,7 @@ public class DefaultNUncompress implements NUncompress {
 //        if (!path.toLowerCase().startsWith("file://")) {
 //            LOG.log(Level.FINE, "downloading url {0} to file {1}", new Object[]{path, file});
 //        } else {
-        _LOGOP(session).level(Level.FINEST).verb(NLoggerVerb.START)
+        _LOGOP(session).level(Level.FINEST).verb(NLogVerb.START)
                 .log(NMsg.ofJ("uncompress {0} to {1}", _source, target));
         Path folder = _target.toFile();
         NPath.of(folder, session).mkdirs();
@@ -322,7 +322,7 @@ public class DefaultNUncompress implements NUncompress {
             _source = NIO.of(session).ofInputSource(monitor.create());
         }
 
-        _LOGOP(session).level(Level.FINEST).verb(NLoggerVerb.START)
+        _LOGOP(session).level(Level.FINEST).verb(NLogVerb.START)
                 .log(NMsg.ofJ("uncompress {0} to {1}", _source, target));
         Path folder = _target.toFile();
         NPath.of(folder, session).mkdirs();
@@ -382,7 +382,7 @@ public class DefaultNUncompress implements NUncompress {
                             NPath.of(newFile, session).mkdirs();
                         } else {
                             Path newFile = folder.resolve(fileName);
-                            _LOGOP(session).level(Level.FINEST).verb(NLoggerVerb.WARNING)
+                            _LOGOP(session).level(Level.FINEST).verb(NLogVerb.WARNING)
                                     .log(NMsg.ofJ("file unzip : {0}", newFile));
                             //create all non exists folders
                             //else you will hit FileNotFoundException for compressed folder
@@ -404,7 +404,7 @@ public class DefaultNUncompress implements NUncompress {
                 _in.close();
             }
         } catch (IOException ex) {
-            _LOGOP(session).level(Level.CONFIG).verb(NLoggerVerb.FAIL).log(
+            _LOGOP(session).level(Level.CONFIG).verb(NLogVerb.FAIL).log(
                     NMsg.ofJ("error uncompressing {0} to {1} : {2}",
                             _source, target, ex));
             throw new NIOException(session, ex);
@@ -473,7 +473,7 @@ public class DefaultNUncompress implements NUncompress {
                 _in.close();
             }
         } catch (IOException ex) {
-            _LOGOP(session).level(Level.CONFIG).verb(NLoggerVerb.FAIL)
+            _LOGOP(session).level(Level.CONFIG).verb(NLogVerb.FAIL)
                     .log(NMsg.ofJ("error uncompressing {0} to {1} : {2}",
                             _source, target, ex));
             throw new NIOException(session, ex);
@@ -502,7 +502,7 @@ public class DefaultNUncompress implements NUncompress {
                     }
                     //get the zipped file list entry
                     Path newFile = folder.resolve(n);
-                    _LOGOP(session).level(Level.FINEST).verb(NLoggerVerb.WARNING)
+                    _LOGOP(session).level(Level.FINEST).verb(NLogVerb.WARNING)
                             .log(NMsg.ofJ("file unzip : {0}", newFile));
                     //create all non exists folders
                     //else you will hit FileNotFoundException for compressed folder
@@ -520,7 +520,7 @@ public class DefaultNUncompress implements NUncompress {
                 _in.close();
             }
         } catch (IOException ex) {
-            _LOGOP(session).level(Level.CONFIG).verb(NLoggerVerb.FAIL)
+            _LOGOP(session).level(Level.CONFIG).verb(NLogVerb.FAIL)
                     .log(NMsg.ofJ("error uncompressing {0} to {1} : {2}", _source,
                             target, ex));
             throw new NIOException(session, ex);
@@ -566,7 +566,7 @@ public class DefaultNUncompress implements NUncompress {
                 _in.close();
             }
         } catch (IOException ex) {
-            _LOGOP(session).level(Level.CONFIG).verb(NLoggerVerb.FAIL)
+            _LOGOP(session).level(Level.CONFIG).verb(NLogVerb.FAIL)
                     .log(NMsg.ofJ("error uncompressing {0} to {1} : {2}", _source,
                             target, ex));
             throw new NIOException(session, ex);

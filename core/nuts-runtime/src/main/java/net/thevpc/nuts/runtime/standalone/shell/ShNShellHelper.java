@@ -1,8 +1,8 @@
 package net.thevpc.nuts.runtime.standalone.shell;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.cmdline.NCommandLineFormatStrategy;
-import net.thevpc.nuts.runtime.standalone.app.cmdline.NCommandLineShellOptions;
+import net.thevpc.nuts.cmdline.NCmdLineFormatStrategy;
+import net.thevpc.nuts.runtime.standalone.app.cmdline.NCmdLineShellOptions;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -258,9 +258,9 @@ public class ShNShellHelper extends AbstractNixNShellHelper {
         return Pattern.compile("[a-zA-Z][a-zA-Z0-9_]*").matcher(arg).matches();
     }
 
-    public String escapeArguments(String[] args, NCommandLineShellOptions options) {
+    public String escapeArguments(String[] args, NCmdLineShellOptions options) {
         if(options==null){
-            options=new NCommandLineShellOptions();
+            options=new NCmdLineShellOptions();
         }else{
             options=options.copy();
         }
@@ -275,19 +275,19 @@ public class ShNShellHelper extends AbstractNixNShellHelper {
         return sb.toString();
     }
 
-    public String escapeArgument(String arg, NCommandLineShellOptions options) {
+    public String escapeArgument(String arg, NCmdLineShellOptions options) {
         if(arg == null || arg.isEmpty()){
             return "\"\"";
         }
         if(options==null){
-            options=new NCommandLineShellOptions();
+            options=new NCmdLineShellOptions();
         }
         if(options.getSession()==null){
             throw new NMissingSessionException();
         }
-        NCommandLineFormatStrategy s = options.getFormatStrategy();
-        if(s==null|| s== NCommandLineFormatStrategy.DEFAULT){
-            s= NCommandLineFormatStrategy.SUPPORT_QUOTES;
+        NCmdLineFormatStrategy s = options.getFormatStrategy();
+        if(s==null|| s== NCmdLineFormatStrategy.DEFAULT){
+            s= NCmdLineFormatStrategy.SUPPORT_QUOTES;
         }
         int ii = arg.indexOf('=');
         if(ii>=0) {
@@ -364,7 +364,7 @@ public class ShNShellHelper extends AbstractNixNShellHelper {
                         case '&':
                         case '|':
                         {
-                            return escapeArgument(arg,options.copy().setFormatStrategy(NCommandLineFormatStrategy.REQUIRE_QUOTES));
+                            return escapeArgument(arg,options.copy().setFormatStrategy(NCmdLineFormatStrategy.REQUIRE_QUOTES));
                         }
                         case '\n':
                         case '\r':

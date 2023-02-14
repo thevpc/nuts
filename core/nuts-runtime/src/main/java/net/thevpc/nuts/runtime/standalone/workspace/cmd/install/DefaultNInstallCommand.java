@@ -36,7 +36,7 @@ import net.thevpc.nuts.text.NText;
 import net.thevpc.nuts.text.NTextBuilder;
 import net.thevpc.nuts.text.NTextStyle;
 import net.thevpc.nuts.text.NTexts;
-import net.thevpc.nuts.util.NLoggerVerb;
+import net.thevpc.nuts.util.NLogVerb;
 import net.thevpc.nuts.util.NStream;
 
 import java.util.*;
@@ -112,7 +112,7 @@ public class DefaultNInstallCommand extends AbstractNInstallCommand {
                 }
             }
         }else{
-            _LOGOP(session).verb(NLoggerVerb.WARNING).level(Level.FINE)
+            _LOGOP(session).verb(NLogVerb.WARNING).level(Level.FINE)
                     .log(NMsg.ofJ("failed to retrieve {0}", def.id));
         }
         return def.definition;
@@ -465,7 +465,7 @@ public class DefaultNInstallCommand extends AbstractNInstallCommand {
                             resultList.add(info.definition);
                         }
                     } catch (RuntimeException ex) {
-                        _LOGOP(session).error(ex).verb(NLoggerVerb.WARNING).level(Level.FINE)
+                        _LOGOP(session).error(ex).verb(NLogVerb.WARNING).level(Level.FINE)
                                 .log(NMsg.ofJ("failed to install {0}", info.id));
                         failedList.add(info.id);
                         if (session.isPlainTrace()) {

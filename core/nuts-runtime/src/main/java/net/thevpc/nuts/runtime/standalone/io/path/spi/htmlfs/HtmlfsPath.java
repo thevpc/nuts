@@ -1,7 +1,7 @@
 package net.thevpc.nuts.runtime.standalone.io.path.spi.htmlfs;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.cmdline.NCommandLine;
+import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.format.NTreeVisitor;
 import net.thevpc.nuts.io.*;
 import net.thevpc.nuts.runtime.standalone.io.path.spi.AbstractPathSPIAdapter;
@@ -12,8 +12,8 @@ import net.thevpc.nuts.spi.NPathSPI;
 import net.thevpc.nuts.spi.NUseDefault;
 import net.thevpc.nuts.text.NTextBuilder;
 import net.thevpc.nuts.text.NTextStyle;
-import net.thevpc.nuts.util.NLoggerOp;
-import net.thevpc.nuts.util.NLoggerVerb;
+import net.thevpc.nuts.util.NLogOp;
+import net.thevpc.nuts.util.NLogVerb;
 import net.thevpc.nuts.util.NStream;
 
 import java.io.*;
@@ -233,8 +233,8 @@ public class HtmlfsPath extends AbstractPathSPIAdapter {
                     try {
                         return p.parseHtmlTomcat(bytes, session);
                     } catch (Exception ex) {
-                        NLoggerOp.of(HtmlfsPath.class, session)
-                                .verb(NLoggerVerb.FAIL)
+                        NLogOp.of(HtmlfsPath.class, session)
+                                .verb(NLogVerb.FAIL)
                                 .level(Level.FINEST)
                                 .error(ex)
                                 .log(NMsg.ofC("failed to parse using %s", p.getClass().getSimpleName()));
@@ -308,7 +308,7 @@ public class HtmlfsPath extends AbstractPathSPIAdapter {
         }
 
         @Override
-        public boolean configureFirst(NCommandLine commandLine) {
+        public boolean configureFirst(NCmdLine commandLine) {
             return false;
         }
     }

@@ -2,7 +2,7 @@ package net.thevpc.nuts.toolbox.ndb.base.cmd;
 
 import net.thevpc.nuts.NApplicationContext;
 import net.thevpc.nuts.NSession;
-import net.thevpc.nuts.cmdline.NCommandLine;
+import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.toolbox.ndb.NdbConfig;
 import net.thevpc.nuts.toolbox.ndb.base.NdbCmd;
@@ -20,7 +20,7 @@ public class RemoveConfigCmd<C extends NdbConfig> extends NdbCmd<C> {
     }
 
     @Override
-    public void run(NApplicationContext appContext, NCommandLine commandLine) {
+    public void run(NApplicationContext appContext, NCmdLine commandLine) {
         NRef<AtName> name = NRef.ofNull(AtName.class);
         NSession session = commandLine.getSession();
         while (commandLine.hasNext()) {

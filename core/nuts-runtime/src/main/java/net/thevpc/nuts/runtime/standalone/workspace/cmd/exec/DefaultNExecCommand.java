@@ -294,8 +294,8 @@ public class DefaultNExecCommand extends AbstractNExecCommand {
                         return new DefaultNSettingsInternalExecutable(args, execSession);
                     }
                 }
-                NWorkspaceCustomCommand command = null;
-                command = NCustomCommandManager.of(prepareSession).findCommand(goodKw);
+                NCustomCommand command = null;
+                command = NCommands.of(prepareSession).findCommand(goodKw);
                 if (command != null) {
                     NCommandExecOptions o = new NCommandExecOptions().setExecutorOptions(executorOptions).setDirectory(directory).setFailFast(failFast)
                             .setExecutionType(executionType).setEnv(env);

@@ -31,7 +31,7 @@ import java.util.List;
 import net.thevpc.nuts.cmdline.DefaultNArgCandidate;
 import net.thevpc.nuts.cmdline.NArgCandidate;
 import net.thevpc.nuts.cmdline.NArgName;
-import net.thevpc.nuts.cmdline.NCommandAutoComplete;
+import net.thevpc.nuts.cmdline.NCmdLineAutoComplete;
 import net.thevpc.nuts.toolbox.nsh.jshell.JShellBuiltin;
 import net.thevpc.nuts.toolbox.nsh.jshell.JShellContext;
 
@@ -55,7 +55,7 @@ public class CommandNonOption implements NArgName {
     }
 
     @Override
-    public List<NArgCandidate> getCandidates(NCommandAutoComplete context) {
+    public List<NArgCandidate> getCandidates(NCmdLineAutoComplete context) {
         List<NArgCandidate> all = new ArrayList<>();
         for (JShellBuiltin command : this.context.builtins().getAll()) {
             all.add(new DefaultNArgCandidate(command.getName()));

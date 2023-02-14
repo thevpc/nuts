@@ -11,9 +11,9 @@ import net.thevpc.nuts.toolbox.ntemplate.filetemplate.eval.FtexEvaluator;
 import net.thevpc.nuts.toolbox.ntemplate.filetemplate.processors.*;
 import net.thevpc.nuts.toolbox.ntemplate.filetemplate.util.FileProcessorUtils;
 import net.thevpc.nuts.toolbox.ntemplate.filetemplate.util.StringUtils;
-import net.thevpc.nuts.util.NLogger;
-import net.thevpc.nuts.util.NLoggerOp;
-import net.thevpc.nuts.util.NLoggerVerb;
+import net.thevpc.nuts.util.NLog;
+import net.thevpc.nuts.util.NLogOp;
+import net.thevpc.nuts.util.NLogVerb;
 
 import java.io.*;
 import java.nio.file.Files;
@@ -83,29 +83,29 @@ public class FileTemplater {
     public FileTemplater(NSession session) {
         this.session = session;
         this.setLog(new TemplateLog() {
-            NLoggerOp logOp;
+            NLogOp logOp;
 
             @Override
             public void info(String title, String message) {
-                log().verb(NLoggerVerb.INFO).level(Level.FINER)
+                log().verb(NLogVerb.INFO).level(Level.FINER)
                         .log(NMsg.ofJ("{0} : {1}", title, message));
             }
 
             @Override
             public void debug(String title, String message) {
-                log().verb(NLoggerVerb.DEBUG).level(Level.FINER)
+                log().verb(NLogVerb.DEBUG).level(Level.FINER)
                         .log(NMsg.ofJ("{0} : {1}", title, message));
             }
 
             @Override
             public void error(String title, String message) {
-                log().verb(NLoggerVerb.FAIL).level(Level.FINER)
+                log().verb(NLogVerb.FAIL).level(Level.FINER)
                         .log(NMsg.ofJ("{0} : {1}", title, message));
             }
 
-            private NLoggerOp log() {
+            private NLogOp log() {
                 if (logOp == null) {
-                    logOp = NLogger.of(FileTemplater.class, session)
+                    logOp = NLog.of(FileTemplater.class, session)
                             .with()
                     ;
                 }

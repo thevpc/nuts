@@ -13,8 +13,8 @@ import net.thevpc.nuts.runtime.standalone.io.util.UnzipOptions;
 import net.thevpc.nuts.runtime.standalone.io.util.ZipUtils;
 import net.thevpc.nuts.runtime.standalone.definition.DefaultNDefinition;
 import net.thevpc.nuts.runtime.standalone.session.NSessionUtils;
-import net.thevpc.nuts.util.NLogger;
-import net.thevpc.nuts.util.NLoggerOp;
+import net.thevpc.nuts.util.NLog;
+import net.thevpc.nuts.util.NLogOp;
 import net.thevpc.nuts.util.NStringUtils;
 
 import java.io.IOException;
@@ -27,20 +27,20 @@ import java.util.logging.Level;
  */
 public class DefaultSourceControlHelper {
 
-    private NLogger LOG;
+    private NLog LOG;
     private NWorkspace ws;
 
     public DefaultSourceControlHelper(NWorkspace ws) {
         this.ws = ws;
     }
 
-    protected NLoggerOp _LOGOP(NSession session) {
+    protected NLogOp _LOGOP(NSession session) {
         return _LOG(session).with().session(session);
     }
 
-    protected NLogger _LOG(NSession session) {
+    protected NLog _LOG(NSession session) {
         if (LOG == null) {
-            LOG = NLogger.of(DefaultSourceControlHelper.class,session);
+            LOG = NLog.of(DefaultSourceControlHelper.class,session);
         }
         return LOG;
     }

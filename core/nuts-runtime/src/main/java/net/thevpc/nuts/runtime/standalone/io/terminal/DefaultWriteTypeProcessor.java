@@ -2,8 +2,8 @@ package net.thevpc.nuts.runtime.standalone.io.terminal;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.util.NAssert;
-import net.thevpc.nuts.util.NLogger;
-import net.thevpc.nuts.util.NLoggerVerb;
+import net.thevpc.nuts.util.NLog;
+import net.thevpc.nuts.util.NLogVerb;
 
 import java.util.function.Supplier;
 import java.util.logging.Level;
@@ -12,7 +12,7 @@ public class DefaultWriteTypeProcessor {
     private NMsg askMessage;
     private NMsg logMessage;
     private Supplier<RuntimeException> error;
-    private NLogger log;
+    private NLog log;
     private NConfirmationMode writeType;
     private NSession session;
 
@@ -31,7 +31,7 @@ public class DefaultWriteTypeProcessor {
         return this;
     }
 
-    public DefaultWriteTypeProcessor withLog(NLogger log, NMsg m) {
+    public DefaultWriteTypeProcessor withLog(NLog log, NMsg m) {
         NAssert.requireNonNull(log, "log", session);
         NAssert.requireNonNull(m, "message", session);
         this.log = log;
@@ -60,7 +60,7 @@ public class DefaultWriteTypeProcessor {
         return error;
     }
 
-    private NLogger getValidLog() {
+    private NLog getValidLog() {
         NAssert.requireNonNull(log, "log", session);
         return log;
     }
@@ -81,12 +81,12 @@ public class DefaultWriteTypeProcessor {
                 break;
             }
             case NO: {
-                getValidLog().with().session(session).level(Level.FINE).verb(NLoggerVerb.WARNING)
+                getValidLog().with().session(session).level(Level.FINE).verb(NLogVerb.WARNING)
                         .log(getValidLogMessage());
                 return false;
             }
         }
-        getValidLog().with().session(session).level(Level.FINE).verb(NLoggerVerb.WARNING)
+        getValidLog().with().session(session).level(Level.FINE).verb(NLogVerb.WARNING)
                 .log(getValidLogMessage());
         return true;
     }

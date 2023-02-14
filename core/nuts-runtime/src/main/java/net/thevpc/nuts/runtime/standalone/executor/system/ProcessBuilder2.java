@@ -25,10 +25,10 @@ package net.thevpc.nuts.runtime.standalone.executor.system;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.cmdline.DefaultNArg;
-import net.thevpc.nuts.cmdline.NCommandLine;
-import net.thevpc.nuts.cmdline.NCommandLineFormatStrategy;
+import net.thevpc.nuts.cmdline.NCmdLine;
+import net.thevpc.nuts.cmdline.NCmdLineFormatStrategy;
 import net.thevpc.nuts.io.NPath;
-import net.thevpc.nuts.runtime.standalone.app.cmdline.NCommandLineShellOptions;
+import net.thevpc.nuts.runtime.standalone.app.cmdline.NCmdLineShellOptions;
 import net.thevpc.nuts.runtime.standalone.io.util.MultiPipeThread;
 import net.thevpc.nuts.runtime.standalone.io.util.NonBlockingInputStreamAdapter;
 import net.thevpc.nuts.runtime.standalone.shell.NShellHelper;
@@ -388,25 +388,25 @@ public class ProcessBuilder2 {
                     if (isGrabOutputString()) {
                         throw new NExecutionException(session,
                                 NMsg.ofC("execution failed with code %d and message : %s. Command was %s", result, getOutputString(),
-                                        NCommandLine.of(getCommand())),
+                                        NCmdLine.of(getCommand())),
                                 result);
                     }
                 } else {
                     if (isGrabErrorString()) {
                         throw new NExecutionException(session,
                                 NMsg.ofC("execution failed with code %d and message : %s. Command was %s", result, getOutputString(),
-                                        NCommandLine.of(getCommand())),
+                                        NCmdLine.of(getCommand())),
                                 result);
                     }
                     if (isGrabOutputString()) {
                         throw new NExecutionException(session, NMsg.ofC(
                                 "execution failed with code %d and message : %s. Command was %s", result, getOutputString(),
-                                NCommandLine.of(getCommand())
+                                NCmdLine.of(getCommand())
                         ), result);
                     }
                 }
                 throw new NExecutionException(session, NMsg.ofC("execution failed with code %d. Command was %s", result,
-                        NCommandLine.of(getCommand())
+                        NCmdLine.of(getCommand())
                 ), result);
             }
         }
@@ -601,10 +601,10 @@ public class ProcessBuilder2 {
                 .append(
                         NShellHelper.of(NShellFamily.getCurrent())
                                 .escapeArguments(fullCommandString.toArray(new String[0]),
-                                        new NCommandLineShellOptions()
+                                        new NCmdLineShellOptions()
                                                 .setSession(session)
                                                 .setExpectEnv(true)
-                                                .setFormatStrategy(NCommandLineFormatStrategy.SUPPORT_QUOTES)
+                                                .setFormatStrategy(NCmdLineFormatStrategy.SUPPORT_QUOTES)
                                 )
                 );
         if (baseIO) {
@@ -782,9 +782,9 @@ public class ProcessBuilder2 {
                 .append(txt.ofCode("system",
                         NShellHelper.of(NShellFamily.getCurrent())
                                 .escapeArguments(fullCommandString.toArray(new String[0]),
-                                        new NCommandLineShellOptions()
+                                        new NCmdLineShellOptions()
                                                 .setSession(session)
-                                                .setFormatStrategy(NCommandLineFormatStrategy.SUPPORT_QUOTES)
+                                                .setFormatStrategy(NCmdLineFormatStrategy.SUPPORT_QUOTES)
                                                 .setExpectEnv(true)
                                 )
                 ));

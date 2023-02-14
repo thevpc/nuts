@@ -6,8 +6,8 @@ import net.thevpc.nuts.runtime.standalone.repository.impl.maven.pom.api.NPomId;
 import net.thevpc.nuts.runtime.standalone.repository.impl.maven.pom.NPomXmlParser;
 import net.thevpc.nuts.runtime.standalone.repository.impl.maven.pom.URLParts;
 import net.thevpc.nuts.runtime.standalone.util.jclass.JavaClassUtils;
-import net.thevpc.nuts.util.NLoggerOp;
-import net.thevpc.nuts.util.NLoggerVerb;
+import net.thevpc.nuts.util.NLogOp;
+import net.thevpc.nuts.util.NLogVerb;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -52,8 +52,8 @@ public class NMetaInfIdResolver {
                         all.add(id);
                     }
                 } catch (Exception ex) {
-                    NLoggerOp.of(NPomXmlParser.class,session)
-                            .verb(NLoggerVerb.WARNING)
+                    NLogOp.of(NPomXmlParser.class,session)
+                            .verb(NLogVerb.WARNING)
                             .level(Level.FINEST)
                             .log(NMsg.ofC("failed to parse pom file %s : %s", url, ex));
                 }
@@ -83,8 +83,8 @@ public class NMetaInfIdResolver {
                         }
                     }
                 } catch (Exception ex) {
-                    NLoggerOp.of(NPomXmlParser.class,session)
-                            .verb(NLoggerVerb.WARNING)
+                    NLogOp.of(NPomXmlParser.class,session)
+                            .verb(NLogVerb.WARNING)
                             .level(Level.FINEST)
                             .log(NMsg.ofC("failed to parse pom file %s : %s", url, ex));
                 }
@@ -119,8 +119,8 @@ public class NMetaInfIdResolver {
                         NPath.of(url,session), n, session)));
             }
         } catch (IOException ex) {
-            NLoggerOp.of(NPomXmlParser.class,session)
-                    .verb(NLoggerVerb.WARNING)
+            NLogOp.of(NPomXmlParser.class,session)
+                    .verb(NLogVerb.WARNING)
                     .level(Level.FINEST)
                     .log(NMsg.ofC("failed to parse class %s : %s", clazz.getName(), ex));
         }

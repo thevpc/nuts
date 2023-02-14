@@ -6,7 +6,7 @@
 package net.thevpc.nuts.runtime.standalone.workspace.cmd.exec;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.cmdline.NCommandLine;
+import net.thevpc.nuts.cmdline.NCmdLine;
 
 /**
  * @author bacali95
@@ -17,7 +17,7 @@ public class DefaultUnknownExecutable extends AbstractNExecutableCommand {
     NSession execSession;
 
     public DefaultUnknownExecutable(String[] cmd, NSession execSession) {
-        super(cmd[0], NCommandLine.of(cmd).toString(), NExecutableType.UNKNOWN);
+        super(cmd[0], NCmdLine.of(cmd).toString(), NExecutableType.UNKNOWN);
         this.execSession = execSession;
     }
 

@@ -2,7 +2,7 @@ package net.thevpc.nuts.reserved;
 
 import net.thevpc.nuts.NConstants;
 import net.thevpc.nuts.NStoreLocation;
-import net.thevpc.nuts.util.NLogger;
+import net.thevpc.nuts.util.NLog;
 import net.thevpc.nuts.util.NPlatformUtils;
 import net.thevpc.nuts.spi.NRepositoryDB;
 import net.thevpc.nuts.spi.NRepositoryLocation;
@@ -15,7 +15,7 @@ public class NReservedBootRepositoryDB implements NRepositoryDB {
     private final Map<String, String> aliasToBase = new LinkedHashMap<>();
     private final Map<String, Set<String>> baseToAliases = new LinkedHashMap<>();
 
-    public NReservedBootRepositoryDB(NLogger logger) {
+    public NReservedBootRepositoryDB(NLog logger) {
         reg("system", NReservedIOUtils.getNativePath(
                         NPlatformUtils.getDefaultPlatformHomeFolder(null,
                                 NStoreLocation.LIB,

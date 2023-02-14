@@ -7,7 +7,7 @@ package net.thevpc.nuts.runtime.standalone.id.filter;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.standalone.util.Simplifiable;
-import net.thevpc.nuts.util.NLogger;
+import net.thevpc.nuts.util.NLog;
 
 import java.util.Map;
 import java.util.Objects;
@@ -18,7 +18,7 @@ import java.util.Objects;
  */
 public class NIdIdFilter extends AbstractIdFilter implements NIdFilter, Simplifiable<NIdFilter> {
 
-    private NLogger LOG;
+    private NLog LOG;
     private final NId filter;
 
     public NIdIdFilter(NId filter, NSession session) {
@@ -37,7 +37,7 @@ public class NIdIdFilter extends AbstractIdFilter implements NIdFilter, Simplifi
             return true;
         }
         if(LOG==null){
-            LOG= NLogger.of(NIdIdFilter.class,session);
+            LOG= NLog.of(NIdIdFilter.class,session);
         }
         if(id.getShortName().equals(filter.getShortName())){
             if (!filter.getVersion().filter(session).acceptVersion(id.getVersion(), session)) {

@@ -2,7 +2,7 @@ package net.thevpc.nuts.toolbox.nversion;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.cmdline.NArg;
-import net.thevpc.nuts.cmdline.NCommandLine;
+import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.io.NPrintStream;
 import net.thevpc.nuts.text.NTextStyle;
@@ -71,7 +71,7 @@ public class NVersionMain implements NApplication {
         boolean sort = false;
         boolean table = false;
         boolean error = false;
-        NCommandLine commandLine = context.getCommandLine();
+        NCmdLine commandLine = context.getCommandLine();
         NArg a;
         int processed = 0;
         while (commandLine.hasNext()) {

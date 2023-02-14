@@ -4,8 +4,8 @@ import net.thevpc.nuts.*;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.runtime.standalone.repository.impl.maven.pom.api.NPomId;
 import net.thevpc.nuts.runtime.standalone.util.jclass.JavaClassUtils;
-import net.thevpc.nuts.util.NLoggerOp;
-import net.thevpc.nuts.util.NLoggerVerb;
+import net.thevpc.nuts.util.NLogOp;
+import net.thevpc.nuts.util.NLogVerb;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -65,8 +65,8 @@ public class NPomIdResolver {
                 try {
                     all.add(new NPomXmlParser(session).parse(NPath.of(s2,session).asURL(), session).getPomId());
                 } catch (Exception ex) {
-                    NLoggerOp.of(NPomXmlParser.class,session)
-                            .verb(NLoggerVerb.WARNING)
+                    NLogOp.of(NPomXmlParser.class,session)
+                            .verb(NLogVerb.WARNING)
                             .level(Level.FINEST)
                             .log(NMsg.ofC("failed to parse pom file %s : %s", s2, ex));
                 }
@@ -92,8 +92,8 @@ public class NPomIdResolver {
                         NPath.of(url,session), n, session)));
             }
         } catch (IOException ex) {
-            NLoggerOp.of(NPomXmlParser.class,session)
-                    .verb(NLoggerVerb.WARNING)
+            NLogOp.of(NPomXmlParser.class,session)
+                    .verb(NLogVerb.WARNING)
                     .level(Level.FINEST)
                     .log(NMsg.ofC("failed to parse class %s : %s", clazz.getName(), ex));
         }
@@ -113,8 +113,8 @@ public class NPomIdResolver {
     public NPomId resolvePomId(Class clazz, NPomId defaultValue) {
         NPomId[] pomIds = resolvePomIds(clazz);
         if (pomIds.length > 1) {
-            NLoggerOp.of(NPomXmlParser.class,session)
-                    .verb(NLoggerVerb.WARNING)
+            NLogOp.of(NPomXmlParser.class,session)
+                    .verb(NLogVerb.WARNING)
                     .level(Level.FINEST)
                     .log(NMsg.ofC(
                             "multiple ids found : %s for class %s and id %s",

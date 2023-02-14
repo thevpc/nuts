@@ -1,8 +1,8 @@
 package net.thevpc.nuts.toolbox.njob;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.cmdline.NCommandHistory;
-import net.thevpc.nuts.cmdline.NCommandLine;
+import net.thevpc.nuts.cmdline.NCmdLine;
+import net.thevpc.nuts.cmdline.NCmdLineHistory;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.io.NSystemTerminal;
 import net.thevpc.nuts.text.NTextBuilder;
@@ -65,7 +65,7 @@ public class JobServiceCmd {
         }
     }
 
-    public boolean runCommands(NCommandLine cmd) {
+    public boolean runCommands(NCmdLine cmd) {
         if (projects.runProjectCommands(cmd)) {
             return true;
         }
@@ -93,7 +93,7 @@ public class JobServiceCmd {
         return false;
     }
 
-    private void runSummary(NCommandLine cmd) {
+    private void runSummary(NCmdLine cmd) {
         if (cmd.isExecMode()) {
             long projectsCount = service.projects().findProjects().count();
             long tasksCount = service.tasks().findTasks(NTaskStatusFilter.OPEN, null, -1, null, null, null, null, null).count();
@@ -303,13 +303,13 @@ public class JobServiceCmd {
         return x -> s.equals(x == null ? "" : x);
     }
 
-    public void runInteractive(NCommandLine cmdLine) {
+    public void runInteractive(NCmdLine cmdLine) {
         NSession session = context.getSession();
         NSystemTerminal.enableRichTerm(session);
         NConfigs.of(session).getSystemTerminal()
                 .setCommandAutoCompleteResolver(new JobAutoCompleter())
                 .setCommandHistory(
-                        NCommandHistory.of(session)
+                        NCmdLineHistory.of(session)
                                 .setPath(context.getVarFolder().resolve("njob-history.hist"))
                 );
         NEnvs.of(session).setProperty(JobServiceCmd.class.getName(), this);
@@ -347,7 +347,7 @@ public class JobServiceCmd {
                     lastError.printStackTrace(session.out().asPrintStream());
                 }
             } else {
-                NCommandLine cmd = NCommandLine.parseDefault(line).get(session);
+                NCmdLine cmd = NCmdLine.parseDefault(line).get(session);
                 cmd.setCommandName(context.getAppId().getArtifactId());
                 try {
                     lastError = null;

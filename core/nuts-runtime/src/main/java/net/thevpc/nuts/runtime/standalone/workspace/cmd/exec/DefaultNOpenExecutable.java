@@ -7,7 +7,7 @@ package net.thevpc.nuts.runtime.standalone.workspace.cmd.exec;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.cmdline.NArg;
-import net.thevpc.nuts.cmdline.NCommandLine;
+import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.runtime.standalone.executor.system.NSysExecUtils;
 import net.thevpc.nuts.text.NText;
 import net.thevpc.nuts.text.NTextStyle;
@@ -35,14 +35,14 @@ public class DefaultNOpenExecutable extends AbstractNExecutableCommand {
                                   String[] executorOptions, NSession session, NSession execSession, NExecCommand execCommand
     ) {
         super(cmd[0],
-                NCommandLine.of(cmd).toString(),
+                NCmdLine.of(cmd).toString(),
                 NExecutableType.SYSTEM);
         this.cmd = cmd;
         this.execCommand = execCommand;
         this.executorOptions = executorOptions == null ? new String[0] : executorOptions;
         this.session = session;
         this.execSession = execSession;
-        NCommandLine commandLine = NCommandLine.of(this.executorOptions);
+        NCmdLine commandLine = NCmdLine.of(this.executorOptions);
         while (commandLine.hasNext()) {
             NArg aa = commandLine.peek().get(session);
             switch (aa.key()) {
@@ -125,9 +125,9 @@ public class DefaultNOpenExecutable extends AbstractNExecutableCommand {
     @Override
     public String toString() {
         if (effectiveOpenExecutable == null) {
-            return "open --fail " + NCommandLine.of(cmd);
+            return "open --fail " + NCmdLine.of(cmd);
         }
-        return "open --with " + effectiveOpenExecutable[0] + " " + NCommandLine.of(cmd);
+        return "open --with " + effectiveOpenExecutable[0] + " " + NCmdLine.of(cmd);
     }
 
     @Override

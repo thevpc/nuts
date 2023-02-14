@@ -40,11 +40,11 @@ import java.util.List;
 public interface NArgName extends Serializable {
 
     static NArgName of(String type, String label, NSession session) {
-        return NCommandLines.of(session).createName(type, label);
+        return NCmdLines.of(session).createName(type, label);
     }
 
     static NArgName of(String type, NSession session) {
-        return NCommandLines.of(session).createName(type);
+        return NCmdLines.of(session).createName(type);
     }
 
     /**
@@ -60,5 +60,5 @@ public interface NArgName extends Serializable {
      * @param context autocomplete
      * @return candidates list
      */
-    List<NArgCandidate> getCandidates(NCommandAutoComplete context);
+    List<NArgCandidate> getCandidates(NCmdLineAutoComplete context);
 }

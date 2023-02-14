@@ -1,7 +1,7 @@
 package net.thevpc.nuts.runtime.standalone.io.path.spi;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.cmdline.NCommandLine;
+import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.elem.NElement;
 import net.thevpc.nuts.elem.NElements;
 import net.thevpc.nuts.format.NTreeVisitor;
@@ -379,7 +379,7 @@ public class GithubfsPath extends AbstractPathSPIAdapter {
         }
 
         @Override
-        public boolean configureFirst(NCommandLine commandLine) {
+        public boolean configureFirst(NCmdLine commandLine) {
             return false;
         }
     }

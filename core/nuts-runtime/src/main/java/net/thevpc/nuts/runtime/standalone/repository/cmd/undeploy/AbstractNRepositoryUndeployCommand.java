@@ -5,7 +5,7 @@
  */
 package net.thevpc.nuts.runtime.standalone.repository.cmd.undeploy;
 
-import net.thevpc.nuts.cmdline.NCommandLine;
+import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.NId;
 import net.thevpc.nuts.NRepository;
 import net.thevpc.nuts.runtime.standalone.repository.cmd.NRepositoryCommandBase;
@@ -27,7 +27,7 @@ public abstract class AbstractNRepositoryUndeployCommand extends NRepositoryComm
     }
 
     @Override
-    public boolean configureFirst(NCommandLine cmd) {
+    public boolean configureFirst(NCmdLine cmd) {
         if (super.configureFirst(cmd)) {
             return true;
         }

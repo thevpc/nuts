@@ -25,7 +25,7 @@ import java.util.logging.Level;
 
 public class DefaultNRepositoryConfigModel implements NRepositoryConfigModel {
 
-    private NLogger LOG;
+    private NLog LOG;
 
     private final NRepository repository;
     private final NSpeedQualifier speed;
@@ -77,13 +77,13 @@ public class DefaultNRepositoryConfigModel implements NRepositoryConfigModel {
         setConfig(config, session, false);
     }
 
-    protected NLoggerOp _LOGOP(NSession session) {
+    protected NLogOp _LOGOP(NSession session) {
         return _LOG(session).with().session(session);
     }
 
-    protected NLogger _LOG(NSession session) {
+    protected NLog _LOG(NSession session) {
         if (LOG == null) {
-            LOG = NLogger.of(DefaultNRepositoryConfigModel.class, session);
+            LOG = NLog.of(DefaultNRepositoryConfigModel.class, session);
         }
         return LOG;
     }
@@ -426,14 +426,14 @@ public class DefaultNRepositoryConfigModel implements NRepositoryConfigModel {
             configurationChanged = false;
             if (_LOG(session).isLoggable(Level.CONFIG)) {
                 if (created) {
-                    _LOGOP(session).level(Level.CONFIG).verb(NLoggerVerb.SUCCESS)
+                    _LOGOP(session).level(Level.CONFIG).verb(NLogVerb.SUCCESS)
                             .log(NMsg.ofJ(
                                     "{0} created repository {1} at {2}",
                                     NStringUtils.formatAlign(repository.getName(), 20, NPositionType.FIRST), repository.getName(),
                                     getStoreLocation()
                             ));
                 } else {
-                    _LOGOP(session).level(Level.CONFIG).verb(NLoggerVerb.SUCCESS).log(NMsg.ofJ(
+                    _LOGOP(session).level(Level.CONFIG).verb(NLogVerb.SUCCESS).log(NMsg.ofJ(
                             "{0} updated repository {1} at {2}",
                             NStringUtils.formatAlign(repository.getName(), 20, NPositionType.FIRST), repository.getName(),
                             getStoreLocation()

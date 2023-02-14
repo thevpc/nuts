@@ -26,7 +26,7 @@
  */
 package net.thevpc.nuts.toolbox.nsh.cmds.bash;
 
-import net.thevpc.nuts.cmdline.NCommandLine;
+import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.NSession;
 import net.thevpc.nuts.NLiteral;
 import net.thevpc.nuts.spi.NComponentScope;
@@ -45,7 +45,7 @@ public class CdCommand extends SimpleJShellBuiltin {
     }
 
     @Override
-    protected boolean configureFirst(NCommandLine commandLine, JShellExecutionContext context) {
+    protected boolean configureFirst(NCmdLine commandLine, JShellExecutionContext context) {
         NSession session = context.getSession();
         Options options = context.getOptions();
         if (commandLine.peek().get(session).isNonOption()) {
@@ -60,7 +60,7 @@ public class CdCommand extends SimpleJShellBuiltin {
     }
 
     @Override
-    protected void execBuiltin(NCommandLine commandLine, JShellExecutionContext context) {
+    protected void execBuiltin(NCmdLine commandLine, JShellExecutionContext context) {
         Options options = context.getOptions();
         if (options.dirname == null) {
             options.dirname = System.getProperty("user.home");

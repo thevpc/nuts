@@ -25,7 +25,7 @@ package net.thevpc.nuts.runtime.standalone.executor.java;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.boot.NClassLoaderNode;
-import net.thevpc.nuts.cmdline.NCommandLine;
+import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.io.NPrintStream;
 import net.thevpc.nuts.io.NTerminalMode;
@@ -171,7 +171,7 @@ public class JavaExecutorComponent implements NExecutorComponent {
         }
         for (String a : executionContext.getWorkspaceOptions()) {
             NWorkspaceOptions extraOptions = NWorkspaceOptionsBuilder.of().setCommandLine(
-                    NCommandLine.parseDefault(a).get(session).toStringArray(),
+                    NCmdLine.parseDefault(a).get(session).toStringArray(),
                     session
             ).readOnly();
             options.setAllPresent(extraOptions);
@@ -403,7 +403,7 @@ public class JavaExecutorComponent implements NExecutorComponent {
                         text.ofBuilder()
                                 .append("exec", NTextStyle.pale())
                                 .append(" ")
-                                .append(NCommandLine.of(cmdLine))
+                                .append(NCmdLine.of(cmdLine))
                 ));
                 return 0;
             }

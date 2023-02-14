@@ -3,7 +3,7 @@ package net.thevpc.nuts.runtime.standalone.io.path;
 import net.thevpc.nuts.NFormat;
 import net.thevpc.nuts.NSession;
 import net.thevpc.nuts.NString;
-import net.thevpc.nuts.cmdline.NCommandLine;
+import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.format.NTreeVisitor;
 import net.thevpc.nuts.io.*;
 import net.thevpc.nuts.runtime.standalone.format.DefaultFormatBase;
@@ -411,7 +411,7 @@ public class NCompressedPathBase extends NPathBase {
         }
 
         @Override
-        public boolean configureFirst(NCommandLine commandLine) {
+        public boolean configureFirst(NCmdLine commandLine) {
             return false;
         }
 

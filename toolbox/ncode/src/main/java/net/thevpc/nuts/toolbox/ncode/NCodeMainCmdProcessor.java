@@ -1,10 +1,10 @@
 package net.thevpc.nuts.toolbox.ncode;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.cmdline.NCommandLineContext;
-import net.thevpc.nuts.cmdline.NCommandLineProcessor;
+import net.thevpc.nuts.cmdline.NCmdLine;
+import net.thevpc.nuts.cmdline.NCmdLineContext;
+import net.thevpc.nuts.cmdline.NCmdLineProcessor;
 import net.thevpc.nuts.cmdline.NArg;
-import net.thevpc.nuts.cmdline.NCommandLine;
 import net.thevpc.nuts.toolbox.ncode.bundles.strings.StringComparator;
 import net.thevpc.nuts.toolbox.ncode.bundles.strings.StringComparators;
 import net.thevpc.nuts.toolbox.ncode.filters.JavaSourceFilter;
@@ -19,7 +19,7 @@ import java.util.List;
 
 import static net.thevpc.nuts.toolbox.ncode.SourceNavigator.navigate;
 
-class NCodeMainCmdProcessor implements NCommandLineProcessor {
+class NCodeMainCmdProcessor implements NCmdLineProcessor {
     private List<String> paths = new ArrayList<>();
     private List<StringComparator> typeComparators = new ArrayList<>();
     private List<StringComparator> fileComparators = new ArrayList<>();
@@ -31,12 +31,12 @@ class NCodeMainCmdProcessor implements NCommandLineProcessor {
     }
 
     @Override
-    public void onCmdInitParsing(NCommandLine commandLine, NCommandLineContext context) {
+    public void onCmdInitParsing(NCmdLine commandLine, NCmdLineContext context) {
         commandLine.setExpandSimpleOptions(true);
     }
 
     @Override
-    public boolean onCmdNextOption(NArg option, NCommandLine commandLine, NCommandLineContext context) {
+    public boolean onCmdNextOption(NArg option, NCmdLine commandLine, NCmdLineContext context) {
         NSession session = applicationContext.getSession();
         switch (option.getStringKey().get(session)) {
             case "-i": {
@@ -76,14 +76,14 @@ class NCodeMainCmdProcessor implements NCommandLineProcessor {
     }
 
     @Override
-    public boolean onCmdNextNonOption(NArg nonOption, NCommandLine commandLine, NCommandLineContext context) {
+    public boolean onCmdNextNonOption(NArg nonOption, NCmdLine commandLine, NCmdLineContext context) {
         NSession session = applicationContext.getSession();
         paths.add(commandLine.next().flatMap(NLiteral::asString).get(session));
         return true;
     }
 
     @Override
-    public void onCmdExec(NCommandLine commandLine, NCommandLineContext context) {
+    public void onCmdExec(NCmdLine commandLine, NCmdLineContext context) {
         NSession session = applicationContext.getSession();
         if (paths.isEmpty()) {
             paths.add(".");

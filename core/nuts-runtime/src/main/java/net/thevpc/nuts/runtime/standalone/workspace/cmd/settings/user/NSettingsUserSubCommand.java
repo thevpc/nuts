@@ -7,7 +7,7 @@ package net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.user;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.cmdline.NArgName;
-import net.thevpc.nuts.cmdline.NCommandLine;
+import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.elem.NElementNotFoundException;
 import net.thevpc.nuts.io.NPrintStream;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.AbstractNSettingsSubCommand;
@@ -21,11 +21,11 @@ import java.util.List;
 public class NSettingsUserSubCommand extends AbstractNSettingsSubCommand {
 
     @Override
-    public boolean exec(NCommandLine cmdLine, Boolean autoSave, NSession session) {
+    public boolean exec(NCmdLine cmdLine, Boolean autoSave, NSession session) {
         return exec(null, cmdLine, autoSave, session);
     }
 
-    public static boolean exec(NRepository editedRepo, NCommandLine cmdLine, Boolean autoSave, NSession session) {
+    public static boolean exec(NRepository editedRepo, NCmdLine cmdLine, Boolean autoSave, NSession session) {
         if (cmdLine.next("add user", "au").isPresent()) {
             NRepository repository = null;
             if (editedRepo != null) {

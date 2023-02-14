@@ -28,7 +28,7 @@ import net.thevpc.nuts.elem.*;
 import java.io.File;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.cmdline.NCommandLine;
+import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.runtime.standalone.elem.mapper.*;
 import net.thevpc.nuts.runtime.standalone.format.xml.NElementFactoryXmlDocument;
@@ -154,7 +154,7 @@ public class DefaultNElementFactoryService implements NElementFactoryService {
         addDefaultMapper(NObjectElementBuilder.class, new NElementMapperNElementBuilder());
         addDefaultMapper(NElement.class, new NElementMapperNElement());
         addDefaultMapper(NElementEntry.class, F_NAMED_ELEM);
-        addDefaultMapper(NCommandLine.class, new NElementMapperCommandLine());
+        addDefaultMapper(NCmdLine.class, new NElementMapperCmdLine());
         addDefaultMapper(NString.class, new NElementMapperNString());
         addDefaultMapper(NText.class, new NElementMapperNText());
         addDefaultMapper(NPath.class, new NElementMapperNPath());

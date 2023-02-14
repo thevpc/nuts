@@ -1,7 +1,7 @@
 package net.thevpc.nuts.toolbox.ntomcat.remote;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.cmdline.NCommandLine;
+import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.elem.NElements;
 import net.thevpc.nuts.format.NObjectFormat;
 import net.thevpc.nuts.io.NPrintStream;
@@ -65,7 +65,7 @@ public class RemoteTomcatAppConfigService extends RemoteTomcatServiceBase {
         if (NBlankable.isBlank(v)) {
             v = "nsh nversion --color=never %file";
         }
-        List<String> cmd = NCommandLine.parseDefault(v).get(session).toStringList();
+        List<String> cmd = NCmdLine.parseDefault(v).get(session).toStringList();
         boolean fileAdded = false;
         for (int i = 0; i < cmd.size(); i++) {
             if ("%file".equals(cmd.get(i))) {

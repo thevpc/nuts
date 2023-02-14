@@ -7,7 +7,7 @@ package net.thevpc.nuts.runtime.standalone.workspace.cmd.exec;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.cmdline.NArg;
-import net.thevpc.nuts.cmdline.NCommandLine;
+import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.runtime.standalone.executor.system.ProcessExecHelper;
 import net.thevpc.nuts.runtime.standalone.util.collections.CoreCollectionUtils;
@@ -35,7 +35,7 @@ public class DefaultNSystemExecutable extends AbstractNExecutableCommand {
     public DefaultNSystemExecutable(String[] cmd,
                                     List<String> executorOptions, NSession session, NSession execSession, NExecCommand execCommand) {
         super(cmd[0],
-                NCommandLine.of(cmd).toString(),
+                NCmdLine.of(cmd).toString(),
                 NExecutableType.SYSTEM);
         this.inheritSystemIO = execCommand.isInheritSystemIO();
         this.cmd = cmd;
@@ -43,7 +43,7 @@ public class DefaultNSystemExecutable extends AbstractNExecutableCommand {
         this.executorOptions = CoreCollectionUtils.nonNullList(executorOptions);
         this.session = session;
         this.execSession = execSession;
-        NCommandLine commandLine = NCommandLine.of(this.executorOptions);
+        NCmdLine commandLine = NCmdLine.of(this.executorOptions);
         while (commandLine.hasNext()) {
             NArg aa = commandLine.peek().get(session);
             switch (aa.key()) {
@@ -110,7 +110,7 @@ public class DefaultNSystemExecutable extends AbstractNExecutableCommand {
 
     @Override
     public String toString() {
-        return execCommand.getRunAs() + " " + NCommandLine.of(cmd).toString();
+        return execCommand.getRunAs() + " " + NCmdLine.of(cmd).toString();
     }
 
     @Override

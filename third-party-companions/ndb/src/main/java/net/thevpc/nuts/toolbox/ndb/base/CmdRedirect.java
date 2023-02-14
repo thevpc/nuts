@@ -1,13 +1,13 @@
 package net.thevpc.nuts.toolbox.ndb.base;
 
-import net.thevpc.nuts.cmdline.NCommandLine;
+import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.io.NPath;
 
 public class CmdRedirect {
-    private NCommandLine cmd;
+    private NCmdLine cmd;
     private NPath path;
 
-    public CmdRedirect(NCommandLine cmd, NPath path) {
+    public CmdRedirect(NCmdLine cmd, NPath path) {
         this.cmd = cmd;
         this.path = path;
     }
@@ -23,7 +23,7 @@ public class CmdRedirect {
         return sb.toString();
     }
 
-    public NCommandLine getCmd() {
+    public NCmdLine getCmd() {
         return cmd;
     }
 

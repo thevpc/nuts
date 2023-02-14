@@ -27,7 +27,7 @@
 package net.thevpc.nuts.toolbox.nsh;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.cmdline.NCommandLine;
+import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.toolbox.nsh.jshell.JShellExecutionContext;
 
 import java.lang.reflect.Constructor;
@@ -75,9 +75,9 @@ public abstract class SimpleJShellBuiltin extends AbstractJShellBuiltin {
         }
     }
 
-    protected abstract boolean configureFirst(NCommandLine commandLine, JShellExecutionContext context);
+    protected abstract boolean configureFirst(NCmdLine commandLine, JShellExecutionContext context);
 
-    protected abstract void execBuiltin(NCommandLine commandLine, JShellExecutionContext context);
+    protected abstract void execBuiltin(NCmdLine commandLine, JShellExecutionContext context);
 
     @Override
     public void execImpl(String[] args, JShellExecutionContext context) {
@@ -85,7 +85,7 @@ public abstract class SimpleJShellBuiltin extends AbstractJShellBuiltin {
         int maxLoops = 1000;
         boolean robustMode = false;
         NSession session = context.getSession();
-        NCommandLine commandLine = NCommandLine.of(args).setCommandName(getName())
+        NCmdLine commandLine = NCmdLine.of(args).setCommandName(getName())
                 .setAutoComplete(context.getShellContext().getAutoComplete());
         initCommandLine(commandLine, context);
         context.setOptions(optionsSupplier==null?null:optionsSupplier.get());
@@ -129,7 +129,7 @@ public abstract class SimpleJShellBuiltin extends AbstractJShellBuiltin {
         execBuiltin(commandLine, context);
     }
 
-    protected void initCommandLine(NCommandLine commandLine, JShellExecutionContext context) {
+    protected void initCommandLine(NCmdLine commandLine, JShellExecutionContext context) {
 
     }
 

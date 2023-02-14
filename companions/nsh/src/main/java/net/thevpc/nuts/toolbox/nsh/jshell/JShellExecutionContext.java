@@ -1,8 +1,8 @@
 package net.thevpc.nuts.toolbox.nsh.jshell;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.cmdline.NCommandAutoComplete;
-import net.thevpc.nuts.cmdline.NCommandLine;
+import net.thevpc.nuts.cmdline.NCmdLine;
+import net.thevpc.nuts.cmdline.NCmdLineAutoComplete;
 import net.thevpc.nuts.io.NPrintStream;
 import net.thevpc.nuts.io.NTerminalMode;
 
@@ -24,11 +24,11 @@ public interface JShellExecutionContext {
 
     NSession getSession();
 
-    boolean configureFirst(NCommandLine cmd);
+    boolean configureFirst(NCmdLine cmd);
 
     boolean isAskVersion();
 
-    void configureLast(NCommandLine cmd);
+    void configureLast(NCmdLine cmd);
 
     JShellContext getShellContext();
 
@@ -84,5 +84,5 @@ public interface JShellExecutionContext {
 
     JShellExecutionContext setSession(NSession session);
 
-    NCommandAutoComplete getAutoComplete();
+    NCmdLineAutoComplete getAutoComplete();
 }

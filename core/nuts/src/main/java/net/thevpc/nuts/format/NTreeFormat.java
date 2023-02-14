@@ -27,7 +27,7 @@ package net.thevpc.nuts.format;
 import net.thevpc.nuts.NContentTypeFormat;
 import net.thevpc.nuts.NExtensions;
 import net.thevpc.nuts.NSession;
-import net.thevpc.nuts.cmdline.NCommandLineConfigurable;
+import net.thevpc.nuts.cmdline.NCmdLineConfigurable;
 
 /**
  * Tree Format handles terminal output in Tree format. It is one of the many
@@ -97,7 +97,7 @@ public interface NTreeFormat extends NContentTypeFormat {
 
     /**
      * configure the current command with the given arguments. This is an
-     * override of the {@link NCommandLineConfigurable#configure(boolean, java.lang.String...)
+     * override of the {@link NCmdLineConfigurable#configure(boolean, java.lang.String...)
      * }
      * to help return a more specific return type;
      *

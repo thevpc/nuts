@@ -27,14 +27,14 @@ import net.thevpc.nuts.*;
 import net.thevpc.nuts.spi.*;
 import net.thevpc.nuts.runtime.standalone.workspace.config.DefaultNConfigs;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceUtils;
-import net.thevpc.nuts.util.NLogger;
+import net.thevpc.nuts.util.NLog;
 
 /**
  * Created by vpc on 1/23/17.
  */
 @NComponentScope(NComponentScopeType.WORKSPACE)
 public class MinimalNWorkspaceArchetypeComponent implements NWorkspaceArchetypeComponent {
-    private NLogger LOG;
+    private NLog LOG;
 
     @Override
     public String getName() {
@@ -43,7 +43,7 @@ public class MinimalNWorkspaceArchetypeComponent implements NWorkspaceArchetypeC
 
     @Override
     public void initializeWorkspace(NSession session) {
-        this.LOG = NLogger.of(MinimalNWorkspaceArchetypeComponent.class, session);
+        this.LOG = NLog.of(MinimalNWorkspaceArchetypeComponent.class, session);
 //        NutsWorkspace ws = session.getWorkspace();
 
         DefaultNConfigs rm = (DefaultNConfigs) NConfigs.of(session);

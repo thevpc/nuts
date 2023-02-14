@@ -35,7 +35,7 @@ public class DefaultNCompress implements NCompress {
 
     private final List<NInputSource> sources = new ArrayList<>();
     private final NWorkspace ws;
-    private NLogger LOG;
+    private NLog LOG;
     private boolean safe = true;
     private NOutputTarget target;
     private NSession session;
@@ -70,9 +70,9 @@ public class DefaultNCompress implements NCompress {
         }
     }
 
-    protected NLogger _LOG(NSession session) {
+    protected NLog _LOG(NSession session) {
         if (LOG == null) {
-            LOG = NLogger.of(DefaultNCompress.class, session);
+            LOG = NLog.of(DefaultNCompress.class, session);
         }
         return LOG;
     }
@@ -85,7 +85,7 @@ public class DefaultNCompress implements NCompress {
         checkSession();
         NAssert.requireNonBlank(sources, "source", session);
         NAssert.requireNonBlank(target, "target", session);
-        _LOG(session).with().level(Level.FINEST).verb(NLoggerVerb.START).log(NMsg.ofJ("compress {0} to {1}", sources, target));
+        _LOG(session).with().level(Level.FINEST).verb(NLogVerb.START).log(NMsg.ofJ("compress {0} to {1}", sources, target));
         try {
             OutputStream fW = null;
             ZipOutputStream zip = null;
@@ -153,7 +153,7 @@ public class DefaultNCompress implements NCompress {
                 throw new NIllegalArgumentException(getSession(), NMsg.ofC("unsupported target %s", target));
             }
         } catch (IOException ex) {
-            _LOG(session).with().level(Level.CONFIG).verb(NLoggerVerb.FAIL)
+            _LOG(session).with().level(Level.CONFIG).verb(NLogVerb.FAIL)
                     .log(NMsg.ofJ("error compressing {0} to {1} : {2}",
                             sources, target, ex));
             throw new NIOException(session, ex);

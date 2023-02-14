@@ -26,7 +26,7 @@ package net.thevpc.nuts.runtime.standalone.workspace.cmd.install;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.cmdline.NArg;
-import net.thevpc.nuts.cmdline.NCommandLine;
+import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.runtime.standalone.util.CoreEnumUtils;
 import net.thevpc.nuts.runtime.standalone.util.collections.CoreCollectionUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.NWorkspaceCommandBase;
@@ -295,7 +295,7 @@ public abstract class AbstractNInstallCommand extends NWorkspaceCommandBase<NIns
     }
 
     @Override
-    public boolean configureFirst(NCommandLine commandLine) {
+    public boolean configureFirst(NCmdLine commandLine) {
         NArg aa = commandLine.peek().get(session);
         if (aa == null) {
             return false;

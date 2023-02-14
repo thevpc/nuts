@@ -4,7 +4,7 @@ import net.thevpc.nuts.NIllegalArgumentException;
 import net.thevpc.nuts.NMsg;
 import net.thevpc.nuts.NSession;
 import net.thevpc.nuts.cmdline.NArg;
-import net.thevpc.nuts.cmdline.NCommandLine;
+import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.runtime.standalone.util.CoreStringUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceVarExpansionFunction;
@@ -162,7 +162,7 @@ public class DefaultNTextTransformer implements NTextTransformer {
             case INCLUDE: {
                 NTextInclude t = (NTextInclude) text;
                 if (config.isProcessIncludes()) {
-                    NCommandLine cmd = NCommandLine.parseDefault(
+                    NCmdLine cmd = NCmdLine.parseDefault(
                             t.getText()
                     ).orNull();
                     if (cmd != null && cmd.length() > 0) {

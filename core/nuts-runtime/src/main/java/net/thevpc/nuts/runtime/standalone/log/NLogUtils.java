@@ -3,9 +3,9 @@ package net.thevpc.nuts.runtime.standalone.log;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.format.NPositionType;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceExt;
+import net.thevpc.nuts.util.NLog;
 import net.thevpc.nuts.util.NLogRecord;
-import net.thevpc.nuts.util.NLogger;
-import net.thevpc.nuts.util.NLoggerVerb;
+import net.thevpc.nuts.util.NLogVerb;
 import net.thevpc.nuts.util.NStringUtils;
 
 import java.io.BufferedReader;
@@ -70,11 +70,11 @@ public class NLogUtils {
         Level lvl = record.getLevel();
         NLogRecord h = new NLogRecord(
                 session, lvl,
-                lvl.intValue() <= Level.SEVERE.intValue() ? NLoggerVerb.FAIL :
-                        lvl.intValue() <= Level.WARNING.intValue() ? NLoggerVerb.WARNING :
-                                lvl.intValue() <= Level.INFO.intValue() ? NLoggerVerb.INFO :
-                                        lvl.intValue() <= Level.FINE.intValue() ? NLoggerVerb.DEBUG :
-                                                NLoggerVerb.DEBUG,
+                lvl.intValue() <= Level.SEVERE.intValue() ? NLogVerb.FAIL :
+                        lvl.intValue() <= Level.WARNING.intValue() ? NLogVerb.WARNING :
+                                lvl.intValue() <= Level.INFO.intValue() ? NLogVerb.INFO :
+                                        lvl.intValue() <= Level.FINE.intValue() ? NLogVerb.DEBUG :
+                                                NLogVerb.DEBUG,
                 NMsg.ofJ(record.getMessage(),
                         record.getParameters()),
                 record.getMillis(),
@@ -216,7 +216,7 @@ public class NLogUtils {
         return session;
     }
 
-    public static void traceMessage(NLogger log, Level lvl, String name, NSession session, NFetchMode fetchMode, NId id, NLoggerVerb tracePhase, String title, long startTime, NMsg extraMsg) {
+    public static void traceMessage(NLog log, Level lvl, String name, NSession session, NFetchMode fetchMode, NId id, NLogVerb tracePhase, String title, long startTime, NMsg extraMsg) {
         if (!log.isLoggable(lvl)) {
             return;
         }
@@ -237,7 +237,7 @@ public class NLogUtils {
                         (id == null ? "" : id),
                         extraMsg));
     }
-    public static void traceMessage(NLogger log, NFetchStrategy fetchMode, NId id, NLoggerVerb tracePhase, String message, long startTime) {
+    public static void traceMessage(NLog log, NFetchStrategy fetchMode, NId id, NLogVerb tracePhase, String message, long startTime) {
         if (log.isLoggable(Level.FINEST)) {
 
             long time = (startTime != 0) ? (System.currentTimeMillis() - startTime) : 0;

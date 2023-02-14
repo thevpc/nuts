@@ -6,7 +6,7 @@
 package net.thevpc.nuts.runtime.standalone.format;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.cmdline.NCommandLine;
+import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.io.*;
 import net.thevpc.nuts.text.NTexts;
 
@@ -218,7 +218,7 @@ public abstract class DefaultFormatBase<T extends NFormat> extends DefaultFormat
     }
 
     @Override
-    public void configureLast(NCommandLine commandLine) {
+    public void configureLast(NCmdLine commandLine) {
         if (!configureFirst(commandLine)) {
             commandLine.throwUnexpectedArgument();
         }

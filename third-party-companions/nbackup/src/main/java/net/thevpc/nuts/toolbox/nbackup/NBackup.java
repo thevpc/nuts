@@ -26,10 +26,10 @@ public class NBackup implements NApplication {
     public void run(NApplicationContext applicationContext) {
         NSession session = applicationContext.getSession();
         session.out().println(NMsg.ofC("%s Backup Tool.", NMsg.ofStyled("Nuts", NTextStyle.keyword())));
-        applicationContext.processCommandLine(new NCommandLineProcessor() {
+        applicationContext.processCommandLine(new NCmdLineProcessor() {
 
             @Override
-            public boolean onCmdNextNonOption(NArg nonOption, NCommandLine commandLine, NCommandLineContext context) {
+            public boolean onCmdNextNonOption(NArg nonOption, NCmdLine commandLine, NCmdLineContext context) {
                 NArg a = commandLine.next().get();
                 switch (a.toString()) {
                     case "pull": {
@@ -41,18 +41,18 @@ public class NBackup implements NApplication {
             }
 
             @Override
-            public void onCmdExec(NCommandLine commandLine, NCommandLineContext context) {
+            public void onCmdExec(NCmdLine commandLine, NCmdLineContext context) {
                 //
             }
         });
     }
 
-    public void runPull(NCommandLine commandLine, NApplicationContext applicationContext) {
-        commandLine.process(new NCommandLineProcessor() {
+    public void runPull(NCmdLine commandLine, NApplicationContext applicationContext) {
+        commandLine.process(new NCmdLineProcessor() {
             private Options options = new Options();
 
             @Override
-            public void onCmdInitParsing(NCommandLine commandLine, NCommandLineContext context) {
+            public void onCmdInitParsing(NCmdLine commandLine, NCmdLineContext context) {
                 NPath configFile = getConfigFile();
                 Config config = null;
                 if (configFile.isFile()) {
@@ -74,7 +74,7 @@ public class NBackup implements NApplication {
             }
 
             @Override
-            public boolean onCmdNextOption(NArg option, NCommandLine commandLine, NCommandLineContext context) {
+            public boolean onCmdNextOption(NArg option, NCmdLine commandLine, NCmdLineContext context) {
                 if (commandLine.withNextEntry((v, a, s) -> {
                     options.config.setRemoteServer(v);
                 }, "--server")) {
@@ -113,7 +113,7 @@ public class NBackup implements NApplication {
             }
 
             @Override
-            public boolean onCmdNextNonOption(NArg nonOption, NCommandLine commandLine, NCommandLineContext context) {
+            public boolean onCmdNextNonOption(NArg nonOption, NCmdLine commandLine, NCmdLineContext context) {
                 NArg a = commandLine.next().get();
                 addPath(a.toString());
                 return true;
@@ -130,7 +130,7 @@ public class NBackup implements NApplication {
             }
 
             @Override
-            public void onCmdExec(NCommandLine commandLine, NCommandLineContext context) {
+            public void onCmdExec(NCmdLine commandLine, NCmdLineContext context) {
                 Config config = options.config;
                 if (config == null) {
                     config = new Config();
@@ -193,9 +193,9 @@ public class NBackup implements NApplication {
                         NMsg.ofStyled(name, NTextStyle.keyword()),
                         NMsg.ofStyled(remotePath, NTextStyle.path())
                 ));
-                session.out().println(NCommandLine.of(cmd));
+                session.out().println(NCmdLine.of(cmd));
                 NExecCommand.of(session).addCommand(cmd).setFailFast(true).run();
             }
-        }, new DefaultNCommandLineContext(applicationContext));
+        }, new DefaultNCmdLineContext(applicationContext));
     }
 }

@@ -6,9 +6,9 @@
 package net.thevpc.nuts.core.test;
 
 import net.thevpc.nuts.cmdline.NArg;
-import net.thevpc.nuts.cmdline.NCommandHistory;
-import net.thevpc.nuts.cmdline.NCommandLine;
-import net.thevpc.nuts.cmdline.NCommandLineFormat;
+import net.thevpc.nuts.cmdline.NCmdLineHistory;
+import net.thevpc.nuts.cmdline.NCmdLine;
+import net.thevpc.nuts.cmdline.NCmdLineFormat;
 import net.thevpc.nuts.concurrent.NLocks;
 import net.thevpc.nuts.core.test.utils.TestUtils;
 import net.thevpc.nuts.*;
@@ -168,7 +168,7 @@ public class Test01_CreateTest {
         }
 
         {
-            NCommandLine cmd = NCommandLine.of(new String[]{"cmd", "--test"});
+            NCmdLine cmd = NCmdLine.of(new String[]{"cmd", "--test"});
             Assertions.assertNotNull(cmd);
         }
 
@@ -203,7 +203,7 @@ public class Test01_CreateTest {
         }
 
         {
-            NCommandHistory h = NCommandHistory.of(s);
+            NCmdLineHistory h = NCmdLineHistory.of(s);
             Assertions.assertNotNull(h);
         }
 
@@ -255,9 +255,9 @@ public class Test01_CreateTest {
             Assertions.assertNotNull(c);
         }
         {
-            NLogger log = NLogger.of(Test01_CreateTest.class, s);
+            NLog log = NLog.of(Test01_CreateTest.class, s);
             Assertions.assertNotNull(log);
-            NLoggerOp logop = NLoggerOp.of(Test01_CreateTest.class, s);
+            NLogOp logop = NLogOp.of(Test01_CreateTest.class, s);
             Assertions.assertNotNull(logop);
         }
         {
@@ -337,7 +337,7 @@ public class Test01_CreateTest {
             Assertions.assertNotNull(r);
         }
         {
-            NCommandLineFormat r = NCommandLineFormat.of(s);
+            NCmdLineFormat r = NCmdLineFormat.of(s);
             Assertions.assertNotNull(r);
         }
         {

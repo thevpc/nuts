@@ -56,7 +56,7 @@ public class DefaultNArgName implements NArgName {
     }
 
     @Override
-    public List<NArgCandidate> getCandidates(NCommandAutoComplete context) {
+    public List<NArgCandidate> getCandidates(NCmdLineAutoComplete context) {
         List<NArgCandidate> list = new ArrayList<>();
         list.add(new DefaultNArgCandidate("<" + getName() + ">"));
         return list;

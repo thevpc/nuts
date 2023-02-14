@@ -7,7 +7,7 @@ package net.thevpc.nuts.toolbox.ndb.sql.derby;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.cmdline.NArg;
-import net.thevpc.nuts.cmdline.NCommandLine;
+import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.io.NPrintStream;
 import net.thevpc.nuts.text.NTextStyle;
@@ -33,7 +33,7 @@ public class NDerbyMain extends SqlSupport<NDerbyConfig> {
     }
 
     @Override
-    public void run(NApplicationContext appContext, NCommandLine commandLine) {
+    public void run(NApplicationContext appContext, NCmdLine commandLine) {
         NSession session = appContext.getSession();
         NArg a;
         NDerbyConfig options = new NDerbyConfig();
@@ -113,7 +113,7 @@ public class NDerbyMain extends SqlSupport<NDerbyConfig> {
         }
     }
 
-    private void runSQL(NCommandLine commandLine, NDerbyConfig options, NSession session) {
+    private void runSQL(NCmdLine commandLine, NDerbyConfig options, NSession session) {
         commandLine.setCommandName("derby run-sql");
         NRef<AtName> name = NRef.ofNull(AtName.class);
         List<String> sql = new ArrayList<>();
@@ -173,7 +173,7 @@ public class NDerbyMain extends SqlSupport<NDerbyConfig> {
                 )).toString();
     }
 
-    public void status(NCommandLine cmdLine, NDerbyConfig options) {
+    public void status(NCmdLine cmdLine, NDerbyConfig options) {
         NSession session = appContext.getSession();
         cmdLine.setCommandName("tomcat --local status");
         NArg a;
@@ -195,7 +195,7 @@ public class NDerbyMain extends SqlSupport<NDerbyConfig> {
         }
     }
 
-    private boolean _opt(NCommandLine cmdLine, NDerbyConfig options) {
+    private boolean _opt(NCmdLine cmdLine, NDerbyConfig options) {
         NSession session = appContext.getSession();
         NArg a;
         if ((a = cmdLine.nextEntry("-v", "--derby-version").orNull()) != null) {
@@ -230,7 +230,7 @@ public class NDerbyMain extends SqlSupport<NDerbyConfig> {
         }
     }
 
-    public void ps(NCommandLine args, NDerbyConfig options) {
+    public void ps(NCmdLine args, NDerbyConfig options) {
         NSession session = appContext.getSession();
         String format = "default";
         args.setCommandName("tomcat --local ps");
@@ -264,7 +264,7 @@ public class NDerbyMain extends SqlSupport<NDerbyConfig> {
                                     factory.ofPlain("HOME:"),
                                     factory.ofStyled(jpsResult.getHome(), NTextStyle.path()),
                                     factory.ofPlain("CMD:"),
-                                    NCommandLine.parseSystem(jpsResult.getArgsLine(), session))
+                                    NCmdLine.parseSystem(jpsResult.getArgsLine(), session))
                             );
                             break;
                         }
@@ -283,7 +283,7 @@ public class NDerbyMain extends SqlSupport<NDerbyConfig> {
         }
     }
 
-    public void versions(NCommandLine args, NDerbyConfig options) {
+    public void versions(NCmdLine args, NDerbyConfig options) {
         NSession session = appContext.getSession();
         args.setCommandName("tomcat --local versions");
         while (args.hasNext()) {

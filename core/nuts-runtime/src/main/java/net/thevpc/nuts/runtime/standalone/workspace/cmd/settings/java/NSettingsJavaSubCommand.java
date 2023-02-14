@@ -6,7 +6,7 @@
 package net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.java;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.cmdline.NCommandLine;
+import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.format.NMutableTableModel;
 import net.thevpc.nuts.format.NTableFormat;
 import net.thevpc.nuts.io.NPrintStream;
@@ -23,7 +23,7 @@ import java.util.List;
 public class NSettingsJavaSubCommand extends AbstractNSettingsSubCommand {
 
     @Override
-    public boolean exec(NCommandLine cmdLine, Boolean autoSave, NSession session) {
+    public boolean exec(NCmdLine cmdLine, Boolean autoSave, NSession session) {
         if (autoSave == null) {
             autoSave = false;
         }

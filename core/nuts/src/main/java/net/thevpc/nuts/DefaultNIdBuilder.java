@@ -27,6 +27,7 @@ package net.thevpc.nuts;
 
 import net.thevpc.nuts.reserved.NReservedUtils;
 import net.thevpc.nuts.reserved.NReservedStringUtils;
+import net.thevpc.nuts.util.NStringMapFormat;
 import net.thevpc.nuts.util.NStringUtils;
 
 import java.util.LinkedHashMap;
@@ -66,7 +67,7 @@ public class DefaultNIdBuilder implements NIdBuilder {
         setCondition(condition);
         String c0 = NStringUtils.trimToNull(classifier);
         String c1 = null;
-        Map<String, String> properties = propertiesQuery == null ? new LinkedHashMap<>() : NStringUtils.parseDefaultMap(propertiesQuery).get();
+        Map<String, String> properties = propertiesQuery == null ? new LinkedHashMap<>() : NStringMapFormat.DEFAULT.parse(propertiesQuery).get();
         if (!properties.isEmpty()) {
             c1 = properties.remove(NConstants.IdProperties.CLASSIFIER);
         }
@@ -269,7 +270,7 @@ public class DefaultNIdBuilder implements NIdBuilder {
                 break;
             }
             case NConstants.IdProperties.CONDITIONAL_PROPERTIES: {
-                condition.setProperties(NStringUtils.parseDefaultMap(value).get());
+                condition.setProperties(NStringMapFormat.DEFAULT.parse(value).get());
                 break;
             }
             case NConstants.IdProperties.CLASSIFIER: {
@@ -308,13 +309,13 @@ public class DefaultNIdBuilder implements NIdBuilder {
 
     @Override
     public NIdBuilder setPropertiesQuery(String propertiesQuery) {
-        setProperties(NStringUtils.parseDefaultMap(propertiesQuery).get());
+        setProperties(NStringMapFormat.DEFAULT.parse(propertiesQuery).get());
         return this;
     }
 
     @Override
     public String getPropertiesQuery() {
-        return NStringUtils.formatDefaultMap(getProperties());
+        return NStringMapFormat.DEFAULT.format(getProperties());
     }
 
     @Override
@@ -385,7 +386,7 @@ public class DefaultNIdBuilder implements NIdBuilder {
             }
         }
         if (!m.isEmpty()) {
-            sb.append("?").append(NStringUtils.formatDefaultMap(m));
+            sb.append("?").append(NStringMapFormat.DEFAULT.format(m));
         }
         return sb.toString();
     }

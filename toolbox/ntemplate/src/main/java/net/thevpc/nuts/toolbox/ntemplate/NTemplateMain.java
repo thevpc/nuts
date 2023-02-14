@@ -1,10 +1,10 @@
 package net.thevpc.nuts.toolbox.ntemplate;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.cmdline.NCommandLineContext;
-import net.thevpc.nuts.cmdline.NCommandLineProcessor;
+import net.thevpc.nuts.cmdline.NCmdLineContext;
+import net.thevpc.nuts.cmdline.NCmdLineProcessor;
 import net.thevpc.nuts.cmdline.NArg;
-import net.thevpc.nuts.cmdline.NCommandLine;
+import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.io.NSessionTerminal;
 import net.thevpc.nuts.toolbox.nsh.jshell.*;
 import net.thevpc.nuts.toolbox.ntemplate.filetemplate.ExprEvaluator;
@@ -25,10 +25,10 @@ public class NTemplateMain implements NApplication {
 
     @Override
     public void run(NApplicationContext appContext) {
-        appContext.processCommandLine(new NCommandLineProcessor() {
+        appContext.processCommandLine(new NCmdLineProcessor() {
 
             @Override
-            public boolean onCmdNextOption(NArg option, NCommandLine commandLine, NCommandLineContext context) {
+            public boolean onCmdNextOption(NArg option, NCmdLine commandLine, NCmdLineContext context) {
                 switch (option.key()) {
                     case "-i":
                     case "--init": {
@@ -56,19 +56,19 @@ public class NTemplateMain implements NApplication {
             }
 
             @Override
-            public boolean onCmdNextNonOption(NArg nonOption, NCommandLine commandLine, NCommandLineContext context) {
+            public boolean onCmdNextNonOption(NArg nonOption, NCmdLine commandLine, NCmdLineContext context) {
                 NSession session = commandLine.getSession();
                 config.addSource(commandLine.next().flatMap(NLiteral::asString).get(session));
                 return false;
             }
 
             @Override
-            public void onCmdFinishParsing(NCommandLine commandLine, NCommandLineContext context) {
+            public void onCmdFinishParsing(NCmdLine commandLine, NCmdLineContext context) {
                 fileTemplater = new NFileTemplater(appContext);
             }
 
             @Override
-            public void onCmdExec(NCommandLine commandLine, NCommandLineContext context) {
+            public void onCmdExec(NCmdLine commandLine, NCmdLineContext context) {
                 fileTemplater.processProject(config);
             }
         });

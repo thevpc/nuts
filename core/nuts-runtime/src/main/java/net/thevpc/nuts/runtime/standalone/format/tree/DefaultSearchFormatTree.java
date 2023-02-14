@@ -10,7 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.cmdline.NCommandLine;
+import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.format.NTreeFormat;
 import net.thevpc.nuts.format.NTreeNodeFormat;
 import net.thevpc.nuts.io.NPrintStream;
@@ -45,7 +45,7 @@ public class DefaultSearchFormatTree extends DefaultSearchFormatBase {
     }
 
     @Override
-    public boolean configureFirst(NCommandLine commandLine) {
+    public boolean configureFirst(NCmdLine commandLine) {
         if (getDisplayOptions().configureFirst(commandLine)) {
             return true;
         }

@@ -31,7 +31,7 @@ public class DefaultNApplicationContext implements NApplicationContext {
     /**
      * auto complete info for "auto-complete" mode
      */
-    private final NCommandAutoComplete autoComplete;
+    private final NCmdLineAutoComplete autoComplete;
     private NWorkspace workspace;
     private NSession session;
     private NId appId;
@@ -65,7 +65,7 @@ public class DefaultNApplicationContext implements NApplicationContext {
         session = this.session;//will be used later
         int wordIndex = -1;
         if (args.size() > 0 && args.get(0).startsWith("--nuts-exec-mode=")) {
-            NCommandLine execModeCommand = NCommandLine.parseDefault(
+            NCmdLine execModeCommand = NCmdLine.parseDefault(
                     args.get(0).substring(args.get(0).indexOf('=') + 1)).get(session);
             if (execModeCommand.hasNext()) {
                 NArg a = execModeCommand.next().get(session);
@@ -134,7 +134,7 @@ public class DefaultNApplicationContext implements NApplicationContext {
             if (wordIndex < 0) {
                 wordIndex = args.size();
             }
-            autoComplete = new AppCommandAutoComplete(this.session, args, wordIndex, getSession().out());
+            autoComplete = new AppCmdLineAutoComplete(this.session, args, wordIndex, getSession().out());
         } else {
             autoComplete = null;
         }
@@ -151,13 +151,13 @@ public class DefaultNApplicationContext implements NApplicationContext {
     }
 
     @Override
-    public NCommandAutoComplete getAutoComplete() {
+    public NCmdLineAutoComplete getAutoComplete() {
         return autoComplete;
     }
 
     /**
      * configure the current command with the given arguments. This is an
-     * override of the {@link NCommandLineConfigurable#configure(boolean, java.lang.String...)
+     * override of the {@link NCmdLineConfigurable#configure(boolean, java.lang.String...)
      * }
      * to help return a more specific return type;
      *
@@ -172,7 +172,7 @@ public class DefaultNApplicationContext implements NApplicationContext {
     }
 
     @Override
-    public void configureLast(NCommandLine commandLine) {
+    public void configureLast(NCmdLine commandLine) {
         if (!configureFirst(commandLine)) {
             commandLine.throwUnexpectedArgument();
         }
@@ -345,16 +345,16 @@ public class DefaultNApplicationContext implements NApplicationContext {
     }
 
     @Override
-    public NCommandLine getCommandLine() {
-        return NCommandLine.of(getArguments())
+    public NCmdLine getCommandLine() {
+        return NCmdLine.of(getArguments())
                 .setCommandName(getAppId().getArtifactId())
                 .setAutoComplete(getAutoComplete())
                 .setSession(getSession());
     }
 
     @Override
-    public void processCommandLine(NCommandLineProcessor commandLineProcessor) {
-        getCommandLine().process(commandLineProcessor, new DefaultNCommandLineContext(this));
+    public void processCommandLine(NCmdLineProcessor commandLineProcessor) {
+        getCommandLine().process(commandLineProcessor, new DefaultNCmdLineContext(this));
     }
 
     @Override
@@ -397,12 +397,12 @@ public class DefaultNApplicationContext implements NApplicationContext {
      * @return {@code this} instance
      */
     @Override
-    public final boolean configure(boolean skipUnsupported, NCommandLine commandLine) {
+    public final boolean configure(boolean skipUnsupported, NCmdLine commandLine) {
         return NConfigurableHelper.configure(this, getSession(), skipUnsupported, commandLine);
     }
 
     @Override
-    public boolean configureFirst(NCommandLine cmd) {
+    public boolean configureFirst(NCmdLine cmd) {
         NArg a = cmd.peek().orNull();
         if (a == null) {
             return false;
@@ -497,14 +497,14 @@ public class DefaultNApplicationContext implements NApplicationContext {
         return this;
     }
 
-    private static class AppCommandAutoComplete extends NCommandAutoCompleteBase {
+    private static class AppCmdLineAutoComplete extends NCmdLineAutoCompleteBase {
 
         private final ArrayList<String> words;
         private final NPrintStream out0;
         private final NSession session;
         private final int wordIndex;
 
-        public AppCommandAutoComplete(NSession session, List<String> args, int wordIndex, NPrintStream out0) {
+        public AppCmdLineAutoComplete(NSession session, List<String> args, int wordIndex, NPrintStream out0) {
             this.session = session;
             words = new ArrayList<>(args);
             this.wordIndex = wordIndex;
@@ -518,7 +518,7 @@ public class DefaultNApplicationContext implements NApplicationContext {
 
         @Override
         public String getLine() {
-            return NCommandLine.of(getWords()).toString();
+            return NCmdLine.of(getWords()).toString();
         }
 
         @Override

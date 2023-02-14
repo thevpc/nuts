@@ -31,7 +31,7 @@
 */
 package net.thevpc.nuts.toolbox.nsh.jshell;
 
-import net.thevpc.nuts.cmdline.NCommandAutoComplete;
+import net.thevpc.nuts.cmdline.NCmdLineAutoComplete;
 import net.thevpc.nuts.spi.NComponent;
 
 /**
@@ -57,7 +57,7 @@ public interface JShellBuiltin extends NComponent {
 
     String getHelpHeader();
 
-    default void autoComplete(JShellExecutionContext context, NCommandAutoComplete autoComplete) {
+    default void autoComplete(JShellExecutionContext context, NCmdLineAutoComplete autoComplete) {
 
     }
 }

@@ -26,8 +26,8 @@
 package net.thevpc.nuts.toolbox.nsh;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.cmdline.NCommandAutoComplete;
-import net.thevpc.nuts.cmdline.NCommandLine;
+import net.thevpc.nuts.cmdline.NCmdLineAutoComplete;
+import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.io.NMemoryPrintStream;
 import net.thevpc.nuts.io.NPrintStream;
 import net.thevpc.nuts.spi.NSupportLevelContext;
@@ -59,9 +59,9 @@ public abstract class AbstractJShellBuiltin implements JShellBuiltin {
         this.supportLevel = supportLevel;
     }
 
-    protected NCommandLine cmdLine(String[] args, JShellExecutionContext context) {
+    protected NCmdLine cmdLine(String[] args, JShellExecutionContext context) {
         NSession session = context.getSession();
-        return NCommandLine.of(args)
+        return NCmdLine.of(args)
                 .setAutoComplete(context.getShellContext().getAutoComplete())
                 .setCommandName(getName());
     }
@@ -72,8 +72,8 @@ public abstract class AbstractJShellBuiltin implements JShellBuiltin {
     }
 
     @Override
-    public void autoComplete(JShellExecutionContext context, NCommandAutoComplete autoComplete) {
-        NCommandAutoComplete oldAutoComplete = context.getShellContext().getAutoComplete();
+    public void autoComplete(JShellExecutionContext context, NCmdLineAutoComplete autoComplete) {
+        NCmdLineAutoComplete oldAutoComplete = context.getShellContext().getAutoComplete();
         context.getShellContext().setAutoComplete(autoComplete);
         try {
             if (autoComplete == null) {

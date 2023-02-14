@@ -2,7 +2,7 @@ package net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.ndi;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.cmdline.NArg;
-import net.thevpc.nuts.cmdline.NCommandLine;
+import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.io.NIOException;
 import net.thevpc.nuts.runtime.standalone.io.util.CoreIOUtils;
 import net.thevpc.nuts.runtime.optional.mslink.OptionalMsLinkHelper;
@@ -46,7 +46,7 @@ public class NSettingsNdiSubCommand extends AbstractNSettingsSubCommand {
         return ndi;
     }
 
-    public void runAddLauncher(NCommandLine commandLine, NSession session) {
+    public void runAddLauncher(NCmdLine commandLine, NSession session) {
         class Data {
             NdiScriptOptions options = new NdiScriptOptions();
             List<String> idsToInstall = new ArrayList<>();
@@ -275,7 +275,7 @@ public class NSettingsNdiSubCommand extends AbstractNSettingsSubCommand {
         }
     }
 
-    public void runRemoveLauncher(NCommandLine commandLine, NSession session) {
+    public void runRemoveLauncher(NCmdLine commandLine, NSession session) {
         ArrayList<String> idsToUninstall = new ArrayList<>();
         boolean forceAll = false;
         boolean missingAnyArgument = true;
@@ -327,7 +327,7 @@ public class NSettingsNdiSubCommand extends AbstractNSettingsSubCommand {
         }
     }
 
-    public void runSwitch(NCommandLine commandLine, NSession session) {
+    public void runSwitch(NCmdLine commandLine, NSession session) {
         class Data {
             String switchWorkspaceLocation = null;
             String switchWorkspaceApi = null;
@@ -461,7 +461,7 @@ public class NSettingsNdiSubCommand extends AbstractNSettingsSubCommand {
     }
 
     @Override
-    public boolean exec(NCommandLine cmdLine, Boolean autoSave, NSession session) {
+    public boolean exec(NCmdLine cmdLine, Boolean autoSave, NSession session) {
         if (cmdLine.next("add launcher", "lna").isPresent()) {
             runAddLauncher(cmdLine, session);
             return true;

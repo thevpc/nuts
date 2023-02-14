@@ -7,7 +7,7 @@ import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceExt;
 import net.thevpc.nuts.runtime.standalone.id.filter.NSearchIdByDescriptor;
 import net.thevpc.nuts.runtime.standalone.id.filter.NSearchIdById;
 import net.thevpc.nuts.runtime.standalone.util.CoreNUtils;
-import net.thevpc.nuts.util.NLoggerOp;
+import net.thevpc.nuts.util.NLogOp;
 
 import java.io.IOException;
 import java.util.logging.Level;
@@ -21,7 +21,7 @@ public abstract class NIdPathIteratorBase implements NIdPathIteratorModel {
                 try {
                     nutsDescriptor = NWorkspaceExt.of(session.getWorkspace()).resolveEffectiveDescriptor(t, session);
                 } catch (Exception ex) {
-                    NLoggerOp.of(NIdPathIteratorBase.class,session).level(Level.FINE).error(ex).log(
+                    NLogOp.of(NIdPathIteratorBase.class,session).level(Level.FINE).error(ex).log(
                             NMsg.ofJ("error resolving effective descriptor for {0} in url {1} : {2}", t.getId(),
                                     pathname,
                                     ex));//e.printStackTrace();
@@ -49,7 +49,7 @@ public abstract class NIdPathIteratorBase implements NIdPathIteratorModel {
             t = parseDescriptor(pathname, NInputStreamMonitor.of(session).setSource(pathname).create(),
                     NFetchMode.LOCAL, repository, session, rootPath);
         } catch (Exception ex) {
-            NLoggerOp.of(NIdPathIteratorBase.class,session).level(Level.FINE).error(ex)
+            NLogOp.of(NIdPathIteratorBase.class,session).level(Level.FINE).error(ex)
                     .log(NMsg.ofJ("error parsing url : {0} : {1}", pathname, toString()));//e.printStackTrace();
         }
         if (t != null) {

@@ -4,7 +4,7 @@ import net.thevpc.nuts.*;
 import net.thevpc.nuts.boot.DefaultNWorkspaceOptionsBuilder;
 import net.thevpc.nuts.cmdline.NArg;
 import net.thevpc.nuts.cmdline.NArgName;
-import net.thevpc.nuts.cmdline.NCommandLine;
+import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.io.NPrintStream;
 import net.thevpc.nuts.text.NTextStyle;
 import net.thevpc.nuts.text.NTexts;
@@ -34,7 +34,7 @@ public class NServerMain implements NApplication {
 
     @Override
     public void run(NApplicationContext context) {
-        NCommandLine cmdLine = context.getCommandLine().setCommandName("nuts-server");
+        NCmdLine cmdLine = context.getCommandLine().setCommandName("nuts-server");
         cmdLine.setCommandName("nuts-server");
         while (cmdLine.hasNext()) {
             if (cmdLine.next("start").isPresent()) {
@@ -56,7 +56,7 @@ public class NServerMain implements NApplication {
         list(context, cmdLine);
     }
 
-    private void list(NApplicationContext context, NCommandLine cmdLine) {
+    private void list(NApplicationContext context, NCmdLine cmdLine) {
         NSession session = context.getSession();
         NWorkspaceServerManager serverManager = new DefaultNWorkspaceServerManager(session);
         cmdLine.setCommandName("nuts-server list").throwUnexpectedArgument();
@@ -82,7 +82,7 @@ public class NServerMain implements NApplication {
         }
     }
 
-    private void stop(NApplicationContext context, NCommandLine cmdLine) {
+    private void stop(NApplicationContext context, NCmdLine cmdLine) {
         NSession session = context.getSession();
         NWorkspaceServerManager serverManager = new DefaultNWorkspaceServerManager(session);
         String s;
@@ -101,7 +101,7 @@ public class NServerMain implements NApplication {
         }
     }
 
-    private void start(NApplicationContext context, NCommandLine commandLine) {
+    private void start(NApplicationContext context, NCmdLine commandLine) {
         NSession session = context.getSession();
         NWorkspaceServerManager serverManager = new DefaultNWorkspaceServerManager(session);
         SrvInfoList servers = new SrvInfoList(session);
@@ -305,7 +305,7 @@ public class NServerMain implements NApplication {
         }
     }
 
-    private void status(NApplicationContext context, NCommandLine commandLine) {
+    private void status(NApplicationContext context, NCmdLine commandLine) {
         NSession session = context.getSession();
         NWorkspaceServerManager serverManager = new DefaultNWorkspaceServerManager(session);
         SrvInfoList servers = new SrvInfoList(session);

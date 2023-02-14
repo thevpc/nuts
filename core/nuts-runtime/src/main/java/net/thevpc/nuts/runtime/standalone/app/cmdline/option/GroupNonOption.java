@@ -29,7 +29,7 @@ package net.thevpc.nuts.runtime.standalone.app.cmdline.option;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.cmdline.DefaultNArgCandidate;
 import net.thevpc.nuts.cmdline.NArgCandidate;
-import net.thevpc.nuts.cmdline.NCommandAutoComplete;
+import net.thevpc.nuts.cmdline.NCmdLineAutoComplete;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -61,7 +61,7 @@ public class GroupNonOption extends DefaultNonOption {
 //    }
 
     @Override
-    public List<NArgCandidate> getCandidates(NCommandAutoComplete context) {
+    public List<NArgCandidate> getCandidates(NCmdLineAutoComplete context) {
         List<NArgCandidate> all = new ArrayList<>();
         NRepository repository=context.get(NRepository.class);
         NUserConfig securityEntityConfig=context.get(NUserConfig.class);

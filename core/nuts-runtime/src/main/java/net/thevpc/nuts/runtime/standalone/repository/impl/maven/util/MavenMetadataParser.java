@@ -3,7 +3,7 @@ package net.thevpc.nuts.runtime.standalone.repository.impl.maven.util;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.io.NIOException;
 import net.thevpc.nuts.runtime.standalone.util.xml.XmlUtils;
-import net.thevpc.nuts.util.NLogger;
+import net.thevpc.nuts.util.NLog;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -26,13 +26,13 @@ import java.util.Stack;
 import java.util.logging.Level;
 
 public class MavenMetadataParser {
-    private final NLogger LOG;
+    private final NLog LOG;
 
     private NSession session;
 
     public MavenMetadataParser(NSession session) {
         this.session = session;
-        LOG= NLogger.of(MavenMetadataParser.class,session);
+        LOG= NLog.of(MavenMetadataParser.class,session);
     }
 
     public String toXmlString(MavenMetadata m) {

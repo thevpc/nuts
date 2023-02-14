@@ -27,8 +27,8 @@ package net.thevpc.nuts.toolbox.ndb.sql.derby;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.io.NPath;
-import net.thevpc.nuts.util.NLogger;
-import net.thevpc.nuts.util.NLoggerVerb;
+import net.thevpc.nuts.util.NLog;
+import net.thevpc.nuts.util.NLogVerb;
 
 import java.io.File;
 import java.io.IOException;
@@ -45,11 +45,11 @@ import java.util.stream.Collectors;
 public class DerbyService {
 
     NApplicationContext context;
-    NLogger LOG;
+    NLog LOG;
 
     public DerbyService(NApplicationContext context) {
         this.context = context;
-        LOG = NLogger.of(getClass(), context.getSession());
+        LOG = NLog.of(getClass(), context.getSession());
     }
 
     public boolean isRunning() {
@@ -139,14 +139,14 @@ public class DerbyService {
             if (optional) {
                 Path r = NFetchCommand.of(context.getSession()).setLocation(targetFile).setId(id).setFailFast(false).getResultPath();
                 if (r != null) {
-                    LOG.with().session(context.getSession()).level(Level.FINEST).verb(NLoggerVerb.READ).log(NMsg.ofJ("downloading {0} to {1}", id, targetFile));
+                    LOG.with().session(context.getSession()).level(Level.FINEST).verb(NLogVerb.READ).log(NMsg.ofJ("downloading {0} to {1}", id, targetFile));
                 }
             } else {
                 NFetchCommand.of(context.getSession()).setLocation(targetFile).setId(id).setFailFast(true).getResultPath();
-                LOG.with().session(context.getSession()).level(Level.FINEST).verb(NLoggerVerb.READ).log(NMsg.ofJ("downloading {0} to {1}", id, targetFile));
+                LOG.with().session(context.getSession()).level(Level.FINEST).verb(NLogVerb.READ).log(NMsg.ofJ("downloading {0} to {1}", id, targetFile));
             }
         } else {
-            LOG.with().session(context.getSession()).level(Level.FINEST).verb(NLoggerVerb.READ).log(NMsg.ofJ("using {0} form {1}", id, targetFile));
+            LOG.with().session(context.getSession()).level(Level.FINEST).verb(NLogVerb.READ).log(NMsg.ofJ("using {0} form {1}", id, targetFile));
         }
         return targetFile;
     }

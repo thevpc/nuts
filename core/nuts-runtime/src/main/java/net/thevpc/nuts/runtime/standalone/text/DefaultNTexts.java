@@ -1139,8 +1139,8 @@ public class DefaultNTexts implements NTexts {
             writeFilteredText(parsed, out);
             return out.toString();
         } catch (Exception ex) {
-            NLoggerOp.of(AbstractNTextNodeParser.class, session)
-                    .verb(NLoggerVerb.WARNING)
+            NLogOp.of(AbstractNTextNodeParser.class, session)
+                    .verb(NLogVerb.WARNING)
                     .level(Level.FINEST)
                     .log(NMsg.ofC("error parsing : %s", text));
             return text;

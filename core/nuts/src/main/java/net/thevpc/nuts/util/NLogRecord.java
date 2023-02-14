@@ -8,13 +8,13 @@ import java.util.logging.LogRecord;
 public class NLogRecord extends LogRecord implements NSessionProvider{
     private NSession session;
     private NMsg nmsg;
-    private NLoggerVerb verb;
+    private NLogVerb verb;
     /**
      * duration
      */
     private long time;
 
-    public NLogRecord(NSession session, Level level, NLoggerVerb verb, NMsg msg, long time, Throwable thrown) {
+    public NLogRecord(NSession session, Level level, NLogVerb verb, NMsg msg, long time, Throwable thrown) {
         super(level, String.valueOf(msg.getMessage()));
         this.nmsg = msg;
         this.verb = verb;
@@ -32,7 +32,7 @@ public class NLogRecord extends LogRecord implements NSessionProvider{
         return time;
     }
 
-    public NLoggerVerb getVerb() {
+    public NLogVerb getVerb() {
         return verb;
     }
 

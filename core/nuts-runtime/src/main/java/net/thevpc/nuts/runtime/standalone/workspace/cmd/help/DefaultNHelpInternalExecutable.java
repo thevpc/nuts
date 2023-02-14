@@ -7,7 +7,7 @@ package net.thevpc.nuts.runtime.standalone.workspace.cmd.help;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.cmdline.NArg;
-import net.thevpc.nuts.cmdline.NCommandLine;
+import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.io.NPrintStream;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceExt;
@@ -15,7 +15,7 @@ import net.thevpc.nuts.runtime.standalone.workspace.cmd.exec.DefaultInternalNExe
 import net.thevpc.nuts.text.NText;
 import net.thevpc.nuts.text.NTextStyle;
 import net.thevpc.nuts.text.NTexts;
-import net.thevpc.nuts.util.NLogger;
+import net.thevpc.nuts.util.NLog;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -27,11 +27,11 @@ import java.util.logging.Level;
  * @author thevpc
  */
 public class DefaultNHelpInternalExecutable extends DefaultInternalNExecutableCommand {
-    private final NLogger LOG;
+    private final NLog LOG;
 
     public DefaultNHelpInternalExecutable(String[] args, NSession session) {
         super("help", args, session);
-        LOG = NLogger.of(DefaultNHelpInternalExecutable.class, session);
+        LOG = NLog.of(DefaultNHelpInternalExecutable.class, session);
     }
 
     @Override
@@ -42,7 +42,7 @@ public class DefaultNHelpInternalExecutable extends DefaultInternalNExecutableCo
         }
         List<String> helpFor = new ArrayList<>();
         NSession session = getSession();
-        NCommandLine cmdLine = NCommandLine.of(args);
+        NCmdLine cmdLine = NCmdLine.of(args);
         boolean helpColors = false;
         while (cmdLine.hasNext()) {
             NArg a = cmdLine.peek().get(session);

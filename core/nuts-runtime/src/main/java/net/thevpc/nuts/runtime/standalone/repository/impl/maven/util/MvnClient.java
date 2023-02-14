@@ -1,12 +1,12 @@
 package net.thevpc.nuts.runtime.standalone.repository.impl.maven.util;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.util.NLogger;
+import net.thevpc.nuts.util.NLog;
 
 import java.util.logging.Level;
 
 public class MvnClient {
-    private final NLogger LOG;
+    private final NLog LOG;
     public static final String NET_VPC_APP_NUTS_MVN = "net.thevpc.nuts.toolbox:mvn";
     private NSession session;
     private Status status = Status.INIT;
@@ -20,7 +20,7 @@ public class MvnClient {
 
     public MvnClient(NSession session) {
         this.session = session;
-        LOG= NLogger.of(MvnClient.class,session);
+        LOG= NLog.of(MvnClient.class,session);
     }
 
     public boolean get(NId id, String repoURL, NSession session) {

@@ -28,7 +28,7 @@ package net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.user;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.cmdline.NArg;
-import net.thevpc.nuts.cmdline.NCommandLine;
+import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.NWorkspaceCommandBaseRepo;
 import net.thevpc.nuts.spi.NSupportLevelContext;
 
@@ -212,7 +212,7 @@ public abstract class AbstractNAddUserCommand extends NWorkspaceCommandBaseRepo<
 
 
     @Override
-    public boolean configureFirst(NCommandLine cmdLine) {
+    public boolean configureFirst(NCmdLine cmdLine) {
         NArg a = cmdLine.peek().get(session);
         if (a == null) {
             return false;

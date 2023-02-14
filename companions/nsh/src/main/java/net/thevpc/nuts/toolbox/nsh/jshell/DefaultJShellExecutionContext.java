@@ -3,8 +3,8 @@ package net.thevpc.nuts.toolbox.nsh.jshell;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.cmdline.NArg;
-import net.thevpc.nuts.cmdline.NCommandAutoComplete;
-import net.thevpc.nuts.cmdline.NCommandLine;
+import net.thevpc.nuts.cmdline.NCmdLine;
+import net.thevpc.nuts.cmdline.NCmdLineAutoComplete;
 import net.thevpc.nuts.io.NPrintStream;
 import net.thevpc.nuts.io.NTerminalMode;
 
@@ -68,7 +68,7 @@ public class DefaultJShellExecutionContext implements JShellExecutionContext {
         return shellContext;
     }
     @Override
-    public boolean configureFirst(NCommandLine cmd) {
+    public boolean configureFirst(NCmdLine cmd) {
         NArg a = cmd.peek().get(session);
         if (a == null) {
             return false;
@@ -116,7 +116,7 @@ public class DefaultJShellExecutionContext implements JShellExecutionContext {
     }
 
     @Override
-    public void configureLast(NCommandLine cmd) {
+    public void configureLast(NCmdLine cmd) {
         if (!configureFirst(cmd)) {
             cmd.throwUnexpectedArgument();
         }
@@ -278,7 +278,7 @@ public class DefaultJShellExecutionContext implements JShellExecutionContext {
     }
 
     @Override
-    public NCommandAutoComplete getAutoComplete() {
+    public NCmdLineAutoComplete getAutoComplete() {
         return shellContext.getAutoComplete();
     }
 }

@@ -422,7 +422,7 @@ public class CoreIOUtils {
             }
         }
         final int[] deleted = new int[]{0, 0, 0};
-        NLogger LOG = session == null ? null : NLogger.of(CoreIOUtils.class, session);
+        NLog LOG = session == null ? null : NLog.of(CoreIOUtils.class, session);
         try {
             Files.walkFileTree(file, new FileVisitor<Path>() {
                 @Override
@@ -435,13 +435,13 @@ public class CoreIOUtils {
                     try {
                         Files.delete(file);
                         if (LOG != null) {
-                            LOG.with().session(session).level(Level.FINEST).verb(NLoggerVerb.WARNING).log(
+                            LOG.with().session(session).level(Level.FINEST).verb(NLogVerb.WARNING).log(
                                     NMsg.ofJ("delete file {0}", file));
                         }
                         deleted[0]++;
                     } catch (IOException e) {
                         if (LOG != null) {
-                            LOG.with().session(session).level(Level.FINEST).verb(NLoggerVerb.WARNING)
+                            LOG.with().session(session).level(Level.FINEST).verb(NLogVerb.WARNING)
                                     .log(NMsg.ofJ("failed deleting file : {0}", file)
                                     );
                         }
@@ -460,13 +460,13 @@ public class CoreIOUtils {
                     try {
                         Files.delete(dir);
                         if (LOG != null) {
-                            LOG.with().session(session).level(Level.FINEST).verb(NLoggerVerb.WARNING)
+                            LOG.with().session(session).level(Level.FINEST).verb(NLogVerb.WARNING)
                                     .log(NMsg.ofJ("delete folder {0}", dir));
                         }
                         deleted[1]++;
                     } catch (IOException e) {
                         if (LOG != null) {
-                            LOG.with().session(session).level(Level.FINEST).verb(NLoggerVerb.WARNING)
+                            LOG.with().session(session).level(Level.FINEST).verb(NLogVerb.WARNING)
                                     .log(NMsg.ofJ("failed deleting folder: {0}", dir)
                                     );
                         }

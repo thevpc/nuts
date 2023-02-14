@@ -1,7 +1,7 @@
 package net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.ndi.base;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.cmdline.NCommandLine;
+import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.io.*;
 import net.thevpc.nuts.runtime.standalone.id.util.NIdUtils;
 import net.thevpc.nuts.runtime.standalone.session.NSessionUtils;
@@ -830,7 +830,7 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
         shortcutName += "%s%v%s%h";
         shortcutName = NameBuilder.label(appDef.getId(), shortcutName, null, appDef.getDescriptor(), this.session).buildName();
 
-        String execCmd = NCommandLine.of(cmd).toString();
+        String execCmd = NCmdLine.of(cmd).toString();
         FreeDesktopEntry.Group sl = FreeDesktopEntry.Group.desktopEntry(shortcutName, execCmd, cwd);
         sl.setStartNotify(true);
         sl.setIcon(iconPath);
@@ -892,7 +892,7 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
             name = NameBuilder.label(options.resolveNutsApiId(), "Nuts Terminal%s%v%s%h", null, options.resolveNutsApiDef().getDescriptor(), session)
                     .buildName();
         }
-        String execCmd = NCommandLine.of(new String[]{cmd}).toString();
+        String execCmd = NCmdLine.of(new String[]{cmd}).toString();
         return createShortcut(nDesktopIntegrationItem,
                 options.resolveNutsApiId(),
                 fileName,

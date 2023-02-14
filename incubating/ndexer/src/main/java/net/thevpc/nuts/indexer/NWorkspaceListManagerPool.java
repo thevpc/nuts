@@ -1,7 +1,7 @@
 package net.thevpc.nuts.indexer;
 
 import net.thevpc.nuts.NSession;
-import net.thevpc.nuts.NWorkspaceListManager;
+import net.thevpc.nuts.NWorkspaceList;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -13,13 +13,13 @@ public class NWorkspaceListManagerPool {
 
     @Autowired
     private NIndexerApplication.Config app;
-    private final Map<String, NWorkspaceListManager> pool = new LinkedHashMap<>();
+    private final Map<String, NWorkspaceList> pool = new LinkedHashMap<>();
 
-    public synchronized NWorkspaceListManager openListManager(String name) {
-        NWorkspaceListManager o = pool.get(name);
+    public synchronized NWorkspaceList openListManager(String name) {
+        NWorkspaceList o = pool.get(name);
         if (o == null) {
             NSession session = app.getApplicationContext().getSession();
-            o = NWorkspaceListManager.of(session).setName(name);
+            o = NWorkspaceList.of(session).setName(name);
             pool.put(name, o);
         }
         return o;

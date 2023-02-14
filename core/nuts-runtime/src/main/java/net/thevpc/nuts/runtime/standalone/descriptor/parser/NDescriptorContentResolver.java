@@ -6,8 +6,8 @@ import net.thevpc.nuts.runtime.standalone.descriptor.util.NDescriptorUtils;
 import net.thevpc.nuts.runtime.standalone.io.util.CoreIOUtils;
 import net.thevpc.nuts.spi.NDescriptorContentParserComponent;
 import net.thevpc.nuts.spi.NDescriptorContentParserContext;
-import net.thevpc.nuts.util.NLoggerOp;
-import net.thevpc.nuts.util.NLoggerVerb;
+import net.thevpc.nuts.util.NLogOp;
+import net.thevpc.nuts.util.NLogVerb;
 
 import java.nio.file.Path;
 import java.util.ArrayList;
@@ -39,9 +39,9 @@ public class NDescriptorContentResolver {
                     try {
                         desc = parser.parse(ctx);
                     } catch (Exception e) {
-                        NLoggerOp.of(CoreIOUtils.class, session)
+                        NLogOp.of(CoreIOUtils.class, session)
                                 .level(Level.FINE)
-                                .verb(NLoggerVerb.WARNING)
+                                .verb(NLogVerb.WARNING)
                                 .error(e)
                                 .log(NMsg.ofC("error parsing %s with %s", localPath, parser.getClass().getSimpleName() + ". Error ignored"));
                         //e.printStackTrace();

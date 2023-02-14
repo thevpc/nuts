@@ -5,8 +5,8 @@ import net.thevpc.nuts.runtime.standalone.repository.impl.maven.pom.NPomXmlParse
 import net.thevpc.nuts.runtime.standalone.repository.impl.maven.util.MavenUtils;
 import net.thevpc.nuts.runtime.standalone.repository.impl.maven.pom.api.NPomId;
 import net.thevpc.nuts.spi.NSupportLevelContext;
-import net.thevpc.nuts.util.NLoggerOp;
-import net.thevpc.nuts.util.NLoggerVerb;
+import net.thevpc.nuts.util.NLogOp;
+import net.thevpc.nuts.util.NLogVerb;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -30,8 +30,8 @@ public class DefaultNIdResolver implements NIdResolver {
             return null;
         }
         if (pomIds.size() > 1) {
-            NLoggerOp.of(NPomXmlParser.class, session)
-                    .verb(NLoggerVerb.WARNING)
+            NLogOp.of(NPomXmlParser.class, session)
+                    .verb(NLogVerb.WARNING)
                     .level(Level.FINEST)
                     .log(NMsg.ofC(
                             "multiple ids found : %s for class %s and id %s",

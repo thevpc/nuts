@@ -2,7 +2,7 @@ package net.thevpc.nuts.toolbox.njob;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.cmdline.NArg;
-import net.thevpc.nuts.cmdline.NCommandLine;
+import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.format.NMutableTableModel;
 import net.thevpc.nuts.format.NTableFormat;
 import net.thevpc.nuts.io.NPrintStream;
@@ -34,7 +34,7 @@ public class NJobsSubCmd {
         this.session = parent.session;
     }
 
-    public void runJobAdd(NCommandLine cmd) {
+    public void runJobAdd(NCmdLine cmd) {
         NJob t = new NJob();
         NRef<Boolean> list = NRef.of(false);
         NRef<Boolean> show = NRef.of(false);
@@ -100,15 +100,15 @@ public class NJobsSubCmd {
                 ));
             }
             if (show.get()) {
-                runJobShow(NCommandLine.of(new String[]{t.getId()}));
+                runJobShow(NCmdLine.of(new String[]{t.getId()}));
             }
             if (list.get()) {
-                runJobList(NCommandLine.of(new String[0]));
+                runJobList(NCmdLine.of(new String[0]));
             }
         }
     }
 
-    public void runJobUpdate(NCommandLine cmd) {
+    public void runJobUpdate(NCmdLine cmd) {
         class Data {
             List<NJob> jobs = new ArrayList<>();
             boolean list = false;
@@ -231,16 +231,16 @@ public class NJobsSubCmd {
             }
             if (d.show) {
                 for (NJob t : new LinkedHashSet<>(d.jobs)) {
-                    runJobList(NCommandLine.of(new String[]{t.getId()}));
+                    runJobList(NCmdLine.of(new String[]{t.getId()}));
                 }
             }
             if (d.list) {
-                runJobList(NCommandLine.of(new String[0]));
+                runJobList(NCmdLine.of(new String[0]));
             }
         }
     }
 
-    public boolean runJobCommands(NCommandLine cmd) {
+    public boolean runJobCommands(NCmdLine cmd) {
         if (cmd.next("aj", "ja", "a j", "j a", "add job", "jobs add").isPresent()) {
             runJobAdd(cmd);
             return true;
@@ -268,7 +268,7 @@ public class NJobsSubCmd {
         }
     }
 
-    private void runJobRemove(NCommandLine cmd) {
+    private void runJobRemove(NCmdLine cmd) {
         NTexts text = NTexts.of(context.getSession());
         while (cmd.hasNext()) {
             NArg a = cmd.next().get(session);
@@ -291,7 +291,7 @@ public class NJobsSubCmd {
 
     }
 
-    private void runJobShow(NCommandLine cmd) {
+    private void runJobShow(NCmdLine cmd) {
         while (cmd.hasNext()) {
             NArg a = cmd.next().get(session);
             if (cmd.isExecMode()) {
@@ -324,7 +324,7 @@ public class NJobsSubCmd {
 
     }
 
-    private void runJobList(NCommandLine cmd) {
+    private void runJobList(NCmdLine cmd) {
         class Data {
             TimespanPattern hoursPerDay = TimespanPattern.WORK;
             int count = 100;
@@ -505,7 +505,7 @@ public class NJobsSubCmd {
         }
     }
 
-    private NJob findJob(String pid, NCommandLine cmd) {
+    private NJob findJob(String pid, NCmdLine cmd) {
         NJob t = null;
         if (pid.startsWith("#")) {
             int x = JobServiceCmd.parseIntOrFF(pid.substring(1));

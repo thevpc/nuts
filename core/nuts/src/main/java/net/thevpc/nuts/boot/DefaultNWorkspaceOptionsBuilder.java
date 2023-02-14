@@ -24,9 +24,9 @@
 package net.thevpc.nuts.boot;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.reserved.NReservedWorkspaceCommandLineParser;
+import net.thevpc.nuts.cmdline.NCmdLine;
+import net.thevpc.nuts.reserved.NReservedWorkspaceCmdLineParser;
 import net.thevpc.nuts.reserved.NReservedCollectionUtils;
-import net.thevpc.nuts.cmdline.NCommandLine;
 import net.thevpc.nuts.io.NTerminalMode;
 import net.thevpc.nuts.util.NLogConfig;
 import net.thevpc.nuts.util.NStringUtils;
@@ -1677,13 +1677,13 @@ public class DefaultNWorkspaceOptionsBuilder implements NWorkspaceOptionsBuilder
 
     @Override
     public NWorkspaceOptionsBuilder setCommandLine(String commandLine, NSession session) {
-        setCommandLine(NCommandLine.parseDefault(commandLine).get(session).toStringArray(), session);
+        setCommandLine(NCmdLine.parseDefault(commandLine).get(session).toStringArray(), session);
         return this;
     }
 
     @Override
     public NWorkspaceOptionsBuilder setCommandLine(String[] args, NSession session) {
-        NReservedWorkspaceCommandLineParser.parseNutsArguments(args, this, session);
+        NReservedWorkspaceCmdLineParser.parseNutsArguments(args, this, session);
         return this;
     }
 
@@ -1820,12 +1820,12 @@ public class DefaultNWorkspaceOptionsBuilder implements NWorkspaceOptionsBuilder
     }
 
     @Override
-    public NCommandLine toCommandLine() {
+    public NCmdLine toCommandLine() {
         return build().toCommandLine();
     }
 
     @Override
-    public NCommandLine toCommandLine(NWorkspaceOptionsConfig config) {
+    public NCmdLine toCommandLine(NWorkspaceOptionsConfig config) {
         return build().toCommandLine(config);
     }
 

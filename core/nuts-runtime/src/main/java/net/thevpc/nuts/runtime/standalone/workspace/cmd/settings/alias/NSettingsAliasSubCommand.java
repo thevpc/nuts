@@ -7,7 +7,7 @@ package net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.alias;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.cmdline.NArg;
-import net.thevpc.nuts.cmdline.NCommandLine;
+import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.AbstractNSettingsSubCommand;
 
 import java.util.ArrayList;
@@ -22,7 +22,7 @@ import java.util.stream.Collectors;
  */
 public class NSettingsAliasSubCommand extends AbstractNSettingsSubCommand {
     @Override
-    public boolean exec(NCommandLine cmdLine, Boolean autoSave, NSession session) {
+    public boolean exec(NCmdLine cmdLine, Boolean autoSave, NSession session) {
         if (cmdLine.next("list aliases").isPresent()) {
             cmdLine.setCommandName("settings list aliases");
             List<String> toList = new ArrayList<>();
@@ -35,11 +35,11 @@ public class NSettingsAliasSubCommand extends AbstractNSettingsSubCommand {
                 }
             }
             if (cmdLine.isExecMode()) {
-                List<NWorkspaceCustomCommand> r = NCustomCommandManager.of(session).findAllCommands()
+                List<NCustomCommand> r = NCommands.of(session).findAllCommands()
                         .stream()
-                        .filter(new Predicate<NWorkspaceCustomCommand>() {
+                        .filter(new Predicate<NCustomCommand>() {
                             @Override
-                            public boolean test(NWorkspaceCustomCommand nutsWorkspaceCommandAlias) {
+                            public boolean test(NCustomCommand nutsWorkspaceCommandAlias) {
                                 if (toList.isEmpty()) {
                                     return true;
                                 }
@@ -63,8 +63,8 @@ public class NSettingsAliasSubCommand extends AbstractNSettingsSubCommand {
                     NPropertiesFormat.of(session).setValue(
                             r.stream().collect(
                                     Collectors.toMap(
-                                            NWorkspaceCustomCommand::getName,
-                                            x -> NCommandLine.of(x.getCommand()).toString(),
+                                            NCustomCommand::getName,
+                                            x -> NCmdLine.of(x.getCommand()).toString(),
                                             (x, y) -> {
                                                 throw new NIllegalArgumentException(session, NMsg.ofC("duplicate %s", x));
                                             },
@@ -82,7 +82,7 @@ public class NSettingsAliasSubCommand extends AbstractNSettingsSubCommand {
         } else if (cmdLine.next("remove alias").isPresent()) {
             if (cmdLine.isExecMode()) {
                 while (cmdLine.hasNext()) {
-                    NCustomCommandManager.of(session).removeCommand(cmdLine.next().get(session).toString());
+                    NCommands.of(session).removeCommand(cmdLine.next().get(session).toString());
                 }
                 NConfigs.of(session).save();
             }
@@ -118,13 +118,13 @@ public class NSettingsAliasSubCommand extends AbstractNSettingsSubCommand {
                     cmdLine.next().get(session);
                 }
                 for (AliasInfo value : toAdd.values()) {
-                    NCustomCommandManager.of(session)
+                    NCommands.of(session)
                             .addCommand(
                                     new NCommandConfig()
-                                            .setCommand(NCommandLine.of(value.command, NShellFamily.BASH, session).setExpandSimpleOptions(false).toStringArray())
+                                            .setCommand(NCmdLine.of(value.command, NShellFamily.BASH, session).setExpandSimpleOptions(false).toStringArray())
                                             .setName(value.name)
                                             .setExecutorOptions(
-                                                    NCommandLine.of(value.executionOptions, NShellFamily.BASH, session)
+                                                    NCmdLine.of(value.executionOptions, NShellFamily.BASH, session)
                                                             .setExpandSimpleOptions(false).toStringList())
                             );
                 }
@@ -135,7 +135,7 @@ public class NSettingsAliasSubCommand extends AbstractNSettingsSubCommand {
         return false;
     }
     private String[] splitCmdAndExecArgs(String aliasValue, NSession session){
-        NCommandLine cmdLine2 = NCommandLine.of(aliasValue, NShellFamily.BASH, session).setExpandSimpleOptions(false);
+        NCmdLine cmdLine2 = NCmdLine.of(aliasValue, NShellFamily.BASH, session).setExpandSimpleOptions(false);
         List<String> executionOptions = new ArrayList<>();
         while (cmdLine2.hasNext()) {
             NArg r = cmdLine2.peek().get(session);
@@ -148,7 +148,7 @@ public class NSettingsAliasSubCommand extends AbstractNSettingsSubCommand {
         if (executionOptions.isEmpty()) {
             return new String[]{aliasValue,null};
         } else {
-            return new String[]{cmdLine2.toString(), NCommandLine.of(executionOptions.toArray(new String[0])).toString()};
+            return new String[]{cmdLine2.toString(), NCmdLine.of(executionOptions.toArray(new String[0])).toString()};
         }
     }
 
@@ -168,10 +168,10 @@ public class NSettingsAliasSubCommand extends AbstractNSettingsSubCommand {
             this.executionOptions = executionOptions;
         }
 
-        public AliasInfo(NWorkspaceCustomCommand a, NSession ws) {
+        public AliasInfo(NCustomCommand a, NSession ws) {
             name = a.getName();
-            command = NCommandLine.of(a.getCommand()).toString();
-            executionOptions = NCommandLine.of(a.getExecutorOptions()).toString();
+            command = NCmdLine.of(a.getCommand()).toString();
+            executionOptions = NCmdLine.of(a.getExecutorOptions()).toString();
             factoryId = a.getFactoryId();
             owner = a.getOwner();
         }

@@ -33,8 +33,8 @@ import net.thevpc.nuts.runtime.standalone.util.iter.NIteratorBase;
 import net.thevpc.nuts.runtime.standalone.id.filter.NExprIdFilter;
 import net.thevpc.nuts.runtime.standalone.repository.impl.NCachedRepository;
 import net.thevpc.nuts.runtime.standalone.workspace.config.NRepositoryConfigManagerExt;
-import net.thevpc.nuts.util.NLogger;
-import net.thevpc.nuts.util.NLoggerVerb;
+import net.thevpc.nuts.util.NLog;
+import net.thevpc.nuts.util.NLogVerb;
 import net.thevpc.nuts.runtime.standalone.io.util.CoreSecurityUtils;
 import net.thevpc.nuts.runtime.standalone.io.util.CoreIOUtils;
 
@@ -51,16 +51,16 @@ import net.thevpc.nuts.util.NStringUtils;
 
 public class NHttpSrvRepository extends NCachedRepository {
 
-    private final NLogger LOG;
+    private final NLog LOG;
     private NId remoteId;
 
     public NHttpSrvRepository(NAddRepositoryOptions options, NSession session, NRepository parentRepository) {
         super(options, session, parentRepository, NSpeedQualifier.SLOW, false, NConstants.RepoTypes.NUTS, true);
-        LOG = NLogger.of(NHttpSrvRepository.class, session);
+        LOG = NLog.of(NHttpSrvRepository.class, session);
         try {
             remoteId = getRemoteId(session);
         } catch (Exception ex) {
-            LOG.with().session(session).level(Level.WARNING).verb(NLoggerVerb.FAIL)
+            LOG.with().session(session).level(Level.WARNING).verb(NLogVerb.FAIL)
                     .log(NMsg.ofJ("unable to initialize Repository NutsId for repository {0}", options.getLocation()));
         }
     }
@@ -74,7 +74,7 @@ public class NHttpSrvRepository extends NCachedRepository {
             try {
                 remoteId = NId.of(httpGetString(getUrl("/version"), session)).get(session);
             } catch (Exception ex) {
-                LOG.with().session(session).level(Level.WARNING).verb(NLoggerVerb.FAIL)
+                LOG.with().session(session).level(Level.WARNING).verb(NLogVerb.FAIL)
                         .log(NMsg.ofJ("unable to resolve Repository NutsId for remote repository {0}", config().getLocation()));
             }
         }
@@ -220,13 +220,13 @@ public class NHttpSrvRepository extends NCachedRepository {
     }
 
     private String httpGetString(String url, NSession session) {
-        LOG.with().session(session).level(Level.FINEST).verb(NLoggerVerb.START)
+        LOG.with().session(session).level(Level.FINEST).verb(NLogVerb.START)
                 .log(NMsg.ofJ("get URL{0}", url));
         return CoreIOUtils.loadString(NPath.of(url, session).getInputStream(), true, session);
     }
 
     private InputStream httpUpload(String url, NSession session, NTransportParamPart... parts) {
-        LOG.with().session(session).level(Level.FINEST).verb(NLoggerVerb.START)
+        LOG.with().session(session).level(Level.FINEST).verb(NLogVerb.START)
                 .log(NMsg.ofJ("uploading URL {0}", url));
         return CoreIOUtils.getHttpClientFacade(session, url).upload(parts);
     }

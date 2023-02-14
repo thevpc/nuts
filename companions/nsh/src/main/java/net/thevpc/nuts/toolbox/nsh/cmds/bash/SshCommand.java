@@ -27,7 +27,7 @@ package net.thevpc.nuts.toolbox.nsh.cmds.bash;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.cmdline.NArg;
-import net.thevpc.nuts.cmdline.NCommandLine;
+import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.lib.ssh.SShConnection;
 import net.thevpc.nuts.toolbox.nsh.SimpleJShellBuiltin;
@@ -49,7 +49,7 @@ public class SshCommand extends SimpleJShellBuiltin {
     }
 
     @Override
-    protected boolean configureFirst(NCommandLine commandLine, JShellExecutionContext context) {
+    protected boolean configureFirst(NCmdLine commandLine, JShellExecutionContext context) {
         Options o = context.getOptions();
         NArg a;
         NSession session = context.getSession();
@@ -87,7 +87,7 @@ public class SshCommand extends SimpleJShellBuiltin {
     }
 
     @Override
-    protected void execBuiltin(NCommandLine commandLine, JShellExecutionContext context) {
+    protected void execBuiltin(NCmdLine commandLine, JShellExecutionContext context) {
         Options o = context.getOptions();
         // address --nuts [nuts options] args
         NSession session = context.getSession();
@@ -99,7 +99,7 @@ public class SshCommand extends SimpleJShellBuiltin {
             List<String> cmd = new ArrayList<>();
             if (o.invokeNuts) {
                 String workspace = null;
-                NCommandLine c = NCommandLine.of(o.cmd.subList(1, o.cmd.size()));
+                NCmdLine c = NCmdLine.of(o.cmd.subList(1, o.cmd.size()));
                 NArg arg = null;
                 while (c.hasNext()) {
                     if ((arg = c.next("--workspace").orNull()) != null) {

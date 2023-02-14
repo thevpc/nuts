@@ -25,7 +25,7 @@ package net.thevpc.nuts.runtime.standalone.workspace.cmd.push;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.cmdline.NArg;
-import net.thevpc.nuts.cmdline.NCommandLine;
+import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.runtime.standalone.util.collections.CoreCollectionUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.NWorkspaceCommandBase;
 import net.thevpc.nuts.spi.NSupportLevelContext;
@@ -260,7 +260,7 @@ public abstract class AbstractDefaultNPushCommand extends NWorkspaceCommandBase<
     }
 
     @Override
-    public boolean configureFirst(NCommandLine cmdLine) {
+    public boolean configureFirst(NCmdLine cmdLine) {
         NArg a = cmdLine.peek().get(session);
         if (a == null) {
             return false;

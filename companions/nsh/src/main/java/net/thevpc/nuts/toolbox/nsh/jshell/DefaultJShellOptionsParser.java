@@ -1,7 +1,7 @@
 package net.thevpc.nuts.toolbox.nsh.jshell;
 
 import net.thevpc.nuts.NApplicationContext;
-import net.thevpc.nuts.cmdline.NCommandLine;
+import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.NMsg;
 import net.thevpc.nuts.NSession;
 
@@ -200,7 +200,7 @@ public class DefaultJShellOptionsParser implements JShellOptionsParser {
 
     protected void parseUnsupportedNextArgument(List<String> args, JShellOptions options) {
         NSession session = appContext.getSession();
-        NCommandLine a = NCommandLine.of(args);
+        NCmdLine a = NCmdLine.of(args);
         if (session.configureFirst(a)) {
             //replace remaining...
             args.clear();

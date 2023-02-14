@@ -2,7 +2,7 @@ package net.thevpc.nuts.toolbox.ndb.sql.nmysql;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.cmdline.NArg;
-import net.thevpc.nuts.cmdline.NCommandLine;
+import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.io.NPrintStream;
 import net.thevpc.nuts.text.NTextStyle;
@@ -35,7 +35,7 @@ public class NMysqlMain extends SqlSupport<NMySqlConfig> {
     }
 
     @Override
-    public void run(NApplicationContext context, NCommandLine commandLine) {
+    public void run(NApplicationContext context, NCmdLine commandLine) {
         NSession session = context.getSession();
         NMySqlService service = new NMySqlService(context);
         while (commandLine.hasNext()) {
@@ -114,7 +114,7 @@ public class NMysqlMain extends SqlSupport<NMySqlConfig> {
     }
 
 
-    private void runPushOrPull(NCommandLine commandLine, boolean pull, NMySqlService service) {
+    private void runPushOrPull(NCmdLine commandLine, boolean pull, NMySqlService service) {
         NSession session = service.getContext().getSession();
         commandLine.setCommandName("mysql --remote " + (pull ? "pull" : "push"));
         class Data {
@@ -171,7 +171,7 @@ public class NMysqlMain extends SqlSupport<NMySqlConfig> {
         }
     }
 
-    private void runSQL(NCommandLine commandLine, NMySqlService service) {
+    private void runSQL(NCmdLine commandLine, NMySqlService service) {
         NSession session = service.getContext().getSession();
         commandLine.setCommandName("mysql run-sql");
         NRef<AtName> name = NRef.ofNull(AtName.class);
@@ -238,7 +238,7 @@ public class NMysqlMain extends SqlSupport<NMySqlConfig> {
                 )).toString();
     }
 
-    private void runBackupOrRestore(NCommandLine commandLine, boolean backup, NMySqlService service) {
+    private void runBackupOrRestore(NCmdLine commandLine, boolean backup, NMySqlService service) {
         NSession session = service.getContext().getSession();
         commandLine.setCommandName("mysql " + (backup ? "backup" : "restore"));
         NRef<AtName> name = NRef.ofNull(AtName.class);
@@ -302,7 +302,7 @@ public class NMysqlMain extends SqlSupport<NMySqlConfig> {
     }
 
 
-    private void createOrUpdate(NCommandLine commandLine, boolean add, NMySqlService service) {
+    private void createOrUpdate(NCmdLine commandLine, boolean add, NMySqlService service) {
         NSession session = service.getContext().getSession();
         commandLine.setCommandName("mysql " + (add ? "add" : "set"));
         class Data {
@@ -854,7 +854,7 @@ public class NMysqlMain extends SqlSupport<NMySqlConfig> {
         }
     }
 
-    public void runRemove(NCommandLine commandLine, NMySqlService service) {
+    public void runRemove(NCmdLine commandLine, NMySqlService service) {
         NSession session = service.getContext().getSession();
         commandLine.setCommandName("mysql remove");
         List<AtName> localNames = new ArrayList<>();
@@ -981,7 +981,7 @@ public class NMysqlMain extends SqlSupport<NMySqlConfig> {
         }
     }
 
-    public void runList(NCommandLine commandLine, NMySqlService service, boolean describe) {
+    public void runList(NCmdLine commandLine, NMySqlService service, boolean describe) {
         NSession session = service.getContext().getSession();
         commandLine.setCommandName("mysql list");
         List<AtName> localNames = new ArrayList<>();

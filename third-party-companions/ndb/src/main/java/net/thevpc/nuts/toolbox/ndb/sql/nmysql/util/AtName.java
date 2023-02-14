@@ -26,7 +26,7 @@
 package net.thevpc.nuts.toolbox.ndb.sql.nmysql.util;
 
 import net.thevpc.nuts.cmdline.NArg;
-import net.thevpc.nuts.cmdline.NCommandLine;
+import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.NMsg;
 import net.thevpc.nuts.NSession;
 import net.thevpc.nuts.toolbox.ndb.util.NdbUtils;
@@ -40,7 +40,7 @@ public class AtName {
     private String config;
     private String name;
 
-    public static AtName nextConfigOption(NCommandLine cmd, NSession session) {
+    public static AtName nextConfigOption(NCmdLine cmd, NSession session) {
         NArg a = cmd.nextEntry().get(session);
         AtName name2 = new AtName(a.getStringValue().get(session));
         if (!name2.getConfigName().isEmpty() && !name2.getDatabaseName().isEmpty()) {
@@ -58,17 +58,17 @@ public class AtName {
         return NdbUtils.coalesce(name, "default") + "@" + NdbUtils.coalesce(config, "default");
     }
 
-    public static AtName nextAppOption(NCommandLine cmd, NSession session) {
+    public static AtName nextAppOption(NCmdLine cmd, NSession session) {
         NArg a = cmd.nextEntry().get(session);
         return a==null?null:new AtName(a.getStringValue().get(session));
     }
 
-    public static AtName nextAppNonOption(NCommandLine cmd, NSession session) {
+    public static AtName nextAppNonOption(NCmdLine cmd, NSession session) {
         NArg a = cmd.nextEntry().get(session);
         return a==null?null:new AtName(a.asString().get(session));
     }
 
-    public static AtName nextConfigNonOption(NCommandLine cmd, NSession session) {
+    public static AtName nextConfigNonOption(NCmdLine cmd, NSession session) {
         NArg a = cmd.peek().get(session);
         AtName name2 = new AtName(a.asString().get(session));
         if (!name2.getConfigName().isEmpty() && !name2.getDatabaseName().isEmpty()) {

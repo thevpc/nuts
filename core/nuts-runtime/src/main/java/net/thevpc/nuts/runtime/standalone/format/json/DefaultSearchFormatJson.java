@@ -7,7 +7,7 @@ package net.thevpc.nuts.runtime.standalone.format.json;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.cmdline.NArg;
-import net.thevpc.nuts.cmdline.NCommandLine;
+import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.elem.NElements;
 import net.thevpc.nuts.io.NPrintStream;
 import net.thevpc.nuts.runtime.standalone.format.NFetchDisplayOptions;
@@ -45,7 +45,7 @@ public class DefaultSearchFormatJson extends DefaultSearchFormatBase {
     }
 
     @Override
-    public boolean configureFirst(NCommandLine commandLine) {
+    public boolean configureFirst(NCmdLine commandLine) {
         NSession session = getSession();
         NArg aa = commandLine.peek().get(session);
         if (aa == null) {

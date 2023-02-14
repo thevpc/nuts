@@ -7,7 +7,7 @@ package net.thevpc.nuts.runtime.standalone.workspace.cmd.exec;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.cmdline.NArg;
-import net.thevpc.nuts.cmdline.NCommandLine;
+import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.io.NPrintStream;
 
 import java.util.*;
@@ -144,7 +144,7 @@ public class DefaultNArtifactExecutable extends AbstractNExecutableCommand {
 
     @Override
     public String toString() {
-        return "nuts " + getId().toString() + " " + NCommandLine.of(appArgs).toString();
+        return "nuts " + getId().toString() + " " + NCmdLine.of(appArgs).toString();
     }
 
     @Override

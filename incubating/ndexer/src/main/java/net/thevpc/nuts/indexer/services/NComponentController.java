@@ -32,7 +32,7 @@ public class NComponentController {
     private NIndexSubscriberListManagerPool indexSubscriberListManagerPool;
     @Autowired
     private NWorkspacePool workspacePool;
-    private NWorkspaceListManager workspaceManager;
+    private NWorkspaceList workspaceManager;
     private NIndexSubscriberListManager subscriberManager;
 
     @PostConstruct

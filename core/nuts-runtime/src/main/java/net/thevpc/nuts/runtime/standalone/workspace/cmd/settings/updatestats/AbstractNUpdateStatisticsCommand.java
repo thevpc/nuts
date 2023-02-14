@@ -7,7 +7,7 @@ package net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.updatestats;
 
 import net.thevpc.nuts.NSession;
 import net.thevpc.nuts.cmdline.NArg;
-import net.thevpc.nuts.cmdline.NCommandLine;
+import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.NUpdateStatisticsCommand;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.NWorkspaceCommandBase;
 import net.thevpc.nuts.spi.NSupportLevelContext;
@@ -126,7 +126,7 @@ public abstract class AbstractNUpdateStatisticsCommand extends NWorkspaceCommand
     }
 
     @Override
-    public boolean configureFirst(NCommandLine cmdLine) {
+    public boolean configureFirst(NCmdLine cmdLine) {
         NArg a = cmdLine.peek().get(session);
         if (a == null) {
             return false;

@@ -4,7 +4,7 @@ import net.thevpc.nuts.NApplicationContext;
 import net.thevpc.nuts.NIllegalArgumentException;
 import net.thevpc.nuts.NMsg;
 import net.thevpc.nuts.NSession;
-import net.thevpc.nuts.cmdline.NCommandLine;
+import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.toolbox.ndb.ExtendedQuery;
 import net.thevpc.nuts.toolbox.ndb.NdbConfig;
 import net.thevpc.nuts.toolbox.ndb.base.NdbCmd;
@@ -21,7 +21,7 @@ public class ShowDatabasesCmd<C extends NdbConfig> extends NdbCmd<C> {
     }
 
 
-    public void run(NApplicationContext appContext, NCommandLine commandLine) {
+    public void run(NApplicationContext appContext, NCmdLine commandLine) {
         NSession session = appContext.getSession();
         NRef<AtName> name = NRef.ofNull(AtName.class);
         C otherOptions = createConfigInstance();

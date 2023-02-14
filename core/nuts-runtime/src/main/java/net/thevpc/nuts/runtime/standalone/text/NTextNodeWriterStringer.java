@@ -1,8 +1,8 @@
 package net.thevpc.nuts.runtime.standalone.text;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.cmdline.DefaultNCommandLine;
-import net.thevpc.nuts.cmdline.NCommandLine;
+import net.thevpc.nuts.cmdline.DefaultNCmdLine;
+import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.io.NIOException;
 import net.thevpc.nuts.runtime.standalone.text.parser.*;
 import net.thevpc.nuts.runtime.standalone.util.CoreStringUtils;
@@ -89,7 +89,7 @@ public class NTextNodeWriterStringer extends AbstractNTextNodeWriter {
             case COMMAND: {
                 NTextCommand s = (NTextCommand) node;
                 writeRaw("```!");
-                NCommandLine cmd = new DefaultNCommandLine().setSession(session);
+                NCmdLine cmd = new DefaultNCmdLine().setSession(session);
                 cmd.add(s.getCommand().getName());
                 cmd.addAll(s.getCommand().getArgs());
                 writeEscapedSpecial(cmd.toString());

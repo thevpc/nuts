@@ -2,7 +2,7 @@ package net.thevpc.nuts.runtime.standalone.workspace.cmd.deploy;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.cmdline.NArg;
-import net.thevpc.nuts.cmdline.NCommandLine;
+import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.io.NIO;
 import net.thevpc.nuts.io.NInputSource;
 import net.thevpc.nuts.io.NPath;
@@ -313,7 +313,7 @@ public abstract class AbstractNDeployCommand extends NWorkspaceCommandBase<NDepl
     }
 
     @Override
-    public boolean configureFirst(NCommandLine cmdLine) {
+    public boolean configureFirst(NCmdLine cmdLine) {
         NArg a = cmdLine.peek().get(session);
         if (a == null) {
             return false;

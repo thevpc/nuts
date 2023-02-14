@@ -6,7 +6,7 @@
 package net.thevpc.nuts.toolbox.nsh.jshell;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.cmdline.NCommandAutoComplete;
+import net.thevpc.nuts.cmdline.NCmdLineAutoComplete;
 import net.thevpc.nuts.toolbox.nsh.NBuiltinManager;
 
 import java.util.*;
@@ -31,7 +31,7 @@ public class DefaultJShellContext extends AbstractJShellContext {
     private JShellBuiltinManager builtinManager;
     private String cwd = System.getProperty("user.dir");
     private JShellFileSystem fileSystem;
-    private NCommandAutoComplete autoComplete;
+    private NCmdLineAutoComplete autoComplete;
     public DefaultJShellContext(JShell shell, JShellNode rootNode, JShellNode parentNode,
                                 JShellContext parentContext, NWorkspace workspace, NSession session, JShellVariables vars,
                                 String serviceName, String[] args
@@ -253,12 +253,12 @@ public class DefaultJShellContext extends AbstractJShellContext {
 
 
     @Override
-    public NCommandAutoComplete getAutoComplete() {
+    public NCmdLineAutoComplete getAutoComplete() {
         return autoComplete;
     }
 
     @Override
-    public void setAutoComplete(NCommandAutoComplete autoComplete) {
+    public void setAutoComplete(NCmdLineAutoComplete autoComplete) {
         this.autoComplete = autoComplete;
     }
 

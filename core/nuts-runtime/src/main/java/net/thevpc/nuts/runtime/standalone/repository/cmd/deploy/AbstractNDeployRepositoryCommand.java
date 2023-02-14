@@ -24,7 +24,7 @@
 package net.thevpc.nuts.runtime.standalone.repository.cmd.deploy;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.cmdline.NCommandLine;
+import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.io.NIO;
 import net.thevpc.nuts.io.NInputSource;
 import net.thevpc.nuts.io.NPath;
@@ -52,7 +52,7 @@ public abstract class AbstractNDeployRepositoryCommand extends NRepositoryComman
     }
 
     @Override
-    public boolean configureFirst(NCommandLine cmd) {
+    public boolean configureFirst(NCmdLine cmd) {
         return super.configureFirst(cmd);
     }
 

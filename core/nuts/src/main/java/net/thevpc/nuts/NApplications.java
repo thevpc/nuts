@@ -26,8 +26,8 @@ package net.thevpc.nuts;
 import net.thevpc.nuts.util.NApiUtils;
 import net.thevpc.nuts.io.NSessionTerminal;
 import net.thevpc.nuts.util.NClock;
-import net.thevpc.nuts.util.NLogger;
-import net.thevpc.nuts.util.NLoggerVerb;
+import net.thevpc.nuts.util.NLog;
+import net.thevpc.nuts.util.NLogVerb;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
@@ -224,7 +224,7 @@ public final class NApplications {
     public static void runApplication(NApplication applicationInstance, NApplicationContext applicationContext) {
         NSession session = applicationContext.getSession();
         boolean inherited = NBootManager.of(session).getBootOptions().getInherited().orElse(false);
-        NLogger.of(NApplications.class, session).with().level(Level.FINE).verb(NLoggerVerb.START)
+        NLog.of(NApplications.class, session).with().level(Level.FINE).verb(NLogVerb.START)
                 .log(
                         NMsg.ofJ(
                                 "running application {0}: {1} {2}", inherited ? "(inherited)" : "",
@@ -272,7 +272,7 @@ public final class NApplications {
      * @param out out stream
      * @return exit code
      */
-    public static int processThrowable(Throwable ex, NLogger out) {
+    public static int processThrowable(Throwable ex, NLog out) {
         return NApiUtils.processThrowable(ex, out);
     }
 

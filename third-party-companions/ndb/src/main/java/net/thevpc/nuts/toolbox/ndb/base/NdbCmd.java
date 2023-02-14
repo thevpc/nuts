@@ -2,7 +2,7 @@ package net.thevpc.nuts.toolbox.ndb.base;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.cmdline.NArg;
-import net.thevpc.nuts.cmdline.NCommandLine;
+import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.toolbox.ndb.NdbConfig;
 import net.thevpc.nuts.toolbox.ndb.sql.nmysql.util.AtName;
@@ -32,9 +32,9 @@ public abstract class NdbCmd<C extends NdbConfig> {
         return names.toArray(new String[0]);
     }
 
-    abstract public void run(NApplicationContext appContext, NCommandLine commandLine);
+    abstract public void run(NApplicationContext appContext, NCmdLine commandLine);
 
-    protected boolean fillOption(NCommandLine cmdLine, C options) {
+    protected boolean fillOption(NCmdLine cmdLine, C options) {
         NSession session = support.getAppContext().getSession();
         NArg a;
         if ((a = cmdLine.nextEntry("--name").orNull()) != null) {
@@ -73,7 +73,7 @@ public abstract class NdbCmd<C extends NdbConfig> {
         }
     }
 
-    protected boolean fillExtraOption(NCommandLine cmdLine, C options) {
+    protected boolean fillExtraOption(NCmdLine cmdLine, C options) {
         return false;
     }
 
@@ -99,7 +99,7 @@ public abstract class NdbCmd<C extends NdbConfig> {
         return support.getConfigClass();
     }
 
-    protected void readConfigNameOption(NCommandLine commandLine, NSession session, NRef<AtName> name) {
+    protected void readConfigNameOption(NCmdLine commandLine, NSession session, NRef<AtName> name) {
         commandLine.withNextEntry((v, a, s) -> {
             if (name.isNull()) {
                 String name2 = NdbUtils.checkName(a.getStringValue().get(session), session);
@@ -114,7 +114,7 @@ public abstract class NdbCmd<C extends NdbConfig> {
         return support.getDbType();
     }
 
-    protected boolean fillOptionLast(NCommandLine commandLine, C options) {
+    protected boolean fillOptionLast(NCmdLine commandLine, C options) {
         if (fillOption(commandLine, options)) {
             return true;
         } else if (support.getAppContext().configureFirst(commandLine)) {

@@ -3,17 +3,17 @@ package net.thevpc.nuts.toolbox.nsh.jshell;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.cmdline.DefaultNArgCandidate;
 import net.thevpc.nuts.cmdline.NArgCandidate;
-import net.thevpc.nuts.cmdline.NCommandAutoCompleteResolver;
-import net.thevpc.nuts.cmdline.NCommandLine;
+import net.thevpc.nuts.cmdline.NCmdLine;
+import net.thevpc.nuts.cmdline.NCmdLineAutoCompleteResolver;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-class NshAutoCompleter implements NCommandAutoCompleteResolver {
+class NshAutoCompleter implements NCmdLineAutoCompleteResolver {
 
     @Override
-    public List<NArgCandidate> resolveCandidates(NCommandLine commandLine, int wordIndex, NSession session) {
+    public List<NArgCandidate> resolveCandidates(NCmdLine commandLine, int wordIndex, NSession session) {
         List<NArgCandidate> candidates = new ArrayList<>();
         JShellContext fileContext = (JShellContext) NEnvs.of(session).getProperties().get(JShellContext.class.getName());
 

@@ -13,7 +13,7 @@ import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 import net.thevpc.nuts.cmdline.NArg;
-import net.thevpc.nuts.cmdline.NCommandLine;
+import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.format.NObjectFormat;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.io.NPrintStream;
@@ -189,7 +189,7 @@ public class DefaultNInfoCommand extends DefaultFormatBase<NInfoCommand> impleme
     }
 
     @Override
-    public boolean configureFirst(NCommandLine cmdLine) {
+    public boolean configureFirst(NCmdLine cmdLine) {
         NSession session = getSession();
         NArg a = cmdLine.peek().get(session);
         if (a == null) {
@@ -447,8 +447,8 @@ public class DefaultNInfoCommand extends DefaultFormatBase<NInfoCommand> impleme
         props.put("command-line-short", session -> NBootManager.of(session).getBootOptions().toCommandLine(new NWorkspaceOptionsConfig().setCompact(true)));
         props.put("inherited", session -> NBootManager.of(session).getBootOptions().getInherited().orElse(false));
         // nuts-boot-args must always be parsed in bash format
-        props.put("inherited-nuts-boot-args", session -> NCommandLine.of(System.getProperty("nuts.boot.args"), NShellFamily.SH, session).format(session));
-        props.put("inherited-nuts-args", session -> NCommandLine.of(System.getProperty("nuts.args"), NShellFamily.SH, session)
+        props.put("inherited-nuts-boot-args", session -> NCmdLine.of(System.getProperty("nuts.boot.args"), NShellFamily.SH, session).format(session));
+        props.put("inherited-nuts-args", session -> NCmdLine.of(System.getProperty("nuts.args"), NShellFamily.SH, session)
                 .format(session)
         );
         props.put("creation-started", session -> NBootManager.of(session).getCreationStartTime());
@@ -651,8 +651,8 @@ public class DefaultNInfoCommand extends DefaultFormatBase<NInfoCommand> impleme
         props.put("command-line-short", NBootManager.of(session).getBootOptions().toCommandLine(new NWorkspaceOptionsConfig().setCompact(true)));
         props.put("inherited", NBootManager.of(session).getBootOptions().getInherited().orElse(false));
         // nuts-boot-args must always be parsed in bash format
-        props.put("inherited-nuts-boot-args", NCommandLine.of(System.getProperty("nuts.boot.args"), NShellFamily.SH, session).format(session));
-        props.put("inherited-nuts-args", NCommandLine.of(System.getProperty("nuts.args"), NShellFamily.SH, session)
+        props.put("inherited-nuts-boot-args", NCmdLine.of(System.getProperty("nuts.boot.args"), NShellFamily.SH, session).format(session));
+        props.put("inherited-nuts-args", NCmdLine.of(System.getProperty("nuts.args"), NShellFamily.SH, session)
                 .format(session)
         );
         props.put("creation-started", NBootManager.of(session).getCreationStartTime());

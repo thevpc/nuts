@@ -26,13 +26,13 @@ package net.thevpc.nuts.ext.term;
 import java.awt.Color;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.cmdline.NCommandAutoCompleteResolver;
-import net.thevpc.nuts.cmdline.NCommandHistory;
+import net.thevpc.nuts.cmdline.NCmdLineAutoCompleteResolver;
+import net.thevpc.nuts.cmdline.NCmdLineHistory;
 import net.thevpc.nuts.io.*;
 import net.thevpc.nuts.spi.*;
 import net.thevpc.nuts.text.*;
-import net.thevpc.nuts.util.NLogger;
-import net.thevpc.nuts.util.NLoggerVerb;
+import net.thevpc.nuts.util.NLog;
+import net.thevpc.nuts.util.NLogVerb;
 import org.jline.reader.*;
 import org.jline.terminal.Terminal;
 import org.jline.terminal.TerminalBuilder;
@@ -60,8 +60,8 @@ public class NJLineTerminal extends NSystemTerminalBaseImpl {
     private NPrintStream out;
     private NPrintStream err;
     private InputStream in;
-    private NCommandAutoCompleteResolver autoCompleteResolver;
-    private NCommandHistory commandHistory;
+    private NCmdLineAutoCompleteResolver autoCompleteResolver;
+    private NCmdLineHistory commandHistory;
     private String commandHighlighter;
 
     public NJLineTerminal() {
@@ -258,8 +258,8 @@ public class NJLineTerminal extends NSystemTerminalBaseImpl {
         try {
             prepare(session);
         } catch (Exception ex) {
-            NLogger.of(NJLineTerminal.class, session)
-                    .with().level(Level.FINEST).verb(NLoggerVerb.FAIL).error(ex)
+            NLog.of(NJLineTerminal.class, session)
+                    .with().level(Level.FINEST).verb(NLogVerb.FAIL).error(ex)
                     .log(NMsg.ofPlain("unable to create NutsJLineTerminal. ignored."));
             return NO_SUPPORT;
         }
@@ -316,7 +316,7 @@ public class NJLineTerminal extends NSystemTerminalBaseImpl {
     }
 
     @Override
-    public NCommandAutoCompleteResolver getAutoCompleteResolver() {
+    public NCmdLineAutoCompleteResolver getAutoCompleteResolver() {
         return autoCompleteResolver;
     }
 
@@ -326,18 +326,18 @@ public class NJLineTerminal extends NSystemTerminalBaseImpl {
     }
 
     @Override
-    public NJLineTerminal setCommandAutoCompleteResolver(NCommandAutoCompleteResolver autoCompleteResolver) {
+    public NJLineTerminal setCommandAutoCompleteResolver(NCmdLineAutoCompleteResolver autoCompleteResolver) {
         this.autoCompleteResolver = autoCompleteResolver;
         return this;
     }
 
     @Override
-    public NCommandHistory getCommandHistory() {
+    public NCmdLineHistory getCommandHistory() {
         return commandHistory;
     }
 
     @Override
-    public NSystemTerminalBase setCommandHistory(NCommandHistory history) {
+    public NSystemTerminalBase setCommandHistory(NCmdLineHistory history) {
         this.commandHistory = history;
         return this;
     }

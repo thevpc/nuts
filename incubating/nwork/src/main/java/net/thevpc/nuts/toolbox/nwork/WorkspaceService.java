@@ -3,7 +3,7 @@ package net.thevpc.nuts.toolbox.nwork;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.cmdline.NArg;
 import net.thevpc.nuts.cmdline.NArgName;
-import net.thevpc.nuts.cmdline.NCommandLine;
+import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.elem.NElements;
 import net.thevpc.nuts.format.NObjectFormat;
 import net.thevpc.nuts.io.NPath;
@@ -137,7 +137,7 @@ public class WorkspaceService {
         }
     }
 
-    public void enableScan(NCommandLine commandLine, NApplicationContext context, boolean enable) {
+    public void enableScan(NCmdLine commandLine, NApplicationContext context, boolean enable) {
         NSession session = context.getSession();
         int count = 0;
         while (commandLine.hasNext()) {
@@ -157,7 +157,7 @@ public class WorkspaceService {
         }
     }
 
-    public void list(NCommandLine cmd, NApplicationContext appContext) {
+    public void list(NCmdLine cmd, NApplicationContext appContext) {
         NSession session = appContext.getSession();
         NArg a;
         List<String> filters = new ArrayList<>();
@@ -207,7 +207,7 @@ public class WorkspaceService {
                 .append(p2.getPath(), NTextStyle.path());
     }
 
-    public void scan(NCommandLine cmdLine, NApplicationContext context) {
+    public void scan(NCmdLine cmdLine, NApplicationContext context) {
         NSession session = context.getSession();
         boolean interactive = false;
         NArg a;
@@ -243,7 +243,7 @@ public class WorkspaceService {
         }
     }
 
-    public void find(NCommandLine cmdLine, NApplicationContext context) {
+    public void find(NCmdLine cmdLine, NApplicationContext context) {
         NArg a;
         NSession session = context.getSession();
         List<File> toScan = new ArrayList<>();
@@ -267,9 +267,9 @@ public class WorkspaceService {
         }
     }
 
-    public void push(NCommandLine commandLine, NApplicationContext appContext) {
+    public void push(NCmdLine commandLine, NApplicationContext appContext) {
         commandLine.setCommandName("nwork push");
-        //rsync /home/vpc/.m2/repository/net/thevpc/nuts/nuts/0.8.4/*  vpc@thevpc.net:/home/vpc/.m2/repository/net/thevpc/nuts/nuts/0.8.4/
+        //rsync /home/me/.m2/repository/net/thevpc/nuts/nuts/0.8.4/*  vpc@thevpc.net:/home/me/.m2/repository/net/thevpc/nuts/nuts/0.8.4/
         List<NId> idsToPush = new ArrayList<>();
         NRef<String> remoteServer = NRef.ofNull(String.class);
         NRef<String> remoteUser = NRef.ofNull(String.class);
@@ -310,7 +310,7 @@ public class WorkspaceService {
         }
     }
 
-    public void status(NCommandLine cmd, NApplicationContext appContext) {
+    public void status(NCmdLine cmd, NApplicationContext appContext) {
         NSession session = appContext.getSession();
         boolean progress = true;
         boolean verbose = false;
@@ -811,7 +811,7 @@ public class WorkspaceService {
         return scan;
     }
 
-    public int setWorkspaceConfigParam(NCommandLine cmd, NApplicationContext appContext) {
+    public int setWorkspaceConfigParam(NCmdLine cmd, NApplicationContext appContext) {
         NSession session = appContext.getSession();
         NArg a;
         while (cmd.hasNext()) {

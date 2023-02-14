@@ -53,7 +53,7 @@ public class NCachedRepository extends AbstractNRepositoryBase {
     protected final NRepositoryFolderHelper lib;
     protected final NRepositoryFolderHelper cache;
     private final NRepositoryMirroringHelper mirroring;
-    public NLogger LOG;
+    public NLog LOG;
 
     public NCachedRepository(NAddRepositoryOptions options, NSession session, NRepository parent, NSpeedQualifier speed, boolean supportedMirroring, String repositoryType, boolean supportsDeploy) {
         super(options, session, parent, speed, supportedMirroring, repositoryType,supportsDeploy);
@@ -66,13 +66,13 @@ public class NCachedRepository extends AbstractNRepositoryBase {
         mirroring = new NRepositoryMirroringHelper(this, cache);
     }
 
-    protected NLoggerOp _LOGOP(NSession session) {
+    protected NLogOp _LOGOP(NSession session) {
         return _LOG(session).with().session(session);
     }
 
-    protected NLogger _LOG(NSession session) {
+    protected NLog _LOG(NSession session) {
         if (LOG == null) {
-            LOG = NLogger.of(NCachedRepository.class, session);
+            LOG = NLog.of(NCachedRepository.class, session);
         }
         return LOG;
     }
@@ -192,7 +192,7 @@ public class NCachedRepository extends AbstractNRepositoryBase {
         } catch (NNotFoundException ex) {
             //ignore error
         } catch (Exception ex) {
-            _LOGOP(session).level(Level.FINEST).verb(NLoggerVerb.FAIL).error(ex)
+            _LOGOP(session).level(Level.FINEST).verb(NLogVerb.FAIL).error(ex)
                     .log(NMsg.ofJ("search versions error : {0}", ex));
             //ignore....
         }

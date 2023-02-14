@@ -11,9 +11,9 @@ import net.thevpc.nuts.*;
 import net.thevpc.nuts.format.NPositionType;
 import net.thevpc.nuts.runtime.standalone.repository.impl.NRepositoryExt;
 import net.thevpc.nuts.runtime.standalone.session.NSessionUtils;
-import net.thevpc.nuts.util.NLogger;
-import net.thevpc.nuts.util.NLoggerOp;
-import net.thevpc.nuts.util.NLoggerVerb;
+import net.thevpc.nuts.util.NLog;
+import net.thevpc.nuts.util.NLogOp;
+import net.thevpc.nuts.util.NLogVerb;
 import net.thevpc.nuts.spi.NRepositoryUndeployCommand;
 import net.thevpc.nuts.util.NStringUtils;
 
@@ -23,7 +23,7 @@ import net.thevpc.nuts.util.NStringUtils;
  */
 public class DefaultNRepositoryUndeployCommand extends AbstractNRepositoryUndeployCommand {
 
-    private NLogger LOG;
+    private NLog LOG;
 
     public DefaultNRepositoryUndeployCommand(NRepository repo) {
         super(repo);
@@ -33,13 +33,13 @@ public class DefaultNRepositoryUndeployCommand extends AbstractNRepositoryUndepl
         super(null);
     }
 
-    protected NLoggerOp _LOGOP(NSession session) {
+    protected NLogOp _LOGOP(NSession session) {
         return _LOG(session).with().session(session);
     }
 
-    protected NLogger _LOG(NSession session) {
+    protected NLog _LOG(NSession session) {
         if (LOG == null) {
-            LOG = NLogger.of(DefaultNRepositoryUndeployCommand.class,session);
+            LOG = NLog.of(DefaultNRepositoryUndeployCommand.class,session);
         }
         return LOG;
     }
@@ -56,14 +56,14 @@ public class DefaultNRepositoryUndeployCommand extends AbstractNRepositoryUndepl
                 try {
                     xrepo.getIndexStore().invalidate(this.getId(), session);
                 } catch (NException ex) {
-                    _LOGOP(session).level(Level.FINEST).verb(NLoggerVerb.FAIL).log(
+                    _LOGOP(session).level(Level.FINEST).verb(NLogVerb.FAIL).log(
                             NMsg.ofJ("error invalidating Indexer for {0} : {1}", getRepo().getName(), ex));
                 }
             }
-            _LOGOP(session).level(Level.FINEST).verb(NLoggerVerb.SUCCESS)
+            _LOGOP(session).level(Level.FINEST).verb(NLogVerb.SUCCESS)
                     .log(NMsg.ofJ("{0} undeploy {1}", NStringUtils.formatAlign(getRepo().getName(), 20, NPositionType.FIRST), this.getId()));
         } catch (RuntimeException ex) {
-            _LOGOP(session).level(Level.FINEST).verb(NLoggerVerb.FAIL)
+            _LOGOP(session).level(Level.FINEST).verb(NLogVerb.FAIL)
                     .log(NMsg.ofJ("{0} undeploy {1}", NStringUtils.formatAlign(getRepo().getName(), 20, NPositionType.FIRST), this.getId()));
         }
         return this;

@@ -25,7 +25,7 @@
  */
 package net.thevpc.nuts;
 
-import net.thevpc.nuts.cmdline.NCommandLine;
+import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.io.NTerminalMode;
 import net.thevpc.nuts.util.NLogConfig;
 
@@ -662,8 +662,8 @@ public interface NWorkspaceOptions extends Serializable {
     NWorkspaceOptionsBuilder builder();
     NWorkspaceOptions readOnly();
 
-    NCommandLine toCommandLine();
-    NCommandLine toCommandLine(NWorkspaceOptionsConfig config);
+    NCmdLine toCommandLine();
+    NCmdLine toCommandLine(NWorkspaceOptionsConfig config);
 
 
 }

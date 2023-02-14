@@ -703,7 +703,7 @@ public class NPomXmlParser {
         } catch (IOException ex) {
             throw new NIOException(session, ex);
         } catch (SAXException ex) {
-            throw new NParseException(session, NMsg.ofPlain("parse problem"), ex);
+            throw new NParseException(session, NMsg.ofC("error parsing %s", stream), ex);
         }
     }
 

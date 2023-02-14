@@ -26,8 +26,8 @@
 package net.thevpc.nuts.runtime.standalone.format;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.cmdline.NCommandLine;
-import net.thevpc.nuts.cmdline.NCommandLineConfigurable;
+import net.thevpc.nuts.cmdline.NCmdLine;
+import net.thevpc.nuts.cmdline.NCmdLineConfigurable;
 import net.thevpc.nuts.format.NIterableFormat;
 import net.thevpc.nuts.io.NPrintStream;
 import net.thevpc.nuts.runtime.standalone.util.NConfigurableHelper;
@@ -71,13 +71,13 @@ public abstract class DefaultSearchFormatBase implements NIterableFormat {
      * @return {@code this} instance
      */
     @Override
-    public boolean configure(boolean skipUnsupported, NCommandLine commandLine) {
+    public boolean configure(boolean skipUnsupported, NCmdLine commandLine) {
         return NConfigurableHelper.configure(this, getSession(), skipUnsupported, commandLine);
     }
 
     /**
      * configure the current command with the given arguments. This is an
-     * override of the {@link NCommandLineConfigurable#configure(boolean, java.lang.String...) }
+     * override of the {@link NCmdLineConfigurable#configure(boolean, java.lang.String...) }
      * to help return a more specific return type;
      *
      * @param args argument to configure with
@@ -101,7 +101,7 @@ public abstract class DefaultSearchFormatBase implements NIterableFormat {
     }
 
     @Override
-    public void configureLast(NCommandLine commandLine) {
+    public void configureLast(NCmdLine commandLine) {
         if (!configureFirst(commandLine)) {
             commandLine.throwUnexpectedArgument();
         }

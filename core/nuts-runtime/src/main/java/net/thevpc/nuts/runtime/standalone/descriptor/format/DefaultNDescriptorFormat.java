@@ -1,7 +1,7 @@
 package net.thevpc.nuts.runtime.standalone.descriptor.format;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.cmdline.NCommandLine;
+import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.elem.NElements;
 import net.thevpc.nuts.io.NPrintStream;
 import net.thevpc.nuts.runtime.standalone.format.DefaultFormatBase;
@@ -60,7 +60,7 @@ public class DefaultNDescriptorFormat extends DefaultFormatBase<NDescriptorForma
     }
 
     @Override
-    public boolean configureFirst(NCommandLine cmd) {
+    public boolean configureFirst(NCmdLine cmd) {
         return false;
     }
 

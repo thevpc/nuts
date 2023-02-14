@@ -6,12 +6,10 @@
 package net.thevpc.nuts.toolbox.ndb.sql.postgres;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.cmdline.NCommandLine;
+import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.io.NPathOption;
-import net.thevpc.nuts.toolbox.ndb.NdbConfig;
 import net.thevpc.nuts.toolbox.ndb.base.CmdRedirect;
-import net.thevpc.nuts.toolbox.ndb.base.cmd.CopyDBCmd;
 import net.thevpc.nuts.toolbox.ndb.sql.postgres.cmd.PostgresDumpCmd;
 import net.thevpc.nuts.toolbox.ndb.sql.postgres.cmd.PostgresRestoreCmd;
 import net.thevpc.nuts.toolbox.ndb.sql.postgres.cmd.PostgresShowDatabasesCmd;
@@ -97,7 +95,7 @@ public class NPostgresSupport extends SqlSupport<NPostgresConfig> {
 
     public CmdRedirect createDumpCommand(NPath remoteSql, NPostgresConfig options, NSession session) {
         return new CmdRedirect(
-                NCommandLine.of(
+                NCmdLine.of(
                         new String[]{
                                 "pg_dump",
                                 options.getDatabaseName(),
@@ -114,11 +112,23 @@ public class NPostgresSupport extends SqlSupport<NPostgresConfig> {
 
 
     public CmdRedirect createRestoreCommand(NPath remoteSql, NPostgresConfig options, NSession session) {
+//        return new CmdRedirect(
+//                NCmdLine.of(
+//                        new String[]{
+//                                "pg_restore",
+//                                options.getDatabaseName(),
+//                                "--host=" + options.getHost(),
+//                                "--port=" + options.getPort(),
+//                                "--username=" + options.getUser()
+//                        }
+//                )
+//                , remoteSql
+//        );
         return new CmdRedirect(
-                NCommandLine.of(
+                NCmdLine.of(
                         new String[]{
-                                "pg_restore",
-                                options.getDatabaseName(),
+                                "psql",
+                                "-d",options.getDatabaseName(),
                                 "--host=" + options.getHost(),
                                 "--port=" + options.getPort(),
                                 "--username=" + options.getUser()

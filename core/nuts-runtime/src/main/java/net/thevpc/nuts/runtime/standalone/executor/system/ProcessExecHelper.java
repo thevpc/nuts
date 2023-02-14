@@ -1,7 +1,7 @@
 package net.thevpc.nuts.runtime.standalone.executor.system;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.cmdline.NCommandLine;
+import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.io.*;
 import net.thevpc.nuts.runtime.standalone.executor.AbstractSyncIProcessExecHelper;
 import net.thevpc.nuts.runtime.standalone.util.CoreNUtils;
@@ -14,8 +14,8 @@ import net.thevpc.nuts.runtime.standalone.xtra.expr.StringPlaceHolderParser;
 import net.thevpc.nuts.text.NTerminalCommand;
 import net.thevpc.nuts.text.NTextStyle;
 import net.thevpc.nuts.text.NTexts;
-import net.thevpc.nuts.util.NLogger;
-import net.thevpc.nuts.util.NLoggerVerb;
+import net.thevpc.nuts.util.NLog;
+import net.thevpc.nuts.util.NLogVerb;
 import net.thevpc.nuts.util.NStringUtils;
 
 import java.io.File;
@@ -111,9 +111,9 @@ public class ProcessExecHelper extends AbstractSyncIProcessExecHelper {
             }
         }
 
-        NLogger _LL = NLogger.of(NWorkspaceUtils.class, session);
+        NLog _LL = NLog.of(NWorkspaceUtils.class, session);
         if (_LL.isLoggable(Level.FINEST)) {
-            _LL.with().level(Level.FINE).verb(NLoggerVerb.START).log(
+            _LL.with().level(Level.FINE).verb(NLogVerb.START).log(
                     NMsg.ofJ("[exec] {0}",
                             NTexts.of(session).ofCode("system",
                                     pb.getCommandString()
@@ -222,7 +222,7 @@ public class ProcessExecHelper extends AbstractSyncIProcessExecHelper {
         for (String arg : args) {
             String s = NStringUtils.trim(StringPlaceHolderParser.replaceDollarPlaceHolders(arg, mapper));
             if (s.startsWith("<::expand::>")) {
-                Collections.addAll(args2, NCommandLine.of(s, NShellFamily.BASH, session).setExpandSimpleOptions(false).toStringArray());
+                Collections.addAll(args2, NCmdLine.of(s, NShellFamily.BASH, session).setExpandSimpleOptions(false).toStringArray());
             } else {
                 args2.add(s);
             }

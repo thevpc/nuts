@@ -7,7 +7,7 @@ package net.thevpc.nuts.runtime.standalone.format.plain;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.cmdline.NArg;
-import net.thevpc.nuts.cmdline.NCommandLine;
+import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.elem.NArrayElement;
 import net.thevpc.nuts.elem.NElement;
 import net.thevpc.nuts.elem.NElements;
@@ -55,7 +55,7 @@ public class NFormatPlain extends DefaultFormatBase<NContentTypeFormat> implemen
     }
 
     @Override
-    public boolean configureFirst(NCommandLine commandLine) {
+    public boolean configureFirst(NCmdLine commandLine) {
         NSession session = getSession();
         NArg n = commandLine.peek().orNull();
         if (n != null) {

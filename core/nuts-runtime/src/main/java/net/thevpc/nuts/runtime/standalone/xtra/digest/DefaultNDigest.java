@@ -26,7 +26,7 @@
 package net.thevpc.nuts.runtime.standalone.xtra.digest;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.cmdline.NCommandLine;
+import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.io.*;
 import net.thevpc.nuts.runtime.standalone.session.NSessionUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceUtils;
@@ -252,7 +252,7 @@ public class DefaultNDigest implements NDigest {
                 }
 
                 @Override
-                public boolean configureFirst(NCommandLine commandLine) {
+                public boolean configureFirst(NCmdLine commandLine) {
                     return false;
                 }
             });

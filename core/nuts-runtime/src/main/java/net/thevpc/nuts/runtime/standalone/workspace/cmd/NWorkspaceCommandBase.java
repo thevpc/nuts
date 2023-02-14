@@ -7,14 +7,14 @@ package net.thevpc.nuts.runtime.standalone.workspace.cmd;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.cmdline.NArg;
-import net.thevpc.nuts.cmdline.NCommandLine;
-import net.thevpc.nuts.cmdline.NCommandLineConfigurable;
+import net.thevpc.nuts.cmdline.NCmdLine;
+import net.thevpc.nuts.cmdline.NCmdLineConfigurable;
 import net.thevpc.nuts.runtime.standalone.session.NSessionUtils;
 import net.thevpc.nuts.runtime.standalone.util.NConfigurableHelper;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceUtils;
 import net.thevpc.nuts.spi.NSupportLevelContext;
-import net.thevpc.nuts.util.NLogger;
-import net.thevpc.nuts.util.NLoggerOp;
+import net.thevpc.nuts.util.NLog;
+import net.thevpc.nuts.util.NLogOp;
 
 /**
  * @param <T> Type
@@ -25,7 +25,7 @@ public abstract class NWorkspaceCommandBase<T extends NWorkspaceCommand> impleme
     protected NWorkspace ws;
     protected NSession session;
     private final String commandName;
-    private NLogger LOG;
+    private NLog LOG;
 //    protected final NutsLogger LOG;
 
     public NWorkspaceCommandBase(NSession session, String commandName) {
@@ -40,13 +40,13 @@ public abstract class NWorkspaceCommandBase<T extends NWorkspaceCommand> impleme
         return DEFAULT_SUPPORT;
     }
 
-    protected NLoggerOp _LOGOP(NSession session) {
+    protected NLogOp _LOGOP(NSession session) {
         return _LOG(session).with().session(session);
     }
 
-    protected NLogger _LOG(NSession session) {
+    protected NLog _LOG(NSession session) {
         if (LOG == null) {
-            LOG = NLogger.of(getClass(), session);
+            LOG = NLog.of(getClass(), session);
         }
         return LOG;
     }
@@ -107,7 +107,7 @@ public abstract class NWorkspaceCommandBase<T extends NWorkspaceCommand> impleme
     }
 
     @Override
-    public boolean configureFirst(NCommandLine cmdLine) {
+    public boolean configureFirst(NCmdLine cmdLine) {
         checkSession();
         NArg a = cmdLine.peek().orNull();
         if (a == null) {
@@ -124,7 +124,7 @@ public abstract class NWorkspaceCommandBase<T extends NWorkspaceCommand> impleme
 
     /**
      * configure the current command with the given arguments. This is an
-     * override of the {@link NCommandLineConfigurable#configure(boolean, java.lang.String...)
+     * override of the {@link NCmdLineConfigurable#configure(boolean, java.lang.String...)
      * }
      * to help return a more specific return type;
      *
@@ -146,14 +146,14 @@ public abstract class NWorkspaceCommandBase<T extends NWorkspaceCommand> impleme
      * @return {@code this} instance
      */
     @Override
-    public boolean configure(boolean skipUnsupported, NCommandLine commandLine) {
+    public boolean configure(boolean skipUnsupported, NCmdLine commandLine) {
         checkSession();
         return NConfigurableHelper.configure(this, getSession(), skipUnsupported, commandLine);
     }
 
 
     @Override
-    public void configureLast(NCommandLine commandLine) {
+    public void configureLast(NCmdLine commandLine) {
         if (!configureFirst(commandLine)) {
             commandLine.throwUnexpectedArgument();
         }

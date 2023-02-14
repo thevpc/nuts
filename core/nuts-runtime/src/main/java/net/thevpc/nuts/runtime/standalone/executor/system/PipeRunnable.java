@@ -23,8 +23,8 @@
  */
 package net.thevpc.nuts.runtime.standalone.executor.system;
 
-import net.thevpc.nuts.util.NLoggerVerb;
-import net.thevpc.nuts.util.NLoggerOp;
+import net.thevpc.nuts.util.NLogVerb;
+import net.thevpc.nuts.util.NLogOp;
 import net.thevpc.nuts.NMsg;
 import net.thevpc.nuts.NSession;
 import net.thevpc.nuts.runtime.standalone.io.util.NonBlockingInputStream;
@@ -100,10 +100,10 @@ public class PipeRunnable implements Runnable, StopMonitor {
                     return true;
                 }
             } catch (Exception ex) {
-                NLoggerOp.of(PipeRunnable.class, session)
+                NLogOp.of(PipeRunnable.class, session)
                         .error(ex)
                         .level(Level.FINEST)
-                        .verb(NLoggerVerb.WARNING)
+                        .verb(NLogVerb.WARNING)
                         .log(NMsg.ofJ("pipe-thread exits with error: {0}", ex));
                 markAsEffectivelyStopped();
             }

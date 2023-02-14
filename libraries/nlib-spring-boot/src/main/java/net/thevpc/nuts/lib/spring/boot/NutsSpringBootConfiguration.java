@@ -1,7 +1,7 @@
 package net.thevpc.nuts.lib.spring.boot;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.cmdline.NCommandLine;
+import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.io.NPrintStream;
 import net.thevpc.nuts.io.NSessionTerminal;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -68,7 +68,7 @@ public class NutsSpringBootConfiguration {
     @Bean
     NApplicationContext nutsAppContext(ApplicationArguments applicationArguments) {
         return NApplications.createApplicationContext(nutsApplication(),
-                NCommandLine.parseDefault(env.getProperty("nuts.args")).get().toStringArray(),
+                NCmdLine.parseDefault(env.getProperty("nuts.args")).get().toStringArray(),
                 applicationArguments.getSourceArgs(),
                 null
         );

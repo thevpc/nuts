@@ -56,7 +56,7 @@ public class DefaultNApplicationExceptionHandler implements NApplicationExceptio
                 fm = NMsg.ofStyled(m, NTextStyle.error());
             }
         } catch (Exception ex2) {
-            NLoggerOp.of(NApplications.class, session).level(Level.FINE).error(ex2).log(
+            NLogOp.of(NApplications.class, session).level(Level.FINE).error(ex2).log(
                     NMsg.ofPlain("unable to get system terminal")
             );
         }

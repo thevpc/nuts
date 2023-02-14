@@ -2,7 +2,7 @@ package net.thevpc.nuts.toolbox.ntomcat.util;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.cmdline.NArg;
-import net.thevpc.nuts.cmdline.NCommandLine;
+import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.io.NPsInfo;
 
@@ -18,7 +18,7 @@ public class RunningTomcat {
     public RunningTomcat(NPsInfo r, NSession session) {
         pid =r.getPid();
         argsLine=r.getCommandLine();
-        NCommandLine cmdline = NCommandLine.parseSystem(r.getCommandLine(),session)
+        NCmdLine cmdline = NCmdLine.parseSystem(r.getCommandLine(),session)
                 .get(session).setExpandSimpleOptions(false);
         NArg a=null;
         while(cmdline.hasNext()){

@@ -29,7 +29,7 @@ package net.thevpc.nuts.format;
 import net.thevpc.nuts.NContentTypeFormat;
 import net.thevpc.nuts.NExtensions;
 import net.thevpc.nuts.NSession;
-import net.thevpc.nuts.cmdline.NCommandLineConfigurable;
+import net.thevpc.nuts.cmdline.NCmdLineConfigurable;
 
 /**
  * Object format is responsible of formatting to terminal
@@ -71,7 +71,7 @@ public interface NObjectFormat extends NContentTypeFormat {
 
     /**
      * configure the current command with the given arguments. This is an
-     * override of the {@link NCommandLineConfigurable#configure(boolean, java.lang.String...) }
+     * override of the {@link NCmdLineConfigurable#configure(boolean, java.lang.String...) }
      * to help return a more specific return type;
      *
      * @param skipUnsupported when true, all unsupported options are skipped

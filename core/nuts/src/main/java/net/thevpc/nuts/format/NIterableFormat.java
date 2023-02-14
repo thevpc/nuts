@@ -26,7 +26,7 @@
 package net.thevpc.nuts.format;
 
 import net.thevpc.nuts.NContentType;
-import net.thevpc.nuts.cmdline.NCommandLineConfigurable;
+import net.thevpc.nuts.cmdline.NCmdLineConfigurable;
 
 /**
  * This interface handles formatting of iterable items in Search.
@@ -35,7 +35,7 @@ import net.thevpc.nuts.cmdline.NCommandLineConfigurable;
  * @app.category Format
  * @since 0.5.5
  */
-public interface NIterableFormat extends NCommandLineConfigurable {
+public interface NIterableFormat extends NCmdLineConfigurable {
 
     /**
      * Current output format
@@ -46,7 +46,7 @@ public interface NIterableFormat extends NCommandLineConfigurable {
 
     /**
      * configure the current command with the given arguments. This is an
-     * override of the {@link NCommandLineConfigurable#configure(boolean, java.lang.String...) }
+     * override of the {@link NCmdLineConfigurable#configure(boolean, java.lang.String...) }
      * to help return a more specific return type;
      *
      * @param args argument to configure with

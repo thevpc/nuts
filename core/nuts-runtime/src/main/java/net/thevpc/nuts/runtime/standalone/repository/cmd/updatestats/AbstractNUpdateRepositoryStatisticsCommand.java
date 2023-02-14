@@ -6,7 +6,7 @@
 package net.thevpc.nuts.runtime.standalone.repository.cmd.updatestats;
 
 import net.thevpc.nuts.cmdline.NArg;
-import net.thevpc.nuts.cmdline.NCommandLine;
+import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.NRepository;
 import net.thevpc.nuts.runtime.standalone.repository.cmd.NRepositoryCommandBase;
 import net.thevpc.nuts.spi.NUpdateRepositoryStatisticsCommand;
@@ -26,7 +26,7 @@ public abstract class AbstractNUpdateRepositoryStatisticsCommand extends NReposi
     }
 
     @Override
-    public boolean configureFirst(NCommandLine cmdLine) {
+    public boolean configureFirst(NCmdLine cmdLine) {
         NArg a = cmdLine.peek().orNull();
         if (a == null) {
             return false;

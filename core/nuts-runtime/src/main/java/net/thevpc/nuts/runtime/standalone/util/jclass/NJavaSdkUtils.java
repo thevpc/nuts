@@ -30,7 +30,7 @@ import java.util.logging.Level;
 public class NJavaSdkUtils {
 
     private final NWorkspace ws;
-    private NLogger LOG;
+    private NLog LOG;
 
     private NJavaSdkUtils(NWorkspace ws) {
         this.ws = ws;
@@ -87,13 +87,13 @@ public class NJavaSdkUtils {
         }
     }
 
-    protected NLoggerOp _LOGOP(NSession session) {
+    protected NLogOp _LOGOP(NSession session) {
         return _LOG(session).with().session(session);
     }
 
-    protected NLogger _LOG(NSession session) {
+    protected NLog _LOG(NSession session) {
         if (LOG == null) {
-            LOG = NLogger.of(NJavaSdkUtils.class, session);
+            LOG = NLog.of(NJavaSdkUtils.class, session);
         }
         return LOG;
     }
@@ -133,10 +133,10 @@ public class NJavaSdkUtils {
             }
             if (bestJava == null) {
                 if (!NBlankable.isBlank(requestedJavaVersion)) {
-                    _LOGOP(session).level(Level.FINE).verb(NLoggerVerb.WARNING)
+                    _LOGOP(session).level(Level.FINE).verb(NLogVerb.WARNING)
                             .log(NMsg.ofJ("no valid JRE found. recommended {0} . Using default java.home at {1}", requestedJavaVersion, System.getProperty("java.home")));
                 } else {
-                    _LOGOP(session).level(Level.FINE).verb(NLoggerVerb.WARNING)
+                    _LOGOP(session).level(Level.FINE).verb(NLogVerb.WARNING)
                             .log(NMsg.ofJ("no valid JRE found. Using default java.home at {0}", System.getProperty("java.home")));
                 }
                 bestJava = current;
@@ -145,7 +145,7 @@ public class NJavaSdkUtils {
         if (requestedVersionFilter.acceptVersion(NVersion.of(bestJava.getVersion()).get( session), session)) {
             return bestJava;
         }
-        _LOGOP(session).level(Level.FINE).verb(NLoggerVerb.WARNING)
+        _LOGOP(session).level(Level.FINE).verb(NLogVerb.WARNING)
                 .log(NMsg.ofJ("no valid JRE found for version {0}", _requestedJavaVersion));
         return null;
     }
@@ -329,7 +329,7 @@ public class NJavaSdkUtils {
                 if (cmdOutputString.length() > 0) {
                     break;
                 } else {
-                    _LOGOP(session).level(i == (MAX_ITER - 1) ? Level.WARNING : Level.FINER).verb(NLoggerVerb.WARNING)
+                    _LOGOP(session).level(i == (MAX_ITER - 1) ? Level.WARNING : Level.FINER).verb(NLogVerb.WARNING)
                             .log(NMsg.ofJ("unable to execute {0}. returned empty string ({1}/{2})", javaExePath, i + 1, MAX_ITER));
                 }
             }
@@ -360,12 +360,12 @@ public class NJavaSdkUtils {
             }
         } catch (Exception ex) {
             loggedError = true;
-            _LOGOP(session).error(ex).level(Level.SEVERE).verb(NLoggerVerb.WARNING)
+            _LOGOP(session).error(ex).level(Level.SEVERE).verb(NLogVerb.WARNING)
                     .log(NMsg.ofJ("unable to execute {0}. JDK Home ignored", javaExePath));
         }
         if (jdkVersion == null) {
             if (!loggedError) {
-                _LOGOP(session).level(Level.SEVERE).verb(NLoggerVerb.WARNING)
+                _LOGOP(session).level(Level.SEVERE).verb(NLogVerb.WARNING)
                         .log(NMsg.ofJ("execute {0} failed with result code {1} and result string \"{2}\". JDK Home ignored", javaExePath.toString(), cmdRresult, cmdOutputString));
             }
             return null;

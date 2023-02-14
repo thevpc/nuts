@@ -1,7 +1,7 @@
 package net.thevpc.nuts.runtime.standalone.executor.exec;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.cmdline.NCommandLine;
+import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.concurrent.NScheduler;
 import net.thevpc.nuts.io.*;
 import net.thevpc.nuts.runtime.standalone.app.cmdline.NCommandLineUtils;
@@ -10,8 +10,8 @@ import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceUtils;
 import net.thevpc.nuts.text.NTerminalCommand;
 import net.thevpc.nuts.text.NTextStyle;
 import net.thevpc.nuts.text.NTexts;
-import net.thevpc.nuts.util.NLogger;
-import net.thevpc.nuts.util.NLoggerVerb;
+import net.thevpc.nuts.util.NLog;
+import net.thevpc.nuts.util.NLogVerb;
 
 import java.io.File;
 import java.io.InputStream;
@@ -92,10 +92,10 @@ public class NExecHelper extends AbstractSyncIProcessExecHelper {
 //            }
 //        }
 
-        NLogger _LL = NLogger.of(NWorkspaceUtils.class, session);
-        NCommandLine commandOut = NCommandLine.of(pb.getCommand());
+        NLog _LL = NLog.of(NWorkspaceUtils.class, session);
+        NCmdLine commandOut = NCmdLine.of(pb.getCommand());
         if (_LL.isLoggable(Level.FINEST)) {
-            _LL.with().level(Level.FINE).verb(NLoggerVerb.START).log(
+            _LL.with().level(Level.FINE).verb(NLogVerb.START).log(
                     NMsg.ofJ("[exec] {0}",
                             commandOut
                     ));

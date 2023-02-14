@@ -9,7 +9,7 @@ import net.thevpc.nuts.NConfigs;
 import net.thevpc.nuts.NImports;
 import net.thevpc.nuts.NMsg;
 import net.thevpc.nuts.cmdline.NArgName;
-import net.thevpc.nuts.cmdline.NCommandLine;
+import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.NSession;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.AbstractNSettingsSubCommand;
 
@@ -20,7 +20,7 @@ import net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.AbstractNSettin
 public class NSettingsImportSubCommand extends AbstractNSettingsSubCommand {
 
     @Override
-    public boolean exec(NCommandLine cmdLine, Boolean autoSave, NSession session) {
+    public boolean exec(NCmdLine cmdLine, Boolean autoSave, NSession session) {
         if (cmdLine.next("list imports", "li").isPresent()) {
             cmdLine.setCommandName("config list imports").throwUnexpectedArgument();
             if (cmdLine.isExecMode()) {

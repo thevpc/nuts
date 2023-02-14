@@ -40,9 +40,9 @@ import net.thevpc.nuts.runtime.standalone.workspace.config.NWorkspaceModel;
 import net.thevpc.nuts.spi.NDefaultTerminalSpec;
 import net.thevpc.nuts.spi.NSystemTerminalBase;
 import net.thevpc.nuts.spi.NTerminalSpec;
-import net.thevpc.nuts.util.NLogger;
-import net.thevpc.nuts.util.NLoggerOp;
-import net.thevpc.nuts.util.NLoggerVerb;
+import net.thevpc.nuts.util.NLog;
+import net.thevpc.nuts.util.NLogOp;
+import net.thevpc.nuts.util.NLogVerb;
 
 import java.io.InputStream;
 import java.io.PrintStream;
@@ -63,7 +63,7 @@ public class DefaultNBootModel implements NBootModel {
     protected NSession bootSession;
     private Map<String, NLiteral> customBootOptions;
     private NWorkspaceTerminalOptions bootTerminal;
-    private NLogger LOG;
+    private NLog LOG;
     private NSystemTerminal systemTerminal;
 
     public DefaultNBootModel(NWorkspace workspace) {
@@ -203,13 +203,13 @@ public class DefaultNBootModel implements NBootModel {
         return NutsSystemTerminal_of_NutsSystemTerminalBase(termb, session);
     }
 
-    protected NLoggerOp _LOGOP(NSession session) {
+    protected NLogOp _LOGOP(NSession session) {
         return _LOG(session).with().session(session);
     }
 
-    protected NLogger _LOG(NSession session) {
+    protected NLog _LOG(NSession session) {
         if (LOG == null) {
-            LOG = NLogger.of(DefaultNBootModel.class, session);
+            LOG = NLog.of(DefaultNBootModel.class, session);
         }
         return LOG;
     }
@@ -230,14 +230,14 @@ public class DefaultNBootModel implements NBootModel {
                 );
                 setSystemTerminal(systemTerminal, session);
                 if (getSystemTerminal().isAutoCompleteSupported()) {
-                    _LOGOP(session).level(Level.FINE).verb(NLoggerVerb.SUCCESS)
+                    _LOGOP(session).level(Level.FINE).verb(NLogVerb.SUCCESS)
                             .log(NMsg.ofPlain("enable rich terminal"));
                 } else {
-                    _LOGOP(session).level(Level.FINE).verb(NLoggerVerb.FAIL)
+                    _LOGOP(session).level(Level.FINE).verb(NLogVerb.FAIL)
                             .log(NMsg.ofPlain("unable to enable rich terminal"));
                 }
             } else {
-                _LOGOP(session).level(Level.FINE).verb(NLoggerVerb.WARNING)
+                _LOGOP(session).level(Level.FINE).verb(NLogVerb.WARNING)
                         .log(NMsg.ofPlain("enableRichTerm discarded; next-term is excluded."));
             }
         }
@@ -255,7 +255,7 @@ public class DefaultNBootModel implements NBootModel {
                 syst = new DefaultSystemTerminal(terminal);
                 NSessionUtils.setSession(syst, session);
             } catch (Exception ex) {
-                _LOGOP(session).level(Level.FINEST).verb(NLoggerVerb.WARNING)
+                _LOGOP(session).level(Level.FINEST).verb(NLogVerb.WARNING)
                         .log(NMsg.ofJ("unable to create system terminal : {0}", ex));
                 DefaultNSystemTerminalBase b = new DefaultNSystemTerminalBase();
                 NSessionUtils.setSession(b, session);

@@ -25,7 +25,7 @@ package net.thevpc.nuts;
 
 import net.thevpc.nuts.boot.DefaultNWorkspaceOptionsBuilder;
 import net.thevpc.nuts.boot.NBootWorkspace;
-import net.thevpc.nuts.cmdline.NCommandLine;
+import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.reserved.NReservedBootLog;
 import net.thevpc.nuts.util.NApiUtils;
 import net.thevpc.nuts.util.NStringUtils;
@@ -133,8 +133,8 @@ public final class Nuts {
     public static NSession openInheritedWorkspace(NWorkspaceTerminalOptions term, String[] overriddenNutsArgs, String... appArgs) throws NUnsatisfiedRequirementsException {
         Instant startTime = Instant.now();
         List<String> nutsArgs = new ArrayList<>();
-        nutsArgs.addAll(NCommandLine.parseDefault(NStringUtils.trim(System.getProperty("nuts.boot.args"))).get().toStringList());
-        nutsArgs.addAll(NCommandLine.parseDefault(NStringUtils.trim(System.getProperty("nuts.args"))).get().toStringList());
+        nutsArgs.addAll(NCmdLine.parseDefault(NStringUtils.trim(System.getProperty("nuts.boot.args"))).get().toStringList());
+        nutsArgs.addAll(NCmdLine.parseDefault(NStringUtils.trim(System.getProperty("nuts.args"))).get().toStringList());
         if (overriddenNutsArgs != null) {
             nutsArgs.addAll(Arrays.asList(overriddenNutsArgs));
         }

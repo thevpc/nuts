@@ -13,8 +13,8 @@ import net.thevpc.nuts.text.NText;
 import net.thevpc.nuts.text.NTextBuilder;
 import net.thevpc.nuts.text.NTextStyle;
 import net.thevpc.nuts.text.NTexts;
-import net.thevpc.nuts.util.NLogger;
-import net.thevpc.nuts.util.NLoggerVerb;
+import net.thevpc.nuts.util.NLog;
+import net.thevpc.nuts.util.NLogVerb;
 import net.thevpc.nuts.util.NProgressEvent;
 import net.thevpc.nuts.util.NProgressListener;
 
@@ -32,7 +32,7 @@ public class TraceNProgressListener implements NProgressListener/*, NutsOutputSt
     private CProgressBar bar;
     private boolean optionsProcessed = false;
     private ProgressOptions options;
-    private NLogger logger;
+    private NLog logger;
 
     public TraceNProgressListener() {
 //        this.session = session;
@@ -44,7 +44,7 @@ public class TraceNProgressListener implements NProgressListener/*, NutsOutputSt
             case START: {
                 bar = CProgressBar.of(event.getSession());
                 this.out = event.getSession().getTerminal().err();
-                this.logger= NLogger.of(TraceNProgressListener.class,event.getSession());
+                this.logger= NLog.of(TraceNProgressListener.class,event.getSession());
                 if (event.getSession().isPlainOut()) {
                     onProgress0(event, false);
                 }
@@ -119,7 +119,7 @@ public class TraceNProgressListener implements NProgressListener/*, NutsOutputSt
             }
             if (armedLogLevel!=null && logger!=null) {
                 this.logger.with().level(armedLogLevel)
-                        .verb(NLoggerVerb.PROGRESS)
+                        .verb(NLogVerb.PROGRESS)
                         .log(NMsg.ofNtf(formattedLine.toString()));
             }else {
                 out.print(ff);

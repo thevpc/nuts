@@ -1,7 +1,7 @@
 package net.thevpc.nuts.toolbox.ntemplate.filetemplate;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.cmdline.NCommandLine;
+import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.toolbox.nsh.SimpleJShellBuiltin;
 import net.thevpc.nuts.toolbox.nsh.jshell.JShellExecutionContext;
 import net.thevpc.nuts.toolbox.ntemplate.filetemplate.util.StringUtils;
@@ -20,7 +20,7 @@ public class ProcessCmd extends SimpleJShellBuiltin {
     }
 
     @Override
-    protected boolean configureFirst(NCommandLine commandLine, JShellExecutionContext context) {
+    protected boolean configureFirst(NCmdLine commandLine, JShellExecutionContext context) {
         Options o = context.getOptions();
         NSession session = context.getSession();
         if (commandLine.isNonOption(0)) {
@@ -34,7 +34,7 @@ public class ProcessCmd extends SimpleJShellBuiltin {
     }
 
     @Override
-    protected void execBuiltin(NCommandLine commandLine, JShellExecutionContext context) {
+    protected void execBuiltin(NCmdLine commandLine, JShellExecutionContext context) {
         Options o = context.getOptions();
         if (o.args.size() == 0) {
             throw new NExecutionException(context.getSession(), NMsg.ofC("%s : invalid arguments count", getName()), 1);

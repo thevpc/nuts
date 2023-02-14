@@ -133,7 +133,7 @@ public class Test04_NTFTest {
                 "    ##:string0:\"lasModifiedDate\"##\u001E##:separator0::##\u001E ##:string0:\"2021-07-26T23:31:51.845Z\"##\u001E##:separator0:,##\u001E\n" +
                 "    ##:string0:\"createdDate\"##\u001E##:separator0::##\u001E ##:string0:\"2021-07-26T23:31:51.845Z\"##\u001E##:separator0:,##\u001E\n" +
                 "    ##:string0:\"installUser\"##\u001E##:separator0::##\u001E ##:string0:\"admin\"##\u001E##:separator0:,##\u001E\n" +
-                "    ##:string0:\"installFolder\"##\u001E##:separator0::##\u001E ##:string0:\"/home/vpc/.local/share/nuts/apps/default-workspace/id/com/github/vatbub/mslinks/1.0.5\"##\u001E##:separator0:,##\u001E\n" +
+                "    ##:string0:\"installFolder\"##\u001E##:separator0::##\u001E ##:string0:\"/home/me/.local/share/nuts/apps/default-workspace/id/com/github/vatbub/mslinks/1.0.5\"##\u001E##:separator0:,##\u001E\n" +
                 "    ##:string0:\"justInstalled\"##\u001E##:separator0::##\u001E ##:keyword0:false##\u001E##:separator0:,##\u001E\n" +
                 "    ##:string0:\"justRequired\"##\u001E##:separator0::##\u001E ##:keyword0:false##\u001E\n" +
                 "  ##:separator0:}##\u001E##:separator0:,##\u001E\n" +
@@ -183,7 +183,7 @@ public class Test04_NTFTest {
                 "    ##:string0:\"lasModifiedDate\"##\u001E##:separator0::##\u001E ##:string0:\"2021-07-27T08:59:44.780Z\"##\u001E##:separator0:,##\u001E\n" +
                 "    ##:string0:\"createdDate\"##\u001E##:separator0::##\u001E ##:string0:\"2021-07-27T08:59:44.780Z\"##\u001E##:separator0:,##\u001E\n" +
                 "    ##:string0:\"installUser\"##\u001E##:separator0::##\u001E ##:string0:\"admin\"##\u001E##:separator0:,##\u001E\n" +
-                "    ##:string0:\"installFolder\"##\u001E##:separator0::##\u001E ##:string0:\"/home/vpc/.local/share/nuts/apps/default-workspace/id/com/github/vatbub/mslinks/1.0.5\"##\u001E##:separator0:,##\u001E\n" +
+                "    ##:string0:\"installFolder\"##\u001E##:separator0::##\u001E ##:string0:\"/home/me/.local/share/nuts/apps/default-workspace/id/com/github/vatbub/mslinks/1.0.5\"##\u001E##:separator0:,##\u001E\n" +
                 "    ##:string0:\"justInstalled\"##\u001E##:separator0::##\u001E ##:keyword0:false##\u001E##:separator0:,##\u001E\n" +
                 "    ##:string0:\"justRequired\"##\u001E##:separator0::##\u001E ##:keyword0:false##\u001E\n" +
                 "  ##:separator0:}##\u001E##:separator0:,##\u001E\n" +

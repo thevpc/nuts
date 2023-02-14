@@ -20,9 +20,9 @@ import net.thevpc.nuts.runtime.standalone.util.CoreNUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.config.ConfigEventType;
 import net.thevpc.nuts.runtime.standalone.repository.impl.main.DefaultNInstalledRepository;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceUtils;
-import net.thevpc.nuts.util.NLogger;
-import net.thevpc.nuts.util.NLoggerOp;
-import net.thevpc.nuts.util.NLoggerVerb;
+import net.thevpc.nuts.util.NLog;
+import net.thevpc.nuts.util.NLogOp;
+import net.thevpc.nuts.util.NLogVerb;
 
 import java.io.IOException;
 import java.io.PrintStream;
@@ -37,20 +37,20 @@ public class DefaultNRepositoryModel {
 
     private final NRepositoryRegistryHelper repositoryRegistryHelper;
     private final NWorkspace workspace;
-    public NLogger LOG;
+    public NLog LOG;
 
     public DefaultNRepositoryModel(NWorkspace workspace) {
         this.workspace = workspace;
         repositoryRegistryHelper = new NRepositoryRegistryHelper(workspace);
     }
 
-    protected NLoggerOp _LOGOP(NSession session) {
+    protected NLogOp _LOGOP(NSession session) {
         return _LOG(session).with().session(session);
     }
 
-    protected NLogger _LOG(NSession session) {
+    protected NLog _LOG(NSession session) {
         if (LOG == null) {
-            LOG = NLogger.of(DefaultNRepositoryModel.class, session);
+            LOG = NLog.of(DefaultNRepositoryModel.class, session);
         }
         return LOG;
     }
@@ -376,7 +376,7 @@ public class DefaultNRepositoryModel {
             throw new NIOException(session, NMsg.ofC("error loading repository %s", file), ex);
         }
         String fileName = "nuts-repository" + (name == null ? "" : ("-") + name) + (uuid == null ? "" : ("-") + uuid) + "-" + Instant.now().toString();
-        LOG.with().session(session).level(Level.SEVERE).verb(NLoggerVerb.FAIL).log(
+        LOG.with().session(session).level(Level.SEVERE).verb(NLogVerb.FAIL).log(
                 NMsg.ofJ("erroneous repository config file. Unable to load file {0} : {1}", file, ex));
         NPath logError = NLocations.of(session).getStoreLocation(getWorkspace().getApiId(), NStoreLocation.LOG)
                 .resolve("invalid-config");
@@ -386,7 +386,7 @@ public class DefaultNRepositoryModel {
             throw new NIOException(session, NMsg.ofC("unable to log repository error while loading config file %s : %s", file, ex1), ex);
         }
         NPath newfile = logError.resolve(fileName + ".json");
-        LOG.with().session(session).level(Level.SEVERE).verb(NLoggerVerb.FAIL)
+        LOG.with().session(session).level(Level.SEVERE).verb(NLogVerb.FAIL)
                 .log(NMsg.ofJ("erroneous repository config file will be replaced by a fresh one. Old config is copied to {0}", newfile));
         try {
             Files.move(file.toFile(), newfile.toFile());

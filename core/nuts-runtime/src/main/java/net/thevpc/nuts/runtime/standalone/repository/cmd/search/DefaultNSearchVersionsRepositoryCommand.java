@@ -24,19 +24,19 @@ import net.thevpc.nuts.spi.NSearchVersionsRepositoryCommand;
  */
 public class DefaultNSearchVersionsRepositoryCommand extends AbstractNSearchVersionsRepositoryCommand {
 
-    private NLogger LOG;
+    private NLog LOG;
 
     public DefaultNSearchVersionsRepositoryCommand(NRepository repo) {
         super(repo);
     }
 
-    protected NLoggerOp _LOGOP(NSession session) {
+    protected NLogOp _LOGOP(NSession session) {
         return _LOG(session).with().session(session);
     }
 
-    protected NLogger _LOG(NSession session) {
+    protected NLog _LOG(NSession session) {
         if (LOG == null) {
-            LOG = NLogger.of(DefaultNSearchVersionsRepositoryCommand.class,session);
+            LOG = NLog.of(DefaultNSearchVersionsRepositoryCommand.class,session);
         }
         return LOG;
     }
@@ -58,7 +58,7 @@ public class DefaultNSearchVersionsRepositoryCommand extends AbstractNSearchVers
                     try {
                         d = xrepo.getIndexStore().searchVersions(id, session);
                     } catch (NException ex) {
-                        _LOGOP(session).level(Level.FINEST).verb(NLoggerVerb.FAIL)
+                        _LOGOP(session).level(Level.FINEST).verb(NLogVerb.FAIL)
                                 .log(NMsg.ofJ("error finding version with Indexer for {0} : {1}", getRepo().getName(), ex));
                     }
                     if (d != null && filter != null) {
@@ -78,7 +78,7 @@ public class DefaultNSearchVersionsRepositoryCommand extends AbstractNSearchVers
             result = IteratorUtils.coalesce(resultList);
             return this;
         } catch (RuntimeException ex) {
-            _LOGOP(session).level(Level.FINEST).verb(NLoggerVerb.FAIL)
+            _LOGOP(session).level(Level.FINEST).verb(NLogVerb.FAIL)
                     .log(NMsg.ofJ("[{0}] {1} {2} {3}",
                             NStringUtils.formatAlign(getFetchMode().toString(), 7, NPositionType.FIRST),
                             NStringUtils.formatAlign(getRepo().getName(), 20, NPositionType.FIRST),

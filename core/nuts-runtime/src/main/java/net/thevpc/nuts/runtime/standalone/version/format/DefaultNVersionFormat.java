@@ -2,7 +2,7 @@ package net.thevpc.nuts.runtime.standalone.version.format;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.cmdline.NArg;
-import net.thevpc.nuts.cmdline.NCommandLine;
+import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.io.NPrintStream;
 import net.thevpc.nuts.io.NTerminalMode;
 import net.thevpc.nuts.runtime.standalone.format.DefaultFormatBase;
@@ -31,7 +31,7 @@ public class DefaultNVersionFormat extends DefaultFormatBase<NVersionFormat> imp
     }
 
     @Override
-    public boolean configureFirst(NCommandLine commandLine) {
+    public boolean configureFirst(NCmdLine commandLine) {
         checkSession();
         NSession session = getSession();
         NArg aa = commandLine.peek().get(session);

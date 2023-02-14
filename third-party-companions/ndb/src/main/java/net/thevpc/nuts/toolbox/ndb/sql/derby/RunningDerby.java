@@ -2,7 +2,7 @@ package net.thevpc.nuts.toolbox.ndb.sql.derby;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.cmdline.NArg;
-import net.thevpc.nuts.cmdline.NCommandLine;
+import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.io.NPsInfo;
 
 import java.util.Objects;
@@ -15,7 +15,7 @@ public class RunningDerby {
     public RunningDerby(NPsInfo r, NSession session) {
         pid =r.getPid();
         argsLine=r.getCommandLine();
-        NCommandLine cmdline = NCommandLine.parseSystem(r.getCommandLine(),session).get(session).setExpandSimpleOptions(false);
+        NCmdLine cmdline = NCmdLine.parseSystem(r.getCommandLine(),session).get(session).setExpandSimpleOptions(false);
         NArg a=null;
         while(cmdline.hasNext()){
             if((a=cmdline.nextEntry("-Dderby.system.home").orNull())!=null) {

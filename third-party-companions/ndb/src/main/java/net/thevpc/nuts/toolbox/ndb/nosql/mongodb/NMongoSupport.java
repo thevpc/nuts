@@ -7,7 +7,7 @@ package net.thevpc.nuts.toolbox.ndb.nosql.mongodb;
 
 import com.mongodb.client.*;
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.cmdline.NCommandLine;
+import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.toolbox.ndb.NdbConfig;
 import net.thevpc.nuts.toolbox.ndb.base.CmdRedirect;
@@ -160,7 +160,7 @@ public class NMongoSupport extends NdbSupportBase<NMongoConfig> {
         }
         cmd.add("--db=" + options.getDatabaseName());
         cmd.add("--out=" + remoteSql.toString());
-        return new CmdRedirect(NCommandLine.of(cmd), null);
+        return new CmdRedirect(NCmdLine.of(cmd), null);
     }
 
 
@@ -180,11 +180,22 @@ public class NMongoSupport extends NdbSupportBase<NMongoConfig> {
             cmd.add("--username=" + options.getUser());
         }
         cmd.add(remoteSql.toString());
-        return new CmdRedirect(NCommandLine.of(cmd), null);
+        return new CmdRedirect(NCmdLine.of(cmd), null);
     }
 
     @Override
     public DumpRestoreMode getDumpRestoreMode(NMongoConfig options, NSession session) {
         return DumpRestoreMode.FOLDER;
     }
+
+
+    public boolean isFolderArchive(NMongoConfig options) {
+        return true;
+    }
+
+    public String getZipSubFolder(NMongoConfig options) {
+        return options.getDatabaseName();
+    }
+
+
 }

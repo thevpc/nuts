@@ -13,7 +13,7 @@ import java.time.temporal.Temporal;
 import java.util.Date;
 import java.util.function.Predicate;
 
-import net.thevpc.nuts.cmdline.NCommandLine;
+import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.elem.*;
 import net.thevpc.nuts.format.NIterableFormat;
 import net.thevpc.nuts.io.*;
@@ -639,7 +639,7 @@ public class DefaultNElements extends DefaultFormatBase<NElements> implements NE
     }
 
     @Override
-    public boolean configureFirst(NCommandLine cmdLine) {
+    public boolean configureFirst(NCmdLine cmdLine) {
         return false;
     }
 

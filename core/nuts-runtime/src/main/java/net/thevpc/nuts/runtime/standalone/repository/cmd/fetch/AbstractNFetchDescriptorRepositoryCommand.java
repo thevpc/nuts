@@ -27,7 +27,7 @@
 package net.thevpc.nuts.runtime.standalone.repository.cmd.fetch;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.cmdline.NCommandLine;
+import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.runtime.standalone.repository.cmd.NRepositoryCommandBase;
 import net.thevpc.nuts.spi.NFetchDescriptorRepositoryCommand;
 
@@ -47,7 +47,7 @@ public abstract class AbstractNFetchDescriptorRepositoryCommand extends NReposit
     }
 
     @Override
-    public boolean configureFirst(NCommandLine cmd) {
+    public boolean configureFirst(NCmdLine cmd) {
         if (super.configureFirst(cmd)) {
             return true;
         }

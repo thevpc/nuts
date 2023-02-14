@@ -4,9 +4,9 @@ import net.thevpc.nuts.*;
 import net.thevpc.nuts.format.NPositionType;
 import net.thevpc.nuts.runtime.standalone.repository.impl.NRepositoryExt;
 import net.thevpc.nuts.runtime.standalone.repository.impl.main.NInstalledRepository;
-import net.thevpc.nuts.util.NLogger;
-import net.thevpc.nuts.util.NLoggerOp;
-import net.thevpc.nuts.util.NLoggerVerb;
+import net.thevpc.nuts.util.NLog;
+import net.thevpc.nuts.util.NLogOp;
+import net.thevpc.nuts.util.NLogVerb;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -18,7 +18,7 @@ import net.thevpc.nuts.runtime.standalone.util.NSpeedQualifiers;
 import net.thevpc.nuts.util.NStringUtils;
 
 public class NRepositoryHelper {
-    private NLogger LOG;
+    private NLog LOG;
 
     private final NRepository repo;
 
@@ -90,13 +90,13 @@ public class NRepositoryHelper {
         return result;
     }
 
-    protected NLoggerOp _LOGOP(NSession session) {
+    protected NLogOp _LOGOP(NSession session) {
         return _LOG(session).with().session(session);
     }
 
-    protected NLogger _LOG(NSession session) {
+    protected NLog _LOG(NSession session) {
         if (LOG == null) {
-            LOG = NLogger.of(NRepositoryHelper.class,session);
+            LOG = NLog.of(NRepositoryHelper.class,session);
         }
         return LOG;
     }
@@ -145,7 +145,7 @@ public class NRepositoryHelper {
 
         public void fireOnAddRepository(NRepositoryEvent event) {
             if (u._LOG(event.getSession()).isLoggable(Level.FINEST)) {
-                u._LOGOP(event.getSession()).level(Level.FINEST).verb(NLoggerVerb.ADD)
+                u._LOGOP(event.getSession()).level(Level.FINEST).verb(NLogVerb.ADD)
                         .log(NMsg.ofJ("{0} add    repo {1}", NStringUtils.formatAlign(u.repo.getName(), 20, NPositionType.FIRST), event
                                 .getRepository().getName())
                         );
@@ -163,7 +163,7 @@ public class NRepositoryHelper {
 
         public void fireOnRemoveRepository(NRepositoryEvent event) {
             if (u._LOG(event.getSession()).isLoggable(Level.FINEST)) {
-                u._LOGOP(event.getSession()).level(Level.FINEST).verb(NLoggerVerb.REMOVE).log(
+                u._LOGOP(event.getSession()).level(Level.FINEST).verb(NLogVerb.REMOVE).log(
                         NMsg.ofJ("{0} remove repo {1}", NStringUtils.formatAlign(u.repo.getName(), 20, NPositionType.FIRST), event
                                 .getRepository().getName()));
             }

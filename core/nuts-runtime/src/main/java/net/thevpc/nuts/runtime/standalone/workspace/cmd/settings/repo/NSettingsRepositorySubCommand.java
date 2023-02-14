@@ -8,7 +8,7 @@ package net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.repo;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.cmdline.NArg;
 import net.thevpc.nuts.cmdline.NArgName;
-import net.thevpc.nuts.cmdline.NCommandLine;
+import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.format.NMutableTableModel;
 import net.thevpc.nuts.format.NTableFormat;
 import net.thevpc.nuts.io.NPath;
@@ -33,7 +33,7 @@ public class NSettingsRepositorySubCommand extends AbstractNSettingsSubCommand {
     }
 
     @Override
-    public boolean exec(NCommandLine cmdLine, Boolean autoSave, NSession session) {
+    public boolean exec(NCmdLine cmdLine, Boolean autoSave, NSession session) {
 
 //        NutsWorkspace ws = session.getWorkspace();
 //        if (cmdLine.next("add repo", "cr") != null) {
@@ -290,7 +290,7 @@ public class NSettingsRepositorySubCommand extends AbstractNSettingsSubCommand {
         return false;
     }
 
-    private void enableRepo(NCommandLine cmdLine, Boolean autoSave, NSession session, boolean enableRepo) {
+    private void enableRepo(NCmdLine cmdLine, Boolean autoSave, NSession session, boolean enableRepo) {
         NRef<String> repositoryName = NRef.ofNull(String.class);
         while (cmdLine.hasNext()) {
             NArg aa = cmdLine.peek().get(session);

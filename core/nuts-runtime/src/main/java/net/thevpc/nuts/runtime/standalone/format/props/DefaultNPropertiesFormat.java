@@ -4,7 +4,7 @@ import java.util.*;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.cmdline.NArg;
-import net.thevpc.nuts.cmdline.NCommandLine;
+import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.elem.NArrayElement;
 import net.thevpc.nuts.elem.NElementEntry;
 import net.thevpc.nuts.elem.NElements;
@@ -39,7 +39,7 @@ public class DefaultNPropertiesFormat extends DefaultFormatBase<NPropertiesForma
     }
 
     @Override
-    public boolean configureFirst(NCommandLine commandLine) {
+    public boolean configureFirst(NCmdLine commandLine) {
         NArg a;
         if ((a = commandLine.nextEntry(OPTION_MULTILINE_PROPERTY).orNull()) != null) {
             NArg i = NArg.of(a.getStringValue().get(getSession()));

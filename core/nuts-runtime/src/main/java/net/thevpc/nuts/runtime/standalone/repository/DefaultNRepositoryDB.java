@@ -6,7 +6,7 @@ import net.thevpc.nuts.reserved.NReservedMavenUtils;
 import net.thevpc.nuts.spi.NRepositoryDB;
 import net.thevpc.nuts.spi.NRepositoryLocation;
 import net.thevpc.nuts.spi.NSupportLevelContext;
-import net.thevpc.nuts.util.NLogger;
+import net.thevpc.nuts.util.NLog;
 import net.thevpc.nuts.util.NPlatformUtils;
 
 import java.util.*;
@@ -24,7 +24,7 @@ public class DefaultNRepositoryDB implements NRepositoryDB {
                         NConstants.Names.DEFAULT_WORKSPACE_NAME), session
         ).resolve(NConstants.Folders.ID).toString());
         reg("maven-local", "maven@" + NPath.ofUserHome(session).resolve(".m2/repository").toString(), ".m2", "m2");
-        for (NRepositoryLocation rr : NReservedMavenUtils.loadSettingsRepos(NLogger.of(DefaultNRepositoryDB.class, session))) {
+        for (NRepositoryLocation rr : NReservedMavenUtils.loadSettingsRepos(NLog.of(DefaultNRepositoryDB.class, session))) {
             reg(rr.getName(), rr.getFullLocation());
         }
         reg("maven-central", "maven@htmlfs:https://repo.maven.apache.org/maven2", "central", "maven", "central");

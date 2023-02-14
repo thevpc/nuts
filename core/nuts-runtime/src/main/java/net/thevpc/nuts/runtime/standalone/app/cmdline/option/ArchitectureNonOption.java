@@ -27,7 +27,7 @@ package net.thevpc.nuts.runtime.standalone.app.cmdline.option;
 
 import net.thevpc.nuts.cmdline.DefaultNArgCandidate;
 import net.thevpc.nuts.cmdline.NArgCandidate;
-import net.thevpc.nuts.cmdline.NCommandAutoComplete;
+import net.thevpc.nuts.cmdline.NCmdLineAutoComplete;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -43,7 +43,7 @@ public class ArchitectureNonOption extends DefaultNonOption {
     }
 
     @Override
-    public List<NArgCandidate> getCandidates(NCommandAutoComplete context) {
+    public List<NArgCandidate> getCandidates(NCmdLineAutoComplete context) {
         List<NArgCandidate> all = new ArrayList<>();
         all.add(new DefaultNArgCandidate("\"linux x86\""));
         all.add(new DefaultNArgCandidate("\"linux x64\""));

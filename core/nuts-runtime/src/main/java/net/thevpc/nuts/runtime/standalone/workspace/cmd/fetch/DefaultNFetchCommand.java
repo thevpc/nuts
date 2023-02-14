@@ -23,7 +23,7 @@ import net.thevpc.nuts.runtime.standalone.workspace.cmd.NRepositoryAndFetchMode;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.NRepositoryAndFetchModeTracker;
 import net.thevpc.nuts.spi.NDependencySolver;
 import net.thevpc.nuts.spi.NRepositorySPI;
-import net.thevpc.nuts.util.NLoggerVerb;
+import net.thevpc.nuts.util.NLogVerb;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -213,7 +213,7 @@ public class DefaultNFetchCommand extends AbstractNFetchCommand {
                     _LOGOP(getSession()).error(ex).level(Level.SEVERE)
                             .log(NMsg.ofJ("unexpected error while fetching descriptor for {0}", id));
                     if (_LOG(getSession()).isLoggable(Level.FINEST)) {
-                        NLogUtils.traceMessage(_LOG(getSession()), nutsFetchModes, id.getLongId(), NLoggerVerb.FAIL, "fetch def", startTime);
+                        NLogUtils.traceMessage(_LOG(getSession()), nutsFetchModes, id.getLongId(), NLogVerb.FAIL, "fetch def", startTime);
                     }
                     descTracker.addFailure(location);
                 }
@@ -225,7 +225,7 @@ public class DefaultNFetchCommand extends AbstractNFetchCommand {
                         foundDefinition.setEffectiveDescriptor(dws.resolveEffectiveDescriptor(foundDefinition.getDescriptor(), session));
                     } catch (NNotFoundException ex) {
                         //ignore
-                        _LOGOP(getSession()).level(Level.WARNING).verb(NLoggerVerb.WARNING)
+                        _LOGOP(getSession()).level(Level.WARNING).verb(NLogVerb.WARNING)
                                 .log(NMsg.ofJ("artifact descriptor found, but its parent is not: {0} with parent {1}", id.getLongName(),
                                         foundDefinition.getDescriptor().getParents()));
                         foundDefinition = null;
@@ -304,7 +304,7 @@ public class DefaultNFetchCommand extends AbstractNFetchCommand {
                                 }
                             }
                             if (!contentSuccessful /*&& includedRemote*/) {
-                                NLogUtils.traceMessage(_LOG(getSession()), nutsFetchModes, id.getLongId(), NLoggerVerb.FAIL,
+                                NLogUtils.traceMessage(_LOG(getSession()), nutsFetchModes, id.getLongId(), NLogVerb.FAIL,
                                         "fetched descriptor but failed to fetch artifact binaries", startTime);
                             }
                         }
@@ -323,10 +323,10 @@ public class DefaultNFetchCommand extends AbstractNFetchCommand {
             }
         } catch (NNotFoundException ex) {
             reasons.add(ex);
-            NLogUtils.traceMessage(_LOG(getSession()), nutsFetchModes, id.getLongId(), NLoggerVerb.FAIL, "fetch definition", startTime);
+            NLogUtils.traceMessage(_LOG(getSession()), nutsFetchModes, id.getLongId(), NLogVerb.FAIL, "fetch definition", startTime);
             throw ex;
         } catch (RuntimeException ex) {
-            NLogUtils.traceMessage(_LOG(getSession()), nutsFetchModes, id.getLongId(), NLoggerVerb.FAIL, "[unexpected] fetch definition", startTime);
+            NLogUtils.traceMessage(_LOG(getSession()), nutsFetchModes, id.getLongId(), NLogVerb.FAIL, "[unexpected] fetch definition", startTime);
             throw ex;
         }
         if (foundDefinition != null) {
@@ -487,7 +487,7 @@ public class DefaultNFetchCommand extends AbstractNFetchCommand {
                                 //this is invalid cache!
                                 cachePath.delete();
                             } else {
-                                NLogUtils.traceMessage(_LOG(getSession()), nutsFetchModes, id.getLongId(), NLoggerVerb.CACHE, "fetch definition", 0);
+                                NLogUtils.traceMessage(_LOG(getSession()), nutsFetchModes, id.getLongId(), NLogVerb.CACHE, "fetch definition", 0);
                                 return d;
                             }
                         }

@@ -27,6 +27,7 @@ package net.thevpc.nuts;
 
 import net.thevpc.nuts.reserved.NReservedStringUtils;
 import net.thevpc.nuts.reserved.NReservedUtils;
+import net.thevpc.nuts.util.NStringMapFormat;
 import net.thevpc.nuts.util.NStringUtils;
 
 import java.util.*;
@@ -78,11 +79,11 @@ public class DefaultNId implements NId {
         }
         this.classifier = c0;
         this.condition = condition == null ? NEnvCondition.BLANK : condition.readOnly();
-        this.properties = NStringUtils.formatDefaultMap(properties);
+        this.properties = NStringMapFormat.DEFAULT.format(properties);
     }
 
     public DefaultNId(String groupId, String artifactId, NVersion version, String classifier, String properties, NEnvCondition condition) {
-        this(groupId, artifactId, version, classifier, NStringUtils.parseDefaultMap(properties).get(), condition);
+        this(groupId, artifactId, version, classifier, NStringMapFormat.DEFAULT.parse(properties).get(), condition);
     }
 
     @Override
@@ -169,7 +170,7 @@ public class DefaultNId implements NId {
 
     @Override
     public Map<String, String> getProperties() {
-        return NStringUtils.parseDefaultMap(properties).get();
+        return NStringMapFormat.DEFAULT.parse(properties).get();
     }
 
     @Override
@@ -254,13 +255,13 @@ public class DefaultNId implements NId {
             m.put(NConstants.IdProperties.CLASSIFIER, classifier);
         }
         m.putAll(NReservedUtils.toMap(condition));
-        for (Map.Entry<String, String> e : NStringUtils.parseDefaultMap(properties).get().entrySet()) {
+        for (Map.Entry<String, String> e : NStringMapFormat.DEFAULT.parse(properties).get().entrySet()) {
             if (!m.containsKey(e.getKey())) {
                 m.put(e.getKey(), e.getValue());
             }
         }
         if (!m.isEmpty()) {
-            sb.append("?").append(NStringUtils.formatDefaultMap(m));
+            sb.append("?").append(NStringMapFormat.DEFAULT.format(m));
         }
         return sb.toString();
     }

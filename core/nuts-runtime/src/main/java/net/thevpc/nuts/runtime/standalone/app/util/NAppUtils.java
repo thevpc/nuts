@@ -1,13 +1,13 @@
 package net.thevpc.nuts.runtime.standalone.app.util;
 
 import net.thevpc.nuts.cmdline.NArg;
-import net.thevpc.nuts.cmdline.NCommandLine;
+import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.NSession;
 
 public class NAppUtils {
     public static boolean processHelpOptions(String[] args, NSession session) {
         if (isIncludesHelpOption(args)) {
-            NCommandLine cmdLine = NCommandLine.of(args);
+            NCmdLine cmdLine = NCmdLine.of(args);
             while (cmdLine.hasNext()) {
                 NArg a = cmdLine.peek().get(session);
                 if (a.isOption()) {

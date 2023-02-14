@@ -29,14 +29,14 @@ import net.thevpc.nuts.*;
 import net.thevpc.nuts.spi.*;
 import net.thevpc.nuts.runtime.standalone.workspace.config.DefaultNConfigs;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceUtils;
-import net.thevpc.nuts.util.NLogger;
+import net.thevpc.nuts.util.NLog;
 
 /**
  * Created by vpc on 1/23/17.
  */
 @NComponentScope(NComponentScopeType.WORKSPACE)
 public class ServerNWorkspaceArchetypeComponent implements NWorkspaceArchetypeComponent {
-    private NLogger LOG;
+    private NLog LOG;
 
     @Override
     public String getName() {
@@ -45,7 +45,7 @@ public class ServerNWorkspaceArchetypeComponent implements NWorkspaceArchetypeCo
 
     @Override
     public void initializeWorkspace(NSession session) {
-        this.LOG = NLogger.of(ServerNWorkspaceArchetypeComponent.class, session);
+        this.LOG = NLog.of(ServerNWorkspaceArchetypeComponent.class, session);
         DefaultNConfigs rm = (DefaultNConfigs) NConfigs.of(session);
         NRepositoryLocation[] br = rm.getModel().resolveBootRepositoriesList(session).resolve(
                 new NRepositoryLocation[]{

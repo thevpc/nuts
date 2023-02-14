@@ -35,7 +35,7 @@ import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceUtils;
 import net.thevpc.nuts.spi.NPaths;
 import net.thevpc.nuts.spi.NRepositorySPI;
 import net.thevpc.nuts.util.NIterator;
-import net.thevpc.nuts.util.NLogger;
+import net.thevpc.nuts.util.NLog;
 import net.thevpc.nuts.util.NStringUtils;
 
 import java.io.IOException;
@@ -49,13 +49,13 @@ import java.util.Map;
  */
 public class MavenFolderRepository extends NFolderRepositoryBase {
 
-    private final NLogger LOG;
+    private final NLog LOG;
     private MvnClient wrapper;
 
     public MavenFolderRepository(NAddRepositoryOptions options, NSession session, NRepository parentRepository) {
         super(options, session, parentRepository,null,false, NConstants.RepoTypes.MAVEN,false);
         repoIter = new MavenRepoIter(this);
-        LOG = NLogger.of(MavenFolderRepository.class, session);
+        LOG = NLog.of(MavenFolderRepository.class, session);
     }
 
     @Override

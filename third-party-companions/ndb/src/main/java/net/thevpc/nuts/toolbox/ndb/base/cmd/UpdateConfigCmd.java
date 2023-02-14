@@ -2,14 +2,13 @@ package net.thevpc.nuts.toolbox.ndb.base.cmd;
 
 import net.thevpc.nuts.NApplicationContext;
 import net.thevpc.nuts.NBlankable;
-import net.thevpc.nuts.cmdline.NCommandLine;
+import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.elem.NElements;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.toolbox.ndb.NdbConfig;
 import net.thevpc.nuts.toolbox.ndb.base.NdbCmd;
 import net.thevpc.nuts.toolbox.ndb.base.NdbSupportBase;
 import net.thevpc.nuts.toolbox.ndb.util.NdbUtils;
-import net.thevpc.nuts.util.NRef;
 import net.thevpc.nuts.util.NStringUtils;
 
 import java.util.Arrays;
@@ -21,7 +20,7 @@ public class UpdateConfigCmd<C extends NdbConfig> extends NdbCmd<C> {
     }
 
     @Override
-    public void run(NApplicationContext appContext, NCommandLine commandLine) {
+    public void run(NApplicationContext appContext, NCmdLine commandLine) {
         C options = createConfigInstance();
         while (commandLine.hasNext()) {
             if (fillOption(commandLine, options)) {

@@ -30,8 +30,8 @@ net.thevpc.nuts.runtime.standalone.repository.impl.maven.MavenRepositoryFactoryC
 net.thevpc.nuts.runtime.standalone.workspace.config.DefaultNIndexStoreFactory
 net.thevpc.nuts.runtime.standalone.workspace.config.DefaultNPlatforms
 net.thevpc.nuts.runtime.standalone.security.DefaultNAuthenticationAgent
-net.thevpc.nuts.runtime.standalone.log.DefaultNLogManager
-net.thevpc.nuts.runtime.standalone.workspace.list.DefaultNWorkspaceListManager
+net.thevpc.nuts.runtime.standalone.log.DefaultNLogs
+net.thevpc.nuts.runtime.standalone.workspace.list.DefaultNWorkspaceList
 net.thevpc.nuts.runtime.standalone.xtra.hashname.DefaultNHashName
 net.thevpc.nuts.runtime.standalone.repository.DefaultNRepositoryDB
 net.thevpc.nuts.runtime.standalone.workspace.cmd.exec.DefaultNExecCommand
@@ -51,7 +51,7 @@ net.thevpc.nuts.runtime.standalone.boot.DefaultNBootManager
 net.thevpc.nuts.runtime.standalone.workspace.config.DefaultNEnvs
 net.thevpc.nuts.runtime.standalone.workspace.config.DefaultNLocations
 net.thevpc.nuts.runtime.standalone.workspace.config.DefaultImports
-net.thevpc.nuts.runtime.standalone.workspace.config.DefaultCustomCommandManager
+net.thevpc.nuts.runtime.standalone.workspace.config.DefaultCommands
 net.thevpc.nuts.runtime.standalone.event.DefaultNEvents
 net.thevpc.nuts.runtime.standalone.security.DefaultNWorkspaceSecurityManager
 net.thevpc.nuts.runtime.standalone.repository.config.DefaultNRepositories
@@ -64,11 +64,11 @@ net.thevpc.nuts.runtime.standalone.extension.DefaultNExtensions
 net.thevpc.nuts.runtime.standalone.xtra.expr.DefaultNExpr
 net.thevpc.nuts.runtime.standalone.stream.DefaultNStreams
 net.thevpc.nuts.runtime.standalone.xtra.glob.DefaultNGlob
-net.thevpc.nuts.runtime.standalone.io.terminal.history.NCommandHistoryImpl
-net.thevpc.nuts.runtime.standalone.app.cmdline.DefaultNCommandLines
+net.thevpc.nuts.runtime.standalone.io.terminal.history.NCmdLineHistoryImpl
+net.thevpc.nuts.runtime.standalone.app.cmdline.DefaultNCmdLines
 net.thevpc.nuts.runtime.standalone.app.DefaultDefaultNApplicationContexts
 
-net.thevpc.nuts.runtime.standalone.app.cmdline.DefaultNCommandLineFormat
+net.thevpc.nuts.runtime.standalone.app.cmdline.DefaultNCmdLineFormat
 net.thevpc.nuts.runtime.standalone.workspace.cmd.exec.format.DefaultNExecCommandFormat
 net.thevpc.nuts.runtime.standalone.format.DefaultNObjectFormat
 net.thevpc.nuts.runtime.standalone.version.format.DefaultNVersionFormat

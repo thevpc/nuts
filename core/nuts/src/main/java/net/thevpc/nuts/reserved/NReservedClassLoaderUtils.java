@@ -28,8 +28,8 @@ package net.thevpc.nuts.reserved;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.boot.NClassLoaderNode;
-import net.thevpc.nuts.util.NLogger;
-import net.thevpc.nuts.util.NLoggerVerb;
+import net.thevpc.nuts.util.NLog;
+import net.thevpc.nuts.util.NLogVerb;
 
 import java.io.File;
 import java.io.IOException;
@@ -46,14 +46,14 @@ import java.util.zip.ZipFile;
 
 public class NReservedClassLoaderUtils {
     private static void fillBootDependencyNodes(NClassLoaderNode node, Set<URL> urls, Set<String> visitedIds,
-                                                NLogger bLog) {
+                                                NLog bLog) {
         String shortName = NId.of(node.getId()).get().getShortName();
         if (!visitedIds.contains(shortName)) {
             visitedIds.add(shortName);
             if (!node.isIncludedInClasspath()) {
                 urls.add(node.getURL());
             } else {
-                bLog.with().level(Level.WARNING).verb(NLoggerVerb.CACHE).log( NMsg.ofJ("url will not be loaded (already in classloader) : {0}", node.getURL()));
+                bLog.with().level(Level.WARNING).verb(NLogVerb.CACHE).log( NMsg.ofJ("url will not be loaded (already in classloader) : {0}", node.getURL()));
             }
             for (NClassLoaderNode dependency : node.getDependencies()) {
                 fillBootDependencyNodes(dependency, urls, visitedIds, bLog);
@@ -62,7 +62,7 @@ public class NReservedClassLoaderUtils {
     }
 
     public static URL[] resolveClassWorldURLs(NClassLoaderNode[] nodes, ClassLoader contextClassLoader,
-                                              NLogger bLog) {
+                                              NLog bLog) {
         LinkedHashSet<URL> urls = new LinkedHashSet<>();
         Set<String> visitedIds = new HashSet<>();
         for (NClassLoaderNode info : nodes) {
@@ -138,7 +138,7 @@ public class NReservedClassLoaderUtils {
     }
 
     public static boolean isLoadedClassPath(URL url, ClassLoader contextClassLoader,
-                                            NLogger bLog) {
+                                            NLog bLog) {
         try {
             if (url != null) {
                 if (contextClassLoader == null) {
@@ -163,11 +163,11 @@ public class NReservedClassLoaderUtils {
                             URL incp = contextClassLoader.getResource(zname);
                             String clz = zname.substring(0, zname.length() - 6).replace('/', '.');
                             if (incp != null) {
-                                bLog.with().level(Level.FINEST).verb(NLoggerVerb.SUCCESS).log( NMsg.ofJ("url {0} is already in classpath. checked class {1} successfully",
+                                bLog.with().level(Level.FINEST).verb(NLogVerb.SUCCESS).log( NMsg.ofJ("url {0} is already in classpath. checked class {1} successfully",
                                         url, clz));
                                 return true;
                             } else {
-                                bLog.with().level(Level.FINEST).verb(NLoggerVerb.INFO).log( NMsg.ofJ("url {0} is not in classpath. failed to check class {1}",
+                                bLog.with().level(Level.FINEST).verb(NLogVerb.INFO).log( NMsg.ofJ("url {0} is not in classpath. failed to check class {1}",
                                         url, clz));
                                 return false;
                             }
@@ -187,7 +187,7 @@ public class NReservedClassLoaderUtils {
         } catch (IOException e) {
             //
         }
-        bLog.with().level(Level.FINEST).verb(NLoggerVerb.FAIL).log( NMsg.ofJ("url {0} is not in classpath. no class found to check", url));
+        bLog.with().level(Level.FINEST).verb(NLogVerb.FAIL).log( NMsg.ofJ("url {0} is not in classpath. no class found to check", url));
         return false;
     }
 }

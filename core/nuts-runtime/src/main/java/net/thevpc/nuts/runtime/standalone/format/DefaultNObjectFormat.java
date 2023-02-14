@@ -26,7 +26,7 @@
 package net.thevpc.nuts.runtime.standalone.format;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.cmdline.NCommandLine;
+import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.elem.NElements;
 import net.thevpc.nuts.format.NObjectFormat;
 import net.thevpc.nuts.format.NTableFormat;
@@ -235,7 +235,7 @@ public class DefaultNObjectFormat extends DefaultFormatBase<NObjectFormat> imple
     }
 
     @Override
-    public boolean configureFirst(NCommandLine commandLine) {
+    public boolean configureFirst(NCmdLine commandLine) {
         return getBase().configureFirst(commandLine);
     }
 

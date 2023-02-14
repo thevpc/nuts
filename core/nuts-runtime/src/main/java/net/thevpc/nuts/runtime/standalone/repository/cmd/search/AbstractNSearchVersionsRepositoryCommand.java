@@ -6,7 +6,7 @@
 package net.thevpc.nuts.runtime.standalone.repository.cmd.search;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.cmdline.NCommandLine;
+import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.runtime.standalone.repository.cmd.NRepositoryCommandBase;
 import net.thevpc.nuts.spi.NSearchVersionsRepositoryCommand;
 import net.thevpc.nuts.util.NIterator;
@@ -27,7 +27,7 @@ public abstract class AbstractNSearchVersionsRepositoryCommand extends NReposito
     }
 
     @Override
-    public boolean configureFirst(NCommandLine cmd) {
+    public boolean configureFirst(NCmdLine cmd) {
         if (super.configureFirst(cmd)) {
             return true;
         }

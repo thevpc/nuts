@@ -38,9 +38,9 @@ import net.thevpc.nuts.runtime.standalone.workspace.config.NConfigsExt;
 import net.thevpc.nuts.runtime.standalone.workspace.config.NWorkspaceConfigSecurity;
 import net.thevpc.nuts.runtime.standalone.xtra.digest.NDigestUtils;
 import net.thevpc.nuts.spi.NAuthenticationAgent;
-import net.thevpc.nuts.util.NLogger;
-import net.thevpc.nuts.util.NLoggerOp;
-import net.thevpc.nuts.util.NLoggerVerb;
+import net.thevpc.nuts.util.NLog;
+import net.thevpc.nuts.util.NLogOp;
+import net.thevpc.nuts.util.NLogVerb;
 import net.thevpc.nuts.util.NStringUtils;
 
 import javax.security.auth.Subject;
@@ -62,7 +62,7 @@ public class DefaultNWorkspaceSecurityModel {
     private final DefaultNWorkspace ws;
     private final WrapperNAuthenticationAgent agent;
     private final Map<String, NAuthorizations> authorizations = new HashMap<>();
-    private NLogger LOG;
+    private NLog LOG;
 
     public DefaultNWorkspaceSecurityModel(final DefaultNWorkspace ws) {
         this.ws = ws;
@@ -70,13 +70,13 @@ public class DefaultNWorkspaceSecurityModel {
         NEvents.of(NSessionUtils.defaultSession(ws)).addWorkspaceListener(new ClearAuthOnWorkspaceChange());
     }
 
-    protected NLoggerOp _LOGOP(NSession session) {
+    protected NLogOp _LOGOP(NSession session) {
         return _LOG(session).with().session(session);
     }
 
-    protected NLogger _LOG(NSession session) {
+    protected NLog _LOG(NSession session) {
         if (LOG == null) {
-            LOG = NLogger.of(DefaultNWorkspaceSecurityModel.class, session);
+            LOG = NLog.of(DefaultNWorkspaceSecurityModel.class, session);
         }
         return LOG;
     }
@@ -117,7 +117,7 @@ public class DefaultNWorkspaceSecurityModel {
         NUser adminSecurity = findUser(NConstants.Users.ADMIN, session);
         if (adminSecurity == null || !adminSecurity.hasCredentials()) {
             if (_LOG(session).isLoggable(Level.CONFIG)) {
-                _LOGOP(session).level(Level.CONFIG).verb(NLoggerVerb.WARNING)
+                _LOGOP(session).level(Level.CONFIG).verb(NLogVerb.WARNING)
                         .log(NMsg.ofJ("{0} user has no credentials. reset to default", NConstants.Users.ADMIN));
             }
             NUserConfig u = NConfigsExt.of(NConfigs.of(session)).getModel().getUser(NConstants.Users.ADMIN, session);

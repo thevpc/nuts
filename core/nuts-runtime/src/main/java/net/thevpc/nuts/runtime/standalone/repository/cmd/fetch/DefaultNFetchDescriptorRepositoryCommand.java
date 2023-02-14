@@ -27,7 +27,7 @@ import java.util.Map;
 import java.util.logging.Level;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.cmdline.NCommandLine;
+import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.runtime.standalone.id.util.NIdUtils;
 import net.thevpc.nuts.runtime.standalone.log.NLogUtils;
 import net.thevpc.nuts.runtime.standalone.repository.impl.NRepositoryExt;
@@ -36,34 +36,34 @@ import net.thevpc.nuts.runtime.standalone.util.CoreStringUtils;
 import net.thevpc.nuts.runtime.standalone.util.filters.CoreFilterUtils;
 import net.thevpc.nuts.runtime.standalone.util.CoreNUtils;
 import net.thevpc.nuts.spi.NFetchDescriptorRepositoryCommand;
-import net.thevpc.nuts.util.NLogger;
-import net.thevpc.nuts.util.NLoggerOp;
-import net.thevpc.nuts.util.NLoggerVerb;
+import net.thevpc.nuts.util.NLog;
+import net.thevpc.nuts.util.NLogOp;
+import net.thevpc.nuts.util.NLogVerb;
 
 /**
  * @author thevpc
  */
 public class DefaultNFetchDescriptorRepositoryCommand extends AbstractNFetchDescriptorRepositoryCommand {
 
-    private NLogger LOG;
+    private NLog LOG;
 
     public DefaultNFetchDescriptorRepositoryCommand(NRepository repo) {
         super(repo);
     }
 
-    protected NLoggerOp _LOGOP(NSession session) {
+    protected NLogOp _LOGOP(NSession session) {
         return _LOG(session).with().session(session);
     }
 
-    protected NLogger _LOG(NSession session) {
+    protected NLog _LOG(NSession session) {
         if (LOG == null) {
-            LOG = NLogger.of(DefaultNFetchDescriptorRepositoryCommand.class,session);
+            LOG = NLog.of(DefaultNFetchDescriptorRepositoryCommand.class,session);
         }
         return LOG;
     }
 
     @Override
-    public boolean configureFirst(NCommandLine cmd) {
+    public boolean configureFirst(NCmdLine cmd) {
         if (super.configureFirst(cmd)) {
             return true;
         }
@@ -113,11 +113,11 @@ public class DefaultNFetchDescriptorRepositoryCommand extends AbstractNFetchDesc
             if (d == null) {
                 throw new NNotFoundException(getSession(), id.getLongId());
             }
-            NLogUtils.traceMessage(_LOG(session), Level.FINER, getRepo().getName(), session, getFetchMode(), id.getLongId(), NLoggerVerb.SUCCESS, "fetch descriptor", startTime, null);
+            NLogUtils.traceMessage(_LOG(session), Level.FINER, getRepo().getName(), session, getFetchMode(), id.getLongId(), NLogVerb.SUCCESS, "fetch descriptor", startTime, null);
             result = d;
         } catch (Exception ex) {
             if (!CoreNUtils.isUnsupportedFetchModeException(ex)) {
-                NLogUtils.traceMessage(_LOG(session), Level.FINEST, getRepo().getName(), session, getFetchMode(), id.getLongId(), NLoggerVerb.FAIL, "fetch descriptor", startTime, CoreStringUtils.exceptionToMessage(ex));
+                NLogUtils.traceMessage(_LOG(session), Level.FINEST, getRepo().getName(), session, getFetchMode(), id.getLongId(), NLogVerb.FAIL, "fetch descriptor", startTime, CoreStringUtils.exceptionToMessage(ex));
             }
             throw ex;
         }

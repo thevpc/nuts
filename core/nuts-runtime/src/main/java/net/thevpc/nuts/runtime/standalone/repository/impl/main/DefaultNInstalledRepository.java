@@ -72,7 +72,7 @@ public class DefaultNInstalledRepository extends AbstractNRepository implements 
     private static final String NUTS_INSTALL_FILE = "nuts-install.json";
     private final NRepositoryFolderHelper deployments;
     private final Map<NId, String> cachedDefaultVersions = new LRUMap<>(200);
-    private NLogger LOG;
+    private NLog LOG;
 
     public DefaultNInstalledRepository(NWorkspace ws, NBootOptions bOptions) {
         this.workspace = ws;
@@ -86,13 +86,13 @@ public class DefaultNInstalledRepository extends AbstractNRepository implements 
         configModel = new InstalledRepositoryConfigModel(workspace, this);
     }
 
-    protected NLoggerOp _LOGOP(NSession session) {
+    protected NLogOp _LOGOP(NSession session) {
         return _LOG(session).with().session(session);
     }
 
-    protected NLogger _LOG(NSession session) {
+    protected NLog _LOG(NSession session) {
         if (LOG == null) {
-            LOG = NLogger.of(DefaultNInstalledRepository.class, session);
+            LOG = NLog.of(DefaultNInstalledRepository.class, session);
         }
         return LOG;
     }

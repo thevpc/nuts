@@ -132,7 +132,7 @@ public abstract class AbstractJShellContext implements JShellContext {
     @Override
     public List<JShellAutoCompleteCandidate> resolveAutoCompleteCandidates(String commandName, List<String> autoCompleteWords, int wordIndex, String autoCompleteLine) {
         JShellBuiltin command = this.builtins().find(commandName);
-        NCommandAutoComplete autoComplete = new DefaultNCommandAutoComplete()
+        NCmdLineAutoComplete autoComplete = new DefaultNCmdLineAutoComplete()
                 .setSession(getSession()).setLine(autoCompleteLine).setWords(autoCompleteWords).setCurrentWordIndex(wordIndex);
 
         if (command != null) {
@@ -172,7 +172,7 @@ public abstract class AbstractJShellContext implements JShellContext {
                             if (s.length() > 0) {
                                 if (s.startsWith(NApplicationContext.AUTO_COMPLETE_CANDIDATE_PREFIX)) {
                                     s = s.substring(NApplicationContext.AUTO_COMPLETE_CANDIDATE_PREFIX.length()).trim();
-                                    NCommandLine args = NCommandLine.of(s, NShellFamily.BASH, session).setExpandSimpleOptions(false);
+                                    NCmdLine args = NCmdLine.of(s, NShellFamily.BASH, session).setExpandSimpleOptions(false);
                                     String value = null;
                                     String display = null;
                                     if (args.hasNext()) {

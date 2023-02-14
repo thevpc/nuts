@@ -24,8 +24,8 @@
 package net.thevpc.nuts.spi;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.cmdline.NCommandAutoCompleteResolver;
-import net.thevpc.nuts.cmdline.NCommandHistory;
+import net.thevpc.nuts.cmdline.NCmdLineAutoCompleteResolver;
+import net.thevpc.nuts.cmdline.NCmdLineHistory;
 import net.thevpc.nuts.io.NPrintStream;
 import net.thevpc.nuts.text.NTerminalCommand;
 import net.thevpc.nuts.text.NTextStyles;
@@ -52,7 +52,7 @@ public interface NSystemTerminalBase extends NComponent {
 
     NPrintStream getErr();
 
-    default NCommandAutoCompleteResolver getAutoCompleteResolver() {
+    default NCmdLineAutoCompleteResolver getAutoCompleteResolver() {
         return null;
     }
 
@@ -60,14 +60,14 @@ public interface NSystemTerminalBase extends NComponent {
         return false;
     }
 
-    NSystemTerminalBase setCommandAutoCompleteResolver(NCommandAutoCompleteResolver autoCompleteResolver);
+    NSystemTerminalBase setCommandAutoCompleteResolver(NCmdLineAutoCompleteResolver autoCompleteResolver);
 
     /**
      * return History implementation
      *
      * @return History implementation
      */
-    NCommandHistory getCommandHistory();
+    NCmdLineHistory getCommandHistory();
 
     /**
      * set History implementation
@@ -75,7 +75,7 @@ public interface NSystemTerminalBase extends NComponent {
      * @param history new history implementation
      * @return {@code this} instance
      */
-    NSystemTerminalBase setCommandHistory(NCommandHistory history);
+    NSystemTerminalBase setCommandHistory(NCmdLineHistory history);
 
     /**
      * return command line language content type (or simple id) used for highlighting (syntax coloring).

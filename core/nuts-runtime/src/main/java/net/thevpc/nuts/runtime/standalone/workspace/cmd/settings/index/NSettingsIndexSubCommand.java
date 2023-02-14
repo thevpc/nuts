@@ -9,7 +9,7 @@ import net.thevpc.nuts.NConfigs;
 import net.thevpc.nuts.NLiteral;
 import net.thevpc.nuts.NSession;
 import net.thevpc.nuts.NUpdateStatisticsCommand;
-import net.thevpc.nuts.cmdline.NCommandLine;
+import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.AbstractNSettingsSubCommand;
 
 import java.util.ArrayList;
@@ -21,7 +21,7 @@ import java.util.List;
 public class NSettingsIndexSubCommand extends AbstractNSettingsSubCommand {
 
     @Override
-    public boolean exec(NCommandLine cmdLine, Boolean autoSave, NSession session) {
+    public boolean exec(NCmdLine cmdLine, Boolean autoSave, NSession session) {
         String name = "settings update stats";
         if (cmdLine.next("update stats").isPresent()) {
             List<String> repos = new ArrayList<>();

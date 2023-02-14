@@ -26,8 +26,8 @@ package net.thevpc.nuts.runtime.standalone.log;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.io.NPrintStream;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceExt;
+import net.thevpc.nuts.util.NLog;
 import net.thevpc.nuts.util.NLogConfig;
-import net.thevpc.nuts.util.NLogger;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -50,7 +50,7 @@ public class DefaultNLogModel {
     private List<Handler> extraHandlers = new ArrayList<>();
     private Path logFolder;
     private NSession defaultSession;
-    private Map<String, NLogger> loaded = new LinkedHashMap<>();
+    private Map<String, NLog> loaded = new LinkedHashMap<>();
 
     public DefaultNLogModel(NWorkspace ws, NWorkspaceOptions bOptions) {
         this.workspace = ws;
@@ -111,26 +111,26 @@ public class DefaultNLogModel {
     }
 
 
-    public NLogger createLogger(String name, NSession session) {
-        NLogger y = loaded.get(name);
+    public NLog createLogger(String name, NSession session) {
+        NLog y = loaded.get(name);
         if (y == null) {
             if (session == null) {
                 session = defaultSession;
             }
-            y = new DefaultNLogger(workspace, session, name);
+            y = new DefaultNLog(workspace, session, name);
             loaded.put(name, y);
         }
         return y;
     }
 
 
-    public NLogger createLogger(Class clazz, NSession session) {
-        NLogger y = loaded.get(clazz.getName());
+    public NLog createLogger(Class clazz, NSession session) {
+        NLog y = loaded.get(clazz.getName());
         if (y == null) {
             if (session == null) {
                 session = defaultSession;
             }
-            y = new DefaultNLogger(workspace, session, clazz);
+            y = new DefaultNLog(workspace, session, clazz);
             loaded.put(clazz.getName(), y);
         }
         return y;
@@ -185,7 +185,7 @@ public class DefaultNLogModel {
                                 session, logConfig, true, logFolder);
                         fileHandler.setLevel(logConfig.getLogFileLevel());
                     } catch (Exception ex) {
-                        Logger.getLogger(DefaultNLogManager.class.getName()).log(Level.FINE, "unable to create file handler", ex);
+                        Logger.getLogger(DefaultNLogs.class.getName()).log(Level.FINE, "unable to create file handler", ex);
                     }
                 }
             }

@@ -3,7 +3,7 @@ package net.thevpc.nuts.tutorial.nsh.cmd;
 import java.util.HashMap;
 
 import net.thevpc.nuts.NMsg;
-import net.thevpc.nuts.cmdline.NCommandLine;
+import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.NSession;
 import net.thevpc.nuts.spi.NComponentScope;
 import net.thevpc.nuts.spi.NComponentScopeType;
@@ -55,7 +55,7 @@ public class Hello extends SimpleJShellBuiltin {
      * @return true if the option is processed
      */
     @Override
-    protected boolean configureFirst(NCommandLine cmdline, JShellExecutionContext ctx) {
+    protected boolean configureFirst(NCmdLine cmdline, JShellExecutionContext ctx) {
         //get an instance of the current options object we are filling.
         Options o = ctx.getOptions();
         //get the next option (without consuming it)
@@ -91,7 +91,7 @@ public class Hello extends SimpleJShellBuiltin {
     }
 
     @Override
-    protected void execBuiltin(NCommandLine cmdline, JShellExecutionContext ctx) {
+    protected void execBuiltin(NCmdLine cmdline, JShellExecutionContext ctx) {
         Options o = ctx.getOptions();
         NSession session = ctx.getSession();
         if (o.complex) {

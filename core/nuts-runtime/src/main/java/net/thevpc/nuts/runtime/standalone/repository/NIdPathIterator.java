@@ -33,7 +33,7 @@ import net.thevpc.nuts.runtime.standalone.util.iter.NIteratorBase;
 import net.thevpc.nuts.text.NTextStyle;
 import net.thevpc.nuts.text.NTexts;
 import net.thevpc.nuts.util.NDescribables;
-import net.thevpc.nuts.util.NLoggerOp;
+import net.thevpc.nuts.util.NLogOp;
 
 import java.util.Stack;
 import java.util.logging.Level;
@@ -108,11 +108,11 @@ public class NIdPathIterator extends NIteratorBase<NId> {
                 } catch (NIOException ex) {
                     //just log without stack trace!
                     session.getTerminal().printProgress(NMsg.ofC("%-14s %-8s %-8s %s %s", repository.getName(), kind, "search folder", file.path.toCompressedForm(), NTexts.of(session).ofStyled("failed!", NTextStyle.error())));
-                    NLoggerOp.of(NIdPathIterator.class, session).level(Level.FINE)//.error(ex)
+                    NLogOp.of(NIdPathIterator.class, session).level(Level.FINE)//.error(ex)
                             .log(NMsg.ofJ("error listing : {0} : {1} : {2}", file.path, toString(), ex.toString()));
                 } catch (Exception ex) {
                     session.getTerminal().printProgress(NMsg.ofC("%-14s %-8s %-8s %s %s", repository.getName(), kind, "search folder", file.path.toCompressedForm(), NTexts.of(session).ofStyled("failed!", NTextStyle.error())));
-                    NLoggerOp.of(NIdPathIterator.class, session).level(Level.FINE).error(ex)
+                    NLogOp.of(NIdPathIterator.class, session).level(Level.FINE).error(ex)
                             .log(NMsg.ofJ("error listing : {0} : {1}", file.path, toString()));
                 }
                 boolean deep = file.depth < maxDepth;
@@ -134,7 +134,7 @@ public class NIdPathIterator extends NIteratorBase<NId> {
                 try {
                     t = model.parseId(file.path, rootFolder, filter, repository, session);
                 } catch (Exception ex) {
-                    NLoggerOp.of(NIdPathIterator.class, session).level(Level.FINE).error(ex)
+                    NLogOp.of(NIdPathIterator.class, session).level(Level.FINE).error(ex)
                             .log(NMsg.ofJ("error parsing : {0} : {1}", file.path, toString()));
                 }
                 if (t != null) {

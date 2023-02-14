@@ -3,7 +3,7 @@ package net.thevpc.nuts.runtime.standalone.executor.java;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.boot.NClassLoaderNode;
 import net.thevpc.nuts.cmdline.NArg;
-import net.thevpc.nuts.cmdline.NCommandLine;
+import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.runtime.standalone.descriptor.util.NDescriptorUtils;
 import net.thevpc.nuts.runtime.standalone.util.*;
@@ -75,7 +75,7 @@ public final class JavaExecutorOptions {
 //        List<String> classPath0 = new ArrayList<>();
 //        List<NutsClassLoaderNode> extraCp = new ArrayList<>();
         //will accept all -- and - based options!
-        NCommandLine cmdLine = NCommandLine.of(getExecArgs()).setExpandSimpleOptions(false);
+        NCmdLine cmdLine = NCmdLine.of(getExecArgs()).setExpandSimpleOptions(false);
         NArg a;
         List<NClassLoaderNode> currentCP = new ArrayList<>();
         while (cmdLine.hasNext()) {

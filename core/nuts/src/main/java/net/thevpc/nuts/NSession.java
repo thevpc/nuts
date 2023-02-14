@@ -23,8 +23,7 @@
  */
 package net.thevpc.nuts;
 
-import net.thevpc.nuts.cmdline.NCommandLineConfigurable;
-import net.thevpc.nuts.cmdline.NCommandLineContext;
+import net.thevpc.nuts.cmdline.NCmdLineConfigurable;
 import net.thevpc.nuts.elem.NArrayElementBuilder;
 import net.thevpc.nuts.format.NIterableFormat;
 import net.thevpc.nuts.io.NPrintStream;
@@ -46,7 +45,7 @@ import java.util.logging.Level;
  * @app.category Base
  * @since 0.5.4
  */
-public interface NSession extends NCommandLineConfigurable {
+public interface NSession extends NCmdLineConfigurable {
 
     /**
      * When true, operations are invited to print to output stream extra

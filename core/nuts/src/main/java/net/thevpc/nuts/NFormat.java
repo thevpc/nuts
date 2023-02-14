@@ -26,7 +26,7 @@
  */
 package net.thevpc.nuts;
 
-import net.thevpc.nuts.cmdline.NCommandLineConfigurable;
+import net.thevpc.nuts.cmdline.NCmdLineConfigurable;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.io.NPrintStream;
 import net.thevpc.nuts.io.NSessionTerminal;
@@ -46,7 +46,7 @@ import java.nio.file.Path;
  * @app.category Format
  * @since 0.5.5
  */
-public interface NFormat extends NCommandLineConfigurable, NComponent, NSessionProvider {
+public interface NFormat extends NCmdLineConfigurable, NComponent, NSessionProvider {
     static NFormat of(NSession session, NFormatSPI spi) {
         return NTexts.of(session).createFormat(spi);
     }
@@ -192,7 +192,7 @@ public interface NFormat extends NCommandLineConfigurable, NComponent, NSessionP
 
     /**
      * configure the current command with the given arguments. This is an
-     * override of the {@link NCommandLineConfigurable#configure(boolean, java.lang.String...)
+     * override of the {@link NCmdLineConfigurable#configure(boolean, java.lang.String...)
      * }
      * to help return a more specific return type;
      *

@@ -6,7 +6,7 @@
 package net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.alias;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.cmdline.NCommandLine;
+import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.exec.AbstractNExecutableCommand;
 import net.thevpc.nuts.text.NText;
 import net.thevpc.nuts.text.NTextStyle;
@@ -17,14 +17,14 @@ import net.thevpc.nuts.text.NTexts;
  */
 public class DefaultNAliasExecutable extends AbstractNExecutableCommand {
 
-    NWorkspaceCustomCommand command;
+    NCustomCommand command;
     NCommandExecOptions o;
     NSession session;
     String[] args;
 
-    public DefaultNAliasExecutable(NWorkspaceCustomCommand command, NCommandExecOptions o, NSession session, String[] args) {
+    public DefaultNAliasExecutable(NCustomCommand command, NCommandExecOptions o, NSession session, String[] args) {
         super(command.getName(),
-                NCommandLine.of(command.getCommand()).toString(),
+                NCmdLine.of(command.getCommand()).toString(),
                 NExecutableType.ALIAS);
         this.command = command;
         this.o = o;

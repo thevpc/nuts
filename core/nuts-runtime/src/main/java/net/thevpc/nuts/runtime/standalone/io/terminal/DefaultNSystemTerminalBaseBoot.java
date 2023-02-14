@@ -2,8 +2,8 @@ package net.thevpc.nuts.runtime.standalone.io.terminal;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.boot.NBootOptions;
-import net.thevpc.nuts.cmdline.NCommandAutoCompleteResolver;
-import net.thevpc.nuts.cmdline.NCommandHistory;
+import net.thevpc.nuts.cmdline.NCmdLineAutoCompleteResolver;
+import net.thevpc.nuts.cmdline.NCmdLineHistory;
 import net.thevpc.nuts.io.*;
 import net.thevpc.nuts.runtime.standalone.boot.DefaultNBootModel;
 import net.thevpc.nuts.runtime.standalone.io.printstream.NPrintStreamSystem;
@@ -11,7 +11,7 @@ import net.thevpc.nuts.runtime.standalone.session.NSessionUtils;
 import net.thevpc.nuts.spi.*;
 import net.thevpc.nuts.text.NTerminalCommand;
 import net.thevpc.nuts.text.NTextStyles;
-import net.thevpc.nuts.util.NLogger;
+import net.thevpc.nuts.util.NLog;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -26,10 +26,10 @@ public class DefaultNSystemTerminalBaseBoot extends NSystemTerminalBaseImpl {
     private final InputStream in;
     private final NWorkspace workspace;
     private final NSession session;
-    private NLogger LOG;
-    private NCommandHistory history;
+    private NLog LOG;
+    private NCmdLineHistory history;
     private String commandHighlighter;
-    private NCommandAutoCompleteResolver commandAutoCompleteResolver;
+    private NCmdLineAutoCompleteResolver commandAutoCompleteResolver;
 
     public DefaultNSystemTerminalBaseBoot(DefaultNBootModel bootModel) {
         this.session = bootModel.bootSession();
@@ -63,9 +63,9 @@ public class DefaultNSystemTerminalBaseBoot extends NSystemTerminalBaseImpl {
     }
 
 
-    private NLogger _LOG() {
+    private NLog _LOG() {
         if (LOG == null && session != null) {
-            LOG = NLogger.of(NSystemTerminalBase.class, session);
+            LOG = NLog.of(NSystemTerminalBase.class, session);
         }
         return LOG;
     }
@@ -120,7 +120,7 @@ public class DefaultNSystemTerminalBaseBoot extends NSystemTerminalBaseImpl {
     }
 
     @Override
-    public NCommandAutoCompleteResolver getAutoCompleteResolver() {
+    public NCmdLineAutoCompleteResolver getAutoCompleteResolver() {
         return commandAutoCompleteResolver;
     }
 
@@ -130,18 +130,18 @@ public class DefaultNSystemTerminalBaseBoot extends NSystemTerminalBaseImpl {
     }
 
     @Override
-    public NSystemTerminalBase setCommandAutoCompleteResolver(NCommandAutoCompleteResolver autoCompleteResolver) {
+    public NSystemTerminalBase setCommandAutoCompleteResolver(NCmdLineAutoCompleteResolver autoCompleteResolver) {
         this.commandAutoCompleteResolver = autoCompleteResolver;
         return this;
     }
 
     @Override
-    public NCommandHistory getCommandHistory() {
+    public NCmdLineHistory getCommandHistory() {
         return history;
     }
 
     @Override
-    public NSystemTerminalBase setCommandHistory(NCommandHistory history) {
+    public NSystemTerminalBase setCommandHistory(NCmdLineHistory history) {
         this.history = history;
         return this;
     }

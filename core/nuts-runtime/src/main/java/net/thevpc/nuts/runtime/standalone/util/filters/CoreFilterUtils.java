@@ -27,9 +27,7 @@ package net.thevpc.nuts.runtime.standalone.util.filters;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.standalone.util.Simplifiable;
-import net.thevpc.nuts.util.NPredicate;
-import net.thevpc.nuts.util.NPredicates;
-import net.thevpc.nuts.util.NStringUtils;
+import net.thevpc.nuts.util.*;
 
 import java.lang.reflect.Array;
 import java.util.*;
@@ -41,7 +39,6 @@ import java.util.stream.Collectors;
  * @author thevpc
  */
 public class CoreFilterUtils {
-
     private static int andInts(Boolean a, Boolean b) {
         if (a == null && b == null) {
             return 0;
@@ -568,7 +565,7 @@ public class CoreFilterUtils {
         }
         Map<String, String> properties = condition.getProperties();
         if (!properties.isEmpty()) {
-            m.put(NConstants.IdProperties.CONDITIONAL_PROPERTIES, NStringUtils.formatMap(properties, "=", ",", "", true));
+            m.put(NConstants.IdProperties.CONDITIONAL_PROPERTIES, NStringMapFormat.COMMA_FORMAT.format(properties));
         }
         return m;
     }

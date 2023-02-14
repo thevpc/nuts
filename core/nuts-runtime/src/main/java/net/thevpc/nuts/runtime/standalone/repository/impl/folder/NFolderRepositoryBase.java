@@ -14,7 +14,7 @@ import net.thevpc.nuts.runtime.standalone.util.iter.IteratorUtils;
 import net.thevpc.nuts.runtime.standalone.xtra.digest.NDigestUtils;
 import net.thevpc.nuts.spi.NPaths;
 import net.thevpc.nuts.util.NIterator;
-import net.thevpc.nuts.util.NLoggerVerb;
+import net.thevpc.nuts.util.NLogVerb;
 import net.thevpc.nuts.util.NStringUtils;
 
 import java.io.IOException;
@@ -50,12 +50,12 @@ public abstract class NFolderRepositoryBase extends NCachedRepository {
             try {
                 return loc.exists();
             } finally {
-                LOG.with().level(Level.FINEST).verb(NLoggerVerb.SUCCESS)
+                LOG.with().level(Level.FINEST).verb(NLogVerb.SUCCESS)
                         .time(System.currentTimeMillis() - now)
                         .log(NMsg.ofC("check available %s : success", getName()));
             }
         } catch (Exception e) {
-            LOG.with().level(Level.FINEST).verb(NLoggerVerb.FAIL)
+            LOG.with().level(Level.FINEST).verb(NLogVerb.FAIL)
                     .time(System.currentTimeMillis() - now)
                     .log(NMsg.ofC("check available %s : failed", getName()));
             return false;

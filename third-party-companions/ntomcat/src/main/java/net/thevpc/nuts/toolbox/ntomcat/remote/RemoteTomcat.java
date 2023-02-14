@@ -2,7 +2,7 @@ package net.thevpc.nuts.toolbox.ntomcat.remote;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.cmdline.NArg;
-import net.thevpc.nuts.cmdline.NCommandLine;
+import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.text.NTextStyle;
 import net.thevpc.nuts.text.NTexts;
@@ -17,10 +17,10 @@ import java.util.List;
 public class RemoteTomcat {
 
     public NApplicationContext context;
-    public NCommandLine cmdLine;
+    public NCmdLine cmdLine;
     public NPath sharedConfigFolder;
 
-    public RemoteTomcat(NApplicationContext applicationContext, NCommandLine cmdLine) {
+    public RemoteTomcat(NApplicationContext applicationContext, NCmdLine cmdLine) {
         this.setContext(applicationContext);
         this.cmdLine = cmdLine;
         sharedConfigFolder = applicationContext.getVersionFolder(NStoreLocation.CONFIG, NTomcatConfigVersions.CURRENT);
@@ -72,7 +72,7 @@ public class RemoteTomcat {
         throw new NExecutionException(context.getSession(), NMsg.ofPlain("missing tomcat action. Type: nuts tomcat --help"), 1);
     }
 
-    public void list(NCommandLine args) {
+    public void list(NCmdLine args) {
         NSession session = getContext().getSession();
         NArg a;
         class Helper {
@@ -104,7 +104,7 @@ public class RemoteTomcat {
         }
     }
 
-    private void add(NCommandLine args) {
+    private void add(NCmdLine args) {
         RemoteTomcatConfigService c = null;
         String appName = null;
         String instanceName = null;
@@ -213,7 +213,7 @@ public class RemoteTomcat {
         c.save();
     }
 
-    public void remove(NCommandLine args) {
+    public void remove(NCmdLine args) {
         RemoteTomcatServiceBase s = null;
         NArg a;
         boolean processed = false;
@@ -239,7 +239,7 @@ public class RemoteTomcat {
         }
     }
 
-    private void install(NCommandLine args) {
+    private void install(NCmdLine args) {
         NSession session = getContext().getSession();
         String conf = null;
         String app = null;
@@ -254,7 +254,7 @@ public class RemoteTomcat {
         }
     }
 
-    private void deploy(NCommandLine args) {
+    private void deploy(NCmdLine args) {
         NSession session = getContext().getSession();
         String app = null;
         String version = null;
@@ -272,7 +272,7 @@ public class RemoteTomcat {
         loadApp(app).deploy(version);
     }
 
-    private void stop(NCommandLine args) {
+    private void stop(NCmdLine args) {
         NSession session = getContext().getSession();
         String name = null;
         NArg a;
@@ -287,7 +287,7 @@ public class RemoteTomcat {
         }
     }
 
-    public void restart(NCommandLine args, boolean shutdown) {
+    public void restart(NCmdLine args, boolean shutdown) {
         NSession session = context.getSession();
         String instance = null;
         boolean deleteLog = false;
@@ -318,7 +318,7 @@ public class RemoteTomcat {
         }
         if (install) {
             for (String app : apps) {
-                install(NCommandLine.of(
+                install(NCmdLine.of(
                         new String[]{
                                 "--name",
                                 instance,
@@ -336,7 +336,7 @@ public class RemoteTomcat {
         }
     }
 
-    public void reset(NCommandLine args) {
+    public void reset(NCmdLine args) {
         NArg a;
         args.setCommandName("tomcat --remote reset");
         while (args.hasNext()) {
@@ -360,7 +360,7 @@ public class RemoteTomcat {
                         .toArray(RemoteTomcatConfigService[]::new);
     }
 
-    public void show(NCommandLine args) {
+    public void show(NCmdLine args) {
         NSession session = context.getSession();
         NArg a;
         RemoteTomcatServiceBase s;
@@ -441,7 +441,7 @@ public class RemoteTomcat {
         }
     }
 
-    public RemoteTomcatServiceBase readBaseServiceArg(NCommandLine args) {
+    public RemoteTomcatServiceBase readBaseServiceArg(NCmdLine args) {
         NSession session = context.getSession();
         NArg a;
         if ((a = args.nextEntry("--name").orNull()) != null) {

@@ -25,10 +25,10 @@ package net.thevpc.nuts.reserved;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.boot.DefaultNBootOptionsBuilder;
+import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.util.NApiUtils;
 import net.thevpc.nuts.boot.NBootOptions;
 import net.thevpc.nuts.boot.NBootOptionsBuilder;
-import net.thevpc.nuts.cmdline.NCommandLine;
 import net.thevpc.nuts.elem.NArrayElementBuilder;
 import net.thevpc.nuts.elem.NElements;
 import net.thevpc.nuts.io.NPrintStream;
@@ -236,7 +236,7 @@ public final class NReservedUtils {
      * @param readline
      */
     public static long deleteStoreLocations(NBootOptions lastBootOptions, NBootOptions o, boolean includeRoot,
-                                            NLogger bLog, Object[] locations, Supplier<String> readline) {
+                                            NLog bLog, Object[] locations, Supplier<String> readline) {
         if (lastBootOptions == null) {
             return 0;
         }
@@ -248,7 +248,7 @@ public final class NReservedUtils {
                             + "You need to provide default response (-y|-n) for resetting/recovering workspace. "
                             + "You was asked to confirm deleting folders as part as recover/reset option."), 243);
         }
-        bLog.with().level(Level.FINEST).verb(NLoggerVerb.WARNING).log(NMsg.ofJ("delete workspace location(s) at : {0}", lastBootOptions.getWorkspace()));
+        bLog.with().level(Level.FINEST).verb(NLogVerb.WARNING).log(NMsg.ofJ("delete workspace location(s) at : {0}", lastBootOptions.getWorkspace()));
         boolean force = false;
         switch (confirm) {
             case ASK: {
@@ -260,7 +260,7 @@ public final class NReservedUtils {
             }
             case NO:
             case ERROR: {
-                bLog.with().level(Level.WARNING).verb(NLoggerVerb.WARNING).log(NMsg.ofPlain("reset cancelled (applied '--no' argument)"));
+                bLog.with().level(Level.WARNING).verb(NLogVerb.WARNING).log(NMsg.ofPlain("reset cancelled (applied '--no' argument)"));
                 throw new NNoSessionCancelException(NMsg.ofPlain("cancel delete folder"));
             }
         }
@@ -294,12 +294,12 @@ public final class NReservedUtils {
     }
 
     public static long deleteAndConfirmAll(Path[] folders, boolean force, String header, NSession session,
-                                           NLogger bLog, NBootOptions bOptions, Supplier<String> readline) {
+                                           NLog bLog, NBootOptions bOptions, Supplier<String> readline) {
         return deleteAndConfirmAll(folders, force, new NReservedDeleteFilesContextImpl(), header, session, bLog, bOptions, readline);
     }
 
     private static long deleteAndConfirmAll(Path[] folders, boolean force, NReservedDeleteFilesContext refForceAll,
-                                            String header, NSession session, NLogger bLog, NBootOptions bOptions, Supplier<String> readline) {
+                                            String header, NSession session, NLog bLog, NBootOptions bOptions, Supplier<String> readline) {
         long count = 0;
         boolean headerWritten = false;
         if (folders != null) {
@@ -313,7 +313,7 @@ public final class NReservedUtils {
                                     if (session != null) {
                                         session.err().println(header);
                                     } else {
-                                        bLog.with().level(Level.WARNING).verb(NLoggerVerb.WARNING).log( NMsg.ofJ("{0}", header));
+                                        bLog.with().level(Level.WARNING).verb(NLogVerb.WARNING).log( NMsg.ofJ("{0}", header));
                                     }
                                 }
                             }
@@ -327,7 +327,7 @@ public final class NReservedUtils {
     }
 
     private static long deleteAndConfirm(Path directory, boolean force, NReservedDeleteFilesContext refForceAll,
-                                         NSession session, NLogger bLog, NBootOptions bOptions, Supplier<String> readline) {
+                                         NSession session, NLog bLog, NBootOptions bOptions, Supplier<String> readline) {
         if (Files.exists(directory)) {
             if (!force && !refForceAll.isForce() && refForceAll.accept(directory)) {
                 String line = null;
@@ -367,7 +367,7 @@ public final class NReservedUtils {
                                 }
                                 case ASK: {
                                     // Level.OFF is to force logging in all cases
-                                    bLog.with().level(Level.OFF).verb(NLoggerVerb.WARNING).log( NMsg.ofJ("do you confirm deleting {0} [y/n/c/a] (default 'n') ? : ", directory));
+                                    bLog.with().level(Level.OFF).verb(NLogVerb.WARNING).log( NMsg.ofJ("do you confirm deleting {0} [y/n/c/a] (default 'n') ? : ", directory));
                                     line = readline.get();
                                 }
                             }
@@ -423,7 +423,7 @@ public final class NReservedUtils {
                     }
                 });
                 count[0]++;
-                bLog.with().level(Level.FINEST).verb(NLoggerVerb.WARNING).log( NMsg.ofJ("delete folder : {0} ({1} files/folders deleted)", directory, count[0]));
+                bLog.with().level(Level.FINEST).verb(NLogVerb.WARNING).log( NMsg.ofJ("delete folder : {0} ({1} files/folders deleted)", directory, count[0]));
             } catch (IOException ex) {
                 throw new UncheckedIOException(ex);
             }
@@ -586,7 +586,7 @@ public final class NReservedUtils {
             idBuilder.setArtifactId(artifact);
             idBuilder.setGroupId(group);
 
-            Map<String, String> queryMap = NStringUtils.parseDefaultMap(m.group("query")).get();
+            Map<String, String> queryMap = NStringMapFormat.DEFAULT.parse(m.group("query")).get();
             NEnvConditionBuilder conditionBuilder = new DefaultNEnvConditionBuilder();
 
             Map<String, String> idProperties = new LinkedHashMap<>();
@@ -634,7 +634,7 @@ public final class NReservedUtils {
                 break;
             }
             case NConstants.IdProperties.CONDITIONAL_PROPERTIES: {
-                Map<String, String> mm = NStringUtils.parseMap(value, "=", ",").get();
+                Map<String, String> mm = NStringMapFormat.COMMA_FORMAT.parse(value).get();
                 sb.setProperties(mm);
                 break;
             }
@@ -645,7 +645,7 @@ public final class NReservedUtils {
     }
 
     private static boolean ndiAddFileLine(Path filePath, String commentLine, String goodLine, boolean force,
-                                          String ensureHeader, String headerReplace, NLogger bLog) {
+                                          String ensureHeader, String headerReplace, NLog bLog) {
         boolean found = false;
         boolean updatedFile = false;
         List<String> lines = new ArrayList<>();
@@ -703,7 +703,7 @@ public final class NReservedUtils {
         return updatedFile;
     }
 
-    static boolean ndiRemoveFileCommented2Lines(Path filePath, String commentLine, boolean force, NLogger bLog) {
+    static boolean ndiRemoveFileCommented2Lines(Path filePath, String commentLine, boolean force, NLog bLog) {
         boolean found = false;
         boolean updatedFile = false;
         try {
@@ -733,12 +733,12 @@ public final class NReservedUtils {
             }
             return updatedFile;
         } catch (IOException ex) {
-            bLog.with().level(Level.WARNING).verb(NLoggerVerb.WARNING).error(ex).log( NMsg.ofPlain("unable to update update " + filePath));
+            bLog.with().level(Level.WARNING).verb(NLogVerb.WARNING).error(ex).log( NMsg.ofPlain("unable to update update " + filePath));
             return false;
         }
     }
 
-    public static void ndiUndo(NLogger bLog) {
+    public static void ndiUndo(NLog bLog) {
         //need to unset settings configuration.
         //what is the safest way to do so?
         NOsFamily os = NOsFamily.getCurrent();
@@ -775,7 +775,7 @@ public final class NReservedUtils {
                 }
             } catch (Exception e) {
                 //ignore
-                bLog.with().level(Level.FINEST).verb(NLoggerVerb.FAIL).log( NMsg.ofJ("unable to undo NDI : {0}", e.toString()));
+                bLog.with().level(Level.FINEST).verb(NLogVerb.FAIL).log( NMsg.ofJ("unable to undo NDI : {0}", e.toString()));
             }
         }
     }
@@ -892,7 +892,7 @@ public final class NReservedUtils {
      * @param out out stream
      * @return exit code
      */
-    public static int processThrowable(Throwable ex, NLogger out) {
+    public static int processThrowable(Throwable ex, NLog out) {
         if (ex == null) {
             return 0;
         }
@@ -914,7 +914,7 @@ public final class NReservedUtils {
                             + " " + NStringUtils.trim(System.getProperty("nuts.args"))
             );
             try {
-                options.setCommandLine(NCommandLine.parseDefault(nutsArgs).get().toStringArray(), null);
+                options.setCommandLine(NCmdLine.parseDefault(nutsArgs).get().toStringArray(), null);
             } catch (Exception e) {
                 //any, ignore...
             }
@@ -943,7 +943,7 @@ public final class NReservedUtils {
         return processThrowable(ex, out, true, showStackTrace, gui);
     }
 
-    public static int processThrowable(Throwable ex, NLogger out, boolean showMessage, boolean showStackTrace, boolean showGui) {
+    public static int processThrowable(Throwable ex, NLog out, boolean showMessage, boolean showStackTrace, boolean showGui) {
         if (ex == null) {
             return 0;
         }
@@ -966,7 +966,7 @@ public final class NReservedUtils {
                         fm = NMsg.ofStyled(m, NTextStyle.error());
                     }
                 } catch (Exception ex2) {
-                    NLoggerOp.of(NApplications.class, session).level(Level.FINE).error(ex2).log(
+                    NLogOp.of(NApplications.class, session).level(Level.FINE).error(ex2).log(
                             NMsg.ofPlain("unable to get system terminal")
                     );
                     //
@@ -1043,15 +1043,15 @@ public final class NReservedUtils {
                     out = new NReservedBootLog();
                 }
                 if (fm != null) {
-                    out.with().level(Level.OFF).verb(NLoggerVerb.FAIL).log(fm);
+                    out.with().level(Level.OFF).verb(NLogVerb.FAIL).log(fm);
                 } else {
-                    out.with().level(Level.OFF).verb(NLoggerVerb.FAIL).log(NMsg.ofPlain(m));
+                    out.with().level(Level.OFF).verb(NLogVerb.FAIL).log(NMsg.ofPlain(m));
                 }
                 if (showStackTrace) {
-                    out.with().level(Level.OFF).verb(NLoggerVerb.FAIL).log(NMsg.ofPlain("---------------"));
-                    out.with().level(Level.OFF).verb(NLoggerVerb.FAIL).log(NMsg.ofPlain(">  STACKTRACE :"));
-                    out.with().level(Level.OFF).verb(NLoggerVerb.FAIL).log(NMsg.ofPlain("---------------"));
-                    out.with().level(Level.OFF).verb(NLoggerVerb.FAIL).log(NMsg.ofPlain(
+                    out.with().level(Level.OFF).verb(NLogVerb.FAIL).log(NMsg.ofPlain("---------------"));
+                    out.with().level(Level.OFF).verb(NLogVerb.FAIL).log(NMsg.ofPlain(">  STACKTRACE :"));
+                    out.with().level(Level.OFF).verb(NLogVerb.FAIL).log(NMsg.ofPlain("---------------"));
+                    out.with().level(Level.OFF).verb(NLogVerb.FAIL).log(NMsg.ofPlain(
                             NReservedLangUtils.stacktrace(ex)
                     ));
                 }
@@ -1126,7 +1126,7 @@ public final class NReservedUtils {
         if (condition.getProperties() != null) {
             Map<String, String> properties = condition.getProperties();
             if (!properties.isEmpty()) {
-                m.put(NConstants.IdProperties.CONDITIONAL_PROPERTIES, NStringUtils.formatDefaultMap(properties));
+                m.put(NConstants.IdProperties.CONDITIONAL_PROPERTIES, NStringMapFormat.DEFAULT.format(properties));
             }
         }
         return m;

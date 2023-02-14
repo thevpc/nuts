@@ -1,8 +1,8 @@
 package net.thevpc.nuts.runtime.standalone.io.terminal;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.cmdline.NCommandAutoCompleteResolver;
-import net.thevpc.nuts.cmdline.NCommandHistory;
+import net.thevpc.nuts.cmdline.NCmdLineAutoCompleteResolver;
+import net.thevpc.nuts.cmdline.NCmdLineHistory;
 import net.thevpc.nuts.io.NPrintStream;
 import net.thevpc.nuts.io.NSystemTerminal;
 import net.thevpc.nuts.runtime.standalone.io.progress.CProgressBar;
@@ -22,7 +22,7 @@ public abstract class AbstractSystemTerminalAdapter extends NSystemTerminalBaseI
     private String commandHighlighter;
 
     @Override
-    public NCommandAutoCompleteResolver getAutoCompleteResolver() {
+    public NCmdLineAutoCompleteResolver getAutoCompleteResolver() {
         NSystemTerminalBase p = getBase();
         if (p != null) {
             return p.getAutoCompleteResolver();
@@ -35,7 +35,7 @@ public abstract class AbstractSystemTerminalAdapter extends NSystemTerminalBaseI
     }
 
     @Override
-    public NSystemTerminalBase setCommandAutoCompleteResolver(NCommandAutoCompleteResolver autoCompleteResolver) {
+    public NSystemTerminalBase setCommandAutoCompleteResolver(NCmdLineAutoCompleteResolver autoCompleteResolver) {
         NSystemTerminalBase p = getBase();
         if (p != null) {
             p.setCommandAutoCompleteResolver(autoCompleteResolver);
@@ -44,13 +44,13 @@ public abstract class AbstractSystemTerminalAdapter extends NSystemTerminalBaseI
     }
 
     @Override
-    public NSystemTerminalBase setCommandHistory(NCommandHistory history) {
+    public NSystemTerminalBase setCommandHistory(NCmdLineHistory history) {
         getBase().setCommandHistory(history);
         return this;
     }
 
     @Override
-    public NCommandHistory getCommandHistory() {
+    public NCmdLineHistory getCommandHistory() {
         return getBase().getCommandHistory();
     }
 
