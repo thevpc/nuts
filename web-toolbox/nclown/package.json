@@ -37,7 +37,7 @@
     "@nebular/security": "3.0.0",
     "@nebular/theme": "3.0.0",
     "@ng-bootstrap/ng-bootstrap": "^4.0.0",
-    "bootstrap": "^4.2.1",
+    "bootstrap": "^4.3.1",
     "classlist.js": "1.1.20150312",
     "core-js": "2.5.1",
     "eva-icons": "^1.1.0",
