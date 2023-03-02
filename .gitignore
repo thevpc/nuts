@@ -180,3 +180,6 @@
 /tutorials/ugly-jar-projects/springboot-project/springboot-project.iml
 /installers/nuts-installer/.idea/
 /third-party-companions/nbackup/target
+/toolbox/nlog/nlog.iml
+/toolbox/nlog/target/
+/third-party-companions/nbackup/nbackup.iml
