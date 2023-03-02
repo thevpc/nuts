@@ -35,7 +35,7 @@ public class NAssert {
     }
 
     private static String createName(String name) {
-        return NBlankable.isBlank(name.isEmpty()) ? "value" : name;
+        return NBlankable.isBlank(name) ? "value" : name;
     }
 
     public static <T> T requireNonNull(T object, Supplier<NMsg> msg, NSession session) {

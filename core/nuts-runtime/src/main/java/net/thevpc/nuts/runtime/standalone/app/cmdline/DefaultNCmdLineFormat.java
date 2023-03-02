@@ -83,7 +83,7 @@ public class DefaultNCmdLineFormat extends DefaultFormatBase<NCmdLineFormat> imp
                                             .setExpectEnv(true)
                             );
             if (isNtf()) {
-                out.println(
+                out.print(
                         NTexts.of(getSession()).ofCode("system", cmd)
                 );
             } else {

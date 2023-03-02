@@ -1471,11 +1471,11 @@ public class DefaultNWorkspaceConfigModel {
                         if (period.getCount() < 0) {
                             period = defaultPeriod;
                         }
-                        ThreadPoolExecutor executorService2 = (ThreadPoolExecutor) Executors.newCachedThreadPool(CoreNUtils.N_DEFAULT_THREAD_FACTORY);
-                        executorService2.setCorePoolSize(minPoolSize);
-                        executorService2.setKeepAliveTime(period.getCount(), period.getUnit());
-                        executorService2.setMaximumPoolSize(maxPoolSize);
-                        executorService = executorService2;
+                        ThreadPoolExecutor poolExecutor = (ThreadPoolExecutor) Executors.newCachedThreadPool(CoreNUtils.N_DEFAULT_THREAD_FACTORY);
+                        poolExecutor.setCorePoolSize(minPoolSize);
+                        poolExecutor.setKeepAliveTime(period.getCount(), period.getUnit());
+                        poolExecutor.setMaximumPoolSize(maxPoolSize);
+                        executorService = poolExecutor;
                     }
                 }
             }

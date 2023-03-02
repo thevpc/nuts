@@ -290,11 +290,6 @@ public class DefaultNSession implements Cloneable, NSession {
                             }
                             setProgressOptions(s);
                         } else {
-                            if (NBlankable.isBlank(s)) {
-                                s = "true";
-                            } else {
-                                s = "true," + s;
-                            }
                             setProgressOptions(s);
                         }
                         this.setProgressOptions(s);
