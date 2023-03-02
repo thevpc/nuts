@@ -7,7 +7,9 @@ import net.thevpc.nuts.toolbox.ndb.base.NdbSupportBase;
 import net.thevpc.nuts.toolbox.ndb.base.cmd.CopyDBCmd;
 import net.thevpc.nuts.toolbox.ndb.sql.sqlbase.cmd.*;
 import net.thevpc.nuts.toolbox.ndb.sql.nmysql.util.AtName;
-import net.thevpc.nuts.toolbox.ndb.util.SqlHelper;
+import net.thevpc.nuts.toolbox.ndb.sql.util.SqlCallable;
+import net.thevpc.nuts.toolbox.ndb.sql.util.SqlHelper;
+import net.thevpc.nuts.toolbox.ndb.sql.util.SqlRunnable;
 import net.thevpc.nuts.util.NStringUtils;
 
 import java.util.Arrays;
@@ -35,6 +37,7 @@ public abstract class SqlSupport<C extends NdbConfig> extends NdbSupportBase<C> 
         declareNdbCmd(new SqlShowTablesCmd<>(this));
         declareNdbCmd(new SqlUpdateCmd<>(this));
         declareNdbCmd(new CopyDBCmd<>(this));
+        declareNdbCmd(new SqlShowSchemaCmd<>(this));
     }
 
 //    @Override
@@ -103,5 +106,16 @@ public abstract class SqlSupport<C extends NdbConfig> extends NdbSupportBase<C> 
         return NStringUtils.formatStringLiteral(String.valueOf(o), NStringUtils.QuoteType.SIMPLE);
     }
 
+    public <T> T callInDb(SqlCallable<T> sql, C options, NSession session) {
+        String jdbcUrl = createJdbcURL(options);
+        return SqlHelper.callAndWaitFor(sql, jdbcUrl, dbDriverPackage, dbDriverClass,
+                options.getUser(), options.getPassword(), null, session);
+    }
+
+    public void runInDb(SqlRunnable sql, C options, NSession session) {
+        String jdbcUrl = createJdbcURL(options);
+        SqlHelper.runAndWaitFor(sql, jdbcUrl, dbDriverPackage, dbDriverClass,
+                options.getUser(), options.getPassword(), null, session);
+    }
 
 }

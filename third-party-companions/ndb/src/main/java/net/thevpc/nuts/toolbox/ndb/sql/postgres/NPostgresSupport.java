@@ -88,7 +88,7 @@ public class NPostgresSupport extends SqlSupport<NPostgresConfig> {
                 NMaps.of(
                         "server", NOptional.of(options.getHost()).ifBlank("localhost").get(),
                         "port", NOptional.of(options.getPort()).mapIf(x -> x <= 0, x -> null, x -> x).ifBlank(5432).get(),
-                        "database", NOptional.of(options.getDatabaseName()).ifBlank("db").get()
+                        "database", NOptional.of(options.getDatabaseName()).ifBlank("postgres").get()
                 )).toString();
     }
 

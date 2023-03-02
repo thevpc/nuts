@@ -16,7 +16,7 @@ import java.util.Arrays;
 
 public class ShowDatabasesCmd<C extends NdbConfig> extends NdbCmd<C> {
     public ShowDatabasesCmd(NdbSupportBase<C> support, String... names) {
-        super(support,"show-db","show-databases","databases","db");
+        super(support,"show-dbs","show-db","show-databases","databases","db");
         this.names.addAll(Arrays.asList(names));
     }
 

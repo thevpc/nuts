@@ -7,7 +7,7 @@ import net.thevpc.nuts.toolbox.ndb.sql.sqlbase.cmd.SqlShowDatabasesCmd;
 
 public class PostgresShowDatabasesCmd extends SqlShowDatabasesCmd<NPostgresConfig> {
     public PostgresShowDatabasesCmd(NPostgresSupport support) {
-        super(support);
+        super(support,"show-db","show-dbs");
     }
 
     @Override

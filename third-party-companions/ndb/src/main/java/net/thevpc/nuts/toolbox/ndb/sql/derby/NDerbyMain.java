@@ -15,7 +15,7 @@ import net.thevpc.nuts.text.NTexts;
 import net.thevpc.nuts.toolbox.ndb.base.CmdRedirect;
 import net.thevpc.nuts.toolbox.ndb.sql.sqlbase.SqlSupport;
 import net.thevpc.nuts.toolbox.ndb.sql.nmysql.util.AtName;
-import net.thevpc.nuts.toolbox.ndb.util.SqlHelper;
+import net.thevpc.nuts.toolbox.ndb.sql.util.SqlHelper;
 import net.thevpc.nuts.util.NMaps;
 import net.thevpc.nuts.util.NRef;
 
@@ -162,6 +162,7 @@ public class NDerbyMain extends SqlSupport<NDerbyConfig> {
                 options.getUser(), options.getPassword(), null,
                 forceShowSQL.get(), session);
     }
+
 
     @Override
     public String createJdbcURL(NDerbyConfig options) {

@@ -20,7 +20,7 @@ import net.thevpc.nuts.toolbox.ndb.sql.nmysql.remote.config.RemoteMysqlDatabaseC
 import net.thevpc.nuts.toolbox.ndb.sql.nmysql.util.AtName;
 import net.thevpc.nuts.toolbox.ndb.sql.nmysql.util.MysqlUtils;
 import net.thevpc.nuts.toolbox.ndb.util.NdbUtils;
-import net.thevpc.nuts.toolbox.ndb.util.SqlHelper;
+import net.thevpc.nuts.toolbox.ndb.sql.util.SqlHelper;
 import net.thevpc.nuts.util.NMaps;
 import net.thevpc.nuts.util.NRef;
 
