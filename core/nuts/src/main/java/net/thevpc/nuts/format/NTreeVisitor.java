@@ -33,11 +33,11 @@ import net.thevpc.nuts.NSession;
  * @param <T> Type
  */
 public interface NTreeVisitor<T> {
-    NTreeVisitResult preVisitDirectory(T dir, NSession session);
+    default NTreeVisitResult preVisitDirectory(T dir, NSession session){return NTreeVisitResult.CONTINUE;}
 
-    NTreeVisitResult visitFile(T file, NSession session);
+    default NTreeVisitResult visitFile(T file, NSession session){return NTreeVisitResult.CONTINUE;}
 
-    NTreeVisitResult visitFileFailed(T file, Exception exc, NSession session);
+    default NTreeVisitResult visitFileFailed(T file, Exception exc, NSession session){return NTreeVisitResult.CONTINUE;}
 
-    NTreeVisitResult postVisitDirectory(T dir, Exception exc, NSession session);
+    default NTreeVisitResult postVisitDirectory(T dir, Exception exc, NSession session){return NTreeVisitResult.CONTINUE;}
 }
