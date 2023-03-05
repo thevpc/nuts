@@ -26,11 +26,11 @@
 package net.thevpc.nuts.toolbox.nsh.cmds.common;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.cmdline.NArg;
 import net.thevpc.nuts.cmdline.NArgName;
 import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.format.NObjectFormat;
 import net.thevpc.nuts.io.NPath;
-import net.thevpc.nuts.toolbox.nsh.cmds.JShellBuiltinBase;
 import net.thevpc.nuts.toolbox.nsh.cmds.JShellBuiltinDefault;
 import net.thevpc.nuts.toolbox.nsh.jshell.JShellExecutionContext;
 import net.thevpc.nuts.toolbox.nsh.util.ShellHelper;
@@ -50,7 +50,7 @@ public class PropsCommand extends JShellBuiltinDefault {
     }
 
     @Override
-    protected boolean configureFirst(NCmdLine commandLine, JShellExecutionContext context) {
+    protected boolean onCmdNextOption(NArg arg, NCmdLine commandLine, JShellExecutionContext context) {
         Options o = context.getOptions();
         NSession session = context.getSession();
         if (commandLine.next("get").isPresent()) {
@@ -180,7 +180,7 @@ public class PropsCommand extends JShellBuiltinDefault {
     }
 
     @Override
-    protected void execBuiltin(NCmdLine commandLine, JShellExecutionContext context) {
+    protected void onCmdExec(NCmdLine commandLine, JShellExecutionContext context) {
         Options o = context.getOptions();
         NSession session = context.getSession();
         commandLine.setCommandName(getName());
@@ -415,5 +415,10 @@ public class PropsCommand extends JShellBuiltinDefault {
         public synchronized Enumeration<Object> keys() {
             return Collections.enumeration((Set) other.keySet());
         }
+    }
+
+    @Override
+    protected boolean onCmdNextNonOption(NArg arg, NCmdLine commandLine, JShellExecutionContext context) {
+        return onCmdNextOption(arg, commandLine, context);
     }
 }

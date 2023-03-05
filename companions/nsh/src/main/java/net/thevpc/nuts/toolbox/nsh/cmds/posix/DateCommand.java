@@ -31,7 +31,6 @@ import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.NSession;
 import net.thevpc.nuts.spi.NComponentScope;
 import net.thevpc.nuts.spi.NComponentScopeType;
-import net.thevpc.nuts.toolbox.nsh.cmds.JShellBuiltinBase;
 import net.thevpc.nuts.toolbox.nsh.cmds.JShellBuiltinDefault;
 import net.thevpc.nuts.toolbox.nsh.jshell.JShellExecutionContext;
 
@@ -52,7 +51,7 @@ public class DateCommand extends JShellBuiltinDefault {
     }
 
     @Override
-    protected boolean configureFirst(NCmdLine cmdLine, JShellExecutionContext context) {
+    protected boolean onCmdNextOption(NArg arg, NCmdLine cmdLine, JShellExecutionContext context) {
         Options options = context.getOptions();
         NSession session = context.getSession();
         NArg a = cmdLine.peek().get(session);
@@ -208,7 +207,7 @@ public class DateCommand extends JShellBuiltinDefault {
     }
 
     @Override
-    protected void execBuiltin(NCmdLine cmdLine, JShellExecutionContext context) {
+    protected void onCmdExec(NCmdLine cmdLine, JShellExecutionContext context) {
         Options options = context.getOptions();
         ZonedDateTime dateTimeInMyZone = ZonedDateTime.
                 of(LocalDateTime.now(), ZoneId.systemDefault());
@@ -279,7 +278,7 @@ public class DateCommand extends JShellBuiltinDefault {
     }
 
     @Override
-    protected void initCommandLine(NCmdLine commandLine, JShellExecutionContext context) {
+    protected void onCmdInitParsing(NCmdLine commandLine, JShellExecutionContext context) {
         for (String s : new String[]{
                 "-Id", "-Idate",
                 "-Ih", "-Ihours",
@@ -303,5 +302,10 @@ public class DateCommand extends JShellBuiltinDefault {
         String reference;
         String setdate;
         boolean utc;
+    }
+
+    @Override
+    protected boolean onCmdNextNonOption(NArg arg, NCmdLine commandLine, JShellExecutionContext context) {
+        return onCmdNextOption(arg, commandLine, context);
     }
 }

@@ -26,12 +26,12 @@
 package net.thevpc.nuts.toolbox.nsh.cmds.bash;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.cmdline.NArg;
 import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.spi.NComponentScope;
 import net.thevpc.nuts.spi.NComponentScopeType;
 import net.thevpc.nuts.text.NTextCode;
 import net.thevpc.nuts.text.NTexts;
-import net.thevpc.nuts.toolbox.nsh.cmds.JShellBuiltinBase;
 import net.thevpc.nuts.toolbox.nsh.cmds.JShellBuiltinDefault;
 import net.thevpc.nuts.toolbox.nsh.jshell.JShellExecutionContext;
 import net.thevpc.nuts.util.NStringUtils;
@@ -47,7 +47,7 @@ public class EchoCommand extends JShellBuiltinDefault {
     }
 
     @Override
-    protected boolean configureFirst(NCmdLine commandLine, JShellExecutionContext context) {
+    protected boolean onCmdNextOption(NArg arg, NCmdLine commandLine, JShellExecutionContext context) {
         Options options = context.getOptions();
         NSession session = context.getSession();
         switch (commandLine.peek().get(session).key()) {
@@ -84,7 +84,7 @@ public class EchoCommand extends JShellBuiltinDefault {
     }
 
     @Override
-    protected void execBuiltin(NCmdLine commandLine, JShellExecutionContext context) {
+    protected void onCmdExec(NCmdLine commandLine, JShellExecutionContext context) {
         Options options = context.getOptions();
         Object ns = null;
         if (options.highlighter == null) {
@@ -110,4 +110,9 @@ public class EchoCommand extends JShellBuiltinDefault {
         StringBuilder message = new StringBuilder();
         int tokensCount = 0;
     }
+    @Override
+    protected boolean onCmdNextNonOption(NArg arg, NCmdLine commandLine, JShellExecutionContext context) {
+        return onCmdNextOption(arg, commandLine, context);
+    }
+
 }

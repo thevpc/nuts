@@ -27,6 +27,7 @@
 package net.thevpc.nuts.toolbox.nsh.cmds;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.cmdline.NArg;
 import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.cmdline.NCmdLineAutoComplete;
 import net.thevpc.nuts.io.NMemoryPrintStream;
@@ -99,9 +100,10 @@ public abstract class JShellBuiltinBase implements JShellBuiltin {
         }
     }
 
-    protected abstract boolean configureFirst(NCmdLine commandLine, JShellExecutionContext context);
+    protected abstract boolean onCmdNextOption(NArg arg, NCmdLine commandLine, JShellExecutionContext context);
+    protected abstract boolean onCmdNextNonOption(NArg arg, NCmdLine commandLine, JShellExecutionContext context);
 
-    protected abstract void execBuiltin(NCmdLine commandLine, JShellExecutionContext context);
+    protected abstract void onCmdExec(NCmdLine commandLine, JShellExecutionContext context);
 
     protected void execImpl(String[] args, JShellExecutionContext context) {
         boolean conf = false;
@@ -110,15 +112,24 @@ public abstract class JShellBuiltinBase implements JShellBuiltin {
         NSession session = context.getSession();
         NCmdLine commandLine = NCmdLine.of(args).setCommandName(getName())
                 .setAutoComplete(context.getShellContext().getAutoComplete());
-        initCommandLine(commandLine, context);
         context.setOptions(optionsSupplier==null?null:optionsSupplier.get());
+        onCmdInitParsing(commandLine, context);
         while (commandLine.hasNext()) {
+            NArg arg = commandLine.peek().get();
             if (robustMode) {
                 String[] before = commandLine.toStringArray();
-                if (!this.configureFirst(commandLine, context)) {
-                    context.configureLast(commandLine);
-                } else {
-                    conf = true;
+                if(arg.isOption()){
+                    if (!this.onCmdNextOption(arg, commandLine, context)) {
+                        context.configureLast(commandLine);
+                    } else {
+                        conf = true;
+                    }
+                }else{
+                    if (!this.onCmdNextNonOption(arg, commandLine, context)) {
+                        context.configureLast(commandLine);
+                    } else {
+                        conf = true;
+                    }
                 }
                 String[] after = commandLine.toStringArray();
                 if (Arrays.equals(before, after)) {
@@ -127,7 +138,7 @@ public abstract class JShellBuiltinBase implements JShellBuiltin {
                             + " args = " + Arrays.toString(after));
                 }
             } else {
-                if (!this.configureFirst(commandLine, context)) {
+                if (!this.onCmdNextOption(arg, commandLine, context)) {
                     context.configureLast(commandLine);
                 } else {
                     conf = true;
@@ -138,6 +149,7 @@ public abstract class JShellBuiltinBase implements JShellBuiltin {
                 robustMode = true;
             }
         }
+        this.onCmdFinishParsing(commandLine, context);
         if (commandLine.isAutoCompleteMode()) {
             return;
         }
@@ -149,10 +161,14 @@ public abstract class JShellBuiltinBase implements JShellBuiltin {
             session.out().println(NIdResolver.of(session).resolveId(getClass()).getVersion());
             return;
         }
-        execBuiltin(commandLine, context);
+        onCmdExec(commandLine, context);
     }
 
-    protected void initCommandLine(NCmdLine commandLine, JShellExecutionContext context) {
+    protected void onCmdFinishParsing(NCmdLine commandLine, JShellExecutionContext context) {
+
+    }
+
+    protected void onCmdInitParsing(NCmdLine commandLine, JShellExecutionContext context) {
 
     }
 

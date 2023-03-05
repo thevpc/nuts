@@ -31,7 +31,6 @@ import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.spi.NComponentScope;
 import net.thevpc.nuts.spi.NComponentScopeType;
-import net.thevpc.nuts.toolbox.nsh.cmds.JShellBuiltinBase;
 import net.thevpc.nuts.toolbox.nsh.cmds.JShellBuiltinDefault;
 import net.thevpc.nuts.toolbox.nsh.jshell.JShellExecutionContext;
 import net.thevpc.nuts.toolbox.nsh.util.ShellHelper;
@@ -51,7 +50,7 @@ public class RmCommand extends JShellBuiltinDefault {
     }
 
     @Override
-    protected boolean configureFirst(NCmdLine commandLine, JShellExecutionContext context) {
+    protected boolean onCmdNextOption(NArg arg, NCmdLine commandLine, JShellExecutionContext context) {
         NSession session = context.getSession();
         Options options = context.getOptions();
         NArg a;
@@ -67,7 +66,7 @@ public class RmCommand extends JShellBuiltinDefault {
     }
 
     @Override
-    protected void execBuiltin(NCmdLine commandLine, JShellExecutionContext context) {
+    protected void onCmdExec(NCmdLine commandLine, JShellExecutionContext context) {
         Options options = context.getOptions();
         NSession session = context.getSession();
         NAssert.requireNonBlank(options.files, "parameters", session);
@@ -91,4 +90,8 @@ public class RmCommand extends JShellBuiltinDefault {
         List<NPath> files = new ArrayList<>();
     }
 
+    @Override
+    protected boolean onCmdNextNonOption(NArg arg, NCmdLine commandLine, JShellExecutionContext context) {
+        return onCmdNextOption(arg, commandLine, context);
+    }
 }

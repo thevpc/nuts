@@ -34,7 +34,6 @@ import net.thevpc.nuts.io.NPrintStream;
 import net.thevpc.nuts.spi.NComponentScope;
 import net.thevpc.nuts.spi.NComponentScopeType;
 import net.thevpc.nuts.text.*;
-import net.thevpc.nuts.toolbox.nsh.cmds.JShellBuiltinBase;
 import net.thevpc.nuts.toolbox.nsh.cmds.JShellBuiltinDefault;
 import net.thevpc.nuts.toolbox.nsh.util.bundles._IOUtils;
 import net.thevpc.nuts.toolbox.nsh.util.bundles._StringUtils;
@@ -55,11 +54,11 @@ import java.util.List;
 public class CatCommand extends JShellBuiltinDefault {
 
     public CatCommand() {
-        super("cat", DEFAULT_SUPPORT,Options.class);
+        super("cat", DEFAULT_SUPPORT, Options.class);
     }
 
     @Override
-    protected boolean configureFirst(NCmdLine commandLine, JShellExecutionContext context) {
+    protected boolean onCmdNextOption(NArg arg, NCmdLine commandLine, JShellExecutionContext context) {
         NSession session = context.getSession();
         Options options = context.getOptions();
         NArg a;
@@ -88,7 +87,12 @@ public class CatCommand extends JShellBuiltinDefault {
     }
 
     @Override
-    protected void execBuiltin(NCmdLine commandLine, JShellExecutionContext context) {
+    protected boolean onCmdNextNonOption(NArg arg, NCmdLine commandLine, JShellExecutionContext context) {
+        return onCmdNextOption(arg, commandLine, context);
+    }
+
+    @Override
+    protected void onCmdExec(NCmdLine commandLine, JShellExecutionContext context) {
         Options options = context.getOptions();
         if (options.files.isEmpty()) {
             options.files.add(null);
@@ -113,7 +117,7 @@ public class CatCommand extends JShellBuiltinDefault {
                     in = context.in();
                     if (f.getHighlighter() == null) {
                         f.setHighlighter("plain");
-                    }else if(f.getHighlighter().isEmpty()){
+                    } else if (f.getHighlighter().isEmpty()) {
                         f.setHighlighter("ntf");
                     }
                 } else {

@@ -49,7 +49,7 @@ public class ShowerrCommand extends JShellBuiltinCore {
     }
 
     @Override
-    protected boolean configureFirst(NCmdLine commandLine, JShellExecutionContext context) {
+    protected boolean onCmdNextOption(NArg arg, NCmdLine commandLine, JShellExecutionContext context) {
         Options options = context.getOptions();
         NSession session = context.getSession();
         NArg a = commandLine.peek().get(session);
@@ -67,7 +67,25 @@ public class ShowerrCommand extends JShellBuiltinCore {
     }
 
     @Override
-    protected void execBuiltin(NCmdLine commandLine, JShellExecutionContext context) {
+    protected boolean onCmdNextNonOption(NArg arg, NCmdLine commandLine, JShellExecutionContext context) {
+        Options options = context.getOptions();
+        NSession session = context.getSession();
+        NArg a = commandLine.peek().get(session);
+        if (!a.isOption()) {
+            if (options.login == null) {
+                options.login = commandLine.next(NArgName.of("username", session)).flatMap(NLiteral::asString).get(session);
+                return true;
+            } else if (options.password == null) {
+                options.password = commandLine.next(NArgName.of("password", session))
+                        .flatMap(NLiteral::asString).get(session).toCharArray();
+                return true;
+            }
+        }
+        return false;
+    }
+
+    @Override
+    protected void onCmdExec(NCmdLine commandLine, JShellExecutionContext context) {
         JShellResult r = context.getShellContext().getLastResult();
         NPrintStream out = context.getSession().out();
         switch (context.getSession().getOutputFormat()) {

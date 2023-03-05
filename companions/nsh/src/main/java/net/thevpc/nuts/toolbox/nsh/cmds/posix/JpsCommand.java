@@ -26,10 +26,10 @@
 package net.thevpc.nuts.toolbox.nsh.cmds.posix;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.cmdline.NArg;
 import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.spi.NComponentScope;
 import net.thevpc.nuts.spi.NComponentScopeType;
-import net.thevpc.nuts.toolbox.nsh.cmds.JShellBuiltinBase;
 import net.thevpc.nuts.toolbox.nsh.cmds.JShellBuiltinDefault;
 import net.thevpc.nuts.toolbox.nsh.jshell.JShellExecutionContext;
 
@@ -81,7 +81,7 @@ public class JpsCommand extends JShellBuiltinDefault {
     }
 
     @Override
-    protected boolean configureFirst(NCmdLine commandLine, JShellExecutionContext context) {
+    protected boolean onCmdNextOption(NArg arg, NCmdLine commandLine, JShellExecutionContext context) {
         NSession session = context.getSession();
         Options options = context.getOptions();
         if (commandLine.next("-l").orNull() != null) {
@@ -111,7 +111,7 @@ public class JpsCommand extends JShellBuiltinDefault {
     }
 
     @Override
-    protected void execBuiltin(NCmdLine commandLine, JShellExecutionContext context) {
+    protected void onCmdExec(NCmdLine commandLine, JShellExecutionContext context) {
         Options options = context.getOptions();
         List<JpsRow> results = new ArrayList<>();
 
@@ -168,5 +168,9 @@ public class JpsCommand extends JShellBuiltinDefault {
         boolean q = false;
         boolean l = false;
         String host;
+    }
+    @Override
+    protected boolean onCmdNextNonOption(NArg arg, NCmdLine commandLine, JShellExecutionContext context) {
+        return onCmdNextOption(arg, commandLine, context);
     }
 }

@@ -26,12 +26,12 @@
 package net.thevpc.nuts.toolbox.nsh.cmds.posix;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.cmdline.NArg;
 import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.io.NCp;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.spi.NComponentScope;
 import net.thevpc.nuts.spi.NComponentScopeType;
-import net.thevpc.nuts.toolbox.nsh.cmds.JShellBuiltinBase;
 import net.thevpc.nuts.toolbox.nsh.cmds.JShellBuiltinDefault;
 import net.thevpc.nuts.toolbox.nsh.jshell.JShellExecutionContext;
 import net.thevpc.nuts.toolbox.nsh.util.ShellHelper;
@@ -53,7 +53,7 @@ public class CpCommand extends JShellBuiltinDefault {
 
 
     @Override
-    protected boolean configureFirst(NCmdLine commandLine, JShellExecutionContext context) {
+    protected boolean onCmdNextOption(NArg arg, NCmdLine commandLine, JShellExecutionContext context) {
         Options options = context.getOptions();
         NSession session = context.getSession();
         switch (commandLine.peek().get(session).key()) {
@@ -78,7 +78,7 @@ public class CpCommand extends JShellBuiltinDefault {
     }
 
     @Override
-    protected void execBuiltin(NCmdLine commandLine, JShellExecutionContext context) {
+    protected void onCmdExec(NCmdLine commandLine, JShellExecutionContext context) {
         Options options = context.getOptions();
         NSession session = context.getSession();
         for (String value : options.files) {
@@ -187,43 +187,9 @@ public class CpCommand extends JShellBuiltinDefault {
         List<NPath> xfiles = new ArrayList<>();
     }
 
-//    private void copyFolder(File from1, File to1) {
-//        try {
-//            Files.walk(from1.toPath())
-//                    .forEach(source -> {
-//                        Path destination = Paths.get(to1.getPath(), source.toString()
-//                                .substring(from1.getPath().length()));
-//                        if(Files.isDirectory(source)){
-//                            destination.toFile().mkdirs();
-//                        }else {
-//                            FileUtils.createParents(destination.toFile());
-//                            try {
-//                                Files.copy(source, destination, StandardCopyOption.REPLACE_EXISTING);
-//                            } catch (IOException e) {
-//                                throw new UncheckedIOException(e);
-//                            }
-//                        }
-//                    });
-//        } catch (IOException e) {
-//            throw new UncheckedIOException(e);
-//        }
-//    }
-
-//    private void copyLocalToRemote(File from, String to, boolean mkdir, SShConnection session) {
-//        if (from.isDirectory()) {
-//            if (mkdir) {
-//                session.mkdir(to, true);
-//            }
-//            for (File file : from.listFiles()) {
-//                copyLocalToRemote(file, to + "/" + file.getName(), mkdir, session);
-//            }
-//        } else if (from.isFile()) {
-////            String p = FileUtils.getFileParentPath(to);
-////            if (p != null) {
-////                session.mkdir(p, true);
-////            }
-//            session.copyLocalToRemote(from.getPath(), to, mkdir);
-//        }
-//    }
+    @Override
+    protected boolean onCmdNextNonOption(NArg arg, NCmdLine commandLine, JShellExecutionContext context) {
+        return onCmdNextOption(arg, commandLine, context);
+    }
 
 }

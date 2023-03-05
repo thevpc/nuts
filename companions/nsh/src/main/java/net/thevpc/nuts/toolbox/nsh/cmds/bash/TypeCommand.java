@@ -31,7 +31,6 @@ import net.thevpc.nuts.NSession;
 import net.thevpc.nuts.NLiteral;
 import net.thevpc.nuts.spi.NComponentScope;
 import net.thevpc.nuts.spi.NComponentScopeType;
-import net.thevpc.nuts.toolbox.nsh.cmds.JShellBuiltinBase;
 import net.thevpc.nuts.toolbox.nsh.cmds.JShellBuiltinDefault;
 import net.thevpc.nuts.toolbox.nsh.jshell.JShell;
 import net.thevpc.nuts.toolbox.nsh.cmds.JShellBuiltin;
@@ -52,7 +51,7 @@ public class TypeCommand extends JShellBuiltinDefault {
     }
 
     @Override
-    protected boolean configureFirst(NCmdLine commandLine, JShellExecutionContext context) {
+    protected boolean onCmdNextOption(NArg arg, NCmdLine commandLine, JShellExecutionContext context) {
         Options config = context.getOptions();
         NSession session = context.getSession();
         NArg a = commandLine.peek().get(session);
@@ -64,7 +63,7 @@ public class TypeCommand extends JShellBuiltinDefault {
     }
 
     @Override
-    protected void execBuiltin(NCmdLine commandLine, JShellExecutionContext context) {
+    protected void onCmdExec(NCmdLine commandLine, JShellExecutionContext context) {
         Options config = context.getOptions();
         JShell shell = context.getShell();
         List<ResultItem> result = new ArrayList<>();
@@ -146,4 +145,8 @@ public class TypeCommand extends JShellBuiltinDefault {
     }
 
 
+    @Override
+    protected boolean onCmdNextNonOption(NArg arg, NCmdLine commandLine, JShellExecutionContext context) {
+        return onCmdNextOption(arg, commandLine, context);
+    }
 }

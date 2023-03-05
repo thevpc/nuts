@@ -32,7 +32,6 @@ import net.thevpc.nuts.NSession;
 import net.thevpc.nuts.NLiteral;
 import net.thevpc.nuts.spi.NComponentScope;
 import net.thevpc.nuts.spi.NComponentScopeType;
-import net.thevpc.nuts.toolbox.nsh.cmds.JShellBuiltinBase;
 import net.thevpc.nuts.toolbox.nsh.cmds.JShellBuiltinDefault;
 import net.thevpc.nuts.toolbox.nsh.jshell.JShellExecutionContext;
 
@@ -46,12 +45,12 @@ import java.util.List;
 public class CommandCommand extends JShellBuiltinDefault {
 
     public CommandCommand() {
-        super("command", DEFAULT_SUPPORT,Options.class);
+        super("command", DEFAULT_SUPPORT, Options.class);
     }
 
 
     @Override
-    protected boolean configureFirst(NCmdLine commandLine, JShellExecutionContext context) {
+    protected boolean onCmdNextOption(NArg arg, NCmdLine commandLine, JShellExecutionContext context) {
         NSession session = context.getSession();
         Options options = context.getOptions();
         NArg a = null;
@@ -72,7 +71,7 @@ public class CommandCommand extends JShellBuiltinDefault {
     }
 
     @Override
-    protected void execBuiltin(NCmdLine commandLine, JShellExecutionContext context) {
+    protected void onCmdExec(NCmdLine commandLine, JShellExecutionContext context) {
         Options options = context.getOptions();
         if (options.commandName != null) {
             context.getShell().executePreparedCommand(options.args.toArray(new String[0]), false, true, true, context.getShellContext());
@@ -84,6 +83,11 @@ public class CommandCommand extends JShellBuiltinDefault {
         boolean p;
         String commandName;
         List<String> args;
+    }
+
+    @Override
+    protected boolean onCmdNextNonOption(NArg arg, NCmdLine commandLine, JShellExecutionContext context) {
+        return onCmdNextOption(arg, commandLine, context);
     }
 
 }

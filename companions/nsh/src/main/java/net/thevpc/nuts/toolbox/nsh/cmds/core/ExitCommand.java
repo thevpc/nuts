@@ -42,27 +42,28 @@ import net.thevpc.nuts.toolbox.nsh.err.JShellQuitException;
 public class ExitCommand extends JShellBuiltinCore {
 
     public ExitCommand() {
-        super("exit", DEFAULT_SUPPORT,Options.class);
+        super("exit", DEFAULT_SUPPORT, Options.class);
     }
 
     @Override
-    protected boolean configureFirst(NCmdLine commandLine, JShellExecutionContext context) {
+    protected boolean onCmdNextOption(NArg arg, NCmdLine commandLine, JShellExecutionContext context) {
+        return false;
+    }
+
+    @Override
+    protected boolean onCmdNextNonOption(NArg arg, NCmdLine commandLine, JShellExecutionContext context) {
         Options options = context.getOptions();
         NSession session = context.getSession();
-        final NArg a = commandLine.peek().get(session);
-        if (a.isOption()) {
-            return false;
-        } else {
-            if (a.isInt() && a.asInt().get(session) > 0) {
-                options.code = a.asInt().get(session);
-                return true;
-            }
+        if (arg.isInt() && arg.asInt().get(session) > 0) {
+            arg = commandLine.next().get();
+            options.code = arg.asInt().get(session);
+            return true;
         }
         return false;
     }
 
     @Override
-    protected void execBuiltin(NCmdLine commandLine, JShellExecutionContext context) {
+    protected void onCmdExec(NCmdLine commandLine, JShellExecutionContext context) {
         Options options = context.getOptions();
         throw new JShellQuitException(context.getSession(), options.code);
     }

@@ -1,8 +1,8 @@
 package net.thevpc.nuts.toolbox.ntemplate.filetemplate;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.cmdline.NArg;
 import net.thevpc.nuts.cmdline.NCmdLine;
-import net.thevpc.nuts.toolbox.nsh.cmds.JShellBuiltinBase;
 import net.thevpc.nuts.toolbox.nsh.cmds.JShellBuiltinDefault;
 import net.thevpc.nuts.toolbox.nsh.jshell.JShellExecutionContext;
 import net.thevpc.nuts.toolbox.ntemplate.filetemplate.util.StringUtils;
@@ -21,7 +21,7 @@ public class ProcessCmd extends JShellBuiltinDefault {
     }
 
     @Override
-    protected boolean configureFirst(NCmdLine commandLine, JShellExecutionContext context) {
+    protected boolean onCmdNextOption(NArg arg, NCmdLine commandLine, JShellExecutionContext context) {
         Options o = context.getOptions();
         NSession session = context.getSession();
         if (commandLine.isNonOption(0)) {
@@ -35,7 +35,7 @@ public class ProcessCmd extends JShellBuiltinDefault {
     }
 
     @Override
-    protected void execBuiltin(NCmdLine commandLine, JShellExecutionContext context) {
+    protected void onCmdExec(NCmdLine commandLine, JShellExecutionContext context) {
         Options o = context.getOptions();
         if (o.args.size() == 0) {
             throw new NExecutionException(context.getSession(), NMsg.ofC("%s : invalid arguments count", getName()), 1);
@@ -48,5 +48,10 @@ public class ProcessCmd extends JShellBuiltinDefault {
 
     private static class Options {
         List<String> args = new ArrayList<>();
+    }
+
+    @Override
+    protected boolean onCmdNextNonOption(NArg arg, NCmdLine commandLine, JShellExecutionContext context) {
+        return onCmdNextOption(arg, commandLine, context);
     }
 }

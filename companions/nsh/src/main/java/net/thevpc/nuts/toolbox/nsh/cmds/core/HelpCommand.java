@@ -26,12 +26,11 @@
 package net.thevpc.nuts.toolbox.nsh.cmds.core;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.cmdline.NArg;
 import net.thevpc.nuts.cmdline.NCmdLine;
-import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.io.NTerminalMode;
 import net.thevpc.nuts.text.NText;
 import net.thevpc.nuts.text.NTextStyle;
-import net.thevpc.nuts.text.NTextTransformConfig;
 import net.thevpc.nuts.text.NTexts;
 import net.thevpc.nuts.toolbox.nsh.cmds.JShellBuiltinCore;
 import net.thevpc.nuts.toolbox.nsh.util.bundles._StringUtils;
@@ -55,7 +54,7 @@ public class HelpCommand extends JShellBuiltinCore {
     }
 
     @Override
-    protected boolean configureFirst(NCmdLine commandLine, JShellExecutionContext context) {
+    protected boolean onCmdNextOption(NArg arg, NCmdLine commandLine, JShellExecutionContext context) {
         NSession session = context.getSession();
         Options options = context.getOptions();
         if (commandLine.next("--ntf").isPresent()) {
@@ -72,7 +71,24 @@ public class HelpCommand extends JShellBuiltinCore {
     }
 
     @Override
-    protected void execBuiltin(NCmdLine commandLine, JShellExecutionContext context) {
+    protected boolean onCmdNextNonOption(NArg arg, NCmdLine commandLine, JShellExecutionContext context) {
+        NSession session = context.getSession();
+        Options options = context.getOptions();
+        if (commandLine.next("--ntf").isPresent()) {
+            options.code = true;
+            return true;
+        } else if (commandLine.peek().get(session).isNonOption()) {
+            options.commandNames.add(
+                    commandLine.nextNonOption(new CommandNonOption("command", context.getShellContext()))
+                            .get().asString().get(session));
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    @Override
+    protected void onCmdExec(NCmdLine commandLine, JShellExecutionContext context) {
         NSession session = context.getSession();
         Options options = context.getOptions();
         if (options.code) {

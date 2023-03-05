@@ -25,12 +25,12 @@ package net.thevpc.nuts.toolbox.nsh.cmds.bash;
 
 import net.thevpc.nuts.NArchFamily;
 import net.thevpc.nuts.NEnvs;
+import net.thevpc.nuts.cmdline.NArg;
 import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.NId;
 import net.thevpc.nuts.NSession;
 import net.thevpc.nuts.spi.NComponentScope;
 import net.thevpc.nuts.spi.NComponentScopeType;
-import net.thevpc.nuts.toolbox.nsh.cmds.JShellBuiltinBase;
 import net.thevpc.nuts.toolbox.nsh.cmds.JShellBuiltinDefault;
 import net.thevpc.nuts.toolbox.nsh.jshell.JShellExecutionContext;
 
@@ -49,7 +49,7 @@ public class UnameCommand extends JShellBuiltinDefault {
 
 
     @Override
-    protected boolean configureFirst(NCmdLine cmdLine, JShellExecutionContext context) {
+    protected boolean onCmdNextOption(NArg arg, NCmdLine cmdLine, JShellExecutionContext context) {
         NSession session = context.getSession();
         Options config = context.getOptions();
         switch (cmdLine.peek().get(session).key()) {
@@ -76,7 +76,7 @@ public class UnameCommand extends JShellBuiltinDefault {
     }
 
     @Override
-    protected void execBuiltin(NCmdLine commandLine, JShellExecutionContext context) {
+    protected void onCmdExec(NCmdLine commandLine, JShellExecutionContext context) {
         Options config = context.getOptions();
         NSession ws = context.getSession();
 
@@ -137,4 +137,8 @@ public class UnameCommand extends JShellBuiltinDefault {
         NArchFamily arch;
     }
 
+    @Override
+    protected boolean onCmdNextNonOption(NArg arg, NCmdLine commandLine, JShellExecutionContext context) {
+        return onCmdNextOption(arg, commandLine, context);
+    }
 }

@@ -3,6 +3,7 @@ package net.thevpc.nuts.tutorial.customshell.cmd;
 import java.util.HashMap;
 
 import net.thevpc.nuts.NMsg;
+import net.thevpc.nuts.cmdline.NArg;
 import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.NSession;
 import net.thevpc.nuts.spi.NComponentScope;
@@ -50,12 +51,13 @@ public class Hello extends JShellBuiltinBase {
      * this method is called multiple times to process all the command line
      * arguments. It just need to process the 'next'/'first' option if supported.
      *
+     * @param arg
      * @param cmdline cmdline to process partially
      * @param ctx     shell context
      * @return true if the option is processed
      */
     @Override
-    protected boolean configureFirst(NCmdLine cmdline, JShellExecutionContext ctx) {
+    protected boolean onCmdNextOption(NArg arg, NCmdLine cmdline, JShellExecutionContext ctx) {
         //get an instance of the current options object we are filling.
         Options o = ctx.getOptions();
         //get the next option (without consuming it)
@@ -81,7 +83,7 @@ public class Hello extends JShellBuiltinBase {
                 //        --complex
                 //        it can even be negated with '~' or '!'
                 //        --!complex
-                cmdline.withNextFlag((value, arg, session) -> o.complex = value);
+                cmdline.withNextFlag((v, a, s) -> o.complex = v);
                 //return true to say that the option was successfully processed
                 return true;
             }
@@ -91,7 +93,12 @@ public class Hello extends JShellBuiltinBase {
     }
 
     @Override
-    protected void execBuiltin(NCmdLine cmdline, JShellExecutionContext ctx) {
+    protected boolean onCmdNextNonOption(NArg arg, NCmdLine commandLine, JShellExecutionContext context) {
+        return false;
+    }
+
+    @Override
+    protected void onCmdExec(NCmdLine cmdline, JShellExecutionContext ctx) {
         Options o = ctx.getOptions();
         NSession session = ctx.getSession();
         if (o.complex) {

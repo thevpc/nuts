@@ -31,7 +31,6 @@ import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.NSession;
 import net.thevpc.nuts.spi.NComponentScope;
 import net.thevpc.nuts.spi.NComponentScopeType;
-import net.thevpc.nuts.toolbox.nsh.cmds.JShellBuiltinBase;
 import net.thevpc.nuts.toolbox.nsh.cmds.JShellBuiltinDefault;
 import net.thevpc.nuts.toolbox.nsh.jshell.JShellExecutionContext;
 
@@ -49,7 +48,7 @@ public class DirNameCommand extends JShellBuiltinDefault {
     }
 
     @Override
-    protected boolean configureFirst(NCmdLine cmdLine, JShellExecutionContext context) {
+    protected boolean onCmdNextOption(NArg arg, NCmdLine cmdLine, JShellExecutionContext context) {
         Options options = context.getOptions();
         NSession session = context.getSession();
         NArg a = cmdLine.peek().get(session);
@@ -73,7 +72,7 @@ public class DirNameCommand extends JShellBuiltinDefault {
     }
 
     @Override
-    protected void execBuiltin(NCmdLine cmdLine, JShellExecutionContext context) {
+    protected void onCmdExec(NCmdLine cmdLine, JShellExecutionContext context) {
         Options options = context.getOptions();
         NSession session = context.getSession();
         if (options.names.isEmpty()) {
@@ -128,5 +127,10 @@ public class DirNameCommand extends JShellBuiltinDefault {
         List<String> names = new ArrayList<>();
         boolean multi = false;
         String suffix = null;
+    }
+
+    @Override
+    protected boolean onCmdNextNonOption(NArg arg, NCmdLine commandLine, JShellExecutionContext context) {
+        return onCmdNextOption(arg, commandLine, context);
     }
 }

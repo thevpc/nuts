@@ -34,6 +34,7 @@ import java.net.Socket;
 import java.util.concurrent.Executor;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.cmdline.NArg;
 import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.io.NPrintStream;
 import net.thevpc.nuts.io.NSessionTerminal;
@@ -179,12 +180,17 @@ public class AdminServerRunnable implements NServer, Runnable {
         }
 
         @Override
-        protected boolean configureFirst(NCmdLine commandLine, JShellExecutionContext context) {
+        protected boolean onCmdNextOption(NArg arg, NCmdLine commandLine, JShellExecutionContext context) {
             return false;
         }
 
         @Override
-        protected void execBuiltin(NCmdLine commandLine, JShellExecutionContext context) {
+        protected boolean onCmdNextNonOption(NArg arg, NCmdLine commandLine, JShellExecutionContext context) {
+            return false;
+        }
+
+        @Override
+        protected void onCmdExec(NCmdLine commandLine, JShellExecutionContext context) {
             if (context.getSession().isPlainTrace()) {
                 context.getSession().out().println("Stopping Server ...");
             }
