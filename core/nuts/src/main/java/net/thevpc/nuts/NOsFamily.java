@@ -99,27 +99,34 @@ public enum NOsFamily implements NEnum {
             if (e.startsWith("MAC")) {
                 return NOptional.of(NOsFamily.MACOS);
             }
-            if (e.startsWith("SUNOS")) {
+            if (e.startsWith("SUNOS") || e.startsWith("SUN_OS")) {
                 return NOptional.of(NOsFamily.UNIX);
             }
-            if (e.startsWith("FREEBSD")) {
+            if (e.startsWith("FREEBSD") || e.startsWith("FREE_BSD")) {
                 return NOptional.of(NOsFamily.UNIX);
             }
             //process plexus os families
             switch (e) {
                 case "DOS":
+                case "MSDOS":
+                case "MS_DOS":
                     return NOptional.of(NOsFamily.WINDOWS);
                 case "NETWARE":
+                case "NET_WARE":
                     return NOptional.of(NOsFamily.UNKNOWN);
+                case "OS2":
                 case "OS_2":
                     return NOptional.of(NOsFamily.UNKNOWN);
                 case "TANDEM":
                     return NOptional.of(NOsFamily.UNKNOWN);
+                case "Z_OS":
                 case "ZOS":
                     return NOptional.of(NOsFamily.UNKNOWN);
+                case "OS400":
                 case "OS_400":
                     return NOptional.of(NOsFamily.UNIX);
                 case "OPENVMS":
+                case "OPEN_VMS":
                     return NOptional.of(NOsFamily.UNKNOWN);
             }
             return null;
