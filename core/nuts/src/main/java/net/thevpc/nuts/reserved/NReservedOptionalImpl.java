@@ -184,7 +184,7 @@ public abstract class NReservedOptionalImpl<T> implements NOptional<T> {
 
     @Override
     public T orElse(T other) {
-        if (isEmpty()) {
+        if (isNotPresent()) {
             return other;
         }
         return get();
@@ -193,7 +193,7 @@ public abstract class NReservedOptionalImpl<T> implements NOptional<T> {
 
     @Override
     public T orElseGet(Supplier<? extends T> other) {
-        if (isEmpty()) {
+        if (isNotPresent()) {
             Objects.requireNonNull(other);
             return other.get();
         }
@@ -201,14 +201,39 @@ public abstract class NReservedOptionalImpl<T> implements NOptional<T> {
     }
 
     public NOptional<T> orElseOf(Supplier<T> other) {
-        if (isEmpty()) {
+        if (isNotPresent()) {
             return NOptional.of(Objects.requireNonNull(other).get(), getMessage());
         }
         return this;
     }
 
     public NOptional<T> orElseOfNullable(Supplier<T> other) {
-        if (isEmpty()) {
+        if (isNotPresent()) {
+            return NOptional.ofNullable(Objects.requireNonNull(other).get());
+        }
+        return this;
+    }
+
+    @Override
+    public T ifEmptyGet(Supplier<? extends T> other) {
+        if (isNotPresent()) {
+            Objects.requireNonNull(other);
+            return other.get();
+        }
+        return get();
+    }
+
+    @Override
+    public NOptional<T> ifEmptyOf(Supplier<T> other) {
+        if (isNotPresent()) {
+            return NOptional.of(Objects.requireNonNull(other).get(), getMessage());
+        }
+        return this;
+    }
+
+    @Override
+    public NOptional<T> ifEmptyOfNullable(Supplier<T> other) {
+        if (isNotPresent()) {
             return NOptional.ofNullable(Objects.requireNonNull(other).get());
         }
         return this;

@@ -187,6 +187,13 @@ public interface NOptional<T> extends NBlankable, NSessionProvider {
 
     NOptional<T> orElseOfNullable(Supplier<T> other);
 
+    T ifEmptyGet(Supplier<? extends T> other);
+
+    NOptional<T> ifEmptyOf(Supplier<T> other);
+
+    public NOptional<T> ifEmptyOfNullable(Supplier<T> other);
+
+
     NOptional<T> orElseUse(Supplier<NOptional<T>> other);
 
     <R extends Throwable> T orElseThrow(Supplier<? extends R> exceptionSupplier) throws R;
