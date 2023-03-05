@@ -30,7 +30,8 @@ import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.NSession;
 import net.thevpc.nuts.spi.NComponentScope;
 import net.thevpc.nuts.spi.NComponentScopeType;
-import net.thevpc.nuts.toolbox.nsh.SimpleJShellBuiltin;
+import net.thevpc.nuts.toolbox.nsh.cmds.JShellBuiltinBase;
+import net.thevpc.nuts.toolbox.nsh.cmds.JShellBuiltinDefault;
 import net.thevpc.nuts.toolbox.nsh.jshell.JShellExecutionContext;
 
 import java.util.Arrays;
@@ -41,7 +42,7 @@ import java.util.Set;
  * Created by vpc on 1/7/17.
  */
 @NComponentScope(NComponentScopeType.WORKSPACE)
-public class UnsetCommand extends SimpleJShellBuiltin {
+public class UnsetCommand extends JShellBuiltinDefault {
 
     public UnsetCommand() {
         super("unset", DEFAULT_SUPPORT,Options.class);

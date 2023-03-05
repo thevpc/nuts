@@ -232,6 +232,12 @@ public interface NDescriptor extends Serializable, NBlankable, NFormattable {
 
     /**
      * @since 0.8.4
+     * @return developers
+     */
+    List<NDescriptorContributor> getDevelopers();
+
+    /**
+     * @since 0.8.4
      * @return licenses
      */
     List<NDescriptorLicense> getLicenses();

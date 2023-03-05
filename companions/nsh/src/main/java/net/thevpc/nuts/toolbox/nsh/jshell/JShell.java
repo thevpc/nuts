@@ -16,17 +16,15 @@
  * (distributed jvm).
  * <br>
  * <p>
- * Copyright [2020] [thevpc]
- * Licensed under the Apache License, Version 2.0 (the "License"); you may
- * not use this file except in compliance with the License. You may obtain a
- * copy of the License at http://www.apache.org/licenses/LICENSE-2.0
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND,
- * either express or implied. See the License for the specific language
+ * Copyright [2020] [thevpc] Licensed under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0 Unless required by applicable law
+ * or agreed to in writing, software distributed under the License is
+ * distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
- * <br>
- * ====================================================================
+ * <br> ====================================================================
  */
 package net.thevpc.nuts.toolbox.nsh.jshell;
 
@@ -39,16 +37,40 @@ import net.thevpc.nuts.io.NSystemTerminal;
 import net.thevpc.nuts.spi.NDefaultSupportLevelContext;
 import net.thevpc.nuts.spi.NSupportLevelContext;
 import net.thevpc.nuts.text.NTextStyle;
-import net.thevpc.nuts.text.NTexts;
 import net.thevpc.nuts.toolbox.nsh.*;
-import net.thevpc.nuts.toolbox.nsh.jshell.parser.JShellParser;
-import net.thevpc.nuts.toolbox.nsh.jshell.util.ByteArrayPrintStream;
+import net.thevpc.nuts.toolbox.nsh.autocomplete.NshAutoCompleter;
+import net.thevpc.nuts.toolbox.nsh.cmdresolver.DefaultJShellCommandTypeResolver;
+import net.thevpc.nuts.toolbox.nsh.cmdresolver.JShellCommandTypeResolver;
+import net.thevpc.nuts.toolbox.nsh.cmdresolver.NCommandTypeResolver;
+import net.thevpc.nuts.toolbox.nsh.cmds.JShellBuiltin;
+import net.thevpc.nuts.toolbox.nsh.cmds.JShellBuiltinCore;
+import net.thevpc.nuts.toolbox.nsh.cmds.JShellBuiltinDefault;
+import net.thevpc.nuts.toolbox.nsh.err.*;
+import net.thevpc.nuts.toolbox.nsh.eval.DefaultJShellEvaluator;
+import net.thevpc.nuts.toolbox.nsh.eval.JShellEvaluator;
+import net.thevpc.nuts.toolbox.nsh.eval.JShellResult;
+import net.thevpc.nuts.toolbox.nsh.eval.NshEvaluator;
+import net.thevpc.nuts.toolbox.nsh.history.DefaultJShellHistory;
+import net.thevpc.nuts.toolbox.nsh.nodes.*;
+import net.thevpc.nuts.toolbox.nsh.sys.JShellExternalExecutor;
+import net.thevpc.nuts.toolbox.nsh.history.JShellHistory;
+import net.thevpc.nuts.toolbox.nsh.options.DefaultJShellOptionsParser;
+import net.thevpc.nuts.toolbox.nsh.options.JShellOptionsParser;
+import net.thevpc.nuts.toolbox.nsh.parser.JShellParser;
+import net.thevpc.nuts.toolbox.nsh.sys.JShellNoExternalExecutor;
+import net.thevpc.nuts.toolbox.nsh.util.ByteArrayPrintStream;
+import net.thevpc.nuts.toolbox.nsh.sys.NExternalExecutor;
 import net.thevpc.nuts.util.NClock;
+import net.thevpc.nuts.util.NLog;
+import net.thevpc.nuts.util.NStringUtils;
 
 import java.io.*;
+import java.time.Year;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.function.Function;
+import java.util.function.Predicate;
 import java.util.function.Supplier;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -64,127 +86,150 @@ public class JShell {
     private final JShellHistory history;
     private final List<JShellVarListener> listeners = new ArrayList<>();
     protected JShellContext rootContext;
-    NClock boot_startMillis;
+    private NClock bootStartMillis;
     private JShellEvaluator evaluator;
     private JShellErrorHandler errorHandler;
     private JShellExternalExecutor externalExecutor;
     private JShellCommandTypeResolver commandTypeResolver;
     private NApplicationContext appContext;
-    private NPath histFile = null;
     private NId appId = null;
+    private String serviceName = null;
+    private Function<NSession, NMsg> headerMessageSupplier = null;
 
-    /**
-     * args are inherited from app context
-     *
-     * @param appContext appContext
-     */
-    public JShell(NApplicationContext appContext) {
-        this(appContext, null);
-    }
-
-    public JShell(NApplicationContext appContext, String[] args) {
-        this(appContext, appContext.getAppId(), appContext.getAppId().getArtifactId(), args);
-    }
-
-    public JShell(NSession session, String[] args) {
-        this(NApplicationContext.of(new String[]{}, null, Nsh.class, null, session), null, null, args);
-    }
-
-    public JShell(NSession session, NId appId, String[] args) {
-        this(NApplicationContext.of(new String[]{}, null, Nsh.class, null, session), appId, appId == null ? null : appId.getArtifactId(), args);
-    }
-
-    public JShell(NSession session, NId appId, String serviceName, String[] args) {
-        this(NApplicationContext.of(new String[]{}, null, Nsh.class, null, session), appId, serviceName, args);
-    }
-
-    private JShell(NApplicationContext appContext, NId appId, String serviceName, String[] args) {
-        this(resolveServiceName(appContext, serviceName, appId), resolveArgs(appContext, args), new DefaultJShellOptionsParser(appContext),
-                new NshEvaluator(), new NCommandTypeResolver(), new NErrorHandler(), new NExternalExecutor(),
-                null
-        );
-        boot_startMillis = appContext.getStartTime();
-        this.appContext = appContext;
-        this.appId = appId;
-        //super.setCwd(workspace.getConfigManager().getCwd());
-        if (this.appId == null) {
-            this.appId = NIdResolver.of(appContext.getSession()).resolveId(JShell.class);
+    public JShell(JShellConfiguration configuration) {
+        if (configuration == null) {
+            configuration = new JShellConfiguration();
         }
-        if (this.appId == null) {
+        headerMessageSupplier = configuration.getHeaderMessageSupplier();
+        serviceName = configuration.getServiceName();
+        String[] args = configuration.getArgs();
+        JShellOptionsParser shellOptionsParser = configuration.getShellOptionsParser();
+        JShellEvaluator evaluator = configuration.getEvaluator();
+        JShellCommandTypeResolver commandTypeResolver = configuration.getCommandTypeResolver();
+        JShellErrorHandler errorHandler = configuration.getErrorHandler();
+        JShellExternalExecutor externalExecutor = configuration.getExternalExecutor();
+        NApplicationContext appContext = configuration.getApplicationContext();
+        NId appId = configuration.getAppId();
+        NSession session = configuration.getSession();
+
+        if (appContext == null && session != null) {
+            appContext = NApplicationContext.of(new String[]{}, null, Nsh.class, null, session);
+        }
+        if (session == null) {
+            if (appContext != null) {
+                session = appContext.getSession();
+            }
+        }
+        args = resolveArgs(appContext, args);
+        this.appId = appId;
+        this.bootStartMillis = appContext == null ? null : appContext.getStartTime();
+        this.appContext = appContext;
+        //super.setCwd(workspace.getConfigManager().getCwd());
+        if (this.appId == null && appContext != null) {
+            this.appId = appContext.getAppId();
+            if (this.appId == null) {
+                this.appId = NIdResolver.of(session).resolveId(JShell.class);
+            }
+        }
+        if (this.appId == null && appContext != null) {
             throw new IllegalArgumentException("unable to resolve application id");
         }
-        JShellContext _rootContext = getRootContext();
-        NSession rSession = _rootContext.getSession();
-        JShellHistory hist = getHistory();
-
-        NEnvs.of(this.appContext.getSession()).setProperty(JShellContext.class.getName(), _rootContext);
-        _rootContext.setSession(appContext.getSession());
-        //add default commands
-        List<JShellBuiltin> allCommand = new ArrayList<>();
-        NSupportLevelContext constraints = new NDefaultSupportLevelContext(appContext.getSession(), this);
-
-        for (JShellBuiltin command : this.appContext.getSession().extensions().
-                createServiceLoader(JShellBuiltin.class, JShell.class, JShellBuiltin.class.getClassLoader())
-                .loadAll(this)) {
-            JShellBuiltin old = _rootContext.builtins().find(command.getName());
-            if (old != null && old.getSupportLevel(constraints) >= command.getSupportLevel(constraints)) {
-                continue;
-            }
-            allCommand.add(command);
+        if (this.appId != null && serviceName == null) {
+            serviceName = this.appId.getArtifactId();
         }
-        _rootContext.builtins().set(allCommand.toArray(new JShellBuiltin[0]));
-        _rootContext.getUserProperties().put(JShellContext.class.getName(), _rootContext);
-        try {
-            histFile = NLocations.of(rSession).getStoreLocation(this.appId,
-                    NStoreLocation.VAR).resolve((serviceName == null ? "" : serviceName) + ".history");
-            hist.setHistoryFile(histFile);
-            if (histFile.exists()) {
-                hist.load(histFile);
-            }
-        } catch (Exception ex) {
-            LOG.log(Level.SEVERE, "error resolving history file", ex);
-        }
-        NEnvs.of(rSession).setProperty(JShellHistory.class.getName(), hist);
-    }
 
-
-    public JShell() {
-        this(null, null, null, null, null, null, null, null);
-    }
-
-    public JShell(String serviceName, String[] args, JShellOptionsParser shellOptionsParser,
-                  JShellEvaluator evaluator, JShellCommandTypeResolver commandTypeResolver,
-                  JShellErrorHandler errorHandler,
-                  JShellExternalExecutor externalExecutor,
-                  JShellHistory history
-    ) {
+        serviceName = resolveServiceName(appContext, serviceName, appId);
         if (commandTypeResolver == null) {
-            this.commandTypeResolver = new DefaultJShellCommandTypeResolver();
+            if (appContext != null) {
+                this.commandTypeResolver = new NCommandTypeResolver();
+            } else {
+                this.commandTypeResolver = new DefaultJShellCommandTypeResolver();
+            }
         } else {
             this.commandTypeResolver = commandTypeResolver;
         }
         if (errorHandler == null) {
-            this.errorHandler = new DefaultJShellErrorHandler();
+            this.errorHandler = new DefaultErrorHandler();
         } else {
             this.errorHandler = errorHandler;
         }
         if (evaluator == null) {
-            this.evaluator = new DefaultJShellEvaluator();
+            if (appContext != null) {
+                this.evaluator = new NshEvaluator();
+            } else {
+                this.evaluator = new DefaultJShellEvaluator();
+            }
         } else {
             this.evaluator = evaluator;
         }
+        JShellHistory history = configuration.getHistory();
         if (history == null) {
             this.history = new DefaultJShellHistory();
         } else {
             this.history = history;
         }
         if (shellOptionsParser == null) {
-            shellOptionsParser = new DefaultJShellOptionsParser(appContext);
+            shellOptionsParser = new DefaultJShellOptionsParser(appContext, session);
         }
-        options = shellOptionsParser.parse(args);
-        this.externalExecutor = externalExecutor;
+        this.options = shellOptionsParser.parse(args);
+        if (externalExecutor == null) {
+            boolean includeExternalExecutor = configuration.getIncludeExternalExecutor() != null && configuration.getIncludeExternalExecutor();
+            if (includeExternalExecutor) {
+                if (appContext != null) {
+                    this.externalExecutor = new NExternalExecutor();
+                } else {
+                    this.externalExecutor = new JShellNoExternalExecutor();
+                }
+            }
+        } else {
+            this.externalExecutor = externalExecutor;
+        }
         if (options.getServiceName() == null) {
             options.setServiceName(serviceName == null ? "jshell" : serviceName);
+        }
+
+        if (session != null) {
+            JShellContext _rootContext = getRootContext();
+            NSession rSession = _rootContext.getSession();
+
+            NEnvs.of(session).setProperty(JShellContext.class.getName(), _rootContext);
+            _rootContext.setSession(session);
+            //add default commands
+            List<JShellBuiltin> allCommand = new ArrayList<>();
+            NSupportLevelContext constraints = new NDefaultSupportLevelContext(session, this);
+
+            Predicate<JShellBuiltin> filter = new JShellBuiltinPredicate(configuration);
+            for (JShellBuiltin command : session.extensions().
+                    createServiceLoader(JShellBuiltin.class, JShell.class, JShellBuiltin.class.getClassLoader())
+                    .loadAll(this)) {
+                JShellBuiltin old = _rootContext.builtins().find(command.getName());
+                if (old != null && old.getSupportLevel(constraints) >= command.getSupportLevel(constraints)) {
+                    continue;
+                }
+                if (filter.test(command)) {
+                    allCommand.add(command);
+                }
+            }
+            _rootContext.builtins().set(allCommand.toArray(new JShellBuiltin[0]));
+            _rootContext.getUserProperties().put(JShellContext.class.getName(), _rootContext);
+
+            try {
+                NPath histFile = this.history.getHistoryFile();
+                if (histFile == null) {
+                    histFile = NLocations.of(rSession).getStoreLocation(this.appId,
+                            NStoreLocation.VAR).resolve((serviceName == null ? "" : serviceName) + ".history");
+                    this.history.setHistoryFile(histFile);
+                    if (histFile.exists()) {
+                        this.history.load(histFile);
+                    }
+                }
+            } catch (Exception ex) {
+                NLog.of(JShell.class, session)
+                        .with().level(Level.SEVERE)
+                        .error(ex)
+                        .log(NMsg.ofC("error resolving history file %s", this.history.getHistoryFile()));
+            }
+            NEnvs.of(rSession).setProperty(JShellHistory.class.getName(), this.history);
         }
     }
 
@@ -482,7 +527,7 @@ public class JShell {
         return 0;
     }
 
-//    protected String readInteractiveLine(JShellFileContext context) {
+    //    protected String readInteractiveLine(JShellFileContext context) {
 //        if (_in_reader == null) {
 //            _in_reader = new BufferedReader(new InputStreamReader(System.in));
 //        }
@@ -492,7 +537,6 @@ public class JShell {
 //            throw new UncheckedIOException(ex);
 //        }
 //    }
-
     public void run() {
         try {
             if (appContext.getAutoComplete() != null) {
@@ -552,11 +596,63 @@ public class JShell {
     }
 
     protected void printHeader(NPrintStream out) {
-        out.resetLine().println(NTexts.of(appContext.getSession()).ofBuilder()
-                .appendCode("sh", "nuts")
-                .append(" shell ")
-                .append("v" + getRootContext().getWorkspace().getRuntimeId().getVersion().toString(), NTextStyle.version())
-                .append(" (c) thevpc 2019-2021"));
+        NMsg m = null;
+        if (headerMessageSupplier != null) {
+            m = headerMessageSupplier.apply(out.getSession());
+            if (m == null) {
+                return;
+            }
+        }
+        if (m == null) {
+            NDescriptor resultDescriptor = null;
+            if (appId != null) {
+                try {
+                    resultDescriptor = NFetchCommand.of(appContext.getSession()).setId(appId).setEffective(true).getResultDescriptor();
+                } catch (Exception ex) {
+                    //just ignore
+                }
+            }
+            NDescriptorContributor contributor = null;
+            if (resultDescriptor != null) {
+                for (NDescriptorContributor c : resultDescriptor.getDevelopers()) {
+                    contributor = c;
+                    break;
+                }
+            }
+            String copyRight = null;
+            if (resultDescriptor != null && resultDescriptor.getLicenses() != null) {
+                for (NDescriptorLicense license : resultDescriptor.getLicenses()) {
+                    if (!NBlankable.isBlank(license.getDate())) {
+                        copyRight = license.getDate();
+                        break;
+                    }
+                }
+            }
+            if (resultDescriptor != null && resultDescriptor.getLicenses() != null) {
+                for (NDescriptorLicense license : resultDescriptor.getLicenses()) {
+                    if (!NBlankable.isBlank(license.getName())) {
+                        copyRight = license.getName();
+                        break;
+                    }
+                }
+            }
+            if (NBlankable.isBlank(copyRight)) {
+                copyRight = String.valueOf(Year.now().getValue());
+            }
+            m = NMsg.ofC("%s v%s (c) %s",
+                    NMsg.ofStyled(NStringUtils.coalesceNonNull(serviceName, "app"), NTextStyle.primary1()),
+                    (appId == null || appId.getVersion().isBlank()) ?
+                            getRootContext().getWorkspace().getRuntimeId().getVersion() :
+                            appId.getVersion()
+                    , contributor == null ? "thevpc" : NStringUtils.coalesceNonBlank(
+                            contributor.getName(),
+                            contributor.getEmail(),
+                            contributor.getId()
+                    ),
+                    copyRight
+            );
+        }
+        out.resetLine().println(m);
     }
 
     protected void executeHelp(JShellContext context) {
@@ -814,8 +910,7 @@ public class JShell {
 
     }
 
-
-//    public String evalAsString(String param, JShellContext context) {
+    //    public String evalAsString(String param, JShellContext context) {
 //        Properties envs = new Properties();
 //        Properties processEnvs = context.vars().getAll();
 //        for (Entry<Object, Object> entry : processEnvs.entrySet()) {
@@ -932,7 +1027,6 @@ public class JShell {
 //        }
 //        return found.toArray(new String[found.size()]);
 //    }
-
     public void prepareContext(JShellContext context) {
 //        try {
 //            cwd = new File(".").getCanonicalPath();
@@ -1103,4 +1197,37 @@ public class JShell {
         return new DefaultJShellContext(this, root, parent, ctx, appContext.getSession().getWorkspace(), appContext.getSession(), env, serviceName, args);
     }
 
+    private static class JShellBuiltinPredicate implements Predicate<JShellBuiltin> {
+        private final JShellConfiguration configuration;
+
+        boolean includeCoreBuiltins;
+        boolean includeDefaultBuiltins;
+
+        public JShellBuiltinPredicate(JShellConfiguration configuration) {
+            this.configuration = configuration;
+            includeCoreBuiltins = configuration.getIncludeCoreBuiltins() == null || configuration.getIncludeCoreBuiltins();
+            includeDefaultBuiltins = configuration.getIncludeDefaultBuiltins() != null && configuration.getIncludeDefaultBuiltins();
+        }
+
+        @Override
+        public boolean test(JShellBuiltin jShellBuiltin) {
+            if (!includeCoreBuiltins) {
+                if (jShellBuiltin instanceof JShellBuiltinCore) {
+                    return false;
+                }
+            }
+            if (!includeDefaultBuiltins) {
+                if (jShellBuiltin instanceof JShellBuiltinDefault) {
+                    return false;
+                }
+            }
+            Predicate<JShellBuiltin> filter = configuration.getBuiltinFilter();
+            if (filter != null) {
+                if (!filter.test(jShellBuiltin)) {
+                    return false;
+                }
+            }
+            return true;
+        }
+    }
 }

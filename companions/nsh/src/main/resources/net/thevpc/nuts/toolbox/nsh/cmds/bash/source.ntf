@@ -1,0 +1,10 @@
+read  and  execute  commands  from filename in the current shell environment
+
+##) SYNOPSIS:
+```sh source <FILENAME> <ARGS>...```
+read  and  execute  commands  from filename in the current shell environment
+
+##) EXAMPLES:
+
+```sh source myfile.nsh```
+    execute myfile.nsh in the current shell

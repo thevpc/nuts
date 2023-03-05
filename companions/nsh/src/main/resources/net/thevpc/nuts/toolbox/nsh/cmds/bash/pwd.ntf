@@ -1,0 +1,13 @@
+print working directory
+
+##) SYNOPSIS:
+```sh pwd```
+prints working directory
+
+
+##) EXAMPLES:
+
+```sh pwd```
+   prints working directory
+
+

@@ -6,6 +6,8 @@ public interface NDescriptorLicense {
 
     String getName();
 
+    String getDate();
+
     String getUrl();
 
     String getDistribution();

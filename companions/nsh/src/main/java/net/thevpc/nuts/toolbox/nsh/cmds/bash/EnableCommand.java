@@ -32,8 +32,9 @@ import net.thevpc.nuts.NSession;
 import net.thevpc.nuts.NLiteral;
 import net.thevpc.nuts.spi.NComponentScope;
 import net.thevpc.nuts.spi.NComponentScopeType;
-import net.thevpc.nuts.toolbox.nsh.SimpleJShellBuiltin;
-import net.thevpc.nuts.toolbox.nsh.jshell.JShellBuiltin;
+import net.thevpc.nuts.toolbox.nsh.cmds.JShellBuiltinBase;
+import net.thevpc.nuts.toolbox.nsh.cmds.JShellBuiltin;
+import net.thevpc.nuts.toolbox.nsh.cmds.JShellBuiltinDefault;
 import net.thevpc.nuts.toolbox.nsh.jshell.JShellExecutionContext;
 
 import java.util.*;
@@ -42,7 +43,7 @@ import java.util.*;
  * Created by vpc on 1/7/17.
  */
 @NComponentScope(NComponentScopeType.WORKSPACE)
-public class EnableCommand extends SimpleJShellBuiltin {
+public class EnableCommand extends JShellBuiltinDefault {
 
     public EnableCommand() {
         super("enable", DEFAULT_SUPPORT,Options.class);

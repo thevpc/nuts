@@ -5,7 +5,7 @@
     <artifactId>nuts-installer</artifactId>
     <version>0.8.4.0</version>
     <packaging>jar</packaging>
-    <name>Nuts Installer</name>
+    <name>Nuts Community Installer</name>
     <url>https://github.com/thevpc/nuts</url>
     <description>Nuts Portable GUI Installer</description>
     <properties>

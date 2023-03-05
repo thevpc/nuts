@@ -3,6 +3,13 @@ package net.thevpc.nuts.toolbox.nsh.jshell;
 import net.thevpc.nuts.cmdline.NCmdLineAutoComplete;
 import net.thevpc.nuts.NSession;
 import net.thevpc.nuts.NWorkspace;
+import net.thevpc.nuts.toolbox.nsh.alias.JShellAliasManager;
+import net.thevpc.nuts.toolbox.nsh.cmds.JShellBuiltinManager;
+import net.thevpc.nuts.toolbox.nsh.eval.JShellResult;
+import net.thevpc.nuts.toolbox.nsh.fs.JShellFileSystem;
+import net.thevpc.nuts.toolbox.nsh.nodes.JShellFunctionManager;
+import net.thevpc.nuts.toolbox.nsh.nodes.JShellNode;
+import net.thevpc.nuts.toolbox.nsh.nodes.JShellVariables;
 
 import java.util.Map;
 

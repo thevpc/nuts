@@ -6,7 +6,7 @@
     <artifactId>nuts-runtime</artifactId>
     <version>0.8.4.0</version>
     <packaging>jar</packaging>
-    <name>Nuts Community Runtime</name>
+    <name>Nuts Community Core Runtime</name>
     <url>https://github.com/thevpc/nuts</url>
     <description>Nuts Reference Runtime Implementation</description>
     <properties>

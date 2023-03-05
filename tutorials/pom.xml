@@ -9,15 +9,19 @@
     <version>0.8.4.0</version>
     <packaging>pom</packaging>
     <modules>
-        <module>nsh/custom-shell-project</module>
-        <module>simple-project</module>
+        <module>ugly-jar-projects/simple-project</module>
         <module>ugly-jar-projects/assembly-project</module>
         <module>ugly-jar-projects/dependency-project</module>
         <module>ugly-jar-projects/onejar-project</module>
         <module>ugly-jar-projects/shade-project</module>
         <module>ugly-jar-projects/springboot-project</module>
-        <module>naf/nuts-spring-boot-integration-hello-world</module>
-        <module>naf/nuts-spring-boot-integration-install-events</module>
+        <module>naf/custom-cli-project-a</module>
+        <module>naf/custom-cli-project-b</module>
+        <module>naf/custom-cli-project-c</module>
+        <module>naf/custom-shell-project</module>
+        <module>naf/spring-boot-integration-hello-world</module>
+        <module>naf/spring-boot-integration-install-events</module>
+        <module>lib/lib-integration-example</module>
     </modules>
     <properties>
     </properties>

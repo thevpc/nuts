@@ -52,7 +52,7 @@ public class NNameFormat {
      * true if a and b have equivalent (cas ignored) parts.
      * @param a first string
      * @param b second string
-     * @return true if a and b have equivalent (cas ignored) parts.
+     * @return true if a and b have equivalent (case ignored) parts.
      */
     public static boolean equalsIgnoreFormat(String a, String b) {
         String[] aa = parse(NStringUtils.trim(a));

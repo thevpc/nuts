@@ -9,22 +9,29 @@ public class DefaultNDescriptorLicenseBuilder implements NDescriptorLicenseBuild
     private String url;
     private String distribution;
     private String comments;
+    private String date;
     private Map<String, String> properties;
 
     public DefaultNDescriptorLicenseBuilder() {
     }
 
     public DefaultNDescriptorLicenseBuilder(NDescriptorLicense other) {
-        this(other.getId(), other.getName(), other.getUrl(), other.getDistribution(), other.getComments(), other.getProperties());
+        this(other.getId(), other.getName(), other.getUrl(), other.getDistribution(), other.getComments(), other.getDate(), other.getProperties());
     }
 
-    public DefaultNDescriptorLicenseBuilder(String id, String name, String url, String distribution, String comments, Map<String, String> properties) {
+    public DefaultNDescriptorLicenseBuilder(String id, String name, String url, String distribution, String comments, String date, Map<String, String> properties) {
         this.id = id;
         this.name = name;
         this.url = url;
         this.distribution = distribution;
         this.comments = comments;
+        this.date = date;
         this.properties = properties == null ? new LinkedHashMap<>() : new LinkedHashMap<>(properties);
+    }
+
+    @Override
+    public String getDate() {
+        return date;
     }
 
     @Override
@@ -93,6 +100,7 @@ public class DefaultNDescriptorLicenseBuilder implements NDescriptorLicenseBuild
         return this;
     }
 
+
     @Override
     public NDescriptorLicense readOnly() {
         return new DefaultNDescriptorLicense(this);
@@ -101,6 +109,11 @@ public class DefaultNDescriptorLicenseBuilder implements NDescriptorLicenseBuild
     @Override
     public NDescriptorLicenseBuilder builder() {
         return new DefaultNDescriptorLicenseBuilder(this);
+    }
+
+    public DefaultNDescriptorLicenseBuilder setDate(String date) {
+        this.date = date;
+        return this;
     }
 
     @Override

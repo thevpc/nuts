@@ -17,7 +17,7 @@
             <version>1.2.10</version>
         </dependency>
     </dependencies>
-    <name>onejar-project</name>
+    <name>Nuts Community Tutorial Documentation :: Ugly :: One Jar</name>
     
     <build>
         <plugins>

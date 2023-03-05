@@ -61,7 +61,7 @@ public class DefaultNApplicationContext implements NApplicationContext {
             this.session = session.copy();
             this.workspace = session.getWorkspace(); //get a workspace session aware!
         }
-        ((DefaultNSession)this.session).setApplicationContext(this);
+        ((DefaultNSession) this.session).setApplicationContext(this);
         session = this.session;//will be used later
         int wordIndex = -1;
         if (args.size() > 0 && args.get(0).startsWith("--nuts-exec-mode=")) {
@@ -176,6 +176,29 @@ public class DefaultNApplicationContext implements NApplicationContext {
         if (!configureFirst(commandLine)) {
             commandLine.throwUnexpectedArgument();
         }
+    }
+
+    @Override
+    public NOptional<NText> getHelp() {
+        NText h = null;
+        try {
+            h = NWorkspaceExt.of(getWorkspace()).resolveDefaultHelp(getAppClass(), session);
+        } catch (Exception ex) {
+            //
+        }
+        if (h != null) {
+            try {
+                h = NTexts.of(session).transform(h, new NTextTransformConfig()
+                        .setProcessTitleNumbers(true)
+                        .setNormalize(true)
+                        .setFlatten(true)
+                );
+            } catch (Exception ex) {
+                //
+                return NOptional.ofNamedError("application help", ex);
+            }
+        }
+        return NOptional.ofNamed(h, "application help");
     }
 
     @Override

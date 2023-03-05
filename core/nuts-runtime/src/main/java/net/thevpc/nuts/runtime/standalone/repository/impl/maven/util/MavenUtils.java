@@ -383,6 +383,66 @@ public class MavenUtils {
                                     .filter(x -> !x.isEmpty())
                                     .collect(Collectors.toList())
                     )
+                    .setLicenses(
+                            pom.getLicenses() == null ? new ArrayList<>() :
+                                    Arrays.stream(pom.getLicenses()).map(x -> {
+                                        return new DefaultNDescriptorLicense(
+                                                x.getName(),
+                                                x.getName(),
+                                                x.getUrl(),
+                                                x.getDistribution(),
+                                                x.getComments(),
+                                                null,
+                                                new LinkedHashMap<>()
+                                        );
+                                    }).collect(Collectors.toList())
+                    )
+                    .setContributors(
+                            pom.getContributors() == null ? new ArrayList<>() :
+                                    Arrays.stream(pom.getContributors()).map(x -> {
+                                        return new DefaultNDescriptorContributor(
+                                                x.getEmail(),
+                                                x.getName(),
+                                                x.getUrl(),
+                                                x.getEmail(),
+                                                new ArrayList<String>(),
+                                                x.getTimeZone(),
+                                                new ArrayList<String>(),
+                                                new DefaultNDescriptorOrganization(
+                                                        x.getOrganization(),
+                                                        x.getOrganization(),
+                                                        x.getOrganizationUrl(),
+                                                        null,
+                                                        new LinkedHashMap<>()
+                                                ),
+                                                x.getProperties() == null ? new LinkedHashMap<>() : new LinkedHashMap<>(x.getProperties()),
+                                                null
+                                        );
+                                    }).collect(Collectors.toList())
+                    )
+                    .setDevelopers(
+                            pom.getDevelopers() == null ? new ArrayList<>() :
+                                    Arrays.stream(pom.getDevelopers()).map(x -> {
+                                        return new DefaultNDescriptorContributor(
+                                                x.getEmail(),
+                                                x.getName(),
+                                                x.getUrl(),
+                                                x.getEmail(),
+                                                new ArrayList<String>(),
+                                                x.getTimeZone(),
+                                                new ArrayList<String>(),
+                                                new DefaultNDescriptorOrganization(
+                                                        x.getOrganization(),
+                                                        x.getOrganization(),
+                                                        x.getOrganizationUrl(),
+                                                        null,
+                                                        new LinkedHashMap<>()
+                                                ),
+                                                x.getProperties() == null ? new LinkedHashMap<>() : new LinkedHashMap<>(x.getProperties()),
+                                                null
+                                        );
+                                    }).collect(Collectors.toList())
+                    )
                     .setGenericName(genericName)
                     .setProperties(props)
                     .build();

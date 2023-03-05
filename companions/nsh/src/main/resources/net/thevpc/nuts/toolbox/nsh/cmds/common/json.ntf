@@ -1,0 +1,14 @@
+manipulate and query json input
+
+##) SYNOPSIS:
+```sh json [--file <file>] [--xpath <query>]```
+search in xpath compatible pattern in input file. If no file is defined, consider standard input
+
+##) EXAMPLES:
+
+```sh json --xpath /item/path -f file.json```
+    search in xpath compatible pattern file.json
+
+```sh json -q "...[][3-5]" -f  ~/.config/nuts/default-workspace/nuts-workspace.json```
+    search in jsonpath compatible pattern. return [ false, 10, "maven-local" ] for standard installation
+

@@ -31,10 +31,11 @@ import net.thevpc.nuts.NSession;
 import net.thevpc.nuts.NLiteral;
 import net.thevpc.nuts.spi.NComponentScope;
 import net.thevpc.nuts.spi.NComponentScopeType;
-import net.thevpc.nuts.toolbox.nsh.SimpleJShellBuiltin;
+import net.thevpc.nuts.toolbox.nsh.cmds.JShellBuiltinBase;
+import net.thevpc.nuts.toolbox.nsh.cmds.JShellBuiltinDefault;
 import net.thevpc.nuts.toolbox.nsh.jshell.JShell;
-import net.thevpc.nuts.toolbox.nsh.jshell.JShellBuiltin;
-import net.thevpc.nuts.toolbox.nsh.jshell.JShellCommandType;
+import net.thevpc.nuts.toolbox.nsh.cmds.JShellBuiltin;
+import net.thevpc.nuts.toolbox.nsh.cmdresolver.JShellCommandResolution;
 import net.thevpc.nuts.toolbox.nsh.jshell.JShellExecutionContext;
 
 import java.util.ArrayList;
@@ -44,7 +45,7 @@ import java.util.List;
  * Created by vpc on 1/7/17.
  */
 @NComponentScope(NComponentScopeType.WORKSPACE)
-public class TypeCommand extends SimpleJShellBuiltin {
+public class TypeCommand extends JShellBuiltinDefault {
 
     public TypeCommand() {
         super("type", DEFAULT_SUPPORT,Options.class);
@@ -84,7 +85,7 @@ public class TypeCommand extends SimpleJShellBuiltin {
                             cmd + " is aliased to `" + alias + "`"
                     ));
                 } else {
-                    JShellCommandType pp = shell.getCommandTypeResolver().type(cmd, context.getShellContext());
+                    JShellCommandResolution pp = shell.getCommandTypeResolver().type(cmd, context.getShellContext());
                     if (pp != null) {
                         result.add(new ResultItem(
                                 cmd,

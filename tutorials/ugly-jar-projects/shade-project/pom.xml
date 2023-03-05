@@ -17,7 +17,7 @@
             <version>1.2.10</version>
         </dependency>
     </dependencies>
-    <name>shade-project</name>
+    <name>Nuts Community Tutorial Documentation :: Ugly :: Shade Project</name>
     
     <build>
         <plugins>

@@ -12,6 +12,7 @@ import java.util.function.Function;
 import java.util.logging.Level;
 
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceUtils;
+import net.thevpc.nuts.spi.NSystemTerminalBase;
 import net.thevpc.nuts.text.*;
 import net.thevpc.nuts.util.NLog;
 import net.thevpc.nuts.util.NLogVerb;
@@ -591,12 +592,16 @@ public class CProgressBar {
             return;
         }
         Level armedLogLevel = options.getArmedLogLevel();
-        if (armedLogLevel!=null) {
+        if (armedLogLevel != null) {
             logger.with().verb(NLogVerb.PROGRESS)
                     .level(armedLogLevel)
                     .log(NMsg.ofNtf(p));
         } else {
-            out.print(p);
+            synchronized (CProgressBar.class) {
+                out.resetLine();
+                out.print(p);
+                int c=4;
+            }
         }
     }
 
@@ -612,7 +617,7 @@ public class CProgressBar {
         }
         s2 = msg.textLength();
         Level armedLogLevel = options.getArmedLogLevel();
-        if (armedLogLevel==null) {
+        if (armedLogLevel == null) {
             if (isPrefixMoveLineStart()) {
                 if (options.isArmedNewline()) {
                     if (!isSuffixMoveLineStart()) {
@@ -632,7 +637,7 @@ public class CProgressBar {
         sb.append(msg);
         sb.append(CoreStringUtils.fillString(' ', maxMessage - s2));
         if (isSuffixMoveLineStart()) {
-            if (armedLogLevel==null && options.isArmedNewline()) {
+            if (armedLogLevel == null && options.isArmedNewline()) {
                 sb.append("\n");
             }
         }

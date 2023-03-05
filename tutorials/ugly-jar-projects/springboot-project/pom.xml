@@ -17,7 +17,7 @@
             <version>1.2.10</version>
         </dependency>
     </dependencies>
-    <name>springboot-project</name>
+    <name>Nuts Community Tutorial Documentation :: Ugly :: Spring Boot Packaging</name>
     
     <build>
         <plugins>

@@ -65,6 +65,7 @@ public class DefaultNDescriptorBuilder implements NDescriptorBuilder {
     private List<NDescriptorProperty> properties = new ArrayList<>(); //defaults to empty;
     private transient DefaultNProperties _propertiesBuilder = new DefaultNProperties(); //defaults to empty;
     private List<NDescriptorContributor> contributors = new ArrayList<>(); //defaults to empty;
+    private List<NDescriptorContributor> developers = new ArrayList<>(); //defaults to empty;
     private List<NDescriptorLicense> licenses = new ArrayList<>(); //defaults to empty;
     private List<NDescriptorMailingList> mailingLists = new ArrayList<>(); //defaults to empty;
     private NDescriptorOrganization organization;
@@ -343,6 +344,7 @@ public class DefaultNDescriptorBuilder implements NDescriptorBuilder {
             setFlags(other.getFlags());
             setOrganization(other.getOrganization());
             setContributors(other.getContributors());
+            setDevelopers(other.getDevelopers());
             setLicenses(other.getLicenses());
             setMailingLists(other.getMailingLists());
         } else {
@@ -374,6 +376,7 @@ public class DefaultNDescriptorBuilder implements NDescriptorBuilder {
         setOrganization(null);
         setContributors(null);
         setLicenses(null);
+        setDevelopers(null);
         setMailingLists(null);
         return this;
     }
@@ -598,6 +601,7 @@ public class DefaultNDescriptorBuilder implements NDescriptorBuilder {
                 flags,
                 getSolver(),
                 getContributors(),
+                getDevelopers(),
                 getLicenses(),
                 getMailingLists(),
                 getOrganization()
@@ -763,6 +767,12 @@ public class DefaultNDescriptorBuilder implements NDescriptorBuilder {
     }
 
     @Override
+    public NDescriptorBuilder setDevelopers(List<NDescriptorContributor> developers) {
+        this.developers = NReservedCollectionUtils.uniqueList(developers);
+        return this;
+    }
+
+    @Override
     public List<NDescriptorLicense> getLicenses() {
         return licenses;
     }
@@ -795,5 +805,8 @@ public class DefaultNDescriptorBuilder implements NDescriptorBuilder {
         return this;
     }
 
-
+    @Override
+    public List<NDescriptorContributor> getDevelopers() {
+        return developers;
+    }
 }

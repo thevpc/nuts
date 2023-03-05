@@ -7,12 +7,13 @@ import java.io.BufferedReader;
 import java.io.PrintWriter;
 import java.io.StringReader;
 import java.io.StringWriter;
+import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 import java.util.function.Predicate;
 
 public final class NReservedLangUtils {
 
-    public static String getErrorMessage(Throwable ex){
+    public static String getErrorMessage(Throwable ex) {
         String m = ex.getMessage();
         if (m == null || m.length() < 5) {
             m = ex.toString();
@@ -38,6 +39,12 @@ public final class NReservedLangUtils {
                 if (c != null) {
                     stack.add(c);
                 }
+                if (th instanceof InvocationTargetException) {
+                    c = ((InvocationTargetException) th).getTargetException();
+                    if (c != null) {
+                        stack.add(c);
+                    }
+                }
             }
         }
         return NOptional.ofEmpty(x -> NMsg.ofC("error with type %s not found", type.getSimpleName()));
@@ -46,7 +53,7 @@ public final class NReservedLangUtils {
     public static String[] stacktraceToArray(Throwable th) {
         try {
             StringWriter sw = new StringWriter();
-            try (PrintWriter pw = new PrintWriter(sw)) {
+            try ( PrintWriter pw = new PrintWriter(sw)) {
                 th.printStackTrace(pw);
             }
             BufferedReader br = new BufferedReader(new StringReader(sw.toString()));
@@ -65,7 +72,7 @@ public final class NReservedLangUtils {
     public static String stacktrace(Throwable th) {
         try {
             StringWriter sw = new StringWriter();
-            try (PrintWriter pw = new PrintWriter(sw)) {
+            try ( PrintWriter pw = new PrintWriter(sw)) {
                 th.printStackTrace(pw);
             }
             return sw.toString();

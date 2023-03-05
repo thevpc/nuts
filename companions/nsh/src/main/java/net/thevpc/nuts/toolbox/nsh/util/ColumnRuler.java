@@ -4,7 +4,7 @@ import net.thevpc.nuts.NSession;
 import net.thevpc.nuts.NString;
 import net.thevpc.nuts.text.NTextStyle;
 import net.thevpc.nuts.text.NTexts;
-import net.thevpc.nuts.toolbox.nsh.bundles._StringUtils;
+import net.thevpc.nuts.toolbox.nsh.util.bundles._StringUtils;
 
 public class ColumnRuler {
     private int width;

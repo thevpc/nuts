@@ -62,6 +62,7 @@ public class DefaultNDescriptor implements NDescriptor {
     private List<String> categories;
     private String genericName;
     private List<NDescriptorContributor> contributors;
+    private List<NDescriptorContributor> developers;
     private List<NDescriptorLicense> licenses;
     private List<NDescriptorMailingList> mailingLists;
     private NDescriptorOrganization organization;
@@ -87,6 +88,7 @@ public class DefaultNDescriptor implements NDescriptor {
                 d.getFlags(),
                 d.getSolver(),
                 d.getContributors(),
+                d.getDevelopers(),
                 d.getLicenses(),
                 d.getMailingLists(),
                 d.getOrganization()
@@ -104,6 +106,7 @@ public class DefaultNDescriptor implements NDescriptor {
                               Set<NDescriptorFlag> flags,
                               String solver,
                               List<NDescriptorContributor> contributors,
+                              List<NDescriptorContributor> developers,
                               List<NDescriptorLicense> licenses,
                               List<NDescriptorMailingList> mailingLists,
                               NDescriptorOrganization organization
@@ -133,6 +136,7 @@ public class DefaultNDescriptor implements NDescriptor {
         this.flags = NReservedCollectionUtils.nonBlankSet(flags);
         this.solver = NStringUtils.trimToNull(solver);
         this.contributors = NReservedCollectionUtils.unmodifiableUniqueList(contributors);
+        this.developers = NReservedCollectionUtils.unmodifiableUniqueList(developers);
         this.licenses = NReservedCollectionUtils.unmodifiableUniqueList(licenses);
         this.mailingLists = NReservedCollectionUtils.unmodifiableUniqueList(mailingLists);
         this.organization = organization;
@@ -172,6 +176,27 @@ public class DefaultNDescriptor implements NDescriptor {
         }
         if (this.icons != null) {
             for (String d : this.icons) {
+                if (!NBlankable.isBlank(d)) {
+                    return false;
+                }
+            }
+        }
+        if (this.developers != null) {
+            for (NDescriptorContributor d : this.developers) {
+                if (!NBlankable.isBlank(d)) {
+                    return false;
+                }
+            }
+        }
+        if (this.contributors != null) {
+            for (NDescriptorContributor d : this.contributors) {
+                if (!NBlankable.isBlank(d)) {
+                    return false;
+                }
+            }
+        }
+        if (this.licenses != null) {
+            for (NDescriptorLicense d : this.licenses) {
                 if (!NBlankable.isBlank(d)) {
                     return false;
                 }
@@ -363,7 +388,8 @@ public class DefaultNDescriptor implements NDescriptor {
     public int hashCode() {
         return Objects.hash(id, idType, packaging,
                 executor, installer, name, description, genericName, condition, flags,
-                solver, categories, properties, icons, parents, locations, dependencies, standardDependencies
+                solver, categories, properties, icons, parents, locations, dependencies, standardDependencies,
+                contributors,developers,licenses
         );
     }
 
@@ -394,7 +420,11 @@ public class DefaultNDescriptor implements NDescriptor {
                 && Objects.equals(dependencies, that.dependencies)
                 && Objects.equals(standardDependencies, that.standardDependencies)
                 && Objects.equals(flags, that.flags)
-                && Objects.equals(properties, that.properties);
+                && Objects.equals(properties, that.properties)
+                && Objects.equals(contributors, that.contributors)
+                && Objects.equals(developers, that.developers)
+                && Objects.equals(licenses, that.licenses)
+                ;
     }
 
     @Override
@@ -418,6 +448,9 @@ public class DefaultNDescriptor implements NDescriptor {
                 + ", genericName=" + genericName
                 + ", properties=" + properties
                 + ", solver=" + solver
+                + ", contributors=" + contributors
+                + ", developers=" + developers
+                + ", licenses=" + licenses
                 + '}';
     }
 
@@ -440,6 +473,11 @@ public class DefaultNDescriptor implements NDescriptor {
     @Override
     public List<NDescriptorContributor> getContributors() {
         return contributors;
+    }
+
+    @Override
+    public List<NDescriptorContributor> getDevelopers() {
+        return developers;
     }
 
     @Override

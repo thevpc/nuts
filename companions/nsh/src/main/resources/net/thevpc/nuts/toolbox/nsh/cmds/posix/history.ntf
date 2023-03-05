@@ -1,0 +1,31 @@
+display the command history list
+
+##) SYNOPSIS:
+```sh history [<OPTION>...] <SOURCE>```
+
+```sh history c | --clear```
+        clear history
+
+```sh history <N>```
+        display max N rows
+
+```sh history -d | --delete <N>```
+```sh history --delete <N>```
+        delete row N
+
+```sh history -D | --remove-duplicates```
+        remove duplicates
+
+```sh history -w | --write [<FILE>]```
+        store to file. If no path defined, will store to default path
+
+```sh history -r | --read [<FILE>]```
+        read from file and append to file. If no path defined, will reload from default path (no append)s
+
+
+##) EXAMPLES:
+
+==history== 20
+   list last 20 commands from history
+
+

@@ -6,7 +6,7 @@
     <artifactId>nsh</artifactId>
     <version>0.8.4.0</version>
     <packaging>jar</packaging>
-    <name>Nuts Community Shell</name>
+    <name>Nuts Community Toolbox Shell</name>
     <url>https://github.com/thevpc/nuts</url>
     <description>Nuts bash shell companion</description>
     <properties>

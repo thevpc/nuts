@@ -4,6 +4,8 @@ import net.thevpc.nuts.*;
 import net.thevpc.nuts.cmdline.*;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.io.NPrintStream;
+import net.thevpc.nuts.toolbox.nsh.autocomplete.JShellAutoCompleteCandidate;
+import net.thevpc.nuts.toolbox.nsh.cmds.JShellBuiltin;
 import net.thevpc.nuts.util.NFunction;
 import net.thevpc.nuts.util.NStringUtils;
 

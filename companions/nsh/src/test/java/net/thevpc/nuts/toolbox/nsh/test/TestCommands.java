@@ -1,7 +1,7 @@
 /**
  * ====================================================================
- *            Nuts : Network Updatable Things Service
- *                  (universal package manager)
+ * Nuts : Network Updatable Things Service
+ * (universal package manager)
  * <br>
  * is a new Open Source Package Manager to help install packages
  * and libraries for runtime execution. Nuts is the ultimate companion for
@@ -11,7 +11,7 @@
  * architecture to help supporting a large range of sub managers / repositories.
  *
  * <br>
- *
+ * <p>
  * Copyright [2020] [thevpc]
  * Licensed under the Apache License, Version 2.0 (the "License"); you may
  * not use this file except in compliance with the License. You may obtain a
@@ -23,10 +23,11 @@
  * governing permissions and limitations under the License.
  * <br>
  * ====================================================================
-*/
+ */
 package net.thevpc.nuts.toolbox.nsh.test;
 
 import net.thevpc.nuts.toolbox.nsh.jshell.JShell;
+import net.thevpc.nuts.toolbox.nsh.jshell.JShellConfiguration;
 import net.thevpc.nuts.toolbox.nsh.jshell.MemResult;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -39,29 +40,41 @@ public class TestCommands {
 
     @Test
     public void testDirname() {
-        JShell c = new JShell(TestUtils.openNewTestWorkspace("--verbose"),new String[0]);
+        JShell c = new JShell(new JShellConfiguration()
+                .setSession(TestUtils.openNewTestWorkspace("--verbose"))
+                .setIncludeDefaultBuiltins(true).setIncludeExternalExecutor(true)
+                .setArgs()
+                );
         MemResult r = c.executeCommand(new String[]{"dirname", "/", "a", "/a", "/a/"});
         Assertions.assertEquals(
                 "/\n"
-                + ".\n"
-                + "/\n"
-                + "/", r.out().trim());
+                        + ".\n"
+                        + "/\n"
+                        + "/", r.out().trim());
     }
 
     @Test
     public void testBasename() {
-        JShell c = new JShell(TestUtils.openNewTestWorkspace("--verbose"),new String[0]);
+        JShell c = new JShell(new JShellConfiguration()
+                .setSession(TestUtils.openNewTestWorkspace("--verbose"))
+                .setIncludeDefaultBuiltins(true).setIncludeExternalExecutor(true)
+                .setArgs()
+        );
         MemResult r = c.executeCommand(new String[]{"basename", "-a", "/", "a", "/a", "/a/"});
         Assertions.assertEquals(
                 "/\n"
-                + "a\n"
-                + "a\n"
-                + "a", r.out().trim());
+                        + "a\n"
+                        + "a\n"
+                        + "a", r.out().trim());
     }
 
     @Test
     public void testEnv() {
-        JShell c = new JShell(TestUtils.openNewTestWorkspace("--verbose"),new String[0]);
+        JShell c = new JShell(new JShellConfiguration()
+                .setSession(TestUtils.openNewTestWorkspace("--verbose"))
+                .setIncludeDefaultBuiltins(true).setIncludeExternalExecutor(true)
+                .setArgs()
+        );
         {
             MemResult r = c.executeCommand(new String[]{"env"});
             Assertions.assertTrue(r.out().contains("PWD="));
@@ -74,7 +87,11 @@ public class TestCommands {
 
     @Test
     public void testCheck() {
-        JShell c = new JShell(TestUtils.openNewTestWorkspace(),new String[0]);
+        JShell c = new JShell(
+                new JShellConfiguration().setSession(TestUtils.openNewTestWorkspace())
+                        .setIncludeDefaultBuiltins(true).setIncludeExternalExecutor(true)
+                        .setArgs()
+        );
         {
             MemResult r = c.executeCommand(new String[]{"test", "1", "-lt", "2"});
             Assertions.assertEquals(0, r.exitCode());

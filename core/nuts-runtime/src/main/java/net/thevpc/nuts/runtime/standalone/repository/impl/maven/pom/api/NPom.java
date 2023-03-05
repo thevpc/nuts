@@ -6,23 +6,27 @@ import org.w3c.dom.Document;
 
 public class NPom {
 
-    String groupId;
-    String artifactId;
-    String version;
-    String packaging;
-    String name;
-    String url;
-    String inceptionYear;
-    String description;
-    Map<String, String> properties;
-    NPomDependency[] dependencies;
-    NPomDependency[] dependenciesManagement;
-    NPomId parent;
-    NPomRepository[] repositories;
-    NPomRepository[] pluginRepositories;
-    NPomProfile[] profiles;
-    String[] modules;
-    Document xml;
+    private String groupId;
+    private String artifactId;
+    private String version;
+    private String packaging;
+    private String name;
+    private String url;
+    private String inceptionYear;
+    private String description;
+    private Map<String, String> properties;
+    private NPomDependency[] dependencies;
+    private NPomDependency[] dependenciesManagement;
+    private NPomId parent;
+    private NPomRepository[] repositories;
+    private NPomRepository[] pluginRepositories;
+    private NPomProfile[] profiles;
+    private String[] modules;
+    private NPomContributor[] contributors;
+    private NPomContributor[] developers;
+    private NPomLicense[] licenses;
+
+    private Document xml;
 
     public NPom(String groupId, String artifactId, String version, String packaging,
                 NPomId parent,
@@ -32,9 +36,16 @@ public class NPom {
                 NPomDependency[] dependencies,
                 NPomDependency[] dependenciesManagement,
                 NPomRepository[] repositories, NPomRepository[] pluginRepositories,
-                String[] modules, NPomProfile[] profiles, Document xml
+                String[] modules, NPomProfile[] profiles,
+                NPomContributor[] contributors,
+                NPomContributor[] developers,
+                NPomLicense[] licenses,
+                Document xml
     ) {
         this.groupId = groupId;
+        this.contributors = contributors;
+        this.developers = developers;
+        this.licenses = licenses;
         this.artifactId = artifactId;
         this.version = version;
         this.properties = properties;
@@ -207,6 +218,43 @@ public class NPom {
 
     public NPom setModules(String[] modules) {
         this.modules = modules;
+        return this;
+    }
+
+    public NPomContributor[] getContributors() {
+        return contributors;
+    }
+
+    public NPom setContributors(NPomContributor[] contributors) {
+        this.contributors = contributors;
+        return this;
+    }
+
+    public NPom setProfiles(NPomProfile[] profiles) {
+        this.profiles = profiles;
+        return this;
+    }
+
+    public NPomContributor[] getDevelopers() {
+        return developers;
+    }
+
+    public NPom setDevelopers(NPomContributor[] developers) {
+        this.developers = developers;
+        return this;
+    }
+
+    public NPomLicense[] getLicenses() {
+        return licenses;
+    }
+
+    public NPom setLicenses(NPomLicense[] licenses) {
+        this.licenses = licenses;
+        return this;
+    }
+
+    public NPom setXml(Document xml) {
+        this.xml = xml;
         return this;
     }
 }

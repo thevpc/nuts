@@ -1,0 +1,11 @@
+remove files or directories
+
+##) SYNOPSIS:
+```sh rm [<OPTION>...] <SOURCE>... <DEST> ...```
+
+remove files or directories
+
+##) EXAMPLES:
+
+
+

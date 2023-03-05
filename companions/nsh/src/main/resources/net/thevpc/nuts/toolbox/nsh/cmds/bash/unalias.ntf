@@ -1,0 +1,14 @@
+remove existing aliases
+
+##) SYNOPSIS:
+```sh unalias <NAME>```
+
+remove existing aliases
+
+##) EXAMPLES:
+
+```sh unalias ll```
+    remove ll alias
+
+
+

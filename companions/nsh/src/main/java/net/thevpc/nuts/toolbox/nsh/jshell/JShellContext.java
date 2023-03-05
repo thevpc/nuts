@@ -4,6 +4,15 @@ import net.thevpc.nuts.cmdline.NCmdLineAutoComplete;
 import net.thevpc.nuts.io.NPrintStream;
 import net.thevpc.nuts.NSession;
 import net.thevpc.nuts.NWorkspace;
+import net.thevpc.nuts.toolbox.nsh.alias.JShellAliasManager;
+import net.thevpc.nuts.toolbox.nsh.autocomplete.JShellAutoCompleteCandidate;
+import net.thevpc.nuts.toolbox.nsh.cmds.JShellBuiltin;
+import net.thevpc.nuts.toolbox.nsh.cmds.JShellBuiltinManager;
+import net.thevpc.nuts.toolbox.nsh.eval.JShellResult;
+import net.thevpc.nuts.toolbox.nsh.fs.JShellFileSystem;
+import net.thevpc.nuts.toolbox.nsh.nodes.JShellFunctionManager;
+import net.thevpc.nuts.toolbox.nsh.nodes.JShellNode;
+import net.thevpc.nuts.toolbox.nsh.nodes.JShellVariables;
 
 import java.io.InputStream;
 import java.io.OutputStream;

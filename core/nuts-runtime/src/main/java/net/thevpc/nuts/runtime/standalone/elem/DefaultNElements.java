@@ -658,7 +658,11 @@ public class DefaultNElements extends DefaultFormatBase<NElements> implements NE
 
     @Override
     public void print(NPrintStream out) {
-        print(out, resolveStructuredFormat());
+        if (contentType == NContentType.PLAIN) {
+            print(out, model.getJsonMan(getSession()));
+        } else {
+            print(out, resolveStructuredFormat());
+        }
     }
 
     public Object elementToObject(NElement o, Type type) {

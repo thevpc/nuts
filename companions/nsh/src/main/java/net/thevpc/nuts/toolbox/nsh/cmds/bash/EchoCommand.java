@@ -31,7 +31,8 @@ import net.thevpc.nuts.spi.NComponentScope;
 import net.thevpc.nuts.spi.NComponentScopeType;
 import net.thevpc.nuts.text.NTextCode;
 import net.thevpc.nuts.text.NTexts;
-import net.thevpc.nuts.toolbox.nsh.SimpleJShellBuiltin;
+import net.thevpc.nuts.toolbox.nsh.cmds.JShellBuiltinBase;
+import net.thevpc.nuts.toolbox.nsh.cmds.JShellBuiltinDefault;
 import net.thevpc.nuts.toolbox.nsh.jshell.JShellExecutionContext;
 import net.thevpc.nuts.util.NStringUtils;
 
@@ -39,7 +40,7 @@ import net.thevpc.nuts.util.NStringUtils;
  * Created by vpc on 1/7/17.
  */
 @NComponentScope(NComponentScopeType.WORKSPACE)
-public class EchoCommand extends SimpleJShellBuiltin {
+public class EchoCommand extends JShellBuiltinDefault {
 
     public EchoCommand() {
         super("echo", DEFAULT_SUPPORT,Options.class);

@@ -408,6 +408,8 @@ public interface NDescriptorBuilder extends NDescriptor {
 
     NDescriptorBuilder setContributors(List<NDescriptorContributor> contributors);
 
+    NDescriptorBuilder setDevelopers(List<NDescriptorContributor> developers);
+
 
     NDescriptorBuilder setLicenses(List<NDescriptorLicense> licenses);
 

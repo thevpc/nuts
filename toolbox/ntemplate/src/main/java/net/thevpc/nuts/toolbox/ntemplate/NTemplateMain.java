@@ -7,6 +7,8 @@ import net.thevpc.nuts.cmdline.NArg;
 import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.io.NSessionTerminal;
 import net.thevpc.nuts.toolbox.nsh.jshell.*;
+import net.thevpc.nuts.toolbox.nsh.nodes.JShellVar;
+import net.thevpc.nuts.toolbox.nsh.nodes.JShellVariables;
 import net.thevpc.nuts.toolbox.ntemplate.filetemplate.ExprEvaluator;
 import net.thevpc.nuts.toolbox.ntemplate.filetemplate.FileTemplater;
 import net.thevpc.nuts.toolbox.ntemplate.filetemplate.ProcessCmd;
@@ -83,7 +85,10 @@ public class NTemplateMain implements NApplication {
         public NshEvaluator(NApplicationContext appContext, FileTemplater fileTemplater) {
             this.appContext = appContext;
             this.fileTemplater = fileTemplater;
-            shell = new JShell(appContext, new String[0]);
+            shell = new JShell(new JShellConfiguration().setApplicationContext(appContext)
+                    .setIncludeDefaultBuiltins(true).setIncludeExternalExecutor(true)
+                    .setArgs()
+            );
             JShellContext rootContext = shell.getRootContext();
             rootContext.setSession(rootContext.getSession().copy());
             rootContext.vars().addVarListener(

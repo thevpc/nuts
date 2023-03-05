@@ -31,7 +31,8 @@ import net.thevpc.nuts.cmdline.NArg;
 import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.io.NPathPermission;
-import net.thevpc.nuts.toolbox.nsh.SimpleJShellBuiltin;
+import net.thevpc.nuts.toolbox.nsh.cmds.JShellBuiltinBase;
+import net.thevpc.nuts.toolbox.nsh.cmds.JShellBuiltinDefault;
 import net.thevpc.nuts.toolbox.nsh.jshell.JShellExecutionContext;
 
 import java.time.Instant;
@@ -40,7 +41,7 @@ import java.util.Stack;
 /**
  * Created by vpc on 1/7/17.
  */
-public class TestCommand extends SimpleJShellBuiltin {
+public class TestCommand extends JShellBuiltinDefault {
 
     public TestCommand() {
         super("test", DEFAULT_SUPPORT, Options.class);

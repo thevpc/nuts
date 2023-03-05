@@ -13,6 +13,8 @@ import net.thevpc.nuts.elem.NObjectElement;
 import net.thevpc.nuts.io.NIOException;
 import net.thevpc.nuts.io.NSessionTerminal;
 import net.thevpc.nuts.toolbox.nsh.jshell.*;
+import net.thevpc.nuts.toolbox.nsh.nodes.JShellVar;
+import net.thevpc.nuts.toolbox.nsh.nodes.JShellVariables;
 import net.thevpc.nuts.toolbox.ntemplate.filetemplate.*;
 import net.thevpc.nuts.toolbox.ntemplate.filetemplate.util.FileProcessorUtils;
 import net.thevpc.nuts.toolbox.ntemplate.filetemplate.util.StringUtils;
@@ -80,7 +82,7 @@ public class DocusaurusCtrl {
         }
         boolean genSidebarMenu = project.getConfig()
                 .asObject().orElse(NObjectElement.ofEmpty(session))
-                .getBooleanByPath("customFields","docusaurus","generateSidebarMenu")
+                .getBooleanByPath("customFields", "docusaurus", "generateSidebarMenu")
                 .orElse(false);
         Path basePath = base;
         Path preProcessor = getPreProcessorBaseDir();
@@ -129,7 +131,7 @@ public class DocusaurusCtrl {
             }
 //            System.out.println(s);
         }
-        if (isBuildPdf() && !project.getConfig().getStringByPath("customFields","asciidoctor","path")
+        if (isBuildPdf() && !project.getConfig().getStringByPath("customFields", "asciidoctor", "path")
                 .isEmpty()) {
             Docusaurus2Asciidoctor d2a = new Docusaurus2Asciidoctor(project);
             session.out().print(NMsg.ofC("build adoc file : %s%n", d2a.getAdocFile()));
@@ -140,7 +142,7 @@ public class DocusaurusCtrl {
         if (isBuildWebSite()) {
             session.out().print(NMsg.ofC("build website%n"));
             runNativeCommand(base, getEffectiveNpmCommandPath(), "run-script", "build");
-            String copyBuildPath = project.getConfig().getStringByPath("customFields","copyBuildPath")
+            String copyBuildPath = project.getConfig().getStringByPath("customFields", "copyBuildPath")
                     .get(session);
             if (copyBuildPath != null && copyBuildPath.length() > 0) {
                 String fromPath = null;
@@ -275,7 +277,7 @@ public class DocusaurusCtrl {
         public NshEvaluator(NApplicationContext appContext, FileTemplater fileTemplater) {
             this.appContext = appContext;
             this.fileTemplater = fileTemplater;
-            shell = new JShell(appContext, new String[0]);
+            shell = new JShell(new JShellConfiguration().setApplicationContext(appContext).setIncludeDefaultBuiltins(true).setIncludeExternalExecutor(true));
             shell.getRootContext().setSession(shell.getRootContext().getSession().copy());
             shell.getRootContext().vars().addVarListener(
                     new JShellVarListener() {
@@ -344,7 +346,7 @@ public class DocusaurusCtrl {
         DocusaurusProject project;
 
         public DocusaurusCustomVarEvaluator(DocusaurusProject project) {
-            this.project=project;
+            this.project = project;
             config = project.getConfig();
             projectName = project.getProjectName();
             projectTitle = project.getTitle();
@@ -403,13 +405,13 @@ public class DocusaurusCtrl {
                             || "doc".equals(config.getString("name").orNull())
             ) {
                 String[] sources = config.getArray("sources").orElse(NArrayElement.ofEmpty(session))
-                        .stream().map(x->x.asString().orElse(null))
+                        .stream().map(x -> x.asString().orElse(null))
                         .filter(Objects::nonNull).toArray(String[]::new);
                 if (sources.length == 0) {
                     throw new IllegalArgumentException("missing doc sources in " + source);
                 }
                 String[] packages = config.getArray("packages").orElse(NArrayElement.ofEmpty(session))
-                        .stream().map(x->x.asString().orNull()).filter(Objects::nonNull).toArray(String[]::new);
+                        .stream().map(x -> x.asString().orNull()).filter(Objects::nonNull).toArray(String[]::new);
                 String target = context.getPathTranslator().translatePath(source.getParent().toString());
                 if (target == null) {
                     throw new IllegalArgumentException("invalid source " + source.getParent());

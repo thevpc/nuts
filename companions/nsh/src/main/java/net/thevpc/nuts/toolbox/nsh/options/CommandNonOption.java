@@ -32,7 +32,7 @@ import net.thevpc.nuts.cmdline.DefaultNArgCandidate;
 import net.thevpc.nuts.cmdline.NArgCandidate;
 import net.thevpc.nuts.cmdline.NArgName;
 import net.thevpc.nuts.cmdline.NCmdLineAutoComplete;
-import net.thevpc.nuts.toolbox.nsh.jshell.JShellBuiltin;
+import net.thevpc.nuts.toolbox.nsh.cmds.JShellBuiltin;
 import net.thevpc.nuts.toolbox.nsh.jshell.JShellContext;
 
 /**

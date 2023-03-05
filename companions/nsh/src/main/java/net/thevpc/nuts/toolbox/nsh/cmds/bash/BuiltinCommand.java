@@ -28,8 +28,9 @@ package net.thevpc.nuts.toolbox.nsh.cmds.bash;
 
 import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.NSession;
-import net.thevpc.nuts.toolbox.nsh.SimpleJShellBuiltin;
-import net.thevpc.nuts.toolbox.nsh.jshell.JShellBuiltin;
+import net.thevpc.nuts.toolbox.nsh.cmds.JShellBuiltinBase;
+import net.thevpc.nuts.toolbox.nsh.cmds.JShellBuiltin;
+import net.thevpc.nuts.toolbox.nsh.cmds.JShellBuiltinDefault;
 import net.thevpc.nuts.toolbox.nsh.jshell.JShellExecutionContext;
 
 import java.util.Arrays;
@@ -37,7 +38,7 @@ import java.util.Arrays;
 /**
  * Created by vpc on 1/7/17.
  */
-public class BuiltinCommand extends SimpleJShellBuiltin {
+public class BuiltinCommand extends JShellBuiltinDefault {
 
     public BuiltinCommand() {
         super("builtin", DEFAULT_SUPPORT, Options.class);

@@ -1,0 +1,16 @@
+display the command history list
+
+##) SYNOPSIS:
+
+```sh history```
+
+display the command history list
+
+##) EXAMPLES:
+
+```sh history```
+
+   display the command history list
+
+
+

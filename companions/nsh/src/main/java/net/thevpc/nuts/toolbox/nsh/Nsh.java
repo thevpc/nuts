@@ -6,9 +6,9 @@ import net.thevpc.nuts.cmdline.NCmdLineProcessor;
 import net.thevpc.nuts.cmdline.NCmdLineContext;
 import net.thevpc.nuts.text.NTextStyle;
 import net.thevpc.nuts.text.NTexts;
-import net.thevpc.nuts.toolbox.nsh.jshell.DefaultJShellOptionsParser;
+import net.thevpc.nuts.toolbox.nsh.options.DefaultJShellOptionsParser;
 import net.thevpc.nuts.toolbox.nsh.jshell.JShell;
-import net.thevpc.nuts.toolbox.nsh.jshell.JShellBuiltin;
+import net.thevpc.nuts.toolbox.nsh.cmds.JShellBuiltin;
 import net.thevpc.nuts.toolbox.nsh.jshell.JShellOptions;
 import net.thevpc.nuts.util.NLogOp;
 import net.thevpc.nuts.util.NLogVerb;
@@ -18,6 +18,8 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.logging.Level;
+
+import net.thevpc.nuts.toolbox.nsh.jshell.JShellConfiguration;
 
 public class Nsh implements NApplication {
 
@@ -63,7 +65,9 @@ public class Nsh implements NApplication {
 //        );
 //        applicationContext.getWorkspace().io().term().enableRichTerm(session);
 
-                JShell c = new JShell(applicationContext, null);
+                JShell c = new JShell(new JShellConfiguration().setApplicationContext(applicationContext)
+                        .setIncludeDefaultBuiltins(true).setIncludeExternalExecutor(true)
+                );
                 JShellBuiltin[] commands = c.getRootContext().builtins().getAll();
                 Set<String> reinstalled = new TreeSet<>();
                 Set<String> firstInstalled = new TreeSet<>();
@@ -73,7 +77,7 @@ public class Nsh implements NApplication {
                         // avoid recursive definition!
                         // disable trace, summary will be traced later!
                         if (NCommands.of(session.copy().setTrace(false)
-                                .setConfirm(NConfirmationMode.YES)
+                                        .setConfirm(NConfirmationMode.YES)
                                 )
                                 .addCommand(new NCommandConfig()
                                         .setFactoryId("nsh")
@@ -89,26 +93,26 @@ public class Nsh implements NApplication {
                     }
                 }
 
-                if (firstInstalled.size() > 0) {
+                if (!firstInstalled.isEmpty()) {
                     log.level(Level.CONFIG).verb(NLogVerb.INFO).log(NMsg.ofJ("[nsh] registered {0} nsh commands : {1}", firstInstalled.size(),
                             String.join(", ", firstInstalled)));
                 }
-                if (reinstalled.size() > 0) {
+                if (!reinstalled.isEmpty()) {
                     log.level(Level.CONFIG).verb(NLogVerb.INFO).log(NMsg.ofJ("[nsh] re-registered {0} nsh commands : {1}", reinstalled.size(),
                             String.join(", ", reinstalled)));
                 }
                 if (session.isPlainTrace()) {
                     NTexts factory = NTexts.of(session);
-                    if (firstInstalled.size() > 0) {
+                    if (!firstInstalled.isEmpty()) {
                         session.out().println(NMsg.ofC("registered %s nsh commands : %s",
-                                factory.ofStyled("" + firstInstalled.size(), NTextStyle.primary3())
-                                , factory.ofStyled(String.join(", ", firstInstalled), NTextStyle.primary3())
+                                factory.ofStyled("" + firstInstalled.size(), NTextStyle.primary3()),
+                                factory.ofStyled(String.join(", ", firstInstalled), NTextStyle.primary3())
                         ));
                     }
-                    if (reinstalled.size() > 0) {
+                    if (!reinstalled.isEmpty()) {
                         session.out().println(NMsg.ofC("re-registered %s nsh commands : %s",
-                                factory.ofStyled("" + reinstalled.size(), NTextStyle.primary3())
-                                , factory.ofStyled(String.join(", ", reinstalled), NTextStyle.primary3())
+                                factory.ofStyled("" + reinstalled.size(), NTextStyle.primary3()),
+                                factory.ofStyled(String.join(", ", reinstalled), NTextStyle.primary3())
                         ));
                     }
                 }
@@ -116,7 +120,7 @@ public class Nsh implements NApplication {
                 if (NBootManager.of(session).getBootOptions().getInitScripts()
                         .ifEmpty(true)
                         .orElse(false)) {
-                    boolean initLaunchers =  NBootManager.of(session).getBootOptions().getInitLaunchers()
+                    boolean initLaunchers = NBootManager.of(session).getBootOptions().getInitLaunchers()
                             .ifEmpty(true)
                             .orElse(false);
                     NEnvs.of(session).addLauncher(
@@ -179,7 +183,9 @@ public class Nsh implements NApplication {
 //        if (o.isEffectiveInteractive()) {
 //            applicationContext.getWorkspace().io().term().enableRichTerm(applicationContext.getSession());
 //        }
-        new JShell(applicationContext).run();
+        new JShell(new JShellConfiguration().setApplicationContext(applicationContext)
+                .setIncludeDefaultBuiltins(true).setIncludeExternalExecutor(true)
+        ).run();
     }
 
 }

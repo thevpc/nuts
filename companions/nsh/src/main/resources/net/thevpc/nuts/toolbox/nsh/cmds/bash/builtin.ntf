@@ -1,0 +1,10 @@
+run builtin nsh command
+
+##) SYNOPSIS:
+```sh builtin <command> <args>...```
+run builtin nsh command
+
+##) EXAMPLES:
+
+```sh builtin ls```
+    runs nsh builtin ls command

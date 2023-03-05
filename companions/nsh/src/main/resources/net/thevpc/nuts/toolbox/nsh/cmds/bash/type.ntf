@@ -1,0 +1,10 @@
+display a description of command type
+
+##) SYNOPSIS:
+```sh type <COMMAND_NAME>```
+display a description of command type
+
+##) EXAMPLES:
+
+```sh type ls```
+    show command type

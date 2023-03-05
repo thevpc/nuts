@@ -1,5 +1,7 @@
 package net.thevpc.nuts.toolbox.nsh.jshell;
 
+import net.thevpc.nuts.toolbox.nsh.nodes.JShellCommandNode;
+
 public class JShellScript implements JShellCommandNode {
     private final JShellCommandNode root;
 

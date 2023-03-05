@@ -30,6 +30,7 @@ package net.thevpc.nuts;
 import net.thevpc.nuts.cmdline.*;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.spi.NApplicationContexts;
+import net.thevpc.nuts.text.NText;
 import net.thevpc.nuts.util.NClock;
 
 import java.util.List;
@@ -42,7 +43,7 @@ import java.util.List;
  * @app.category Application
  * @since 0.5.5
  */
-public interface NApplicationContext extends NCmdLineConfigurable,NSessionProvider {
+public interface NApplicationContext extends NCmdLineConfigurable, NSessionProvider {
     /**
      * string that prefix each auto complete candidate
      */
@@ -51,11 +52,11 @@ public interface NApplicationContext extends NCmdLineConfigurable,NSessionProvid
     /**
      * create a new instance of {@link NApplicationContext}
      *
-     * @param session         session context session. If null will consider {@code getSession()} that should not be null as well.
-     * @param args            application arguments
+     * @param session   session context session. If null will consider {@code getSession()} that should not be null as well.
+     * @param args      application arguments
      * @param startTime application start time
-     * @param appClass        application class
-     * @param storeId         application store id or null
+     * @param appClass  application class
+     * @param storeId   application store id or null
      * @return new instance of {@link NApplicationContext}
      */
     static NApplicationContext of(String[] args, NClock startTime, Class appClass, String storeId, NSession session) {
@@ -105,6 +106,9 @@ public interface NApplicationContext extends NCmdLineConfigurable,NSessionProvid
      * @since 0.7.1
      */
     void configureLast(NCmdLine commandLine);
+
+
+    NOptional<NText> getHelp();
 
     /**
      * print application help to the default out ({@code getSession().out()})

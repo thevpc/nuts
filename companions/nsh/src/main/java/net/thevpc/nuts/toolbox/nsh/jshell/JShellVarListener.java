@@ -1,5 +1,8 @@
 package net.thevpc.nuts.toolbox.nsh.jshell;
 
+import net.thevpc.nuts.toolbox.nsh.nodes.JShellVar;
+import net.thevpc.nuts.toolbox.nsh.nodes.JShellVariables;
+
 public interface JShellVarListener {
     default void varAdded(JShellVar jShellVar, JShellVariables vars, JShellContext context) {
 

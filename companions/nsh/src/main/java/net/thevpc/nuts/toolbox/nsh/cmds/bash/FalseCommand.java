@@ -31,14 +31,15 @@ import net.thevpc.nuts.NExecutionException;
 import net.thevpc.nuts.NMsg;
 import net.thevpc.nuts.spi.NComponentScope;
 import net.thevpc.nuts.spi.NComponentScopeType;
-import net.thevpc.nuts.toolbox.nsh.SimpleJShellBuiltin;
+import net.thevpc.nuts.toolbox.nsh.cmds.JShellBuiltinBase;
+import net.thevpc.nuts.toolbox.nsh.cmds.JShellBuiltinDefault;
 import net.thevpc.nuts.toolbox.nsh.jshell.JShellExecutionContext;
 
 /**
  * Created by vpc on 1/7/17.
  */
 @NComponentScope(NComponentScopeType.WORKSPACE)
-public class FalseCommand extends SimpleJShellBuiltin {
+public class FalseCommand extends JShellBuiltinDefault {
 
     public FalseCommand() {
         super("false", DEFAULT_SUPPORT,Options.class);

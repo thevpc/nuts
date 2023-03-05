@@ -1,0 +1,14 @@
+package and compress (archive) files
+
+##) SYNOPSIS:
+
+```sh zip [-r] <ZIP_FILE> <FILE> ...```
+
+package and compress (archive) filesy
+
+##) EXAMPLES:
+
+```sh zip -r out.zip /another/path```
+   changes to another path
+
+

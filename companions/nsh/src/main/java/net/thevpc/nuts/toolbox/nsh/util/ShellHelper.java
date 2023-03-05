@@ -12,7 +12,7 @@ import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.io.NPrintStream;
 import net.thevpc.nuts.io.NSessionTerminal;
 import net.thevpc.nuts.lib.ssh.SshListener;
-import net.thevpc.nuts.toolbox.nsh.bundles._IOUtils;
+import net.thevpc.nuts.toolbox.nsh.util.bundles._IOUtils;
 
 public class ShellHelper {
 

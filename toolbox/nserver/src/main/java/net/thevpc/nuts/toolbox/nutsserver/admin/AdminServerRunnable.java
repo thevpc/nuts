@@ -1,7 +1,7 @@
 /**
  * ====================================================================
- *            Nuts : Network Updatable Things Service
- *                  (universal package manager)
+ * Nuts : Network Updatable Things Service
+ * (universal package manager)
  * <br>
  * is a new Open Source Package Manager to help install packages
  * and libraries for runtime execution. Nuts is the ultimate companion for
@@ -10,19 +10,19 @@
  * to share shell scripts and other 'things' . Its based on an extensible
  * architecture to help supporting a large range of sub managers / repositories.
  * <br>
- *
+ * <p>
  * Copyright [2020] [thevpc]
- * Licensed under the Apache License, Version 2.0 (the "License"); you may 
- * not use this file except in compliance with the License. You may obtain a 
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may
+ * not use this file except in compliance with the License. You may obtain a
  * copy of the License at http://www.apache.org/licenses/LICENSE-2.0
- * Unless required by applicable law or agreed to in writing, software 
- * distributed under the License is distributed on an 
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, 
- * either express or implied. See the License for the specific language 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND,
+ * either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  * <br>
  * ====================================================================
-*/
+ */
 package net.thevpc.nuts.toolbox.nutsserver.admin;
 
 import java.io.IOException;
@@ -41,13 +41,13 @@ import net.thevpc.nuts.io.NTerminalMode;
 import net.thevpc.nuts.spi.NComponent;
 import net.thevpc.nuts.spi.NComponentScope;
 import net.thevpc.nuts.spi.NComponentScopeType;
-import net.thevpc.nuts.toolbox.nsh.SimpleJShellBuiltin;
+import net.thevpc.nuts.toolbox.nsh.cmds.JShellBuiltinBase;
 import net.thevpc.nuts.toolbox.nsh.jshell.JShell;
+import net.thevpc.nuts.toolbox.nsh.jshell.JShellConfiguration;
 import net.thevpc.nuts.toolbox.nsh.jshell.JShellExecutionContext;
 import net.thevpc.nuts.toolbox.nutsserver.NServer;
 
 /**
- *
  * @author thevpc
  */
 public class AdminServerRunnable implements NServer, Runnable {
@@ -123,17 +123,21 @@ public class AdminServerRunnable implements NServer, Runnable {
                             try {
                                 try {
                                     PrintStream out = new PrintStream(finalAccept.getOutputStream());
-                                    NPrintStream eout = NPrintStream.of(out, NTerminalMode.FORMATTED, null,invokerSession);
+                                    NPrintStream eout = NPrintStream.of(out, NTerminalMode.FORMATTED, null, invokerSession);
                                     NSession session = invokerSession;
                                     session.setTerminal(
                                             NSessionTerminal.of(
                                                     finalAccept.getInputStream(),
-                                                    eout,eout, invokerSession)
+                                                    eout, eout, invokerSession)
                                     );
-                                    cli = new JShell(session,
-                                            NIdResolver.of(invokerSession)
-                                                    .resolveId(AdminServerRunnable.class),
-                                            serverId,new String[0]);
+                                    cli = new JShell(
+                                            new JShellConfiguration()
+                                                    .setSession(session)
+                                                    .setAppId(NIdResolver.of(invokerSession)
+                                                            .resolveId(AdminServerRunnable.class))
+                                                    .setServiceName(serverId)
+                                                    .setArgs(new String[0])
+                                    );
                                     cli.getRootContext().builtins().unset("connect");
                                     cli.getRootContext().builtins().set(new StopServerBuiltin2(finalServerSocket));
                                     cli.run();
@@ -161,12 +165,12 @@ public class AdminServerRunnable implements NServer, Runnable {
     }
 
     @NComponentScope(NComponentScopeType.WORKSPACE)
-    private static class StopServerBuiltin2 extends SimpleJShellBuiltin {
+    private static class StopServerBuiltin2 extends JShellBuiltinBase {
 
         private final ServerSocket socket;
 
         public StopServerBuiltin2(ServerSocket finalServerSocket) {
-            super("stop-server", NComponent.DEFAULT_SUPPORT,Options.class);
+            super("stop-server", NComponent.DEFAULT_SUPPORT, Options.class);
             this.socket = finalServerSocket;
         }
 
@@ -187,7 +191,7 @@ public class AdminServerRunnable implements NServer, Runnable {
             try {
                 socket.close();
             } catch (IOException ex) {
-                throw new NExecutionException(context.getSession(), NMsg.ofC("%s",ex), ex, 100);
+                throw new NExecutionException(context.getSession(), NMsg.ofC("%s", ex), ex, 100);
             }
         }
     }

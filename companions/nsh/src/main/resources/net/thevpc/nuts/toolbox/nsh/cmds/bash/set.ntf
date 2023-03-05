@@ -1,0 +1,10 @@
+read and write variables
+
+##) SYNOPSIS:
+```sh set <VARNAME>> <VALUE>```
+read and write variables
+
+##) EXAMPLES:
+
+```sh elemName "msg"```
+    store "msg" in var elemName

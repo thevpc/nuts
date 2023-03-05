@@ -1,0 +1,16 @@
+list directory (or file)
+
+##) SYNOPSIS:
+```sh ls [<-OPTIONS>] <DIRECTORY>```
+
+-l : long format
+-d : list directory names
+
+lists directory content
+
+##) EXAMPLES:
+
+```sh ls /another/path```
+   lists folder content
+
+

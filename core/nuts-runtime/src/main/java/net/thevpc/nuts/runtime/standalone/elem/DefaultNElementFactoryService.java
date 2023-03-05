@@ -89,6 +89,9 @@ public class DefaultNElementFactoryService implements NElementFactoryService {
     private static final NElementMapper F_NUTS_ID_LOCATION = new NElementMapperNIdLocation();
     private static final NElementMapper F_ARTIFACT_CALL = new NElementMapperNArtifactCall();
     private static final NElementMapper F_DESCRIPTOR_PROPERTY = new NElementMapperNDescriptorProperty();
+    private static final NElementMapper F_DESCRIPTOR_CONTRIBUTOR = new NElementMapperNDescriptorContributor();
+    private static final NElementMapper F_DESCRIPTOR_LICENSE = new NElementMapperNDescriptorLicense();
+    private static final NElementMapper F_DESCRIPTOR_ORGANIZATION = new NElementMapperNDescriptorOrganization();
     private static final NElementMapper F_DESCRIPTOR_PROPERTY_BUILDER = new NElementMapperNDescriptorPropertyBuilder();
     private static final NElementMapper F_NUTS_ENUM = new NElementMapperNEnum();
     private static final NElementMapper F_NUTS_REPO_LOCATION = new NElementMapperNRepositoryLocation();
@@ -173,6 +176,12 @@ public class DefaultNElementFactoryService implements NElementFactoryService {
         setCoreMapper(NEnvConditionBuilder.class, F_NUTS_ENV_CONDITION_BUILDER);
         setCoreMapper(NDescriptorProperty.class, F_DESCRIPTOR_PROPERTY);
         setCoreMapper(NDescriptorPropertyBuilder.class, F_DESCRIPTOR_PROPERTY_BUILDER);
+        setCoreMapper(NDescriptorContributor.class, F_DESCRIPTOR_CONTRIBUTOR);
+        setCoreMapper(NDescriptorContributorBuilder.class, F_DESCRIPTOR_CONTRIBUTOR);
+        setCoreMapper(NDescriptorLicense.class, F_DESCRIPTOR_LICENSE);
+        setCoreMapper(NDescriptorLicenseBuilder.class, F_DESCRIPTOR_LICENSE);
+        setCoreMapper(NDescriptorOrganization.class, F_DESCRIPTOR_ORGANIZATION);
+        setCoreMapper(NDescriptorOrganizationBuilder.class, F_DESCRIPTOR_ORGANIZATION);
         setCoreMapper(NEnum.class, F_NUTS_ENUM);
         setCoreMapper(NRepositoryLocation.class, F_NUTS_REPO_LOCATION);
         setCoreMapper(NLiteral.class, new NElementMapperNLiteral());

@@ -1,0 +1,13 @@
+list, test and extract compressed files in a ZIP archive
+
+##) SYNOPSIS:
+```sh unzip [<OPTION>...] <SOURCE>```
+
+list, test and extract compressed files in a ZIP archive
+
+##) EXAMPLES:
+
+```sh unzip file.zip```
+   unzip file to the current directory
+
+

@@ -51,6 +51,17 @@ public class NPomXmlParser {
         return a;
     }
 
+    private static List<Element> toElements(NodeList parentChildList) {
+        List<Element> a = new ArrayList<>();
+        for (int j = 0; j < parentChildList.getLength(); j++) {
+            Element parElem = toElement(parentChildList.item(j));
+            if (parElem != null) {
+                a.add(parElem);
+            }
+        }
+        return a;
+    }
+
     private static Element toElement(Node n) {
         if (n instanceof Element) {
             return (Element) n;
@@ -745,6 +756,9 @@ public class NPomXmlParser {
         List<NPomRepositoryNode> repos = new ArrayList<>();
         List<NPomRepositoryNode> pluginRepos = new ArrayList<>();
         List<NPomProfileNode> profiles = new ArrayList<>();
+        List<NPomContributor> contributors = new ArrayList<>();
+        List<NPomContributor> developers = new ArrayList<>();
+        List<NPomLicense> licenses = new ArrayList<>();
         //optional, but recommended
         //read this - http://stackoverflow.com/questions/13786607/normalization-in-dom-parsing-with-java-how-does-it-work
         doc.getDocumentElement().normalize();
@@ -798,6 +812,51 @@ public class NPomXmlParser {
                     }
                     case "url": {
                         url = elemToStr(elem1);
+                        break;
+                    }
+                    case "contributors": {
+                        for (Element contributor : toElements(elem1.getChildNodes())) {
+                            if ("contributor".equals(contributor.getTagName())) {
+                                contributors.add(parseContributor(contributor));
+                            }
+                        }
+                        break;
+                    }
+                    case "developers": {
+                        for (Element contributor : toElements(elem1.getChildNodes())) {
+                            if ("developer".equals(contributor.getTagName())) {
+                                developers.add(parseContributor(contributor));
+                            }
+                        }
+                        break;
+                    }
+                    case "licenses": {
+                        for (Element contributor : toElements(elem1.getChildNodes())) {
+                            if ("license".equals(contributor.getTagName())) {
+                                NPomLicense cc = new NPomLicense();
+                                for (Element parElem : toElements(contributor.getChildNodes())) {
+                                    switch (parElem.getTagName()) {
+                                        case "name": {
+                                            cc.setName(elemToStr(parElem));
+                                            break;
+                                        }
+                                        case "url": {
+                                            cc.setUrl(elemToStr(parElem));
+                                            break;
+                                        }
+                                        case "distribution": {
+                                            cc.setDistribution(elemToStr(parElem));
+                                            break;
+                                        }
+                                        case "comments": {
+                                            cc.setComments(elemToStr(parElem));
+                                            break;
+                                        }
+                                    }
+                                }
+                                licenses.add(cc);
+                            }
+                        }
                         break;
                     }
                     case "parent": {
@@ -894,6 +953,9 @@ public class NPomXmlParser {
                 pluginRepos.stream().map(x -> x.getObject()).toArray(NPomRepository[]::new),
                 modules.toArray(new String[0]),
                 profiles.stream().map(x -> x.getObject()).toArray(NPomProfile[]::new),
+                contributors.toArray(new NPomContributor[0]),
+                developers.toArray(new NPomContributor[0]),
+                licenses.toArray(new NPomLicense[0]),
                 doc
         );
         if (visitor != null) {
@@ -901,6 +963,62 @@ public class NPomXmlParser {
         }
 
         return pom;
+    }
+
+    private NPomContributor parseContributor(Element contributor) {
+        NPomContributor cc = new NPomContributor();
+        for (Element parElem : toElements(contributor.getChildNodes())) {
+            switch (parElem.getTagName()) {
+                case "name": {
+                    cc.setName(elemToStr(parElem));
+                    break;
+                }
+                case "email": {
+                    cc.setEmail(elemToStr(parElem));
+                    break;
+                }
+                case "organization": {
+                    cc.setOrganization(elemToStr(parElem));
+                    break;
+                }
+                case "organizationUrl": {
+                    cc.setOrganizationUrl(elemToStr(parElem));
+                    break;
+                }
+                case "url": {
+                    cc.setUrl(elemToStr(parElem));
+                    break;
+                }
+                case "timezone": {
+                    cc.setTimeZone(elemToStr(parElem));
+                    break;
+                }
+                case "roles": {
+                    for (Element r : toElements(parElem.getChildNodes())) {
+                        if ("role".equals(r.getTagName())) {
+                            String v = elemToStr(parElem);
+                            if (cc.getRoles() == null) {
+                                cc.setRoles(new ArrayList<>());
+                            }
+                            cc.getRoles().add(v);
+                        }
+                    }
+                    break;
+                }
+                case "properties": {
+                    for (Element r : toElements(parElem.getChildNodes())) {
+                        String n = r.getTagName();
+                        String v = elemToStr(parElem);
+                        if (cc.getProperties() == null) {
+                            cc.setProperties(new LinkedHashMap<>());
+                        }
+                        cc.getProperties().put(n, v);
+                    }
+                    break;
+                }
+            }
+        }
+        return cc;
     }
 
     private NPomProfilesNode parseProfiles(Element elem1, NSession session, PomDomVisitor visitor, DefaultPomDomVisitorContext context, OsAndArch osAndArch, PomMode mode) {
