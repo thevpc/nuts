@@ -42,11 +42,11 @@ public class NTextNodeWriterRenderer extends AbstractNTextNodeWriter {
 //    private NutsWorkspace ws;
 
     public NTextNodeWriterRenderer(NPrintStream rawOutput, NSession session) {
-        this(new NPrintStreamHelper(rawOutput), session,rawOutput.getTerminal());
+        this(new NPrintStreamHelper(rawOutput), session, rawOutput.getTerminal());
     }
 
     public NTextNodeWriterRenderer(OutputStream rawOutput, NSession session, NSystemTerminalBase term) {
-        this(new OutputStreamHelper(rawOutput, session), session,term);
+        this(new OutputStreamHelper(rawOutput, session), session, term);
     }
 
     public NTextNodeWriterRenderer(OutputHelper rawOutput, NSession session, NSystemTerminalBase term) {
@@ -67,7 +67,7 @@ public class NTextNodeWriterRenderer extends AbstractNTextNodeWriter {
 
     @Override
     public void writeRaw(char[] buf, int off, int len) {
-        writeRaw(new String(buffer,off,len));
+        writeRaw(new String(buffer, off, len));
     }
 
     @Override
@@ -131,7 +131,7 @@ public class NTextNodeWriterRenderer extends AbstractNTextNodeWriter {
                     writeRaw("\n");
                 } else {
                     NText sWithTitle = txt.ofList(
-                            txt.ofPlain(CoreStringUtils.fillString('#',s.getLevel())+") "),
+                            txt.ofPlain(CoreStringUtils.fillString('#', s.getLevel()) + ") "),
                             s.getChild()
                     );
                     writeNode(s2, sWithTitle, ctx);
@@ -141,8 +141,8 @@ public class NTextNodeWriterRenderer extends AbstractNTextNodeWriter {
             }
             case COMMAND: {
                 DefaultNTextCommand s = (DefaultNTextCommand) node;
-                if(term!=null){
-                    if(!ctx.isFiltered()) {
+                if (term != null) {
+                    if (!ctx.isFiltered()) {
                         term.run(s.getCommand(), session);
                     }
                 }
@@ -158,7 +158,7 @@ public class NTextNodeWriterRenderer extends AbstractNTextNodeWriter {
                 writeNode(formats,
                         txt.ofStyled(child,
                                 NTextStyles.of(NTextStyle.underlined())
-                        ),ctx);
+                        ), ctx);
                 writeRaw(formats, "see: " + ((NTextLink) node).getText(), ctx.isFiltered());
                 break;
             }
@@ -173,14 +173,14 @@ public class NTextNodeWriterRenderer extends AbstractNTextNodeWriter {
                                 )
                                 ,
                                 NTextStyles.of(NTextStyle.warn())
-                        ),ctx);
+                        ), ctx);
                 break;
             }
             case CODE: {
                 NTextCode node1 = (NTextCode) node;
-                if(ctx.isFiltered()){
+                if (ctx.isFiltered()) {
                     writeRaw(formats, node1.getText(), true);
-                }else {
+                } else {
                     NText cn = node1.highlight(session);
                     writeNode(formats, cn, ctx);
                 }
@@ -195,15 +195,19 @@ public class NTextNodeWriterRenderer extends AbstractNTextNodeWriter {
     protected void writeRaw(NTextStyles format, String rawString, boolean filterFormat) {
         if (!filterFormat && format != null) {
             if (rawString.length() > 0) {
-                if(format.isPlain()){
+                if (format.isPlain()) {
                     writeRaw(rawString);
-                }else {
+                } else {
                     flush();
-                    term.setStyles(format, session);
-                    try{
+                    if (term != null) {
+                        term.setStyles(format, session);
+                    }
+                    try {
                         writeRaw(rawString);
                     } finally {
-                        term.setStyles(null, session);
+                        if (term != null) {
+                            term.setStyles(null, session);
+                        }
                     }
                 }
             }
@@ -234,7 +238,6 @@ public class NTextNodeWriterRenderer extends AbstractNTextNodeWriter {
             rawOutput.write(b, 0, b.length);
         }
     }
-
 
 
     public final void writeLater(byte[] later) {

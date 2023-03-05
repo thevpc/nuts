@@ -33,5 +33,9 @@ public interface NMemoryPrintStream extends NPrintStream {
         return NIO.of(session).ofInMemoryPrintStream();
     }
 
+    static NMemoryPrintStream of(NTerminalMode mode, NSession session) {
+        return NIO.of(session).ofInMemoryPrintStream(mode);
+    }
+
     byte[] getBytes();
 }

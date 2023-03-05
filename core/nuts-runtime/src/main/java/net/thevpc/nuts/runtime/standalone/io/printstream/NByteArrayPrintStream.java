@@ -3,6 +3,7 @@ package net.thevpc.nuts.runtime.standalone.io.printstream;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.io.NMemoryPrintStream;
 import net.thevpc.nuts.io.NPrintStream;
+import net.thevpc.nuts.io.NTerminalMode;
 import net.thevpc.nuts.text.NTextStyle;
 import net.thevpc.nuts.text.NTexts;
 
@@ -10,14 +11,15 @@ import java.io.ByteArrayOutputStream;
 import java.io.OutputStream;
 
 public class NByteArrayPrintStream extends NPrintStreamRaw implements NMemoryPrintStream {
-    public NByteArrayPrintStream(NSession session) {
-        super(new ByteArrayOutputStream(), null, null, session, new Bindings(),null);
+    public NByteArrayPrintStream(NTerminalMode mode, NSession session) {
+        super(new ByteArrayOutputStream(), mode, null, null, session, new Bindings(), null);
         getOutputMetaData().setMessage(
                 NMsg.ofNtf(NTexts.of(session).ofStyled("<memory-buffer>", NTextStyle.path()))
         );
     }
-    protected NByteArrayPrintStream(ByteArrayOutputStream bos, NSession session) {
-        super(bos, null, null, session, new Bindings(),null);
+
+    protected NByteArrayPrintStream(NTerminalMode mode, ByteArrayOutputStream bos, NSession session) {
+        super(bos, mode, null, null, session, new Bindings(), null);
         getOutputMetaData().setMessage(
                 NMsg.ofNtf(NTexts.of(session).ofStyled("<memory-buffer>", NTextStyle.path()))
         );
@@ -25,16 +27,16 @@ public class NByteArrayPrintStream extends NPrintStreamRaw implements NMemoryPri
 
     @Override
     public NPrintStream setSession(NSession session) {
-        if(session==null || session==this.session){
+        if (session == null || session == this.session) {
             return this;
         }
-        return new NByteArrayPrintStream((ByteArrayOutputStream) out,session);
+        return new NByteArrayPrintStream(getTerminalMode(), (ByteArrayOutputStream) out, session);
     }
 
     @Override
     public byte[] getBytes() {
         flush();
-        return ((ByteArrayOutputStream)out).toByteArray();
+        return ((ByteArrayOutputStream) out).toByteArray();
     }
 
     @Override

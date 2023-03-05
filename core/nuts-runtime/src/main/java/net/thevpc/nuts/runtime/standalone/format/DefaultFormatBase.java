@@ -63,13 +63,14 @@ public abstract class DefaultFormatBase<T extends NFormat> extends DefaultFormat
     @Override
     public NString format() {
         checkSession();
-        NPrintStream out = NMemoryPrintStream.of(getSession());
-        print(out);
-        return isNtf() ?
-                NTexts.of(getSession()).parse(out.toString())
-                :
-                NTexts.of(getSession()).ofPlain(out.toString())
-                ;
+        NPrintStream out = NMemoryPrintStream.of(NTerminalMode.FORMATTED, getSession());
+        if(isNtf()){
+            print(out);
+            return NTexts.of(getSession()).parse(out.toString());
+        }else{
+            print(out);
+            return NTexts.of(getSession()).ofPlain(out.toString());
+        }
     }
 
     @Override

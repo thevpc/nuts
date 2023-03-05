@@ -4,9 +4,9 @@ import net.thevpc.nuts.*;
 import net.thevpc.nuts.cmdline.NArg;
 import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.cmdline.NCmdLineConfigurable;
+import net.thevpc.nuts.io.NMemoryPrintStream;
 import net.thevpc.nuts.io.NPrintStream;
 import net.thevpc.nuts.io.NSessionTerminal;
-import net.thevpc.nuts.runtime.standalone.io.printstream.NByteArrayPrintStream;
 import net.thevpc.nuts.runtime.standalone.app.gui.CoreNUtilGui;
 import net.thevpc.nuts.runtime.standalone.session.NSessionUtils;
 import net.thevpc.nuts.runtime.standalone.util.NConfigurableHelper;
@@ -62,12 +62,12 @@ public class DefaultNQuestion<T> implements NQuestion<T> {
                 }
                 case ERROR: {
                     if (cancelMessage != null) {
-                        NByteArrayPrintStream os = new NByteArrayPrintStream(getSession());
+                        NMemoryPrintStream os = NMemoryPrintStream.of(getSession());
                         os.print(cancelMessage);
                         os.flush();
                         throw new NCancelException(getSession(), NMsg.ofNtf(os.toString()));
                     } else {
-                        NByteArrayPrintStream os = new NByteArrayPrintStream(getSession());
+                        NMemoryPrintStream os = NMemoryPrintStream.of(getSession());
                         os.print(message);
                         os.flush();
                         throw new NCancelException(getSession(), NMsg.ofC("cancelled : %s", NMsg.ofNtf(os.toString())));
@@ -76,7 +76,7 @@ public class DefaultNQuestion<T> implements NQuestion<T> {
             }
         }
         if (!getSession().isPlainOut()) {
-            NByteArrayPrintStream os = new NByteArrayPrintStream(getSession());
+            NMemoryPrintStream os = NMemoryPrintStream.of(getSession());
             os.print(message);
             os.flush();
             throw new NExecutionException(getSession(), NMsg.ofC(

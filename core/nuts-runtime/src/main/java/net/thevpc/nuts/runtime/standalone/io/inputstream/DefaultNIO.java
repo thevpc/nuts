@@ -59,8 +59,13 @@ public class DefaultNIO implements NIO {
 
     @Override
     public NMemoryPrintStream ofInMemoryPrintStream() {
+        return ofInMemoryPrintStream(null);
+    }
+
+    @Override
+    public NMemoryPrintStream ofInMemoryPrintStream(NTerminalMode mode) {
         checkSession();
-        return new NByteArrayPrintStream(getSession());
+        return new NByteArrayPrintStream(mode,getSession());
     }
 
     @Override

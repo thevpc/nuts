@@ -27,7 +27,11 @@ public class NPrintStreamRaw extends NPrintStreamBase {
     }
 
     public NPrintStreamRaw(OutputStream out, Boolean autoFlush, String encoding, NSession session, Bindings bindings, NSystemTerminalBase term) {
-        super(true, NTerminalMode.INHERITED, session, bindings, term);
+        this(out, null, autoFlush, encoding, session, bindings, term);
+    }
+
+    public NPrintStreamRaw(OutputStream out, NTerminalMode mode, Boolean autoFlush, String encoding, NSession session, Bindings bindings, NSystemTerminalBase term) {
+        super(true, mode == null ? NTerminalMode.INHERITED : mode, session, bindings, term);
         getOutputMetaData().setMessage(NMsg.ofNtf(NTexts.of(session).ofStyled("<raw-stream>", NTextStyle.path())));
         this.out = out;
         if (out instanceof PrintStream) {

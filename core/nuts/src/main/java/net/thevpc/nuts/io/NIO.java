@@ -57,6 +57,8 @@ public interface NIO extends NComponent {
 
     NMemoryPrintStream ofInMemoryPrintStream();
 
+    NMemoryPrintStream ofInMemoryPrintStream(NTerminalMode mode);
+
     /**
      * create print stream that supports the given {@code mode}. If the given
      * {@code out} is a PrintStream that supports {@code mode}, it should be
