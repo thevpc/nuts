@@ -43,6 +43,7 @@ public class DefaultNUncompress implements NUncompress {
     private NSession session;
     private NProgressFactory progressFactory;
     private Set<NPathOption> options = new LinkedHashSet<>();
+    private NUncompressVisitor visitor;
 
     public DefaultNUncompress(NSession session) {
         this.session = session;
@@ -236,52 +237,44 @@ public class DefaultNUncompress implements NUncompress {
     @Override
     public NUncompress run() {
         checkSession();
-        String format = getFormat();
-        if (NBlankable.isBlank(format)) {
-            format = "zip";
-        }
-        NInputSource _source = source;
+        CompressType compressType = toCompressType(getFormat());
         NAssert.requireNonNull(source, "source", getSession());
-        NAssert.requireNonNull(target, "target", getSession());
-        NPath _target = asValidTargetPath();
-        if (_target == null) {
-            throw new NIllegalArgumentException(getSession(), NMsg.ofC("invalid target %s", target));
-        }
+
+        NInputSource _source = source;
         if (options.contains(NPathOption.LOG)
                 || options.contains(NPathOption.TRACE)
                 || getProgressFactory() != null) {
             NInputStreamMonitor monitor = NInputStreamMonitor.of(session);
-            monitor.setOrigin(_source);
+            monitor.setOrigin(source);
             monitor.setLogProgress(options.contains(NPathOption.LOG));
             monitor.setTraceProgress(options.contains(NPathOption.TRACE));
             monitor.setProgressFactory(getProgressFactory());
-            monitor.setSource(_source);
+            monitor.setSource(source);
             _source = NIO.of(session).ofInputSource(monitor.create());
         }
-        //boolean _source_isPath = _source.isPath();
-//        if (!path.toLowerCase().startsWith("file://")) {
-//            LOG.log(Level.FINE, "downloading url {0} to file {1}", new Object[]{path, file});
-//        } else {
+
+        if (visitor == null && target == null) {
+            NAssert.requireNonNull(target, "target", getSession());
+        } else if (visitor != null && target != null) {
+            throw new NIllegalArgumentException(getSession(), NMsg.ofC("invalid target %s when visitor is specified", target));
+        }else if(visitor!=null){
+            return runVisitor(_source,compressType);
+        }
+
+
         _LOGOP(session).level(Level.FINEST).verb(NLogVerb.START)
                 .log(NMsg.ofJ("uncompress {0} to {1}", _source, target));
-        Path folder = _target.toFile();
-        NPath.of(folder, session).mkdirs();
-
-        switch (format) {
-            case "zip": {
-                runZip();
-                break;
+        switch (compressType) {
+            case ZIP: {
+                runUnzipToTarget(_source);
+                return this;
             }
-            case "gzip":
-            case "gz": {
-                runGZip();
-                break;
-            }
-            default: {
-                throw new NUnsupportedArgumentException(getSession(), NMsg.ofC("unsupported format %s", format));
+            case GZIP:{
+                runUngzipToTarget(_source);
+                return this;
             }
         }
-        return this;
+        throw new NUnsupportedArgumentException(getSession(), NMsg.ofC("unsupported format %s", format));
     }
 
     private NPath asValidTargetPath() {
@@ -298,43 +291,34 @@ public class DefaultNUncompress implements NUncompress {
 
     @Override
     public NUncompress visit(NUncompressVisitor visitor) {
-        checkSession();
-        String format = getFormat();
+        this.visitor = visitor;
+        return this;
+    }
+
+    private CompressType toCompressType(String format) {
         if (NBlankable.isBlank(format)) {
             format = "zip";
         }
-        NAssert.requireNonNull(source, "source", getSession());
-        NAssert.requireNonNull(target, "target", getSession());
-        NPath _target = asValidTargetPath();
-        if (_target == null) {
-            throw new NIllegalArgumentException(getSession(), NMsg.ofC("invalid target %s", target));
-        }
-        NInputSource _source = source;
-        if (options.contains(NPathOption.LOG)
-                || options.contains(NPathOption.TRACE)
-                || getProgressFactory() != null) {
-            NInputStreamMonitor monitor = NInputStreamMonitor.of(session);
-            monitor.setOrigin(source);
-            monitor.setLogProgress(options.contains(NPathOption.LOG));
-            monitor.setTraceProgress(options.contains(NPathOption.TRACE));
-            monitor.setProgressFactory(getProgressFactory());
-            monitor.setSource(source);
-            _source = NIO.of(session).ofInputSource(monitor.create());
-        }
-
-        _LOGOP(session).level(Level.FINEST).verb(NLogVerb.START)
-                .log(NMsg.ofJ("uncompress {0} to {1}", _source, target));
-        Path folder = _target.toFile();
-        NPath.of(folder, session).mkdirs();
-
         switch (format) {
             case "zip": {
-                visitZip(visitor);
-                break;
+                return CompressType.ZIP;
             }
             case "gzip":
             case "gz": {
-                visitGZip(visitor);
+                return CompressType.GZIP;
+            }
+        }
+        throw new NUnsupportedArgumentException(getSession(), NMsg.ofC("unsupported format %s", format));
+    }
+
+    private NUncompress runVisitor(NInputSource source,CompressType format) {
+        switch (format) {
+            case ZIP: {
+                visitUnzip(source,visitor);
+                break;
+            }
+            case GZIP:{
+                visitUngzip(source,visitor);
                 break;
             }
             default: {
@@ -344,15 +328,16 @@ public class DefaultNUncompress implements NUncompress {
         return this;
     }
 
-    private void runZip() {
-        checkSession();
-        NInputSource _source = source;
+    private void runUnzipToTarget(NInputSource source) {
         try {
+            NPath _target = asValidTargetPath();
+            if (_target == null) {
+                throw new NIllegalArgumentException(getSession(), NMsg.ofC("invalid target %s", target));
+            }
+            Path folder = _target.toFile();
+            NPath.of(folder, session).mkdirs();
             byte[] buffer = new byte[1024];
-            //create output directory is not exists
-            Path folder = asValidTargetPath().toFile();
-            //get the zip file content
-            InputStream _in = _source.getInputStream();
+            InputStream _in = source.getInputStream();
             try {
                 try (ZipInputStream zis = new ZipInputStream(_in)) {
                     //get the zipped file list entry
@@ -406,17 +391,15 @@ public class DefaultNUncompress implements NUncompress {
         } catch (IOException ex) {
             _LOGOP(session).level(Level.CONFIG).verb(NLogVerb.FAIL).log(
                     NMsg.ofJ("error uncompressing {0} to {1} : {2}",
-                            _source, target, ex));
+                            source, target, ex));
             throw new NIOException(session, ex);
         }
     }
 
-    private void visitZip(NUncompressVisitor visitor) {
-        checkSession();
-        NInputSource _source = source;
+    private void visitUnzip(NInputSource source,NUncompressVisitor visitor) {
         try {
             //get the zip file content
-            InputStream _in = _source.getInputStream();
+            InputStream _in = source.getInputStream();
             try {
                 try (ZipInputStream zis = new ZipInputStream(_in)) {
                     //get the zipped file list entry
@@ -474,23 +457,26 @@ public class DefaultNUncompress implements NUncompress {
             }
         } catch (IOException ex) {
             _LOGOP(session).level(Level.CONFIG).verb(NLogVerb.FAIL)
-                    .log(NMsg.ofJ("error uncompressing {0} to {1} : {2}",
-                            _source, target, ex));
+                    .log(NMsg.ofJ("error visiting {0} : {2}",
+                            source, ex));
             throw new NIOException(session, ex);
         }
     }
 
-    private void runGZip() {
-        NInputSource _source = source;
+    private void runUngzipToTarget(NInputSource source) {
         try {
-            String baseName = _source.getInputMetaData().getName().orElse("no-name");
+            NPath _target = asValidTargetPath();
+            if (_target == null) {
+                throw new NIllegalArgumentException(getSession(), NMsg.ofC("invalid target %s", target));
+            }
+            Path folder = _target.toFile();
+            NPath.of(folder, session).mkdirs();
+
+            String baseName = source.getInputMetaData().getName().orElse("no-name");
             byte[] buffer = new byte[1024];
 
-            //create output directory is not exists
-            Path folder = asValidTargetPath().toFile();
-
             //get the zip file content
-            InputStream _in = _source.getInputStream();
+            InputStream _in = source.getInputStream();
             try {
                 try (GZIPInputStream zis = new GZIPInputStream(_in)) {
                     String n = NPath.of(baseName, session).getName();
@@ -521,20 +507,17 @@ public class DefaultNUncompress implements NUncompress {
             }
         } catch (IOException ex) {
             _LOGOP(session).level(Level.CONFIG).verb(NLogVerb.FAIL)
-                    .log(NMsg.ofJ("error uncompressing {0} to {1} : {2}", _source,
+                    .log(NMsg.ofJ("error uncompressing {0} to {1} : {2}", source,
                             target, ex));
             throw new NIOException(session, ex);
         }
     }
 
-    private void visitGZip(NUncompressVisitor visitor) {
-        NInputSource _source = source;
+    private void visitUngzip(NInputSource source,NUncompressVisitor visitor) {
         try {
-            String baseName = _source.getInputMetaData().getName().orElse("no-name");
-            byte[] buffer = new byte[1024];
-
+            String baseName = source.getInputMetaData().getName().orElse("no-name");
             //get the zip file content
-            InputStream _in = _source.getInputStream();
+            InputStream _in = source.getInputStream();
             try {
                 try (GZIPInputStream zis = new GZIPInputStream(_in)) {
                     String n = NPath.of(baseName, session).getName();
@@ -567,16 +550,16 @@ public class DefaultNUncompress implements NUncompress {
             }
         } catch (IOException ex) {
             _LOGOP(session).level(Level.CONFIG).verb(NLogVerb.FAIL)
-                    .log(NMsg.ofJ("error uncompressing {0} to {1} : {2}", _source,
+                    .log(NMsg.ofJ("error uncompressing {0} to {1} : {2}", source,
                             target, ex));
             throw new NIOException(session, ex);
         }
     }
 
     /**
-     * return progress factory responsible of creating progress monitor
+     * return progress factory responsible for creating progress monitor
      *
-     * @return progress factory responsible of creating progress monitor
+     * @return progress factory responsible for creating progress monitor
      * @since 0.5.8
      */
     @Override
@@ -676,6 +659,11 @@ public class DefaultNUncompress implements NUncompress {
     @Override
     public Set<NPathOption> getOptions() {
         return new LinkedHashSet<>(options);
+    }
+
+    private enum CompressType{
+        ZIP,
+        GZIP
     }
 
 }

@@ -138,7 +138,7 @@ public class UnzipCommand extends SimpleJShellBuiltin {
                                     session.out().print(NMsg.ofStyled(path, NTextStyle.path()));
                                     return true;
                                 }
-                            });
+                            }).run();
                 } else {
                     String dir = options.dir;
                     if (NBlankable.isBlank(dir)) {

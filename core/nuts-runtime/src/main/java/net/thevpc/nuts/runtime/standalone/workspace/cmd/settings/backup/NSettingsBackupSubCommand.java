@@ -122,7 +122,7 @@ public class NSettingsBackupSubCommand extends AbstractNSettingsSubCommand {
                                 }
                                 return true;
                             }
-                        });
+                        }).run();
                 if (nutsWorkspaceConfigRef[0] == null) {
                     commandLine.throwMissingArgument(NMsg.ofC("not a valid file : %s", file));
                 }

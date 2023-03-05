@@ -52,6 +52,7 @@ public abstract class AbstractNExecCommand extends NWorkspaceCommandBase<NExecCo
     public int getSupportLevel(NSupportLevelContext context) {
         return DEFAULT_SUPPORT;
     }
+
     @Override
     public NExecCommandFormat formatter() {
         return NExecCommandFormat.of(getSession()).setValue(this);
@@ -107,9 +108,9 @@ public abstract class AbstractNExecCommand extends NWorkspaceCommandBase<NExecCo
         if (this.command == null) {
             this.command = new ArrayList<>();
         }
-        if(command!=null){
+        if (command != null) {
             for (String s : command) {
-                if(s!=null){
+                if (s != null) {
                     this.command.add(s);
                 }
             }
@@ -122,9 +123,9 @@ public abstract class AbstractNExecCommand extends NWorkspaceCommandBase<NExecCo
         if (this.command == null) {
             this.command = new ArrayList<>();
         }
-        if(command!=null){
+        if (command != null) {
             for (String s : command) {
-                if(s!=null){
+                if (s != null) {
                     this.command.add(s);
                 }
             }
@@ -723,11 +724,11 @@ public abstract class AbstractNExecCommand extends NWorkspaceCommandBase<NExecCo
     protected static class SPrintStream extends NByteArrayPrintStream {
 
         public SPrintStream(NSession session) {
-            super(session);
+            super(null, session);
         }
 
         protected SPrintStream(ByteArrayOutputStream bos, NSession session) {
-            super(bos, session);
+            super(null, bos, session);
         }
 
         @Override

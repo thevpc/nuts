@@ -192,7 +192,7 @@ public class JarPathVersionResolver implements PathVersionResolver {
                             }
                             return true;
                         }
-                    });
+                    }).run();
         } catch (IOException ex) {
             throw new NIOException(session, ex);
         }
