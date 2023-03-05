@@ -4,6 +4,7 @@ import net.thevpc.nuts.NBlankable;
 import net.thevpc.nuts.elem.NMapBy;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class NNameFormat {
@@ -45,6 +46,22 @@ public class NNameFormat {
         this.leading = leading;
         this.next = next;
         this.sep = sep;
+    }
+
+    public static boolean equalsIgnoreFormat(String a, String b) {
+        String[] aa = parse(NStringUtils.trim(a));
+        String[] bb = parse(NStringUtils.trim(b));
+        int length = aa.length;
+        if (bb.length != length) {
+            return false;
+        }
+        for (int i=0; i<length; i++) {
+            String o1 = aa[i];
+            String o2 = bb[i];
+            if (!(o1==null ? o2==null : o1.equalsIgnoreCase(o2)))
+                return false;
+        }
+        return true;
     }
 
     public NWordFormat getLeading() {
