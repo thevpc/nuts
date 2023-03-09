@@ -27,17 +27,16 @@
 package net.thevpc.nuts.toolbox.nsh.sys;
 
 import net.thevpc.nuts.NExecCommand;
-import net.thevpc.nuts.toolbox.nsh.jshell.JShellContext;
-import net.thevpc.nuts.toolbox.nsh.sys.JShellExternalExecutor;
+import net.thevpc.nuts.toolbox.nsh.eval.NShellContext;
 
 /**
  *
  * @author thevpc
  */
-public class NExternalExecutor implements JShellExternalExecutor {
+public class NExternalExecutor implements NShellExternalExecutor {
     
     @Override
-    public int execExternalCommand(String[] command, JShellContext context) {
+    public int execExternalCommand(String[] command, NShellContext context) {
         return NExecCommand.of(context.getSession()).addCommand(command).setFailFast(true)
                 .setExecutionType(context.getSession().getExecutionType())
                 .setDirectory(context.getCwd())

@@ -12,9 +12,11 @@ import net.thevpc.nuts.elem.NElements;
 import net.thevpc.nuts.elem.NObjectElement;
 import net.thevpc.nuts.io.NIOException;
 import net.thevpc.nuts.io.NSessionTerminal;
-import net.thevpc.nuts.toolbox.nsh.jshell.*;
-import net.thevpc.nuts.toolbox.nsh.nodes.JShellVar;
-import net.thevpc.nuts.toolbox.nsh.nodes.JShellVariables;
+import net.thevpc.nuts.toolbox.nsh.eval.NShellContext;
+import net.thevpc.nuts.toolbox.nsh.nshell.*;
+import net.thevpc.nuts.toolbox.nsh.nodes.NShellVar;
+import net.thevpc.nuts.toolbox.nsh.nodes.NShellVarListener;
+import net.thevpc.nuts.toolbox.nsh.nodes.NShellVariables;
 import net.thevpc.nuts.toolbox.ntemplate.filetemplate.*;
 import net.thevpc.nuts.toolbox.ntemplate.filetemplate.util.FileProcessorUtils;
 import net.thevpc.nuts.toolbox.ntemplate.filetemplate.util.StringUtils;
@@ -271,29 +273,29 @@ public class DocusaurusCtrl {
 
     private static class NshEvaluator implements ExprEvaluator {
         private NApplicationContext appContext;
-        private JShell shell;
+        private NShell shell;
         private FileTemplater fileTemplater;
 
         public NshEvaluator(NApplicationContext appContext, FileTemplater fileTemplater) {
             this.appContext = appContext;
             this.fileTemplater = fileTemplater;
-            shell = new JShell(new JShellConfiguration().setApplicationContext(appContext).setIncludeDefaultBuiltins(true).setIncludeExternalExecutor(true));
+            shell = new NShell(new NShellConfiguration().setApplicationContext(appContext).setIncludeDefaultBuiltins(true).setIncludeExternalExecutor(true));
             shell.getRootContext().setSession(shell.getRootContext().getSession().copy());
             shell.getRootContext().vars().addVarListener(
-                    new JShellVarListener() {
+                    new NShellVarListener() {
                         @Override
-                        public void varAdded(JShellVar jShellVar, JShellVariables vars, JShellContext context) {
-                            setVar(jShellVar.getName(), jShellVar.getValue());
+                        public void varAdded(NShellVar nShellVar, NShellVariables vars, NShellContext context) {
+                            setVar(nShellVar.getName(), nShellVar.getValue());
                         }
 
                         @Override
-                        public void varValueUpdated(JShellVar jShellVar, String oldValue, JShellVariables vars, JShellContext context) {
-                            setVar(jShellVar.getName(), jShellVar.getValue());
+                        public void varValueUpdated(NShellVar nShellVar, String oldValue, NShellVariables vars, NShellContext context) {
+                            setVar(nShellVar.getName(), nShellVar.getValue());
                         }
 
                         @Override
-                        public void varRemoved(JShellVar jShellVar, JShellVariables vars, JShellContext context) {
-                            setVar(jShellVar.getName(), null);
+                        public void varRemoved(NShellVar nShellVar, NShellVariables vars, NShellContext context) {
+                            setVar(nShellVar.getName(), null);
                         }
                     }
             );
@@ -311,7 +313,7 @@ public class DocusaurusCtrl {
         public Object eval(String content, FileTemplater context) {
             NSession session = context.getSession().copy();
             session.setTerminal(NSessionTerminal.ofMem(session));
-            JShellContext ctx = shell.createInlineContext(
+            NShellContext ctx = shell.createInlineContext(
                     shell.getRootContext(),
                     context.getSourcePath().orElseGet(() -> "nsh"), new String[0]
             );

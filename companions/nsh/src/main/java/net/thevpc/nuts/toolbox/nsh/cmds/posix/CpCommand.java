@@ -32,8 +32,8 @@ import net.thevpc.nuts.io.NCp;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.spi.NComponentScope;
 import net.thevpc.nuts.spi.NComponentScopeType;
-import net.thevpc.nuts.toolbox.nsh.cmds.JShellBuiltinDefault;
-import net.thevpc.nuts.toolbox.nsh.jshell.JShellExecutionContext;
+import net.thevpc.nuts.toolbox.nsh.cmds.NShellBuiltinDefault;
+import net.thevpc.nuts.toolbox.nsh.eval.NShellExecutionContext;
 import net.thevpc.nuts.toolbox.nsh.util.ShellHelper;
 import net.thevpc.nuts.util.NAssert;
 
@@ -45,7 +45,7 @@ import java.util.List;
  * https://medium.com/ldclakmal/scp-with-java-b7b7dbcdbc85
  */
 @NComponentScope(NComponentScopeType.WORKSPACE)
-public class CpCommand extends JShellBuiltinDefault {
+public class CpCommand extends NShellBuiltinDefault {
 
     public CpCommand() {
         super("cp", DEFAULT_SUPPORT,Options.class);
@@ -53,7 +53,7 @@ public class CpCommand extends JShellBuiltinDefault {
 
 
     @Override
-    protected boolean onCmdNextOption(NArg arg, NCmdLine commandLine, JShellExecutionContext context) {
+    protected boolean onCmdNextOption(NArg arg, NCmdLine commandLine, NShellExecutionContext context) {
         Options options = context.getOptions();
         NSession session = context.getSession();
         switch (commandLine.peek().get(session).key()) {
@@ -78,7 +78,7 @@ public class CpCommand extends JShellBuiltinDefault {
     }
 
     @Override
-    protected void onCmdExec(NCmdLine commandLine, JShellExecutionContext context) {
+    protected void onCmdExec(NCmdLine commandLine, NShellExecutionContext context) {
         Options options = context.getOptions();
         NSession session = context.getSession();
         for (String value : options.files) {
@@ -97,7 +97,7 @@ public class CpCommand extends JShellBuiltinDefault {
         }
     }
 
-    public void copy(NPath from, NPath to, Options o, JShellExecutionContext context) {
+    public void copy(NPath from, NPath to, Options o, NShellExecutionContext context) {
         NSession session = context.getSession();
         NCp ccp = NCp.of(session)
                 .from(from)
@@ -188,7 +188,7 @@ public class CpCommand extends JShellBuiltinDefault {
     }
 
     @Override
-    protected boolean onCmdNextNonOption(NArg arg, NCmdLine commandLine, JShellExecutionContext context) {
+    protected boolean onCmdNextNonOption(NArg arg, NCmdLine commandLine, NShellExecutionContext context) {
         return onCmdNextOption(arg, commandLine, context);
     }
 

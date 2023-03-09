@@ -31,8 +31,8 @@ import net.thevpc.nuts.cmdline.NArgName;
 import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.format.NObjectFormat;
 import net.thevpc.nuts.io.NPath;
-import net.thevpc.nuts.toolbox.nsh.cmds.JShellBuiltinDefault;
-import net.thevpc.nuts.toolbox.nsh.jshell.JShellExecutionContext;
+import net.thevpc.nuts.toolbox.nsh.cmds.NShellBuiltinDefault;
+import net.thevpc.nuts.toolbox.nsh.eval.NShellExecutionContext;
 import net.thevpc.nuts.toolbox.nsh.util.ShellHelper;
 
 import java.io.IOException;
@@ -43,14 +43,14 @@ import java.util.*;
 /**
  * Created by vpc on 1/7/17.
  */
-public class PropsCommand extends JShellBuiltinDefault {
+public class PropsCommand extends NShellBuiltinDefault {
 
     public PropsCommand() {
         super("props", DEFAULT_SUPPORT,Options.class);
     }
 
     @Override
-    protected boolean onCmdNextOption(NArg arg, NCmdLine commandLine, JShellExecutionContext context) {
+    protected boolean onCmdNextOption(NArg arg, NCmdLine commandLine, NShellExecutionContext context) {
         Options o = context.getOptions();
         NSession session = context.getSession();
         if (commandLine.next("get").isPresent()) {
@@ -180,7 +180,7 @@ public class PropsCommand extends JShellBuiltinDefault {
     }
 
     @Override
-    protected void onCmdExec(NCmdLine commandLine, JShellExecutionContext context) {
+    protected void onCmdExec(NCmdLine commandLine, NShellExecutionContext context) {
         Options o = context.getOptions();
         NSession session = context.getSession();
         commandLine.setCommandName(getName());
@@ -226,18 +226,18 @@ public class PropsCommand extends JShellBuiltinDefault {
         return "show properties vars";
     }
 
-    private void action_list(JShellExecutionContext context, Options o) {
+    private void action_list(NShellExecutionContext context, Options o) {
         NObjectFormat.of(context.getSession()).setValue(getProperties(o, context)).print();
     }
 
-    private int action_get(JShellExecutionContext context, Options o) {
+    private int action_get(NShellExecutionContext context, Options o) {
         Map<String, String> p = getProperties(o, context);
         String v = p.get(o.property);
         NObjectFormat.of(context.getSession()).setValue(v == null ? "" : v).print();
         return 0;
     }
 
-    private Map<String, String> getProperties(Options o, JShellExecutionContext context) {
+    private Map<String, String> getProperties(Options o, NShellExecutionContext context) {
         Map<String, String> p = o.sort ? new TreeMap<String, String>() : new HashMap<String, String>();
         switch (o.sourceType) {
             case FILE: {
@@ -252,7 +252,7 @@ public class PropsCommand extends JShellBuiltinDefault {
         return p;
     }
 
-    private Format detectFileFormat(String file, JShellExecutionContext context) {
+    private Format detectFileFormat(String file, NShellExecutionContext context) {
         if (file.toLowerCase().endsWith(".props")
                 || file.toLowerCase().endsWith(".properties")) {
             return Format.PROPS;
@@ -262,7 +262,7 @@ public class PropsCommand extends JShellBuiltinDefault {
         throw new NExecutionException(context.getSession(), NMsg.ofC("unknown file format %s", file), 2);
     }
 
-    private Map<String, String> readProperties(Options o, JShellExecutionContext context) {
+    private Map<String, String> readProperties(Options o, NShellExecutionContext context) {
         Map<String, String> p = new LinkedHashMap<>();
         String sourceFile = o.sourceFile;
         NPath filePath = ShellHelper.xfileOf(sourceFile, context.getCwd(), context.getSession());
@@ -292,7 +292,7 @@ public class PropsCommand extends JShellBuiltinDefault {
         return p;
     }
 
-    private void storeProperties(Map<String, String> p, Options o, JShellExecutionContext context) throws IOException {
+    private void storeProperties(Map<String, String> p, Options o, NShellExecutionContext context) throws IOException {
         String targetFile = o.targetFile;
         boolean console = false;
         switch (o.targetType) {
@@ -418,7 +418,7 @@ public class PropsCommand extends JShellBuiltinDefault {
     }
 
     @Override
-    protected boolean onCmdNextNonOption(NArg arg, NCmdLine commandLine, JShellExecutionContext context) {
+    protected boolean onCmdNextNonOption(NArg arg, NCmdLine commandLine, NShellExecutionContext context) {
         return onCmdNextOption(arg, commandLine, context);
     }
 }

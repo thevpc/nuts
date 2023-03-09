@@ -35,8 +35,8 @@ import net.thevpc.nuts.io.NUncompress;
 import net.thevpc.nuts.spi.NComponentScope;
 import net.thevpc.nuts.spi.NComponentScopeType;
 import net.thevpc.nuts.text.NTextStyle;
-import net.thevpc.nuts.toolbox.nsh.cmds.JShellBuiltinDefault;
-import net.thevpc.nuts.toolbox.nsh.jshell.JShellExecutionContext;
+import net.thevpc.nuts.toolbox.nsh.cmds.NShellBuiltinDefault;
+import net.thevpc.nuts.toolbox.nsh.eval.NShellExecutionContext;
 
 import java.io.InputStream;
 import java.io.UncheckedIOException;
@@ -47,14 +47,14 @@ import java.util.List;
  * Created by vpc on 1/7/17.
  */
 @NComponentScope(NComponentScopeType.WORKSPACE)
-public class UnzipCommand extends JShellBuiltinDefault {
+public class UnzipCommand extends NShellBuiltinDefault {
 
     public UnzipCommand() {
         super("unzip", DEFAULT_SUPPORT, Options.class);
     }
 
     @Override
-    protected boolean onCmdNextOption(NArg arg, NCmdLine commandLine, JShellExecutionContext context) {
+    protected boolean onCmdNextOption(NArg arg, NCmdLine commandLine, NShellExecutionContext context) {
         Options options = context.getOptions();
         NSession session = context.getSession();
         NArg a;
@@ -115,7 +115,7 @@ public class UnzipCommand extends JShellBuiltinDefault {
     }
 
     @Override
-    protected void onCmdExec(NCmdLine commandLine, JShellExecutionContext context) {
+    protected void onCmdExec(NCmdLine commandLine, NShellExecutionContext context) {
         Options options = context.getOptions();
         NSession session = context.getSession();
         if (options.zfiles.isEmpty()) {
@@ -167,7 +167,7 @@ public class UnzipCommand extends JShellBuiltinDefault {
         List<String> xFiles = new ArrayList<>();
     }
     @Override
-    protected boolean onCmdNextNonOption(NArg arg, NCmdLine commandLine, JShellExecutionContext context) {
+    protected boolean onCmdNextNonOption(NArg arg, NCmdLine commandLine, NShellExecutionContext context) {
         return onCmdNextOption(arg, commandLine, context);
     }
 }

@@ -38,9 +38,9 @@ import net.thevpc.nuts.spi.NComponentScope;
 import net.thevpc.nuts.spi.NComponentScopeType;
 import net.thevpc.nuts.text.NTextStyle;
 import net.thevpc.nuts.text.NTexts;
-import net.thevpc.nuts.toolbox.nsh.cmds.JShellBuiltinDefault;
+import net.thevpc.nuts.toolbox.nsh.cmds.NShellBuiltinDefault;
+import net.thevpc.nuts.toolbox.nsh.eval.NShellExecutionContext;
 import net.thevpc.nuts.toolbox.nsh.util.bundles.BytesSizeFormat;
-import net.thevpc.nuts.toolbox.nsh.jshell.JShellExecutionContext;
 import net.thevpc.nuts.util.NComparator;
 import net.thevpc.nuts.util.NStringUtils;
 
@@ -55,7 +55,7 @@ import java.util.stream.Stream;
  * Created by vpc on 1/7/17.
  */
 @NComponentScope(NComponentScopeType.WORKSPACE)
-public class LsCommand extends JShellBuiltinDefault {
+public class LsCommand extends NShellBuiltinDefault {
 
     private static final FileSorter FILE_SORTER = new FileSorter();
     private final HashSet<String> fileTypeArchive = new HashSet<String>(Arrays.asList("jar", "war", "ear", "rar", "zip", "tar", "gz"));
@@ -69,7 +69,7 @@ public class LsCommand extends JShellBuiltinDefault {
     }
 
     @Override
-    protected boolean onCmdNextOption(NArg arg, NCmdLine commandLine, JShellExecutionContext context) {
+    protected boolean onCmdNextOption(NArg arg, NCmdLine commandLine, NShellExecutionContext context) {
         Options options = context.getOptions();
         NSession session = context.getSession();
         NArg a;
@@ -97,7 +97,7 @@ public class LsCommand extends JShellBuiltinDefault {
     }
 
     @Override
-    protected void onCmdExec(NCmdLine commandLine, JShellExecutionContext context) {
+    protected void onCmdExec(NCmdLine commandLine, NShellExecutionContext context) {
         Options options = context.getOptions();
         ResultSuccess success = new ResultSuccess();
         success.workingDir = context.getAbsolutePath(".");
@@ -398,7 +398,7 @@ public class LsCommand extends JShellBuiltinDefault {
     }
 
     @Override
-    protected boolean onCmdNextNonOption(NArg arg, NCmdLine commandLine, JShellExecutionContext context) {
+    protected boolean onCmdNextNonOption(NArg arg, NCmdLine commandLine, NShellExecutionContext context) {
         return onCmdNextOption(arg, commandLine, context);
     }
 }

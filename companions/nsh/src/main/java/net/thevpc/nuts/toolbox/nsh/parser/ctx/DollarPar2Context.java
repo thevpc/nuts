@@ -1,14 +1,14 @@
 package net.thevpc.nuts.toolbox.nsh.parser.ctx;
 
 import net.thevpc.nuts.toolbox.nsh.parser.AbstractContext;
-import net.thevpc.nuts.toolbox.nsh.parser.JShellParser;
+import net.thevpc.nuts.toolbox.nsh.parser.NShellParser;
 import net.thevpc.nuts.toolbox.nsh.parser.StrReader;
 import net.thevpc.nuts.toolbox.nsh.parser.Token;
 
 public class DollarPar2Context extends AbstractContext {
 
 
-    public DollarPar2Context(JShellParser jshp) {
+    public DollarPar2Context(NShellParser jshp) {
         super(jshp);
     }
 

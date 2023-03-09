@@ -32,9 +32,9 @@ import net.thevpc.nuts.spi.NComponentScope;
 import net.thevpc.nuts.spi.NComponentScopeType;
 import net.thevpc.nuts.text.NTextStyle;
 import net.thevpc.nuts.text.NTexts;
-import net.thevpc.nuts.toolbox.nsh.autocomplete.JShellAutoCompleteCandidate;
-import net.thevpc.nuts.toolbox.nsh.cmds.JShellBuiltinDefault;
-import net.thevpc.nuts.toolbox.nsh.jshell.JShellExecutionContext;
+import net.thevpc.nuts.toolbox.nsh.autocomplete.NShellAutoCompleteCandidate;
+import net.thevpc.nuts.toolbox.nsh.cmds.NShellBuiltinDefault;
+import net.thevpc.nuts.toolbox.nsh.eval.NShellExecutionContext;
 
 import java.util.*;
 
@@ -42,14 +42,14 @@ import java.util.*;
  * Created by vpc on 1/7/17.
  */
 @NComponentScope(NComponentScopeType.WORKSPACE)
-public class AutocompleteCommand extends JShellBuiltinDefault {
+public class AutocompleteCommand extends NShellBuiltinDefault {
 
     public AutocompleteCommand() {
         super("autocomplete", DEFAULT_SUPPORT,Options.class);
     }
 
     @Override
-    protected boolean onCmdNextOption(NArg arg, NCmdLine cmdLine, JShellExecutionContext context) {
+    protected boolean onCmdNextOption(NArg arg, NCmdLine cmdLine, NShellExecutionContext context) {
         Options options = context.getOptions();
         NSession session = context.getSession();
         if (!cmdLine.isNextOption()) {
@@ -72,27 +72,27 @@ public class AutocompleteCommand extends JShellBuiltinDefault {
     }
 
     @Override
-    protected boolean onCmdNextNonOption(NArg arg, NCmdLine commandLine, JShellExecutionContext context) {
+    protected boolean onCmdNextNonOption(NArg arg, NCmdLine commandLine, NShellExecutionContext context) {
         return onCmdNextOption(arg, commandLine, context);
     }
 
     @Override
-    protected void onCmdExec(NCmdLine commandLine, JShellExecutionContext context) {
+    protected void onCmdExec(NCmdLine commandLine, NShellExecutionContext context) {
         Options options = context.getOptions();
         NSession session = context.getSession();
         if (options.cmd == null) {
-            throw new NExecutionException(session, NMsg.ofPlain("missing JShellCommandNode"), 1);
+            throw new NExecutionException(session, NMsg.ofPlain("missing NShellCommandNode"), 1);
         }
         if (options.index < 0) {
             options.index = options.items.size();
             options.items.add("");
         }
-        List<JShellAutoCompleteCandidate> aa = context.getShellContext().resolveAutoCompleteCandidates(
+        List<NShellAutoCompleteCandidate> aa = context.getShellContext().resolveAutoCompleteCandidates(
                 options.cmd, options.items, options.index,
                 NCmdLine.of(options.items).toString()
         );
         Properties p = new Properties();
-        for (JShellAutoCompleteCandidate autoCompleteCandidate : aa) {
+        for (NShellAutoCompleteCandidate autoCompleteCandidate : aa) {
             String value = autoCompleteCandidate.getValue();
             String dvalue = autoCompleteCandidate.getDisplay();
             if (dvalue != null && dvalue.equals(value)) {

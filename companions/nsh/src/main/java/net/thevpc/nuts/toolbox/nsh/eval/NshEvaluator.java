@@ -29,10 +29,9 @@ import net.thevpc.nuts.io.NPrintStream;
 import net.thevpc.nuts.NSession;
 import net.thevpc.nuts.io.NSessionTerminal;
 import net.thevpc.nuts.io.NTerminalMode;
-import net.thevpc.nuts.toolbox.nsh.err.JShellException;
-import net.thevpc.nuts.toolbox.nsh.err.JShellUniformException;
-import net.thevpc.nuts.toolbox.nsh.jshell.*;
-import net.thevpc.nuts.toolbox.nsh.nodes.JShellCommandNode;
+import net.thevpc.nuts.toolbox.nsh.err.NShellException;
+import net.thevpc.nuts.toolbox.nsh.err.NShellUniformException;
+import net.thevpc.nuts.toolbox.nsh.nodes.NShellCommandNode;
 import net.thevpc.nuts.toolbox.nsh.util.JavaShellNonBlockingInputStream;
 import net.thevpc.nuts.toolbox.nsh.util.JavaShellNonBlockingInputStreamAdapter;
 
@@ -45,10 +44,10 @@ import java.util.logging.Level;
 /**
  * @author thevpc
  */
-public class NshEvaluator extends DefaultJShellEvaluator {
+public class NshEvaluator extends DefaultNShellEvaluator {
 
     @Override
-    public int evalBinaryPipeOperation(JShellCommandNode left, JShellCommandNode right, JShellContext context) {
+    public int evalBinaryPipeOperation(NShellCommandNode left, NShellCommandNode right, NShellContext context) {
         final NPrintStream nout;
         final PipedOutputStream out;
         final PipedInputStream in;
@@ -59,16 +58,16 @@ public class NshEvaluator extends DefaultJShellEvaluator {
             in = new PipedInputStream(out, 1024);
             in2 = (in instanceof JavaShellNonBlockingInputStream) ? (JavaShellNonBlockingInputStream) in : new JavaShellNonBlockingInputStreamAdapter("jpipe-" + right.toString(), in);
         } catch (IOException ex) {
-            throw new JShellException(context.getSession(), ex, 1);
+            throw new NShellException(context.getSession(), ex, 1);
         }
-        final JShellContext leftContext = context.getShell().createNewContext(context).setOut(nout.asPrintStream());
-        final JShellUniformException[] a = new JShellUniformException[2];
+        final NShellContext leftContext = context.getShell().createNewContext(context).setOut(nout.asPrintStream());
+        final NShellUniformException[] a = new NShellUniformException[2];
         Thread j1 = new Thread() {
             @Override
             public void run() {
                 try {
                     context.getShell().evalNode(left, leftContext);
-                } catch (JShellUniformException e) {
+                } catch (NShellUniformException e) {
                     if (e.isQuit()) {
                         e.throwQuit();
                         return;
@@ -80,10 +79,10 @@ public class NshEvaluator extends DefaultJShellEvaluator {
 
         };
         j1.start();
-        JShellContext rightContext = context.getShell().createNewContext(context).setIn((InputStream) in2);
+        NShellContext rightContext = context.getShell().createNewContext(context).setIn((InputStream) in2);
         try {
             context.getShell().evalNode(right, rightContext);
-        } catch (JShellUniformException e) {
+        } catch (NShellUniformException e) {
             if (e.isQuit()) {
                 e.throwQuit();
                 return 0;
@@ -102,8 +101,8 @@ public class NshEvaluator extends DefaultJShellEvaluator {
     }
 
     @Override
-    public String evalCommandAndReturnString(JShellCommandNode command, JShellContext context) {
-        DefaultJShellContext newCtx = (DefaultJShellContext) context.getShell().createNewContext(context);
+    public String evalCommandAndReturnString(NShellCommandNode command, NShellContext context) {
+        DefaultNShellContext newCtx = (DefaultNShellContext) context.getShell().createNewContext(context);
         NSession session = newCtx.getSession().copy();
         newCtx.setSession(session);
         session.setLogTermLevel(Level.OFF);

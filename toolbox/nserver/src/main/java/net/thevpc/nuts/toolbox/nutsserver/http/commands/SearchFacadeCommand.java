@@ -28,7 +28,7 @@ public class SearchFacadeCommand extends AbstractFacadeCommand {
         //Content-type
         String boundary = context.getRequestHeaderFirstValue("Content-type");
         if (NBlankable.isBlank(boundary)) {
-            context.sendError(400, "Invalid JShellCommandNode Arguments : " + getName() + " . Invalid format.");
+            context.sendError(400, "Invalid NShellCommandNode Arguments : " + getName() + " . Invalid format.");
             return;
         }
         MultipartStreamHelper stream = new MultipartStreamHelper(context.getRequestBody(), boundary, context.getSession());

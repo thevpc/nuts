@@ -32,9 +32,9 @@ import net.thevpc.nuts.NSession;
 import net.thevpc.nuts.NLiteral;
 import net.thevpc.nuts.spi.NComponentScope;
 import net.thevpc.nuts.spi.NComponentScopeType;
-import net.thevpc.nuts.toolbox.nsh.cmds.JShellBuiltin;
-import net.thevpc.nuts.toolbox.nsh.cmds.JShellBuiltinDefault;
-import net.thevpc.nuts.toolbox.nsh.jshell.JShellExecutionContext;
+import net.thevpc.nuts.toolbox.nsh.cmds.NShellBuiltin;
+import net.thevpc.nuts.toolbox.nsh.cmds.NShellBuiltinDefault;
+import net.thevpc.nuts.toolbox.nsh.eval.NShellExecutionContext;
 
 import java.util.*;
 
@@ -42,14 +42,14 @@ import java.util.*;
  * Created by vpc on 1/7/17.
  */
 @NComponentScope(NComponentScopeType.WORKSPACE)
-public class EnableCommand extends JShellBuiltinDefault {
+public class EnableCommand extends NShellBuiltinDefault {
 
     public EnableCommand() {
         super("enable", DEFAULT_SUPPORT,Options.class);
     }
 
     @Override
-    protected boolean onCmdNextOption(NArg arg, NCmdLine commandLine, JShellExecutionContext context) {
+    protected boolean onCmdNextOption(NArg arg, NCmdLine commandLine, NShellExecutionContext context) {
         Options options = context.getOptions();
         NSession session = context.getSession();
         final NArg a = commandLine.peek().get(session);
@@ -93,11 +93,11 @@ public class EnableCommand extends JShellBuiltinDefault {
     }
 
     @Override
-    protected void onCmdExec(NCmdLine commandLine, JShellExecutionContext context) {
+    protected void onCmdExec(NCmdLine commandLine, NShellExecutionContext context) {
         Options options = context.getOptions();
         if (options.p || options.names.isEmpty()) {
             Map<String, String> result = new LinkedHashMap<>();
-            for (JShellBuiltin command : context.builtins().getAll()) {
+            for (NShellBuiltin command : context.builtins().getAll()) {
                 result.put(command.getName(), command.isEnabled() ? "enabled" : "disabled");
             }
             switch (context.getSession().getOutputFormat()) {
@@ -123,7 +123,7 @@ public class EnableCommand extends JShellBuiltinDefault {
         } else if (options.n) {
             List<String> nobuiltin = new ArrayList<>();
             for (String name : options.names) {
-                JShellBuiltin c = context.builtins().find(name);
+                NShellBuiltin c = context.builtins().find(name);
                 if (c == null) {
                     nobuiltin.add(name);
                 } else {
@@ -150,7 +150,7 @@ public class EnableCommand extends JShellBuiltinDefault {
 
 
     @Override
-    protected boolean onCmdNextNonOption(NArg arg, NCmdLine commandLine, JShellExecutionContext context) {
+    protected boolean onCmdNextNonOption(NArg arg, NCmdLine commandLine, NShellExecutionContext context) {
         return onCmdNextOption(arg, commandLine, context);
     }
 }

@@ -29,8 +29,8 @@ import net.thevpc.nuts.*;
 import net.thevpc.nuts.cmdline.NArg;
 import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.io.NPath;
-import net.thevpc.nuts.toolbox.nsh.cmds.JShellBuiltinDefault;
-import net.thevpc.nuts.toolbox.nsh.jshell.JShellExecutionContext;
+import net.thevpc.nuts.toolbox.nsh.cmds.NShellBuiltinDefault;
+import net.thevpc.nuts.toolbox.nsh.eval.NShellExecutionContext;
 import net.thevpc.nuts.toolbox.nsh.util.ShellHelper;
 
 import java.io.BufferedReader;
@@ -44,14 +44,14 @@ import java.util.List;
 /**
  * Created by vpc on 1/7/17.
  */
-public class TailCommand extends JShellBuiltinDefault {
+public class TailCommand extends NShellBuiltinDefault {
 
     public TailCommand() {
         super("tail", DEFAULT_SUPPORT, Options.class);
     }
 
     @Override
-    protected boolean onCmdNextOption(NArg arg, NCmdLine commandLine, JShellExecutionContext context) {
+    protected boolean onCmdNextOption(NArg arg, NCmdLine commandLine, NShellExecutionContext context) {
         Options options = context.getOptions();
         NSession session = context.getSession();
         NArg a = commandLine.peek().get(session);
@@ -74,7 +74,7 @@ public class TailCommand extends JShellBuiltinDefault {
     }
 
     @Override
-    protected void onCmdExec(NCmdLine commandLine, JShellExecutionContext context) {
+    protected void onCmdExec(NCmdLine commandLine, NShellExecutionContext context) {
         Options options = context.getOptions();
         NSession session = context.getSession();
 
@@ -86,7 +86,7 @@ public class TailCommand extends JShellBuiltinDefault {
         }
     }
 
-    private void tail(NPath file, int max, JShellExecutionContext context) {
+    private void tail(NPath file, int max, NShellExecutionContext context) {
         BufferedReader r = null;
         NSession session = context.getSession();
         try {
@@ -120,7 +120,7 @@ public class TailCommand extends JShellBuiltinDefault {
         List<NPath> files = new ArrayList<>();
     }
     @Override
-    protected boolean onCmdNextNonOption(NArg arg, NCmdLine commandLine, JShellExecutionContext context) {
+    protected boolean onCmdNextNonOption(NArg arg, NCmdLine commandLine, NShellExecutionContext context) {
         return onCmdNextOption(arg, commandLine, context);
     }
 }

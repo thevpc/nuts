@@ -42,10 +42,10 @@ import net.thevpc.nuts.io.NTerminalMode;
 import net.thevpc.nuts.spi.NComponent;
 import net.thevpc.nuts.spi.NComponentScope;
 import net.thevpc.nuts.spi.NComponentScopeType;
-import net.thevpc.nuts.toolbox.nsh.cmds.JShellBuiltinBase;
-import net.thevpc.nuts.toolbox.nsh.jshell.JShell;
-import net.thevpc.nuts.toolbox.nsh.jshell.JShellConfiguration;
-import net.thevpc.nuts.toolbox.nsh.jshell.JShellExecutionContext;
+import net.thevpc.nuts.toolbox.nsh.cmds.NShellBuiltinBase;
+import net.thevpc.nuts.toolbox.nsh.nshell.NShell;
+import net.thevpc.nuts.toolbox.nsh.nshell.NShellConfiguration;
+import net.thevpc.nuts.toolbox.nsh.eval.NShellExecutionContext;
 import net.thevpc.nuts.toolbox.nutsserver.NServer;
 
 /**
@@ -120,7 +120,7 @@ public class AdminServerRunnable implements NServer, Runnable {
                         @Override
                         public void run() {
                             String[] args = {NConstants.Ids.NUTS_SHELL};
-                            JShell cli = null;
+                            NShell cli = null;
                             try {
                                 try {
                                     PrintStream out = new PrintStream(finalAccept.getOutputStream());
@@ -131,8 +131,8 @@ public class AdminServerRunnable implements NServer, Runnable {
                                                     finalAccept.getInputStream(),
                                                     eout, eout, invokerSession)
                                     );
-                                    cli = new JShell(
-                                            new JShellConfiguration()
+                                    cli = new NShell(
+                                            new NShellConfiguration()
                                                     .setSession(session)
                                                     .setAppId(NIdResolver.of(invokerSession)
                                                             .resolveId(AdminServerRunnable.class))
@@ -166,7 +166,7 @@ public class AdminServerRunnable implements NServer, Runnable {
     }
 
     @NComponentScope(NComponentScopeType.WORKSPACE)
-    private static class StopServerBuiltin2 extends JShellBuiltinBase {
+    private static class StopServerBuiltin2 extends NShellBuiltinBase {
 
         private final ServerSocket socket;
 
@@ -180,17 +180,17 @@ public class AdminServerRunnable implements NServer, Runnable {
         }
 
         @Override
-        protected boolean onCmdNextOption(NArg arg, NCmdLine commandLine, JShellExecutionContext context) {
+        protected boolean onCmdNextOption(NArg arg, NCmdLine commandLine, NShellExecutionContext context) {
             return false;
         }
 
         @Override
-        protected boolean onCmdNextNonOption(NArg arg, NCmdLine commandLine, JShellExecutionContext context) {
+        protected boolean onCmdNextNonOption(NArg arg, NCmdLine commandLine, NShellExecutionContext context) {
             return false;
         }
 
         @Override
-        protected void onCmdExec(NCmdLine commandLine, JShellExecutionContext context) {
+        protected void onCmdExec(NCmdLine commandLine, NShellExecutionContext context) {
             if (context.getSession().isPlainTrace()) {
                 context.getSession().out().println("Stopping Server ...");
             }

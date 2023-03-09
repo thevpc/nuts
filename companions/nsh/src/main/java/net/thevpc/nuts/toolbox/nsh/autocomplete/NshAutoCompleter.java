@@ -5,8 +5,8 @@ import net.thevpc.nuts.cmdline.DefaultNArgCandidate;
 import net.thevpc.nuts.cmdline.NArgCandidate;
 import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.cmdline.NCmdLineAutoCompleteResolver;
-import net.thevpc.nuts.toolbox.nsh.cmds.JShellBuiltin;
-import net.thevpc.nuts.toolbox.nsh.jshell.JShellContext;
+import net.thevpc.nuts.toolbox.nsh.cmds.NShellBuiltin;
+import net.thevpc.nuts.toolbox.nsh.eval.NShellContext;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -17,20 +17,20 @@ public class NshAutoCompleter implements NCmdLineAutoCompleteResolver {
     @Override
     public List<NArgCandidate> resolveCandidates(NCmdLine commandLine, int wordIndex, NSession session) {
         List<NArgCandidate> candidates = new ArrayList<>();
-        JShellContext fileContext = (JShellContext) NEnvs.of(session).getProperties().get(JShellContext.class.getName());
+        NShellContext fileContext = (NShellContext) NEnvs.of(session).getProperties().get(NShellContext.class.getName());
 
         if (wordIndex == 0) {
-            for (JShellBuiltin command : fileContext.builtins().getAll()) {
+            for (NShellBuiltin command : fileContext.builtins().getAll()) {
                 candidates.add(new DefaultNArgCandidate(command.getName()));
             }
         } else {
             List<String> autoCompleteWords = new ArrayList<>(Arrays.asList(commandLine.toStringArray()));
             int x = commandLine.getCommandName().length();
 
-            List<JShellAutoCompleteCandidate> autoCompleteCandidates
+            List<NShellAutoCompleteCandidate> autoCompleteCandidates
                     = fileContext.resolveAutoCompleteCandidates(commandLine.getCommandName(), autoCompleteWords, wordIndex, commandLine.toString());
             for (Object cmdCandidate0 : autoCompleteCandidates) {
-                JShellAutoCompleteCandidate cmdCandidate = (JShellAutoCompleteCandidate) cmdCandidate0;
+                NShellAutoCompleteCandidate cmdCandidate = (NShellAutoCompleteCandidate) cmdCandidate0;
                 if (cmdCandidate != null) {
                     String value = cmdCandidate.getValue();
                     if (!NBlankable.isBlank(value)) {

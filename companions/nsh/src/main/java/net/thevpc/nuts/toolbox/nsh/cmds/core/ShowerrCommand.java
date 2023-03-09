@@ -34,22 +34,22 @@ import net.thevpc.nuts.spi.NComponentScope;
 import net.thevpc.nuts.spi.NComponentScopeType;
 import net.thevpc.nuts.text.NTextStyle;
 import net.thevpc.nuts.text.NTexts;
-import net.thevpc.nuts.toolbox.nsh.cmds.JShellBuiltinCore;
-import net.thevpc.nuts.toolbox.nsh.jshell.JShellExecutionContext;
-import net.thevpc.nuts.toolbox.nsh.eval.JShellResult;
+import net.thevpc.nuts.toolbox.nsh.cmds.NShellBuiltinCore;
+import net.thevpc.nuts.toolbox.nsh.eval.NShellExecutionContext;
+import net.thevpc.nuts.toolbox.nsh.eval.NShellResult;
 
 /**
  * Created by vpc on 1/7/17.
  */
 @NComponentScope(NComponentScopeType.WORKSPACE)
-public class ShowerrCommand extends JShellBuiltinCore {
+public class ShowerrCommand extends NShellBuiltinCore {
 
     public ShowerrCommand() {
         super("showerr", DEFAULT_SUPPORT,Options.class);
     }
 
     @Override
-    protected boolean onCmdNextOption(NArg arg, NCmdLine commandLine, JShellExecutionContext context) {
+    protected boolean onCmdNextOption(NArg arg, NCmdLine commandLine, NShellExecutionContext context) {
         Options options = context.getOptions();
         NSession session = context.getSession();
         NArg a = commandLine.peek().get(session);
@@ -67,7 +67,7 @@ public class ShowerrCommand extends JShellBuiltinCore {
     }
 
     @Override
-    protected boolean onCmdNextNonOption(NArg arg, NCmdLine commandLine, JShellExecutionContext context) {
+    protected boolean onCmdNextNonOption(NArg arg, NCmdLine commandLine, NShellExecutionContext context) {
         Options options = context.getOptions();
         NSession session = context.getSession();
         NArg a = commandLine.peek().get(session);
@@ -85,8 +85,8 @@ public class ShowerrCommand extends JShellBuiltinCore {
     }
 
     @Override
-    protected void onCmdExec(NCmdLine commandLine, JShellExecutionContext context) {
-        JShellResult r = context.getShellContext().getLastResult();
+    protected void onCmdExec(NCmdLine commandLine, NShellExecutionContext context) {
+        NShellResult r = context.getShellContext().getLastResult();
         NPrintStream out = context.getSession().out();
         switch (context.getSession().getOutputFormat()) {
             case PLAIN: {

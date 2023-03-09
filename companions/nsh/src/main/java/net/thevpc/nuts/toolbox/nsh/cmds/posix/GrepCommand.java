@@ -40,8 +40,8 @@ import net.thevpc.nuts.io.NCp;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.io.NPrintStream;
 import net.thevpc.nuts.text.*;
-import net.thevpc.nuts.toolbox.nsh.cmds.JShellBuiltinDefault;
-import net.thevpc.nuts.toolbox.nsh.jshell.JShellExecutionContext;
+import net.thevpc.nuts.toolbox.nsh.cmds.NShellBuiltinDefault;
+import net.thevpc.nuts.toolbox.nsh.eval.NShellExecutionContext;
 import net.thevpc.nuts.toolbox.nsh.util.ColumnRuler;
 import net.thevpc.nuts.toolbox.nsh.util.FileInfo;
 import net.thevpc.nuts.util.NAssert;
@@ -50,14 +50,14 @@ import net.thevpc.nuts.util.NStringUtils;
 /**
  * Created by vpc on 1/7/17.
  */
-public class GrepCommand extends JShellBuiltinDefault {
+public class GrepCommand extends NShellBuiltinDefault {
 
     public GrepCommand() {
         super("grep", DEFAULT_SUPPORT,Options.class);
     }
 
     @Override
-    protected boolean onCmdNextOption(NArg arg, NCmdLine commandLine, JShellExecutionContext context) {
+    protected boolean onCmdNextOption(NArg arg, NCmdLine commandLine, NShellExecutionContext context) {
         NSession session = context.getSession();
         Options options = context.getOptions();
         NArg a;
@@ -102,7 +102,7 @@ public class GrepCommand extends JShellBuiltinDefault {
     }
 
     @Override
-    protected void onCmdExec(NCmdLine commandLine, JShellExecutionContext context) {
+    protected void onCmdExec(NCmdLine commandLine, NShellExecutionContext context) {
         Options options = context.getOptions();
         NPrintStream out = context.out();
         if (options.files.isEmpty()) {
@@ -156,7 +156,7 @@ public class GrepCommand extends JShellBuiltinDefault {
         }
     }
 
-    protected int grepFile(FileInfo f, Pattern p, Options options, JShellExecutionContext context, boolean prefixFileName, List<GrepResultItem> results) {
+    protected int grepFile(FileInfo f, Pattern p, Options options, NShellExecutionContext context, boolean prefixFileName, List<GrepResultItem> results) {
 
         Reader reader = null;
         boolean closeReader = false;
@@ -369,7 +369,7 @@ public class GrepCommand extends JShellBuiltinDefault {
     }
 
     @Override
-    protected boolean onCmdNextNonOption(NArg arg, NCmdLine commandLine, JShellExecutionContext context) {
+    protected boolean onCmdNextNonOption(NArg arg, NCmdLine commandLine, NShellExecutionContext context) {
         return onCmdNextOption(arg, commandLine, context);
     }
 }

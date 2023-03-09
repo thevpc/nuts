@@ -31,8 +31,8 @@ import net.thevpc.nuts.cmdline.NArg;
 import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.io.NPathPermission;
-import net.thevpc.nuts.toolbox.nsh.cmds.JShellBuiltinDefault;
-import net.thevpc.nuts.toolbox.nsh.jshell.JShellExecutionContext;
+import net.thevpc.nuts.toolbox.nsh.cmds.NShellBuiltinDefault;
+import net.thevpc.nuts.toolbox.nsh.eval.NShellExecutionContext;
 
 import java.time.Instant;
 import java.util.Stack;
@@ -40,17 +40,17 @@ import java.util.Stack;
 /**
  * Created by vpc on 1/7/17.
  */
-public class TestCommand extends JShellBuiltinDefault {
+public class TestCommand extends NShellBuiltinDefault {
 
     public TestCommand() {
         super("test", DEFAULT_SUPPORT, Options.class);
     }
 
-    private static NPath evalPath(Eval a, JShellExecutionContext context) {
+    private static NPath evalPath(Eval a, NShellExecutionContext context) {
         return NPath.of(evalStr(a, context),context.getSession());
     }
 
-    private static String evalStr(Eval a, JShellExecutionContext context) {
+    private static String evalStr(Eval a, NShellExecutionContext context) {
         NSession session = context.getSession();
         if (a instanceof EvalArg) {
             return ((EvalArg) a).arg.asString().get(session);
@@ -58,7 +58,7 @@ public class TestCommand extends JShellBuiltinDefault {
         return String.valueOf(a.eval(context));
     }
 
-    private static int evalInt(Eval a, JShellExecutionContext context) {
+    private static int evalInt(Eval a, NShellExecutionContext context) {
         NSession session = context.getSession();
         if (a instanceof EvalArg) {
             return ((EvalArg) a).arg.asInt().get(session);
@@ -188,7 +188,7 @@ public class TestCommand extends JShellBuiltinDefault {
     }
 
     @Override
-    protected boolean onCmdNextOption(NArg arg, NCmdLine commandLine, JShellExecutionContext context) {
+    protected boolean onCmdNextOption(NArg arg, NCmdLine commandLine, NShellExecutionContext context) {
         NSession session = context.getSession();
         commandLine.setExpandSimpleOptions(false);
         Options options=context.getOptions();
@@ -229,7 +229,7 @@ public class TestCommand extends JShellBuiltinDefault {
     }
 
     @Override
-    protected void onCmdExec(NCmdLine commandLine, JShellExecutionContext context) {
+    protected void onCmdExec(NCmdLine commandLine, NShellExecutionContext context) {
         NSession session = context.getSession();
         Options options=context.getOptions();
         if(options.operands.isEmpty()){
@@ -252,7 +252,7 @@ public class TestCommand extends JShellBuiltinDefault {
 
         String getType();
 
-        int eval(JShellExecutionContext context);
+        int eval(NShellExecutionContext context);
     }
 
     private static class Options {
@@ -290,7 +290,7 @@ public class TestCommand extends JShellBuiltinDefault {
         }
 
         @Override
-        public int eval(JShellExecutionContext context) {
+        public int eval(NShellExecutionContext context) {
             NSession session = context.getSession();
             return arg.asString().get(session).length() > 0 ? 0 : 1;
         }
@@ -307,7 +307,7 @@ public class TestCommand extends JShellBuiltinDefault {
         }
 
         @Override
-        public int eval(JShellExecutionContext context) {
+        public int eval(NShellExecutionContext context) {
             NSession session = context.getSession();
             switch (type) {
                 case "!": {
@@ -429,7 +429,7 @@ public class TestCommand extends JShellBuiltinDefault {
         }
 
         @Override
-        public int eval(JShellExecutionContext context) {
+        public int eval(NShellExecutionContext context) {
             switch (type) {
                 case "=": {
                     String s1 = evalStr(arg1, context);
@@ -527,7 +527,7 @@ public class TestCommand extends JShellBuiltinDefault {
     }
 
     @Override
-    protected boolean onCmdNextNonOption(NArg arg, NCmdLine commandLine, JShellExecutionContext context) {
+    protected boolean onCmdNextNonOption(NArg arg, NCmdLine commandLine, NShellExecutionContext context) {
         return onCmdNextOption(arg, commandLine, context);
     }
 }

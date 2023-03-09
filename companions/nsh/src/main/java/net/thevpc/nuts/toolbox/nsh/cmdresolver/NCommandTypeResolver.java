@@ -29,20 +29,20 @@ package net.thevpc.nuts.toolbox.nsh.cmdresolver;
 import net.thevpc.nuts.NExecCommand;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.NSession;
-import net.thevpc.nuts.toolbox.nsh.jshell.JShellContext;
+import net.thevpc.nuts.toolbox.nsh.eval.NShellContext;
 import net.thevpc.nuts.NExecutableInformation;
 
 /**
  *
  * @author thevpc
  */
-public class NCommandTypeResolver implements JShellCommandTypeResolver {
+public class NCommandTypeResolver implements NShellCommandTypeResolver {
 
     @Override
-    public JShellCommandResolution type(String item, JShellContext context) {
+    public NShellCommandResolution type(String item, NShellContext context) {
         String a = context.aliases().get(item);
         if (a != null) {
-            return new JShellCommandResolution(item, "shell alias", a, item + " is aliased to " + a);
+            return new NShellCommandResolution(item, "shell alias", a, item + " is aliased to " + a);
         }
         String path = item;
         if (!item.startsWith("/")) {
@@ -51,10 +51,10 @@ public class NCommandTypeResolver implements JShellCommandTypeResolver {
         NSession session = context.getSession();
         final NExecutableInformation w = NExecCommand.of(session).addCommand(item).which();
         if (w != null) {
-            return new JShellCommandResolution(item, "nuts " + w.getType().toString().toLowerCase(), w.getValue(), w.getDescription());
+            return new NShellCommandResolution(item, "nuts " + w.getType().toString().toLowerCase(), w.getValue(), w.getDescription());
         }
         if (NPath.of(path, session).exists()) {
-            return new JShellCommandResolution(item, "path", path, item + " is " + path);
+            return new NShellCommandResolution(item, "path", path, item + " is " + path);
         }
         return null;
     }

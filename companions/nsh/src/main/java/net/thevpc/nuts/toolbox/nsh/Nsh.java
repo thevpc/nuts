@@ -6,10 +6,10 @@ import net.thevpc.nuts.cmdline.NCmdLineProcessor;
 import net.thevpc.nuts.cmdline.NCmdLineContext;
 import net.thevpc.nuts.text.NTextStyle;
 import net.thevpc.nuts.text.NTexts;
-import net.thevpc.nuts.toolbox.nsh.options.DefaultJShellOptionsParser;
-import net.thevpc.nuts.toolbox.nsh.jshell.JShell;
-import net.thevpc.nuts.toolbox.nsh.cmds.JShellBuiltin;
-import net.thevpc.nuts.toolbox.nsh.jshell.JShellOptions;
+import net.thevpc.nuts.toolbox.nsh.nshell.NShell;
+import net.thevpc.nuts.toolbox.nsh.options.DefaultNShellOptionsParser;
+import net.thevpc.nuts.toolbox.nsh.cmds.NShellBuiltin;
+import net.thevpc.nuts.toolbox.nsh.nshell.NShellOptions;
 import net.thevpc.nuts.util.NLogOp;
 import net.thevpc.nuts.util.NLogVerb;
 
@@ -19,7 +19,7 @@ import java.util.Set;
 import java.util.TreeSet;
 import java.util.logging.Level;
 
-import net.thevpc.nuts.toolbox.nsh.jshell.JShellConfiguration;
+import net.thevpc.nuts.toolbox.nsh.nshell.NShellConfiguration;
 
 public class Nsh implements NApplication {
 
@@ -65,14 +65,14 @@ public class Nsh implements NApplication {
 //        );
 //        applicationContext.getWorkspace().io().term().enableRichTerm(session);
 
-                JShell c = new JShell(new JShellConfiguration().setApplicationContext(applicationContext)
+                NShell c = new NShell(new NShellConfiguration().setApplicationContext(applicationContext)
                         .setIncludeDefaultBuiltins(true).setIncludeExternalExecutor(true)
                 );
-                JShellBuiltin[] commands = c.getRootContext().builtins().getAll();
+                NShellBuiltin[] commands = c.getRootContext().builtins().getAll();
                 Set<String> reinstalled = new TreeSet<>();
                 Set<String> firstInstalled = new TreeSet<>();
                 NSession sessionCopy = session.copy();
-                for (JShellBuiltin command : commands) {
+                for (NShellBuiltin command : commands) {
                     if (!CONTEXTUAL_BUILTINS.contains(command.getName())) {
                         // avoid recursive definition!
                         // disable trace, summary will be traced later!
@@ -176,14 +176,14 @@ public class Nsh implements NApplication {
     @Override
     public void run(NApplicationContext applicationContext) {
 
-        //before loading JShell check if we need to activate rich term
-        DefaultJShellOptionsParser options = new DefaultJShellOptionsParser(applicationContext);
-        JShellOptions o = options.parse(applicationContext.getCommandLine().toStringArray());
+        //before loading NShell check if we need to activate rich term
+        DefaultNShellOptionsParser options = new DefaultNShellOptionsParser(applicationContext);
+        NShellOptions o = options.parse(applicationContext.getCommandLine().toStringArray());
 
 //        if (o.isEffectiveInteractive()) {
 //            applicationContext.getWorkspace().io().term().enableRichTerm(applicationContext.getSession());
 //        }
-        new JShell(new JShellConfiguration().setApplicationContext(applicationContext)
+        new NShell(new NShellConfiguration().setApplicationContext(applicationContext)
                 .setIncludeDefaultBuiltins(true).setIncludeExternalExecutor(true)
         ).run();
     }

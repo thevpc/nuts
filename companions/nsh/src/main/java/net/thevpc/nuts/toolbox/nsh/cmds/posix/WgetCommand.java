@@ -33,8 +33,8 @@ import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.io.NPathOption;
 import net.thevpc.nuts.spi.NComponentScope;
 import net.thevpc.nuts.spi.NComponentScopeType;
-import net.thevpc.nuts.toolbox.nsh.cmds.JShellBuiltinDefault;
-import net.thevpc.nuts.toolbox.nsh.jshell.JShellExecutionContext;
+import net.thevpc.nuts.toolbox.nsh.cmds.NShellBuiltinDefault;
+import net.thevpc.nuts.toolbox.nsh.eval.NShellExecutionContext;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -43,14 +43,14 @@ import java.util.List;
  * Created by vpc on 1/7/17.
  */
 @NComponentScope(NComponentScopeType.WORKSPACE)
-public class WgetCommand extends JShellBuiltinDefault {
+public class WgetCommand extends NShellBuiltinDefault {
 
     public WgetCommand() {
         super("wget", DEFAULT_SUPPORT,Options.class);
     }
 
     @Override
-    protected boolean onCmdNextOption(NArg arg, NCmdLine commandLine, JShellExecutionContext context) {
+    protected boolean onCmdNextOption(NArg arg, NCmdLine commandLine, NShellExecutionContext context) {
         Options options = context.getOptions();
         NSession session = context.getSession();
         if (commandLine.next("-O", "--output-document").isPresent()) {
@@ -66,7 +66,7 @@ public class WgetCommand extends JShellBuiltinDefault {
     }
 
     @Override
-    protected void onCmdExec(NCmdLine commandLine, JShellExecutionContext context) {
+    protected void onCmdExec(NCmdLine commandLine, NShellExecutionContext context) {
         Options options = context.getOptions();
         if (options.files.isEmpty()) {
             throw new NExecutionException(context.getSession(), NMsg.ofPlain("wget: Missing Files"), 2);
@@ -76,7 +76,7 @@ public class WgetCommand extends JShellBuiltinDefault {
         }
     }
 
-    protected void download(String path, String output, JShellExecutionContext context) {
+    protected void download(String path, String output, NShellExecutionContext context) {
         String output2 = output;
         NSession session = context.getSession();
         String urlName = NPath.of(path,session).getName();
@@ -95,7 +95,7 @@ public class WgetCommand extends JShellBuiltinDefault {
         List<String> files = new ArrayList<>();
     }
     @Override
-    protected boolean onCmdNextNonOption(NArg arg, NCmdLine commandLine, JShellExecutionContext context) {
+    protected boolean onCmdNextNonOption(NArg arg, NCmdLine commandLine, NShellExecutionContext context) {
         return onCmdNextOption(arg, commandLine, context);
     }
 }

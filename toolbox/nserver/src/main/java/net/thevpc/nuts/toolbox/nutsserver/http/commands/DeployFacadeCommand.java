@@ -26,7 +26,7 @@ public class DeployFacadeCommand extends AbstractFacadeCommand {
     public void executeImpl(FacadeCommandContext context) throws IOException {
         String boundary = context.getRequestHeaderFirstValue("Content-type");
         if (NBlankable.isBlank(boundary)) {
-            context.sendError(400, "invalid JShellCommandNode arguments : " + getName() + " . invalid format.");
+            context.sendError(400, "invalid NShellCommandNode arguments : " + getName() + " . invalid format.");
             return;
         }
         NSession session = context.getSession();
@@ -68,7 +68,7 @@ public class DeployFacadeCommand extends AbstractFacadeCommand {
             }
         }
         if (contentFile == null) {
-            context.sendError(400, "invalid JShellCommandNode arguments : " + getName() + " : missing file");
+            context.sendError(400, "invalid NShellCommandNode arguments : " + getName() + " : missing file");
         }
         NId id = NDeployCommand.of(session).setContent(NPath.of(contentFile,session))
                 .setSha1(receivedContentHash)

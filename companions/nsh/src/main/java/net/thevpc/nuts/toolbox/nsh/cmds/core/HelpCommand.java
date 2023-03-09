@@ -32,10 +32,10 @@ import net.thevpc.nuts.io.NTerminalMode;
 import net.thevpc.nuts.text.NText;
 import net.thevpc.nuts.text.NTextStyle;
 import net.thevpc.nuts.text.NTexts;
-import net.thevpc.nuts.toolbox.nsh.cmds.JShellBuiltinCore;
+import net.thevpc.nuts.toolbox.nsh.cmds.NShellBuiltinCore;
+import net.thevpc.nuts.toolbox.nsh.cmds.NShellBuiltin;
+import net.thevpc.nuts.toolbox.nsh.eval.NShellExecutionContext;
 import net.thevpc.nuts.toolbox.nsh.util.bundles._StringUtils;
-import net.thevpc.nuts.toolbox.nsh.cmds.JShellBuiltin;
-import net.thevpc.nuts.toolbox.nsh.jshell.JShellExecutionContext;
 import net.thevpc.nuts.toolbox.nsh.options.CommandNonOption;
 
 import java.util.ArrayList;
@@ -47,14 +47,14 @@ import java.util.function.Function;
 /**
  * Created by vpc on 1/7/17.
  */
-public class HelpCommand extends JShellBuiltinCore {
+public class HelpCommand extends NShellBuiltinCore {
 
     public HelpCommand() {
         super("help", DEFAULT_SUPPORT, Options.class);
     }
 
     @Override
-    protected boolean onCmdNextOption(NArg arg, NCmdLine commandLine, JShellExecutionContext context) {
+    protected boolean onCmdNextOption(NArg arg, NCmdLine commandLine, NShellExecutionContext context) {
         NSession session = context.getSession();
         Options options = context.getOptions();
         if (commandLine.next("--ntf").isPresent()) {
@@ -71,7 +71,7 @@ public class HelpCommand extends JShellBuiltinCore {
     }
 
     @Override
-    protected boolean onCmdNextNonOption(NArg arg, NCmdLine commandLine, JShellExecutionContext context) {
+    protected boolean onCmdNextNonOption(NArg arg, NCmdLine commandLine, NShellExecutionContext context) {
         NSession session = context.getSession();
         Options options = context.getOptions();
         if (commandLine.next("--ntf").isPresent()) {
@@ -88,7 +88,7 @@ public class HelpCommand extends JShellBuiltinCore {
     }
 
     @Override
-    protected void onCmdExec(NCmdLine commandLine, JShellExecutionContext context) {
+    protected void onCmdExec(NCmdLine commandLine, NShellExecutionContext context) {
         NSession session = context.getSession();
         Options options = context.getOptions();
         if (options.code) {
@@ -127,28 +127,28 @@ public class HelpCommand extends JShellBuiltinCore {
                 String helpText = (n == null ? "no help found" : n.toString());
                 context.out().println(ss.apply(helpText));
                 context.out().println(NTexts.of(session).ofStyled("AVAILABLE COMMANDS ARE:", NTextStyle.primary1()));
-                JShellBuiltin[] commands = context.builtins().getAll();
-                Arrays.sort(commands, new Comparator<JShellBuiltin>() {
+                NShellBuiltin[] commands = context.builtins().getAll();
+                Arrays.sort(commands, new Comparator<NShellBuiltin>() {
                     @Override
-                    public int compare(JShellBuiltin o1, JShellBuiltin o2) {
+                    public int compare(NShellBuiltin o1, NShellBuiltin o2) {
                         return o1.getName().compareTo(o2.getName());
                     }
                 });
                 int max = 1;
-                for (JShellBuiltin cmd : commands) {
+                for (NShellBuiltin cmd : commands) {
                     int x = cmd.getName().length();
                     if (x > max) {
                         max = x;
                     }
                 }
-                for (JShellBuiltin cmd : commands) {
+                for (NShellBuiltin cmd : commands) {
                     context.out().print(NMsg.ofC("%s : ", text.ofStyled(_StringUtils.formatLeft(cmd.getName(), max), NTextStyle.primary4())));
                     context.out().println(ss.apply(cmd.getHelpHeader())); //formatted
                 }
             } else {
                 int x = 0;
                 for (String commandName : options.commandNames) {
-                    JShellBuiltin command1 = context.builtins().find(commandName);
+                    NShellBuiltin command1 = context.builtins().find(commandName);
                     if (command1 == null) {
                         context.err().println(NMsg.ofC("command not found : %s", text.ofStyled(commandName, NTextStyle.error())));
                         x = 1;

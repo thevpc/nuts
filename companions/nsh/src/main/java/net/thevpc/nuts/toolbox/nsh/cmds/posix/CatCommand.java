@@ -34,10 +34,10 @@ import net.thevpc.nuts.io.NPrintStream;
 import net.thevpc.nuts.spi.NComponentScope;
 import net.thevpc.nuts.spi.NComponentScopeType;
 import net.thevpc.nuts.text.*;
-import net.thevpc.nuts.toolbox.nsh.cmds.JShellBuiltinDefault;
+import net.thevpc.nuts.toolbox.nsh.cmds.NShellBuiltinDefault;
+import net.thevpc.nuts.toolbox.nsh.eval.NShellExecutionContext;
 import net.thevpc.nuts.toolbox.nsh.util.bundles._IOUtils;
 import net.thevpc.nuts.toolbox.nsh.util.bundles._StringUtils;
-import net.thevpc.nuts.toolbox.nsh.jshell.JShellExecutionContext;
 import net.thevpc.nuts.toolbox.nsh.util.ColumnRuler;
 import net.thevpc.nuts.toolbox.nsh.util.FileInfo;
 import net.thevpc.nuts.toolbox.nsh.util.ShellHelper;
@@ -51,14 +51,14 @@ import java.util.List;
  * Created by vpc on 1/7/17.
  */
 @NComponentScope(NComponentScopeType.WORKSPACE)
-public class CatCommand extends JShellBuiltinDefault {
+public class CatCommand extends NShellBuiltinDefault {
 
     public CatCommand() {
         super("cat", DEFAULT_SUPPORT, Options.class);
     }
 
     @Override
-    protected boolean onCmdNextOption(NArg arg, NCmdLine commandLine, JShellExecutionContext context) {
+    protected boolean onCmdNextOption(NArg arg, NCmdLine commandLine, NShellExecutionContext context) {
         NSession session = context.getSession();
         Options options = context.getOptions();
         NArg a;
@@ -87,12 +87,12 @@ public class CatCommand extends JShellBuiltinDefault {
     }
 
     @Override
-    protected boolean onCmdNextNonOption(NArg arg, NCmdLine commandLine, JShellExecutionContext context) {
+    protected boolean onCmdNextNonOption(NArg arg, NCmdLine commandLine, NShellExecutionContext context) {
         return onCmdNextOption(arg, commandLine, context);
     }
 
     @Override
-    protected void onCmdExec(NCmdLine commandLine, JShellExecutionContext context) {
+    protected void onCmdExec(NCmdLine commandLine, NShellExecutionContext context) {
         Options options = context.getOptions();
         if (options.files.isEmpty()) {
             options.files.add(null);
@@ -152,7 +152,7 @@ public class CatCommand extends JShellBuiltinDefault {
         }
     }
 
-    private void catText2(InputStream in, Options options, JShellExecutionContext context, FileInfo info, List<CatResult> results) throws IOException {
+    private void catText2(InputStream in, Options options, NShellExecutionContext context, FileInfo info, List<CatResult> results) throws IOException {
         boolean whole = true;
         NSession session = context.getSession();
         if (whole && info.getHighlighter() != null) {
@@ -203,7 +203,7 @@ public class CatCommand extends JShellBuiltinDefault {
         }
     }
 
-    private void catText(InputStream in, OutputStream os, Options options, JShellExecutionContext context, FileInfo info) throws IOException {
+    private void catText(InputStream in, OutputStream os, Options options, NShellExecutionContext context, FileInfo info) throws IOException {
         if (info.getHighlighter() == null/* || "plain".equalsIgnoreCase(info.getHighlighter()) || "text".equalsIgnoreCase(info.getHighlighter())*/) {
             if (!options.n && !options.T && !options.E) {
                 _IOUtils.copy(in, os, 4096 * 2);

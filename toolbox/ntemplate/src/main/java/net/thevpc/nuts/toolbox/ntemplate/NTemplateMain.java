@@ -6,9 +6,11 @@ import net.thevpc.nuts.cmdline.NCmdLineProcessor;
 import net.thevpc.nuts.cmdline.NArg;
 import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.io.NSessionTerminal;
-import net.thevpc.nuts.toolbox.nsh.jshell.*;
-import net.thevpc.nuts.toolbox.nsh.nodes.JShellVar;
-import net.thevpc.nuts.toolbox.nsh.nodes.JShellVariables;
+import net.thevpc.nuts.toolbox.nsh.eval.NShellContext;
+import net.thevpc.nuts.toolbox.nsh.nshell.*;
+import net.thevpc.nuts.toolbox.nsh.nodes.NShellVar;
+import net.thevpc.nuts.toolbox.nsh.nodes.NShellVarListener;
+import net.thevpc.nuts.toolbox.nsh.nodes.NShellVariables;
 import net.thevpc.nuts.toolbox.ntemplate.filetemplate.ExprEvaluator;
 import net.thevpc.nuts.toolbox.ntemplate.filetemplate.FileTemplater;
 import net.thevpc.nuts.toolbox.ntemplate.filetemplate.ProcessCmd;
@@ -79,33 +81,33 @@ public class NTemplateMain implements NApplication {
 
     private static class NshEvaluator implements ExprEvaluator {
         private final NApplicationContext appContext;
-        private final JShell shell;
+        private final NShell shell;
         private final FileTemplater fileTemplater;
 
         public NshEvaluator(NApplicationContext appContext, FileTemplater fileTemplater) {
             this.appContext = appContext;
             this.fileTemplater = fileTemplater;
-            shell = new JShell(new JShellConfiguration().setApplicationContext(appContext)
+            shell = new NShell(new NShellConfiguration().setApplicationContext(appContext)
                     .setIncludeDefaultBuiltins(true).setIncludeExternalExecutor(true)
                     .setArgs()
             );
-            JShellContext rootContext = shell.getRootContext();
+            NShellContext rootContext = shell.getRootContext();
             rootContext.setSession(rootContext.getSession().copy());
             rootContext.vars().addVarListener(
-                    new JShellVarListener() {
+                    new NShellVarListener() {
                         @Override
-                        public void varAdded(JShellVar jShellVar, JShellVariables vars, JShellContext context) {
-                            setVar(jShellVar.getName(), jShellVar.getValue());
+                        public void varAdded(NShellVar nShellVar, NShellVariables vars, NShellContext context) {
+                            setVar(nShellVar.getName(), nShellVar.getValue());
                         }
 
                         @Override
-                        public void varValueUpdated(JShellVar jShellVar, String oldValue, JShellVariables vars, JShellContext context) {
-                            setVar(jShellVar.getName(), jShellVar.getValue());
+                        public void varValueUpdated(NShellVar nShellVar, String oldValue, NShellVariables vars, NShellContext context) {
+                            setVar(nShellVar.getName(), nShellVar.getValue());
                         }
 
                         @Override
-                        public void varRemoved(JShellVar jShellVar, JShellVariables vars, JShellContext context) {
-                            setVar(jShellVar.getName(), null);
+                        public void varRemoved(NShellVar nShellVar, NShellVariables vars, NShellContext context) {
+                            setVar(nShellVar.getName(), null);
                         }
                     }
             );
@@ -121,7 +123,7 @@ public class NTemplateMain implements NApplication {
 
         @Override
         public Object eval(String content, FileTemplater context) {
-            JShellContext ctx = shell.createInlineContext(shell.getRootContext(), context.getSourcePath().orElse("nsh"), new String[0]);
+            NShellContext ctx = shell.createInlineContext(shell.getRootContext(), context.getSourcePath().orElse("nsh"), new String[0]);
             NSession session = context.getSession().copy();
             session.setTerminal(NSessionTerminal.ofMem(session));
             ctx.setSession(session);

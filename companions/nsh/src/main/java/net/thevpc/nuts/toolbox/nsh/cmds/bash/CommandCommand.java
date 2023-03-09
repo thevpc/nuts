@@ -32,8 +32,8 @@ import net.thevpc.nuts.NSession;
 import net.thevpc.nuts.NLiteral;
 import net.thevpc.nuts.spi.NComponentScope;
 import net.thevpc.nuts.spi.NComponentScopeType;
-import net.thevpc.nuts.toolbox.nsh.cmds.JShellBuiltinDefault;
-import net.thevpc.nuts.toolbox.nsh.jshell.JShellExecutionContext;
+import net.thevpc.nuts.toolbox.nsh.cmds.NShellBuiltinDefault;
+import net.thevpc.nuts.toolbox.nsh.eval.NShellExecutionContext;
 
 import java.util.Arrays;
 import java.util.List;
@@ -42,7 +42,7 @@ import java.util.List;
  * Created by vpc on 1/7/17.
  */
 @NComponentScope(NComponentScopeType.WORKSPACE)
-public class CommandCommand extends JShellBuiltinDefault {
+public class CommandCommand extends NShellBuiltinDefault {
 
     public CommandCommand() {
         super("command", DEFAULT_SUPPORT, Options.class);
@@ -50,7 +50,7 @@ public class CommandCommand extends JShellBuiltinDefault {
 
 
     @Override
-    protected boolean onCmdNextOption(NArg arg, NCmdLine commandLine, JShellExecutionContext context) {
+    protected boolean onCmdNextOption(NArg arg, NCmdLine commandLine, NShellExecutionContext context) {
         NSession session = context.getSession();
         Options options = context.getOptions();
         NArg a = null;
@@ -71,7 +71,7 @@ public class CommandCommand extends JShellBuiltinDefault {
     }
 
     @Override
-    protected void onCmdExec(NCmdLine commandLine, JShellExecutionContext context) {
+    protected void onCmdExec(NCmdLine commandLine, NShellExecutionContext context) {
         Options options = context.getOptions();
         if (options.commandName != null) {
             context.getShell().executePreparedCommand(options.args.toArray(new String[0]), false, true, true, context.getShellContext());
@@ -86,7 +86,7 @@ public class CommandCommand extends JShellBuiltinDefault {
     }
 
     @Override
-    protected boolean onCmdNextNonOption(NArg arg, NCmdLine commandLine, JShellExecutionContext context) {
+    protected boolean onCmdNextNonOption(NArg arg, NCmdLine commandLine, NShellExecutionContext context) {
         return onCmdNextOption(arg, commandLine, context);
     }
 

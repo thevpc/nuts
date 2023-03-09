@@ -29,20 +29,20 @@ import net.thevpc.nuts.cmdline.NArg;
 import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.NSession;
 import net.thevpc.nuts.NVersionFormat;
-import net.thevpc.nuts.toolbox.nsh.cmds.JShellBuiltinCore;
-import net.thevpc.nuts.toolbox.nsh.jshell.JShellExecutionContext;
+import net.thevpc.nuts.toolbox.nsh.cmds.NShellBuiltinCore;
+import net.thevpc.nuts.toolbox.nsh.eval.NShellExecutionContext;
 
 /**
  * Created by vpc on 1/7/17.
  */
-public class VersionCommand extends JShellBuiltinCore {
+public class VersionCommand extends NShellBuiltinCore {
 
     public VersionCommand() {
         super("version", DEFAULT_SUPPORT, Options.class);
     }
 
     @Override
-    protected boolean onCmdNextOption(NArg arg, NCmdLine commandLine, JShellExecutionContext context) {
+    protected boolean onCmdNextOption(NArg arg, NCmdLine commandLine, NShellExecutionContext context) {
         Options options = context.getOptions();
         if (options.version == null) {
             options.version = NVersionFormat.of(context.getSession());
@@ -51,7 +51,7 @@ public class VersionCommand extends JShellBuiltinCore {
     }
 
     @Override
-    protected boolean onCmdNextNonOption(NArg arg, NCmdLine commandLine, JShellExecutionContext context) {
+    protected boolean onCmdNextNonOption(NArg arg, NCmdLine commandLine, NShellExecutionContext context) {
         Options options = context.getOptions();
         if (options.version == null) {
             options.version = NVersionFormat.of(context.getSession());
@@ -60,7 +60,7 @@ public class VersionCommand extends JShellBuiltinCore {
     }
 
     @Override
-    protected void onCmdExec(NCmdLine commandLine, JShellExecutionContext context) {
+    protected void onCmdExec(NCmdLine commandLine, NShellExecutionContext context) {
         NSession session = context.getSession();
         Options options = context.getOptions();
         if (options.version == null) {

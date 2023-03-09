@@ -36,19 +36,19 @@ import java.util.logging.Logger;
  *
  * @author thevpc
  */
-public class NBuiltinManager implements JShellBuiltinManager {
+public class NBuiltinManager implements NShellBuiltinManager {
     private static final Logger LOG = Logger.getLogger(NBuiltinManager.class.getName());
 
-    private Map<String, JShellBuiltin> commands = new HashMap<>();
+    private Map<String, NShellBuiltin> commands = new HashMap<>();
 
     @Override
-    public JShellBuiltin find(String command) {
+    public NShellBuiltin find(String command) {
         return commands.get(command);
     }
 
     @Override
-    public JShellBuiltin get(String cmd) {
-        JShellBuiltin command = find(cmd);
+    public NShellBuiltin get(String cmd) {
+        NShellBuiltin command = find(cmd);
         if (command == null) {
             throw new NoSuchElementException("builtin not found : " + cmd);
         }
@@ -64,7 +64,7 @@ public class NBuiltinManager implements JShellBuiltinManager {
     }
 
     @Override
-    public void set(JShellBuiltin command) {
+    public void set(NShellBuiltin command) {
         boolean b = commands.put(command.getName(), command) == null;
         if (LOG.isLoggable(Level.FINE)) {
             if (b) {
@@ -76,13 +76,13 @@ public class NBuiltinManager implements JShellBuiltinManager {
     }
 
     @Override
-    public void set(JShellBuiltin... cmds) {
+    public void set(NShellBuiltin... cmds) {
         StringBuilder installed = new StringBuilder();
         StringBuilder reinstalled = new StringBuilder();
         int installedCount = 0;
         int reinstalledCount = 0;
         boolean loggable = LOG.isLoggable(Level.FINE);
-        for (JShellBuiltin command : cmds) {
+        for (NShellBuiltin command : cmds) {
             boolean b = commands.put(command.getName(), command) == null;
             if (loggable) {
                 if (b) {
@@ -117,15 +117,15 @@ public class NBuiltinManager implements JShellBuiltinManager {
         boolean b = commands.remove(command) != null;
         if (LOG.isLoggable(Level.FINE)) {
             if (b) {
-                LOG.log(Level.FINE, "Uninstalling JShellCommandNode : " + command);
+                LOG.log(Level.FINE, "Uninstalling NShellCommandNode : " + command);
             }
         }
         return b;
     }
 
     @Override
-    public JShellBuiltin[] getAll() {
-        return commands.values().toArray(new JShellBuiltin[0]);
+    public NShellBuiltin[] getAll() {
+        return commands.values().toArray(new NShellBuiltin[0]);
     }
 
 }

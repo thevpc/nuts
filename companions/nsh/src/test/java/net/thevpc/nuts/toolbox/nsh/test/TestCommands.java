@@ -26,9 +26,9 @@
  */
 package net.thevpc.nuts.toolbox.nsh.test;
 
-import net.thevpc.nuts.toolbox.nsh.jshell.JShell;
-import net.thevpc.nuts.toolbox.nsh.jshell.JShellConfiguration;
-import net.thevpc.nuts.toolbox.nsh.jshell.MemResult;
+import net.thevpc.nuts.toolbox.nsh.nshell.NShell;
+import net.thevpc.nuts.toolbox.nsh.nshell.NShellConfiguration;
+import net.thevpc.nuts.toolbox.nsh.util.MemResult;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -40,7 +40,7 @@ public class TestCommands {
 
     @Test
     public void testDirname() {
-        JShell c = new JShell(new JShellConfiguration()
+        NShell c = new NShell(new NShellConfiguration()
                 .setSession(TestUtils.openNewTestWorkspace("--verbose"))
                 .setIncludeDefaultBuiltins(true).setIncludeExternalExecutor(true)
                 .setArgs()
@@ -55,7 +55,7 @@ public class TestCommands {
 
     @Test
     public void testBasename() {
-        JShell c = new JShell(new JShellConfiguration()
+        NShell c = new NShell(new NShellConfiguration()
                 .setSession(TestUtils.openNewTestWorkspace("--verbose"))
                 .setIncludeDefaultBuiltins(true).setIncludeExternalExecutor(true)
                 .setArgs()
@@ -70,7 +70,7 @@ public class TestCommands {
 
     @Test
     public void testEnv() {
-        JShell c = new JShell(new JShellConfiguration()
+        NShell c = new NShell(new NShellConfiguration()
                 .setSession(TestUtils.openNewTestWorkspace("--verbose"))
                 .setIncludeDefaultBuiltins(true).setIncludeExternalExecutor(true)
                 .setArgs()
@@ -87,8 +87,8 @@ public class TestCommands {
 
     @Test
     public void testCheck() {
-        JShell c = new JShell(
-                new JShellConfiguration().setSession(TestUtils.openNewTestWorkspace())
+        NShell c = new NShell(
+                new NShellConfiguration().setSession(TestUtils.openNewTestWorkspace())
                         .setIncludeDefaultBuiltins(true).setIncludeExternalExecutor(true)
                         .setArgs()
         );

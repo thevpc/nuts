@@ -139,7 +139,7 @@ public class NHttpServletFacade {
             if (ii.command.isEmpty()) {
                 context.sendError(404, "missing command");
             } else {
-                context.sendError(404, "JShellCommandNode Not found : " + ii.command);
+                context.sendError(404, "NShellCommandNode Not found : " + ii.command);
             }
         } else {
             try {

@@ -26,13 +26,13 @@
 package net.thevpc.nuts.toolbox.nsh.autocomplete;
 
 import net.thevpc.nuts.spi.NComponent;
-import net.thevpc.nuts.toolbox.nsh.cmds.JShellBuiltin;
-import net.thevpc.nuts.toolbox.nsh.jshell.JShellExecutionContext;
+import net.thevpc.nuts.toolbox.nsh.cmds.NShellBuiltin;
+import net.thevpc.nuts.toolbox.nsh.eval.NShellExecutionContext;
 
 /**
  * Created by vpc on 3/7/17.
  */
 public interface NCommandAutoCompleteComponent extends NComponent {
 
-    void autoComplete(JShellBuiltin command, JShellExecutionContext context);
+    void autoComplete(NShellBuiltin command, NShellExecutionContext context);
 }

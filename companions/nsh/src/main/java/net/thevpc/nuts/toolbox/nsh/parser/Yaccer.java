@@ -2,12 +2,13 @@ package net.thevpc.nuts.toolbox.nsh.parser;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.io.NPath;
-import net.thevpc.nuts.toolbox.nsh.err.JShellUniformException;
-import net.thevpc.nuts.toolbox.nsh.jshell.*;
-import net.thevpc.nuts.toolbox.nsh.nodes.JShellArgumentNode;
-import net.thevpc.nuts.toolbox.nsh.nodes.JShellCmdLineNode;
-import net.thevpc.nuts.toolbox.nsh.nodes.JShellCommandNode;
-import net.thevpc.nuts.toolbox.nsh.nodes.JShellNode;
+import net.thevpc.nuts.toolbox.nsh.err.NShellUniformException;
+import net.thevpc.nuts.toolbox.nsh.eval.NShellContext;
+import net.thevpc.nuts.toolbox.nsh.nshell.*;
+import net.thevpc.nuts.toolbox.nsh.nodes.NShellArgumentNode;
+import net.thevpc.nuts.toolbox.nsh.nodes.NShellCmdLineNode;
+import net.thevpc.nuts.toolbox.nsh.nodes.NShellCommandNode;
+import net.thevpc.nuts.toolbox.nsh.nodes.NShellNode;
 import net.thevpc.nuts.util.NGlob;
 
 import java.util.*;
@@ -16,16 +17,16 @@ import java.util.stream.Collectors;
 public class Yaccer {
 
     private final Lexer lexer;
-    private final LinkedList<JShellNode> buffer = new LinkedList<>();
+    private final LinkedList<NShellNode> buffer = new LinkedList<>();
 
     public Yaccer(Lexer lexer) {
         this.lexer = lexer;
     }
 
 
-    public Iterable<JShellNode> nodes() {
-        return () -> new Iterator<JShellNode>() {
-            JShellNode n = null;
+    public Iterable<NShellNode> nodes() {
+        return () -> new Iterator<NShellNode>() {
+            NShellNode n = null;
 
             @Override
             public boolean hasNext() {
@@ -34,13 +35,13 @@ public class Yaccer {
             }
 
             @Override
-            public JShellNode next() {
+            public NShellNode next() {
                 return n;
             }
         };
     }
 
-    public JShellNode readNodeL0() {
+    public NShellNode readNodeL0() {
         if (!buffer.isEmpty()) {
             return buffer.removeFirst();
         }
@@ -100,7 +101,7 @@ public class Yaccer {
         return lexer;
     }
 
-    private JShellCommandNode readScriptL1() {
+    private NShellCommandNode readScriptL1() {
         Token u = getLexer().peekToken();
         if (u == null) {
             return null;
@@ -119,7 +120,7 @@ public class Yaccer {
         }
         if (u.type.equals("!")) {
             Token not = getLexer().nextToken();
-            JShellCommandNode next = readScriptL1();
+            NShellCommandNode next = readScriptL1();
             return new UnOpPrefix(not, next);
         }
         if (u.type.equals("(")) {
@@ -127,10 +128,10 @@ public class Yaccer {
         }
         if (u.isSharp()) {
             Comments c = readComments();
-            JShellCommandNode next = readScriptL1();
+            NShellCommandNode next = readScriptL1();
             return new CommentedNode(next, c);
         }
-        JShellCommandNode a = readScriptLine();
+        NShellCommandNode a = readScriptLine();
         if (a == null) {
             return a;
         }
@@ -142,7 +143,7 @@ public class Yaccer {
             case "&&":
             case "||": {
                 Token op = getLexer().nextToken();
-                JShellNode b = readScriptLine();
+                NShellNode b = readScriptLine();
                 if (b == null) {
                     return new UnOpSuffix(a, op);
                 }
@@ -152,8 +153,8 @@ public class Yaccer {
         return a;
     }
 
-    public JShellCommandNode readScriptL2() {
-        JShellCommandNode a = readScriptL1();
+    public NShellCommandNode readScriptL2() {
+        NShellCommandNode a = readScriptL1();
         if (a == null) {
             return null;
         }
@@ -165,7 +166,7 @@ public class Yaccer {
             switch (u.type) {
                 case "|": {
                     Token op = getLexer().nextToken();
-                    JShellCommandNode b = readScriptL1();
+                    NShellCommandNode b = readScriptL1();
                     if (b == null) {
                         return new UnOpSuffix(a, op);
                     } else {
@@ -180,8 +181,8 @@ public class Yaccer {
         }
     }
 
-    public JShellCommandNode readScriptL3() {
-        JShellCommandNode a = readScriptL2();
+    public NShellCommandNode readScriptL3() {
+        NShellCommandNode a = readScriptL2();
         if (a == null) {
             return null;
         }
@@ -193,7 +194,7 @@ public class Yaccer {
             switch (u.type) {
                 case "&": {
                     Token op = getLexer().nextToken();
-                    JShellCommandNode b = readScriptL2();
+                    NShellCommandNode b = readScriptL2();
                     if (b == null) {
                         return new UnOpSuffix(a, op);
                     } else {
@@ -208,8 +209,8 @@ public class Yaccer {
         }
     }
 
-    public JShellCommandNode readScriptL4() {
-        JShellCommandNode a = readScriptL3();
+    public NShellCommandNode readScriptL4() {
+        NShellCommandNode a = readScriptL3();
         if (a == null) {
             return null;
         }
@@ -228,7 +229,7 @@ public class Yaccer {
                 case "&>>":
                 case "&2>>": {
                     Token op = getLexer().nextToken();
-                    JShellNode b = readScriptL3();
+                    NShellNode b = readScriptL3();
                     if (b == null) {
                         return new UnOpSuffix(a, op);
                     } else {
@@ -243,8 +244,8 @@ public class Yaccer {
         }
     }
 
-    public JShellCommandNode readScriptL5() {
-        JShellCommandNode a = null;
+    public NShellCommandNode readScriptL5() {
+        NShellCommandNode a = null;
         Token sep = null;
         while (true) {
             Token u = getLexer().peekToken();
@@ -258,7 +259,7 @@ public class Yaccer {
                     break;
                 }
                 default: {
-                    JShellCommandNode b = readScriptL4();
+                    NShellCommandNode b = readScriptL4();
                     if (b == null) {
                         return a;
                     }
@@ -277,8 +278,8 @@ public class Yaccer {
         }
     }
 
-    public JShellNode readNodeL1() {
-        JShellNode a = readNodeL0();
+    public NShellNode readNodeL1() {
+        NShellNode a = readNodeL0();
         if (a == null) {
             return a;
         }
@@ -290,7 +291,7 @@ public class Yaccer {
             case "&&":
             case "&": {
                 Token op = getLexer().nextToken();
-                JShellNode b = readNodeL0();
+                NShellNode b = readNodeL0();
                 if (b == null) {
                     return new UnOpSuffix(a, op);
                 }
@@ -300,8 +301,8 @@ public class Yaccer {
         return a;
     }
 
-    public JShellNode readNodeL2() {
-        JShellNode a = readNodeL1();
+    public NShellNode readNodeL2() {
+        NShellNode a = readNodeL1();
         if (a == null) {
             return a;
         }
@@ -313,7 +314,7 @@ public class Yaccer {
             case "||":
             case "|": {
                 Token op = getLexer().nextToken();
-                JShellNode b = readNodeL1();
+                NShellNode b = readNodeL1();
                 if (b == null) {
                     return new UnOpSuffix(a, op);
                 }
@@ -323,8 +324,8 @@ public class Yaccer {
         return a;
     }
 
-    public JShellNode readNodeL3() {
-        JShellNode a = readNodeL1();
+    public NShellNode readNodeL3() {
+        NShellNode a = readNodeL1();
         if (a == null) {
             return a;
         }
@@ -335,7 +336,7 @@ public class Yaccer {
         switch (u.type) {
             case ";": {
                 Token op = getLexer().nextToken();
-                JShellNode b = readNodeL1();
+                NShellNode b = readNodeL1();
                 if (b == null) {
                     return new UnOpSuffix(a, op);
                 }
@@ -345,8 +346,8 @@ public class Yaccer {
         return a;
     }
 
-    public JShellNode readNodeL4() {
-        JShellNode a = readNodeL3();
+    public NShellNode readNodeL4() {
+        NShellNode a = readNodeL3();
         if (a == null) {
             return a;
         }
@@ -360,7 +361,7 @@ public class Yaccer {
             case "<":
             case "&<": {
                 Token op = getLexer().nextToken();
-                JShellNode b = readNodeL3();
+                NShellNode b = readNodeL3();
                 if (b == null) {
                     return new UnOpSuffix(a, op);
                 }
@@ -370,8 +371,8 @@ public class Yaccer {
         return a;
     }
 
-    public JShellNode readNodeL5() {
-        JShellNode a = readNodeL4();
+    public NShellNode readNodeL5() {
+        NShellNode a = readNodeL4();
         if (a == null) {
             return null;
         }
@@ -383,7 +384,7 @@ public class Yaccer {
         switch (u.type) {
             case ";": {
                 Token op = getLexer().nextToken();
-                JShellNode b = readNodeL4();
+                NShellNode b = readNodeL4();
                 if (b == null) {
                     return new UnOpSuffix(a, op);
                 }
@@ -394,19 +395,19 @@ public class Yaccer {
     }
 
 
-    public JShellNode readNode() {
+    public NShellNode readNode() {
 //        return readNodeL5();
         return readNodeL0();
     }
 
-    public JShellCommandNode readScriptPar() {
+    public NShellCommandNode readScriptPar() {
         Token u = getLexer().peekToken();
         if (u == null) {
             return null;
         }
         if (u.type.equals("(")) {
             getLexer().nextToken();
-            JShellNode n = readScript();
+            NShellNode n = readScript();
             u = getLexer().peekToken();
             if (u == null || u.type.equals(")")) {
                 if (u != null) {
@@ -419,13 +420,13 @@ public class Yaccer {
         return null;
     }
 
-    public JShellCommandNode readCommandL1() {
+    public NShellCommandNode readCommandL1() {
         getLexer().skipWhites();
         Token t = getLexer().peekToken();
         if (t == null) {
             return null;
         }
-        JShellCommandNode line = readScriptLine();
+        NShellCommandNode line = readScriptLine();
         if (line == null) {
             return null;
         }
@@ -444,7 +445,7 @@ public class Yaccer {
                     case "&<<":
                     case "&>>": {
                         getLexer().nextToken();
-                        JShellCommandNode next = readScriptLine();
+                        NShellCommandNode next = readScriptLine();
                         if (next == null) {
                             line = new SuffixOpCommand(line, t);
                         } else {
@@ -459,8 +460,8 @@ public class Yaccer {
         return line;
     }
 
-    public JShellCommandNode readCommandL2() {
-        JShellCommandNode line = readCommandL1();
+    public NShellCommandNode readCommandL2() {
+        NShellCommandNode line = readCommandL1();
         if (line == null) {
             return null;
         }
@@ -472,7 +473,7 @@ public class Yaccer {
                 switch (t.type) {
                     case "|": {
                         getLexer().nextToken();
-                        JShellCommandNode next = readCommandL1();
+                        NShellCommandNode next = readCommandL1();
                         if (next == null) {
                             line = new SuffixOpCommand(line, t);
                         } else {
@@ -486,8 +487,8 @@ public class Yaccer {
         return line;
     }
 
-    public JShellCommandNode readCommandL3() {
-        JShellCommandNode line = readCommandL2();
+    public NShellCommandNode readCommandL3() {
+        NShellCommandNode line = readCommandL2();
         if (line == null) {
             return null;
         }
@@ -500,7 +501,7 @@ public class Yaccer {
                     case "&&":
                     case "||": {
                         getLexer().nextToken();
-                        JShellCommandNode next = readCommandL2();
+                        NShellCommandNode next = readCommandL2();
                         if (next == null) {
                             line = new SuffixOpCommand(line, t);
                         } else {
@@ -514,7 +515,7 @@ public class Yaccer {
         return line;
     }
 
-    private String getArgumentsLineFirstArgToken(JShellCommandNode line) {
+    private String getArgumentsLineFirstArgToken(NShellCommandNode line) {
         if (line != null) {
             Argument arg1 = ((ArgumentsLine) line).args.get(0);
             if (arg1.nodes.size() == 1 && arg1.nodes.get(0) instanceof TokenNode) {
@@ -573,7 +574,7 @@ public class Yaccer {
         return new ArgumentsLine(a);
     }
 
-    public JShellCommandNode readScript() {
+    public NShellCommandNode readScript() {
         return readScriptL5();
     }
 
@@ -598,7 +599,7 @@ public class Yaccer {
     }
 
     public Argument readArgument() {
-        List<JShellNode> a = new ArrayList<>();
+        List<NShellNode> a = new ArrayList<>();
         while (true) {
             Token t = getLexer().peekToken();
             if (t == null || t.isNewline() || t.isSemiColon()) {
@@ -609,7 +610,7 @@ public class Yaccer {
                     break;
                 }
             }
-            JShellNode n = readNode();
+            NShellNode n = readNode();
             if (n == null) {
                 break;
             }
@@ -625,7 +626,7 @@ public class Yaccer {
 //        List<NutsToken> ok = new ArrayList<>();
 //        boolean loop = true;
 //        while (loop) {
-//            NutsToken t = jShellParser2.lexer().peedToken();
+//            NutsToken t = shellParser2.lexer().peedToken();
 //            if (t == null) {
 //                break;
 //            }
@@ -642,7 +643,7 @@ public class Yaccer {
 //                case "\"":
 //                case "'":
 //                case "`": {
-//                    jShellParser2.lexer().nextToken();
+//                    shellParser2.lexer().nextToken();
 //                    ok.add(t);
 //                    break;
 //                }
@@ -658,7 +659,7 @@ public class Yaccer {
 //        return new Argument(ok);
     }
 
-    public static String evalTokenString(Token token, JShellContext context) {
+    public static String evalTokenString(Token token, NShellContext context) {
         NGlob g = NGlob.of(context.getSession());
         switch (token.type) {
             case "WORD": {
@@ -697,7 +698,7 @@ public class Yaccer {
                     return "";
                 }
                 Yaccer yy2 = new Yaccer(new PreloadedLexer(subTokens));
-                JShellCommandNode subCommand = yy2.readScript();
+                NShellCommandNode subCommand = yy2.readScript();
                 if (subCommand == null) {
                     //all are comments perhaps!
                     return "";
@@ -752,7 +753,7 @@ public class Yaccer {
     }
 
 
-    public static String evalNodeString(JShellNode node, JShellContext context) {
+    public static String evalNodeString(NShellNode node, NShellContext context) {
         if (node instanceof Comments) {
             return "";
         } else if (node instanceof TokenNode) {
@@ -761,7 +762,7 @@ public class Yaccer {
         throw new RuntimeException("Error");
     }
 
-    public class WhiteNode implements JShellNode {
+    public class WhiteNode implements NShellNode {
         Token token;
 
         public WhiteNode(Token token) {
@@ -774,7 +775,7 @@ public class Yaccer {
         }
     }
 
-    public class NewlineNode implements JShellNode {
+    public class NewlineNode implements NShellNode {
         Token token;
 
         public NewlineNode(Token token) {
@@ -787,14 +788,14 @@ public class Yaccer {
         }
     }
 
-    public static class TokenNode implements JShellNode {
+    public static class TokenNode implements NShellNode {
         Token token;
 
         public TokenNode(Token token) {
             this.token = token;
         }
 
-        public String evalString(JShellContext context) {
+        public String evalString(NShellContext context) {
             return evalTokenString(token, context);
         }
 
@@ -804,27 +805,27 @@ public class Yaccer {
         }
     }
 
-    public static class BinOpCommand implements JShellCommandNode {
-        JShellCommandNode left;
+    public static class BinOpCommand implements NShellCommandNode {
+        NShellCommandNode left;
         Token op;
-        JShellCommandNode right;
+        NShellCommandNode right;
 
-        public BinOpCommand(JShellCommandNode left, Token op, JShellCommandNode right) {
+        public BinOpCommand(NShellCommandNode left, Token op, NShellCommandNode right) {
             this.left = left;
             this.op = op;
             this.right = right;
         }
 
         @Override
-        public int eval(final JShellContext context) {
+        public int eval(final NShellContext context) {
             String cmd = op.isNewline() ? ";" : String.valueOf(op.value);
             return context.getShell().getEvaluator().evalBinaryOperation(cmd, left, right, context);
         }
-        private List<JShellCommandNode> expandCommands(JShellCommandNode c){
+        private List<NShellCommandNode> expandCommands(NShellCommandNode c){
             if(c instanceof BinOpCommand){
                 BinOpCommand b = (BinOpCommand) c;
                 if(b.op.isSemiColon()){
-                    List<JShellCommandNode> a=new ArrayList<>();
+                    List<NShellCommandNode> a=new ArrayList<>();
                     a.addAll(expandCommands(b.left));
                     a.addAll(expandCommands(b.right));
                     return a;
@@ -852,17 +853,17 @@ public class Yaccer {
         }
     }
 
-    public class SuffixOpCommand implements JShellCommandNode {
-        JShellCommandNode a;
+    public class SuffixOpCommand implements NShellCommandNode {
+        NShellCommandNode a;
         Token op;
 
-        public SuffixOpCommand(JShellCommandNode a, Token op) {
+        public SuffixOpCommand(NShellCommandNode a, Token op) {
             this.a = a;
             this.op = op;
         }
 
         @Override
-        public int eval(JShellContext context) {
+        public int eval(NShellContext context) {
             switch (op.type) {
                 case "&": {
                     return context.getShell().getEvaluator().evalSuffixAndOperation(a, context);
@@ -873,22 +874,22 @@ public class Yaccer {
     }
 
     public class CondBloc {
-        JShellCommandNode cond;
-        JShellCommandNode block;
+        NShellCommandNode cond;
+        NShellCommandNode block;
 
-        public CondBloc(JShellCommandNode cond, JShellCommandNode block) {
+        public CondBloc(NShellCommandNode cond, NShellCommandNode block) {
             this.cond = cond;
             this.block = block;
         }
 
-        public boolean eval(JShellContext context) {
+        public boolean eval(NShellContext context) {
 //        System.out.println("+ IF " + conditionNode);
             boolean trueCond = false;
             if (cond != null) {
                 try {
                     context.getShell().evalNode(cond, context);
                     trueCond = true;
-                } catch (JShellUniformException ex) {
+                } catch (NShellUniformException ex) {
                     if (ex.isQuit()) {
                         ex.throwQuit();
                     }
@@ -905,14 +906,14 @@ public class Yaccer {
         }
     }
 
-    public class IfCommand implements JShellCommandNode {
+    public class IfCommand implements NShellCommandNode {
         CondBloc _if;
-        JShellCommandNode _then;
+        NShellCommandNode _then;
         List<CondBloc> _elif = new ArrayList<>();
-        JShellCommandNode _else;
+        NShellCommandNode _else;
 
         @Override
-        public int eval(JShellContext context) {
+        public int eval(NShellContext context) {
 //        System.out.println("+ IF " + conditionNode);
             if (_if.eval(context)) {
                 return 0;
@@ -930,13 +931,13 @@ public class Yaccer {
 
     }
 
-    public class WhileCommand implements JShellCommandNode {
+    public class WhileCommand implements NShellCommandNode {
         CondBloc _while;
-        JShellCommandNode _do;
-        JShellCommandNode _done;
+        NShellCommandNode _do;
+        NShellCommandNode _done;
 
         @Override
-        public int eval(JShellContext context) {
+        public int eval(NShellContext context) {
             while (true) {
                 if (!_while.eval(context)) {
                     return 0;
@@ -945,7 +946,7 @@ public class Yaccer {
         }
     }
 
-    public static class ArgumentsLine implements JShellCmdLineNode {
+    public static class ArgumentsLine implements NShellCmdLineNode {
         List<Argument> args;
 
         public ArgumentsLine(List<Argument> args) {
@@ -957,20 +958,20 @@ public class Yaccer {
         }
 
         @Override
-        public Iterator<JShellArgumentNode> iterator() {
+        public Iterator<NShellArgumentNode> iterator() {
             return (Iterator) args.iterator();
         }
 
         @Override
-        public int eval(JShellContext context) {
-            JShell shell = context.getShell();
+        public int eval(NShellContext context) {
+            NShell shell = context.getShell();
             ArrayList<String> cmds = new ArrayList<String>();
             Map<String, String> usingItems = new LinkedHashMap<>();
             List<Argument> args2 = new ArrayList<>(args);
             boolean source = false;
             if (args2.size() > 0) {
                 Argument arg = args2.get(0);
-                List<JShellNode> anodes = arg.nodes;
+                List<NShellNode> anodes = arg.nodes;
                 if (anodes.size() == 1
                         && anodes.get(0) instanceof TokenNode && ((TokenNode) anodes.get(0)).token.isDot()
                 ) {
@@ -981,7 +982,7 @@ public class Yaccer {
             if (!source) {
                 while (args2.size() > 0) {
                     Argument arg = args2.get(0);
-                    List<JShellNode> anodes = arg.nodes;
+                    List<NShellNode> anodes = arg.nodes;
                     if (anodes.size() >= 2
                             && anodes.get(0) instanceof TokenNode && ((TokenNode) anodes.get(0)).token.isWord()
                             && anodes.get(1) instanceof TokenNode && ((TokenNode) anodes.get(1)).token.isEquals()
@@ -1032,17 +1033,17 @@ public class Yaccer {
         }
     }
 
-    public class Par implements JShellCommandNode {
-        JShellNode element;
+    public class Par implements NShellCommandNode {
+        NShellNode element;
 
-        public Par(JShellNode element) {
+        public Par(NShellNode element) {
             this.element = element;
         }
 
         @Override
-        public int eval(JShellContext context) {
+        public int eval(NShellContext context) {
             return context.getShell().evalNode(
-                    ((JShellCommandNode) element),
+                    ((NShellCommandNode) element),
                     context
             );
         }
@@ -1053,11 +1054,11 @@ public class Yaccer {
         }
     }
 
-    public class UnOpSuffix implements JShellCommandNode {
-        JShellNode a;
+    public class UnOpSuffix implements NShellCommandNode {
+        NShellNode a;
         Token op;
 
-        public UnOpSuffix(JShellNode a, Token op) {
+        public UnOpSuffix(NShellNode a, Token op) {
             this.a = a;
             this.op = op;
         }
@@ -1069,16 +1070,16 @@ public class Yaccer {
         }
 
         @Override
-        public int eval(JShellContext context) {
+        public int eval(NShellContext context) {
             throw new NIllegalArgumentException(context.getSession(), NMsg.ofC("not yet implemented UnOpSuffix %s",op.image));
         }
     }
 
-    public class CommentedNode implements JShellCommandNode {
-        JShellNode a;
+    public class CommentedNode implements NShellCommandNode {
+        NShellNode a;
         List<Comments> comments = new ArrayList<>();
 
-        public CommentedNode(JShellNode a, Comments comments) {
+        public CommentedNode(NShellNode a, Comments comments) {
             if (a instanceof CommentedNode) {
                 this.a = ((CommentedNode) a).a;
                 this.comments.add(comments);
@@ -1090,10 +1091,10 @@ public class Yaccer {
         }
 
         @Override
-        public int eval(JShellContext context) {
+        public int eval(NShellContext context) {
             if (a != null) {
                 return context.getShell().evalNode(
-                        ((JShellCommandNode) a),context
+                        ((NShellCommandNode) a),context
                 );
             }
             return 0;
@@ -1104,11 +1105,11 @@ public class Yaccer {
         }
     }
 
-    public class UnOpPrefix implements JShellCommandNode {
-        JShellNode a;
+    public class UnOpPrefix implements NShellCommandNode {
+        NShellNode a;
         Token op;
 
-        public UnOpPrefix(Token op, JShellNode a) {
+        public UnOpPrefix(Token op, NShellNode a) {
             this.a = a;
             this.op = op;
         }
@@ -1119,17 +1120,17 @@ public class Yaccer {
         }
 
         @Override
-        public int eval(JShellContext context) {
+        public int eval(NShellContext context) {
             throw new NIllegalArgumentException(context.getSession(), NMsg.ofC("not yet implemented UnOpPrefix %s",op.image));
         }
     }
 
-    public class BinOp implements JShellCommandNode {
-        JShellNode a;
+    public class BinOp implements NShellCommandNode {
+        NShellNode a;
         Token op;
-        JShellNode b;
+        NShellNode b;
 
-        public BinOp(JShellNode a, Token op, JShellNode b) {
+        public BinOp(NShellNode a, Token op, NShellNode b) {
             this.a = a;
             this.op = op;
             this.b = b;
@@ -1143,29 +1144,29 @@ public class Yaccer {
         }
 
         @Override
-        public int eval(JShellContext context) {
+        public int eval(NShellContext context) {
             throw new NIllegalArgumentException(context.getSession(), NMsg.ofC("not yet implemented BinOp %s",op.image));
         }
     }
 
-    public static class Argument implements JShellArgumentNode {
-        List<JShellNode> nodes;
-        public Argument(List<JShellNode> nodes) {
+    public static class Argument implements NShellArgumentNode {
+        List<NShellNode> nodes;
+        public Argument(List<NShellNode> nodes) {
             this.nodes = nodes;
         }
 
         @Override
         public String toString() {
             StringBuilder sb=new StringBuilder();
-            for (JShellNode node : nodes) {
+            for (NShellNode node : nodes) {
                 sb.append(node);
             }
             return sb.toString();
         }
 
-        public String[] evalString(JShellContext context) {
+        public String[] evalString(NShellContext context) {
             StringBuilder sb = new StringBuilder();
-            for (JShellNode node : nodes) {
+            for (NShellNode node : nodes) {
                 sb.append(evalNodeString(node, context));
             }
             String value = sb.toString();
@@ -1215,7 +1216,7 @@ public class Yaccer {
         }
     }
 
-    public class Comments implements JShellNode {
+    public class Comments implements NShellNode {
         List<Token> tokens;
 
         public Comments(List<Token> tokens) {
@@ -1233,7 +1234,7 @@ public class Yaccer {
 
     }
 
-//    public void pushBack(JShellNode n){
+//    public void pushBack(NShellNode n){
 //        buffer.addFirst(n);
 //    }
 }

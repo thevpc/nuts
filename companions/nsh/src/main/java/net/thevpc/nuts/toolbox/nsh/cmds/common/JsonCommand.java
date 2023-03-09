@@ -33,9 +33,9 @@ import net.thevpc.nuts.elem.NElements;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.spi.NComponentScope;
 import net.thevpc.nuts.spi.NComponentScopeType;
-import net.thevpc.nuts.toolbox.nsh.cmds.JShellBuiltinDefault;
-import net.thevpc.nuts.toolbox.nsh.jshell.JShellContext;
-import net.thevpc.nuts.toolbox.nsh.jshell.JShellExecutionContext;
+import net.thevpc.nuts.toolbox.nsh.cmds.NShellBuiltinDefault;
+import net.thevpc.nuts.toolbox.nsh.eval.NShellContext;
+import net.thevpc.nuts.toolbox.nsh.eval.NShellExecutionContext;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -55,14 +55,14 @@ import java.util.List;
  * Created by vpc on 1/7/17.
  */
 @NComponentScope(NComponentScopeType.WORKSPACE)
-public class JsonCommand extends JShellBuiltinDefault {
+public class JsonCommand extends NShellBuiltinDefault {
 
     public JsonCommand() {
         super("json", DEFAULT_SUPPORT, Options.class);
     }
 
     @Override
-    protected boolean onCmdNextOption(NArg arg, NCmdLine commandLine, JShellExecutionContext context) {
+    protected boolean onCmdNextOption(NArg arg, NCmdLine commandLine, NShellExecutionContext context) {
         Options options = context.getOptions();
         NSession session = context.getSession();
         NArg a;
@@ -82,7 +82,7 @@ public class JsonCommand extends JShellBuiltinDefault {
     }
 
     @Override
-    protected void onCmdExec(NCmdLine commandLine, JShellExecutionContext context) {
+    protected void onCmdExec(NCmdLine commandLine, NShellExecutionContext context) {
         Options options = context.getOptions();
 //        if (options.xpaths.isEmpty()) {
 //            commandLine.required();
@@ -145,15 +145,15 @@ public class JsonCommand extends JShellBuiltinDefault {
         }
     }
 
-    private Document readJsonConvertXml(String path, JShellContext context) {
+    private Document readJsonConvertXml(String path, NShellContext context) {
         return readJsonConvertAny(path, Document.class, context);
     }
 
-    private NElement readJsonConvertElement(String path, JShellContext context) {
+    private NElement readJsonConvertElement(String path, NShellContext context) {
         return readJsonConvertAny(path, NElement.class, context);
     }
 
-    private <T> T readJsonConvertAny(String path, Class<T> cls, JShellContext context) {
+    private <T> T readJsonConvertAny(String path, Class<T> cls, NShellContext context) {
         NSession session = context.getSession();
         NElements njson = NElements.of(session).json();
         T inputDocument = null;
@@ -199,7 +199,7 @@ public class JsonCommand extends JShellBuiltinDefault {
     }
 
     @Override
-    protected boolean onCmdNextNonOption(NArg arg, NCmdLine commandLine, JShellExecutionContext context) {
+    protected boolean onCmdNextNonOption(NArg arg, NCmdLine commandLine, NShellExecutionContext context) {
         return onCmdNextOption(arg, commandLine, context);
     }
 }

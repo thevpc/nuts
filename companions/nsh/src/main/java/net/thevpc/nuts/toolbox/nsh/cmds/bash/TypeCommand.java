@@ -31,11 +31,11 @@ import net.thevpc.nuts.NSession;
 import net.thevpc.nuts.NLiteral;
 import net.thevpc.nuts.spi.NComponentScope;
 import net.thevpc.nuts.spi.NComponentScopeType;
-import net.thevpc.nuts.toolbox.nsh.cmds.JShellBuiltinDefault;
-import net.thevpc.nuts.toolbox.nsh.jshell.JShell;
-import net.thevpc.nuts.toolbox.nsh.cmds.JShellBuiltin;
-import net.thevpc.nuts.toolbox.nsh.cmdresolver.JShellCommandResolution;
-import net.thevpc.nuts.toolbox.nsh.jshell.JShellExecutionContext;
+import net.thevpc.nuts.toolbox.nsh.cmds.NShellBuiltinDefault;
+import net.thevpc.nuts.toolbox.nsh.nshell.NShell;
+import net.thevpc.nuts.toolbox.nsh.cmds.NShellBuiltin;
+import net.thevpc.nuts.toolbox.nsh.cmdresolver.NShellCommandResolution;
+import net.thevpc.nuts.toolbox.nsh.eval.NShellExecutionContext;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -44,14 +44,14 @@ import java.util.List;
  * Created by vpc on 1/7/17.
  */
 @NComponentScope(NComponentScopeType.WORKSPACE)
-public class TypeCommand extends JShellBuiltinDefault {
+public class TypeCommand extends NShellBuiltinDefault {
 
     public TypeCommand() {
         super("type", DEFAULT_SUPPORT,Options.class);
     }
 
     @Override
-    protected boolean onCmdNextOption(NArg arg, NCmdLine commandLine, JShellExecutionContext context) {
+    protected boolean onCmdNextOption(NArg arg, NCmdLine commandLine, NShellExecutionContext context) {
         Options config = context.getOptions();
         NSession session = context.getSession();
         NArg a = commandLine.peek().get(session);
@@ -63,12 +63,12 @@ public class TypeCommand extends JShellBuiltinDefault {
     }
 
     @Override
-    protected void onCmdExec(NCmdLine commandLine, JShellExecutionContext context) {
+    protected void onCmdExec(NCmdLine commandLine, NShellExecutionContext context) {
         Options config = context.getOptions();
-        JShell shell = context.getShell();
+        NShell shell = context.getShell();
         List<ResultItem> result = new ArrayList<>();
         for (String cmd : config.commands) {
-            JShellBuiltin ic = context.builtins().find(cmd);
+            NShellBuiltin ic = context.builtins().find(cmd);
             if (ic != null && ic.isEnabled()) {
                 result.add(new ResultItem(
                         cmd,
@@ -84,7 +84,7 @@ public class TypeCommand extends JShellBuiltinDefault {
                             cmd + " is aliased to `" + alias + "`"
                     ));
                 } else {
-                    JShellCommandResolution pp = shell.getCommandTypeResolver().type(cmd, context.getShellContext());
+                    NShellCommandResolution pp = shell.getCommandTypeResolver().type(cmd, context.getShellContext());
                     if (pp != null) {
                         result.add(new ResultItem(
                                 cmd,
@@ -146,7 +146,7 @@ public class TypeCommand extends JShellBuiltinDefault {
 
 
     @Override
-    protected boolean onCmdNextNonOption(NArg arg, NCmdLine commandLine, JShellExecutionContext context) {
+    protected boolean onCmdNextNonOption(NArg arg, NCmdLine commandLine, NShellExecutionContext context) {
         return onCmdNextOption(arg, commandLine, context);
     }
 }

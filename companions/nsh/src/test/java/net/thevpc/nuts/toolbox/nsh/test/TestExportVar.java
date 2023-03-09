@@ -31,8 +31,8 @@ import net.thevpc.nuts.io.NCp;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.io.NSessionTerminal;
 import net.thevpc.nuts.spi.NPaths;
-import net.thevpc.nuts.toolbox.nsh.jshell.JShell;
-import net.thevpc.nuts.toolbox.nsh.jshell.JShellConfiguration;
+import net.thevpc.nuts.toolbox.nsh.nshell.NShell;
+import net.thevpc.nuts.toolbox.nsh.nshell.NShellConfiguration;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -52,8 +52,8 @@ public class TestExportVar {
                 .to(a).run();
         NCp.of(session).from("echo 'run b' ; echo a2=$a ; a=2; b=3 ; echo a2=$a ; echo b2=$b".getBytes())
                 .to(b).run();
-        JShell c = new JShell(
-                new JShellConfiguration()
+        NShell c = new NShell(
+                new NShellConfiguration()
                         .setSession(session)
                         .setArgs(a.toString())
                         .setIncludeDefaultBuiltins(true).setIncludeExternalExecutor(true)

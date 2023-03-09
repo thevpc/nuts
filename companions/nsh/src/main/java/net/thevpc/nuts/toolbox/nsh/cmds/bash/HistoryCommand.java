@@ -31,9 +31,9 @@ import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.spi.NComponentScope;
 import net.thevpc.nuts.spi.NComponentScopeType;
-import net.thevpc.nuts.toolbox.nsh.cmds.JShellBuiltinDefault;
-import net.thevpc.nuts.toolbox.nsh.jshell.JShellExecutionContext;
-import net.thevpc.nuts.toolbox.nsh.history.JShellHistory;
+import net.thevpc.nuts.toolbox.nsh.cmds.NShellBuiltinDefault;
+import net.thevpc.nuts.toolbox.nsh.eval.NShellExecutionContext;
+import net.thevpc.nuts.toolbox.nsh.history.NShellHistory;
 
 import java.io.IOException;
 import java.util.LinkedHashMap;
@@ -43,14 +43,14 @@ import java.util.List;
  * Created by vpc on 1/7/17.
  */
 @NComponentScope(NComponentScopeType.WORKSPACE)
-public class HistoryCommand extends JShellBuiltinDefault {
+public class HistoryCommand extends NShellBuiltinDefault {
 
     public HistoryCommand() {
         super("history", DEFAULT_SUPPORT,Options.class);
     }
 
     @Override
-    protected boolean onCmdNextOption(NArg arg, NCmdLine commandLine, JShellExecutionContext context) {
+    protected boolean onCmdNextOption(NArg arg, NCmdLine commandLine, NShellExecutionContext context) {
         Options options = context.getOptions();
         NSession session = context.getSession();
         NArg a;
@@ -96,9 +96,9 @@ public class HistoryCommand extends JShellBuiltinDefault {
     }
 
     @Override
-    protected void onCmdExec(NCmdLine commandLine, JShellExecutionContext context) {
+    protected void onCmdExec(NCmdLine commandLine, NShellExecutionContext context) {
         Options options = context.getOptions();
-        JShellHistory shistory = context.getShell().getHistory();
+        NShellHistory shistory = context.getShell().getHistory();
         NSession session = context.getSession();
         switch (options.action) {
             case PRINT: {
@@ -172,7 +172,7 @@ public class HistoryCommand extends JShellBuiltinDefault {
         Action action = Action.PRINT;
     }
     @Override
-    protected boolean onCmdNextNonOption(NArg arg, NCmdLine commandLine, JShellExecutionContext context) {
+    protected boolean onCmdNextNonOption(NArg arg, NCmdLine commandLine, NShellExecutionContext context) {
         return onCmdNextOption(arg, commandLine, context);
     }
 }

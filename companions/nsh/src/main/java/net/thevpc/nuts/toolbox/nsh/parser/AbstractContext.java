@@ -1,9 +1,9 @@
 package net.thevpc.nuts.toolbox.nsh.parser;
 
 public abstract class AbstractContext implements Context {
-    protected final JShellParser reader;
+    protected final NShellParser reader;
 
-    public AbstractContext(JShellParser reader) {
+    public AbstractContext(NShellParser reader) {
         this.reader = reader;
     }
 

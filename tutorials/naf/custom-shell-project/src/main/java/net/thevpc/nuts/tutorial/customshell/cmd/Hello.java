@@ -8,12 +8,12 @@ import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.NSession;
 import net.thevpc.nuts.spi.NComponentScope;
 import net.thevpc.nuts.spi.NComponentScopeType;
-import net.thevpc.nuts.toolbox.nsh.cmds.JShellBuiltinBase;
-import net.thevpc.nuts.toolbox.nsh.jshell.JShellExecutionContext;
+import net.thevpc.nuts.toolbox.nsh.cmds.NShellBuiltinBase;
+import net.thevpc.nuts.toolbox.nsh.eval.NShellExecutionContext;
 
 /**
  * any command you want to support. The simplest way is to extend
- * JShellBuiltinBase. Don't you forget to add the fully qualified class name
+ * NShellBuiltinBase. Don't you forget to add the fully qualified class name
  * to the file
  * <pre>
  * src/main/resources/META-INF/services/net.thevpc.nuts.toolbox.nsh.jshell.JShellBuildtin
@@ -22,7 +22,7 @@ import net.thevpc.nuts.toolbox.nsh.jshell.JShellExecutionContext;
  * @author vpc
  */
 @NComponentScope(NComponentScopeType.WORKSPACE)
-public class Hello extends JShellBuiltinBase {
+public class Hello extends NShellBuiltinBase {
 
     /**
      * simple constructor, it defines mainly what is the command name (here
@@ -57,7 +57,7 @@ public class Hello extends JShellBuiltinBase {
      * @return true if the option is processed
      */
     @Override
-    protected boolean onCmdNextOption(NArg arg, NCmdLine cmdline, JShellExecutionContext ctx) {
+    protected boolean onCmdNextOption(NArg arg, NCmdLine cmdline, NShellExecutionContext ctx) {
         //get an instance of the current options object we are filling.
         Options o = ctx.getOptions();
         //get the next option (without consuming it)
@@ -93,12 +93,12 @@ public class Hello extends JShellBuiltinBase {
     }
 
     @Override
-    protected boolean onCmdNextNonOption(NArg arg, NCmdLine commandLine, JShellExecutionContext context) {
+    protected boolean onCmdNextNonOption(NArg arg, NCmdLine commandLine, NShellExecutionContext context) {
         return false;
     }
 
     @Override
-    protected void onCmdExec(NCmdLine cmdline, JShellExecutionContext ctx) {
+    protected void onCmdExec(NCmdLine cmdline, NShellExecutionContext ctx) {
         Options o = ctx.getOptions();
         NSession session = ctx.getSession();
         if (o.complex) {

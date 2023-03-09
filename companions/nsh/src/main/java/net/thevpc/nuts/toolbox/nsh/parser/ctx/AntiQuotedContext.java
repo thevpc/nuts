@@ -1,14 +1,14 @@
 package net.thevpc.nuts.toolbox.nsh.parser.ctx;
 
 import net.thevpc.nuts.toolbox.nsh.parser.AbstractContext;
-import net.thevpc.nuts.toolbox.nsh.parser.JShellParser;
+import net.thevpc.nuts.toolbox.nsh.parser.NShellParser;
 import net.thevpc.nuts.toolbox.nsh.parser.StrReader;
 import net.thevpc.nuts.toolbox.nsh.parser.Token;
 
 public class AntiQuotedContext extends AbstractContext {
 
 
-    public AntiQuotedContext(JShellParser jshp) {
+    public AntiQuotedContext(NShellParser jshp) {
         super(jshp);
     }
 

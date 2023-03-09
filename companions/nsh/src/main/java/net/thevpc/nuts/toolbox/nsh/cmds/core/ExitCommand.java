@@ -31,27 +31,27 @@ import net.thevpc.nuts.cmdline.NArg;
 import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.spi.NComponentScope;
 import net.thevpc.nuts.spi.NComponentScopeType;
-import net.thevpc.nuts.toolbox.nsh.cmds.JShellBuiltinCore;
-import net.thevpc.nuts.toolbox.nsh.jshell.JShellExecutionContext;
-import net.thevpc.nuts.toolbox.nsh.err.JShellQuitException;
+import net.thevpc.nuts.toolbox.nsh.cmds.NShellBuiltinCore;
+import net.thevpc.nuts.toolbox.nsh.eval.NShellExecutionContext;
+import net.thevpc.nuts.toolbox.nsh.err.NShellQuitException;
 
 /**
  * Created by vpc on 1/7/17.
  */
 @NComponentScope(NComponentScopeType.WORKSPACE)
-public class ExitCommand extends JShellBuiltinCore {
+public class ExitCommand extends NShellBuiltinCore {
 
     public ExitCommand() {
         super("exit", DEFAULT_SUPPORT, Options.class);
     }
 
     @Override
-    protected boolean onCmdNextOption(NArg arg, NCmdLine commandLine, JShellExecutionContext context) {
+    protected boolean onCmdNextOption(NArg arg, NCmdLine commandLine, NShellExecutionContext context) {
         return false;
     }
 
     @Override
-    protected boolean onCmdNextNonOption(NArg arg, NCmdLine commandLine, JShellExecutionContext context) {
+    protected boolean onCmdNextNonOption(NArg arg, NCmdLine commandLine, NShellExecutionContext context) {
         Options options = context.getOptions();
         NSession session = context.getSession();
         if (arg.isInt() && arg.asInt().get(session) > 0) {
@@ -63,9 +63,9 @@ public class ExitCommand extends JShellBuiltinCore {
     }
 
     @Override
-    protected void onCmdExec(NCmdLine commandLine, JShellExecutionContext context) {
+    protected void onCmdExec(NCmdLine commandLine, NShellExecutionContext context) {
         Options options = context.getOptions();
-        throw new JShellQuitException(context.getSession(), options.code);
+        throw new NShellQuitException(context.getSession(), options.code);
     }
 
     private static class Options {

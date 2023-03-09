@@ -30,9 +30,9 @@ import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.NSession;
 import net.thevpc.nuts.spi.NComponentScope;
 import net.thevpc.nuts.spi.NComponentScopeType;
-import net.thevpc.nuts.toolbox.nsh.cmds.JShellBuiltinDefault;
-import net.thevpc.nuts.toolbox.nsh.jshell.JShellExecutionContext;
-import net.thevpc.nuts.toolbox.nsh.nodes.JShellFunction;
+import net.thevpc.nuts.toolbox.nsh.cmds.NShellBuiltinDefault;
+import net.thevpc.nuts.toolbox.nsh.eval.NShellExecutionContext;
+import net.thevpc.nuts.toolbox.nsh.nodes.NShellFunction;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -43,14 +43,14 @@ import java.util.Map;
  * Created by vpc on 1/7/17.
  */
 @NComponentScope(NComponentScopeType.WORKSPACE)
-public class SetCommand extends JShellBuiltinDefault {
+public class SetCommand extends NShellBuiltinDefault {
 
     public SetCommand() {
         super("set", DEFAULT_SUPPORT,Options.class);
     }
 
     @Override
-    protected boolean onCmdNextOption(NArg arg, NCmdLine commandLine, JShellExecutionContext context) {
+    protected boolean onCmdNextOption(NArg arg, NCmdLine commandLine, NShellExecutionContext context) {
         NSession session = context.getSession();
         Options options = context.getOptions();
         NArg a = commandLine.peek().get(session);
@@ -64,14 +64,14 @@ public class SetCommand extends JShellBuiltinDefault {
     }
 
     @Override
-    protected void onCmdExec(NCmdLine commandLine, JShellExecutionContext context) {
+    protected void onCmdExec(NCmdLine commandLine, NShellExecutionContext context) {
         Options options = context.getOptions();
         if (options.vars.isEmpty()) {
             List<String> results = new ArrayList<>();
             for (Map.Entry<Object, Object> entry : context.vars().getAll().entrySet()) {
                 results.add(entry.getKey() + "=" + entry.getValue());
             }
-            for (JShellFunction function : context.functions().getAll()) {
+            for (NShellFunction function : context.functions().getAll()) {
                 results.add(function.getDefinition());
             }
             context.getSession().out().println(results);
@@ -87,7 +87,7 @@ public class SetCommand extends JShellBuiltinDefault {
         LinkedHashMap<String, String> vars = new LinkedHashMap<>();
     }
     @Override
-    protected boolean onCmdNextNonOption(NArg arg, NCmdLine commandLine, JShellExecutionContext context) {
+    protected boolean onCmdNextNonOption(NArg arg, NCmdLine commandLine, NShellExecutionContext context) {
         return onCmdNextOption(arg, commandLine, context);
     }
 }

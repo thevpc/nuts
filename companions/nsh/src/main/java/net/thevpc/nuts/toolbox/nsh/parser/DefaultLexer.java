@@ -3,16 +3,16 @@ package net.thevpc.nuts.toolbox.nsh.parser;
 import java.util.*;
 
 public class DefaultLexer extends AbstractLexer {
-    private final JShellParser jShellParser;
+    private final NShellParser nShellParser;
     public Stack<Context> ctx = new Stack<>();
     private LinkedList<Token> tokensBuffer = new LinkedList<>();
 
-    public DefaultLexer(JShellParser jShellParser) {
-        this.jShellParser = jShellParser;
+    public DefaultLexer(NShellParser nShellParser) {
+        this.nShellParser = nShellParser;
     }
 
     public Token continueReadDollarWord() {
-        StrReader reader = jShellParser.strReader();
+        StrReader reader = nShellParser.strReader();
         int char0 = reader.peekChar();
         if (char0 == '$') {
             StringBuilder sb = new StringBuilder();
@@ -52,7 +52,7 @@ public class DefaultLexer extends AbstractLexer {
     }
 
     public Token continueReadWord() {
-        StrReader reader = jShellParser.strReader();
+        StrReader reader = nShellParser.strReader();
         int char0 = reader.peekChar();
         if (reader.isWordChar(char0)) {
             StringBuilder sb = new StringBuilder();
@@ -96,7 +96,7 @@ public class DefaultLexer extends AbstractLexer {
 
 
     public Token continueReadWhite() {
-        StrReader reader = jShellParser.strReader();
+        StrReader reader = nShellParser.strReader();
         int r = reader.peekChar();
         if (r == '\n') {
             StringBuilder sb = new StringBuilder();
@@ -135,14 +135,14 @@ public class DefaultLexer extends AbstractLexer {
     }
 
     public Token processContext(String prefix, Context t) {
-        StrReader reader = jShellParser.strReader();
+        StrReader reader = nShellParser.strReader();
         List<Token> all = new ArrayList<>();
         Context c = ctx.peek();
         int before = ctx.size();
         ctx.push(t);
         StringBuilder sb=new StringBuilder();
-        while (jShellParser.lexer().ctx.peek() != c) {
-            Token tt = jShellParser.lexer().nextToken(before);
+        while (nShellParser.lexer().ctx.peek() != c) {
+            Token tt = nShellParser.lexer().nextToken(before);
             if (tt != null) {
                 all.add(tt);
                 sb.append(tt.getImage());

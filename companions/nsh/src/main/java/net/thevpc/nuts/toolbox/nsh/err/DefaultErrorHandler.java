@@ -31,22 +31,22 @@ import net.thevpc.nuts.io.NPrintStream;
 import net.thevpc.nuts.NExecutionException;
 import net.thevpc.nuts.text.NTextStyle;
 import net.thevpc.nuts.toolbox.nsh.util.bundles._StringUtils;
-import net.thevpc.nuts.toolbox.nsh.jshell.JShellContext;
+import net.thevpc.nuts.toolbox.nsh.eval.NShellContext;
 
 /**
  * @author thevpc
  */
-public class DefaultErrorHandler implements JShellErrorHandler {
+public class DefaultErrorHandler implements NShellErrorHandler {
 
     @Override
     public boolean isQuitException(Throwable th) {
-        return th instanceof JShellQuitException;
+        return th instanceof NShellQuitException;
     }
 
     @Override
     public int errorToCode(Throwable th) {
-        if (th instanceof JShellException) {
-            return ((JShellException) th).getExitCode();
+        if (th instanceof NShellException) {
+            return ((NShellException) th).getExitCode();
         }
         if (th instanceof NExecutionException) {
             return ((NExecutionException) th).getExitCode();
@@ -60,7 +60,7 @@ public class DefaultErrorHandler implements JShellErrorHandler {
     }
 
     @Override
-    public void onError(String message, Throwable th, JShellContext context) {
+    public void onError(String message, Throwable th, NShellContext context) {
         if (context.getSession() != null && context.getSession().err() != null) {
             NPrintStream err = context.getSession().err();
             err.println(NMsg.ofStyled(message, NTextStyle.error()));

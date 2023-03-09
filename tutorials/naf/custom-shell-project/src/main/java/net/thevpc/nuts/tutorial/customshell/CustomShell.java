@@ -2,10 +2,8 @@ package net.thevpc.nuts.tutorial.customshell;
 
 import net.thevpc.nuts.NApplication;
 import net.thevpc.nuts.NApplicationContext;
-import net.thevpc.nuts.toolbox.nsh.sys.JShellNoExternalExecutor;
-import net.thevpc.nuts.toolbox.nsh.jshell.JShell;
-import net.thevpc.nuts.toolbox.nsh.jshell.JShellConfiguration;
-import net.thevpc.nuts.tutorial.customshell.cmd.Hello;
+import net.thevpc.nuts.toolbox.nsh.nshell.NShell;
+import net.thevpc.nuts.toolbox.nsh.nshell.NShellConfiguration;
 
 /**
  * @author vpc
@@ -18,8 +16,8 @@ public class CustomShell implements NApplication {
 
     @Override
     public void run(NApplicationContext nac) {
-        JShell sh = new JShell(
-                new JShellConfiguration()
+        NShell sh = new NShell(
+                new NShellConfiguration()
                         .setApplicationContext(nac)
         );
         sh.run();

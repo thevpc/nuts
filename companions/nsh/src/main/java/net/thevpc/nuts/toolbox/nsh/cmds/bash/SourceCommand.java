@@ -29,9 +29,9 @@ import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.spi.NComponentScope;
 import net.thevpc.nuts.spi.NComponentScopeType;
-import net.thevpc.nuts.toolbox.nsh.cmds.JShellBuiltinDefault;
-import net.thevpc.nuts.toolbox.nsh.jshell.JShellContext;
-import net.thevpc.nuts.toolbox.nsh.jshell.JShellExecutionContext;
+import net.thevpc.nuts.toolbox.nsh.cmds.NShellBuiltinDefault;
+import net.thevpc.nuts.toolbox.nsh.eval.NShellContext;
+import net.thevpc.nuts.toolbox.nsh.eval.NShellExecutionContext;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -41,14 +41,14 @@ import java.util.List;
  * Created by vpc on 1/7/17.
  */
 @NComponentScope(NComponentScopeType.WORKSPACE)
-public class SourceCommand extends JShellBuiltinDefault {
+public class SourceCommand extends NShellBuiltinDefault {
 
     public SourceCommand() {
         super("source", DEFAULT_SUPPORT, Options.class);
     }
 
     @Override
-    protected boolean onCmdNextOption(NArg arg, NCmdLine commandLine, JShellExecutionContext context) {
+    protected boolean onCmdNextOption(NArg arg, NCmdLine commandLine, NShellExecutionContext context) {
         Options options = context.getOptions();
         NSession session = context.getSession();
         final NArg a = commandLine.peek().get(session);
@@ -62,7 +62,7 @@ public class SourceCommand extends JShellBuiltinDefault {
     }
 
     @Override
-    protected void onCmdExec(NCmdLine commandLine, JShellExecutionContext context) {
+    protected void onCmdExec(NCmdLine commandLine, NShellExecutionContext context) {
         Options options = context.getOptions();
         NSession session = context.getSession();
         if (options.args.isEmpty()) {
@@ -85,8 +85,8 @@ public class SourceCommand extends JShellBuiltinDefault {
         if (!file.isRegularFile()) {
             throwExecutionException(NMsg.ofC("file not found : %s",file), 1, session);
         } else {
-            JShellContext c2 = context.getShellContext();
-            JShellContext c = context.getShell().createInlineContext(c2, file.toString(), options.args.toArray(new String[0]));
+            NShellContext c2 = context.getShellContext();
+            NShellContext c = context.getShell().createInlineContext(c2, file.toString(), options.args.toArray(new String[0]));
             context.getShell().executeServiceFile(c, false);
         }
     }
@@ -97,7 +97,7 @@ public class SourceCommand extends JShellBuiltinDefault {
     }
 
     @Override
-    protected boolean onCmdNextNonOption(NArg arg, NCmdLine commandLine, JShellExecutionContext context) {
+    protected boolean onCmdNextNonOption(NArg arg, NCmdLine commandLine, NShellExecutionContext context) {
         return onCmdNextOption(arg, commandLine, context);
     }
 }

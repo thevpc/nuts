@@ -31,8 +31,8 @@ import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.NSession;
 import net.thevpc.nuts.spi.NComponentScope;
 import net.thevpc.nuts.spi.NComponentScopeType;
-import net.thevpc.nuts.toolbox.nsh.cmds.JShellBuiltinDefault;
-import net.thevpc.nuts.toolbox.nsh.jshell.JShellExecutionContext;
+import net.thevpc.nuts.toolbox.nsh.cmds.NShellBuiltinDefault;
+import net.thevpc.nuts.toolbox.nsh.eval.NShellExecutionContext;
 import net.thevpc.nuts.toolbox.nsh.util.ShellHelper;
 
 import java.util.ArrayList;
@@ -44,14 +44,14 @@ import java.util.List;
  * https://medium.com/ldclakmal/scp-with-java-b7b7dbcdbc85
  */
 @NComponentScope(NComponentScopeType.WORKSPACE)
-public class MkdirCommand extends JShellBuiltinDefault {
+public class MkdirCommand extends NShellBuiltinDefault {
 
     public MkdirCommand() {
         super("mkdir", DEFAULT_SUPPORT,Options.class);
     }
 
     @Override
-    protected boolean onCmdNextOption(NArg arg, NCmdLine commandLine, JShellExecutionContext context) {
+    protected boolean onCmdNextOption(NArg arg, NCmdLine commandLine, NShellExecutionContext context) {
         NSession session = context.getSession();
         Options options = context.getOptions();
         NArg a;
@@ -67,7 +67,7 @@ public class MkdirCommand extends JShellBuiltinDefault {
     }
 
     @Override
-    protected void onCmdExec(NCmdLine commandLine, JShellExecutionContext context) {
+    protected void onCmdExec(NCmdLine commandLine, NShellExecutionContext context) {
         Options options = context.getOptions();
         NSession session = context.getSession();
         options.xfiles = ShellHelper.xfilesOf(options.files, context.getCwd(), session);
@@ -96,7 +96,7 @@ public class MkdirCommand extends JShellBuiltinDefault {
     }
 
     @Override
-    protected boolean onCmdNextNonOption(NArg arg, NCmdLine commandLine, JShellExecutionContext context) {
+    protected boolean onCmdNextNonOption(NArg arg, NCmdLine commandLine, NShellExecutionContext context) {
         return onCmdNextOption(arg, commandLine, context);
     }
 }
