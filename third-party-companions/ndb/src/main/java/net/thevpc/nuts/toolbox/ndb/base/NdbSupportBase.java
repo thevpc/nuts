@@ -9,6 +9,7 @@ import net.thevpc.nuts.toolbox.ndb.NdbConfig;
 import net.thevpc.nuts.toolbox.ndb.base.cmd.*;
 import net.thevpc.nuts.toolbox.ndb.sql.nmysql.NMySqlConfigVersions;
 import net.thevpc.nuts.toolbox.ndb.sql.nmysql.util.AtName;
+import net.thevpc.nuts.toolbox.ndb.util.LoginServerPath;
 import net.thevpc.nuts.toolbox.ndb.util.NdbUtils;
 import net.thevpc.nuts.util.NRef;
 import net.thevpc.nuts.util.NStringUtils;
@@ -59,7 +60,7 @@ public abstract class NdbSupportBase<C extends NdbConfig> implements NdbSupport 
     @Override
     public void run(NApplicationContext appContext, NCmdLine commandLine) {
         NArg a;
-        commandLine.setCommandName("ndb "+dbType);
+        commandLine.setCommandName("ndb " + dbType);
         while (commandLine.hasNext()) {
             boolean ok = false;
             for (NdbCmd<C> cc : commands.values()) {
@@ -137,7 +138,7 @@ public abstract class NdbSupportBase<C extends NdbConfig> implements NdbSupport 
 
 
     protected boolean fillOption(NCmdLine cmdLine, C options) {
-        NSession session = appContext.getSession();
+        NSession session = getAppContext().getSession();
         NArg a;
         if ((a = cmdLine.nextEntry("--name").orNull()) != null) {
             options.setName(a.getStringValue().get(session));
@@ -157,6 +158,15 @@ public abstract class NdbSupportBase<C extends NdbConfig> implements NdbSupport 
         } else if ((a = cmdLine.nextEntry("-P", "--password").orNull()) != null) {
             options.setPassword(a.getStringValue().get(session));
             return true;
+        } else if ((a = cmdLine.nextEntry("--db").orNull()) != null) {
+            String db = a.getStringValue().get(session);
+            LoginServerPath loginServerPath = LoginServerPath.parse(db).get();
+            options.setUser(loginServerPath.getUser());
+            options.setPassword(loginServerPath.getPassword());
+            options.setHost(loginServerPath.getServer());
+            options.setPort(loginServerPath.getPort());
+            options.setDatabaseName(loginServerPath.getPath());
+            return true;
         } else if ((a = cmdLine.nextEntry("--remote-server").orNull()) != null) {
             options.setRemoteServer(a.getStringValue().get(session));
             return true;
@@ -166,11 +176,17 @@ public abstract class NdbSupportBase<C extends NdbConfig> implements NdbSupport 
         } else if ((a = cmdLine.nextEntry("--remote-temp-folder").orNull()) != null) {
             options.setRemoteTempFolder(a.getStringValue().get(session));
             return true;
+        } else if ((a = cmdLine.nextEntry("--ssh").orNull()) != null) {
+            String ssh = a.getStringValue().get(session);
+            LoginServerPath loginServerPath = LoginServerPath.parse(ssh).get();
+            options.setRemoteUser(loginServerPath.getUser());
+            options.setRemoteServer(loginServerPath.getServer());
+            options.setRemoteTempFolder(loginServerPath.getPath());
+            return true;
         } else if (fillExtraOption(cmdLine, options)) {
             return true;
-        } else {
-            return false;
         }
+        return false;
     }
 
     protected boolean fillAddConfigOption(NCmdLine commandLine) {
@@ -189,10 +205,10 @@ public abstract class NdbSupportBase<C extends NdbConfig> implements NdbSupport 
     public NPath getRemoteTempFolder(C options, NSession session) {
         String remoteTempFolder = options.getRemoteTempFolder();
         if (NBlankable.isBlank(remoteTempFolder)) {
-            return NPath.of("/home/" + options.getRemoteUser(), session);
+            return NPath.of(NdbUtils.getDefaultUserHome(options.getRemoteUser()), session);
         } else {
             remoteTempFolder = remoteTempFolder.trim();
-            return NPath.of("/home/" + options.getRemoteUser(), session).resolve(remoteTempFolder);
+            return NPath.of(NdbUtils.getDefaultUserHome(options.getRemoteUser()), session).resolve(remoteTempFolder);
         }
     }
 

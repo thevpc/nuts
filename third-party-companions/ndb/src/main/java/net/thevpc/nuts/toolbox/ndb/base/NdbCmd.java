@@ -6,6 +6,7 @@ import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.toolbox.ndb.NdbConfig;
 import net.thevpc.nuts.toolbox.ndb.sql.nmysql.util.AtName;
+import net.thevpc.nuts.toolbox.ndb.util.LoginServerPath;
 import net.thevpc.nuts.toolbox.ndb.util.NdbUtils;
 import net.thevpc.nuts.util.NRef;
 
@@ -35,38 +36,9 @@ public abstract class NdbCmd<C extends NdbConfig> {
     abstract public void run(NApplicationContext appContext, NCmdLine commandLine);
 
     protected boolean fillOption(NCmdLine cmdLine, C options) {
-        NSession session = support.getAppContext().getSession();
-        NArg a;
-        if ((a = cmdLine.nextEntry("--name").orNull()) != null) {
-            options.setName(a.getStringValue().get(session));
-            return true;
-        } else if ((a = cmdLine.nextEntry("-h", "--host").orNull()) != null) {
-            options.setHost(a.getStringValue().get(session));
-            return true;
-        } else if ((a = cmdLine.nextEntry("-p", "--port").orNull()) != null) {
-            options.setPort(a.getValue().asInt().get(session));
-            return true;
-        } else if ((a = cmdLine.nextEntry("-n", "--dbname").orNull()) != null) {
-            options.setDatabaseName(a.getStringValue().get(session));
-            return true;
-        } else if ((a = cmdLine.nextEntry("-u", "--user").orNull()) != null) {
-            options.setUser(a.getStringValue().get(session));
-            return true;
-        } else if ((a = cmdLine.nextEntry("-P", "--password").orNull()) != null) {
-            options.setPassword(a.getStringValue().get(session));
-            return true;
-        } else if ((a = cmdLine.nextEntry("--remote-server").orNull()) != null) {
-            options.setRemoteServer(a.getStringValue().get(session));
-            return true;
-        } else if ((a = cmdLine.nextEntry("--remote-user").orNull()) != null) {
-            options.setRemoteUser(a.getStringValue().get(session));
-            return true;
-        } else if ((a = cmdLine.nextEntry("--remote-temp-folder").orNull()) != null) {
-            options.setRemoteTempFolder(a.getStringValue().get(session));
+        if (support.fillExtraOption(cmdLine, options)) {
             return true;
         } else if (fillExtraOption(cmdLine, options)) {
-            return true;
-        } else if (support.fillExtraOption(cmdLine, options)) {
             return true;
         } else {
             return false;

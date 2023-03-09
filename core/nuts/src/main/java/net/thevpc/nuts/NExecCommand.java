@@ -60,7 +60,6 @@ public interface NExecCommand extends NWorkspaceCommand {
      */
     NString format();
 
-    ;
 
     /**
      * if true, an exception is thrown whenever the command returns non zero

@@ -40,7 +40,9 @@ public class CopyDBCmd<C extends NdbConfig> extends NdbCmd<C> {
                     case "--from-password":
                     case "--from-remote-server":
                     case "--from-remote-user":
-                    case "--from-remote-temp-folder": {
+                    case "--from-remote-temp-folder":
+                    case "--from-ssh":
+                    case "--from-db": {
                         commandLine.withNextEntry((v, a, s) ->
                                 fromOptions.addAll(Arrays.asList(
                                         "--" + key.substring("--from-".length())
@@ -55,7 +57,9 @@ public class CopyDBCmd<C extends NdbConfig> extends NdbCmd<C> {
                     case "--to-password":
                     case "--to-remote-server":
                     case "--to-remote-user":
-                    case "--to-remote-temp-folder": {
+                    case "--to-remote-temp-folder":
+                    case "--to-ssh":
+                    case "--to-db": {
                         commandLine.withNextEntry((v, a, s) -> toOptions.addAll(Arrays.asList(
                                 "--" + key.substring("--to-".length())
                                 , v)));

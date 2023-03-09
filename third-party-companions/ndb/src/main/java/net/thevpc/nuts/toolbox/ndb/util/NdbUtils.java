@@ -23,17 +23,31 @@
  */
 package net.thevpc.nuts.toolbox.ndb.util;
 
-import net.thevpc.nuts.NBlankable;
-import net.thevpc.nuts.NIllegalArgumentException;
-import net.thevpc.nuts.NMsg;
-import net.thevpc.nuts.NSession;
+import net.thevpc.nuts.*;
+import net.thevpc.nuts.elem.NElements;
+import net.thevpc.nuts.io.NPath;
+import net.thevpc.nuts.io.NPathOption;
+
+import java.math.BigInteger;
+import java.time.Instant;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.util.NoSuchElementException;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
- *
  * @author thevpc
  */
 public class NdbUtils {
     public static final String SERVER_CONFIG_EXT = ".config";
+
+    public static String getDefaultUserHome(String name) {
+        if ("root".equals(name)) {
+            return "/root";
+        }
+        return "/home/" + name;
+    }
 
     public static String checkName(String name, NSession session) {
         if (!isName(name)) {

@@ -8,9 +8,11 @@ import net.thevpc.nuts.toolbox.ndb.base.CmdRedirect;
 import net.thevpc.nuts.toolbox.ndb.base.NdbCmd;
 import net.thevpc.nuts.toolbox.ndb.base.NdbSupportBase;
 import net.thevpc.nuts.toolbox.ndb.sql.nmysql.util.AtName;
+import net.thevpc.nuts.toolbox.ndb.util.RollingFileService;
 import net.thevpc.nuts.util.NRef;
 import net.thevpc.nuts.util.NStringUtils;
 
+import java.sql.Ref;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Date;
@@ -114,6 +116,7 @@ public class DumpCmd<C extends NdbConfig> extends NdbCmd<C> {
         NRef<AtName> name = NRef.ofNull(AtName.class);
         NRef<NPath> file = NRef.ofNull(NPath.class);
         C otherOptions = createConfigInstance();
+        NRef<Integer> roll = NRef.of(-1);
         while (commandLine.hasNext()) {
             if (commandLine.isNextOption()) {
                 switch (commandLine.peek().get(session).key()) {
@@ -124,6 +127,12 @@ public class DumpCmd<C extends NdbConfig> extends NdbCmd<C> {
                     case "--file": {
                         commandLine.withNextEntry((v, a, s) -> {
                             file.set(NPath.of(v, s));
+                        });
+                        break;
+                    }
+                    case "--roll": {
+                        commandLine.withNextEntryValue((v, a, s) -> {
+                            roll.set(v.asInt().get());
                         });
                         break;
                     }
@@ -144,40 +153,76 @@ public class DumpCmd<C extends NdbConfig> extends NdbCmd<C> {
         NPath zipPath;
         boolean plainFolder = false;
         boolean zip = false;
-        String simpleName0 = options.getDatabaseName() + "-" + new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss-SSS").format(new Date());
         String dumpExt = NStringUtils.trim(getSupport().getDumpExt(options, session));
         if (file.get() == null) {
-            simpleName = simpleName0;
-            plainFolderPath = NPath.of(simpleName + dumpExt, session);
-            zipPath = NPath.of(simpleName + ".zip", session);
+            if (roll.get() > 0) {
+                RollingFileService rfs = new RollingFileService(NPath.ofUserDirectory(session).resolve(options.getDatabaseName() + "#.zip"), roll.get(), session);
+                zipPath = rfs.roll();
+                simpleName = zipPath.getBaseName();
+                plainFolderPath = zipPath.resolve(simpleName + dumpExt);
+            } else {
+                simpleName = options.getDatabaseName() + "-" + new SimpleDateFormat("yyyyMMddHHmmssSSSSSS").format(new Date());
+                plainFolderPath = NPath.of(simpleName + dumpExt, session);
+                zipPath = NPath.of(simpleName + ".zip", session);
+            }
             plainFolder = false;
             zip = true;
+
         } else if (file.get().isDirectory()) {
-            simpleName = simpleName0;
-            plainFolderPath = file.get().resolve(simpleName + dumpExt);
-            zipPath = file.get().resolve(simpleName + ".zip");
+            if (roll.get() > 0) {
+                RollingFileService rfs = new RollingFileService(file.get().resolve(options.getDatabaseName() + "#.zip"), roll.get(), session);
+                zipPath = rfs.roll();
+                simpleName = zipPath.getBaseName();
+                plainFolderPath = zipPath.resolve(simpleName + dumpExt);
+
+            } else {
+                simpleName = options.getDatabaseName() + "-" + new SimpleDateFormat("yyyyMMddHHmmssSSSSSS").format(new Date());
+                plainFolderPath = file.get().resolve(simpleName + dumpExt);
+                zipPath = file.get().resolve(simpleName + ".zip");
+            }
             plainFolder = false;
             zip = true;
         } else {
-            simpleName = file.get().getBaseName();
-            if (file.get().getName().toLowerCase().endsWith(".zip")) {
-                zipPath = file.get();
-                plainFolderPath = zipPath.resolveSibling(simpleName + dumpExt);
+            NPath nFile = file.get();
+            simpleName = nFile.getBaseName();
+            if (nFile.getName().toLowerCase().endsWith(".zip")) {
+                if (roll.get() > 0) {
+                    RollingFileService rfs = new RollingFileService(nFile, roll.get(), session);
+                    zipPath = rfs.roll();
+                    plainFolderPath = zipPath.resolveSibling(zipPath.getName() + dumpExt);
+                } else {
+                    zipPath = nFile;
+                    plainFolderPath = zipPath.resolveSibling(simpleName + dumpExt);
+                }
                 plainFolder = false;
                 zip = true;
-            } else if (dumpExt.length() > 0 && file.get().getName().toLowerCase().endsWith(dumpExt)) {
-                plainFolderPath = file.get();
-                zipPath = plainFolderPath.resolveSibling(simpleName + ".zip");
+            } else if (dumpExt.length() > 0 && nFile.getName().toLowerCase().endsWith(dumpExt)) {
+                if (roll.get() > 0) {
+                    RollingFileService rfs = new RollingFileService(nFile, roll.get(), session);
+                    plainFolderPath = rfs.roll();
+                    zipPath = plainFolderPath.resolveSibling(plainFolderPath.getBaseName() + ".zip");
+                } else {
+                    plainFolderPath = nFile;
+                    zipPath = plainFolderPath.resolveSibling(simpleName + ".zip");
+                }
                 plainFolder = true;
                 zip = false;
             } else {
-                plainFolderPath = file.get().resolveSibling(file.get().getName() + dumpExt);
-                zipPath = file.get().resolveSibling(file.get().getName() + ".zip");
+                if (roll.get() > 0) {
+                    RollingFileService rfs = new RollingFileService(nFile, roll.get(), session);
+                    NPath roll1 = rfs.roll();
+                    plainFolderPath = roll1.resolveSibling(roll1.getName() + dumpExt);
+                    zipPath = nFile.resolveSibling(roll1.getName() + ".zip");
+                } else {
+                    plainFolderPath = nFile.resolveSibling(nFile.getName() + dumpExt);
+                    zipPath = nFile.resolveSibling(nFile.getName() + ".zip");
+                }
                 plainFolder = false;
                 zip = true;
             }
         }
         if (isRemoteCommand(options)) {
+            String simpleName0 = zipPath.getBaseName();
             NPath remoteTempFolder = getSupport().getRemoteTempFolder(options, session);
             NPath remotePlainFolder = remoteTempFolder.resolve(simpleName0 + dumpExt);
             NPath remoteZip = remoteTempFolder.resolve(simpleName0 + ".zip");
@@ -278,7 +323,6 @@ public class DumpCmd<C extends NdbConfig> extends NdbCmd<C> {
                     zipExec.setDirectory(plainFolderPath.getParent().toString());
                     run(zipExec);
                 }
-
 
 
             }

@@ -23,6 +23,7 @@ import java.util.Map;
 
 import net.thevpc.nuts.toolbox.ndb.sql.nmysql.util.AtName;
 import net.thevpc.nuts.toolbox.ndb.sql.nmysql.util.MysqlUtils;
+import net.thevpc.nuts.toolbox.ndb.util.NdbUtils;
 
 public class RemoteMysqlDatabaseConfigService {
 
@@ -263,7 +264,7 @@ public class RemoteMysqlDatabaseConfigService {
         } else {
             b.addCommand("nsh", "-c", "ssh");
             b.addCommand(this.config.getServer());
-            b.addCommand("/home/" + System.getProperty("user.name") + "/bin/nuts");
+            b.addCommand(NdbUtils.getDefaultUserHome(System.getProperty("user.name")) + "/bin/nuts");
             b.addCommand("-b");
             b.addCommand("-y");
             b.addCommand("--trace=false");
