@@ -14,6 +14,7 @@ import java.net.URL;
 import java.nio.charset.Charset;
 import java.nio.charset.CharsetDecoder;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -285,7 +286,11 @@ public abstract class NPathBase implements NPath {
 
     @Override
     public boolean isFile() {
-        return asFile() != null;
+        Path f = asFile();
+        if (f == null) {
+            return false;
+        }
+        return Files.isRegularFile(f);
     }
 
     public URL asURL() {
