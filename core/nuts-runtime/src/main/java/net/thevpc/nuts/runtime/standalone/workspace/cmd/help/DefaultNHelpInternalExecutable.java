@@ -76,7 +76,9 @@ public class DefaultNHelpInternalExecutable extends DefaultInternalNExecutableCo
 
         if (helpColors) {
             NTexts txt = NTexts.of(session);
-            NText n = txt.parser().parse(NPath.of("classpath:/net/thevpc/nuts/runtime/ntf-help.ntf", session));
+            NText n = txt.parser().parse(NPath.of("classpath:/net/thevpc/nuts/runtime/ntf-help.ntf",
+                    this.getClass().getClassLoader(),
+                    session));
             session.getTerminal().out().print(
                     n == null ? NTexts.of(session).ofStyled(("no help found for " + name), NTextStyle.error()) : n
             );
