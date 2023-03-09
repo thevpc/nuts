@@ -289,7 +289,7 @@ public class DefaultNRepositoryModel {
             }
             if (NBlankable.isBlank(conf.getLocation())
                     && !NBlankable.isBlank(options.getLocation())
-                    && NPath.of(options.getLocation(), session).isFile()
+                    //&& NPath.of(options.getLocation(), session).isFile()
             ) {
                 conf.setLocation(NRepositoryLocation.of(options.getLocation()));
             }

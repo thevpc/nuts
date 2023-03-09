@@ -738,9 +738,9 @@ public class DefaultNCp implements NCp {
         if (target != null) {
             if (target instanceof NPath) {
                 NPath p = (NPath) target;
-                if (p.isFile()) {
+                //if (p.isFile()) {
                     return p;
-                }
+                //}
             }
         }
         return null;

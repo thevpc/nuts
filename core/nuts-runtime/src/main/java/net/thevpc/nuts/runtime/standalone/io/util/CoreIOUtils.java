@@ -843,8 +843,11 @@ public class CoreIOUtils {
 
     public static Path toPathInputSource(NInputSource is, List<Path> tempPaths, boolean enforceExtension, NSession session) {
         boolean isPath = is instanceof NPath;
-        if (isPath && ((NPath) is).isFile()) {
-            return ((NPath) is).toFile();
+        if (isPath) {
+            Path sf = ((NPath) is).asFile();
+            if(sf!=null) {
+                return sf;
+            }
         }
         NPaths tmps = NPaths.of(session);
         String name = is.getInputMetaData().getName().orElse("no-name");

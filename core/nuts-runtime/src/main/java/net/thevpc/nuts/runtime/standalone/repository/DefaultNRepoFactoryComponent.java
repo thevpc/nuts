@@ -87,7 +87,7 @@ public class DefaultNRepoFactoryComponent implements NRepositoryFactoryComponent
         }
         if (NConstants.RepoTypes.NUTS.equals(type)) {
             if (NBlankable.isBlank(config.getLocation()) ||
-                    NPath.of(config.getLocation().getPath(), session).isFile()
+                    NPath.of(config.getLocation().getPath(), session).isLocal()
             ) {
                 return new NFolderRepository(options, session, parentRepository);
             } else if (NPath.of(config.getLocation().getPath(), session).isURL()) {

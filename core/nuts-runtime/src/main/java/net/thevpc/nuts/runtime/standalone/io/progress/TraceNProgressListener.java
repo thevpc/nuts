@@ -52,7 +52,9 @@ public class TraceNProgressListener implements NProgressListener/*, NutsOutputSt
             }
             case COMPLETE: {
                 if (event.getSession().isPlainOut()) {
-                    return onProgress0(event, true);
+                    boolean b = onProgress0(event, true);
+                    out.resetLine();
+                    return b;
                     //out.println();
                 }
                 return false;

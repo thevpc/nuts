@@ -133,7 +133,7 @@ public class DefaultNCompress implements NCompress {
                     }
                 }
                 if (tempPath != null) {
-                    if (this.target instanceof NPath && ((NPath) target).isFile()) {
+                    if (this.target instanceof NPath/* && ((NPath) target).isFile()*/) {
                         Files.move(tempPath, ((NPath) target).toFile(),
                                 StandardCopyOption.REPLACE_EXISTING);
                     } else if (this.target instanceof NPath) {

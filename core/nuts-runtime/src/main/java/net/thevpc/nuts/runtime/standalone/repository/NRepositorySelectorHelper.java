@@ -76,7 +76,7 @@ public class NRepositorySelectorHelper {
         NAssert.requireNonBlank(url, "repository url (<name>=<url>)", session);
         return new NAddRepositoryOptions().setName(name)
                 .setFailSafe(false).setCreate(true)
-                .setOrder((!NBlankable.isBlank(url) && NPath.of(url, session).isFile())
+                .setOrder((!NBlankable.isBlank(url) && NPath.of(url, session).isLocal())
                         ? NAddRepositoryOptions.ORDER_USER_LOCAL
                         : NAddRepositoryOptions.ORDER_USER_REMOTE
                 )

@@ -6,6 +6,7 @@ import net.thevpc.nuts.NMsg;
 import net.thevpc.nuts.NSession;
 import net.thevpc.nuts.io.NCp;
 import net.thevpc.nuts.io.NPath;
+import net.thevpc.nuts.io.NPathOption;
 import net.thevpc.nuts.util.NProgressEvent;
 import net.thevpc.nuts.util.NProgressListener;
 
@@ -14,9 +15,19 @@ import java.text.DecimalFormat;
 public class ExamplesOfCp {
     public void executeAll(NSession session) {
         executeSomeCommand(session);
+        executeCustomMonitor(session);
     }
 
     public void executeSomeCommand(NSession session) {
+        session.out().println("Example of ## Cp ##");
+        NCp.of(session)
+                .from(NPath.of("http://www.google.com", session))
+                .to(NPath.of("example.txt", session))
+                .addOptions(NPathOption.LOG, NPathOption.TRACE)
+                .run();
+    }
+
+    public void executeCustomMonitor(NSession session) {
         session.out().println("Example of ## Cp ##");
         NCp.of(session)
                 .from(NPath.of("http://www.google.com", session))
