@@ -26,11 +26,13 @@ package net.thevpc.nuts.runtime.standalone.util.reflect;
 import net.thevpc.nuts.NOptional;
 import net.thevpc.nuts.NSession;
 import net.thevpc.nuts.util.*;
+import org.jetbrains.annotations.NotNull;
 
 import java.lang.reflect.*;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 /**
  * @author thevpc
@@ -351,6 +353,7 @@ public class ClassNReflectType implements NReflectType {
             for (Field f : clazz.getDeclaredFields()) {
                 if (!declaredProperties.containsKey(f.getName())) {
                     if (!Modifier.isStatic(f.getModifiers()) && !Modifier.isTransient(f.getModifiers())) {
+                        //TypeFieldTreeNode classFieldData = getClassFieldData(f, getActualClassArguments0(type));
                         FieldReflectProperty p = new FieldReflectProperty(f, cleanInstance, this, propertyDefaultValueStrategy);
                         declaredProperties.put(p.getName(), new IndexedItem<>(hierarchyIndex, p));
                     }
@@ -358,6 +361,23 @@ public class ClassNReflectType implements NReflectType {
             }
         }
     }
+
+    @NotNull
+    private static Map<TypeVariable<?>, Type> getActualClassArguments0(Type type) {
+        Map<TypeVariable<?>, Type> m=new HashMap<>();
+        if(type instanceof ParameterizedType){
+            Type[] actualTypeArguments = ((ParameterizedType) type).getActualTypeArguments();
+            Type rawType = ((ParameterizedType) type).getRawType();
+            if(rawType instanceof Class){
+                TypeVariable<? extends Class<?>>[] typeParameters = ((Class<?>) rawType).getTypeParameters();
+                for (int i = 0; i <typeParameters.length; i++) {
+                    m.put(typeParameters[i],actualTypeArguments[i]);
+                }
+            }
+        }
+        return m;
+    }
+
 
     private static class IndexedItem<T> {
         int index;
@@ -368,4 +388,161 @@ public class ClassNReflectType implements NReflectType {
             this.item = item;
         }
     }
+//
+//
+//
+//    // thanks to https://stackoverflow.com/questions/1868333/how-can-i-determine-the-type-of-a-generic-field-in-java
+//    public static class TypeFieldTreeNode {
+//        public String fieldName;
+//        public String typeSimpleName;
+//        public String typeCanonicalName;
+//        public Type typeGenericName;
+//
+//        public TypeFieldTreeNode(String fieldName, String typeSimpleName, String typeCanonicalName, Type genericTypeName) {
+//            this.fieldName = fieldName;
+//            this.typeSimpleName = typeSimpleName;
+//            this.typeCanonicalName = typeCanonicalName;
+//            this.typeGenericName = genericTypeName;
+//        }
+//    }
+//
+//    // thanks to https://stackoverflow.com/questions/1868333/how-can-i-determine-the-type-of-a-generic-field-in-java
+//    private static TypeFieldTreeNode getClassFieldData(Field field,
+//                                                Map<TypeVariable<?>, Type> actualClassArguments) {
+//        Class<?> fieldClass = field.getType();
+//        Type fieldGenericType = field.getGenericType();
+//        TypeFieldTreeNode result = null;
+//
+//        // if type of the field is a generic parameter of the class containing the field
+//        if(fieldGenericType instanceof TypeVariable<?>) {
+//            Type actualFieldType = null;
+//            Class<?> actualFieldClass = null;
+//            Map<TypeVariable<?>, Type> fieldTypeActualClassArguments = new HashMap<>();
+//            TypeVariable<?> fieldTypeVariable = (TypeVariable<?>) fieldGenericType;
+//
+//            if(actualClassArguments.containsKey(fieldTypeVariable))
+//                actualFieldType = actualClassArguments.get(fieldTypeVariable);
+//            else
+//                throw new RuntimeException(String.format("For a field %s of type %s from class %s, the corresponding actual type of generic parameter was not found",
+//                        field.getName(), fieldGenericType.getTypeName(), field.getDeclaringClass().getCanonicalName()));
+//
+//            // for example, field "myField2" of class MyClass2<MyClass<Integer>> where:
+//            // public class MyClass2<T> { public T myField2; }
+//            // public class MyClass<T> { public T myField; }
+//            if(actualFieldType instanceof ParameterizedType) {
+//                actualFieldClass = (Class<?>)((ParameterizedType) actualFieldType).getRawType();
+//                result = new TypeFieldTreeNode(field.getName(), actualFieldClass.getSimpleName(),
+//                        actualFieldClass.getCanonicalName(), actualFieldType);
+//
+//                fieldTypeActualClassArguments = mapTypeActualClassArguments(actualFieldClass, actualFieldType, actualClassArguments);
+//            }
+//            // for example, field "myField" of class MyClass<Integer> where:
+//            // public class MyClass<T> { public T myField; }
+//            else {
+//                actualFieldClass = (Class<?>) actualFieldType;
+//                result = new TypeFieldTreeNode(field.getName(), actualFieldClass.getSimpleName(),
+//                        actualFieldClass.getCanonicalName(), actualFieldType);
+//            }
+//        }
+//        // if the field is an array and the type of the elements of the array is a generic parameter of the class containing the field
+//        // for example, field "myField" of class MyClass<Integer> where:
+//        // public class MyClass<T> { public T[] myField; }
+//        else if(fieldGenericType instanceof GenericArrayType) {
+//            Type genericComponentType = ((GenericArrayType) fieldGenericType).getGenericComponentType();
+//            if(genericComponentType instanceof TypeVariable<?>) {
+//                if(actualClassArguments.containsKey(genericComponentType)) {
+//                    Type actualArrayComponentType = actualClassArguments.get(genericComponentType);
+//                    assert !(actualArrayComponentType instanceof ParameterizedType);
+//                    Class<?> actualArrayClass = (Class<?>) actualArrayComponentType;
+//                    result = new TypeFieldTreeNode(field.getName(), actualArrayClass.getSimpleName() + "[]",
+//                            actualArrayClass.getCanonicalName() + "[]", actualArrayComponentType.to);
+//                }
+//                else
+//                    throw new RuntimeException(String.format("For a field %s of type %s from class %s, the corresponding actual type of generic parameter was not found",
+//                            field.getName(), fieldGenericType.getTypeName(), field.getDeclaringClass().getCanonicalName()));
+//            }
+//            else
+//                throw new RuntimeException(String.format("Unknown array genericComponentType: %s", genericComponentType.getClass().getCanonicalName()));
+//        }
+//        else {
+//            result = new TypeFieldTreeNode(field.getName(), fieldClass.getSimpleName(), fieldClass.getCanonicalName(), "");
+//            Map<TypeVariable<?>, Type> fieldTypeActualClassArguments = new HashMap<>();
+//
+//            // for example, field "myField2" of class MyClass2<Integer> where:
+//            // public class MyClass2<T> { public MyClass<T> myField2; }
+//            // public class MyClass<T> { public T myField; }
+//            if(fieldGenericType instanceof ParameterizedType) {
+//
+//                // custom generic type name creator for situations when actual type arguments can be of type TypeVariable
+//                result.typeGenericName = getGenericTypeName((ParameterizedType)fieldGenericType, actualClassArguments);
+//                fieldTypeActualClassArguments = mapTypeActualClassArguments(fieldClass, fieldGenericType, actualClassArguments);
+//            }
+//
+//            List<Field> childFields = Arrays.stream(fieldClass.getFields()).filter(f -> !Modifier.isFinal(f.getModifiers()))
+//                    .collect(Collectors.toList());
+//            for (Field childField : childFields) {
+//                result.children.add(getClassFieldData(childField, fieldTypeActualClassArguments));
+//            }
+//        }
+//
+//        return result;
+//    }
+//
+//    // thanks to https://stackoverflow.com/questions/1868333/how-can-i-determine-the-type-of-a-generic-field-in-java
+//    private static Map<TypeVariable<?>, Type> mapTypeActualClassArguments(Class<?> clazz, Type genericType,
+//                                                                   Map<TypeVariable<?>, Type> actualClassArguments) {
+//        if(!(genericType instanceof ParameterizedType)) {
+//            return Collections.emptyMap();
+//        }
+//
+//        Map<TypeVariable<?>, Type> result = new HashMap<>();
+//        Type[] actualTypeParametersTypes = ((ParameterizedType) genericType).getActualTypeArguments();
+//        TypeVariable<?>[] classTypeParameters = clazz.getTypeParameters();
+//
+//        for (int i = 0; i < classTypeParameters.length; i++) {
+//            if(actualTypeParametersTypes[i] instanceof TypeVariable<?>) {
+//                TypeVariable<?> fieldTypeVariable = (TypeVariable<?>) actualTypeParametersTypes[i];
+//
+//                if(actualClassArguments.containsKey(fieldTypeVariable))
+//                    actualTypeParametersTypes[i] = actualClassArguments.get(fieldTypeVariable);
+//                else
+//                    throw new RuntimeException(String.format("For generic parameter %s of type %s, the corresponding actual type of generic parameter was not found",
+//                            classTypeParameters[i].getName(), genericType.getTypeName()));
+//            }
+//            result.put(classTypeParameters[i], actualTypeParametersTypes[i]);
+//        }
+//
+//        return result;
+//    }
+//
+//    // thanks to https://stackoverflow.com/questions/1868333/how-can-i-determine-the-type-of-a-generic-field-in-java
+//    private static String getGenericTypeName(ParameterizedType parameterizedType,
+//                                      Map<TypeVariable<?>, Type> actualClassArguments) {
+//        List<String> genericParamJavaTypes = new ArrayList<>();
+//        for(Type typeArgument : parameterizedType.getActualTypeArguments()) {
+//            if (typeArgument instanceof TypeVariable<?>) {
+//                TypeVariable<?> typeVariable = (TypeVariable<?>) typeArgument;
+//                if(actualClassArguments.containsKey(typeVariable)) {
+//                    typeArgument = actualClassArguments.get(typeVariable);
+//                } else
+//                    throw new RuntimeException(String.format("For generic parameter %s of type %s, the corresponding actual type of generic parameter was not found",
+//                            typeArgument.getTypeName(), parameterizedType.getTypeName()));
+//            }
+//
+//            if(typeArgument instanceof ParameterizedType) {
+//                ParameterizedType parameterizedTypeArgument = (ParameterizedType) typeArgument;
+//                Map<TypeVariable<?>, Type> typeActualClassArguments = mapTypeActualClassArguments(
+//                        (Class<?>)parameterizedTypeArgument.getRawType(),
+//                        typeArgument, actualClassArguments);
+//                genericParamJavaTypes.add(getGenericTypeName((ParameterizedType) typeArgument, typeActualClassArguments));
+//            }
+//            else if (typeArgument instanceof Class<?>)
+//                genericParamJavaTypes.add(((Class<?>) typeArgument).getCanonicalName());
+//            else
+//                throw new RuntimeException(String.format("For generic parameter %s of type %s, the corresponding actual type of generic parameter was not found", typeArgument.getTypeName()));
+//        }
+//
+//        Class<?> rawType = (Class<?>) parameterizedType.getRawType();
+//        return rawType.getCanonicalName() + "<" + String.join(", ", genericParamJavaTypes) + ">";
+//    }
 }

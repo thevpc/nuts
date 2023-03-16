@@ -1,12 +1,7 @@
 package net.thevpc.nuts.runtime.standalone.elem.mapper;
 
-import net.thevpc.nuts.elem.NElement;
-import net.thevpc.nuts.elem.NElementEntry;
-import net.thevpc.nuts.elem.NElementFactoryContext;
-import net.thevpc.nuts.elem.NElementMapper;
+import net.thevpc.nuts.elem.*;
 import net.thevpc.nuts.runtime.standalone.util.reflect.ReflectUtils;
-import net.thevpc.nuts.runtime.standalone.util.reflect.SimpleParametrizedType;
-import net.thevpc.nuts.elem.DefaultNElementEntry;
 
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
@@ -38,7 +33,7 @@ public class NElementMapperNamedElement implements NElementMapper<NElementEntry>
         Type[] args = (typeOfResult instanceof ParameterizedType)
                 ? (((ParameterizedType) typeOfResult).getActualTypeArguments())
                 : new Type[]{Object.class, Object.class};
-        Type mapType = new SimpleParametrizedType(Map.class, args);
+        Type mapType = ReflectUtils.createParametrizedType(Map.class, args);
         Map map = (Map) context.elementToObject(o, mapType);
         return new DefaultNElementEntry(
                 (NElement) map.get("key"),

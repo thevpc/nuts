@@ -1,7 +1,7 @@
 /**
  * ====================================================================
- *            Nuts : Network Updatable Things Service
- *                  (universal package manager)
+ * Nuts : Network Updatable Things Service
+ * (universal package manager)
  * <br>
  * is a new Open Source Package Manager to help install packages and libraries
  * for runtime execution. Nuts is the ultimate companion for maven (and other
@@ -10,7 +10,7 @@
  * other 'things' . Its based on an extensible architecture to help supporting a
  * large range of sub managers / repositories.
  * <br>
- *
+ * <p>
  * Copyright [2020] [thevpc] Licensed under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -25,6 +25,7 @@ package net.thevpc.nuts.runtime.standalone.util.reflect;
 
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
+import java.lang.reflect.TypeVariable;
 
 /**
  *
@@ -44,13 +45,13 @@ public class ReflectUtils {
                         return value.equals(false);
                     }
                     case "byte": {
-                        return value.equals((byte)0);
+                        return value.equals((byte) 0);
                     }
                     case "char": {
-                        return value.equals((char)0);
+                        return value.equals((char) 0);
                     }
                     case "short": {
-                        return value.equals((short)0);
+                        return value.equals((short) 0);
                     }
                     case "int": {
                         return value.equals(0);
@@ -69,6 +70,7 @@ public class ReflectUtils {
         }
         return false;
     }
+
     public static Object getDefaultValue(Type type) {
         if (type instanceof Class) {
             Class c = (Class) type;
@@ -78,13 +80,13 @@ public class ReflectUtils {
                         return (false);
                     }
                     case "byte": {
-                        return ((byte)0);
+                        return ((byte) 0);
                     }
                     case "char": {
-                        return ((char)0);
+                        return ((char) 0);
                     }
                     case "short": {
-                        return ((short)0);
+                        return ((short) 0);
                     }
                     case "int": {
                         return (0);
@@ -110,9 +112,24 @@ public class ReflectUtils {
 
     public static Class getRawClass(java.lang.reflect.Type type) {
         Type tclazz = type;
-        while (tclazz instanceof ParameterizedType) {
-            tclazz = ((ParameterizedType) tclazz).getRawType();
+        while (true) {
+            if (tclazz instanceof ParameterizedType) {
+                tclazz = ((ParameterizedType) tclazz).getRawType();
+            } else if (tclazz instanceof TypeVariable) {
+                Type[] bounds = ((TypeVariable) tclazz).getBounds();
+                if (bounds.length > 0) {
+                    tclazz = bounds[0];
+                } else {
+                    tclazz = Object.class;
+                }
+            } else {
+                break;
+            }
         }
+        if (tclazz instanceof Class) {
+            return (Class) tclazz;
+        }
+
         return (Class) tclazz;
     }
 }

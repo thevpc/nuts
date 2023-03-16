@@ -263,7 +263,7 @@ public class NMsg {
                 return MessageFormat.format(sMsg, params);
             }
             case VFORMAT: {
-                return formatAsVStyle();
+                return formatAsV();
             }
             case NTF:
             case STYLED:
@@ -275,7 +275,7 @@ public class NMsg {
         return "NMsg{" + "message=" + message + ", style=" + format + ", params=" + Arrays.toString(params) + '}';
     }
 
-    private String formatAsVStyle() {
+    private String formatAsV() {
         return replaceDollarString((String) message,
                 s -> {
                     Object param = params[0];
