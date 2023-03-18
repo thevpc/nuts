@@ -123,7 +123,7 @@ public class DefaultNExecutionContext implements NExecutionContext {
         this.executorOptions = other.getExecutorOptions();
         this.executorProperties = other.getExecutorProperties();
         this.workspaceOptions = other.getWorkspaceOptions();
-        this.cwd = other.getCwd();
+        this.cwd = other.getDirectory();
         this.env = other.getEnv();
         this.failFast = other.isFailFast();
         this.temporary = other.isTemporary();
@@ -208,7 +208,7 @@ public class DefaultNExecutionContext implements NExecutionContext {
     }
 
     @Override
-    public NPath getCwd() {
+    public NPath getDirectory() {
         return cwd;
     }
 

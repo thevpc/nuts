@@ -28,13 +28,12 @@ import java.util.List;
  */
 public class NDerbyMain extends SqlSupport<NDerbyConfig> {
 
-    public NDerbyMain(NApplicationContext appContext) {
-        super("derby", NDerbyConfig.class, appContext, "org.apache.derby:derbyclient#10.16.1.1", "org.apache.derby.jdbc.ClientDriver");
+    public NDerbyMain(NSession session) {
+        super("derby", NDerbyConfig.class, session, "org.apache.derby:derbyclient#10.16.1.1", "org.apache.derby.jdbc.ClientDriver");
     }
 
     @Override
-    public void run(NApplicationContext appContext, NCmdLine commandLine) {
-        NSession session = appContext.getSession();
+    public void run(NSession session, NCmdLine commandLine) {
         NArg a;
         NDerbyConfig options = new NDerbyConfig();
         commandLine.setCommandName("derby");
@@ -83,12 +82,12 @@ public class NDerbyMain extends SqlSupport<NDerbyConfig> {
             }
         }
         if (commandLine.isExecMode()) {
-            DerbyService srv = new DerbyService(appContext);
+            DerbyService srv = new DerbyService(session);
             int effectivePort = options.getPort() < 0 ? 1527 : options.getPort();
             if (options.getCmd() == Command.start) {
                 NTexts factory = NTexts.of(session);
                 if (commandLine.isExecMode()) {
-                    if (new DerbyService(appContext).isRunning()) {
+                    if (new DerbyService(session).isRunning()) {
                         session.out().println(NMsg.ofC("derby is %s on port %s",
                                 factory.ofStyled("already running", NTextStyle.warn()),
                                 factory.ofStyled("" + effectivePort, NTextStyle.number())
@@ -97,9 +96,9 @@ public class NDerbyMain extends SqlSupport<NDerbyConfig> {
                     }
                 }
             } else if (options.getCmd() == Command.shutdown) {
-                NTexts factory = NTexts.of(appContext.getSession());
+                NTexts factory = NTexts.of(session);
                 if (commandLine.isExecMode()) {
-                    if (!new DerbyService(appContext).isRunning()) {
+                    if (!new DerbyService(session).isRunning()) {
                         session.out().println(NMsg.ofC("derby is %s on port %s",
                                 factory.ofStyled("already stopped", NTextStyle.warn()),
                                 factory.ofStyled("" + effectivePort, NTextStyle.number())
@@ -175,7 +174,6 @@ public class NDerbyMain extends SqlSupport<NDerbyConfig> {
     }
 
     public void status(NCmdLine cmdLine, NDerbyConfig options) {
-        NSession session = appContext.getSession();
         cmdLine.setCommandName("tomcat --local status");
         NArg a;
         while (cmdLine.hasNext()) {
@@ -188,7 +186,7 @@ public class NDerbyMain extends SqlSupport<NDerbyConfig> {
         options.setCmd(Command.ping);
         NTexts factory = NTexts.of(session);
         if (cmdLine.isExecMode()) {
-            if (new DerbyService(appContext).isRunning()) {
+            if (new DerbyService(session).isRunning()) {
                 session.out().println(NMsg.ofC("derby is %s", factory.ofStyled("running", NTextStyle.primary1())));
             } else {
                 session.out().println(NMsg.ofC("derby is %s", factory.ofStyled("stopped", NTextStyle.error())));
@@ -197,7 +195,6 @@ public class NDerbyMain extends SqlSupport<NDerbyConfig> {
     }
 
     private boolean _opt(NCmdLine cmdLine, NDerbyConfig options) {
-        NSession session = appContext.getSession();
         NArg a;
         if ((a = cmdLine.nextEntry("-v", "--derby-version").orNull()) != null) {
             options.setDerbyVersion(a.getStringValue().get(session));
@@ -223,7 +220,7 @@ public class NDerbyMain extends SqlSupport<NDerbyConfig> {
         } else if ((a = cmdLine.nextEntry("-n", "--dbname").orNull()) != null) {
             options.setDatabaseName(a.getStringValue().get(session));
             return true;
-        } else if (appContext.configureFirst(cmdLine)) {
+        } else if (session.configureFirst(cmdLine)) {
             return true;
         } else {
             cmdLine.throwUnexpectedArgument();
@@ -232,7 +229,6 @@ public class NDerbyMain extends SqlSupport<NDerbyConfig> {
     }
 
     public void ps(NCmdLine args, NDerbyConfig options) {
-        NSession session = appContext.getSession();
         String format = "default";
         args.setCommandName("tomcat --local ps");
         NArg a;
@@ -251,7 +247,7 @@ public class NDerbyMain extends SqlSupport<NDerbyConfig> {
         if (args.isExecMode()) {
             if (session.isPlainOut()) {
                 NPrintStream out = session.out();
-                for (RunningDerby jpsResult : DerbyUtils.getRunningInstances(appContext)) {
+                for (RunningDerby jpsResult : DerbyUtils.getRunningInstances(session)) {
                     switch (format) {
                         case "short": {
                             out.println(NMsg.ofC("%s",
@@ -279,13 +275,12 @@ public class NDerbyMain extends SqlSupport<NDerbyConfig> {
                     }
                 }
             } else {
-                session.out().println(DerbyUtils.getRunningInstances(appContext));
+                session.out().println(DerbyUtils.getRunningInstances(session));
             }
         }
     }
 
     public void versions(NCmdLine args, NDerbyConfig options) {
-        NSession session = appContext.getSession();
         args.setCommandName("tomcat --local versions");
         while (args.hasNext()) {
             if (_opt(args, options)) {
@@ -295,7 +290,7 @@ public class NDerbyMain extends SqlSupport<NDerbyConfig> {
             }
         }
         if (args.isExecMode()) {
-            DerbyService srv = new DerbyService(appContext);
+            DerbyService srv = new DerbyService(session);
             session.out().println(srv.findVersions());
         }
     }

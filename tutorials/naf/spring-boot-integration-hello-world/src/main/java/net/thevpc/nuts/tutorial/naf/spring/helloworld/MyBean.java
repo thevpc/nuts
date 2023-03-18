@@ -1,7 +1,6 @@
 package net.thevpc.nuts.tutorial.naf.spring.helloworld;
 
 
-import net.thevpc.nuts.NApplicationContext;
 import net.thevpc.nuts.NSession;
 import net.thevpc.nuts.NWorkspace;
 import net.thevpc.nuts.io.NPrintStream;
@@ -18,8 +17,6 @@ public class MyBean {
     private NSession session;
     @Autowired
     private NWorkspace workspace;
-    @Autowired
-    private NApplicationContext applicationContext;
     @Autowired
     private NPrintStream out;
 

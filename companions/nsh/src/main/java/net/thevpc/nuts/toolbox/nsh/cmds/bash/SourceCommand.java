@@ -80,7 +80,7 @@ public class SourceCommand extends NShellBuiltinDefault {
             }
         }
         if(!file.isAbsolute()){
-            file=file.toAbsolute(context.getCwd());
+            file=file.toAbsolute(context.getDirectory());
         }
         if (!file.isRegularFile()) {
             throwExecutionException(NMsg.ofC("file not found : %s",file), 1, session);

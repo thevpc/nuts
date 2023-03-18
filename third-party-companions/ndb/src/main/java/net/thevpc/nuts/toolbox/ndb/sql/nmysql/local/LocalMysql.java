@@ -24,10 +24,10 @@ package net.thevpc.nuts.toolbox.ndb.sql.nmysql.local;
 //
 //public class LocalMysql {
 //    private static final Logger LOG = Logger.getLogger(LocalMysql.class.getName());
-//    private NutsApplicationContext context;
+//    private NSession session;
 //    private Path sharedConfigFolder;
 //
-//    public LocalMysql(NutsApplicationContext ws) {
+//    public LocalMysql(NSession ws) {
 //        this.setContext(ws);
 //        sharedConfigFolder = Paths.get(getContext().getVersionFolderFolder(NutsStoreLocation.CONFIG, NMySqlConfigVersions.CURRENT));
 //    }
@@ -554,12 +554,12 @@ package net.thevpc.nuts.toolbox.ndb.sql.nmysql.local;
 //        return loadMysqlConfigOrError(atname.getConfigName()).getDatabaseOrError(atname.getDatabaseName());
 //    }
 //
-//    public NutsApplicationContext getContext() {
-//        return context;
+//    public NSession getContext() {
+//        return session;
 //    }
 //
-//    public void setContext(NutsApplicationContext context) {
-//        this.context = context;
+//    public void setContext(NSession session) {
+//        this.session = session;
 //    }
 //
 //}

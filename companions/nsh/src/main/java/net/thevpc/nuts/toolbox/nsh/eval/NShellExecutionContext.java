@@ -39,8 +39,6 @@ public interface NShellExecutionContext {
 
     NShellContext getShellContext();
 
-    NApplicationContext getAppContext();
-
     NTerminalMode geTerminalMode();
 
     boolean isAskHelp();
@@ -69,11 +67,11 @@ public interface NShellExecutionContext {
 
     Map<String, Object> getUserProperties();
 
-    String getCwd();
+    String getDirectory();
 
     String getHome();
 
-    void setCwd(String cwd);
+    void setDirectory(String cwd);
 
     NShellFileSystem getFileSystem();
 

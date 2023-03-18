@@ -25,10 +25,10 @@ public class NoapiMain implements NApplication {
     }
 
     @Override
-    public void run(NApplicationContext appContext) {
-        this.service = new NOpenAPIService(appContext);
+    public void run(NSession session) {
+        this.service = new NOpenAPIService(session);
         ref.setCommand("pdf");
-        appContext.processCommandLine(new NCmdLineProcessor() {
+        session.processAppCommandLine(new NCmdLineProcessor() {
             @Override
             public boolean onCmdNextOption(NArg option, NCmdLine commandLine, NCmdLineContext context) {
                 NSession session = commandLine.getSession();
@@ -150,7 +150,7 @@ public class NoapiMain implements NApplication {
                 for (NoapiCmdData d : data) {
                     switch (d.getCommand()) {
                         case "pdf": {
-                            NOpenAPIService service = new NOpenAPIService(appContext);
+                            NOpenAPIService service = new NOpenAPIService(session);
                             service.run(d.getPath(), d.getTarget(), d.getVars(), d.getVarsMap(), d.isKeep());
                             break;
                         }

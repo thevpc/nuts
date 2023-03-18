@@ -48,7 +48,7 @@ public class SshFileInputStream extends DynamicInputStream {
             // exec 'scp -f rfile' remotely
             String command = "scp -f " + from;
             try {
-                channel = connection.session.openChannel("exec");
+                channel = connection.sshSession.openChannel("exec");
             } catch (JSchException e) {
                 throw new IOException(e);
             }

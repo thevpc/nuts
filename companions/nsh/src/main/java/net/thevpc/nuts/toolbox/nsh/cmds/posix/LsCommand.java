@@ -127,7 +127,7 @@ public class LsCommand extends NShellBuiltinDefault {
                 errors.result.put(path, NMsg.ofC("cannot access '%s': No such file or directory", path));
                 continue;
             }
-            file = file.toAbsolute(NPath.of(context.getCwd(), session));
+            file = file.toAbsolute(NPath.of(context.getDirectory(), session));
             if (!file.exists()) {
                 exitCode = 1;
                 if (errors == null) {

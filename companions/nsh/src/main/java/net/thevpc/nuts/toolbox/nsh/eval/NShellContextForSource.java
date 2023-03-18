@@ -83,8 +83,8 @@ public class NShellContextForSource extends AbstractNShellContext {
     }
 
     @Override
-    public String getCwd() {
-        return other.getCwd();
+    public String getDirectory() {
+        return other.getDirectory();
     }
 
     @Override
@@ -93,8 +93,8 @@ public class NShellContextForSource extends AbstractNShellContext {
     }
 
     @Override
-    public void setCwd(String cwd) {
-        other.setCwd(cwd);
+    public void setDirectory(String cwd) {
+        other.setDirectory(cwd);
     }
 
     @Override

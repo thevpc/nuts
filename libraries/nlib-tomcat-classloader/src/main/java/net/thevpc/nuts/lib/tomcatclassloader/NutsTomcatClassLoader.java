@@ -27,7 +27,7 @@ public class NutsTomcatClassLoader extends WebappClassLoader {
     private static final String SERVICES_PREFIX = "/META-INF/services/";
     private static final org.apache.juli.logging.Log log
             = org.apache.juli.logging.LogFactory.getLog(WebappClassLoaderBase.class);
-    protected NSession nutsWorkspace;
+    protected NSession nutsSession;
     protected ClassLoader nutsClassLoader;
     protected boolean nutsClassLoaderUnderConstruction;
     protected String nutsPath;
@@ -123,8 +123,8 @@ public class NutsTomcatClassLoader extends WebappClassLoader {
     }
 
     public synchronized NSession resolveNutsWorkspace() {
-        if (nutsWorkspace == null) {
-            nutsWorkspace
+        if (nutsSession == null) {
+            nutsSession
                     = Nuts.openWorkspace(
                         new DefaultNWorkspaceOptionsBuilder()
                                     .setRuntimeId(getWorkspaceBootRuntime())
@@ -138,7 +138,7 @@ public class NutsTomcatClassLoader extends WebappClassLoader {
                                     )
                     );
         }
-        return nutsWorkspace;
+        return nutsSession;
     }
 
 //    @Override

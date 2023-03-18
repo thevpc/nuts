@@ -61,7 +61,7 @@ public class DefaultNShellContext extends AbstractNShellContext {
         this.shell = shell;
         setFileSystem(new DefaultNShellFileSystem());
         if (parentContext != null) {
-            setCwd(parentContext.getCwd());
+            setDirectory(parentContext.getDirectory());
         }
         setRootNode(rootNode);
         setParentNode(parentNode);
@@ -92,7 +92,7 @@ public class DefaultNShellContext extends AbstractNShellContext {
 
         this.parentContext = parentContext;//.copy();
         if (parentContext != null) {
-            setCwd(parentContext.getCwd());
+            setDirectory(parentContext.getDirectory());
         }
     }
 
@@ -173,7 +173,7 @@ public class DefaultNShellContext extends AbstractNShellContext {
     }
 
     @Override
-    public String getCwd() {
+    public String getDirectory() {
         return cwd;
     }
 
@@ -183,7 +183,7 @@ public class DefaultNShellContext extends AbstractNShellContext {
     }
 
     @Override
-    public void setCwd(String cwd) {
+    public void setDirectory(String cwd) {
         NShellFileSystem fs = getFileSystem();
         if (cwd == null || cwd.isEmpty()) {
             this.cwd = fs.getHomeWorkingDir(getSession());
@@ -211,7 +211,7 @@ public class DefaultNShellContext extends AbstractNShellContext {
     @Override
     public void setFileSystem(NShellFileSystem fileSystem) {
         this.fileSystem = fileSystem;
-        setCwd(this.fileSystem.getInitialWorkingDir(getSession()));
+        setDirectory(this.fileSystem.getInitialWorkingDir(getSession()));
     }
 
     @Override

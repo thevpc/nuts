@@ -15,23 +15,22 @@ import java.util.List;
 public class ProjectService {
 
     private ProjectConfig config;
-    private final NApplicationContext appContext;
+    private final NSession session;
     private final RepositoryAddress defaultRepositoryAddress;
     private final NPath sharedConfigFolder;
 
-    public ProjectService(NApplicationContext context, RepositoryAddress defaultRepositoryAddress, NPath file) throws IOException {
-        this.appContext = context;
+    public ProjectService(NSession session, RepositoryAddress defaultRepositoryAddress, NPath file) throws IOException {
+        this.session = session;
         this.defaultRepositoryAddress = defaultRepositoryAddress == null ? new RepositoryAddress() : defaultRepositoryAddress;
-        NSession session = context.getSession();
         config = NElements.of(session).json().parse(file, ProjectConfig.class);
-        sharedConfigFolder = context.getVersionFolder(NStoreLocation.CONFIG, NWorkConfigVersions.CURRENT);
+        sharedConfigFolder = session.getAppVersionFolder(NStoreLocation.CONFIG, NWorkConfigVersions.CURRENT);
     }
 
-    public ProjectService(NApplicationContext context, RepositoryAddress defaultRepositoryAddress, ProjectConfig config) {
+    public ProjectService(NSession session, RepositoryAddress defaultRepositoryAddress, ProjectConfig config) {
         this.config = config;
-        this.appContext = context;
+        this.session = session;
         this.defaultRepositoryAddress = defaultRepositoryAddress;
-        sharedConfigFolder = context.getVersionFolder(NStoreLocation.CONFIG, NWorkConfigVersions.CURRENT);
+        sharedConfigFolder = session.getAppVersionFolder(NStoreLocation.CONFIG, NWorkConfigVersions.CURRENT);
     }
 
     public ProjectConfig getConfig() {
@@ -55,14 +54,12 @@ public class ProjectService {
     public void save() throws IOException {
         NPath configFile = getConfigFile();
         configFile.mkParentDirs();
-        NSession session = appContext.getSession();
         NElements.of(session).json().setValue(config).print(configFile);
     }
 
     public boolean load() {
         NPath configFile = getConfigFile();
         if (configFile.isRegularFile()) {
-            NSession session = appContext.getSession();
             ProjectConfig u = NElements.of(session).json().parse(configFile, ProjectConfig.class);
             if (u != null) {
                 config = u;
@@ -77,7 +74,6 @@ public class ProjectService {
         if (f.isDirectory()) {
             if (new File(f, "pom.xml").isFile()) {
                 try {
-                    NSession session = appContext.getSession();
                     return NDescriptorParser.of(session)
                             .setDescriptorStyle(NDescriptorStyle.MAVEN)
                             .parse(new File(f, "pom.xml")).get(session);
@@ -98,7 +94,6 @@ public class ProjectService {
         if (f.isDirectory()) {
             if (new File(f, "pom.xml").isFile()) {
                 try {
-                    NSession session = appContext.getSession();
                     NDescriptor g = NDescriptorParser.of(session)
                             .setDescriptorStyle(NDescriptorStyle.MAVEN)
                             .parse(new File(f, "pom.xml")).get(session);
@@ -152,7 +147,6 @@ public class ProjectService {
     }
 
     public File detectLocalVersionFile(String sid) {
-        NSession session = appContext.getSession();
         NId id = NId.of(sid).get(session);
         if (config.getTechnologies().contains("maven")) {
             File f = new File(System.getProperty("user.home"), ".m2/repository/"
@@ -180,7 +174,6 @@ public class ProjectService {
             if (f.isDirectory()) {
                 if (new File(f, "pom.xml").isFile()) {
                     try {
-                        NSession session = appContext.getSession();
                         return NDescriptorParser.of(session)
                                 .setDescriptorStyle(NDescriptorStyle.MAVEN)
                                 .parse(new File(f, "pom.xml")).get(session).getId().getVersion().toString();
@@ -194,7 +187,6 @@ public class ProjectService {
     }
 
     public File detectRemoteVersionFile(String sid) {
-        NSession session = appContext.getSession();
         NId id = NId.of(sid).get(session);
         if (config.getTechnologies().contains("maven")) {
             RepositoryAddress a = config.getAddress();
@@ -252,7 +244,6 @@ public class ProjectService {
                         a = new RepositoryAddress();
                     }
                     String nutsRepository = a.getNutsRepository();
-                    NSession session = appContext.getSession();
                     if (NBlankable.isBlank(nutsRepository)) {
                         throw new NExecutionException(session, NMsg.ofPlain("missing repository. try 'nwork set -r vpc-public-maven' or something like that"), 2);
                     }

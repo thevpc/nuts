@@ -19,7 +19,7 @@ public class RemoteTomcatConfigService extends RemoteTomcatServiceBase {
     public static final String REMOTE_CONFIG_EXT = ".remote-config";
     private static final String NTOMCAT = "net.thevpc.nuts.toolbox:ntomcat";
     RemoteTomcatConfig config;
-    NApplicationContext context;
+    NSession session;
     RemoteTomcat client;
     NPath sharedConfigFolder;
     private String name;
@@ -27,8 +27,8 @@ public class RemoteTomcatConfigService extends RemoteTomcatServiceBase {
     public RemoteTomcatConfigService(String name, RemoteTomcat client) {
         setName(name);
         this.client = client;
-        this.context = client.context;
-        sharedConfigFolder = client.getContext().getVersionFolder(NStoreLocation.CONFIG, NTomcatConfigVersions.CURRENT);
+        this.session = client.session;
+        sharedConfigFolder = client.getSession().getAppVersionFolder(NStoreLocation.CONFIG, NTomcatConfigVersions.CURRENT);
     }
 
     public RemoteTomcatConfigService(NPath file, RemoteTomcat client) {
@@ -58,7 +58,6 @@ public class RemoteTomcatConfigService extends RemoteTomcatServiceBase {
 
     @Override
     public RemoteTomcatConfigService print(NPrintStream out) {
-        NSession session = context.getSession();
         NElements.of(session).json().setValue(getConfig()).print(out);
         out.flush();
         return this;
@@ -82,7 +81,6 @@ public class RemoteTomcatConfigService extends RemoteTomcatServiceBase {
 
     public RemoteTomcatConfigService save() {
         NPath f = getConfigPath();
-        NSession session = context.getSession();
         NElements.of(session).json().setValue(config).print(f);
         return this;
     }
@@ -161,7 +159,6 @@ public class RemoteTomcatConfigService extends RemoteTomcatServiceBase {
     }
 
     public RemoteTomcatConfigService loadConfig() {
-        NSession session = context.getSession();
         if (name == null) {
             throw new NExecutionException(session, NMsg.ofPlain("missing instance name"), 2);
         }
@@ -188,7 +185,7 @@ public class RemoteTomcatConfigService extends RemoteTomcatServiceBase {
     public RemoteTomcatAppConfigService getAppOrError(String appName) {
         RemoteTomcatAppConfig a = getConfig().getApps().get(appName);
         if (a == null) {
-            throw new NExecutionException(context.getSession(), NMsg.ofC("app not found :%s", appName), 2);
+            throw new NExecutionException(session, NMsg.ofC("app not found :%s", appName), 2);
         }
         return new RemoteTomcatAppConfigService(appName, a, this);
     }
@@ -229,7 +226,7 @@ public class RemoteTomcatConfigService extends RemoteTomcatServiceBase {
         cmdList.add("nuts");
         cmdList.add("--bot");
         cmdList.addAll(Arrays.asList(cmd));
-        NExecCommand.of(context.getSession())
+        NExecCommand.of(session)
                 .addCommand(cmdList)
                 .setFailFast(true)
                 .run();

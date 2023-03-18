@@ -33,7 +33,7 @@ public class SShConnection implements AutoCloseable {
 //            return null;
 //        }
 //    };
-    Session session;
+    Session sshSession;
     NSession nSession;
     private boolean redirectErrorStream;
     private boolean failFast;
@@ -41,16 +41,16 @@ public class SShConnection implements AutoCloseable {
     private PrintStream err = new PrintStream(new NonClosableOutputStream(System.err));
     private List<SshListener> listeners = new ArrayList<>();
 
-    public SShConnection(String address, NSession nSession) {
-        this(new SshAddress(address), nSession);
+    public SShConnection(String address, NSession sshSession) {
+        this(new SshAddress(address), sshSession);
     }
 
-    public SShConnection(SshAddress address, NSession nSession) {
-        init(address.getUser(), address.getHost(), address.getPort(), address.getKeyFile(), address.getPassword(), nSession);
+    public SShConnection(SshAddress address, NSession sshSession) {
+        init(address.getUser(), address.getHost(), address.getPort(), address.getKeyFile(), address.getPassword(), sshSession);
     }
 
-    public SShConnection(String user, String host, int port, String keyFilePath, String keyPassword, NSession nSession) {
-        init(user, host, port, keyFilePath, keyPassword, nSession);
+    public SShConnection(String user, String host, int port, String keyFilePath, String keyPassword, NSession sshSession) {
+        init(user, host, port, keyFilePath, keyPassword, sshSession);
     }
 
     public boolean isRedirectErrorStream() {
@@ -88,8 +88,8 @@ public class SShConnection implements AutoCloseable {
         return this;
     }
 
-    private void init(String user, String host, int port, String keyFilePath, String keyPassword, NSession nSession) {
-        this.nSession = nSession;
+    private void init(String user, String host, int port, String keyFilePath, String keyPassword, NSession session) {
+        this.nSession = session;
         try {
             JSch jsch = new JSch();
 
@@ -111,13 +111,13 @@ public class SShConnection implements AutoCloseable {
             if (port <= 0) {
                 port = 22;
             }
-            session = jsch.getSession(user, host, port);
+            this.sshSession = jsch.getSession(user, host, port);
             if (keyPassword != null && keyPassword.length() > 0) {
-                session.setConfig("PreferredAuthentications", "password");
-                session.setPassword(keyPassword);
+                this.sshSession.setConfig("PreferredAuthentications", "password");
+                this.sshSession.setPassword(keyPassword);
             }
-            session.setConfig(config);
-            session.connect();
+            this.sshSession.setConfig(config);
+            this.sshSession.connect();
         } catch (JSchException e) {
             //
             throw new UncheckedIOException(new IOException(e.getMessage() + " (" + new SshAddress(user, host, port, keyFilePath, keyPassword) + ")", e));
@@ -221,7 +221,7 @@ public class SShConnection implements AutoCloseable {
             listener.onExec(command);
         }
         try {
-            Channel channel = session.openChannel("exec");
+            Channel channel = sshSession.openChannel("exec");
             ((ChannelExec) channel).setCommand(command);
 
             // X Forwarding
@@ -294,7 +294,7 @@ public class SShConnection implements AutoCloseable {
 //            }
             // exec 'scp -f rfile' remotely
             String command = "scp -f " + from;
-            Channel channel = session.openChannel("exec");
+            Channel channel = sshSession.openChannel("exec");
             ((ChannelExec) channel).setCommand(command);
 
             // get I/O streams for remote scp
@@ -414,7 +414,7 @@ public class SShConnection implements AutoCloseable {
 //            }
             // exec 'scp -f rfile' remotely
             String command = "scp -f " + from;
-            Channel channel = session.openChannel("exec");
+            Channel channel = sshSession.openChannel("exec");
             ((ChannelExec) channel).setCommand(command);
 
             // get I/O streams for remote scp
@@ -549,7 +549,7 @@ public class SShConnection implements AutoCloseable {
 
             // exec 'scp -t rfile' remotely
             String command = "scp " + (ptimestamp ? "-p" : "") + " -t " + to;
-            Channel channel = session.openChannel("exec");
+            Channel channel = sshSession.openChannel("exec");
             ((ChannelExec) channel).setCommand(command);
 
             // get I/O streams for remote scp
@@ -631,7 +631,7 @@ public class SShConnection implements AutoCloseable {
     }
 
     public void close() {
-        session.disconnect();
+        sshSession.disconnect();
     }
 
     public String getOutputString() {

@@ -131,11 +131,6 @@ public class DefaultNShellExecutionContext implements NShellExecutionContext {
     }
 
     @Override
-    public NApplicationContext getAppContext() {
-        return getShell().getAppContext();
-    }
-
-    @Override
     public NTerminalMode geTerminalMode() {
         return terminalMode;
     }
@@ -210,8 +205,8 @@ public class DefaultNShellExecutionContext implements NShellExecutionContext {
     }
 
     @Override
-    public String getCwd() {
-        return shellContext.getCwd();
+    public String getDirectory() {
+        return shellContext.getDirectory();
     }
 
     @Override
@@ -220,8 +215,8 @@ public class DefaultNShellExecutionContext implements NShellExecutionContext {
     }
 
     @Override
-    public void setCwd(String cwd) {
-        shellContext.setCwd(cwd);
+    public void setDirectory(String cwd) {
+        shellContext.setDirectory(cwd);
     }
 
     @Override

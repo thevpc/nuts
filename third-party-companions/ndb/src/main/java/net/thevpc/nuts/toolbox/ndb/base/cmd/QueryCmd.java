@@ -17,8 +17,7 @@ public class QueryCmd<C extends NdbConfig> extends NdbCmd<C> {
         this.names.addAll(Arrays.asList(names));
     }
 
-    public void run(NApplicationContext appContext, NCmdLine commandLine) {
-        NSession session = appContext.getSession();
+    public void run(NSession session, NCmdLine commandLine) {
         NRef<AtName> name = NRef.ofNull(AtName.class);
         ExtendedQuery eq = new ExtendedQuery(getName());
         C otherOptions = createConfigInstance();

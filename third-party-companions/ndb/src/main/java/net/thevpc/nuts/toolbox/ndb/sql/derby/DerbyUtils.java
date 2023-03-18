@@ -1,12 +1,12 @@
 package net.thevpc.nuts.toolbox.ndb.sql.derby;
 
+import net.thevpc.nuts.NSession;
+import net.thevpc.nuts.io.NPs;
+
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UncheckedIOException;
-import net.thevpc.nuts.NApplicationContext;
-import net.thevpc.nuts.io.NPs;
-import net.thevpc.nuts.NSession;
 
 public class DerbyUtils {
 
@@ -26,8 +26,7 @@ public class DerbyUtils {
         }
     }
 
-    public static RunningDerby[] getRunningInstances(NApplicationContext context) {
-        NSession session = context.getSession();
+    public static RunningDerby[] getRunningInstances(NSession session) {
         return NPs.of(session)
                 .type("java").getResultList()
                 .stream().filter((p) -> p.getName().equals("org.apache.derby.drda.NetworkServerControl"))

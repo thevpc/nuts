@@ -142,8 +142,7 @@ public class TomcatUtils {
         return null;
     }
 
-    public static RunningTomcat[] getRunningInstances(NApplicationContext context) {
-        NSession session = context.getSession();
+    public static RunningTomcat[] getRunningInstances(NSession session) {
         return NPs.of(session).type("java").getResultList()
                 .stream().filter((p) -> p.getName().equals("org.apache.catalina.startup.Bootstrap"))
                 .map(x -> new RunningTomcat(x, session)).toArray(RunningTomcat[]::new);

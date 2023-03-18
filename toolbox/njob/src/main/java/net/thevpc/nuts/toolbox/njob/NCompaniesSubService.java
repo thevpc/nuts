@@ -1,14 +1,14 @@
 package net.thevpc.nuts.toolbox.njob;
 
-import net.thevpc.nuts.NApplicationContext;
+import net.thevpc.nuts.NSession;
 
 public class NCompaniesSubService {
-    private NApplicationContext context;
+    private NSession session;
     private NJobConfigStore dal;
     private JobService service;
 
-    public NCompaniesSubService(NApplicationContext context, NJobConfigStore dal, JobService service) {
-        this.context = context;
+    public NCompaniesSubService(NSession session, NJobConfigStore dal, JobService service) {
+        this.session = session;
         this.dal = dal;
         this.service = service;
     }

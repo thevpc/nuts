@@ -1,6 +1,5 @@
 package net.thevpc.nuts.toolbox.ndb.base.cmd;
 
-import net.thevpc.nuts.NApplicationContext;
 import net.thevpc.nuts.NSession;
 import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.io.NPath;
@@ -22,8 +21,7 @@ public class CopyDBCmd<C extends NdbConfig> extends NdbCmd<C> {
     }
 
 
-    public void run(NApplicationContext appContext, NCmdLine commandLine) {
-        NSession session = appContext.getSession();
+    public void run(NSession session, NCmdLine commandLine) {
         List<String> fromOptions = new ArrayList<>();
         List<String> toOptions = new ArrayList<>();
         NRef<NPath> tempDataFile = NRef.ofNull();
@@ -79,7 +77,7 @@ public class CopyDBCmd<C extends NdbConfig> extends NdbCmd<C> {
                         break;
                     }
                     default: {
-                        if (support.getAppContext().configureFirst(commandLine)) {
+                        if (support.getSession().configureFirst(commandLine)) {
 
                         } else {
                             commandLine.getSession().configureLast(commandLine);
@@ -103,8 +101,8 @@ public class CopyDBCmd<C extends NdbConfig> extends NdbCmd<C> {
         }
         fromOptions.addAll(Arrays.asList("--file", tempDataFile.toString()));
         toOptions.addAll(Arrays.asList("--file", tempDataFile.toString()));
-        getSupport().findCommand("dump").get().run(appContext, NCmdLine.of(fromOptions).setSession(session));
-        getSupport().findCommand("restore").get().run(appContext, NCmdLine.of(toOptions).setSession(session));
+        getSupport().findCommand("dump").get().run(session, NCmdLine.of(fromOptions).setSession(session));
+        getSupport().findCommand("restore").get().run(session, NCmdLine.of(toOptions).setSession(session));
         if (!keepFile.get()) {
             tempDataFile.get().deleteTree();
         }

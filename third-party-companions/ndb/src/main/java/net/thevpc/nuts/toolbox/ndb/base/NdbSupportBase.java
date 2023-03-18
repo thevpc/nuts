@@ -20,16 +20,16 @@ import java.util.Objects;
 
 public abstract class NdbSupportBase<C extends NdbConfig> implements NdbSupport {
     protected Class<C> configClass;
-    protected NApplicationContext appContext;
+    protected NSession session;
     protected String dbType;
     protected NPath sharedConfigFolder;
     protected Map<String, NdbCmd<C>> commands = new HashMap<>();
 
-    public NdbSupportBase(String dbType, Class<C> configClass, NApplicationContext appContext) {
+    public NdbSupportBase(String dbType, Class<C> configClass, NSession session) {
         this.dbType = dbType;
         this.configClass = configClass;
-        this.appContext = appContext;
-        this.sharedConfigFolder = appContext.getVersionFolder(NStoreLocation.CONFIG, NMySqlConfigVersions.CURRENT)
+        this.session = session;
+        this.sharedConfigFolder = session.getAppVersionFolder(NStoreLocation.CONFIG, NMySqlConfigVersions.CURRENT)
                 .resolve(dbType);
         declareNdbCmd(new AddConfigCmd<>(this));
         declareNdbCmd(new CountCmd<>(this));
@@ -53,27 +53,27 @@ public abstract class NdbSupportBase<C extends NdbConfig> implements NdbSupport 
         commands.put(cmd.getName(), cmd);
     }
 
-    public NApplicationContext getAppContext() {
-        return appContext;
+    public NSession getSession() {
+        return session;
     }
 
     @Override
-    public void run(NApplicationContext appContext, NCmdLine commandLine) {
+    public void run(NSession session, NCmdLine commandLine) {
         NArg a;
         commandLine.setCommandName("ndb " + dbType);
         while (commandLine.hasNext()) {
             boolean ok = false;
             for (NdbCmd<C> cc : commands.values()) {
-                if (commandLine.withNextFlag((value, arg, session) -> {
+                if (commandLine.withNextFlag((value, arg, s) -> {
                     commandLine.setCommandName(getDbType() + " " + arg.key());
-                    cc.run(appContext, commandLine);
+                    cc.run(s, commandLine);
                 }, cc.getNames())) {
                     ok = true;
                     break;
                 }
             }
             if (!ok) {
-                if (runExtraCommand(appContext, commandLine)) {
+                if (runExtraCommand(session, commandLine)) {
 
                 } else {
                     commandLine.getSession().configureLast(commandLine);
@@ -93,7 +93,7 @@ public abstract class NdbSupportBase<C extends NdbConfig> implements NdbSupport 
         return NOptional.ofNamedEmpty("command " + name);
     }
 
-    protected boolean runExtraCommand(NApplicationContext appContext, NCmdLine commandLine) {
+    protected boolean runExtraCommand(NSession session, NCmdLine commandLine) {
         return false;
     }
 
@@ -127,7 +127,7 @@ public abstract class NdbSupportBase<C extends NdbConfig> implements NdbSupport 
         if (!file.exists()) {
             return NOptional.ofNamedEmpty("config " + name);
         }
-        NElements json = NElements.of(appContext.getSession()).setNtf(false).json();
+        NElements json = NElements.of(session).setNtf(false).json();
         return NOptional.ofNamed(json.parse(file, configClass), "config " + name);
     }
 
@@ -138,7 +138,7 @@ public abstract class NdbSupportBase<C extends NdbConfig> implements NdbSupport 
 
 
     protected boolean fillOption(NCmdLine cmdLine, C options) {
-        NSession session = getAppContext().getSession();
+        NSession session = getSession();
         NArg a;
         if ((a = cmdLine.nextEntry("--name").orNull()) != null) {
             options.setName(a.getStringValue().get(session));
@@ -227,7 +227,7 @@ public abstract class NdbSupportBase<C extends NdbConfig> implements NdbSupport 
 
             } else if (fillAddConfigOption(commandLine)) {
 
-            } else if (appContext.configureFirst(commandLine)) {
+            } else if (session.configureFirst(commandLine)) {
 
             } else {
                 commandLine.throwUnexpectedArgument();

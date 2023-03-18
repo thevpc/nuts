@@ -5,7 +5,7 @@ import net.thevpc.nuts.elem.*;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.lib.md.*;
 import net.thevpc.nuts.toolbox.noapi.service.docs.ConfigMarkdownGenerator;
-import net.thevpc.nuts.toolbox.noapi.service.docs.MainMakdownGenerator;
+import net.thevpc.nuts.toolbox.noapi.service.docs.MainMarkdownGenerator;
 import net.thevpc.nuts.toolbox.noapi.model.SupportedTargetType;
 import net.thevpc.nuts.toolbox.noapi.util.AppMessages;
 import net.thevpc.nuts.toolbox.noapi.util.NoApiUtils;
@@ -14,7 +14,7 @@ import java.util.*;
 
 public class NOpenAPIService {
 
-    private NApplicationContext appContext;
+    private NSession session;
     private AppMessages msg;
     private List<String> defaultAdocHeaders = Arrays.asList(
             ":source-highlighter: coderay",
@@ -29,14 +29,13 @@ public class NOpenAPIService {
     );
     ;
 
-    public NOpenAPIService(NApplicationContext appContext) {
-        this.appContext = appContext;
-        msg = new AppMessages(null, getClass().getResource("/net/thevpc/nuts/toolbox/noapi/messages-en.json"), appContext.getSession());
+    public NOpenAPIService(NSession session) {
+        this.session = session;
+        msg = new AppMessages(null, getClass().getResource("/net/thevpc/nuts/toolbox/noapi/messages-en.json"), session);
     }
 
     public void run(String source, String target, String varsPath, Map<String, String> varsMap, boolean keep) {
         Map<String, String> vars = new HashMap<>();
-        NSession session = appContext.getSession();
         if (!NBlankable.isBlank(varsPath)) {
             Map<Object, Object> m = NElements.of(session).parse(NPath.of(varsPath, session), Map.class);
             for (Map.Entry<Object, Object> o : m.entrySet()) {
@@ -54,7 +53,7 @@ public class NOpenAPIService {
             session.out().println(NMsg.ofC("read open-api file %s", sourcePath));
         }
         String sourceBaseName = sourcePath.getSmartBaseName();
-        NElement apiElement = NoApiUtils.loadElement(sourcePath, appContext.getSession());
+        NElement apiElement = NoApiUtils.loadElement(sourcePath, session);
         NObjectElement infoObj = apiElement.asObject().get(session).getObject("info").orElse(NElements.of(session).ofEmptyObject());
         String documentVersion = infoObj.getString("version").orNull();
 
@@ -96,13 +95,12 @@ public class NOpenAPIService {
             generateConfigDocument(z, apiElement, parentPath, sourceFolder, targetPathObj2.getSmartBaseName(),targetPathObj.getName(), targetType, keep, vars);
         }
 
-        MainMakdownGenerator mg = new MainMakdownGenerator(appContext, msg);
+        MainMarkdownGenerator mg = new MainMarkdownGenerator(session, msg);
         MdDocument md = mg.createMarkdown(apiElement, sourceFolder, vars, defaultAdocHeaders);
         NoApiUtils.writeAdoc(md, targetPathObj, keep, targetType, session);
     }
 
     private void generateConfigDocument(NElement configElements, NElement apiElement, NPath parentPath, NPath sourceFolder, String baseName, String apiFileName, SupportedTargetType targetType, boolean keep, Map<String, String> vars) {
-        NSession session = appContext.getSession();
         NObjectElement obj = configElements.asObject().get(session);
         String targetName = obj.getString("target-name").get(session);
         String targetId = obj.getString("target-id").get(session);
@@ -114,7 +112,7 @@ public class NOpenAPIService {
         String documentVersion = infoObj.getString("version").orNull();
 
         NPath newFile = parentPath.resolve(baseName + "-" + NoApiUtils.toValidFileName(targetId)+"-"+documentVersion + ".pdf");
-        ConfigMarkdownGenerator mg = new ConfigMarkdownGenerator(appContext, msg);
+        ConfigMarkdownGenerator mg = new ConfigMarkdownGenerator(session, msg);
         MdDocument md = mg.createMarkdown(obj, apiElement.asObject().get(session), newFile.getParent(), sourceFolder, apiFileName, vars, defaultAdocHeaders);
         NoApiUtils.writeAdoc(md, newFile, keep, targetType, session);
     }

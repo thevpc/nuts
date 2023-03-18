@@ -87,6 +87,7 @@ public enum NTextStyleType implements NEnum {
                 case "PLAIN": {
                     return NOptional.of(PLAIN);
                 }
+                case "FX":
                 case "FOREGROUNDX":
                 case "FOREGROUNDTRUECOLOR": {
                     return NOptional.of(FORE_TRUE_COLOR);
@@ -98,6 +99,7 @@ public enum NTextStyleType implements NEnum {
                 case "BACKGROUNDCOLOR": {
                     return NOptional.of(BACK_COLOR);
                 }
+                case "BX":
                 case "BACKTRUECOLOR":
                 case "BACKGROUNDX":
                 case "BACKGROUNDTRUECOLOR": {

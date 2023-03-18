@@ -3,6 +3,7 @@ package net.thevpc.nuts.runtime.standalone.executor.embedded;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.standalone.executor.java.JavaExecutorComponent;
 import net.thevpc.nuts.runtime.standalone.executor.java.JavaExecutorOptions;
+import net.thevpc.nuts.util.NClock;
 
 import java.lang.reflect.Method;
 import java.util.Arrays;
@@ -25,6 +26,7 @@ public class ClassloaderAwareRunnableImpl extends ClassloaderAwareRunnable {
 
     @Override
     public Object runWithContext() throws Throwable {
+        NClock now = NClock.now();
         if (cls.getName().equals("net.thevpc.nuts.Nuts")) {
             NWorkspaceOptionsBuilder o = NWorkspaceOptionsBuilder.of().setCommandLine(
                     joptions.getAppArgs().toArray(new String[0]),session
@@ -67,6 +69,7 @@ public class ClassloaderAwareRunnableImpl extends ClassloaderAwareRunnable {
         } catch (Exception rr) {
             //ignore
         }
+        sessionCopy.prepareApplication(joptions.getAppArgs().toArray(new String[0]),cls,null, now);
         if (nutsAppVersion != null && nutsApp!=null) {
             //NutsWorkspace
             NApplications.getSharedMap().put("nuts.embedded.application.id", id);

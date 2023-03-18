@@ -19,13 +19,13 @@ import java.util.Map;
 import java.util.Objects;
 
 public class ConfigMarkdownGenerator {
-    private NApplicationContext appContext;
+    private NSession session;
     private AppMessages msg;
     private OpenApiParser openApiParser = new OpenApiParser();
     private int maxExampleInlineLength = 80;
 
-    public ConfigMarkdownGenerator(NApplicationContext appContext, AppMessages msg) {
-        this.appContext = appContext;
+    public ConfigMarkdownGenerator(NSession session, AppMessages msg) {
+        this.session = session;
         this.msg = msg;
     }
 
@@ -35,7 +35,6 @@ public class ConfigMarkdownGenerator {
             NPath targetFolder,
             NPath sourceFolder, String apiDocumentFileName,
             Map<String, String> vars0, List<String> defaultAdocHeaders) {
-        NSession session = appContext.getSession();
         NObjectElement openApiEntries = apiElement.asObject().get(session);
         NElements prv = NElements.of(session);
         NObjectElement infoObj = openApiEntries.getObject("info").orElse(prv.ofEmptyObject());
@@ -85,7 +84,6 @@ public class ConfigMarkdownGenerator {
 
     private void _fillIntroduction(NObjectElement configElement, NObjectElement apiElement,
                                    List<MdElement> all, Vars vars, String apiDocumentFileName) {
-        NSession session = appContext.getSession();
         all.add(MdFactory.endParagraph());
         all.add(MdFactory.title(2, msg.get("INTRODUCTION").get()));
         all.add(MdFactory.endParagraph());
@@ -147,7 +145,6 @@ public class ConfigMarkdownGenerator {
 
 
     private void _fillConfigVars(NObjectElement entries, List<MdElement> all, Vars vars, List<ConfigVar> configVars) {
-        NSession session = appContext.getSession();
         String targetName = entries.getString("target-name").get(session);
         String observations = entries.getString("observations").orElse("");
         all.add(MdFactory.endParagraph());

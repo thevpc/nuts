@@ -265,7 +265,7 @@ public class PropsCommand extends NShellBuiltinDefault {
     private Map<String, String> readProperties(Options o, NShellExecutionContext context) {
         Map<String, String> p = new LinkedHashMap<>();
         String sourceFile = o.sourceFile;
-        NPath filePath = ShellHelper.xfileOf(sourceFile, context.getCwd(), context.getSession());
+        NPath filePath = ShellHelper.xfileOf(sourceFile, context.getDirectory(), context.getSession());
         try (InputStream is = filePath.getInputStream()) {
 
             Format sourceFormat = o.sourceFormat;
@@ -334,7 +334,7 @@ public class PropsCommand extends NShellBuiltinDefault {
                 }
             }
         } else {
-            NPath filePath = ShellHelper.xfileOf(targetFile, context.getCwd(), session);
+            NPath filePath = ShellHelper.xfileOf(targetFile, context.getDirectory(), session);
             try (OutputStream os = filePath.getOutputStream()) {
                 Format format = o.targetFormat;
                 if (format == Format.AUTO) {

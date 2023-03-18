@@ -1,8 +1,8 @@
 package net.thevpc.nuts.toolbox.njob;
 
-import net.thevpc.nuts.NApplicationContext;
 import net.thevpc.nuts.NIllegalArgumentException;
 import net.thevpc.nuts.NMsg;
+import net.thevpc.nuts.NSession;
 import net.thevpc.nuts.toolbox.njob.model.*;
 import net.thevpc.nuts.toolbox.njob.time.TimePeriod;
 import net.thevpc.nuts.toolbox.njob.time.TimePeriods;
@@ -12,19 +12,22 @@ import java.time.Instant;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.time.temporal.ChronoUnit;
-import java.util.*;
+import java.util.Calendar;
+import java.util.Collection;
+import java.util.TreeSet;
+import java.util.UUID;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class NTasksSubService {
 
-    private NApplicationContext context;
+    private NSession session;
     private NJobConfigStore dal;
     private JobService service;
 
-    public NTasksSubService(NApplicationContext context, NJobConfigStore dal, JobService service) {
-        this.context = context;
+    public NTasksSubService(NSession session, NJobConfigStore dal, JobService service) {
+        this.session = session;
         this.dal = dal;
         this.service = service;
     }
@@ -281,9 +284,9 @@ public class NTasksSubService {
     public boolean removeTask(String taskId) {
         long count = findAllTasks().filter(x -> taskId.equals(x.getParentTaskId())).count();
         if (count > 1) {
-            throw new NIllegalArgumentException(context.getSession(), NMsg.ofC("Task is used in %d tasks. It cannot be removed.",count));
+            throw new NIllegalArgumentException(session, NMsg.ofC("Task is used in %d tasks. It cannot be removed.",count));
         } else if (count > 0) {
-            throw new NIllegalArgumentException(context.getSession(), NMsg.ofPlain("Task is used in one task. It cannot be removed."));
+            throw new NIllegalArgumentException(session, NMsg.ofPlain("Task is used in one task. It cannot be removed."));
         }
         return dal.delete(NTask.class, taskId);
     }

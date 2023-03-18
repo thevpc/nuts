@@ -1205,7 +1205,7 @@ public class Yaccer {
             if (applyWildCard) {
                 NPath pp= NPath.of(value,context.getSession());
                 if(!pp.isAbsolute()){
-                    pp=pp.toAbsolute(context.getCwd());
+                    pp=pp.toAbsolute(context.getDirectory());
                 }
                 String[] r = pp.walkGlob().map(NPath::toString,"toString").toArray(String[]::new);
                 if(r.length>0){

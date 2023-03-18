@@ -18,7 +18,7 @@ public class NWorkspaceListManagerPool {
     public synchronized NWorkspaceList openListManager(String name) {
         NWorkspaceList o = pool.get(name);
         if (o == null) {
-            NSession session = app.getApplicationContext().getSession();
+            NSession session = app.getSession();
             o = NWorkspaceList.of(session).setName(name);
             pool.put(name, o);
         }

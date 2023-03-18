@@ -8,12 +8,12 @@
 type (```sh nuts help --colors```) to display this help
 
 ##) NTF special characters:
-#### \# \u001E \\ \` #### are special characters
+#### \# \u001E \\ ` #### are special characters
 #### : { and } #### are also special characters when used inside \# styles
 ####\##### defines primary styles
 ####\\u001E#### is a 'nop' character. it is used as a separator when required. It is not displayed.
-####\`\`\`Text\`\`\`#### defines verbatim text
-####\`\`\`lang code-bloc\`\`\`#### defines formatted code in the given language/format (such as sh, java, json, ...)
+####\```Text\```#### defines verbatim text
+####\```lang code-bloc\```#### defines formatted code in the given language/format (such as sh, java, json, ...)
 ####\\#### You can escape special characters using ####\\#### character
 
 
@@ -63,44 +63,44 @@ Text ```#Text#```                              | Text #Text#                   |
 ```##:!:Text##``` ```##:+:Text##``` ```##:-:Text##```      | ##:!:Text##  ##:+:Text## ##:-:Text##               | reversed, bold, striked
 ```##:primary3:Text##```                       | ##:primary3:Text##                          | primary3
 ```##:secondary5:Text##```                     | ##:s4:Text##                          | secondary5
-```##{s12:AA##:12:BB##\u001E##:6:CC##DD}##```       | ##{s12:AA##:12:BB##\u001E##:6:CC##DD}##                      | composed colors, note the \\u001E separator
+```##{s12:AA##:12:BB##\u001E##:6:CC##DD}##```  | ##{s12:AA##:12:BB##\u001E##:6:CC##DD}##                | composed colors, note the \\u001E separator
 ```##:f158:AA## ##:f58:BB## ##:f201:CC##```    | ##:f158:AA## ##:f58:BB## ##:f201:CC##                      | foreground 8bits colors
 ```##:foreground158:Text##```                  | ##:foreground158:Text##                          | foreground 158 (8bits)
 ```##:fxd787af:Text##```                       | ##:fxd787af:Text##                          | foreground Pink (d787af in 24bits)
 ```##:foregroundxd787af:Text##```              | ##:foregroundxd787af:Text##                          | foreground Pink (d787af in 24bits)
 ```##:b158:Text##```                           | ##:b158:Text##                          | background 158 (8bits)
-```##:bxd787af:Text##```                       | ##:bxd787af:Text##                | background Pink (24bits)
+```##:bxd787af:Text##```                       | ##:bxd787af:Text##                          | background Pink (24bits)
 
 ##) NTF SPECIAL CHARACTERS
 NTF uses special characters as escape format. characters have different meanings in different situations,
-but you will be able to escape any character using \\. You can also escape a whole text using \`\`\`
+but you will be able to escape any character using \\. You can also escape a whole text using \```
 
 ##Format##                                   | ##Display##                       | ##Description##
 ----------------------------------------------------------------------------------------------------
-\\`\\#\\u001E                                    | \`\#\u001E                           | escaped characters
-\`\`\` Text with # escaped\`\`\`               | ``` Text with # escaped```           | escaped text (note the starting space)
+```\#\u001E```                                 | \#\u001E                       | escaped characters
+\``` Text with # escaped\```               | ``` Text with # escaped```           | escaped text (note the leading space)
 
 ##) NTF STYLES:
 Supported styles in NTF are defined in the following table:
 
 ##Format##                                   | ##Display##                       | ##Description##
 ----------------------------------------------------------------------------------------------------
-\`\`\`underlined underlined\`\`\`              | ```underlined underlined```                    | underlined
-\`\`\`italic italic\`\`\`                      | ```italic italic```                        | italic
-\`\`\`striked striked\`\`\`                    | ```striked striked```                       | striked
-\`\`\`reversed reversed\`\`\`                  | ```reversed reversed```                      | reversed
-\`\`\`error error\`\`\` \`\`\`warn warn\`\`\`  ...   | ```error error``` ```warn warn``` ```info info```  ```config config```       | several token types
+\```underlined underlined\```              | ```underlined underlined```                    | underlined
+\```italic italic\```                      | ```italic italic```                        | italic
+\```striked striked\```                    | ```striked striked```                       | striked
+\```reversed reversed\```                  | ```reversed reversed```                      | reversed
+\```error error\``` \```warn warn\```  ...   | ```error error``` ```warn warn``` ```info info```  ```config config```       | several token types
 ...                                      | ```comments comments``` ```string string``` ```number number``` ```boolean boolean```|
-                                         | ```keyword keyword``` ```option option``` ```input input```     |
+                                         | ```keyword keyword``` ```option option``` ```input input```          |
                                          | ```operator operator``` ```separator separator``` ```success success```    |
                                          | ```danger danger``` ```fail fail``` ```var var``` ```pale pale```          |
-\#\#\:underlined underlined\#\#\               | ##:underlined underlined##                    | underlined
-\#\#\:italic italic\#\#\                       | ##:italic italic##                        | italic
-\#\#\:striked striked\#\#\                     | ##:striked striked##                       | striked
-\#\#\:reversed reversed\#\#\                   | ##:reversed reversed##                      | reversed
-\#\#\:error  error\#\#\  \#\#\warn  warn\#\#\  ...   | ##:error  error## ##:warn  warn## ##:info info##  ##:config config##     | several embeddable token types
+\#\#:underlined underlined\#\#               | ##:underlined underlined##                    | underlined
+\#\#:italic italic\#\#                       | ##:italic italic##                        | italic
+\#\#:striked striked\#\#                     | ##:striked striked##                       | striked
+\#\#:reversed reversed\#\#                   | ##:reversed reversed##                      | reversed
+\#\#:error  error\#\#  \#\#warn  warn\#\#  ...   | ##:error  error## ##:warn  warn## ##:info info##  ##:config config##     | several embeddable token types
 ...                                      | ##:comments comments## ##:string string## ##:number number## ##:boolean boolean##|
-                                         | ##:keyword keyword## ##:option  option## ##:user_input user_input##    |
+                                         | ##:keyword keyword## ##:option  option## ##:input user_input##    |
                                          | ##:operator operator## ##:separator  separator## ##:success success##   |
                                          | ##:danger danger## ##:fail  fail## ##:var var## ##:pale pale##         |
 
@@ -133,24 +133,24 @@ Particularly Xml, Json, Bash and Java are supported.
 
 ###) Xml format
 ####) NTF syntax
-####) NTF syntax
-\`\`\`xml <xml n='value'></xml>\`\`\`
+\```xml <xml n='value'></xml>\```
 ####) Coloring Result
 ```xml <xml n='value'></xml>```
 
 ###) Json format
 ####) NTF syntax
-\`\`\`json {k:'value',n:'value'}\`\`\`
+\```json {k:'value',n:'value'}\```
 ####) Coloring Result
 ```json {k:'value',n:'value'}```
 
 ###) Java format
 ####) NTF syntax
-\`\`\`java
+
+\```java
 public class A{
     int a=12;
 }
-\`\`\`
+\```
 ####) Coloring Result
 ```java
 public class A{
@@ -160,7 +160,7 @@ public class A{
 
 ###) Shell commandline format
 ####) NTF syntax
-\`\`\`sh cmd arg user -option=true\`\`\`
+\```sh cmd arg user -option=true\```
 ####) Coloring Result
 ```sh cmd arg user -option=true```
 

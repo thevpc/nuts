@@ -30,14 +30,13 @@ import java.util.Map;
 
 public class NMysqlMain extends SqlSupport<NMySqlConfig> {
 
-    public NMysqlMain(NApplicationContext appContext) {
-        super("mysql", NMySqlConfig.class, appContext, "mysql:mysql-connector-java#8.0.26", "com.mysql.cj.jdbc.Driver");
+    public NMysqlMain(NSession session) {
+        super("mysql", NMySqlConfig.class, session, "mysql:mysql-connector-java#8.0.26", "com.mysql.cj.jdbc.Driver");
     }
 
     @Override
-    public void run(NApplicationContext context, NCmdLine commandLine) {
-        NSession session = context.getSession();
-        NMySqlService service = new NMySqlService(context);
+    public void run(NSession session, NCmdLine commandLine) {
+        NMySqlService service = new NMySqlService(session);
         while (commandLine.hasNext()) {
             switch (commandLine.peek().get(session).key()) {
                 case "add":
@@ -92,7 +91,7 @@ public class NMysqlMain extends SqlSupport<NMySqlConfig> {
                     return;
                 }
                 default: {
-                    context.configureLast(commandLine);
+                    session.configureLast(commandLine);
                 }
             }
         }
@@ -115,7 +114,7 @@ public class NMysqlMain extends SqlSupport<NMySqlConfig> {
 
 
     private void runPushOrPull(NCmdLine commandLine, boolean pull, NMySqlService service) {
-        NSession session = service.getContext().getSession();
+        NSession session = service.getSession();
         commandLine.setCommandName("mysql --remote " + (pull ? "pull" : "push"));
         class Data {
             AtName name = null;
@@ -146,7 +145,7 @@ public class NMysqlMain extends SqlSupport<NMySqlConfig> {
                         break;
                     }
                     default: {
-                        service.getContext().configureLast(commandLine);
+                        service.getSession().configureLast(commandLine);
                     }
                 }
             } else {
@@ -172,7 +171,7 @@ public class NMysqlMain extends SqlSupport<NMySqlConfig> {
     }
 
     private void runSQL(NCmdLine commandLine, NMySqlService service) {
-        NSession session = service.getContext().getSession();
+        NSession session = service.getSession();
         commandLine.setCommandName("mysql run-sql");
         NRef<AtName> name = NRef.ofNull(AtName.class);
         List<String> sql = new ArrayList<>();
@@ -197,7 +196,7 @@ public class NMysqlMain extends SqlSupport<NMySqlConfig> {
                         break;
                     }
                     default: {
-                        service.getContext().configureLast(commandLine);
+                        service.getSession().configureLast(commandLine);
                     }
                 }
             } else {
@@ -239,7 +238,7 @@ public class NMysqlMain extends SqlSupport<NMySqlConfig> {
     }
 
     private void runBackupOrRestore(NCmdLine commandLine, boolean backup, NMySqlService service) {
-        NSession session = service.getContext().getSession();
+        NSession session = service.getSession();
         commandLine.setCommandName("mysql " + (backup ? "backup" : "restore"));
         NRef<AtName> name = NRef.ofNull(AtName.class);
         NRef<String> path = NRef.ofNull(String.class);
@@ -267,7 +266,7 @@ public class NMysqlMain extends SqlSupport<NMySqlConfig> {
                         break;
                     }
                     default: {
-                        service.getContext().configureLast(commandLine);
+                        service.getSession().configureLast(commandLine);
                     }
                 }
             } else {
@@ -303,7 +302,7 @@ public class NMysqlMain extends SqlSupport<NMySqlConfig> {
 
 
     private void createOrUpdate(NCmdLine commandLine, boolean add, NMySqlService service) {
-        NSession session = service.getContext().getSession();
+        NSession session = service.getSession();
         commandLine.setCommandName("mysql " + (add ? "add" : "set"));
         class Data {
             AtName name = null;
@@ -546,7 +545,7 @@ public class NMysqlMain extends SqlSupport<NMySqlConfig> {
                                 commandLine.throwUnexpectedArgument(NMsg.ofPlain("already defined"));
                             }
                         } else {
-                            service.getContext().configureLast(commandLine);
+                            service.getSession().configureLast(commandLine);
                         }
                         break;
                     }
@@ -855,7 +854,7 @@ public class NMysqlMain extends SqlSupport<NMySqlConfig> {
     }
 
     public void runRemove(NCmdLine commandLine, NMySqlService service) {
-        NSession session = service.getContext().getSession();
+        NSession session = service.getSession();
         commandLine.setCommandName("mysql remove");
         List<AtName> localNames = new ArrayList<>();
         List<AtName> remoteNames = new ArrayList<>();
@@ -884,7 +883,7 @@ public class NMysqlMain extends SqlSupport<NMySqlConfig> {
                         break;
                     }
                     default: {
-                        service.getContext().configureLast(commandLine);
+                        service.getSession().configureLast(commandLine);
                     }
                 }
             } else {
@@ -931,8 +930,8 @@ public class NMysqlMain extends SqlSupport<NMySqlConfig> {
         }
     }
 
-    public Object toObject(String dbName, String confName, LocalMysqlDatabaseConfig config, boolean describe, boolean plain, NApplicationContext context) {
-        NTexts text = NTexts.of(context.getSession());
+    public Object toObject(String dbName, String confName, LocalMysqlDatabaseConfig config, boolean describe, boolean plain, NSession session) {
+        NTexts text = NTexts.of(session);
         if (!describe) {
             if (plain) {
                 return text.ofBuilder()
@@ -955,8 +954,8 @@ public class NMysqlMain extends SqlSupport<NMySqlConfig> {
         }
     }
 
-    public Object toObject(String dbName, String confName, RemoteMysqlDatabaseConfig config, boolean describe, boolean plain, NApplicationContext context) {
-        NTexts text = NTexts.of(context.getSession());
+    public Object toObject(String dbName, String confName, RemoteMysqlDatabaseConfig config, boolean describe, boolean plain, NSession session) {
+        NTexts text = NTexts.of(session);
         if (!describe) {
             if (plain) {
                 return text.ofBuilder()
@@ -982,7 +981,7 @@ public class NMysqlMain extends SqlSupport<NMySqlConfig> {
     }
 
     public void runList(NCmdLine commandLine, NMySqlService service, boolean describe) {
-        NSession session = service.getContext().getSession();
+        NSession session = service.getSession();
         commandLine.setCommandName("mysql list");
         List<AtName> localNames = new ArrayList<>();
         List<AtName> remoteNames = new ArrayList<>();
@@ -1001,7 +1000,7 @@ public class NMysqlMain extends SqlSupport<NMySqlConfig> {
                         break;
                     }
                     default: {
-                        service.getContext().configureLast(commandLine);
+                        service.getSession().configureLast(commandLine);
                     }
                 }
             } else {
@@ -1045,11 +1044,11 @@ public class NMysqlMain extends SqlSupport<NMySqlConfig> {
                 for (LocaleOrRemote cnf : result) {
                     if (cnf.local != null) {
                         for (Map.Entry<String, LocalMysqlDatabaseConfig> db : cnf.local.getDatabases().entrySet()) {
-                            session.getIterableOutput().next(toObject(db.getKey(), cnf.name, db.getValue(), describe, false, service.getContext()), index++);
+                            session.getIterableOutput().next(toObject(db.getKey(), cnf.name, db.getValue(), describe, false, service.getSession()), index++);
                         }
                     } else {
                         for (Map.Entry<String, RemoteMysqlDatabaseConfig> db : cnf.remote.getDatabases().entrySet()) {
-                            session.getIterableOutput().next(toObject(db.getKey(), cnf.name, db.getValue(), describe, false, service.getContext()), index++);
+                            session.getIterableOutput().next(toObject(db.getKey(), cnf.name, db.getValue(), describe, false, service.getSession()), index++);
                         }
                     }
                 }
@@ -1063,13 +1062,13 @@ public class NMysqlMain extends SqlSupport<NMySqlConfig> {
                         if (cnf.local != null) {
                             for (Map.Entry<String, LocalMysqlDatabaseConfig> db : cnf.local.getDatabases().entrySet()) {
                                 session.out().println(NMsg.ofC("%s",
-                                        toObject(db.getKey(), cnf.name, db.getValue(), describe, true, service.getContext())
+                                        toObject(db.getKey(), cnf.name, db.getValue(), describe, true, service.getSession())
                                 ));
                             }
                         } else {
                             for (Map.Entry<String, RemoteMysqlDatabaseConfig> db : cnf.remote.getDatabases().entrySet()) {
                                 session.out().println(NMsg.ofC("%s",
-                                        toObject(db.getKey(), cnf.name, db.getValue(), describe, true, service.getContext())
+                                        toObject(db.getKey(), cnf.name, db.getValue(), describe, true, service.getSession())
                                 ));
                             }
                         }

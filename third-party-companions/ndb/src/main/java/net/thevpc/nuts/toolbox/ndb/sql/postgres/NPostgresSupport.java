@@ -24,8 +24,8 @@ import java.util.*;
  */
 public class NPostgresSupport extends SqlSupport<NPostgresConfig> {
 
-    public NPostgresSupport(NApplicationContext appContext) {
-        super("postgresql", NPostgresConfig.class, appContext, "org.postgresql:postgresql#42.5.1", "org.postgresql.Driver");
+    public NPostgresSupport(NSession session) {
+        super("postgresql", NPostgresConfig.class, session, "org.postgresql:postgresql#42.5.1", "org.postgresql.Driver");
         declareNdbCmd(new PostgresShowTablesCmd(this));
         declareNdbCmd(new PostgresShowDatabasesCmd(this));
         declareNdbCmd(new PostgresDumpCmd(this));

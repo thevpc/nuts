@@ -32,16 +32,15 @@ public class WorkspaceService {
 
     public static final String SCAN = "net.thevpc.nuts.toolbox.nwork.scan";
     private WorkspaceConfig config;
-    private final NApplicationContext appContext;
+    private final NSession session;
     private final NPath sharedConfigFolder;
 
-    public WorkspaceService(NApplicationContext appContext) {
-        this.appContext = appContext;
-        sharedConfigFolder = appContext.getVersionFolder(NStoreLocation.CONFIG, NWorkConfigVersions.CURRENT);
+    public WorkspaceService(NSession session) {
+        this.session = session;
+        sharedConfigFolder = session.getAppVersionFolder(NStoreLocation.CONFIG, NWorkConfigVersions.CURRENT);
         NPath c = getConfigFile();
         if (c.isRegularFile()) {
             try {
-                NSession session = appContext.getSession();
                 config = NElements.of(session).json().parse(c, WorkspaceConfig.class);
             } catch (Exception ex) {
                 //
@@ -106,7 +105,6 @@ public class WorkspaceService {
         config = c;
         NPath configFile = getConfigFile();
         configFile.mkParentDirs();
-        NSession session = appContext.getSession();
         NElements.of(session).json().setValue(c).print(configFile);
     }
 
@@ -137,8 +135,7 @@ public class WorkspaceService {
         }
     }
 
-    public void enableScan(NCmdLine commandLine, NApplicationContext context, boolean enable) {
-        NSession session = context.getSession();
+    public void enableScan(NCmdLine commandLine, NSession session, boolean enable) {
         int count = 0;
         while (commandLine.hasNext()) {
             if (commandLine.peek().get(session).isNonOption()) {
@@ -148,7 +145,7 @@ public class WorkspaceService {
                     count++;
                 }
             } else {
-                context.configureLast(commandLine);
+                session.configureLast(commandLine);
             }
         }
 
@@ -157,16 +154,15 @@ public class WorkspaceService {
         }
     }
 
-    public void list(NCmdLine cmd, NApplicationContext appContext) {
-        NSession session = appContext.getSession();
-        NArg a;
+    public void list(NCmdLine cmd, NSession session) {
+       NArg a;
         List<String> filters = new ArrayList<>();
         cmd.setCommandName("nwork list");
         while (cmd.hasNext()) {
             if ((a = cmd.nextNonOption().orNull()) != null) {
                 filters.add(a.asString().get(session));
             } else {
-                appContext.configureLast(cmd);
+                session.configureLast(cmd);
             }
         }
         if (cmd.isExecMode()) {
@@ -182,7 +178,7 @@ public class WorkspaceService {
             if (session.isPlainOut()) {
                 for (ProjectConfig p2 : result) {
                     session.out().println(
-                            formatProjectConfig(appContext, p2)
+                            formatProjectConfig(session, p2)
                     );
                 }
             } else {
@@ -192,8 +188,8 @@ public class WorkspaceService {
         }
     }
 
-    private NTextBuilder formatProjectConfig(NApplicationContext appContext, ProjectConfig p2) {
-        NTexts text = NTexts.of(appContext.getSession());
+    private NTextBuilder formatProjectConfig(NSession session, ProjectConfig p2) {
+        NTexts text = NTexts.of(session);
         return text.ofBuilder()
                 .append(p2.getId(), NTextStyle.primary4())
                 .append(" ")
@@ -207,8 +203,7 @@ public class WorkspaceService {
                 .append(p2.getPath(), NTextStyle.path());
     }
 
-    public void scan(NCmdLine cmdLine, NApplicationContext context) {
-        NSession session = context.getSession();
+    public void scan(NCmdLine cmdLine, NSession session) {
         boolean interactive = false;
         NArg a;
         boolean run = false;
@@ -225,7 +220,7 @@ public class WorkspaceService {
                 run = true;
                 toScan.add(new File(folder));
             } else {
-                context.configureLast(cmdLine);
+                session.configureLast(cmdLine);
             }
         }
         if (cmdLine.isExecMode()) {
@@ -237,15 +232,14 @@ public class WorkspaceService {
             }
 
             int scanned = scan(toScan, interactive);
-            if (appContext.getSession().isPlainOut()) {
-                appContext.getSession().out().println(NMsg.ofC("##SUMMARY## : %s projects scanned", scanned));
+            if (session.isPlainOut()) {
+                session.out().println(NMsg.ofC("##SUMMARY## : %s projects scanned", scanned));
             }
         }
     }
 
-    public void find(NCmdLine cmdLine, NApplicationContext context) {
+    public void find(NCmdLine cmdLine, NSession session) {
         NArg a;
-        NSession session = context.getSession();
         List<File> toScan = new ArrayList<>();
         String where = null;
         while (cmdLine.hasNext()) {
@@ -256,25 +250,25 @@ public class WorkspaceService {
                         .flatMap(NLiteral::asString).get(session);
                 toScan.add(new File(folder));
             } else {
-                context.configureLast(cmdLine);
+                session.configureLast(cmdLine);
             }
         }
         if (cmdLine.isExecMode()) {
             int scanned = find(toScan, where);
-            if (appContext.getSession().isPlainOut()) {
-                appContext.getSession().out().println(NMsg.ofC("##SUMMARY## : %s projects scanned", scanned));
+            if (session.isPlainOut()) {
+                session.out().println(NMsg.ofC("##SUMMARY## : %s projects scanned", scanned));
             }
         }
     }
 
-    public void push(NCmdLine commandLine, NApplicationContext appContext) {
+    public void push(NCmdLine commandLine, NSession session) {
         commandLine.setCommandName("nwork push");
         //rsync /home/me/.m2/repository/net/thevpc/nuts/nuts/0.8.4/*  vpc@thevpc.net:/home/me/.m2/repository/net/thevpc/nuts/nuts/0.8.4/
         List<NId> idsToPush = new ArrayList<>();
         NRef<String> remoteServer = NRef.ofNull(String.class);
         NRef<String> remoteUser = NRef.ofNull(String.class);
         while (commandLine.hasNext()) {
-            if (appContext.configureFirst(commandLine)) {
+            if (session.configureFirst(commandLine)) {
 
             } else if (commandLine.withNextEntry((v, a, s) -> remoteServer.set(v), "--remote-server", "--to-server", "--to", "-t")) {
             } else if (commandLine.withNextEntry((v, a, s) -> remoteUser.set(v), "--remote-user")) {
@@ -282,13 +276,12 @@ public class WorkspaceService {
                 NArg a = commandLine.next().get();
                 idsToPush.add(NId.of(a.toString()).get());
             } else {
-                appContext.configureLast(commandLine);
+                session.configureLast(commandLine);
             }
         }
         if (idsToPush.isEmpty()) {
             commandLine.throwMissingArgument();
         }
-        NSession session = appContext.getSession();
         if (remoteUser.isBlank()) {
             remoteUser.set(System.getProperty("user.name"));
         }
@@ -310,8 +303,7 @@ public class WorkspaceService {
         }
     }
 
-    public void status(NCmdLine cmd, NApplicationContext appContext) {
-        NSession session = appContext.getSession();
+    public void status(NCmdLine cmd, NSession session) {
         boolean progress = true;
         boolean verbose = false;
         Boolean commitable = null;
@@ -320,12 +312,12 @@ public class WorkspaceService {
         Boolean uptodate = null;
         Boolean old = null;
         Boolean invalid = null;
-//        NutsTableFormat tf = appContext.getWorkspace().format().table()
+//        NutsTableFormat tf = session.getWorkspace().format().table()
 //                .addHeaderCells("Id", "Local", "Remote", "Status");
         List<String> filters = new ArrayList<>();
         NArg a;
         while (cmd.hasNext()) {
-            if (appContext.configureFirst(cmd)) {
+            if (session.configureFirst(cmd)) {
                 //consumed
 //            } else if (tf.configureFirst(cmd)) {
                 //consumed
@@ -584,7 +576,6 @@ public class WorkspaceService {
     private boolean matches(String id, List<String> filters) {
         boolean accept = filters.isEmpty();
         if (!accept) {
-            NSession session = appContext.getSession();
             NId nid = NId.of(id).get(session);
             for (String filter : filters) {
                 if (id.equals(filter)
@@ -621,7 +612,7 @@ public class WorkspaceService {
             for (NPath file : storeLocation.list()) {
                 if (file.isRegularFile() && file.getName().endsWith(".config")) {
                     try {
-                        all.add(new ProjectService(appContext, config.getDefaultRepositoryAddress(), file));
+                        all.add(new ProjectService(session, config.getDefaultRepositoryAddress(), file));
                     } catch (IOException e) {
                         //ignore
                     }
@@ -634,11 +625,11 @@ public class WorkspaceService {
     public int find(List<File> folders, String where) {
         FileScanner fs = new FileScanner();
         if (where != null && where.trim().length() > 0) {
-            fs.setPathFilter(FileScanner.parseExpr(where, appContext.getSession()));
+            fs.setPathFilter(FileScanner.parseExpr(where, session));
         }
         fs.getSource().addAll(folders.stream().map(File::toPath).collect(Collectors.toSet()));
         fs.scan().forEach(x -> {
-            appContext.getSession().out().println(x);
+            session.out().println(x);
         });
         return 0;
     }
@@ -650,17 +641,16 @@ public class WorkspaceService {
             stack.push(folder);
         }
         int scanned = 0;
-        NSession session = appContext.getSession();
         boolean structuredOutContentType = session.isTrace() && session.getOutputFormat() != NContentType.PLAIN;
         while (!stack.isEmpty()) {
             File folder = stack.pop();
             if (folder.isDirectory()) {
                 if (isScanEnabled(folder)) {
                     NTexts text = NTexts.of(session);
-                    ProjectConfig p2 = new ProjectService(appContext, config.getDefaultRepositoryAddress(), new ProjectConfig().setPath(folder.getPath())
+                    ProjectConfig p2 = new ProjectService(session, config.getDefaultRepositoryAddress(), new ProjectConfig().setPath(folder.getPath())
                     ).rebuildProjectMetadata();
                     if (p2.getTechnologies().size() > 0) {
-                        ProjectService projectService = new ProjectService(appContext, config.getDefaultRepositoryAddress(), p2);
+                        ProjectService projectService = new ProjectService(session, config.getDefaultRepositoryAddress(), p2);
                         boolean loaded = false;
                         try {
                             loaded = projectService.load();
@@ -672,10 +662,10 @@ public class WorkspaceService {
                             if (p3.equals(p2)) {
                                 //no updates!
                                 if (session.isPlainOut()) {
-                                    session.out().println(NMsg.ofC("already registered project folder %s", formatProjectConfig(appContext, p2)));
+                                    session.out().println(NMsg.ofC("already registered project folder %s", formatProjectConfig(session, p2)));
                                 }
                                 if (structuredOutContentType) {
-                                    result.add(new ScanResult(folder.getPath(), "already-registered", NMsg.ofC("already registered project folder %s", formatProjectConfig(appContext, p2)).toString()));
+                                    result.add(new ScanResult(folder.getPath(), "already-registered", NMsg.ofC("already registered project folder %s", formatProjectConfig(session, p2)).toString()));
                                 }
                             } else if (!p2.getPath().equals(p3.getPath())) {
                                 if (session.isPlainOut()) {
@@ -699,12 +689,12 @@ public class WorkspaceService {
                                 }
                             } else {
                                 if (session.isPlainOut()) {
-                                    session.out().println(NMsg.ofC("reloaded project folder %s", formatProjectConfig(appContext, p2)));
+                                    session.out().println(NMsg.ofC("reloaded project folder %s", formatProjectConfig(session, p2)));
                                 }
                                 if (structuredOutContentType) {
                                     result.add(new ScanResult(folder.getPath(), "reloaded",
                                             NMsg.ofC(
-                                                    "reloaded project folder %s", formatProjectConfig(appContext, p2).toString()
+                                                    "reloaded project folder %s", formatProjectConfig(session, p2).toString()
                                             ).toString()
                                     ));
                                 }
@@ -712,7 +702,7 @@ public class WorkspaceService {
 //                if (!StringUtils.isEmpty(repo)) {
 //                    p2.setAddress(new );
 //                }
-                                ProjectService ps = new ProjectService(appContext, null, p2);
+                                ProjectService ps = new ProjectService(session, null, p2);
                                 try {
                                     ps.save();
                                 } catch (IOException e) {
@@ -723,7 +713,7 @@ public class WorkspaceService {
                         } else {
 
                             if (session.isPlainOut()) {
-                                session.out().println(NMsg.ofC("detected Project Folder %s", formatProjectConfig(appContext, p2)));
+                                session.out().println(NMsg.ofC("detected Project Folder %s", formatProjectConfig(session, p2)));
                             }
                             if (interactive) {
                                 String id = session.getTerminal().readLine(NMsg.ofC("enter Id %s: ",
@@ -741,7 +731,7 @@ public class WorkspaceService {
 //                if (!StringUtils.isEmpty(repo)) {
 //                    p2.setAddress(new );
 //                }
-                            ProjectService ps = new ProjectService(appContext, null, p2);
+                            ProjectService ps = new ProjectService(session, null, p2);
                             try {
                                 ps.save();
                             } catch (IOException e) {
@@ -769,7 +759,6 @@ public class WorkspaceService {
         Path ni = folder.resolve(".nuts-info");
         Map p = null;
         boolean scan = true;
-        NSession session = appContext.getSession();
         if (Files.isRegularFile(ni)) {
             try {
                 p = NElements.of(session).json().parse(ni, Map.class);
@@ -797,7 +786,6 @@ public class WorkspaceService {
         Map p = null;
         if (ni.isFile()) {
             try {
-                NSession session = appContext.getSession();
                 p = NElements.of(session).json().parse(ni, Map.class);
                 String v = p.get(SCAN) == null ? null : String.valueOf(p.get(SCAN));
                 if (v == null || "false".equals(v.trim())) {
@@ -811,8 +799,7 @@ public class WorkspaceService {
         return scan;
     }
 
-    public int setWorkspaceConfigParam(NCmdLine cmd, NApplicationContext appContext) {
-        NSession session = appContext.getSession();
+    public int setWorkspaceConfigParam(NCmdLine cmd, NSession session) {
         NArg a;
         while (cmd.hasNext()) {
             if ((a = cmd.nextEntry("-r", "--repo").orNull()) != null) {

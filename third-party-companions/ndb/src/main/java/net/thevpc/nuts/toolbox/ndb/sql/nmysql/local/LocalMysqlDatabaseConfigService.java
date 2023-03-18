@@ -16,13 +16,13 @@ public class LocalMysqlDatabaseConfigService {
     private String name;
     private LocalMysqlDatabaseConfig config;
     private LocalMysqlConfigService mysql;
-    private NApplicationContext context;
+    private NSession session;
 
     public LocalMysqlDatabaseConfigService(String name, LocalMysqlDatabaseConfig config, LocalMysqlConfigService mysql) {
         this.name = name;
         this.config = config;
         this.mysql = mysql;
-        this.context = mysql.getContext();
+        this.session = mysql.getSession();
     }
 
     public LocalMysqlDatabaseConfig getConfig() {
@@ -35,12 +35,12 @@ public class LocalMysqlDatabaseConfigService {
 
     public LocalMysqlDatabaseConfigService remove() {
         mysql.getConfig().getDatabases().remove(name);
-        context.getSession().out().println(NMsg.ofC("%s app removed.", getBracketsPrefix(getFullName())));
+        session.out().println(NMsg.ofC("%s app removed.", getBracketsPrefix(getFullName())));
         return this;
     }
 
     public NString getBracketsPrefix(String str) {
-        return NTexts.of(context.getSession()).ofBuilder()
+        return NTexts.of(session).ofBuilder()
                 .append("[")
                 .append(str, NTextStyle.primary5())
                 .append("]");
@@ -55,7 +55,6 @@ public class LocalMysqlDatabaseConfigService {
     }
 
     public LocalMysqlDatabaseConfigService write(PrintStream out) {
-        NSession session = context.getSession();
         NElements.of(session).json().setValue(getConfig()).setNtf(false).print(out);
         return this;
     }
@@ -73,7 +72,6 @@ public class LocalMysqlDatabaseConfigService {
         }
         path= Paths.get(path).toAbsolutePath().normalize().toString();
         String password = getConfig().getPassword();
-        NSession session = context.getSession();
         char[] credentials = NWorkspaceSecurityManager.of(session).getCredentials(password.toCharArray());
         password = new String(credentials);
         if (path.endsWith(".sql")) {
@@ -149,7 +147,6 @@ public class LocalMysqlDatabaseConfigService {
 //        if(!path.endsWith(".sql") && !path.endsWith(".sql.zip") && !path.endsWith(".zip")){
 //            path=path+
 //        }
-        NSession session = context.getSession();
         char[] password = NWorkspaceSecurityManager.of(session).getCredentials(getConfig().getPassword().toCharArray());
 
         if (path.endsWith(".sql")) {

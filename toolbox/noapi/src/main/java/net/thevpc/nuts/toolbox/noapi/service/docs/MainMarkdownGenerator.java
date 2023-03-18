@@ -16,15 +16,15 @@ import java.time.LocalDate;
 import java.util.*;
 import java.util.stream.Collectors;
 
-public class MainMakdownGenerator {
-    private NApplicationContext appContext;
+public class MainMarkdownGenerator {
+    private NSession session;
     private AppMessages msg;
     private Properties httpCodes = new Properties();
     private OpenApiParser openApiParser = new OpenApiParser();
     private int maxExampleInlineLength = 80;
 
-    public MainMakdownGenerator(NApplicationContext appContext, AppMessages msg) {
-        this.appContext = appContext;
+    public MainMarkdownGenerator(NSession session, AppMessages msg) {
+        this.session = session;
         this.msg = msg;
         try (InputStream is = getClass().getResourceAsStream("/net/thevpc/nuts/toolbox/noapi/http-codes.properties")) {
             httpCodes.load(is);
@@ -34,7 +34,6 @@ public class MainMakdownGenerator {
     }
 
     public MdDocument createMarkdown(NElement obj, NPath folder, Map<String, String> vars0, List<String> defaultAdocHeaders) {
-        NSession session = appContext.getSession();
         MdDocumentBuilder doc = new MdDocumentBuilder();
 
         List<String> options = new ArrayList<>(defaultAdocHeaders);
@@ -73,7 +72,6 @@ public class MainMakdownGenerator {
     }
 
     private void _fillConfigVars(NObjectElement entries, List<MdElement> all, Vars vars2) {
-        NSession session = appContext.getSession();
         String target = "your-company";
         vars2.putDefault("config.target", target);
         List<ConfigVar> configVars = OpenApiParser.loadConfigVars(null, entries, vars2, session);
@@ -118,7 +116,6 @@ public class MainMakdownGenerator {
     }
 
     private void _fillIntroduction(NObjectElement entries, List<MdElement> all, Vars vars) {
-        NSession session = appContext.getSession();
         all.add(MdFactory.endParagraph());
         all.add(MdFactory.title(2, msg.get("INTRODUCTION").get()));
         all.add(MdFactory.endParagraph());
@@ -189,7 +186,6 @@ public class MainMakdownGenerator {
     }
 
     private void _fillHeaders(NObjectElement entries, List<MdElement> all, Vars vars2) {
-        NSession session = appContext.getSession();
         NObjectElement components = entries.getObject("components").orElse(NObjectElement.ofEmpty(session));
         if (!components.getObject("headers").isEmpty()) {
             all.add(MdFactory.endParagraph());
@@ -223,7 +219,6 @@ public class MainMakdownGenerator {
     }
 
     private void _fillSecuritySchemes(NObjectElement entries, List<MdElement> all, Vars vars2) {
-        NSession session = appContext.getSession();
         NObjectElement components = entries.getObject("components").orElse(NObjectElement.ofEmpty(session));
         NObjectElement securitySchemes = components.getObject("securitySchemes").orElse(NObjectElement.ofEmpty(session));
         if (!securitySchemes.isEmpty()) {
@@ -325,7 +320,7 @@ public class MainMakdownGenerator {
 
 
     private void _fillSchemaTypes(NObjectElement entries, List<MdElement> all, Vars vars2, List<TypeCrossRef> typeCrossRefs) {
-        Map<String, TypeInfo> allTypes = openApiParser.parseTypes(entries, appContext.getSession());
+        Map<String, TypeInfo> allTypes = openApiParser.parseTypes(entries, session);
         if (allTypes.isEmpty()) {
             return;
         }
@@ -404,8 +399,7 @@ public class MainMakdownGenerator {
 
 
     private void _fillApiPaths(NObjectElement entries, List<MdElement> all, Vars vars2, List<TypeCrossRef> typeCrossRefs) {
-        Map<String, TypeInfo> allTypes = openApiParser.parseTypes(entries, appContext.getSession());
-        NSession session = appContext.getSession();
+        Map<String, TypeInfo> allTypes = openApiParser.parseTypes(entries, session);
         NElements prv = NElements.of(session);
         all.add(MdFactory.endParagraph());
         all.add(MdFactory.title(2, msg.get("API_PATHS").get()));
@@ -452,7 +446,6 @@ public class MainMakdownGenerator {
     }
 
     private void _fillServerList(NObjectElement entries, List<MdElement> all, Vars vars2) {
-        NSession session = appContext.getSession();
         all.add(MdFactory.endParagraph());
         all.add(MdFactory.title(3, "SERVER LIST"));
         all.add(NoApiUtils.asText(
@@ -502,7 +495,6 @@ public class MainMakdownGenerator {
     }
 
     private void _fillApiPathMethodParam(List<NElement> headerParameters, List<MdElement> all, String url, List<TypeCrossRef> typeCrossRefs, String paramType) {
-        NSession session = appContext.getSession();
         MdTable tab = new MdTable(
                 new MdColumn[]{
                         new MdColumn(NoApiUtils.asText(msg.get("NAME").get()), MdHorizontalAlign.LEFT),
@@ -548,7 +540,6 @@ public class MainMakdownGenerator {
                                     String dsummary, String ddescription, NArrayElement dparameters,
                                     NObjectElement schemas, List<TypeCrossRef> typeCrossRefs,Map<String, TypeInfo> allTypes) {
 
-        NSession session = appContext.getSession();
         String nsummary = call.getString("summary").orElse(dsummary);
         String ndescription = call.getString("description").orElse(ddescription);
         all.add(MdFactory.endParagraph());

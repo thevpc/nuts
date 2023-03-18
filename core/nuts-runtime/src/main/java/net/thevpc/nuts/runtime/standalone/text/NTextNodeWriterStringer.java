@@ -158,10 +158,13 @@ public class NTextNodeWriterStringer extends AbstractNTextNodeWriter {
                     break;
                 }
                 case '`': {
-                    if (i < cc.length - 3) {
+                    if (i < cc.length - 2) {
                         if (cc[i] == '`' && cc[i + 1] == '`' && cc[i + 2] == '`') {
                             sb.append('\\');
                             sb.append(cc[i]);
+                            sb.append(cc[i + 1]);
+                            sb.append(cc[i + 2]);
+                            i += 2;
                         } else {
                             sb.append(cc[i]);
                         }

@@ -37,7 +37,6 @@ import net.thevpc.nuts.io.NSystemTerminal;
 import net.thevpc.nuts.spi.NDefaultSupportLevelContext;
 import net.thevpc.nuts.spi.NSupportLevelContext;
 import net.thevpc.nuts.text.NTextStyle;
-import net.thevpc.nuts.toolbox.nsh.*;
 import net.thevpc.nuts.toolbox.nsh.autocomplete.NshAutoCompleter;
 import net.thevpc.nuts.toolbox.nsh.cmdresolver.DefaultNShellCommandTypeResolver;
 import net.thevpc.nuts.toolbox.nsh.cmdresolver.NShellCommandTypeResolver;
@@ -89,7 +88,7 @@ public class NShell {
     private NShellErrorHandler errorHandler;
     private NShellExternalExecutor externalExecutor;
     private NShellCommandTypeResolver commandTypeResolver;
-    private NApplicationContext appContext;
+    private NSession session;
     private NId appId = null;
     private String serviceName = null;
     private Function<NSession, NMsg> headerMessageSupplier = null;
@@ -106,39 +105,30 @@ public class NShell {
         NShellCommandTypeResolver commandTypeResolver = configuration.getCommandTypeResolver();
         NShellErrorHandler errorHandler = configuration.getErrorHandler();
         NShellExternalExecutor externalExecutor = configuration.getExternalExecutor();
-        NApplicationContext appContext = configuration.getApplicationContext();
         NId appId = configuration.getAppId();
         NSession session = configuration.getSession();
 
-        if (appContext == null && session != null) {
-            appContext = NApplicationContext.of(new String[]{}, null, Nsh.class, null, session);
-        }
-        if (session == null) {
-            if (appContext != null) {
-                session = appContext.getSession();
-            }
-        }
-        args = resolveArgs(appContext, args);
+        args = resolveArgs(session, args);
         this.appId = appId;
-        this.bootStartMillis = appContext == null ? null : appContext.getStartTime();
-        this.appContext = appContext;
+        this.bootStartMillis = session == null ? null : session.getAppStartTime();
+        this.session = session;
         //super.setCwd(workspace.getConfigManager().getCwd());
-        if (this.appId == null && appContext != null) {
-            this.appId = appContext.getAppId();
+        if (this.appId == null && session != null) {
+            this.appId = session.getAppId();
             if (this.appId == null) {
                 this.appId = NIdResolver.of(session).resolveId(NShell.class);
             }
         }
-        if (this.appId == null && appContext != null) {
+        if (this.appId == null && session != null) {
             throw new IllegalArgumentException("unable to resolve application id");
         }
         if (this.appId != null && serviceName == null) {
             serviceName = this.appId.getArtifactId();
         }
 
-        serviceName = resolveServiceName(appContext, serviceName, appId);
+        serviceName = resolveServiceName(session, serviceName, appId);
         if (commandTypeResolver == null) {
-            if (appContext != null) {
+            if (session != null) {
                 this.commandTypeResolver = new NCommandTypeResolver();
             } else {
                 this.commandTypeResolver = new DefaultNShellCommandTypeResolver();
@@ -152,7 +142,7 @@ public class NShell {
             this.errorHandler = errorHandler;
         }
         if (evaluator == null) {
-            if (appContext != null) {
+            if (session != null) {
                 this.evaluator = new NshEvaluator();
             } else {
                 this.evaluator = new DefaultNShellEvaluator();
@@ -167,13 +157,13 @@ public class NShell {
             this.history = history;
         }
         if (shellOptionsParser == null) {
-            shellOptionsParser = new DefaultNShellOptionsParser(appContext, session);
+            shellOptionsParser = new DefaultNShellOptionsParser(session);
         }
         this.options = shellOptionsParser.parse(args);
         if (externalExecutor == null) {
             boolean includeExternalExecutor = configuration.getIncludeExternalExecutor() != null && configuration.getIncludeExternalExecutor();
             if (includeExternalExecutor) {
-                if (appContext != null) {
+                if (session != null) {
                     this.externalExecutor = new NExternalExecutor();
                 } else {
                     this.externalExecutor = new NShellNoExternalExecutor();
@@ -231,17 +221,17 @@ public class NShell {
         }
     }
 
-    private static String[] resolveArgs(NApplicationContext appContext, String[] args) {
+    private static String[] resolveArgs(NSession session, String[] args) {
         if (args != null) {
             return args;
         }
-        return appContext.getArguments().toArray(new String[0]);
+        return session.getAppArguments().toArray(new String[0]);
     }
 
-    private static String resolveServiceName(NApplicationContext appContext, String serviceName, NId appId) {
+    private static String resolveServiceName(NSession session, String serviceName, NId appId) {
         if ((serviceName == null || serviceName.trim().isEmpty())) {
             if (appId == null) {
-                appId = NIdResolver.of(appContext.getSession()).resolveId(NShell.class);
+                appId = NIdResolver.of(session).resolveId(NShell.class);
             }
             serviceName = appId.getArtifactId();
         }
@@ -527,7 +517,7 @@ public class NShell {
 
     public void run() {
         try {
-            if (appContext.getAutoComplete() != null) {
+            if (session.getAppAutoComplete() != null) {
                 return;
             }
             NShellContext rootContext = getRootContext();
@@ -574,7 +564,7 @@ public class NShell {
         } catch (NExecutionException ex) {
             throw ex;
         } catch (Exception ex) {
-            throw new NExecutionException(appContext.getSession(), NMsg.ofC("%s", ex), ex, 100);
+            throw new NExecutionException(session, NMsg.ofC("%s", ex), ex, 100);
         }
     }
 
@@ -595,7 +585,7 @@ public class NShell {
             NDescriptor resultDescriptor = null;
             if (appId != null) {
                 try {
-                    resultDescriptor = NFetchCommand.of(appContext.getSession()).setId(appId).setEffective(true).getResultDescriptor();
+                    resultDescriptor = NFetchCommand.of(session).setId(appId).setEffective(true).getResultDescriptor();
                 } catch (Exception ex) {
                     //just ignore
                 }
@@ -653,13 +643,12 @@ public class NShell {
     }
 
     protected void executeInteractive(NShellContext context) {
-        NSession session = appContext.getSession();
         NSystemTerminal.enableRichTerm(session);
         NConfigs.of(session).getSystemTerminal()
                 .setCommandAutoCompleteResolver(new NshAutoCompleter())
                 .setCommandHistory(
                         NCmdLineHistory.of(session)
-                                .setPath(appContext.getVarFolder().resolve("nsh-history.hist"))
+                                .setPath(session.getAppVarFolder().resolve("nsh-history.hist"))
                 );
         prepareContext(getRootContext());
         printHeader(context.out());
@@ -745,10 +734,9 @@ public class NShell {
     }
 
     public int executeServiceFile(NShellContext context, boolean ignoreIfNotFound) {
-        NSession session = appContext.getSession();
         String file = context.getServiceName();
         if (file != null) {
-            file = NPath.of(file, session).toAbsolute(context.getCwd()).toString();
+            file = NPath.of(file, session).toAbsolute(context.getDirectory()).toString();
         }
         if (file == null || !NPath.of(file, session).exists()) {
             if (ignoreIfNotFound) {
@@ -866,7 +854,7 @@ public class NShell {
                 c = promptChars[i];
                 switch (c) {
                     case 'W': {
-                        s.append(context.getCwd());
+                        s.append(context.getDirectory());
                         break;
                     }
                     case 'u': {
@@ -1151,15 +1139,15 @@ public class NShell {
     }
 
     public String getVersion() {
-        NId nutsId = NIdResolver.of(appContext.getSession()).resolveId(getClass());
+        NId nutsId = NIdResolver.of(session).resolveId(getClass());
         if (nutsId == null) {
             return "dev";
         }
         return nutsId.getVersion().getValue();
     }
 
-    public NApplicationContext getAppContext() {
-        return appContext;
+    public NSession getSession() {
+        return session;
     }
 
     public MemResult executeCommand(String[] command) {
@@ -1182,7 +1170,7 @@ public class NShell {
     }
 
     public NShellContext createContext(NShellContext ctx, NShellNode root, NShellNode parent, NShellVariables env, String serviceName, String[] args) {
-        return new DefaultNShellContext(this, root, parent, ctx, appContext.getSession().getWorkspace(), appContext.getSession(), env, serviceName, args);
+        return new DefaultNShellContext(this, root, parent, ctx, session.getWorkspace(), session, env, serviceName, args);
     }
 
     private static class NShellBuiltinPredicate implements Predicate<NShellBuiltin> {

@@ -1236,4 +1236,91 @@ public class Test04_NTFTest {
         Assertions.assertEquals(true, ((NTextList)s).get(0) instanceof NTextCommand);
         Assertions.assertEquals(true, ((NTextCommand)((NTextList)s).get(0)).getCommand().getName().equals("clear-line"));
     }
+    @Test
+    public void test35() {
+        String str = "```##{s12:AA##:12:BB##\\u001E##:6:CC##DD}##```       | ##{s12:AA##:12:BB##\\u001E##:6:CC##DD}##                      | composed colors, note the \\\\u001E separator\n" +
+                "```##:f158:AA## ##:f58:BB## ##:f201:CC##```    | ##:f158:AA## ##:f58:BB## ##:f201:CC##                      | foreground 8bits colors\n";
+        //String str = "##{s12:AA##:12:BB##\\u001E##:6:CC##DD}##";
+        //String str = "##{s12:AA##:12:BB##u001E##:6:CC##DD}##";
+        //String str = "##{s12:AA##:12:BB##u001E##:6:CC##}##";
+        //String str = "##{s12:AA##:12:BB##u}##";
+        //String str = "##{s12:AA##:12:BB##u##:12:BB##}##";
+        //String str = "##{s1:A##:1:B##C##:1:D##}##";
+        //String str = "##{s12:AA##:12:BB##}##";
+        NText parsed = NString.of(str, session).toText();
+        TestUtils.println(parsed);
+        Assertions.assertEquals(NTextType.LIST, parsed.getType());
+        Assertions.assertEquals(12, ((NTextList)parsed).size());
+    }
+    @Test
+    public void test36() {
+        String str = "##:fxd787af:Text##";
+
+        NText parsed = NString.of(str, session).toText();
+        TestUtils.println(parsed);
+//        Assertions.assertEquals(NTextType.LIST, parsed.getType());
+//        Assertions.assertEquals(12, ((NTextList)parsed).size());
+    }
+    @Test
+    public void test37() {
+        String str = "```##:primary3:Text##```                       | ##:primary3:Text##                          | primary3\n" +
+                "```##:secondary5:Text##```                     | ##:s4:Text##                          | secondary5\n" +
+                "```##{s12:AA##:12:BB##\\u001E##:6:CC##DD}##```       | ##{s12:AA##:12:BB##\\u001E##:6:CC##DD}##                      | composed colors, note the \\\\u001E separator\n" +
+                "```##:f158:AA## ##:f58:BB## ##:f201:CC##```    | ##:f158:AA## ##:f58:BB## ##:f201:CC##                      | foreground 8bits colors\n" +
+                "```##:foreground158:Text##```                  | ##:foreground158:Text##                          | foreground 158 (8bits)\n" +
+                "```##:fxd787af:Text##```                       | ##:fxd787af:Text##                          | foreground Pink (d787af in 24bits)\n" +
+                "```##:foregroundxd787af:Text##```              | ##:foregroundxd787af:Text##                          | foreground Pink (d787af in 24bits)\n" +
+                "```##:b158:Text##```                           | ##:b158:Text##                          | background 158 (8bits)\n" +
+                "```##:bxd787af:Text##```                       | ##:bxd787af:Text##                | background Pink (24bits)";
+
+        NText parsed = NString.of(str, session).toText();
+        TestUtils.println(parsed);
+        Assertions.assertEquals(NTextType.LIST, parsed.getType());
+        Assertions.assertEquals(40, ((NTextList)parsed).size());
+    }
+    @Test
+    public void test38() {
+        String str = "```##:bxd787af:Text##```";
+        NText parsed = NString.of(str, session).toText();
+        TestUtils.println(parsed);
+//        Assertions.assertEquals(NTextType.LIST, parsed.getType());
+//        Assertions.assertEquals(12, ((NTextList)parsed).size());
+    }
+    @Test
+    public void test39() {
+        String str = "\\```underlined underlined\\```";
+        NText parsed = NString.of(str, session).toText();
+        TestUtils.println(parsed);
+        Assertions.assertEquals(NTextType.PLAIN, parsed.getType());
+        String text = ((NTextPlain) parsed).getText();
+        Assertions.assertEquals("```underlined underlined```", text);
+        String text2 = parsed.toString();
+        Assertions.assertEquals(str, text2);
+    }
+
+    @Test
+    public void test40() {
+        String str = "```#) Title 1```";
+        NText parsed = NString.of(str, session).toText();
+        TestUtils.println(parsed);
+        Assertions.assertEquals(NTextType.CODE, parsed.getType());
+        String text = ((NTextCode) parsed).getText();
+        Assertions.assertEquals("#) Title 1", text);
+        String text2 = parsed.toString();
+        //will add leading space
+        Assertions.assertEquals("``` #) Title 1```", text2);
+    }
+
+    @Test
+    public void test41() {
+        String str = "###) Xml format\n" +
+                "####) NTF syntax\n"
+        ;
+        NText parsed = NString.of(str, session).toText();
+        TestUtils.println(parsed);
+        Assertions.assertEquals(NTextType.LIST, parsed.getType());
+        Assertions.assertEquals(2, ((NTextList) parsed).size());
+        Assertions.assertEquals(NTextType.TITLE, ((NTextList) parsed).get(0).getType());
+        Assertions.assertEquals(NTextType.TITLE, ((NTextList) parsed).get(1).getType());
+    }
 }

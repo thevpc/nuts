@@ -244,7 +244,6 @@ public class DefaultCustomCommandsModel {
             );
         }
 //        options = CoreNutsUtils.validate(options, workspace);
-//        NutsSession session = session.getSession();
         NCommandConfig command = defaultCommandFactory.findCommand(name, session);
         if (command == null) {
             throw new NIllegalArgumentException(session,

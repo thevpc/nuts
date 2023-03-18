@@ -22,10 +22,10 @@ package net.thevpc.nuts.toolbox.ndb.sql.nmysql.remote;
 //
 //public class RemoteMysql {
 //
-//    public NutsApplicationContext context;
+//    public NSession session;
 //    private Path sharedConfigFolder;
-//    public RemoteMysql(NutsApplicationContext context) {
-//        this.context = context;
+//    public RemoteMysql(NSession session) {
+//        this.session = session;
 //        sharedConfigFolder = Paths.get(getContext().getVersionFolderFolder(NutsStoreLocation.CONFIG, NMySqlConfigVersions.CURRENT));
 //    }
 //
@@ -446,11 +446,11 @@ package net.thevpc.nuts.toolbox.ndb.sql.nmysql.remote;
 //        return t;
 //    }
 //
-//    public NutsApplicationContext getContext() {
+//    public NSession getContext() {
 //        return context;
 //    }
 //
-//    public void setContext(NutsApplicationContext context) {
-//        this.context = context;
+//    public void setContext(NSession session) {
+//        this.session = session;
 //    }
 //}

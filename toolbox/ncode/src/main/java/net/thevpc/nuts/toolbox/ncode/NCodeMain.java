@@ -16,8 +16,8 @@ public class NCodeMain implements NApplication {
     }
 
     @Override
-    public void run(NApplicationContext applicationContext) {
-        applicationContext.processCommandLine(new NCodeMainCmdProcessor(applicationContext));
+    public void run(NSession session) {
+        session.processAppCommandLine(new NCodeMainCmdProcessor(session));
     }
 
 }

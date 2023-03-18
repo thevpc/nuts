@@ -117,7 +117,7 @@ public interface NExecutionContext extends NSessionProvider {
      *
      * @return current working directory
      */
-    NPath getCwd();
+    NPath getDirectory();
 
     /**
      * when true, any non 0 exited command will throw an Exception

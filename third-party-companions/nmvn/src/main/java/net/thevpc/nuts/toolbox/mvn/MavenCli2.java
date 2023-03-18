@@ -1,6 +1,6 @@
 package net.thevpc.nuts.toolbox.mvn;
 
-import net.thevpc.nuts.NApplicationContext;
+import net.thevpc.nuts.NSession;
 import org.apache.maven.cli.MavenCli;
 
 import java.io.ByteArrayOutputStream;
@@ -10,7 +10,7 @@ import java.util.Map;
 
 public class MavenCli2 {
     ByteArrayOutputStream bos;
-    private NApplicationContext appContext;
+    private NSession session;
     private String workingDirectory;
     private String multiModuleProjectDirectory;
     private String artifactId;
@@ -19,8 +19,8 @@ public class MavenCli2 {
     private Map<String, String> options = new HashMap<>();
 
 
-    public MavenCli2(NApplicationContext appContext) {
-        this.appContext = appContext;
+    public MavenCli2(NSession session) {
+        this.session = session;
     }
 
     public boolean isGrabString() {
@@ -70,7 +70,7 @@ public class MavenCli2 {
 
     public int doMain(String[] args) {
         if (multiModuleProjectDirectory == null) {
-            System.setProperty("maven.multiModuleProjectDirectory", appContext.getConfigFolder().toString());
+            System.setProperty("maven.multiModuleProjectDirectory", session.getAppConfigFolder().toString());
         } else {
             System.setProperty("maven.multiModuleProjectDirectory", multiModuleProjectDirectory);
         }
@@ -92,7 +92,7 @@ public class MavenCli2 {
             out.flush();
             return t;
         } else {
-            return cli.doMain(args, wd, appContext.getSession().out().asPrintStream(), appContext.getSession().err().asPrintStream());
+            return cli.doMain(args, wd, session.out().asPrintStream(), session.err().asPrintStream());
         }
     }
 

@@ -16,7 +16,7 @@ public class Main extends Application implements NutsApplication {
     private static String[] appArgs;
 
     public void init() throws Exception {
-        NutsApplicationContext ac=NutsApplications.createApplicationContext(this,appArgs,null);
+        NSession ac=NutsApplications.createApplicationContext(this,appArgs,null);
         NutsApplications.runApplication(this,ac);
         NutsSession session=ac.getSession();
         switch (ac.getMode()){
@@ -50,7 +50,7 @@ public class Main extends Application implements NutsApplication {
     }
 
     @Override
-    public void run(NutsApplicationContext applicationContext) {
+    public void run(NSession session) {
 
     }
 }

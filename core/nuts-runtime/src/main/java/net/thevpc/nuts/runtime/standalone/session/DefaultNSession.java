@@ -24,15 +24,15 @@
 package net.thevpc.nuts.runtime.standalone.session;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.cmdline.NArg;
-import net.thevpc.nuts.cmdline.NCmdLine;
-import net.thevpc.nuts.cmdline.NCmdLineConfigurable;
+import net.thevpc.nuts.cmdline.*;
 import net.thevpc.nuts.elem.NArrayElementBuilder;
 import net.thevpc.nuts.elem.NElements;
 import net.thevpc.nuts.format.NIterableFormat;
+import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.io.NPrintStream;
 import net.thevpc.nuts.io.NSessionTerminal;
 import net.thevpc.nuts.io.NTerminalMode;
+import net.thevpc.nuts.runtime.standalone.app.cmdline.NCommandLineUtils;
 import net.thevpc.nuts.runtime.standalone.elem.DefaultNArrayElementBuilder;
 import net.thevpc.nuts.runtime.standalone.extension.DefaultNExtensions;
 import net.thevpc.nuts.runtime.standalone.io.progress.ProgressOptions;
@@ -40,9 +40,13 @@ import net.thevpc.nuts.runtime.standalone.io.terminal.AbstractNSessionTerminal;
 import net.thevpc.nuts.runtime.standalone.util.CoreStringUtils;
 import net.thevpc.nuts.runtime.standalone.util.NConfigurableHelper;
 import net.thevpc.nuts.runtime.standalone.util.collections.NPropertiesHolder;
-import net.thevpc.nuts.util.NLogConfig;
-import net.thevpc.nuts.util.NMapListener;
-import net.thevpc.nuts.util.NStringUtils;
+import net.thevpc.nuts.runtime.standalone.util.jclass.JavaClassUtils;
+import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceExt;
+import net.thevpc.nuts.text.NText;
+import net.thevpc.nuts.text.NTextStyle;
+import net.thevpc.nuts.text.NTextTransformConfig;
+import net.thevpc.nuts.text.NTexts;
+import net.thevpc.nuts.util.*;
 
 import java.io.InputStream;
 import java.time.Instant;
@@ -89,10 +93,26 @@ public class DefaultNSession implements Cloneable, NSession {
     private String errLinePrefix;
     private String outLinePrefix;
     private Instant expireTime;
-    private NId appId;
+    //private NId appId;
     private String locale;
     private boolean iterableOut;
-    private NApplicationContext applicationContext;
+    private Class appClass;
+    private final NPath[] appFolders = new NPath[NStoreLocation.values().length];
+    private final NPath[] appSharedFolders = new NPath[NStoreLocation.values().length];
+    /**
+     * auto complete info for "auto-complete" mode
+     */
+    private NCmdLineAutoComplete appAutoComplete;
+    private NId appId;
+    private NClock appStartTime;
+    private List<String> appArgs;
+    private NApplicationMode appMode = NApplicationMode.RUN;
+    private NAppStoreLocationResolver appStoreLocationResolver;
+    /**
+     * previous parse for "update" mode
+     */
+    private NVersion appPreviousVersion;
+    private List<String> appModeArgs = new ArrayList<>();
 
     public DefaultNSession(NWorkspace ws) {
         this.ws = new NWorkspaceSessionAwareImpl(this, ws);
@@ -104,6 +124,7 @@ public class DefaultNSession implements Cloneable, NSession {
         setAll(options);
     }
 
+
     /**
      * configure the current command with the given arguments. This is an
      * override of the {@link NCmdLineConfigurable#configure(boolean, java.lang.String...)
@@ -114,9 +135,12 @@ public class DefaultNSession implements Cloneable, NSession {
      * @return {@code this} instance
      */
     @Override
-    public Object configure(boolean skipUnsupported, String... args) {
-        return NConfigurableHelper.configure(this, this, skipUnsupported, args, "nuts-session");
+    public final NSession configure(boolean skipUnsupported, String... args) {
+        NId appId = getAppId();
+        String appName = appId == null ? "app" : appId.getArtifactId();
+        return NConfigurableHelper.configure(this, this, skipUnsupported, args, appName);
     }
+
 
     /**
      * configure the current command with the given arguments.
@@ -509,10 +533,52 @@ public class DefaultNSession implements Cloneable, NSession {
                     }
                     break;
                 }
+                case "-?":
+                case "-h":
+                case "--help": {
+                    boolean enabled = a.isActive();
+                    cmdLine.skip();
+                    if (enabled) {
+                        if (cmdLine.isExecMode()) {
+                            printAppHelp();
+                        }
+                        cmdLine.skipAll();
+                        throw new NExecutionException(this, NMsg.ofPlain("help"), 0);
+                    }
+                    break;
+                }
+                case "--skip-event": {
+                    boolean enabled = a.isActive();
+                    switch (getAppMode()) {
+                        case INSTALL:
+                        case UNINSTALL:
+                        case UPDATE: {
+                            if (enabled) {
+                                cmdLine.skip();
+                                throw new NExecutionException(this, NMsg.ofPlain("skip-event"), 0);
+                            }
+                        }
+                    }
+                    return true;
+                }
+                case "--version": {
+                    boolean enabled = a.isActive();
+                    cmdLine.skip();
+                    if (enabled) {
+                        if (cmdLine.isExecMode()) {
+                            out().println(NIdResolver.of(this).resolveId(getClass()).getVersion());
+                            cmdLine.skipAll();
+                        }
+                        throw new NExecutionException(this, NMsg.ofPlain("version"), 0);
+                    }
+                    return true;
+                }
+
             }
         }
         return false;
     }
+
 
     //    @Override
     public NContentType getPreferredOutputFormat() {
@@ -682,7 +748,26 @@ public class DefaultNSession implements Cloneable, NSession {
             cloned.refProperties = new NPropertiesHolder();
             cloned.outputFormatOptions = outputFormatOptions == null ? null : new ArrayList<>(outputFormatOptions);
             cloned.listeners = null;
-            cloned.applicationContext = applicationContext;
+
+            cloned.appClass = this.getAppClass();
+            NStoreLocation[] values = NStoreLocation.values();
+            for (int i = 0; i < values.length; i++) {
+                NStoreLocation value = values[i];
+                cloned.appFolders[i] = this.getAppFolder(value);
+            }
+            for (int i = 0; i < values.length; i++) {
+                NStoreLocation value = values[i];
+                cloned.appSharedFolders[i] = this.getAppSharedFolder(value);
+            }
+            cloned.appAutoComplete = this.getAppAutoComplete();
+            cloned.appStartTime = this.getAppStartTime();
+            cloned.appArgs = this.getAppArguments() == null ? null : new ArrayList<>(this.getAppArguments());
+            cloned.appMode = this.getAppMode();
+            cloned.appStoreLocationResolver = this.getAppStoreLocationResolver();
+            this.appPreviousVersion = this.getAppPreviousVersion();
+            cloned.appModeArgs = this.getAppModeArguments() == null ? null : new ArrayList<>(this.getAppModeArguments());
+
+
             if (listeners != null) {
                 for (NListener listener : getListeners()) {
                     cloned.addListener(listener);
@@ -731,10 +816,24 @@ public class DefaultNSession implements Cloneable, NSession {
         this.logFileFilter = other.getLogFileFilter();
         this.eout = other.eout();
         this.appId = other.getAppId();
-        this.dependencySolver = other.getDependencySolver();
-        if (this.applicationContext == null) {
-            this.applicationContext = other.getApplicationContext();
+        this.appClass = other.getAppClass();
+        NStoreLocation[] values = NStoreLocation.values();
+        for (int i = 0; i < values.length; i++) {
+            NStoreLocation value = values[i];
+            this.appFolders[i] = other.getAppFolder(value);
         }
+        for (int i = 0; i < values.length; i++) {
+            NStoreLocation value = values[i];
+            this.appSharedFolders[i] = other.getAppSharedFolder(value);
+        }
+        this.appAutoComplete = other.getAppAutoComplete();
+        this.appStartTime = other.getAppStartTime();
+        this.appArgs = other.getAppArguments() == null ? null : new ArrayList<>(other.getAppArguments());
+        this.appMode = other.getAppMode();
+        this.appStoreLocationResolver = other.getAppStoreLocationResolver();
+        this.appPreviousVersion = other.getAppPreviousVersion();
+        this.appModeArgs = other.getAppModeArguments() == null ? null : new ArrayList<>(other.getAppModeArguments());
+        this.dependencySolver = other.getDependencySolver();
         return this;
     }
 
@@ -770,13 +869,7 @@ public class DefaultNSession implements Cloneable, NSession {
 
     @Override
     public NId getAppId() {
-        return appId;
-    }
-
-    @Override
-    public NSession setAppId(NId appId) {
-        this.appId = appId;
-        return this;
+        return this.appId;
     }
 
     @Override
@@ -1495,12 +1588,411 @@ public class DefaultNSession implements Cloneable, NSession {
     }
 
 
-    public NApplicationContext getApplicationContext() {
-        return applicationContext;
+    @Override
+    public NSession prepareApplication(String[] args0, Class appClass, String storeId, NClock startTime) {
+        List<String> args = new ArrayList<>();
+        if (args0 != null) {
+            for (String s : args0) {
+                if (s == null) {
+                    s = "";
+                }
+                args.add(s);
+            }
+        }
+        this.appStartTime = startTime == null ? NClock.now() : startTime;
+        int wordIndex = -1;
+        if (args.size() > 0 && args.get(0).startsWith("--nuts-exec-mode=")) {
+            NCmdLine execModeCommand = NCmdLine.parseDefault(
+                    args.get(0).substring(args.get(0).indexOf('=') + 1)).get(this);
+            if (execModeCommand.hasNext()) {
+                NArg a = execModeCommand.next().get(this);
+                switch (a.key()) {
+                    case "auto-complete": {
+                        this.appMode = NApplicationMode.AUTO_COMPLETE;
+                        if (execModeCommand.hasNext()) {
+                            wordIndex = execModeCommand.next().get(this).asInt().get(this);
+                        }
+                        this.appModeArgs = execModeCommand.toStringList();
+                        execModeCommand.skipAll();
+                        break;
+                    }
+                    case "install": {
+                        this.appMode = NApplicationMode.INSTALL;
+                        this.appModeArgs = execModeCommand.toStringList();
+                        execModeCommand.skipAll();
+                        break;
+                    }
+                    case "uninstall": {
+                        this.appMode = NApplicationMode.UNINSTALL;
+                        this.appModeArgs = execModeCommand.toStringList();
+                        execModeCommand.skipAll();
+                        break;
+                    }
+                    case "update": {
+                        this.appMode = NApplicationMode.UPDATE;
+                        if (execModeCommand.hasNext()) {
+                            this.appPreviousVersion = NVersion.of(execModeCommand.next().flatMap(NLiteral::asString).get(this)).get(this);
+                        }
+                        this.appModeArgs = execModeCommand.toStringList();
+                        execModeCommand.skipAll();
+                        break;
+                    }
+                    default: {
+                        throw new NExecutionException(this, NMsg.ofC("Unsupported nuts-exec-mode : %s", args.get(0)), 205);
+                    }
+                }
+            }
+            args = args.subList(1, args.size());
+        }
+        NId _appId = (NId) NApplications.getSharedMap().get("nuts.embedded.application.id");
+        if (_appId != null) {
+            //("=== Inherited "+_appId);
+        } else {
+            _appId = NIdResolver.of(this).resolveId(appClass);
+        }
+        if (_appId == null) {
+            throw new NExecutionException(this, NMsg.ofC("invalid Nuts Application (%s). Id cannot be resolved", appClass.getName()), 203);
+        }
+        this.appArgs = (args);
+        this.appId = (_appId);
+        this.appClass = appClass == null ? null : JavaClassUtils.unwrapCGLib(appClass);
+        NLocations locations = NLocations.of(this);
+        for (NStoreLocation folder : NStoreLocation.values()) {
+            setAppFolder(folder, locations.getStoreLocation(this.appId, folder));
+            setAppSharedFolder(folder, locations.getStoreLocation(this.appId.builder().setVersion("SHARED").build(), folder));
+        }
+        if (this.appMode == NApplicationMode.AUTO_COMPLETE) {
+            //TODO fix me
+//            this.workspace.term().setSession(session).getSystemTerminal()
+//                    .setMode(NutsTerminalMode.FILTERED);
+            if (wordIndex < 0) {
+                wordIndex = args.size();
+            }
+            this.appAutoComplete = new AppCmdLineAutoComplete(this, args, wordIndex, out());
+        } else {
+            this.appAutoComplete = null;
+        }
+        return this;
     }
 
-    public DefaultNSession setApplicationContext(NApplicationContext applicationContext) {
-        this.applicationContext = applicationContext;
+
+    @Override
+    public NApplicationMode getAppMode() {
+        return this.appMode;
+    }
+
+    @Override
+    public List<String> getAppModeArguments() {
+        return this.appModeArgs;
+    }
+
+    @Override
+    public NCmdLineAutoComplete getAppAutoComplete() {
+        return this.appAutoComplete;
+    }
+
+
+    @Override
+    public NOptional<NText> getAppHelp() {
+        NText h = null;
+        try {
+            h = NWorkspaceExt.of(getWorkspace()).resolveDefaultHelp(getAppClass(), this);
+        } catch (Exception ex) {
+            //
+        }
+        if (h != null) {
+            try {
+                h = NTexts.of(this).transform(h, new NTextTransformConfig()
+                        .setProcessTitleNumbers(true)
+                        .setNormalize(true)
+                        .setFlatten(true)
+                );
+            } catch (Exception ex) {
+                //
+                return NOptional.ofNamedError("application help", ex);
+            }
+        }
+        return NOptional.ofNamed(h, "application help");
+    }
+
+    @Override
+    public void printAppHelp() {
+        NText h = NWorkspaceExt.of(getWorkspace()).resolveDefaultHelp(getAppClass(), this);
+        h = NTexts.of(this).transform(h, new NTextTransformConfig()
+                .setProcessTitleNumbers(true)
+                .setNormalize(true)
+                .setFlatten(true)
+        );
+        if (h == null) {
+            this.out().println(NMsg.ofC("Help is %s.", NMsg.ofStyled("missing", NTextStyle.error())));
+        } else {
+            this.out().println(h);
+        }
+        //need flush if the help is syntactically incorrect
+        this.out().flush();
+    }
+
+    @Override
+    public Class getAppClass() {
+        return this.appClass;
+    }
+
+    @Override
+    public NPath getAppAppsFolder() {
+        return getAppFolder(NStoreLocation.APPS);
+    }
+
+    @Override
+    public NPath getAppConfigFolder() {
+        return getAppFolder(NStoreLocation.CONFIG);
+    }
+
+    @Override
+    public NPath getAppLogFolder() {
+        return getAppFolder(NStoreLocation.LOG);
+    }
+
+    @Override
+    public NPath getAppTempFolder() {
+        return getAppFolder(NStoreLocation.TEMP);
+    }
+
+    @Override
+    public NPath getAppVarFolder() {
+        return getAppFolder(NStoreLocation.VAR);
+    }
+
+    @Override
+    public NPath getAppLibFolder() {
+        return getAppFolder(NStoreLocation.LIB);
+    }
+
+    @Override
+    public NPath getAppRunFolder() {
+        return getAppFolder(NStoreLocation.RUN);
+    }
+
+    @Override
+    public NPath getAppCacheFolder() {
+        return getAppFolder(NStoreLocation.CACHE);
+    }
+
+    @Override
+    public NPath getAppVersionFolder(NStoreLocation location, String version) {
+        if (version == null
+                || version.isEmpty()
+                || version.equalsIgnoreCase("current")
+                || version.equals(getAppId().getVersion().getValue())) {
+            return getAppFolder(location);
+        }
+        NId newId = this.getAppId().builder().setVersion(version).build();
+        if (this.appStoreLocationResolver != null) {
+            NPath r = this.appStoreLocationResolver.getStoreLocation(newId, location);
+            if (r != null) {
+                return r;
+            }
+        }
+        return NLocations.of(this).getStoreLocation(newId, location);
+    }
+
+    @Override
+    public NPath getAppSharedAppsFolder() {
+        return getAppSharedFolder(NStoreLocation.APPS);
+    }
+
+    @Override
+    public NPath getAppSharedConfigFolder() {
+        return getAppSharedFolder(NStoreLocation.CONFIG);
+    }
+
+    @Override
+    public NPath getAppSharedLogFolder() {
+        return getAppSharedFolder(NStoreLocation.LOG);
+    }
+
+    @Override
+    public NPath getAppSharedTempFolder() {
+        return getAppSharedFolder(NStoreLocation.TEMP);
+    }
+
+    @Override
+    public NPath getAppSharedVarFolder() {
+        return getAppSharedFolder(NStoreLocation.VAR);
+    }
+
+    @Override
+    public NPath getAppSharedLibFolder() {
+        return getAppSharedFolder(NStoreLocation.LIB);
+    }
+
+    @Override
+    public NPath getAppSharedRunFolder() {
+        return getAppSharedFolder(NStoreLocation.RUN);
+    }
+
+    @Override
+    public NPath getAppSharedFolder(NStoreLocation location) {
+        return this.appSharedFolders[location.ordinal()];
+    }
+
+    @Override
+    public NVersion getAppVersion() {
+        return this.appId == null ? null : this.appId.getVersion();
+    }
+
+    @Override
+    public List<String> getAppArguments() {
+        return this.appArgs;
+    }
+
+    @Override
+    public NClock getAppStartTime() {
+        return this.appStartTime;
+    }
+
+    @Override
+    public NVersion getAppPreviousVersion() {
+        return this.appPreviousVersion;
+    }
+
+    @Override
+    public NCmdLine getAppCommandLine() {
+        return NCmdLine.of(getAppArguments())
+                .setCommandName(getAppId().getArtifactId())
+                .setAutoComplete(getAppAutoComplete())
+                .setSession(this);
+    }
+
+    @Override
+    public void processAppCommandLine(NCmdLineProcessor commandLineProcessor) {
+        getAppCommandLine().process(commandLineProcessor, new DefaultNCmdLineContext(this));
+    }
+
+    @Override
+    public NPath getAppFolder(NStoreLocation location) {
+        return this.appFolders[location.ordinal()];
+    }
+
+    @Override
+    public boolean isAppExecMode() {
+        return getAppAutoComplete() == null;
+    }
+
+    @Override
+    public NAppStoreLocationResolver getAppStoreLocationResolver() {
+        return this.appStoreLocationResolver;
+    }
+
+    @Override
+    public NSession setAppVersionStoreLocationSupplier(NAppStoreLocationResolver appVersionStoreLocationSupplier) {
+        this.appStoreLocationResolver = appVersionStoreLocationSupplier;
         return this;
+    }
+
+    @Override
+    public NSession setAppMode(NApplicationMode mode) {
+        this.appMode = mode;
+        return this;
+    }
+
+    @Override
+    public NSession setAppModeArgs(List<String> modeArgs) {
+        this.appModeArgs = modeArgs;
+        return this;
+    }
+
+
+    @Override
+    public NSession setAppFolder(NStoreLocation location, NPath folder) {
+        this.appFolders[location.ordinal()] = folder;
+        return this;
+    }
+
+    @Override
+    public NSession setAppSharedFolder(NStoreLocation location, NPath folder) {
+        this.appSharedFolders[location.ordinal()] = folder;
+        return this;
+    }
+
+    //    @Override
+    public NSession setAppId(NId appId) {
+        this.appId = appId;
+        return this;
+    }
+
+    //    @Override
+    @Override
+    public NSession setAppArguments(List<String> args) {
+        this.appArgs = args;
+        return this;
+    }
+
+    @Override
+    public NSession setAppArguments(String[] args) {
+        this.appArgs = new ArrayList<>(Arrays.asList(args));
+        return this;
+    }
+
+    @Override
+    public NSession setAppStartTime(NClock startTime) {
+        this.appStartTime = startTime;
+        return this;
+    }
+
+    @Override
+    public NSession setAppPreviousVersion(NVersion previousVersion) {
+        this.appPreviousVersion = previousVersion;
+        return this;
+    }
+
+    private static class AppCmdLineAutoComplete extends NCmdLineAutoCompleteBase {
+
+        private final ArrayList<String> words;
+        private final NPrintStream out0;
+        private final NSession session;
+        private final int wordIndex;
+
+        public AppCmdLineAutoComplete(NSession session, List<String> args, int wordIndex, NPrintStream out0) {
+            this.session = session;
+            words = new ArrayList<>(args);
+            this.wordIndex = wordIndex;
+            this.out0 = out0;
+        }
+
+        @Override
+        public NSession getSession() {
+            return session;
+        }
+
+        @Override
+        public String getLine() {
+            return NCmdLine.of(getWords()).toString();
+        }
+
+        @Override
+        public List<String> getWords() {
+            return words;
+        }
+
+        @Override
+        public int getCurrentWordIndex() {
+            return wordIndex;
+        }
+
+        @Override
+        protected NArgCandidate addCandidatesImpl(NArgCandidate value) {
+            NArgCandidate c = super.addCandidatesImpl(value);
+            String v = value.getValue();
+            if (v == null) {
+                throw new NExecutionException(session, NMsg.ofPlain("candidate cannot be null"), 2);
+            }
+            String d = value.getDisplay();
+            if (Objects.equals(v, d) || d == null) {
+                out0.println(NMsg.ofC("%s", AUTO_COMPLETE_CANDIDATE_PREFIX + NCommandLineUtils.escapeArgument(v)));
+            } else {
+                out0.println(NMsg.ofC("%s", AUTO_COMPLETE_CANDIDATE_PREFIX + NCommandLineUtils.escapeArgument(v) + " " + NCommandLineUtils.escapeArgument(d)));
+            }
+            return c;
+        }
     }
 }

@@ -1,12 +1,10 @@
 package net.thevpc.nuts.toolbox.ndb.base;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.cmdline.NArg;
 import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.toolbox.ndb.NdbConfig;
 import net.thevpc.nuts.toolbox.ndb.sql.nmysql.util.AtName;
-import net.thevpc.nuts.toolbox.ndb.util.LoginServerPath;
 import net.thevpc.nuts.toolbox.ndb.util.NdbUtils;
 import net.thevpc.nuts.util.NRef;
 
@@ -33,7 +31,7 @@ public abstract class NdbCmd<C extends NdbConfig> {
         return names.toArray(new String[0]);
     }
 
-    abstract public void run(NApplicationContext appContext, NCmdLine commandLine);
+    abstract public void run(NSession session, NCmdLine commandLine);
 
     protected boolean fillOption(NCmdLine cmdLine, C options) {
         if (support.fillExtraOption(cmdLine, options)) {
@@ -89,7 +87,7 @@ public abstract class NdbCmd<C extends NdbConfig> {
     protected boolean fillOptionLast(NCmdLine commandLine, C options) {
         if (fillOption(commandLine, options)) {
             return true;
-        } else if (support.getAppContext().configureFirst(commandLine)) {
+        } else if (support.getSession().configureFirst(commandLine)) {
             return true;
         } else {
             commandLine.getSession().configureLast(commandLine);

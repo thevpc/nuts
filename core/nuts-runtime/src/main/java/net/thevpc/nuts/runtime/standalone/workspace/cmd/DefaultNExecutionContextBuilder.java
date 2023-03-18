@@ -119,7 +119,7 @@ public class DefaultNExecutionContextBuilder implements NExecutionContextBuilder
         this.workspace = other.getWorkspace();
         this.executorOptions.addAll(CoreCollectionUtils.nonNullList(other.getExecutorOptions()));
         this.executorProperties.putAll(CoreCollectionUtils.nonNullMap(other.getExecutorProperties()));
-        this.cwd = other.getCwd();
+        this.cwd = other.getDirectory();
         this.env = other.getEnv();
         this.failFast = other.isFailFast();
         this.temporary = other.isTemporary();
@@ -183,7 +183,7 @@ public class DefaultNExecutionContextBuilder implements NExecutionContextBuilder
     }
 
     @Override
-    public NPath getCwd() {
+    public NPath getDirectory() {
         return cwd;
     }
 
@@ -314,7 +314,7 @@ public class DefaultNExecutionContextBuilder implements NExecutionContextBuilder
     }
 
     @Override
-    public NExecutionContextBuilder setCwd(NPath cwd) {
+    public NExecutionContextBuilder setDirectory(NPath cwd) {
         this.cwd = cwd;
         return this;
     }
@@ -397,7 +397,7 @@ public class DefaultNExecutionContextBuilder implements NExecutionContextBuilder
         this.workspaceOptions.clear();
         this.workspaceOptions.addAll(other.getWorkspaceOptions());
         this.executorProperties = other.getExecutorProperties();
-        this.cwd = other.getCwd();
+        this.cwd = other.getDirectory();
         this.env = other.getEnv();
         this.failFast = other.isFailFast();
         this.temporary = other.isTemporary();

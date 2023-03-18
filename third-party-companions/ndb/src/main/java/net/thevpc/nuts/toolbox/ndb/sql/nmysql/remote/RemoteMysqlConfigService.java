@@ -17,14 +17,14 @@ public class RemoteMysqlConfigService {
 
     public static final String CLIENT_CONFIG_EXT = ".remote-config";
     RemoteMysqlConfig config;
-    NApplicationContext context;
+    NSession session;
     NPath sharedConfigFolder;
     private String name;
 
-    public RemoteMysqlConfigService(String name, NApplicationContext context) {
+    public RemoteMysqlConfigService(String name, NSession session) {
         setName(name);
-        this.context = context;
-        sharedConfigFolder = context.getVersionFolder(NStoreLocation.CONFIG, NMySqlConfigVersions.CURRENT);
+        this.session = session;
+        sharedConfigFolder = session.getAppVersionFolder(NStoreLocation.CONFIG, NMySqlConfigVersions.CURRENT);
     }
 
     public String getName() {
@@ -50,7 +50,6 @@ public class RemoteMysqlConfigService {
 
     public RemoteMysqlConfigService saveConfig() {
         NPath f = getConfigPath();
-        NSession session = context.getSession();
         NElements.of(session).json().setValue(config)
                 .setNtf(false).print(f);
         return this;
@@ -66,7 +65,6 @@ public class RemoteMysqlConfigService {
     }
 
     public RemoteMysqlConfigService loadConfig() {
-        NSession session = context.getSession();
         if (name == null) {
             throw new NExecutionException(session, NMsg.ofPlain("missing config name"), 2);
         }
@@ -87,7 +85,6 @@ public class RemoteMysqlConfigService {
     }
 
     public RemoteMysqlConfigService write(PrintStream out) {
-        NSession session = context.getSession();
         NElements.of(session).json().setValue(getConfig())
                 .setNtf(false).print(out);
         out.flush();
@@ -111,7 +108,7 @@ public class RemoteMysqlConfigService {
                 case OPEN_OR_NULL:
                     return null;
                 case OPEN_OR_ERROR:
-                    throw new NIllegalArgumentException(context.getSession(), NMsg.ofC("remote instance not found: %s@%s", dbName, getName()));
+                    throw new NIllegalArgumentException(session, NMsg.ofC("remote instance not found: %s@%s", dbName, getName()));
                 case CREATE_OR_ERROR:
                 case OPEN_OR_CREATE: {
                     a = new RemoteMysqlDatabaseConfig();
@@ -119,13 +116,13 @@ public class RemoteMysqlConfigService {
                     return new RemoteMysqlDatabaseConfigService(dbName, a, this);
                 }
                 default: {
-                    throw new NIllegalArgumentException(context.getSession(), NMsg.ofPlain("unexpected error"));
+                    throw new NIllegalArgumentException(session, NMsg.ofPlain("unexpected error"));
                 }
             }
         }
         switch (action) {
             case CREATE_OR_ERROR: {
-                throw new NIllegalArgumentException(context.getSession(), NMsg.ofC("remote instance not found: %s@%s", dbName, getName()));
+                throw new NIllegalArgumentException(session, NMsg.ofC("remote instance not found: %s@%s", dbName, getName()));
             }
             case OPEN_OR_ERROR:
             case OPEN_OR_NULL:
@@ -133,7 +130,7 @@ public class RemoteMysqlConfigService {
                 return new RemoteMysqlDatabaseConfigService(dbName, a, this);
             }
             default: {
-                throw new NIllegalArgumentException(context.getSession(), NMsg.ofPlain("unexpected error"));
+                throw new NIllegalArgumentException(session, NMsg.ofPlain("unexpected error"));
             }
         }
     }

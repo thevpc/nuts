@@ -28,14 +28,14 @@ import net.thevpc.nuts.toolbox.ndb.util.NdbUtils;
 public class RemoteMysqlDatabaseConfigService {
 
     private final RemoteMysqlDatabaseConfig config;
-    private final NApplicationContext context;
+    private final NSession session;
     private final RemoteMysqlConfigService client;
     private final String name;
 
     public RemoteMysqlDatabaseConfigService(String name, RemoteMysqlDatabaseConfig config, RemoteMysqlConfigService client) {
         this.config = config;
         this.client = client;
-        this.context = client.context;
+        this.session = client.session;
         this.name = name;
     }
 
@@ -45,7 +45,7 @@ public class RemoteMysqlDatabaseConfigService {
 
     public RemoteMysqlDatabaseConfigService remove() {
         client.getConfig().getDatabases().remove(name);
-        context.getSession().out().println(NMsg.ofC("%s db config removed.", getBracketsPrefix(name)));
+        session.out().println(NMsg.ofC("%s db config removed.", getBracketsPrefix(name)));
         return this;
 
     }
@@ -59,14 +59,12 @@ public class RemoteMysqlDatabaseConfigService {
     }
 
     public void write(PrintStream out) {
-        NSession session = context.getSession();
         NElements.of(session).json().setValue(getConfig())
                 .setNtf(false).print(out);
     }
 
     public String pull(String localPath, boolean restore, boolean deleteRemote) {
-        CachedMapFile lastRun = new CachedMapFile(context, "pull-" + getName());
-        NSession session = context.getSession();
+        CachedMapFile lastRun = new CachedMapFile(session, "pull-" + getName());
         if (lastRun.exists()) {
             if (!session.getTerminal().ask()
                     .resetLine()
@@ -78,7 +76,7 @@ public class RemoteMysqlDatabaseConfigService {
                 lastRun.reset();
             }
         }
-        NMySqlService ms = new NMySqlService(context);
+        NMySqlService ms = new NMySqlService(session);
         AtName locName = new AtName(getConfig().getLocalName());
         LocalMysqlDatabaseConfigService loc = ms.loadLocalMysqlConfig(locName.getConfigName(), NOpenMode.OPEN_OR_ERROR)
                 .getDatabase(locName.getDatabaseName(), NOpenMode.OPEN_OR_ERROR);
@@ -109,7 +107,7 @@ public class RemoteMysqlDatabaseConfigService {
         String ppath = (String) resMap.get("path");
 
         if (NBlankable.isBlank(localPath)) {
-            localPath = context.getVarFolder()
+            localPath = session.getAppVarFolder()
                     .resolve("pull-backups")
                     .resolve(client.getName() + "-" + getName())
                     .resolve(/*MysqlUtils.newDateString()+"-"+*/Paths.get(ppath).getFileName().toString())
@@ -134,7 +132,7 @@ public class RemoteMysqlDatabaseConfigService {
                     throw new NIOException(session, e);
                 }
             }
-            NExecCommand.of(context.getSession()).setExecutionType(NExecutionType.EMBEDDED)
+            NExecCommand.of(session).setExecutionType(NExecutionType.EMBEDDED)
                     .setSession(session.copy())
                     .addCommand("nsh",
                             "--bot",
@@ -176,11 +174,10 @@ public class RemoteMysqlDatabaseConfigService {
     }
 
     public void push(String localPath, boolean backup) {
-        NMySqlService ms = new NMySqlService(context);
+        NMySqlService ms = new NMySqlService(session);
         AtName locName = new AtName(getConfig().getLocalName());
         LocalMysqlDatabaseConfigService loc = ms.loadLocalMysqlConfig(locName.getConfigName(), NOpenMode.OPEN_OR_ERROR)
                 .getDatabase(locName.getDatabaseName(), NOpenMode.OPEN_OR_ERROR);
-        NSession session = context.getSession();
         if (backup) {
             localPath = loc.backup(localPath).path;
         } else {
@@ -250,7 +247,6 @@ public class RemoteMysqlDatabaseConfigService {
     }
 
     public String execRemoteNuts(String... cmd) {
-        NSession session = context.getSession();
         NExecCommand b = NExecCommand.of(session)
                 .setSession(session.copy());
         if ("localhost".equals(this.config.getServer())) {
@@ -301,7 +297,7 @@ public class RemoteMysqlDatabaseConfigService {
     }
 
     public NString getBracketsPrefix(String str) {
-        return NTexts.of(context.getSession()).ofBuilder()
+        return NTexts.of(session).ofBuilder()
                 .append("[")
                 .append(str, NTextStyle.primary5())
                 .append("]");

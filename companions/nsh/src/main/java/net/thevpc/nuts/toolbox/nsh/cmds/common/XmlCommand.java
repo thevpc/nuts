@@ -90,7 +90,7 @@ public class XmlCommand extends NShellBuiltinDefault {
 
         Document doc = null;
         if (options.input != null) {
-            NPath file = NPath.of(options.input, session).toAbsolute(context.getCwd());
+            NPath file = NPath.of(options.input, session).toAbsolute(context.getDirectory());
             if (file.isFile()) {
                 try (InputStream is = file.getInputStream()) {
                     doc = dBuilder.parse(is);

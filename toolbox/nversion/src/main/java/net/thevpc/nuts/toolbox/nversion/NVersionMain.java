@@ -29,9 +29,9 @@ public class NVersionMain implements NApplication {
         new NVersionMain().runAndExit(args);
     }
 
-    private Set<VersionDescriptor> detectVersions(String filePath, NApplicationContext context) throws IOException {
+    private Set<VersionDescriptor> detectVersions(String filePath, NSession session) throws IOException {
         for (PathVersionResolver r : resolvers) {
-            Set<VersionDescriptor> x = r.resolve(filePath, context);
+            Set<VersionDescriptor> x = r.resolve(filePath, session);
             if (x != null) {
                 return x;
             }
@@ -39,25 +39,24 @@ public class NVersionMain implements NApplication {
         try {
             Path p = Paths.get(filePath);
             if (!Files.exists(p)) {
-                throw new NExecutionException(context.getSession(), NMsg.ofC("nversion: file does not exist: %s" , p), 2);
+                throw new NExecutionException(session, NMsg.ofC("nversion: file does not exist: %s" , p), 2);
             }
             if (Files.isDirectory(p)) {
-                throw new NExecutionException(context.getSession(), NMsg.ofC("nversion: unsupported directory: %s", p), 2);
+                throw new NExecutionException(session, NMsg.ofC("nversion: unsupported directory: %s", p), 2);
             }
             if (Files.isRegularFile(p)) {
-                throw new NExecutionException(context.getSession(), NMsg.ofC("nversion: unsupported file: %s", filePath), 2);
+                throw new NExecutionException(session, NMsg.ofC("nversion: unsupported file: %s", filePath), 2);
             }
         } catch (NExecutionException ex) {
             throw ex;
         } catch (Exception ex) {
             //
         }
-        throw new NExecutionException(context.getSession(), NMsg.ofC("nversion: unsupported path: %s", filePath), 2);
+        throw new NExecutionException(session, NMsg.ofC("nversion: unsupported path: %s", filePath), 2);
     }
 
     @Override
-    public void run(NApplicationContext context) {
-        NSession session = context.getSession();
+    public void run(NSession session) {
         Set<String> unsupportedFileTypes = new HashSet<>();
         Set<String> jarFiles = new HashSet<>();
         Set<String> exeFiles = new HashSet<>();
@@ -71,7 +70,7 @@ public class NVersionMain implements NApplication {
         boolean sort = false;
         boolean table = false;
         boolean error = false;
-        NCmdLine commandLine = context.getCommandLine();
+        NCmdLine commandLine = session.getAppCommandLine();
         NArg a;
         int processed = 0;
         while (commandLine.hasNext()) {
@@ -101,7 +100,7 @@ public class NVersionMain implements NApplication {
                 a = commandLine.next().get(session);
                 jarFiles.add(a.asString().get(session));
             } else {
-                context.configureLast(commandLine);
+                session.configureLast(commandLine);
             }
         }
         if (commandLine.isExecMode()) {
@@ -110,7 +109,7 @@ public class NVersionMain implements NApplication {
                 Set<VersionDescriptor> value = null;
                 try {
                     processed++;
-                    value = detectVersions(NPath.of(arg, session).toAbsolute().toString(), context);
+                    value = detectVersions(NPath.of(arg, session).toAbsolute().toString(), session);
                 } catch (IOException e) {
                     throw new NExecutionException(session, NMsg.ofC("nversion: unable to detect version for %s",arg), e, 2);
                 }

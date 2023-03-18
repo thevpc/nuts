@@ -28,8 +28,8 @@ public class NTemplateMain implements NApplication {
     }
 
     @Override
-    public void run(NApplicationContext appContext) {
-        appContext.processCommandLine(new NCmdLineProcessor() {
+    public void run(NSession session) {
+        session.processAppCommandLine(new NCmdLineProcessor() {
 
             @Override
             public boolean onCmdNextOption(NArg option, NCmdLine commandLine, NCmdLineContext context) {
@@ -68,7 +68,7 @@ public class NTemplateMain implements NApplication {
 
             @Override
             public void onCmdFinishParsing(NCmdLine commandLine, NCmdLineContext context) {
-                fileTemplater = new NFileTemplater(appContext);
+                fileTemplater = new NFileTemplater(session);
             }
 
             @Override
@@ -80,14 +80,14 @@ public class NTemplateMain implements NApplication {
 
 
     private static class NshEvaluator implements ExprEvaluator {
-        private final NApplicationContext appContext;
+        private final NSession session;
         private final NShell shell;
         private final FileTemplater fileTemplater;
 
-        public NshEvaluator(NApplicationContext appContext, FileTemplater fileTemplater) {
-            this.appContext = appContext;
+        public NshEvaluator(NSession session, FileTemplater fileTemplater) {
+            this.session = session;
             this.fileTemplater = fileTemplater;
-            shell = new NShell(new NShellConfiguration().setApplicationContext(appContext)
+            shell = new NShell(new NShellConfiguration().setSession(session)
                     .setIncludeDefaultBuiltins(true).setIncludeExternalExecutor(true)
                     .setArgs()
             );
@@ -138,9 +138,9 @@ public class NTemplateMain implements NApplication {
     }
 
     private static class NFileTemplater extends FileTemplater {
-        public NFileTemplater(NApplicationContext appContext) {
-            super(appContext.getSession());
-            this.setDefaultExecutor("text/ntemplate-nsh-project", new NshEvaluator(appContext, this));
+        public NFileTemplater(NSession session) {
+            super(session);
+            this.setDefaultExecutor("text/ntemplate-nsh-project", new NshEvaluator(session, this));
             setProjectFileName("project.nsh");
         }
 

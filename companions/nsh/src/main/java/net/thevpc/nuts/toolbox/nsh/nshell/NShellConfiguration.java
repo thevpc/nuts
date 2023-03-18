@@ -23,7 +23,6 @@
  */
 package net.thevpc.nuts.toolbox.nsh.nshell;
 
-import net.thevpc.nuts.NApplicationContext;
 import net.thevpc.nuts.NId;
 import net.thevpc.nuts.NMsg;
 import net.thevpc.nuts.NSession;
@@ -31,9 +30,9 @@ import net.thevpc.nuts.toolbox.nsh.cmdresolver.NShellCommandTypeResolver;
 import net.thevpc.nuts.toolbox.nsh.cmds.NShellBuiltin;
 import net.thevpc.nuts.toolbox.nsh.err.NShellErrorHandler;
 import net.thevpc.nuts.toolbox.nsh.eval.NShellEvaluator;
-import net.thevpc.nuts.toolbox.nsh.sys.NShellExternalExecutor;
 import net.thevpc.nuts.toolbox.nsh.history.NShellHistory;
 import net.thevpc.nuts.toolbox.nsh.options.NShellOptionsParser;
+import net.thevpc.nuts.toolbox.nsh.sys.NShellExternalExecutor;
 
 import java.util.function.Function;
 import java.util.function.Predicate;
@@ -43,9 +42,8 @@ import java.util.function.Predicate;
  */
 public class NShellConfiguration {
 
-    private NApplicationContext applicationContext;
-    private NId appId;
     private NSession session;
+    private NId appId;
     private String[] args;
     private String serviceName;
     private NShellOptionsParser shellOptionsParser;
@@ -71,12 +69,12 @@ public class NShellConfiguration {
     private Boolean includeExternalExecutor;
     private Function<NSession, NMsg> headerMessageSupplier;
 
-    public NApplicationContext getApplicationContext() {
-        return applicationContext;
+    public NSession getSession() {
+        return session;
     }
 
-    public NShellConfiguration setApplicationContext(NApplicationContext applicationContext) {
-        this.applicationContext = applicationContext;
+    public NShellConfiguration setSession(NSession session) {
+        this.session = session;
         return this;
     }
 
@@ -160,16 +158,6 @@ public class NShellConfiguration {
         this.appId = appId;
         return this;
     }
-
-    public NSession getSession() {
-        return session;
-    }
-
-    public NShellConfiguration setSession(NSession session) {
-        this.session = session;
-        return this;
-    }
-
 
     public Predicate<NShellBuiltin> getBuiltinFilter() {
         return builtinFilter;

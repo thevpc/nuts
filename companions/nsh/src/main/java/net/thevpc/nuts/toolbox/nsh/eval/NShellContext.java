@@ -63,11 +63,11 @@ public interface NShellContext {
 
     Map<String, Object> getUserProperties();
 
-    String getCwd();
+    String getDirectory();
 
     String getHome();
 
-    void setCwd(String cwd);
+    void setDirectory(String cwd);
 
     NShellFileSystem getFileSystem();
 

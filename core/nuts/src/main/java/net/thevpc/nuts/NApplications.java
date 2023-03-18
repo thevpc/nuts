@@ -33,6 +33,7 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
+import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.logging.Level;
@@ -172,43 +173,6 @@ public final class NApplications {
         }
         throw new NBootException(NMsg.ofC("missing application constructor one of : \n\t static createApplicationInstance(NutsSession,String[])\n\t Constructor(NutsSession,String[])\n\t Constructor()", appType.getName()));
     }
-
-    /**
-     * create an Application Context instance for the given arguments. The session can be null.
-     *
-     * @param applicationInstance application instance (to resolve appId)
-     * @param nutsArgs            nutsArgs arguments
-     * @param appArgs             application arguments
-     * @param session             caller workspace session (or null to create an inherited workspace)
-     * @return NApplicationContext instance
-     */
-    public static NApplicationContext createApplicationContext(NApplication applicationInstance, String[] nutsArgs, String[] appArgs, NSession session) {
-        NClock startTime = NClock.now();
-        if (applicationInstance == null) {
-            throw new NullPointerException("null application");
-        }
-        if (session == null) {
-            session = Nuts.openInheritedWorkspace(nutsArgs, appArgs);
-        }
-        NApplicationContext applicationContext;
-        applicationContext = applicationInstance.createApplicationContext(session, nutsArgs, appArgs, startTime);
-        if (applicationContext == null) {
-            applicationContext = NApplicationContext.of(appArgs, startTime, applicationInstance.getClass(), null, session);
-        }
-
-        //copy inter-process parameters only
-        NSession ctxSession = applicationContext.getSession();
-        ctxSession.setFetchStrategy(session.getFetchStrategy());
-        ctxSession.setOutputFormat(session.getOutputFormat());
-        ctxSession.setConfirm(session.getConfirm());
-        ctxSession.setTrace(session.isTrace());
-        ctxSession.setIndexed(session.isIndexed());
-        ctxSession.setCached(session.isCached());
-        ctxSession.setTransitive(session.isTransitive());
-        ctxSession.setTerminal(NSessionTerminal.of(session.getTerminal(), ctxSession));
-        return applicationContext;
-    }
-
     /**
      * run application with given life cycle.
      *
@@ -218,41 +182,45 @@ public final class NApplications {
      * @param args                application arguments
      */
     public static void runApplication(NApplication applicationInstance, NSession session, String[] nutsArgs, String[] args) {
-        runApplication(applicationInstance, createApplicationContext(applicationInstance, nutsArgs, args, session));
+        NClock now = NClock.now();
+        if (session == null) {
+            session = Nuts.openInheritedWorkspace(nutsArgs, args);
+        }
+        session.prepareApplication(nutsArgs, applicationInstance.getClass(), null, now);
+        runApplication(applicationInstance, session);
     }
 
-    public static void runApplication(NApplication applicationInstance, NApplicationContext applicationContext) {
-        NSession session = applicationContext.getSession();
+    public static void runApplication(NApplication applicationInstance, NSession session) {
         boolean inherited = NBootManager.of(session).getBootOptions().getInherited().orElse(false);
         NLog.of(NApplications.class, session).with().level(Level.FINE).verb(NLogVerb.START)
                 .log(
                         NMsg.ofJ(
                                 "running application {0}: {1} {2}", inherited ? "(inherited)" : "",
-                                applicationInstance.getClass().getName(), applicationContext.getCommandLine()
+                                applicationInstance.getClass().getName(), session.getAppCommandLine()
                         )
                 );
-        switch (applicationContext.getMode()) {
+        switch (session.getAppMode()) {
             //both RUN and AUTO_COMPLETE execute the run branch. Later
-            //applicationContext.isExecMode()
+            //session.isExecMode()
             case RUN:
             case AUTO_COMPLETE: {
-                applicationInstance.run(applicationContext);
+                applicationInstance.run(session);
                 return;
             }
             case INSTALL: {
-                applicationInstance.onInstallApplication(applicationContext);
+                applicationInstance.onInstallApplication(session);
                 return;
             }
             case UPDATE: {
-                applicationInstance.onUpdateApplication(applicationContext);
+                applicationInstance.onUpdateApplication(session);
                 return;
             }
             case UNINSTALL: {
-                applicationInstance.onUninstallApplication(applicationContext);
+                applicationInstance.onUninstallApplication(session);
                 return;
             }
         }
-        throw new NExecutionException(session, NMsg.ofC("unsupported execution mode %s", applicationContext.getMode()), 204);
+        throw new NExecutionException(session, NMsg.ofC("unsupported execution mode %s", session.getAppMode()), 204);
     }
 
     /**

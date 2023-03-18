@@ -26,7 +26,6 @@
  */
 package net.thevpc.nuts.cmdline;
 
-import net.thevpc.nuts.NApplicationContext;
 import net.thevpc.nuts.NSessionProvider;
 
 /**
@@ -42,12 +41,6 @@ import net.thevpc.nuts.NSessionProvider;
  * @app.category Command Line
  */
 public interface NCmdLineContext extends NSessionProvider {
-    /**
-     * applicationContext or null
-     * @return applicationContext or null
-     */
-    NApplicationContext getApplicationContext();
-
     Object getSource();
 
     /**

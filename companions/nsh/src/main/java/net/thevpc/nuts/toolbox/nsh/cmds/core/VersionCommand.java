@@ -67,11 +67,11 @@ public class VersionCommand extends NShellBuiltinCore {
             options.version = NVersionFormat.of(context.getSession());
         }
         if(context.getSession().isPlainOut()){
-            context.out().println( context.getAppContext().getAppId().getVersion().getValue());
+            context.out().println( context.getSession().getAppId().getVersion().getValue());
         }else {
             options.version
                     .setSession(session)
-                    .addProperty("app-version", context.getAppContext().getAppId().getVersion().getValue())
+                    .addProperty("app-version", context.getSession().getAppId().getVersion().getValue())
                     .println(context.out());
         }
     }

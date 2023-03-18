@@ -30,7 +30,7 @@ public class LocalTomcatConfigService extends LocalTomcatServiceBase {
 
     public static final String LOCAL_CONFIG_EXT = ".local-config";
     private final LocalTomcat app;
-    private final NApplicationContext appContext;
+    private final NSession session;
     private final NPath sharedConfigFolder;
     private String name;
     private LocalTomcatConfig config;
@@ -48,8 +48,8 @@ public class LocalTomcatConfigService extends LocalTomcatServiceBase {
     public LocalTomcatConfigService(String name, LocalTomcat app) {
         this.app = app;
         setName(name);
-        this.appContext = app.getContext();
-        sharedConfigFolder = app.getContext().getVersionFolder(NStoreLocation.CONFIG, NTomcatConfigVersions.CURRENT);
+        this.session = app.getSession();
+        sharedConfigFolder = app.getSession().getAppVersionFolder(NStoreLocation.CONFIG, NTomcatConfigVersions.CURRENT);
     }
 
     public void open(NOpenMode autoCreate) {
@@ -186,7 +186,7 @@ public class LocalTomcatConfigService extends LocalTomcatServiceBase {
             if (x2 > 0) {
                 v = v.substring(0, x2);
             }
-            catalinaBase = appContext.getSharedConfigFolder().resolve("catalina-base-" + v).resolve("default");
+            catalinaBase = session.getAppSharedConfigFolder().resolve("catalina-base-" + v).resolve("default");
         } else {
             if (!catalinaBase.isAbsolute()) {
                 String v = getValidCatalinaVersion();
@@ -195,7 +195,7 @@ public class LocalTomcatConfigService extends LocalTomcatServiceBase {
                 if (x2 > 0) {
                     v = v.substring(0, x2);
                 }
-                catalinaBase = appContext.getSharedConfigFolder().resolve("catalina-base-" + v).resolve(catalinaBase);
+                catalinaBase = session.getAppSharedConfigFolder().resolve("catalina-base-" + v).resolve(catalinaBase);
             }
         }
         return catalinaBase;
@@ -203,7 +203,7 @@ public class LocalTomcatConfigService extends LocalTomcatServiceBase {
 
     public NPath resolveCatalinaHome() {
         NDefinition f = getCatalinaNutsDefinition();
-        NPath u = f.getInstallInformation().get(appContext.getSession()).getInstallFolder();
+        NPath u = f.getInstallInformation().get(session).getInstallFolder();
         NPath[] paths;
         try {
             paths = u.stream().filter(NPath::isDirectory, "isDirectory").toArray(NPath[]::new);
@@ -225,10 +225,6 @@ public class LocalTomcatConfigService extends LocalTomcatServiceBase {
             return h2;
         }
         return NPath.of(h, getSession());
-    }
-
-    private NSession getSession() {
-        return appContext.getSession();
     }
 
     public NString getFormattedError(String str) {
@@ -591,7 +587,7 @@ public class LocalTomcatConfigService extends LocalTomcatServiceBase {
 
     public RunningTomcat getRunningTomcat() {
         NPath catalinaBase = getCatalinaBase();
-        return Arrays.stream(TomcatUtils.getRunningInstances(appContext))
+        return Arrays.stream(TomcatUtils.getRunningInstances(session))
                 .filter(p -> (catalinaBase == null
                         || catalinaBase.toString().equals(p.getBase())))
                 .findFirst().orElse(null);
@@ -1106,8 +1102,8 @@ public class LocalTomcatConfigService extends LocalTomcatServiceBase {
         return app;
     }
 
-    public NApplicationContext getAppContext() {
-        return appContext;
+    public NSession getSession() {
+        return session;
     }
 
     public Integer getShutdownPort() {

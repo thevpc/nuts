@@ -23,15 +23,13 @@ import java.util.stream.Stream;
 public class NJobsSubCmd {
 
     private final JobService service;
-    private final NApplicationContext context;
     private final NSession session;
     private final JobServiceCmd parent;
 
     public NJobsSubCmd(JobServiceCmd parent) {
         this.parent = parent;
-        this.context = parent.context;
-        this.service = parent.service;
         this.session = parent.session;
+        this.service = parent.service;
     }
 
     public void runJobAdd(NCmdLine cmd) {
@@ -93,9 +91,9 @@ public class NJobsSubCmd {
         }
         if (cmd.isExecMode()) {
             service.jobs().addJob(t);
-            if (context.getSession().isPlainTrace()) {
-                context.getSession().out().println(NMsg.ofC("job %s (%s) added.",
-                        NTexts.of(context.getSession()).ofStyled(t.getId(), NTextStyle.primary5()),
+            if (session.isPlainTrace()) {
+                session.out().println(NMsg.ofC("job %s (%s) added.",
+                        NTexts.of(session).ofStyled(t.getId(), NTextStyle.primary5()),
                         t.getName()
                 ));
             }
@@ -219,11 +217,11 @@ public class NJobsSubCmd {
                     c.accept(job);
                 }
             }
-            NTexts text = NTexts.of(context.getSession());
+            NTexts text = NTexts.of(session);
             for (NJob job : new LinkedHashSet<>(d.jobs)) {
                 service.jobs().updateJob(job);
-                if (context.getSession().isPlainTrace()) {
-                    context.getSession().out().println(NMsg.ofC("job %s (%s) updated.",
+                if (session.isPlainTrace()) {
+                    session.out().println(NMsg.ofC("job %s (%s) updated.",
                             text.ofStyled(job.getId(), NTextStyle.primary5()),
                             text.ofStyled(job.getName(), NTextStyle.primary1())
                     ));
@@ -269,19 +267,19 @@ public class NJobsSubCmd {
     }
 
     private void runJobRemove(NCmdLine cmd) {
-        NTexts text = NTexts.of(context.getSession());
+        NTexts text = NTexts.of(session);
         while (cmd.hasNext()) {
             NArg a = cmd.next().get(session);
             NJob t = findJob(a.toString(), cmd);
             if (cmd.isExecMode()) {
                 if (service.jobs().removeJob(t.getId())) {
-                    if (context.getSession().isPlainTrace()) {
-                        context.getSession().out().println(NMsg.ofC("job %s removed.",
+                    if (session.isPlainTrace()) {
+                        session.out().println(NMsg.ofC("job %s removed.",
                                 text.ofStyled(a.toString(), NTextStyle.primary5())
                         ));
                     }
                 } else {
-                    context.getSession().out().println(NMsg.ofC("job %s %s.",
+                    session.out().println(NMsg.ofC("job %s %s.",
                             text.ofStyled(a.toString(), NTextStyle.primary5()),
                             text.ofStyled("not found", NTextStyle.error())
                     ));
@@ -296,7 +294,7 @@ public class NJobsSubCmd {
             NArg a = cmd.next().get(session);
             if (cmd.isExecMode()) {
                 NJob job = findJob(a.toString(), cmd);
-                NPrintStream out = context.getSession().out();
+                NPrintStream out = session.out();
                 if (job == null) {
                     out.println(NMsg.ofC("```kw %s```: ```error not found```.",
                             a.toString()
@@ -466,7 +464,7 @@ public class NJobsSubCmd {
         if (cmd.isExecMode()) {
             Stream<NJob> r = service.jobs().findLastJobs(null, d.count, d.countType, d.whereFilter, d.groupBy, d.timeUnit, d.hoursPerDay);
             ChronoUnit timeUnit0 = d.timeUnit;
-            if (context.getSession().isPlainTrace()) {
+            if (session.isPlainTrace()) {
                 NMutableTableModel m = NMutableTableModel.of(session);
                 NJobGroup finalGroupBy = d.groupBy;
                 List<NJob> lastResults = new ArrayList<>();
@@ -495,12 +493,12 @@ public class NJobsSubCmd {
                             }
                     );
                 });
-                context.getSession().setProperty("LastResults", lastResults.toArray(new NJob[0]));
+                session.setProperty("LastResults", lastResults.toArray(new NJob[0]));
                 NTableFormat.of(session)
                         .setBorder("spaces")
                         .setValue(m).println();
             } else {
-                context.getSession().out().print(r.collect(Collectors.toList()));
+                session.out().print(r.collect(Collectors.toList()));
             }
         }
     }
@@ -510,7 +508,7 @@ public class NJobsSubCmd {
         if (pid.startsWith("#")) {
             int x = JobServiceCmd.parseIntOrFF(pid.substring(1));
             if (x >= 1) {
-                Object lastResults = context.getSession().getProperty("LastResults");
+                Object lastResults = session.getProperty("LastResults");
                 if (lastResults instanceof NJob[] && x <= ((NJob[]) lastResults).length) {
                     t = ((NJob[]) lastResults)[x - 1];
                 }

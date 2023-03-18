@@ -169,8 +169,8 @@ public abstract class AbstractNShellContext implements NShellContext {
                         for (String s : rr.split("\n")) {
                             s = s.trim();
                             if (s.length() > 0) {
-                                if (s.startsWith(NApplicationContext.AUTO_COMPLETE_CANDIDATE_PREFIX)) {
-                                    s = s.substring(NApplicationContext.AUTO_COMPLETE_CANDIDATE_PREFIX.length()).trim();
+                                if (s.startsWith(NSession.AUTO_COMPLETE_CANDIDATE_PREFIX)) {
+                                    s = s.substring(NSession.AUTO_COMPLETE_CANDIDATE_PREFIX.length()).trim();
                                     NCmdLine args = NCmdLine.of(s, NShellFamily.BASH, session).setExpandSimpleOptions(false);
                                     String value = null;
                                     String display = null;
@@ -213,7 +213,7 @@ public abstract class AbstractNShellContext implements NShellContext {
         if (NPath.of(path, getSession()).isAbsolute()) {
             return getFileSystem().getAbsolutePath(path, getSession());
         }
-        return getFileSystem().getAbsolutePath(getCwd() + "/" + path, getSession());
+        return getFileSystem().getAbsolutePath(getDirectory() + "/" + path, getSession());
     }
 
     @Override
@@ -230,7 +230,7 @@ public abstract class AbstractNShellContext implements NShellContext {
             setRootNode(other.getRootNode());
             setParentNode(other.getParentNode());
             setFileSystem(other.getFileSystem());
-            setCwd(other.getCwd());
+            setDirectory(other.getDirectory());
             setFunctionManager(other.functions());
         }
     }

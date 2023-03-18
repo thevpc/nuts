@@ -20,21 +20,20 @@ import java.util.Map;
 public class RemoteTomcatAppConfigService extends RemoteTomcatServiceBase {
 
     private RemoteTomcatAppConfig config;
-    private NApplicationContext context;
+    private NSession session;
     private RemoteTomcatConfigService client;
     private String name;
 
     public RemoteTomcatAppConfigService(String name, RemoteTomcatAppConfig config, RemoteTomcatConfigService client) {
         this.config = config;
         this.client = client;
-        this.context = client.context;
+        this.session = client.session;
         this.name = name;
     }
 
     public void install() {
         RemoteTomcatConfig cconfig = client.getConfig();
         String localWarPath = this.config.getPath();
-        NSession session = context.getSession();
         if (!new File(localWarPath).exists()) {
             throw new NExecutionException(session, NMsg.ofC("missing source war file %s", localWarPath), 2);
         }
@@ -127,23 +126,22 @@ public class RemoteTomcatAppConfigService extends RemoteTomcatServiceBase {
     }
 
     public RemoteTomcatAppConfigService print(NPrintStream out) {
-        NSession session = context.getSession();
         Map<String, Object> m = new LinkedHashMap<>();
         m.put("config-name", getName());
         m.putAll(NElements.of(session).convert(getConfig(), Map.class));
-        NObjectFormat.of(context.getSession()).setValue(m).print(out);
+        NObjectFormat.of(session).setValue(m).print(out);
         return this;
     }
 
     public RemoteTomcatAppConfigService remove() {
         client.getConfig().getApps().remove(name);
-        context.getSession().out().println(NMsg.ofC("%s app removed.", getBracketsPrefix(name)));
+        session.out().println(NMsg.ofC("%s app removed.", getBracketsPrefix(name)));
         return this;
 
     }
 
     public NString getBracketsPrefix(String str) {
-        return NTexts.of(context.getSession()).ofBuilder()
+        return NTexts.of(session).ofBuilder()
                 .append("[")
                 .append(str, NTextStyle.primary5())
                 .append("]");

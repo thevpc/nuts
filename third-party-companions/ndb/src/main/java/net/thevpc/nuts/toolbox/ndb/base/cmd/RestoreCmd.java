@@ -24,8 +24,7 @@ public class RestoreCmd<C extends NdbConfig> extends NdbCmd<C> {
 
 
     @Override
-    public void run(NApplicationContext appContext, NCmdLine commandLine) {
-        NSession session = appContext.getSession();
+    public void run(NSession session, NCmdLine commandLine) {
         NRef<AtName> name = NRef.ofNull(AtName.class);
         NRef<NPath> file = NRef.ofNull(NPath.class);
         C otherOptions = createConfigInstance();

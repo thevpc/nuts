@@ -507,7 +507,7 @@ public class DefaultNExecCommand extends AbstractNExecCommand {
                     .setWorkspaceOptions(workspaceOptions)
                     .setEnv(env)
                     .setExecutorProperties(execProps)
-                    .setCwd(dir)
+                    .setDirectory(dir)
                     .setWorkspace(session.getWorkspace())
                     .setSession(session)
                     .setExecSession(execSession)

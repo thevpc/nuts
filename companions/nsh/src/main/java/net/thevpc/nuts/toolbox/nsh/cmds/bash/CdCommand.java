@@ -72,7 +72,7 @@ public class CdCommand extends NShellBuiltinDefault {
         if (options.dirname == null) {
             options.dirname = System.getProperty("user.home");
         }
-        context.setCwd(options.dirname);
+        context.setDirectory(options.dirname);
     }
 
     private static class Options {

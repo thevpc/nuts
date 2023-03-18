@@ -3,7 +3,6 @@ package net.thevpc.nuts.tutorial.cli;
 import java.util.ArrayList;
 import java.util.List;
 import net.thevpc.nuts.NApplication;
-import net.thevpc.nuts.NApplicationContext;
 import net.thevpc.nuts.NMsg;
 import net.thevpc.nuts.NSession;
 import net.thevpc.nuts.cmdline.NArg;
@@ -21,9 +20,8 @@ public class CustomCliC implements NApplication {
     }
 
     @Override
-    public void run(NApplicationContext nac) {
-        NSession session = nac.getSession();
-        NCmdLine cmdLine = nac.getCommandLine();
+    public void run(NSession session) {
+        NCmdLine cmdLine = session.getAppCommandLine();
         NRef<Boolean> boolOption = NRef.of(false);
         NRef<String> stringOption = NRef.ofNull();
         List<String> others = new ArrayList<>();
@@ -43,7 +41,7 @@ public class CustomCliC implements NApplication {
                         break;
                     }
                     default: {
-                        nac.configureLast(cmdLine);
+                        session.configureLast(cmdLine);
                     }
                 }
             } else {

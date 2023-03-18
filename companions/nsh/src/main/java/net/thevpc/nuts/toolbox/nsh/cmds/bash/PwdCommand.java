@@ -50,7 +50,7 @@ public class PwdCommand extends NShellBuiltinDefault {
     @Override
     protected void onCmdExec(NCmdLine commandLine, NShellExecutionContext context) {
         //Options options=context.getOptions();
-        context.getSession().out().println(context.getCwd());
+        context.getSession().out().println(context.getDirectory());
     }
 
     private static class Options {

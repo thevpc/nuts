@@ -68,9 +68,9 @@ public class DefaultNCmdLine implements NCmdLine {
 
     }
 
-    public DefaultNCmdLine(NApplicationContext context) {
-        setArguments(context.getArguments());
-        setAutoComplete(context.getAutoComplete());
+    public DefaultNCmdLine(NSession session) {
+        setArguments(session.getAppArguments());
+        setAutoComplete(session.getAppAutoComplete());
     }
 
     public DefaultNCmdLine(String[] args, NCmdLineAutoComplete autoComplete) {

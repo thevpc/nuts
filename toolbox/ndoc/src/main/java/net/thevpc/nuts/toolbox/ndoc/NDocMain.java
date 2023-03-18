@@ -22,8 +22,8 @@ public class NDocMain implements NApplication, NCmdLineProcessor {
     }
 
     @Override
-    public void run(NApplicationContext appContext) {
-        appContext.processCommandLine(this);
+    public void run(NSession session) {
+        session.processAppCommandLine(this);
     }
 
     @Override

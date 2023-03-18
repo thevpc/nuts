@@ -2,7 +2,6 @@ package net.thevpc.nuts.toolbox.ndb.sql.sqlbase.cmd;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.cmdline.NCmdLine;
-import net.thevpc.nuts.elem.NElement;
 import net.thevpc.nuts.elem.NElements;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.toolbox.ndb.ExtendedQuery;
@@ -27,8 +26,7 @@ public class SqlShowSchemaCmd<C extends NdbConfig> extends NdbCmd<C> {
     }
 
     @Override
-    public void run(NApplicationContext appContext, NCmdLine commandLine) {
-        NSession session = appContext.getSession();
+    public void run(NSession session, NCmdLine commandLine) {
         NRef<AtName> name = NRef.ofNull(AtName.class);
         C otherOptions = createConfigInstance();
         ExtendedQuery eq = new ExtendedQuery(getName());

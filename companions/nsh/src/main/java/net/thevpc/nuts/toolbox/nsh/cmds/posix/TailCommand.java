@@ -67,7 +67,7 @@ public class TailCommand extends NShellBuiltinDefault {
             }
         } else {
             String path = a.asString().get(session);
-            NPath file = NPath.of(path, session).toAbsolute(context.getCwd());
+            NPath file = NPath.of(path, session).toAbsolute(context.getDirectory());
             options.files.add(file);
             return true;
         }

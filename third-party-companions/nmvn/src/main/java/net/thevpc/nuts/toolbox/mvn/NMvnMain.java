@@ -38,16 +38,15 @@ public class NMvnMain implements NApplication {
     }
 
     @Override
-    public void run(NApplicationContext appContext) {
-        NSession session = appContext.getSession();
+    public void run(NSession session) {
         String command = null;
         List<String> args2 = new ArrayList<>();
         Options o = new Options();
-        NCmdLine cmd = appContext.getCommandLine();
+        NCmdLine cmd = session.getAppCommandLine();
         NArg a;
         while (cmd.hasNext()) {
             if (command == null) {
-                if (appContext.configureFirst(cmd)) {
+                if (session.configureFirst(cmd)) {
                     //fo nothing
                 } else if ((a = cmd.nextFlag("-j", "--json").orNull()) != null) {
                     o.json = a.getBooleanValue().get(session);
@@ -67,7 +66,7 @@ public class NMvnMain implements NApplication {
             command = "build";
         }
         if (cmd.isExecMode()) {
-            MavenCli2 cli = new MavenCli2(appContext);
+            MavenCli2 cli = new MavenCli2(session);
 
             String[] args2Arr = args2.toArray(new String[0]);
             switch (command) {
@@ -82,7 +81,7 @@ public class NMvnMain implements NApplication {
                             defaultArgs.add(ar);
                         }
                     }
-                    int r = callMvn(cli,appContext, o, defaultArgs.toArray(new String[0]));
+                    int r = callMvn(cli,session, o, defaultArgs.toArray(new String[0]));
                     if (r == 0) {
                         return;
                     } else {
@@ -106,7 +105,7 @@ public class NMvnMain implements NApplication {
                     }
                     Path dir = createTempPom(session);
                     cli.setWorkingDirectory(dir.toString());
-                    int r = callMvn(cli,appContext, o,  "dependency:get");
+                    int r = callMvn(cli,session, o,  "dependency:get");
                     try {
                         delete(dir);
                     } catch (IOException ex) {
@@ -122,8 +121,8 @@ public class NMvnMain implements NApplication {
         }
     }
 
-//    public void prepareM2Home(NApplicationContext appContext){
-//        Path configFolder = appContext.getConfigFolder();
+//    public void prepareM2Home(NSession session){
+//        Path configFolder = session.getConfigFolder();
 //        if(!Files.isRegularFile(configFolder.resolve(".mvn/maven.config"))){
 //            if(!Files.isDirectory(configFolder.resolve(".mvn"))){
 //                Files.createDirectories(configFolder.resolve(".mvn"));
@@ -132,25 +131,25 @@ public class NMvnMain implements NApplication {
 //        }
 //        maven.multiModuleProjectDirectory
 //    }
-    private static int callMvn(MavenCli2 cli, NApplicationContext appContext, Options options, String... args) {
+    private static int callMvn(MavenCli2 cli, NSession session, Options options, String... args) {
        if (options.json) {
             try {
                 cli.setGrabString(true);
                 int r = cli.doMain(args);
                 String s = cli.getResultString();
                 if (s.contains("BUILD SUCCESS")) {
-                    appContext.getSession().out().println("{'result':'success'}");
+                    session.out().println("{'result':'success'}");
                     return 0;
                 } else {
                     if (r == 0) {
                         r = 1;
                     }
-                    appContext.getSession().out().println("{'result':'error'}");
+                    session.out().println("{'result':'error'}");
                 }
                 return r;
             } catch (Exception ex) {
                 LOG.log(Level.FINE,"error executing mvn command "+ Arrays.toString(args),ex);//e.printStackTrace();
-                appContext.getSession().out().println("{'result':'error'}");
+                session.out().println("{'result':'error'}");
                 return 1;
             }
         } else {

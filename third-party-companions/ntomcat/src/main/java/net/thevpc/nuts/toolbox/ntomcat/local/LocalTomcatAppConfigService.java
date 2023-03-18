@@ -25,15 +25,15 @@ public class LocalTomcatAppConfigService extends LocalTomcatServiceBase {
     private String name;
     private LocalTomcatAppConfig config;
     private LocalTomcatConfigService tomcat;
-    private NApplicationContext context;
+    private NSession session;
     private NPath sharedConfigFolder;
 
     public LocalTomcatAppConfigService(String name, LocalTomcatAppConfig config, LocalTomcatConfigService tomcat) {
         this.name = name;
         this.config = config;
         this.tomcat = tomcat;
-        this.context = tomcat.getTomcatServer().getContext();
-        sharedConfigFolder = tomcat.getAppContext().getVersionFolder(NStoreLocation.CONFIG, NTomcatConfigVersions.CURRENT);
+        this.session = tomcat.getTomcatServer().getSession();
+        sharedConfigFolder = tomcat.getSession().getAppVersionFolder(NStoreLocation.CONFIG, NTomcatConfigVersions.CURRENT);
     }
 
     @Override
@@ -48,7 +48,7 @@ public class LocalTomcatAppConfigService extends LocalTomcatServiceBase {
     public Path getArchiveFile(String version) {
         String runningFolder = tomcat.getConfig().getArchiveFolder();
         if (runningFolder == null || runningFolder.trim().isEmpty()) {
-            runningFolder = context.getSharedConfigFolder().resolve("archive").toString();
+            runningFolder = session.getAppSharedConfigFolder().resolve("archive").toString();
         }
         String packaging = "war";
         return Paths.get(runningFolder).resolve(name + "-" + version + "." + packaging);
@@ -62,14 +62,14 @@ public class LocalTomcatAppConfigService extends LocalTomcatServiceBase {
         String _runningFolder = tomcat.getConfig().getRunningFolder();
         NPath runningFolder = (_runningFolder == null || _runningFolder.trim().isEmpty()) ? null : NPath.of(_runningFolder, getSession());
         if (runningFolder == null) {
-            runningFolder = context.getSharedConfigFolder().resolve("running");
+            runningFolder = session.getAppSharedConfigFolder().resolve("running");
         }
         String packaging = "war";
         return runningFolder.resolve(name + "." + packaging);
     }
 
     private NSession getSession() {
-        return context.getSession();
+        return session;
     }
 
     public NPath getVersionFile() {

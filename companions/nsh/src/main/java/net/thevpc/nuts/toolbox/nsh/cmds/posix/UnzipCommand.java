@@ -122,7 +122,7 @@ public class UnzipCommand extends NShellBuiltinDefault {
             commandLine.throwMissingArgument();
         }
         for (String path : options.zfiles) {
-            NPath file = NPath.of(path, session).toAbsolute(context.getCwd());
+            NPath file = NPath.of(path, session).toAbsolute(context.getDirectory());
             try {
                 if (options.l) {
                     NUncompress.of(session)
@@ -142,7 +142,7 @@ public class UnzipCommand extends NShellBuiltinDefault {
                 } else {
                     String dir = options.dir;
                     if (NBlankable.isBlank(dir)) {
-                        dir = context.getCwd();
+                        dir = context.getDirectory();
                     }
                     dir = context.getAbsolutePath(dir);
                     NUncompress.of(session)

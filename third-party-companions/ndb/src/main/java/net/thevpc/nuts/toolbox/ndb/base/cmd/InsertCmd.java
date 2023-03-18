@@ -18,11 +18,10 @@ public class InsertCmd<C extends NdbConfig> extends NdbCmd<C> {
     }
 
     @Override
-    public void run(NApplicationContext appContext, NCmdLine commandLine) {
+    public void run(NSession session, NCmdLine commandLine) {
         NRef<AtName> name = NRef.ofNull(AtName.class);
         ExtendedQuery eq = new ExtendedQuery(getName());
         C otherOptions = createConfigInstance();
-        NSession session = appContext.getSession();
 
         String status = "";
         while (commandLine.hasNext()) {

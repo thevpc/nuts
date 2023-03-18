@@ -17,23 +17,23 @@ public class LocalMysqlConfigService {
     public static final String SERVER_CONFIG_EXT = ".local-config";
     private String name;
     private LocalMysqlConfig config;
-    private NApplicationContext context;
+    private NSession session;
     private NDefinition catalinaNDefinition;
     private String catalinaVersion;
     private NPath sharedConfigFolder;
 
-    public LocalMysqlConfigService(NPath file, NApplicationContext context) {
+    public LocalMysqlConfigService(NPath file, NSession session) {
         this(
                 file.getName().toString().substring(0, file.getName().length() - LocalMysqlConfigService.SERVER_CONFIG_EXT.length()),
-                context
+                session
         );
         loadConfig();
     }
 
-    public LocalMysqlConfigService(String name, NApplicationContext context) {
+    public LocalMysqlConfigService(String name, NSession session) {
         setName(name);
-        this.context = context;
-        sharedConfigFolder = getContext().getVersionFolder(NStoreLocation.CONFIG, NMySqlConfigVersions.CURRENT);
+        this.session = session;
+        sharedConfigFolder = getSession().getAppVersionFolder(NStoreLocation.CONFIG, NMySqlConfigVersions.CURRENT);
     }
 
     public LocalMysqlConfigService setName(String name) {
@@ -54,7 +54,7 @@ public class LocalMysqlConfigService {
 
     public LocalMysqlConfigService saveConfig() {
         NPath f = getServerConfigPath();
-        NElements.of(context.getSession()).setNtf(false).json().setValue(config).print(f);
+        NElements.of(session).setNtf(false).json().setValue(config).print(f);
         return this;
     }
 
@@ -86,7 +86,6 @@ public class LocalMysqlConfigService {
     public LocalMysqlConfigService loadConfig() {
         String name = getName();
         NPath f = getServerConfigPath();
-        NSession session = context.getSession();
         if (f.exists()) {
             config = NElements.of(session).json().parse(f, LocalMysqlConfig.class);
             return this;
@@ -105,7 +104,6 @@ public class LocalMysqlConfigService {
     }
 
     public LocalMysqlConfigService write(PrintStream out) {
-        NSession session = context.getSession();
         NElements.of(session).json().setValue(getConfig()).setNtf(false).print(out);
         return this;
     }
@@ -123,7 +121,7 @@ public class LocalMysqlConfigService {
                 case OPEN_OR_NULL:
                     return null;
                 case OPEN_OR_ERROR:
-                    throw new NIllegalArgumentException(context.getSession(), NMsg.ofC("local instance not found:%s@%s" ,dbName, getName()));
+                    throw new NIllegalArgumentException(session, NMsg.ofC("local instance not found:%s@%s" ,dbName, getName()));
                 case CREATE_OR_ERROR:
                 case OPEN_OR_CREATE: {
                     a = new LocalMysqlDatabaseConfig();
@@ -131,13 +129,13 @@ public class LocalMysqlConfigService {
                     return new LocalMysqlDatabaseConfigService(dbName, a, this);
                 }
                 default: {
-                    throw new NIllegalArgumentException(context.getSession(), NMsg.ofPlain("unexpected error"));
+                    throw new NIllegalArgumentException(session, NMsg.ofPlain("unexpected error"));
                 }
             }
         }
         switch (action) {
             case CREATE_OR_ERROR: {
-                throw new NIllegalArgumentException(context.getSession(), NMsg.ofC("local instance not found:%s@%s",dbName,getName()));
+                throw new NIllegalArgumentException(session, NMsg.ofC("local instance not found:%s@%s",dbName,getName()));
             }
             case OPEN_OR_ERROR:
             case OPEN_OR_NULL:
@@ -145,7 +143,7 @@ public class LocalMysqlConfigService {
                 return new LocalMysqlDatabaseConfigService(dbName, a, this);
             }
             default: {
-                throw new NIllegalArgumentException(context.getSession(), NMsg.ofPlain("unexpected error"));
+                throw new NIllegalArgumentException(session, NMsg.ofPlain("unexpected error"));
             }
         }
     }
@@ -159,8 +157,8 @@ public class LocalMysqlConfigService {
         return a;
     }
 
-    public NApplicationContext getContext() {
-        return context;
+    public NSession getSession() {
+        return session;
     }
 
     public String getMysqlCommand() {

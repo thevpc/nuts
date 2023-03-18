@@ -27,13 +27,12 @@ import java.util.stream.Stream;
 public class NTasksSubCmd {
 
     private JobService service;
-    private NApplicationContext context;
     private NSession session;
     private JobServiceCmd parent;
 
     public NTasksSubCmd(JobServiceCmd parent) {
         this.parent = parent;
-        this.context = parent.context;
+        this.session = parent.session;
         this.service = parent.service;
         this.session = parent.session;
     }
@@ -164,9 +163,9 @@ public class NTasksSubCmd {
                 c.accept(t);
             }
             service.tasks().addTask(t);
-            if (context.getSession().isPlainTrace()) {
-                context.getSession().out().println(NMsg.ofC("task %s (%s) added.",
-                        NTexts.of(context.getSession()).ofStyled(t.getId(), NTextStyle.primary5()),
+            if (session.isPlainTrace()) {
+                session.out().println(NMsg.ofC("task %s (%s) added.",
+                        NTexts.of(session).ofStyled(t.getId(), NTextStyle.primary5()),
                         t.getName()
                 ));
             }
@@ -402,11 +401,11 @@ public class NTasksSubCmd {
                     c.accept(task);
                 }
             }
-            NTexts text = NTexts.of(context.getSession());
+            NTexts text = NTexts.of(session);
             for (NTask task : new LinkedHashSet<>(d.tasks)) {
                 service.tasks().updateTask(task);
-                if (context.getSession().isPlainTrace()) {
-                    context.getSession().out().println(NMsg.ofC("task %s (%s) updated.",
+                if (session.isPlainTrace()) {
+                    session.out().println(NMsg.ofC("task %s (%s) updated.",
                             text.ofStyled(task.getId(), NTextStyle.primary5()),
                             text.ofStyled(task.getName(), NTextStyle.primary1())
                     ));
@@ -595,7 +594,7 @@ public class NTasksSubCmd {
         if (cmd.isExecMode()) {
             Stream<NTask> r = service.tasks().findTasks(d.status, null, d.count, d.countType, d.whereFilter, d.groupBy, d.timeUnit, d.hoursPerDay);
 
-            if (context.getSession().isPlainTrace()) {
+            if (session.isPlainTrace()) {
                 NMutableTableModel m = NMutableTableModel.of(session);
                 List<NTask> lastResults = new ArrayList<>();
                 int[] index = new int[1];
@@ -606,12 +605,12 @@ public class NTasksSubCmd {
                     ));
                     lastResults.add(x);
                 });
-                context.getSession().setProperty("LastResults", lastResults.toArray(new NTask[0]));
+                session.setProperty("LastResults", lastResults.toArray(new NTask[0]));
                 NTableFormat.of(session)
                         .setBorder("spaces")
                         .setValue(m).println();
             } else {
-                context.getSession().out().print(r.collect(Collectors.toList()));
+                session.out().print(r.collect(Collectors.toList()));
             }
         }
     }
@@ -643,19 +642,19 @@ public class NTasksSubCmd {
     }
 
     private void runTaskRemove(NCmdLine cmd) {
-        NTexts text = NTexts.of(context.getSession());
+        NTexts text = NTexts.of(session);
         while (cmd.hasNext()) {
             NArg a = cmd.next().get(session);
             if (cmd.isExecMode()) {
                 NTask t = findTask(a.toString(), cmd);
                 if (service.tasks().removeTask(t.getId())) {
-                    if (context.getSession().isPlainTrace()) {
-                        context.getSession().out().println(NMsg.ofC("task %s removed.",
+                    if (session.isPlainTrace()) {
+                        session.out().println(NMsg.ofC("task %s removed.",
                                 text.ofStyled(a.toString(), NTextStyle.primary5())
                         ));
                     }
                 } else {
-                    context.getSession().out().println(NMsg.ofC("task %s %s.",
+                    session.out().println(NMsg.ofC("task %s %s.",
                             text.ofStyled(a.toString(), NTextStyle.primary5()),
                             text.ofStyled("not found", NTextStyle.error())
                     ));
@@ -670,7 +669,7 @@ public class NTasksSubCmd {
             NArg a = cmd.next().get(session);
             if (cmd.isExecMode()) {
                 NTask task = findTask(a.toString(), cmd);
-                NPrintStream out = context.getSession().out();
+                NPrintStream out = session.out();
                 if (task == null) {
                     out.println(NMsg.ofC("```kw %s```: ```error not found```.",
                             a.toString()
@@ -739,7 +738,7 @@ public class NTasksSubCmd {
         if (pid.startsWith("#")) {
             int x = NLiteral.of(pid.substring(1)).asInt().orElse(-1);
             if (x >= 1) {
-                Object lastResults = context.getSession().getProperty("LastResults");
+                Object lastResults = session.getProperty("LastResults");
                 if (lastResults instanceof NTask[] && x <= ((NTask[]) lastResults).length) {
                     t = ((NTask[]) lastResults)[x - 1];
                 }

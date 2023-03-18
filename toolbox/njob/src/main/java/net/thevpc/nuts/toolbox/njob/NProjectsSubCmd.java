@@ -27,13 +27,12 @@ import java.util.stream.Stream;
 public class NProjectsSubCmd {
 
     private JobService service;
-    private NApplicationContext context;
     private NSession session;
     private JobServiceCmd parent;
 
     public NProjectsSubCmd(JobServiceCmd parent) {
         this.parent = parent;
-        this.context = parent.context;
+        this.session = parent.session;
         this.service = parent.service;
         this.session = parent.session;
     }
@@ -102,9 +101,9 @@ public class NProjectsSubCmd {
         }
         if (cmd.isExecMode()) {
             service.projects().addProject(t);
-            if (context.getSession().isPlainTrace()) {
-                context.getSession().out().println(NMsg.ofC("project %s (%s) added.",
-                        NTexts.of(context.getSession()).ofStyled(t.getId(), NTextStyle.primary5()),
+            if (session.isPlainTrace()) {
+                session.out().println(NMsg.ofC("project %s (%s) added.",
+                        NTexts.of(session).ofStyled(t.getId(), NTextStyle.primary5()),
                         t.getName()
                 ));
             }
@@ -215,14 +214,14 @@ public class NProjectsSubCmd {
             cmd.throwError(NMsg.ofNtf("project name expected"));
         }
         if (cmd.isExecMode()) {
-            NTexts text = NTexts.of(context.getSession());
+            NTexts text = NTexts.of(session);
             for (NProject project : d.projects) {
                 for (Consumer<NProject> c : d.runLater) {
                     c.accept(project);
                 }
                 service.projects().updateProject(project);
-                if (context.getSession().isPlainTrace()) {
-                    context.getSession().out().println(NMsg.ofC("project %s (%s) updated.",
+                if (session.isPlainTrace()) {
+                    session.out().println(NMsg.ofC("project %s (%s) updated.",
                             text.ofStyled(project.getId(), NTextStyle.primary5()),
                             text.ofStyled(project.getName(), NTextStyle.primary1())
                     ));
@@ -230,9 +229,9 @@ public class NProjectsSubCmd {
             }
             if (d.mergeTo != null) {
                 service.projects().mergeProjects(d.mergeTo, d.projects.stream().map(x -> x.getId()).toArray(String[]::new));
-                if (context.getSession().isPlainTrace()) {
-                    context.getSession().out().println(NMsg.ofC("projects merged to %s.",
-                            NTexts.of(context.getSession())
+                if (session.isPlainTrace()) {
+                    session.out().println(NMsg.ofC("projects merged to %s.",
+                            NTexts.of(session)
                                     .ofStyled(d.mergeTo, NTextStyle.primary5())
                     ));
                 }
@@ -317,7 +316,7 @@ public class NProjectsSubCmd {
                             }
                     );
 
-            if (context.getSession().isPlainTrace()) {
+            if (session.isPlainTrace()) {
                 NMutableTableModel m = NMutableTableModel.of(session);
                 List<NProject> lastResults = new ArrayList<>();
                 int[] index = new int[1];
@@ -339,25 +338,25 @@ public class NProjectsSubCmd {
                             parent.getFormattedProject(x.getName() == null ? "*" : x.getName())
                     );
                 });
-                context.getSession().setProperty("LastResults", lastResults.toArray(new NProject[0]));
+                session.setProperty("LastResults", lastResults.toArray(new NProject[0]));
                 NTableFormat.of(session)
                         .setBorder("spaces")
-                        .setValue(m).println(context.getSession().out());
+                        .setValue(m).println(session.out());
             } else {
-                context.getSession().out().print(r.collect(Collectors.toList()));
+                session.out().print(r.collect(Collectors.toList()));
             }
         }
     }
 
     private void runProjectRemove(NCmdLine cmd) {
-        NTexts text = NTexts.of(context.getSession());
+        NTexts text = NTexts.of(session);
         while (cmd.hasNext()) {
             NArg a = cmd.next().get(session);
             if (cmd.isExecMode()) {
                 NProject t = findProject(a.toString(), cmd);
-                NPrintStream out = context.getSession().out();
+                NPrintStream out = session.out();
                 if (service.projects().removeProject(t.getId())) {
-                    if (context.getSession().isPlainTrace()) {
+                    if (session.isPlainTrace()) {
                         out.println(NMsg.ofC("project %s removed.",
                                 text.ofStyled(a.toString(), NTextStyle.primary5())
                         ));
@@ -377,7 +376,7 @@ public class NProjectsSubCmd {
         while (cmd.hasNext()) {
             NArg a = cmd.next().get(session);
             NProject project = findProject(a.toString(), cmd);
-            NPrintStream out = context.getSession().out();
+            NPrintStream out = session.out();
             if (project == null) {
                 out.println(NMsg.ofC("```kw %s```: ```error not found```.",
                         a.toString()
@@ -403,7 +402,7 @@ public class NProjectsSubCmd {
         if (pid.startsWith("#")) {
             int x = JobServiceCmd.parseIntOrFF(pid.substring(1));
             if (x >= 1) {
-                Object lastResults = context.getSession().getProperty("LastResults");
+                Object lastResults = session.getProperty("LastResults");
                 if (lastResults instanceof NProject[] && x <= ((NProject[]) lastResults).length) {
                     t = ((NProject[]) lastResults)[x - 1];
                 }

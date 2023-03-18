@@ -16,8 +16,8 @@ public class NLogMain implements NApplication {
     }
 
     @Override
-    public void run(NApplicationContext applicationContext) {
-        applicationContext.processCommandLine(new NLogMainCmdProcessor(applicationContext));
+    public void run(NSession session) {
+        session.processAppCommandLine(new NLogMainCmdProcessor(session));
     }
 
 }

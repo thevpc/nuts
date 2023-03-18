@@ -25,13 +25,14 @@
 */
 package net.thevpc.nuts.toolbox.nversion;
 
+import net.thevpc.nuts.NSession;
+
 import java.util.Set;
-import net.thevpc.nuts.NApplicationContext;
 
 /**
  *
  * @author thevpc
  */
 public interface PathVersionResolver {
-    public Set<VersionDescriptor> resolve(String filePath, NApplicationContext context);
+    public Set<VersionDescriptor> resolve(String filePath, NSession session);
 }

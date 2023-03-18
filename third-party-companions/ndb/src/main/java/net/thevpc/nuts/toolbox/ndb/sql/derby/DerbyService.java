@@ -44,12 +44,12 @@ import java.util.stream.Collectors;
  */
 public class DerbyService {
 
-    NApplicationContext context;
+    NSession session;
     NLog LOG;
 
-    public DerbyService(NApplicationContext context) {
-        this.context = context;
-        LOG = NLog.of(getClass(), context.getSession());
+    public DerbyService(NSession session) {
+        this.session = session;
+        LOG = NLog.of(getClass(), session);
     }
 
     public boolean isRunning() {
@@ -132,29 +132,28 @@ public class DerbyService {
     }
 
     private Path download(String id, Path folder, boolean optional) {
-        final NId iid = NId.of(id).get(context.getSession());
+        final NId iid = NId.of(id).get(session);
 //        Path downloadBaseFolder = folder//.resolve(iid.getVersion().getValue());
         Path targetFile = folder.resolve(iid.getArtifactId() + ".jar");
         if (!Files.exists(targetFile)) {
             if (optional) {
-                Path r = NFetchCommand.of(context.getSession()).setLocation(targetFile).setId(id).setFailFast(false).getResultPath();
+                Path r = NFetchCommand.of(session).setLocation(targetFile).setId(id).setFailFast(false).getResultPath();
                 if (r != null) {
-                    LOG.with().session(context.getSession()).level(Level.FINEST).verb(NLogVerb.READ).log(NMsg.ofJ("downloading {0} to {1}", id, targetFile));
+                    LOG.with().session(session).level(Level.FINEST).verb(NLogVerb.READ).log(NMsg.ofJ("downloading {0} to {1}", id, targetFile));
                 }
             } else {
-                NFetchCommand.of(context.getSession()).setLocation(targetFile).setId(id).setFailFast(true).getResultPath();
-                LOG.with().session(context.getSession()).level(Level.FINEST).verb(NLogVerb.READ).log(NMsg.ofJ("downloading {0} to {1}", id, targetFile));
+                NFetchCommand.of(session).setLocation(targetFile).setId(id).setFailFast(true).getResultPath();
+                LOG.with().session(session).level(Level.FINEST).verb(NLogVerb.READ).log(NMsg.ofJ("downloading {0} to {1}", id, targetFile));
             }
         } else {
-            LOG.with().session(context.getSession()).level(Level.FINEST).verb(NLogVerb.READ).log(NMsg.ofJ("using {0} form {1}", id, targetFile));
+            LOG.with().session(session).level(Level.FINEST).verb(NLogVerb.READ).log(NMsg.ofJ("using {0} form {1}", id, targetFile));
         }
         return targetFile;
     }
 
     public Set<String> findVersions() {
-        NSession session = context.getSession();
         NId java = NEnvs.of(session).getPlatform();
-        List<String> all = NSearchCommand.of(context.getSession().copy()).addId("org.apache.derby:derbynet").setDistinct(true)
+        List<String> all = NSearchCommand.of(session.copy()).addId("org.apache.derby:derbynet").setDistinct(true)
                 .setIdFilter(
                         (java.getVersion().compareTo("1.9") < 0) ? NVersionFilters.of(session).byValue("[,10.15.1.3[").get().to(NIdFilter.class) :
                                 null)
@@ -172,32 +171,31 @@ public class DerbyService {
     public NExecCommand command(NDerbyConfig options) {
         List<String> command = new ArrayList<>();
         List<String> executorOptions = new ArrayList<>();
-        NSession session = context.getSession();
         String currentDerbyVersion = options.getDerbyVersion();
         if (currentDerbyVersion == null) {
             NId java = NEnvs.of(session).getPlatform();
-            NId best = NSearchCommand.of(context.getSession().copy()).addId("org.apache.derby:derbynet").setDistinct(true).setLatest(true)
+            NId best = NSearchCommand.of(session.copy()).addId("org.apache.derby:derbynet").setDistinct(true).setLatest(true)
                     .setIdFilter(
                             (java.getVersion().compareTo("1.9") < 0) ? NVersionFilters.of(session).byValue("[,10.15.1.3[").get().to(NIdFilter.class) :
                                     null)
-                    .setSession(context.getSession().copy())
+                    .setSession(session.copy())
                     .getResultIds().singleton();
             currentDerbyVersion = best.getVersion().toString();
         }
 
         NPath derbyDataHome = null;
         if (options.getDerbyDataHomeReplace() != null) {
-            derbyDataHome = context.getSharedVarFolder();
+            derbyDataHome = session.getAppSharedVarFolder();
         } else {
             if (options.getDerbyDataHomeRoot() != null && options.getDerbyDataHomeRoot().trim().length() > 0) {
-                derbyDataHome = NPath.of(options.getDerbyDataHomeRoot(),session).toAbsolute(context.getSharedVarFolder());
+                derbyDataHome = NPath.of(options.getDerbyDataHomeRoot(),session).toAbsolute(session.getAppSharedVarFolder());
             } else {
-                derbyDataHome = context.getSharedVarFolder().resolve("derby-db");
+                derbyDataHome = session.getAppSharedVarFolder().resolve("derby-db");
             }
         }
         NPath derbyDataHomeRoot = derbyDataHome.getParent();
         derbyDataHome.mkdirs();
-        Path derbyBinHome = NLocations.of(session).getStoreLocation(context.getAppId(), NStoreLocation.APPS).resolve(currentDerbyVersion).toFile();
+        Path derbyBinHome = NLocations.of(session).getStoreLocation(session.getAppId(), NStoreLocation.APPS).resolve(currentDerbyVersion).toFile();
         Path derbyLibHome = derbyBinHome.resolve("lib");
         Path derby = download("org.apache.derby:derby#" + currentDerbyVersion, derbyLibHome, false);
         Path derbynet = download("org.apache.derby:derbynet#" + currentDerbyVersion, derbyLibHome, false);
@@ -205,13 +203,13 @@ public class DerbyService {
         Path derbyclient = download("org.apache.derby:derbyclient#" + currentDerbyVersion, derbyLibHome, false);
         Path derbytools = download("org.apache.derby:derbytools#" + currentDerbyVersion, derbyLibHome, false);
         Path policy = derbyBinHome.resolve("derby.policy");
-        if (!Files.exists(policy) || context.getSession().isYes()) {
+        if (!Files.exists(policy) || session.isYes()) {
             try (InputStream is=NDerbyMain.class.getResourceAsStream("/net/thevpc/nuts/toolbox/ndb/derby/policy-file.policy")){
                 String permissions = new String(DerbyUtils.loadByteArray(is))
                         .replace("${{DB_PATH}}", derbyDataHomeRoot.toString());
                 Files.write(policy, permissions.getBytes());
             } catch (IOException ex) {
-                throw new NExecutionException(context.getSession(), NMsg.ofC("unable to create %s",policy), 1);
+                throw new NExecutionException(session, NMsg.ofC("unable to create %s",policy), 1);
             }
         }
         //use named jar because derby does test upon jar names at runtime (what a shame !!!)
@@ -224,7 +222,7 @@ public class DerbyService {
                         +
                         (derbyoptionaltools != null ? (":" + derbyoptionaltools) : "")
         );
-//        if (appContext.getSession().isPlainTrace()) {
+//        if (session.isPlainTrace()) {
 //            executorOptions.add("--show-command");
 //        }
         executorOptions.add("--main-class=org.apache.derby.drda.NetworkServerControl");
@@ -274,12 +272,8 @@ public class DerbyService {
         }
     }
 
-    public NApplicationContext getAppContext() {
-        return context;
-    }
-
     public NSession getSession() {
-        return getAppContext().getSession();
+        return session;
     }
 
 }

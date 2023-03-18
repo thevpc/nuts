@@ -48,7 +48,7 @@ import org.boris.pecoff4j.util.ResourceHelper;
  * @author thevpc
  */
 public class ExePathVersionResolver implements PathVersionResolver{
-    public Set<VersionDescriptor>  resolve(String filePath, NApplicationContext context){
+    public Set<VersionDescriptor>  resolve(String filePath, NSession session){
         try {
             if(!filePath.endsWith(".exe") && !filePath.endsWith(".dll")){
                 return null;
@@ -100,7 +100,6 @@ public class ExePathVersionResolver implements PathVersionResolver{
                     }
                     p.setProperty("nuts.version-provider", "win-pe");
                     if (!NBlankable.isBlank(artifactId) && !NBlankable.isBlank(artifactVersion)) {
-                        NSession session = context.getSession();
                         d.add(new VersionDescriptor(
                                 NIdBuilder.of().setArtifactId(artifactId).setVersion(artifactVersion).build(),
                                 p
@@ -110,7 +109,7 @@ public class ExePathVersionResolver implements PathVersionResolver{
             }
             return d;
         } catch (IOException ex) {
-            throw new NIOException(context.getSession(), ex);
+            throw new NIOException(session, ex);
         }
     }
 }

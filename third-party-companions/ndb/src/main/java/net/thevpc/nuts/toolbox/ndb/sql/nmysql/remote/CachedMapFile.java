@@ -8,27 +8,26 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class CachedMapFile {
-    private final NApplicationContext context;
+    private final NSession session;
     private Map<String, String> map;
     private boolean enabled;
     private final NPath path;
     private boolean loaded;
 
-    public CachedMapFile(NApplicationContext context, String name) {
-        this(context, name, true);
+    public CachedMapFile(NSession session, String name) {
+        this(session, name, true);
     }
 
-    public CachedMapFile(NApplicationContext context, String name, boolean enabled) {
-        this.context = context;
+    public CachedMapFile(NSession session, String name, boolean enabled) {
+        this.session = session;
         this.enabled = enabled;
-        NId appId = context.getAppId();
-        path = context.getTempFolder()
+        NId appId = session.getAppId();
+        path = session.getAppTempFolder()
                 .resolve(appId.getGroupId() + "-" + appId.getArtifactId() + "-" + appId.getVersion())
                 .resolve(name + ".json");
         if (enabled) {
             if (path.isRegularFile()) {
                 try {
-                    NSession session = context.getSession();
                     map = NElements.of(session)
                             .json()
                             .parse(path, Map.class);
@@ -88,7 +87,6 @@ public class CachedMapFile {
             }
             map.put(k, v);
             try {
-                NSession session = context.getSession();
                 NElements.of(session).setValue(map)
                         .json()
                         .setNtf(false)

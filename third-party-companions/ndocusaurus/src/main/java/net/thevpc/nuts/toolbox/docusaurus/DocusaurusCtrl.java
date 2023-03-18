@@ -41,11 +41,11 @@ public class DocusaurusCtrl {
     private boolean autoInstallNutsPackages;
     private String ndocVersion;
     private String npmCommandPath;
-    private NApplicationContext appContext;
+    private NSession session;
 
-    public DocusaurusCtrl(DocusaurusProject project, NApplicationContext appContext) {
+    public DocusaurusCtrl(DocusaurusProject project, NSession session) {
         this.project = project;
-        this.appContext = appContext;
+        this.session = session;
     }
 
     public boolean isBuildPdf() {
@@ -101,7 +101,7 @@ public class DocusaurusCtrl {
             TemplateConfig config = new TemplateConfig()
                     .setProjectPath(preProcessor.toString())
                     .setTargetFolder(getTargetBaseDir().toString());
-            new NFileTemplater(appContext)
+            new NFileTemplater(session)
                     .setWorkingDir(base.toString())
                     .setMimeTypeResolver(
                             new DefaultMimeTypeResolver()
@@ -195,20 +195,20 @@ public class DocusaurusCtrl {
     }
 
     private void runNativeCommand(Path workFolder, String... cmd) {
-        NExecCommand.of(appContext.getSession())
+        NExecCommand.of(session)
                 .setExecutionType(NExecutionType.EMBEDDED)
-                .addCommand(cmd).setDirectory(NPath.of(workFolder, appContext.getSession()))
+                .addCommand(cmd).setDirectory(NPath.of(workFolder, session))
                 .setFailFast(true).getResult();
     }
 
     private void runCommand(Path workFolder, boolean yes, String... cmd) {
-        NSession s = appContext.getSession().copy();
+        NSession s = session.copy();
         if (yes) {
             s = s.setConfirm(NConfirmationMode.YES);
         } else {
             s = s.setConfirm(NConfirmationMode.ERROR);
         }
-        NExecCommand.of(s).addCommand(cmd).setDirectory(NPath.of(workFolder, appContext.getSession()))
+        NExecCommand.of(s).addCommand(cmd).setDirectory(NPath.of(workFolder, session))
                 .setExecutionType(NExecutionType.EMBEDDED)
                 .setFailFast(true).getResult();
     }
@@ -273,14 +273,14 @@ public class DocusaurusCtrl {
     }
 
     private static class NshEvaluator implements ExprEvaluator {
-        private NApplicationContext appContext;
+        private NSession session;
         private NShell shell;
         private FileTemplater fileTemplater;
 
-        public NshEvaluator(NApplicationContext appContext, FileTemplater fileTemplater) {
-            this.appContext = appContext;
+        public NshEvaluator(NSession session, FileTemplater fileTemplater) {
+            this.session = session;
             this.fileTemplater = fileTemplater;
-            shell = new NShell(new NShellConfiguration().setApplicationContext(appContext).setIncludeDefaultBuiltins(true).setIncludeExternalExecutor(true));
+            shell = new NShell(new NShellConfiguration().setSession(session).setIncludeDefaultBuiltins(true).setIncludeExternalExecutor(true));
             shell.getRootContext().setSession(shell.getRootContext().getSession().copy());
             shell.getRootContext().vars().addVarListener(
                     new NShellVarListener() {
@@ -331,9 +331,9 @@ public class DocusaurusCtrl {
     }
 
     private static class NFileTemplater extends FileTemplater {
-        public NFileTemplater(NApplicationContext appContext) {
-            super(appContext.getSession());
-            this.setDefaultExecutor("text/ntemplate-nsh-project", new NshEvaluator(appContext, this));
+        public NFileTemplater(NSession session) {
+            super(session);
+            this.setDefaultExecutor("text/ntemplate-nsh-project", new NshEvaluator(session, this));
             setProjectFileName("project.nsh");
         }
 
@@ -398,7 +398,7 @@ public class DocusaurusCtrl {
         @Override
         public void processPath(Path source, String mimeType, FileTemplater context) {
             NSession session = context.getSession();
-            NObjectElement config = DocusaurusFolder.ofFolder(appContext.getSession(), source.getParent(),
+            NObjectElement config = DocusaurusFolder.ofFolder(session, source.getParent(),
                             Paths.get(context.getRootDirRequired()).resolve("docs"),
                             getPreProcessorBaseDir().resolve("src"),
                             0)

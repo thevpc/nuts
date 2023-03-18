@@ -17,7 +17,7 @@ public class NIndexSubscriberListManagerPool {
     public synchronized NIndexSubscriberListManager openSubscriberListManager(String name) {
         NIndexSubscriberListManager o = pool.get(name);
         if (o == null) {
-            NSession session=app.getApplicationContext().getSession();
+            NSession session=app.getSession();
             o = new NIndexSubscriberListManager(session,name);
             pool.put(name, o);
         }

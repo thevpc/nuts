@@ -200,7 +200,10 @@ public class NTFParser2 extends AbstractNTextNodeParser {
                                                     m -> {
                                                         wasNewLine = false;
                                                         q.read(SHARPS[simpleLvl].length()); //ignore extra
-                                                        ret.set(pushUpSimpleStyle());
+                                                        NText p = pushUpSimpleStyle();
+                                                        if(p!=null) {
+                                                            ret.set(p);
+                                                        }
                                                     }
                                             )
                                             .onFullMatch("##{" + (simpleLvl + 1) + ",}",
@@ -262,38 +265,45 @@ public class NTFParser2 extends AbstractNTextNodeParser {
                                 }
                             }
                         } else {
-                            String s = q.peek(2);
-                            if (s.length() == 2) {
-                                switch (s.charAt(1)) {
-                                    case '\\': {
-                                        wasNewLine = false;
-                                        q.read(2);
-                                        buffer.append("\\");
-                                        break;
+                            String s = q.peek(4);
+                            if(s.equals("\\```")){
+                                q.read(4);
+                                wasNewLine = false;
+                                buffer.append("```");
+                            }else {
+                                s = q.peek(2);
+                                if (s.length() == 2) {
+                                    switch (s.charAt(1)) {
+                                        case '\\': {
+                                            wasNewLine = false;
+                                            q.read(2);
+                                            buffer.append("\\");
+                                            break;
+                                        }
+                                        case '#': {
+                                            wasNewLine = false;
+                                            q.read(2);
+                                            buffer.append("#");
+                                            break;
+                                        }
+                                        case '\u001E': {
+                                            wasNewLine = false;
+                                            //just ignore
+                                            q.read(2);
+                                            break;
+                                        }
+                                        default: {
+                                            wasNewLine = false;
+                                            buffer.append(q.read(2));
+                                        }
                                     }
-                                    case '#': {
-                                        wasNewLine = false;
-                                        q.read(2);
-                                        buffer.append("#");
-                                        break;
-                                    }
-                                    case '\u001E': {
-                                        wasNewLine = false;
-                                        //just ignore
-                                        q.read(2);
-                                        break;
-                                    }
-                                    default: {
-                                        wasNewLine = false;
-                                        buffer.append(q.read(2));
-                                    }
-                                }
-                            } else {
-                                if (q.isEOF()) {
-                                    wasNewLine = false;
-                                    buffer.append(q.read());
                                 } else {
-                                    return null;
+                                    if (q.isEOF()) {
+                                        wasNewLine = false;
+                                        buffer.append(q.read());
+                                    } else {
+                                        return null;
+                                    }
                                 }
                             }
                         }
@@ -318,8 +328,10 @@ public class NTFParser2 extends AbstractNTextNodeParser {
                         } else if (mode == StepEnum.TITLE) {
                             String s = q.readNewLine(true);
                             if (s != null) {
-                                wasNewLine = false;
+                                wasNewLine = true;
                                 return pushUpTitle();
+                            }else{
+                                wasNewLine = false;
                             }
                             return null;
                         } else {

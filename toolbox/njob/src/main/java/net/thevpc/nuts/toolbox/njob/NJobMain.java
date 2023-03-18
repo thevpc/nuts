@@ -12,13 +12,12 @@ public class NJobMain implements NApplication {
     }
 
     @Override
-    public void run(NApplicationContext appContext) {
-        NSession session = appContext.getSession();
-        JobServiceCmd ts = new JobServiceCmd(appContext);
-        NCmdLine cmdLine = appContext.getCommandLine();
+    public void run(NSession session) {
+        JobServiceCmd ts = new JobServiceCmd(session);
+        NCmdLine cmdLine = session.getAppCommandLine();
         NArg a;
         while(!cmdLine.isEmpty()) {
-            if (appContext.configureFirst(cmdLine)) {
+            if (session.configureFirst(cmdLine)) {
                 //
             } else if (
                     cmdLine.peek().get().toString().equals("-i")

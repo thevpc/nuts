@@ -194,9 +194,9 @@ public class JavaExecutorComponent implements NExecutorComponent {
                 executionContext.isTemporary(),
                 executionContext.getArguments(),
                 executionContext.getExecutorOptions(),
-                NBlankable.isBlank(executionContext.getCwd()) ?
+                NBlankable.isBlank(executionContext.getDirectory()) ?
                 NPath.ofUserDirectory(session)
-                        : executionContext.getCwd(),
+                        : executionContext.getDirectory(),
                 session);
         final NSession execSession = executionContext.getExecSession();
         switch (executionContext.getExecutionType()) {

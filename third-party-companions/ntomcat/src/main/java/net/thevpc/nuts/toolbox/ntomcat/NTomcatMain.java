@@ -14,8 +14,7 @@ public class NTomcatMain implements NApplication {
     }
 
     @Override
-    public void run(NApplicationContext appContext) {
-        NSession session = appContext.getSession();
+    public void run(NSession session) {
         NRepository apacheRepo = NRepositories.of(session).findRepository("apache-tomcat");
         if (apacheRepo == null) {
             NRepositories.of(session).addRepository(
@@ -25,7 +24,7 @@ public class NTomcatMain implements NApplication {
                             
             );
         }
-        NCmdLine cmdLine = appContext.getCommandLine();
+        NCmdLine cmdLine = session.getAppCommandLine();
         Boolean local = null;
         boolean skipFirst = false;
         if (cmdLine.hasNext()) {
@@ -43,11 +42,11 @@ public class NTomcatMain implements NApplication {
             local = true;
         }
         if (local) {
-            LocalTomcat m = new LocalTomcat(appContext, cmdLine);
+            LocalTomcat m = new LocalTomcat(session, cmdLine);
             m.runArgs();
             session.flush();
         } else {
-            RemoteTomcat m = new RemoteTomcat(appContext, cmdLine);
+            RemoteTomcat m = new RemoteTomcat(session, cmdLine);
             m.runArgs();
             session.flush();
         }

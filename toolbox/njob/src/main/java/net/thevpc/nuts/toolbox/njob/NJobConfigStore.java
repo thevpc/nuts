@@ -14,17 +14,16 @@ import java.util.UUID;
 import java.util.stream.Stream;
 
 public class NJobConfigStore {
-    private NApplicationContext context;
+    private NSession session;
     private NElements json;
     private NPath dbPath;
 
-    public NJobConfigStore(NApplicationContext applicationContext) {
-        this.context = applicationContext;
-        NSession session = applicationContext.getSession();
+    public NJobConfigStore(NSession session) {
+        this.session = session;
         json = NElements.of(session).json().setNtf(false);
         json.setCompact(false);
         //ensure we always consider the latest config version
-        dbPath = applicationContext.getVersionFolder(NStoreLocation.CONFIG, NJobConfigVersions.CURRENT)
+        dbPath = session.getAppVersionFolder(NStoreLocation.CONFIG, NJobConfigVersions.CURRENT)
         .resolve("db");
     }
 

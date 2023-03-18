@@ -12,12 +12,12 @@ import java.util.logging.Logger;
 
 public class NMySqlService {
     private static final Logger LOG = Logger.getLogger(NMySqlService.class.getName());
-    private NApplicationContext context;
+    private NSession session;
     private NPath sharedConfigFolder;
 
-    public NMySqlService(NApplicationContext context) {
-        this.context = context;
-        sharedConfigFolder = context.getVersionFolder(NStoreLocation.CONFIG, NMySqlConfigVersions.CURRENT);
+    public NMySqlService(NSession session) {
+        this.session = session;
+        sharedConfigFolder = session.getAppVersionFolder(NStoreLocation.CONFIG, NMySqlConfigVersions.CURRENT);
     }
 
     public LocalMysqlConfigService[] listLocalConfig() {
@@ -34,10 +34,10 @@ public class NMySqlService {
     }
 
     public LocalMysqlConfigService loadLocalMysqlConfig(String name, NOpenMode action) {
-        LocalMysqlConfigService t = new LocalMysqlConfigService(name, context);
+        LocalMysqlConfigService t = new LocalMysqlConfigService(name, session);
         if (t.existsConfig()) {
             if (action == NOpenMode.CREATE_OR_ERROR) {
-                throw new NIllegalArgumentException(context.getSession(), NMsg.ofC("local mysql config already exist: %s", name));
+                throw new NIllegalArgumentException(session, NMsg.ofC("local mysql config already exist: %s", name));
             }
             t.loadConfig();
         } else {
@@ -47,7 +47,7 @@ public class NMySqlService {
                     break;
                 }
                 case OPEN_OR_ERROR: {
-                    throw new NIllegalArgumentException(context.getSession(), NMsg.ofC("no such local mysql config: %s", name));
+                    throw new NIllegalArgumentException(session, NMsg.ofC("no such local mysql config: %s", name));
                 }
                 case OPEN_OR_NULL: {
                     t = null;
@@ -59,10 +59,10 @@ public class NMySqlService {
     }
 
     public RemoteMysqlConfigService loadRemoteMysqlConfig(String name, NOpenMode action) {
-        RemoteMysqlConfigService t = new RemoteMysqlConfigService(name, context);
+        RemoteMysqlConfigService t = new RemoteMysqlConfigService(name, session);
         if (t.existsConfig()) {
             if (action == NOpenMode.CREATE_OR_ERROR) {
-                throw new NIllegalArgumentException(context.getSession(), NMsg.ofC("remote mysql config already exist: %s", name));
+                throw new NIllegalArgumentException(session, NMsg.ofC("remote mysql config already exist: %s", name));
             }
             t.loadConfig();
         } else {
@@ -72,7 +72,7 @@ public class NMySqlService {
                     break;
                 }
                 case OPEN_OR_ERROR: {
-                    throw new NIllegalArgumentException(context.getSession(), NMsg.ofC("no such remote mysql config: %s", name));
+                    throw new NIllegalArgumentException(session, NMsg.ofC("no such remote mysql config: %s", name));
                 }
                 case OPEN_OR_NULL: {
                     t = null;
@@ -88,17 +88,17 @@ public class NMySqlService {
     }
 
     public LocalMysqlConfigService loadLocalMysqlConfig(NPath file) {
-        LocalMysqlConfigService t = new LocalMysqlConfigService(file, context);
+        LocalMysqlConfigService t = new LocalMysqlConfigService(file, session);
         t.loadConfig();
         return t;
     }
 
-    public NApplicationContext getContext() {
-        return context;
+    public NSession getSession() {
+        return session;
     }
 
     public RemoteMysqlConfigService loadRemoteMysqlConfig(String name) {
-        RemoteMysqlConfigService t = new RemoteMysqlConfigService(name, context);
+        RemoteMysqlConfigService t = new RemoteMysqlConfigService(name, session);
         t.loadConfig();
         return t;
     }

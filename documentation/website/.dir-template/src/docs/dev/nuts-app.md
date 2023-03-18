@@ -182,7 +182,7 @@ import java.io.File;
 import jxl.Workbook;
 import jxl.write.WritableWorkbook;
 
-public class App implements NutsApplication {
+public class App implements NApplication {
 
     public static void main(String[] args) {
         // just create an instance and call runAndExit in the main method
@@ -190,9 +190,8 @@ public class App implements NutsApplication {
     }
 
     @Override
-    public void run(NutsApplicationContext applicationContext) {
-        NutsSession s = applicationContext.getSession();
-        NutsCommandLine cmd = applicationContext.getCommandLine();
+    public void run(NSession session) {
+        NCmdLine cmd = session.getAppCommandLine();
         File file = new File("file.xls");
         while (cmd.hasNext()) {
             switch (cmd.getKey().getString()) {

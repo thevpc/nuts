@@ -6,12 +6,12 @@ import net.thevpc.nuts.text.NTextStyle;
 import net.thevpc.nuts.text.NTexts;
 
 public class SettingsRepoUtils {
-    public static void showRepo(NApplicationContext context, NRepository repository, String prefix) {
+    public static void showRepo(NSession session, NRepository repository, String prefix) {
         boolean enabled = repository.config().isEnabled();
         String disabledString = enabled ? "" : " <DISABLED>";
-        NPrintStream out = context.getSession().out();
+        NPrintStream out = session.out();
         out.print(prefix);
-        NTexts factory = NTexts.of(context.getSession());
+        NTexts factory = NTexts.of(session);
         if (enabled) {
             out.print(factory.ofStyled(repository.getName() + disabledString, NTextStyle.primary2()));
         } else {
@@ -22,12 +22,12 @@ public class SettingsRepoUtils {
 
     }
 
-    public static void showRepoTree(NApplicationContext context, NRepository repository, String prefix) {
-        showRepo(context, repository, prefix);
+    public static void showRepoTree(NSession session, NRepository repository, String prefix) {
+        showRepo(session, repository, prefix);
         String prefix1 = prefix + "  ";
         if (repository.config().isSupportedMirroring()) {
             for (NRepository c : repository.config().getMirrors()) {
-                showRepoTree(context, c, prefix1);
+                showRepoTree(session, c, prefix1);
             }
         }
     }

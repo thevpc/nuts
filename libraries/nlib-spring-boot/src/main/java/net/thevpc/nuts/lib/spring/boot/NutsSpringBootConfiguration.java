@@ -42,7 +42,7 @@ public class NutsSpringBootConfiguration {
 
     @Bean
     public NSession nutsSession(ApplicationArguments applicationArguments) {
-        return nutsAppContext(applicationArguments).getSession();
+        return Nuts.openInheritedWorkspace(NCmdLine.parseDefault(env.getProperty("nuts.args")).get().toStringArray(), applicationArguments.getSourceArgs());
     }
 
     @Bean
@@ -65,18 +65,14 @@ public class NutsSpringBootConfiguration {
         }
     }
 
-    @Bean
-    NApplicationContext nutsAppContext(ApplicationArguments applicationArguments) {
-        return NApplications.createApplicationContext(nutsApplication(),
-                NCmdLine.parseDefault(env.getProperty("nuts.args")).get().toStringArray(),
-                applicationArguments.getSourceArgs(),
-                null
-        );
-    }
 
     @Bean
-    public CommandLineRunner nutsCommandLineRunner(ApplicationContext ctx, ApplicationArguments applicationArguments) {
-        return args -> NApplications.runApplication(nutsApplication(), nutsAppContext(applicationArguments));
+    public CommandLineRunner nutsCommandLineRunner(ApplicationArguments applicationArguments) {
+        return args -> NApplications.runApplication(nutsApplication(),
+                nutsSession(applicationArguments),
+                NCmdLine.parseDefault(env.getProperty("nuts.args")).get().toStringArray(),
+                applicationArguments.getSourceArgs()
+                );
     }
 
 }

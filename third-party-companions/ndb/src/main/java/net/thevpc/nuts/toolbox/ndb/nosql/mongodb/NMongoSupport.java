@@ -39,8 +39,8 @@ public class NMongoSupport extends NdbSupportBase<NMongoConfig> {
         }
     }
 
-    public NMongoSupport(NApplicationContext appContext) {
-        super("mongodb", NMongoConfig.class, appContext);
+    public NMongoSupport(NSession session) {
+        super("mongodb", NMongoConfig.class, session);
         setMongoLogEnabled(false);
         declareNdbCmd(new MongoFindCmd(this));
         declareNdbCmd(new MongoShowDatabasesCmd(this));

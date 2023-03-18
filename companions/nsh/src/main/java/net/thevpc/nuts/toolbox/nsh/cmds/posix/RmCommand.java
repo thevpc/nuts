@@ -59,7 +59,7 @@ public class RmCommand extends NShellBuiltinDefault {
             return true;
         } else if (commandLine.peek().get(session).isNonOption()) {
             options.files.add(ShellHelper.xfileOf(commandLine.next().flatMap(NLiteral::asString).get(session),
-                    context.getCwd(), session));
+                    context.getDirectory(), session));
             return true;
         }
         return false;

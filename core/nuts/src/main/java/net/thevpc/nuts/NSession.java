@@ -23,11 +23,17 @@
  */
 package net.thevpc.nuts;
 
+import net.thevpc.nuts.cmdline.NCmdLine;
+import net.thevpc.nuts.cmdline.NCmdLineAutoComplete;
 import net.thevpc.nuts.cmdline.NCmdLineConfigurable;
+import net.thevpc.nuts.cmdline.NCmdLineProcessor;
 import net.thevpc.nuts.elem.NArrayElementBuilder;
 import net.thevpc.nuts.format.NIterableFormat;
+import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.io.NPrintStream;
 import net.thevpc.nuts.io.NSessionTerminal;
+import net.thevpc.nuts.text.NText;
+import net.thevpc.nuts.util.NClock;
 import net.thevpc.nuts.util.NMapListener;
 
 import java.io.InputStream;
@@ -46,6 +52,7 @@ import java.util.logging.Level;
  * @since 0.5.4
  */
 public interface NSession extends NCmdLineConfigurable {
+    String AUTO_COMPLETE_CANDIDATE_PREFIX = "```error Candidate```: ";
 
     /**
      * When true, operations are invited to print to output stream extra
@@ -242,6 +249,82 @@ public interface NSession extends NCmdLineConfigurable {
     NSession setAll(NWorkspaceOptions options);
 
     NId getAppId();
+
+    NSession prepareApplication(String[] args, Class appClass, String storeId, NClock startTime);
+
+    NApplicationMode getAppMode();
+
+    List<String> getAppModeArguments();
+
+    NCmdLineAutoComplete getAppAutoComplete();
+
+    NOptional<NText> getAppHelp();
+
+    void printAppHelp();
+
+    Class getAppClass();
+
+    NPath getAppAppsFolder();
+
+    NPath getAppConfigFolder();
+
+    NPath getAppLogFolder();
+
+    NPath getAppTempFolder();
+
+    NPath getAppVarFolder();
+
+    NPath getAppLibFolder();
+
+    NPath getAppRunFolder();
+
+    NPath getAppCacheFolder();
+
+    NPath getAppVersionFolder(NStoreLocation location, String version);
+
+    NPath getAppSharedAppsFolder();
+
+    NPath getAppSharedConfigFolder();
+
+    NPath getAppSharedLogFolder();
+
+    NPath getAppSharedTempFolder();
+
+    NPath getAppSharedVarFolder();
+
+    NPath getAppSharedLibFolder();
+
+    NPath getAppSharedRunFolder();
+
+    NPath getAppSharedFolder(NStoreLocation location);
+
+    NVersion getAppVersion();
+
+    List<String> getAppArguments();
+
+    NClock getAppStartTime();
+
+    NVersion getAppPreviousVersion();
+
+    NCmdLine getAppCommandLine();
+
+    void processAppCommandLine(NCmdLineProcessor commandLineProcessor);
+
+    NPath getAppFolder(NStoreLocation location);
+
+    boolean isAppExecMode();
+
+    NAppStoreLocationResolver getAppStoreLocationResolver();
+
+    NSession setAppVersionStoreLocationSupplier(NAppStoreLocationResolver appVersionStoreLocationSupplier);
+
+    NSession setAppMode(NApplicationMode mode);
+
+    NSession setAppModeArgs(List<String> modeArgs);
+
+    NSession setAppFolder(NStoreLocation location, NPath folder);
+
+    NSession setAppSharedFolder(NStoreLocation location, NPath folder);
 
     NSession setAppId(NId appId);
 
@@ -646,6 +729,12 @@ public interface NSession extends NCmdLineConfigurable {
     <T> T getOrComputeRefProperty(String name, Function<NSession, T> supplier);
 
 
-    NApplicationContext getApplicationContext();
+    //    @Override
+    NSession setAppArguments(List<String> args);
 
+    NSession setAppArguments(String[] args);
+
+    NSession setAppStartTime(NClock startTime);
+
+    NSession setAppPreviousVersion(NVersion previousVersion);
 }

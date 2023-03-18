@@ -23,17 +23,16 @@ public class NBackup implements NApplication {
     }
 
     @Override
-    public void run(NApplicationContext applicationContext) {
-        NSession session = applicationContext.getSession();
+    public void run(NSession session) {
         session.out().println(NMsg.ofC("%s Backup Tool.", NMsg.ofStyled("Nuts", NTextStyle.keyword())));
-        applicationContext.processCommandLine(new NCmdLineProcessor() {
+        session.processAppCommandLine(new NCmdLineProcessor() {
 
             @Override
             public boolean onCmdNextNonOption(NArg nonOption, NCmdLine commandLine, NCmdLineContext context) {
                 NArg a = commandLine.next().get();
                 switch (a.toString()) {
                     case "pull": {
-                        runPull(commandLine, applicationContext);
+                        runPull(commandLine, session);
                         return true;
                     }
                 }
@@ -47,7 +46,7 @@ public class NBackup implements NApplication {
         });
     }
 
-    public void runPull(NCmdLine commandLine, NApplicationContext applicationContext) {
+    public void runPull(NCmdLine commandLine, NSession session) {
         commandLine.process(new NCmdLineProcessor() {
             private Options options = new Options();
 
@@ -70,7 +69,7 @@ public class NBackup implements NApplication {
             }
 
             private NPath getConfigFile() {
-                return applicationContext.getConfigFolder().resolve("backup.json");
+                return session.getAppConfigFolder().resolve("backup.json");
             }
 
             @Override
@@ -135,7 +134,6 @@ public class NBackup implements NApplication {
                 if (config == null) {
                     config = new Config();
                 }
-                NSession session = applicationContext.getSession();
                 session.out().println(NMsg.ofC("Config File %s", getConfigFile()));
 
                 switch (options.cmd) {
@@ -196,6 +194,6 @@ public class NBackup implements NApplication {
                 session.out().println(NCmdLine.of(cmd));
                 NExecCommand.of(session).addCommand(cmd).setFailFast(true).run();
             }
-        }, new DefaultNCmdLineContext(applicationContext));
+        }, new DefaultNCmdLineContext(session));
     }
 }

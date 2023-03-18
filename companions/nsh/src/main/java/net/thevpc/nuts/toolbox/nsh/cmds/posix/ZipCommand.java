@@ -58,7 +58,7 @@ public class ZipCommand extends NShellBuiltinDefault {
         } else if (commandLine.peek().get(session).isNonOption()) {
             String path = commandLine.nextNonOption(NArgName.of("file", session))
                     .flatMap(NLiteral::asString).get(session);
-            NPath file = NPath.of(path, session).toAbsolute(context.getCwd());
+            NPath file = NPath.of(path, session).toAbsolute(context.getDirectory());
             if (options.outZip == null) {
                 options.outZip = file;
             } else {

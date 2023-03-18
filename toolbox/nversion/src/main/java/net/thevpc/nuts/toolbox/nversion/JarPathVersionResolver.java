@@ -43,14 +43,13 @@ import net.thevpc.nuts.io.NUncompress;
  * @author thevpc
  */
 public class JarPathVersionResolver implements PathVersionResolver {
-    public Set<VersionDescriptor> resolve(String filePath, NApplicationContext context) {
+    public Set<VersionDescriptor> resolve(String filePath, NSession session) {
         if (filePath.endsWith(".jar") || filePath.endsWith(".war") || filePath.endsWith(".ear")) {
 
         } else {
             return null;
         }
         Set<VersionDescriptor> all = new HashSet<>();
-        NSession session = context.getSession();
         try (InputStream is = (NPath.of(filePath, session).toAbsolute()).getInputStream()) {
             NUncompress.of(session)
                     .from(is)

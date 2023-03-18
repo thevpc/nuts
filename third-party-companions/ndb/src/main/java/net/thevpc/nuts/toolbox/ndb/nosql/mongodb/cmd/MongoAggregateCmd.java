@@ -2,7 +2,6 @@ package net.thevpc.nuts.toolbox.ndb.nosql.mongodb.cmd;
 
 import com.mongodb.client.AggregateIterable;
 import com.mongodb.client.MongoCursor;
-import net.thevpc.nuts.NApplicationContext;
 import net.thevpc.nuts.NBlankable;
 import net.thevpc.nuts.NSession;
 import net.thevpc.nuts.cmdline.NCmdLine;
@@ -28,8 +27,7 @@ public class MongoAggregateCmd extends NdbCmd<NMongoConfig> {
     }
 
     @Override
-    public void run(NApplicationContext appContext, NCmdLine commandLine) {
-        NSession session = appContext.getSession();
+    public void run(NSession session, NCmdLine commandLine) {
         NRef<AtName> name = NRef.ofNull(AtName.class);
         ExtendedQuery eq = new ExtendedQuery(getName());
         NMongoConfig otherOptions = createConfigInstance();

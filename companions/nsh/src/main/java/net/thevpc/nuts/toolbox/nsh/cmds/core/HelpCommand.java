@@ -107,8 +107,8 @@ public class HelpCommand extends NShellBuiltinCore {
             if (options.commandNames.isEmpty()) {
                 NText n=null;
                 try {
-                    if (context.getAppContext() != null) {
-                        n = context.getAppContext().getHelp().orNull();
+                    if (context.getSession() != null) {
+                        n = context.getSession().getAppHelp().orNull();
                     }
                 } catch (Exception ex) {
                     //

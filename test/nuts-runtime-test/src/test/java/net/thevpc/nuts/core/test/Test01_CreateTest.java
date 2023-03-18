@@ -5,32 +5,30 @@
  */
 package net.thevpc.nuts.core.test;
 
+import net.thevpc.nuts.*;
 import net.thevpc.nuts.cmdline.NArg;
-import net.thevpc.nuts.cmdline.NCmdLineHistory;
 import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.cmdline.NCmdLineFormat;
+import net.thevpc.nuts.cmdline.NCmdLineHistory;
 import net.thevpc.nuts.concurrent.NLocks;
 import net.thevpc.nuts.core.test.utils.TestUtils;
-import net.thevpc.nuts.*;
-
-import java.io.File;
-import java.io.InputStream;
-import java.util.regex.Pattern;
-
 import net.thevpc.nuts.elem.NElements;
 import net.thevpc.nuts.format.NObjectFormat;
 import net.thevpc.nuts.format.NTableFormat;
 import net.thevpc.nuts.format.NTreeFormat;
 import net.thevpc.nuts.io.*;
-import net.thevpc.nuts.spi.NApplicationContexts;
 import net.thevpc.nuts.spi.NDependencySolver;
 import net.thevpc.nuts.spi.NPaths;
 import net.thevpc.nuts.spi.NTerminals;
 import net.thevpc.nuts.text.NText;
 import net.thevpc.nuts.text.NTexts;
 import net.thevpc.nuts.util.*;
-import net.thevpc.nuts.util.NStream;
-import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+
+import java.io.File;
+import java.io.InputStream;
+import java.util.regex.Pattern;
 
 /**
  * @author thevpc
@@ -207,10 +205,6 @@ public class Test01_CreateTest {
             Assertions.assertNotNull(h);
         }
 
-        {
-            NApplicationContexts c = NApplicationContexts.of(s);
-            Assertions.assertNotNull(c);
-        }
 
         {
             NExecutionEntries c = NExecutionEntries.of(s);

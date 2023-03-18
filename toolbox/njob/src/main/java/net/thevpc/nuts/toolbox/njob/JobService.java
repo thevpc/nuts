@@ -1,24 +1,24 @@
 package net.thevpc.nuts.toolbox.njob;
 
-import net.thevpc.nuts.NApplicationContext;
+import net.thevpc.nuts.NSession;
 import net.thevpc.nuts.toolbox.njob.time.WeekDay;
 
 import java.time.Instant;
 import java.util.*;
 
 public class JobService {
-    private NApplicationContext context;
+    private NSession session;
     private NJobConfigStore dal;
     private NJobsSubService jobs;
     private NTasksSubService tasks;
     private NProjectsSubService projects;
 
-    public JobService(NApplicationContext context) {
-        this.context = context;
-        this.dal = new NJobConfigStore(context);
-        this.jobs = new NJobsSubService(context, dal, this);
-        this.tasks = new NTasksSubService(context, dal, this);
-        this.projects = new NProjectsSubService(context, dal, this);
+    public JobService(NSession session) {
+        this.session = session;
+        this.dal = new NJobConfigStore(session);
+        this.jobs = new NJobsSubService(session, dal, this);
+        this.tasks = new NTasksSubService(session, dal, this);
+        this.projects = new NProjectsSubService(session, dal, this);
     }
 
     public static String wildcardToRegex(String pattern) {

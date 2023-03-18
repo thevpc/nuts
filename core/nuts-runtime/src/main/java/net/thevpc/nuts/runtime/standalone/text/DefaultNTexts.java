@@ -521,7 +521,28 @@ public class DefaultNTexts implements NTexts {
             text = "";
         }
         int i = 0;
-        while (i < text.length() && text.charAt(i) != ':' && !Character.isWhitespace(text.charAt(i))) i++;
+        while (i < text.length()) {
+            char c = text.charAt(i);
+            if (c != ':'
+                    && !Character.isWhitespace(c)
+                    && (
+                    (c >= 'a' && c <= 'z')
+                            || (c >= 'A' && c <= 'Z')
+                            || (
+                            i > 0 &&
+                                    (
+                                            (c >= '0' && c <= '9')
+                                                    || (c == '_')
+                                                    || (c == '-')
+                                    )
+                                    || (i == 0 && c == '!')
+                    )
+            )) {
+                i++;
+            } else {
+                break;
+            }
+        }
         String cmd = null;
         String value = null;
         if (i == text.length()) {
@@ -538,18 +559,21 @@ public class DefaultNTexts implements NTexts {
             char sep = ' ';
             if (i < text.length()) {
                 cmd = text.substring(0, i);
-                value = text.substring(i + 1);
                 sep = text.charAt(i);
                 //normalize separator
                 if (sep == ' ' || sep == '\t' || sep == ':') {
                     //ok
+                    value = text.substring(i + 1);
                 } else if (sep == '\n') {
+                    value = text.substring(i + 1);
                     if (value.length() > 0 && value.charAt(0) == '\r') {
                         value = value.substring(1);
                     }
                 } else if (sep == '\r') {
                     sep = '\n';
+                    value = text.substring(i + 1);
                 } else {
+                    value = text.substring(i);
                     sep = ' ';
                 }
             } else {

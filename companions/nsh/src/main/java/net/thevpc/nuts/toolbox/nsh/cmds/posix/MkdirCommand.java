@@ -70,7 +70,7 @@ public class MkdirCommand extends NShellBuiltinDefault {
     protected void onCmdExec(NCmdLine commandLine, NShellExecutionContext context) {
         Options options = context.getOptions();
         NSession session = context.getSession();
-        options.xfiles = ShellHelper.xfilesOf(options.files, context.getCwd(), session);
+        options.xfiles = ShellHelper.xfilesOf(options.files, context.getDirectory(), session);
         if (options.xfiles.size() < 1) {
             commandLine.throwMissingArgument();
         }

@@ -46,7 +46,7 @@ public class NCommandTypeResolver implements NShellCommandTypeResolver {
         }
         String path = item;
         if (!item.startsWith("/")) {
-            path = context.getCwd() + "/" + item;
+            path = context.getDirectory() + "/" + item;
         }
         NSession session = context.getSession();
         final NExecutableInformation w = NExecCommand.of(session).addCommand(item).which();

@@ -25,8 +25,6 @@
  */
 package net.thevpc.nuts;
 
-import net.thevpc.nuts.util.NClock;
-
 /**
  * Nuts Application is the Top Level interface to be handled by nuts as rich console
  * application. By default, NApplication classes :
@@ -37,7 +35,7 @@ import net.thevpc.nuts.util.NClock;
  * <li>enables install mode to be executed when the jar is installed in nuts repos</li>
  * <li>enables uninstall mode to be executed when the jar is uninstalled from nuts repos</li>
  * <li>enables update mode to be executed when the a new version of the same jar has been installed</li>
- * <li>have many default options enabled (such as --help, --version, --json,--table, etc.) and thus supports natively multi output channels</li>
+ * <li>have many default options enabled (such as --help, --version, --json,--table, etc.) and thus support natively multi output channels</li>
  * <li>have a well defined storage layout (with temp, lib, config folders, etc...)</li>
  * </ul>
  * Typically, a Nuts Application follows this code pattern :
@@ -45,7 +43,7 @@ import net.thevpc.nuts.util.NClock;
  *   package org.example.test;
  *
  * import net.thevpc.nuts.NApplication;
- * import net.thevpc.nuts.NApplicationContext;
+ * import net.thevpc.nuts.NSession;
  * import net.thevpc.nuts.cmdline.NArg;
  * import net.thevpc.nuts.cmdline.NCmdLine;
  * import net.thevpc.nuts.cmdline.NCmdLineContext;
@@ -60,8 +58,8 @@ import net.thevpc.nuts.util.NClock;
  *         new MyApplication1().runAndExit(args);
  *     }
  *
- *     public void run(NApplicationContext applicationContext) {
- *         applicationContext.processCommandLine(new NCmdLineProcessor() {
+ *     public void run(NSession session) {
+ *         session.processCommandLine(new NCmdLineProcessor() {
  *             boolean noMoreOptions = false;
  *             boolean clean = false;
  *             List<String> params = new ArrayList<>();
@@ -115,9 +113,8 @@ import net.thevpc.nuts.util.NClock;
  *     }
  *
  *     // do the main staff in launch method
- *     public void run(NApplicationContext appContext) {
- *         NSession session = appContext.getSession();
- *         NCmdLine cmdLine = appContext.getCommandLine();
+ *     public void run(NSession session) {
+ *         NCmdLine cmdLine = session.getCommandLine();
  *         boolean boolOption = false;
  *         String stringOption = null;
  *         List<String> others = new ArrayList<>();
@@ -143,7 +140,7 @@ import net.thevpc.nuts.util.NClock;
  *                         break;
  *                     }
  *                     default: {
- *                         appContext.configureLast(cmdLine);
+ *                         session.configureLast(cmdLine);
  *                     }
  *                 }
  *             } else {
@@ -165,7 +162,7 @@ import net.thevpc.nuts.util.NClock;
  *package org.example.test;
  *
  * import net.thevpc.nuts.NApplication;
- * import net.thevpc.nuts.NApplicationContext;
+ * import net.thevpc.nuts.NSession;
  * import net.thevpc.nuts.NMsg;
  * import net.thevpc.nuts.NSession;
  * import net.thevpc.nuts.cmdline.NArg;
@@ -182,9 +179,8 @@ import net.thevpc.nuts.util.NClock;
  *     }
  *
  *     // do the main staff in launch method
- *     public void run(NApplicationContext appContext) {
- *         NSession session = appContext.getSession();
- *         NCmdLine cmdLine = appContext.getCommandLine();
+ *     public void run(NSession session) {
+ *         NCmdLine cmdLine = session.getCommandLine();
  *         NRef<Boolean> boolOption = NRef.of(false);
  *         NRef<String> stringOption = NRef.ofNull();
  *         List<String> others = new ArrayList<>();
@@ -204,7 +200,7 @@ import net.thevpc.nuts.util.NClock;
  *                         break;
  *                     }
  *                     default: {
- *                         appContext.configureLast(cmdLine);
+ *                         session.configureLast(cmdLine);
  *                     }
  *                 }
  *             } else {
@@ -226,7 +222,6 @@ import net.thevpc.nuts.util.NClock;
  *     package org.example.test;
  *
  * import net.thevpc.nuts.NApplication;
- * import net.thevpc.nuts.NApplicationContext;
  * import net.thevpc.nuts.NMsg;
  * import net.thevpc.nuts.NSession;
  * import net.thevpc.nuts.cmdline.NArg;
@@ -243,9 +238,8 @@ import net.thevpc.nuts.util.NClock;
  *     }
  *
  *     // do the main staff in launch method
- *     public void run(NApplicationContext appContext) {
- *         NSession session = appContext.getSession();
- *         NCmdLine cmdLine = appContext.getCommandLine();
+ *     public void run(NSession session) {
+ *         NCmdLine cmdLine = session.getCommandLine();
  *         NRef<Boolean> boolOption = NRef.of(false);
  *         NRef<String> stringOption = NRef.ofNull();
  *         List<String> others = new ArrayList<>();
@@ -255,7 +249,7 @@ import net.thevpc.nuts.util.NClock;
  *             }else if(cmdLine.withNextEntry((v, a, s)->stringOption.set(v),"-n","--name")){
  *
  *             }else if(cmdLine.hasNextOption()){
- *                 appContext.configureLast(cmdLine);
+ *                 session.configureLast(cmdLine);
  *             }else{
  *                 others.add(cmdLine.nextString().get());
  *             }
@@ -328,47 +322,35 @@ public interface NApplication {
      * this method should be overridden to perform specific business when
      * application is installed
      *
-     * @param applicationContext context
+     * @param session context
      */
-    default void onInstallApplication(NApplicationContext applicationContext) {
+    default void onInstallApplication(NSession session) {
     }
 
     /**
      * this method should be overridden to perform specific business when
      * application is updated
      *
-     * @param applicationContext context
+     * @param session context
      */
-    default void onUpdateApplication(NApplicationContext applicationContext) {
+    default void onUpdateApplication(NSession session) {
     }
 
     /**
      * this method should be overridden to perform specific business when
      * application is uninstalled
      *
-     * @param applicationContext context
+     * @param session context
      */
-    default void onUninstallApplication(NApplicationContext applicationContext) {
+    default void onUninstallApplication(NSession session) {
     }
 
-    /**
-     * create application context or return null for default
-     *
-     * @param session   session
-     * @param nutsArgs  nuts arguments
-     * @param appArgs      app arguments
-     * @param startTime start time
-     * @return new instance of NApplicationContext or null
-     */
-    default NApplicationContext createApplicationContext(NSession session, String[] nutsArgs, String[] appArgs, NClock startTime) {
-        return null;
-    }
 
     /**
      * run application within the given context
      *
-     * @param applicationContext app context
+     * @param session app context
      */
-    void run(NApplicationContext applicationContext);
+    void run(NSession session);
 
 }

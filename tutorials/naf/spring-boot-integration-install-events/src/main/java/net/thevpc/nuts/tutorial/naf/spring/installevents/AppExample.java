@@ -18,32 +18,28 @@ public class AppExample implements NApplication {
     }
 
     @Override
-    public void onInstallApplication(NApplicationContext applicationContext) {
-        NSession session = applicationContext.getSession();
+    public void onInstallApplication(NSession session) {
         session.out().println("write your business logic that will be processed when the application is being installed here...");
     }
 
     @Override
-    public void onUpdateApplication(NApplicationContext applicationContext) {
-        NSession session = applicationContext.getSession();
+    public void onUpdateApplication(NSession session) {
         session.out().println("write your business logic that will be processed when the application is being updated/upgraded here...");
     }
 
     @Override
-    public void onUninstallApplication(NApplicationContext applicationContext) {
-        NSession session = applicationContext.getSession();
+    public void onUninstallApplication(NSession session) {
         session.out().println("write your business logic that will be processed when the application is being uninstalled/removed here...");
     }
 
     /**
      * This method will be called to run you application or to process auto-complete arguments
      *
-     * @param context nuts application context
+     * @param session nuts application context
      */
     @Override
-    public void run(NApplicationContext context) {
-        NSession session = context.getSession();
-        NCmdLine cmd = context.getCommandLine();
+    public void run(NSession session) {
+        NCmdLine cmd = session.getAppCommandLine();
         NArg a;
         String someStringOption = null;
         Boolean someBooleanOption = null;
@@ -87,7 +83,7 @@ public class AppExample implements NApplication {
             cmd.next("--some-string-option").get(session);
         }
         //the application can be run in one of 'execMode' and 'autoCompleteMode' modes
-        if (context.isExecMode()) {
+        if (session.isAppExecMode()) {
             //only run if in execMode
             //just display the options as an example of execution
             Map<String, Object> result = new LinkedHashMap<>();

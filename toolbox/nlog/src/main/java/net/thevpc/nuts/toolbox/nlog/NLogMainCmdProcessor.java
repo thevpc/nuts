@@ -1,6 +1,5 @@
 package net.thevpc.nuts.toolbox.nlog;
 
-import net.thevpc.nuts.NApplicationContext;
 import net.thevpc.nuts.NLiteral;
 import net.thevpc.nuts.NSession;
 import net.thevpc.nuts.cmdline.NArg;
@@ -17,11 +16,11 @@ class NLogMainCmdProcessor implements NCmdLineProcessor {
     private List<String> paths = new ArrayList<>();
     private NLogFilterConfig config = new NLogFilterConfig();
     private LineFilterBuilder filter = new LineFilterBuilder();
-    private NApplicationContext applicationContext;
+    private NSession session;
     private boolean caseSensitive;
 
-    public NLogMainCmdProcessor(NApplicationContext applicationContext) {
-        this.applicationContext = applicationContext;
+    public NLogMainCmdProcessor(NSession session) {
+        this.session = session;
     }
 
     @Override
@@ -145,7 +144,6 @@ class NLogMainCmdProcessor implements NCmdLineProcessor {
             commandLine.next();
             filter.or();
         } else {
-            NSession session = applicationContext.getSession();
             paths.add(commandLine.next().flatMap(NLiteral::asString).get(session));
         }
         return true;
@@ -153,7 +151,6 @@ class NLogMainCmdProcessor implements NCmdLineProcessor {
 
     @Override
     public void onCmdExec(NCmdLine commandLine, NCmdLineContext context) {
-        NSession session = applicationContext.getSession();
         if (paths.isEmpty()) {
             commandLine.throwMissingArgumentByName("path");
         }

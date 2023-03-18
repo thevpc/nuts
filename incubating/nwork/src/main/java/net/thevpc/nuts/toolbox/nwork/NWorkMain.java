@@ -13,39 +13,38 @@ public class NWorkMain implements NApplication {
     }
 
     @Override
-    public void run(NApplicationContext appContext) {
-        this.service = new WorkspaceService(appContext);
-        NSession session = appContext.getSession();
-        NCmdLine cmdLine = appContext.getCommandLine().setCommandName("nwork");
+    public void run(NSession session) {
+        this.service = new WorkspaceService(session);
+        NCmdLine cmdLine = session.getAppCommandLine().setCommandName("nwork");
         NArg a;
         do {
-            if (appContext.configureFirst(cmdLine)) {
+            if (session.configureFirst(cmdLine)) {
                 //
             } else if ((a = cmdLine.next("scan", "s").orNull()) != null) {
-                service.scan(cmdLine, appContext);
+                service.scan(cmdLine, session);
                 return;
             } else if ((a = cmdLine.next("find", "f").orNull()) != null) {
-                service.find(cmdLine, appContext);
+                service.find(cmdLine, session);
                 return;
             } else if ((a = cmdLine.next("status", "t").orNull()) != null) {
                 if (a.getValue().isBoolean()) {
-                    service.enableScan(cmdLine, appContext, a.getBooleanValue().get(session));
+                    service.enableScan(cmdLine, session, a.getBooleanValue().get(session));
                 } else {
-                    service.status(cmdLine, appContext);
+                    service.status(cmdLine, session);
                 }
                 return;
             } else if ((a = cmdLine.next("push").orNull()) != null) {
                 if (a.getValue().isBoolean()) {
-                    service.enableScan(cmdLine, appContext, a.getBooleanValue().get(session));
+                    service.enableScan(cmdLine, session, a.getBooleanValue().get(session));
                 } else {
-                    service.push(cmdLine, appContext);
+                    service.push(cmdLine, session);
                 }
                 return;
             } else if ((a = cmdLine.next("list", "l").orNull()) != null) {
-                service.list(cmdLine, appContext);
+                service.list(cmdLine, session);
                 return;
             } else if ((a = cmdLine.next("set").orNull()) != null) {
-                service.setWorkspaceConfigParam(cmdLine, appContext);
+                service.setWorkspaceConfigParam(cmdLine, session);
                 return;
             } else {
                 cmdLine.setCommandName("nwork").throwUnexpectedArgument();

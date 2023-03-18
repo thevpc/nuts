@@ -24,10 +24,10 @@ class NCodeMainCmdProcessor implements NCmdLineProcessor {
     private List<StringComparator> typeComparators = new ArrayList<>();
     private List<StringComparator> fileComparators = new ArrayList<>();
     private boolean caseInsensitive = false;
-    private NApplicationContext applicationContext;
+    private NSession session;
 
-    public NCodeMainCmdProcessor(NApplicationContext applicationContext) {
-        this.applicationContext = applicationContext;
+    public NCodeMainCmdProcessor(NSession session) {
+        this.session = session;
     }
 
     @Override
@@ -37,7 +37,6 @@ class NCodeMainCmdProcessor implements NCmdLineProcessor {
 
     @Override
     public boolean onCmdNextOption(NArg option, NCmdLine commandLine, NCmdLineContext context) {
-        NSession session = applicationContext.getSession();
         switch (option.getStringKey().get(session)) {
             case "-i": {
                 option = commandLine.nextFlag().get(session);
@@ -77,14 +76,12 @@ class NCodeMainCmdProcessor implements NCmdLineProcessor {
 
     @Override
     public boolean onCmdNextNonOption(NArg nonOption, NCmdLine commandLine, NCmdLineContext context) {
-        NSession session = applicationContext.getSession();
         paths.add(commandLine.next().flatMap(NLiteral::asString).get(session));
         return true;
     }
 
     @Override
     public void onCmdExec(NCmdLine commandLine, NCmdLineContext context) {
-        NSession session = applicationContext.getSession();
         if (paths.isEmpty()) {
             paths.add(".");
         }

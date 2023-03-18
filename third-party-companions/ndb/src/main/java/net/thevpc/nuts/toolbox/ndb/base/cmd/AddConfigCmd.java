@@ -1,7 +1,7 @@
 package net.thevpc.nuts.toolbox.ndb.base.cmd;
 
-import net.thevpc.nuts.NApplicationContext;
 import net.thevpc.nuts.NBlankable;
+import net.thevpc.nuts.NSession;
 import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.elem.NElements;
 import net.thevpc.nuts.io.NPath;
@@ -21,7 +21,7 @@ public class AddConfigCmd<C extends NdbConfig> extends NdbCmd<C> {
     }
 
     @Override
-    public void run(NApplicationContext appContext, NCmdLine commandLine) {
+    public void run(NSession session, NCmdLine commandLine) {
         C options = createConfigInstance();
         NRef<Boolean> update = NRef.of(false);
         while (commandLine.hasNext()) {
@@ -33,7 +33,7 @@ public class AddConfigCmd<C extends NdbConfig> extends NdbCmd<C> {
                     }, "--update")
             ) {
             } else {
-                appContext.configureLast(commandLine);
+                session.configureLast(commandLine);
             }
         }
         options.setName(NStringUtils.trimToNull(options.getName()));

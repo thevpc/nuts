@@ -12,7 +12,6 @@ import net.thevpc.nuts.toolbox.ndb.util.RollingFileService;
 import net.thevpc.nuts.util.NRef;
 import net.thevpc.nuts.util.NStringUtils;
 
-import java.sql.Ref;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Date;
@@ -25,11 +24,10 @@ public class DumpCmd<C extends NdbConfig> extends NdbCmd<C> {
 
 
 //    @Override
-//    public void run(NApplicationContext appContext, NCmdLine commandLine) {
+//    public void run(NSession session, NCmdLine commandLine) {
 //        NRef<AtName> name = NRef.ofNull(AtName.class);
 //        ExtendedQuery eq = new ExtendedQuery(getName());
 //        C otherOptions = createConfigInstance();
-//        NSession session = appContext.getSession();
 //
 //        String status = "";
 //        while (commandLine.hasNext()) {
@@ -111,8 +109,7 @@ public class DumpCmd<C extends NdbConfig> extends NdbCmd<C> {
 //    }
 
 
-    public void run(NApplicationContext appContext, NCmdLine commandLine) {
-        NSession session = appContext.getSession();
+    public void run(NSession session, NCmdLine commandLine) {
         NRef<AtName> name = NRef.ofNull(AtName.class);
         NRef<NPath> file = NRef.ofNull(NPath.class);
         C otherOptions = createConfigInstance();

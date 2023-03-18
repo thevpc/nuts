@@ -158,7 +158,7 @@ public class JsonCommand extends NShellBuiltinDefault {
         NElements njson = NElements.of(session).json();
         T inputDocument = null;
         if (path != null) {
-            NPath file = NPath.of(path, session).toAbsolute(context.getCwd());
+            NPath file = NPath.of(path, session).toAbsolute(context.getDirectory());
             if (file.exists()) {
                 inputDocument = njson.parse(file, cls);
             } else {

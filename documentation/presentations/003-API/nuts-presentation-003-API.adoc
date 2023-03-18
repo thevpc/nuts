@@ -82,9 +82,9 @@ image::images/nuts-components.png[scaledwidth=80%]
 === Session API
 
 ```java
-    NutsSession session=Nuts.openWorkspace("-Z","-S","y","--json");
-    session.setConfirm(NutsConfirmationMode.ASK);
-    session.setOutputFormat(NutsContentType.XML);
+    NSession session=Nuts.openWorkspace("-Z","-S","y","--json");
+    session.setConfirm(NConfirmationMode.ASK);
+    session.setOutputFormat(NContentType.XML);
 
     session.out().println("Hello");
     session.out().printlnf("Hello");
@@ -98,7 +98,7 @@ image::images/nuts-components.png[scaledwidth=80%]
 === Std In/Out/Err API
 
 ```java
-    NutsSession session=Nuts.openWorkspace("-Z","-S","y","--json");
+    NSession session=Nuts.openWorkspace("-Z","-S","y","--json");
 
     session.out().println("Hello");
     session.out().printlnf("Hello");
@@ -116,19 +116,19 @@ image::images/nuts-components.png[scaledwidth=80%]
 === Find API
 
 ```java
-    NutsSession session=...;
-    NutsResult<NutsId> ids=NSearchCommand.of(session)
+    NSession session=...;
+    NStream<NId> ids=NSearchCommand.of(session)
         .addId("org.jedit:jedit")
         .setLatest(true)
         .setDistinct(true).getResultIds();
-    for(NutsId id:ids){
+    for(NId id:ids){
        ...
     }
-    NutsResult<NutsDefinition> defs=NSearchCommand.of(session)
+    NStream<NDefinition> defs=NSearchCommand.of(session)
         .addId("org.jedit:jedit")
         .setLatest(true)
         .setDistinct(true).getResultDefnintions();
-    for(NutsDefinition d:defs){
+    for(NDefinition d:defs){
        session.out().println(d.getInstallInformation()
        .getInstallFolder());
     }
@@ -137,7 +137,7 @@ image::images/nuts-components.png[scaledwidth=80%]
 === ClassPath API
 
 ```java
-    NutsSession session=...;
+    NSession session=...;
     ClassLoader loader=NSearchCommand.of(session)
         .addId("org.jedit:jedit")
         .addId("org.spring.framework:spring-context")
@@ -150,7 +150,7 @@ image::images/nuts-components.png[scaledwidth=80%]
 === NTF API
 
 ```java
-    NutsSession session=...;
+    NSession session=...;
     session.out().printlnf("#Hello1# ##Hello2## ##:_:Hello3## ");
     session.out().printlnf("```java public static class MyClass {}```");
     session.out().printlnf("```js public static class MyClass {}```");
@@ -163,24 +163,24 @@ image::images/nuts-components.png[scaledwidth=80%]
 === Format API
 
 ```java
-    NutsSession session=...;
+    NSession session=...;
     class Customer{String id;String name;}
     Customer customer1,customer2,customer3; ...
     //
-    session.setOutputFormat(NutsContentType.JSON).out().printlnf(Arrays.asList(customer1,customer2,customer3))
-    session.setOutputFormat(NutsContentType.TREE).out().printlnf(Arrays.asList(customer1,customer2,customer3))
-    session.setOutputFormat(NutsContentType.PLAIN).out().printlnf(Arrays.asList(customer1,customer2,customer3))
-    session.setOutputFormat(NutsContentType.XML).out().printlnf(Arrays.asList(customer1,customer2,customer3))
-    session.setOutputFormat(NutsContentType.PROPS).out().printlnf(Arrays.asList(customer1,customer2,customer3))
+    session.setOutputFormat(NContentType.JSON).out().printlnf(Arrays.asList(customer1,customer2,customer3))
+    session.setOutputFormat(NContentType.TREE).out().printlnf(Arrays.asList(customer1,customer2,customer3))
+    session.setOutputFormat(NContentType.PLAIN).out().printlnf(Arrays.asList(customer1,customer2,customer3))
+    session.setOutputFormat(NContentType.XML).out().printlnf(Arrays.asList(customer1,customer2,customer3))
+    session.setOutputFormat(NContentType.PROPS).out().printlnf(Arrays.asList(customer1,customer2,customer3))
     session.out().printlnf(Arrays.asList(customer1,customer2,customer3))
 ```
 
 === Format API
 
 ```java
-    NutsSession session=...;
+    NSession session=...;
     Object a,b,c,d; ...
-    NutsMutableTableModel m = NutsMutableTableModel.of(session);
+    NMutableTableModel m = NMutableTableModel.of(session);
     m.newRow().addCells(a,b,c,d);
     session.out().printlnf(m);
 ```
@@ -190,7 +190,7 @@ image::images/nuts-components.png[scaledwidth=80%]
 === Exec API
 
 ```java
-    NutsSession session=Nuts.openWorkspace("-Z","-S");
+    NSession session=Nuts.openWorkspace("-Z","-S");
     int code=NExecCommand.of(session).addCommand("ls", "-l").getResult();
     String out=NExecCommand.of(session).addCommand("nsh", "ls","--table")
         .grabOutputString()
@@ -203,15 +203,15 @@ image::images/nuts-components.png[scaledwidth=80%]
 === IO API
 
 ```java
-    NutsSession session=...;
-    NutsCp.of(session)
+    NSession session=...;
+    NCp.of(session)
         .from("http://my-server.com/file.pdf")
         .to("/home/my-file")
         .setProgressMonitor(true)
         .setValidator((in)->checkSHA1Hash(in))
         .run();
 
-    NutsPs ps=NutsPs.of(session)
+    NPs ps=NPs.of(session)
     if(ps.isSupportedKillProcess()){
         ps.killProcess("1234");
     }
@@ -244,7 +244,7 @@ image::images/nuts-components.png[scaledwidth=80%]
 
 == Nuts Application Framework
 
-* Implement NutsApplication
+* Implement NApplication
 * Add Description Properties in pom.xml
 
 <<<
@@ -252,13 +252,13 @@ image::images/nuts-components.png[scaledwidth=80%]
 == NAF Example
 
 ```java
-public class Main implements NutsApplication {
+public class Main implements NApplication {
     public static void main(String[] args) {
         new Main.runAndExit(args);
     }
     @Override
-    public void run(NutsApplicationContext applicationContext) {
-        NutsCommandLine cmd=applicationContext.commandLine();
+    public void run(NSession session) {
+        NCmdLine cmd=session.getAppCommandLine();
         ...
     }
 }
@@ -269,19 +269,19 @@ public class Main implements NutsApplication {
 == NAF Example
 
 ```java
-public class Main implements NutsApplication {
-    public static void main(String[] args) {new Main.runAndExit(args);}
+public class Main implements NApplication {
+    public static void main(String[] args) {new Main().runAndExit(args);}
     @Override
-    public void run(NutsApplicationContext applicationContext) {
-        NutsCommandLine cmd=applicationContext.commandLine();
+    public void run(NSession session) {
+        NCmdLine cmd=session.getAppCommandLine();
         ...
     }
     @Override
-    public void onInstallApplication(NutsApplicationContext applicationContext) {}
+    public void onInstallApplication(NSession session) {}
     @Override
-    public void onUpdateApplication(NutsApplicationContext applicationContext) {}
+    public void onUpdateApplication(NSession session) {}
     @Override
-    public void onUninstallApplication(NutsApplicationContext applicationContext) {}
+    public void onUninstallApplication(NSession session) {}
 }
 ```
 
@@ -293,14 +293,14 @@ public class Main implements NutsApplication {
 ```java
 @SpringBootApplication
 @Import(NutsSpringBootConfig.class)
-public class AppExample implements NutsApplication {
+public class AppExample implements NApplication {
     public static void main(String[] args) {
         SpringApplication.run(AppExample.class, args);
     }
 
     @Override
-    public void run(NutsApplicationContext context) {
-        NutsPrintStream out = context.getSession().out();
+    public void run(NSession session) {
+        NPrintStream out = session.out();
         out.println("Hello ##World##");
     }
 }

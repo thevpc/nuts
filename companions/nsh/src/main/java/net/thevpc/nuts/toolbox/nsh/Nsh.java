@@ -34,11 +34,10 @@ public class Nsh implements NApplication {
     }
 
     @Override
-    public void onInstallApplication(NApplicationContext applicationContext) {
-        NLogOp log = NLogOp.of(Nsh.class, applicationContext.getSession());
+    public void onInstallApplication(NSession session) {
+        NLogOp log = NLogOp.of(Nsh.class, session);
         log.level(Level.CONFIG).verb(NLogVerb.START).log(NMsg.ofPlain("[nsh] Installation..."));
-        NSession session = applicationContext.getSession();
-        applicationContext.processCommandLine(new NCmdLineProcessor() {
+        session.processAppCommandLine(new NCmdLineProcessor() {
             @Override
             public void onCmdInitParsing(NCmdLine commandLine, NCmdLineContext context) {
                 commandLine.setCommandName("nsh --nuts-exec-mode=install");
@@ -50,7 +49,7 @@ public class Nsh implements NApplication {
                     log.level(Level.CONFIG).verb(NLogVerb.INFO).log(NMsg.ofJ("[nsh] activating options trace={0} yes={1}", session.isTrace(), session.isYes()));
                 }
                 //id will not include version or
-                String nshIdStr = applicationContext.getAppId().getShortName();
+                String nshIdStr = session.getAppId().getShortName();
                 NConfigs cfg = NConfigs.of(session);
 //        HashMap<String, String> parameters = new HashMap<>();
 //        parameters.put("forList", nshIdStr + " --!color -c find-forCommand");
@@ -63,9 +62,9 @@ public class Nsh implements NApplication {
 //                        .setPriority(1)
 //                        .setParameters(parameters)
 //        );
-//        applicationContext.getWorkspace().io().term().enableRichTerm(session);
+//        session.getWorkspace().io().term().enableRichTerm(session);
 
-                NShell c = new NShell(new NShellConfiguration().setApplicationContext(applicationContext)
+                NShell c = new NShell(new NShellConfiguration().setSession(session)
                         .setIncludeDefaultBuiltins(true).setIncludeExternalExecutor(true)
                 );
                 NShellBuiltin[] commands = c.getRootContext().builtins().getAll();
@@ -83,7 +82,7 @@ public class Nsh implements NApplication {
                                         .setFactoryId("nsh")
                                         .setName(command.getName())
                                         .setCommand(nshIdStr, "-c", command.getName())
-                                        .setOwner(applicationContext.getAppId())
+                                        .setOwner(session.getAppId())
                                         .setHelpCommand(nshIdStr, "-c", "help", "--ntf", command.getName())
                                 )) {
                             reinstalled.add(command.getName());
@@ -137,32 +136,31 @@ public class Nsh implements NApplication {
     }
 
     @Override
-    public void onUpdateApplication(NApplicationContext applicationContext) {
-        NLogOp log = NLogOp.of(Nsh.class, applicationContext.getSession());
+    public void onUpdateApplication(NSession session) {
+        NLogOp log = NLogOp.of(Nsh.class, session);
         log.level(Level.CONFIG).verb(NLogVerb.INFO).log(NMsg.ofPlain("[nsh] update..."));
-        NVersion currentVersion = applicationContext.getAppVersion();
-        NVersion previousVersion = applicationContext.getAppPreviousVersion();
-        onInstallApplication(applicationContext);
+        NVersion currentVersion = session.getAppVersion();
+        NVersion previousVersion = session.getAppPreviousVersion();
+        onInstallApplication(session);
     }
 
     @Override
-    public void onUninstallApplication(NApplicationContext applicationContext) {
-        NLogOp log = NLogOp.of(Nsh.class, applicationContext.getSession());
+    public void onUninstallApplication(NSession session) {
+        NLogOp log = NLogOp.of(Nsh.class, session);
         log.level(Level.CONFIG).verb(NLogVerb.INFO).log(NMsg.ofPlain("[nsh] uninstallation..."));
         try {
-            NSession session = applicationContext.getSession();
             try {
                 NCommands.of(session).removeCommandFactory("nsh");
             } catch (Exception notFound) {
                 //ignore!
             }
-            for (NCustomCommand command : NCommands.of(session).findCommandsByOwner(applicationContext.getAppId())) {
+            for (NCustomCommand command : NCommands.of(session).findCommandsByOwner(session.getAppId())) {
                 try {
                     NCommands.of(session).removeCommand(command.getName());
                 } catch (Exception ex) {
-                    if (applicationContext.getSession().isPlainTrace()) {
+                    if (session.isPlainTrace()) {
                         NTexts factory = NTexts.of(session);
-                        applicationContext.getSession().err().println(NMsg.ofC("unable to uninstall %s.",
+                        session.err().println(NMsg.ofC("unable to uninstall %s.",
                                 factory.ofStyled(command.getName(), NTextStyle.primary3())
                         ));
                     }
@@ -174,16 +172,16 @@ public class Nsh implements NApplication {
     }
 
     @Override
-    public void run(NApplicationContext applicationContext) {
+    public void run(NSession session) {
 
         //before loading NShell check if we need to activate rich term
-        DefaultNShellOptionsParser options = new DefaultNShellOptionsParser(applicationContext);
-        NShellOptions o = options.parse(applicationContext.getCommandLine().toStringArray());
+        DefaultNShellOptionsParser options = new DefaultNShellOptionsParser(session);
+        NShellOptions o = options.parse(session.getAppCommandLine().toStringArray());
 
 //        if (o.isEffectiveInteractive()) {
-//            applicationContext.getWorkspace().io().term().enableRichTerm(applicationContext.getSession());
+//            session.getWorkspace().io().term().enableRichTerm(session);
 //        }
-        new NShell(new NShellConfiguration().setApplicationContext(applicationContext)
+        new NShell(new NShellConfiguration().setSession(session)
                 .setIncludeDefaultBuiltins(true).setIncludeExternalExecutor(true)
         ).run();
     }

@@ -20,8 +20,8 @@ public class NDocusaurusMain implements NApplication {
     }
 
     @Override
-    public void run(NApplicationContext appContext) {
-        appContext.processCommandLine(new NCmdLineProcessor() {
+    public void run(NSession session) {
+        session.processAppCommandLine(new NCmdLineProcessor() {
             @Override
             public boolean onCmdNextOption(NArg option, NCmdLine commandLine, NCmdLineContext context) {
                 NSession session = commandLine.getSession();
@@ -75,7 +75,7 @@ public class NDocusaurusMain implements NApplication {
                 DocusaurusProject docusaurusProject = new DocusaurusProject(workdir,
                         Paths.get(workdir).resolve(".dir-template").resolve("src").toString(),
                         commandLine.getSession());
-                new DocusaurusCtrl(docusaurusProject, appContext)
+                new DocusaurusCtrl(docusaurusProject, session)
                         .setBuildWebSite(build)
                         .setStartWebSite(start)
                         .setBuildPdf(buildPdf)

@@ -40,12 +40,11 @@ import net.thevpc.nuts.*;
  */
 public class MavenFolderPathVersionResolver implements PathVersionResolver {
 
-    public Set<VersionDescriptor> resolve(String filePath, NApplicationContext context) {
+    public Set<VersionDescriptor> resolve(String filePath, NSession session) {
         if (Files.isRegularFile(Paths.get(filePath).resolve("pom.xml"))) {
             Properties properties = new Properties();
             Set<VersionDescriptor> all = new HashSet<>();
             try (InputStream inputStream = Files.newInputStream(Paths.get(filePath).resolve("pom.xml"))) {
-                NSession session = context.getSession();
                 NDescriptor d = NDescriptorParser.of(session)
                         .setDescriptorStyle(NDescriptorStyle.MAVEN)
                         .parse(inputStream).get(session);

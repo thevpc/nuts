@@ -33,31 +33,30 @@ public class NServerMain implements NApplication {
     private CountDownLatch lock = new CountDownLatch(1);
 
     @Override
-    public void run(NApplicationContext context) {
-        NCmdLine cmdLine = context.getCommandLine().setCommandName("nuts-server");
+    public void run(NSession session) {
+        NCmdLine cmdLine = session.getAppCommandLine().setCommandName("nuts-server");
         cmdLine.setCommandName("nuts-server");
         while (cmdLine.hasNext()) {
             if (cmdLine.next("start").isPresent()) {
-                start(context, cmdLine);
+                start(session, cmdLine);
                 return;
             } else if (cmdLine.next("stop").isPresent()) {
-                stop(context, cmdLine);
+                stop(session, cmdLine);
                 return;
             } else if (cmdLine.next("list").isPresent()) {
-                list(context, cmdLine);
+                list(session, cmdLine);
                 return;
             } else if (cmdLine.next("status").isPresent()) {
-                status(context, cmdLine);
+                status(session, cmdLine);
                 return;
             } else {
-                context.configureLast(cmdLine);
+                session.configureLast(cmdLine);
             }
         }
-        list(context, cmdLine);
+        list(session, cmdLine);
     }
 
-    private void list(NApplicationContext context, NCmdLine cmdLine) {
-        NSession session = context.getSession();
+    private void list(NSession session, NCmdLine cmdLine) {
         NWorkspaceServerManager serverManager = new DefaultNWorkspaceServerManager(session);
         cmdLine.setCommandName("nuts-server list").throwUnexpectedArgument();
         if (cmdLine.isExecMode()) {
@@ -82,8 +81,7 @@ public class NServerMain implements NApplication {
         }
     }
 
-    private void stop(NApplicationContext context, NCmdLine cmdLine) {
-        NSession session = context.getSession();
+    private void stop(NSession session, NCmdLine cmdLine) {
         NWorkspaceServerManager serverManager = new DefaultNWorkspaceServerManager(session);
         String s;
         int count = 0;
@@ -101,8 +99,7 @@ public class NServerMain implements NApplication {
         }
     }
 
-    private void start(NApplicationContext context, NCmdLine commandLine) {
-        NSession session = context.getSession();
+    private void start(NSession session, NCmdLine commandLine) {
         NWorkspaceServerManager serverManager = new DefaultNWorkspaceServerManager(session);
         SrvInfoList servers = new SrvInfoList(session);
         NArg a;
@@ -128,7 +125,7 @@ public class NServerMain implements NApplication {
                 } else {
                     s.append(a.asString());
                 }
-                HostStr u = parseHostStr(s.toString(), context, true);
+                HostStr u = parseHostStr(s.toString(), session, true);
                 if (u.protocol.isEmpty()) {
                     u.protocol = "http";
                 }
@@ -152,7 +149,7 @@ public class NServerMain implements NApplication {
                 }
                 servers.current().workspaceLocations.put(serverContext, ws);
             } else {
-                context.configureLast(commandLine);
+                session.configureLast(commandLine);
             }
 
         }
@@ -169,7 +166,7 @@ public class NServerMain implements NApplication {
                         wsContext = "";
                     }
                     if (NBlankable.isBlank(wsContext)) {
-                        NAssert.requireNonNull(context.getWorkspace(), "workspace", session);
+                        NAssert.requireNonNull(session.getWorkspace(), "workspace", session);
                         nSession = session;
                         server.workspaces.put(wsContext, nSession);
                     } else {
@@ -255,7 +252,7 @@ public class NServerMain implements NApplication {
         }
     }
 
-    private HostStr parseHostStr(String host, NApplicationContext context, boolean srv) {
+    private HostStr parseHostStr(String host, NSession session, boolean srv) {
         try {
             Matcher pattern = HOST_PATTERN.matcher(host);
             HostStr v = new HostStr();
@@ -271,13 +268,13 @@ public class NServerMain implements NApplication {
                     v.port = Integer.parseInt(pattern.group("port"));
                 }
             } else {
-                throw new NIllegalArgumentException(context.getSession(),
+                throw new NIllegalArgumentException(session,
                         NMsg.ofC("invalid Host : %s", v.protocol)
                 );
             }
             return v;
         } catch (Exception ex) {
-            throw new NIllegalArgumentException(context.getSession(), NMsg.ofPlain("invalid"), ex);
+            throw new NIllegalArgumentException(session, NMsg.ofPlain("invalid"), ex);
         }
     }
 
@@ -305,8 +302,7 @@ public class NServerMain implements NApplication {
         }
     }
 
-    private void status(NApplicationContext context, NCmdLine commandLine) {
-        NSession session = context.getSession();
+    private void status(NSession session, NCmdLine commandLine) {
         NWorkspaceServerManager serverManager = new DefaultNWorkspaceServerManager(session);
         SrvInfoList servers = new SrvInfoList(session);
         NArg a;
@@ -328,10 +324,10 @@ public class NServerMain implements NApplication {
                 } else {
                     s.append(a.asString());
                 }
-                HostStr u = parseHostStr(s.toString(), context, false);
+                HostStr u = parseHostStr(s.toString(), session, false);
                 servers.add().set(u);
             } else {
-                context.configureLast(commandLine);
+                session.configureLast(commandLine);
             }
 
         }

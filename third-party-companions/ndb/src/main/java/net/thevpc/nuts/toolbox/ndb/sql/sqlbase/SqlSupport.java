@@ -20,8 +20,8 @@ public abstract class SqlSupport<C extends NdbConfig> extends NdbSupportBase<C> 
     protected String dbDriverPackage;
     protected String dbDriverClass;
 
-    public SqlSupport(String dbType, Class<C> configClass, NApplicationContext appContext, String dbDriverPackage, String dbDriverClass) {
-        super(dbType, configClass, appContext);
+    public SqlSupport(String dbType, Class<C> configClass, NSession session, String dbDriverPackage, String dbDriverClass) {
+        super(dbType, configClass, session);
         this.dbDriverPackage = dbDriverPackage;
         this.dbDriverClass = dbDriverClass;
         declareNdbCmd(new SqlCountCmd<>(this));
@@ -60,7 +60,7 @@ public abstract class SqlSupport<C extends NdbConfig> extends NdbSupportBase<C> 
         if (isRemoteCommand(options)) {
             //call self remotely
             NPrepareCommand.of(session).setUserName(options.getRemoteUser()).setTargetServer(options.getRemoteServer()).addIds(Arrays.asList(NId.of(dbDriverPackage).get())).run();
-            run(sysSsh(options, session).addCommand("nuts").addCommand(appContext.getAppId().toString()).addCommand(dbType).addCommand("run-sql").addCommand("--host=" + options.getHost()).addCommand("--port=" + options.getPort()).addCommand("--dbname=" + options.getDatabaseName()).addCommand("--user=" + options.getUser()).addCommand("--password=" + options.getPassword()));
+            run(sysSsh(options, session).addCommand("nuts").addCommand(session.getAppId().toString()).addCommand(dbType).addCommand("run-sql").addCommand("--host=" + options.getHost()).addCommand("--port=" + options.getPort()).addCommand("--dbname=" + options.getDatabaseName()).addCommand("--user=" + options.getUser()).addCommand("--password=" + options.getPassword()));
             return;
         }
         String jdbcUrl = createJdbcURL(options);

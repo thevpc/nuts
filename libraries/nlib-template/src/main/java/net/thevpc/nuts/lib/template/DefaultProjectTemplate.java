@@ -36,7 +36,6 @@ public class DefaultProjectTemplate implements ProjectTemplate {
     private TemplateConsole console;
     private boolean askAll = false;
     private List<ProjectTemplateListener> configListeners = new ArrayList<>();
-    private NApplicationContext applicationContext;
     private NSession session;
     private String targetRoot = "/";
     public Set<String> createPaths = new HashSet<>();
@@ -49,19 +48,18 @@ public class DefaultProjectTemplate implements ProjectTemplate {
         }
     };
 
-    public DefaultProjectTemplate(NApplicationContext appContext) {
-        this.applicationContext = appContext;
-        this.session = this.applicationContext.getSession();
+    public DefaultProjectTemplate(NSession session) {
+        this.session = session;
         console = new TemplateConsole() {
             @Override
             public void println(String message, Object... params) {
-                session.out().println(NMsg.ofC(message, params));
+                DefaultProjectTemplate.this.session.out().println(NMsg.ofC(message, params));
             }
 
             @Override
             public String ask(String propName, String propertyTitle, StringValidator validator, String defaultValue) {
-                NSessionTerminal term = session.getTerminal();
-                if (session.getConfirm() == NConfirmationMode.YES) {
+                NSessionTerminal term = DefaultProjectTemplate.this.session.getTerminal();
+                if (DefaultProjectTemplate.this.session.getConfirm() == NConfirmationMode.YES) {
                     return defaultValue;
                 }
                 return term.ask()
@@ -157,10 +155,6 @@ public class DefaultProjectTemplate implements ProjectTemplate {
 
     public File getProjectRootFolder() {
         return new File(getConfigProperty("ProjectRootFolder").get());
-    }
-
-    public NApplicationContext getApplicationContext() {
-        return applicationContext;
     }
 
     public void registerDefaultsFunctions() {
@@ -436,7 +430,7 @@ public class DefaultProjectTemplate implements ProjectTemplate {
                 if (!getSession().getTerminal().ask()
                         .resetLine()
                         .forBoolean(NMsg.ofC("accept project location %s?",
-                                NTexts.of(applicationContext.getSession()).ofStyled(p.getPath(), NTextStyle.path())))
+                                NTexts.of(session).ofStyled(p.getPath(), NTextStyle.path())))
                         .setDefaultValue(false)
                         .getBooleanValue()) {
                     throw new NCancelException(getSession());

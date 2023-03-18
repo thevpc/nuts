@@ -66,7 +66,6 @@ net.thevpc.nuts.runtime.standalone.stream.DefaultNStreams
 net.thevpc.nuts.runtime.standalone.xtra.glob.DefaultNGlob
 net.thevpc.nuts.runtime.standalone.io.terminal.history.NCmdLineHistoryImpl
 net.thevpc.nuts.runtime.standalone.app.cmdline.DefaultNCmdLines
-net.thevpc.nuts.runtime.standalone.app.DefaultDefaultNApplicationContexts
 
 net.thevpc.nuts.runtime.standalone.app.cmdline.DefaultNCmdLineFormat
 net.thevpc.nuts.runtime.standalone.workspace.cmd.exec.format.DefaultNExecCommandFormat

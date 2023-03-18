@@ -1,10 +1,10 @@
 package net.thevpc.nuts.toolbox.ndb;
 
 import net.thevpc.nuts.NApplication;
-import net.thevpc.nuts.NApplicationContext;
+import net.thevpc.nuts.NSession;
 import net.thevpc.nuts.cmdline.NCmdLine;
-import net.thevpc.nuts.toolbox.ndb.sql.derby.NDerbyMain;
 import net.thevpc.nuts.toolbox.ndb.nosql.mongodb.NMongoSupport;
+import net.thevpc.nuts.toolbox.ndb.sql.derby.NDerbyMain;
 import net.thevpc.nuts.toolbox.ndb.sql.nmysql.NMysqlMain;
 import net.thevpc.nuts.toolbox.ndb.sql.postgres.NPostgresSupport;
 
@@ -15,28 +15,28 @@ public class NdbMain implements NApplication {
     }
 
     @Override
-    public void run(NApplicationContext context) {
-        run(context.getCommandLine(),context);
+    public void run(NSession session) {
+        run(session.getAppCommandLine(), session);
     }
 
-    public void run(NCmdLine commandLine, NApplicationContext context) {
+    public void run(NCmdLine commandLine, NSession session) {
         while (commandLine.hasNext()) {
             if (commandLine.next("mysql", "mariadb").isPresent()) {
-                new NMysqlMain(context).run(context, commandLine);
+                new NMysqlMain(session).run(session, commandLine);
                 return;
             } else if (commandLine.next("derby").isPresent()) {
-                new NDerbyMain(context).run(context, commandLine);
+                new NDerbyMain(session).run(session, commandLine);
                 return;
             } else if (commandLine.next("mongo", "mongodb").isPresent()) {
-                new NMongoSupport(context).run(context, commandLine);
+                new NMongoSupport(session).run(session, commandLine);
                 return;
             } else if (commandLine.next("postgres", "postgresql").isPresent()) {
-                new NPostgresSupport(context).run(context, commandLine);
+                new NPostgresSupport(session).run(session, commandLine);
                 return;
             } else {
-                context.configureLast(commandLine);
+                session.configureLast(commandLine);
             }
         }
-        context.printHelp();
+        session.printAppHelp();
     }
 }

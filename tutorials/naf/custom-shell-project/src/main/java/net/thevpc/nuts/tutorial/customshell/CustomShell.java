@@ -1,7 +1,7 @@
 package net.thevpc.nuts.tutorial.customshell;
 
 import net.thevpc.nuts.NApplication;
-import net.thevpc.nuts.NApplicationContext;
+import net.thevpc.nuts.NSession;
 import net.thevpc.nuts.toolbox.nsh.nshell.NShell;
 import net.thevpc.nuts.toolbox.nsh.nshell.NShellConfiguration;
 
@@ -15,10 +15,10 @@ public class CustomShell implements NApplication {
     }
 
     @Override
-    public void run(NApplicationContext nac) {
+    public void run(NSession session) {
         NShell sh = new NShell(
                 new NShellConfiguration()
-                        .setApplicationContext(nac)
+                        .setSession(session)
         );
         sh.run();
     }
