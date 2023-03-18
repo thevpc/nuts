@@ -80,6 +80,8 @@ public interface NExecCommand extends NWorkspaceCommand {
      */
     NExecCommand setFailFast(boolean failFast);
 
+    NExecCommand failFast();
+
     /**
      * return command to execute
      *
@@ -219,7 +221,7 @@ public interface NExecCommand extends NWorkspaceCommand {
      *
      * @return execution directory
      */
-    String getDirectory();
+    NPath getDirectory();
 
     /**
      * set execution directory
@@ -227,7 +229,7 @@ public interface NExecCommand extends NWorkspaceCommand {
      * @param directory execution directory
      * @return {@code this} instance
      */
-    NExecCommand setDirectory(String directory);
+    NExecCommand setDirectory(NPath directory);
 
     /**
      * return new command input stream (standard input source)

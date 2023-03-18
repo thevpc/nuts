@@ -31,7 +31,7 @@ public abstract class AbstractNExecCommand extends NWorkspaceCommandBase<NExecCo
     protected Map<String, String> env;
     protected NExecutionException result;
     protected boolean executed;
-    protected String directory;
+    protected NPath directory;
     protected NPrintStream out;
     protected NPrintStream err;
     protected InputStream in;
@@ -72,6 +72,11 @@ public abstract class AbstractNExecCommand extends NWorkspaceCommandBase<NExecCo
     public NExecCommand setFailFast(boolean failFast) {
         this.failFast = failFast;
         return this;
+    }
+
+    @Override
+    public NExecCommand failFast() {
+        return setFailFast(true);
     }
 
     @Override
@@ -250,12 +255,12 @@ public abstract class AbstractNExecCommand extends NWorkspaceCommandBase<NExecCo
     }
 
     @Override
-    public String getDirectory() {
+    public NPath getDirectory() {
         return directory;
     }
 
     @Override
-    public NExecCommand setDirectory(String directory) {
+    public NExecCommand setDirectory(NPath directory) {
         this.directory = directory;
         return this;
     }

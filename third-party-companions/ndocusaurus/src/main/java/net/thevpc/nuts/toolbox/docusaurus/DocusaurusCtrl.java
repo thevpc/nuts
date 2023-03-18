@@ -11,6 +11,7 @@ import net.thevpc.nuts.elem.NElement;
 import net.thevpc.nuts.elem.NElements;
 import net.thevpc.nuts.elem.NObjectElement;
 import net.thevpc.nuts.io.NIOException;
+import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.io.NSessionTerminal;
 import net.thevpc.nuts.toolbox.nsh.eval.NShellContext;
 import net.thevpc.nuts.toolbox.nsh.nshell.*;
@@ -196,7 +197,7 @@ public class DocusaurusCtrl {
     private void runNativeCommand(Path workFolder, String... cmd) {
         NExecCommand.of(appContext.getSession())
                 .setExecutionType(NExecutionType.EMBEDDED)
-                .addCommand(cmd).setDirectory(workFolder.toString())
+                .addCommand(cmd).setDirectory(NPath.of(workFolder, appContext.getSession()))
                 .setFailFast(true).getResult();
     }
 
@@ -207,7 +208,7 @@ public class DocusaurusCtrl {
         } else {
             s = s.setConfirm(NConfirmationMode.ERROR);
         }
-        NExecCommand.of(s).addCommand(cmd).setDirectory(workFolder.toString())
+        NExecCommand.of(s).addCommand(cmd).setDirectory(NPath.of(workFolder, appContext.getSession()))
                 .setExecutionType(NExecutionType.EMBEDDED)
                 .setFailFast(true).getResult();
     }

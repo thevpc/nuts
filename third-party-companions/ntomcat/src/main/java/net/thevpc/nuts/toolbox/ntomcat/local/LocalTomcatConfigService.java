@@ -382,7 +382,7 @@ public class LocalTomcatConfigService extends LocalTomcatServiceBase {
 //            b.addCommand("-Dcatalina.home=" + catalinaHome);
 //        }
 //        b.addCommand("-Dcatalina.base=" + catalinaBase);
-        b.setDirectory(catalinaBase.toString());
+        b.setDirectory(catalinaBase);
         LocalTomcatConfig c = getConfig();
         String javaHome = c.getJavaHome();
         if (javaHome == null) {

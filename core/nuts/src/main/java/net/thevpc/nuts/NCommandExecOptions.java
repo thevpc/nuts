@@ -26,6 +26,8 @@
  */
 package net.thevpc.nuts;
 
+import net.thevpc.nuts.io.NPath;
+
 import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
@@ -54,7 +56,7 @@ public class NCommandExecOptions implements Serializable {
     /**
      * execution directory
      */
-    private String directory;
+    private NPath directory;
 
     /**
      * when fail fast,non zero exit value will raise NutsExecutionException
@@ -111,7 +113,7 @@ public class NCommandExecOptions implements Serializable {
      *
      * @return execution directory
      */
-    public String getDirectory() {
+    public NPath getDirectory() {
         return directory;
     }
 
@@ -121,7 +123,7 @@ public class NCommandExecOptions implements Serializable {
      * @param directory new value
      * @return {@code this} instance
      */
-    public NCommandExecOptions setDirectory(String directory) {
+    public NCommandExecOptions setDirectory(NPath directory) {
         this.directory = directory;
         return this;
     }

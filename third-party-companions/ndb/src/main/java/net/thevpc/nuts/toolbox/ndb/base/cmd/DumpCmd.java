@@ -290,7 +290,7 @@ public class DumpCmd<C extends NdbConfig> extends NdbCmd<C> {
                         }
                         zipExec.addCommand(zipPath.toString());
                         zipExec.addCommand(".");
-                        zipExec.setDirectory(plainFolderPath.toString());
+                        zipExec.setDirectory(plainFolderPath);
                         run(zipExec);
                     } else {
 
@@ -305,7 +305,7 @@ public class DumpCmd<C extends NdbConfig> extends NdbCmd<C> {
                         }
                         zipExec.addCommand(zipPath.toString());
                         zipExec.addCommand(".");
-                        zipExec.setDirectory(plainFolderPath.resolve(sf).toString());
+                        zipExec.setDirectory(plainFolderPath.resolve(sf));
                         run(zipExec);
                     }
                 } else {
@@ -320,7 +320,7 @@ public class DumpCmd<C extends NdbConfig> extends NdbCmd<C> {
                     }
                     zipExec.addCommand(zipPath.toString());
                     zipExec.addCommand(plainFolderPath.toString());
-                    zipExec.setDirectory(plainFolderPath.getParent().toString());
+                    zipExec.setDirectory(plainFolderPath.getParent());
                     run(zipExec);
                 }
 

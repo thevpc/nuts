@@ -47,7 +47,7 @@ public class DefaultNExecutionContext implements NExecutionContext {
     private NSession session;
     private NWorkspace workspace;
     private NArtifactCall executorDescriptor;
-    private String cwd;
+    private NPath cwd;
     private String commandName;
     private boolean failFast;
     private boolean temporary;
@@ -80,7 +80,7 @@ public class DefaultNExecutionContext implements NExecutionContext {
 //    }
     public DefaultNExecutionContext(NDefinition definition,
                                     List<String> arguments, List<String> executorArgs, List<String> workspaceOptions, Map<String, String> env, Map<String, String> executorProperties,
-                                    String cwd, NSession session, NSession execSession, NWorkspace workspace, boolean failFast,
+                                    NPath cwd, NSession session, NSession execSession, NWorkspace workspace, boolean failFast,
                                     boolean temporary,
                                     NExecutionType executionType,
                                     String commandName,
@@ -208,7 +208,7 @@ public class DefaultNExecutionContext implements NExecutionContext {
     }
 
     @Override
-    public String getCwd() {
+    public NPath getCwd() {
         return cwd;
     }
 
@@ -271,7 +271,7 @@ public class DefaultNExecutionContext implements NExecutionContext {
         return this;
     }
 
-    public DefaultNExecutionContext setCwd(String cwd) {
+    public DefaultNExecutionContext setCwd(NPath cwd) {
         this.cwd = cwd;
         return this;
     }

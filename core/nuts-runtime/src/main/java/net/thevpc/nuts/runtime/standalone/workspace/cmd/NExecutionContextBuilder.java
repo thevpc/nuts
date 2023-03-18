@@ -111,7 +111,7 @@ public interface NExecutionContextBuilder extends NSessionProvider{
      *
      * @return current working directory
      */
-    String getCwd();
+    NPath getCwd();
 
     /**
      * when true, any non 0 exited command will throw an Exception
@@ -166,7 +166,7 @@ public interface NExecutionContextBuilder extends NSessionProvider{
 
     NExecutionContextBuilder setExecutorDescriptor(NArtifactCall executorDescriptor);
 
-    NExecutionContextBuilder setCwd(String cwd);
+    NExecutionContextBuilder setCwd(NPath cwd);
 
     NExecutionContextBuilder setCommandName(String commandName);
 

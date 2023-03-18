@@ -43,7 +43,7 @@ public final class JavaExecutorOptions {
     private boolean java9;
     private String javaCommand = null;//runnerProps.getProperty("java.parseVersion");
     private String mainClass = null;
-    private String dir = null;
+    private NPath dir = null;
     private boolean javaw = false;
     private boolean excludeBase = false;
     private boolean showCommand;
@@ -52,7 +52,7 @@ public final class JavaExecutorOptions {
     private String j9_module;
 
     public JavaExecutorOptions(NDefinition def, boolean tempId, List<String> args,
-                               List<String> executorOptions, String dir, NSession session) {
+                               List<String> executorOptions, NPath dir, NSession session) {
         this.session = session;
         showCommand = CoreNUtils.isShowCommand(session);
         NId id = def.getId();
@@ -119,7 +119,7 @@ public final class JavaExecutorOptions {
                 }
                 case "--dir":
                 case "-dir": {
-                    cmdLine.withNextEntry((v, r, s)-> this.dir = v);
+                    cmdLine.withNextEntry((v, r, s)-> this.dir = NPath.of(v,session));
                     break;
                 }
                 case "--win":
@@ -533,7 +533,7 @@ public final class JavaExecutorOptions {
         return mainClass;
     }
 
-    public String getDir() {
+    public NPath getDir() {
         return dir;
     }
 

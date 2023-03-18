@@ -28,6 +28,7 @@ package net.thevpc.nuts.toolbox.nsh.cmds.bash;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.cmdline.NArg;
 import net.thevpc.nuts.cmdline.NCmdLine;
+import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.spi.NComponentScope;
 import net.thevpc.nuts.spi.NComponentScopeType;
 import net.thevpc.nuts.toolbox.nsh.cmds.NShellBuiltinDefault;
@@ -170,8 +171,8 @@ public class EnvCommand extends NShellBuiltinDefault {
             final NExecCommand e = NExecCommand.of(context.getSession()).addCommand(options.command)
                     .setEnv(env)
                     .setFailFast(true);
-            if (options.dir != null) {
-                e.setDirectory(options.dir);
+            if (!NBlankable.isBlank(options.dir)) {
+                e.setDirectory(NPath.of(options.dir, context.getSession()));
             }
             if (options.executionType != null) {
                 e.setExecutionType(options.executionType);

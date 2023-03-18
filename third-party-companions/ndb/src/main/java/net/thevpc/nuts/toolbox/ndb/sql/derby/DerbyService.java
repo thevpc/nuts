@@ -249,7 +249,7 @@ public class DerbyService {
         return NExecCommand.of(session)
                 .addExecutorOptions(executorOptions)
                 .addCommand(command)
-                .setDirectory(derbyBinHome.toString())
+                .setDirectory(NPath.of(derbyBinHome,session))
                 .setFailFast(true)
                 ;
     }

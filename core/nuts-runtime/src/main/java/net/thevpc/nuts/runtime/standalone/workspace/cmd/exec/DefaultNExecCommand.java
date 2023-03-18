@@ -1,6 +1,7 @@
 package net.thevpc.nuts.runtime.standalone.workspace.cmd.exec;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.io.NSessionTerminal;
 import net.thevpc.nuts.runtime.standalone.app.cmdline.NCommandLineUtils;
 import net.thevpc.nuts.runtime.standalone.executor.NExecutionContextUtils;
@@ -421,13 +422,13 @@ public class DefaultNExecCommand extends AbstractNExecCommand {
         return ws_execDef(def, commandName, appArgs, executorOptions, this.workspaceOptions, env, directory, failFast, executionType, runAs, session, execSession);
     }
 
-    protected NExecutableInformationExt ws_execDef(NDefinition def, String commandName, String[] appArgs, List<String> executorOptions, List<String> workspaceOptions, Map<String, String> env, String dir, boolean failFast, NExecutionType executionType, NRunAs runAs, NSession traceSession, NSession execSession) {
+    protected NExecutableInformationExt ws_execDef(NDefinition def, String commandName, String[] appArgs, List<String> executorOptions, List<String> workspaceOptions, Map<String, String> env, NPath dir, boolean failFast, NExecutionType executionType, NRunAs runAs, NSession traceSession, NSession execSession) {
         return new DefaultNArtifactExecutable(def, commandName, appArgs, executorOptions, workspaceOptions, env, dir, failFast, traceSession, execSession, executionType, runAs, this);
     }
 
     public void ws_execId(NDefinition def, String commandName, String[] appArgs,
                           List<String> executorOptions,
-                          List<String> workspaceOptions, Map<String, String> env, String dir, boolean failFast, boolean temporary,
+                          List<String> workspaceOptions, Map<String, String> env, NPath dir, boolean failFast, boolean temporary,
                           NSession session,
                           NSession execSession,
                           NExecutionType executionType,

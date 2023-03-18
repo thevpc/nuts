@@ -54,8 +54,7 @@ class JavaProcessExecHelper extends AbstractSyncIProcessExecHelper {
                 out.println("\t\t " + xarg);
 //                }
             }
-            String directory = NBlankable.isBlank(joptions.getDir()) ? null : NPath.of(joptions.getDir(), ws)
-                    .toAbsolute().toString();
+            String directory = NBlankable.isBlank(joptions.getDir()) ? null : joptions.getDir().toAbsolute().toString();
             ProcessExecHelper.ofDefinition(def,
                     args.toArray(new String[0]), osEnv, directory, executionContext.getExecutorProperties(), joptions.isShowCommand(), true, executionContext.getSleepMillis(), executionContext.isInheritSystemIO(), false,
                     executionContext.getRedirectOutputFile(),
@@ -77,8 +76,7 @@ class JavaProcessExecHelper extends AbstractSyncIProcessExecHelper {
                 out.println(NMsg.ofC("\t\t %s", xarg));
             }
         }
-        String directory = NBlankable.isBlank(joptions.getDir()) ? null : NPath.of(joptions.getDir(), ws)
-                .toAbsolute().toString();
+        String directory = NBlankable.isBlank(joptions.getDir()) ? null : joptions.getDir().toAbsolute().toString();
         NWorkspaceExt.of(getSession()).getModel().recomm.getRecommendations(new RequestQueryInfo(def.getId().toString(), ""), NRecommendationPhase.EXEC, false, getSession());
         return ProcessExecHelper.ofDefinition(def,
                 args.toArray(new String[0]), osEnv, directory, executionContext.getExecutorProperties(), joptions.isShowCommand(), true, executionContext.getSleepMillis(), executionContext.isInheritSystemIO(), false,

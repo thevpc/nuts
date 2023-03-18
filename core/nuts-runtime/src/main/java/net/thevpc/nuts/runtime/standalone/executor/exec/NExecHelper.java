@@ -45,7 +45,7 @@ public class NExecHelper extends AbstractSyncIProcessExecHelper {
                 .addExecutorOptions(optionsAndArgs.getOptions())
                 .setRunAs(runAs)
                 .setEnv(env)
-                .setDirectory(directory == null ? null : directory.toString())
+                .setDirectory(directory == null ? null : NPath.of(directory,session))
                 .setSleepMillis((int) sleep)
                 .setFailFast(failFast);
         if (!inheritSystemIO) {

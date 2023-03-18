@@ -8,6 +8,7 @@ package net.thevpc.nuts.runtime.standalone.workspace.cmd.exec;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.cmdline.NArg;
 import net.thevpc.nuts.cmdline.NCmdLine;
+import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.io.NPrintStream;
 
 import java.util.*;
@@ -23,7 +24,7 @@ public class DefaultNArtifactExecutable extends AbstractNExecutableCommand {
     List<String> executorOptions;
     List<String> workspaceOptions;
     Map<String, String> env;
-    String dir;
+    NPath dir;
     boolean failFast;
     NSession session;
     NSession execSession;
@@ -33,7 +34,7 @@ public class DefaultNArtifactExecutable extends AbstractNExecutableCommand {
     boolean autoInstall = true;
 
     public DefaultNArtifactExecutable(NDefinition def, String commandName, String[] appArgs, List<String> executorOptions,
-                                      List<String> workspaceOptions, Map<String, String> env, String dir, boolean failFast,
+                                      List<String> workspaceOptions, Map<String, String> env, NPath dir, boolean failFast,
                                       NSession session,
                                       NSession execSession,
                                       NExecutionType executionType, NRunAs runAs, DefaultNExecCommand execCommand) {

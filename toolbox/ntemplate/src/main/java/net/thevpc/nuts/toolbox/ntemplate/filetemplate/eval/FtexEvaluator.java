@@ -1,8 +1,10 @@
 package net.thevpc.nuts.toolbox.ntemplate.filetemplate.eval;
 
+import net.thevpc.nuts.NBlankable;
 import net.thevpc.nuts.NExecCommand;
 import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.NSession;
+import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.toolbox.ntemplate.filetemplate.ExprEvaluator;
 import net.thevpc.nuts.toolbox.ntemplate.filetemplate.FileTemplater;
 import net.thevpc.nuts.toolbox.ntemplate.filetemplate.MimeTypeConstants;
@@ -232,7 +234,10 @@ public class FtexEvaluator implements ExprEvaluator {
         NSession session = ctx.getSession();
         return NExecCommand.of(session).addCommand(
                         NCmdLine.parseDefault(value).get(session).toStringArray()
-        ).setDirectory(ctx.getWorkingDirRequired())
+                ).setDirectory(
+                        NBlankable.isBlank(ctx.getWorkingDirRequired()) ? null :
+                                NPath.of(ctx.getWorkingDirRequired(), session)
+                )
                 .grabOutputString()
                 .run()
                 .getOutputString();

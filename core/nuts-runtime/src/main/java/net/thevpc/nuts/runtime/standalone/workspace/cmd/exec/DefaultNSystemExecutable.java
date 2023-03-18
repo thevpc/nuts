@@ -71,7 +71,7 @@ public class DefaultNSystemExecutable extends AbstractNExecutableCommand {
         }
         return ProcessExecHelper.ofArgs(null,
                 execCommand.getCommand().toArray(new String[0]), e2,
-                execCommand.getDirectory() == null ? null : NPath.of(execCommand.getDirectory(), session).toFile(),
+                execCommand.getDirectory() == null ? null : execCommand.getDirectory().toFile(),
                 session.getTerminal(),
                 execSession.getTerminal(), showCommand, true, execCommand.getSleepMillis(),
                 inheritSystemIO,
