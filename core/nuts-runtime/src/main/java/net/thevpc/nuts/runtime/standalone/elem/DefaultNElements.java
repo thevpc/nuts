@@ -27,10 +27,12 @@ import net.thevpc.nuts.runtime.standalone.format.table.DefaultSearchFormatTable;
 import net.thevpc.nuts.runtime.standalone.text.DefaultNTextManagerModel;
 import net.thevpc.nuts.runtime.standalone.format.tree.DefaultSearchFormatTree;
 import net.thevpc.nuts.runtime.standalone.format.xml.DefaultSearchFormatXml;
+import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceUtils;
 import net.thevpc.nuts.spi.NSupportLevelContext;
 import net.thevpc.nuts.text.NTexts;
 import net.thevpc.nuts.util.NAssert;
 import net.thevpc.nuts.util.NProgressFactory;
+import net.thevpc.nuts.util.NReflectRepository;
 
 public class DefaultNElements extends DefaultFormatBase<NElements> implements NElements {
 
@@ -625,7 +627,8 @@ public class DefaultNElements extends DefaultFormatBase<NElements> implements NE
     }
 
     private DefaultNElementFactoryContext createFactoryContext() {
-        DefaultNElementFactoryContext c = new DefaultNElementFactoryContext(this);
+        NReflectRepository reflectRepository = NWorkspaceUtils.of(getSession()).getReflectRepository();
+        DefaultNElementFactoryContext c = new DefaultNElementFactoryContext(this, reflectRepository);
         switch (getContentType()) {
             case XML:
             case JSON:

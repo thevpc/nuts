@@ -120,8 +120,8 @@ public class DefaultNWorkspaceArchetypeComponent implements NWorkspaceArchetypeC
         if (initializeScripts || initializeLaunchers) {
             NWorkspaceUtils.of(session).installScriptsAndLaunchers(initializeLaunchers);
         }
-        Boolean skipCompanions = NBootManager.of(session).getBootOptions().getSkipCompanions().orElse(false);
-        if (!skipCompanions) {
+        Boolean installCompanions = NBootManager.of(session).getBootOptions().getInstallCompanions().orElse(false);
+        if (installCompanions) {
             NWorkspaceUtils.of(session).installCompanions();
         }
     }

@@ -413,7 +413,7 @@ public class NReservedWorkspaceOptionsArgumentsBuilder {
         } else {
             fillOption("--debug", null, options.getDebug().isPresent(), false, arguments, true);
         }
-        fillOption("--skip-companions", "-k", options.getSkipCompanions().orNull(), false, arguments, false);
+        fillOption("--install-companions", "-k", options.getInstallCompanions().orNull(), false, arguments, false);
         fillOption("--skip-welcome", "-K", options.getSkipWelcome().orElse(false), false, arguments, false);
         fillOption("--out-line-prefix", null, options.getOutLinePrefix().orNull(), arguments, false);
         fillOption("--skip-boot", "-Q", options.getSkipBoot().orNull(), false, arguments, false);

@@ -83,6 +83,13 @@ public class NNameFormat {
     }
 
 
+    public static String[] parse(CharSequence value) {
+        if(value==null){
+            return new String[]{""};
+        }
+        return parse(value.toString());
+    }
+
     public static String[] parse(String value) {
         if (NBlankable.isBlank(value)) {
             return new String[]{""};
@@ -169,6 +176,10 @@ public class NNameFormat {
     }
 
     public String format(String value) {
+        return format(parse(value));
+    }
+
+    public String format(CharSequence value) {
         return format(parse(value));
     }
 

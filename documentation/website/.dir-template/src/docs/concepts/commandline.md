@@ -27,10 +27,10 @@ nuts --workspace=/myfolder/myworkspace
 Of course, not all options can support values, an not all options neither support the suffixed and/or the non-suffixed mode. Please relate to the documentation of nuts or the application you are using to know how to use the options.
 
 ## Boolean Options
-Particularly, when the value is a boolean, the value do not need to be defined. As a result "--skip-companions" and "--skip-companions=true" are equivalent. However "--skip-companions true" is not (because the option is of type boolean) and "true" will be parsed as a NonOption.
+Particularly, when the value is a boolean, the value do not need to be defined. As a result "--install-companions" and "--install-companions=true" are equivalent. However "--install-companions true" is not (because the option is of type boolean) and "true" will be parsed as a NonOption.
 
 To define a "false" value to the boolean option we can either suffix with "=false" or prefix with "!" or "~" sign. 
-Hence, "--skip-companions=false", "--!skip-companions" and "--~skip-companions" are all equivalent.
+Hence, "--install-companions=false", "--!install-companions" and "--~install-companions" are all equivalent.
 Note also that `~` if referred to `!` because in bash shells (and som other shells) `!` will be expanded in a special manner.
 
 ## Combo Simple Options
@@ -45,7 +45,7 @@ Options starting with "-//" and "--//" are simply ignored by the command line pa
 Options in **```nuts```** are can be of one of the following categories :
 
 * Create Options : such options are only relevant when creating a new workspace. They define the configuration of the workspace to create. They will be ignored when the workspace already exists. They will be ignored too, in sub-processes. Examples include
-    * --skip-companions
+    * --install-companions
     * --archetype
     * --store-strategy
     * --standalone

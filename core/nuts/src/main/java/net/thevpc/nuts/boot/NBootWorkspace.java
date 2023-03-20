@@ -160,7 +160,7 @@ public final class NBootWorkspace {
         this.computedOptions.setReset(this.computedOptions.getReset().orElse(false));
         this.computedOptions.setSkipErrors(this.computedOptions.getSkipErrors().orElse(false));
         this.computedOptions.setSkipWelcome(this.computedOptions.getSkipWelcome().orElse(false));
-        this.computedOptions.setSkipCompanions(this.computedOptions.getSkipCompanions().orElse(false));
+        this.computedOptions.setInstallCompanions(this.computedOptions.getInstallCompanions().orElse(false));
         this.computedOptions.setIsolationLevel(this.computedOptions.getIsolationLevel().orElse(NIsolationLevel.SYSTEM));
         this.computedOptions.setTransitive(this.computedOptions.getTransitive().orElse(true));
         this.computedOptions.setTrace(this.computedOptions.getTrace().orElse(true));

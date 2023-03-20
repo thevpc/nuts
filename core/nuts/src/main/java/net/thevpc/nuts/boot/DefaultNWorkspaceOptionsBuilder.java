@@ -102,7 +102,7 @@ public class DefaultNWorkspaceOptionsBuilder implements NWorkspaceOptionsBuilder
      * if true, do not install nuts companion tools upon workspace creation
      * option-type : exported (inherited in child workspaces)
      */
-    private Boolean skipCompanions;
+    private Boolean installCompanions;
 
     /**
      * if true, do not run welcome when no application arguments were resolved.
@@ -1105,8 +1105,8 @@ public class DefaultNWorkspaceOptionsBuilder implements NWorkspaceOptionsBuilder
     }
 
     @Override
-    public NOptional<Boolean> getSkipCompanions() {
-        return NOptional.ofNamed(skipCompanions,"skipCompanions");
+    public NOptional<Boolean> getInstallCompanions() {
+        return NOptional.ofNamed(installCompanions,"installCompanions");
     }
 
     /**
@@ -1116,8 +1116,8 @@ public class DefaultNWorkspaceOptionsBuilder implements NWorkspaceOptionsBuilder
      * @return {@code this} instance
      */
     @Override
-    public NWorkspaceOptionsBuilder setSkipCompanions(Boolean skipInstallCompanions) {
-        this.skipCompanions = skipInstallCompanions;
+    public NWorkspaceOptionsBuilder setInstallCompanions(Boolean skipInstallCompanions) {
+        this.installCompanions = skipInstallCompanions;
         return this;
     }
 
@@ -1387,7 +1387,7 @@ public class DefaultNWorkspaceOptionsBuilder implements NWorkspaceOptionsBuilder
         this.setJavaOptions(other.getJavaOptions().orNull());
         this.setWorkspace(other.getWorkspace().orNull());
         this.setName(other.getName().orNull());
-        this.setSkipCompanions(other.getSkipCompanions().orNull());
+        this.setInstallCompanions(other.getInstallCompanions().orNull());
         this.setSkipWelcome(other.getSkipWelcome().orNull());
         this.setSkipBoot(other.getSkipBoot().orNull());
         this.setGlobal(other.getGlobal().orNull());
@@ -1478,8 +1478,8 @@ public class DefaultNWorkspaceOptionsBuilder implements NWorkspaceOptionsBuilder
             if (other.getName().isPresent()) {
                 this.setName(other.getName().orNull());
             }
-            if (other.getSkipCompanions().isPresent()) {
-                this.setSkipCompanions(other.getSkipCompanions().orNull());
+            if (other.getInstallCompanions().isPresent()) {
+                this.setInstallCompanions(other.getInstallCompanions().orNull());
             }
             if (other.getSkipWelcome().isPresent()) {
                 this.setSkipWelcome(other.getSkipWelcome().orNull());
@@ -1796,7 +1796,7 @@ public class DefaultNWorkspaceOptionsBuilder implements NWorkspaceOptionsBuilder
                 getExecutionType().orNull(), getStoreLocationStrategy().orNull(), getRepositoryStoreLocationStrategy().orNull(),
                 getStoreLocationLayout().orNull(), getTerminalMode().orNull(), getFetchStrategy().orNull(),
                 getRunAs().orNull(), getCreationTime().orNull(), getExpireTime().orNull(),
-                getSkipCompanions().orNull(), getSkipWelcome().orNull(), getSkipBoot().orNull(),
+                getInstallCompanions().orNull(), getSkipWelcome().orNull(), getSkipBoot().orNull(),
                 getGlobal().orNull(), getGui().orNull(), getReadOnly().orNull(), getTrace().orNull(),
                 getDry().orNull(), getRecover().orNull(), getReset().orNull(), getCommandVersion().orNull(),
                 getCommandHelp().orNull(), getCommandHelp().orNull(), getSwitchWorkspace().orNull(), getCached().orNull(),
@@ -1902,7 +1902,7 @@ public class DefaultNWorkspaceOptionsBuilder implements NWorkspaceOptionsBuilder
         setProgressOptions(null);
         setDependencySolver(null);
         setDebug(null);
-        setSkipCompanions(null);
+        setInstallCompanions(null);
         setSkipWelcome(null);
         setSkipBoot(null);
         setOutLinePrefix(null);

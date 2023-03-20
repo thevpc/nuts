@@ -367,7 +367,7 @@ public class DefaultNInfoCommand extends DefaultFormatBase<NInfoCommand> impleme
         props.put("nuts-progress", session -> session.isProgress());
         props.put("nuts-terminal-mode", session -> NBootManager.of(session).getBootOptions().getTerminalMode().orNull());
         props.put("nuts-cached", session -> NBootManager.of(session).getBootOptions().getCached().orNull());
-        props.put("nuts-skip-companions", session -> NBootManager.of(session).getBootOptions().getSkipCompanions().orNull());
+        props.put("nuts-install-companions", session -> NBootManager.of(session).getBootOptions().getInstallCompanions().orNull());
         props.put("nuts-skip-welcome", session -> NBootManager.of(session).getBootOptions().getSkipWelcome().orNull());
         props.put("nuts-skip-boot", session -> NBootManager.of(session).getBootOptions().getSkipBoot().orNull());
         props.put("nuts-init-platforms", session -> NBootManager.of(session).getBootOptions().getInitPlatforms().orNull());
@@ -572,7 +572,7 @@ public class DefaultNInfoCommand extends DefaultFormatBase<NInfoCommand> impleme
         props.put("nuts-progress", session.isProgress());
         props.put("nuts-terminal-mode", options.getTerminalMode().orNull());
         props.put("nuts-cached", options.getCached().orNull());
-        props.put("nuts-skip-companions", options.getSkipCompanions().orNull());
+        props.put("nuts-install-companions", options.getInstallCompanions().orNull());
         props.put("nuts-skip-welcome", options.getSkipWelcome().orNull());
         props.put("nuts-skip-boot", options.getSkipBoot().orNull());
         props.put("nuts-init-platforms", options.getInitPlatforms().orNull());

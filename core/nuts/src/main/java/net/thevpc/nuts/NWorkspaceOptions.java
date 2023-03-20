@@ -450,7 +450,7 @@ public interface NWorkspaceOptions extends Serializable {
      * @return if true, do not install nuts companion tools upon workspace creation.
      */
 
-    NOptional<Boolean> getSkipCompanions();
+    NOptional<Boolean> getInstallCompanions();
 
     /**
      * if true, do not run welcome when no application arguments were resolved.

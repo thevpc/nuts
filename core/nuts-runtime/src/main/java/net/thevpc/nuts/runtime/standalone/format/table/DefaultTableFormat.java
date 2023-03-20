@@ -36,9 +36,9 @@ import net.thevpc.nuts.runtime.standalone.format.DefaultFormatBase;
 import net.thevpc.nuts.runtime.standalone.text.util.NTextUtils;
 import net.thevpc.nuts.runtime.standalone.util.CorePlatformUtils;
 import net.thevpc.nuts.runtime.standalone.util.CoreStringUtils;
-import net.thevpc.nuts.runtime.standalone.util.StringBuilder2;
 import net.thevpc.nuts.spi.NSupportLevelContext;
 import net.thevpc.nuts.text.NTexts;
+import net.thevpc.nuts.util.NStringBuilder;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -293,7 +293,7 @@ public class DefaultTableFormat extends DefaultFormatBase<NTableFormat> implemen
     @Override
     public void print(NPrintStream w) {
         NPrintStream out = getValidPrintStream(w);
-        StringBuilder2 line = new StringBuilder2();
+        NStringBuilder line = new NStringBuilder();
         List<Row> rows = rebuild(getSession());
         if (rows.size() > 0) {
             List<DefaultCell> cells = rows.get(0).cells;
@@ -302,17 +302,17 @@ public class DefaultTableFormat extends DefaultFormatBase<NTableFormat> implemen
                     + getSeparator(NTableSeparator.FIRST_ROW_SEP)
                     + getSeparator(NTableSeparator.FIRST_ROW_LINE)
                     + getSeparator(NTableSeparator.FIRST_ROW_END)).length() > 0) {
-                line.write(getSeparator(NTableSeparator.FIRST_ROW_START));
+                line.append(getSeparator(NTableSeparator.FIRST_ROW_START));
                 for (int i = 0; i < cells.size(); i++) {
                     if (i > 0) {
-                        line.write(getSeparator(NTableSeparator.FIRST_ROW_SEP));
+                        line.append(getSeparator(NTableSeparator.FIRST_ROW_SEP));
                     }
                     DefaultCell cell = cells.get(i);
                     String B = getSeparator(NTableSeparator.FIRST_ROW_LINE);
                     String s = cell.rendered.toString();
-                    line.write(CoreStringUtils.fillString(B, NTexts.of(ws).parse(s).textLength()));
+                    line.append(CoreStringUtils.fillString(B, NTexts.of(ws).parse(s).textLength()));
                 }
-                line.write(getSeparator(NTableSeparator.FIRST_ROW_END));
+                line.append(getSeparator(NTableSeparator.FIRST_ROW_END));
 
                 out.print(line.trim().newLine().toString());
                 out.flush();
@@ -324,17 +324,17 @@ public class DefaultTableFormat extends DefaultFormatBase<NTableFormat> implemen
                             + getSeparator(NTableSeparator.MIDDLE_ROW_SEP)
                             + getSeparator(NTableSeparator.MIDDLE_ROW_LINE)
                             + getSeparator(NTableSeparator.MIDDLE_ROW_END)).length() > 0) {
-                        line.write(getSeparator(NTableSeparator.MIDDLE_ROW_START));
+                        line.append(getSeparator(NTableSeparator.MIDDLE_ROW_START));
                         for (int i = 0; i < cells.size(); i++) {
                             if (i > 0) {
-                                line.write(getSeparator(NTableSeparator.MIDDLE_ROW_SEP));
+                                line.append(getSeparator(NTableSeparator.MIDDLE_ROW_SEP));
                             }
                             DefaultCell cell = cells.get(i);
                             String B = getSeparator(NTableSeparator.MIDDLE_ROW_LINE);
                             String s = cell.rendered.toString();
-                            line.write(CoreStringUtils.fillString(B, NTexts.of(ws).parse(s).textLength()));
+                            line.append(CoreStringUtils.fillString(B, NTexts.of(ws).parse(s).textLength()));
                         }
-                        line.write(getSeparator(NTableSeparator.MIDDLE_ROW_END));
+                        line.append(getSeparator(NTableSeparator.MIDDLE_ROW_END));
 
                         out.print(line.trim().newLine().toString());
                         out.flush();
@@ -345,16 +345,16 @@ public class DefaultTableFormat extends DefaultFormatBase<NTableFormat> implemen
                 Row row = rows.get(i1);
                 cells = row.cells;
 
-                line.write(getSeparator(NTableSeparator.ROW_START));
+                line.append(getSeparator(NTableSeparator.ROW_START));
                 for (int i = 0; i < cells.size(); i++) {
                     if (i > 0) {
-                        line.write(getSeparator(NTableSeparator.ROW_SEP));
+                        line.append(getSeparator(NTableSeparator.ROW_SEP));
                     }
                     DefaultCell cell = cells.get(i);
                     String s = cell.rendered.toString();
-                    line.write(s);
+                    line.append(s);
                 }
-                line.write(getSeparator(NTableSeparator.ROW_END));
+                line.append(getSeparator(NTableSeparator.ROW_END));
 
                 out.print(line.trim().newLine().toString());
                 out.flush();
@@ -365,18 +365,18 @@ public class DefaultTableFormat extends DefaultFormatBase<NTableFormat> implemen
                     + getSeparator(NTableSeparator.LAST_ROW_SEP)
                     + getSeparator(NTableSeparator.LAST_ROW_LINE)
                     + getSeparator(NTableSeparator.LAST_ROW_END)).length() > 0) {
-                line.write(getSeparator(NTableSeparator.LAST_ROW_START));
+                line.append(getSeparator(NTableSeparator.LAST_ROW_START));
                 cells = rows.get(0).cells;
                 for (int i = 0; i < cells.size(); i++) {
                     if (i > 0) {
-                        line.write(getSeparator(NTableSeparator.LAST_ROW_SEP));
+                        line.append(getSeparator(NTableSeparator.LAST_ROW_SEP));
                     }
                     DefaultCell cell = cells.get(i);
                     String B = getSeparator(NTableSeparator.LAST_ROW_LINE);
                     String s = cell.rendered.toString();
-                    line.write(CoreStringUtils.fillString(B, NTexts.of(ws).parse(s).textLength()));
+                    line.append(CoreStringUtils.fillString(B, NTexts.of(ws).parse(s).textLength()));
                 }
-                line.write(getSeparator(NTableSeparator.LAST_ROW_END));
+                line.append(getSeparator(NTableSeparator.LAST_ROW_END));
             }
         }
         out.print(line.trim().toString());

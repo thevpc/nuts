@@ -372,11 +372,11 @@
 //                        }
 //                        break;
 //                    }
-//                    case "--skip-companions":
+//                    case "--install-companions":
 //                    case "-k": {
 //                        a = cmdLine.nextBoolean();
 //                        if (active) {
-//                            options.setSkipCompanions(a.getBooleanValue());
+//                            options.setInstallCompanions(a.getBooleanValue());
 //                        }
 //                        break;
 //                    }

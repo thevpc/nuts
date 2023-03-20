@@ -207,7 +207,7 @@ public interface NWorkspaceOptionsBuilder extends NWorkspaceOptions {
 
     NWorkspaceOptionsBuilder setCommandHelp(Boolean help);
 
-    NWorkspaceOptionsBuilder setSkipCompanions(Boolean skipInstallCompanions);
+    NWorkspaceOptionsBuilder setInstallCompanions(Boolean skipInstallCompanions);
 
     NWorkspaceOptionsBuilder setSkipWelcome(Boolean skipWelcome);
 

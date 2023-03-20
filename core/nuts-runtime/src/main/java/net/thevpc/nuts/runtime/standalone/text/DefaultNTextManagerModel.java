@@ -238,7 +238,7 @@ public class DefaultNTextManagerModel {
 
     public NElementFactoryService getElementFactoryService(NSession session) {
         if (elementFactoryService == null) {
-            elementFactoryService = new DefaultNElementFactoryService(ws, session);
+            elementFactoryService = new DefaultNElementFactoryService(session);
         }
         return elementFactoryService;
     }

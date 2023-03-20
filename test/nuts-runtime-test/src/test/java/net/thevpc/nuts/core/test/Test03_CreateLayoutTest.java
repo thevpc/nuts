@@ -133,7 +133,7 @@ public class Test03_CreateLayoutTest {
                 "--system-lib-home", new File(base, "system.lib").getPath(),
                 "--system-run-home", new File(base, "system.run").getPath(),
                 //            "--verbose",
-                "--skip-companions",
+                "--install-companions=false",
                 "info");
 
         NSession w = TestUtils.runExistingTestWorkspace("--system-config-home", new File(base, "system.config.ignored").getPath(),

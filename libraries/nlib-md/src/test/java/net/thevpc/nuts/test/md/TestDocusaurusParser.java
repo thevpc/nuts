@@ -63,7 +63,7 @@ public class TestDocusaurusParser {
 //        String s="id_test: _install_" ;
 //        String s="Or, you can also use NAF (**```nuts```** Application Framework) make your application full featured \"Nuts aware\" application." ;
         String s = "* Create Options :\n" +
-                "    * --skip-companions\n" +
+                "    * --install-companions=false\n" +
                 "    * --archetype\n" +
                 "    * --store-strategy\n" +
                 "    * --standalone\n";

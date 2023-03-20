@@ -7,13 +7,13 @@ import net.thevpc.nuts.runtime.standalone.io.path.spi.FilePath;
 import net.thevpc.nuts.runtime.standalone.io.path.spi.URLPath;
 import net.thevpc.nuts.runtime.standalone.io.util.CoreIOUtils;
 import net.thevpc.nuts.runtime.standalone.session.NSessionUtils;
-import net.thevpc.nuts.runtime.standalone.util.StringBuilder2;
 import net.thevpc.nuts.runtime.standalone.workspace.config.DefaultNConfigs;
 import net.thevpc.nuts.runtime.standalone.workspace.config.DefaultNWorkspaceConfigModel;
+import net.thevpc.nuts.spi.NPathFactory;
 import net.thevpc.nuts.spi.NPathSPI;
 import net.thevpc.nuts.spi.NPaths;
-import net.thevpc.nuts.spi.NPathFactory;
 import net.thevpc.nuts.spi.NSupportLevelContext;
+import net.thevpc.nuts.util.NStringBuilder;
 
 import java.io.File;
 import java.io.IOException;
@@ -168,8 +168,8 @@ public class DefaultNPaths implements NPaths {
             name = "";
         }
         rootFolder.mkdirs();
-        StringBuilder2 ext = new StringBuilder2(CoreIOUtils.getFileExtension(name, true, true));
-        StringBuilder2 prefix = new StringBuilder2((ext.length() > 0) ? name.substring(0, name.length() - ext.length()) : name);
+        NStringBuilder ext = new NStringBuilder(CoreIOUtils.getFileExtension(name, true, true));
+        NStringBuilder prefix = new NStringBuilder((ext.length() > 0) ? name.substring(0, name.length() - ext.length()) : name);
         if (ext.isEmpty() && prefix.isEmpty()) {
             prefix.append("nuts-");
             if (!folder) {

@@ -69,15 +69,25 @@ public class DefaultNReflectRepository implements NReflectRepository {
         return v;
     }
 
+    @Override
+    public NReflectType getParametrizedType(Type type, Type owner, Type[] params) {
+        SimpleParametrizedType s = new SimpleParametrizedType(
+                type,
+                params,
+                owner
+        );
+        return getType(s);
+    }
+
     private NReflectType create(Type clz) {
-        Class raw = ReflectUtils.getRawClass(clz);
-        NReflectPropertyAccessStrategy a = configuration.getAccessStrategy(raw);
-        NReflectPropertyDefaultValueStrategy d = configuration.getDefaultValueStrategy(raw);
-        return new ClassNReflectType(clz, a, d, this);
+        return new DefaultNReflectType(clz, this);
     }
 
     @Override
     public int getSupportLevel(NSupportLevelContext context) {
         return DEFAULT_SUPPORT;
     }
+
+
+
 }

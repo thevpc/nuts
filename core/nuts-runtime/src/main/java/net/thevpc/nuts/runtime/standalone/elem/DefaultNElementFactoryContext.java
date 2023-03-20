@@ -32,6 +32,7 @@ import java.util.function.Predicate;
 import net.thevpc.nuts.elem.NElement;
 import net.thevpc.nuts.elem.NElementFactoryContext;
 import net.thevpc.nuts.elem.NElements;
+import net.thevpc.nuts.util.NReflectRepository;
 
 /**
  * @author thevpc
@@ -41,11 +42,18 @@ public class DefaultNElementFactoryContext implements NElementFactoryContext {
     private final Map<String, Object> properties = new HashMap<>();
     private final Set<RefItem> visited = new LinkedHashSet<>();
     private final DefaultNElements base;
+    private final NReflectRepository repository;
     private boolean ntf;
 
-    public DefaultNElementFactoryContext(DefaultNElements base) {
+    public DefaultNElementFactoryContext(DefaultNElements base, NReflectRepository repository) {
         this.base = base;
+        this.repository = repository;
         this.ntf = base.isNtf();
+    }
+
+    @Override
+    public NReflectRepository getReflectRepository() {
+        return repository;
     }
 
     @Override
@@ -73,27 +81,28 @@ public class DefaultNElementFactoryContext implements NElementFactoryContext {
         return properties;
     }
 
-    private String stacktrace(){
-        StringBuilder sb=new StringBuilder(
+    private String stacktrace() {
+        StringBuilder sb = new StringBuilder(
 
         );
-        boolean nl=false;
+        boolean nl = false;
         for (RefItem refItem : visited) {
-            if(nl){
+            if (nl) {
                 sb.append("\n");
-            }else{
-                nl=true;
+            } else {
+                nl = true;
             }
             sb.append(refItem.step).append(": ").append(refItem.o.getClass().getName());
         }
         return sb.toString();
     }
+
     @Override
     public NElement defaultObjectToElement(Object o, Type expectedType) {
         if (o != null) {
             RefItem ro = new RefItem(o, "defaultObjectToElement");
             if (visited.contains(ro)) {
-                throw new NIllegalArgumentException(getSession(), NMsg.ofC("unable to serialize object of type %s because of cyclic references: %s", o.getClass().getName(),stacktrace()));
+                throw new NIllegalArgumentException(getSession(), NMsg.ofC("unable to serialize object of type %s because of cyclic references: %s", o.getClass().getName(), stacktrace()));
             }
             visited.add(ro);
             try {
@@ -110,7 +119,7 @@ public class DefaultNElementFactoryContext implements NElementFactoryContext {
         if (o != null) {
             RefItem ro = new RefItem(o, "defaultDestruct");
             if (visited.contains(ro)) {
-                throw new NIllegalArgumentException(getSession(), NMsg.ofC("unable to destruct object of type %s because of cyclic references: %s", o.getClass().getName(),stacktrace()));
+                throw new NIllegalArgumentException(getSession(), NMsg.ofC("unable to destruct object of type %s because of cyclic references: %s", o.getClass().getName(), stacktrace()));
             }
             visited.add(ro);
             try {
@@ -127,7 +136,7 @@ public class DefaultNElementFactoryContext implements NElementFactoryContext {
         if (o != null) {
             RefItem ro = new RefItem(o, "objectToElement");
             if (visited.contains(ro)) {
-                throw new NIllegalArgumentException(getSession(), NMsg.ofC("unable to serialize object of type %s because of cyclic references: %s", o.getClass().getName(),stacktrace()));
+                throw new NIllegalArgumentException(getSession(), NMsg.ofC("unable to serialize object of type %s because of cyclic references: %s", o.getClass().getName(), stacktrace()));
             }
             visited.add(ro);
             try {

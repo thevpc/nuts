@@ -2,6 +2,7 @@ package net.thevpc.nuts.runtime.standalone.util.jclass;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.standalone.util.CorePlatformUtils;
+import net.thevpc.nuts.runtime.standalone.util.reflect.SimpleParametrizedType;
 import net.thevpc.nuts.runtime.standalone.xtra.execentries.DefaultNExecutionEntry;
 import net.thevpc.nuts.util.NLogOp;
 import net.thevpc.nuts.util.NRef;
@@ -9,6 +10,7 @@ import net.thevpc.nuts.util.NRef;
 import java.io.BufferedInputStream;
 import java.io.InputStream;
 import java.lang.reflect.Modifier;
+import java.lang.reflect.Type;
 import java.util.logging.Level;
 
 public class JavaClassUtils {

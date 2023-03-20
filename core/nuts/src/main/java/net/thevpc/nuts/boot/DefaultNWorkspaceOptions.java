@@ -108,7 +108,7 @@ public class DefaultNWorkspaceOptions implements Serializable, NWorkspaceOptions
      * if true, do not install nuts companion tools upon workspace creation
      * option-type : exported (inherited in child workspaces)
      */
-    private final Boolean skipCompanions;
+    private final Boolean installCompanions;
 
     /**
      * if true, do not run welcome when no application arguments were resolved.
@@ -400,7 +400,7 @@ public class DefaultNWorkspaceOptions implements Serializable, NWorkspaceOptions
                                     NExecutionType executionType, NStoreLocationStrategy storeLocationStrategy,
                                     NStoreLocationStrategy repositoryStoreLocationStrategy, NOsFamily storeLocationLayout,
                                     NTerminalMode terminalMode, NFetchStrategy fetchStrategy, NRunAs runAs,
-                                    Instant creationTime, Instant expireTime, Boolean skipCompanions, Boolean skipWelcome,
+                                    Instant creationTime, Instant expireTime, Boolean installCompanions, Boolean skipWelcome,
                                     Boolean skipBoot, Boolean global, Boolean gui, Boolean readOnly,
                                     Boolean trace, Boolean dry, Boolean recover, Boolean reset, Boolean commandVersion,
                                     Boolean commandHelp, Boolean inherited, Boolean switchWorkspace, Boolean cached,
@@ -430,7 +430,7 @@ public class DefaultNWorkspaceOptions implements Serializable, NWorkspaceOptions
         this.outLinePrefix = outLinePrefix;
         this.errLinePrefix = errLinePrefix;
         this.name = name;
-        this.skipCompanions = skipCompanions;
+        this.installCompanions = installCompanions;
         this.skipWelcome = skipWelcome;
         this.skipBoot = skipBoot;
         this.global = global;
@@ -759,8 +759,8 @@ public class DefaultNWorkspaceOptions implements Serializable, NWorkspaceOptions
     }
 
     @Override
-    public NOptional<Boolean> getSkipCompanions() {
-        return NOptional.ofNamed(skipCompanions,"skipCompanions");
+    public NOptional<Boolean> getInstallCompanions() {
+        return NOptional.ofNamed(installCompanions,"installCompanions");
     }
 
 

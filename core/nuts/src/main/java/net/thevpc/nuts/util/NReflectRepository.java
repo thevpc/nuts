@@ -29,7 +29,6 @@ import net.thevpc.nuts.spi.NComponent;
 import java.lang.reflect.Type;
 
 /**
- *
  * @author thevpc
  * @since 0.8.4
  */
@@ -38,6 +37,7 @@ public interface NReflectRepository extends NComponent {
         return session.extensions().createSupported(NReflectRepository.class, true, session);
     }
 
+    NReflectType getParametrizedType(Type clazz,Type owner,Type[] params);
     NReflectType getType(Type clazz);
 
     NReflectConfiguration getConfiguration();

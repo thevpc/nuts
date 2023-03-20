@@ -26,14 +26,17 @@ package net.thevpc.nuts.util;
 import net.thevpc.nuts.NOptional;
 import net.thevpc.nuts.NSession;
 
+import java.lang.reflect.Type;
 import java.util.List;
+import java.util.function.Function;
 
 /**
- *
  * @author thevpc
  * @since 0.8.4
  */
 public interface NReflectType {
+
+    NReflectRepository getRepository();
 
     NReflectPropertyAccessStrategy getAccessStrategy();
 
@@ -43,17 +46,39 @@ public interface NReflectType {
 
     String getName();
 
+    Type getJavaType();
+
+    NReflectType getSuperType();
+
+    boolean isParametrizedType();
+
+    boolean isTypeVariable();
+
+    NReflectType[] getTypeParameters();
+
+    NReflectType getActualTypeArgument(NReflectType type);
+
+    NReflectType[] getActualTypeArguments();
+
+    NReflectType replaceVars(Function<NReflectType, NReflectType> mapper);
+
     List<NReflectProperty> getProperties();
 
     NOptional<NReflectProperty> getProperty(String name);
+
     NOptional<NReflectProperty> getDeclaredProperty(String name);
 
     boolean hasNoArgsConstructor();
 
     boolean hasSessionConstructor();
 
+    NReflectType getRawType();
+
     Object newInstance();
 
     Object newInstance(NSession session);
 
+    boolean isArrayType();
+
+    NReflectType toArray();
 }

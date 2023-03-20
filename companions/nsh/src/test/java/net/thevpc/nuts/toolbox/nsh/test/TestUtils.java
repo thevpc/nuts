@@ -216,7 +216,7 @@ public class TestUtils {
         //disable interactive mode and 'always confirm'
         argsList.add("--yes");
         //disable companions
-        argsList.add("--skip-companions");
+        argsList.add("--install-companions=false");
 //        argsList.add("--embedded");
         argsList.addAll(Arrays.asList(args));
         if(run){

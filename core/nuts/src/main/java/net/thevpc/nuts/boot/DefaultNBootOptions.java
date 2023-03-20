@@ -102,7 +102,7 @@ public class DefaultNBootOptions extends DefaultNWorkspaceOptions implements NBo
 
     public DefaultNBootOptions(List<String> outputFormatOptions, List<String> customOptions, NVersion apiVersion,
                                NId runtimeId, String javaCommand, String javaOptions, String workspace,
-                               String outLinePrefix, String errLinePrefix, String name, Boolean skipCompanions,
+                               String outLinePrefix, String errLinePrefix, String name, Boolean installCompanions,
                                Boolean skipWelcome, Boolean skipBoot, Boolean global, Boolean gui,
                                Boolean dry, Boolean recover, Boolean reset, Boolean commandVersion, Boolean commandHelp, Boolean inherited, Boolean switchWorkspace, Boolean cached, Boolean indexed, Boolean transitive, Boolean bot, NIsolationLevel isolation, Boolean initLaunchers, Boolean initScripts, Boolean initPlatforms, Boolean initJava, List<String> excludedExtensions, List<String> repositories, String userName,
                                char[] credentials, NTerminalMode terminalMode, Boolean readOnly,
@@ -127,7 +127,7 @@ public class DefaultNBootOptions extends DefaultNWorkspaceOptions implements NBo
                 errLinePrefix, userName, credentials, progressOptions, dependencySolver, debug, archetype,
                 locale, theme, logConfig, confirm, outputFormat, openMode, executionType, storeLocationStrategy,
                 repositoryStoreLocationStrategy, storeLocationLayout, terminalMode, fetchStrategy, runAs, creationTime,
-                expireTime, skipCompanions, skipWelcome, skipBoot, global, gui, readOnly, trace, dry, recover, reset,
+                expireTime, installCompanions, skipWelcome, skipBoot, global, gui, readOnly, trace, dry, recover, reset,
                 commandVersion, commandHelp, inherited, switchWorkspace, cached, indexed, transitive, bot, skipErrors,
                 isolation, initLaunchers, initScripts, initPlatforms, initJava, stdin, stdout, stderr, executorService,
                 classLoaderSupplier, applicationArguments, outputFormatOptions, customOptions,

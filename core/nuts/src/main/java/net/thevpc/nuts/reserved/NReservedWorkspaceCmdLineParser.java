@@ -365,11 +365,11 @@ public final class NReservedWorkspaceCmdLineParser {
                         }
                         break;
                     }
-                    case "--skip-companions":
+                    case "--install-companions":
                     case "-k": {
                         a = cmdLine.nextFlag().get(session);
                         if (active) {
-                            options.setSkipCompanions(a.getBooleanValue().get());
+                            options.setInstallCompanions(a.getBooleanValue().get());
                         }
                         break;
                     }

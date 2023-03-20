@@ -24,7 +24,7 @@ public class NWorkspacePool {
                 o = app.getSession();
             } else {
                 o = Nuts.openWorkspace(new DefaultNWorkspaceOptionsBuilder()
-                        .setSkipCompanions(true)
+                        .setInstallCompanions(false)
                         .setWorkspace(ws)
                 );
             }

@@ -81,8 +81,8 @@ public class MinimalNWorkspaceArchetypeComponent implements NWorkspaceArchetypeC
         if (initializeScripts || initializeLaunchers) {
             NWorkspaceUtils.of(session).installScriptsAndLaunchers(initializeLaunchers);
         }
-        Boolean skipCompanions = NBootManager.of(session).getBootOptions().getSkipCompanions().orElse(true);
-        if (!skipCompanions) {
+        Boolean installCompanions = NBootManager.of(session).getBootOptions().getInstallCompanions().orElse(false);
+        if (installCompanions) {
             NWorkspaceUtils.of(session).installCompanions();
         }
     }

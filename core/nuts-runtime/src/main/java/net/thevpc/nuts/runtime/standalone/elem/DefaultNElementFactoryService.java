@@ -102,14 +102,13 @@ public class DefaultNElementFactoryService implements NElementFactoryService {
     private final Map<Class, NElementMapper> coreMappers = new HashMap<>();
     private final ClassMap<NElementMapper> customMappers = new ClassMap<>(null, NElementMapper.class);
     private NReflectRepository typesRepository;
-    private final NWorkspace ws;
     private final NSession session;
     private final NElementMapper F_OBJ = new NElementMapperObjReflect(this);
 
     private final NElementMapper F_COLLECTION = new NElementMapperCollection(this);
     private final NElementMapper F_MAP = new NElementMapperMap(this);
 
-    public DefaultNElementFactoryService(NWorkspace ws, NSession session) {
+    public DefaultNElementFactoryService(NSession session) {
         typesRepository = NWorkspaceUtils.of(session).getReflectRepository();
         addDefaultMapper(Boolean.class, F_BOOLEANS);
         addDefaultMapper(boolean.class, F_BOOLEANS);
@@ -185,7 +184,6 @@ public class DefaultNElementFactoryService implements NElementFactoryService {
         setCoreMapper(NEnum.class, F_NUTS_ENUM);
         setCoreMapper(NRepositoryLocation.class, F_NUTS_REPO_LOCATION);
         setCoreMapper(NLiteral.class, new NElementMapperNLiteral());
-        this.ws = ws;
         this.session = session;
     }
 

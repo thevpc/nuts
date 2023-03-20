@@ -76,7 +76,7 @@ public class Test06_UpdateTest {
                 "--standalone",
                 "--standalone-repositories",
                 "--yes",
-                "--skip-companions"
+                "--install-companions=false"
         );
         NRepositories repos = NRepositories.of(uws);
         NRepository updateRepo1 = repos.addRepository("local");
@@ -147,7 +147,7 @@ public class Test06_UpdateTest {
                 "--standalone",
                 "--standalone-repositories",
                 "--yes",
-                "--skip-companions"
+                "--install-companions=false"
         );
         NRepositories repos = NRepositories.of(nws);
         repos.addRepository(new NAddRepositoryOptions().setTemporary(true).setName("temp").setLocation(d.updateRepoPath)
@@ -217,7 +217,7 @@ public class Test06_UpdateTest {
                         "--boot-version=" + newApiVersion,
                         "--bot",
                         "--color=never",
-                        "--skip-companions",
+                        "--install-companions=false",
                         "--json",
                         "version"
                 )

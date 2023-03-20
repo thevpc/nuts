@@ -43,7 +43,7 @@ public class Test01_CreateTest {
                 "--standalone",
                 "--archetype", "minimal",
                 "--verbose",
-                "--skip-companions",
+                "--install-companions=false",
                 "--verbose"
         );
         Assertions.assertEquals(
@@ -87,7 +87,7 @@ public class Test01_CreateTest {
                 "--standalone",
                 "--archetype", "minimal",
                 "--verbose",
-                "--skip-companions");
+                "--install-companions=false");
     }
 
     @Test
@@ -97,7 +97,7 @@ public class Test01_CreateTest {
                 "--exploded",
                 "--archetype", "minimal",
                 "--verbose",
-                "--skip-companions");
+                "--install-companions=false");
     }
 
     @Test
@@ -109,7 +109,7 @@ public class Test01_CreateTest {
                 "--exploded",
                 "--archetype", "default",
                 "--verbose",
-                "--skip-companions");
+                "--install-companions=false");
         String base = "";
         switch (NOsFamily.getCurrent()) {
             case WINDOWS: {
@@ -143,7 +143,7 @@ public class Test01_CreateTest {
                 "--exploded",
                 "--archetype", "minimal",
                 "--verbose",
-                "--skip-companions");
+                "--install-companions=false");
     }
 
     @Test
@@ -153,7 +153,7 @@ public class Test01_CreateTest {
                 "--exploded",
                 "--archetype", "minimal",
                 "--verbose",
-                "--skip-companions");
+                "--install-companions=false");
     }
 
     @Test

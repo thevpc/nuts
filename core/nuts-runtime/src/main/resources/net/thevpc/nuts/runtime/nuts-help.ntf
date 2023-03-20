@@ -285,8 +285,8 @@ Boot Runtime Version: ###${nuts.workspace-runtime.version}###
             ```sh --cache-location <path>```
             ```sh --run-location <path>```
 
- ```sh --skip-companions or -k ```  (default is false)
-       skip installing companion tools.
+ ```sh --install-companions or -k ```  (default is false)
+       install companion tools.
  
  ```sh --switch ``` (default is ```kw false```)
       When creating a new workspace, by default, only default workspace (```sh --workspace=""```) updates ```path .bashrc``` file

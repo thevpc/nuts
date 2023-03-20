@@ -2,6 +2,8 @@ package net.thevpc.nuts.runtime.standalone.util.reflect;
 
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
+import java.util.Arrays;
+import java.util.Objects;
 
 /**
  * ==================================================================== Nuts :
@@ -14,7 +16,7 @@ import java.lang.reflect.Type;
  * other 'things' . Its based on an extensible architecture to help supporting a
  * large range of sub managers / repositories.
  * <br>
- *
+ * <p>
  * Copyright [2020] [thevpc] Licensed under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -25,8 +27,8 @@ import java.lang.reflect.Type;
  * governing permissions and limitations under the License.
  * <br> ====================================================================
  */
+
 /**
- *
  * @author thevpc
  */
 public class SimpleParametrizedType implements ParameterizedType {
@@ -35,10 +37,6 @@ public class SimpleParametrizedType implements ParameterizedType {
     private Type[] actualTypeArguments;
     private Type rawType;
     private Type ownerType;
-
-    public SimpleParametrizedType(Type rawType, Type... actualTypeArguments) {
-        this(rawType, actualTypeArguments, null);
-    }
 
     public SimpleParametrizedType(Type rawType, Type[] actualTypeArguments, Type ownerType) {
         this.actualTypeArguments = actualTypeArguments;
@@ -76,6 +74,86 @@ public class SimpleParametrizedType implements ParameterizedType {
     @Override
     public String getTypeName() {
         return typeName;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (o instanceof ParameterizedType) {
+            // Check that information is equivalent
+            ParameterizedType that = (ParameterizedType) o;
+
+            if (this == that)
+                return true;
+
+            Type thatOwner = that.getOwnerType();
+            Type thatRawType = that.getRawType();
+
+            if (false) { // Debugging
+                boolean ownerEquality = (ownerType == null ?
+                        thatOwner == null :
+                        ownerType.equals(thatOwner));
+                boolean rawEquality = (rawType == null ?
+                        thatRawType == null :
+                        rawType.equals(thatRawType));
+
+                boolean typeArgEquality = Arrays.equals(actualTypeArguments, // avoid clone
+                        that.getActualTypeArguments());
+                for (Type t : actualTypeArguments) {
+                    System.out.printf("\t\t%s%s%n", t, t.getClass());
+                }
+
+                System.out.printf("\towner %s\traw %s\ttypeArg %s%n",
+                        ownerEquality, rawEquality, typeArgEquality);
+                return ownerEquality && rawEquality && typeArgEquality;
+            }
+
+            return
+                    Objects.equals(ownerType, thatOwner) &&
+                            Objects.equals(rawType, thatRawType) &&
+                            Arrays.equals(actualTypeArguments, // avoid clone
+                                    that.getActualTypeArguments());
+        } else {
+            return false;
+        }
+    }
+
+    @Override
+    public int hashCode() {
+        return
+                Arrays.hashCode(actualTypeArguments) ^
+                        Objects.hashCode(ownerType) ^
+                        Objects.hashCode(rawType);
+    }
+
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+
+        if (ownerType != null) {
+            if (ownerType instanceof Class) {
+                sb.append(((Class) ownerType).getName());
+            } else {
+                sb.append(ownerType.toString());
+            }
+            sb.append("$");
+            sb.append(rawType.getTypeName());
+        } else {
+            sb.append(rawType.getTypeName());
+        }
+
+        if (actualTypeArguments != null &&
+                actualTypeArguments.length > 0) {
+            sb.append("<");
+            boolean first = true;
+            for (Type t : actualTypeArguments) {
+                if (!first)
+                    sb.append(", ");
+                sb.append(t.getTypeName());
+                first = false;
+            }
+            sb.append(">");
+        }
+
+        return sb.toString();
     }
 
 }

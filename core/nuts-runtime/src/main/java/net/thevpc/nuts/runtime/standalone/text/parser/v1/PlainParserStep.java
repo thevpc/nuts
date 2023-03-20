@@ -1,12 +1,12 @@
 package net.thevpc.nuts.runtime.standalone.text.parser.v1;
 
+import net.thevpc.nuts.NConstants;
 import net.thevpc.nuts.NSession;
+import net.thevpc.nuts.text.NText;
 import net.thevpc.nuts.text.NTexts;
-import net.thevpc.nuts.runtime.standalone.util.StringBuilder2;
+import net.thevpc.nuts.util.NStringBuilder;
 
 import java.util.function.IntPredicate;
-import net.thevpc.nuts.NConstants;
-import net.thevpc.nuts.text.NText;
 
 public class PlainParserStep extends ParserStep {
 
@@ -14,7 +14,7 @@ public class PlainParserStep extends ParserStep {
     private StringBuilder escape;
 //    private boolean spreadLines;
     private boolean lineStart;
-    private StringBuilder2 value = new StringBuilder2();
+    private NStringBuilder value = new NStringBuilder();
     private NSession session;
     private DefaultNTextNodeParser.State state;
     private IntPredicate exitCondition;
@@ -48,7 +48,7 @@ public class PlainParserStep extends ParserStep {
         this.lineStart = state.isLineStart();
         if(preParsed){
             value.append(s);
-            last = value.last();
+            last = value.getLast();
 //            _COUNT++;
 //            System.err.println(" PlainParserStep "+s+" : "+value);
             state.setLineStart(s.indexOf('\n')>=0);
@@ -92,7 +92,7 @@ public class PlainParserStep extends ParserStep {
                         return;
                     } else {
                         if (oldLast == c) {
-                            value.readLast();
+                            value.removeLast();
                             if (value.length() == 0) {
                                 p.applyDropReplace(this, new StyledParserStep(c + "" + c, lineStart, session, state, exitOnBrace));
                                 return;

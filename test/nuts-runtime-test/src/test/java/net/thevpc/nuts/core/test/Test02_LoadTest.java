@@ -21,8 +21,8 @@ public class Test02_LoadTest {
     @Test
     public void load1() throws Exception {
 
-        NWorkspace w1 = TestUtils.openNewTestWorkspace("--skip-companions").getWorkspace();
-        NWorkspace w2 = TestUtils.openNewTestWorkspace("--skip-companions").getWorkspace();
+        NWorkspace w1 = TestUtils.openNewTestWorkspace("--install-companions=false").getWorkspace();
+        NWorkspace w2 = TestUtils.openNewTestWorkspace("--install-companions=false").getWorkspace();
     }
 
     @BeforeAll

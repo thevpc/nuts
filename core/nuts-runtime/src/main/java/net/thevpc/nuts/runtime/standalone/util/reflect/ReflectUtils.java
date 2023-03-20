@@ -106,10 +106,6 @@ public class ReflectUtils {
         return null;
     }
 
-    public static ParameterizedType createParametrizedType(Type rawType, Type... actualTypeArguments) {
-        return new SimpleParametrizedType(rawType, actualTypeArguments);
-    }
-
     public static Class getRawClass(java.lang.reflect.Type type) {
         Type tclazz = type;
         while (true) {

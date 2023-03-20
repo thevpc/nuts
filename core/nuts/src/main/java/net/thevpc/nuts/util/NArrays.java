@@ -295,4 +295,40 @@ public class NArrays {
         newArr[0] = b1;
         return newArr;
     }
+
+    public static <T> T[] copyOf(T[] original) {
+        return (T[]) Arrays.copyOf(original, original.length);
+    }
+
+    public static byte[] copyOf(byte[] original) {
+        return Arrays.copyOf(original, original.length);
+    }
+
+    public static boolean[] copyOf(boolean[] original) {
+        return Arrays.copyOf(original, original.length);
+    }
+
+    public static short[] copyOf(short[] original) {
+        return Arrays.copyOf(original, original.length);
+    }
+
+    public static int[] copyOf(int[] original) {
+        return Arrays.copyOf(original, original.length);
+    }
+
+    public static char[] copyOf(char[] original) {
+        return Arrays.copyOf(original, original.length);
+    }
+
+    public static long[] copyOf(long[] original) {
+        return Arrays.copyOf(original, original.length);
+    }
+
+    public static float[] copyOf(float[] original) {
+        return Arrays.copyOf(original, original.length);
+    }
+
+    public static double[] copyOf(double[] original) {
+        return Arrays.copyOf(original, original.length);
+    }
 }

@@ -32,9 +32,12 @@ public class NElementMapperNArtifactCall implements NElementMapper<NArtifactCall
         NObjectElement object = o.asObject().get(session);
         NId id = (NId) context.elementToObject(object.get(context.elem().ofString("id")).orNull(), NId.class);
         String[] arguments = (String[]) context.elementToObject(object.get(context.elem().ofString("arguments")).orNull(), String[].class);
+        Type mapType = context.getReflectRepository().getParametrizedType(
+                Map.class, null, new Type[]{String.class, String.class}
+        ).getJavaType();
         Map<String, String> properties = (Map<String, String>) context
                 .elementToObject(object.get(context.elem().
-                        ofString("properties")).orNull(), ReflectUtils.createParametrizedType(Map.class, String.class, String.class));
+                        ofString("properties")).orNull(), mapType);
 
         return new DefaultNArtifactCall(id, Arrays.asList(arguments), properties);
     }

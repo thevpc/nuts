@@ -231,7 +231,7 @@ public class TestUtils {
             //disable interactive mode and 'always confirm'²
             argsList.add("--yes");
             //disable installing nsh
-            argsList.add("--skip-companions");
+            argsList.add("--install-companions=true");
             argsList.add("--skip-welcome");
 //        argsList.add("--embedded");
             argsList.addAll(Arrays.asList(args));

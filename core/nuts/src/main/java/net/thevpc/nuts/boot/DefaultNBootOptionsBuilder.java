@@ -124,7 +124,7 @@ public final class DefaultNBootOptionsBuilder extends DefaultNWorkspaceOptionsBu
         return new DefaultNBootOptions(
                 getOutputFormatOptions().orNull(), getCustomOptions().orNull(), getApiVersion().orNull(), getRuntimeId().orNull(), getJavaCommand().orNull()
                 , getJavaOptions().orNull(), getWorkspace().orNull(), getOutLinePrefix().orNull(), getErrLinePrefix().orNull()
-                , getName().orNull(), getSkipCompanions().orNull(), getSkipWelcome().orNull(), getSkipBoot().orNull()
+                , getName().orNull(), getInstallCompanions().orNull(), getSkipWelcome().orNull(), getSkipBoot().orNull()
                 , getGlobal().orNull(), getGui().orNull(), getDry().orNull(), getRecover().orNull(), getReset().orNull(), getCommandVersion().orNull(), getCommandHelp().orNull(), getCommandHelp().orNull(), getSwitchWorkspace().orNull(), getCached().orNull(), getCached().orNull(), getTransitive().orNull(), getBot().orNull()
                 , getIsolationLevel().orNull(), getInitLaunchers().orNull(), getInitScripts().orNull(), getInitPlatforms().orNull()
                 , getInitJava().orNull(), getExcludedExtensions().orNull(), getRepositories().orNull(), getUserName().orNull()

@@ -26,6 +26,7 @@ package net.thevpc.nuts.elem;
 import net.thevpc.nuts.NSession;
 import net.thevpc.nuts.NSessionProvider;
 import net.thevpc.nuts.NWorkspace;
+import net.thevpc.nuts.util.NReflectRepository;
 
 import java.lang.reflect.Type;
 import java.util.Map;
@@ -37,6 +38,8 @@ import java.util.function.Predicate;
 public interface NElementFactoryContext extends NSessionProvider {
 
     Predicate<Class> getIndestructibleObjects();
+
+    NReflectRepository getReflectRepository();
 
     NWorkspace getWorkspace();
 

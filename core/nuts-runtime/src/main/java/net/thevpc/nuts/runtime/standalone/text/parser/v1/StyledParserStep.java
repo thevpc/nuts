@@ -1,12 +1,12 @@
 package net.thevpc.nuts.runtime.standalone.text.parser.v1;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.runtime.standalone.util.collections.EvictingCharQueue;
-import net.thevpc.nuts.runtime.standalone.util.StringBuilder2;
 import net.thevpc.nuts.runtime.standalone.text.parser.DefaultNTextPlain;
 import net.thevpc.nuts.runtime.standalone.util.CoreStringUtils;
 import net.thevpc.nuts.runtime.standalone.util.NDebugString;
+import net.thevpc.nuts.runtime.standalone.util.collections.EvictingCharQueue;
 import net.thevpc.nuts.text.*;
+import net.thevpc.nuts.util.NStringBuilder;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -22,8 +22,8 @@ public class StyledParserStep extends ParserStep {
     int sharpsEndCount = 0;
     CurState curState = CurState.EMPTY;
     List<NText> children = new ArrayList<>();
-    StringBuilder2 name = new StringBuilder2();
-    StringBuilder2 content = new StringBuilder2();
+    NStringBuilder name = new NStringBuilder();
+    NStringBuilder content = new NStringBuilder();
     boolean lineStart;
 //    List<ParserStep> children = new ArrayList<>();
     int maxSize = 10;
@@ -160,7 +160,7 @@ public class StyledParserStep extends ParserStep {
                             content.append(c);
                         }else {
                             if (!content.isEmpty()) {
-                                children.add(text.ofPlain(content.readAll()));
+                                children.add(text.ofPlain(content.removeAll()));
                             }
                             if (curState == CurState.SHARP_CONTENT) {
                                 curState = CurState.SHARP_CONTENT_SHARP;
@@ -179,7 +179,7 @@ public class StyledParserStep extends ParserStep {
                             content.append(c);
                         }else {
                             if (!content.isEmpty()) {
-                                children.add(text.ofPlain(content.readAll()));
+                                children.add(text.ofPlain(content.removeAll()));
                             }
                             beforeChangingStep();
                             state.applyPush(c, true, false, exitOnBrace);
@@ -373,7 +373,7 @@ public class StyledParserStep extends ParserStep {
                             content.append(c);
                         }else {
                             if (!content.isEmpty()) {
-                                children.add(text.ofPlain(content.readAll()));
+                                children.add(text.ofPlain(content.removeAll()));
                             }
                             beforeChangingStep();
                             state.applyPush(new StyledParserStep("#", false, session, state,true));
@@ -386,7 +386,7 @@ public class StyledParserStep extends ParserStep {
                             content.append(c);
                         }else {
                             if (!content.isEmpty()) {
-                                children.add(text.ofPlain(content.readAll()));
+                                children.add(text.ofPlain(content.removeAll()));
                             }
                             curState = CurState.SHARP2_OBRACE_NAME_COL_CONTENT_CBRACE;
                         }
@@ -400,7 +400,7 @@ public class StyledParserStep extends ParserStep {
                         }else {
                             //ignore
                             if (!content.isEmpty()) {
-                                children.add(text.ofPlain(content.readAll()));
+                                children.add(text.ofPlain(content.removeAll()));
                             }
                         }
                         break;
@@ -411,7 +411,7 @@ public class StyledParserStep extends ParserStep {
                             content.append(c);
                         }else {
                             if (!content.isEmpty()) {
-                                children.add(text.ofPlain(content.readAll()));
+                                children.add(text.ofPlain(content.removeAll()));
                             }
                             beforeChangingStep();
                             state.applyPush(c, true, false, exitOnBrace);
@@ -519,7 +519,7 @@ public class StyledParserStep extends ParserStep {
                     }
                     default:{
                         if (!content.isEmpty()) {
-                            children.add(text.ofPlain(content.readAll()));
+                            children.add(text.ofPlain(content.removeAll()));
                         }
                         state.applyPopReplay(this, c);
                     }
@@ -543,7 +543,7 @@ public class StyledParserStep extends ParserStep {
                     }
                     default:{
                         if (!content.isEmpty()) {
-                            children.add(text.ofPlain(content.readAll()));
+                            children.add(text.ofPlain(content.removeAll()));
                         }
                         state.applyPopReplay(this, c);
                     }
@@ -552,7 +552,7 @@ public class StyledParserStep extends ParserStep {
             }
             case SHARP2_OBRACE_NAME_COL_CONTENT_CBRACE_SHARP2_END:{
                 if (!content.isEmpty()) {
-                    children.add(text.ofPlain(content.readAll()));
+                    children.add(text.ofPlain(content.removeAll()));
                 }
                 state.applyPopReplay(this, c);
                 break;

@@ -25,7 +25,11 @@ public class NElementMapperNamedElement implements NElementMapper<NElementEntry>
         Map<String, Object> m = new HashMap<>();
         m.put("key", je.getKey());
         m.put("value", je.getValue());
-        return context.objectToElement(m, ReflectUtils.createParametrizedType(Map.class, String.class, Object.class));
+        return context.objectToElement(m,
+                context.getReflectRepository().getParametrizedType(
+                        Map.class, null, new Type[]{String.class, Object.class}
+                ).getJavaType()
+        );
     }
 
     @Override
@@ -33,7 +37,9 @@ public class NElementMapperNamedElement implements NElementMapper<NElementEntry>
         Type[] args = (typeOfResult instanceof ParameterizedType)
                 ? (((ParameterizedType) typeOfResult).getActualTypeArguments())
                 : new Type[]{Object.class, Object.class};
-        Type mapType = ReflectUtils.createParametrizedType(Map.class, args);
+        Type mapType = context.getReflectRepository().getParametrizedType(
+                Map.class, null, args
+        ).getJavaType();
         Map map = (Map) context.elementToObject(o, mapType);
         return new DefaultNElementEntry(
                 (NElement) map.get("key"),
