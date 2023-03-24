@@ -12,6 +12,7 @@ import net.thevpc.nuts.text.NTextBuilder;
 import net.thevpc.nuts.text.NTextStyle;
 import net.thevpc.nuts.text.NTextStyleType;
 import net.thevpc.nuts.text.NTexts;
+import net.thevpc.nuts.util.NQuoteType;
 import net.thevpc.nuts.util.NStringUtils;
 
 import java.util.*;
@@ -283,11 +284,11 @@ public class DefaultNIdFormat extends DefaultFormatBase<NIdFormat> implements NI
     }
 
     private String _encodeValue(String s) {
-        return NStringUtils.formatStringLiteral(s, NStringUtils.QuoteType.SIMPLE, NSupportMode.PREFERRED);
+        return NStringUtils.formatStringLiteral(s, NQuoteType.SIMPLE, NSupportMode.PREFERRED);
     }
 
     private String _encodeKey(String s) {
-        return NStringUtils.formatStringLiteral(s, NStringUtils.QuoteType.SIMPLE, NSupportMode.PREFERRED);
+        return NStringUtils.formatStringLiteral(s, NQuoteType.SIMPLE, NSupportMode.PREFERRED);
     }
 
     @Override

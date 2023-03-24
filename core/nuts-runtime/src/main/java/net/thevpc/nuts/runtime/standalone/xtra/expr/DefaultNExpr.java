@@ -1,8 +1,11 @@
 package net.thevpc.nuts.runtime.standalone.xtra.expr;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.expr.NExpr;
+import net.thevpc.nuts.expr.NExprDeclarations;
+import net.thevpc.nuts.expr.NExprEvaluator;
+import net.thevpc.nuts.expr.NExprMutableDeclarations;
 import net.thevpc.nuts.spi.NSupportLevelContext;
-import net.thevpc.nuts.util.*;
 
 public class DefaultNExpr implements NExpr {
 

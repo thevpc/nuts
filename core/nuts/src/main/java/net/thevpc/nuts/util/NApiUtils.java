@@ -55,7 +55,7 @@ public class NApiUtils {
         return s == null || isBlank(s.toString().toCharArray());
     }
 
-    public static <T> T coalesce(List<T> any) {
+    public static <T> T firstNonBlank(List<T> any) {
         for (T t : any) {
             if(!isBlank(t)){
                 return t;
@@ -64,7 +64,7 @@ public class NApiUtils {
         return null;
     }
 
-    public static <T> T coalesce(T... any) {
+    public static <T> T firstNonBlank(T... any) {
         for (T t : any) {
             if(!isBlank(t)){
                 return t;

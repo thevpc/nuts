@@ -31,6 +31,7 @@ import net.thevpc.nuts.runtime.standalone.util.CoreStringUtils;
 import net.thevpc.nuts.text.NTextBuilder;
 import net.thevpc.nuts.text.NTextStyle;
 import net.thevpc.nuts.text.NTexts;
+import net.thevpc.nuts.util.NQuoteType;
 import net.thevpc.nuts.util.NStringUtils;
 
 import java.lang.reflect.Array;
@@ -84,7 +85,7 @@ public class NTextUtils {
             if (ne.getValue().type() == NElementType.STRING) {
                 sb.append(
                         txt.ofText(
-                                NStringUtils.formatStringLiteral(stringValueFormatted(ne.getValue(), escapeString, session).toString(), NStringUtils.QuoteType.DOUBLE)
+                                NStringUtils.formatStringLiteral(stringValueFormatted(ne.getValue(), escapeString, session).toString(), NQuoteType.DOUBLE)
                         ));
 //            } else if (ne.getValue().type() == NutsElementType.NUTS_STRING) {
 //                sb.append(ne.getValue().asNutsString());
@@ -101,7 +102,7 @@ public class NTextUtils {
                     || (ne.getValue() instanceof NElement && ((NElement) ne.getValue()).isString())) {
                 sb.append(
                         txt.ofText(
-                                NStringUtils.formatStringLiteral(stringValueFormatted(ne.getValue(), escapeString, session).toString(), NStringUtils.QuoteType.DOUBLE)
+                                NStringUtils.formatStringLiteral(stringValueFormatted(ne.getValue(), escapeString, session).toString(), NQuoteType.DOUBLE)
                         )
                 );
 //            } else if (ne.getValue() instanceof NutsElement && ((NutsElement) ne.getValue()).isNutsString()) {

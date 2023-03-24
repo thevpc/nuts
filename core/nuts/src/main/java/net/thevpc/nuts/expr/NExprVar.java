@@ -1,4 +1,7 @@
-package net.thevpc.nuts.util;
+package net.thevpc.nuts.expr;
+
+import net.thevpc.nuts.util.ReservedNExprConst;
+import net.thevpc.nuts.util.ReservedNExprVar;
 
 public interface NExprVar {
     static NExprVar ofConst(Object value) {

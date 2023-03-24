@@ -23,8 +23,8 @@
  */
 package net.thevpc.nuts.core.test;
 
+import net.thevpc.nuts.expr.*;
 import net.thevpc.nuts.runtime.standalone.xtra.expr.NToken;
-import net.thevpc.nuts.util.*;
 import net.thevpc.nuts.NSession;
 import net.thevpc.nuts.core.test.utils.TestUtils;
 import net.thevpc.nuts.runtime.standalone.xtra.expr.StreamTokenizerExt;

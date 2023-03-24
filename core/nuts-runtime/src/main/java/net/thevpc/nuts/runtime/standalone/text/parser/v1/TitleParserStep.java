@@ -2,6 +2,7 @@ package net.thevpc.nuts.runtime.standalone.text.parser.v1;
 
 import net.thevpc.nuts.NSession;
 import net.thevpc.nuts.text.NTexts;
+import net.thevpc.nuts.util.NQuoteType;
 import net.thevpc.nuts.util.NStringUtils;
 import net.thevpc.nuts.runtime.standalone.text.DefaultNTexts;
 
@@ -65,7 +66,7 @@ public class TitleParserStep extends ParserStep {
 
     @Override
     public String toString() {
-        StringBuilder sb = new StringBuilder("Title(" + NStringUtils.formatStringLiteral(start.toString(), NStringUtils.QuoteType.DOUBLE));
+        StringBuilder sb = new StringBuilder("Title(" + NStringUtils.formatStringLiteral(start.toString(), NQuoteType.DOUBLE));
         for (ParserStep parserStep : children) {
             sb.append(",");
             sb.append(parserStep.toString());

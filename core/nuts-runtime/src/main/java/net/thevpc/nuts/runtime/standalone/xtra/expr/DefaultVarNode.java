@@ -2,10 +2,10 @@ package net.thevpc.nuts.runtime.standalone.xtra.expr;
 
 import net.thevpc.nuts.NMsg;
 import net.thevpc.nuts.NOptional;
-import net.thevpc.nuts.util.NExprDeclarations;
-import net.thevpc.nuts.util.NExprNode;
-import net.thevpc.nuts.util.NExprNodeType;
-import net.thevpc.nuts.util.NExprWordNode;
+import net.thevpc.nuts.expr.NExprDeclarations;
+import net.thevpc.nuts.expr.NExprNode;
+import net.thevpc.nuts.expr.NExprNodeType;
+import net.thevpc.nuts.expr.NExprWordNode;
 
 import java.util.Collections;
 import java.util.List;

@@ -25,8 +25,8 @@ package net.thevpc.nuts.text;
 
 import net.thevpc.nuts.util.NEnum;
 import net.thevpc.nuts.NOptional;
+import net.thevpc.nuts.util.NEnumUtils;
 import net.thevpc.nuts.util.NNameFormat;
-import net.thevpc.nuts.util.NStringUtils;
 
 /**
  * @app.category Format
@@ -48,7 +48,7 @@ public enum NTextType implements NEnum {
     }
 
     public static NOptional<NTextType> parse(String value) {
-        return NStringUtils.parseEnum(value, NTextType.class);
+        return NEnumUtils.parseEnum(value, NTextType.class);
     }
 
     @Override

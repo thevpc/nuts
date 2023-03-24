@@ -26,8 +26,8 @@
 package net.thevpc.nuts;
 
 import net.thevpc.nuts.util.NEnum;
+import net.thevpc.nuts.util.NEnumUtils;
 import net.thevpc.nuts.util.NNameFormat;
-import net.thevpc.nuts.util.NStringUtils;
 
 /**
  * user interaction mode. Some operations may require user confirmation before
@@ -69,7 +69,7 @@ public enum NConfirmationMode implements NEnum {
     }
 
     public static NOptional<NConfirmationMode> parse(String value) {
-        return NStringUtils.parseEnum(value, NConfirmationMode.class);
+        return NEnumUtils.parseEnum(value, NConfirmationMode.class);
     }
 
     /**

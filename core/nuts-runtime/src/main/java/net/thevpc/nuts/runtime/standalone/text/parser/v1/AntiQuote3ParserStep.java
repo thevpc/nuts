@@ -5,6 +5,7 @@ import net.thevpc.nuts.runtime.standalone.text.DefaultNTexts;
 import net.thevpc.nuts.text.NTerminalCommand;
 import net.thevpc.nuts.text.NText;
 import net.thevpc.nuts.text.NTexts;
+import net.thevpc.nuts.util.NQuoteType;
 import net.thevpc.nuts.util.NStringUtils;
 
 public class AntiQuote3ParserStep extends ParserStep {
@@ -287,9 +288,9 @@ public class AntiQuote3ParserStep extends ParserStep {
 
     @Override
     public String toString() {
-        StringBuilder sb = new StringBuilder("Quoted(" + NStringUtils.formatStringLiteral(start.toString(), NStringUtils.QuoteType.DOUBLE));
+        StringBuilder sb = new StringBuilder("Quoted(" + NStringUtils.formatStringLiteral(start.toString(), NQuoteType.DOUBLE));
         sb.append(",");
-        sb.append(NStringUtils.formatStringLiteral(getPartialValue(), NStringUtils.QuoteType.DOUBLE));
+        sb.append(NStringUtils.formatStringLiteral(getPartialValue(), NQuoteType.DOUBLE));
         sb.append(",status=").append(status == 0 ? "EXPECT_START" : status == 1 ? "EXPECT_CONTENT" : status == 2 ? "EXPECT_END" : String.valueOf(status));
         sb.append(",end=");
         sb.append(end);

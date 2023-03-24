@@ -56,7 +56,7 @@ public interface NReflectType {
 
     NReflectType[] getTypeParameters();
 
-    NReflectType getActualTypeArgument(NReflectType type);
+    NOptional<NReflectType> getActualTypeArgument(NReflectType type);
 
     NReflectType[] getActualTypeArguments();
 

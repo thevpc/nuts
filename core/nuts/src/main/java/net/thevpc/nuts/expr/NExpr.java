@@ -24,7 +24,7 @@
  * <br>
  * ====================================================================
  */
-package net.thevpc.nuts.util;
+package net.thevpc.nuts.expr;
 
 import net.thevpc.nuts.NSession;
 import net.thevpc.nuts.NSessionProvider;

@@ -29,6 +29,7 @@ package net.thevpc.nuts.runtime.standalone.version.filter;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.runtime.standalone.id.filter.NExprIdFilter;
 import net.thevpc.nuts.runtime.standalone.util.filters.CoreFilterUtils;
+import net.thevpc.nuts.util.NQuoteType;
 import net.thevpc.nuts.util.NStringUtils;
 
 import java.io.Serializable;
@@ -119,8 +120,8 @@ public class DefaultNVersionFilter extends AbstractVersionFilter implements NExp
                 //this will escape `"' if it is present
                 + NStringUtils.formatStringLiteral(
                 //this will create '...' value
-                NStringUtils.formatStringLiteral(toString(), NStringUtils.QuoteType.SIMPLE),
-                NStringUtils.QuoteType.DOUBLE, NSupportMode.NEVER
+                NStringUtils.formatStringLiteral(toString(), NQuoteType.SIMPLE),
+                NQuoteType.DOUBLE, NSupportMode.NEVER
         )
                 + ")";
     }

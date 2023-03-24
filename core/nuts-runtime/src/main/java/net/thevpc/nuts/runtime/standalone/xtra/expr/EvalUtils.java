@@ -1,6 +1,6 @@
 package net.thevpc.nuts.runtime.standalone.xtra.expr;
 
-import net.thevpc.nuts.util.NExprNode;
+import net.thevpc.nuts.expr.NExprNode;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;

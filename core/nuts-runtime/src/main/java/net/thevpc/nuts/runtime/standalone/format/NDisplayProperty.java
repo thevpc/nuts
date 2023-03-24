@@ -27,8 +27,8 @@ package net.thevpc.nuts.runtime.standalone.format;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.util.NEnum;
+import net.thevpc.nuts.util.NEnumUtils;
 import net.thevpc.nuts.util.NNameFormat;
-import net.thevpc.nuts.util.NStringUtils;
 
 /**
  *
@@ -73,7 +73,7 @@ public enum NDisplayProperty implements NEnum {
     }
 
     public static NOptional<NDisplayProperty> parse(String value) {
-        return NStringUtils.parseEnum(value, NDisplayProperty.class, s->{
+        return NEnumUtils.parseEnum(value, NDisplayProperty.class, s->{
             switch (s.getNormalizedValue()){
                 case "DE":
                 case "DESKTOP":

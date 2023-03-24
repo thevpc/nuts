@@ -2,13 +2,13 @@ package net.thevpc.nuts.toolbox.ndb.base.cmd;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.cmdline.NCmdLine;
+import net.thevpc.nuts.format.NObjectFormat;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.toolbox.ndb.NdbConfig;
 import net.thevpc.nuts.toolbox.ndb.base.CmdRedirect;
 import net.thevpc.nuts.toolbox.ndb.base.NdbCmd;
 import net.thevpc.nuts.toolbox.ndb.base.NdbSupportBase;
 import net.thevpc.nuts.toolbox.ndb.sql.nmysql.util.AtName;
-import net.thevpc.nuts.toolbox.ndb.util.RollingFileService;
 import net.thevpc.nuts.util.NRef;
 import net.thevpc.nuts.util.NStringUtils;
 
@@ -153,8 +153,11 @@ public class DumpCmd<C extends NdbConfig> extends NdbCmd<C> {
         String dumpExt = NStringUtils.trim(getSupport().getDumpExt(options, session));
         if (file.get() == null) {
             if (roll.get() > 0) {
-                RollingFileService rfs = new RollingFileService(NPath.ofUserDirectory(session).resolve(options.getDatabaseName() + "#.zip"), roll.get(), session);
-                zipPath = rfs.roll();
+                zipPath=NPath.of(NObjectFormat.of(session)
+                        .setFormatParam("count",roll.get())
+                        .setValue(NPath.ofUserDirectory(session).resolve(options.getDatabaseName() + "#.zip"))
+                        .setNtf(false)
+                        .format().filteredText(),session);
                 simpleName = zipPath.getBaseName();
                 plainFolderPath = zipPath.resolve(simpleName + dumpExt);
             } else {
@@ -167,8 +170,12 @@ public class DumpCmd<C extends NdbConfig> extends NdbCmd<C> {
 
         } else if (file.get().isDirectory()) {
             if (roll.get() > 0) {
-                RollingFileService rfs = new RollingFileService(file.get().resolve(options.getDatabaseName() + "#.zip"), roll.get(), session);
-                zipPath = rfs.roll();
+                zipPath=NPath.of(NObjectFormat.of(session)
+                        .setFormatParam("count",roll.get())
+                        .setValue(file.get().resolve(options.getDatabaseName() + "#.zip"))
+                        .setNtf(false)
+                        .format().filteredText(),session);
+
                 simpleName = zipPath.getBaseName();
                 plainFolderPath = zipPath.resolve(simpleName + dumpExt);
 
@@ -184,8 +191,11 @@ public class DumpCmd<C extends NdbConfig> extends NdbCmd<C> {
             simpleName = nFile.getBaseName();
             if (nFile.getName().toLowerCase().endsWith(".zip")) {
                 if (roll.get() > 0) {
-                    RollingFileService rfs = new RollingFileService(nFile, roll.get(), session);
-                    zipPath = rfs.roll();
+                    zipPath=NPath.of(NObjectFormat.of(session)
+                            .setFormatParam("count",roll.get())
+                            .setValue(nFile)
+                            .setNtf(false)
+                            .format().filteredText(),session);
                     plainFolderPath = zipPath.resolveSibling(zipPath.getName() + dumpExt);
                 } else {
                     zipPath = nFile;
@@ -195,8 +205,11 @@ public class DumpCmd<C extends NdbConfig> extends NdbCmd<C> {
                 zip = true;
             } else if (dumpExt.length() > 0 && nFile.getName().toLowerCase().endsWith(dumpExt)) {
                 if (roll.get() > 0) {
-                    RollingFileService rfs = new RollingFileService(nFile, roll.get(), session);
-                    plainFolderPath = rfs.roll();
+                    plainFolderPath=NPath.of(NObjectFormat.of(session)
+                            .setFormatParam("count",roll.get())
+                            .setValue(nFile)
+                            .setNtf(false)
+                            .format().filteredText(),session);
                     zipPath = plainFolderPath.resolveSibling(plainFolderPath.getBaseName() + ".zip");
                 } else {
                     plainFolderPath = nFile;
@@ -206,8 +219,11 @@ public class DumpCmd<C extends NdbConfig> extends NdbCmd<C> {
                 zip = false;
             } else {
                 if (roll.get() > 0) {
-                    RollingFileService rfs = new RollingFileService(nFile, roll.get(), session);
-                    NPath roll1 = rfs.roll();
+                    NPath roll1=NPath.of(NObjectFormat.of(session)
+                            .setFormatParam("count",roll.get())
+                            .setValue(nFile)
+                            .setNtf(false)
+                            .format().filteredText(),session);
                     plainFolderPath = roll1.resolveSibling(roll1.getName() + dumpExt);
                     zipPath = nFile.resolveSibling(roll1.getName() + ".zip");
                 } else {

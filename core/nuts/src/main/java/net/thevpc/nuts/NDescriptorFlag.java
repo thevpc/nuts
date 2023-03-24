@@ -27,8 +27,8 @@
 package net.thevpc.nuts;
 
 import net.thevpc.nuts.util.NEnum;
+import net.thevpc.nuts.util.NEnumUtils;
 import net.thevpc.nuts.util.NNameFormat;
-import net.thevpc.nuts.util.NStringUtils;
 
 /**
  * Formats supported by Nuts
@@ -78,7 +78,7 @@ public enum NDescriptorFlag implements NEnum {
     }
 
     public static NOptional<NDescriptorFlag> parse(String value) {
-        return NStringUtils.parseEnum(value, NDescriptorFlag.class);
+        return NEnumUtils.parseEnum(value, NDescriptorFlag.class);
     }
 
 

@@ -41,7 +41,7 @@ public enum NReflectPropertyAccessStrategy implements NEnum {
     }
 
     public static NOptional<NReflectPropertyAccessStrategy> parse(String value) {
-        return NStringUtils.parseEnum(value, NReflectPropertyAccessStrategy.class);
+        return NEnumUtils.parseEnum(value, NReflectPropertyAccessStrategy.class);
     }
     @Override
     public String id() {

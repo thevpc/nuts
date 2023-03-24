@@ -3,6 +3,7 @@ package net.thevpc.nuts;
 import net.thevpc.nuts.reserved.NReservedOptionalEmpty;
 import net.thevpc.nuts.reserved.NReservedOptionalError;
 import net.thevpc.nuts.reserved.NReservedOptionalValid;
+import net.thevpc.nuts.util.NStringUtils;
 
 import java.util.Collection;
 import java.util.Optional;
@@ -14,11 +15,23 @@ import java.util.function.Supplier;
 public interface NOptional<T> extends NBlankable, NSessionProvider {
 
     static <T> NOptional<T> ofNamedEmpty(String name) {
-        return ofEmpty(s -> NMsg.ofC("missing %s", name));
+        return ofEmpty(s -> NMsg.ofC("missing %s", NStringUtils.firstNonBlank(name, "value")));
+    }
+
+    static <T> NOptional<T> ofNamedEmpty(NMsg message) {
+        return ofEmpty(message == null ? null : s -> message);
+    }
+
+    static <T> NOptional<T> ofNamedError(NMsg message) {
+        return ofError(message == null ? s -> NMsg.ofC("error evaluating %s", "value") : s -> message);
+    }
+
+    static <T> NOptional<T> ofNamedError(NMsg message, Throwable throwable) {
+        return ofError(message == null ? s -> NMsg.ofC("error evaluating %s", "value") : s -> message, throwable);
     }
 
     static <T> NOptional<T> ofNamedError(String name) {
-        return ofError(s -> NMsg.ofC("error evaluating %s", name));
+        return ofError(s -> NMsg.ofC("error evaluating %s", NStringUtils.firstNonBlank(name, "value")));
     }
 
     static <T> NOptional<T> ofNamedError(String name, Throwable throwable) {
@@ -51,7 +64,7 @@ public interface NOptional<T> extends NBlankable, NSessionProvider {
     }
 
     static <T> NOptional<T> ofNamed(T value, String name) {
-        return of(value, s -> NMsg.ofC("missing %s", name));
+        return of(value, s -> NMsg.ofC("missing %s", NStringUtils.firstNonBlank(name, "value")));
     }
 
     static <T> NOptional<T> of(T value, Function<NSession, NMsg> emptyMessage) {
@@ -66,7 +79,7 @@ public interface NOptional<T> extends NBlankable, NSessionProvider {
     }
 
     static <T> NOptional<T> ofNamedOptional(Optional<T> optional, String name) {
-        return ofOptional(optional, s -> NMsg.ofC("missing %s", name));
+        return ofOptional(optional, s -> NMsg.ofC("missing %s", NStringUtils.firstNonBlank(name, "value")));
     }
 
     static <T> NOptional<T> ofOptional(Optional<T> optional, Function<NSession, NMsg> errorMessage) {
@@ -85,7 +98,7 @@ public interface NOptional<T> extends NBlankable, NSessionProvider {
             return ofSingleton(collection, null, null);
         }
         return ofFirst(collection,
-                s -> NMsg.ofC("missing %s", name)
+                s -> NMsg.ofC("missing %s", NStringUtils.firstNonBlank(name, "value"))
         );
     }
 
@@ -94,9 +107,9 @@ public interface NOptional<T> extends NBlankable, NSessionProvider {
             return ofSingleton(collection, null, null);
         }
         return ofSingleton(collection,
-                s -> NMsg.ofC("missing %s", name)
+                s -> NMsg.ofC("missing %s", NStringUtils.firstNonBlank(name, "value"))
                 ,
-                s -> NMsg.ofC("too many elements %s>1 for %s", collection == null ? 0 : collection.size(), name));
+                s -> NMsg.ofC("too many elements %s>1 for %s", collection == null ? 0 : collection.size(), NStringUtils.firstNonBlank(name, "value")));
     }
 
     static <T> NOptional<T> ofSingleton(Collection<T> collection, Function<NSession, NMsg> emptyMessage, Function<NSession, NMsg> errorMessage) {

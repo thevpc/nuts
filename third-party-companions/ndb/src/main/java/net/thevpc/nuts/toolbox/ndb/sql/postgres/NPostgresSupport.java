@@ -10,11 +10,9 @@ import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.io.NPathOption;
 import net.thevpc.nuts.toolbox.ndb.base.CmdRedirect;
-import net.thevpc.nuts.toolbox.ndb.sql.postgres.cmd.PostgresDumpCmd;
-import net.thevpc.nuts.toolbox.ndb.sql.postgres.cmd.PostgresRestoreCmd;
-import net.thevpc.nuts.toolbox.ndb.sql.postgres.cmd.PostgresShowDatabasesCmd;
-import net.thevpc.nuts.toolbox.ndb.sql.postgres.cmd.PostgresShowTablesCmd;
+import net.thevpc.nuts.toolbox.ndb.sql.postgres.cmd.*;
 import net.thevpc.nuts.toolbox.ndb.sql.sqlbase.SqlSupport;
+import net.thevpc.nuts.toolbox.ndb.sql.util.SqlConnectionInfo;
 import net.thevpc.nuts.util.*;
 
 import java.util.*;
@@ -30,6 +28,7 @@ public class NPostgresSupport extends SqlSupport<NPostgresConfig> {
         declareNdbCmd(new PostgresShowDatabasesCmd(this));
         declareNdbCmd(new PostgresDumpCmd(this));
         declareNdbCmd(new PostgresRestoreCmd(this));
+        declareNdbCmd(new PostgresShowTableSizeCmd(this));
     }
 
     public void revalidateOptions(NPostgresConfig options) {
@@ -83,13 +82,21 @@ public class NPostgresSupport extends SqlSupport<NPostgresConfig> {
         }
     }
 
-    public String createJdbcURL(NPostgresConfig options) {
-        return NMsg.ofV("jdbc:postgresql://${server}:${port}/${database}",
+    public SqlConnectionInfo createSqlConnectionInfo(NPostgresConfig options) {
+        String url = NMsg.ofV("jdbc:postgresql://${server}:${port}/${database}",
                 NMaps.of(
                         "server", NOptional.of(options.getHost()).ifBlank("localhost").get(),
                         "port", NOptional.of(options.getPort()).mapIf(x -> x <= 0, x -> null, x -> x).ifBlank(5432).get(),
                         "database", NOptional.of(options.getDatabaseName()).ifBlank("postgres").get()
                 )).toString();
+        return new SqlConnectionInfo()
+                .setJdbcDriver(dbDriverClass)
+                .setJdbcUrl(url)
+                .setProperties(null)
+                .setId(dbDriverPackage)
+                .setUser(options.getUser())
+                .setPassword(options.getPassword())
+                ;
     }
 
 

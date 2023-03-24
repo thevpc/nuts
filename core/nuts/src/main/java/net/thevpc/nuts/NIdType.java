@@ -27,8 +27,8 @@
 package net.thevpc.nuts;
 
 import net.thevpc.nuts.util.NEnum;
+import net.thevpc.nuts.util.NEnumUtils;
 import net.thevpc.nuts.util.NNameFormat;
-import net.thevpc.nuts.util.NStringUtils;
 
 /**
  * Artifacts are organized according to {@code NutsIdType} to reflect how the artifact
@@ -80,7 +80,7 @@ public enum NIdType implements NEnum {
     }
 
     public static NOptional<NIdType> parse(String value) {
-        return NStringUtils.parseEnum(value, NIdType.class);
+        return NEnumUtils.parseEnum(value, NIdType.class);
     }
 
     /**

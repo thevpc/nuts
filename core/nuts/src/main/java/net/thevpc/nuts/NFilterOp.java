@@ -27,8 +27,8 @@
 package net.thevpc.nuts;
 
 import net.thevpc.nuts.util.NEnum;
+import net.thevpc.nuts.util.NEnumUtils;
 import net.thevpc.nuts.util.NNameFormat;
-import net.thevpc.nuts.util.NStringUtils;
 
 /**
  * Filter Type
@@ -50,7 +50,7 @@ public enum NFilterOp implements NEnum {
     }
 
     public static NOptional<NFilterOp> parse(String value) {
-        return NStringUtils.parseEnum(value, NFilterOp.class);
+        return NEnumUtils.parseEnum(value, NFilterOp.class);
     }
     @Override
     public String id() {

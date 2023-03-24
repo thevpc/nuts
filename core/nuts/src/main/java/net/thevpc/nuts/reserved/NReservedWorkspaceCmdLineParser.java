@@ -31,7 +31,7 @@ import net.thevpc.nuts.util.NApiUtils;
 import net.thevpc.nuts.cmdline.NArg;
 import net.thevpc.nuts.io.NTerminalMode;
 import net.thevpc.nuts.util.NLogConfig;
-import net.thevpc.nuts.util.NStringUtils;
+import net.thevpc.nuts.util.NLogUtils;
 
 import java.time.Instant;
 import java.util.*;
@@ -1204,7 +1204,7 @@ public final class NReservedWorkspaceCmdLineParser {
                 if (enabled) {
                     String id = a.key();
                     logConfig.setLogFileLevel(
-                            NStringUtils.parseLogLevel(id.substring("--log-file-".length())).orNull()
+                            NLogUtils.parseLogLevel(id.substring("--log-file-".length())).orNull()
                     );
                 }
                 break;
@@ -1224,7 +1224,7 @@ public final class NReservedWorkspaceCmdLineParser {
                 if (enabled) {
                     String id = a.key();
                     logConfig.setLogTermLevel(
-                            NStringUtils.parseLogLevel(id.substring("--log-term-".length())).orNull()
+                            NLogUtils.parseLogLevel(id.substring("--log-term-".length())).orNull()
                     );
                 }
                 break;
@@ -1251,7 +1251,7 @@ public final class NReservedWorkspaceCmdLineParser {
                 cmdLine.skip();
                 if (enabled) {
                     String id = a.key();
-                    Level lvl = NStringUtils.parseLogLevel(id.substring("--log-".length())).orNull();
+                    Level lvl = NLogUtils.parseLogLevel(id.substring("--log-".length())).orNull();
                     logConfig.setLogTermLevel(lvl);
                     logConfig.setLogFileLevel(lvl);
                 }

@@ -34,7 +34,7 @@ public abstract class NdbCmd<C extends NdbConfig> {
     abstract public void run(NSession session, NCmdLine commandLine);
 
     protected boolean fillOption(NCmdLine cmdLine, C options) {
-        if (support.fillExtraOption(cmdLine, options)) {
+        if (support.fillOption(cmdLine, options)) {
             return true;
         } else if (fillExtraOption(cmdLine, options)) {
             return true;

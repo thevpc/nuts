@@ -15,6 +15,7 @@ import net.thevpc.nuts.text.NTexts;
 import net.thevpc.nuts.toolbox.ndb.base.CmdRedirect;
 import net.thevpc.nuts.toolbox.ndb.sql.sqlbase.SqlSupport;
 import net.thevpc.nuts.toolbox.ndb.sql.nmysql.util.AtName;
+import net.thevpc.nuts.toolbox.ndb.sql.util.SqlConnectionInfo;
 import net.thevpc.nuts.toolbox.ndb.sql.util.SqlHelper;
 import net.thevpc.nuts.util.NMaps;
 import net.thevpc.nuts.util.NRef;
@@ -155,22 +156,27 @@ public class NDerbyMain extends SqlSupport<NDerbyConfig> {
             commandLine.throwMissingArgument(NMsg.ofPlain("sql"));
         }
 
-        String jdbcUrl = createJdbcURL(options);
-        ;
-        SqlHelper.runAndWaitFor(sql, jdbcUrl, dbDriverPackage, dbDriverClass,
-                options.getUser(), options.getPassword(), null,
+        SqlHelper.runAndWaitFor(sql, createSqlConnectionInfo(options),
                 forceShowSQL.get(), session);
     }
 
 
     @Override
-    public String createJdbcURL(NDerbyConfig options) {
-        return NMsg.ofV("jdbc:derby://${server}:${port}/${database};create=true",
+    public SqlConnectionInfo createSqlConnectionInfo(NDerbyConfig options) {
+        String url = NMsg.ofV("jdbc:derby://${server}:${port}/${database};create=true",
                 NMaps.of(
                         "server", NOptional.of(options.getHost()).ifBlank("localhost").get(),
                         "port", NOptional.of(options.getPort() <= 0 ? null : options.getPort()).ifBlank(1527).get(),
                         "database", NOptional.of(options.getDatabaseName()).ifBlank("db").get()
                 )).toString();
+        return new SqlConnectionInfo()
+                .setJdbcDriver(dbDriverClass)
+                .setJdbcUrl(url)
+                .setProperties(null)
+                .setId(dbDriverPackage)
+                .setUser(options.getUser())
+                .setPassword(options.getPassword())
+                ;
     }
 
     public void status(NCmdLine cmdLine, NDerbyConfig options) {

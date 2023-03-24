@@ -2,8 +2,8 @@ package net.thevpc.nuts.runtime.standalone.repository.impl.main;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.util.NEnum;
+import net.thevpc.nuts.util.NEnumUtils;
 import net.thevpc.nuts.util.NNameFormat;
-import net.thevpc.nuts.util.NStringUtils;
 
 public enum NInstallLogAction implements NEnum {
     INSTALL,
@@ -19,7 +19,7 @@ public enum NInstallLogAction implements NEnum {
     }
 
     public static NOptional<NInstallLogAction> parse(String value) {
-        return NStringUtils.parseEnum(value, NInstallLogAction.class);
+        return NEnumUtils.parseEnum(value, NInstallLogAction.class);
     }
 
 

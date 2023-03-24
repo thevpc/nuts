@@ -1,6 +1,6 @@
 package net.thevpc.nuts.toolbox.nsh.util;
 
-import net.thevpc.nuts.util.NExprNode;
+import net.thevpc.nuts.expr.NExprNode;
 
 public class RowFilter {
     NExprNode expr;

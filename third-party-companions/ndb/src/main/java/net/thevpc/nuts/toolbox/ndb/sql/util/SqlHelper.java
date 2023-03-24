@@ -1,6 +1,9 @@
 package net.thevpc.nuts.toolbox.ndb.sql.util;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.toolbox.ndb.ExtendedQuery;
+import net.thevpc.nuts.toolbox.ndb.NdbConfig;
+import net.thevpc.nuts.toolbox.ndb.sql.sqlbase.SqlSupport;
 import net.thevpc.nuts.toolbox.ndb.util.ClassloaderAwareCallable;
 import net.thevpc.nuts.util.NStringUtils;
 
@@ -17,14 +20,29 @@ public class SqlHelper implements Closeable {
     private Connection connection;
     private static Map<Object, ClassLoader> cachedClassLoaders = new HashMap<>();
 
-    public static void runAndWaitFor(List<String> sql, String jdbcUrl, String id, String jdbcDriver, String user, String password, Properties properties, Boolean forceShowSQL, NSession session) {
+    public static void runAndWaitFor(List<String> sql, SqlConnectionInfo info, Boolean forceShowSQL, NSession session) {
         runAndWaitFor(
                 new SqlRunnable() {
                     @Override
                     public void run(SqlHelper h, NSession session) {
                         h.runAndPrintSql(sql, forceShowSQL, session);
                     }
-                }, jdbcUrl, id, jdbcDriver, user, password, properties, session
+                }, info, session
+        );
+    }
+
+    public static List<Object> callSqlAndWaitGet(String sql, SqlConnectionInfo info, Boolean forceShowSQL, NSession session) {
+        return callAndWaitFor(
+                new SqlCallable<List<Object>>() {
+
+                    @Override
+                    public List<Object> run(SqlHelper h, NSession session) {
+                        if (forceShowSQL != null && forceShowSQL) {
+                            session.out().println(NMsg.ofCode("sql", sql));
+                        }
+                        return h.runSQL2(sql);
+                    }
+                }, info, session
         );
     }
 
@@ -140,12 +158,16 @@ public class SqlHelper implements Closeable {
         switch (value) {
             case DatabaseMetaData.tableIndexStatistic:
                 return "tableIndexStatistic";
-            case DatabaseMetaData.tableIndexClustered           : return "tableIndexClustered";
-            case DatabaseMetaData.tableIndexHashed              : return "tableIndexHashed";
-            case DatabaseMetaData.tableIndexOther               : return "tableIndexOther";
+            case DatabaseMetaData.tableIndexClustered:
+                return "tableIndexClustered";
+            case DatabaseMetaData.tableIndexHashed:
+                return "tableIndexHashed";
+            case DatabaseMetaData.tableIndexOther:
+                return "tableIndexOther";
         }
-        return "unknown["+value+"]";
+        return "unknown[" + value + "]";
     }
+
     public static String getImportedKeyDeferrability(short updateRule) {
         switch (updateRule) {
             case DatabaseMetaData.importedKeyInitiallyDeferred:
@@ -214,11 +236,11 @@ public class SqlHelper implements Closeable {
         return connection;
     }
 
-    public static void runAndWaitFor(SqlRunnable sql, String jdbcUrl, String id, String jdbcDriver, String user, String password, Properties properties, NSession session) {
+    public static void runAndWaitFor(SqlRunnable sql, SqlConnectionInfo info, NSession session) {
         ClassloaderAwareCallable<Object> callable = new ClassloaderAwareCallable<>(session, null,
-                SqlHelper.createClassLoader(session, id));
+                SqlHelper.createClassLoader(session, info.getId()));
         callable.runAndWaitFor((ClassloaderAwareCallable.Context cc) -> {
-            try (SqlHelper connection = new SqlHelper(jdbcUrl, jdbcDriver, user, password, properties, cc.getClassLoader())) {
+            try (SqlHelper connection = new SqlHelper(info, cc.getClassLoader())) {
                 sql.run(connection, session);
             } catch (Exception ex) {
                 ex.printStackTrace();
@@ -227,11 +249,11 @@ public class SqlHelper implements Closeable {
         });
     }
 
-    public static <T> T callAndWaitFor(SqlCallable<T> sql, String jdbcUrl, String id, String jdbcDriver, String user, String password, Properties properties, NSession session) {
+    public static <T> T callAndWaitFor(SqlCallable<T> sql, SqlConnectionInfo info, NSession session) {
         ClassloaderAwareCallable<Object> callable = new ClassloaderAwareCallable<>(session, null,
-                SqlHelper.createClassLoader(session, id));
+                SqlHelper.createClassLoader(session, info.getId()));
         Object o = callable.runAndWaitFor((ClassloaderAwareCallable.Context cc) -> {
-            try (SqlHelper connection = new SqlHelper(jdbcUrl, jdbcDriver, user, password, properties, cc.getClassLoader())) {
+            try (SqlHelper connection = new SqlHelper(info, cc.getClassLoader())) {
                 return sql.run(connection, session);
             } catch (Exception ex) {
                 throw new RuntimeException(ex);
@@ -245,6 +267,10 @@ public class SqlHelper implements Closeable {
         return cachedClassLoaders.computeIfAbsent(z, x -> NSearchCommand.of(session).addId(id)
                 .setDependencyFilter(NDependencyFilters.of(session).byRunnable())
                 .getResultClassLoader(SqlHelper.class.getClassLoader()));
+    }
+
+    public SqlHelper(SqlConnectionInfo info, ClassLoader classLoader) {
+        this(info.getJdbcUrl(), info.getJdbcDriver(), info.getUser(), info.getPassword(), info.getProperties(), classLoader);
     }
 
     public SqlHelper(String jdbcUrl, String jdbcDriver, String user, String password, Properties properties, ClassLoader classLoader) {
@@ -492,6 +518,230 @@ public class SqlHelper implements Closeable {
             }
         }
         return all;
+    }
+
+
+    public static <C extends NdbConfig> SqlDB computeSchema(ExtendedQuery eq, SqlSupport<C> ss, C options, NSession session) {
+        return ss.callInDb(new SqlCallable<SqlDB>() {
+            @Override
+            public SqlDB run(SqlHelper c, NSession session) throws Exception {
+                String catalog = null;
+                String schema = null;
+                SqlDB d = new SqlDB();
+
+                Connection connection = c.getConnection();
+                DatabaseMetaData metaData = connection.getMetaData();
+                String connSchema = connection.getSchema();
+                String connCat = connection.getCatalog();
+                SqlHelper.loop(
+                        metaData.getTables(connCat, connSchema, null, null),
+                        (r, m) -> {
+                            try {
+                                String tabCat = r.getString("TABLE_CAT");
+                                String tabSchema = r.getString("TABLE_SCHEM");
+                                if (tabCat == null) {
+                                    tabCat = connCat;
+                                }
+                                if (tabSchema == null) {
+                                    tabSchema = connSchema;
+                                }
+                                if (
+                                        Objects.equals(tabCat, connCat)
+                                                && Objects.equals(tabSchema, connSchema)
+                                ) {
+                                    String tableType = r.getString("TABLE_TYPE");
+
+                                    SqlTable t = d.getOrCreateTable(tabCat, tabSchema, r.getString("TABLE_NAME"), tableType);
+                                    t.remarks = r.getString("REMARKS");
+                                    t.typesCatalog = NStringUtils.trimToNull(r.getString("TYPE_CAT"));
+                                    t.typesSchema = NStringUtils.trimToNull(r.getString("TYPE_SCHEM"));
+                                    t.typeName = NStringUtils.trimToNull(r.getString("TYPE_NAME"));
+                                    t.selfReferencingColName = NStringUtils.trimToNull(r.getString("SELF_REFERENCING_COL_NAME"));
+                                    t.refGeneration = NStringUtils.trimToNull(r.getString("REF_GENERATION"));
+                                }
+                            } catch (SQLException e) {
+                                throw new RuntimeException(e);
+                            }
+                        }
+                );
+                for (SqlCatalog sCat : d.catalogs.values()) {
+                    for (SqlSchema sSchema : sCat.schemas.values()) {
+                        for (Map<String, SqlTable> value : sSchema.tableMaps().values()) {
+                            for (SqlTable sTable : value.values()) {
+                                fillTableColumns(metaData, connSchema, connCat, sCat, sSchema, sTable);
+                                fillTableIndexes(metaData, sCat, sSchema, sTable);
+                            }
+                        }
+                    }
+                }
+                return d.sort();
+            }
+        }, options, session);
+    }
+
+    private static void fillTableIndexes(DatabaseMetaData metaData, SqlCatalog sCat, SqlSchema sSchema, SqlTable sTable) throws SQLException {
+        SqlHelper.loop(
+                metaData.getIndexInfo(sCat.catalogName, sSchema.schemaName, sTable.tableName, false, true),
+                (r, m) -> {
+                    try {
+                        String tabCat = r.getString("TABLE_CAT");
+                        String tabSchema = r.getString("TABLE_SCHEM");
+                        String tabName = r.getString("TABLE_NAME");
+                        if (tabCat == null) {
+                            tabCat = sCat.catalogName;
+                        }
+                        if (tabSchema == null) {
+                            tabSchema = sSchema.schemaName;
+                        }
+                        if (tabName == null) {
+                            tabName = sTable.tableName;
+                        }
+                        if (
+                                Objects.equals(tabCat, sCat.catalogName)
+                                        && Objects.equals(tabSchema, sSchema.schemaName)
+                                        && Objects.equals(tabName, sTable.tableName)
+                        ) {
+
+                            String indexQualifier = r.getString("INDEX_QUALIFIER");
+                            String indexName = r.getString("INDEX_NAME");
+                            SqlIndex t = sTable.indexes.stream().filter(x ->
+                                    Objects.equals(x.indexName, indexName)
+                                            && Objects.equals(x.indexQualifier, indexQualifier)
+                            ).findFirst().orElse(null);
+                            if (t == null) {
+                                t = new SqlIndex();
+                                t.indexQualifier = indexQualifier;
+                                t.indexName = indexName;
+                                sTable.indexes.add(t);
+                            }
+                            SqlIndexColumn c = new SqlIndexColumn();
+                            c.nonUnique = r.getBoolean("NON_UNIQUE");
+                            c.type = SqlHelper.getIndexTypeName(r.getShort("TYPE"));
+                            c.ordinalPosition = r.getShort("ORDINAL_POSITION");
+                            c.columnName = r.getString("COLUMN_NAME");
+                            String ascOrDesc = NStringUtils.trim(r.getString("ASC_OR_DESC")).toLowerCase();
+                            c.asc = ascOrDesc.isEmpty() ? null : ascOrDesc.equals("a");
+                            c.pages = r.getLong("PAGES");
+                            c.filterCondition = r.getString("FILTER_CONDITION");
+                            t.columns.add(c);
+                        }
+                    } catch (SQLException e) {
+                        throw new RuntimeException(e);
+                    }
+                }
+        );
+    }
+
+    private static void fillTableColumns(DatabaseMetaData metaData, String connSchema, String connCat, SqlCatalog sCat, SqlSchema sSchema, SqlTable sTable) throws SQLException {
+        SqlHelper.loop(
+                metaData.getColumns(sCat.catalogName, sSchema.schemaName, sTable.tableName, null),
+                (r, m) -> {
+                    try {
+                        String tabCat = r.getString("TABLE_CAT");
+                        String tabSchema = r.getString("TABLE_SCHEM");
+                        if (tabCat == null) {
+                            tabCat = connCat;
+                        }
+                        if (tabSchema == null) {
+                            tabSchema = connSchema;
+                        }
+                        if (
+                                Objects.equals(tabCat, connCat)
+                                        && Objects.equals(tabSchema, connSchema)
+                        ) {
+                            SqlColumn t = new SqlColumn();
+                            t.columnName = r.getString("COLUMN_NAME");
+                            t.dataType = SqlHelper.getSqlTypeName(r.getInt("DATA_TYPE")).toLowerCase();
+                            t.typeName = r.getString("TYPE_NAME");
+                            t.columnSize = r.getInt("COLUMN_SIZE");
+                            //t.bufferLength = r.getInt("BUFFER_LENGTH");
+                            t.decimalDigits = r.getInt("DECIMAL_DIGITS");
+                            t.numPrecRadix = r.getInt("NUM_PREC_RADIX");
+                            t.nullable = SqlHelper.getColumnNullableName(r.getInt("NULLABLE"));
+                            t.nullable2 = SqlHelper.getColumnYesNoEmptyName(r.getString("IS_NULLABLE"));
+                            t.remarks = r.getString("REMARKS");
+                            t.columnDef = r.getString("COLUMN_DEF");
+                            //t.sqlDataType = r.getInt("SQL_DATA_TYPE");
+                            //t.sqlDateTimeSub = r.getInt("SQL_DATETIME_SUB");
+                            t.charOctetLength = r.getInt("CHAR_OCTET_LENGTH");
+                            t.ordinalPosition = r.getInt("ORDINAL_POSITION");
+                            t.scopeCatalog = r.getString("SCOPE_CATALOG");
+                            t.scopeSchema = r.getString("SCOPE_SCHEMA");
+                            t.scopeTable = r.getString("SCOPE_TABLE");
+                            t.sourceDataType = r.getShort("SOURCE_DATA_TYPE");
+                            t.autoIncrement = SqlHelper.getColumnYesNoEmptyName(r.getString("IS_AUTOINCREMENT"));
+                            t.generatedColumn = SqlHelper.getColumnYesNoEmptyName(r.getString("IS_GENERATEDCOLUMN"));
+                            sTable.columns.add(t);
+
+                        }
+                    } catch (SQLException e) {
+                        throw new RuntimeException(e);
+                    }
+                }
+        );
+        SqlHelper.loop(
+                metaData.getPrimaryKeys(sCat.catalogName, sSchema.schemaName, sTable.tableName),
+                (r, m) -> {
+                    try {
+                        String tabCat = r.getString("TABLE_CAT");
+                        String tabSchema = r.getString("TABLE_SCHEM");
+                        String tabName = r.getString("TABLE_NAME");
+                        if (tabCat == null) {
+                            tabCat = connCat;
+                        }
+                        if (tabSchema == null) {
+                            tabSchema = connSchema;
+                        }
+                        if (tabName == null) {
+                            tabName = sTable.tableName;
+                        }
+                        if (
+                                Objects.equals(tabCat, connCat)
+                                        && Objects.equals(tabSchema, connSchema)
+                                        && Objects.equals(tabName, sTable.tableName)
+                        ) {
+                            SqlPrimaryKey t = new SqlPrimaryKey();
+                            t.columnName = r.getString("COLUMN_NAME");
+                            t.keySeq = r.getShort("KEY_SEQ");
+                            t.pkName = r.getString("PK_NAME");
+                            sTable.primaryKeys.add(t);
+                            SqlColumn c = sTable.columns.stream().filter(x -> x.columnName.equals(t.columnName))
+                                    .findFirst().get();
+                            c.primaryKeySeq = t.keySeq;
+                            c.primaryKey = true;
+                        }
+                    } catch (SQLException e) {
+                        throw new RuntimeException(e);
+                    }
+                }
+        );
+        SqlHelper.loop(
+                metaData.getImportedKeys(sCat.catalogName, sSchema.schemaName, sTable.tableName),
+                (r, m) -> {
+                    try {
+//                        String fkTableCat = r.getString("FKTABLE_CAT");
+//                        String fkTableSchema = r.getString("FKTABLE_SCHEM");
+//                        String fkTableName = r.getString("FKTABLE_NAME");
+                        String fkColumnName = r.getString("FKCOLUMN_NAME");
+                        SqlImportedColumn t = new SqlImportedColumn();
+                        t.pkTableCat = r.getString("PKTABLE_CAT");
+                        t.pkTableSchema = r.getString("PKTABLE_SCHEM");
+                        t.pkTableName = r.getString("PKTABLE_NAME");
+                        t.pkColumnName = r.getString("PKCOLUMN_NAME");
+                        t.keySeq = r.getShort("KEY_SEQ");
+                        t.updateRule = SqlHelper.getImportedKeyRuleName(r.getShort("UPDATE_RULE"));
+                        t.deleteRule = SqlHelper.getImportedKeyRuleName(r.getShort("DELETE_RULE"));
+                        t.fkName = r.getString("FK_NAME");
+                        t.pkName = r.getString("PK_NAME");
+                        t.deferrability = SqlHelper.getImportedKeyDeferrability(r.getShort("DEFERRABILITY"));
+                        SqlColumn ff = sTable.columns.stream().filter(c -> c.columnName.equals(fkColumnName))
+                                .findFirst().get();
+                        ff.foreignKeys.add(t);
+                    } catch (SQLException e) {
+                        throw new RuntimeException(e);
+                    }
+                }
+        );
     }
 
 }

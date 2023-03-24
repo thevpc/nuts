@@ -3,8 +3,8 @@ package net.thevpc.nuts.runtime.standalone.io.terminal;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.io.NTerminalMode;
 import net.thevpc.nuts.util.NEnum;
+import net.thevpc.nuts.util.NEnumUtils;
 import net.thevpc.nuts.util.NNameFormat;
-import net.thevpc.nuts.util.NStringUtils;
 
 public enum NTerminalModeOp implements NEnum {
     NOP(NTerminalMode.INHERITED, NTerminalMode.INHERITED),
@@ -36,7 +36,7 @@ public enum NTerminalModeOp implements NEnum {
     }
 
     public static NOptional<NTerminalMode> parse(String value) {
-        return NStringUtils.parseEnum(value, NTerminalMode.class);
+        return NEnumUtils.parseEnum(value, NTerminalMode.class);
     }
 
 }

@@ -28,8 +28,8 @@ package net.thevpc.nuts.format;
 
 import net.thevpc.nuts.util.NEnum;
 import net.thevpc.nuts.NOptional;
+import net.thevpc.nuts.util.NEnumUtils;
 import net.thevpc.nuts.util.NNameFormat;
-import net.thevpc.nuts.util.NStringUtils;
 
 /**
  * Text align constants
@@ -66,7 +66,7 @@ public enum NPositionType implements NEnum {
     }
 
     public static NOptional<NPositionType> parse(String value) {
-        return NStringUtils.parseEnum(value, NPositionType.class, s -> {
+        return NEnumUtils.parseEnum(value, NPositionType.class, s -> {
             switch (s.getNormalizedValue()){
                 case "LEFT":
                 case "TOP":

@@ -238,13 +238,13 @@ public class NStringMapFormat {
                     }
                     if (v.isEmpty()) {
                         sb.append(
-                                NStringUtils.formatStringLiteral(k, NStringUtils.QuoteType.SIMPLE, NSupportMode.PREFERRED, escapedChars)
+                                NStringUtils.formatStringLiteral(k, NQuoteType.SIMPLE, NSupportMode.PREFERRED, escapedChars)
                         );
                     } else {
                         sb.append(
-                                        NStringUtils.formatStringLiteral(k, NStringUtils.QuoteType.SIMPLE, NSupportMode.PREFERRED, escapedChars))
+                                        NStringUtils.formatStringLiteral(k, NQuoteType.SIMPLE, NSupportMode.PREFERRED, escapedChars))
                                 .append(equalsChars)
-                                .append(NStringUtils.formatStringLiteral(v, NStringUtils.QuoteType.SIMPLE, NSupportMode.PREFERRED, escapedChars)
+                                .append(NStringUtils.formatStringLiteral(v, NQuoteType.SIMPLE, NSupportMode.PREFERRED, escapedChars)
                                 );
                     }
                 } else {
@@ -252,7 +252,7 @@ public class NStringMapFormat {
                         sb.append(separatorChars);
                     }
                     sb.append(
-                            NStringUtils.formatStringLiteral(k, NStringUtils.QuoteType.SIMPLE, NSupportMode.PREFERRED, escapedChars)
+                            NStringUtils.formatStringLiteral(k, NQuoteType.SIMPLE, NSupportMode.PREFERRED, escapedChars)
                     );
                 }
             }

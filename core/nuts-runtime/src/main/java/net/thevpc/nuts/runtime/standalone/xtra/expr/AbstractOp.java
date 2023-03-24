@@ -1,6 +1,8 @@
 package net.thevpc.nuts.runtime.standalone.xtra.expr;
 
-import net.thevpc.nuts.util.*;
+import net.thevpc.nuts.expr.NExprOp;
+import net.thevpc.nuts.expr.NExprOpAssociativity;
+import net.thevpc.nuts.expr.NExprOpType;
 
 public abstract class AbstractOp implements NExprOp {
     private final NExprOpType type;

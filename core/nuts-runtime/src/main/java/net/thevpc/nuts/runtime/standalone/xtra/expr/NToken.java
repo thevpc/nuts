@@ -1,5 +1,6 @@
 package net.thevpc.nuts.runtime.standalone.xtra.expr;
 
+import net.thevpc.nuts.util.NQuoteType;
 import net.thevpc.nuts.util.NStringUtils;
 
 public class NToken {
@@ -198,7 +199,7 @@ public class NToken {
         return "NutsToken{" +
                 "ttype=" + typeString(ttype) +
                 ", lineno=" + lineno +
-                ", sval=" + (sval == null ? "null" : NStringUtils.formatStringLiteral(sval, NStringUtils.QuoteType.SIMPLE)) +
+                ", sval=" + (sval == null ? "null" : NStringUtils.formatStringLiteral(sval, NQuoteType.SIMPLE)) +
                 ", nval=" + nval +
                 '}';
     }

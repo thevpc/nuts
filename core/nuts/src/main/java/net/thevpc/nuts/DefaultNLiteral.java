@@ -1,6 +1,7 @@
 package net.thevpc.nuts;
 
 import net.thevpc.nuts.elem.NElementType;
+import net.thevpc.nuts.util.NQuoteType;
 import net.thevpc.nuts.util.NStringUtils;
 
 import java.math.BigDecimal;
@@ -537,7 +538,7 @@ public class DefaultNLiteral implements NLiteral {
             case NULL:
                 return "null";
             case STRING:
-                return NStringUtils.formatStringLiteral(asString().get(), NStringUtils.QuoteType.DOUBLE);
+                return NStringUtils.formatStringLiteral(asString().get(), NQuoteType.DOUBLE);
             case BOOLEAN:
                 return String.valueOf(asBoolean().get());
             case BYTE:
@@ -550,7 +551,7 @@ public class DefaultNLiteral implements NLiteral {
             case DOUBLE:
                 return String.valueOf(asNumber().get());
             case INSTANT:
-                return NStringUtils.formatStringLiteral(asInstant().get().toString(), NStringUtils.QuoteType.DOUBLE);
+                return NStringUtils.formatStringLiteral(asInstant().get().toString(), NQuoteType.DOUBLE);
         }
         return asString().get();
     }

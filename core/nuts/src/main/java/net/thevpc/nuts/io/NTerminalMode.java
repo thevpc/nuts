@@ -29,8 +29,8 @@ package net.thevpc.nuts.io;
 import net.thevpc.nuts.util.NEnum;
 import net.thevpc.nuts.NOptional;
 import net.thevpc.nuts.NLiteral;
+import net.thevpc.nuts.util.NEnumUtils;
 import net.thevpc.nuts.util.NNameFormat;
-import net.thevpc.nuts.util.NStringUtils;
 
 /**
  * @author thevpc
@@ -77,7 +77,7 @@ public enum NTerminalMode implements NEnum {
     }
 
     public static NOptional<NTerminalMode> parse(String value) {
-        return NStringUtils.parseEnum(value, NTerminalMode.class, s -> {
+        return NEnumUtils.parseEnum(value, NTerminalMode.class, s -> {
             String normalizedValue = s.getNormalizedValue();
             switch (normalizedValue){
                 case "SYSTEM":

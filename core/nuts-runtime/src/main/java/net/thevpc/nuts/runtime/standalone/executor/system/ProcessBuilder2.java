@@ -36,6 +36,7 @@ import net.thevpc.nuts.runtime.standalone.util.CoreStringUtils;
 import net.thevpc.nuts.text.NTextBuilder;
 import net.thevpc.nuts.text.NTextStyle;
 import net.thevpc.nuts.text.NTexts;
+import net.thevpc.nuts.util.NQuoteType;
 import net.thevpc.nuts.util.NStringUtils;
 
 import java.io.*;
@@ -651,7 +652,7 @@ public class ProcessBuilder2 {
                                     sb.append(" 2> ").append(r.file().getPath());
                                     break;
                                 case APPEND:
-                                    sb.append(" 2>> ").append(NStringUtils.formatStringLiteral(r.file().getPath(), NStringUtils.QuoteType.DOUBLE));
+                                    sb.append(" 2>> ").append(NStringUtils.formatStringLiteral(r.file().getPath(), NQuoteType.DOUBLE));
                                     break;
                                 default:
                                     sb.append(" 2> ").append("{?}");
@@ -673,7 +674,7 @@ public class ProcessBuilder2 {
                         case PIPE:
                             break;
                         case READ:
-                            sb.append(" < ").append(NStringUtils.formatStringLiteral(r.file().getPath(), NStringUtils.QuoteType.DOUBLE));
+                            sb.append(" < ").append(NStringUtils.formatStringLiteral(r.file().getPath(), NQuoteType.DOUBLE));
                             break;
                         default:
                             sb.append(" < ").append("{?}");

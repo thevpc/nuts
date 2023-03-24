@@ -1,6 +1,6 @@
 package net.thevpc.nuts.runtime.standalone.xtra.expr;
 
-import net.thevpc.nuts.util.NExprOpType;
+import net.thevpc.nuts.expr.NExprOpType;
 
 import java.util.Objects;
 

@@ -27,8 +27,8 @@
 package net.thevpc.nuts;
 
 import net.thevpc.nuts.util.NEnum;
+import net.thevpc.nuts.util.NEnumUtils;
 import net.thevpc.nuts.util.NNameFormat;
-import net.thevpc.nuts.util.NStringUtils;
 
 import java.util.Arrays;
 import java.util.HashSet;
@@ -94,7 +94,7 @@ public enum NFetchStrategy implements Iterable<NFetchMode>, NEnum {
     }
 
     public static NOptional<NFetchStrategy> parse(String value) {
-        return NStringUtils.parseEnum(value, NFetchStrategy.class);
+        return NEnumUtils.parseEnum(value, NFetchStrategy.class);
     }
 
 

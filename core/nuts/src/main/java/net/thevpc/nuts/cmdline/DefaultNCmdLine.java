@@ -29,6 +29,7 @@ import net.thevpc.nuts.text.NTextBuilder;
 import net.thevpc.nuts.text.NTextStyle;
 import net.thevpc.nuts.text.NTexts;
 import net.thevpc.nuts.util.NAssert;
+import net.thevpc.nuts.util.NQuoteType;
 import net.thevpc.nuts.util.NStringUtils;
 
 import java.util.*;
@@ -1017,7 +1018,7 @@ public class DefaultNCmdLine implements NCmdLine {
 
     @Override
     public String toString() {
-        return toStringList().stream().map(x -> NStringUtils.formatStringLiteral(x, NStringUtils.QuoteType.DOUBLE, NSupportMode.PREFERRED)).collect(Collectors.joining(" "));
+        return toStringList().stream().map(x -> NStringUtils.formatStringLiteral(x, NQuoteType.DOUBLE, NSupportMode.PREFERRED)).collect(Collectors.joining(" "));
     }
 
     private String createExpandedSimpleOption(char start, boolean negate, char val) {

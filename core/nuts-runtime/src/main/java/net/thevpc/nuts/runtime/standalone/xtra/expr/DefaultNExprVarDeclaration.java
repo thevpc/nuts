@@ -1,8 +1,8 @@
 package net.thevpc.nuts.runtime.standalone.xtra.expr;
 
-import net.thevpc.nuts.util.NExprDeclarations;
-import net.thevpc.nuts.util.NExprVar;
-import net.thevpc.nuts.util.NExprVarDeclaration;
+import net.thevpc.nuts.expr.NExprDeclarations;
+import net.thevpc.nuts.expr.NExprVar;
+import net.thevpc.nuts.expr.NExprVarDeclaration;
 
 public class DefaultNExprVarDeclaration implements NExprVarDeclaration {
     private String name;

@@ -1,6 +1,9 @@
-package net.thevpc.nuts.util;
+package net.thevpc.nuts.expr;
 
 import net.thevpc.nuts.NOptional;
+import net.thevpc.nuts.util.NEnum;
+import net.thevpc.nuts.util.NEnumUtils;
+import net.thevpc.nuts.util.NNameFormat;
 
 public enum NExprOpAssociativity implements NEnum {
     LEFT,
@@ -12,7 +15,7 @@ public enum NExprOpAssociativity implements NEnum {
     }
 
     public static NOptional<NExprOpAssociativity> parse(String value) {
-        return NStringUtils.parseEnum(value, NExprOpAssociativity.class);
+        return NEnumUtils.parseEnum(value, NExprOpAssociativity.class);
     }
 
     @Override

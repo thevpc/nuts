@@ -27,8 +27,8 @@
 package net.thevpc.nuts;
 
 import net.thevpc.nuts.util.NEnum;
+import net.thevpc.nuts.util.NEnumUtils;
 import net.thevpc.nuts.util.NNameFormat;
-import net.thevpc.nuts.util.NStringUtils;
 
 /**
  * Install strategy defines the strategy used by installer
@@ -80,7 +80,7 @@ public enum NInstallStrategy implements NEnum {
     }
 
     public static NOptional<NInstallStrategy> parse(String value) {
-        return NStringUtils.parseEnum(value, NInstallStrategy.class);
+        return NEnumUtils.parseEnum(value, NInstallStrategy.class);
     }
 
 

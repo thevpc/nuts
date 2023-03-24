@@ -24,8 +24,8 @@
 package net.thevpc.nuts;
 
 import net.thevpc.nuts.util.NEnum;
+import net.thevpc.nuts.util.NEnumUtils;
 import net.thevpc.nuts.util.NNameFormat;
-import net.thevpc.nuts.util.NStringUtils;
 
 /**
  * uniform platform
@@ -51,7 +51,7 @@ public enum NPlatformFamily implements NEnum {
     }
 
     public static NOptional<NPlatformFamily> parse(String value) {
-        return NStringUtils.parseEnum(value, NPlatformFamily.class, s->{
+        return NEnumUtils.parseEnum(value, NPlatformFamily.class, s->{
             switch (s.getNormalizedValue()) {
                 case "JAVA":
                 case "JAVAW":

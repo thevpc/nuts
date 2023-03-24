@@ -1,6 +1,9 @@
-package net.thevpc.nuts.util;
+package net.thevpc.nuts.expr;
 
 import net.thevpc.nuts.NOptional;
+import net.thevpc.nuts.util.NEnum;
+import net.thevpc.nuts.util.NEnumUtils;
+import net.thevpc.nuts.util.NNameFormat;
 
 public enum NExprOpType implements NEnum {
     INFIX,
@@ -13,7 +16,7 @@ public enum NExprOpType implements NEnum {
     }
 
     public static NOptional<NExprOpType> parse(String value) {
-        return NStringUtils.parseEnum(value, NExprOpType.class, s -> {
+        return NEnumUtils.parseEnum(value, NExprOpType.class, s -> {
             switch (s.getNormalizedValue()) {
                 case "INFIX":
                     return NOptional.of(INFIX);

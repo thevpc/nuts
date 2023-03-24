@@ -23,15 +23,12 @@
  */
 package net.thevpc.nuts.runtime.standalone.util.reflect;
 
-import net.thevpc.nuts.util.NArrays;
+import net.thevpc.nuts.util.NReflectProperty;
 import net.thevpc.nuts.util.NReflectPropertyDefaultValueStrategy;
 import net.thevpc.nuts.util.NReflectType;
-import net.thevpc.nuts.util.NReflectProperty;
 
 import java.lang.reflect.Array;
-import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
-import java.lang.reflect.TypeVariable;
 import java.util.Arrays;
 import java.util.Objects;
 
@@ -52,39 +49,9 @@ public abstract class AbstractReflectProperty implements NReflectProperty {
         this.cleanInstanceValue = cleanInstance == null ? ReflectUtils.getDefaultValue(propertyType) : read(cleanInstance);
         this.type = type;
         NReflectType nReflectType = type.getRepository().getType(propertyType)
-                .replaceVars(t -> {
-                    NReflectType[] typeParameters = NArrays.copyOf(type.getTypeParameters());
-                    for (int i = 0; i < typeParameters.length; i++) {
-                        if (t.equals(typeParameters[i])) {
-                            return type.getActualTypeArguments()[i];
-                        }
-                    }
-                    return t;
-                });
+                .replaceVars(t -> type.getActualTypeArgument(t).orElse(t));
         this.defaultValueStrategy = defaultValueStrategy;
-        if(propertyType instanceof ParameterizedType){
-            ParameterizedType pt=(ParameterizedType)propertyType;
-            Type[] actualTypeArguments = pt.getActualTypeArguments();
-            actualTypeArguments=Arrays.copyOf(actualTypeArguments,actualTypeArguments.length);
-            for (int i = 0; i < actualTypeArguments.length; i++) {
-                Type y = actualTypeArguments[i];
-                y=replaceTypeVariable(y);
-            }
-        }
-        this.propertyType = propertyType;
-    }
-
-    private Type replaceTypeVariable(Type y) {
-        if(y instanceof Class){
-            return y;
-        }
-        if(y instanceof TypeVariable<?>){
-            TypeVariable tv=(TypeVariable) y;
-            String n = tv.getName();
-
-            return y;
-        }
-        return null;
+        this.propertyType = nReflectType.getJavaType();
     }
 
     @Override

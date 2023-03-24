@@ -2,7 +2,10 @@ package net.thevpc.nuts.runtime.standalone.xtra.expr;
 
 import net.thevpc.nuts.NMsg;
 import net.thevpc.nuts.NOptional;
-import net.thevpc.nuts.util.*;
+import net.thevpc.nuts.expr.NExprDeclarations;
+import net.thevpc.nuts.expr.NExprFunctionNode;
+import net.thevpc.nuts.expr.NExprNode;
+import net.thevpc.nuts.expr.NExprNodeType;
 
 import java.util.Arrays;
 import java.util.Collections;

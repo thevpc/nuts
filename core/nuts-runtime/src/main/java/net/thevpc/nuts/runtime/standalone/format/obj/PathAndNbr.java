@@ -1,4 +1,4 @@
-package net.thevpc.nuts.toolbox.ndb.util;
+package net.thevpc.nuts.runtime.standalone.format.obj;
 
 import net.thevpc.nuts.io.NPath;
 

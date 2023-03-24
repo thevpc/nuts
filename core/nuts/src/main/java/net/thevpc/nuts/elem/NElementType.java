@@ -25,8 +25,8 @@ package net.thevpc.nuts.elem;
 
 import net.thevpc.nuts.util.NEnum;
 import net.thevpc.nuts.NOptional;
+import net.thevpc.nuts.util.NEnumUtils;
 import net.thevpc.nuts.util.NNameFormat;
-import net.thevpc.nuts.util.NStringUtils;
 
 /**
  * Element type. this an extension of json element types.
@@ -116,7 +116,7 @@ public enum NElementType implements NEnum {
     }
 
     public static NOptional<NElementType> parse(String value) {
-        return NStringUtils.parseEnum(value, NElementType.class);
+        return NEnumUtils.parseEnum(value, NElementType.class);
     }
 
     public boolean isNumber() {

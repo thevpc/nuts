@@ -5,7 +5,7 @@ import net.thevpc.nuts.NOptional;
 import java.util.function.Function;
 
 public enum NMemoryUnit implements NEnum {
-    BIT, BYTE, KILO_BYTE, MEGA_BYTE, TERA_BYTE, PETA_BYTE, ZETA_BYTE;
+    BIT, BYTE, KILO_BYTE, MEGA_BYTE, GIGA_BYTE, TERA_BYTE, PETA_BYTE, ZETA_BYTE;
     private String id;
 
     NMemoryUnit() {
@@ -18,9 +18,9 @@ public enum NMemoryUnit implements NEnum {
     }
 
     public static NOptional<NMemoryUnit> parse(String value) {
-        return NStringUtils.parseEnum(value, NMemoryUnit.class, new Function<NStringUtils.EnumValue, NOptional<NMemoryUnit>>() {
+        return NEnumUtils.parseEnum(value, NMemoryUnit.class, new Function<NEnumUtils.EnumValue, NOptional<NMemoryUnit>>() {
             @Override
-            public NOptional<NMemoryUnit> apply(NStringUtils.EnumValue enumValue) {
+            public NOptional<NMemoryUnit> apply(NEnumUtils.EnumValue enumValue) {
                 switch (enumValue.getNormalizedValue()) {
                     case "B":
                     case "O":
@@ -33,6 +33,10 @@ public enum NMemoryUnit implements NEnum {
                     case "MB":
                     case "MO":
                         return NOptional.of(MEGA_BYTE);
+                    case "G":
+                    case "GB":
+                    case "GO":
+                        return NOptional.of(GIGA_BYTE);
                     case "T":
                     case "TB":
                     case "TO":

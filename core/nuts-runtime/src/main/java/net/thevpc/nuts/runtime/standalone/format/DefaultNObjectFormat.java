@@ -31,17 +31,27 @@ import net.thevpc.nuts.elem.NElements;
 import net.thevpc.nuts.format.NObjectFormat;
 import net.thevpc.nuts.format.NTableFormat;
 import net.thevpc.nuts.format.NTreeFormat;
+import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.io.NPrintStream;
 import net.thevpc.nuts.io.NSessionTerminal;
+import net.thevpc.nuts.runtime.standalone.format.obj.RollingFileService;
 import net.thevpc.nuts.runtime.standalone.format.plain.NFormatPlain;
+import net.thevpc.nuts.spi.NPathSPI;
 import net.thevpc.nuts.spi.NSupportLevelContext;
 import net.thevpc.nuts.text.NTextBuilder;
 import net.thevpc.nuts.util.NFunction;
+import net.thevpc.nuts.util.NMemorySize;
+import net.thevpc.nuts.util.NNameFormat;
+import net.thevpc.nuts.util.NStringUtils;
 
 import java.io.File;
 import java.io.Writer;
+import java.net.URL;
 import java.nio.file.Path;
 import java.util.Collections;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 /**
  * @author thevpc
@@ -50,12 +60,74 @@ public class DefaultNObjectFormat extends DefaultFormatBase<NObjectFormat> imple
 
     private Object value;
 
+    private String formatMode;
+    private String formatString;
+    private Map<String, Object> formatParams = new HashMap<>();
     private boolean compact;
     private NContentType outputFormat;
 //    private NutsObjectFormat base;
 
     public DefaultNObjectFormat(NSession session) {
         super(session, "object-format");
+    }
+
+    @Override
+    public String getFormatMode() {
+        return formatMode;
+    }
+
+    @Override
+    public NObjectFormat setFormatMode(String formatMode) {
+        this.formatMode = formatMode;
+        return this;
+    }
+
+    @Override
+    public String getFormatString() {
+        return formatString;
+    }
+
+    @Override
+    public NObjectFormat setFormatString(String formatString) {
+        this.formatString = formatString;
+        return this;
+    }
+
+    @Override
+    public Map<String, Object> getFormatParams() {
+        return formatParams;
+    }
+
+    @Override
+    public NObjectFormat setFormatParams(Map<String, Object> formatParams) {
+        this.formatParams = formatParams;
+        return this;
+    }
+
+    @Override
+    public NObjectFormat setFormatParam(String name, Object value) {
+        if (value == null) {
+            if (this.formatParams != null) {
+                this.formatParams.remove(name);
+            }
+        } else {
+            if (this.formatParams == null) {
+                this.formatParams = new LinkedHashMap<>();
+            }
+            this.formatParams.put(name, value);
+        }
+        return this;
+    }
+
+    @Override
+    public NContentType getOutputFormat() {
+        return outputFormat;
+    }
+
+    @Override
+    public NObjectFormat setOutputFormat(NContentType outputFormat) {
+        this.outputFormat = outputFormat;
+        return this;
     }
 
     @Override
@@ -94,6 +166,39 @@ public class DefaultNObjectFormat extends DefaultFormatBase<NObjectFormat> imple
         checkSession();
         NSession session = getSession();
         Object value = getValue();
+        String formatMode = getFormatMode();
+        String type2 = formatMode == null ? "" : NNameFormat.CLASS_NAME.format(NStringUtils.trim(formatMode));
+        switch (type2) {
+            case "Byte":
+            case "Bytes":
+            case "Memory": {
+                value = NOptional.of(new NMemorySize(((Number) value).longValue(), 0, false));
+                break;
+            }
+            case "RollingPath": {
+                if (value instanceof NPath) {
+                    //
+                } else if (value instanceof File) {
+                    value = NPath.of((File) value, session);
+                } else if (value instanceof URL) {
+                    value = NPath.of((URL) value, session);
+                } else if (value instanceof String) {
+                    value = NPath.of((String) value, session);
+                } else if (value instanceof NPathSPI) {
+                    value = NPath.of((NPathSPI) value, session);
+                } else {
+                    throw new NIllegalArgumentException(session, NMsg.ofC("invalid RollingPath value %s", value));
+                }
+                NLiteral count = NLiteral.of(formatParams != null ? formatParams.get("count") : null);
+                RollingFileService fs = new RollingFileService(
+                        (NPath) value,
+                        count.isInt() ? count.asInt().get() : 3,
+                        session
+                );
+                value = fs.roll();
+                break;
+            }
+        }
         switch (getSession().getOutputFormat()) {
             //structured formats!
             case XML:

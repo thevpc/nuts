@@ -26,8 +26,8 @@
 package net.thevpc.nuts;
 
 import net.thevpc.nuts.util.NEnum;
+import net.thevpc.nuts.util.NEnumUtils;
 import net.thevpc.nuts.util.NNameFormat;
-import net.thevpc.nuts.util.NStringUtils;
 
 /**
  * fetch mode defines if the artifact should be looked for withing the "installed" meta repository, "local" (offline)
@@ -77,7 +77,7 @@ public enum NFetchMode implements NEnum {
     }
 
     public static NOptional<NFetchMode> parse(String value) {
-        return NStringUtils.parseEnum(value, NFetchMode.class);
+        return NEnumUtils.parseEnum(value, NFetchMode.class);
     }
 
 

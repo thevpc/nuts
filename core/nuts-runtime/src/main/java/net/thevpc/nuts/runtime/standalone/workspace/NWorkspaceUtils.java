@@ -312,7 +312,7 @@ public class NWorkspaceUtils {
                             .setId(session.getWorkspace().getApiId())
                             .setCreateScript(true)
                             .setSwitchWorkspace(
-                                    NBootManager.of(session).getBootOptions().getSwitchWorkspace().orElse(false)
+                                    NBootManager.of(session).getBootOptions().getSwitchWorkspace().orNull()
                             )
                             .setCreateDesktopLauncher(includeGraphicalLaunchers ? NSupportMode.PREFERRED : NSupportMode.NEVER)
                             .setCreateMenuLauncher(includeGraphicalLaunchers ? NSupportMode.SUPPORTED : NSupportMode.NEVER)

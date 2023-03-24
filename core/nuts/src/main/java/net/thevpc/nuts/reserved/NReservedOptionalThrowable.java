@@ -31,6 +31,9 @@ public abstract class NReservedOptionalThrowable<T> extends NReservedOptionalImp
                     NReservedLangUtils.stacktrace(rootStack)
             );
         }
+        if(m==null){
+            m=NMsg.ofPlain("missing value");
+        }
         return m;
     }
 

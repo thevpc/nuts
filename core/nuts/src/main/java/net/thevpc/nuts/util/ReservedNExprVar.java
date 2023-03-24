@@ -1,5 +1,8 @@
 package net.thevpc.nuts.util;
 
+import net.thevpc.nuts.expr.NExprDeclarations;
+import net.thevpc.nuts.expr.NExprVar;
+
 public class ReservedNExprVar implements NExprVar {
     private Object value;
 

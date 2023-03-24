@@ -28,8 +28,8 @@ package net.thevpc.nuts.format;
 
 import net.thevpc.nuts.util.NEnum;
 import net.thevpc.nuts.NOptional;
+import net.thevpc.nuts.util.NEnumUtils;
 import net.thevpc.nuts.util.NNameFormat;
-import net.thevpc.nuts.util.NStringUtils;
 
 /**
  * @app.category Format
@@ -61,7 +61,7 @@ public enum NTableSeparator implements NEnum {
     }
 
     public static NOptional<NTableSeparator> parse(String value) {
-        return NStringUtils.parseEnum(value, NTableSeparator.class);
+        return NEnumUtils.parseEnum(value, NTableSeparator.class);
     }
 
     /**

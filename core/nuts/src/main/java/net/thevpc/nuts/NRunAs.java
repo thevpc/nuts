@@ -27,8 +27,8 @@
 package net.thevpc.nuts;
 
 import net.thevpc.nuts.util.NEnum;
+import net.thevpc.nuts.util.NEnumUtils;
 import net.thevpc.nuts.util.NNameFormat;
-import net.thevpc.nuts.util.NStringUtils;
 
 import java.util.Objects;
 
@@ -111,7 +111,7 @@ public class NRunAs {
         }
 
         public static NOptional<Mode> parse(String value) {
-            return NStringUtils.parseEnum(value, Mode.class);
+            return NEnumUtils.parseEnum(value, Mode.class);
         }
 
         @Override

@@ -19,6 +19,7 @@ import net.thevpc.nuts.toolbox.ndb.sql.nmysql.remote.config.RemoteMysqlConfig;
 import net.thevpc.nuts.toolbox.ndb.sql.nmysql.remote.config.RemoteMysqlDatabaseConfig;
 import net.thevpc.nuts.toolbox.ndb.sql.nmysql.util.AtName;
 import net.thevpc.nuts.toolbox.ndb.sql.nmysql.util.MysqlUtils;
+import net.thevpc.nuts.toolbox.ndb.sql.util.SqlConnectionInfo;
 import net.thevpc.nuts.toolbox.ndb.util.NdbUtils;
 import net.thevpc.nuts.toolbox.ndb.sql.util.SqlHelper;
 import net.thevpc.nuts.util.NMaps;
@@ -215,26 +216,32 @@ public class NMysqlMain extends SqlSupport<NMySqlConfig> {
         if (sql.isEmpty()) {
             commandLine.throwMissingArgument(NMsg.ofPlain("sql"));
         }
-        String jdbcUrl = createJdbcURL(
+        SqlConnectionInfo jdbcUrl = createSqlConnectionInfo(
                 (NMySqlConfig)
                         new NMySqlConfig()
                                 .setHost(d.getConfig().getServer())
                                 .setPort(d.getConfig().getPort())
                                 .setDatabaseName(d.getConfig().getDatabaseName())
         );
-        SqlHelper.runAndWaitFor(sql, jdbcUrl, dbDriverPackage, dbDriverClass,
-                d.getConfig().getUser(), d.getConfig().getPassword(), null,
-                forceShowSQL.get(), session);
+        SqlHelper.runAndWaitFor(sql, jdbcUrl, forceShowSQL.get(), session);
     }
 
     @Override
-    public String createJdbcURL(NMySqlConfig d) {
-        return NMsg.ofV("jdbc:mysql://${server}:${port}/${database}",
+    public SqlConnectionInfo createSqlConnectionInfo(NMySqlConfig options) {
+        String url = NMsg.ofV("jdbc:mysql://${server}:${port}/${database}",
                 NMaps.of(
-                        "server", NOptional.of(d.getHost()).ifBlank("localhost").get(),
-                        "port", NOptional.of(d.getPort()).ifBlank(3306).get(),
-                        "database", NOptional.of(d.getDatabaseName()).ifBlank("test").get()
+                        "server", NOptional.of(options.getHost()).ifBlank("localhost").get(),
+                        "port", NOptional.of(options.getPort()).ifBlank(3306).get(),
+                        "database", NOptional.of(options.getDatabaseName()).ifBlank("test").get()
                 )).toString();
+        return new SqlConnectionInfo()
+                .setJdbcDriver(dbDriverClass)
+                .setJdbcUrl(url)
+                .setProperties(null)
+                .setId(dbDriverPackage)
+                .setUser(options.getUser())
+                .setPassword(options.getPassword())
+                ;
     }
 
     private void runBackupOrRestore(NCmdLine commandLine, boolean backup, NMySqlService service) {

@@ -1,8 +1,10 @@
-package net.thevpc.nuts.toolbox.ndb.util;
+package net.thevpc.nuts.runtime.standalone.format.obj;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.io.NPathOption;
+import net.thevpc.nuts.util.NMemorySize;
+import net.thevpc.nuts.util.NMemorySizeFormat;
 
 import java.math.BigInteger;
 import java.text.DecimalFormat;
@@ -27,25 +29,6 @@ public class RollingFileService {
     private String filePatternSimple;
     private int count;
 
-    public static void main(String[] args) {
-        NSession session = Nuts.openWorkspace();
-        RollingFileService r = new RollingFileService(
-                NPath.ofUserDirectory(session).resolve("aaaa").resolve("hoho#.log"),
-                10,
-                session
-        );
-
-        for (int i = 0; i < 800; i++) {
-            try {
-                Thread.sleep(1000);
-            } catch (InterruptedException e) {
-                throw new RuntimeException(e);
-            }
-            NPath t = r.roll();
-            t.getParent().mkdirs();
-            t.writeString("SomeThing " + (i + 1));
-        }
-    }
 
     public RollingFileService(NPath folder, int count, NSession session) {
         this.count = count;

@@ -28,8 +28,8 @@ package net.thevpc.nuts.text;
 
 import net.thevpc.nuts.util.NEnum;
 import net.thevpc.nuts.NOptional;
+import net.thevpc.nuts.util.NEnumUtils;
 import net.thevpc.nuts.util.NNameFormat;
-import net.thevpc.nuts.util.NStringUtils;
 
 import java.util.Locale;
 
@@ -78,7 +78,7 @@ public enum NTextFormatType implements NEnum {
     }
 
     public static NOptional<NTextFormatType> parse(String value) {
-        return NStringUtils.parseEnum(value, NTextFormatType.class);
+        return NEnumUtils.parseEnum(value, NTextFormatType.class);
     }
 
 

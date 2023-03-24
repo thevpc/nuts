@@ -24,8 +24,8 @@
 package net.thevpc.nuts;
 
 import net.thevpc.nuts.util.NEnum;
+import net.thevpc.nuts.util.NEnumUtils;
 import net.thevpc.nuts.util.NNameFormat;
-import net.thevpc.nuts.util.NStringUtils;
 
 /**
  * uniform platform architecture impl-note: list updated from
@@ -68,7 +68,7 @@ public enum NArchFamily implements NEnum {
     }
 
     public static NOptional<NArchFamily> parse(String value) {
-        return NStringUtils.parseEnum(value, NArchFamily.class, s->{
+        return NEnumUtils.parseEnum(value, NArchFamily.class, s->{
             String arch = s.getNormalizedValue();
             switch (arch) {
                 case "X8632":

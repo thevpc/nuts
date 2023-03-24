@@ -40,7 +40,7 @@ public enum NReflectPropertyDefaultValueStrategy implements NEnum {
     }
 
     public static NOptional<NReflectPropertyDefaultValueStrategy> parse(String value) {
-        return NStringUtils.parseEnum(value, NReflectPropertyDefaultValueStrategy.class);
+        return NEnumUtils.parseEnum(value, NReflectPropertyDefaultValueStrategy.class);
     }
 
 

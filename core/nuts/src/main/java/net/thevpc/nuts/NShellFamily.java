@@ -26,6 +26,7 @@
 package net.thevpc.nuts;
 
 import net.thevpc.nuts.util.NEnum;
+import net.thevpc.nuts.util.NEnumUtils;
 import net.thevpc.nuts.util.NNameFormat;
 import net.thevpc.nuts.util.NStringUtils;
 
@@ -104,7 +105,7 @@ public enum NShellFamily implements NEnum {
     }
 
     public static NOptional<NShellFamily> parse(String value) {
-        return NStringUtils.parseEnum(value, NShellFamily.class, s -> {
+        return NEnumUtils.parseEnum(value, NShellFamily.class, s -> {
             String n = null;
             if (s.getValue().contains("/")) {
                 List<String> parts = NStringUtils.split(s.getValue().trim().toUpperCase(), "/",true,true);

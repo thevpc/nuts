@@ -27,8 +27,8 @@
 package net.thevpc.nuts;
 
 import net.thevpc.nuts.util.NEnum;
+import net.thevpc.nuts.util.NEnumUtils;
 import net.thevpc.nuts.util.NNameFormat;
-import net.thevpc.nuts.util.NStringUtils;
 
 /**
  * @app.category Base
@@ -54,7 +54,7 @@ public enum NStoreLocationStrategy implements NEnum {
     }
 
     public static NOptional<NStoreLocationStrategy> parse(String value) {
-        return NStringUtils.parseEnum(value, NStoreLocationStrategy.class, s->{
+        return NEnumUtils.parseEnum(value, NStoreLocationStrategy.class, s->{
             switch (s.getNormalizedValue()) {
                 case "S":
                     return NOptional.of(NStoreLocationStrategy.STANDALONE);

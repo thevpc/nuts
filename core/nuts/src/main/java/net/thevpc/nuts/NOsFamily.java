@@ -26,8 +26,8 @@
 package net.thevpc.nuts;
 
 import net.thevpc.nuts.util.NEnum;
+import net.thevpc.nuts.util.NEnumUtils;
 import net.thevpc.nuts.util.NNameFormat;
-import net.thevpc.nuts.util.NStringUtils;
 
 /**
  * Supported Operating System Families
@@ -70,7 +70,7 @@ public enum NOsFamily implements NEnum {
     }
 
     public static NOptional<NOsFamily> parse(String value) {
-        return NStringUtils.parseEnum(value, NOsFamily.class, s -> {
+        return NEnumUtils.parseEnum(value, NOsFamily.class, s -> {
             String e = s.getNormalizedValue();
             switch (e) {
                 case "W":

@@ -26,8 +26,8 @@
 package net.thevpc.nuts;
 
 import net.thevpc.nuts.util.NEnum;
+import net.thevpc.nuts.util.NEnumUtils;
 import net.thevpc.nuts.util.NNameFormat;
-import net.thevpc.nuts.util.NStringUtils;
 
 /**
  * Supported dependency scope lists
@@ -126,7 +126,7 @@ public enum NDependencyScope implements NEnum {
     }
 
     public static NOptional<NDependencyScope> parse(String value) {
-        return NStringUtils.parseEnum(value, NDependencyScope.class, s -> {
+        return NEnumUtils.parseEnum(value, NDependencyScope.class, s -> {
             switch (s.getNormalizedValue()) {
                 case "COMPILEONLY": //gradle
                 case "COMPILE_ONLY": //gradle

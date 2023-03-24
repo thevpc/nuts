@@ -25,8 +25,8 @@ package net.thevpc.nuts.text;
 
 import net.thevpc.nuts.util.NEnum;
 import net.thevpc.nuts.NOptional;
+import net.thevpc.nuts.util.NEnumUtils;
 import net.thevpc.nuts.util.NNameFormat;
-import net.thevpc.nuts.util.NStringUtils;
 
 /**
  * @app.category Format
@@ -77,7 +77,7 @@ public enum NTextStyleType implements NEnum {
     }
 
     public static NOptional<NTextStyleType> parse(String value) {
-        return NStringUtils.parseEnum(value, NTextStyleType.class, s->{
+        return NEnumUtils.parseEnum(value, NTextStyleType.class, s->{
             switch (s.getNormalizedValue()) {
                 case "F":
                 case "FOREGROUND":

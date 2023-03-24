@@ -27,8 +27,8 @@
 package net.thevpc.nuts;
 
 import net.thevpc.nuts.util.NEnum;
+import net.thevpc.nuts.util.NEnumUtils;
 import net.thevpc.nuts.util.NNameFormat;
-import net.thevpc.nuts.util.NStringUtils;
 
 /**
  * @author thevpc
@@ -74,7 +74,7 @@ public enum NOpenMode implements NEnum {
     }
 
     public static NOptional<NOpenMode> parse(String value) {
-        return NStringUtils.parseEnum(value, NOpenMode.class, s->{
+        return NEnumUtils.parseEnum(value, NOpenMode.class, s->{
             switch (s.getNormalizedValue()) {
                 case "R":
                 case "READ":

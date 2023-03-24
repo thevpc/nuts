@@ -3,8 +3,8 @@ package net.thevpc.nuts.runtime.standalone.xtra.expr;
 import net.thevpc.nuts.NOptional;
 import net.thevpc.nuts.NSession;
 import net.thevpc.nuts.NMsg;
-import net.thevpc.nuts.util.NExprNode;
-import net.thevpc.nuts.util.NExprOpType;
+import net.thevpc.nuts.expr.NExprNode;
+import net.thevpc.nuts.expr.NExprOpType;
 
 import java.io.StringReader;
 import java.util.*;

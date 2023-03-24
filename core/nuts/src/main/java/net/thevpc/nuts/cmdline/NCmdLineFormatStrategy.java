@@ -25,8 +25,8 @@ package net.thevpc.nuts.cmdline;
 
 import net.thevpc.nuts.util.NEnum;
 import net.thevpc.nuts.NOptional;
+import net.thevpc.nuts.util.NEnumUtils;
 import net.thevpc.nuts.util.NNameFormat;
-import net.thevpc.nuts.util.NStringUtils;
 
 /**
  * uniform platform architecture impl-note: list updated from
@@ -57,7 +57,7 @@ public enum NCmdLineFormatStrategy implements NEnum {
 
 
     public static NOptional<NCmdLineFormatStrategy> parse(String value) {
-        return NStringUtils.parseEnum(value, NCmdLineFormatStrategy.class);
+        return NEnumUtils.parseEnum(value, NCmdLineFormatStrategy.class);
     }
 
 

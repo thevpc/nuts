@@ -26,8 +26,8 @@
 package net.thevpc.nuts;
 
 import net.thevpc.nuts.util.NEnum;
+import net.thevpc.nuts.util.NEnumUtils;
 import net.thevpc.nuts.util.NNameFormat;
-import net.thevpc.nuts.util.NStringUtils;
 
 import java.util.EnumSet;
 
@@ -142,7 +142,7 @@ public enum NDependencyScopePattern implements NEnum {
     }
 
     public static NOptional<NDependencyScopePattern> parse(String value) {
-        return NStringUtils.parseEnum(value, NDependencyScopePattern.class, s->{
+        return NEnumUtils.parseEnum(value, NDependencyScopePattern.class, s->{
             switch (s.getNormalizedValue()) {
                 case "COMPILEONLY": //gradle
                 case "COMPILE_ONLY": //gradle

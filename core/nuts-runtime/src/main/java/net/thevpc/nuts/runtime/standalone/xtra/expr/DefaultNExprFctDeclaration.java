@@ -1,8 +1,8 @@
 package net.thevpc.nuts.runtime.standalone.xtra.expr;
 
-import net.thevpc.nuts.util.NExprDeclarations;
-import net.thevpc.nuts.util.NExprFct;
-import net.thevpc.nuts.util.NExprFctDeclaration;
+import net.thevpc.nuts.expr.NExprDeclarations;
+import net.thevpc.nuts.expr.NExprFct;
+import net.thevpc.nuts.expr.NExprFctDeclaration;
 
 import java.util.List;
 

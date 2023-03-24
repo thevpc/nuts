@@ -618,11 +618,11 @@ public class NShell {
                 copyRight = String.valueOf(Year.now().getValue());
             }
             m = NMsg.ofC("%s v%s (c) %s",
-                    NMsg.ofStyled(NStringUtils.coalesceNonNull(serviceName, "app"), NTextStyle.primary1()),
+                    NMsg.ofStyled(NStringUtils.firstNonNull(serviceName, "app"), NTextStyle.primary1()),
                     (appId == null || appId.getVersion().isBlank()) ?
                             getRootContext().getWorkspace().getRuntimeId().getVersion() :
                             appId.getVersion()
-                    , contributor == null ? "thevpc" : NStringUtils.coalesceNonBlank(
+                    , contributor == null ? "thevpc" : NStringUtils.firstNonBlank(
                             contributor.getName(),
                             contributor.getEmail(),
                             contributor.getId()

@@ -1922,7 +1922,7 @@ public class DefaultNWorkspace extends AbstractNWorkspace implements NWorkspaceE
         }
 
         public static NOptional<InstallStrategy0> parse(String value) {
-            return NStringUtils.parseEnum(value, InstallStrategy0.class);
+            return NEnumUtils.parseEnum(value, InstallStrategy0.class);
         }
 
 

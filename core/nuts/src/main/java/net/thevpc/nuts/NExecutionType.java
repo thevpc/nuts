@@ -26,8 +26,8 @@
 package net.thevpc.nuts;
 
 import net.thevpc.nuts.util.NEnum;
+import net.thevpc.nuts.util.NEnumUtils;
 import net.thevpc.nuts.util.NNameFormat;
-import net.thevpc.nuts.util.NStringUtils;
 
 /**
  * Command execution type.
@@ -73,7 +73,7 @@ public enum NExecutionType implements NEnum {
     }
 
     public static NOptional<NExecutionType> parse(String value) {
-        return NStringUtils.parseEnum(value, NExecutionType.class);
+        return NEnumUtils.parseEnum(value, NExecutionType.class);
     }
 
 

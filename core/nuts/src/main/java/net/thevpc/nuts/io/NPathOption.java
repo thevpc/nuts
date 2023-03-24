@@ -27,8 +27,8 @@ package net.thevpc.nuts.io;
 
 import net.thevpc.nuts.util.NEnum;
 import net.thevpc.nuts.NOptional;
+import net.thevpc.nuts.util.NEnumUtils;
 import net.thevpc.nuts.util.NNameFormat;
-import net.thevpc.nuts.util.NStringUtils;
 
 import java.nio.file.LinkOption;
 
@@ -178,7 +178,7 @@ public enum NPathOption implements NEnum {
     }
 
     public static NOptional<NPathOption> parse(String value) {
-        return NStringUtils.parseEnum(value, NPathOption.class);
+        return NEnumUtils.parseEnum(value, NPathOption.class);
     }
 
 

@@ -27,8 +27,8 @@ package net.thevpc.nuts.format;
 
 import net.thevpc.nuts.util.NEnum;
 import net.thevpc.nuts.NOptional;
+import net.thevpc.nuts.util.NEnumUtils;
 import net.thevpc.nuts.util.NNameFormat;
-import net.thevpc.nuts.util.NStringUtils;
 
 /**
  * Equivalent to FileVisitResult
@@ -53,7 +53,7 @@ public enum NTreeVisitResult implements NEnum {
     }
 
     public static NOptional<NTreeVisitResult> parse(String value) {
-        return NStringUtils.parseEnum(value, NTreeVisitResult.class);
+        return NEnumUtils.parseEnum(value, NTreeVisitResult.class);
     }
 
 

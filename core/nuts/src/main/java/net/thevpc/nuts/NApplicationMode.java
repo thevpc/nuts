@@ -27,8 +27,8 @@
 package net.thevpc.nuts;
 
 import net.thevpc.nuts.util.NEnum;
+import net.thevpc.nuts.util.NEnumUtils;
 import net.thevpc.nuts.util.NNameFormat;
-import net.thevpc.nuts.util.NStringUtils;
 
 /**
  * Modes Application can run with
@@ -90,7 +90,7 @@ public enum NApplicationMode implements NEnum {
     }
 
     public static NOptional<NApplicationMode> parse(String value) {
-        return NStringUtils.parseEnum(value, NApplicationMode.class);
+        return NEnumUtils.parseEnum(value, NApplicationMode.class);
     }
 
     /**

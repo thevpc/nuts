@@ -1,6 +1,9 @@
-package net.thevpc.nuts.util;
+package net.thevpc.nuts.expr;
 
 import net.thevpc.nuts.NOptional;
+import net.thevpc.nuts.util.NEnum;
+import net.thevpc.nuts.util.NEnumUtils;
+import net.thevpc.nuts.util.NNameFormat;
 
 public enum NExprNodeType implements NEnum {
     FUNCTION,
@@ -15,7 +18,7 @@ public enum NExprNodeType implements NEnum {
 
 
     public static NOptional<NExprNodeType> parse(String value) {
-        return NStringUtils.parseEnum(value, NExprNodeType.class, s -> {
+        return NEnumUtils.parseEnum(value, NExprNodeType.class, s -> {
             switch (s.getNormalizedValue()) {
                 case "VAR":
                 case "VARIABLE":

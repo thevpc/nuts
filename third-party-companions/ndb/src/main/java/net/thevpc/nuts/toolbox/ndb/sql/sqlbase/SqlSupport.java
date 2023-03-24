@@ -8,8 +8,10 @@ import net.thevpc.nuts.toolbox.ndb.base.cmd.CopyDBCmd;
 import net.thevpc.nuts.toolbox.ndb.sql.sqlbase.cmd.*;
 import net.thevpc.nuts.toolbox.ndb.sql.nmysql.util.AtName;
 import net.thevpc.nuts.toolbox.ndb.sql.util.SqlCallable;
+import net.thevpc.nuts.toolbox.ndb.sql.util.SqlConnectionInfo;
 import net.thevpc.nuts.toolbox.ndb.sql.util.SqlHelper;
 import net.thevpc.nuts.toolbox.ndb.sql.util.SqlRunnable;
+import net.thevpc.nuts.util.NQuoteType;
 import net.thevpc.nuts.util.NStringUtils;
 
 import java.util.Arrays;
@@ -63,11 +65,10 @@ public abstract class SqlSupport<C extends NdbConfig> extends NdbSupportBase<C> 
             run(sysSsh(options, session).addCommand("nuts").addCommand(session.getAppId().toString()).addCommand(dbType).addCommand("run-sql").addCommand("--host=" + options.getHost()).addCommand("--port=" + options.getPort()).addCommand("--dbname=" + options.getDatabaseName()).addCommand("--user=" + options.getUser()).addCommand("--password=" + options.getPassword()));
             return;
         }
-        String jdbcUrl = createJdbcURL(options);
-        SqlHelper.runAndWaitFor(sql, jdbcUrl, dbDriverPackage, dbDriverClass, options.getUser(), options.getPassword(), null, forceShowSQL, session);
+        SqlHelper.runAndWaitFor(sql, createSqlConnectionInfo(options), forceShowSQL, session);
     }
 
-    public abstract String createJdbcURL(C options);
+    public abstract SqlConnectionInfo createSqlConnectionInfo(C options);
 
     public abstract void revalidateOptions(C options);
 
@@ -103,19 +104,19 @@ public abstract class SqlSupport<C extends NdbConfig> extends NdbSupportBase<C> 
         if (o == null || o instanceof Boolean || o instanceof Number) {
             return String.valueOf(o);
         }
-        return NStringUtils.formatStringLiteral(String.valueOf(o), NStringUtils.QuoteType.SIMPLE);
+        return NStringUtils.formatStringLiteral(String.valueOf(o), NQuoteType.SIMPLE);
     }
 
+    public List<Object> callSqlAndWaitGet(String sql, C options,Boolean forceShowSQL, NSession session) {
+        return SqlHelper.callSqlAndWaitGet(sql, createSqlConnectionInfo(options), forceShowSQL,session);
+    }
     public <T> T callInDb(SqlCallable<T> sql, C options, NSession session) {
-        String jdbcUrl = createJdbcURL(options);
-        return SqlHelper.callAndWaitFor(sql, jdbcUrl, dbDriverPackage, dbDriverClass,
-                options.getUser(), options.getPassword(), null, session);
+        SqlConnectionInfo jdbcUrl = createSqlConnectionInfo(options);
+        return SqlHelper.callAndWaitFor(sql, jdbcUrl, session);
     }
 
     public void runInDb(SqlRunnable sql, C options, NSession session) {
-        String jdbcUrl = createJdbcURL(options);
-        SqlHelper.runAndWaitFor(sql, jdbcUrl, dbDriverPackage, dbDriverClass,
-                options.getUser(), options.getPassword(), null, session);
+        SqlHelper.runAndWaitFor(sql, createSqlConnectionInfo(options), session);
     }
 
 }

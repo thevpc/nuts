@@ -188,6 +188,8 @@ public class NMemorySizeFormat {
                 return iec ? "KiB" : "KB";
             case MEGA_BYTE:
                 return iec ? "MiB" : "MB";
+            case GIGA_BYTE:
+                return iec ? "GiB" : "GB";
             case TERA_BYTE:
                 return iec ? "TiB" : "TB";
             case PETA_BYTE:

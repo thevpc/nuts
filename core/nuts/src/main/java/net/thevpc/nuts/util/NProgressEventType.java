@@ -28,6 +28,6 @@ public enum NProgressEventType implements NEnum {
     }
 
     public static NOptional<NProgressEventType> parse(String value) {
-        return NStringUtils.parseEnum(value, NProgressEventType.class);
+        return NEnumUtils.parseEnum(value, NProgressEventType.class);
     }
 }

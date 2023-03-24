@@ -26,8 +26,8 @@
 package net.thevpc.nuts;
 
 import net.thevpc.nuts.util.NEnum;
+import net.thevpc.nuts.util.NEnumUtils;
 import net.thevpc.nuts.util.NNameFormat;
-import net.thevpc.nuts.util.NStringUtils;
 
 /**
  * Executable command type returned by which internal command
@@ -78,7 +78,7 @@ public enum NExecutableType implements NEnum {
     }
 
     public static NOptional<NExecutableType> parse(String value) {
-        return NStringUtils.parseEnum(value, NExecutableType.class);
+        return NEnumUtils.parseEnum(value, NExecutableType.class);
     }
 
 

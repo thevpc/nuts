@@ -23,6 +23,7 @@
  */
 package net.thevpc.nuts.runtime.standalone.util.reflect;
 
+import net.thevpc.nuts.NMsg;
 import net.thevpc.nuts.NOptional;
 import net.thevpc.nuts.NSession;
 import net.thevpc.nuts.util.*;
@@ -114,7 +115,15 @@ public class DefaultNReflectType implements NReflectType {
                     return false;
                 }
             } else {
-                throw new IllegalArgumentException("TODO");
+                Class c2 = ReflectUtils.getRawClass(javaType);
+                if (c2 != null) {
+                    try {
+                        noArgConstr = ((Class) c2).getConstructor();
+                        noArgConstr.setAccessible(true);
+                    } catch (Exception ex) {
+                        return false;
+                    }
+                }
             }
         }
         return true;
@@ -131,10 +140,18 @@ public class DefaultNReflectType implements NReflectType {
                     return false;
                 }
             } else {
-                throw new IllegalArgumentException("TODO");
+                Class c2 = ReflectUtils.getRawClass(javaType);
+                if (c2 != null) {
+                    try {
+                        sessionConstr = ((Class) c2).getConstructor(NSession.class);
+                        sessionConstr.setAccessible(true);
+                    } catch (Exception ex) {
+                        return false;
+                    }
+                }
             }
         }
-        return true;
+        return false;
     }
 
     @Override
@@ -218,17 +235,7 @@ public class DefaultNReflectType implements NReflectType {
         }
         if (javaType instanceof ParameterizedType) {
             Type rt = ((ParameterizedType) javaType).getRawType();
-            NReflectType pp = repo.getType(rt);
-            NReflectType ss = pp.getSuperType();
-            return pp.replaceVars(
-                    x -> {
-                        NReflectType r = getActualTypeArgument(x);
-                        if (r != null) {
-                            return r;
-                        }
-                        return x;
-                    }
-            );
+            return repo.getType(rt).replaceVars(x -> getActualTypeArgument(x).orElse(x));
         }
         return null;
     }
@@ -502,17 +509,21 @@ public class DefaultNReflectType implements NReflectType {
     }
 
     @Override
-    public NReflectType getActualTypeArgument(NReflectType type) {
+    public NOptional<NReflectType> getActualTypeArgument(NReflectType type) {
         NReflectType[] typeParameters = getTypeParameters();
+        NReflectType[] r = getActualTypeArguments();
+        if(r.length==0){
+            return NOptional.ofNamedEmpty(NMsg.ofC("actual type argument %s", type).toString());
+        }
         for (int i = 0; i < typeParameters.length; i++) {
             NReflectType typeParameter = typeParameters[i];
             if (typeParameter.equals(type)) {
-                NReflectType[] r = getActualTypeArguments();
-                return r[i];
+                return NOptional.ofNamed(r[i], NMsg.ofC("actual type argument %s", type).toString());
             }
         }
-        return null;
+        return NOptional.ofNamedEmpty(NMsg.ofC("actual type argument %s", type).toString());
     }
+
     @Override
     public NReflectType[] getActualTypeArguments() {
         if (isParametrizedType()) {
@@ -697,23 +708,27 @@ public class DefaultNReflectType implements NReflectType {
         if (javaType instanceof ParameterizedType) {
             NReflectType[] actualTypeArguments = NArrays.copyOf(getActualTypeArguments());
             NReflectType[] typeParameters = NArrays.copyOf(getTypeParameters());
-            if (actualTypeArguments.length != typeParameters.length) {
-                actualTypeArguments = NArrays.copyOf(getActualTypeArguments());
-                typeParameters = NArrays.copyOf(getTypeParameters());
-            }
             boolean someUpdates = false;
             for (int i = 0; i < actualTypeArguments.length; i++) {
-                NReflectType r = typeParameters[i].replaceVars(mapper);
-                if (r != typeParameters[i] && r != null) {
-                    typeParameters[i] = r;
-                    someUpdates = true;
+                NReflectType r = typeParameters[i];
+                NReflectType a = actualTypeArguments[i];
+                if(a.isTypeVariable()){
+                    NReflectType aa=a.replaceVars(mapper);
+                    if (aa != a && aa != null) {
+                        actualTypeArguments[i] = aa;
+                        someUpdates = true;
+                    }
                 }
             }
             if (someUpdates) {
                 DefaultNReflectType ownerType = (DefaultNReflectType) getOwnerType();
-                return repo.getParametrizedType(javaType,
+                Type c2 = ReflectUtils.getRawClass(javaType);
+                if (c2 == null) {
+                    c2=javaType;
+                }
+                return repo.getParametrizedType(c2,
                         ownerType == null ? null : ownerType.javaType,
-                        Arrays.stream(typeParameters)
+                        Arrays.stream(actualTypeArguments)
                                 .map(x -> ((DefaultNReflectType) x).javaType)
                                 .toArray(Type[]::new)
                 );

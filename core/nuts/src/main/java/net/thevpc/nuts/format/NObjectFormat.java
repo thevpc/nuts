@@ -26,10 +26,13 @@
  */
 package net.thevpc.nuts.format;
 
+import net.thevpc.nuts.NContentType;
 import net.thevpc.nuts.NContentTypeFormat;
 import net.thevpc.nuts.NExtensions;
 import net.thevpc.nuts.NSession;
 import net.thevpc.nuts.cmdline.NCmdLineConfigurable;
+
+import java.util.Map;
 
 /**
  * Object format is responsible of formatting to terminal
@@ -44,6 +47,24 @@ public interface NObjectFormat extends NContentTypeFormat {
     static NObjectFormat of(NSession session) {
        return NExtensions.of(session).createSupported(NObjectFormat.class);
     }
+
+    String getFormatMode();
+
+    NObjectFormat setFormatMode(String formatMode);
+
+    String getFormatString();
+
+    NObjectFormat setFormatString(String formatString);
+
+    Map<String, Object> getFormatParams();
+
+    NObjectFormat setFormatParams(Map<String, Object> formatParams);
+
+    NObjectFormat setFormatParam(String name, Object value);
+
+    NContentType getOutputFormat();
+
+    NObjectFormat setOutputFormat(NContentType outputFormat);
 
     /**
      * return value to format

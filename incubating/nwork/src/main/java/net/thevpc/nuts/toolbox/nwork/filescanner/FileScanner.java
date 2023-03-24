@@ -1,7 +1,7 @@
 package net.thevpc.nuts.toolbox.nwork.filescanner;
 
 import net.thevpc.nuts.NSession;
-import net.thevpc.nuts.util.*;
+import net.thevpc.nuts.expr.*;
 import net.thevpc.nuts.toolbox.nwork.filescanner.tags.*;
 
 import java.io.IOException;

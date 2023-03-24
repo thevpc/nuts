@@ -1,4 +1,4 @@
-package net.thevpc.nuts.util;
+package net.thevpc.nuts.expr;
 
 public interface NExprMutableDeclarations extends NExprDeclarations {
     NExprFctDeclaration declareFunction(String name, NExprFct fctImpl);

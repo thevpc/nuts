@@ -33,8 +33,6 @@ import net.thevpc.nuts.reserved.NReservedStringUtils;
 
 import java.text.Normalizer;
 import java.util.*;
-import java.util.function.Function;
-import java.util.logging.Level;
 import java.util.regex.Pattern;
 
 /**
@@ -45,6 +43,8 @@ import java.util.regex.Pattern;
 public class NStringUtils {
     private static final char[] BASE16_CHARS = "0123456789ABCDEF".toCharArray();
 
+    private NStringUtils() {
+    }
 
     /**
      * return normalized string without accents
@@ -59,53 +59,6 @@ public class NStringUtils {
         String nfdNormalizedString = Normalizer.normalize(value, Normalizer.Form.NFD);
         Pattern pattern = Pattern.compile("\\p{InCombiningDiacriticalMarks}+");
         return pattern.matcher(nfdNormalizedString).replaceAll("");
-    }
-
-    /**
-     * return normalized file name by replacing any special character with a space and trimming the result
-     *
-     * @param name fine name to normalize
-     * @return normalized string without accents
-     */
-    public static String normalizeFileName(String name) {
-        char[] chars = NStringUtils.normalizeString(name).toCharArray();
-        for (int i = 0; i < chars.length; i++) {
-            switch (chars[i]) {
-                case '°': {
-                    chars[i] = 'o';
-                    break;
-                }
-                case '"':
-                case '\'':
-                case '`':
-                case '?':
-                case '*':
-                case ':':
-                case '%':
-                case '|':
-                case '<':
-                case '>':
-                case '/':
-                case '\\':
-                case '{':
-                case '}':
-                case '[':
-                case ']':
-                case '(':
-                case ')':
-                case '$':
-                {
-                    chars[i] = ' ';
-                    break;
-                }
-                default: {
-                    if (chars[i] < 32) {
-                        chars[i] = ' ';
-                    }
-                }
-            }
-        }
-        return new String(chars).trim();
     }
 
     /**
@@ -134,11 +87,11 @@ public class NStringUtils {
         return t;
     }
 
-    public static String coalesceNonNull(String... values) {
-        return coalesceNonNull(values == null ? null : Arrays.asList(values));
+    public static String firstNonNull(String... values) {
+        return firstNonNull(values == null ? null : Arrays.asList(values));
     }
 
-    public static String coalesceNonNull(List<String> values) {
+    public static String firstNonNull(List<String> values) {
         if (values != null) {
             for (String value : values) {
                 if (value != null) {
@@ -153,11 +106,11 @@ public class NStringUtils {
         return value == null || value.isEmpty();
     }
 
-    public static String coalesceNonEmpty(String... values) {
-        return coalesceNonEmpty(values == null ? null : Arrays.asList(values));
+    public static String firstNonEmpty(String... values) {
+        return firstNonEmpty(values == null ? null : Arrays.asList(values));
     }
 
-    public static String coalesceNonEmpty(List<String> values) {
+    public static String firstNonEmpty(List<String> values) {
         if (values != null) {
             for (String value : values) {
                 if (!isEmpty(value)) {
@@ -168,11 +121,11 @@ public class NStringUtils {
         return null;
     }
 
-    public static String coalesceNonBlank(String... values) {
-        return coalesceNonBlank(values == null ? null : Arrays.asList(values));
+    public static String firstNonBlank(String... values) {
+        return firstNonBlank(values == null ? null : Arrays.asList(values));
     }
 
-    public static String coalesceNonBlank(List<String> values) {
+    public static String firstNonBlank(List<String> values) {
         if (values != null) {
             for (String value : values) {
                 if (!NBlankable.isBlank(value)) {
@@ -240,18 +193,18 @@ public class NStringUtils {
     }
 
     public static String formatStringLiteral(String text) {
-        return formatStringLiteral(text, QuoteType.DOUBLE);
+        return formatStringLiteral(text, NQuoteType.DOUBLE);
     }
 
-    public static String formatStringLiteral(String text, QuoteType quoteType) {
+    public static String formatStringLiteral(String text, NQuoteType quoteType) {
         return formatStringLiteral(text, quoteType, NSupportMode.ALWAYS);
     }
 
-    public static String formatStringLiteral(String text, QuoteType quoteType, NSupportMode condition) {
+    public static String formatStringLiteral(String text, NQuoteType quoteType, NSupportMode condition) {
         return formatStringLiteral(text, quoteType, condition, "");
     }
 
-    public static String formatStringLiteral(String text, QuoteType quoteType, NSupportMode condition, String escapeChars) {
+    public static String formatStringLiteral(String text, NQuoteType quoteType, NSupportMode condition, String escapeChars) {
         StringBuilder sb = new StringBuilder();
         boolean requireQuotes = condition == NSupportMode.ALWAYS;
         boolean allowQuotes = condition != NSupportMode.NEVER;
@@ -295,7 +248,7 @@ public class NStringUtils {
                     break;
                 }
                 case '\"': {
-                    if (quoteType == QuoteType.DOUBLE) {
+                    if (quoteType == NQuoteType.DOUBLE) {
                         sb.append("\\").append(c);
                         if (!requireQuotes && allowQuotes) {
                             requireQuotes = true;
@@ -306,7 +259,7 @@ public class NStringUtils {
                     break;
                 }
                 case '\'': {
-                    if (quoteType == QuoteType.SIMPLE) {
+                    if (quoteType == NQuoteType.SIMPLE) {
                         sb.append("\\").append(c);
                         if (!requireQuotes && allowQuotes) {
                             requireQuotes = true;
@@ -317,7 +270,7 @@ public class NStringUtils {
                     break;
                 }
                 case '`': {
-                    if (quoteType == QuoteType.ANTI) {
+                    if (quoteType == NQuoteType.ANTI) {
                         sb.append("\\").append(c);
                         if (!requireQuotes && allowQuotes) {
                             requireQuotes = true;
@@ -372,108 +325,6 @@ public class NStringUtils {
         return NReservedStringUtils.parseAndTrimToDistinctList(s);
     }
 
-    public static NOptional<Level> parseLogLevel(String value) {
-        value = value == null ? "" : value.trim();
-        if (value.isEmpty()) {
-            return NOptional.ofNamedEmpty("log level");
-        }
-        switch (value.trim().toLowerCase()) {
-            case "off": {
-                return NOptional.of(Level.OFF);
-            }
-            case "verbose":
-            case "finest": {
-                return NOptional.of(Level.FINEST);
-            }
-            case "finer": {
-                return NOptional.of(Level.FINER);
-            }
-            case "fine": {
-                return NOptional.of(Level.FINE);
-            }
-            case "info": {
-                return NOptional.of(Level.INFO);
-            }
-            case "all": {
-                return NOptional.of(Level.ALL);
-            }
-            case "warning": {
-                return NOptional.of(Level.WARNING);
-            }
-            case "severe": {
-                return NOptional.of(Level.SEVERE);
-            }
-            case "config": {
-                return NOptional.of(Level.CONFIG);
-            }
-        }
-        Integer i = NLiteral.of(value).asInt().orNull();
-        if (i != null) {
-            switch (i) {
-                case Integer.MAX_VALUE:
-                    return NOptional.of(Level.OFF);
-                case 1000:
-                    return NOptional.of(Level.SEVERE);
-                case 900:
-                    return NOptional.of(Level.WARNING);
-                case 800:
-                    return NOptional.of(Level.INFO);
-                case 700:
-                    return NOptional.of(Level.CONFIG);
-                case 500:
-                    return NOptional.of(Level.FINE);
-                case 400:
-                    return NOptional.of(Level.FINER);
-                case 300:
-                    return NOptional.of(Level.FINEST);
-                case Integer.MIN_VALUE:
-                    return NOptional.of(Level.ALL);
-            }
-            return NOptional.of(new CustomLogLevel("LEVEL" + i, i));
-        }
-        String finalValue = value;
-        return NOptional.ofError(s -> NMsg.ofC("invalid level %s", finalValue));
-    }
-
-    public static <T extends Enum> NOptional<T> parseEnum(String value, Class<T> type) {
-        if (NBlankable.isBlank(value)) {
-            return NOptional.ofEmpty(s -> NMsg.ofC("%s is empty", type.getSimpleName()));
-        }
-        String normalizedValue = NNameFormat.CONST_NAME.format(value);
-        try {
-            return NOptional.of((T) Enum.valueOf(type, normalizedValue));
-        } catch (Exception notFound) {
-            return NOptional.ofError(s -> NMsg.ofC(type.getSimpleName() + " invalid value : %s", value));
-        }
-    }
-
-
-    public static <T extends Enum> NOptional<T> parseEnum(String value, Class<T> type, Function<EnumValue, NOptional<T>> mapper) {
-        if (NBlankable.isBlank(value)) {
-            return NOptional.ofEmpty(s -> NMsg.ofC("%s is empty", type.getSimpleName()));
-        }
-        String[] parsedValue = NNameFormat.parse(value);
-        String normalizedValue = NNameFormat.CONST_NAME.format(parsedValue);
-        if (mapper != null) {
-            try {
-                NOptional<T> o = mapper.apply(new EnumValue(
-                        value,
-                        normalizedValue,
-                        parsedValue
-                ));
-                if (o != null) {
-                    return o;
-                }
-            } catch (Exception notFound) {
-                //just ignore
-            }
-        }
-        try {
-            return NOptional.of((T) Enum.valueOf(type, normalizedValue));
-        } catch (Exception notFound) {
-            return NOptional.ofError(s -> NMsg.ofC("%s invalid value : %s", type.getSimpleName(), value), notFound);
-        }
-    }
 
     public static List<String> split(String value, String chars) {
         return split(value, chars, true, false);
@@ -512,67 +363,5 @@ public class NStringUtils {
             }
         }
         return all;
-    }
-
-
-    public static class EnumValue {
-        private String value;
-        private String normalizedValue;
-        private String[] parsedValue;
-
-        public EnumValue(String value, String normalizedValue, String[] parsedValue) {
-            this.value = value;
-            this.normalizedValue = normalizedValue;
-            this.parsedValue = parsedValue;
-        }
-
-        public String getValue() {
-            return value;
-        }
-
-        public String getNormalizedValue() {
-            return normalizedValue;
-        }
-
-        public String[] getParsedValue() {
-            return parsedValue;
-        }
-    }
-
-
-    public enum QuoteType implements NEnum {
-        DOUBLE,
-        SIMPLE,
-        ANTI;
-        /**
-         * lower-cased identifier for the enum entry
-         */
-        private final String id;
-
-        /**
-         * default constructor
-         */
-        QuoteType() {
-            this.id = NNameFormat.ID_NAME.format(name());
-        }
-
-        public static NOptional<QuoteType> parse(String value) {
-            return NStringUtils.parseEnum(value, QuoteType.class);
-        }
-
-        /**
-         * lower cased identifier.
-         *
-         * @return lower cased identifier
-         */
-        public String id() {
-            return id;
-        }
-    }
-
-    private static class CustomLogLevel extends Level {
-        public CustomLogLevel(String name, int value) {
-            super(name, value);
-        }
     }
 }

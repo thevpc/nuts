@@ -1517,7 +1517,7 @@ public class DefaultNSession implements Cloneable, NSession {
                 if (enabled) {
                     String id = a.getKey().asString().get(this);
                     this.setLogFileLevel(
-                            NStringUtils.parseLogLevel(id.substring("--log-file-".length())).ifEmpty(null).get(this));
+                            NLogUtils.parseLogLevel(id.substring("--log-file-".length())).ifEmpty(null).get(this));
                 }
                 break;
             }
@@ -1535,7 +1535,7 @@ public class DefaultNSession implements Cloneable, NSession {
                 cmdLine.skip();
                 if (enabled) {
                     String id = a.getKey().asString().get(this);
-                    this.setLogTermLevel(NStringUtils.parseLogLevel(id.substring("--log-term-".length())).ifEmpty(null).get(this));
+                    this.setLogTermLevel(NLogUtils.parseLogLevel(id.substring("--log-term-".length())).ifEmpty(null).get(this));
                 }
                 break;
             }
@@ -1561,7 +1561,7 @@ public class DefaultNSession implements Cloneable, NSession {
                 cmdLine.skip();
                 if (enabled) {
                     String id = a.getKey().asString().get(this);
-                    Level lvl = NStringUtils.parseLogLevel(id.substring("--log-".length())).ifEmpty(null).get(this);
+                    Level lvl = NLogUtils.parseLogLevel(id.substring("--log-".length())).ifEmpty(null).get(this);
                     this.setLogTermLevel(lvl);
                     this.setLogFileLevel(lvl);
                 }

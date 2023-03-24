@@ -389,7 +389,7 @@ public final class NBootWorkspace {
                 Map<String, String> m = (Map) System.getProperties();
                 int max = m.keySet().stream().mapToInt(String::length).max().getAsInt();
                 for (String k : new TreeSet<String>(m.keySet())) {
-                    bLog.log(Level.CONFIG, NLogVerb.START, NMsg.ofJ("    {0} = {1}", NStringUtils.formatAlign(k, max, NPositionType.FIRST), NStringUtils.formatStringLiteral(m.get(k), NStringUtils.QuoteType.DOUBLE)));
+                    bLog.log(Level.CONFIG, NLogVerb.START, NMsg.ofJ("    {0} = {1}", NStringUtils.formatAlign(k, max, NPositionType.FIRST), NStringUtils.formatStringLiteral(m.get(k), NQuoteType.DOUBLE)));
                 }
             }
             String workspaceName = null;

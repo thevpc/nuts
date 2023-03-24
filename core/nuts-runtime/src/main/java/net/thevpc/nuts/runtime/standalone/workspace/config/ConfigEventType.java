@@ -2,8 +2,8 @@ package net.thevpc.nuts.runtime.standalone.workspace.config;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.util.NEnum;
+import net.thevpc.nuts.util.NEnumUtils;
 import net.thevpc.nuts.util.NNameFormat;
-import net.thevpc.nuts.util.NStringUtils;
 
 public enum ConfigEventType  implements NEnum {
     API, RUNTIME, BOOT, MAIN, SECURITY;
@@ -19,7 +19,7 @@ public enum ConfigEventType  implements NEnum {
     }
 
     public static NOptional<ConfigEventType> parse(String value) {
-        return NStringUtils.parseEnum(value, ConfigEventType.class);
+        return NEnumUtils.parseEnum(value, ConfigEventType.class);
     }
 
 }

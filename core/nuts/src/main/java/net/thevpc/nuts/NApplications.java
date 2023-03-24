@@ -186,7 +186,7 @@ public final class NApplications {
         if (session == null) {
             session = Nuts.openInheritedWorkspace(nutsArgs, args);
         }
-        session.prepareApplication(nutsArgs, applicationInstance.getClass(), null, now);
+        session.prepareApplication(args, applicationInstance.getClass(), null, now);
         runApplication(applicationInstance, session);
     }
 

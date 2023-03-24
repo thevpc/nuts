@@ -27,8 +27,8 @@
 package net.thevpc.nuts;
 
 import net.thevpc.nuts.util.NEnum;
+import net.thevpc.nuts.util.NEnumUtils;
 import net.thevpc.nuts.util.NNameFormat;
-import net.thevpc.nuts.util.NStringUtils;
 
 public enum NIsolationLevel implements NEnum {
     SYSTEM,
@@ -42,7 +42,7 @@ public enum NIsolationLevel implements NEnum {
     }
 
     public static NOptional<NIsolationLevel> parse(String value) {
-        return NStringUtils.parseEnum(value, NIsolationLevel.class);
+        return NEnumUtils.parseEnum(value, NIsolationLevel.class);
     }
 
     @Override

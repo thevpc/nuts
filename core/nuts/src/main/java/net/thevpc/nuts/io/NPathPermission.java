@@ -25,8 +25,8 @@ package net.thevpc.nuts.io;
 
 import net.thevpc.nuts.util.NEnum;
 import net.thevpc.nuts.NOptional;
+import net.thevpc.nuts.util.NEnumUtils;
 import net.thevpc.nuts.util.NNameFormat;
-import net.thevpc.nuts.util.NStringUtils;
 
 /**
  * uniform permissions
@@ -91,7 +91,7 @@ public enum NPathPermission implements NEnum {
     }
 
     public static NOptional<NPathPermission> parse(String value) {
-        return NStringUtils.parseEnum(value, NPathPermission.class);
+        return NEnumUtils.parseEnum(value, NPathPermission.class);
     }
 
 

@@ -80,9 +80,10 @@ public class NMemorySize implements Serializable, NFormattable {
         return values[NMemoryUnit.BYTE.ordinal()]
                 + values[NMemoryUnit.KILO_BYTE.ordinal()] * KB
                 + values[NMemoryUnit.MEGA_BYTE.ordinal()] * KB * KB
-                + values[NMemoryUnit.TERA_BYTE.ordinal()] * KB * KB * KB
-                + values[NMemoryUnit.PETA_BYTE.ordinal()] * KB * KB * KB * KB
-                + values[NMemoryUnit.ZETA_BYTE.ordinal()] * KB * KB * KB * KB * KB;
+                + values[NMemoryUnit.GIGA_BYTE.ordinal()] * KB * KB * KB
+                + values[NMemoryUnit.TERA_BYTE.ordinal()] * KB * KB * KB * KB
+                + values[NMemoryUnit.PETA_BYTE.ordinal()] * KB * KB * KB * KB * KB
+                + values[NMemoryUnit.ZETA_BYTE.ordinal()] * KB * KB * KB * KB * KB * KB;
     }
 
     public NMemorySize(long memBytes, int memBits, boolean iec) {
@@ -93,11 +94,13 @@ public class NMemorySize implements Serializable, NFormattable {
         this.bytes = memBytes;
         this.bits = memBits;
 
-        values[NMemoryUnit.ZETA_BYTE.ordinal()] = memBytes / (KB * KB * KB * KB * KB);
+        values[NMemoryUnit.ZETA_BYTE.ordinal()] = memBytes / (KB * KB * KB * KB * KB * KB);
+        memBytes = memBytes % (KB * KB * KB * KB * KB * KB);
+        values[NMemoryUnit.PETA_BYTE.ordinal()] = memBytes / (KB * KB * KB * KB * KB);
         memBytes = memBytes % (KB * KB * KB * KB * KB);
-        values[NMemoryUnit.PETA_BYTE.ordinal()] = memBytes / (KB * KB * KB * KB);
+        values[NMemoryUnit.TERA_BYTE.ordinal()] = memBytes / (KB * KB * KB * KB);
         memBytes = memBytes % (KB * KB * KB * KB);
-        values[NMemoryUnit.TERA_BYTE.ordinal()] = memBytes / (KB * KB * KB);
+        values[NMemoryUnit.GIGA_BYTE.ordinal()] = memBytes / (KB * KB * KB);
         memBytes = memBytes % (KB * KB * KB);
         values[NMemoryUnit.MEGA_BYTE.ordinal()] = memBytes / (KB * KB);
         memBytes = memBytes % (KB * KB);
@@ -156,19 +159,27 @@ public class NMemorySize implements Serializable, NFormattable {
                     return;
                 }
             }
+            if (smallestUnitOrdinal <= NMemoryUnit.GIGA_BYTE.ordinal()) {
+                if (largestUnitOrdinal > NMemoryUnit.GIGA_BYTE.ordinal()) {
+                    this.values[NMemoryUnit.GIGA_BYTE.ordinal()] = (int) ((memBytes / (KB * KB * KB)) % KB);
+                } else {
+                    this.values[NMemoryUnit.GIGA_BYTE.ordinal()] = memBytes / (KB * KB * KB);
+                    return;
+                }
+            }
             if (smallestUnitOrdinal <= NMemoryUnit.TERA_BYTE.ordinal()) {
                 if (largestUnitOrdinal > NMemoryUnit.TERA_BYTE.ordinal()) {
-                    this.values[NMemoryUnit.TERA_BYTE.ordinal()] = (int) ((memBytes / (KB * KB * KB)) % KB);
+                    this.values[NMemoryUnit.TERA_BYTE.ordinal()] = (int) ((memBytes / (KB * KB * KB * KB)) % KB);
                 } else {
-                    this.values[NMemoryUnit.TERA_BYTE.ordinal()] = memBytes / (KB * KB * KB);
+                    this.values[NMemoryUnit.TERA_BYTE.ordinal()] = memBytes / (KB * KB * KB * KB);
                     return;
                 }
             }
             if (smallestUnitOrdinal <= NMemoryUnit.PETA_BYTE.ordinal()) {
                 if (largestUnitOrdinal > NMemoryUnit.PETA_BYTE.ordinal()) {
-                    this.values[NMemoryUnit.PETA_BYTE.ordinal()] = (int) ((memBytes / (KB * KB * KB * KB)) % KB);
+                    this.values[NMemoryUnit.PETA_BYTE.ordinal()] = (int) ((memBytes / (KB * KB * KB * KB * KB)) % KB);
                 } else {
-                    this.values[NMemoryUnit.PETA_BYTE.ordinal()] = memBytes / (KB * KB * KB * KB);
+                    this.values[NMemoryUnit.PETA_BYTE.ordinal()] = memBytes / (KB * KB * KB * KB * KB);
                     return;
                 }
             }
@@ -176,16 +187,18 @@ public class NMemorySize implements Serializable, NFormattable {
 //                if (largestUnitOrdinal > NutsMemoryUnit.ZETA_BYTE.ordinal()) {
 //                    this.values[NutsMemoryUnit.ZETA_BYTE.ordinal()] = (int) ((memBytes / (KB*KB*KB*KB*KB)) % KB);
 //                } else {
-                this.values[NMemoryUnit.ZETA_BYTE.ordinal()] = memBytes / (KB * KB * KB * KB * KB);
+                this.values[NMemoryUnit.ZETA_BYTE.ordinal()] = memBytes / (KB * KB * KB * KB * KB * KB);
 //                    return;
 //                }
             }
         } else {
-            values[NMemoryUnit.ZETA_BYTE.ordinal()] = memBytes / (KB * KB * KB * KB * KB);
+            values[NMemoryUnit.ZETA_BYTE.ordinal()] = memBytes / (KB * KB * KB * KB * KB * KB);
+            memBytes = memBytes % (KB * KB * KB * KB * KB * KB);
+            values[NMemoryUnit.PETA_BYTE.ordinal()] = memBytes / (KB * KB * KB * KB * KB);
             memBytes = memBytes % (KB * KB * KB * KB * KB);
-            values[NMemoryUnit.PETA_BYTE.ordinal()] = memBytes / (KB * KB * KB * KB);
+            values[NMemoryUnit.TERA_BYTE.ordinal()] = memBytes / (KB * KB * KB * KB);
             memBytes = memBytes % (KB * KB * KB * KB);
-            values[NMemoryUnit.TERA_BYTE.ordinal()] = memBytes / (KB * KB * KB);
+            values[NMemoryUnit.GIGA_BYTE.ordinal()] = memBytes / (KB * KB * KB);
             memBytes = memBytes % (KB * KB * KB);
             values[NMemoryUnit.MEGA_BYTE.ordinal()] = memBytes / (KB * KB);
             memBytes = memBytes % (KB * KB);
@@ -227,12 +240,25 @@ public class NMemorySize implements Serializable, NFormattable {
                 set(NMemoryUnit.ZETA_BYTE, 0);
                 break;
             }
-            case MEGA_BYTE: {
-                add(NMemoryUnit.MEGA_BYTE,
+            case GIGA_BYTE: {
+                add(NMemoryUnit.TERA_BYTE,
                         KB * get(NMemoryUnit.TERA_BYTE)
                                 + KB * KB * get(NMemoryUnit.PETA_BYTE)
                                 + KB * KB * KB * get(NMemoryUnit.ZETA_BYTE)
                 );
+                set(NMemoryUnit.TERA_BYTE, 0);
+                set(NMemoryUnit.PETA_BYTE, 0);
+                set(NMemoryUnit.ZETA_BYTE, 0);
+                break;
+            }
+            case MEGA_BYTE: {
+                add(NMemoryUnit.MEGA_BYTE,
+                        KB * get(NMemoryUnit.GIGA_BYTE)
+                                + KB * KB * get(NMemoryUnit.TERA_BYTE)
+                                + KB * KB * KB * get(NMemoryUnit.PETA_BYTE)
+                                + KB * KB * KB * KB * get(NMemoryUnit.ZETA_BYTE)
+                );
+                set(NMemoryUnit.GIGA_BYTE, 0);
                 set(NMemoryUnit.TERA_BYTE, 0);
                 set(NMemoryUnit.ZETA_BYTE, 0);
                 set(NMemoryUnit.PETA_BYTE, 0);
@@ -241,11 +267,13 @@ public class NMemorySize implements Serializable, NFormattable {
             case KILO_BYTE: {
                 add(NMemoryUnit.KILO_BYTE,
                         KB * get(NMemoryUnit.MEGA_BYTE)
-                                + KB * KB * get(NMemoryUnit.TERA_BYTE)
-                                + KB * KB * KB * get(NMemoryUnit.PETA_BYTE)
-                                + KB * KB * KB * KB * get(NMemoryUnit.ZETA_BYTE)
+                                + KB * KB * get(NMemoryUnit.GIGA_BYTE)
+                                + KB * KB * KB * get(NMemoryUnit.TERA_BYTE)
+                                + KB * KB * KB * KB * get(NMemoryUnit.PETA_BYTE)
+                                + KB * KB * KB * KB * KB * get(NMemoryUnit.ZETA_BYTE)
                 );
                 set(NMemoryUnit.MEGA_BYTE, 0);
+                set(NMemoryUnit.GIGA_BYTE, 0);
                 set(NMemoryUnit.TERA_BYTE, 0);
                 set(NMemoryUnit.ZETA_BYTE, 0);
                 set(NMemoryUnit.PETA_BYTE, 0);
@@ -255,12 +283,14 @@ public class NMemorySize implements Serializable, NFormattable {
                 add(NMemoryUnit.BYTE,
                         KB * get(NMemoryUnit.KILO_BYTE)
                                 + KB * KB * get(NMemoryUnit.MEGA_BYTE)
-                                + KB * KB * KB * get(NMemoryUnit.TERA_BYTE)
-                                + KB * KB * KB * KB * get(NMemoryUnit.PETA_BYTE)
-                                + KB * KB * KB * KB * KB * get(NMemoryUnit.ZETA_BYTE)
+                                + KB * KB * KB * get(NMemoryUnit.GIGA_BYTE)
+                                + KB * KB * KB * KB * get(NMemoryUnit.TERA_BYTE)
+                                + KB * KB * KB * KB * KB * get(NMemoryUnit.PETA_BYTE)
+                                + KB * KB * KB * KB * KB * KB * get(NMemoryUnit.ZETA_BYTE)
                 );
                 set(NMemoryUnit.KILO_BYTE, 0);
                 set(NMemoryUnit.MEGA_BYTE, 0);
+                set(NMemoryUnit.GIGA_BYTE, 0);
                 set(NMemoryUnit.TERA_BYTE, 0);
                 set(NMemoryUnit.ZETA_BYTE, 0);
                 set(NMemoryUnit.PETA_BYTE, 0);
@@ -271,13 +301,15 @@ public class NMemorySize implements Serializable, NFormattable {
                         8L * get(NMemoryUnit.BYTE)
                                 + 8L * KB * get(NMemoryUnit.KILO_BYTE)
                                 + 8L * KB * KB * get(NMemoryUnit.MEGA_BYTE)
-                                + 8L * KB * KB * KB * get(NMemoryUnit.TERA_BYTE)
-                                + 8L * KB * KB * KB * KB * get(NMemoryUnit.PETA_BYTE)
-                                + 8L * KB * KB * KB * KB * KB * get(NMemoryUnit.ZETA_BYTE)
+                                + 8L * KB * KB * KB * get(NMemoryUnit.GIGA_BYTE)
+                                + 8L * KB * KB * KB * KB * get(NMemoryUnit.TERA_BYTE)
+                                + 8L * KB * KB * KB * KB * KB * get(NMemoryUnit.PETA_BYTE)
+                                + 8L * KB * KB * KB * KB * KB * KB * get(NMemoryUnit.ZETA_BYTE)
                 );
                 set(NMemoryUnit.BYTE, 0);
                 set(NMemoryUnit.KILO_BYTE, 0);
                 set(NMemoryUnit.MEGA_BYTE, 0);
+                set(NMemoryUnit.GIGA_BYTE, 0);
                 set(NMemoryUnit.TERA_BYTE, 0);
                 set(NMemoryUnit.ZETA_BYTE, 0);
                 set(NMemoryUnit.PETA_BYTE, 0);
@@ -666,7 +698,7 @@ public class NMemorySize implements Serializable, NFormattable {
 
     private boolean normalizeNegativeUnit(long[] values, NMemoryUnit curr, NMemoryUnit next, long multiplier) {
         if (values[curr.ordinal()] < 0) {
-            if (values[curr.ordinal()] > 0) {
+            if (values[next.ordinal()] > 0) {
                 long requiredMicros = (-values[next.ordinal()]) / multiplier;
                 if (requiredMicros * multiplier < -values[next.ordinal()]) {
                     requiredMicros++;
@@ -735,55 +767,24 @@ public class NMemorySize implements Serializable, NFormattable {
 
     public NMemorySize normalize() {
         long[] values = toUnitsArray();
-        if (normalizeNegativeUnit(values, NMemoryUnit.BIT, NMemoryUnit.BYTE, 8L)) {
-            if (normalizeNegativeUnit(values, NMemoryUnit.BIT, NMemoryUnit.KILO_BYTE, 8L * KB)) {
-                if (normalizeNegativeUnit(values, NMemoryUnit.BIT, NMemoryUnit.MEGA_BYTE, 8L * KB * KB)) {
-                    if (normalizeNegativeUnit(values, NMemoryUnit.BIT, NMemoryUnit.TERA_BYTE, 8L * KB * KB * KB)) {
-                        if (normalizeNegativeUnit(values, NMemoryUnit.BIT, NMemoryUnit.PETA_BYTE, 8L * KB * KB * KB * KB)) {
-                            if (normalizeNegativeUnit(values, NMemoryUnit.BIT, NMemoryUnit.ZETA_BYTE, 8L * KB * KB * KB * KB * KB)) {
-                            }
-                        }
-                    }
+        NMemoryUnit[] mUnits = NMemoryUnit.values();
+        for (int i = 0; i < mUnits.length-1; i++) {
+            NMemoryUnit value = mUnits[i];
+            long mul=i==0?8:KB;
+            for (int j = i; j <mUnits.length; j++) {
+                if (!normalizeNegativeUnit(values, value, mUnits[j], mul)) {
+                    break;
                 }
+                mul*=KB;
             }
         }
-        if (normalizeNegativeUnit(values, NMemoryUnit.BYTE, NMemoryUnit.KILO_BYTE, KB)) {
-            if (normalizeNegativeUnit(values, NMemoryUnit.BYTE, NMemoryUnit.MEGA_BYTE, KB * KB)) {
-                if (normalizeNegativeUnit(values, NMemoryUnit.BYTE, NMemoryUnit.TERA_BYTE, KB * KB * KB)) {
-                    if (normalizeNegativeUnit(values, NMemoryUnit.BYTE, NMemoryUnit.PETA_BYTE, KB * KB * KB * KB)) {
-                        if (normalizeNegativeUnit(values, NMemoryUnit.BYTE, NMemoryUnit.ZETA_BYTE, KB * KB * KB * KB * KB)) {
-                        }
-                    }
-                }
-            }
-        }
-        if (normalizeNegativeUnit(values, NMemoryUnit.KILO_BYTE, NMemoryUnit.MEGA_BYTE, KB)) {
-            if (normalizeNegativeUnit(values, NMemoryUnit.KILO_BYTE, NMemoryUnit.TERA_BYTE, KB * KB)) {
-                if (normalizeNegativeUnit(values, NMemoryUnit.KILO_BYTE, NMemoryUnit.PETA_BYTE, KB * KB * KB)) {
-                    if (normalizeNegativeUnit(values, NMemoryUnit.KILO_BYTE, NMemoryUnit.ZETA_BYTE, KB * KB * KB * KB)) {
-                    }
-                }
-            }
-        }
-        if (normalizeNegativeUnit(values, NMemoryUnit.MEGA_BYTE, NMemoryUnit.TERA_BYTE, KB)) {
-            if (normalizeNegativeUnit(values, NMemoryUnit.MEGA_BYTE, NMemoryUnit.PETA_BYTE, KB * KB)) {
-                if (normalizeNegativeUnit(values, NMemoryUnit.MEGA_BYTE, NMemoryUnit.ZETA_BYTE, KB * KB * KB)) {
-                }
-            }
-        }
-        if (normalizeNegativeUnit(values, NMemoryUnit.TERA_BYTE, NMemoryUnit.PETA_BYTE, KB)) {
-            if (normalizeNegativeUnit(values, NMemoryUnit.TERA_BYTE, NMemoryUnit.ZETA_BYTE, KB * KB)) {
-            }
-        }
-        if (normalizeNegativeUnit(values, NMemoryUnit.PETA_BYTE, NMemoryUnit.ZETA_BYTE, KB)) {
-        }
-        NMemoryUnit[] memUnits = NMemoryUnit.values();
+        NMemoryUnit[] memUnits = mUnits;
         for (int i = 0; i < memUnits.length - 1; i++) {
             long n = values[i];
             if (n < 0) {
                 long mul = 1;
                 for (int j = i + 1; j < memUnits.length; j++) {
-                    mul *= (j == 1 ? 9 : KB);
+                    mul *= (j == 1 ? 8 : KB);
                     long p = values[j];
                     if (p > 0) {
                         long u = (-n) / mul;
@@ -811,7 +812,7 @@ public class NMemorySize implements Serializable, NFormattable {
         }
         NMemorySize d = new NMemorySize(values, smallestUnit, largestUnit, iec);
         if (this.bytes != d.bytes || this.bits != d.bits) {
-            throw new IllegalArgumentException("unexpected");
+            throw new IllegalArgumentException("unexpected " + d + "<>" + this);
         }
         return d;
     }
