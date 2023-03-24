@@ -149,7 +149,7 @@ public class NChronometer implements Serializable, NFormattable {
     public NChronometer start() {
         endClock = null;
         startClock = NClock.now();
-        lastNanos = startClock.getNanos();
+        lastNanos = startClock.getTimeNanos();
         accumulatedNanos = 0;
         running = true;
         return this;
@@ -200,7 +200,7 @@ public class NChronometer implements Serializable, NFormattable {
     public NChronometer stop() {
         if (running) {
             endClock = NClock.now();
-            accumulatedNanos += endClock.getNanos() - lastNanos;
+            accumulatedNanos += endClock.getTimeNanos() - lastNanos;
             lastNanos = -1;
             running = false;
         }

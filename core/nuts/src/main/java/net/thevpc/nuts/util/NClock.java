@@ -36,7 +36,7 @@ public class NClock {
         return timeMillis;
     }
 
-    public long getNanos() {
+    public long getTimeNanos() {
         return nanos;
     }
 
