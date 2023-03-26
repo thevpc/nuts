@@ -207,72 +207,81 @@ public class NMsg {
 
     @Override
     public String toString() {
-        switch (format) {
-            case CFORMAT: {
-                StringBuilder sb = new StringBuilder();
-                new Formatter(sb).format((String) message, params);
-                return sb.toString();
-            }
-            case JFORMAT: {
-                //must process special case of {}
-                String sMsg = (String) message;
-                if (sMsg.contains("{}")) {
+        try {
+            switch (format) {
+                case CFORMAT: {
                     StringBuilder sb = new StringBuilder();
-                    char[] chars = sMsg.toCharArray();
-                    int currentIndex = 0;
-                    for (int i = 0; i < chars.length; i++) {
-                        char c = chars[i];
-                        if (c == '{') {
-                            StringBuilder sb2 = new StringBuilder();
-                            i++;
-                            while (i < chars.length) {
-                                char c2 = chars[i];
-                                if (c2 == '}') {
-                                    break;
-                                } else if (c2 == '\\') {
-                                    sb2.append(c2);
-                                    i++;
-                                    if (i < chars.length) {
-                                        c2 = chars[i];
+                    new Formatter(sb).format((String) message, params);
+                    return sb.toString();
+                }
+                case JFORMAT: {
+                    //must process special case of {}
+                    String sMsg = (String) message;
+                    if (sMsg.contains("{}")) {
+                        StringBuilder sb = new StringBuilder();
+                        char[] chars = sMsg.toCharArray();
+                        int currentIndex = 0;
+                        for (int i = 0; i < chars.length; i++) {
+                            char c = chars[i];
+                            if (c == '{') {
+                                StringBuilder sb2 = new StringBuilder();
+                                i++;
+                                while (i < chars.length) {
+                                    char c2 = chars[i];
+                                    if (c2 == '}') {
+                                        break;
+                                    } else if (c2 == '\\') {
+                                        sb2.append(c2);
+                                        i++;
+                                        if (i < chars.length) {
+                                            c2 = chars[i];
+                                            sb2.append(c2);
+                                        }
+                                    } else {
                                         sb2.append(c2);
                                     }
-                                } else {
-                                    sb2.append(c2);
                                 }
-                            }
-                            String s2 = sb2.toString();
-                            if (s2.isEmpty()) {
-                                s2 = String.valueOf(currentIndex);
-                            } else if (s2.trim().startsWith(":")) {
-                                s2 = String.valueOf(currentIndex) + s2;
-                            }
-                            sb.append("{").append(s2).append("}");
-                            currentIndex++;
-                        } else if (c == '\\') {
-                            sb.append(c);
-                            i++;
-                            if (i < chars.length) {
+                                String s2 = sb2.toString();
+                                if (s2.isEmpty()) {
+                                    s2 = String.valueOf(currentIndex);
+                                } else if (s2.trim().startsWith(":")) {
+                                    s2 = String.valueOf(currentIndex) + s2;
+                                }
+                                sb.append("{").append(s2).append("}");
+                                currentIndex++;
+                            } else if (c == '\\') {
+                                sb.append(c);
+                                i++;
+                                if (i < chars.length) {
+                                    sb.append(c);
+                                }
+                            } else {
                                 sb.append(c);
                             }
-                        } else {
-                            sb.append(c);
                         }
+                        sMsg = sb.toString();
                     }
-                    sMsg = sb.toString();
+                    return MessageFormat.format(sMsg, params);
                 }
-                return MessageFormat.format(sMsg, params);
+                case VFORMAT: {
+                    return formatAsV();
+                }
+                case NTF:
+                case STYLED:
+                case CODE:
+                case PLAIN: {
+                    return String.valueOf(message); //ignore any style
+                }
             }
-            case VFORMAT: {
-                return formatAsV();
+            return "NMsg{" + "message=" + message + ", style=" + format + ", params=" + Arrays.toString(params) + '}';
+
+        } catch (Exception e) {
+            List<Object> a = new ArrayList<>();
+            if (params != null) {
+                a.add(Arrays.asList(params));
             }
-            case NTF:
-            case STYLED:
-            case CODE:
-            case PLAIN: {
-                return String.valueOf(message); //ignore any style
-            }
+            return NMsg.ofC("[ERROR] Invalid %s message %s with params %s : %s", format, message, a, e).toString();
         }
-        return "NMsg{" + "message=" + message + ", style=" + format + ", params=" + Arrays.toString(params) + '}';
     }
 
     private String formatAsV() {
