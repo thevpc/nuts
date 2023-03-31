@@ -1,0 +1,6 @@
+Manifest-Version: 1.0
+Built-By: Nuts Community Team
+Created-By: 1.8
+Build-Jdk: 1.8
+Main-Class: net.thevpc.nuts.runtime.standalone.installer.NutsBundleRunner
+

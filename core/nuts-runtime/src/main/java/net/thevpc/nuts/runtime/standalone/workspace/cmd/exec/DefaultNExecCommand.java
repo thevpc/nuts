@@ -12,6 +12,7 @@ import net.thevpc.nuts.runtime.standalone.workspace.cmd.NExecutableInformationEx
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.NExecutionContextBuilder;
 import net.thevpc.nuts.runtime.standalone.util.CoreStringUtils;
 import net.thevpc.nuts.runtime.standalone.executor.ArtifactExecutorComponent;
+import net.thevpc.nuts.runtime.standalone.workspace.cmd.bundle.DefaultNBundleInternalExecutable;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.deploy.DefaultNDeployInternalExecutable;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.fetch.DefaultNFetchInternalExecutable;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.help.DefaultNHelpInternalExecutable;
@@ -275,6 +276,9 @@ public class DefaultNExecCommand extends AbstractNExecCommand {
                     }
                     case "license": {
                         return new DefaultNLicenseInternalExecutable(args, execSession);
+                    }
+                    case "bundle": {
+                        return new DefaultNBundleInternalExecutable(args, execSession);
                     }
                     case "help": {
                         return new DefaultNHelpInternalExecutable(args, execSession);

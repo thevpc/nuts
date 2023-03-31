@@ -177,10 +177,21 @@ public class DefaultNCompress implements NCompress {
                 if (path.equals("")) {
                     addFileToZip(srcFolder.getName(), c, zip, false);
                 } else {
-                    addFileToZip(concatPath(path, c.getName()), c, zip, false);
+                    addFileToZip(
+                            concatPath(path, srcFolder.getName()),
+                            c, zip, false);
                 }
             }
         }
+    }
+
+    private String stripZipPath(String path) {
+        if (path.length() > 1) {
+            if (path.charAt(0) == '/') {
+                return path.substring(1);
+            }
+        }
+        return path;
     }
 
     private void addFileToZip(String path, Item srcFile, ZipOutputStream zip, boolean flag) throws UncheckedIOException {
@@ -195,7 +206,7 @@ public class DefaultNCompress implements NCompress {
         try {
 
             if (flag) {
-                zip.putNextEntry(new ZipEntry(pathPrefix + srcFile.getName() + "/"));
+                zip.putNextEntry(new ZipEntry(stripZipPath(pathPrefix + srcFile.getName() + "/")));
             } else {
                 if (srcFile.isSourceDirectory()) {
                     addFolderToZip(pathPrefix, srcFile, zip);
@@ -203,7 +214,7 @@ public class DefaultNCompress implements NCompress {
                     byte[] buf = new byte[1024];
                     int len;
                     InputStream in = srcFile.open();
-                    zip.putNextEntry(new ZipEntry(pathPrefix + srcFile.getName()));
+                    zip.putNextEntry(new ZipEntry(stripZipPath(pathPrefix + srcFile.getName())));
                     while ((len = in.read(buf)) > 0) {
                         zip.write(buf, 0, len);
                     }
