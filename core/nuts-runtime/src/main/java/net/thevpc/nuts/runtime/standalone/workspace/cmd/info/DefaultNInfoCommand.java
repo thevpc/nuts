@@ -67,8 +67,12 @@ public class DefaultNInfoCommand extends DefaultFormatBase<NInfoCommand> impleme
             if(v!=null){
                 return v;
             }
-            NRepository repo = NRepositories.of(s.session).getRepository(s.string);
-            if(repo!=null){
+            v = System.getProperty(s.string);
+            if(v!=null){
+                return v;
+            }
+            NRepository repo = NRepositories.of(s.session).findRepository(s.string);
+            if (repo != null) {
                 return buildRepoRepoMap(repo, true, null);
             }
             return null;
