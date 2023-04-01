@@ -89,23 +89,7 @@ public class CoreCollectionUtils {
         return set;
     }
 
-    public static <K, V> Map<K, V> fill(Map<K, V> m, K k1, V v1) {
-        m.put(k1, v1);
-        return m;
-    }
 
-    public static <K, V> Map<K, V> fill(Map<K, V> m, K k1, V v1, K k2, V v2) {
-        m.put(k1, v1);
-        m.put(k2, v2);
-        return m;
-    }
-
-    public static <K, V> Map<K, V> fill(Map<K, V> m, K k1, V v1, K k2, V v2, K k3, V v3) {
-        m.put(k1, v1);
-        m.put(k2, v2);
-        m.put(k3, v3);
-        return m;
-    }
 
     public static <T, V> Map<T, V> unmodifiableMap(Map<T, V> other) {
         return other == null ? Collections.emptyMap() : Collections.unmodifiableMap(nonNullMap(other));

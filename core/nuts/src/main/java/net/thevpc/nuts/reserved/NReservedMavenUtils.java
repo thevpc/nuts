@@ -32,16 +32,15 @@ import net.thevpc.nuts.boot.NBootOptionsBuilder;
 import net.thevpc.nuts.spi.NRepositoryLocation;
 import net.thevpc.nuts.util.NLog;
 import net.thevpc.nuts.util.NLogVerb;
+import net.thevpc.nuts.util.NMavenSettings;
+import net.thevpc.nuts.util.NMavenSettingsLoader;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
 import org.xml.sax.SAXParseException;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import java.io.*;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -221,12 +220,22 @@ public final class NReservedMavenUtils {
         return null;
     }
 
-    public static Set<NId> loadDependenciesFromId(NId rid, NLog bLog, Collection<NRepositoryLocation> repos) {
+    public static Set<NId> loadDependenciesFromId(NId rid, NLog bLog, Collection<NRepositoryLocation> repos, Map<String, Object> cache) {
         String urlPath = NReservedUtils.idToPath(rid) + "/" + rid.getArtifactId() + "-" + rid.getVersion() + ".pom";
-        Set<NId> deps = null;
+        Set<NId> deps = Collections.emptySet();
         for (NRepositoryLocation baseUrl : repos) {
             String loc = baseUrl.getPath();
             if (loc != null) {
+                if (isMavenSettingsRepo(baseUrl)) {
+                    Set<String> urls = loadMavenSettingsUrls(bLog, cache);
+                    for (String url : urls) {
+                        deps = loadDependenciesFromPomUrl(url + "/" + urlPath, bLog);
+                        if (!deps.isEmpty()) {
+                            return deps;
+                        }
+                    }
+                    //this is a special cas
+                }
                 if (loc.startsWith("htmlfs:")) {
                     loc = loc.substring("htmlfs:".length());
                 }
@@ -236,121 +245,9 @@ public final class NReservedMavenUtils {
                 }
             }
         }
-        if (deps == null) {
-            deps = new LinkedHashSet<>();
-        }
         return deps;
     }
 
-    private static Boolean elementBoolean(Node c, boolean def) {
-        String t = elementText(c);
-        if (t.isEmpty()) {
-            return def;
-        }
-        return Boolean.parseBoolean(t);
-    }
-
-    private static String elementText(Node c) {
-        String e = c == null ? null : c.getTextContent();
-        if (e == null) {
-            e = "";
-        }
-        e = e.trim();
-        return e;
-    }
-
-    private static List<Element> elements(Node c, Predicate<Element> cond) {
-        return (List) nodes(c, x -> x instanceof Element && (cond == null || cond.test((Element) x)));
-    }
-
-    private static List<Node> nodes(Node c, Predicate<Node> cond) {
-        List<Node> li = new ArrayList<>();
-        NodeList a = c.getChildNodes();
-        for (int i = 0; i < a.getLength(); i++) {
-            Node e = a.item(i);
-            if (cond == null || cond.test(e)) {
-                li.add(e);
-            }
-        }
-        return li;
-    }
-
-    public static List<NRepositoryLocation> loadAllMavenRepos(NLog logger) {
-        List<NRepositoryLocation> all = new ArrayList<>();
-        all.add(new NRepositoryLocation("maven-local", "maven", System.getProperty("user.home") + NReservedIOUtils.getNativePath("/.m2/repository")));
-        all.add(new NRepositoryLocation("maven-central", "maven", "https://repo.maven.apache.org/maven2"));
-        all.addAll(NReservedMavenUtils.loadSettingsRepos(logger));
-        return all;
-    }
-
-    public static List<NRepositoryLocation> loadSettingsRepos(NLog bLog) {
-        URL u = null;
-        File r = null;
-        try {
-            r = new File(System.getProperty("user.home") + NReservedIOUtils.getNativePath("/.m2/settings.xml"));
-            if (!r.isFile()) {
-                return new ArrayList<>();
-            }
-            u = r.toURI().toURL();
-        } catch (MalformedURLException e) {
-            bLog.with().level(Level.SEVERE).verb(NLogVerb.FAIL).error(e).log(NMsg.ofJ("unable to load {0}.", r));
-            return new ArrayList<>();
-        }
-        return loadSettingsRepos(u, bLog);
-    }
-
-    public static List<NRepositoryLocation> loadSettingsRepos(URL url, NLog bLog) {
-        ArrayList<NRepositoryLocation> list = new ArrayList<>();
-        InputStream xml = null;
-        try {
-            xml = NReservedIOUtils.openStream(url, bLog);
-            DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-            DocumentBuilder builder = factory.newDocumentBuilder();
-            Document doc = null;
-            doc = builder.parse(xml);
-            Element c = doc.getDocumentElement();
-            for (Element profiles : elements(c, x -> x.getNodeName().equals("profiles"))) {
-                for (Element profile : elements(profiles, x -> x.getNodeName().equals("profile"))) {
-                    boolean active = true;
-                    for (Element activation : elements(profile, x -> x.getNodeName().equals("activation"))) {
-                        for (Element activeByDefault : elements(activation, x -> x.getNodeName().equals("activeByDefault"))) {
-                            active = elementBoolean(activeByDefault, active);
-                        }
-                    }
-                    if (active) {
-                        for (Element repositories : elements(profile, x -> x.getNodeName().equals("repositories"))) {
-                            for (Element repository : elements(repositories, x -> x.getNodeName().equals("repository"))) {
-                                String id = elementText(NOptional.ofSingleton(elements(repository, x -> x.getNodeName().equals("id"))).orNull());
-                                String url0 = elementText(NOptional.ofSingleton(elements(repository, x -> x.getNodeName().equals("url"))).orNull());
-                                boolean enabled0 = true;
-                                for (Element releases : elements(profile, x -> x.getNodeName().equals("releases"))) {
-                                    for (Element enabled : elements(releases, x -> x.getNodeName().equals("enabled"))) {
-                                        enabled0 = elementBoolean(enabled, enabled0);
-                                    }
-                                }
-                                if (enabled0 && !NBlankable.isBlank(id) && !NBlankable.isBlank(url0)) {
-                                    list.add(new NRepositoryLocation(id.trim(), "maven", url0.trim()));
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-
-        } catch (Exception ex) {
-            bLog.with().level(Level.FINE).verb(NLogVerb.FAIL).error(ex).log(NMsg.ofJ("unable to loadSettingsRepos {0}", url));
-            return Collections.emptyList();
-        } finally {
-            if (xml != null) {
-                try {
-                    xml.close();
-                } catch (IOException ex) {
-                    //ignore
-                }
-            }
-        }
-        return list;
-    }
 
     static Set<NId> loadDependenciesFromPomUrl(String url, NLog bLog) {
         LinkedHashSet<NId> depsSet = new LinkedHashSet<>();
@@ -771,7 +668,7 @@ public final class NReservedMavenUtils {
                     }
                 }
             }
-        } catch (IOException|UncheckedIOException ex) {
+        } catch (IOException | UncheckedIOException ex) {
             //ignore
         }
         return all;
@@ -779,8 +676,8 @@ public final class NReservedMavenUtils {
 
     public static File getBootCacheJar(NId vid, NRepositoryLocation[] repositories, NRepositoryLocation cacheFolder, boolean useCache, String name,
                                        Instant expire, NReservedErrorInfoList errorList, NBootOptions bOptions,
-                                       Function<String, String> pathExpansionConverter, NLog bLog) {
-        File f = getBootCacheFile(vid, getFileName(vid, "jar"), repositories, cacheFolder, useCache, expire, errorList, bOptions, pathExpansionConverter, bLog);
+                                       Function<String, String> pathExpansionConverter, NLog bLog, Map<String, Object> cache) {
+        File f = getBootCacheFile(vid, getFileName(vid, "jar"), repositories, cacheFolder, useCache, expire, errorList, bOptions, pathExpansionConverter, bLog, cache);
         if (f == null) {
             throw new NInvalidWorkspaceException(bOptions.getWorkspace().orNull(),
                     NMsg.ofC("unable to load %s %s from repositories %s", name, vid, Arrays.asList(repositories)));
@@ -791,7 +688,7 @@ public final class NReservedMavenUtils {
     static File getBootCacheFile(NId vid, String fileName, NRepositoryLocation[] repositories, NRepositoryLocation cacheFolder,
                                  boolean useCache, Instant expire, NReservedErrorInfoList errorList,
                                  NBootOptions bOptions,
-                                 Function<String, String> pathExpansionConverter, NLog bLog) {
+                                 Function<String, String> pathExpansionConverter, NLog bLog, Map<String, Object> cache) {
         String path = getPathFile(vid, fileName);
         if (useCache && cacheFolder != null) {
 
@@ -804,7 +701,7 @@ public final class NReservedMavenUtils {
             if (useCache && cacheFolder != null && cacheFolder.equals(repository)) {
                 return null; // I do not remember why I did this!
             }
-            File file = getBootCacheFile(vid, path, repository, cacheFolder, useCache, expire, errorList, bOptions, pathExpansionConverter, bLog);
+            File file = getBootCacheFile(vid, path, repository, cacheFolder, useCache, expire, errorList, bOptions, pathExpansionConverter, bLog,cache);
             if (file != null) {
                 return file;
             }
@@ -815,98 +712,123 @@ public final class NReservedMavenUtils {
     private static File getBootCacheFile(NId nutsId, String path, NRepositoryLocation repository0, NRepositoryLocation cacheFolder,
                                          boolean useCache, Instant expire, NReservedErrorInfoList errorList,
                                          NBootOptions bOptions, Function<String, String> pathExpansionConverter,
-                                         NLog bLog) {
+                                         NLog bLog, Map<String, Object> cache) {
         boolean cacheLocalFiles = true;//Boolean.getBoolean("nuts.cache.cache-local-files");
-        String repository = repository0.getPath();
-        //we know exactly the file path, so we will trim "htmlfs:" protocol
-        if (repository.startsWith("htmlfs:")) {
-            repository = repository.substring("htmlfs:".length());
+        Set<String> urls=new LinkedHashSet<>();
+        if (isMavenSettingsRepo(repository0)) {
+            urls.addAll(loadMavenSettingsUrls(bLog, cache));
+        }else{
+            urls.add(repository0.getPath());
         }
-        repository = NReservedIOUtils.expandPath(repository, bOptions.getWorkspace().get(), pathExpansionConverter);
-        File repositoryFolder = null;
-        if (NReservedIOUtils.isURL(repository)) {
-            try {
-                repositoryFolder = NReservedIOUtils.toFile(new URL(repository));
-            } catch (Exception ex) {
-                bLog.with().level(Level.FINE).verb(NLogVerb.FAIL).error(ex).log(NMsg.ofJ("unable to convert url to file : {0}", repository));
-                //ignore
+        for (String repository : urls) {
+            //we know exactly the file path, so we will trim "htmlfs:" protocol
+            if (repository.startsWith("htmlfs:")) {
+                repository = repository.substring("htmlfs:".length());
             }
-        } else {
-            repositoryFolder = new File(repository);
-        }
-        if (repositoryFolder == null) {
-            if (cacheFolder == null) {
-                return null;
-            }
-            File ok = null;
-            File to = new File(cacheFolder.getPath(), path);
-            String urlPath = repository;
-            if (!urlPath.endsWith("/")) {
-                urlPath += "/";
-            }
-            urlPath += path;
-            try {
-                NReservedIOUtils.copy(new URL(urlPath), to, bLog);
-                errorList.removeErrorsFor(nutsId);
-                ok = to;
-            } catch (IOException|UncheckedIOException ex) {
-                errorList.add(new NReservedErrorInfo(nutsId, repository, urlPath, "unable to load", ex));
-                //not found
-            }
-            return ok;
-        } else {
-            repository = repositoryFolder.getPath();
-        }
-        File repoFolder = NReservedIOUtils.createFile(NReservedUtils.getHome(NStoreLocation.CONFIG, bOptions), repository);
-        File ff = null;
-
-        if (repoFolder.isDirectory()) {
-            File file = new File(repoFolder, path.replace('/', File.separatorChar));
-            if (file.isFile()) {
-                ff = file;
-            } else {
-                bLog.with().level(Level.CONFIG).verb(NLogVerb.FAIL).log(NMsg.ofJ("locate {0}", file));
-            }
-        } else {
-            File file = new File(repoFolder, path.replace('/', File.separatorChar));
-            bLog.with().level(Level.CONFIG).verb(NLogVerb.FAIL).log(NMsg.ofJ("locate {0} ; repository is not a valid folder : {1}", file, repoFolder));
-        }
-
-        if (ff != null) {
-            if (cacheFolder != null && cacheLocalFiles) {
-                File to = new File(cacheFolder.getPath(), path);
-                String toc = NReservedIOUtils.getAbsolutePath(to.getPath());
-                String ffc = NReservedIOUtils.getAbsolutePath(ff.getPath());
-                if (ffc.equals(toc)) {
-                    return ff;
-                }
+            repository = NReservedIOUtils.expandPath(repository, bOptions.getWorkspace().get(), pathExpansionConverter);
+            File repositoryFolder = null;
+            if (NReservedIOUtils.isURL(repository)) {
                 try {
-                    if (to.getParentFile() != null) {
-                        to.getParentFile().mkdirs();
-                    }
-                    String ext = "config";
-                    if (ff.getName().endsWith(".jar")) {
-                        ext = "jar";
-                    }
-                    if (to.isFile()) {
-                        NReservedIOUtils.copy(ff, to, bLog);
-                        bLog.with().level(Level.CONFIG).verb(NLogVerb.CACHE).log(NMsg.ofJ("recover cached {0} file {0} to {1}", ext, ff, to));
-                    } else {
-                        NReservedIOUtils.copy(ff, to, bLog);
-                        bLog.with().level(Level.CONFIG).verb(NLogVerb.CACHE).log(NMsg.ofJ("cache {0} file {0} to {1}", ext, ff, to));
-                    }
-                    return to;
-                } catch (IOException ex) {
-                    errorList.add(new NReservedErrorInfo(nutsId, repository, ff.getPath(), "unable to cache", ex));
-                    bLog.with().level(Level.CONFIG).verb(NLogVerb.FAIL).log(NMsg.ofJ("error caching file {0} to {1} : {2}", ff, to, ex.toString()));
+                    repositoryFolder = NReservedIOUtils.toFile(new URL(repository));
+                } catch (Exception ex) {
+                    bLog.with().level(Level.FINE).verb(NLogVerb.FAIL).error(ex).log(NMsg.ofJ("unable to convert url to file : {0}", repository));
+                    //ignore
+                }
+            } else {
+                repositoryFolder = new File(repository);
+            }
+            if (repositoryFolder == null) {
+                if (cacheFolder == null) {
+                    return null;
+                }
+                File ok = null;
+                File to = new File(cacheFolder.getPath(), path);
+                String urlPath = repository;
+                if (!urlPath.endsWith("/")) {
+                    urlPath += "/";
+                }
+                urlPath += path;
+                try {
+                    NReservedIOUtils.copy(new URL(urlPath), to, bLog);
+                    errorList.removeErrorsFor(nutsId);
+                    ok = to;
+                } catch (IOException | UncheckedIOException ex) {
+                    errorList.add(new NReservedErrorInfo(nutsId, repository, urlPath, "unable to load", ex));
                     //not found
                 }
-                return ff;
-
+                return ok;
+            } else {
+                repository = repositoryFolder.getPath();
             }
-            return ff;
+            File repoFolder = NReservedIOUtils.createFile(NReservedUtils.getHome(NStoreLocation.CONFIG, bOptions), repository);
+            File ff = null;
+
+            if (repoFolder.isDirectory()) {
+                File file = new File(repoFolder, path.replace('/', File.separatorChar));
+                if (file.isFile()) {
+                    ff = file;
+                } else {
+                    bLog.with().level(Level.CONFIG).verb(NLogVerb.FAIL).log(NMsg.ofJ("locate {0}", file));
+                }
+            } else {
+                File file = new File(repoFolder, path.replace('/', File.separatorChar));
+                bLog.with().level(Level.CONFIG).verb(NLogVerb.FAIL).log(NMsg.ofJ("locate {0} ; repository is not a valid folder : {1}", file, repoFolder));
+            }
+
+            if (ff != null) {
+                if (cacheFolder != null && cacheLocalFiles) {
+                    File to = new File(cacheFolder.getPath(), path);
+                    String toc = NReservedIOUtils.getAbsolutePath(to.getPath());
+                    String ffc = NReservedIOUtils.getAbsolutePath(ff.getPath());
+                    if (ffc.equals(toc)) {
+                        return ff;
+                    }
+                    try {
+                        if (to.getParentFile() != null) {
+                            to.getParentFile().mkdirs();
+                        }
+                        String ext = "config";
+                        if (ff.getName().endsWith(".jar")) {
+                            ext = "jar";
+                        }
+                        if (to.isFile()) {
+                            NReservedIOUtils.copy(ff, to, bLog);
+                            bLog.with().level(Level.CONFIG).verb(NLogVerb.CACHE).log(NMsg.ofJ("recover cached {0} file {0} to {1}", ext, ff, to));
+                        } else {
+                            NReservedIOUtils.copy(ff, to, bLog);
+                            bLog.with().level(Level.CONFIG).verb(NLogVerb.CACHE).log(NMsg.ofJ("cache {0} file {0} to {1}", ext, ff, to));
+                        }
+                        return to;
+                    } catch (IOException ex) {
+                        errorList.add(new NReservedErrorInfo(nutsId, repository, ff.getPath(), "unable to cache", ex));
+                        bLog.with().level(Level.CONFIG).verb(NLogVerb.FAIL).log(NMsg.ofJ("error caching file {0} to {1} : {2}", ff, to, ex.toString()));
+                        //not found
+                    }
+                    return ff;
+
+                }
+                return ff;
+            }
         }
         return null;
+    }
+
+    public static boolean isMavenSettingsRepo(NRepositoryLocation loc) {
+        if ("maven".equals(loc.getPath()) && "maven".equals(loc.getName())) {
+            return true;
+        }
+        return false;
+    }
+
+    private static Set<String> loadMavenSettingsUrls(NLog bLog, Map<String, Object> cache) {
+        NMavenSettings mavenSettings = (NMavenSettings) cache.computeIfAbsent(NMavenSettings.class.getName(), x -> new NMavenSettingsLoader(bLog).loadSettingsRepos());
+        Set<String> urls = new LinkedHashSet<>();
+        urls.add(mavenSettings.getLocalRepository());
+        urls.add(mavenSettings.getRemoteRepository());
+        for (NRepositoryLocation activeRepository : mavenSettings.getActiveRepositories()) {
+            urls.add(activeRepository.getPath());
+        }
+        return urls;
     }
 
     public static String resolveNutsApiVersionFromClassPath(NLog bLog) {

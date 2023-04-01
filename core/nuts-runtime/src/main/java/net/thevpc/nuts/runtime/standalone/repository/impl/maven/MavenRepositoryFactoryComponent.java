@@ -26,6 +26,7 @@ package net.thevpc.nuts.runtime.standalone.repository.impl.maven;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.runtime.standalone.repository.NRepositorySelectorHelper;
+import net.thevpc.nuts.runtime.standalone.repository.impl.maven.util.MavenUtils;
 import net.thevpc.nuts.runtime.standalone.repository.util.NRepositoryUtils;
 import net.thevpc.nuts.spi.*;
 import net.thevpc.nuts.util.NStringUtils;
@@ -44,16 +45,16 @@ public class MavenRepositoryFactoryComponent implements NRepositoryFactoryCompon
     public List<NAddRepositoryOptions> getDefaultRepositories(NSession session) {
         return Arrays.asList(
                 NRepositorySelectorHelper.createRepositoryOptions(
-                        Objects.requireNonNull(NRepositoryLocation.of("maven-local", NRepositoryDB.of(session), session)),
-                        true, session),
-                NRepositorySelectorHelper.createRepositoryOptions(
-                        Objects.requireNonNull(NRepositoryLocation.of("maven-central", NRepositoryDB.of(session), session)),
+                        Objects.requireNonNull(NRepositoryLocation.of("maven", NRepositoryDB.of(session), session)),
                         true, session)
         );
     }
 
     @Override
     public NRepository create(NAddRepositoryOptions options, NSession session, NRepository parentRepository) {
+        if(MavenUtils.isMavenSettingsRepository(options)){
+            return new MavenSettingsRepository(options, session, parentRepository);
+        }
         final NRepositoryConfig config = options.getConfig();
         String type = NRepositoryUtils.getRepoType(config);
         if (NBlankable.isBlank(type)) {

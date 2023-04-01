@@ -7,6 +7,7 @@ import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.io.NPathPermission;
 import net.thevpc.nuts.runtime.standalone.repository.NRepositoryRegistryHelper;
 import net.thevpc.nuts.runtime.standalone.repository.NRepositorySelectorHelper;
+import net.thevpc.nuts.runtime.standalone.repository.impl.maven.util.MavenUtils;
 import net.thevpc.nuts.runtime.standalone.repository.util.NRepositoryUtils;
 import net.thevpc.nuts.runtime.standalone.session.NSessionUtils;
 import net.thevpc.nuts.spi.*;
@@ -194,7 +195,10 @@ public class DefaultNRepositoryModel {
 //            return null;
 //        }
         NRepository r = this.createRepository(options, null, session);
-        addRepository(r, session, options.isTemporary(),options.isEnabled());
+        if (r == null) {
+            return null;/*fail safe and cannot load*/
+        }
+        addRepository(r, session, options.isTemporary(), options.isEnabled());
         return r;
     }
 
@@ -250,7 +254,7 @@ public class DefaultNRepositoryModel {
                 options.setEnabled(true);
             } else if (conf == null) {
                 options.setLocation(CoreIOUtils.resolveRepositoryPath(options, rootFolder, session));
-                conf = loadRepository(NPath.of(options.getLocation(),session).resolve(NConstants.Files.REPOSITORY_CONFIG_FILE_NAME), options.getName(), session);
+                conf = loadRepository(NPath.of(options.getLocation(), session).resolve(NConstants.Files.REPOSITORY_CONFIG_FILE_NAME), options.getName(), session);
                 if (conf == null) {
                     if (options.isFailSafe()) {
                         return null;
@@ -264,8 +268,8 @@ public class DefaultNRepositoryModel {
                     options.setEnabled(
                             NBootManager.of(session).getBootOptions().getRepositories() == null
                                     || NRepositorySelectorList.ofAll(
-                                            NBootManager.of(session).getBootOptions().getRepositories().orNull(),
-                                    NRepositoryDB.of(session),session
+                                    NBootManager.of(session).getBootOptions().getRepositories().orNull(),
+                                    NRepositoryDB.of(session), session
                             ).acceptExisting(
                                     conf.getLocation().setName(options.getName())
                             ));
@@ -276,8 +280,8 @@ public class DefaultNRepositoryModel {
                     options.setEnabled(
                             NBootManager.of(session).getBootOptions().getRepositories() == null
                                     || NRepositorySelectorList.ofAll(
-                                            NBootManager.of(session).getBootOptions().getRepositories().orNull(),
-                                    NRepositoryDB.of(session),session
+                                    NBootManager.of(session).getBootOptions().getRepositories().orNull(),
+                                    NRepositoryDB.of(session), session
                             ).acceptExisting(
                                     conf.getLocation().setName(options.getName())
                             ));
@@ -289,7 +293,7 @@ public class DefaultNRepositoryModel {
             }
             if (NBlankable.isBlank(conf.getLocation())
                     && !NBlankable.isBlank(options.getLocation())
-                    //&& NPath.of(options.getLocation(), session).isFile()
+                //&& NPath.of(options.getLocation(), session).isFile()
             ) {
                 conf.setLocation(NRepositoryLocation.of(options.getLocation()));
             }
@@ -312,7 +316,7 @@ public class DefaultNRepositoryModel {
                 }
             } else {
                 if (NBlankable.isBlank(repoType)) {
-                    throw new NInvalidRepositoryException(session, options.getName(), NMsg.ofC("unable to detect valid type for repository %s",options.getName()));
+                    throw new NInvalidRepositoryException(session, options.getName(), NMsg.ofC("unable to detect valid type for repository %s", options.getName()));
                 } else {
                     throw new NInvalidRepositoryException(session, options.getName(), NMsg.ofC("invalid repository type %s", repoType));
                 }
@@ -329,7 +333,7 @@ public class DefaultNRepositoryModel {
         NSessionUtils.checkSession(getWorkspace(), session);
         NRepositoryLocation r = null;
         try {
-            r = NRepositoryLocation.of(repositoryNamedUrl, NRepositoryDB.of(session),session);
+            r = NRepositoryLocation.of(repositoryNamedUrl, NRepositoryDB.of(session), session);
         } catch (Exception ex) {
             throw new NInvalidRepositoryException(session, repositoryNamedUrl, NMsg.ofPlain("invalid repository definition"));
         }
@@ -340,7 +344,7 @@ public class DefaultNRepositoryModel {
     public NRepositoryConfig loadRepository(NPath file, String name, NSession session) {
         NRepositoryConfig conf = null;
         if (file.isRegularFile() && file.getPermissions().contains(NPathPermission.CAN_READ)) {
-            byte[] bytes= file.readBytes();
+            byte[] bytes = file.readBytes();
             try {
                 NElements elem = NElements.of(session);
                 Map<String, Object> a_config0 = elem.json().parse(bytes, Map.class);

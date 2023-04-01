@@ -28,6 +28,7 @@ package net.thevpc.nuts.runtime.standalone.descriptor;
 import net.thevpc.nuts.*;
 
 import java.util.List;
+import java.util.Set;
 
 /**
  * Created by vpc on 1/5/17.
@@ -152,5 +153,45 @@ public abstract class DelegateNDescriptor extends AbstractNDescriptor {
     @Override
     public NIdType getIdType() {
         return getBase().getIdType();
+    }
+
+    @Override
+    public boolean isBlank() {
+        return getBase().isBlank();
+    }
+
+    @Override
+    public Set<NDescriptorFlag> getFlags() {
+        return getBase().getFlags();
+    }
+
+    @Override
+    public NDescriptor readOnly() {
+        return getBase().readOnly();
+    }
+
+    @Override
+    public List<NDescriptorContributor> getContributors() {
+        return getBase().getContributors();
+    }
+
+    @Override
+    public List<NDescriptorContributor> getDevelopers() {
+        return getBase().getDevelopers();
+    }
+
+    @Override
+    public List<NDescriptorLicense> getLicenses() {
+        return getBase().getLicenses();
+    }
+
+    @Override
+    public List<NDescriptorMailingList> getMailingLists() {
+        return getBase().getMailingLists();
+    }
+
+    @Override
+    public NDescriptorOrganization getOrganization() {
+        return getBase().getOrganization();
     }
 }

@@ -44,10 +44,10 @@ public class DefaultNRepositories implements NRepositories {
         return NRepositoryFilters.of(getSession());
     }
 
-    private NRepository toSessionAwareRepo(NRepository x){
+    private NRepository toSessionAwareRepo(NRepository x) {
         return NRepositorySessionAwareImpl.of(x, model.getWorkspace(), session);
     }
-    
+
     @Override
     public List<NRepository> getRepositories() {
         return Arrays.stream(model.getRepositories(session)).map(x -> toSessionAwareRepo(x))
@@ -95,13 +95,15 @@ public class DefaultNRepositories implements NRepositories {
     @Override
     public NRepository addRepository(NAddRepositoryOptions options) {
         checkSession();
-        return toSessionAwareRepo(model.addRepository(options, session));
+        NRepository r = model.addRepository(options, session);
+        return r == null ? null : toSessionAwareRepo(r);
     }
 
     @Override
     public NRepository addRepository(String repositoryNamedUrl) {
         checkSession();
-        return toSessionAwareRepo(model.addRepository(repositoryNamedUrl, session));
+        NRepository r = model.addRepository(repositoryNamedUrl, session);
+        return r == null ? null : toSessionAwareRepo(r);
     }
 
     private void checkSession() {

@@ -23,11 +23,7 @@ public class DefaultNRepositoryDB implements NRepositoryDB {
                         true,
                         NConstants.Names.DEFAULT_WORKSPACE_NAME), session
         ).resolve(NConstants.Folders.ID).toString());
-        reg("maven-local", "maven@" + NPath.ofUserHome(session).resolve(".m2/repository").toString(), ".m2", "m2");
-        for (NRepositoryLocation rr : NReservedMavenUtils.loadSettingsRepos(NLog.of(DefaultNRepositoryDB.class, session))) {
-            reg(rr.getName(), rr.getFullLocation());
-        }
-        reg("maven-central", "maven@htmlfs:https://repo.maven.apache.org/maven2", "central", "maven", "central");
+        reg("maven", "maven", ".m2", "m2","central", "maven", "central");
         reg("jcenter", "maven@https://jcenter.bintray.com");
         reg("jboss", "maven@https://repository.jboss.org/nexus/content/repositories/releases");
         reg("clojars", "maven@https://repo.clojars.org");

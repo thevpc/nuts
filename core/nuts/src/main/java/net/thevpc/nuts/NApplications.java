@@ -173,6 +173,7 @@ public final class NApplications {
         }
         throw new NBootException(NMsg.ofC("missing application constructor one of : \n\t static createApplicationInstance(NutsSession,String[])\n\t Constructor(NutsSession,String[])\n\t Constructor()", appType.getName()));
     }
+
     /**
      * run application with given life cycle.
      *
@@ -199,26 +200,33 @@ public final class NApplications {
                                 applicationInstance.getClass().getName(), session.getAppCommandLine()
                         )
                 );
-        switch (session.getAppMode()) {
-            //both RUN and AUTO_COMPLETE execute the run branch. Later
-            //session.isExecMode()
-            case RUN:
-            case AUTO_COMPLETE: {
-                applicationInstance.run(session);
+        try {
+            switch (session.getAppMode()) {
+                //both RUN and AUTO_COMPLETE execute the run branch. Later
+                //session.isExecMode()
+                case RUN:
+                case AUTO_COMPLETE: {
+                    applicationInstance.run(session);
+                    return;
+                }
+                case INSTALL: {
+                    applicationInstance.onInstallApplication(session);
+                    return;
+                }
+                case UPDATE: {
+                    applicationInstance.onUpdateApplication(session);
+                    return;
+                }
+                case UNINSTALL: {
+                    applicationInstance.onUninstallApplication(session);
+                    return;
+                }
+            }
+        } catch (NExecutionException e) {
+            if (e.getExitCode() == 0) {
                 return;
             }
-            case INSTALL: {
-                applicationInstance.onInstallApplication(session);
-                return;
-            }
-            case UPDATE: {
-                applicationInstance.onUpdateApplication(session);
-                return;
-            }
-            case UNINSTALL: {
-                applicationInstance.onUninstallApplication(session);
-                return;
-            }
+            throw e;
         }
         throw new NExecutionException(session, NMsg.ofC("unsupported execution mode %s", session.getAppMode()), 204);
     }

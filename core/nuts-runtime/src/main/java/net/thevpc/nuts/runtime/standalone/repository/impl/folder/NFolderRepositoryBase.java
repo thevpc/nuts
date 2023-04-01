@@ -123,7 +123,7 @@ public abstract class NFolderRepositoryBase extends NCachedRepository {
     }
 
     @Override
-    public void updateStatistics2(NSession session) {
+    public void updateStatisticsImpl(NSession session) {
         config().setSession(session).getLocationPath()
                 .walkDfs(new NTreeVisitor<NPath>() {
                              @Override

@@ -198,7 +198,7 @@ public class DefaultFileNLock implements NLock {
         } catch (IOException ex) {
             return false;
         }
-        return true;
+        return false;
     }
 
     @Override

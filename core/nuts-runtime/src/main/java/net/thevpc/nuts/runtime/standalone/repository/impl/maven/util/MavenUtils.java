@@ -883,4 +883,32 @@ public class MavenUtils {
         }
         return null;
     }
+
+    public static boolean isMavenSettingsRepository(NAddRepositoryOptions options){
+        if(!"maven".equals(options.getName())){
+            return false;
+        }
+//        if(!(NBlankable.isBlank(options.getLocation()) || options.getLocation().trim().equals("maven"))){
+//            return false;
+//        }
+        if(options.getRepositoryModel()!=null){
+            return false;
+        }
+        if(options.getConfig()!=null){
+            if(!NBlankable.isBlank(options.getConfig().getName())){
+                if(!"maven".equals(options.getConfig().getName())) {
+                    return false;
+                }
+            }
+            if(!NBlankable.isBlank(options.getConfig().getLocation())){
+                String n = options.getConfig().getLocation().toString();
+                if(!NBlankable.isBlank(n)){
+                    if(!"maven".equals(n) && !"maven@maven".equals(n)){
+                        return false;
+                    }
+                }
+            }
+        }
+        return true;
+    }
 }

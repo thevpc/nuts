@@ -67,7 +67,7 @@ public class ProgressOptions {
         if (item.isEmpty()) {
             return false;
         }
-        return item.flatMap(NLiteral::asBoolean).orElse(false);
+        return item.isBlank() || item.flatMap(NLiteral::asBoolean).orElse(false);
     }
 
     public Level getArmedLogLevel() {

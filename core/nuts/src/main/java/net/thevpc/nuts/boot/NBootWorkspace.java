@@ -112,6 +112,7 @@ public final class NBootWorkspace {
     private NLog nLog;
     private NSession nLogSession;
     private Scanner scanner;
+    private Map<String, Object> cache = new LinkedHashMap<>();
 
     public NBootWorkspace(NWorkspaceTerminalOptions bootTerminal, String... args) {
         this.bLog = new NReservedBootLog(bootTerminal);
@@ -178,7 +179,7 @@ public final class NBootWorkspace {
         this.computedOptions.setLocale(this.computedOptions.getLocale().orElse(Locale.getDefault().toString()));
         this.computedOptions.setOutputFormat(this.computedOptions.getOutputFormat().orElse(NContentType.PLAIN));
         this.computedOptions.setCreationTime(this.computedOptions.getCreationTime().orElse(creationTime));
-        if(this.computedOptions.getApplicationArguments().isEmpty()){
+        if (this.computedOptions.getApplicationArguments().isEmpty()) {
             this.computedOptions.setApplicationArguments(new ArrayList<>());
         }
         this.bLog.setOptions(this.computedOptions);
@@ -286,7 +287,9 @@ public final class NBootWorkspace {
         NRepositoryLocation[] result;
         if (old.length == 0) {
             //no previous config, use defaults!
-            result = bootRepositories.resolve(NReservedMavenUtils.loadAllMavenRepos(nLog).toArray(new NRepositoryLocation[0]), repositoryDB);
+            result = bootRepositories.resolve(new NRepositoryLocation[]{
+                    new NRepositoryLocation("maven", "maven", "maven")
+            }, repositoryDB);
         } else {
             result = bootRepositories.resolve(Arrays.stream(old).map(x -> NRepositoryLocation.of(x.getName(), x.getUrl())).toArray(NRepositoryLocation[]::new), repositoryDB);
         }
@@ -655,7 +658,7 @@ public final class NBootWorkspace {
                         }
 
                         if (!cacheLoaded || loadedDeps == null) {
-                            loadedDeps = NReservedMavenUtils.loadDependenciesFromId(computedOptions.getRuntimeId().get(), bLog, resolveBootRuntimeRepositories(false));
+                            loadedDeps = NReservedMavenUtils.loadDependenciesFromId(computedOptions.getRuntimeId().get(), bLog, resolveBootRuntimeRepositories(false), cache);
                             bLog.log(Level.CONFIG, NLogVerb.SUCCESS, NMsg.ofJ("detect runtime dependencies : {0}", loadedDeps));
                         }
                     } catch (Exception ex) {
@@ -710,7 +713,7 @@ public final class NBootWorkspace {
                                     }
                                 }
                                 if (loadedDeps == null) {
-                                    loadedDeps = NReservedMavenUtils.loadDependenciesFromId(eid, bLog, resolveBootRuntimeRepositories(true));
+                                    loadedDeps = NReservedMavenUtils.loadDependenciesFromId(eid, bLog, resolveBootRuntimeRepositories(true), cache);
                                 }
                                 all.add(new DefaultNDescriptorBuilder().setId(NId.of(extension).get()).setDependencies(loadedDeps.stream().map(NId::toDependency).collect(Collectors.toList())).build());
                             }
@@ -780,10 +783,10 @@ public final class NBootWorkspace {
             NRepositoryLocation[] repositories = NStringUtils.split(computedOptions.getBootRepositories().orNull(), "\n;", true, true).stream().map(NRepositoryLocation::of).toArray(NRepositoryLocation[]::new);
 
             NRepositoryLocation workspaceBootLibFolderRepo = NRepositoryLocation.of("nuts@" + workspaceBootLibFolder);
-            computedOptions.setRuntimeBootDependencyNode(createClassLoaderNode(computedOptions.getRuntimeBootDescriptor().orNull(), repositories, workspaceBootLibFolderRepo, recover, errorList, true));
+            computedOptions.setRuntimeBootDependencyNode(createClassLoaderNode(computedOptions.getRuntimeBootDescriptor().orNull(), repositories, workspaceBootLibFolderRepo, recover, errorList, true,cache));
 
             for (NDescriptor nutsBootDescriptor : computedOptions.getExtensionBootDescriptors().orElseGet(ArrayList::new)) {
-                deps.add(createClassLoaderNode(nutsBootDescriptor, repositories, workspaceBootLibFolderRepo, recover, errorList, false));
+                deps.add(createClassLoaderNode(nutsBootDescriptor, repositories, workspaceBootLibFolderRepo, recover, errorList, false,cache));
             }
             computedOptions.setExtensionBootDependencyNodes(deps);
             deps.add(0, computedOptions.getRuntimeBootDependencyNode().orNull());
@@ -1262,12 +1265,12 @@ public final class NBootWorkspace {
         return null;
     }
 
-    private NClassLoaderNode createClassLoaderNode(NDescriptor descr, NRepositoryLocation[] repositories, NRepositoryLocation workspaceBootLibFolder, boolean recover, NReservedErrorInfoList errorList, boolean runtimeDep) throws MalformedURLException {
+    private NClassLoaderNode createClassLoaderNode(NDescriptor descr, NRepositoryLocation[] repositories, NRepositoryLocation workspaceBootLibFolder, boolean recover, NReservedErrorInfoList errorList, boolean runtimeDep, Map<String, Object> cache) throws MalformedURLException {
         NId id = descr.getId();
         List<NDependency> deps = descr.getDependencies();
         NClassLoaderNodeBuilder rt = new NClassLoaderNodeBuilder();
         String name = runtimeDep ? "runtime" : ("extension " + id.toString());
-        File file = NReservedMavenUtils.getBootCacheJar(computedOptions.getRuntimeId().get(), repositories, workspaceBootLibFolder, !recover, name, computedOptions.getExpireTime().orNull(), errorList, computedOptions, pathExpansionConverter, bLog);
+        File file = NReservedMavenUtils.getBootCacheJar(computedOptions.getRuntimeId().get(), repositories, workspaceBootLibFolder, !recover, name, computedOptions.getExpireTime().orNull(), errorList, computedOptions, pathExpansionConverter, bLog, cache);
         rt.setId(id.toString());
         rt.setUrl(file.toURI().toURL());
         rt.setIncludedInClasspath(NReservedClassLoaderUtils.isLoadedClassPath(rt.getURL(), getContextClassLoader(), bLog));
@@ -1286,7 +1289,7 @@ public final class NBootWorkspace {
         for (NDependency s : deps) {
             NClassLoaderNodeBuilder x = new NClassLoaderNodeBuilder();
             if (NReservedUtils.isAcceptDependency(s, computedOptions)) {
-                x.setId(s.toString()).setUrl(NReservedMavenUtils.getBootCacheJar(s.toId(), repositories, workspaceBootLibFolder, !recover, name + " dependency", computedOptions.getExpireTime().orNull(), errorList, computedOptions, pathExpansionConverter, bLog).toURI().toURL());
+                x.setId(s.toString()).setUrl(NReservedMavenUtils.getBootCacheJar(s.toId(), repositories, workspaceBootLibFolder, !recover, name + " dependency", computedOptions.getExpireTime().orNull(), errorList, computedOptions, pathExpansionConverter, bLog, cache).toURI().toURL());
                 x.setIncludedInClasspath(NReservedClassLoaderUtils.isLoadedClassPath(x.getURL(), getContextClassLoader(), bLog));
                 rt.addDependency(x.build());
             }

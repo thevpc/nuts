@@ -43,11 +43,11 @@ public class NSimpleRepositoryWrapper extends NCachedRepository {
         return base.search(filter, basePaths, fetchMode, this, session);
     }
 
-    public void updateStatistics2(NSession session) {
+    public void updateStatisticsImpl(NSession session) {
         base.updateStatistics(this, session);
     }
 
-    protected boolean isAllowedOverrideNut(NId id) {
+    protected boolean isAllowedOverrideArtifact(NId id) {
         return ((this.mode & NRepositoryModel.LIB_OVERRIDE) != 0);
     }
 

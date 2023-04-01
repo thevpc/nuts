@@ -335,12 +335,12 @@ public class DefaultNExecCommand extends AbstractNExecCommand {
         if (nid == null) {
             return null;
         }
-        List<NId> ff = NSearchCommand.of(traceSession).addId(nid).setOptional(false).setLatest(true).setFailFast(false)
+        NId ff = NSearchCommand.of(traceSession).addId(nid).setOptional(false).setLatest(true).setFailFast(false)
                 .setInstallStatus(NInstallStatusFilters.of(session).byDeployed(true))
                 .getResultDefinitions().stream()
                 .sorted(Comparator.comparing(x -> !x.getInstallInformation().get(session).isDefaultVersion())) // default first
-                .map(NDefinition::getId).collect(Collectors.toList());
-        if (ff.isEmpty()) {
+                .map(NDefinition::getId).findFirst().orElse(null);
+        if (ff==null) {
             if (!forceInstalled) {
                 if (ignoreIfUserCommand && isUserCommand(nid.toString())) {
                     return null;
@@ -358,20 +358,14 @@ public class DefaultNExecCommand extends AbstractNExecCommand {
                         .setOptional(false).setFailFast(false)
                         .setLatest(true)
                         //                        .configure(true,"--trace-monitor")
-                        .getResultIds().toList();
+                        .getResultIds().findFirst().orElse(null);
             }
         }
-        if (ff.isEmpty()) {
+        if (ff==null) {
             return null;
         } else {
-            List<NVersion> versions = ff.stream().map(NId::getVersion).distinct().collect(Collectors.toList());
-            if (versions.size() > 1) {
-                throw new NTooManyElementsException(getSession(),
-                        NMsg.ofC("%s can be resolved to all (%d) of %s", nid, ff.size(), ff)
-                );
-            }
+            return ff;
         }
-        return ff.get(0);
     }
 
     public boolean isUserCommand(String s) {

@@ -7,6 +7,7 @@ import net.thevpc.nuts.spi.NRepositoryDB;
 import net.thevpc.nuts.spi.NRepositoryLocation;
 import net.thevpc.nuts.spi.NRepositorySelectorList;
 import net.thevpc.nuts.util.NAssert;
+import net.thevpc.nuts.util.NMaps;
 import net.thevpc.nuts.util.NPlatformUtils;
 
 import java.util.HashMap;
@@ -129,8 +130,6 @@ public class NRepositorySelectorHelper {
                                         )
                         );
             }
-            case "maven":
-            case "mvn":
             case "central":
             case "maven-central": {
                 return new NAddRepositoryOptions().setName("maven-central")
@@ -139,7 +138,21 @@ public class NRepositorySelectorHelper {
                         .setConfig(
                                 new NRepositoryConfig()
                                         .setLocation(NRepositoryLocation.of("maven@htmlfs:https://repo.maven.apache.org/maven2"))
-                                        .setEnv(CoreCollectionUtils.fill(new HashMap<>(),
+                                        .setEnv(NMaps.of(
+                                                "maven.solrsearch.url", "https://search.maven.org/solrsearch/select",
+                                                "maven.solrsearch.enable", "true"
+                                        ))
+                        );
+            }
+            case "maven":
+            case "mvn": {
+                return new NAddRepositoryOptions().setName("maven")
+                        .setFailSafe(false).setCreate(true)
+                        .setOrder(NAddRepositoryOptions.ORDER_USER_REMOTE)
+                        .setConfig(
+                                new NRepositoryConfig()
+                                        .setLocation(NRepositoryLocation.of("maven@maven"))
+                                        .setEnv(NMaps.of(
                                                 "maven.solrsearch.url", "https://search.maven.org/solrsearch/select",
                                                 "maven.solrsearch.enable", "true"
                                         ))
