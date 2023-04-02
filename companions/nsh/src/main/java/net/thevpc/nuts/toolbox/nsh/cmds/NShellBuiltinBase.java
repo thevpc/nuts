@@ -138,10 +138,18 @@ public abstract class NShellBuiltinBase implements NShellBuiltin {
                             + " args = " + Arrays.toString(after));
                 }
             } else {
-                if (!this.onCmdNextOption(arg, commandLine, context)) {
-                    context.configureLast(commandLine);
-                } else {
-                    conf = true;
+                if(arg.isOption()){
+                    if (!this.onCmdNextOption(arg, commandLine, context)) {
+                        context.configureLast(commandLine);
+                    } else {
+                        conf = true;
+                    }
+                }else{
+                    if (!this.onCmdNextNonOption(arg, commandLine, context)) {
+                        context.configureLast(commandLine);
+                    } else {
+                        conf = true;
+                    }
                 }
             }
             maxLoops--;

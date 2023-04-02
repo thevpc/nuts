@@ -38,8 +38,10 @@ public class NdbConfig implements Cloneable {
     private String databaseName;
     private String host;
     private Integer port;
+    private Integer remotePort;
     private String remoteServer;
     private String remoteUser;
+    private String remotePassword;
     private String remoteTempFolder;
 
     public NdbConfig setNonNull(NdbConfig other) {
@@ -153,6 +155,24 @@ public class NdbConfig implements Cloneable {
 
     public NdbConfig setPort(Integer port) {
         this.port = port;
+        return this;
+    }
+
+    public Integer getRemotePort() {
+        return remotePort;
+    }
+
+    public NdbConfig setRemotePort(Integer remotePort) {
+        this.remotePort = remotePort;
+        return this;
+    }
+
+    public String getRemotePassword() {
+        return remotePassword;
+    }
+
+    public NdbConfig setRemotePassword(String remotePassword) {
+        this.remotePassword = remotePassword;
         return this;
     }
 

@@ -75,7 +75,6 @@ import java.util.regex.Pattern;
 
 public class NShell {
 
-    public static final String APP_VERSION = "0.4";
     public static final String ENV_PATH = "PATH";
     public static final String ENV_HOME = "HOME";
     private static final Logger LOG = Logger.getLogger(NShell.class.getName());
@@ -342,8 +341,8 @@ public class NShell {
             try {
                 getHistory().add(line);
                 NShellCommandNode nn = parseScript(line);
-                context.getShell().evalNode(nn, context);
-                success = true;
+                int i = context.getShell().evalNode(nn, context);
+                success = i==0;
             } catch (NShellQuitException e) {
                 throw e;
             } catch (Throwable e) {
@@ -639,7 +638,7 @@ public class NShell {
     }
 
     protected void executeVersion(NShellContext context) {
-        context.out().println(NMsg.ofC("v%s", APP_VERSION));
+        context.out().println(NMsg.ofC("v%s", context.getSession().getAppId().getVersion()));
     }
 
     protected void executeInteractive(NShellContext context) {
@@ -685,7 +684,7 @@ public class NShell {
         if (getOptions().isLogin()) {
             executeLogoutScripts();
         }
-        onQuit(new NShellQuitException(session, 1));
+        onQuit(new NShellQuitException(session, 0));
     }
 
     private void executeLoginScripts() {

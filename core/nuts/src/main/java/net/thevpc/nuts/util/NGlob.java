@@ -44,5 +44,7 @@ public interface NGlob extends NComponent {
 
     Pattern toPattern(String pattern);
 
+    String toPatternString(String pattern);
+
     String escape(String s);
 }

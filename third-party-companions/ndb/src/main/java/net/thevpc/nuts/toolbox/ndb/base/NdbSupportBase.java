@@ -9,7 +9,7 @@ import net.thevpc.nuts.toolbox.ndb.NdbConfig;
 import net.thevpc.nuts.toolbox.ndb.base.cmd.*;
 import net.thevpc.nuts.toolbox.ndb.sql.nmysql.NMySqlConfigVersions;
 import net.thevpc.nuts.toolbox.ndb.sql.nmysql.util.AtName;
-import net.thevpc.nuts.toolbox.ndb.util.LoginServerPath;
+import net.thevpc.nuts.toolbox.ndb.util.DbUrlString;
 import net.thevpc.nuts.toolbox.ndb.util.NdbUtils;
 import net.thevpc.nuts.util.NRef;
 import net.thevpc.nuts.util.NStringUtils;
@@ -160,12 +160,19 @@ public abstract class NdbSupportBase<C extends NdbConfig> implements NdbSupport 
             return true;
         } else if ((a = cmdLine.nextEntry("--db").orNull()) != null) {
             String db = a.getStringValue().get(session);
-            LoginServerPath loginServerPath = LoginServerPath.parse(db).get();
-            options.setUser(loginServerPath.getUser());
-            options.setPassword(loginServerPath.getPassword());
-            options.setHost(loginServerPath.getServer());
-            options.setPort(loginServerPath.getPort());
-            options.setDatabaseName(loginServerPath.getPath());
+            DbUrlString dbUrlString = DbUrlString.parse(db).get();
+
+            options.setRemoteUser(dbUrlString.getSshUser());
+            options.setRemotePassword(dbUrlString.getSshPassword());
+            options.setRemoteServer(dbUrlString.getSshServer());
+            options.setRemotePort(dbUrlString.getSshPort());
+
+            options.setUser(dbUrlString.getDbUser());
+            options.setPassword(dbUrlString.getDbPassword());
+            options.setHost(dbUrlString.getDbServer());
+            options.setPort(dbUrlString.getDbPort());
+            options.setDatabaseName(dbUrlString.getDbPath());
+
             return true;
         } else if ((a = cmdLine.nextEntry("--remote-server").orNull()) != null) {
             options.setRemoteServer(a.getStringValue().get(session));
@@ -178,10 +185,10 @@ public abstract class NdbSupportBase<C extends NdbConfig> implements NdbSupport 
             return true;
         } else if ((a = cmdLine.nextEntry("--ssh").orNull()) != null) {
             String ssh = a.getStringValue().get(session);
-            LoginServerPath loginServerPath = LoginServerPath.parse(ssh).get();
-            options.setRemoteUser(loginServerPath.getUser());
-            options.setRemoteServer(loginServerPath.getServer());
-            options.setRemoteTempFolder(loginServerPath.getPath());
+            DbUrlString dbUrlString = DbUrlString.parse(ssh).get();
+            options.setRemoteUser(dbUrlString.getSshUser());
+            options.setRemoteServer(dbUrlString.getSshServer());
+            options.setRemoteTempFolder(dbUrlString.getDbPath());
             return true;
         } else if (fillExtraOption(cmdLine, options)) {
             return true;

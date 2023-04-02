@@ -28,7 +28,6 @@ import net.thevpc.nuts.NBlankable;
 import java.util.regex.Pattern;
 
 /**
- *
  * @author thevpc
  */
 public class GlobUtils {
@@ -57,7 +56,7 @@ public class GlobUtils {
      * *
      * **
      *
-     * @param pattern pattern
+     * @param pattern  pattern
      * @param contains contains
      * @return regexp
      */
@@ -112,12 +111,16 @@ public class GlobUtils {
     }
 
 
-    public static Pattern glob(String o,String separators) {
-        if(separators==null || separators.length()==0){
-            separators="/";
+    public static Pattern glob(String o, String separators) {
+        return Pattern.compile(globString(o, separators));
+    }
+
+    public static String globString(String o, String separators) {
+        if (separators == null || separators.length() == 0) {
+            separators = "/";
         }
         for (char s : separators.toCharArray()) {
-            switch (s){
+            switch (s) {
                 case '{':
                 case '}':
                 case '(':
@@ -125,25 +128,25 @@ public class GlobUtils {
                 case '<':
                 case '>':
                 case '*':
-                case '?':{
-                    throw new IllegalArgumentException("unsupported glob separator "+s);
+                case '?': {
+                    throw new IllegalArgumentException("unsupported glob separator " + s);
                 }
             }
         }
-        char s=separators.charAt(0);
+        char s = separators.charAt(0);
         while (true) {
-            if (o.endsWith(s+"**"+s+"*")) {
+            if (o.endsWith(s + "**" + s + "*")) {
                 o = o.substring(0, o.length() - 5);
-            } else if (o.endsWith(s+"**")) {
+            } else if (o.endsWith(s + "**")) {
                 o = o.substring(0, o.length() - 3);
-            } else if (o.endsWith(s+"*")) {
+            } else if (o.endsWith(s + "*")) {
                 o = o.substring(0, o.length() - 2);
             } else {
                 break;
             }
         }
         if (o.isEmpty()) {
-            return Pattern.compile(".*");
+            return (".*");
         }
         StringBuilder sb = new StringBuilder();
         char[] chars = o.toCharArray();
@@ -165,7 +168,7 @@ public class GlobUtils {
                         if (i + 2 < chars.length && chars[i + 2] == s) {
                             i++;
                             if (i + 3 < chars.length) {
-                                sb.append(".*["+ escapedSeparators +"]");
+                                sb.append(".*[" + escapedSeparators + "]");
                             } else {
                                 sb.append(".*");
                             }
@@ -174,7 +177,7 @@ public class GlobUtils {
                             sb.append(".*");
                         }
                     } else {
-                        sb.append("[^"+ escapedSeparators +"]*");
+                        sb.append("[^" + escapedSeparators + "]*");
                     }
                     break;
                 }
@@ -187,18 +190,19 @@ public class GlobUtils {
                 }
             }
         }
-        return Pattern.compile(sb.toString());
+        return (sb.toString());
     }
-    private static String escapeSeparators(String s){
-        StringBuilder sb=new StringBuilder();
+
+    private static String escapeSeparators(String s) {
+        StringBuilder sb = new StringBuilder();
         for (char c : s.toCharArray()) {
-            switch (c){
-                case '\\':{
+            switch (c) {
+                case '\\': {
                     sb.append('\\');
                     sb.append(c);
                     break;
                 }
-                default:{
+                default: {
                     sb.append(c);
                 }
             }

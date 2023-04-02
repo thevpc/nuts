@@ -14,7 +14,7 @@ public class DefaultNGlob implements NGlob {
 
     public DefaultNGlob(NSession session) {
         this.session = session;
-        separator= File.separator;
+        separator = File.separator;
     }
 
     @Override
@@ -30,15 +30,15 @@ public class DefaultNGlob implements NGlob {
 
     @Override
     public boolean isGlob(String pattern) {
-        if(pattern==null){
+        if (pattern == null) {
             return false;
         }
         for (char c : pattern.toCharArray()) {
-            switch (c){
+            switch (c) {
                 case '*':
                 case '?':
                 case '[':
-                case ']':{
+                case ']': {
                     return true;
                 }
             }
@@ -55,21 +55,29 @@ public class DefaultNGlob implements NGlob {
     }
 
     @Override
+    public String toPatternString(String pattern) {
+        if (NBlankable.isBlank(pattern)) {
+            return ".*";
+        }
+        return GlobUtils.globString(pattern, getSeparator());
+    }
+
+    @Override
     public int getSupportLevel(NSupportLevelContext context) {
         return DEFAULT_SUPPORT;
     }
 
-    public String escape(String s){
-        StringBuilder sb=new StringBuilder();
+    public String escape(String s) {
+        StringBuilder sb = new StringBuilder();
         for (char c : s.toCharArray()) {
-            switch (c){
+            switch (c) {
                 case '\\':
                 case '*':
-                case '?':{
+                case '?': {
                     sb.append('\\').append(c);
                     break;
                 }
-                default:{
+                default: {
                     sb.append(c);
                     break;
                 }

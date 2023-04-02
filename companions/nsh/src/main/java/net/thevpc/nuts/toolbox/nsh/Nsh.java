@@ -154,17 +154,26 @@ public class Nsh implements NApplication {
             } catch (Exception notFound) {
                 //ignore!
             }
+            Set<String> uninstalled = new TreeSet<>();
             for (NCustomCommand command : NCommands.of(session).findCommandsByOwner(session.getAppId())) {
                 try {
-                    NCommands.of(session).removeCommand(command.getName());
+                    NCommands.of(
+                            session.copy().setTrace(false)
+                                    .setConfirm(NConfirmationMode.YES)
+                    ).removeCommand(command.getName());
+                    uninstalled.add(command.getName());
                 } catch (Exception ex) {
                     if (session.isPlainTrace()) {
                         NTexts factory = NTexts.of(session);
-                        session.err().println(NMsg.ofC("unable to uninstall %s.",
+                        session.err().println(NMsg.ofC("unable to unregister %s.",
                                 factory.ofStyled(command.getName(), NTextStyle.primary3())
                         ));
                     }
                 }
+            }
+            if (!uninstalled.isEmpty()) {
+                log.level(Level.CONFIG).verb(NLogVerb.INFO).log(NMsg.ofJ("[nsh] unregistered {0} nsh commands : {1}", uninstalled.size(),
+                        String.join(", ", uninstalled)));
             }
         } catch (Exception ex) {
             //ignore

@@ -205,6 +205,9 @@ public class NStringUtils {
     }
 
     public static String formatStringLiteral(String text, NQuoteType quoteType, NSupportMode condition, String escapeChars) {
+        if(text==null){
+            return "null";
+        }
         StringBuilder sb = new StringBuilder();
         boolean requireQuotes = condition == NSupportMode.ALWAYS;
         boolean allowQuotes = condition != NSupportMode.NEVER;
