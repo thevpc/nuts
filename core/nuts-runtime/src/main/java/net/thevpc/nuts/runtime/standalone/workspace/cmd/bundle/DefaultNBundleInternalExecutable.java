@@ -94,7 +94,7 @@ public class DefaultNBundleInternalExecutable extends DefaultInternalNExecutable
                     }
                 }
             } else {
-                ids.add(commandLine.next().toString());
+                ids.add(commandLine.next().get().toString());
             }
         }
         NPath d = NPaths.of(session).createTempFolder("bundle");
@@ -167,11 +167,33 @@ public class DefaultNBundleInternalExecutable extends DefaultInternalNExecutable
                             .getResultContent())
                     .to(d.resolve("META-INF/bundle").resolve(fullPath))
                     .run();
-            nuts_bundle_files_config.println("/" + fullPath
-                    + "=$target/"
+            nuts_bundle_files_config.println("copy /" + fullPath
+                    + " $target/"
                     + fullPath
             );
+
+             fileName = id.getArtifactId() + "-" + id.getVersion() + ".nuts";
+             fullPath = id.getGroupId().replace('.', '/')
+                    + '/'
+                    + id.getArtifactId()
+                    + '/'
+                    + fileName;
+            cp.from(
+                    NDescriptorFormat.of(session).setValue(f.setId(id).getResultDescriptor()).setNtf(false).toString().getBytes()
+                    )
+                    .to(d.resolve("META-INF/bundle").resolve(fullPath))
+                    .run();
+            nuts_bundle_files_config.println("copy /" + fullPath
+                    + " $target/"
+                    + fullPath
+            );
+
+
         }
+        cp.from("{}".getBytes())
+                .to(d.resolve("META-INF/bundle").resolve(".nuts-repository"))
+                .run();
+        nuts_bundle_files_config.println("copy /.nuts-repository $target/.nuts-repository");
         for (NId id : toBaseDir) {
             String fileName = id.getArtifactId() + "-" + id.getVersion() + ".jar";
             String fullPath = id.getGroupId().replace('.', '/')
@@ -179,19 +201,20 @@ public class DefaultNBundleInternalExecutable extends DefaultInternalNExecutable
                     + id.getArtifactId()
                     + '/'
                     + fileName;
-            nuts_bundle_files_config.println("/" + fullPath
-                    + "=$target/"
+            nuts_bundle_files_config.println("copy /" + fullPath
+                    + " $target/"
                     + fileName
             );
-            nuts_bundle_files_config.println("/" + fullPath
-                    + "=${user.dir}/"
-                    + fileName
+            nuts_bundle_files_config.println(
+                    "copy /" + fullPath
+                            + " ${user.dir}/"
+                            + fileName
             );
         }
         d.resolve("META-INF/nuts-bundle-files.config").writeString(nuts_bundle_files_config.toString());
 
 
-        nuts_bundle_info_config.println("target=${user.home}/.m2/repository");
+        nuts_bundle_info_config.println("target=${user.dir}/lib");
 
         String appVersion = NStringUtils.firstNonBlank(withAppVersion.get(), "1.0");
         String appTitle = NStringUtils.firstNonBlank(withAppTitle.get(), withAppName.get(), defaultName);

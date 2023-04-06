@@ -439,41 +439,4 @@ public class NReservedIOUtils {
             throw new UncheckedIOException(ex);
         }
     }
-
-    public static boolean isRemoteURL(String a) {
-        if (NBlankable.isBlank(a)) {
-            return false;
-        }
-        int i = a.indexOf(':');
-        if (i >= 0) {
-            String protocol = a.substring(0, i);
-            if (protocol.length() == 1) {
-                // this is a file
-                return false;
-            }
-            String path = a.substring(i + 1);
-            if (protocol.equalsIgnoreCase("http") || protocol.equalsIgnoreCase("https")) {
-                if (path.startsWith("//")) {
-                    path = path.substring(2);
-                    Pattern p = Pattern.compile("^(?<n>[^!:/\\\\?#]*).*");
-                    Matcher m = p.matcher(path);
-                    if (m.find()) {
-                        String k = m.group("n");
-                        if (k != null) {
-                            if (k.startsWith("127.")) {
-                                return false;
-                            }
-                            if (k.equalsIgnoreCase("localhost")) {
-                                return false;
-                            }
-                        }
-                    }
-                }
-                return true;
-            } else {
-                return true;
-            }
-        }
-        return false;
-    }
 }

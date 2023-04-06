@@ -562,7 +562,7 @@ public final class NReservedMavenUtils {
             if (!basePath.endsWith("/")) {
                 basePath = basePath + "/";
             }
-            boolean remoteURL = NReservedIOUtils.isRemoteURL(basePath);
+            boolean remoteURL = new NReservedPath(basePath).isRemote();
             if ((remoteURL && online) || (!remoteURL && offline)) {
                 //do nothing
                 if (htmlfs) {

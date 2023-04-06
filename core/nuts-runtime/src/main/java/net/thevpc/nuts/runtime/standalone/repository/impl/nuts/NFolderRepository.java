@@ -88,20 +88,22 @@ public class NFolderRepository extends NFolderRepositoryBase {
         if (!acceptedFetchNoCache(fetchMode)) {
             throw new NNotFoundException(session, id, new NFetchModeNotSupportedException(session, this, fetchMode, id.toString(), null));
         }
+        NPath nutsPath = getIdRemotePath(id, session);
+        NNotFoundException nutsPathEx = null;
         try {
             InputStream stream = null;
+            NId idDesc = id.builder().setFaceDescriptor().build();
             try {
                 NDescriptor nutsDescriptor = null;
                 byte[] bytes = null;
                 String name = null;
-                NId idDesc = id.builder().setFaceDescriptor().build();
                 try {
                     stream = getStream(idDesc, "artifact descriptor", "retrieve", session);
                     bytes = CoreIOUtils.loadByteArray(stream, true, session);
                     name = NIO.of(session).ofInputSource(stream).getInputMetaData().getName().orElse("no-name");
-                    nutsDescriptor = MavenUtils.of(session).parsePomXmlAndResolveParents(
-                            CoreIOUtils.createBytesStream(bytes, NMsg.ofNtf(name), "application/json", "nuts.json", session)
-                            , fetchMode, getIdRemotePath(id, session).toString(), this);
+                    nutsDescriptor = NDescriptorParser.of(session)
+                            .setDescriptorStyle(NDescriptorStyle.NUTS)
+                            .parse(CoreIOUtils.createBytesStream(bytes, NMsg.ofNtf(name), "application/json", "nuts.json", session)).get();
                 } finally {
                     if (stream != null) {
                         stream.close();
@@ -112,31 +114,42 @@ public class NFolderRepository extends NFolderRepositoryBase {
                         , "artifact descriptor", session);
                 return nutsDescriptor;
             } catch (IOException | UncheckedIOException | NIOException ex) {
-                throw new NNotFoundException(session, id, ex);
+                throw new NNotFoundException(session, id,
+                        new NNotFoundException.NIdInvalidDependency[0],
+                        new NNotFoundException.NIdInvalidLocation[]{
+                                new NNotFoundException.NIdInvalidLocation(
+                                        getName(),
+                                        getIdRemotePath(idDesc, session).toString(),
+                                        ex.getMessage()
+                                )
+                        },
+                        ex);
             }
         } catch (NNotFoundException e) {
+            nutsPathEx = e;
             //ignore
         }
         //now try pom file (maven!)
         checkSession(session);
         InputStream stream = null;
+        NPath pomURL =
+                config().setSession(session).getLocationPath().resolve(
+                        getIdBasedir(id, session).resolve(
+                                getIdFilename(id, ".pom", session)
+                        )
+                );
         try {
             NDescriptor nutsDescriptor = null;
             byte[] bytes = null;
             String name = null;
             try {
-                NPath pomURL =
-                        config().setSession(session).getLocationPath().resolve(
-                                getIdBasedir(id, session).resolve(
-                                        getIdFilename(id, ".pom", session)
-                                )
-                        );
                 stream = openStream(id, pomURL, id, "artifact descriptor", "retrieve", session);
                 bytes = CoreIOUtils.loadByteArray(stream, true, session);
                 name = NIO.of(session).ofInputSource(stream).getInputMetaData().getName().orElse("no-name");
-                nutsDescriptor = MavenUtils.of(session).parsePomXmlAndResolveParents(
-                        CoreIOUtils.createBytesStream(bytes, NMsg.ofNtf(name), "text/xml", "pom.xml", session)
-                        , fetchMode, getIdRemotePath(id, session).toString(), this);
+                nutsDescriptor = NDescriptorParser.of(session)
+                        .setDescriptorStyle(NDescriptorStyle.NUTS)
+                        .parse(CoreIOUtils.createBytesStream(bytes, NMsg.ofNtf(name), "text/xml", "pom.xml", session)).get();
+
             } finally {
                 if (stream != null) {
                     stream.close();
@@ -147,7 +160,17 @@ public class NFolderRepository extends NFolderRepositoryBase {
                     , "artifact descriptor", session);
             return nutsDescriptor;
         } catch (IOException | UncheckedIOException | NIOException ex) {
-            throw new NNotFoundException(session, id, ex);
+            throw new NNotFoundException(session, id,
+                    new NNotFoundException.NIdInvalidDependency[0],
+                    new NNotFoundException.NIdInvalidLocation[]{
+                            new NNotFoundException.NIdInvalidLocation(
+                                    getName(), nutsPath.toString(), nutsPathEx.getMessage()
+                            ),
+                            new NNotFoundException.NIdInvalidLocation(
+                                    getName(), pomURL.toString(), ex.getMessage()
+                            )
+                    },
+                    ex);
         }
     }
 }

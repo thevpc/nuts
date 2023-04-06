@@ -59,10 +59,10 @@ public class NCachedRepository extends AbstractNRepositoryBase {
 
     public NCachedRepository(NAddRepositoryOptions options, NSession session, NRepository parent, NSpeedQualifier speed, boolean supportedMirroring, String repositoryType, boolean supportsDeploy) {
         super(options, session, parent, speed, supportedMirroring, repositoryType, supportsDeploy);
-        cache = new NRepositoryFolderHelper(this, session, config().setSession(session).getStoreLocation(NStoreLocation.CACHE), true,
+        cache = new NRepositoryFolderHelper(this, session, config().setSession(session).getStoreLocation(NStoreLocation.CACHE).resolve(NConstants.Folders.ID), true,
                 "cache", NElements.of(session).ofObject().set("repoKind", "cache").build()
         );
-        lib = new NRepositoryFolderHelper(this, session, config().setSession(session).getStoreLocation(NStoreLocation.LIB), false,
+        lib = new NRepositoryFolderHelper(this, session, config().setSession(session).getStoreLocation(NStoreLocation.LIB).resolve(NConstants.Folders.ID), false,
                 "lib", NElements.of(session).ofObject().set("repoKind", "lib").build()
         );
         mirroring = new NRepositoryMirroringHelper(this, cache);
@@ -302,6 +302,8 @@ public class NCachedRepository extends AbstractNRepositoryBase {
             res = lockEnabled ?
                     NLocks.of(session).setSource(id.builder().setFaceContent().build()).call(nOptionalCallable)
                     :nOptionalCallable.call();
+        } catch (RuntimeException e) {
+            throw e;
         } catch (Exception e) {
             throw new RuntimeException(e);
         }

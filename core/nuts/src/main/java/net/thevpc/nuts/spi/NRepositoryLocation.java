@@ -158,7 +158,7 @@ public class NRepositoryLocation implements Comparable<NRepositoryLocation>, NBl
                 url = locationString;
                 String n = db.getRepositoryNameByLocation(url);
                 if (n == null) {
-                    name = url;
+                    name = null;
                 } else {
                     name = n;
                 }

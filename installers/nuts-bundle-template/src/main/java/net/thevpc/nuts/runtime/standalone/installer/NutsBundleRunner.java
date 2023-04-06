@@ -119,26 +119,39 @@ public class NutsBundleRunner {
                 }
             }
         }
-        String varFile = "nuts-bundle-files" + ((layout == null || layout.isEmpty()) ? "" : ("." + layout)) + ".config";
-        if (!isResourceAvailable(varFile)) {
+        String filesPath = "nuts-bundle-files" + ((layout == null || layout.isEmpty()) ? "" : ("." + layout)) + ".config";
+        if (!isResourceAvailable(filesPath)) {
             if ((layout == null || layout.isEmpty())) {
-                System.err.println("missing files file : " + varFile);
+                System.err.println("missing files file : " + filesPath);
                 return false;
             } else {
-                System.err.println("invalid layout " + layout + " . missing files file : " + varFile);
+                System.err.println("invalid layout " + layout + " . missing files file : " + filesPath);
                 return false;
             }
         }
-        List<Map.Entry<String, String>> config = readKeyVarFileEntries(varFile, true);
+        List<String[]> config = readArgsFileEntries(filesPath, true);
         if (config.isEmpty()) {
             System.err.println("empty config file");
             return false;
         }
-        for (Map.Entry<String, String> r : config) {
-            String k = r.getKey();
-            String v = r.getValue();
-            v = replaceDollarString(v, env);
-            copyFile(k, v, verbose);
+        for (String[] r : config) {
+            if (r.length > 0) {
+                switch (r[0].toLowerCase()) {
+                    case "copy": {
+                        if (r.length == 3) {
+                            String k = r[1];
+                            String v = replaceDollarString(r[2], env);
+                            copyFile(k, v, verbose);
+                        } else {
+                            throw new IllegalArgumentException("expected copy from to");
+                        }
+                        break;
+                    }
+                    default: {
+                        throw new IllegalArgumentException("unsupported command " + r[0]);
+                    }
+                }
+            }
         }
         return true;
     }
@@ -279,6 +292,34 @@ public class NutsBundleRunner {
         return m;
     }
 
+    private List<String[]> readArgsFileEntries(String pp, boolean required) {
+        if (!required) {
+            if (!isResourceAvailable(pp)) {
+                return new ArrayList<>();
+            }
+        }
+        List<String[]> result = new ArrayList<>();
+        try {
+            try (BufferedReader br = new BufferedReader(new InputStreamReader(createInputStream(pp)))) {
+                String line;
+                while ((line = br.readLine()) != null) {
+                    line = line.trim();
+                    if (!line.isEmpty()) {
+                        if (line.charAt(0) != '#') {
+                            String[] args = parseDefaultList(line);
+                            if (args.length > 0) {
+                                result.add(args);
+                            }
+                        }
+                    }
+                }
+            }
+        } catch (IOException ex) {
+            throw new UncheckedIOException(ex);
+        }
+        return result;
+    }
+
     private List<Map.Entry<String, String>> readKeyVarFileEntries(String pp, boolean required) {
         if (!required) {
             if (!isResourceAvailable(pp)) {
@@ -343,4 +384,164 @@ public class NutsBundleRunner {
             throw new UncheckedIOException(ex);
         }
     }
+
+    public static String[] parseDefaultList(String commandLineString) {
+        if (commandLineString == null) {
+            return new String[0];
+        }
+        List<String> args = new ArrayList<>();
+        StringBuilder sb = new StringBuilder();
+        final int START = 0;
+        final int IN_WORD = 1;
+        final int IN_QUOTED_WORD = 2;
+        final int IN_DBQUOTED_WORD = 3;
+        int status = START;
+        char[] charArray = commandLineString.toCharArray();
+        for (int i = 0; i < charArray.length; i++) {
+            char c = charArray[i];
+            switch (status) {
+                case START: {
+                    switch (c) {
+                        case ' ':
+                        case '\t': {
+                            //ignore
+                            break;
+                        }
+                        case '\r':
+                        case '\n': //support multiline commands
+                        {
+                            //ignore
+                            break;
+                        }
+                        case '\'': {
+                            status = IN_QUOTED_WORD;
+                            //ignore
+                            break;
+                        }
+                        case '"': {
+                            status = IN_DBQUOTED_WORD;
+                            //ignore
+                            break;
+                        }
+                        case '\\': {
+                            status = IN_WORD;
+                            i++;
+                            sb.append(charArray[i]);
+                            break;
+                        }
+                        default: {
+                            sb.append(c);
+                            status = IN_WORD;
+                            break;
+                        }
+                    }
+                    break;
+                }
+                case IN_WORD: {
+                    switch (c) {
+                        case ' ': {
+                            args.add(sb.toString());
+                            sb.delete(0, sb.length());
+                            status = START;
+                            break;
+                        }
+                        case '\'':
+                        case '"': {
+                            throw new IllegalArgumentException("illegal char " + c);
+                        }
+                        case '\\': {
+                            i++;
+                            sb.append(charArray[i]);
+                            break;
+                        }
+                        default: {
+                            sb.append(c);
+                            break;
+                        }
+                    }
+                    break;
+                }
+                case IN_QUOTED_WORD: {
+                    switch (c) {
+                        case '\'': {
+                            args.add(sb.toString());
+                            sb.delete(0, sb.length());
+                            status = START;
+                            //ignore
+                            break;
+                        }
+                        default: {
+                            sb.append(c);
+                            //ignore
+                            break;
+                        }
+                    }
+                    break;
+                }
+                case IN_DBQUOTED_WORD: {
+                    switch (c) {
+                        case '"': {
+                            args.add(sb.toString());
+                            sb.delete(0, sb.length());
+                            status = START;
+                            //ignore
+                            break;
+                        }
+                        case '\\': {
+                            i = readEscapedArg(charArray, i + 1, sb);
+                            //ignore
+                            break;
+                        }
+                        default: {
+                            sb.append(c);
+                            //ignore
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+        switch (status) {
+            case START: {
+                break;
+            }
+            case IN_WORD: {
+                args.add(sb.toString());
+                sb.delete(0, sb.length());
+                break;
+            }
+            case IN_QUOTED_WORD: {
+                throw new IllegalArgumentException("expected quote");
+            }
+        }
+        return args.toArray(new String[0]);
+    }
+
+    private static int readEscapedArg(char[] charArray, int i, StringBuilder sb) {
+        char c = charArray[i];
+        switch (c) {
+            case '\\':
+            case ';':
+            case '\"':
+            case '\'':
+            case '$':
+            case ' ':
+            case '<':
+            case '>':
+            case '(':
+            case ')':
+            case '~':
+            case '&':
+            case '|': {
+                sb.append(c);
+                break;
+            }
+            default: {
+                sb.append('\\').append(c);
+                break;
+            }
+        }
+        return i;
+    }
+
 }

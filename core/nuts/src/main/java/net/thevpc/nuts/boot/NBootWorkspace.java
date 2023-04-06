@@ -31,10 +31,7 @@ import net.thevpc.nuts.reserved.*;
 import net.thevpc.nuts.spi.*;
 import net.thevpc.nuts.util.*;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.UncheckedIOException;
+import java.io.*;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.file.Files;
@@ -293,6 +290,49 @@ public final class NBootWorkspace {
         } else {
             result = bootRepositories.resolve(Arrays.stream(old).map(x -> NRepositoryLocation.of(x.getName(), x.getUrl())).toArray(NRepositoryLocation[]::new), repositoryDB);
         }
+        result = Arrays.stream(result).map(
+                r -> {
+                    if (NBlankable.isBlank(r.getLocationType()) || NBlankable.isBlank(r.getName())) {
+                        boolean fileExists = false;
+                        if (r.getFullLocation() != null) {
+                            NReservedPath r1 = new NReservedPath(r.getFullLocation());
+                            NReservedPath r2 = r1.resolve(".nuts-repository");
+                            NReservedJsonParser parser = null;
+                            try {
+                                byte[] bytes = r2.readAllBytes(nLog);
+                                if (bytes != null) {
+                                    fileExists = true;
+                                    parser = new NReservedJsonParser(new InputStreamReader(new ByteArrayInputStream(bytes)));
+                                    Map<String, Object> jsonObject = parser.parseObject();
+                                    if (NBlankable.isBlank(r.getLocationType())) {
+                                        Object o = jsonObject.get("repositoryType");
+                                        if (o instanceof String && !NBlankable.isBlank(o)) {
+                                            r = r.setLocationType(String.valueOf(o));
+                                        }
+                                    }
+                                    if (NBlankable.isBlank(r.getName())) {
+                                        Object o = jsonObject.get("repositoryName");
+                                        if (o instanceof String && !NBlankable.isBlank(o)) {
+                                            r = r.setName(String.valueOf(o));
+                                        }
+                                    }
+                                    if (NBlankable.isBlank(r.getName())) {
+                                        r = r.setName(r.getName());
+                                    }
+                                }
+                            } catch (Exception e) {
+                                bLog.log(Level.CONFIG, NLogVerb.WARNING, NMsg.ofC("unable to load %s", r2));
+                            }
+                        }
+                        if (fileExists) {
+                            if (NBlankable.isBlank(r.getLocationType())) {
+                                r = r.setLocationType(NConstants.RepoTypes.NUTS);
+                            }
+                        }
+                    }
+                    return r;
+                }
+        ).toArray(NRepositoryLocation[]::new);
         Set<NRepositoryLocation> rr = Arrays.stream(result).collect(Collectors.toCollection(LinkedHashSet::new));
         if (dependencies) {
             parsedBootRuntimeDependenciesRepositories = rr;
@@ -783,10 +823,10 @@ public final class NBootWorkspace {
             NRepositoryLocation[] repositories = NStringUtils.split(computedOptions.getBootRepositories().orNull(), "\n;", true, true).stream().map(NRepositoryLocation::of).toArray(NRepositoryLocation[]::new);
 
             NRepositoryLocation workspaceBootLibFolderRepo = NRepositoryLocation.of("nuts@" + workspaceBootLibFolder);
-            computedOptions.setRuntimeBootDependencyNode(createClassLoaderNode(computedOptions.getRuntimeBootDescriptor().orNull(), repositories, workspaceBootLibFolderRepo, recover, errorList, true,cache));
+            computedOptions.setRuntimeBootDependencyNode(createClassLoaderNode(computedOptions.getRuntimeBootDescriptor().orNull(), repositories, workspaceBootLibFolderRepo, recover, errorList, true, cache));
 
             for (NDescriptor nutsBootDescriptor : computedOptions.getExtensionBootDescriptors().orElseGet(ArrayList::new)) {
-                deps.add(createClassLoaderNode(nutsBootDescriptor, repositories, workspaceBootLibFolderRepo, recover, errorList, false,cache));
+                deps.add(createClassLoaderNode(nutsBootDescriptor, repositories, workspaceBootLibFolderRepo, recover, errorList, false, cache));
             }
             computedOptions.setExtensionBootDependencyNodes(deps);
             deps.add(0, computedOptions.getRuntimeBootDependencyNode().orNull());
@@ -849,7 +889,7 @@ public final class NBootWorkspace {
             }
             if (nWorkspace == null) {
                 //should never happen
-                bLog.log(Level.SEVERE, NLogVerb.FAIL, NMsg.ofJ("unable to load Workspace \"{0}\" from ClassPath :", computedOptions.getName()));
+                bLog.log(Level.SEVERE, NLogVerb.FAIL, NMsg.ofJ("unable to load Workspace \"{0}\" from ClassPath :", computedOptions.getName().orNull()));
                 for (URL url : bootClassWorldURLs) {
                     bLog.log(Level.SEVERE, NLogVerb.FAIL, NMsg.ofJ("\t {0}", NReservedUtils.formatURL(url)));
                 }

@@ -1,7 +1,16 @@
 package net.thevpc.nuts.runtime.standalone.repository.util;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.reserved.NReservedJsonParser;
+import net.thevpc.nuts.reserved.NReservedPath;
 import net.thevpc.nuts.spi.NRepositoryLocation;
+import net.thevpc.nuts.util.NLog;
+import net.thevpc.nuts.util.NLogVerb;
+
+import java.io.ByteArrayInputStream;
+import java.io.InputStreamReader;
+import java.util.Map;
+import java.util.logging.Level;
 
 public class NRepositoryUtils {
     public static NRepositoryRef optionsToRef(NAddRepositoryOptions options) {
@@ -23,10 +32,59 @@ public class NRepositoryUtils {
                 .setTemporary(false);
     }
 
+    public static class RepoExtraInfos {
+
+    }
+
+    public static NRepositoryLocation validateLocation(NRepositoryLocation r, NLog nLog) {
+        if (NBlankable.isBlank(r.getLocationType()) || NBlankable.isBlank(r.getName())) {
+            if (r.getFullLocation() != null) {
+                NReservedPath r1 = new NReservedPath(r.getFullLocation());
+                NReservedPath r2 = r1.resolve(".nuts-repository");
+                NReservedJsonParser parser = null;
+                boolean fileExists = false;
+                try {
+                    byte[] bytes = r2.readAllBytes(nLog);
+                    if (bytes != null) {
+                        fileExists = true;
+                        parser = new NReservedJsonParser(new InputStreamReader(new ByteArrayInputStream(bytes)));
+                        Map<String, Object> jsonObject = parser.parseObject();
+                        if (NBlankable.isBlank(r.getLocationType())) {
+                            Object o = jsonObject.get("repositoryType");
+                            if (o instanceof String && !NBlankable.isBlank(o)) {
+                                r = r.setLocationType(String.valueOf(o));
+                            }
+                        }
+                        if (NBlankable.isBlank(r.getName())) {
+                            Object o = jsonObject.get("repositoryName");
+                            if (o instanceof String && !NBlankable.isBlank(o)) {
+                                r = r.setName(String.valueOf(o));
+                            }
+                        }
+                        if (NBlankable.isBlank(r.getName())) {
+                            r = r.setName(r.getName());
+                        }
+                    }
+                } catch (Exception e) {
+                    if (nLog != null) {
+                        nLog.with().level(Level.CONFIG).verb(NLogVerb.WARNING).log(NMsg.ofC("unable to load %s", r2));
+                    }
+                }
+                if (fileExists) {
+                    if (NBlankable.isBlank(r.getLocationType())) {
+                        r = r.setLocationType(NConstants.RepoTypes.NUTS);
+                    }
+                }
+            }
+        }
+        return r;
+    }
+
     public static String getRepoType(NRepositoryConfig conf) {
-        if(conf!=null){
+        if (conf != null) {
             NRepositoryLocation loc = conf.getLocation();
-            if(loc!=null) {
+            if (loc != null) {
+                loc = validateLocation(loc, null);
                 if (!NBlankable.isBlank(loc.getLocationType())) {
                     return loc.getLocationType();
                 }

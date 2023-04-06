@@ -567,7 +567,9 @@ public class DefaultNFetchCommand extends AbstractNFetchCommand {
             }
             return result;
         }
-        throw new NNotFoundException(session, id);
+        throw new NNotFoundException(session, id, new NNotFoundException.NIdInvalidDependency[0], new NNotFoundException.NIdInvalidLocation[]{
+                new NNotFoundException.NIdInvalidLocation(repo.getName(), null, id + " not found")
+        }, null);
     }
 
     public static class ScopePlusOptionsCache {

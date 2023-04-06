@@ -22,9 +22,6 @@ class DefaultNWorkspaceBootConfig implements NWorkspaceBootConfig {
     private String workspace = null;
     private String bootRepositories = null;
 
-    // folder types and layout types are exploded so that it is easier
-    // to extract from json file even though no json library is available
-    // via simple regexp
     private Map<NStoreLocation, String> storeLocations = null;
     private Map<NHomeLocation, String> homeLocations = null;
 
