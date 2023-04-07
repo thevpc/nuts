@@ -610,5 +610,22 @@ public class CoreNUtils {
                 .orElse(false);
     }
 
+    public static String resolveJarPath(NId id) {
+        return resolveFilePath(id,"jar");
+    }
+    public static String resolveNutsDescriptorPath(NId id) {
+        return resolveFilePath(id,"nuts");
+    }
+    public static String resolveFilePath(NId id, String extension) {
+        String fileName = id.getArtifactId() + "-" + id.getVersion() + "." + extension;
+        return id.getGroupId().replace('.', '/')
+                + '/'
+                + id.getArtifactId()
+                + '/'
+                + id.getVersion()
+                + '/'
+                + fileName;
+    }
+
 
 }

@@ -294,8 +294,11 @@ public final class NBootWorkspace {
                 r -> {
                     if (NBlankable.isBlank(r.getLocationType()) || NBlankable.isBlank(r.getName())) {
                         boolean fileExists = false;
-                        if (r.getFullLocation() != null) {
-                            NReservedPath r1 = new NReservedPath(r.getFullLocation());
+                        if (r.getPath() != null) {
+                            NReservedPath r1 = new NReservedPath(r.getPath()).toAbsolute();
+                            if (!r.getPath().equals(r1.getPath())) {
+                                r = r.setPath(r1.getPath());
+                            }
                             NReservedPath r2 = r1.resolve(".nuts-repository");
                             NReservedJsonParser parser = null;
                             try {

@@ -75,6 +75,11 @@ public class NRepositorySelectorHelper {
         }
         NAssert.requireNonBlank(name, "repository name (<name>=<url>)", session);
         NAssert.requireNonBlank(url, "repository url (<name>=<url>)", session);
+
+        NRepositoryLocation loc = NRepositoryLocation.of(url);
+        String sloc = NPath.of(loc.getPath(),session).toAbsolute().toString();
+        loc=loc.setPath(sloc);
+
         return new NAddRepositoryOptions().setName(name)
                 .setFailSafe(false).setCreate(true)
                 .setOrder((!NBlankable.isBlank(url) && NPath.of(url, session).isLocal())
@@ -82,7 +87,7 @@ public class NRepositorySelectorHelper {
                         : NAddRepositoryOptions.ORDER_USER_REMOTE
                 )
                 .setConfig(new NRepositoryConfig()
-                        .setLocation(NRepositoryLocation.of(url))
+                        .setLocation(loc)
                 );
     }
 

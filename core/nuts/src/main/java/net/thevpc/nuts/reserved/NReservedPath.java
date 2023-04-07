@@ -196,4 +196,16 @@ public class NReservedPath {
     public String toString() {
         return String.valueOf(path);
     }
+
+    public NReservedPath toAbsolute() {
+        Path file = getFile();
+        if(file!=null){
+            return new NReservedPath(file.normalize().toAbsolutePath());
+        }
+        return this;
+    }
+
+    public String getPath() {
+        return path;
+    }
 }

@@ -12,7 +12,9 @@ import net.thevpc.nuts.io.NCompress;
 import net.thevpc.nuts.io.NCp;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.io.NPrintStream;
+import net.thevpc.nuts.runtime.standalone.app.gui.CoreNUtilGui;
 import net.thevpc.nuts.runtime.standalone.app.util.NAppUtils;
+import net.thevpc.nuts.runtime.standalone.util.CoreNUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceExt;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.exec.DefaultInternalNExecutableCommand;
 import net.thevpc.nuts.spi.NPaths;
@@ -53,6 +55,8 @@ public class DefaultNBundleInternalExecutable extends DefaultInternalNExecutable
         NRef<String> withAppTitle = NRef.of(null);
         NRef<String> withAppDesc = NRef.of(null);
         NRef<String> withTarget = NRef.of(null);
+        NRef<String> withFormat = NRef.of(null);
+        NRef<Boolean> withClean = NRef.of(false);
         while (commandLine.hasNext()) {
             NArg a = commandLine.peek().get(session);
             if (a.isOption()) {
@@ -89,6 +93,37 @@ public class DefaultNBundleInternalExecutable extends DefaultInternalNExecutable
                         commandLine.withNextEntry((v, ar, s) -> withTarget.set(v));
                         break;
                     }
+                    case "--dir":
+                    case "--as-dir": {
+                        commandLine.withNextFlag((v, ar, s) -> {
+                            if (v) {
+                                withFormat.set("dir");
+                            }
+                        });
+                        break;
+                    }
+                    case "--jar":
+                    case "--as-jar": {
+                        commandLine.withNextFlag((v, ar, s) -> {
+                            if (v) {
+                                withFormat.set("jar");
+                            }
+                        });
+                        break;
+                    }
+                    case "--as-zip":
+                    case "--zip": {
+                        commandLine.withNextFlag((v, ar, s) -> {
+                            if (v) {
+                                withFormat.set("zip");
+                            }
+                        });
+                        break;
+                    }
+                    case "--clean": {
+                        commandLine.withNextFlag((v, ar, s) -> withClean.set(v));
+                        break;
+                    }
                     default: {
                         session.configureLast(commandLine);
                     }
@@ -97,18 +132,16 @@ public class DefaultNBundleInternalExecutable extends DefaultInternalNExecutable
                 ids.add(commandLine.next().get().toString());
             }
         }
-        NPath d = NPaths.of(session).createTempFolder("bundle");
-        NCp cp = NCp.of(session);
-        cp
-                .from(getClass().getResource("/META-INF/bundle/NutsBundleRunner.class"))
-                .setMkdirs(true)
-                .to(d.resolve("net/thevpc/nuts/runtime/standalone/installer/NutsBundleRunner.class"))
-                .run();
-        cp
-                .from(getClass().getResource("/META-INF/bundle/MANIFEST-COPY.MF"))
-                .setMkdirs(true)
-                .to(d.resolve("META-INF/MANIFEST.MF"))
-                .run();
+        NPath rootFolder = null;
+        NPath bundleFolder = null;
+        boolean tempBundleFolder = false;
+        String format = withFormat.get();
+        if (format == null) {
+            format = "jar";
+        }
+        boolean includeConfigFiles = true;
+
+
         Set<NId> nIds = new LinkedHashSet<>();
         Set<NId> toBaseDir = new LinkedHashSet<>();
         if (ids.isEmpty() || (ids.size() == 1 && ids.get(0).equals("nuts"))) {
@@ -151,98 +184,179 @@ public class DefaultNBundleInternalExecutable extends DefaultInternalNExecutable
         }
         String defaultName = sId.stream().map(x -> NId.of(x).get().getArtifactId()).distinct().sorted()
                 .collect(Collectors.joining("-")) + "-bundle";
+        String appName = NStringUtils.firstNonBlank(withAppName.get(), withAppTitle.get(), defaultName);
+
+        switch (format) {
+            case "jar":
+            case "zip": {
+                rootFolder = NPaths.of(session).createTempFolder("bundle");
+                includeConfigFiles = true;
+                bundleFolder = rootFolder.resolve("META-INF/bundle");
+                break;
+            }
+            case "dir": {
+                rootFolder = NBlankable.isBlank(withTarget.get()) ?
+                        NPath.ofUserDirectory(session).resolve(appName + "-bundle")
+                        : NPath.of(withTarget.get(), session)
+                ;
+                bundleFolder = rootFolder;
+                if (withClean.get()) {
+                    if (rootFolder.isDirectory()) {
+                        for (NPath nPath : rootFolder.list()) {
+                            nPath.deleteTree();
+                        }
+                    }
+                }
+                includeConfigFiles = false;
+                break;
+            }
+            default: {
+                commandLine.throwUnexpectedArgument(NMsg.ofC("invalid format %s", format));
+            }
+        }
+
+        NCp cp = NCp.of(session);
+        if ("jar".equals(format)) {
+            cp
+                    .from(getClass().getResource("/META-INF/bundle/NutsBundleRunner.class"))
+                    .setMkdirs(true)
+                    .to(rootFolder.resolve("net/thevpc/nuts/runtime/standalone/installer/NutsBundleRunner.class"))
+                    .run();
+            cp
+                    .from(getClass().getResource("/META-INF/bundle/MANIFEST-COPY.MF"))
+                    .setMkdirs(true)
+                    .to(rootFolder.resolve("META-INF/MANIFEST.MF"))
+                    .run();
+        }
+
+
         NFetchCommand f = NFetchCommand.of(session);
         NStringBuilder nuts_bundle_files_config = new NStringBuilder();
         NStringBuilder nuts_bundle_info_config = new NStringBuilder();
 
-        for (NId id : nIds) {
-            String fileName = id.getArtifactId() + "-" + id.getVersion() + ".jar";
-            String fullPath = id.getGroupId().replace('.', '/')
-                    + '/'
-                    + id.getArtifactId()
-                    + '/'
-                    + fileName;
-            cp.from(f
-                            .setId(id)
-                            .getResultContent())
-                    .to(d.resolve("META-INF/bundle").resolve(fullPath))
-                    .run();
-            nuts_bundle_files_config.println("copy /" + fullPath
-                    + " $target/"
-                    + fullPath
-            );
-
-             fileName = id.getArtifactId() + "-" + id.getVersion() + ".nuts";
-             fullPath = id.getGroupId().replace('.', '/')
-                    + '/'
-                    + id.getArtifactId()
-                    + '/'
-                    + fileName;
-            cp.from(
-                    NDescriptorFormat.of(session).setValue(f.setId(id).getResultDescriptor()).setNtf(false).toString().getBytes()
-                    )
-                    .to(d.resolve("META-INF/bundle").resolve(fullPath))
-                    .run();
-            nuts_bundle_files_config.println("copy /" + fullPath
-                    + " $target/"
-                    + fullPath
-            );
-
-
+        //load all definitions
+        Map<NId, NDefinition> allIds = new HashMap<>();
+        Stack<NId> toProcess = new Stack<>();
+        toProcess.addAll(nIds);
+        while (!toProcess.isEmpty()) {
+            NId id = toProcess.pop();
+            if (!allIds.containsKey(id)) {
+                allIds.put(id, null);
+                NDefinition resultDefinition = f.setId(id).setContent(true).getResultDefinition();
+                allIds.put(id, resultDefinition);
+                for (NId parent : resultDefinition.getDescriptor().getParents()) {
+                    toProcess.push(parent);
+                }
+            }
         }
-        cp.from("{}".getBytes())
-                .to(d.resolve("META-INF/bundle").resolve(".nuts-repository"))
-                .run();
-        nuts_bundle_files_config.println("copy /.nuts-repository $target/.nuts-repository");
-        for (NId id : toBaseDir) {
-            String fileName = id.getArtifactId() + "-" + id.getVersion() + ".jar";
-            String fullPath = id.getGroupId().replace('.', '/')
-                    + '/'
-                    + id.getArtifactId()
-                    + '/'
-                    + fileName;
-            nuts_bundle_files_config.println("copy /" + fullPath
-                    + " $target/"
-                    + fileName
-            );
-            nuts_bundle_files_config.println(
-                    "copy /" + fullPath
-                            + " ${user.dir}/"
-                            + fileName
-            );
+
+        for (Map.Entry<NId, NDefinition> entry : allIds.entrySet()) {
+            NId id = entry.getKey();
+            NDefinition resultDefinition = entry.getValue();
+            String fullPath = CoreNUtils.resolveJarPath(id);
+            if (resultDefinition.getContent().isPresent()) {
+                cp.from(resultDefinition.getContent().get())
+                        .to(bundleFolder.resolve(fullPath))
+                        .run();
+                if (includeConfigFiles) {
+                    nuts_bundle_files_config.println("copy /" + fullPath
+                            + " $target/"
+                            + fullPath
+                    );
+                }
+            }
+
+            fullPath = CoreNUtils.resolveNutsDescriptorPath(id);
+            cp.from(NDescriptorFormat.of(session).setValue(resultDefinition.getDescriptor()).setNtf(false).toString().getBytes())
+                    .to(bundleFolder.resolve(fullPath))
+                    .run();
+            if (includeConfigFiles) {
+                nuts_bundle_files_config.println("copy /" + fullPath
+                        + " $target/"
+                        + fullPath
+                );
+            }
         }
-        d.resolve("META-INF/nuts-bundle-files.config").writeString(nuts_bundle_files_config.toString());
 
+        bundleFolder.resolve(".nuts-repository").writeString("{}");
+        if (includeConfigFiles) {
+            nuts_bundle_files_config.println("copy /.nuts-repository $target/.nuts-repository");
+            for (NId id : toBaseDir) {
+                String fullPath = CoreNUtils.resolveJarPath(id);
 
-        nuts_bundle_info_config.println("target=${user.dir}/lib");
+                nuts_bundle_files_config.println("copy /" + fullPath
+                        + " $target/"
+                        + NPath.of(fullPath, session).getName()
+                );
+                nuts_bundle_files_config.println(
+                        "copy /" + fullPath
+                                + " ${user.dir}/"
+                                + NPath.of(fullPath, session).getName()
+                );
+            }
+            rootFolder.resolve("META-INF/nuts-bundle-files.config").writeString(nuts_bundle_files_config.toString());
+        }
+
 
         String appVersion = NStringUtils.firstNonBlank(withAppVersion.get(), "1.0");
         String appTitle = NStringUtils.firstNonBlank(withAppTitle.get(), withAppName.get(), defaultName);
-        String appName = NStringUtils.firstNonBlank(withAppName.get(), withAppTitle.get(), defaultName);
         String appDesc = NStringUtils.firstNonBlank(withAppDesc.get(), withAppTitle.get());
 
-        if (appVersion != null) {
-            nuts_bundle_info_config.println("version=" + appVersion);
-        }
-        if (appTitle != null) {
-            nuts_bundle_info_config.println("title=" + appTitle);
-        }
-        if (appName != null) {
-            nuts_bundle_info_config.println("name=" + appName);
-        }
-        if (appDesc != null) {
-            nuts_bundle_info_config.println("description=" + appDesc);
-        }
-        d.resolve("META-INF/nuts-bundle-info.config").writeString(nuts_bundle_info_config.toString());
+        if (includeConfigFiles) {
 
-        NCompress zip = NCompress.of(session).setFormat("zip");
-        zip.addSource(d)
-                .setSkipRoot(true)
-                .setTarget(
-                        NStringUtils.firstNonBlank(withTarget.get(),
-                                appName + ".jar")
-                )
-                .run();
+            nuts_bundle_info_config.println("target=${user.dir}/lib");
+            if (appVersion != null) {
+                nuts_bundle_info_config.println("version=" + appVersion);
+            }
+            if (appTitle != null) {
+                nuts_bundle_info_config.println("title=" + appTitle);
+            }
+            if (appName != null) {
+                nuts_bundle_info_config.println("name=" + appName);
+            }
+            if (appDesc != null) {
+                nuts_bundle_info_config.println("description=" + appDesc);
+            }
+            rootFolder.resolve("META-INF/nuts-bundle-info.config").writeString(nuts_bundle_info_config.toString());
+        }
+
+        switch (format) {
+            case "jar": {
+                NCompress zip = NCompress.of(session).setFormat("zip");
+                zip.addSource(rootFolder)
+                        .setSkipRoot(true)
+                        .setTarget(
+                                NStringUtils.firstNonBlank(withTarget.get(),
+                                        appName + ".jar")
+                        )
+                        .run();
+                if (tempBundleFolder) {
+                    rootFolder.deleteTree();
+                }
+                break;
+            }
+            case "zip": {
+                NCompress zip = NCompress.of(session).setFormat("zip");
+                zip.addSource(rootFolder)
+                        .setSkipRoot(true)
+                        .setTarget(
+                                NStringUtils.firstNonBlank(withTarget.get(),
+                                        appName + ".zip")
+                        )
+                        .run();
+                if (tempBundleFolder) {
+                    rootFolder.deleteTree();
+                }
+                break;
+            }
+            case "dir": {
+                break;
+            }
+            default: {
+                commandLine.throwUnexpectedArgument(NMsg.ofC("invalid format %s", format));
+            }
+        }
+
     }
 
 }

@@ -728,7 +728,9 @@ public final class NReservedUtils {
                 updatedFile = true;
             }
             if (force || updatedFile) {
-                Files.createDirectories(filePath.getParent());
+                if(!Files.exists(filePath.getParent())){
+                    Files.createDirectories(filePath.getParent());
+                }
                 Files.write(filePath, (String.join("\n", lines) + "\n").getBytes());
             }
             return updatedFile;
