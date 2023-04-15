@@ -45,7 +45,7 @@ import java.util.concurrent.locks.Lock;
  */
 public interface NLocks extends NComponent, NSessionProvider {
     static NLocks of(NSession session) {
-        return NExtensions.of(session).createSupported(NLocks.class);
+        return NExtensions.of(session).createComponent(NLocks.class).get();
     }
 
     /**

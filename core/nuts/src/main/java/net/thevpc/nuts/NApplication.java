@@ -64,14 +64,14 @@ package net.thevpc.nuts;
  *             boolean clean = false;
  *             List<String> params = new ArrayList<>();
  *
- *             public boolean onCmdNextOption(NArg option, NCmdLine commandLine, NCmdLineContext context) {
+ *             public boolean onCmdNextOption(NArg option, NCmdLine cmdLine, NCmdLineContext context) {
  *                 if (!noMoreOptions) {
  *                     return false;
  *                 }
  *                 switch (option.key()) {
  *                     case "-c":
  *                     case "--clean": {
- *                         NArg a = commandLine.nextFlag().get();
+ *                         NArg a = cmdLine.nextFlag().get();
  *                         if (a.isEnabled()) {
  *                             clean = a.getBooleanValue().get();
  *                         }
@@ -81,14 +81,14 @@ package net.thevpc.nuts;
  *                 return false;
  *             }
  *
- *             public boolean onCmdNextNonOption(NArg nonOption, NCmdLine commandLine, NCmdLineContext context) {
- *                 params.add(commandLine.next().get().toString());
+ *             public boolean onCmdNextNonOption(NArg nonOption, NCmdLine cmdLine, NCmdLineContext context) {
+ *                 params.add(cmdLine.next().get().toString());
  *                 return true;
  *             }
  *
- *             public void onCmdExec(NCmdLine commandLine, NCmdLineContext context) {
+ *             public void onCmdExec(NCmdLine cmdLine, NCmdLineContext context) {
  *                 if(clean){
- *                     commandLine.getSession().out().println("cleaned!");
+ *                     cmdLine.getSession().out().println("cleaned!");
  *                 }
  *             }
  *         });

@@ -9,8 +9,8 @@ import net.thevpc.nuts.runtime.standalone.workspace.config.compat.AbstractNVersi
 import net.thevpc.nuts.runtime.standalone.workspace.config.compat.CompatUtils;
 
 public class NVersionCompat803 extends AbstractNVersionCompat {
-    public NVersionCompat803(NSession ws, NVersion apiVersion) {
-        super(ws, apiVersion, 507);
+    public NVersionCompat803(NSession session, NVersion apiVersion) {
+        super(session, apiVersion, 507);
     }
 
     @Override

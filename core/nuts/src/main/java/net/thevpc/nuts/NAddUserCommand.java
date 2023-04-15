@@ -43,7 +43,7 @@ import java.util.List;
 public interface NAddUserCommand extends NWorkspaceCommand {
 
     static NAddUserCommand of(NSession session) {
-        return NExtensions.of(session).createSupported(NAddUserCommand.class);
+        return NExtensions.of(session).createComponent(NAddUserCommand.class).get();
     }
 
     /**

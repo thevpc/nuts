@@ -278,7 +278,7 @@ public class DateCommand extends NShellBuiltinDefault {
     }
 
     @Override
-    protected void onCmdInitParsing(NCmdLine commandLine, NShellExecutionContext context) {
+    protected void onCmdInitParsing(NCmdLine cmdLine, NShellExecutionContext context) {
         for (String s : new String[]{
                 "-Id", "-Idate",
                 "-Ih", "-Ihours",
@@ -286,7 +286,7 @@ public class DateCommand extends NShellBuiltinDefault {
                 "-Is", "-Iseconds",
                 "-Ins"
         }) {
-            commandLine.registerSpecialSimpleOption(s);
+            cmdLine.registerSpecialSimpleOption(s);
         }
     }
 
@@ -305,7 +305,7 @@ public class DateCommand extends NShellBuiltinDefault {
     }
 
     @Override
-    protected boolean onCmdNextNonOption(NArg arg, NCmdLine commandLine, NShellExecutionContext context) {
-        return onCmdNextOption(arg, commandLine, context);
+    protected boolean onCmdNextNonOption(NArg arg, NCmdLine cmdLine, NShellExecutionContext context) {
+        return onCmdNextOption(arg, cmdLine, context);
     }
 }

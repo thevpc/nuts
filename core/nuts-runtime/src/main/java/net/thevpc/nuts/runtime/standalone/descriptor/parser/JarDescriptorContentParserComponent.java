@@ -46,11 +46,11 @@ import net.thevpc.nuts.util.NStringUtils;
 public class JarDescriptorContentParserComponent implements NDescriptorContentParserComponent {
 
     public static final Set<String> POSSIBLE_EXT = new HashSet<>(Collections.singletonList("jar"));//, "war", "ear"
-    private NSession ws;
+    private NSession session;
 
     @Override
     public int getSupportLevel(NSupportLevelContext criteria) {
-        this.ws = criteria.getSession();
+        this.session = criteria.getSession();
         NDescriptorContentParserContext cons = criteria.getConstraints(NDescriptorContentParserContext.class);
         if (cons != null) {
             String e = NStringUtils.trim(cons.getFileExtension());
@@ -73,7 +73,7 @@ public class JarDescriptorContentParserComponent implements NDescriptorContentPa
         if (!POSSIBLE_EXT.contains(parserContext.getFileExtension())) {
             return null;
         }
-        final NId JAVA = NId.of("java").get(ws);
+        final NId JAVA = NId.of("java").get(session);
         final NRef<NDescriptor> nutsjson = new NRef<>();
         final NRef<NDescriptor> metainf = new NRef<>();
         final NRef<NDescriptor> maven = new NRef<>();

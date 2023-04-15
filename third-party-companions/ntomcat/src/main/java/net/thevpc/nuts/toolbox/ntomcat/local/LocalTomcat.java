@@ -731,22 +731,22 @@ public class LocalTomcat {
         }
     }
 
-    public void showLog(NCmdLine commandLine) {
+    public void showLog(NCmdLine cmdLine) {
         NSession session = getSession();
-        LocalTomcatServiceBase s = nextLocalTomcatServiceBase(commandLine, NOpenMode.OPEN_OR_ERROR);
+        LocalTomcatServiceBase s = nextLocalTomcatServiceBase(cmdLine, NOpenMode.OPEN_OR_ERROR);
         boolean path = false;
         int count = -1;
         NArg a;
-        commandLine.setCommandName("tomcat --local log");
-        while (commandLine.hasNext()) {
-            if ((a = commandLine.nextEntry("--path").orNull()) != null) {
+        cmdLine.setCommandName("tomcat --local log");
+        while (cmdLine.hasNext()) {
+            if ((a = cmdLine.nextEntry("--path").orNull()) != null) {
                 path = true;
-            } else if (commandLine.isNextOption() && TomcatUtils.isPositiveInt(commandLine.peek()
+            } else if (cmdLine.isNextOption() && TomcatUtils.isPositiveInt(cmdLine.peek()
                     .get(session)
                     .asString().get(session).substring(1))) {
-                count = Integer.parseInt(commandLine.next().flatMap(NLiteral::asString).get(session).substring(1));
+                count = Integer.parseInt(cmdLine.next().flatMap(NLiteral::asString).get(session).substring(1));
             } else {
-                session.configureLast(commandLine);
+                session.configureLast(cmdLine);
             }
         }
         LocalTomcatConfigService c = toLocalTomcatConfigService(s);

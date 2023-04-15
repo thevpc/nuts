@@ -71,8 +71,8 @@ public class DefaultNUpdateCommand extends AbstractNUpdateCommand {
     private boolean checkFixes = false;
     private List<FixAction> resultFixes = null;
 
-    public DefaultNUpdateCommand(NSession ws) {
-        super(ws);
+    public DefaultNUpdateCommand(NSession session) {
+        super(session);
     }
 
     @Override

@@ -43,7 +43,7 @@ import java.util.Set;
  */
 public interface NConfigs extends NComponent,NSessionProvider {
     static NConfigs of(NSession session) {
-        return NExtensions.of(session).createSupported(NConfigs.class);
+        return NExtensions.of(session).createComponent(NConfigs.class).get();
     }
 
     NWorkspaceStoredConfig stored();

@@ -49,14 +49,14 @@ public interface NFormatSPI {
 
     /**
      * ask {@code this} instance to configure with the very first argument of
-     * {@code commandLine}. If the first argument is not supported, return
+     * {@code cmdLine}. If the first argument is not supported, return
      * {@code false} and consume (skip/read) the argument. If the argument
      * required one or more parameters, these arguments are also consumed and
      * finally return {@code true}
      *
-     * @param commandLine arguments to configure with
+     * @param cmdLine arguments to configure with
      * @return true when the at least one argument was processed
      */
-    boolean configureFirst(NCmdLine commandLine);
+    boolean configureFirst(NCmdLine cmdLine);
 
 }

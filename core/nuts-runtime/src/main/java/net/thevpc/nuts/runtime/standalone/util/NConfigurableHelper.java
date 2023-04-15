@@ -55,38 +55,38 @@ public class NConfigurableHelper {
         return (T) c;
     }
 
-    public static boolean configure(NCmdLineConfigurable c, NSession session, boolean skipUnsupported, NCmdLine commandLine) {
+    public static boolean configure(NCmdLineConfigurable c, NSession session, boolean skipUnsupported, NCmdLine cmdLine) {
         boolean conf = false;
         int maxLoops = 1000;
         boolean robustMode = false;
-        while (commandLine.hasNext()) {
+        while (cmdLine.hasNext()) {
             if (robustMode) {
-                String[] before = commandLine.toStringArray();
-                if (!c.configureFirst(commandLine)) {
+                String[] before = cmdLine.toStringArray();
+                if (!c.configureFirst(cmdLine)) {
                     if (skipUnsupported) {
-                        commandLine.skip();
+                        cmdLine.skip();
                     } else {
-                        commandLine.throwUnexpectedArgument();
+                        cmdLine.throwUnexpectedArgument();
                     }
                 } else {
                     conf = true;
                 }
-                String[] after = commandLine.toStringArray();
+                String[] after = cmdLine.toStringArray();
                 if (Arrays.equals(before, after)) {
                     throw new NIllegalArgumentException(session,
                             NMsg.ofC(
                                     "bad implementation of configureFirst in class %s."
-                                            + " commandLine is not consumed; perhaps missing skip() class."
+                                            + " cmdLine is not consumed; perhaps missing skip() class."
                                             + " args = %s" , c.getClass().getName(), Arrays.toString(after)
                             )
                             );
                 }
             } else {
-                if (!c.configureFirst(commandLine)) {
+                if (!c.configureFirst(cmdLine)) {
                     if (skipUnsupported) {
-                        commandLine.skip();
+                        cmdLine.skip();
                     } else {
-                        commandLine.throwUnexpectedArgument();
+                        cmdLine.throwUnexpectedArgument();
                     }
                 } else {
                     conf = true;

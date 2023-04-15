@@ -40,7 +40,7 @@ import java.net.URL;
 /**
  * Created by vpc on 1/21/17.
  */
-@NComponentScope(NComponentScopeType.WORKSPACE)
+@NComponentScope(NComponentScopeType.SESSION)
 public class DefaultHttpTransportComponent implements NTransportComponent {
 
     public static final NTransportComponent INSTANCE = new DefaultHttpTransportComponent();

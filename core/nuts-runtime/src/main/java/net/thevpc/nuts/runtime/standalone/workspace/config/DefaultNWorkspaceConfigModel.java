@@ -53,10 +53,7 @@ import net.thevpc.nuts.runtime.standalone.util.CoreNConstants;
 import net.thevpc.nuts.runtime.standalone.util.CoreNUtils;
 import net.thevpc.nuts.runtime.standalone.util.TimePeriod;
 import net.thevpc.nuts.runtime.standalone.util.collections.CoreCollectionUtils;
-import net.thevpc.nuts.runtime.standalone.workspace.DefaultNWorkspace;
-import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceExt;
-import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceUtils;
-import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceVarExpansionFunction;
+import net.thevpc.nuts.runtime.standalone.workspace.*;
 import net.thevpc.nuts.runtime.standalone.workspace.config.compat.CompatUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.config.compat.NVersionCompat;
 import net.thevpc.nuts.runtime.standalone.workspace.config.compat.v502.NVersionCompat502;
@@ -143,6 +140,16 @@ public class DefaultNWorkspaceConfigModel {
         addPathFactory(new GenericFilePath.GenericPathFactory(ws));
         invalidPathFactory = new InvalidFilePathFactory();
         //        this.excludedRepositoriesSet = this.options.getExcludedRepositories() == null ? null : new HashSet<>(CoreStringUtils.split(Arrays.asList(this.options.getExcludedRepositories()), " ,;"));
+    }
+
+
+    public void onNewComponent(Class componentType,NSession session){
+        if(NPathFactory.class.isAssignableFrom(componentType)){
+            DefaultNWorkspaceFactory aa=(DefaultNWorkspaceFactory) (((NWorkspaceExt) ws).getModel().extensionModel.getObjectFactory());
+            addPathFactory(
+                    (NPathFactory) aa.newInstance(componentType,session,NPathFactory.class)
+            );
+        }
     }
 
     protected NLogOp _LOGOP(NSession session) {
@@ -396,7 +403,7 @@ public class DefaultNWorkspaceConfigModel {
         if (NBlankable.isBlank(repositoryType)) {
             repositoryType = NConstants.RepoTypes.NUTS;
         }
-        return session.extensions().createAllSupported(NRepositoryFactoryComponent.class,
+        return session.extensions().createComponents(NRepositoryFactoryComponent.class,
                 new NRepositoryConfig().setLocation(
                         NRepositoryLocation.of(repositoryType + "@")
                 )).size() > 0;
@@ -424,7 +431,7 @@ public class DefaultNWorkspaceConfigModel {
         Set<String> set = new HashSet<>();
         set.add("default");
         for (NWorkspaceArchetypeComponent extension : session.extensions()
-                .createAllSupported(NWorkspaceArchetypeComponent.class, null)) {
+                .createComponents(NWorkspaceArchetypeComponent.class, null)) {
             set.add(extension.getName());
         }
         return set;
@@ -600,10 +607,10 @@ public class DefaultNWorkspaceConfigModel {
                     }
                 }
             }
-            if(cConfig.getApiId()==null){
+            if (cConfig.getApiId() == null) {
                 cConfig.setApiId(NId.ofApi(Nuts.getVersion()).get(session));
             }
-            if(cConfig.getRuntimeId()==null){
+            if (cConfig.getRuntimeId() == null) {
                 cConfig.setRuntimeId(bOptions.getRuntimeId().orNull());
             }
             NWorkspaceConfigRuntime rconfig = compat.parseRuntimeConfig(session);
@@ -634,13 +641,13 @@ public class DefaultNWorkspaceConfigModel {
             setCurrentConfig(cConfig
                     .build(NLocations.of(session).getWorkspaceLocation(), session)
             );
-            if(aconfig==null){
-                aconfig=new NWorkspaceConfigApi();
+            if (aconfig == null) {
+                aconfig = new NWorkspaceConfigApi();
             }
-            if(aconfig.getApiVersion()==null){
+            if (aconfig.getApiVersion() == null) {
                 aconfig.setApiVersion(cConfig.getApiId().getVersion());
             }
-            if(aconfig.getRuntimeId()==null){
+            if (aconfig.getRuntimeId() == null) {
                 aconfig.setRuntimeId(cConfig.getRuntimeId());
             }
             setConfigBoot(_config, session, false);
@@ -925,7 +932,7 @@ public class DefaultNWorkspaceConfigModel {
     private Map<String, NDependencySolverFactory> getSolversMap(NSession session) {
         if (dependencySolvers == null) {
             dependencySolvers = new LinkedHashMap<>();
-            for (NDependencySolverFactory nutsDependencySolver : session.extensions().createAllSupported(NDependencySolverFactory.class, null)) {
+            for (NDependencySolverFactory nutsDependencySolver : session.extensions().createComponents(NDependencySolverFactory.class, null)) {
                 dependencySolvers.put(nutsDependencySolver.getName(), nutsDependencySolver);
             }
         }
@@ -954,9 +961,9 @@ public class DefaultNWorkspaceConfigModel {
         authenticationAgent = NStringUtils.trim(authenticationAgent);
         NAuthenticationAgent supported = null;
         if (authenticationAgent.isEmpty()) {
-            supported = session.extensions().createSupported(NAuthenticationAgent.class, true, "");
+            supported = session.extensions().createComponent(NAuthenticationAgent.class, "").get();
         } else {
-            List<NAuthenticationAgent> agents = session.extensions().createAllSupported(NAuthenticationAgent.class, authenticationAgent);
+            List<NAuthenticationAgent> agents = session.extensions().createComponents(NAuthenticationAgent.class, authenticationAgent);
             for (NAuthenticationAgent agent : agents) {
                 if (agent.getId().equals(authenticationAgent)) {
                     supported = agent;
@@ -964,7 +971,7 @@ public class DefaultNWorkspaceConfigModel {
             }
         }
         if (supported == null) {
-            throw new NExtensionNotFoundException(session, NAuthenticationAgent.class, authenticationAgent);
+            return NOptional.<NAuthenticationAgent>ofNamedEmpty(NMsg.ofC("extensions component %s with agent=%s", NAuthenticationAgent.class, authenticationAgent)).get();
         }
         NSessionUtils.setSession(supported, session);
         return supported;
@@ -993,7 +1000,7 @@ public class DefaultNWorkspaceConfigModel {
 
     public void onExtensionsPrepared(NSession session) {
         try {
-            indexStoreClientFactory = session.extensions().createSupported(NIndexStoreFactory.class, false, null);
+            indexStoreClientFactory = session.extensions().createComponent(NIndexStoreFactory.class).orNull();
         } catch (Exception ex) {
             //
         }
@@ -1038,7 +1045,7 @@ public class DefaultNWorkspaceConfigModel {
         repos.removeAllRepositories();
         List<NRepositoryRef> refsToLoad = this.storeModelMain.getRepositories();
         if (refsToLoad != null) {
-            refsToLoad=new ArrayList<>(refsToLoad);
+            refsToLoad = new ArrayList<>(refsToLoad);
             //reset config because add will add it again...
             this.storeModelMain.setRepositories(new ArrayList<>());
             for (NRepositoryRef ref : refsToLoad) {
@@ -1124,7 +1131,7 @@ public class DefaultNWorkspaceConfigModel {
                 + ", workspace=" + ((currentConfig == null) ? "NULL" : ("'"
                 +
                 (ws == null ? "?" : "" + ((DefaultNLocations) NLocations.of(NSessionUtils.defaultSession(ws))
-                        ).getModel().getWorkspaceLocation()) + '\''))
+                ).getModel().getWorkspaceLocation()) + '\''))
                 + '}';
     }
 
@@ -1737,6 +1744,12 @@ public class DefaultNWorkspaceConfigModel {
                 //ignore
             }
             return null;
+        }
+
+        @Override
+        public int getSupportLevel(NSupportLevelContext context) {
+            String path= context.getConstraints();
+            return 1;
         }
     }
 

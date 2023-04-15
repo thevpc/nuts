@@ -10,9 +10,9 @@ import java.util.List;
 
 public class NTextNodeCollector implements NTextVisitor {
     private List<NText> all = new ArrayList<>();
-    private NSession ws;
-    public NTextNodeCollector(NSession ws) {
-        this.ws=ws;
+    private NSession session;
+    public NTextNodeCollector(NSession session) {
+        this.session =session;
     }
 
     @Override
@@ -24,10 +24,10 @@ public class NTextNodeCollector implements NTextVisitor {
         if (all.isEmpty()) {
             return null;
         }
-        return NTexts.of(ws).ofList(all).simplify();
+        return NTexts.of(session).ofList(all).simplify();
     }
 
     public NText getRootOrEmpty() {
-        return NTexts.of(ws).ofList(all).simplify();
+        return NTexts.of(session).ofList(all).simplify();
     }
 }

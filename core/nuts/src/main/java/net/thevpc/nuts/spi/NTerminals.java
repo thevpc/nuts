@@ -38,7 +38,6 @@ import java.io.InputStream;
  *
  * @app.category Input Output
  */
-@NComponentScope(NComponentScopeType.WORKSPACE)
 public interface NTerminals extends NComponent {
 
     /**
@@ -48,7 +47,7 @@ public interface NTerminals extends NComponent {
      * @return the singleton instance of NutsTerminals for the given session
      */
     static NTerminals of(NSession session) {
-       return NExtensions.of(session).createSupported(NTerminals.class);
+       return NExtensions.of(session).createComponent(NTerminals.class).get();
     }
 
     /**
@@ -60,7 +59,7 @@ public interface NTerminals extends NComponent {
      * @param session session
      * @return {@code this} instance
      */
-    NTerminals enableRichTerm(NSession session);
+    NTerminals enableRichTerm();
 
     /**
      * return new terminal bound to the given session
@@ -68,7 +67,7 @@ public interface NTerminals extends NComponent {
      * @param session session
      * @return new terminal
      */
-    NSessionTerminal createTerminal(NSession session);
+    NSessionTerminal createTerminal();
 
     /**
      * return new terminal
@@ -79,7 +78,7 @@ public interface NTerminals extends NComponent {
      * @param session session
      * @return new terminal
      */
-    NSessionTerminal createTerminal(InputStream in, NPrintStream out, NPrintStream err, NSession session);
+    NSessionTerminal createTerminal(InputStream in, NPrintStream out, NPrintStream err);
 
     /**
      * return new terminal bound to the given parent terminal and session.
@@ -88,7 +87,7 @@ public interface NTerminals extends NComponent {
      * @param session  session
      * @return new terminal bound to the given parent terminal and session.
      */
-    NSessionTerminal createTerminal(NSessionTerminal terminal, NSession session);
+    NSessionTerminal createTerminal(NSessionTerminal terminal);
 
     /**
      * return a new terminal with empty input and byte-array output/error.
@@ -98,7 +97,7 @@ public interface NTerminals extends NComponent {
      * @param session session
      * @return a new terminal with empty input and byte-array output/error.
      */
-    NSessionTerminal createMemTerminal(NSession session);
+    NSessionTerminal createMemTerminal();
 
     /**
      * return a new terminal with empty input and byte-array output/error.
@@ -108,6 +107,6 @@ public interface NTerminals extends NComponent {
      * @param session  session
      * @return a new terminal with empty input and byte-array output/error.
      */
-    NSessionTerminal createMemTerminal(boolean mergeErr, NSession session);
+    NSessionTerminal createMemTerminal(boolean mergeErr);
 
 }

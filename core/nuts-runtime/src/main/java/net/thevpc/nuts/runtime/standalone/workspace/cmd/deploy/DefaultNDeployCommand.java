@@ -33,8 +33,8 @@ import java.util.stream.Collectors;
  */
 public class DefaultNDeployCommand extends AbstractNDeployCommand {
 
-    public DefaultNDeployCommand(NSession ws) {
-        super(ws);
+    public DefaultNDeployCommand(NSession session) {
+        super(session);
     }
 
     private static CharacterizedDeployFile characterizeForDeploy(NInputSource contentFile, NFetchCommand options, List<String> parseOptions, NSession session) {

@@ -13,6 +13,7 @@ import net.thevpc.nuts.runtime.standalone.xtra.expr.StringTokenizerUtils;
 import net.thevpc.nuts.spi.NFormatSPI;
 import net.thevpc.nuts.spi.NPathFactory;
 import net.thevpc.nuts.spi.NPathSPI;
+import net.thevpc.nuts.spi.NSupportLevelContext;
 import net.thevpc.nuts.text.NTextBuilder;
 import net.thevpc.nuts.text.NTextStyle;
 import net.thevpc.nuts.text.NTexts;
@@ -569,7 +570,7 @@ public class NResourcePath implements NPathSPI {
         }
 
         @Override
-        public boolean configureFirst(NCmdLine commandLine) {
+        public boolean configureFirst(NCmdLine cmdLine) {
             return false;
         }
     }
@@ -586,12 +587,21 @@ public class NResourcePath implements NPathSPI {
             NSessionUtils.checkSession(ws, session);
             try {
                 if (path.startsWith("nuts-resource:")) {
-                    return NSupported.of(10, () -> new NResourcePath(path, session));
+                    return NSupported.of(DEFAULT_SUPPORT, () -> new NResourcePath(path, session));
                 }
             } catch (Exception ex) {
                 //ignore
             }
             return null;
+        }
+
+        @Override
+        public int getSupportLevel(NSupportLevelContext context) {
+            String path= context.getConstraints();
+            if (path.startsWith("nuts-resource:")) {
+                return DEFAULT_SUPPORT;
+            }
+            return NO_SUPPORT;
         }
     }
 

@@ -8,10 +8,7 @@ import net.thevpc.nuts.runtime.standalone.session.NSessionUtils;
 import net.thevpc.nuts.runtime.standalone.util.CoreNConstants;
 import net.thevpc.nuts.runtime.standalone.xtra.expr.StringTokenizerUtils;
 import net.thevpc.nuts.runtime.standalone.io.util.CoreIOUtils;
-import net.thevpc.nuts.spi.NFormatSPI;
-import net.thevpc.nuts.spi.NPathFactory;
-import net.thevpc.nuts.spi.NPathSPI;
-import net.thevpc.nuts.spi.NUseDefault;
+import net.thevpc.nuts.spi.*;
 import net.thevpc.nuts.text.NTextBuilder;
 import net.thevpc.nuts.text.NTextStyle;
 import net.thevpc.nuts.util.NLogOp;
@@ -43,6 +40,15 @@ public class DotfilefsPath extends AbstractPathSPIAdapter {
                 return NSupported.of(10, () -> new DotfilefsPath(path, session));
             }
             return null;
+        }
+
+        @Override
+        public int getSupportLevel(NSupportLevelContext context) {
+            String path= context.getConstraints();
+            if (path.startsWith(PREFIX)) {
+                return DEFAULT_SUPPORT;
+            }
+            return NO_SUPPORT;
         }
     }
 
@@ -318,7 +324,7 @@ public class DotfilefsPath extends AbstractPathSPIAdapter {
         }
 
         @Override
-        public boolean configureFirst(NCmdLine commandLine) {
+        public boolean configureFirst(NCmdLine cmdLine) {
             return false;
         }
     }

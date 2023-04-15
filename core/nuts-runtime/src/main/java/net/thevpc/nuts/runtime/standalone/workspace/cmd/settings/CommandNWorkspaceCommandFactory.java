@@ -15,10 +15,10 @@ public class CommandNWorkspaceCommandFactory implements NWorkspaceCommandFactory
     private String[] findCommand;
     private String[] execCommand;
     private String[] listCommand;
-    private NSession ws;
+    private NSession session;
 
-    public CommandNWorkspaceCommandFactory(NSession ws) {
-        this.ws = ws;
+    public CommandNWorkspaceCommandFactory(NSession session) {
+        this.session = session;
     }
 
     public void configure(NCommandFactoryConfig config) {
@@ -33,7 +33,7 @@ public class CommandNWorkspaceCommandFactory implements NWorkspaceCommandFactory
             findCommand = validateCommand(p.get("find"));
             execCommand = validateCommand(p.get("exec"));
             String slistCommand = p.get("list");
-            listCommand = slistCommand == null ? new String[0] : NCmdLine.of(slistCommand, NShellFamily.BASH, ws).setExpandSimpleOptions(false).toStringArray();
+            listCommand = slistCommand == null ? new String[0] : NCmdLine.of(slistCommand, NShellFamily.BASH, session).setExpandSimpleOptions(false).toStringArray();
             if (listCommand.length > 0 && !listCommand[0].contains(":")) {
                 listCommand = new String[0];
             }
@@ -54,7 +54,7 @@ public class CommandNWorkspaceCommandFactory implements NWorkspaceCommandFactory
         if (command == null) {
             return new String[0];
         }
-        String[] commandArr = NCmdLine.of(command, NShellFamily.BASH, ws).setExpandSimpleOptions(false).toStringArray();
+        String[] commandArr = NCmdLine.of(command, NShellFamily.BASH, session).setExpandSimpleOptions(false).toStringArray();
         if (commandArr.length == 0) {
             return commandArr;
         }

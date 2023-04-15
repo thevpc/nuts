@@ -385,8 +385,8 @@ public class ProcessExecHelper extends AbstractSyncIProcessExecHelper {
                                 throw new NIllegalArgumentException(session, NMsg.ofPlain("unable to resolve su application"));
                             }
                             cc.add(su.toString());
-                            cc.add("-c");
                             cc.add(runAsEffective);
+                            cc.add("-c");
                         }
                         break;
                     }
@@ -441,6 +441,7 @@ public class ProcessExecHelper extends AbstractSyncIProcessExecHelper {
                                 throw new NIllegalArgumentException(session, NMsg.ofPlain("unable to resolve su application"));
                             }
                             cc.add(su.toString());
+                            cc.add("-S");
                         }
                         break;
                     }

@@ -37,6 +37,7 @@ import net.thevpc.nuts.spi.NExecutorComponent;
 import net.thevpc.nuts.text.NTextStyle;
 import net.thevpc.nuts.text.NTexts;
 import net.thevpc.nuts.util.NAssert;
+import net.thevpc.nuts.util.NConnexionString;
 import net.thevpc.nuts.util.NStream;
 
 import java.io.File;
@@ -44,7 +45,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.*;
-import java.util.stream.Collectors;
 
 /**
  * type: Command Class
@@ -61,8 +61,20 @@ public class DefaultNExecCommand extends AbstractNExecCommand {
     @Override
     public NExecutableInformation which() {
         checkSession();
+
         NSession traceSession = getSession();
         NSession execSession = traceSession.copy();
+        String host = getHost();
+        if (!NBlankable.isBlank(host)) {
+            NConnexionString connexionString = NConnexionString.of(host).get();
+            if ("ssh".equals(connexionString.getProtocol())) {
+                NExtensions.of(session)
+                        .loadExtension(NId.of("net.thevpc.nuts.ext:next-ssh").get());
+            }
+            NExecCommandExtension ee = NExtensions.of(session).createComponent(NExecCommandExtension.class, connexionString).get();
+            return whichHost(ee, connexionString);
+        }
+
         NSessionTerminal terminal = NSessionTerminal.of(traceSession.getTerminal(), execSession);
         if (this.in != null) {
             terminal.setIn(this.in);
@@ -135,6 +147,72 @@ public class DefaultNExecCommand extends AbstractNExecCommand {
             }
         }
         return exec;
+    }
+
+    public NExecutableInformation whichHost(NExecCommandExtension commExec, NConnexionString connexionString) {
+        checkSession();
+        NSession traceSession = getSession();
+        NSession execSession = traceSession.copy();
+        NSessionTerminal terminal = NSessionTerminal.of(traceSession.getTerminal(), execSession);
+        if (this.in != null) {
+            terminal.setIn(this.in);
+        }
+        if (this.out != null) {
+            terminal.setOut(this.out);
+        }
+        if (isRedirectErrorStream()) {
+            if (this.out != null) {
+                terminal.setErr(this.out);
+            } else {
+                terminal.setErr(traceSession.getTerminal().out());
+            }
+        }
+        terminal.out().flush();
+        terminal.err().flush();
+        NExecutableInformationExt exec = null;
+        execSession.setTerminal(terminal);
+        NExecutionType executionType = this.getExecutionType();
+        NRunAs runAs = this.getRunAs();
+        if (executionType == null) {
+            executionType = session.getExecutionType();
+        }
+        if (executionType == null) {
+            executionType = NExecutionType.SPAWN;
+        }
+        switch (executionType) {
+            case OPEN: {
+                throw new NUnsupportedArgumentException(getSession(), NMsg.ofC("invalid open execution type %s on host %s", connexionString));
+            }
+            case SYSTEM: {
+                NExecutionType finalExecutionType = executionType;
+                NAssert.requireNull(commandDefinition, () -> NMsg.ofC("unable to run artifact as %s cmd", finalExecutionType), session);
+                NAssert.requireNonBlank(command, "command", session);
+                String[] ts = command.toArray(new String[0]);
+                return new DefaultNSystemExecutableRemote(
+                        commExec, ts,
+                        getExecutorOptions(),
+                        traceSession,
+                        execSession,
+                        this
+                );
+            }
+            case SPAWN: {
+                if (commandDefinition != null) {
+                    String[] ts = command == null ? new String[0] : command.toArray(new String[0]);
+                    return new DefaultSpawnExecutableRemote(commExec, commandDefinition, ts, getExecutorOptions(), traceSession, execSession, this);
+                } else {
+                    NAssert.requireNonBlank(command, "command", session);
+                    String[] ts = command.toArray(new String[0]);
+                    return new DefaultSpawnExecutableRemote(commExec, null, ts, getExecutorOptions(), traceSession, execSession, this);
+                }
+            }
+            case EMBEDDED: {
+                throw new NUnsupportedArgumentException(getSession(), NMsg.ofC("invalid embedded execution type %s on host %s", connexionString));
+            }
+            default: {
+                throw new NUnsupportedArgumentException(getSession(), NMsg.ofC("invalid execution type %s on host %s", executionType, connexionString));
+            }
+        }
     }
 
     @Override
@@ -340,7 +418,7 @@ public class DefaultNExecCommand extends AbstractNExecCommand {
                 .getResultDefinitions().stream()
                 .sorted(Comparator.comparing(x -> !x.getInstallInformation().get(session).isDefaultVersion())) // default first
                 .map(NDefinition::getId).findFirst().orElse(null);
-        if (ff==null) {
+        if (ff == null) {
             if (!forceInstalled) {
                 if (ignoreIfUserCommand && isUserCommand(nid.toString())) {
                     return null;
@@ -361,7 +439,7 @@ public class DefaultNExecCommand extends AbstractNExecCommand {
                         .getResultIds().findFirst().orElse(null);
             }
         }
-        if (ff==null) {
+        if (ff == null) {
             return null;
         } else {
             return ff;
@@ -480,7 +558,7 @@ public class DefaultNExecCommand extends AbstractNExecCommand {
                 }
             }
             if (execComponent == null) {
-                execComponent = getSession().extensions().createSupported(NExecutorComponent.class, true, def);
+                execComponent = getSession().extensions().createComponent(NExecutorComponent.class, def).get();
             }
             if (executorCall != null) {
                 for (String argument : executorCall.getArguments()) {

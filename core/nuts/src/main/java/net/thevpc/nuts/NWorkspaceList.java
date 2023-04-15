@@ -41,7 +41,7 @@ import java.util.List;
 public interface NWorkspaceList extends NComponent {
 
     static NWorkspaceList of(NSession session) {
-       return NExtensions.of(session).createSupported(NWorkspaceList.class);
+       return NExtensions.of(session).createComponent(NWorkspaceList.class).get();
     }
     List<NWorkspaceLocation> getWorkspaces();
 

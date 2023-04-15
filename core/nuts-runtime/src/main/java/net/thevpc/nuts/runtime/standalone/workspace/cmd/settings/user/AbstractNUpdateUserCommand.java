@@ -53,8 +53,8 @@ public abstract class AbstractNUpdateUserCommand extends NWorkspaceCommandBaseRe
     protected final Set<String> rm_permissions = new HashSet<>();
     protected final Set<String> rm_groups = new HashSet<>();
 
-    public AbstractNUpdateUserCommand(NSession ws) {
-        super(ws, "update-user");
+    public AbstractNUpdateUserCommand(NSession session) {
+        super(session, "update-user");
     }
 
     @Override

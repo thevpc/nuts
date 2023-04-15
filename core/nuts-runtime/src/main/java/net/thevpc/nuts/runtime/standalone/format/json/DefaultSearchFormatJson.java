@@ -45,18 +45,18 @@ public class DefaultSearchFormatJson extends DefaultSearchFormatBase {
     }
 
     @Override
-    public boolean configureFirst(NCmdLine commandLine) {
+    public boolean configureFirst(NCmdLine cmdLine) {
         NSession session = getSession();
-        NArg aa = commandLine.peek().get(session);
+        NArg aa = cmdLine.peek().get(session);
         if (aa == null) {
             return false;
         }
-        if (getDisplayOptions().configureFirst(commandLine)) {
+        if (getDisplayOptions().configureFirst(cmdLine)) {
             return true;
         }
         switch(aa.key()) {
             case "--compact": {
-                commandLine.withNextFlag((v, a, s) -> this.compact=v);
+                cmdLine.withNextFlag((v, a, s) -> this.compact=v);
                 return true;
             }
         }

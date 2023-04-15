@@ -18,76 +18,76 @@ public class FindCmd<C extends NdbConfig> extends NdbCmd<C> {
     }
 
     @Override
-    public void run(NSession session, NCmdLine commandLine) {
+    public void run(NSession session, NCmdLine cmdLine) {
         NRef<AtName> name = NRef.ofNull(AtName.class);
         ExtendedQuery eq = new ExtendedQuery(getName());
         C otherOptions = createConfigInstance();
 
         String status = "";
-        while (commandLine.hasNext()) {
+        while (cmdLine.hasNext()) {
             switch (status) {
                 case "": {
-                    switch (commandLine.peek().get(session).key()) {
+                    switch (cmdLine.peek().get(session).key()) {
                         case "--config": {
-                            readConfigNameOption(commandLine, session, name);
+                            readConfigNameOption(cmdLine, session, name);
                             break;
                         }
                         case "--entity":
                         case "--table":
                         case "--collection": {
-                            commandLine.withNextEntry((v, a, s) -> eq.setTable(v));
+                            cmdLine.withNextEntry((v, a, s) -> eq.setTable(v));
                             break;
                         }
                         case "--where": {
                             status = "--where";
-                            commandLine.withNextFlag((v, a, s) -> {
+                            cmdLine.withNextFlag((v, a, s) -> {
                             });
                             break;
                         }
                         case "--sort": {
                             status = "--sort";
-                            commandLine.withNextFlag((v, a, s) -> {
+                            cmdLine.withNextFlag((v, a, s) -> {
                             });
                             break;
                         }
                         case "--limit": {
-                            commandLine.withNextValue((v, a, s) -> eq.setLimit(v.asLong().get()));
+                            cmdLine.withNextValue((v, a, s) -> eq.setLimit(v.asLong().get()));
                             break;
                         }
                         case "--skip": {
-                            commandLine.withNextValue((v, a, s) -> eq.setSkip(v.asLong().get()));
+                            cmdLine.withNextValue((v, a, s) -> eq.setSkip(v.asLong().get()));
                             break;
                         }
                         default: {
-                            fillOptionLast(commandLine, otherOptions);
+                            fillOptionLast(cmdLine, otherOptions);
                         }
                     }
                     break;
                 }
                 case "--where": {
-                    switch (commandLine.peek().get(session).key()) {
+                    switch (cmdLine.peek().get(session).key()) {
                         case "--sort": {
                             status = "--sort";
-                            commandLine.withNextFlag((v, a, s) -> {
+                            cmdLine.withNextFlag((v, a, s) -> {
                             });
                             break;
                         }
                         default: {
-                            eq.getWhere().add(commandLine.next().get().toString());
+                            eq.getWhere().add(cmdLine.next().get().toString());
                         }
                     }
                     break;
                 }
                 case "--sort": {
-                    switch (commandLine.peek().get(session).key()) {
+                    switch (cmdLine.peek().get(session).key()) {
                         case "--where": {
                             status = "--where";
-                            commandLine.withNextFlag((v, a, s) -> {
+                            cmdLine.withNextFlag((v, a, s) -> {
                             });
                             break;
                         }
                         default: {
-                            eq.getSort().add(commandLine.next().get().toString());
+                            eq.getSort().add(cmdLine.next().get().toString());
                         }
                     }
                     break;
@@ -95,12 +95,12 @@ public class FindCmd<C extends NdbConfig> extends NdbCmd<C> {
             }
         }
         if (NBlankable.isBlank(eq.getTable())) {
-            commandLine.throwMissingArgumentByName("--table");
+            cmdLine.throwMissingArgumentByName("--table");
         }
         C options = loadFromName(name, otherOptions);
         support.revalidateOptions(options);
         if (NBlankable.isBlank(otherOptions.getDatabaseName())) {
-            commandLine.throwMissingArgumentByName("--dbname");
+            cmdLine.throwMissingArgumentByName("--dbname");
         }
         run(eq, options, session);
     }

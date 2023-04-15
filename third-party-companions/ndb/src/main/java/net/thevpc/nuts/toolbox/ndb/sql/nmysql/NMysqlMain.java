@@ -36,67 +36,67 @@ public class NMysqlMain extends SqlSupport<NMySqlConfig> {
     }
 
     @Override
-    public void run(NSession session, NCmdLine commandLine) {
+    public void run(NSession session, NCmdLine cmdLine) {
         NMySqlService service = new NMySqlService(session);
-        while (commandLine.hasNext()) {
-            switch (commandLine.peek().get(session).key()) {
+        while (cmdLine.hasNext()) {
+            switch (cmdLine.peek().get(session).key()) {
                 case "add":
                 case "create": {
-                    commandLine.skip();
-                    createOrUpdate(commandLine, true, service);
+                    cmdLine.skip();
+                    createOrUpdate(cmdLine, true, service);
                     return;
                 }
                 case "update": {
-                    commandLine.skip();
-                    createOrUpdate(commandLine, false, service);
+                    cmdLine.skip();
+                    createOrUpdate(cmdLine, false, service);
                     return;
                 }
                 case "remove": {
-                    commandLine.skip();
-                    runRemove(commandLine, service);
+                    cmdLine.skip();
+                    runRemove(cmdLine, service);
                     return;
                 }
                 case "list": {
-                    commandLine.skip();
-                    runList(commandLine, service, false);
+                    cmdLine.skip();
+                    runList(cmdLine, service, false);
                     return;
                 }
                 case "desc": {
-                    commandLine.skip();
-                    runList(commandLine, service, true);
+                    cmdLine.skip();
+                    runList(cmdLine, service, true);
                     return;
                 }
                 case "backup": {
-                    commandLine.skip();
-                    runBackupOrRestore(commandLine, true, service);
+                    cmdLine.skip();
+                    runBackupOrRestore(cmdLine, true, service);
                     return;
                 }
                 case "restore": {
-                    commandLine.skip();
-                    runBackupOrRestore(commandLine, false, service);
+                    cmdLine.skip();
+                    runBackupOrRestore(cmdLine, false, service);
                     return;
                 }
                 case "pull": {
-                    commandLine.skip();
-                    runPushOrPull(commandLine, true, service);
+                    cmdLine.skip();
+                    runPushOrPull(cmdLine, true, service);
                     return;
                 }
                 case "push": {
-                    commandLine.skip();
-                    runPushOrPull(commandLine, false, service);
+                    cmdLine.skip();
+                    runPushOrPull(cmdLine, false, service);
                     return;
                 }
                 case "run-sql": {
-                    commandLine.skip();
-                    runSQL(commandLine, service);
+                    cmdLine.skip();
+                    runSQL(cmdLine, service);
                     return;
                 }
                 default: {
-                    session.configureLast(commandLine);
+                    session.configureLast(cmdLine);
                 }
             }
         }
-        runList(commandLine, service, false);
+        runList(cmdLine, service, false);
 //        String[] args = context.getArguments();
 //        if (args.length == 0) {
 //            throw new NutsExecutionException(context.getWorkspace(), "Expected --remote or --local", 2);
@@ -114,48 +114,48 @@ public class NMysqlMain extends SqlSupport<NMySqlConfig> {
     }
 
 
-    private void runPushOrPull(NCmdLine commandLine, boolean pull, NMySqlService service) {
+    private void runPushOrPull(NCmdLine cmdLine, boolean pull, NMySqlService service) {
         NSession session = service.getSession();
-        commandLine.setCommandName("mysql --remote " + (pull ? "pull" : "push"));
+        cmdLine.setCommandName("mysql --remote " + (pull ? "pull" : "push"));
         class Data {
             AtName name = null;
             String path = null;
         }
         Data d = new Data();
-        while (commandLine.hasNext()) {
-            if (commandLine.isNextOption()) {
-                switch (commandLine.peek().get(session).key()) {
+        while (cmdLine.hasNext()) {
+            if (cmdLine.isNextOption()) {
+                switch (cmdLine.peek().get(session).key()) {
                     case "--name": {
-                        commandLine.withNextEntry((v, aa, s) -> {
+                        cmdLine.withNextEntry((v, aa, s) -> {
                             if (d.name == null) {
                                 d.name = new AtName(v);
                             } else {
-                                commandLine.throwUnexpectedArgument(NMsg.ofPlain("already defined"));
+                                cmdLine.throwUnexpectedArgument(NMsg.ofPlain("already defined"));
                             }
                         });
                         break;
                     }
                     case "--path": {
-                        commandLine.withNextEntry((v, aa, s) -> {
+                        cmdLine.withNextEntry((v, aa, s) -> {
                             if (d.path == null) {
                                 d.path = v;
                             } else {
-                                commandLine.throwUnexpectedArgument(NMsg.ofPlain("already defined"));
+                                cmdLine.throwUnexpectedArgument(NMsg.ofPlain("already defined"));
                             }
                         });
                         break;
                     }
                     default: {
-                        service.getSession().configureLast(commandLine);
+                        service.getSession().configureLast(cmdLine);
                     }
                 }
             } else {
                 if (d.name == null) {
-                    d.name = new AtName(commandLine.next().get().asString().get());
+                    d.name = new AtName(cmdLine.next().get().asString().get());
                 } else if (d.path == null) {
-                    d.path = commandLine.next().get().asString().get();
+                    d.path = cmdLine.next().get().asString().get();
                 } else {
-                    commandLine.throwUnexpectedArgument();
+                    cmdLine.throwUnexpectedArgument();
                 }
             }
         }
@@ -171,40 +171,40 @@ public class NMysqlMain extends SqlSupport<NMySqlConfig> {
         }
     }
 
-    private void runSQL(NCmdLine commandLine, NMySqlService service) {
+    private void runSQL(NCmdLine cmdLine, NMySqlService service) {
         NSession session = service.getSession();
-        commandLine.setCommandName("mysql run-sql");
+        cmdLine.setCommandName("mysql run-sql");
         NRef<AtName> name = NRef.ofNull(AtName.class);
         List<String> sql = new ArrayList<>();
         NRef<Boolean> forceShowSQL = NRef.ofNull(Boolean.class);
-        while (commandLine.hasNext()) {
-            if (commandLine.isNextOption()) {
-                switch (commandLine.peek().get(session).key()) {
+        while (cmdLine.hasNext()) {
+            if (cmdLine.isNextOption()) {
+                switch (cmdLine.peek().get(session).key()) {
                     case "--name": {
-                        commandLine.withNextEntry((v, a, s) -> {
+                        cmdLine.withNextEntry((v, a, s) -> {
                             if (name.isNull()) {
                                 name.set(new AtName(a.getStringValue().get(session)));
                             } else {
-                                commandLine.throwUnexpectedArgument(NMsg.ofPlain("already defined"));
+                                cmdLine.throwUnexpectedArgument(NMsg.ofPlain("already defined"));
                             }
                         });
                         break;
                     }
                     case "--show-sql": {
-                        commandLine.withNextFlag((v, a, s) -> {
+                        cmdLine.withNextFlag((v, a, s) -> {
                             forceShowSQL.set(v);
                         });
                         break;
                     }
                     default: {
-                        service.getSession().configureLast(commandLine);
+                        service.getSession().configureLast(cmdLine);
                     }
                 }
             } else {
                 if (name.isNull()) {
-                    name.set(new AtName(commandLine.next().get(session).asString().get(session)));
+                    name.set(new AtName(cmdLine.next().get(session).asString().get(session)));
                 } else {
-                    sql.add(commandLine.next().flatMap(NLiteral::asString).get(session));
+                    sql.add(cmdLine.next().flatMap(NLiteral::asString).get(session));
                 }
             }
         }
@@ -214,7 +214,7 @@ public class NMysqlMain extends SqlSupport<NMySqlConfig> {
         LocalMysqlConfigService c = service.loadLocalMysqlConfig(name.get().getConfigName(), NOpenMode.OPEN_OR_ERROR);
         LocalMysqlDatabaseConfigService d = c.getDatabase(name.get().getDatabaseName(), NOpenMode.OPEN_OR_ERROR);
         if (sql.isEmpty()) {
-            commandLine.throwMissingArgument(NMsg.ofPlain("sql"));
+            cmdLine.throwMissingArgument(NMsg.ofPlain("sql"));
         }
         SqlConnectionInfo jdbcUrl = createSqlConnectionInfo(
                 (NMySqlConfig)
@@ -244,45 +244,45 @@ public class NMysqlMain extends SqlSupport<NMySqlConfig> {
                 ;
     }
 
-    private void runBackupOrRestore(NCmdLine commandLine, boolean backup, NMySqlService service) {
+    private void runBackupOrRestore(NCmdLine cmdLine, boolean backup, NMySqlService service) {
         NSession session = service.getSession();
-        commandLine.setCommandName("mysql " + (backup ? "backup" : "restore"));
+        cmdLine.setCommandName("mysql " + (backup ? "backup" : "restore"));
         NRef<AtName> name = NRef.ofNull(AtName.class);
         NRef<String> path = NRef.ofNull(String.class);
-        while (commandLine.hasNext()) {
-            if (commandLine.isNextOption()) {
-                switch (commandLine.peek().get(session).key()) {
+        while (cmdLine.hasNext()) {
+            if (cmdLine.isNextOption()) {
+                switch (cmdLine.peek().get(session).key()) {
                     case "--name": {
-                        commandLine.withNextEntry((v, a, s) -> {
+                        cmdLine.withNextEntry((v, a, s) -> {
                             if (name.isNull()) {
                                 name.set(new AtName(a.getStringValue().get(session)));
                             } else {
-                                commandLine.throwUnexpectedArgument(NMsg.ofPlain("already defined"));
+                                cmdLine.throwUnexpectedArgument(NMsg.ofPlain("already defined"));
                             }
                         });
                         break;
                     }
                     case "--path": {
-                        commandLine.withNextEntry((v, a, s) -> {
+                        cmdLine.withNextEntry((v, a, s) -> {
                             if (path.isNull()) {
                                 path.set(v);
                             } else {
-                                commandLine.throwUnexpectedArgument(NMsg.ofPlain("already defined"));
+                                cmdLine.throwUnexpectedArgument(NMsg.ofPlain("already defined"));
                             }
                         });
                         break;
                     }
                     default: {
-                        service.getSession().configureLast(commandLine);
+                        service.getSession().configureLast(cmdLine);
                     }
                 }
             } else {
                 if (name.isNull()) {
-                    name.set(new AtName(commandLine.next().get(session).asString().get(session)));
+                    name.set(new AtName(cmdLine.next().get(session).asString().get(session)));
                 } else if (path.isNull()) {
-                    path.set(commandLine.next().flatMap(NLiteral::asString).get(session));
+                    path.set(cmdLine.next().flatMap(NLiteral::asString).get(session));
                 } else {
-                    commandLine.throwUnexpectedArgument();
+                    cmdLine.throwUnexpectedArgument();
                 }
             }
         }
@@ -300,7 +300,7 @@ public class NMysqlMain extends SqlSupport<NMySqlConfig> {
             s.out().println(result);
         } else {
             if (path.isNull()) {
-                commandLine.throwMissingArgumentByName("--path");
+                cmdLine.throwMissingArgumentByName("--path");
             }
             LocalMysqlDatabaseConfigService.RestoreResult result = d.restore(path.get());
             s.out().println(result);
@@ -308,9 +308,9 @@ public class NMysqlMain extends SqlSupport<NMySqlConfig> {
     }
 
 
-    private void createOrUpdate(NCmdLine commandLine, boolean add, NMySqlService service) {
+    private void createOrUpdate(NCmdLine cmdLine, boolean add, NMySqlService service) {
         NSession session = service.getSession();
-        commandLine.setCommandName("mysql " + (add ? "add" : "set"));
+        cmdLine.setCommandName("mysql " + (add ? "add" : "set"));
         class Data {
             AtName name = null;
 
@@ -333,25 +333,25 @@ public class NMysqlMain extends SqlSupport<NMySqlConfig> {
             boolean askPassword = false;
         }
         Data d = new Data();
-        while (commandLine.hasNext()) {
-            if (commandLine.isNextOption()) {
-                switch (commandLine.peek().get(session).key()) {
+        while (cmdLine.hasNext()) {
+            if (cmdLine.isNextOption()) {
+                switch (cmdLine.peek().get(session).key()) {
                     case "--name": {
-                        commandLine.withNextEntry((v, a, s) -> {
+                        cmdLine.withNextEntry((v, a, s) -> {
                             if (d.name == null) {
                                 d.name = new AtName(v);
                             } else {
-                                commandLine.throwUnexpectedArgument(NMsg.ofPlain("already defined"));
+                                cmdLine.throwUnexpectedArgument(NMsg.ofPlain("already defined"));
                             }
                         });
                         break;
                     }
                     case "--shutdown-wait-time": {
-                        commandLine.withNextEntryValue((v, a, s) -> {
+                        cmdLine.withNextEntryValue((v, a, s) -> {
                             if (d.expectedRemote == null) {
                                 d.expectedRemote = false;
                             } else if (d.expectedRemote) {
-                                commandLine.throwUnexpectedArgument();
+                                cmdLine.throwUnexpectedArgument();
                             }
                             d.c_shutdown_wait_time = v.asInt().get(session);
                         });
@@ -359,209 +359,209 @@ public class NMysqlMain extends SqlSupport<NMySqlConfig> {
                         break;
                     }
                     case "--startup-wait-time": {
-                        commandLine.withNextEntryValue((v, a, s) -> {
+                        cmdLine.withNextEntryValue((v, a, s) -> {
                             if (d.expectedRemote == null) {
                                 d.expectedRemote = false;
                             } else if (d.expectedRemote) {
-                                commandLine.throwUnexpectedArgument();
+                                cmdLine.throwUnexpectedArgument();
                             }
                             d.c_startup_wait_time = v.asInt().get(session);
                         });
                         break;
                     }
                     case "--backup-folder": {
-                        commandLine.withNextEntry((v, a, s) -> {
+                        cmdLine.withNextEntry((v, a, s) -> {
                             if (d.expectedRemote == null) {
                                 d.expectedRemote = false;
                             } else if (d.expectedRemote) {
-                                commandLine.throwUnexpectedArgument();
+                                cmdLine.throwUnexpectedArgument();
                             }
                             d.c_archive_folder = v;
                         });
                         break;
                     }
                     case "--running-folder": {
-                        commandLine.withNextEntry((v, a, s) -> {
+                        cmdLine.withNextEntry((v, a, s) -> {
                             if (d.expectedRemote == null) {
                                 d.expectedRemote = false;
                             } else if (d.expectedRemote) {
-                                commandLine.throwUnexpectedArgument();
+                                cmdLine.throwUnexpectedArgument();
                             }
                             d.c_running_folder = v;
                         });
                         break;
                     }
                     case "--log-file": {
-                        commandLine.withNextEntry((v, a, s) -> {
+                        cmdLine.withNextEntry((v, a, s) -> {
                             if (d.expectedRemote == null) {
                                 d.expectedRemote = false;
                             } else if (d.expectedRemote) {
-                                commandLine.throwUnexpectedArgument();
+                                cmdLine.throwUnexpectedArgument();
                             }
                             d.c_log_file = v;
                         });
                         break;
                     }
                     case "--mysql-command": {
-                        commandLine.withNextEntry((v, a, s) -> {
+                        cmdLine.withNextEntry((v, a, s) -> {
                             if (d.expectedRemote == null) {
                                 d.expectedRemote = false;
                             } else if (d.expectedRemote) {
-                                commandLine.throwUnexpectedArgument();
+                                cmdLine.throwUnexpectedArgument();
                             }
                             d.c_mysql_command = v;
                         });
                         break;
                     }
                     case "--mysqldump-command": {
-                        commandLine.withNextEntry((v, a, s) -> {
+                        cmdLine.withNextEntry((v, a, s) -> {
                             if (d.expectedRemote == null) {
                                 d.expectedRemote = false;
                             } else if (d.expectedRemote) {
-                                commandLine.throwUnexpectedArgument();
+                                cmdLine.throwUnexpectedArgument();
                             }
                             d.c_mysqldump_command = v;
                         });
                         break;
                     }
                     case "--kill": {
-                        commandLine.withNextFlag((v, a, s) -> {
+                        cmdLine.withNextFlag((v, a, s) -> {
                             if (d.expectedRemote == null) {
                                 d.expectedRemote = false;
                             } else if (d.expectedRemote) {
-                                commandLine.throwUnexpectedArgument();
+                                cmdLine.throwUnexpectedArgument();
                             }
                             d.c_kill = v;
                         });
                         break;
                     }
                     case "--user": {
-                        commandLine.withNextEntry((v, a, s) -> {
+                        cmdLine.withNextEntry((v, a, s) -> {
                             if (d.expectedRemote == null) {
                                 d.expectedRemote = false;
                             } else if (d.expectedRemote) {
-                                commandLine.throwUnexpectedArgument();
+                                cmdLine.throwUnexpectedArgument();
                             }
                             d.user = v;
                         });
                         break;
                     }
                     case "--password": {
-                        commandLine.withNextEntry((v, a, s) -> {
+                        cmdLine.withNextEntry((v, a, s) -> {
                             if (d.expectedRemote == null) {
                                 d.expectedRemote = false;
                             } else if (d.expectedRemote) {
-                                commandLine.throwUnexpectedArgument();
+                                cmdLine.throwUnexpectedArgument();
                             }
                             d.password = v;
                         });
                         break;
                     }
                     case "--ask-password": {
-                        commandLine.withNextFlag((v, a, s) -> {
+                        cmdLine.withNextFlag((v, a, s) -> {
                             if (d.expectedRemote == null) {
                                 d.expectedRemote = false;
                             } else if (d.expectedRemote) {
-                                commandLine.throwUnexpectedArgument();
+                                cmdLine.throwUnexpectedArgument();
                             }
                             d.askPassword = v;
                         });
                         break;
                     }
                     case "--db": {
-                        commandLine.withNextEntry((v, a, s) -> {
+                        cmdLine.withNextEntry((v, a, s) -> {
                             if (d.expectedRemote == null) {
                                 d.expectedRemote = false;
                             } else if (d.expectedRemote) {
-                                commandLine.throwUnexpectedArgument();
+                                cmdLine.throwUnexpectedArgument();
                             }
                             d.dbname = v;
                         });
                         break;
                     }
                     case "--local-name": {
-                        commandLine.withNextEntry((v, a, s) -> {
+                        cmdLine.withNextEntry((v, a, s) -> {
                             if (d.expectedRemote == null) {
                                 d.expectedRemote = true;
                             } else if (!d.expectedRemote) {
-                                commandLine.throwUnexpectedArgument();
+                                cmdLine.throwUnexpectedArgument();
                             }
                             if (d.forRemote_localName == null) {
                                 d.forRemote_localName = new AtName(v);
                             } else {
-                                commandLine.throwUnexpectedArgument(NMsg.ofPlain("already defined"));
+                                cmdLine.throwUnexpectedArgument(NMsg.ofPlain("already defined"));
                             }
                         });
                         break;
                     }
                     case "--remote-name": {
-                        commandLine.withNextEntry((v, a, s) -> {
+                        cmdLine.withNextEntry((v, a, s) -> {
                             if (d.expectedRemote == null) {
                                 d.expectedRemote = true;
                             } else if (!d.expectedRemote) {
-                                commandLine.throwUnexpectedArgument();
+                                cmdLine.throwUnexpectedArgument();
                             }
                             if (d.forRemote_remoteName == null) {
                                 d.forRemote_remoteName = new AtName(v);
                             } else {
-                                commandLine.throwUnexpectedArgument(NMsg.ofPlain("already defined"));
+                                cmdLine.throwUnexpectedArgument(NMsg.ofPlain("already defined"));
                             }
                         });
                         break;
                     }
                     case "--server": {
-                        commandLine.withNextEntry((v, a, s) -> {
+                        cmdLine.withNextEntry((v, a, s) -> {
                             if (d.expectedRemote == null) {
                                 d.expectedRemote = true;
                             } else if (!d.expectedRemote) {
-                                commandLine.throwUnexpectedArgument();
+                                cmdLine.throwUnexpectedArgument();
                             }
                             if (d.forRemote_server == null) {
                                 d.forRemote_server = v;
                             } else {
-                                commandLine.throwUnexpectedArgument(NMsg.ofPlain("already defined"));
+                                cmdLine.throwUnexpectedArgument(NMsg.ofPlain("already defined"));
                             }
                         });
                         break;
                     }
                     case "--local": {
-                        commandLine.withNextFlag((v, a, s) -> {
+                        cmdLine.withNextFlag((v, a, s) -> {
                             if (d.expectedRemote == null) {
                                 d.expectedRemote = !v;
                             } else if (d.expectedRemote) {
-                                commandLine.throwUnexpectedArgument();
+                                cmdLine.throwUnexpectedArgument();
                             }
                         });
                         break;
                     }
                     case "--remote": {
-                        commandLine.withNextFlag((v, a, s) -> {
+                        cmdLine.withNextFlag((v, a, s) -> {
                             if (d.expectedRemote == null) {
                                 d.expectedRemote = v;
                             } else if (!d.expectedRemote) {
-                                commandLine.throwUnexpectedArgument();
+                                cmdLine.throwUnexpectedArgument();
                             }
                         });
                         break;
                     }
                     default: {
-                        if (commandLine.peek().get(session).isNonOption()) {
+                        if (cmdLine.peek().get(session).isNonOption()) {
                             if (d.name == null) {
-                                d.name = AtName.nextAppOption(commandLine, session);
+                                d.name = AtName.nextAppOption(cmdLine, session);
                             } else {
-                                commandLine.throwUnexpectedArgument(NMsg.ofPlain("already defined"));
+                                cmdLine.throwUnexpectedArgument(NMsg.ofPlain("already defined"));
                             }
                         } else {
-                            service.getSession().configureLast(commandLine);
+                            service.getSession().configureLast(cmdLine);
                         }
                         break;
                     }
                 }
             } else {
                 if (d.name == null) {
-                    d.name = AtName.nextAppNonOption(commandLine, session);
+                    d.name = AtName.nextAppNonOption(cmdLine, session);
                 } else {
-                    commandLine.throwUnexpectedArgument();
+                    cmdLine.throwUnexpectedArgument();
                 }
             }
         }
@@ -572,10 +572,10 @@ public class NMysqlMain extends SqlSupport<NMySqlConfig> {
             d.expectedRemote = false;
         }
         if (d.expectedRemote && d.forRemote_server == null) {
-            commandLine.throwMissingArgumentByName("--server");
+            cmdLine.throwMissingArgumentByName("--server");
         }
         NTexts factory = NTexts.of(session);
-        if (commandLine.isExecMode()) {
+        if (cmdLine.isExecMode()) {
             NPrintStream out = session.out();
             if (!d.expectedRemote) {
                 LocalMysqlConfigService c = service.loadLocalMysqlConfig(d.name.getConfigName(), add ? NOpenMode.OPEN_OR_CREATE : NOpenMode.OPEN_OR_ERROR);
@@ -860,49 +860,49 @@ public class NMysqlMain extends SqlSupport<NMySqlConfig> {
         }
     }
 
-    public void runRemove(NCmdLine commandLine, NMySqlService service) {
+    public void runRemove(NCmdLine cmdLine, NMySqlService service) {
         NSession session = service.getSession();
-        commandLine.setCommandName("mysql remove");
+        cmdLine.setCommandName("mysql remove");
         List<AtName> localNames = new ArrayList<>();
         List<AtName> remoteNames = new ArrayList<>();
         boolean currentLocal = true;
         NArg a;
 
-        while (commandLine.hasNext()) {
-            if (commandLine.isNextOption()) {
-                switch (commandLine.peek().get(session).key()) {
+        while (cmdLine.hasNext()) {
+            if (cmdLine.isNextOption()) {
+                switch (cmdLine.peek().get(session).key()) {
                     case "--remote": {
-                        commandLine.nextFlag();
+                        cmdLine.nextFlag();
                         currentLocal = false;
                         break;
                     }
                     case "--local": {
-                        commandLine.nextFlag();
+                        cmdLine.nextFlag();
                         currentLocal = true;
                         break;
                     }
                     case "--name": {
                         if (currentLocal) {
-                            localNames.add(AtName.nextAppOption(commandLine, session));
+                            localNames.add(AtName.nextAppOption(cmdLine, session));
                         } else {
-                            remoteNames.add(AtName.nextAppOption(commandLine, session));
+                            remoteNames.add(AtName.nextAppOption(cmdLine, session));
                         }
                         break;
                     }
                     default: {
-                        service.getSession().configureLast(commandLine);
+                        service.getSession().configureLast(cmdLine);
                     }
                 }
             } else {
                 if (currentLocal) {
-                    localNames.add(AtName.nextAppNonOption(commandLine, session));
+                    localNames.add(AtName.nextAppNonOption(cmdLine, session));
                 } else {
-                    remoteNames.add(AtName.nextAppNonOption(commandLine, session));
+                    remoteNames.add(AtName.nextAppNonOption(cmdLine, session));
                 }
             }
         }
         if (localNames.isEmpty() && remoteNames.isEmpty()) {
-            commandLine.peek().get(session);
+            cmdLine.peek().get(session);
         }
         for (AtName localName : localNames) {
             if (localName.getDatabaseName().isEmpty()) {
@@ -987,27 +987,27 @@ public class NMysqlMain extends SqlSupport<NMySqlConfig> {
         }
     }
 
-    public void runList(NCmdLine commandLine, NMySqlService service, boolean describe) {
+    public void runList(NCmdLine cmdLine, NMySqlService service, boolean describe) {
         NSession session = service.getSession();
-        commandLine.setCommandName("mysql list");
+        cmdLine.setCommandName("mysql list");
         List<AtName> localNames = new ArrayList<>();
         List<AtName> remoteNames = new ArrayList<>();
         Boolean expectedLocal = null;
-        while (commandLine.hasNext()) {
-            if (commandLine.isNextOption()) {
-                switch (commandLine.peek().get(session).key()) {
+        while (cmdLine.hasNext()) {
+            if (cmdLine.isNextOption()) {
+                switch (cmdLine.peek().get(session).key()) {
                     case "--local": {
-                        commandLine.nextFlag();
+                        cmdLine.nextFlag();
                         expectedLocal = true;
                         break;
                     }
                     case "--remote": {
-                        commandLine.nextFlag();
+                        cmdLine.nextFlag();
                         expectedLocal = false;
                         break;
                     }
                     default: {
-                        service.getSession().configureLast(commandLine);
+                        service.getSession().configureLast(cmdLine);
                     }
                 }
             } else {
@@ -1015,9 +1015,9 @@ public class NMysqlMain extends SqlSupport<NMySqlConfig> {
                     expectedLocal = true;
                 }
                 if (expectedLocal) {
-                    localNames.add(AtName.nextConfigNonOption(commandLine, session));
+                    localNames.add(AtName.nextConfigNonOption(cmdLine, session));
                 } else {
-                    remoteNames.add(AtName.nextConfigNonOption(commandLine, session));
+                    remoteNames.add(AtName.nextConfigNonOption(cmdLine, session));
                 }
             }
         }

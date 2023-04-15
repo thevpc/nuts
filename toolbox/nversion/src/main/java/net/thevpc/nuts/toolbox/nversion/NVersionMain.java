@@ -70,40 +70,40 @@ public class NVersionMain implements NApplication {
         boolean sort = false;
         boolean table = false;
         boolean error = false;
-        NCmdLine commandLine = session.getAppCommandLine();
+        NCmdLine cmdLine = session.getAppCommandLine();
         NArg a;
         int processed = 0;
-        while (commandLine.hasNext()) {
-            if ((a = commandLine.nextFlag("--maven").orNull())!=null) {
+        while (cmdLine.hasNext()) {
+            if ((a = cmdLine.nextFlag("--maven").orNull())!=null) {
                 maven = a.getBooleanValue().get(session);
-            } else if ((a = commandLine.nextFlag("--win-pe").orNull())!=null) {
+            } else if ((a = cmdLine.nextFlag("--win-pe").orNull())!=null) {
                 winPE = a.getBooleanValue().get(session);
-            } else if ((a = commandLine.nextFlag("--exe").orNull())!=null) {
+            } else if ((a = cmdLine.nextFlag("--exe").orNull())!=null) {
                 winPE = a.getBooleanValue().get(session);
-            } else if ((a = commandLine.nextFlag("--dll").orNull())!=null) {
+            } else if ((a = cmdLine.nextFlag("--dll").orNull())!=null) {
                 winPE = a.getBooleanValue().get(session);
-            } else if ((a = commandLine.nextFlag("--long").orNull())!=null) {
+            } else if ((a = cmdLine.nextFlag("--long").orNull())!=null) {
                 longFormat = a.getBooleanValue().get(session);
-            } else if ((a = commandLine.nextFlag("--name").orNull())!=null) {
+            } else if ((a = cmdLine.nextFlag("--name").orNull())!=null) {
                 nameFormat = a.getBooleanValue().get(session);
-            } else if ((a = commandLine.nextFlag("--sort").orNull())!=null) {
+            } else if ((a = cmdLine.nextFlag("--sort").orNull())!=null) {
                 sort = a.getBooleanValue().get(session);
-            } else if ((a = commandLine.nextFlag("--id").orNull())!=null) {
+            } else if ((a = cmdLine.nextFlag("--id").orNull())!=null) {
                 idFormat = a.getBooleanValue().get(session);
-            } else if ((a = commandLine.nextFlag("--all").orNull())!=null) {
+            } else if ((a = cmdLine.nextFlag("--all").orNull())!=null) {
                 all = a.getBooleanValue().get(session);
-            } else if ((a = commandLine.nextFlag("--table").orNull())!=null) {
+            } else if ((a = cmdLine.nextFlag("--table").orNull())!=null) {
                 table = a.getBooleanValue().get(session);
-            } else if ((a = commandLine.nextFlag("--error").orNull())!=null) {
+            } else if ((a = cmdLine.nextFlag("--error").orNull())!=null) {
                 error = a.getBooleanValue().get(session);
-            } else if (commandLine.peek().get(session).isNonOption()) {
-                a = commandLine.next().get(session);
+            } else if (cmdLine.peek().get(session).isNonOption()) {
+                a = cmdLine.next().get(session);
                 jarFiles.add(a.asString().get(session));
             } else {
-                session.configureLast(commandLine);
+                session.configureLast(cmdLine);
             }
         }
-        if (commandLine.isExecMode()) {
+        if (cmdLine.isExecMode()) {
 
             for (String arg : jarFiles) {
                 Set<VersionDescriptor> value = null;

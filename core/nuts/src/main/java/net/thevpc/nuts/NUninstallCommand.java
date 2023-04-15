@@ -38,7 +38,7 @@ import java.util.List;
  */
 public interface NUninstallCommand extends NWorkspaceCommand {
     static NUninstallCommand of(NSession session) {
-        return NExtensions.of(session).createSupported(NUninstallCommand.class);
+        return NExtensions.of(session).createComponent(NUninstallCommand.class).get();
     }
 
     NUninstallCommand addId(NId id);

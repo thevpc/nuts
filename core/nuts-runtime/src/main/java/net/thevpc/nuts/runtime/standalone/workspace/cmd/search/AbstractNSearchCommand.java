@@ -70,8 +70,8 @@ public abstract class AbstractNSearchCommand extends DefaultNQueryBaseOptions<NS
     protected NVersion targetApiVersion = null;
     protected NInstallStatusFilter installStatus;
 
-    public AbstractNSearchCommand(NSession ws) {
-        super(ws, "search");
+    public AbstractNSearchCommand(NSession session) {
+        super(session, "search");
     }
 
     @Override

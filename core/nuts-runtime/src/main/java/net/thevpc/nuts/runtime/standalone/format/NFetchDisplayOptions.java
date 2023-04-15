@@ -125,14 +125,14 @@ public class NFetchDisplayOptions {
         return this;
     }
 
-    public final boolean configure(boolean skipUnsupported, NCmdLine commandLine) {
+    public final boolean configure(boolean skipUnsupported, NCmdLine cmdLine) {
         boolean conf = false;
-        while (commandLine.hasNext()) {
-            if (!configureFirst(commandLine)) {
+        while (cmdLine.hasNext()) {
+            if (!configureFirst(cmdLine)) {
                 if (skipUnsupported) {
-                    commandLine.skip();
+                    cmdLine.skip();
                 } else {
-                    commandLine.throwUnexpectedArgument();
+                    cmdLine.throwUnexpectedArgument();
                 }
             } else {
                 conf = true;

@@ -47,33 +47,33 @@ public class EchoCommand extends NShellBuiltinDefault {
     }
 
     @Override
-    protected boolean onCmdNextOption(NArg arg, NCmdLine commandLine, NShellExecutionContext context) {
+    protected boolean onCmdNextOption(NArg arg, NCmdLine cmdLine, NShellExecutionContext context) {
         Options options = context.getOptions();
         NSession session = context.getSession();
-        switch (commandLine.peek().get(session).key()) {
+        switch (cmdLine.peek().get(session).key()) {
             case "-n": {
-                commandLine.withNextFlag((v, a, s) -> options.newLine=v);
+                cmdLine.withNextFlag((v, a, s) -> options.newLine=v);
                 return true;
             }
             case "-p":
             case "--plain": {
-                commandLine.withNextTrueFlag((v, a, s) -> options.highlighter=null);
+                cmdLine.withNextTrueFlag((v, a, s) -> options.highlighter=null);
                 return true;
             }
             case "-H":
             case "--highlight":
             case "--highlighter":
             {
-                commandLine.withNextEntry((v, a, s) -> options.highlighter= NStringUtils.trim(v));
+                cmdLine.withNextEntry((v, a, s) -> options.highlighter= NStringUtils.trim(v));
                 return true;
             }
             default: {
-                if (commandLine.peek().get(session).isNonOption()) {
-                    while (commandLine.hasNext()) {
+                if (cmdLine.peek().get(session).isNonOption()) {
+                    while (cmdLine.hasNext()) {
                         if (options.tokensCount > 0) {
                             options.message.append(" ");
                         }
-                        options.message.append(commandLine.next().get(session).toString());
+                        options.message.append(cmdLine.next().get(session).toString());
                         options.tokensCount++;
                     }
                     return true;
@@ -84,7 +84,7 @@ public class EchoCommand extends NShellBuiltinDefault {
     }
 
     @Override
-    protected void onCmdExec(NCmdLine commandLine, NShellExecutionContext context) {
+    protected void onCmdExec(NCmdLine cmdLine, NShellExecutionContext context) {
         Options options = context.getOptions();
         Object ns = null;
         if (options.highlighter == null) {
@@ -111,8 +111,8 @@ public class EchoCommand extends NShellBuiltinDefault {
         int tokensCount = 0;
     }
     @Override
-    protected boolean onCmdNextNonOption(NArg arg, NCmdLine commandLine, NShellExecutionContext context) {
-        return onCmdNextOption(arg, commandLine, context);
+    protected boolean onCmdNextNonOption(NArg arg, NCmdLine cmdLine, NShellExecutionContext context) {
+        return onCmdNextOption(arg, cmdLine, context);
     }
 
 }

@@ -31,10 +31,10 @@ public class DefaultNVersionFormat extends DefaultFormatBase<NVersionFormat> imp
     }
 
     @Override
-    public boolean configureFirst(NCmdLine commandLine) {
+    public boolean configureFirst(NCmdLine cmdLine) {
         checkSession();
         NSession session = getSession();
-        NArg aa = commandLine.peek().get(session);
+        NArg aa = cmdLine.peek().get(session);
         if (aa == null) {
             return false;
         }
@@ -42,11 +42,11 @@ public class DefaultNVersionFormat extends DefaultFormatBase<NVersionFormat> imp
         switch (aa.key()) {
             case "-a":
             case "--all": {
-                commandLine.withNextFlag((v, a, s) -> this.all = v);
+                cmdLine.withNextFlag((v, a, s) -> this.all = v);
                 return true;
             }
             case "--add": {
-                NArg aa2 = commandLine.nextEntry().get(session);
+                NArg aa2 = cmdLine.nextEntry().get(session);
                 NArg r = NArg.of(aa2.getStringValue().get(session));
                 if (enabled) {
                     this.all = true;
@@ -55,7 +55,7 @@ public class DefaultNVersionFormat extends DefaultFormatBase<NVersionFormat> imp
                 return true;
             }
             default: {
-                if (session.configureFirst(commandLine)) {
+                if (session.configureFirst(cmdLine)) {
                     return true;
                 }
             }
@@ -132,12 +132,12 @@ public class DefaultNVersionFormat extends DefaultFormatBase<NVersionFormat> imp
         if (extraProperties != null) {
             extraKeys = new TreeSet(extraProperties.keySet());
         }
-        NSession ws = getSession();
-        props.put("nuts-api-version", ws.getWorkspace().getApiVersion().toString());
-        props.put("nuts-runtime-version", ws.getWorkspace().getRuntimeId().getVersion().toString());
+        NSession session = getSession();
+        props.put("nuts-api-version", session.getWorkspace().getApiVersion().toString());
+        props.put("nuts-runtime-version", session.getWorkspace().getRuntimeId().getVersion().toString());
         if (all) {
             props.put("java-version", System.getProperty("java.version"));
-            props.put("os-version", NEnvs.of(ws).getOs().getVersion().toString());
+            props.put("os-version", NEnvs.of(session).getOs().getVersion().toString());
         }
         for (String extraKey : extraKeys) {
             props.put(extraKey, extraProperties.get(extraKey));

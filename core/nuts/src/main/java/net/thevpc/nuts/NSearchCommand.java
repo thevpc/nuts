@@ -46,7 +46,7 @@ import java.util.Set;
 public interface NSearchCommand extends NWorkspaceCommand {
 
     static NSearchCommand of(NSession session) {
-        return NExtensions.of(session).createSupported(NSearchCommand.class);
+        return NExtensions.of(session).createComponent(NSearchCommand.class).get();
     }
 
     ////////////////////////////////////////////////////////

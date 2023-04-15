@@ -43,7 +43,7 @@ public class DefaultNContentTypes implements NContentTypes {
     @Override
     public String probeContentType(NPath path) {
         List<NContentTypeResolver> allSupported = session.extensions()
-                .createAllSupported(NContentTypeResolver.class, path);
+                .createComponents(NContentTypeResolver.class, path);
         NSupported<String> best = null;
         for (NContentTypeResolver r : allSupported) {
             NSupported<String> s = r.probeContentType(path, session);
@@ -62,7 +62,7 @@ public class DefaultNContentTypes implements NContentTypes {
     @Override
     public List<String> findExtensionsByContentType(String contentType) {
         List<NContentTypeResolver> allSupported = session.extensions()
-                .createAllSupported(NContentTypeResolver.class, null);
+                .createComponents(NContentTypeResolver.class, null);
         LinkedHashSet<String> all = new LinkedHashSet<>();
         for (NContentTypeResolver r : allSupported) {
             List<String> s = r.findExtensionsByContentType(contentType, session);
@@ -76,7 +76,7 @@ public class DefaultNContentTypes implements NContentTypes {
     @Override
     public List<String> findContentTypesByExtension(String extension) {
         List<NContentTypeResolver> allSupported = session.extensions()
-                .createAllSupported(NContentTypeResolver.class, null);
+                .createComponents(NContentTypeResolver.class, null);
         LinkedHashSet<String> all = new LinkedHashSet<>();
         for (NContentTypeResolver r : allSupported) {
             List<String> s = r.findContentTypesByExtension(extension, session);
@@ -96,7 +96,7 @@ public class DefaultNContentTypes implements NContentTypes {
     @Override
     public String probeContentType(byte[] bytes) {
         List<NContentTypeResolver> allSupported = session.extensions()
-                .createAllSupported(NContentTypeResolver.class, bytes);
+                .createComponents(NContentTypeResolver.class, bytes);
         NSupported<String> best = null;
         for (NContentTypeResolver r : allSupported) {
             NSupported<String> s = r.probeContentType(bytes, session);

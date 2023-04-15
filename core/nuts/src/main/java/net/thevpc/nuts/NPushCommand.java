@@ -40,7 +40,7 @@ import java.util.List;
 public interface NPushCommand extends NWorkspaceCommand {
 
     static NPushCommand of(NSession session) {
-        return NExtensions.of(session).createSupported(NPushCommand.class);
+        return NExtensions.of(session).createComponent(NPushCommand.class).get();
     }
     /**
      * remove id to push.

@@ -828,6 +828,13 @@ public final class NReservedWorkspaceCmdLineParser {
                         }
                         break;
                     }
+                    case "--sudo": {
+                        a = cmdLine.nextFlag().get(session);
+                        if (active) {
+                            options.setRunAs(NRunAs.sudo());
+                        }
+                        break;
+                    }
                     case "-o":
                     case "--open-mode": {
                         a = cmdLine.nextEntry().get(session);

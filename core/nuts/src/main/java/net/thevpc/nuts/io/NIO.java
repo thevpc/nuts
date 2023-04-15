@@ -37,7 +37,7 @@ import java.io.Writer;
 
 public interface NIO extends NComponent {
     static NIO of(NSession session) {
-       return NExtensions.of(session).createSupported(NIO.class, true, session);
+       return NExtensions.of(session).createComponent(NIO.class).get();
     }
 
     static InputStream ofNullInputStream(NSession session) {

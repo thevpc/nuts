@@ -46,28 +46,28 @@ public class CdCommand extends NShellBuiltinDefault {
     }
 
     @Override
-    protected boolean onCmdNextOption(NArg arg, NCmdLine commandLine, NShellExecutionContext context) {
+    protected boolean onCmdNextOption(NArg arg, NCmdLine cmdLine, NShellExecutionContext context) {
         NSession session = context.getSession();
         Options options = context.getOptions();
-        if (commandLine.peek().get(session).isNonOption()) {
+        if (cmdLine.peek().get(session).isNonOption()) {
             if (options.dirname == null) {
-                options.dirname = commandLine.next().flatMap(NLiteral::asString).get(session);
+                options.dirname = cmdLine.next().flatMap(NLiteral::asString).get(session);
                 return true;
             } else {
-                commandLine.throwUnexpectedArgument();
+                cmdLine.throwUnexpectedArgument();
             }
         }
         return false;
     }
 
     @Override
-    protected boolean onCmdNextNonOption(NArg arg, NCmdLine commandLine, NShellExecutionContext context) {
-        return onCmdNextOption(arg, commandLine, context);
+    protected boolean onCmdNextNonOption(NArg arg, NCmdLine cmdLine, NShellExecutionContext context) {
+        return onCmdNextOption(arg, cmdLine, context);
     }
 
 
     @Override
-    protected void onCmdExec(NCmdLine commandLine, NShellExecutionContext context) {
+    protected void onCmdExec(NCmdLine cmdLine, NShellExecutionContext context) {
         Options options = context.getOptions();
         if (options.dirname == null) {
             options.dirname = System.getProperty("user.home");

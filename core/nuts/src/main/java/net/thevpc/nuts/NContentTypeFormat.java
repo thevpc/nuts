@@ -40,7 +40,7 @@ import net.thevpc.nuts.cmdline.NCmdLineConfigurable;
 public interface NContentTypeFormat extends NFormat {
 
     static NContentTypeFormat of(NSession session) {
-       return NExtensions.of(session).createSupported(NContentTypeFormat.class);
+       return NExtensions.of(session).createComponent(NContentTypeFormat.class).get();
     }
 
     /**

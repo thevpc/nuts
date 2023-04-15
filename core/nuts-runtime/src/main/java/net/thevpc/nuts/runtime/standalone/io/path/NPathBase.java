@@ -393,7 +393,7 @@ public abstract class NPathBase implements NPath {
         }
 
         @Override
-        public boolean configureFirst(NCmdLine commandLine) {
+        public boolean configureFirst(NCmdLine cmdLine) {
             return false;
         }
 

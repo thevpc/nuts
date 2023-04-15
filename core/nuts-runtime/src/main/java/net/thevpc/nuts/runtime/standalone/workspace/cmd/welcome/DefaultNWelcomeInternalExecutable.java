@@ -38,17 +38,17 @@ public class DefaultNWelcomeInternalExecutable extends DefaultInternalNExecutabl
             return;
         }
         NSession session = getSession();
-        NCmdLine commandLine = NCmdLine.of(args);
-        while (commandLine.hasNext()) {
-            NArg a = commandLine.peek().get(session);
+        NCmdLine cmdLine = NCmdLine.of(args);
+        while (cmdLine.hasNext()) {
+            NArg a = cmdLine.peek().get(session);
             if (a.isOption()) {
                 switch(a.key()) {
                     default: {
-                        getSession().configureLast(commandLine);
+                        getSession().configureLast(cmdLine);
                     }
                 }
             } else {
-                getSession().configureLast(commandLine);
+                getSession().configureLast(cmdLine);
             }
         }
 

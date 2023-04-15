@@ -51,19 +51,19 @@ public class TypeCommand extends NShellBuiltinDefault {
     }
 
     @Override
-    protected boolean onCmdNextOption(NArg arg, NCmdLine commandLine, NShellExecutionContext context) {
+    protected boolean onCmdNextOption(NArg arg, NCmdLine cmdLine, NShellExecutionContext context) {
         Options config = context.getOptions();
         NSession session = context.getSession();
-        NArg a = commandLine.peek().get(session);
+        NArg a = cmdLine.peek().get(session);
         if (a.isNonOption()) {
-            config.commands.add(commandLine.next().flatMap(NLiteral::asString).get(session));
+            config.commands.add(cmdLine.next().flatMap(NLiteral::asString).get(session));
             return true;
         }
         return false;
     }
 
     @Override
-    protected void onCmdExec(NCmdLine commandLine, NShellExecutionContext context) {
+    protected void onCmdExec(NCmdLine cmdLine, NShellExecutionContext context) {
         Options config = context.getOptions();
         NShell shell = context.getShell();
         List<ResultItem> result = new ArrayList<>();
@@ -146,7 +146,7 @@ public class TypeCommand extends NShellBuiltinDefault {
 
 
     @Override
-    protected boolean onCmdNextNonOption(NArg arg, NCmdLine commandLine, NShellExecutionContext context) {
-        return onCmdNextOption(arg, commandLine, context);
+    protected boolean onCmdNextNonOption(NArg arg, NCmdLine cmdLine, NShellExecutionContext context) {
+        return onCmdNextOption(arg, cmdLine, context);
     }
 }

@@ -332,7 +332,7 @@ public abstract class AbstractPathSPIAdapter implements NPathSPI {
         }
 
         @Override
-        public boolean configureFirst(NCmdLine commandLine) {
+        public boolean configureFirst(NCmdLine cmdLine) {
             return false;
         }
     }

@@ -35,7 +35,7 @@ import java.util.Map;
  */
 public interface NLocations extends NComponent, NSessionProvider {
     static NLocations of(NSession session) {
-        return NExtensions.of(session).createSupported(NLocations.class);
+        return NExtensions.of(session).createComponent(NLocations.class).get();
     }
 
     NPath getHomeLocation(NStoreLocation folderType);

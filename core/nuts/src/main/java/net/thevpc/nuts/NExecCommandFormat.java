@@ -38,7 +38,7 @@ import java.util.function.Predicate;
  */
 public interface NExecCommandFormat extends NFormat {
     static NExecCommandFormat of(NSession session) {
-       return NExtensions.of(session).createSupported(NExecCommandFormat.class);
+       return NExtensions.of(session).createComponent(NExecCommandFormat.class).get();
     }
 
     /**

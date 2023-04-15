@@ -36,7 +36,7 @@ import net.thevpc.nuts.cmdline.NCmdLineConfigurable;
  */
 public interface NRemoveUserCommand extends NWorkspaceCommand {
     static NRemoveUserCommand of(NSession session) {
-        return NExtensions.of(session).createSupported(NRemoveUserCommand.class);
+        return NExtensions.of(session).createComponent(NRemoveUserCommand.class).get();
     }
 
     /**

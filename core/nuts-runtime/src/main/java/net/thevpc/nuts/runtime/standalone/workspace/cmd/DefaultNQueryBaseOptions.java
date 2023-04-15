@@ -38,10 +38,10 @@ public abstract class DefaultNQueryBaseOptions<T extends NWorkspaceCommand> exte
 //    private Boolean cached = true;
 //    private Boolean indexed = null;
 //    private NutsFetchStrategy fetchStrategy = null;
-    public DefaultNQueryBaseOptions(NSession ws, String name) {
-        super(ws, name);
+    public DefaultNQueryBaseOptions(NSession session, String name) {
+        super(session, name);
 //        this.session=ws.createSession();
-        displayOptions = new NFetchDisplayOptions(ws);
+        displayOptions = new NFetchDisplayOptions(session);
     }
 
     //@Override

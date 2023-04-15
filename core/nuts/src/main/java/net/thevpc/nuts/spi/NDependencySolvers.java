@@ -31,10 +31,9 @@ import net.thevpc.nuts.NSession;
 
 import java.util.List;
 
-@NComponentScope(NComponentScopeType.WORKSPACE)
 public interface NDependencySolvers extends NComponent {
     static NDependencySolvers of(NSession session) {
-       return NExtensions.of(session).createSupported(NDependencySolvers.class);
+       return NExtensions.of(session).createComponent(NDependencySolvers.class).get();
     }
 
     NDependencySolver createSolver(NSession session);

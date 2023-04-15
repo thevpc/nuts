@@ -41,7 +41,7 @@ import java.util.List;
 public interface NDependencyFormat extends NFormat, NComponent {
 
     static NDependencyFormat of(NSession session) {
-       return NExtensions.of(session).createSupported(NDependencyFormat.class);
+       return NExtensions.of(session).createComponent(NDependencyFormat.class).get();
     }
 
     /**

@@ -392,7 +392,7 @@ public class InvalidFilePath implements NPathSPI {
         }
 
         @Override
-        public boolean configureFirst(NCmdLine commandLine) {
+        public boolean configureFirst(NCmdLine cmdLine) {
             return false;
         }
     }

@@ -46,8 +46,8 @@ public abstract class AbstractDefaultNPushCommand extends NWorkspaceCommandBase<
     protected List<NId> lockedIds;
     protected String repository;
 
-    public AbstractDefaultNPushCommand(NSession ws) {
-        super(ws, "push");
+    public AbstractDefaultNPushCommand(NSession session) {
+        super(session, "push");
     }
 
     @Override

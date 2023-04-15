@@ -73,7 +73,8 @@ public class DefaultNWorkspaceFactory implements NWorkspaceFactory {
             discoveredCacheById.put(id, value);
             Set<Class> all = new HashSet<>();
             for (ClassClassMap m : value.classes.values()) {
-                all.addAll(m.values());
+                Collection<Class> values = m.values();
+                all.addAll(values);
             }
             return all;
         }
@@ -81,7 +82,7 @@ public class DefaultNWorkspaceFactory implements NWorkspaceFactory {
     }
 
     @Override
-    public <T extends NComponent> T createSupported(Class<T> type, Object supportCriteria, boolean required, NSession session) {
+    public <T extends NComponent> NOptional<T> createComponent(Class<T> type, Object supportCriteria, NSession session) {
         int bestSupportLevel = Integer.MIN_VALUE;
         T bestObj = null;
         NSupportLevelContext context = new NDefaultSupportLevelContext(session, supportCriteria);
@@ -94,15 +95,14 @@ public class DefaultNWorkspaceFactory implements NWorkspaceFactory {
                 }
             }
         }
-        if (required && bestObj == null) {
-            //at boot time some types are nor yet available, so fall back to defaults!
-            throw new NExtensionNotFoundException(session, type, supportCriteria);
+        if (bestObj == null) {
+            return NOptional.ofNamedEmpty(NMsg.ofC("extensions component %s",type));
         }
-        return bestObj;
+        return NOptional.of(bestObj);
     }
 
     @Override
-    public <T extends NComponent> List<T> createAllSupported(Class<T> type, Object supportCriteria, NSession session) {
+    public <T extends NComponent> List<T> createComponents(Class<T> type, Object supportCriteria, NSession session) {
         List<T> list = createAll(type, session);
         class TypeAndLevel {
             final T t;
@@ -303,7 +303,7 @@ public class DefaultNWorkspaceFactory implements NWorkspaceFactory {
         return null;
     }
 
-    protected <T> T instantiate0(Class<T> t, NSession session, Class apiType) {
+    public <T> T newInstance(Class<T> t, NSession session, Class apiType) {
         checkSession(session);
         T theInstance = null;
         CachedConstructor<T> ctrl = getCtrl0(t, session);
@@ -346,7 +346,7 @@ public class DefaultNWorkspaceFactory implements NWorkspaceFactory {
         return theInstance;
     }
 
-    protected <T> T instantiate0(Class<T> t, Class[] argTypes, Object[] args, Class apiType, NSession session) {
+    protected <T> T newInstance(Class<T> t, Class[] argTypes, Object[] args, Class apiType, NSession session) {
         checkSession(session);
         T t1 = null;
         try {
@@ -398,7 +398,7 @@ public class DefaultNWorkspaceFactory implements NWorkspaceFactory {
             case WORKSPACE: {
                 Object o = singletons.get(implType);
                 if (o == null) {
-                    o = instantiate0(implType, session, apiType);
+                    o = newInstance(implType, session, apiType);
                     if (o != null) {
                         singletons.put(implType, o);
                         doLogInstantiation(apiType, o.getClass(), "singleton", session);
@@ -411,7 +411,7 @@ public class DefaultNWorkspaceFactory implements NWorkspaceFactory {
                 String key = "session-scoped:" + Integer.toHexString(System.identityHashCode(session)).toUpperCase() + ":" + implType.getName();
                 Object o = session.getProperty(key);
                 if (o == null) {
-                    o = instantiate0(implType, session, apiType);
+                    o = newInstance(implType, session, apiType);
                     if (o != null) {
                         session.setProperty(key, o);
                         doLogInstantiation(apiType, o.getClass(), "session", session);
@@ -420,7 +420,7 @@ public class DefaultNWorkspaceFactory implements NWorkspaceFactory {
                 return (T) o;
             }
             default: {
-                T o = instantiate0(implType, session, apiType);
+                T o = newInstance(implType, session, apiType);
                 if (o != null) {
                     doLogInstantiation(apiType, o.getClass(), "prototype", session);
                 }
@@ -546,7 +546,7 @@ public class DefaultNWorkspaceFactory implements NWorkspaceFactory {
             }
             Object o = singletons.get(type);
             if (o == null) {
-                o = instantiate0(type, session, apiType);
+                o = newInstance(type, session, apiType);
                 singletons.put(type, o);
                 if (LOG.isLoggable(Level.CONFIG)) {
                     LOG.with().session(validLogSession(session)).level(Level.FINEST).verb(NLogVerb.READ)
@@ -555,7 +555,7 @@ public class DefaultNWorkspaceFactory implements NWorkspaceFactory {
             }
             return (T) o;
         } else {
-            T o = instantiate0(type, argTypes, args, apiType, session);
+            T o = newInstance(type, argTypes, args, apiType, session);
             if (LOG.isLoggable(Level.CONFIG)) {
                 LOG.with().session(validLogSession(session)).level(Level.FINEST).verb(NLogVerb.READ)
                         .log(NMsg.ofJ("resolve {0} to  ```underlined prototype``` {1}", NStringUtils.formatAlign(apiType.getSimpleName(), 40, NPositionType.FIRST), o.getClass().getName()));
@@ -581,7 +581,7 @@ public class DefaultNWorkspaceFactory implements NWorkspaceFactory {
             return (T) resolveInstance(e, type, session);
         }
         for (Class<T> t : extensionTypes) {
-            return instantiate0(t, session, type);
+            return newInstance(t, session, type);
         }
         throw new NElementNotFoundException(session, NMsg.ofC("type %s not found", type));
     }

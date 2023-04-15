@@ -252,7 +252,7 @@ public class DefaultNDigest implements NDigest {
                 }
 
                 @Override
-                public boolean configureFirst(NCmdLine commandLine) {
+                public boolean configureFirst(NCmdLine cmdLine) {
                     return false;
                 }
             });

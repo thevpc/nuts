@@ -53,23 +53,23 @@ public class CpCommand extends NShellBuiltinDefault {
 
 
     @Override
-    protected boolean onCmdNextOption(NArg arg, NCmdLine commandLine, NShellExecutionContext context) {
+    protected boolean onCmdNextOption(NArg arg, NCmdLine cmdLine, NShellExecutionContext context) {
         Options options = context.getOptions();
         NSession session = context.getSession();
-        switch (commandLine.peek().get(session).key()) {
+        switch (cmdLine.peek().get(session).key()) {
             case "--mkdir": {
-                commandLine.withNextFlag((v, a, s) -> options.mkdir=v);
+                cmdLine.withNextFlag((v, a, s) -> options.mkdir=v);
                 return true;
             }
             case "-r":
             case "-R":
             case "--recursive": {
-                commandLine.withNextFlag((v, a, s) -> options.recursive=v);
+                cmdLine.withNextFlag((v, a, s) -> options.recursive=v);
                 return true;
             }
             default: {
-                if (commandLine.peek().get(session).isNonOption()) {
-                    commandLine.withNextEntry((v, a, s) -> options.files.add(v));
+                if (cmdLine.peek().get(session).isNonOption()) {
+                    cmdLine.withNextEntry((v, a, s) -> options.files.add(v));
                     return true;
                 }
             }
@@ -78,7 +78,7 @@ public class CpCommand extends NShellBuiltinDefault {
     }
 
     @Override
-    protected void onCmdExec(NCmdLine commandLine, NShellExecutionContext context) {
+    protected void onCmdExec(NCmdLine cmdLine, NShellExecutionContext context) {
         Options options = context.getOptions();
         NSession session = context.getSession();
         for (String value : options.files) {
@@ -188,8 +188,8 @@ public class CpCommand extends NShellBuiltinDefault {
     }
 
     @Override
-    protected boolean onCmdNextNonOption(NArg arg, NCmdLine commandLine, NShellExecutionContext context) {
-        return onCmdNextOption(arg, commandLine, context);
+    protected boolean onCmdNextNonOption(NArg arg, NCmdLine cmdLine, NShellExecutionContext context) {
+        return onCmdNextOption(arg, cmdLine, context);
     }
 
 }

@@ -855,18 +855,18 @@ public class NMemorySize implements Serializable, NFormattable {
             }
 
             @Override
-            public boolean configureFirst(NCmdLine commandLine) {
-                NArg a = commandLine.peek().get(session);
+            public boolean configureFirst(NCmdLine cmdLine) {
+                NArg a = cmdLine.peek().get(session);
                 switch (a.key()) {
                     case "--iec": {
-                        a = commandLine.nextFlag().get(session);
+                        a = cmdLine.nextFlag().get(session);
                         if (a.isActive()) {
                             iec = a.getBooleanValue().get();
                         }
                         return true;
                     }
                     case "--fixed": {
-                        a = commandLine.nextFlag().get(session);
+                        a = cmdLine.nextFlag().get(session);
                         if (a.isActive()) {
                             fixed = a.getBooleanValue().get();
                         }

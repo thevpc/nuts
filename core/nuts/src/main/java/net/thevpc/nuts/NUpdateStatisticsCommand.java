@@ -38,7 +38,7 @@ import java.util.Collection;
  */
 public interface NUpdateStatisticsCommand extends NWorkspaceCommand {
     static NUpdateStatisticsCommand of(NSession session) {
-        return NExtensions.of(session).createSupported(NUpdateStatisticsCommand.class);
+        return NExtensions.of(session).createComponent(NUpdateStatisticsCommand.class).get();
     }
 
     NUpdateStatisticsCommand clearRepos();

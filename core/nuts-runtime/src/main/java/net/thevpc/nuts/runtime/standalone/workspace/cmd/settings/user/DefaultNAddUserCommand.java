@@ -36,8 +36,8 @@ import net.thevpc.nuts.runtime.standalone.util.CoreStringUtils;
  */
 public class DefaultNAddUserCommand extends AbstractNAddUserCommand {
 
-    public DefaultNAddUserCommand(NSession ws) {
-        super(ws);
+    public DefaultNAddUserCommand(NSession session) {
+        super(session);
     }
 
     @Override
@@ -59,15 +59,15 @@ public class DefaultNAddUserCommand extends AbstractNAddUserCommand {
                     .setUser(security, getSession());
         } else {
             checkSession();
-            NSession ws = getSession();
-            NWorkspaceSecurityManager sec = NWorkspaceSecurityManager.of(ws);
+            NSession session = getSession();
+            NWorkspaceSecurityManager sec = NWorkspaceSecurityManager.of(session);
             NUserConfig security = new NUserConfig(getUsername(),
                     CoreStringUtils.chrToStr(sec.createCredentials(getCredentials(), false, null)),
                     getGroups(), getPermissions());
             security.setRemoteIdentity(getRemoteIdentity());
             security.setRemoteCredentials(CoreStringUtils.chrToStr(sec.createCredentials(getRemoteCredentials(), true, null)));
-            NConfigsExt.of(NConfigs.of(ws)).getModel()
-                    .setUser(security, ws);
+            NConfigsExt.of(NConfigs.of(session)).getModel()
+                    .setUser(security, session);
         }
         return this;
     }

@@ -22,8 +22,8 @@ public class NFormatFromSPI extends DefaultFormatBase<NFormat> {
     }
 
     @Override
-    public boolean configureFirst(NCmdLine commandLine) {
-        return spi.configureFirst(commandLine);
+    public boolean configureFirst(NCmdLine cmdLine) {
+        return spi.configureFirst(cmdLine);
     }
 
     @Override

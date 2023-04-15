@@ -99,12 +99,12 @@ public abstract class DefaultFormatBase0<T> implements NCmdLineConfigurable {
      *
      * @param skipUnsupported when true, all unsupported options are skipped
      * silently
-     * @param commandLine arguments to configure with
+     * @param cmdLine arguments to configure with
      * @return {@code this} instance
      */
     @Override
-    public final boolean configure(boolean skipUnsupported, NCmdLine commandLine) {
-        return NConfigurableHelper.configure(this, getSession(), skipUnsupported, commandLine);
+    public final boolean configure(boolean skipUnsupported, NCmdLine cmdLine) {
+        return NConfigurableHelper.configure(this, getSession(), skipUnsupported, cmdLine);
     }
 
     public boolean isNtf() {
@@ -117,9 +117,9 @@ public abstract class DefaultFormatBase0<T> implements NCmdLineConfigurable {
     }
 
     @Override
-    public void configureLast(NCmdLine commandLine) {
-        if (!configureFirst(commandLine)) {
-            commandLine.throwUnexpectedArgument();
+    public void configureLast(NCmdLine cmdLine) {
+        if (!configureFirst(cmdLine)) {
+            cmdLine.throwUnexpectedArgument();
         }
     }
 }

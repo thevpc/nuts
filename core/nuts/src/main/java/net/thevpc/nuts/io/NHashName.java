@@ -5,7 +5,7 @@ import net.thevpc.nuts.spi.NComponent;
 
 public interface NHashName extends NComponent {
     static NHashName of(NSession session) {
-        return session.extensions().createSupported(NHashName.class, true, session);
+        return session.extensions().createComponent(NHashName.class).get();
     }
 
 

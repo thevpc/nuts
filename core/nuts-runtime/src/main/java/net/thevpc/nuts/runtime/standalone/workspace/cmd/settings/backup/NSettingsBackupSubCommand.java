@@ -30,21 +30,21 @@ import java.util.List;
 public class NSettingsBackupSubCommand extends AbstractNSettingsSubCommand {
 
     @Override
-    public boolean exec(NCmdLine commandLine, Boolean autoSave, NSession session) {
-        if (commandLine.next("backup").isPresent()) {
-            commandLine.setCommandName("settings backup");
+    public boolean exec(NCmdLine cmdLine, Boolean autoSave, NSession session) {
+        if (cmdLine.next("backup").isPresent()) {
+            cmdLine.setCommandName("settings backup");
             String file = null;
             NArg a;
-            while (commandLine.hasNext()) {
-                if ((a = commandLine.nextEntry("--file", "-f").orNull()) != null) {
+            while (cmdLine.hasNext()) {
+                if ((a = cmdLine.nextEntry("--file", "-f").orNull()) != null) {
                     file = a.getValue().asString().orElse("");
-                } else if (commandLine.peek().get(session).isNonOption()) {
-                    file = commandLine.nextEntry().get(session).getValue().asString().orElse("");
+                } else if (cmdLine.peek().get(session).isNonOption()) {
+                    file = cmdLine.nextEntry().get(session).getValue().asString().orElse("");
                 } else {
-                    session.configureLast(commandLine);
+                    session.configureLast(cmdLine);
                 }
             }
-            if (commandLine.isExecMode()) {
+            if (cmdLine.isExecMode()) {
                 List<String> all = new ArrayList<>();
                 all.add(NLocations.of(session).getWorkspaceLocation().toFile()
                         .resolve("nuts-workspace.json").toString()
@@ -72,20 +72,20 @@ public class NSettingsBackupSubCommand extends AbstractNSettingsSubCommand {
                 cmp.to(file).run();
             }
             return true;
-        } else if (commandLine.next("restore").isPresent()) {
-            commandLine.setCommandName("settings restore");
+        } else if (cmdLine.next("restore").isPresent()) {
+            cmdLine.setCommandName("settings restore");
             String file = null;
             String ws = null;
             NArg a;
-            while (commandLine.hasNext()) {
-                if ((a = commandLine.nextEntry("--file", "-f").orNull()) != null) {
+            while (cmdLine.hasNext()) {
+                if ((a = cmdLine.nextEntry("--file", "-f").orNull()) != null) {
                     file = a.getValue().asString().orElse("");
-                } else if ((a = commandLine.nextEntry("--workspace", "-w").orNull()) != null) {
+                } else if ((a = cmdLine.nextEntry("--workspace", "-w").orNull()) != null) {
                     ws = a.getValue().asString().orElse("");
-                } else if (commandLine.peek().get(session).isNonOption()) {
-                    file = commandLine.nextEntry().get(session).getValue().asString().orElse("");
+                } else if (cmdLine.peek().get(session).isNonOption()) {
+                    file = cmdLine.nextEntry().get(session).getValue().asString().orElse("");
                 } else {
-                    session.configureLast(commandLine);
+                    session.configureLast(cmdLine);
                 }
             }
             if (file == null || file.isEmpty()) {
@@ -99,9 +99,9 @@ public class NSettingsBackupSubCommand extends AbstractNSettingsSubCommand {
                 file += ".zip";
             }
             if (!Files.isRegularFile(Paths.get(file))) {
-                commandLine.throwMissingArgument(NMsg.ofC("not a valid file : %s", file));
+                cmdLine.throwMissingArgument(NMsg.ofC("not a valid file : %s", file));
             }
-            if (commandLine.isExecMode()) {
+            if (cmdLine.isExecMode()) {
                 NObjectElement[] nutsWorkspaceConfigRef = new NObjectElement[1];
                 NElements elem = NElements.of(session);
                 NUncompress.of(session)
@@ -124,14 +124,14 @@ public class NSettingsBackupSubCommand extends AbstractNSettingsSubCommand {
                             }
                         }).run();
                 if (nutsWorkspaceConfigRef[0] == null) {
-                    commandLine.throwMissingArgument(NMsg.ofC("not a valid file : %s", file));
+                    cmdLine.throwMissingArgument(NMsg.ofC("not a valid file : %s", file));
                 }
                 if (ws == null || ws.isEmpty()) {
                     NElements prv = elem.setSession(session);
                     ws = nutsWorkspaceConfigRef[0].getString("name").get(session);
                 }
                 if (ws == null || ws.isEmpty()) {
-                    commandLine.throwMissingArgument(NMsg.ofC("not a valid file : %s", file));
+                    cmdLine.throwMissingArgument(NMsg.ofC("not a valid file : %s", file));
                 }
                 String platformHomeFolder = NPlatformUtils.getWorkspaceLocation(null,
                         NConfigs.of(session).stored().isGlobal(), ws);

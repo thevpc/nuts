@@ -39,10 +39,9 @@ import java.util.logging.Level;
  *
  * @app.category Logging
  */
-@NComponentScope(NComponentScopeType.WORKSPACE)
 public interface NLogs extends NComponent {
     static NLogs of(NSession session) {
-       return NExtensions.of(session).createSupported(NLogs.class);
+       return NExtensions.of(session).createComponent(NLogs.class).get();
     }
 
     /**

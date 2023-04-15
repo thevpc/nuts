@@ -40,7 +40,7 @@ import net.thevpc.nuts.spi.NComponent;
  */
 public interface NPs extends NComponent, NSessionProvider {
     static NPs of(NSession session) {
-        return NExtensions.of(session).createSupported(NPs.class);
+        return NExtensions.of(session).createComponent(NPs.class).get();
     }
 
     /**

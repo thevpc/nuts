@@ -40,8 +40,8 @@ import net.thevpc.nuts.runtime.standalone.workspace.config.DefaultNWorkspaceConf
  */
 public class DefaultNUpdateUserCommand extends AbstractNUpdateUserCommand {
 
-    public DefaultNUpdateUserCommand(NSession ws) {
-        super(ws);
+    public DefaultNUpdateUserCommand(NSession session) {
+        super(session);
     }
 
     @Override

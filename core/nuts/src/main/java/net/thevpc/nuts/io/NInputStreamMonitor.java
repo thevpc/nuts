@@ -42,7 +42,7 @@ import java.nio.file.Path;
  */
 public interface NInputStreamMonitor extends NComponent, NSessionProvider {
     static NInputStreamMonitor of(NSession session) {
-        return NExtensions.of(session).createSupported(NInputStreamMonitor.class);
+        return NExtensions.of(session).createComponent(NInputStreamMonitor.class).get();
     }
 
     /**

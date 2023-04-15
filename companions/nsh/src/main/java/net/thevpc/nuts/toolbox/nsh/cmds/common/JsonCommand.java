@@ -62,18 +62,18 @@ public class JsonCommand extends NShellBuiltinDefault {
     }
 
     @Override
-    protected boolean onCmdNextOption(NArg arg, NCmdLine commandLine, NShellExecutionContext context) {
+    protected boolean onCmdNextOption(NArg arg, NCmdLine cmdLine, NShellExecutionContext context) {
         Options options = context.getOptions();
         NSession session = context.getSession();
         NArg a;
-        if ((a = commandLine.nextEntry("-f", "--file").orNull()) != null) {
+        if ((a = cmdLine.nextEntry("-f", "--file").orNull()) != null) {
             options.input = a.getStringValue().get(session);
             return true;
-        } else if ((a = commandLine.nextEntry("-q").orNull()) != null) {
+        } else if ((a = cmdLine.nextEntry("-q").orNull()) != null) {
             options.queryType = "jpath";
             options.queries.add(a.getStringValue().get(session));
             return true;
-        } else if ((a = commandLine.nextEntry("--xpath").orNull()) != null) {
+        } else if ((a = cmdLine.nextEntry("--xpath").orNull()) != null) {
             options.queryType = "xpath";
             options.queries.add(a.getStringValue().get(session));
             return true;
@@ -82,10 +82,10 @@ public class JsonCommand extends NShellBuiltinDefault {
     }
 
     @Override
-    protected void onCmdExec(NCmdLine commandLine, NShellExecutionContext context) {
+    protected void onCmdExec(NCmdLine cmdLine, NShellExecutionContext context) {
         Options options = context.getOptions();
 //        if (options.xpaths.isEmpty()) {
-//            commandLine.required();
+//            cmdLine.required();
 //        }
 
         NSession session = context.getSession();
@@ -199,7 +199,7 @@ public class JsonCommand extends NShellBuiltinDefault {
     }
 
     @Override
-    protected boolean onCmdNextNonOption(NArg arg, NCmdLine commandLine, NShellExecutionContext context) {
-        return onCmdNextOption(arg, commandLine, context);
+    protected boolean onCmdNextNonOption(NArg arg, NCmdLine cmdLine, NShellExecutionContext context) {
+        return onCmdNextOption(arg, cmdLine, context);
     }
 }

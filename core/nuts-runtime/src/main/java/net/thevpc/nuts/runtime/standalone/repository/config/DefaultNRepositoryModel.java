@@ -7,7 +7,6 @@ import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.io.NPathPermission;
 import net.thevpc.nuts.runtime.standalone.repository.NRepositoryRegistryHelper;
 import net.thevpc.nuts.runtime.standalone.repository.NRepositorySelectorHelper;
-import net.thevpc.nuts.runtime.standalone.repository.impl.maven.util.MavenUtils;
 import net.thevpc.nuts.runtime.standalone.repository.util.NRepositoryUtils;
 import net.thevpc.nuts.runtime.standalone.session.NSessionUtils;
 import net.thevpc.nuts.spi.*;
@@ -300,7 +299,7 @@ public class DefaultNRepositoryModel {
 
             NRepositoryFactoryComponent factory_ = session.extensions()
                     .setSession(session)
-                    .createSupported(NRepositoryFactoryComponent.class, false, conf);
+                    .createComponent(NRepositoryFactoryComponent.class, conf).orNull();
             if (factory_ != null) {
                 NRepository r = factory_.create(options, session, parentRepository);
                 if (r != null) {

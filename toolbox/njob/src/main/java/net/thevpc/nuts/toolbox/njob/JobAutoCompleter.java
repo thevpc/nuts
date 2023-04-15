@@ -42,16 +42,16 @@ public class JobAutoCompleter implements NCmdLineAutoCompleteResolver {
     }
 
     @Override
-    public List<NArgCandidate> resolveCandidates(NCmdLine commandLine, int wordIndex, NSession session) {
+    public List<NArgCandidate> resolveCandidates(NCmdLine cmdLine, int wordIndex, NSession session) {
         JobServiceCmd fileContext = (JobServiceCmd) NEnvs.of(session).getProperties().get(JobServiceCmd.class.getName());
         DefaultNCmdLineAutoComplete autoComplete = new DefaultNCmdLineAutoComplete()
                 .setSession(session)
                 .setCurrentWordIndex(wordIndex)
-                .setLine(commandLine.toString()).setWords(
-                Arrays.asList(commandLine.toStringArray())
+                .setLine(cmdLine.toString()).setWords(
+                Arrays.asList(cmdLine.toStringArray())
         );
-        commandLine.setAutoComplete(autoComplete);
-        fileContext.runCommands(commandLine);
+        cmdLine.setAutoComplete(autoComplete);
+        fileContext.runCommands(cmdLine);
         return autoComplete.getCandidates();
     }
 

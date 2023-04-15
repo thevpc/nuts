@@ -17,7 +17,7 @@ import java.util.List;
 import java.util.function.Function;
 import java.util.stream.Stream;
 
-@NComponentScope(NComponentScopeType.WORKSPACE)
+@NComponentScope(NComponentScopeType.SESSION)
 public class DefaultNStreams implements NStreams {
     private final NSession session;
 

@@ -36,7 +36,6 @@ import net.thevpc.nuts.spi.NComponentScopeType;
  * @app.category Config
  * @since 0.8.0
  */
-@NComponentScope(NComponentScopeType.SESSION)
 public interface NTypedFilters<T extends NFilter> extends NComponent {
     T nonnull(NFilter filter);
 

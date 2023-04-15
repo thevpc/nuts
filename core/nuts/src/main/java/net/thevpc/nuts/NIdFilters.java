@@ -32,10 +32,9 @@ import net.thevpc.nuts.spi.NComponentScopeType;
 /**
  * @app.category Base
  */
-@NComponentScope(NComponentScopeType.WORKSPACE)
 public interface NIdFilters extends NTypedFilters<NIdFilter> {
     static NIdFilters of(NSession session) {
-       return NExtensions.of(session).createSupported(NIdFilters.class);
+       return NExtensions.of(session).createComponent(NIdFilters.class).get();
     }
 
     NIdFilter byValue(NId id);

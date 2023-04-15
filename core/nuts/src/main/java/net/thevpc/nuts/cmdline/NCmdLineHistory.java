@@ -44,7 +44,7 @@ import java.util.ListIterator;
  */
 public interface NCmdLineHistory extends NComponent {
     static NCmdLineHistory of(NSession session) {
-       return NExtensions.of(session).createSupported(NCmdLineHistory.class);
+       return NExtensions.of(session).createComponent(NCmdLineHistory.class).get();
     }
 
 

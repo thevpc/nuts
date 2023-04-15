@@ -21,6 +21,7 @@ import net.thevpc.nuts.runtime.standalone.util.CoreNUtils;
 import net.thevpc.nuts.runtime.standalone.util.collections.ListMap;
 import net.thevpc.nuts.runtime.standalone.util.filters.CoreFilterUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.DefaultNWorkspaceFactory;
+import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceExt;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceFactory;
 import net.thevpc.nuts.runtime.standalone.workspace.config.NWorkspaceConfigBoot;
 import net.thevpc.nuts.runtime.standalone.workspace.config.NConfigsExt;
@@ -250,8 +251,8 @@ public class DefaultNWorkspaceExtensionModel {
         return new DefaultNServiceLoader<T, B>(session, serviceType, criteriaType, classLoader);
     }
 
-    public <T extends NComponent, V> T createSupported(Class<T> type, V supportCriteria, boolean required, NSession session) {
-        return objectFactory.createSupported(type, supportCriteria, required, session);
+    public <T extends NComponent, V> NOptional<T> createSupported(Class<T> type, V supportCriteria, NSession session) {
+        return objectFactory.createComponent(type, supportCriteria, session);
     }
 
 //    public <T extends NutsComponent<V>, V> T createSupported(Class<T> type, V supportCriteria, Class[] constructorParameterTypes, Object[] constructorParameters, boolean required, NutsSession session) {
@@ -259,7 +260,7 @@ public class DefaultNWorkspaceExtensionModel {
 //    }
 
     public <T extends NComponent, V> List<T> createAllSupported(Class<T> type, V supportCriteria, NSession session) {
-        return objectFactory.createAllSupported(type, supportCriteria, session);
+        return objectFactory.createComponents(type, supportCriteria, session);
     }
 //    public List<Class> resolveComponentTypesOld(Class o) {
 //        List<Class> a = new ArrayList<>();
@@ -379,7 +380,10 @@ public class DefaultNWorkspaceExtensionModel {
                     }
 //                    ws.install().setSession(session).id(def.getId());
                     workspaceExtensionsClassLoader.add(NClassLoaderUtils.definitionToClassLoaderNode(def, session));
-                    objectFactory.discoverTypes(def.getId(), def.getContent().map(NPath::asURL).orNull(), workspaceExtensionsClassLoader, session);
+                    Set<Class> classes = objectFactory.discoverTypes(def.getId(), def.getContent().map(NPath::asURL).orNull(), workspaceExtensionsClassLoader, session);
+                    for (Class aClass : classes) {
+                        ((NWorkspaceExt)ws).getModel().configModel.onNewComponent(aClass,session);
+                    }
                     //should check current classpath
                     //and the add to classpath
                     loadedExtensionIds.add(extension);
@@ -562,7 +566,7 @@ public class DefaultNWorkspaceExtensionModel {
 //        throw new ClassCastException(NutsComponent.class.getName());
 //    }
     public NSessionTerminal createTerminal(NTerminalSpec spec, NSession session) {
-        NSystemTerminalBase termb= createSupported(NSystemTerminalBase.class, spec, true, session);
+        NSystemTerminalBase termb= createSupported(NSystemTerminalBase.class, spec, session).get();
         if (spec != null && spec.get("ignoreClass") != null && spec.get("ignoreClass").equals(termb.getClass())) {
             return null;
         }
@@ -758,4 +762,7 @@ public class DefaultNWorkspaceExtensionModel {
         return objectFactory.createFirst(type, session);
     }
 
+    public NWorkspaceFactory getObjectFactory() {
+        return objectFactory;
+    }
 }

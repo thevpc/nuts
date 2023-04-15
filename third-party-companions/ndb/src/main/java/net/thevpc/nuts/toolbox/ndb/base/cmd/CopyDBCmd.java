@@ -21,24 +21,24 @@ public class CopyDBCmd<C extends NdbConfig> extends NdbCmd<C> {
     }
 
 
-    public void run(NSession session, NCmdLine commandLine) {
+    public void run(NSession session, NCmdLine cmdLine) {
         List<String> fromOptions = new ArrayList<>();
         List<String> toOptions = new ArrayList<>();
         NRef<NPath> tempDataFile = NRef.ofNull();
         NRef<Boolean> keepFile = NRef.ofNull();
-        while (commandLine.hasNext()) {
-            if (commandLine.isNextOption()) {
-                String key = commandLine.peek().get(session).key();
+        while (cmdLine.hasNext()) {
+            if (cmdLine.isNextOption()) {
+                String key = cmdLine.peek().get(session).key();
                 switch (key) {
                     case "--from":
                     {
-                        commandLine.withNextEntry((v, a, s) ->
+                        cmdLine.withNextEntry((v, a, s) ->
                                 fromOptions.addAll(Arrays.asList("--db", v)));
                         break;
                     }
                     case "--to":
                     {
-                        commandLine.withNextEntry((v, a, s) ->
+                        cmdLine.withNextEntry((v, a, s) ->
                                 toOptions.addAll(Arrays.asList("--db", v)));
                         break;
                     }
@@ -54,7 +54,7 @@ public class CopyDBCmd<C extends NdbConfig> extends NdbCmd<C> {
                     case "--from-ssh":
                     case "--from-db":
                     {
-                        commandLine.withNextEntry((v, a, s) ->
+                        cmdLine.withNextEntry((v, a, s) ->
                                 fromOptions.addAll(Arrays.asList(
                                         "--" + key.substring("--from-".length())
                                         , v)));
@@ -71,13 +71,13 @@ public class CopyDBCmd<C extends NdbConfig> extends NdbCmd<C> {
                     case "--to-remote-temp-folder":
                     case "--to-ssh":
                     case "--to-db": {
-                        commandLine.withNextEntry((v, a, s) -> toOptions.addAll(Arrays.asList(
+                        cmdLine.withNextEntry((v, a, s) -> toOptions.addAll(Arrays.asList(
                                 "--" + key.substring("--to-".length())
                                 , v)));
                         break;
                     }
                     case "--file": {
-                        commandLine.withNextEntry((v, a, s) -> {
+                        cmdLine.withNextEntry((v, a, s) -> {
                             if (!v.endsWith(".zip")) {
                                 v = v + ".zip";
                             }
@@ -86,19 +86,19 @@ public class CopyDBCmd<C extends NdbConfig> extends NdbCmd<C> {
                         break;
                     }
                     case "--keep-file": {
-                        commandLine.withNextFlag((v, a, s) -> keepFile.set(v));
+                        cmdLine.withNextFlag((v, a, s) -> keepFile.set(v));
                         break;
                     }
                     default: {
-                        if (support.getSession().configureFirst(commandLine)) {
+                        if (support.getSession().configureFirst(cmdLine)) {
 
                         } else {
-                            commandLine.getSession().configureLast(commandLine);
+                            cmdLine.getSession().configureLast(cmdLine);
                         }
                     }
                 }
             } else {
-                commandLine.throwUnexpectedArgument();
+                cmdLine.throwUnexpectedArgument();
             }
         }
         if (tempDataFile.isNull()) {

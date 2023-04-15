@@ -1676,8 +1676,8 @@ public class DefaultNWorkspaceOptionsBuilder implements NWorkspaceOptionsBuilder
     }
 
     @Override
-    public NWorkspaceOptionsBuilder setCommandLine(String commandLine, NSession session) {
-        setCommandLine(NCmdLine.parseDefault(commandLine).get(session).toStringArray(), session);
+    public NWorkspaceOptionsBuilder setCommandLine(String cmdLine, NSession session) {
+        setCommandLine(NCmdLine.parseDefault(cmdLine).get(session).toStringArray(), session);
         return this;
     }
 

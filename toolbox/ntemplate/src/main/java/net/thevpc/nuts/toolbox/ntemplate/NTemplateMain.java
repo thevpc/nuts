@@ -32,26 +32,26 @@ public class NTemplateMain implements NApplication {
         session.processAppCommandLine(new NCmdLineProcessor() {
 
             @Override
-            public boolean onCmdNextOption(NArg option, NCmdLine commandLine, NCmdLineContext context) {
+            public boolean onCmdNextOption(NArg option, NCmdLine cmdLine, NCmdLineContext context) {
                 switch (option.key()) {
                     case "-i":
                     case "--init": {
-                        commandLine.withNextEntry((v, r, s) -> config.addInitScript(v));
+                        cmdLine.withNextEntry((v, r, s) -> config.addInitScript(v));
                         return true;
                     }
                     case "-s":
                     case "--scriptType": {
-                        commandLine.withNextEntry((v, r, s) -> config.setScriptType(v));
+                        cmdLine.withNextEntry((v, r, s) -> config.setScriptType(v));
                         return true;
                     }
                     case "-t":
                     case "--to": {
-                        commandLine.withNextEntry((v, r, s) -> config.setTargetFolder(v));
+                        cmdLine.withNextEntry((v, r, s) -> config.setTargetFolder(v));
                         return true;
                     }
                     case "-p":
                     case "--project": {
-                        commandLine.withNextEntry((v, r, s) -> config.setProjectPath(v));
+                        cmdLine.withNextEntry((v, r, s) -> config.setProjectPath(v));
                         return true;
                     }
 
@@ -60,19 +60,19 @@ public class NTemplateMain implements NApplication {
             }
 
             @Override
-            public boolean onCmdNextNonOption(NArg nonOption, NCmdLine commandLine, NCmdLineContext context) {
-                NSession session = commandLine.getSession();
-                config.addSource(commandLine.next().flatMap(NLiteral::asString).get(session));
+            public boolean onCmdNextNonOption(NArg nonOption, NCmdLine cmdLine, NCmdLineContext context) {
+                NSession session = cmdLine.getSession();
+                config.addSource(cmdLine.next().flatMap(NLiteral::asString).get(session));
                 return false;
             }
 
             @Override
-            public void onCmdFinishParsing(NCmdLine commandLine, NCmdLineContext context) {
+            public void onCmdFinishParsing(NCmdLine cmdLine, NCmdLineContext context) {
                 fileTemplater = new NFileTemplater(session);
             }
 
             @Override
-            public void onCmdExec(NCmdLine commandLine, NCmdLineContext context) {
+            public void onCmdExec(NCmdLine cmdLine, NCmdLineContext context) {
                 fileTemplater.processProject(config);
             }
         });

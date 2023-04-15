@@ -23,32 +23,32 @@ public class SqlShowSchemaCmd<C extends NdbConfig> extends NdbCmd<C> {
     }
 
     @Override
-    public void run(NSession session, NCmdLine commandLine) {
+    public void run(NSession session, NCmdLine cmdLine) {
         NRef<AtName> name = NRef.ofNull(AtName.class);
         C otherOptions = createConfigInstance();
         ExtendedQuery eq = new ExtendedQuery(getName());
         NRef<NPath> file = NRef.ofNull();
-        while (commandLine.hasNext()) {
-            if (commandLine.isNextOption()) {
-                switch (commandLine.peek().get(session).key()) {
+        while (cmdLine.hasNext()) {
+            if (cmdLine.isNextOption()) {
+                switch (cmdLine.peek().get(session).key()) {
                     case "--config": {
-                        readConfigNameOption(commandLine, session, name);
+                        readConfigNameOption(cmdLine, session, name);
                         break;
                     }
                     case "--long": {
-                        commandLine.withNextFlag((v, a, s) -> eq.setLongMode(v));
+                        cmdLine.withNextFlag((v, a, s) -> eq.setLongMode(v));
                         break;
                     }
                     case "--file": {
-                        commandLine.withNextEntryValue((v, a, s) -> file.set(NPath.of(v.toString(), session)));
+                        cmdLine.withNextEntryValue((v, a, s) -> file.set(NPath.of(v.toString(), session)));
                         break;
                     }
                     default: {
-                        fillOptionLast(commandLine, otherOptions);
+                        fillOptionLast(cmdLine, otherOptions);
                     }
                 }
             } else {
-                commandLine.throwUnexpectedArgument();
+                cmdLine.throwUnexpectedArgument();
             }
         }
         //if (NBlankable.isBlank(otherOptions.getDatabaseName())) {

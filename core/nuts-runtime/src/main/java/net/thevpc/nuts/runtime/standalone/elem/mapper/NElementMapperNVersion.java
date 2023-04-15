@@ -12,8 +12,8 @@ public class NElementMapperNVersion implements NElementMapper<NVersion> {
     @Override
     public Object destruct(NVersion src, Type typeOfSrc, NElementFactoryContext context) {
         if (context.isNtf()) {
-            NSession ws = context.getSession();
-            return src.formatter(context.getSession()).setSession(ws).setNtf(true).format();
+            NSession session = context.getSession();
+            return src.formatter(context.getSession()).setSession(session).setNtf(true).format();
         } else {
             return src.toString();
         }

@@ -44,7 +44,7 @@ import java.util.function.Predicate;
  */
 public interface NInstallCommand extends NWorkspaceCommand {
     static NInstallCommand of(NSession session) {
-        return NExtensions.of(session).createSupported(NInstallCommand.class);
+        return NExtensions.of(session).createComponent(NInstallCommand.class).get();
     }
 
     /**

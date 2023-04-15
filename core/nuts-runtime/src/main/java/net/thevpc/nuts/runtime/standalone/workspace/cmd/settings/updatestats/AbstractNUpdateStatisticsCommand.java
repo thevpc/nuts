@@ -22,10 +22,10 @@ import java.util.LinkedHashSet;
 public abstract class AbstractNUpdateStatisticsCommand extends NWorkspaceCommandBase<NUpdateStatisticsCommand> implements NUpdateStatisticsCommand {
 
     private LinkedHashSet<Path> paths = new LinkedHashSet<>();
-    private LinkedHashSet<String> repositrories = new LinkedHashSet<>();
+    private LinkedHashSet<String> repositories = new LinkedHashSet<>();
 
-    public AbstractNUpdateStatisticsCommand(NSession ws) {
-        super(ws, "update-statistics");
+    public AbstractNUpdateStatisticsCommand(NSession session) {
+        super(session, "update-statistics");
     }
 
     @Override
@@ -35,14 +35,14 @@ public abstract class AbstractNUpdateStatisticsCommand extends NWorkspaceCommand
 
     @Override
     public NUpdateStatisticsCommand clearRepos() {
-        repositrories.clear();
+        repositories.clear();
         return this;
     }
 
     @Override
     public NUpdateStatisticsCommand addRepo(String s) {
         if (s != null) {
-            repositrories.add(s);
+            repositories.add(s);
         }
         return this;
     }
@@ -50,7 +50,7 @@ public abstract class AbstractNUpdateStatisticsCommand extends NWorkspaceCommand
     @Override
     public NUpdateStatisticsCommand removeRepo(String s) {
         if (s != null) {
-            repositrories.remove(s);
+            repositories.remove(s);
         }
         return this;
     }
@@ -75,8 +75,8 @@ public abstract class AbstractNUpdateStatisticsCommand extends NWorkspaceCommand
         return this;
     }
 
-    public String[] getRepositrories() {
-        return repositrories.toArray(new String[0]);
+    public String[] getRepositories() {
+        return repositories.toArray(new String[0]);
     }
 
     @Override

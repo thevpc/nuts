@@ -17,8 +17,8 @@ public abstract class AbstractNRemoveUserCommand extends NWorkspaceCommandBaseRe
 
     protected String login;
 
-    public AbstractNRemoveUserCommand(NSession ws) {
-        super(ws, "remove-user");
+    public AbstractNRemoveUserCommand(NSession session) {
+        super(session, "remove-user");
     }
 
     @Override

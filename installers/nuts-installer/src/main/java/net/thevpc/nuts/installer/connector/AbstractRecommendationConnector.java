@@ -21,7 +21,7 @@ public abstract class AbstractRecommendationConnector implements RecommendationC
         if (localUserUUID != null) {
             return localUserUUID;
         }
-        Path userConfig = Paths.get(Utils.getWorkspaceLocation()).getParent().resolve(".nuts-user-config");
+        Path userConfig = Paths.get(Utils.getBaseNutsLocation()).resolve(".nuts-user-config");
         Map m = null;
         String _uuid = null;
         if (Files.exists(userConfig)) {

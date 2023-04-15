@@ -39,7 +39,7 @@ import java.util.List;
  */
 public interface NExecutionEntries extends NComponent,NSessionProvider {
     static NExecutionEntries of(NSession session) {
-       return NExtensions.of(session).createSupported(NExecutionEntries.class);
+       return NExtensions.of(session).createComponent(NExecutionEntries.class).get();
     }
 
     /**

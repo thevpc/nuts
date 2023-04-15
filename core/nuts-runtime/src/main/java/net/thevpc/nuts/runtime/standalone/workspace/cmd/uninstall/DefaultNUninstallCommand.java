@@ -28,8 +28,8 @@ import java.util.stream.Collectors;
  */
 public class DefaultNUninstallCommand extends AbstractNUninstallCommand {
 
-    public DefaultNUninstallCommand(NSession ws) {
-        super(ws);
+    public DefaultNUninstallCommand(NSession session) {
+        super(session);
     }
 
     @Override

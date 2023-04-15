@@ -38,7 +38,7 @@ import java.util.List;
  */
 public interface NUpdateUserCommand extends NWorkspaceCommand {
     static NUpdateUserCommand of(NSession session) {
-        return NExtensions.of(session).createSupported(NUpdateUserCommand.class);
+        return NExtensions.of(session).createComponent(NUpdateUserCommand.class).get();
     }
 
     NUpdateUserCommand removeGroup(String group);

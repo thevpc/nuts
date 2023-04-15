@@ -45,7 +45,7 @@ import java.util.Set;
  */
 public interface NUncompress extends NComponent, NSessionProvider {
     static NUncompress of(NSession session) {
-        return NExtensions.of(session).createSupported(NUncompress.class);
+        return NExtensions.of(session).createComponent(NUncompress.class).get();
     }
 
     /**

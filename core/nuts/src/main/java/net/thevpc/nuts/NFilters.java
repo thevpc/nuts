@@ -34,10 +34,9 @@ import net.thevpc.nuts.spi.NComponentScopeType;
  * @app.category Config
  * @since 0.8.0
  */
-@NComponentScope(NComponentScopeType.SESSION)
 public interface NFilters extends NComponent {
     static NFilters of(NSession session) {
-       return NExtensions.of(session).createSupported(NFilters.class);
+       return NExtensions.of(session).createComponent(NFilters.class).get();
     }
 
 

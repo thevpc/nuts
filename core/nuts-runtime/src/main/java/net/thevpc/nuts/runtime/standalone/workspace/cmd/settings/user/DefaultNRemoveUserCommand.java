@@ -18,8 +18,8 @@ import net.thevpc.nuts.runtime.standalone.workspace.config.NConfigsExt;
  */
 public class DefaultNRemoveUserCommand extends AbstractNRemoveUserCommand {
 
-    public DefaultNRemoveUserCommand(NSession ws) {
-        super(ws);
+    public DefaultNRemoveUserCommand(NSession session) {
+        super(session);
     }
 
     @Override

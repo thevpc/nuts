@@ -31,7 +31,7 @@ public abstract class NdbCmd<C extends NdbConfig> {
         return names.toArray(new String[0]);
     }
 
-    abstract public void run(NSession session, NCmdLine commandLine);
+    abstract public void run(NSession session, NCmdLine cmdLine);
 
     protected boolean fillOption(NCmdLine cmdLine, C options) {
         if (support.fillOption(cmdLine, options)) {

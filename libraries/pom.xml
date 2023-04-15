@@ -11,7 +11,6 @@
     <modules>
         <module>nlib-md</module>
         <module>nlib-servlet</module>
-        <module>nlib-ssh</module>
         <module>nlib-talk-agent</module>
         <module>nlib-template</module>
         <module>nlib-tomcat-classloader</module>

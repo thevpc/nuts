@@ -18,10 +18,11 @@ import java.util.regex.Pattern;
 
 public class Utils {
     public static boolean isBlank(String url) {
-        return url==null || url.trim().isEmpty();
+        return url == null || url.trim().isEmpty();
     }
+
     public static String trim(String url) {
-        return url==null ?"": url.trim();
+        return url == null ? "" : url.trim();
     }
 
     public static Path downloadFile(String url, String prefix, String ext, Path to) {
@@ -54,7 +55,7 @@ public class Utils {
                 }
             }
         }
-        throw new RuntimeException("cannot download "+url);
+        throw new RuntimeException("cannot download " + url);
     }
 
     public static String downloadFile(String url) {
@@ -74,22 +75,23 @@ public class Utils {
                 }
             }
         }
-        throw new RuntimeException("cannot download "+url);
+        throw new RuntimeException("cannot download " + url);
     }
 
     public static Function<String, String> getVarsConverter(InstallerContext context) {
         return new Function<String, String>() {
             @Override
             public String apply(String s) {
-                switch (s){
-                    case "apiVersion": return InstallData.of(context).getInstallVersion().api;
+                switch (s) {
+                    case "apiVersion":
+                        return InstallData.of(context).getInstallVersion().api;
                 }
                 return null;
             }
         };
     }
 
-    public static String loadString(String url,Function<String, String> convert) {
+    public static String loadString(String url, Function<String, String> convert) {
         URL r = NutsInstaller.class.getResource(url);
         if (r == null) {
             throw new NoSuchElementException("not found " + url);
@@ -138,19 +140,19 @@ public class Utils {
         return m;
     }
 
-    public static String getWorkspaceLocation() {
-        if(isWindows()){
-            return System.getProperty("user.home") + "\\AppData\\Roaming\\nuts\\config\\";
+    public static String getBaseNutsLocation() {
+        if (isWindows()) {
+            return System.getProperty("user.home") + "\\AppData\\Roaming\\nuts\\";
         }
         String val = trim(System.getenv("XDG_CONFIG_HOME"));
         if (!val.isEmpty()) {
-            return val + "/nuts/";
+            return val + "/nuts";
         }
-        return System.getProperty("user.home") + "/.config/nuts" + "/";
+        return System.getProperty("user.home") + "/.config/nuts/";
     }
 
     public static boolean isWindows() {
-        String e=System.getProperty("os.name");
+        String e = System.getProperty("os.name");
         if (e == null) {
             e = "";
         } else {

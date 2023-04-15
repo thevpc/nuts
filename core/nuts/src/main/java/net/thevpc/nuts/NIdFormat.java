@@ -43,7 +43,7 @@ import java.util.List;
  */
 public interface NIdFormat extends NFormat, NComponent {
     static NIdFormat of(NSession session) {
-       return NExtensions.of(session).createSupported(NIdFormat.class);
+       return NExtensions.of(session).createComponent(NIdFormat.class).get();
     }
 
     /**

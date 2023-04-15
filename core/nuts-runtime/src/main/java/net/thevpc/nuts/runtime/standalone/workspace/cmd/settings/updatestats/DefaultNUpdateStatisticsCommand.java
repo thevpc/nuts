@@ -16,7 +16,6 @@ import net.thevpc.nuts.runtime.standalone.repository.impl.NRepositoryFolderHelpe
 import net.thevpc.nuts.runtime.standalone.repository.impl.maven.util.MavenRepositoryFolderHelper;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceUtils;
 import net.thevpc.nuts.spi.NRepositorySPI;
-import net.thevpc.nuts.text.NTexts;
 import net.thevpc.nuts.util.NAssert;
 
 /**
@@ -24,8 +23,8 @@ import net.thevpc.nuts.util.NAssert;
  */
 public class DefaultNUpdateStatisticsCommand extends AbstractNUpdateStatisticsCommand {
 
-    public DefaultNUpdateStatisticsCommand(NSession ws) {
-        super(ws);
+    public DefaultNUpdateStatisticsCommand(NSession session) {
+        super(session);
     }
 
     @Override
@@ -33,7 +32,7 @@ public class DefaultNUpdateStatisticsCommand extends AbstractNUpdateStatisticsCo
         boolean processed = false;
         NSession session = getSession();
         checkSession();
-        for (String repository : getRepositrories()) {
+        for (String repository : getRepositories()) {
             processed = true;
             NRepository repo = NRepositories.of(getSession()).getRepository(repository);
             NRepositorySPI repoSPI = NWorkspaceUtils.of(session).repoSPI(repo);

@@ -37,7 +37,7 @@ import java.util.List;
  */
 public interface NPrepareCommand extends NWorkspaceCommand {
     static NPrepareCommand of(NSession session) {
-        return NExtensions.of(session).createSupported(NPrepareCommand.class);
+        return NExtensions.of(session).createComponent(NPrepareCommand.class).get();
     }
 
     NPrepareCommand setTargetServer(String remoteServer);

@@ -19,24 +19,24 @@ public class RemoveConfigCmd<C extends NdbConfig> extends NdbCmd<C> {
     }
 
     @Override
-    public void run(NSession session, NCmdLine commandLine) {
+    public void run(NSession session, NCmdLine cmdLine) {
         NRef<AtName> name = NRef.ofNull(AtName.class);
-        while (commandLine.hasNext()) {
-            if (commandLine.isNextOption()) {
-                switch (commandLine.peek().get(session).key()) {
+        while (cmdLine.hasNext()) {
+            if (cmdLine.isNextOption()) {
+                switch (cmdLine.peek().get(session).key()) {
                     case "--config": {
-                        readConfigNameOption(commandLine, session, name);
+                        readConfigNameOption(cmdLine, session, name);
                         break;
                     }
                     default: {
-                        session.configureLast(commandLine);
+                        session.configureLast(cmdLine);
                     }
                 }
             } else {
                 if (name.isNull()) {
-                    name.set(new AtName(commandLine.next().get(session).asString().get(session)));
+                    name.set(new AtName(cmdLine.next().get(session).asString().get(session)));
                 } else {
-                    commandLine.throwUnexpectedArgument();
+                    cmdLine.throwUnexpectedArgument();
                 }
             }
         }

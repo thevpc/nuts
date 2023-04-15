@@ -38,7 +38,7 @@ import java.util.List;
 public interface NBootManager extends NComponent, NSessionProvider {
 
     static NBootManager of(NSession session) {
-        return NExtensions.of(session).createSupported(NBootManager.class);
+        return NExtensions.of(session).createComponent(NBootManager.class).get();
     }
 
     NBootManager setSession(NSession session);

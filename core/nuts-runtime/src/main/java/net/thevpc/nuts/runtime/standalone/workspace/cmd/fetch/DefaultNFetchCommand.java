@@ -33,8 +33,8 @@ import java.util.logging.Level;
 public class DefaultNFetchCommand extends AbstractNFetchCommand {
 
 
-    public DefaultNFetchCommand(NSession ws) {
-        super(ws);
+    public DefaultNFetchCommand(NSession session) {
+        super(session);
     }
 
     @Override
@@ -72,9 +72,9 @@ public class DefaultNFetchCommand extends AbstractNFetchCommand {
     public String getResultContentHash() {
         try {
             checkSession();
-            NSession ws = getSession();
-            Path f = getResultDefinition().getContent().map(NPath::toFile).get(session);
-            return NDigest.of(ws).setSource(f).computeString();
+            NSession session = getSession();
+            Path f = getResultDefinition().getContent().map(NPath::toFile).get(this.session);
+            return NDigest.of(session).setSource(f).computeString();
         } catch (NNotFoundException ex) {
             if (!isFailFast()) {
                 return null;

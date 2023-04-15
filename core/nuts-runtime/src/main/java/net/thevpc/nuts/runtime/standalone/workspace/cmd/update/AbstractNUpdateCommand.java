@@ -41,8 +41,8 @@ public abstract class AbstractNUpdateCommand extends NWorkspaceCommandBase<NUpda
 
     protected NWorkspaceUpdateResult result;
 
-    public AbstractNUpdateCommand(NSession ws) {
-        super(ws, "update");
+    public AbstractNUpdateCommand(NSession session) {
+        super(session, "update");
     }
 
     @Override

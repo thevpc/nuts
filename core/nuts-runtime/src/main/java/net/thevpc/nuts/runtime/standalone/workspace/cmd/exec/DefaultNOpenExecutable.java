@@ -42,16 +42,16 @@ public class DefaultNOpenExecutable extends AbstractNExecutableCommand {
         this.executorOptions = executorOptions == null ? new String[0] : executorOptions;
         this.session = session;
         this.execSession = execSession;
-        NCmdLine commandLine = NCmdLine.of(this.executorOptions);
-        while (commandLine.hasNext()) {
-            NArg aa = commandLine.peek().get(session);
+        NCmdLine cmdLine = NCmdLine.of(this.executorOptions);
+        while (cmdLine.hasNext()) {
+            NArg aa = cmdLine.peek().get(session);
             switch (aa.key()) {
                 case "--show-command": {
-                    commandLine.withNextFlag((v, a, s) -> this.showCommand = (v));
+                    cmdLine.withNextFlag((v, a, s) -> this.showCommand = (v));
                     break;
                 }
                 default: {
-                    commandLine.skip();
+                    cmdLine.skip();
                 }
             }
         }

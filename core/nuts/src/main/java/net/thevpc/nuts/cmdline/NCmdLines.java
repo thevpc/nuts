@@ -39,7 +39,7 @@ import net.thevpc.nuts.spi.NComponent;
  */
 public interface NCmdLines extends NComponent, NSessionProvider {
     static NCmdLines of(NSession session) {
-        return NExtensions.of(session).createSupported(NCmdLines.class, session);
+        return NExtensions.of(session).createComponent(NCmdLines.class, session).get();
     }
 
     /**

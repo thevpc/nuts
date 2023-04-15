@@ -50,10 +50,10 @@ public class SetCommand extends NShellBuiltinDefault {
     }
 
     @Override
-    protected boolean onCmdNextOption(NArg arg, NCmdLine commandLine, NShellExecutionContext context) {
+    protected boolean onCmdNextOption(NArg arg, NCmdLine cmdLine, NShellExecutionContext context) {
         NSession session = context.getSession();
         Options options = context.getOptions();
-        NArg a = commandLine.peek().get(session);
+        NArg a = cmdLine.peek().get(session);
         if (a.isNonOption()) {
             if (a.isKeyValue()) {
                 options.vars.put(a.key(), a.getStringValue().get(session));
@@ -64,7 +64,7 @@ public class SetCommand extends NShellBuiltinDefault {
     }
 
     @Override
-    protected void onCmdExec(NCmdLine commandLine, NShellExecutionContext context) {
+    protected void onCmdExec(NCmdLine cmdLine, NShellExecutionContext context) {
         Options options = context.getOptions();
         if (options.vars.isEmpty()) {
             List<String> results = new ArrayList<>();
@@ -87,7 +87,7 @@ public class SetCommand extends NShellBuiltinDefault {
         LinkedHashMap<String, String> vars = new LinkedHashMap<>();
     }
     @Override
-    protected boolean onCmdNextNonOption(NArg arg, NCmdLine commandLine, NShellExecutionContext context) {
-        return onCmdNextOption(arg, commandLine, context);
+    protected boolean onCmdNextNonOption(NArg arg, NCmdLine cmdLine, NShellExecutionContext context) {
+        return onCmdNextOption(arg, cmdLine, context);
     }
 }

@@ -36,7 +36,7 @@ import java.util.Set;
  */
 public interface NEnvs extends NComponent,NSessionProvider {
     static NEnvs of(NSession session) {
-        return NExtensions.of(session).createSupported(NEnvs.class);
+        return NExtensions.of(session).createComponent(NEnvs.class).get();
     }
 
     /**

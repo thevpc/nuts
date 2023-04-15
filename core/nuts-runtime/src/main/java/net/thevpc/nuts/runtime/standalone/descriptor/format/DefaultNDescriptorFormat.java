@@ -60,7 +60,7 @@ public class DefaultNDescriptorFormat extends DefaultFormatBase<NDescriptorForma
     }
 
     @Override
-    public boolean configureFirst(NCmdLine cmd) {
+    public boolean configureFirst(NCmdLine cmdLine) {
         return false;
     }
 

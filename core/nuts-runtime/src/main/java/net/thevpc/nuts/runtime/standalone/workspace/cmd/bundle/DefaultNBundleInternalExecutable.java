@@ -46,7 +46,7 @@ public class DefaultNBundleInternalExecutable extends DefaultInternalNExecutable
             return;
         }
         NSession session = getSession();
-        NCmdLine commandLine = NCmdLine.of(args);
+        NCmdLine cmdLine = NCmdLine.of(args);
         List<String> ids = new ArrayList<>();
         NRef<Boolean> withDependencies = NRef.of(true);
         NRef<Boolean> withOptional = NRef.of(false);
@@ -57,45 +57,45 @@ public class DefaultNBundleInternalExecutable extends DefaultInternalNExecutable
         NRef<String> withTarget = NRef.of(null);
         NRef<String> withFormat = NRef.of(null);
         NRef<Boolean> withClean = NRef.of(false);
-        while (commandLine.hasNext()) {
-            NArg a = commandLine.peek().get(session);
+        while (cmdLine.hasNext()) {
+            NArg a = cmdLine.peek().get(session);
             if (a.isOption()) {
                 switch (a.key()) {
                     case "--optional": {
-                        commandLine.withNextFlag((v, ar, s) -> withOptional.set(v));
+                        cmdLine.withNextFlag((v, ar, s) -> withOptional.set(v));
                         break;
                     }
                     case "--deps":
                     case "--dependencies": {
-                        commandLine.withNextFlag((v, ar, s) -> withDependencies.set(v));
+                        cmdLine.withNextFlag((v, ar, s) -> withDependencies.set(v));
                         break;
                     }
                     case "--app-version": {
-                        commandLine.withNextEntry((v, ar, s) -> withAppVersion.set(v));
+                        cmdLine.withNextEntry((v, ar, s) -> withAppVersion.set(v));
                         break;
                     }
                     case "--app-name":
                     case "--name": {
-                        commandLine.withNextEntry((v, ar, s) -> withAppName.set(v));
+                        cmdLine.withNextEntry((v, ar, s) -> withAppName.set(v));
                         break;
                     }
                     case "--app-desc":
                     case "--desc": {
-                        commandLine.withNextEntry((v, ar, s) -> withAppDesc.set(v));
+                        cmdLine.withNextEntry((v, ar, s) -> withAppDesc.set(v));
                         break;
                     }
                     case "--app-title":
                     case "--title": {
-                        commandLine.withNextEntry((v, ar, s) -> withAppTitle.set(v));
+                        cmdLine.withNextEntry((v, ar, s) -> withAppTitle.set(v));
                         break;
                     }
                     case "--target": {
-                        commandLine.withNextEntry((v, ar, s) -> withTarget.set(v));
+                        cmdLine.withNextEntry((v, ar, s) -> withTarget.set(v));
                         break;
                     }
                     case "--dir":
                     case "--as-dir": {
-                        commandLine.withNextFlag((v, ar, s) -> {
+                        cmdLine.withNextFlag((v, ar, s) -> {
                             if (v) {
                                 withFormat.set("dir");
                             }
@@ -104,7 +104,7 @@ public class DefaultNBundleInternalExecutable extends DefaultInternalNExecutable
                     }
                     case "--jar":
                     case "--as-jar": {
-                        commandLine.withNextFlag((v, ar, s) -> {
+                        cmdLine.withNextFlag((v, ar, s) -> {
                             if (v) {
                                 withFormat.set("jar");
                             }
@@ -113,7 +113,7 @@ public class DefaultNBundleInternalExecutable extends DefaultInternalNExecutable
                     }
                     case "--as-zip":
                     case "--zip": {
-                        commandLine.withNextFlag((v, ar, s) -> {
+                        cmdLine.withNextFlag((v, ar, s) -> {
                             if (v) {
                                 withFormat.set("zip");
                             }
@@ -121,15 +121,15 @@ public class DefaultNBundleInternalExecutable extends DefaultInternalNExecutable
                         break;
                     }
                     case "--clean": {
-                        commandLine.withNextFlag((v, ar, s) -> withClean.set(v));
+                        cmdLine.withNextFlag((v, ar, s) -> withClean.set(v));
                         break;
                     }
                     default: {
-                        session.configureLast(commandLine);
+                        session.configureLast(cmdLine);
                     }
                 }
             } else {
-                ids.add(commandLine.next().get().toString());
+                ids.add(cmdLine.next().get().toString());
             }
         }
         NPath rootFolder = null;
@@ -172,7 +172,7 @@ public class DefaultNBundleInternalExecutable extends DefaultInternalNExecutable
                     }
                 }
             }
-            commandLine.throwUnexpectedArgument(NMsg.ofC("%s", ids));
+            cmdLine.throwUnexpectedArgument(NMsg.ofC("%s", ids));
         }
         Set<String> sId = new TreeSet<>(ids);
         if (sId.size() > 3) {
@@ -211,7 +211,7 @@ public class DefaultNBundleInternalExecutable extends DefaultInternalNExecutable
                 break;
             }
             default: {
-                commandLine.throwUnexpectedArgument(NMsg.ofC("invalid format %s", format));
+                cmdLine.throwUnexpectedArgument(NMsg.ofC("invalid format %s", format));
             }
         }
 
@@ -353,7 +353,7 @@ public class DefaultNBundleInternalExecutable extends DefaultInternalNExecutable
                 break;
             }
             default: {
-                commandLine.throwUnexpectedArgument(NMsg.ofC("invalid format %s", format));
+                cmdLine.throwUnexpectedArgument(NMsg.ofC("invalid format %s", format));
             }
         }
 

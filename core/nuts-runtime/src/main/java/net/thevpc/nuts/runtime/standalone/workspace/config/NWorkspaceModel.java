@@ -5,6 +5,7 @@ import net.thevpc.nuts.NSession;
 import net.thevpc.nuts.NVersion;
 import net.thevpc.nuts.NWorkspace;
 import net.thevpc.nuts.runtime.standalone.event.DefaultNWorkspaceEventModel;
+import net.thevpc.nuts.runtime.standalone.util.collections.NPropertiesHolder;
 import net.thevpc.nuts.runtime.standalone.util.filters.DefaultNFilterModel;
 import net.thevpc.nuts.runtime.standalone.text.DefaultNTextManagerModel;
 import net.thevpc.nuts.runtime.standalone.log.DefaultNLogModel;
@@ -47,6 +48,7 @@ public class NWorkspaceModel {
     public String apiDigest;
     public SafeRecommendationConnector recomm =new SafeRecommendationConnector(new SimpleRecommendationConnector());
     public List<String> recommendedCompanions=new ArrayList<>();
+    public NPropertiesHolder properties = new NPropertiesHolder();
 
     public NWorkspaceModel(NWorkspace ws) {
         this.ws = ws;

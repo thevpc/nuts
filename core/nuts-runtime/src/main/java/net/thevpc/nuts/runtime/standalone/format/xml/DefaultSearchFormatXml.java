@@ -96,22 +96,22 @@ public class DefaultSearchFormatXml extends DefaultSearchFormatBase {
     }
 
     @Override
-    public boolean configureFirst(NCmdLine cmd) {
+    public boolean configureFirst(NCmdLine cmdLine) {
         NSession session = getSession();
-        NArg a = cmd.peek().get(session);
+        NArg a = cmdLine.peek().get(session);
         if (a == null) {
             return false;
         }
-        if (getDisplayOptions().configureFirst(cmd)) {
+        if (getDisplayOptions().configureFirst(cmdLine)) {
             return true;
         }
         switch(a.key()) {
             case "--compact": {
-                cmd.withNextFlag((v, r, s)->compact=v);
+                cmdLine.withNextFlag((v, r, s)->compact=v);
                 return true;
             }
             case "--root-name": {
-                cmd.withNextEntry((v, r, s)->rootName=v);
+                cmdLine.withNextEntry((v, r, s)->rootName=v);
                 return true;
             }
         }

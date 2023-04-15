@@ -10,6 +10,7 @@ import net.thevpc.nuts.runtime.standalone.session.NSessionUtils;
 import net.thevpc.nuts.spi.NFormatSPI;
 import net.thevpc.nuts.spi.NPathFactory;
 import net.thevpc.nuts.spi.NPathSPI;
+import net.thevpc.nuts.spi.NSupportLevelContext;
 import net.thevpc.nuts.text.NTexts;
 import net.thevpc.nuts.util.NStream;
 
@@ -745,7 +746,7 @@ public class FilePath implements NPathSPI {
         }
 
         @Override
-        public boolean configureFirst(NCmdLine commandLine) {
+        public boolean configureFirst(NCmdLine cmdLine) {
             return false;
         }
     }
@@ -771,6 +772,22 @@ public class FilePath implements NPathSPI {
             }
             return null;
         }
+
+        @Override
+        public int getSupportLevel(NSupportLevelContext context) {
+            String path= context.getConstraints();
+            try {
+                if (URLPath.MOSTLY_URL_PATTERN.matcher(path).matches()) {
+                    return NO_SUPPORT;
+                }
+                Path value = Paths.get(path);
+                return DEFAULT_SUPPORT;
+            } catch (Exception ex) {
+                //ignore
+            }
+            return NO_SUPPORT;
+        }
+
     }
 
     @Override

@@ -220,9 +220,9 @@ public abstract class DefaultFormatBase<T extends NFormat> extends DefaultFormat
     }
 
     @Override
-    public void configureLast(NCmdLine commandLine) {
-        if (!configureFirst(commandLine)) {
-            commandLine.throwUnexpectedArgument();
+    public void configureLast(NCmdLine cmdLine) {
+        if (!configureFirst(cmdLine)) {
+            cmdLine.throwUnexpectedArgument();
         }
     }
 

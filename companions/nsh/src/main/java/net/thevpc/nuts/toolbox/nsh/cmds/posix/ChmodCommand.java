@@ -49,26 +49,26 @@ public class ChmodCommand extends NShellBuiltinDefault {
 
 
     @Override
-    protected boolean onCmdNextNonOption(NArg arg, NCmdLine commandLine, NShellExecutionContext context) {
-        return onCmdNextOption(arg, commandLine, context);
+    protected boolean onCmdNextNonOption(NArg arg, NCmdLine cmdLine, NShellExecutionContext context) {
+        return onCmdNextOption(arg, cmdLine, context);
     }
 
     @Override
-    protected boolean onCmdNextOption(NArg arg, NCmdLine commandLine, NShellExecutionContext context) {
+    protected boolean onCmdNextOption(NArg arg, NCmdLine cmdLine, NShellExecutionContext context) {
         NSession session = context.getSession();
         Options options = context.getOptions();
         //invert processing order!
-        if (context.configureFirst(commandLine)) {
+        if (context.configureFirst(cmdLine)) {
             return true;
         }
-        NArg a = commandLine.peek().get(session);
+        NArg a = cmdLine.peek().get(session);
         String s = a.asString().get(session);
         if (s.equals("-R") || s.equals("--recursive")) {
-            commandLine.skip();
+            cmdLine.skip();
             options.m.recursive = true;
             return true;
         } else {
-            commandLine.skip();
+            cmdLine.skip();
             boolean add = true;
             int x = 0;
             int w = 0;
@@ -192,11 +192,11 @@ public class ChmodCommand extends NShellBuiltinDefault {
     }
 
     @Override
-    protected void onCmdExec(NCmdLine commandLine, NShellExecutionContext context) {
+    protected void onCmdExec(NCmdLine cmdLine, NShellExecutionContext context) {
         NSession session = context.getSession();
         Options options = context.getOptions();
         if (options.files.isEmpty()) {
-            commandLine.throwMissingArgument();
+            cmdLine.throwMissingArgument();
         }
         LinkedHashMap<NPath, NMsg> errors = new LinkedHashMap<>();
         for (NPath f : options.files) {

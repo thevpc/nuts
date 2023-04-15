@@ -40,7 +40,7 @@ import java.io.InputStream;
  */
 public interface NSystemTerminal extends NSystemTerminalBase {
     static void enableRichTerm(NSession session) {
-        NTerminals.of(session).enableRichTerm(session);
+        NTerminals.of(session).enableRichTerm();
     }
 
     /**

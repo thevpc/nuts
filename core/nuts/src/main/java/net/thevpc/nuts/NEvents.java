@@ -35,7 +35,7 @@ import java.util.List;
  */
 public interface NEvents extends NComponent, NSessionProvider {
     static NEvents of(NSession session) {
-        return NExtensions.of(session).createSupported(NEvents.class);
+        return NExtensions.of(session).createComponent(NEvents.class).get();
     }
 
     NEvents removeRepositoryListener(NRepositoryListener listener);

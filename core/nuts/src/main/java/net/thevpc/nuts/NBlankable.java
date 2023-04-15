@@ -28,6 +28,9 @@ package net.thevpc.nuts;
 
 import net.thevpc.nuts.util.NApiUtils;
 
+import java.util.Arrays;
+import java.util.List;
+
 /**
  * Capable of being blank
  *
@@ -93,4 +96,30 @@ public interface NBlankable {
      * @return argument value
      */
     boolean isBlank();
+
+
+    static <T> T firstNonBlank(T a, T b) {
+        if (!NBlankable.isBlank(a)) {
+            return a;
+        }
+        if (!NBlankable.isBlank(b)) {
+            return b;
+        }
+        return null;
+    }
+
+    static <T> T firstNonBlank(T... values) {
+        return firstNonBlank(values == null ? null : Arrays.asList(values));
+    }
+
+    static <T> T firstNonBlank(List<? extends T> values) {
+        if (values != null) {
+            for (T value : values) {
+                if (!NBlankable.isBlank(value)) {
+                    return value;
+                }
+            }
+        }
+        return null;
+    }
 }

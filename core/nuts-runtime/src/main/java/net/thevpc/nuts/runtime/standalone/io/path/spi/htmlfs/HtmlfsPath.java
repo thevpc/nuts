@@ -6,10 +6,7 @@ import net.thevpc.nuts.format.NTreeVisitor;
 import net.thevpc.nuts.io.*;
 import net.thevpc.nuts.runtime.standalone.io.path.spi.AbstractPathSPIAdapter;
 import net.thevpc.nuts.runtime.standalone.session.NSessionUtils;
-import net.thevpc.nuts.spi.NFormatSPI;
-import net.thevpc.nuts.spi.NPathFactory;
-import net.thevpc.nuts.spi.NPathSPI;
-import net.thevpc.nuts.spi.NUseDefault;
+import net.thevpc.nuts.spi.*;
 import net.thevpc.nuts.text.NTextBuilder;
 import net.thevpc.nuts.text.NTextStyle;
 import net.thevpc.nuts.util.NLogOp;
@@ -276,9 +273,22 @@ public class HtmlfsPath extends AbstractPathSPIAdapter {
         public NSupported<NPathSPI> createPath(String path, NSession session, ClassLoader classLoader) {
             NSessionUtils.checkSession(ws, session);
             if (path.startsWith(PREFIX)) {
-                return NSupported.of(10, () -> new HtmlfsPath(path, session));
+                return NSupported.of(DEFAULT_SUPPORT, () -> new HtmlfsPath(path, session));
             }
             return null;
+        }
+
+        @Override
+        public int getSupportLevel(NSupportLevelContext context) {
+            String path= context.getConstraints();
+            try {
+                if (path.startsWith(PREFIX)) {
+                    return DEFAULT_SUPPORT;
+                }
+            } catch (Exception ex) {
+                //ignore
+            }
+            return NO_SUPPORT;
         }
     }
 
@@ -308,7 +318,7 @@ public class HtmlfsPath extends AbstractPathSPIAdapter {
         }
 
         @Override
-        public boolean configureFirst(NCmdLine commandLine) {
+        public boolean configureFirst(NCmdLine cmdLine) {
             return false;
         }
     }

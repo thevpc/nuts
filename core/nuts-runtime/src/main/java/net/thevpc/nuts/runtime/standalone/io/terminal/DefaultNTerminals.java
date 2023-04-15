@@ -18,11 +18,11 @@ import java.io.InputStream;
 public class DefaultNTerminals implements NTerminals {
 
     public DefaultNWorkspaceConfigModel cmodel;
-    public NWorkspace ws;
+    public NSession session;
     public DefaultNBootModel bootModel;
 
     public DefaultNTerminals(NSession session) {
-        this.ws = session.getWorkspace();
+        this.session = session;
         this.cmodel = ((DefaultNConfigs) NConfigs.of(session)).getModel();
         bootModel = NWorkspaceExt.of(session.getWorkspace()).getModel().bootModel;
     }
@@ -36,30 +36,26 @@ public class DefaultNTerminals implements NTerminals {
     }
 
     @Override
-    public NTerminals enableRichTerm(NSession session) {
-        checkSession(session);
+    public NTerminals enableRichTerm() {
         bootModel.enableRichTerm(session);
         return this;
     }
 
 
     @Override
-    public NSessionTerminal createTerminal(NSession session) {
-        checkSession(session);
+    public NSessionTerminal createTerminal() {
         return cmodel.createTerminal(session);
     }
 
     @Override
-    public NSessionTerminal createTerminal(InputStream in, NPrintStream out, NPrintStream err, NSession session) {
-        checkSession(session);
+    public NSessionTerminal createTerminal(InputStream in, NPrintStream out, NPrintStream err) {
         return cmodel.createTerminal(in, out, err, session);
     }
 
     @Override
-    public NSessionTerminal createTerminal(NSessionTerminal terminal, NSession session) {
-        checkSession(session);
+    public NSessionTerminal createTerminal(NSessionTerminal terminal) {
         if (terminal == null) {
-            return createTerminal(session);
+            return createTerminal();
         }
         if (terminal instanceof DefaultNSessionTerminalFromSystem) {
             DefaultNSessionTerminalFromSystem t = (DefaultNSessionTerminalFromSystem) terminal;
@@ -73,16 +69,16 @@ public class DefaultNTerminals implements NTerminals {
     }
 
     @Override
-    public NSessionTerminal createMemTerminal(NSession session) {
-        return createMemTerminal(false, session);
+    public NSessionTerminal createMemTerminal() {
+        return createMemTerminal(false);
     }
 
     @Override
-    public NSessionTerminal createMemTerminal(boolean mergeErr, NSession session) {
+    public NSessionTerminal createMemTerminal(boolean mergeErr) {
         ByteArrayInputStream in = new ByteArrayInputStream(new byte[0]);
         NMemoryPrintStream out = NMemoryPrintStream.of(session);
         NMemoryPrintStream err = mergeErr ? out : NMemoryPrintStream.of(session);
-        return createTerminal(in, out, err, session);
+        return createTerminal(in, out, err);
     }
 
     @Override

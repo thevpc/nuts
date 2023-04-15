@@ -34,60 +34,60 @@ public class NDerbyMain extends SqlSupport<NDerbyConfig> {
     }
 
     @Override
-    public void run(NSession session, NCmdLine commandLine) {
+    public void run(NSession session, NCmdLine cmdLine) {
         NArg a;
         NDerbyConfig options = new NDerbyConfig();
-        commandLine.setCommandName("derby");
-        while (commandLine.hasNext()) {
-            if ((a = commandLine.next("start").orNull()) != null) {
+        cmdLine.setCommandName("derby");
+        while (cmdLine.hasNext()) {
+            if ((a = cmdLine.next("start").orNull()) != null) {
                 options.setCmd(Command.start);
-            } else if ((a = commandLine.next("sys", "sysinfo", "sys-info").orNull()) != null) {
+            } else if ((a = cmdLine.next("sys", "sysinfo", "sys-info").orNull()) != null) {
                 options.setCmd(Command.sysinfo);
-            } else if ((a = commandLine.next("ping").orNull()) != null) {
+            } else if ((a = cmdLine.next("ping").orNull()) != null) {
                 options.setCmd(Command.ping);
-            } else if ((a = commandLine.next("status").orNull()) != null) {
-                status(commandLine, options);
+            } else if ((a = cmdLine.next("status").orNull()) != null) {
+                status(cmdLine, options);
                 return;
-            } else if ((a = commandLine.next("rt", "runtime", "runtimeinfo", "runtime-info").orNull()) != null) {
+            } else if ((a = cmdLine.next("rt", "runtime", "runtimeinfo", "runtime-info").orNull()) != null) {
                 options.setCmd(Command.runtimeinfo);
-            } else if ((a = commandLine.nextEntry("trace").orNull()) != null) {
+            } else if ((a = cmdLine.nextEntry("trace").orNull()) != null) {
                 options.setCmd(Command.trace);
                 options.setExtraArg(a.getStringValue().get(session));
-            } else if ((a = commandLine.nextEntry("trace-directory", "tracedirectory").orNull()) != null) {
+            } else if ((a = cmdLine.nextEntry("trace-directory", "tracedirectory").orNull()) != null) {
                 options.setCmd(Command.tracedirectory);
                 options.setExtraArg(a.getStringValue().get(session));
-            } else if ((a = commandLine.nextEntry("max-threads", "maxthreads").orNull()) != null) {
+            } else if ((a = cmdLine.nextEntry("max-threads", "maxthreads").orNull()) != null) {
                 options.setCmd(Command.maxthreads);
                 options.setExtraArg(a.getStringValue().get(session));
-            } else if ((a = commandLine.nextEntry("time-slice", "timeslice").orNull()) != null) {
+            } else if ((a = cmdLine.nextEntry("time-slice", "timeslice").orNull()) != null) {
                 options.setCmd(Command.timeslice);
                 options.setExtraArg(a.getStringValue().get(session));
-            } else if ((a = commandLine.nextEntry("log-connections", "logconnections").orNull()) != null) {
+            } else if ((a = cmdLine.nextEntry("log-connections", "logconnections").orNull()) != null) {
                 options.setCmd(Command.logconnections);
                 options.setExtraArg(a.getStringValue().get(session));
-            } else if ((a = commandLine.next("stop", "shutdown").orNull()) != null) {
+            } else if ((a = cmdLine.next("stop", "shutdown").orNull()) != null) {
                 options.setCmd(Command.shutdown);
-            } else if ((a = commandLine.next("ps").orNull()) != null) {
-                ps(commandLine, options);
+            } else if ((a = cmdLine.next("ps").orNull()) != null) {
+                ps(cmdLine, options);
                 return;
-            } else if ((a = commandLine.next("versions").orNull()) != null) {
-                versions(commandLine, options);
+            } else if ((a = cmdLine.next("versions").orNull()) != null) {
+                versions(cmdLine, options);
                 return;
-            } else if ((a = commandLine.next("run-sql").orNull()) != null) {
-                runSQL(commandLine, options, session);
+            } else if ((a = cmdLine.next("run-sql").orNull()) != null) {
+                runSQL(cmdLine, options, session);
                 return;
-            } else if (_opt(commandLine, options)) {
+            } else if (_opt(cmdLine, options)) {
                 //
             } else {
-                commandLine.setCommandName("derby").throwUnexpectedArgument();
+                cmdLine.setCommandName("derby").throwUnexpectedArgument();
             }
         }
-        if (commandLine.isExecMode()) {
+        if (cmdLine.isExecMode()) {
             DerbyService srv = new DerbyService(session);
             int effectivePort = options.getPort() < 0 ? 1527 : options.getPort();
             if (options.getCmd() == Command.start) {
                 NTexts factory = NTexts.of(session);
-                if (commandLine.isExecMode()) {
+                if (cmdLine.isExecMode()) {
                     if (new DerbyService(session).isRunning()) {
                         session.out().println(NMsg.ofC("derby is %s on port %s",
                                 factory.ofStyled("already running", NTextStyle.warn()),
@@ -98,7 +98,7 @@ public class NDerbyMain extends SqlSupport<NDerbyConfig> {
                 }
             } else if (options.getCmd() == Command.shutdown) {
                 NTexts factory = NTexts.of(session);
-                if (commandLine.isExecMode()) {
+                if (cmdLine.isExecMode()) {
                     if (!new DerbyService(session).isRunning()) {
                         session.out().println(NMsg.ofC("derby is %s on port %s",
                                 factory.ofStyled("already stopped", NTextStyle.warn()),

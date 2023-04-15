@@ -54,20 +54,20 @@ public class UnzipCommand extends NShellBuiltinDefault {
     }
 
     @Override
-    protected boolean onCmdNextOption(NArg arg, NCmdLine commandLine, NShellExecutionContext context) {
+    protected boolean onCmdNextOption(NArg arg, NCmdLine cmdLine, NShellExecutionContext context) {
         Options options = context.getOptions();
         NSession session = context.getSession();
         NArg a;
         String mode = "zip";
-        while (commandLine.hasNext()) {
+        while (cmdLine.hasNext()) {
             switch (mode) {
                 case "zip": {
-                    if ((a = commandLine.nextFlag("-l").orNull()) != null) {
+                    if ((a = cmdLine.nextFlag("-l").orNull()) != null) {
                         options.l = a.getBooleanValue().get(session);
-                    } else if ((a = commandLine.nextEntry("-d").orNull()) != null) {
+                    } else if ((a = cmdLine.nextEntry("-d").orNull()) != null) {
                         options.dir = a.getStringValue().get(session);
-                    } else if (!commandLine.isNextOption()) {
-                        String s = commandLine.next().get(session).toString();
+                    } else if (!cmdLine.isNextOption()) {
+                        String s = cmdLine.next().get(session).toString();
                         if (options.zfiles.isEmpty() || s.toLowerCase().endsWith(".zip")) {
                             options.zfiles.add(s);
                         } else {
@@ -75,39 +75,39 @@ public class UnzipCommand extends NShellBuiltinDefault {
                             mode = "internFiles";
                         }
                     } else {
-                        commandLine.throwUnexpectedArgument();
+                        cmdLine.throwUnexpectedArgument();
                     }
                     break;
                 }
                 case "internFiles": {
-                    if ((a = commandLine.nextFlag("-l").orNull()) != null) {
+                    if ((a = cmdLine.nextFlag("-l").orNull()) != null) {
                         options.l = a.getBooleanValue().get(session);
-                    } else if ((a = commandLine.nextEntry("-d").orNull()) != null) {
+                    } else if ((a = cmdLine.nextEntry("-d").orNull()) != null) {
                         options.dir = a.getStringValue().get(session);
-                    } else if ((a = commandLine.nextEntry("-x").orNull()) != null) {
+                    } else if ((a = cmdLine.nextEntry("-x").orNull()) != null) {
                         options.xFiles.add(a.getStringValue().get(session));
                         mode = "xFiles";
-                    } else if (!commandLine.isNextOption()) {
-                        options.xFiles.add(commandLine.next().get(session).toString());
+                    } else if (!cmdLine.isNextOption()) {
+                        options.xFiles.add(cmdLine.next().get(session).toString());
                     } else {
-                        commandLine.throwUnexpectedArgument();
+                        cmdLine.throwUnexpectedArgument();
                     }
                     break;
                 }
                 case "xFiles": {
-                    if ((a = commandLine.nextFlag("-l").orNull()) != null) {
+                    if ((a = cmdLine.nextFlag("-l").orNull()) != null) {
                         options.l = a.getBooleanValue().get(session);
-                    } else if ((a = commandLine.nextEntry("-d").orNull()) != null) {
+                    } else if ((a = cmdLine.nextEntry("-d").orNull()) != null) {
                         options.dir = a.getStringValue().get(session);
-                    } else if (!commandLine.isNextOption()) {
-                        options.xFiles.add(commandLine.next().get(session).toString());
+                    } else if (!cmdLine.isNextOption()) {
+                        options.xFiles.add(cmdLine.next().get(session).toString());
                     } else {
-                        commandLine.throwUnexpectedArgument();
+                        cmdLine.throwUnexpectedArgument();
                     }
                     break;
                 }
                 default: {
-                    commandLine.throwUnexpectedArgument();
+                    cmdLine.throwUnexpectedArgument();
                 }
             }
         }
@@ -115,11 +115,11 @@ public class UnzipCommand extends NShellBuiltinDefault {
     }
 
     @Override
-    protected void onCmdExec(NCmdLine commandLine, NShellExecutionContext context) {
+    protected void onCmdExec(NCmdLine cmdLine, NShellExecutionContext context) {
         Options options = context.getOptions();
         NSession session = context.getSession();
         if (options.zfiles.isEmpty()) {
-            commandLine.throwMissingArgument();
+            cmdLine.throwMissingArgument();
         }
         for (String path : options.zfiles) {
             NPath file = NPath.of(path, session).toAbsolute(context.getDirectory());
@@ -167,7 +167,7 @@ public class UnzipCommand extends NShellBuiltinDefault {
         List<String> xFiles = new ArrayList<>();
     }
     @Override
-    protected boolean onCmdNextNonOption(NArg arg, NCmdLine commandLine, NShellExecutionContext context) {
-        return onCmdNextOption(arg, commandLine, context);
+    protected boolean onCmdNextNonOption(NArg arg, NCmdLine cmdLine, NShellExecutionContext context) {
+        return onCmdNextOption(arg, cmdLine, context);
     }
 }

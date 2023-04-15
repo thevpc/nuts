@@ -135,17 +135,17 @@ public class WorkspaceService {
         }
     }
 
-    public void enableScan(NCmdLine commandLine, NSession session, boolean enable) {
+    public void enableScan(NCmdLine cmdLine, NSession session, boolean enable) {
         int count = 0;
-        while (commandLine.hasNext()) {
-            if (commandLine.peek().get(session).isNonOption()) {
-                String expression = commandLine.next().flatMap(NLiteral::asString).get(session);
-                if (commandLine.isExecMode()) {
+        while (cmdLine.hasNext()) {
+            if (cmdLine.peek().get(session).isNonOption()) {
+                String expression = cmdLine.next().flatMap(NLiteral::asString).get(session);
+                if (cmdLine.isExecMode()) {
                     setScanEnabled(Paths.get(expression), enable);
                     count++;
                 }
             } else {
-                session.configureLast(commandLine);
+                session.configureLast(cmdLine);
             }
         }
 
@@ -261,32 +261,32 @@ public class WorkspaceService {
         }
     }
 
-    public void push(NCmdLine commandLine, NSession session) {
-        commandLine.setCommandName("nwork push");
+    public void push(NCmdLine cmdLine, NSession session) {
+        cmdLine.setCommandName("nwork push");
         //rsync /home/me/.m2/repository/net/thevpc/nuts/nuts/0.8.4/*  vpc@thevpc.net:/home/me/.m2/repository/net/thevpc/nuts/nuts/0.8.4/
         List<NId> idsToPush = new ArrayList<>();
         NRef<String> remoteServer = NRef.ofNull(String.class);
         NRef<String> remoteUser = NRef.ofNull(String.class);
-        while (commandLine.hasNext()) {
-            if (session.configureFirst(commandLine)) {
+        while (cmdLine.hasNext()) {
+            if (session.configureFirst(cmdLine)) {
 
-            } else if (commandLine.withNextEntry((v, a, s) -> remoteServer.set(v), "--remote-server", "--to-server", "--to", "-t")) {
-            } else if (commandLine.withNextEntry((v, a, s) -> remoteUser.set(v), "--remote-user")) {
-            } else if (commandLine.isNextNonOption()) {
-                NArg a = commandLine.next().get();
+            } else if (cmdLine.withNextEntry((v, a, s) -> remoteServer.set(v), "--remote-server", "--to-server", "--to", "-t")) {
+            } else if (cmdLine.withNextEntry((v, a, s) -> remoteUser.set(v), "--remote-user")) {
+            } else if (cmdLine.isNextNonOption()) {
+                NArg a = cmdLine.next().get();
                 idsToPush.add(NId.of(a.toString()).get());
             } else {
-                session.configureLast(commandLine);
+                session.configureLast(cmdLine);
             }
         }
         if (idsToPush.isEmpty()) {
-            commandLine.throwMissingArgument();
+            cmdLine.throwMissingArgument();
         }
         if (remoteUser.isBlank()) {
             remoteUser.set(System.getProperty("user.name"));
         }
         if (remoteServer.isBlank()) {
-            commandLine.throwMissingArgumentByName("--remote-server");
+            cmdLine.throwMissingArgumentByName("--remote-server");
         }
         for (NId id : idsToPush) {
             String groupIdPath = String.join("/", id.getGroupId().split("[.]"));

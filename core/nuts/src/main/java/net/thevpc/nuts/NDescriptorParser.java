@@ -43,7 +43,7 @@ import java.nio.file.Path;
 public interface NDescriptorParser extends NComponent, NSessionProvider {
 
     static NDescriptorParser of(NSession session) {
-        return NExtensions.of(session).createSupported(NDescriptorParser.class);
+        return NExtensions.of(session).createComponent(NDescriptorParser.class).get();
     }
 
     /**

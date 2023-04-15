@@ -22,12 +22,12 @@ public class NTextNodeWriterStringer extends AbstractNTextNodeWriter {
         this.session = session;
     }
 
-    public static String toString(NText n, NSession ws) {
+    public static String toString(NText n, NSession session) {
         if (n == null) {
             return "";
         }
         ByteArrayOutputStream bos = new ByteArrayOutputStream();
-        new NTextNodeWriterStringer(bos, ws).writeNode(n);
+        new NTextNodeWriterStringer(bos, session).writeNode(n);
         return bos.toString();
     }
 

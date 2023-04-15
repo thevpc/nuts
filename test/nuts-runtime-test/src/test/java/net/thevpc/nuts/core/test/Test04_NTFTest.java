@@ -248,9 +248,9 @@ public class Test04_NTFTest {
 
     private static void writeColors(String s) {
         TestUtils.println(s);
-        NSession ws = TestUtils.openNewTestWorkspace("--verbose", "--install-companions=false");
+        NSession session = TestUtils.openNewTestWorkspace("--verbose", "--install-companions=false");
         {
-            ws.out().println(s);
+            session.out().println(s);
         }
     }
 

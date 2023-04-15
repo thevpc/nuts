@@ -28,8 +28,8 @@ public class DefaultSearchFormatProps extends DefaultSearchFormatBase {
     }
 
     @Override
-    public boolean configureFirst(NCmdLine cmd) {
-        if (getDisplayOptions().configureFirst(cmd)) {
+    public boolean configureFirst(NCmdLine cmdLine) {
+        if (getDisplayOptions().configureFirst(cmdLine)) {
             return true;
         }
         return false;

@@ -50,127 +50,127 @@ public class PropsCommand extends NShellBuiltinDefault {
     }
 
     @Override
-    protected boolean onCmdNextOption(NArg arg, NCmdLine commandLine, NShellExecutionContext context) {
+    protected boolean onCmdNextOption(NArg arg, NCmdLine cmdLine, NShellExecutionContext context) {
         Options o = context.getOptions();
         NSession session = context.getSession();
-        if (commandLine.next("get").isPresent()) {
-            o.property = commandLine.next().flatMap(NLiteral::asString).get(session);
+        if (cmdLine.next("get").isPresent()) {
+            o.property = cmdLine.next().flatMap(NLiteral::asString).get(session);
             o.action = "get";
-            while (commandLine.hasNext()) {
-                if (commandLine.next("--xml").isPresent()) {
+            while (cmdLine.hasNext()) {
+                if (cmdLine.next("--xml").isPresent()) {
                     o.sourceFormat = Format.XML;
                     o.sourceType = SourceType.FILE;
-                    o.sourceFile = commandLine.nextNonOption(NArgName.of("file",session)).flatMap(NLiteral::asString).get(session);
+                    o.sourceFile = cmdLine.nextNonOption(NArgName.of("file",session)).flatMap(NLiteral::asString).get(session);
 
-                } else if (commandLine.next("--system").isPresent()) {
+                } else if (cmdLine.next("--system").isPresent()) {
                     o.sourceFormat = Format.PROPS;
                     o.sourceType = SourceType.SYSTEM;
                     o.sourceFile = null;
 
-                } else if (commandLine.next("--props").isPresent()) {
+                } else if (cmdLine.next("--props").isPresent()) {
                     o.sourceFormat = Format.PROPS;
                     o.sourceType = SourceType.FILE;
-                    o.sourceFile = commandLine.nextNonOption(NArgName.of("file",session)).flatMap(NLiteral::asString).get(session);
+                    o.sourceFile = cmdLine.nextNonOption(NArgName.of("file",session)).flatMap(NLiteral::asString).get(session);
 
-                } else if (commandLine.next("--file").isPresent()) {
+                } else if (cmdLine.next("--file").isPresent()) {
                     o.sourceFormat = Format.AUTO;
                     o.sourceType = SourceType.FILE;
-                    o.sourceFile = commandLine.nextNonOption(NArgName.of("file",session)).flatMap(NLiteral::asString).get(session);
+                    o.sourceFile = cmdLine.nextNonOption(NArgName.of("file",session)).flatMap(NLiteral::asString).get(session);
                 } else {
-                    commandLine.setCommandName(getName()).throwUnexpectedArgument();
+                    cmdLine.setCommandName(getName()).throwUnexpectedArgument();
                 }
 
             }
             return true;
-        } else if (commandLine.next("set").isPresent()) {
-            String k = commandLine.next().flatMap(NLiteral::asString).get(session);
-            String v = commandLine.next().flatMap(NLiteral::asString).get(session);
+        } else if (cmdLine.next("set").isPresent()) {
+            String k = cmdLine.next().flatMap(NLiteral::asString).get(session);
+            String v = cmdLine.next().flatMap(NLiteral::asString).get(session);
             o.updates.put(k, v);
             o.action = "set";
-            while (commandLine.hasNext()) {
-                if (commandLine.next("--comments").isPresent()) {
-                    o.comments = commandLine.next().get(session).getStringValue().get(session);
-                } else if (commandLine.next("--to-props-file").isPresent()) {
+            while (cmdLine.hasNext()) {
+                if (cmdLine.next("--comments").isPresent()) {
+                    o.comments = cmdLine.next().get(session).getStringValue().get(session);
+                } else if (cmdLine.next("--to-props-file").isPresent()) {
                     o.targetFormat = Format.PROPS;
                     o.targetType = TargetType.FILE;
-                    o.targetFile = commandLine.nextNonOption(NArgName.of("file",session)).flatMap(NLiteral::asString).get(session);
+                    o.targetFile = cmdLine.nextNonOption(NArgName.of("file",session)).flatMap(NLiteral::asString).get(session);
 
-                } else if (commandLine.next("--to-xml-file").isPresent()) {
+                } else if (cmdLine.next("--to-xml-file").isPresent()) {
                     o.targetFormat = Format.XML;
                     o.targetType = TargetType.FILE;
-                    o.targetFile = commandLine.nextNonOption(NArgName.of("file",session)).flatMap(NLiteral::asString).get(session);
-                } else if (commandLine.next("--to-file").isPresent()) {
+                    o.targetFile = cmdLine.nextNonOption(NArgName.of("file",session)).flatMap(NLiteral::asString).get(session);
+                } else if (cmdLine.next("--to-file").isPresent()) {
                     o.targetFormat = Format.AUTO;
                     o.targetType = TargetType.FILE;
-                    o.targetFile = commandLine.nextNonOption(NArgName.of("file",session)).flatMap(NLiteral::asString).get(session);
+                    o.targetFile = cmdLine.nextNonOption(NArgName.of("file",session)).flatMap(NLiteral::asString).get(session);
 
-                } else if (commandLine.next("--print-props").isPresent()) {
+                } else if (cmdLine.next("--print-props").isPresent()) {
                     o.targetFormat = Format.PROPS;
                     o.targetType = TargetType.CONSOLE;
                     o.targetFile = null;
 
-                } else if (commandLine.next("--print-xml").isPresent()) {
+                } else if (cmdLine.next("--print-xml").isPresent()) {
                     o.targetFormat = Format.XML;
                     o.targetType = TargetType.CONSOLE;
                     o.targetFile = null;
 
-                } else if (commandLine.next("--save").isPresent()) {
+                } else if (cmdLine.next("--save").isPresent()) {
                     o.targetFormat = Format.AUTO;
                     o.targetType = TargetType.CONSOLE;
                     o.targetFile = null;
-                } else if (commandLine.next("--sort").isPresent()) {
+                } else if (cmdLine.next("--sort").isPresent()) {
                     o.sort = true;
                     session.addOutputFormatOptions("--sort");
-                } else if (commandLine.next("--xml").isPresent()) {
+                } else if (cmdLine.next("--xml").isPresent()) {
                     o.sourceFormat = Format.XML;
                     o.sourceType = SourceType.FILE;
-                    o.sourceFile = commandLine.nextNonOption(NArgName.of("file",session)).flatMap(NLiteral::asString).get(session);
+                    o.sourceFile = cmdLine.nextNonOption(NArgName.of("file",session)).flatMap(NLiteral::asString).get(session);
 
-                } else if (commandLine.next("--system").isPresent()) {
+                } else if (cmdLine.next("--system").isPresent()) {
                     o.sourceFormat = Format.PROPS;
                     o.sourceType = SourceType.SYSTEM;
                     o.sourceFile = null;
 
-                } else if (commandLine.next("--props").isPresent()) {
+                } else if (cmdLine.next("--props").isPresent()) {
                     o.sourceFormat = Format.PROPS;
                     o.sourceType = SourceType.FILE;
-                    o.sourceFile = commandLine.nextNonOption(NArgName.of("file",session)).flatMap(NLiteral::asString).get(session);
-                } else if (commandLine.next("--file").isPresent()) {
+                    o.sourceFile = cmdLine.nextNonOption(NArgName.of("file",session)).flatMap(NLiteral::asString).get(session);
+                } else if (cmdLine.next("--file").isPresent()) {
                     o.sourceFormat = Format.AUTO;
                     o.sourceType = SourceType.FILE;
-                    o.sourceFile = commandLine.nextNonOption(NArgName.of("file",session)).flatMap(NLiteral::asString).get(session);
+                    o.sourceFile = cmdLine.nextNonOption(NArgName.of("file",session)).flatMap(NLiteral::asString).get(session);
                 } else {
-                    commandLine.setCommandName(getName()).throwUnexpectedArgument();
+                    cmdLine.setCommandName(getName()).throwUnexpectedArgument();
                 }
             }
             return true;
-        } else if (commandLine.next("list").isPresent()) {
+        } else if (cmdLine.next("list").isPresent()) {
             o.action = "list";
-            while (commandLine.hasNext()) {
-                if (commandLine.next("--xml").isPresent()) {
+            while (cmdLine.hasNext()) {
+                if (cmdLine.next("--xml").isPresent()) {
                     o.sourceFormat = Format.XML;
                     o.sourceType = SourceType.FILE;
-                    o.sourceFile = commandLine.nextNonOption(NArgName.of("file",session)).flatMap(NLiteral::asString).get(session);
+                    o.sourceFile = cmdLine.nextNonOption(NArgName.of("file",session)).flatMap(NLiteral::asString).get(session);
 
-                } else if (commandLine.next("--system").isPresent()) {
+                } else if (cmdLine.next("--system").isPresent()) {
                     o.sourceFormat = Format.PROPS;
                     o.sourceType = SourceType.SYSTEM;
                     o.sourceFile = null;
 
-                } else if (commandLine.next("--props").isPresent()) {
+                } else if (cmdLine.next("--props").isPresent()) {
                     o.sourceFormat = Format.PROPS;
                     o.sourceType = SourceType.FILE;
-                    o.sourceFile = commandLine.nextNonOption(NArgName.of("file",session)).flatMap(NLiteral::asString).get(session);
+                    o.sourceFile = cmdLine.nextNonOption(NArgName.of("file",session)).flatMap(NLiteral::asString).get(session);
 
-                } else if (commandLine.next("--file").isPresent()) {
+                } else if (cmdLine.next("--file").isPresent()) {
                     o.sourceFormat = Format.AUTO;
                     o.sourceType = SourceType.FILE;
-                    o.sourceFile = commandLine.nextNonOption(NArgName.of("file",session)).flatMap(NLiteral::asString).get(session);
-                } else if (commandLine.next("--sort").isPresent()) {
+                    o.sourceFile = cmdLine.nextNonOption(NArgName.of("file",session)).flatMap(NLiteral::asString).get(session);
+                } else if (cmdLine.next("--sort").isPresent()) {
                     o.sort = true;
                     session.addOutputFormatOptions("--sort");
                 } else {
-                    commandLine.setCommandName(getName()).throwUnexpectedArgument();
+                    cmdLine.setCommandName(getName()).throwUnexpectedArgument();
                 }
             }
             return true;
@@ -180,10 +180,10 @@ public class PropsCommand extends NShellBuiltinDefault {
     }
 
     @Override
-    protected void onCmdExec(NCmdLine commandLine, NShellExecutionContext context) {
+    protected void onCmdExec(NCmdLine cmdLine, NShellExecutionContext context) {
         Options o = context.getOptions();
         NSession session = context.getSession();
-        commandLine.setCommandName(getName());
+        cmdLine.setCommandName(getName());
         if (o.sourceType != SourceType.FILE && o.sourceFile != null) {
             throw new NExecutionException(session, NMsg.ofPlain("props: Should not use file with --system flag"), 2);
         }
@@ -418,7 +418,7 @@ public class PropsCommand extends NShellBuiltinDefault {
     }
 
     @Override
-    protected boolean onCmdNextNonOption(NArg arg, NCmdLine commandLine, NShellExecutionContext context) {
-        return onCmdNextOption(arg, commandLine, context);
+    protected boolean onCmdNextNonOption(NArg arg, NCmdLine cmdLine, NShellExecutionContext context) {
+        return onCmdNextOption(arg, cmdLine, context);
     }
 }

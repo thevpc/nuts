@@ -1,12 +1,17 @@
 package net.thevpc.nuts.lib.ssh;
 
 import com.jcraft.jsch.*;
+import net.thevpc.nuts.NLiteral;
 import net.thevpc.nuts.NMsg;
 import net.thevpc.nuts.NSession;
 import net.thevpc.nuts.text.NTextStyle;
+import net.thevpc.nuts.util.NConnexionString;
+import net.thevpc.nuts.util.NMaps;
+import net.thevpc.nuts.util.NStringMapFormat;
 
 import java.io.*;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Properties;
 
@@ -42,11 +47,15 @@ public class SShConnection implements AutoCloseable {
     private List<SshListener> listeners = new ArrayList<>();
 
     public SShConnection(String address, NSession sshSession) {
-        this(new SshAddress(address), sshSession);
+        this(NConnexionString.of(address).get(), sshSession);
     }
 
-    public SShConnection(SshAddress address, NSession sshSession) {
-        init(address.getUser(), address.getHost(), address.getPort(), address.getKeyFile(), address.getPassword(), sshSession);
+    public SShConnection(NConnexionString address, NSession sshSession) {
+        init(address.getUser(), address.getHost(),
+                NLiteral.of(address.getPort()).asInt().orElse(-1),
+                NStringMapFormat.URL_FORMAT.parse(address.getQueryString())
+                        .orElse(Collections.emptyMap()).get("key-file"),
+                address.getPassword(), sshSession);
     }
 
     public SShConnection(String user, String host, int port, String keyFilePath, String keyPassword, NSession sshSession) {
@@ -90,6 +99,8 @@ public class SShConnection implements AutoCloseable {
 
     private void init(String user, String host, int port, String keyFilePath, String keyPassword, NSession session) {
         this.nSession = session;
+        out = new PrintStream(new NonClosableOutputStream(this.nSession.out().asOutputStream()));
+        err = new PrintStream(new NonClosableOutputStream(this.nSession.err().asOutputStream()));
         try {
             JSch jsch = new JSch();
 
@@ -120,7 +131,13 @@ public class SShConnection implements AutoCloseable {
             this.sshSession.connect();
         } catch (JSchException e) {
             //
-            throw new UncheckedIOException(new IOException(e.getMessage() + " (" + new SshAddress(user, host, port, keyFilePath, keyPassword) + ")", e));
+            throw new UncheckedIOException(new IOException(e.getMessage() + " (" +
+                    new NConnexionString().setUser(user).setHost(host).setPort(String.valueOf(port)).setPassword(keyPassword).setQueryString(
+                            keyFilePath == null ? null : NStringMapFormat.URL_FORMAT
+                                    .format(
+                                            NMaps.of("key-file", keyFilePath)
+                                    )
+                    ) + ")", e));
         }
     }
 

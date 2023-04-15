@@ -54,15 +54,15 @@ public class HelpCommand extends NShellBuiltinCore {
     }
 
     @Override
-    protected boolean onCmdNextOption(NArg arg, NCmdLine commandLine, NShellExecutionContext context) {
+    protected boolean onCmdNextOption(NArg arg, NCmdLine cmdLine, NShellExecutionContext context) {
         NSession session = context.getSession();
         Options options = context.getOptions();
-        if (commandLine.next("--ntf").isPresent()) {
+        if (cmdLine.next("--ntf").isPresent()) {
             options.code = true;
             return true;
-        } else if (commandLine.peek().get(session).isNonOption()) {
+        } else if (cmdLine.peek().get(session).isNonOption()) {
             options.commandNames.add(
-                    commandLine.nextNonOption(new CommandNonOption("command", context.getShellContext()))
+                    cmdLine.nextNonOption(new CommandNonOption("command", context.getShellContext()))
                             .get().asString().get(session));
             return true;
         } else {
@@ -71,15 +71,15 @@ public class HelpCommand extends NShellBuiltinCore {
     }
 
     @Override
-    protected boolean onCmdNextNonOption(NArg arg, NCmdLine commandLine, NShellExecutionContext context) {
+    protected boolean onCmdNextNonOption(NArg arg, NCmdLine cmdLine, NShellExecutionContext context) {
         NSession session = context.getSession();
         Options options = context.getOptions();
-        if (commandLine.next("--ntf").isPresent()) {
+        if (cmdLine.next("--ntf").isPresent()) {
             options.code = true;
             return true;
-        } else if (commandLine.peek().get(session).isNonOption()) {
+        } else if (cmdLine.peek().get(session).isNonOption()) {
             options.commandNames.add(
-                    commandLine.nextNonOption(new CommandNonOption("command", context.getShellContext()))
+                    cmdLine.nextNonOption(new CommandNonOption("command", context.getShellContext()))
                             .get().asString().get(session));
             return true;
         } else {
@@ -88,7 +88,7 @@ public class HelpCommand extends NShellBuiltinCore {
     }
 
     @Override
-    protected void onCmdExec(NCmdLine commandLine, NShellExecutionContext context) {
+    protected void onCmdExec(NCmdLine cmdLine, NShellExecutionContext context) {
         NSession session = context.getSession();
         Options options = context.getOptions();
         if (options.code) {
@@ -103,7 +103,7 @@ public class HelpCommand extends NShellBuiltinCore {
                 return text.ofPlain(t).toString();
             }
         } : x -> x;
-        if (commandLine.isExecMode()) {
+        if (cmdLine.isExecMode()) {
             if (options.commandNames.isEmpty()) {
                 NText n=null;
                 try {

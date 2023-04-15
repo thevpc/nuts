@@ -47,16 +47,16 @@ public class ZipCommand extends NShellBuiltinDefault {
     }
 
     @Override
-    protected boolean onCmdNextOption(NArg arg, NCmdLine commandLine, NShellExecutionContext context) {
+    protected boolean onCmdNextOption(NArg arg, NCmdLine cmdLine, NShellExecutionContext context) {
         Options options = context.getOptions();
         NSession session = context.getSession();
-        if (commandLine.next("-r").isPresent()) {
+        if (cmdLine.next("-r").isPresent()) {
             options.r = true;
             return true;
-        } else if (commandLine.isNextOption()) {
+        } else if (cmdLine.isNextOption()) {
             return false;
-        } else if (commandLine.peek().get(session).isNonOption()) {
-            String path = commandLine.nextNonOption(NArgName.of("file", session))
+        } else if (cmdLine.peek().get(session).isNonOption()) {
+            String path = cmdLine.nextNonOption(NArgName.of("file", session))
                     .flatMap(NLiteral::asString).get(session);
             NPath file = NPath.of(path, session).toAbsolute(context.getDirectory());
             if (options.outZip == null) {
@@ -70,14 +70,14 @@ public class ZipCommand extends NShellBuiltinDefault {
     }
 
     @Override
-    protected void onCmdExec(NCmdLine commandLine, NShellExecutionContext context) {
+    protected void onCmdExec(NCmdLine cmdLine, NShellExecutionContext context) {
         Options options = context.getOptions();
         NSession session = context.getSession();
         if (options.files.isEmpty()) {
-            commandLine.throwError(NMsg.ofPlain("missing input-files"));
+            cmdLine.throwError(NMsg.ofPlain("missing input-files"));
         }
         if (options.outZip == null) {
-            commandLine.throwError(NMsg.ofPlain("missing out-zip"));
+            cmdLine.throwError(NMsg.ofPlain("missing out-zip"));
         }
         NCompress aa = NCompress.of(session)
                 .setTarget(options.outZip);
@@ -96,7 +96,7 @@ public class ZipCommand extends NShellBuiltinDefault {
     }
 
     @Override
-    protected boolean onCmdNextNonOption(NArg arg, NCmdLine commandLine, NShellExecutionContext context) {
-        return onCmdNextOption(arg, commandLine, context);
+    protected boolean onCmdNextNonOption(NArg arg, NCmdLine cmdLine, NShellExecutionContext context) {
+        return onCmdNextOption(arg, cmdLine, context);
     }
 }

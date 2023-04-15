@@ -51,28 +51,28 @@ public class MkdirCommand extends NShellBuiltinDefault {
     }
 
     @Override
-    protected boolean onCmdNextOption(NArg arg, NCmdLine commandLine, NShellExecutionContext context) {
+    protected boolean onCmdNextOption(NArg arg, NCmdLine cmdLine, NShellExecutionContext context) {
         NSession session = context.getSession();
         Options options = context.getOptions();
         NArg a;
-        if ((a = commandLine.nextFlag("--parent", "-p").orNull()) != null) {
+        if ((a = cmdLine.nextFlag("--parent", "-p").orNull()) != null) {
             options.p = a.getBooleanValue().get(session);
             return true;
-        } else if (commandLine.peek().get(session).isNonOption()) {
-            options.files.addAll(Arrays.asList(commandLine.toStringArray()));
-            commandLine.skipAll();
+        } else if (cmdLine.peek().get(session).isNonOption()) {
+            options.files.addAll(Arrays.asList(cmdLine.toStringArray()));
+            cmdLine.skipAll();
             return true;
         }
         return false;
     }
 
     @Override
-    protected void onCmdExec(NCmdLine commandLine, NShellExecutionContext context) {
+    protected void onCmdExec(NCmdLine cmdLine, NShellExecutionContext context) {
         Options options = context.getOptions();
         NSession session = context.getSession();
         options.xfiles = ShellHelper.xfilesOf(options.files, context.getDirectory(), session);
         if (options.xfiles.size() < 1) {
-            commandLine.throwMissingArgument();
+            cmdLine.throwMissingArgument();
         }
 //        ShellHelper.WsSshListener listener = new ShellHelper.WsSshListener(context.getSession());
         for (NPath v : options.xfiles) {
@@ -96,7 +96,7 @@ public class MkdirCommand extends NShellBuiltinDefault {
     }
 
     @Override
-    protected boolean onCmdNextNonOption(NArg arg, NCmdLine commandLine, NShellExecutionContext context) {
-        return onCmdNextOption(arg, commandLine, context);
+    protected boolean onCmdNextNonOption(NArg arg, NCmdLine cmdLine, NShellExecutionContext context) {
+        return onCmdNextOption(arg, cmdLine, context);
     }
 }

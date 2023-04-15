@@ -50,15 +50,15 @@ public class RmCommand extends NShellBuiltinDefault {
     }
 
     @Override
-    protected boolean onCmdNextOption(NArg arg, NCmdLine commandLine, NShellExecutionContext context) {
+    protected boolean onCmdNextOption(NArg arg, NCmdLine cmdLine, NShellExecutionContext context) {
         NSession session = context.getSession();
         Options options = context.getOptions();
         NArg a;
-        if ((a = commandLine.nextFlag("-R").orNull()) != null) {
+        if ((a = cmdLine.nextFlag("-R").orNull()) != null) {
             options.R = a.getBooleanValue().get(session);
             return true;
-        } else if (commandLine.peek().get(session).isNonOption()) {
-            options.files.add(ShellHelper.xfileOf(commandLine.next().flatMap(NLiteral::asString).get(session),
+        } else if (cmdLine.peek().get(session).isNonOption()) {
+            options.files.add(ShellHelper.xfileOf(cmdLine.next().flatMap(NLiteral::asString).get(session),
                     context.getDirectory(), session));
             return true;
         }
@@ -66,7 +66,7 @@ public class RmCommand extends NShellBuiltinDefault {
     }
 
     @Override
-    protected void onCmdExec(NCmdLine commandLine, NShellExecutionContext context) {
+    protected void onCmdExec(NCmdLine cmdLine, NShellExecutionContext context) {
         Options options = context.getOptions();
         NSession session = context.getSession();
         NAssert.requireNonBlank(options.files, "parameters", session);
@@ -91,7 +91,7 @@ public class RmCommand extends NShellBuiltinDefault {
     }
 
     @Override
-    protected boolean onCmdNextNonOption(NArg arg, NCmdLine commandLine, NShellExecutionContext context) {
-        return onCmdNextOption(arg, commandLine, context);
+    protected boolean onCmdNextNonOption(NArg arg, NCmdLine cmdLine, NShellExecutionContext context) {
+        return onCmdNextOption(arg, cmdLine, context);
     }
 }

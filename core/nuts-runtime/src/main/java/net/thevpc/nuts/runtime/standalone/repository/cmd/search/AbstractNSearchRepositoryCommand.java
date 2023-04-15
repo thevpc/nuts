@@ -25,8 +25,8 @@ public abstract class AbstractNSearchRepositoryCommand extends NRepositoryComman
     }
 
     @Override
-    public boolean configureFirst(NCmdLine cmd) {
-        if (super.configureFirst(cmd)) {
+    public boolean configureFirst(NCmdLine cmdLine) {
+        if (super.configureFirst(cmdLine)) {
             return true;
         }
         return false;

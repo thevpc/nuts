@@ -63,8 +63,8 @@ public class DefaultNFetchDescriptorRepositoryCommand extends AbstractNFetchDesc
     }
 
     @Override
-    public boolean configureFirst(NCmdLine cmd) {
-        if (super.configureFirst(cmd)) {
+    public boolean configureFirst(NCmdLine cmdLine) {
+        if (super.configureFirst(cmdLine)) {
             return true;
         }
         return false;

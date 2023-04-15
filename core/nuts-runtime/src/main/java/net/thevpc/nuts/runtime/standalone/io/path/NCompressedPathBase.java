@@ -411,7 +411,7 @@ public class NCompressedPathBase extends NPathBase {
         }
 
         @Override
-        public boolean configureFirst(NCmdLine commandLine) {
+        public boolean configureFirst(NCmdLine cmdLine) {
             return false;
         }
 

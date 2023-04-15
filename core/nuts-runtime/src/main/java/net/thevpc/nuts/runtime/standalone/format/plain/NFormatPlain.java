@@ -55,20 +55,20 @@ public class NFormatPlain extends DefaultFormatBase<NContentTypeFormat> implemen
     }
 
     @Override
-    public boolean configureFirst(NCmdLine commandLine) {
+    public boolean configureFirst(NCmdLine cmdLine) {
         NSession session = getSession();
-        NArg n = commandLine.peek().orNull();
+        NArg n = cmdLine.peek().orNull();
         if (n != null) {
             NArg a;
             boolean enabled = n.isActive();
-            if ((a = commandLine.nextEntry(DefaultNPropertiesFormat.OPTION_MULTILINE_PROPERTY).get(session)) != null) {
+            if ((a = cmdLine.nextEntry(DefaultNPropertiesFormat.OPTION_MULTILINE_PROPERTY).get(session)) != null) {
                 if (enabled) {
                     NArg i = NArg.of(a.getStringValue().get(session));
                     extraConfig.add(a.asString().get(session));
                     addMultilineProperty(i.key(), i.getStringValue().get(session));
                 }
             } else {
-                a = commandLine.next().get(session);
+                a = cmdLine.next().get(session);
                 if (!a.isOption() || a.isActive()) {
                     extraConfig.add(a.asString().get(session));
                 }

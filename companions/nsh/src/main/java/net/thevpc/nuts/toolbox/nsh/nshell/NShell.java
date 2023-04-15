@@ -824,11 +824,11 @@ public class NShell {
 //        return getPromptString(getRootContext());
 //    }
     protected NMsg getPromptString(NShellContext context) {
-        NSession ws = context.getSession();
+        NSession session = context.getSession();
 //        String wss = ws == null ? "" : new File(getRootContext().getAbsolutePath(ws.config().getWorkspaceLocation().toString())).getName();
         String login = null;
-        if (ws != null) {
-            login = NWorkspaceSecurityManager.of(ws).getCurrentUsername();
+        if (session != null) {
+            login = NWorkspaceSecurityManager.of(session).getCurrentUsername();
         }
         String prompt = ((login != null && login.length() > 0 && !"anonymous".equals(login)) ? (login + "@") : "");
         if (!NBlankable.isBlank(getRootContext().getServiceName())) {

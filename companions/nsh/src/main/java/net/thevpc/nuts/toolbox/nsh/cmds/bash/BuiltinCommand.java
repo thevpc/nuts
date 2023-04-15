@@ -45,21 +45,21 @@ public class BuiltinCommand extends NShellBuiltinDefault {
     }
 
     @Override
-    protected boolean onCmdNextOption(NArg arg, NCmdLine commandLine, NShellExecutionContext context) {
+    protected boolean onCmdNextOption(NArg arg, NCmdLine cmdLine, NShellExecutionContext context) {
         Options o = context.getOptions();
-        o.args = commandLine.toStringArray();
-        commandLine.skipAll();
+        o.args = cmdLine.toStringArray();
+        cmdLine.skipAll();
         return true;
     }
 
     @Override
-    protected boolean onCmdNextNonOption(NArg arg, NCmdLine commandLine, NShellExecutionContext context) {
-        return onCmdNextOption(arg, commandLine, context);
+    protected boolean onCmdNextNonOption(NArg arg, NCmdLine cmdLine, NShellExecutionContext context) {
+        return onCmdNextOption(arg, cmdLine, context);
     }
 
 
     @Override
-    protected void onCmdExec(NCmdLine commandLine, NShellExecutionContext context) {
+    protected void onCmdExec(NCmdLine cmdLine, NShellExecutionContext context) {
         Options o = context.getOptions();
         NSession session = context.getSession();
         if (o.args.length > 0) {
@@ -67,7 +67,7 @@ public class BuiltinCommand extends NShellBuiltinDefault {
             a.exec(Arrays.copyOfRange(o.args, 1, o.args.length), context);
             return;
         }
-        commandLine.throwMissingArgument();
+        cmdLine.throwMissingArgument();
     }
 
 

@@ -110,10 +110,6 @@ public class NApiUtils {
         return true;
     }
 
-    public static String[] parseCommandLineArray(String commandLineString) {
-        return NCmdLine.parseDefault(commandLineString).get().toStringArray();
-    }
-
     public static int processThrowable(Throwable ex, NLog out) {
         return NReservedUtils.processThrowable(ex, out);
     }
@@ -182,17 +178,6 @@ public class NApiUtils {
 
     public static URL findClassLoaderJar(NId id, URL[] urls) {
         return NReservedClassLoaderUtils.findClassLoaderJar(id, urls);
-    }
-
-    public static <T extends NEnum> void checkNonNullEnum(T objectValue, String stringValue, Class<T> enumType, NSession session) {
-        if (objectValue == null) {
-            if (!NBlankable.isBlank(stringValue)) {
-                if (session == null) {
-                    throw new NBootException(NMsg.ofC("invalid value %s of type %s", stringValue, enumType.getName()));
-                }
-                throw new NParseEnumException(session, stringValue, NCmdLineFormatStrategy.class);
-            }
-        }
     }
 
     public static NOptional<Integer> parseFileSizeInBytes(String value, Integer defaultMultiplier) {

@@ -31,20 +31,20 @@ public class DefaultSearchFormatTable extends DefaultSearchFormatBase {
         super(session, writer, NContentType.TABLE, options);
     }
 
-    public NMutableTableModel getTableModel(NSession ws) {
-        getTable(ws);
+    public NMutableTableModel getTableModel(NSession session) {
+        getTable(session);
         return model;
     }
 
-    public NTableFormat getTable(NSession ws) {
+    public NTableFormat getTable(NSession session) {
         if (table == null) {
-            table = NTableFormat.of(ws);
-            model = NMutableTableModel.of(ws);
+            table = NTableFormat.of(session);
+            model = NMutableTableModel.of(session);
             table.setValue(model);
             if (getSession() != null && getSession().getOutputFormatOptions() != null) {
                 for (String outputFormatOption : getSession().getOutputFormatOptions()) {
                     if (outputFormatOption != null) {
-                        table.configure(true, NCmdLine.of(outputFormatOption, NShellFamily.BASH, ws).setExpandSimpleOptions(false));
+                        table.configure(true, NCmdLine.of(outputFormatOption, NShellFamily.BASH, session).setExpandSimpleOptions(false));
                     }
                 }
             }
@@ -53,13 +53,13 @@ public class DefaultSearchFormatTable extends DefaultSearchFormatBase {
     }
 
     @Override
-    public boolean configureFirst(NCmdLine cmd) {
+    public boolean configureFirst(NCmdLine cmdLine) {
         NSession session = getSession();
-        NArg a = cmd.peek().get(session);
+        NArg a = cmdLine.peek().get(session);
         if (a == null) {
             return false;
         }
-        if (getDisplayOptions().configureFirst(cmd)) {
+        if (getDisplayOptions().configureFirst(cmdLine)) {
             return true;
         }
         return false;

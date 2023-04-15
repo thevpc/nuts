@@ -50,45 +50,45 @@ public class HistoryCommand extends NShellBuiltinDefault {
     }
 
     @Override
-    protected boolean onCmdNextOption(NArg arg, NCmdLine commandLine, NShellExecutionContext context) {
+    protected boolean onCmdNextOption(NArg arg, NCmdLine cmdLine, NShellExecutionContext context) {
         Options options = context.getOptions();
         NSession session = context.getSession();
         NArg a;
-        if (commandLine.next("-c", "--clear").isPresent()) {
+        if (cmdLine.next("-c", "--clear").isPresent()) {
             options.action = Action.CLEAR;
-            commandLine.setCommandName(getName()).throwUnexpectedArgument();
+            cmdLine.setCommandName(getName()).throwUnexpectedArgument();
             return true;
-        } else if ((a = commandLine.nextEntry("-d", "--delete").orNull()) != null) {
+        } else if ((a = cmdLine.nextEntry("-d", "--delete").orNull()) != null) {
             options.action = Action.DELETE;
             options.ival = a.getValue().asInt().get(session);
-            commandLine.setCommandName(getName()).throwUnexpectedArgument();
+            cmdLine.setCommandName(getName()).throwUnexpectedArgument();
             return true;
-        } else if ((a = commandLine.next("-D", "--remove-duplicates").orNull()) != null) {
+        } else if ((a = cmdLine.next("-D", "--remove-duplicates").orNull()) != null) {
             options.action = Action.REMOVE_DUPLICATES;
-            commandLine.setCommandName(getName()).throwUnexpectedArgument();
+            cmdLine.setCommandName(getName()).throwUnexpectedArgument();
             return true;
-        } else if ((a = commandLine.next("-w", "--write").orNull()) != null) {
+        } else if ((a = cmdLine.next("-w", "--write").orNull()) != null) {
             options.action = Action.WRITE;
             if (a.isKeyValue()) {
                 options.sval = a.getStringValue().get(session);
-            } else if (!commandLine.isEmpty()) {
-                options.sval = commandLine.next().flatMap(NLiteral::asString).get(session);
+            } else if (!cmdLine.isEmpty()) {
+                options.sval = cmdLine.next().flatMap(NLiteral::asString).get(session);
             }
-            commandLine.setCommandName(getName()).throwUnexpectedArgument();
+            cmdLine.setCommandName(getName()).throwUnexpectedArgument();
             return true;
-        } else if ((a = commandLine.next("-r", "--read").orNull()) != null) {
+        } else if ((a = cmdLine.next("-r", "--read").orNull()) != null) {
             options.action = Action.READ;
             if (a.isKeyValue()) {
                 options.sval = a.getStringValue().get(session);
-            } else if (!commandLine.isEmpty()) {
-                options.sval = commandLine.next().flatMap(NLiteral::asString).get(session);
+            } else if (!cmdLine.isEmpty()) {
+                options.sval = cmdLine.next().flatMap(NLiteral::asString).get(session);
             }
-            commandLine.setCommandName(getName()).throwUnexpectedArgument();
+            cmdLine.setCommandName(getName()).throwUnexpectedArgument();
             return true;
         } else {
-            if (commandLine.peek().get(session).asInt().orElse(0) != 0) {
+            if (cmdLine.peek().get(session).asInt().orElse(0) != 0) {
                 options.action = Action.PRINT;
-                options.ival = Math.abs(commandLine.next().get(session).asInt().get(session));
+                options.ival = Math.abs(cmdLine.next().get(session).asInt().get(session));
                 return true;
             }
         }
@@ -96,7 +96,7 @@ public class HistoryCommand extends NShellBuiltinDefault {
     }
 
     @Override
-    protected void onCmdExec(NCmdLine commandLine, NShellExecutionContext context) {
+    protected void onCmdExec(NCmdLine cmdLine, NShellExecutionContext context) {
         Options options = context.getOptions();
         NShellHistory shistory = context.getShell().getHistory();
         NSession session = context.getSession();
@@ -172,7 +172,7 @@ public class HistoryCommand extends NShellBuiltinDefault {
         Action action = Action.PRINT;
     }
     @Override
-    protected boolean onCmdNextNonOption(NArg arg, NCmdLine commandLine, NShellExecutionContext context) {
-        return onCmdNextOption(arg, commandLine, context);
+    protected boolean onCmdNextNonOption(NArg arg, NCmdLine cmdLine, NShellExecutionContext context) {
+        return onCmdNextOption(arg, cmdLine, context);
     }
 }

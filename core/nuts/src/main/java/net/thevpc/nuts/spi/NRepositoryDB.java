@@ -5,10 +5,9 @@ import net.thevpc.nuts.NSession;
 
 import java.util.Set;
 
-@NComponentScope(NComponentScopeType.WORKSPACE)
 public interface NRepositoryDB extends NComponent {
     static NRepositoryDB of(NSession session){
-       return NExtensions.of(session).createSupported(NRepositoryDB.class, true, session);
+       return NExtensions.of(session).createComponent(NRepositoryDB.class).get();
     }
 
     Set<String> getAllNames(String name);

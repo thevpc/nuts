@@ -70,7 +70,7 @@ public class DefaultNTextManagerModel {
     public DefaultNTextManagerModel(NWorkspace ws) {
         this.ws = ws;
         NSession session = NSessionUtils.defaultSession(ws);
-        List<NCodeHighlighter> all = session.extensions().createAllSupported(NCodeHighlighter.class, null);
+        List<NCodeHighlighter> all = session.extensions().createComponents(NCodeHighlighter.class, null);
         for (NCodeHighlighter h : all) {
             highlighters.put(h.getId().toLowerCase(), h);
         }

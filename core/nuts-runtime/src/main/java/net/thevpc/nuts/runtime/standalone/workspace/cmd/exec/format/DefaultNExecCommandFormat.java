@@ -250,7 +250,7 @@ public class DefaultNExecCommandFormat extends DefaultFormatBase<NExecCommandFor
     }
 
     @Override
-    public boolean configureFirst(NCmdLine commandLine) {
+    public boolean configureFirst(NCmdLine cmdLine) {
         return false;
     }
 

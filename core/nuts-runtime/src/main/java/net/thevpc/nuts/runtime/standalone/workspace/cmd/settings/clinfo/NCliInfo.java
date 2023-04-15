@@ -80,7 +80,7 @@ public class NCliInfo {
     }
 
     public static String loadCliId(NSession session) {
-        return loadCliId(session,true);
+        return loadCliId(session, true);
     }
 
     public static String loadCliId(NSession session, boolean auto) {
@@ -93,10 +93,6 @@ public class NCliInfo {
 
     @NotNull
     private static Path getConfigFile() {
-        return Paths.get(NPlatformUtils.getWorkspaceLocation(
-                NOsFamily.getCurrent(),
-                false,
-                null
-        )).getParent().resolve(".nuts-user-config");
+        return Paths.get(NPlatformUtils.getBaseLocation(NOsFamily.getCurrent(), false)).resolve(".nuts-user-config");
     }
 }

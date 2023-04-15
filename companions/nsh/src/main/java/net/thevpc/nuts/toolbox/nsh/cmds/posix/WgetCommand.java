@@ -50,15 +50,15 @@ public class WgetCommand extends NShellBuiltinDefault {
     }
 
     @Override
-    protected boolean onCmdNextOption(NArg arg, NCmdLine commandLine, NShellExecutionContext context) {
+    protected boolean onCmdNextOption(NArg arg, NCmdLine cmdLine, NShellExecutionContext context) {
         Options options = context.getOptions();
         NSession session = context.getSession();
-        if (commandLine.next("-O", "--output-document").isPresent()) {
-            options.outputDocument = commandLine.nextNonOption().get(session).asString().orNull();
+        if (cmdLine.next("-O", "--output-document").isPresent()) {
+            options.outputDocument = cmdLine.nextNonOption().get(session).asString().orNull();
             return true;
-        } else if (!commandLine.isNextOption()) {
-            while (commandLine.hasNext()) {
-                options.files.add(commandLine.next().flatMap(NLiteral::asString).get(session));
+        } else if (!cmdLine.isNextOption()) {
+            while (cmdLine.hasNext()) {
+                options.files.add(cmdLine.next().flatMap(NLiteral::asString).get(session));
             }
             return true;
         }
@@ -66,7 +66,7 @@ public class WgetCommand extends NShellBuiltinDefault {
     }
 
     @Override
-    protected void onCmdExec(NCmdLine commandLine, NShellExecutionContext context) {
+    protected void onCmdExec(NCmdLine cmdLine, NShellExecutionContext context) {
         Options options = context.getOptions();
         if (options.files.isEmpty()) {
             throw new NExecutionException(context.getSession(), NMsg.ofPlain("wget: Missing Files"), 2);
@@ -95,7 +95,7 @@ public class WgetCommand extends NShellBuiltinDefault {
         List<String> files = new ArrayList<>();
     }
     @Override
-    protected boolean onCmdNextNonOption(NArg arg, NCmdLine commandLine, NShellExecutionContext context) {
-        return onCmdNextOption(arg, commandLine, context);
+    protected boolean onCmdNextNonOption(NArg arg, NCmdLine cmdLine, NShellExecutionContext context) {
+        return onCmdNextOption(arg, cmdLine, context);
     }
 }

@@ -81,29 +81,29 @@ public class JpsCommand extends NShellBuiltinDefault {
     }
 
     @Override
-    protected boolean onCmdNextOption(NArg arg, NCmdLine commandLine, NShellExecutionContext context) {
+    protected boolean onCmdNextOption(NArg arg, NCmdLine cmdLine, NShellExecutionContext context) {
         NSession session = context.getSession();
         Options options = context.getOptions();
-        if (commandLine.next("-l").orNull() != null) {
+        if (cmdLine.next("-l").orNull() != null) {
             options.l = true;
             return true;
-        } else if (commandLine.next("-v").orNull() != null) {
+        } else if (cmdLine.next("-v").orNull() != null) {
             options.v = true;
             return true;
-        } else if (commandLine.next("-m").orNull() != null) {
+        } else if (cmdLine.next("-m").orNull() != null) {
             options.m = true;
             return true;
-        } else if (commandLine.next("-q").orNull() != null) {
+        } else if (cmdLine.next("-q").orNull() != null) {
             options.q = true;
             return true;
-        } else if (commandLine.next("-V").orNull() != null) {
+        } else if (cmdLine.next("-V").orNull() != null) {
             options.v = true;
             return true;
-        } else if (commandLine.isNextOption()) {
+        } else if (cmdLine.isNextOption()) {
             //
         } else {
             if (options.host == null) {
-                options.host = commandLine.next().get(session).toString();
+                options.host = cmdLine.next().get(session).toString();
                 return true;
             }
         }
@@ -111,7 +111,7 @@ public class JpsCommand extends NShellBuiltinDefault {
     }
 
     @Override
-    protected void onCmdExec(NCmdLine commandLine, NShellExecutionContext context) {
+    protected void onCmdExec(NCmdLine cmdLine, NShellExecutionContext context) {
         Options options = context.getOptions();
         List<JpsRow> results = new ArrayList<>();
 
@@ -170,7 +170,7 @@ public class JpsCommand extends NShellBuiltinDefault {
         String host;
     }
     @Override
-    protected boolean onCmdNextNonOption(NArg arg, NCmdLine commandLine, NShellExecutionContext context) {
-        return onCmdNextOption(arg, commandLine, context);
+    protected boolean onCmdNextNonOption(NArg arg, NCmdLine cmdLine, NShellExecutionContext context) {
+        return onCmdNextOption(arg, cmdLine, context);
     }
 }

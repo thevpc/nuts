@@ -24,68 +24,68 @@ public class DumpCmd<C extends NdbConfig> extends NdbCmd<C> {
 
 
 //    @Override
-//    public void run(NSession session, NCmdLine commandLine) {
+//    public void run(NSession session, NCmdLine cmdLine) {
 //        NRef<AtName> name = NRef.ofNull(AtName.class);
 //        ExtendedQuery eq = new ExtendedQuery(getName());
 //        C otherOptions = createConfigInstance();
 //
 //        String status = "";
-//        while (commandLine.hasNext()) {
+//        while (cmdLine.hasNext()) {
 //            switch (status) {
 //                case "": {
-//                    switch (commandLine.peek().get(session).key()) {
+//                    switch (cmdLine.peek().get(session).key()) {
 //                        case "--config": {
-//                            readConfigNameOption(commandLine, session, name);
+//                            readConfigNameOption(cmdLine, session, name);
 //                            break;
 //                        }
 //                        case "--entity":
 //                        case "--table":
 //                        case "--collection": {
-//                            commandLine.withNextString((v, a, s) -> eq.setTable(v));
+//                            cmdLine.withNextString((v, a, s) -> eq.setTable(v));
 //                            break;
 //                        }
 //                        case "--where": {
 //                            status = "--where";
-//                            commandLine.withNextBoolean((v, a, s) -> {
+//                            cmdLine.withNextBoolean((v, a, s) -> {
 //                            });
 //                            break;
 //                        }
 //                        case "--set": {
 //                            status = "--set";
-//                            commandLine.withNextBoolean((v, a, s) -> {
+//                            cmdLine.withNextBoolean((v, a, s) -> {
 //                            });
 //                            break;
 //                        }
 //                        default: {
-//                            fillOptionLast(commandLine, otherOptions);
+//                            fillOptionLast(cmdLine, otherOptions);
 //                        }
 //                    }
 //                    break;
 //                }
 //                case "--where": {
-//                    switch (commandLine.peek().get(session).key()) {
+//                    switch (cmdLine.peek().get(session).key()) {
 //                        case "--set": {
 //                            status = "--set";
-//                            commandLine.withNextBoolean((v, a, s) -> {
+//                            cmdLine.withNextBoolean((v, a, s) -> {
 //                            });
 //                            break;
 //                        }
 //                        default: {
-//                            eq.getWhere().add(commandLine.next().get().toString());
+//                            eq.getWhere().add(cmdLine.next().get().toString());
 //                        }
 //                    }
 //                    break;
 //                }
 //                case "--set": {
-//                    switch (commandLine.peek().get(session).key()) {
+//                    switch (cmdLine.peek().get(session).key()) {
 //                        case "--where": {
 //                            status = "--where";
-//                            commandLine.withNextBoolean((v, a, s) -> {
+//                            cmdLine.withNextBoolean((v, a, s) -> {
 //                            });
 //                            break;
 //                        }
 //                        default: {
-//                            eq.getSet().add(commandLine.next().get().toString());
+//                            eq.getSet().add(cmdLine.next().get().toString());
 //                        }
 //                    }
 //                    break;
@@ -93,13 +93,13 @@ public class DumpCmd<C extends NdbConfig> extends NdbCmd<C> {
 //            }
 //        }
 //        if (NBlankable.isBlank(eq.getTable())) {
-//            commandLine.throwMissingArgumentByName("--table");
+//            cmdLine.throwMissingArgumentByName("--table");
 //        }
 //
 //        C options = loadFromName(name, otherOptions);
 //        support.revalidateOptions(options);
 //        if (NBlankable.isBlank(otherOptions.getDatabaseName())) {
-//            commandLine.throwMissingArgumentByName("--dbname");
+//            cmdLine.throwMissingArgumentByName("--dbname");
 //        }
 //        runDump(eq, options, session);
 //    }
@@ -109,36 +109,36 @@ public class DumpCmd<C extends NdbConfig> extends NdbCmd<C> {
 //    }
 
 
-    public void run(NSession session, NCmdLine commandLine) {
+    public void run(NSession session, NCmdLine cmdLine) {
         NRef<AtName> name = NRef.ofNull(AtName.class);
         NRef<NPath> file = NRef.ofNull(NPath.class);
         C otherOptions = createConfigInstance();
         NRef<Integer> roll = NRef.of(-1);
-        while (commandLine.hasNext()) {
-            if (commandLine.isNextOption()) {
-                switch (commandLine.peek().get(session).key()) {
+        while (cmdLine.hasNext()) {
+            if (cmdLine.isNextOption()) {
+                switch (cmdLine.peek().get(session).key()) {
                     case "--name": {
-                        readConfigNameOption(commandLine, session, name);
+                        readConfigNameOption(cmdLine, session, name);
                         break;
                     }
                     case "--file": {
-                        commandLine.withNextEntry((v, a, s) -> {
+                        cmdLine.withNextEntry((v, a, s) -> {
                             file.set(NPath.of(v, s));
                         });
                         break;
                     }
                     case "--roll": {
-                        commandLine.withNextEntryValue((v, a, s) -> {
+                        cmdLine.withNextEntryValue((v, a, s) -> {
                             roll.set(v.asInt().get());
                         });
                         break;
                     }
                     default: {
-                        fillOptionLast(commandLine, otherOptions);
+                        fillOptionLast(cmdLine, otherOptions);
                     }
                 }
             } else {
-                commandLine.throwUnexpectedArgument();
+                cmdLine.throwUnexpectedArgument();
             }
         }
 

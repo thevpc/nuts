@@ -228,7 +228,7 @@ public class DefaultNWorkspace extends AbstractNWorkspace implements NWorkspaceE
             this.wsModel.bootModel.onInitializeWorkspace();
 
             NSystemTerminalBase termb = defaultSession().extensions()
-                    .createSupported(NSystemTerminalBase.class);
+                    .createComponent(NSystemTerminalBase.class).get();
             NConfigs config = NConfigs.of(defaultSession());
             config
                     .setSystemTerminal(termb)
@@ -836,7 +836,7 @@ public class DefaultNWorkspace extends AbstractNWorkspace implements NWorkspaceE
         }
         NWorkspaceArchetypeComponent instance = null;
         TreeSet<String> validValues = new TreeSet<>();
-        for (NWorkspaceArchetypeComponent ac : session.extensions().setSession(session).createAllSupported(NWorkspaceArchetypeComponent.class, archetype)) {
+        for (NWorkspaceArchetypeComponent ac : session.extensions().setSession(session).createComponents(NWorkspaceArchetypeComponent.class, archetype)) {
             if (archetype.equals(ac.getName())) {
                 instance = ac;
                 break;
@@ -1585,7 +1585,7 @@ public class DefaultNWorkspace extends AbstractNWorkspace implements NWorkspaceE
                 }
             }
             NInstallerComponent best = session.extensions().setSession(session)
-                    .createSupported(NInstallerComponent.class, false, runnerFile == null ? nutToInstall : runnerFile);
+                    .createComponent(NInstallerComponent.class, runnerFile == null ? nutToInstall : runnerFile).orNull();
             if (best != null) {
                 return best;
             }

@@ -41,7 +41,7 @@ import java.util.List;
  */
 public interface NWorkspaceSecurityManager extends NComponent, NSessionProvider {
     static NWorkspaceSecurityManager of(NSession session) {
-        return NExtensions.of(session).createSupported(NWorkspaceSecurityManager.class);
+        return NExtensions.of(session).createComponent(NWorkspaceSecurityManager.class).get();
     }
 
     /**

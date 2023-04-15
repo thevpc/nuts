@@ -17,46 +17,46 @@ public class CreateIndexCmd<C extends NdbConfig> extends NdbCmd<C> {
         this.names.addAll(Arrays.asList(names));
     }
 
-    public void run(NSession session, NCmdLine commandLine) {
+    public void run(NSession session, NCmdLine cmdLine) {
         NRef<AtName> name = NRef.ofNull(AtName.class);
         ExtendedQuery eq = new ExtendedQuery(getName());
         C otherOptions = createConfigInstance();
 
         String status = "";
-        while (commandLine.hasNext()) {
+        while (cmdLine.hasNext()) {
             switch (status) {
                 case "": {
-                    switch (commandLine.peek().get(session).key()) {
+                    switch (cmdLine.peek().get(session).key()) {
                         case "--config": {
-                            readConfigNameOption(commandLine, session, name);
+                            readConfigNameOption(cmdLine, session, name);
                             break;
                         }
                         case "--entity":
                         case "--table":
                         case "--collection": {
-                            commandLine.withNextEntry((v, a, s) -> eq.setTable(v));
+                            cmdLine.withNextEntry((v, a, s) -> eq.setTable(v));
                             break;
                         }
                         case "--one": {
-                            commandLine.withNextFlag((v, a, s) -> eq.setOne(v));
+                            cmdLine.withNextFlag((v, a, s) -> eq.setOne(v));
                             break;
                         }
                         case "--set": {
                             status = "--set";
-                            commandLine.withNextFlag((v, a, s) -> {
+                            cmdLine.withNextFlag((v, a, s) -> {
                             });
                             break;
                         }
                         default: {
-                            fillOptionLast(commandLine, otherOptions);
+                            fillOptionLast(cmdLine, otherOptions);
                         }
                     }
                     break;
                 }
                 case "--set": {
-                    switch (commandLine.peek().get(session).key()) {
+                    switch (cmdLine.peek().get(session).key()) {
                         default: {
-                            eq.getSet().add(commandLine.next().get().toString());
+                            eq.getSet().add(cmdLine.next().get().toString());
                         }
                     }
                     break;
@@ -64,16 +64,16 @@ public class CreateIndexCmd<C extends NdbConfig> extends NdbCmd<C> {
             }
         }
         if (NBlankable.isBlank(eq.getTable())) {
-            commandLine.throwMissingArgumentByName("--table");
+            cmdLine.throwMissingArgumentByName("--table");
         }
 
         C options = loadFromName(name, otherOptions);
         revalidateOptions(options);
         if (NBlankable.isBlank(otherOptions.getDatabaseName())) {
-            commandLine.throwMissingArgumentByName("--dbname");
+            cmdLine.throwMissingArgumentByName("--dbname");
         }
         if (NBlankable.isBlank(otherOptions.getDatabaseName())) {
-            commandLine.throwMissingArgumentByName("--dbname");
+            cmdLine.throwMissingArgumentByName("--dbname");
         }
         runCreateIndex(eq, options, session);
     }

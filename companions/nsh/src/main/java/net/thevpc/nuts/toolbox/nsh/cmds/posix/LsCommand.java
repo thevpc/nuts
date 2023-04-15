@@ -69,35 +69,35 @@ public class LsCommand extends NShellBuiltinDefault {
     }
 
     @Override
-    protected boolean onCmdNextOption(NArg arg, NCmdLine commandLine, NShellExecutionContext context) {
+    protected boolean onCmdNextOption(NArg arg, NCmdLine cmdLine, NShellExecutionContext context) {
         Options options = context.getOptions();
         NSession session = context.getSession();
         NArg a;
-        if ((a = commandLine.nextFlag("-d", "--dir").orNull()) != null) {
+        if ((a = cmdLine.nextFlag("-d", "--dir").orNull()) != null) {
             options.d = a.getBooleanValue().get(session);
             return true;
-        } else if ((a = commandLine.nextFlag("-l", "--list").orNull()) != null) {
+        } else if ((a = cmdLine.nextFlag("-l", "--list").orNull()) != null) {
             options.l = a.getBooleanValue().get(session);
             return true;
-        } else if ((a = commandLine.nextFlag("-a", "--all").orNull()) != null) {
+        } else if ((a = cmdLine.nextFlag("-a", "--all").orNull()) != null) {
             options.a = a.getBooleanValue().get(session);
             return true;
-        } else if ((a = commandLine.nextFlag("-h").orNull()) != null) {
+        } else if ((a = cmdLine.nextFlag("-h").orNull()) != null) {
             options.h = a.getBooleanValue().get(session);
             return true;
-        } else if (commandLine.peek().get(session).isNonOption()) {
-            String path = commandLine.next(NArgName.of("file", session))
+        } else if (cmdLine.peek().get(session).isNonOption()) {
+            String path = cmdLine.next(NArgName.of("file", session))
                     .flatMap(NLiteral::asString).get(session);
             options.paths.add(path);
-            options.paths.addAll(Arrays.asList(commandLine.toStringArray()));
-            commandLine.skip();
+            options.paths.addAll(Arrays.asList(cmdLine.toStringArray()));
+            cmdLine.skip();
             return true;
         }
         return false;
     }
 
     @Override
-    protected void onCmdExec(NCmdLine commandLine, NShellExecutionContext context) {
+    protected void onCmdExec(NCmdLine cmdLine, NShellExecutionContext context) {
         Options options = context.getOptions();
         ResultSuccess success = new ResultSuccess();
         success.workingDir = context.getAbsolutePath(".");
@@ -398,7 +398,7 @@ public class LsCommand extends NShellBuiltinDefault {
     }
 
     @Override
-    protected boolean onCmdNextNonOption(NArg arg, NCmdLine commandLine, NShellExecutionContext context) {
-        return onCmdNextOption(arg, commandLine, context);
+    protected boolean onCmdNextNonOption(NArg arg, NCmdLine cmdLine, NShellExecutionContext context) {
+        return onCmdNextOption(arg, cmdLine, context);
     }
 }

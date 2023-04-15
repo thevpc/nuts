@@ -48,8 +48,8 @@ public abstract class AbstractNAddUserCommand extends NWorkspaceCommandBaseRepo<
     protected final Set<String> permissions = new HashSet<>();
     protected final Set<String> groups = new HashSet<>();
 
-    public AbstractNAddUserCommand(NSession ws) {
-        super(ws, "add-user");
+    public AbstractNAddUserCommand(NSession session) {
+        super(session, "add-user");
     }
 
     @Override

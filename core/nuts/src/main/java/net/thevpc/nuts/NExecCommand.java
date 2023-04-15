@@ -43,7 +43,7 @@ import java.util.Map;
 public interface NExecCommand extends NWorkspaceCommand {
 
     static NExecCommand of(NSession session) {
-        return NExtensions.of(session).createSupported(NExecCommand.class);
+        return NExtensions.of(session).createComponent(NExecCommand.class).get();
     }
 
     /**
@@ -435,4 +435,20 @@ public interface NExecCommand extends NWorkspaceCommand {
 
     NExecCommand setRedirectInputFile(NPath redirectInputFile);
 
+
+    /**
+     * return host connexion string.
+     * when host is not blank, this connexion string will be used to connect to a remote host for execution
+     * @return host
+     * @since 0.8.4
+     */
+    String getHost() ;
+
+    /**
+     * update host connexion string.
+     * when host is not blank, this connexion string will be used to connect to a remote host for execution
+     * @param host host
+     * @return {@code this} instance
+     */
+    NExecCommand setHost(String host);
 }

@@ -16,8 +16,8 @@ public abstract class AbstractNUndeployCommand extends NWorkspaceCommandBase<NUn
     protected String repository;
     protected boolean offline = true;
 
-    public AbstractNUndeployCommand(NSession ws) {
-        super(ws, "undeploy");
+    public AbstractNUndeployCommand(NSession session) {
+        super(session, "undeploy");
     }
 
     @Override

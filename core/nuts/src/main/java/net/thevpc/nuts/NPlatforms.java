@@ -36,7 +36,7 @@ import java.util.function.Predicate;
  */
 public interface NPlatforms extends NComponent, NSessionProvider {
     static NPlatforms of(NSession session) {
-        return NExtensions.of(session).createSupported(NPlatforms.class);
+        return NExtensions.of(session).createComponent(NPlatforms.class).get();
     }
 
     boolean addPlatform(NPlatformLocation location);

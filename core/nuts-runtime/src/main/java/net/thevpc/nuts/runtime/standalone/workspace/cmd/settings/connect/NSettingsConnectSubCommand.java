@@ -28,23 +28,23 @@ public class NSettingsConnectSubCommand extends AbstractNSettingsSubCommand {
     public static final int DEFAULT_ADMIN_SERVER_PORT = 8898;
 
     @Override
-    public boolean exec(NCmdLine commandLine, Boolean autoSave, NSession session) {
-        String cmd0 = commandLine.toString();
-        if (commandLine.next("connect").isPresent()) {
+    public boolean exec(NCmdLine cmdLine, Boolean autoSave, NSession session) {
+        String cmd0 = cmdLine.toString();
+        if (cmdLine.next("connect").isPresent()) {
             char[] password = null;
             String server = null;
             NArg a;
-            while (commandLine.hasNext()) {
-                if ((a = commandLine.nextEntry("--password").orNull()) != null) {
+            while (cmdLine.hasNext()) {
+                if ((a = cmdLine.nextEntry("--password").orNull()) != null) {
                     password = a.getValue().asString().orElse("").toCharArray();
-                } else if (commandLine.isNextOption()) {
-                    session.configureLast(commandLine);
+                } else if (cmdLine.isNextOption()) {
+                    session.configureLast(cmdLine);
                 } else {
-                    server = commandLine.nextNonOption(NArgName.of("ServerAddress",session)).flatMap(NLiteral::asString).get(session);
-                    commandLine.setCommandName("settings connect").throwUnexpectedArgument();
+                    server = cmdLine.nextNonOption(NArgName.of("ServerAddress",session)).flatMap(NLiteral::asString).get(session);
+                    cmdLine.setCommandName("settings connect").throwUnexpectedArgument();
                 }
             }
-            if (!commandLine.isExecMode()) {
+            if (!cmdLine.isExecMode()) {
                 return true;
             }
             String login = null;

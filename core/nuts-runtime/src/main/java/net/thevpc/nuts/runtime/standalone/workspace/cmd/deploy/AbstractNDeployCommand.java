@@ -42,8 +42,8 @@ public abstract class AbstractNDeployCommand extends NWorkspaceCommandBase<NDepl
         }
     }
 
-    public AbstractNDeployCommand(NSession ws) {
-        super(ws, "deploy");
+    public AbstractNDeployCommand(NSession session) {
+        super(session, "deploy");
     }
     @Override
     public int getSupportLevel(NSupportLevelContext context) {

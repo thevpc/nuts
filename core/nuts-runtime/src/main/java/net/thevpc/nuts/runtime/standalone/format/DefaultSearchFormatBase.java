@@ -67,12 +67,12 @@ public abstract class DefaultSearchFormatBase implements NIterableFormat {
      *
      * @param skipUnsupported when true, all unsupported options are skipped
      * silently
-     * @param commandLine arguments to configure with
+     * @param cmdLine arguments to configure with
      * @return {@code this} instance
      */
     @Override
-    public boolean configure(boolean skipUnsupported, NCmdLine commandLine) {
-        return NConfigurableHelper.configure(this, getSession(), skipUnsupported, commandLine);
+    public boolean configure(boolean skipUnsupported, NCmdLine cmdLine) {
+        return NConfigurableHelper.configure(this, getSession(), skipUnsupported, cmdLine);
     }
 
     /**
@@ -101,9 +101,9 @@ public abstract class DefaultSearchFormatBase implements NIterableFormat {
     }
 
     @Override
-    public void configureLast(NCmdLine commandLine) {
-        if (!configureFirst(commandLine)) {
-            commandLine.throwUnexpectedArgument();
+    public void configureLast(NCmdLine cmdLine) {
+        if (!configureFirst(cmdLine)) {
+            cmdLine.throwUnexpectedArgument();
         }
     }
 }

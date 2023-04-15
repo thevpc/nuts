@@ -32,7 +32,7 @@ public class NDescriptorContentResolver {
                     localPath, fileExtension, null, parseOptions);
             List<NDescriptorContentParserComponent> allParsers = session.extensions()
                     .setSession(session)
-                    .createAllSupported(NDescriptorContentParserComponent.class, ctx);
+                    .createComponents(NDescriptorContentParserComponent.class, ctx);
             if (allParsers.size() > 0) {
                 for (NDescriptorContentParserComponent parser : allParsers) {
                     NDescriptor desc = null;

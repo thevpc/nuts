@@ -188,11 +188,11 @@ public class TestCommand extends NShellBuiltinDefault {
     }
 
     @Override
-    protected boolean onCmdNextOption(NArg arg, NCmdLine commandLine, NShellExecutionContext context) {
+    protected boolean onCmdNextOption(NArg arg, NCmdLine cmdLine, NShellExecutionContext context) {
         NSession session = context.getSession();
-        commandLine.setExpandSimpleOptions(false);
+        cmdLine.setExpandSimpleOptions(false);
         Options options=context.getOptions();
-        NArg a = commandLine.next().get(session);
+        NArg a = cmdLine.next().get(session);
         switch (a.asString().get(session)) {
             case "(": {
                 options.operators.add(a.asString().get(session));
@@ -229,7 +229,7 @@ public class TestCommand extends NShellBuiltinDefault {
     }
 
     @Override
-    protected void onCmdExec(NCmdLine commandLine, NShellExecutionContext context) {
+    protected void onCmdExec(NCmdLine cmdLine, NShellExecutionContext context) {
         NSession session = context.getSession();
         Options options=context.getOptions();
         if(options.operands.isEmpty()){
@@ -527,7 +527,7 @@ public class TestCommand extends NShellBuiltinDefault {
     }
 
     @Override
-    protected boolean onCmdNextNonOption(NArg arg, NCmdLine commandLine, NShellExecutionContext context) {
-        return onCmdNextOption(arg, commandLine, context);
+    protected boolean onCmdNextNonOption(NArg arg, NCmdLine cmdLine, NShellExecutionContext context) {
+        return onCmdNextOption(arg, cmdLine, context);
     }
 }

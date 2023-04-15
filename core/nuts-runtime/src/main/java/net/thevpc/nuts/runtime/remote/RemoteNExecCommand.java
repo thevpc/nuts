@@ -6,8 +6,8 @@ import net.thevpc.nuts.runtime.standalone.workspace.cmd.exec.AbstractNExecComman
 
 public class RemoteNExecCommand extends AbstractNExecCommand {
 
-    public RemoteNExecCommand(NSession ws) {
-        super(ws);
+    public RemoteNExecCommand(NSession session) {
+        super(session);
     }
 
     @Override

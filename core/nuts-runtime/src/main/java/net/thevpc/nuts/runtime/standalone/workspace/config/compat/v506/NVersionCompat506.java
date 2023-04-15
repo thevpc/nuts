@@ -9,8 +9,8 @@ import net.thevpc.nuts.runtime.standalone.workspace.config.compat.CompatUtils;
 import java.util.List;
 
 public class NVersionCompat506 extends AbstractNVersionCompat {
-    public NVersionCompat506(NSession ws, NVersion apiVersion) {
-        super(ws, apiVersion, 506);
+    public NVersionCompat506(NSession session, NVersion apiVersion) {
+        super(session, apiVersion, 506);
     }
 
     @Override

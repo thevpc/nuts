@@ -11,6 +11,7 @@ import net.thevpc.nuts.toolbox.ndb.sql.nmysql.NMySqlConfigVersions;
 import net.thevpc.nuts.toolbox.ndb.sql.nmysql.util.AtName;
 import net.thevpc.nuts.toolbox.ndb.util.DbUrlString;
 import net.thevpc.nuts.toolbox.ndb.util.NdbUtils;
+import net.thevpc.nuts.util.NConnexionString;
 import net.thevpc.nuts.util.NRef;
 import net.thevpc.nuts.util.NStringUtils;
 
@@ -58,25 +59,25 @@ public abstract class NdbSupportBase<C extends NdbConfig> implements NdbSupport 
     }
 
     @Override
-    public void run(NSession session, NCmdLine commandLine) {
+    public void run(NSession session, NCmdLine cmdLine) {
         NArg a;
-        commandLine.setCommandName("ndb " + dbType);
-        while (commandLine.hasNext()) {
+        cmdLine.setCommandName("ndb " + dbType);
+        while (cmdLine.hasNext()) {
             boolean ok = false;
             for (NdbCmd<C> cc : commands.values()) {
-                if (commandLine.withNextFlag((value, arg, s) -> {
-                    commandLine.setCommandName(getDbType() + " " + arg.key());
-                    cc.run(s, commandLine);
+                if (cmdLine.withNextFlag((value, arg, s) -> {
+                    cmdLine.setCommandName(getDbType() + " " + arg.key());
+                    cc.run(s, cmdLine);
                 }, cc.getNames())) {
                     ok = true;
                     break;
                 }
             }
             if (!ok) {
-                if (runExtraCommand(session, commandLine)) {
+                if (runExtraCommand(session, cmdLine)) {
 
                 } else {
-                    commandLine.getSession().configureLast(commandLine);
+                    cmdLine.getSession().configureLast(cmdLine);
                 }
             }
         }
@@ -162,16 +163,16 @@ public abstract class NdbSupportBase<C extends NdbConfig> implements NdbSupport 
             String db = a.getStringValue().get(session);
             DbUrlString dbUrlString = DbUrlString.parse(db).get();
 
-            options.setRemoteUser(dbUrlString.getSshUser());
-            options.setRemotePassword(dbUrlString.getSshPassword());
-            options.setRemoteServer(dbUrlString.getSshServer());
-            options.setRemotePort(dbUrlString.getSshPort());
+            options.setRemoteUser(dbUrlString.getSsh().getUser());
+            options.setRemotePassword(dbUrlString.getSsh().getPassword());
+            options.setRemoteServer(dbUrlString.getSsh().getHost());
+            options.setRemotePort(NLiteral.of(dbUrlString.getSsh().getPort()).asInt().orNull());
 
-            options.setUser(dbUrlString.getDbUser());
-            options.setPassword(dbUrlString.getDbPassword());
-            options.setHost(dbUrlString.getDbServer());
-            options.setPort(dbUrlString.getDbPort());
-            options.setDatabaseName(dbUrlString.getDbPath());
+            options.setUser(dbUrlString.getDb().getUser());
+            options.setPassword(dbUrlString.getDb().getPassword());
+            options.setHost(dbUrlString.getDb().getHost());
+            options.setPort(NLiteral.of(dbUrlString.getDb().getPort()).asInt().orNull());
+            options.setDatabaseName(dbUrlString.getDb().getPath());
 
             return true;
         } else if ((a = cmdLine.nextEntry("--remote-server").orNull()) != null) {
@@ -185,10 +186,11 @@ public abstract class NdbSupportBase<C extends NdbConfig> implements NdbSupport 
             return true;
         } else if ((a = cmdLine.nextEntry("--ssh").orNull()) != null) {
             String ssh = a.getStringValue().get(session);
-            DbUrlString dbUrlString = DbUrlString.parse(ssh).get();
-            options.setRemoteUser(dbUrlString.getSshUser());
-            options.setRemoteServer(dbUrlString.getSshServer());
-            options.setRemoteTempFolder(dbUrlString.getDbPath());
+            NConnexionString dbUrlString = NConnexionString.of("ssh://"+ssh).get();
+            options.setRemoteUser(dbUrlString.getUser());
+            options.setRemotePassword(dbUrlString.getPassword());
+            options.setRemoteServer(dbUrlString.getHost());
+            options.setRemotePort(NLiteral.of(dbUrlString.getPort()).asInt().orNull());
             return true;
         } else if (fillExtraOption(cmdLine, options)) {
             return true;

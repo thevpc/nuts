@@ -37,7 +37,7 @@ import java.util.Map;
  */
 public interface NPropertiesFormat extends NContentTypeFormat {
     static NPropertiesFormat of(NSession session) {
-       return NExtensions.of(session).createSupported(NPropertiesFormat.class);
+       return NExtensions.of(session).createComponent(NPropertiesFormat.class).get();
     }
 
     /**

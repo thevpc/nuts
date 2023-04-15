@@ -47,79 +47,79 @@ public class EnvCommand extends NShellBuiltinDefault {
     }
 
     @Override
-    protected boolean onCmdNextOption(NArg arg, NCmdLine commandLine, NShellExecutionContext context) {
+    protected boolean onCmdNextOption(NArg arg, NCmdLine cmdLine, NShellExecutionContext context) {
         Options options = context.getOptions();
         NSession session = context.getSession();
-        NArg a = commandLine.peek().get(session);
+        NArg a = cmdLine.peek().get(session);
         switch (options.readStatus) {
             case 0: {
                 switch (a.key()) {
                     case "--sort": {
-                        commandLine.withNextFlag((v, r, s) -> options.sort = v);
+                        cmdLine.withNextFlag((v, r, s) -> options.sort = v);
                         return true;
                     }
                     case "--external":
                     case "--spawn":
                     case "-x": {
-                        commandLine.withNextTrueFlag((v, r, s) -> options.executionType = NExecutionType.SPAWN);
+                        cmdLine.withNextTrueFlag((v, r, s) -> options.executionType = NExecutionType.SPAWN);
                         return true;
                     }
                     case "--embedded":
                     case "-b": {
-                        commandLine.withNextTrueFlag((v, r, s) -> options.executionType = NExecutionType.EMBEDDED);
+                        cmdLine.withNextTrueFlag((v, r, s) -> options.executionType = NExecutionType.EMBEDDED);
                         return true;
                     }
                     case "--system": {
-                        commandLine.withNextTrueFlag((v, r, s) -> options.executionType = NExecutionType.SYSTEM);
+                        cmdLine.withNextTrueFlag((v, r, s) -> options.executionType = NExecutionType.SYSTEM);
                         return true;
                     }
                     case "--current-user": {
-                        commandLine.withNextTrueFlag((v, r, s) -> options.runAs = NRunAs.currentUser());
+                        cmdLine.withNextTrueFlag((v, r, s) -> options.runAs = NRunAs.currentUser());
                         return true;
                     }
                     case "--as-root": {
-                        commandLine.withNextTrueFlag((v, r, s) -> options.runAs = NRunAs.root());
+                        cmdLine.withNextTrueFlag((v, r, s) -> options.runAs = NRunAs.root());
                         return true;
                     }
                     case "--sudo": {
-                        commandLine.withNextTrueFlag((v, r, s) -> options.runAs = NRunAs.sudo());
+                        cmdLine.withNextTrueFlag((v, r, s) -> options.runAs = NRunAs.sudo());
                         return true;
                     }
                     case "--as-user": {
-                        commandLine.withNextEntry((v, r, s) -> options.runAs = NRunAs.user(v));
+                        cmdLine.withNextEntry((v, r, s) -> options.runAs = NRunAs.user(v));
                         return true;
                     }
                     case "-C":
                     case "--chdir": {
-                        commandLine.withNextEntry((v, r, s) -> options.dir = v);
+                        cmdLine.withNextEntry((v, r, s) -> options.dir = v);
                         return true;
                     }
                     case "-u":
                     case "--unset": {
-                        commandLine.withNextEntry((v, r, s) -> options.unsetVers.add(v));
+                        cmdLine.withNextEntry((v, r, s) -> options.unsetVers.add(v));
                         return true;
                     }
                     case "-i":
                     case "--ignore-environment": {
-                        commandLine.withNextFlag((v, r, s) -> options.ignoreEnvironment = v);
+                        cmdLine.withNextFlag((v, r, s) -> options.ignoreEnvironment = v);
                         return true;
                     }
                     case "-": {
-                        commandLine.skip();
+                        cmdLine.skip();
                         options.readStatus = 1;
                         return true;
                     }
                     default: {
                         if (a.isKeyValue()) {
                             options.newEnv.put(a.key(), a.getStringValue().get(session));
-                            commandLine.skip();
+                            cmdLine.skip();
                             options.readStatus = 1;
                             return true;
                         } else if (a.isOption()) {
                             return false;
                         } else {
                             options.command.add(a.asString().get(session));
-                            commandLine.skip();
+                            cmdLine.skip();
                             options.readStatus = 2;
                             return true;
                         }
@@ -133,12 +133,12 @@ public class EnvCommand extends NShellBuiltinDefault {
                     options.command.add(a.asString().get(session));
                     options.readStatus = 2;
                 }
-                commandLine.skip();
+                cmdLine.skip();
                 return true;
             }
             case 2: {
                 options.command.add(a.asString().get(session));
-                commandLine.skip();
+                cmdLine.skip();
                 return true;
             }
         }
@@ -146,7 +146,7 @@ public class EnvCommand extends NShellBuiltinDefault {
     }
 
     @Override
-    protected void onCmdExec(NCmdLine commandLine, NShellExecutionContext context) {
+    protected void onCmdExec(NCmdLine cmdLine, NShellExecutionContext context) {
         Options options = context.getOptions();
         if (options.sort) {
             context.getSession().addOutputFormatOptions("--sort");
@@ -195,7 +195,7 @@ public class EnvCommand extends NShellBuiltinDefault {
     }
 
     @Override
-    protected boolean onCmdNextNonOption(NArg arg, NCmdLine commandLine, NShellExecutionContext context) {
-        return onCmdNextOption(arg, commandLine, context);
+    protected boolean onCmdNextNonOption(NArg arg, NCmdLine cmdLine, NShellExecutionContext context) {
+        return onCmdNextOption(arg, cmdLine, context);
     }
 }

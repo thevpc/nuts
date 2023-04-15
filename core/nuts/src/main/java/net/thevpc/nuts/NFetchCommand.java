@@ -43,7 +43,7 @@ import java.util.Set;
 public interface NFetchCommand extends NWorkspaceCommand {
 
     static NFetchCommand of(NSession session) {
-        return NExtensions.of(session).createSupported(NFetchCommand.class);
+        return NExtensions.of(session).createComponent(NFetchCommand.class).get();
     }
 
     ////////////////////////////////////////////////////////

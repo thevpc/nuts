@@ -6,6 +6,7 @@ import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.runtime.standalone.session.NSessionUtils;
 import net.thevpc.nuts.spi.NPathFactory;
 import net.thevpc.nuts.spi.NPathSPI;
+import net.thevpc.nuts.spi.NSupportLevelContext;
 
 import java.util.Objects;
 
@@ -90,12 +91,21 @@ public class ClassLoaderPath extends URLPath {
             NSessionUtils.checkSession(ws, session);
             try {
                 if (path.startsWith("classpath:")) {
-                    return NSupported.of(10,()->new ClassLoaderPath(path, classLoader, session));
+                    return NSupported.of(DEFAULT_SUPPORT,()->new ClassLoaderPath(path, classLoader, session));
                 }
             } catch (Exception ex) {
                 //ignore
             }
             return null;
+        }
+
+        @Override
+        public int getSupportLevel(NSupportLevelContext context) {
+            String path= context.getConstraints();
+            if (path.startsWith("classpath:")) {
+                return DEFAULT_SUPPORT;
+            }
+            return NO_SUPPORT;
         }
     }
 }

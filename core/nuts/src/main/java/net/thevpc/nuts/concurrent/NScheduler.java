@@ -8,10 +8,9 @@ import net.thevpc.nuts.spi.NComponentScopeType;
 
 import java.util.concurrent.ExecutorService;
 
-@NComponentScope(NComponentScopeType.WORKSPACE)
 public interface NScheduler extends NComponent {
     static NScheduler of(NSession session){
-       return NExtensions.of(session).createSupported(NScheduler.class);
+       return NExtensions.of(session).createComponent(NScheduler.class).get();
     }
     ExecutorService executorService();
 }

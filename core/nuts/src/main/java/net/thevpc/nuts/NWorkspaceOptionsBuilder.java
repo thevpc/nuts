@@ -322,7 +322,7 @@ public interface NWorkspaceOptionsBuilder extends NWorkspaceOptions {
     NWorkspaceOptionsBuilder setAll(NWorkspaceOptions other);
     NWorkspaceOptionsBuilder setAllPresent(NWorkspaceOptions other);
 
-    NWorkspaceOptionsBuilder setCommandLine(String commandLine, NSession session);
+    NWorkspaceOptionsBuilder setCommandLine(String cmdLine, NSession session);
 
     NWorkspaceOptionsBuilder setCommandLine(String[] args, NSession session);
 

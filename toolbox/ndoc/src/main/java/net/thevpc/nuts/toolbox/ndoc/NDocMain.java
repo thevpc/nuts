@@ -27,27 +27,27 @@ public class NDocMain implements NApplication, NCmdLineProcessor {
     }
 
     @Override
-    public boolean onCmdNextOption(NArg option, NCmdLine commandLine, NCmdLineContext context) {
-        NSession session = commandLine.getSession();
+    public boolean onCmdNextOption(NArg option, NCmdLine cmdLine, NCmdLineContext context) {
+        NSession session = cmdLine.getSession();
         switch (option.key()) {
             case "-s":
             case "--source": {
-                commandLine.withNextEntry((v, r, s) -> src.add(v));
+                cmdLine.withNextEntry((v, r, s) -> src.add(v));
                 return true;
             }
             case "-t":
             case "--target": {
-                commandLine.withNextEntry((v, r, s) -> target=v);
+                cmdLine.withNextEntry((v, r, s) -> target=v);
                 return true;
             }
             case "-p":
             case "--package": {
-                commandLine.withNextEntry((v, r, s) -> pck.add(v));
+                cmdLine.withNextEntry((v, r, s) -> pck.add(v));
                 return true;
             }
             case "-b":
             case "--backend": {
-                commandLine.withNextEntry((v, r, s) -> backend=v);
+                cmdLine.withNextEntry((v, r, s) -> backend=v);
                 return true;
             }
         }
@@ -55,12 +55,12 @@ public class NDocMain implements NApplication, NCmdLineProcessor {
     }
 
     @Override
-    public boolean onCmdNextNonOption(NArg nonOption, NCmdLine commandLine, NCmdLineContext context) {
+    public boolean onCmdNextNonOption(NArg nonOption, NCmdLine cmdLine, NCmdLineContext context) {
         return false;
     }
 
     @Override
-    public void onCmdExec(NCmdLine commandLine, NCmdLineContext context) {
+    public void onCmdExec(NCmdLine cmdLine, NCmdLineContext context) {
         if (src.isEmpty()) {
             src.add(".");
         }

@@ -17,10 +17,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.net.HttpURLConnection;
-import java.net.URISyntaxException;
-import java.net.URL;
-import java.net.URLConnection;
+import java.net.*;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.Instant;
@@ -373,8 +370,7 @@ public class URLPath implements NPathSPI {
         if (url == null) {
             throw new NIOException(getSession(), NMsg.ofC("unable to resolve input stream %s", toString()));
         }
-        NTransportComponent best = session.extensions()
-                .createSupported(NTransportComponent.class, false, url);
+        NTransportComponent best = session.extensions().createComponent(NTransportComponent.class, url).orNull();
         if (best == null) {
             best = DefaultHttpTransportComponent.INSTANCE;
         }
@@ -782,7 +778,7 @@ public class URLPath implements NPathSPI {
         }
 
         @Override
-        public boolean configureFirst(NCmdLine commandLine) {
+        public boolean configureFirst(NCmdLine cmdLine) {
             return false;
         }
     }
@@ -809,6 +805,26 @@ public class URLPath implements NPathSPI {
                 //ignore
             }
             return null;
+        }
+
+        @Override
+        public int getSupportLevel(NSupportLevelContext context) {
+            Object c = context.getConstraints();
+            if(c instanceof String) {
+                String path=(String) c;
+                if (path.length() > 0) {
+                    char s = path.charAt(0);
+                    if (Character.isAlphabetic(s)) {
+                        try {
+                            URL url = new URL(path);
+                            return 5;
+                        } catch (MalformedURLException e) {
+                            //
+                        }
+                    }
+                }
+            }
+            return NO_SUPPORT;
         }
     }
 }

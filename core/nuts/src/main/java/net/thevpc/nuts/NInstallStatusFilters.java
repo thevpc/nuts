@@ -30,10 +30,9 @@ import net.thevpc.nuts.spi.NComponentScopeType;
 /**
  * @app.category Base
  */
-@NComponentScope(NComponentScopeType.SESSION)
 public interface NInstallStatusFilters extends NTypedFilters<NInstallStatusFilter> {
     static NInstallStatusFilters of(NSession session) {
-       return NExtensions.of(session).createSupported(NInstallStatusFilters.class);
+       return NExtensions.of(session).createComponent(NInstallStatusFilters.class).get();
     }
 
     NInstallStatusFilter byInstalled(boolean value);

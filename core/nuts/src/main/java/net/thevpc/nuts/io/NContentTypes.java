@@ -45,10 +45,9 @@ import java.util.List;
  * @author thevpc
  * @since 0.8.3
  */
-@NComponentScope(NComponentScopeType.SESSION)
 public interface NContentTypes extends NComponent {
     static NContentTypes of(NSession session) {
-       return NExtensions.of(session).createSupported(NContentTypes.class);
+       return NExtensions.of(session).createComponent(NContentTypes.class).get();
     }
 
     String probeContentType(URL path);

@@ -26,6 +26,7 @@
  */
 package net.thevpc.nuts.runtime.standalone.workspace;
 
+import net.thevpc.nuts.NOptional;
 import net.thevpc.nuts.NSession;
 import net.thevpc.nuts.spi.NComponent;
 import net.thevpc.nuts.NId;
@@ -45,9 +46,9 @@ public interface NWorkspaceFactory {
 
     Set<Class> discoverTypes(NId id, URL url, ClassLoader bootClassLoader, Class[] extensionPoints, NSession session);
 
-    <T extends NComponent> T createSupported(Class<T> type, Object supportCriteria, boolean required, NSession session);
+    <T extends NComponent> NOptional<T> createComponent(Class<T> type, Object supportCriteria, NSession session);
 
-    <T extends NComponent> List<T> createAllSupported(Class<T> type, Object supportCriteria, NSession session);
+    <T extends NComponent> List<T> createComponents(Class<T> type, Object supportCriteria, NSession session);
 
     <T> List<T> createAll(Class<T> type, NSession session);
 

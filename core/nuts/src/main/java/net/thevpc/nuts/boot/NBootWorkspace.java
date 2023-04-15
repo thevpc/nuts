@@ -1127,14 +1127,24 @@ public final class NBootWorkspace {
                 }
             }
         }
+        NExecCommand execCmd = NExecCommand.of(session.setDry(computedOptions.getDry().orElse(false)))
+                .setExecutionType(o.getExecutionType().orElse(null))
+                .setRunAs(o.getRunAs().orElse(null))
+                .setFailFast(true);
+        List<String> executorOptions = o.getExecutorOptions().orNull();
+        if (executorOptions != null) {
+            execCmd.configure(true, executorOptions.toArray(new String[0]));
+        }
+        execCmd.addExecutorOptions(executorOptions);
         if (o.getApplicationArguments().get().size() == 0) {
             if (o.getSkipWelcome().orElse(false)) {
                 return session;
             }
-            NExecCommand.of(session.setDry(computedOptions.getDry().orElse(false))).addCommand("welcome").addExecutorOptions(o.getExecutorOptions().orNull()).setExecutionType(o.getExecutionType().orElse(NExecutionType.SPAWN)).setFailFast(true).run();
+            execCmd.addCommand("welcome");
         } else {
-            NExecCommand.of(session.setDry(computedOptions.getDry().orElse(false))).addCommand(o.getApplicationArguments().get()).addExecutorOptions(o.getExecutorOptions().orNull()).setExecutionType(o.getExecutionType().orElse(NExecutionType.SPAWN)).setFailFast(true).run();
+            execCmd.addCommand(o.getApplicationArguments().get());
         }
+        execCmd.run();
         return session;
     }
 

@@ -12,8 +12,8 @@ public class NVersionCompat507 extends AbstractNVersionCompat {
 
     public static final NVersion CONFIG_VERSION_507 = NVersion.of("5.0.7").get();
 
-    public NVersionCompat507(NSession ws, NVersion apiVersion) {
-        super(ws, apiVersion, 507);
+    public NVersionCompat507(NSession session, NVersion apiVersion) {
+        super(session, apiVersion, 507);
     }
 
     @Override

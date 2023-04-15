@@ -26,6 +26,7 @@ package net.thevpc.nuts.runtime.standalone.workspace.cmd.install;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.elem.NElements;
 import net.thevpc.nuts.io.NMemoryPrintStream;
+import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.io.NPrintStream;
 import net.thevpc.nuts.runtime.standalone.dependency.util.NDependencyUtils;
 import net.thevpc.nuts.runtime.standalone.util.iter.IteratorUtils;
@@ -36,6 +37,7 @@ import net.thevpc.nuts.text.NText;
 import net.thevpc.nuts.text.NTextBuilder;
 import net.thevpc.nuts.text.NTextStyle;
 import net.thevpc.nuts.text.NTexts;
+import net.thevpc.nuts.util.NConnexionString;
 import net.thevpc.nuts.util.NLogVerb;
 import net.thevpc.nuts.util.NStream;
 
@@ -51,8 +53,8 @@ import java.util.stream.Collectors;
  */
 public class DefaultNInstallCommand extends AbstractNInstallCommand {
 
-    public DefaultNInstallCommand(NSession ws) {
-        super(ws);
+    public DefaultNInstallCommand(NSession session) {
+        super(session);
     }
 
     private NDefinition _loadIdContent(NId id, NId forId, NSession session, boolean includeDeps, InstallIdList loaded, NInstallStrategy installStrategy) {
@@ -94,15 +96,15 @@ public class DefaultNInstallCommand extends AbstractNInstallCommand {
                     .setDependencyFilter(NDependencyFilters.of(session).byRunnable())
                     //
                     .getResultDefinition();
-        }catch (NNotFoundException ee){
-            if(!NDependencyUtils.isRequiredDependency(id.toDependency())) {
-                includeDeps=false;
-            }else{
+        } catch (NNotFoundException ee) {
+            if (!NDependencyUtils.isRequiredDependency(id.toDependency())) {
+                includeDeps = false;
+            } else {
                 throw ee;
             }
         }
         def.doRequire = true;
-        if(def.definition!=null) {
+        if (def.definition != null) {
             for (NId parent : def.definition.getDescriptor().getParents()) {
                 _loadIdContent(parent, id, session, false, loaded, NInstallStrategy.REQUIRE);
             }
@@ -111,7 +113,7 @@ public class DefaultNInstallCommand extends AbstractNInstallCommand {
                     _loadIdContent(dependency.toId(), id, session, false, loaded, NInstallStrategy.REQUIRE);
                 }
             }
-        }else{
+        } else {
             _LOGOP(session).verb(NLogVerb.WARNING).level(Level.FINE)
                     .log(NMsg.ofJ("failed to retrieve {0}", def.id));
         }
@@ -164,7 +166,7 @@ public class DefaultNInstallCommand extends AbstractNInstallCommand {
         }
         return new NListStream<NDefinition>(getSession(),
                 ids.isEmpty() ? null : ids.keySet().toArray()[0].toString(),
-                Arrays.asList(result),e-> NElements.of(e).ofString("InstallResult")
+                Arrays.asList(result), e -> NElements.of(e).ofString("InstallResult")
         );
     }
 
@@ -192,7 +194,7 @@ public class DefaultNInstallCommand extends AbstractNInstallCommand {
         if (this.isCompanions()) {
             // In all cases, even though search may be empty we consider that the list is not empty
             // so that no empty exception is thrown
-            list.emptyCommand=false;
+            list.emptyCommand = false;
             for (NId sid : session.extensions().getCompanionIds()) {
                 if (!list.isVisited(sid)) {
                     List<NId> allIds = NSearchCommand.of(session).addId(sid).setLatest(true).setTargetApiVersion(ws.getApiVersion()).getResultIds().toList();
@@ -214,7 +216,7 @@ public class DefaultNInstallCommand extends AbstractNInstallCommand {
         if (isInstalled()) {
             // In all cases, even though search may be empty we considere that the list is not empty
             // so that no empty exception is thrown
-            list.emptyCommand=false;
+            list.emptyCommand = false;
             for (NId resultId : NSearchCommand.of(session).setInstallStatus(
                     NInstallStatusFilters.of(session).byInstalled(true)).getResultIds()) {
                 list.addForInstall(resultId, getInstalled(), true);
@@ -405,9 +407,9 @@ public class DefaultNInstallCommand extends AbstractNInstallCommand {
                 printList(mout, "installed", "set as default", list_installed_setdefault);
                 printList(mout, "installed", "ignored", installed_ignored);
             }
-            if(!list_required_reinstalled.isEmpty() || !list_required_rerequired.isEmpty()){
+            if (!list_required_reinstalled.isEmpty() || !list_required_rerequired.isEmpty()) {
                 mout.println("should we proceed re-installation?");
-            }else {
+            } else {
                 mout.println("should we proceed installation?");
             }
             if (!NConfigs.of(getSession()).getDefaultTerminal().ask()
@@ -440,10 +442,10 @@ public class DefaultNInstallCommand extends AbstractNInstallCommand {
             }
             //force installation
             for (InstallIdInfo info : list.infos()) {
-                if(info.ignored){
-                    info.ignored=false;
-                    info.doInstall=true;
-                    info.forced=true;
+                if (info.ignored) {
+                    info.ignored = false;
+                    info.doInstall = true;
+                    info.forced = true;
                 }
             }
         }

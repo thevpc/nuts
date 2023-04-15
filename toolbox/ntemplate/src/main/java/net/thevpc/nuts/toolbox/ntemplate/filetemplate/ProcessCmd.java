@@ -21,13 +21,13 @@ public class ProcessCmd extends NShellBuiltinDefault {
     }
 
     @Override
-    protected boolean onCmdNextOption(NArg arg, NCmdLine commandLine, NShellExecutionContext context) {
+    protected boolean onCmdNextOption(NArg arg, NCmdLine cmdLine, NShellExecutionContext context) {
         Options o = context.getOptions();
         NSession session = context.getSession();
-        if (commandLine.isNonOption(0)) {
-            o.args.add(commandLine.next().flatMap(NLiteral::asString).get(session));
-            while (commandLine.hasNext()) {
-                o.args.add(commandLine.next().flatMap(NLiteral::asString).get(session));
+        if (cmdLine.isNonOption(0)) {
+            o.args.add(cmdLine.next().flatMap(NLiteral::asString).get(session));
+            while (cmdLine.hasNext()) {
+                o.args.add(cmdLine.next().flatMap(NLiteral::asString).get(session));
             }
             return true;
         }
@@ -35,7 +35,7 @@ public class ProcessCmd extends NShellBuiltinDefault {
     }
 
     @Override
-    protected void onCmdExec(NCmdLine commandLine, NShellExecutionContext context) {
+    protected void onCmdExec(NCmdLine cmdLine, NShellExecutionContext context) {
         Options o = context.getOptions();
         if (o.args.size() == 0) {
             throw new NExecutionException(context.getSession(), NMsg.ofC("%s : invalid arguments count", getName()), 1);
@@ -51,7 +51,7 @@ public class ProcessCmd extends NShellBuiltinDefault {
     }
 
     @Override
-    protected boolean onCmdNextNonOption(NArg arg, NCmdLine commandLine, NShellExecutionContext context) {
-        return onCmdNextOption(arg, commandLine, context);
+    protected boolean onCmdNextNonOption(NArg arg, NCmdLine cmdLine, NShellExecutionContext context) {
+        return onCmdNextOption(arg, cmdLine, context);
     }
 }

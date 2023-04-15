@@ -62,74 +62,74 @@ public class GrepCommand extends NShellBuiltinDefault {
 
 
     @Override
-    protected boolean onCmdNextNonOption(NArg arg, NCmdLine commandLine, NShellExecutionContext context) {
+    protected boolean onCmdNextNonOption(NArg arg, NCmdLine cmdLine, NShellExecutionContext context) {
         NSession session = context.getSession();
         Options options = context.getOptions();
         if (!options.withNutsOptions && options.expression == null) {
-            options.expression = commandLine.next().flatMap(NLiteral::asString).get(session);
+            options.expression = cmdLine.next().flatMap(NLiteral::asString).get(session);
         } else {
-            String path = commandLine.next().flatMap(NLiteral::asString).get(session);
+            String path = cmdLine.next().flatMap(NLiteral::asString).get(session);
             options.files.add(new FileInfo(NPath.of(path, session), options.highlighter));
         }
         return true;
     }
 
     @Override
-    protected boolean onCmdNextOption(NArg arg, NCmdLine commandLine, NShellExecutionContext context) {
+    protected boolean onCmdNextOption(NArg arg, NCmdLine cmdLine, NShellExecutionContext context) {
         NSession session = context.getSession();
         Options options = context.getOptions();
         NArg a;
-        if (commandLine.next("-").orNull() != null) {
+        if (cmdLine.next("-").orNull() != null) {
             options.files.add(null);
             return true;
-        } else if ((a = commandLine.next("-e", "--regexp").orNull()) != null) {
+        } else if ((a = cmdLine.next("-e", "--regexp").orNull()) != null) {
             //options.regexp = true;
             return true;
-        } else if ((a = commandLine.nextEntry("--expr", "--like").orNull()) != null) {
-            processRequireNutsOption(a, commandLine, options);
+        } else if ((a = cmdLine.nextEntry("--expr", "--like").orNull()) != null) {
+            processRequireNutsOption(a, cmdLine, options);
             options.expression = a.getStringValue().get();
             return true;
-        } else if (commandLine.next("-v", "--invert-match").orNull() != null) {
+        } else if (cmdLine.next("-v", "--invert-match").orNull() != null) {
             options.invertMatch = true;
             return true;
-        } else if (commandLine.next("-w", "--word-regexp").orNull() != null) {
+        } else if (cmdLine.next("-w", "--word-regexp").orNull() != null) {
             options.word = true;
             return true;
-        } else if (commandLine.next("-x", "--line-regexp").orNull() != null) {
+        } else if (cmdLine.next("-x", "--line-regexp").orNull() != null) {
             options.lineRegexp = true;
             return true;
-        } else if (commandLine.next("-i", "--ignore-case").orNull() != null) {
+        } else if (cmdLine.next("-i", "--ignore-case").orNull() != null) {
             options.ignoreCase = true;
             return true;
-        } else if (commandLine.next("-r", "--recursive").orNull() != null) {
+        } else if (cmdLine.next("-r", "--recursive").orNull() != null) {
             options.recursive = true;
             options.followSymbolicLinks = false;
             return true;
-        } else if (commandLine.next("-R", "--dereference-recursive").orNull() != null) {
+        } else if (cmdLine.next("-R", "--dereference-recursive").orNull() != null) {
             options.recursive = true;
             options.followSymbolicLinks = true;
             return true;
-        } else if ((a = commandLine.next("--nx").orNull()) != null) {
+        } else if ((a = cmdLine.next("--nx").orNull()) != null) {
             options.withNutsOptions = true;
             return true;
-        } else if ((a = commandLine.nextEntry("--file-name").orNull()) != null) {
-            processRequireNutsOption(a, commandLine, options);
+        } else if ((a = cmdLine.nextEntry("--file-name").orNull()) != null) {
+            processRequireNutsOption(a, cmdLine, options);
             options.fileNames.add(a.getStringValue().get());
             return true;
-        } else if ((a = commandLine.nextEntry("--file-iname").orNull()) != null) {
-            processRequireNutsOption(a, commandLine, options);
+        } else if ((a = cmdLine.nextEntry("--file-iname").orNull()) != null) {
+            processRequireNutsOption(a, cmdLine, options);
             options.fileNamesIgnoreCase.add(a.getStringValue().get());
             return true;
-        } else if ((a = commandLine.next("--from").orNull()) != null) {
-            processRequireNutsOption(a, commandLine, options);
+        } else if ((a = cmdLine.next("--from").orNull()) != null) {
+            processRequireNutsOption(a, cmdLine, options);
             options.from = NLiteral.of(a).asLong().orElse(null);
             return true;
-        } else if ((a = commandLine.next("--to").orNull()) != null) {
-            processRequireNutsOption(a, commandLine, options);
+        } else if ((a = cmdLine.next("--to").orNull()) != null) {
+            processRequireNutsOption(a, cmdLine, options);
             options.to = NLiteral.of(a).asLong().orElse(null);
             return true;
-        } else if ((a = commandLine.next("--range").orNull()) != null) {
-            processRequireNutsOption(a, commandLine, options);
+        } else if ((a = cmdLine.next("--range").orNull()) != null) {
+            processRequireNutsOption(a, cmdLine, options);
             NumberRangeList rl = NumberRangeList.parse(a.getStringValue().get());
             if (rl != null) {
                 NumberRange r = rl.toRange();
@@ -137,19 +137,19 @@ public class GrepCommand extends NShellBuiltinDefault {
                 options.to = r.getTo();
             }
             return true;
-        } else if ((a = commandLine.next("--jex", "--java-exception").orNull()) != null) {
-            processRequireNutsOption(a, commandLine, options);
+        } else if ((a = cmdLine.next("--jex", "--java-exception").orNull()) != null) {
+            processRequireNutsOption(a, cmdLine, options);
             options.windowFilter.add(new JavaExceptionWindowFilter());
             return true;
-        } else if ((a = commandLine.next("-H", "--highlight", "--highlighter").orNull()) != null) {
-            processRequireNutsOption(a, commandLine, options);
+        } else if ((a = cmdLine.next("-H", "--highlight", "--highlighter").orNull()) != null) {
+            processRequireNutsOption(a, cmdLine, options);
             options.highlighter = NStringUtils.trim(a.getStringValue().get(session));
             return true;
-        } else if ((a = commandLine.next("-S", "--selection-style").orNull()) != null) {
-            processRequireNutsOption(a, commandLine, options);
+        } else if ((a = cmdLine.next("-S", "--selection-style").orNull()) != null) {
+            processRequireNutsOption(a, cmdLine, options);
             options.selectionStyle = NStringUtils.trimToNull(a.getStringValue().get(session));
             return true;
-        } else if (commandLine.next("-n").isPresent()) {
+        } else if (cmdLine.next("-n").isPresent()) {
             options.n = true;
             return true;
         } else {
@@ -157,10 +157,10 @@ public class GrepCommand extends NShellBuiltinDefault {
         }
     }
 
-    private static void processRequireNutsOption(NArg a, NCmdLine commandLine, Options options) {
+    private static void processRequireNutsOption(NArg a, NCmdLine cmdLine, Options options) {
         if (!options.withNutsOptions) {
             if (options.requireNutsOptions) {
-                commandLine.throwUnexpectedArgument(NMsg.ofC(" option can be used along with --nx", a));
+                cmdLine.throwUnexpectedArgument(NMsg.ofC(" option can be used along with --nx", a));
             } else {
                 options.withNutsOptions = true;
             }
@@ -168,7 +168,7 @@ public class GrepCommand extends NShellBuiltinDefault {
     }
 
     @Override
-    protected void onCmdExec(NCmdLine commandLine, NShellExecutionContext context) {
+    protected void onCmdExec(NCmdLine cmdLine, NShellExecutionContext context) {
         Options options = context.getOptions();
         NPrintStream out = context.out();
         if (options.files.isEmpty()) {

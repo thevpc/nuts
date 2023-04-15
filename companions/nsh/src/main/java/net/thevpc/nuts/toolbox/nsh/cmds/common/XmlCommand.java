@@ -58,14 +58,14 @@ public class XmlCommand extends NShellBuiltinDefault {
     }
 
     @Override
-    protected boolean onCmdNextOption(NArg arg, NCmdLine commandLine, NShellExecutionContext context) {
+    protected boolean onCmdNextOption(NArg arg, NCmdLine cmdLine, NShellExecutionContext context) {
         NSession session = context.getSession();
         Options options = context.getOptions();
         NArg a;
-        if ((a = commandLine.nextEntry("-f", "--file").orNull()) != null) {
+        if ((a = cmdLine.nextEntry("-f", "--file").orNull()) != null) {
             options.input = a.getStringValue().get(session);
             return true;
-        } else if ((a = commandLine.nextEntry("-q", "--xpath").orNull()) != null) {
+        } else if ((a = cmdLine.nextEntry("-q", "--xpath").orNull()) != null) {
             options.xpaths.add(a.getStringValue().get(session));
             return true;
         }
@@ -73,11 +73,11 @@ public class XmlCommand extends NShellBuiltinDefault {
     }
 
     @Override
-    protected void onCmdExec(NCmdLine commandLine, NShellExecutionContext context) {
+    protected void onCmdExec(NCmdLine cmdLine, NShellExecutionContext context) {
         Options options = context.getOptions();
         NSession session = context.getSession();
         if (options.xpaths.isEmpty()) {
-            commandLine.throwMissingArgument();
+            cmdLine.throwMissingArgument();
         }
 
         DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
@@ -157,7 +157,7 @@ public class XmlCommand extends NShellBuiltinDefault {
     }
 
     @Override
-    protected boolean onCmdNextNonOption(NArg arg, NCmdLine commandLine, NShellExecutionContext context) {
-        return onCmdNextOption(arg, commandLine, context);
+    protected boolean onCmdNextNonOption(NArg arg, NCmdLine cmdLine, NShellExecutionContext context) {
+        return onCmdNextOption(arg, cmdLine, context);
     }
 }

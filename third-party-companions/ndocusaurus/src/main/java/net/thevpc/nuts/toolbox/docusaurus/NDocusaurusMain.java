@@ -23,13 +23,13 @@ public class NDocusaurusMain implements NApplication {
     public void run(NSession session) {
         session.processAppCommandLine(new NCmdLineProcessor() {
             @Override
-            public boolean onCmdNextOption(NArg option, NCmdLine commandLine, NCmdLineContext context) {
-                NSession session = commandLine.getSession();
+            public boolean onCmdNextOption(NArg option, NCmdLine cmdLine, NCmdLineContext context) {
+                NSession session = cmdLine.getSession();
                 switch (option.key()) {
                     case "-d":
                     case "--dir": {
                         if (workdir == null) {
-                            commandLine.withNextEntry((v, a, s) -> workdir = v);
+                            cmdLine.withNextEntry((v, a, s) -> workdir = v);
                             return true;
                         }
                     }
@@ -38,19 +38,19 @@ public class NDocusaurusMain implements NApplication {
             }
 
             @Override
-            public boolean onCmdNextNonOption(NArg nonOption, NCmdLine commandLine, NCmdLineContext context) {
-                NSession session = commandLine.getSession();
+            public boolean onCmdNextNonOption(NArg nonOption, NCmdLine cmdLine, NCmdLineContext context) {
+                NSession session = cmdLine.getSession();
                 switch (nonOption.asString().get(session)) {
                     case "start": {
-                        commandLine.withNextFlag((v, a, s) -> start = v);
+                        cmdLine.withNextFlag((v, a, s) -> start = v);
                         return true;
                     }
                     case "build": {
-                        commandLine.withNextFlag((v, a, s) -> build = v);
+                        cmdLine.withNextFlag((v, a, s) -> build = v);
                         return true;
                     }
                     case "pdf": {
-                        commandLine.withNextFlag((v, a, s) -> buildPdf = v);
+                        cmdLine.withNextFlag((v, a, s) -> buildPdf = v);
                         return true;
                     }
                 }
@@ -58,28 +58,28 @@ public class NDocusaurusMain implements NApplication {
             }
 
             @Override
-            public void onCmdFinishParsing(NCmdLine commandLine, NCmdLineContext context) {
-                NSession session = commandLine.getSession();
+            public void onCmdFinishParsing(NCmdLine cmdLine, NCmdLineContext context) {
+                NSession session = cmdLine.getSession();
                 if (!start && !build && !buildPdf) {
-                    commandLine.throwMissingArgument(
+                    cmdLine.throwMissingArgument(
                             NMsg.ofC("missing command. try %s", NMsg.ofCode("sh", "ndocusaurus pdf | start | build"))
                     );
                 }
             }
 
             @Override
-            public void onCmdExec(NCmdLine commandLine, NCmdLineContext context) {
+            public void onCmdExec(NCmdLine cmdLine, NCmdLineContext context) {
                 if (workdir == null) {
                     workdir = ".";
                 }
                 DocusaurusProject docusaurusProject = new DocusaurusProject(workdir,
                         Paths.get(workdir).resolve(".dir-template").resolve("src").toString(),
-                        commandLine.getSession());
+                        cmdLine.getSession());
                 new DocusaurusCtrl(docusaurusProject, session)
                         .setBuildWebSite(build)
                         .setStartWebSite(start)
                         .setBuildPdf(buildPdf)
-                        .setAutoInstallNutsPackages(NBootManager.of(commandLine.getSession()).getBootOptions().getConfirm().orElse(NConfirmationMode.ASK) == NConfirmationMode.YES)
+                        .setAutoInstallNutsPackages(NBootManager.of(cmdLine.getSession()).getBootOptions().getConfirm().orElse(NConfirmationMode.ASK) == NConfirmationMode.YES)
                         .run();
             }
         });

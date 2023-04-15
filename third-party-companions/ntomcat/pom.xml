@@ -66,8 +66,8 @@
             <version>0.8.4</version>
         </dependency>
         <dependency>
-            <groupId>net.thevpc.nuts.lib</groupId>
-            <artifactId>nlib-ssh</artifactId>
+            <groupId>net.thevpc.nuts.ext</groupId>
+            <artifactId>next-ssh</artifactId>
             <version>0.8.4.0</version>
         </dependency>
         <dependency>

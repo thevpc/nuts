@@ -52,7 +52,7 @@ public interface NElements extends NContentTypeFormat {
 
 
     static NElements of(NSession session) {
-       return NExtensions.of(session).createSupported(NElements.class);
+       return NExtensions.of(session).createComponent(NElements.class).get();
     }
 
     /**

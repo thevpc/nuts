@@ -39,25 +39,25 @@ public class DefaultNPropertiesFormat extends DefaultFormatBase<NPropertiesForma
     }
 
     @Override
-    public boolean configureFirst(NCmdLine commandLine) {
+    public boolean configureFirst(NCmdLine cmdLine) {
         NArg a;
-        if ((a = commandLine.nextEntry(OPTION_MULTILINE_PROPERTY).orNull()) != null) {
+        if ((a = cmdLine.nextEntry(OPTION_MULTILINE_PROPERTY).orNull()) != null) {
             NArg i = NArg.of(a.getStringValue().get(getSession()));
             if (i.isActive()) {
                 addMultilineProperty(i.getKey().asString().get(getSession()), i.getStringValue().get(getSession()));
             }
             return true;
-        } else if ((a = commandLine.nextFlag("--compact").orNull()) != null) {
+        } else if ((a = cmdLine.nextFlag("--compact").orNull()) != null) {
             if (a.isActive()) {
                 this.compact = a.getBooleanValue().get(getSession());
             }
             return true;
-        } else if ((a = commandLine.nextFlag("--props").orNull()) != null) {
+        } else if ((a = cmdLine.nextFlag("--props").orNull()) != null) {
             if (a.isActive()) {
                 this.javaProps = a.getBooleanValue().get(getSession());
             }
             return true;
-        } else if ((a = commandLine.nextFlag("--escape-text").orNull()) != null) {
+        } else if ((a = cmdLine.nextFlag("--escape-text").orNull()) != null) {
             if (a.isActive()) {
                 this.escapeText = a.getBooleanValue().get(getSession());
             }

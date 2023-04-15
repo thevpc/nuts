@@ -13,6 +13,7 @@ import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceUtils;
 import net.thevpc.nuts.spi.NComponent;
 import net.thevpc.nuts.spi.NSupportLevelContext;
 
+import java.net.URL;
 import java.util.*;
 
 /**
@@ -75,18 +76,15 @@ public class DefaultNExtensions implements NExtensions {
     }
 
     @Override
-    public <T extends NComponent> T createSupported(Class<T> type) {
-        return createSupported(type, true, null);
+    public <T extends NComponent> NOptional<T> createComponent(Class<T> type) {
+        return createComponent(type,  null);
     }
 
-    public <T extends NComponent, V> T createSupported(Class<T> serviceType, boolean required, V criteriaType) {
+    public <T extends NComponent, V> NOptional<T> createComponent(Class<T> serviceType, V criteriaType) {
         checkSession();
-        return model.createSupported(serviceType, criteriaType, required, session);
+        return model.createSupported(serviceType, criteriaType, session);
     }
 
-    public <T extends NComponent, V> T createSupported(Class<T> serviceType, V criteriaType) {
-        return createSupported(serviceType, true, criteriaType);
-    }
 
 //    @Override
 //    public <T extends NutsComponent<V>, V> T createSupported(Class<T> serviceType, V criteriaType, Class[] constructorParameterTypes, boolean required, Object[] constructorParameters) {
@@ -95,7 +93,7 @@ public class DefaultNExtensions implements NExtensions {
 //    }
 
     @Override
-    public <T extends NComponent, V> List<T> createAllSupported(Class<T> serviceType, V criteriaType) {
+    public <T extends NComponent, V> List<T> createComponents(Class<T> serviceType, V criteriaType) {
         checkSession();
         return model.createAllSupported(serviceType, criteriaType, session);
     }
@@ -152,6 +150,59 @@ public class DefaultNExtensions implements NExtensions {
     public boolean isLoadedExtensions(NId id) {
         checkSession();
         return model.isLoadedExtensions(id, session);
+    }
+
+    @Override
+    public boolean isLoadedId(NId id) {
+        return isLoadedId(id, null);
+    }
+
+    @Override
+    public boolean isLoadedId(NId id, ClassLoader classLoader) {
+        if (id == null) {
+            return false;
+        }
+        if (classLoader == null) {
+            classLoader = Thread.currentThread().getContextClassLoader();
+        }
+        URL pomXml = classLoader.getResource("META-INF/maven/" + id.getGroupId() + "/" + id.getArtifactId() + "/pom.xml");
+        if (pomXml != null) {
+            NDescriptor e = NDescriptorParser.of(getSession())
+                    .setDescriptorStyle(NDescriptorStyle.MAVEN)
+                    .parse(pomXml).orNull();
+            if (e != null) {
+                if (e.getId() != null) {
+                    NVersion v = e.getId().getVersion();
+                    if (v != null) {
+                        NVersion v2 = id.getVersion();
+                        if (v2 != null && !v2.isBlank()) {
+                            return v2.equals(v);
+                        }
+                    }
+                    return true;
+                }
+            }
+        }
+
+        URL nuts = classLoader.getResource("META-INF/nuts/" + id.getGroupId().replace('.', '/') + "/" + id.getArtifactId() + "/pom.xml");
+        if (nuts != null) {
+            NDescriptor e = NDescriptorParser.of(getSession())
+                    .setDescriptorStyle(NDescriptorStyle.NUTS)
+                    .parse(nuts).orNull();
+            if (e != null) {
+                if (e.getId() != null) {
+                    NVersion v = e.getId().getVersion();
+                    if (v != null) {
+                        NVersion v2 = id.getVersion();
+                        if (v2 != null && !v2.isBlank()) {
+                            return v2.equals(v);
+                        }
+                    }
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
     @Override

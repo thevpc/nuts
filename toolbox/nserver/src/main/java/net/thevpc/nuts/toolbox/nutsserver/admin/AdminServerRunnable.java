@@ -180,17 +180,17 @@ public class AdminServerRunnable implements NServer, Runnable {
         }
 
         @Override
-        protected boolean onCmdNextOption(NArg arg, NCmdLine commandLine, NShellExecutionContext context) {
+        protected boolean onCmdNextOption(NArg arg, NCmdLine cmdLine, NShellExecutionContext context) {
             return false;
         }
 
         @Override
-        protected boolean onCmdNextNonOption(NArg arg, NCmdLine commandLine, NShellExecutionContext context) {
+        protected boolean onCmdNextNonOption(NArg arg, NCmdLine cmdLine, NShellExecutionContext context) {
             return false;
         }
 
         @Override
-        protected void onCmdExec(NCmdLine commandLine, NShellExecutionContext context) {
+        protected void onCmdExec(NCmdLine cmdLine, NShellExecutionContext context) {
             if (context.getSession().isPlainTrace()) {
                 context.getSession().out().println("Stopping Server ...");
             }

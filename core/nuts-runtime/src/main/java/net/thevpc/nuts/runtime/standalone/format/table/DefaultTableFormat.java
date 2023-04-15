@@ -297,7 +297,7 @@ public class DefaultTableFormat extends DefaultFormatBase<NTableFormat> implemen
         List<Row> rows = rebuild(getSession());
         if (rows.size() > 0) {
             List<DefaultCell> cells = rows.get(0).cells;
-            NSession ws = getSession();
+            NSession session = getSession();
             if ((getSeparator(NTableSeparator.FIRST_ROW_START)
                     + getSeparator(NTableSeparator.FIRST_ROW_SEP)
                     + getSeparator(NTableSeparator.FIRST_ROW_LINE)
@@ -310,7 +310,7 @@ public class DefaultTableFormat extends DefaultFormatBase<NTableFormat> implemen
                     DefaultCell cell = cells.get(i);
                     String B = getSeparator(NTableSeparator.FIRST_ROW_LINE);
                     String s = cell.rendered.toString();
-                    line.append(CoreStringUtils.fillString(B, NTexts.of(ws).parse(s).textLength()));
+                    line.append(CoreStringUtils.fillString(B, NTexts.of(session).parse(s).textLength()));
                 }
                 line.append(getSeparator(NTableSeparator.FIRST_ROW_END));
 
@@ -332,7 +332,7 @@ public class DefaultTableFormat extends DefaultFormatBase<NTableFormat> implemen
                             DefaultCell cell = cells.get(i);
                             String B = getSeparator(NTableSeparator.MIDDLE_ROW_LINE);
                             String s = cell.rendered.toString();
-                            line.append(CoreStringUtils.fillString(B, NTexts.of(ws).parse(s).textLength()));
+                            line.append(CoreStringUtils.fillString(B, NTexts.of(session).parse(s).textLength()));
                         }
                         line.append(getSeparator(NTableSeparator.MIDDLE_ROW_END));
 
@@ -374,7 +374,7 @@ public class DefaultTableFormat extends DefaultFormatBase<NTableFormat> implemen
                     DefaultCell cell = cells.get(i);
                     String B = getSeparator(NTableSeparator.LAST_ROW_LINE);
                     String s = cell.rendered.toString();
-                    line.append(CoreStringUtils.fillString(B, NTexts.of(ws).parse(s).textLength()));
+                    line.append(CoreStringUtils.fillString(B, NTexts.of(session).parse(s).textLength()));
                 }
                 line.append(getSeparator(NTableSeparator.LAST_ROW_END));
             }

@@ -678,14 +678,14 @@ public class DefaultNInfoCommand extends DefaultFormatBase<NInfoCommand> impleme
     }
 
     private Map<String, Object> buildRepoRepoMap(NRepository repo, boolean deep, String prefix) {
-        NSession ws = getSession();
+        NSession session = getSession();
         FilteredMap props = new FilteredMap(filter);
         props.put(key(prefix, "name"), stringValue(repo.getName()));
         props.put(key(prefix, "global-name"), repo.config().getGlobalName());
         props.put(key(prefix, "uuid"), stringValue(repo.getUuid()));
         props.put(key(prefix, "type"),
                 //display as enum
-                NTexts.of(ws).ofStyled(repo.config().getType(), NTextStyle.option())
+                NTexts.of(session).ofStyled(repo.config().getType(), NTextStyle.option())
         );
         props.put(key(prefix, "speed"), (repo.config().getSpeed()));
         props.put(key(prefix, "enabled"), (repo.config().isEnabled()));

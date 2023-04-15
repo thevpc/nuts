@@ -427,6 +427,8 @@ public interface NSession extends NCmdLineConfigurable {
      */
     Object getProperty(String key);
 
+    Object getWorkspaceProperty(String key);
+
     /**
      * set session property
      *
@@ -727,6 +729,10 @@ public interface NSession extends NCmdLineConfigurable {
      * @since 0.8.4
      */
     <T> T getOrComputeRefProperty(String name, Function<NSession, T> supplier);
+
+    <T> T getOrComputeProperty(String name, Function<NSession, T> supplier);
+
+    <T> T getOrComputeWorkspaceProperty(String name, Function<NSession, T> supplier);
 
 
     //    @Override

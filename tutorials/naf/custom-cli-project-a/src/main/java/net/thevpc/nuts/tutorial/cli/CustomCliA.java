@@ -27,14 +27,14 @@ public class CustomCliA implements NApplication {
             List<String> params = new ArrayList<>();
 
             @Override
-            public boolean onCmdNextOption(NArg option, NCmdLine commandLine, NCmdLineContext context) {
+            public boolean onCmdNextOption(NArg option, NCmdLine cmdLine, NCmdLineContext context) {
                 if (!noMoreOptions) {
                     return false;
                 }
                 switch (option.key()) {
                     case "-c":
                     case "--clean": {
-                        NArg a = commandLine.nextFlag().get();
+                        NArg a = cmdLine.nextFlag().get();
                         if (a.isEnabled()) {
                             clean = a.getBooleanValue().get();
                         }
@@ -45,15 +45,15 @@ public class CustomCliA implements NApplication {
             }
 
             @Override
-            public boolean onCmdNextNonOption(NArg nonOption, NCmdLine commandLine, NCmdLineContext context) {
-                params.add(commandLine.next().get().toString());
+            public boolean onCmdNextNonOption(NArg nonOption, NCmdLine cmdLine, NCmdLineContext context) {
+                params.add(cmdLine.next().get().toString());
                 return true;
             }
 
             @Override
-            public void onCmdExec(NCmdLine commandLine, NCmdLineContext context) {
+            public void onCmdExec(NCmdLine cmdLine, NCmdLineContext context) {
                 if (clean) {
-                    commandLine.getSession().out().println("cleaned!");
+                    cmdLine.getSession().out().println("cleaned!");
                 }
             }
         });

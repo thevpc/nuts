@@ -142,20 +142,20 @@ public abstract class NWorkspaceCommandBase<T extends NWorkspaceCommand> impleme
      *
      * @param skipUnsupported when true, all unsupported options are skipped
      *                        silently
-     * @param commandLine     arguments to configure with
+     * @param cmdLine     arguments to configure with
      * @return {@code this} instance
      */
     @Override
-    public boolean configure(boolean skipUnsupported, NCmdLine commandLine) {
+    public boolean configure(boolean skipUnsupported, NCmdLine cmdLine) {
         checkSession();
-        return NConfigurableHelper.configure(this, getSession(), skipUnsupported, commandLine);
+        return NConfigurableHelper.configure(this, getSession(), skipUnsupported, cmdLine);
     }
 
 
     @Override
-    public void configureLast(NCmdLine commandLine) {
-        if (!configureFirst(commandLine)) {
-            commandLine.throwUnexpectedArgument();
+    public void configureLast(NCmdLine cmdLine) {
+        if (!configureFirst(cmdLine)) {
+            cmdLine.throwUnexpectedArgument();
         }
     }
 

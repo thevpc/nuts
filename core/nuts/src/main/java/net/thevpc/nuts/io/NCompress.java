@@ -49,7 +49,7 @@ import java.util.Set;
  */
 public interface NCompress extends NComponent, NSessionProvider {
     static NCompress of(NSession session) {
-        return NExtensions.of(session).createSupported(NCompress.class);
+        return NExtensions.of(session).createComponent(NCompress.class).get();
     }
 
     /**

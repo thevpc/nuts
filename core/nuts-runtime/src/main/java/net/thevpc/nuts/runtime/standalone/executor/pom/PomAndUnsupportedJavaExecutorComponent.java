@@ -42,7 +42,7 @@ import net.thevpc.nuts.util.NStringUtils;
 public class PomAndUnsupportedJavaExecutorComponent implements NExecutorComponent {
 
     public static NId ID;
-    NSession ws;
+    NSession session;
 
     @Override
     public NId getId() {
@@ -51,9 +51,9 @@ public class PomAndUnsupportedJavaExecutorComponent implements NExecutorComponen
 
     @Override
     public int getSupportLevel(NSupportLevelContext context) {
-        this.ws=context.getSession();
+        this.session =context.getSession();
         if(ID==null){
-            ID = NId.of("net.thevpc.nuts.exec:java-unsupported").get( ws);
+            ID = NId.of("net.thevpc.nuts.exec:java-unsupported").get(session);
         }
         NDefinition def = context.getConstraints(NDefinition.class);
         if (def != null) {

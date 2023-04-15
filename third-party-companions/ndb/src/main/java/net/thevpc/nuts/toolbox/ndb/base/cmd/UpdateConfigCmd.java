@@ -20,15 +20,15 @@ public class UpdateConfigCmd<C extends NdbConfig> extends NdbCmd<C> {
     }
 
     @Override
-    public void run(NSession session, NCmdLine commandLine) {
+    public void run(NSession session, NCmdLine cmdLine) {
         C options = createConfigInstance();
-        while (commandLine.hasNext()) {
-            if (fillOption(commandLine, options)) {
+        while (cmdLine.hasNext()) {
+            if (fillOption(cmdLine, options)) {
                 //
-            } else if (session.configureFirst(commandLine)) {
+            } else if (session.configureFirst(cmdLine)) {
 
             } else {
-                commandLine.throwUnexpectedArgument();
+                cmdLine.throwUnexpectedArgument();
             }
         }
         options.setName(NStringUtils.trimToNull(options.getName()));
@@ -40,7 +40,7 @@ public class UpdateConfigCmd<C extends NdbConfig> extends NdbCmd<C> {
         if (!file.exists()) {
             throw new RuntimeException("not found");
         }
-        NElements json = NElements.of(commandLine.getSession()).setNtf(false).json();
+        NElements json = NElements.of(cmdLine.getSession()).setNtf(false).json();
         C old = json.parse(file, getConfigClass());
         String oldName = old.getName();
         old.setNonNull(options);

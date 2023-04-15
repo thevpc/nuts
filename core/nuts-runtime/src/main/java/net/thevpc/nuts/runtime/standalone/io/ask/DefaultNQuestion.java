@@ -500,24 +500,24 @@ public class DefaultNQuestion<T> implements NQuestion<T> {
      *
      * @param skipUnsupported when true, all unsupported options are skipped
      *                        silently
-     * @param commandLine     arguments to configure with
+     * @param cmdLine     arguments to configure with
      * @return {@code this} instance
      */
     @Override
-    public final boolean configure(boolean skipUnsupported, NCmdLine commandLine) {
+    public final boolean configure(boolean skipUnsupported, NCmdLine cmdLine) {
         checkSession();
-        return NConfigurableHelper.configure(this, getSession(), skipUnsupported, commandLine);
+        return NConfigurableHelper.configure(this, getSession(), skipUnsupported, cmdLine);
     }
 
     @Override
-    public boolean configureFirst(NCmdLine commandLine) {
-        NArg aa = commandLine.peek().get(session);
+    public boolean configureFirst(NCmdLine cmdLine) {
+        NArg aa = cmdLine.peek().get(session);
         if (aa == null) {
             return false;
         }
         switch (aa.key()) {
             case "trace-confirmation": {
-                commandLine.withNextFlag((v, a, s) -> this.traceConfirmation = v);
+                cmdLine.withNextFlag((v, a, s) -> this.traceConfirmation = v);
                 break;
             }
         }
@@ -529,9 +529,9 @@ public class DefaultNQuestion<T> implements NQuestion<T> {
     }
 
     @Override
-    public void configureLast(NCmdLine commandLine) {
-        if (!configureFirst(commandLine)) {
-            commandLine.throwUnexpectedArgument();
+    public void configureLast(NCmdLine cmdLine) {
+        if (!configureFirst(cmdLine)) {
+            cmdLine.throwUnexpectedArgument();
         }
     }
 }

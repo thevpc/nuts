@@ -284,11 +284,11 @@ public class NChronometer implements Serializable, NFormattable {
             }
 
             @Override
-            public boolean configureFirst(NCmdLine commandLine) {
-                NArg a = commandLine.peek().get(session);
+            public boolean configureFirst(NCmdLine cmdLine) {
+                NArg a = cmdLine.peek().get(session);
                 switch (a.key()) {
                     case "--mode": {
-                        a = commandLine.nextEntry().get(session);
+                        a = cmdLine.nextEntry().get(session);
                         if (a.isActive()) {
                             formatMode = NDurationFormatMode.parse(a.getStringValue().get()).get();
                         }

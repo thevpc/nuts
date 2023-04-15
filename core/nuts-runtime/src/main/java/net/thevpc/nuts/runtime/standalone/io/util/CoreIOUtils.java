@@ -542,7 +542,7 @@ public class CoreIOUtils {
 
     public static NTransportConnection getHttpClientFacade(NSession session, String url) {
         NTransportComponent best = session.extensions()
-                .createSupported(NTransportComponent.class, false, url);
+                .createComponent(NTransportComponent.class, url).orNull();
         if (best == null) {
             best = DefaultHttpTransportComponent.INSTANCE;
         }

@@ -32,10 +32,9 @@ import net.thevpc.nuts.spi.NComponentScopeType;
 /**
  * @app.category Base
  */
-@NComponentScope(NComponentScopeType.SESSION)
 public interface NRepositoryFilters extends NTypedFilters<NRepositoryFilter> {
     static NRepositoryFilters of(NSession session) {
-       return NExtensions.of(session).createSupported(NRepositoryFilters.class);
+       return NExtensions.of(session).createComponent(NRepositoryFilters.class).get();
     }
 
     NRepositoryFilter byName(String... names);

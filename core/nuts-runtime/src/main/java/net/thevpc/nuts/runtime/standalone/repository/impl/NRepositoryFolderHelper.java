@@ -50,7 +50,7 @@ import java.util.TreeSet;
  */
 public class NRepositoryFolderHelper {
     private final NRepository repo;
-    private final NSession ws;
+    private final NSession session;
     private final NPath rootPath;
     private final boolean cacheFolder;
     private NLog LOG;
@@ -59,12 +59,12 @@ public class NRepositoryFolderHelper {
     private final String kind;
     private final NObjectElement extraInfoElements;
 
-    public NRepositoryFolderHelper(NRepository repo, NSession ws, NPath rootPath, boolean cacheFolder, String kind, NObjectElement extraInfoElements) {
+    public NRepositoryFolderHelper(NRepository repo, NSession session, NPath rootPath, boolean cacheFolder, String kind, NObjectElement extraInfoElements) {
         this.repo = repo;
         this.kind = kind;
-        this.ws = ws;
+        this.session = session;
         this.extraInfoElements = extraInfoElements;
-        if (ws == null && repo == null) {
+        if (session == null && repo == null) {
             throw new IllegalArgumentException("both workspace and repository are null");
         }
         this.rootPath = rootPath;
@@ -119,11 +119,11 @@ public class NRepositoryFolderHelper {
     }
 
     public NWorkspace getWorkspace() {
-        return ws.getWorkspace();
+        return session.getWorkspace();
     }
 
     public NSession getSession() {
-        return ws;
+        return session;
     }
 
 
@@ -561,7 +561,7 @@ public class NRepositoryFolderHelper {
                         }
                     }
                     try (PrintStream p = new PrintStream(new File(folder, CoreNConstants.Files.DOT_FILES))) {
-                        p.println("#version=" + ws.getWorkspace().getApiVersion());
+                        p.println("#version=" + session.getWorkspace().getApiVersion());
                         for (String file : folders) {
                             p.println(file + "/");
                         }

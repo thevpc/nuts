@@ -15,19 +15,19 @@ import net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.AbstractNSettin
 public class NCliInfoSubCommand extends AbstractNSettingsSubCommand {
 
     @Override
-    public boolean exec(NCmdLine commandLine, Boolean autoSave, NSession session) {
-        if (commandLine.next("cli-id").isPresent()) {
-            if(commandLine.isEmpty()){
+    public boolean exec(NCmdLine cmdLine, Boolean autoSave, NSession session) {
+        if (cmdLine.next("cli-id").isPresent()) {
+            if(cmdLine.isEmpty()){
                 doLoadCliId(session);
             }else{
-                String value = commandLine.nextNonOption().get().toString();
+                String value = cmdLine.nextNonOption().get().toString();
                 doSaveCliId(session, value);
             }
-        }else if (commandLine.next("get cli-id").isPresent()) {
+        }else if (cmdLine.next("get cli-id").isPresent()) {
             doLoadCliId(session);
             return true;
-        }else if (commandLine.next("set cli-id").isPresent()) {
-            String value = commandLine.nextNonOption().get().toString();
+        }else if (cmdLine.next("set cli-id").isPresent()) {
+            String value = cmdLine.nextNonOption().get().toString();
             doSaveCliId(session, value);
             return true;
         }

@@ -36,7 +36,6 @@ import java.util.*;
 import java.util.function.Predicate;
 
 /**
- *
  * type: Command Class
  *
  * @author thevpc
@@ -72,8 +71,8 @@ public abstract class AbstractNInstallCommand extends NWorkspaceCommandBase<NIns
         }
     }
 
-    public AbstractNInstallCommand(NSession ws) {
-        super(ws, "install");
+    public AbstractNInstallCommand(NSession session) {
+        super(session, "install");
     }
 
     @Override
@@ -295,8 +294,8 @@ public abstract class AbstractNInstallCommand extends NWorkspaceCommandBase<NIns
     }
 
     @Override
-    public boolean configureFirst(NCmdLine commandLine) {
-        NArg aa = commandLine.peek().get(session);
+    public boolean configureFirst(NCmdLine cmdLine) {
+        NArg aa = cmdLine.peek().get(session);
         if (aa == null) {
             return false;
         }
@@ -304,38 +303,38 @@ public abstract class AbstractNInstallCommand extends NWorkspaceCommandBase<NIns
         switch (aa.key()) {
             case "-c":
             case "--companions": {
-                commandLine.withNextFlag((v, a, s) -> this.setCompanions(v));
+                cmdLine.withNextFlag((v, a, s) -> this.setCompanions(v));
                 return true;
             }
             case "-i":
             case "--installed": {
-                commandLine.withNextFlag((v, a, s) -> this.setInstalled(v));
+                cmdLine.withNextFlag((v, a, s) -> this.setInstalled(v));
                 return true;
             }
             case "-s":
             case "--strategy": {
-                String val = commandLine.nextEntry().flatMap(NLiteral::asString).get(session);
+                String val = cmdLine.nextEntry().flatMap(NLiteral::asString).get(session);
                 if (enabled) {
                     this.setStrategy(CoreEnumUtils.parseEnumString(val, NInstallStrategy.class, false));
                 }
                 return true;
             }
             case "--reinstall": {
-                commandLine.skip();
+                cmdLine.skip();
                 if (enabled) {
                     this.setStrategy(NInstallStrategy.REINSTALL);
                 }
                 return true;
             }
             case "--require": {
-                commandLine.skip();
+                cmdLine.skip();
                 if (enabled) {
                     this.setStrategy(NInstallStrategy.REQUIRE);
                 }
                 return true;
             }
             case "--repair": {
-                commandLine.skip();
+                cmdLine.skip();
                 if (enabled) {
                     this.setStrategy(NInstallStrategy.REPAIR);
                 }
@@ -343,22 +342,21 @@ public abstract class AbstractNInstallCommand extends NWorkspaceCommandBase<NIns
             }
             case "-g":
             case "--args": {
-                commandLine.skip();
+                cmdLine.skip();
                 if (enabled) {
-                    this.addArgs(commandLine.toStringArray());
+                    this.addArgs(cmdLine.toStringArray());
                 }
-                commandLine.skipAll();
+                cmdLine.skipAll();
                 return true;
             }
-
             default: {
-                if (super.configureFirst(commandLine)) {
+                if (super.configureFirst(cmdLine)) {
                     return true;
                 }
                 if (aa.isOption()) {
                     return false;
                 } else {
-                    commandLine.skip();
+                    cmdLine.skip();
                     addId(aa.asString().get(session));
                     return true;
                 }

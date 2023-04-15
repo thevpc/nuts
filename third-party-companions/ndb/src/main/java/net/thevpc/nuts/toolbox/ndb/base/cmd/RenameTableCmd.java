@@ -19,27 +19,27 @@ public class RenameTableCmd<C extends NdbConfig> extends NdbCmd<C> {
     }
 
     @Override
-    public void run(NSession session, NCmdLine commandLine) {
+    public void run(NSession session, NCmdLine cmdLine) {
         NRef<AtName> name = NRef.ofNull(AtName.class);
         C otherOptions = createConfigInstance();
         ExtendedQuery eq = new ExtendedQuery(getName());
         NRef<String> table = new NRef<>();
-        while (commandLine.hasNext()) {
-            NArg arg = commandLine.peek().get(session);
+        while (cmdLine.hasNext()) {
+            NArg arg = cmdLine.peek().get(session);
             switch (arg.key()) {
                 case "--config": {
-                    readConfigNameOption(commandLine, session, name);
+                    readConfigNameOption(cmdLine, session, name);
                     break;
                 }
                 case "--entity":
                 case "--table":
                 case "--collection": {
-                    commandLine.withNextEntry((v, a, s) -> table.set(v));
+                    cmdLine.withNextEntry((v, a, s) -> table.set(v));
                     break;
                 }
                 default: {
                     if (arg.isOption()) {
-                        fillOptionLast(commandLine, otherOptions);
+                        fillOptionLast(cmdLine, otherOptions);
                     } else {
                         eq.setNewName(arg.toString());
                     }
@@ -48,15 +48,15 @@ public class RenameTableCmd<C extends NdbConfig> extends NdbCmd<C> {
         }
 
         if (table.isBlank()) {
-            commandLine.throwMissingArgumentByName("--entity");
+            cmdLine.throwMissingArgumentByName("--entity");
         }
         if (NBlankable.isBlank(otherOptions.getDatabaseName())) {
-            commandLine.throwMissingArgumentByName("--dbname");
+            cmdLine.throwMissingArgumentByName("--dbname");
         }
         C options = loadFromName(name, otherOptions);
         getSupport().revalidateOptions(options);
         if (NBlankable.isBlank(otherOptions.getDatabaseName())) {
-            commandLine.throwMissingArgumentByName("--dbname");
+            cmdLine.throwMissingArgumentByName("--dbname");
         }
         runRenameTable(eq, options, session);
     }

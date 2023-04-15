@@ -17,8 +17,8 @@ import net.thevpc.nuts.text.NText;
  */
 public interface NWorkspaceExt {
 
-    static NWorkspaceExt of(NSession ws) {
-        return of(ws.getWorkspace());
+    static NWorkspaceExt of(NSession session) {
+        return of(session.getWorkspace());
     }
 
     static NWorkspaceExt of(NWorkspace ws) {

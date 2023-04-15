@@ -28,8 +28,8 @@ public abstract class AbstractNUninstallCommand extends NWorkspaceCommandBase<NU
     private List<String> args;
     private final List<NId> ids = new ArrayList<>();
 
-    public AbstractNUninstallCommand(NSession ws) {
-        super(ws, "uninstall");
+    public AbstractNUninstallCommand(NSession session) {
+        super(session, "uninstall");
     }
 
     @Override

@@ -41,7 +41,7 @@ import java.util.Map;
  */
 public interface NArtifactCallBuilder extends Serializable, NComponent {
     static NArtifactCallBuilder of(NSession session) {
-       return NExtensions.of(session).createSupported(NArtifactCallBuilder.class);
+       return NExtensions.of(session).createComponent(NArtifactCallBuilder.class).get();
     }
 
     /**

@@ -38,7 +38,7 @@ public interface NApplicationExceptionHandler extends NComponent {
      * @return a new instance of {@code NApplicationExceptionHandler}
      */
     static NApplicationExceptionHandler of(NSession session) {
-       return NExtensions.of(session).createSupported(NApplicationExceptionHandler.class, true, session);
+       return NExtensions.of(session).createComponent(NApplicationExceptionHandler.class).get();
     }
 
     /**

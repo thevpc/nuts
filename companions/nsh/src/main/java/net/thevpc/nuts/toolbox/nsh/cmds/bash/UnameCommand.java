@@ -76,14 +76,14 @@ public class UnameCommand extends NShellBuiltinDefault {
     }
 
     @Override
-    protected void onCmdExec(NCmdLine commandLine, NShellExecutionContext context) {
+    protected void onCmdExec(NCmdLine cmdLine, NShellExecutionContext context) {
         Options config = context.getOptions();
-        NSession ws = context.getSession();
+        NSession session = context.getSession();
 
         Result rr = new Result();
-        rr.osDist = NEnvs.of(ws).getOsDist();
-        rr.os = NEnvs.of(ws).getOs();
-        rr.arch = NEnvs.of(ws).getArchFamily();
+        rr.osDist = NEnvs.of(session).getOsDist();
+        rr.os = NEnvs.of(session).getOs();
+        rr.arch = NEnvs.of(session).getArchFamily();
         if (!config.farch && !config.fos && !config.fdist) {
             config.farch = true;
             config.fos = true;
@@ -138,7 +138,7 @@ public class UnameCommand extends NShellBuiltinDefault {
     }
 
     @Override
-    protected boolean onCmdNextNonOption(NArg arg, NCmdLine commandLine, NShellExecutionContext context) {
-        return onCmdNextOption(arg, commandLine, context);
+    protected boolean onCmdNextNonOption(NArg arg, NCmdLine cmdLine, NShellExecutionContext context) {
+        return onCmdNextOption(arg, cmdLine, context);
     }
 }

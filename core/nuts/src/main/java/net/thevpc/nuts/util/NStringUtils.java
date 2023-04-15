@@ -121,6 +121,16 @@ public class NStringUtils {
         return null;
     }
 
+    public static String firstNonBlank(String a, String b) {
+        if (!NBlankable.isBlank(a)) {
+            return a;
+        }
+        if (!NBlankable.isBlank(b)) {
+            return b;
+        }
+        return null;
+    }
+
     public static String firstNonBlank(String... values) {
         return firstNonBlank(values == null ? null : Arrays.asList(values));
     }
@@ -205,7 +215,7 @@ public class NStringUtils {
     }
 
     public static String formatStringLiteral(String text, NQuoteType quoteType, NSupportMode condition, String escapeChars) {
-        if(text==null){
+        if (text == null) {
             return "null";
         }
         StringBuilder sb = new StringBuilder();

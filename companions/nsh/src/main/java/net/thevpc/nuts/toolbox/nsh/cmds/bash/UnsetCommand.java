@@ -48,27 +48,27 @@ public class UnsetCommand extends NShellBuiltinDefault {
     }
 
     @Override
-    protected boolean onCmdNextOption(NArg arg, NCmdLine commandLine, NShellExecutionContext context) {
+    protected boolean onCmdNextOption(NArg arg, NCmdLine cmdLine, NShellExecutionContext context) {
         Options options = context.getOptions();
         NSession session = context.getSession();
-        NArg aa = commandLine.peek().get(session);
+        NArg aa = cmdLine.peek().get(session);
         if (aa.isOption()) {
             if (aa.key().equals("-v")) {
-                commandLine.withNextFlag((v, a, s) -> options.fct= !v);
+                cmdLine.withNextFlag((v, a, s) -> options.fct= !v);
                 return true;
             } else if (aa.key().equals("-f")) {
-                commandLine.withNextFlag((v, a, s) -> options.fct= v);
+                cmdLine.withNextFlag((v, a, s) -> options.fct= v);
                 return true;
             }
         } else {
-            options.list.addAll(Arrays.asList(commandLine.toStringArray()));
-            commandLine.skipAll();
+            options.list.addAll(Arrays.asList(cmdLine.toStringArray()));
+            cmdLine.skipAll();
         }
         return false;
     }
 
     @Override
-    protected void onCmdExec(NCmdLine commandLine, NShellExecutionContext context) {
+    protected void onCmdExec(NCmdLine cmdLine, NShellExecutionContext context) {
         Options options = context.getOptions();
         if (options.fct) {
             for (String k : options.list) {
@@ -87,7 +87,7 @@ public class UnsetCommand extends NShellBuiltinDefault {
         Set<String> list = new HashSet<>();
     }
     @Override
-    protected boolean onCmdNextNonOption(NArg arg, NCmdLine commandLine, NShellExecutionContext context) {
-        return onCmdNextOption(arg, commandLine, context);
+    protected boolean onCmdNextNonOption(NArg arg, NCmdLine cmdLine, NShellExecutionContext context) {
+        return onCmdNextOption(arg, cmdLine, context);
     }
 }

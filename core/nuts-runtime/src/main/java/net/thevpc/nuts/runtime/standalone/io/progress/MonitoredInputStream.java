@@ -255,7 +255,7 @@ public class MonitoredInputStream extends InputStream implements NInputSource, I
             }
 
             @Override
-            public boolean configureFirst(NCmdLine commandLine) {
+            public boolean configureFirst(NCmdLine cmdLine) {
                 return false;
             }
         });

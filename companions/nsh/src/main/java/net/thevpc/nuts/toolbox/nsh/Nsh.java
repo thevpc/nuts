@@ -39,12 +39,12 @@ public class Nsh implements NApplication {
         log.level(Level.CONFIG).verb(NLogVerb.START).log(NMsg.ofPlain("[nsh] Installation..."));
         session.processAppCommandLine(new NCmdLineProcessor() {
             @Override
-            public void onCmdInitParsing(NCmdLine commandLine, NCmdLineContext context) {
-                commandLine.setCommandName("nsh --nuts-exec-mode=install");
+            public void onCmdInitParsing(NCmdLine cmdLine, NCmdLineContext context) {
+                cmdLine.setCommandName("nsh --nuts-exec-mode=install");
             }
 
             @Override
-            public void onCmdExec(NCmdLine commandLine, NCmdLineContext context) {
+            public void onCmdExec(NCmdLine cmdLine, NCmdLineContext context) {
                 if (session.isTrace() || session.isYes()) {
                     log.level(Level.CONFIG).verb(NLogVerb.INFO).log(NMsg.ofJ("[nsh] activating options trace={0} yes={1}", session.isTrace(), session.isYes()));
                 }

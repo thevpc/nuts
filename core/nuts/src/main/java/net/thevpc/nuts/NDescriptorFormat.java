@@ -37,7 +37,7 @@ import net.thevpc.nuts.spi.NComponent;
  */
 public interface NDescriptorFormat extends NFormat, NComponent {
     static NDescriptorFormat of(NSession session) {
-       return NExtensions.of(session).createSupported(NDescriptorFormat.class);
+       return NExtensions.of(session).createComponent(NDescriptorFormat.class).get();
     }
 
     /**

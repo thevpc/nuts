@@ -1,4 +1,5 @@
 import net.thevpc.nuts.toolbox.ndb.util.DbUrlString;
+import net.thevpc.nuts.util.NConnexionString;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -6,14 +7,16 @@ public class LoginServerPathTest {
 
     @Test
     public void tes1() {
-        check("user:password@server:1/12", new DbUrlString().setDbUser("user").setDbPassword("password").setDbServer("server").setDbPort(1).setDbPath("12"));
+        check("user:password@server:1/12", new DbUrlString()
+                .setDb(new NConnexionString().setUser("user").setPassword("password").setHost("server").setPort(String.valueOf(1)).setPath("12"))
+        );
         check("ssh:u:p@s:12/du:dp@ds:13", new DbUrlString()
-                .setSshUser("u").setSshPassword("p").setSshServer("s").setSshPort(12)
-                .setDbUser("du").setDbPassword("dp").setDbServer("ds").setDbPort(13)
+                .setSsh(new NConnexionString().setUser("u").setPassword("p").setHost("s").setPort("12"))
+                .setDb(new NConnexionString().setUser("du").setPassword("dp").setHost("ds").setPort("13"))
         );
         check("ssh:u@s/ds", new DbUrlString()
-                .setSshUser("u").setSshServer("s")
-                .setDbPath("ds")
+                .setSsh(new NConnexionString().setUser("u").setHost("s"))
+                .setDb(new NConnexionString().setPath("ds"))
         );
     }
 

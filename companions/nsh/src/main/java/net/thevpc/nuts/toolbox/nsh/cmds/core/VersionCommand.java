@@ -42,25 +42,25 @@ public class VersionCommand extends NShellBuiltinCore {
     }
 
     @Override
-    protected boolean onCmdNextOption(NArg arg, NCmdLine commandLine, NShellExecutionContext context) {
+    protected boolean onCmdNextOption(NArg arg, NCmdLine cmdLine, NShellExecutionContext context) {
         Options options = context.getOptions();
         if (options.version == null) {
             options.version = NVersionFormat.of(context.getSession());
         }
-        return options.version.configureFirst(commandLine);
+        return options.version.configureFirst(cmdLine);
     }
 
     @Override
-    protected boolean onCmdNextNonOption(NArg arg, NCmdLine commandLine, NShellExecutionContext context) {
+    protected boolean onCmdNextNonOption(NArg arg, NCmdLine cmdLine, NShellExecutionContext context) {
         Options options = context.getOptions();
         if (options.version == null) {
             options.version = NVersionFormat.of(context.getSession());
         }
-        return options.version.configureFirst(commandLine);
+        return options.version.configureFirst(cmdLine);
     }
 
     @Override
-    protected void onCmdExec(NCmdLine commandLine, NShellExecutionContext context) {
+    protected void onCmdExec(NCmdLine cmdLine, NShellExecutionContext context) {
         NSession session = context.getSession();
         Options options = context.getOptions();
         if (options.version == null) {

@@ -49,10 +49,10 @@ public class EnableCommand extends NShellBuiltinDefault {
     }
 
     @Override
-    protected boolean onCmdNextOption(NArg arg, NCmdLine commandLine, NShellExecutionContext context) {
+    protected boolean onCmdNextOption(NArg arg, NCmdLine cmdLine, NShellExecutionContext context) {
         Options options = context.getOptions();
         NSession session = context.getSession();
-        final NArg a = commandLine.peek().get(session);
+        final NArg a = cmdLine.peek().get(session);
         if (a.isOption()) {
             if (a.key().equals("--sort")) {
                 options.displayOptions.add(a.toString());
@@ -61,39 +61,39 @@ public class EnableCommand extends NShellBuiltinDefault {
         } else if (a.isOption()) {
             switch(a.key()) {
                 case "-a": {
-                    commandLine.withNextFlag((v, r, s) -> options.a = v);
+                    cmdLine.withNextFlag((v, r, s) -> options.a = v);
                     return true;
                 }
                 case "-d": {
-                    commandLine.withNextFlag((v, r, s) -> options.d = v);
+                    cmdLine.withNextFlag((v, r, s) -> options.d = v);
                     return true;
                 }
                 case "-n": {
-                    commandLine.withNextFlag((v, r, s) -> options.n = v);
+                    cmdLine.withNextFlag((v, r, s) -> options.n = v);
                     return true;
                 }
                 case "-p": {
-                    commandLine.withNextFlag((v, r, s) -> options.p = v);
+                    cmdLine.withNextFlag((v, r, s) -> options.p = v);
                     return true;
                 }
                 case "-s": {
-                    commandLine.withNextFlag((v, r, s) -> options.s = v);
+                    cmdLine.withNextFlag((v, r, s) -> options.s = v);
                     return true;
                 }
                 case "-f": {
-                    commandLine.withNextEntry((v, r, s) -> options.file = v);
+                    cmdLine.withNextEntry((v, r, s) -> options.file = v);
                     return true;
                 }
             }
         } else {
-            options.names.add(commandLine.next().flatMap(NLiteral::asString).get(session));
+            options.names.add(cmdLine.next().flatMap(NLiteral::asString).get(session));
             return true;
         }
         return false;
     }
 
     @Override
-    protected void onCmdExec(NCmdLine commandLine, NShellExecutionContext context) {
+    protected void onCmdExec(NCmdLine cmdLine, NShellExecutionContext context) {
         Options options = context.getOptions();
         if (options.p || options.names.isEmpty()) {
             Map<String, String> result = new LinkedHashMap<>();
@@ -150,7 +150,7 @@ public class EnableCommand extends NShellBuiltinDefault {
 
 
     @Override
-    protected boolean onCmdNextNonOption(NArg arg, NCmdLine commandLine, NShellExecutionContext context) {
-        return onCmdNextOption(arg, commandLine, context);
+    protected boolean onCmdNextNonOption(NArg arg, NCmdLine cmdLine, NShellExecutionContext context) {
+        return onCmdNextOption(arg, cmdLine, context);
     }
 }

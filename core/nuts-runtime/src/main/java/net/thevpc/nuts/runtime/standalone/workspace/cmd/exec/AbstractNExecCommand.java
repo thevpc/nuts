@@ -43,9 +43,10 @@ public abstract class AbstractNExecCommand extends NWorkspaceCommandBase<NExecCo
     private NPath redirectOutputFile;
     private NPath redirectInputFile;
     private long sleepMillis = 1000;
+    private String host;
 
-    public AbstractNExecCommand(NSession ws) {
-        super(ws, "exec");
+    public AbstractNExecCommand(NSession session) {
+        super(session, "exec");
     }
 
     @Override
@@ -532,6 +533,7 @@ public abstract class AbstractNExecCommand extends NWorkspaceCommandBase<NExecCo
             command = new ArrayList<>();
         }
         if (!command.isEmpty()) {
+            cmdLine.next();
             command.add(a.asString().get(getSession()));
             return true;
         }
@@ -610,6 +612,10 @@ public abstract class AbstractNExecCommand extends NWorkspaceCommandBase<NExecCo
                 if (enabled) {
                     getSession().setDry(val);
                 }
+                return true;
+            }
+            case "--host": {
+                cmdLine.withNextEntry((v, ar, s) -> this.setHost(v));
                 return true;
             }
             default: {
@@ -760,9 +766,18 @@ public abstract class AbstractNExecCommand extends NWorkspaceCommandBase<NExecCo
             }
 
             @Override
-            public boolean configureFirst(NCmdLine commandLine) {
+            public boolean configureFirst(NCmdLine cmdLine) {
                 return false;
             }
         });
+    }
+
+    public String getHost() {
+        return host;
+    }
+
+    public NExecCommand setHost(String host) {
+        this.host = host;
+        return this;
     }
 }

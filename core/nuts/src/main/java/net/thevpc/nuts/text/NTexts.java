@@ -38,7 +38,7 @@ import java.util.List;
  */
 public interface NTexts extends NComponent, NSessionProvider{
     static NTexts of(NSession session) {
-       return NExtensions.of(session).createSupported(NTexts.class);
+       return NExtensions.of(session).createComponent(NTexts.class).get();
     }
 
     NTexts setSession(NSession session);

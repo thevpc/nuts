@@ -46,7 +46,7 @@ import java.security.MessageDigest;
  */
 public interface NDigest extends NComponent, NSessionProvider {
     static NDigest of(NSession session) {
-       return NExtensions.of(session).createSupported(NDigest.class);
+       return NExtensions.of(session).createComponent(NDigest.class).get();
     }
 
     /**

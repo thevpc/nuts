@@ -37,7 +37,7 @@ import java.util.List;
  */
 public interface NUpdateCommand extends NWorkspaceCommand {
     static NUpdateCommand of(NSession session) {
-        return NExtensions.of(session).createSupported(NUpdateCommand.class);
+        return NExtensions.of(session).createComponent(NUpdateCommand.class).get();
     }
 
     NUpdateCommand removeId(NId id);

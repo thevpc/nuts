@@ -36,10 +36,9 @@ import java.util.Iterator;
 import java.util.function.Function;
 import java.util.stream.Stream;
 
-@NComponentScope(NComponentScopeType.WORKSPACE)
 public interface NStreams extends NComponent {
     static NStreams of(NSession session) {
-        return session.extensions().createSupported(NStreams.class, true, session);
+        return session.extensions().createComponent(NStreams.class).get();
     }
 
     <T> NStream<T> createStream(T[] str, Function<NSession, NElement> name);

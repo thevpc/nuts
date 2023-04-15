@@ -26,11 +26,11 @@ class NJLineCompleter implements Completer {
         NCmdLineAutoCompleteResolver autoCompleteResolver = nutsJLineTerminal.getAutoCompleteResolver();
         if (autoCompleteResolver != null) {
 
-            NCmdLine commandLine = NCmdLine.of(line.words());
+            NCmdLine cmdLine = NCmdLine.of(line.words());
             if (line.words().size() > 0) {
-                commandLine.setCommandName(line.words().get(0));
+                cmdLine.setCommandName(line.words().get(0));
             }
-            List<NArgCandidate> nArgCandidates = autoCompleteResolver.resolveCandidates(commandLine, line.wordIndex(), session);
+            List<NArgCandidate> nArgCandidates = autoCompleteResolver.resolveCandidates(cmdLine, line.wordIndex(), session);
             if (nArgCandidates != null) {
                 for (NArgCandidate cmdCandidate : nArgCandidates) {
                     if (cmdCandidate != null) {

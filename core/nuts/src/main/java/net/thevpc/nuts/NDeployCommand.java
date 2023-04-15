@@ -46,7 +46,7 @@ import java.util.List;
 public interface NDeployCommand extends NWorkspaceCommand {
 
     static NDeployCommand of(NSession session) {
-        return NExtensions.of(session).createSupported(NDeployCommand.class);
+        return NExtensions.of(session).createComponent(NDeployCommand.class).get();
     }
     /**
      * set content

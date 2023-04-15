@@ -753,9 +753,18 @@ public class DefaultNCp implements NCp {
         NAssert.requireNonNull(target, "target", getSession());
         NPath _target = asValidTargetPath();
         NPath _source0 = asValidSourcePath();
-        boolean _target_isPath = _target != null;
+        boolean _target_isLocalPath = false;
+        Path _localFile = null;
+        try{
+            if(_target!=null) {
+                _localFile = _target.toFile();
+            }
+            _target_isLocalPath=true;
+        }catch (Exception e){
+            // ignore
+        }
         boolean safe = options.contains(NPathOption.SAFE);
-        if (checker != null && !_target_isPath && !safe) {
+        if (checker != null && !_target_isLocalPath && !safe) {
             throw new NIllegalArgumentException(getSession(), NMsg.ofNtf("unsupported validation if neither safeCopy is armed nor path is defined"));
         }
         NMsg loggedSrc = _source.getInputMetaData().getMessage().orElse(NMsg.ofPlain("unknown-source"));
@@ -792,8 +801,8 @@ public class DefaultNCp implements NCp {
         try {
             if (safe) {
                 Path temp = null;
-                if (_target_isPath) {
-                    Path to = _target.toFile();
+                if (_target_isLocalPath) {
+                    Path to = _localFile;
                     NPath.of(to, session).mkParentDirs();
                     temp = to.resolveSibling(to.getFileName() + "~");
                 } else {
@@ -809,14 +818,14 @@ public class DefaultNCp implements NCp {
                         }
                     }
                     _validate(temp);
-                    if (_target_isPath) {
+                    if (_target_isLocalPath) {
                         try {
-                            Files.move(temp, _target.toFile(), StandardCopyOption.REPLACE_EXISTING);
+                            Files.move(temp, _localFile, StandardCopyOption.REPLACE_EXISTING);
                         } catch (FileSystemException e) {
                             // happens when the file is used by another process
                             // in that case try to check if the file needs to be copied
                             //if not, return safely!
-                            if (CoreIOUtils.compareContent(temp, _target.toFile(), session)) {
+                            if (CoreIOUtils.compareContent(temp, _localFile, session)) {
                                 //cannot write the file (used by another process), but no pbm because does not need to
                                 return;
                             }
@@ -834,8 +843,8 @@ public class DefaultNCp implements NCp {
                     }
                 }
             } else {
-                if (_target_isPath) {
-                    Path to = _target.toFile();
+                if (_target_isLocalPath) {
+                    Path to = _localFile;
                     NPath.of(to, session).mkParentDirs();
                     if (_source0 != null) {
                         copy(_source0.toFile(), to, new HashSet<>(Collections.singletonList(NPathOption.REPLACE_EXISTING)));

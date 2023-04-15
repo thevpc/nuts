@@ -17,11 +17,11 @@ import java.util.logging.Level;
 public class DefaultNLogs implements NLogs {
 
     private final DefaultNLogModel model;
-    private final NSession ws;
+    private final NSession session;
 
-    public DefaultNLogs(NSession ws) {
-        this.ws = ws;
-        this.model = ((NWorkspaceExt) (ws.getWorkspace())).getModel().logModel;
+    public DefaultNLogs(NSession session) {
+        this.session = session;
+        this.model = ((NWorkspaceExt) (session.getWorkspace())).getModel().logModel;
     }
 
     @Override

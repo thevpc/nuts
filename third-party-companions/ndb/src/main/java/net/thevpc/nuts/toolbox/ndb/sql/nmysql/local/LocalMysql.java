@@ -27,8 +27,8 @@ package net.thevpc.nuts.toolbox.ndb.sql.nmysql.local;
 //    private NSession session;
 //    private Path sharedConfigFolder;
 //
-//    public LocalMysql(NSession ws) {
-//        this.setContext(ws);
+//    public LocalMysql(NSession session) {
+//        this.setContext(session);
 //        sharedConfigFolder = Paths.get(getContext().getVersionFolderFolder(NutsStoreLocation.CONFIG, NMySqlConfigVersions.CURRENT));
 //    }
 //

@@ -11,8 +11,8 @@ public abstract class AbstractNFetchCommand extends DefaultNQueryBaseOptions<NFe
     private NId id;
 //    protected Boolean installedOrNot;
 
-    public AbstractNFetchCommand(NSession ws) {
-        super(ws, "fetch");
+    public AbstractNFetchCommand(NSession session) {
+        super(session, "fetch");
         setFailFast(true);
     }
 

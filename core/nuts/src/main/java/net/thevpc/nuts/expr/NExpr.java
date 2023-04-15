@@ -35,7 +35,7 @@ import net.thevpc.nuts.spi.NComponent;
  */
 public interface NExpr extends NComponent, NSessionProvider {
     static NExpr of(NSession session) {
-        return session.extensions().createSupported(NExpr.class);
+        return session.extensions().createComponent(NExpr.class).get();
     }
 
     NExprDeclarations newDeclarations(boolean includeDefaults);

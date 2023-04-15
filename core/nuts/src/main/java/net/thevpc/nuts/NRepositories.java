@@ -33,7 +33,7 @@ import java.util.List;
  */
 public interface NRepositories extends NComponent, NSessionProvider {
     static NRepositories of(NSession session) {
-        return NExtensions.of(session).createSupported(NRepositories.class);
+        return NExtensions.of(session).createComponent(NRepositories.class).get();
     }
 
     NRepositoryFilters filter();

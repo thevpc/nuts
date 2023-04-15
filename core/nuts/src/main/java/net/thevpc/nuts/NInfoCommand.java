@@ -40,7 +40,7 @@ import java.util.*;
 public interface NInfoCommand extends NFormat, NWorkspaceCommand {
 
     static NInfoCommand of(NSession session) {
-       return NExtensions.of(session).createSupported(NInfoCommand.class);
+       return NExtensions.of(session).createComponent(NInfoCommand.class).get();
     }
 
     /**

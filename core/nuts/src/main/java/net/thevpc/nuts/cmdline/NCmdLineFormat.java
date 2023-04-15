@@ -40,7 +40,7 @@ import net.thevpc.nuts.NShellFamily;
 public interface NCmdLineFormat extends NFormat {
 
     static NCmdLineFormat of(NSession session) {
-       return NExtensions.of(session).createSupported(NCmdLineFormat.class);
+       return NExtensions.of(session).createComponent(NCmdLineFormat.class).get();
     }
 
     /**

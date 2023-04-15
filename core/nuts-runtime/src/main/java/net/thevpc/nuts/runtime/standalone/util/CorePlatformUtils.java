@@ -248,13 +248,13 @@ public class CorePlatformUtils {
     /**
      * https://en.wikipedia.org/wiki/List_of_Microsoft_Windows_versions
      *
-     * @param ws workspace
+     * @param session workspace
      * @return platform os name
      */
-    public static String getPlatformOs(NSession ws) {
+    public static String getPlatformOs(NSession session) {
         String property = System.getProperty("os.name").toLowerCase();
         if (property.startsWith("linux")) {
-            return buildUnixOsNameAndVersion("linux", ws);
+            return buildUnixOsNameAndVersion("linux", session);
         }
         if (property.startsWith("win")) {
             if (property.startsWith("windows 10")) {
@@ -284,31 +284,31 @@ public class CorePlatformUtils {
             if (property.startsWith("mac os x") || property.startsWith("macosx")) {
                 return "macos#10";
             }
-            return buildUnixOsNameAndVersion("macos", ws);
+            return buildUnixOsNameAndVersion("macos", session);
         }
         if (property.startsWith("sunos") || property.startsWith("solaris")) {
-            return buildUnixOsNameAndVersion("sunos", ws);
+            return buildUnixOsNameAndVersion("sunos", session);
         }
         if (property.startsWith("zos")) {
-            return buildUnixOsNameAndVersion("zos", ws);
+            return buildUnixOsNameAndVersion("zos", session);
         }
         if (property.startsWith("freebsd")) {
-            return buildUnixOsNameAndVersion("freebsd", ws);
+            return buildUnixOsNameAndVersion("freebsd", session);
         }
         if (property.startsWith("openbsd")) {
-            return buildUnixOsNameAndVersion("openbsd", ws);
+            return buildUnixOsNameAndVersion("openbsd", session);
         }
         if (property.startsWith("netbsd")) {
-            return buildUnixOsNameAndVersion("netbsd", ws);
+            return buildUnixOsNameAndVersion("netbsd", session);
         }
         if (property.startsWith("aix")) {
-            return buildUnixOsNameAndVersion("aix", ws);
+            return buildUnixOsNameAndVersion("aix", session);
         }
         if (property.startsWith("hpux")) {
-            return buildUnixOsNameAndVersion("hpux", ws);
+            return buildUnixOsNameAndVersion("hpux", session);
         }
         if (property.startsWith("os400") && property.length() <= 5 || !Character.isDigit(property.charAt(5))) {
-            return buildUnixOsNameAndVersion("os400", ws);
+            return buildUnixOsNameAndVersion("os400", session);
         }
         return "unknown";
 //        return property;

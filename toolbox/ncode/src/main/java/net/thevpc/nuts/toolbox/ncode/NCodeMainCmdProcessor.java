@@ -31,24 +31,24 @@ class NCodeMainCmdProcessor implements NCmdLineProcessor {
     }
 
     @Override
-    public void onCmdInitParsing(NCmdLine commandLine, NCmdLineContext context) {
-        commandLine.setExpandSimpleOptions(true);
+    public void onCmdInitParsing(NCmdLine cmdLine, NCmdLineContext context) {
+        cmdLine.setExpandSimpleOptions(true);
     }
 
     @Override
-    public boolean onCmdNextOption(NArg option, NCmdLine commandLine, NCmdLineContext context) {
+    public boolean onCmdNextOption(NArg option, NCmdLine cmdLine, NCmdLineContext context) {
         switch (option.getStringKey().get(session)) {
             case "-i": {
-                option = commandLine.nextFlag().get(session);
+                option = cmdLine.nextFlag().get(session);
                 caseInsensitive = option.getBooleanValue().get(session);
                 return true;
             }
             case "-t": {
-                typeComparators.add(comp(commandLine.nextEntry().get(session).getStringValue().get(session)));
+                typeComparators.add(comp(cmdLine.nextEntry().get(session).getStringValue().get(session)));
                 return true;
             }
             case "-f": {
-                fileComparators.add(comp(commandLine.nextEntry().get(session).getStringValue().get(session)));
+                fileComparators.add(comp(cmdLine.nextEntry().get(session).getStringValue().get(session)));
                 return true;
             }
         }
@@ -75,18 +75,18 @@ class NCodeMainCmdProcessor implements NCmdLineProcessor {
     }
 
     @Override
-    public boolean onCmdNextNonOption(NArg nonOption, NCmdLine commandLine, NCmdLineContext context) {
-        paths.add(commandLine.next().flatMap(NLiteral::asString).get(session));
+    public boolean onCmdNextNonOption(NArg nonOption, NCmdLine cmdLine, NCmdLineContext context) {
+        paths.add(cmdLine.next().flatMap(NLiteral::asString).get(session));
         return true;
     }
 
     @Override
-    public void onCmdExec(NCmdLine commandLine, NCmdLineContext context) {
+    public void onCmdExec(NCmdLine cmdLine, NCmdLineContext context) {
         if (paths.isEmpty()) {
             paths.add(".");
         }
         if(typeComparators.isEmpty() && fileComparators.isEmpty()){
-            commandLine.throwMissingArgumentByName("filter");
+            cmdLine.throwMissingArgumentByName("filter");
         }
         List<Object> results=new ArrayList<>();
         if(!typeComparators.isEmpty()) {

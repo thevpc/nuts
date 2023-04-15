@@ -147,12 +147,12 @@ public class DefaultNSession implements Cloneable, NSession {
      *
      * @param skipUnsupported when true, all unsupported options are skipped
      *                        silently
-     * @param commandLine     arguments to configure with
+     * @param cmdLine         arguments to configure with
      * @return {@code this} instance
      */
     @Override
-    public final boolean configure(boolean skipUnsupported, NCmdLine commandLine) {
-        return NConfigurableHelper.configure(this, this, skipUnsupported, commandLine);
+    public final boolean configure(boolean skipUnsupported, NCmdLine cmdLine) {
+        return NConfigurableHelper.configure(this, this, skipUnsupported, cmdLine);
     }
 
     @Override
@@ -1001,6 +1001,11 @@ public class DefaultNSession implements Cloneable, NSession {
     }
 
     @Override
+    public Object getWorkspaceProperty(String key) {
+        return ((NWorkspaceExt) ws).getModel().properties.getProperty(key);
+    }
+
+    @Override
     public NConfirmationMode getConfirm() {
         NConfirmationMode cm = (confirm != null) ? confirm : NBootManager.of(this).getBootOptions().getConfirm().orNull();
         if (isBot()) {
@@ -1571,10 +1576,20 @@ public class DefaultNSession implements Cloneable, NSession {
     }
 
     @Override
-    public void configureLast(NCmdLine commandLine) {
-        if (!configureFirst(commandLine)) {
-            commandLine.throwUnexpectedArgument();
+    public void configureLast(NCmdLine cmdLine) {
+        if (!configureFirst(cmdLine)) {
+            cmdLine.throwUnexpectedArgument();
         }
+    }
+
+    public <T> T getOrComputeWorkspaceProperty(String name, Function<NSession, T> supplier) {
+        Object v = getWorkspaceProperty(name);
+        if (v != null) {
+            return (T) v;
+        }
+        v = supplier.apply(this);
+        setRefProperty(name, v);
+        return (T) v;
     }
 
     public <T> T getOrComputeRefProperty(String name, Function<NSession, T> supplier) {
@@ -1587,6 +1602,16 @@ public class DefaultNSession implements Cloneable, NSession {
         return (T) v;
     }
 
+    @Override
+    public <T> T getOrComputeProperty(String name, Function<NSession, T> supplier) {
+        Object v = getProperty(name);
+        if (v != null) {
+            return (T) v;
+        }
+        v = supplier.apply(this);
+        setRefProperty(name, v);
+        return (T) v;
+    }
 
     @Override
     public NSession prepareApplication(String[] args0, Class appClass, String storeId, NClock startTime) {

@@ -49,37 +49,37 @@ public class SshCommand extends NShellBuiltinDefault {
     }
 
     @Override
-    protected boolean onCmdNextOption(NArg arg, NCmdLine commandLine, NShellExecutionContext context) {
+    protected boolean onCmdNextOption(NArg arg, NCmdLine cmdLine, NShellExecutionContext context) {
         Options o = context.getOptions();
         NArg a;
         NSession session = context.getSession();
         if (!o.cmd.isEmpty()) {
-            o.cmd.add(commandLine.next().flatMap(NLiteral::asString).get(session));
+            o.cmd.add(cmdLine.next().flatMap(NLiteral::asString).get(session));
             return true;
-        } else if (commandLine.peek().get(session).isNonOption()) {
+        } else if (cmdLine.peek().get(session).isNonOption()) {
             if (o.address == null) {
-                o.address = commandLine.next().flatMap(NLiteral::asString).get(session);
+                o.address = cmdLine.next().flatMap(NLiteral::asString).get(session);
             } else {
-                o.cmd.add(commandLine.next().flatMap(NLiteral::asString).get(session));
+                o.cmd.add(cmdLine.next().flatMap(NLiteral::asString).get(session));
             }
             return true;
-        } else if ((a = commandLine.next("--nuts").orNull()) != null) {
+        } else if ((a = cmdLine.next("--nuts").orNull()) != null) {
             if (o.acceptDashNuts) {
                 o.invokeNuts = true;
             } else {
                 o.cmd.add(a.asString().get(session));
             }
             return true;
-        } else if ((a = commandLine.next("--nuts-jre").orNull()) != null) {
+        } else if ((a = cmdLine.next("--nuts-jre").orNull()) != null) {
             if (o.acceptDashNuts) {
                 o.nutsJre = a.getStringValue().get(session);
             } else {
                 o.cmd.add(a.asString().get(session));
             }
             return true;
-        } else if (o.address == null || commandLine.peek().get(session).isNonOption()) {
+        } else if (o.address == null || cmdLine.peek().get(session).isNonOption()) {
             o.acceptDashNuts = false;
-            o.cmd.add(commandLine.next().flatMap(NLiteral::asString).get(session));
+            o.cmd.add(cmdLine.next().flatMap(NLiteral::asString).get(session));
             return true;
         }
 
@@ -87,7 +87,7 @@ public class SshCommand extends NShellBuiltinDefault {
     }
 
     @Override
-    protected void onCmdExec(NCmdLine commandLine, NShellExecutionContext context) {
+    protected void onCmdExec(NCmdLine cmdLine, NShellExecutionContext context) {
         Options o = context.getOptions();
         // address --nuts [nuts options] args
         NSession session = context.getSession();
@@ -160,7 +160,7 @@ public class SshCommand extends NShellBuiltinDefault {
     }
 
     @Override
-    protected boolean onCmdNextNonOption(NArg arg, NCmdLine commandLine, NShellExecutionContext context) {
-        return onCmdNextOption(arg, commandLine, context);
+    protected boolean onCmdNextNonOption(NArg arg, NCmdLine cmdLine, NShellExecutionContext context) {
+        return onCmdNextOption(arg, cmdLine, context);
     }
 }

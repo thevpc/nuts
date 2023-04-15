@@ -48,13 +48,13 @@ public class SourceCommand extends NShellBuiltinDefault {
     }
 
     @Override
-    protected boolean onCmdNextOption(NArg arg, NCmdLine commandLine, NShellExecutionContext context) {
+    protected boolean onCmdNextOption(NArg arg, NCmdLine cmdLine, NShellExecutionContext context) {
         Options options = context.getOptions();
         NSession session = context.getSession();
-        final NArg a = commandLine.peek().get(session);
+        final NArg a = cmdLine.peek().get(session);
         if (!a.isOption()) {
-            options.args.addAll(Arrays.asList(commandLine.toStringArray()));
-            commandLine.skipAll();
+            options.args.addAll(Arrays.asList(cmdLine.toStringArray()));
+            cmdLine.skipAll();
             return true;
         } else {
             return false;
@@ -62,7 +62,7 @@ public class SourceCommand extends NShellBuiltinDefault {
     }
 
     @Override
-    protected void onCmdExec(NCmdLine commandLine, NShellExecutionContext context) {
+    protected void onCmdExec(NCmdLine cmdLine, NShellExecutionContext context) {
         Options options = context.getOptions();
         NSession session = context.getSession();
         if (options.args.isEmpty()) {
@@ -97,7 +97,7 @@ public class SourceCommand extends NShellBuiltinDefault {
     }
 
     @Override
-    protected boolean onCmdNextNonOption(NArg arg, NCmdLine commandLine, NShellExecutionContext context) {
-        return onCmdNextOption(arg, commandLine, context);
+    protected boolean onCmdNextNonOption(NArg arg, NCmdLine cmdLine, NShellExecutionContext context) {
+        return onCmdNextOption(arg, cmdLine, context);
     }
 }

@@ -37,10 +37,9 @@ import java.util.List;
  * @author thevpc
  * @app.category Base
  */
-@NComponentScope(NComponentScopeType.SESSION)
 public interface NDescriptorFilters extends NTypedFilters<NDescriptorFilter> {
     static NDescriptorFilters of(NSession session) {
-       return NExtensions.of(session).createSupported(NDescriptorFilters.class);
+       return NExtensions.of(session).createComponent(NDescriptorFilters.class).get();
     }
 
     NDescriptorFilter byPackaging(String... values);

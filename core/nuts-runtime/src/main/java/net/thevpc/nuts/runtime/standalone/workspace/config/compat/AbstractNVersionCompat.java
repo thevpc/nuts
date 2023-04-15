@@ -4,18 +4,18 @@ import net.thevpc.nuts.NSession;
 import net.thevpc.nuts.NVersion;
 
 public abstract class AbstractNVersionCompat implements NVersionCompat {
-    private NSession ws;
+    private NSession session;
     private NVersion apiVersion;
     private int apiOrdinalVersion;
 
-    public AbstractNVersionCompat(NSession ws, NVersion apiVersion, int apiOrdinalVersion) {
-        this.ws = ws;
+    public AbstractNVersionCompat(NSession session, NVersion apiVersion, int apiOrdinalVersion) {
+        this.session = session;
         this.apiVersion = apiVersion;
         this.apiOrdinalVersion = apiOrdinalVersion;
     }
 
     public NSession getSession() {
-        return ws;
+        return session;
     }
 
     public NVersion getApiVersion() {

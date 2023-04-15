@@ -58,28 +58,28 @@ public class CatCommand extends NShellBuiltinDefault {
     }
 
     @Override
-    protected boolean onCmdNextOption(NArg arg, NCmdLine commandLine, NShellExecutionContext context) {
+    protected boolean onCmdNextOption(NArg arg, NCmdLine cmdLine, NShellExecutionContext context) {
         NSession session = context.getSession();
         Options options = context.getOptions();
         NArg a;
 
-        if (commandLine.next("-") != null) {
+        if (cmdLine.next("-") != null) {
             options.files.add(null);
             return true;
-        } else if ((a = commandLine.nextFlag("-n", "--number").orNull()) != null) {
+        } else if ((a = cmdLine.nextFlag("-n", "--number").orNull()) != null) {
             options.n = a.getBooleanValue().get(session);
             return true;
-        } else if ((a = commandLine.nextFlag("-t", "--show-tabs").orNull()) != null) {
+        } else if ((a = cmdLine.nextFlag("-t", "--show-tabs").orNull()) != null) {
             options.T = a.getBooleanValue().get(session);
             return true;
-        } else if ((a = commandLine.nextFlag("-E", "--show-ends").orNull()) != null) {
+        } else if ((a = cmdLine.nextFlag("-E", "--show-ends").orNull()) != null) {
             options.E = a.getBooleanValue().get(session);
             return true;
-        } else if ((a = commandLine.next("-H", "--highlight", "--highlighter").orNull()) != null) {
+        } else if ((a = cmdLine.next("-H", "--highlight", "--highlighter").orNull()) != null) {
             options.highlighter = NStringUtils.trim(a.getStringValue().get(session));
             return true;
-        } else if (!commandLine.isNextOption()) {
-            String path = commandLine.next().flatMap(NLiteral::asString).get(session);
+        } else if (!cmdLine.isNextOption()) {
+            String path = cmdLine.next().flatMap(NLiteral::asString).get(session);
             options.files.add(new FileInfo(NPath.of(path, session), options.highlighter));
             return true;
         }
@@ -87,12 +87,12 @@ public class CatCommand extends NShellBuiltinDefault {
     }
 
     @Override
-    protected boolean onCmdNextNonOption(NArg arg, NCmdLine commandLine, NShellExecutionContext context) {
-        return onCmdNextOption(arg, commandLine, context);
+    protected boolean onCmdNextNonOption(NArg arg, NCmdLine cmdLine, NShellExecutionContext context) {
+        return onCmdNextOption(arg, cmdLine, context);
     }
 
     @Override
-    protected void onCmdExec(NCmdLine commandLine, NShellExecutionContext context) {
+    protected void onCmdExec(NCmdLine cmdLine, NShellExecutionContext context) {
         Options options = context.getOptions();
         if (options.files.isEmpty()) {
             options.files.add(null);

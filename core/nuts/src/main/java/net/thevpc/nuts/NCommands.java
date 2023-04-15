@@ -38,7 +38,7 @@ import java.util.List;
  */
 public interface NCommands extends NComponent,NSessionProvider {
     static NCommands of(NSession session) {
-        return NExtensions.of(session).createSupported(NCommands.class);
+        return NExtensions.of(session).createComponent(NCommands.class).get();
     }
 
     /**

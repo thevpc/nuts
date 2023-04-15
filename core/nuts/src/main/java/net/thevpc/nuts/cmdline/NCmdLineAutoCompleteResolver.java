@@ -40,10 +40,10 @@ public interface NCmdLineAutoCompleteResolver {
     /**
      * resolve possible candidates
      *
-     * @param commandLine command line
+     * @param cmdLine command line
      * @param wordIndex   cursor index where to complete
      * @param session     session
      * @return possible candidates
      */
-    List<NArgCandidate> resolveCandidates(NCmdLine commandLine, int wordIndex, NSession session);
+    List<NArgCandidate> resolveCandidates(NCmdLine cmdLine, int wordIndex, NSession session);
 }

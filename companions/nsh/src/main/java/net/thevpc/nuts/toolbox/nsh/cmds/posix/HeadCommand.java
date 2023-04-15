@@ -51,16 +51,16 @@ public class HeadCommand extends NShellBuiltinDefault {
     }
 
     @Override
-    protected boolean onCmdNextOption(NArg arg, NCmdLine commandLine, NShellExecutionContext context) {
+    protected boolean onCmdNextOption(NArg arg, NCmdLine cmdLine, NShellExecutionContext context) {
         Options options = context.getOptions();
         NSession session = context.getSession();
-        NArg a = commandLine.peek().get(session);
+        NArg a = cmdLine.peek().get(session);
         if (a.isOption() && a.getKey().isInt()) {
             options.max = a.getKey().asInt().get(session);
-            commandLine.skip();
+            cmdLine.skip();
             return true;
         } else if (!a.isOption()) {
-            String path = commandLine.next().flatMap(NLiteral::asString).get(session);
+            String path = cmdLine.next().flatMap(NLiteral::asString).get(session);
             String file = NPath.of(path, session).toAbsolute(context.getDirectory()).toString();
             options.files.add(file);
             return true;
@@ -69,11 +69,11 @@ public class HeadCommand extends NShellBuiltinDefault {
     }
 
     @Override
-    protected void onCmdExec(NCmdLine commandLine, NShellExecutionContext context) {
+    protected void onCmdExec(NCmdLine cmdLine, NShellExecutionContext context) {
         Options options = context.getOptions();
         NSession session = context.getSession();
         if (options.files.isEmpty()) {
-            commandLine.throwMissingArgument();
+            cmdLine.throwMissingArgument();
         }
         for (String file : options.files) {
             head(file, options.max, context);
@@ -109,7 +109,7 @@ public class HeadCommand extends NShellBuiltinDefault {
         List<String> files = new ArrayList<>();
     }
     @Override
-    protected boolean onCmdNextNonOption(NArg arg, NCmdLine commandLine, NShellExecutionContext context) {
-        return onCmdNextOption(arg, commandLine, context);
+    protected boolean onCmdNextNonOption(NArg arg, NCmdLine cmdLine, NShellExecutionContext context) {
+        return onCmdNextOption(arg, cmdLine, context);
     }
 }

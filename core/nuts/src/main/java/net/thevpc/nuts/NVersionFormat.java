@@ -37,7 +37,7 @@ import java.util.Map;
 public interface NVersionFormat extends NFormat, NComponent {
 
     static NVersionFormat of(NSession session) {
-       return NExtensions.of(session).createSupported(NVersionFormat.class);
+       return NExtensions.of(session).createComponent(NVersionFormat.class).get();
     }
 
     /**

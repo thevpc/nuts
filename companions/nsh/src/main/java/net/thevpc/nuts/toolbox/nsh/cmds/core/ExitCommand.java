@@ -46,16 +46,16 @@ public class ExitCommand extends NShellBuiltinCore {
     }
 
     @Override
-    protected boolean onCmdNextOption(NArg arg, NCmdLine commandLine, NShellExecutionContext context) {
+    protected boolean onCmdNextOption(NArg arg, NCmdLine cmdLine, NShellExecutionContext context) {
         return false;
     }
 
     @Override
-    protected boolean onCmdNextNonOption(NArg arg, NCmdLine commandLine, NShellExecutionContext context) {
+    protected boolean onCmdNextNonOption(NArg arg, NCmdLine cmdLine, NShellExecutionContext context) {
         Options options = context.getOptions();
         NSession session = context.getSession();
         if (arg.isInt() && arg.asInt().get(session) > 0) {
-            arg = commandLine.next().get();
+            arg = cmdLine.next().get();
             options.code = arg.asInt().get(session);
             return true;
         }
@@ -63,7 +63,7 @@ public class ExitCommand extends NShellBuiltinCore {
     }
 
     @Override
-    protected void onCmdExec(NCmdLine commandLine, NShellExecutionContext context) {
+    protected void onCmdExec(NCmdLine cmdLine, NShellExecutionContext context) {
         Options options = context.getOptions();
         throw new NShellQuitException(context.getSession(), options.code);
     }

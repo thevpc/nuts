@@ -61,7 +61,7 @@ import java.util.Set;
  */
 public interface NCp extends NComponent,NSessionProvider {
     static NCp of(NSession session) {
-       return NExtensions.of(session).createSupported(NCp.class);
+       return NExtensions.of(session).createComponent(NCp.class).get();
     }
 
     /**

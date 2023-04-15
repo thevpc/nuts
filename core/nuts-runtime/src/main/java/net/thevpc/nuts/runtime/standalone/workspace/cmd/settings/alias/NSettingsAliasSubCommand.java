@@ -168,7 +168,7 @@ public class NSettingsAliasSubCommand extends AbstractNSettingsSubCommand {
             this.executionOptions = executionOptions;
         }
 
-        public AliasInfo(NCustomCommand a, NSession ws) {
+        public AliasInfo(NCustomCommand a, NSession session) {
             name = a.getName();
             command = NCmdLine.of(a.getCommand()).toString();
             executionOptions = NCmdLine.of(a.getExecutorOptions()).toString();

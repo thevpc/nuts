@@ -52,8 +52,8 @@ public abstract class AbstractNDeployRepositoryCommand extends NRepositoryComman
     }
 
     @Override
-    public boolean configureFirst(NCmdLine cmd) {
-        return super.configureFirst(cmd);
+    public boolean configureFirst(NCmdLine cmdLine) {
+        return super.configureFirst(cmdLine);
     }
 
     @Override

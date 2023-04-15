@@ -68,9 +68,9 @@ public class CoreFilterUtils {
     }
 
     public static <T extends NFilter> T[]
-    getTopLevelFilters(NFilter idFilter, Class<T> clazz, NSession ws) {
+    getTopLevelFilters(NFilter idFilter, Class<T> clazz, NSession session) {
         return getTopLevelFilters(idFilter).stream()
-                .map(x -> NFilters.of(ws).as(clazz, x))
+                .map(x -> NFilters.of(session).as(clazz, x))
                 .toArray(value -> (T[]) Array.newInstance(clazz, value));
     }
 
@@ -85,9 +85,9 @@ public class CoreFilterUtils {
     }
 
     public static NIdFilter idFilterOf(Map<String, String> map, NIdFilter idFilter, NDescriptorFilter
-            descriptorFilter, NSession ws) {
-        return NIdFilters.of(ws).nonnull(idFilter).and(
-                CoreFilterUtils.createNutsDescriptorFilter(map, ws).and(descriptorFilter).to(NIdFilter.class)
+            descriptorFilter, NSession session) {
+        return NIdFilters.of(session).nonnull(idFilter).and(
+                CoreFilterUtils.createNutsDescriptorFilter(map, session).and(descriptorFilter).to(NIdFilter.class)
         );
     }
 
@@ -103,14 +103,14 @@ public class CoreFilterUtils {
                 ;
     }
 
-    public static NDescriptorFilter createNutsDescriptorFilter(Map<String, String> faceMap, NSession ws) {
+    public static NDescriptorFilter createNutsDescriptorFilter(Map<String, String> faceMap, NSession session) {
         return createNutsDescriptorFilter(
                 faceMap == null ? null : faceMap.get(NConstants.IdProperties.ARCH),
                 faceMap == null ? null : faceMap.get(NConstants.IdProperties.OS),
                 faceMap == null ? null : faceMap.get(NConstants.IdProperties.OS_DIST),
                 faceMap == null ? null : faceMap.get(NConstants.IdProperties.PLATFORM),
                 faceMap == null ? null : faceMap.get(NConstants.IdProperties.DESKTOP),
-                ws);
+                session);
     }
 
     public static NPredicate<NId> createFilter(NIdFilter t, NSession session) {
@@ -570,9 +570,9 @@ public class CoreFilterUtils {
         return m;
     }
 
-    public static <T extends NFilter> T simplifyFilterOr(NSession ws, Class<T> cls, T base, NFilter... all) {
+    public static <T extends NFilter> T simplifyFilterOr(NSession session, Class<T> cls, T base, NFilter... all) {
         if (all.length == 0) {
-            return NFilters.of(ws).always(cls);
+            return NFilters.of(session).always(cls);
         }
         if (all.length == 1) {
             return (T) all[0].simplify();
@@ -585,7 +585,7 @@ public class CoreFilterUtils {
             if (t2 != null) {
                 switch (t2.getFilterOp()) {
                     case TRUE: {
-                        return NFilters.of(ws).always(cls);
+                        return NFilters.of(session).always(cls);
                     }
                     case FALSE: {
                         someFalse = true;
@@ -604,9 +604,9 @@ public class CoreFilterUtils {
         }
         if (all2.isEmpty()) {
             if (someFalse) {
-                return NFilters.of(ws).never(cls);
+                return NFilters.of(session).never(cls);
             }
-            return NFilters.of(ws).always(cls);
+            return NFilters.of(session).always(cls);
         }
         if (all2.size() == 1) {
             return all2.get(0);
@@ -614,12 +614,12 @@ public class CoreFilterUtils {
         if (!updates) {
             return base;
         }
-        return NFilters.of(ws).any(cls, all2.toArray((T[]) Array.newInstance(cls, 0)));
+        return NFilters.of(session).any(cls, all2.toArray((T[]) Array.newInstance(cls, 0)));
     }
 
-    public static <T extends NFilter> T simplifyFilterAnd(NSession ws, Class<T> cls, T base, NFilter... all) {
+    public static <T extends NFilter> T simplifyFilterAnd(NSession session, Class<T> cls, T base, NFilter... all) {
         if (all.length == 0) {
-            return NFilters.of(ws).always(cls);
+            return NFilters.of(session).always(cls);
         }
         if (all.length == 1) {
             return (T) all[0].simplify();
@@ -631,7 +631,7 @@ public class CoreFilterUtils {
             if (t2 != null) {
                 switch (t2.getFilterOp()) {
                     case FALSE: {
-                        return NFilters.of(ws).never(cls);
+                        return NFilters.of(session).never(cls);
                     }
                     case TRUE: {
                         updates = true;
@@ -649,7 +649,7 @@ public class CoreFilterUtils {
             }
         }
         if (all2.size() == 0) {
-            return NFilters.of(ws).always(cls);
+            return NFilters.of(session).always(cls);
         }
         if (all2.size() == 1) {
             return all2.get(0);
@@ -657,12 +657,12 @@ public class CoreFilterUtils {
         if (!updates) {
             return base;
         }
-        return NFilters.of(ws).all(cls, all2.toArray((T[]) Array.newInstance(cls, 0)));
+        return NFilters.of(session).all(cls, all2.toArray((T[]) Array.newInstance(cls, 0)));
     }
 
-    public static <T extends NFilter> T simplifyFilterNone(NSession ws, Class<T> cls, T base, NFilter... all) {
+    public static <T extends NFilter> T simplifyFilterNone(NSession session, Class<T> cls, T base, NFilter... all) {
         if (all.length == 0) {
-            return NFilters.of(ws).always(cls);
+            return NFilters.of(session).always(cls);
         }
         List<T> all2 = new ArrayList<>();
         boolean updates = false;
@@ -671,7 +671,7 @@ public class CoreFilterUtils {
             if (t2 != null) {
                 switch (t2.getFilterOp()) {
                     case TRUE: {
-                        return NFilters.of(ws).never(cls);
+                        return NFilters.of(session).never(cls);
                     }
                     case FALSE: {
                         updates = true;
@@ -689,12 +689,12 @@ public class CoreFilterUtils {
             }
         }
         if (all2.size() == 0) {
-            return NFilters.of(ws).always(cls);
+            return NFilters.of(session).always(cls);
         }
         if (!updates) {
             return base;
         }
-        return NFilters.of(ws).none(cls, all2.toArray((T[]) Array.newInstance(cls, 0)));
+        return NFilters.of(session).none(cls, all2.toArray((T[]) Array.newInstance(cls, 0)));
     }
 
     public static <T> T simplify(T any) {

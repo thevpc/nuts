@@ -100,38 +100,38 @@ public abstract class NShellBuiltinBase implements NShellBuiltin {
         }
     }
 
-    protected abstract boolean onCmdNextOption(NArg arg, NCmdLine commandLine, NShellExecutionContext context);
-    protected abstract boolean onCmdNextNonOption(NArg arg, NCmdLine commandLine, NShellExecutionContext context);
+    protected abstract boolean onCmdNextOption(NArg arg, NCmdLine cmdLine, NShellExecutionContext context);
+    protected abstract boolean onCmdNextNonOption(NArg arg, NCmdLine cmdLine, NShellExecutionContext context);
 
-    protected abstract void onCmdExec(NCmdLine commandLine, NShellExecutionContext context);
+    protected abstract void onCmdExec(NCmdLine cmdLine, NShellExecutionContext context);
 
     protected void execImpl(String[] args, NShellExecutionContext context) {
         boolean conf = false;
         int maxLoops = 1000;
         boolean robustMode = false;
         NSession session = context.getSession();
-        NCmdLine commandLine = NCmdLine.of(args).setCommandName(getName())
+        NCmdLine cmdLine = NCmdLine.of(args).setCommandName(getName())
                 .setAutoComplete(context.getShellContext().getAutoComplete());
         context.setOptions(optionsSupplier==null?null:optionsSupplier.get());
-        onCmdInitParsing(commandLine, context);
-        while (commandLine.hasNext()) {
-            NArg arg = commandLine.peek().get();
+        onCmdInitParsing(cmdLine, context);
+        while (cmdLine.hasNext()) {
+            NArg arg = cmdLine.peek().get();
             if (robustMode) {
-                String[] before = commandLine.toStringArray();
+                String[] before = cmdLine.toStringArray();
                 if(arg.isOption()){
-                    if (!this.onCmdNextOption(arg, commandLine, context)) {
-                        context.configureLast(commandLine);
+                    if (!this.onCmdNextOption(arg, cmdLine, context)) {
+                        context.configureLast(cmdLine);
                     } else {
                         conf = true;
                     }
                 }else{
-                    if (!this.onCmdNextNonOption(arg, commandLine, context)) {
-                        context.configureLast(commandLine);
+                    if (!this.onCmdNextNonOption(arg, cmdLine, context)) {
+                        context.configureLast(cmdLine);
                     } else {
                         conf = true;
                     }
                 }
-                String[] after = commandLine.toStringArray();
+                String[] after = cmdLine.toStringArray();
                 if (Arrays.equals(before, after)) {
                     throw new IllegalStateException("bad implementation of configureFirst in class " + getClass().getName() + "."
                             + " Commandline is not consumed; perhaps missing skip() class."
@@ -139,14 +139,14 @@ public abstract class NShellBuiltinBase implements NShellBuiltin {
                 }
             } else {
                 if(arg.isOption()){
-                    if (!this.onCmdNextOption(arg, commandLine, context)) {
-                        context.configureLast(commandLine);
+                    if (!this.onCmdNextOption(arg, cmdLine, context)) {
+                        context.configureLast(cmdLine);
                     } else {
                         conf = true;
                     }
                 }else{
-                    if (!this.onCmdNextNonOption(arg, commandLine, context)) {
-                        context.configureLast(commandLine);
+                    if (!this.onCmdNextNonOption(arg, cmdLine, context)) {
+                        context.configureLast(cmdLine);
                     } else {
                         conf = true;
                     }
@@ -157,8 +157,8 @@ public abstract class NShellBuiltinBase implements NShellBuiltin {
                 robustMode = true;
             }
         }
-        this.onCmdFinishParsing(commandLine, context);
-        if (commandLine.isAutoCompleteMode()) {
+        this.onCmdFinishParsing(cmdLine, context);
+        if (cmdLine.isAutoCompleteMode()) {
             return;
         }
         if (context.isAskHelp()) {
@@ -169,14 +169,14 @@ public abstract class NShellBuiltinBase implements NShellBuiltin {
             session.out().println(NIdResolver.of(session).resolveId(getClass()).getVersion());
             return;
         }
-        onCmdExec(commandLine, context);
+        onCmdExec(cmdLine, context);
     }
 
-    protected void onCmdFinishParsing(NCmdLine commandLine, NShellExecutionContext context) {
+    protected void onCmdFinishParsing(NCmdLine cmdLine, NShellExecutionContext context) {
 
     }
 
-    protected void onCmdInitParsing(NCmdLine commandLine, NShellExecutionContext context) {
+    protected void onCmdInitParsing(NCmdLine cmdLine, NShellExecutionContext context) {
 
     }
 

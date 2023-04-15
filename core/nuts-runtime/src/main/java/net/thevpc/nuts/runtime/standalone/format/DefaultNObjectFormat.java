@@ -340,8 +340,8 @@ public class DefaultNObjectFormat extends DefaultFormatBase<NObjectFormat> imple
     }
 
     @Override
-    public boolean configureFirst(NCmdLine commandLine) {
-        return getBase().configureFirst(commandLine);
+    public boolean configureFirst(NCmdLine cmdLine) {
+        return getBase().configureFirst(cmdLine);
     }
 
     @Override

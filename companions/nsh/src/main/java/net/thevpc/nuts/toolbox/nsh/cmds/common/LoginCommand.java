@@ -43,17 +43,17 @@ public class LoginCommand extends NShellBuiltinDefault {
     }
 
     @Override
-    protected boolean onCmdNextOption(NArg arg, NCmdLine commandLine, NShellExecutionContext context) {
+    protected boolean onCmdNextOption(NArg arg, NCmdLine cmdLine, NShellExecutionContext context) {
         Options options = context.getOptions();
         NSession session = context.getSession();
-        NArg a = commandLine.peek().get(session);
+        NArg a = cmdLine.peek().get(session);
         if (!a.isOption()) {
             if (options.login == null) {
-                options.login = commandLine.next(NArgName.of("username", session))
+                options.login = cmdLine.next(NArgName.of("username", session))
                         .flatMap(NLiteral::asString).get(session);
                 return true;
             } else if (options.password == null) {
-                options.password = commandLine.next(NArgName.of("password", session))
+                options.password = cmdLine.next(NArgName.of("password", session))
                         .flatMap(NLiteral::asString).get(session).toCharArray();
                 return true;
             }
@@ -62,7 +62,7 @@ public class LoginCommand extends NShellBuiltinDefault {
     }
 
     @Override
-    protected void onCmdExec(NCmdLine commandLine, NShellExecutionContext context) {
+    protected void onCmdExec(NCmdLine cmdLine, NShellExecutionContext context) {
         Options options = context.getOptions();
         if (!NConstants.Users.ANONYMOUS.equals(options.login)
                 && (options.password == null
@@ -82,7 +82,7 @@ public class LoginCommand extends NShellBuiltinDefault {
     }
 
     @Override
-    protected boolean onCmdNextNonOption(NArg arg, NCmdLine commandLine, NShellExecutionContext context) {
-        return onCmdNextOption(arg, commandLine, context);
+    protected boolean onCmdNextNonOption(NArg arg, NCmdLine cmdLine, NShellExecutionContext context) {
+        return onCmdNextOption(arg, cmdLine, context);
     }
 }

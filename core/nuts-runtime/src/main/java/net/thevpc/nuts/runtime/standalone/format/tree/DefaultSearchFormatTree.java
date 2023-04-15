@@ -45,8 +45,8 @@ public class DefaultSearchFormatTree extends DefaultSearchFormatBase {
     }
 
     @Override
-    public boolean configureFirst(NCmdLine commandLine) {
-        if (getDisplayOptions().configureFirst(commandLine)) {
+    public boolean configureFirst(NCmdLine cmdLine) {
+        if (getDisplayOptions().configureFirst(cmdLine)) {
             return true;
         }
         return false;

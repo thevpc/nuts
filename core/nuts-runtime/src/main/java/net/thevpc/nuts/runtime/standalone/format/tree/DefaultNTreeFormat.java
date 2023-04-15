@@ -57,12 +57,12 @@ public class DefaultNTreeFormat extends DefaultFormatBase<NTreeFormat> implement
         linkFormatter = CorePlatformUtils.SUPPORTS_UTF_ENCODING ? LINK_UNICODE_FORMATTER : LINK_ASCII_FORMATTER;
     }
 
-    public DefaultNTreeFormat(NSession ws, NTreeModel tree) {
-        this(ws, tree, null, null);
+    public DefaultNTreeFormat(NSession session, NTreeModel tree) {
+        this(session, tree, null, null);
     }
 
-    public DefaultNTreeFormat(NSession ws, NTreeModel tree, NTreeNodeFormat formatter, NTreeLinkFormat linkFormatter) {
-        super(ws, "tree");
+    public DefaultNTreeFormat(NSession session, NTreeModel tree, NTreeNodeFormat formatter, NTreeLinkFormat linkFormatter) {
+        super(session, "tree");
         if (formatter == null) {
             formatter = TO_STRING_FORMATTER;
         }
@@ -236,16 +236,16 @@ public class DefaultNTreeFormat extends DefaultFormatBase<NTreeFormat> implement
     }
 
     @Override
-    public boolean configureFirst(NCmdLine commandLine) {
+    public boolean configureFirst(NCmdLine cmdLine) {
         NSession session = getSession();
-        NArg aa = commandLine.peek().orNull();
+        NArg aa = cmdLine.peek().orNull();
         if (aa == null) {
             return false;
         }
         boolean enabled = aa.isActive();
         switch (aa.key()) {
             case "--border": {
-                commandLine.withNextEntry((v, a, s) -> {
+                cmdLine.withNextEntry((v, a, s) -> {
                     switch (NStringUtils.trim(v)) {
                         case "simple": {
                             setLinkFormat(LINK_ASCII_FORMATTER);
@@ -260,15 +260,15 @@ public class DefaultNTreeFormat extends DefaultFormatBase<NTreeFormat> implement
                 return true;
             }
             case "--omit-root": {
-                commandLine.withNextFlag((v, a, s) -> setOmitRoot(v));
+                cmdLine.withNextFlag((v, a, s) -> setOmitRoot(v));
                 return true;
             }
             case "--infinite": {
-                commandLine.withNextFlag((v, a, s) -> infinite = (v));
+                cmdLine.withNextFlag((v, a, s) -> infinite = (v));
                 return true;
             }
             case DefaultNPropertiesFormat.OPTION_MULTILINE_PROPERTY: {
-                NArg i = commandLine.nextEntry().get(session);
+                NArg i = cmdLine.nextEntry().get(session);
                 if (enabled) {
                     addMultilineProperty(i.key(), i.getStringValue().get(session));
                 }

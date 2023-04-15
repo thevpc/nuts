@@ -41,7 +41,7 @@ package net.thevpc.nuts.cmdline;
 public interface NCmdLineProcessor {
     NCmdLineProcessor NOP = new NCmdLineProcessor() {
         @Override
-        public void onCmdExec(NCmdLine commandLine, NCmdLineContext context) {
+        public void onCmdExec(NCmdLine cmdLine, NCmdLineContext context) {
 
         }
     };
@@ -51,11 +51,11 @@ public interface NCmdLineProcessor {
  the "next" methods to
      *
      * @param option      peeked argument
-     * @param commandLine associated commandLine
+     * @param cmdLine associated cmdLine
      * @param context session
      * @return true if the argument can be processed, false otherwise.
      */
-    default boolean onCmdNextOption(NArg option, NCmdLine commandLine, NCmdLineContext context){
+    default boolean onCmdNextOption(NArg option, NCmdLine cmdLine, NCmdLineContext context){
         return false;
     }
 
@@ -65,21 +65,21 @@ public interface NCmdLineProcessor {
      * the "next" methods to
      *
      * @param nonOption   peeked argument
-     * @param commandLine associated commandLine
+     * @param cmdLine associated cmdLine
      * @param context session
      * @return true if the argument can be processed, false otherwise.
      */
-    default boolean onCmdNextNonOption(NArg nonOption, NCmdLine commandLine, NCmdLineContext context){
+    default boolean onCmdNextNonOption(NArg nonOption, NCmdLine cmdLine, NCmdLineContext context){
         return false;
     }
 
     /**
      * initialize the processor.
      * Called before any other method.
-     *  @param commandLine associated commandLine
+     *  @param cmdLine associated cmdLine
      * @param context session
      */
-    default void onCmdInitParsing(NCmdLine commandLine, NCmdLineContext context) {
+    default void onCmdInitParsing(NCmdLine cmdLine, NCmdLineContext context) {
 
     }
 
@@ -87,20 +87,20 @@ public interface NCmdLineProcessor {
      * prepare for execution for auto-complete and/or exec modes.
      * Called after all next methods and before exec and autoComplete methods
      *
-     * @param commandLine associated commandLine
+     * @param cmdLine associated cmdLine
      * @param context session
      */
-    default void onCmdFinishParsing(NCmdLine commandLine, NCmdLineContext context) {
+    default void onCmdFinishParsing(NCmdLine cmdLine, NCmdLineContext context) {
 
     }
 
     /**
      * execute options, called after all options was processed and
      * cmdLine.isExecMode() returns true.
-     * @param commandLine associated commandLine
+     * @param cmdLine associated cmdLine
      * @param context session
      */
-    void onCmdExec(NCmdLine commandLine, NCmdLineContext context);
+    void onCmdExec(NCmdLine cmdLine, NCmdLineContext context);
 
     /**
      * called when auto-complete ({@code autoComplete} is not null)

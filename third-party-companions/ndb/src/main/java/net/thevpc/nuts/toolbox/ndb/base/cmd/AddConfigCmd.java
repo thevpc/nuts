@@ -21,19 +21,19 @@ public class AddConfigCmd<C extends NdbConfig> extends NdbCmd<C> {
     }
 
     @Override
-    public void run(NSession session, NCmdLine commandLine) {
+    public void run(NSession session, NCmdLine cmdLine) {
         C options = createConfigInstance();
         NRef<Boolean> update = NRef.of(false);
-        while (commandLine.hasNext()) {
-            if (fillOption(commandLine, options)) {
+        while (cmdLine.hasNext()) {
+            if (fillOption(cmdLine, options)) {
                 //
             } else if (
-                    commandLine.withNextFlag((v, a, s) -> {
+                    cmdLine.withNextFlag((v, a, s) -> {
                         update.set(v);
                     }, "--update")
             ) {
             } else {
-                session.configureLast(commandLine);
+                session.configureLast(cmdLine);
             }
         }
         options.setName(NStringUtils.trimToNull(options.getName()));
@@ -42,7 +42,7 @@ public class AddConfigCmd<C extends NdbConfig> extends NdbCmd<C> {
         }
 
         NPath file = getSharedConfigFolder().resolve(asFullName(options.getName()) + NdbUtils.SERVER_CONFIG_EXT);
-        NElements json = NElements.of(commandLine.getSession()).setNtf(false).json();
+        NElements json = NElements.of(cmdLine.getSession()).setNtf(false).json();
         if (file.exists()) {
             if (update.get()) {
                 C old = json.parse(file, support.getConfigClass());

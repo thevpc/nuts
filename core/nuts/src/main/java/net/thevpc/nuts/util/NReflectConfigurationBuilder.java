@@ -36,7 +36,7 @@ import java.util.function.Function;
 public interface NReflectConfigurationBuilder extends NComponent {
 
     static NReflectConfigurationBuilder of(NSession session) {
-        return session.extensions().createSupported(NReflectConfigurationBuilder.class, true, session);
+        return session.extensions().createComponent(NReflectConfigurationBuilder.class).get();
     }
 
     NReflectConfiguration build();

@@ -45,7 +45,7 @@ import java.util.Map;
 public interface NObjectFormat extends NContentTypeFormat {
 
     static NObjectFormat of(NSession session) {
-       return NExtensions.of(session).createSupported(NObjectFormat.class);
+       return NExtensions.of(session).createComponent(NObjectFormat.class).get();
     }
 
     String getFormatMode();

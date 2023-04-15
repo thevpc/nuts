@@ -51,14 +51,14 @@ public class TailCommand extends NShellBuiltinDefault {
     }
 
     @Override
-    protected boolean onCmdNextOption(NArg arg, NCmdLine commandLine, NShellExecutionContext context) {
+    protected boolean onCmdNextOption(NArg arg, NCmdLine cmdLine, NShellExecutionContext context) {
         Options options = context.getOptions();
         NSession session = context.getSession();
-        NArg a = commandLine.peek().get(session);
+        NArg a = cmdLine.peek().get(session);
         if (a.isOption()) {
             if (ShellHelper.isInt(a.asString()
                     .get(session).substring(1))) {
-                options.max = Integer.parseInt(commandLine.next()
+                options.max = Integer.parseInt(cmdLine.next()
                         .get(session).asString()
                         .get(session).substring(1));
                 return true;
@@ -74,7 +74,7 @@ public class TailCommand extends NShellBuiltinDefault {
     }
 
     @Override
-    protected void onCmdExec(NCmdLine commandLine, NShellExecutionContext context) {
+    protected void onCmdExec(NCmdLine cmdLine, NShellExecutionContext context) {
         Options options = context.getOptions();
         NSession session = context.getSession();
 
@@ -120,7 +120,7 @@ public class TailCommand extends NShellBuiltinDefault {
         List<NPath> files = new ArrayList<>();
     }
     @Override
-    protected boolean onCmdNextNonOption(NArg arg, NCmdLine commandLine, NShellExecutionContext context) {
-        return onCmdNextOption(arg, commandLine, context);
+    protected boolean onCmdNextNonOption(NArg arg, NCmdLine cmdLine, NShellExecutionContext context) {
+        return onCmdNextOption(arg, cmdLine, context);
     }
 }

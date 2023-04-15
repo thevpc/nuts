@@ -36,7 +36,7 @@ import java.util.List;
  */
 public interface NUndeployCommand extends NWorkspaceCommand {
     static NUndeployCommand of(NSession session) {
-        return NExtensions.of(session).createSupported(NUndeployCommand.class);
+        return NExtensions.of(session).createComponent(NUndeployCommand.class).get();
     }
 
     String getRepository();

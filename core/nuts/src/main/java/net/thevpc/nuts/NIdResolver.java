@@ -39,7 +39,7 @@ import java.util.List;
 public interface NIdResolver extends NComponent {
 
     static NIdResolver of(NSession session) {
-       return NExtensions.of(session).createSupported(NIdResolver.class);
+       return NExtensions.of(session).createComponent(NIdResolver.class).get();
     }
 
     /**

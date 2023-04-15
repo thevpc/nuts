@@ -8,8 +8,8 @@ import net.thevpc.nuts.spi.NRepositorySPI;
 
 public class DefaultNUndeployCommand extends AbstractNUndeployCommand {
 
-    public DefaultNUndeployCommand(NSession ws) {
-        super(ws);
+    public DefaultNUndeployCommand(NSession session) {
+        super(session);
     }
 
     @Override

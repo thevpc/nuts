@@ -41,23 +41,23 @@ import java.io.InputStream;
  */
 public interface NSessionTerminal {
     static NSessionTerminal of(NSession session) {
-        return NTerminals.of(session).createTerminal(session);
+        return NTerminals.of(session).createTerminal();
     }
 
     static NSessionTerminal of(NSessionTerminal parent, NSession session) {
-        return NTerminals.of(session).createTerminal(parent, session);
+        return NTerminals.of(session).createTerminal(parent);
     }
 
     static NSessionTerminal of(InputStream in, NPrintStream out, NPrintStream err, NSession session) {
-        return NTerminals.of(session).createTerminal(in, out, err, session);
+        return NTerminals.of(session).createTerminal(in, out, err);
     }
 
     static NSessionTerminal ofMem(NSession session) {
-        return NTerminals.of(session).createMemTerminal(session);
+        return NTerminals.of(session).createMemTerminal();
     }
 
     static NSessionTerminal ofMem(boolean mergeError, NSession session) {
-        return NTerminals.of(session).createMemTerminal(mergeError, session);
+        return NTerminals.of(session).createMemTerminal(mergeError);
     }
 
     String readLine(NPrintStream out, NMsg message);

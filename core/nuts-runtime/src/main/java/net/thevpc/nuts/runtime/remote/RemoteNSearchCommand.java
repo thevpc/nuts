@@ -10,8 +10,8 @@ import java.util.List;
 
 public class RemoteNSearchCommand extends AbstractNSearchCommand {
 
-    public RemoteNSearchCommand(NSession ws) {
-        super(ws);
+    public RemoteNSearchCommand(NSession session) {
+        super(session);
     }
 
     @Override

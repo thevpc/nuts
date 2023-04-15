@@ -33,10 +33,10 @@ public class DefaultNLicenseInternalExecutable extends DefaultInternalNExecutabl
             return;
         }
         NSession session = getSession();
-        NCmdLine commandLine = NCmdLine.of(args);
-        while (commandLine.hasNext()) {
-            NArg a = commandLine.peek().get(session);
-            session.configureLast(commandLine);
+        NCmdLine cmdLine = NCmdLine.of(args);
+        while (cmdLine.hasNext()) {
+            NArg a = cmdLine.peek().get(session);
+            session.configureLast(cmdLine);
         }
 
         NText licenseString = NWorkspaceExt.of(session.getWorkspace()).getLicenseText(session);

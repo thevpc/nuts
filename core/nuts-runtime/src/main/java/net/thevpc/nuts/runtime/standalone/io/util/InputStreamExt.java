@@ -138,7 +138,7 @@ public class InputStreamExt extends InputStream implements NInputSource, Interru
             }
 
             @Override
-            public boolean configureFirst(NCmdLine commandLine) {
+            public boolean configureFirst(NCmdLine cmdLine) {
                 return false;
             }
         });

@@ -43,7 +43,7 @@ import net.thevpc.nuts.cmdline.NCmdLineConfigurable;
  */
 public interface NTreeFormat extends NContentTypeFormat {
     static NTreeFormat of(NSession session) {
-       return NExtensions.of(session).createSupported(NTreeFormat.class);
+       return NExtensions.of(session).createComponent(NTreeFormat.class).get();
     }
 
     /**

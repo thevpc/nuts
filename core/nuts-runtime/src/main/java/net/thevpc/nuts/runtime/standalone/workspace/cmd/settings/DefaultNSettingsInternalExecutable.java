@@ -103,7 +103,7 @@ public class DefaultNSettingsInternalExecutable extends DefaultInternalNExecutab
     public List<NSettingsSubCommand> getSubCommands() {
         if (subCommands == null) {
             subCommands = new ArrayList<>(
-                    getSession().extensions().createAllSupported(NSettingsSubCommand.class, this)
+                    getSession().extensions().createComponents(NSettingsSubCommand.class, this)
             );
         }
         return subCommands;

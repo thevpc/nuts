@@ -54,8 +54,8 @@ import net.thevpc.nuts.util.NIterator;
  */
 public class DefaultNSearchCommand extends AbstractNSearchCommand {
 
-    public DefaultNSearchCommand(NSession ws) {
-        super(ws);
+    public DefaultNSearchCommand(NSession session) {
+        super(session);
     }
 
     @Override

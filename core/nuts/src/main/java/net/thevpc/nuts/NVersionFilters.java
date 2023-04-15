@@ -31,10 +31,9 @@ import net.thevpc.nuts.spi.NComponentScopeType;
  * @author thevpc
  * @app.category Base
  */
-@NComponentScope(NComponentScopeType.SESSION)
 public interface NVersionFilters extends NTypedFilters<NVersionFilter> {
     static NVersionFilters of(NSession session) {
-       return NExtensions.of(session).createSupported(NVersionFilters.class);
+       return NExtensions.of(session).createComponent(NVersionFilters.class).get();
     }
 
     NOptional<NVersionFilter> byValue(String version);

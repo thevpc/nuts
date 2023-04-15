@@ -26,6 +26,7 @@
 /lib/nlib-template/target/
 /lib/nlib-tomcat-classloader/target/
 /lib/nlib-ssh/target/
+/extensions/next-ssh/target/
 /lib/nlib-md/target/
 /lsp/conf/
 /lsp/log/
@@ -207,3 +208,6 @@
 /tutorials/lib/lib-integration-example/custom-shell-project.iml
 /tutorials/lib/lib-integration-example/lib-integration-example.iml
 /installers/nuts-bundle-template/target/
+/installers/nuts-bundle-template/src/main/resources/META-INF/bundle/nuts-0.8.4.jar
+/installers/nuts-bundle-template/src/main/resources/META-INF/bundle/nuts-runtime-0.8.4.0.jar
+/installers/nuts-bundle-template/nuts-bundle-template.iml

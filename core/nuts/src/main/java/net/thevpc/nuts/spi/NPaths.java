@@ -8,10 +8,9 @@ import java.io.File;
 import java.net.URL;
 import java.nio.file.Path;
 
-@NComponentScope(NComponentScopeType.SESSION)
 public interface NPaths extends NComponent {
     static NPaths of(NSession session) {
-       return NExtensions.of(session).createSupported(NPaths.class, true, session);
+       return NExtensions.of(session).createComponent(NPaths.class).get();
     }
 
     /**

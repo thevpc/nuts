@@ -60,7 +60,7 @@ public interface NExtensions extends NComponent ,NSessionProvider{
      * @param type            extension type
      * @return valid instance or null if no extension implementation was found
      */
-    <T extends NComponent> T createSupported(Class<T> type);
+    <T extends NComponent> NOptional<T> createComponent(Class<T> type);
 
     /**
      * create supported extension implementation or return null.
@@ -72,11 +72,9 @@ public interface NExtensions extends NComponent ,NSessionProvider{
      * @param supportCriteria context
      * @return valid instance or null if no extension implementation was found
      */
-    <T extends NComponent, V> T createSupported(Class<T> type, boolean required, V supportCriteria);
+    <T extends NComponent, V> NOptional<T> createComponent(Class<T> type, V supportCriteria);
 
-    <T extends NComponent, V> T createSupported(Class<T> type, V supportCriteria);
-
-    <T extends NComponent, V> List<T> createAllSupported(Class<T> type, V supportCriteria);
+    <T extends NComponent, V> List<T> createComponents(Class<T> type, V supportCriteria);
 
     <T> List<T> createAll(Class<T> type);
 
@@ -96,6 +94,10 @@ public interface NExtensions extends NComponent ,NSessionProvider{
     boolean registerType(Class extensionPointType, Class extensionType, NId source);
 
     boolean isRegisteredType(Class extensionPointType, Class extensionType);
+
+    boolean isLoadedId(NId id);
+
+    boolean isLoadedId(NId id,ClassLoader classLoader);
 
     boolean isLoadedExtensions(NId id);
 

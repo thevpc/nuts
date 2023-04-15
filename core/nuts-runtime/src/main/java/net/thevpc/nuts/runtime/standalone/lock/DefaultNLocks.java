@@ -14,8 +14,8 @@ import java.util.concurrent.Callable;
 import java.util.concurrent.TimeUnit;
 
 public class DefaultNLocks extends AbstractNLocks {
-    public DefaultNLocks(NSession ws) {
-        super(ws);
+    public DefaultNLocks(NSession session) {
+        super(session);
     }
 
     @Override

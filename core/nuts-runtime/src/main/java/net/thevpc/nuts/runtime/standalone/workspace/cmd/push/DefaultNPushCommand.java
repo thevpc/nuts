@@ -45,8 +45,8 @@ import net.thevpc.nuts.util.NStringUtils;
  */
 public class DefaultNPushCommand extends AbstractDefaultNPushCommand {
 
-    public DefaultNPushCommand(NSession ws) {
-        super(ws);
+    public DefaultNPushCommand(NSession session) {
+        super(session);
     }
 
     @Override

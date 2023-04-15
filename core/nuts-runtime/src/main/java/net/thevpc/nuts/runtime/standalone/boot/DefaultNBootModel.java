@@ -26,6 +26,7 @@ package net.thevpc.nuts.runtime.standalone.boot;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.boot.NBootOptions;
 import net.thevpc.nuts.cmdline.DefaultNArg;
+import net.thevpc.nuts.elem.NElementNotFoundException;
 import net.thevpc.nuts.io.NPrintStream;
 import net.thevpc.nuts.io.NSystemTerminal;
 import net.thevpc.nuts.runtime.optional.jansi.OptionalJansi;
@@ -177,7 +178,7 @@ public class DefaultNBootModel implements NBootModel {
 
     public void setSystemTerminal(NSystemTerminalBase terminal, NSession session) {
         if (terminal == null) {
-            throw new NExtensionNotFoundException(session, NSystemTerminalBase.class, null);
+            throw new NIllegalArgumentException(session, NMsg.ofPlain("missing terminal"));
         }
         NSystemTerminal syst = NutsSystemTerminal_of_NutsSystemTerminalBase(terminal, session);
         NSystemTerminal old = this.systemTerminal;
@@ -199,7 +200,7 @@ public class DefaultNBootModel implements NBootModel {
     public NSystemTerminal createSystemTerminal(NTerminalSpec spec, NSession session) {
         NSystemTerminalBase termb = session.extensions()
                 .setSession(session)
-                .createSupported(NSystemTerminalBase.class, true, spec);
+                .createComponent(NSystemTerminalBase.class, spec).get();
         return NutsSystemTerminal_of_NutsSystemTerminalBase(termb, session);
     }
 
@@ -245,7 +246,7 @@ public class DefaultNBootModel implements NBootModel {
 
     private NSystemTerminal NutsSystemTerminal_of_NutsSystemTerminalBase(NSystemTerminalBase terminal, NSession session) {
         if (terminal == null) {
-            throw new NExtensionNotFoundException(session, NSystemTerminalBase.class, "SystemTerminalBase");
+            throw new NIllegalArgumentException(session, NMsg.ofPlain("missing terminal"));
         }
         NSystemTerminal syst;
         if ((terminal instanceof NSystemTerminal)) {
@@ -325,7 +326,7 @@ public class DefaultNBootModel implements NBootModel {
                 return NOptional.of(r);
             }
         }
-        return NOptional.ofNamedEmpty("options "+ Arrays.asList(names));
+        return NOptional.ofNamedEmpty("options " + Arrays.asList(names));
     }
 
     public NOptional<NLiteral> getCustomBootOption(String name) {

@@ -45,16 +45,16 @@ public class DefaultNWhichInternalExecutable extends DefaultInternalNExecutableC
         }
         List<String> commands = new ArrayList<String>();
 //        NutsWorkspace ws = getSession().getWorkspace();
-        NCmdLine commandLine = NCmdLine.of(args);
-        while (commandLine.hasNext()) {
-            NArg a = commandLine.peek().get(session);
+        NCmdLine cmdLine = NCmdLine.of(args);
+        while (cmdLine.hasNext()) {
+            NArg a = cmdLine.peek().get(session);
             if (a.isOption()) {
-                session.configureLast(commandLine);
+                session.configureLast(cmdLine);
             } else {
-                commandLine.skip();
+                cmdLine.skip();
                 commands.add(a.toString());
-                commands.addAll(Arrays.asList(commandLine.toStringArray()));
-                commandLine.skipAll();
+                commands.addAll(Arrays.asList(cmdLine.toStringArray()));
+                cmdLine.skipAll();
             }
         }
         NAssert.requireNonBlank(commands, "commands", session);

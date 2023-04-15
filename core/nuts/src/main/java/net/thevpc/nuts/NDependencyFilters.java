@@ -35,7 +35,6 @@ import java.util.Collection;
  * @author thevpc
  * @app.category Base
  */
-@NComponentScope(NComponentScopeType.SESSION)
 public interface NDependencyFilters extends NTypedFilters<NDependencyFilter> {
 
     /**
@@ -44,7 +43,7 @@ public interface NDependencyFilters extends NTypedFilters<NDependencyFilter> {
      * @return a new session bound instance of NutsDependencyFilters
      */
     static NDependencyFilters of(NSession session) {
-       return NExtensions.of(session).createSupported(NDependencyFilters.class);
+       return NExtensions.of(session).createComponent(NDependencyFilters.class).get();
     }
 
     /**

@@ -26,29 +26,29 @@ public class SqlRestoreCmd<C extends NdbConfig> extends RestoreCmd<C> {
         return (SqlSupport<C>) super.getSupport();
     }
 
-    public void run(NSession session, NCmdLine commandLine) {
+    public void run(NSession session, NCmdLine cmdLine) {
         NRef<AtName> name = NRef.ofNull(AtName.class);
         NRef<NPath> file = NRef.ofNull(NPath.class);
         C otherOptions = createConfigInstance();
-        while (commandLine.hasNext()) {
-            if (commandLine.isNextOption()) {
-                switch (commandLine.peek().get(session).key()) {
+        while (cmdLine.hasNext()) {
+            if (cmdLine.isNextOption()) {
+                switch (cmdLine.peek().get(session).key()) {
                     case "--name": {
-                        readConfigNameOption(commandLine, session, name);
+                        readConfigNameOption(cmdLine, session, name);
                         break;
                     }
                     case "--file": {
-                        commandLine.withNextEntry((v, a, s) -> {
+                        cmdLine.withNextEntry((v, a, s) -> {
                             file.set(NPath.of(v, s));
                         });
                         break;
                     }
                     default: {
-                        fillOptionLast(commandLine, otherOptions);
+                        fillOptionLast(cmdLine, otherOptions);
                     }
                 }
             } else {
-                commandLine.throwUnexpectedArgument();
+                cmdLine.throwUnexpectedArgument();
             }
         }
         String dumpExt = getSupport().getDumpExt(otherOptions, session);

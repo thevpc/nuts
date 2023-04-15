@@ -49,21 +49,21 @@ public class WhoamiCommand extends NShellBuiltinDefault {
     }
 
     @Override
-    protected boolean onCmdNextOption(NArg arg, NCmdLine commandLine, NShellExecutionContext context) {
+    protected boolean onCmdNextOption(NArg arg, NCmdLine cmdLine, NShellExecutionContext context) {
         Options config = context.getOptions();
         NSession session = context.getSession();
-        switch (commandLine.peek().get(session).key()) {
+        switch (cmdLine.peek().get(session).key()) {
             case "--all":
             case "-a": {
                 config.argAll = true;
                 config.nutsUser = true;
-                commandLine.skip();
+                cmdLine.skip();
                 return true;
             }
             case "--nuts":
             case "-n": {
                 config.nutsUser = true;
-                commandLine.skip();
+                cmdLine.skip();
                 return true;
             }
         }
@@ -71,7 +71,7 @@ public class WhoamiCommand extends NShellBuiltinDefault {
     }
 
     @Override
-    protected void onCmdExec(NCmdLine commandLine, NShellExecutionContext context) {
+    protected void onCmdExec(NCmdLine cmdLine, NShellExecutionContext context) {
         Result result = new Result();
         Options options = context.getOptions();
         if (!options.nutsUser) {
@@ -250,7 +250,7 @@ public class WhoamiCommand extends NShellBuiltinDefault {
 
 
     @Override
-    protected boolean onCmdNextNonOption(NArg arg, NCmdLine commandLine, NShellExecutionContext context) {
-        return onCmdNextOption(arg, commandLine, context);
+    protected boolean onCmdNextNonOption(NArg arg, NCmdLine cmdLine, NShellExecutionContext context) {
+        return onCmdNextOption(arg, cmdLine, context);
     }
 }

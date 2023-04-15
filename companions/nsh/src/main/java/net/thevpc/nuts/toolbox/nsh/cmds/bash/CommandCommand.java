@@ -50,28 +50,28 @@ public class CommandCommand extends NShellBuiltinDefault {
 
 
     @Override
-    protected boolean onCmdNextOption(NArg arg, NCmdLine commandLine, NShellExecutionContext context) {
+    protected boolean onCmdNextOption(NArg arg, NCmdLine cmdLine, NShellExecutionContext context) {
         NSession session = context.getSession();
         Options options = context.getOptions();
         NArg a = null;
         //inverse configuration order
-        if (context.configureFirst(commandLine)) {
+        if (context.configureFirst(cmdLine)) {
             return true;
-        } else if ((a = commandLine.nextFlag("-p").orNull()) != null) {
+        } else if ((a = cmdLine.nextFlag("-p").orNull()) != null) {
             options.p = a.getBooleanValue().get(session);
-        } else if (!commandLine.isNextOption()) {
+        } else if (!cmdLine.isNextOption()) {
             if (options.commandName == null) {
-                options.commandName = commandLine.next().flatMap(NLiteral::asString).get(session);
+                options.commandName = cmdLine.next().flatMap(NLiteral::asString).get(session);
             }
-            options.args.addAll(Arrays.asList(commandLine.toStringArray()));
-            commandLine.skipAll();
+            options.args.addAll(Arrays.asList(cmdLine.toStringArray()));
+            cmdLine.skipAll();
             return true;
         }
         return false;
     }
 
     @Override
-    protected void onCmdExec(NCmdLine commandLine, NShellExecutionContext context) {
+    protected void onCmdExec(NCmdLine cmdLine, NShellExecutionContext context) {
         Options options = context.getOptions();
         if (options.commandName != null) {
             context.getShell().executePreparedCommand(options.args.toArray(new String[0]), false, true, true, context.getShellContext());
@@ -86,8 +86,8 @@ public class CommandCommand extends NShellBuiltinDefault {
     }
 
     @Override
-    protected boolean onCmdNextNonOption(NArg arg, NCmdLine commandLine, NShellExecutionContext context) {
-        return onCmdNextOption(arg, commandLine, context);
+    protected boolean onCmdNextNonOption(NArg arg, NCmdLine cmdLine, NShellExecutionContext context) {
+        return onCmdNextOption(arg, cmdLine, context);
     }
 
 }

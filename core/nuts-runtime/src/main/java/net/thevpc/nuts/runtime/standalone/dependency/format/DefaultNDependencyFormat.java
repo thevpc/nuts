@@ -212,36 +212,36 @@ public class DefaultNDependencyFormat extends DefaultFormatBase<NDependencyForma
 
 
     @Override
-    public boolean configureFirst(NCmdLine commandLine) {
+    public boolean configureFirst(NCmdLine cmdLine) {
         NSession session = getSession();
-        NArg aa = commandLine.peek().get(session);
+        NArg aa = cmdLine.peek().get(session);
         if (aa == null) {
             return false;
         }
         boolean enabled=aa.isActive();
         switch(aa.key()) {
             case "--omit-env": {
-                commandLine.withNextFlag((v, a, s) -> setOmitOtherProperties(v));
+                cmdLine.withNextFlag((v, a, s) -> setOmitOtherProperties(v));
                 return true;
             }
 //            case "--omit-face": {
-//                setOmitFace(commandLine.nextBooleanValue().get(session));
+//                setOmitFace(cmdLine.nextBooleanValue().get(session));
 //                return true;
 //            }
             case "--omit-group": {
-                commandLine.withNextFlag((v, a, s) -> setOmitGroupId(v));
+                cmdLine.withNextFlag((v, a, s) -> setOmitGroupId(v));
                 return true;
             }
             case "--omit-imported-group": {
-                commandLine.withNextFlag((v, a, s) -> setOmitImportedGroup(v));
+                cmdLine.withNextFlag((v, a, s) -> setOmitImportedGroup(v));
                 return true;
             }
             case "--omit-repo": {
-                commandLine.withNextFlag((v, a, s) -> setOmitRepository(v));
+                cmdLine.withNextFlag((v, a, s) -> setOmitRepository(v));
                 return true;
             }
             case "--highlight-imported-group": {
-                commandLine.withNextFlag((v, a, s) -> setHighlightImportedGroup(v));
+                cmdLine.withNextFlag((v, a, s) -> setHighlightImportedGroup(v));
                 return true;
             }
         }

@@ -52,25 +52,25 @@ public class Hello extends NShellBuiltinBase {
      * arguments. It just need to process the 'next'/'first' option if supported.
      *
      * @param arg
-     * @param cmdline cmdline to process partially
+     * @param cmdLine cmdline to process partially
      * @param ctx     shell context
      * @return true if the option is processed
      */
     @Override
-    protected boolean onCmdNextOption(NArg arg, NCmdLine cmdline, NShellExecutionContext ctx) {
+    protected boolean onCmdNextOption(NArg arg, NCmdLine cmdLine, NShellExecutionContext ctx) {
         //get an instance of the current options object we are filling.
         Options o = ctx.getOptions();
         //get the next option (without consuming it)
         // arguments can be options in the form --key=value or -k=value
         //if not an option, the key will be resolved to the hole argument string
-        switch (cmdline.peek().get().key()) {
+        switch (cmdLine.peek().get().key()) {
             case "--who": {
                 //consume the next argument
                 //which is of the form
                 //        --who=me
                 //        or (using spaces)
                 //        --who me
-                cmdline.withNextEntry((v, aa, session) -> o.who = v);
+                cmdLine.withNextEntry((v, aa, session) -> o.who = v);
                 //return true to say that the option was successfully processed
                 return true;
             }
@@ -83,7 +83,7 @@ public class Hello extends NShellBuiltinBase {
                 //        --complex
                 //        it can even be negated with '~' or '!'
                 //        --!complex
-                cmdline.withNextFlag((v, a, s) -> o.complex = v);
+                cmdLine.withNextFlag((v, a, s) -> o.complex = v);
                 //return true to say that the option was successfully processed
                 return true;
             }
@@ -93,12 +93,12 @@ public class Hello extends NShellBuiltinBase {
     }
 
     @Override
-    protected boolean onCmdNextNonOption(NArg arg, NCmdLine commandLine, NShellExecutionContext context) {
+    protected boolean onCmdNextNonOption(NArg arg, NCmdLine cmdLine, NShellExecutionContext context) {
         return false;
     }
 
     @Override
-    protected void onCmdExec(NCmdLine cmdline, NShellExecutionContext ctx) {
+    protected void onCmdExec(NCmdLine cmdLine, NShellExecutionContext ctx) {
         Options o = ctx.getOptions();
         NSession session = ctx.getSession();
         if (o.complex) {

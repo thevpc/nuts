@@ -10,8 +10,10 @@ import net.thevpc.nuts.spi.NPathSPI;
 import net.thevpc.nuts.text.NTextBuilder;
 import net.thevpc.nuts.text.NTextStyle;
 import net.thevpc.nuts.text.NTexts;
+import net.thevpc.nuts.util.NConnexionString;
 import net.thevpc.nuts.util.NFunction;
 import net.thevpc.nuts.util.NStream;
+import net.thevpc.nuts.util.NStringMapFormat;
 
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -23,11 +25,11 @@ import java.util.*;
 
 class SshNPath implements NPathSPI {
 
-    private final SshPath path;
+    private final NConnexionString path;
     private final NSession session;
     private SshListener listener;
 
-    public SshNPath(SshPath path, NSession session) {
+    public SshNPath(NConnexionString path, NSession session) {
         this.path = path;
         this.session = session;
     }
@@ -53,7 +55,7 @@ class SshNPath implements NPathSPI {
 
     @Override
     public NStream<NPath> list(NPath basePath) {
-        try (SShConnection c = new SShConnection(path.toAddress(), getSession())
+        try (SShConnection c = new SShConnection(path, getSession())
                 .addListener(listener)) {
             c.grabOutputString();
             int i = c.execStringCommand("ls " + path.getPath());
@@ -98,10 +100,11 @@ class SshNPath implements NPathSPI {
                 NTextBuilder sb = text.ofBuilder();
                 String user = path.getUser();
                 String host = path.getHost();
-                int port = path.getPort();
+                int port = NLiteral.of(path.getPort()).asInt().orElse(-1);
                 String path0 = path.getPath();
                 String password = path.getPassword();
-                String keyFile = path.getKeyFile();
+                String keyFile = NStringMapFormat.URL_FORMAT.parse(path.getQueryString())
+                        .orElse(Collections.emptyMap()).get("key-file");
 
                 sb.append(text.ofStyled("ssh://", _sep));
                 if (!(user == null || user.trim().length() == 0)) {
@@ -142,7 +145,7 @@ class SshNPath implements NPathSPI {
             }
 
             @Override
-            public boolean configureFirst(NCmdLine commandLine) {
+            public boolean configureFirst(NCmdLine cmdLine) {
                 return false;
             }
         };
@@ -161,54 +164,22 @@ class SshNPath implements NPathSPI {
 
     @Override
     public NPath resolve(NPath basePath, String path) {
-        return NPath.of(
-                SshPath.toString(
-                        this.path.getHost(),
-                        this.path.getPort(),
-                        NPath.of(this.path.getPath(), session).resolve(path).toString(),
-                        this.path.getUser(),
-                        this.path.getPassword(),
-                        this.path.getKeyFile()
-                ), getSession());
+        return NPath.of(this.path.toString(), getSession());
     }
 
     @Override
     public NPath resolve(NPath basePath, NPath path) {
-        return NPath.of(
-                SshPath.toString(
-                        this.path.getHost(),
-                        this.path.getPort(),
-                        NPath.of(this.path.getPath(), session).resolve(path).toString(),
-                        this.path.getUser(),
-                        this.path.getPassword(),
-                        this.path.getKeyFile()
-                ), getSession());
+        return NPath.of(this.path.toString(), getSession());
     }
 
     @Override
     public NPath resolveSibling(NPath basePath, String path) {
-        return NPath.of(
-                SshPath.toString(
-                        this.path.getHost(),
-                        this.path.getPort(),
-                        NPath.of(this.path.getPath(), session).resolveSibling(path).toString(),
-                        this.path.getUser(),
-                        this.path.getPassword(),
-                        this.path.getKeyFile()
-                ), getSession());
+        return NPath.of(this.path.toString(), getSession());
     }
 
     @Override
     public NPath resolveSibling(NPath basePath, NPath path) {
-        return NPath.of(
-                SshPath.toString(
-                        this.path.getHost(),
-                        this.path.getPort(),
-                        NPath.of(this.path.getPath(), session).resolveSibling(path).toString(),
-                        this.path.getUser(),
-                        this.path.getPassword(),
-                        this.path.getKeyFile()
-                ), getSession());
+        return NPath.of(this.path.toString(), getSession());
     }
 
     @Override
@@ -261,7 +232,7 @@ class SshNPath implements NPathSPI {
 
     @Override
     public boolean isDirectory(NPath basePath) {
-        try (SShConnection c = new SShConnection(path.toAddress(), getSession())
+        try (SShConnection c = new SShConnection(path, getSession())
                 .addListener(listener)) {
             c.grabOutputString();
             int i = c.execStringCommand("file " + path.getPath());
@@ -286,7 +257,7 @@ class SshNPath implements NPathSPI {
 
     @Override
     public boolean isRegularFile(NPath basePath) {
-        try (SShConnection c = new SShConnection(path.toAddress(), getSession())
+        try (SShConnection c = new SShConnection(path, getSession())
                 .addListener(listener)) {
             c.grabOutputString();
             int i = c.execStringCommand("file " + path.getPath());
@@ -336,7 +307,7 @@ class SshNPath implements NPathSPI {
 
     @Override
     public OutputStream getOutputStream(NPath basePath, NPathOption... options) {
-        throw new NIOException(getSession(), NMsg.ofC("not supported output stream for %s", toString()));
+        return new SshFileOutputStream2(path, session, false);
     }
 
     @Override
@@ -345,14 +316,14 @@ class SshNPath implements NPathSPI {
     }
 
     public void delete(NPath basePath, boolean recurse) {
-        try (SShConnection session = new SShConnection(path.toAddress(), getSession())
+        try (SShConnection session = new SShConnection(path, getSession())
                 .addListener(listener)) {
             session.rm(path.getPath(), recurse);
         }
     }
 
     public void mkdir(boolean parents, NPath basePath) {
-        try (SShConnection c = new SShConnection(path.toAddress(), getSession())
+        try (SShConnection c = new SShConnection(path, getSession())
                 .addListener(listener)) {
             c.mkdir(path.getPath(), parents);
         }
@@ -379,15 +350,7 @@ class SshNPath implements NPathSPI {
         if (loc == null) {
             return null;
         }
-        return NPath.of(
-                SshPath.toString(
-                        this.path.getHost(),
-                        this.path.getPort(),
-                        loc,
-                        this.path.getUser(),
-                        this.path.getPassword(),
-                        this.path.getKeyFile()
-                ), getSession());
+        return NPath.of(path.toString(), getSession());
     }
 
     @Override
@@ -472,7 +435,7 @@ class SshNPath implements NPathSPI {
     public NStream<NPath> walk(NPath basePath, int maxDepth, NPathOption[] options) {
         EnumSet<NPathOption> optionsSet = EnumSet.noneOf(NPathOption.class);
         optionsSet.addAll(Arrays.asList(options));
-        try (SShConnection c = new SShConnection(path.toAddress(), getSession())
+        try (SShConnection c = new SShConnection(path, getSession())
                 .addListener(listener)) {
             c.grabOutputString();
             StringBuilder cmd = new StringBuilder();
@@ -511,15 +474,7 @@ class SshNPath implements NPathSPI {
 
     @Override
     public NPath subpath(NPath basePath, int beginIndex, int endIndex) {
-        return NPath.of(
-                SshPath.toString(
-                        this.path.getHost(),
-                        this.path.getPort(),
-                        NPath.of(getLocation(basePath), getSession()).subpath(beginIndex, endIndex).toString(),
-                        this.path.getUser(),
-                        this.path.getPassword(),
-                        this.path.getKeyFile()
-                ), getSession());
+        return NPath.of(this.path.toString(), getSession());
     }
 
     @Override
@@ -530,13 +485,13 @@ class SshNPath implements NPathSPI {
     @Override
     public void moveTo(NPath basePath, NPath other, NPathOption... options) {
         if (other.toString().startsWith("ssh:")) {
-            SshPath sp = new SshPath(other.toString());
+            NConnexionString sp = NConnexionString.of(other.toString()).get();
             if (
                     Objects.equals(sp.getHost(), path.getHost())
                             && Objects.equals(sp.getUser(), path.getUser())
             ) {
                 int r = -1;
-                try (SShConnection c = new SShConnection(path.toAddress(), getSession())
+                try (SShConnection c = new SShConnection(path, getSession())
                         .addListener(listener)) {
                     c.grabOutputString();
                     r = c.execStringCommand("mv " + path.getPath() + " " + sp);
@@ -606,15 +561,31 @@ class SshNPath implements NPathSPI {
 
     @Override
     public NPath toRelativePath(NPath basePath, NPath parentPath) {
-        String child=basePath.getLocation();
-        String parent=parentPath.getLocation();
+        String child = basePath.getLocation();
+        String parent = parentPath.getLocation();
         if (child.startsWith(parent)) {
             child = child.substring(parent.length());
             if (child.startsWith("/") || child.startsWith("\\")) {
                 child = child.substring(1);
             }
-            return NPath.of(child,session);
+            return NPath.of(child, session);
         }
         return null;
+    }
+
+    @Override
+    public String toString() {
+        NConnexionString c = path.copy();
+        c.setQueryString(null);
+        c.setPath(null);
+        StringBuilder sb = new StringBuilder();
+        sb.append(c);
+        sb.append(':');
+        sb.append(path.getPath());
+        if (!NBlankable.isBlank(path.getQueryString())) {
+            sb.append('?');
+            sb.append(path.getQueryString());
+        }
+        return sb.toString();
     }
 }
