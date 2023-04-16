@@ -13,7 +13,7 @@ import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.io.NServiceLoader;
 import net.thevpc.nuts.io.NSessionTerminal;
 import net.thevpc.nuts.runtime.standalone.dependency.util.NClassLoaderUtils;
-import net.thevpc.nuts.runtime.standalone.id.util.NIdUtils;
+import net.thevpc.nuts.runtime.standalone.id.util.CoreNIdUtils;
 import net.thevpc.nuts.runtime.standalone.io.printstream.NFormattedPrintStream;
 import net.thevpc.nuts.runtime.standalone.io.terminal.DefaultNSessionTerminalFromSystem;
 import net.thevpc.nuts.runtime.standalone.session.NSessionUtils;
@@ -87,7 +87,7 @@ public class DefaultNWorkspaceExtensionModel {
 
     protected NLog _LOG(NSession session) {
         if (LOG == null) {
-            LOG = NLog.of(DefaultNWorkspaceExtensionModel.class,session);
+            LOG = NLog.of(DefaultNWorkspaceExtensionModel.class, session);
         }
         return LOG;
     }
@@ -135,12 +135,12 @@ public class DefaultNWorkspaceExtensionModel {
         List<NExtensionInformation> ret = new ArrayList<>();
         List<String> allUrls = new ArrayList<>();
         for (String r : getExtensionRepositoryLocations(id)) {
-            String url = r + "/" + NIdUtils.getPath(id, "." + extensionType, '/');
+            String url = r + "/" + NIdUtils.resolveFilePath(id, extensionType);
             allUrls.add(url);
             URL u = expandURL(url, session);
             if (u != null) {
                 NExtensionInformation[] s = new NExtensionInformation[0];
-                try (Reader rr = new InputStreamReader(NPath.of(u,session).getInputStream())) {
+                try (Reader rr = new InputStreamReader(NPath.of(u, session).getInputStream())) {
                     s = NElements.of(session).json().parse(rr, DefaultNExtensionInformation[].class);
                 } catch (IOException ex) {
                     _LOGOP(session).level(Level.SEVERE).error(ex)
@@ -188,7 +188,7 @@ public class DefaultNWorkspaceExtensionModel {
         this.workspaceExtensionsClassLoader = new DefaultNClassLoader("workspaceExtensionsClassLoader", session, bootClassLoader);
     }
 
-//    public void registerType(RegInfo regInfo, NutsSession session) {
+    //    public void registerType(RegInfo regInfo, NutsSession session) {
 //        if (registerType(regInfo.extensionPointType, regInfo.extensionTypeImpl, session)) {
 //            defaultWiredComponents.add(regInfo.extensionPointType.getName(), ((Class<? extends NutsComponent>) regInfo.extensionTypeImpl).getName());
 //        }
@@ -208,7 +208,7 @@ public class DefaultNWorkspaceExtensionModel {
         throw new ClassCastException(NComponent.class.getName());
     }
 
-//    @Override
+    //    @Override
 //    public NutsWorkspaceExtension addWorkspaceExtension(NutsId id, NutsSession session) {
 //        session = NutsWorkspaceUtils.validateSession(ws, session);
 //        NutsWorkspaceConfigManagerExt cfg = NutsWorkspaceConfigManagerExt.of(ws.config());
@@ -239,7 +239,7 @@ public class DefaultNWorkspaceExtensionModel {
         return objectFactory.discoverTypes(id, url, classLoader, session);
     }
 
-//    @Override
+    //    @Override
 //    public Set<Class> discoverTypes(ClassLoader classLoader, NutsSession session) {
 //        return objectFactory.discoverTypes(classLoader);
 //    }
@@ -278,7 +278,7 @@ public class DefaultNWorkspaceExtensionModel {
         return objectFactory.createAll(type, session);
     }
 
-//    @Override
+    //    @Override
 //    public Set<Class> getExtensionPoints(NutsSession session) {
 //        return objectFactory.getExtensionPoints();
 //    }
@@ -376,13 +376,13 @@ public class DefaultNWorkspaceExtensionModel {
                         throw new NIllegalArgumentException(session, NMsg.ofC("extension not found: %s", extension));
                     }
                     if (def.getDescriptor().getIdType() != NIdType.EXTENSION) {
-                        throw new NIllegalArgumentException(session, NMsg.ofC("not an extension: %s" ,extension));
+                        throw new NIllegalArgumentException(session, NMsg.ofC("not an extension: %s", extension));
                     }
 //                    ws.install().setSession(session).id(def.getId());
                     workspaceExtensionsClassLoader.add(NClassLoaderUtils.definitionToClassLoaderNode(def, session));
                     Set<Class> classes = objectFactory.discoverTypes(def.getId(), def.getContent().map(NPath::asURL).orNull(), workspaceExtensionsClassLoader, session);
                     for (Class aClass : classes) {
-                        ((NWorkspaceExt)ws).getModel().configModel.onNewComponent(aClass,session);
+                        ((NWorkspaceExt) ws).getModel().configModel.onNewComponent(aClass, session);
                     }
                     //should check current classpath
                     //and the add to classpath
@@ -518,7 +518,7 @@ public class DefaultNWorkspaceExtensionModel {
                         } catch (IOException ex) {
                             _LOGOP(session).level(Level.SEVERE)
                                     .error(ex).log(NMsg.ofJ("failed to close zip file {0} : {1}",
-                                    file.getContent().orNull(), ex));
+                                            file.getContent().orNull(), ex));
                             //ignore return false;
                         }
                     }
@@ -556,7 +556,7 @@ public class DefaultNWorkspaceExtensionModel {
         return a;
     }
 
-//    public boolean installExtensionComponentType(Class extensionPointType, Class extensionImplType, NutsSession session) {
+    //    public boolean installExtensionComponentType(Class extensionPointType, Class extensionImplType, NutsSession session) {
 //        if (NutsComponent.class.isAssignableFrom(extensionPointType)) {
 //            if (extensionPointType.isAssignableFrom(extensionImplType)) {
 //                return registerType(extensionPointType, extensionImplType, session);
@@ -566,18 +566,18 @@ public class DefaultNWorkspaceExtensionModel {
 //        throw new ClassCastException(NutsComponent.class.getName());
 //    }
     public NSessionTerminal createTerminal(NTerminalSpec spec, NSession session) {
-        NSystemTerminalBase termb= createSupported(NSystemTerminalBase.class, spec, session).get();
+        NSystemTerminalBase termb = createSupported(NSystemTerminalBase.class, spec, session).get();
         if (spec != null && spec.get("ignoreClass") != null && spec.get("ignoreClass").equals(termb.getClass())) {
             return null;
         }
-        return new DefaultNSessionTerminalFromSystem(session,termb);
+        return new DefaultNSessionTerminalFromSystem(session, termb);
     }
 
     //@Override
     public URL[] getExtensionURLLocations(NId nutsId, String appId, String extensionType, NSession session) {
         List<URL> bootUrls = new ArrayList<>();
         for (String r : getExtensionRepositoryLocations(nutsId)) {
-            String url = r + "/" + NIdUtils.getPath(nutsId, "." + extensionType, '/');
+            String url = r + "/" + NIdUtils.resolveFilePath(nutsId, extensionType);
             URL u = expandURL(url, session);
             bootUrls.add(u);
         }
@@ -602,7 +602,7 @@ public class DefaultNWorkspaceExtensionModel {
     }
 
     protected URL expandURL(String url, NSession session) {
-        return NPath.of(url,session)
+        return NPath.of(url, session)
                 .toAbsolute(NLocations.of(session).getWorkspaceLocation())
                 .toURL();
     }
@@ -626,7 +626,7 @@ public class DefaultNWorkspaceExtensionModel {
 //        return false;
 //    }
 
-//    @Override
+    //    @Override
 //    public boolean removeExtension(NutsId extensionId) {
 //        if (extensionId == null) {
 //            throw new NutsIllegalArgumentException(ws, "Invalid Extension");
@@ -758,7 +758,7 @@ public class DefaultNWorkspaceExtensionModel {
 
 
     //TODO fix me!
-    public <T> T createFirst(Class<T> type, NSession session){
+    public <T> T createFirst(Class<T> type, NSession session) {
         return objectFactory.createFirst(type, session);
     }
 

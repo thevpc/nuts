@@ -117,13 +117,13 @@ class InstalledRepositoryConfigModel implements NRepositoryConfigModel {
     }
 
     @Override
-    public NPath getStoreLocation(NStoreLocation folderType, NSession session) {
+    public NPath getStoreLocation(NStoreType folderType, NSession session) {
         return null;
     }
 
     @Override
-    public NStoreLocationStrategy getStoreLocationStrategy(NSession session) {
-        return NLocations.of(session).getRepositoryStoreLocationStrategy();
+    public NStoreStrategy getStoreStrategy(NSession session) {
+        return NLocations.of(session).getRepositoryStoreStrategy();
     }
 
     @Override

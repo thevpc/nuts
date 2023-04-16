@@ -27,7 +27,7 @@ package net.thevpc.nuts.runtime.standalone.workspace.config.compat.v506;
 
 import net.thevpc.nuts.NConfigItem;
 import net.thevpc.nuts.NRepositoryRef;
-import net.thevpc.nuts.NStoreLocationStrategy;
+import net.thevpc.nuts.NStoreStrategy;
 import net.thevpc.nuts.NUserConfig;
 
 import java.util.Arrays;
@@ -48,7 +48,7 @@ public class NRepositoryConfig506 extends NConfigItem {
     private String type;
     private String location;
     private String[] storeLocations = null;
-    private NStoreLocationStrategy storeLocationStrategy = null;
+    private NStoreStrategy storeLocationStrategy = null;
     private String groups;
     private Map<String,String> env;
     private List<NRepositoryRef> mirrors;
@@ -95,11 +95,11 @@ public class NRepositoryConfig506 extends NConfigItem {
         return this;
     }
 
-    public NStoreLocationStrategy getStoreLocationStrategy() {
+    public NStoreStrategy getStoreLocationStrategy() {
         return storeLocationStrategy;
     }
 
-    public NRepositoryConfig506 setStoreLocationStrategy(NStoreLocationStrategy storeLocationStrategy) {
+    public NRepositoryConfig506 setStoreLocationStrategy(NStoreStrategy storeLocationStrategy) {
         this.storeLocationStrategy = storeLocationStrategy;
         return this;
     }

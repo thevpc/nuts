@@ -49,7 +49,7 @@ public class Test01_CreateTest {
         );
         Assertions.assertEquals(
                 NPath.of(new File(wsPath, "cache"),session),
-                NLocations.of(session).getStoreLocation(NStoreLocation.CACHE));
+                NLocations.of(session).getStoreLocation(NStoreType.CACHE));
         Assertions.assertEquals(0, NRepositories.of(session).getRepositories().size());
 //        Assertions.assertEquals(new File(wsPath,  "cache/" + NutsConstants.Folders.REPOSITORIES + "/" +
 //                        NRepositories.of(session).getRepositories()[0].getName() +
@@ -127,14 +127,14 @@ public class Test01_CreateTest {
         }
         Assertions.assertEquals(
                 NPath.of(new File(base, new File(wsPath).getName()),session),
-                NLocations.of(session).getStoreLocation(NStoreLocation.CACHE));
+                NLocations.of(session).getStoreLocation(NStoreType.CACHE));
         Assertions.assertEquals(
                 NPath.of(new File(base, new File(wsPath).getName() + "/"
                         + NConstants.Folders.REPOSITORIES + "/"
                         + NRepositories.of(session).getRepositories().get(0).getName()
                         + "/" + NRepositories.of(session).getRepositories().get(0).getUuid()
                 ),session),
-                NRepositories.of(session).getRepositories().get(0).config().getStoreLocation(NStoreLocation.CACHE));
+                NRepositories.of(session).getRepositories().get(0).config().getStoreLocation(NStoreType.CACHE));
     }
 
     @Test
@@ -353,29 +353,29 @@ public class Test01_CreateTest {
     @Test
     public void testHomePath(){
         Assertions.assertEquals(
-                NHomeLocation.of(null, NStoreLocation.APPS),
-                NHomeLocation.parse("system-apps").orElse(null)
+                NHomeLocation.of(null, NStoreType.BIN),
+                NHomeLocation.parse("system-bin").orElse(null)
         );
         Assertions.assertEquals(
-                NHomeLocation.of(NOsFamily.MACOS, NStoreLocation.CACHE),
-                NHomeLocation.parse("").orElse(NHomeLocation.of(NOsFamily.MACOS, NStoreLocation.CACHE) )
+                NHomeLocation.of(NOsFamily.MACOS, NStoreType.CACHE),
+                NHomeLocation.parse("").orElse(NHomeLocation.of(NOsFamily.MACOS, NStoreType.CACHE) )
         );
         Assertions.assertEquals(
-                NHomeLocation.of(NOsFamily.MACOS, NStoreLocation.CACHE),
-                NHomeLocation.parse("").orElse( NHomeLocation.of(NOsFamily.MACOS, NStoreLocation.CACHE))
+                NHomeLocation.of(NOsFamily.MACOS, NStoreType.CACHE),
+                NHomeLocation.parse("").orElse( NHomeLocation.of(NOsFamily.MACOS, NStoreType.CACHE))
         );
         Assertions.assertNull(NHomeLocation.parse("any error").orElse(null));
         Assertions.assertEquals(
-                NHomeLocation.of(null, NStoreLocation.APPS),
-                NEnum.parse(NHomeLocation.class, "system-apps").orElse(null)
+                NHomeLocation.of(null, NStoreType.BIN),
+                NEnum.parse(NHomeLocation.class, "system-bin").orElse(null)
         );
         Assertions.assertEquals(
-                NHomeLocation.of(NOsFamily.MACOS, NStoreLocation.CACHE),
-                NEnum.parse(NHomeLocation.class,"").orElse(NHomeLocation.of(NOsFamily.MACOS, NStoreLocation.CACHE))
+                NHomeLocation.of(NOsFamily.MACOS, NStoreType.CACHE),
+                NEnum.parse(NHomeLocation.class,"").orElse(NHomeLocation.of(NOsFamily.MACOS, NStoreType.CACHE))
         );
         Assertions.assertEquals(
-                NHomeLocation.of(NOsFamily.MACOS, NStoreLocation.CACHE),
-                NEnum.parse(NHomeLocation.class,"").orElse(NHomeLocation.of(NOsFamily.MACOS, NStoreLocation.CACHE) )
+                NHomeLocation.of(NOsFamily.MACOS, NStoreType.CACHE),
+                NEnum.parse(NHomeLocation.class,"").orElse(NHomeLocation.of(NOsFamily.MACOS, NStoreType.CACHE) )
         );
         Assertions.assertNull(NEnum.parse(NHomeLocation.class,"any error")
                 .orElse(null));

@@ -43,8 +43,8 @@ public class NRepositoryConfig507 extends NConfigItem {
     private String name;
     private String type;
     private String location;
-    private Map<NStoreLocation, String> storeLocations = null;
-    private NStoreLocationStrategy storeLocationStrategy = null;
+    private Map<NStoreType, String> storeLocations = null;
+    private NStoreStrategy storeLocationStrategy = null;
     private String groups;
     private Map<String, String> env;
     private List<NRepositoryRef> mirrors;
@@ -91,11 +91,11 @@ public class NRepositoryConfig507 extends NConfigItem {
         return this;
     }
 
-    public NStoreLocationStrategy getStoreLocationStrategy() {
+    public NStoreStrategy getStoreLocationStrategy() {
         return storeLocationStrategy;
     }
 
-    public NRepositoryConfig507 setStoreLocationStrategy(NStoreLocationStrategy storeLocationStrategy) {
+    public NRepositoryConfig507 setStoreLocationStrategy(NStoreStrategy storeLocationStrategy) {
         this.storeLocationStrategy = storeLocationStrategy;
         return this;
     }
@@ -154,11 +154,11 @@ public class NRepositoryConfig507 extends NConfigItem {
         return this;
     }
 
-    public Map<NStoreLocation, String> getStoreLocations() {
+    public Map<NStoreType, String> getStoreLocations() {
         return storeLocations;
     }
 
-    public NRepositoryConfig507 setStoreLocations(Map<NStoreLocation, String> storeLocations) {
+    public NRepositoryConfig507 setStoreLocations(Map<NStoreType, String> storeLocations) {
         this.storeLocations = storeLocations;
         return this;
     }

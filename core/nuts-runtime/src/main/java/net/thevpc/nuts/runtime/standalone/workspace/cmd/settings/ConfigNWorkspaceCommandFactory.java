@@ -71,7 +71,7 @@ public class ConfigNWorkspaceCommandFactory implements NWorkspaceCommandFactory 
 
     public NPath getStoreLocation(NSession session) {
         checkSession(session);
-        return NLocations.of(session).getStoreLocation(session.getWorkspace().getApiId(), NStoreLocation.APPS);
+        return NLocations.of(session).getStoreLocation(session.getWorkspace().getApiId(), NStoreType.BIN);
     }
 
     private NPath getCommandsFolder(NSession session) {

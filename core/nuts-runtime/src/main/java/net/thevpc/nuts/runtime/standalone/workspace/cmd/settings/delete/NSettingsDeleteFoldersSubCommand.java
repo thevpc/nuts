@@ -22,7 +22,7 @@ import java.util.Set;
 public class NSettingsDeleteFoldersSubCommand extends AbstractNSettingsSubCommand {
 
     private static void deleteRepoCache(NRepository repository, NSession session, boolean force) {
-        NPath s = repository.config().getStoreLocation(NStoreLocation.CACHE);
+        NPath s = repository.config().getStoreLocation(NStoreType.CACHE);
         if (s != null) {
             if (s.exists()) {
                 session.out().println(NMsg.ofC("```error deleting``` %s folder %s ...",
@@ -46,12 +46,12 @@ public class NSettingsDeleteFoldersSubCommand extends AbstractNSettingsSubComman
 
     @Override
     public boolean exec(NCmdLine cmdLine, Boolean autoSave, NSession session) {
-        for (NStoreLocation value : NStoreLocation.values()) {
+        for (NStoreType value : NStoreType.values()) {
             String cmdName = "delete " + value.id();
             cmdLine.setCommandName("settings " + cmdName);
             if (cmdLine.next(cmdName).isPresent()) {
                 boolean force = false;
-                Set<NStoreLocation> locationsToDelete = new HashSet<>();
+                Set<NStoreType> locationsToDelete = new HashSet<>();
                 locationsToDelete.add(value);
                 while (cmdLine.hasNext()) {
                     NArg a;
@@ -60,7 +60,7 @@ public class NSettingsDeleteFoldersSubCommand extends AbstractNSettingsSubComman
                     } else if (!cmdLine.isNextOption()) {
                         String s = cmdLine.peek().get(session).asString().get();
                         try {
-                            locationsToDelete.add(NStoreLocation.valueOf(s.toUpperCase()));
+                            locationsToDelete.add(NStoreType.valueOf(s.toUpperCase()));
                         } catch (Exception ex) {
                             cmdLine.throwUnexpectedArgument();
                         }
@@ -69,7 +69,7 @@ public class NSettingsDeleteFoldersSubCommand extends AbstractNSettingsSubComman
                     }
                 }
                 if (cmdLine.isExecMode()) {
-                    for (NStoreLocation folder : locationsToDelete) {
+                    for (NStoreType folder : locationsToDelete) {
                         deleteWorkspaceFolder(session, folder, force);
                     }
                 }
@@ -79,7 +79,7 @@ public class NSettingsDeleteFoldersSubCommand extends AbstractNSettingsSubComman
         return false;
     }
 
-    private void deleteWorkspaceFolder(NSession session, NStoreLocation folder, boolean force) {
+    private void deleteWorkspaceFolder(NSession session, NStoreType folder, boolean force) {
         NPath sstoreLocation = NLocations.of(session).getStoreLocation(folder);
         if (sstoreLocation != null) {
             NTexts factory = NTexts.of(session);
@@ -102,7 +102,7 @@ public class NSettingsDeleteFoldersSubCommand extends AbstractNSettingsSubComman
         }
     }
 
-    private void deleteRepoFolder(NRepository repository, NSession session, NStoreLocation folder, boolean force) {
+    private void deleteRepoFolder(NRepository repository, NSession session, NStoreType folder, boolean force) {
         NPath sstoreLocation = NLocations.of(session).getStoreLocation(folder);
         if (sstoreLocation != null) {
             NTexts factory = NTexts.of(session);
@@ -128,7 +128,7 @@ public class NSettingsDeleteFoldersSubCommand extends AbstractNSettingsSubComman
     }
 
     private void deleteCache(NSession session, boolean force) {
-        NPath sstoreLocation = NLocations.of(session).getStoreLocation(NStoreLocation.CACHE);
+        NPath sstoreLocation = NLocations.of(session).getStoreLocation(NStoreType.CACHE);
         if (sstoreLocation != null) {
             //            File cache = new File(storeLocation);
             if (sstoreLocation.exists()) {

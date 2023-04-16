@@ -1,11 +1,12 @@
 package net.thevpc.nuts.runtime.standalone.xtra.hashname;
 
-import net.thevpc.nuts.*;
+import net.thevpc.nuts.NSession;
+import net.thevpc.nuts.NWorkspace;
 import net.thevpc.nuts.io.NHashName;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.runtime.standalone.util.CoreNUtils;
 import net.thevpc.nuts.spi.NSupportLevelContext;
-import net.thevpc.nuts.util.NPlatformUtils;
+import net.thevpc.nuts.util.NPlatformHome;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -36,11 +37,7 @@ public class DefaultNHashName implements NHashName {
         if (p == null) {
             return ("Root " + n).trim();
         } else {
-            Path root = Paths.get(NPlatformUtils.getWorkspaceLocation(
-                    null,
-                    false,
-                    null
-            )).getParent().getParent();
+            Path root = Paths.get(NPlatformHome.USER.getWorkspaceLocation(null)).getParent().getParent();
             if (p.equals(root.toString())) {
                 return n;
             }

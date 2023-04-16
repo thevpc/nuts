@@ -11,17 +11,10 @@ import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.io.NCompress;
 import net.thevpc.nuts.io.NCp;
 import net.thevpc.nuts.io.NPath;
-import net.thevpc.nuts.io.NPrintStream;
-import net.thevpc.nuts.runtime.standalone.app.gui.CoreNUtilGui;
 import net.thevpc.nuts.runtime.standalone.app.util.NAppUtils;
-import net.thevpc.nuts.runtime.standalone.util.CoreNUtils;
-import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceExt;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.exec.DefaultInternalNExecutableCommand;
 import net.thevpc.nuts.spi.NPaths;
-import net.thevpc.nuts.text.NText;
-import net.thevpc.nuts.util.NRef;
-import net.thevpc.nuts.util.NStringBuilder;
-import net.thevpc.nuts.util.NStringUtils;
+import net.thevpc.nuts.util.*;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -253,7 +246,7 @@ public class DefaultNBundleInternalExecutable extends DefaultInternalNExecutable
         for (Map.Entry<NId, NDefinition> entry : allIds.entrySet()) {
             NId id = entry.getKey();
             NDefinition resultDefinition = entry.getValue();
-            String fullPath = CoreNUtils.resolveJarPath(id);
+            String fullPath = NIdUtils.resolveJarPath(id);
             if (resultDefinition.getContent().isPresent()) {
                 cp.from(resultDefinition.getContent().get())
                         .to(bundleFolder.resolve(fullPath))
@@ -266,7 +259,7 @@ public class DefaultNBundleInternalExecutable extends DefaultInternalNExecutable
                 }
             }
 
-            fullPath = CoreNUtils.resolveNutsDescriptorPath(id);
+            fullPath = NIdUtils.resolveNutsDescriptorPath(id);
             cp.from(NDescriptorFormat.of(session).setValue(resultDefinition.getDescriptor()).setNtf(false).toString().getBytes())
                     .to(bundleFolder.resolve(fullPath))
                     .run();
@@ -282,7 +275,7 @@ public class DefaultNBundleInternalExecutable extends DefaultInternalNExecutable
         if (includeConfigFiles) {
             nuts_bundle_files_config.println("copy /.nuts-repository $target/.nuts-repository");
             for (NId id : toBaseDir) {
-                String fullPath = CoreNUtils.resolveJarPath(id);
+                String fullPath = NIdUtils.resolveJarPath(id);
 
                 nuts_bundle_files_config.println("copy /" + fullPath
                         + " $target/"

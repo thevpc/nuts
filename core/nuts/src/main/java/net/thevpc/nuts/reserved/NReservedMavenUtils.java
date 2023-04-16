@@ -27,13 +27,12 @@
 package net.thevpc.nuts.reserved;
 
 import net.thevpc.nuts.*;
+import net.thevpc.nuts.boot.NBootCache;
 import net.thevpc.nuts.boot.NBootOptions;
 import net.thevpc.nuts.boot.NBootOptionsBuilder;
+import net.thevpc.nuts.boot.NIdCache;
 import net.thevpc.nuts.spi.NRepositoryLocation;
-import net.thevpc.nuts.util.NLog;
-import net.thevpc.nuts.util.NLogVerb;
-import net.thevpc.nuts.util.NMavenSettings;
-import net.thevpc.nuts.util.NMavenSettingsLoader;
+import net.thevpc.nuts.util.*;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.xml.sax.SAXParseException;
@@ -156,15 +155,7 @@ public final class NReservedMavenUtils {
     }
 
     public static String toMavenPath(NId nutsId) {
-        StringBuilder sb = new StringBuilder();
-        sb.append(nutsId.getGroupId().replace(".", "/"));
-        sb.append("/");
-        sb.append(nutsId.getArtifactId());
-        if (!nutsId.getVersion().isBlank()) {
-            sb.append("/");
-            sb.append(nutsId.getVersion().getValue());
-        }
-        return sb.toString();
+        return NIdUtils.resolveIdPath(nutsId);
     }
 
     public static String resolveMavenFullPath(NRepositoryLocation repo, NId nutsId, String ext) {
@@ -182,7 +173,7 @@ public final class NReservedMavenUtils {
 
 
     public static String getPathFile(NId id, String name) {
-        return id.getGroupId().replace('.', '/') + '/' + id.getArtifactId() + '/' + id.getVersion() + "/" + name;
+        return toMavenPath(id) + "/" + name;
     }
 
     public static File resolveOrDownloadJar(NId nutsId, NRepositoryLocation[] repositories, NRepositoryLocation cacheFolder, NLog bLog, boolean includeDesc, Instant expire, NReservedErrorInfoList errors) {
@@ -220,9 +211,9 @@ public final class NReservedMavenUtils {
         return null;
     }
 
-    public static Set<NId> loadDependenciesFromId(NId rid, NLog bLog, Collection<NRepositoryLocation> repos, Map<String, Object> cache) {
-        String urlPath = NReservedUtils.idToPath(rid) + "/" + rid.getArtifactId() + "-" + rid.getVersion() + ".pom";
-        Set<NId> deps = Collections.emptySet();
+    public static Set<NId> loadDependenciesFromId(NId rid, NLog bLog, Collection<NRepositoryLocation> repos, NBootCache cache) {
+        String urlPath = NIdUtils.resolveFilePath(rid, "pom");
+        Set<NId> deps = null;
         for (NRepositoryLocation baseUrl : repos) {
             String loc = baseUrl.getPath();
             if (loc != null) {
@@ -230,7 +221,7 @@ public final class NReservedMavenUtils {
                     Set<String> urls = loadMavenSettingsUrls(bLog, cache);
                     for (String url : urls) {
                         deps = loadDependenciesFromPomUrl(url + "/" + urlPath, bLog);
-                        if (!deps.isEmpty()) {
+                        if (deps != null) {
                             return deps;
                         }
                     }
@@ -240,7 +231,7 @@ public final class NReservedMavenUtils {
                     loc = loc.substring("htmlfs:".length());
                 }
                 deps = loadDependenciesFromPomUrl(loc + "/" + urlPath, bLog);
-                if (!deps.isEmpty()) {
+                if (deps != null) {
                     break;
                 }
             }
@@ -249,7 +240,7 @@ public final class NReservedMavenUtils {
     }
 
 
-    static Set<NId> loadDependenciesFromPomUrl(String url, NLog bLog) {
+    private static Set<NId> loadDependenciesFromPomUrl(String url, NLog bLog) {
         LinkedHashSet<NId> depsSet = new LinkedHashSet<>();
         InputStream xml = null;
         try {
@@ -259,9 +250,9 @@ public final class NReservedMavenUtils {
                     xml = NReservedIOUtils.openStream(url1, bLog);
                 } catch (Exception ex) {
                     //do not need to log error
-                    return depsSet;
+                    return null;
                 }
-            } else if (url.startsWith("file://")) {
+            } else if (url.startsWith("file:")) {
                 URL url1 = new URL(url);
                 File file = NReservedIOUtils.toFile(url1);
                 if (file == null) {
@@ -270,19 +261,19 @@ public final class NReservedMavenUtils {
                         xml = NReservedIOUtils.openStream(url1, bLog);
                     } catch (Exception ex) {
                         //do not need to log error
-                        return depsSet;
+                        return null;
                     }
                 } else if (file.isFile()) {
                     xml = Files.newInputStream(file.toPath());
                 } else {
-                    return depsSet;
+                    return null;
                 }
             } else {
                 File file = new File(url);
                 if (file.isFile()) {
                     xml = Files.newInputStream(file.toPath());
                 } else {
-                    return depsSet;
+                    return null;
                 }
             }
             DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
@@ -407,8 +398,9 @@ public final class NReservedMavenUtils {
             List<NId> ok = new ArrayList<>();
             for (NId idep : depsSet) {
                 NDependency dep = idep.toDependency();
+
                 String arch = archMap.get(idep.getShortName());
-                String os = archMap.get(idep.getShortName());
+                String os = osMap.get(idep.getShortName());
                 boolean replace = false;
                 if (arch != null || os != null) {
                     if ((dep.getCondition().getOs().isEmpty() && os != null)
@@ -625,7 +617,7 @@ public final class NReservedMavenUtils {
                 }
             }
         }
-        String path = zId.getGroupId().replace('.', '/') + '/' + zId.getArtifactId();
+        String path = NIdUtils.resolveIdPath(zId.getShortId());
         NVersion bestVersion = null;
         String bestPath = null;
         boolean stopOnFirstValidRepo = false;
@@ -676,7 +668,7 @@ public final class NReservedMavenUtils {
 
     public static File getBootCacheJar(NId vid, NRepositoryLocation[] repositories, NRepositoryLocation cacheFolder, boolean useCache, String name,
                                        Instant expire, NReservedErrorInfoList errorList, NBootOptions bOptions,
-                                       Function<String, String> pathExpansionConverter, NLog bLog, Map<String, Object> cache) {
+                                       Function<String, String> pathExpansionConverter, NLog bLog, NBootCache cache) {
         File f = getBootCacheFile(vid, getFileName(vid, "jar"), repositories, cacheFolder, useCache, expire, errorList, bOptions, pathExpansionConverter, bLog, cache);
         if (f == null) {
             throw new NInvalidWorkspaceException(bOptions.getWorkspace().orNull(),
@@ -688,7 +680,7 @@ public final class NReservedMavenUtils {
     static File getBootCacheFile(NId vid, String fileName, NRepositoryLocation[] repositories, NRepositoryLocation cacheFolder,
                                  boolean useCache, Instant expire, NReservedErrorInfoList errorList,
                                  NBootOptions bOptions,
-                                 Function<String, String> pathExpansionConverter, NLog bLog, Map<String, Object> cache) {
+                                 Function<String, String> pathExpansionConverter, NLog bLog, NBootCache cache) {
         String path = getPathFile(vid, fileName);
         if (useCache && cacheFolder != null) {
 
@@ -701,10 +693,18 @@ public final class NReservedMavenUtils {
             if (useCache && cacheFolder != null && cacheFolder.equals(repository)) {
                 return null; // I do not remember why I did this!
             }
-            File file = getBootCacheFile(vid, path, repository, cacheFolder, useCache, expire, errorList, bOptions, pathExpansionConverter, bLog,cache);
+            File file = getBootCacheFile(vid, path, repository, cacheFolder, useCache, expire, errorList, bOptions, pathExpansionConverter, bLog, cache);
             if (file != null) {
                 return file;
             }
+        }
+        NIdCache e = cache.fallbackIdMap.get(vid);
+        if (e != null && e.jar != null) {
+            return new File(e.jar);
+        }
+        e = cache.fallbackIdMap.get(vid.getShortId());
+        if (e != null && e.jar != null) {
+            return new File(e.jar);
         }
         return null;
     }
@@ -712,12 +712,12 @@ public final class NReservedMavenUtils {
     private static File getBootCacheFile(NId nutsId, String path, NRepositoryLocation repository0, NRepositoryLocation cacheFolder,
                                          boolean useCache, Instant expire, NReservedErrorInfoList errorList,
                                          NBootOptions bOptions, Function<String, String> pathExpansionConverter,
-                                         NLog bLog, Map<String, Object> cache) {
+                                         NLog bLog, NBootCache cache) {
         boolean cacheLocalFiles = true;//Boolean.getBoolean("nuts.cache.cache-local-files");
-        Set<String> urls=new LinkedHashSet<>();
+        Set<String> urls = new LinkedHashSet<>();
         if (isMavenSettingsRepo(repository0)) {
             urls.addAll(loadMavenSettingsUrls(bLog, cache));
-        }else{
+        } else {
             urls.add(repository0.getPath());
         }
         for (String repository : urls) {
@@ -760,7 +760,7 @@ public final class NReservedMavenUtils {
             } else {
                 repository = repositoryFolder.getPath();
             }
-            File repoFolder = NReservedIOUtils.createFile(NReservedUtils.getHome(NStoreLocation.CONFIG, bOptions), repository);
+            File repoFolder = NReservedIOUtils.createFile(NReservedUtils.getHome(NStoreType.CONF, bOptions), repository);
             File ff = null;
 
             if (repoFolder.isDirectory()) {
@@ -820,8 +820,8 @@ public final class NReservedMavenUtils {
         return false;
     }
 
-    private static Set<String> loadMavenSettingsUrls(NLog bLog, Map<String, Object> cache) {
-        NMavenSettings mavenSettings = (NMavenSettings) cache.computeIfAbsent(NMavenSettings.class.getName(), x -> new NMavenSettingsLoader(bLog).loadSettingsRepos());
+    private static Set<String> loadMavenSettingsUrls(NLog bLog, NBootCache cache) {
+        NMavenSettings mavenSettings = (NMavenSettings) cache.cache.computeIfAbsent(NMavenSettings.class.getName(), x -> new NMavenSettingsLoader(bLog).loadSettingsRepos());
         Set<String> urls = new LinkedHashSet<>();
         urls.add(mavenSettings.getLocalRepository());
         urls.add(mavenSettings.getRemoteRepository());
@@ -891,7 +891,7 @@ public final class NReservedMavenUtils {
 
     public static Map<String, String> resolvePomTagValues(String[] propNames, File file) {
         if (file != null && file.isFile()) {
-            try (InputStream is = new FileInputStream(file)) {
+            try (InputStream is = Files.newInputStream(file.toPath())) {
                 return resolvePomTagValues(propNames, is);
             } catch (IOException e) {
                 //

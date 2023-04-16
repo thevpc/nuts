@@ -80,7 +80,7 @@ public class DefaultNDependency implements NDependency {
         }
         this.condition = condition == null ? NEnvCondition.BLANK : condition;
         this.type = NStringUtils.trimToNull(type);
-        this.properties = NStringMapFormat.DEFAULT.format(NStringMapFormat.DEFAULT.parse(properties).get());
+        this.properties = NStringUtils.trim(NStringMapFormat.DEFAULT.format(NStringMapFormat.DEFAULT.parse(properties).get()));
     }
 
     @Override

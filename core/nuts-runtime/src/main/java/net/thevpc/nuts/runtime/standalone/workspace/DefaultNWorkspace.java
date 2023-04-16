@@ -44,7 +44,7 @@ import net.thevpc.nuts.runtime.standalone.descriptor.util.NDescriptorUtils;
 import net.thevpc.nuts.runtime.standalone.event.*;
 import net.thevpc.nuts.runtime.standalone.extension.DefaultNWorkspaceExtensionModel;
 import net.thevpc.nuts.runtime.standalone.extension.NExtensionListHelper;
-import net.thevpc.nuts.runtime.standalone.id.util.NIdUtils;
+import net.thevpc.nuts.runtime.standalone.id.util.CoreNIdUtils;
 import net.thevpc.nuts.runtime.standalone.installer.CommandForIdNInstallerComponent;
 import net.thevpc.nuts.runtime.standalone.io.util.CoreIOUtils;
 import net.thevpc.nuts.runtime.standalone.log.DefaultNLogModel;
@@ -310,17 +310,17 @@ public class DefaultNWorkspace extends AbstractNWorkspace implements NWorkspaceE
                 ));
                 LOGCRF.log(NMsg.ofJ("   nuts-workspace                 : {0}", NTextUtils.formatLogValue(text, userOptions.getWorkspace().orNull(), bootOptions.getWorkspace().orNull())));
                 LOGCRF.log(NMsg.ofJ("   nuts-hash-name                 : {0}", getHashName()));
-                LOGCRF.log(NMsg.ofJ("   nuts-store-apps                : {0}", NTextUtils.formatLogValue(text, userOptions.getStoreLocation(NStoreLocation.APPS).orNull(), bootOptions.getStoreLocation(NStoreLocation.APPS).orNull())));
-                LOGCRF.log(NMsg.ofJ("   nuts-store-config              : {0}", NTextUtils.formatLogValue(text, userOptions.getStoreLocation(NStoreLocation.CONFIG).orNull(), bootOptions.getStoreLocation(NStoreLocation.CONFIG).orNull())));
-                LOGCRF.log(NMsg.ofJ("   nuts-store-var                 : {0}", NTextUtils.formatLogValue(text, userOptions.getStoreLocation(NStoreLocation.VAR).orNull(), bootOptions.getStoreLocation(NStoreLocation.VAR).orNull())));
-                LOGCRF.log(NMsg.ofJ("   nuts-store-log                 : {0}", NTextUtils.formatLogValue(text, userOptions.getStoreLocation(NStoreLocation.LOG).orNull(), bootOptions.getStoreLocation(NStoreLocation.LOG).orNull())));
-                LOGCRF.log(NMsg.ofJ("   nuts-store-temp                : {0}", NTextUtils.formatLogValue(text, userOptions.getStoreLocation(NStoreLocation.TEMP).orNull(), bootOptions.getStoreLocation(NStoreLocation.TEMP).orNull())));
-                LOGCRF.log(NMsg.ofJ("   nuts-store-cache               : {0}", NTextUtils.formatLogValue(text, userOptions.getStoreLocation(NStoreLocation.CACHE).orNull(), bootOptions.getStoreLocation(NStoreLocation.CACHE).orNull())));
-                LOGCRF.log(NMsg.ofJ("   nuts-store-run                 : {0}", NTextUtils.formatLogValue(text, userOptions.getStoreLocation(NStoreLocation.RUN).orNull(), bootOptions.getStoreLocation(NStoreLocation.RUN).orNull())));
-                LOGCRF.log(NMsg.ofJ("   nuts-store-lib                 : {0}", NTextUtils.formatLogValue(text, userOptions.getStoreLocation(NStoreLocation.LIB).orNull(), bootOptions.getStoreLocation(NStoreLocation.LIB).orNull())));
-                LOGCRF.log(NMsg.ofJ("   nuts-store-strategy            : {0}", NTextUtils.formatLogValue(text, userOptions.getStoreLocationStrategy().orNull(), bootOptions.getStoreLocationStrategy().orNull())));
-                LOGCRF.log(NMsg.ofJ("   nuts-repos-store-strategy      : {0}", NTextUtils.formatLogValue(text, userOptions.getRepositoryStoreLocationStrategy().orNull(), bootOptions.getRepositoryStoreLocationStrategy().orNull())));
-                LOGCRF.log(NMsg.ofJ("   nuts-store-layout              : {0}", NTextUtils.formatLogValue(text, userOptions.getStoreLocationLayout().orNull(), bootOptions.getStoreLocationLayout().isNotPresent() ? "system" : bootOptions.getStoreLocationLayout().orNull())));
+                LOGCRF.log(NMsg.ofJ("   nuts-store-bin                 : {0}", NTextUtils.formatLogValue(text, userOptions.getStoreType(NStoreType.BIN).orNull(), bootOptions.getStoreType(NStoreType.BIN).orNull())));
+                LOGCRF.log(NMsg.ofJ("   nuts-store-conf                : {0}", NTextUtils.formatLogValue(text, userOptions.getStoreType(NStoreType.CONF).orNull(), bootOptions.getStoreType(NStoreType.CONF).orNull())));
+                LOGCRF.log(NMsg.ofJ("   nuts-store-var                 : {0}", NTextUtils.formatLogValue(text, userOptions.getStoreType(NStoreType.VAR).orNull(), bootOptions.getStoreType(NStoreType.VAR).orNull())));
+                LOGCRF.log(NMsg.ofJ("   nuts-store-log                 : {0}", NTextUtils.formatLogValue(text, userOptions.getStoreType(NStoreType.LOG).orNull(), bootOptions.getStoreType(NStoreType.LOG).orNull())));
+                LOGCRF.log(NMsg.ofJ("   nuts-store-temp                : {0}", NTextUtils.formatLogValue(text, userOptions.getStoreType(NStoreType.TEMP).orNull(), bootOptions.getStoreType(NStoreType.TEMP).orNull())));
+                LOGCRF.log(NMsg.ofJ("   nuts-store-cache               : {0}", NTextUtils.formatLogValue(text, userOptions.getStoreType(NStoreType.CACHE).orNull(), bootOptions.getStoreType(NStoreType.CACHE).orNull())));
+                LOGCRF.log(NMsg.ofJ("   nuts-store-run                 : {0}", NTextUtils.formatLogValue(text, userOptions.getStoreType(NStoreType.RUN).orNull(), bootOptions.getStoreType(NStoreType.RUN).orNull())));
+                LOGCRF.log(NMsg.ofJ("   nuts-store-lib                 : {0}", NTextUtils.formatLogValue(text, userOptions.getStoreType(NStoreType.LIB).orNull(), bootOptions.getStoreType(NStoreType.LIB).orNull())));
+                LOGCRF.log(NMsg.ofJ("   nuts-store-strategy            : {0}", NTextUtils.formatLogValue(text, userOptions.getStoreStrategy().orNull(), bootOptions.getStoreStrategy().orNull())));
+                LOGCRF.log(NMsg.ofJ("   nuts-repos-store-strategy      : {0}", NTextUtils.formatLogValue(text, userOptions.getRepositoryStoreStrategy().orNull(), bootOptions.getRepositoryStoreStrategy().orNull())));
+                LOGCRF.log(NMsg.ofJ("   nuts-store-layout              : {0}", NTextUtils.formatLogValue(text, userOptions.getStoreLayout().orNull(), bootOptions.getStoreLayout().isNotPresent() ? "system" : bootOptions.getStoreLayout().orNull())));
                 LOGCRF.log(NMsg.ofJ("   nuts-username                  : {0}", NTextUtils.formatLogValue(text, userOptions.getUserName().orNull(), bootOptions.getUserName().orNull())));
                 LOGCRF.log(NMsg.ofJ("   nuts-read-only                 : {0}", NTextUtils.formatLogValue(text, userOptions.getReadOnly().orNull(), bootOptions.getReadOnly().orNull())));
                 LOGCRF.log(NMsg.ofJ("   nuts-trace                     : {0}", NTextUtils.formatLogValue(text, userOptions.getTrace().orNull(), bootOptions.getTrace().orNull())));
@@ -444,19 +444,19 @@ public class DefaultNWorkspace extends AbstractNWorkspace implements NWorkspaceE
                 rconfig.setId(runtimeId);
 
                 bconfig.setBootRepositories(repositories);
-                bconfig.setStoreLocationStrategy(bootOptions.getStoreLocationStrategy().orNull());
-                bconfig.setRepositoryStoreLocationStrategy(bootOptions.getRepositoryStoreLocationStrategy().orNull());
-                bconfig.setStoreLocationLayout(bootOptions.getStoreLocationLayout().orNull());
-                bconfig.setGlobal(bootOptions.getGlobal().orElse(false));
+                bconfig.setStoreStrategy(bootOptions.getStoreStrategy().orNull());
+                bconfig.setRepositoryStoreStrategy(bootOptions.getRepositoryStoreStrategy().orNull());
+                bconfig.setStoreLayout(bootOptions.getStoreLayout().orNull());
+                bconfig.setSystem(bootOptions.getSystem().orElse(false));
                 bconfig.setStoreLocations(new NStoreLocationsMap(bootOptions.getStoreLocations().orNull()).toMapOrNull());
                 bconfig.setHomeLocations(new NHomeLocationsMap(bootOptions.getHomeLocations().orNull()).toMapOrNull());
 
                 boolean namedWorkspace = CoreNUtils.isValidWorkspaceName(bootOptions.getWorkspace().orNull());
-                if (bconfig.getStoreLocationStrategy() == null) {
-                    bconfig.setStoreLocationStrategy(namedWorkspace ? NStoreLocationStrategy.EXPLODED : NStoreLocationStrategy.STANDALONE);
+                if (bconfig.getStoreStrategy() == null) {
+                    bconfig.setStoreStrategy(namedWorkspace ? NStoreStrategy.EXPLODED : NStoreStrategy.STANDALONE);
                 }
-                if (bconfig.getRepositoryStoreLocationStrategy() == null) {
-                    bconfig.setRepositoryStoreLocationStrategy(NStoreLocationStrategy.EXPLODED);
+                if (bconfig.getRepositoryStoreStrategy() == null) {
+                    bconfig.setRepositoryStoreStrategy(NStoreStrategy.EXPLODED);
                 }
                 bconfig.setName(CoreNUtils.resolveValidWorkspaceName(bootOptions.getWorkspace().orNull()));
 
@@ -578,7 +578,7 @@ public class DefaultNWorkspace extends AbstractNWorkspace implements NWorkspaceE
                     d.setFailSafe(false);
                     if (d.getConfig() != null) {
                         d.getConfig().setName(NBlankable.isBlank(n) ? ruuid : n);
-                        d.getConfig().setStoreLocationStrategy(NStoreLocationStrategy.STANDALONE);
+                        d.getConfig().setStoreStrategy(NStoreStrategy.STANDALONE);
                     }
                     NRepositories.of(defaultSession()).addRepository(d);
                 }
@@ -1448,7 +1448,7 @@ public class DefaultNWorkspace extends AbstractNWorkspace implements NWorkspaceE
     public NText resolveDefaultHelp(Class clazz, NSession session) {
         NId nutsId = NIdResolver.of(session).resolveId(clazz);
         if (nutsId != null) {
-            NPath urlPath = NPath.of("classpath:/" + nutsId.getGroupId().replace('.', '/') + "/" + nutsId.getArtifactId() + ".ntf", clazz == null ? null : clazz.getClassLoader(), session);
+            NPath urlPath = NPath.of("classpath:/" + net.thevpc.nuts.util.NIdUtils.resolveIdPath(nutsId.getShortId()) + ".ntf", clazz == null ? null : clazz.getClassLoader(), session);
             NTexts txt = NTexts.of(session);
             NText n = txt.parser().parse(urlPath);
             n = txt.transform(n, new NTextTransformConfig()
@@ -1573,7 +1573,7 @@ public class DefaultNWorkspace extends AbstractNWorkspace implements NWorkspaceE
                         installerId = installerId.builder().setGroupId("net.thevpc.nuts.toolbox").build();
                     }
                     //ensure installer is always well qualified!
-                    NIdUtils.checkShortId(installerId, session);
+                    CoreNIdUtils.checkShortId(installerId, session);
                     runnerFile = NSearchCommand.of(session).setId(installerId)
                             .setOptional(false)
                             .setContent(true)
@@ -1637,24 +1637,24 @@ public class DefaultNWorkspace extends AbstractNWorkspace implements NWorkspaceE
         getInstalledRepository().uninstall(def, session);
         NId id = def.getId();
         if (deleteFiles) {
-            if (NLocations.of(session).getStoreLocation(id, NStoreLocation.APPS).exists()) {
-                NLocations.of(session).getStoreLocation(id, NStoreLocation.APPS).deleteTree();
+            if (NLocations.of(session).getStoreLocation(id, NStoreType.BIN).exists()) {
+                NLocations.of(session).getStoreLocation(id, NStoreType.BIN).deleteTree();
             }
-            if (NLocations.of(session).getStoreLocation(id, NStoreLocation.LIB).exists()) {
-                NLocations.of(session).getStoreLocation(id, NStoreLocation.LIB).deleteTree();
+            if (NLocations.of(session).getStoreLocation(id, NStoreType.LIB).exists()) {
+                NLocations.of(session).getStoreLocation(id, NStoreType.LIB).deleteTree();
             }
-            if (NLocations.of(session).getStoreLocation(id, NStoreLocation.LOG).exists()) {
-                NLocations.of(session).getStoreLocation(id, NStoreLocation.LOG).deleteTree();
+            if (NLocations.of(session).getStoreLocation(id, NStoreType.LOG).exists()) {
+                NLocations.of(session).getStoreLocation(id, NStoreType.LOG).deleteTree();
             }
-            if (NLocations.of(session).getStoreLocation(id, NStoreLocation.CACHE).exists()) {
-                NLocations.of(session).getStoreLocation(id, NStoreLocation.CACHE).deleteTree();
+            if (NLocations.of(session).getStoreLocation(id, NStoreType.CACHE).exists()) {
+                NLocations.of(session).getStoreLocation(id, NStoreType.CACHE).deleteTree();
             }
             if (eraseFiles) {
-                if (NLocations.of(session).getStoreLocation(id, NStoreLocation.VAR).exists()) {
-                    NLocations.of(session).getStoreLocation(id, NStoreLocation.VAR).deleteTree();
+                if (NLocations.of(session).getStoreLocation(id, NStoreType.VAR).exists()) {
+                    NLocations.of(session).getStoreLocation(id, NStoreType.VAR).deleteTree();
                 }
-                if (NLocations.of(session).getStoreLocation(id, NStoreLocation.CONFIG).exists()) {
-                    NLocations.of(session).getStoreLocation(id, NStoreLocation.CONFIG).deleteTree();
+                if (NLocations.of(session).getStoreLocation(id, NStoreType.CONF).exists()) {
+                    NLocations.of(session).getStoreLocation(id, NStoreType.CONF).deleteTree();
                 }
             }
         }
@@ -1706,7 +1706,7 @@ public class DefaultNWorkspace extends AbstractNWorkspace implements NWorkspaceE
         NLocations loc = NLocations.of(session);
         if (!descriptor.getId().getVersion().isBlank() && descriptor.getId().getVersion().isSingleValue()
                 && descriptor.getId().toString().indexOf('$') < 0) {
-            NPath l = loc.getStoreLocation(descriptor.getId(), NStoreLocation.CACHE);
+            NPath l = loc.getStoreLocation(descriptor.getId(), NStoreType.CACHE);
             String nn = loc.getDefaultIdFilename(descriptor.getId().builder().setFace("eff-nuts.cache").build());
             eff = l.resolve(nn);
             if (eff.isRegularFile()) {
@@ -1727,7 +1727,7 @@ public class DefaultNWorkspace extends AbstractNWorkspace implements NWorkspaceE
         NDescriptor effectiveDescriptor = _resolveEffectiveDescriptor(descriptor, session);
         NDescriptorUtils.checkValidEffectiveDescriptor(effectiveDescriptor, session);
         if (eff == null) {
-            NPath l = NLocations.of(session).getStoreLocation(effectiveDescriptor.getId(), NStoreLocation.CACHE);
+            NPath l = NLocations.of(session).getStoreLocation(effectiveDescriptor.getId(), NStoreType.CACHE);
             String nn = loc.getDefaultIdFilename(effectiveDescriptor.getId().builder().setFace("eff-nuts.cache").build());
             eff = l.resolve(nn);
         }
@@ -1793,7 +1793,7 @@ public class DefaultNWorkspace extends AbstractNWorkspace implements NWorkspaceE
             }
         }
         for (NDefinition def : defs.values()) {
-            NPath bootstrapFolder = NLocations.of(session).getStoreLocation(NStoreLocation.LIB).resolve(NConstants.Folders.ID);
+            NPath bootstrapFolder = NLocations.of(session).getStoreLocation(NStoreType.LIB).resolve(NConstants.Folders.ID);
             NId id2 = def.getId();
             NCp.of(session).from(def.getContent().get(session))
                     .to(bootstrapFolder.resolve(NLocations.of(session).getDefaultIdBasedir(id2))

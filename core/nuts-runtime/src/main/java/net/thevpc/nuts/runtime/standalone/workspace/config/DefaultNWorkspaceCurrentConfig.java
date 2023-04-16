@@ -4,7 +4,7 @@ import net.thevpc.nuts.*;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.runtime.standalone.boot.NBootConfig;
 import net.thevpc.nuts.runtime.standalone.xtra.expr.StringTokenizerUtils;
-import net.thevpc.nuts.util.NPlatformUtils;
+import net.thevpc.nuts.util.NPlatformHome;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -16,9 +16,9 @@ import java.util.stream.Collectors;
 
 public final class DefaultNWorkspaceCurrentConfig {
 
-    private final Map<NStoreLocation, String> userStoreLocations = new HashMap<>();
-    private final Map<NStoreLocation, String> effStoreLocationsMap = new HashMap<>();
-    private final Path[] effStoreLocationPath = new Path[NStoreLocation.values().length];
+    private final Map<NStoreType, String> userStoreLocations = new HashMap<>();
+    private final Map<NStoreType, String> effStoreLocationsMap = new HashMap<>();
+    private final Path[] effStoreLocationPath = new Path[NStoreType.values().length];
     private final Map<NHomeLocation, String> homeLocations = new HashMap<>();
     private final NWorkspace ws;
     private String name;
@@ -29,10 +29,10 @@ public final class DefaultNWorkspaceCurrentConfig {
     private String bootRepositories;
     private String bootJavaCommand;
     private String bootJavaOptions;
-    private NStoreLocationStrategy storeLocationStrategy;
-    private NStoreLocationStrategy repositoryStoreLocationStrategy;
-    private NOsFamily storeLocationLayout;
-    private Boolean global;
+    private NStoreStrategy storeStrategy;
+    private NStoreStrategy repositoryStoreStrategy;
+    private NOsFamily storeLayout;
+    private Boolean system;
 //    private NutsId platform;
 //    private NutsId os;
 //    private NutsOsFamily osFamily;
@@ -56,29 +56,29 @@ public final class DefaultNWorkspaceCurrentConfig {
         if (c.getJavaOptions().isPresent()) {
             this.bootJavaOptions = c.getJavaOptions().get();
         }
-        if (c.getStoreLocationStrategy().isPresent()) {
-            this.storeLocationStrategy = c.getStoreLocationStrategy().get();
+        if (c.getStoreStrategy().isPresent()) {
+            this.storeStrategy = c.getStoreStrategy().get();
         }
-        if (c.getRepositoryStoreLocationStrategy().isPresent()) {
-            this.repositoryStoreLocationStrategy = c.getRepositoryStoreLocationStrategy().get();
+        if (c.getRepositoryStoreStrategy().isPresent()) {
+            this.repositoryStoreStrategy = c.getRepositoryStoreStrategy().get();
         }
-        if (c.getStoreLocationLayout().isPresent()) {
-            this.storeLocationLayout = c.getStoreLocationLayout().get();
+        if (c.getStoreLayout().isPresent()) {
+            this.storeLayout = c.getStoreLayout().get();
         }
-        for (Map.Entry<NStoreLocation, String> e : new NStoreLocationsMap(c.getStoreLocations().orNull()).toMap().entrySet()) {
+        for (Map.Entry<NStoreType, String> e : new NStoreLocationsMap(c.getStoreLocations().orNull()).toMap().entrySet()) {
             String o = this.userStoreLocations.get(e.getKey());
-            if(NBlankable.isBlank(o)){
-                this.userStoreLocations.put(e.getKey(),e.getValue());
+            if (NBlankable.isBlank(o)) {
+                this.userStoreLocations.put(e.getKey(), e.getValue());
             }
         }
         for (Map.Entry<NHomeLocation, String> e : new NHomeLocationsMap(c.getHomeLocations().orNull()).toMap().entrySet()) {
             String o = this.homeLocations.get(e.getKey());
-            if(NBlankable.isBlank(o)){
-                this.homeLocations.put(e.getKey(),e.getValue());
+            if (NBlankable.isBlank(o)) {
+                this.homeLocations.put(e.getKey(), e.getValue());
             }
         }
-        if(this.global==null) {
-            this.global = c.getGlobal().orElse(false);
+        if (this.system == null) {
+            this.system = c.getSystem().orElse(false);
         }
         return this;
     }
@@ -104,26 +104,27 @@ public final class DefaultNWorkspaceCurrentConfig {
     }
 
     public DefaultNWorkspaceCurrentConfig build(NPath workspaceLocation, NSession session) {
-        if (storeLocationStrategy == null) {
-            storeLocationStrategy = NStoreLocationStrategy.EXPLODED;
+        if (storeStrategy == null) {
+            storeStrategy = NStoreStrategy.EXPLODED;
         }
-        if (repositoryStoreLocationStrategy == null) {
-            repositoryStoreLocationStrategy = NStoreLocationStrategy.EXPLODED;
+        if (repositoryStoreStrategy == null) {
+            repositoryStoreStrategy = NStoreStrategy.EXPLODED;
         }
-        Map<NStoreLocation, String> storeLocations = NPlatformUtils.buildLocations(getStoreLocationLayout(), storeLocationStrategy,
-                getStoreLocations(), homeLocations, isGlobal(), workspaceLocation.toString(),
+        Map<NStoreType, String> storeLocations =
+        NPlatformHome.of(getStoreLayout(),getSystem()).buildLocations(storeStrategy,
+                getStoreLocations(), homeLocations, workspaceLocation.toString(),
                 session
         );
         this.effStoreLocationsMap.clear();
         this.effStoreLocationsMap.putAll(storeLocations);
         for (int i = 0; i < effStoreLocationPath.length; i++) {
-            effStoreLocationPath[i] = Paths.get(effStoreLocationsMap.get(NStoreLocation.values()[i]));
+            effStoreLocationPath[i] = Paths.get(effStoreLocationsMap.get(NStoreType.values()[i]));
         }
         if (apiId == null) {
             apiId = NId.ofApi(Nuts.getVersion()).get(session);
         }
-        if (storeLocationLayout == null) {
-            storeLocationLayout = NEnvs.of(session).getOsFamily();
+        if (storeLayout == null) {
+            storeLayout = NEnvs.of(session).getOsFamily();
         }
         return this;
     }
@@ -156,7 +157,7 @@ public final class DefaultNWorkspaceCurrentConfig {
                     .setId(NId.of(this.bootRuntime.toString()).get())
                     .setDependencies(
                             StringTokenizerUtils.splitSemiColon(c.getDependencies()).stream()
-                                    .map(x-> NDependency.of(x).get(session)).collect(Collectors.toList())
+                                    .map(x -> NDependency.of(x).get(session)).collect(Collectors.toList())
                     ).build()
             ;
         }
@@ -167,29 +168,29 @@ public final class DefaultNWorkspaceCurrentConfig {
         if (c.getName() != null) {
             this.name = c.getName();
         }
-        if (c.getStoreLocationStrategy() != null) {
-            this.storeLocationStrategy = c.getStoreLocationStrategy();
+        if (c.getStoreStrategy() != null) {
+            this.storeStrategy = c.getStoreStrategy();
         }
-        if (c.getRepositoryStoreLocationStrategy() != null) {
-            this.repositoryStoreLocationStrategy = c.getRepositoryStoreLocationStrategy();
+        if (c.getRepositoryStoreStrategy() != null) {
+            this.repositoryStoreStrategy = c.getRepositoryStoreStrategy();
         }
-        if (c.getStoreLocationLayout() != null) {
-            this.storeLocationLayout = c.getStoreLocationLayout();
+        if (c.getStoreLayout() != null) {
+            this.storeLayout = c.getStoreLayout();
         }
-        for (Map.Entry<NStoreLocation, String> e : new NStoreLocationsMap(c.getStoreLocations()).toMap().entrySet()) {
+        for (Map.Entry<NStoreType, String> e : new NStoreLocationsMap(c.getStoreLocations()).toMap().entrySet()) {
             String o = this.userStoreLocations.get(e.getKey());
-            if(NBlankable.isBlank(o)){
-                this.userStoreLocations.put(e.getKey(),e.getValue());
+            if (NBlankable.isBlank(o)) {
+                this.userStoreLocations.put(e.getKey(), e.getValue());
             }
         }
         for (Map.Entry<NHomeLocation, String> e : new NHomeLocationsMap(c.getHomeLocations()).toMap().entrySet()) {
             String o = this.homeLocations.get(e.getKey());
-            if(NBlankable.isBlank(o)){
-                this.homeLocations.put(e.getKey(),e.getValue());
+            if (NBlankable.isBlank(o)) {
+                this.homeLocations.put(e.getKey(), e.getValue());
             }
         }
-        if(this.global==null) {
-            this.global = c.isGlobal();
+        if (this.system == null) {
+            this.system = c.isSystem();
         }
 //        this.gui |= c.getGui().orElse(false);
         return this;
@@ -218,29 +219,29 @@ public final class DefaultNWorkspaceCurrentConfig {
         if (c.getJavaOptions() != null) {
             this.bootJavaOptions = c.getJavaOptions();
         }
-        if (c.getStoreLocationStrategy() != null) {
-            this.storeLocationStrategy = c.getStoreLocationStrategy();
+        if (c.getStoreStrategy() != null) {
+            this.storeStrategy = c.getStoreStrategy();
         }
-        if (c.getRepositoryStoreLocationStrategy() != null) {
-            this.repositoryStoreLocationStrategy = c.getRepositoryStoreLocationStrategy();
+        if (c.getRepositoryStoreStrategy() != null) {
+            this.repositoryStoreStrategy = c.getRepositoryStoreStrategy();
         }
-        if (c.getStoreLocationLayout() != null) {
-            this.storeLocationLayout = c.getStoreLocationLayout();
+        if (c.getStoreLayout() != null) {
+            this.storeLayout = c.getStoreLayout();
         }
-        for (Map.Entry<NStoreLocation, String> e : new NStoreLocationsMap(c.getStoreLocations()).toMap().entrySet()) {
+        for (Map.Entry<NStoreType, String> e : new NStoreLocationsMap(c.getStoreLocations()).toMap().entrySet()) {
             String o = this.userStoreLocations.get(e.getKey());
-            if(NBlankable.isBlank(o)){
-                this.userStoreLocations.put(e.getKey(),e.getValue());
+            if (NBlankable.isBlank(o)) {
+                this.userStoreLocations.put(e.getKey(), e.getValue());
             }
         }
         for (Map.Entry<NHomeLocation, String> e : new NHomeLocationsMap(c.getHomeLocations()).toMap().entrySet()) {
             String o = this.homeLocations.get(e.getKey());
-            if(NBlankable.isBlank(o)){
-                this.homeLocations.put(e.getKey(),e.getValue());
+            if (NBlankable.isBlank(o)) {
+                this.homeLocations.put(e.getKey(), e.getValue());
             }
         }
-        if(this.global==null) {
-            this.global = c.isGlobal();
+        if (this.system == null) {
+            this.system = c.isSystem();
         }
         return this;
     }
@@ -264,12 +265,16 @@ public final class DefaultNWorkspaceCurrentConfig {
         return this;
     }
 
-    public boolean isGlobal() {
-        return this.global!=null && this.global;
+    public boolean getSystem() {
+        return this.system;
     }
 
-    public DefaultNWorkspaceCurrentConfig setGlobal(boolean global) {
-        this.global = global;
+    public boolean isSystem() {
+        return this.system != null && this.system;
+    }
+
+    public DefaultNWorkspaceCurrentConfig setSystem(boolean system) {
+        this.system = system;
         return this;
     }
 
@@ -321,25 +326,25 @@ public final class DefaultNWorkspaceCurrentConfig {
         return bootJavaOptions;
     }
 
-    public NStoreLocationStrategy getStoreLocationStrategy() {
-        return storeLocationStrategy;
+    public NStoreStrategy getStoreStrategy() {
+        return storeStrategy;
     }
 
-    public DefaultNWorkspaceCurrentConfig setStoreLocationStrategy(NStoreLocationStrategy storeLocationStrategy) {
-        this.storeLocationStrategy = storeLocationStrategy;
+    public DefaultNWorkspaceCurrentConfig setStoreStrategy(NStoreStrategy storeStrategy) {
+        this.storeStrategy = storeStrategy;
         return this;
     }
 
-    public NStoreLocationStrategy getRepositoryStoreLocationStrategy() {
-        return repositoryStoreLocationStrategy;
+    public NStoreStrategy getRepositoryStoreStrategy() {
+        return repositoryStoreStrategy;
     }
 
-    public DefaultNWorkspaceCurrentConfig setRepositoryStoreLocationStrategy(NStoreLocationStrategy repositoryStoreLocationStrategy) {
-        this.repositoryStoreLocationStrategy = repositoryStoreLocationStrategy;
+    public DefaultNWorkspaceCurrentConfig setRepositoryStoreStrategy(NStoreStrategy repositoryStoreStrategy) {
+        this.repositoryStoreStrategy = repositoryStoreStrategy;
         return this;
     }
 
-    public Map<NStoreLocation, String> getStoreLocations() {
+    public Map<NStoreType, String> getStoreLocations() {
         return new LinkedHashMap<>(effStoreLocationsMap);
     }
 
@@ -355,34 +360,33 @@ public final class DefaultNWorkspaceCurrentConfig {
         return this;
     }
 
-    public NPath getStoreLocation(NStoreLocation folderType, NSession session) {
-        Path p = effStoreLocationPath[folderType.ordinal()];
-        return p==null?null: NPath.of(p,session);
+    public NPath getStoreLocation(NStoreType storeType, NSession session) {
+        Path p = effStoreLocationPath[storeType.ordinal()];
+        return p == null ? null : NPath.of(p, session);
     }
 
     public NPath getHomeLocation(NHomeLocation location, NSession session) {
         String s = new NHomeLocationsMap(homeLocations).get(location);
-        return s==null?null: NPath.of(s,session);
+        return s == null ? null : NPath.of(s, session);
     }
 
-    public NPath getHomeLocation(NStoreLocation folderType, NSession session) {
-        return NPath.of(Paths.get(NPlatformUtils.getPlatformHomeFolder(getStoreLocationLayout(),
-                folderType, getHomeLocations(),
-                isGlobal(),
+    public NPath getHomeLocation(NStoreType storeType, NSession session) {
+        return NPath.of(Paths.get(NPlatformHome.of(getStoreLayout(), isSystem()).getWorkspaceLocation(
+                storeType, getHomeLocations(),
                 getName()
-        )),session);
+        )), session);
     }
 
-    public NOsFamily getStoreLocationLayout() {
-        return storeLocationLayout;
+    public NOsFamily getStoreLayout() {
+        return storeLayout;
     }
 
-    public DefaultNWorkspaceCurrentConfig setStoreLocationLayout(NOsFamily storeLocationLayout) {
-        this.storeLocationLayout = storeLocationLayout;
+    public DefaultNWorkspaceCurrentConfig setStoreLayout(NOsFamily storeLayout) {
+        this.storeLayout = storeLayout;
         return this;
     }
 
-    public DefaultNWorkspaceCurrentConfig setUserStoreLocations(Map<NStoreLocation, String> userStoreLocations) {
+    public DefaultNWorkspaceCurrentConfig setUserStoreLocations(Map<NStoreType, String> userStoreLocations) {
         this.userStoreLocations.clear();
         if (userStoreLocations != null) {
             this.userStoreLocations.putAll(userStoreLocations);
@@ -401,20 +405,19 @@ public final class DefaultNWorkspaceCurrentConfig {
     }
 
 
-
-    public NPath getStoreLocation(String id, NStoreLocation folderType, NSession session) {
-        return getStoreLocation(NId.of(id).get(session), folderType, session);
+    public NPath getStoreLocation(String id, NStoreType storeType, NSession session) {
+        return getStoreLocation(NId.of(id).get(session), storeType, session);
     }
 
-    public NPath getStoreLocation(NId id, NStoreLocation folderType, NSession session) {
-        NPath storeLocation = getStoreLocation(folderType,session);
+    public NPath getStoreLocation(NId id, NStoreType storeType, NSession session) {
+        NPath storeLocation = getStoreLocation(storeType, session);
         if (storeLocation == null) {
             return null;
         }
-        switch (folderType) {
+        switch (storeType) {
             case CACHE:
                 return storeLocation.resolve(NConstants.Folders.ID).resolve(NLocations.of(session).getDefaultIdBasedir(id));
-            case CONFIG:
+            case CONF:
                 return storeLocation.resolve(NConstants.Folders.ID).resolve(NLocations.of(session).getDefaultIdBasedir(id));
         }
         return storeLocation.resolve(NLocations.of(session).getDefaultIdBasedir(id));

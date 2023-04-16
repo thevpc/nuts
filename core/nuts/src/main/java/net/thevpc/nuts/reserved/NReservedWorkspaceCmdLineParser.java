@@ -203,7 +203,7 @@ public final class NReservedWorkspaceCmdLineParser {
                         a = cmdLine.nextEntry().get(session);
                         String v = a.getStringValue().orElse("");
                         if (active) {
-                            options.setStoreLocationStrategy(parseNutsStoreLocationStrategy(v));
+                            options.setStoreStrategy(parseNutsStoreStrategy(v));
                         }
                         break;
                     }
@@ -212,7 +212,7 @@ public final class NReservedWorkspaceCmdLineParser {
                     case "--standalone-workspace": {
                         a = cmdLine.nextFlag().get(session);
                         if (active && a.getBooleanValue().get(session)) {
-                            options.setStoreLocationStrategy(NStoreLocationStrategy.STANDALONE);
+                            options.setStoreStrategy(NStoreStrategy.STANDALONE);
                         }
                         break;
 
@@ -222,7 +222,7 @@ public final class NReservedWorkspaceCmdLineParser {
                     case "--exploded-workspace": {
                         a = cmdLine.nextFlag().get(session);
                         if (active && a.getBooleanValue().get(session)) {
-                            options.setStoreLocationStrategy(NStoreLocationStrategy.EXPLODED);
+                            options.setStoreStrategy(NStoreStrategy.EXPLODED);
                         }
                         break;
                     }
@@ -231,21 +231,21 @@ public final class NReservedWorkspaceCmdLineParser {
                         a = cmdLine.nextEntry().get(session);
                         String v = a.getStringValue().get(session);
                         if (active) {
-                            options.setRepositoryStoreLocationStrategy(parseNutsStoreLocationStrategy(v));
+                            options.setRepositoryStoreStrategy(parseNutsStoreStrategy(v));
                         }
                         break;
                     }
                     case "--exploded-repositories": {
                         a = cmdLine.nextFlag().get(session);
                         if (active && a.getBooleanValue().get(session)) {
-                            options.setRepositoryStoreLocationStrategy(NStoreLocationStrategy.EXPLODED);
+                            options.setRepositoryStoreStrategy(NStoreStrategy.EXPLODED);
                         }
                         break;
                     }
                     case "--standalone-repositories": {
                         a = cmdLine.nextFlag().get(session);
                         if (active && a.getBooleanValue().get(session)) {
-                            options.setRepositoryStoreLocationStrategy(NStoreLocationStrategy.STANDALONE);
+                            options.setRepositoryStoreStrategy(NStoreStrategy.STANDALONE);
                         }
                         break;
                     }
@@ -253,46 +253,46 @@ public final class NReservedWorkspaceCmdLineParser {
                         a = cmdLine.nextEntry().get(session);
                         String v = a.getStringValue().get(session);
                         if (active) {
-                            options.setStoreLocationLayout(parseNutsOsFamily(v));
+                            options.setStoreLayout(parseNutsOsFamily(v));
                         }
                         break;
                     }
                     case "--system-layout": {
                         a = cmdLine.nextFlag().get(session);
                         if (active && a.getBooleanValue().get(session)) {
-                            options.setStoreLocationLayout(null);
+                            options.setStoreLayout(null);
                         }
                         break;
                     }
                     case "--windows-layout": {
                         a = cmdLine.nextFlag().get(session);
                         if (active && a.getBooleanValue().get(session)) {
-                            options.setStoreLocationLayout(NOsFamily.WINDOWS);
+                            options.setStoreLayout(NOsFamily.WINDOWS);
                         }
                         break;
                     }
                     case "--macos-layout": {
                         a = cmdLine.nextFlag().get(session);
                         if (active && a.getBooleanValue().get(session)) {
-                            options.setStoreLocationLayout(NOsFamily.MACOS);
+                            options.setStoreLayout(NOsFamily.MACOS);
                         }
                         break;
                     }
                     case "--linux-layout": {
                         a = cmdLine.nextFlag().get(session);
                         if (active && a.getBooleanValue().get(session)) {
-                            options.setStoreLocationLayout(NOsFamily.LINUX);
+                            options.setStoreLayout(NOsFamily.LINUX);
                         }
                         break;
                     }
                     case "--unix-layout": {
                         a = cmdLine.nextFlag().get(session);
                         if (active && a.getBooleanValue().get(session)) {
-                            options.setStoreLocationLayout(NOsFamily.UNIX);
+                            options.setStoreLayout(NOsFamily.UNIX);
                         }
                         break;
                     }
-                    case "--apps-location":
+                    case "--bin-location":
                     case "--config-location":
                     case "--var-location":
                     case "--log-location":
@@ -302,7 +302,7 @@ public final class NReservedWorkspaceCmdLineParser {
                         a = cmdLine.nextEntry().get(session);
                         String v = a.getStringValue().get(session);
                         if (active) {
-                            NStoreLocation m = NStoreLocation.valueOf(k.substring(2, k.indexOf('-', 2)).toUpperCase());
+                            NStoreType m = NStoreType.valueOf(k.substring(2, k.indexOf('-', 2)).toUpperCase());
                             options.setStoreLocation(m, v);
                         }
                         break;
@@ -317,7 +317,7 @@ public final class NReservedWorkspaceCmdLineParser {
                     case "--system-run-home": {
                         a = cmdLine.nextEntry().get(session);
                         String v = a.getStringValue().get(session);
-                        NStoreLocation folder = NStoreLocation.valueOf(
+                        NStoreType folder = NStoreType.valueOf(
                                 k.substring(3 + "system".length(), k.indexOf('-', 3 + "system".length())).toUpperCase());
                         if (active) {
                             options.setHomeLocation(NHomeLocation.of(null, folder), v);
@@ -359,7 +359,7 @@ public final class NReservedWorkspaceCmdLineParser {
                         a = cmdLine.nextEntry().get(session);
                         String v = a.getStringValue().get(session);
                         NOsFamily layout = NOsFamily.valueOf(k.substring(2, k.indexOf('-', 2)).toUpperCase());
-                        NStoreLocation folder = NStoreLocation.valueOf(k.substring(3 + layout.toString().length(), k.indexOf('-', 3 + layout.toString().length())).toUpperCase());
+                        NStoreType folder = NStoreType.valueOf(k.substring(3 + layout.toString().length(), k.indexOf('-', 3 + layout.toString().length())).toUpperCase());
                         if (active) {
                             options.setHomeLocation(NHomeLocation.of(layout, folder), v);
                         }
@@ -411,7 +411,7 @@ public final class NReservedWorkspaceCmdLineParser {
                     case "--global": {
                         a = cmdLine.nextFlag().get(session);
                         if (active) {
-                            options.setGlobal(a.getBooleanValue().get(session));
+                            options.setSystem(a.getBooleanValue().get(session));
                         }
                         break;
                     }
@@ -1267,10 +1267,10 @@ public final class NReservedWorkspaceCmdLineParser {
         }
     }
 
-    private static NStoreLocationStrategy parseNutsStoreLocationStrategy(String s) {
-        NStoreLocationStrategy m = NStoreLocationStrategy.parse(s).orNull();
+    private static NStoreStrategy parseNutsStoreStrategy(String s) {
+        NStoreStrategy m = NStoreStrategy.parse(s).orNull();
         if (m == null && !NBlankable.isBlank(s)) {
-            throw new NBootException(NMsg.ofC("unable to parse value for NutsStoreLocationStrategy : %s", s));
+            throw new NBootException(NMsg.ofC("unable to parse value for NutsStoreStrategy : %s", s));
         }
         return m;
     }

@@ -1,31 +1,4 @@
-/**
- * ====================================================================
- * Nuts : Network Updatable Things Service
- * (universal package manager)
- * <br>
- * is a new Open Source Package Manager to help install packages
- * and libraries for runtime execution. Nuts is the ultimate companion for
- * maven (and other build managers) as it helps installing all package
- * dependencies at runtime. Nuts is not tied to java and is a good choice
- * to share shell scripts and other 'things' . Its based on an extensible
- * architecture to help supporting a large range of sub managers / repositories.
- *
- * <br>
- * <p>
- * Copyright [2020] [thevpc]
- * Licensed under the Apache License, Version 2.0 (the "License"); you may
- * not use this file except in compliance with the License. You may obtain a
- * copy of the License at http://www.apache.org/licenses/LICENSE-2.0
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND,
- * either express or implied. See the License for the specific language
- * governing permissions and limitations under the License.
- * <br>
- * ====================================================================
- */
 package net.thevpc.nuts.util;
-
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.reserved.NReservedIOUtils;
@@ -35,38 +8,117 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.function.Function;
 
-/**
- * @author thevpc
- * @app.category Util
- * @since 0.8.1
- */
-public final class NPlatformUtils {
+public class NPlatformHome {
+    public static final NPlatformHome USER = of(null);
+    public static final NPlatformHome SYSTEM = ofSystem(null);
+    private final NOsFamily platformOsFamily;
+    private final boolean system;
+    private final Function<String, String> env;
+    private final Function<String, String> props;
+    private final String wsPrefix="ws";
+    private final String sysPrefix="system";
+
+
+    public static NPlatformHome ofSystem(NOsFamily platformOsFamily, Function<String, String> env, Function<String, String> props) {
+        return new NPlatformHome(platformOsFamily, true, env, props);
+    }
+
+    public static NPlatformHome of(NOsFamily platformOsFamily, Function<String, String> env, Function<String, String> props) {
+        return new NPlatformHome(platformOsFamily, false, env, props);
+    }
+
+    public static NPlatformHome ofSystem(NOsFamily platformOsFamily) {
+        return new NPlatformHome(platformOsFamily, true, null, null);
+    }
+
+    public static NPlatformHome of(NOsFamily platformOsFamily) {
+        return new NPlatformHome(platformOsFamily, false, null, null);
+    }
+
+    public static NPlatformHome of(NOsFamily platformOsFamily, boolean system) {
+        return new NPlatformHome(platformOsFamily, system, null, null);
+    }
+
+    public static NPlatformHome ofPortable(NOsFamily platformOsFamily, String userName) {
+        return ofPortable(platformOsFamily, false, userName);
+    }
+
+    public static NPlatformHome ofPortableSystem(NOsFamily platformOsFamily, String userName) {
+        return ofPortable(platformOsFamily, true, userName);
+    }
+
+    public static NPlatformHome ofPortable(NOsFamily platformOsFamily, boolean system, String userName) {
+        NAssert.requireNonBlank(userName, "userName");
+        return new NPlatformHome(platformOsFamily, system, p -> null, p -> portableProp(p, platformOsFamily, userName));
+    }
+
+
+    private static String portableProp(String p, NOsFamily platformOsFamily, String userName) {
+        NOsFamily osFamily = platformOsFamily == null ? NOsFamily.UNIX : platformOsFamily;
+        switch (p) {
+            case "user.name":
+                return userName;
+            case "user.home": {
+                switch (osFamily) {
+                    case WINDOWS: {
+                        return "C:\\Users\\" + userName;
+                    }
+                    default: {
+                        switch (userName) {
+                            case "root":
+                                return "/root";
+                            default:
+                                return "/home/" + userName;
+                        }
+                    }
+                }
+                //break;
+            }
+            case "java.io.tmpdir": {
+                switch (osFamily) {
+                    case WINDOWS: {
+                        return "C:\\Users\\" + userName + "\\AppData\\Local\\Temp";
+                    }
+                    default: {
+                        return "/tmp";
+                    }
+                }
+                //break;
+            }
+        }
+        return null;
+    }
+
+
+    public NPlatformHome(NOsFamily platformOsFamily, boolean system, Function<String, String> env, Function<String, String> props) {
+        this.platformOsFamily = platformOsFamily != null ? platformOsFamily : NOsFamily.getCurrent();
+        this.system = system;
+        this.env = env != null ? env : System::getenv;
+        this.props = props != null ? props : System::getProperty;
+    }
 
     /**
      * resolves custom nuts home folder from {@code homeLocations}.
      * Home folder is the root for nuts folders.
      * It depends on folder type and store layout.
      *
-     * @param location         folder type to resolve home for
-     * @param platformOsFamily location layout to resolve home for
-     * @param homeLocations    workspace home locations
+     * @param location      folder type to resolve home for
+     * @param homeLocations workspace home locations
      * @return home folder path or null
      */
-    public static String getCustomPlatformHomeFolder(NOsFamily platformOsFamily, NStoreLocation location, Map<NHomeLocation, String> homeLocations) {
+    public String getCustomPlatformHomeFolder(NStoreType location, Map<NHomeLocation, String> homeLocations) {
         if (location == null) {
             return null;
         }
-        if (platformOsFamily == null) {
-            platformOsFamily = NOsFamily.getCurrent();
-        }
         String s;
         String locationName = location.id();
-        s = NStringUtils.trim(System.getProperty("nuts.home." + locationName + "." + platformOsFamily.id()));
+        s = NStringUtils.trim(props.apply("nuts.home." + locationName + "." + platformOsFamily.id()));
         if (!s.isEmpty()) {
             return s/* + "/" + workspaceName*/;
         }
-        s = NStringUtils.trim(System.getProperty("nuts.export.home." + locationName + "." + platformOsFamily.id()));
+        s = NStringUtils.trim(props.apply("nuts.export.home." + locationName + "." + platformOsFamily.id()));
         if (!s.isEmpty()) {
             return s/* + "/" + workspaceName*/;
         }
@@ -92,25 +144,24 @@ public final class NPlatformUtils {
      * Specifications: XDG Base Directory Specification
      * (https://specifications.freedesktop.org/basedir-spec/basedir-spec-latest.html)
      *
-     * @param location         folder type to resolve home for
-     * @param platformOsFamily location layout to resolve home for
-     * @param homeLocations    workspace home locations
-     * @param global           global workspace
-     * @param workspaceName    workspace name or id (discriminator)
+     * @param location      folder type to resolve home for
+     * @param homeLocations workspace home locations
+     * @param workspaceName workspace name or id (discriminator)
      * @return home folder path
+     * TODO : rename me
      */
-    public static String getPlatformHomeFolder(NOsFamily platformOsFamily, NStoreLocation location, Map<NHomeLocation, String> homeLocations, boolean global, String workspaceName) {
+    public String getWorkspaceLocation(NStoreType location, Map<NHomeLocation, String> homeLocations, String workspaceName) {
         if (location == null) {
-            return getWorkspaceLocation(platformOsFamily, global, workspaceName);
+            return getWorkspaceLocation(workspaceName);
         }
-        String s = getCustomPlatformHomeFolder(platformOsFamily, location, homeLocations);
+        String s = getCustomPlatformHomeFolder(location, homeLocations);
         if (s != null) {
             return s;
         }
-        return getDefaultPlatformHomeFolder(platformOsFamily, location, global, workspaceName);
+        return getWorkspaceStore(location, workspaceName);
     }
 
-    public static String getWorkspaceLocation(NOsFamily platformOsFamily, boolean global, String workspaceName) {
+    public String getWorkspaceLocation(String workspaceName) {
         if (NBlankable.isBlank(workspaceName)) {
             workspaceName = NConstants.Names.DEFAULT_WORKSPACE_NAME;
         } else if (workspaceName.equals(".") || workspaceName.equals("..") || workspaceName.indexOf('/') >= 0 || workspaceName.indexOf('\\') >= 0) {
@@ -118,17 +169,11 @@ public final class NPlatformUtils {
             //return it as is and make it absolute
             return Paths.get(workspaceName).normalize().toAbsolutePath().toString();
         }
-        if (platformOsFamily == null) {
-            platformOsFamily = NOsFamily.getCurrent();
-        }
-        return getBaseLocation(platformOsFamily, global) + getNativePath("/ws/" + workspaceName);
+        return getHome() + getNativePath("/ws/" + workspaceName);
     }
 
-    public static String getBaseLocation(NOsFamily platformOsFamily, boolean global) {
-        if (platformOsFamily == null) {
-            platformOsFamily = NOsFamily.getCurrent();
-        }
-        if (global) {
+    public String getHome() {
+        if (system) {
             switch (platformOsFamily) {
                 case WINDOWS: {
                     return getWindowsProgramFiles() + "\\nuts";
@@ -138,18 +183,8 @@ public final class NPlatformUtils {
                 }
             }
         } else {
-            switch (platformOsFamily) {
-                case WINDOWS: {
-                    return System.getProperty("user.home") + getNativePath("/AppData/Roaming/nuts/config");
-                }
-                default: {
-                    String val = NStringUtils.trim(System.getenv("XDG_CONFIG_HOME"));
-                    if (!val.isEmpty()) {
-                        return val + "/nuts/";
-                    }
-                    return System.getProperty("user.home") + "/.config/nuts";
-                }
-            }
+            String userHome = props.apply("user.home");
+            return userHome + getNativePath("/.nuts");
         }
     }
 
@@ -160,15 +195,13 @@ public final class NPlatformUtils {
      * Specifications: XDG Base Directory Specification
      * (https://specifications.freedesktop.org/basedir-spec/basedir-spec-latest.html)
      *
-     * @param location         folder type to resolve home for
-     * @param platformOsFamily location layout to resolve home for
-     * @param global           global workspace
-     * @param workspaceName    workspace name or id (discriminator)
+     * @param location      folder type to resolve home for
+     * @param workspaceName workspace name or id (discriminator)
      * @return home folder path
      */
-    public static String getDefaultPlatformHomeFolder(NOsFamily platformOsFamily, NStoreLocation location, boolean global, String workspaceName) {
+    public String getWorkspaceStore(NStoreType location, String workspaceName) {
         if (location == null) {
-            return getWorkspaceLocation(platformOsFamily, global, workspaceName);
+            return getWorkspaceLocation(workspaceName);
         }
         if (NBlankable.isBlank(workspaceName)) {
             workspaceName = NConstants.Names.DEFAULT_WORKSPACE_NAME;
@@ -181,55 +214,63 @@ public final class NPlatformUtils {
                 workspaceName = fileName.toString();
             }
         }
-        return getDefaultPlatformHomeFolderBase(platformOsFamily, location, global)+getNativePath("/ws/" + getNativePath(workspaceName));
+        return getStore(location) + getNativePath("/ws/" + getNativePath(workspaceName));
     }
 
-    public static String getDefaultPlatformHomeFolderBase(NOsFamily platformOsFamily, NStoreLocation location, boolean global) {
+    public String getStore(NStoreType location) {
         if (location == null) {
-            return getBaseLocation(platformOsFamily, global);
+            return getHome();
         }
+        NOsFamily platformOsFamily = this.platformOsFamily;
         if (platformOsFamily == null) {
             platformOsFamily = NOsFamily.getCurrent();
         }
         String locationName = location.id();
-        if (global) {
+        if (system) {
             String s = null;
-            s = NStringUtils.trim(System.getProperty("nuts.home.global." + locationName + "." + platformOsFamily.id()));
+            s = NStringUtils.trim(props.apply("nuts.store.system." + locationName + "." + platformOsFamily.id()));
             if (!s.isEmpty()) {
                 return s;
             }
-            s = NStringUtils.trim(System.getProperty("nuts.export.home.global." + locationName + "." + platformOsFamily.id()));
+            s = NStringUtils.trim(props.apply("nuts.export.store.system." + locationName + "." + platformOsFamily.id()));
             if (!s.isEmpty()) {
                 return s.trim();
             }
             switch (location) {
-                case APPS: {
+                case BIN: {
                     switch (platformOsFamily) {
                         case WINDOWS: {
-                            return getWindowsProgramFiles() + "\\nuts\\apps";
+                            return getWindowsProgramFiles() + "\\nuts\\"+locationName;
                         }
                         default: {
-                            return "/opt/nuts/apps";
+                            return "/opt/nuts/"+locationName;
                         }
                     }
                 }
                 case LIB: {
                     switch (platformOsFamily) {
                         case WINDOWS: {
-                            return getWindowsProgramFiles() + "\\nuts\\lib";
+                            return getWindowsProgramFiles() + "\\nuts\\"+locationName;
                         }
                         default: {
-                            return "/opt/nuts/lib";
+                            return "/opt/nuts/"+locationName;
                         }
                     }
                 }
-                case CONFIG: {
-                    return Paths.get(getBaseLocation(platformOsFamily, global)).resolve(locationName).toString();
+                case CONF: {
+                    switch (platformOsFamily) {
+                        case WINDOWS: {
+                            return getWindowsProgramFiles() + "\\nuts\\"+locationName;
+                        }
+                        default: {
+                            return "/etc/opt/nuts/"+locationName;
+                        }
+                    }
                 }
                 case LOG: {
                     switch (platformOsFamily) {
                         case WINDOWS: {
-                            return getWindowsProgramFiles() + "\\nuts\\log";
+                            return getWindowsProgramFiles() + "\\nuts\\"+locationName;
                         }
                         default: {
                             return "/var/log/nuts";
@@ -239,7 +280,7 @@ public final class NPlatformUtils {
                 case CACHE: {
                     switch (platformOsFamily) {
                         case WINDOWS: {
-                            return getWindowsProgramFiles() + "\\nuts\\cache";
+                            return getWindowsProgramFiles() + "\\nuts\\"+locationName;
                         }
                         default: {
                             return "/var/cache/nuts";
@@ -249,7 +290,7 @@ public final class NPlatformUtils {
                 case VAR: {
                     switch (platformOsFamily) {
                         case WINDOWS: {
-                            return getWindowsProgramFiles() + "\\nuts\\var";
+                            return getWindowsProgramFiles() + "\\nuts\\"+locationName;
                         }
                         default: {
                             return "/var/opt/nuts";
@@ -259,102 +300,115 @@ public final class NPlatformUtils {
                 case TEMP: {
                     switch (platformOsFamily) {
                         case WINDOWS: {
-                            String pf = System.getenv("TMP");
+                            String pf = env.apply("TMP");
                             if (NBlankable.isBlank(pf)) {
-                                pf = getWindowsSystemRoot() + "\\TEMP";
+                                pf = getWindowsSystemRoot() + "\\Temp";
                             }
                             return pf + "\\nuts";
                         }
                         default: {
-                            return "/tmp/nuts/global";
+                            return "/tmp/nuts/"+sysPrefix;
                         }
                     }
                 }
                 case RUN: {
                     switch (platformOsFamily) {
                         case WINDOWS: {
-                            String pf = System.getenv("TMP");
+                            String pf = env.apply("TMP");
                             if (NBlankable.isBlank(pf)) {
-                                pf = getWindowsSystemRoot() + "\\TEMP";
+                                pf = getWindowsSystemRoot() + "\\Temp";
                             }
                             return pf + "\\nuts\\run";
                         }
                         default: {
-                            return "/tmp/run/nuts/global";
+                            return "/tmp/run/nuts/"+sysPrefix;
                         }
                     }
                 }
             }
         } else {
+            String userHome = props.apply("user.home");
+            String userName = props.apply("user.name");
             switch (location) {
                 case VAR:
-                case APPS:
+                case BIN:
                 case LIB: {
                     switch (platformOsFamily) {
                         case WINDOWS: {
-                            return System.getProperty("user.home") + getNativePath("/AppData/Roaming/nuts/" + locationName);
+                            return userHome + getNativePath("/AppData/Roaming/nuts/" + locationName);
                         }
                         default: {
-                            String val = NStringUtils.trim(System.getenv("XDG_DATA_HOME"));
+                            String val = NStringUtils.trim(env.apply("XDG_DATA_HOME"));
                             if (!val.isEmpty()) {
                                 return val + "/nuts/" + locationName;
                             }
-                            return System.getProperty("user.home") + "/.local/share/nuts/" + locationName;
+                            return userHome + "/.local/share/nuts/" + locationName;
                         }
                     }
                 }
                 case LOG: {
                     switch (platformOsFamily) {
                         case WINDOWS: {
-                            return System.getProperty("user.home") + getNativePath("/AppData/LocalLow/nuts/" + locationName);
+                            return userHome + getNativePath("/AppData/LocalLow/nuts/" + locationName);
                         }
                         default: {
-                            String val = NStringUtils.trim(System.getenv("XDG_LOG_HOME"));
+                            String val = NStringUtils.trim(env.apply("XDG_LOG_HOME"));
                             if (!val.isEmpty()) {
                                 return val + "/nuts";
                             }
-                            return System.getProperty("user.home") + "/.local/log/nuts";
+                            return userHome + "/.local/log/nuts";
                         }
                     }
                 }
                 case RUN: {
                     switch (platformOsFamily) {
                         case WINDOWS: {
-                            return System.getProperty("user.home") + getNativePath("/AppData/Local/nuts/" + locationName);
+                            return userHome + getNativePath("/AppData/Local/nuts/" + locationName);
                         }
                         default: {
-                            String val = NStringUtils.trim(System.getenv("XDG_RUNTIME_DIR"));
+                            String val = NStringUtils.trim(env.apply("XDG_RUNTIME_DIR"));
                             if (!val.isEmpty()) {
                                 return val + "/nuts";
                             }
-                            return System.getProperty("user.home") + "/.local/run/nuts";
+                            return userHome + "/.local/run/nuts";
                         }
                     }
                 }
-                case CONFIG: {
-                    return Paths.get(getBaseLocation(platformOsFamily, global)).resolve(locationName).toString();
+                case CONF: {
+                    switch (platformOsFamily) {
+                        case WINDOWS: {
+                            return userHome + getNativePath("/AppData/Roaming/nuts/"+locationName);
+                        }
+                        default: {
+                            String val = NStringUtils.trim(env.apply("XDG_CONFIG_HOME"));
+                            if (!val.isEmpty()) {
+                                return val + "/nuts";
+                            }
+                            return userHome + "/.config/nuts";
+                        }
+                    }
                 }
                 case CACHE: {
                     switch (platformOsFamily) {
                         case WINDOWS: {
-                            return System.getProperty("user.home") + getNativePath("/AppData/Local/nuts/cache");
+                            return userHome + getNativePath("/AppData/Local/nuts/cache");
                         }
                         default: {
-                            String val = NStringUtils.trim(System.getenv("XDG_CACHE_HOME"));
+                            String val = NStringUtils.trim(env.apply("XDG_CACHE_HOME"));
                             if (!val.isEmpty()) {
                                 return val + "/nuts";
                             }
-                            return System.getProperty("user.home") + "/.cache/nuts";
+                            return userHome + "/.cache/nuts";
                         }
                     }
                 }
                 case TEMP: {
                     switch (platformOsFamily) {
                         case WINDOWS:
-                            return System.getProperty("user.home") + getNativePath("/AppData/Local/nuts/log");
+                            return userHome + getNativePath("/AppData/Local/nuts/"+locationName);
                         default:
                             //on macos/unix/linux temp folder is shared. will add user folder as discriminator
-                            return System.getProperty("java.io.tmpdir") + getNativePath("/" + System.getProperty("user.name") + "/nuts");
+                            return props.apply("java.io.tmpdir") + getNativePath("/" + userName + "/nuts");
                     }
                 }
             }
@@ -362,8 +416,8 @@ public final class NPlatformUtils {
         throw new NBootException(NMsg.ofC("unsupported getDefaultPlatformHomeFolderBase %s/%s", platformOsFamily, location));
     }
 
-    public static String getWindowsProgramFiles() {
-        String s = System.getenv("ProgramFiles");
+    public String getWindowsProgramFiles() {
+        String s = env.apply("ProgramFiles");
         if (!NBlankable.isBlank(s)) {
             return s;
         }
@@ -374,8 +428,8 @@ public final class NPlatformUtils {
         return "C:\\Program Files";
     }
 
-    public static String getWindowsProgramFilesX86() {
-        String s = System.getenv("ProgramFiles(x86)");
+    public String getWindowsProgramFilesX86() {
+        String s = env.apply("ProgramFiles(x86)");
         if (!NBlankable.isBlank(s)) {
             return s;
         }
@@ -387,64 +441,63 @@ public final class NPlatformUtils {
     }
 
 
-    public static String getWindowsSystemRoot() {
+    public String getWindowsSystemRoot() {
         String e;
-        e = System.getenv("SystemRoot");
+        e = env.apply("SystemRoot");
         if (!NBlankable.isBlank(e)) {
             return e;
         }
-        e = System.getenv("windir");
+        e = env.apply("windir");
         if (!NBlankable.isBlank(e)) {
             return e;
         }
-        e = System.getenv("SystemDrive");
+        e = env.apply("SystemDrive");
         if (!NBlankable.isBlank(e)) {
             return e + "\\Windows";
         }
         return "C:\\Windows";
     }
 
-    public static String getWindowsSystemDrive() {
-        String e = System.getenv("SystemDrive");
+    public String getWindowsSystemDrive() {
+        String e = env.apply("SystemDrive");
         if (!NBlankable.isBlank(e)) {
             return e;
         }
-        e = System.getenv("SystemRoot");
+        e = env.apply("SystemRoot");
         if (!NBlankable.isBlank(e)) {
             return e.substring(0, 2);
         }
-        e = System.getenv("windir");
+        e = env.apply("windir");
         if (!NBlankable.isBlank(e)) {
             return e.substring(0, 2);
         }
         return null;
     }
 
-    private static String getNativePath(String s) {
-        return s.replace('/', File.separatorChar);
+    private String getNativePath(String s) {
+        switch (platformOsFamily){
+            case WINDOWS:return s.replace('/', '\\');
+        }
+        return s.replace('\\', '/');
     }
 
     /**
-     * @param platformOsFamily      platformOsFamily or null
-     * @param storeLocationStrategy storeLocationStrategy or null
+     * @param storeStrategy storeStrategy or null
      * @param baseLocations         baseLocations or null
      * @param homeLocations         homeLocations or null
-     * @param global                global
      * @param workspaceLocation     workspaceName or null
      * @param session               session or null
      * @return locations map
      */
-    public static Map<NStoreLocation, String> buildLocations(
-            NOsFamily platformOsFamily,
-            NStoreLocationStrategy storeLocationStrategy,
-            Map<NStoreLocation, String> baseLocations,
+    public Map<NStoreType, String> buildLocations(
+            NStoreStrategy storeStrategy,
+            Map<NStoreType, String> baseLocations,
             Map<NHomeLocation, String> homeLocations,
-            boolean global, String workspaceLocation, NSession session) {
-        workspaceLocation = getWorkspaceLocation(platformOsFamily, global, workspaceLocation);
-        String[] homes = new String[NStoreLocation.values().length];
-        for (NStoreLocation location : NStoreLocation.values()) {
-            String platformHomeFolder = getPlatformHomeFolder(platformOsFamily, location, homeLocations,
-                    global, workspaceLocation);
+            String workspaceLocation, NSession session) {
+        workspaceLocation = getWorkspaceLocation(workspaceLocation);
+        String[] homes = new String[NStoreType.values().length];
+        for (NStoreType location : NStoreType.values()) {
+            String platformHomeFolder = getWorkspaceLocation(location, homeLocations, workspaceLocation);
             if (NBlankable.isBlank(platformHomeFolder)) {
                 if (session == null) {
                     throw new NBootException(NMsg.ofC("missing Home for %s", location.id()));
@@ -454,13 +507,13 @@ public final class NPlatformUtils {
             }
             homes[location.ordinal()] = platformHomeFolder;
         }
-        if (storeLocationStrategy == null) {
-            storeLocationStrategy = NStoreLocationStrategy.EXPLODED;
+        if (storeStrategy == null) {
+            storeStrategy = NStoreStrategy.EXPLODED;
         }
-        Map<NStoreLocation, String> storeLocations = new LinkedHashMap<>();
+        Map<NStoreType, String> storeLocations = new LinkedHashMap<>();
         if (baseLocations != null) {
-            for (Map.Entry<NStoreLocation, String> e : baseLocations.entrySet()) {
-                NStoreLocation loc = e.getKey();
+            for (Map.Entry<NStoreType, String> e : baseLocations.entrySet()) {
+                NStoreType loc = e.getKey();
                 if (loc == null) {
                     if (session == null) {
                         throw new NBootException(NMsg.ofPlain("null location"));
@@ -471,12 +524,12 @@ public final class NPlatformUtils {
                 storeLocations.put(loc, e.getValue());
             }
         }
-        for (NStoreLocation location : NStoreLocation.values()) {
+        for (NStoreType location : NStoreType.values()) {
             String _storeLocation = storeLocations.get(location);
             if (NBlankable.isBlank(_storeLocation)) {
-                switch (storeLocationStrategy) {
+                switch (storeStrategy) {
                     case STANDALONE: {
-                        String c = NPlatformUtils.getCustomPlatformHomeFolder(platformOsFamily, location, homeLocations);
+                        String c = getCustomPlatformHomeFolder(location, homeLocations);
                         storeLocations.put(location, c == null ? (workspaceLocation + File.separator + location.id()) : c);
                         break;
                     }
@@ -486,9 +539,9 @@ public final class NPlatformUtils {
                     }
                 }
             } else if (!Paths.get(_storeLocation).isAbsolute()) {
-                switch (storeLocationStrategy) {
+                switch (storeStrategy) {
                     case STANDALONE: {
-                        String c = NPlatformUtils.getCustomPlatformHomeFolder(platformOsFamily, location, homeLocations);
+                        String c = getCustomPlatformHomeFolder(location, homeLocations);
                         storeLocations.put(location, c == null ?
                                 (workspaceLocation + File.separator + location.id() + NReservedIOUtils.getNativePath("/" + _storeLocation))
                                 :
@@ -506,5 +559,4 @@ public final class NPlatformUtils {
         }
         return storeLocations;
     }
-
 }

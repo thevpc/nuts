@@ -1010,7 +1010,7 @@ public interface NSearchCommand extends NWorkspaceCommand {
      * @param location location type to return
      * @return query result
      */
-    NStream<NPath> getResultStoreLocations(NStoreLocation location);
+    NStream<NPath> getResultStoreLocations(NStoreType location);
 
     /**
      * execute query and return the selected columns. Supported columns are :

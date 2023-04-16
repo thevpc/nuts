@@ -83,7 +83,7 @@ public class Test06_UpdateTest {
 //        uws.config().save();
         //NutsRepository updateRepo1 = uws.config().getRepository("local", session);
         data.updateRepoPath = updateRepo1.config().getStoreLocation().toString();
-        TestUtils.println(updateRepo1.config().getStoreLocationStrategy());
+        TestUtils.println(updateRepo1.config().getStoreStrategy());
         NInfoCommand.of(uws).configure(false, "--repos").println();
 
         data.apiDef = NFetchCommand.of(uws).setContent(true).setNutsApi().getResultDefinition();
@@ -123,9 +123,9 @@ public class Test06_UpdateTest {
                                 .build()
                 )
                 .run();
-        TestUtils.println(repos.getRepository("local").config().getStoreLocationStrategy());
+        TestUtils.println(repos.getRepository("local").config().getStoreStrategy());
         TestUtils.println(repos.getRepository("local").config().getStoreLocation());
-        TestUtils.println(repos.getRepository("local").config().getStoreLocation(NStoreLocation.LIB));
+        TestUtils.println(repos.getRepository("local").config().getStoreLocation(NStoreType.LIB));
 
         String api = "net.thevpc.nuts:nuts";
         String rt = "net.thevpc.nuts:nuts-runtime";
@@ -151,11 +151,11 @@ public class Test06_UpdateTest {
         );
         NRepositories repos = NRepositories.of(nws);
         repos.addRepository(new NAddRepositoryOptions().setTemporary(true).setName("temp").setLocation(d.updateRepoPath)
-                .setConfig(new NRepositoryConfig().setStoreLocationStrategy(NStoreLocationStrategy.STANDALONE))
+                .setConfig(new NRepositoryConfig().setStoreStrategy(NStoreStrategy.STANDALONE))
         );
-        TestUtils.println(repos.getRepository("temp").config().getStoreLocationStrategy());
+        TestUtils.println(repos.getRepository("temp").config().getStoreStrategy());
         TestUtils.println(repos.getRepository("temp").config().getStoreLocation());
-        TestUtils.println(repos.getRepository("temp").config().getStoreLocation(NStoreLocation.LIB));
+        TestUtils.println(repos.getRepository("temp").config().getStoreLocation(NStoreType.LIB));
         NInfoCommand.of(nws).configure(false, "--repos").setShowRepositories(true).println();
 
         Assertions.assertEquals(d.updateRepoPath,
@@ -203,9 +203,9 @@ public class Test06_UpdateTest {
 //        Path bootFolder=Paths.get(workspacePath).resolve(NutsConstants.Folders.BOOT);
 //        Path bootCompFolder=Paths.get(workspacePath).resolve(NutsConstants.Folders.BOOT);
         NLocations nwsLocations = NLocations.of(nws);
-        Path bootCacheFolder = (nwsLocations.getStoreLocation(NStoreLocation.CACHE)).resolve(NConstants.Folders.ID).toFile();
-        Path libFolder = (nwsLocations.getStoreLocation(NStoreLocation.LIB)).resolve(NConstants.Folders.ID).toFile();
-        Path configFolder = (nwsLocations.getStoreLocation(NStoreLocation.CONFIG)).resolve(NConstants.Folders.ID).toFile();
+        Path bootCacheFolder = (nwsLocations.getStoreLocation(NStoreType.CACHE)).resolve(NConstants.Folders.ID).toFile();
+        Path libFolder = (nwsLocations.getStoreLocation(NStoreType.LIB)).resolve(NConstants.Folders.ID).toFile();
+        Path configFolder = (nwsLocations.getStoreLocation(NStoreType.CONF)).resolve(NConstants.Folders.ID).toFile();
         Assertions.assertTrue(Files.exists(libFolder.resolve("net/thevpc/nuts/nuts/").resolve(newApiVersion)
                 .resolve("nuts-" + newApiVersion + ".jar")
         ));

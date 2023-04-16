@@ -43,7 +43,7 @@ public abstract class AbstractNExecCommand extends NWorkspaceCommandBase<NExecCo
     private NPath redirectOutputFile;
     private NPath redirectInputFile;
     private long sleepMillis = 1000;
-    private String host;
+    private String target;
 
     public AbstractNExecCommand(NSession session) {
         super(session, "exec");
@@ -614,8 +614,8 @@ public abstract class AbstractNExecCommand extends NWorkspaceCommandBase<NExecCo
                 }
                 return true;
             }
-            case "--host": {
-                cmdLine.withNextEntry((v, ar, s) -> this.setHost(v));
+            case "--target": {
+                cmdLine.withNextEntry((v, ar, s) -> this.setTarget(v));
                 return true;
             }
             default: {
@@ -772,12 +772,12 @@ public abstract class AbstractNExecCommand extends NWorkspaceCommandBase<NExecCo
         });
     }
 
-    public String getHost() {
-        return host;
+    public String getTarget() {
+        return target;
     }
 
-    public NExecCommand setHost(String host) {
-        this.host = host;
+    public NExecCommand setTarget(String host) {
+        this.target = host;
         return this;
     }
 }

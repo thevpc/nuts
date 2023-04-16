@@ -82,8 +82,8 @@ public final class NWorkspaceConfigBoot502 implements Serializable {
     private String logsStoreLocation = null;
     private String tempStoreLocation = null;
     private String cacheStoreLocation = null;
-    private NStoreLocationStrategy repositoryStoreLocationStrategy = null;
-    private NStoreLocationStrategy storeLocationStrategy = null;
+    private NStoreStrategy repositoryStoreLocationStrategy = null;
+    private NStoreStrategy storeLocationStrategy = null;
     private String storeLocationLayout = null;
 
     private String programsSystemHome = null;
@@ -327,11 +327,11 @@ public final class NWorkspaceConfigBoot502 implements Serializable {
 
     }
 
-    public NStoreLocationStrategy getStoreLocationStrategy() {
+    public NStoreStrategy getStoreLocationStrategy() {
         return storeLocationStrategy;
     }
 
-    public void setStoreLocationStrategy(NStoreLocationStrategy storeLocationStrategy) {
+    public void setStoreLocationStrategy(NStoreStrategy storeLocationStrategy) {
         this.storeLocationStrategy = storeLocationStrategy;
 
     }
@@ -354,11 +354,11 @@ public final class NWorkspaceConfigBoot502 implements Serializable {
 
     }
 
-    public NStoreLocationStrategy getRepositoryStoreLocationStrategy() {
+    public NStoreStrategy getRepositoryStoreLocationStrategy() {
         return repositoryStoreLocationStrategy;
     }
 
-    public void setRepositoryStoreLocationStrategy(NStoreLocationStrategy repositoryStoreLocationStrategy) {
+    public void setRepositoryStoreLocationStrategy(NStoreStrategy repositoryStoreLocationStrategy) {
         this.repositoryStoreLocationStrategy = repositoryStoreLocationStrategy;
 
     }
@@ -680,12 +680,12 @@ public final class NWorkspaceConfigBoot502 implements Serializable {
         homeLocations.put("linux:temp", tempWindowsHome);
         homeLocations.put("linux:cache", cacheWindowsHome);
 
-        c.setGlobal(global);
+        c.setSystem(global);
         //there is no extensions in 0.5.2
 //        c.setExtensions(extensions);
-        c.setStoreLocationLayout("windows".equalsIgnoreCase(storeLocationLayout) ? NOsFamily.WINDOWS
+        c.setStoreLayout("windows".equalsIgnoreCase(storeLocationLayout) ? NOsFamily.WINDOWS
                 : "linux".equals(storeLocationLayout) ? NOsFamily.LINUX : null);
-        c.setStoreLocationStrategy(storeLocationStrategy);
+        c.setStoreStrategy(storeLocationStrategy);
         c.setUuid(uuid);
         c.setWorkspace(workspace);
         return c;

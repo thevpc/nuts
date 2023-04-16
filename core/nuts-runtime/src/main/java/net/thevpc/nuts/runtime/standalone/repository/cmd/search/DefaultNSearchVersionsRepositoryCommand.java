@@ -12,7 +12,7 @@ import java.util.logging.Level;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.format.NPositionType;
 import net.thevpc.nuts.util.*;
-import net.thevpc.nuts.runtime.standalone.id.util.NIdUtils;
+import net.thevpc.nuts.runtime.standalone.id.util.CoreNIdUtils;
 import net.thevpc.nuts.runtime.standalone.repository.impl.NRepositoryExt;
 import net.thevpc.nuts.runtime.standalone.session.NSessionUtils;
 import net.thevpc.nuts.runtime.standalone.util.iter.IteratorBuilder;
@@ -48,7 +48,7 @@ public class DefaultNSearchVersionsRepositoryCommand extends AbstractNSearchVers
         //id = id.builder().setFaceContent().build();
         getRepo().security().setSession(session).checkAllowed(NConstants.Permissions.FETCH_DESC, "find-versions");
         NRepositoryExt xrepo = NRepositoryExt.of(getRepo());
-        NIdUtils.checkShortId(id,session);
+        CoreNIdUtils.checkShortId(id,session);
         xrepo.checkAllowedFetch(id, session);
         try {
             List<NIterator<? extends NId>> resultList = new ArrayList<>();

@@ -90,28 +90,28 @@ public final class NBootConfig implements Cloneable, Serializable {
     /**
      * workspace store location strategy
      */
-    private NStoreLocationStrategy storeLocationStrategy;
+    private NStoreStrategy storeStrategy;
 
     /**
      * workspace bootRepositories store location strategy
      */
-    private NStoreLocationStrategy repositoryStoreLocationStrategy;
+    private NStoreStrategy repositoryStoreStrategy;
 
     /**
      * workspace store location layout
      */
-    private NOsFamily storeLocationLayout;
+    private NOsFamily storeLayout;
 
     /**
      * when global is true consider system wide folders (user independent but
      * needs greater privileges)
      */
-    private boolean global;
+    private boolean system;
 
     /**
      * workspace store locations
      */
-    private Map<NStoreLocation, String> storeLocations;
+    private Map<NStoreType, String> storeLocations;
     /**
      * workspace expected locations for all layout. Relevant when moving the
      * workspace cross operating systems
@@ -125,15 +125,15 @@ public final class NBootConfig implements Cloneable, Serializable {
         if (options != null) {
             this.setWorkspace(options.getWorkspace().orNull());
             this.setName(options.getName().orNull());
-            this.setStoreLocationStrategy(options.getStoreLocationStrategy().orNull());
-            this.setRepositoryStoreLocationStrategy(options.getRepositoryStoreLocationStrategy().orNull());
-            this.setStoreLocationLayout(options.getStoreLocationLayout().orNull());
+            this.setStoreStrategy(options.getStoreStrategy().orNull());
+            this.setRepositoryStoreStrategy(options.getRepositoryStoreStrategy().orNull());
+            this.setStoreLayout(options.getStoreLayout().orNull());
             this.storeLocations = CoreCollectionUtils.nonNullMap(options.getStoreLocations().orNull());
             this.homeLocations = CoreCollectionUtils.nonNullMap(options.getHomeLocations().orNull());
             this.setRuntimeId(options.getRuntimeId().orNull());
 //            this.setRuntimeDependencies(options.getBootRuntimeDependencies());
 //            this.setRepositories(options.getBootRepositories());
-            this.global = options.getGlobal().orElse(false);
+            this.system = options.getSystem().orElse(false);
             this.runtimeId = options.getRuntimeId().orNull();
         }
     }
@@ -150,10 +150,10 @@ public final class NBootConfig implements Cloneable, Serializable {
             this.javaOptions = context.getJavaOptions();
             this.storeLocations = new LinkedHashMap<>(context.getStoreLocations());
             this.homeLocations = new LinkedHashMap<>(context.getHomeLocations());
-            this.storeLocationStrategy = context.getStoreLocationStrategy();
-            this.repositoryStoreLocationStrategy = context.getRepositoryStoreLocationStrategy();
-            this.storeLocationLayout = context.getStoreLocationLayout();
-            this.global = context.isGlobal();
+            this.storeStrategy = context.getStoreStrategy();
+            this.repositoryStoreStrategy = context.getRepositoryStoreStrategy();
+            this.storeLayout = context.getStoreLayout();
+            this.system = context.getSystem();
         }
     }
 
@@ -169,9 +169,9 @@ public final class NBootConfig implements Cloneable, Serializable {
             this.javaOptions = other.getJavaOptions();
             this.storeLocations = other.storeLocations == null ? null : new LinkedHashMap<>(other.storeLocations);
             this.homeLocations = other.homeLocations == null ? null : new LinkedHashMap<>(other.homeLocations);
-            this.storeLocationStrategy = other.getStoreLocationStrategy();
-            this.storeLocationLayout = other.getStoreLocationLayout();
-            this.global = other.isGlobal();
+            this.storeStrategy = other.getStoreStrategy();
+            this.storeLayout = other.getStoreLayout();
+            this.system = other.isSystem();
         }
     }
 
@@ -262,12 +262,12 @@ public final class NBootConfig implements Cloneable, Serializable {
         }
     }
 
-    public NStoreLocationStrategy getStoreLocationStrategy() {
-        return storeLocationStrategy;
+    public NStoreStrategy getStoreStrategy() {
+        return storeStrategy;
     }
 
-    public NBootConfig setStoreLocationStrategy(NStoreLocationStrategy storeLocationStrategy) {
-        this.storeLocationStrategy = storeLocationStrategy;
+    public NBootConfig setStoreStrategy(NStoreStrategy storeStrategy) {
+        this.storeStrategy = storeStrategy;
         return this;
     }
 
@@ -280,8 +280,8 @@ public final class NBootConfig implements Cloneable, Serializable {
         return this;
     }
 
-    public NOsFamily getStoreLocationLayout() {
-        return storeLocationLayout;
+    public NOsFamily getStoreLayout() {
+        return storeLayout;
     }
 
 //    public NutsBootConfig setStoreLocation(NutsStoreLocation folder, String value) {
@@ -292,7 +292,7 @@ public final class NBootConfig implements Cloneable, Serializable {
 //    public String getStoreLocation(NutsStoreLocation folder) {
 //        return this.storeLocations[folder.ordinal()];
 //    }
-    public void setStoreLocations(Map<NStoreLocation, String> storeLocations) {
+    public void setStoreLocations(Map<NStoreType, String> storeLocations) {
         this.storeLocations = storeLocations;
     }
 
@@ -300,37 +300,21 @@ public final class NBootConfig implements Cloneable, Serializable {
         this.homeLocations = homeLocations;
     }
 
-//    public NutsBootConfig setHomeLocation(NutsOsFamily layout, NutsStoreLocation folder, String value) {
-//        if (layout == null) {
-//            this.defaultHomeLocations[folder.ordinal()] = value;
-//        } else {
-//            this.homeLocations[layout.ordinal() * NutsStoreLocation.values().length + folder.ordinal()] = value;
-//        }
-//        return this;
-//    }
-//
-//    public String getHomeLocation(NutsOsFamily layout, NutsStoreLocation folder) {
-//        if (layout == null) {
-//            return this.defaultHomeLocations[folder.ordinal()];
-//        } else {
-//            return this.homeLocations[layout.ordinal() * NutsStoreLocation.values().length + folder.ordinal()];
-//        }
-//    }
-    public NBootConfig setStoreLocationLayout(NOsFamily storeLocationLayout) {
-        this.storeLocationLayout = storeLocationLayout;
+    public NBootConfig setStoreLayout(NOsFamily storeLayout) {
+        this.storeLayout = storeLayout;
         return this;
     }
 
-    public NStoreLocationStrategy getRepositoryStoreLocationStrategy() {
-        return repositoryStoreLocationStrategy;
+    public NStoreStrategy getRepositoryStoreStrategy() {
+        return repositoryStoreStrategy;
     }
 
-    public NBootConfig setRepositoryStoreLocationStrategy(NStoreLocationStrategy repositoryStoreLocationStrategy) {
-        this.repositoryStoreLocationStrategy = repositoryStoreLocationStrategy;
+    public NBootConfig setRepositoryStoreStrategy(NStoreStrategy repositoryStoreStrategy) {
+        this.repositoryStoreStrategy = repositoryStoreStrategy;
         return this;
     }
 
-    public Map<NStoreLocation, String> getStoreLocations() {
+    public Map<NStoreType, String> getStoreLocations() {
         return storeLocations;
     }
 
@@ -338,8 +322,8 @@ public final class NBootConfig implements Cloneable, Serializable {
         return homeLocations;
     }
 
-    public boolean isGlobal() {
-        return global;
+    public boolean isSystem() {
+        return system;
     }
 
     @Override
@@ -401,25 +385,25 @@ public final class NBootConfig implements Cloneable, Serializable {
             sb.append("homeLocations=").append(homeLocations);
 
         }
-        if (storeLocationStrategy != null) {
+        if (storeStrategy != null) {
             if (sb.length() > 0) {
                 sb.append(", ");
             }
-            sb.append("storeLocationStrategy=").append(storeLocationStrategy);
+            sb.append("storeStrategy=").append(storeStrategy);
         }
-        if (repositoryStoreLocationStrategy != null) {
+        if (repositoryStoreStrategy != null) {
             if (sb.length() > 0) {
                 sb.append(", ");
             }
-            sb.append("repositoryStoreLocationStrategy=").append(repositoryStoreLocationStrategy);
+            sb.append("repositoryStoreStrategy=").append(repositoryStoreStrategy);
         }
-        if (storeLocationLayout != null) {
+        if (storeLayout != null) {
             if (sb.length() > 0) {
                 sb.append(", ");
             }
-            sb.append("storeLocationLayout=").append(storeLocationLayout);
+            sb.append("storeLayout=").append(storeLayout);
         }
-        if (global) {
+        if (system) {
             if (sb.length() > 0) {
                 sb.append(", ");
             }

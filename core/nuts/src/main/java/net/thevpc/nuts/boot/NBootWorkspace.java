@@ -37,11 +37,13 @@ import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.time.Instant;
 import java.util.*;
 import java.util.function.Function;
 import java.util.logging.Level;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * NutsBootWorkspace is responsible of loading initial nuts-runtime.jar and its
@@ -81,7 +83,7 @@ public final class NBootWorkspace {
                 case "home.cache":
                 case "home.run":
                 case "home.log":
-                    return NReservedUtils.getHome(NStoreLocation.valueOf(from.substring("home.".length()).toUpperCase()), computedOptions);
+                    return NReservedUtils.getHome(NStoreType.valueOf(from.substring("home.".length()).toUpperCase()), computedOptions);
                 case "apps":
                 case "config":
                 case "lib":
@@ -90,8 +92,8 @@ public final class NBootWorkspace {
                 case "temp":
                 case "log":
                 case "var": {
-                    Map<NStoreLocation, String> s = computedOptions.getStoreLocations().orElse(Collections.emptyMap());
-                    String v = s.get(NStoreLocation.parse(from).orNull());
+                    Map<NStoreType, String> s = computedOptions.getStoreLocations().orElse(Collections.emptyMap());
+                    String v = s.get(NStoreType.parse(from).orNull());
                     if (v == null) {
                         return "${" + from + "}";
                     }
@@ -109,7 +111,7 @@ public final class NBootWorkspace {
     private NLog nLog;
     private NSession nLogSession;
     private Scanner scanner;
-    private Map<String, Object> cache = new LinkedHashMap<>();
+    private NBootCache cache = new NBootCache();
 
     public NBootWorkspace(NWorkspaceTerminalOptions bootTerminal, String... args) {
         this.bLog = new NReservedBootLog(bootTerminal);
@@ -150,7 +152,7 @@ public final class NBootWorkspace {
         this.computedOptions.setUserOptions(this.userOptions);
         this.computedOptions.setBot(this.computedOptions.getBot().orElse(false));
         this.computedOptions.setDry(this.computedOptions.getDry().orElse(false));
-        this.computedOptions.setGlobal(this.computedOptions.getGlobal().orElse(false));
+        this.computedOptions.setSystem(this.computedOptions.getSystem().orElse(false));
         this.computedOptions.setGui(this.computedOptions.getGui().orElse(false));
         this.computedOptions.setInherited(this.computedOptions.getInherited().orElse(false));
         this.computedOptions.setReadOnly(this.computedOptions.getReadOnly().orElse(false));
@@ -186,31 +188,33 @@ public final class NBootWorkspace {
         if (NBlankable.isBlank(bootOptions.getName())) {
             bootOptions.setName(workspaceName);
         }
-        boolean global = bootOptions.getGlobal().orElse(false);
+        boolean system = bootOptions.getSystem().orElse(false);
         if (sandboxMode.compareTo(NIsolationLevel.SANDBOX) >= 0) {
-            bootOptions.setStoreLocationStrategy(NStoreLocationStrategy.STANDALONE);
-            bootOptions.setRepositoryStoreLocationStrategy(NStoreLocationStrategy.EXPLODED);
-            global = false;
+            bootOptions.setStoreStrategy(NStoreStrategy.STANDALONE);
+            bootOptions.setRepositoryStoreStrategy(NStoreStrategy.EXPLODED);
+            system = false;
         } else {
-            if (bootOptions.getStoreLocationStrategy().isNotPresent()) {
-                bootOptions.setStoreLocationStrategy(immediateLocation ? NStoreLocationStrategy.EXPLODED : NStoreLocationStrategy.STANDALONE);
+            if (bootOptions.getStoreStrategy().isNotPresent()) {
+                bootOptions.setStoreStrategy(immediateLocation ? NStoreStrategy.EXPLODED : NStoreStrategy.STANDALONE);
             }
-            if (bootOptions.getRepositoryStoreLocationStrategy().isNotPresent()) {
-                bootOptions.setRepositoryStoreLocationStrategy(NStoreLocationStrategy.EXPLODED);
+            if (bootOptions.getRepositoryStoreStrategy().isNotPresent()) {
+                bootOptions.setRepositoryStoreStrategy(NStoreStrategy.EXPLODED);
             }
         }
-        Map<NStoreLocation, String> storeLocations = NPlatformUtils.buildLocations(bootOptions.getStoreLocationLayout().orNull(), bootOptions.getStoreLocationStrategy().orNull(), bootOptions.getStoreLocations().orNull(), bootOptions.getHomeLocations().orNull(), global, bootOptions.getWorkspace().orNull(), null//no session!
-        );
+        Map<NStoreType, String> storeLocations =
+                NPlatformHome.of(bootOptions.getStoreLayout().orNull(), system)
+                        .buildLocations(bootOptions.getStoreStrategy().orNull(), bootOptions.getStoreLocations().orNull(), bootOptions.getHomeLocations().orNull(), bootOptions.getWorkspace().orNull(), null//no session!
+                        );
         if (new HashSet<>(storeLocations.values()).size() != storeLocations.size()) {
-            Map<String, List<NStoreLocation>> conflicts = new LinkedHashMap<>();
-            for (Map.Entry<NStoreLocation, String> e : storeLocations.entrySet()) {
+            Map<String, List<NStoreType>> conflicts = new LinkedHashMap<>();
+            for (Map.Entry<NStoreType, String> e : storeLocations.entrySet()) {
                 conflicts.computeIfAbsent(e.getValue(), k -> new ArrayList<>()).add(e.getKey());
             }
             StringBuilder error = new StringBuilder();
             error.append("invalid store locations. Two or more stores point to the same location:");
             List<Object> errorParams = new ArrayList<>();
-            for (Map.Entry<String, List<NStoreLocation>> e : conflicts.entrySet()) {
-                List<NStoreLocation> ev = e.getValue();
+            for (Map.Entry<String, List<NStoreType>> e : conflicts.entrySet()) {
+                List<NStoreType> ev = e.getValue();
                 if (ev.size() > 1) {
                     String ek = e.getKey();
                     error.append("\n");
@@ -348,13 +352,13 @@ public final class NBootWorkspace {
     public String[] createProcessCommandLine() {
         prepareWorkspace();
         bLog.log(Level.FINE, NLogVerb.START, NMsg.ofJ("running version {0}.  {1}", computedOptions.getApiVersion().orNull(), getRequirementsHelpString(true)));
-        String defaultWorkspaceLibFolder = computedOptions.getStoreLocation(NStoreLocation.LIB).orNull();
+        String defaultWorkspaceLibFolder = computedOptions.getStoreType(NStoreType.LIB).orNull();
         List<NRepositoryLocation> repos = new ArrayList<>();
         repos.add(NRepositoryLocation.of("nuts@" + defaultWorkspaceLibFolder));
         Collection<NRepositoryLocation> bootRepositories = resolveBootRuntimeRepositories(true);
         repos.addAll(bootRepositories);
         NReservedErrorInfoList errorList = new NReservedErrorInfoList();
-        File file = NReservedMavenUtils.resolveOrDownloadJar(NId.ofApi(computedOptions.getApiVersion().orNull()).get(), repos.toArray(new NRepositoryLocation[0]), NRepositoryLocation.of("nuts@" + computedOptions.getStoreLocation(NStoreLocation.LIB).get() + File.separator + NConstants.Folders.ID), bLog, false, computedOptions.getExpireTime().orNull(), errorList);
+        File file = NReservedMavenUtils.resolveOrDownloadJar(NId.ofApi(computedOptions.getApiVersion().orNull()).get(), repos.toArray(new NRepositoryLocation[0]), NRepositoryLocation.of("nuts@" + computedOptions.getStoreType(NStoreType.LIB).get() + File.separator + NConstants.Folders.ID), bLog, false, computedOptions.getExpireTime().orNull(), errorList);
         if (file == null) {
             errorList.insert(0, new NReservedErrorInfo(null, null, null, "unable to load nuts " + computedOptions.getApiVersion().orNull(), null));
             logError(null, errorList);
@@ -401,9 +405,110 @@ public final class NBootWorkspace {
         return computedOptions;
     }
 
+
+    private NIdCache getFallbackRuntime(NId baseId, boolean lastWorkspace, boolean copyTemp) {
+        return cache.fallbackIdMap.computeIfAbsent(baseId,
+                bid -> {
+                    NIdCache fid = new NIdCache();
+                    fid.baseId = bid;
+                    String s = (lastWorkspace ? lastWorkspaceOptions : computedOptions).getStoreLocations().get().get(NStoreType.LIB) + "/id/" + NIdUtils.resolveIdPath(bid.getShortId());
+                    //
+                    Path ss = Paths.get(s);
+                    NId bestId = null;
+                    NVersion bestVersion = null;
+                    Path bestPath = null;
+
+                    if (Files.isDirectory(ss)) {
+                        try (Stream<Path> stream = Files.list(ss)) {
+                            for (Path path : stream.collect(Collectors.toList())) {
+                                NVersion version = NVersion.of(path.getFileName().toString()).orNull();
+                                if (version != null) {
+                                    if (Files.isDirectory(path)) {
+                                        NId rId = bid.builder().setVersion(version).build();
+                                        Path jar = ss.resolve(version.toString()).resolve(NIdUtils.resolveFileName(
+                                                rId,
+                                                "jar"
+                                        ));
+                                        if (Files.isRegularFile(jar)) {
+                                            if (bestVersion == null || bestVersion.compareTo(version) < 0) {
+                                                bestVersion = version;
+                                                bestPath = jar;
+                                                bestId = rId;
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        } catch (Exception ex) {
+                            // ignore any error
+                        }
+                    }
+                    if (bestVersion != null) {
+                        Path descNutsPath = bestPath.resolveSibling(NIdUtils.resolveFileName(bestId, "nuts"));
+                        Map<String, Object> descNuts = null;
+                        if (Files.isRegularFile(descNutsPath)) {
+                            NReservedJsonParser parser = null;
+                            try {
+                                parser = new NReservedJsonParser(
+                                        new InputStreamReader(
+                                                new ByteArrayInputStream(
+                                                        Files.readAllBytes(descNutsPath)
+                                                )));
+                            } catch (IOException e) {
+                                throw new RuntimeException(e);
+                            }
+                            descNuts = parser.parseObject();
+                            List<String> dependencies = (List<String>) descNuts.get("dependencies");
+                            if (dependencies != null) {
+                                fid.deps = dependencies.stream().map(x -> NId.of(x).get())
+                                        .filter(x -> NReservedUtils.isAcceptDependency(x.toDependency(), computedOptions))
+                                        .collect(Collectors.toSet());
+                                fid.depsData = fid.deps.stream()
+                                        .map(x -> {
+                                            try {
+                                                return getFallbackRuntime(x, lastWorkspace, copyTemp);
+                                            } catch (RuntimeException e) {
+                                                if (!x.toDependency().isOptional()) {
+                                                    throw e;
+                                                }
+                                                //
+                                            }
+                                            return null;
+                                        })
+                                        .filter(Objects::nonNull)
+                                        .collect(Collectors.toList());
+                            }
+                        } else {
+                            //
+                        }
+                        fid.id = bestId;
+
+                        if (copyTemp) {
+                            Path temp = null;
+                            try {
+                                temp = Files.createTempFile("old-", bestPath.getFileName().toString());
+                                Files.copy(bestPath, temp, StandardCopyOption.REPLACE_EXISTING);
+                            } catch (IOException e) {
+                                throw new NBootException(NMsg.ofPlain("error storing nuts-runtime.jar"), e);
+                            }
+                            fid.jar = temp.toString();
+                            fid.expected = bestPath.toString();
+                            fid.temp = true;
+
+                        } else {
+                            fid.jar = bestPath.toString();
+                        }
+                    }
+
+                    return fid;
+                }
+        );
+    }
+
     @SuppressWarnings("unchecked")
     private boolean prepareWorkspace() {
         if (!preparedWorkspace) {
+
             preparedWorkspace = true;
             NIsolationLevel isolationMode = computedOptions.getIsolationLevel().orElse(NIsolationLevel.SYSTEM);
             if (bLog.isLoggable(Level.CONFIG)) {
@@ -456,21 +561,21 @@ public final class NBootWorkspace {
                 immediateLocation = true;
                 workspaceName = t.getFileName().toString();
                 resetFlag = false; //no need for reset
-                if (computedOptions.getGlobal().orElse(false)) {
+                if (computedOptions.getSystem().orElse(false)) {
                     throw new NBootException(NMsg.ofNtf("you cannot specify option '--global' in sandbox mode"));
                 }
                 if (computedOptions.getWorkspace().ifBlankEmpty().isPresent()) {
                     throw new NBootException(NMsg.ofNtf("you cannot specify '--workspace' in sandbox mode"));
                 }
-                if (computedOptions.getStoreLocationStrategy().orElse(NStoreLocationStrategy.STANDALONE) != NStoreLocationStrategy.STANDALONE) {
+                if (computedOptions.getStoreStrategy().orElse(NStoreStrategy.STANDALONE) != NStoreStrategy.STANDALONE) {
                     throw new NBootException(NMsg.ofNtf("you cannot specify '--exploded' in sandbox mode"));
                 }
-                if (computedOptions.getGlobal().orElse(false)) {
+                if (computedOptions.getSystem().orElse(false)) {
                     throw new NBootException(NMsg.ofNtf("you cannot specify '--global' in sandbox mode"));
                 }
                 computedOptions.setWorkspace(lastNutsWorkspaceJsonConfigPath);
             } else {
-                if (isolationMode.compareTo(NIsolationLevel.SYSTEM) > 0 && userOptions.getGlobal().orElse(false)) {
+                if (isolationMode.compareTo(NIsolationLevel.SYSTEM) > 0 && userOptions.getSystem().orElse(false)) {
                     if (userOptions.getReset().orElse(false)) {
                         throw new NBootException(NMsg.ofC("invalid option 'global' in %s mode", isolationMode));
                     }
@@ -479,7 +584,7 @@ public final class NBootWorkspace {
                     //this is a protocol based workspace
                     //String protocol=ws.substring(0,ws.indexOf("://"));
                     workspaceName = "remote-bootstrap";
-                    lastNutsWorkspaceJsonConfigPath = NPlatformUtils.getWorkspaceLocation(null, computedOptions.getGlobal().orElse(false), NReservedUtils.resolveValidWorkspaceName(workspaceName));
+                    lastNutsWorkspaceJsonConfigPath = NPlatformHome.of(null, computedOptions.getSystem().orElse(false)).getWorkspaceLocation(NReservedUtils.resolveValidWorkspaceName(workspaceName));
                     lastConfigLoaded = NReservedBootConfigLoader.loadBootConfig(lastNutsWorkspaceJsonConfigPath, bLog);
                     immediateLocation = true;
 
@@ -487,7 +592,7 @@ public final class NBootWorkspace {
                     immediateLocation = NReservedUtils.isValidWorkspaceName(_ws);
                     int maxDepth = 36;
                     for (int i = 0; i < maxDepth; i++) {
-                        lastNutsWorkspaceJsonConfigPath = NReservedUtils.isValidWorkspaceName(_ws) ? NPlatformUtils.getWorkspaceLocation(null, computedOptions.getGlobal().orElse(false), NReservedUtils.resolveValidWorkspaceName(_ws)) : NReservedIOUtils.getAbsolutePath(_ws);
+                        lastNutsWorkspaceJsonConfigPath = NReservedUtils.isValidWorkspaceName(_ws) ? NPlatformHome.of(null, computedOptions.getSystem().orElse(false)).getWorkspaceLocation(NReservedUtils.resolveValidWorkspaceName(_ws)) : NReservedIOUtils.getAbsolutePath(_ws);
 
                         NBootOptionsBuilder configLoaded = NReservedBootConfigLoader.loadBootConfig(lastNutsWorkspaceJsonConfigPath, bLog);
                         if (configLoaded == null) {
@@ -525,9 +630,9 @@ public final class NBootWorkspace {
                 curr.setJavaCommand(lastConfigLoaded.getJavaCommand().orNull());
                 curr.setJavaOptions(lastConfigLoaded.getJavaOptions().orNull());
                 curr.setExtensionsSet(NReservedCollectionUtils.nonNullSet(lastConfigLoaded.getExtensionsSet().orNull()));
-                curr.setStoreLocationStrategy(lastConfigLoaded.getStoreLocationStrategy().orNull());
-                curr.setRepositoryStoreLocationStrategy(lastConfigLoaded.getRepositoryStoreLocationStrategy().orNull());
-                curr.setStoreLocationLayout(lastConfigLoaded.getStoreLocationLayout().orNull());
+                curr.setStoreStrategy(lastConfigLoaded.getStoreStrategy().orNull());
+                curr.setRepositoryStoreStrategy(lastConfigLoaded.getRepositoryStoreStrategy().orNull());
+                curr.setStoreLayout(lastConfigLoaded.getStoreLayout().orNull());
                 curr.setStoreLocations(NReservedCollectionUtils.nonNullMap(lastConfigLoaded.getStoreLocations().orNull()));
                 curr.setHomeLocations(NReservedCollectionUtils.nonNullMap(lastConfigLoaded.getHomeLocations().orNull()));
             }
@@ -543,7 +648,8 @@ public final class NBootWorkspace {
                         bLog.log(Level.INFO, NLogVerb.DEBUG, NMsg.ofPlain("[dry] [reset] delete ALL workspace folders and configurations"));
                     } else {
                         bLog.log(Level.CONFIG, NLogVerb.WARNING, NMsg.ofPlain("reset workspace"));
-                        countDeleted = NReservedUtils.deleteStoreLocations(lastWorkspaceOptions, getOptions(), true, bLog, NStoreLocation.values(), () -> scanner.nextLine());
+                        getFallbackRuntime(NId.RUNTIME_ID, true, true);
+                        countDeleted = NReservedUtils.deleteStoreLocations(lastWorkspaceOptions, getOptions(), true, bLog, NStoreType.values(), () -> scanner.nextLine());
                         NReservedUtils.ndiUndo(bLog);
                     }
                 } else {
@@ -551,7 +657,8 @@ public final class NBootWorkspace {
                         bLog.log(Level.INFO, NLogVerb.DEBUG, NMsg.ofPlain("[dry] [reset] delete ALL workspace folders and configurations"));
                     } else {
                         bLog.log(Level.CONFIG, NLogVerb.WARNING, NMsg.ofPlain("reset workspace"));
-                        countDeleted = NReservedUtils.deleteStoreLocations(computedOptions, getOptions(), true, bLog, NStoreLocation.values(), () -> scanner.nextLine());
+                        getFallbackRuntime(NId.RUNTIME_ID, false, true);
+                        countDeleted = NReservedUtils.deleteStoreLocations(computedOptions, getOptions(), true, bLog, NStoreType.values(), () -> scanner.nextLine());
                         NReservedUtils.ndiUndo(bLog);
                     }
                 }
@@ -561,10 +668,10 @@ public final class NBootWorkspace {
                 } else {
                     bLog.log(Level.CONFIG, NLogVerb.WARNING, NMsg.ofPlain("recover workspace."));
                     List<Object> folders = new ArrayList<>();
-                    folders.add(NStoreLocation.CACHE);
-                    folders.add(NStoreLocation.TEMP);
+                    folders.add(NStoreType.CACHE);
+                    folders.add(NStoreType.TEMP);
                     //delete nuts.jar and nuts-runtime.jar in the lib folder. They will be re-downloaded.
-                    String p = NReservedUtils.getStoreLocationPath(computedOptions, NStoreLocation.LIB);
+                    String p = NReservedUtils.getStoreLocationPath(computedOptions, NStoreType.LIB);
                     if (p != null) {
                         folders.add(Paths.get(p).resolve("id/net/thevpc/nuts/nuts"));
                         folders.add(Paths.get(p).resolve("id/net/thevpc/nuts/nuts-runtime"));
@@ -586,9 +693,9 @@ public final class NBootWorkspace {
                     computedOptions.setHomeLocations(Collections.emptyMap());
                 }
             }
-            if (computedOptions.getStoreLocationLayout().isNotPresent()) {
+            if (computedOptions.getStoreLayout().isNotPresent()) {
                 if (lastWorkspaceOptions != null && !resetFlag) {
-                    computedOptions.setStoreLocationLayout(lastWorkspaceOptions.getStoreLocationLayout().orElse(NOsFamily.getCurrent()));
+                    computedOptions.setStoreLayout(lastWorkspaceOptions.getStoreLayout().orElse(NOsFamily.getCurrent()));
                 } else {
                     computedOptions.setHomeLocations(Collections.emptyMap());
                 }
@@ -625,7 +732,7 @@ public final class NBootWorkspace {
             }
 
             NId bootApiId = NId.ofApi(computedOptions.getApiVersion().orNull()).get();
-            Path nutsApiConfigBootPath = Paths.get(computedOptions.getStoreLocation(NStoreLocation.CONFIG).get() + File.separator + NConstants.Folders.ID).resolve(NReservedUtils.idToPath(bootApiId)).resolve(NConstants.Files.API_BOOT_CONFIG_FILE_NAME);
+            Path nutsApiConfigBootPath = Paths.get(computedOptions.getStoreType(NStoreType.CONF).get() + File.separator + NConstants.Folders.ID).resolve(NIdUtils.resolveIdPath(bootApiId)).resolve(NConstants.Files.API_BOOT_CONFIG_FILE_NAME);
             boolean loadedApiConfig = false;
 
             //This is not cache, but still, if recover or reset, config will be ignored!
@@ -661,10 +768,13 @@ public final class NBootWorkspace {
                     //load from local lib folder
                     NId runtimeId = null;
                     if (!resetFlag && !computedOptions.getRecover().orElse(false)) {
-                        runtimeId = NReservedMavenUtils.resolveLatestMavenId(NId.of(NConstants.Ids.NUTS_RUNTIME).get(), (rtVersion) -> rtVersion.getValue().startsWith(apiVersion + "."), bLog, Collections.singletonList(NRepositoryLocation.of("nuts@" + computedOptions.getStoreLocation(NStoreLocation.LIB).get() + File.separatorChar + NConstants.Folders.ID)), computedOptions);
+                        runtimeId = NReservedMavenUtils.resolveLatestMavenId(NId.of(NConstants.Ids.NUTS_RUNTIME).get(), (rtVersion) -> rtVersion.getValue().startsWith(apiVersion + "."), bLog, Collections.singletonList(NRepositoryLocation.of("nuts@" + computedOptions.getStoreType(NStoreType.LIB).get() + File.separatorChar + NConstants.Folders.ID)), computedOptions);
                     }
                     if (runtimeId == null) {
                         runtimeId = NReservedMavenUtils.resolveLatestMavenId(NId.of(NConstants.Ids.NUTS_RUNTIME).get(), (rtVersion) -> rtVersion.getValue().startsWith(apiVersion + "."), bLog, resolveBootRuntimeRepositories(true), computedOptions);
+                    }
+                    if (runtimeId == null) {
+                        runtimeId = getFallbackRuntime(NId.RUNTIME_ID, false, false).id;
                     }
                     if (runtimeId == null) {
                         bLog.log(Level.FINEST, NLogVerb.FAIL, NMsg.ofPlain("unable to resolve latest runtime-id version (is connection ok?)"));
@@ -685,7 +795,7 @@ public final class NBootWorkspace {
                 if (computedOptions.getRuntimeBootDescriptor().isNotPresent()) {
                     Set<NId> loadedDeps = null;
                     NId rid = computedOptions.getRuntimeId().get();
-                    Path nutsRuntimeCacheConfigPath = Paths.get(computedOptions.getStoreLocation(NStoreLocation.CONFIG).get() + File.separator + NConstants.Folders.ID).resolve(NReservedUtils.idToPath(bootApiId)).resolve(NConstants.Files.RUNTIME_BOOT_CONFIG_FILE_NAME);
+                    Path nutsRuntimeCacheConfigPath = Paths.get(computedOptions.getStoreType(NStoreType.CONF).get() + File.separator + NConstants.Folders.ID).resolve(NIdUtils.resolveIdPath(bootApiId)).resolve(NConstants.Files.RUNTIME_BOOT_CONFIG_FILE_NAME);
                     try {
                         boolean cacheLoaded = false;
                         if (!computedOptions.getRecover().orElse(false) && !resetFlag && NReservedIOUtils.isFileAccessible(nutsRuntimeCacheConfigPath, computedOptions.getExpireTime().orNull(), bLog)) {
@@ -707,6 +817,10 @@ public final class NBootWorkspace {
                     } catch (Exception ex) {
                         bLog.log(Level.FINEST, NLogVerb.FAIL, NMsg.ofJ("unable to load {0} file : {1}", nutsRuntimeCacheConfigPath.getFileName(), ex.toString()));
                         //
+                    }
+                    if (loadedDeps == null) {
+                        NIdCache r = getFallbackRuntime(NId.RUNTIME_ID, false, false);
+                        loadedDeps = r.deps;
                     }
                     if (loadedDeps == null) {
                         throw new NBootException(NMsg.ofC("unable to load dependencies for %s", rid));
@@ -743,7 +857,7 @@ public final class NBootWorkspace {
                         for (String extension : computedOptions.getExtensionsSet().orElseGet(Collections::emptySet)) {
                             NId eid = NId.of(extension).get();
                             if (!excludedExtensions.contains(eid.getShortName()) && !excludedExtensions.contains(eid.getArtifactId())) {
-                                Path extensionFile = Paths.get(computedOptions.getStoreLocation(NStoreLocation.CONFIG).get() + File.separator + NConstants.Folders.ID).resolve(NReservedUtils.idToPath(bootApiId)).resolve(NConstants.Files.EXTENSION_BOOT_CONFIG_FILE_NAME);
+                                Path extensionFile = Paths.get(computedOptions.getStoreType(NStoreType.CONF).get() + File.separator + NConstants.Folders.ID).resolve(NIdUtils.resolveIdPath(bootApiId)).resolve(NConstants.Files.EXTENSION_BOOT_CONFIG_FILE_NAME);
                                 Set<NId> loadedDeps = null;
                                 if (isLoadFromCache() && NReservedIOUtils.isFileAccessible(extensionFile, computedOptions.getExpireTime().orNull(), bLog)) {
                                     try {
@@ -757,6 +871,9 @@ public final class NBootWorkspace {
                                 }
                                 if (loadedDeps == null) {
                                     loadedDeps = NReservedMavenUtils.loadDependenciesFromId(eid, bLog, resolveBootRuntimeRepositories(true), cache);
+                                }
+                                if (loadedDeps == null) {
+                                    throw new NBootException(NMsg.ofC("unable to load dependencies for %s", eid));
                                 }
                                 all.add(new DefaultNDescriptorBuilder().setId(NId.of(extension).get()).setDependencies(loadedDeps.stream().map(NId::toDependency).collect(Collectors.toList())).build());
                             }
@@ -821,15 +938,15 @@ public final class NBootWorkspace {
 
             List<NClassLoaderNode> deps = new ArrayList<>();
 
-            String workspaceBootLibFolder = computedOptions.getStoreLocation(NStoreLocation.LIB).get() + File.separator + NConstants.Folders.ID;
+            String workspaceBootLibFolder = computedOptions.getStoreType(NStoreType.LIB).get() + File.separator + NConstants.Folders.ID;
 
             NRepositoryLocation[] repositories = NStringUtils.split(computedOptions.getBootRepositories().orNull(), "\n;", true, true).stream().map(NRepositoryLocation::of).toArray(NRepositoryLocation[]::new);
 
             NRepositoryLocation workspaceBootLibFolderRepo = NRepositoryLocation.of("nuts@" + workspaceBootLibFolder);
-            computedOptions.setRuntimeBootDependencyNode(createClassLoaderNode(computedOptions.getRuntimeBootDescriptor().orNull(), repositories, workspaceBootLibFolderRepo, recover, errorList, true, cache));
+            computedOptions.setRuntimeBootDependencyNode(createClassLoaderNode(computedOptions.getRuntimeBootDescriptor().orNull(), repositories, workspaceBootLibFolderRepo, recover, errorList, true));
 
             for (NDescriptor nutsBootDescriptor : computedOptions.getExtensionBootDescriptors().orElseGet(ArrayList::new)) {
-                deps.add(createClassLoaderNode(nutsBootDescriptor, repositories, workspaceBootLibFolderRepo, recover, errorList, false, cache));
+                deps.add(createClassLoaderNode(nutsBootDescriptor, repositories, workspaceBootLibFolderRepo, recover, errorList, false));
             }
             computedOptions.setExtensionBootDependencyNodes(deps);
             deps.add(0, computedOptions.getRuntimeBootDependencyNode().orNull());
@@ -1154,7 +1271,7 @@ public final class NBootWorkspace {
 
     private void logError(URL[] bootClassWorldURLs, NReservedErrorInfoList ths) {
         String workspace = computedOptions.getWorkspace().orNull();
-        Map<NStoreLocation, String> rbc_locations = computedOptions.getStoreLocations().orElse(Collections.emptyMap());
+        Map<NStoreType, String> rbc_locations = computedOptions.getStoreLocations().orElse(Collections.emptyMap());
         bLog.log(Level.SEVERE, NLogVerb.FAIL, NMsg.ofJ("unable to bootstrap nuts (digest {0}):", getApiDigest()));
         if (!ths.list().isEmpty()) {
             bLog.log(Level.SEVERE, NLogVerb.FAIL, NMsg.ofJ("{0}", ths.list().get(0)));
@@ -1164,16 +1281,16 @@ public final class NBootWorkspace {
         bLog.log(Level.SEVERE, NLogVerb.FAIL, NMsg.ofJ("  nuts-boot-runtime                : {0}", computedOptions.getRuntimeId().map(Object::toString).orElse("<?> Not Found!")));
         bLog.log(Level.SEVERE, NLogVerb.FAIL, NMsg.ofJ("  nuts-boot-repositories           : {0}", computedOptions.getBootRepositories().map(Object::toString).orElse("<?> Not Found!")));
         bLog.log(Level.SEVERE, NLogVerb.FAIL, NMsg.ofJ("  workspace-location               : {0}", NOptional.of(workspace).orElse("<default-location>")));
-        bLog.log(Level.SEVERE, NLogVerb.FAIL, NMsg.ofJ("  nuts-store-apps                  : {0}", rbc_locations.get(NStoreLocation.APPS)));
-        bLog.log(Level.SEVERE, NLogVerb.FAIL, NMsg.ofJ("  nuts-store-config                : {0}", rbc_locations.get(NStoreLocation.CONFIG)));
-        bLog.log(Level.SEVERE, NLogVerb.FAIL, NMsg.ofJ("  nuts-store-var                   : {0}", rbc_locations.get(NStoreLocation.VAR)));
-        bLog.log(Level.SEVERE, NLogVerb.FAIL, NMsg.ofJ("  nuts-store-log                   : {0}", rbc_locations.get(NStoreLocation.LOG)));
-        bLog.log(Level.SEVERE, NLogVerb.FAIL, NMsg.ofJ("  nuts-store-temp                  : {0}", rbc_locations.get(NStoreLocation.TEMP)));
-        bLog.log(Level.SEVERE, NLogVerb.FAIL, NMsg.ofJ("  nuts-store-cache                 : {0}", rbc_locations.get(NStoreLocation.CACHE)));
-        bLog.log(Level.SEVERE, NLogVerb.FAIL, NMsg.ofJ("  nuts-store-run                   : {0}", rbc_locations.get(NStoreLocation.RUN)));
-        bLog.log(Level.SEVERE, NLogVerb.FAIL, NMsg.ofJ("  nuts-store-lib                   : {0}", rbc_locations.get(NStoreLocation.LIB)));
-        bLog.log(Level.SEVERE, NLogVerb.FAIL, NMsg.ofJ("  nuts-store-strategy              : {0}", NReservedUtils.desc(computedOptions.getStoreLocationStrategy().orNull())));
-        bLog.log(Level.SEVERE, NLogVerb.FAIL, NMsg.ofJ("  nuts-store-layout                : {0}", NReservedUtils.desc(computedOptions.getStoreLocationLayout().orNull())));
+        bLog.log(Level.SEVERE, NLogVerb.FAIL, NMsg.ofJ("  nuts-store-bin                   : {0}", rbc_locations.get(NStoreType.BIN)));
+        bLog.log(Level.SEVERE, NLogVerb.FAIL, NMsg.ofJ("  nuts-store-conf                  : {0}", rbc_locations.get(NStoreType.CONF)));
+        bLog.log(Level.SEVERE, NLogVerb.FAIL, NMsg.ofJ("  nuts-store-var                   : {0}", rbc_locations.get(NStoreType.VAR)));
+        bLog.log(Level.SEVERE, NLogVerb.FAIL, NMsg.ofJ("  nuts-store-log                   : {0}", rbc_locations.get(NStoreType.LOG)));
+        bLog.log(Level.SEVERE, NLogVerb.FAIL, NMsg.ofJ("  nuts-store-temp                  : {0}", rbc_locations.get(NStoreType.TEMP)));
+        bLog.log(Level.SEVERE, NLogVerb.FAIL, NMsg.ofJ("  nuts-store-cache                 : {0}", rbc_locations.get(NStoreType.CACHE)));
+        bLog.log(Level.SEVERE, NLogVerb.FAIL, NMsg.ofJ("  nuts-store-run                   : {0}", rbc_locations.get(NStoreType.RUN)));
+        bLog.log(Level.SEVERE, NLogVerb.FAIL, NMsg.ofJ("  nuts-store-lib                   : {0}", rbc_locations.get(NStoreType.LIB)));
+        bLog.log(Level.SEVERE, NLogVerb.FAIL, NMsg.ofJ("  nuts-store-strategy              : {0}", NReservedUtils.desc(computedOptions.getStoreStrategy().orNull())));
+        bLog.log(Level.SEVERE, NLogVerb.FAIL, NMsg.ofJ("  nuts-store-layout                : {0}", NReservedUtils.desc(computedOptions.getStoreLayout().orNull())));
         bLog.log(Level.SEVERE, NLogVerb.FAIL, NMsg.ofJ("  nuts-boot-args                   : {0}", this.computedOptions.toCommandLine()));
         bLog.log(Level.SEVERE, NLogVerb.FAIL, NMsg.ofJ("  nuts-app-args                    : {0}", this.computedOptions.getApplicationArguments().get()));
         bLog.log(Level.SEVERE, NLogVerb.FAIL, NMsg.ofJ("  option-read-only                 : {0}", this.computedOptions.getReadOnly().orElse(false)));
@@ -1318,7 +1435,7 @@ public final class NBootWorkspace {
         return null;
     }
 
-    private NClassLoaderNode createClassLoaderNode(NDescriptor descr, NRepositoryLocation[] repositories, NRepositoryLocation workspaceBootLibFolder, boolean recover, NReservedErrorInfoList errorList, boolean runtimeDep, Map<String, Object> cache) throws MalformedURLException {
+    private NClassLoaderNode createClassLoaderNode(NDescriptor descr, NRepositoryLocation[] repositories, NRepositoryLocation workspaceBootLibFolder, boolean recover, NReservedErrorInfoList errorList, boolean runtimeDep) throws MalformedURLException {
         NId id = descr.getId();
         List<NDependency> deps = descr.getDependencies();
         NClassLoaderNodeBuilder rt = new NClassLoaderNodeBuilder();

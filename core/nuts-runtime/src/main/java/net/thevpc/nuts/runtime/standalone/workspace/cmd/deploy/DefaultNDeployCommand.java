@@ -3,7 +3,7 @@ package net.thevpc.nuts.runtime.standalone.workspace.cmd.deploy;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.io.*;
 import net.thevpc.nuts.runtime.standalone.descriptor.parser.NDescriptorContentResolver;
-import net.thevpc.nuts.runtime.standalone.id.util.NIdUtils;
+import net.thevpc.nuts.runtime.standalone.id.util.CoreNIdUtils;
 import net.thevpc.nuts.runtime.standalone.util.CorePlatformUtils;
 import net.thevpc.nuts.runtime.standalone.io.util.ZipOptions;
 import net.thevpc.nuts.runtime.standalone.io.util.ZipUtils;
@@ -226,7 +226,7 @@ public class DefaultNDeployCommand extends AbstractNDeployCommand {
                 NId effId = dws.resolveEffectiveId(descriptor, session);
                 CorePlatformUtils.checkAcceptCondition(descriptor.getCondition(), false, session);
                 if (NBlankable.isBlank(repository)) {
-                    effId = NIdUtils.createContentFaceId(effId.builder().setPropertiesQuery("").build(), descriptor, session);
+                    effId = CoreNIdUtils.createContentFaceId(effId.builder().setPropertiesQuery("").build(), descriptor, session);
                     for (NRepository repo : wu.filterRepositoriesDeploy(effId, null)
                             .stream()
                             .filter(x -> x.config().getDeployWeight() > 0)
@@ -250,7 +250,7 @@ public class DefaultNDeployCommand extends AbstractNDeployCommand {
                     if (!repo.config().isEnabled()) {
                         throw new NRepositoryDisabledException(getSession(), repository);
                     }
-                    effId = NIdUtils.createContentFaceId(effId.builder().setPropertiesQuery("").build(), descriptor, session);
+                    effId = CoreNIdUtils.createContentFaceId(effId.builder().setPropertiesQuery("").build(), descriptor, session);
                     NRepositorySPI repoSPI = wu.repoSPI(repo);
                     repoSPI.deploy()
                             .setSession(session)

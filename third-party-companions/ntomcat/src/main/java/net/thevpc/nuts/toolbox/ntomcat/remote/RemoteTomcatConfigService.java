@@ -28,7 +28,7 @@ public class RemoteTomcatConfigService extends RemoteTomcatServiceBase {
         setName(name);
         this.client = client;
         this.session = client.session;
-        sharedConfigFolder = client.getSession().getAppVersionFolder(NStoreLocation.CONFIG, NTomcatConfigVersions.CURRENT);
+        sharedConfigFolder = client.getSession().getAppVersionFolder(NStoreType.CONF, NTomcatConfigVersions.CURRENT);
     }
 
     public RemoteTomcatConfigService(NPath file, RemoteTomcat client) {

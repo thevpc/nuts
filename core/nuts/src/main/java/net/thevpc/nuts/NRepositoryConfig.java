@@ -42,8 +42,8 @@ public class NRepositoryConfig extends NConfigItem {
     private String uuid;
     private String name;
     private NRepositoryLocation location;
-    private Map<NStoreLocation, String> storeLocations = null;
-    private NStoreLocationStrategy storeLocationStrategy = null;
+    private Map<NStoreType, String> storeLocations = null;
+    private NStoreStrategy storeStrategy = null;
     private String groups;
     private Map<String, String> env;
     private List<NRepositoryRef> mirrors;
@@ -90,12 +90,12 @@ public class NRepositoryConfig extends NConfigItem {
         return this;
     }
 
-    public NStoreLocationStrategy getStoreLocationStrategy() {
-        return storeLocationStrategy;
+    public NStoreStrategy getStoreStrategy() {
+        return storeStrategy;
     }
 
-    public NRepositoryConfig setStoreLocationStrategy(NStoreLocationStrategy storeLocationStrategy) {
-        this.storeLocationStrategy = storeLocationStrategy;
+    public NRepositoryConfig setStoreStrategy(NStoreStrategy storeStrategy) {
+        this.storeStrategy = storeStrategy;
         return this;
     }
 
@@ -153,11 +153,11 @@ public class NRepositoryConfig extends NConfigItem {
         return this;
     }
 
-    public Map<NStoreLocation, String> getStoreLocations() {
+    public Map<NStoreType, String> getStoreLocations() {
         return storeLocations;
     }
 
-    public NRepositoryConfig setStoreLocations(Map<NStoreLocation, String> storeLocations) {
+    public NRepositoryConfig setStoreLocations(Map<NStoreType, String> storeLocations) {
         this.storeLocations = storeLocations;
         return this;
     }
@@ -170,7 +170,7 @@ public class NRepositoryConfig extends NConfigItem {
 //        hash = 53 * hash + Objects.hashCode(this.type);
         hash = 53 * hash + Objects.hashCode(this.location);
         hash = 53 * hash + Objects.hashCode(this.storeLocations);
-        hash = 53 * hash + Objects.hashCode(this.storeLocationStrategy);
+        hash = 53 * hash + Objects.hashCode(this.storeStrategy);
         hash = 53 * hash + Objects.hashCode(this.groups);
         hash = 53 * hash + Objects.hashCode(this.env);
         hash = 53 * hash + Objects.hashCode(this.mirrors);
@@ -216,7 +216,7 @@ public class NRepositoryConfig extends NConfigItem {
         if (!Objects.equals(this.storeLocations, other.storeLocations)) {
             return false;
         }
-        if (this.storeLocationStrategy != other.storeLocationStrategy) {
+        if (this.storeStrategy != other.storeStrategy) {
             return false;
         }
         if (!Objects.equals(this.env, other.env)) {
@@ -232,7 +232,7 @@ public class NRepositoryConfig extends NConfigItem {
     public String toString() {
         return "NutsRepositoryConfig{" + ", uuid=" + uuid + ", name=" + name
 //                + ", type=" + type
-                + ", location=" + location + ", storeLocations=" + (storeLocations == null ? "null" : storeLocations.toString()) + ", storeLocationStrategy=" + storeLocationStrategy + ", groups=" + groups + ", env=" + env + ", mirrors=" + mirrors + ", users=" + users + ", indexEnabled=" + indexEnabled + ", authenticationAgent=" + authenticationAgent + '}';
+                + ", location=" + location + ", storeLocations=" + (storeLocations == null ? "null" : storeLocations.toString()) + ", storeStrategy=" + storeStrategy + ", groups=" + groups + ", env=" + env + ", mirrors=" + mirrors + ", users=" + users + ", indexEnabled=" + indexEnabled + ", authenticationAgent=" + authenticationAgent + '}';
     }
 
 }

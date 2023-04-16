@@ -133,7 +133,7 @@ public class NdiScriptOptions implements Cloneable {
                 nutsApiJarPath = apiDef.getContent().orNull();
             } else {
                 NWorkspaceBootConfig bootConfig = loadSwitchWorkspaceLocationConfig(getLauncher().getSwitchWorkspaceLocation());
-                nutsApiJarPath = NPath.of(bootConfig.getStoreLocation(nid, NStoreLocation.LIB),session);
+                nutsApiJarPath = NPath.of(bootConfig.getStoreLocation(nid, NStoreType.LIB),session);
                 NLocations.of(session).getDefaultIdFilename(nid);
             }
         }
@@ -141,27 +141,27 @@ public class NdiScriptOptions implements Cloneable {
     }
 
     public NPath resolveBinFolder() {
-        return resolveNutsAppsFolder().resolve("bin");
+        return resolveNutsBinFolder().resolve("bin");
     }
 
     public NPath resolveIncFolder() {
-        return resolveNutsAppsFolder().resolve("inc");
+        return resolveNutsBinFolder().resolve("inc");
     }
 
-    public NPath resolveNutsAppsFolder() {
+    public NPath resolveNutsBinFolder() {
         NWorkspaceBootConfig bootConfig = null;
         NId apiId = session.getWorkspace().getApiId();
         if (getLauncher().getSwitchWorkspaceLocation() != null) {
             bootConfig = loadSwitchWorkspaceLocationConfig(getLauncher().getSwitchWorkspaceLocation());
             return NPath.of(
-                    bootConfig.getStoreLocation(apiId, NStoreLocation.APPS),session
+                    bootConfig.getStoreLocation(apiId, NStoreType.BIN),session
             );
         } else {
-            return NLocations.of(session).getStoreLocation(apiId, NStoreLocation.APPS);
+            return NLocations.of(session).getStoreLocation(apiId, NStoreType.BIN);
         }
     }
 
-    public NPath resolveNutsApiAppsFolder() {
+    public NPath resolveNutsApiBinFolder() {
         NWorkspaceBootConfig bootConfig = null;
         NId apiId = session.getWorkspace().getApiId().builder().setVersion(nutsVersion).build();
         apiId = NSearchCommand.of(session).addId(apiId).setLatest(true).setFailFast(true).setContent(true)
@@ -169,9 +169,9 @@ public class NdiScriptOptions implements Cloneable {
                 .getResultDefinitions().singleton().getId();
         if (getLauncher().getSwitchWorkspaceLocation() != null) {
             bootConfig = loadSwitchWorkspaceLocationConfig(getLauncher().getSwitchWorkspaceLocation());
-            return NPath.of(bootConfig.getStoreLocation(apiId, NStoreLocation.APPS),session);
+            return NPath.of(bootConfig.getStoreLocation(apiId, NStoreType.BIN),session);
         } else {
-            return NLocations.of(session).getStoreLocation(apiId, NStoreLocation.APPS);
+            return NLocations.of(session).getStoreLocation(apiId, NStoreType.BIN);
         }
     }
 
@@ -201,7 +201,7 @@ public class NdiScriptOptions implements Cloneable {
                 NVersion _latestVersion = null;
                 try {
                     _latestVersion = Files.list(
-                                    Paths.get(bootConfig.getStoreLocation(session.getWorkspace().getApiId(), NStoreLocation.CONFIG))
+                                    Paths.get(bootConfig.getStoreLocation(session.getWorkspace().getApiId(), NStoreType.CONF))
                                             .getParent())
                             .filter(
                                     f

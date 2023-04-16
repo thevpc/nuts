@@ -56,7 +56,7 @@ public class NRepositoryConfig502 implements Serializable {
     private String tempStoreLocation = null;
     private String cacheStoreLocation = null;
     private String runStoreLocation = null;
-    private NStoreLocationStrategy storeLocationStrategy = null;
+    private NStoreStrategy storeLocationStrategy = null;
     private String groups;
     private Map<String,String> env;
     private List<NRepositoryRef> mirrors;
@@ -207,11 +207,11 @@ public class NRepositoryConfig502 implements Serializable {
         return this;
     }
 
-    public NStoreLocationStrategy getStoreLocationStrategy() {
+    public NStoreStrategy getStoreLocationStrategy() {
         return storeLocationStrategy;
     }
 
-    public NRepositoryConfig502 setStoreLocationStrategy(NStoreLocationStrategy storeLocationStrategy) {
+    public NRepositoryConfig502 setStoreLocationStrategy(NStoreStrategy storeLocationStrategy) {
         this.storeLocationStrategy = storeLocationStrategy;
         return this;
     }
@@ -381,7 +381,7 @@ public class NRepositoryConfig502 implements Serializable {
         c.setIndexEnabled(indexEnabled);
         c.setMirrors(mirrors);
         c.setName(name);
-        c.setStoreLocationStrategy(storeLocationStrategy);
+        c.setStoreStrategy(storeLocationStrategy);
         NRepositoryLocation loc = NRepositoryLocation.of(location);
         if(!NBlankable.isBlank(type)){
             loc=loc.setLocationType(type);
@@ -389,13 +389,13 @@ public class NRepositoryConfig502 implements Serializable {
         c.setLocation(NRepositoryLocation.of(loc.toString()));
         c.setStoreLocations(
                 new NStoreLocationsMap(null)
-                        .set(NStoreLocation.APPS, programsStoreLocation)
-                        .set(NStoreLocation.CONFIG, configStoreLocation)
-                        .set(NStoreLocation.VAR, varStoreLocation)
-                        .set(NStoreLocation.LOG, logStoreLocation)
-                        .set(NStoreLocation.TEMP, tempStoreLocation)
-                        .set(NStoreLocation.CACHE, cacheStoreLocation)
-                        .set(NStoreLocation.LIB, libStoreLocation)
+                        .set(NStoreType.BIN, programsStoreLocation)
+                        .set(NStoreType.CONF, configStoreLocation)
+                        .set(NStoreType.VAR, varStoreLocation)
+                        .set(NStoreType.LOG, logStoreLocation)
+                        .set(NStoreType.TEMP, tempStoreLocation)
+                        .set(NStoreType.CACHE, cacheStoreLocation)
+                        .set(NStoreType.LIB, libStoreLocation)
                 .toMap()
         );
         return c;

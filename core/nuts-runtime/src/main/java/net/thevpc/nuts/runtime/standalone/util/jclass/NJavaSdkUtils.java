@@ -161,8 +161,8 @@ public class NJavaSdkUtils {
             }
             case WINDOWS: {
                 conf = new String[]{
-                        NPlatformUtils.getWindowsProgramFiles() + "\\Java",
-                        NPlatformUtils.getWindowsProgramFilesX86() + "\\Java"
+                        NPlatformHome.USER.getWindowsProgramFiles() + "\\Java",
+                        NPlatformHome.USER.getWindowsProgramFilesX86() + "\\Java"
                 };
                 break;
             }
@@ -201,8 +201,8 @@ public class NJavaSdkUtils {
             }
             case WINDOWS: {
                 conf.addAll(Arrays.asList(
-                        NPlatformUtils.getWindowsProgramFiles() + "\\Java",
-                        NPlatformUtils.getWindowsProgramFilesX86() + "\\Java"
+                        NPlatformHome.USER.getWindowsProgramFiles() + "\\Java",
+                        NPlatformHome.USER.getWindowsProgramFilesX86() + "\\Java"
                 ));
                 break;
             }

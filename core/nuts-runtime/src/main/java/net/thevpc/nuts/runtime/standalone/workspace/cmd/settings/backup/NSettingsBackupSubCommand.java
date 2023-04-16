@@ -11,11 +11,11 @@ import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.elem.NElements;
 import net.thevpc.nuts.elem.NObjectElement;
 import net.thevpc.nuts.io.NCompress;
-import net.thevpc.nuts.io.NUncompressVisitor;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.io.NUncompress;
+import net.thevpc.nuts.io.NUncompressVisitor;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.AbstractNSettingsSubCommand;
-import net.thevpc.nuts.util.NPlatformUtils;
+import net.thevpc.nuts.util.NPlatformHome;
 
 import java.io.File;
 import java.io.InputStream;
@@ -49,7 +49,7 @@ public class NSettingsBackupSubCommand extends AbstractNSettingsSubCommand {
                 all.add(NLocations.of(session).getWorkspaceLocation().toFile()
                         .resolve("nuts-workspace.json").toString()
                 );
-                for (NStoreLocation value : NStoreLocation.values()) {
+                for (NStoreType value : NStoreType.values()) {
                     NPath r = NLocations.of(session).getStoreLocation(value);
                     if (r.isDirectory()) {
                         all.add(r.toString());
@@ -133,8 +133,7 @@ public class NSettingsBackupSubCommand extends AbstractNSettingsSubCommand {
                 if (ws == null || ws.isEmpty()) {
                     cmdLine.throwMissingArgument(NMsg.ofC("not a valid file : %s", file));
                 }
-                String platformHomeFolder = NPlatformUtils.getWorkspaceLocation(null,
-                        NConfigs.of(session).stored().isGlobal(), ws);
+                String platformHomeFolder = NPlatformHome.of(null, NConfigs.of(session).stored().isSystem()).getWorkspaceLocation(ws);
                 NUncompress.of(session)
                         .from(NPath.of(file,session))
                         .to(NPath.of(platformHomeFolder,session))

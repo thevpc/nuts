@@ -34,7 +34,7 @@ import net.thevpc.nuts.util.NNameFormat;
  * @app.category Base
  * @since 0.5.4
  */
-public enum NStoreLocationStrategy implements NEnum {
+public enum NStoreStrategy implements NEnum {
     /**
      * Default location strategy. locations will be exploded to distinct roots
      */
@@ -49,17 +49,17 @@ public enum NStoreLocationStrategy implements NEnum {
      */
     private final String id;
 
-    NStoreLocationStrategy() {
+    NStoreStrategy() {
         this.id = NNameFormat.ID_NAME.format(name());
     }
 
-    public static NOptional<NStoreLocationStrategy> parse(String value) {
-        return NEnumUtils.parseEnum(value, NStoreLocationStrategy.class, s->{
+    public static NOptional<NStoreStrategy> parse(String value) {
+        return NEnumUtils.parseEnum(value, NStoreStrategy.class, s->{
             switch (s.getNormalizedValue()) {
                 case "S":
-                    return NOptional.of(NStoreLocationStrategy.STANDALONE);
+                    return NOptional.of(NStoreStrategy.STANDALONE);
                 case "E":
-                    return NOptional.of(NStoreLocationStrategy.EXPLODED);
+                    return NOptional.of(NStoreStrategy.EXPLODED);
             }
             return null;
         });

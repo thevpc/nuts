@@ -203,8 +203,7 @@ public class NShell {
             try {
                 NPath histFile = this.history.getHistoryFile();
                 if (histFile == null) {
-                    histFile = NLocations.of(rSession).getStoreLocation(this.appId,
-                            NStoreLocation.VAR).resolve((serviceName == null ? "" : serviceName) + ".history");
+                    histFile = NLocations.of(rSession).getStoreLocation(this.appId, NStoreType.VAR).resolve((serviceName == null ? "" : serviceName) + ".history");
                     this.history.setHistoryFile(histFile);
                     if (histFile.exists()) {
                         this.history.load(histFile);
@@ -342,7 +341,7 @@ public class NShell {
                 getHistory().add(line);
                 NShellCommandNode nn = parseScript(line);
                 int i = context.getShell().evalNode(nn, context);
-                success = i==0;
+                success = i == 0;
             } catch (NShellQuitException e) {
                 throw e;
             } catch (Throwable e) {

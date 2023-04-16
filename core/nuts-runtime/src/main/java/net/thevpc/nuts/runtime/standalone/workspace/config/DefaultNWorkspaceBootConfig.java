@@ -1,7 +1,7 @@
 package net.thevpc.nuts.runtime.standalone.workspace.config;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.util.NPlatformUtils;
+import net.thevpc.nuts.util.NPlatformHome;
 
 import java.nio.file.Paths;
 import java.util.Collections;
@@ -17,17 +17,17 @@ class DefaultNWorkspaceBootConfig implements NWorkspaceBootConfig {
     private boolean immediateLocation;
 
     private String uuid = null;
-    private boolean global;
+    private boolean system;
     private String name = null;
     private String workspace = null;
     private String bootRepositories = null;
 
-    private Map<NStoreLocation, String> storeLocations = null;
+    private Map<NStoreType, String> storeLocations = null;
     private Map<NHomeLocation, String> homeLocations = null;
 
-    private NStoreLocationStrategy repositoryStoreLocationStrategy = null;
-    private NStoreLocationStrategy storeLocationStrategy = null;
-    private NOsFamily storeLocationLayout = null;
+    private NStoreStrategy repositoryStoreStrategy = null;
+    private NStoreStrategy storeStrategy = null;
+    private NOsFamily storeLayout = null;
 
     private List<Extension> extensions;
 
@@ -37,19 +37,19 @@ class DefaultNWorkspaceBootConfig implements NWorkspaceBootConfig {
         this.immediateLocation = immediateLocation;
         this.effectiveWorkspaceName = effectiveWorkspaceName;
         this.uuid = bootModel.getUuid();
-        this.global = bootModel.isGlobal();
+        this.system = bootModel.isSystem();
         this.name = bootModel.getName();
         this.workspace = bootModel.getWorkspace();
         this.bootRepositories = bootModel.getBootRepositories();
         this.storeLocations = bootModel.getStoreLocations()==null?new HashMap<>() : new HashMap<>(bootModel.getStoreLocations());
         this.homeLocations = bootModel.getHomeLocations()==null?new HashMap<>() : new HashMap<>(bootModel.getHomeLocations());
-        this.repositoryStoreLocationStrategy = bootModel.getRepositoryStoreLocationStrategy();
-        this.storeLocationStrategy = bootModel.getStoreLocationStrategy();
-        this.storeLocationLayout = bootModel.getStoreLocationLayout();
-        if (storeLocationStrategy == null) {
-            storeLocationStrategy = NStoreLocationStrategy.EXPLODED;
+        this.repositoryStoreStrategy = bootModel.getRepositoryStoreStrategy();
+        this.storeStrategy = bootModel.getStoreStrategy();
+        this.storeLayout = bootModel.getStoreLayout();
+        if (storeStrategy == null) {
+            storeStrategy = NStoreStrategy.EXPLODED;
         }
-        this.storeLocations= NPlatformUtils.buildLocations(null,storeLocationStrategy, storeLocations, homeLocations, global, effectiveWorkspace,session);
+        this.storeLocations= NPlatformHome.of(null,system).buildLocations(storeStrategy, storeLocations, homeLocations, effectiveWorkspace,session);
         List<NWorkspaceConfigBoot.ExtensionConfig> extensions = bootModel.getExtensions();
         if (extensions == null) {
             this.extensions= Collections.emptyList();
@@ -101,7 +101,7 @@ class DefaultNWorkspaceBootConfig implements NWorkspaceBootConfig {
     }
 
     @Override
-    public Map<NStoreLocation, String> getStoreLocations() {
+    public Map<NStoreType, String> getStoreLocations() {
         return Collections.unmodifiableMap(storeLocations);
     }
 
@@ -112,20 +112,20 @@ class DefaultNWorkspaceBootConfig implements NWorkspaceBootConfig {
 
 
     @Override
-    public NStoreLocationStrategy getStoreLocationStrategy() {
-        return storeLocationStrategy;
+    public NStoreStrategy getStoreStrategy() {
+        return storeStrategy;
     }
 
 
     @Override
-    public NOsFamily getStoreLocationLayout() {
-        return storeLocationLayout;
+    public NOsFamily getStoreLayout() {
+        return storeLayout;
     }
 
 
     @Override
-    public NStoreLocationStrategy getRepositoryStoreLocationStrategy() {
-        return repositoryStoreLocationStrategy;
+    public NStoreStrategy getRepositoryStoreStrategy() {
+        return repositoryStoreStrategy;
     }
 
     @Override
@@ -135,8 +135,8 @@ class DefaultNWorkspaceBootConfig implements NWorkspaceBootConfig {
 
 
     @Override
-    public boolean isGlobal() {
-        return global;
+    public boolean isSystem() {
+        return system;
     }
 
 
@@ -157,7 +157,7 @@ class DefaultNWorkspaceBootConfig implements NWorkspaceBootConfig {
     }
 
     @Override
-    public String getStoreLocation(NId id, NStoreLocation folderType) {
+    public String getStoreLocation(NId id, NStoreType folderType) {
         String storeLocation = getStoreLocation(folderType);
         if (storeLocation == null) {
             return null;
@@ -173,8 +173,8 @@ class DefaultNWorkspaceBootConfig implements NWorkspaceBootConfig {
     }
 
     @Override
-    public String getStoreLocation(NStoreLocation storeLocation) {
-        return storeLocations.get(storeLocation);
+    public String getStoreLocation(NStoreType storeType) {
+        return storeLocations.get(storeType);
     }
 
 
@@ -185,10 +185,9 @@ class DefaultNWorkspaceBootConfig implements NWorkspaceBootConfig {
 
 
     @Override
-    public String getHomeLocation(NStoreLocation storeLocation) {
-        return NPlatformUtils.getPlatformHomeFolder(getStoreLocationLayout(),
-                storeLocation, getHomeLocations(),
-                isGlobal(),
+    public String getHomeLocation(NStoreType storeType) {
+        return NPlatformHome.of(getStoreLayout(), isSystem()).getWorkspaceLocation(
+                storeType, getHomeLocations(),
                 getName()
         );
     }

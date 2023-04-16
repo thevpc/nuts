@@ -30,7 +30,7 @@ import net.thevpc.nuts.elem.NElements;
 import net.thevpc.nuts.io.NIOException;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.runtime.standalone.definition.DefaultNInstallInfo;
-import net.thevpc.nuts.runtime.standalone.id.util.NIdUtils;
+import net.thevpc.nuts.runtime.standalone.id.util.CoreNIdUtils;
 import net.thevpc.nuts.runtime.standalone.io.util.FolderObjectIterator;
 import net.thevpc.nuts.runtime.standalone.io.util.NInstallStatusIdFilter;
 import net.thevpc.nuts.runtime.standalone.repository.cmd.deploy.AbstractNDeployRepositoryCommand;
@@ -79,7 +79,7 @@ public class DefaultNInstalledRepository extends AbstractNRepository implements 
         this.initSession = NSessionUtils.defaultSession(ws);
         this.deployments = new NRepositoryFolderHelper(this,
                 NSessionUtils.defaultSession(ws),
-                NPath.of(bOptions.getStoreLocation(NStoreLocation.LIB).get(), initSession).resolve(NConstants.Folders.ID)
+                NPath.of(bOptions.getStoreType(NStoreType.LIB).get(), initSession).resolve(NConstants.Folders.ID)
                 , false,
                 "lib", NElements.of(initSession).ofObject().set("repoKind", "lib").build()
         );
@@ -121,7 +121,7 @@ public class DefaultNInstalledRepository extends AbstractNRepository implements 
 
     @Override
     public NIterator<NInstallInformation> searchInstallInformation(NSession session) {
-        NPath rootFolder = NLocations.of(session).getStoreLocation(NStoreLocation.CONFIG).resolve(NConstants.Folders.ID);
+        NPath rootFolder = NLocations.of(session).getStoreLocation(NStoreType.CONF).resolve(NConstants.Folders.ID);
         return new FolderObjectIterator<NInstallInformation>("NutsInstallInformation",
                 rootFolder,
                 null, -1, session, new FolderObjectIterator.FolderIteratorModel<NInstallInformation>() {
@@ -158,7 +158,7 @@ public class DefaultNInstalledRepository extends AbstractNRepository implements 
         }
         NPath pp = NLocations.of(session).getStoreLocation(id
                         //.setAlternative("")
-                        .builder().setVersion("ANY").build(), NStoreLocation.CONFIG)
+                        .builder().setVersion("ANY").build(), NStoreType.CONF)
                 .resolveSibling("default-version");
         String defaultVersion = "";
         if (pp.isRegularFile()) {
@@ -180,7 +180,7 @@ public class DefaultNInstalledRepository extends AbstractNRepository implements 
         String version = id.getVersion().getValue();
         NPath pp = NLocations.of(session).getStoreLocation(id
                         //                .setAlternative("")
-                        .builder().setVersion("ANY").build(), NStoreLocation.CONFIG)
+                        .builder().setVersion("ANY").build(), NStoreType.CONF)
                 .resolveSibling("default-version");
         if (NBlankable.isBlank(version)) {
             if (pp.isRegularFile()) {
@@ -390,7 +390,7 @@ public class DefaultNInstalledRepository extends AbstractNRepository implements 
     }
 
     public NId pathToId(NPath path, NSession session) {
-        NPath rootFolder = NLocations.of(session).getStoreLocation(NStoreLocation.CONFIG).resolve(NConstants.Folders.ID);
+        NPath rootFolder = NLocations.of(session).getStoreLocation(NStoreType.CONF).resolve(NConstants.Folders.ID);
         String p = path.toString().substring(rootFolder.toString().length());
         List<String> split = StringTokenizerUtils.split(p, "/\\");
         if (split.size() >= 4) {
@@ -428,7 +428,7 @@ public class DefaultNInstalledRepository extends AbstractNRepository implements 
 
     public InstallInfoConfig getInstallInfoConfig(NId id, NPath path, NSession session) {
         if (id == null && path == null) {
-            NIdUtils.checkShortId(id,session);
+            CoreNIdUtils.checkShortId(id,session);
         }
         if (path == null) {
             path = getPath(id, NUTS_INSTALL_FILE, session);
@@ -486,7 +486,7 @@ public class DefaultNInstalledRepository extends AbstractNRepository implements 
     }
 
     public NIterator<InstallInfoConfig> searchInstallConfig(NSession session) {
-        NPath rootFolder = NLocations.of(session).getStoreLocation(NStoreLocation.CONFIG).resolve(NConstants.Folders.ID);
+        NPath rootFolder = NLocations.of(session).getStoreLocation(NStoreType.CONF).resolve(NConstants.Folders.ID);
         return new FolderObjectIterator<InstallInfoConfig>("InstallInfoConfig",
                 rootFolder,
                 null, -1, session, new FolderObjectIterator.FolderIteratorModel<InstallInfoConfig>() {
@@ -531,7 +531,7 @@ public class DefaultNInstalledRepository extends AbstractNRepository implements 
         NInstallStatus s = NInstallStatus.of(ii.isInstalled(), ii.isRequired(), obsolete, defaultVersion);
         return new DefaultNInstallInfo(ii.getId(),
                 s,
-                NLocations.of(session).getStoreLocation(ii.getId(), NStoreLocation.APPS),
+                NLocations.of(session).getStoreLocation(ii.getId(), NStoreType.BIN),
                 ii.getCreationDate(),
                 ii.getLastModificationDate(),
                 ii.getCreationUser(),
@@ -676,7 +676,7 @@ public class DefaultNInstalledRepository extends AbstractNRepository implements 
     }
 
     public NPath getPath(NId id, String name, NSession session) {
-        return NLocations.of(session).getStoreLocation(id, NStoreLocation.CONFIG).resolve(name);
+        return NLocations.of(session).getStoreLocation(id, NStoreType.CONF).resolve(name);
     }
 
     /////////////////////////////////////////////////////////////////////////////////////////////
@@ -787,7 +787,7 @@ public class DefaultNInstalledRepository extends AbstractNRepository implements 
                 if (getFilter() instanceof NInstallStatusIdFilter) {
                     NPath installFolder
                             = NLocations.of(getSession()).getStoreLocation(getId()
-                            .builder().setVersion("ANY").build(), NStoreLocation.CONFIG).getParent();
+                            .builder().setVersion("ANY").build(), NStoreType.CONF).getParent();
                     if (installFolder.isDirectory()) {
                         final NVersionFilter filter0 = getId().getVersion().filter(getSession());
                         result = IteratorBuilder.of(installFolder.stream().iterator(), getSession())

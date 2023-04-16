@@ -152,10 +152,10 @@ public class DefaultNPaths implements NPaths {
         NPath rootFolder = null;
         NRepository repositoryById = null;
         if (repositoryId == null) {
-            rootFolder = NLocations.of(session).getStoreLocation(NStoreLocation.TEMP);
+            rootFolder = NLocations.of(session).getStoreLocation(NStoreType.TEMP);
         } else {
             repositoryById = NRepositories.of(session).setSession(session).getRepository(repositoryId);
-            rootFolder = repositoryById.config().setSession(session).getStoreLocation(NStoreLocation.TEMP);
+            rootFolder = repositoryById.config().setSession(session).getStoreLocation(NStoreType.TEMP);
         }
         NId appId = session.getAppId();
         if (appId == null) {

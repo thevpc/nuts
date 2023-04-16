@@ -2,15 +2,13 @@ package net.thevpc.nuts.runtime.standalone.repository;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.io.NPath;
-import net.thevpc.nuts.runtime.standalone.util.collections.CoreCollectionUtils;
 import net.thevpc.nuts.spi.NRepositoryDB;
 import net.thevpc.nuts.spi.NRepositoryLocation;
 import net.thevpc.nuts.spi.NRepositorySelectorList;
 import net.thevpc.nuts.util.NAssert;
 import net.thevpc.nuts.util.NMaps;
-import net.thevpc.nuts.util.NPlatformUtils;
+import net.thevpc.nuts.util.NPlatformHome;
 
-import java.util.HashMap;
 import java.util.Objects;
 
 public class NRepositorySelectorHelper {
@@ -77,8 +75,8 @@ public class NRepositorySelectorHelper {
         NAssert.requireNonBlank(url, "repository url (<name>=<url>)", session);
 
         NRepositoryLocation loc = NRepositoryLocation.of(url);
-        String sloc = NPath.of(loc.getPath(),session).toAbsolute().toString();
-        loc=loc.setPath(sloc);
+        String sloc = NPath.of(loc.getPath(), session).toAbsolute().toString();
+        loc = loc.setPath(sloc);
 
         return new NAddRepositoryOptions().setName(name)
                 .setFailSafe(false).setCreate(true)
@@ -113,12 +111,12 @@ public class NRepositorySelectorHelper {
                         .setConfig(
                                 new NRepositoryConfig()
                                         .setLocation(NRepositoryLocation.of("nuts@"
-                                                + NPath.of(NPlatformUtils.getPlatformHomeFolder(null,
-                                                        NStoreLocation.LIB, NConfigs.of(session).stored().getHomeLocations(),
-                                                        true,
-                                                        NConstants.Names.DEFAULT_WORKSPACE_NAME), session)
-                                                        .resolve(NConstants.Folders.ID)
-                                                        .toString())
+                                                + NPath.of(
+                                                        NPlatformHome.SYSTEM.getWorkspaceLocation(
+                                                                NStoreType.LIB, NConfigs.of(session).stored().getHomeLocations(),
+                                                                NConstants.Names.DEFAULT_WORKSPACE_NAME), session)
+                                                .resolve(NConstants.Folders.ID)
+                                                .toString())
                                         )
                         );
             }
@@ -130,8 +128,8 @@ public class NRepositorySelectorHelper {
                         .setConfig(
                                 new NRepositoryConfig()
                                         .setLocation(NRepositoryLocation.of("maven@"
-                                                + NPath.ofUserHome(session).resolve(".m2/repository").toString()
-                                        )
+                                                        + NPath.ofUserHome(session).resolve(".m2/repository").toString()
+                                                )
                                         )
                         );
             }
@@ -247,8 +245,7 @@ public class NRepositorySelectorHelper {
                         );
             }
             case "nuts-thevpc-git":
-            case "nuts-public":
-            {
+            case "nuts-public": {
                 return new NAddRepositoryOptions().setName("nuts-public")
                         .setFailSafe(false).setCreate(true)
                         .setOrder(NAddRepositoryOptions.ORDER_USER_REMOTE)
@@ -257,8 +254,7 @@ public class NRepositorySelectorHelper {
                                         .setLocation(NRepositoryLocation.of("nuts@dotfilefs:https://raw.githubusercontent.com/thevpc/nuts-public/master"))
                         );
             }
-            case "nuts-preview":
-            {
+            case "nuts-preview": {
                 return new NAddRepositoryOptions().setName("nuts-preview")
                         .setFailSafe(false).setCreate(true)
                         .setOrder(NAddRepositoryOptions.ORDER_USER_REMOTE)
@@ -268,7 +264,7 @@ public class NRepositorySelectorHelper {
                         );
             }
             case "dev":
-            case "thevpc":{
+            case "thevpc": {
                 return new NAddRepositoryOptions().setName("thevpc")
                         .setFailSafe(false).setCreate(true)
                         .setOrder(NAddRepositoryOptions.ORDER_USER_REMOTE)
@@ -278,8 +274,7 @@ public class NRepositorySelectorHelper {
                         );
             }
             case "thevpc-goodies":
-            case "goodies":
-            {
+            case "goodies": {
                 return new NAddRepositoryOptions().setName("thevpc")
                         .setFailSafe(false).setCreate(true)
                         .setOrder(NAddRepositoryOptions.ORDER_USER_REMOTE)

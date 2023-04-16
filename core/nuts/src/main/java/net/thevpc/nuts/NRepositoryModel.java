@@ -49,7 +49,7 @@ public interface NRepositoryModel {
 
     String getName();
 
-    default NStoreLocationStrategy getStoreLocationStrategy() {
+    default NStoreStrategy getStoreStrategy() {
         return null;
     }
 

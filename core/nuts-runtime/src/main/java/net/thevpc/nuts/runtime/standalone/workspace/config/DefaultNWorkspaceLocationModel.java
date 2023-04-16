@@ -2,7 +2,7 @@ package net.thevpc.nuts.runtime.standalone.workspace.config;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.io.NPath;
-import net.thevpc.nuts.runtime.standalone.id.util.NIdUtils;
+import net.thevpc.nuts.runtime.standalone.id.util.CoreNIdUtils;
 import net.thevpc.nuts.runtime.standalone.session.NSessionUtils;
 import net.thevpc.nuts.runtime.standalone.util.CoreNConstants;
 import net.thevpc.nuts.runtime.standalone.workspace.DefaultNWorkspace;
@@ -48,23 +48,23 @@ public class DefaultNWorkspaceLocationModel {
     }
 
 
-    public NPath getHomeLocation(NStoreLocation folderType, NSession session) {
+    public NPath getHomeLocation(NStoreType folderType, NSession session) {
         return cfg().current().getHomeLocation(folderType,session);
     }
 
 
-    public NPath getStoreLocation(NStoreLocation folderType, NSession session) {
+    public NPath getStoreLocation(NStoreType folderType, NSession session) {
         try {
             return cfg().current().getStoreLocation(folderType,session);
         } catch (IllegalStateException stillInitializing) {
             NWorkspaceOptions info = NWorkspaceExt.of(ws).getModel().bootModel.getBootUserOptions();
-            String h = info.getStoreLocation(folderType).orNull();
+            String h = info.getStoreType(folderType).orNull();
             return h==null?null: NPath.of(h,session);
         }
     }
 
 
-    public void setStoreLocation(NStoreLocation folderType, String location, NSession session) {
+    public void setStoreLocation(NStoreType folderType, String location, NSession session) {
         NAssert.requireNonNull(folderType, "store root folder", session);
         cfg().onPreUpdateConfig("store-location", session);
         cfg().getStoreModelBoot().setStoreLocations(new NStoreLocationsMap(cfg().getStoreModelBoot().getStoreLocations()).set(folderType, location).toMapOrNull());
@@ -72,26 +72,26 @@ public class DefaultNWorkspaceLocationModel {
     }
 
 
-    public void setStoreLocationStrategy(NStoreLocationStrategy strategy, NSession session) {
+    public void setStoreStrategy(NStoreStrategy strategy, NSession session) {
         if (strategy == null) {
-            strategy = NStoreLocationStrategy.EXPLODED;
+            strategy = NStoreStrategy.EXPLODED;
         }
 //        session = CoreNutsUtils.validate(session, ws);
-        cfg().onPreUpdateConfig("store-location-strategy", session);
-        cfg().getStoreModelBoot().setStoreLocationStrategy(strategy);
-        cfg().onPostUpdateConfig("store-location-strategy", session);
+        cfg().onPreUpdateConfig("store-strategy", session);
+        cfg().getStoreModelBoot().setStoreStrategy(strategy);
+        cfg().onPostUpdateConfig("store-strategy", session);
     }
 
 
-    public void setStoreLocationLayout(NOsFamily layout, NSession session) {
+    public void setStoreLayout(NOsFamily layout, NSession session) {
 //        session = CoreNutsUtils.validate(session, ws);
-        cfg().onPreUpdateConfig("store-location-layout", session);
-        cfg().getStoreModelBoot().setStoreLocationLayout(layout);
-        cfg().onPostUpdateConfig("store-location-layout", session);
+        cfg().onPreUpdateConfig("store-layout", session);
+        cfg().getStoreModelBoot().setStoreLayout(layout);
+        cfg().onPostUpdateConfig("store-layout", session);
     }
 
 
-    public NPath getStoreLocation(NStoreLocation folderType, String repositoryIdOrName, NSession session) {
+    public NPath getStoreLocation(NStoreType folderType, String repositoryIdOrName, NSession session) {
         if (repositoryIdOrName == null) {
             return getStoreLocation(folderType, session);
         }
@@ -101,7 +101,7 @@ public class DefaultNWorkspaceLocationModel {
     }
 
 
-    public NPath getStoreLocation(NId id, NStoreLocation folderType, String repositoryIdOrName, NSession session) {
+    public NPath getStoreLocation(NId id, NStoreType folderType, String repositoryIdOrName, NSession session) {
         if (repositoryIdOrName == null) {
             return getStoreLocation(id, folderType, session);
         }
@@ -110,7 +110,7 @@ public class DefaultNWorkspaceLocationModel {
     }
 
 
-    public NPath getStoreLocation(NId id, NStoreLocation folderType, NSession session) {
+    public NPath getStoreLocation(NId id, NStoreType folderType, NSession session) {
         NPath storeLocation = getStoreLocation(folderType, session);
         if (storeLocation == null) {
             return null;
@@ -125,22 +125,22 @@ public class DefaultNWorkspaceLocationModel {
 //        return storeLocation.resolve(getDefaultIdBasedir(id));
     }
 
-    public NStoreLocationStrategy getStoreLocationStrategy(NSession session) {
-        return cfg().current().getStoreLocationStrategy();
+    public NStoreStrategy getStoreStrategy(NSession session) {
+        return cfg().current().getStoreStrategy();
     }
 
 
-    public NStoreLocationStrategy getRepositoryStoreLocationStrategy(NSession session) {
-        return cfg().current().getRepositoryStoreLocationStrategy();
+    public NStoreStrategy getRepositoryStoreStrategy(NSession session) {
+        return cfg().current().getRepositoryStoreStrategy();
     }
 
 
-    public NOsFamily getStoreLocationLayout(NSession session) {
-        return cfg().current().getStoreLocationLayout();
+    public NOsFamily getStoreLayout(NSession session) {
+        return cfg().current().getStoreLayout();
     }
 
 
-    public Map<NStoreLocation, String> getStoreLocations(NSession session) {
+    public Map<NStoreType, String> getStoreLocations(NSession session) {
         return cfg().current().getStoreLocations();
     }
 
@@ -156,7 +156,7 @@ public class DefaultNWorkspaceLocationModel {
 
 
     public NPath getDefaultIdBasedir(NId id, NSession session) {
-        NIdUtils.checkShortId(id,session);
+        CoreNIdUtils.checkShortId(id,session);
         String groupId = id.getGroupId();
         String artifactId = id.getArtifactId();
         String plainIdPath = groupId.replace('.', '/') + "/" + artifactId;

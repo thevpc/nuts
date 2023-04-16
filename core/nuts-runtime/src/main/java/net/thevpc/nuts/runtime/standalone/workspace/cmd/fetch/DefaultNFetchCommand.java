@@ -6,7 +6,7 @@ import net.thevpc.nuts.io.NDigest;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.runtime.standalone.dependency.util.NDependencyUtils;
 import net.thevpc.nuts.runtime.standalone.descriptor.util.NDescriptorUtils;
-import net.thevpc.nuts.runtime.standalone.id.util.NIdUtils;
+import net.thevpc.nuts.runtime.standalone.id.util.CoreNIdUtils;
 import net.thevpc.nuts.runtime.standalone.log.NLogUtils;
 import net.thevpc.nuts.runtime.standalone.session.NSessionUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceExt;
@@ -176,7 +176,7 @@ public class DefaultNFetchCommand extends AbstractNFetchCommand {
         long startTime = System.currentTimeMillis();
         checkSession();
         NWorkspaceUtils wu = NWorkspaceUtils.of(session);
-        NIdUtils.checkLongId(id, session);
+        CoreNIdUtils.checkLongId(id, session);
 //        checkSession();
         NSession _ws = getSession();
         NSessionUtils.checkSession(this.ws, options.getSession());
@@ -247,7 +247,7 @@ public class DefaultNFetchCommand extends AbstractNFetchCommand {
                         if (!NDescriptorUtils.isNoContent(foundDefinition.getDescriptor())) {
                             boolean loadedFromInstallRepo = DefaultNInstalledRepository.INSTALLED_REPO_UUID.equals(successfulDescriptorLocation
                                     .getRepository().getUuid());
-                            NId id1 = NIdUtils.createContentFaceId(foundDefinition.getId(), foundDefinition.getDescriptor(), session);
+                            NId id1 = CoreNIdUtils.createContentFaceId(foundDefinition.getId(), foundDefinition.getDescriptor(), session);
                             Path copyTo = options.getLocation();
                             if (copyTo != null && Files.isDirectory(copyTo)) {
                                 copyTo = copyTo.resolve(NLocations.of(_ws).getDefaultIdFilename(id1));
@@ -406,7 +406,7 @@ public class DefaultNFetchCommand extends AbstractNFetchCommand {
         boolean nutsApp = nutsDescriptor.isApplication();
         NSession session = getSession();
         if (jar.getName().toLowerCase().endsWith(".jar") && jar.isRegularFile()) {
-            NPath cachePath = NLocations.of(session).getStoreLocation(nutsDescriptor.getId(), NStoreLocation.CACHE)
+            NPath cachePath = NLocations.of(session).getStoreLocation(nutsDescriptor.getId(), NStoreType.CACHE)
                     .resolve(NLocations.of(session).getDefaultIdFilename(nutsDescriptor.getId()
                                     .builder()
                                     .setFace("info.cache")
@@ -469,7 +469,7 @@ public class DefaultNFetchCommand extends AbstractNFetchCommand {
         NWorkspaceUtils wu = NWorkspaceUtils.of(session);
         NElements elem = NElements.of(session);
         if (withCache) {
-            cachePath = NLocations.of(session).getStoreLocation(id, NStoreLocation.CACHE, repo.getUuid())
+            cachePath = NLocations.of(session).getStoreLocation(id, NStoreType.CACHE, repo.getUuid())
                     .resolve(NLocations.of(session).getDefaultIdFilename(id.builder().setFace("def.cache").build()));
             if (cachePath.isRegularFile()) {
                 try {

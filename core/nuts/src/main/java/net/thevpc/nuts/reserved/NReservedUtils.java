@@ -90,15 +90,6 @@ public final class NReservedUtils {
         }
     }
 
-    public static String idToPath(NId id) {
-        return id.getGroupId().replace('.', '/') + "/"
-                + id.getArtifactId() + "/" + id.getVersion();
-    }
-
-    public static boolean isAbsolutePath(String location) {
-        return new File(location).isAbsolute();
-    }
-
     public static String resolveJavaCommand(String javaHome) {
         String exe = NOsFamily.getCurrent().equals(NOsFamily.WINDOWS) ? "java.exe" : "java";
         if (javaHome == null || javaHome.isEmpty()) {
@@ -151,7 +142,7 @@ public final class NReservedUtils {
         String ss
                 =
                 (s instanceof Enum) ? NNameFormat.CONST_NAME.format(((Enum<?>) s).name())
-                : s.toString().trim();
+                        : s.toString().trim();
         return ss.isEmpty() ? "<EMPTY>" : ss;
     }
 
@@ -211,19 +202,20 @@ public final class NReservedUtils {
         return false;
     }
 
-    public static String getHome(NStoreLocation storeFolder, NBootOptions bOptions) {
-        return NPlatformUtils.getPlatformHomeFolder(
-                bOptions.getStoreLocationLayout().orNull(),
-                storeFolder,
-                bOptions.getHomeLocations().orNull(),
-                bOptions.getGlobal().orElse(false),
-                bOptions.getName().orNull()
-        );
+    public static String getHome(NStoreType storeFolder, NBootOptions bOptions) {
+        return (bOptions.getSystem().orElse(false) ?
+                NPlatformHome.ofSystem(bOptions.getStoreLayout().orNull()) :
+                NPlatformHome.of(bOptions.getStoreLayout().orNull()))
+                .getWorkspaceLocation(
+                        storeFolder,
+                        bOptions.getHomeLocations().orNull(),
+                        bOptions.getName().orNull()
+                );
     }
 
 
-    public static String getStoreLocationPath(NBootOptions bOptions, NStoreLocation value) {
-        Map<NStoreLocation, String> storeLocations = bOptions.getStoreLocations().orNull();
+    public static String getStoreLocationPath(NBootOptions bOptions, NStoreType value) {
+        Map<NStoreType, String> storeLocations = bOptions.getStoreLocations().orNull();
         if (storeLocations != null) {
             return storeLocations.get(value);
         }
@@ -271,8 +263,8 @@ public final class NReservedUtils {
         }
         for (Object ovalue : locations) {
             if (ovalue != null) {
-                if (ovalue instanceof NStoreLocation) {
-                    NStoreLocation value = (NStoreLocation) ovalue;
+                if (ovalue instanceof NStoreType) {
+                    NStoreType value = (NStoreType) ovalue;
                     String p = getStoreLocationPath(lastBootOptions, value);
                     if (p != null) {
                         folders.add(Paths.get(p));
@@ -313,7 +305,7 @@ public final class NReservedUtils {
                                     if (session != null) {
                                         session.err().println(header);
                                     } else {
-                                        bLog.with().level(Level.WARNING).verb(NLogVerb.WARNING).log( NMsg.ofJ("{0}", header));
+                                        bLog.with().level(Level.WARNING).verb(NLogVerb.WARNING).log(NMsg.ofJ("{0}", header));
                                     }
                                 }
                             }
@@ -367,7 +359,7 @@ public final class NReservedUtils {
                                 }
                                 case ASK: {
                                     // Level.OFF is to force logging in all cases
-                                    bLog.with().level(Level.OFF).verb(NLogVerb.WARNING).log( NMsg.ofJ("do you confirm deleting {0} [y/n/c/a] (default 'n') ? : ", directory));
+                                    bLog.with().level(Level.OFF).verb(NLogVerb.WARNING).log(NMsg.ofJ("do you confirm deleting {0} [y/n/c/a] (default 'n') ? : ", directory));
                                     line = readline.get();
                                 }
                             }
@@ -423,7 +415,7 @@ public final class NReservedUtils {
                     }
                 });
                 count[0]++;
-                bLog.with().level(Level.FINEST).verb(NLogVerb.WARNING).log( NMsg.ofJ("delete folder : {0} ({1} files/folders deleted)", directory, count[0]));
+                bLog.with().level(Level.FINEST).verb(NLogVerb.WARNING).log(NMsg.ofJ("delete folder : {0} ({1} files/folders deleted)", directory, count[0]));
             } catch (IOException ex) {
                 throw new UncheckedIOException(ex);
             }
@@ -457,17 +449,9 @@ public final class NReservedUtils {
         return sb.toString();
     }
 
-    public static boolean isAcceptDependency(NDependency s, NBootOptions bOptions) {
-        boolean bootOptionals = NReservedNUtilWorkspaceOptions.isBootOptional(bOptions);
-        //by default ignore optionals
-        String o = s.getOptional();
-        if (NBlankable.isBlank(o) || Boolean.parseBoolean(o)) {
-            if (!bootOptionals && !NReservedNUtilWorkspaceOptions.isBootOptional(s.getArtifactId(), bOptions)) {
-                return false;
-            }
-        }
-        List<String> oss = NReservedCollectionUtils.uniqueNonBlankList(s.getCondition().getOs());
-        List<String> archs = NReservedCollectionUtils.uniqueNonBlankList(s.getCondition().getArch());
+    public static boolean isAcceptCondition(NEnvCondition cond) {
+        List<String> oss = NReservedCollectionUtils.uniqueNonBlankList(cond.getOs());
+        List<String> archs = NReservedCollectionUtils.uniqueNonBlankList(cond.getArch());
         if (!oss.isEmpty()) {
             NOsFamily eos = NOsFamily.getCurrent();
             boolean osOk = false;
@@ -500,6 +484,18 @@ public final class NReservedUtils {
             }
         }
         return true;
+    }
+
+    public static boolean isAcceptDependency(NDependency s, NBootOptions bOptions) {
+        boolean bootOptionals = NReservedNUtilWorkspaceOptions.isBootOptional(bOptions);
+        //by default ignore optionals
+        String o = s.getOptional();
+        if (NBlankable.isBlank(o) || Boolean.parseBoolean(o)) {
+            if (!bootOptionals && !NReservedNUtilWorkspaceOptions.isBootOptional(s.getArtifactId(), bOptions)) {
+                return false;
+            }
+        }
+        return isAcceptCondition(s.getCondition());
     }
 
     public static String toDependencyExclusionListString(List<NId> exclusions) {
@@ -728,14 +724,14 @@ public final class NReservedUtils {
                 updatedFile = true;
             }
             if (force || updatedFile) {
-                if(!Files.exists(filePath.getParent())){
+                if (!Files.exists(filePath.getParent())) {
                     Files.createDirectories(filePath.getParent());
                 }
                 Files.write(filePath, (String.join("\n", lines) + "\n").getBytes());
             }
             return updatedFile;
         } catch (IOException ex) {
-            bLog.with().level(Level.WARNING).verb(NLogVerb.WARNING).error(ex).log( NMsg.ofPlain("unable to update update " + filePath));
+            bLog.with().level(Level.WARNING).verb(NLogVerb.WARNING).error(ex).log(NMsg.ofPlain("unable to update update " + filePath));
             return false;
         }
     }
@@ -777,7 +773,7 @@ public final class NReservedUtils {
                 }
             } catch (Exception e) {
                 //ignore
-                bLog.with().level(Level.FINEST).verb(NLogVerb.FAIL).log( NMsg.ofJ("unable to undo NDI : {0}", e.toString()));
+                bLog.with().level(Level.FINEST).verb(NLogVerb.FAIL).log(NMsg.ofJ("unable to undo NDI : {0}", e.toString()));
             }
         }
     }

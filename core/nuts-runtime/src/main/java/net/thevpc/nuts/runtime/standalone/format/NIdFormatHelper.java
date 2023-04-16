@@ -470,43 +470,43 @@ public class NIdFormatHelper {
             }
             case CACHE_FOLDER: {
                 if (def != null) {
-                    return stringValue(NLocations.of(session).getStoreLocation(def.getId(), NStoreLocation.CACHE));
+                    return stringValue(NLocations.of(session).getStoreLocation(def.getId(), NStoreType.CACHE));
                 }
                 return text.ofStyled("<null>", NTextStyle.error());
             }
-            case CONFIG_FOLDER: {
+            case CONF_FOLDER: {
                 if (def != null) {
-                    return stringValue(NLocations.of(session).getStoreLocation(def.getId(), NStoreLocation.CONFIG));
+                    return stringValue(NLocations.of(session).getStoreLocation(def.getId(), NStoreType.CONF));
                 }
                 return text.ofStyled("<null>", NTextStyle.error());
             }
             case LIB_FOLDER: {
                 if (def != null) {
-                    return stringValue(NLocations.of(session).getStoreLocation(def.getId(), NStoreLocation.LIB));
+                    return stringValue(NLocations.of(session).getStoreLocation(def.getId(), NStoreType.LIB));
                 }
                 return text.ofStyled("<null>", NTextStyle.error());
             }
             case LOG_FOLDER: {
                 if (def != null) {
-                    return stringValue(NLocations.of(session).getStoreLocation(def.getId(), NStoreLocation.LOG));
+                    return stringValue(NLocations.of(session).getStoreLocation(def.getId(), NStoreType.LOG));
                 }
                 return text.ofStyled("<null>", NTextStyle.error());
             }
             case TEMP_FOLDER: {
                 if (def != null) {
-                    return stringValue(NLocations.of(session).getStoreLocation(def.getId(), NStoreLocation.TEMP));
+                    return stringValue(NLocations.of(session).getStoreLocation(def.getId(), NStoreType.TEMP));
                 }
                 return text.ofStyled("<null>", NTextStyle.error());
             }
             case VAR_LOCATION: {
                 if (def != null) {
-                    return stringValue(NLocations.of(session).getStoreLocation(def.getId(), NStoreLocation.VAR));
+                    return stringValue(NLocations.of(session).getStoreLocation(def.getId(), NStoreType.VAR));
                 }
                 return text.ofStyled("<null>", NTextStyle.error());
             }
-            case APPS_FOLDER: {
+            case BIN_FOLDER: {
                 if (def != null) {
-                    return stringValue(NLocations.of(session).getStoreLocation(def.getId(), NStoreLocation.APPS));
+                    return stringValue(NLocations.of(session).getStoreLocation(def.getId(), NStoreType.BIN));
                 }
                 return text.ofStyled("<null>", NTextStyle.error());
             }

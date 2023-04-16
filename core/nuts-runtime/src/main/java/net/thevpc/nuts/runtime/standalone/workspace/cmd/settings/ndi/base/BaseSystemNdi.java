@@ -3,7 +3,7 @@ package net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.ndi.base;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.io.*;
-import net.thevpc.nuts.runtime.standalone.id.util.NIdUtils;
+import net.thevpc.nuts.runtime.standalone.id.util.CoreNIdUtils;
 import net.thevpc.nuts.runtime.standalone.session.NSessionUtils;
 import net.thevpc.nuts.runtime.standalone.shell.NShellHelper;
 import net.thevpc.nuts.runtime.standalone.shell.ReplaceString;
@@ -707,9 +707,9 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
     }
 
     public String getPreferredIconPath(NId appId) {
-        if (NIdUtils.isApiId(appId)) {
+        if (CoreNIdUtils.isApiId(appId)) {
             //apiId does not define any icon, will load icon from the runtime
-            NId rt = NIdUtils.findRuntimeForApi(appId.getVersion().getValue(), getSession());
+            NId rt = CoreNIdUtils.findRuntimeForApi(appId.getVersion().getValue(), getSession());
             if (rt == null) {
                 rt = session.getWorkspace().getRuntimeId();
             }
@@ -753,7 +753,7 @@ public abstract class BaseSystemNdi extends AbstractSystemNdi {
             NPath p0 = NPath.of(descAppIcon, session);
             descAppIcon=toAbsoluteIconPath(appId, descAppIcon);
             String bestName = descAppIconDigest + "." + p0.getLastExtension();
-            NPath localIconPath = NLocations.of(session).getStoreLocation(appDef.getId(), NStoreLocation.CACHE)
+            NPath localIconPath = NLocations.of(session).getStoreLocation(appDef.getId(), NStoreType.CACHE)
                     .resolve("icons")
                     .resolve(bestName);
             if (localIconPath.isRegularFile()) {

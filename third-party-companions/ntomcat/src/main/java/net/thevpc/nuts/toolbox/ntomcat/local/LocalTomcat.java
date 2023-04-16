@@ -28,7 +28,7 @@ public class LocalTomcat {
     public LocalTomcat(NSession sessino, NCmdLine cmdLine) {
         this.setSession(sessino);
         this.cmdLine = cmdLine;
-        sharedConfigFolder = sessino.getAppVersionFolder(NStoreLocation.CONFIG, NTomcatConfigVersions.CURRENT);
+        sharedConfigFolder = sessino.getAppVersionFolder(NStoreType.CONF, NTomcatConfigVersions.CURRENT);
     }
 
     public void runArgs() {

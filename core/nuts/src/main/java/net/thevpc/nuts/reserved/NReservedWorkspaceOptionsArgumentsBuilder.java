@@ -102,8 +102,8 @@ public class NReservedWorkspaceOptionsArgumentsBuilder {
                             return;
                         }
                     }
-                } else if (value instanceof NStoreLocationStrategy) {
-                    switch ((NStoreLocationStrategy) value) {
+                } else if (value instanceof NStoreStrategy) {
+                    switch ((NStoreStrategy) value) {
                         case EXPLODED: {
                             fillOption0(selectOptionName(longName, shortName), selectOptionVal("exploded", "e"), arguments, forceSingle);
                             return;
@@ -402,7 +402,7 @@ public class NReservedWorkspaceOptionsArgumentsBuilder {
             fillOption("--repository", "-r", options.getRepositories().orElseGet(Collections::emptyList), ";", arguments, false);
         }
 
-        fillOption("--global", "-g", options.getGlobal().orNull(), false, arguments, false);
+        fillOption("--global", "-g", options.getSystem().orNull(), false, arguments, false);
         fillOption("--gui", null, options.getGui().orNull(), false, arguments, false);
         fillOption("--read-only", "-R", options.getReadOnly().orNull(), false, arguments, false);
         fillOption("--trace", "-t", options.getTrace().orNull(), true, arguments, false);
@@ -475,11 +475,11 @@ public class NReservedWorkspaceOptionsArgumentsBuilder {
 
         fillOption("--name", null, NStringUtils.trim(options.getName().orNull()), arguments, false);
         fillOption("--archetype", "-A", options.getArchetype().orNull(), arguments, false);
-        fillOption("--store-layout", null, options.getStoreLocationLayout().orNull(), NOsFamily.class, arguments, false);
-        fillOption("--store-strategy", null, options.getStoreLocationStrategy().orNull(), NStoreLocationStrategy.class, arguments, false);
-        fillOption("--repo-store-strategy", null, options.getRepositoryStoreLocationStrategy().orNull(), NStoreLocationStrategy.class, arguments, false);
-        Map<NStoreLocation, String> storeLocations = options.getStoreLocations().orElseGet(Collections::emptyMap);
-        for (NStoreLocation location : NStoreLocation.values()) {
+        fillOption("--store-layout", null, options.getStoreLayout().orNull(), NOsFamily.class, arguments, false);
+        fillOption("--store-strategy", null, options.getStoreStrategy().orNull(), NStoreStrategy.class, arguments, false);
+        fillOption("--repo-store-strategy", null, options.getRepositoryStoreStrategy().orNull(), NStoreStrategy.class, arguments, false);
+        Map<NStoreType, String> storeLocations = options.getStoreLocations().orElseGet(Collections::emptyMap);
+        for (NStoreType location : NStoreType.values()) {
             String s = storeLocations.get(location);
             if (!NBlankable.isBlank(s)) {
                 fillOption("--" + location.id() + "-location", null, s, arguments, false);
@@ -488,14 +488,14 @@ public class NReservedWorkspaceOptionsArgumentsBuilder {
 
         Map<NHomeLocation, String> homeLocations = options.getHomeLocations().orElseGet(Collections::emptyMap);
         if (homeLocations != null) {
-            for (NStoreLocation location : NStoreLocation.values()) {
+            for (NStoreType location : NStoreType.values()) {
                 String s = homeLocations.get(NHomeLocation.of(null, location));
                 if (!NBlankable.isBlank(s)) {
                     fillOption("--system-" + location.id() + "-home", null, s, arguments, false);
                 }
             }
             for (NOsFamily osFamily : NOsFamily.values()) {
-                for (NStoreLocation location : NStoreLocation.values()) {
+                for (NStoreType location : NStoreType.values()) {
                     String s = homeLocations.get(NHomeLocation.of(osFamily, location));
                     if (!NBlankable.isBlank(s)) {
                         fillOption("--" + osFamily.id() + "-" + location.id() + "-home", null, s, arguments, false);

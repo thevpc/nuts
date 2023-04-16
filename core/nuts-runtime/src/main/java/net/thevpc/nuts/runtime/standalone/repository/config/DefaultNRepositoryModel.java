@@ -232,7 +232,7 @@ public class DefaultNRepositoryModel {
             config.setName(name);
             config.setLocation(NRepositoryLocation.of("custom@"));
             config.setUuid(uuid);
-            config.setStoreLocationStrategy(repoModel.getStoreLocationStrategy());
+            config.setStoreStrategy(repoModel.getStoreStrategy());
             NAddRepositoryOptions options2 = new NAddRepositoryOptions();
             options2.setName(config.getName());
             options2.setConfig(config);
@@ -381,7 +381,7 @@ public class DefaultNRepositoryModel {
         String fileName = "nuts-repository" + (name == null ? "" : ("-") + name) + (uuid == null ? "" : ("-") + uuid) + "-" + Instant.now().toString();
         LOG.with().session(session).level(Level.SEVERE).verb(NLogVerb.FAIL).log(
                 NMsg.ofJ("erroneous repository config file. Unable to load file {0} : {1}", file, ex));
-        NPath logError = NLocations.of(session).getStoreLocation(getWorkspace().getApiId(), NStoreLocation.LOG)
+        NPath logError = NLocations.of(session).getStoreLocation(getWorkspace().getApiId(), NStoreType.LOG)
                 .resolve("invalid-config");
         try {
             logError.mkParentDirs();
@@ -401,7 +401,7 @@ public class DefaultNRepositoryModel {
             o.printf("workspace.path:%s%n", NLocations.of(session).getWorkspaceLocation());
             o.printf("repository.path:%s%n", file);
             o.printf("workspace.options:%s%n", wboot.getBootOptions().toCommandLine(new NWorkspaceOptionsConfig().setCompact(false)));
-            for (NStoreLocation location : NStoreLocation.values()) {
+            for (NStoreType location : NStoreType.values()) {
                 o.printf("location." + location.id() + ":%s%n", NLocations.of(session).getStoreLocation(location));
             }
             o.printf("java.class.path:%s%n", System.getProperty("java.class.path"));

@@ -195,7 +195,7 @@ public class DerbyService {
         }
         NPath derbyDataHomeRoot = derbyDataHome.getParent();
         derbyDataHome.mkdirs();
-        Path derbyBinHome = NLocations.of(session).getStoreLocation(session.getAppId(), NStoreLocation.APPS).resolve(currentDerbyVersion).toFile();
+        Path derbyBinHome = NLocations.of(session).getStoreLocation(session.getAppId(), NStoreType.BIN).resolve(currentDerbyVersion).toFile();
         Path derbyLibHome = derbyBinHome.resolve("lib");
         Path derby = download("org.apache.derby:derby#" + currentDerbyVersion, derbyLibHome, false);
         Path derbynet = download("org.apache.derby:derbynet#" + currentDerbyVersion, derbyLibHome, false);

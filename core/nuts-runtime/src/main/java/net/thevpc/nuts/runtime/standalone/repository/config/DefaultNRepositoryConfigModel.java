@@ -217,16 +217,16 @@ public class DefaultNRepositoryConfigModel implements NRepositoryConfigModel {
     }
 
     @Override
-    public NStoreLocationStrategy getStoreLocationStrategy(NSession session) {
-        NStoreLocationStrategy strategy = config.getStoreLocationStrategy();
+    public NStoreStrategy getStoreStrategy(NSession session) {
+        NStoreStrategy strategy = config.getStoreStrategy();
         if (strategy == null) {
-            strategy = NStoreLocationStrategy.values()[0];
+            strategy = NStoreStrategy.values()[0];
         }
         return strategy;
     }
 
     @Override
-    public NPath getStoreLocation(NStoreLocation folderType, NSession session) {
+    public NPath getStoreLocation(NStoreType folderType, NSession session) {
         NStoreLocationsMap hlm = new NStoreLocationsMap(config.getStoreLocations());
 
 //        String n = CoreNutsUtils.getArrItem(config.getStoreLocations(), folderType.ordinal());
@@ -238,7 +238,7 @@ public class DefaultNRepositoryConfigModel implements NRepositoryConfigModel {
             }
             return getStoreLocation().resolve(n);
         } else {
-            switch (getStoreLocationStrategy(session)) {
+            switch (getStoreStrategy(session)) {
                 case STANDALONE: {
                     if (NBlankable.isBlank(n)) {
                         n = folderType.toString().toLowerCase();
@@ -274,9 +274,9 @@ public class DefaultNRepositoryConfigModel implements NRepositoryConfigModel {
             fireChange = true;
             this.config.setUuid(UUID.randomUUID().toString());
         }
-        if (this.config.getStoreLocationStrategy() == null) {
+        if (this.config.getStoreStrategy() == null) {
             fireChange = true;
-            this.config.setStoreLocationStrategy(NLocations.of(session).getRepositoryStoreLocationStrategy());
+            this.config.setStoreStrategy(NLocations.of(session).getRepositoryStoreStrategy());
         }
         if (!Objects.equals(NRepositoryUtils.getRepoType(config), repositoryType)) {
             throw new NIllegalArgumentException(session,

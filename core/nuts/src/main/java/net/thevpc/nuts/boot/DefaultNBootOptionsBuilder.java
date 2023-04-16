@@ -125,7 +125,7 @@ public final class DefaultNBootOptionsBuilder extends DefaultNWorkspaceOptionsBu
                 getOutputFormatOptions().orNull(), getCustomOptions().orNull(), getApiVersion().orNull(), getRuntimeId().orNull(), getJavaCommand().orNull()
                 , getJavaOptions().orNull(), getWorkspace().orNull(), getOutLinePrefix().orNull(), getErrLinePrefix().orNull()
                 , getName().orNull(), getInstallCompanions().orNull(), getSkipWelcome().orNull(), getSkipBoot().orNull()
-                , getGlobal().orNull(), getGui().orNull(), getDry().orNull(), getRecover().orNull(), getReset().orNull(), getCommandVersion().orNull(), getCommandHelp().orNull(), getCommandHelp().orNull(), getSwitchWorkspace().orNull(), getCached().orNull(), getCached().orNull(), getTransitive().orNull(), getBot().orNull()
+                , getSystem().orNull(), getGui().orNull(), getDry().orNull(), getRecover().orNull(), getReset().orNull(), getCommandVersion().orNull(), getCommandHelp().orNull(), getCommandHelp().orNull(), getSwitchWorkspace().orNull(), getCached().orNull(), getCached().orNull(), getTransitive().orNull(), getBot().orNull()
                 , getIsolationLevel().orNull(), getInitLaunchers().orNull(), getInitScripts().orNull(), getInitPlatforms().orNull()
                 , getInitJava().orNull(), getExcludedExtensions().orNull(), getRepositories().orNull(), getUserName().orNull()
                 , getCredentials().orNull(), getTerminalMode().orNull(), getReadOnly().orNull(), getTrace().orNull(), getProgressOptions().orNull()
@@ -134,8 +134,8 @@ public final class DefaultNBootOptionsBuilder extends DefaultNWorkspaceOptionsBu
                 getClassLoaderSupplier().orNull(), getExecutorOptions().orNull(),
                 getDebug().orNull(),
                 getExecutionType().orNull(), getRunAs().orNull(), getArchetype().orNull(),
-                getStoreLocations().orNull(), getHomeLocations().orNull(), getStoreLocationLayout().orNull(), getStoreLocationStrategy().orNull()
-                , getRepositoryStoreLocationStrategy().orNull(), getFetchStrategy().orNull(),
+                getStoreLocations().orNull(), getHomeLocations().orNull(), getStoreLayout().orNull(), getStoreStrategy().orNull()
+                , getRepositoryStoreStrategy().orNull(), getFetchStrategy().orNull(),
                 getStdin().orNull(), getStdout().orNull(), getStdout().orNull()
                 , getExecutorService().orNull(), getExpireTime().orNull(), getErrors().orNull(), getSkipErrors().orNull(), getLocale().orNull()
                 , getTheme().orNull(), getUuid().orNull(), getBootRepositories().orNull(), getRuntimeBootDependencyNode().orNull(), getExtensionBootDescriptors().orNull()

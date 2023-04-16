@@ -29,7 +29,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import net.thevpc.nuts.NBlankable;
-import net.thevpc.nuts.NStoreLocation;
+import net.thevpc.nuts.NStoreType;
 
 /**
  *
@@ -37,13 +37,13 @@ import net.thevpc.nuts.NStoreLocation;
  */
 public class NStoreLocationsMap {
 
-    private Map<NStoreLocation, String> locations;
+    private Map<NStoreType, String> locations;
 
-    public NStoreLocationsMap(Map<NStoreLocation, String> locations) {
+    public NStoreLocationsMap(Map<NStoreType, String> locations) {
         this.locations = locations;
     }
 
-    public String get(NStoreLocation location) {
+    public String get(NStoreType location) {
         if (locations != null) {
             if (location != null) {
                 return locations.get(location);
@@ -52,14 +52,14 @@ public class NStoreLocationsMap {
         return null;
     }
 
-    public NStoreLocationsMap set(Map<NStoreLocation, String> locations) {
+    public NStoreLocationsMap set(Map<NStoreType, String> locations) {
         set(new NStoreLocationsMap(locations));
         return this;
     }
 
     public NStoreLocationsMap set(NStoreLocationsMap other) {
         if (other != null) {
-            for (NStoreLocation location : NStoreLocation.values()) {
+            for (NStoreType location : NStoreType.values()) {
                 String v = other.get(location);
                 if (!NBlankable.isBlank(v)) {
                     set(location, v);
@@ -69,7 +69,7 @@ public class NStoreLocationsMap {
         return this;
     }
 
-    public NStoreLocationsMap set(NStoreLocation location, String value) {
+    public NStoreLocationsMap set(NStoreType location, String value) {
         if (location != null) {
             if (NBlankable.isBlank(value)) {
                 if (locations != null) {
@@ -85,10 +85,10 @@ public class NStoreLocationsMap {
         return this;
     }
 
-    public Map<NStoreLocation, String> toMap() {
-        Map<NStoreLocation, String> map = new HashMap<>();
+    public Map<NStoreType, String> toMap() {
+        Map<NStoreType, String> map = new HashMap<>();
         if (locations != null) {
-            for (NStoreLocation location : NStoreLocation.values()) {
+            for (NStoreType location : NStoreType.values()) {
                 String v = get(location);
                 if (!NBlankable.isBlank(v)) {
                     map.put(location, v);
@@ -98,8 +98,8 @@ public class NStoreLocationsMap {
         return map;
     }
 
-    public Map<NStoreLocation, String> toMapOrNull() {
-        Map<NStoreLocation, String> m = toMap();
+    public Map<NStoreType, String> toMapOrNull() {
+        Map<NStoreType, String> m = toMap();
         if (m.isEmpty()) {
             return null;
         }

@@ -69,7 +69,7 @@ public interface NRepositoryConfigManager extends NSessionProvider {
      */
     NPath getStoreLocation();
 
-    NPath getStoreLocation(NStoreLocation folderType);
+    NPath getStoreLocation(NStoreType folderType);
 
     boolean isIndexEnabled();
 
@@ -128,7 +128,7 @@ public interface NRepositoryConfigManager extends NSessionProvider {
      */
     NRepositoryConfigManager removeMirror(String repositoryId);
 
-    NStoreLocationStrategy getStoreLocationStrategy();
+    NStoreStrategy getStoreStrategy();
 
     NRepositoryConfigManager setSession(NSession session);
 

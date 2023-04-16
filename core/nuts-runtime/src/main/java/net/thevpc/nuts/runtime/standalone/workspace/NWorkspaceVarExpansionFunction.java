@@ -24,22 +24,22 @@ public class NWorkspaceVarExpansionFunction implements Function<String, String> 
     @Override
     public String apply(String from) {
         switch (from) {
-            case "home.config":
-                return str(NLocations.of(session).getHomeLocation(NStoreLocation.CONFIG));
-            case "home.apps":
-                return str(NLocations.of(session).getHomeLocation(NStoreLocation.APPS));
+            case "home.conf":
+                return str(NLocations.of(session).getHomeLocation(NStoreType.CONF));
+            case "home.bin":
+                return str(NLocations.of(session).getHomeLocation(NStoreType.BIN));
             case "home.lib":
-                return str(NLocations.of(session).getHomeLocation(NStoreLocation.LIB));
+                return str(NLocations.of(session).getHomeLocation(NStoreType.LIB));
             case "home.temp":
-                return str(NLocations.of(session).getHomeLocation(NStoreLocation.TEMP));
+                return str(NLocations.of(session).getHomeLocation(NStoreType.TEMP));
             case "home.var":
-                return str(NLocations.of(session).getHomeLocation(NStoreLocation.VAR));
+                return str(NLocations.of(session).getHomeLocation(NStoreType.VAR));
             case "home.cache":
-                return str(NLocations.of(session).getHomeLocation(NStoreLocation.CACHE));
+                return str(NLocations.of(session).getHomeLocation(NStoreType.CACHE));
             case "home.log":
-                return str(NLocations.of(session).getHomeLocation(NStoreLocation.LOG));
+                return str(NLocations.of(session).getHomeLocation(NStoreType.LOG));
             case "home.run":
-                return str(NLocations.of(session).getHomeLocation(NStoreLocation.RUN));
+                return str(NLocations.of(session).getHomeLocation(NStoreType.RUN));
             case "workspace.hash-name":
                 return session.getWorkspace().getHashName();
             case "workspace.name":
@@ -50,21 +50,21 @@ public class NWorkspaceVarExpansionFunction implements Function<String, String> 
             case "user.home":
                 return System.getProperty("user.home");
             case "workspace.config":
-                return NLocations.of(session).getStoreLocation(NStoreLocation.CONFIG).toString();
+                return NLocations.of(session).getStoreLocation(NStoreType.CONF).toString();
             case "workspace.lib":
-                return NLocations.of(session).getStoreLocation(NStoreLocation.LIB).toString();
+                return NLocations.of(session).getStoreLocation(NStoreType.LIB).toString();
             case "workspace.apps":
-                return NLocations.of(session).getStoreLocation(NStoreLocation.APPS).toString();
+                return NLocations.of(session).getStoreLocation(NStoreType.BIN).toString();
             case "workspace.cache":
-                return NLocations.of(session).getStoreLocation(NStoreLocation.CACHE).toString();
+                return NLocations.of(session).getStoreLocation(NStoreType.CACHE).toString();
             case "workspace.run":
-                return NLocations.of(session).getStoreLocation(NStoreLocation.RUN).toString();
+                return NLocations.of(session).getStoreLocation(NStoreType.RUN).toString();
             case "workspace.temp":
-                return NLocations.of(session).getStoreLocation(NStoreLocation.TEMP).toString();
+                return NLocations.of(session).getStoreLocation(NStoreType.TEMP).toString();
             case "workspace.log":
-                return NLocations.of(session).getStoreLocation(NStoreLocation.LOG).toString();
+                return NLocations.of(session).getStoreLocation(NStoreType.LOG).toString();
             case "workspace.var":
-                return NLocations.of(session).getStoreLocation(NStoreLocation.VAR).toString();
+                return NLocations.of(session).getStoreLocation(NStoreType.VAR).toString();
             case "nuts.boot.version":
                 return session.getWorkspace().getApiVersion().toString();
             case "nuts.boot.id":

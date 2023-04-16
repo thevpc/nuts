@@ -28,7 +28,7 @@ import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.io.NIO;
 import net.thevpc.nuts.io.NInputSource;
 import net.thevpc.nuts.io.NPath;
-import net.thevpc.nuts.runtime.standalone.id.util.NIdUtils;
+import net.thevpc.nuts.runtime.standalone.id.util.CoreNIdUtils;
 import net.thevpc.nuts.runtime.standalone.repository.cmd.NRepositoryCommandBase;
 import net.thevpc.nuts.spi.NDeployRepositoryCommand;
 import net.thevpc.nuts.util.NAssert;
@@ -128,7 +128,7 @@ public abstract class AbstractNDeployRepositoryCommand extends NRepositoryComman
         checkSession();
         NSession session = getSession();
         getRepo().security().setSession(session).checkAllowed(NConstants.Permissions.DEPLOY, "deploy");
-        NIdUtils.checkLongId(getId(), session);
+        CoreNIdUtils.checkLongId(getId(), session);
         NAssert.requireNonNull(this.getContent(), "content", getSession());
         NAssert.requireNonNull(this.getDescriptor(), "descriptor", getSession());
         if (this.getId().getVersion().isReleaseVersion()

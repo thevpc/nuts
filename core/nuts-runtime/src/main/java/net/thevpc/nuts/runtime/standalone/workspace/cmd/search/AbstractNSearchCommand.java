@@ -724,7 +724,7 @@ public abstract class AbstractNSearchCommand extends DefaultNQueryBaseOptions<NS
     }
 
     @Override
-    public NStream<NPath> getResultStoreLocations(NStoreLocation location) {
+    public NStream<NPath> getResultStoreLocations(NStoreType location) {
         checkSession();
         return postProcessResult(IteratorBuilder.of(getResultDefinitionIteratorBase(isContent(), isEffective()), session)
                 .map(NFunction.of(x -> NLocations.of(getSession()).getStoreLocation(x.getId(), location), "getStoreLocation(" + location.id() + ")"))
@@ -1147,32 +1147,32 @@ public abstract class AbstractNSearchCommand extends DefaultNQueryBaseOptions<NS
                         r = getResultInstallFolders();
                         break;
                     }
-                    case APPS_FOLDER: {
-                        r = getResultStoreLocations(NStoreLocation.APPS);
+                    case BIN_FOLDER: {
+                        r = getResultStoreLocations(NStoreType.BIN);
                         break;
                     }
                     case CACHE_FOLDER: {
-                        r = getResultStoreLocations(NStoreLocation.CACHE);
+                        r = getResultStoreLocations(NStoreType.CACHE);
                         break;
                     }
-                    case CONFIG_FOLDER: {
-                        r = getResultStoreLocations(NStoreLocation.CONFIG);
+                    case CONF_FOLDER: {
+                        r = getResultStoreLocations(NStoreType.CONF);
                         break;
                     }
                     case LIB_FOLDER: {
-                        r = getResultStoreLocations(NStoreLocation.LIB);
+                        r = getResultStoreLocations(NStoreType.LIB);
                         break;
                     }
                     case LOG_FOLDER: {
-                        r = getResultStoreLocations(NStoreLocation.LOG);
+                        r = getResultStoreLocations(NStoreType.LOG);
                         break;
                     }
                     case TEMP_FOLDER: {
-                        r = getResultStoreLocations(NStoreLocation.TEMP);
+                        r = getResultStoreLocations(NStoreType.TEMP);
                         break;
                     }
                     case VAR_LOCATION: {
-                        r = getResultStoreLocations(NStoreLocation.VAR);
+                        r = getResultStoreLocations(NStoreType.VAR);
                         break;
                     }
                     case STATUS: {

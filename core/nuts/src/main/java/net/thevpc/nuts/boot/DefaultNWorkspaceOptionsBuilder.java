@@ -122,11 +122,11 @@ public class DefaultNWorkspaceOptionsBuilder implements NWorkspaceOptionsBuilder
     private Boolean skipBoot;
 
     /**
-     * if true consider global/system repository
+     * if true consider system repository
      * <br>
      * option-type : exported (inherited in child workspaces)
      */
-    private Boolean global;
+    private Boolean system;
 
     /**
      * if true consider GUI/Swing mode
@@ -285,7 +285,7 @@ public class DefaultNWorkspaceOptionsBuilder implements NWorkspaceOptionsBuilder
      * option-type : create (used when creating new workspace. will not be
      * exported nor promoted to runtime)
      */
-    private Map<NStoreLocation, String> storeLocations;
+    private Map<NStoreType, String> storeLocations;
 
     /**
      * option-type : create (used when creating new workspace. will not be
@@ -297,19 +297,19 @@ public class DefaultNWorkspaceOptionsBuilder implements NWorkspaceOptionsBuilder
      * option-type : create (used when creating new workspace. will not be
      * exported nor promoted to runtime)
      */
-    private NOsFamily storeLocationLayout;
+    private NOsFamily storeLayout;
 
     /**
      * option-type : create (used when creating new workspace. will not be
      * exported nor promoted to runtime)
      */
-    private NStoreLocationStrategy storeLocationStrategy;
+    private NStoreStrategy storeStrategy;
 
     /**
      * option-type : create (used when creating new workspace. will not be
      * exported nor promoted to runtime)
      */
-    private NStoreLocationStrategy repositoryStoreLocationStrategy;
+    private NStoreStrategy repositoryStoreStrategy;
 
     /**
      * option-type : exported (inherited in child workspaces)
@@ -816,19 +816,19 @@ public class DefaultNWorkspaceOptionsBuilder implements NWorkspaceOptionsBuilder
     }
 
     @Override
-    public NOptional<NStoreLocationStrategy> getRepositoryStoreLocationStrategy() {
-        return NOptional.ofNamed(repositoryStoreLocationStrategy,"repositoryStoreLocationStrategy");
+    public NOptional<NStoreStrategy> getRepositoryStoreStrategy() {
+        return NOptional.ofNamed(repositoryStoreStrategy,"repositoryStoreStrategy");
     }
 
     /**
-     * set repositoryStoreLocationStrategy
+     * set repositoryStoreStrategy
      *
-     * @param repositoryStoreLocationStrategy new value
+     * @param repositoryStoreStrategy new value
      * @return {@code this} instance
      */
     @Override
-    public NWorkspaceOptionsBuilder setRepositoryStoreLocationStrategy(NStoreLocationStrategy repositoryStoreLocationStrategy) {
-        this.repositoryStoreLocationStrategy = repositoryStoreLocationStrategy;
+    public NWorkspaceOptionsBuilder setRepositoryStoreStrategy(NStoreStrategy repositoryStoreStrategy) {
+        this.repositoryStoreStrategy = repositoryStoreStrategy;
         return this;
     }
 
@@ -850,51 +850,51 @@ public class DefaultNWorkspaceOptionsBuilder implements NWorkspaceOptionsBuilder
     }
 
     @Override
-    public NOptional<String> getStoreLocation(NStoreLocation folder) {
+    public NOptional<String> getStoreType(NStoreType folder) {
         return NOptional.ofNamed(storeLocations==null?null:storeLocations.get(folder),"storeLocations["+folder+"]");
     }
 
     @Override
-    public NOptional<NOsFamily> getStoreLocationLayout() {
-        return NOptional.ofNamed(storeLocationLayout,"storeLocationLayout");
+    public NOptional<NOsFamily> getStoreLayout() {
+        return NOptional.ofNamed(storeLayout,"storeLayout");
     }
 
     /**
-     * set storeLocationLayout
+     * set storeLayout
      *
-     * @param storeLocationLayout new value
+     * @param storeLayout new value
      * @return {@code this} instance
      */
     @Override
-    public NWorkspaceOptionsBuilder setStoreLocationLayout(NOsFamily storeLocationLayout) {
-        this.storeLocationLayout = storeLocationLayout;
+    public NWorkspaceOptionsBuilder setStoreLayout(NOsFamily storeLayout) {
+        this.storeLayout = storeLayout;
         return this;
     }
 
     @Override
-    public NOptional<NStoreLocationStrategy> getStoreLocationStrategy() {
-        return NOptional.ofNamed(storeLocationStrategy,"storeLocationStrategy");
+    public NOptional<NStoreStrategy> getStoreStrategy() {
+        return NOptional.ofNamed(storeStrategy,"storeStrategy");
     }
 
     /**
-     * set storeLocationStrategy
+     * set storeStrategy
      *
-     * @param storeLocationStrategy new value
+     * @param storeStrategy new value
      * @return {@code this} instance
      */
     @Override
-    public NWorkspaceOptionsBuilder setStoreLocationStrategy(NStoreLocationStrategy storeLocationStrategy) {
-        this.storeLocationStrategy = storeLocationStrategy;
+    public NWorkspaceOptionsBuilder setStoreStrategy(NStoreStrategy storeStrategy) {
+        this.storeStrategy = storeStrategy;
         return this;
     }
 
     @Override
-    public NOptional<Map<NStoreLocation, String>> getStoreLocations() {
+    public NOptional<Map<NStoreType, String>> getStoreLocations() {
         return NOptional.ofNamed(storeLocations,"storeLocations");
     }
 
     @Override
-    public NWorkspaceOptionsBuilder setStoreLocations(Map<NStoreLocation, String> storeLocations) {
+    public NWorkspaceOptionsBuilder setStoreLocations(Map<NStoreType, String> storeLocations) {
         if (storeLocations != null) {
             if (this.storeLocations == null) {
                 this.storeLocations = new HashMap<>();
@@ -981,19 +981,19 @@ public class DefaultNWorkspaceOptionsBuilder implements NWorkspaceOptionsBuilder
     }
 
     @Override
-    public NOptional<Boolean> getGlobal() {
-        return NOptional.ofNamed(global,"global");
+    public NOptional<Boolean> getSystem() {
+        return NOptional.ofNamed(system,"system");
     }
 
     /**
-     * set global
+     * set system
      *
-     * @param global new value
+     * @param system new value
      * @return {@code this} instance
      */
     @Override
-    public NWorkspaceOptionsBuilder setGlobal(Boolean global) {
-        this.global = global;
+    public NWorkspaceOptionsBuilder setSystem(Boolean system) {
+        this.system = system;
         return this;
     }
 
@@ -1390,7 +1390,7 @@ public class DefaultNWorkspaceOptionsBuilder implements NWorkspaceOptionsBuilder
         this.setInstallCompanions(other.getInstallCompanions().orNull());
         this.setSkipWelcome(other.getSkipWelcome().orNull());
         this.setSkipBoot(other.getSkipBoot().orNull());
-        this.setGlobal(other.getGlobal().orNull());
+        this.setSystem(other.getSystem().orNull());
         this.setGui(other.getGui().orNull());
         this.setUserName(other.getUserName().orNull());
         this.setCredentials(other.getCredentials().orNull());
@@ -1417,12 +1417,12 @@ public class DefaultNWorkspaceOptionsBuilder implements NWorkspaceOptionsBuilder
         this.setExecutionType(other.getExecutionType().orNull());
         this.setRunAs(other.getRunAs().orNull());
         this.setArchetype(other.getArchetype().orNull());
-        this.setStoreLocationStrategy(other.getStoreLocationStrategy().orNull());
+        this.setStoreStrategy(other.getStoreStrategy().orNull());
         this.setHomeLocations(other.getHomeLocations().orNull());
         this.setStoreLocations(other.getStoreLocations().orNull());
-        this.setStoreLocationLayout(other.getStoreLocationLayout().orNull());
-        this.setStoreLocationStrategy(other.getStoreLocationStrategy().orNull());
-        this.setRepositoryStoreLocationStrategy(other.getRepositoryStoreLocationStrategy().orNull());
+        this.setStoreLayout(other.getStoreLayout().orNull());
+        this.setStoreStrategy(other.getStoreStrategy().orNull());
+        this.setRepositoryStoreStrategy(other.getRepositoryStoreStrategy().orNull());
         this.setFetchStrategy(other.getFetchStrategy().orNull());
         this.setCached(other.getCached().orNull());
         this.setIndexed(other.getIndexed().orNull());
@@ -1487,8 +1487,8 @@ public class DefaultNWorkspaceOptionsBuilder implements NWorkspaceOptionsBuilder
             if (other.getSkipBoot().isPresent()) {
                 this.setSkipBoot(other.getSkipBoot().orNull());
             }
-            if (other.getGlobal().isPresent()) {
-                this.setGlobal(other.getGlobal().orNull());
+            if (other.getSystem().isPresent()) {
+                this.setSystem(other.getSystem().orNull());
             }
             if (other.getGui().isPresent()) {
                 this.setGui(other.getGui().orNull());
@@ -1568,8 +1568,8 @@ public class DefaultNWorkspaceOptionsBuilder implements NWorkspaceOptionsBuilder
             if (other.getArchetype().isPresent()) {
                 this.setArchetype(other.getArchetype().orNull());
             }
-            if (other.getStoreLocationStrategy().isPresent()) {
-                this.setStoreLocationStrategy(other.getStoreLocationStrategy().orNull());
+            if (other.getStoreStrategy().isPresent()) {
+                this.setStoreStrategy(other.getStoreStrategy().orNull());
             }
             if (other.getHomeLocations().isPresent()) {
                 this.setHomeLocations(other.getHomeLocations().orNull());
@@ -1578,14 +1578,14 @@ public class DefaultNWorkspaceOptionsBuilder implements NWorkspaceOptionsBuilder
             if (other.getStoreLocations().isPresent()) {
                 this.setStoreLocations(other.getStoreLocations().orNull());
             }
-            if (other.getStoreLocationLayout().isPresent()) {
-                this.setStoreLocationLayout(other.getStoreLocationLayout().orNull());
+            if (other.getStoreLayout().isPresent()) {
+                this.setStoreLayout(other.getStoreLayout().orNull());
             }
-            if (other.getStoreLocationStrategy().isPresent()) {
-                this.setStoreLocationStrategy(other.getStoreLocationStrategy().orNull());
+            if (other.getStoreStrategy().isPresent()) {
+                this.setStoreStrategy(other.getStoreStrategy().orNull());
             }
-            if (other.getRepositoryStoreLocationStrategy().isPresent()) {
-                this.setRepositoryStoreLocationStrategy(other.getRepositoryStoreLocationStrategy().orNull());
+            if (other.getRepositoryStoreStrategy().isPresent()) {
+                this.setRepositoryStoreStrategy(other.getRepositoryStoreStrategy().orNull());
             }
             if (other.getFetchStrategy().isPresent()) {
                 this.setFetchStrategy(other.getFetchStrategy().orNull());
@@ -1707,7 +1707,7 @@ public class DefaultNWorkspaceOptionsBuilder implements NWorkspaceOptionsBuilder
      * @return {@code this} instance
      */
     @Override
-    public NWorkspaceOptionsBuilder setStoreLocation(NStoreLocation location, String value) {
+    public NWorkspaceOptionsBuilder setStoreLocation(NStoreType location, String value) {
         if (NBlankable.isBlank(value)) {
             if (storeLocations != null) {
                 storeLocations.remove(location);
@@ -1793,11 +1793,11 @@ public class DefaultNWorkspaceOptionsBuilder implements NWorkspaceOptionsBuilder
                 getCredentials().orNull(), getProgressOptions().orNull(), getDependencySolver().orNull(),
                 getDebug().orNull(), getArchetype().orNull(), getLocale().orNull(), getTheme().orNull(),
                 getLogConfig().orNull(), getConfirm().orNull(), getOutputFormat().orNull(), getOpenMode().orNull(),
-                getExecutionType().orNull(), getStoreLocationStrategy().orNull(), getRepositoryStoreLocationStrategy().orNull(),
-                getStoreLocationLayout().orNull(), getTerminalMode().orNull(), getFetchStrategy().orNull(),
+                getExecutionType().orNull(), getStoreStrategy().orNull(), getRepositoryStoreStrategy().orNull(),
+                getStoreLayout().orNull(), getTerminalMode().orNull(), getFetchStrategy().orNull(),
                 getRunAs().orNull(), getCreationTime().orNull(), getExpireTime().orNull(),
                 getInstallCompanions().orNull(), getSkipWelcome().orNull(), getSkipBoot().orNull(),
-                getGlobal().orNull(), getGui().orNull(), getReadOnly().orNull(), getTrace().orNull(),
+                getSystem().orNull(), getGui().orNull(), getReadOnly().orNull(), getTrace().orNull(),
                 getDry().orNull(), getRecover().orNull(), getReset().orNull(), getCommandVersion().orNull(),
                 getCommandHelp().orNull(), getCommandHelp().orNull(), getSwitchWorkspace().orNull(), getCached().orNull(),
                 getIndexed().orNull(), getTransitive().orNull(), getBot().orNull(), getSkipErrors().orNull(),
@@ -1873,9 +1873,9 @@ public class DefaultNWorkspaceOptionsBuilder implements NWorkspaceOptionsBuilder
     public NWorkspaceOptionsBuilder unsetCreationOptions() {
         setName(null);
         setArchetype(null);
-        setStoreLocationLayout(null);
-        setStoreLocationStrategy(null);
-        setRepositoryStoreLocationStrategy(null);
+        setStoreLayout(null);
+        setStoreStrategy(null);
+        setRepositoryStoreStrategy(null);
         setStoreLocations(null);
         setHomeLocations(null);
         setSwitchWorkspace(null);
@@ -1895,7 +1895,7 @@ public class DefaultNWorkspaceOptionsBuilder implements NWorkspaceOptionsBuilder
         setLogConfig(null);
         setExcludedExtensions(null);
         setRepositories(null);
-        setGlobal(null);
+        setSystem(null);
         setGui(null);
         setReadOnly(null);
         setTrace(null);

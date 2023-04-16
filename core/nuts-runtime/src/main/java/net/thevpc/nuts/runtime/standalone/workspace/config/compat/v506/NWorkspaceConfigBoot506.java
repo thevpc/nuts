@@ -68,11 +68,11 @@ public final class NWorkspaceConfigBoot506 extends NConfigItem {
     // folder types and layout types are exploded so that it is easier
     // to extract from json file even though no json library is available
     // via simple regexp
-    private Map<NStoreLocation, String> storeLocations = null;
+    private Map<NStoreType, String> storeLocations = null;
     private Map<NHomeLocation, String> homeLocations = null;
 
-    private NStoreLocationStrategy repositoryStoreLocationStrategy = null;
-    private NStoreLocationStrategy storeLocationStrategy = null;
+    private NStoreStrategy repositoryStoreLocationStrategy = null;
+    private NStoreStrategy storeLocationStrategy = null;
     private NOsFamily storeLocationLayout = null;
 
     private List<NRepositoryRef> repositories;
@@ -252,12 +252,12 @@ public final class NWorkspaceConfigBoot506 extends NConfigItem {
         return commandFactories;
     }
 
-    public NWorkspaceConfigBoot506 setStoreLocations(Map<NStoreLocation, String> storeLocations) {
+    public NWorkspaceConfigBoot506 setStoreLocations(Map<NStoreType, String> storeLocations) {
         this.storeLocations = storeLocations;
         return this;
     }
 
-    public Map<NStoreLocation, String> getStoreLocations() {
+    public Map<NStoreType, String> getStoreLocations() {
         return storeLocations;
     }
 
@@ -270,11 +270,11 @@ public final class NWorkspaceConfigBoot506 extends NConfigItem {
         return this;
     }
 
-    public NStoreLocationStrategy getStoreLocationStrategy() {
+    public NStoreStrategy getStoreLocationStrategy() {
         return storeLocationStrategy;
     }
 
-    public NWorkspaceConfigBoot506 setStoreLocationStrategy(NStoreLocationStrategy storeLocationStrategy) {
+    public NWorkspaceConfigBoot506 setStoreLocationStrategy(NStoreStrategy storeLocationStrategy) {
         this.storeLocationStrategy = storeLocationStrategy;
         return this;
     }
@@ -288,11 +288,11 @@ public final class NWorkspaceConfigBoot506 extends NConfigItem {
         return this;
     }
 
-    public NStoreLocationStrategy getRepositoryStoreLocationStrategy() {
+    public NStoreStrategy getRepositoryStoreLocationStrategy() {
         return repositoryStoreLocationStrategy;
     }
 
-    public NWorkspaceConfigBoot506 setRepositoryStoreLocationStrategy(NStoreLocationStrategy repositoryStoreLocationStrategy) {
+    public NWorkspaceConfigBoot506 setRepositoryStoreLocationStrategy(NStoreStrategy repositoryStoreLocationStrategy) {
         this.repositoryStoreLocationStrategy = repositoryStoreLocationStrategy;
         return this;
     }
@@ -327,16 +327,16 @@ public final class NWorkspaceConfigBoot506 extends NConfigItem {
     public NWorkspaceConfigBoot toWorkspaceConfig() {
         NWorkspaceConfigBoot c = new NWorkspaceConfigBoot();
         c.setUuid(this.getUuid());
-        c.setGlobal(this.isGlobal());
+        c.setSystem(this.isGlobal());
         c.setName(this.getName());
         c.setWorkspace(this.getWorkspace());
         c.setConfigVersion(this.getConfigVersion());
         c.setBootRepositories(this.getBootRepositories());
         c.setStoreLocations(this.getStoreLocations() == null ? null : new LinkedHashMap<>(this.getStoreLocations()));
         c.setHomeLocations(this.getHomeLocations() == null ? null : new LinkedHashMap<>(this.getHomeLocations()));
-        c.setRepositoryStoreLocationStrategy(this.getRepositoryStoreLocationStrategy());
-        c.setStoreLocationStrategy(this.getStoreLocationStrategy());
-        c.setStoreLocationLayout(this.getStoreLocationLayout());
+        c.setRepositoryStoreStrategy(this.getRepositoryStoreLocationStrategy());
+        c.setStoreStrategy(this.getStoreLocationStrategy());
+        c.setStoreLayout(this.getStoreLocationLayout());
         //there is no extensions in 0.5.6
         return c;
     }

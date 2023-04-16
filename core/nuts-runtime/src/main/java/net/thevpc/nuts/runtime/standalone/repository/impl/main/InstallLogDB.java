@@ -12,7 +12,7 @@ public class InstallLogDB {
                 o = new NanoDB(
                                 NLocations.of(session).getStoreLocation(
                                         session.getWorkspace().getApiId().builder().setVersion("SHARED").build(),
-                                        NStoreLocation.VAR
+                                        NStoreType.VAR
                                 ).resolve("install-log").toFile().toFile()
                 );
                 o.getSerializers().setSerializer(NId.class, () -> new NanoDBNIdSerializer(session));

@@ -69,7 +69,7 @@ public class NBackup implements NApplication {
             }
 
             private NPath getConfigFile() {
-                return session.getAppConfigFolder().resolve("backup.json");
+                return session.getAppConfFolder().resolve("backup.json");
             }
 
             @Override

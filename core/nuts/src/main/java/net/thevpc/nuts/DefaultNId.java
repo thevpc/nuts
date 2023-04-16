@@ -79,7 +79,7 @@ public class DefaultNId implements NId {
         }
         this.classifier = c0;
         this.condition = condition == null ? NEnvCondition.BLANK : condition.readOnly();
-        this.properties = NStringMapFormat.DEFAULT.format(properties);
+        this.properties = NStringUtils.trim(NStringMapFormat.DEFAULT.format(properties));
     }
 
     public DefaultNId(String groupId, String artifactId, NVersion version, String classifier, String properties, NEnvCondition condition) {

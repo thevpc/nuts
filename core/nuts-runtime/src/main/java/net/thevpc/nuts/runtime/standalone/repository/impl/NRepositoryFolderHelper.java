@@ -12,7 +12,7 @@ import net.thevpc.nuts.elem.NObjectElement;
 import net.thevpc.nuts.io.*;
 import net.thevpc.nuts.runtime.standalone.descriptor.util.NDescriptorUtils;
 import net.thevpc.nuts.runtime.standalone.event.DefaultNContentEvent;
-import net.thevpc.nuts.runtime.standalone.id.util.NIdUtils;
+import net.thevpc.nuts.runtime.standalone.id.util.CoreNIdUtils;
 import net.thevpc.nuts.runtime.standalone.io.terminal.DefaultWriteTypeProcessor;
 import net.thevpc.nuts.runtime.standalone.io.util.CoreIOUtils;
 import net.thevpc.nuts.runtime.standalone.repository.NIdPathIterator;
@@ -88,7 +88,7 @@ public class NRepositoryFolderHelper {
     }
 
     public NPath getLongIdLocalFolder(NId id, NSession session) {
-        NIdUtils.checkLongId(id, session);
+        CoreNIdUtils.checkLongId(id, session);
         if (repo == null) {
             return getStoreLocation().resolve(NLocations.of(session).getDefaultIdBasedir(id));
         }
@@ -103,7 +103,7 @@ public class NRepositoryFolderHelper {
     }
 
     public NPath getShortIdLocalFolder(NId id, NSession session) {
-        NIdUtils.checkShortId(id, session);
+        CoreNIdUtils.checkShortId(id, session);
         if (repo == null) {
             return getStoreLocation().resolve(NLocations.of(session).getDefaultIdBasedir(id.builder().setVersion("").build()));
         }
@@ -228,15 +228,15 @@ public class NRepositoryFolderHelper {
     }
 
     public NPath getRelativeLocalGroupAndArtifactFile(NId id, NSession session) {
-        NIdUtils.checkShortId(id, session);
-        NPath groupFolder = NPath.of(id.getGroupId().replace('.', File.separatorChar), session);
-        return groupFolder.resolve(id.getArtifactId());
+        CoreNIdUtils.checkShortId(id, session);
+        return NPath.of(
+                net.thevpc.nuts.util.NIdUtils.resolveIdPath(id.getShortId())
+                , session);
     }
 
     public NPath getLocalGroupAndArtifactFile(NId id, NSession session) {
-        NIdUtils.checkShortId(id, session);
-        NPath groupFolder = getStoreLocation().resolve(id.getGroupId().replace('.', File.separatorChar));
-        return groupFolder.resolve(id.getArtifactId());
+        CoreNIdUtils.checkShortId(id, session);
+        return getStoreLocation().resolve(net.thevpc.nuts.util.NIdUtils.resolveIdPath(id.getShortId()));
     }
 
     public NIterator<NId> searchVersions(NId id, final NIdFilter filter, boolean deep, NSession session) {
@@ -360,11 +360,11 @@ public class NRepositoryFolderHelper {
         if (id == null) {
             id = descriptor.getId();
         }
-        NIdUtils.checkLongId(id, session);
+        CoreNIdUtils.checkLongId(id, session);
         NInputSource inputSource = null;
         if (deployment.getContent() == null) {
             if (!NDescriptorUtils.isNoContent(descriptor)) {
-                NAssert.requireNonNull(deployment.getContent(), ()-> NMsg.ofC("invalid deployment; missing content for %s", deployment.getId()), session);
+                NAssert.requireNonNull(deployment.getContent(), () -> NMsg.ofC("invalid deployment; missing content for %s", deployment.getId()), session);
             }
         } else {
             inputSource = NIO.of(session).ofMultiRead(deployment.getContent());
@@ -420,7 +420,7 @@ public class NRepositoryFolderHelper {
         if (!isWriteEnabled()) {
             throw new NIllegalArgumentException(session, NMsg.ofPlain("read only repository"));
         }
-        NIdUtils.checkLongId(id, session);
+        CoreNIdUtils.checkLongId(id, session);
         NPath descFile = getLongIdLocalFile(id.builder().setFaceDescriptor().build(), session);
         if (descFile.exists()) {
             if (!DefaultWriteTypeProcessor
@@ -464,7 +464,7 @@ public class NRepositoryFolderHelper {
         if (!isWriteEnabled()) {
             return null;
         }
-        NIdUtils.checkLongId(id, session);
+        CoreNIdUtils.checkLongId(id, session);
         NPath pckFile = getLongIdLocalFile(id.builder().setFaceContent().setPackaging(descriptor.getPackaging()).build(), session);
         if (pckFile.exists()) {
             if (content instanceof NPath) {

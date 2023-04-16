@@ -64,15 +64,15 @@ public class DefaultNExecCommand extends AbstractNExecCommand {
 
         NSession traceSession = getSession();
         NSession execSession = traceSession.copy();
-        String host = getHost();
-        if (!NBlankable.isBlank(host)) {
-            NConnexionString connexionString = NConnexionString.of(host).get();
+        String target = getTarget();
+        if (!NBlankable.isBlank(target)) {
+            NConnexionString connexionString = NConnexionString.of(target).get();
             if ("ssh".equals(connexionString.getProtocol())) {
                 NExtensions.of(session)
                         .loadExtension(NId.of("net.thevpc.nuts.ext:next-ssh").get());
             }
             NExecCommandExtension ee = NExtensions.of(session).createComponent(NExecCommandExtension.class, connexionString).get();
-            return whichHost(ee, connexionString);
+            return whichOnTarget(ee, connexionString);
         }
 
         NSessionTerminal terminal = NSessionTerminal.of(traceSession.getTerminal(), execSession);
@@ -149,7 +149,7 @@ public class DefaultNExecCommand extends AbstractNExecCommand {
         return exec;
     }
 
-    public NExecutableInformation whichHost(NExecCommandExtension commExec, NConnexionString connexionString) {
+    public NExecutableInformation whichOnTarget(NExecCommandExtension commExec, NConnexionString connexionString) {
         checkSession();
         NSession traceSession = getSession();
         NSession execSession = traceSession.copy();
@@ -172,7 +172,6 @@ public class DefaultNExecCommand extends AbstractNExecCommand {
         NExecutableInformationExt exec = null;
         execSession.setTerminal(terminal);
         NExecutionType executionType = this.getExecutionType();
-        NRunAs runAs = this.getRunAs();
         if (executionType == null) {
             executionType = session.getExecutionType();
         }

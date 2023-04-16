@@ -39,11 +39,11 @@ public interface NWorkspaceStoredConfig {
 
     String getName();
 
-    NStoreLocationStrategy getStoreLocationStrategy();
+    NStoreStrategy getStoreStrategy();
 
-    NStoreLocationStrategy getRepositoryStoreLocationStrategy();
+    NStoreStrategy getRepositoryStoreStrategy();
 
-    NOsFamily getStoreLocationLayout();
+    NOsFamily getStoreLayout();
 
     /**
      * all home locations key/value map where keys are in the form "location"
@@ -51,7 +51,7 @@ public interface NWorkspaceStoredConfig {
      *
      * @return home locations mapping
      */
-    Map<NStoreLocation, String> getStoreLocations();
+    Map<NStoreType, String> getStoreLocations();
 
     /**
      * all home locations key/value map where keys are in the form
@@ -61,7 +61,7 @@ public interface NWorkspaceStoredConfig {
      */
     Map<NHomeLocation, String> getHomeLocations();
 
-    String getStoreLocation(NStoreLocation folderType);
+    String getStoreLocation(NStoreType folderType);
 
     String getHomeLocation(NHomeLocation homeLocation);
 
@@ -77,5 +77,5 @@ public interface NWorkspaceStoredConfig {
 
     String getJavaOptions();
 
-    boolean isGlobal();
+    boolean isSystem();
 }

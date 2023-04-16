@@ -39,7 +39,7 @@ public class NIndexSubscriberListManager {
         return NLocations.of(session)
                 .getStoreLocation(NIdResolver.of(session)
                                 .resolveId(NIndexSubscriberListManager.class),
-                        NStoreLocation.CONFIG).resolve(
+                        NStoreType.CONF).resolve(
                         name + "-nuts-subscriber-list.json");
     }
 

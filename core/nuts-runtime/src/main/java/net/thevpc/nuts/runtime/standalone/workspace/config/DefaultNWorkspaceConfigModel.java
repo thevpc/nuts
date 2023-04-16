@@ -143,11 +143,11 @@ public class DefaultNWorkspaceConfigModel {
     }
 
 
-    public void onNewComponent(Class componentType,NSession session){
-        if(NPathFactory.class.isAssignableFrom(componentType)){
-            DefaultNWorkspaceFactory aa=(DefaultNWorkspaceFactory) (((NWorkspaceExt) ws).getModel().extensionModel.getObjectFactory());
+    public void onNewComponent(Class componentType, NSession session) {
+        if (NPathFactory.class.isAssignableFrom(componentType)) {
+            DefaultNWorkspaceFactory aa = (DefaultNWorkspaceFactory) (((NWorkspaceExt) ws).getModel().extensionModel.getObjectFactory());
             addPathFactory(
-                    (NPathFactory) aa.newInstance(componentType,session,NPathFactory.class)
+                    (NPathFactory) aa.newInstance(componentType, session, NPathFactory.class)
             );
         }
     }
@@ -195,7 +195,7 @@ public class DefaultNWorkspaceConfigModel {
         NSessionUtils.checkSession(this.ws, session);
         boolean ok = false;
         NWorkspaceSecurityManager.of(session).checkAllowed(NConstants.Permissions.SAVE, "save");
-        NPath apiVersionSpecificLocation = NLocations.of(session).getStoreLocation(session.getWorkspace().getApiId(), NStoreLocation.CONFIG);
+        NPath apiVersionSpecificLocation = NLocations.of(session).getStoreLocation(session.getWorkspace().getApiId(), NStoreType.CONF);
         NElements elem = NElements.of(session);
         if (force || storeModelBootChanged) {
 
@@ -213,7 +213,7 @@ public class DefaultNWorkspaceConfigModel {
             ok = true;
         }
 
-        NPath configVersionSpecificLocation = NLocations.of(session).getStoreLocation(session.getWorkspace().getApiId(), NStoreLocation.CONFIG);
+        NPath configVersionSpecificLocation = NLocations.of(session).getStoreLocation(session.getWorkspace().getApiId(), NStoreType.CONF);
         if (force || storeModelSecurityChanged) {
             storeModelSecurity.setUsers(configUsers.isEmpty() ? null : configUsers.values().toArray(new NUserConfig[0]));
 
@@ -281,7 +281,7 @@ public class DefaultNWorkspaceConfigModel {
             ok = true;
         }
         if (force || storeModelRuntimeChanged) {
-            NPath runtimeVersionSpecificLocation = NLocations.of(session).getStoreLocation(NStoreLocation.CONFIG)
+            NPath runtimeVersionSpecificLocation = NLocations.of(session).getStoreLocation(NStoreType.CONF)
                     .resolve(NConstants.Folders.ID).resolve(NLocations.of(session).getDefaultIdBasedir(session.getWorkspace().getRuntimeId()));
             NPath afile = runtimeVersionSpecificLocation.resolve(NConstants.Files.RUNTIME_BOOT_CONFIG_FILE_NAME);
             storeModelRuntime.setConfigVersion(current().getApiVersion());
@@ -311,19 +311,18 @@ public class DefaultNWorkspaceConfigModel {
         return save(true, session);
     }
 
-    public NWorkspaceBootConfig loadBootConfig(String _ws, boolean global, boolean followLinks, NSession session) {
+    public NWorkspaceBootConfig loadBootConfig(String _ws, boolean system, boolean followLinks, NSession session) {
         String _ws0 = _ws;
         String effWorkspaceName = null;
         String lastConfigPath = null;
         NWorkspaceConfigBoot lastConfigLoaded = null;
         boolean defaultLocation = false;
+        NPlatformHome plocs = NPlatformHome.of(null, system);
         if (_ws != null && _ws.matches("[a-z-]+://.*")) {
             //this is a protocol based workspace
             //String protocol=ws.substring(0,ws.indexOf("://"));
             effWorkspaceName = "remote-bootstrap";
-            lastConfigPath = NPlatformUtils.getWorkspaceLocation(null,
-                    global,
-                    CoreNUtils.resolveValidWorkspaceName(effWorkspaceName));
+            lastConfigPath = plocs.getWorkspaceLocation(CoreNUtils.resolveValidWorkspaceName(effWorkspaceName));
             lastConfigLoaded = parseBootConfig(NPath.of(lastConfigPath, session), session);
             defaultLocation = true;
             return new DefaultNWorkspaceBootConfig(session, _ws0, lastConfigPath, effWorkspaceName, defaultLocation, lastConfigLoaded);
@@ -333,10 +332,7 @@ public class DefaultNWorkspaceConfigModel {
             for (int i = 0; i < maxDepth; i++) {
                 lastConfigPath
                         = CoreNUtils.isValidWorkspaceName(_ws)
-                        ? NPlatformUtils.getWorkspaceLocation(
-                        null,
-                        global,
-                        CoreNUtils.resolveValidWorkspaceName(_ws)
+                        ? plocs.getWorkspaceLocation(CoreNUtils.resolveValidWorkspaceName(_ws)
                 ) : CoreIOUtils.getAbsolutePath(_ws);
 
                 NWorkspaceConfigBoot configLoaded = parseBootConfig(NPath.of(lastConfigPath, session), session);
@@ -362,10 +358,7 @@ public class DefaultNWorkspaceConfigModel {
             defaultLocation = CoreNUtils.isValidWorkspaceName(_ws);
             lastConfigPath
                     = CoreNUtils.isValidWorkspaceName(_ws)
-                    ? NPlatformUtils.getWorkspaceLocation(
-                    null,
-                    global,
-                    CoreNUtils.resolveValidWorkspaceName(_ws)
+                    ? plocs.getWorkspaceLocation(CoreNUtils.resolveValidWorkspaceName(_ws)
             ) : CoreIOUtils.getAbsolutePath(_ws);
 
             lastConfigLoaded = parseBootConfig(NPath.of(lastConfigPath, session), session);
@@ -441,7 +434,7 @@ public class DefaultNWorkspaceConfigModel {
         NPath root = this.getRepositoriesRoot(session);
         return repositoryLocation
                 .toAbsolute(root != null ? root :
-                        NLocations.of(session).getStoreLocation(NStoreLocation.CONFIG)
+                        NLocations.of(session).getStoreLocation(NStoreType.CONF)
                                 .resolve(NConstants.Folders.REPOSITORIES))
                 ;
     }
@@ -462,8 +455,8 @@ public class DefaultNWorkspaceConfigModel {
         return current().getJavaOptions();
     }
 
-    public boolean isGlobal() {
-        return current().isGlobal();
+    public boolean isSystem() {
+        return current().getSystem();
     }
 
     public Instant getCreationStartTime() {
@@ -525,9 +518,23 @@ public class DefaultNWorkspaceConfigModel {
         NDescriptor d = wsModel.bootModel.getBootEffectiveOptions().getRuntimeBootDescriptor().get(session);
         NId iruntimeId = NId.of(d.getId().toString()).get(session);
         wsModel.configModel.prepareBootClassPathConf(NIdType.API, ws.getApiId(), null, iruntimeId, false, false, session);
-        wsModel.configModel.prepareBootClassPathJar(ws.getApiId(), null, iruntimeId, false, session);
+        NBootDef nBootNutsApi = wsModel.configModel.prepareBootClassPathJar(ws.getApiId(), null, iruntimeId, false, session);
         wsModel.configModel.prepareBootClassPathConf(NIdType.RUNTIME, iruntimeId, ws.getApiId(), null, false, true, session);
-        wsModel.configModel.prepareBootClassPathJar(iruntimeId, ws.getApiId(), null, true, session);
+        NBootDef nBootNutsRuntime = wsModel.configModel.prepareBootClassPathJar(iruntimeId, ws.getApiId(), null, true, session);
+
+//        NPath sharedFolder = NPath.of(NPlatformHome.USER.getStore(NStoreType.LIB), session)
+//                .resolve("boot");
+
+//        NPath sharedNutsApi = sharedFolder.resolve(NIdUtils.resolveJarPath(nBootNutsApi.id));
+//        NPath sharedNutsRuntime = sharedFolder.resolve(NIdUtils.resolveJarPath(nBootNutsRuntime.id));
+//        boolean devMode = true;
+//        if (devMode || !sharedNutsApi.isRegularFile()) {
+//            nBootNutsApi.content.copyTo(sharedNutsApi.mkParentDirs());
+//        }
+//        if (devMode || !sharedNutsRuntime.isRegularFile()) {
+//            nBootNutsRuntime.content.copyTo(sharedNutsRuntime.mkParentDirs());
+//        }
+
         List<NWorkspaceConfigBoot.ExtensionConfig> extensions = getStoredConfigBoot().getExtensions();
         if (extensions != null) {
             for (NWorkspaceConfigBoot.ExtensionConfig extension : extensions) {
@@ -673,7 +680,7 @@ public class DefaultNWorkspaceConfigModel {
 
     private List<NId> findOlderNutsApiIds(NSession session) {
         NId apiId = session.getWorkspace().getApiId();
-        NPath path = NLocations.of(session).getStoreLocation(apiId, NStoreLocation.CONFIG)
+        NPath path = NLocations.of(session).getStoreLocation(apiId, NStoreType.CONF)
                 .getParent();
         List<NId> olderIds = path.stream().filter(NPath::isDirectory, s -> NElements.of(s).ofString("isDirectory"))
                 .map(x -> NVersion.of(x.getName()).get(session), "toVersion")
@@ -724,7 +731,7 @@ public class DefaultNWorkspaceConfigModel {
                 NWorkspaceExt.of(ws).deployBoot(session, extensionId, true);
             }
         }
-        NPath runtimeVersionSpecificLocation = NLocations.of(session).getStoreLocation(NStoreLocation.CONFIG)
+        NPath runtimeVersionSpecificLocation = NLocations.of(session).getStoreLocation(NStoreType.CONF)
                 .resolve(NConstants.Folders.ID).resolve(NLocations.of(session).getDefaultIdBasedir(extensionId));
         NPath afile = runtimeVersionSpecificLocation.resolve(NConstants.Files.EXTENSION_BOOT_CONFIG_FILE_NAME);
         cc.setConfigVersion(current().getApiVersion());
@@ -754,7 +761,7 @@ public class DefaultNWorkspaceConfigModel {
         estoreModelApi.setApiVersion(apiId.getVersion());
         estoreModelApi.setRuntimeId(runtimeId);
         estoreModelApi.setConfigVersion(current().getApiVersion());
-        NPath apiVersionSpecificLocation = NLocations.of(session).getStoreLocation(apiId, NStoreLocation.CONFIG);
+        NPath apiVersionSpecificLocation = NLocations.of(session).getStoreLocation(apiId, NStoreType.CONF);
         NPath afile = apiVersionSpecificLocation.resolve(NConstants.Files.API_BOOT_CONFIG_FILE_NAME);
         NElements elems = NElements.of(session);
         elems.json().setValue(estoreModelApi)
@@ -766,7 +773,7 @@ public class DefaultNWorkspaceConfigModel {
                 newDeps
         );
 
-        NPath runtimeVersionSpecificLocation = NLocations.of(session).getStoreLocation(NStoreLocation.CONFIG)
+        NPath runtimeVersionSpecificLocation = NLocations.of(session).getStoreLocation(NStoreType.CONF)
                 .resolve(NConstants.Folders.ID).resolve(NLocations.of(session).getDefaultIdBasedir(runtimeId));
         afile = runtimeVersionSpecificLocation.resolve(NConstants.Files.RUNTIME_BOOT_CONFIG_FILE_NAME);
         storeModelRuntime.setConfigVersion(current().getApiVersion());
@@ -945,11 +952,11 @@ public class DefaultNWorkspaceConfigModel {
 
 
     public NPath getRepositoriesRoot(NSession session) {
-        return NLocations.of(session).getStoreLocation(NStoreLocation.CONFIG).resolve(NConstants.Folders.REPOSITORIES);
+        return NLocations.of(session).getStoreLocation(NStoreType.CONF).resolve(NConstants.Folders.REPOSITORIES);
     }
 
     public NPath getTempRepositoriesRoot(NSession session) {
-        return NLocations.of(session).getStoreLocation(NStoreLocation.TEMP).resolve(NConstants.Folders.REPOSITORIES);
+        return NLocations.of(session).getStoreLocation(NStoreType.TEMP).resolve(NConstants.Folders.REPOSITORIES);
     }
 
     public boolean isValidWorkspaceFolder(NSession session) {
@@ -1073,53 +1080,6 @@ public class DefaultNWorkspaceConfigModel {
         }
     }
 
-//    public String getBootClassWorldString(NutsSession session) {
-//        StringBuilder sb = new StringBuilder();
-//        for (URL bootClassWorldURL : getBootClassWorldURLs()) {
-//            if (sb.length() > 0) {
-//                sb.append(File.pathSeparator);
-//            }
-//            if (CoreIOUtils.isPathFile(bootClassWorldURL.toString())) {
-//                File f = CoreIOUtils.toPathFile(bootClassWorldURL.toString(), session).toFile();
-//                sb.append(f.getPath());
-//            } else {
-//                sb.append(bootClassWorldURL.toString().replace(":", "\\:"));
-//            }
-//        }
-//        return sb.toString();
-//    }
-
-    //    
-//    public Path getBootNutsJar() {
-//        try {
-//            NutsId baseId = ws.id().parseRequired(NutsConstants.Ids.NUTS_API);
-//            String urlPath = "META-INF/maven/" + baseId.getGroup() + "/" + baseId.getName() + "/pom.properties";
-//            URL resource = Nuts.class.getResource(urlPath);
-//            if (resource != null) {
-//                URL runtimeURL = CoreIOUtils.resolveURLFromResource(Nuts.class, urlPath);
-//                return CoreIOUtils.resolveLocalPathFromURL(runtimeURL);
-//            }
-//        } catch (Exception e) {
-//            //e.printStackTrace();
-//        }
-//        // This will happen when running app from  nuts dev project so that classes folder is considered as
-//        // binary class path instead of a single jar file.
-//        // In that case we will gather nuts from maven .m2 repository
-//        PomId m = PomIdResolver.resolvePomId(Nuts.class, null);
-//        if (m != null) {
-//            Path f = ws.io().path(System.getProperty("user.home"), ".m2", "repository", m.getGroupId().replace('.', '/'), m.getArtifactId(), m.getVersion(),
-//                    ws.locations().getDefaultIdFilename(
-//                            ws.elements().setGroup(m.getGroupId()).setName(m.getArtifactId()).setVersion(m.getVersion())
-//                                    .setFaceComponent()
-//                                    .setPackaging("jar")
-//                                    .build()
-//                    ));
-//            if (Files.exists(f)) {
-//                return f;
-//            }
-//        }
-//        return null;
-//    }
     public String toString() {
         String s1 = "NULL";
         String s2 = "NULL";
@@ -1170,10 +1130,7 @@ public class DefaultNWorkspaceConfigModel {
                         NPath.of(n.getURL(), session)
                 );
             }
-            String contentPath = id.getGroupId().replace('.', '/')
-                    + "/" + id.getArtifactId()
-                    + "/" + id.getVersion()
-                    + "/" + id.getArtifactId() + "-" + id.getVersion();
+            String contentPath = NIdUtils.resolveFilePath(id, null);
             NPath jarPath = null;
             NPath pomPath = null;
             for (NRepositoryLocation nutsRepositoryLocation : resolveBootRepositoriesBootSelectionArray(session)) {
@@ -1225,7 +1182,7 @@ public class DefaultNWorkspaceConfigModel {
         }
     }
 
-    public void prepareBootClassPathJar(NId id, NId forId, NId forceRuntimeId, boolean processDependencies, NSession session) {
+    public NBootDef prepareBootClassPathJar(NId id, NId forId, NId forceRuntimeId, boolean processDependencies, NSession session) {
         NBootDef d = fetchBootDef(id, true, session);
         if (deployToInstalledRepository(d.content.toFile(), session)) {
             if (processDependencies) {
@@ -1234,6 +1191,7 @@ public class DefaultNWorkspaceConfigModel {
                 }
             }
         }
+        return d;
     }
 
     private boolean isFirstBoot() {
@@ -1302,7 +1260,7 @@ public class DefaultNWorkspaceConfigModel {
         d.setHomeLocations(new NHomeLocationsMap(storeModelBoot.getHomeLocations()).toMapOrNull());
         d.build(NLocations.of(session).getWorkspaceLocation(), session);
         NStoreLocationsMap newSL = new NStoreLocationsMap(currentConfig.getStoreLocations());
-        for (NStoreLocation sl : NStoreLocation.values()) {
+        for (NStoreType sl : NStoreType.values()) {
             String oldPath = preUpdateConfigStoreLocations.get(sl);
             String newPath = newSL.get(sl);
             if (!oldPath.equals(newPath)) {
@@ -1324,7 +1282,7 @@ public class DefaultNWorkspaceConfigModel {
         String fileSuffix = Instant.now().toString();
         fileSuffix = fileSuffix.replace(':', '-');
         String fileName = "nuts-workspace-" + fileSuffix;
-        NPath logError = NLocations.of(session).getStoreLocation(ws.getApiId(), NStoreLocation.LOG).resolve("invalid-config");
+        NPath logError = NLocations.of(session).getStoreLocation(ws.getApiId(), NStoreType.LOG).resolve("invalid-config");
         NPath logFile = logError.resolve(fileName + ".error");
         _LOGOP(session).level(Level.SEVERE).verb(NLogVerb.FAIL)
                 .log(NMsg.ofJ("erroneous workspace config file. Unable to load file {0} : {1}", file, ex));
@@ -1353,7 +1311,7 @@ public class DefaultNWorkspaceConfigModel {
                                     .setCompact(false)
                     )
             );
-            for (NStoreLocation location : NStoreLocation.values()) {
+            for (NStoreType location : NStoreType.values()) {
                 o.println("location." + location.id() + ":");
                 o.println(NLocations.of(session).getStoreLocation(location));
             }
@@ -1656,22 +1614,22 @@ public class DefaultNWorkspaceConfigModel {
         }
 
         @Override
-        public NStoreLocationStrategy getStoreLocationStrategy() {
-            return getStoredConfigBoot().getStoreLocationStrategy();
+        public NStoreStrategy getStoreStrategy() {
+            return getStoredConfigBoot().getStoreStrategy();
         }
 
         @Override
-        public NStoreLocationStrategy getRepositoryStoreLocationStrategy() {
-            return getStoredConfigBoot().getStoreLocationStrategy();
+        public NStoreStrategy getRepositoryStoreStrategy() {
+            return getStoredConfigBoot().getStoreStrategy();
         }
 
         @Override
-        public NOsFamily getStoreLocationLayout() {
-            return getStoredConfigBoot().getStoreLocationLayout();
+        public NOsFamily getStoreLayout() {
+            return getStoredConfigBoot().getStoreLayout();
         }
 
         @Override
-        public Map<NStoreLocation, String> getStoreLocations() {
+        public Map<NStoreType, String> getStoreLocations() {
             return getStoredConfigBoot().getStoreLocations();
         }
 
@@ -1681,7 +1639,7 @@ public class DefaultNWorkspaceConfigModel {
         }
 
         @Override
-        public String getStoreLocation(NStoreLocation folderType) {
+        public String getStoreLocation(NStoreType folderType) {
             return new NStoreLocationsMap(getStoredConfigBoot().getStoreLocations()).get(folderType);
         }
 
@@ -1728,8 +1686,8 @@ public class DefaultNWorkspaceConfigModel {
         }
 
         @Override
-        public boolean isGlobal() {
-            return getStoredConfigBoot().isGlobal();
+        public boolean isSystem() {
+            return getStoredConfigBoot().isSystem();
         }
 
     }
@@ -1748,7 +1706,7 @@ public class DefaultNWorkspaceConfigModel {
 
         @Override
         public int getSupportLevel(NSupportLevelContext context) {
-            String path= context.getConstraints();
+            String path = context.getConstraints();
             return 1;
         }
     }

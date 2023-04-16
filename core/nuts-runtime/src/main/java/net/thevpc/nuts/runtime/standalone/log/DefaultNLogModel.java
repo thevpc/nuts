@@ -55,7 +55,7 @@ public class DefaultNLogModel {
     public DefaultNLogModel(NWorkspace ws, NWorkspaceOptions bOptions) {
         this.workspace = ws;
         NWorkspaceOptions bootOptions = NWorkspaceExt.of(this.workspace).getModel().bootModel.getBootUserOptions();
-        logFolder = Paths.get(bOptions.getStoreLocation(NStoreLocation.LOG).orNull());
+        logFolder = Paths.get(bOptions.getStoreType(NStoreType.LOG).orNull());
         NLogConfig lc = bootOptions.getLogConfig().orNull();
         if (lc != null) {
             if (lc.getLogFileLevel() != null) {

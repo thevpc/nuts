@@ -11,7 +11,7 @@ import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.io.NPathOption;
 import net.thevpc.nuts.runtime.standalone.event.DefaultNContentEvent;
 import net.thevpc.nuts.runtime.standalone.id.filter.NSearchIdByDescriptor;
-import net.thevpc.nuts.runtime.standalone.id.util.NIdUtils;
+import net.thevpc.nuts.runtime.standalone.id.util.CoreNIdUtils;
 import net.thevpc.nuts.runtime.standalone.repository.NRepositoryHelper;
 import net.thevpc.nuts.runtime.standalone.repository.cmd.NRepositorySupportedAction;
 import net.thevpc.nuts.runtime.standalone.session.NSessionUtils;
@@ -193,7 +193,7 @@ public class NRepositoryMirroringHelper {
             repo = this.repo.config().setSession(session.copy().setTransitive(false)).getMirror(repository);
         }
         if (repo != null) {
-            NId effId = NIdUtils.createContentFaceId(id.builder().setPropertiesQuery("").build(), desc,session)
+            NId effId = CoreNIdUtils.createContentFaceId(id.builder().setPropertiesQuery("").build(), desc,session)
 //                    .setAlternative(NutsUtilStrings.trim(desc.getAlternative()))
                     ;
             NDeployRepositoryCommand dep = repoSPI.deploy()

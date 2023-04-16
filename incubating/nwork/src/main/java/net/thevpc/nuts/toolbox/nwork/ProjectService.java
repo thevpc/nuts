@@ -6,6 +6,7 @@ import net.thevpc.nuts.elem.NElements;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.toolbox.nwork.config.ProjectConfig;
 import net.thevpc.nuts.toolbox.nwork.config.RepositoryAddress;
+import net.thevpc.nuts.util.NIdUtils;
 
 import java.io.File;
 import java.io.IOException;
@@ -23,14 +24,14 @@ public class ProjectService {
         this.session = session;
         this.defaultRepositoryAddress = defaultRepositoryAddress == null ? new RepositoryAddress() : defaultRepositoryAddress;
         config = NElements.of(session).json().parse(file, ProjectConfig.class);
-        sharedConfigFolder = session.getAppVersionFolder(NStoreLocation.CONFIG, NWorkConfigVersions.CURRENT);
+        sharedConfigFolder = session.getAppVersionFolder(NStoreType.CONF, NWorkConfigVersions.CURRENT);
     }
 
     public ProjectService(NSession session, RepositoryAddress defaultRepositoryAddress, ProjectConfig config) {
         this.config = config;
         this.session = session;
         this.defaultRepositoryAddress = defaultRepositoryAddress;
-        sharedConfigFolder = session.getAppVersionFolder(NStoreLocation.CONFIG, NWorkConfigVersions.CURRENT);
+        sharedConfigFolder = session.getAppVersionFolder(NStoreType.CONF, NWorkConfigVersions.CURRENT);
     }
 
     public ProjectConfig getConfig() {
@@ -149,18 +150,7 @@ public class ProjectService {
     public File detectLocalVersionFile(String sid) {
         NId id = NId.of(sid).get(session);
         if (config.getTechnologies().contains("maven")) {
-            File f = new File(System.getProperty("user.home"), ".m2/repository/"
-                    + id.getGroupId().replace('.', File.separatorChar)
-                    + File.separatorChar
-                    + id.getArtifactId()
-                    + File.separatorChar
-                    + id.getVersion()
-                    + File.separatorChar
-                    + id.getArtifactId()
-                    + "-"
-                    + id.getVersion()
-                    + ".jar"
-            );
+            File f = new File(System.getProperty("user.home"), ".m2/repository/" + NIdUtils.resolveJarPath(id));
             if (f.exists()) {
                 return f;
             }

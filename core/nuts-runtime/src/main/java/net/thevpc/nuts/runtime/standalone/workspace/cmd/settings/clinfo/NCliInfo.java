@@ -1,10 +1,9 @@
 package net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.clinfo;
 
 import net.thevpc.nuts.NBlankable;
-import net.thevpc.nuts.NOsFamily;
 import net.thevpc.nuts.NSession;
 import net.thevpc.nuts.elem.NElements;
-import net.thevpc.nuts.util.NPlatformUtils;
+import net.thevpc.nuts.util.NPlatformHome;
 import net.thevpc.nuts.util.NStringUtils;
 import org.jetbrains.annotations.NotNull;
 
@@ -93,6 +92,6 @@ public class NCliInfo {
 
     @NotNull
     private static Path getConfigFile() {
-        return Paths.get(NPlatformUtils.getBaseLocation(NOsFamily.getCurrent(), false)).resolve(".nuts-user-config");
+        return Paths.get(NPlatformHome.USER.getHome()).resolve(".nuts-user-config");
     }
 }

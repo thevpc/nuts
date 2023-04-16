@@ -74,13 +74,13 @@ public interface NRepositoryConfigModel {
 
     NPath getStoreLocation();
 
-    NPath getStoreLocation(NStoreLocation folderType, NSession session);
+    NPath getStoreLocation(NStoreType folderType, NSession session);
 
     //        @Override
     //        public int getSupportLevel(NutsRepositorySupportedAction supportedAction, NutsId id, NutsFetchMode fetchMode, boolean transitive) {
     //            return 0;
     //        }
-    NStoreLocationStrategy getStoreLocationStrategy(NSession session);
+    NStoreStrategy getStoreStrategy(NSession session);
 
     String getType(NSession session);
 

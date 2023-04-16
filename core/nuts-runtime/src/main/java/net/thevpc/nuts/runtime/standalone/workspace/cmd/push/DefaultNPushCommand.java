@@ -24,7 +24,7 @@
 package net.thevpc.nuts.runtime.standalone.workspace.cmd.push;
 
 import net.thevpc.nuts.*;
-import net.thevpc.nuts.runtime.standalone.id.util.NIdUtils;
+import net.thevpc.nuts.runtime.standalone.id.util.CoreNIdUtils;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceExt;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceUtils;
 import net.thevpc.nuts.runtime.standalone.util.CoreStringUtils;
@@ -85,7 +85,7 @@ public class DefaultNPushCommand extends AbstractDefaultNPushCommand {
                         //
                     }
                     if (descr != null && repo.config().isSupportedMirroring()) {
-                        NId id2 = NIdUtils.createContentFaceId(dws.resolveEffectiveId(descr, session), descr,session);
+                        NId id2 = CoreNIdUtils.createContentFaceId(dws.resolveEffectiveId(descr, session), descr,session);
                         try {
                             repoSPI.push().setId(id2)
                                     .setOffline(offline)
@@ -115,7 +115,7 @@ public class DefaultNPushCommand extends AbstractDefaultNPushCommand {
                 if (!repo.config().isEnabled()) {
                     throw new NIllegalArgumentException(getSession(), NMsg.ofC("repository %s is disabled", repo.getName()));
                 }
-                NId effId = NIdUtils.createContentFaceId(id.builder().setPropertiesQuery("").build(), file.getDescriptor(),session) //                        .setAlternative(NutsUtilStrings.trim(file.getDescriptor().getAlternative()))
+                NId effId = CoreNIdUtils.createContentFaceId(id.builder().setPropertiesQuery("").build(), file.getDescriptor(),session) //                        .setAlternative(NutsUtilStrings.trim(file.getDescriptor().getAlternative()))
                         ;
                 NRepositorySPI repoSPI = wu.repoSPI(repo);
                 repoSPI.deploy().setSession(session)

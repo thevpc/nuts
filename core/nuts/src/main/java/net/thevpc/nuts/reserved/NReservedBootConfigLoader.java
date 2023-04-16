@@ -28,6 +28,7 @@ package net.thevpc.nuts.reserved;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.boot.DefaultNBootOptionsBuilder;
 import net.thevpc.nuts.boot.NBootOptionsBuilder;
+import net.thevpc.nuts.reserved.compat.NReservedBootConfigLoaderOld;
 import net.thevpc.nuts.util.NLog;
 import net.thevpc.nuts.util.NLogVerb;
 
@@ -84,13 +85,13 @@ public final class NReservedBootConfigLoader {
             bLog.with().level(Level.CONFIG).verb(NLogVerb.READ).log( NMsg.ofJ("detect config version {0} ( considered as 0.5.1, very old config, ignored)", configVersion));
         } else if (buildNumber <= 505) {
             bLog.with().level(Level.CONFIG).verb(NLogVerb.READ).log(NMsg.ofJ("detect config version {0} ( compatible with 0.5.2 config file )", configVersion));
-            loadConfigVersion502(c, jsonObject, bLog);
+            NReservedBootConfigLoaderOld.loadConfigVersion502(c, jsonObject, bLog);
         } else if (buildNumber <= 506) {
             bLog.with().level(Level.CONFIG).verb(NLogVerb.READ).log(NMsg.ofJ("detect config version {0} ( compatible with 0.5.6 config file )", configVersion));
-            loadConfigVersion506(c, jsonObject, bLog);
+            NReservedBootConfigLoaderOld.loadConfigVersion506(c, jsonObject, bLog);
         } else {
             bLog.with().level(Level.CONFIG).verb(NLogVerb.READ).log(NMsg.ofJ("detect config version {0} ( compatible with 0.5.7 config file )", configVersion));
-            loadConfigVersion507(c, jsonObject, bLog);
+            NReservedBootConfigLoaderOld.loadConfigVersion507(c, jsonObject, bLog);
         }
         return c;
     }
@@ -107,46 +108,7 @@ public final class NReservedBootConfigLoader {
         }
     }
 
-    /**
-     * best effort to load config object from jsonObject saved with nuts version
-     * "0.5.6" and later.
-     *
-     * @param config     config object to fill
-     * @param jsonObject config JSON object
-     */
-    @SuppressWarnings("unchecked")
-    private static void loadConfigVersion507(NBootOptionsBuilder config, Map<String, Object> jsonObject,
-                                             NLog bLog) {
-        bLog.with().level(Level.CONFIG).verb(NLogVerb.INFO).log( NMsg.ofPlain("config version compatibility : 0.5.7"));
-        config.setUuid((String) jsonObject.get("uuid"));
-        config.setName((String) jsonObject.get("name"));
-        config.setWorkspace((String) jsonObject.get("workspace"));
-        config.setJavaCommand((String) jsonObject.get("javaCommand"));
-        config.setJavaOptions((String) jsonObject.get("javaOptions"));
-        config.setHomeLocations(asNutsHomeLocationMap((Map<Object, String>) jsonObject.get("homeLocations")));
-        config.setStoreLocations(asNutsStoreLocationMap((Map<Object, String>) jsonObject.get("storeLocations")));
-        config.setStoreLocationStrategy(NStoreLocationStrategy.parse((String) jsonObject.get("storeLocationStrategy")).orNull());
-        config.setStoreLocationLayout(NOsFamily.parse((String) jsonObject.get("storeLocationLayout")).orNull());
-        config.setRepositoryStoreLocationStrategy(NStoreLocationStrategy.parse((String) jsonObject.get("repositoryStoreLocationStrategy")).orNull());
-        config.setBootRepositories((String) jsonObject.get("bootRepositories"));
-
-        List<Map<String, Object>> extensions = (List<Map<String, Object>>) jsonObject.get("extensions");
-        if (extensions != null) {
-            LinkedHashSet<String> extSet = new LinkedHashSet<>();
-            for (Map<String, Object> extension : extensions) {
-                String eid = (String) extension.get("id");
-                Boolean enabled = (Boolean) extension.get("enabled");
-                if (enabled != null && enabled) {
-                    extSet.add(eid);
-                }
-            }
-            config.setExtensionsSet(extSet);
-        } else {
-            config.setExtensionsSet(new HashSet<>());
-        }
-    }
-
-    private static Map<NHomeLocation, String> asNutsHomeLocationMap(Map<Object,String> m) {
+    public static Map<NHomeLocation, String> asNutsHomeLocationMap(Map<Object,String> m) {
         Map<NHomeLocation, String> a = new LinkedHashMap<>();
         if (m != null) {
             for (Map.Entry<Object, String> e : m.entrySet()) {
@@ -165,18 +127,18 @@ public final class NReservedBootConfigLoader {
         return a;
     }
 
-    private static Map<NStoreLocation, String> asNutsStoreLocationMap(Map<Object,String> m) {
-        Map<NStoreLocation, String> a = new LinkedHashMap<>();
+    public static Map<NStoreType, String> asNutsStoreLocationMap(Map<Object,String> m) {
+        Map<NStoreType, String> a = new LinkedHashMap<>();
         if (m != null) {
             for (Map.Entry<Object, String> e : m.entrySet()) {
                 Object k = e.getKey();
-                NStoreLocation kk;
-                if (k instanceof NStoreLocation) {
-                    kk = (NStoreLocation) k;
+                NStoreType kk;
+                if (k instanceof NStoreType) {
+                    kk = (NStoreType) k;
                 } else if (k == null) {
                     kk = null;
                 } else {
-                    kk = NStoreLocation.parse((String) k).orNull();
+                    kk = NStoreType.parse((String) k).orNull();
                 }
                 if (kk != null) {
                     a.put(kk, e.getValue());
@@ -186,118 +148,5 @@ public final class NReservedBootConfigLoader {
         return a;
     }
 
-
-    /**
-     * best effort to load config object from jsonObject saved with nuts version
-     * "[0.5.6]" and later.
-     *
-     * @param config     config object to fill
-     * @param jsonObject config JSON object
-     */
-    @SuppressWarnings("unchecked")
-    private static void loadConfigVersion506(NBootOptionsBuilder config, Map<String, Object> jsonObject,
-                                             NLog bLog) {
-        bLog.with().level(Level.CONFIG).verb(NLogVerb.INFO).log( NMsg.ofPlain("config version compatibility : 0.5.6"));
-        config.setUuid((String) jsonObject.get("uuid"));
-        config.setName((String) jsonObject.get("name"));
-        config.setWorkspace((String) jsonObject.get("workspace"));
-        config.setApiVersion(NVersion.of((String) jsonObject.get("apiVersion")).orNull());
-        NId runtimeId = NId.of((String) jsonObject.get("runtimeId")).orNull();
-        config.setRuntimeId(runtimeId);
-        config.setJavaCommand((String) jsonObject.get("javaCommand"));
-        config.setJavaOptions((String) jsonObject.get("javaOptions"));
-        config.setStoreLocations(asNutsStoreLocationMap((Map<Object, String>) jsonObject.get("storeLocations")));
-        config.setHomeLocations(asNutsHomeLocationMap((Map<Object, String>) jsonObject.get("homeLocations")));
-        String s = (String) jsonObject.get("storeLocationStrategy");
-        if (s != null && s.length() > 0) {
-            config.setStoreLocationStrategy(NStoreLocationStrategy.valueOf(s.toUpperCase()));
-        }
-        s = (String) jsonObject.get("repositoryStoreLocationStrategy");
-        if (s != null && s.length() > 0) {
-            config.setRepositoryStoreLocationStrategy(NStoreLocationStrategy.valueOf(s.toUpperCase()));
-        }
-        s = (String) jsonObject.get("storeLocationLayout");
-        if (s != null && s.length() > 0) {
-            config.setStoreLocationLayout(NOsFamily.valueOf(s.toUpperCase()));
-        }
-    }
-
-    /**
-     * best effort to load config object from jsonObject saved with nuts version
-     * "[0.5.2,0.5.6[".
-     *
-     * @param config     config object to fill
-     * @param jsonObject config JSON object
-     */
-    private static void loadConfigVersion502(NBootOptionsBuilder config, Map<String, Object> jsonObject,
-                                             NLog bLog) {
-        bLog.with().level(Level.CONFIG).verb(NLogVerb.INFO).log( NMsg.ofPlain("config version compatibility : 0.5.2"));
-        config.setUuid((String) jsonObject.get("uuid"));
-        config.setName((String) jsonObject.get("name"));
-        config.setWorkspace((String) jsonObject.get("workspace"));
-        config.setApiVersion(NVersion.of((String) jsonObject.get("bootApiVersion")).orNull());
-        NId runtimeId = NId.of((String) jsonObject.get("bootRuntime")).orNull();
-        config.setRuntimeId(runtimeId);
-        config.setJavaCommand((String) jsonObject.get("bootJavaCommand"));
-        config.setJavaOptions((String) jsonObject.get("bootJavaOptions"));
-        Map<NStoreLocation, String> storeLocations = new LinkedHashMap<>();
-        Map<NHomeLocation, String> homeLocations = new LinkedHashMap<>();
-        for (NStoreLocation folder : NStoreLocation.values()) {
-            String folderName502 = folder.name();
-            if (folder == NStoreLocation.APPS) {
-                folderName502 = "programs";
-            }
-            String k = folderName502.toLowerCase() + "StoreLocation";
-            String v = (String) jsonObject.get(k);
-            storeLocations.put(folder, v);
-
-            k = folderName502.toLowerCase() + "SystemHome";
-            v = (String) jsonObject.get(k);
-            homeLocations.put(NHomeLocation.of(null, folder), v);
-            for (NOsFamily osFamily : NOsFamily.values()) {
-                switch (osFamily) {
-                    case LINUX: {
-                        k = folderName502.toLowerCase() + "LinuxHome";
-                        break;
-                    }
-                    case UNIX: {
-                        k = folderName502.toLowerCase() + "UnixHome";
-                        break;
-                    }
-                    case MACOS: {
-                        k = folderName502.toLowerCase() + "MacOsHome";
-                        break;
-                    }
-                    case WINDOWS: {
-                        k = folderName502.toLowerCase() + "WindowsHome";
-                        break;
-                    }
-                    case UNKNOWN: {
-                        k = folderName502.toLowerCase() + "UnknownHome";
-                        break;
-                    }
-                    default: {
-                        throw new NBootException(NMsg.ofC("unsupported os-family %s", osFamily));
-                    }
-                }
-                v = (String) jsonObject.get(k);
-                homeLocations.put(NHomeLocation.of(osFamily, folder), v);
-            }
-        }
-        config.setHomeLocations(homeLocations);
-        config.setStoreLocations(storeLocations);
-        String s = (String) jsonObject.get("storeLocationStrategy");
-        if (s != null && s.length() > 0) {
-            config.setStoreLocationStrategy(NStoreLocationStrategy.valueOf(s.toUpperCase()));
-        }
-        s = (String) jsonObject.get("repositoryStoreLocationStrategy");
-        if (s != null && s.length() > 0) {
-            config.setRepositoryStoreLocationStrategy(NStoreLocationStrategy.valueOf(s.toUpperCase()));
-        }
-        s = (String) jsonObject.get("storeLocationLayout");
-        if (s != null && s.length() > 0) {
-            config.setStoreLocationLayout(NOsFamily.valueOf(s.toUpperCase()));
-        }
-    }
 
 }

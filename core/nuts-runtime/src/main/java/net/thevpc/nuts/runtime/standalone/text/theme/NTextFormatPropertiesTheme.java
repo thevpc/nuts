@@ -50,7 +50,7 @@ public class NTextFormatPropertiesTheme implements NTextFormatTheme {
             } else {
                 NPath themeFile = NLocations.of(session).getStoreLocation(
                         NId.ofRuntime("SHARED").get(session),
-                        NStoreLocation.CONFIG
+                        NStoreType.CONF
                 ).resolve("themes").resolve(name);
                 if (themeFile.isRegularFile()) {
                     try (InputStream inStream = themeFile.getInputStream()) {

@@ -56,7 +56,8 @@ public abstract class AbstractRecommendationConnector implements RecommendationC
         validateRequest(ri);
         NId id = new NId(ri.q.getId());
         String name="installer-recommendations.json";
-        String url = "/repo/" + id.getGroupId().replace('.', '/')
+        String url = "/repo/" +
+                id.getGroupId().replace('.', '/')
                 + '/' + id.getArtifactId()
                 + '/' + id.getVersion()
                 + '/' + name;

@@ -2,7 +2,7 @@ package net.thevpc.nuts.runtime.standalone.descriptor.util;
 
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.util.*;
-import net.thevpc.nuts.runtime.standalone.id.util.NIdUtils;
+import net.thevpc.nuts.runtime.standalone.id.util.CoreNIdUtils;
 import net.thevpc.nuts.runtime.standalone.util.CoreNUtils;
 import net.thevpc.nuts.runtime.standalone.util.CoreStringUtils;
 import net.thevpc.nuts.runtime.standalone.util.MapToFunction;
@@ -94,11 +94,11 @@ public class NDescriptorUtils {
         boolean topException = false;
         try {
             for (NId parent : effectiveDescriptor.getParents()) {
-                NIdUtils.checkValidEffectiveId(parent, session);
+                CoreNIdUtils.checkValidEffectiveId(parent, session);
             }
-            NIdUtils.checkValidEffectiveId(effectiveDescriptor.getId(), session);
+            CoreNIdUtils.checkValidEffectiveId(effectiveDescriptor.getId(), session);
             for (NDependency dependency : effectiveDescriptor.getDependencies()) {
-                if (!NIdUtils.isValidEffectiveId(dependency.toId())) {
+                if (!CoreNIdUtils.isValidEffectiveId(dependency.toId())) {
                     if (dependency.isOptional()) {
                         NLogOp.of(NDescriptorUtils.class, session)
                                 .verb(NLogVerb.WARNING).level(Level.FINE)
@@ -118,7 +118,7 @@ public class NDescriptorUtils {
             for (NDependency dependency : effectiveDescriptor.getStandardDependencies()) {
                 //NutsIdUtils.checkValidEffectiveId(dependency.toId(),session);
                 // replace direct call to checkValidEffectiveId with the following...
-                if (!NIdUtils.isValidEffectiveId(dependency.toId())) {
+                if (!CoreNIdUtils.isValidEffectiveId(dependency.toId())) {
                     // sometimes the variable is defined later in the pom that uses this POM standard Dependencies
                     // so just log a warning, this is not an error but a very bad practice from the dependency maintainer!
                     NLogOp.of(NDescriptorUtils.class, session)

@@ -128,11 +128,11 @@ public class DefaultNWorkspaceOptions implements Serializable, NWorkspaceOptions
     private final Boolean skipBoot;
 
     /**
-     * if true consider global/system repository
+     * if true consider system repository
      * <br>
      * option-type : exported (inherited in child workspaces)
      */
-    private final Boolean global;
+    private final Boolean system;
 
     /**
      * if true consider GUI/Swing mode
@@ -291,7 +291,7 @@ public class DefaultNWorkspaceOptions implements Serializable, NWorkspaceOptions
      * option-type : create (used when creating new workspace. will not be
      * exported nor promoted to runtime)
      */
-    private final Map<NStoreLocation, String> storeLocations;
+    private final Map<NStoreType, String> storeLocations;
 
     /**
      * option-type : create (used when creating new workspace. will not be
@@ -303,19 +303,19 @@ public class DefaultNWorkspaceOptions implements Serializable, NWorkspaceOptions
      * option-type : create (used when creating new workspace. will not be
      * exported nor promoted to runtime)
      */
-    private final NOsFamily storeLocationLayout;
+    private final NOsFamily storeLayout;
 
     /**
      * option-type : create (used when creating new workspace. will not be
      * exported nor promoted to runtime)
      */
-    private final NStoreLocationStrategy storeLocationStrategy;
+    private final NStoreStrategy storeStrategy;
 
     /**
      * option-type : create (used when creating new workspace. will not be
      * exported nor promoted to runtime)
      */
-    private final NStoreLocationStrategy repositoryStoreLocationStrategy;
+    private final NStoreStrategy repositoryStoreStrategy;
 
     /**
      * option-type : exported (inherited in child workspaces)
@@ -397,11 +397,11 @@ public class DefaultNWorkspaceOptions implements Serializable, NWorkspaceOptions
                                     char[] credentials, String progressOptions, String dependencySolver,
                                     String debug, String archetype, String locale, String theme, NLogConfig logConfig,
                                     NConfirmationMode confirm, NContentType outputFormat, NOpenMode openMode,
-                                    NExecutionType executionType, NStoreLocationStrategy storeLocationStrategy,
-                                    NStoreLocationStrategy repositoryStoreLocationStrategy, NOsFamily storeLocationLayout,
+                                    NExecutionType executionType, NStoreStrategy storeStrategy,
+                                    NStoreStrategy repositoryStoreStrategy, NOsFamily storeLayout,
                                     NTerminalMode terminalMode, NFetchStrategy fetchStrategy, NRunAs runAs,
                                     Instant creationTime, Instant expireTime, Boolean installCompanions, Boolean skipWelcome,
-                                    Boolean skipBoot, Boolean global, Boolean gui, Boolean readOnly,
+                                    Boolean skipBoot, Boolean system, Boolean gui, Boolean readOnly,
                                     Boolean trace, Boolean dry, Boolean recover, Boolean reset, Boolean commandVersion,
                                     Boolean commandHelp, Boolean inherited, Boolean switchWorkspace, Boolean cached,
                                     Boolean indexed, Boolean transitive, Boolean bot, Boolean skipErrors,
@@ -409,7 +409,7 @@ public class DefaultNWorkspaceOptions implements Serializable, NWorkspaceOptions
                                     ExecutorService executorService, Supplier<ClassLoader> classLoaderSupplier,
                                     List<String> applicationArguments, List<String> outputFormatOptions,
                                     List<String> customOptions, List<String> excludedExtensions, List<String> repositories,
-                                    List<String> executorOptions, List<NMsg> errors, Map<NStoreLocation, String> storeLocations,
+                                    List<String> executorOptions, List<NMsg> errors, Map<NStoreType, String> storeLocations,
                                     Map<NHomeLocation, String> homeLocations, NSupportMode desktopLauncher, NSupportMode menuLauncher, NSupportMode userLauncher) {
         this.outputFormatOptions = NReservedCollectionUtils.unmodifiableOrNullList(outputFormatOptions);
         this.customOptions = NReservedCollectionUtils.unmodifiableOrNullList(customOptions);
@@ -433,7 +433,7 @@ public class DefaultNWorkspaceOptions implements Serializable, NWorkspaceOptions
         this.installCompanions = installCompanions;
         this.skipWelcome = skipWelcome;
         this.skipBoot = skipBoot;
-        this.global = global;
+        this.system = system;
         this.gui = gui;
         this.userName = userName;
         this.credentials = credentials == null ? null : Arrays.copyOf(credentials, credentials.length);
@@ -459,9 +459,9 @@ public class DefaultNWorkspaceOptions implements Serializable, NWorkspaceOptions
         this.runAs = runAs;
         this.archetype = archetype;
         this.switchWorkspace = switchWorkspace;
-        this.storeLocationLayout = storeLocationLayout;
-        this.storeLocationStrategy = storeLocationStrategy;
-        this.repositoryStoreLocationStrategy = repositoryStoreLocationStrategy;
+        this.storeLayout = storeLayout;
+        this.storeStrategy = storeStrategy;
+        this.repositoryStoreStrategy = repositoryStoreStrategy;
         this.fetchStrategy = fetchStrategy;
         this.cached = cached;
         this.indexed = indexed;
@@ -650,8 +650,8 @@ public class DefaultNWorkspaceOptions implements Serializable, NWorkspaceOptions
 
 
     @Override
-    public NOptional<NStoreLocationStrategy> getRepositoryStoreLocationStrategy() {
-        return NOptional.ofNamed(repositoryStoreLocationStrategy,"repositoryStoreLocationStrategy");
+    public NOptional<NStoreStrategy> getRepositoryStoreStrategy() {
+        return NOptional.ofNamed(repositoryStoreStrategy,"repositoryStoreStrategy");
     }
 
     @Override
@@ -661,24 +661,24 @@ public class DefaultNWorkspaceOptions implements Serializable, NWorkspaceOptions
 
 
     @Override
-    public NOptional<String> getStoreLocation(NStoreLocation folder) {
+    public NOptional<String> getStoreType(NStoreType folder) {
         return NOptional.ofNamed(storeLocations==null ?null:storeLocations.get(folder),"storeLocations["+folder+"]");
     }
 
     @Override
-    public NOptional<NOsFamily> getStoreLocationLayout() {
-        return NOptional.ofNamed(storeLocationLayout,"storeLocationLayout");
+    public NOptional<NOsFamily> getStoreLayout() {
+        return NOptional.ofNamed(storeLayout,"storeLayout");
     }
 
 
     @Override
-    public NOptional<NStoreLocationStrategy> getStoreLocationStrategy() {
-        return NOptional.ofNamed(storeLocationStrategy,"storeLocationStrategy");
+    public NOptional<NStoreStrategy> getStoreStrategy() {
+        return NOptional.ofNamed(storeStrategy,"storeStrategy");
     }
 
 
     @Override
-    public NOptional<Map<NStoreLocation, String>> getStoreLocations() {
+    public NOptional<Map<NStoreType, String>> getStoreLocations() {
         return NOptional.ofNamed(storeLocations,"storeLocations");
     }
 
@@ -712,8 +712,8 @@ public class DefaultNWorkspaceOptions implements Serializable, NWorkspaceOptions
 
 
     @Override
-    public NOptional<Boolean> getGlobal() {
-        return NOptional.ofNamed(global,"global");
+    public NOptional<Boolean> getSystem() {
+        return NOptional.ofNamed(system,"system");
     }
 
 

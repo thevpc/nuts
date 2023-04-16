@@ -141,7 +141,7 @@ public class DefaultNLocks extends AbstractNLocks {
             if (NBlankable.isBlank(face)) {
                 face = "content";
             }
-            return NLocations.of(getSession()).getStoreLocation((NId) lockedObject, NStoreLocation.RUN)
+            return NLocations.of(getSession()).getStoreLocation((NId) lockedObject, NStoreType.RUN)
                     .resolve("nuts-" + face)
                     .toFile()
                     ;

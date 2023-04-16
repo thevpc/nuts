@@ -27,7 +27,7 @@ public class DefaultNLocations implements NLocations {
     }
 
     @Override
-    public NPath getHomeLocation(NStoreLocation folderType) {
+    public NPath getHomeLocation(NStoreType folderType) {
         checkSession();
         return model.getHomeLocation(folderType, session);
     }
@@ -38,49 +38,49 @@ public class DefaultNLocations implements NLocations {
 
 
     @Override
-    public NPath getStoreLocation(NStoreLocation folderType) {
+    public NPath getStoreLocation(NStoreType folderType) {
         checkSession();
         return model.getStoreLocation(folderType, session);
     }
 
     @Override
-    public NPath getStoreLocation(NId id, NStoreLocation folderType) {
+    public NPath getStoreLocation(NId id, NStoreType folderType) {
         checkSession();
         return model.getStoreLocation(id, folderType, session);
     }
 
     @Override
-    public NPath getStoreLocation(NStoreLocation folderType, String repositoryIdOrName) {
+    public NPath getStoreLocation(NStoreType folderType, String repositoryIdOrName) {
         checkSession();
         return model.getStoreLocation(folderType, repositoryIdOrName, session);
     }
 
     @Override
-    public NPath getStoreLocation(NId id, NStoreLocation folderType, String repositoryIdOrName) {
+    public NPath getStoreLocation(NId id, NStoreType folderType, String repositoryIdOrName) {
         checkSession();
         return model.getStoreLocation(id, folderType, repositoryIdOrName, session);
     }
 
     @Override
-    public NStoreLocationStrategy getStoreLocationStrategy() {
+    public NStoreStrategy getStoreStrategy() {
         checkSession();
-        return model.getStoreLocationStrategy(session);
+        return model.getStoreStrategy(session);
     }
 
     @Override
-    public NStoreLocationStrategy getRepositoryStoreLocationStrategy() {
+    public NStoreStrategy getRepositoryStoreStrategy() {
         checkSession();
-        return model.getRepositoryStoreLocationStrategy(session);
+        return model.getRepositoryStoreStrategy(session);
     }
 
     @Override
-    public NOsFamily getStoreLocationLayout() {
+    public NOsFamily getStoreLayout() {
         checkSession();
-        return model.getStoreLocationLayout(session);
+        return model.getStoreLayout(session);
     }
 
     @Override
-    public Map<NStoreLocation, String> getStoreLocations() {
+    public Map<NStoreType, String> getStoreLocations() {
         checkSession();
         return model.getStoreLocations(session);
     }
@@ -127,7 +127,7 @@ public class DefaultNLocations implements NLocations {
     }
 
     @Override
-    public NLocations setStoreLocation(NStoreLocation folderType, String location) {
+    public NLocations setStoreLocation(NStoreType folderType, String location) {
         checkSession();
         model.setStoreLocation(folderType, location, session);
         return this;
@@ -138,16 +138,16 @@ public class DefaultNLocations implements NLocations {
     }
 
     @Override
-    public NLocations setStoreLocationStrategy(NStoreLocationStrategy strategy) {
+    public NLocations setStoreStrategy(NStoreStrategy strategy) {
         checkSession();
-        model.setStoreLocationStrategy(strategy, session);
+        model.setStoreStrategy(strategy, session);
         return this;
     }
 
     @Override
-    public NLocations setStoreLocationLayout(NOsFamily layout) {
+    public NLocations setStoreLayout(NOsFamily storeLayout) {
         checkSession();
-        model.setStoreLocationLayout(layout, session);
+        model.setStoreLayout(storeLayout, session);
         return this;
     }
 

@@ -55,11 +55,11 @@ public enum NDisplayProperty implements NEnum {
     FILE,
     VAR_LOCATION,
     TEMP_FOLDER,
-    CONFIG_FOLDER,
+    CONF_FOLDER,
     LIB_FOLDER,
     LOG_FOLDER,
     CACHE_FOLDER,
-    APPS_FOLDER,
+    BIN_FOLDER,
     LONG_STATUS;
     private String id;
 

@@ -90,7 +90,7 @@ public class DefaultNRepoConfigManager implements NRepositoryConfigManager, NRep
     }
 
     @Override
-    public NPath getStoreLocation(NStoreLocation folderType) {
+    public NPath getStoreLocation(NStoreType folderType) {
         checkSession();
         return getModel().getStoreLocation(folderType, session);
     }
@@ -198,9 +198,9 @@ public class DefaultNRepoConfigManager implements NRepositoryConfigManager, NRep
     }
 
     @Override
-    public NStoreLocationStrategy getStoreLocationStrategy() {
+    public NStoreStrategy getStoreStrategy() {
         checkSession();
-        return getModel().getStoreLocationStrategy(session);
+        return getModel().getStoreStrategy(session);
     }
 
     public NSession getSession() {

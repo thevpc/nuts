@@ -276,7 +276,7 @@ Boot Runtime Version: ###${nuts.workspace-runtime.version}###
 
  More tuning of these folders may be done by defining the folders location directly 
  instead of the folder's home locations using the following options :
-            ```sh --apps-location <path>```
+            ```sh --bin-location <path>```
             ```sh --lib-location <path>```
             ```sh --config-location <path>```
             ```sh --var-location <path>```

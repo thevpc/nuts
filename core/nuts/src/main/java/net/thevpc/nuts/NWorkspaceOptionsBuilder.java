@@ -144,14 +144,14 @@ public interface NWorkspaceOptionsBuilder extends NWorkspaceOptions {
     NWorkspaceOptionsBuilder setCredentials(char[] credentials);
 
 
-    NWorkspaceOptionsBuilder setRepositoryStoreLocationStrategy(NStoreLocationStrategy repositoryStoreLocationStrategy);
+    NWorkspaceOptionsBuilder setRepositoryStoreStrategy(NStoreStrategy repositoryStoreStrategy);
 
 
     NWorkspaceOptionsBuilder setRuntimeId(NId runtimeId);
 
-    NWorkspaceOptionsBuilder setStoreLocationLayout(NOsFamily storeLocationLayout);
+    NWorkspaceOptionsBuilder setStoreLayout(NOsFamily storeLayout);
 
-    NWorkspaceOptionsBuilder setStoreLocationStrategy(NStoreLocationStrategy storeLocationStrategy);
+    NWorkspaceOptionsBuilder setStoreStrategy(NStoreStrategy storeStrategy);
 
 
     /**
@@ -163,7 +163,7 @@ public interface NWorkspaceOptionsBuilder extends NWorkspaceOptions {
      * @param storeLocations store locations map
      * @return {@code this} instance
      */
-    NWorkspaceOptionsBuilder setStoreLocations(Map<NStoreLocation, String> storeLocations);
+    NWorkspaceOptionsBuilder setStoreLocations(Map<NStoreType, String> storeLocations);
 
     NWorkspaceOptionsBuilder setTerminalMode(NTerminalMode terminalMode);
 
@@ -182,7 +182,7 @@ public interface NWorkspaceOptionsBuilder extends NWorkspaceOptions {
      * @param global if true consider global/system repository shared between all users
      * @return if true consider global/system repository
      */
-    NWorkspaceOptionsBuilder setGlobal(Boolean global);
+    NWorkspaceOptionsBuilder setSystem(Boolean global);
 
     NWorkspaceOptionsBuilder setGui(Boolean gui);
 
@@ -328,7 +328,7 @@ public interface NWorkspaceOptionsBuilder extends NWorkspaceOptions {
 
     NWorkspaceOptionsBuilder setUserName(String username);
 
-    NWorkspaceOptionsBuilder setStoreLocation(NStoreLocation location, String value);
+    NWorkspaceOptionsBuilder setStoreLocation(NStoreType location, String value);
 
     NWorkspaceOptionsBuilder setHomeLocation(NHomeLocation location, String value);
 

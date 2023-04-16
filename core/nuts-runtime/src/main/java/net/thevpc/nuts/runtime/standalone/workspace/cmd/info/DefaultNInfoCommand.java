@@ -237,7 +237,7 @@ public class DefaultNInfoCommand extends DefaultFormatBase<NInfoCommand> impleme
                 cmdLine.skip();
                 if (enabled) {
                     requests.add("nuts-workspace");
-                    for (NStoreLocation folderType : NStoreLocation.values()) {
+                    for (NStoreType folderType : NStoreType.values()) {
                         requests.add("nuts-workspace-" + folderType.id());
                     }
                     requests.add("user-home");
@@ -340,12 +340,12 @@ public class DefaultNInfoCommand extends DefaultFormatBase<NInfoCommand> impleme
                 }
         );
         props.put("nuts-workspace-id", session -> NTexts.of(session).ofStyled(stringValue(session.getWorkspace().getUuid()), NTextStyle.path()));
-        props.put("nuts-store-layout", session -> NLocations.of(session).getStoreLocationLayout());
-        props.put("nuts-store-strategy", session -> NLocations.of(session).getStoreLocationStrategy());
-        props.put("nuts-repo-store-strategy", session -> NLocations.of(session).getRepositoryStoreLocationStrategy());
-        props.put("nuts-global", session -> NBootManager.of(session).getBootOptions().getGlobal().orNull());
+        props.put("nuts-store-layout", session -> NLocations.of(session).getStoreLayout());
+        props.put("nuts-store-strategy", session -> NLocations.of(session).getStoreStrategy());
+        props.put("nuts-repo-store-strategy", session -> NLocations.of(session).getRepositoryStoreStrategy());
+        props.put("nuts-global", session -> NBootManager.of(session).getBootOptions().getSystem().orNull());
         props.put("nuts-workspace", session -> NLocations.of(session).getWorkspaceLocation());
-        for (NStoreLocation folderType : NStoreLocation.values()) {
+        for (NStoreType folderType : NStoreType.values()) {
             props.put("nuts-workspace-" + folderType.id(), session -> NLocations.of(session).getStoreLocation(folderType));
         }
         props.put("nuts-open-mode", session -> NBootManager.of(session).getBootOptions().getOpenMode().orNull());
@@ -545,12 +545,12 @@ public class DefaultNInfoCommand extends DefaultFormatBase<NInfoCommand> impleme
                 txt.ofBuilder().appendJoined(";", runtimeClassPath)
         );
         props.put("nuts-workspace-id", txt.ofStyled(stringValue(session.getWorkspace().getUuid()), NTextStyle.path()));
-        props.put("nuts-store-layout", NLocations.of(session).getStoreLocationLayout());
-        props.put("nuts-store-strategy", NLocations.of(session).getStoreLocationStrategy());
-        props.put("nuts-repo-store-strategy", NLocations.of(session).getRepositoryStoreLocationStrategy());
-        props.put("nuts-global", options.getGlobal().orNull());
+        props.put("nuts-store-layout", NLocations.of(session).getStoreLayout());
+        props.put("nuts-store-strategy", NLocations.of(session).getStoreStrategy());
+        props.put("nuts-repo-store-strategy", NLocations.of(session).getRepositoryStoreStrategy());
+        props.put("nuts-global", options.getSystem().orNull());
         props.put("nuts-workspace", NLocations.of(session).getWorkspaceLocation());
-        for (NStoreLocation folderType : NStoreLocation.values()) {
+        for (NStoreType folderType : NStoreType.values()) {
             props.put("nuts-workspace-" + folderType.id(), NLocations.of(session).getStoreLocation(folderType));
         }
         props.put("nuts-open-mode", options.getOpenMode().orNull());
@@ -693,9 +693,9 @@ public class DefaultNInfoCommand extends DefaultFormatBase<NInfoCommand> impleme
         props.put(key(prefix, "index-subscribed"), (repo.config().setSession(getSession()).isIndexSubscribed()));
         props.put(key(prefix, "location"), repo.config().getLocation());
         props.put(key(prefix, "deploy-order"), (repo.config().getDeployWeight()));
-        props.put(key(prefix, "store-location-strategy"), (repo.config().getStoreLocationStrategy()));
+        props.put(key(prefix, "store-strategy"), (repo.config().getStoreStrategy()));
         props.put(key(prefix, "store-location"), repo.config().getStoreLocation());
-        for (NStoreLocation value : NStoreLocation.values()) {
+        for (NStoreType value : NStoreType.values()) {
             props.put(key(prefix, "store-location-" + value.id()), repo.config().getStoreLocation(value));
         }
         props.put(key(prefix, "supported-mirroring"), (repo.config().isSupportedMirroring()));

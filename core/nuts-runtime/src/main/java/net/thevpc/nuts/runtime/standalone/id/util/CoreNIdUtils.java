@@ -9,7 +9,7 @@ import net.thevpc.nuts.util.NStringUtils;
 
 import java.util.Map;
 
-public class NIdUtils {
+public class CoreNIdUtils {
     public static void checkLongId(NId id, NSession session) {
         checkShortId(id, session);
         NAssert.requireNonBlank(id.getVersion(), () -> NMsg.ofC("missing version for %s", id), session);
@@ -45,20 +45,6 @@ public class NIdUtils {
         return id.builder().setProperties(q).build();
     }
 
-    public static String getPath(NId id, String ext, char sep) {
-        StringBuilder sb = new StringBuilder();
-        sb.append(id.getGroupId().replace('.', sep));
-        sb.append(sep);
-        sb.append(id.getArtifactId());
-        sb.append(sep);
-        sb.append(id.getVersion().toString());
-        sb.append(sep);
-        String name = id.getArtifactId() + "-" + id.getVersion().getValue();
-        sb.append(name);
-        sb.append(ext);
-        return sb.toString();
-    }
-
     public static boolean isApiId(NId id) {
         return NId.ofApi("").get().equalsShortId(id);
     }
@@ -88,7 +74,7 @@ public class NIdUtils {
         if (apiVersion.equals(session.getWorkspace().getApiVersion().toString())) {
             return session.getWorkspace().getRuntimeId();
         }
-        NPath apiBoot = NLocations.of(session).getStoreLocation(apiId(apiVersion, session), NStoreLocation.CONFIG).resolve(NConstants.Files.API_BOOT_CONFIG_FILE_NAME);
+        NPath apiBoot = NLocations.of(session).getStoreLocation(apiId(apiVersion, session), NStoreType.CONF).resolve(NConstants.Files.API_BOOT_CONFIG_FILE_NAME);
         if (apiBoot.isRegularFile()) {
             NWorkspaceConfigApi c = NElements.of(session)
                     .setSession(session)

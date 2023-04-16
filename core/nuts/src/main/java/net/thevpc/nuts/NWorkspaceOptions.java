@@ -282,7 +282,7 @@ public interface NWorkspaceOptions extends Serializable {
      * @return repository store location strategy to consider when creating new repositories
      * for a new workspace.
      */
-    NOptional<NStoreLocationStrategy> getRepositoryStoreLocationStrategy();
+    NOptional<NStoreStrategy> getRepositoryStoreStrategy();
 
     /**
      * nuts runtime id (or version) to boot.
@@ -303,7 +303,7 @@ public interface NWorkspaceOptions extends Serializable {
      * @param folder folder type
      * @return store location for the given folder.
      */
-    NOptional<String> getStoreLocation(NStoreLocation folder);
+    NOptional<String> getStoreType(NStoreType folder);
 
 
     /**
@@ -314,7 +314,7 @@ public interface NWorkspaceOptions extends Serializable {
      *
      * @return store location layout to consider when creating a new workspace.
      */
-    NOptional<NOsFamily> getStoreLocationLayout();
+    NOptional<NOsFamily> getStoreLayout();
 
     /**
      * store location strategy for creating a new workspace.
@@ -324,7 +324,7 @@ public interface NWorkspaceOptions extends Serializable {
      *
      * @return store location strategy for creating a new workspace.
      */
-    NOptional<NStoreLocationStrategy> getStoreLocationStrategy();
+    NOptional<NStoreStrategy> getStoreStrategy();
 
     /**
      * store locations map to consider when creating a new workspace.
@@ -334,7 +334,7 @@ public interface NWorkspaceOptions extends Serializable {
      *
      * @return store locations map to consider when creating a new workspace.
      */
-    NOptional<Map<NStoreLocation, String>> getStoreLocations();
+    NOptional<Map<NStoreType, String>> getStoreLocations();
 
     /**
      * terminal mode (inherited, formatted, filtered) to use.
@@ -376,14 +376,14 @@ public interface NWorkspaceOptions extends Serializable {
     NOptional<String> getDebug();
 
     /**
-     * if true consider global/system repository
+     * if true consider system repository
      * <br>
      * <strong>option-type :</strong> exported (inherited in child workspaces)
      *
-     * @return if true consider global/system repository
+     * @return if true consider system repository
      */
 
-    NOptional<Boolean> getGlobal();
+    NOptional<Boolean> getSystem();
 
     /**
      * if true consider GUI/Swing mode

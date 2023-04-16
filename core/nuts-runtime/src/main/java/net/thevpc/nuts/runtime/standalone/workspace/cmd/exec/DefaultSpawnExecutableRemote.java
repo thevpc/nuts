@@ -8,6 +8,8 @@ package net.thevpc.nuts.runtime.standalone.workspace.cmd.exec;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.cmdline.NArg;
 import net.thevpc.nuts.cmdline.NCmdLine;
+import net.thevpc.nuts.elem.NElement;
+import net.thevpc.nuts.elem.NElements;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.io.NSessionTerminal;
 import net.thevpc.nuts.runtime.standalone.executor.AbstractSyncIProcessExecHelper;
@@ -16,6 +18,8 @@ import net.thevpc.nuts.text.NText;
 import net.thevpc.nuts.text.NTextStyle;
 import net.thevpc.nuts.text.NTexts;
 import net.thevpc.nuts.util.NConnexionString;
+import net.thevpc.nuts.util.NIdUtils;
+import net.thevpc.nuts.util.NPlatformHome;
 import net.thevpc.nuts.util.NStringUtils;
 
 import java.util.*;
@@ -34,62 +38,107 @@ public class DefaultSpawnExecutableRemote extends AbstractNExecutableCommand {
     NConnexionString connexionString;
     private boolean showCommand = false;
     private final boolean inheritSystemIO;
+    private NExecCommandExtension commExec;
 
     private static class RemoteConnexionStringInfo {
         public String javaCommand = "java";
         public String nutsJar;
         long lastChecked;
         long timoutMS = 1000;
+        String userName;
         String userHome;
-        String nutsCommand;
+        String osType;
+        String workspaceName = "default-workspace";
+
+        void tryUpdate(DefaultSpawnExecutableRemote r) {
+            if (isUpdatable()) {
+                update(r);
+                lastChecked = System.currentTimeMillis();
+            }
+        }
 
         void update(DefaultSpawnExecutableRemote r) {
-            if (userHome == null) {
-                userHome = NStringUtils.trim(r.runOnceGrab("echo", "$HOME"));
+            if (userHome == null || userName == null) {
+                // echo -e "$USER\\n$HOME\n$OSTYPE"
+                String[] echoes = NStringUtils.trim(r.runOnceGrab("echo", "-e", "$USER\\\\n$HOME\\\\n$OSTYPE")).split("\n");
+                userName = echoes[0];
+                userHome = echoes[1];
+                osType = echoes[2];
             }
-            if (NBlankable.isBlank(nutsCommand)) {
-                try {
-                    nutsCommand = NStringUtils.trim(r.runOnceGrab("which", "nuts"));
-                } catch (Exception e) {
-                    //
-                }
-            }
-            if (NBlankable.isBlank(nutsCommand)) {
+            if (NBlankable.isBlank(nutsJar)) {
                 NSession session = r.session;
-                if (NBlankable.isBlank(nutsCommand)) {
-                    if (NBlankable.isBlank(nutsJar)) {
-                        List<String> nutsPaths = new ArrayList<>();
-                        try {
-                            String ls = NStringUtils.trim(r.runOnceGrab("ls", userHome + "/bin/nuts*.jar"));
-                            nutsPaths.addAll(Arrays.asList(ls.split("\n")));
-                        } catch (Exception e) {
-                            //
-                        }
-                        if (!nutsPaths.isEmpty()) {
-                            nutsJar = nutsPaths.get(0);
-                        }
-                    }
+                NConnexionString targetConnexion = NConnexionString.of(r.execCommand.getTarget()).get().copy()
+                        .setQueryString(null)
+                        .setPath(null);
+                NElement workspaceJson = null;
+                NPlatformHome pHome = NPlatformHome.ofPortable(NOsFamily.LINUX, userHome);
+                try {
+                    workspaceJson = NElements.of(session)
+                            .parse(
+                                    NPath.of(targetConnexion.copy()
+                                            .setPath(pHome.getHome() + "/ws/" + workspaceName + "/nuts-workspace.json")
+                                            .toString(), session)
+                            );
+                } catch (Exception e) {
+                    //not found!
+                }
+                String storeLocationLib = null;
+                if (workspaceJson != null && workspaceJson.isObject()) {
+                    storeLocationLib = workspaceJson.asObject().get().getStringByPath("storeLocations", "lib").orNull();
+                }
+                if (storeLocationLib == null) {
+                    storeLocationLib = pHome.getWorkspaceStore(NStoreType.LIB, workspaceName);
+                }
 
-                    if (NBlankable.isBlank(nutsJar)) {
-                        NPath e = NFetchCommand.of(session)
+                String sharedNutsApiJar = storeLocationLib + "/" + NIdUtils.resolveJarPath(r.session.getWorkspace().getApiId());
+                String sharedNutsApiDesc = storeLocationLib + "/" + NIdUtils.resolveDescPath(r.session.getWorkspace().getApiId());
+                String sharedNutsRuntimeJar = storeLocationLib + "/" + NIdUtils.resolveJarPath(r.session.getWorkspace().getRuntimeId());
+                String sharedNutsRuntimeDesc = storeLocationLib + "/" + NIdUtils.resolveDescPath(r.session.getWorkspace().getRuntimeId());
+
+                if (NBlankable.isBlank(nutsJar)) {
+                    if (!NPath.of(targetConnexion.copy()
+                            .setPath(sharedNutsApiJar)
+                            .toString(), session).exists()) {
+                        NDefinition e = NFetchCommand.of(session)
                                 .setId(session.getWorkspace().getApiId())
                                 .setContent(true)
-                                .getResultContent();
-                        String nutsJar2 = userHome + "/bin/" + e.getName();
-                        e.copyTo(
-                                NPath.of(
-                                        NConnexionString.of(r.execCommand.getHost()).get()
-                                                .copy()
-                                                .setPath(null)
-                                                + ":" + nutsJar2,
+                                .getResultDefinition();
+                        e.getContent().get().copyTo(
+                                NPath.of(targetConnexion
+                                                + ":" + sharedNutsApiJar,
                                         session
-                                )
+                                ).mkParentDirs()
                         );
-                        nutsJar = nutsJar2;
+                        e.getDescriptor().formatter(session).setNtf(false).print(
+                                NPath.of(targetConnexion
+                                                + ":" + sharedNutsApiDesc,
+                                        session
+                                ).mkParentDirs()
+                        );
                     }
+                    if (!NPath.of(targetConnexion.copy()
+                            .setPath(sharedNutsRuntimeJar)
+                            .toString(), session).exists()) {
+                        NDefinition e = NFetchCommand.of(session)
+                                .setId(session.getWorkspace().getRuntimeId())
+                                .setContent(true)
+                                .getResultDefinition();
+                        e.getContent().get().copyTo(
+                                NPath.of(targetConnexion
+                                                + ":" + sharedNutsApiJar,
+                                        session
+                                ).mkParentDirs()
+                        );
+                        e.getDescriptor().formatter(session).setNtf(false).print(
+                                NPath.of(targetConnexion
+                                                + ":" + sharedNutsRuntimeDesc,
+                                        session
+                                ).mkParentDirs()
+                        );
+                    }
+                    nutsJar = sharedNutsApiJar;
                 }
             }
-
         }
 
         boolean isUpdatable() {
@@ -97,7 +146,6 @@ public class DefaultSpawnExecutableRemote extends AbstractNExecutableCommand {
         }
     }
 
-    private NExecCommandExtension commExec;
 
     public DefaultSpawnExecutableRemote(NExecCommandExtension commExec, NDefinition def, String[] cmd,
                                         List<String> executorOptions, NSession session, NSession execSession, NExecCommand execCommand) {
@@ -129,34 +177,18 @@ public class DefaultSpawnExecutableRemote extends AbstractNExecutableCommand {
 
     @Override
     public NId getId() {
-        return null;
+        return def.getId();
     }
 
     private AbstractSyncIProcessExecHelper resolveExecHelper() {
-//        Map<String, String> e2 = null;
-//        Map<String, String> env1 = execCommand.getEnv();
-//        if (env1 != null) {
-//            e2 = new HashMap<>((Map) env1);
-//        }
-//        return ProcessExecHelper.ofArgs(null,
-//                execCommand.getCommand().toArray(new String[0]), e2,
-//                execCommand.getDirectory() == null ? null : execCommand.getDirectory().toFile(),
-//                session.getTerminal(),
-//                execSession.getTerminal(), showCommand, true, execCommand.getSleepMillis(),
-//                inheritSystemIO,
-//                /*redirectErr*/ false,
-//                /*fileIn*/ execCommand.getRedirectInputFile(),
-//                /*fileOut*/ execCommand.getRedirectOutputFile(),
-//                execCommand.getRunAs(),
-//                session);
-
-
         return new AbstractSyncIProcessExecHelper(session) {
             @Override
             public int exec() {
                 String[] nec = resolveNutsExecutableCommand();
                 ArrayList<String> cmd2 = new ArrayList<>();
                 cmd2.addAll(Arrays.asList(nec));
+                cmd2.add("--bot");
+                cmd2.add("--yes");
                 cmd2.add("---caller-app=remote-nuts");
                 cmd2.add("--exec");
                 cmd2.addAll(executorOptions);
@@ -173,14 +205,14 @@ public class DefaultSpawnExecutableRemote extends AbstractNExecutableCommand {
         Map<String, RemoteConnexionStringInfo> m = execSession.getOrComputeWorkspaceProperty(RemoteConnexionStringInfo.class.getName() + "Map",
                 s -> new HashMap<>()
         );
-        RemoteConnexionStringInfo k = m.computeIfAbsent(execCommand.getHost(), v -> new RemoteConnexionStringInfo());
-        if (k.isUpdatable()) {
-            k.update(this);
-        }
+        RemoteConnexionStringInfo k = m.computeIfAbsent(execCommand.getTarget(), v -> new RemoteConnexionStringInfo());
+        k.tryUpdate(this);
         ArrayList<String> cmd = new ArrayList<>();
         cmd.add(k.javaCommand);
         cmd.add("-jar");
         cmd.add(k.nutsJar);
+        cmd.add("-w");
+        cmd.add(k.workspaceName);
         return cmd.toArray(new String[0]);
     }
 
@@ -188,7 +220,7 @@ public class DefaultSpawnExecutableRemote extends AbstractNExecutableCommand {
         NSession sc = execSession.copy();
         sc.setTerminal(NSessionTerminal.ofMem(sc));
         int e = commExec.exec(new DefaultNExecCommandExtensionContext(
-                execCommand.getHost(),
+                execCommand.getTarget(),
                 cmd, sc
         ));
         if (e != 0) {
@@ -201,7 +233,7 @@ public class DefaultSpawnExecutableRemote extends AbstractNExecutableCommand {
 
     private int runOnce(String[] cmd) {
         return commExec.exec(new DefaultNExecCommandExtensionContext(
-                execCommand.getHost(),
+                execCommand.getTarget(),
                 cmd, execSession
         ));
     }

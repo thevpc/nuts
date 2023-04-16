@@ -51,7 +51,7 @@ public class NWorkspaceUtils {
     }
 
     public static boolean isUserDefaultWorkspace(NSession session) {
-        String defaultWorkspaceLocation = NPlatformUtils.getWorkspaceLocation(null, false, null);
+        String defaultWorkspaceLocation = NPlatformHome.USER.getWorkspaceLocation(null);
         return defaultWorkspaceLocation.equals(session.getWorkspace().getLocation().toString());
     }
 

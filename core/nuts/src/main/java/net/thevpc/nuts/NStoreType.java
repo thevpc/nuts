@@ -35,21 +35,21 @@ import net.thevpc.nuts.util.NNameFormat;
  * @app.category Base
  * @since 0.5.4
  */
-public enum NStoreLocation implements NEnum {
+public enum NStoreType implements NEnum {
 
     /**
      * defines the base directory relative to which user specific executable
      * files should be stored.
-     * Contains (not modifiable ) binaries an executables.
+     * Contains (not modifiable) binaries and executables.
      */
-    APPS,
+    BIN,
 
     /**
      * defines the base directory relative to which user specific configuration
      * files should be stored. equivalent to $XDG_CONFIG_HOME on LINUX systems.
      * Contains configuration files.
      */
-    CONFIG,
+    CONF,
 
     /**
      * defines the base directory relative to which user specific data files
@@ -100,12 +100,12 @@ public enum NStoreLocation implements NEnum {
      */
     private final String id;
 
-    NStoreLocation() {
+    NStoreType() {
         this.id = NNameFormat.ID_NAME.format(name());
     }
 
-    public static NOptional<NStoreLocation> parse(String value) {
-        return NEnumUtils.parseEnum(value, NStoreLocation.class);
+    public static NOptional<NStoreType> parse(String value) {
+        return NEnumUtils.parseEnum(value, NStoreType.class);
     }
 
     /**

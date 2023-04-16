@@ -12,7 +12,7 @@ public class CacheDB {
                                 NLocations.of(session).getStoreLocation(
                                         session.getWorkspace().getApiId().builder().setVersion("SHARED").build()
                                 ,
-                                NStoreLocation.CACHE
+                                NStoreType.CACHE
                         ).resolve("cachedb").toFile().toFile()
                 );
                 o.getSerializers().setSerializer(NId.class,()->new NanoDBNIdSerializer(session));

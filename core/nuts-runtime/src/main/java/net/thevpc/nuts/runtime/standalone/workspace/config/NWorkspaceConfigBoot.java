@@ -37,7 +37,7 @@ public final class NWorkspaceConfigBoot extends NConfigItem {
 
     private static final long serialVersionUID = 830;
     private String uuid = null;
-    private boolean global;
+    private boolean system;
     private String name = null;
     private String workspace = null;
     private String bootRepositories = null;
@@ -45,12 +45,12 @@ public final class NWorkspaceConfigBoot extends NConfigItem {
     // folder types and layout types are exploded so that it is easier
     // to extract from json file even though no json library is available
     // via simple regexp
-    private Map<NStoreLocation, String> storeLocations = null;
+    private Map<NStoreType, String> storeLocations = null;
     private Map<NHomeLocation, String> homeLocations = null;
 
-    private NStoreLocationStrategy repositoryStoreLocationStrategy = null;
-    private NStoreLocationStrategy storeLocationStrategy = null;
-    private NOsFamily storeLocationLayout = null;
+    private NStoreStrategy repositoryStoreStrategy = null;
+    private NStoreStrategy storeStrategy = null;
+    private NOsFamily storeLayout = null;
 
     private List<ExtensionConfig> extensions;
 
@@ -95,11 +95,11 @@ public final class NWorkspaceConfigBoot extends NConfigItem {
         return this;
     }
 
-    public Map<NStoreLocation, String> getStoreLocations() {
+    public Map<NStoreType, String> getStoreLocations() {
         return storeLocations;
     }
 
-    public NWorkspaceConfigBoot setStoreLocations(Map<NStoreLocation, String> storeLocations) {
+    public NWorkspaceConfigBoot setStoreLocations(Map<NStoreType, String> storeLocations) {
         this.storeLocations = storeLocations;
         return this;
     }
@@ -113,30 +113,30 @@ public final class NWorkspaceConfigBoot extends NConfigItem {
         return this;
     }
 
-    public NStoreLocationStrategy getStoreLocationStrategy() {
-        return storeLocationStrategy;
+    public NStoreStrategy getStoreStrategy() {
+        return storeStrategy;
     }
 
-    public NWorkspaceConfigBoot setStoreLocationStrategy(NStoreLocationStrategy storeLocationStrategy) {
-        this.storeLocationStrategy = storeLocationStrategy;
+    public NWorkspaceConfigBoot setStoreStrategy(NStoreStrategy storeStrategy) {
+        this.storeStrategy = storeStrategy;
         return this;
     }
 
-    public NOsFamily getStoreLocationLayout() {
-        return storeLocationLayout;
+    public NOsFamily getStoreLayout() {
+        return storeLayout;
     }
 
-    public NWorkspaceConfigBoot setStoreLocationLayout(NOsFamily storeLocationLayout) {
-        this.storeLocationLayout = storeLocationLayout;
+    public NWorkspaceConfigBoot setStoreLayout(NOsFamily storeLayout) {
+        this.storeLayout = storeLayout;
         return this;
     }
 
-    public NStoreLocationStrategy getRepositoryStoreLocationStrategy() {
-        return repositoryStoreLocationStrategy;
+    public NStoreStrategy getRepositoryStoreStrategy() {
+        return repositoryStoreStrategy;
     }
 
-    public NWorkspaceConfigBoot setRepositoryStoreLocationStrategy(NStoreLocationStrategy repositoryStoreLocationStrategy) {
-        this.repositoryStoreLocationStrategy = repositoryStoreLocationStrategy;
+    public NWorkspaceConfigBoot setRepositoryStoreStrategy(NStoreStrategy repositoryStoreStrategy) {
+        this.repositoryStoreStrategy = repositoryStoreStrategy;
         return this;
     }
 
@@ -149,12 +149,12 @@ public final class NWorkspaceConfigBoot extends NConfigItem {
         return this;
     }
 
-    public boolean isGlobal() {
-        return global;
+    public boolean isSystem() {
+        return system;
     }
 
-    public NWorkspaceConfigBoot setGlobal(boolean global) {
-        this.global = global;
+    public NWorkspaceConfigBoot setSystem(boolean system) {
+        this.system = system;
         return this;
     }
 

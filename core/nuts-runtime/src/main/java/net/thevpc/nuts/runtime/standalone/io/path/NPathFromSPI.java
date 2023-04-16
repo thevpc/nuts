@@ -229,10 +229,10 @@ public class NPathFromSPI extends NPathBase {
             if (s.startsWith("~")) {
                 NLocations locations = NLocations.of(session);
                 if (s.equals("~~")) {
-                    NPath nutsHome = locations.getHomeLocation(NStoreLocation.CONFIG);
+                    NPath nutsHome = locations.getHomeLocation(NStoreType.CONF);
                     return nutsHome.normalize();
                 } else if (s.startsWith("~~") && s.length() > 2 && (s.charAt(2) == '/' || s.charAt(2) == '\\')) {
-                    NPath nutsHome = locations.getHomeLocation(NStoreLocation.CONFIG);
+                    NPath nutsHome = locations.getHomeLocation(NStoreType.CONF);
                     return nutsHome.resolve(s.substring(3)).normalize();
                 } else if (s.equals("~")) {
                     return NPath.ofUserHome(session);

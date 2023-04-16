@@ -442,7 +442,7 @@ public interface NExecCommand extends NWorkspaceCommand {
      * @return host
      * @since 0.8.4
      */
-    String getHost() ;
+    String getTarget() ;
 
     /**
      * update host connexion string.
@@ -450,5 +450,5 @@ public interface NExecCommand extends NWorkspaceCommand {
      * @param host host
      * @return {@code this} instance
      */
-    NExecCommand setHost(String host);
+    NExecCommand setTarget(String host);
 }

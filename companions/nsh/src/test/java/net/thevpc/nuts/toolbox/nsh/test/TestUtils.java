@@ -63,8 +63,8 @@ public class TestUtils {
 
     public static String[] createSysDirs(File base) {
         return new String[]{
-                "--system-apps-home", new File(base, "system.apps").getPath(),
-                "--system-config-home", new File(base, "system.config").getPath(),
+                "--system-bin-home", new File(base, "system.bin").getPath(),
+                "--system-conf-home", new File(base, "system.conf").getPath(),
                 "--system-var-home", new File(base, "system.var").getPath(),
                 "--system-log-home", new File(base, "system.log").getPath(),
                 "--system-temp-home", new File(base, "system.temp").getPath(),

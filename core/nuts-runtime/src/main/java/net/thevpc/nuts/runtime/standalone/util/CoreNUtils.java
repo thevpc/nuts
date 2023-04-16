@@ -361,7 +361,7 @@ public class CoreNUtils {
 //    }
 
     public static String[] nullArray_Locations(String[] a) {
-        return nullArray(a, NStoreLocation.values().length);
+        return nullArray(a, NStoreType.values().length);
     }
 
     //    public static String trimToNullAlternative(String s) {
@@ -372,7 +372,7 @@ public class CoreNUtils {
 //        return (s.isEmpty() || NutsConstants.IdProperties.ALTERNATIVE_DEFAULT_VALUE.equalsIgnoreCase(s)) ? null : s;
 //    }
     public static String[] nullArray_LocationsAndOses(String[] a) {
-        return nullArray(a, NStoreLocation.values().length * NOsFamily.values().length);
+        return nullArray(a, NStoreType.values().length * NOsFamily.values().length);
     }
 
     public static String[] nullArray(String[] a, int size) {
@@ -402,11 +402,11 @@ public class CoreNUtils {
     }
 
     public static String[] nonNullArray_Locations(String[] a) {
-        return nonNullArray(a, NStoreLocation.values().length);
+        return nonNullArray(a, NStoreType.values().length);
     }
 
     public static String[] nonNullArray_LocationsAndOses(String[] a) {
-        return nonNullArray(a, NStoreLocation.values().length * NOsFamily.values().length);
+        return nonNullArray(a, NStoreType.values().length * NOsFamily.values().length);
     }
 
     public static String[] nonNullArray(String[] a, int size) {
@@ -469,11 +469,6 @@ public class CoreNUtils {
             }
             return p;
         }
-    }
-
-    public static String idToPath(NId id) {
-        return id.getGroupId().replace('.', '/') + "/"
-                + id.getArtifactId() + "/" + id.getVersion();
     }
 
     public static Properties copyOfNonNull(Properties p) {
@@ -608,23 +603,6 @@ public class CoreNUtils {
         return NBootManager.of(session).getCustomBootOption("---show-command")
                 .flatMap(NLiteral::asBoolean)
                 .orElse(false);
-    }
-
-    public static String resolveJarPath(NId id) {
-        return resolveFilePath(id,"jar");
-    }
-    public static String resolveNutsDescriptorPath(NId id) {
-        return resolveFilePath(id,"nuts");
-    }
-    public static String resolveFilePath(NId id, String extension) {
-        String fileName = id.getArtifactId() + "-" + id.getVersion() + "." + extension;
-        return id.getGroupId().replace('.', '/')
-                + '/'
-                + id.getArtifactId()
-                + '/'
-                + id.getVersion()
-                + '/'
-                + fileName;
     }
 
 

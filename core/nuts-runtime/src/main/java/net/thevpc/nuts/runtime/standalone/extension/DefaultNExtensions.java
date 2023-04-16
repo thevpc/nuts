@@ -12,6 +12,7 @@ import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceExt;
 import net.thevpc.nuts.runtime.standalone.workspace.NWorkspaceUtils;
 import net.thevpc.nuts.spi.NComponent;
 import net.thevpc.nuts.spi.NSupportLevelContext;
+import net.thevpc.nuts.util.NIdUtils;
 
 import java.net.URL;
 import java.util.*;
@@ -77,7 +78,7 @@ public class DefaultNExtensions implements NExtensions {
 
     @Override
     public <T extends NComponent> NOptional<T> createComponent(Class<T> type) {
-        return createComponent(type,  null);
+        return createComponent(type, null);
     }
 
     public <T extends NComponent, V> NOptional<T> createComponent(Class<T> serviceType, V criteriaType) {
@@ -184,7 +185,8 @@ public class DefaultNExtensions implements NExtensions {
             }
         }
 
-        URL nuts = classLoader.getResource("META-INF/nuts/" + id.getGroupId().replace('.', '/') + "/" + id.getArtifactId() + "/pom.xml");
+        URL nuts = classLoader.getResource("META-INF/nuts/"
+                + NIdUtils.resolveIdPath(id.getShortId()) + "/nuts.json");
         if (nuts != null) {
             NDescriptor e = NDescriptorParser.of(getSession())
                     .setDescriptorStyle(NDescriptorStyle.NUTS)

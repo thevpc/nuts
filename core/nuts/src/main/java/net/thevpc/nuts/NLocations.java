@@ -38,25 +38,25 @@ public interface NLocations extends NComponent, NSessionProvider {
         return NExtensions.of(session).createComponent(NLocations.class).get();
     }
 
-    NPath getHomeLocation(NStoreLocation folderType);
+    NPath getHomeLocation(NStoreType folderType);
 
-    NPath getStoreLocation(NStoreLocation folderType);
+    NPath getStoreLocation(NStoreType folderType);
 
-    NPath getStoreLocation(NId id, NStoreLocation folderType);
+    NPath getStoreLocation(NId id, NStoreType folderType);
 
-    NPath getStoreLocation(NStoreLocation folderType, String repositoryIdOrName);
+    NPath getStoreLocation(NStoreType folderType, String repositoryIdOrName);
 
-    NPath getStoreLocation(NId id, NStoreLocation folderType, String repositoryIdOrName);
+    NPath getStoreLocation(NId id, NStoreType folderType, String repositoryIdOrName);
 
-    NStoreLocationStrategy getStoreLocationStrategy();
+    NStoreStrategy getStoreStrategy();
 
-    NLocations setStoreLocationStrategy(NStoreLocationStrategy strategy);
+    NLocations setStoreStrategy(NStoreStrategy strategy);
 
-    NStoreLocationStrategy getRepositoryStoreLocationStrategy();
+    NStoreStrategy getRepositoryStoreStrategy();
 
-    NOsFamily getStoreLocationLayout();
+    NOsFamily getStoreLayout();
 
-    NLocations setStoreLocationLayout(NOsFamily layout);
+    NLocations setStoreLayout(NOsFamily storeLayout);
 
     /**
      * all home locations key/value map where keys are in the form "location"
@@ -64,7 +64,7 @@ public interface NLocations extends NComponent, NSessionProvider {
      *
      * @return home locations mapping
      */
-    Map<NStoreLocation, String> getStoreLocations();
+    Map<NStoreType, String> getStoreLocations();
 
     String getDefaultIdFilename(NId id);
 
@@ -86,7 +86,7 @@ public interface NLocations extends NComponent, NSessionProvider {
 
     NPath getWorkspaceLocation();
 
-    NLocations setStoreLocation(NStoreLocation folderType, String location);
+    NLocations setStoreLocation(NStoreType folderType, String location);
 
     NLocations setHomeLocation(NHomeLocation homeType, String location);
 

@@ -97,8 +97,8 @@ public class DefaultNSession implements Cloneable, NSession {
     private String locale;
     private boolean iterableOut;
     private Class appClass;
-    private final NPath[] appFolders = new NPath[NStoreLocation.values().length];
-    private final NPath[] appSharedFolders = new NPath[NStoreLocation.values().length];
+    private final NPath[] appFolders = new NPath[NStoreType.values().length];
+    private final NPath[] appSharedFolders = new NPath[NStoreType.values().length];
     /**
      * auto complete info for "auto-complete" mode
      */
@@ -750,13 +750,13 @@ public class DefaultNSession implements Cloneable, NSession {
             cloned.listeners = null;
 
             cloned.appClass = this.getAppClass();
-            NStoreLocation[] values = NStoreLocation.values();
+            NStoreType[] values = NStoreType.values();
             for (int i = 0; i < values.length; i++) {
-                NStoreLocation value = values[i];
+                NStoreType value = values[i];
                 cloned.appFolders[i] = this.getAppFolder(value);
             }
             for (int i = 0; i < values.length; i++) {
-                NStoreLocation value = values[i];
+                NStoreType value = values[i];
                 cloned.appSharedFolders[i] = this.getAppSharedFolder(value);
             }
             cloned.appAutoComplete = this.getAppAutoComplete();
@@ -817,13 +817,13 @@ public class DefaultNSession implements Cloneable, NSession {
         this.eout = other.eout();
         this.appId = other.getAppId();
         this.appClass = other.getAppClass();
-        NStoreLocation[] values = NStoreLocation.values();
+        NStoreType[] values = NStoreType.values();
         for (int i = 0; i < values.length; i++) {
-            NStoreLocation value = values[i];
+            NStoreType value = values[i];
             this.appFolders[i] = other.getAppFolder(value);
         }
         for (int i = 0; i < values.length; i++) {
-            NStoreLocation value = values[i];
+            NStoreType value = values[i];
             this.appSharedFolders[i] = other.getAppSharedFolder(value);
         }
         this.appAutoComplete = other.getAppAutoComplete();
@@ -1682,7 +1682,7 @@ public class DefaultNSession implements Cloneable, NSession {
         this.appId = (_appId);
         this.appClass = appClass == null ? null : JavaClassUtils.unwrapCGLib(appClass);
         NLocations locations = NLocations.of(this);
-        for (NStoreLocation folder : NStoreLocation.values()) {
+        for (NStoreType folder : NStoreType.values()) {
             setAppFolder(folder, locations.getStoreLocation(this.appId, folder));
             setAppSharedFolder(folder, locations.getStoreLocation(this.appId.builder().setVersion("SHARED").build(), folder));
         }
@@ -1763,47 +1763,47 @@ public class DefaultNSession implements Cloneable, NSession {
     }
 
     @Override
-    public NPath getAppAppsFolder() {
-        return getAppFolder(NStoreLocation.APPS);
+    public NPath getAppBinFolder() {
+        return getAppFolder(NStoreType.BIN);
     }
 
     @Override
-    public NPath getAppConfigFolder() {
-        return getAppFolder(NStoreLocation.CONFIG);
+    public NPath getAppConfFolder() {
+        return getAppFolder(NStoreType.CONF);
     }
 
     @Override
     public NPath getAppLogFolder() {
-        return getAppFolder(NStoreLocation.LOG);
+        return getAppFolder(NStoreType.LOG);
     }
 
     @Override
     public NPath getAppTempFolder() {
-        return getAppFolder(NStoreLocation.TEMP);
+        return getAppFolder(NStoreType.TEMP);
     }
 
     @Override
     public NPath getAppVarFolder() {
-        return getAppFolder(NStoreLocation.VAR);
+        return getAppFolder(NStoreType.VAR);
     }
 
     @Override
     public NPath getAppLibFolder() {
-        return getAppFolder(NStoreLocation.LIB);
+        return getAppFolder(NStoreType.LIB);
     }
 
     @Override
     public NPath getAppRunFolder() {
-        return getAppFolder(NStoreLocation.RUN);
+        return getAppFolder(NStoreType.RUN);
     }
 
     @Override
     public NPath getAppCacheFolder() {
-        return getAppFolder(NStoreLocation.CACHE);
+        return getAppFolder(NStoreType.CACHE);
     }
 
     @Override
-    public NPath getAppVersionFolder(NStoreLocation location, String version) {
+    public NPath getAppVersionFolder(NStoreType location, String version) {
         if (version == null
                 || version.isEmpty()
                 || version.equalsIgnoreCase("current")
@@ -1822,41 +1822,41 @@ public class DefaultNSession implements Cloneable, NSession {
 
     @Override
     public NPath getAppSharedAppsFolder() {
-        return getAppSharedFolder(NStoreLocation.APPS);
+        return getAppSharedFolder(NStoreType.BIN);
     }
 
     @Override
-    public NPath getAppSharedConfigFolder() {
-        return getAppSharedFolder(NStoreLocation.CONFIG);
+    public NPath getAppSharedConfFolder() {
+        return getAppSharedFolder(NStoreType.CONF);
     }
 
     @Override
     public NPath getAppSharedLogFolder() {
-        return getAppSharedFolder(NStoreLocation.LOG);
+        return getAppSharedFolder(NStoreType.LOG);
     }
 
     @Override
     public NPath getAppSharedTempFolder() {
-        return getAppSharedFolder(NStoreLocation.TEMP);
+        return getAppSharedFolder(NStoreType.TEMP);
     }
 
     @Override
     public NPath getAppSharedVarFolder() {
-        return getAppSharedFolder(NStoreLocation.VAR);
+        return getAppSharedFolder(NStoreType.VAR);
     }
 
     @Override
     public NPath getAppSharedLibFolder() {
-        return getAppSharedFolder(NStoreLocation.LIB);
+        return getAppSharedFolder(NStoreType.LIB);
     }
 
     @Override
     public NPath getAppSharedRunFolder() {
-        return getAppSharedFolder(NStoreLocation.RUN);
+        return getAppSharedFolder(NStoreType.RUN);
     }
 
     @Override
-    public NPath getAppSharedFolder(NStoreLocation location) {
+    public NPath getAppSharedFolder(NStoreType location) {
         return this.appSharedFolders[location.ordinal()];
     }
 
@@ -1894,7 +1894,7 @@ public class DefaultNSession implements Cloneable, NSession {
     }
 
     @Override
-    public NPath getAppFolder(NStoreLocation location) {
+    public NPath getAppFolder(NStoreType location) {
         return this.appFolders[location.ordinal()];
     }
 
@@ -1928,13 +1928,13 @@ public class DefaultNSession implements Cloneable, NSession {
 
 
     @Override
-    public NSession setAppFolder(NStoreLocation location, NPath folder) {
+    public NSession setAppFolder(NStoreType location, NPath folder) {
         this.appFolders[location.ordinal()] = folder;
         return this;
     }
 
     @Override
-    public NSession setAppSharedFolder(NStoreLocation location, NPath folder) {
+    public NSession setAppSharedFolder(NStoreType location, NPath folder) {
         this.appSharedFolders[location.ordinal()] = folder;
         return this;
     }

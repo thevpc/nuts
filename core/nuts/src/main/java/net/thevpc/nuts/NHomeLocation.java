@@ -43,14 +43,14 @@ import java.util.Objects;
 public class NHomeLocation implements NEnum {
     private static final Map<String, NHomeLocation> CACHE = new HashMap<>();
     private final NOsFamily osFamily;
-    private final NStoreLocation storeLocation;
+    private final NStoreType storeLocation;
 
-    private NHomeLocation(NOsFamily osFamily, NStoreLocation storeLocation) {
+    private NHomeLocation(NOsFamily osFamily, NStoreType storeLocation) {
         this.osFamily = osFamily;
         this.storeLocation = storeLocation;
     }
 
-    public static NHomeLocation of(NOsFamily osFamily, NStoreLocation storeLocation) {
+    public static NHomeLocation of(NOsFamily osFamily, NStoreType storeLocation) {
         String key = (osFamily == null ? "system" : osFamily.id()) + "_" + (storeLocation == null ? "system" : storeLocation.id());
         NHomeLocation instance = CACHE.get(key);
         if (instance == null) {
@@ -81,7 +81,7 @@ public class NHomeLocation implements NEnum {
             String s1 = e.substring(0, i);
             String s2 = e.substring(i + 1);
             NOsFamily osf = s1.equals("system") ? null : NOsFamily.parse(s1).orNull();
-            NStoreLocation loc = s2.equals("system") ? null : NStoreLocation.parse(s2).orNull();
+            NStoreType loc = s2.equals("system") ? null : NStoreType.parse(s2).orNull();
             if (osf == null) {
                 if (!s1.equals("system") && s1.length() > 0) {
                     return NOptional.ofError(s -> NMsg.ofC(NHomeLocation.class.getSimpleName() + " invalid value : %s", finalValue));
@@ -114,7 +114,7 @@ public class NHomeLocation implements NEnum {
      *
      * @return Store Location
      */
-    public NStoreLocation getStoreLocation() {
+    public NStoreType getStoreLocation() {
         return storeLocation;
     }
 

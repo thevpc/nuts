@@ -33,12 +33,12 @@ import net.thevpc.nuts.io.NPath;
  */
 public interface NAppStoreLocationResolver {
     /**
-     * used in {@link NSession#getAppVersionFolder(NStoreLocation, String)}
+     * used in {@link NSession#getAppVersionFolder(NStoreType, String)}
      * to resolve folder for the given version
      *
      * @param id         nuts id
      * @param folderType folder type
      * @return valid location, or null for default with resolves to {@code workspace.locations().getStoreLocation(id,folderType)}
      */
-    NPath getStoreLocation(NId id, NStoreLocation folderType);
+    NPath getStoreLocation(NId id, NStoreType folderType);
 }

@@ -50,27 +50,27 @@ public interface NWorkspaceBootConfig {
 
     String getBootRepositories();
 
-    Map<NStoreLocation, String> getStoreLocations();
+    Map<NStoreType, String> getStoreLocations();
 
     Map<NHomeLocation, String> getHomeLocations();
 
-    NStoreLocationStrategy getStoreLocationStrategy();
+    NStoreStrategy getStoreStrategy();
 
-    NOsFamily getStoreLocationLayout();
+    NOsFamily getStoreLayout();
 
-    NStoreLocationStrategy getRepositoryStoreLocationStrategy();
+    NStoreStrategy getRepositoryStoreStrategy();
 
     String getUuid();
 
-    boolean isGlobal();
+    boolean isSystem();
 
-    String getStoreLocation(NId id, NStoreLocation folderType);
+    String getStoreLocation(NId id, NStoreType folderType);
 
-    String getStoreLocation(NStoreLocation storeLocation);
+    String getStoreLocation(NStoreType storeLocation);
 
     String getHomeLocation(NHomeLocation homeLocation);
 
-    String getHomeLocation(NStoreLocation storeLocation);
+    String getHomeLocation(NStoreType storeLocation);
 
     /**
      * @app.category Config

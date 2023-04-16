@@ -42,7 +42,7 @@ import java.util.logging.Level;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.io.NIOException;
 import net.thevpc.nuts.io.NPath;
-import net.thevpc.nuts.runtime.standalone.id.util.NIdUtils;
+import net.thevpc.nuts.runtime.standalone.id.util.CoreNIdUtils;
 import net.thevpc.nuts.runtime.standalone.repository.impl.NRepositoryExt;
 import net.thevpc.nuts.runtime.standalone.util.CoreNConstants;
 import net.thevpc.nuts.DefaultNVersion;
@@ -108,9 +108,8 @@ public class MavenRepositoryFolderHelper {
     }
 
     public NPath getLocalGroupAndArtifactFile(NId id, NSession session) {
-        NIdUtils.checkShortId(id,session);
-        NPath groupFolder = getStoreLocation().resolve(id.getGroupId().replace('.', File.separatorChar));
-        return groupFolder.resolve(id.getArtifactId());
+        CoreNIdUtils.checkShortId(id,session);
+        return getStoreLocation().resolve(net.thevpc.nuts.util.NIdUtils.resolveIdPath(id.getShortId()));
     }
 
     public Iterator<NId> searchVersions(NId id, final NIdFilter filter, boolean deep, NSession session) {

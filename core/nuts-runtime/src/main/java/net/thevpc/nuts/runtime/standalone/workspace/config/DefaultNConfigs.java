@@ -141,7 +141,7 @@ public class DefaultNConfigs implements NConfigs, NConfigsExt {
     @Override
     public boolean isGlobal() {
         checkSession();
-        return model.isGlobal();
+        return model.isSystem();
     }
 
     public NSession getSession() {

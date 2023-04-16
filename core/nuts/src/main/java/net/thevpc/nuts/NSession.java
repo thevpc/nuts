@@ -264,9 +264,9 @@ public interface NSession extends NCmdLineConfigurable {
 
     Class getAppClass();
 
-    NPath getAppAppsFolder();
+    NPath getAppBinFolder();
 
-    NPath getAppConfigFolder();
+    NPath getAppConfFolder();
 
     NPath getAppLogFolder();
 
@@ -280,11 +280,11 @@ public interface NSession extends NCmdLineConfigurable {
 
     NPath getAppCacheFolder();
 
-    NPath getAppVersionFolder(NStoreLocation location, String version);
+    NPath getAppVersionFolder(NStoreType location, String version);
 
     NPath getAppSharedAppsFolder();
 
-    NPath getAppSharedConfigFolder();
+    NPath getAppSharedConfFolder();
 
     NPath getAppSharedLogFolder();
 
@@ -296,7 +296,7 @@ public interface NSession extends NCmdLineConfigurable {
 
     NPath getAppSharedRunFolder();
 
-    NPath getAppSharedFolder(NStoreLocation location);
+    NPath getAppSharedFolder(NStoreType location);
 
     NVersion getAppVersion();
 
@@ -310,7 +310,7 @@ public interface NSession extends NCmdLineConfigurable {
 
     void processAppCommandLine(NCmdLineProcessor commandLineProcessor);
 
-    NPath getAppFolder(NStoreLocation location);
+    NPath getAppFolder(NStoreType location);
 
     boolean isAppExecMode();
 
@@ -322,9 +322,9 @@ public interface NSession extends NCmdLineConfigurable {
 
     NSession setAppModeArgs(List<String> modeArgs);
 
-    NSession setAppFolder(NStoreLocation location, NPath folder);
+    NSession setAppFolder(NStoreType location, NPath folder);
 
-    NSession setAppSharedFolder(NStoreLocation location, NPath folder);
+    NSession setAppSharedFolder(NStoreType location, NPath folder);
 
     NSession setAppId(NId appId);
 

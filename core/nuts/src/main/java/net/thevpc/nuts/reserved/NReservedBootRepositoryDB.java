@@ -1,12 +1,12 @@
 package net.thevpc.nuts.reserved;
 
 import net.thevpc.nuts.NConstants;
-import net.thevpc.nuts.NStoreLocation;
-import net.thevpc.nuts.util.NLog;
-import net.thevpc.nuts.util.NPlatformUtils;
+import net.thevpc.nuts.NStoreType;
 import net.thevpc.nuts.spi.NRepositoryDB;
 import net.thevpc.nuts.spi.NRepositoryLocation;
 import net.thevpc.nuts.spi.NSupportLevelContext;
+import net.thevpc.nuts.util.NLog;
+import net.thevpc.nuts.util.NPlatformHome;
 
 import java.util.*;
 
@@ -17,9 +17,8 @@ public class NReservedBootRepositoryDB implements NRepositoryDB {
 
     public NReservedBootRepositoryDB(NLog logger) {
         reg("system", NReservedIOUtils.getNativePath(
-                        NPlatformUtils.getDefaultPlatformHomeFolder(null,
-                                NStoreLocation.LIB,
-                                true,
+                        NPlatformHome.SYSTEM.getWorkspaceStore(
+                                NStoreType.LIB,
                                 NConstants.Names.DEFAULT_WORKSPACE_NAME) + "/" + NConstants.Folders.ID
                 )
         );

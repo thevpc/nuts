@@ -9,15 +9,12 @@ import net.thevpc.nuts.*;
 import net.thevpc.nuts.cmdline.NArg;
 import net.thevpc.nuts.cmdline.NCmdLine;
 import net.thevpc.nuts.runtime.standalone.executor.AbstractSyncIProcessExecHelper;
-import net.thevpc.nuts.runtime.standalone.executor.system.ProcessExecHelper;
 import net.thevpc.nuts.runtime.standalone.util.collections.CoreCollectionUtils;
 import net.thevpc.nuts.text.NText;
 import net.thevpc.nuts.text.NTextStyle;
 import net.thevpc.nuts.text.NTexts;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 /**
  * @author thevpc
@@ -88,7 +85,7 @@ public class DefaultNSystemExecutableRemote extends AbstractNExecutableCommand {
             @Override
             public int exec() {
                 return commExec.exec(new DefaultNExecCommandExtensionContext(
-                        execCommand.getHost(),
+                        execCommand.getTarget(),
                         cmd, execSession
                 ));
             }

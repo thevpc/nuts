@@ -3,6 +3,7 @@ package net.thevpc.nuts.runtime.standalone.workspace.cmd.recom;
 import net.thevpc.nuts.*;
 import net.thevpc.nuts.io.NPath;
 import net.thevpc.nuts.runtime.standalone.workspace.cmd.settings.clinfo.NCliInfo;
+import net.thevpc.nuts.util.NIdUtils;
 import net.thevpc.nuts.util.NStringUtils;
 
 import java.util.Locale;
@@ -29,7 +30,7 @@ public abstract class AbstractRecommendationConnector implements RecommendationC
         validateRequest(ri, session);
         NId id = NId.of(ri.q.getId()).ifBlankEmpty().get(session);
         String name = phase.name().toLowerCase() + (failure ? "-failure" : "") + "-recommendations.json";
-        String url = "/repo/" + id.getGroupId().replace('.', '/') + '/' + id.getArtifactId() + '/' + id.getVersion() + '/' + name;
+        String url = "/repo/" + NIdUtils.resolveIdPath(id) + '/' + name;
         return post(url, ri, Map.class, session);
     }
 
@@ -94,7 +95,7 @@ public abstract class AbstractRecommendationConnector implements RecommendationC
         if (!p.isEmpty()) {
             if (p.equals("dev") || p.equals("debug")) {
                 p = "http://127.0.0.1:8080/public/nuts";
-            }else if (p.matches("localhost") || p.matches("127[.]0[.]0[.][0-9]+")) {
+            } else if (p.matches("localhost") || p.matches("127[.]0[.]0[.][0-9]+")) {
                 p = "http://" + p + ":8080/public/nuts";
             } else if (p.matches("localhost(:[0-9]+)?") || p.matches("127[.]0[.]0[.][0-9]+(:[0-9]+)?")) {
                 p = "http://" + p + "/public/nuts";

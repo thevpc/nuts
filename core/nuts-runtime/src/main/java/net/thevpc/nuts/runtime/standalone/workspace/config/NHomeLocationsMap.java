@@ -57,13 +57,13 @@ public class NHomeLocationsMap {
 
     public NHomeLocationsMap set(NHomeLocationsMap other) {
         if (other != null) {
-            for (NStoreLocation location : NStoreLocation.values()) {
+            for (NStoreType location : NStoreType.values()) {
                 String v = other.get(NHomeLocation.of(null, location));
                 if (!NBlankable.isBlank(v)) {
                     set(NHomeLocation.of(null, location), v);
                 }
             }
-            for (NStoreLocation location : NStoreLocation.values()) {
+            for (NStoreType location : NStoreType.values()) {
                 for (NOsFamily osFamily : NOsFamily.values()) {
                     String v = other.get(NHomeLocation.of(osFamily, location));
                     if (!NBlankable.isBlank(v)) {
@@ -76,7 +76,7 @@ public class NHomeLocationsMap {
     }
 
     public NHomeLocationsMap set(NHomeLocation type, String value) {
-        NStoreLocation storeLocation = type.getStoreLocation();
+        NStoreType storeLocation = type.getStoreLocation();
         if (storeLocation != null) {
             if (NBlankable.isBlank(value)) {
                 if (locations != null) {
@@ -95,13 +95,13 @@ public class NHomeLocationsMap {
     public Map<NHomeLocation, String> toMap() {
         Map<NHomeLocation, String> map = new HashMap<>();
         if (locations != null) {
-            for (NStoreLocation location : NStoreLocation.values()) {
+            for (NStoreType location : NStoreType.values()) {
                 String v = get(NHomeLocation.of(null, location));
                 if (!NBlankable.isBlank(v)) {
                     map.put(NHomeLocation.of(null, location), v);
                 }
             }
-            for (NStoreLocation location : NStoreLocation.values()) {
+            for (NStoreType location : NStoreType.values()) {
                 for (NOsFamily osFamily : NOsFamily.values()) {
                     String v = get(NHomeLocation.of(osFamily, location));
                     if (!NBlankable.isBlank(v)) {

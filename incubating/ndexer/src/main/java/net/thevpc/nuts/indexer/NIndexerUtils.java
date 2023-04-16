@@ -24,7 +24,7 @@ public class NIndexerUtils {
         if (m == null) {
             m = NLocations.of(session)
                     .getStoreLocation(NIdResolver.of(session).resolveId(NIndexerUtils.class),
-                            NStoreLocation.CACHE) + File.separator + entity;
+                            NStoreType.CACHE) + File.separator + entity;
             NEnvs.of(session).setProperty(k, m);
         }
         return new File(m).toPath();
